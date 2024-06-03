@@ -1,140 +1,130 @@
-Return-Path: <linux-kernel+bounces-199402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0281D8D86D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:01:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152A38D86DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A504B22655
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469AD1C22274
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF79133993;
-	Mon,  3 Jun 2024 16:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11D7135A6C;
+	Mon,  3 Jun 2024 16:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inVrbcEP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p5eETr/E"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D59526AD0;
-	Mon,  3 Jun 2024 16:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B17D134409
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717430473; cv=none; b=bzSTfnFngEAhkUecHZ+x1YEk0ZWbGrEla7j/U+ppaBO/wdQHFSWiabdCuCuSCTAKfRiaotzXc8+orYy2sptfMyykIUC2JR6n/ES79mVbrh2ZIH1bAJYQh+NBBtnhKgjtumX/7NdUMu00eR+g7RPZlRgutQsj+NIX4CcJtt2OQJo=
+	t=1717430528; cv=none; b=arcdp+gDMsgrtqBGDXqFA6/cYmRNozQZxJB0zEcpPs34sPp8kdKW4eYyihy9e1isU7CXbyhR8O75MAP3/4M1/xZd36Al16vJ6ZgHglfD4lr9zgC6kof1AyyuAAD8LRQXEDi8Xrb411r8kiBYsfm7ObdwEfk2L2ZLQo40GcEbLLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717430473; c=relaxed/simple;
-	bh=Iv1Uc6RhMV8UTtYf+csBgZAea6pO/MLrB9bZpKUWHsw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PRpj8QVif61eaXBrEWhYtZ/2mHwqASkiS50p2KJGumJIJR53NGJh4S1xBINKF6UNwqtHth175EuCFeYVo6uHN7gMz18geW8QVvJkIWLnUiJeiB0rHtKQ5M86d8B5zreweQfJ4zzc/hT68fpqgw6/eMG5kYNGi9oEddvrjsOaLIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inVrbcEP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E17E8C2BD10;
-	Mon,  3 Jun 2024 16:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717430472;
-	bh=Iv1Uc6RhMV8UTtYf+csBgZAea6pO/MLrB9bZpKUWHsw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=inVrbcEPSdpAHVrE7BOlBkaNG+nL0oLLR9ZPw9KHBGFHot8eCM6ep9LnM9H7WNkPM
-	 BT6Awd0gVdP2AG5W8PTk9E7B6VJKWIq0o0f7Ve/qNRGBvo8pt5xhV7d8tm+AAoaEqX
-	 447D0DasWT/TaXDLSowPzBcnN5i16DuSvy/OYrR1fReSiSp9sL1gJv1QuV5PxHnK9r
-	 VObMyOEdHQrTj09LxO2ZkzaIK0c2KAthaaOTkCCSVmeEtoof3hn0alU29hbzZSJ6qA
-	 N7/3QZCxQ4NcAYqjlZnoEA5/AvpDAovHNbSh9fm8BIM2ydVER7NbaKtoyYLQzFndp+
-	 BmsXHIRLsf0UA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sEA7S-000Hvn-Tk;
-	Mon, 03 Jun 2024 17:01:11 +0100
-Date: Mon, 03 Jun 2024 17:01:10 +0100
-Message-ID: <86h6eakoc9.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org,
-	Hagar Hemdan <hagarhem@amazon.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	stable@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip: irq/urgent] irqchip/gic-v3-its: Fix potential race condition in its_vlpi_prop_update()
-In-Reply-To: <171741750653.10875.4371546608500601999.tip-bot2@tip-bot2>
-References: <20240531162144.28650-1-hagarhem@amazon.com>
-	<171741750653.10875.4371546608500601999.tip-bot2@tip-bot2>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1717430528; c=relaxed/simple;
+	bh=3pPvxS6gC0j0wLGI+tY2V3qvQ3+8OtijuhMmjKJ6yQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RabJ3kDAqyjVNugjMnIWuM9VzAKNM1ASyOCpkte+Tbt63HCN6yuRiINNAKEMsBBs4Kk9aR6Fwao7VRB7UmkrjgGmt1g29idjgs++Dlg75Sl8z7XaXBmcfGKCBZCwIuyHLR3jgaecJBfKh1OBF+W9RjoTR4+felf6zNxsxsgX7gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p5eETr/E; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso23965a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:02:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717430525; x=1718035325; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3pPvxS6gC0j0wLGI+tY2V3qvQ3+8OtijuhMmjKJ6yQo=;
+        b=p5eETr/E07844d7vd35bqJhYdG0vUZVgUqAIwededZOWY6Vmm9gOs7PsYdk8hFYphP
+         6r8I+BNvRqo1Y7tMPa+PTld0bupt1nkxTh/Gi+eLh01ZeFgbh8bLw3c0WDcBLW8NB+EQ
+         J68I0YieIvQRUw5T7GjO2CEz0D3kGAKGaIYhIjRdQo0R8V6JSX59XZjT5ORD3XvOk4D2
+         ZKvsLrnzcvssY8mC/Gh6h9p7K7gfogOzIXPbr1Ed8WI7RYjMoVFnyKpKhSqc0vUjUgBV
+         AzI/21WCYBkGKUN43lmug5QJXB949K3WNDxyxybU0keTgs/zVW8JTofEV23cZyLvpmFG
+         z/6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717430525; x=1718035325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3pPvxS6gC0j0wLGI+tY2V3qvQ3+8OtijuhMmjKJ6yQo=;
+        b=TSDkfOF8LmOSmS9eY3MGTvxUrfg/lGaEZmMf0eH8/nvaGIadxBTp4gjNBUpYuDG5lS
+         BkylwfIbTB8W261WBOTSVdrSHoeKmUrIeYmXKuerHiM8IF3579oIna8jE4Ft7BIdQdI8
+         2g2jp4lj5GmvGISl5K8q5lsfIZgEUANZzc8k8FIOTSNbBGmSsmMGUC+kvU2EM7m35iQd
+         pmTY3YnmCa1aFTFRey5HTxlBtkuQdRvnkedwub8KZ0fZ097EVak2bB+osf9FDzlV930P
+         t/w9q2EccH55Oq0lGCvSCrJZYC18hyfjagYHLodq2bHF1+DBDTpw0CwEc2fhHBMZ30pg
+         etsA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4zx+Ez4HACpqb0HClapxi3KUGKgAWg0ZCILdOgi4+fR3XsjjqjMYab47wI0rt3voF+ngfQ7zO+lUT3ToJKJdWEcTAxFzArTB4VCkF
+X-Gm-Message-State: AOJu0YxsYHZCKvzibGPQrWwfDucE2MZy68Ih5JFYzlU+q54U6jjznLC5
+	uvLYb0kbZSIBGznjSxhSRnPc3DIAZBvb3G/+ml+dAiYSfxud4tLjc8tQA9AsiRHgR0GAQ75yejP
+	MFQcvYmYfzGA73JNlD2g9b0vDg1L9alfl/C0=
+X-Google-Smtp-Source: AGHT+IE2ygUL2gxko1zx9nZ3F9o7d4GPZHrXPzUVa/BVxhglHJFXHF4Y/LFsOuSgzTNV+PzRLjHurcbX0Q3lsDSwxtg=
+X-Received: by 2002:a05:6402:1803:b0:572:e6fb:ab07 with SMTP id
+ 4fb4d7f45d1cf-57a49645b32mr266898a12.7.1717430524539; Mon, 03 Jun 2024
+ 09:02:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, hagarhem@amazon.com, tglx@linutronix.de, stable@vger.kernel.org, x86@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240603114008.16235-1-hailong.liu@oppo.com>
+In-Reply-To: <20240603114008.16235-1-hailong.liu@oppo.com>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 3 Jun 2024 09:01:52 -0700
+Message-ID: <CANDhNCq50zPB+TS+_Oo0HY0aUuBAdik2KrC8eJRTygbis293sw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] dma-buf: heaps: move the verification of
+ heap_flags to the corresponding heap
+To: hailong.liu@oppo.com
+Cc: Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	21cnbao@gmail.com, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 03 Jun 2024 13:25:06 +0100,
-"tip-bot2 for Hagar Hemdan" <tip-bot2@linutronix.de> wrote:
-> 
-> The following commit has been merged into the irq/urgent branch of tip:
-> 
-> Commit-ID:     8dd4302d37bb2fe842acb3be688d393254b4f126
-> Gitweb:        https://git.kernel.org/tip/8dd4302d37bb2fe842acb3be688d393254b4f126
-> Author:        Hagar Hemdan <hagarhem@amazon.com>
-> AuthorDate:    Fri, 31 May 2024 16:21:44 
-> Committer:     Thomas Gleixner <tglx@linutronix.de>
-> CommitterDate: Mon, 03 Jun 2024 14:19:42 +02:00
-> 
-> irqchip/gic-v3-its: Fix potential race condition in its_vlpi_prop_update()
-> 
-> its_vlpi_prop_update() calls lpi_write_config() which obtains the
-> mapping information for a VLPI without lock held. So it could race
-> with its_vlpi_unmap().
-> 
-> Since all calls from its_irq_set_vcpu_affinity() require the same                                                                                                                                                                                                                                                            
-> lock to be held, hoist the locking there instead of sprinkling the
-> locking all over the place.
-> 
-> This bug was discovered using Coverity Static Analysis Security Testing
-> (SAST) by Synopsys, Inc.
-> 
-> [ tglx: Use guard() instead of goto ]
+On Mon, Jun 3, 2024 at 4:40=E2=80=AFAM <hailong.liu@oppo.com> wrote:
+>
+> From: "Hailong.Liu" <hailong.liu@oppo.com>
+>
+> This help module use heap_flags to determine the type of dma-buf,
+> so that some mechanisms can be used to speed up allocation, such as
+> memory_pool, to optimize the allocation time of dma-buf.
 
-Good call. Except that...
+This feels like it's trying to introduce heap specific flags, but
+doesn't introduce any details about what those flags might be?
 
-> 
-> Fixes: 015ec0386ab6 ("irqchip/gic-v3-its: Add VLPI configuration handling")
-> Suggested-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> Link: https://lore.kernel.org/r/20240531162144.28650-1-hagarhem@amazon.com
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 44 ++++++++-----------------------
->  1 file changed, 12 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 40ebf17..c696ac9 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
+This seems like it would re-allow the old opaque vendor specific heap
+flags that we saw in the ION days, which was problematic as different
+userspaces would use the same interface with potentially colliding
+heap flags with different meanings. Resulting in no way to properly
+move to an upstream solution.
 
-[...]
+With the dma-heaps interface, we're trying to make sure it is well
+defined. One can register a number of heaps with different behaviors,
+and the heap name is used to differentiate the behavior. Any flags
+introduced will need to be well defined and behaviorally consistent
+between heaps. That way when an upstream solution lands, if necessary
+we can provide backwards compatibility via symlinks.
 
-> @@ -1992,6 +1970,8 @@ static int its_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
->  	if (!is_v4(its_dev->its))
->  		return -EINVAL;
->  
-> +	guard(raw_spinlock_irq, &its_dev->event_map.vlpi_lock);
-> +
+So I don't think this is a good direction to go for dma-heaps.
 
-I don't think this compiles as is, due to the funky syntax required.
+It would be better if you were able to clarify what flag requirements
+you need, so we can better understand how they might apply to other
+heaps, and see if it was something we would want to define as a flag
+(see the discussion here for similar thoughts:
+https://lore.kernel.org/lkml/CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyci=
+VXMXQ@mail.gmail.com/
+)
 
-Thanks,
+But if your vendor heap really needs some sort of flags argument that
+you can't generalize, you can always implement your own dmabuf
+exporter driver with whatever ioctl interface you'd prefer.
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+thanks
+-john
 
