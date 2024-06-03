@@ -1,131 +1,143 @@
-Return-Path: <linux-kernel+bounces-198972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A128D7FE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 498EA8D7FE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579CC289DB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:24:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2C028A06F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1F282860;
-	Mon,  3 Jun 2024 10:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183198288D;
+	Mon,  3 Jun 2024 10:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BsgINyhX"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFvGCRP9"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A057B67D;
-	Mon,  3 Jun 2024 10:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B567D3E8;
+	Mon,  3 Jun 2024 10:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717410291; cv=none; b=DmQcCGVLZdkU72EJXcGWsy/BljmBiGAELnnN2JozvqHzQ8+zJOB4Cwpg64tmiu+J2m97TUIf2fRSt0k9fvb9FOAeI5mnqH0EPp4i3opvTV6cGnLud9XDpX65vZmAu+gpkFEFTU3jZQrKO17Nq0NOTb/ogHFFJwGs/C2x6le5aOA=
+	t=1717410360; cv=none; b=YFKCvph50PuEikglAqHOf2vj0yxX2XLCFKsot6d6ivqn6x9d25epO3cD975L5N1SE3SRWSfz9WOrVAa4xxiSWJ074zX94WUipbnzFwhD4fP759k+dszqoakBzBnS2nLpkGwFTSIjRv7HiFcgUnCzetqWJ032lrh8nWUWKNRx5Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717410291; c=relaxed/simple;
-	bh=ySxojL4s3GRQtCCO1qqScuVnnfRp68eyKYTF0VJJHX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W26fazrnAKBxNo0Zt6B+Fc6tP0Qso7EFiDtqvPTLs9uISQ3Vjn4AabJRmOsw6t9IqOZeNhTx27ggfyA8HaAHyXd8cfZFvcpkMgcZ6SNdfIKfgwHu6T54pqvm+EASU2lHLFcnx//0mJYf70OH74mCYFEHmD8nSxJ8fRg0GgL+6q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BsgINyhX; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1717410360; c=relaxed/simple;
+	bh=YPDnODl9PcFzR13QsOhcvaSdZfLpPP4ia6ug9ukKWwk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=agOLkn88qJrbiqnHqwyqVnXT7DHS8bqiqre91hANfimOmfAxEA8btu0QetQwNXj0gcVCPIehIiV8IJWHg7TMlUBYMEPPimBvBdyvjarQ1aEmLUb94btpCQywGdBZeGBIQ0ovZrpi4PWD/spoeyAjXWOHAlYhGGftfOr+5YifxTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFvGCRP9; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6266ffdba8so358326666b.1;
-        Mon, 03 Jun 2024 03:24:49 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e73441edf7so46022301fa.1;
+        Mon, 03 Jun 2024 03:25:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717410288; x=1718015088; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AqA1PXrwcCN98Nii3x8SpO9ZeqKqzlhOVt86I0o4hY8=;
-        b=BsgINyhXo+jvY5BJDCT2Hk9BC8D4XBKXTsOA+EuqB3N+TaI+5WHGqf2mPIk6NNCuUI
-         1+WyCplmqxI8k2QPgrP1K7DqBMVoBzumqZ3YxXdiOxF+a2CxuIQibBak2gnJl3PJ0ljm
-         DuwDBlt/yVmnrbOZbXTyQAw8rQSGSYkMUAUyhJ88V2V0DEczEcPNWQC+ZLmfNqM2gMq6
-         bfeImSWzKZv2fblSJnDSaiYvFqbsI8OwJKZCEhC3O8KAJgmJViE4mwmEgzr6HOVFd0a8
-         F6RinnooUKxqWDci4LD7iCVOeTWSaD6x7nY+GsmhUwIaMSpVywECLe3XjQ1zdHsbJAkg
-         DH8g==
+        d=gmail.com; s=20230601; t=1717410357; x=1718015157; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YPDnODl9PcFzR13QsOhcvaSdZfLpPP4ia6ug9ukKWwk=;
+        b=LFvGCRP9GgS0LPDu9rUohYwS3fiGv5Zz2y8ESaCExPzYQw1iNzRMMwp94/xqr6QwaN
+         6RTwG7kqIa0wlbFQ7QApaaG7QIlb+Aw0zS1xipm+dV4O3izalrecN4meV3jHYhxCC8U3
+         ghKLs2L4lPA+Su4o9zyL1vjgcJlyisPnMfdkGlkontVPtiXnbIGReFV/WTuVlXF3NQaF
+         a0nJaMEHpdCCxAvY/I/cNxFM6AooroqSFu9aZxoxMi58sHcWfajR8pXPTvB2G3GUuNlC
+         /eBOsVMmdd2bfOwzr9Y3btmj2BPIT3rO5xuNUIUuN0PyXIjqaOYu10pNEGUa7r4dC7Un
+         mS+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717410288; x=1718015088;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AqA1PXrwcCN98Nii3x8SpO9ZeqKqzlhOVt86I0o4hY8=;
-        b=XWysxLq7y7hMjN5Yb3oNXcTv4sdtAkFBpfK87O3D6YATcEpLwUZY00ruIeRqFHBSJ6
-         +Ir+3zZb8rpxLt/3vF927La2ji1kGxfnsr4ijvayo4NlSbWOSRi5+yRa9V+Q8iJE6qYd
-         HxWhZfGrXqTr9p2sm2c/8CII0/eskdtrcaazCJyFclViVdJQMkdt8XseQlzXotrKMDCS
-         wDJ32vFAZ/ITU7oAOAnsh6JXljST1GGlyLBXkJwSup6eKqAwwDtUZZ17WMHWWtJaRY8t
-         4wFrxqJ5Z2G0oiUq7xrdcuNjDwGhFEp/IzBlFYsHAl4KHFledXFPL6+YCs9E/AaTlzzF
-         wjRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUazBuWFYiGJ2IEgP1LNox3yHTIfggF3H50jzbGkij2T6Fgslzucxd3D5GyOiy3I4yb3CAcSpPFPUbzessKfVUT3vr48T2GchdTO6U/+XrxxUj+iU6R9Nt9jpknJjmqR39HsW/bpFJ9Ow==
-X-Gm-Message-State: AOJu0YytcgWY60Kof73hwYgP2S+yMyAnc2xERoP+coTCOwMPafRhWdJe
-	udLIHy46sTCAIWudQNLhgxaliujqoR2DaRN8bRo2SeWCmiV1W41Fda38Dh3t
-X-Google-Smtp-Source: AGHT+IF1CtcgDyhj37LHv92BCOpjLvOTVmffDU90JlA3fyLw8/2VlZTAH8nbqfafha5QeK5FmMjkNQ==
-X-Received: by 2002:a17:906:da89:b0:a59:a85d:31c6 with SMTP id a640c23a62f3a-a68224460b9mr684563466b.66.1717410287636;
-        Mon, 03 Jun 2024 03:24:47 -0700 (PDT)
-Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68b6ef0d8esm328804366b.105.2024.06.03.03.24.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 03:24:47 -0700 (PDT)
-Message-ID: <a61bb06d-bb06-49d3-82e8-7262fdbb0031@gmail.com>
-Date: Mon, 3 Jun 2024 12:24:43 +0200
+        d=1e100.net; s=20230601; t=1717410357; x=1718015157;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YPDnODl9PcFzR13QsOhcvaSdZfLpPP4ia6ug9ukKWwk=;
+        b=sq7s0RWutIprCiwB2hoXq4P+MSSbo1sBoAcCYRGTgOKFKfY0Wk6M/Qz9yIgXpTTdSt
+         kcdrosoCDpHas9EyJ71vIDNPlBHbHZyKL6SDvJannc84QlickDC/lF9yzDmyKNUdDYMh
+         CjKgzl7/YDKWQmikxTAwSQorkXem1ZGMQ0U7xHBJYfF9L/FHa4Opvhqq0s5Uea2lF85R
+         OEtujpLC7R9qro7UfzMC3V88ykb3hCS//Sio0lstPfwrimMjoYa+xQ7eT/g/Iq89Oj6y
+         jMx2+yejieqhMmpo18is7U3JmqX0NcQfqACFNydrZJw5o38apSae5MEwPB9bbY4jwAcX
+         BlSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMDFNb909KDKgnX5PrJIVst2o4+RINIjWDmGQW6FFy8iZNOWResn2XQFQHRqvQ5b24Q4MrLSwtuFxa+takrn0g/3xW9Ydp6n8f8g30Rix8GJL+i/pADumN+r5nWI2QsSs7irXnDRm5
+X-Gm-Message-State: AOJu0Yw+jKm2NvCZoEspG+dJlf9sijiYt3dB/r+7krK7OTITDiisPQKW
+	j00zUJy/1e6PaEiSW5MTAKYY9YoNCG569LA5cx3guOtX81RLNejZ
+X-Google-Smtp-Source: AGHT+IFoYCPQcW7U08SKO8zdKSSmkBYwIdHuHbk1AW5ruboNFfp/attGeJ9EPFVoBvokLFFq6UlC1Q==
+X-Received: by 2002:a2e:b8c8:0:b0:2e9:5011:f6b1 with SMTP id 38308e7fff4ca-2ea951a9d69mr71259451fa.42.1717410356686;
+        Mon, 03 Jun 2024 03:25:56 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421292205ccsm134767175e9.4.2024.06.03.03.25.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 03:25:56 -0700 (PDT)
+Message-ID: <11841924e4e1db49001a2fe52f5985f3c044c184.camel@gmail.com>
+Subject: Re: [PATCH v3 0/5] iio: add support for multiple scan types
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Julien Stephan
+ <jstephan@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 03 Jun 2024 12:25:55 +0200
+In-Reply-To: <20240602102517.438b51b8@jic23-huawei>
+References: 
+	<20240530-iio-add-support-for-multiple-scan-types-v3-0-cbc4acea2cfa@baylibre.com>
+	 <20240602102517.438b51b8@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] arm: dts: nxp: lpc: lpc32xx: drop 'clocks' form
- rtc
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- Vladimir Zapolskiy <vz@mleia.com>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com,
- Javier Carrasco Cruz <javier.carrasco.cruz@gmail.com>
-References: <20240413-rtc_dtschema-v3-0-eff368bcc471@gmail.com>
- <20240413-rtc_dtschema-v3-1-eff368bcc471@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240413-rtc_dtschema-v3-1-eff368bcc471@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 13/04/2024 22:22, Javier Carrasco wrote:
-> The RTC does not provide a controllable clock signal (it uses a fixed
-> 32768 Hz crystal, the input clock of the SoC). Remove the 'clocks'
-> property to better describe the device and avoid errors when checking
-> the dts against the nxp,lpc3220-rtc binding.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->  arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi b/arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi
-> index 974410918f35..f78d67e672b4 100644
-> --- a/arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi
-> +++ b/arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi
-> @@ -384,7 +384,6 @@ rtc: rtc@40024000 {
->  				reg = <0x40024000 0x1000>;
->  				interrupt-parent = <&sic1>;
->  				interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
-> -				clocks = <&clk LPC32XX_CLK_RTC>;
->  			};
->  
->  			gpio: gpio@40028000 {
-> 
+On Sun, 2024-06-02 at 10:25 +0100, Jonathan Cameron wrote:
+> On Thu, 30 May 2024 10:14:07 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+>=20
+> > Up to now, the IIO subsystem has only supported a single scan type per
+> > channel. This scan type determines the binary format of the data in the
+> > buffer when doing buffered reads.
+> >=20
+> > For simple devices, there is only one scan type and all is well. But
+> > for more complex devices, there may be multiple scan types. For example=
+,
+> > ADCs with a resolution boost feature that adds more bits to the raw
+> > sample data. Traditionally, for slow devices, we've just always used th=
+e
+> > highest resolution mode, but for high performance ADCs, this may not be
+> > always practical. Manipulating data after every read can hurt performan=
+ce
+> > and in the case of hardware buffers, it may not be possible to change t=
+he
+> > format of the data in the buffer at all. There are also ADCs where
+> > enabling the higher resolution can only be done if oversampling is also
+> > enabled which may not be desireable.
+> >=20
+> > To allow for more flexibility, we would like to add support for multipl=
+e
+> > scan types per channel.
+> >=20
+> > To avoid having to touch every driver, we implemented this in a way tha=
+t
+> > preserves the existing scan_type field. See the "iio: add support for
+> > multiple scan types per channel" the details. The first couple of patch=
+es
+> > are just preparation for this.
+> >=20
+> > [1]:
+> > https://lore.kernel.org/linux-iio/CAMknhBHOXaff__QyU-wFSNNENvs23vDX5n_d=
+dH-Dw3s6-sQ9sg@mail.gmail.com/
+>=20
+> Nice series. Applied to the togreg branch of iio.git and pushed out as
+> testing for 0-day to poke at it.
+>=20
+> Obviously this v3 hasn't been on list that long, but there is still time
+> as I doubt I'll push out a non rebasing tree for a week or so.
+> This week is looking too busy!
 
-A little reminder: the rest of the series was applied, but this patch is
-still pending.The nxp,lpc3220-rtc binding was moved to trivial-rtc.yaml
-and it is already in the mainline kernel.
+If there's still time, feel free to add my tag:
 
-Best regards,
-Javier Carrasco
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+
+
 
