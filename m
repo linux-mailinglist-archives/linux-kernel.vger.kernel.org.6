@@ -1,144 +1,81 @@
-Return-Path: <linux-kernel+bounces-199253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C188D8468
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:51:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06F38D8469
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96A728322E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23341C21DC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8037C12E1F9;
-	Mon,  3 Jun 2024 13:51:25 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7693512DD8A;
+	Mon,  3 Jun 2024 13:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kOjAT6NL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B307E12DDAE;
-	Mon,  3 Jun 2024 13:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26EE1E4A2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422685; cv=none; b=cge99zofr2tDmXQIQ+ZsgunahQqtDAkY7kOm1PelvSsXBxAbKy5k/umzLL8vf8b2Sr0StVqZwXi5+Ue7KrwqC1sIRfoNIX5ExHXoKOBcxt8W2EZe4Zbafty+0plPE1RFJ6UjVT/coY2BvjhBQdIp9CIEXtEpyNy3GLxJVy9AjGE=
+	t=1717422757; cv=none; b=HBxtXOcfspmZ1lskUyscaDHWmbh0Es+dpWohygp/Lbx3cPy2Wbti493uXwOagaokuy798ANe5Ea9FgpCIiAvgQtNnjaPiuJKJM+p+eiumS2oDnCAC+PVGv4LR0OJ7mzpDOqYizr7PFhG6sd9WC7QH1sxxctoWg2zdkVX7zSNiD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422685; c=relaxed/simple;
-	bh=HKKTu5vhAUsqBzR4kRXK9CCm8TDx2Kz71laD8niO1YI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=BOQaDV888Hh8b7Bn3vGy0jMiOIqCm5QgmmpsTl1FBWR9hoYPojD2trgPmXxv3mexX1CKvXV+l2qkB36z/QX26HBOFNyF7AQpvY7Vcm3SMO0ccmLY58ufGErI4XP8PxjW62npgn8bqHfQ2Xw7uNsrGv4wc+V+24DMg9/f4NN95ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VtFW11hWcz4f3jXr;
-	Mon,  3 Jun 2024 21:51:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id C95761A0170;
-	Mon,  3 Jun 2024 21:51:18 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAXOQxUyl1mA7BNOw--.32316S3;
-	Mon, 03 Jun 2024 21:51:18 +0800 (CST)
-Subject: Re: [RFC PATCH v4 5/8] xfs: refactor the truncating order
-To: "Darrick J. Wong" <djwong@kernel.org>,
- Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, brauner@kernel.org, david@fromorbit.com,
- chandanbabu@kernel.org, jack@suse.cz, willy@infradead.org,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-6-yi.zhang@huaweicloud.com>
- <ZlnRODP_b8bhXOEE@infradead.org> <20240531152732.GM52987@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <de2c345e-6892-f3c1-09a9-cdf5991cca7e@huaweicloud.com>
-Date: Mon, 3 Jun 2024 21:51:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1717422757; c=relaxed/simple;
+	bh=66W8PqO/08bEDz3lkl5bCSdcI1i/DXfmzD75BacEB78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O60yqvODGWp95uzem4RtofhMk6rlupJbu5D4OISIx/e3FP+EqlaMFhVSp1E/NLcksbeq7rJACjeB8B5lwKT9ifiRvhyH9/SnykWt3TmEzXhXehMrBqKVv91UcDC10Z162K9YJUfbM8+E6c3JTvJLiw3nyedjMk4lvbs6278F8O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kOjAT6NL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2WoGTDTDlIhk96e2gtrr9oRMnWxD0GTiKrPTYhXDtqA=; b=kOjAT6NLs8wlRmEz9XbT+ulX+3
+	jFhcvpiFSf2R85R9ES/zwCmqSfM6zji4AJdy/qI3IVpPP2krL/ywYPsl9gVQIaSgVuQ7bIWoR7myc
+	ct1OR5B30DArtpgGP7i3XhpagUIybx6fUbvTtjx06mGHKG6NUXIzT5ck1P/K0X1TF7eGiMSWMQPSa
+	sXjsolo6ubITZlu8fhugmF4q41+pZkMBt9Da/f1fXQsKAd2qmFPjKhC3LuOqIX/PDqVPFr/y1QT+G
+	RQDkYcz/fk7FN79xRHN/2b/I3Fo/Av1tFIXRk8yek7NYp6P0mWYuXiORv+hNyKC6B+To3YpOScQ0F
+	OqAIdCGw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sE86y-0000000E8t1-26jG;
+	Mon, 03 Jun 2024 13:52:32 +0000
+Date: Mon, 3 Jun 2024 14:52:32 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Yajun Deng <yajun.deng@linux.dev>
+Cc: akpm@linux-foundation.org, rppt@kernel.org, hannes@cmpxchg.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: pass the pfn to set_pageblock_migratetype
+Message-ID: <Zl3KoETSfL6-RTU1@casper.infradead.org>
+References: <20240603124100.2834-1-yajun.deng@linux.dev>
+ <Zl2_N9wHOh9ACQpt@casper.infradead.org>
+ <1bb60f7db3a11e86e6f48c1eefe7f27d7d23019c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240531152732.GM52987@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAXOQxUyl1mA7BNOw--.32316S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7urykXw18WFy7KFWkKrW5GFg_yoW8Aw4xpr
-	W3CasYvr1kKr1UAr18X3W0qwna9a98tayxJr95WFn7KF98uryfXF1xtryjgF4UArn3Ww4S
-	qa1DW34fCwn5AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1bb60f7db3a11e86e6f48c1eefe7f27d7d23019c@linux.dev>
 
-On 2024/5/31 23:27, Darrick J. Wong wrote:
-> On Fri, May 31, 2024 at 06:31:36AM -0700, Christoph Hellwig wrote:
->>> +	write_back = newsize > ip->i_disk_size && oldsize != ip->i_disk_size;
->>
->> Maybe need_writeback would be a better name for the variable?  Also no
->> need to initialize it to false at declaration time if it is
->> unconditionally set here.
+On Mon, Jun 03, 2024 at 01:48:50PM +0000, Yajun Deng wrote:
+> June 3, 2024 at 9:03 PM, "Matthew Wilcox" <willy@infradead.org> wrote:
+> > On Mon, Jun 03, 2024 at 08:41:00PM +0800, Yajun Deng wrote:
+> > > It is necessary to calculate the pfn in the set_pageblock_migratetype(),
+> > >  but most of the callers already have the pfn.
+> > 
+> > It's not exactly a hard computation though. Have you done any
+> > 
+> > measurements that show this patch is an improvement?
 > 
-> This variable captures whether or not we need to write dirty file tail
-> data because we're extending the ondisk EOF, right?
-> 
-> I don't really like long names like any good 1980s C programmer, but
-> maybe we should name this something like "extending_ondisk_eof"?
-> 
-> 	if (newsize > ip->i_disk_size && oldsize != ip->i_disk_size)
-> 		extending_ondisk_eof = true;
-> 
-> 	...
-> 
-> 	if (did_zeroing || extending_ondisk_eof)
-> 		filemap_write_and_wait_range(...);
-> 
-> Hm?
+> No, just view the code. But some callers are in a for loop.
 
-Sure, this name looks better.
-
-> 
->>> +		/*
->>> +		 * Updating i_size after writing back to make sure the zeroed
->>> +		 * blocks could been written out, and drop all the page cache
->>> +		 * range that beyond blocksize aligned new EOF block.
->>> +		 *
->>> +		 * We've already locked out new page faults, so now we can
->>> +		 * safely remove pages from the page cache knowing they won't
->>> +		 * get refaulted until we drop the XFS_MMAP_EXCL lock after the
-> 
-> And can we correct the comment here too?
-> 
-> "...until we drop XFS_MMAPLOCK_EXCL after the extent manipulations..."
-> 
-
-Sure,
-
-> --D
-> 
->>> +		 * extent manipulations are complete.
->>> +		 */
->>> +		i_size_write(inode, newsize);
->>> +		truncate_pagecache(inode, roundup_64(newsize, blocksize));
->>
->> Any reason this open codes truncate_setsize()?
->>
-
-It's not equal to open codes truncate_setsize(), please look the truncate
-start pos is aligned to rtextsize for realtime inode, we only drop page
-cache that beyond the new aligned EOF block.
-
-Thanks,
-Yi.
-
+All the more reason to MEASURE.  There is a cost to marshalling
+function arguments which must be weighed against the cost of
+recalculating the PFN.  Since you haven't done that, NAK.
 
