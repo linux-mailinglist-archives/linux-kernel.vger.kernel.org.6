@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-199551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A588D8875
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:09:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 231CC8D8877
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382DC1F211FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1EADB23FB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A641137C43;
-	Mon,  3 Jun 2024 18:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA23137C44;
+	Mon,  3 Jun 2024 18:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lfq+vRAa"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SSmCPQOd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885B0135A46;
-	Mon,  3 Jun 2024 18:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EB2135A46;
+	Mon,  3 Jun 2024 18:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717438166; cv=none; b=st+uNO08TB8yuJxRkefACi/ZPXnRQ5PL7R01+1jImiE8UQD+6PC97UKrf28GPhPsLke2+QJeSMfq/IesLrzw3PeZn7KHCwjmH5M7fRw/aIWeWKkgmeTWwHPzFn57fDPwwmk9Ea5KalPG/UBnn15nKQgqvNsjDly8me5hUr2A1hY=
+	t=1717438210; cv=none; b=fRV9xjZ4JtrjdzvCPoRqf2jNM0L7R6hHHXC8si/6jt+AHPGzIR2w5kBq0NS8L44eOwa8z9wit5Z+AcmENN+g2PXmyJ7UM/rhTkIDmh1p5Iz9Gvl+8j+6T09SUSbb5D93+ebtp1mSrZSKzWLJAXmVSoPH19UMVJ5gkkgB9ll/SQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717438166; c=relaxed/simple;
-	bh=EbQBKymnLfQkHlodvpkwnhhpbzot4LiyZVD0ZhAWyCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCjL1WsrdOrWkF0AtCZCsjRF8hsMXKMScEPmv266Smn3YbHTWxIGhpp+YbnIQdkzZSXb+JpLhkfnK/2k16DMNx33ZquJ2vOfcFB3+oVqO3nYqR1/7TaJOqlAGHBkyC96P4XbWi4emtNaYg9IHMt3aVNqw5ATjqt/DzTw9B+tEjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lfq+vRAa; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f44b441b08so35895345ad.0;
-        Mon, 03 Jun 2024 11:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717438164; x=1718042964; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YXl034VbTvbkD/cq16AaCovQc9yLMytZtK7abGPdXzg=;
-        b=Lfq+vRAaISDhvDLknkoLHki/FQCIq6svqEOFK6DlMyAZFpiXzsTlywDgF8seIMjWnJ
-         Xs8vndg1e4ehy6nC9Zob99UxkxIcrUEAT7u4TFnnIF66D9S7HLyMCnS2D2OTCMV1YXRe
-         nzGXh9uifhdGxVT2xVwFi0f+vF6p2y/i+Bv6RMNxvTPXrAMCHsc1CSdSUFHPdvOGpFU6
-         Bi2acZaIanCt0qyP1du8P3o3hooxQFe61+rakK4OI6Yg1dz+VZfXD/CWwVJLjxnv+bA7
-         u5kPDiAYvO6A9Kl1T6Sksf5zo9BX1Y5eZsaq8JHEuXw65NmI/zG9xksDNK521975vY9N
-         9USg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717438164; x=1718042964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YXl034VbTvbkD/cq16AaCovQc9yLMytZtK7abGPdXzg=;
-        b=BBbYjcmBzSAiqyHFXiQHS4MZWEYsDNEF9n+RfcB9ql5p/R1QljdkRkJW7IA4zWwB0A
-         erYebopKIx8JH25Tnu19LLhRpFOO1Adi5ZY27ceAuMBpKIMO2rYVbYCuKDd/7oS+WMTK
-         OxtDcpLwA6URDzh81dtVCDzkaMK250M/iMm7wUyniToHEruIj3sVWzWXEvF/DJ5hAuBS
-         akPwn1j0ehk38ox5r1E7M/T5l+E28rDk/N0gddtteTHi1QPQrmwIKnay0uXuuXbDL8CW
-         QVm+IM8kgnquAwqqQFmFAA5S0hSnhPOrLGRbq1louwqx6J769IcPUOda1IKGXVNu9N+r
-         nrfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzkiEddbQPFn54ZfDeKp6OUwVodfmq4Fh/7LKXG465RchBXlzQb1sCosN3ytdaFi1yfa52+XzIqJAYF7m+t75bb7iD182W6EuI4ect/+mo+endAklY0Z1pp9z4s+wJVT2D6dDvOY1uFaFr6g==
-X-Gm-Message-State: AOJu0YzqDY0dB/wn95u3EuavLXsXS0Xtc6aOBy6ZJzHFUWsGZR208igU
-	QLPJzPChAPOy8iohzkOXGhjR7K0UjKM9QymmLLveZukpMAVhriZR
-X-Google-Smtp-Source: AGHT+IHSwf3aVNsUusaergW0STCqU0itWuY9cjfQCrhrIMhWg30627T2Ovf4HIXKoM2Fm2C8sSjl7g==
-X-Received: by 2002:a17:902:fcc8:b0:1f4:bcef:e970 with SMTP id d9443c01a7336-1f6370cda21mr76848495ad.55.1717438163739;
-        Mon, 03 Jun 2024 11:09:23 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323e27a3sm67526665ad.180.2024.06.03.11.09.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 11:09:23 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 3 Jun 2024 08:09:22 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] writeback: factor out balance_wb_limits to remove
- repeated code
-Message-ID: <Zl4G0tI_0CHKIWHh@slm.duckdns.org>
-References: <20240514125254.142203-1-shikemeng@huaweicloud.com>
- <20240514125254.142203-9-shikemeng@huaweicloud.com>
- <ZljGiunxmVAlW6EE@slm.duckdns.org>
- <cfbbcc80-7db1-8277-98ab-1f32c3a629ab@huaweicloud.com>
+	s=arc-20240116; t=1717438210; c=relaxed/simple;
+	bh=zsgMPooafz7AGjnPIjZFIdlWYoALoHzCo+CZZTXQr8M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nlr3IeWWzX0AjP8OWBn9VrM3LQonwNv5P574xUdZFAsbs3gP82FkaHwCrT9aVU/KENMYz3intGUl20Ffyxi9iBqEw/6/OnyuO074JZD/utYYXa4LhyGt6tK93d4oXliJsbPFIPN36WnDqArSk1THTTkfko2CQ2JA8B5dnVN54Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SSmCPQOd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453Ce3BS014637;
+	Mon, 3 Jun 2024 18:10:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vkRS9m7AYGWskla626cGM7
+	D9rxeMb62KofzxY1kyFmA=; b=SSmCPQOdDS7EO3boW55o1RarXfSqSgse9j8GR9
+	aEua798r6CB7oReq+VuB2IOKVXsSaBUGVneMt2uo5kQ+R1U1DyKWLumOEfr4saj1
+	dtoHDFX/GgWpz4xujYvrPTyVJTx2W8KDwg02lnGaC932hRygw5LV7VtGL4JeyywL
+	Ulf7RjoFcQ2wNKAcB1MDp0VnPJndiDI3MVZ/z4JEgkHs5XPMPZsmh4EF1lz3o9yl
+	qvtUkh+cTJ1OXLrhT4QwzODLFlHctMQ2cx68KgR2LRDZOAsUYyvQikVPJoksrxXc
+	eMonaJggcZhJczC3Y8ZzOwSU/LONvK5Ij0Ib+TA1r0Ziekeg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4bcnb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 18:10:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453IA2jh000461
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 18:10:02 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
+ 11:10:01 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 3 Jun 2024 11:10:00 -0700
+Subject: [PATCH] ppdev: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cfbbcc80-7db1-8277-98ab-1f32c3a629ab@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240603-md-char-ppdev-v1-1-b169cb17c844@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPgGXmYC/x3MywrCQAyF4VcpWRuYTkVHX0VczCXagB2HpJZC6
+ bsbXX4czr+BkjApXLsNhBZWfldDf+ggj7E+CbmYwTt/dCc34FTQBsHWCi0Yzr13yQ85hAvYpwk
+ 9eP33bndzikqYJNY8/iovrp8Vp6gzCez7F89HNm5+AAAA
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Arnd Bergmann
+	<arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8tdwNUACzxdLvqezM0gEWEYUBk3BZ_Uo
+X-Proofpoint-GUID: 8tdwNUACzxdLvqezM0gEWEYUBk3BZ_Uo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_14,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ bulkscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406030148
 
-Hello,
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
 
-On Mon, Jun 03, 2024 at 02:39:18PM +0800, Kemeng Shi wrote:
-> > Isn't this a bit nasty? The helper skips updating states because it knows
-> > the caller is not going to use them? I'm not sure the slight code reduction
-> > justifies the added subtlety.
-> 
-> It's a general rule that wb should not be limited if the wb is in freerun state.
-> So I think it's intuitive to obey the rule in both balance_wb_limits and it's
-> caller in which case balance_wb_limits and it's caller should stop to do anything
-> when freerun state of wb is first seen.
-> But no insistant on this...
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Hmm... can you at least add comments pointing out that if freerun, the
-limits fields are invalid?
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/char/ppdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks.
+diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
+index 58e9dcc2a308..3655aa859185 100644
+--- a/drivers/char/ppdev.c
++++ b/drivers/char/ppdev.c
+@@ -882,5 +882,6 @@ static void __exit ppdev_cleanup(void)
+ module_init(ppdev_init);
+ module_exit(ppdev_cleanup);
+ 
++MODULE_DESCRIPTION("Support for user-space parallel port device drivers");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS_CHARDEV_MAJOR(PP_MAJOR);
 
--- 
-tejun
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240603-md-char-ppdev-87120b23c889
+
 
