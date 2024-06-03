@@ -1,200 +1,142 @@
-Return-Path: <linux-kernel+bounces-198866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BF38D7E7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3B38D7EAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C0328320C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:27:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FDCF282BBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843127F7D5;
-	Mon,  3 Jun 2024 09:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0D1824A4;
+	Mon,  3 Jun 2024 09:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2ClgOjD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YXtbz/Hh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2ClgOjD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YXtbz/Hh"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vzcIOIxy"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7ED7E578
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30223823AF;
+	Mon,  3 Jun 2024 09:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406822; cv=none; b=psJvm5xNXxMSev/IambVv0kWjTgd7TniE9NflCbGRppuqvWeFXk/WFgNlOjLFQEtms7k5V3tHQDggWL+EXWv7N3X9eOumHYO+0zUaDrbkvN2ktUmDlNhqJkPxV0gNdORabT7AtEFyY9zWTuAVj1ac4ScWgw1dGswdPvnawLRdmo=
+	t=1717406979; cv=none; b=gD9y13xyYHYZ4pDw+U8Jq0y3vZNNhY2UHN9XZY22fMjNHfps/YMIGUc8oeg6jN6QRzFoiVR6ON3+NvANHbzvJT8fMFerHIgtgkCSACoz6Rc8WruIiPQLg6re6s7r1yOB8HXA+hW7/ojk49ODt7S8MqtBwklI1fF/HawCgtunh/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406822; c=relaxed/simple;
-	bh=JnqgnbluSpxGX3/XEWJInIKCr9TkBqPGjkMIdXOPcAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WCN4G6ERTXuavruApwGV1raEqfUzrqcWDOQHXt1tF+LH1xsIsltp98SrLrjrZSe2CK+ZXdbMhht3sANHXkizW0eo9m/ns/bU78sz57Py6JCLLVnCdr9XGqh+DStqNi95zL6BqtjgVJDd6UEVKknnM0SLd9l9K0FtF9y9Fpg5BFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2ClgOjD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YXtbz/Hh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2ClgOjD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YXtbz/Hh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3170820021;
-	Mon,  3 Jun 2024 09:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717406819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BBmtgSc5+8tDW8x9zpQyWMicQzt+mzz1arbpmd9iXI0=;
-	b=m2ClgOjDD/0FhdJ5Xjt17d9Ur/Xe2+sYqNX6yIfAIHmk3wIlOBz2lP6C6WCronU37v9TxC
-	uklcO4GCpmbAZMi3YO/5xoCadh6mvmyBfZm5pSqHOdVNXuVO1mCCygxJUJiEFwQm3XgqqI
-	30hubML3Upvo+tVyQPUrjF7h9I3+y10=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717406819;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BBmtgSc5+8tDW8x9zpQyWMicQzt+mzz1arbpmd9iXI0=;
-	b=YXtbz/HhwLz1eVwHcVpdU7nnIC/Gc8WQPdKBe+z03XZ1yzdJF5+zA/Zut730otPWFNSilV
-	BkYH6uoFdNok7QAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=m2ClgOjD;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="YXtbz/Hh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717406819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BBmtgSc5+8tDW8x9zpQyWMicQzt+mzz1arbpmd9iXI0=;
-	b=m2ClgOjDD/0FhdJ5Xjt17d9Ur/Xe2+sYqNX6yIfAIHmk3wIlOBz2lP6C6WCronU37v9TxC
-	uklcO4GCpmbAZMi3YO/5xoCadh6mvmyBfZm5pSqHOdVNXuVO1mCCygxJUJiEFwQm3XgqqI
-	30hubML3Upvo+tVyQPUrjF7h9I3+y10=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717406819;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BBmtgSc5+8tDW8x9zpQyWMicQzt+mzz1arbpmd9iXI0=;
-	b=YXtbz/HhwLz1eVwHcVpdU7nnIC/Gc8WQPdKBe+z03XZ1yzdJF5+zA/Zut730otPWFNSilV
-	BkYH6uoFdNok7QAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17B4C139CB;
-	Mon,  3 Jun 2024 09:26:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hFB0BWOMXWZPAgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 03 Jun 2024 09:26:59 +0000
-Message-ID: <377fd8bc-acb5-4ef3-8c1c-67cb2e90065b@suse.cz>
-Date: Mon, 3 Jun 2024 11:26:58 +0200
+	s=arc-20240116; t=1717406979; c=relaxed/simple;
+	bh=/RwLt37mZinhQXbN/cqOQ0+EvPSbkY9p9MAGa8qCzqM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LtAqAREfQy4BrFttLCFVpF/LWt4Yx3Dsk20/NvU5g50qyDhXyffTTSML46EPok4UiVeXa2Sa2TrFZjUj/QFnwI83+tOkG6xEcJoR3ZOy8kaFbR65OMTkVgXaBlI3DVulxQ8LQ0ifoLbuX7VaOwg8dtoYuMZAx10YXFoN1v5iAsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vzcIOIxy; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4537cWVc004745;
+	Mon, 3 Jun 2024 11:28:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=W4T/YoU6NKIK7mMSN7BvQl
+	A9NuSsgbgmhksWstWhGaA=; b=vzcIOIxyNo5aha17vMDuOfTuxg5AqMKs+ePYLr
+	ez7TccT5jAlFE0GQnS9DSIxgdhPYPVFzsOXgwu1g2bLS7nxSK9EEHvCm99HSbhQ3
+	L5TmntEfcF9UhPXrDcnTYiDNGPavJ0mNzeaKLfWjI9FnvZMo9pZWgIG66gNBIekw
+	cw1Mp3TpdL9iX4+JHUQAzP8GndyTuJ6wuwht2Er+gPIvldqdR65xm23joKcpKWrE
+	aaYPZY4V4ZIb6H0y6cCcpL+HZZsiecr4K7CUZOXLujdxpRaXEgGCY6SfH8KQk9b4
+	aAtPBlNjkeAwx7IPsmuGYAI3xr9xgPGZiZ7m/6ETs9iGt/4w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ygekhm92p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 11:28:42 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 14CCE4005D;
+	Mon,  3 Jun 2024 11:28:15 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3EE222165E7;
+	Mon,  3 Jun 2024 11:28:15 +0200 (CEST)
+Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 3 Jun
+ 2024 11:28:14 +0200
+From: Christophe Roullier <christophe.roullier@foss.st.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 00/11] Series to deliver Ethernet for STM32MP13
+Date: Mon, 3 Jun 2024 11:27:46 +0200
+Message-ID: <20240603092757.71902-1-christophe.roullier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] slab: delete useless RED_INACTIVE and RED_ACTIVE
-Content-Language: en-US
-To: Chengming Zhou <chengming.zhou@linux.dev>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240528-b4-slab-debug-v1-0-8694ef4802df@linux.dev>
- <20240528-b4-slab-debug-v1-3-8694ef4802df@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240528-b4-slab-debug-v1-3-8694ef4802df@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.89 / 50.00];
-	BAYES_HAM(-2.89)[99.52%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[linux.dev,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,gmail.com,intel.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 3170820021
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -2.89
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_06,2024-05-30_01,2024-05-17_01
 
-On 5/28/24 9:16 AM, Chengming Zhou wrote:
-> These seem useless since we use the SLUB_RED_INACTIVE and SLUB_RED_ACTIVE,
-> so just delete them, no functional change.
-> 
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+STM32MP13 is STM32 SOC with 2 GMACs instances
+    GMAC IP version is SNPS 4.20.
+    GMAC IP configure with 1 RX and 1 TX queue.
+    DMA HW capability register supported
+    RX Checksum Offload Engine supported
+    TX Checksum insertion supported
+    Wake-Up On Lan supported
+    TSO supported
+Rework dwmac glue to simplify management for next stm32 (integrate RFC from Marek)
 
-Hm right, only SLAB was using those. Thanks.
+V2: - Remark from Rob Herring (add Krzysztof's ack in patch 02/11, update in yaml)
+      Remark from Serge Semin (upate commits msg)
+V3: - Remove PHY regulator patch and Ethernet2 DT because need to clarify how to
+      manage PHY regulator (in glue or PHY side)
+    - Integrate RFC from Marek
+    - Remark from Rob Herring in YAML documentation
+
+Christophe Roullier (6):
+  dt-bindings: net: add STM32MP13 compatible in documentation for stm32
+  net: ethernet: stmmac: add management of stm32mp13 for stm32
+  ARM: dts: stm32: add ethernet1 and ethernet2 support on stm32mp13
+  ARM: dts: stm32: add ethernet1/2 RMII pins for STM32MP13F-DK board
+  ARM: dts: stm32: add ethernet1 for STM32MP135F-DK board
+  ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
+
+Marek Vasut (5):
+  net: stmmac: dwmac-stm32: Separate out external clock rate validation
+  net: stmmac: dwmac-stm32: Separate out external clock selector
+  net: stmmac: dwmac-stm32: Extract PMCR configuration
+  net: stmmac: dwmac-stm32: Clean up the debug prints
+  net: stmmac: dwmac-stm32: Fix Mhz to MHz
+
+ .../devicetree/bindings/net/stm32-dwmac.yaml  |  41 +++-
+ arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi   |  71 +++++++
+ arch/arm/boot/dts/st/stm32mp131.dtsi          |  31 +++
+ arch/arm/boot/dts/st/stm32mp133.dtsi          |  30 +++
+ arch/arm/boot/dts/st/stm32mp135f-dk.dts       |  24 +++
+ arch/arm/configs/multi_v7_defconfig           |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 176 ++++++++++++++----
+ 7 files changed, 327 insertions(+), 47 deletions(-)
+
+-- 
+2.25.1
 
 
