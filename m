@@ -1,371 +1,446 @@
-Return-Path: <linux-kernel+bounces-199020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492B78D809C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:11:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E55E8D809F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 891C4B24833
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3AEB1F22B81
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEBA84A41;
-	Mon,  3 Jun 2024 11:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B8F84A33;
+	Mon,  3 Jun 2024 11:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDnlhFbw"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxiTsHEp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603BE286A6;
-	Mon,  3 Jun 2024 11:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1E17FBBE;
+	Mon,  3 Jun 2024 11:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717413081; cv=none; b=W4trmi/ZIjErOTv/pWOq0B9SL0u6EvqXHNSZ5EQoZtgjg1Sy2lXO2Ly4uA8a6Xm6rBf40DjEzLOZRHu3i6+C3mnRuX9byMRd0XpsA7MrDNQnKDrLLFetlZN3U2nphGLqfa48gAaDRHEBuMv/vsImH4VYm3ukEPsH8xX2h2qizQw=
+	t=1717413100; cv=none; b=MUiaJ0j1spiFiLKirGNj8tqZxrbDQ3xbNIgTBiYdZO2jnj7QF2nsk+yZ6MU3abn4dAoo9fPQuP3cWf/+1IM2Rb7xJ3z9gDRmlEO1B3fiTXZZYcpiejldhh4wORWPCn8a7wx9juVzCXS4zCP7Vn03ZiZqXeOIcSeCyqYaUjm0R0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717413081; c=relaxed/simple;
-	bh=4R4RZwILrUT+/p7yjK315AWpXesvrl6b0LgHaaWF9Fs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UmoDq2WXgVIsrRQAmAaOB3Me2UnT4Y/7hwQlmxqxjTNyEJ6e3Usu7hXz2oNXjxKQJrm6CQKUxhpsrvZNhGPDXsJRcZBVS0UQVId8C6QBi6i98TP2NpQ8uEEx3HoOrEQRJJVUl00lc5k7mR6rZFGf5aZlgFmuATuN0UGYJ//cMIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDnlhFbw; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e724bc466fso48634421fa.3;
-        Mon, 03 Jun 2024 04:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717413077; x=1718017877; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=21Ip7eqo28QVMy4KB0J5/yfczskOxmLqVxJkzM1gqtk=;
-        b=GDnlhFbwfbFHicLE45mqZvkVNoUa4USVydMOEPKHrpTzHwKu9RzA7FoqAtngF6haqB
-         RLZT3F75H0cmVFjsDSdMuD4OqN2EmmyA8Y1Q5LL23xFIm8oYSwSs1Vq2LYL82f8ncUbj
-         UgcZ2qgxq/FTZOdqI+1JWRtsBT0cwr02XapQI2lH2E68EFsqgls0TA5XI/5P2A6tlJYf
-         KulckX37tpCda1xvTIcI352oz44jbpVFHNppGIskIE0lE6WeQsHVvk4zVGSo8H6xLbX7
-         /VtBfqXz/oyLotR3mtLZP7u1oBg+W1f0Ydh82d4i5vv0XWPSZ6oL1pW9p0yY7eX6FEeW
-         mdJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717413077; x=1718017877;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=21Ip7eqo28QVMy4KB0J5/yfczskOxmLqVxJkzM1gqtk=;
-        b=EYnHplOflTa7lraxXU8uHua2smM483gXi+ZgB9SqRomsK0q0ii+kdHxYjfkrX42sNf
-         o35pA/xrzEttP60cKFP1l0DkFqRtxjrs+Jb6jrhKr9Z+oiKrY05uuQgkl4nvAy6DFzA/
-         bWOSbVNmIfx80G46vAlITHRt71hveI4AmbBWRwldOvMyTRjfK4e2kbYkF5yiJfae424o
-         exYAVwVyvpW+I4npORZL7Qqb1wIHiUeXEpW0GYX9jMs/VtI00+gLAIWTadJGC3Ifen1n
-         4xsoDmwV1idYghkdI5NWdPRmqH6E+tjL4oVy8+5vqqORqUCiy8vYVAnRFjslRJy+RHxu
-         ESUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHRgnz7DqsRXk3cx0u3YVetvesjC4kx3sWaNUZLDpruw6SNN893uwW3ecMUx0TqqO/va9b+uWgEjN/7C3gOFJwQRDFEQXW9faaYSbnZ4EyksGIcHZubSJjHDcgJCIZbstP9wVcRTS+8PokUKemOYW4Hcc78Nd9U8+2XHJO1JvdBA==
-X-Gm-Message-State: AOJu0YzHtH/rFhScIxV2bJjOGv/czQd6LBdt3u+Oe0bFanVskVaXi130
-	IuLXdhYC9qTUscR0eeu1zt2e4JssMd3ggoBNnMR/hXCW5C5uMkDF
-X-Google-Smtp-Source: AGHT+IGmC5yZg/ntzQ187WC9OjsjzxAFntpccGCb4SzAv6g1Jin8V2c+WCE8xou5INDzMNKuawpjag==
-X-Received: by 2002:a2e:a787:0:b0:2da:a73:4f29 with SMTP id 38308e7fff4ca-2ea95181312mr77744711fa.30.1717413077175;
-        Mon, 03 Jun 2024 04:11:17 -0700 (PDT)
-Received: from [10.158.37.53] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b8a4c88sm115121525e9.31.2024.06.03.04.11.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 04:11:16 -0700 (PDT)
-Message-ID: <eda43490-8d77-4d7d-9b24-1aafd073d760@gmail.com>
-Date: Mon, 3 Jun 2024 14:11:14 +0300
+	s=arc-20240116; t=1717413100; c=relaxed/simple;
+	bh=tcxyK9s71QfV3xdgpdXvkdxY2UQhXIcW7RSsBnk8yWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s1EAwKZvYOwBDHn9lvfLH6Fx3Rs8kWvGq4NmfCg91eVdHnNKjkwohXyXsx0NbVoUOdbpiAcaZJvqnNNdbT23CovFa1IX9akTmFR+SCrbwPXs5oBFbMpvHn+1lC8xugQIOTzA94eye21RRNIF/8tnf22e4Sp9nj1KRn/U950sCAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxiTsHEp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE86C4AF0D;
+	Mon,  3 Jun 2024 11:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717413100;
+	bh=tcxyK9s71QfV3xdgpdXvkdxY2UQhXIcW7RSsBnk8yWk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QxiTsHEpmnORVD70dARG5m/I2/VzRsjDh8gCXcSaPaXFwtZNQ2BHT9TDi5XDT3Xi/
+	 160UYP2BVok3/Jxsi+5V/0+5rZPaAGE+psXr6JxLzN/kaUWpDV3TJTkxwpYOIe37+N
+	 5wMVw8TZ7iBGC4xqag68D3DB8bTOgibHXHHOCPm+kNKhEVNczoSBaYU/edY41hKKXH
+	 rx+dXQesPQXilyth3/Qmjkt96L/eHgIEEYDQ+zUxcM1/COfa3kUJQBCx6McE9D/DXk
+	 +WHuzREeY2i4R6i/ZTgPIoChvfTKA64hy+PCJAd5NEGLWH7NsDEvWzhVpTvcSzGINb
+	 F1tPpThk7O0VA==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b7ffd9f6eso3922789e87.3;
+        Mon, 03 Jun 2024 04:11:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHOdO/NorDi2Tb1aboEwbKpvvNyS75QSDTCRewf/7I2aDWNXhWm0gu5EJV7kOBG5nKHbkWzXQhITLbeOvDpUr6WGO6v0BjQRS+vvf2jKEJJgWrXhLZyaxsFGXLQha3F3/QKoEoUbO2pnUhcUF8zEvV/LRCEzjnVxUjsDii0fF72OqMeQ==
+X-Gm-Message-State: AOJu0YyGP95v/oJN71TfrYaYgDh84GgNhGcikgiotFnWsFWtkIv2zsIs
+	+0YEAnkJR9iUYz8tSzLboFbbF6FTsCJvEsOZZptAgSSMogGmTnu84XqDqHLCd0GwcFzxMjD/53D
+	qUNsbxM8T6L5txisCRZ0Uyv+C7QM=
+X-Google-Smtp-Source: AGHT+IGQWUff7l1RX9xrLPUc0J3fk1ggRAbvisd33Gp2ve0PcrmLKxkvHLY8iBMXKgtlv5ulwii7pMtI7BABjiFDbUg=
+X-Received: by 2002:ac2:5633:0:b0:52b:70c3:45f7 with SMTP id
+ 2adb3069b0e04-52b8955963amr5195863e87.3.1717413097981; Mon, 03 Jun 2024
+ 04:11:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next v3 2/2] net/mlx5e: Add per queue netdev-genl stats
-To: Joe Damato <jdamato@fastly.com>, Tariq Toukan <ttoukan.linux@gmail.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, nalramli@fastly.com,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Richard Cochran <richardcochran@gmail.com>,
- "open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>
-References: <20240529031628.324117-1-jdamato@fastly.com>
- <20240529031628.324117-3-jdamato@fastly.com>
- <5b3a0f6a-5a03-45d7-ab10-1f1ba25504d3@gmail.com>
- <ZlzGjXxVD-JClqIy@LQ3V64L9R2>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <ZlzGjXxVD-JClqIy@LQ3V64L9R2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240528151052.313031-1-alexghiti@rivosinc.com>
+ <20240528151052.313031-8-alexghiti@rivosinc.com> <CAJF2gTQgg-7Fzoz9TsjWD-_8ABbS7M66aEztCsZ9Ejk8LOvmiQ@mail.gmail.com>
+ <CAHVXubg=T3AMER0z8-iRqqFmDQp8iEM92cXwPZcW2Sfm=_KOHQ@mail.gmail.com>
+ <CAJF2gTRWSZsD3vDcXvawCxt665PZcbwurUqXx3juaoZaDrdttQ@mail.gmail.com>
+ <CAHVXubiE2_MJgTj4nq7Vkv0D60niRgZ0QkCXNz6PiNQ8h+Wy1A@mail.gmail.com>
+ <CAJF2gTTM1=cP9yB_3xs20pN_vscEe+WzuOUyTMB1UPU3aYMZEQ@mail.gmail.com>
+ <CAHVXubh+mK3VHT3zB=9MDudNd5gDQLbT0NqfEedqY=dG43or6A@mail.gmail.com>
+ <CAJF2gTR6y3K3RGE_n_Efr=LasYtCK9dHE5VPscbzz7P9yHHHww@mail.gmail.com> <6adf71fb-287b-490c-b7b0-4f8fa4fc1560@ghiti.fr>
+In-Reply-To: <6adf71fb-287b-490c-b7b0-4f8fa4fc1560@ghiti.fr>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 3 Jun 2024 19:11:24 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTSA70dohbzBec08FhrPMV1u2B9fN==p7q34m=8_WemeFQ@mail.gmail.com>
+Message-ID: <CAJF2gTSA70dohbzBec08FhrPMV1u2B9fN==p7q34m=8_WemeFQ@mail.gmail.com>
+Subject: Re: [PATCH 7/7] riscv: Add qspinlock support based on Zabha extension
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 3, 2024 at 5:22=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wrot=
+e:
+>
+> Hi Guo,
+>
+> On 31/05/2024 08:42, Guo Ren wrote:
+> > On Fri, May 31, 2024 at 2:22=E2=80=AFPM Alexandre Ghiti <alexghiti@rivo=
+sinc.com> wrote:
+> >> On Fri, May 31, 2024 at 3:57=E2=80=AFAM Guo Ren <guoren@kernel.org> wr=
+ote:
+> >>> On Thu, May 30, 2024 at 1:30=E2=80=AFPM Alexandre Ghiti <alexghiti@ri=
+vosinc.com> wrote:
+> >>>> Hi Guo,
+> >>>>
+> >>>> On Thu, May 30, 2024 at 3:55=E2=80=AFAM Guo Ren <guoren@kernel.org> =
+wrote:
+> >>>>> On Wed, May 29, 2024 at 9:03=E2=80=AFPM Alexandre Ghiti <alexghiti@=
+rivosinc.com> wrote:
+> >>>>>> Hi Guo,
+> >>>>>>
+> >>>>>> On Wed, May 29, 2024 at 11:24=E2=80=AFAM Guo Ren <guoren@kernel.or=
+g> wrote:
+> >>>>>>> On Tue, May 28, 2024 at 11:18=E2=80=AFPM Alexandre Ghiti <alexghi=
+ti@rivosinc.com> wrote:
+> >>>>>>>> In order to produce a generic kernel, a user can select
+> >>>>>>>> CONFIG_QUEUED_SPINLOCKS which will fallback at runtime to the ti=
+cket
+> >>>>>>>> spinlock implementation if Zabha is not present.
+> >>>>>>>>
+> >>>>>>>> Note that we can't use alternatives here because the discovery o=
+f
+> >>>>>>>> extensions is done too late and we need to start with the qspinl=
+ock
+> >>>>>>>> implementation because the ticket spinlock implementation would =
+pollute
+> >>>>>>>> the spinlock value, so let's use static keys.
+> >>>>>>>>
+> >>>>>>>> This is largely based on Guo's work and Leonardo reviews at [1].
+> >>>>>>>>
+> >>>>>>>> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638=
+-1-guoren@kernel.org/ [1]
+> >>>>>>>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> >>>>>>>> ---
+> >>>>>>>>   .../locking/queued-spinlocks/arch-support.txt |  2 +-
+> >>>>>>>>   arch/riscv/Kconfig                            |  1 +
+> >>>>>>>>   arch/riscv/include/asm/Kbuild                 |  4 +-
+> >>>>>>>>   arch/riscv/include/asm/spinlock.h             | 39 +++++++++++=
+++++++++
+> >>>>>>>>   arch/riscv/kernel/setup.c                     | 18 +++++++++
+> >>>>>>>>   include/asm-generic/qspinlock.h               |  2 +
+> >>>>>>>>   include/asm-generic/ticket_spinlock.h         |  2 +
+> >>>>>>>>   7 files changed, 66 insertions(+), 2 deletions(-)
+> >>>>>>>>   create mode 100644 arch/riscv/include/asm/spinlock.h
+> >>>>>>>>
+> >>>>>>>> diff --git a/Documentation/features/locking/queued-spinlocks/arc=
+h-support.txt b/Documentation/features/locking/queued-spinlocks/arch-suppor=
+t.txt
+> >>>>>>>> index 22f2990392ff..cf26042480e2 100644
+> >>>>>>>> --- a/Documentation/features/locking/queued-spinlocks/arch-suppo=
+rt.txt
+> >>>>>>>> +++ b/Documentation/features/locking/queued-spinlocks/arch-suppo=
+rt.txt
+> >>>>>>>> @@ -20,7 +20,7 @@
+> >>>>>>>>       |    openrisc: |  ok  |
+> >>>>>>>>       |      parisc: | TODO |
+> >>>>>>>>       |     powerpc: |  ok  |
+> >>>>>>>> -    |       riscv: | TODO |
+> >>>>>>>> +    |       riscv: |  ok  |
+> >>>>>>>>       |        s390: | TODO |
+> >>>>>>>>       |          sh: | TODO |
+> >>>>>>>>       |       sparc: |  ok  |
+> >>>>>>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> >>>>>>>> index 184a9edb04e0..ccf1703edeb9 100644
+> >>>>>>>> --- a/arch/riscv/Kconfig
+> >>>>>>>> +++ b/arch/riscv/Kconfig
+> >>>>>>>> @@ -59,6 +59,7 @@ config RISCV
+> >>>>>>>>          select ARCH_SUPPORTS_SHADOW_CALL_STACK if HAVE_SHADOW_C=
+ALL_STACK
+> >>>>>>>>          select ARCH_USE_MEMTEST
+> >>>>>>>>          select ARCH_USE_QUEUED_RWLOCKS
+> >>>>>>>> +       select ARCH_USE_QUEUED_SPINLOCKS if TOOLCHAIN_HAS_ZABHA
+> >>>>>>> Using qspinlock or not depends on real hardware capabilities, not=
+ the
+> >>>>>>> compiler flag. That's why I introduced combo-spinlock, ticket-spi=
+nlock
+> >>>>>>> & qspinlock three Kconfigs, and the combo-spinlock would compat a=
+ll
+> >>>>>>> hardware platforms but waste some qspinlock code size.
+> >>>>>> You're right, and I think your comment matches what Conor mentione=
+d
+> >>>>>> about the lack of clarity with some extensions: TOOLCHAIN_HAS_ZABH=
+A
+> >>>>>> will allow a platform with Zabha capability to use qspinlocks. But=
+ if
+> >>>>>> the hardware does not, it will fallback to the ticket spinlocks.
+> >>>>>>
+> >>>>>> But I agree that looking at the config alone may be misleading, ev=
+en
+> >>>>>> though it will work as expected at runtime. So I agree with you:
+> >>>>>> unless anyone is strongly against the combo spinlocks, I will do w=
+hat
+> >>>>>> you suggest and add them.
+> >>>>> The problem with the v12 combo-spinlock is using a static_branch
+> >>>>> instead of the full ALTERNATIVE. Frankly, that's a bad example that
+> >>>>> costs more code space. I found that your cmpxchg32/64 also uses a
+> >>>>> condition branch, which has a similar problem, right?
+> >>>>>
+> >>>>> Anyway, your patch series inspired me to update the v13
+> >>>>> combo-spinlock. My plan is:
+> >>>>> 1. Separate native-qspinlock out of paravirt-qspinlock.
+> >>>>> 2. Re-design an ALTERNATIVE(asm) code instead of static_branch gene=
+ric
+> >>>>> ticket-lock or qspinlock.
+> >>>> What's your plan to make use of alternatives here? The alternatives
+> >>>> patching depends on the discovery of the extensions, which is done t=
+oo
+> >>>> late, at least after the first use of a spinlock (the printk
+> >>>> spinlock). So you'd need to find a way to first use qspinlocks (but
+> >>>> without knowing Zabha is available) and then do the correct patching=
+:
+> >>> I do that in v12:
+> >>> 1. Use qspinlock as init.
+> >>> 2. Change to ticket-lock or not.
+> >>> (Only qspinlock -> ticket-lock, No reverse direction)
+> >>>
+> >>> If there is no contention, Qspinlock is okay for all platforms before
+> >>> smp bringup & no-irq environment.
+> >>>
+> >> Yes, by using static keys not alternatives. My question was: how do
+> >> you plan to use alternatives here instead of static keys? To me, it's
+> >> not that simple, hence my suggestions in my previous answer.
+> > Yes, it's not that simple. The current framework doesn't support that
+> > and has two problems:
+> > 1. We need to re-implement ticket-lock & qspinlock-fast-path with assem=
+bly code.
+> > 2. Current alternatives patching only for extensions, but qspinlock is
+> > not a formal extension. Could we accept
+> > __RISCV_ISA_EXT_DATA(xqspinlock, RISCV_ISA_EXT_XQSPINLOCK)?
+>
+>
+> But the problem is that the alternatives needs to patch the code very
+> early in the boot process which is not possible since we don't have the
+> list of extensions yet (for ACPI systems), so your
+> RISCV_ISA_EXT_XQSPINLOCK proposal would not help.
+I think the setup_arch()->apply_boot_alternatives() is okay. I can do
+that in v13.
+
+>
+> Thanks,
+>
+> Alex
+>
+>
+> >
+> >> Thanks,
+> >>
+> >> Alex
+> >>
+> >>>> an idea here could be to add an "init" value to the alternatives and
+> >>>> let the patching process do the right thing when the extensions are
+> >>>> known.
+> >>>>
+> >>>> Another solution would be the early discovery of the extensions, but=
+ I
+> >>>> took a look and it's easy with a device tree, but not with ACPI.
+> >>>>
+> >>>> Let me know what you plan to do and how I can help!
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>> Alex
+> >>>>
+> >>>>> What do you think?
+> >>>>>
+> >>>>>
+> >>>>>> Thanks again for your initial work,
+> >>>>>>
+> >>>>>> Alex
+> >>>>>>
+> >>>>>>>>          select ARCH_USES_CFI_TRAPS if CFI_CLANG
+> >>>>>>>>          select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH if SMP && MMU
+> >>>>>>>>          select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT if MMU
+> >>>>>>>> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/=
+asm/Kbuild
+> >>>>>>>> index 504f8b7e72d4..ad72f2bd4cc9 100644
+> >>>>>>>> --- a/arch/riscv/include/asm/Kbuild
+> >>>>>>>> +++ b/arch/riscv/include/asm/Kbuild
+> >>>>>>>> @@ -2,10 +2,12 @@
+> >>>>>>>>   generic-y +=3D early_ioremap.h
+> >>>>>>>>   generic-y +=3D flat.h
+> >>>>>>>>   generic-y +=3D kvm_para.h
+> >>>>>>>> +generic-y +=3D mcs_spinlock.h
+> >>>>>>>>   generic-y +=3D parport.h
+> >>>>>>>> -generic-y +=3D spinlock.h
+> >>>>>>>>   generic-y +=3D spinlock_types.h
+> >>>>>>>> +generic-y +=3D ticket_spinlock.h
+> >>>>>>>>   generic-y +=3D qrwlock.h
+> >>>>>>>>   generic-y +=3D qrwlock_types.h
+> >>>>>>>> +generic-y +=3D qspinlock.h
+> >>>>>>>>   generic-y +=3D user.h
+> >>>>>>>>   generic-y +=3D vmlinux.lds.h
+> >>>>>>>> diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/incl=
+ude/asm/spinlock.h
+> >>>>>>>> new file mode 100644
+> >>>>>>>> index 000000000000..e00429ac20ed
+> >>>>>>>> --- /dev/null
+> >>>>>>>> +++ b/arch/riscv/include/asm/spinlock.h
+> >>>>>>>> @@ -0,0 +1,39 @@
+> >>>>>>>> +/* SPDX-License-Identifier: GPL-2.0 */
+> >>>>>>>> +
+> >>>>>>>> +#ifndef __ASM_RISCV_SPINLOCK_H
+> >>>>>>>> +#define __ASM_RISCV_SPINLOCK_H
+> >>>>>>>> +
+> >>>>>>>> +#ifdef CONFIG_QUEUED_SPINLOCKS
+> >>>>>>>> +#define _Q_PENDING_LOOPS       (1 << 9)
+> >>>>>>>> +
+> >>>>>>>> +#define __no_arch_spinlock_redefine
+> >>>>>>>> +#include <asm/ticket_spinlock.h>
+> >>>>>>>> +#include <asm/qspinlock.h>
+> >>>>>>>> +#include <asm/alternative.h>
+> >>>>>>>> +
+> >>>>>>>> +DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+> >>>>>>>> +
+> >>>>>>>> +#define SPINLOCK_BASE_DECLARE(op, type, type_lock)             =
+        \
+> >>>>>>>> +static __always_inline type arch_spin_##op(type_lock lock)     =
+        \
+> >>>>>>>> +{                                                              =
+        \
+> >>>>>>>> +       if (static_branch_unlikely(&qspinlock_key))             =
+        \
+> >>>>>>>> +               return queued_spin_##op(lock);                  =
+        \
+> >>>>>>>> +       return ticket_spin_##op(lock);                          =
+        \
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>> +SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
+> >>>>>>>> +SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
+> >>>>>>>> +SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
+> >>>>>>>> +SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
+> >>>>>>>> +SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
+> >>>>>>>> +SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+> >>>>>>>> +
+> >>>>>>>> +#else
+> >>>>>>>> +
+> >>>>>>>> +#include <asm/ticket_spinlock.h>
+> >>>>>>>> +
+> >>>>>>>> +#endif
+> >>>>>>>> +
+> >>>>>>>> +#include <asm/qrwlock.h>
+> >>>>>>>> +
+> >>>>>>>> +#endif /* __ASM_RISCV_SPINLOCK_H */
+> >>>>>>>> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup=
+.c
+> >>>>>>>> index 4f73c0ae44b2..31ce75522fd4 100644
+> >>>>>>>> --- a/arch/riscv/kernel/setup.c
+> >>>>>>>> +++ b/arch/riscv/kernel/setup.c
+> >>>>>>>> @@ -244,6 +244,23 @@ static void __init parse_dtb(void)
+> >>>>>>>>   #endif
+> >>>>>>>>   }
+> >>>>>>>>
+> >>>>>>>> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
+> >>>>>>>> +EXPORT_SYMBOL(qspinlock_key);
+> >>>>>>>> +
+> >>>>>>>> +static void __init riscv_spinlock_init(void)
+> >>>>>>>> +{
+> >>>>>>>> +       asm goto(ALTERNATIVE("nop", "j %[qspinlock]", 0, RISCV_I=
+SA_EXT_ZABHA, 1)
+> >>>>>>>> +                : : : : qspinlock);
+> >>>>>>>> +
+> >>>>>>>> +       static_branch_disable(&qspinlock_key);
+> >>>>>>>> +       pr_info("Ticket spinlock: enabled\n");
+> >>>>>>>> +
+> >>>>>>>> +       return;
+> >>>>>>>> +
+> >>>>>>>> +qspinlock:
+> >>>>>>>> +       pr_info("Queued spinlock: enabled\n");
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>>   extern void __init init_rt_signal_env(void);
+> >>>>>>>>
+> >>>>>>>>   void __init setup_arch(char **cmdline_p)
+> >>>>>>>> @@ -295,6 +312,7 @@ void __init setup_arch(char **cmdline_p)
+> >>>>>>>>          riscv_set_dma_cache_alignment();
+> >>>>>>>>
+> >>>>>>>>          riscv_user_isa_enable();
+> >>>>>>>> +       riscv_spinlock_init();
+> >>>>>>>>   }
+> >>>>>>>>
+> >>>>>>>>   bool arch_cpu_is_hotpluggable(int cpu)
+> >>>>>>>> diff --git a/include/asm-generic/qspinlock.h b/include/asm-gener=
+ic/qspinlock.h
+> >>>>>>>> index 0655aa5b57b2..bf47cca2c375 100644
+> >>>>>>>> --- a/include/asm-generic/qspinlock.h
+> >>>>>>>> +++ b/include/asm-generic/qspinlock.h
+> >>>>>>>> @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(s=
+truct qspinlock *lock)
+> >>>>>>>>   }
+> >>>>>>>>   #endif
+> >>>>>>>>
+> >>>>>>>> +#ifndef __no_arch_spinlock_redefine
+> >>>>>>>>   /*
+> >>>>>>>>    * Remapping spinlock architecture specific functions to the c=
+orresponding
+> >>>>>>>>    * queued spinlock functions.
+> >>>>>>>> @@ -146,5 +147,6 @@ static __always_inline bool virt_spin_lock(s=
+truct qspinlock *lock)
+> >>>>>>>>   #define arch_spin_lock(l)              queued_spin_lock(l)
+> >>>>>>>>   #define arch_spin_trylock(l)           queued_spin_trylock(l)
+> >>>>>>>>   #define arch_spin_unlock(l)            queued_spin_unlock(l)
+> >>>>>>>> +#endif
+> >>>>>>>>
+> >>>>>>>>   #endif /* __ASM_GENERIC_QSPINLOCK_H */
+> >>>>>>>> diff --git a/include/asm-generic/ticket_spinlock.h b/include/asm=
+-generic/ticket_spinlock.h
+> >>>>>>>> index cfcff22b37b3..325779970d8a 100644
+> >>>>>>>> --- a/include/asm-generic/ticket_spinlock.h
+> >>>>>>>> +++ b/include/asm-generic/ticket_spinlock.h
+> >>>>>>>> @@ -89,6 +89,7 @@ static __always_inline int ticket_spin_is_cont=
+ended(arch_spinlock_t *lock)
+> >>>>>>>>          return (s16)((val >> 16) - (val & 0xffff)) > 1;
+> >>>>>>>>   }
+> >>>>>>>>
+> >>>>>>>> +#ifndef __no_arch_spinlock_redefine
+> >>>>>>>>   /*
+> >>>>>>>>    * Remapping spinlock architecture specific functions to the c=
+orresponding
+> >>>>>>>>    * ticket spinlock functions.
+> >>>>>>>> @@ -99,5 +100,6 @@ static __always_inline int ticket_spin_is_con=
+tended(arch_spinlock_t *lock)
+> >>>>>>>>   #define arch_spin_lock(l)              ticket_spin_lock(l)
+> >>>>>>>>   #define arch_spin_trylock(l)           ticket_spin_trylock(l)
+> >>>>>>>>   #define arch_spin_unlock(l)            ticket_spin_unlock(l)
+> >>>>>>>> +#endif
+> >>>>>>>>
+> >>>>>>>>   #endif /* __ASM_GENERIC_TICKET_SPINLOCK_H */
+> >>>>>>>> --
+> >>>>>>>> 2.39.2
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> --
+> >>>>>>> Best Regards
+> >>>>>>>   Guo Ren
+> >>>>>
+> >>>>>
+> >>>>> --
+> >>>>> Best Regards
+> >>>>>   Guo Ren
+> >>>
+> >>>
+> >>> --
+> >>> Best Regards
+> >>>   Guo Ren
+> >
+> >
 
 
 
-On 02/06/2024 22:22, Joe Damato wrote:
-> On Sun, Jun 02, 2024 at 12:14:21PM +0300, Tariq Toukan wrote:
->>
->>
->> On 29/05/2024 6:16, Joe Damato wrote:
->>> Add functions to support the netdev-genl per queue stats API.
->>>
->>> ./cli.py --spec netlink/specs/netdev.yaml \
->>>            --dump qstats-get --json '{"scope": "queue"}'
->>>
->>> ...snip
->>>
->>>    {'ifindex': 7,
->>>     'queue-id': 62,
->>>     'queue-type': 'rx',
->>>     'rx-alloc-fail': 0,
->>>     'rx-bytes': 105965251,
->>>     'rx-packets': 179790},
->>>    {'ifindex': 7,
->>>     'queue-id': 0,
->>>     'queue-type': 'tx',
->>>     'tx-bytes': 9402665,
->>>     'tx-packets': 17551},
->>>
->>> ...snip
->>>
->>> Also tested with the script tools/testing/selftests/drivers/net/stats.py
->>> in several scenarios to ensure stats tallying was correct:
->>>
->>> - on boot (default queue counts)
->>> - adjusting queue count up or down (ethtool -L eth0 combined ...)
->>> - adding mqprio TCs
->>
->> Please test also with interface down.
-> 
-> OK. I'll test with the interface down.
-> 
-> Is there some publicly available Mellanox script I can run to test
-> all the different cases? That would make this much easier. Maybe
-> this is something to include in mlnx-tools on github?
-> 
-
-You're testing some new functionality. We don't have something for it.
-
-
-> The mlnx-tools scripts that includes some python scripts for setting
-> up QoS doesn't seem to work on my system, and outputs vague error
-> messages. I have no idea if I'm missing some kernel option, if the
-> device doesn't support it, or if I need some other dependency
-> installed.
-> 
-
-Can you share the command you use, and the output?
-
-> I have been testing these patches on a:
-> 
-> Mellanox Technologies MT28800 Family [ConnectX-5 Ex]
-> firmware-version: 16.29.2002 (MT_0000000013)
-> 
->>>
->>> Signed-off-by: Joe Damato <jdamato@fastly.com>
->>> ---
->>>    .../net/ethernet/mellanox/mlx5/core/en_main.c | 132 ++++++++++++++++++
->>>    1 file changed, 132 insertions(+)
->>>
->>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>> index ce15805ad55a..515c16a88a6c 100644
->>> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>> @@ -39,6 +39,7 @@
->>>    #include <linux/debugfs.h>
->>>    #include <linux/if_bridge.h>
->>>    #include <linux/filter.h>
->>> +#include <net/netdev_queues.h>
->>>    #include <net/page_pool/types.h>
->>>    #include <net/pkt_sched.h>
->>>    #include <net/xdp_sock_drv.h>
->>> @@ -5293,6 +5294,136 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
->>>    	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
->>>    }
->>> +static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
->>> +				     struct netdev_queue_stats_rx *stats)
->>> +{
->>> +	struct mlx5e_priv *priv = netdev_priv(dev);
->>> +	struct mlx5e_channel_stats *channel_stats;
->>> +	struct mlx5e_rq_stats *xskrq_stats;
->>> +	struct mlx5e_rq_stats *rq_stats;
->>> +
->>> +	if (mlx5e_is_uplink_rep(priv))
->>> +		return;
->>> +
->>> +	channel_stats = priv->channel_stats[i];
->>> +	xskrq_stats = &channel_stats->xskrq;
->>> +	rq_stats = &channel_stats->rq;
->>> +
->>> +	stats->packets = rq_stats->packets + xskrq_stats->packets;
->>> +	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
->>> +	stats->alloc_fail = rq_stats->buff_alloc_err +
->>> +			    xskrq_stats->buff_alloc_err;
->>> +}
->>> +
->>> +static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
->>> +				     struct netdev_queue_stats_tx *stats)
->>> +{
->>> +	struct mlx5e_priv *priv = netdev_priv(dev);
->>> +	struct mlx5e_channel_stats *channel_stats;
->>> +	struct mlx5e_sq_stats *sq_stats;
->>> +	int ch_ix, tc_ix;
->>> +
->>> +	mutex_lock(&priv->state_lock);
->>> +	txq_ix_to_chtc_ix(&priv->channels.params, i, &ch_ix, &tc_ix);
->>> +	mutex_unlock(&priv->state_lock);
->>> +
->>> +	channel_stats = priv->channel_stats[ch_ix];
->>> +	sq_stats = &channel_stats->sq[tc_ix];
->>> +
->>> +	stats->packets = sq_stats->packets;
->>> +	stats->bytes = sq_stats->bytes;
->>> +}
->>> +
->>> +static void mlx5e_get_base_stats(struct net_device *dev,
->>> +				 struct netdev_queue_stats_rx *rx,
->>> +				 struct netdev_queue_stats_tx *tx)
->>> +{
->>> +	struct mlx5e_priv *priv = netdev_priv(dev);
->>> +	int i, j;
->>> +
->>> +	if (!mlx5e_is_uplink_rep(priv)) {
->>> +		rx->packets = 0;
->>> +		rx->bytes = 0;
->>> +		rx->alloc_fail = 0;
->>> +
->>> +		/* compute stats for deactivated RX queues
->>> +		 *
->>> +		 * if priv->channels.num == 0 the device is down, so compute
->>> +		 * stats for every queue.
->>> +		 *
->>> +		 * otherwise, compute only the queues which have been deactivated.
->>> +		 */
->>> +		mutex_lock(&priv->state_lock);
->>> +		if (priv->channels.num == 0)
->>> +			i = 0;
->>
->> This is not consistent with the above implementation of
->> mlx5e_get_queue_stats_rx(), which always returns the stats even if the
->> channel is down.
->> This way, you'll double count the down channels.
->>
->> I think you should always start from priv->channels.params.num_channels.
-> 
-> OK, I'll do that.
-> 
->>> +		else
->>> +			i = priv->channels.params.num_channels;
->>> +		mutex_unlock(&priv->state_lock);
->>
->> I understand that you're following the guidelines by taking the lock here, I
->> just don't think this improves anything... If channels can be modified in
->> between calls to mlx5e_get_base_stats / mlx5e_get_queue_stats_rx, then
->> wrapping the priv->channels access with a lock can help protect each single
->> deref, but not necessarily in giving a consistent "screenshot" of the stats.
->>
->> The rtnl_lock should take care of that, as the driver holds it when changing
->> the number of channels and updating the real_numrx/tx_queues.
->>
->> This said, I would carefully say you can drop the mutex once following the
->> requested changes above.
-
-I still don't really like this design, so I gave some more thought on 
-this...
-
-I think we should come up with a new mapping array under priv, that maps 
-i (from real_num_tx_queues) to the matching sq_stats struct.
-This array would be maintained in the channels open/close functions, 
-similarly to priv->txq2sq.
-
-Then, we would not calculate the mapping per call, but just get the 
-proper pointer from the array. This eases the handling of htb and ptp 
-queues, which were missed in your txq_ix_to_chtc_ix().
-
-This handles mapped SQs.
-
-Now, regarding unmapped ones, they must be handled in the "base" 
-function call.
-We'd still need to access channels->params, to:
-1. read params.num_channels to iterate until priv->stats_nch, and
-2. read mlx5e_get_dcb_num_tc(params) to iterate until priv->max_opened_tc.
-
-I think we can live with this without holding the mutex, given that this 
-runs under the rtnl lock.
-We can add ASSERT_RTNL() to verify the assumption.
-
-
-> 
-> OK, that makes sense to me.
-> 
-> So then I assume I can drop the mutex in mlx5e_get_queue_stats_tx
-> above, as well, for the same reasons?
-> 
-> Does this mean then that you are in favor of the implementation for
-> tx stats provided in this RFC and that I've implemented option 1 as
-> you described in the previous thread correctly?
-> 
-
-Yes, but I wasn't happy enough with the design.
-Thanks for your contribution.
-
->>> +
->>> +		for (; i < priv->stats_nch; i++) {
->>> +			struct netdev_queue_stats_rx rx_i = {0};
->>> +
->>> +			mlx5e_get_queue_stats_rx(dev, i, &rx_i);
->>> +
->>> +			rx->packets += rx_i.packets;
->>> +			rx->bytes += rx_i.bytes;
->>> +			rx->alloc_fail += rx_i.alloc_fail;
->>> +		}
->>> +
->>> +		if (priv->rx_ptp_opened) {
->>> +			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
->>> +
->>> +			rx->packets += rq_stats->packets;
->>> +			rx->bytes += rq_stats->bytes;
->>> +		}
->>> +	}
->>> +
->>> +	tx->packets = 0;
->>> +	tx->bytes = 0;
->>> +
->>> +	mutex_lock(&priv->state_lock);
->>> +	for (i = 0; i < priv->stats_nch; i++) {
->>> +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
->>> +
->>> +		/* while iterating through all channels [0, stats_nch], there
->>> +		 * are two cases to handle:
->>> +		 *
->>> +		 *  1. the channel is available, so sum only the unavailable TCs
->>> +		 *     [mlx5e_get_dcb_num_tc, max_opened_tc).
->>> +		 *
->>> +		 *  2. the channel is unavailable, so sum all TCs [0, max_opened_tc).
->>> +		 */
->>
->> I wonder why not call the local var 'tc'?
-> 
-> OK.
-> 
->>> +		if (i < priv->channels.params.num_channels) {
->>> +			j = mlx5e_get_dcb_num_tc(&priv->channels.params);
->>> +		} else {
->>> +			j = 0;
->>> +		}
->>
->> Remove parenthesis, or use ternary op.
-> 
-> I'll remove the parenthesis; I didn't run checkpatch.pl on this RFC
-> (which catches this), but I should have.
-> 
->>> +
->>> +		for (; j < priv->max_opened_tc; j++) {
->>> +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
->>> +
->>> +			tx->packets += sq_stats->packets;
->>> +			tx->bytes += sq_stats->bytes;
->>> +		}
->>> +	}
->>> +	mutex_unlock(&priv->state_lock);
->>> +
->>
->> Same comment regarding dropping the mutex.
-> 
-> OK.
-
+--=20
+Best Regards
+ Guo Ren
 
