@@ -1,120 +1,84 @@
-Return-Path: <linux-kernel+bounces-199594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B528D8954
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:04:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE9E8D895D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 938E9B2133E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:04:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A4A1F238F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BA913A3F2;
-	Mon,  3 Jun 2024 19:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DBF13A261;
+	Mon,  3 Jun 2024 19:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVEjz1iW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="TeXhPvgr"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBE7137923;
-	Mon,  3 Jun 2024 19:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4633E139D04
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717441480; cv=none; b=tv0QiDGivrhu5GLSUUlvnJqBo/u0WdUmEE9uK6NSGmWVCNcPGDlRojvh3g9UcHfJo22LY44p3XzVjJ6Arg+0m+m7boz0AedOE0BS9QIAzikNRVUic/VDRUzUVwJyXuTaomUYyJAFyCCkz+oj+elvCLjHMAOYzkRdBDNsL/BpsM8=
+	t=1717441605; cv=none; b=lmT4HG2LyytmsaIG16iC0lWJsqzI1tUbrt9JLWzyaqZUsK9utl1+JnZTufMPhT2LlKv+51l5sy0xo9iYCSsUNvh2RYZcu1LSWJ8qG505sOUDitEu04VYW/l7aQpPDaM654Go+E7kcPeGfUvL6eO4U8FVia23DHOLL22895j79Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717441480; c=relaxed/simple;
-	bh=SiJjhq+F76gd2xYIUJnRmLkcW/pcUax1GZT5innf0yw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qrLXKE9zFrK+JZcref+Ur9RqY+W8j2Drr6f+IxLfJQvtd6vEl57ThmYQrDrGMdKW0o+STTtLGmWLuNuh1/nQneEGOsVpFxyV8XacbJvR/RjEWf5OTDPgQNDtOaWQRMlcFyFJ3Naj6Vo1ZK6NcNSATt8WGdkF5OwpBxrWHCAN7G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVEjz1iW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3E2C4AF09;
-	Mon,  3 Jun 2024 19:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717441479;
-	bh=SiJjhq+F76gd2xYIUJnRmLkcW/pcUax1GZT5innf0yw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mVEjz1iWVYBbZpGBAolpFKdBtmgSZ54sICUew0JuIbETnve4H0k0gJUmsATrApj22
-	 8bWCeCg0OiCcFi8uFYMNo/cmw9Mdg40sZ37IMLuOwKlDV10UtX24GdQtamSiblknQ7
-	 N8ZkVCyqV4APP+2d/iduxIXrKn4DMTP8dQ/ahGfBmnajMRdjdlyXqtB1VaT76QmQlo
-	 LSL/mPn4tlLMwEhLzA2regmdBiIcSJT8Ez7w0fwfNO/cK5YfOO+6t9It2nEp6lThez
-	 e6YA2G3EYNY4dDwNQPVvzVNZo0dbgKD4Jp/qBlvlqBEzpZDV1paa2JMVpnOOEXq42d
-	 VfVXoXkIukNyA==
-From: SeongJae Park <sj@kernel.org>
-To: yskelg@gmail.com
-Cc: SeongJae Park <sj@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jinwoo Park <pmnxis@gmail.com>,
-	Austin Kim <austindh.kim@gmail.com>,
-	shjy180909@gmail.com,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] Documentation: cve Korean translation
-Date: Mon,  3 Jun 2024 12:04:36 -0700
-Message-Id: <20240603190436.222077-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240603161530.80789-1-yskelg@gmail.com>
-References: 
+	s=arc-20240116; t=1717441605; c=relaxed/simple;
+	bh=PQgb60lAp1YrIzldjkL0RQ1Ba27CtlBEJ/1DJHz3WF0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n0f02Ggh6zzNOVbJmRdt9KbY+f+Niv6/Jl1LM+C4Ea9WtOhDdD62DUcUNAuBYZO4s04Mq/TrsivPlf+IxCO3YnkBjUi9t6o383QNxItYQIcxOvqhf2GTLo2Nd7Aprl017RteSqcEQNfXZ9xLuYT/5V1zuU4BZBt/c6XLvCzWAA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=TeXhPvgr; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4VtNW33yCjz9sST;
+	Mon,  3 Jun 2024 21:06:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
+	t=1717441599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PQgb60lAp1YrIzldjkL0RQ1Ba27CtlBEJ/1DJHz3WF0=;
+	b=TeXhPvgruSv5ixTUVJMfHUXoNIoKlnqEh6HHLY6bA4JfY5T+tTW8BAga20n+MVb7L3iP5j
+	5QPbzS9j0dPZWXx8EW7BztkEhDqCL/g7+2nr3koLlz46/R6RK2om/5zwiFcTsWJX+nnL5y
+	CHUfpDeCCYNFtBZC+yxcgEixkyKCbWGfMPxQpLB5h65qKywk9Fftuei0BLpzNAAKBR4IjD
+	9xg6y0ubPH9C/Jj0BYpVpMcOe3O0RehgkdoQaMrLloCDbCiJq28ppqOtIkpvEeaqDVbyym
+	f/AcLwqy0WpzIFNaXfD7U7L1BtOnCN/b+YmE5dnuPgtWlEBf4NOWmWdg89snIg==
+From: Ben Walsh <ben@jubnut.com>
+To: Dustin Howett <dustin@howett.net>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ Guenter Roeck <groeck@chromium.org>, Kieran Levin <ktl@frame.work>, Thomas
+ =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Mario Limonciello
+ <mario.limonciello@amd.com>, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] platform/chrome: Fix MEC concurrency problems
+ for Framework Laptop
+In-Reply-To: <CA+BfgNKcG4ShokZ3ERmg75nJXMRbwJeAH=GnWwHt6A3XRar+gQ@mail.gmail.com>
+References: <20240603063834.5580-1-ben@jubnut.com>
+ <CA+BfgNKcG4ShokZ3ERmg75nJXMRbwJeAH=GnWwHt6A3XRar+gQ@mail.gmail.com>
+Date: Mon, 03 Jun 2024 20:06:36 +0100
+Message-ID: <87r0dd26df.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 4VtNW33yCjz9sST
 
-On Tue,  4 Jun 2024 01:15:31 +0900 yskelg@gmail.com wrote:
+Dustin Howett <dustin@howett.net> writes:
 
-> From: Yunseong Kim <yskelg@gmail.com>
-> 
-> This is a Documentation/process/cve korean version.
-> 
-> The following changes have been updated based on SeongJae Park’s feedback
-> and Austin Kim’s from the last v2 and v3 patches.
-> 
-> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
-> ---
->  Documentation/translations/ko_KR/index.rst    |   2 +-
->  .../translations/ko_KR/process/cve.rst        | 119 +++++++++---------
->  2 files changed, 61 insertions(+), 60 deletions(-)
-> 
-> diff --git a/Documentation/translations/ko_KR/index.rst b/Documentation/translations/ko_KR/index.rst
-> index 4add6b2fe1f2..f38f0ce19a1e 100644
-> --- a/Documentation/translations/ko_KR/index.rst
-> +++ b/Documentation/translations/ko_KR/index.rst
-> @@ -12,7 +12,7 @@
->     :maxdepth: 1
->  
->     howto
-> -
+> I've tested this patch series on the following devices:
+>
+> - Chromebook Pixel 2013 ("link")
+> - Framework Laptop 11th Gen Intel Core ("hx20"), firmware revision 3.19
+> - Framework Laptop AMD Ryzen 7040 Series ("azalea"), firmware revision 3.05
+>
+> It works as expected.
 
-I don't think you need to delete the above line.
-
-> +   process/cve
->  
->  리눅스 커널 메모리 배리어
->  -------------------------
-> diff --git a/Documentation/translations/ko_KR/process/cve.rst b/Documentation/translations/ko_KR/process/cve.rst
-> index 94610c177f17..5a84d0d4266f 100644
-> --- a/Documentation/translations/ko_KR/process/cve.rst
-> +++ b/Documentation/translations/ko_KR/process/cve.rst
-> @@ -1,7 +1,9 @@
->  .. SPDX-License-Identifier: GPL-2.0
->  
-> -:Original: Documentation/process/cve.rst
-> -:Translator: Yunseong Kim <yskelg@gmail.com>
-> +:원문: Documentation/process/cve.rst
-> +:역자: 김윤성 <yskelg@gmail.com>
-> +:감수: 박진우 <pmnxis@gmail.com>, 박성재 <sj@kernel.org>,
-
-Thank you for adding me.  However, please don't add me here unless I ask you
-to.
-
-
-Thanks,
-SJ
-
-[...]
+Very cool! Thanks for looking at this, Dustin.
 
