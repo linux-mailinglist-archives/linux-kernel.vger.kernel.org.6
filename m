@@ -1,119 +1,89 @@
-Return-Path: <linux-kernel+bounces-198553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D048D7A2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:50:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4AE58D7A30
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 032C61F21318
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:50:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F6B2B20BF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045F3BE48;
-	Mon,  3 Jun 2024 02:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37BFB652;
+	Mon,  3 Jun 2024 02:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iVLyEF3u"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05ED45250;
-	Mon,  3 Jun 2024 02:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="hNL/uz0l"
+Received: from mail-177131.yeah.net (mail-177131.yeah.net [123.58.177.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1297E8;
+	Mon,  3 Jun 2024 02:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717383031; cv=none; b=cJt6K51iXK+k2HZy0G/TX84zeNCSmx1Pi9COn9hxlOxfJ7kt5AAMs8vel57BgFlpHrizz31JTFuGTu8PjJwDLg9xeByicyfPSVfTCViRkYqdg6Y/WgIOsJwsl79DncQEHJIiCNPBFYlpFgHE7MTNbycRf58zohiJ9qiIkWBdqZM=
+	t=1717383114; cv=none; b=ELqNT3ZJ+Xo+s70t+Qd28Bxnt5FYBtF9IYZ0UiekQ2hIyjpAsbDxvtitdm4mMtdB5R7V01yXLECTaKDR3X4RnsKYICK55ko8bGgrA3weWKB5EPScemda73fUkJ8wHKvmVVSK/+0zMpnzXz9SKnwfDdGxdyHUD/EqnWzlEc9P46Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717383031; c=relaxed/simple;
-	bh=6uvSY3SwAc38IQogftaZ7RpTV6ON0Jubfb3GR7ZfSHw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=oL+deSSoPsyqs5KPqp1phBBMVLatgpeWyFF7MEt+etqzuMHfEBMPIV0uOlJ3iCvy761DmScEG37ikbTLsmahYlR9uxDitX1rhW/SibqYipoW+v0hdUs3a36cMKZQKdY4ChK6B3v8LgpzXIa1ifOHumPL8aJNs1s+OzoLsiRJiY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iVLyEF3u; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 452NdYBw007549;
-	Mon, 3 Jun 2024 02:50:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=AyV4HEOEcvfq3ISoGaKKge
-	6HVEEr9S/6kBh7HMdcDRk=; b=iVLyEF3u53bcfn8LfQVj6HONsXMVbjR/M1lRfo
-	flSwTeiLpd1PLXdTKjkqvCSDTHx9GsyF9pnCJU7Nv5TO3ydt+XrelC7WZY7ivcIy
-	A9Dk4Bv4T7SpTSdZWt6Fg/Iwd0xrAJ5d09hT5svY22OYhl6zrEoY9bYyQcxE+mht
-	nvriAJ3LsliaayjhfSVMgHajlfWdJ0y27iR6Kbso/0uYIUUykiQFDD/eLzl/NVkv
-	2N3fUm8KvVFqRUo0hizD81p/hgLDrx/n7ZDoNrbeug0l8tjSPfneivD1BSOclsUo
-	HOaED+PFqOcd58O4XtdwMEVXziGhx1HQgU6p5d1JjNPzMCQA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6qjsyh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 02:50:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4532oHnn030908
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 02:50:17 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 2 Jun 2024
- 19:50:16 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 2 Jun 2024 19:50:15 -0700
-Subject: [PATCH] auxdisplay: hd44780: add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1717383114; c=relaxed/simple;
+	bh=NiytJ2AMYvegxaHKEXtaqWHe+4LqIoAAvBf48/InMtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pp40kpbi4Fb2LIg2Caa8ZqQF11/q6MBG02uMGMP65vKWUca2IVUSXOrawinB7cB334i8H5LUGgJGBi7EqaPv4SsNgvvs9hzgJ4wK1Hp+dblvW2TCwB6M7zmN8LuGmSLWIKVD75TGwg5+AtcTh3XkNG8hs0KSMBHRI9tfiIbNkLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=hNL/uz0l; arc=none smtp.client-ip=123.58.177.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=DYwujD+kR84TKzaju2fXFZQwbc6+rq3fIhZZ+IH4RxQ=;
+	b=hNL/uz0lTLcW0fj3f3834Wn/lAEWEiXics/TiypTkmOf0aAZcSgaAUknSiatXt
+	mtgRdnXaDTnjUJ9919cQoMnd9ie9pwEJ+za5BFsedm10HneqEkZ3El1TsTws1TID
+	oHSwc9VoAKeg8PFQOF1cYgWcktZEbJScgrGLqLbUoVmxU=
+Received: from dragon (unknown [114.216.76.201])
+	by smtp1 (Coremail) with SMTP id ClUQrACHZu9rL11mpM4xBw--.38460S3;
+	Mon, 03 Jun 2024 10:50:20 +0800 (CST)
+Date: Mon, 3 Jun 2024 10:50:19 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Esben Haabendal <esben@geanix.com>
+Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
+Message-ID: <Zl0va6yv2VY4ky0l@dragon>
+References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
+ <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240602-md-drivers-auxdisplay-hd44780-v1-1-0f15bd19f949@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGYvXWYC/x3MwQqDMAwA0F+RnBeopVjZr4wdUpvNgHaSTHGI/
- 75ux3d5BxirsMG1OUB5E5NXqWgvDQwjlSej5GrwzgfXOY9zxqyysRrSumexZaIPjjmE2DuM3KV
- +6PrWxwj1WJQfsv//2706kTEmpTKMv3WSsu44k71Z4Ty/mWVU3o4AAAA=
-To: Andy Shevchenko <andy@kernel.org>,
-        Geert Uytterhoeven
-	<geert@linux-m68k.org>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _V14EhOMqn0F1e0fHOkE3NY3OUZp2kmF
-X-Proofpoint-ORIG-GUID: _V14EhOMqn0F1e0fHOkE3NY3OUZp2kmF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-02_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 mlxlogscore=934 clxscore=1011 impostorscore=0 malwarescore=0
- mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030024
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
+X-CM-TRANSID:ClUQrACHZu9rL11mpM4xBw--.38460S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrCFWxur43GF45Wrykur1fCrg_yoWxWFcE9F
+	Wkta1kAryDCw42qr1kKF43Xryvka17WF9Y9ryqqry5Ka95Zwn7AFn5Jw45Cwn8tw4rW3sr
+	Z3ZYqrn8tryavjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0QdbUUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBQzyZVsVCm9ZPwAAsT
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/hd44780_common.o
+On Mon, May 06, 2024 at 12:23:53PM +0200, Esben Haabendal wrote:
+> Making pinctrl drivers and subsequently the pinctrl framework
+> user-controllable, allows building a kernel without this.
+> While in many (most) cases, this could make the system unbootable, it
+> does allow building smaller kernels for those situations where picntrl
+> is not needed.
+> 
+> One such situation is when building a kernel for NXP LS1021A systems,
+> which does not have run-time controllable pinctrl, so pinctrl framework
+> and drivers are 100% dead-weight.
+> 
+> 
+> Signed-off-by: Esben Haabendal <esben@geanix.com>
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/auxdisplay/hd44780_common.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/auxdisplay/hd44780_common.c b/drivers/auxdisplay/hd44780_common.c
-index 7cbf375b0fa5..4ef87c3118c0 100644
---- a/drivers/auxdisplay/hd44780_common.c
-+++ b/drivers/auxdisplay/hd44780_common.c
-@@ -366,4 +366,5 @@ struct hd44780_common *hd44780_common_alloc(void)
- }
- EXPORT_SYMBOL_GPL(hd44780_common_alloc);
- 
-+MODULE_DESCRIPTION("Common functions for HD44780 (and compatibles) LCD displays");
- MODULE_LICENSE("GPL");
-
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240602-md-drivers-auxdisplay-hd44780-7e6b8c681277
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
 
