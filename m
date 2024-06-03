@@ -1,121 +1,224 @@
-Return-Path: <linux-kernel+bounces-199461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DDA8D8774
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EED28D8775
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1E128970B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:49:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C3C1C217B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06D91369B1;
-	Mon,  3 Jun 2024 16:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BF11369B4;
+	Mon,  3 Jun 2024 16:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHi/e0Oc"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nm7PsrVv"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBCE4A0A;
-	Mon,  3 Jun 2024 16:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC9C132811
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717433352; cv=none; b=nA3lQRCJxXNSPZC/7EAfMGYwFS550GSzVMnFNEj7dMwssP+gPLR7FLul4/GgKwWzMzGy3CTzTYoG/d5UBLE9xtBs8LdzYXD5QY0C5dXAVRvpvZ9uk22ix1VQJ7FUZ/Tqn1Jsx9hj8YGjqeL2f4V6c2+3f6Y+WvUUf3LGj7KYYw4=
+	t=1717433549; cv=none; b=CO6JhhQChmcNG2RWeZ9iqIS5drzJXUXENlUIq1N7ywpamvUmx3w9XCTI4gP6xG3v2MML5cB2vykt1WlNiwuA+v9O496KEuf71epKX9chisab8hZvjOcXS0iDUHz1K/OgZl0QFR6bAVNRGWg2y8JyEFTecUwh3OZF9fFFwHl+g0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717433352; c=relaxed/simple;
-	bh=c33fDiWFJQT75vUwqaalvIU2B7A6fRgsEaexBd0OkSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WNnzL7n6PAY3ohJhFqPuIKcj5FOiljQBQCB5yovHE32/SsLaERAMsc9UUt83aakSMZRTwogVcQOMOl7ek9fZKRf6vaDSxBW2U7xDSG8RGZ56wc58zFP8rbUwSZ5r9cux6tBUIpzJAK52wn4uLJkarH10ZbQFZ8ZZqzLAAgFPa3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WHi/e0Oc; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4210f0bb857so4369515e9.1;
-        Mon, 03 Jun 2024 09:49:10 -0700 (PDT)
+	s=arc-20240116; t=1717433549; c=relaxed/simple;
+	bh=7bbMMx35Lkzpu2sIpK2fSOilM52beTXlFemB8pNEi7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ddesJw4fgncw0Nc042xLNYZtOgZKDOebGAdVQBqrpvnfKPesIveX2X48P7FgftHXnsLTG6uX/ALxxUT43MZMBntZehqiZFOpIxBRs+1gSOFcGBnq3i9o4Nvzdds6EtVbIpp+8Gmbm76PHU6pJQVFJCR71MaFNdljgXMSuNsS1DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nm7PsrVv; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3748a185da1so2775ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:52:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717433349; x=1718038149; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v9yNx7cmxLPe/b/+oaDWP8CtyOBubgZufBr1kEUxuYY=;
-        b=WHi/e0OcUZYDm7y/yPssBqjWj4KOMq3GM319NKMWqkQ83+Hks/dSSlrUIOIkLN2DGF
-         TnOdKGp8Sqj1pWZYESC39OhPDo9AWxyfHnKDlGkNTZH1z4Eu5mSOhn1ngswflh7XD60k
-         SjVbW6liBrDLiWSKKPbhP5uNpvZqnHnSXL9F2jaL7CWvrReoR5PXqncvO6Os7N70Re/8
-         2b8BY+fPHgaKvTIAgjeT4CemqDM4XHwd8cd/h2Hc9JZTOKMxMrsMXzqsZFAbY8cgikIg
-         9BGN/vpmWXYugEvbPiTMzQxK0olVqqWfXtzv84gISaKLwr9qhXVpfz6kluGWnKIyXwL+
-         bMSw==
+        d=google.com; s=20230601; t=1717433547; x=1718038347; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rJcLm5ZpSkzvbycg4N/ncJTb6gnjJ0KZfkcYCAHjp+4=;
+        b=nm7PsrVvgvl7nuW3kPwH7oCYnVVVcRKZ4O4l5ob8DM2HtaQ1Tq2LJ7765kzVF8t0CN
+         ZYaHm1LU+IOL9AcrAOMgRi8Yy2KyzWFD8SuN2voGKSqJkodKV6I0dSNn575DJuJTgOqm
+         YG1yS2FlEkNVe5ZBwYprpMNYBA4H8hQnDskZo5CSKstTy3TZqCL1AGN4jQAMvBBRnxwg
+         DSoBN0rs/RJVrvHSe6xlHRmtzg/QkZdDQDwmeSx0KmndhvSPnGsU1KmVbZsfcJYEGpmT
+         5dRTWYr9VEanCH3bYWZq27aOkPxgSpYLuQzeO2dDOwhCh3QQd/VrRIAF9JRPLgMI5jH9
+         lUPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717433349; x=1718038149;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v9yNx7cmxLPe/b/+oaDWP8CtyOBubgZufBr1kEUxuYY=;
-        b=EhX4U3SK+/ZaCes1r2h65lkTffzDzzcytsTyO2e0tODko6cCyqHHXKdov+M3YvHfoL
-         7e4F1Y3ZHvWdKeJXvZYNosPVkVr3Ib6fVC1t22w2bz0eQK/MdRyNcmqXRqHHzxlBswtt
-         MphsgGnv54yNkNdbWWzQEUbM9UDpUpPnXDKsa0nRHPgUEQYmUAQpZnmpPEI/3VNo9XJw
-         mbLqg5SeP3C60lpaepADPMMYVHSnU/9BLNn/2IEnIbN0cV8sNRE6SWXSwNoGvnkzdtjb
-         p0MYZZOWrVv1cj5Cj0euie2ttCp31HlN3GN+GFqaJtcmMvgiOjabXnRzTEmS7PgyVh/V
-         rDCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqzJ0Gu9BePz2fNsFI/CRAahRYYZrY6rkTmnDlTs4RmKITuVBFapYepDdPl3OO5BzkyUBRaBPiEvG33LoaeIGuSgiTSEikx/MwfADp29VjFgX+NjSTvPsvqH7+2PuGRlWYrrs+2w==
-X-Gm-Message-State: AOJu0YzyzvAx/1Pp9TgW4yyOPNjIIEEZ6qbmxn0wSmZ31Qs0cc5+gnic
-	NR+DbstZ8eyn/1wap5Wp+e6XQE7veNL19Ww7XH+qSdCrj5mN0OJvdu6aqg==
-X-Google-Smtp-Source: AGHT+IF3VvEqdy5EfpNNHKvS//F8kPiFxL2leaLCAoXjeUi5YbkvMclGrXG3oC1gO16lp6r7MQFJdw==
-X-Received: by 2002:a05:600c:3c99:b0:41f:cfe6:3648 with SMTP id 5b1f17b1804b1-4212e0453a3mr74001955e9.1.1717433348651;
-        Mon, 03 Jun 2024 09:49:08 -0700 (PDT)
-Received: from [172.16.102.219] ([167.98.27.226])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42139688d82sm64537745e9.3.2024.06.03.09.49.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 09:49:08 -0700 (PDT)
-Message-ID: <4c6d11d0-5e5e-4fef-b8dc-78f22bf14860@gmail.com>
-Date: Mon, 3 Jun 2024 17:49:07 +0100
+        d=1e100.net; s=20230601; t=1717433547; x=1718038347;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rJcLm5ZpSkzvbycg4N/ncJTb6gnjJ0KZfkcYCAHjp+4=;
+        b=Kxyh8p0MGtlMRNgGr5mQNxCGIyzgV67lTEwhUmWbHQuic2S1jinRiQnxZxvYO19dRr
+         rIhh84K+FcXvGckB+WmFb+3sZPO6nCKVmsGoOVseDH4ltY6Nhqs3PUjSaiLjukszA0D2
+         oF92PSR4RpT5OUMIVt/eT94KEZEpX3hq9mhnJBn2dUer+Clct9EKzUIOYjvArJDcYdmL
+         Gfx0QJC2ttgeEp6mqlcYw3VbyuRudClC4hE7O3jSooUq3CKll3RG8b0ETQxZ2pX+bj9Q
+         AfOpzKdp5dtvue7X9hjsrd2mgcKcY/K9YbwB9cpBxodoDnGZjev+xm44V+9vG1+RbdzZ
+         l5EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzlTiQErXTZ/wdBO/aXcU5ZDrPsfrNbI2t+N9I3gp4mJ5MATyz/t+DfYmrjd5UOhXdDdZUqn+k7QYMlvNfCXL/Q8Pt35gsk44m+Ejr
+X-Gm-Message-State: AOJu0Yzgm18QkappWd0KrrkZGUpgODLQPwdZ83mdcvCxpdZvqD2Kvcog
+	1OFbiKMv2bWg4+XvlmLCLgoyQaFiBq7v0jngnBUKIhtBsdh9U6gA+K2mLI1gi3YIe9NMlR4hjUt
+	Qu3b9DUav0YdQ1W82ubBEEnHVFXCZPhDJAhIm
+X-Google-Smtp-Source: AGHT+IEsp6V45TBw2JP7tZOMI7fzyinIOWiPjdrnPxAAGdXewgE+WOZ4b0+9mdZyeN9H9AIThrhCqlA1vYPrFURxTSM=
+X-Received: by 2002:a92:c00c:0:b0:373:8081:23d0 with SMTP id
+ e9e14a558f8ab-37490ecd770mr4635645ab.18.1717433546712; Mon, 03 Jun 2024
+ 09:52:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] iio: light: ROHM BH1745 colour sensor
-To: Mudit Sharma <muditsharma.info@gmail.com>, jic23@kernel.org,
- lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240603162122.165943-1-muditsharma.info@gmail.com>
- <20240603162122.165943-2-muditsharma.info@gmail.com>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <20240603162122.165943-2-muditsharma.info@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240603092812.46616-1-yangyicong@huawei.com> <20240603092812.46616-2-yangyicong@huawei.com>
+In-Reply-To: <20240603092812.46616-2-yangyicong@huawei.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 3 Jun 2024 09:52:15 -0700
+Message-ID: <CAP-5=fXNumMLL=_+qXdnQPqgLSwo7Z1BFmPww63NkX5EcDRDsQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] perf pmu: Limit PMU cpumask to online CPUs
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: will@kernel.org, mark.rutland@arm.com, acme@kernel.org, 
+	namhyung@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	peterz@infradead.org, mingo@redhat.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, james.clark@arm.com, dongli.zhang@oracle.com, 
+	jonathan.cameron@huawei.com, prime.zeng@hisilicon.com, linuxarm@huawei.com, 
+	yangyicong@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/3/24 17:21, Mudit Sharma wrote:
-> Add support for BH1745, which is an I2C colour sensor with red, green,
-> blue and clear channels. It has a programmable active low interrupt pin.
-> Interrupt occurs when the signal from the selected interrupt source
-> channel crosses set interrupt threshold high or low level.
-> 
-> This driver includes device attributes to configure the following:
-> - Interrupt pin latch: The interrupt pin can be configured to
->    be latched (until interrupt register (0x60) is read or initialized)
->    or update after each measurement.
-> - Interrupt source: The colour channel that will cause the interrupt
->    when channel will cross the set threshold high or low level.
-> 
-> This driver also includes device attributes to present valid
-> configuration options/values for:
-> - Integration time
-> - Interrupt colour source
-> - Hardware gain
-> 
-> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+On Mon, Jun 3, 2024 at 2:33=E2=80=AFAM Yicong Yang <yangyicong@huawei.com> =
+wrote:
+>
+> From: Yicong Yang <yangyicong@hisilicon.com>
+>
+> We'll initialize the PMU's cpumask from "cpumask" or "cpus" sysfs
+> attributes if provided by the driver without checking the CPUs
+> are online or not. In such case that CPUs provided by the driver
+> contains the offline CPUs, we'll try to open event on the offline
+> CPUs and then rejected by the kernel:
+>
+> [root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
+> [root@localhost yang]# ./perf_static stat -e armv8_pmuv3_0/cycles/ --time=
+out 100
+> Error:
+> The sys_perf_event_open() syscall returned with 19 (No such device) for e=
+vent (cpu-clock).
+> /bin/dmesg | grep -i perf may provide additional information.
+>
+> So it's better to do a double check in the userspace and only include
+> the online CPUs from "cpumask" or "cpus" to avoid opening events on
+> offline CPUs.
+
+I see where you are coming from with this but I think it is wrong. The
+cpus for an uncore PMU are a hint of the CPU to open on rather than
+the set of valid CPUs. For example:
+```
+$ cat /sys/devices/uncore_imc_free_running_0/cpumask
+0
+$ perf stat -vv -e uncore_imc_free_running_0/data_read/ -C 1 -a sleep 0.1
+Using CPUID GenuineIntel-6-8D-1
+Attempt to add: uncore_imc_free_running_0/data_read/
+..after resolving event: uncore_imc_free_running_0/event=3D0xff,umask=3D0x2=
+0/
+Control descriptor is not initialized
+------------------------------------------------------------
+perf_event_attr:
+  type                             24 (uncore_imc_free_running_0)
+  size                             136
+  config                           0x20ff (data_read)
+  sample_type                      IDENTIFIER
+  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+  disabled                         1
+  inherit                          1
+  exclude_guest                    1
+------------------------------------------------------------
+sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8
+sys_perf_event_open failed, error -22
+switching off cloexec flag
+------------------------------------------------------------
+perf_event_attr:
+  type                             24 (uncore_imc_free_running_0)
+  size                             136
+  config                           0x20ff (data_read)
+  sample_type                      IDENTIFIER
+  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+  disabled                         1
+  inherit                          1
+  exclude_guest                    1
+------------------------------------------------------------
+sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0
+sys_perf_event_open failed, error -22
+switching off exclude_guest, exclude_host
+------------------------------------------------------------
+perf_event_attr:
+  type                             24 (uncore_imc_free_running_0)
+  size                             136
+  config                           0x20ff (data_read)
+  sample_type                      IDENTIFIER
+  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+  disabled                         1
+  inherit                          1
+------------------------------------------------------------
+sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0 =3D 3
+uncore_imc_free_running_0/data_read/: 1: 4005984 102338957 102338957
+uncore_imc_free_running_0/data_read/: 4005984 102338957 102338957
+
+ Performance counter stats for 'system wide':
+
+            244.51 MiB  uncore_imc_free_running_0/data_read/
+
+       0.102320376 seconds time elapsed
+```
+So the CPU mask of the PMU says to open on CPU 0, but on the command
+line when I passed "-C 1" it opened it on CPU 1. If the cpumask file
+contained an offline CPU then this change would make it so the CPU map
+in the tool were empty, however, a different CPU may be programmable
+and online.
+
+Fwiw, the tool will determine whether the mask is for all valid or a
+hint by using the notion of a PMU being "core" or not. That notion
+considers whether the mask was loading from a "cpumask" or "cpus"
+file:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/pmu.c?h=3Dperf-tools-next#n810
+
+Thanks,
+Ian
+
+> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
 > ---
-
-LGTM,
-
-Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-
--- 
-Kind regards,
-Ivan Orlov
-
+>  tools/perf/util/pmu.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index 888ce9912275..51e8d10ee28b 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -771,8 +771,17 @@ static struct perf_cpu_map *pmu_cpumask(int dirfd, c=
+onst char *name, bool is_cor
+>                         continue;
+>                 cpus =3D perf_cpu_map__read(file);
+>                 fclose(file);
+> -               if (cpus)
+> -                       return cpus;
+> +               if (cpus) {
+> +                       struct perf_cpu_map *intersect __maybe_unused;
+> +
+> +                       if (perf_cpu_map__is_subset(cpu_map__online(), cp=
+us))
+> +                               return cpus;
+> +
+> +                       intersect =3D perf_cpu_map__intersect(cpus, cpu_m=
+ap__online());
+> +                       perf_cpu_map__put(cpus);
+> +                       if (intersect)
+> +                               return intersect;
+> +               }
+>         }
+>
+>         /* Nothing found, for core PMUs assume this means all CPUs. */
+> --
+> 2.24.0
+>
 
