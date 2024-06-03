@@ -1,122 +1,188 @@
-Return-Path: <linux-kernel+bounces-199577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6468D88D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:46:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594E58D88DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3808728338C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F53F1F22932
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56022139568;
-	Mon,  3 Jun 2024 18:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E3A1386D2;
+	Mon,  3 Jun 2024 18:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iyLPyq/K"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RfoT1fGQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5505D2BB0D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881D8F9E9;
+	Mon,  3 Jun 2024 18:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717440371; cv=none; b=egzDv6E3euxA8f/IVAAosxKiIA2bgZWakW6WbTVMhbrG0+zN7S1Pp3Jg4DMOG1Yjoz5LH29xQ4NT1c4gSmfPRgucKvs8H7xAbeHj5AASKtp6qD5ES/on8J1BupAJJDtJPxqPb7N2LbnFBSzv+mVBPmjOtke13KMQI6TsRiE2GgQ=
+	t=1717440477; cv=none; b=Casls81XtGBb2GiiJxvP10twvlsCNI6H8WQe88kkHIxa7lzYhXvtIJnicNZuMBNBUUIEx5XEEb3hwPzXN9YjzSTgXRq2P5JzWfWvifSkY3MMDiGSq1bC5rrcN7wUgZzQcLasfAuzJ93rl2uBk0zkXO1eRSquzydrD8iGJoa/jOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717440371; c=relaxed/simple;
-	bh=zJUvO9qZ8ra4YCfqKYCYV6jebwpDoo5wIxkD2zPoXPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xm1brm8cZCp1X297brVabWUT18/CgosLYJ+ujOdsPU8+TNqNNDnH3bunybO0xUhzvWRjoI+nIvHM4zAT7kiUxRhWH/ikuh8Imfsd/eEyK/JHRCEgwBguOpBi4yTlPBHDNTdYtpOsPvaozXWIB8CtyhJHEKkccM4jHsTAL/kM4s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iyLPyq/K; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f8da5e4850so2535023a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 11:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717440367; x=1718045167; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6fbbg11gxYAzEz2wKYpT4nltvS1xcJseRvXkIglIExg=;
-        b=iyLPyq/Kjfjrcj4IAgVqcMXNYBgKC9QOQ9IpdWRNWJvcz70eNM3AfX0JvPf0HBGBlu
-         NmGCjJEjAKymFlkiqiz4zhxihuikAdU5V5gxw3AsCMmKFl13QcJLFZ1RDhy1K1udgxCY
-         p7has3ZsdKcZqqzDnu9A5oeTseCQPkTGrEH0dJ2RxLUV38JLls8ndvxm5X9ptmVWXisY
-         pN5VAjPzdiUuVx8PXJen/lasxQXhFmaYKY8o/AkinvRPmO8CG6CyQ+DFntJxLOXKosJy
-         Yj2i1HTKc41OYV7jj+Y1Xp/1D4lOSImoh+w7DCBBFmJfpZHE9Bkc/0MSge+BSPDLJ8ij
-         SXYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717440367; x=1718045167;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6fbbg11gxYAzEz2wKYpT4nltvS1xcJseRvXkIglIExg=;
-        b=Gu/Ea6y+DsYiPqQJAnzUw8rMjE+d2pwe1NmyWWYlibx/A4mIEGLvlXa7mt8UlgeRax
-         vtfA/UXAKs152hVt1zG59StpeFI4MkZUKFzyqkFK3pYV3+CCrPN9eAPXf4KGgBjd8Msp
-         97mDhq9f36gsw1ClYZOc+L7Lyd38XoqSOZ92MPemFxeKz6VqF9lm7IxzAjtf52VOIRGq
-         /hEflDSUie8H0NZqI9085AC/JGfc0Rl4SKcEXTxbj9EGO1ITJhi7EqAcVAJs795XIYza
-         gJkqEc6kT/GM99Z0h3PEUD3rfcrsoA46H+z2YCKidy6+h8TSI7gebOIEjz9I7/EFm49v
-         Wgpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcUoICWhorjRpQ5FmU3AEaRXGda1UoCa6CjQY6hY+SwszXUCK9d5NGTxvdTWlxr1Dv8luIJRd0JxeXdtfkSucx4l6hJz6tYUbM2ivc
-X-Gm-Message-State: AOJu0YyhHYhhE3ygsPGcUmvn99wT6+o+Yyr7wRkpuZjXis7pmR1cdZ2J
-	yUnyzFU+u9yuc5fhY9y8pwM6K+IYXPS/0+zmh5O0zRzAkeEv4awMTcYCW7z95uI=
-X-Google-Smtp-Source: AGHT+IGqr4CqoJEu+Q5SFykaDA/vtBhgorglavgKOTyHlAuobIO2Ssw5kWxTsjyonoeH+DyK3EyiQA==
-X-Received: by 2002:a05:6830:4103:b0:6f9:3717:5870 with SMTP id 46e09a7af769-6f937175a1dmr587435a34.11.1717440367364;
-        Mon, 03 Jun 2024 11:46:07 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f91054e9acsm1554532a34.35.2024.06.03.11.46.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 11:46:06 -0700 (PDT)
-Message-ID: <cd14f81f-0f09-4b0e-9765-aea4398c6448@baylibre.com>
-Date: Mon, 3 Jun 2024 13:46:06 -0500
+	s=arc-20240116; t=1717440477; c=relaxed/simple;
+	bh=15edaRo3ICbpvaIs7c6VEpdb48R0PeutvnP1BJysCiA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IR0fgi0kgrsLF840WLPEJhF1x4/LZ6JGKfvczq7WPPycHGaMaN3CEQr+2godfUW2y1rTiop/mIjcVnsjW2ow5ACb4l38uhS3JxDa5pTs4fdUP3p6I9+F9RmOOsiFdHyYl+PDITjWbnZZmpqLA8yxtSSDFO7598unKId2cCSZb4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RfoT1fGQ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717440476; x=1748976476;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=15edaRo3ICbpvaIs7c6VEpdb48R0PeutvnP1BJysCiA=;
+  b=RfoT1fGQCBdovUie90RhU2fUD8e9JUebxacGbpvN1K/ff66y86d5sxal
+   4fAEBY4YWewdpqetz/onlHZBH2A5XPnS9BO2pX1+ILr0d0Vov7StNm0Vn
+   5Gf9PhVZMLd75kQiwt6TyeokHTdImXOlLaGUkTPXxxLo/LgWl3Weo7KP1
+   2CZGgWDJqiBXhOKwap7eOJsgiEdI95/EJ1svnIhf4C8yQ9539WqChz3+n
+   nbcSlOotLQ0ox+Q2kN6tF6siNH3sduOgvJBHuEndAKLlo9L7BNeplgQ/n
+   64n2xt3UhfXg9LultZJOngj6lElyXgxRrUFqVOf6c/Q7XcVWK41CV6O5k
+   A==;
+X-CSE-ConnectionGUID: 7ybUBxOBRN2pX5XG4t/xmw==
+X-CSE-MsgGUID: EtfynT4kRoiAY9qcutCcEQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="13760284"
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="13760284"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 11:47:55 -0700
+X-CSE-ConnectionGUID: k4gcVFlcRN6rDfDYOVQJCg==
+X-CSE-MsgGUID: 5TjGErkLRrOhpKmSenUGNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="74452120"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 11:47:55 -0700
+Message-ID: <f34c20ae3feac0e3570125f124e440d51c5e4d9b.camel@linux.intel.com>
+Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
+ global.turbo_disabled after initialization
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Xi Ruoyao <xry111@xry111.site>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+ <linux-pm@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>
+Date: Mon, 03 Jun 2024 11:47:54 -0700
+In-Reply-To: <CAJZ5v0jjLgG3VY_kBYc4mTrL2ybD2LfBTk2_H7xY0+Aq5g827A@mail.gmail.com>
+References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
+	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
+	 <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
+	 <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
+	 <f382e06635b3b52841d1e0c11dcf639d225edae0.camel@xry111.site>
+	 <29d69252dcdc398f147c9139a8666d09e7bd831d.camel@linux.intel.com>
+	 <0324bc3a88654855719cd48a5ed69a34eea31037.camel@xry111.site>
+	 <c3526e7a0e80ec1a3a011259c38ab4b772040ea4.camel@linux.intel.com>
+	 <48eba83030e155f703b4248e9c1ae65aa44b1a83.camel@xry111.site>
+	 <CAJZ5v0jjLgG3VY_kBYc4mTrL2ybD2LfBTk2_H7xY0+Aq5g827A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] iio: ABI: add DAC 42kohm_to_gnd powerdown mode
-To: Kim Seer Paller <kimseer.paller@analog.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
-References: <20240523031909.19427-1-kimseer.paller@analog.com>
- <20240523031909.19427-3-kimseer.paller@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240523031909.19427-3-kimseer.paller@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 5/22/24 10:19 PM, Kim Seer Paller wrote:
+On Mon, 2024-06-03 at 20:32 +0200, Rafael J. Wysocki wrote:
+> On Mon, Jun 3, 2024 at 7:44=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wro=
+te:
+> >=20
+> > On Mon, 2024-06-03 at 10:11 -0700, srinivas pandruvada wrote:
+> > > On Mon, 2024-06-03 at 21:12 +0800, Xi Ruoyao wrote:
+> > > > On Sun, 2024-06-02 at 16:11 -0700, srinivas pandruvada wrote:
+> > > >=20
+> > > > /* snip */
+> > > >=20
+> > > > > What is the output of:
+> > > > > grep . /sys/devices/system/cpu/intel_pstate/*
+> > > > >=20
+> > > > > Also
+> > > > > rdmsr 0x771
+> > > > > rdmsr 0x774
+> > > > >=20
+> > > > >=20
+> > > > > Try these three patches. Don't worry about the commit
+> > > > > description
+> > > > > for
+> > > > > this issue.
+> > > >=20
+> > > > Unfortunately they still do not fix the issue for me.
+> > > >=20
+> > > > The outputs of grep and rdmsr commands are initially:
+> > > >=20
+> > > > /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost:0
+> > > > /sys/devices/system/cpu/intel_pstate/max_perf_pct:100
+> > > > /sys/devices/system/cpu/intel_pstate/min_perf_pct:9
+> > > > /sys/devices/system/cpu/intel_pstate/no_turbo:1
+> > > > /sys/devices/system/cpu/intel_pstate/num_pstates:41
+> > > > /sys/devices/system/cpu/intel_pstate/status:active
+> > > > /sys/devices/system/cpu/intel_pstate/turbo_pct:33
+> > > > rdmsr 0x771: 10d1f2c
+> > > > rdmsr 0x774: 1f04
+> > > >=20
+> > > > But it then changes to:
+> > > >=20
+> > > > /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost:0
+> > > > /sys/devices/system/cpu/intel_pstate/max_perf_pct:100
+> > > > /sys/devices/system/cpu/intel_pstate/min_perf_pct:9
+> > > > /sys/devices/system/cpu/intel_pstate/no_turbo:1
+> > > > /sys/devices/system/cpu/intel_pstate/num_pstates:41
+> > > > /sys/devices/system/cpu/intel_pstate/status:active
+> > > > /sys/devices/system/cpu/intel_pstate/turbo_pct:33
+> > > > rdmsr 0x771: 10c1f2c
+> > > > rdmsr 0x774: 1f04
+> > > >=20
+> > > > It seems only the output of rdmsr 0x771 has changed.=C2=A0 And if I
+> > > > read
+> > > > the
+> > > > SDM correctly it's a "Most_Efficient_Performance" change.
+> > > That is fine.
+> > >=20
+> > > We don't have any notifications either via ACPI or via HWP
+> > > interrupt.
+> > > I think it was working by chance before this change as by the
+> > > cpufreq
+> > > core is trying to set policy, the turbo is enabled by the
+> > > firmware.
+> > >=20
+> > > What is this laptop make and model?
+> >=20
+> > It's a Hasee X5-2021S5H.
+> >=20
+> > Hasee is known for producing some laptops very cheap but often
+> > having
+> > "minor" issues.=C2=A0 So I guess the firmware is doing some stupid
+> > thing.
+> >=20
+> > But turbo works just fine on Windows 11 so it'd be better if we
+> > could
+> > make it work for Linux too.
+>=20
+> In principle, there are two things that can be done about this.
+>=20
+> First, MSR_IA32_MISC_ENABLE_TURBO_DISABLE on this system can be
+> ignored altogether, but that would require adding a quirk.
+>=20
+> Second, a delayed work can be added to check the MSR long enough
+> after
+> initialization and update global.turbo_disabled if it is 1.=C2=A0 However=
+,
+> that would require some code surgery.
 
-It is always helpful to have a commit message that explains why we need
-this change.
+I was about to send this suggestion.
 
-> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> index 7cee78ad4108..6ee58f59065b 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> @@ -708,6 +708,7 @@ Description:
->  		2.5kohm_to_gnd: connected to ground via a 2.5kOhm resistor,
->  		6kohm_to_gnd: connected to ground via a 6kOhm resistor,
->  		20kohm_to_gnd: connected to ground via a 20kOhm resistor,
-> +		42kohm_to_gnd: connected to ground via a 42kOhm resistor,
->  		90kohm_to_gnd: connected to ground via a 90kOhm resistor,
->  		100kohm_to_gnd: connected to ground via an 100kOhm resistor,
->  		125kohm_to_gnd: connected to ground via an 125kOhm resistor,
+For the first one we can always program the HWP_REQ.max to HWP_CAP.max
+and  let hardware do the clipping. But this is not friendly to passive
+mode. But display of scalig_max_freq still should reflect the reality.
+
+
+Thanks,
+Srinivas
+
+>=20
 
 
