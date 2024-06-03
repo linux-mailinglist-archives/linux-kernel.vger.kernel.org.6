@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-199476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363298D878E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:01:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6D18D878F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD32D1F21E14
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:01:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EADF21C220C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807AA13777B;
-	Mon,  3 Jun 2024 17:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D111C13791A;
+	Mon,  3 Jun 2024 17:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kyo71aHP"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KPwPBfMr"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43933136E2B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D735137777
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717434084; cv=none; b=GvfzGmAEK2c3zYSQ0o0sukTaB3SDRnVjoovCBm1Tt/sxf9Iw//4gnozEsYh+ULwvWhJ9+AOw3m0pFg6JDFwwhth+M9fVJn8wdP0Yg23SEuyE/+rd630kV5kzV6hjFiTeMw1nq7kFkMWPA2fPSr3REChyUdSXaIxS746qDN8ETUc=
+	t=1717434089; cv=none; b=gpweudxqGyPzyRVHB4mUaPrlA4eqMTzmhoCHG9PRQum2KyiiDcPRj5q2kPfiTCV7+l54SSG4DXzBDpqR7NWff1JxHpCPAcE9b5OScmuwO5VI9m8aHWCpKBgsjTOqgpMUVnLNp4UBUE03e5UVK0AWMrwZEWZPpx8As2E90gUUGUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717434084; c=relaxed/simple;
-	bh=dtegb95Yoog4s+bRLFOy72NiUIfsUaciwClLxjmqRgM=;
+	s=arc-20240116; t=1717434089; c=relaxed/simple;
+	bh=3SI9j5SVRu/Hmpi2nSsddaJaEryZv9zB6NLAEMk+BQ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dubTIrEZzXvEeUjndpHSOmMtEXZYCa1QOxo9+9sycj3CGDcrkqUesJMUZExBt+l7FrHk7sXwXR0YHYJ3ZWkYm1Aw4XuHsE49u2Hl099p3DhpAaT9V5mvNlGd3nGNcYXfU0jhyGN5ANngv/sDMRlLxabLLFb69MfmfO+PiFvNQeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kyo71aHP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rDTYr+MFhpo5KNC+O8/PJeMg4wx4hxlcpkT6/y8CQQs=; b=kyo71aHPY610RKZP6dlylIxAYy
-	jrp8EIUgFOmXADj0oF/je4gZUA4b8TganmG9mGr0KaGPP+E6jTig1vSXaqtm/iYHHqLpILrft7YqF
-	zwbkXfdwGiHBvmMv7teqhb5rAhx3l8rNWdkJq4yLrD1zQbwg30VP9J2fK1nazgWWSLx24xECykJ4C
-	k6JWCYjdOW8GPinarGRA9775xRpQmSH8jNIHpT7ZkMxZdIQMgrVuWPbZ0WzrMCWyuUi/bs/U0zUFh
-	+O40txmnK2SISB89RL9PdeTD0oIfCk1Wne4LzrD45nhaE4O2CMVikk+VC5V7BNI4FbqvkRQJwJ/w2
-	nAJVHkBw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sEB3R-0000000EEkG-1cMp;
-	Mon, 03 Jun 2024 17:01:05 +0000
-Date: Mon, 3 Jun 2024 18:01:05 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: David Hildenbrand <david@redhat.com>, Byungchul Park <byungchul@sk.com>,
-	Byungchul Park <lkml.byungchul.park@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	ying.huang@intel.com, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, peterz@infradead.org,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-Message-ID: <Zl320dWODSYw-PgV@casper.infradead.org>
-References: <20240531092001.30428-1-byungchul@sk.com>
- <20240531092001.30428-10-byungchul@sk.com>
- <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
- <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
- <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
- <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
- <20240603093505.GA12549@system.software.com>
- <d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
- <35866f91-7d96-462a-aa0a-ac8a6b8cbcf8@redhat.com>
- <196481bb-b86d-4959-b69b-21fda4daae77@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwDT4MuhgjlALadBzP6z6OwAShKP2L7cKlqNIi6vZD2I7AAhA8SuR683W4UlEUN2BC0oqXNwg3KDqAc4YY+U+jE6xC9TPy0BZA+4xF4GnRF6HlWxG+lnAsjP4MRGKGMVLNsKXiePwsA3YiQoy3XNmR9KvwvQoLQ3hnR52SqSnG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KPwPBfMr; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 39CBE40E016E;
+	Mon,  3 Jun 2024 17:01:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id G8OYUZaiYqwq; Mon,  3 Jun 2024 17:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717434081; bh=+4BvNpPAGG+MtFL51umjmfWWWtuUucP0ZyFjXxPrsnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KPwPBfMraQkLhVtJLD9NPMIr1yTdqJcSqE+p8SBYe8k6YSXjRh7XkQFiAsGvQ2Cf7
+	 9UgEQvvZjHQcCMn8Fppi9UGBPupjWG11nMU7tyxKewRtr5e6pGBJdWopo8ScPJcwEJ
+	 yJxXGX5kSTe76dCFQ+kJrl4J/hytkU+qO7ESYX9S9m4S6F05m9TbHoPiUTx450DHr6
+	 1Fn/bPiraKjIr8ZE8csES0PnsK1zsZWrS/AAPQWXzUnIE6e8UPAUWgwhYvOhZJtsR3
+	 a+5reUZIAeWJA+ZbGE/w74gK+WH6zOgdceX+erkBG/Jbyb+OyoCGOv3/zhVbdZnXEU
+	 SaBHYaCpFumhgN+BZw3edDTTqfRc6o+9Ma4RlFHP9YsfzACk4Pwl1D8eQxhs0vt/SR
+	 LGN0oWANbm5+Dln6TFG14cD4UNHiT6g+rGDxb1MtyrFCIWSrXRtkETDFleKgHDWWd1
+	 3xO4oGsBkkaYuxpnCvMli42SEoYIRPAbRyo3Qt/QF+ED0apKdVqt9Ikd9gHontv/6L
+	 /NI2Pm6fBXQnRdARSBwYmGQhPgyi56/LqtJN9VA95R4VZi6/JT4iRezpCAYjyBiIS2
+	 tIYN1tESXS/md6w/zpw2H6xLLE/vjFgZX3UsVZ+YRnDQvjoV0yzjo+1kxMPTokUi7H
+	 fMjBpYGAUJv4WZV+c2Dc5+WY=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4BE5340E016A;
+	Mon,  3 Jun 2024 17:01:07 +0000 (UTC)
+Date: Mon, 3 Jun 2024 19:01:06 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH 0/3] Add and use get_cpu_cacheinfo_level()
+Message-ID: <20240603170106.GHZl320tVKXp2HyUfb@fat_crate.local>
+References: <20240531195720.232561-1-tony.luck@intel.com>
+ <22569491-1b29-4b3d-8e9c-a5d10b73b6ab@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <196481bb-b86d-4959-b69b-21fda4daae77@intel.com>
+In-Reply-To: <22569491-1b29-4b3d-8e9c-a5d10b73b6ab@intel.com>
 
-On Mon, Jun 03, 2024 at 09:37:46AM -0700, Dave Hansen wrote:
-> Yeah, we'd need some equivalent of a PTE marker, but for the page cache.
->  Presumably some xa_value() that means a reader has to go do a
-> luf_flush() before going any farther.
+On Mon, Jun 03, 2024 at 09:55:24AM -0700, Reinette Chatre wrote:
+> Thank you to Andrew for picking up this series into the
+> mm-nonmm-unstable branch. I am not familiar with how patches flow
+> from this repo/branch but I expect that this inclusion will require some
+> high level coordination between the big repos since resctrl changes
+> usually flow upstream through x86/cache branch of tip and I
+> anticipate some conflicts and also needing to figure out how to deal
+> with this new dependency in planned resctrl changes.
 
-I can allocate one for that.  We've got something like 1000 currently
-unused values which can't be mistaken for anything else.
+Which is totally useless coordination if Andrew simply leaves x86
+patches to go through the tip tree and there are no conflicts.
 
-> That would actually have a chance at fixing two issues:  One where a new
-> page cache insertion is attempted.  The other where someone goes to look
-> in the page cache and takes some action _because_ it is empty (I think
-> NFS is doing some of this for file locks).
-> 
-> LUF is also pretty fundamentally built on the idea that files can't
-> change without LUF being aware.  That model seems to work decently for
-> normal old filesystems on normal old local block devices.  I'm worried
-> about NFS, and I don't know how seriously folks take FUSE, but it
-> obviously can't work well for FUSE.
+> Could you please provide your guidance on how to achieve a smooth
+> upstream of this work?
 
-I'm more concerned with:
+I'd prefer if resctrl patches go only through tip so that there's no
+unnecessary headaches with merging and coordination.
 
- - page goes back to buddy
- - page is allocated to slab
- - application reads through stale TLB entry and sees kernel memory
+Thx.
 
-Or did that scenario get resolved?
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
