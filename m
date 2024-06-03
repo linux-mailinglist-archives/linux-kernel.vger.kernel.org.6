@@ -1,155 +1,133 @@
-Return-Path: <linux-kernel+bounces-198606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343E58D7AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:55:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2708B8D7AEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D6B1F21179
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8C428215A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 05:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73EA1C6BD;
-	Mon,  3 Jun 2024 04:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gzer7bcA"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B8D19E;
-	Mon,  3 Jun 2024 04:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB464208CE;
+	Mon,  3 Jun 2024 05:13:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C734B12B83;
+	Mon,  3 Jun 2024 05:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717390544; cv=none; b=cwPEUF8HAFUtXqM7DTCfG4/1366ZksFQKaGI9j+OI9n7bX+BeCr7uFjr2hLbFMluIP3omAXELgfLbA4zu3zc6bxQe5CgREBYtNsfjDjMgrh8s6oRM2iV3F1jX6S6M8WnTiLxhFmKg9TSnmxCdlhSNNidQGN0hmJgNtFTGVABQE0=
+	t=1717391584; cv=none; b=oCxtASpHBTPTOz3/xauWJ10Hxs4nhNOHdh6mEtQwsisWy1QR1hZ1AVBYTundVnt0SP178Cjtr+jUoGUtzib5tgOtZZ85rfNP4TjP+Szafrkc1D79Hyz+sxtF/mmM+88EgJV3bwDRlJoCgyKf/QMD2Mqcf2UtAohhn1kTyuFnu4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717390544; c=relaxed/simple;
-	bh=AV2KrnFWAFUsRY9ZYLITcITNmLoIydafWAFTUt+9/Bw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kDpC0nRUNYH3cVACkGPkWuAgyfOTHaMcDwPomDnULRRGKqLVoIut6Xoy2YXC/A+t5hRbhCTjFm6+Q4VU+EiPqaiCYzXOjvYBlZCJbkO07zOBJaMMiyyQYXcWJXWSCeHB/JdrVAIDDNIFs+t6lSxeOICoqD/e56miHAzZMzTphtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gzer7bcA; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c1a99b75d8so2842129a91.3;
-        Sun, 02 Jun 2024 21:55:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717390542; x=1717995342; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vgpl2pvD+ZoEuT/KfaO9NrRSypVlYGw9oery+TBtf0=;
-        b=Gzer7bcAU0tgF3wrhGydTV2OYeqTTQhdiyOPXcIpODfGVpfqwe8vfOKwdZtbDP4xMK
-         HVWBnVv8VJVsZy0kq7ROuUBJMJt1zpmNNpGcR9ypA11IORvT4fQiF8RsiWHw5F7AqWiO
-         lGknG9Cd9Yoxx1c6A9Ju8FDfK4FDqy70s87T7Zxq4+jVvwgHsq2/O5bipA+BzZS79lYh
-         c3IsY9naAWLIv5rBFXi1VCJP/uZvmW9RMtMuGu1foSTFoZaToyDzJovgEDSOHxSP5dIZ
-         7XKeyrOFSdsuZqzmajkKua4AJMDWtnmEfGgfh+CG1tEY+VpYXW4Wl9us2CcjNJvH6jtN
-         6fiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717390542; x=1717995342;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0vgpl2pvD+ZoEuT/KfaO9NrRSypVlYGw9oery+TBtf0=;
-        b=HBpFCuwbBe5CJH37QjlAUyTvK6djVcO76OjcTOUWTk9fzEVmvNPwuive838dUo0zQy
-         TBUXvVKwA2nj/RznmfmZatm3O5f7AeP8xv3e4t4PCsgFlyMkPLOew2SJ/mgpCPqSVrCB
-         yVKgH0n4xFmmcIvPgwCIfbrFMW2xlpdCoz1NxksSS9zGiM6athD9TaxjH7mxyO+w/3ma
-         yNNg39zFrDJLXdAi7XYRO4hqPpvs8HU3u1uJilcrBUtvrbEaywP2a7hi0tSdDqQRfvXi
-         mPbA6oTrNVkgjqMa/v45K5DZpLihBeu4R/+ZUdQAfSvcJWV1jLNg4IkrDwiDe+vrFqk4
-         z1AA==
-X-Forwarded-Encrypted: i=1; AJvYcCUS+2zJwjG4xAdiDRNvkT60cergkZJrvPIXdNVXevvXQMn/+6rdzKy+BvpND28U2PAloUp/LDcFa6kSjv40KCx5fVF4KJL18eEDmotehH3O1SWjz34SwByEk2NjlLN5GJjg
-X-Gm-Message-State: AOJu0Yw7n09vpSaRUu9AbL8hBywKIUFFfLwUm2ClM5s7xDeSjPYMEVoD
-	1SJJr2ZH+foqoK4a/Vyal34akt5YyEFrNXvNujKb4l+orjGC8B+q10eKfxsOC9Y6UMizYks/cSA
-	woaT8auh2Izo+qXj6F+HMd6B425A=
-X-Google-Smtp-Source: AGHT+IHEyhaKsUK+k+X1cL0Tk2qMW5U0nA+oNE9TF97gEWvQ5ZDWKnHGufLeOwv7OOeJRXFVuGKAObYwr/xULukjTkg=
-X-Received: by 2002:a17:90b:612:b0:2c1:aa8e:3ca6 with SMTP id
- 98e67ed59e1d1-2c1dc588b81mr8514194a91.23.1717390542031; Sun, 02 Jun 2024
- 21:55:42 -0700 (PDT)
+	s=arc-20240116; t=1717391584; c=relaxed/simple;
+	bh=I4tg3RbZKDscuJkrdFyXIhahM/BAQns9/jygbqowXeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dFPyXKZ6PC830RzyNAR16KUkDfxHHMoMyi4854YtYhX2pJEf72FwpKNWogGoa8yzd9UYFBwqT+Mxbv0J9aYSQdMBEEYNLJPtd+ZzUOBXWxXewaOy6l3g4HTbbklK2G1LctXtzxHbMu9qOuFZJXw2zNNl+wgsmy5cnR+t7Qxaung=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 253B21042;
+	Sun,  2 Jun 2024 22:13:25 -0700 (PDT)
+Received: from [10.162.40.16] (a077893.blr.arm.com [10.162.40.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C4EC3F762;
+	Sun,  2 Jun 2024 22:12:56 -0700 (PDT)
+Message-ID: <ad3e457a-cc3d-4422-9be8-656b4f925711@arm.com>
+Date: Mon, 3 Jun 2024 10:42:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528030054.4525-1-qiang.zhang1211@gmail.com>
- <1195a9a3-db87-465d-a3b0-ee92d67da954@paulmck-laptop> <CALm+0cVZ7GQC+v4Xe7nArh0DHKeax+ok_tYsKaB=JtG-BVgUag@mail.gmail.com>
-In-Reply-To: <CALm+0cVZ7GQC+v4Xe7nArh0DHKeax+ok_tYsKaB=JtG-BVgUag@mail.gmail.com>
-From: Z qiang <qiang.zhang1211@gmail.com>
-Date: Mon, 3 Jun 2024 12:55:30 +0800
-Message-ID: <CALm+0cUQuZDb6nrng+CnOXNGyy6gUWNGq9VoreU98KNkyTw_CQ@mail.gmail.com>
-Subject: Re: [PATCH] rcutorture: Skip debug object testing for cur_ops without
- ->debug_objects set
-To: paulmck@kernel.org
-Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
-	urezki@gmail.com, rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V17 1/9] arm64/sysreg: Add BRBE registers and fields
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ will@kernel.org, catalin.marinas@arm.com, Mark Brown <broonie@kernel.org>,
+ James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Suzuki Poulose <suzuki.poulose@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, linux-perf-users@vger.kernel.org
+References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
+ <20240405024639.1179064-2-anshuman.khandual@arm.com>
+ <Zkygkt2a9HBHfmeu@J2N7QTR9R3>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <Zkygkt2a9HBHfmeu@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->
-> >
-> > On Tue, May 28, 2024 at 11:00:54AM +0800, Zqiang wrote:
-> > > This commit make rcu_test_debug_objects() early return when the
-> > > specified cur_ops not set the ->debug_objects.
-> > >
-> > > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
-> > > ---
-> > >  kernel/rcu/rcutorture.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> > > index 08bf7c669dd3..9b8c277ab91a 100644
-> > > --- a/kernel/rcu/rcutorture.c
-> > > +++ b/kernel/rcu/rcutorture.c
-> > > @@ -3495,8 +3495,9 @@ static void rcu_test_debug_objects(void)
-> > >               return;
-> > >       }
-> > >
-> > > -     if (WARN_ON_ONCE(cur_ops->debug_objects &&
-> > > -                     (!cur_ops->call || !cur_ops->cb_barrier)))
-> > > +     if (!cur_ops->debug_objects ||
-> > > +                     WARN_ON_ONCE(cur_ops->debug_objects &&
-> >
-> > You lost me here.  Given that we have "!cur_ops->debug_objects" before
-> > that WARN_ON_ONCE(), why do we need "cur_ops->debug_objects" inside of it?
-> >
-> > Also, we don't get here unless the rcutorture.object_debug kernel boot
-> > parameter is specified, don't we really want to WARN_ON_ONCE if the
-> > current flavor does not support that?
 
-Maybe I didn't describe it clearly enough, this
-modification is mainly to filter out test types that do not support
-double call_rcu*() checking, for example tasks, tasks-rudes,
- task-tracing  ;) .
 
-Thanks
-Zqiang
+On 5/21/24 18:54, Mark Rutland wrote:
+> On Fri, Apr 05, 2024 at 08:16:31AM +0530, Anshuman Khandual wrote:
+>> This adds BRBE related register definitions and various other related field
+>> macros there in. These will be used subsequently in a BRBE driver, which is
+>> being added later on. While here, this drops redundant register definitions
+>> from the header i.e (arch/arm64/include/asm/sysreg.h).
+>>
+>> BRBINFx_EL1_TYPE_IMPDEF_TRAP_EL3 register field value has been derived from
+>> latest ARM DDI 0601 ID121123, AKA 2023-12 instead of latest ARM ARM i.e ARM
+>> DDI 0487J.a. Please find the definition here.
+>>
+>> https://developer.arm.com/documentation/ddi0601/2023-12/
+> 
+> The K.a release of the ARM ARM has now been published, and that includes
+> the "0b110000 IMPLEMENTATION DEFINED exception to EL3" value, so we can
+> point to that now.
 
->
-> Hi, Paul
->
-> The rcutorture.object_debug is set true, but the tasks-tracing does not support
-> duplicate cur_ops->call check, but the debug_objects test was still done.
->
-> insmod rcutorture.ko torture_type=tasks-tracing fwd_progress=4
-> n_barrier_cbs=4 object_debug=1
->
-> [  106.082416] rcutorture: WARN: Duplicate call_tasks-tracing() test starting.
-> [  106.082533] tasks-tracing-torture: rcu_torture_read_exit: Start of test
-> [  106.082543] tasks-tracing-torture: rcu_torture_read_exit: Start of episode
-> [  106.105552] rcutorture: duplicated callback was invoked.
-> [  106.105567] rcutorture: duplicated callback was invoked.
-> [  106.111269] rcutorture: WARN: Duplicate call_tasks-tracing() test complete.
->
-> Thanks
-> Zqiang
->
-> >
-> > Or do you have a use case that needs to silence these warnings?
-> >
-> >                                                         Thanx, Paul
-> >
-> > > +                             (!cur_ops->call || !cur_ops->cb_barrier)))
-> > >               return;
-> > >
-> > >       struct rcu_head *rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
-> > > --
-> > > 2.17.1
-> > >
+Sure.
+
+> 
+> With that in mind, for the commit message we can say:
+> 
+> | This patch adds definitions related to the Branch Record Buffer
+> | Extension (BRBE) as per ARM DDI 0487K.a. These will be used by KVM and
+> | a BRBE driver in subsequent patches.
+> |
+> | Some existing BRBE definitions in asm/sysreg.h are replaced with
+> | equivalent generated definitions.
+
+Replaced the commit message wordings as suggested.
+
+> 
+> Aside from a couple of minor issues below, this looks good to me. With
+> those fixed up (and the commit message above):
+> 
+> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+
+Thanks Mark.
+
+> 
+> [...]
+> 
+>> +Sysreg	BRBIDR0_EL1	2	1	9	2	0
+>> +Res0	63:16
+>> +Enum	15:12	CC
+>> +	0b101	20_BIT
+>> +EndEnum
+> 
+> Please pad this to the width of the field, i.e.
+> 
+> 	0b0101	20_bit
+
+Done.
+
+> 
+>> +Enum	11:8	FORMAT
+>> +	0b0	0
+>> +EndEnum
+> 
+> Likewise, this should be padded to the width of the field.
+
+Done.
+
+> 
+> As with the BRBFCR_EL1.BANK definitions, I reckon it's worth givin the
+> enum value a prefix, so please make this:
+> 
+> 	0b0000	FORMAT_0
+
+Sure, will change as suggested.
 
