@@ -1,105 +1,182 @@
-Return-Path: <linux-kernel+bounces-199648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FF98D8A3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:33:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4C28D8939
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C8C1C23B71
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C40B71F241E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C9913A252;
-	Mon,  3 Jun 2024 19:33:25 +0000 (UTC)
-Received: from xmailer.gwdg.de (xmailer.gwdg.de [134.76.10.29])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01FC13A3E3;
+	Mon,  3 Jun 2024 19:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Na5chPc0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F0D374EA;
-	Mon,  3 Jun 2024 19:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12C4259C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717443204; cv=none; b=DfvIrzAcod4y2olu4UFwl0RaMECxLo6zTL25CDWV5izg5WF+eOpO+k53yVR+AXt9zzCkcyjckblCVccjJVFhv6ReEOEkp377L/UZf75CsiCd8gyemQwkskHpYT7pJofGlkh0pX9Capd0OSNy1661kv8eLjqgS3QsQ8gwcO/ouOA=
+	t=1717441217; cv=none; b=I8c8ZQK+MTnO6vX4DszpAERNEY9Mz+XcTIjebKGXtcgwWWH7ie3jqaMSAtkRRhUfTLbVXIToiG1RDo2bj66Bh6EfzP8JLLzxJ9toI6OvVlEb4k2WvOnlsi9HeKmV4H9tRevaqU6Sp66v/BDNNzV6JIZb/zohwHwjn+AMH5aLrdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717443204; c=relaxed/simple;
-	bh=ZFG0RzAoaOkp+zsaLv13A2Z5uR/A9GDeP1h90WlRyV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQHsKGh3tfZeqUIazFYkR6t1hAod/SiHKqUT//T0zsdGldbGICF7VUj4l7yJQe1Q8z7gc017vHdn4MTtiZam5p8NPxKPXeYnzG7URRCK2pC5vDYKbYCvQP3l03f7AVV39nIgr1NYPoHspOZcqloqxHBviISZrv8LKbO/JG9DrPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuebingen.mpg.de; spf=pass smtp.mailfrom=tuebingen.mpg.de; arc=none smtp.client-ip=134.76.10.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuebingen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuebingen.mpg.de
-Received: from mailgw.tuebingen.mpg.de ([192.124.27.5] helo=tuebingen.mpg.de)
-	by mailer.gwdg.de with esmtp (GWDG Mailer)
-	(envelope-from <maan@tuebingen.mpg.de>)
-	id 1sECtE-0005IN-0g;
-	Mon, 03 Jun 2024 20:58:40 +0200
-Received: from [10.35.40.80] (HELO mailhost.tuebingen.mpg.de)
-  by tuebingen.mpg.de (CommuniGate Pro SMTP 6.2.6)
-  with SMTP id 55632179; Mon, 03 Jun 2024 20:58:39 +0200
-Received: by mailhost.tuebingen.mpg.de (sSMTP sendmail emulation); Mon, 03 Jun 2024 20:58:39 +0200
-Date: Mon, 3 Jun 2024 20:58:39 +0200
-From: Andre Noll <maan@tuebingen.mpg.de>
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jonathan Corbet <corbet@lwn.net>, Andre Noll <maan@systemlinux.org>,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH v2] docs: crypto: async-tx-api: fix broken code example
-Message-ID: <Zl4SX4mF0EFuJLnc@tuebingen.mpg.de>
-References: <20240529-async-dma-docs-v2-1-8faf87e72e6d@pengutronix.de>
+	s=arc-20240116; t=1717441217; c=relaxed/simple;
+	bh=AwMHxY3k75m7h3r41XCGVG8OXkNNH18sWo3dk32O0n8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eWn0mVTd6WbDJIRSOOptoN9I/OnuZZZOldUGoVbaIw+kb/PRqshu6Ntxiyg/Se/MQ7ENmKstLANxAqt9wIHtHjCNHPXhQ7pLrl3Pk/WMy5fdQB+YEDePwnw2Cec2+6fSeXC0fDJQXW2YLTR7TbcQBdL1ixH0GIGRskQ0jO7TrV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Na5chPc0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717441210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ChfCqFN0nqpXyobaCbZBOpsrLFEiiX0rTZd/s7etRxo=;
+	b=Na5chPc0EIA2wqMZm7QIfsdi2RhNl4E+zPZ/Xz5EuRODB4nr59+jD96MuCHL2uRd3hRYOe
+	/irjAAK3W+4IejA+SE7tcHzCZeTzhPPagx8deJlQ8GMTzk+V3WqeywsfN6Mv32d645eBVC
+	i4f2/lDiWt1D/U84KEymnmasN9StCbU=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-8md3RB_4ORq9sC23YHIvsA-1; Mon,
+ 03 Jun 2024 15:00:06 -0400
+X-MC-Unique: 8md3RB_4ORq9sC23YHIvsA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A5B663C025B5;
+	Mon,  3 Jun 2024 19:00:04 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.16.249])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 0A4EFC15C0C;
+	Mon,  3 Jun 2024 19:00:03 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Adrian Moreno <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org,  Pravin B Shelar <pshelar@ovn.org>,  "David S.
+ Miller" <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan
+ <shuah@kernel.org>,  dev@openvswitch.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org, Simon
+ Horman <horms@verge.net.au>
+Subject: Re: [PATCH net-next 1/2] selftests: openvswitch: fix action formatting
+In-Reply-To: <20240603183121.2305013-1-amorenoz@redhat.com> (Adrian Moreno's
+	message of "Mon, 3 Jun 2024 20:31:19 +0200")
+References: <20240603183121.2305013-1-amorenoz@redhat.com>
+Date: Mon, 03 Jun 2024 15:00:03 -0400
+Message-ID: <f7ta5k126oc.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240529-async-dma-docs-v2-1-8faf87e72e6d@pengutronix.de>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
-X-Spam-Level: $
-X-Virus-Scanned: (clean) by clamav
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Wed, May 29, 10:08, Ahmad Fatoum wrote
-> The code example fails to compile:
-> 
->   1) addr_conv is defined twice, once as a VLA, which have been phased out
-> 
->   2) submit is not a pointer, but is still dereferenced with ->
-> 
->   3) The first call to async_xor() lacked the trailing semicolon
-> 
-> Fix these issues and while at it, fix some code style nitpicks as well:
-> 
->   1) make the functions static as users are unlikely to export them
-> 
->   2) include the relevant header
-> 
->   3) Shorten the example a bit by removing a redundant variable
->      definition
-> 
-> Fixes: 04ce9ab385dc ("async_xor: permit callers to pass in a 'dma/page scribble' region")
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Adrian Moreno <amorenoz@redhat.com> writes:
+
+> In the action formatting function ("dpstr"), the iteration is made over
+> the nla_map, so if there are more than one attribute from the same type
+> we only print the first one.
+>
+> Fix this by iterating over the actual attributes.
+>
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 > ---
-> Changes in v2:
-> - commit message: fix addr_conv typo (Andre)
-> - commit message: note addition of missing semicolon (Andre)
-> - add header include (Andre)
-> - shorten code by removing redundant variable definition (Andre)
-> - Link to v1: https://lore.kernel.org/r/20240523-async-dma-docs-v1-1-b900e0804e11@pengutronix.de
+>  .../selftests/net/openvswitch/ovs-dpctl.py    | 48 +++++++++++--------
+>  1 file changed, 27 insertions(+), 21 deletions(-)
+>
+> diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> index 1dd057afd3fb..b76907ac0092 100644
+> --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> @@ -437,40 +437,46 @@ class ovsactions(nla):
+>      def dpstr(self, more=False):
+>          print_str = ""
+>  
+> -        for field in self.nla_map:
+> -            if field[1] == "none" or self.get_attr(field[0]) is None:
+> +        for attr_name, value in self["attrs"]:
+> +            attr_desc = next(filter(lambda x: x[0] == attr_name, self.nla_map),
+> +                             None)
+> +            if not attr_desc:
+> +                raise ValueError("Unknown attribute: %s" % attr)
+> +
+> +            attr_type = attr_desc[1]
+> +
+> +            if attr_type == "none":
 
-Looks good to me now. Feel free to add
+I agree, this is an issue.  BUT I think it might be better to just
+filter by field type up front.  See:
 
-	Reviewed-by: Andre Noll <maan@tuebingen.mpg.de>
+https://github.com/apconole/linux-next-work/commit/7262107de7170d44b6dbf6c5ea6f7e6c0bb71d36#diff-3e72e7405c6bb4e9842bed5f63883ca930387086bb40d4034e92ed83a5decb4bR441
 
-Best
-Andre
--- 
-Max Planck Institute for Biology
-Tel: (+49) 7071 601 829
-Max-Planck-Ring 5, 72076 Tübingen, Germany
-http://people.tuebingen.mpg.de/maan/
+That version I think ends up being much easier to follow.  If you want
+to take it for your series, feel free.  If you disagree, maybe there's
+something I'm not considering about it.
+
+NOTE that version is just a bunch of independent changes that are
+squashed together.  I have a cleaner version.
+
+I can also bundle up the series I have so far and submit, but I didn't
+want to do that until I got all the pmtu.sh support working.  Maybe it
+makes sense to send it now though.  Simon, Jakub - wdyt?
+
+>                  continue
+>              if print_str != "":
+>                  print_str += ","
+>  
+> -            if field[1] == "uint32":
+> -                if field[0] == "OVS_ACTION_ATTR_OUTPUT":
+> -                    print_str += "%d" % int(self.get_attr(field[0]))
+> -                elif field[0] == "OVS_ACTION_ATTR_RECIRC":
+> -                    print_str += "recirc(0x%x)" % int(self.get_attr(field[0]))
+> -                elif field[0] == "OVS_ACTION_ATTR_TRUNC":
+> -                    print_str += "trunc(%d)" % int(self.get_attr(field[0]))
+> -                elif field[0] == "OVS_ACTION_ATTR_DROP":
+> -                    print_str += "drop(%d)" % int(self.get_attr(field[0]))
+> -            elif field[1] == "flag":
+> -                if field[0] == "OVS_ACTION_ATTR_CT_CLEAR":
+> +            if attr_type == "uint32":
+> +                if attr_name == "OVS_ACTION_ATTR_OUTPUT":
+> +                    print_str += "%d" % int(value)
+> +                elif attr_name == "OVS_ACTION_ATTR_RECIRC":
+> +                    print_str += "recirc(0x%x)" % int(value)
+> +                elif attr_name == "OVS_ACTION_ATTR_TRUNC":
+> +                    print_str += "trunc(%d)" % int(value)
+> +                elif attr_name == "OVS_ACTION_ATTR_DROP":
+> +                    print_str += "drop(%d)" % int(value)
+> +            elif attr_type == "flag":
+> +                if attr_name == "OVS_ACTION_ATTR_CT_CLEAR":
+>                      print_str += "ct_clear"
+> -                elif field[0] == "OVS_ACTION_ATTR_POP_VLAN":
+> +                elif attr_name == "OVS_ACTION_ATTR_POP_VLAN":
+>                      print_str += "pop_vlan"
+> -                elif field[0] == "OVS_ACTION_ATTR_POP_ETH":
+> +                elif attr_name == "OVS_ACTION_ATTR_POP_ETH":
+>                      print_str += "pop_eth"
+> -                elif field[0] == "OVS_ACTION_ATTR_POP_NSH":
+> +                elif attr_name == "OVS_ACTION_ATTR_POP_NSH":
+>                      print_str += "pop_nsh"
+> -                elif field[0] == "OVS_ACTION_ATTR_POP_MPLS":
+> +                elif attr_name == "OVS_ACTION_ATTR_POP_MPLS":
+>                      print_str += "pop_mpls"
+>              else:
+> -                datum = self.get_attr(field[0])
+> -                if field[0] == "OVS_ACTION_ATTR_CLONE":
+> +                if attr_name == "OVS_ACTION_ATTR_CLONE":
+>                      print_str += "clone("
+> -                    print_str += datum.dpstr(more)
+> +                    print_str += value.dpstr(more)
+>                      print_str += ")"
+>                  else:
+> -                    print_str += datum.dpstr(more)
+> +                    print_str += value.dpstr(more)
+>  
+>          return print_str
+
 
