@@ -1,156 +1,189 @@
-Return-Path: <linux-kernel+bounces-199033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A66C8D80DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:18:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D5E8D80E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1A95B2696B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:18:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B531B22478
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9E784A30;
-	Mon,  3 Jun 2024 11:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4874084A2F;
+	Mon,  3 Jun 2024 11:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEMLzZI6"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e7VpV3zs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B5L/F2DY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ose4pF9G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TC39YB7Q"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE04D433AE;
-	Mon,  3 Jun 2024 11:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F9019E;
+	Mon,  3 Jun 2024 11:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717413483; cv=none; b=PkvJV0hYR6rXBLpASsCllNEw3wNCVsSba1PUZLHc/npRFnCaf2BtbYbBwZWL+SUXMoCMJrDl5K3CRWEDitgKvIm5aUJMT9KN1WxgBznZnL2RZIqjv7C8597eO5x/vV60fIfmoHre/3m8Q3m9dhCxcLHxHNc1vub3oRBS5D+yH4s=
+	t=1717413532; cv=none; b=QcFXCsELasud+V/EiplReys4U3aaKE6X7JDi8WLpscrWGv1MgyFHuhiZEm5iZuXLyLRPZe6KdANYs3qKgjPtAcs+U5H200PbzOAGysBoJSzhKs7cc2C0SV6w9PkRcmyMU5UpnxJ6ZKjU/6G9+OmsIU6gfVbI69aZvSX+oOuLrg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717413483; c=relaxed/simple;
-	bh=fNXSMsIfpEIa8xVCHoOcoT1rEHej/fTjnMleI/hRA2o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IvlgPEhD1xGmeuOe7k7qd+Xm4zwYxZuKkvZEIE9blmnHz8XFGcT/DKdGczx7GoXTouluadsXltAL+37d9pydbxt2Th+fe+R/h0jeM/z4LT6Mi3wp0kVPI/XMk+VW/6yLQE0JWRq6qe0C0FlN+Vg9B+e9wWCOkzHHfdgkKJfiA+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iEMLzZI6; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a68b0a229so480258a12.3;
-        Mon, 03 Jun 2024 04:18:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717413480; x=1718018280; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tl3ulKo5GJTw7HBOMHVnR1dxMRxq4LpVBTOeiObvY4Q=;
-        b=iEMLzZI6L0psMOZFXxkDtgFer225An3XKA5K0llVIC3UKC1xS9sJVhW79I+3wTjAEQ
-         vsBHKd2eIL+L4hL098uBSejQFeRj7Dq9uiL2TUHuUuQgp23tYFCpIfwBubqurnh13pAF
-         dTDl5tCRr1Uhwwsoyd49ICbB1A9nO9z/+2Y+HX1PMSmTIyFO0TZ/hJ+/S2xPiZK0Ap5L
-         eE906ZqFW5DUU6YvqrkFN0l+NW4Qaxd+Ho3I9O9zM1ayGF7Cr2ZqijOpDLmXxG/gFQNi
-         jG1+yg6CyNsyMevvJ+QjGaNpevyk88rpa4o5zuZaqiN4oPeAAmnmz6ZWDwDSnPJXhvT/
-         W0sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717413480; x=1718018280;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tl3ulKo5GJTw7HBOMHVnR1dxMRxq4LpVBTOeiObvY4Q=;
-        b=amGcQltsGvM4Crb2dHJGrOgBeL/JsSsDGulGlZ3GZD32zk0Dix+N+pDcfQ/1ewMMRS
-         9UhvEp2hC7fm/tZlhMIKinYbLJBJ8TZRrRj8MpJNlcp3qmvlhTi8QQodV+Jf1m5pFa4j
-         xQinpoVu3Jd+TbyZg3rnB+UP5/N4X7IFeeHqJavMHkKrNNWJzXyLkhiE80DMZpQkYgN6
-         i+Re8LowP2eFuIDeZ1qkk07+c9pi6pI+Uv1+1x5/kjEpa9W4PvpedNGgy5upR8ud+hmg
-         oH0dtWYc7FOu9uz+Z0jZzrLAOQb00vMokIKRt7ajV1yCmhQtI3MW22tc/wTX3EkRl+Ti
-         8e2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW6aUy3XN73lsZ4K2Pl0TS55C1FETRuoNd+KHgKQ0WHJbI/UnpnWeqWo5N/N2vWiZEETI5usOJCNx6RzgIyc8SYh7Hi4yVOTB72yUpK0r9NBsKBsnsKM8a7dh2zh5X5xU22FC5uw3X5Zkm3LePl
-X-Gm-Message-State: AOJu0YyGN7NXhQjwyCxQFWadscFsVxUx2esJS0DzepxKFS+uMwtyYFu1
-	K6Ya74IDkupbKjUUX41ToVbuAJTkUNHV4TeIgXKQVev8ge7YUlEDol6boc9iRgA=
-X-Google-Smtp-Source: AGHT+IH7ThME1P861evYzO3bn2mTV8SABwp5+HfMTEHS3eGeHuOpJXkBBO7KLO0pwIaFoGiwWdKZqw==
-X-Received: by 2002:a50:935c:0:b0:57a:4af6:3197 with SMTP id 4fb4d7f45d1cf-57a4af63298mr3451951a12.10.1717413479962;
-        Mon, 03 Jun 2024 04:17:59 -0700 (PDT)
-Received: from [10.67.234.135] ([91.90.123.30])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b99c42sm5074007a12.17.2024.06.03.04.17.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 04:17:59 -0700 (PDT)
-Message-ID: <5dfdfa17-d3b3-408e-a8a6-b8dc0756eac3@gmail.com>
-Date: Mon, 3 Jun 2024 13:17:58 +0200
+	s=arc-20240116; t=1717413532; c=relaxed/simple;
+	bh=Z/kN2v+vYtxWp9RIZ2oSiu3+w1DhZNB4wkdQ143Vr0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sle9sQB2G575W4+HU6K/1P10iaadosDMwXzGyI/JWB1VIpld2tBx90rMtBmyhtG9VVgsrYoz8qL9oj3gvpxZGVxZQ4A589eTF88snaQfvPYhX68Am1tUfTOMpY1ko9o/7lK0AZhKgLkXhzlkgrMBlLlTfcbcJeE1rLbla2tYeAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e7VpV3zs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B5L/F2DY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ose4pF9G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TC39YB7Q; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E6EE520032;
+	Mon,  3 Jun 2024 11:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717413529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7x+DjdWOAhVr3HrnwN5lbbMnHsmhdZvdjrufKWRKMxY=;
+	b=e7VpV3zs2jh+wmbrUdLnR26tJzGo2RKy3ZFsqf0mnVPCJlUvIucThKrDFs1rU1jWtTP+yu
+	iNgowpia0gANIlcEpA3QgQbV6TPlyHvj1qHrrT3hDzuuLDLQyl2salwDdrGrKksBDQHymK
+	R9h4Q5T81O/V0w5/FmhEjf9RQiLL5NQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717413529;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7x+DjdWOAhVr3HrnwN5lbbMnHsmhdZvdjrufKWRKMxY=;
+	b=B5L/F2DYaT9ZV5fIfhTflOgVFOXiQEUcfY/X5RwOZs01JsHCrAQjxFJcPNP9qoD4RUAWiq
+	QxGVRDPT420hOzCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Ose4pF9G;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TC39YB7Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717413528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7x+DjdWOAhVr3HrnwN5lbbMnHsmhdZvdjrufKWRKMxY=;
+	b=Ose4pF9G29NVZPwO90i+1qNfs6QpxTCF5o7IkLhxYu4x41Y66IQXPJV4ycQANu5JXeETeY
+	6afuL1MP1e7r7x8ZQUiGNc9uxR8ZiSAOQ6b3uy1OnXoPXQulIdN6JXnJJEshz2vPyed/Xn
+	vGS4qCT2FodIFzV2k2PZYvfAnqsKTkk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717413528;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7x+DjdWOAhVr3HrnwN5lbbMnHsmhdZvdjrufKWRKMxY=;
+	b=TC39YB7QGP3fbWt9znHOLLLqnPvKa+zz9NdPDlwUVWewicmzUccizkYdlY8VQNJtoOTvr7
+	ksULYXT31/JvqABA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D90E713A93;
+	Mon,  3 Jun 2024 11:18:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7oKvNJimXWZyJQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 11:18:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 816E8A087F; Mon,  3 Jun 2024 13:18:44 +0200 (CEST)
+Date: Mon, 3 Jun 2024 13:18:44 +0200
+From: Jan Kara <jack@suse.cz>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH] fs/direct-io: Remove linux/prefetch.h include
+Message-ID: <20240603111844.l4g2yk5q6z23cz3n@quack3>
+References: <20240603014834.45294-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: filesystems: fix warn_unused_result build
- warnings
-From: Amer Al Shanawany <amer.shanawany@gmail.com>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Miklos Szeredi <mszeredi@redhat.com>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-References: <20240417184913.74734-1-amer.shanawany@gmail.com>
- <58e0539d-423e-42e0-9ee4-8fc8e1eed94f@collabora.com>
- <0910d537-c2e8-4932-8b0e-b5ce381e1ee1@gmail.com>
-Content-Language: en-US
-In-Reply-To: <0910d537-c2e8-4932-8b0e-b5ce381e1ee1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603014834.45294-1-youling.tang@linux.dev>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.99 / 50.00];
+	BAYES_HAM(-2.98)[99.92%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: E6EE520032
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -3.99
 
-On 5/4/24 19:17, Amer Al Shanawany wrote:
-> On 4/19/24 18:41, Muhammad Usama Anjum wrote:
->> On 4/17/24 11:49 PM, Amer Al Shanawany wrote:
->>> Fix the following warnings by adding return check and error messages.
->>>
->>> statmount_test.c: In function ‘cleanup_namespace’:
->>> statmount_test.c:128:9: warning: ignoring return value of ‘fchdir’
->>> declared with attribute ‘warn_unused_result’ [-Wunused-result]
->>>   128 |         fchdir(orig_root);
->>>       |         ^~~~~~~~~~~~~~~~~
->>> statmount_test.c:129:9: warning: ignoring return value of ‘chroot’
->>> declared with attribute ‘warn_unused_result’ [-Wunused-result]
->>>   129 |         chroot(".");
->>>       |         ^~~~~~~~~~~
->>>
->>> Signed-off-by: Amer Al Shanawany <amer.shanawany@gmail.com>
->> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>
->>> ---
->>>  .../selftests/filesystems/statmount/statmount_test.c | 12 ++++++++++--
->>>  1 file changed, 10 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/filesystems/statmount/statmount_test.c b/tools/testing/selftests/filesystems/statmount/statmount_test.c
->>> index e6d7c4f1c85b..e8c019d72cbf 100644
->>> --- a/tools/testing/selftests/filesystems/statmount/statmount_test.c
->>> +++ b/tools/testing/selftests/filesystems/statmount/statmount_test.c
->>> @@ -125,8 +125,16 @@ static uint32_t old_root_id, old_parent_id;
->>>  
->>>  static void cleanup_namespace(void)
->>>  {
->>> -	fchdir(orig_root);
->>> -	chroot(".");
->>> +	int ret;
->>> +
->>> +	ret = fchdir(orig_root);
->>> +	if (ret == -1)
->>> +		ksft_perror("fchdir to original root");
->>> +
->>> +	ret = chroot(".");
->>> +	if (ret == -1)
->>> +		ksft_perror("chroot to original root");
->>> +
->>>  	umount2(root_mntpoint, MNT_DETACH);
->>>  	rmdir(root_mntpoint);
->>>  }
-> Hi,
->
-> Can you please consider this patch?
->
-> Thank  you
->
-> Amer
->
->
->
-Hello,
+On Mon 03-06-24 09:48:34, Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
+> 
+> After commit c22198e78d52 ("direct-io: remove random prefetches"), Nothing
+> in this file needs anything from `linux/prefetch.h`.
+> 
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 
-Could you please consider this simple patch for fixing build warnings for kselftest ?
+Looks good. Feel free to add:
 
-Thank you
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Amer
+								Honza
+
+> ---
+>  fs/direct-io.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> index b0aafe640fa4..bbd05f1a2145 100644
+> --- a/fs/direct-io.c
+> +++ b/fs/direct-io.c
+> @@ -37,7 +37,6 @@
+>  #include <linux/rwsem.h>
+>  #include <linux/uio.h>
+>  #include <linux/atomic.h>
+> -#include <linux/prefetch.h>
+>  
+>  #include "internal.h"
+>  
+> @@ -1121,11 +1120,6 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+>  	struct blk_plug plug;
+>  	unsigned long align = offset | iov_iter_alignment(iter);
+>  
+> -	/*
+> -	 * Avoid references to bdev if not absolutely needed to give
+> -	 * the early prefetch in the caller enough time.
+> -	 */
+> -
+>  	/* watch out for a 0 len io from a tricksy fs */
+>  	if (iov_iter_rw(iter) == READ && !count)
+>  		return 0;
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
