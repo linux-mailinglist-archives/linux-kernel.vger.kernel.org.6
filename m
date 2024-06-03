@@ -1,166 +1,241 @@
-Return-Path: <linux-kernel+bounces-198916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40EF8D7F0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:42:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968BC8D7F10
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F5C1C20DD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C71028338A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3CA84A32;
-	Mon,  3 Jun 2024 09:35:24 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E453B84A2F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F9484A4F;
+	Mon,  3 Jun 2024 09:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="e19Jkq5X"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2121E84A34
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717407324; cv=none; b=N8JXjRyOgPLpAne7o9AoAsctRwv9Spt1Wg0UB+2zkx18r04OT9IXk7yKRuyBb3Ms+qQEXNI+QKH83J+vV4cyG8DulNg7VoDY2ouanjva1U9+J2mv4bOmxUBAYHglVzn4NHbojy6Z+E2rNfDoWH0gmt4dtOrI+GM1OVEcHOtbd98=
+	t=1717407442; cv=none; b=Vj5MdxIfU9ArIV1cptIet6qpHvPwfXF3jow3xSaeHr6cjj4BMZctQ78++EsXKZkaw+glagQoS1QUi5HofU6tMtqI1mtQ6b5JZgZEeJO44FGbEZ8hydhHjyG8r1s0BWUXQWOPNqmf1ARk5SgYWva2pOo8qoPvp+f5xhrhP5+wX54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717407324; c=relaxed/simple;
-	bh=BrWArai6JPydr1Fs/+Dkieqx/1gPi2kBDlb48gbbQpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gb5rBVigM7IkRJrvG6QK+blMT+O57BGfouwnuHXU84CwNhzZT9QGw4cwdkYUYW1Ln//gqbfysbaFU4f+XzfqaKFJpcoo/wClRAzp+AGTLHqFDcfMbhhvB8T2ZIEz+wXtBnljzrt6tHx9qBcriJpwHE43yBCrnsUi20lA/BHfRQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-a8-665d8e4e60ff
-Date: Mon, 3 Jun 2024 18:35:05 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Byungchul Park <lkml.byungchul.park@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	ying.huang@intel.com, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	peterz@infradead.org, luto@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	rjgolo@gmail.com
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-Message-ID: <20240603093505.GA12549@system.software.com>
-References: <20240531092001.30428-1-byungchul@sk.com>
- <20240531092001.30428-10-byungchul@sk.com>
- <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
- <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
- <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
- <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
+	s=arc-20240116; t=1717407442; c=relaxed/simple;
+	bh=NWTlpW6QobjmH+BM1dNPUWYU9mQVctb06bdqorK/vA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VtRGiepjEqwCvTVnIbUrdVoC2kL0SVdYg0PJf+EJzZUhtc54tpmZ645SmnNXcKyiQu9gaQiuxfD2n88Rz5T/G+0BrH24jHHy/kEmt7s1XTVxc3Em3oPivAFzalKNS58mTrw7fkVJ1uvn86uol4nv5VD8Kph6bg8LkgwcXHR7bsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=e19Jkq5X; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717407437; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Iva+9WQvYLiNTKeFAevO7LbMxV0uR7UoFIatWKMudCU=;
+	b=e19Jkq5XQBIeQ19y8jzhAkAQhkMBOHxQCQVgkiP6UZl0zf4msfdLUwJh/ciP75LswRx0OkmCASNGhIbQshH8von43epRdjlpJLJIpHF0QYCjbARawATPf2q13sTyeqXoo2DbX2l1gTrdE0weXNpxHxTNT92c4ta4eZKwPsbzvqc=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W7lUb2m_1717407434;
+Received: from 30.97.56.74(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7lUb2m_1717407434)
+          by smtp.aliyun-inc.com;
+          Mon, 03 Jun 2024 17:37:15 +0800
+Message-ID: <90fa2110-a74b-4445-b93d-63110a4a9f8a@linux.alibaba.com>
+Date: Mon, 3 Jun 2024 17:37:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsXC9ZZnoa5fX2yaweTJyhZz1q9hs/i84R+b
-	xaeXDxgtXmxoZ7T4uv4Xs8XTT30sFpd3zWGzuLfmP6vF0c5NzBbnd61ltdixdB+TxaUDC5gs
-	jvceYLKYf+8zm8XmTVOZLY5Pmcpo8fsHUMfJWZNZHIQ8vrf2sXjsnHWX3WPBplKPzSu0PBbv
-	ecnksWlVJ5vHpk+T2D3enTvH7nFixm8Wj3knAz3e77vK5rH1l51H49RrbB6fN8kF8EVx2aSk
-	5mSWpRbp2yVwZcy9+pStYKNkxeNZwQ2MN4S7GDk5JARMJB513maEsY/MncIKYrMIqEgs+PSd
-	HcRmE1CXuHHjJzOILSKgIbGpbQOYzSxwjFni/35VEFtYoEDi1YRJYPW8AhYSv1dvAZsjJHCY
-	SeLV9QiIuKDEyZlPWCB6tSRu/HvJ1MXIAWRLSyz/xwES5hSwk2g6dRbsHFEBZYkD244DlXAB
-	nbaNXWJt5yImiDslJQ6uuMEygVFgFpKxs5CMnYUwdgEj8ypGocy8stzEzBwTvYzKvMwKveT8
-	3E2MwMhcVvsnegfjpwvBhxgFOBiVeHgv5MSkCbEmlhVX5h5ilOBgVhLh7auLThPiTUmsrEot
-	yo8vKs1JLT7EKM3BoiTOa/StPEVIID2xJDU7NbUgtQgmy8TBKdXAmDdbXKq4s7PwlPuEeg8/
-	Z615WztzsmdH6ytoTamfNdHS7XLN5Mqajw7vfjl1CpnveO4Qz7g9aWPEihWlB9p7T/feWFi5
-	+9acVTnRCzjWvH3E8SLcatVMD7aFAgVLv711VOC6yXm0yZyp8b2U3P7P8wJFm8+3uDhNaxPq
-	CdU/ejH6Y+KUc8W6SizFGYmGWsxFxYkAyYmT/sgCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsXC5WfdrOvXF5tm0LJQzGLO+jVsFp83/GOz
-	+PTyAaPFiw3tjBZf1/9itnj6qY/F4vDck6wWl3fNYbO4t+Y/q8XRzk3MFud3rWW12LF0H5PF
-	pQMLmCyO9x5gsph/7zObxeZNU5ktjk+Zymjx+wdQx8lZk1kchD2+t/axeOycdZfdY8GmUo/N
-	K7Q8Fu95yeSxaVUnm8emT5PYPd6dO8fucWLGbxaPeScDPd7vu8rmsfjFByaPrb/sPBqnXmPz
-	+LxJLoA/issmJTUnsyy1SN8ugStj7tWnbAUbJSsezwpuYLwh3MXIySEhYCJxZO4UVhCbRUBF
-	YsGn7+wgNpuAusSNGz+ZQWwRAQ2JTW0bwGxmgWPMEv/3q4LYwgIFEq8mTAKr5xWwkPi9egvY
-	HCGBw0wSr65HQMQFJU7OfMIC0aslcePfS6YuRg4gW1pi+T8OkDCngJ1E06mzjCC2qICyxIFt
-	x5kmMPLOQtI9C0n3LITuBYzMqxhFMvPKchMzc0z1irMzKvMyK/SS83M3MQLjbFntn4k7GL9c
-	dj/EKMDBqMTD+yIpNk2INbGsuDL3EKMEB7OSCG9fXXSaEG9KYmVValF+fFFpTmrxIUZpDhYl
-	cV6v8NQEIYH0xJLU7NTUgtQimCwTB6dUA+Oytzv4Psem5O2clRTjzuxfxukRUvatkfOV7/zI
-	JdHnzZkcs1x4wyznZE05xnTg0f8579N6XmbE/bWbM3+L8FvJl0f1jW7oX7CwO2LfE5d++sLD
-	5eKM85YHttccKssL+KXGfVNsx7wlvEffZmgsnX/hq555/Sfzh2Xdx9cw8OeLcfncbq/+pK3E
-	UpyRaKjFXFScCABmvynUrwIAAA==
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] mm: memory: extend finish_fault() to support large
+ folio
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
+ david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
+ ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
+ ioworker0@gmail.com, da.gomez@samsung.com, p.raghav@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
+ <bf80d4a792ea82ab066f819ad7d10ed22a2f8e66.1717033868.git.baolin.wang@linux.alibaba.com>
+ <CAGsJ_4z60mrjuQ5qKCKn0+knk_M1dy=NsH4nVLqe5Khue_5gFw@mail.gmail.com>
+ <e05df24a-6254-430e-88ca-6db23e5c6bab@linux.alibaba.com>
+ <CAGsJ_4zsR=xA4sCSyMc0OafaRdp7ibRGpdc00mDFEqT6pSQbKA@mail.gmail.com>
+ <CAGsJ_4yKaag+ryGvS=JMoYBXaKRTUoMacNXxgUCGe4YjucdqbQ@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAGsJ_4yKaag+ryGvS=JMoYBXaKRTUoMacNXxgUCGe4YjucdqbQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 01, 2024 at 09:22:17AM +0200, David Hildenbrand wrote:
-> On 31.05.24 23:46, Dave Hansen wrote:
-> > On 5/31/24 11:04, Byungchul Park wrote:
-> > ...
-> > > I don't believe you do not agree with the concept itself.  Thing is
-> > > the current version is not good enough.  I will do my best by doing
-> > > what I can do.
-> > 
-> > More performance is good.  I agree with that.
-> > 
-> > But it has to be weighed against the risk and the complexity.  The more
-> > I look at this approach, the more I think this is not a good trade off.
-> > There's a lot of risk and a lot of complexity and we haven't seen the
-> > full complexity picture.  The gaps are being fixed by adding complexity
-> > in new subsystems (the VFS in this case).
-> > 
-> > There are going to be winners and losers, and this version for example
-> > makes file writes lose performance.
-> > 
-> > Just to be crystal clear: I disagree with the concept of leaving stale
-> > TLB entries in place in an attempt to gain performance.
+
+
+On 2024/6/3 17:01, Barry Song wrote:
+> On Mon, Jun 3, 2024 at 8:58 PM Barry Song <21cnbao@gmail.com> wrote:
+>>
+>> On Mon, Jun 3, 2024 at 8:29 PM Baolin Wang
+>> <baolin.wang@linux.alibaba.com> wrote:
+>>>
+>>>
+>>>
+>>> On 2024/6/3 13:28, Barry Song wrote:
+>>>> On Thu, May 30, 2024 at 2:04 PM Baolin Wang
+>>>> <baolin.wang@linux.alibaba.com> wrote:
+>>>>>
+>>>>> Add large folio mapping establishment support for finish_fault() as a preparation,
+>>>>> to support multi-size THP allocation of anonymous shmem pages in the following
+>>>>> patches.
+>>>>>
+>>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>>> ---
+>>>>>    mm/memory.c | 58 ++++++++++++++++++++++++++++++++++++++++++++---------
+>>>>>    1 file changed, 48 insertions(+), 10 deletions(-)
+>>>>>
+>>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>>> index eef4e482c0c2..435187ff7ea4 100644
+>>>>> --- a/mm/memory.c
+>>>>> +++ b/mm/memory.c
+>>>>> @@ -4831,9 +4831,12 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>>>>>    {
+>>>>>           struct vm_area_struct *vma = vmf->vma;
+>>>>>           struct page *page;
+>>>>> +       struct folio *folio;
+>>>>>           vm_fault_t ret;
+>>>>>           bool is_cow = (vmf->flags & FAULT_FLAG_WRITE) &&
+>>>>>                         !(vma->vm_flags & VM_SHARED);
+>>>>> +       int type, nr_pages, i;
+>>>>> +       unsigned long addr = vmf->address;
+>>>>>
+>>>>>           /* Did we COW the page? */
+>>>>>           if (is_cow)
+>>>>> @@ -4864,24 +4867,59 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>>>>>                           return VM_FAULT_OOM;
+>>>>>           }
+>>>>>
+>>>>> +       folio = page_folio(page);
+>>>>> +       nr_pages = folio_nr_pages(folio);
+>>>>> +
+>>>>> +       /*
+>>>>> +        * Using per-page fault to maintain the uffd semantics, and same
+>>>>> +        * approach also applies to non-anonymous-shmem faults to avoid
+>>>>> +        * inflating the RSS of the process.
+>>>>
+>>>> I don't feel the comment explains the root cause.
+>>>> For non-shmem, anyway we have allocated the memory? Avoiding inflating
+>>>> RSS seems not so useful as we have occupied the memory. the memory footprint
+>>>
+>>> This is also to keep the same behavior as before for non-anon-shmem, and
+>>> will be discussed in the future.
+>>
+>> OK.
+>>
+>>>
+>>>> is what we really care about. so we want to rely on read-ahead hints of subpage
+>>>> to determine read-ahead size? that is why we don't map nr_pages for non-shmem
+>>>> files though we can potentially reduce nr_pages - 1 page faults?
+>>>
+>>> IMHO, there is 2 cases for non-anon-shmem:
+>>> (1) read mmap() faults: we can rely on the 'fault_around_bytes'
+>>> interface to determin what size of mapping to build.
+>>> (2) writable mmap() faults: I want to keep the same behavior as before
+>>> (per-page fault), but we can talk about this when I send new patches to
+>>> use mTHP to control large folio allocation for writable mmap().
+>>
+>> OK.
+>>
+>>>
+>>>>> +        */
+>>>>> +       if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma))) {
+>>>>> +               nr_pages = 1;
+>>>>> +       } else if (nr_pages > 1) {
+>>>>> +               pgoff_t idx = folio_page_idx(folio, page);
+>>>>> +               /* The page offset of vmf->address within the VMA. */
+>>>>> +               pgoff_t vma_off = vmf->pgoff - vmf->vma->vm_pgoff;
+>>>>> +
+>>>>> +               /*
+>>>>> +                * Fallback to per-page fault in case the folio size in page
+>>>>> +                * cache beyond the VMA limits.
+>>>>> +                */
+>>>>> +               if (unlikely(vma_off < idx ||
+>>>>> +                            vma_off + (nr_pages - idx) > vma_pages(vma))) {
+>>>>> +                       nr_pages = 1;
+>>>>> +               } else {
+>>>>> +                       /* Now we can set mappings for the whole large folio. */
+>>>>> +                       addr = vmf->address - idx * PAGE_SIZE;
+>>>>> +                       page = &folio->page;
+>>>>> +               }
+>>>>> +       }
+>>>>> +
+>>>>>           vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+>>>>> -                                     vmf->address, &vmf->ptl);
+>>>>> +                                      addr, &vmf->ptl);
+>>>>>           if (!vmf->pte)
+>>>>>                   return VM_FAULT_NOPAGE;
+>>>>>
+>>>>>           /* Re-check under ptl */
+>>>>> -       if (likely(!vmf_pte_changed(vmf))) {
+>>>>> -               struct folio *folio = page_folio(page);
+>>>>> -               int type = is_cow ? MM_ANONPAGES : mm_counter_file(folio);
+>>>>> -
+>>>>> -               set_pte_range(vmf, folio, page, 1, vmf->address);
+>>>>> -               add_mm_counter(vma->vm_mm, type, 1);
+>>>>> -               ret = 0;
+>>>>> -       } else {
+>>>>> -               update_mmu_tlb(vma, vmf->address, vmf->pte);
+>>>>> +       if (nr_pages == 1 && unlikely(vmf_pte_changed(vmf))) {
+>>>>> +               update_mmu_tlb(vma, addr, vmf->pte);
+>>>>>                   ret = VM_FAULT_NOPAGE;
+>>>>> +               goto unlock;
+>>>>> +       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
+>>>>
+>>>> In what case we can't use !pte_range_none(vmf->pte, 1) for nr_pages == 1
+>>>> then unify the code for nr_pages==1 and nr_pages > 1?
+>>>>
+>>>> It seems this has been discussed before, but I forget the reason.
+>>>
+>>> IIUC, this is for uffd case, which is not a none pte entry.
+>>
+>> Is it possible to have a COW case for shmem? For example, if someone
+>> maps a shmem
+>> file as read-only and then writes to it, would that prevent the use of
+>> pte_range_none?
 > 
-> There is the inherent problem that a CPU reading from such (unmapped but not
-> flushed yet) memory will not get a page fault, which I think is the most
-> controversial part here (besides interaction with other deferred TLB
-> flushing, and how this glues into the buddy).
-> 
-> What we used to do so far was limiting the timeframe where that could
-> happen, under well-controlled circumstances. On the common unmap/zap path,
-> we perform the batched TLB flush before any page faults / VMA changes would
-> have be possible and munmap() would have returned with "succeess". Now that
-> time frame could be significantly longer.
-> 
-> So in current code, at the point in time where we would process a page
-> fault, mmap()/munmap()/... the TLB would have been flushed already.
-> 
-> To "mimic" the old behavior, we'd essentially have to force any page
-> faults/mmap/whatsoever to perform the deferred flush such that the CPU will
-> see the "reality" again. Not sure how that could be done in a *consistent*
+> sorry, i mean PRIVATE but not READ-ONLY.
 
-In luf's point of view, the points where the deferred flush should be
-performed are simply:
+Yes, I think so. Now CoW case still use per-page fault in do_cow_fault().
 
-	1. when changing the vma maps, that might be luf'ed.
-	2. when updating data of the pages, that might be luf'ed.
+>> Furthermore, if we encounter a large folio in shmem while reading,
+>> does it necessarily
+>> mean we can map the entire folio? Is it possible for some processes to
 
-All we need to do is to indentify the points:
+Now this will depend on the 'fault_around_bytes' interface.
 
-	1. when changing the vma maps, that might be luf'ed.
+>> only map part
+>> of large folios? For instance, if process A allocates large folios and
+>> process B maps
+>> only part of this shmem file or partially unmaps a large folio, how
+>> would that be handled?
 
-	   a) mmap and munmap e.i. fault handler or unmap_region().
-	   b) permission to writable e.i. mprotect or fault handler.
-	   c) what I'm missing.
+This is certainly possible.
 
-	2. when updating data of the pages, that might be luf'ed.
+For tmpfs:
+(1) If 'fault_around_bytes' is enabled, filemap_map_pages() will handle 
+partially mapping of the large folio for process B.
 
-	   a) updating files through vfs e.g. file_end_write().
-	   b) updating files through writable maps e.i. 1-a) or 1-b).
-	   c) what I'm missing.
+(2) If 'fault_around_bytes' is set to 0, finish_fault() will fallback to 
+per-page fault.
 
-Some of them are already performing necessary tlb flush and the others
-are not.  luf has to handle the others, that I've been focusing on.  Of
-course, there might be what I'm missing tho.
+For Anonomous shmem, process B should be the child of process A in your 
+case, then:
+(1) If 'fault_around_bytes' is enabled, behavior is same with tmpfs.
 
-Worth noting again, luf is working only on *migration* and *reclaim*
-currently.  Thing is when to stop the pending initiated from migration
-or reclaim by luf.
+(2) If 'fault_around_bytes' is set to 0, finish_fault() will build the 
+whole large folio mapping for process B. Since process B will copy the 
+same shared VMA from parent process A, which means a mTHP mapping to share.
 
-	Byungchul
+>> Apologies for not debugging this thoroughly, but these two corner
+>> cases seem worth
+>> considering. If these scenarios have already been addressed, please disregard my
+>> comments.
 
-> way (check whenever we take the mmap/vma lock etc ...) and if there would
-> still be a performance win.
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
+No worries:) Thanks for your valuable input.
 
