@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-198989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59DD78D803C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:46:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077DC8D802F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130D91F25F9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C47283EA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53170839FE;
-	Mon,  3 Jun 2024 10:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39911839F1;
+	Mon,  3 Jun 2024 10:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pu+BK2j9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MoijTguv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRA/rBya"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1C782487;
-	Mon,  3 Jun 2024 10:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E74882D64;
+	Mon,  3 Jun 2024 10:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717410989; cv=none; b=ocqJowsogMiU70suN3gSaEYTW4EcsKxNKNu75IEJmvCssF74fyTfqwS/M0A1IdzFZhAow+8lUW2bvztuOHO+fORhYLv2u/8+RnbYdHAQej8wi5wl0k50gEaJge9xZyYqpPEdpUO2ZgJ0ytuYXq/arPMyJN3UFUGWMuo85cQXwg8=
+	t=1717411089; cv=none; b=ab/Ig9Odz7k3hZBR96rLZxJDPy9eIYQtpuG0pGIxnHHTlY9GonO/VuBEMgMgVrQ1ruPG/1WZE/ILOoG4I/XZ9ofNoZfQJayfoYXTeQ9mPNLhlPG8mpCPAzEvgsJvNoyLQHqeXptN7fBbUaDATc8Ecc2fIdfLCZvRHSWAqHN/XG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717410989; c=relaxed/simple;
-	bh=7Bk8a5XKoqld68DuYkGTzx/fVfXv5gS4p9UqRcye2pc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=kMuwCsvlz8AKgORaIq6mGBM4YkF/eswhjqPXC5njyxStRWYJptP4HiPUQgrgAW72QqZO0yc3AfrbqVvR1SoWItntYz1VtA9Kr+Kj8UWuNNzD9u4Vu9NYrZDoaddxOewxw5sAsk/M17adBBAzK+7EWXeDhktHd0PvYtlVbe3Nsbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pu+BK2j9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MoijTguv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Jun 2024 10:36:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717410986;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jjtlOTPaOIgUVbAWMc4atfx/AHmzxrJPiglFci9YRlg=;
-	b=Pu+BK2j97JI06LClrainV9UU3mgnc5NJUWnZTyh4dYOi/Ye8exKjK9GeLFkfxZ4+EwkAe7
-	w33+sBnjyNhy8mNVNDzf0qx3oRbjDhIzMbzfkD+bH0EwERIm9IIhaxe6hmKonJ4RxGBCty
-	2/isL1YbdRYD6HzPHsgSCxJLOQwxT9efzykowZJdnGq7WN9lmDPArG4lj8Goc/XVfYZHoX
-	INv+jIzYlBRGCHDEci318CdXH66VzhgsIxqXBN1bFu7zk+hPlRnD3a6yoFTZpJYKvjwn71
-	3RT54wRm08JHV2tMTDvJGlLyWclX8s9fa3RgkOjh9nMCON2TE8gEZgpvXScewg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717410986;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jjtlOTPaOIgUVbAWMc4atfx/AHmzxrJPiglFci9YRlg=;
-	b=MoijTguveVGfqVYLkT7vu2XDn8FfhghN9Uui0d7oxxJlViSboxPI2Jng9nGVMVj6O3zpaT
-	zL0AgnoDv9v+VeAw==
-From: "tip-bot2 for Sunil V L" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/riscv-intc: Prevent memory leak when
- riscv_intc_init_common() fails
-Cc: Sunil V L <sunilvl@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>,
- Anup Patel <anup@brainfault.org>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240527081113.616189-1-sunilvl@ventanamicro.com>
-References: <20240527081113.616189-1-sunilvl@ventanamicro.com>
+	s=arc-20240116; t=1717411089; c=relaxed/simple;
+	bh=kM4oD8NAaDYrx9lv8+wUf5WJMEkwvykiX51xhmqmGMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u54vE2jKptnz5hrERJIFQDg/a6b0IsPZGSzH7w8vL0i1WXcsQ0Bgh4QkCb+WYJphzzKNEFY46gvXB4p3x7/oV2RFiX9UiVex+5EaAzzeOFF3oIRfdSYGlpoP0lMGJuu5myVaiOFmYFMUNWSlAQO9ob5nWiJOhSjoYltYxBQNhek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRA/rBya; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717411089; x=1748947089;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kM4oD8NAaDYrx9lv8+wUf5WJMEkwvykiX51xhmqmGMA=;
+  b=VRA/rByaLyRo4b4Zq0C2d4CNHZKVpktdcTwbgdwJdYLWUDcBVnFHu9fh
+   QGnGU3JNGXG4UqKZJdZK3bHlxP08OpiS0Nrq9y+f8G40698TVU3xO506a
+   iee9kUdi3kvBdOeU5gGRk+i09Kz0RqmnI58FKUxT6DU2rHdHVurcQa9jk
+   SvkQkbcEHcqeRE9PGEXo8/UeWgSpTaTvkK0a7bPXaJNk35kZfoMrNk7so
+   nXs7O+Hurv/LBl0L8tOdL15SeCjuXVJmz631rbitvtD8d+Qjpj1T8yKRH
+   3akDDXOlvSWipcVVKSTL2G3hh8YI+2PkarVPwuJF0nhb4DwzgHRW14ajR
+   g==;
+X-CSE-ConnectionGUID: 0eLWl9/+TL2BnxQZzG2RCQ==
+X-CSE-MsgGUID: eeteLrWpTz6IPFyrCMaOmQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="25296647"
+X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
+   d="scan'208";a="25296647"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 03:38:08 -0700
+X-CSE-ConnectionGUID: bcRepabeR2SLdZzSB5waIg==
+X-CSE-MsgGUID: 6htlfZ81Qx+2fGK80CVRMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
+   d="scan'208";a="41761292"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa003.jf.intel.com with SMTP; 03 Jun 2024 03:38:04 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 03 Jun 2024 13:38:03 +0300
+Date: Mon, 3 Jun 2024 13:38:03 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v2 2/2] usb: typec: mux: gpio-sbu: Make enable gpio
+ optional
+Message-ID: <Zl2dCytk06deuA7i@kuha.fi.intel.com>
+References: <20240603083558.9629-1-francesco@dolcini.it>
+ <20240603083558.9629-3-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171741098562.10875.13157753436022438155.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603083558.9629-3-francesco@dolcini.it>
 
-The following commit has been merged into the irq/urgent branch of tip:
+On Mon, Jun 03, 2024 at 10:35:58AM +0200, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> The enable gpio is not required when the SBU mux is used only for
+> orientation, make it optional.
+> 
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Commit-ID:     0110c4b110477bb1f19b0d02361846be7ab08300
-Gitweb:        https://git.kernel.org/tip/0110c4b110477bb1f19b0d02361846be7ab08300
-Author:        Sunil V L <sunilvl@ventanamicro.com>
-AuthorDate:    Mon, 27 May 2024 13:41:13 +05:30
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 03 Jun 2024 12:29:35 +02:00
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-irqchip/riscv-intc: Prevent memory leak when riscv_intc_init_common() fails
+> ---
+> v2:
+>  - removed useless NULL check for optional enable gpio
+> ---
+>  drivers/usb/typec/mux/gpio-sbu-mux.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/mux/gpio-sbu-mux.c b/drivers/usb/typec/mux/gpio-sbu-mux.c
+> index 374168482d36..8902102c05a8 100644
+> --- a/drivers/usb/typec/mux/gpio-sbu-mux.c
+> +++ b/drivers/usb/typec/mux/gpio-sbu-mux.c
+> @@ -66,6 +66,9 @@ static int gpio_sbu_mux_set(struct typec_mux_dev *mux,
+>  {
+>  	struct gpio_sbu_mux *sbu_mux = typec_mux_get_drvdata(mux);
+>  
+> +	if (!sbu_mux->enable_gpio)
+> +		return -EOPNOTSUPP;
+> +
+>  	mutex_lock(&sbu_mux->lock);
+>  
+>  	switch (state->mode) {
+> @@ -102,7 +105,8 @@ static int gpio_sbu_mux_probe(struct platform_device *pdev)
+>  
+>  	mutex_init(&sbu_mux->lock);
+>  
+> -	sbu_mux->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
+> +	sbu_mux->enable_gpio = devm_gpiod_get_optional(dev, "enable",
+> +						       GPIOD_OUT_LOW);
+>  	if (IS_ERR(sbu_mux->enable_gpio))
+>  		return dev_err_probe(dev, PTR_ERR(sbu_mux->enable_gpio),
+>  				     "unable to acquire enable gpio\n");
+> -- 
+> 2.39.2
 
-When riscv_intc_init_common() fails, the firmware node allocated is not
-freed. Add the missing free().
-
-Fixes: 7023b9d83f03 ("irqchip/riscv-intc: Add ACPI support")
-Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20240527081113.616189-1-sunilvl@ventanamicro.com
-
----
- drivers/irqchip/irq-riscv-intc.c |  9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
-index 9e71c44..4f3a123 100644
---- a/drivers/irqchip/irq-riscv-intc.c
-+++ b/drivers/irqchip/irq-riscv-intc.c
-@@ -253,8 +253,9 @@ IRQCHIP_DECLARE(andes, "andestech,cpu-intc", riscv_intc_init);
- static int __init riscv_intc_acpi_init(union acpi_subtable_headers *header,
- 				       const unsigned long end)
- {
--	struct fwnode_handle *fn;
- 	struct acpi_madt_rintc *rintc;
-+	struct fwnode_handle *fn;
-+	int rc;
- 
- 	rintc = (struct acpi_madt_rintc *)header;
- 
-@@ -273,7 +274,11 @@ static int __init riscv_intc_acpi_init(union acpi_subtable_headers *header,
- 		return -ENOMEM;
- 	}
- 
--	return riscv_intc_init_common(fn, &riscv_intc_chip);
-+	rc = riscv_intc_init_common(fn, &riscv_intc_chip);
-+	if (rc)
-+		irq_domain_free_fwnode(fn);
-+
-+	return rc;
- }
- 
- IRQCHIP_ACPI_DECLARE(riscv_intc, ACPI_MADT_TYPE_RINTC, NULL,
+-- 
+heikki
 
