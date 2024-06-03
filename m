@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-199273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92FE8D84B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:17:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245618D84C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5751F23A36
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1E31F2277D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7CC12E1DD;
-	Mon,  3 Jun 2024 14:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F8012E1DD;
+	Mon,  3 Jun 2024 14:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f60kxw0t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="haLZJ04W"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A159C1D54B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073B8757E0;
+	Mon,  3 Jun 2024 14:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424237; cv=none; b=g9hOr9ytNlJex1h/xsqxKyj7ipVyla1vdxiBMuiKm460HDWHWE7r2y1X1LPc3wEWkNbv5vC++qYeTfsXByxE+40YKcFcU6s2D4z5D5J/rg1vfozxAZtu2+EXWRBBebrEoGBG+YsGIvxeH1JNK01M4908g9hEdYcuimpjTfYAVvs=
+	t=1717424287; cv=none; b=T4tM4HggBCvEG2/ULjFufo1Vi1v39XjUrJIRqiXxGILfScleyA7uBxO7nPSaCL9XEoKc1yYS6IQhNFQhA2Z/nw6NTk193JDB+zfdDnNEJg621myr01HJ10k5DsTKj1lqM5ZAUxt1zjGxQdpzvvvK1hE8+PSvJzcIuXAXX2XhQgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424237; c=relaxed/simple;
-	bh=mB42GeWihI/UnySxYDKsPF06FNhZIZVrKClUa6ZXkK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qzsdJ3FueR0jhR0261A7bltNLoAaYNxBbcEX/EhPugrO9mzlmltPqKY7rlQJos4LzdT5hDUb6Fmt0Pcf8IzskAa59A315al8AtoSihly9NcSNtdPNaGy6FL/sANrXRaylWUXagsNYXeAVo5oHGVTeFJ2UU/OF2AK1qYKutuST3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f60kxw0t; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717424234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZLk9HWXXmuijfDLUc7HCk2M98+TmBAchEzBPpKKETig=;
-	b=f60kxw0twgK7HfJe8hMvgrKoQu7Ubjbse6TJ9FqJHRKsNPUXir0P2fe6qtByBV0Qxs2Dgw
-	GIA2dihdT2s8Et0lNdB/sxCG1utnkQhYXXQFzXuuT2KNRat6cHhb1pTQoyo7goP3HUAqnX
-	T1mem2eP3ICmSdKQiDbeo/HVVetBDt8=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-258-9MTR0zIvMFu9AA5lLeyJtw-1; Mon, 03 Jun 2024 10:17:13 -0400
-X-MC-Unique: 9MTR0zIvMFu9AA5lLeyJtw-1
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e212ee8008so556617139f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 07:17:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717424232; x=1718029032;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZLk9HWXXmuijfDLUc7HCk2M98+TmBAchEzBPpKKETig=;
-        b=Tjepy4tymo6dbqUbBdjTo81497Gwty9aFFIve6XgQIUzcnSTh09YZyPpGxMn9fZTp4
-         bmyssDXyhBrHGwLIhmLy1hM7KXXC0FcFoP4NABCddRZXJCrUIbDuXELOPh4fPzZ7C0uW
-         fIrl1eLiigqVMkUeFaf1I8eMDFWObul9fpXfByedmBu7jKqq80lFykfP1GyQIF1gCZaA
-         QgYtRv+nlrDQKUDgsjv5Qdy6YS3k0IDrFo3/WF4/jyPH2rJ7gDhcwAk1iTPzKNdQq/gO
-         afKu5+OeGJYb5oSL2mxIa5IX3d1rW2RKUS13hkqCLIA+BV+uGlHjBkffGi+EDUw6IUjw
-         xn+A==
-X-Forwarded-Encrypted: i=1; AJvYcCX6HVX9licaYeOuDp+EXuIDQfJvBi5de/845d6PHQ2uBgBqNsziKqx73R+/Ndohzw8FMO5QP4jQZPsvHYnCwOD5RPmyz/TYfcMuGGcc
-X-Gm-Message-State: AOJu0Yw+7XqwSgmoybG2l1mTslJtd4rw0u56udls+LH3L+6X/0eQS8mV
-	XTnfAIWWxLvdq9uX/3spZI9AnAbPt/Yoykyv6e0EjjpTb2aCulK6YvvIiUHw/eu7lsHZ5r9bZ9W
-	th+B9xqcH+lr2llIiCHYXq8MfeHd8/Lg+tunVzVdbociw4VVPOFogrgKdFT5txA==
-X-Received: by 2002:a05:6602:1603:b0:7ea:f970:36d9 with SMTP id ca18e2360f4ac-7eaffeac9aemr1169893239f.12.1717424232576;
-        Mon, 03 Jun 2024 07:17:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFSK0JZd22UF2ZfugGWJ6NPGbhYoYtjjYlIjpAxF42ITiFy/yYyDhpybZ0dOX6ZyTHfgp5QxA==
-X-Received: by 2002:a05:6602:1603:b0:7ea:f970:36d9 with SMTP id ca18e2360f4ac-7eaffeac9aemr1169887339f.12.1717424231706;
-        Mon, 03 Jun 2024 07:17:11 -0700 (PDT)
-Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b5f1291571sm131336173.16.2024.06.03.07.17.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 07:17:11 -0700 (PDT)
-Message-ID: <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
-Date: Mon, 3 Jun 2024 09:17:10 -0500
+	s=arc-20240116; t=1717424287; c=relaxed/simple;
+	bh=Nf7EkE/DcmOXUWq7//w7j44DEIeDgmsYUhVl5I1q/G4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XdU/p6A7irn7ypVt0NIeTwaIVAI9aD76nXYi4//W7GSXGg2pOpvJljVJMpWJhtl9vYU3rrMOWTJeDdh6Ze54v559Ab/WSyCCSrns5HUYuVWyDSjsU5kwFu0t/lRusxTe8ByqIK+/JmZedXE9gmVbICFMrm6mqlwtVylocScRmeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=haLZJ04W; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453EHi6Y066799;
+	Mon, 3 Jun 2024 09:17:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717424264;
+	bh=WY81iHewcfaHm+CBu0+YMAJ6JRDKVaA92ColmoV1lgY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=haLZJ04WXtZsjmFA6su4X4sqc1YmJ71x0Js+wWV0DpL1G+28UP/RxwglItNwAGbnL
+	 rCuhQAdmVgr9779Uoji5RhF4ynJp31GIkA+qzrOdP+jcTyI2Z9hJntCXIhX6r4l6v5
+	 7qwHt4O5KsvA+yUUiAhkfEnEGKSIphSi6PcsdDBI=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453EHigd009400
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 09:17:44 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 09:17:44 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 09:17:43 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453EHhgd073081;
+	Mon, 3 Jun 2024 09:17:43 -0500
+Message-ID: <147d58a6-0cad-47b6-a069-755f835a77e9@ti.com>
+Date: Mon, 3 Jun 2024 09:17:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,52 +64,199 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-To: Christian Brauner <brauner@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, David Howells
- <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <20240527100618.np2wqiw5mz7as3vk@ninjato>
- <20240527-pittoresk-kneipen-652000baed56@brauner>
- <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
- <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
+Subject: Re: [PATCH v4 6/7] arm64: dts: ti: k3-j722s-main: Add SERDES and PCIe
+ support
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <rogerq@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>
+References: <20240601121554.2860403-1-s-vadapalli@ti.com>
+ <20240601121554.2860403-7-s-vadapalli@ti.com>
 Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
-Content-Type: text/plain; charset=UTF-8
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240601121554.2860403-7-s-vadapalli@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/3/24 8:31 AM, Christian Brauner wrote:
-> On Mon, Jun 03, 2024 at 09:24:50AM +0200, Wolfram Sang wrote:
->>
->>>>> Does that fix it for you?
->>>>
->>>> Yes, it does, thank you.
->>>>
->>>> Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>
->>> Thanks, applied. Should be fixed by end of the week.
->>
->> It is in -next but not in rc2. rc3 then?
+On 6/1/24 7:15 AM, Siddharth Vadapalli wrote:
+> J722S SoC has two instances of SERDES namely SERDES0 and SERDES1 and one
+> instance of PCIe namely PCIe0. Both SERDES0 and SERDES1 are single lane
+> SERDES. The PCIe0 instance of PCIe is a Gen3 single lane PCIe controller.
 > 
-> Yes, it wasn't ready when I sent the fixes for -rc2 as I just put it in
-> that day.
+> Since SERDES and PCIe are not present on AM62P SoC, add the device-tree
+> nodes corresponding to them in the J722S SoC specific "k3-j722s-main.dtsi"
+> file.
 > 
+> Co-developed-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> v3:
+> https://lore.kernel.org/r/20240524090514.152727-2-s-vadapalli@ti.com/
+> https://lore.kernel.org/r/20240524090514.152727-7-s-vadapalli@ti.com/
+> and
+> https://lore.kernel.org/r/20240524090514.152727-8-s-vadapalli@ti.com/
+> Changes since v3:
+> - The k3-j722s-main.dtsi specific changes in the above patches have been
+>    squashed into this patch.
+> 
+>   arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 131 ++++++++++++++++++++++
+>   1 file changed, 131 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> index 3ca3f0041956..91489014f09e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> @@ -4,7 +4,121 @@
+>    * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
+>    */
+>   
+> +#include <dt-bindings/phy/phy-cadence.h>
+> +#include <dt-bindings/phy/phy-ti.h>
+> +
+> +/ {
+> +	serdes_refclk: clk-0 {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <0>;
+> +	};
+> +};
+> +
+>   &cbass_main {
+> +	serdes_wiz0: phy@f000000 {
+> +		compatible = "ti,am64-wiz-10g";
+> +		ranges = <0x0f000000 0x0 0x0f000000 0x00010000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		power-domains = <&k3_pds 279 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 279 0>, <&k3_clks 279 1>, <&serdes_refclk>;
+> +		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
+> +		num-lanes = <1>;
+> +		#reset-cells = <1>;
+> +		#clock-cells = <1>;
+> +
+> +		assigned-clocks = <&k3_clks 279 1>;
+> +		assigned-clock-parents = <&k3_clks 279 5>;
+> +
+> +		serdes0: serdes@f000000 {
+> +			compatible = "ti,j721e-serdes-10g";
+> +			reg = <0x0f000000 0x00010000>;
+> +			reg-names = "torrent_phy";
+> +			resets = <&serdes_wiz0 0>;
+> +			reset-names = "torrent_reset";
+> +			clocks = <&serdes_wiz0 TI_WIZ_PLL0_REFCLK>,
+> +				 <&serdes_wiz0 TI_WIZ_PHY_EN_REFCLK>;
+> +			clock-names = "refclk", "phy_en_refclk";
+> +			assigned-clocks = <&serdes_wiz0 TI_WIZ_PLL0_REFCLK>,
+> +					  <&serdes_wiz0 TI_WIZ_PLL1_REFCLK>,
+> +					  <&serdes_wiz0 TI_WIZ_REFCLK_DIG>;
+> +			assigned-clock-parents = <&k3_clks 279 1>,
+> +						 <&k3_clks 279 1>,
+> +						 <&k3_clks 279 1>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			#clock-cells = <1>;
+> +
+> +			status = "disabled"; /* Needs lane config */
 
-See my other reply, are you sure we should make this change? From a
-"keep the old behavior" POV maybe so, but this looks to me like a
-bug in busybox, passing fstab hint "options" like "auto" as actual mount
-options being the root cause of the problem. debugfs isn't uniquely
-affected by this behavior.
+Does the other SERDES (serdes1) not need this config? It looks like
+it does in the board file.. If so disable it too.
 
-I'm not dead set against the change, just wanted to point this out.
+Andrew
 
-Thanks,
--Eric
-
+> +		};
+> +	};
+> +
+> +	serdes_wiz1: phy@f010000 {
+> +		compatible = "ti,am64-wiz-10g";
+> +		ranges = <0x0f010000 0x0 0x0f010000 0x00010000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		power-domains = <&k3_pds 280 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 280 0>, <&k3_clks 280 1>, <&serdes_refclk>;
+> +		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
+> +		num-lanes = <1>;
+> +		#reset-cells = <1>;
+> +		#clock-cells = <1>;
+> +
+> +		assigned-clocks = <&k3_clks 280 1>;
+> +		assigned-clock-parents = <&k3_clks 280 5>;
+> +
+> +		serdes1: serdes@f010000 {
+> +			compatible = "ti,j721e-serdes-10g";
+> +			reg = <0x0f010000 0x00010000>;
+> +			reg-names = "torrent_phy";
+> +			resets = <&serdes_wiz1 0>;
+> +			reset-names = "torrent_reset";
+> +			clocks = <&serdes_wiz1 TI_WIZ_PLL0_REFCLK>,
+> +				 <&serdes_wiz1 TI_WIZ_PHY_EN_REFCLK>;
+> +			clock-names = "refclk", "phy_en_refclk";
+> +			assigned-clocks = <&serdes_wiz1 TI_WIZ_PLL0_REFCLK>,
+> +					  <&serdes_wiz1 TI_WIZ_PLL1_REFCLK>,
+> +					  <&serdes_wiz1 TI_WIZ_REFCLK_DIG>;
+> +			assigned-clock-parents = <&k3_clks 280 1>,
+> +						 <&k3_clks 280 1>,
+> +						 <&k3_clks 280 1>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			#clock-cells = <1>;
+> +		};
+> +	};
+> +
+> +	pcie0_rc: pcie@f102000 {
+> +		compatible = "ti,j722s-pcie-host", "ti,j721e-pcie-host";
+> +		reg = <0x00 0x0f102000 0x00 0x1000>,
+> +		      <0x00 0x0f100000 0x00 0x400>,
+> +		      <0x00 0x0d000000 0x00 0x00800000>,
+> +		      <0x00 0x68000000 0x00 0x00001000>;
+> +		reg-names = "intd_cfg", "user_cfg", "reg", "cfg";
+> +		ranges = <0x01000000 0x00 0x68001000  0x00 0x68001000  0x00 0x0010000>,
+> +			 <0x02000000 0x00 0x68011000  0x00 0x68011000  0x00 0x7fef000>;
+> +		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
+> +		interrupt-names = "link_state";
+> +		interrupts = <GIC_SPI 99 IRQ_TYPE_EDGE_RISING>;
+> +		device_type = "pci";
+> +		max-link-speed = <3>;
+> +		num-lanes = <1>;
+> +		power-domains = <&k3_pds 259 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 259 0>, <&serdes1 CDNS_TORRENT_REFCLK_DRIVER>;
+> +		clock-names = "fck", "pcie_refclk";
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +		bus-range = <0x0 0xff>;
+> +		vendor-id = <0x104c>;
+> +		device-id = <0xb010>;
+> +		cdns,no-bar-match-nbits = <64>;
+> +		ti,syscon-pcie-ctrl = <&pcie0_ctrl 0x0>;
+> +		msi-map = <0x0 &gic_its 0x0 0x10000>;
+> +		status = "disabled";
+> +	};
+> +
+>   	usbss1: usb@f920000 {
+>   		compatible = "ti,j721e-usb";
+>   		reg = <0x00 0x0f920000 0x00 0x100>;
+> @@ -37,3 +151,20 @@ usb1: usb@31200000{
+>   		};
+>   	};
+>   };
+> +
+> +&main_conf {
+> +	serdes_ln_ctrl: mux-controller@4080 {
+> +		compatible = "reg-mux";
+> +		reg = <0x4080 0x14>;
+> +		#mux-control-cells = <1>;
+> +		mux-reg-masks = <0x00 0x3>, /* SERDES0 lane0 select */
+> +				<0x10 0x3>; /* SERDES1 lane0 select */
+> +	};
+> +};
+> +
+> +&wkup_conf {
+> +	pcie0_ctrl: pcie0-ctrl@4070 {
+> +		compatible = "ti,j784s4-pcie-ctrl", "syscon";
+> +		reg = <0x4070 0x4>;
+> +	};
+> +};
 
