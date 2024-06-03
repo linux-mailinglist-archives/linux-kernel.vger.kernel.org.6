@@ -1,202 +1,254 @@
-Return-Path: <linux-kernel+bounces-199073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EFE8D81CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:00:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4F88D81CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24E2F1C2253B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:00:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132291F22089
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DBC126F2F;
-	Mon,  3 Jun 2024 11:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015E7126F39;
+	Mon,  3 Jun 2024 12:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fOwEt4ot";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ghOnvA8/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q/b1iCU2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958E7126F0A;
-	Mon,  3 Jun 2024 11:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717415994; cv=none; b=tESEqAm9TEjm8CeNGmvT6RmBJHj1sp/iYKP35We0DB1HokXdbeQCCMhlR7KSi6uQNNVi+dLQeV+O8IZaaDI67kPGBJJeAYw4PPHHBYpskWbuad3gqz6UuZyAJdFP0cvWmF1CEUueDEbf6DrK/bxg1UEfrXOGGpNF9U4/9TYOK/I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717415994; c=relaxed/simple;
-	bh=TQRPL/Oo8rr3W7nHbR/xkncUh5R8NuI+ZeJCE71XecM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=VxMQ5I8wXnjgo62sGKhQ7TfQ8z8afoD5vBYLY9qjz5UBGDeMeaFwmPDKSyfIEKh6zNXLkvIK44P+a9BsxaGoWf6z1TuZ0rI7HPY2PTqVX37X2PpiWcPqxQqKCWuhRhxvvolwSIJiplSXXPVSNNVs+a9McoN5J0K+QL3saVVwwl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fOwEt4ot; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ghOnvA8/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Jun 2024 11:59:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717415990;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Su/G7s/uy3NDXOkalvjbUj5RE12/Nt5IBT4vLru/iXQ=;
-	b=fOwEt4otIV9mT7RwDGug39OSHXkMc4csgRtLyhQbQ7nSRgW8YYr/qwVBTiqoISiVy9JsBq
-	dkIwf0Tg+aoPRJ1m9AAYKUcuCvC59+saeH+/UMB1xVHbRfWDTGPLs/BhLNoBXz/HJxru6b
-	hJvF03Rxv2iIuhREi6Xp85XusmSWgmi0e3ETJ7PtOb5Pa81KGsg+0hmgu81mh57syYtDlO
-	9szNq0HiXNbGy2nUvNMco0jihvBKf2mlVvmkpQr+1BH7OQ3lZx8ZRBdvnB77EwbyMuvt1t
-	8VoeSAIDgH9LFzQHn3Inuv02C49xJVHTapDUtxpH5+2LWn2dxLDEmobdjGXGQA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717415990;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Su/G7s/uy3NDXOkalvjbUj5RE12/Nt5IBT4vLru/iXQ=;
-	b=ghOnvA8/I+6qs3xv31dBpLfaMZtXZImsCP4gHOQ00KfsU3HXdY+k8Sxo6QCP60v9uRdYfT
-	juM7Qz3orFuah4Bw==
-From: "tip-bot2 for Samuel Holland" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/sifive-plic: Chain to parent IRQ after
- handlers are ready
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- Samuel Holland <samuel.holland@sifive.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Anup Patel <anup@brainfault.org>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240529215458.937817-1-samuel.holland@sifive.com>
-References: <20240529215458.937817-1-samuel.holland@sifive.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA60010949;
+	Mon,  3 Jun 2024 12:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717416074; cv=fail; b=j2cmbybzq3/Kgz4r6PxR1bW6qrKtfFDarCV1sU2H1O7UgWWIlzjcQYtZpb27NZnwfpmB2ZOkShQsRJbkaWRU6KSUDbbWirtwwNUNDntWMkNeXm2jLhVKlFMeUpKfhyqMiVR+7Ut6fEM2os2WHaC6Dek0yHpnVBjx5oqCFPjoft8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717416074; c=relaxed/simple;
+	bh=o7au7KmgNV0bK+kppLZDCKUW3M3qCjE7jgx02umizNk=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q2J/Cm/Js3Y0YYRw1BYsJwhymUMUezTRgJPGWZ+A0s5Z4I9cpSVp3wa8WI/CUF6PoJdjW+o/vev/ZWshTDDV2I2Cl5Sq1XB69oASzm7KJQ1Wqa809FCrDvL0ACMTQ5G0M2rr+SCPFGnf/PHJe4Vbxwcht8rc8kkEOFwwAouvaJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q/b1iCU2; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717416072; x=1748952072;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=o7au7KmgNV0bK+kppLZDCKUW3M3qCjE7jgx02umizNk=;
+  b=Q/b1iCU2vxXOFj9l1IHJuJLIgioGmojVJ5Vpa2pklnLAbVK08oMXGlG+
+   /uRyRpT7k3duqCgbhnQJbi3hQpry7pst62qUxt2rIx0xD+u7MPgDrgBEh
+   g2kKM0WyrEMqb7tCPYq9TWwdGiC52AFmoZ27+wstdRz2tIItMskHL0MWa
+   2yJPH0yTUrTaFw23gd3ArMkT2rsJjrTvgBhoOJsAg5xKl2q7SpIauiZnV
+   D6mF/depFD7a8q8LLKHq4VSsPDbbx4xVNZxIS2SobNZS5FrHfWdTnB6l0
+   ZsR0OFQYO3FZuonmSm/HeoWtDaVoF5KkxnK+lffkZUNAiS71r7JJ+GVe2
+   Q==;
+X-CSE-ConnectionGUID: wvIXSQuATH6Gtfbs+Dp3nw==
+X-CSE-MsgGUID: bBPgmFpzQ4OeaTON8CX4eA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="24556198"
+X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
+   d="scan'208";a="24556198"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 05:00:56 -0700
+X-CSE-ConnectionGUID: pyS1Db86SGabHhpWVwKP9g==
+X-CSE-MsgGUID: mPS8CLzaQ3ym2era0pzhkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
+   d="scan'208";a="41397759"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Jun 2024 05:00:56 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 3 Jun 2024 05:00:55 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 3 Jun 2024 05:00:55 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 3 Jun 2024 05:00:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HOxFHI5zW46epGa4dytdCIL8bclgq2xfxUHBI7SiRoAWDrStBP957r9umCYvE2DRuC2MQBKzi6SQX7pItBxdry0BljfeNXbd5zfXwSOaBU9NLTHUDaiIpeMOvyE3GsoveFhangGdhl8f95Gyvyi7w/NFsLmEqVj7XoisRVD1eEAt7I7WUSI46IJEsaaJ5BWtworobVAtA1U8BOrZJEst4JtoXpCsDHcWCO79TMwa9iSYgUmVqmTUbVRNcDerQd/63W/lQP/lCuLYGteG36D1X+m77Km6cm+cECskNLTZOtziutK0RW25pmzVuRLH4TDV734IPbTF0p+3UZh07BkXmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XOrgaSKfJpnaKOMnOD33als1IyBjb5ujThSAw7orUcQ=;
+ b=gMBOSGiOPNYrlKZq+lHQs77DQj8TOTOt3Gd+g4iJXRF5lLFTOnEkHPTIizHK3B8ZOHBN0Xq/1ENymEsuMZFddTAe+11a0l1nlTCWU+pOUEO/57cINtbImMk/fyo5676bZIcKZRy7yWDS8SbN4FvKXVWv5K6LzL5yxvL5bHLy+C4OqQV+V+pDi//YnGUs1fvJtJDShgltKHOFZg0bXX0L/c7hWD+vppDqdb20DoL9DBUX/D4jcUwgD3it0my6cBoIv4GEX9mMr2Irn5vz4lPYp2SV46nznEKcVjFj0SuKckpAJXqahgUt9fvpvIIqWIceVOjLB48F3479jEF1E0/0xQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MW4PR11MB5776.namprd11.prod.outlook.com (2603:10b6:303:183::9)
+ by MN2PR11MB4677.namprd11.prod.outlook.com (2603:10b6:208:24e::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Mon, 3 Jun
+ 2024 12:00:53 +0000
+Received: from MW4PR11MB5776.namprd11.prod.outlook.com
+ ([fe80::4bea:b8f6:b86f:6942]) by MW4PR11MB5776.namprd11.prod.outlook.com
+ ([fe80::4bea:b8f6:b86f:6942%5]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
+ 12:00:52 +0000
+Message-ID: <ac0226c9-c3a4-4cc5-9323-850f79b7718a@intel.com>
+Date: Mon, 3 Jun 2024 14:00:45 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH v3] octeontx2-af: Add debugfs support to dump NIX
+ TM topology
+To: Anshumali Gaur <agaur@marvell.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+	hariprasad <hkelam@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+References: <20240603112249.6403-1-agaur@marvell.com>
+Content-Language: en-US
+From: Wojciech Drewek <wojciech.drewek@intel.com>
+In-Reply-To: <20240603112249.6403-1-agaur@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR07CA0274.eurprd07.prod.outlook.com
+ (2603:10a6:803:b4::41) To MW4PR11MB5776.namprd11.prod.outlook.com
+ (2603:10b6:303:183::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171741598986.10875.3452301673328892748.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR11MB5776:EE_|MN2PR11MB4677:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f57bf16-5669-4b11-90ef-08dc83c4d125
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WFROZlJQOWJreWcvME9HN01IRy9xSlc5NGx5M3VtT0JoRURZZ3JXT2c2SVBu?=
+ =?utf-8?B?QWpuSC95dFVHRVNUSFpjUDJuMkpOMlRtcU12Q1hJMFhDbU5Od1YyaDlBeGxs?=
+ =?utf-8?B?N0toeVNoaEdUdDRTTlIwTkFPc0RtcHZ0MWRRRzkyamZVM1k4QkthTWRtTGcx?=
+ =?utf-8?B?aGpkY3ExOFlpazRYSVV4bFpoRDhpdDMxcWhxQXYwMXB2RXY3L3AvQTVRdm1V?=
+ =?utf-8?B?SkEvNjdLT1hVSVIxMHg1cGRqQ0djdi9vK3pNYXg1eGlyTGZ0UHVXVzkvamEx?=
+ =?utf-8?B?VFNJdUJ6dkpzSTFiNXhjb2VWWFJvdnlTS3JlbE5UeFZuSUgxNE45Z3Z0bFFn?=
+ =?utf-8?B?c2pEUU9lMlc2YXR5Y1JvVzUwS0dxS3d3SG15SWM2S0pzb0NOOTBya000a2xt?=
+ =?utf-8?B?eVF4c0JGZi9NdSsremNJczBLeDhYQkg1STNnL0lIbzRrNmJrMlZKQTR2T3Vm?=
+ =?utf-8?B?c1lzQmU2VnVvY0JnVkhpSUpaVVNqZStFWDlWNU9obTJCNGUxK21yV2dyMFJD?=
+ =?utf-8?B?NkxRY3FPbkM5eFVTT2syeDVMYmY4MFc0dkx5d3d1akpCZkpXSjd6YzdTQXR4?=
+ =?utf-8?B?NGx2dU13QW1zYTZEYzZZc0FuSUZycENxUlducks0U2k1NmdSWXQvVU5JczJY?=
+ =?utf-8?B?ZERWWmlpOVFXQnFFdlRIbjhrbko0U3U1NzlEU09pSWNOSG9HTjdWUGk4VlJG?=
+ =?utf-8?B?TkhmenRtOUVEZ3R3cExCSVAyYVZkc0ttb2xGU0FteVFNWFBnOG5xYXgvZWFh?=
+ =?utf-8?B?dVFGcGs2OUIxNmdTLzJPdEFnUHJDdUJHYjVLcEQ2MysrcDcrT2JLVm1qYjNS?=
+ =?utf-8?B?aDNWYWFHUytUTUlLYSt6VTdVY01kUjQxZit1N1BpK0dXTWxyUS9qZUFEc0tW?=
+ =?utf-8?B?Y0RKYk96RGtTV0N6VVpSZHFxVE9kU0xjSTlyNGJ6ZHJmMlJXTmJYSVM2QjBD?=
+ =?utf-8?B?Zk5JM1FKdDAyRXpsUWhBQitEakN3bkI4RUVXMTQwN0phUjlPQTZkcVRWQU5W?=
+ =?utf-8?B?SEs2c1UwS0gxWkFxbmtUTmdQUkFaeFhReWEvTmtiQ1lJZXlKWDh4ZWFLU1Jh?=
+ =?utf-8?B?NFQ5UDFZK3dZWnVEdFFyWUR6RlNDOEJnaGszOWhIblZScTRFanpRay9OS1Nt?=
+ =?utf-8?B?K0I5ZC92cENwMkJKN3FybkNuWERkb2VzL0VFSTZtb3greVpaSW9RT3IvSmRP?=
+ =?utf-8?B?M1g0RjY3dTFTZTBLZ2g1YTlmM203ekhpQmlWdk0xdnRWbndNN1k0RCtTOHB4?=
+ =?utf-8?B?RURpWDQ5Rnp4a1BiNjB1WmFQS0ZUQU0xRitPN05oZm5iQ0F6OWZUL2d6UStt?=
+ =?utf-8?B?dURJd3FWc1U1YlM2NjNPQUJLKzU2dUdVMVo5ZHM5ZjZzSzBQMksrQldIUnBa?=
+ =?utf-8?B?bzlGY2FBV3dkMlBmTjAzUElXNUJzZE80OEU4ZEZoQTZ0RWdxVFBkYmM5cmhX?=
+ =?utf-8?B?K0xKL3pEWFVkR29XblRWNnc1alJKUzk3UjdJc1ZvLzRKeEtjbzcvbUtocVcy?=
+ =?utf-8?B?TEMzRW9NTXBGMFFwTkFhS2pOUmk0NnJZaWtqbFI5SWNWeWVra0Q4K2U5eWlR?=
+ =?utf-8?B?QW1mRkxrUVFYaTR2N0xYbHlVWDVxbnE5N1ZJTUdpaThsUW94ZndJNVJjbkZK?=
+ =?utf-8?B?S2c5UXgyanJ2cVdQZkp1dW1KODFGa3l6dzZCWFU2bjRFTWw1RUN1czZ1MEsz?=
+ =?utf-8?B?Sm9NQkdaeHdHcGJkNlQvcjZic0g1MEo3LzExMnlwYXZIOTFkMEhoUHlnPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB5776.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eGR0dVZieXJtcFNsaHl1Q2RzZS80QmN0SGtMWWNLMmd1UEVWemtTR09BcGto?=
+ =?utf-8?B?eSs4Mk5jREgvYUFXWHNEbWY5ZTlPekgwT3ZxUW4xMklTamZiUU9kYUtGdTNP?=
+ =?utf-8?B?dG0zVStUWjhabUpYY0dZVlZvcWx0SEZva0pIN2JUSkJDd0VIT0hqVXVYajNx?=
+ =?utf-8?B?NDN1Uk45TEVWdWxTMUU2Q0g1SGIzQ0gwT3Jld3p2WkpPaWp1anMrT2ZYUk9w?=
+ =?utf-8?B?WUlack8waXpBOWFLZ0RBWThuQ0pyWFlRdWo2cTJaMlNPSWl3WEFMajRxdXBx?=
+ =?utf-8?B?bXlqR1dGWXhkTWk0bU1ocGVCcHZuUVpwU0JjaGh5dTNOK2w4WlJBOU9JbnJn?=
+ =?utf-8?B?STZmZHNWdlVlNFNLL3RQRVphdDJQdHc4N2ErS0RadHQxcjMvUC9VTEpQWHJR?=
+ =?utf-8?B?d1J5RGlGeHQ5MW9QTENJWThIRklCaGVrSWRBY2h6MEp5KzUwaVFJN3VVS3NN?=
+ =?utf-8?B?WWZKQ0RZY291RGkxOHZGVmNvcXE4WmYvaXMyU2R5YTUxNTQrUEJMNkp3RUVX?=
+ =?utf-8?B?T0xCTkE2UlljTFNkbWRheGs2Qjh5eVVHTGNaMXlQem5rbFhkZTIzZXVpTW5M?=
+ =?utf-8?B?U3VPbHlJaEpIYmJBUXJuQlJyTlo2bmdUUDFLMnVORHVsMmpYdmVEbEZkUEVY?=
+ =?utf-8?B?R2hjUDlqOVd4a2l5dFN0NldRUzBWSlorY3JXa1lWUWd0QWhnZmJ0THdLY29q?=
+ =?utf-8?B?S2RrVUE5YTYvRmc2S3JOazZYOG9VUWdlQXJqS2lEeVAwU3d0U3FPaml1L1NY?=
+ =?utf-8?B?UnVYTmllbXZ4bVB5Q3VZVnM2aFFFejdOQmdXZ1FJaGhBK0lrcElUVmxTSzN5?=
+ =?utf-8?B?Q1F2dTNieGpFWDduT2k0NzRXSTE0YXJFdXBEeXVCRGduVHd6YUkrRjRLS2xa?=
+ =?utf-8?B?dkNDMjg5dmNHa3E5RGhzbE9URWY4Ykt6Z09jdnArbHlSdEhSY2ZHNkVKcnNW?=
+ =?utf-8?B?UlZidFlLS0hVZ3JEL2NWcDU1SVZjcFRWNGx6SElLMnZuSmg5a1JQRXAvMnRm?=
+ =?utf-8?B?TFZESEZkSThsSkc3MGRVWWZsMkZhRWIrNGMyNk5zQjhyUEFwZi9pSTRlRFNi?=
+ =?utf-8?B?cVcvMzJyWlV5L3dOSUlhNDN0bndRMGgyZm9ZeXRPb3g2SVUzT2JmOEwyeUZy?=
+ =?utf-8?B?bGRVSEp6R1dqMDlWTW9NSkowL1dQZHdubGNBNlpLODdOSmxsUkxQSnN3elBL?=
+ =?utf-8?B?dWRVN0lxQlovWWZSMlRSZzNxczExN3AzWTJPeHV2MFNRNGFoMlVwWW8vZG56?=
+ =?utf-8?B?UVFIOXp4bGwyRk83YUE4WEJFZkVabDdBODZFK1NITWxPa0Qya1Y4eFVibkpK?=
+ =?utf-8?B?M2FsM2Iyamo5dXpha1pTMDAwQzJSQ0xkWGtySlNEODZwSHozY1cvQmpzdkxR?=
+ =?utf-8?B?N0tTeHdIdyt4cDVvaHk2QmNabzhnUWJxRXNtL2JSR0pqdnFRYUJ4TXd5a2pE?=
+ =?utf-8?B?WUVjcUtJTmMxSVpZRDNUemM4M05RSWlTeEJ5VHZFRWJkbW1leGI2bXh6L0tE?=
+ =?utf-8?B?U0hSQlluV0IzcEJ6MEprYWxsc2p3Q3V6YlVoZWpqTnB2N1BSekNjT2lYWWU5?=
+ =?utf-8?B?b2ZMUVpOeHYrWVNnaWZ2RU9SUVMwM1FtVVg4V3Fiemt5bHdaU2VMQVpHaW45?=
+ =?utf-8?B?MitITFVBNjd6QnRFdTF5UDR4RDRJdmkzYjVKbnlPZzhaa1VYNmRHeTlUYWdQ?=
+ =?utf-8?B?azRpYUNwb3ZSa0xNK1h6bzV5WnJwZGRuaVQrUGVTeGFCaGdkWXNUQXY0WTNQ?=
+ =?utf-8?B?ZHlVYzYxRzdtM04xMjFDTXNQaUJIUmo4UDNtZGJkeWI2a0FiTmFibzZ3ZWFD?=
+ =?utf-8?B?bmFEUFBqcDlpa3p4cDBsa0lRQyt2eG8xSTJuWVJvWlZvRFo3U3ZjbHdiNHVz?=
+ =?utf-8?B?MjRTb3ZjajEzMXR3dmx0U1pWUkl2ZGtldThDS3FyVEpMa2x4SVFNMHgvNGhq?=
+ =?utf-8?B?SW9wTjZzM3YrREt2QUM1T20zTjVlZHRxN0pwU3F3TnhRZFliaHFVNjBjUGti?=
+ =?utf-8?B?TUhNRngxY2JBc3A5aW1VWG5BNzRtVmtlUXZIay9oVHhSMnF1NktMcEdIcVZI?=
+ =?utf-8?B?YkRXTTdMSHdJT3VJdjNPYloydUNaS2I4SVZ3Zy8vUnROVnQ0M0pNODBFR2xW?=
+ =?utf-8?B?MGlRRFlCbnU4T1doVXFEblB4SjRrV2pPdlk3VEhuaWtjdHJWNTJvVzZreFpS?=
+ =?utf-8?B?UkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f57bf16-5669-4b11-90ef-08dc83c4d125
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB5776.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 12:00:52.7980
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YL6owSLZ469TM14RXd+2nPqXZbBz/TJ3U6ivRbNJWN+gt3PdM3lGZNjT4lxVXuKc0rj+MBCqwOxg+pLb6z8tSOmQW0kQ7ni4nQdHxW79Y1M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4677
+X-OriginatorOrg: intel.com
 
-The following commit has been merged into the irq/urgent branch of tip:
 
-Commit-ID:     e306a894bd511804ba9db7c00ca9cc05b55df1f2
-Gitweb:        https://git.kernel.org/tip/e306a894bd511804ba9db7c00ca9cc05b55df1f2
-Author:        Samuel Holland <samuel.holland@sifive.com>
-AuthorDate:    Wed, 29 May 2024 14:54:56 -07:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 03 Jun 2024 13:53:12 +02:00
 
-irqchip/sifive-plic: Chain to parent IRQ after handlers are ready
+On 03.06.2024 13:22, Anshumali Gaur wrote:
+> This patch adds support to dump NIX transmit queue topology.
+> There are multiple levels of scheduling/shaping supported by
+> NIX and a packet traverses through multiple levels before sending
+> the packet out. At each level, there are set of scheduling/shaping
+> rules applied to a packet flow.
+> 
+> Each packet traverses through multiple levels
+> SQ->SMQ->TL4->TL3->TL2->TL1 and these levels are mapped in a parent-child
+> relationship.
+> 
+> This patch dumps the debug information related to all TM Levels in
+> the following way.
+> 
+> Example:
+> $ echo <nixlf> > /sys/kernel/debug/octeontx2/nix/tm_tree
+> $ cat /sys/kernel/debug/octeontx2/nix/tm_tree
+> 
+> A more desriptive set of registers at each level can be dumped
+> in the following way.
+> 
+> Example:
+> $ echo <nixlf> > /sys/kernel/debug/octeontx2/nix/tm_topo
+> $ cat /sys/kernel/debug/octeontx2/nix/tm_topo
+> 
+> Signed-off-by: Anshumali Gaur <agaur@marvell.com>
+> ---
 
-Now that the PLIC uses a platform driver, the driver is probed later in the
-boot process, where interrupts from peripherals might already be pending.
+Thx,
+Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
 
-As a result, plic_handle_irq() may be called as early as the call to
-irq_set_chained_handler() completes. But this call happens before the
-per-context handler is completely set up, so there is a window where
-plic_handle_irq() can see incomplete per-context state and crash.
+> v3:
+>     - Addressed review comments given by Wojciech Drewek
+> 	1. Removed unnecessary goto statement
+> 	2. Moved valid SQ check before AF mbox
+> v2:
+>     - Addressed review comments given by Simon Horman
+> 	1. Resolved indentation issues
+> 
+>  .../net/ethernet/marvell/octeontx2/af/rvu.h   |   1 +
+>  .../marvell/octeontx2/af/rvu_debugfs.c        | 365 ++++++++++++++++++
+>  .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   7 +
+>  3 files changed, 373 insertions(+)
+> 
 
-Avoid this by delaying the call to irq_set_chained_handler() until all
-handlers from all PLICs are initialized.
-
-Fixes: 8ec99b033147 ("irqchip/sifive-plic: Convert PLIC driver into a platform driver")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20240529215458.937817-1-samuel.holland@sifive.com
-Closes: https://lore.kernel.org/r/CAMuHMdVYFFR7K5SbHBLY-JHhb7YpgGMS_hnRWm8H0KD-wBo+4A@mail.gmail.com/
----
- drivers/irqchip/irq-sifive-plic.c | 34 +++++++++++++++---------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 8fb183c..9e22f7e 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -85,7 +85,7 @@ struct plic_handler {
- 	struct plic_priv	*priv;
- };
- static int plic_parent_irq __ro_after_init;
--static bool plic_cpuhp_setup_done __ro_after_init;
-+static bool plic_global_setup_done __ro_after_init;
- static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
- 
- static int plic_irq_set_type(struct irq_data *d, unsigned int type);
-@@ -487,10 +487,8 @@ static int plic_probe(struct platform_device *pdev)
- 	unsigned long plic_quirks = 0;
- 	struct plic_handler *handler;
- 	u32 nr_irqs, parent_hwirq;
--	struct irq_domain *domain;
- 	struct plic_priv *priv;
- 	irq_hw_number_t hwirq;
--	bool cpuhp_setup;
- 
- 	if (is_of_node(dev->fwnode)) {
- 		const struct of_device_id *id;
-@@ -549,14 +547,6 @@ static int plic_probe(struct platform_device *pdev)
- 			continue;
- 		}
- 
--		/* Find parent domain and register chained handler */
--		domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
--		if (!plic_parent_irq && domain) {
--			plic_parent_irq = irq_create_mapping(domain, RV_IRQ_EXT);
--			if (plic_parent_irq)
--				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
--		}
--
- 		/*
- 		 * When running in M-mode we need to ignore the S-mode handler.
- 		 * Here we assume it always comes later, but that might be a
-@@ -597,25 +587,35 @@ done:
- 		goto fail_cleanup_contexts;
- 
- 	/*
--	 * We can have multiple PLIC instances so setup cpuhp state
-+	 * We can have multiple PLIC instances so setup global state
- 	 * and register syscore operations only once after context
- 	 * handlers of all online CPUs are initialized.
- 	 */
--	if (!plic_cpuhp_setup_done) {
--		cpuhp_setup = true;
-+	if (!plic_global_setup_done) {
-+		struct irq_domain *domain;
-+		bool global_setup = true;
-+
- 		for_each_online_cpu(cpu) {
- 			handler = per_cpu_ptr(&plic_handlers, cpu);
- 			if (!handler->present) {
--				cpuhp_setup = false;
-+				global_setup = false;
- 				break;
- 			}
- 		}
--		if (cpuhp_setup) {
-+
-+		if (global_setup) {
-+			/* Find parent domain and register chained handler */
-+			domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
-+			if (domain)
-+				plic_parent_irq = irq_create_mapping(domain, RV_IRQ_EXT);
-+			if (plic_parent_irq)
-+				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
-+
- 			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
- 					  "irqchip/sifive/plic:starting",
- 					  plic_starting_cpu, plic_dying_cpu);
- 			register_syscore_ops(&plic_irq_syscore_ops);
--			plic_cpuhp_setup_done = true;
-+			plic_global_setup_done = true;
- 		}
- 	}
- 
+<...>
 
