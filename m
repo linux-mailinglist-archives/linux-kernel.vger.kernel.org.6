@@ -1,106 +1,126 @@
-Return-Path: <linux-kernel+bounces-199498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C258D87C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:13:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 629EC8D87C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18DE1F22F4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:13:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC814B2179C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92151137758;
-	Mon,  3 Jun 2024 17:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075681369B1;
+	Mon,  3 Jun 2024 17:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iRRgw/eF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KFQx7REV"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8F313792A;
-	Mon,  3 Jun 2024 17:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864611366
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717434806; cv=none; b=Z29D+5Gv4mBg7WRt2tA2zioGyZQe7mumpyvs+vs1VsRbTk6gjm0wZr4hcj3eZ4b37JPlwgIL9sR1SBWHc+LZVuk5smBucpFzrdBYh5+D2TGDGn3Uvn7Ua7mkDjN6PvOYf1ZIh/qUWBVXcD2MO3ItT/ZpoAFDeeSmQJnVgDsNTx4=
+	t=1717434991; cv=none; b=J1jg757kndHWz3yXiYNgybXXgPNCuVUG+qLnR67/yVLhFPMDqgDSkuoaIeHffo9M/sUiVR/4U2yaENUzb1e63wMwRkJY6+MXqnFpfCeHO/pvBlm6i9J7RUJlTDXm5iS9HLFAlYK9yTKDQKx6q3BdcZxtnPQ6AhGVTBFWQX3xXMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717434806; c=relaxed/simple;
-	bh=GuRckkGxIqRqkRN1xRPmF+yOItGPvl2HAB6FrRkYmF4=;
+	s=arc-20240116; t=1717434991; c=relaxed/simple;
+	bh=1368XZAvzlfC/6803RyQGyJa+BTzFz3YES/xqB6au6o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IKe/Rvp8N0JjDyBzl5Sm5QNLg2KOmfVuhrhRdaXeD9rALoKcwpWPY9xtoGeqt6+jyZX9YHVg7DBpPiBaYjftQls959K4BU8PTfGNLFDHNkHQo8RJHznCWY//IpXZnq4TQglSZqO2OEzaealELi8iHoszQBYNgq3+0DMMghIqmLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iRRgw/eF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453BvbHO021204;
-	Mon, 3 Jun 2024 17:13:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bvwJuGzjJ0MglAc7N5MtbBicWHNWFhGvsAf7k0EcdDU=; b=iRRgw/eF2ANeyFTo
-	ORaCrOU72/aJ3g3N1KCfRTTBdWPI8M49rQaytC3CiKZr+j+Iw7NRKpAX9xT8QWCi
-	Ia1ISgIJFODzaD8nptkwwciM+e+gr3Z96GlaF8LqnYv1mdv2uVIuToKE9tav+ptz
-	YvMtTxG47RdTbsITktD/dQ96e00upSDeTSswmWsO03NAJ7SBVoot30RoET7Awlsy
-	InNEPruaSjlCfrwm2WSJN8aFLHApeOVLRm3b7ojkFb0kdP4l6zhdXoIMZLXE8ROg
-	wmWhOXrMMno+X0ILtra4Nj0XcyEvTJw45cgbJNbc6p3Ko5Lt+uWfWNZdpJwyaJ+W
-	DMePaw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw42vgr2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 17:13:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453HDEfr030875
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 17:13:14 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 10:13:10 -0700
-Message-ID: <9dfe8eac-2da4-6f69-5300-1b953757dba4@quicinc.com>
-Date: Mon, 3 Jun 2024 11:13:10 -0600
+	 In-Reply-To:Content-Type; b=oSDPpDfD//Lj71AX3iAF7DkOdsa2tXt3J2x9ocBayy62jHfRgwwiuIArnJMpKkXxWZkxLMdLDXVF863r4qz03lga4znMZovU0bU7GFuCdx5MLg5wFazZUC7Puu85fm6egbe34ypfUbo7l6GceHA3IrgHAlkrTIihM0cxNgP99UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KFQx7REV; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453HGNCg009033;
+	Mon, 3 Jun 2024 12:16:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717434983;
+	bh=JChILJzlq2tt8JMM3AnaoiRSRjrx9BEIpoWfEuiUXbQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=KFQx7REV8f093OpCRqjan8tKKRYmcbERbnAKSFriISMOYW3nD5Wwna+ZsRzcP5Tj8
+	 r/F4vUbU1eHr327ocFiTyF2NStiekgVxYznGZRutky9Xjc2a7bjlQ+w+FWPl0aT78t
+	 +zoElKAWLwMbhqGB6RnCh6yUwlAI0LsEaAawvuto=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453HGN9l023264
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 12:16:23 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 12:16:22 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 12:16:22 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453HGJm0026382;
+	Mon, 3 Jun 2024 12:16:20 -0500
+Message-ID: <63167c3f-f583-4b2d-83c8-632827594ebb@ti.com>
+Date: Mon, 3 Jun 2024 22:46:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] dmaengine: qcom: add missing MODULE_DESCRIPTION() macros
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] Correct nr_types assignment for TPS6594/3 and
+ TPS65224
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <m-leonard@ti.com>, <n-francis@ti.com>, <bhargav.r@ltts.com>,
+        <m.nirmaladevi@ltts.com>, <vigneshr@ti.com>
+References: <20240603170524.643010-1-s-ramamoorthy@ti.com>
+ <20240603170524.643010-2-s-ramamoorthy@ti.com>
 Content-Language: en-US
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Sinan Kaya <okaya@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, <kernel@quicinc.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240603-md-drivers-dma-qcom-v1-1-d1bd919352bf@quicinc.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240603-md-drivers-dma-qcom-v1-1-d1bd919352bf@quicinc.com>
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20240603170524.643010-2-s-ramamoorthy@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PUm823R08Qy_RaFEivk6Lk_q_IHZKnfq
-X-Proofpoint-ORIG-GUID: PUm823R08Qy_RaFEivk6Lk_q_IHZKnfq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_13,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- impostorscore=0 mlxlogscore=963 clxscore=1011 bulkscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030141
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/3/2024 11:06 AM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma_mgmt.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro, using
-> the descriptions from the associated Kconfig items.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+On 6/3/2024 10:35 PM, Shree Ramamoorthy wrote:
+> Swap nr_types assignment for TPS6594/3 and TPS65224.
+> Issue detected with v6.10-rc1 and tested using a TI J7200 EVM board.
+
+
+Please prefix line, where you want this patch to go
+
+like tiL6.6 or so
+
+
+> Log:
+> [   13.974024] Call trace:
+> [   13.974025]  _regulator_put.part.0+0x40/0x48
+> [   13.974028]  regulator_register+0x2b0/0xa00
+> [   13.974031]  devm_regulator_register+0x58/0xa0
+> [   13.974035]  tps6594_regulator_probe+0x4e0/0x5f0 [tps6594_regulator]
+> ...
+> [   13.974178] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000004
+>
+> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+> ---
+>   drivers/regulator/tps6594-regulator.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
+> index 4a859f4c0f83..b66608ab2546 100644
+> --- a/drivers/regulator/tps6594-regulator.c
+> +++ b/drivers/regulator/tps6594-regulator.c
+> @@ -660,11 +660,11 @@ static int tps6594_regulator_probe(struct platform_device *pdev)
+>   	} else if (tps->chip_id == TPS65224) {
+>   		nr_buck = ARRAY_SIZE(tps65224_buck_regs);
+>   		nr_ldo = ARRAY_SIZE(tps65224_ldo_regs);
+> -		nr_types = REGS_INT_NB;
+> +		nr_types = TPS65224_REGS_INT_NB;
+>   	} else {
+>   		nr_buck = ARRAY_SIZE(buck_regs);
+>   		nr_ldo = ARRAY_SIZE(tps6594_ldo_regs);
+> -		nr_types = TPS65224_REGS_INT_NB;
+> +		nr_types = REGS_INT_NB;
+>   	}
+>   
+>   	reg_irq_nb = nr_types * (nr_buck + nr_ldo);
+> --
 
