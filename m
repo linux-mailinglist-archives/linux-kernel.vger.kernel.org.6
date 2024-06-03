@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-198845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3E18D7E3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:15:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685C38D7E46
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA8C4B2364F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998AF1C211FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C328C7829C;
-	Mon,  3 Jun 2024 09:14:57 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F010082487;
+	Mon,  3 Jun 2024 09:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OP4bcj5R"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C8B770F1
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AB3757E0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406097; cv=none; b=ZfecDtj9zm1C26y2q2G2PjJbZ+SDCU2IIKKoomF8CkR6h1RLLlxCpLsa2IV1ZLXOZvU5bx1XxESplwXLWTdnwZWrBHcklppEiQ7YEhAK6BTLP0uOCBrhuvSMZ03FqSkJYFc6ZlJixQbq8eMdqjL3OS63Yh7EwWNL4B1G5nZwAto=
+	t=1717406152; cv=none; b=GmvkqLdueqtcq4KqpYlVN3+/Aw2sziZom4Cu4qw/mvWQcBftQbVZChmBomVzp/KR/XMoj+OFaXLMZmPQ1Rr+ZQGToCR/FMNAmu30HNyEyAHurYFcY4igvaFpVJ8JyyJje5zwStMDZ3lvPwKXW0SLw2eLftHPDQxkLbFCpFkxl6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406097; c=relaxed/simple;
-	bh=RBHxbEbPrdDXGVgs9JAV6IdcubHw5Ps3pU1smttww4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ke/U+H8MY3ylSvy3U/yytkLonGV9B6Ew9QU2WxJQ5rx/Px1lLj6clM2uFeirgxQM9RNWJLoF4Qi3aXcPnAbBoCtj/FctF+ordXKqxU0pvxrqVOx6ZKwVXtltg02IL2ezNUjfwtOIeUOlT/Yel/Z/Dtv4QpVC6Gz6SPqTPGRLn9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8477CC0005;
-	Mon,  3 Jun 2024 09:14:50 +0000 (UTC)
-Message-ID: <b199fde6-c24e-4c18-9c38-fdc923294551@ghiti.fr>
-Date: Mon, 3 Jun 2024 11:14:49 +0200
+	s=arc-20240116; t=1717406152; c=relaxed/simple;
+	bh=juVl4ZS6gVuhwW1IQQEKZM1dFRzL13hPFkXy9YvTkLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LAiqDu0gCIQ5L0rx5otd1R9uLdU0VIVpHlytGU5DOxB3k2l3OzSaaGS73m3dyimsfkY6Ex8gk51XYT+9CZiL9TT3H20noI+dwkrbnWAy4NQ2I8kdVtOZp0xGW33odRO5BPJKiNZgJOso+ct8LMBekFt/iZC/Y4oYQjim0h2AoKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OP4bcj5R; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=biXZIWD1v9hTZV
+	Kd+qm0AHfD0kwBeNtZ397Rf7lcyC4=; b=OP4bcj5RoXfNjl8GPh3Khtnfrfzu5S
+	2QsIL40M5PIr88oN1/isY8//G5RKCNgAhYgucx+9QEhBaWgOuippevPmHqXXjraE
+	/OJk8qFlP2ggcDCYLWktNqWS+xz1pWxZIMF1ZiPwjjSs7rL4FwU7FntDBWqPlcd4
+	WPH5xfhmGxZ48/Q64J9lHwI/oqtfjUqzyDdIP2YJUPjz7R6wCq52Yw1rHA4duWZX
+	zVyE/T/+9y+mJnSiDlDCqigDIWajYW77nIXTINX+5uw3aQEvbrX3ld82CM4xIQ/D
+	pw+HdhlhdlUiyqq0WvvBg1opzwcNKxZdAQ5suf+joYnbZYklmIUdF3ng==
+Received: (qmail 1899198 invoked from network); 3 Jun 2024 11:15:45 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jun 2024 11:15:45 +0200
+X-UD-Smtp-Session: l3s3148p1@9Rsxx/gZ6oUgAwDPXzLGAH1eNELjOc3g
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Arend van Spriel <arend.vanspriel@broadcom.com>,
+	ath11k@lists.infradead.org,
+	brcm80211-dev-list.pdl@broadcom.com,
+	brcm80211@lists.linux.dev,
+	Christian Lamparter <chunkeey@googlemail.com>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org,
+	Ping-Ke Shih <pkshih@realtek.com>
+Subject: [PATCH 0/6] net: use 'time_left' instead of 'timeout' with wait_*() functions
+Date: Mon,  3 Jun 2024 11:15:33 +0200
+Message-ID: <20240603091541.8367-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v0] RISC-V: Use Zkr to seed KASLR base address
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>, Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, Alexandre Ghiti <alexghiti@rivosinc.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Masahiro Yamada <masahiroy@kernel.org>
-References: <20240531162327.2436962-1-jesse@rivosinc.com>
- <20240531-uselessly-spied-262ecf44e694@spud>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240531-uselessly-spied-262ecf44e694@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
-Hi Conor,
+There is a confusing pattern in the kernel to use a variable named 'timeout' to
+store the result of wait_*() functions causing patterns like:
 
-On 31/05/2024 19:31, Conor Dooley wrote:
-> On Fri, May 31, 2024 at 12:23:27PM -0400, Jesse Taube wrote:
->> Dectect the Zkr extension and use it to seed the kernel base address.
->>
->> Detection of the extension can not be done in the typical fashion, as
->> this is very early in the boot process. Instead, add a trap handler
->> and run it to see if the extension is present.
-> You can't rely on the lack of a trap meaning that Zkr is present unless
-> you know that the platform implements Ssstrict. The CSR with that number
-> could do anything if not Ssstrict compliant, so this approach gets a
-> nak from me. Unfortunately, Ssstrict doesn't provide a way to detect
-> it, so you're stuck with getting that information from firmware.
+        timeout = wait_for_completion_timeout(...)
+        if (!timeout) return -ETIMEDOUT;
+
+with all kinds of permutations. Use 'time_left' as a variable to make the code
+obvious and self explaining.
+
+This is part of a tree-wide series. The rest of the patches can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/time_left
+
+Because these patches are generated, I audit them before sending. This is why I
+will send series step by step. Build bot is happy with these patches, though.
+No functional changes intended.
 
 
-FYI, this patch is my idea, so I'm the one to blame here :)
+Wolfram Sang (6):
+  wifi: ath11k: use 'time_left' variable with wait_event_timeout()
+  wifi: brcmfmac: use 'time_left' variable with wait_event_timeout()
+  wifi: mac80211: use 'time_left' variable with
+    wait_for_completion_timeout()
+  wifi: p54: use 'time_left' variable with
+    wait_for_completion_interruptible_timeout()
+  wifi: rtw89: use 'time_left' variable with
+    wait_for_completion_timeout()
+  wifi: zd1211rw: use 'time_left' variable with
+    wait_for_completion_timeout()
 
+ drivers/net/wireless/ath/ath11k/qmi.c         | 20 +++++++++----------
+ .../broadcom/brcm80211/brcmfmac/cfg80211.c    | 10 +++++-----
+ drivers/net/wireless/intersil/p54/fwio.c      |  6 +++---
+ drivers/net/wireless/intersil/p54/p54pci.c    |  8 ++++----
+ drivers/net/wireless/intersil/p54/p54spi.c    | 10 +++++-----
+ drivers/net/wireless/marvell/mwl8k.c          | 10 +++++-----
+ drivers/net/wireless/realtek/rtw89/core.c     |  6 +++---
+ drivers/net/wireless/zydas/zd1211rw/zd_usb.c  |  8 ++++----
+ 8 files changed, 39 insertions(+), 39 deletions(-)
 
->
-> For DT systems, you can actually parse the DT in the pi, we do it to get
-> the kaslr seed if present, so you can actually check for Zkr. With ACPI
-> I have no idea how you can get that information, I amn't an ACPI-ist.
+-- 
+2.43.0
 
-
-I took a look at how to access ACPI tables this early when implementing 
-the Zabha/Zacas patches, but it seems not possible.
-
-But I'll look into this more, this is not the first time we need the 
-extensions list very early and since we have no way to detect the 
-presence of an extension at runtime, something needs to be done.
-
-Thanks,
-
-Alex
-
-
->
-> Thanks,
-> Conor.
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
