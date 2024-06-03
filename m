@@ -1,113 +1,128 @@
-Return-Path: <linux-kernel+bounces-199458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA538D876C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:44:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 807748D8770
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66EB2283AF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:44:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B17731C21BF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEC613699F;
-	Mon,  3 Jun 2024 16:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004C01369A7;
+	Mon,  3 Jun 2024 16:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VpRKLdSB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTgiQNnx"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5AA8060D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0D84A0A;
+	Mon,  3 Jun 2024 16:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717433087; cv=none; b=PW6p9K6PaFicX70dWrF0M7n89RdXJKyqHaeicgHTvL+lC99giTSr9m9GzafdXnXxw1GDzbfITbJ55OSFwTSosM2NlnByH/rAwrKTj0ioxcEzNlU8inCM9jbNSMqCTPAS/Tti3TpLcZ5lhqcvRCIpAy3N73nzeZ9Oj4r0XnnLFSs=
+	t=1717433268; cv=none; b=C/OdzdzrDv0aaDoQ8MPITVpVD5QhDyXtzL2es/w7IHBF4YdiVxRmoJVFYjSeYyV9EJP0/wXZqLPYahOSrNvPDQNQmbBrarhc4rul2kadOExbH+6oI/mRaJ7oEH431DjonHTQ6hzAPt3oQoMj2QoJqieGg3sJbanvwpc+0yI9Ww4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717433087; c=relaxed/simple;
-	bh=t4eoPsxvhm/UX72ypmID6dj2keloK0/DxVJPrFRAldI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bqJgL3XRz/3omtoje6ih3vDOQNgGb7ju/Mi8ROsXTGwxehaSgNR5c3Pq7t5WcX2qGRD80IPp8qZXLH/ao9TmY5Qcv4KsaA+dzPcTn0+QNqAyocpS0xUwiOdv52b3ABFGxqjwynNYpTj9CoyDSgeVf41ELZhKBZmrxDFBjtMAqRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VpRKLdSB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717433085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zkJhM79a8R11avJivbxxdE1EejxLWPTC2S55x7A+4us=;
-	b=VpRKLdSB3owQrmEgzvT6ABXi1wKxYr2MN2vSa0JBJuFqad+fvhNqq+kk9/mimWHSvTIbSz
-	FhLhVS4QtR1iIcfx4AtUwt8jQbrjOBXf42uFqsZzisPCjCABefNiZmcljQeIKXcoRh3bQ3
-	JLhQlakWgR5En/YDaEe5yhKmnaM5rK4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-365-errRmU8HPbWczMCWGdT3dw-1; Mon, 03 Jun 2024 12:44:43 -0400
-X-MC-Unique: errRmU8HPbWczMCWGdT3dw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4213530af1aso12984375e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:44:42 -0700 (PDT)
+	s=arc-20240116; t=1717433268; c=relaxed/simple;
+	bh=tcsYbpsClbDP7W64qXiViyfHY/uLsnMu8lYBzHjvMW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BP7bgYk4eMAr1QEiML/pjWHh9xcq0Hgq57JzuZxGO9Q+1GVw3ilRSomkvlvS2LPrpCQw1DJXEG6KPxAie8EEhQUcjlsx+O/2a70d0O86ljH87nD9md8LICdqv7CfuHJugSePU9q6KASsSaGAIorsbxgZYVIoqwf3AbPNiDalX0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bTgiQNnx; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42115de211aso5743305e9.2;
+        Mon, 03 Jun 2024 09:47:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717433265; x=1718038065; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2K2x6wRyZJXzetpmcBmeg4at5V4dSutinzh+c8KxFdU=;
+        b=bTgiQNnxB7nX20v6NHYlfcQ/Qp3sVwBiwVdGTwZEk2ZU9LwU6eUKvQnFsDWYeTRXrD
+         sdhhnMRgIRxT81JDcIs8VD5gkbyQNzqMRKaKhiZyxZW/4w8b0LWBmhk+PURHF9ho0a3f
+         paXlKaOLVBckdI21lEVCiwfeQLdsVU7FU/U4tgLQ1uE8/ZZrmXmJyNVMKiJdaXakQBcc
+         V7CflhrthfIKmzu+hg9raUFD56HL0JBLzZfMil2qVJ4TDS2CGM1fvSAvE4UfGsV/jGMO
+         ownSNnOcm5zo4dKiIegcwWlt7/YpPjmWaglqqroEK/XXQcYCdM4AbX9xUnqoUic+CViU
+         Wsng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717433081; x=1718037881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zkJhM79a8R11avJivbxxdE1EejxLWPTC2S55x7A+4us=;
-        b=X9tEhII0QCE46PQ1b77WR0hkKsmxvJOOkX7psEbZo6UiHChzFlefzc4FislKgNtLUG
-         PBxtRBskl2rmKCsr+lu045yG3Z+sGFFrlfyO2756heiUENiJlRXBdpkoTyblMKIgq/Kq
-         0ZlAZkS/8X38KgxyGVrblS8l3RnSOonruFe1KPgBdW1gEJOrtV/9gYVQ444SusYJRgRS
-         D0qyvBjyStT2pg/BAKFwfHq0iT1pzwr+ZSN6mhpW9JO93O/imY6zehkzVrI7qcq4coUj
-         kqAMEGbNQFnGKiM9gHgI/FzA4JVc+6XoooSiaw4nCGk/EtrLLKE2q6dv5dgDKVZjRHrW
-         c69w==
-X-Forwarded-Encrypted: i=1; AJvYcCVLNH+bSLoFLOjWXLmYC5y5XxN3xPdq3tTxueE1XgHc8uNde5V26sgBoLFBN3+00YgzvmBzFxDBkfrQg48KFM/hi8O5VhitQuL0Kr2k
-X-Gm-Message-State: AOJu0YwvmInk5ibjW8OPVXT7mzzGphaKTd35vt+3wxK5juzNWUgY3PWc
-	dZ6Cn1k5zpNIpJVY+XyqHjhQoei8/5H9lZRNP3nvkBNs+UzvrV6C8Dd5wHyLCsnzJmp3H+pMA3i
-	xp7UvWggV4+sXNvdAwpFfiUdGjGz+r59vc28k7qOrxbtBZBC5JHyDouXrMEyenPqf/pPcl7SWbL
-	5TRx+qNHYVHVkJla2+imddyoKbiQf3KaOub2xI
-X-Received: by 2002:a05:600c:4744:b0:420:2983:2229 with SMTP id 5b1f17b1804b1-4212e07530emr82210715e9.22.1717433081463;
-        Mon, 03 Jun 2024 09:44:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMCnI5M+sIjdtgeYl/SuU7qEpdctfImP4SJ6aepSaIJ9r0QcVVw+D6lCCYSXtw8KRc+Y06WU8alk5VEuqo8TA=
-X-Received: by 2002:a05:600c:4744:b0:420:2983:2229 with SMTP id
- 5b1f17b1804b1-4212e07530emr82210525e9.22.1717433081090; Mon, 03 Jun 2024
- 09:44:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717433265; x=1718038065;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2K2x6wRyZJXzetpmcBmeg4at5V4dSutinzh+c8KxFdU=;
+        b=XWpOpX5d94o3LB4Hy7pD7f9CldvWAF85bnaDN4NXchT8u83e3GY2WFt8S8FXwjKEoQ
+         JhvmIPYyNIyklzZJSoA99La/fovgf4yIVDAOjKFSZOkHQwkVS8QObD3942DEgEyVH5QU
+         lvEIuR7jyAwKttZUlsEYgs03ESQhjymPmaebZHU7zQqIX//oCYYmIAmpWqSRP/4y25Sr
+         IqoDhVoT8xsi4ohygnLQFJOKLdiM6DI5w4yqjEmKweuxrg5QkWp00hmpbSsjoL8Gb9w1
+         zVop3mRpV2AEhWECLNodiSB4J3fEF9ua/siqaopZnsfXepdrPyZ4Pof76PR5QdbjLooc
+         8JLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVE9PIO/OqUI6yb29VGNLrRqqjeTiurZ1+uYyyIMYT9s3aQ3QjY/WYjbcaaFAsz23vcPuZBnKGaSTrHDwXvQyMMsVw5EzU+g/CZZd6uEZDv+ZyBm4X0ojYFG4ezbCDjQGsgAmdog==
+X-Gm-Message-State: AOJu0YzNNPfELLjJpl/jR484ndq5KSwBvCiQxEl9z+vqCJtubP9FaMRJ
+	Baq/tRXy30Tfs8htBkS3vYQhezkZEKT9mfaWB1eu9dZUa0TVoUDv3EQqWw==
+X-Google-Smtp-Source: AGHT+IGQkiS+qgnQgwMl3BMAYdUelaFUvRGyti9wZfuLl3wYbfZQtWiHoNEAwwnqvObBQE9zFLF7Uw==
+X-Received: by 2002:a05:600c:1d27:b0:421:29b4:533b with SMTP id 5b1f17b1804b1-4212e00487emr77921295e9.0.1717433264921;
+        Mon, 03 Jun 2024 09:47:44 -0700 (PDT)
+Received: from [172.16.102.219] ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421292205ccsm145572875e9.4.2024.06.03.09.47.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 09:47:44 -0700 (PDT)
+Message-ID: <33c7d977-dfb0-4386-bbd7-5327fd4e798f@gmail.com>
+Date: Mon, 3 Jun 2024 17:47:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510211024.556136-1-michael.roth@amd.com> <6nby33glecw46wrdws7vuokrqz4b72evrzdujcrsm6pujo62b6@xoxstkzsvwrj>
-In-Reply-To: <6nby33glecw46wrdws7vuokrqz4b72evrzdujcrsm6pujo62b6@xoxstkzsvwrj>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 3 Jun 2024 18:44:29 +0200
-Message-ID: <CABgObfbT_v23LbP7Mp-PfbnakHYrZ7+g3KfUA_BOnsp+7ivMYQ@mail.gmail.com>
-Subject: Re: [PULL 00/19] KVM: Add AMD Secure Nested Paging (SEV-SNP)
- Hypervisor Support
-To: Michael Roth <michael.roth@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>, linux-coco@lists.linux.dev, jroedel@suse.de, 
-	thomas.lendacky@amd.com, vkuznets@redhat.com, pgonda@google.com, 
-	rientjes@google.com, tobin@ibm.com, bp@alien8.de, vbabka@suse.cz, 
-	alpergun@google.com, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
-	pankaj.gupta@amd.com, liam.merwick@oracle.com, papaluri@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] MAINTAINERS: Add maintainer for ROHM BH1745
+To: Mudit Sharma <muditsharma.info@gmail.com>, jic23@kernel.org,
+ lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240603162122.165943-1-muditsharma.info@gmail.com>
+ <20240603162122.165943-3-muditsharma.info@gmail.com>
+Content-Language: en-US
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+In-Reply-To: <20240603162122.165943-3-muditsharma.info@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 5:23=E2=80=AFAM Michael Roth <michael.roth@amd.com>=
- wrote:
-> As discussed during the PUCK call, here is a branch with fixup patches
-> that incorporate the additional review/testing that came in after these
-> patches were merged into kvm/next:
->
->   https://github.com/mdroth/linux/commits/kvm-next-snp-fixes4/
->
-> They are intended to be squashed in but can also be applied on top if
-> that's preferable (but in that case the first 2 patches need to be
-> squashed together to maintain build bisectability):
+On 6/3/24 17:21, Mudit Sharma wrote:
+> Add myself as maintainer for ROHM BH1745 colour sensor driver.
+> 
+> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+> ---
+> v1->v2:
+> - No changes
+> 
+>   MAINTAINERS | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6c90161c7bf..945873321fef 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19407,6 +19407,13 @@ S:	Supported
+>   F:	drivers/power/supply/bd99954-charger.c
+>   F:	drivers/power/supply/bd99954-charger.h
+>   
+> +ROHM BH1745 COLOUR SENSOR
+> +M:	Mudit Sharma <muditsharma.info@gmail.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+> +F:	drivers/iio/light/bh1745.c
+> +
+>   ROHM BH1750 AMBIENT LIGHT SENSOR DRIVER
+>   M:	Tomasz Duszynski <tduszyns@gmail.com>
+>   S:	Maintained
 
-Yes, I'd rather not rebase kvm/next again so I applied them on top.
-None of the issues are so egregiously bad.
+Looks good to me,
 
-Paolo
+Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+-- 
+Kind regards,
+Ivan Orlov
 
 
