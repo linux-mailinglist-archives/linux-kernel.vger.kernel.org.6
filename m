@@ -1,133 +1,194 @@
-Return-Path: <linux-kernel+bounces-199743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2B18FA374
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:46:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6F38FA3BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E3128CEDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:46:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2171C23C59
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AA913C69C;
-	Mon,  3 Jun 2024 21:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1385912E1FF;
+	Mon,  3 Jun 2024 21:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Z3G5f6mH"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pZqbKxER"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EA323A6;
-	Mon,  3 Jun 2024 21:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9265323A6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 21:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717451157; cv=none; b=kVZi0BpDicSuz02U8vrxTqSm+iScAqftJR2BneG//38BDavFcJ4EIcrfNTCqK85plgx3bxF0y794LmU+J02gzk0RVqiSj9qw1IaJtqY+U8i0XSNxJ5vTAqCRwGW8zIBxcSs1EjOtflgG0hfEuBWnrFT8KmmLc29ptMxyCN2FbaQ=
+	t=1717451228; cv=none; b=VWdBoYxkJRgHcOo622f96NzSE5w3xWlKZCstaetf1z4ZmFWWAambtn77pennxi11cDujbSwJID/7wcMvbAqDohVzXEaoV49kOsXdZn1LRPUcGjenQqYRM09a4p2wtZN+Lu7VmgPF8lr48npDdO1sRYxuwrXgOKbOqIcga4rI54M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717451157; c=relaxed/simple;
-	bh=jnzdAcc4PzycCzETozPN0Yi+614DvOmUMIDAH3w8MWI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qKRYwu5Bt+JigU/V0doKOElpFTgZbA2TTvY/u8PbS1+u+VlX9oJq9Nc89wkdCbYKJBGazxWp4OIcfRWgyXD8AR/zrDrfVuKlOrQDjeuUXbx2EbDd6H9dr/bCs2VwCSlvvBvFrJZc7qdolSc/Kx05OhSfLv7GgKbP3eVcxGWxHrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Z3G5f6mH; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1717451152;
-	bh=jnzdAcc4PzycCzETozPN0Yi+614DvOmUMIDAH3w8MWI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Z3G5f6mHtnwoBuvaJ2A8zbBDKfLFnsVfG6paE0p+8AjDm70lkyShDySIu9s4ShK6R
-	 eG+taaMigO0hNW2cct4UswiKaob9PSWIpPfDthazVqugZtS0qtTozpq4+p3noN8k/O
-	 W7170NJhsQaq4/f+j9fhtwq/oBKRqu60S4Qk3qAw=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 03 Jun 2024 23:45:29 +0200
-Subject: [PATCH] leds: triggers: flush pending brightness before activating
- trigger
+	s=arc-20240116; t=1717451228; c=relaxed/simple;
+	bh=MkchS3T1yd/q8NMQ5OnngmwnF/j9QgKZ2Hww8Q8rcjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k+HQuzd0EGALLJs1+naRNZNxCA80SmtKxIizbdbiJAdXuPihVV/0gn/baKWFJwzqyqoHrHGNQ//8TYeTigyfEKvBxp8gPPiY8StCIfICEaA3HJi3IzTz2+NViREggVsQqFb8qfx82zYWe2bR2d2K2B610ZxVzPY76Ac22InUSCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pZqbKxER; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eabd22d404so2270871fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 14:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717451225; x=1718056025; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FoNDEjuOcgHDOVnZsyqRle0CnqIa5i20V/byDmBZIYI=;
+        b=pZqbKxERbLF7hNyIw9z3gbVjV4gq5DACJn8GjOYzmEylzGCiHPbjSb8u0fdhTRZSnu
+         YL4NEwGdNxQzKQQUApo13gmpm+7uXSQcBis79qIss8ZfAkrRoLVdMS6ugjJtMnMpjd5V
+         Oqtj4/gE5vD7r/e8+iV7khiL/TRr4/KdeR2dY8baplZ+XWWaVURlpW/4QlLdTgqjkZdg
+         eDOWi8jUE0ivlmcZETrjhY3r7fLsaZNQ408coNH3A4zXdztRDdoUomkDah348y3BP+Vu
+         vuhuSzpk9YPanDYsngBPiXKCrUy5suNVX8IIMT2ICyixrzS9SNG6fFrh0e7/W7DsvRO2
+         RnrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717451225; x=1718056025;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FoNDEjuOcgHDOVnZsyqRle0CnqIa5i20V/byDmBZIYI=;
+        b=kcVRNvRpdIaM9khS3RoWte/uoKBnE7N/7+r+Hzw7E9EiSaJqrjos1lZ7VqNxn5blQ4
+         JFjwhLV0N5JprZN4EPZRaQMH8mebkZfxQiVhZXpNOqlthmphep9+VbiJW6xmRKlQ3O8l
+         3VBW6/lY/SPLo0iH6Ndt/WF4E8DPUuLyb+l/f5e2aCLTYfWNzXpiAPnTpFTfn5GIx8Vb
+         /aQAryYrBbaIhRhpkaCbTwHlV72VcwNF0Bha/1AYHk4kWxQBiPZgDK6SJDKtfz/ywLo6
+         NMtRUzw4S6G+CJzrc7TiDs/Yfv5EMY6ux7lTVAQrS/L65nakHDouN8J5imRVM6qgiO1+
+         VsKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSH3TgPe0pYZyqctk/8kf6EAzQyinf7PVfgoBminW/t0BIIDawW0Pq9X2KRjkeluyBZQgrwp9qidFaMJ5STzkK547KHpEiUYGTNkDl
+X-Gm-Message-State: AOJu0YyxfEBIZvvv5n1Onb1ndaosIt4VzvbA32iP98mC5TcVXNwjGNcR
+	OJf2CwCmurnXwRtOixcAVJmCr6S/01ZXoEIhGn5ZFT20GVbTS0iT7FSiLJWjQMc=
+X-Google-Smtp-Source: AGHT+IEj4vQ1nY8StZT7F/AmAO9Jl6Uf5hey1JkSdjWJ4OoehBOPXVZJP+dMJdd2kMJUgH8mBkF+vg==
+X-Received: by 2002:a2e:b8c7:0:b0:2d6:f69d:c74c with SMTP id 38308e7fff4ca-2ea951e0961mr72022941fa.38.1717451224716;
+        Mon, 03 Jun 2024 14:47:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91bb4aedsm13686521fa.33.2024.06.03.14.47.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 14:47:04 -0700 (PDT)
+Date: Tue, 4 Jun 2024 00:47:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: noralf@tronnes.org
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	David Lechner <david@lechnology.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>, 
+	Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
+Subject: Re: [PATCH v3 4/5] drm/mipi-dbi: Add support for DRM_FORMAT_RGB888
+Message-ID: <qij3fk3psujfazigjt56hrpj2celdeyvsz3uzioo5aorbzzwql@kbglyrbkd6g6>
+References: <20240603-panel-mipi-dbi-rgb666-v3-0-59ed53ca73da@tronnes.org>
+ <20240603-panel-mipi-dbi-rgb666-v3-4-59ed53ca73da@tronnes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240603-led-trigger-flush-v1-1-c904c6e2fb34@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAHg5XmYC/x3MQQqEMAxG4atI1hOIrQh6FXExjn9rQFRSlQHx7
- haX3+K9ixJMkagtLjKcmnRdMspPQb/pu0SwjtnkxFVSi+cZI++mMcI4zEea2A8IXjyGRhzlbjM
- E/b/Prr/vB3TderFjAAAA
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dustin Howett <dustin@howett.net>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717451151; l=2217;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=jnzdAcc4PzycCzETozPN0Yi+614DvOmUMIDAH3w8MWI=;
- b=DAmfVDCS7blGrssqP3RWZCRm53faQYuKu8a5Zw2zdv/zTi5sOCNVQi6QvJrLuiWAPpf2b0kqY
- cFQkQmsu1a8DBYfwMgEE6CNmT+xuJtdxURJmEyvH+ofnM9G1zv9DAeW
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+In-Reply-To: <20240603-panel-mipi-dbi-rgb666-v3-4-59ed53ca73da@tronnes.org>
 
-The race fixed in timer_trig_activate() between a blocking
-set_brightness() call and trigger->activate() can affect any trigger.
-So move the call to flush_work() into led_trigger_set() where it can
-avoid the race for all triggers.
+On Mon, Jun 03, 2024 at 01:21:35PM +0200, Noralf Trønnes via B4 Relay wrote:
+> From: Noralf Trønnes <noralf@tronnes.org>
+> 
+> DRM_FORMAT_RGB888 is 24 bits per pixel and it would be natural to send it
+> on the SPI bus using a 24 bits per word transfer. The problem with this
+> is that not all SPI controllers support 24 bpw.
+> 
+> Since DRM_FORMAT_RGB888 is stored in memory as little endian and the SPI
+> bus is big endian we use 8 bpw to always get the same pixel format on the
+> bus: b8g8r8.
+> 
+> The MIPI DCS specification lists the standard commands that can be sent
+> over the MIPI DBI interface. The set_address_mode (36h) command has one
+> bit in the parameter that controls RGB/BGR order. This means that the
+> controller can be configured to receive the pixel as BGR.
+> 
+> RGB888 is rarely supported on these controllers but RGB666 is very common.
+> All datasheets I have seen do at least support the pixel format option
+> where each color is sent as one byte and the 6 MSB's are used.
+> 
+> All this put together means that we can send each pixel as b8g8r8 and an
+> RGB666 capable controller sees this as b6x2g6x2r6x2.
+> 
+> Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+> ---
+>  drivers/gpu/drm/drm_mipi_dbi.c | 29 +++++++++++++++++++++++++----
+>  include/drm/drm_mipi_dbi.h     |  5 +++++
+>  2 files changed, 30 insertions(+), 4 deletions(-)
 
-Fixes: 0db37915d912 ("leds: avoid races with workqueue")
-Fixes: 8c0f693c6eff ("leds: avoid flush_work in atomic context")
-Signed-off-by: Thomas WeiÃŸschuh <linux@weissschuh.net>
----
-Dustin, could you validate that this fixes the issue you encountered in
-the cros_ec led driver?
----
- drivers/leds/led-triggers.c          | 10 ++++++++--
- drivers/leds/trigger/ledtrig-timer.c |  5 -----
- 2 files changed, 8 insertions(+), 7 deletions(-)
+The patch generally LGTM. The only nit is the name of
+'emulation_format'. My first impression was that it is a format that the
+driver is emulating to userspace, however it looks like this is
+over-the-wire format (with the RGB666 vs RGB888 note kept in mind).
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index b1b323b19301..9e6233dbcfd4 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -195,10 +195,16 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
- 		led_cdev->trigger = trig;
- 
- 		ret = 0;
--		if (trig->activate)
-+		if (trig->activate) {
-+			/*
-+			 * If "set brightness to 0" is pending in workqueue,
-+			 * we don't want that to be reordered after ->activate()
-+			 */
-+			flush_work(&led_cdev->set_brightness_work);
- 			ret = trig->activate(led_cdev);
--		else
-+		} else {
- 			led_set_brightness(led_cdev, trig->brightness);
-+		}
- 		if (ret)
- 			goto err_activate;
- 
-diff --git a/drivers/leds/trigger/ledtrig-timer.c b/drivers/leds/trigger/ledtrig-timer.c
-index b4688d1d9d2b..1d213c999d40 100644
---- a/drivers/leds/trigger/ledtrig-timer.c
-+++ b/drivers/leds/trigger/ledtrig-timer.c
-@@ -110,11 +110,6 @@ static int timer_trig_activate(struct led_classdev *led_cdev)
- 		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
- 	}
- 
--	/*
--	 * If "set brightness to 0" is pending in workqueue, we don't
--	 * want that to be reordered after blink_set()
--	 */
--	flush_work(&led_cdev->set_brightness_work);
- 	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
- 		      &led_cdev->blink_delay_off);
- 
+If my understanding is correct, I'd suggest renaming emulation_format
+to something like 'raw_format' or 'panel_format'.
 
----
-base-commit: f06ce441457d4abc4d76be7acba26868a2d02b1c
-change-id: 20240603-led-trigger-flush-3bef303eb902
+> 
+> diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
+> index 77f8a828d6e0..eb330676857c 100644
+> --- a/drivers/gpu/drm/drm_mipi_dbi.c
+> +++ b/drivers/gpu/drm/drm_mipi_dbi.c
+> @@ -206,6 +206,7 @@ int mipi_dbi_buf_copy(void *dst, struct iosys_map *src, struct drm_framebuffer *
+>  		      struct drm_rect *clip, bool swap,
+>  		      struct drm_format_conv_state *fmtcnv_state)
+>  {
+> +	struct mipi_dbi_dev *dbidev = drm_to_mipi_dbi_dev(fb->dev);
+>  	struct drm_gem_object *gem = drm_gem_fb_get_obj(fb, 0);
+>  	struct iosys_map dst_map = IOSYS_MAP_INIT_VADDR(dst);
+>  	int ret;
+> @@ -222,8 +223,18 @@ int mipi_dbi_buf_copy(void *dst, struct iosys_map *src, struct drm_framebuffer *
+>  		else
+>  			drm_fb_memcpy(&dst_map, NULL, src, fb, clip);
+>  		break;
+> +	case DRM_FORMAT_RGB888:
+> +		drm_fb_memcpy(&dst_map, NULL, src, fb, clip);
+> +		break;
+>  	case DRM_FORMAT_XRGB8888:
+> -		drm_fb_xrgb8888_to_rgb565(&dst_map, NULL, src, fb, clip, fmtcnv_state, swap);
+> +		switch (dbidev->emulation_format) {
+> +		case DRM_FORMAT_RGB565:
+> +			drm_fb_xrgb8888_to_rgb565(&dst_map, NULL, src, fb, clip, fmtcnv_state, swap);
+> +			break;
+> +		case DRM_FORMAT_RGB888:
+> +			drm_fb_xrgb8888_to_rgb888(&dst_map, NULL, src, fb, clip, fmtcnv_state);
+> +			break;
+> +		}
+>  		break;
+>  	default:
+>  		drm_err_once(fb->dev, "Format is not supported: %p4cc\n",
 
-Best regards,
+[skipped]
+
+> diff --git a/include/drm/drm_mipi_dbi.h b/include/drm/drm_mipi_dbi.h
+> index b36596efdcc3..85bf19b98cee 100644
+> --- a/include/drm/drm_mipi_dbi.h
+> +++ b/include/drm/drm_mipi_dbi.h
+> @@ -101,6 +101,11 @@ struct mipi_dbi_dev {
+>  	 */
+>  	struct drm_display_mode mode;
+>  
+> +	/**
+> +	 * @emulation_format: Pixel format to use when emulating XRGB8888
+> +	 */
+> +	u32 emulation_format;
+> +
+>  	/**
+>  	 * @tx_buf: Buffer used for transfer (copy clip rect area)
+>  	 */
+> 
+> -- 
+> 2.45.1
+> 
+> 
+
 -- 
-Thomas WeiÃŸschuh <linux@weissschuh.net>
-
+With best wishes
+Dmitry
 
