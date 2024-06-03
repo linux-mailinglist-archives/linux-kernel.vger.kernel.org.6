@@ -1,117 +1,186 @@
-Return-Path: <linux-kernel+bounces-198554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BAE8D7A2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 501298D7A37
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53E91C20DB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:50:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A4AE1C20C1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 02:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD613AD5E;
-	Mon,  3 Jun 2024 02:50:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC505250
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 02:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E38B663;
+	Mon,  3 Jun 2024 02:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="GBpa7xoo"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77248D29B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 02:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717383047; cv=none; b=XdENZNV1OQT0FJxUpkvM9MG/cwoD1S96KiutrcLuKjlwZ8VZJ3cU1bTB5UHJtet+syReRl+3XCPhblRkRloJTMJL3kiJFG2OPJgVo0nD2JGnmhO6qg8sV91Z9BpF/zWRx2vwUNv5IovbsTL8ZL3C5QA1uqVoWnZY7yF3wK0+1vY=
+	t=1717383499; cv=none; b=VMrdihno2OnIk2fyGkqxmNAe1YxdlU7tglopi+8EUwS9JS37q8PdRk0GrO/3D/NSCZNUxng6Tywds6dGJalT1CGImFslcIqvjgu+fOsV3ATUjJPI8wF2Hsv5O2fljlTgJYi/+0wsW5ESrEQFbUkolG08O1TI2omiZ6rxCzwWO7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717383047; c=relaxed/simple;
-	bh=9Cuj767uAqO5fKjEM1oY17xabYsz8+VeUEz+oc7TZpc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gPDKM+PYxsvAyaQhV8RGDXfmRYUK/A3PbK/VvcXKuBEyVRr98lSNNj5QH/LpBUe5ebecyx5jBc5xBop2pAwUJCaJY1M/TozIe70+HcUOUMVnBy8n4B0ZN5Syjo2lzyPtFLv5Hb0rpB5tMhpI5mtwi9rhSJmD+7WPNk+PIt9sGzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vsyrj1ZGcz4f3lCm
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 10:50:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 3ED6F1A06E0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 10:50:40 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBF9L11mxJ2vOQ--.46547S3;
-	Mon, 03 Jun 2024 10:50:40 +0800 (CST)
-Subject: Re: [PATCH] md/dm-raid: don't clear MD_RECOVERY_FROZEN after setting
- frozen
-To: linan666@huaweicloud.com, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, song@kernel.org, xni@redhat.com
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240601090608.2847814-1-linan666@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <d20a99fa-965d-936d-1492-df87bba3da62@huaweicloud.com>
-Date: Mon, 3 Jun 2024 10:50:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1717383499; c=relaxed/simple;
+	bh=TDMzxrWehCpcrouEiQlU14TqotNUMejWIh7fhfoLRAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CeQ1IlInWEIC+WLI9qJELsSoTH/PpEbz0wq2+81T3RFAN6TJeAP7Yr2zdQ1LZWvzHwE3MPPCthzpXRQjj8GlOHFzbzcGyp7MaDqdyujj1IaHToiHWe2UCrkfD7wwNpQYvSjyQEiHTgh2QEXqVSWyBZqn2RpSn3BRH16L+AahoPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=GBpa7xoo; arc=none smtp.client-ip=117.135.210.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=wMpQlTsu2ZFAUv16znDumhREYmtHYvEuZSemXgjeZdI=;
+	b=GBpa7xooWCGlDga9bf8cUDJ8sBI04RVvcxjgLc/UiNhPIxSSmrjut4RWW70Bpm
+	ZVNx6gy0ueZriADEKz0dVmg2shBeVzNT92wJuUw+iFLW4NII3EOoYd+fUYTfQofS
+	Rc2UVT2MUA9rW3RV2hHwRyK147Ud5xfwAjUImabt3BV90=
+Received: from [172.24.140.185] (unknown [111.204.182.99])
+	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wD3H_urMF1mdhOPAw--.9565S2;
+	Mon, 03 Jun 2024 10:55:42 +0800 (CST)
+Message-ID: <bb43844e-0ef2-44d6-9d98-496865d942b9@126.com>
+Date: Mon, 3 Jun 2024 10:55:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240601090608.2847814-1-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBF9L11mxJ2vOQ--.46547S3
-X-Coremail-Antispam: 1UD129KBjvJXoWrZFy3JFy8uw15uFW3WFyrCrg_yoW8Jr4rpF
-	4kCa9xAr48Ar47Za9rXF1q9ayFv3ZFqr90krW7C3s5XryfGF9rW3WFgw42qFWkJFyrGFW7
-	JF47JF4rZF15KaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-	3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: Reschedule the cfs_rq when current is
+ ineligible
+To: Chunxin Zang <spring.cxz@gmail.com>
+Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+ linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
+ yangchen11@lixiang.com, Jerry Zhou <zhouchunhua@lixiang.com>,
+ Chunxin Zang <zangchunxin@lixiang.com>, mingo@redhat.com,
+ Peter Zijlstra <peterz@infradead.org>, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org
+References: <20240524134011.270861-1-spring.cxz@gmail.com>
+ <572bef0a-727c-4922-93e9-ad29c385120e@126.com>
+ <6AF97701-B8F4-46C6-851E-A8BACE97E8C0@gmail.com>
+Content-Language: en-US
+From: Honglei Wang <jameshongleiwang@126.com>
+In-Reply-To: <6AF97701-B8F4-46C6-851E-A8BACE97E8C0@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD3H_urMF1mdhOPAw--.9565S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Gr1rurykJw4kZFy7Kw4Uurg_yoW7WrWfpF
+	ZIqa42vF4kJw1UJ3yIyw4I9FyrGFWfAFy8XFn5tFyFqFnxK3Wftr13KrWjkrW09r4F9r1a
+	vr4qq3y3u34qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UC_M-UUUUU=
+X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbiYAXyrWV21EhACgAEs7
 
-ÔÚ 2024/06/01 17:06, linan666@huaweicloud.com Ð´µÀ:
-> From: Li Nan <linan122@huawei.com>
-> 
-> MD_RECOVERY_FROZEN should always remain set after array is frozen. But
-> in raid_message(), this flag is cleared soon after frozen. Fix it. This
-> flag will be cleared in md_idle_sync_thread(), there is no need to clear
-> it again for idle.
-> 
-> Fixes: cd32b27a66db ("md/dm-raid: don't call md_reap_sync_thread() directly")
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->   drivers/md/dm-raid.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
-> index abe88d1e6735..466740a3a522 100644
-> --- a/drivers/md/dm-raid.c
-> +++ b/drivers/md/dm-raid.c
-> @@ -3744,9 +3744,10 @@ static int raid_message(struct dm_target *ti, unsigned int argc, char **argv,
->   
->   		md_idle_sync_thread(mddev);
->   		mddev_unlock(mddev);
-> +	} else {
-> +		clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
->   	}
->   
-> -	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
->   	if (decipher_sync_action(mddev, mddev->recovery) != st_idle)
->   		return -EBUSY;
->   	else if (!strcasecmp(argv[0], "resync"))
+On 2024/5/29 22:31, Chunxin Zang wrote:
+> 
+> 
+>> On May 25, 2024, at 19:48, Honglei Wang <jameshongleiwang@126.com> wrote:
+>>
+>>
+>>
+>> On 2024/5/24 21:40, Chunxin Zang wrote:
+>>> I found that some tasks have been running for a long enough time and
+>>> have become illegal, but they are still not releasing the CPU. This
+>>> will increase the scheduling delay of other processes. Therefore, I
+>>> tried checking the current process in wakeup_preempt and entity_tick,
+>>> and if it is illegal, reschedule that cfs queue.
+>>> The modification can reduce the scheduling delay by about 30% when
+>>> RUN_TO_PARITY is enabled.
+>>> So far, it has been running well in my test environment, and I have
+>>> pasted some test results below.
+>>> I isolated four cores for testing. I ran Hackbench in the background
+>>> and observed the test results of cyclictest.
+>>> hackbench -g 4 -l 100000000 &
+>>> cyclictest --mlockall -D 5m -q
+>>>                                   EEVDF      PATCH  EEVDF-NO_PARITY  PATCH-NO_PARITY
+>>>                  # Min Latencies: 00006      00006      00006      00006
+>>>    LNICE(-19)    # Avg Latencies: 00191      00122      00089      00066
+>>>                  # Max Latencies: 15442      07648      14133      07713
+>>>                  # Min Latencies: 00006      00010      00006      00006
+>>>    LNICE(0)      # Avg Latencies: 00466      00277      00289      00257
+>>>                  # Max Latencies: 38917      32391      32665      17710
+>>>                  # Min Latencies: 00019      00053      00010      00013
+>>>    LNICE(19)     # Avg Latencies: 37151      31045      18293      23035
+>>>                  # Max Latencies: 2688299    7031295    426196     425708
+>>> I'm actually a bit hesitant about placing this modification under the
+>>> NO_PARITY feature. This is because the modification conflicts with the
+>>> semantics of RUN_TO_PARITY. So, I captured and compared the number of
+>>> resched occurrences in wakeup_preempt to see if it introduced any
+>>> additional overhead.
+>>> Similarly, hackbench is used to stress the utilization of four cores to
+>>> 100%, and the method for capturing the number of PREEMPT occurrences is
+>>> referenced from [1].
+>>> schedstats                          EEVDF       PATCH   EEVDF-NO_PARITY  PATCH-NO_PARITY  CFS(6.5)
+>>> stats.check_preempt_count          5053054     5057286    5003806    5018589    5031908
+>>> stats.patch_cause_preempt_count    -------     858044     -------    765726     -------
+>>> stats.need_preempt_count           570520      858684     3380513    3426977    1140821
+>>>  From the above test results, there is a slight increase in the number of
+>>> resched occurrences in wakeup_preempt. However, the results vary with each
+>>> test, and sometimes the difference is not that significant. But overall,
+>>> the count of reschedules remains lower than that of CFS and is much less
+>>> than that of NO_PARITY.
+>>> [1]: https://lore.kernel.org/all/20230816134059.GC982867@hirez.programming.kicks-ass.net/T/#m52057282ceb6203318be1ce9f835363de3bef5cb
+>>> Signed-off-by: Chunxin Zang <zangchunxin@lixiang.com>
+>>> Reviewed-by: Chen Yang <yangchen11@lixiang.com>
+>>> ---
+>>>   kernel/sched/fair.c | 6 ++++++
+>>>   1 file changed, 6 insertions(+)
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index 03be0d1330a6..a0005d240db5 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -5523,6 +5523,9 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+>>>   			hrtimer_active(&rq_of(cfs_rq)->hrtick_timer))
+>>>   		return;
+>>>   #endif
+>>> +
+>>> +	if (!entity_eligible(cfs_rq, curr))
+>>> +		resched_curr(rq_of(cfs_rq));
+>>>   }
+>>>     @@ -8325,6 +8328,9 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>>>   	if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
+>>>   		return;
+>>>   +	if (!entity_eligible(cfs_rq, se))
+>>> +		goto preempt;
+>>> +
+>>>   	find_matching_se(&se, &pse);
+>>>   	WARN_ON_ONCE(!pse);
+>>>   
+>> Hi Chunxin,
+>>
+>> Did you run a comparative test to see which modification is more helpful on improve the latency? Modification at tick point makes more sense to me. But, seems just resched arbitrarily in wakeup might introduce too much preemption (and maybe more context switch?) in complex environment such as cgroup hierarchy.
+>>
+>> Thanks,
+>> Honglei
+> 
+> Hi Honglei
+> 
+> I attempted to build a slightly more complex scenario. It consists of 4 isolated cores,
+> 4 groups of hackbench (160 processes in total) to stress the CPU, and 1 cyclictest
+> process to test scheduling latency. Using cgroup v2, to created 64 cgroup leaf nodes
+> in a binary tree structure (with a depth of 7). I then evenly distributed the aforementioned
+> 161 processes across the 64 cgroups respectively, and observed the scheduling delay
+> performance of cyclictest.
+> 
+> Unfortunately, the test results were very fluctuating, and the two sets of data were very
+> close to each other. I suspect that it might be due to too few processes being distributed
+> in each cgroup, which led to the logic for determining ineligible always succeeding and
+> following the original logic. Later, I will attempt more tests to verify the impact of these
+> modifications in scenarios involving multiple cgroups.
+> 
+
+Sorry to lately replay, I was a bit busy last week. How's the test going 
+on? What about run some workload processes who spend more time in 
+kernel? Maybe it's worth do give a try, but it depends on your test plan.
+
+Thanks,
+Honglei
+
+> thanks
+> Chunxin
+> 
 > 
 
 
