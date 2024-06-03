@@ -1,94 +1,125 @@
-Return-Path: <linux-kernel+bounces-199222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A466C8D8403
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:32:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415E28D8400
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599AB28DF40
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F210C28DC30
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117E412E1D3;
-	Mon,  3 Jun 2024 13:32:10 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C798A12D76D;
+	Mon,  3 Jun 2024 13:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgV79tYr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F1212D1FA;
-	Mon,  3 Jun 2024 13:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103C412D1FA;
+	Mon,  3 Jun 2024 13:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717421529; cv=none; b=c4/jIXYVhpoS+Eu5stzG53TJMtGNuxqFFucpLrzZWU01CZcd8SPs7c5B22vpUlP2F0Ih27rB0tdda6R600JZNS0fAYqO6oHh5VgAx3jgcYMp8WelPhrkC1h7puKa/WgVYB26GMDTRH0r7y/M6EzxGaa0aXMX+1tY9RM6QlWO5Wo=
+	t=1717421524; cv=none; b=nnpDxLQLZH11+IxZgYtSKHU1V3GJRKxuGVBSapl8rG49Qj5O6YSNRuYiShboLGH6ab7NEU+fv1IjLBAxoyeHPnRNjQN/7wWWYzYlew9EtfbN+8wPkfAcDkmQSoxtkEf5pMWEDRnunSHFF6MomY3/FkwMHgDtC6l8M4q/V1Odkbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717421529; c=relaxed/simple;
-	bh=i7qyliEW3tXAHVQUR36q8o9p80BoaaM8/W3VFHNn2Wc=;
+	s=arc-20240116; t=1717421524; c=relaxed/simple;
+	bh=CfNFaBdw1xG9IssterEE6MbYhcLFzsxVaBM/TXav0lE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gTg3c5bmGFsZcKZ5Jcs9if7Os55gMR8f7Mue9UOLLSSZwYnLbyCHXTeNQxDeT4nSTH5vj0L2I3PDhs9dNBoEAF7VikadId9qm2CHr0X3ZgbQpmdFXXLlMHGGgAuGGbIiZfJfBCDbvCSvdV+wVUHQeiRDzwjL2JJXghe5gWoHRRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sE7mv-000000001SM-47uV;
-	Mon, 03 Jun 2024 13:31:50 +0000
-Date: Mon, 3 Jun 2024 14:31:46 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJBxovQKb0IZPch9UGRQmJc+llhRW6ZJbVjzH4XMqJiNp9FNtc/QI9cZGg2DienjJrl5TLD2rFiCMRLBg+NW6yHHCpVeVTHL6g3hWY3/L54O5wWleMRBHwZZVuXcZvGN9ZRkcnhc8rhS6zEPRfydRUQkWAB4GeVJVtxvHwzjhlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgV79tYr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 096B7C4AF08;
+	Mon,  3 Jun 2024 13:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717421523;
+	bh=CfNFaBdw1xG9IssterEE6MbYhcLFzsxVaBM/TXav0lE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fgV79tYrLH2VJm0N9fppEAqrahRKszmoTNV20ZAuJCegUzvjjEa2Y1xCYnRC586MK
+	 u0J5rn7ekJt7hHrR0SP27q7Wr0qKQ74KW9+zdG6w70qrQHUuc3KFEVLEbQUuRdUmiu
+	 ivL3VYIPytSu1htnCyBY9cyYQncuW7GqZ/c5WwkhBVmYi/Y6YN6Pv/zX0wjerjQQlo
+	 iJ441XqzfB9PdXn9E0PcrDwzJQOw3FO33nmuN8FhmSjsWsw3CY0nlsy+gt9F/+gNuI
+	 cV35Nra/hzqnACnBG7MDuywSjkvwh8sDPRNymaNDZhuGVTIEkuvjic/sxxtsVUqyMs
+	 YjhwzYJBsWmTQ==
+Date: Mon, 3 Jun 2024 14:31:59 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v6 5/5] net: phy: add driver for built-in 2.5G
- ethernet PHY on MT7988
-Message-ID: <Zl3Fwoiv1bJlGaQZ@makrotopia.org>
-References: <20240603121834.27433-1-SkyLake.Huang@mediatek.com>
- <20240603121834.27433-6-SkyLake.Huang@mediatek.com>
- <Zl3ELbG8c8y0/4DN@shell.armlinux.org.uk>
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Bug Report] selftests: arm64: build errors
+Message-ID: <7b7f4dd1-bc13-4827-84d6-20ebed7119b6@sirena.org.uk>
+References: <5ec0f2f3-5259-41a9-a25d-5baf1680dd10@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JaJbRFCY2mj2cYSO"
 Content-Disposition: inline
-In-Reply-To: <Zl3ELbG8c8y0/4DN@shell.armlinux.org.uk>
+In-Reply-To: <5ec0f2f3-5259-41a9-a25d-5baf1680dd10@collabora.com>
+X-Cookie: Don't let your status become too quo!
 
-On Mon, Jun 03, 2024 at 02:25:01PM +0100, Russell King (Oracle) wrote:
-> On Mon, Jun 03, 2024 at 08:18:34PM +0800, Sky Huang wrote:
-> > Add support for internal 2.5Gphy on MT7988. This driver will load
-> > necessary firmware, add appropriate time delay and figure out LED.
-> > Also, certain control registers will be set to fix link-up issues.
-> 
-> Based on our previous discussion, it may be worth checking in the
-> .config_init() method whether phydev->interface is one of the
-> PHY interface modes that this PHY supports. As I understand from one
-> of your previous emails, the possibilities are XGMII, USXGMII or
-> INTERNAL. Thus:
-> 
-> > +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
-> > +{
-> > +	struct pinctrl *pinctrl;
-> > +	int ret;
-> 
-> 	/* Check that the PHY interface type is compatible */
-> 	if (phydev->interface != PHY_INTERFACE_MODE_INTERNAL &&
-> 	    phydev->interface != PHY_INTERFACE_MODE_XGMII &&
-> 	    phydev->interface != PHY_INTERFACE_MODE_USXGMII)
-> 		return -ENODEV;
 
-The PHY is built-into the SoC, and as such the connection type should
-always be "internal". The PHY does not exist as dedicated IC, only
-as built-in part of the MT7988 SoC.
+--JaJbRFCY2mj2cYSO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 03, 2024 at 06:28:16PM +0500, Muhammad Usama Anjum wrote:
+
+> gcc pac.c /pauth/pac_corruptor.o /pauth/helper.o -o /pauth/pac -Wall -O2 =
+-g
+> -I/linux_mainline/tools/testing/selftests/  -I/linux_mainline/tools/inclu=
+de
+> -mbranch-protection=3Dpac-ret  -march=3Darmv8.2-a
+> In file included from pac.c:13:
+> ../../kselftest_harness.h: In function =E2=80=98clone3_vfork=E2=80=99:
+> ../../kselftest_harness.h:88:9: error: variable =E2=80=98args=E2=80=99 ha=
+s initializer but
+> incomplete type
+>    88 |  struct clone_args args =3D {
+
+This is in the generic code.
+
+>   CC       check_prctl
+> check_prctl.c: In function =E2=80=98set_tagged_addr_ctrl=E2=80=99:
+> check_prctl.c:19:14: error: =E2=80=98PR_SET_TAGGED_ADDR_CTRL=E2=80=99 und=
+eclared (first use
+> in this function)
+>    19 |  ret =3D prctl(PR_SET_TAGGED_ADDR_CTRL, val, 0, 0, 0);
+>=20
+> gcc -mbranch-protection=3Dstandard -DBTI=3D1 -ffreestanding -Wall -Wextra=
+ -Wall
+> -O2 -g -I/linux_mainline/tools/testing/selftests/
+> -I/linux_mainline/tools/include  -c -o /bti/test-bti.o test.c
+> test.c: In function =E2=80=98handler=E2=80=99:
+> test.c:85:50: error: =E2=80=98PSR_BTYPE_MASK=E2=80=99 undeclared (first u=
+se in this
+> function); did you mean =E2=80=98PSR_MODE_MASK=E2=80=99?
+>    85 |  write(1, &"00011011"[((uc->uc_mcontext.pstate & PSR_BTYPE_MASK)
+
+> I've GCC 8 installed. I'm not expecting the errors because of a little
+> older compiler. Any more ideas about the failures?
+
+You need to run headers_install IIRC.
+
+--JaJbRFCY2mj2cYSO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZdxc4ACgkQJNaLcl1U
+h9CX0Qf/Zvgw13gwuY/rn/A9JCGMEvZQENQvG2gs7AyeyVI1tJgGrnfQKXnC9Vte
+L9E8XcfKTAVUag5e/xS4t5rDzfhZGvL7G8ytI64qnhhDZziOfC8HOYuQIaYruhv+
+5ISO5+OxLWRH7LXtO82kif/ObWplhQrIf4Uq0f7TYPuDY33Jpmk/RuHdngTuDrpO
+7QrR8DpZdQMna0f+AQghbXj4ngq89mqBdocktgBFDMf+2qRhnZHU2eJzkKUq88hS
++AnlPu18DHYYJsoiqE2ucE3r20r5FtXq0n6YIYcN4HkUMzc9Lo/aIibymG5k97Q1
+Nx/7csNI46dhALHilBw1nU2FRJwDLw==
+=pVuw
+-----END PGP SIGNATURE-----
+
+--JaJbRFCY2mj2cYSO--
 
