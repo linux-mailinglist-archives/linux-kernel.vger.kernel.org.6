@@ -1,276 +1,113 @@
-Return-Path: <linux-kernel+bounces-198602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA11B8D7ADA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:41:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18428D7AE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D50281ECE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:41:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572D51F21C0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F541D54D;
-	Mon,  3 Jun 2024 04:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841C620317;
+	Mon,  3 Jun 2024 04:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="jJtEtxcg"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RyXFbgHV"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFA710962;
-	Mon,  3 Jun 2024 04:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D3317C77
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 04:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717389698; cv=none; b=Vp5jCw8qGrN++dqC+IhszvNwUq5n/2KDm1hetsxqZe1/RVFg55Cn+Oy+TFEQRajVJHViAv1x7vby60qvrEkY+pqdjrYHSg798Y/uFbO8yt77VA11EIc/0qnbYdeVBC2z302M4TTphwBleXoziQQtKzHiRX9J5+PYQMWD29X55W8=
+	t=1717389801; cv=none; b=SQmr65lgryyT2JdFO4c9+qvueukpY6C3d2NQSDIIMOrwn2YrkBi1Uq9nikb9YbIM+uV7lQaSGqnTHLwhDeaA5Dp29f5eRLq6YLi14Ri1ALgZOJkDZkiY8bodYQdGWcKHBI6N1cbWybWVhMLCzXeq/xGkGadB1Zi7jNe5/knNmeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717389698; c=relaxed/simple;
-	bh=i2cl6XEwysmOuHmffmxVeDu1g21pp3kj7X0a7NE0ACs=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Df5k3CrgdSkxJupLP1Eqks+b2hSw0RX7MYbng0cJUVgqMyDYXZDq/L5/rKy6betYiESYSvLHkeuYtnfIeGc+ii7CUBLzOHRwVfoYtXJndI6IQuCYhrDuZ1RuGMJmqQNSvXiddXwgxdjyyl1jc5pEqtPBtsFVW1Ti9Kg/SM9FyEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=jJtEtxcg; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1717389801; c=relaxed/simple;
+	bh=HzZDgjQYuvmDJq3i4NfWqunXjEzQo7xEJGoCmHbV/5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RM9v5foyn3EUnrBTt1BzX5J7KzvT2tgqAF4HUrWtUxEP+VIiQUi9oOkWqWMzZ2BHxMf3YhYrIFzTMCroJRZk0WjMeyjGm5WXRpgE+hMPoF9dE7ikFjXDBN2n0KL+7OfG1hStuVXp5KCrTcwb7ydpRuC8q2tsFy96tpitPK4PByQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RyXFbgHV; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c19e6dc3dcso3209541a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2024 21:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717389799; x=1717994599; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYCOigvbPRn1QXs7z+gV/0ewTOfNCducvc/Nnzd9dqg=;
+        b=RyXFbgHVwxJ7iHwNfYHy4EomjZhBymGGFNR70KPmuZb42DcwzybOa+um7fHAJ4d3CA
+         E62P3RmxxJuI1a/hLUDodfg4Wzwj6AblMC+D41ea9NxUHB59h9QXAVC64VCofEyr05RG
+         hgopo4pUGvQDeSQQYZmCWZ4Yb9iRSgQN9aH/cx2ZSyYM3SFpdLmc2A+X1Vnsi4abCXkJ
+         gzgfu4Yreer5FWrBnk+JErr9iK7rDpzNewJ6vDHY5Tm00ZLDBBJ75YDfaa1XKt3YuW4M
+         kQByNuEQBXIfQJLYSUc06KZeooyNJddJqtJFmRLIKdB2EOtkxIVR0fD8dqDiX8GklgoD
+         4hAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717389799; x=1717994599;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PYCOigvbPRn1QXs7z+gV/0ewTOfNCducvc/Nnzd9dqg=;
+        b=lgG4A6XZ3otPLzPDqizU3VnfFQUrXIuEZm1BDFzIqLSeHH2zg8xCo8Q6AqWkwY3+Kv
+         r8XlJ7Su4hUTY9p+xb5r7tqPcwrpsh66pgk0VxChSzEg5bK5LY0oN9A0fJRocRbreFZ/
+         iLJ8GjuajMFxxolZZwJ5ck+E+shzTJAnAfpFR0yvwOyaT3/VahngoVrj6ruk+cDhWjEC
+         opOmXWtKMHFsa+gPkXd+xunze3tKNQXJfXrTZhpcyO47rUBvrPoFQ2vLUab65xx1yFca
+         9DKMl3Gn6h4p2r7kXe+oZYvJfwzIpSVoXlLqOa/6LqwxKDLcw2PGWGyeInsdirvgZu1O
+         J2kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYjjKCcR3znfDe8bdLlHXG2XJVXhzsLGdr8bGRZQwBsuVffyVwDHhBVdgbHZN2QrVWgWtAyRma9MMdlqrJGwZLHcyRsxyTSuLLn5PI
+X-Gm-Message-State: AOJu0Yy4vR4fahllZDV0njR5pue7bXynBbNXJ/KqUdLRDid9dKvZ83//
+	Fbl/7Ayp75oMFFTZIVAGhnlMXv9KQ8N+Bcb9qyDw7adqmjj1qrpr7rCeMC/EwUQ=
+X-Google-Smtp-Source: AGHT+IGICJDgYZTyQLtQrb19UNS8GlFzTTuoxROSl97QOLqPlxpWyNoDe4s7cwH3PGktOiIdZ3+6hQ==
+X-Received: by 2002:a17:90b:50c6:b0:2b1:e314:a5e6 with SMTP id 98e67ed59e1d1-2c1dc56c32amr7244785a91.7.1717389799209;
+        Sun, 02 Jun 2024 21:43:19 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1ac1f9208sm7241985a91.41.2024.06.02.21.43.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Jun 2024 21:43:18 -0700 (PDT)
+Date: Mon, 3 Jun 2024 10:13:16 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: dt-platdev: add missing MODULE_DESCRIPTION()
+ macro
+Message-ID: <20240603044316.7psjarzpopab3pmq@vireshk-i7>
+References: <20240602-md-cpufreq-dt-platdev-v1-1-63c7d91c00ba@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1717389691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sXWZszKwatnqxwRziwWpQ1vPENDN2S6HW3DPEm3pyo4=;
-	b=jJtEtxcg4y2R/w8NZXbs8h8T1I2BQ1R24otfoUcQtZpVSrG2X9l+exuGJYiG7LwqerUYLa
-	K4PUdXCaIVXXx2FBIWvkMsR9v2r56HxNGUSCFQwCisEj/OkF8IsAWR94NZAH+gzJESaapJ
-	Kf9hDucWkxl4UfFhaH34K2pxM1EwxbIJvH0ApsRHDhrUOyaCmaNb4I56NxlsAMNGFRUsz4
-	Dl5CuQnNio9VxSYEBbWGrNtuGf+TQJkMyrIZjiyK5w+GDQx2jGsTmT4Nq80VLvPlufRfY4
-	bPKvFVERd3mYd2GGWvKagCTDt0Esg7UtrjBnVtvCpMzS/LvqFyuFZZZToUcm7Q==
-Date: Mon, 03 Jun 2024 06:41:29 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: wens@kernel.org
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Diederik de Haas <didi.debian@cknow.org>
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix the DCDC_REG2 minimum voltage
- on Quartz64 Model B
-In-Reply-To: <CAGb2v64K7fgeV9GVNnpoZ_4BZU7JKXHSCYU0hKxHmnyojFRu7g@mail.gmail.com>
-References: <e70742ea2df432bf57b3f7de542d81ca22b0da2f.1716225483.git.dsimic@manjaro.org>
- <CAGb2v66DPvvRcq+98vF2mCF8URW_qys1+B_FM9kcm6ppuPvyeg@mail.gmail.com>
- <20cf041dcd6f752174bf29d2a53c61b3@manjaro.org> <1994616.CrzyxZ31qj@diego>
- <99ea0e0053d3ada3325bdfaec7a937f0@manjaro.org>
- <CAGb2v64K7fgeV9GVNnpoZ_4BZU7JKXHSCYU0hKxHmnyojFRu7g@mail.gmail.com>
-Message-ID: <ee74c146d1e69bef118e208fdf5cf10f@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602-md-cpufreq-dt-platdev-v1-1-63c7d91c00ba@quicinc.com>
 
-Hello Chen-Yu,
-
-On 2024-06-03 05:49, Chen-Yu Tsai wrote:
-> On Sat, Jun 1, 2024 at 6:41 AM Dragan Simic <dsimic@manjaro.org> wrote:
->> On 2024-05-31 20:40, Heiko Stübner wrote:
->> > Am Freitag, 31. Mai 2024, 00:48:45 CEST schrieb Dragan Simic:
->> >> On 2024-05-29 18:27, Chen-Yu Tsai wrote:
->> >> > On Tue, May 21, 2024 at 1:20 AM Dragan Simic <dsimic@manjaro.org>
->> >> > wrote:
->> >> >>
->> >> >> Correct the specified regulator-min-microvolt value for the buck
->> >> >> DCDC_REG2
->> >> >> regulator, which is part of the Rockchip RK809 PMIC, in the Pine64
->> >> >> Quartz64
->> >> >> Model B board dts.  According to the RK809 datasheet, version 1.01,
->> >> >> this
->> >> >> regulator is capable of producing voltages as low as 0.5 V on its
->> >> >> output,
->> >> >> instead of going down to 0.9 V only, which is additionally confirmed
->> >> >> by the
->> >> >> regulator-min-microvolt values found in the board dts files for the
->> >> >> other
->> >> >> supported boards that use the same RK809 PMIC.
->> >> >>
->> >> >> This allows the DVFS to clock the GPU on the Quartz64 Model B below
->> >> >> 700 MHz,
->> >> >> all the way down to 200 MHz, which saves some power and reduces the
->> >> >> amount of
->> >> >> generated heat a bit, improving the thermal headroom and possibly
->> >> >> improving
->> >> >> the bursty CPU and GPU performance on this board.
->> >> >>
->> >> >> This also eliminates the following warnings in the kernel log:
->> >> >>
->> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000,
->> >> >> not supported by regulator
->> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
->> >> >> (200000000)
->> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000,
->> >> >> not supported by regulator
->> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
->> >> >> (300000000)
->> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000,
->> >> >> not supported by regulator
->> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
->> >> >> (400000000)
->> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000,
->> >> >> not supported by regulator
->> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
->> >> >> (600000000)
->> >> >>
->> >> >> Fixes: dcc8c66bef79 ("arm64: dts: rockchip: add Pine64 Quartz64-B
->> >> >> device tree")
->> >> >> Cc: stable@vger.kernel.org
->> >> >> Reported-By: Diederik de Haas <didi.debian@cknow.org>
->> >> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> >> >> ---
->> >> >>  arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts | 2 +-
->> >> >>  1 file changed, 1 insertion(+), 1 deletion(-)
->> >> >>
->> >> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
->> >> >> b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
->> >> >> index 26322a358d91..b908ce006c26 100644
->> >> >> --- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
->> >> >> +++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
->> >> >> @@ -289,7 +289,7 @@ vdd_gpu: DCDC_REG2 {
->> >> >>                                 regulator-name = "vdd_gpu";
->> >> >>                                 regulator-always-on;
->> >> >>                                 regulator-boot-on;
->> >> >> -                               regulator-min-microvolt = <900000>;
->> >> >> +                               regulator-min-microvolt = <500000>;
->> >> >
->> >> > The constraints here are supposed to be the constraints of the
->> >> > consumer,
->> >> > not the provider. The latter is already known by the implementation.
->> >> >
->> >> > So if the GPU can go down to 0.825V or 0.81V even (based on the
->> >> > datasheet),
->> >> > this should say the corresponding value. Surely the GPU can't go down
->> >> > to
->> >> > 0.5V?
->> >> >
->> >> > Can you send another fix for it?
->> >>
->> >> I can confirm that the voltage of the power supply of GPU found inside
->> >> the RK3566 can be as low as 0.81 V, according to the datasheet, or as
->> >> low as 0.825 V, according to the GPU OPPs found in rk356x.dtsi.
->> >>
->> >> If we want the regulator-min-microvolt parameter to reflect the
->> >> contraint
->> >> of the GPU as the consumer, which I agree with, we should do that for
->> >> other
->> >> RK3566-based boards as well, and almost surely for the boards based on
->> >> the
->> >> RK3568, too.
->> >
->> > Hmm, I'm not so sure about that.
->> >
->> > The binding does define:
->> >       regulator-min-microvolt:
->> >           description: smallest voltage consumers may set
->> >
->> > This does not seem to describe it as a constraint solely of the
->> > consumer.
->> > At least the wording sounds way more flexible there.
->> >
->> > Also any regulator _could_ have multiple consumers, whose value would
->> > it need then.
->> 
->> The way I see it, the regulator-min-microvolt and
->> regulator-max-microvolt
->> parameters should be configured in a way that protects the consumer(s)
->> of the particular voltage regulator against undervoltage and 
->> overvoltage
->> conditions, which may be useful in some corner cases.
->> 
->> If there are multiple consumers, which in this case may actually 
->> happen
->> (IIRC, some boards use the same regulator for the GPU and NPU portions
->> of the SoC), the situation becomes far from ideal, because the 
->> consumers
->> might have different voltage requirements, but that's pretty much an
->> unavoidable compromise.
+On 02-06-24, 15:14, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/cpufreq-dt-platdev.o
 > 
-> As Dragan mentioned, the min/max voltage constraints are there to 
-> prevent
-> the implementation from setting a voltage that would make the hardware
-> inoperable, either temporarily or permanently. So the range set here
-> should be the intersection of the permitted ranges of all consumers on
-> that power rail.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> Now if that intersection happens to be an empty set, then it would up
-> to the implementation to do proper lock-outs. Hopefully no one designs
-> such hardware as it's too easy to fry some part of the hardware.
-
-Yes, such a hardware design would need fixing first on the schematic
-level.  When it comes to the RK3566's GPU and NPU sharing the same
-regulator, we should be fine because the RK3566 datasheet states that
-both the GPU and the NPU can go as low as 0.81 V, and their upper
-absolute ratings are the same at 1.2 V, so 1.0 V, which is as far as
-the GPU OPPs go, should be fine for both.
-
-As a note, neither the RK3566 datasheet nor the RK3566 hardware design
-guide specify the recommended upper voltage limit for the GPU or the
-NPU.  Though, their upper absolute ratings are the same, as already
-described above.
-
->> > While true, setting it to the lowest the regulator can do in the
->> > original
->> > fix patch, might've been a bit much and a saner value might be better.
->> 
->> Agreed, but the value was selected according to what the other
->> RK3566-based
->> boards use, to establish some kind of consistency.  Now, there's a 
->> good
->> chance for the second pass, so to speak, which should establish 
->> another
->> different state, but also consistent. :)
->> 
->> >> This would ensure consistency, but I'd like to know are all those
->> >> resulting
->> >> patches going to be accepted before starting to prepare them?  There
->> >> will
->> >> be a whole bunch of small patches.
->> >
->> > Hmm, though I'd say that would be one patch per soc?
->> >
->> > I.e. you're setting the min-voltage of _one_ regulator used
->> > on each board to a value to support the defined OPPs.
->> >
->> > I.e. in my mind you'd end up with:
->> >       arm64: dts: rockchip: set better min voltage for vdd_gpu on rk356x
->> > boards
->> >
->> > And setting the lower voltage to reach that lower OPP on all affected
->> > rk356x boards.
->> 
->> Yes, the same thoughts have already crossed my mind, but I thought 
->> we'd
->> like those patches to also include Fixes tags, so they also get
->> propagated
->> into the long-term kernel versions?  In that case, we'd need one patch
->> per
->> board, to have a clear relation to the commits referenced in the Fixes
->> tags.
->> 
->> OTOH, if we don't want the patches to be propagated into the long-term
->> kernel
->> versions, then having one patch per SoC would be perfectly fine.
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> It's really up to Heiko, but personally I don't think it's that 
-> important
-> to have them backported. These would be correctness patches, but don't
-> really affect functionality.
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index c74dd1e01e0d..cac379ba006d 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -233,4 +233,5 @@ static int __init cpufreq_dt_platdev_init(void)
+>  			       sizeof(struct cpufreq_dt_platform_data)));
+>  }
+>  core_initcall(cpufreq_dt_platdev_init);
+> +MODULE_DESCRIPTION("Generic DT based cpufreq platdev driver");
+>  MODULE_LICENSE("GPL");
 
-On second thought, I also think that it might be better not to have
-these changes propagated into the long-term kernel versions.  That
-would keep the amount of backported changes to the bare minimum, i.e.
-containing just the really important fixes, while these changes are
-more on the correctness side.  Maybe together with providing a bit
-of additional safety.
+Applied. Thanks.
+
+-- 
+viresh
 
