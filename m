@@ -1,425 +1,255 @@
-Return-Path: <linux-kernel+bounces-199694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6BC8D8AF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82928D8AEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B3201C21772
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F59B280DCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D24113B58C;
-	Mon,  3 Jun 2024 20:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E24813B588;
+	Mon,  3 Jun 2024 20:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pPc9JVan"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2079.outbound.protection.outlook.com [40.107.220.79])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="poBqRGcg"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2138.outbound.protection.outlook.com [40.107.101.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CB720ED;
-	Mon,  3 Jun 2024 20:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD23720ED
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 20:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.138
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717446900; cv=fail; b=YaNpZJ7ImUy9UBe+L2PfDAD3BqoNDHOXaitmZVL3P3MFn4HfvcEry7ot2Usy83Wu7SXaxY9BLg231ZGuGaxnZbRbidg/W+BVokeL7D2cdDblrXjsP8zBrRym5/zSoCm3MBrsnN+jGjDM4R8E7GowLd38Alw/BoRMhen32wC9zhQ=
+	t=1717446890; cv=fail; b=RoPScRnjwDkfXOvwUhgVug55IoyQBWBeAfxthGaCNWYbw4/oyPs2WXBcbRiRIpDSMWplBl0T8En8K1+VmhSQiPL5y7Ms7TqDt5pV9iIqLubJpfz0a7rzUT5cYLq0twcqVeZEFMTD3lBkvnngRtwjyeFPmT5Dpr02vpp1k2m11tI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717446900; c=relaxed/simple;
-	bh=2dhypqHUuACvyG/Wq8dzmTcOrZUd9A1rl+PGrY0zpp4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tQJgkkmgf8BPl+sleknviOzIcvbUw2TZOUEDvUWH0yjEAXsxFYXlU0seSwGzlAT/RBaxR7ahSV7i2CWQrRB+B1QynpGFWVrLdXg0ywokpCCdw+YNLWCFFu0K8jXAibznjx8Sio8Dr5LSMABsuDl2ovcFmuEfTtoT3YmKRCkj+Ho=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pPc9JVan; arc=fail smtp.client-ip=40.107.220.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1717446890; c=relaxed/simple;
+	bh=fF9NKl8oWG3ex4lVft7G6X031gXMyuNPNAYSj0JNvDk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gOcJss3fLvfbeucoyERR881AauGNa6qWjhuOeNxa3LgrFoJXbb8CzMwJ7s7B/9H6JB5g907UsXzjyesPBzBHfbIBq4jcuG1VkivPn/O4EF/Sg+KJbASr0lyjYI0QC41pfA4P9vdBng0M+5fi3x+2kuYI3Lhugq0dZUSH2iw0yy8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=poBqRGcg; arc=fail smtp.client-ip=40.107.101.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HMdpk0/paMkcK9cAg0V6Fbpfshx6+j11/IQVKlZeX36UJnzh84m+SrFj1YlgsxNEPX4fV32pc9V/vMMaUgz8Ropmrq9994swkIXOWvxxFCocm9O+IFHemFWvvZvhpUm3AjCAg3QMERldenCjjhNZ6nAg1UBJUu/Q83pTsv0uSxZEg7zcl9V2oVkRrcyGhczCZbsn0cKYuCipeiH22gCoa19HYA/evYEc9uSH6x561zkZ2N0kvq9f04AdkJY0tLLpVH7KqLbajorXOCZRL2olMfac7P/xwCX3HHVIEjODlI8Rd4Wi5rKDPE+wPlzTxGKJJ6/AYlBnbHK2XLUR4+3hmA==
+ b=CxhfnZXC8GBGqJsiSl2d9YAcnN1O15AfakFeNep4e6wPk74sfoOOkT1BgZq1MoWA074JLIj/T5omA6coz7AcOfF+4/eACRAReyQdEUtRVjx+JOh5lhhn/ZgNHUXFqoILifxetxN/bvSWrBEfwzaJ9I80d9E+PlM+//EYDVtjlkM9Ad/45pULeoiSDkKJkGoHwYpAC1/MNGFnggLiZ978cUn9BQebrA6fr+UHguk4ib1ABgzP4uhAjG5opRWca+uKw0+Ha8vxX8YNovEL725hdanB9pg6jaw+wymL0vfWg3l8A3i4P42egByVfWCGM3CeYPGvs4n90mwtozdHH9Zljw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bge3AnqPlE5lKTHw9SgmPyoH0L5CJu6tvw7UX7pV5xw=;
- b=T4Vv80UT9bP2vFh/L5m+3EikYlvE2sHA02jisxzbl3fDYKer569kNuIcd+Nz79ALkFvRUKMCp60GllBP240+VPkNibmWbzFCyLDlwnQlTFnvH6W48B+fSMDTiUVTJMScuksxAHcxpV3Lt1x6EyJpcb7YmRJBLcAuNBgni+YbLCPIuNfqpSXITwE3EctGR4CTgnBzEOVZPq+czvnVuBvb5zs8pFlHlCire+tWR1mY2klApP0txVsLLlZxMm2cAkcU8hasFIM72Gf8f3vGEBMdSknqBkK0qMAnUkQIuh5x1zlRyLv9VXM8mp3svU8I/WzHhX8+QvfsL6ituQlW1VBdYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=UJyWY+PLOrAlVxzPnLXqpn7rn3Jx/Uv4Nsc8leJ8u8g=;
+ b=SgBUISlaXgimyUj3AB7pA+qs49L2eYQVyBBvmEZyle9GZflCUCV9hoUYw2/mOIidGWZyhXkNXQT3+3XKvFjiW/m8Owyr0dtVcJHPNe7oTzb+lf4OOXzQjbMyPrcPTsiMkFjNhe1n/fCipVOVLRB/HaJ7moyaIU+6jmGLiiRB9q4uCeSFiezD7bdVlJdzkccCh1HUJV210QSrihS7yUza6M4EP0hTrgKKKJotRIIEuISs8Jm7a5m2T96MOYkvHUbEEC4W0V+n85ItXQiJqAAXkGQWetKYqxzDIqd3R/yEYtuwKd6tLz+CFd93bExMvbHPTH+a6JJ6y4UzaUdflgMvtw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bge3AnqPlE5lKTHw9SgmPyoH0L5CJu6tvw7UX7pV5xw=;
- b=pPc9JVanvlHlhhWMA/amAhIz3oXSdBO4YNDkN0s3iqdiV5DYRdVgLMFQ68ZTDuvXKbb9Ls0lASEIbFVzol3Q18XpdIx5fF7UARdBP5UpI83+osD9TIU+ka0jOpHylB7fCGd45bPyPI0TYqsMOlJgPE+ImwQEDq7qcTorKCvklDQ=
-Received: from SJ0PR03CA0140.namprd03.prod.outlook.com (2603:10b6:a03:33c::25)
- by SN7PR12MB7132.namprd12.prod.outlook.com (2603:10b6:806:2a4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Mon, 3 Jun
- 2024 20:34:55 +0000
-Received: from SN1PEPF0002BA51.namprd03.prod.outlook.com
- (2603:10b6:a03:33c:cafe::9e) by SJ0PR03CA0140.outlook.office365.com
- (2603:10b6:a03:33c::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.28 via Frontend
- Transport; Mon, 3 Jun 2024 20:34:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002BA51.mail.protection.outlook.com (10.167.242.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Mon, 3 Jun 2024 20:34:54 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 3 Jun
- 2024 15:34:54 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 3 Jun
- 2024 15:34:53 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 3 Jun 2024 15:34:53 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
- Shah <tanmay.shah@amd.com>
-Subject: [PATCH v4] drivers: remoteproc: xlnx: add attach detach support
-Date: Mon, 3 Jun 2024 13:34:38 -0700
-Message-ID: <20240603203437.973009-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.37.6
+ bh=UJyWY+PLOrAlVxzPnLXqpn7rn3Jx/Uv4Nsc8leJ8u8g=;
+ b=poBqRGcgVGnGH8RJRg46VmDSaqEk2vd3XmxR20YwfphW978L23IgND7y6gO+OwSkRp9Fn8mXxlaFdBqFF70vRjughZXIA+R48d4lxy3QZEQ2ZucVt/U6BifRUcgwf6FbRKIxByMXBAh6dvDxxZrOiIArW+3SysAo/T3F1SVTh5o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from BYAPR01MB5463.prod.exchangelabs.com (2603:10b6:a03:11b::20) by
+ SN4PR01MB7504.prod.exchangelabs.com (2603:10b6:806:207::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.25; Mon, 3 Jun 2024 20:34:45 +0000
+Received: from BYAPR01MB5463.prod.exchangelabs.com
+ ([fe80::4984:7039:100:6955]) by BYAPR01MB5463.prod.exchangelabs.com
+ ([fe80::4984:7039:100:6955%6]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
+ 20:34:45 +0000
+Message-ID: <0c89a5e6-ab77-4028-9779-d8db77525b0c@os.amperecomputing.com>
+Date: Mon, 3 Jun 2024 13:34:42 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 PATCH] arm64: mm: force write fault for atomic RMW
+ instructions
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Christoph Lameter (Ampere)" <cl@linux.com>, will@kernel.org,
+ anshuman.khandual@arm.com, scott@os.amperecomputing.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240520165636.802268-1-yang@os.amperecomputing.com>
+ <Zk93vBqAD3LgmbGb@arm.com> <640f8606-2757-4e82-721f-9625d48ded65@gentwo.org>
+ <Zk-SNVyEHT1UsxqD@arm.com> <ad87bb77-a9a5-2c0d-b4b2-13db09615d7c@linux.com>
+ <Zk-2a7s2pvkVsm2C@arm.com>
+ <d18611c7-9108-46f7-a5a5-6c8e0069de9b@os.amperecomputing.com>
+ <Zl3qCajhEbC9pNAm@arm.com>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <Zl3qCajhEbC9pNAm@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR07CA0036.namprd07.prod.outlook.com
+ (2603:10b6:a02:bc::49) To BYAPR01MB5463.prod.exchangelabs.com
+ (2603:10b6:a03:11b::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA51:EE_|SN7PR12MB7132:EE_
-X-MS-Office365-Filtering-Correlation-Id: f112cc5f-c5c5-4cff-fff1-08dc840ca081
+X-MS-TrafficTypeDiagnostic: BYAPR01MB5463:EE_|SN4PR01MB7504:EE_
+X-MS-Office365-Filtering-Correlation-Id: 095912bd-4fb4-4616-4a3b-08dc840c9ad6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|1800799015|36860700004|82310400017;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sR0NtrNAxo/WS9mZ65rJ1S0sGtII4W5oMUI0ntW3MtbXLab73+2h7O5NoJ+f?=
- =?us-ascii?Q?IJpZZryZ6PzY/ElZYCkTYsnFvHA96EI533wFA0jkhGgfyv9PyamocydI++Ir?=
- =?us-ascii?Q?sdg4hylvNUDtVnFBmQlIXwsKO1YYpTXUaVxlSOqsGFMR2tPoJsxYQcDVNsUY?=
- =?us-ascii?Q?Pr0EVNjm+9Y0yoeK1FAfWM1EhscXF5JkM0l30RNlUN+C1CrtRKCpoBEHJk/F?=
- =?us-ascii?Q?I7BZ49DIokSLaITb1hnOhFGDkcqvm2pDj9YCeq8uFrw6fIQqWQVvF89lApSv?=
- =?us-ascii?Q?007PnyEj/6ptd7HteFlHkVVeKI+gXYjkgxreLMuJwLZoN2DEZ4BvKloHEhHY?=
- =?us-ascii?Q?AFNIUiRATFiJJmo/P0z4Fgoeh2GeRTrV15vVPe+uOsYNRDd65jsBhG3KYlUu?=
- =?us-ascii?Q?pyyQDJ+JWsuDd1qCwvFsYYZ1mfommZGoeZhIOBgVWVbP07v8Il4sEccbQAlp?=
- =?us-ascii?Q?2PC7lBwaCqZ0RAxiAtxUPuQrUNELDRbzUF1CtKib793rOMQjlruBK/keZJ43?=
- =?us-ascii?Q?yAEyhbSuKwBk7es2YnEcbpI9DGbTdYL6OidUAKqXZpNq0Pn0gjdmi1E/Wj4F?=
- =?us-ascii?Q?pAiH6DU6qxok03Li7WMr1+rZVdsBGCRGU1JbO29EG8YJNGbzHvleAG9aOnXm?=
- =?us-ascii?Q?+S0HxmymZAKE0u0pSQuduu72lcBg+WwO2ooQT7Fjpo5PDCohsIv3S0wUqpS/?=
- =?us-ascii?Q?Lfd39VdBqFJwU2acGcNA5DCtwIwOi3tbnK1i2DGYHxHYynGUuVlc5axlqp+g?=
- =?us-ascii?Q?JexaJbanxcQpCxu68dmaOsW+rBaXbGOwSp0JNbCJ+jcPJReousft7por649j?=
- =?us-ascii?Q?nFYa0tpAsb2n3kG6Z0HB+MCOaXVJZgHHmh71HhIfaBlBJNBCIYCix2poyiXG?=
- =?us-ascii?Q?ijrgMixgnhRF5R1G2IQASTWFbNfQmkPdWVX7e1/tt9fjq1oEpPpySKY11o3u?=
- =?us-ascii?Q?PsFAI3TfJsp4FamcIAwYw+sAa/xpIVfVj8FQmpIAGDYrRnO0JhPzsoU3D7BE?=
- =?us-ascii?Q?B74OGIO8LSYbsMPKbhrylTqYEXUXne/zzAnDgwxAHOYkvXXC23fzWiw8Q9qH?=
- =?us-ascii?Q?jzNN/p7ogOqOAlEvlIh7pyPgYrIG4mIc0w3CzUyD7j+H1QKrMDuolqYVSUJZ?=
- =?us-ascii?Q?obTEJ73XrUOGodPooCbHVRUOL1RVH3n9jtRaXnCeFs81z6ufsyJBIAv2VlWA?=
- =?us-ascii?Q?Dg+f8mSXEgojnHm/dbi8KKP6DuOD4EC1eFDp6wc3cGsH19/glktT7fNxRVJO?=
- =?us-ascii?Q?bH5ZLAODNV758tbTWiHioKmwnBTEdBe0/siYaTdqe+yc7m5wvX+tt3rY9aWR?=
- =?us-ascii?Q?oyPmKXlcWaOBDuLXjJ6ZzUvWDq7Cq9tLrVSpPgiJWuPENLJNDDide0Bk5jHi?=
- =?us-ascii?Q?KEXZx5JE+GPIpKTLcn4yzG3rb+0i?=
+	=?utf-8?B?bldXRWtyYWZqaEtzZmw3RlhkOHN0N28wTjQvN3ljVnRxblhhZTR2R0VHcUwx?=
+ =?utf-8?B?NE5jaGNNUEU4NkZ2ZGxhbHZiTFRaWnJ0YktHeUJ1cVYzR3ZSajdMN2Z6cnFt?=
+ =?utf-8?B?czhSSU9wMkFPR3Vzby9WK0lsNjNKMjQ5WFk1dUlYYUdwc05KR0ZYY3Rvd3Bq?=
+ =?utf-8?B?Z0NZWWVJY3Vkd3lxQkVndS9jcWN1ekx2V29pZWc3ZWRwYnd1UTgrNlg3OE1l?=
+ =?utf-8?B?bjhyU3IwQitCUURIOHlQaDlvczVEWnc4UFEyaXpTeDM0anFXeXY1NmZueWs5?=
+ =?utf-8?B?eTRlei9WVS9JTnJSeW5PeUlYMW1USzhZUU8vVmV6YWhpK2N6czV5b3QrNGxj?=
+ =?utf-8?B?SkJZZWFCak11NzNJR3lGQUVxMUY4YnFpTFp4aHFsZ1ZHM3NDRS9OVFNhUXEy?=
+ =?utf-8?B?ZCtJRkdmV1EwSUgxRnVjU2FhSEloWmwzc2ZKU0VQNU9lcXdnUlBYWjM5TnBU?=
+ =?utf-8?B?Rjl0UVVSenRVNzkvTVU4ZHMyekkyTTJhSHZLWDdacGZTdWZWSk9SdjRqcXJh?=
+ =?utf-8?B?SEhoMTNwMDh2U0VWdENYcXlMeWc2UWYvVkVoMkIvOTU4SmRWUjBNV2cvL2Z6?=
+ =?utf-8?B?ZVZlZnpLT1h2dlFSN2FpbW5NNFNJTDR0UmZJS0ZIZ09jSFdMdmt5aU0ydzlq?=
+ =?utf-8?B?MzJJTWFjK25xUjRiTU13d3UyUEtPMHNWYjJtNzlPalNIM2I2cEJweElOQzRF?=
+ =?utf-8?B?dVZSdlhEWG5SSys5dnF2dUx6QkZpRHowRno4L09oRnRJQjUrMHNsMktkWVJa?=
+ =?utf-8?B?N2luZHFzSEppMk50M1Frait5b3lYbFFXbURlMStWTlliN1hpQUo2c2ZJTnZt?=
+ =?utf-8?B?eVlCb2dqSTd3M2tTOHFhc3cxWHR6b1lHeEpseTM0d21mT2hpZmwvdDdPT1VH?=
+ =?utf-8?B?emxVZ05ZZ0M2K2ZNb0I2THJ1a3dHczRZZGtTT3ZUUTA2MGNHRFo3U2tLYTk1?=
+ =?utf-8?B?bjBaNGtibWEzSjRubkFPZm1CRHBweXVPL0VxUUc1ZnZGSFZ1YUMvSTdnM2lu?=
+ =?utf-8?B?Y0d1RlNjek9ueWlXa2o5MkpldlViRklNS2x6WUFIWVF5c2VPNDlCZTVtRDVZ?=
+ =?utf-8?B?L25SZkpidUx1SlNKMDI0dEVVUDE5OFJSOVBOem9hY3Fabnh6V0sza3RkVUVv?=
+ =?utf-8?B?aUpselNjTGRadlZtdVZ6ZkhiYWRIa25sRmxqS0dDODVTa1BuUlRPb0RvTDZO?=
+ =?utf-8?B?UWpGeGhyMEhOTFpwQnd4cmtLM1hMSzJoRCtnaFdEaUV0VTFxRmFTSVlSUWlN?=
+ =?utf-8?B?anJVRnZMd3YrWEhtWWZpTkZOY2FhZkJCYSszTEh3YTFxbDVTTDFaWkk3di8z?=
+ =?utf-8?B?OHJLUDJmTGs5MWwydmxOTkRDbEpocGNKMUFUYmc0QzBLRW9TUXd4TTRLUlNr?=
+ =?utf-8?B?Y3d4OVNtNHNVVDBnTXRISDZtaEkrc2dpalR3N0NnOUR4VnZZNU5RRlQrRTBl?=
+ =?utf-8?B?Q3JLTEZXeVVaSkV4MkwwTEZ0anVYVEszL0N3ejdpRTUrKzNSWjEzVlhsQlds?=
+ =?utf-8?B?WCt4OFk2RlpLTjlGVHY3NTJJQlB3Ti8zUjNpc1o1THFWR2ZuY2lZL2lpNjU0?=
+ =?utf-8?B?OXkyVnorbjFySTRoVHhDNFpxNHJLVDBQV09xY2kyeDdFUjVJbEZkTHRwUFFz?=
+ =?utf-8?B?eUp2cXUzaW5pR1R3QmpuVGRpVlJDOE5KUEs0aVBmMW93dm5tTmFRbTRJUFp3?=
+ =?utf-8?B?UDRwenRDRnN4cjBaRHlNM2hCNDhjMjJEUk5qdHFVRG4yU04zM0FOVlBnPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(1800799015)(36860700004)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 20:34:54.6491
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR01MB5463.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bm1aMHlSREw4OERIVThWcjlKUGtmK0xJQ094SXhOTWw4YWEzem9GWkNwOWQw?=
+ =?utf-8?B?dmF1RTFhb0RUWVBHM3VYSG9QNjYwVXlabHFFalp0TWYwOGt2NWlSc2F0S05Q?=
+ =?utf-8?B?L0tuMXhFRy8xd3hNblZHR0xaYmdHYUs5S1M2dDl1ek92eStoSm0vaFNsMEw4?=
+ =?utf-8?B?aUhsL1JhT0t4cHVkbEp0dFJJTStoWndYR1BxanM3dFpmTnN3ODFacmFzUTVS?=
+ =?utf-8?B?TEtEWjk3Ym9pT1EvZnhDOGIzUEl1N05WMHhsK0xTNkE0dlZZendNbk0xQzlL?=
+ =?utf-8?B?V3phdFBQd3B0UllNL0ppK3lTQVJpVFgzZWRZQ2VHUEpLRDZPN1JZOWdoVTNa?=
+ =?utf-8?B?ODBsWDRxWU9XZE82REhpaDRXcFlhYlp2RkgzbFNiRllCS0JuUXRJaENLczI4?=
+ =?utf-8?B?Q1ExSlFZLytwT3BrUFV1Ny9YZ2RaQ1dtdThYZCs2WUxtVVJoSENBeENqQkc4?=
+ =?utf-8?B?dlJ5eGQ2UWJuTVFDbW00Qnc1TG5YMytIR0FWSG40dXJGaVlVOXNyS29sUzdh?=
+ =?utf-8?B?VThPb2R1L3hSMlI3a1gxNk05bzJocWFZdkdYUzViWGVyMExkZXVHbjd0VnJU?=
+ =?utf-8?B?NmhXdTJHZXVGNEI2U0xFMHRvYlBBc0U1ZVkzS3NvN3NJK3g3SmxyYngydCs4?=
+ =?utf-8?B?QWY2OUZPdUZHWG9pTHdvZWJFalBwVVgrajJSRjEzYXRMVlI2dFBxZUxmZkZT?=
+ =?utf-8?B?RVBYQUVhMDVIWnpMQUNzMlFVNm1IUCtzN3dhdWMvYmJDb2QweGR5SDJBQ3p1?=
+ =?utf-8?B?UkMyM29QNWxNd1BYcFI0TzNpWFJ5N00rb1p0UWtqTkFSQzBJVGVrNjVHTkdN?=
+ =?utf-8?B?OURkbk05OGQwd3NwZ05pUnhTUjQwVjUvbmlBVXNzWWNGNzJvQ3JTVTc0TSt0?=
+ =?utf-8?B?L01WSDdzbTg2Qk1Ob09tTXVaQXVhTlRXQmUybWRWVkhhbGVWM3RlMk9PL3BO?=
+ =?utf-8?B?cDgrMDViUDczVW9tVmV2VFR5NmdtZkhMdmtmOHlkZUpta3dpYk9sUTVBcmhM?=
+ =?utf-8?B?KzErOXUrLzFRY0JIUW95WWViOGRpODZGcU81SjdaTUQ4NExYSnU2TDJRUnlR?=
+ =?utf-8?B?bjNBbWovVFhiekp5T08yTVFiSWZlNE5IMWw0Zkh0NjQ4WWpiU25qbi9MOHAw?=
+ =?utf-8?B?UVBKeHAwQ1JOVzZqaFlneVJzUi9YRUk2VXlxb0FNb1BuRFRKODRHNEZMNkw1?=
+ =?utf-8?B?YWc0cENjc3VKa0pEWDV0VStjb3p3RmY5dTRaTkpzSXl3bEJNVDVjVHpTWElm?=
+ =?utf-8?B?b1FKc2dwMytSdktGd2NSMFlRYTIzK0k4aGJsRUp0QVNaTDRlSWpJdjk1MWF0?=
+ =?utf-8?B?TStXSm5rYVcyallIdnpOckpqZkFkV2hUTGRCazBINW94R0tHaEEwRmRrYnEz?=
+ =?utf-8?B?ejVWL2VBSVFSK0JGNDlGTUJJRjdMSFZ4Q3VMNmZzbFEyMGRyRTNRS09zeHFw?=
+ =?utf-8?B?allXZFhPcXRqNENVczFDUzgxdFpodDJyRnNuZUxBNFA1ZVVTbVd4QlRmVk9F?=
+ =?utf-8?B?cUtkWXluV1R3RzhmbVViK2w4VWZOS1VoNlYvZ3FEMnMyZGw3NWx4RU5NTjhS?=
+ =?utf-8?B?MkJzUnVkRjUxbVRKODlFU1hMZWlCVjFzNWlSdURRWldrVktCckhFSmpEMm9L?=
+ =?utf-8?B?VWZ1Zmc3L0FCdjVQVmZlTThDMzJLRnY3UlJJQ1o1YlRnV2pwRk1haXZoOVZj?=
+ =?utf-8?B?dHF3ZlVGTDJONFhjdndQbXpqQ2NjSCt2MVNHZExrWG1SdHNBVEFFeWdEOUh0?=
+ =?utf-8?B?eDF5Qmx5V1NISmRXSUdqREgrenVPNEhEUFVJVEVKZTlJU3R6ZHhDRjAzOTdr?=
+ =?utf-8?B?aVMzQ0JwL1BrbjNlZmZNdlM3M2ZEM0s0bTVvOU9Gc0owajQ1TXNPQ2RML0Ji?=
+ =?utf-8?B?WUxnZDV1N1ZPQS9QbU15eTVSMEdaYWxFN2dFK3paUFA0RmZkdmZXMWl4U2c3?=
+ =?utf-8?B?ZWRHK3VGL3RMS29uUWUyZkJueTRNenFBUUJjYlkvcnhMTmU5Sk1vbDRUSmVk?=
+ =?utf-8?B?RWFJSXBPV2hDdVJyUUdTNEtaYWYzMnJqTWNrTzM5R3E1TjVuaGFQSmZIZUpx?=
+ =?utf-8?B?VVdPekRaR1ZQUHVPUktJZThyMXFhL1lhNVhrUllya0N5VXNEWnBBaGlUcG1h?=
+ =?utf-8?B?Z3VOazc0MnpkaDJpd1p1M3NINjRQem4xWGU5a1J1SDFrUjFKSndXYkNCMW10?=
+ =?utf-8?Q?4oX40T3v1n+O4VTKfXvtprA=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 095912bd-4fb4-4616-4a3b-08dc840c9ad6
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR01MB5463.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 20:34:45.4485
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f112cc5f-c5c5-4cff-fff1-08dc840ca081
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA51.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7132
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wwJY1gR6QwhZHPn7efYC0IjtGtkw+iOYd/hK0xAWWVI4T7eUMgwJPZI3UcG/WZdPkoLLOwlt7ymt5FYDtzTvag7No6EddksjZ2QarpNTQuc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR01MB7504
 
-It is possible that remote processor is already running before
-linux boot or remoteproc platform driver probe. Implement required
-remoteproc framework ops to provide resource table address and
-connect or disconnect with remote processor in such case.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 
----
-Changes in v4:
-  - Move change log out of commit text
+On 6/3/24 9:06 AM, Catalin Marinas wrote:
+> On Thu, May 23, 2024 at 03:13:23PM -0700, Yang Shi wrote:
+>> On 5/23/24 2:34 PM, Catalin Marinas wrote:
+>>> On Thu, May 23, 2024 at 12:43:34PM -0700, Christoph Lameter (Ampere) wrote:
+>>>> On Thu, 23 May 2024, Catalin Marinas wrote:
+>>>>>>> While this class includes all atomics that currently require write
+>>>>>>> permission, there's some unallocated space in this range and we don't
+>>>>>>> know what future architecture versions may introduce. Unfortunately we
+>>>>>>> need to check each individual atomic op in this class (not sure what the
+>>>>>>> overhead will be).
+>>>>>> Can you tell us which bits or pattern is not allocated? Maybe we can exclude
+>>>>>> that from the pattern.
+>>>>> Yes, it may be easier to exclude those patterns. See the Arm ARM K.a
+>>>>> section C4.1.94.29 (page 791).
+>>>> Hmmm. We could consult an exception table once the pattern matches to reduce
+>>>> the overhead.
+>>> Yeah, check the atomic class first and then go into the finer-grained
+>>> details. I think this would reduce the overhead for non-atomic
+>>> instructions.
+>> If I read the instruction encoding correctly, the unallocated instructions
+>> are decided by the below fields:
+>>
+>>    - size
+>>    - VAR
+>>    - o3
+>>    - opc
+>>
+>> To exclude them I think we can do something like:
+>>
+>> if atomic instructions {
+>>      if V == 1
+>>          return false;
+>>      if o3 opc == 111x
+>>          return false;
+>>      switch VAR {
+>>          000
+>>              check o3 and opc
+>>          001
+>>              check 03 and opc
+>>          010
+>>              check o3 and opc
+>>          011
+>>              check o3 and opc
+>>          default
+>>              if size != 11
+>>                  check o3 and opc
+>>      }
+>> }
+>>
+>> So it may take 4 + the possible unallocated combos of o3 and opc branches
+>> for the worst case. I saw 5 different combos for o3 and opc, so 9 branches
+>> for worst cases.
+> Or we have a sorted table of exclusions and do a binary search. Not sure
+> which one is faster.
+>
+>> But if they will be allocated to non-atomic instructions, we have to do
+>> fine-grained decoding, but it may be easier since we can just filter out
+>> those non-atomic instructions? Anyway it depends on how they will be used.
+>> Hopefully this won't happen.
+> Actually, the atomics table has LD64B and LDAPR already which are load
+> instructions, no write permission needed. So we need to exclude these
+> and all the unallocated space in this range.
 
-Changes in v3:
+OK. Excluding LD64B and LDAPR actually makes the check much simpler if 
+we return true for supported instructions instead of checking 
+unallocated instructions. It looks like:
 
-  - Drop SRAM patch from the series
-  - Change type from "struct resource_table *" to void __iomem *
-  - Change comment format from /** to /*
-  - Remove unmap of resource table va address during detach, allowing
-    attach-detach-reattach use case.
-  - Unmap rsc_data_va after retrieving resource table data structure.
-  - Unmap resource table va during driver remove op
+((val & 0x3f207c00) == 0x38200000) |
+((val & 0x3f208c00) == 0x38200000) |
+((val & 0x7fe06c00) == 0x78202000) |
+((val & 0xbf204c00) == 0x38200000)
 
-Changes in v2:
+Thanks D Scott help figure this out.
 
-  - Fix typecast warnings reported using sparse tool.
-  - Fix following sparse warnings:
-
-drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse: warning: incorrect type in assignment (different address spaces)
-drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse: warning: incorrect type in assignment (different address spaces)
-drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse: warning: incorrect type in argument 1 (different address spaces)
- drivers/remoteproc/xlnx_r5_remoteproc.c | 173 +++++++++++++++++++++++-
- 1 file changed, 169 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 84243d1dff9f..6898d4761566 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -25,6 +25,10 @@
- /* RX mailbox client buffer max length */
- #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
- 				 sizeof(struct zynqmp_ipi_message))
-+
-+#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
-+				 (uint32_t)'m' << 8 | (uint32_t)'p')
-+
- /*
-  * settings for RPU cluster mode which
-  * reflects possible values of xlnx,cluster-mode dt-property
-@@ -73,6 +77,26 @@ struct mbox_info {
- 	struct mbox_chan *rx_chan;
- };
- 
-+/**
-+ * struct rsc_tbl_data
-+ *
-+ * Platform specific data structure used to sync resource table address.
-+ * It's important to maintain order and size of each field on remote side.
-+ *
-+ * @version: version of data structure
-+ * @magic_num: 32-bit magic number.
-+ * @comp_magic_num: complement of above magic number
-+ * @rsc_tbl_size: resource table size
-+ * @rsc_tbl: resource table address
-+ */
-+struct rsc_tbl_data {
-+	const int version;
-+	const u32 magic_num;
-+	const u32 comp_magic_num;
-+	const u32 rsc_tbl_size;
-+	const uintptr_t rsc_tbl;
-+} __packed;
-+
- /*
-  * Hardcoded TCM bank values. This will stay in driver to maintain backward
-  * compatibility with device-tree that does not have TCM information.
-@@ -95,20 +119,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
- /**
-  * struct zynqmp_r5_core
-  *
-+ * @rsc_tbl_va: resource table virtual address
-  * @dev: device of RPU instance
-  * @np: device node of RPU instance
-  * @tcm_bank_count: number TCM banks accessible to this RPU
-  * @tcm_banks: array of each TCM bank data
-  * @rproc: rproc handle
-+ * @rsc_tbl_size: resource table size retrieved from remote
-  * @pm_domain_id: RPU CPU power domain id
-  * @ipi: pointer to mailbox information
-  */
- struct zynqmp_r5_core {
-+	void __iomem *rsc_tbl_va;
- 	struct device *dev;
- 	struct device_node *np;
- 	int tcm_bank_count;
- 	struct mem_bank_data **tcm_banks;
- 	struct rproc *rproc;
-+	u32 rsc_tbl_size;
- 	u32 pm_domain_id;
- 	struct mbox_info *ipi;
- };
-@@ -621,10 +649,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
- {
- 	int ret;
- 
--	ret = add_tcm_banks(rproc);
--	if (ret) {
--		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
--		return ret;
-+	/*
-+	 * For attach/detach use case, Firmware is already loaded so
-+	 * TCM isn't really needed at all. Also, for security TCM can be
-+	 * locked in such case and linux may not have access at all.
-+	 * So avoid adding TCM banks. TCM power-domains requested during attach
-+	 * callback.
-+	 */
-+	if (rproc->state != RPROC_DETACHED) {
-+		ret = add_tcm_banks(rproc);
-+		if (ret) {
-+			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-+			return ret;
-+		}
- 	}
- 
- 	ret = add_mem_regions_carveout(rproc);
-@@ -662,6 +699,120 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
- 	return 0;
- }
- 
-+static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
-+							     size_t *size)
-+{
-+	struct zynqmp_r5_core *r5_core;
-+
-+	r5_core = rproc->priv;
-+
-+	*size = r5_core->rsc_tbl_size;
-+
-+	return (struct resource_table *)r5_core->rsc_tbl_va;
-+}
-+
-+static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-+{
-+	struct resource_table *rsc_tbl_addr;
-+	struct device *dev = r5_core->dev;
-+	struct rsc_tbl_data *rsc_data_va;
-+	struct resource res_mem;
-+	struct device_node *np;
-+	int ret;
-+
-+	/*
-+	 * It is expected from remote processor firmware to provide resource
-+	 * table address via struct rsc_tbl_data data structure.
-+	 * Start address of first entry under "memory-region" property list
-+	 * contains that data structure which holds resource table address, size
-+	 * and some magic number to validate correct resource table entry.
-+	 */
-+	np = of_parse_phandle(r5_core->np, "memory-region", 0);
-+	if (!np) {
-+		dev_err(dev, "failed to get memory region dev node\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_address_to_resource(np, 0, &res_mem);
-+	if (ret) {
-+		dev_err(dev, "failed to get memory-region resource addr\n");
-+		return -EINVAL;
-+	}
-+
-+	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
-+							sizeof(struct rsc_tbl_data));
-+	if (!rsc_data_va) {
-+		dev_err(dev, "failed to map resource table data address\n");
-+		return -EIO;
-+	}
-+
-+	/*
-+	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
-+	 * do not consider resource table address valid and don't attach
-+	 */
-+	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
-+	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
-+		dev_dbg(dev, "invalid magic number, won't attach\n");
-+		return -EINVAL;
-+	}
-+
-+	r5_core->rsc_tbl_va = ioremap_wc(rsc_data_va->rsc_tbl,
-+					 rsc_data_va->rsc_tbl_size);
-+	if (!r5_core->rsc_tbl_va) {
-+		dev_err(dev, "failed to get resource table va\n");
-+		return -EINVAL;
-+	}
-+
-+	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
-+
-+	/*
-+	 * As of now resource table version 1 is expected. Don't fail to attach
-+	 * but warn users about it.
-+	 */
-+	if (rsc_tbl_addr->ver != 1)
-+		dev_warn(dev, "unexpected resource table version %d\n",
-+			 rsc_tbl_addr->ver);
-+
-+	iounmap((void __iomem *)rsc_data_va);
-+	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
-+
-+	return 0;
-+}
-+
-+static int zynqmp_r5_attach(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	int i, pm_domain_id, ret;
-+
-+	/*
-+	 * Firmware is loaded in TCM. Request TCM power domains to notify
-+	 * platform management controller that TCM is in use. This will be
-+	 * released during unprepare callback.
-+	 */
-+	for (i = 0; i < r5_core->tcm_bank_count; i++) {
-+		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-+		ret = zynqmp_pm_request_node(pm_domain_id,
-+					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-+					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-+		if (ret < 0)
-+			pr_warn("TCM %d can't be requested\n", i);
-+	}
-+
-+	return 0;
-+}
-+
-+static int zynqmp_r5_detach(struct rproc *rproc)
-+{
-+	/*
-+	 * Generate last notification to remote after clearing virtio flag.
-+	 * Remote can avoid polling on virtio reset flag if kick is generated
-+	 * during detach by host and check virtio reset flag on kick interrupt.
-+	 */
-+	zynqmp_r5_rproc_kick(rproc, 0);
-+
-+	return 0;
-+}
-+
- static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.prepare	= zynqmp_r5_rproc_prepare,
- 	.unprepare	= zynqmp_r5_rproc_unprepare,
-@@ -673,6 +824,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- 	.kick		= zynqmp_r5_rproc_kick,
-+	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
-+	.attach		= zynqmp_r5_attach,
-+	.detach		= zynqmp_r5_detach,
- };
- 
- /**
-@@ -723,6 +877,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 		goto free_rproc;
- 	}
- 
-+	/*
-+	 * Move rproc state to DETACHED to give one time opportunity to attach
-+	 * if firmware is already available in the memory. This can happen if
-+	 * firmware is loaded via debugger or by any other agent in the system.
-+	 * If firmware isn't available in the memory and resource table isn't found,
-+	 * then rproc state stay OFFLINE.
-+	 */
-+	if (!zynqmp_r5_get_rsc_table_va(r5_core))
-+		r5_rproc->state = RPROC_DETACHED;
-+
- 	r5_core->rproc = r5_rproc;
- 	return r5_core;
- 
-@@ -1134,6 +1298,7 @@ static void zynqmp_r5_cluster_exit(void *data)
- 	for (i = 0; i < cluster->core_count; i++) {
- 		r5_core = cluster->r5_cores[i];
- 		zynqmp_r5_free_mbox(r5_core->ipi);
-+		iounmap(r5_core->rsc_tbl_va);
- 		of_reserved_mem_device_release(r5_core->dev);
- 		put_device(r5_core->dev);
- 		rproc_del(r5_core->rproc);
-
-base-commit: d7faf9a16886a748c9dd4063ea897f1e68b412f2
--- 
-2.37.6
+>
 
 
