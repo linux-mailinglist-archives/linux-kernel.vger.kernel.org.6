@@ -1,310 +1,181 @@
-Return-Path: <linux-kernel+bounces-199473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 338358D878A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9F68D878D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3541F224CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E22B1C21D67
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A5F13666E;
-	Mon,  3 Jun 2024 17:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D2E1369A0;
+	Mon,  3 Jun 2024 17:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A77EmfVY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B73hhSQm"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F112562E;
-	Mon,  3 Jun 2024 17:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717434060; cv=fail; b=lEF5bqSDvdklC3caYaTjVlYYtXkqD+ALnPiLXFyq5z1YNDk4SJCD7LteXXSd1J7TAczFtBqWtK7FBqXzkSz64mxmbXqAEj9jteB3a1pnpdUCfaVSkgFU14kXqjY6e+EqWNERa0BINiOKMi5dZXygCV9cGcxcu6L3KmvWvk3jccY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717434060; c=relaxed/simple;
-	bh=neDmK5PBth66/CsoAulp0A261qUNqQRuIAgNoTWuZvQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=amwcqsxWXjy/u7DFTLUCQNyXmGss/LdMygApJY6Q43M9gMOlU7N07xvEHgIDU/r1270Lbgh9nY7DRVeNU6PJW+BOzZvDvUqZWbMgxYymXFOea33kRQwiRcCbRyK6i5DDSfxMLgoQvF7pwwpXjVYhoLwv60+jOdHLA7HqMpmMMAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A77EmfVY; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717434059; x=1748970059;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=neDmK5PBth66/CsoAulp0A261qUNqQRuIAgNoTWuZvQ=;
-  b=A77EmfVYFTEvINe3ozvQ5dNU7Ps2IV0VKRXIhlC5zK2u4TEVumOw3juR
-   ff0SribfL0s11L7Wt3OW5FxBIZ7LFk01knlohm+LDpkw3T6nkeTM+rWq7
-   5HmTqu9CMwBqkjCR23ck7XwD3sJ88MSnpBVVMtkeexwCuk/5i6znh319B
-   ppr61CCpCpfsUkXceiKXuUIStxiXI6yAffxUTeR1H4y/JuY8ctzhtY/3Y
-   1BVqtmtFUPdbJ6knjJUDODc7rMOs8QVXxgUlzUamdrKEJWXZds1KQOwi3
-   0C3BuuJ5adheGFSPqUmv0SzFTFBUlJ8/32Ze+MJlpq6mDh5soFAh80EJM
-   w==;
-X-CSE-ConnectionGUID: rDvxwj93R9KCzYrYTMWnmg==
-X-CSE-MsgGUID: Ua+IiRJYSpi/IzbMFEEeBA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="24513938"
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="24513938"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 10:00:58 -0700
-X-CSE-ConnectionGUID: BH4NloCFT0uc9M6nJp1Otw==
-X-CSE-MsgGUID: cRQcdWShT5+RwRlxcjUVrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="68096694"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Jun 2024 10:00:57 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 3 Jun 2024 10:00:57 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 3 Jun 2024 10:00:57 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.41) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 3 Jun 2024 10:00:56 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cN2AA33I7BTxUhcwC7rcelIaK8ef1pdN7KAVMtJiiYYcsfQg4/rITJYe2S2NT3hyVv9WSim4vrCsBV8EUj5jOjhOlifdPNoocpxGgMOUql2Yt9HtHTeRMeGMpQF/425qft7WR+3wMzAczbUJMxa6CD4kBilAMmL6HB8X3cIwSUYt2vGyJUXmsCKgxOiab0jy7lECltMr1kOS7LR9ysIspEXDAQ9m09NLPu8XJvXJY2tKGAdTSteuOoY8D+7keW/HuBVPHT9bzngUtSWRaxxF/ZPB+jEtZR/Td7OboyIk8Q23xGBQ9OQB9j8IR9GqXGPvCCjZYAeAnfvBleg+WHxx9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r6qiSexp3fpokdtzanBsep77bLEIHoH0WQRdrfCwHWU=;
- b=R37eLLOna3TgZmLbdj9y4ulUduP5GmKO6I2y9BTkd5M3B4NbElczp1XARUadCG/SmxiVFL6PUXx4A5TjUImlglb6c/ZOIp7I1bvsAGg3oQqRDA5t9e4HGWtnB/DexPQ+dCx1kvRweProppKCVDUDsN8qwDi5cCBj4WMFjXU3Al2YJEfJnVqClWtMjy1AL7prWf4QNBveRAz2Z2/XkMBLBns4bbNFq7yL16tKXRy7TG095fBwlZ9xgPfnxvnUXV4VTvg5tnANW90ULX8YuW52ywaMLeoDnPMs0K1DJyB6FMMMvntZCJ2NafFuMwoKh8EovakGia89hBWUUZzetsdmWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CO6PR11MB5635.namprd11.prod.outlook.com (2603:10b6:5:35f::14)
- by CY8PR11MB6866.namprd11.prod.outlook.com (2603:10b6:930:5e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Mon, 3 Jun
- 2024 17:00:54 +0000
-Received: from CO6PR11MB5635.namprd11.prod.outlook.com
- ([fe80::8cfa:1a7f:d9ee:42cf]) by CO6PR11MB5635.namprd11.prod.outlook.com
- ([fe80::8cfa:1a7f:d9ee:42cf%4]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 17:00:54 +0000
-From: "Wang, Weilin" <weilin.wang@intel.com>
-To: Namhyung Kim <namhyung@gmail.com>
-CC: "namhyung@google.com" <namhyung@google.com>, Namhyung Kim
-	<namhyung@kernel.org>, Ian Rogers <irogers@google.com>, "Arnaldo Carvalho de
- Melo" <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
-	<mingo@redhat.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, Kan
- Liang <kan.liang@linux.intel.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Taylor, Perry" <perry.taylor@intel.com>,
-	"Alt, Samantha" <samantha.alt@intel.com>, "Biggers, Caleb"
-	<caleb.biggers@intel.com>
-Subject: RE: [RFC PATCH v10 8/8] perf test: Add test for Intel TPEBS counting
- mode
-Thread-Topic: [RFC PATCH v10 8/8] perf test: Add test for Intel TPEBS counting
- mode
-Thread-Index: AQHasZOMbuNn7cwVHkStwuT5Ba6t6rG1I8WAgAEoKXA=
-Date: Mon, 3 Jun 2024 17:00:54 +0000
-Message-ID: <CO6PR11MB56353AAFC39B85C7E9310488EEFF2@CO6PR11MB5635.namprd11.prod.outlook.com>
-References: <20240529064327.4080674-9-weilin.wang@intel.com>
- <20240602232041.1730256-1-namhyung@google.com>
-In-Reply-To: <20240602232041.1730256-1-namhyung@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR11MB5635:EE_|CY8PR11MB6866:EE_
-x-ms-office365-filtering-correlation-id: ebc02e76-49fa-4bbd-52f5-08dc83eebb52
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?mXmYOqhQMV7p3tpgaHw0HntMfOOFaoZIu/krXvV+lShekBuyJ2GSJD7BJSRl?=
- =?us-ascii?Q?YdXN7B2A+fm5sPCkuU4c8CreVlKKUmlUMJCJQ59BexuG3b0f/pF7UcnrcvOX?=
- =?us-ascii?Q?l0NBzMolVsG1AVrll5xC4ZK8/yJF5k4crAhqgaKYXdfG8I5OtOJsmMiOaDoF?=
- =?us-ascii?Q?T5ftDrC18iUS4xpSuqZdVwxbuVc2IcwCHzYGQMZVS2H0FV4BrRN7DDuWy5K4?=
- =?us-ascii?Q?KniCQfwZpJY35EAEjA7Gy3K5tNVQpXwB1Jslq2AN+x0i/g1h/3lFpw1QIYzK?=
- =?us-ascii?Q?h00mJI9OQ1hglWwFCetVzjs67CsgX7mSeLkPi2jTo2cx2gKq7WSbA9axkErq?=
- =?us-ascii?Q?bX+Tbi2ZNXZzFzC+7xpZIfHUtBVEw4SxFHiYeITKXXmR9dd3qzCll+pIxPKJ?=
- =?us-ascii?Q?jM3eTMJ3vtN+w2HBrwK35jADKpw6PlQ3JXKET2/MdM4JCBs6eiN+YsCEZhQP?=
- =?us-ascii?Q?x9UFJJw7SdLW0XeyVb/eUAriatfIQarniSXA/HAk21V5ZQcWdn2Z53uxvCsf?=
- =?us-ascii?Q?0kCEZFWu0MLTtW3LSM39mtkBad3RNOrX1AbjLwFGYF9MNzMTtghOoU7UbVCd?=
- =?us-ascii?Q?Ilj+KWfRLJ8ioHE64DorDx6aSLSkNVdcya6ysLLTdmKmtA9kx5RwWY2E5Cgm?=
- =?us-ascii?Q?82l1QPgUTuKow845/z82cV86cSe2+f7HGXGfh1i6O7qxG6h7iBR+Dm/Q1Sc7?=
- =?us-ascii?Q?MTWAJKy3g84X++Jqa/PO0eP2CppxfY3j1m6u5QaviB2pA6+7wKbwV1LjJmVX?=
- =?us-ascii?Q?if1Ntmw3ErFpJ4ADyGv+MFgDryU9XmMRY9t1iBHe6p6tCydkGgq+GLDIGUya?=
- =?us-ascii?Q?0LaLlINJLgGC1alxSz5WjnbgPTiILT3YSZ+2m0hAqSavLhZcA7/qTqWUTVEi?=
- =?us-ascii?Q?mJQz8frUS2W7gzeA4dcbvskctPalkEK2zIfKAZ9338BXRD+2cmyTrLn8HkJd?=
- =?us-ascii?Q?zs4l0EZCOMrOOReO7aH1i+/Rt+JPsYdLwP2t2Il1XoMOHs2PmD9Fnk3QBNe6?=
- =?us-ascii?Q?V6SLHyvu44JHutYXATkcybrFaaQOMblP7niUDvldU5uiOsJSRadgbiIDHmKV?=
- =?us-ascii?Q?0H2/z8wxZ9caN4BzbB6pRRa+XBWDLWytawWzcIIQA03CaA0s3hu4kenkx0md?=
- =?us-ascii?Q?lVt+Xju7Twhwfa0ZvxCWrN2HlcJ4+4tg3NcAX5yf5bJK7THXLsE9Qd+iI5fs?=
- =?us-ascii?Q?FQPRb3YV8h63DEMmCLFwtYukZWhC13aoZ9UJPMUZOwYKnJzz7lR+5xm25/KA?=
- =?us-ascii?Q?Nts64VueG9MDru4h/nROA5xD1xyHmhX9ef3Bkmr2WQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR11MB5635.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?yYvJ+RIP9Fk2DcEar6IPhOJ61Qc5zJ7PoRlLj/3y2ou+lo9wNlE7U+MBK0kD?=
- =?us-ascii?Q?dDB9dxmQtaYJGi5VsEfQxMSYU+04YlTgu2S0q7BFkCh9/KZQvLfal4AHYdTw?=
- =?us-ascii?Q?M3Z5R73vp0pPFwWF8UOOSOynlgV3NUp/WMmn8Lf7Mq5V4tM6vDRICNzxIKX2?=
- =?us-ascii?Q?/zvTVvgyvqPMxQIrqt+VO4ipW90mehEZwG0BqEdQJa6/tT8bX4PwrES5HGte?=
- =?us-ascii?Q?oVfPFHtoKEk80pzzVnpaMpdcr0XzHx6LlBpLUSeLzdd/2Aq4TsxrhDqGRA0L?=
- =?us-ascii?Q?9JwcvkOGmLdFGq5lz3l7kQYaG1t9XtcKG8tITJYB6bB80LrIWK1O6zd0VnLl?=
- =?us-ascii?Q?9/rtqSKvBLI8gzC9hadI/58b7DKE6zPlKbQS4qZk2QQDeD5bwzumDemoxC/h?=
- =?us-ascii?Q?NdbhwTzyeztfJpbmPDgMynHFdEaGKj4GzZ0/ZYGaQ0Lk7k2w65EvwlBuNqy4?=
- =?us-ascii?Q?/yQqhyvH7zhc+5l4XVDUI1M9pEZBANeNqcNmLaNrEZ9lX6Hkz7Qi3366MvwK?=
- =?us-ascii?Q?U5PNr0oZxD1wwNs9ZFuWROiKLBHWtqmqfQ/Zmo68T+WWR5pGgc5LvBvcZVD3?=
- =?us-ascii?Q?vmQWVZwPXdXCuBQlzapYTdTTN2dKjYvPsBqivj1JGekqht4EmFDE1yjS8O63?=
- =?us-ascii?Q?Q/SrHjJ8ewdpBDpeitY76Jc2i8DtsmJliW6TmUEtASiCP6j4O07JKudcZF9s?=
- =?us-ascii?Q?bvM1o0IUq0CvpMDsvNokKYmO4HwyK6hkAAniPVoy0KoA2G63YQjuhaN9aqzj?=
- =?us-ascii?Q?svlGkGhrOeijL22r2Zsl4U13+qK0NejLcKB79ttZa9t80nqAtTGIn1odx+Em?=
- =?us-ascii?Q?Ao0pjDFvmm1I8dhLTMQx62ahmpARy8DNc/seKltAKIXO+gcA2aB1mUdzP4Ni?=
- =?us-ascii?Q?dLeVP7VFlSUETfQJ/zXcs8+lnrZZjGI5KEoPv7ut9T/nKiG84EITYrTFDDsi?=
- =?us-ascii?Q?sHCvyBc+CvbOWCUJ3fH0VJJBP9X4L8Zpi24u/H9UPhISi+G+c2/0H4HAh7b1?=
- =?us-ascii?Q?xl4NuXbsyXcbGK3H4k0NtpGz3g1QMYNaYOvvekodbD7vcz7DLrhfAu7uw6SH?=
- =?us-ascii?Q?gFKgwkxbxuuAKw9OIb4RKmJ5ILw8UxJi7PErDumoSN+/Zpb+0FaPQy+4o9qG?=
- =?us-ascii?Q?jCUjoNGoFL2lPdR6sJfRWI70YvkzAhB3gHs4YrJEA4ykrR9noxSm51Urldlq?=
- =?us-ascii?Q?cnkPp+MZ+com24wJ2ZUOdohpWOcA+eqNhdae6roUtlxFtxk0qMgRy0ZgkUZS?=
- =?us-ascii?Q?qovNVjYcmnFD8TmZH6mCyrQqkqBWRY1wuiknX1yNiEUhPXycNSoRpemb7HW6?=
- =?us-ascii?Q?E27POVW3Ch9eHBJ3q59Cwp9Zo0HRyF5WxAy6fARkWs+J+0frv/EdkuxBCJJX?=
- =?us-ascii?Q?Gy7cGblwy6XNUMln4mMPrVkofKryfRFmKFoZlMCd0hfMe65mDm7DLVjALSVa?=
- =?us-ascii?Q?Ygbv2tFySpjQj2LkTx8GSAneQRs6hIY4M4lVAMNHSvoz3BMdtBHQcxnJVF90?=
- =?us-ascii?Q?p5SsbR7nXyf+z8eoGrKNTO1F2xa+K8ryiOzCcuszX9ZzJ0mZ4j94c5bs88dC?=
- =?us-ascii?Q?DoEOgZv/JYoI0m3us1TB7Uxbqjaesj4qwMwqY0rd?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F31C262B6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717434080; cv=none; b=OnlGfqxyiDjvlYc/BsF7fH7P+XaQs1I1o98qvYr4p5UloZsaXopPiqA01ou0xVGG/pRk+5gdugjFWCVa4xVPDwePndhjCiOlT8/IM9PcnOHpx9IZ0VfZjeOn8llwfE/v6Wyvr+Olg2DPQAq9FyhaP3I30fo10SmXURfe/mj+6Js=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717434080; c=relaxed/simple;
+	bh=XRm7qfVoKNCKJc8gWfdzMNwjpxqHgSu1zVUhoH1YdX0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N8neTBHinBk2WUDc5RdO4f7kWSEF+u55HwqHmCav9x33wAfFT+HVvUuKCW2qqc8vADJueXqgG0nkk8gWMkKPgDA/mnojXkVTxwBGK3563vyPMypCBylMQyzQvk9As//Q0iT6ngX1ZK2v1/aFcCOabbjgzoAr0MlJeYapcLVoqH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B73hhSQm; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9E9141C0004;
+	Mon,  3 Jun 2024 17:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717434076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jmDCtjl47QuoVAqZojA/Ey2uy0oviYRp59KU+NyG2KI=;
+	b=B73hhSQmhFwbOtJ/WMQ33Geu0egPkOPK1sZbEU7f4UzzOhrIwlLMNmyUNkfITVbUxLePcV
+	wajF1xNkPvZTQhWLzLOEtg15/PqHz2qAlkGdk//tz2Y2QU5JKlAAf/oCKmQOc1Y1rK2B4K
+	JQodDFj5b77H8H8fM8inZL6HTkNL9gUCFxFa+BultBdtnobUdCi8kkeHC4tCvjjxs0BLUl
+	vdl1Ofig4xBinQi+6twUMZvxrl6IvJhPcJZng5JvDLvvlkB2Qv8J2oVHtW7Kgf+CJTL7wN
+	pEj9E1fBEdX5LceJ1BOo293SyA0F1ajl4u5qnGH3nYP5+tL9SWQ0SJBthVcB6w==
+From: Thomas Richard <thomas.richard@bootlin.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org
+Cc: m.nirmaladevi@ltts.com,
+	bhargav.r@ltts.com,
+	lee@kernel.org,
+	linux-kernel@vger.kernel.org,
+	gregory.clement@bootlin.com,
+	thomas.petazzoni@bootlin.com,
+	u-kumar1@ti.com,
+	Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH] regulator: tps6594-regulator: Fix the number of irqs for TPS65224 and TPS6594
+Date: Mon,  3 Jun 2024 19:01:00 +0200
+Message-Id: <20240603170100.2394402-1-thomas.richard@bootlin.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR11MB5635.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebc02e76-49fa-4bbd-52f5-08dc83eebb52
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2024 17:00:54.7388
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Jiu5L0sKU9hhhQwwSTFqHg/r7jzy9W8Ww7MSxVo8i20HdpylPC3YIkFBIOuYrKs4YhavuWNDIk53ljOdb/+NiQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB6866
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
+The number of irqs is computed to allocate the right amount of memory for
+the irq data. An array of struct tps6594_regulator_irq_data is allocated
+one time for all the irqs. Each irq uses one cell of the array.
 
+If the computed number of irqs is not correct, not allocated memory could
+be used.
 
-> -----Original Message-----
-> From: Namhyung Kim <namhyung@gmail.com>
-> Sent: Sunday, June 2, 2024 4:21 PM
-> To: Wang, Weilin <weilin.wang@intel.com>
-> Cc: namhyung@google.com; Namhyung Kim <namhyung@kernel.org>; Ian
-> Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
-> <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
-> <mingo@redhat.com>; Alexander Shishkin
-> <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hunte=
-r,
-> Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>;
-> linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor, P=
-erry
-> <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Biggers=
-,
-> Caleb <caleb.biggers@intel.com>
-> Subject: Re: [RFC PATCH v10 8/8] perf test: Add test for Intel TPEBS coun=
-ting
-> mode
->=20
-> From: namhyung@google.com
->=20
-> On Wed, 29 May 2024 02:43:24 -0400 weilin.wang@intel.com wrote:
->=20
-> > From: Weilin Wang <weilin.wang@intel.com>
-> >
-> > Intel TPEBS sampling mode is supported through perf record. The countin=
-g
-> mode
-> > code uses perf record to capture retire_latency value and use it in met=
-ric
-> > calculation. This test checks the counting mode code.
-> >
-> > Signed-off-by: Weilin Wang <weilin.wang@intel.com>
-> > ---
-> >  .../perf/tests/shell/test_stat_intel_tpebs.sh | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >  create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
-> >
-> > diff --git a/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-> b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-> > new file mode 100755
-> > index 000000000000..43f75055fee4
-> > --- /dev/null
-> > +++ b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-> > @@ -0,0 +1,19 @@
-> > +#!/bin/bash
-> > +# test Intel TPEBS counting mode
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +set e
-> > +err=3D0
-> > +
-> > +# Use this event for testing because it should exist in all platforms
-> > +e=3Dcache-misses:R
-> > +
-> > +# Without this cmd option, default value or zero is returned
-> > +echo "Testing without --enable-tpebs-recording"
-> > +result=3D$(perf stat -e "$e" true 2>&1)
-> > +[[ "$result" =3D~ "$e" ]] || exit 1
-> > +
-> > +# In platforms that do not support TPEBS, it should execute without er=
-ror.
-> > +echo "Testing with --enable-tpebs-recording"
-> > +result=3D$(perf stat -e "$e" --enable-tpebs-recording -a sleep 0.01 2>=
-&1)
-> > +[[ "$result" =3D~ "perf record" && "$result" =3D~ "$e" ]] || exit 1
->=20
-> I got these build errors:
->=20
-Sorry about the error! I will fix it.=20
+Fix the	values used in the calculation for TPS6594 and TPS65224.
 
-Thanks,
-Weilin
+Fixes: 00c826525fba (regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators)
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
 
-> Thanks,
-> Namhyung
->=20
-> ---
->=20
->   TEST    tests/shell/test_stat_intel_tpebs.sh.shellcheck_log
->=20
-> In tests/shell/test_stat_intel_tpebs.sh line 6:
-> err=3D0
-> ^-^ SC2034 (warning): err appears unused. Verify use (or export if used
-> externally).
->=20
->=20
-> In tests/shell/test_stat_intel_tpebs.sh line 14:
-> [[ "$result" =3D~ "$e" ]] || exit 1
->                 ^--^ SC2076 (warning): Remove quotes from right-hand side=
- of =3D~ to
-> match as a regex rather than literally.
->=20
->=20
-> In tests/shell/test_stat_intel_tpebs.sh line 19:
-> [[ "$result" =3D~ "perf record" && "$result" =3D~ "$e" ]] || exit 1
->                                               ^--^ SC2076 (warning): Remo=
-ve quotes from right-
-> hand side of =3D~ to match as a regex rather than literally.
->=20
-> For more information:
->   https://www.shellcheck.net/wiki/SC2034 -- err appears unused. Verify us=
-e
-> (o...
->   https://www.shellcheck.net/wiki/SC2076 -- Remove quotes from right-hand
-> sid...
-> make[4]: *** [tests/Build:91:
-> tests/shell/test_stat_intel_tpebs.sh.shellcheck_log] Error 1
->=20
+Issue detected with Linux v6.10-rc1 and v6.10-rc2 using a TI J7200 EVM board
+during the suspend sequence.
+
+#echo 1 > /sys/power/pm_debug_messages
+#echo 1 > /sys/power/pm_print_times
+#echo 0 > /sys/module/printk/parameters/console_suspend
+#echo 8 > /proc/sys/kernel/printk
+#echo deep > /sys/power/mem_sleep
+#echo mem > /sys/power/state
+[   12.607734] PM: suspend entry (deep)
+[   12.612619] Filesystems sync: 0.000 seconds
+[   12.618349] Unable to handle kernel paging request at virtual address 000000366b63756a
+[   12.626255] Mem abort info:
+[   12.629037]   ESR = 0x0000000096000004
+[   12.632772]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   12.638070]   SET = 0, FnV = 0
+[   12.641111]   EA = 0, S1PTW = 0
+[   12.644240]   FSC = 0x04: level 0 translation fault
+[   12.649103] Data abort info:
+[   12.651971]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[   12.657441]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[   12.662477]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[   12.667774] user pgtable: 4k pages, 48-bit VAs, pgdp=00000008844be000
+[   12.674198] [000000366b63756a] pgd=0000000000000000, p4d=0000000000000000
+[   12.680974] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+[   12.687225] Modules linked in:
+[   12.690271] CPU: 1 PID: 135 Comm: sh Not tainted 6.10.0-rc2-00036-g8de0c9c7e923-dirty #46
+[   12.698430] Hardware name: Texas Instruments J7200 EVM (DT)
+[   12.703987] pstate: a00000c5 (NzCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   12.710932] pc : devres_for_each_res+0x64/0xf0
+[   12.715370] lr : devres_for_each_res+0x4c/0xf0
+[   12.719800] sp : ffff8000840d3a80
+[   12.723102] x29: ffff8000840d3a80 x28: ffff800081aeef50 x27: ffff00080038d2bc
+[   12.730224] x26: 000000366b637562 x25: ffff80008358a978 x24: ffff8000840d3b68
+[   12.737346] x23: ffff800080923924 x22: ffff00080038d2c0 x21: ffff800080923290
+[   12.744467] x20: ffff8000809232fc x19: ffff00080038d010 x18: ffff8000840d3af8
+[   12.751589] x17: ffff8000833d5c58 x16: 0000000078d6c4df x15: 0000000069b9dda5
+[   12.758710] x14: 00000000f75c2086 x13: 00000000a0b1f81f x12: 000000004a81b180
+[   12.765831] x11: 00000000e38eab80 x10: 00000000981bbba1 x9 : 00000000d391c60b
+[   12.772952] x8 : ffff8000840d3b98 x7 : 0000000000000000 x6 : ffff800081aeeed0
+[   12.780073] x5 : ffff8000840d3b68 x4 : 0000000000000000 x3 : 0000000000000001
+[   12.787194] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 000000364b435542
+[   12.794315] Call trace:
+[   12.796751]  devres_for_each_res+0x64/0xf0
+[   12.800837]  dev_cache_fw_image+0x5c/0x1a8
+[   12.804921]  dpm_for_each_dev+0x54/0x88
+[   12.808749]  fw_pm_notify+0x80/0x108
+[   12.812312]  blocking_notifier_call_chain_robust+0x74/0xe4
+[   12.817785]  pm_notifier_call_chain_robust+0x28/0x48
+[   12.822738]  pm_suspend+0x118/0x270
+[   12.826216]  state_store+0x80/0xec
+[   12.829607]  kobj_attr_store+0x18/0x2c
+[   12.833349]  sysfs_kf_write+0x44/0x54
+[   12.837001]  kernfs_fop_write_iter+0x120/0x1ec
+[   12.841432]  vfs_write+0x238/0x368
+[   12.844823]  ksys_write+0x70/0x104
+[   12.848213]  __arm64_sys_write+0x1c/0x28
+[   12.852124]  invoke_syscall+0x48/0x118
+[   12.855867]  el0_svc_common.constprop.0+0x40/0xe0
+[   12.860560]  do_el0_svc+0x1c/0x28
+[   12.863865]  el0_svc+0x34/0xdc
+[   12.866910]  el0t_64_sync_handler+0x100/0x12c
+[   12.871255]  el0t_64_sync+0x190/0x194
+[   12.874907] Code: f94004da eb1600df 540000e1 14000018 (f9400740)
+[   12.880986] ---[ end trace 0000000000000000 ]---
+
+ drivers/regulator/tps6594-regulator.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
+index 4a859f4c0f83..ac53792e3fed 100644
+--- a/drivers/regulator/tps6594-regulator.c
++++ b/drivers/regulator/tps6594-regulator.c
+@@ -653,18 +653,14 @@ static int tps6594_regulator_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	if (tps->chip_id == LP8764) {
+-		nr_buck = ARRAY_SIZE(buck_regs);
+-		nr_ldo = 0;
+-		nr_types = REGS_INT_NB;
+-	} else if (tps->chip_id == TPS65224) {
++	if (tps->chip_id == TPS65224) {
+ 		nr_buck = ARRAY_SIZE(tps65224_buck_regs);
+ 		nr_ldo = ARRAY_SIZE(tps65224_ldo_regs);
+-		nr_types = REGS_INT_NB;
++		nr_types = TPS65224_REGS_INT_NB;
+ 	} else {
+ 		nr_buck = ARRAY_SIZE(buck_regs);
+-		nr_ldo = ARRAY_SIZE(tps6594_ldo_regs);
+-		nr_types = TPS65224_REGS_INT_NB;
++		nr_ldo = (tps->chip_id == LP8764) ? 0 : ARRAY_SIZE(tps6594_ldo_regs);
++		nr_types = REGS_INT_NB;
+ 	}
+ 
+ 	reg_irq_nb = nr_types * (nr_buck + nr_ldo);
+-- 
+2.39.2
 
 
