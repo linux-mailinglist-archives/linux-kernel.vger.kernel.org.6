@@ -1,68 +1,72 @@
-Return-Path: <linux-kernel+bounces-199130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B398D82B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED738D82C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3FB81C21A12
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:48:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A88728946B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FB512C52F;
-	Mon,  3 Jun 2024 12:48:27 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6D1129A78;
+	Mon,  3 Jun 2024 12:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwXyOVrZ"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345A3839EA;
-	Mon,  3 Jun 2024 12:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDF984A50
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717418907; cv=none; b=sJQl7Qr9oRL87Z1PGWoBepCcHm5uuAkNI5/NnY84C0nl/hB5wZ5lLpPNpgFUtH6q2IT68ob8KMpurOftXFhl3OTUGTp8zIiIGRp3lWBfderjKfwRn4JgRcWThZsZ8Pch+aYHjT0uRM5lNo9t36cgDdYgnwOpEvZiHwTCSy/qLOQ=
+	t=1717418955; cv=none; b=fV8ZGpGO5O4xztXlnotYugUTQw1fPwrfaa5GI7aRTSC+a1cro2BAbuy7l6bsA3j/dKK0p+IdGgsXE9j6VXEn56uZynVZXh7FUwU8qnQ51UhisKvREnh3/VpAXtU/+kL0XZN8uixS338xHbJiOcJxEKwVPtg7/aMEbU4yJy6FFyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717418907; c=relaxed/simple;
-	bh=LU3VNWiMTpsMlsnk6QbX+f+ptU01h6D7q3/HM/MmTn4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZD4761pfl+6hyYEmPqhbfvODReMmR1nOPBAkUNM9TcX0E8kRZ0D7Fl9RQbqwWuCsJUYfK2a/imN066pRF02pvEJakZGE8/HpaxHoKOT8jLC/wCbhn3QeJjnV1yBTf61Dl4PE9hzAtqMdlY1+lUqCp69ytqNPFGOO4b/0HJOhagw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VtD5F0LhTz6K9Y7;
-	Mon,  3 Jun 2024 20:47:13 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1B017140B2A;
-	Mon,  3 Jun 2024 20:48:21 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 3 Jun
- 2024 13:48:20 +0100
-Date: Mon, 3 Jun 2024 13:48:19 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Dan Williams <dan.j.williams@intel.com>
-CC: Dongsheng Yang <dongsheng.yang@easystack.cn>, Gregory Price
-	<gregory.price@memverge.com>, John Groves <John@groves.net>,
-	<axboe@kernel.dk>, <linux-block@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <james.morse@arm.com>, Mark Rutland
-	<mark.rutland@arm.com>
-Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
-Message-ID: <20240603134819.00001c5f@Huawei.com>
-In-Reply-To: <665a9402445ee_166872941d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-References: <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
-	<20240508164417.00006c69@Huawei.com>
-	<3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
-	<20240509132134.00000ae9@Huawei.com>
-	<a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
-	<664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	<8f161b2d-eacd-ad35-8959-0f44c8d132b3@easystack.cn>
-	<ZldIzp0ncsRX5BZE@memverge.com>
-	<5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
-	<20240530143813.00006def@Huawei.com>
-	<665a9402445ee_166872941d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1717418955; c=relaxed/simple;
+	bh=j8KndF6/ZOHYOE01U5ocmBeiSxz+EVrLkoFMPmuBDwk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p8Ywfd9FMh14jAQ3cKqyEWfT9RX01B0CC/+lKW10ij8GssiSrLztINIRu9CEC1aGXhCWXP7RZAHNNEXxu9zjOngPS7yIZRQJF0oVy27fVeNinPHV1j8aHd9PKUgieP7eD1j2THA3z5lQdYIecjDCvROrIlfMGhkBIVNZBZ8BYIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TwXyOVrZ; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eaafda3b90so12130301fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717418952; x=1718023752; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fHP7lEVpq4ve8OrCbUPc3mP38ofIqfLhRNWA+cJRRKo=;
+        b=TwXyOVrZQx8F8m+XhEWOJfdty07OwqHSRH5waL6YCiQoaYTGTTFrXGMkwLt55NB7Uf
+         uIcllUznN8gUDnZ3nPs91/gX9Z5Qz/hOxO3vFZMM/bg8OVDuzpunl/xU7noHljXYlOTp
+         lyuaGzz7uzB87Cjwj1yPVRad7CQeZxz2V7CeKmbQII67EEjS+mvMxXLqHoJ4yGXiy1zi
+         J5D0vaEhB4JWeDqJaa3IhG/uoVU/tJn5JALAkxJstJn6p0+UKLBl6iFT/ivtR7i5Epaj
+         ZxRDzPN9aXp3K6F0k5hnupdS0xuKAhKULz74FpZyVHngzCDoz2Yzxb3ICBcwmkwj6wl3
+         YEOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717418952; x=1718023752;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fHP7lEVpq4ve8OrCbUPc3mP38ofIqfLhRNWA+cJRRKo=;
+        b=B5KPCw5NkTNIPEzyi1uetXesKEbyfuXEfI4yd5VTD1hMBgPp6M+6XCsnQwKesamE/P
+         cws5Sojjr5FJ60d7AJ6R7sw4HlExX/3mmS2kDyzlZ8RfIWKPvpVXNUkJ6QUFoQLK4NH0
+         vBLDATzXs9ghc5Ug+mu5bJk8l5utkDnc+kPxIFk7dKrgf7H+OV2V7SeNMGN19+16Vy6h
+         ymoeErVIByMJHet41yArbGSUkhMiohQ1Msr9ObwwxiW9CSSGbB5unl2b19HhAo2TtUCw
+         1crH6ZArAE1VaTY16lDsEMQFfFTb14cf2aFawkmUDbvcmdhFcCMHCYE75ug3isO3mCug
+         kxwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoWOMHlJTLLEAxA+JQy7oR13poXZDMiKDBQDBlxw+LsRnDffbritapXbdq+lh79knkd0LMHJzMp3NhAWs5PQq70Nmmu/Y4GOypfi4T
+X-Gm-Message-State: AOJu0Yzl1eeTTH6dNlx6EDdXFTi5NUUts81LiOB5VSjGk4VfB4jK2a11
+	ASEbWoZfJI5knD3n2p/lixOXUH3KxvlgliAdcRcdry0j9kJKWco2iPuu1+62JN0=
+X-Google-Smtp-Source: AGHT+IE9Ayc4DcHcWLO5HTV2h0JFcg5QofiXmQEC4LCodFPNyXjy+AkOroRghE76gjgv7iVUiVX2Sg==
+X-Received: by 2002:a2e:920e:0:b0:2ea:78e2:6a5e with SMTP id 38308e7fff4ca-2ea951ab3c1mr63789471fa.34.1717418951920;
+        Mon, 03 Jun 2024 05:49:11 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91cefc4fsm12124101fa.118.2024.06.03.05.49.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 05:49:11 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 03 Jun 2024 15:49:10 +0300
+Subject: [PATCH] arm64: dts: qcom: qrb4210-rb2: make L9A always-on
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,191 +74,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240603-rb2-l9a-aon-v1-1-81c35a0de43d@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAMW7XWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMwNj3aIkI90cy0TdxPw83RRDI0ujpMQU08TERCWgjoKi1LTMCrBp0bG
+ 1tQCVf3wxXQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1048;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=j8KndF6/ZOHYOE01U5ocmBeiSxz+EVrLkoFMPmuBDwk=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmXbvHIcYofH2bj8VO/+xEtwQYlhU4A6Umt5Ut7
+ Ikpev1osh2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZl27xwAKCRCLPIo+Aiko
+ 1QRvB/9yr7FrJBNhg2KTb9jCzq7wrhohXwu1iHX1Tbq86qWBy4O6IHYuNTCyyCgjYu6pJlaUZZ4
+ iKRhK8JSGHCDOjD6yrsoAYOIL6tpo0ACfBQwDpvgk7DDMwfIjN+E3rIliicnAPd1nC6wVtnC5Hs
+ ZuNT8Ev8dC/9EppIiBBMS+KYFSDEaZujejcF5Zgjuq0e+E/hq4Q9SiiVpamrLkUP5rEAnqCJ9KC
+ TDPdi305J3i1eVRi2p0bNPqWrKooaq9jSC7MTe1YQJt7mliF62inXa9OAd0/da6JAk3cplpyZ9V
+ C5ewJJ9LUn82LSRO40W/MI3IGZLmtqhFdeGIjOkrDXFpbdFK
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Fri, 31 May 2024 20:22:42 -0700
-Dan Williams <dan.j.williams@intel.com> wrote:
+The L9A regulator is used to further control voltage regulators on the
+board. Make sure that is stays always on to prevent undervolting some of
+the volage rails.
 
-> Jonathan Cameron wrote:
-> > On Thu, 30 May 2024 14:59:38 +0800
-> > Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
-> >  =20
-> > > =E5=9C=A8 2024/5/29 =E6=98=9F=E6=9C=9F=E4=B8=89 =E4=B8=8B=E5=8D=88 11=
-:25, Gregory Price =E5=86=99=E9=81=93: =20
-> > > > On Wed, May 22, 2024 at 02:17:38PM +0800, Dongsheng Yang wrote:   =
-=20
-> > > >>
-> > > >>
-> > > >> =E5=9C=A8 2024/5/22 =E6=98=9F=E6=9C=9F=E4=B8=89 =E4=B8=8A=E5=8D=88=
- 2:41, Dan Williams =E5=86=99=E9=81=93:   =20
-> > > >>> Dongsheng Yang wrote:
-> > > >>>
-> > > >>> What guarantees this property? How does the reader know that its =
-local
-> > > >>> cache invalidation is sufficient for reading data that has only r=
-eached
-> > > >>> global visibility on the remote peer? As far as I can see, there =
-is
-> > > >>> nothing that guarantees that local global visibility translates to
-> > > >>> remote visibility. In fact, the GPF feature is counter-evidence o=
-f the
-> > > >>> fact that writes can be pending in buffers that are only flushed =
-on a
-> > > >>> GPF event.   =20
-> > > >>
-> > > >> Sounds correct. From what I learned from GPF, ADR, and eADR, there=
- would
-> > > >> still be data in WPQ even though we perform a CPU cache line flush=
- in the
-> > > >> OS.
-> > > >>
-> > > >> This means we don't have a explicit method to make data puncture a=
-ll caches
-> > > >> and land in the media after writing. also it seems there isn't a e=
-xplicit
-> > > >> method to invalidate all caches along the entire path.
-> > > >>   =20
-> > > >>>
-> > > >>> I remain skeptical that a software managed inter-host cache-coher=
-ency
-> > > >>> scheme can be made reliable with current CXL defined mechanisms. =
-  =20
-> > > >>
-> > > >>
-> > > >> I got your point now, acorrding current CXL Spec, it seems softwar=
-e managed
-> > > >> cache-coherency for inter-host shared memory is not working. Will =
-the next
-> > > >> version of CXL spec consider it?   =20
-> > > >>>   =20
-> > > >=20
-> > > > Sorry for missing the conversation, have been out of office for a b=
-it.
-> > > >=20
-> > > > It's not just a CXL spec issue, though that is part of it. I think =
-the
-> > > > CXL spec would have to expose some form of puncturing flush, and th=
-is
-> > > > makes the assumption that such a flush doesn't cause some kind of
-> > > > race/deadlock issue.  Certainly this needs to be discussed.
-> > > >=20
-> > > > However, consider that the upstream processor actually has to gener=
-ate
-> > > > this flush.  This means adding the flush to existing coherence prot=
-ocols,
-> > > > or at the very least a new instruction to generate the flush explic=
-itly.
-> > > > The latter seems more likely than the former.
-> > > >=20
-> > > > This flush would need to ensure the data is forced out of the local=
- WPQ
-> > > > AND all WPQs south of the PCIE complex - because what you really wa=
-nt to
-> > > > know is that the data has actually made it back to a place where re=
-mote
-> > > > viewers are capable of percieving the change.
-> > > >=20
-> > > > So this means:
-> > > > 1) Spec revision with puncturing flush
-> > > > 2) Buy-in from CPU vendors to generate such a flush
-> > > > 3) A new instruction added to the architecture.
-> > > >=20
-> > > > Call me in a decade or so.
-> > > >=20
-> > > >=20
-> > > > But really, I think it likely we see hardware-coherence well before=
- this.
-> > > > For this reason, I have become skeptical of all but a few memory sh=
-aring
-> > > > use cases that depend on software-controlled cache-coherency.   =20
-> > >=20
-> > > Hi Gregory,
-> > >=20
-> > > 	From my understanding, we actually has the same idea here. What I am=
-=20
-> > > saying is that we need SPEC to consider this issue, meaning we need t=
-o=20
-> > > describe how the entire software-coherency mechanism operates, which=
-=20
-> > > includes the necessary hardware support. Additionally, I agree that i=
-f=20
-> > > software-coherency also requires hardware support, it seems that=20
-> > > hardware-coherency is the better path. =20
-> > > >=20
-> > > > There are some (FAMFS, for example). The coherence state of these
-> > > > systems tend to be less volatile (e.g. mappings are read-only), or
-> > > > they have inherent design limitations (cacheline-sized message pass=
-ing
-> > > > via write-ahead logging only).   =20
-> > >=20
-> > > Can you explain more about this? I understand that if the reader in t=
-he=20
-> > > writer-reader model is using a readonly mapping, the interaction will=
- be=20
-> > > much simpler. However, after the writer writes data, if we don't have=
- a=20
-> > > mechanism to flush and invalidate puncturing all caches, how can the=
-=20
-> > > readonly reader access the new data? =20
-> >=20
-> > There is a mechanism for doing coarse grained flushing that is known to
-> > work on some architectures. Look at cpu_cache_invalidate_memregion().
-> > On intel/x86 it's wbinvd_on_all_cpu_cpus() =20
->=20
-> There is no guarantee on x86 that after cpu_cache_invalidate_memregion()
-> that a remote shared memory consumer can be assured to see the writes
-> from that event.
+Fixes: 8d58a8c0d930 ("arm64: dts: qcom: Add base qrb4210-rb2 board dts")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I was wondering about that after I wrote this...  I guess it guarantees
-we won't get a late landing write or is that not even true?
+diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+index 2c39bb1b97db..e0c14d23b909 100644
+--- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
++++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+@@ -403,6 +403,8 @@ vreg_l9a_1p8: l9 {
+ 			regulator-min-microvolt = <1800000>;
+ 			regulator-max-microvolt = <1800000>;
+ 			regulator-allow-set-load;
++			regulator-always-on;
++			regulator-boot-on;
+ 		};
+ 
+ 		vreg_l10a_1p8: l10 {
 
-So if we remove memory, then added fresh memory again quickly enough
-can we get a left over write showing up?  I guess that doesn't matter as
-the kernel will chase it with a memset(0) anyway and that will be ordered
-as to the same address.
+---
+base-commit: 0e1980c40b6edfa68b6acf926bab22448a6e40c9
+change-id: 20240603-rb2-l9a-aon-d1292bad5aaa
 
-However we won't be able to elide that zeroing even if we know the device
-did it which is makes some operations the device might support rather
-pointless :(
-
->=20
-> > on arm64 it's a PSCI firmware call CLEAN_INV_MEMREGION (there is a
-> > public alpha specification for PSCI 1.3 with that defined but we
-> > don't yet have kernel code.) =20
->=20
-> That punches visibility through CXL shared memory devices?
-
-It's a draft spec and Mark + James in +CC can hopefully confirm.
-It does say
-"Cleans and invalidates all caches, including system caches".
-which I'd read as meaning it should but good to confirm.
-
->=20
-> > These are very big hammers and so unsuited for anything fine grained.
-> > In the extreme end of possible implementations they briefly stop all
-> > CPUs and clean and invalidate all caches of all types.  So not suited
-> > to anything fine grained, but may be acceptable for a rare setup event,
-> > particularly if the main job of the writing host is to fill that memory
-> > for lots of other hosts to use.
-> >=20
-> > At least the ARM one takes a range so allows for a less painful
-> > implementation.  I'm assuming we'll see new architecture over time
-> > but this is a different (and potentially easier) problem space
-> > to what you need. =20
->=20
-> cpu_cache_invalidate_memregion() is only about making sure local CPU
-> sees new contents after an DPA:HPA remap event. I hope CPUs are able to
-> get away from that responsibility long term when / if future memory
-> expanders just issue back-invalidate automatically when the HDM decoder
-> configuration changes.
-
-I would love that to be the way things go, but I fear the overheads of
-doing that on the protocol means people will want the option of the painful
-approach.
-
-Jonathan
-=20
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
