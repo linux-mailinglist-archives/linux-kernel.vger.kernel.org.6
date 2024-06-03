@@ -1,188 +1,273 @@
-Return-Path: <linux-kernel+bounces-199419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E498D86FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:16:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4C18D86F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C622281A90
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:16:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B0F1C21598
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CE2135A4B;
-	Mon,  3 Jun 2024 16:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215FA135A5A;
+	Mon,  3 Jun 2024 16:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dGzVvi4g"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jtIS63tC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="me2lGRgz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BE412D205
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC4FF9EF;
+	Mon,  3 Jun 2024 16:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717431370; cv=none; b=H1sMPVhUfnuG3lVEA8KtrJ5bx/wBWegB5tR5LsR3r/xJkKn0q8sM+YWEQdcCGCmV6nNWV6wTF2Xu4gn8Vo2VCN6Od2bC0GBPLDSqJEqIQpKvtwWIoowrw+W1m6HAjgvB+FMYDFTtUrByyMg7Bo+iqFtBh4blwJXtCV6ZU1fQOS4=
+	t=1717431239; cv=none; b=nD31sSjUN/iVhSu+Li8+Wd5lLmZClQVHxM8JZm7zfpiV1EL6goiqo5oWzuFJnvS317lKkc32yK/6cuCMRcKeSwESK97UT1ZONIbMbbH78SWtCJzAzDpHZQ9nVWQEUHCxkrmIe/fbPsK/vilQwVlZZmR5OuzDqu2xdfbomTutHb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717431370; c=relaxed/simple;
-	bh=NjJX0xKM5DPMuTwBiyi6UFsD0n9pOuHRMR2Y1oanS1o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tnFDbZlDEw626ycvQrDqVHysM4S5el+GzVP6QE+yKdRhfhx22yljuWTk1QXbACw9GIUD5k8mZjCTYEB8yFl1U4xrAPbNeS7Maznu+Lk+hk6U655oO4/+WGGUcGv+c0T9r6fGxf87TREGtqjLLmyNl92NyuP28Zo1cAg/2GuFRbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dGzVvi4g; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717431369; x=1748967369;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=NjJX0xKM5DPMuTwBiyi6UFsD0n9pOuHRMR2Y1oanS1o=;
-  b=dGzVvi4g7iJlhrepokwZkR2Q1/kfLzFPCfMY8YyamiX7hCh8Lv0rZ2Tp
-   QEFrjCm4mEQhYQJozbkffzKdkR3sw5iqlL4AnmRIm7O2Prlv0YGdJ51Rs
-   AwlSgBw+on0Y+1QTSuKwLS4+u5flX5t/JL8ZdhuYTn/YeUpMpiZgQw16i
-   89Iug7HIMgWDPAJv+KyqVYUU5b2iRH1FdFi75ZmSzR2bLGhUi/RLr8++j
-   j2Ei4BP+D/t2Av6oAH7NlEAKvIcAjVOup0v3y768gkRhac8EpmqzEDtR1
-   JW0gQmtFkDlOQFGQequMcScf92u3j3AYbVSufKpv9pmJ7g3DFoxtC8B6o
-   A==;
-X-CSE-ConnectionGUID: 1EFdWXwURzOtLG+6oPJxkQ==
-X-CSE-MsgGUID: NKESAfI9S9uXCXGMpl/Fqg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="24556309"
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="24556309"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 09:13:48 -0700
-X-CSE-ConnectionGUID: mLGO8cpdSeWD3nsCWZrRKA==
-X-CSE-MsgGUID: pLeFbCtMTFqXRiZOtIBYYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="74416911"
-Received: from tjancza1-mobl.amr.corp.intel.com (HELO [10.209.38.23]) ([10.209.38.23])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 09:13:47 -0700
-Message-ID: <c3d2a49e580cea9ae86e692f72094119310adc8f.camel@linux.intel.com>
-Subject: Re: [PATCH] sched/balance: Skip unnecessary updates to idle load
- balancer's flags
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, linux-kernel@vger.kernel.org,
- Vinicius Gomes <vinicius.gomes@intel.com>
-Date: Mon, 03 Jun 2024 09:13:47 -0700
-In-Reply-To: <Zlygeqy+SVs1KZYW@chenyu5-mobl2>
-References: <20240531205452.65781-1-tim.c.chen@linux.intel.com>
-	 <Zlygeqy+SVs1KZYW@chenyu5-mobl2>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+	s=arc-20240116; t=1717431239; c=relaxed/simple;
+	bh=/Nbr+owWYREElZ+Q0mbfwVbveFRjO/m10UrMZYRRH8s=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nqxlwkPQRfPB/OqA7pk9JOEFHZHYriEVw3yfjve/+dcWb7yLzf6I57rPIY+5jTgUaC24730kpLHsvfhv1WFMtfzw1p60eWM5qNw+u83gIFQ1v8BZ9KVrkPQJd5uPFlQmDHlGATZfkYGjCPXDFyKNGw3FSc/TroRoRkysDeCv4uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jtIS63tC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=me2lGRgz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717431233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QCBBZJLHh7XXomoDX6GxiwpPupsy6ADT629bR0qasGs=;
+	b=jtIS63tCYfjWvRU2Igs6e0UiizUnhuCkfFZs3qPlIHqtVqv1P2rvMXYBDu6Ho4ip2ZJiIs
+	QQrKBiytMw7j3yAMyee/qzLdmx0rNLosIMUbpnSKhOCwpmZCbIRX6xravFOxE/LpfzmM4Y
+	nVI+FwbEQ8bXE0EbKpcMDBDl0uJku8JxpFg+CB54Tk0h05oW8UostXsaqlqRopamZwyPMi
+	SuJQOlRGbSJIELdLuGNTICffRgkvnxuMXzUgrD85EzMfwdYhu56+Nq8G+/x5YRg6tDSFgo
+	cFkX5cuiDnFsBeRWAeKYDtk5XvcgbGA862p2FvGlTiXCyxaQKkTD56dGhIGCdg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717431233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QCBBZJLHh7XXomoDX6GxiwpPupsy6ADT629bR0qasGs=;
+	b=me2lGRgztqsDfCutkLB/uTn+8yycRq2sYAB3UNAJXjHf2Mj3i961nVH4l7zjVaer9RHxe2
+	tiaYHkoHLSmsmrBg==
+To: Gatlin Newhouse <gatlin.newhouse@gmail.com>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Kees Cook <keescook@chromium.org>, Marco Elver
+ <elver@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Andrey
+ Ryabinin <ryabinin.a.a@gmail.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Gatlin Newhouse
+ <gatlin.newhouse@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Baoquan He <bhe@redhat.com>,
+ Changbin Du <changbin.du@huawei.com>, Pengfei Xu <pengfei.xu@intel.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Xin Li <xin3.li@intel.com>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Tina Zhang <tina.zhang@intel.com>, Uros Bizjak
+ <ubizjak@gmail.com>, "Kirill A. Shutemov"
+ <kirill.shutemov@linux.intel.com>, linux-kernel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org,
+ llvm@lists.linux.dev
+Subject: Re: [PATCH v2] x86/traps: Enable UBSAN traps on x86
+In-Reply-To: <20240601031019.3708758-1-gatlin.newhouse@gmail.com>
+References: <20240601031019.3708758-1-gatlin.newhouse@gmail.com>
+Date: Mon, 03 Jun 2024 18:13:53 +0200
+Message-ID: <878qzm6m2m.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Mon, 2024-06-03 at 00:40 +0800, Chen Yu wrote:
-> >=20
-> > With instrumentation, we found that 81% of the updates do not result in
-> > any change in the ilb_cpu's flags.  That is, multiple cpus are asking
-> > the ilb_cpu to do the same things over and over again, before the ilb_c=
-pu
-> > has a chance to run NOHZ load balance.
-> >=20
-> > Skip updates to ilb_cpu's flags if no new work needs to be done.
-> > Such updates do not change ilb_cpu's NOHZ flags.  This requires an extr=
-a
-> > atomic read but it is less expensive than frequent unnecessary atomic
-> > updates that generate cache bounces.
->=20
-> A race condition is that many CPUs choose the same ilb_cpu and ask it to =
-trigger
-> the nohz idle balance. This is because find_new_ilb() always finds the fi=
-rst
-> nohz idle CPU. I wonder if we could change the
-> for_each_cpu_and(ilb_cpu, nohz.idle_cpus_mask, hk_mask)
-> into
-> for_each_cpu_wrap(ilb_cpu,  cpumask_and(nohz.idle_cpus_mask, hk_mask), th=
-is_cpu+1)=20
-> so different ilb_cpu might be found by different CPUs.
-> Then the extra atomic read could brings less cache bounces.
->=20
+On Sat, Jun 01 2024 at 03:10, Gatlin Newhouse wrote:
 
-Your proposal improves scaling.  However,
-that could result in many idle CPUs getting kicked.  I assume that
-current approach of delegating to a common idle CPU will disturb fewer CPUs
-and let them stay in deeper idle states, and get the power benefits
-from NOHZ scheme.
+> Bring x86 to parity with arm64, similar to commit 25b84002afb9
+> ("arm64: Support Clang UBSAN trap codes for better reporting").
+> Enable the output of UBSAN type information on x86 architectures
+> compiled with clang when CONFIG_UBSAN_TRAP=y. Currently ARM
+> architectures output which specific sanitizer caused the trap,
+> via the encoded data in the trap instruction. Clang on x86
+> currently encodes the same data in ud1 instructions but the x86
+> handle_bug() and is_valid_bugaddr() functions currently only look
+> at ud2s.
 
-> >=20
-> > We saw that on the OLTP workload, cpu cycles from trigger_load_balance(=
-)
-> > (or sched_balance_trigger()) got reduced from 0.7% to 0.2%.
-> >=20
-> > Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > ---
-> >  kernel/sched/fair.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >=20
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 8a5b1ae0aa55..9ab6dff6d8ac 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -11891,6 +11891,13 @@ static void kick_ilb(unsigned int flags)
-> >  	if (ilb_cpu < 0)
-> >  		return;
-> > =20
-> > +	/*
-> > +	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
-> > +	 * i.e. all bits in flags are already set in ilb_cpu.
-> > +	 */
-> > +	if ((atomic_read(nohz_flags(ilb_cpu)) & flags) =3D=3D flags)
->=20
-> Maybe also mention in the comment that when above statement is true, the
-> current ilb_cpu's flags is not 0 and in NOHZ_KICK_MASK, so return directl=
-y
-> here is safe(anyway just 2 cents)
+Please structure your change log properly instead of one paragraph of
+unstructured word salad. See:
 
-Not sure I follow your comments about return being safe.  Let me explain
-in details.
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+  
+> +/*
+> + * Check for UD1, UD2, with or without Address Size Override Prefixes instructions.
+> + */
+>  __always_inline int is_valid_bugaddr(unsigned long addr)
+>  {
+>  	if (addr < TASK_SIZE_MAX)
+> @@ -88,7 +92,13 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
+>  	 * We got #UD, if the text isn't readable we'd have gotten
+>  	 * a different exception.
+>  	 */
+> -	return *(unsigned short *)addr == INSN_UD2;
+> +	if (*(u16 *)addr == INSN_UD2)
+> +		return INSN_UD2;
+> +	if (*(u16 *)addr == INSN_UD1)
+> +		return INSN_UD1;
+> +	if (*(u8 *)addr == INSN_ASOP && *(u16 *)(addr + 1) == INSN_UD1)
 
-We will return directly if and only if the bits set in flags are also set
-in nohz_flags(ilb_cpu). =20
+	s/1/LEN_ASOP/ ?
 
-The comment's intention is to say that if the above statement is true, then
-the later operation of=20
+> +		return INSN_ASOP;
+> +	return 0;
 
-	atomic_fetch_or(flags, nohz_flags(ilb_cpu))
+I'm not really a fan of the reuse of the INSN defines here. Especially
+not about INSN_ASOP. Also 0 is just lame.
 
-will be useless and not result in any change to nohz_flags(ilb_cpu), since =
-all the set bits
-in flags are already set in nohz_flags(ilb_cpu).
+Neither does the function name make sense anymore. is_valid_bugaddr() is
+clearly telling that it's a boolean check (despite the return value
+being int for hysterical raisins). But now you turn it into a
+non-boolean integer which returns a instruction encoding. That's
+hideous. Programming should result in obvious code and that should be
+pretty obvious to people who create tools to validate code.
 
-So will it be clearer if I say
+Also all UBSAN cares about is the actual failure type and not the
+instruction itself:
 
-	/*
-	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
-	 * i.e. all bits in flags are already set in ilb_cpu.
-	 * Later OR of flags to nohz_flags(ilb_cpu)
-	 * will not change nohz_flags(ilb_cpu).
-	 */
+#define INSN_UD_MASK		0xFFFF
+#define INSN_ASOP_MASK		0x00FF
 
-Thanks.
+#define BUG_UD_NONE		0xFFFF
+#define BUG_UD2			0xFFFE
 
+__always_inline u16 get_ud_type(unsigned long addr)
+{
+	u16 insn;
 
-Tim
+	if (addr < TASK_SIZE_MAX)
+        	return BUD_UD_NONE;
 
-> Reviewed-by: Chen Yu <yu.c.chen@intel.com>
->=20
-> thanks,
-> Chenyu
->=20
-> > +		return;
-> > +
-> >  	/*
-> >  	 * Access to rq::nohz_csd is serialized by NOHZ_KICK_MASK; he who set=
-s
-> >  	 * the first flag owns it; cleared by nohz_csd_func().
-> > --=20
-> > 2.32.0
-> >=20
+        insn = *(u16 *)addr;
+        if ((insn & INSN_UD_MASK) == INSN_UD2)
+        	return BUG_UD2;
 
+	if ((insn & INSN_ASOP_MASK) == INSN_ASOP)
+        	insn = *(u16 *)(++addr);
+
+	// UBSAN encodes the failure type in the two bytes after UD1
+        if ((insn & INSN_UD_MASK) == INSN_UD1)
+        	return *(u16 *)(addr + LEN_UD1);
+
+	return BUG_UD_NONE;
+}
+
+No?
+
+>  static nokprobe_inline int
+> @@ -216,6 +226,7 @@ static inline void handle_invalid_op(struct pt_regs *regs)
+>  static noinstr bool handle_bug(struct pt_regs *regs)
+>  {
+>  	bool handled = false;
+> +	int insn;
+>  
+>  	/*
+>  	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
+> @@ -223,7 +234,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+>  	 * irqentry_enter().
+>  	 */
+>  	kmsan_unpoison_entry_regs(regs);
+> -	if (!is_valid_bugaddr(regs->ip))
+> +	insn = is_valid_bugaddr(regs->ip);
+> +	if (insn == 0)
+
+Sigh.
+
+But with the above sanitized (pun intended) this becomes obvious by
+itself:
+
+        ud_type = get_ud_type(regs->ip);
+        if (ud_type == BUG_UD_NONE)
+        	return false;
+
+See?
+
+>  		return handled;
+>  
+>  	/*
+> @@ -236,10 +248,15 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+>  	 */
+>  	if (regs->flags & X86_EFLAGS_IF)
+>  		raw_local_irq_enable();
+> -	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+> -	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+> -		regs->ip += LEN_UD2;
+> -		handled = true;
+> +
+> +	if (insn == INSN_UD2) {
+> +		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+> +		handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+
+Please indent the second condition properly:
+
+       if (a ||
+           b) {
+
+I know you just added another tab, but when touching code, then please
+do it right.
+
+> +			regs->ip += LEN_UD2;
+> +			handled = true;
+
+> +/*
+> + * Checks for the information embedded in the UD1 trap instruction
+> + * for the UB Sanitizer in order to pass along debugging output.
+> + */
+> +void handle_ubsan_failure(struct pt_regs *regs, int insn)
+> +{
+> +	u32 type = 0;
+
+Pointless initialization.
+
+> +	if (insn == INSN_ASOP) {
+> +		type = (*(u16 *)(regs->ip + LEN_ASOP + LEN_UD1));
+> +		if ((type & 0xFF) == 0x40)
+
+No magic constants please. What does 0x40 mean?
+
+> +			type = (type >> 8) & 0xFF;
+
+That mask is pointless as u16 is zero extended when assigned to u32, but
+why not using u16 in the first place to make it clear?
+
+> +	} else {
+> +		type = (*(u16 *)(regs->ip + LEN_UD1));
+> +		if ((type & 0xFF) == 0x40)
+> +			type = (type >> 8) & 0xFF;
+> +	}
+
+Copy & pasta rules!
+
+	unsigned long addr = regs->ip + LEN_UD1;
+	u16 type;
+
+        type = insn == INSN_UD1 ? *(u16 *)addr : *(u16 *)(addr + LEN_ASOP);
+
+	if ((type & 0xFF) == UBSAN_MAGICALLY_USE_2ND_BYTE)
+		type >>= 8;
+	pr_crit("%s\n", report_ubsan_failure(regs, type));
+
+I don't see the point for printing regs->ip as this is followed by a
+stack trace anyway, but I don't have a strong opinion about it either.
+
+Though with the above get_ud_type() variant this becomes even simpler:
+
+void handle_ubsan_failure(struct pt_regs *regs, u16 type)
+{
+	if ((type & 0xFF) == UBSAN_MAGICALLY_USE_2ND_BYTE)
+		type >>= 8;
+	pr_crit("%s\n", report_ubsan_failure(regs, type));
+}
+
+Thanks,
+
+        tglx
 
