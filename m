@@ -1,164 +1,156 @@
-Return-Path: <linux-kernel+bounces-199676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3388D8ABA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:10:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519018D8ABC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0638D28233F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2EE61F26A71
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E0513B58A;
-	Mon,  3 Jun 2024 20:10:33 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F29513B79F;
+	Mon,  3 Jun 2024 20:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bkWOetA0"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC221386C0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 20:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ECB1386C0;
+	Mon,  3 Jun 2024 20:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717445432; cv=none; b=Qb/Kg+Qzk4ps+oTfHn73Qijy/CSIKYd7uxPkMxp3sLIvgbFkJ2ekRvtpg5vhpFbV0V2qWY1PRzZ1mQxeMn4Th67FG7nqSTvcD/JacVDAa4qT2nmHRlKuL/w6mX4CdfFmTczMZFn0AHhvPfIHztBAqkLhNZodiRUXdWwdWZLfjwE=
+	t=1717445440; cv=none; b=pGKUIvvIWzcWLae5XI0XAd9N7tiXsC8DpUCJY/nlSWYsz2ylOPdv+JAY/ojLe1g4z0Uf8Bk7Fg17QpQUgdq0JQarMrO/ttZWJQ9jqOEBw/5k9k1Ht3g6Cvq5O1pfaVsrkcU6UuJyvrGvpLJT6z4R50icGDzRkiY1qwxqkL2RP98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717445432; c=relaxed/simple;
-	bh=COezhxMiO8LnS0x8wTsMoUdadFNcncWfGAUM+9NxZog=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F+RvSFhu9Qw2HN2km1jY/U8z00hF85TU0U70KGWSVad+P/5y8gSnQqRnkOwTrrR6N+VjgW477bYVH1HCwPlN0cSRYkKYAftt0CBVs04Rc7msd+FAdeGMtXW26KktEiTSbhnEBywiUeWBY2FFCQWBYD4pZ11/f9zWZ+UMguyDF8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-374a53fc682so2209395ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 13:10:30 -0700 (PDT)
+	s=arc-20240116; t=1717445440; c=relaxed/simple;
+	bh=x1O7edjDGbj6bbXUMLVTfHxEluKeFrflgY2spv1hY9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qMBOmmyu9ByPjXQxyyGugN5db+pCWcbNG6R/HnRlYb7E0F4TxICHKdYl+RlC9h5SBBFLCDrfoZ14lsCvkN8U+O/fEyEDsV/JNO8N0lR/Ttj5ODN0yh+Bj4fldo1Ti2ZUZUcMxNonC8hsXVrRHuAnaR4wBMWvcf9In2wK8rqGtmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bkWOetA0; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70255d5ddb8so1694094b3a.0;
+        Mon, 03 Jun 2024 13:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717445438; x=1718050238; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tB3oMH0/1iwURt1RuFxMD8K0WTqVNPre1pls3mzOWF8=;
+        b=bkWOetA0//GZ+cJe7K4DXSTHyZEzU+RNehPVSDWjP+vqz0zw8oLN2IKA/q22BPwRBU
+         ikrf2v6AL50e3pqiyEejwsm41ybkKYfE6G6bJUfMJYW2GNng2O+Zj/Rc6RW19hk3LTn0
+         SankqLcKoyG1xsRTW4v+KGI0rIwCIm/tIqNC2E12PtYepShg5jCdHwwjzH37zYdC/U1+
+         EelcnTe2W5aIA90RFyoiify4TcgHyf4iIijt8mxKdQ0ReDabs0Y0UOXsws9ajxbg9CbB
+         dXbyOtmS/1IF2sHCAqCPZEYuh59Wa7WlN48qCbL7AhxSp57VhBvt1U4D7b5fVO8UsOt/
+         2q1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717445430; x=1718050230;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DxRzCjBuECTU/sGdLd303oZWSW5TcR632p/Z3UX+gTY=;
-        b=FNXkUep/WJdByacdgpSrRD0xIOayk8BskuuytHYHDM//xMD6Y+kjqJF51I13PEVej9
-         pL4CmAPFIs8UXbI2gLXNx89mul4Zzi844MzkwrmEFH/teX7BbFmFUG5OiGZ8k6bvNupE
-         ofValalZy/fYUfK+UW0EJrprPMSHTfCGV262BDScM25582YFcfPRF+9HBmeERjrglN2s
-         yYtGMQ3YEFHSn5SmLyqXb3EjzjWISN7LIL4dvlMqzliOelU7ZJg40jIkmQmXTCFKFXgn
-         bU8pwuFkMPncKl0D1ibkaXKKOxFLfHFcwEv/y8lDWdnUklruVkg0YtI+SFukkTHf0xX3
-         d4+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWazrLUAoJABkB+FZpITGIyltg3NyoKADTtqlC9IdVk/o6flhr3KbUsBjGTtkSsAXm3WEi8dL6csTbkdi3wbhJH5U9I0P9KXzsbq8ep
-X-Gm-Message-State: AOJu0YzxQeRIVso+TuEoLyu7MCHx+XjyjfXGrcUMT7DtVE2WJcUIioPD
-	gqk+aGvmMPtbUmqcgI/DpzoYi+n5UYapvqguZryJJCsjPxwqezwpm2mXaCrhjrM9HNF9kfsOkTc
-	vMJDSkoI7O7OYDX7iG/noIH20ET1hOJrMtQyK0DoMkNJjpCpF+nJZBYo=
-X-Google-Smtp-Source: AGHT+IFX+KKg3oKONbyQzVmFLWqIVs0DRPg5yyoHhYHtggyd0Ky/+/iWLVV+zxSEIQg6etSdqe77BQkmhAviC8++//jbkb6LTYKy
+        d=1e100.net; s=20230601; t=1717445438; x=1718050238;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tB3oMH0/1iwURt1RuFxMD8K0WTqVNPre1pls3mzOWF8=;
+        b=fQqw3Zt0Mv5e4UMDZvDgg3jbjzGmrlzez5nBP2YJyKk9f7DGpq7xUDQj7JxhVN2tBN
+         dWr5ua6ZJ/57/+ysDOa7BGk1bpzGCtYTCOhnBwRyIG4hktjWlPEEg2Lkm7GPqSWI79jO
+         AXzpfgKi3k7jBHtH6OSdYu5fje3t1gfD/rRG2kr1mDlwy7s0GwU8/wLNFgIqs8nmtmbL
+         ANkSVe235ff3p0vGaoD+g4lXbcWVDiP7xSOZxccuGj7RdsdEp2l5SUtgxQ8GgHanJ6Lc
+         8GqeKEnOhae1ifbIdRkUrtenbV7LfIWFSC7QAn3sy55rq7hwKyZWhqhCp2He9jj2TfpP
+         ME/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUw4VBUJELWvwP5n3WBSsJdSyhb+NjnVs7vDavzoh2zG56+grFZLck2Agj1r0DjOQdi4nNqmtv16huQj5zcb3Uqvx5qbiWVt7jGPp4+3cajAhLSuDiIAJvJtQlXd0GWVA/wLnh1GSVrEQ==
+X-Gm-Message-State: AOJu0YzCJwmWJ64uS5qa6eqcgnxVbbffYpnCkFv8oFJwxkKwsuEdp6vc
+	vvBKj332H1GHZs5pJabKOkEkyEerR3d6YFKu5L06OqoIQtggZtTA
+X-Google-Smtp-Source: AGHT+IEVQGnMSRE7zH6xgkRYedjsC9HbkRrCyp965UviTaBHJIvABANMTDro4pi/XchAtovJwS4SsQ==
+X-Received: by 2002:a05:6a20:12c3:b0:1af:9ee6:25c4 with SMTP id adf61e73a8af0-1b26f2cc341mr10250089637.42.1717445438285;
+        Mon, 03 Jun 2024 13:10:38 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702423c69d5sm5908157b3a.27.2024.06.03.13.10.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 13:10:37 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 3 Jun 2024 10:10:36 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
+ worning
+Message-ID: <Zl4jPImmEeRuYQjz@slm.duckdns.org>
+References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+ <ZljyqODpCD0_5-YD@slm.duckdns.org>
+ <20240531034851.GF3884@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c4:b0:373:fed2:d934 with SMTP id
- e9e14a558f8ab-3748b96aa5amr9970465ab.1.1717445430249; Mon, 03 Jun 2024
- 13:10:30 -0700 (PDT)
-Date: Mon, 03 Jun 2024 13:10:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca9a81061a01ec20@google.com>
-Subject: [syzbot] [net?] KASAN: global-out-of-bounds Read in __hw_addr_add_ex
-From: syzbot <syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531034851.GF3884@unreal>
 
-Hello,
+Hello, again, Leon.
 
-syzbot found the following issue on:
+Re-reading the warning, I'm not sure this is a bug on workqueue side.
 
-HEAD commit:    7932b172ac7e Revert "riscv: mm: accelerate pagefault when ..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=138db30c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=71e27a66e3476b52
-dashboard link: https://syzkaller.appspot.com/bug?extid=91161fe81857b396c8a0
-compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: riscv64
+On Fri, May 31, 2024 at 06:48:51AM +0300, Leon Romanovsky wrote:
+>  [ 1233.554381] ==================================================================
+>  [ 1233.555215] BUG: KASAN: slab-use-after-free in lockdep_register_key+0x707/0x810
+>  [ 1233.555983] Read of size 8 at addr ffff88811f1d8928 by task test-ovs-bond-m/10149
+>  [ 1233.556774] 
+>  [ 1233.557020] CPU: 0 PID: 10149 Comm: test-ovs-bond-m Not tainted 6.10.0-rc1_external_1613e604df0c #1
+>  [ 1233.557951] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+>  [ 1233.559044] Call Trace:
+>  [ 1233.559367]  <TASK>
+>  [ 1233.559653]  dump_stack_lvl+0x7e/0xc0
+>  [ 1233.560078]  print_report+0xc1/0x600
+>  [ 1233.561975]  kasan_report+0xb9/0xf0
+>  [ 1233.562872]  lockdep_register_key+0x707/0x810
+>  [ 1233.564799]  alloc_workqueue+0x466/0x1800
+>  [ 1233.567627]  mlx5_pagealloc_init+0x7d/0x180 [mlx5_core]
+>  [ 1233.568322]  mlx5_mdev_init+0x482/0xad0 [mlx5_core]
+>  [ 1233.569387]  probe_one+0x11d/0xc80 [mlx5_core]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+So, this is saying that alloc_workqueue() allocated a name during lockdep
+initialization. This is before pwq init or anything else complicated
+happening. It just allocated the workqueue struct and called into
+lockep_register_key(&wq->key).
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-7932b172.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/484dae64ac53/vmlinux-7932b172.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0917f9215e08/Image-7932b172.xz
+>  [ 1233.599979] Allocated by task 9589:
+>  [ 1233.600382]  kasan_save_stack+0x20/0x40
+>  [ 1233.600828]  kasan_save_track+0x10/0x30
+>  [ 1233.601265]  __kasan_kmalloc+0x77/0x90
+>  [ 1233.601696]  kernfs_iop_get_link+0x61/0x5a0
+>  [ 1233.602181]  vfs_readlink+0x1ab/0x320
+>  [ 1233.602605]  do_readlinkat+0x1cb/0x290
+>  [ 1233.602610]  __x64_sys_readlinkat+0x92/0xf0
+>  [ 1233.602612]  do_syscall_64+0x6d/0x140
+>  [ 1233.605196]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>  [ 1233.605731] 
+>  [ 1233.605986] Freed by task 9589:
+>  [ 1233.606373]  kasan_save_stack+0x20/0x40
+>  [ 1233.606801]  kasan_save_track+0x10/0x30
+>  [ 1233.607232]  kasan_save_free_info+0x37/0x50
+>  [ 1233.607695]  poison_slab_object+0x10c/0x190
+>  [ 1233.608161]  __kasan_slab_free+0x11/0x30
+>  [ 1233.608604]  kfree+0x11b/0x340
+>  [ 1233.608970]  vfs_readlink+0x120/0x320
+>  [ 1233.609413]  do_readlinkat+0x1cb/0x290
+>  [ 1233.609849]  __x64_sys_readlinkat+0x92/0xf0
+>  [ 1233.610308]  do_syscall_64+0x6d/0x140
+>  [ 1233.610741]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+91161fe81857b396c8a0@syzkaller.appspotmail.com
+And KASAN is reporting use-after-free on a completely unrelated VFS object.
+I can't tell for sure from the logs alone but lockdep_register_key()
+iterates entries in the hashtable trying to find whether the key is a
+duplicate and it could be that that walk is triggering the use-after-free
+warning. If so, it doesn't really have much to do with workqueue. The
+corruption happened elsewhere and workqueue just happens to traverse the
+hashtable afterwards.
 
-==================================================================
-BUG: KASAN: global-out-of-bounds in memcmp+0xc0/0xca lib/string.c:676
-Read of size 1 at addr ffffffff8905f080 by task syz-executor.1/3813
+Thanks.
 
-CPU: 1 PID: 3813 Comm: syz-executor.1 Not tainted 6.10.0-rc1-syzkaller-g7932b172ac7e #0
-Hardware name: riscv-virtio,qemu (DT)
-Call Trace:
-[<ffffffff8000f6f8>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:129
-[<ffffffff85c29e64>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:135
-[<ffffffff85c83b6c>] __dump_stack lib/dump_stack.c:88 [inline]
-[<ffffffff85c83b6c>] dump_stack_lvl+0x122/0x196 lib/dump_stack.c:114
-[<ffffffff85c341cc>] print_address_description mm/kasan/report.c:377 [inline]
-[<ffffffff85c341cc>] print_report+0x288/0x596 mm/kasan/report.c:488
-[<ffffffff8091ed98>] kasan_report+0xec/0x118 mm/kasan/report.c:601
-[<ffffffff80920be2>] __asan_report_load1_noabort+0x12/0x1a mm/kasan/report_generic.c:378
-[<ffffffff85c00d1e>] memcmp+0xc0/0xca lib/string.c:676
-[<ffffffff84a203e2>] __hw_addr_add_ex+0xee/0x676 net/core/dev_addr_lists.c:88
-[<ffffffff84a233e2>] __dev_mc_add net/core/dev_addr_lists.c:867 [inline]
-[<ffffffff84a233e2>] dev_mc_add+0xac/0x108 net/core/dev_addr_lists.c:885
-[<ffffffff84bb54ee>] mrp_init_applicant+0xe8/0x56e net/802/mrp.c:873
-[<ffffffff8578898e>] vlan_mvrp_init_applicant+0x26/0x30 net/8021q/vlan_mvrp.c:57
-[<ffffffff8577ec66>] register_vlan_dev+0x1b4/0x922 net/8021q/vlan.c:170
-[<ffffffff8577f922>] register_vlan_device net/8021q/vlan.c:277 [inline]
-[<ffffffff8577f922>] vlan_ioctl_handler+0x54e/0x956 net/8021q/vlan.c:621
-[<ffffffff84952e12>] sock_ioctl+0x1f6/0x61a net/socket.c:1305
-[<ffffffff80a0f314>] vfs_ioctl fs/ioctl.c:51 [inline]
-[<ffffffff80a0f314>] __do_sys_ioctl fs/ioctl.c:907 [inline]
-[<ffffffff80a0f314>] __se_sys_ioctl fs/ioctl.c:893 [inline]
-[<ffffffff80a0f314>] __riscv_sys_ioctl+0x186/0x1d6 fs/ioctl.c:893
-[<ffffffff8000e200>] syscall_handler+0x94/0x118 arch/riscv/include/asm/syscall.h:90
-[<ffffffff85c85e24>] do_trap_ecall_u+0x14c/0x214 arch/riscv/kernel/traps.c:330
-[<ffffffff85ca872c>] ret_from_exception+0x0/0x64 arch/riscv/kernel/entry.S:112
-
-The buggy address belongs to the variable:
- vlan_mrp_app+0x60/0x3e80
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x8925f
-flags: 0xffe000000002000(reserved|node=0|zone=0|lastcpupid=0x7ff)
-raw: 0ffe000000002000 ff1c0000002497c8 ff1c0000002497c8 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
-
-Memory state around the buggy address:
- ffffffff8905ef80: f9 f9 f9 f9 00 00 00 00 00 00 00 00 00 00 00 00
- ffffffff8905f000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffffff8905f080: f9 f9 f9 f9 00 00 00 00 00 00 00 00 00 00 00 00
-                   ^
- ffffffff8905f100: 00 00 00 00 00 00 00 00 f9 f9 f9 f9 00 00 00 00
- ffffffff8905f180: f9 f9 f9 f9 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+tejun
 
