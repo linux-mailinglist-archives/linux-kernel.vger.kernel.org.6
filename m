@@ -1,129 +1,200 @@
-Return-Path: <linux-kernel+bounces-199391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D8868D867C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729B98D86A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8341C21EDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F5E282D8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25AF13212F;
-	Mon,  3 Jun 2024 15:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F8A13541B;
+	Mon,  3 Jun 2024 15:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="D+zEcert"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKCKUK+6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85528132106
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC06131182;
+	Mon,  3 Jun 2024 15:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717429843; cv=none; b=WapHrO9zxHBUDf1e4kTnc9JAXXoaS3tGIhdNdh7WSlLNsA0b3v6lHnqP3iIlWYLiS+Q7e42q9dk5sQCv5O2ZzTxQIWkNYvqZRVcYq7oPtNNyh+c2x/DZDVTrGca7R64pg+U4S+1dvOn1yeCbqTE4HpdNbyYhSBaGnbw7ACT/180=
+	t=1717430089; cv=none; b=d8idxIkEnsMeCpYHwkr7SrWAztcbcSHcl0PffJkyU5n7Nbri4kaDh7MvtE7MRTDHfXYT74oK35unDupsIQLfyNfPi3kbyRwKwXy9RNQdNP2T5TkY0rgsCXHuUcy9+b64Oa9LdquwuAKySyNaQTUN+ymFYDeIVALiXX0cfs3ILDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717429843; c=relaxed/simple;
-	bh=EIk/OCxOr6s7m6nzaLWsUUPelToDAz/HweSq4ldD3wI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LMD44eVDRHi9Qz4LWXvwuj2K5luuNaeeY9uaB6GcX09kaCfJsQsapa8mgvcpO8kCIonkTxlanDs+Sx/C8hlQrG0/cs+KA8Jd/d3uIkMXhrTk+t4MxonE5OAFryEBxS4NajjUZ7yqRGCF0ctLOcLgZW9Nlk7WrjRXx7JBfKfeKDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=D+zEcert; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: liujianfeng1994@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1717429836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aTmnFmkb8bF4TERqRFMbzfPb+Pc3fo4b54LXUjoLOuo=;
-	b=D+zEcert3hN9qGsK+AcXWlJsjl3Db9gKXd9jdOfgBXOdhBF/Rj6hfCYf6UV8El6Mo8Zw85
-	se61lByt+dUN8+uOWuYBrqOpYFr7cMX/ObegFYCrTB88zL4S5AzP3bDeILhxxNCKraqs5f
-	zOLbHrxfKRpT69dPS7dw4jJ4R3uE6jTbo0YRtvXitxRLuWSHpdEzyx8WZszT6tu0wzRJJG
-	36ck3nAPg+HtfwzYeR1WHvFpI2D7QVdqGA9x1kL0Wj/QiGDGs/vcKGTnWWNQQYX+Odwmhv
-	I8OMDl/mgsZ56PH+SZUmrFY3jCGEhdyY4JC7uus2qf81hf3p3/yg5d+olUH4jg==
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: ezequiel@vanguardiasur.com.ar
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: jacob-chen@iotwrt.com
-X-Envelope-To: krzysztof.kozlowski+dt@linaro.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-media@vger.kernel.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: mchehab@kernel.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: sfr@canb.auug.org.au
-X-Envelope-To: liujianfeng1994@gmail.com
-X-Envelope-To: nicolas@ndufresne.ca
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: liujianfeng1994@gmail.com, linux-rockchip@lists.infradead.org
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
- ezequiel@vanguardiasur.com.ar, heiko@sntech.de, jacob-chen@iotwrt.com,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, mchehab@kernel.org, robh@kernel.org,
- sfr@canb.auug.org.au, Jianfeng Liu <liujianfeng1994@gmail.com>,
- Nicolas Dufresne <nicolas@ndufresne.ca>
-Subject: Re: [PATCH v1 2/2] arm64: dts: rockchip: Add RGA2 support to rk3588
-Date: Mon, 03 Jun 2024 17:50:23 +0200
-Message-ID: <1952296.0IMdUL435T@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240322064734.3509132-1-liujianfeng1994@gmail.com>
-References:
- <20240322052915.3507937-3-liujianfeng1994@gmail.com>
- <20240322064734.3509132-1-liujianfeng1994@gmail.com>
+	s=arc-20240116; t=1717430089; c=relaxed/simple;
+	bh=/mqwg4w9jJOykMYUTyLRSt9g531pR70Ydsxqn4u/d+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0OGUMOEjNw+VmgXurlJuA7BDLIHJjGx+81Qaox/AB37XGuRu4IH7GxMQ/QkAFBbucC/DKNKZ6yirTLmNUgABknqC3ZNMq3621a3xWSqQdZjhtsBXoE3sJDboTNS9mxIJh7BJjVKX9mqxb7HQzhW+g6SYmv7XixV+oZpMKanF6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKCKUK+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B30C2BD10;
+	Mon,  3 Jun 2024 15:54:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717430088;
+	bh=/mqwg4w9jJOykMYUTyLRSt9g531pR70Ydsxqn4u/d+o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SKCKUK+6SCKeWy0UyNbLs+BB50UwRzhJv4efMVYn6OgVCU8qKZOoOpikzAgyrDe1O
+	 c4yv7tSWwpos/H3uofzMHk3UaF+4OmLwFpp1u5SQZwX++JqcvFKzrN05AwuXi8pwiv
+	 l3OcNKpTom+E1RJSLQlmWM821dK+GFMnMb3xAiZ0CgSOXYuEjCMHNczULBEfDw6rFU
+	 6gL3Bl5JsihcjAqCZXhoGKU3e8X27voOnp9v0TqxQX3FKdnFAthexAWnpBGY29zyKJ
+	 GBUKCdxh3msMwIIQB/IY/VIEyArSMLRvKmyPeHrKA3Nmh3jHArbXt61pSR6XGaMBej
+	 70tQt7QWPZM7A==
+Date: Mon, 3 Jun 2024 10:54:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v8 19/36] dt-bindings: interrupt-controller:
+ renesas,sh7751-irl-ext: Add json-schema
+Message-ID: <20240603155445.GA501876-robh@kernel.org>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp>
+ <e35aa188e5176544c6884f2d1d7aa1b242a51acf.1716965617.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4429252.AOvsMelbiZ";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e35aa188e5176544c6884f2d1d7aa1b242a51acf.1716965617.git.ysato@users.sourceforge.jp>
 
---nextPart4429252.AOvsMelbiZ
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-To: liujianfeng1994@gmail.com, linux-rockchip@lists.infradead.org
-Date: Mon, 03 Jun 2024 17:50:23 +0200
-Message-ID: <1952296.0IMdUL435T@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240322064734.3509132-1-liujianfeng1994@gmail.com>
-MIME-Version: 1.0
+On Wed, May 29, 2024 at 05:01:05PM +0900, Yoshinori Sato wrote:
+> Renesas SH7751 external interrupt encoder json-schema.
+> 
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  .../renesas,sh7751-irl-ext.yaml               | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,sh7751-irl-ext.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,sh7751-irl-ext.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,sh7751-irl-ext.yaml
+> new file mode 100644
+> index 000000000000..ff70d57b86cd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,sh7751-irl-ext.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/renesas,sh7751-irl-ext.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas SH7751 external interrupt encoder with enable regs.
+> +
+> +maintainers:
+> +  - Yoshinori Sato <ysato@users.sourceforge.jp>
+> +
+> +description:
+> +  This is the generally used external interrupt encoder on SH7751 based boards.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: renesas,sh7751-irl-ext
+> +
+> +  reg: true
 
-Hi Jianfeng,
+Needs to define how many and what they are.
 
-On Friday, 22 March 2024 07:47:34 CEST Jianfeng Liu wrote:
-> This node is not sorted by bus-address, and anthoer patch adding hantro g1
-> with addreess fdb50000 is not merged. I will send v2 after that patch is
-> merged.
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +  '#address-cells':
+> +    const: 0
+> +
+> +  renesas,set-to-disable:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description: Invert enable registers. Setting the bit to 0 enables interrupts.
+> +
+> +  renesas,enable-reg:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: |
 
-AFAICT the hantro g1 patch set is waiting on an answer to several questions 
-Nicolas raised, so maybe sent v2 of this patch set first?
+Don't need '|'.
 
-Cheers,
-  Diederik
---nextPart4429252.AOvsMelbiZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+> +      IRQ enable register bit mapping
 
------BEGIN PGP SIGNATURE-----
+This needs a better description and constraints? Number of entries in 
+the array or values of the entries.
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZl3mPwAKCRDXblvOeH7b
-bsnfAQC/cE8BH/2LVsh7rUJAf/rE0KjB2ckiPPsnjj2I3lHepAEA0VQJxXLkXPKS
-B+Be5H5BThEaVFp5ODi5Cz5zKSu8qAY=
-=XRA5
------END PGP SIGNATURE-----
-
---nextPart4429252.AOvsMelbiZ--
-
-
-
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +  - renesas,enable-reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    r2dintc: interrupt-controller@a4000000 {
+> +        compatible = "renesas,sh7751-irl-ext";
+> +        reg = <0xa4000000 0x02>;
+> +        interrupt-controller;
+> +        #address-cells = <0>;
+> +        #interrupt-cells = <2>;
+> +        renesas,enable-reg = <12 9 10 3 0 4 1 2 8 5 6 7 15 15 15 11>;
+> +    };
+> -- 
+> 2.39.2
+> 
 
