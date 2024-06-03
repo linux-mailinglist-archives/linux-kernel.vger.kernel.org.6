@@ -1,137 +1,131 @@
-Return-Path: <linux-kernel+bounces-199115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901E38D8253
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:33:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E718D8258
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4235E28613E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FB8E1C218EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7DF12BF3D;
-	Mon,  3 Jun 2024 12:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C47812C473;
+	Mon,  3 Jun 2024 12:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hP/vHJfZ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AF4aKxB+"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF9612BF23
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C149E64F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717418015; cv=none; b=s0uejELkFC+jMdA1WtwOZTlPFX9q9NSBIo5enYQoo1vdhgBLzA175FXwOfZE4F8r169ZEQ/z0+dJawK2vCcmdHu3oWQ0ZUwzePw7vuWrd4CMt77zVbAcu353eQLJvh6rcvVYURmoiC0fM5otBmjWfez9k4oMJ7+x8NcqFOjlVJI=
+	t=1717418095; cv=none; b=bg0fQGRFztMT0KMFOGb//+6jwovheh9wtMVhkPXdeeiyMkZjtzFgUCIxsVtNsIclG/cVs+VGgPRMmJtvea8jvprzVgWHswRB0ih1da987zySqefBKjCu4GisbPtlgNH3wyr6AaQaLw28RDKT+Zs76zDRVIPrLThKtc3Smuhb5Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717418015; c=relaxed/simple;
-	bh=kYIuQsN2L0HfcJb21dz7RS0YauRbygmsFvNM6IcF+4Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sXbbWpvcxqLyZOp8uILOh/cLHY5G8OAGptFpkSQndIm0TbfVyPPMQnGNrbi5TeX3Oa+oqHea9kHleK7Y4GHGbEfkQs6FsIF1IyYXnQh/Je7DFKABuhNwRKCy4bjdC7wkR5Yy26zeSB97ILnHxaeq9e3Qh8MI5M09s8S9fcl65AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hP/vHJfZ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52962423ed8so4771779e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:33:33 -0700 (PDT)
+	s=arc-20240116; t=1717418095; c=relaxed/simple;
+	bh=yI5u5wUiXcIr1CXdNjn8aKUwswP4fbQVdrpLyFYQ0tw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h1ujMFrQlhrW3x71t53Y9nyG50v9UeSOsxhxPKgHZHHIqBLm0R61GVCa7dKHiWXoD2sSyONduOgfcWUY0t3Wk4tXQrg5bw5+y1sfqj+ekzfl2m8/TRUeYeS6y67Syb0lZ0Pq3GzXcNnCpCTusWsG/c8GL7FprGgyrQqj01ivXRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AF4aKxB+; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3550134ef25so4011598f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:34:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717418012; x=1718022812; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1Ru8Np0KrRH/lYPvykLiPbmxJAWT+d6nNSuG8nv7VOk=;
-        b=hP/vHJfZi/bHrQ4IuhaBnYngwwZ2sieK1DnZjJdIiIwot+xje1GXPGNRUDB9vwu2dR
-         VbUv9H4Ank2P/V2VKcnk44SqoXGY31aFJ3nLJq7AiuGUaucTr5n67ZHW3FEDQis1379R
-         yK/DYRkEYOmGd2xnAmq81LBGa0XbKYzbILoUKbUKvaKKHa2mV4O3Oz5B0QEuJsRqImYc
-         NWANY+djXBoLuMYN+8Mqzyvgqa35sGIe2xB4Y459b3LjPgcyFtzmfzW3J0pZR5Q/nzZf
-         vWa4dJ3C7vbb0JBeB0L1pIJ23pkDz7SvNMBpXMwe7K2mQ5FQNjIP5MLwYHug2EVWH5k4
-         abgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717418012; x=1718022812;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=linaro.org; s=google; t=1717418092; x=1718022892; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1Ru8Np0KrRH/lYPvykLiPbmxJAWT+d6nNSuG8nv7VOk=;
-        b=LaBzPQWWpeCrVR8Q0FP75NwYM7SVcR1cT6QycvABmjAnBQB3Q9TR9OQRQvB9zfglZN
-         PDzHOsl8pHu23edyvELI/EKy7xOJhqVIXNiZ8yIf01pYfJ62zH2+85+m6YWS9xrxeQER
-         SvoN4KF+Nkw7IwbY0P7WgYDZ4E0Y3WCx3iLDijuGRWkS9hnGckkKSHU0CIJl8ysTdxNi
-         nW3BhacFbuY6PR9Mbwc0nHPH7yk9jLgUs37Hxqzvkf4aqOHYviCsSZRacfPo+6xVmTGA
-         KPOkmC1EC+L5rkN9o8jg1eVbgqNbryJ22dhf3NVnVkWzoptBDvwioullrCln2+0etSV0
-         dzZw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4MQikx0KJImrr0OVKR8zGEZasQRadoTSVt1Jl5fPW/DutN4+gMcaWZt7da5sYma1YoXzK1SQQ+bfI8jLlU8JGAXX3t8HvOLas6FJ7
-X-Gm-Message-State: AOJu0YylzzH9LDNb9fDbz/2ikOV1UOb+Ciyjx8cb/XI3PYOOvviwhX3G
-	5TQFI/SYYk4dIjRMhXD+KRi473bjD0dpAWZQkhoqgxLbScT//iRnHPRCHw0YdRK14BSUG4n0JpH
-	iunLvZIcwI7ZJYupov+RKP1hDOE0=
-X-Google-Smtp-Source: AGHT+IELbgEKpUYqgg7/B8eBPlQ72lpREBzdEuG36lLClLg99bLNWWdoXAoX4HgzvKzIriL8h+z/Kw3R6J65SU1E728=
-X-Received: by 2002:a05:6512:314a:b0:52b:79a5:517a with SMTP id
- 2adb3069b0e04-52b8959daa7mr5518994e87.33.1717418011642; Mon, 03 Jun 2024
- 05:33:31 -0700 (PDT)
+        bh=AYnk7Jhk5XQEe5qdju2BLibwhg+AiDV6NTuQ4IZI3jM=;
+        b=AF4aKxB+qBDDBZP28KIXT4cDRTepRl3Poa+5owQ3QlqZsh121k87/c8uy+5/4HWcb4
+         hXkVY6pE5JAYRFk6Sm2XeRO8jLx1lGYW9B/eR/bLUiwpIJhvhNj2xh3PYxeanV3P8cSD
+         /EtI1skUw3Dac7iu+R7gnOxetcWKjhxSSY5K7za/RbH9MczHWY/NEfd2QztlQTj4Neeq
+         V/zq+hYF/2STIRpQa69G5z088RB3Fi/7PNs/m/r8ndVCeU3GEGpUxRpjj7deK1XKTU2G
+         0ExZr2vgUNNPEe8h0m2HH41vpxHZnPpoAFbHBrBd3h0G7uYSJM5Zd9LWlrOasqmU6ce8
+         SJiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717418092; x=1718022892;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AYnk7Jhk5XQEe5qdju2BLibwhg+AiDV6NTuQ4IZI3jM=;
+        b=O/L6ekrlNeLXC6T586jsmDxXnwGfrtBP9R8yAjjuDczrhSCV3OjgSmUypB1JM87S4E
+         MGCu7UOcnivIxtrwFgxVwO5eSAb3FYIpn2NO2xFt2/g2OnP/WfkDoV+72/ZALKt4GHy9
+         /xzw9i1qY1dHwWw8BufosV0tcFveY76qnPmn4Sr0AIwvOsI5fyWOSB93we9iLbTtCuuA
+         j7vC0x+0dKN9FiJb870BSIQm8PcF+iuMfmGHN1rXp1abLKrvjgKdQKrai3d6KU4cylWD
+         B7Sth1EsYMLOsr1pp2hNdOqWV0f9CnocHLexQZrQqbhnWXGFLLglWt9McZ9vJj5APklN
+         Hflg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/1i6i9s0BBIM1cxbQlObtTOuhpuTW7nt6z5KiQgv4656LLH5+iFUVA5L+48icExCPUJuyHPcVxkwI8WpviwZ0g5ZVkzBuohGbdySe
+X-Gm-Message-State: AOJu0YyuqFuNeqjz0zwA9m6SXCWKecXWsUqmrBbgff5znIbaGd8PjwXz
+	Y8+MuxZ0BK8T0pPXu7UDNt8x2D/MmNAiW9RkGpotg+wuJLo0scgIqn+7nBVRp5c=
+X-Google-Smtp-Source: AGHT+IEwm+dY0qO4BpWxOUL58zZV+cnU+QzHw3FR6bdQ3WmbzIoTUPKI6tqs4tXJauEY94kgkadNCQ==
+X-Received: by 2002:a5d:4210:0:b0:354:fbc2:5cf6 with SMTP id ffacd0b85a97d-35e0f28854dmr5869925f8f.30.1717418092035;
+        Mon, 03 Jun 2024 05:34:52 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35dd04c090esm8938768f8f.6.2024.06.03.05.34.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 05:34:51 -0700 (PDT)
+Message-ID: <39405408-97d3-49b5-b797-e9363471adf6@linaro.org>
+Date: Mon, 3 Jun 2024 13:34:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Geunsik Lim <geunsik.lim@gmail.com>
-Date: Mon, 3 Jun 2024 21:33:19 +0900
-Message-ID: <CAGFP0L+BaNAtCF7c7cJ1bvbjomp03Fy0=6=w6dj29Fnr0ygSCA@mail.gmail.com>
-Subject: [PATCH] fix: Prevent memory leak by checking for NULL buffer before
- calling css_put()
-To: Axel Rasmussen <axelrasmussen@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, 
-	Hugh Dickins <hughd@google.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] ASoC: codecs: lpass-rx-macro: remove unused struct
+ 'rx_macro_reg_mask_val'
+To: linux@treblig.org, lgirdwood@gmail.com, broonie@kernel.org,
+ perex@perex.cz, tiwai@suse.com
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240601225446.183505-1-linux@treblig.org>
+ <20240601225446.183505-2-linux@treblig.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240601225446.183505-2-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This commit addresses a potential memory leak in the
-`get_mm_memcg_path()` function
-by explicitly checking if the allocated buffer (`buf`) is NULL before
-calling the
-`css_put()` function. The prefix 'css' means abbreviation of cgroup_subsys_state
 
-Previously, the code would directly call `css_put()` without checking
-the value of
-`buf`, which could lead to a memory leak if the buffer allocation failed.
-This commit introduces a conditional check to ensure that `css_put()`
-is only called
-if `buf` is not NULL.
 
-This change enhances the code's robustness and prevents memory leaks, improving
-overall system stability.
+On 01/06/2024 23:54, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> 'rx_macro_reg_mask_val' is unused since the original
+> commit af3d54b99764 ("ASoC: codecs: lpass-rx-macro: add support for
+> lpass rx macro").
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
 
-**Specific Changes:**
+thanks for the patch,
 
-* In the `out_put` label, an `if` statement is added to check
-  if `buf` is not NULL before calling `css_put()`.
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-**Benefits:**
-
-* Prevents potential memory leaks
-* Enhances code robustness
-* Improves system stability
-
-Signed-off-by: Geunsik Lim <leemgs@gmail.com>
-Signed-off-by: Geunsik Lim <geunsik.lim@samsung.com>
----
- mm/mmap_lock.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-index 1854850b4b89..7314045b0e3b 100644
---- a/mm/mmap_lock.c
-+++ b/mm/mmap_lock.c
-@@ -213,7 +213,8 @@ static const char *get_mm_memcg_path(struct mm_struct *mm)
-        cgroup_path(memcg->css.cgroup, buf, MEMCG_PATH_BUF_SIZE);
-
- out_put:
--       css_put(&memcg->css);
-+        if (buf != NULL)
-+                css_put(&memcg->css);
- out:
-        return buf;
- }
---
-2.34.1
-----
-To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Please read the FAQ at  http://www.tux.org/lkml/
+--srini
+>   sound/soc/codecs/lpass-rx-macro.c | 6 ------
+>   1 file changed, 6 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
+> index f35187d69cac..dfb7e4c69683 100644
+> --- a/sound/soc/codecs/lpass-rx-macro.c
+> +++ b/sound/soc/codecs/lpass-rx-macro.c
+> @@ -463,12 +463,6 @@ static const struct comp_coeff_val comp_coeff_table[HPH_MODE_MAX][COMP_MAX_COEFF
+>   	},
+>   };
+>   
+> -struct rx_macro_reg_mask_val {
+> -	u16 reg;
+> -	u8 mask;
+> -	u8 val;
+> -};
+> -
+>   enum {
+>   	INTERP_HPHL,
+>   	INTERP_HPHR,
 
