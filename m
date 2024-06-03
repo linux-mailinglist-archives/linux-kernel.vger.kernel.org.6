@@ -1,126 +1,115 @@
-Return-Path: <linux-kernel+bounces-198709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97378D7C6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B478D7C6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 475CC1F22B5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B07282D29
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592D843AA2;
-	Mon,  3 Jun 2024 07:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4D746436;
+	Mon,  3 Jun 2024 07:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G2gDK9AD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RGGnHXMh"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB4A42047
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7254F1E2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717399489; cv=none; b=rF84TQVby8HTTqBTvu05QHlL6u7Q2+aOUCzbevGlUYI9VATbq5EzOZCJh6YrNlXHNsU3JabXpg6ay/2efWl73CtVeoj59RzP90Npj86gjqXZYkbq1C3bHjqhkiCxtWYFeZEFTpD3hj3EYZK0tUda+qWjUIT4yB3NyaOuDgrmU1U=
+	t=1717399497; cv=none; b=uPT9bNdnMw610nUg/87GMiCbN8uGq0tY3DZpvORdl8qXbp/Z2gI62K2VoNXxxXwBWCJxhseBtZ24LwB4yVMm6BsjkKQfzH/cUaJjIZWlz/gbSs1MzAONu+5Gg4XMjuJb+j96c8ahrO3k8lBdPVzGxkKPBoJmRe0/lLCVYi0FKOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717399489; c=relaxed/simple;
-	bh=CFw0jXkCJ2C0wlfWJK24i5rMaTVUzDmZPVQIJxPWnQA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DRcVtJApZtyH2UMgEYPsRh75IqQKR91lE4Kt5yg4W8FxKgju14+jw6LHvhWm+foEqXWyg41mhj8roZ6nqZSAFptqI7OqDaWQ9gr9mc5Tb0gjCSwedr+4xeOZ/4G5XL1f6gTZlbSNRSKsFveifz4bk3att3JDSSgvRT+SnZxBGlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G2gDK9AD; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717399488; x=1748935488;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=CFw0jXkCJ2C0wlfWJK24i5rMaTVUzDmZPVQIJxPWnQA=;
-  b=G2gDK9AD0dULbtSNRWzbN1bDwIVT3gGumBWwcNDY2OpXPiz+u778KJZ1
-   yAs7UOeCwVf+xwRfezMf2jPEfHwBOtoWskk2J3hE4okwG+Q7RraD0DBZV
-   JRJUMtPNWVC+1wJ/5gfIOxtQbk7ifSfQA1M9sJ57ZqO8BP2S90/Cxf0jJ
-   53wIOvY8Az5d358a+sL0Ya822RCkn8st//h9B+yYAA4wudGaYpKGoXUER
-   ENYVFDKq6gRlWahUxrz27bgS52AZ4owgfuA1H3eoO3sqRKsrFCbBfGakh
-   GK+19g0gTFgrUkkgVi4zJZVQ8ilLEqy2s3+1xLlMhMyleurbGe64ga8Aj
-   Q==;
-X-CSE-ConnectionGUID: jiMuqrmSR5OiHXB1lp6GdA==
-X-CSE-MsgGUID: zN2aiknTRo+zrIOjJ9xPtQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="13824948"
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="13824948"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 00:24:47 -0700
-X-CSE-ConnectionGUID: kxqd9paxTmyZfVioFUTnCg==
-X-CSE-MsgGUID: wgn4h+pnQIKznB3X/28G+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
-   d="scan'208";a="36875565"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.161])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 00:24:44 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 3 Jun 2024 10:24:39 +0300 (EEST)
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: Chia-I Wu <olvaffe@gmail.com>, amd-gfx@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, christian.koenig@amd.com, 
-    alexander.deucher@amd.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Alison Schofield <alison.schofield@intel.com>, 
-    Dave Jiang <dave.jiang@intel.com>, Baoquan He <bhe@redhat.com>, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] kernel/resource: optimize find_next_iomem_res
-In-Reply-To: <Zlw1_n20oqchAYxH@smile.fi.intel.com>
-Message-ID: <783e9d9a-e408-c6f0-9a4b-050e1979b919@linux.intel.com>
-References: <20240531053704.2009827-1-olvaffe@gmail.com> <ZlmQ3_wcL3cgp4Hb@smile.fi.intel.com> <CAPaKu7SsD+X7KAO=3vEYU_7YGM_f+7k1fdC9nEK=-NaJw8oYaA@mail.gmail.com> <Zlw1_n20oqchAYxH@smile.fi.intel.com>
+	s=arc-20240116; t=1717399497; c=relaxed/simple;
+	bh=MMSanncrp/6sHc+FstGi0yx7PbgnY74Rsicjkp0BGFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GHusK6+Jv9GPGf20CvvchEMvfbGPgX/p/f/868b87Lg6xbtKMPPInK9dv0zehk8TkOArabjuGXeOnBZ/z58Kp6L5T6cjJMHOb2YczFMLGQGQ4Cqx1k382psHn4i2iz7MAVjOyjte1HFzpRhjDaNIVKzF/nukMF9bhOq0xepLLWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RGGnHXMh; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=MMSa
+	nncrp/6sHc+FstGi0yx7PbgnY74Rsicjkp0BGFY=; b=RGGnHXMh6QLX6orEcadl
+	amLGnMcGYcaT6VBOeFbLrovvvrO6ZgBJng4oCuB3H+rxCz4/LCTSKgphySIo0stM
+	gJE0sxjG4MLsjJq61L9C5fub0KZSBHPo92nc3gsSST4kcB+xsOwEhCgJP/WKLq9E
+	qbGrXwCrAAvf30lWoaA1BsEEs/kmMjIOKo77SvXscOTxnwCJtz3j+p4gERJrMjHy
+	PRh7HmJCmoKK8RnqdlUad8awF9Nimw2MSTkAuu6Wqzx8y25yEFNElW6V52qtzsff
+	ov6kvmztdLE4PtZFlbfZlfOusHMxO2gk9VIx1Lduh0Gh64Xo8ofajjYUl4OMtItE
+	wA==
+Received: (qmail 1864745 invoked from network); 3 Jun 2024 09:24:50 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jun 2024 09:24:50 +0200
+X-UD-Smtp-Session: l3s3148p1@wnqQOvcZAIAgAwDPXzLGAH1eNELjOc3g
+Date: Mon, 3 Jun 2024 09:24:50 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Eric Sandeen <sandeen@redhat.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, David Howells <dhowells@redhat.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
+Message-ID: <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Christian Brauner <brauner@kernel.org>, Eric Sandeen <sandeen@redhat.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
+ <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
+ <20240527100618.np2wqiw5mz7as3vk@ninjato>
+ <20240527-pittoresk-kneipen-652000baed56@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-947370823-1717399436=:1529"
-Content-ID: <ac58b535-760b-99ee-4936-892d3e4f1ed9@linux.intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xkspjckpbjuf2tis"
+Content-Disposition: inline
+In-Reply-To: <20240527-pittoresk-kneipen-652000baed56@brauner>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-947370823-1717399436=:1529
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <9a23e7b3-9da0-cdcd-f514-8f55036748af@linux.intel.com>
+--xkspjckpbjuf2tis
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2 Jun 2024, Andy Shevchenko wrote:
 
-> On Fri, May 31, 2024 at 02:31:45PM -0700, Chia-I Wu wrote:
-> > On Fri, May 31, 2024 at 1:57=E2=80=AFAM Andy Shevchenko <
-> > andriy.shevchenko@linux.intel.com> wrote:
-> > > On Thu, May 30, 2024 at 10:36:57PM -0700, Chia-I Wu wrote:
+> > > Does that fix it for you?
+> >=20
+> > Yes, it does, thank you.
+> >=20
+> > Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >=20
-> ...
->=20
-> > > P.S> I'm not so sure about this change. It needs a thoroughly testing=
-, esp.
-> > > in PCI case. Cc'ing to Ilpo.
->=20
-> > What's special about PCI?
->=20
-> PCI, due to its nature, may rebuild resources either by shrinking or expa=
-nding
-> of the entire subtree after the PCI bridge in question. And this may happ=
-en at
-> run-time due to hotplug support. But I'm not a deep expert in this area, =
-Ilpo
-> knows much more than me.
+> Thanks, applied. Should be fixed by end of the week.
 
-There is code which clearly tries to do expanding resource but that=20
-usually fails to work as intended because of a parent resource whose size=
-=20
-is fixed because it's already assigned.
+It is in -next but not in rc2. rc3 then?
 
-Some other code might block shrinking too under certain conditions.
 
-This area would need to be reworked in PCI core but it's massive and=20
-scary looking change.
+--xkspjckpbjuf2tis
+Content-Type: application/pgp-signature; name="signature.asc"
 
---=20
- i.
---8323328-947370823-1717399436=:1529--
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZdb70ACgkQFA3kzBSg
+KbZkJhAAoj5KbUejwU9YyeAk7sGJ8tfd/3ZOjyGc6Y9EHGp4Lv53qOwXCtoJdiqU
+jMbq8dBC3CXTAvKwSugsUG73nbxiYct0B6GNFVGu31s0BfMwiarrU+Wo98PB/w8H
+vpPaZ51lGOmUbAoojm0HkfC9UOrO8tSlrvzs6YXNJXS+RO70p/dUFEQzzOQhORuN
+g+xuliNgWR7Fpp2lqzUQZEckRyaRqLB35jGhCZBOuFJcB2xrDkGU+htN4s/r8Edt
+6AUh7IBw0uuQgFWJoMDHlhMMDswymVcdYK7IKN7w5T1c3h+zMdE45W+rNoISMrP/
+ThvkK2Lrt0xGJJLURGAoiLbQrON6p+9yQZwOiA/k9ULYz+hRxrPJE8l8XVPZ2Grb
+9T07N9FB2IdeUBtTDqZ81Ei+hccLbrgX9YwWV23R8I8vZrWV8fIPQgY5pRKqAMaO
+VUZAcZJEB0sYjVcoRiXIiLSX80dXe5rzrnf49D0PHMEk9GCP399TkFhmVrXiQAS3
+3F4S8WubvO3WDt/qzy9Yuq/P8Lf+2kClb5RiGHUxIkGOTupxVbdy9O5H9D3FUilx
+r2/FrTbQ7kSVPKW+QFJ93YH5/GEU9QERVmnApKmA38vI0Ow2nclci61+H/NNicKv
+nRMlFWXKprL8+ox9MEMHfWRkp5ET/lhILa5hivXYMqyB8UIyC2A=
+=Bmf7
+-----END PGP SIGNATURE-----
+
+--xkspjckpbjuf2tis--
 
