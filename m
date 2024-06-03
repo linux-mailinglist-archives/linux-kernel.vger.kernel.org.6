@@ -1,128 +1,380 @@
-Return-Path: <linux-kernel+bounces-199514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3258D87F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:31:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C70B8D87FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58B011F22F59
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 541D228AE15
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAA3137764;
-	Mon,  3 Jun 2024 17:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299B413777B;
+	Mon,  3 Jun 2024 17:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E7yRObjS"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A0tXkFkR"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AA2262B6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB56A137755
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435912; cv=none; b=o8o9oCEmhGdmyIfJN+/DTiLA2ivGmtUBHC6UHrwpLexS+H+y9wr5wnYWASFb+kj0GR+Hbuw4IdF9Bl/el6vOTE6LV6Z1XQc67dGbfb1QokrQ8vU9aglOqxMoLUWOOTdgls25cpym+nOf27+7KViHo64vGdizRDHD6kxir9vOZ/A=
+	t=1717435929; cv=none; b=YeFqym5V5pnlU0bH7ykcnVaGrF2exe7+Ju8jca2RvN4rkRkbm9vyh9g4JWiW3mbanbAOSapzD13/PtvUXrSmpHfAzAkW167lW9Bvl2AQExxM3XyXiDy+SZCXm/Erv4CyBHLbdRgIIcwY0Oc3oqk0IMtsLlba8XiWMvIhJ4K2WkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435912; c=relaxed/simple;
-	bh=vGhYcr0+gYUyTAifot4Vhtgw/itqf24EiBKozbQQf5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fWuQj8P4oH3yjRmzQ3AMag7LP684PD8jgnx97WhIzeNaN6uP8S4IWRrHPHKgANNSchxMsI1+8jDlVCqulYFTDfdqG1SH2GE1zZiQsc3z96UiH7DvT0J05p3udKPBAHoXv8JSebfDnH2ne7g2NYfBtX+6U+KXhFW3oW7YTHCUhec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E7yRObjS; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453HVi9m015573;
-	Mon, 3 Jun 2024 12:31:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717435904;
-	bh=kRDCV0dmaLYdBq6EzHV1AR1oRsGqL12bPgTrR83mOKw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=E7yRObjS9cDNDlsg/5DzYhrwXdTiMUUVDQcnGUMEvJ1gRob5MblfrbijV7QTKyiFZ
-	 NwxfGDxTsPKvFNxAUeocE38LuLOl5NxtApsanMRJVmmjEMQ2ubita9it6sFIE2/gE/
-	 qfVpiaGHc+y4u7dG99dZBXIKiFIi8rsVEw/dLbhY=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453HViSo116201
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 3 Jun 2024 12:31:44 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
- Jun 2024 12:31:44 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 3 Jun 2024 12:31:44 -0500
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453HVf7i051902;
-	Mon, 3 Jun 2024 12:31:42 -0500
-Message-ID: <117f2292-b2a1-470f-8d88-80f325f3341b@ti.com>
-Date: Mon, 3 Jun 2024 23:01:40 +0530
+	s=arc-20240116; t=1717435929; c=relaxed/simple;
+	bh=MAVrEHQznP2/fwWlLae0Zx4RKcm7cpRQzHaeqHjUAco=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pDoNbLLOo+NSkqTAUgZI8mSqlZSpsLl8dtSbp6OQa4FtanJiMmxL2HU2x4SBh21VluhEsmUDALcCQJ8f0fBj69lVK4gubhI32NggJqJZVr+MvpZsIescViWdZdqvnR2BFbx8pfYo8Ijw0gp2bnNcU3RezgceNdnQ9KGvumZ2iz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A0tXkFkR; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e73359b8fbso64840991fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 10:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1717435925; x=1718040725; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=E0chlZzFYNY4NCq9cTKoNOXLnYzWUplu9hQipTbXGuw=;
+        b=A0tXkFkRh1xTckeDhLMJnUp3WfEBCr06BlXv2lmX7pJ/qKYIvh9OOLWEZVZSLkPTR5
+         nxiFbrmKjZKDUewDK/0qd+I621RED532LWxNwL4G2P6s2WhRLKXWRtuZKIl1uwUSDS3A
+         M0nGYiQYeOaL9oQnkoHjs5unNCASvwEnOyzqfsIqSQO3/U1Q6wCLVIxOGUJmUc1xTswn
+         pWQ849ZET4DQBGb6pEmkgu4cvrDyma7Q6B+lfRsofe1bSbF+ccScjerZEpJFJiGBGApS
+         XZS+5J2R4ONqP+PCUwX+gQ2hQWwVzPclBIm0z1jQG8/LsmQczMOp9o95MVcpc7S2B9Wx
+         +WwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717435925; x=1718040725;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E0chlZzFYNY4NCq9cTKoNOXLnYzWUplu9hQipTbXGuw=;
+        b=QAz7Id8QJ7adtGUN4ku1UvqgP8Z9KkyoOrKrLB8dlrnqsNTh1J6F9GUVych1/lrW78
+         rnfA7OwKEAlvHbuhGaWJWiKAB1gAOE1yLEdj6ZeQ518863/sJm0G+EJQG5cnFDFn9Gmk
+         B1zoBj6ahpaUz3VC5eCLo4L6gsHZXD9IMEQJ/Cu1tAjMvyYv1LhguCDfrpc21lEO2Jf5
+         LHnktasgYd3N7QOlWipBRBkWJMR6ROH4v/Q4NnMpQCRRrpB/wIc5wxLc6cjINTJJiq71
+         Y2eoowMJce/RMPnVDi8fgD58UNP4dw2nPljJaRzRgWs0PHgIKqWKN/t7rDyJ4YY6/N0v
+         /Iuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTcyEYeVZkTsY24kJ7LHy+Lw0kD68jTyD7T9eQyFF/87GEwT4S/n4Rq/vzJdH4qYSK1k2pSGgNRuCzDk7wtvWi1Wt9rvpwIv91F0f/
+X-Gm-Message-State: AOJu0YwmJjITj9ZNBRu8y+yQhqZuq3IduldLThshyzlZEFwso2q2P0KJ
+	fJ9ZDsa5yl0ZWhgIT68L8OBWjsRDehredxoTCurKM2HLlaE1km8p1wQYA6n4v7k=
+X-Google-Smtp-Source: AGHT+IHO8mHadgphKx5sBj6yHPRmiEDtLh4jXTfTdhstov+igBiD7SGsFcw6y5DheFe+02Lz1FxTAw==
+X-Received: by 2002:a05:651c:b28:b0:2e9:77ec:58eb with SMTP id 38308e7fff4ca-2ea9512fe77mr85905171fa.17.1717435924946;
+        Mon, 03 Jun 2024 10:32:04 -0700 (PDT)
+Received: from ?IPv6:2804:5078:851:4000:58f2:fc97:371f:2? ([2804:5078:851:4000:58f2:fc97:371f:2])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c3598487d9sm5620665a12.70.2024.06.03.10.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 10:32:04 -0700 (PDT)
+Message-ID: <6e0845f56efcffa8ed1e7ef1c63d20e383614e6d.camel@suse.com>
+Subject: Re: [PATCH v3] selftests: livepatch: Test atomic replace against
+ multiple modules
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Miroslav Benes
+	 <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, Joe Lawrence
+	 <joe.lawrence@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 03 Jun 2024 14:31:53 -0300
+In-Reply-To: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
+References: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] Correct nr_types assignment for TPS6594/3 and
- TPS65224
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, <lgirdwood@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-CC: <m-leonard@ti.com>, <u-kumar1@ti.com>, <n-francis@ti.com>,
-        <bhargav.r@ltts.com>, <m.nirmaladevi@ltts.com>
-References: <20240603170524.643010-1-s-ramamoorthy@ti.com>
- <20240603170524.643010-2-s-ramamoorthy@ti.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20240603170524.643010-2-s-ramamoorthy@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-
-
-On 03/06/24 22:35, Shree Ramamoorthy wrote:
-> Swap nr_types assignment for TPS6594/3 and TPS65224.
-> Issue detected with v6.10-rc1 and tested using a TI J7200 EVM board.
-> 
-> Log:
-> [   13.974024] Call trace:
-> [   13.974025]  _regulator_put.part.0+0x40/0x48
-> [   13.974028]  regulator_register+0x2b0/0xa00
-> [   13.974031]  devm_regulator_register+0x58/0xa0
-> [   13.974035]  tps6594_regulator_probe+0x4e0/0x5f0 [tps6594_regulator]
-> ...
-> [   13.974178] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000004
-> 
-> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+On Mon, 2024-06-03 at 14:26 -0300, Marcos Paulo de Souza wrote:
+> Adapt the current test-livepatch.sh script to account the number of
+> applied livepatches and ensure that an atomic replace livepatch
+> disables
+> all previously applied livepatches.
+>=20
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 > ---
+> Changes since v2:
+> * Used variables to stop the name of other livepatches applied to
 
-Please add a appropriate Fixes: tag
+Typo here :)
 
->  drivers/regulator/tps6594-regulator.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
-> index 4a859f4c0f83..b66608ab2546 100644
-> --- a/drivers/regulator/tps6594-regulator.c
-> +++ b/drivers/regulator/tps6594-regulator.c
-> @@ -660,11 +660,11 @@ static int tps6594_regulator_probe(struct platform_device *pdev)
->  	} else if (tps->chip_id == TPS65224) {
->  		nr_buck = ARRAY_SIZE(tps65224_buck_regs);
->  		nr_ldo = ARRAY_SIZE(tps65224_ldo_regs);
-> -		nr_types = REGS_INT_NB;
-> +		nr_types = TPS65224_REGS_INT_NB;
->  	} else {
->  		nr_buck = ARRAY_SIZE(buck_regs);
->  		nr_ldo = ARRAY_SIZE(tps6594_ldo_regs);
-> -		nr_types = TPS65224_REGS_INT_NB;
-> +		nr_types = REGS_INT_NB;
->  	}
->  
->  	reg_irq_nb = nr_types * (nr_buck + nr_ldo);
-> --
+s/stop/show
+> test
+> =C2=A0 the atomic replace. (Joe)
 
--- 
-Regards
-Vignesh
+
+
+
+>=20
+> Changes since v1:
+> * Added checks in the existing test-livepatch.sh instead of creating
+> a
+> =C2=A0 new test file. (Joe)
+> * Fixed issues reported by ShellCheck (Joe)
+> ---
+> Changes in v3:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
+> - Link to v2:
+> https://lore.kernel.org/r/20240525-lp-atomic-replace-v2-1-142199bb65a1@su=
+se.com
+> ---
+> =C2=A0.../testing/selftests/livepatch/test-livepatch.sh=C2=A0 | 138
+> +++++++++++++--------
+> =C2=A01 file changed, 89 insertions(+), 49 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/livepatch/test-livepatch.sh
+> b/tools/testing/selftests/livepatch/test-livepatch.sh
+> index e3455a6b1158..ca770b8c62fc 100755
+> --- a/tools/testing/selftests/livepatch/test-livepatch.sh
+> +++ b/tools/testing/selftests/livepatch/test-livepatch.sh
+> @@ -4,7 +4,9 @@
+> =C2=A0
+> =C2=A0. $(dirname $0)/functions.sh
+> =C2=A0
+> -MOD_LIVEPATCH=3Dtest_klp_livepatch
+> +MOD_LIVEPATCH1=3Dtest_klp_livepatch
+> +MOD_LIVEPATCH2=3Dtest_klp_syscall
+> +MOD_LIVEPATCH3=3Dtest_klp_callbacks_demo
+> =C2=A0MOD_REPLACE=3Dtest_klp_atomic_replace
+> =C2=A0
+> =C2=A0setup_config
+> @@ -16,33 +18,33 @@ setup_config
+> =C2=A0
+> =C2=A0start_test "basic function patching"
+> =C2=A0
+> -load_lp $MOD_LIVEPATCH
+> +load_lp $MOD_LIVEPATCH1
+> =C2=A0
+> -if [[ "$(cat /proc/cmdline)" !=3D "$MOD_LIVEPATCH: this has been live
+> patched" ]] ; then
+> +if [[ "$(cat /proc/cmdline)" !=3D "$MOD_LIVEPATCH1: this has been live
+> patched" ]] ; then
+> =C2=A0	echo -e "FAIL\n\n"
+> =C2=A0	die "livepatch kselftest(s) failed"
+> =C2=A0fi
+> =C2=A0
+> -disable_lp $MOD_LIVEPATCH
+> -unload_lp $MOD_LIVEPATCH
+> +disable_lp $MOD_LIVEPATCH1
+> +unload_lp $MOD_LIVEPATCH1
+> =C2=A0
+> -if [[ "$(cat /proc/cmdline)" =3D=3D "$MOD_LIVEPATCH: this has been live
+> patched" ]] ; then
+> +if [[ "$(cat /proc/cmdline)" =3D=3D "$MOD_LIVEPATCH1: this has been live
+> patched" ]] ; then
+> =C2=A0	echo -e "FAIL\n\n"
+> =C2=A0	die "livepatch kselftest(s) failed"
+> =C2=A0fi
+> =C2=A0
+> -check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
+> -livepatch: enabling patch '$MOD_LIVEPATCH'
+> -livepatch: '$MOD_LIVEPATCH': initializing patching transition
+> -livepatch: '$MOD_LIVEPATCH': starting patching transition
+> -livepatch: '$MOD_LIVEPATCH': completing patching transition
+> -livepatch: '$MOD_LIVEPATCH': patching complete
+> -% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
+> -livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
+> -livepatch: '$MOD_LIVEPATCH': starting unpatching transition
+> -livepatch: '$MOD_LIVEPATCH': completing unpatching transition
+> -livepatch: '$MOD_LIVEPATCH': unpatching complete
+> -% rmmod $MOD_LIVEPATCH"
+> +check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH1'
+> +livepatch: '$MOD_LIVEPATCH1': initializing patching transition
+> +livepatch: '$MOD_LIVEPATCH1': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH1': completing patching transition
+> +livepatch: '$MOD_LIVEPATCH1': patching complete
+> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH1/enabled
+> +livepatch: '$MOD_LIVEPATCH1': initializing unpatching transition
+> +livepatch: '$MOD_LIVEPATCH1': starting unpatching transition
+> +livepatch: '$MOD_LIVEPATCH1': completing unpatching transition
+> +livepatch: '$MOD_LIVEPATCH1': unpatching complete
+> +% rmmod $MOD_LIVEPATCH1"
+> =C2=A0
+> =C2=A0
+> =C2=A0# - load a livepatch that modifies the output from /proc/cmdline an=
+d
+> @@ -53,7 +55,7 @@ livepatch: '$MOD_LIVEPATCH': unpatching complete
+> =C2=A0
+> =C2=A0start_test "multiple livepatches"
+> =C2=A0
+> -load_lp $MOD_LIVEPATCH
+> +load_lp $MOD_LIVEPATCH1
+> =C2=A0
+> =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> @@ -69,26 +71,26 @@ unload_lp $MOD_REPLACE
+> =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> =C2=A0
+> -disable_lp $MOD_LIVEPATCH
+> -unload_lp $MOD_LIVEPATCH
+> +disable_lp $MOD_LIVEPATCH1
+> +unload_lp $MOD_LIVEPATCH1
+> =C2=A0
+> =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> =C2=A0
+> -check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
+> -livepatch: enabling patch '$MOD_LIVEPATCH'
+> -livepatch: '$MOD_LIVEPATCH': initializing patching transition
+> -livepatch: '$MOD_LIVEPATCH': starting patching transition
+> -livepatch: '$MOD_LIVEPATCH': completing patching transition
+> -livepatch: '$MOD_LIVEPATCH': patching complete
+> -$MOD_LIVEPATCH: this has been live patched
+> +check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH1'
+> +livepatch: '$MOD_LIVEPATCH1': initializing patching transition
+> +livepatch: '$MOD_LIVEPATCH1': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH1': completing patching transition
+> +livepatch: '$MOD_LIVEPATCH1': patching complete
+> +$MOD_LIVEPATCH1: this has been live patched
+> =C2=A0% insmod test_modules/$MOD_REPLACE.ko replace=3D0
+> =C2=A0livepatch: enabling patch '$MOD_REPLACE'
+> =C2=A0livepatch: '$MOD_REPLACE': initializing patching transition
+> =C2=A0livepatch: '$MOD_REPLACE': starting patching transition
+> =C2=A0livepatch: '$MOD_REPLACE': completing patching transition
+> =C2=A0livepatch: '$MOD_REPLACE': patching complete
+> -$MOD_LIVEPATCH: this has been live patched
+> +$MOD_LIVEPATCH1: this has been live patched
+> =C2=A0$MOD_REPLACE: this has been live patched
+> =C2=A0% echo 0 > /sys/kernel/livepatch/$MOD_REPLACE/enabled
+> =C2=A0livepatch: '$MOD_REPLACE': initializing unpatching transition
+> @@ -96,35 +98,57 @@ livepatch: '$MOD_REPLACE': starting unpatching
+> transition
+> =C2=A0livepatch: '$MOD_REPLACE': completing unpatching transition
+> =C2=A0livepatch: '$MOD_REPLACE': unpatching complete
+> =C2=A0% rmmod $MOD_REPLACE
+> -$MOD_LIVEPATCH: this has been live patched
+> -% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
+> -livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
+> -livepatch: '$MOD_LIVEPATCH': starting unpatching transition
+> -livepatch: '$MOD_LIVEPATCH': completing unpatching transition
+> -livepatch: '$MOD_LIVEPATCH': unpatching complete
+> -% rmmod $MOD_LIVEPATCH"
+> +$MOD_LIVEPATCH1: this has been live patched
+> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH1/enabled
+> +livepatch: '$MOD_LIVEPATCH1': initializing unpatching transition
+> +livepatch: '$MOD_LIVEPATCH1': starting unpatching transition
+> +livepatch: '$MOD_LIVEPATCH1': completing unpatching transition
+> +livepatch: '$MOD_LIVEPATCH1': unpatching complete
+> +% rmmod $MOD_LIVEPATCH1"
+> =C2=A0
+> =C2=A0
+> =C2=A0# - load a livepatch that modifies the output from /proc/cmdline an=
+d
+> =C2=A0#=C2=A0=C2=A0 verify correct behavior
+> -# - load an atomic replace livepatch and verify that only the second
+> is active
+> -# - remove the first livepatch and verify that the atomic replace
+> livepatch
+> -#=C2=A0=C2=A0 is still active
+> +# - load two addtional livepatches and check the number of livepatch
+> modules
+> +#=C2=A0=C2=A0 applied
+> +# - load an atomic replace livepatch and check that the other three
+> modules were
+> +#=C2=A0=C2=A0 disabled
+> +# - remove all livepatches besides the atomic replace one and verify
+> that the
+> +#=C2=A0=C2=A0 atomic replace livepatch is still active
+> =C2=A0# - remove the atomic replace livepatch and verify that none are
+> active
+> =C2=A0
+> =C2=A0start_test "atomic replace livepatch"
+> =C2=A0
+> -load_lp $MOD_LIVEPATCH
+> +load_lp $MOD_LIVEPATCH1
+> =C2=A0
+> =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> =C2=A0
+> +for mod in $MOD_LIVEPATCH2 $MOD_LIVEPATCH3; do
+> +	load_lp "$mod"
+> +done
+> +
+> +mods=3D(/sys/kernel/livepatch/*)
+> +nmods=3D${#mods[@]}
+> +if [ "$nmods" -ne 3 ]; then
+> +	die "Expecting three modules listed, found $nmods"
+> +fi
+> +
+> =C2=A0load_lp $MOD_REPLACE replace=3D1
+> =C2=A0
+> =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> =C2=A0
+> -unload_lp $MOD_LIVEPATCH
+> +mods=3D(/sys/kernel/livepatch/*)
+> +nmods=3D${#mods[@]}
+> +if [ "$nmods" -ne 1 ]; then
+> +	die "Expecting only one moduled listed, found $nmods"
+> +fi
+> +
+> +# These modules were disabled by the atomic replace
+> +for mod in $MOD_LIVEPATCH3 $MOD_LIVEPATCH2 $MOD_LIVEPATCH1; do
+> +	unload_lp "$mod"
+> +done
+> =C2=A0
+> =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> @@ -135,13 +159,27 @@ unload_lp $MOD_REPLACE
+> =C2=A0grep 'live patched' /proc/cmdline > /dev/kmsg
+> =C2=A0grep 'live patched' /proc/meminfo > /dev/kmsg
+> =C2=A0
+> -check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
+> -livepatch: enabling patch '$MOD_LIVEPATCH'
+> -livepatch: '$MOD_LIVEPATCH': initializing patching transition
+> -livepatch: '$MOD_LIVEPATCH': starting patching transition
+> -livepatch: '$MOD_LIVEPATCH': completing patching transition
+> -livepatch: '$MOD_LIVEPATCH': patching complete
+> -$MOD_LIVEPATCH: this has been live patched
+> +check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH1'
+> +livepatch: '$MOD_LIVEPATCH1': initializing patching transition
+> +livepatch: '$MOD_LIVEPATCH1': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH1': completing patching transition
+> +livepatch: '$MOD_LIVEPATCH1': patching complete
+> +$MOD_LIVEPATCH1: this has been live patched
+> +% insmod test_modules/$MOD_LIVEPATCH2.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH2'
+> +livepatch: '$MOD_LIVEPATCH2': initializing patching transition
+> +livepatch: '$MOD_LIVEPATCH2': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH2': completing patching transition
+> +livepatch: '$MOD_LIVEPATCH2': patching complete
+> +% insmod test_modules/$MOD_LIVEPATCH3.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH3'
+> +livepatch: '$MOD_LIVEPATCH3': initializing patching transition
+> +$MOD_LIVEPATCH3: pre_patch_callback: vmlinux
+> +livepatch: '$MOD_LIVEPATCH3': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH3': completing patching transition
+> +$MOD_LIVEPATCH3: post_patch_callback: vmlinux
+> +livepatch: '$MOD_LIVEPATCH3': patching complete
+> =C2=A0% insmod test_modules/$MOD_REPLACE.ko replace=3D1
+> =C2=A0livepatch: enabling patch '$MOD_REPLACE'
+> =C2=A0livepatch: '$MOD_REPLACE': initializing patching transition
+> @@ -149,7 +187,9 @@ livepatch: '$MOD_REPLACE': starting patching
+> transition
+> =C2=A0livepatch: '$MOD_REPLACE': completing patching transition
+> =C2=A0livepatch: '$MOD_REPLACE': patching complete
+> =C2=A0$MOD_REPLACE: this has been live patched
+> -% rmmod $MOD_LIVEPATCH
+> +% rmmod $MOD_LIVEPATCH3
+> +% rmmod $MOD_LIVEPATCH2
+> +% rmmod $MOD_LIVEPATCH1
+> =C2=A0$MOD_REPLACE: this has been live patched
+> =C2=A0% echo 0 > /sys/kernel/livepatch/$MOD_REPLACE/enabled
+> =C2=A0livepatch: '$MOD_REPLACE': initializing unpatching transition
+>=20
+> ---
+> base-commit: 6d69b6c12fce479fde7bc06f686212451688a102
+> change-id: 20240525-lp-atomic-replace-90b33ed018dc
+>=20
+> Best regards,
+
 
