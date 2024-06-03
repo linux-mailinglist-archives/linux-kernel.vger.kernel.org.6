@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-199615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44E88D8992
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:12:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417E58D8997
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ECC028B0E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:12:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F163728B8D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BACC140E38;
-	Mon,  3 Jun 2024 19:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40F914264C;
+	Mon,  3 Jun 2024 19:07:19 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDD113CFA4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C5113D247;
 	Mon,  3 Jun 2024 19:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717441633; cv=none; b=o7WLjfFgrQcRri8qtdR72REC1jvooz3z+9zzw6H8GhY+XvUO3FR2nn0Xc5icV26IjVaVyqpEmd1ZOGhR/rbQ9IcNnl85GyWvVR4naUQjcORrdczB2IZkKI//VBX2B8RCwwmiEcg1OQ/RU7MiahARPtZcg6WI944Xx1eNMKLZNHk=
+	t=1717441633; cv=none; b=ojzmbZXLN/xF8ev5vlN5dycBZoeH00x/1KL6rBWiqswn64w3GxySlLLgFgEeA8mU8zIkAVJWXxBlAcEviJLJFalj3/iaRVzdUsEuN5TF53Cuv+XN7bR0wqF5zH9PPqS5EAMl5OvRPV6NZHx9uDphVypAWgIunZkVzD0EBwXVzGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717441633; c=relaxed/simple;
-	bh=HaOqVX9Zfq8EcxlqcgeTv6riQSn0DAcVMNqbadp2eeM=;
+	bh=Pm7PSUxREyu8vazVQyA1LZW0yMStfKzkpurO/Q2407g=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=rKg9hctxxEGKAmGRDo0lGA3owFq4gikhwiEJ1eB0EuCJvsLi3+nnRJxJfHkbPd2kkEi8TIv4ZjgnS8Z3iPvHWX/sVydy864XjjhQ7SDNIRA+7ECjZHUZRvzni+ivAfuhdNSwgqvTnwnZy5GdsJ6+LaB4SSV5NOHxPgrE4IgT5jE=
+	 Content-Type; b=MnS0hPK+y/fAqJWAY9nm+AU16bRi5VFfQFWy+zbfENnKuTaAc4hQxCXktNu73nrwpVAhb6Un1BD3NtNamozCLqpW3eh8Vs7++c5mKZochKIva3zDxU7gT1aGMpIi2EF1m+sAAeb0HjIQA9PqCxzrQLqogvp0UNs7Kt/iYW/2GLs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B5B8C4AF0D;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF147C4AF18;
 	Mon,  3 Jun 2024 19:07:13 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sED2e-00000009Twx-2Rbe;
+	id 1sED2e-00000009TxR-384F;
 	Mon, 03 Jun 2024 15:08:24 -0400
-Message-ID: <20240603190824.447448026@goodmis.org>
+Message-ID: <20240603190824.604448781@goodmis.org>
 User-Agent: quilt/0.68
-Date: Mon, 03 Jun 2024 15:07:26 -0400
+Date: Mon, 03 Jun 2024 15:07:27 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -55,8 +55,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>,
  Thomas Gleixner <tglx@linutronix.de>,
  Guo Ren <guoren@kernel.org>
-Subject: [PATCH v3 22/27] function_graph: Use for_each_set_bit() in
- __ftrace_return_to_handler()
+Subject: [PATCH v3 23/27] function_graph: Use bitmask to loop on fgraph entry
 References: <20240603190704.663840775@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,34 +67,62 @@ Content-Type: text/plain; charset=UTF-8
 
 From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-Instead of iterating through the entire fgraph_array[] and seeing if one
-of the bitmap bits are set to know to call the array's retfunc() function,
-use for_each_set_bit() on the bitmap itself. This will only iterate for
-the number of set bits.
+Instead of looping through all the elements of fgraph_array[] to see if
+there's an gops attached to one and then calling its gops->func(). Create
+a fgraph_array_bitmask that sets bits when an index in the array is
+reserved (via the simple lru algorithm). Then only the bits set in this
+bitmask needs to be looked at where only elements in the array that have
+ops registered need to be looked at.
+
+Note, we do not care about races. If a bit is set before the gops is
+assigned, it only wastes time looking at the element and ignoring it (as
+it did before this bitmask is added).
 
 Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/fgraph.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/trace/fgraph.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index f207b7ae5f46..0827b67f746d 100644
+index 0827b67f746d..4d566a0a741d 100644
 --- a/kernel/trace/fgraph.c
 +++ b/kernel/trace/fgraph.c
-@@ -783,11 +783,10 @@ static unsigned long __ftrace_return_to_handler(struct fgraph_ret_regs *ret_regs
- #endif
+@@ -172,6 +172,7 @@ DEFINE_STATIC_KEY_FALSE(kill_ftrace_graph);
+ int ftrace_graph_active;
  
- 	bitmap = get_bitmap_bits(current, offset);
--	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
+ static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE];
++static unsigned long fgraph_array_bitmask;
+ 
+ /* LRU index table for fgraph_array */
+ static int fgraph_lru_table[FGRAPH_ARRAY_SIZE];
+@@ -196,6 +197,8 @@ static int fgraph_lru_release_index(int idx)
+ 
+ 	fgraph_lru_table[fgraph_lru_last] = idx;
+ 	fgraph_lru_last = (fgraph_lru_last + 1) % FGRAPH_ARRAY_SIZE;
 +
-+	for_each_set_bit(i, &bitmap, sizeof(bitmap) * BITS_PER_BYTE) {
- 		struct fgraph_ops *gops = fgraph_array[i];
++	clear_bit(idx, &fgraph_array_bitmask);
+ 	return 0;
+ }
  
--		if (!(bitmap & BIT(i)))
--			continue;
- 		if (gops == &fgraph_stub)
- 			continue;
+@@ -210,6 +213,8 @@ static int fgraph_lru_alloc_index(void)
+ 
+ 	fgraph_lru_table[fgraph_lru_next] = -1;
+ 	fgraph_lru_next = (fgraph_lru_next + 1) % FGRAPH_ARRAY_SIZE;
++
++	set_bit(idx, &fgraph_array_bitmask);
+ 	return idx;
+ }
+ 
+@@ -631,7 +636,8 @@ int function_graph_enter(unsigned long ret, unsigned long func,
+ 	if (offset < 0)
+ 		goto out;
+ 
+-	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
++	for_each_set_bit(i, &fgraph_array_bitmask,
++			 sizeof(fgraph_array_bitmask) * BITS_PER_BYTE) {
+ 		struct fgraph_ops *gops = fgraph_array[i];
+ 		int save_curr_ret_stack;
  
 -- 
 2.43.0
