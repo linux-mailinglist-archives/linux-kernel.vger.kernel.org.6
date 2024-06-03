@@ -1,165 +1,125 @@
-Return-Path: <linux-kernel+bounces-198754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51ACE8D7CFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:04:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925E78D7D03
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0678F2813F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:04:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C311E1C20F54
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AB653372;
-	Mon,  3 Jun 2024 08:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F17053E31;
+	Mon,  3 Jun 2024 08:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Jrc3Naue"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FX5i62F8"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DE3487BF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6505E487BF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717401887; cv=none; b=unh1tYO9aoN1JFJNhamS9AQRjkX208lRJ11uGR8SpHT1LKJO4Eak40YGowEcIMErOLDdId+FlZRZ9ipsew/2AXO9cpF5MRqUwScEi59yTVRjSmO0lEJpKipNzGfEytlx+FoDFyNy983b3r1dRmVfccVXNyfiD5l9JbIkng5z0ck=
+	t=1717401977; cv=none; b=Tr9c8yz0Dsg4Xodac2z+dvMYGb/Cifr3AbhRVtAkMR+Rrk85BWD3VK30qzPEIuHvSebprzpO8OPwyref+ydR/Z6H1q3076lQS/A7vpIAOk6leatauhRrepB14nCNUTw+KgM60DVkVkw67yWyPe5jun1ZV6UKkN/qigskYw5eqno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717401887; c=relaxed/simple;
-	bh=JhG7fTxqtLhhNG58bB7gakwsBxU8x6j5V9O91Y38mmY=;
+	s=arc-20240116; t=1717401977; c=relaxed/simple;
+	bh=MIF84jAmIzDg4Wz6TnMTbmZnsvgXm/Bb1xUd8UhNtFo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SPY+XinfljFJxtsQC9EpDUKFRVgsKzB5vHBiYzktzQGpif5Ocew+go3ep8hnEe1ioCvRvl/SZxuz70lzynRZSlguS2ezTcRss6ELp3cwgEPYrMNM28wLpn6RHX/+Jxf5iHlNhBG2EtrF9eWbxv/bUQBq9LIeuQE4F11b2hkX6TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Jrc3Naue; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717401881; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=o+t7UAkpsXwsI9xsAwJFZS/iROqWU8NNbxxJU91Kwsk=;
-	b=Jrc3Naue58w0R/XScmaiX+gVr0vPDDqX0eVN3PROprLZ6NF4NhyGtf0lsaRCkFZDET8FV79q8BVGvd6ugXEY36ZJl4MCI/qULLaThXmxalfKGo5Sg5g2wCzaYGMT6BJWiWa7/fYnJDrcl2klhgR9wEY3LHCTKimrQnWi64s5Z7Q=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7kFySD_1717401878;
-Received: from 30.97.56.74(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7kFySD_1717401878)
-          by smtp.aliyun-inc.com;
-          Mon, 03 Jun 2024 16:04:39 +0800
-Message-ID: <2ce6d815-541d-497c-8eba-3d5099e8dcd5@linux.alibaba.com>
-Date: Mon, 3 Jun 2024 16:04:38 +0800
+	 In-Reply-To:Content-Type; b=jty/hQEF9YAPYRz6uqbcsLGediqVLs80UDaeZ/8njRYmPY8KUIt87bmF3fL0oXvGlICAy+3dHKgMsnECp0J8LwRy4ts6fzjIAai/1lIlaLMzNH0hnjxKQ7aN8M/Ih9hon/vmwaHwOKTJARyb2WEfipFeFBn5fzKw5VPeE+MbSWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FX5i62F8; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: vbabka@suse.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717401972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RzieQJ4BnZ2O+k2Yxxz/okFmp27lskeHqZjRJMv514E=;
+	b=FX5i62F8fKahV2di7nQq0WGf6YGLs0O3dOslRmI/ZZJUdPAXnv0U2qwRCaNzwIoGNu+ZAd
+	UeXA0Zrs/2oNq8IYXl5OEO6CwiyTPMfzKHZNYM8Np5dg8QLl0TzjUhlVkW+aUfNkG682Kv
+	eACi2gCe6KmweGHY9JCpbno0ZJzscWI=
+X-Envelope-To: cl@gentwo.org
+X-Envelope-To: penberg@kernel.org
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: iamjoonsoo.kim@lge.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: 42.hyeyoo@gmail.com
+X-Envelope-To: feng.tang@intel.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: zhouchengming@bytedance.com
+Message-ID: <0df9277d-6f10-4af6-abd7-50a275489a72@linux.dev>
+Date: Mon, 3 Jun 2024 16:05:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] mm: memory: extend finish_fault() to support large
- folio
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
- david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
- ziy@nvidia.com, da.gomez@samsung.com, p.raghav@samsung.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Bang Li <libang.li@antgroup.com>
-References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
- <bf80d4a792ea82ab066f819ad7d10ed22a2f8e66.1717033868.git.baolin.wang@linux.alibaba.com>
- <CAK1f24nxQi4ER+fLioHmOpH3dgGbhdyDiSvfwidEz-oSuWyAYA@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAK1f24nxQi4ER+fLioHmOpH3dgGbhdyDiSvfwidEz-oSuWyAYA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 1/3] slab: check the return value of
+ check_bytes_and_report()
+Content-Language: en-US
+To: Vlastimil Babka <vbabka@suse.cz>,
+ "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, zhouchengming@bytedance.com
+References: <20240528-b4-slab-debug-v1-0-8694ef4802df@linux.dev>
+ <20240528-b4-slab-debug-v1-1-8694ef4802df@linux.dev>
+ <4e4d45b5-c684-2d93-49d2-b179a088c2d5@gentwo.org>
+ <dc7181fc-5b16-46f1-a267-0eb5781f692a@linux.dev>
+ <2ff52c5e-4b6b-4b3d-9047-f00967315d3e@suse.cz>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <2ff52c5e-4b6b-4b3d-9047-f00967315d3e@suse.cz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 2024/6/3 12:44, Lance Yang wrote:
-> On Thu, May 30, 2024 at 10:04 AM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
+On 2024/6/3 15:46, Vlastimil Babka wrote:
+> On 5/31/24 10:31 AM, Chengming Zhou wrote:
+>> On 2024/5/30 23:20, Christoph Lameter (Ampere) wrote:
+>>> On Tue, 28 May 2024, Chengming Zhou wrote:
+>>>
+>>>> diff --git a/mm/slub.c b/mm/slub.c
+>>>> index 0809760cf789..de57512734ac 100644
+>>>> --- a/mm/slub.c
+>>>> +++ b/mm/slub.c
+>>>> @@ -1324,9 +1324,10 @@ static int check_object(struct kmem_cache *s, struct slab *slab,
+>>>>         }
+>>>>     } else {
+>>>>         if ((s->flags & SLAB_POISON) && s->object_size < s->inuse) {
+>>>> -            check_bytes_and_report(s, slab, p, "Alignment padding",
+>>>> +            if (!check_bytes_and_report(s, slab, p, "Alignment padding",
+>>>>                 endobject, POISON_INUSE,
+>>>> -                s->inuse - s->object_size);
+>>>> +                s->inuse - s->object_size))
+>>>> +                return 0;
+>>>>         }
+>>>>     }
+>>>
+>>> This change means we will then skip the rest of the checks in check_object() such as the poison check.
 >>
->> Add large folio mapping establishment support for finish_fault() as a preparation,
->> to support multi-size THP allocation of anonymous shmem pages in the following
->> patches.
+>> Yeah, only when this padding checking failed.
 >>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/memory.c | 58 ++++++++++++++++++++++++++++++++++++++++++++---------
->>   1 file changed, 48 insertions(+), 10 deletions(-)
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index eef4e482c0c2..435187ff7ea4 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -4831,9 +4831,12 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>   {
->>          struct vm_area_struct *vma = vmf->vma;
->>          struct page *page;
->> +       struct folio *folio;
->>          vm_fault_t ret;
->>          bool is_cow = (vmf->flags & FAULT_FLAG_WRITE) &&
->>                        !(vma->vm_flags & VM_SHARED);
->> +       int type, nr_pages, i;
->> +       unsigned long addr = vmf->address;
->>
->>          /* Did we COW the page? */
->>          if (is_cow)
->> @@ -4864,24 +4867,59 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>                          return VM_FAULT_OOM;
->>          }
->>
->> +       folio = page_folio(page);
->> +       nr_pages = folio_nr_pages(folio);
->> +
->> +       /*
->> +        * Using per-page fault to maintain the uffd semantics, and same
->> +        * approach also applies to non-anonymous-shmem faults to avoid
->> +        * inflating the RSS of the process.
->> +        */
->> +       if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma))) {
->> +               nr_pages = 1;
->> +       } else if (nr_pages > 1) {
->> +               pgoff_t idx = folio_page_idx(folio, page);
->> +               /* The page offset of vmf->address within the VMA. */
->> +               pgoff_t vma_off = vmf->pgoff - vmf->vma->vm_pgoff;
->> +
->> +               /*
->> +                * Fallback to per-page fault in case the folio size in page
->> +                * cache beyond the VMA limits.
->> +                */
->> +               if (unlikely(vma_off < idx ||
->> +                            vma_off + (nr_pages - idx) > vma_pages(vma))) {
->> +                       nr_pages = 1;
->> +               } else {
->> +                       /* Now we can set mappings for the whole large folio. */
->> +                       addr = vmf->address - idx * PAGE_SIZE;
->> +                       page = &folio->page;
->> +               }
->> +       }
->> +
->>          vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
->> -                                     vmf->address, &vmf->ptl);
->> +                                      addr, &vmf->ptl);
->>          if (!vmf->pte)
->>                  return VM_FAULT_NOPAGE;
->>
->>          /* Re-check under ptl */
->> -       if (likely(!vmf_pte_changed(vmf))) {
->> -               struct folio *folio = page_folio(page);
->> -               int type = is_cow ? MM_ANONPAGES : mm_counter_file(folio);
->> -
->> -               set_pte_range(vmf, folio, page, 1, vmf->address);
->> -               add_mm_counter(vma->vm_mm, type, 1);
->> -               ret = 0;
->> -       } else {
->> -               update_mmu_tlb(vma, vmf->address, vmf->pte);
->> +       if (nr_pages == 1 && unlikely(vmf_pte_changed(vmf))) {
->> +               update_mmu_tlb(vma, addr, vmf->pte);
->>                  ret = VM_FAULT_NOPAGE;
->> +               goto unlock;
->> +       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
->> +               for (i = 0; i < nr_pages; i++)
->> +                       update_mmu_tlb(vma, addr + PAGE_SIZE * i, vmf->pte + i);
+>> Now, we always abort checking and return 0 when the first checking error happens,
+>> such as redzones checking above.
 > 
-> Just a friendly reminder: Bang has added the update_mmu_tlb_range()[1] batch
-> function to update TLB in batches, so we can use it instead of the
-> update_mmu_tlb()
-> loop.
-> 
-> [1] https://lore.kernel.org/linux-mm/20240522061204.117421-1-libang.li@antgroup.com/
+> Yes your patch will make it consistent. But IMHO it would be better to do
+> all the checks without skipping, report their specific error findings in
+> check_bytes_and_report() but not print_trailer(). Once all checks were done,
+> if any found an error, print the trailer once from check_object(). Thoughts?
 
-Good point, I will use the new helper instead.
+Ok, it's feasible, will change to this.
+
+> 
+>> Thanks.
+> 
 
