@@ -1,274 +1,198 @@
-Return-Path: <linux-kernel+bounces-199378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D478D8642
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:43:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019558D864D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2941A1C2182E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFB1328388F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421B0131182;
-	Mon,  3 Jun 2024 15:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DF5132124;
+	Mon,  3 Jun 2024 15:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QByKCFCG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g2pGxbPQ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D84F12E1FF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50151311A8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717429372; cv=none; b=UchFxt82UKSmgTWzdnRniQUhMH9M0TpX63KvIP+ZlmfXw0x+yWOyvX3JsyNRrauX4glqGsohr/8p3h0Xqi4fVEAka97eH2IIivVhXRFuYE13/B5zr5DXZTK7bhrEHn/ys/buyvU8Ys4d5utLGjPOYfYobAd87hbd/gYlDQVvykg=
+	t=1717429458; cv=none; b=Atm7FZJgfTWX3RhyV5KNL66tWltPQ4MZjaaMw4jBP1VQANp8Vy8IUxoEpI4NF70ub+FgyG5UGlTdWkTN+Z7etli8oyZvGs03F714rb72HiN+ZAwPsrCK2HysQn9g2aNltqCcbP0iBSFGKuNgCTF5IUuHDrnz4i/VxR8/awtgcfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717429372; c=relaxed/simple;
-	bh=bBOEzXVXHgOQePBrBeC0KZN6fQ20TA+slzGDDMQu7AM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S5zIs3bsjpUO4QqkcbONwSXEL0XqUiIphQkfqJwgR/AAOiNKyWww7lH5PfEktRYLJ4o1HgkBUX4qWH2PzGO/icZdh5DOTvNqmxTIA2LZR/x7f2TJ8BtODG8aBOXXAxiuloJ82y0T7t4SbquQVCo+h9Myffy00kNEp2lNEDiapIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QByKCFCG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717429369;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JlFg7uy6aRqdZ9PHzh1ezbeR2Vu35L0P/Y5WFAQh38w=;
-	b=QByKCFCGkdcmpkdqdIVj9BJWrOr8W+xqovOYzS6ZnHrL+7+cNjXJVXaSv3GSybm5yBiy1q
-	IhKSOm1QWu1q8QyV8PM0URuekJtN8QBR1Uky/HsN6sQXBKSuhAvbLzwycbEyR0998hE41A
-	xZCbg4Z29fFmWfPjEjq80uwSuFvYhWs=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-g5nmRJHlPIuXA95D8RIbZQ-1; Mon, 03 Jun 2024 11:42:48 -0400
-X-MC-Unique: g5nmRJHlPIuXA95D8RIbZQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35dcb90989eso2891796f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 08:42:48 -0700 (PDT)
+	s=arc-20240116; t=1717429458; c=relaxed/simple;
+	bh=ViCOgp0Yz/a1mBDif8ovCtOgE1SFPQZh2StHW9aA04A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I19txnyQ3WHd/BHmf4knhmoZ5uDbzD6KGnjN6VUdpI7akIjD2KXUO8Px3IOWSD+/IMWBAhEzWAq0OE0R4uKq0MWNtnmB5+83q6t1lwh5R1wydPEJR891Pof6NFEQl1Lc3jb3KMmjszvFGd+aPxbl/Kpnro0SmJ5psRDD74EVEns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g2pGxbPQ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a68e7538cfaso215904266b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 08:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717429455; x=1718034255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rqJ9wkj5wZpDYGPbIA+rqZwe8IgS9OX1IL+4hKpxPn4=;
+        b=g2pGxbPQ9ZGPb9G9nYOHHhrxTVOtUJfV9458zm88if8hA13aqyLDEJipAGSqvX8TB+
+         FTasRCdH7JHpoINO3WVCONpJheLxEsaNr8Ef1yGDiBNaN2RxJ2Nzl7ihOG9ZAEaFdOK8
+         GfllnyypXe50GRE0mPPo+THrRNvBwWfaWOb29haboSGS4whavBCCiCEYHNIDHW2u3Bj9
+         mcWO3d1uQJfuFBZAa89/mW4CLtQsdh8Cx0waCMTKIdowIlPddY3GDPmhoWU9o7SJrLe7
+         i+0l2jfSFXe46fNY2b0ovBZWKMpvDDMucWgOaO7ZZamsjmtZbL3/zRbXMaKnUCQTMx1t
+         8lGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717429367; x=1718034167;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JlFg7uy6aRqdZ9PHzh1ezbeR2Vu35L0P/Y5WFAQh38w=;
-        b=H9+ZkqnIXrbO8jWmT42LKDtkFOQx6EAlNT1OxNxrHPcTjaU6rLONKKhgCMXAHJS3OX
-         FfWFv5FVOnkNt9DXU9DDsXmkZ0m0puuvhfFpAqtZPOrxWPQ/RbOwfyb3aSN6c5lRhn2+
-         jNnGU+p/uLwm9iBNRkeB9ZdI0Q93G81es4Bat8BPEuwRHd5arpIe/rqaA/vZSaB8OYXr
-         VObMjDtlH+GbqYXrf+fD3zZIFXTbYMuEXD+gjiNZegEJWvQCwk+tWKoytAmnsfT9/+nZ
-         vYZfTxA0ViTaY3oq1KBHQDZwQFPnb0hqG2mnd3sVoFnqiMP1vg+qTnUz9OiYHbZ/LjS2
-         F/Og==
-X-Forwarded-Encrypted: i=1; AJvYcCWzlfslCca95sLUUWxmkGcHF8QhFwbHQx3G2OTHkNkgmDpuUv65GIMbwb6o8ottX5hTvsnRDlEjmUgwQhkwTf+PtypecPCjiK528D3K
-X-Gm-Message-State: AOJu0YxEnD3E5ld1oTr8S6jh+UxvoxeNJPKqfmH0mG7APJg8sKxAi74d
-	iebXVQSe3ycqW0cdJSgEX0SkzQhM6i3p54RBrdu7SlYgE3I+r4Q6eiBoaGuSrU9Z3hG0+1DzOja
-	Z0R2Gy2xOQLkSPm8u3t8zVqi34xj2HAfs7D4/sivhkXygfjBJcObdHNj7R5B+iQ==
-X-Received: by 2002:adf:e9d1:0:b0:355:3dc:1f26 with SMTP id ffacd0b85a97d-35e0f289290mr7250177f8f.37.1717429366981;
-        Mon, 03 Jun 2024 08:42:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/6lsDBuTW+rzYFuK9rkdDT0Y/FN0eTrgZha0XrJfSWQK1wUmWWcbepXjnRcWrNhV4g/WXtw==
-X-Received: by 2002:adf:e9d1:0:b0:355:3dc:1f26 with SMTP id ffacd0b85a97d-35e0f289290mr7250160f8f.37.1717429366485;
-        Mon, 03 Jun 2024 08:42:46 -0700 (PDT)
-Received: from ?IPV6:2a01:599:908:c963:af9b:c64c:dfd8:5999? ([2a01:599:908:c963:af9b:c64c:dfd8:5999])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062fe2csm9018817f8f.69.2024.06.03.08.42.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 08:42:45 -0700 (PDT)
-Message-ID: <8da12503-839d-459f-a2fa-4abd6d21935d@redhat.com>
-Date: Mon, 3 Jun 2024 17:42:44 +0200
+        d=1e100.net; s=20230601; t=1717429455; x=1718034255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rqJ9wkj5wZpDYGPbIA+rqZwe8IgS9OX1IL+4hKpxPn4=;
+        b=lvnApIs3jJ35kkGe4efPYIbaDCM9jCuaL4+kDFRI1NFnsYsRVe+jk/5tcpgbNGu4ZP
+         Lo/d7ksYj32mB5cEezdfocz7fHez9RruvUYtNAdWsF7DeSsTJU0u7Mn1MZ126tuB3XRw
+         It7QIvJ5Paz5LYCeoyZq5iOGGuIB3ct02wzZxIEk+9siBpLmFVslgvKSxR4uxiC6S3FU
+         f/cIAcpORHRVKjz1rlJAJB/xDlfucM3AJNyZ+ozFZ4S8xAxfW9mFhkBukl0yofSrJrZd
+         e+d4ZXsLcSpj2ZAL2obYjdlCM1DaGs4er180ff/HBu1AU++VgCm1qRBDdah9m+RLsPK/
+         TX/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW7JZDbVE9FNTrqMwiYmW96T2AoP9BkeFBAVbnZZGxmdhsDuW6+GATqmysnqS1yw5jiJCBwY2gHwQGg9RncfDPubChz/xwen8mo+TAU
+X-Gm-Message-State: AOJu0YyX9tnlSXR/ek5TEjgT/YAphlqzVDYm/yxf8D+yJEK6wG+5zlwu
+	/74nS9aMV+QcwBenv0ktjEAx+a/31cXSZBWoHfaLBSgMwsZsodfDcEnHCxzlpnJuaXxjm4T8spp
+	H+/1hG2DpkcB9/1+/vsFYimh087M8NqfiNc2o
+X-Google-Smtp-Source: AGHT+IEgXEMq7A34vV1MITk1aHrXEuVw+nVV7KMqkaSqRj4HNWxMWt5F6AEA8YGPMHEYOyWRevT8/8awpnNeVecVNuY=
+X-Received: by 2002:a17:907:3f28:b0:a68:5ac4:3aaf with SMTP id
+ a640c23a62f3a-a685ac43be7mr699125166b.41.1717429454535; Mon, 03 Jun 2024
+ 08:44:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] efa7df3e3b:
- kernel_BUG_at_include/linux/page_ref.h
-To: Peter Xu <peterx@redhat.com>
-Cc: Yang Shi <shy828301@gmail.com>, kernel test robot
- <oliver.sang@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Vivek Kasireddy <vivek.kasireddy@intel.com>, Rik van Riel
- <riel@surriel.com>, oe-lkp@lists.linux.dev, lkp@intel.com,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Christopher Lameter <cl@linux.com>,
- linux-mm@kvack.org
-References: <202405311534.86cd4043-lkp@intel.com>
- <CAHbLzkpMhEuGkQDGWrK1LhvZ-ZxTJkV1xjmn-nRGZMH4U+F5ZA@mail.gmail.com>
- <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com> <ZlpcRnuZUEYJJ0JA@x1n>
- <CAHbLzkrRw-xf819gYJwRQ=-u971LQYnB2FNJMkN=s6u-pJ4Z8g@mail.gmail.com>
- <CAHbLzkoB+oFTxtVYpeXQvko2q9HUVzUYrr83S6M6PUmXDQpkag@mail.gmail.com>
- <0edfcfed-e8c4-4c46-bbce-528c07084792@redhat.com> <Zl3cakfiRsPQDb8q@x1n>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zl3cakfiRsPQDb8q@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240530201616.1316526-1-almasrymina@google.com>
+ <20240530201616.1316526-3-almasrymina@google.com> <ZlqzER_ufrhlB28v@infradead.org>
+ <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com> <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
+In-Reply-To: <5aee4bba-ca65-443c-bd78-e5599b814a13@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 3 Jun 2024 08:43:58 -0700
+Message-ID: <CAHS8izNmT_NzgCu1pY1RKgJh+kP2rCL_90Gqau2Pkd3-48Q1_w@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
+ custom page providers
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
+	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03.06.24 17:08, Peter Xu wrote:
-> On Sat, Jun 01, 2024 at 08:22:21AM +0200, David Hildenbrand wrote:
->> On 01.06.24 02:59, Yang Shi wrote:
->>> On Fri, May 31, 2024 at 5:01 PM Yang Shi <shy828301@gmail.com> wrote:
->>>>
->>>> On Fri, May 31, 2024 at 4:25 PM Peter Xu <peterx@redhat.com> wrote:
->>>>>
->>>>> On Fri, May 31, 2024 at 07:46:41PM +0200, David Hildenbrand wrote:
->>>>>> try_grab_folio()->try_get_folio()->folio_ref_try_add_rcu()
->>>>>>
->>>>>> Is called (mm-unstable) from:
->>>>>>
->>>>>> (1) gup_fast function, here IRQs are disable
->>>>>> (2) gup_hugepte(), possibly problematic
->>>>>> (3) memfd_pin_folios(), possibly problematic
->>>>>> (4) __get_user_pages(), likely problematic
->>>>>>
->>>>>> (1) should be fine.
->>>>>>
->>>>>> (2) is possibly problematic on the !fast path. If so, due to commit
->>>>>>       a12083d721d7 ("mm/gup: handle hugepd for follow_page()") ? CCing Peter.
->>>>>>
->>>>>> (3) is possibly wrong. CCing Vivek.
->>>>>>
->>>>>> (4) is what we hit here
->>>>>
->>>>> I guess it was overlooked because try_grab_folio() didn't have any comment
->>>>> or implication on RCU or IRQ internal helpers being used, hence a bit
->>>>> confusing.  E.g. it has different context requirement on try_grab_page(),
->>>>> even though they look like sister functions.  It might be helpful to have a
->>>>> better name, something like try_grab_folio_rcu() in this case.
->>>>>
->>>>> Btw, none of above cases (2-4) have real bug, but we're looking at some way
->>>>> to avoid triggering the sanity check, am I right?  I hope besides the host
->>>>> splash I didn't overlook any other side effect this issue would cause, and
->>>>> the splash IIUC should so far be benign, as either gup slow (2,4) or the
->>>>> newly added memfd_pin_folios() (3) look like to have the refcount stablized
->>>>> anyway.
->>>>>
->>>>> Yang's patch in the other email looks sane to me, just that then we'll add
->>>>> quite some code just to avoid this sanity check in paths 2-4 which seems
->>>>> like an slight overkill.
->>>>>
->>>>> One thing I'm thinking is whether folio_ref_try_add_rcu() can get rid of
->>>>> its RCU limitation. It boils down to whether we can use atomic_add_unless()
->>>>> on TINY_RCU / UP setup too?  I mean, we do plenty of similar things
->>>>> (get_page_unless_zero, etc.) in generic code and I don't understand why
->>>>> here we need to treat folio_ref_try_add_rcu() specially.
->>>>>
->>>>> IOW, the assertions here we added:
->>>>>
->>>>>           VM_BUG_ON(!in_atomic() && !irqs_disabled());
->>>>>
->>>>> Is because we need atomicity of below sequences:
->>>>>
->>>>>           VM_BUG_ON_FOLIO(folio_ref_count(folio) == 0, folio);
->>>>>           folio_ref_add(folio, count);
->>>>>
->>>>> But atomic ops avoids it.
->>>>
->>>> Yeah, I didn't think of why atomic can't do it either. But is it
->>>> written in this way because we want to catch the refcount == 0 case
->>>> since it means a severe bug? Did we miss something?
->>>
->>> Thought more about it and disassembled the code. IIUC, this is an
->>> optimization for non-SMP kernel. When in rcu critical section or irq
->>> is disabled, we just need an atomic add instruction.
->>> folio_ref_add_unless() would yield more instructions, including branch
->>> instruction. But I'm wondering how useful it would be nowadays. Is it
->>> really worth the complexity? AFAIK, for example, ARM64 has not
->>> supported non-SMP kernel for years.
->>>
->>> My patch actually replaced all folio_ref_add_unless() to
->>> folio_ref_add() for slow paths, so it is supposed to run faster, but
->>> we are already in slow path, it may be not measurable at all. So
->>> having more simple and readable code may outweigh the potential slight
->>> performance gain in this case?
->>
->> Yes, we don't want to use atomic RMW that return values where we can use
->> atomic RMW that don't return values. The former is slower and implies a
->> memory barrier, that can be optimized out on some arcitectures (arm64 IIRC)
->>
->> We should clean that up here, and make it clearer that the old function is
->> only for grabbing a folio if it can be freed concurrently -- GUP-fast.
-> 
-> Note again that this only affects TINY_RCU, which mostly implies
-> !PREEMPTION and UP.  It's a matter of whether we prefer adding these bunch
-> of code to optimize that.
-> 
-> Also we didn't yet measure that in a real workload and see how that
-> "unless" plays when buried in other paths, but then we'll need a special
-> kernel build first, and again I'm not sure whether it'll be worthwhile.
+On Mon, Jun 3, 2024 at 7:52=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.c=
+om> wrote:
+>
+> On 6/3/24 15:17, Mina Almasry wrote:
+> > On Fri, May 31, 2024 at 10:35=E2=80=AFPM Christoph Hellwig <hch@infrade=
+ad.org> wrote:
+> >>
+> >> On Thu, May 30, 2024 at 08:16:01PM +0000, Mina Almasry wrote:
+> >>> I'm unsure if the discussion has been resolved yet. Sending the serie=
+s
+> >>> anyway to get reviews/feedback on the (unrelated) rest of the series.
+> >>
+> >> As far as I'm concerned it is not.  I've not seen any convincing
+> >> argument for more than page/folio allocator including larger order /
+> >> huge page and dmabuf.
+> >>
+> >
+> > Thanks Christoph, this particular patch series adds dmabuf, so I
+> > assume no objection there. I assume the objection is that you want the
+> > generic, extensible hooks removed.
+> >
+> > To be honest, I don't think the hooks are an integral part of the
+> > design, and at this point I think we've argued for them enough. I
+> > think we can easily achieve the same thing with just raw if statements
+> > in a couple of places. We can always add the hooks if and only if we
+> > actually justify many memory providers.
+> >
+> > Any objections to me removing the hooks and directing to memory
+> > allocations via simple if statements? Something like (very rough
+> > draft, doesn't compile):
+>
+> The question for Christoph is what exactly is the objection here? Why we
+> would not be using well defined ops when we know there will be more
+> users? Repeating what I said in the last thread, for io_uring it's used
+> to implement the flow of buffers from userspace to the kernel, the ABI,
+> which is orthogonal to the issue of what memory type it is and how it
+> came there. And even if you mandate unnecessary dmabuf condoms for user
+> memory in one form or another IMHO for no clear reason, the callbacks
+> (or yet another if-else) would still be needed.
+>
+> Sure, Mina can drop and hard code devmem path to easy the pain for
+> him and delay the discussion, but then shortly after I will be
+> re-sending same shit.
 
-try_get_folio() is all about grabbing a folio that might get freed 
-concurrently. That's why it calls folio_ref_try_add_rcu() and does 
-complicated stuff.
+You don't need to re-send the same ops again, right? You can add io
+uring support without ops. Something like:
 
-On !CONFIG_TINY_RCU, it performs a folio_ref_add_unless(). That's 
-essentially a atomic_add_unless(), which in the worst case ends up being 
-a cmpxchg loop.
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 92be1aaf18ccc..2cc986455bce6 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -557,8 +557,8 @@ netmem_ref page_pool_alloc_netmem(struct page_pool
+*pool, gfp_t gfp)
+                return netmem;
 
+        /* Slow-path: cache empty, do real allocation */
+-       if (static_branch_unlikely(&page_pool_mem_providers) && pool->mp_op=
+s)
+-               netmem =3D pool->mp_ops->alloc_pages(pool, gfp);
++       if (unlikely(page_pool_is_dmabuf(pool)))
++               netmem =3D mp_dmabuf_devmem_alloc_pages():
++       else if (unlikely(page_pool_is_iouring(pool)))
++               netmem =3D mp_io_uring_alloc_pages():
+       else
+                netmem =3D __page_pool_alloc_pages_slow(pool, gfp);
+        return netmem;
 
-Stating that we should be using try_get_folio() in paths where we are 
-sure the folio refcount is not 0 is the same as using folio_try_get() 
-where folio_get() would be sufficient.
+So IMO, the ops themselves, which Christoph is repeatedly nacking, are
+not that important.
 
-The VM_BUG_ON in folio_ref_try_add_rcu() really tells us here that we 
-are using a function in the wrong context, although in our case, it is 
-safe to use (there is now BUG). Which is true, because we know we have a 
-folio reference and can simply use a simple folio_ref_add().
+I humbly think the energy should be spent convincing maintainers of
+the use case of io uring memory, not the ops. The ops are a cosmetic
+change to the code, and can be added later. Christoph is nacking the
+ops because it gives people too much rope [1].
 
-Again, just like we have folio_get() and folio_try_get(), we should 
-distinguish in GUP whether we are adding more reference to a folio (and 
-effectively do what folio_get() would), or whether we are actually 
-grabbing a folio that could be freed concurrently (what folio_try_get() 
-would do).
+But if you disagree and think the ops themselves are important for a
+reason I missed, I'm happy waiting until agreement is reached here.
+Sorry, just voicing my 2 cents.
 
--- 
-Cheers,
+[1] https://lore.kernel.org/netdev/ZjjHUh1eINPg1wkn@infradead.org/
 
-David / dhildenb
-
+--=20
+Thanks,
+Mina
 
