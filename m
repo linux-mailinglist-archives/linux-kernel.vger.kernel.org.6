@@ -1,130 +1,173 @@
-Return-Path: <linux-kernel+bounces-199158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409D28D8338
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:01:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFB88D8344
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0457283BDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23E91C2442D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A574A12EBF2;
-	Mon,  3 Jun 2024 13:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AB212DDAD;
+	Mon,  3 Jun 2024 13:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJD2rqM3"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYI6bKqL"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9548F12BF32;
-	Mon,  3 Jun 2024 13:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68DC12D766;
+	Mon,  3 Jun 2024 13:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717419616; cv=none; b=EJgJ6fHenmvE1bR6iILfTFyvAqxAJs/weGVF3RjqoqoJMtOlOFNljj0Ins6DSPya+4xSM6Y0ZCA+yMHsgtTR4kPxcBUswphXqXQEmtEeX0mjpDDlUFMaGaqk1jrYHBCLu3oodYOmXMyVNIsAUZgVAMjx+sIlzvfuE0tIwsuWgkM=
+	t=1717419627; cv=none; b=ic1U5ZJl2XQO6JkxIUkpJ+MK6TIe9WhSgo3WceMoneDnYeV+pOx64A/X6uJPdoaAI1Uc2ulIDQHxZ5y3+X71Y2XNvnLF/pIGmwHIEX9Tg+SNjrqhuesrBj3ztFIUMbxOxG6AgcDfpt8tCJHpFkPQpiDbDFZAslN1E7yxuqVTOw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717419616; c=relaxed/simple;
-	bh=k2wgTL18kuSKqyNl5dkcq1HYWU5kQFEoQcxxyP7yN6I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Mp6DusrHpeGzWtVGF9vp+t/WYCxBlTbCEma6j8+hwxjqUNVhJSYuY2NDxR4hneKT6EswXTbLs4QEhs9eXitjYwyHwbZDr7iZ7XdHaDZ6hdhNQiDBzPe4fzodzGV+cEF43+JFukG3wskbq1Qozo1G9F/S8X0h/Ckzbb0XZaOAzk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJD2rqM3; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1717419627; c=relaxed/simple;
+	bh=EFDXzbET0oDEK5hJ72ljh6kZ1Ef9iy+G5uzyhrhtjCE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gDNvXCws1vqOMZDyxLHoRvNuJwvD4FPnalRFXt7yyEs220IW+cIIyF0CtMB8kOkYM+qI2djPrv9e8G5kpk9xbvbv94SB6Ou2/5kiqvp2eIzURYf9SW3Iv72hY+7q1zoaoz+GQFZgJgIQE7x4SQSeQkl6mwRCgO5ZnGiocssOwDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FYI6bKqL; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f6342c5fa8so22089135ad.1;
-        Mon, 03 Jun 2024 06:00:14 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a68e7538cfaso188090766b.0;
+        Mon, 03 Jun 2024 06:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717419614; x=1718024414; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=H53in9T6bqMlipskp/q0AgS6bzBlQnqYSzHHwGRdlB8=;
-        b=KJD2rqM3G2SLpoM6VGFf/+EuKNU5+2plmx9QzHLyj4thpKntdh9hMD68Hbu142O5Pn
-         H5jzU/E40f9SDA0MgL469xL3YRRQ87AmN7W9+zVENAS/tS3Fb2BZigr/zuuVKl7mak0F
-         xLaV3BcDXkyIxAxXfm5zfOE0TTRScCLPGxGVtuAzrwEf6XlHwTXu1x493slKW+wgvwtv
-         z47nOFS0huwNF4cR5gklnd5ye6DT6iN++zxpXwv31B1k+I/EGY5ISlIlu7P+rntyRytE
-         1c3QWKzAfr93pY6EMKB6c9Cj2pGFcImwalneUsDYFqr8+lEgDTaZpZGqYzCv0vbdnsPQ
-         l4Ug==
+        d=gmail.com; s=20230601; t=1717419623; x=1718024423; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IIyV9sL6Yz42R1gBXDzy0b0ZnJFQDq+9KiMNnkN2uWM=;
+        b=FYI6bKqLm0UW6/ooemUwVyDWttMNoKQYdMYq3SL+xXy6cURlsZF2fw2jUA1YVeEKgn
+         hAnlYes2iMznRSB5d5l4JVTBeAp1f8vGtVPEUopN8oQt8I7pH3fzLZ5FX3lvXKWvYgaF
+         lfhEAttEfog0dBwoclHMJ2mDNLYB1QlZTWO8rDGMbgfbfILoVFk6jHshwCRh0e2E1Cp6
+         rXpnkISq5VUn/eKRQTRkSSBbeM3DDVkd2ofooX56N54JBT0eTtxeptiWRdq4SGH0tTdx
+         3MdcWmj3SYyV6CPY2QiD454O1UjjUdi88kAyBE7nAvXWcuwfjKfM+WTDo1KB4BiIWFwN
+         nv5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717419614; x=1718024414;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H53in9T6bqMlipskp/q0AgS6bzBlQnqYSzHHwGRdlB8=;
-        b=A8nJ4fJnXcmK3pz7oDE9hehLk79EEhm09Q6JrZNQTLJlTbIA8fcQKV5j5+yDSlRGd6
-         6XAITSyUHgwYWk8wawhqf2zSBoPTPiJL5YYEoUphoPXIq4FMsjDcETcEnKVpjMx3EkjS
-         OM5xMGLclKfNgnkAs9PteXT6GYxz+AzAdokMGa68rgvktachYEOMTCZy1ZyDjKAz/uzx
-         2BrBTSRhuNqeUmgmJUt0a17On7u6lUQiS9u4o3qgCP3CpRp8Q7N6mjEiYESSaA0V6R+5
-         FBUtaSr+GapJtNV/oOZwJdE7CiLSSF94cRu1VyVF8OWB2/asNz5gXr9hd7VJi8++d/nD
-         dbDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeeBD2dbld8W5fm8/jxgFkAKjXvsIpZpx3Ykk6Lgh0Ctg2pHZrVCJeRosEhWsuc5IsbYBcF785agqm4jvp7a+J7gY/97LQ3HmI+LBDYFXB+r/wA8HomVwMK1ppRy633tukbDVD/1ajbvjFF4PkKGr19m0aZkhfMMaWAMjDAUOtnt3Axw==
-X-Gm-Message-State: AOJu0YzYUs5ApTRX5dgpWMTcLVRlYMLvAtaJE2LNsd5yKjiwM90BHBBR
-	TbQhi9dsjDfH0MJvlgWO2NUOCWIo/SF2KrR0T21EdKJ/JiQXPYy+
-X-Google-Smtp-Source: AGHT+IEuN+ni+k7sWZttBLUG3sRQkp0r0Le5gqTRQZF9jyJjmU1FWhgBWZslNT6ZKtaEwegZmN6ACA==
-X-Received: by 2002:a17:902:c781:b0:1f4:6ad9:39e1 with SMTP id d9443c01a7336-1f6370b1218mr68319365ad.54.1717419613692;
-        Mon, 03 Jun 2024 06:00:13 -0700 (PDT)
-Received: from localhost ([36.45.244.211])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f665929689sm31205285ad.151.2024.06.03.06.00.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2024 06:00:13 -0700 (PDT)
-From: joswang <joswang1221@gmail.com>
-To: Thinh.Nguyen@synopsys.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	balbi@kernel.org,
-	devicetree@vger.kernel.org,
-	joswang <joswang@lenovo.com>
-Subject: [PATCH v2, 1/3] dt-bindings: usb: dwc3: Add snps,p2p3tranok quirk
-Date: Mon,  3 Jun 2024 21:00:04 +0800
-Message-Id: <20240603130004.25662-1-joswang1221@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240601092646.52139-1-joswang1221@gmail.com>
-References: <20240601092646.52139-1-joswang1221@gmail.com>
+        d=1e100.net; s=20230601; t=1717419623; x=1718024423;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IIyV9sL6Yz42R1gBXDzy0b0ZnJFQDq+9KiMNnkN2uWM=;
+        b=K299TehGzdwHjcevsIpZ/cW4lWvfC+a4NBqNahcHiC5f4oI03kSiniCU2i5Jr4ok7g
+         u6t5oYmpPifnPim3otkkgJb9H9Kxqx7Qe3SMpvOSL3h0GKNJDCd6V3zKDsssDnsCOfD3
+         9ph64C0/+VyaXo7/CwaoOxLCLAc20UdC7DI3ftB0NOyq48GaYjR3Hcj1PkiS+bjnOIHv
+         h48DoQMAYlJU6PAtI9XySZxK7YrvSEiORuVc3xuTJe1T7VXbS/PgCyNX7sGo19oSN8OY
+         HKUteVrFSDlb7sscOYOaQPTWrWFqgbayrzfSnfbTsT2/5mBvOhk76O1al1h6YAKozsAV
+         nxZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/veD7xx7NWT/ZSpDaTpjt3NSn3KDYWuAGhPdN1aOgBf4NFj2sRzlSfIwkylvsdUM3kzMyQ3c4e6VOhXuS9OR0l4HD1ZRYRngzFlSWFLNqBB6ojizWeskmJk6/bJ1HbLntLswZQHC/suGJ9WrN5dJdH+9+kMII3iib/PJ4804EltUwQA==
+X-Gm-Message-State: AOJu0YwPBMuC4Vz2b87LohazEapPp/6fg1RUfj8Mi/f8yamiERkZ14VF
+	E5PQGUYCOrTBotz5L1tL+JbSV/VL9DLQKIn/u5Ef6Opg+m3AGuovCJ+6FZMR
+X-Google-Smtp-Source: AGHT+IHtTwO4VHK0/SVGfw5rnIXHFULu/ZOyEUPSIxEJGgKYp0vTo3BIfG/sBD3Ixz2pAfasVabhnw==
+X-Received: by 2002:a17:906:37d2:b0:a68:c14d:2686 with SMTP id a640c23a62f3a-a68c14d26ccmr375812666b.25.1717419622938;
+        Mon, 03 Jun 2024 06:00:22 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67eab85e8dsm479749266b.164.2024.06.03.06.00.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 06:00:22 -0700 (PDT)
+Message-ID: <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
+Subject: Re: [PATCH v4 3/6] iio: adc: ad7173: refactor ain and vref selection
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Dumitru Ceclan via B4 Relay
+	 <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>,  David Lechner <dlechner@baylibre.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
+Date: Mon, 03 Jun 2024 15:00:21 +0200
+In-Reply-To: <20240601194925.23123071@jic23-huawei>
+References: <20240531-ad4111-v4-0-64607301c057@analog.com>
+	 <20240531-ad4111-v4-3-64607301c057@analog.com>
+	 <20240601194925.23123071@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-From: joswang <joswang@lenovo.com>
+On Sat, 2024-06-01 at 19:49 +0100, Jonathan Cameron wrote:
+> On Fri, 31 May 2024 22:42:29 +0300
+> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org=
+> wrote:
+>=20
+> > From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> >=20
+> > Move validation of analog inputs and reference voltage selection to
+> > separate functions to reduce the size of the channel config parsing
+> > function and improve readability.
+> > Add defines for the number of analog inputs in a channel.
+> >=20
+> > Reviewed-by: David Lechner <dlechner@baylibre.com>
+> > Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> > ---
+> > =C2=A0drivers/iio/adc/ad7173.c | 71 ++++++++++++++++++++++++++++++++++-=
+-------------
+> > =C2=A01 file changed, 50 insertions(+), 21 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> > index 6e249628bc64..a20831d99aa5 100644
+> > --- a/drivers/iio/adc/ad7173.c
+> > +++ b/drivers/iio/adc/ad7173.c
+> > @@ -60,6 +60,7 @@
+> > =C2=A0#define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
+> > =C2=A0#define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
+> > =C2=A0
+> > +#define AD7173_NO_AINS_PER_CHANNEL	2
+> > =C2=A0#define AD7173_CH_ADDRESS(pos, neg) \
+> > =C2=A0	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
+> > =C2=A0	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
+> > @@ -623,6 +624,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
+> > =C2=A0static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_st=
+ate *st,
+> > =C2=A0						 u8 reference_select)
+> > =C2=A0{
+> > +	struct device *dev =3D &st->sd.spi->dev;
+> > =C2=A0	int vref;
+> > =C2=A0
+> > =C2=A0	switch (reference_select) {
+> > @@ -646,9 +648,11 @@ static unsigned int ad7173_get_ref_voltage_milli(s=
+truct
+> > ad7173_state *st,
+> > =C2=A0		return -EINVAL;
+> > =C2=A0	}
+> > =C2=A0
+> > -	if (vref < 0)
+> > +	if (vref < 0) {
+> > +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
+> > +			reference_select, vref);
+> > =C2=A0		return vref;
+> > -
+> > +	}
+> > =C2=A0	return vref / (MICRO / MILLI);
+> > =C2=A0}
+> > =C2=A0
+> > @@ -905,13 +909,50 @@ static int ad7173_register_clk_provider(struct ii=
+o_dev
+> > *indio_dev)
+> > =C2=A0					=C2=A0=C2=A0 &st->int_clk_hw);
+> > =C2=A0}
+> > =C2=A0
+> > +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
+> > +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const unsigned int
+> > ain[AD7173_NO_AINS_PER_CHANNEL])
+> I was late to the game in replying to previous thread.
+>=20
+> This is neater without the loop and with 2 parameters.=C2=A0 Anyhow see r=
+eply to v3.
+>=20
 
-There is an issue with the DWC31 2.00a and earlier versions
-where the controller link power state transition from
-P3/P3CPM/P4 to P2 may take longer than expected, ultimately
-resulting in the hibernation D3 entering time exceeding the
-expected 10ms.
+Yeps, even more given that we're passing/copying the complete array which a=
+lways
+fells awkward to me :)
 
-Add a new 'snps,p2p3tranok-quirk' DT quirk to dwc3 core
-for enable the controller transitions directly from phy
-power state P2 to P3 or from state P3 to P2.
+- Nuno S=C3=A1
 
-Note that this can only be set if the USB3 PHY supports
-direct p3 to p2 or p2 to p3 conversion.
-
-Signed-off-by: joswang <joswang@lenovo.com>
----
- Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-index 1cd0ca90127d..721927495887 100644
---- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
-@@ -242,6 +242,13 @@ properties:
-       When set, all HighSpeed bus instances in park mode are disabled.
-     type: boolean
- 
-+  snps,p2p3tranok-quirk:
-+    description:
-+      When set, the controller transitions directly from phy power state
-+      P2 to P3 or from state P3 to P2. Note that this can only be set
-+      if the USB3 PHY supports direct p3 to p2 or p2 to p3 conversion.
-+    type: boolean
-+
-   snps,dis_metastability_quirk:
-     description:
-       When set, disable metastability workaround. CAUTION! Use only if you are
--- 
-2.17.1
 
 
