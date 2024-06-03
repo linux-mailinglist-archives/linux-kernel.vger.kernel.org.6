@@ -1,69 +1,122 @@
-Return-Path: <linux-kernel+bounces-199528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC268D8826
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCA88D8822
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADC221F2139E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:43:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43FB1F21B05
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8883F137921;
-	Mon,  3 Jun 2024 17:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F743137925;
+	Mon,  3 Jun 2024 17:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dn9hWA6d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lcATzdGS"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BA2137902;
-	Mon,  3 Jun 2024 17:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085B3135A6F;
+	Mon,  3 Jun 2024 17:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717436611; cv=none; b=HkrdqHG56+80PIqJDO4JMnyOTRS6oFurV0cD0j34bFBD/JCeU3UKup4TwTzs33pOh29qKkceAIYMe0eP1E0ZfOkWODZmxiF5rMiHBca8gQqWj+QbQ14hRJeCAI6Y0MouRZ5Ajbh90i1GBuMHMzZs3W3/6AOjUGhsq9sVoxtgGt8=
+	t=1717436563; cv=none; b=apXD1M23RVEWF94N77fxsnk9fMbMi+Do1G+pAYnB5qxMysTs1CODJ1KSd17rgy/n3k/D99+5AXue1zY+RpBqdFlR9EKT7+R8QV/JEfuc6Fj7/LR5N6vOn5wr6XpyXJBX5oMFnw9lyN2PJ6ynfIwNyN0h6xbQ+4+Gusv/rFV4ICU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717436611; c=relaxed/simple;
-	bh=j2giooDoELICQ3uc1GkFOkfhcLltnqQzqVBJAIjeHJE=;
+	s=arc-20240116; t=1717436563; c=relaxed/simple;
+	bh=epvhLo1mWE99TSJ4TRY/EC7cNxGbjrIEgwOICO3Bt3o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdOooymZc6TTtU0AU+vKKVRnGfai5E6EF6cS2taPfmov5Z/oFCotkDEHr8CgMw9gQXJL4zkjQt+vYwbfkv6PLblWpmwVfn2m44tYnH8Yd9pw27Ybg1lhqHm9XoNT6LgmXZYOl2sZo2YeaygisfM0M3fZfwa/thFkWL20d2zbDFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dn9hWA6d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B072AC2BD10;
-	Mon,  3 Jun 2024 17:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717436610;
-	bh=j2giooDoELICQ3uc1GkFOkfhcLltnqQzqVBJAIjeHJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dn9hWA6dMSiBGPUDMEWP9UIEij5v/bfQHq6dKecKjdLT4o4xF9krfA07ri6VVunxE
-	 4bkjIi0t07Rdx0fuUbeoNfVqxtHB4jCTCodT21dDg9EwLF+sHwtOvTxZaBDdYHu7A+
-	 MPZ6I1itabOTmR5aSmjeztm99+G3aBKTXTa/6KY4kZh+KqC65MRO+arsYQtsH8Q7w6
-	 aL9f1v1HYECrErCeXbf99FAoSpo/PGu3LFHJ64hsUnzXNU56M+VPjGrWrGUHlJ2W3w
-	 buv7fKlUVL+U8OQFLzz1tfcCMEXCVv6CnEfVZ5emUTfC9xIY1d+5mObAeNL2faM4le
-	 a1J8qUIjctEEA==
-Date: Mon, 3 Jun 2024 20:41:29 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: "Kalra, Ashish" <ashish.kalra@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, rafael@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, adrian.hunter@intel.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com,
-	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com,
-	michael.roth@amd.com, seanjc@google.com, kai.huang@intel.com,
-	bhe@redhat.com, kirill.shutemov@linux.intel.com, bdas@redhat.com,
-	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
-	jroedel@suse.de, ardb@kernel.org, kexec@lists.infradead.org,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
-Message-ID: <Zl4ASZfWMkvAcJXO@kernel.org>
-References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
- <cover.1717111180.git.ashish.kalra@amd.com>
- <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
- <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
- <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
- <Zl3HfiQ6oHdTdOdA@kernel.org>
- <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
- <Zl3hPefvOwPv0Mjn@kernel.org>
- <141a9666-f3cf-4323-9536-4367f489be43@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVf/lAxI/UFs4s8DoaNwhh0+zn8DcoFLABp/qjvnbHUb2dx9td8VIOBvAaHJ/9p2t3/lck1lfl+VrHSgEN93OhTeb5jdVFzz/4lR7KG+FOy421R3jTy8mdK9Tazh8HOLcy0q7pUETAJo/hn6bAyAhLIL04Hzb1oDfXR5x3BDZJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lcATzdGS; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-794ab0ae817so265299685a.2;
+        Mon, 03 Jun 2024 10:42:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717436561; x=1718041361; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lqo8/N2WL4gT1OcLo3qtSeNxyML4fela4YEeG8cnJxQ=;
+        b=lcATzdGSJn1yZ9xfDVR6N6R4EueZpZapx8iH0pgOKSvAtC9RxkEsvoUs9cvKw92upk
+         QDldr6/a+UGs5cjW0FNdytMnobzrtF0AuKQFPeCGmZWyBE3IUiamqJt+46nRYPy5o6nz
+         lz4Qi3PfJwkyC71SIiy8jI4kWorux0JIEoJT4tc08c8/3/x+fPpkaiBG7adZuUpVusOG
+         270o9nqUkxCcsf4LgwrybRYDNGKRK2VlaVgi3JkJoH3qVzyitZ3vKOQWyhow+q7VZWyd
+         A+3+ZmcrdHjSd73ks/k7NZhPmL7rnTKbKLqlg073tVvpupd5tYFashWF9SP5X0VoRYSN
+         ThrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717436561; x=1718041361;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lqo8/N2WL4gT1OcLo3qtSeNxyML4fela4YEeG8cnJxQ=;
+        b=NfNGqc6MFQv55FCDbribHj3auNATqWduNQjoazwlR5AJ/JqlOeQLUxp6LfV5XTzZ8U
+         tRVR9O/WSsh+JXsc4KbarS4uT9XzJaeN8UeJeYDBkl0A0PXzs+AMKMjX9onmoA4chSvm
+         kAzweIW+/in3wQgSexyMrNwN6GKjEP+PqkdusY9IgJNLZYQBYdwKyGwVGxFQARqgXwBd
+         jzxm76yLL1AdYCtA3LDMy7b3LvUnj/A58mUWJrV/2ppa94edSOjW6fscPcCRFaG141vb
+         h8gAQJQFWMLY21l0ZDzJABw+NhmtGmyZ3KnOna9KDuGzAIw5WW9YZJiBYXPvnnbOrla+
+         YTVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuGB9T/g2rh+gsLSgHrQJwIcpOPsXAWyr24LHBS4X8PLJlu2XED1QK6MS2hiEHSxq+voQbOjAoMaGqKSVcnqXaiguaM6A186mY61DJWn0iyZmjRWLbPQqIt+MifhTttuCpy2j16xMuXnInrd0=
+X-Gm-Message-State: AOJu0YyPF2nzA1no6uN2GIy1FRqZ8h1LoHq3i6MsgKYrzIXHEQwNcmET
+	t7NOGaE3r9vFGVMIcZtKU+1xvYheMurqaDqos1SKTdYKlX3/7bS7
+X-Google-Smtp-Source: AGHT+IEmh2P7iFc4eHQR6V8pIF45N/E5P3S8BMMDUYIxJmX1LvdjLvcw/Fv4sfFtQsIF/XDScyoEpA==
+X-Received: by 2002:a05:620a:4720:b0:790:ef5d:25ae with SMTP id af79cd13be357-794f5ebf4f1mr1306054385a.56.1717436560788;
+        Mon, 03 Jun 2024 10:42:40 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794f328fcc9sm298141885a.129.2024.06.03.10.42.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 10:42:40 -0700 (PDT)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 76B861200032;
+	Mon,  3 Jun 2024 13:42:39 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Mon, 03 Jun 2024 13:42:39 -0400
+X-ME-Sender: <xms:jwBeZvliBAJQ0jP-BL4p-l7CeLV7KYQdICONxbrU2Ewc_G8L3GIXew>
+    <xme:jwBeZi32S0DdEk9I-SzRsdREWh6B1uDORSNy10puQGJ8_dQ0kNkPkKmDqOGfDDZKK
+    UG-R8JnzAMdr5jD7A>
+X-ME-Received: <xmr:jwBeZlqXYI4edETMm1XtM9OTjx3cp09au2r8qClcbPBjNod4N4Y6bZcG_4D9PA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelvddgudduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhepkeekledtgeffgeduvefgffelieetgfeuudevudefleeugeekkedutdeg
+    heejveelnecuffhomhgrihhnpehnvgigthdrmhgrphenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhp
+    vghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrd
+    hfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:jwBeZnm59j4LA_c1AdI-Aa8Txi-EcRsYRibQmayXtKiTUm7BWI4X3w>
+    <xmx:jwBeZt1yf5-CSsgvJT8RpzyqV3qUmvhFh2vrUsTx821XdpgjL8cv8g>
+    <xmx:jwBeZmsSGXVyLnSFdKtMZw0B3ova98VK2txeU52tz4ETF_uxM60fHA>
+    <xmx:jwBeZhWLepnyZdiN8bnxj5y1fCMpRjHaTfp9KeedynaRJy8nLGafcw>
+    <xmx:jwBeZs3iLugazPjHs1ztSUEElg-VohepnO5UAEcHAFoj3aPjL0n3yKGT>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Jun 2024 13:42:38 -0400 (EDT)
+Date: Mon, 3 Jun 2024 10:41:41 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Matt Gilbride <mattgilbride@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>,
+	Michel Lespinasse <michel@lespinasse.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] rust: rbtree: add mutable iterator
+Message-ID: <Zl4AVUqq8Hd-a230@boqun-archlinux>
+References: <20240603-b4-rbtree-v4-0-308e43d6abfc@google.com>
+ <20240603-b4-rbtree-v4-4-308e43d6abfc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,103 +125,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <141a9666-f3cf-4323-9536-4367f489be43@amd.com>
+In-Reply-To: <20240603-b4-rbtree-v4-4-308e43d6abfc@google.com>
 
-On Mon, Jun 03, 2024 at 11:56:01AM -0500, Kalra, Ashish wrote:
-> On 6/3/2024 10:29 AM, Mike Rapoport wrote:
-> 
-> > On Mon, Jun 03, 2024 at 09:01:49AM -0500, Kalra, Ashish wrote:
-> > > On 6/3/2024 8:39 AM, Mike Rapoport wrote:
-> > > 
-> > > > On Mon, Jun 03, 2024 at 08:06:56AM -0500, Kalra, Ashish wrote:
-> > > > > On 6/3/2024 3:56 AM, Borislav Petkov wrote
-> > > > > 
-> > > > > > > EFI memory map and due to early allocation it uses memblock allocation.
-> > > > > > > 
-> > > > > > > Later during boot, efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
-> > > > > > > in case of a kexec-ed kernel boot.
-> > > > > > > 
-> > > > > > > This function kexec_enter_virtual_mode() installs the new EFI memory map by
-> > > > > > > calling efi_memmap_init_late() which remaps the efi_memmap physically allocated
-> > > > > > > in efi_arch_mem_reserve(), but this remapping is still using memblock allocation.
-> > > > > > > 
-> > > > > > > Subsequently, when memblock is freed later in boot flow, this remapped
-> > > > > > > efi_memmap will have random corruption (similar to a use-after-free scenario).
-> > > > > > > 
-> > > > > > > The corrupted EFI memory map is then passed to the next kexec-ed kernel
-> > > > > > > which causes a panic when trying to use the corrupted EFI memory map.
-> > > > > > This sounds fishy: memblock allocated memory is not freed later in the
-> > > > > > boot - it remains reserved. Only free memory is freed from memblock to
-> > > > > > the buddy allocator.
-> > > > > > 
-> > > > > > Or is the problem that memblock-allocated memory cannot be memremapped
-> > > > > > because *raisins*?
-> > > > > This is what seems to be happening:
-> > > > > 
-> > > > > efi_arch_mem_reserve() calls efi_memmap_alloc() to allocate memory for
-> > > > > EFI memory map and due to early allocation it uses memblock allocation.
-> > > > > 
-> > > > > And later efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
-> > > > > in case of a kexec-ed kernel boot.
-> > > > > 
-> > > > > This function kexec_enter_virtual_mode() installs the new EFI memory map by
-> > > > > calling efi_memmap_init_late() which does memremap() on memblock-allocated memory.
-> > > > Does the issue happen only with SNP?
-> > > This is observed under SNP as efi_arch_mem_reserve() is only being called
-> > > with SNP enabled and then efi_arch_mem_reserve() allocates EFI memory map
-> > > using memblock.
-> > I don't see how efi_arch_mem_reserve() is only called with SNP. What did I
-> > miss?
-> 
-> This is the call stack for efi_arch_mem_reserve():
-> 
-> [    0.310010]  efi_arch_mem_reserve+0xb1/0x220
-> [    0.311382]  efi_mem_reserve+0x36/0x60
-> [    0.311973]  efi_bgrt_init+0x17d/0x1a0
-> [    0.313265]  acpi_parse_bgrt+0x12/0x20
-> [    0.313858]  acpi_table_parse+0x77/0xd0
-> [    0.314463]  acpi_boot_init+0x362/0x630
-> [    0.315069]  setup_arch+0xa88/0xf80
-> [    0.315629]  start_kernel+0x68/0xa90
-> [    0.316194]  x86_64_start_reservations+0x1c/0x30
-> [    0.316921]  x86_64_start_kernel+0xbf/0x110
-> [    0.317582]  common_startup_64+0x13e/0x141
-> 
-> So, probably it is being invoked specifically for AMD platform ?
+On Mon, Jun 03, 2024 at 04:05:19PM +0000, Matt Gilbride wrote:
+[...]
+> +/// A mutable iterator over the nodes of a [`RBTree`].
+> +///
+> +/// Instances are created by calling [`RBTree::iter_mut`].
+> +pub struct IterMut<'a, K, V> {
+> +    _tree: PhantomData<&'a mut RBTree<K, V>>,
+> +    iter_raw: IterRaw<K, V>,
+> +}
+> +
+> +// SAFETY: The [`RBTreeIterator`] gives out mutable references to K and V, so it has the same
 
-AFAIU, efi_bgrt_init() can be called for any x86 platform, with or without
-encryption. 
-So if my understating is correct, efi_arch_mem_reserve() will be called with SNP
-disabled as well. And if kexec works ok without SNP but fails with SNP this
-may give as a clue to the root cause of the failure.
- 
-> > > If we skip efi_arch_mem_reserve() (which should probably be anyway skipped
-> > > for kexec case), then for kexec boot, EFI memmap is memremapped in the same
-> > > virtual address as the first kernel and not the allocated memblock address.
-> > Maybe we should skip efi_arch_mem_reserve() for kexec case, but I think we
-> > still need to understand what's causing memory corruption.
-> 
-> When, efi_arch_mem_reserve() allocates memory for EFI memory map using
-> memblock and then later in boot, kexec_enter_virtual_mode() does memremap on
-> this memblock allocated memory, subsequently after this i see EFI memory map
-> corruption, so are there are any issues doing memremap on memblock-allocated
-> memory ?
+s/RBTreeIterator/IterMut ?
 
-memblock-allocated memory is just RAM, so my take is that memremap() cannot
-figure out the encryption bits properly.
+Also `IterMut` doesn't give out mutable references to K, which makes
+me think...
 
-You can check if there are issues with memrmapp()ing memblock-allocated
-memory by sticking memblock_phys_alloc() somewhere, filling that memory with a
-pattern and then calling memremap(addr, size, MEMREMAP_WB) and checking if
-the pattern is still there.
- 
-> Thanks, Ashish
-> 
-> > > > I didn't really dig, but my theory would be that it has something to do
-> > > > with arch_memremap_can_ram_remap() in arch/x86/mm/ioremap.c
-> > > > > Thanks, Ashish
+> +// thread safety requirements as mutable references.
+> +unsafe impl<'a, K: Send, V: Send> Send for IterMut<'a, K, V> {}
+> +
 
--- 
-Sincerely yours,
-Mike.
+we can lose the constrains to `K: Sync`, right?
+
+Regards,
+Boqun
+
+> +// SAFETY: The [`RBTreeIterator`] gives out mutable references to K and V, so it has the same
+> +// thread safety requirements as mutable references.
+> +unsafe impl<'a, K: Sync, V: Sync> Sync for IterMut<'a, K, V> {}
+> +
+> +impl<'a, K, V> Iterator for IterMut<'a, K, V> {
+> +    type Item = (&'a K, &'a mut V);
+> +
+> +    fn next(&mut self) -> Option<Self::Item> {
+> +        self.iter_raw.next().map(|(k, v)|
+> +            // SAFETY: Due to `&mut self`, we have exclusive access to `k` and `v`, for the lifetime of `'a`.
+> +            unsafe { (&*k, &mut *v) })
+> +    }
+> +}
+> +
+[...]
 
