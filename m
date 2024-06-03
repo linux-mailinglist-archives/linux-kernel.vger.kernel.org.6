@@ -1,242 +1,151 @@
-Return-Path: <linux-kernel+bounces-199579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DC38D88DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:48:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029258D89AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C395F1F24B03
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339161C242EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE23E139597;
-	Mon,  3 Jun 2024 18:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F9813BAC6;
+	Mon,  3 Jun 2024 19:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MtO6To6f"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b="J1JsREm1"
+Received: from sonic313-21.consmr.mail.ir2.yahoo.com (sonic313-21.consmr.mail.ir2.yahoo.com [77.238.179.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8690DF9E9;
-	Mon,  3 Jun 2024 18:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5821F13A876
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.179.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717440523; cv=none; b=aDHpVOIEPYXoFQ3rA9hL13+d1WXWgvQWRHaez7cxofq3DmaGACd7gt/3Y8oHUhSicPqY2ddfLDofiA/Iuo3SDwPv3Rr0U4RpbbN4wb1k1rJr8+3D//G/8EuKzayCE//BKBG/NJmrrluKM2PXiwSKHz/FEzncG72z6V+wrLBZK7g=
+	t=1717441825; cv=none; b=fGfqEm4wBfr8rSXulLrRZN/H6rEWVyhvJpi2QntH+RSmuFmwa8Y2BXPk9uKDh6fKBs3KZui4fj2ezEBe5wK93n5aCnbvVC1M1wD69GooeLDuXaEl88w7+/lVwoNCC9VgVwx8Ulfvp8XrccFQZl0hZ+gUIQGIeYkekstmOs0EyMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717440523; c=relaxed/simple;
-	bh=K3G21/24zzUUViCEIjLWZ1Tg2KRYA6Z2/ct1+J+l1fQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bK1JqL0RW8ussHMfz+ESJPEUIoWfxfJTBtIctWIWPmk2hb744AoG7iqlin6TQHqtcdllSGJzq3VqlZqaWiXGWXBwLRS/33sIKxcXBzT6sECyahwBYvc5AWiT0Wgqlhas01HYiI6qGq0Aq42flO3cd32ejE5QybNaZTOZTbNYOb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MtO6To6f; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4538vsuB011909;
-	Mon, 3 Jun 2024 18:48:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	efodBSu3WxBGbSpwkD4Q7QpyR//IjG3Ok/8+uKaU8ww=; b=MtO6To6fZUGKErfC
-	CHSOBNLAgpY0uWUiuN5DLkrMZPjhRQ8pz9zkG2Mf1nAPlRF74wyuIP3Xa82FbIKf
-	f47WOqBzCP90ddsXWRqEFOyKvDldTI4nxozmjXsOSLSayhTdH/OEIae9jCj9HIsO
-	GdwMYPoVYsMmfxje7L+xdJitZeuFncna0fuZLbSiJxrIAXPc/IxCE+NnXMm9jwjk
-	GcAaGwgtvUbVyNxEFwehuSHNl/O6utzCBngb0FCsDUskEZteeGNjHF8KSWF8Q3pN
-	L8MH8+NLE3yYXNmDBCuShZ7HUM0q/3hjdl/oodQyW6sDV1h9PaquskWAry9Uv2fM
-	f+CLZA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4bcqrt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 18:48:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453ImNlo021742
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 18:48:23 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 11:48:18 -0700
-Message-ID: <89a56998-51f2-0dc3-54e8-2bc2217d265d@quicinc.com>
-Date: Tue, 4 Jun 2024 00:18:14 +0530
+	s=arc-20240116; t=1717441825; c=relaxed/simple;
+	bh=KPYkAqhmju7XsyzBTxmcRoWn5S92tOqYTNT7Zf42wUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NLIdMqIoqS0+zCCZcynXvAsl+ATLAQ6OisBtG7oT005Ifq7TGyw1CkuA50+9/CA4UhyIiDYPt/mzA3VGD0wlo+jt0wkMCSigRyq3XRNq7iU+510x4ZEVmWUs9xZvo666r6XezhHq/RIRRixTogcJqk5anZcMlPy6rK3/A+kyKEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de; spf=pass smtp.mailfrom=yahoo.de; dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b=J1JsREm1; arc=none smtp.client-ip=77.238.179.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.de; s=s2048; t=1717441816; bh=edWCNicz5SLkhidXgXtdvBzRygTru67Exq0izoAmB5E=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=J1JsREm1GMQyjSBjtQPGnapUvJYCq2JZfCXRXdfBJ1dJRQaxMgDD9ZQreCpnZFN8KjYxupZOFgY8b6ju/GnctuTNW+Ke5xKhIzSlFUvd6kQRWBuF55ZoGAzkbdx1/5S4loUdNlrjauTZRYieE0ugbYbqJpa+gqNGFY0n9zhFSknDGI36IFKNsRwrjUrX5nu7VpDbtoel3DgDhR7xsBZXyYsTI/gl9G78oX9H1tZtGT08sYg+yWjXaMtCW1jEFficU7ke7FEf7IJX+mU85ZqtV43xuy3wgxLP2QqValdES2VShCuYT+02DYQIbrPS4KYiFx5W/d1EBdOHBL0ruhSczw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1717441816; bh=HLLzKbN86DMWAOiWBMzfwvF233zZVKaahPOtp3NrJ2l=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=O3gxnjEk528WBpcvGNkUp+l0J4TaTDaWUZL20MhwoI+/IIDXzUQC5T7kK2kvSEHlj8U/VH6dfyt4fvMbQazRIstgzCHZfVB6pi9K9E43kLpIhgRIbj/NcD2cZwcQUX0nhl6ndiU8MTodkksB7Mnje/cW+dEH8z4kiLerW36evjo6NnDRgH/Eo0L/uEub/LoMXlGOu5sG7MeodlrkSknuUghuKXqanONJiS/eQmjMmjYHrjR7tjlGdGAXNpidUXVpYZnXcnpyljOQkFMDlrvBQKlbZ9lPGPGAmCA7z9oVe81MFu6W+e48qav5c/fG74QYJHbVqH5crZm34WGdEpqvFA==
+X-YMail-OSG: RRRAq.cVM1n6crMbCT.spnjMTieSo.tt0qvtB4AOa0lp934HpKZRmcMBUd.S_Fs
+ pqKphfUtzKyDdzA0YyYE_2_O5wds9gfEJHib7hAywVMfMKFSIYpdBpb9khpv0e0n.0UEnoPCdBhv
+ O3wF1k7a7OzlcFMzX84f_cAo56wUB92GVfIeXQSWK9KSewfWkTE2Fadgap0U93tlS_ONLoqOldOa
+ QNkeTZDtXt2cMCoZJP.be62Hm4fjUlCbxIpvkuo6FPXlbv7PyIZAbklVazvfFTW9JPAku1Nllhdh
+ OaBDpvdiqdgZM7NjZeiWKNFOWDah2Xcurs2qLEbGPAK8.jD8wfSIkjPOHj00c8yepEQowSgPi_MW
+ vBUlcUBLj5Oa5DCYwNg7KZb.6uyTBh1mDz14pv.gb9sp9OaYbLHMKGcikhLextuU0sfe9rvLP0Si
+ _6SFGmQ7UwNqTK2YdjOJR62CQF3W5TnqYpJdKc0eyoHdGKwkFCrxpMiZTJ7hAbBvw2iETrABl8hr
+ tvADER.UGLaUsf47f70aclGO7w1cAz7sngtu5tq.THxK2fyX8_PrXb2fKVHogj4JnXCuzokj8bI7
+ 7RJ56L82la.HeIumagtCCEf06xQ1HTyY1HmWivB_UWqDcSH9twW4awJim9pDZpbE2F.itilM3wr9
+ e6HMUjnEcglfYUrKgQcdnUTw.cuwAztFaBu5c9HrpI3YJNQ3sySn4YvUMR7cbZKkm_JbVz9gz0kG
+ FCTOT47xmaSw7y_HWcbgQqg0H94d5gTh0eAd5TeR6RVqHJm6fBvz7Yh3dt0e9bMwxR3ly_ambSPk
+ 7vnJHa9Ycg79VMdy2yGRKtBY2b9YQ3KgAMD0zn5VaR7xpD5ct3dN0_tYiv_Xgj6_TmZ41JU88ept
+ 3O3_R8MzeohgmAQ6jiBh_4LsuQVRCly5ZQzLLUkiUxNpNWbXhy0uhGde01.IsrRKL498bIUWTotK
+ hlazkSrXHiISCeeDIC73LnFLwfWtHU.GHSsz30_Yp0dBoSqIxjKu32Y.jfQ.f2BNNPZmizE86FQf
+ E..nYeW__tvIDYDiPv474VlxieQvJ260emljUo2DqB3Ehh13kUbBFnH7S4Zar5N10CUiY2QWl6jx
+ fRRtKL6MjBopYdy46jpc43pOHvyuHFZv06J_e2Dbz4gGJ3sQSXywrcPBzcM_BDQeocn7rGUxpJnA
+ B763QKOGlvPgTaYQmZiQWMxJB6QCNKG1k71265Unc33l.RYiu50HoFVlycBlID1rALmHvjKeLht5
+ mMvvcV6pGOzDgHihvoUHiGR.wESEDOYKEzOzJt39H3i41vcR0zXxDY3dQ9Sgqia_6p8eON4ZA9eG
+ Y.xx9baR.EFAS3HxTPaPq.0RFkxvGNHh5ZNv1r4GA6QeadYTdwTZr8SngRzw6P3r8a8MaLjcMNDi
+ uVoCDx0BpKfk7CEFCupCJK8X2VjhNDTmpAdBE_zUMNdZ46QawukiKtVfATKS0vkVwADWcylZSdt_
+ BxkLBol9tx3RWMuGNo7RNG7l9HPou49C3TbuIPNvrVgpZs4qn6_Hgbabmr.nOuJbqqzY5kbvMM2z
+ DzkJ0HaQlz.wWfVfiU781crKod9984S8_eFAdaJKfrbBVpsbT02LInBFo3CaqQRYDwanjuVQrLJd
+ f05E3qei4DnL.gKzlDsOdnh6WYH7kcXDAZB2nWd6Ty2nwK32ZKUD_keGuayhfvYFp72NSGNi_oki
+ SD3npZa3yqP_1Lu8gKP_JajAa7F5zxjNvRnaaqY8T51weOQCTmUWNjI17FbCw.8js1DDbbkmuZeB
+ SBWIfhzCESrYtg0Dl7zsW2hAH.SULdOxKK5Y55LlC7Va8qN1SNlWgOX44We9bxI3POXeJMu4M03j
+ WeVYwgz3QKr5AGFHW.CKI19r.40xMIVC.Tv6fVWsdbThv6.kBB585UxEg4adCdTqO2WCAaeGRwPF
+ tVcCtT6J.iZLb2OPLkA9tzg4e1XBa1h2jjInP_fTMUtC3ib5hhjnA8P2Chk9GQztEjJKAab6JlIv
+ sixBpNiOvdzL3nxgrJ8as0Wzhc5WGHSRtzeGuF2OqizEUjqtbnL989FBQ8ealhkUvLgmrKoEv8zQ
+ qC7ktR51sFka5I7Bmqohewtn51_zL5u4q57FahRZGq6yj54y6Mqu0yVWpWa_0v4pjIDAqPu9c5LC
+ HfQ6wPD2pV7geth9K5w5.pfbloEKJzoPdxBqjxruAwMGAlVeVBUdIABkQDeyDMsQL18zmdRk7gLA
+ QMb7xc0jYZBMBF2L3sAgZALgqeBuxzBr47wEvxPa_Z1_SHiO9LXUzluhM3AHm
+X-Sonic-MF: <fhortner@yahoo.de>
+X-Sonic-ID: 83e29caa-1270-46e0-bf41-7b4f52bbe70c
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ir2.yahoo.com with HTTP; Mon, 3 Jun 2024 19:10:16 +0000
+Received: by hermes--production-ir2-7b99fc9bb6-z99rq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID abd44bd1c36a5049a30287d79d773928;
+          Mon, 03 Jun 2024 18:49:57 +0000 (UTC)
+Message-ID: <829c478d-f547-4e12-9976-ed465dd8d4ed@yahoo.de>
+Date: Mon, 3 Jun 2024 20:49:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V4 2/2] cpufreq: scmi: Register for limit change
- notifications
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression, thermal: core: battery reading wrong after wake from
+ S3 [Was: Bug Report according to thermal_core.c]
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
+ <7f4a777b-88f6-4429-b168-d1337d291386@yahoo.de>
+ <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info>
+ <a97f9f4d-17f1-44cf-a0f4-634fd38aba2a@yahoo.de>
+ <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
+From: "fhortner@yahoo.de" <fhortner@yahoo.de>
 Content-Language: en-US
-To: Vincent Guittot <vincent.guittot@linaro.org>
-CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <morten.rasmussen@arm.com>,
-        <dietmar.eggemann@arm.com>, <lukasz.luba@arm.com>,
-        <pierre.gondois@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_mdtipton@quicinc.com>, <linux-arm-msm@vger.kernel.org>
-References: <20240328074131.2839871-1-quic_sibis@quicinc.com>
- <20240328074131.2839871-3-quic_sibis@quicinc.com>
- <CAKfTPtDtnCm2NqhiXZLODXH5A9Hc9ryP==3LFZUcNnKE4J+PEg@mail.gmail.com>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <CAKfTPtDtnCm2NqhiXZLODXH5A9Hc9ryP==3LFZUcNnKE4J+PEg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qDl1N6TAfhcADbzTCjj104iEoB-_YvRp
-X-Proofpoint-GUID: qDl1N6TAfhcADbzTCjj104iEoB-_YvRp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_15,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- phishscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- bulkscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406030154
+In-Reply-To: <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+
+I Totally agree, this was also my first thought, what has the battery 
+state to do with thermals.
+But at least, so far, we have in total three repros confirmed in the bug 
+report. All of the same machine.
+Thinkpad X1 Xtreme Gen2 = Thinkpad P1 Gen2. The only difference is the 
+graphics Nvidia Geforce vs Nvidia Quadro
+
+these are the types of thermal zones:
+
+cat /sys/class/thermal/thermal_zone*/type
+acpitz
+SEN6
+SEN7
+SEN8
+SEN9
+SENA
+SENB
+SENC
+SEND
+x86_pkg_temp
+iwlwifi_1
+INT3400 Thermal
+SEN1
+SEN2
+pch_cannonlake
+SEN3
+SEN0
+B0D4
+SEN4
+SEN5
 
 
+Am 03.06.24 um 20:38 schrieb Rafael J. Wysocki:
+> On Thu, May 30, 2024 at 1:10 PM fhortner@yahoo.de <fhortner@yahoo.de> wrote:
+>> Thanks Thorsten for the side note.
+>>
+>> I have compiled kernel 6.8.11 with reverted commit
+>> 5a5efdaffda5d23717d9117cf36cda9eafcf2fae.
+>>
+>> Battery Status works fine now with reverted commit after S3 Sleep and
+>> Wake cycles.
+> Well, the connection between the battery status and the resume of
+> thermal zones is somewhat unclear to me at the moment.
+>
+> Most likely, the commit in question changes the timing of system
+> resume which affects the battery behavior and it seems to be related
+> to the EC somehow.
+>
+> Let's first see what thermal zones there are on your system, so please
+> send the output of
+>
+> $ cat /sys/class/thermal/thermal_zone*/type
 
-On 5/28/24 14:38, Vincent Guittot wrote:
-> Hi Sibi,
-> 
-
-Hey Vincent,
-Thanks for taking time to review the series :)
-
-> On Thu, 28 Mar 2024 at 08:42, Sibi Sankar <quic_sibis@quicinc.com> wrote:
->>
->> Register for limit change notifications if supported and use the throttled
->> frequency from the notification to apply HW pressure.
->>
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->> ---
->>
->> v4:
->> * Use a interim variable to show the khz calc. [Lukasz]
->> * Use driver_data to pass on the handle and scmi_dev instead of using
->>    global variables. Dropped Lukasz's Rb due to adding these minor
->>    changes.
->>
->>   drivers/cpufreq/scmi-cpufreq.c | 44 ++++++++++++++++++++++++++++++++++
->>   1 file changed, 44 insertions(+)
->>
->> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
->> index 3b4f6bfb2f4c..d946b7a08258 100644
->> --- a/drivers/cpufreq/scmi-cpufreq.c
->> +++ b/drivers/cpufreq/scmi-cpufreq.c
->> @@ -21,11 +21,18 @@
->>   #include <linux/types.h>
->>   #include <linux/units.h>
->>
->> +struct scmi_cpufreq_driver_data {
->> +       struct scmi_device *sdev;
->> +       const struct scmi_handle *handle;
->> +};
->> +
->>   struct scmi_data {
->>          int domain_id;
->>          int nr_opp;
->>          struct device *cpu_dev;
->> +       struct cpufreq_policy *policy;
->>          cpumask_var_t opp_shared_cpus;
->> +       struct notifier_block limit_notify_nb;
->>   };
->>
->>   static struct scmi_protocol_handle *ph;
->> @@ -174,6 +181,22 @@ static struct freq_attr *scmi_cpufreq_hw_attr[] = {
->>          NULL,
->>   };
->>
->> +static int scmi_limit_notify_cb(struct notifier_block *nb, unsigned long event, void *data)
->> +{
->> +       struct scmi_data *priv = container_of(nb, struct scmi_data, limit_notify_nb);
->> +       struct scmi_perf_limits_report *limit_notify = data;
->> +       struct cpufreq_policy *policy = priv->policy;
->> +       unsigned int limit_freq_khz;
->> +
->> +       limit_freq_khz = limit_notify->range_max_freq / HZ_PER_KHZ;
->> +
->> +       policy->max = clamp(limit_freq_khz, policy->cpuinfo.min_freq, policy->cpuinfo.max_freq);
->> +
->> +       cpufreq_update_pressure(policy);
-> 
-> I noticed your patch while looking for other things in the archive but
-> I don't think this is the right way to do it.
-> 
-> cpufreq_update_pressure() aims to set to the scheduler the aggregation
-> of all cappings set to cpufreq through the pm_qos and
-> freq_qos_add_request(). Calling this function directly in scmi
-> notification callback will overwrite the pm_qos aggregation. And at
-> the opposite, any update of a pm_qos constraint will overwrite scmi
-> notification. Instead you should better set a pm_qos constraint like
-> others
-
-Sure, I'll drop update_pressue and use the freq_qos_update_request to
-update the policy->max_freq_req with the new policy->max.
-
--Sibi
-
-> 
->> +
->> +       return NOTIFY_OK;
->> +}
->> +
->>   static int scmi_cpufreq_init(struct cpufreq_policy *policy)
->>   {
->>          int ret, nr_opp, domain;
->> @@ -181,6 +204,7 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
->>          struct device *cpu_dev;
->>          struct scmi_data *priv;
->>          struct cpufreq_frequency_table *freq_table;
->> +       struct scmi_cpufreq_driver_data *data = cpufreq_get_driver_data();
->>
->>          cpu_dev = get_cpu_device(policy->cpu);
->>          if (!cpu_dev) {
->> @@ -294,6 +318,17 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
->>                  }
->>          }
->>
->> +       priv->limit_notify_nb.notifier_call = scmi_limit_notify_cb;
->> +       ret = data->handle->notify_ops->devm_event_notifier_register(data->sdev, SCMI_PROTOCOL_PERF,
->> +                                                       SCMI_EVENT_PERFORMANCE_LIMITS_CHANGED,
->> +                                                       &domain,
->> +                                                       &priv->limit_notify_nb);
->> +       if (ret)
->> +               dev_warn(cpu_dev,
->> +                        "failed to register for limits change notifier for domain %d\n", domain);
->> +
->> +       priv->policy = policy;
->> +
->>          return 0;
->>
->>   out_free_opp:
->> @@ -366,12 +401,21 @@ static int scmi_cpufreq_probe(struct scmi_device *sdev)
->>          int ret;
->>          struct device *dev = &sdev->dev;
->>          const struct scmi_handle *handle;
->> +       struct scmi_cpufreq_driver_data *data;
->>
->>          handle = sdev->handle;
->>
->>          if (!handle)
->>                  return -ENODEV;
->>
->> +       data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +       if (!data)
->> +               return -ENOMEM;
->> +
->> +       data->sdev = sdev;
->> +       data->handle = handle;
->> +       scmi_cpufreq_driver.driver_data = data;
->> +
->>          perf_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_PERF, &ph);
->>          if (IS_ERR(perf_ops))
->>                  return PTR_ERR(perf_ops);
->> --
->> 2.34.1
->>
->>
 
