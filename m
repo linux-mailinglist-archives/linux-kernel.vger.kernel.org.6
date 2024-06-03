@@ -1,97 +1,167 @@
-Return-Path: <linux-kernel+bounces-199288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6508D84EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:27:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712748D850F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE52A28AD79
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E81A28330B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918F612EBCA;
-	Mon,  3 Jun 2024 14:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F43136669;
+	Mon,  3 Jun 2024 14:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nziQ/mVX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="U5JsTJpK"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA01132110;
-	Mon,  3 Jun 2024 14:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9A9134406;
+	Mon,  3 Jun 2024 14:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424811; cv=none; b=cBXNuOUJJj3Ak+I+fOiwom9p53VBnAobCjBc0v4MCpIBwjzWXhYV9CA6ZhmvtFSzE71hvm4eF5GwajEWPCFr7YBZftvsEeUVo9fkBqrt7WpBc46Jce30BaBmbVePsN3JlxXaG0N9LH6oE56NQpZxPLkGM5Bu99ZfVyzDHctDPXI=
+	t=1717425018; cv=none; b=IjQuYv9L9JPWHYQWATivkT6bDwE/s28rYiTOGUvLcx0thXLqmvt9Sc8p2keWCjEjhuilhrkAbarkb0HoVp0smMhDSokw+g+L9Jf/FE6/erqNdVrw4erWbjC0BUtTbymjjX3iv9Lqx8uu7hsE6kogw+DRgQlSMf0+C4TLHmLk5Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424811; c=relaxed/simple;
-	bh=axgOU2f60G0C43RP1CrPbQ4L1znDGnP/69ACpWN0I38=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tWv1g5uvuqmkOqvHUdKssb03TAuFpIHBKrDXyo778WHp6aDkeIXD5PvY7vdnl8eSKAzFQxqWT2KYqtTIVbgVUi15fVfXsBaKc8Z+4ro3sN4piQdkR1RXV7J57RXQyn2iHbu8FuZcprSPfsy3hX72xzeXkg92XSlbYF242PJXX70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nziQ/mVX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9FCEC2BD10;
-	Mon,  3 Jun 2024 14:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717424811;
-	bh=axgOU2f60G0C43RP1CrPbQ4L1znDGnP/69ACpWN0I38=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=nziQ/mVXp7YCNa7p4zsni3uaJ3zs9YhugkQBFdbHAS/9jJ8XhXpqeimMgVzz0cxlq
-	 C7c4Hy89R/6ZW4SyO4GmPdkf/y05AbxgcXYNONDPNFcbYvb6bhYjxIq5LTYqbOhriO
-	 7A74qQWsotYogJsqml0n7f01l8Upy2ligRZrIgMs1byEiZw7yg3FcpEGsgPoQZZSAy
-	 r/7ei65O8uBcEGznjUL53Un+QiqZclw4v0zmpxuUk6djf543JXoYJHgRcSC3xn/D9o
-	 JTsVFdLlPQnD+FGKiZTnoIveEvKQC+IAY4NoHZ6Hysu9BYZV1gAkcIwQfBFbEKRvlR
-	 +IWGh2HFYtxrg==
-From: Vinod Koul <vkoul@kernel.org>
-To: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org, 
- quic_msarkar@quicinc.com, quic_qianyu@quicinc.com, abel.vesa@linaro.org, 
- quic_cang@quicinc.com, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devi priya <quic_devipriy@quicinc.com>
-In-Reply-To: <20240516032436.2681828-1-quic_devipriy@quicinc.com>
-References: <20240516032436.2681828-1-quic_devipriy@quicinc.com>
-Subject: Re: [PATCH V4 0/4] Add support for PCIe PHY in IPQ9574
-Message-Id: <171742480737.106728.8115956533813966138.b4-ty@kernel.org>
-Date: Mon, 03 Jun 2024 19:56:47 +0530
+	s=arc-20240116; t=1717425018; c=relaxed/simple;
+	bh=ca3PFMqvf2PEgoAA0VG4VlDQamgfG44SJn7TGmIqUT8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Qg96lQVlrSesoc1C4NHmM2wjeSJTPJ6no4ynXaHygDMwJ9EPTtAW/j3X0bxxlgb6zYnO5ZzAKx6aWFI7k7i3EKYquF6EQVirgzK0QIz89nS/rvbop4KFelVR5vXMFaH4i1XXu6IJg6Mlv2ov9j/PjDKzYpXDFpSZqD+9ndogOEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=U5JsTJpK; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id E7E2D88308;
+	Mon,  3 Jun 2024 16:30:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1717425015;
+	bh=D1FOb8+LRm3aTJoqLkva7vJcqtsDNNOiof4KFRfCgww=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=U5JsTJpKB9XrS+tOJLOdQnsrjPnXzbEKxTliEtCsqgl9KiPEoZiH/ruyYK8A4xR6w
+	 6BTejiu4wQw10P32WDrayv4apql6SINcNU1zBEL1UleFpWvNjsXYUWPagQhgFk1d7C
+	 AOnA5FvELgXNYWpNKVmVbPMvFUvBhKE3FNFkFO46G1s3+Keqj69pNyCis9vnebE+Po
+	 QgJ8ePGlpDpOea5a0C3f+LEQF70txG3PZy1lQ4PqAlIjg1X4ztyN/N1vGSXaUIVHNp
+	 o1J7lMtU3Se4D24YoY8YTLAaEg06HeQdXRgkQrCEMt6L1j1I9L/B6n/KE25YxFMyM0
+	 t+0qPGhF12zDQ==
+Message-ID: <f1c30ac7-cec1-422f-9114-7b30321d3563@denx.de>
+Date: Mon, 3 Jun 2024 16:27:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH v3 02/11] net: stmmac: dwmac-stm32: Separate out external
+ clock rate validation
+To: Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Sai Krishna Gajula <saikrishnag@marvell.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240603092757.71902-1-christophe.roullier@foss.st.com>
+ <20240603092757.71902-3-christophe.roullier@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <20240603092757.71902-3-christophe.roullier@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-
-On Thu, 16 May 2024 08:54:32 +0530, devi priya wrote:
-> This series adds support for a single-lane and two-lane PCIe PHYs
-> found on Qualcomm IPQ9574 platform.
+On 6/3/24 11:27 AM, Christophe Roullier wrote:
+> From: Marek Vasut <marex@denx.de>
 > 
-> [V4]
-> 	Picked up the R-b/A-b tags.
-> 	Split the phy driver and headers to individual patches.
-> [V3]
-> 	https://lore.kernel.org/linux-arm-msm/20240512082541.1805335-1-quic_devipriy@quicinc.com/
-> [V2]
-> 	https://lore.kernel.org/linux-arm-msm/20230519085723.15601-1-quic_devipriy@quicinc.com/
-> [V1]
-> 	https://lore.kernel.org/linux-arm-msm/20230421124150.21190-1-quic_devipriy@quicinc.com/
+> Pull the external clock frequency validation into a separate function,
+> to avoid conflating it with external clock DT property decoding and
+> clock mux register configuration. This should make the code easier to
+> read and understand.
 > 
-> [...]
+> This does change the code behavior slightly. The clock mux PMCR register
+> setting now depends solely on the DT properties which configure the clock
+> mux between external clock and internal RCC generated clock. The mux PMCR
+> register settings no longer depend on the supplied clock frequency, that
+> supplied clock frequency is now only validated, and if the clock frequency
+> is invalid for a mode, it is rejected.
+> 
+> Previously, the code would switch the PMCR register clock mux to internal
+> RCC generated clock if external clock couldn't provide suitable frequency,
+> without checking whether the RCC generated clock frequency is correct. Such
+> behavior is risky at best, user should have configured their clock correctly
+> in the first place, so this behavior is removed here.
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
+>   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 54 +++++++++++++++----
+>   1 file changed, 44 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> index c92dfc4ecf570..43340a5573c64 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> @@ -157,25 +157,57 @@ static int stm32_dwmac_init(struct plat_stmmacenet_data *plat_dat, bool resume)
+>   	return stm32_dwmac_clk_enable(dwmac, resume);
+>   }
+>   
+> +static int stm32mp1_validate_ethck_rate(struct plat_stmmacenet_data *plat_dat)
+> +{
+> +	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+> +	const u32 clk_rate = clk_get_rate(dwmac->clk_eth_ck);
 
-Applied, thanks!
+ From Sai in
+Re: [net-next,RFC,PATCH 1/5] net: stmmac: dwmac-stm32: Separate out 
+external clock rate validation
 
-[1/4] dt-bindings: phy: qcom,ipq8074-qmp-pcie: Document the IPQ9574 QMP PCIe PHYs
-      commit: 29f09daab910c797f5468afda91a51e3e29de7ee
-[2/4] phy: qcom-qmp: Add missing offsets for Qserdes PLL registers.
-      commit: f1aaa788b997ba8a7810da0696e89fd3f79ecce3
-[3/4] phy: qcom-qmp: Add missing register definitions for PCS V5
-      commit: 71ae2acf1d7542ecd21c6933cae8fe65d550074b
-[4/4] phy: qcom-qmp-pcie: Add support for IPQ9574 g3x1 and g3x2 PCIEs
-      commit: 2f2f5c13cc5ea87f1dd2debfd06fe5f624e5c0fd
+Please check reverse x-mass tree is followed for these variables, if 
+possible.
 
-Best regards,
--- 
-Vinod Koul <vkoul@kernel.org>
+> +	switch (plat_dat->mac_interface) {
+> +	case PHY_INTERFACE_MODE_MII:
+> +		if (clk_rate == ETH_CK_F_25M)
+> +			return 0;
+> +		break;
+> +	case PHY_INTERFACE_MODE_GMII:
+> +		if (clk_rate == ETH_CK_F_25M)
+> +			return 0;
+> +		break;
 
+ From Sai in
+Re: [net-next,RFC,PATCH 1/5] net: stmmac: dwmac-stm32: Separate out 
+external clock rate validation
+
+Please check, whether we can combine the two cases..
+
+> +	case PHY_INTERFACE_MODE_RMII:
+> +		if (clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_50M)
+> +			return 0;
+> +		break;
+> +	case PHY_INTERFACE_MODE_RGMII:
+> +	case PHY_INTERFACE_MODE_RGMII_ID:
+> +	case PHY_INTERFACE_MODE_RGMII_RXID:
+> +	case PHY_INTERFACE_MODE_RGMII_TXID:
+> +		if (clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_125M)
+> +			return 0;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	dev_err(dwmac->dev, "Mode %s does not match eth-ck frequency %d Hz",
+> +		phy_modes(plat_dat->mac_interface), clk_rate);
+> +	return -EINVAL;
+> +}
+
+[...]
 
