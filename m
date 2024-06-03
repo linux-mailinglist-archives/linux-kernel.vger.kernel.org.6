@@ -1,113 +1,89 @@
-Return-Path: <linux-kernel+bounces-199659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63F18D8A78
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:49:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B068D8A7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D11B28A3B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5399628AA60
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAF013A87C;
-	Mon,  3 Jun 2024 19:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="yKeDYqzn"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF38213B596;
+	Mon,  3 Jun 2024 19:49:14 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D21020ED;
-	Mon,  3 Jun 2024 19:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFE613B287;
+	Mon,  3 Jun 2024 19:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717444151; cv=none; b=At1lxF4rDyu541txfux6P/C1aBYnH43r5+v/9TbouAi5aFL/b5+P3zupr2lYWtr2W3UzthY60RXwO9l31dewLfCvOli6I4N3sVb/T4rVtgQnvpxtX7R0MFzT/TB7pi99ZQ9ccnB2O762NQsdD5m168SukPZpvb7fkubOPBSE2r4=
+	t=1717444154; cv=none; b=n8qzPmHHOzF7dsQ1r2Q1tSz0VfP6j60kUNibvdBUNq+FWWrt1F4ATqa6zBjlI3kBEazgg5Qr31HZKjpzXCPfHqzUbjrhwe6mlFppdYrSoozIh1R8K/R9SAM4TBqaGXRLAkS4n8rD6a7cwovPix32dz+a/G8FQtStrBlS17Gy3Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717444151; c=relaxed/simple;
-	bh=u+LtdUKeIquPtM3Gzq7t7e3fZ4iyQFikAJZQBux6nk0=;
+	s=arc-20240116; t=1717444154; c=relaxed/simple;
+	bh=ZecRCW16gc1bohlnVxh9o8nTv9ssEss5ipSxh+2ZfKM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NNTZVYd3ItNgcPTAKQr7zS79pzrDqe+mZ+em6DaaTYj2DW73OfYWux7JJ+gB8jjrLgzGJlTyamAGmftNy+0M2EfKTpWu1NjtYC/WsxDieZA+Tj1PEaoOjPSs+06kwhbw5FGNC/HicITayqhJhR/oQb+XLmT5wNdv4nffBN2iSvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=yKeDYqzn; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717444148;
-	bh=u+LtdUKeIquPtM3Gzq7t7e3fZ4iyQFikAJZQBux6nk0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yKeDYqznxvMlnDjCxJ5nvSbpUHVOSiOzhSxfdZodzshS1XyCtvr2/mNnzmOl2VTqJ
-	 s6bdjQYz6QiDp0PlUQ8zhJSN3+pc2X4U4vX1XzNTSacxJhxxAQ1eP+muwLboz/uqdG
-	 mDdQDJLLiklJcdt2zmhtEAUTfzuxOwaDy77O7J6HgGQ109k6lAUBbX+f5ztj/0S/MS
-	 HOHaWHihp2yZU+3riG0wuSzPi1z4s4LzEuw83cEC+j4H75LOsuVS8/h8T0edyAokC8
-	 gCtlROFmbMUfE0fTeML5G3DptKY6VQKZbcn61iWuFvwnqqCy9DxwS22gPTku4IKPB8
-	 KJiWYYzJDB0Hw==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2FA1E3782192;
-	Mon,  3 Jun 2024 19:49:06 +0000 (UTC)
-Date: Mon, 3 Jun 2024 15:49:04 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Thangaraj Samynathan <thangaraj.s@microchip.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1 0/8] spi: Rework DMA mapped flag
-Message-ID: <e9f6e8fe-7147-4caf-a7fc-e612069c2eaf@notapiano>
-References: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nay2vcWcj+q4YcqcGJ8lOc1F5oflEb+JqkE2IgePjqiMj6TIDSq1DAw9Vm2gugrC5f+mGErl4n+bAE2wHItelqaC++53zZNcTKeSjQFykY8cUsXdplCIRqxIrLsRSZxtpbJ3NTVX/bhMTPMqpQ8xuPJ1lMpwhhKTHsdA9AMtwAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: WGbTdQFJRPesqMwe21xLiw==
+X-CSE-MsgGUID: IVLB5l1mS0mevZeTGkVs7g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17793856"
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="17793856"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:49:13 -0700
+X-CSE-ConnectionGUID: aFUKDmSGT5Syf4POBYiWQA==
+X-CSE-MsgGUID: AHfx65rxTRaQbh2H+xmnjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="67814692"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:49:11 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy@kernel.org>)
+	id 1sEDg5-0000000DNH2-01Bp;
+	Mon, 03 Jun 2024 22:49:09 +0300
+Date: Mon, 3 Jun 2024 22:49:08 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] auxdisplay: hd44780: add missing MODULE_DESCRIPTION()
+ macro
+Message-ID: <Zl4eNFEdrsFmHFq1@smile.fi.intel.com>
+References: <20240602-md-drivers-auxdisplay-hd44780-v1-1-0f15bd19f949@quicinc.com>
+ <CAMuHMdWCTKBJ5FXeDTD+opJshNk3micT06kea+YRD7WTtqsnbg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <CAMuHMdWCTKBJ5FXeDTD+opJshNk3micT06kea+YRD7WTtqsnbg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, May 31, 2024 at 10:42:32PM +0300, Andy Shevchenko wrote:
-> The first part of the series (patches 1 to 7) is an introduction
-> of a new helper followed by the user conversion.
+On Mon, Jun 03, 2024 at 09:55:00AM +0200, Geert Uytterhoeven wrote:
+> On Mon, Jun 3, 2024 at 4:50â€¯AM Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+> > make allmodconfig && make W=1 C=1 reports:
+> > WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/hd44780_common.o
+> >
+> > Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> >
+> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > 
-> This consolidates the same code and also makes patch 8 (last one)
-> be localised to the SPI core part.
-> 
-> The last patch is the main rework to get rid of a recently introduced
-> hack with a dummy SG list and move to the transfer-based DMA mapped
-> flag. 
-> 
-> That said, the patches 1 to 7 may be applied right away since they
-> have no functional change intended, while the last one needs more
-> testing and reviewing.
-> 
-> Andy Shevchenko (8):
->   spi: Introduce internal spi_xfer_is_dma_mapped() helper
->   spi: dw: Use new spi_xfer_is_dma_mapped() helper
->   spi: ingenic: Use new spi_xfer_is_dma_mapped() helper
->   spi: omap2-mcspi: Use new spi_xfer_is_dma_mapped() helper
->   spi: pxa2xx: Use new spi_xfer_is_dma_mapped() helper
->   spi: pci1xxxx: Use new spi_xfer_is_dma_mapped() helper
->   spi: qup: Use new spi_xfer_is_dma_mapped() helper
->   spi: Rework per message DMA mapped flag to be per transfer
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Tested on next-20240603. No issue noticed on sc7180-trogdor-kingoftown and
-sc7180-trogdor-lazor-limozeen. So,
+Pushed to my review and testing queue, thanks!
 
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Although patch 5 (pxa2xx) didn't apply, so I skipped it (but it's not used on
-my platforms).
 
-Thanks,
-Nícolas
 
