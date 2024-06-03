@@ -1,107 +1,190 @@
-Return-Path: <linux-kernel+bounces-198799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D728D7D8D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:39:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699828D7D92
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0511B1F23622
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:39:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CE70B240B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C7264CCC;
-	Mon,  3 Jun 2024 08:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10926F073;
+	Mon,  3 Jun 2024 08:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="aq000GDw"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hlyJZUhO"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0636726AD0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F3A5FBB7;
+	Mon,  3 Jun 2024 08:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717403981; cv=none; b=kSQHXho/23X4KV43Q5tMak+Ctfj8cvQjIUSI9roO/bmzvQKyLM/sn5BsFmFOCd7j1IbNSf5Tml4nZrcYG0RAPPWDudXFGWqGxUR8NJMQAfqNs6MKPxTevMB3fCtw0Ji35A/2AnMFBPD6rGu17I3GYohh+KyiG7oQRvrnq8j9e+U=
+	t=1717404007; cv=none; b=KL9R0ImTdPCS7zlnObnxx/fXXXxv7bSHgN8qoz1bWJSCZUw62IUZNxPizS2LsZnHZbUb9h1G+9JVeWRrHUfwFcxP8FbzkjLUEuzidHDyQHoRnHtOM6mfa1omNPdJBckThuOkyj9XVivlSNFObEe0zyxDoY6jj6NiZtRW7Hc5/yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717403981; c=relaxed/simple;
-	bh=ioNQPeE6dcN4g7b9w4om4bfdVlgNm5KQPxatUE+0XD8=;
+	s=arc-20240116; t=1717404007; c=relaxed/simple;
+	bh=sm2WphO+53+X7EoyS+a9MQSq6fuBiYPK6PgONkDv8VU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mnT14RTN0jh6+G7HNXZ8OZrrvR1jzap4rTn53kqU74tnbiOCrzDc1gv+IfEoZzQaCSnUtGvn31Aj6JnxouOZwNb+u/ajrwA1lv8o6oZfe8e4Kji0NlPJNfve1Bgz9Amw0TRzstssY57i3rt/PhxJvMyyt28OoYuItgwtxJIDv5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=aq000GDw; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0HlUQLpV6dwNNdThUICIrY2+VfVWUdO6SeprKbBBR0Q=; b=aq000GDw6Pb4G6BYu2/HxZdiA4
-	s7Z5E/poXNwiGzEyRk+uoiEgrqBGdwLgF4AgGnJiOotWJSACT/lW2ZkcdNBiTE9IXgyylwTEMxZHj
-	NDrIG4IjxEaFEuqRKOLUqWJYgfS7fIuhAJCjFPk6kWI7tx0xMkFUT7Ajmxd45o4ZOYwFcT6fY6n2s
-	W7LxLP5P8Znsq7JQ6YPM2E+ilM7aLDq5Xwf9IefKUzecdLIlRReDgeZqsUbIhO8GJRelaFiVRngpR
-	aUFGPXg1gl/Vr1MXZOBr700rVfFjPa3829eZTplBL6jK5gklxjt043+DQQq75zdqjlbhAbSVUz/zV
-	kD/74iLQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37758)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sE3Dp-0002S0-0l;
-	Mon, 03 Jun 2024 09:39:17 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sE3Do-0000IG-DI; Mon, 03 Jun 2024 09:39:16 +0100
-Date: Mon, 3 Jun 2024 09:39:16 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: oleg@redhat.com, arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
-	linus.walleij@linaro.org, eric.devolder@oracle.com, robh@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: Add HAVE_FUNCTION_ARG_ACCESS_API support
-Message-ID: <Zl2BNCXzKRG+eTDv@shell.armlinux.org.uk>
-References: <20240603073751.2282024-1-ruanjinjie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fl7NIKOP8sUhMsE504y3R1LwmMZARc2x/hgTI50U9a3gzCTLop0epOLLnrnNG21QECBnIFMQh0Ccvv9H6k6FQdykh67GxwdmLZzdpw0Xq2DsmGzOgfBUbek1UdTm+hvA77OdLn15v5rrk/jiSDbRKHpk2oqQ3B+q5QCJrJJC6BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hlyJZUhO; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BCCDB40E0176;
+	Mon,  3 Jun 2024 08:40:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NaOQH7nJ-Lsa; Mon,  3 Jun 2024 08:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717403999; bh=EOQSXaPODkDHM7VjIgumTPn4fUWhW0OISBcc5f5uwf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hlyJZUhOM5L/0fr7gI4M49zSnf9pySr1xNLlxUn5xkCo2v/KR1abmWweu4eKySSOR
+	 Ddkrz51/6ck9sJKXv2KJ82JJM5E3rbokzSoAiN9zFc13Segfnjtm7uJ0UzCBpRPLZX
+	 XvO8FDnIXMuqtOF9YoUIPk4jpJG3sYTqai0fW7GmmggZ3SQYtMMTg5Afxc03yCpdcM
+	 /hWCWvzkpT0Emis2MSqsDf14Qc6eRiuikyEF71hYPfJgYvtJ5zc+/ngnAthIakGohD
+	 vfTsbSzCohMb1reYEJj4NGFvo2R9jeN+92FQ/Vmmd3fdq9GhksZDFP58zTI6rqdk8K
+	 UmRgn/KUJlsPlGo6JnkuLY+aEIFb2vKNg9vcoIP+fb/wEY2ZDYiVjIRKDQ2S+pCGVH
+	 tZpqg+iaLWdhSwagcJV3lWZb9waRWJtkWmCxz2HYnLIrOOgjkg8EB+BegCXdPlWycG
+	 ejxKyLFAeLN2YuKpFyB+MnNSZfSDAhaBT+k6V+TZmX9G8ZUOHWSCSKQAS07oqIBcUd
+	 7bJmBJVETY8dRat62n1ZSUo65yvHlI2WVl8AId0w0kbsrekIItlWnoToHh3nKvTjRP
+	 1GI55x8Yyi3iq4dQtwZREUu57fQHyR6bz3BKIYNlrAXwRoqv1ZWjFw12xQ3zN7KuIA
+	 H6x3+IwzZ7iJGr6GHScdaDsE=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9F37A40E0081;
+	Mon,  3 Jun 2024 08:39:32 +0000 (UTC)
+Date: Mon, 3 Jun 2024 10:39:30 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Tao Liu <ltao@redhat.com>
+Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
+ ACPI MADT wakeup method
+Message-ID: <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240603073751.2282024-1-ruanjinjie@huawei.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
 
-On Mon, Jun 03, 2024 at 03:37:51PM +0800, Jinjie Ruan wrote:
-> Currently, kprobe on ARM32 can not use the '$argx' syntax available on
-> other architecture. So implement regs_get_kernel_argument() and add
-> HAVE_FUNCTION_ARG_ACCESS_API support.
+On Tue, May 28, 2024 at 12:55:21PM +0300, Kirill A. Shutemov wrote:
+> MADT Multiprocessor Wakeup structure version 1 brings support of CPU
 
-This may work in the simple case, but it just doesn't work in the
-general case, where a function accepts 64-bit arguments. For example,
-for EABI and a function taking a 64-bit argument followed by a 32-bit
-argument:
+s/of /for /
 
-	R0/R1 = 64-bit argument
-	R2 = 32-bit argument
+> offlining: BIOS provides a reset vector where the CPU has to jump to
+> for offlining itself. The new TEST mailbox command can be used to test
+> whether the CPU offlined itself which means the BIOS has control over
+> the CPU and can online it again via the ACPI MADT wakeup method.
+> 
+> Add CPU offling support for the ACPI MADT wakeup method by implementing
 
-Now consider 32-bit argument followed by 64-bit argument:
+Unknown word [offling] in commit message.
 
-	R0 = 32-bit argument
-	R1 = unused
-	R2/R3 = 64-bit argument
+Please introduce a spellchecker into your patch creation workflow.
 
-Note that the mapping isn't argN = RN.
+> custom cpu_die(), play_dead() and stop_this_cpu() SMP operations.
+> 
+> CPU offlining makes is possible to hand over secondary CPUs over kexec,
 
-Also, given that "unsigned long" is 32-bit on 32-bit Arm, one can't
-return a 64-bit argument through this interface. Even if one typed
-the function as u64, it still wouldn't work because the caller
-assigns the return value to an unsigned long. This seems to be an
-issue throughout the kernel tracing - it isn't written to support
-64-bit arguments on 32-bit architectures. See, for example,
-fetch_store_raw(), where the unsigned long gets cast to a u64.
-It'll still only have 32-bits of significant value.
+s/is /it /
+
+> not limiting the second kernel to a single CPU.
+
+...
+
+> +/*
+> + * Make sure asm_acpi_mp_play_dead() is present in the identity mapping at
+> + * the same place as in the kernel page tables. asm_acpi_mp_play_dead() switches
+> + * to the identity mapping and the function has be present at the same spot in
+> + * the virtual address space before and after switching page tables.
+> + */
+> +static int __init init_transition_pgtable(pgd_t *pgd)
+
+This looks like a generic helper which should be in set_memory.c. And
+looking at that file, there's populate_pgd() which does pretty much the
+same thing, if I squint real hard.
+
+Let's tone down the duplication.
+
+> +{
+> +	pgprot_t prot = PAGE_KERNEL_EXEC_NOENC;
+> +	unsigned long vaddr, paddr;
+> +	p4d_t *p4d;
+> +	pud_t *pud;
+> +	pmd_t *pmd;
+> +	pte_t *pte;
+> +
+> +	vaddr = (unsigned long)asm_acpi_mp_play_dead;
+> +	pgd += pgd_index(vaddr);
+> +	if (!pgd_present(*pgd)) {
+> +		p4d = (p4d_t *)alloc_pgt_page(NULL);
+> +		if (!p4d)
+> +			return -ENOMEM;
+> +		set_pgd(pgd, __pgd(__pa(p4d) | _KERNPG_TABLE));
+> +	}
+> +	p4d = p4d_offset(pgd, vaddr);
+> +	if (!p4d_present(*p4d)) {
+> +		pud = (pud_t *)alloc_pgt_page(NULL);
+> +		if (!pud)
+> +			return -ENOMEM;
+> +		set_p4d(p4d, __p4d(__pa(pud) | _KERNPG_TABLE));
+> +	}
+> +	pud = pud_offset(p4d, vaddr);
+> +	if (!pud_present(*pud)) {
+> +		pmd = (pmd_t *)alloc_pgt_page(NULL);
+> +		if (!pmd)
+> +			return -ENOMEM;
+> +		set_pud(pud, __pud(__pa(pmd) | _KERNPG_TABLE));
+> +	}
+> +	pmd = pmd_offset(pud, vaddr);
+> +	if (!pmd_present(*pmd)) {
+> +		pte = (pte_t *)alloc_pgt_page(NULL);
+> +		if (!pte)
+> +			return -ENOMEM;
+> +		set_pmd(pmd, __pmd(__pa(pte) | _KERNPG_TABLE));
+> +	}
+> +	pte = pte_offset_kernel(pmd, vaddr);
+> +
+> +	paddr = __pa(vaddr);
+> +	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, prot));
+> +
+> +	return 0;
+> +}
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
