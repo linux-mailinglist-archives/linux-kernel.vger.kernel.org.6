@@ -1,80 +1,59 @@
-Return-Path: <linux-kernel+bounces-199385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A0D8D866E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A778D8659
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D051F238FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633401C218D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6421B1369B4;
-	Mon,  3 Jun 2024 15:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09840131E2D;
+	Mon,  3 Jun 2024 15:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Xcqgj03m"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IM11dwwx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0426A132111;
-	Mon,  3 Jun 2024 15:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BE9320D;
+	Mon,  3 Jun 2024 15:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717429667; cv=none; b=toncjnk1DsqnnTaQ7U7ys5eXbR1RKQjy2OabUeLebHrYqlDU39fFLhESN3fZ/iCz1AiKhD+biyse9m9fTsUWmcgZid+S43JPAdkb/kHBee5yz/caaL/0K+Shpfc/JK/KmzS5lw/4W0W0hxAMl2joIG1/3t2IcHJ6YfWqbIko6dI=
+	t=1717429651; cv=none; b=RdRpwHfc6Z1FSs0cbc54agrM9aI4S/kukBiTaYjgJ/hqQrI09PzZRkALUbF1C5le3AIxQUpz6OWMIlr0AAaDpJR6dibILbDpx4Wb0vX2ABQmZ54CS3f0rfuGoyVl/QTw9z+sHSgXqdObAfudM7ZNnFqneD2KXQNefK/0VhXkhL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717429667; c=relaxed/simple;
-	bh=kEfw9Gf/J/AwjbIiHUKCIuzei/vlk1gbZ9C22yhdYrw=;
+	s=arc-20240116; t=1717429651; c=relaxed/simple;
+	bh=b+zQs7Ud84kKrfcUQbsWSU0w3CdVTZCIcIp3j/qc7Rk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OgxAY3pZZWv/6DhNUAdYT2/R3uqwyxNrCGv25oW/8qQwaec20R42vO3C/vLBfMqIMrjJK+Wh3dFUakxHZYTHMI/z3/uf3osuq2dJUzYJ7++44dAQ5htXJPAdC4PoB5IMC5fLkN8VO/+yc3HF8BlGr9n5anCstyxFBB/nm3COxCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Xcqgj03m; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=fAYpza8hWil5WjZElg0QfdMfsUIIaDnzonGkWuiJ7RM=; b=Xcqgj03mHhAOmGF/mV0Pya5L1Z
-	zo5ux+T/fErNj3+HM0Ca53BmLhxpEag2+lSEPEqx9YpzKgLcmH627C2FYs0aUdOMjkuAzW/NH4HTa
-	H2fg9YX2pfFBBVOT6+2E/1aAtShqa/O1wh4vge2ByUBiVTv9SI3K9KLz2X0bzfwpdNBIKrT67pEZ4
-	MpvROis2o7bX4Dewey6M6FNZ3fnFZg63+/6LVJn5EZ+qAkhnrczfum/wGcYigjyrqJTCwXhbbiAxu
-	aFfhdteowMkt65UuxFb5gUPTJMHGUil58mENNBGiDBETbS+uIase1dtguxr2lpV99tNO2D5Ko45Fv
-	rp9R7x4Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38448)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sE9uC-0002wf-2a;
-	Mon, 03 Jun 2024 16:47:28 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sE9uC-0000Yo-Qm; Mon, 03 Jun 2024 16:47:28 +0100
-Date: Mon, 3 Jun 2024 16:47:28 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Sky Huang <SkyLake.Huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v6 5/5] net: phy: add driver for built-in 2.5G
- ethernet PHY on MT7988
-Message-ID: <Zl3lkIDqnt4JD//u@shell.armlinux.org.uk>
-References: <20240603121834.27433-1-SkyLake.Huang@mediatek.com>
- <20240603121834.27433-6-SkyLake.Huang@mediatek.com>
- <Zl3ELbG8c8y0/4DN@shell.armlinux.org.uk>
- <Zl3Fwoiv1bJlGaQZ@makrotopia.org>
- <Zl3IGN5ZHCQfQfmt@shell.armlinux.org.uk>
- <Zl3Yo3dwQlXEfP3i@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a2zJ+yvc2DpCZ3gZ4cgb4jhIFhP5yEb7igqHz7hXohEN7FSZ2RBWjP9RDwu6h2rks5fV+CKOLI2rxH2MtrrZLRv3eYvnp7rO/TVvNKfUaYr6QGQIcTPssJEtHf+MCnaKAmNsV7Rfhp9sANOq2VADB/XJP2olBsALdw7Ys9nqdPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IM11dwwx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 591F6C2BD10;
+	Mon,  3 Jun 2024 15:47:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717429650;
+	bh=b+zQs7Ud84kKrfcUQbsWSU0w3CdVTZCIcIp3j/qc7Rk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IM11dwwxoZ3cpJsx6QRpjaFEQ1IdRa5bT1iAkAmiBkqDDDy60RciKWYGe/lO8ynu+
+	 PInTAgvm4JRBCTKjeQQjWZwKMcDoYSro+lPDyabMDT8CYltX5gMH2+r/8JM4TAOjS0
+	 3PXHhnuY4xYsR8RclFWyTFotekETcMlW/4U/X+fksX5ELMIeq3pNDBGfhkZ6R7kK7t
+	 7UO0+WwU+bLQ70R0TdAVHXmNbZYlrca7Nr5OXgIH9W5nbGT+i0mymPEXgzwh6CNT3x
+	 QYrFtcJ0b/OrVTXoUVnxbeuDBKDH9qjwPid6/09E+dRTkwzHd5nvwFuyF6qQJc/cIj
+	 1OhqEhhsVDiog==
+Date: Mon, 3 Jun 2024 10:47:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: Amna Waseem <Amna.Waseem@axis.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@axis.com
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ti,ina2xx: Add alert-polarity
+ property
+Message-ID: <20240603154728.GA480397-robh@kernel.org>
+References: <20240529-apol-ina2xx-fix-v1-0-77b4b382190f@axis.com>
+ <20240529-apol-ina2xx-fix-v1-1-77b4b382190f@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,61 +62,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zl3Yo3dwQlXEfP3i@makrotopia.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20240529-apol-ina2xx-fix-v1-1-77b4b382190f@axis.com>
 
-On Mon, Jun 03, 2024 at 03:52:19PM +0100, Daniel Golle wrote:
-> On Mon, Jun 03, 2024 at 02:41:44PM +0100, Russell King (Oracle) wrote:
-> > On Mon, Jun 03, 2024 at 02:31:46PM +0100, Daniel Golle wrote:
-> > > On Mon, Jun 03, 2024 at 02:25:01PM +0100, Russell King (Oracle) wrote:
-> > > > On Mon, Jun 03, 2024 at 08:18:34PM +0800, Sky Huang wrote:
-> > > > > Add support for internal 2.5Gphy on MT7988. This driver will load
-> > > > > necessary firmware, add appropriate time delay and figure out LED.
-> > > > > Also, certain control registers will be set to fix link-up issues.
-> > > > 
-> > > > Based on our previous discussion, it may be worth checking in the
-> > > > .config_init() method whether phydev->interface is one of the
-> > > > PHY interface modes that this PHY supports. As I understand from one
-> > > > of your previous emails, the possibilities are XGMII, USXGMII or
-> > > > INTERNAL. Thus:
-> > > > 
-> > > > > +static int mt798x_2p5ge_phy_config_init(struct phy_device *phydev)
-> > > > > +{
-> > > > > +	struct pinctrl *pinctrl;
-> > > > > +	int ret;
-> > > > 
-> > > > 	/* Check that the PHY interface type is compatible */
-> > > > 	if (phydev->interface != PHY_INTERFACE_MODE_INTERNAL &&
-> > > > 	    phydev->interface != PHY_INTERFACE_MODE_XGMII &&
-> > > > 	    phydev->interface != PHY_INTERFACE_MODE_USXGMII)
-> > > > 		return -ENODEV;
-> > > 
-> > > The PHY is built-into the SoC, and as such the connection type should
-> > > always be "internal". The PHY does not exist as dedicated IC, only
-> > > as built-in part of the MT7988 SoC.
-> > 
-> > That's not how it was described to me by Sky.
-> > 
-> > If what you say is correct, then the implementation of
-> > mt798x_2p5ge_phy_get_rate_matching() which checks for interface modes
-> > other than INTERNAL is not correct. Also it means that config_init()
-> > should not permit anything but INTERNAL.
+On Wed, May 29, 2024 at 08:07:14AM +0200, Amna Waseem wrote:
+> Add a property to the binding to configure the Alert Polarity.
+> Alert pin is asserted based on the value of Alert Polarity bit of
+> Mask/Enable register. It is by default 0 which means Alert pin is
+> configured to be active low. To configure it to active high, set
+> alert-polarity property value to 1.
 > 
-> The way the PHY is connected to the MAC *inside the chip* is XGMII
-> according the MediaTek. So call it "internal" or "xgmii", however, up to
-> my knowledge it's a fact that there is **only one way** this PHY is
-> connected and used, and that is being an internal part of the MT7988 SoC.
+> Signed-off-by: Amna Waseem <Amna.Waseem@axis.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> Imho, as there are no actual XGMII signals exposed anywhere I'd use
-> "internal" to describe the link between MAC and PHY (which are both
-> inside the same chip package).
+> diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> index df86c2c92037..a3f0fd71fcc6 100644
+> --- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
+> @@ -66,6 +66,14 @@ properties:
+>      description: phandle to the regulator that provides the VS supply typically
+>        in range from 2.7 V to 5.5 V.
+>  
+> +  alert-polarity:
+> +    description: |
+> +      Alert polarity bit value of Mask/Enable register. Alert pin is asserted
+> +      based on the value of Alert polarity Bit. Default value is active low.
+> +      0 selects active low, 1 selects active high.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
 
-I don't care what gets decided about what's acceptable for the PHY to
-accept, just that it checks for the acceptable modes in .config_init()
-and the .get_rate_matching() method is not checking for interface
-modes that are not permitted.
+This is alert as in SMBus Alert? That's handled as an interrupt, but 
+this binding has no interrupt property. And the interrupt binding 
+provides a way already to specify active trigger state. Why do we need a 
+second way to do this?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Rob
 
