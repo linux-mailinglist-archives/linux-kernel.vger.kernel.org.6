@@ -1,91 +1,100 @@
-Return-Path: <linux-kernel+bounces-199247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87C18D8459
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:49:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE2E8D845A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8432C282DB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9895F283901
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361F112DDAF;
-	Mon,  3 Jun 2024 13:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741D012EBD6;
+	Mon,  3 Jun 2024 13:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZisACYn8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AqckkOyg"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC0512D775;
-	Mon,  3 Jun 2024 13:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69BE12EBCC
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422551; cv=none; b=fGQJAIcpsfF3WelzFHorWSZVv7iRa/O+Aa2yQ8aKPGTttI41zZ8wDIel7//hoDGqkS6EJxUrpdOOH8z9qnuvjQPru60LWh3XVdCfqh7MldxcwVi4ZxDrioQqBU7mm6QZHRhTP+uaaGlLPkNrDBSHXomgMqIGE1fSQ2f2kRnYGhE=
+	t=1717422566; cv=none; b=AOld1QfZKnuR9S2yf6XqVpt1lHVFmVmjWDuzfP0/RtEA5W1bMusZXHY27GRUvb72B9z8gJ6j9C+P+ZEG2tVHx5KxxafJBUEaVFdMq9uVfRYKzU+mKiwY7d2U77whd7RzjidTcpXE1F6JBB4Atx2o00X6O3VwEF80dliBLwrMgyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422551; c=relaxed/simple;
-	bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Po6pxrofGl/gSv+KOBiWgJSGTaPEKRDFQsjN+zFWrYL1T+GIJeuGC1WToCtF39TPbl8MQjUFgB2AcDj1TY+UR0t7aKjeeyBvXEtmXqmHCffVej+lp3SNHhYqTTLYiwKoRq3XgcchuCYv4+ADeF/vsYJGSmq647iKrVwwX2P0t8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZisACYn8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6627EC2BD10;
-	Mon,  3 Jun 2024 13:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717422551;
-	bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZisACYn87/yVDMYuUqZhSnnIDcT1BBhqBJf3pwJ9g36CqBaRd1o++SF7xAIaUJ+yq
-	 A8G6tyhCpv5uvRxScuApOIceS+HbBOShXATC+57sKgqA0H/vFpKtbrGTMozCsNPp27
-	 bK4bHMLMZKGRuiNLQGFWN1my+eqqxbI3otY09ptnkjM4C/08GOvZxOjqUPcsW8ITjr
-	 o4PvmaXrbM4Pa+JerKjE5y5loTi2ClWbVJfm4mz0b/nFx6M7t7+E3vCvMJxvySQSqE
-	 Y+3XPMNxRgxhwkoGw4RD3Cfj1cCUR1fpPg2h5+ltUr9y5mU+lesA/mIrjk3nxmoQ7r
-	 eMSWOd1DP8vuQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] readdir: Remove unused header include
-Date: Mon,  3 Jun 2024 15:48:56 +0200
-Message-ID: <20240603-kugel-kopieren-03484dc4daab@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240602101534.348159-2-thorsten.blum@toblux.com>
-References: <20240602101534.348159-2-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1717422566; c=relaxed/simple;
+	bh=z9K5vR7nav8alZNy7Ozvejb3OKNpcsYE3Cftk5p10Yc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZZS28bOzSboPF7xIAB/ZtybfMU8CNQ5JJxb/K8uTbjYEH90F+CRHqa+Wm6hBe7jHFRD0mD4TwcWPJxN1v8KDGesb3MYhkD3jch9oDMtmx1i/SP3GtK1nh6a0iNAlKJ9ct4RHQF4FM6NdLkOPoWW9a50vypjn2jYQ7Wt/8ht7bok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AqckkOyg; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3BECF1BF206;
+	Mon,  3 Jun 2024 13:49:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717422563;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z9K5vR7nav8alZNy7Ozvejb3OKNpcsYE3Cftk5p10Yc=;
+	b=AqckkOygqLn9SRaAoRNMxvTe3hG4ggDylcf4QJ5+QOa9MMn0EDTuOql6MC7pgK4pNBNNoU
+	KzjrUnUBDJrVwWpFTYQinKJWB3ZBEXDA/U0zK2Y6gHRpedMkbL1cKnAuzF0kye3nJgRqT7
+	S3mOVhiAOA5wT5YhOyEzVtr1hqn923rLfx5HLNLwaA2OeIFqz+oKFdkZR8o3U6dHx5A4rk
+	rodnFu7g5iI29Tl1aPwAAHrJiSTXD1rmYsW+M23jtKUxC2+cQxQFXfHcNhUE5c6gUD3BcB
+	XgvCdFjbeggzHgLJIicAiH31l7bGuAGIPsJTpFtnr9eNQr+J/qrObd1i7Hs1AA==
+Date: Mon, 3 Jun 2024 15:49:18 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Conor Culhane <conor.culhane@silvaco.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, linux-i3c@lists.infradead.org (moderated
+ list:SILVACO I3C DUAL-ROLE MASTER), linux-kernel@vger.kernel.org (open
+ list), imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] i3c: master: svc: fix IBIWON not set if IBI follow
+ a hot join
+Message-ID: <20240603154918.4b0c95b2@xps-13>
+In-Reply-To: <20240531154308.1246214-1-Frank.Li@nxp.com>
+References: <20240531154308.1246214-1-Frank.Li@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=971; i=brauner@kernel.org; h=from:subject:message-id; bh=bN6rbFCtnOlzFHmoF0XRZoe/+d54NqkBt6Joc+xkbmA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFnrwgZMi24qn6h+33ZR5dZcre+S28QLgkziPg4q3k9 dUlPxMKOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaydinD/8xJ736evPgiT1Vh gcYvqU1WLPtW62xSFvabVe/TVL67VZOR4fzGxutu/1Q6t9gZHVxZc+WnYGii/9t3jw+rhzY855t +nwMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Sun, 02 Jun 2024 12:15:35 +0200, Thorsten Blum wrote:
-> Since commit c512c6918719 ("uaccess: implement a proper
-> unsafe_copy_to_user() and switch filldir over to it") the header file is
-> no longer needed.
-> 
-> 
+Hi Frank,
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Frank.Li@nxp.com wrote on Fri, 31 May 2024 11:43:08 -0400:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> When an In-Band Interrupt(IBI) occurs after svc_i3c_master_do_daa_locked(=
+),
+> typically triggered during a Hot Join (HJ) event, the IBIWON flag fails to
+> be set when issuing an auto IBI command.
+>=20
+> The issue stems from the omission of emitting STOP upon successful
+> execution of svc_i3c_master_do_daa_locked(). Consequently, the controller
+> interprets it as a repeat start when emitting the auto IBI command. Per t=
+he
+> I3C specification, an IBI should never occur during a repeat start, thus
+> preventing the IBIWON flag from being set.
+>=20
+> Emit STOP regardless of the success or failure of
+> svc_i3c_master_do_daa_locked() to match I3C spec requirement.
+>=20
+> Cc: <stable@vger.kernel.org>
+> Fixes: dd3c52846d59 ("i3c: master: svc: Add Silvaco I3C master driver")
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+There was no hot-join support in this commit. You can probably use
+instead:
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Fixes: 05b26c31a485 ("i3c: master: svc: add hot join support")
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] readdir: Remove unused header include
-      https://git.kernel.org/vfs/vfs/c/c06a4cc368ac
+Thanks,
+Miqu=C3=A8l
 
