@@ -1,576 +1,383 @@
-Return-Path: <linux-kernel+bounces-199075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0A88D81D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:01:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1AD8D81D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9971F237E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:01:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA0CDB21242
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2313B1272D6;
-	Mon,  3 Jun 2024 12:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE4C126F1C;
+	Mon,  3 Jun 2024 12:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="n1fh4Nc5"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="mhMRRLxr"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368EE7E579
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BDC7E579
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717416084; cv=none; b=JklUk6l+eZ/anqqlTq0bGoocutS07eyEMmGnWrhjOd53iHXzyOfFv7HRjFXkIxnnKbSBhfTUR7MupG/7DtKoMD8G9yVfv3nwZxh3h1mevF4QpGQRsaYtWOvjE2vl/9ZW0wtHaVBbfFEIydirhGQB5RK9f6O89lPwPE3KyQ+mdNI=
+	t=1717416150; cv=none; b=eBVuiBswBMf7tpZV6I4iuP6KHhWr1ZNgu+Cm+50/MlchDM/JiAE3N4dMsnHalh/fwe2UvaAbSzpVnjaWj8hSYP46KhC8ONTaLzWSFjx7UbmmWRQiLlVScNtqjVn7TGidpTRvjIGIepYowEbafvH4j9Bji72JKmMBh4s5mT3W2MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717416084; c=relaxed/simple;
-	bh=d2mjs4XZMkNeQ+HUqicIdUBGMGtIr9dkOylyvyZRNZM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ww8gz5AiMjlsjOO8YqGcZsudSRgC+jVIowoGk6d1jweW4TSrUO6eulVdwZoxISvmHcYtbM9dfSQ1d2mTD4YO5TLX1NwCqzfP5I1KE/uz3RHepvhDxRgmU+5d0egUBZNX9bAE69N+29ZREFg0A4cultq+5jamnHpCLmHHSlzE6rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=n1fh4Nc5; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4212b4eea2eso26436635e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:01:20 -0700 (PDT)
+	s=arc-20240116; t=1717416150; c=relaxed/simple;
+	bh=OSTW8r0HUTW5KRhY7Mown9CKgLCCkexuNlcWY+UWKUo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ggps8BVZui1Vc1/UhPKO6CRFZth/weCsdvm+1DbxUhlBgIAvy2O8fSBhwxQ2QcdjCG1EjQ//T2fE3K6fhCKYT7kp2A/qhjKAuHRXPVfr91NKAwwcNL3NlVnrXGdK+YJwv6LTNVgRuudSiANAb8U1k4pV6nZ52n0YzbHEUpzdg1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=mhMRRLxr; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a033c2e9fso5322117a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:02:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717416079; x=1718020879; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/3xUCui7cLPYCBQDbqvkFkoK4V/RGmuP0R9MYWDAsMY=;
-        b=n1fh4Nc5ojKHDmx2jtkEIFajYeIujNdPSiQcJ+YAb2UE9fGbCKL3tz7MrQy2/Mfhtf
-         D54WihHka7zQt+iW8Wl3mX4WWoN+VoypLB5dVTT+ZGYHB+vUxIpwVA39XPmPSVZOYiyA
-         qLvCM8NmDYSLbWQC+0glftOL8j2kHoznCK9Rukrmvt9Xq8nQSr4ji/sHET5p3WLqMHUP
-         Yb+huY7gKjTsksCZFUl30OicOKwFzjndxMn9iJ0Pt7CpzqFwAci5Inx9ea/cjbBQrQ4T
-         ocYf/jwI8HsM9EOTp/TX6hZSU+Ze2Y1THZb5iLIVvkJTidU78FQYTNHO1GX7JgM/m/dG
-         lgMQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717416146; x=1718020946; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WMOJmLS/Nn9J0SYKlSWYVE6j+qu58H+1OHJ/cgq+xrA=;
+        b=mhMRRLxrSdUC9cH/Nquh01Jzc/vezquSQuEYbbonX6nkMjqBB4GjY/Ijhdoa8tLXZ5
+         zgywrQilOarLmFMSneFIuCwuY9kYDMSKZTgUFPGJJAPMHuEP5lW5n/DgoN1lghq3x+dy
+         hxhLcSBkJj+yE4Q+CeCu5QzAjPPvR/dimmCNj2gUaX/TC4UYNeFyrrBV7b4H1G5tv5Lf
+         ekfdP0nWZKtnjkrbS+uC8mpIgaB5eiQ18i8TCnDdy1rR4lCPPgR/3TR8uVVTjkXIOBjd
+         AlKkqwEVZNzYfK2rordOvq8S2lDSky1M6hFeIM/GncBVjWmFG537k6nXyb3vEnCANCaP
+         UIvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717416079; x=1718020879;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717416146; x=1718020946;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/3xUCui7cLPYCBQDbqvkFkoK4V/RGmuP0R9MYWDAsMY=;
-        b=MCcJNXCVIp3TO6QXqL/5AMYB6U/+yj+zxW0XutZH+IRtt9HJft1BBSJGAwov4lzkU3
-         SILArVrsRNIAZXNAMOU37YPQsr+XBDkQsMmU3jopK6R6OXMo9fc+aoATTr8kgbxaDDhi
-         T7skBYQ+j1aQt+aBYKfpFD2QdtMGzORv5LrwvAQ4swbbhhR9dL79/I1quPT3VgITi+Ch
-         TTFurKyCgeGAp3XU49weAJNHkaTPxkxRtJzGslChSf4hWRjkBXD2Gl3dzJWSpumsp16e
-         hdqzoKCZVDwMrkzhkWaN0FNAOmgWCHc88zeeTcJRLf0d//zny8lljZd2Gu7JdPupsYMY
-         oaiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmpBWzuWx2D5VhBFcOFZUZ3zCJlsuHXWgmSUrG9fgUM+uFY88xu1Bo6zDd17jV3B1GdLJFFN1O2YWcxnADZHhWmYSwa1V4wsrN5mXJ
-X-Gm-Message-State: AOJu0YwgQrPJaemFNMaaAkrOATKSSrETD3YQBzRUP0GNKFa0mQ50Npp/
-	pDQc34m+a23/+0HkQxK3CQBXGpIQBb4WWVsARXUXXc0I5ASs0dv5Bd9ZSLKOCus=
-X-Google-Smtp-Source: AGHT+IEUTn+YwahcCQswRuuEjn2b/mncaQi5c822nBTE41ro1vWLUXwe/FYhGZ+7jdgFe0px3+VKbQ==
-X-Received: by 2002:a05:600c:198b:b0:41a:b30e:42a3 with SMTP id 5b1f17b1804b1-4212e0bfd84mr66395065e9.37.1717416078969;
-        Mon, 03 Jun 2024 05:01:18 -0700 (PDT)
-Received: from localhost ([165.225.194.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42127069305sm145639915e9.22.2024.06.03.05.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 05:01:18 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Jens Axboe <axboe@kernel.dk>,  Christoph Hellwig <hch@lst.de>,  Keith
- Busch <kbusch@kernel.org>,  Damien Le Moal <dlemoal@kernel.org>,  Bart Van
- Assche <bvanassche@acm.org>,  Hannes Reinecke <hare@suse.de>,  Ming Lei
- <ming.lei@redhat.com>,  "linux-block@vger.kernel.org"
- <linux-block@vger.kernel.org>,  Andreas Hindborg <a.hindborg@samsung.com>,
-  Wedson Almeida Filho <wedsonaf@gmail.com>,  Greg KH
- <gregkh@linuxfoundation.org>,  Matthew Wilcox <willy@infradead.org>,
-  Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
-  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron <bjorn3_gh@protonmail.com>,  Alice Ryhl <aliceryhl@google.com>,
-  Chaitanya Kulkarni <chaitanyak@nvidia.com>,  Luis Chamberlain
- <mcgrof@kernel.org>,  Yexuan Yang <1182282462@bupt.edu.cn>,  Sergio
- =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,  Joel
- Granados
- <j.granados@samsung.com>,  "Pankaj Raghav (Samsung)"
- <kernel@pankajraghav.com>,  Daniel Gomez <da.gomez@samsung.com>,  Niklas
- Cassel <Niklas.Cassel@wdc.com>,  Philipp Stanner <pstanner@redhat.com>,
-  Conor Dooley <conor@kernel.org>,  Johannes Thumshirn
- <Johannes.Thumshirn@wdc.com>,  Matias =?utf-8?Q?Bj=C3=B8rling?=
- <m@bjorling.me>,  open list
- <linux-kernel@vger.kernel.org>,  "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>,  "lsf-pc@lists.linux-foundation.org"
- <lsf-pc@lists.linux-foundation.org>,  "gost.dev@samsung.com"
- <gost.dev@samsung.com>
-Subject: Re: [PATCH v4 1/3] rust: block: introduce `kernel::block::mq` module
-In-Reply-To: <b6b8e3e6-a2b9-4ddd-bf0f-e924d5d65653@proton.me> (Benno Lossin's
-	message of "Sun, 02 Jun 2024 20:08:17 +0000")
-References: <20240601134005.621714-1-nmi@metaspace.dk>
-	<20240601134005.621714-2-nmi@metaspace.dk>
-	<b6b8e3e6-a2b9-4ddd-bf0f-e924d5d65653@proton.me>
-Date: Mon, 03 Jun 2024 14:01:10 +0200
-Message-ID: <87mso2me0p.fsf@metaspace.dk>
+        bh=WMOJmLS/Nn9J0SYKlSWYVE6j+qu58H+1OHJ/cgq+xrA=;
+        b=IE6cwdgLRUVuHYNK/opXR00pX5ectkMMvFgwLaoIVUpMaKEBEDu+9XCC4taJKRjotR
+         2G3qCIg6qRILsK3U2fECBrQI6C/dQqjIOf0VibZ4LLZ8aknNgehsmWjVM4QT8Fao5pwT
+         4AaoMw7xQLtvGnbDwzkEUrgs6Y++V5VbMC1CpW5hSYngMO02nJhay3O6cQQ0TRq5xl51
+         2zdcHCxpCl3v7VK3Ao1oI+05YHMr9OPiTLRTiKmPC4O42HKsfTJDDUUAIAW6NBM/p5Ed
+         wD96boZ9G0+XGre9SbfdHQJXHgSqOxxqHquqWdX2rbnk0rH+ccwNGjCv1KcnFpLn09xV
+         Pueg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxCwnjrmUrg2Lek8AItNzD1lseEtf6rS6h4AOs+/P69rp9935fBPQvNoWKZV9RsbWsVLllLyyLsgzXCRSgu8/Lh+1gXL9XzzJ+CKF
+X-Gm-Message-State: AOJu0YxJeJFG+GDSErzjclom02DZek2Cp3sgyW6cKErVsJ68Wc3lAw3j
+	mv83kawaHMi1lXeYuYXlM1rLWpmWJrerWmNBxm30Ytaa4w+SOHMrhV2egTAGUvGiUaDgNBQmyDy
+	bjgUr/77W9axxsYPVwDNONKkT+6KNCwUF1kgQBw==
+X-Google-Smtp-Source: AGHT+IEcNuSPY/6zmXkbJ2ykkTAVjgIdBcvRO/PSDLvgQzilSvNQKgMTHA7oFyKBa29xVYDm6MJBhlpDtDdGT6zZAIU=
+X-Received: by 2002:a50:a414:0:b0:579:7b6c:5ab3 with SMTP id
+ 4fb4d7f45d1cf-57a364e3615mr7699348a12.22.1717416145533; Mon, 03 Jun 2024
+ 05:02:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240131155929.169961-1-alexghiti@rivosinc.com>
+ <20240131155929.169961-4-alexghiti@rivosinc.com> <CAEEQ3wnT-K18R1KQjJbeSdnFnRFQZt=wCuAHeDrf7EohwZ7n=w@mail.gmail.com>
+In-Reply-To: <CAEEQ3wnT-K18R1KQjJbeSdnFnRFQZt=wCuAHeDrf7EohwZ7n=w@mail.gmail.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Mon, 3 Jun 2024 14:02:14 +0200
+Message-ID: <CAHVXubiKAY_L04ZwYSp-MpPPT5sPzxm4wB6HVFPzsMcB-3zq9w@mail.gmail.com>
+Subject: Re: [External] [PATCH RFC/RFT v2 3/4] riscv: Stop emitting preventive
+ sfence.vma for new vmalloc mappings
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton <akpm@linux-foundation.org>, 
+	Ved Shanbhogue <ved@rivosinc.com>, Matt Evans <mev@rivosinc.com>, Dylan Jhong <dylan@andestech.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Benno Lossin <benno.lossin@proton.me> writes:
+Hi Yunhui,
 
-> On 01.06.24 15:40, Andreas Hindborg wrote:
->> +/// A generic block device.
->> +///
->> +/// # Invariants
->> +///
->> +///  - `gendisk` must always point to an initialized and valid `struct =
-gendisk`.
->> +pub struct GenDisk<T: Operations, S: GenDiskState =3D Added> {
+On Mon, Jun 3, 2024 at 4:26=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.com>=
+ wrote:
 >
-> I am curious, do you need the type state for this struct? AFAIU you are
-> only using it to configure the `GenDisk`, so could you also use a config
-> struct that is given to `GenDisk::new`. That way we can avoid the extra
-> traits and generic argument.
+> Hi Alexandre,
 >
-> Since there are so many options, a builder config struct might be a good
-> idea.
-
-I agree, let's do a builder. That would actually make some things a bit
-simpler.
-
-
+> On Thu, Feb 1, 2024 at 12:03=E2=80=AFAM Alexandre Ghiti <alexghiti@rivosi=
+nc.com> wrote:
+> >
+> > In 6.5, we removed the vmalloc fault path because that can't work (see
+> > [1] [2]). Then in order to make sure that new page table entries were
+> > seen by the page table walker, we had to preventively emit a sfence.vma
+> > on all harts [3] but this solution is very costly since it relies on IP=
+I.
+> >
+> > And even there, we could end up in a loop of vmalloc faults if a vmallo=
+c
+> > allocation is done in the IPI path (for example if it is traced, see
+> > [4]), which could result in a kernel stack overflow.
+> >
+> > Those preventive sfence.vma needed to be emitted because:
+> >
+> > - if the uarch caches invalid entries, the new mapping may not be
+> >   observed by the page table walker and an invalidation may be needed.
+> > - if the uarch does not cache invalid entries, a reordered access
+> >   could "miss" the new mapping and traps: in that case, we would actual=
+ly
+> >   only need to retry the access, no sfence.vma is required.
+> >
+> > So this patch removes those preventive sfence.vma and actually handles
+> > the possible (and unlikely) exceptions. And since the kernel stacks
+> > mappings lie in the vmalloc area, this handling must be done very early
+> > when the trap is taken, at the very beginning of handle_exception: this
+> > also rules out the vmalloc allocations in the fault path.
+> >
+> > Link: https://lore.kernel.org/linux-riscv/20230531093817.665799-1-bjorn=
+@kernel.org/ [1]
+> > Link: https://lore.kernel.org/linux-riscv/20230801090927.2018653-1-dyla=
+n@andestech.com [2]
+> > Link: https://lore.kernel.org/linux-riscv/20230725132246.817726-1-alexg=
+hiti@rivosinc.com/ [3]
+> > Link: https://lore.kernel.org/lkml/20200508144043.13893-1-joro@8bytes.o=
+rg/ [4]
+> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > ---
+> >  arch/riscv/include/asm/cacheflush.h  | 18 +++++-
+> >  arch/riscv/include/asm/thread_info.h |  5 ++
+> >  arch/riscv/kernel/asm-offsets.c      |  5 ++
+> >  arch/riscv/kernel/entry.S            | 84 ++++++++++++++++++++++++++++
+> >  arch/riscv/mm/init.c                 |  2 +
+> >  5 files changed, 113 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/a=
+sm/cacheflush.h
+> > index a129dac4521d..b0d631701757 100644
+> > --- a/arch/riscv/include/asm/cacheflush.h
+> > +++ b/arch/riscv/include/asm/cacheflush.h
+> > @@ -37,7 +37,23 @@ static inline void flush_dcache_page(struct page *pa=
+ge)
+> >         flush_icache_mm(vma->vm_mm, 0)
+> >
+> >  #ifdef CONFIG_64BIT
+> > -#define flush_cache_vmap(start, end)           flush_tlb_kernel_range(=
+start, end)
+> > +extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
+> > +extern char _end[];
+> > +#define flush_cache_vmap flush_cache_vmap
+> > +static inline void flush_cache_vmap(unsigned long start, unsigned long=
+ end)
+> > +{
+> > +       if (is_vmalloc_or_module_addr((void *)start)) {
+> > +               int i;
+> > +
+> > +               /*
+> > +                * We don't care if concurrently a cpu resets this valu=
+e since
+> > +                * the only place this can happen is in handle_exceptio=
+n() where
+> > +                * an sfence.vma is emitted.
+> > +                */
+> > +               for (i =3D 0; i < ARRAY_SIZE(new_vmalloc); ++i)
+> > +                       new_vmalloc[i] =3D -1ULL;
+> > +       }
+> > +}
+> >  #define flush_cache_vmap_early(start, end)     local_flush_tlb_kernel_=
+range(start, end)
+> >  #endif
+> >
+> > diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/=
+asm/thread_info.h
+> > index 5d473343634b..32631acdcdd4 100644
+> > --- a/arch/riscv/include/asm/thread_info.h
+> > +++ b/arch/riscv/include/asm/thread_info.h
+> > @@ -60,6 +60,11 @@ struct thread_info {
+> >         void                    *scs_base;
+> >         void                    *scs_sp;
+> >  #endif
+> > +       /*
+> > +        * Used in handle_exception() to save a0, a1 and a2 before know=
+ing if we
+> > +        * can access the kernel stack.
+> > +        */
+> > +       unsigned long           a0, a1, a2;
+> >  };
+> >
+> >  #ifdef CONFIG_SHADOW_CALL_STACK
+> > diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-of=
+fsets.c
+> > index a03129f40c46..939ddc0e3c6e 100644
+> > --- a/arch/riscv/kernel/asm-offsets.c
+> > +++ b/arch/riscv/kernel/asm-offsets.c
+> > @@ -35,6 +35,8 @@ void asm_offsets(void)
+> >         OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
+> >         OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
+> >         OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
+> > +
+> > +       OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
+> >         OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
+> >         OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_=
+count);
+> >         OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp);
+> > @@ -42,6 +44,9 @@ void asm_offsets(void)
+> >  #ifdef CONFIG_SHADOW_CALL_STACK
+> >         OFFSET(TASK_TI_SCS_SP, task_struct, thread_info.scs_sp);
+> >  #endif
+> > +       OFFSET(TASK_TI_A0, task_struct, thread_info.a0);
+> > +       OFFSET(TASK_TI_A1, task_struct, thread_info.a1);
+> > +       OFFSET(TASK_TI_A2, task_struct, thread_info.a2);
+> >
+> >         OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
+> >         OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
+> > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> > index 9d1a305d5508..c1ffaeaba7aa 100644
+> > --- a/arch/riscv/kernel/entry.S
+> > +++ b/arch/riscv/kernel/entry.S
+> > @@ -19,6 +19,78 @@
+> >
+> >         .section .irqentry.text, "ax"
+> >
+> > +.macro new_vmalloc_check
+> > +       REG_S   a0, TASK_TI_A0(tp)
+> > +       REG_S   a1, TASK_TI_A1(tp)
+> > +       REG_S   a2, TASK_TI_A2(tp)
+> > +
+> > +       csrr    a0, CSR_CAUSE
+> > +       /* Exclude IRQs */
+> > +       blt     a0, zero, _new_vmalloc_restore_context
+> > +       /* Only check new_vmalloc if we are in page/protection fault */
+> > +       li      a1, EXC_LOAD_PAGE_FAULT
+> > +       beq     a0, a1, _new_vmalloc_kernel_address
+> > +       li      a1, EXC_STORE_PAGE_FAULT
+> > +       beq     a0, a1, _new_vmalloc_kernel_address
+> > +       li      a1, EXC_INST_PAGE_FAULT
+> > +       bne     a0, a1, _new_vmalloc_restore_context
+> > +
+> > +_new_vmalloc_kernel_address:
+> > +       /* Is it a kernel address? */
+> > +       csrr    a0, CSR_TVAL
+> > +       bge     a0, zero, _new_vmalloc_restore_context
+> > +
+> > +       /* Check if a new vmalloc mapping appeared that could explain t=
+he trap */
+> > +
+> > +       /*
+> > +        * Computes:
+> > +        * a0 =3D &new_vmalloc[BIT_WORD(cpu)]
+> > +        * a1 =3D BIT_MASK(cpu)
+> > +        */
+> > +       REG_L   a2, TASK_TI_CPU(tp)
+> > +       /*
+> > +        * Compute the new_vmalloc element position:
+> > +        * (cpu / 64) * 8 =3D (cpu >> 6) << 3
+> > +        */
+> > +       srli    a1, a2, 6
+> > +       slli    a1, a1, 3
+> > +       la      a0, new_vmalloc
+> > +       add     a0, a0, a1
+> > +       /*
+> > +        * Compute the bit position in the new_vmalloc element:
+> > +        * bit_pos =3D cpu % 64 =3D cpu - (cpu / 64) * 64 =3D cpu - (cp=
+u >> 6) << 6
+> > +        *         =3D cpu - ((cpu >> 6) << 3) << 3
+> > +        */
+> > +       slli    a1, a1, 3
+> > +       sub     a1, a2, a1
+> > +       /* Compute the "get mask": 1 << bit_pos */
+> > +       li      a2, 1
+> > +       sll     a1, a2, a1
+> > +
+> > +       /* Check the value of new_vmalloc for this cpu */
+> > +       REG_L   a2, 0(a0)
+> > +       and     a2, a2, a1
+> > +       beq     a2, zero, _new_vmalloc_restore_context
+> > +
+> > +       /* Atomically reset the current cpu bit in new_vmalloc */
+> > +       amoxor.w        a0, a1, (a0)
+> > +
+> > +       /* Only emit a sfence.vma if the uarch caches invalid entries *=
+/
+> > +       ALTERNATIVE("sfence.vma", "nop", 0, RISCV_ISA_EXT_SVVPTC, 1)
+> > +
+> > +       REG_L   a0, TASK_TI_A0(tp)
+> > +       REG_L   a1, TASK_TI_A1(tp)
+> > +       REG_L   a2, TASK_TI_A2(tp)
+> > +       csrw    CSR_SCRATCH, x0
+> > +       sret
+> > +
+> > +_new_vmalloc_restore_context:
+> > +       REG_L   a0, TASK_TI_A0(tp)
+> > +       REG_L   a1, TASK_TI_A1(tp)
+> > +       REG_L   a2, TASK_TI_A2(tp)
+> > +.endm
+> > +
+> > +
+> >  SYM_CODE_START(handle_exception)
+> >         /*
+> >          * If coming from userspace, preserve the user thread pointer a=
+nd load
+> > @@ -30,6 +102,18 @@ SYM_CODE_START(handle_exception)
+> >
+> >  .Lrestore_kernel_tpsp:
+> >         csrr tp, CSR_SCRATCH
+> > +
+> > +       /*
+> > +        * The RISC-V kernel does not eagerly emit a sfence.vma after e=
+ach
+> > +        * new vmalloc mapping, which may result in exceptions:
+> > +        * - if the uarch caches invalid entries, the new mapping would=
+ not be
+> > +        *   observed by the page table walker and an invalidation is n=
+eeded.
+> > +        * - if the uarch does not cache invalid entries, a reordered a=
+ccess
+> > +        *   could "miss" the new mapping and traps: in that case, we o=
+nly need
+> > +        *   to retry the access, no sfence.vma is required.
+> > +        */
+> > +       new_vmalloc_check
+> > +
+> >         REG_S sp, TASK_TI_KERNEL_SP(tp)
+> >
+> >  #ifdef CONFIG_VMAP_STACK
+> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> > index eafc4c2200f2..54c9fdeda11e 100644
+> > --- a/arch/riscv/mm/init.c
+> > +++ b/arch/riscv/mm/init.c
+> > @@ -36,6 +36,8 @@
+> >
+> >  #include "../kernel/head.h"
+> >
+> > +u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
+> > +
+> >  struct kernel_mapping kernel_map __ro_after_init;
+> >  EXPORT_SYMBOL(kernel_map);
+> >  #ifdef CONFIG_XIP_KERNEL
+> > --
+> > 2.39.2
+> >
+> >
 >
->> +    tagset: Arc<TagSet<T>>,
->> +    gendisk: *mut bindings::gendisk,
->> +    _phantom: core::marker::PhantomData<S>,
->> +}
->> +
->> +// SAFETY: `GenDisk` is an owned pointer to a `struct gendisk` and an `=
-Arc` to a
->> +// `TagSet` It is safe to send this to other threads as long as T is Se=
-nd.
->> +unsafe impl<T: Operations + Send, S: GenDiskState> Send for GenDisk<T, =
-S> {}
->> +
->> +/// Disks in this state are allocated and initialized, but are not yet
->> +/// accessible from the kernel VFS.
->> +pub enum Initialized {}
->> +
->> +/// Disks in this state have been attached to the kernel VFS and may re=
-ceive IO
->> +/// requests.
->> +pub enum Added {}
->> +
->> +mod seal {
->> +    pub trait Sealed {}
->> +}
->> +
->> +/// Typestate representing states of a `GenDisk`.
->> +///
->> +/// This trait cannot be implemented by downstream crates.
->> +pub trait GenDiskState: seal::Sealed {
->> +    /// Set to true if [`GenDisk`] should call `del_gendisk` on drop.
->> +    const DELETE_ON_DROP: bool;
->> +}
->> +
->> +impl seal::Sealed for Initialized {}
->> +impl GenDiskState for Initialized {
->> +    const DELETE_ON_DROP: bool =3D false;
->> +}
->> +impl seal::Sealed for Added {}
->> +impl GenDiskState for Added {
->> +    const DELETE_ON_DROP: bool =3D true;
->> +}
->> +
->> +impl<T: Operations> GenDisk<T, Initialized> {
->> +    /// Try to create a new `GenDisk`.
->> +    pub fn try_new(tagset: Arc<TagSet<T>>) -> Result<Self> {
->
-> Since there is no non-try `new` function, I think we should name this
-> function just `new`.
+> Can we consider using new_vmalloc as a percpu variable, so that we
+> don't need to add a0/1/2 in thread_info?
 
-Right, I am still getting used to the new naming scheme. Do you know if
-it is documented anywhere?
+At first, I used percpu variables. But then I realized that percpu
+areas are allocated in the vmalloc area, so if somehow we take a trap
+when accessing the new_vmalloc percpu variable, we could not recover
+from this as we would trap forever in new_vmalloc_check. But
+admittedly, not sure that can happen.
 
->
->> +        let lock_class_key =3D crate::sync::LockClassKey::new();
->> +
->> +        // SAFETY: `tagset.raw_tag_set()` points to a valid and initial=
-ized tag set
->> +        let gendisk =3D from_err_ptr(unsafe {
->> +            bindings::__blk_mq_alloc_disk(
->> +                tagset.raw_tag_set(),
->> +                core::ptr::null_mut(), // TODO: We can pass queue limit=
-s right here
->> +                core::ptr::null_mut(),
->> +                lock_class_key.as_ptr(),
->> +            )
->> +        })?;
->> +
->> +        const TABLE: bindings::block_device_operations =3D bindings::bl=
-ock_device_operations {
->> +            submit_bio: None,
->> +            open: None,
->> +            release: None,
->> +            ioctl: None,
->> +            compat_ioctl: None,
->> +            check_events: None,
->> +            unlock_native_capacity: None,
->> +            getgeo: None,
->> +            set_read_only: None,
->> +            swap_slot_free_notify: None,
->> +            report_zones: None,
->> +            devnode: None,
->> +            alternative_gpt_sector: None,
->> +            get_unique_id: None,
->> +            // TODO: Set to THIS_MODULE. Waiting for const_refs_to_stat=
-ic feature to
->> +            // be merged (unstable in rustc 1.78 which is staged for li=
-nux 6.10)
->> +            // https://github.com/rust-lang/rust/issues/119618
->> +            owner: core::ptr::null_mut(),
->> +            pr_ops: core::ptr::null_mut(),
->> +            free_disk: None,
->> +            poll_bio: None,
->> +        };
->> +
->> +        // SAFETY: gendisk is a valid pointer as we initialized it above
->> +        unsafe { (*gendisk).fops =3D &TABLE };
->> +
->> +        // INVARIANT: `gendisk` was initialized above.
->> +        // INVARIANT: `gendisk.queue.queue_data` is set to `data` in th=
-e call to
->
-> There is no `data` in the mentioned call above.
+And how would that remove a0, a1 and a2 from thread_info? We'd still
+need to save some registers somewhere to access the percpu variable
+right?
 
-Thanks, I'll move the comment to the patch it belongs in =F0=9F=91=8D
+> Also, try not to do too much
+> calculation logic in new_vmalloc_check, after all, handle_exception is
+> a high-frequency path. In this case, can we consider writing
+> new_vmalloc_check in C language to increase readability?
 
->
->> +        // `__blk_mq_alloc_disk` above.
->> +        Ok(GenDisk {
->> +            tagset,
->> +            gendisk,
->> +            _phantom: PhantomData,
->> +        })
->> +    }
->> +
->
-> [...]
->
->> +impl<T: Operations> OperationsVTable<T> {
->> +    /// This function is called by the C kernel. A pointer to this func=
-tion is
->> +    /// installed in the `blk_mq_ops` vtable for the driver.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// - The caller of this function must ensure `bd` is valid
->> +    ///   and initialized. The pointees must outlive this function.
->
-> Until when do the pointees have to be alive? "must outlive this
-> function" could also be the case if the pointees die immediately after
-> this function returns.
+If we write that in C, we don't have the control over the allocated
+registers and then we can't correctly save the context.
 
-It should not be plural. What I intended to communicate is that what
-`bd` points to must be valid for read for the duration of the function
-call. I think that is what "The pointee must outlive this function"
-states? Although when we talk about lifetime of an object pointed to by
-a pointer, I am not sure about the correct way to word this. Do we talk
-about the lifetime of the pointer or the lifetime of the pointed to
-object (the pointee). We should not use the same wording for the pointer
-and the pointee.
+Thanks for your interest in this patchset :)
 
-How about:
-
-    /// - The caller of this function must ensure that the pointee of `bd` =
-is
-    ///   valid for read for the duration of this function.
-
->
->> +    /// - This function must not be called with a `hctx` for which
->> +    ///   `Self::exit_hctx_callback()` has been called.
->> +    /// - (*bd).rq must point to a valid `bindings:request` for which
->> +    ///   `OperationsVTable<T>::init_request_callback` was called
->
-> Missing `.` at the end.
-
-Thanks.
-
->
->> +    unsafe extern "C" fn queue_rq_callback(
->> +        _hctx: *mut bindings::blk_mq_hw_ctx,
->> +        bd: *const bindings::blk_mq_queue_data,
->> +    ) -> bindings::blk_status_t {
->> +        // SAFETY: `bd.rq` is valid as required by the safety requireme=
-nt for
->> +        // this function.
->> +        let request =3D unsafe { &*(*bd).rq.cast::<Request<T>>() };
->> +
->> +        // One refcount for the ARef, one for being in flight
->> +        request.wrapper_ref().refcount().store(2, Ordering::Relaxed);
->> +
->> +        // SAFETY: We own a refcount that we took above. We pass that t=
-o `ARef`.
->> +        // By the safety requirements of this function, `request` is a =
-valid
->> +        // `struct request` and the private data is properly initialize=
-d.
->> +        let rq =3D unsafe { Request::aref_from_raw((*bd).rq) };
->
-> I think that you need to require that the request is alive at least
-> until `blk_mq_end_request` is called for the request (since at that
-> point all `ARef`s will be gone).
-> Also if this is not guaranteed, the safety requirements of
-> `AlwaysRefCounted` are violated (since the object can just disappear
-> even if it has refcount > 0 [the refcount refers to the Rust refcount in
-> the `RequestDataWrapper`, not the one in C]).
-
-Yea, for the last invariant of `Request`:
-
-  /// * `self` is reference counted by atomic modification of
-  ///   self.wrapper_ref().refcount().
-
-I will add this to the safety comment at the call site:
-
-  //  - `rq` will be alive until `blk_mq_end_request` is called and is
-  //    reference counted by `ARef` until then.
-
-
->
->> +
->> +        // SAFETY: We have exclusive access and we just set the refcoun=
-t above.
->> +        unsafe { Request::start_unchecked(&rq) };
->> +
->> +        let ret =3D T::queue_rq(
->> +            rq,
->> +            // SAFETY: `bd` is valid as required by the safety requirem=
-ent for this function.
->> +            unsafe { (*bd).last },
->> +        );
->> +
->> +        if let Err(e) =3D ret {
->> +            e.to_blk_status()
->> +        } else {
->> +            bindings::BLK_STS_OK as _
->> +        }
->> +    }
->> +
->> +    /// This function is called by the C kernel. A pointer to this func=
-tion is
->> +    /// installed in the `blk_mq_ops` vtable for the driver.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This function may only be called by blk-mq C infrastructure.
->> +    unsafe extern "C" fn commit_rqs_callback(_hctx: *mut bindings::blk_=
-mq_hw_ctx) {
->> +        T::commit_rqs()
->> +    }
->> +
->> +    /// This function is called by the C kernel. It is not currently
->> +    /// implemented, and there is no way to exercise this code path.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This function may only be called by blk-mq C infrastructure.
->> +    unsafe extern "C" fn complete_callback(_rq: *mut bindings::request)=
- {}
->> +
->> +    /// This function is called by the C kernel. A pointer to this func=
-tion is
->> +    /// installed in the `blk_mq_ops` vtable for the driver.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This function may only be called by blk-mq C infrastructure.
->> +    unsafe extern "C" fn poll_callback(
->> +        _hctx: *mut bindings::blk_mq_hw_ctx,
->> +        _iob: *mut bindings::io_comp_batch,
->> +    ) -> core::ffi::c_int {
->> +        T::poll().into()
->> +    }
->> +
->> +    /// This function is called by the C kernel. A pointer to this func=
-tion is
->> +    /// installed in the `blk_mq_ops` vtable for the driver.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This function may only be called by blk-mq C infrastructure. Th=
-is
->> +    /// function may only be called onece before `exit_hctx_callback` i=
-s called
->
-> Typo: "onece"
-
-Since you keep finding typos in my patches, I took this morning to fix
-my spelling setup in Emacs. It was a deep rabbit hole, but I think I got
-it now =F0=9F=A4=9E
+Alex
 
 >
->> +    /// for the same context.
->> +    unsafe extern "C" fn init_hctx_callback(
->> +        _hctx: *mut bindings::blk_mq_hw_ctx,
->> +        _tagset_data: *mut core::ffi::c_void,
->> +        _hctx_idx: core::ffi::c_uint,
->> +    ) -> core::ffi::c_int {
->> +        from_result(|| Ok(0))
->> +    }
->> +
->> +    /// This function is called by the C kernel. A pointer to this func=
-tion is
->> +    /// installed in the `blk_mq_ops` vtable for the driver.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This function may only be called by blk-mq C infrastructure.
->> +    unsafe extern "C" fn exit_hctx_callback(
->> +        _hctx: *mut bindings::blk_mq_hw_ctx,
->> +        _hctx_idx: core::ffi::c_uint,
->> +    ) {
->> +    }
->> +
->> +    /// This function is called by the C kernel. A pointer to this func=
-tion is
->> +    /// installed in the `blk_mq_ops` vtable for the driver.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// This function may only be called by blk-mq C infrastructure. `s=
-et` must
->> +    /// point to an initialized `TagSet<T>`.
->> +    unsafe extern "C" fn init_request_callback(
->> +        _set: *mut bindings::blk_mq_tag_set,
->> +        rq: *mut bindings::request,
->> +        _hctx_idx: core::ffi::c_uint,
->> +        _numa_node: core::ffi::c_uint,
->> +    ) -> core::ffi::c_int {
->> +        from_result(|| {
->> +            // SAFETY: The `blk_mq_tag_set` invariants guarantee that a=
-ll
->> +            // requests are allocated with extra memory for the request=
- data.
->
-> What guarantees that the right amount of memory has been allocated?
-> AFAIU that is guaranteed by the `TagSet` (but there is no invariant).
-
-It is by C API contract. `TagSet`::try_new` (now `new`) writes
-`cmd_size` into the `struct blk_mq_tag_set`. That is picked up by
-`blk_mq_alloc_tag_set` to allocate the right amount of space for each reque=
-st.
-
-The invariant here is on the C type. Perhaps the wording is wrong. I am
-not exactly sure how to express this. How about this:
-
-            // SAFETY: We instructed `blk_mq_alloc_tag_set` to allocate req=
-uests
-            // with extra memory for the request data when we called it in
-            // `TagSet::new`.
-
->
->> +            let pdu =3D unsafe { bindings::blk_mq_rq_to_pdu(rq) }.cast:=
-:<RequestDataWrapper>();
->> +
->> +            // SAFETY: The refcount field is allocated but not initiali=
-zed, this
->> +            // valid for write.
->> +            unsafe { RequestDataWrapper::refcount_ptr(pdu).write(Atomic=
-U64::new(0)) };
->> +
->> +            Ok(0)
->> +        })
->> +    }
->
-> [...]
->
->> +    /// Notify the block layer that a request is going to be processed =
-now.
->> +    ///
->> +    /// The block layer uses this hook to do proper initializations suc=
-h as
->> +    /// starting the timeout timer. It is a requirement that block devi=
-ce
->> +    /// drivers call this function when starting to process a request.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// The caller must have exclusive ownership of `self`, that is
->> +    /// `self.wrapper_ref().refcount() =3D=3D 2`.
->> +    pub(crate) unsafe fn start_unchecked(this: &ARef<Self>) {
->> +        // SAFETY: By type invariant, `self.0` is a valid `struct reque=
-st`. By
->> +        // existence of `&mut self` we have exclusive access.
->
-> We don't have a `&mut self`. But the safety requirements ask for a
-> unique `ARef`.
-
-Thanks, I'll rephrase to:
-
-        // SAFETY: By type invariant, `self.0` is a valid `struct request` =
-and
-        // we have exclusive access.
-
->
->> +        unsafe { bindings::blk_mq_start_request(this.0.get()) };
->> +    }
->> +
->> +    fn try_set_end(this: ARef<Self>) -> Result<ARef<Self>, ARef<Self>> {
->> +        // We can race with `TagSet::tag_to_rq`
->> +        match this.wrapper_ref().refcount().compare_exchange(
->> +            2,
->> +            0,
->> +            Ordering::Relaxed,
->> +            Ordering::Relaxed,
->> +        ) {
->> +            Err(_old) =3D> Err(this),
->> +            Ok(_) =3D> Ok(this),
->> +        }
->> +    }
->> +
->> +    /// Notify the block layer that the request has been completed with=
-out errors.
->> +    ///
->> +    /// This function will return `Err` if `this` is not the only `ARef`
->> +    /// referencing the request.
->> +    pub fn end_ok(this: ARef<Self>) -> Result<(), ARef<Self>> {
->> +        let this =3D Self::try_set_end(this)?;
->> +        let request_ptr =3D this.0.get();
->> +        core::mem::forget(this);
->> +
->> +        // SAFETY: By type invariant, `self.0` is a valid `struct reque=
-st`. By
->> +        // existence of `&mut self` we have exclusive access.
->
-> Same here, but in this case, the `ARef` is unique, since you called
-> `try_set_end`. You could make it a `# Guarantee` of `try_set_end`: "If
-> `Ok(aref)` is returned, then the `aref` is unique."
-
-Makes sense. I have not seen `# Guarantee` used anywhere. Do you have a lin=
-k for that use?
-
->
->> +        unsafe { bindings::blk_mq_end_request(request_ptr, bindings::BL=
-K_STS_OK as _) };
->> +
->> +        Ok(())
->> +    }
->> +
->> +    /// Return a pointer to the `RequestDataWrapper` stored in the priv=
-ate area
->> +    /// of the request structure.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// - `this` must point to a valid allocation.
->> +    pub(crate) unsafe fn wrapper_ptr(this: *mut Self) -> NonNull<Reques=
-tDataWrapper> {
->> +        let request_ptr =3D this.cast::<bindings::request>();
->> +        let wrapper_ptr =3D
->> +            // SAFETY: By safety requirements for this function, `this`=
- is a
->> +            // valid allocation.
->
-> Formatting: move the safety comment above the `let`.
-
-Thanks.
-
-I'll send a new version shortly.
-
-
-BR Andreas
+> Thanks,
+> Yunhui
 
