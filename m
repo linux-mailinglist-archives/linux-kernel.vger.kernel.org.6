@@ -1,114 +1,106 @@
-Return-Path: <linux-kernel+bounces-199204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47598D83CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:24:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E518D83D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518071F22D2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C582812C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BEA12D769;
-	Mon,  3 Jun 2024 13:24:00 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDB412DD83;
+	Mon,  3 Jun 2024 13:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZgcVGsgW"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C694A12D1F4;
-	Mon,  3 Jun 2024 13:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1CC12D210
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717421040; cv=none; b=WcvcxMePdq35M/Wv4gogFpUpCvncf0bVqxSzE/u+E+diMmiBa+Q2RMp929eF2cXSdIoybCYDgYpZQnol6VHCntra3zClCAEObKGXJ6iFSZ98SEx/KHG/9aTyBTV5U4+5yoGI5IgDPPew7l2pA7RA4Y9N/uLkfxyqA+D3z365tKU=
+	t=1717421121; cv=none; b=C8xTFIym/NEogmzA9/eVFpCT1/9bITy/FpKBJocK7apR9bmVeT+vt9zH7WONmAU1GgJxog67LmaPzpRL25MPs7Uc+MLfDtEanfgksNVqzLupfiX1vFEJaf+MnYZ7vDOlUu3jAvlNDMoyfZLiPp/CSdaZct/x3c5nppaLZCP5FQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717421040; c=relaxed/simple;
-	bh=udMEuk2A2ogGiCDA9gXwFSBeuO3i5em6Eu0uB+qAV04=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hugLxGvCjY9s7UfWFJC+ihD9examJcBrxMyZgxs82XnJ4LDU+p0JetePTgSdhxendRk/ooaBiWf4GoZ5SjC9Oqc4iTXP1/WcoZUwNcfUhySRrzMkPSD70YNtMemDimsaw/JST4WthVS/A6rP9hQp2nA0va0tw+ubPRUv3nVLIGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VtDvM17rCz4f3m75;
-	Mon,  3 Jun 2024 21:23:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 340D41A0170;
-	Mon,  3 Jun 2024 21:23:54 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgCnyw7ow11mnudLOw--.43837S3;
-	Mon, 03 Jun 2024 21:23:54 +0800 (CST)
-Subject: Re: [RFC PATCH v4 3/8] iomap: pass blocksize to iomap_truncate_page()
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
- willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-4-yi.zhang@huaweicloud.com>
- <ZlnE7vrk_dmrqUxC@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <4dad0661-fad4-cac3-ffcc-0485ae62b823@huaweicloud.com>
-Date: Mon, 3 Jun 2024 21:23:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1717421121; c=relaxed/simple;
+	bh=RoPZ7OtHwd67JQKS3Bxn9QyWtOUZRPsQ7lKzHfuSPnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mSxeAx6vfLLrxTnGRvEbclqrvPhlMHT99r7khgtgfL55N+GJ18p6ftNuN6dhTM/mL75xjqhvIxACKHp7iA9kvQcv/r2rL4Vftd6PUq6kf0qORm/oVTQEn+wn1Q6sz1erooJMACcybLORfPQkfYpG3kbzlYc/ywF6PL3dB+5Sjis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZgcVGsgW; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4213373568dso22683995e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717421117; x=1718025917; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2P2nwrZKdBj15mvgcJuR9vi5zzVRhf+Cue2wFYJyTjI=;
+        b=ZgcVGsgW2uqA7nd6s4HgqFRZSie5quyjR95ztOnoG33HLZ8yAyPdFOja8lIrlaAmtI
+         soSfzyYA6zW2Rt2RQPrlFX1etsFT2zcCam56fig7qsYsWhNEMDhhGuW/NuJ2mEWQYGr4
+         ata0f5yFBk1O82LQCb4SvGkVsKdlSMg48Lx6okNsGby3s/C8PGC8KIEfFym9BAHIYDlw
+         n65OQMyV2Cd6C67r3kyPr0TPKFUMDazoZtYL/2sHjXcCa31r32NhQMFEJfMa2pmMXvNn
+         mXCaZFdOB+VmiwSjKJzcSffC+7NYCmmRNrkkLAgoxRetVM3dmQQlbnZ8VhcQsd7mLoOr
+         TKlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717421117; x=1718025917;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2P2nwrZKdBj15mvgcJuR9vi5zzVRhf+Cue2wFYJyTjI=;
+        b=SCWJE7sRIlH2Ozzf1XBTp4bXGUMzKVvlANCaZ+Rx2vbw3U8sTScP8yOINR3eljGQw4
+         XXAafJN+7Jrb6Yww8LME3d6IlAfYnVfv5Fn4Whipo9K1XNPVjLRwDch4Jqz6hH7lnAA1
+         byGyCirw58cyQ1rufguy6nkvu9hHJTi10x+BkEK0RWZC1258yFWsHSHThG54Q890sUvC
+         mchAeXzNgtTpUazDcVTomNFxhYZwrwUI4qkEOWKG2ElTnwGfOuHX1TFNUnA+QZI6fx2Q
+         kDCCPSKPqr86FCRHp+r/X1LKhF0wqBORm1fiLvKxO4IJZUD3YoloJ7EmQWMPDYaveGLP
+         YNqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDZBDF4e82i4jesefZZCOzdI1br9tM4i83F7fqcc3iHr56VI/9sQNWmM603HmT48rfRrmMmy/amuqJtFIv5NH+4w9nFQBDXgOsmrLa
+X-Gm-Message-State: AOJu0YzZ+Uu1d23c0fp3S/IPrL8N6DhJK6Q09szCGwnhynuA5LlVz2/Q
+	hk1x1rTwooZDdzSjKTtjnF/UiGdTjUmKUB4u8Vq56EXPT8slUhgjjvdUrj1QUuk=
+X-Google-Smtp-Source: AGHT+IHCoCO6DEuGsOccYDm5/ZkSHsUmm7OTMtTgMzLzeaEljHePUFoXDVgzjeY4+rVjXEay5zGTQA==
+X-Received: by 2002:a05:600c:4595:b0:41c:97e:2100 with SMTP id 5b1f17b1804b1-4212e045524mr72536285e9.3.1717421117078;
+        Mon, 03 Jun 2024 06:25:17 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:638a:e591:7142:7b85])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4212b84de44sm117381195e9.11.2024.06.03.06.25.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 06:25:16 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jan Dakinevich <jan.dakinevich@salutedevices.com>,
+	Alexander Stein <alexander.stein@mailbox.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v2] dt-bindings: clock: meson: Convert axg-audio-clkc to YAML format
+Date: Mon,  3 Jun 2024 15:24:44 +0200
+Message-ID: <171742077914.140081.9416853265361727678.b4-ty@baylibre.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240513224552.800153-1-jan.dakinevich@salutedevices.com>
+References: <20240513224552.800153-1-jan.dakinevich@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZlnE7vrk_dmrqUxC@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgCnyw7ow11mnudLOw--.43837S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrZw43uFy5tr43urW8Jr4DXFb_yoWDKrg_u3
-	92qFyvq3W8CrnxZF43Cr13JrZxtF1q9r9xWFZ8X3y2vasxWFZrAFZ29F97CFn5ta1IkrnI
-	yryYgF48Cry7ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI
-	1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2024/5/31 20:39, Christoph Hellwig wrote:
->> -		const struct iomap_ops *ops)
->> +iomap_truncate_page(struct inode *inode, loff_t pos, unsigned int blocksize,
->> +		bool *did_zero, const struct iomap_ops *ops)
->>  {
->> -	unsigned int blocksize = i_blocksize(inode);
->> -	unsigned int off = pos & (blocksize - 1);
->> +	unsigned int off = rem_u64(pos, blocksize);
->>  
->>  	/* Block boundary? Nothing to do */
->>  	if (!off)
-> 
-> Instad of passing yet another argument here, can we just kill
-> iomap_truncate_page?
-> 
-> I.e. just open code the rem_u64 and 0 offset check in the only caller
-> and call iomap_zero_range.  Same for the DAX variant and it's two
-> callers.
-> 
+Applied to clk-meson (v6.11/drivers), thanks!
 
-Yeah, we could drop iomap_truncate_page() and dax_truncate_page(), but
-that means we have to open code the zeroing length calculation or add a
-fs private helper to do that in every filesystems. Now we only have xfs
-and ext2 two caller, so it looks fine, but if the caller becomes more in
-the future, this could becomes repetitive, if we keep them, all
-filesystems could don't pay attention to these details.
+[1/1] dt-bindings: clock: meson: Convert axg-audio-clkc to YAML format
+      https://github.com/BayLibre/clk-meson/commit/23dc5f7e181a
 
-Thanks,
-Yi.
-
+Best regards,
+--
+Jerome
 
