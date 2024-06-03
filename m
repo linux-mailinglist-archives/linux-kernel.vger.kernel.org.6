@@ -1,143 +1,156 @@
-Return-Path: <linux-kernel+bounces-199567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A178D88A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:31:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2838D88A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EF8CB23775
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7171C22839
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0009B13A3F0;
-	Mon,  3 Jun 2024 18:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971D91386D8;
+	Mon,  3 Jun 2024 18:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CN7y9waX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsEnbYk8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155F139CE3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 18:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CAD1CD38;
+	Mon,  3 Jun 2024 18:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717439496; cv=none; b=VI9eacTHk0QEuS0J9TyEBbLciPJnRK854ipqbn0DjxZsPba9ucQ2XqmjOx1qj60h7LUwVvzg47HCSVmyjN6KCfAM+j5wo26Gh1IfT77daDGnN3Rcky/6SKPt3Ny94mw9tlbXlfFPZDoSQgczKOABmzqvn0KeaAdbyZVmGfOs6fI=
+	t=1717439564; cv=none; b=RyVJjdKUsdn1x2mSW22shsGPxUwdpbrqm9hSFIAvbfWV2ZslRwmuUey2vquLaHRt3cdLuMvamohu3QHnUwjQkTx6QwzQv+wWoON4vBGvo9Fn+wlcMb5DdUTNEGL18fF1wYxDpfyPW5GOAkSD9NnK6a9HbGz7fdsHzTxsIM3uOIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717439496; c=relaxed/simple;
-	bh=hLoX2IbM9Dc7g8XZC4sIIbm2xI5YIG+DCSbPVcZQL2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u/cTOhySI4FVhA74HuSJEIUzlncIBlKDqF9IvEibqoRVpXv/CUAM1qr17/1AjoMIZqkbeHQucMzE7lYSMUWNL9lbo5ar/Ratm/eZAcP+bfJslxtcVf2R25SPyWtkMgT0IURRvV1XClqqoRZUNRZeQJIcyCtVoRawJqftbXXRTR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CN7y9waX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717439493;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NbybIFAPNiJYTP2dPOGJz7xcoG9uvl5NWDzivsSBGLw=;
-	b=CN7y9waXuCZqcshnmSuyD2bt4kmj83OpahUT3h6I/al5dkMQu9rPLrbL6cnFjz3k4WgpEu
-	YeKpE5/DEYkOGhQLjIOh1AWIR9PZ9Ng92zoG7Od91YV6YDOgmEbLlCBVwgxe2vPXmOBjBk
-	3Z1/upRqhPe5GcJeiRJ08qOSki+wkrU=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-248-gdLL279nNteQGXOeK8LKTg-1; Mon,
- 03 Jun 2024 14:31:28 -0400
-X-MC-Unique: gdLL279nNteQGXOeK8LKTg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 917AE3806703;
-	Mon,  3 Jun 2024 18:31:27 +0000 (UTC)
-Received: from antares.redhat.com (unknown [10.39.193.112])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 94870105017A;
-	Mon,  3 Jun 2024 18:31:25 +0000 (UTC)
-From: Adrian Moreno <amorenoz@redhat.com>
-To: netdev@vger.kernel.org
-Cc: aconole@redhat.com,
-	Adrian Moreno <amorenoz@redhat.com>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	dev@openvswitch.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/2] selftests: openvswitch: set value to nla flags
-Date: Mon,  3 Jun 2024 20:31:20 +0200
-Message-ID: <20240603183121.2305013-2-amorenoz@redhat.com>
-In-Reply-To: <20240603183121.2305013-1-amorenoz@redhat.com>
-References: <20240603183121.2305013-1-amorenoz@redhat.com>
+	s=arc-20240116; t=1717439564; c=relaxed/simple;
+	bh=aPa+/FsLkyYUDC9JB9iMOLBgMjAYvMKPSrF8ZW8Ds9s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bu/5Q9fwkR/YzImnxk2/xEiNQE0yGtapDgTwfBVWi1tDzFNNWnBKzDooeVBGL+kHSy8tsRqg5yq5oMCQkCP867otG08GpBH4pG0PpoNEJEMgzJt5S+O7/OSLz+NFw/xK+t6I/ArpJ1bKt9ch8Qym96ZvEXbPHp0oE+VWQbNRXCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsEnbYk8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 715BDC4AF08;
+	Mon,  3 Jun 2024 18:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717439564;
+	bh=aPa+/FsLkyYUDC9JB9iMOLBgMjAYvMKPSrF8ZW8Ds9s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NsEnbYk8tcs5EN293qSPbTGJ7Ffzf1hp1D7/KGgH4flOKv+9yRsQu2d9DHUzSSiQF
+	 ywfJJl3Ow1AeWqRM90arYV9XdE6o5psPLn7DQYa0gmR8k1cVT2QTYcqtCILRJ+mbH7
+	 sBdBpg3ei8jcXkjE7DKC8Sn5G0fFq7OGchun3zOYHTPr299vlPKjN3oq5xiyHsdDlK
+	 pQeoDFKnuAIUTnKeXfzPGxS6Ecy63OAdXWouQnCwbkrhBDxrF08vvmNIfRVL42/YkD
+	 KnLrduogY6PLPFn5cA12Prw2AjnQXvlmer1NQjGTCxs3xo90h484M7BXsIRRNE+Zen
+	 iHpE1zzj1S4+g==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5b99ba97d89so443190eaf.1;
+        Mon, 03 Jun 2024 11:32:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXAcxeO/oyX541bnnlLJVsA5qHdWFzpCTlOicgC5w97BXM5D40GCAAJg08JzsZKV4mySBUvOXvKoEtgyk0YYdP6HgP/dTFpmXjJRvlNzPzUXpO0WxVSYYB1SzidQdxbQOvFMWStmxg=
+X-Gm-Message-State: AOJu0Yyi+PNnz0lZYzL3fzQgjsA3Kg6866f+IcczbUlgWJ5O7KQtnGE+
+	lBt4wTDR4z2gij2sRopQkGzyM9rtJQ15BAHUuNOpTjFyyBcciFkem9nWEdluSwAnhrYAFs/muGh
+	9Ty83bjEI52uQlWr0cwih0xC2OLE=
+X-Google-Smtp-Source: AGHT+IFkVGBmRedZ8pCYTCG05bHXWol2F1IK/xuSCVveLWdmV8qOK18/xpRA2GSOP8+QAxtU+fHb9EoNTFDYjsSMZyc=
+X-Received: by 2002:a05:6870:36d5:b0:24f:ee85:2c9e with SMTP id
+ 586e51a60fabf-2508bde6735mr11670759fac.5.1717439563751; Mon, 03 Jun 2024
+ 11:32:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
+ <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+ <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
+ <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
+ <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
+ <f382e06635b3b52841d1e0c11dcf639d225edae0.camel@xry111.site>
+ <29d69252dcdc398f147c9139a8666d09e7bd831d.camel@linux.intel.com>
+ <0324bc3a88654855719cd48a5ed69a34eea31037.camel@xry111.site>
+ <c3526e7a0e80ec1a3a011259c38ab4b772040ea4.camel@linux.intel.com> <48eba83030e155f703b4248e9c1ae65aa44b1a83.camel@xry111.site>
+In-Reply-To: <48eba83030e155f703b4248e9c1ae65aa44b1a83.camel@xry111.site>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Jun 2024 20:32:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jjLgG3VY_kBYc4mTrL2ybD2LfBTk2_H7xY0+Aq5g827A@mail.gmail.com>
+Message-ID: <CAJZ5v0jjLgG3VY_kBYc4mTrL2ybD2LfBTk2_H7xY0+Aq5g827A@mail.gmail.com>
+Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
+ global.turbo_disabled after initialization
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Netlink flags, although they don't have payload at the netlink level,
-are represented as having a "True" value in pyroute2.
+On Mon, Jun 3, 2024 at 7:44=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrote=
+:
+>
+> On Mon, 2024-06-03 at 10:11 -0700, srinivas pandruvada wrote:
+> > On Mon, 2024-06-03 at 21:12 +0800, Xi Ruoyao wrote:
+> > > On Sun, 2024-06-02 at 16:11 -0700, srinivas pandruvada wrote:
+> > >
+> > > /* snip */
+> > >
+> > > > What is the output of:
+> > > > grep . /sys/devices/system/cpu/intel_pstate/*
+> > > >
+> > > > Also
+> > > > rdmsr 0x771
+> > > > rdmsr 0x774
+> > > >
+> > > >
+> > > > Try these three patches. Don't worry about the commit description
+> > > > for
+> > > > this issue.
+> > >
+> > > Unfortunately they still do not fix the issue for me.
+> > >
+> > > The outputs of grep and rdmsr commands are initially:
+> > >
+> > > /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost:0
+> > > /sys/devices/system/cpu/intel_pstate/max_perf_pct:100
+> > > /sys/devices/system/cpu/intel_pstate/min_perf_pct:9
+> > > /sys/devices/system/cpu/intel_pstate/no_turbo:1
+> > > /sys/devices/system/cpu/intel_pstate/num_pstates:41
+> > > /sys/devices/system/cpu/intel_pstate/status:active
+> > > /sys/devices/system/cpu/intel_pstate/turbo_pct:33
+> > > rdmsr 0x771: 10d1f2c
+> > > rdmsr 0x774: 1f04
+> > >
+> > > But it then changes to:
+> > >
+> > > /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost:0
+> > > /sys/devices/system/cpu/intel_pstate/max_perf_pct:100
+> > > /sys/devices/system/cpu/intel_pstate/min_perf_pct:9
+> > > /sys/devices/system/cpu/intel_pstate/no_turbo:1
+> > > /sys/devices/system/cpu/intel_pstate/num_pstates:41
+> > > /sys/devices/system/cpu/intel_pstate/status:active
+> > > /sys/devices/system/cpu/intel_pstate/turbo_pct:33
+> > > rdmsr 0x771: 10c1f2c
+> > > rdmsr 0x774: 1f04
+> > >
+> > > It seems only the output of rdmsr 0x771 has changed.  And if I read
+> > > the
+> > > SDM correctly it's a "Most_Efficient_Performance" change.
+> > That is fine.
+> >
+> > We don't have any notifications either via ACPI or via HWP interrupt.
+> > I think it was working by chance before this change as by the cpufreq
+> > core is trying to set policy, the turbo is enabled by the firmware.
+> >
+> > What is this laptop make and model?
+>
+> It's a Hasee X5-2021S5H.
+>
+> Hasee is known for producing some laptops very cheap but often having
+> "minor" issues.  So I guess the firmware is doing some stupid thing.
+>
+> But turbo works just fine on Windows 11 so it'd be better if we could
+> make it work for Linux too.
 
-Without it, trying to add a flow with a flag-type action (e.g: pop_vlan)
-fails with the following traceback:
+In principle, there are two things that can be done about this.
 
-Traceback (most recent call last):
-  File "[...]/ovs-dpctl.py", line 2498, in <module>
-    sys.exit(main(sys.argv))
-             ^^^^^^^^^^^^^^
-  File "[...]/ovs-dpctl.py", line 2487, in main
-    ovsflow.add_flow(rep["dpifindex"], flow)
-  File "[...]/ovs-dpctl.py", line 2136, in add_flow
-    reply = self.nlm_request(
-            ^^^^^^^^^^^^^^^^^
-  File "[...]/pyroute2/netlink/nlsocket.py", line 822, in nlm_request
-    return tuple(self._genlm_request(*argv, **kwarg))
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "[...]/pyroute2/netlink/generic/__init__.py", line 126, in
-nlm_request
-    return tuple(super().nlm_request(*argv, **kwarg))
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "[...]/pyroute2/netlink/nlsocket.py", line 1124, in nlm_request
-    self.put(msg, msg_type, msg_flags, msg_seq=msg_seq)
-  File "[...]/pyroute2/netlink/nlsocket.py", line 389, in put
-    self.sendto_gate(msg, addr)
-  File "[...]/pyroute2/netlink/nlsocket.py", line 1056, in sendto_gate
-    msg.encode()
-  File "[...]/pyroute2/netlink/__init__.py", line 1245, in encode
-    offset = self.encode_nlas(offset)
-             ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "[...]/pyroute2/netlink/__init__.py", line 1560, in encode_nlas
-    nla_instance.setvalue(cell[1])
-  File "[...]/pyroute2/netlink/__init__.py", line 1265, in setvalue
-    nlv.setvalue(nla_tuple[1])
-                 ~~~~~~~~~^^^
-IndexError: list index out of range
+First, MSR_IA32_MISC_ENABLE_TURBO_DISABLE on this system can be
+ignored altogether, but that would require adding a quirk.
 
-Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
----
- tools/testing/selftests/net/openvswitch/ovs-dpctl.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-index b76907ac0092..a2395c3f37a1 100644
---- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-+++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-@@ -537,7 +537,7 @@ class ovsactions(nla):
-             for flat_act in parse_flat_map:
-                 if parse_starts_block(actstr, flat_act[0], False):
-                     actstr = actstr[len(flat_act[0]):]
--                    self["attrs"].append([flat_act[1]])
-+                    self["attrs"].append([flat_act[1], True])
-                     actstr = actstr[strspn(actstr, ", ") :]
-                     parsed = True
- 
--- 
-2.45.1
-
+Second, a delayed work can be added to check the MSR long enough after
+initialization and update global.turbo_disabled if it is 1.  However,
+that would require some code surgery.
 
