@@ -1,210 +1,159 @@
-Return-Path: <linux-kernel+bounces-199512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28578D87F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:31:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FD58D87FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FD77B213B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EFC128B2CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4146130487;
-	Mon,  3 Jun 2024 17:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C387137925;
+	Mon,  3 Jun 2024 17:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rLYv1Oj4"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="opYuUqrK"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E1C2913
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435852; cv=fail; b=qndNSGxfBFo5pYFKWU1Y5+NONbazCPlCx/J5u0Cfub5z4GxSPDJLPJtY+cGqwdaFxaKsdtogbffZHY5qmIb13BzIPuOsGdLcQ+JetRSAba5vdmGGOIoeFSyhOMTKK+LKTMusCBWVbV0bFiWZ09F5BwwuQ58g4lp5cNrV0tHQQ70=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435852; c=relaxed/simple;
-	bh=lSEMEvqfj6TA8Z7AFN33vJd04hrpuean2xSsWzNk2Pk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=G67nTBtruXX6adnyq5QR2OYihS7KSOUx9XdOXSTDhHYiN/fPcyZk2S1Dj1rEzXdGD0Ac2DKmR7PKeXuf98j1PzAA8WAZ0tYicLG/4dLJuUQxKymHAx88jYyMFv7rxpblGRSJEfmyEKXId7fxd+K9SdIyt02cFE9ScdU3niEhuy8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rLYv1Oj4; arc=fail smtp.client-ip=40.107.93.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dDpG8G+yL/T/NOv9JVnNo1/6+Bgn0oc9k46Wz1CVr0WSgvlQWlDLG8l3A5OdUuKq3E/XXMNHp5MNzyWjd/DcCdxeldXcUEUJI3zqpEZgbz3xazbIpmg6y14Yw8Joe/ZNW+SSlPvUPBZzjAEHHp+2jqGCYGKkUHv1fq7e7DQ9o/zKeDl2IP28FDeQjDPn6o9ebjJ7tlk+vEGVNJZbYh+H0Y088U+1+k8MwvJdaYw/O792+CNaVq+cBszLkabKpaMZELox3TIflW8Lzz/uX5Jh6qpkffDGCuN0m47fIIJ9JyqthCyAEHJO6Jouxj9a8BPjqsvFluPBSVinhtdjTbZBPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O3xn7fYNYS4Jtm6bZr51fqoA40jZaUxKzpyvaUfgYI0=;
- b=BtP875vPrKshJSpZvuvk9+w7uDPplT5cgHvRJ1UhDiwVmw5a5NUZErwhqeaFISFtbbPMUwg5n5JDASAvz31NjfSfh4qvJoc7o29mRltJdDnI+ys7niNNpRz8TMLRazTMou9++SxKMtbMYp57h/XnAtqHw6Wx9KJEjhiuPjzuqiwwivRKk89UCZ9vVyUrSUse+l0f0zRbQx2JuYZqvUQKKb//H+ZWR5WEGrwyq1pcSGRw7mk0rk3dAiJJEbBdGdUx7rpRxGcmUJj442emOGOwGSicZouwg/Phyc5oJg/ScCPC/DwLoNFWwzvo/pjFuCkltIFZTFS/eSMR18+EunTqPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O3xn7fYNYS4Jtm6bZr51fqoA40jZaUxKzpyvaUfgYI0=;
- b=rLYv1Oj495G5AtX46786DfEcWBHJs4AI1mfuR0Ijl0Vl548dE6+31lJkz/KkNhFcJnS5R/BpoQmLoT+8387WSpyrvOM364pRRdIieoj9DHien5lIM+1wmKjVWCueIkAKcEN7Hsb2JJNIRutvBqtUE1kqTuY0lIWe9Xg4QaTXtCiQTZ2QzBXIbGHlFIStEV/4iBy/AY+vfkCzV8eSSv21W/Z9VZbHnZI/UR584fDUUysLrlYkEGVNvmByDaECO0WumkGycDaZd0jhIVayG/PxjFVSHahX3VJTC42FV1tulZ6w3RcdFflfcA8D63D7s7RNfwHjo1jN0jpubHnxWDqBYg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by LV8PR12MB9153.namprd12.prod.outlook.com (2603:10b6:408:185::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Mon, 3 Jun
- 2024 17:30:47 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 17:30:46 +0000
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>,
-	patches@lists.linux.dev,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH] sysfs: Add stub sysfs_bin_attr_simple_read() for !CONFIG_SYSFS
-Date: Mon,  3 Jun 2024 14:30:45 -0300
-Message-ID: <0-v1-44baae71b833+ab-sysfs_simple_read_jgg@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: YT4PR01CA0473.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:d6::6) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF34136E28
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717435940; cv=none; b=mwpUdrEvdwdxMEOofhSyzMch/Db1dZrF1x4rHNKDJpF8obEYYe816s5twr8lkpZhkdUzLmHZC0uEf8+zkW9uQimtJjwfKuBxrTES1B5EMVqVg870SvWREnkySPBap9DXwJw6iKs1p1cGoASFDzN5y4oVA3qUQNH80IqUxkz1VcY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717435940; c=relaxed/simple;
+	bh=O6GhZotd2BYZDip5JDutiTFpsVWFbSZQ3i1oM5jDl/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tK9ebUPD0cv4M5w6RIyQCV140GMt9KbypCAZLR22+UScR1BEb7wh4BnZCw+GjNT8DUBceb9DwuEwppfL47sg2zkv2pbYRRWAhnsHi/hg8BJu7pCBe+tV86wc9ZXdBDHbLhtDIwKwBKKXPte3QOistTPD2wFdm6ZmO5VaUS+wc/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=opYuUqrK; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42108856c33so27278265e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 10:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717435937; x=1718040737; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I6lZeLqXe3ejNVp6NkHTGb2agg9ZhMGoWIbA4FuiQCE=;
+        b=opYuUqrKr/AS8k2ujbYCyKLJ4qNZwoSoXnSY9mwfj5D42Ysa12qJvSeBwNz2uxEVYn
+         CEbn/mMrY38vZ2CLDSxFasJmkaziEYTvk4PPjYna1AIRB2ycy/MtnYouzFrRnnByAsJ8
+         R654BfuxVdIOnSRsg1cmjJV/agsjqrme09qtYjAQEPLPPlgHG5meJhRlAE+OfAFQs/wg
+         6rLae9ZN265E18yVgFUUsjFS1kDv1zJjM8U23sxNwRH37pNPNEaCEhfDhJuxUr0kHXAG
+         qG8T8HWcj+NcJQQWKVLgFx29DcstJ47Q3O9SdqXNLVSakffYZW9EEptcBifvOfwX2CLy
+         +eoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717435937; x=1718040737;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I6lZeLqXe3ejNVp6NkHTGb2agg9ZhMGoWIbA4FuiQCE=;
+        b=AJVVIFctjgD36jhZ3V5B449GskTnIymBHQxqZDmbsdXQGcCFuf7u+scHrU2eszpktC
+         WHMOgPJL+WnSfmo3UA5xhStYQxbdHx0OoEjyYPzlZDzwg61SJG876zIxxmuL1Tmr2Mhw
+         GCEkC9E6WiBRQzxdzo3TPusSJEB5WoCjGACHkrlUQlVFASGqN1ggFAYDX4gp0PvE69WG
+         dF3woAEhV7E7dfCVhHrjZ28ntmab3JJQU4+NYYJokHIFhvIDqhUrTcLDgD/jgAPtcU8T
+         cieUB/k4sIXyQMwQ+O7D5S4pY1zlqmf3r2NFU4cVROZFr61jIJ9x9S/gMGmyoHuIxwfP
+         WbZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXP9D6aN+m2OURGPO1JBI3Py2dqVZwmgyCXS3am1qFtrusrTrAmnHdyBT5c1n1Ohl33y/aDF8CdiEnKpSRzGWqklNinIGkDVc0XfXY
+X-Gm-Message-State: AOJu0YxUPVPXAnI/v9+4AIkJ7qEhZMkjkSeDd1ov0IxpLemcp+hNQ2QW
+	cO7CUewidupz2fLSpAkI+r3ALR9SF4bh1Eo1ZORS03vWMI8RTJC0/5XatNLCsKKmmfRAnaT3vY1
+	O7Wd+ZLWnL8VRXI7BPRphIo6zEGs8HygtY7yc
+X-Google-Smtp-Source: AGHT+IHPBSr6Q08XNRaq9LIuJApuhMEdcTWJilasTuQLDU/lTHvec1E4BlQkV7G8xapO9IL44goXuhFn5/lUGnCOjHI=
+X-Received: by 2002:adf:e3d1:0:b0:354:db90:6df4 with SMTP id
+ ffacd0b85a97d-35e7c56ba79mr346084f8f.23.1717435936987; Mon, 03 Jun 2024
+ 10:32:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|LV8PR12MB9153:EE_
-X-MS-Office365-Filtering-Correlation-Id: d96bd659-69d1-4d94-8f4b-08dc83f2e771
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZGsGUgM5Dejs+kalWgLWVHKsOa1dkq41+TXF41CQPvsAn2CCrE5bv2Bw5JBC?=
- =?us-ascii?Q?D2eGkTIEIUrm3rxl3tGmTG7VOik6WqmSHS8tPDy7bOBnmlJE9WJ5UPdTRrR7?=
- =?us-ascii?Q?UsSaQiS75sT+HF37kJtFVvcOsu+9Jm3u3BVgZCNWr3gqTBT2nTyzVRuy9EtJ?=
- =?us-ascii?Q?DRQ/yQjAEk+zy1O4gnnOhP9JSNir3sb7CPpXt9CcW6yuAlKLRecd1up6EL/p?=
- =?us-ascii?Q?Ad6g4o45eXrvgd9JFhZj+6aG1Sqp73DJU2CEZz03Hyi6vnaR3rESeOJiVVyW?=
- =?us-ascii?Q?CBieH+lSBbqZYCM6VHnj110sJa5FQqUl6HDaVVKl6qvAh8cDYvDMTdLmUppN?=
- =?us-ascii?Q?YqrYX9X3Av1S2lXgflN7S0ozjUVrBg5cwYicQDtti+uQc4IKFRud3qaZzMtE?=
- =?us-ascii?Q?l48++wWavNEy6LHID5ORfBXv1LNFQWL1UaDWuW9P/SRrXveVRU1A8Ix+ZEzc?=
- =?us-ascii?Q?w7I7hbYSgMObXxSoCSPnuJ/5OD1apj1eOyKJwlJKHlO4seLc3QmXILdu8L+o?=
- =?us-ascii?Q?4jz0tL2dOpjnb9qqZCf92UvhP0XebKPr6/mQPG3qC26jeOjgYXL0/026TdU0?=
- =?us-ascii?Q?URhK6IbK+Qh28DrcstnBUfLPQqdS/TTLaXDkQuAxbF/MuPwwbUJ95sdw6Qo/?=
- =?us-ascii?Q?S78yqxrWA7D5yf5xocdaqo2//2id1XACUh4AvUfEMaf0EEnw/nhnijalj8ah?=
- =?us-ascii?Q?HSpu+jNL7BLbaaZzoW3898ZG5UKgB/Bk1Gg82aM847NUcpi+CqbONF5SS7v5?=
- =?us-ascii?Q?F4opDKOzhcbeZGElGxfkEuO2/Sd0xBCUzDLad0S9HZeivceeaqYx8s61ccf8?=
- =?us-ascii?Q?WUX4/NPepgLUiPU2/9pZog/nNCeftGB2HR/AYk6VaxZSXJXnX8J+LmzpAayH?=
- =?us-ascii?Q?Eu5P8DZXjpc5e6YmIcKtccTl2lBeuy9a+BsF6iyTRzUdhHsFUmazkBvkY1Jl?=
- =?us-ascii?Q?KhirLW3XegcztKQcsAqEccggxHPaIFWnzPpXou7bcMvm542ZkkM1P3Hwlh7M?=
- =?us-ascii?Q?7DiUXHrZHgFyMAfmkg6STAbbBORzfLfphrVRM5EafLzBGseCxfLGq6RCtt05?=
- =?us-ascii?Q?SqIlWF7qdmLXJt8KPj0H9hPJsJWXsoP+0ARheS7FPbwoI8jepEgokP6AO29F?=
- =?us-ascii?Q?b6AFHF8IZ7R8pS2xmFNHVW7ZpAxZgcv9xw+Y4okm+HqfIln/7bXhhovjd3aJ?=
- =?us-ascii?Q?+pYlelUITtr4OlSRrFVeCAYQjKSS0kGnIPxK20sXXDT4WdoNV2Fda8+9TzM9?=
- =?us-ascii?Q?KgXtMa6Ba2EAhAT127YpNEYWNurtYuVzFa9SZKmP7A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RIFn/ufITVfWoO7AeiPMWIMPIUI7hGml5+0i79CceikT2GypO0+fU+95Ioiz?=
- =?us-ascii?Q?3JLm7QxexdOlwTRPLhsdKe9yNMpXXKMhLY+cBNtWKspH0gFdFOLD/WI2gsVU?=
- =?us-ascii?Q?MaGb1crs72dmQNnFgZ+zMiW9e+pBQOltg5Siq55tvhzkWS3JATmCRBN9cJBt?=
- =?us-ascii?Q?3TYAG2VJY+zLKTsvL0W4leY3njnprpD6gGmUyW5LJMNRhmGmWhpYL1KXLbtc?=
- =?us-ascii?Q?IyEiOPdB8PIpohrGfk0NoqDN26jQOiweWXVXbALShjx8FXNRrXr+hdV+nHgh?=
- =?us-ascii?Q?e1UUkiNLsMOwJlgtn/wFhXLFscFxLO2nTaA7Je61yC/hr1CGumgXOrj1aiIs?=
- =?us-ascii?Q?wTWXENsuPeuVv13Buw/cfrLGPg/Yp95CGxbBPGTaafVoTRDSnVkwRVqBLaoz?=
- =?us-ascii?Q?kbH3FKnoT3hC6SIZeXnXfkeapbs73KogLYQVcl/LV2PGXXb5WeyPUvLIRv92?=
- =?us-ascii?Q?GV5abmN3N1c6uw+idAppfc0CxVT6TZE4KxsrTcD4NKY6/ACJj+ffyvOzJ/M8?=
- =?us-ascii?Q?tOiIRAaqS/o306DP9XcAKWKIOrs4Sw2Abo9WvjLiTUFfG0FQloev99Filnp4?=
- =?us-ascii?Q?xf/0hLIbALHm2dYrClA8wkTI7FnVpv425B8uRWfGQV08ZUKHy/TofxZDV2jN?=
- =?us-ascii?Q?AZ6aHRs0NlnHMUb+cGTBSrUJznptHgy8iHJvAxrdeF1nTadqqbG/xoUsMdA3?=
- =?us-ascii?Q?laHJkDVEQeRavX+O+uMNOKCmBGz0OeMN+RhV9EgZhGUjqGEsP6cOjPGp5zYm?=
- =?us-ascii?Q?ii7x0Q3wIFegoTwn25/81I+E8lKgSDNDyHytUxOWRXOpn1gKn6NQsInvezP4?=
- =?us-ascii?Q?6MLzgBY8nV8OsR9/7t/B8s3Yug8NVvzgyaOlBYBEqiHFrSJmcK758K1dGjnO?=
- =?us-ascii?Q?UUyVBI9HD6159YNSpgJe7pY69GMmZLKXIrBdZCe+Rb5/Eg7tHdGdQD1IDsE8?=
- =?us-ascii?Q?b+VNiiO70/6BYJOnE7BP13f011VEXUB4MfEvuxScUH5MQD91ops/1SaQ7SbK?=
- =?us-ascii?Q?JUw9EDOLcm4YwzOMzVKpkbU9ZApnMqHRWY4PQAr6Wws1ChwdJPpsqHs4aWVp?=
- =?us-ascii?Q?NQZWg9NETthEoA3OOvgi82ATtBFxNRPxhHiEsQGH6Ar3dxLzQLMy64xo9TKO?=
- =?us-ascii?Q?Ifs/fdzmw7zWiwSTDwoaofc5wj9oXZUPpG2Ucou4wi+Jjcr9FXndOEFPAN/e?=
- =?us-ascii?Q?pD3UFp2kYh7Kp7Jnht7f8AJKS/pq+SiNi4rLbrGm2cXsvbT9tTMXJ0pPIXjP?=
- =?us-ascii?Q?CkGYiWXDVxs1JNCWCYIBi3j4kzYdT4VBWu15ddM2A3RnssszW3j/VNu09448?=
- =?us-ascii?Q?yZ4T4ZN/qycDYw0ms7+WgRfi72+fEv8UzIUs0VdLR9voEz0MCTtIzH2xlPLT?=
- =?us-ascii?Q?SMODUEDQetvmbO4gEXEJr/RN47vYMsCQm7I109ZbEmWu2VFihelMdTFFm5fP?=
- =?us-ascii?Q?sOEr4ypbKaoNMUfB9g/vPUwSA81IZrrE+aQTQnBNDnDdNJB5HeHv67c+m3T8?=
- =?us-ascii?Q?Bsyuhnr49vDsK2KcFQv6DdQzFrYPP8J5UgRhceQIob4BPF4PK/3HWTMcQPGQ?=
- =?us-ascii?Q?LwjW2J0Wjs2+QY/Hwh1phrcNtwahJTHPLHfG88dB?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d96bd659-69d1-4d94-8f4b-08dc83f2e771
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 17:30:46.9067
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5/xFeBFZgkf7HTK9TlV7EfzsIz0SClUbNtKjm6++SCUHsL+gCoytGGYYMEKjPTP8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9153
+References: <CAGFP0L+BaNAtCF7c7cJ1bvbjomp03Fy0=6=w6dj29Fnr0ygSCA@mail.gmail.com>
+In-Reply-To: <CAGFP0L+BaNAtCF7c7cJ1bvbjomp03Fy0=6=w6dj29Fnr0ygSCA@mail.gmail.com>
+From: Axel Rasmussen <axelrasmussen@google.com>
+Date: Mon, 3 Jun 2024 10:31:38 -0700
+Message-ID: <CAJHvVchjzxLVfg844SNjK9EWmC+yhVneGaf1vVscmjomH_aaow@mail.gmail.com>
+Subject: Re: [PATCH] fix: Prevent memory leak by checking for NULL buffer
+ before calling css_put()
+To: Geunsik Lim <geunsik.lim@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Ingo Molnar <mingo@elte.hu>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <a.p.zijlstra@chello.nl>, Hugh Dickins <hughd@google.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-At least dmi_scan.c fails to compile:
+On Mon, Jun 3, 2024 at 5:33=E2=80=AFAM Geunsik Lim <geunsik.lim@gmail.com> =
+wrote:
+>
+> This commit addresses a potential memory leak in the
+> `get_mm_memcg_path()` function
+> by explicitly checking if the allocated buffer (`buf`) is NULL before
+> calling the
+> `css_put()` function. The prefix 'css' means abbreviation of cgroup_subsy=
+s_state
+>
+> Previously, the code would directly call `css_put()` without checking
+> the value of
+> `buf`, which could lead to a memory leak if the buffer allocation failed.
+> This commit introduces a conditional check to ensure that `css_put()`
+> is only called
+> if `buf` is not NULL.
+>
+> This change enhances the code's robustness and prevents memory leaks, imp=
+roving
+> overall system stability.
+>
+> **Specific Changes:**
+>
+> * In the `out_put` label, an `if` statement is added to check
+>   if `buf` is not NULL before calling `css_put()`.
+>
+> **Benefits:**
+>
+> * Prevents potential memory leaks
+> * Enhances code robustness
+> * Improves system stability
+>
+> Signed-off-by: Geunsik Lim <leemgs@gmail.com>
+> Signed-off-by: Geunsik Lim <geunsik.lim@samsung.com>
+> ---
+>  mm/mmap_lock.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
+> index 1854850b4b89..7314045b0e3b 100644
+> --- a/mm/mmap_lock.c
+> +++ b/mm/mmap_lock.c
+> @@ -213,7 +213,8 @@ static const char *get_mm_memcg_path(struct mm_struct=
+ *mm)
+>         cgroup_path(memcg->css.cgroup, buf, MEMCG_PATH_BUF_SIZE);
+>
+>  out_put:
+> -       css_put(&memcg->css);
+> +        if (buf !=3D NULL)
+> +                css_put(&memcg->css);
+>  out:
+>         return buf;
+>  }
 
-../drivers/firmware/dmi_scan.c:764:8: error: use of undeclared identifier 'sysfs_bin_attr_simple_read'
-  764 | static BIN_ATTR_SIMPLE_ADMIN_RO(smbios_entry_point);
-      |        ^
-../include/linux/sysfs.h:383:41: note: expanded from macro 'BIN_ATTR_SIMPLE_ADMIN_RO'
-  383 | struct bin_attribute bin_attr_##_name = __BIN_ATTR_SIMPLE_RO(_name, 0400)
-      |                                         ^
-../include/linux/sysfs.h:376:10: note: expanded from macro '__BIN_ATTR_SIMPLE_RO'
-  376 |         .read   = sysfs_bin_attr_simple_read,                           \
-      |                   ^
-../drivers/firmware/dmi_scan.c:765:8: error: use of undeclared identifier 'sysfs_bin_attr_simple_read'
-  765 | static BIN_ATTR_SIMPLE_ADMIN_RO(DMI);
-      |        ^
-../include/linux/sysfs.h:383:41: note: expanded from macro 'BIN_ATTR_SIMPLE_ADMIN_RO'
-  383 | struct bin_attribute bin_attr_##_name = __BIN_ATTR_SIMPLE_RO(_name, 0400)
-      |                                         ^
-../include/linux/sysfs.h:376:10: note: expanded from macro '__BIN_ATTR_SIMPLE_RO'
-  376 |         .read   = sysfs_bin_attr_simple_read,                           \
-      |                   ^
+I think the existing code is correct, and this change actually
+introduces a memory leak where there was none before.
 
-Since the only declaration for sysfs_bin_attr_simple_read() is inside the
-"#ifdef CONFIG_SYSFS". Add a stub to the #else section too.
+In the case where get_memcg_path_buf() returns NULL, we *still* need
+to css_put() what we got from get_mem_cgroup_from_mm() before.
 
-Fixes: d48c03198a92 ("sysfs: Add sysfs_bin_attr_simple_read() helper")
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
----
- include/linux/sysfs.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+NAK, unless I'm missing something.
 
-I don't see a patch for this yet, but I did find a 0-day robot complaint:
-
-https://lore.kernel.org/all/202404200345.eGdn5uxW-lkp@intel.com/
-
-diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index a7d725fbf73937..e672a927d650a3 100644
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -750,6 +750,15 @@ static inline int sysfs_emit_at(char *buf, int at, const char *fmt, ...)
- {
- 	return 0;
- }
-+
-+static inline ssize_t sysfs_bin_attr_simple_read(struct file *file,
-+						 struct kobject *kobj,
-+						 struct bin_attribute *attr,
-+						 char *buf, loff_t off,
-+						 size_t count)
-+{
-+	return -EINVAL;
-+}
- #endif /* CONFIG_SYSFS */
- 
- static inline int __must_check sysfs_create_file(struct kobject *kobj,
-
-base-commit: c58a77fe0ba1b708759338ad8bd3828b75a26035
--- 
-2.45.2
-
+> --
+> 2.34.1
+> ----
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" i=
+n
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
