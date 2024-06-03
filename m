@@ -1,131 +1,101 @@
-Return-Path: <linux-kernel+bounces-198707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094498D7C61
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549A58D7C69
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8846280E6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:24:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867F21C21B1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A48A43AA2;
-	Mon,  3 Jun 2024 07:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595344437D;
+	Mon,  3 Jun 2024 07:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ij7qee+2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itJLId7o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B054084D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 07:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B17E3FBB7;
+	Mon,  3 Jun 2024 07:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717399443; cv=none; b=Kdcas7ilTZ+yyAu+TqOncpfmT4Gd8pw+uTR69ItooVKVEUn/AJTvGyGRS2eNAkBTHr1tuU+ta5OvRLLvyz57kJiufAFvIrszOcTzXDlbtlanIWG93fnXSbM1NmTnjB6MSwiFiOHt+E4Vjifa7jXO3OygCrVykUg7LnM69dox6+A=
+	t=1717399482; cv=none; b=cABHJVHUsBihwDj3+sguHhECrcN4y/YZZy0vlkPmSfZ8exRkYXR/shhmMPdjhXGl1tQ2OJfUrH+dBPSLPNmjgNl5FI2r0b5Z1NDofltz5C9o0pQ2lgttZItYRRCnI2c5856CnvZIP2pPHgWH/w+TNahnEbIaqGWbPH5kIh5j+eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717399443; c=relaxed/simple;
-	bh=jXX8dE7Opa6SPb1eAr4cYkqk9m+6M2AcMLxLfip3H8g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uNNm/SZLAxQF3RyC/n2yogQsK75bxCHqMZrrS7cklJSucKkaoASnKm4KQ24mkE4oJqGAkQ5r/5FIFcdWpXqYklxEip/Vs2tkxWkmV4dQ5310XV9rQfogWY9HYxSvk/ZO26658HZIzvEzG49YmzXpSoa5QN9Kib9lfZ9R88xxkTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ij7qee+2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717399440;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=p9lkfOb50mYknLTXxEH/1KkxK13NvvMCFt7POCqNueE=;
-	b=Ij7qee+2qiPRiQsIAF7a8f9E7sNEzOXjXDioOZWOQSy9qagYu9J1tC5STCnUqnE2j8F9hb
-	FLWEtt/3bANhKNLYPz8UuoUsqPL2fFR5Dz6acZaOCl30j7jA+/tNOg1MTadgWEKPSsDQFZ
-	NxRVpvs/u9CYERop+N19QNZq7lQnahE=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-394-cH7orArDNtizL7aN-QSWHw-1; Mon, 03 Jun 2024 03:23:58 -0400
-X-MC-Unique: cH7orArDNtizL7aN-QSWHw-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a68ad67f110so63317366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 00:23:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717399437; x=1718004237;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p9lkfOb50mYknLTXxEH/1KkxK13NvvMCFt7POCqNueE=;
-        b=QBiC+Ejg7JFk5ZZ7j8shdUVqyWtmB7kiGhUl/gHBueKpKFGqm3NesyTy50joTtO8py
-         A8tYwNR2QTW0DmNfUYY7LIiqWL7PdHxipr5KAFUfNnO9phgK1X0KV/g0i/VsJofrZuzc
-         JYPRIYLPppt9c574CYT1QWgc/4dB+N/qYUQdEpwFUJ9795gE0RKdjOA9cnKsakWNMmID
-         S/Fe3oWjXIhY382u6Vic+JFVvaXlZuZYn4hszqsBt/xV05iWFEibsaIEs6afMCs3jPrQ
-         NtSfCvi1dSGOPGjmA3skVQcW/4NNiT7PdUEqtTZW4sjGFGiro9D4m87vCxrYH8bwjvMO
-         /Iew==
-X-Forwarded-Encrypted: i=1; AJvYcCVlQtzLSR0XOdeSCn4uuBIu3VKF03/4DHQimerpuTIlwgxrUKCPev7I4EcYRiXLZH68HJonLfl8bN3MqL5jonyk+pxMXjBuXdrdG9Aa
-X-Gm-Message-State: AOJu0YzWRf5J0OOmr3SCIZqKFDYG1t8CRGoci94Pt7HUZtS0ywPaCHgX
-	GUojea1u2mGqv8HSl9R9Wr9omoOaiXhyjnz3B4jWO0Ibp83eyYEce1MYhAIkRRv2W/A7Bn8ITTv
-	XQFC7mPcviRlEjJfQFJmc6JudBFdK49qnQfHP+rys2OhWqEDCmOSVEHIgz568Ag==
-X-Received: by 2002:a50:934e:0:b0:578:5cbb:7296 with SMTP id 4fb4d7f45d1cf-57a36439beemr7303924a12.36.1717399437045;
-        Mon, 03 Jun 2024 00:23:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFriRgQqLA1tuZVgrU6sA/7pisxmgPgYLdViimwhIn5HrCNMkK8cZu2MTkPGVh7h56cgKoC/w==
-X-Received: by 2002:a50:934e:0:b0:578:5cbb:7296 with SMTP id 4fb4d7f45d1cf-57a36439beemr7303908a12.36.1717399436521;
-        Mon, 03 Jun 2024 00:23:56 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:833c:88f3:25a9:d641])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a5ef86458sm1641846a12.78.2024.06.03.00.23.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 00:23:56 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Benson Leung <bleung@chromium.org>,
-	chrome-platform@lists.linux.dev,
-	linux-hwmon@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: repair file entry in CHROMEOS EC HARDWARE MONITORING
-Date: Mon,  3 Jun 2024 09:23:43 +0200
-Message-ID: <20240603072352.9396-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717399482; c=relaxed/simple;
+	bh=FOhXogo/ndaJHFsPJGaYQZam1yDI2Ba7KUL/q8kkfOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4QElxgWW69AWOzRWkNi4r0CmLMS1/BZeaCGeABJW1yW2B5z/z/GYtsOoRbV4xsY0MyaNufznH7lUs3VGGbWrRe0FbWwKG03gJgZjs4xpZeBSTn3o7Iu6YD6VBsjmkwiV9/B9vCtuANEH5ge+WwnkVWevM6PyttjyELYtr9yyac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itJLId7o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35987C2BD10;
+	Mon,  3 Jun 2024 07:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717399482;
+	bh=FOhXogo/ndaJHFsPJGaYQZam1yDI2Ba7KUL/q8kkfOc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=itJLId7oTsc8I4+W0j/LT+LHNHvYuxLUUaQSBvnt6A0xYWh08CZ25iXwjnz6QWooM
+	 snTYbJ9dljJg0mh5EZP3WtA+3PoojrAqU+Iva/teaIpqs/AXQC/ix13TNbXhzUhqsK
+	 gX/wBgkM1GqIdYuVLNDHuc/pbC2Oz+mGnL+PrZER11cZgMUdhYx3uTOo+iDfPU+Qg3
+	 0ZF6vy/AosWzFQ+VZFq+DACbnyCKKAhTbDrvkqTZQfP19m18zjyehCdzQQwxvaConQ
+	 M2fdeRMBzUpzvhwudD5WAafus8zYbs664XYhG2I/19gQGzloUUFvI+XsnwZrzxZHVv
+	 DwB6xutZCt0NA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sE23a-000000004VU-3wdn;
+	Mon, 03 Jun 2024 09:24:39 +0200
+Date: Mon, 3 Jun 2024 09:24:38 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>
+Subject: Re: [PATCH] iio: inkern: fix channel read regression
+Message-ID: <Zl1vttlXz3FRVyYS@hovoldconsulting.com>
+References: <20240530074416.13697-1-johan+linaro@kernel.org>
+ <20240601142147.3ac40207@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240601142147.3ac40207@jic23-huawei>
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Hi Jonathan,
 
-Commit e8665a172378 ("hwmon: add ChromeOS EC driver") adds a driver, some
-documentation and the new section CHROMEOS EC HARDWARE MONITORING in
-MAINTAINERS. The commit adds Documentation/hwmon/cros_ec_hwmon.rst. The
-file entry in the MAINTAINERS section however accidentally refers to
-chros_ec_hwmon.rst.
+On Sat, Jun 01, 2024 at 02:21:47PM +0100, Jonathan Cameron wrote:
+> On Thu, 30 May 2024 09:44:16 +0200
+> Johan Hovold <johan+linaro@kernel.org> wrote:
+> 
+> > A recent "cleanup" broke IIO channel read outs and thereby thermal
+> > mitigation on the Lenovo ThinkPad X13s by returning zero instead of the
+> > expected IIO value type in iio_read_channel_processed_scale():
+> > 
+> > 	thermal thermal_zone12: failed to read out thermal zone (-22)
+> > 
+> > Fixes: 3092bde731ca ("iio: inkern: move to the cleanup.h magic")
+> > Cc: Nuno Sa <nuno.sa@analog.com>
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+> In meantime, Nuno please take another look at these and see if
+> we have additional problem cases like this.  Given the patch
+> queue I have and a busy few days it will be a while before I
+> get to it but I'll try and take a close look soon as well.
 
-Refer to the intended documentation file.
+Please consider getting this one into mainline as soon as possible as it
+breaks thermal mitigation, which can cause literal skin burns, on all
+Qualcomm platforms (and probably other platforms too).
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Longer term, in my view the readability and chance of bugs
+> is reduced, but churn always introduces the possibility of
+> issues like this in the short term :(
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3eab6c381a3b..09813e21da27 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5143,7 +5143,7 @@ M:	Thomas Weißschuh <thomas@weissschuh.net>
- L:	chrome-platform@lists.linux.dev
- L:	linux-hwmon@vger.kernel.org
- S:	Maintained
--F:	Documentation/hwmon/chros_ec_hwmon.rst
-+F:	Documentation/hwmon/cros_ec_hwmon.rst
- F:	drivers/hwmon/cros_ec_hwmon.c
- 
- CHROMEOS EC SUBDRIVERS
--- 
-2.45.1
+I just worry about some of the cleanup.h conversion I've seen where
+inexperienced developers potentially break tested and reviewed code for
+something which is often not very readable and for very little gain.
 
+Johan
 
