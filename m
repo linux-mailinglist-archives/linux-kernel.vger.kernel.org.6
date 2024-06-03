@@ -1,198 +1,287 @@
-Return-Path: <linux-kernel+bounces-199674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494748D8AB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:08:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57568D8AB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A5611C22061
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B2B1F267D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9526313B580;
-	Mon,  3 Jun 2024 20:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9883A13B595;
+	Mon,  3 Jun 2024 20:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eF6ixkfd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="avqNIsU6"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2043.outbound.protection.outlook.com [40.107.20.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF3A46A4;
-	Mon,  3 Jun 2024 20:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717445272; cv=none; b=WD7qxMBLOJwm7P7u2lR2Rht60Li3Xw8NmEJPgekKlNtZaav8tgNheEfdW6pU4We9y5yZ+wgbWV1jCyVoWNiWcC76Kf3blL0qbrBlv80xYbwP3NotkN6IbiRcYP4Jr4PSbJaklehnMOm+Ujh4BKG37/nYK7bWcsIw7ZLCKEuk4mY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717445272; c=relaxed/simple;
-	bh=xbP3NEx923MmK1rOGQkQZGfcDONB0sYHOQ7X3kICkbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SZ90zojiUPbSJ627NnAMBvzko9AHmOmmORtNjlbQ+ddGIulkoy8hxIXRR3w6Aj4mokdVG2OapeJ+WzUBuG6STbWY0S6pK170o17AbJJLLskBIU9VwnSnNP/r7ZhfadppKvAgvSDGrJWHrlCLyPc794WIXtS8h7B9NRRP1IYuQU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eF6ixkfd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66D8C2BD10;
-	Mon,  3 Jun 2024 20:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717445272;
-	bh=xbP3NEx923MmK1rOGQkQZGfcDONB0sYHOQ7X3kICkbs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eF6ixkfdNG3aSUtnYDQ+Hr0Niz083LutVFYg5zYucMgoEnG37y4QDmQVAZAM3PmLc
-	 EIkLwBJ6pdcWxGOiNsTvmFaT9zeQVnkrZ8PIR1XlxH/cURC+/VK9SZQZ4+1VAZ5R8V
-	 OdheL7QY48b/DWwbfCvS1hx7CKY/Ve0gY1cHqv48YR/dL9wbWhUQ46FOkUph1X0YbJ
-	 Nmvmq94Eu/SzRMJFiZKh9Mtz5vVGvzCWezgLeY2GIJpmXD06sN6Z9sIEHrZesPL9AQ
-	 iDy0inifqx+eGmUILYOi2OTX/05+Nm/PUG5639trow7w1dueju5tBBKBlLeXKRsINL
-	 WVrpDKFKWk8pw==
-Date: Mon, 3 Jun 2024 21:07:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-Cc: Dumitru Ceclan via B4 Relay
- <devnull+dumitru.ceclan.analog.com@kernel.org>, dumitru.ceclan@analog.com,
- Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] iio: adc: ad7173: Add support for AD411x devices
-Message-ID: <20240603210738.3880f1cc@jic23-huawei>
-In-Reply-To: <93ebe75b-5a7d-4d69-9515-7cbeb66c8e7e@gmail.com>
-References: <20240531-ad4111-v4-0-64607301c057@analog.com>
-	<20240531-ad4111-v4-6-64607301c057@analog.com>
-	<20240601201912.32fe3524@jic23-huawei>
-	<93ebe75b-5a7d-4d69-9515-7cbeb66c8e7e@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E55B46A4;
+	Mon,  3 Jun 2024 20:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717445291; cv=fail; b=IzAco2qyU0mP/GjejNTOpOsPlKy5GFdELRWWVuai9fW/Nrygp/lz8KQ4tnrvZ+Cs/HR8WqTX7ozIOsgRdOlHj/Kv/WviUV83YjaRv7ZC42U5evnKqDOzrR9GQSVQcByV96542ECSEzQNdkpcIfp6wAWQzpWbQbm8ysa7B3p6jYs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717445291; c=relaxed/simple;
+	bh=FILfFTy57PkpNgIqPT1/62+ls3SfV5E21ZlnfaTtWNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MYg5Ub5ubHN5DX+20i88RlDp7pXjC4tP4SdWHffxFCuuj1ycVM5Ar/m1w6mtc1U3IC63n5BIkhTGRX/52LfvdvXwDB4Iw4JkgUiYHQCrjYE+E67LfpXY1R4qGC8/fa/qbwgFH5dFViDKMCSbhrBLucfUaF0N7LwDI+N669YF8H8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=avqNIsU6; arc=fail smtp.client-ip=40.107.20.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cIKV8aV+t3uB1R0z3yjpBuL+kzwww7gQh1B3SGh6lDf6ObXivhZfyIjddFeGmwQUytLV7f6Q8313fPXDX5f9jWQK2WUO5tiWNh891JKHz0nU+C1MPordSZ+IcnmXSDiCuJcru4YMimjY160cLV1Mp7H0uiCnzZfwywxtut8BgGmsC2GOlUJh3tmEaDICIFxU+1j5gONKpWt2VQBIhUOjMWDLn04HlWK97/9mNrIuvgBxATAMvF0lbUNczKdjYhaYDaHXt2uUTcfoPZnRHUQn95xrDrEw4WuAjTv2sXtmB7QrdmaDMIFytSCrjqPiQqTJ244qxRwnuuktFGHinkVKNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Oso9jpW2O91tJb6+1dlrFlUBVDbER7h6xnfBxcsg4F8=;
+ b=O2X3ru/HQD1GRc2riReINkWGqH03vgwHG9Jm5Czly3QSP35kvtBDNbGNHPId7hDZAU6547J21H6jM6W/N6ZhpKJP6b6w3ZptmkCRu6OexnXbxtv+HHNNfkV3KFMEULgn27Gms3tzBdqKn8bGtcqMJGlDuBu+2Y8lw/Ivq+qcSX8qrQl6477eIZ7PJnp6BAIbbtlt8E9uNyObwUZ8VVrSgzk+HL22epIQ86FXrqlfVgtQp0HMoW7rWhiXqdjuPqUBWrfdHi3UhZ6Vie+UHS96gJ3SNXnX5tBJOO5CopA9S4tpZnA3YDyeD3/RMy4X2SSqfEcC/OHMzUfcnOkqq4lEhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oso9jpW2O91tJb6+1dlrFlUBVDbER7h6xnfBxcsg4F8=;
+ b=avqNIsU6Y2GbD5et+sm2uZ8pv3AGnJu6X8YbW3WlcaL8T7czLlWlDQ61Bb2jDs4CccORFinZ6UFUOkLwZVPW/OwUCFCz2Gu/qyH3r0bCroOiVl/W1nudYWlfGFsx3hrFYlsWHFPvBEIxV/iEN5L/SimizgThm2unMyDk+EgJXH8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB7835.eurprd04.prod.outlook.com (2603:10a6:10:1ea::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.23; Mon, 3 Jun
+ 2024 20:08:06 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
+ 20:08:06 +0000
+Date: Mon, 3 Jun 2024 16:07:55 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support
+ MSI ITS and IOMMU for i.MX95
+Message-ID: <Zl4im579O3qjIzZ3@lizhi-Precision-Tower-5810>
+References: <Zl4OpTfcfqMHELiX@lizhi-Precision-Tower-5810>
+ <20240603185627.GA687746@bhelgaas>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603185627.GA687746@bhelgaas>
+X-ClientProxiedBy: SJ0PR13CA0191.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7835:EE_
+X-MS-Office365-Filtering-Correlation-Id: f42ba446-b2be-4360-302a-08dc8408e1b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|52116005|7416005|376005|366007|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TpXOItUVj1mbPrVpZjMm6OcGrHN2VYjxTNGSuW6hY5J2CtT4n2DTQ4jhiT0y?=
+ =?us-ascii?Q?b9vSyx5xA5wyS2chBwnwZBrfLyv2s32gmKoCko6cxhkFQKcCZEzIn7TzZr+p?=
+ =?us-ascii?Q?8BjX5FqCkwdOZhINQrI8FlIFUXdQiplgFyCyhIV7HXc/L1AfSuJU/INRvAsx?=
+ =?us-ascii?Q?gdahXGZYWKMlQXUQmv/M3+FIOrEId7tr0/llM+bMQ6+JCuylHaa+oDyETOE7?=
+ =?us-ascii?Q?dJm4vWchfl8Kz6mJ9EXt75Af04zGsQEOaOn3RFHtswF03sY/ebHccrOJ7tpR?=
+ =?us-ascii?Q?q94EG7W4062zFtRf2b49pRfyTpgwdrUz7LWp9AH58wA1u8Tis+TVeCVoOiXx?=
+ =?us-ascii?Q?1J2moJx943+7iiT1/hwd1QxzQyR3trYPv50KRLDwZov+qSlAQWqx3IZgJS9v?=
+ =?us-ascii?Q?nf2Du1kXCm0KtyUYGxwPOB8mukkSI0b+AplIxSRbAuxrnm8awBI4KPb6b/9a?=
+ =?us-ascii?Q?Gy2iDoL572lWDjKwxcbT1bGeX12FPW5igTKbmvL4+t0AsMz1xwHiMgghg5eO?=
+ =?us-ascii?Q?eXsNG6xPWf61e42PHWkLAZrbmNkRkuunanhgs5sugDnPThf947iCP9ieCL0d?=
+ =?us-ascii?Q?wVfas+5WyHEYXchdaOXfbdRUT5t8VU7GCnAFIfVOoELdUGxe9aDM93HAS96D?=
+ =?us-ascii?Q?fLYRKQdavUdgVk5yev1WDJ6hKcbOTBabQLoVnxhzsai39qkUwAS3WPdPuL6G?=
+ =?us-ascii?Q?JLenf+IAP55eFMKxL9PFKHiaRhCp/z1NJ2PCPIOKvo5n1cM6760vfkIr9iSK?=
+ =?us-ascii?Q?RsS1Wn3QH+1rWiBIt8NoGwaGccb55CvRiWwZT8XLMAD4CQHPV7SPeCHqPDRA?=
+ =?us-ascii?Q?k2uG8XRZdjsytWaogo+j4JerjGknNBWIG8koRvHWhlXccuMvo82UYWLfLFPG?=
+ =?us-ascii?Q?M5gaXH+Qryc2kNUtWVtO2VJwKJzGzxjAuTf2GB5ldvq5gSj8NFtDYxdtgPkk?=
+ =?us-ascii?Q?e4EegwGroCQLPImaOXlwVV/QAN1dOfDU626kxu/BFL0XrDYC5Ip7MW8kkKqh?=
+ =?us-ascii?Q?JnPjZGpm0GrIkatRaHCWrqQVS71tqf53CmXeHRvN23zWUfGNO3ckFS51LkK1?=
+ =?us-ascii?Q?lZUGqxPXyuhd0YedxaCLl1+e5q62GmqimkMBix4o9XmO5hbe3RqLMxvyPIp1?=
+ =?us-ascii?Q?cADvvuvFIS0MBSYFIPmVmZvN3IVR42TnLiK/JMk/iBptoWIomx9+KAOmIiBc?=
+ =?us-ascii?Q?y0EUTIuO9wc10AVcGBJOI4zcPRLKHUtX0jhOm0Gy32fW7INL6+qcX2X2hMt4?=
+ =?us-ascii?Q?9kExErbcX+JmgOBJK1AoehZwOQ7+WOzVur8XMCxW6F9DNwNcKzL7ewJna3Xl?=
+ =?us-ascii?Q?g8J9eQXQRzJ1kouIA4/zm7lfGjGIAC4WKhyWWqqL4OT8Ew=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(7416005)(376005)(366007)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BrSGZjDBLK9EYWntQnzr8aJSUB4HYjP20G1GfkoI7w+OxVW65mj03X8v2ASh?=
+ =?us-ascii?Q?uhHkfkPBcHWUJC7wWwRGnfLCspLdHOnxhPvn+RKj335XOknQNCDa3iAsuUBp?=
+ =?us-ascii?Q?3fJjID7NPyg17HRHiRqC5YG4+O6d/Ls+iUph2HxXI5FLKAaH/FjNzEfM9NCQ?=
+ =?us-ascii?Q?aHY3LZgS7pg26TcJYc9WUdJhPFeu/al5J/8+cXdMD6bVaiYVx0Dt0pNEGslp?=
+ =?us-ascii?Q?4WI3QvMIVV8fbEVIscKNJhvvozMb7CsqWs+Cc+jb/IRGLiUkdq+lGe9oeonX?=
+ =?us-ascii?Q?KYVPPc88crRp0kKpGnVV1Rn0LQtqxfautDn/py2AWgYOK9dJBpHV6qsZ/lcZ?=
+ =?us-ascii?Q?I4cQR+AtvRsUpkV7wMQUZdDVcvsrtR7jzr80R1v9duQzQ4ymcsJOB/122lD+?=
+ =?us-ascii?Q?kmx/7cawKm+IbdjqsQf2dnTE7Prvl/NhMPg8nb47jbGJ6agjuGj0EuVTlZgY?=
+ =?us-ascii?Q?AQBsep5EFgJGnd8QQYESjkYvIEDQaSSLCAGToLGiJPnw2D0i0131n3Le4Aqh?=
+ =?us-ascii?Q?ZudExOXRe5SaRTFG0mYJQoOu66hYP8rDuOs+ufsz5ybGufEejhbE6LiwiR3R?=
+ =?us-ascii?Q?86NUQpnGblteYCznRev861tVnGSd/aZPGb+pAaIV+urz5F5lKm2lOVjvFTpW?=
+ =?us-ascii?Q?voLOgPM0DXHjE0dmmQoDGFxlQ6TOaL90It1tMRsi18/gXCey0YA7uz+7JgCR?=
+ =?us-ascii?Q?lN0ABWKTn2UVie17iRIAGzKHguwy4REnCPwWvig05gG/M/4v0XJVe9ggAlyB?=
+ =?us-ascii?Q?illJV2fpzKzAYtF1AX8Po+BpsJUVftrXnjU58bcr39MYUetccMifpnXVkGG/?=
+ =?us-ascii?Q?pMaXBP7tJIDAjOuklG6QNO8q671u+RuLOfOLgGPtLvgaPlXNAwEqc9hhQJNc?=
+ =?us-ascii?Q?xbHoU0UId10sglY/vqA74fYYgAhhZD8Zd9fuZbStHLcMyw8aKhxSHyA1CNTG?=
+ =?us-ascii?Q?axkV/XyRWckJmy0t8ziEVFeoqztXlUaNVbviC/vo0eNCIFsCyiqaWem7wm4x?=
+ =?us-ascii?Q?nqXx8JwASewDe5ZXdXhlM/9TwpQ14y5FNbN+luDkMfxJzm6ZTFXrN6u4amwz?=
+ =?us-ascii?Q?Ji/wrJKyqL9w8kde0i0MR4xDfsw6R6A3Dosm4YEXq2pjTl3FdXxfuPxzerjY?=
+ =?us-ascii?Q?Z7toaSw/M9gKvt7fSBeSfqQ6bE47sAa+Dptq9WtEsA3NITuUdUR0uTKyvvIo?=
+ =?us-ascii?Q?NSEaFnUbsO7Oy9Sc8uU75tTHedw5/Sg/MSLy11UBgBWs2nsqNHXyM42qA9Ui?=
+ =?us-ascii?Q?19N78oT1cm7kJGDbWo9QCbVj41SMaKZUTOYvJj/CWsbb9zopDE2KABnpb7wq?=
+ =?us-ascii?Q?Gl0bPAJjTYzfmwpr0o1L17LrClZ2pJxOa4XDk6LPzhoJHWOGwSXzg//88IG4?=
+ =?us-ascii?Q?S2RTqbOgvToZHO1+lJsNzZSdvP/Bl3BHT10RWa1VXMYzlIxncn3Kom9/7vIp?=
+ =?us-ascii?Q?JBVIVzNaC3KbzeKBGZ9FWCYyrxt8IoBloUq4NgzoiHFkiszq+feVCY37pYgS?=
+ =?us-ascii?Q?9AGO6ITQ+tS0d0OVGHG41qha9151lA/bTtGNIbtebC/kQEgaOrdtrtHn4bnG?=
+ =?us-ascii?Q?voCCRM4MeV3ImB1DYqvlMN8nDdcw0e+E0hYozoMu?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f42ba446-b2be-4360-302a-08dc8408e1b7
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 20:08:06.2367
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p5sLWg4ekcbJrcGHIlx49P2M1oYZ3jwmBJ0zITSH248TqNloP2fHpAe8uWxUI3EP/fZK6RMLdPQZEB4kM2UWSQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7835
 
-On Mon, 3 Jun 2024 13:11:33 +0300
-"Ceclan, Dumitru" <mitrutzceclan@gmail.com> wrote:
-
-> On 01/06/2024 22:19, Jonathan Cameron wrote:
-> > On Fri, 31 May 2024 22:42:32 +0300
-> > Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
-> >   
-> >> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> >>
-> >> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
-> >>
-> >> The AD411X family encompasses a series of low power, low noise, 24-bit,
-> >> sigma-delta analog-to-digital converters that offer a versatile range of
-> >> specifications.
-> >>
-> >> This family of ADCs integrates an analog front end suitable for processing
-> >> both fully differential and single-ended, bipolar voltage inputs
-> >> addressing a wide array of industrial and instrumentation requirements.
-> >>
-> >> - All ADCs have inputs with a precision voltage divider with a division
-> >>   ratio of 10.
-> >> - AD4116 has 5 low level inputs without a voltage divider.
-> >> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
-> >>   shunt resistor.
-> >>
-> >> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>  
-> > Hi Dumitru,
+On Mon, Jun 03, 2024 at 01:56:27PM -0500, Bjorn Helgaas wrote:
+> On Mon, Jun 03, 2024 at 02:42:45PM -0400, Frank Li wrote:
+> > On Mon, Jun 03, 2024 at 12:19:21PM -0500, Bjorn Helgaas wrote:
+> > > On Fri, May 31, 2024 at 03:58:49PM +0100, Robin Murphy wrote:
+> > > > On 2024-05-31 12:08 am, Bjorn Helgaas wrote:
+> > > > > [+cc IOMMU and pcie-apple.c folks for comment]
+> > > > > 
+> > > > > On Tue, May 28, 2024 at 03:39:21PM -0400, Frank Li wrote:
+> > > > > > For the i.MX95, configuration of a LUT is necessary to convert Bus Device
+> > > > > > Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
+> > > > > > This involves examining the msi-map and smmu-map to ensure consistent
+> > > > > > mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
+> > > > > > registers are configured. In the absence of an msi-map, the built-in MSI
+> > > > > > controller is utilized as a fallback.
+> > > > > > 
+> > > > > > Additionally, register a PCI bus notifier to trigger imx_pcie_add_device()
+> > > > > > upon the appearance of a new PCI device and when the bus is an iMX6 PCI
+> > > > > > controller. This function configures the correct LUT based on Device Tree
+> > > > > > Settings (DTS).
+> > > > > 
+> > > > > This scheme is pretty similar to apple_pcie_bus_notifier().  If we
+> > > > > have to do this, I wish it were *more* similar, i.e., copy the
+> > > > > function names, bitmap tracking, code structure, etc.
+> > > > > 
+> > > > > I don't really know how stream IDs work, but I assume they are used on
+> > > > > most or all arm64 platforms, so I'm a little surprised that of all the
+> > > > > PCI host drivers used on arm64, only pcie-apple.c and pci-imx6.c need
+> > > > > this notifier.
+> > > > 
+> > > > This is one of those things that's mostly at the mercy of the PCIe root
+> > > > complex implementation. Typically the SMMU StreamID and/or GIC ITS DeviceID
+> > > > is derived directly from the PCI RID, sometimes with additional high-order
+> > > > bits hard-wired to disambiguate PCI segments. I believe this RID-translation
+> > > > LUT is a particular feature of the the Synopsys IP - I know there's also one
+> > > > on the NXP Layerscape platforms, but on those it's programmed by the
+> > > > bootloader, which also generates the appropriate "msi-map" and "iommu-map"
+> > > > properties to match. Ideally that's what i.MX should do as well, but hey.
+> > > 
+> > > Maybe this RID-translation is a feature of i.MX, not of Synopsys?  I
+> > > see that the LUT CSR accesses use IMX95_* definitions.
 > > 
-> > A follow on comment on the validation code.
-> > Also there is some good docs for the sampling frequency but are they
-> > actually related to the rest of this change?  They also raise
-> > questions about ABI compliance that we may want to deal with as
-> > a follow up patch.
-> > 
-> > A few other trivial things inline.
-> > 
-> > This is looking pretty good, so hopefully we'll get the last few corners
-> > sorted in v5.
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> > 
-> >   
-> >> ---
-> >>  drivers/iio/adc/ad7173.c | 336 +++++++++++++++++++++++++++++++++++++++++++----
-> >>  1 file changed, 307 insertions(+), 29 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> >> index ed8ff8c5f343..91ff984eedf4 100644
-> >> --- a/drivers/iio/adc/ad7173.c
-> >> +++ b/drivers/iio/adc/ad7173.c
-> >> @@ -1,8 +1,9 @@  
-> >   
-> >>  #define AD7173_INTERFACE_DATA_STAT	BIT(6)
-> >> @@ -125,26 +132,46 @@
-> >>  #define AD7173_VOLTAGE_INT_REF_uV	2500000
-> >>  #define AD7173_TEMP_SENSIIVITY_uV_per_C	477
-> >>  #define AD7177_ODR_START_VALUE		0x07
-> >> +#define AD4111_SHUNT_RESISTOR_OHM	50
-> >> +#define AD4111_DIVIDER_RATIO		10
-> >> +#define AD411X_VCOM_INPUT		0X10  
-> > 
-> > AD4111_VCOM_INPUT . Looks like one wildcard escaped an earlier edit?
-> >   
-> >> +#define AD4111_CURRENT_CHAN_CUTOFF	16
-> >>  
-> >> @@ -736,6 +918,21 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
-> >>  		return ret;
-> >>  
-> >>  	switch (info) {
-> >> +	/*
-> >> +	 * This attribute sets the sampling frequency to each channel individually.  
-> > 
-> > frequency for each channel?
-> >   
-> >> +	 * There are no issues for raw or buffered reads of an individual channel.
-> >> +	 *
-> >> +	 * When multiple channels are enabled in buffered mode, the effective
-> >> +	 * sampling rate of a channel is lowered in correlation to the number
-> >> +	 * of channels enabled and the sampling rate of the other channels.
-> >> +	 *
-> >> +	 * Example: 3 channels enabled with rates CH1:6211sps CH2,CH3:10sps
-> >> +	 * While the reading of CH1 takes only 0.16ms, the reading of CH2 and CH3
-> >> +	 * will take 100ms each.
-> >> +	 *
-> >> +	 * This will cause the reading of CH1 to be actually done once every
-> >> +	 * 200.16ms, an effective rate of 4.99sps.  
-> > 
-> > Hmm. This is a bit unfortunate as if I understand correctly that's not really what
-> > people will expect when they configure the sampling frequency.  However I can't immediately
-> > think of a better solution.  You could let userspace write a value that is cached
-> > then attempt to get as near as possible as channels are enabled.
-> > 
-> > Still this looks like a documentation enhancement of existing behavior
-> > in which case any functional change can be in a future patch.
-> > However I don't think the docs update belongs in this patch unless
-> > I'm missing some reason for it?
-> >  
+> > Yes, it convert 16bit RID to 6bit stream id.
 > 
-> Well, it would seem like this exact behaviour is already documented:
-> 
->  "
->  What:		/sys/bus/iio/devices/iio:deviceX/in_voltageX_sampling_frequency
->  What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_sampling_frequency
->  What:		/sys/bus/iio/devices/iio:deviceX/in_currentZ_sampling_frequency
->  KernelVersion:	5.20
->  Contact:	linux-iio@vger.kernel.org
->  Description:
-> 		Some devices have separate controls of sampling frequency for
-> 		individual channels. If multiple channels are enabled in a scan,
-> 		then the sampling_frequency of the scan may be computed from the
-> 		per channel sampling frequencies.
->  "
+> IIUC, you're saying this is not a Synopsys feature, it's an i.MX
+> feature.
 
-I guess we've hit this before and added very specific documentation around this
-that I'd forgotten about.  Thanks for pointing it out!
-
-> Does it still make sense to keep this comment here? But if kept, yeah, a different patch
-I think there is no harm in having the additional info.  Not as if everyone will
-check the ABI docs whilst trying to understand the driver code. I didn't for one :(
-
-Jonathan
+Yes, it is i.MX feature. But I think other vendor should have similar
+situation if use old arm smmu.
 
 > 
-> ...
+> > > > If it's really necessary to do this programming from Linux, then there's
+> > > > still no point in it being dynamic - the mappings cannot ever change, since
+> > > > the rest of the kernel believes that what the DT said at boot time was
+> > > > already a property of the hardware. It would be a lot more logical, and
+> > > > likely simpler, for the driver to just read the relevant map property and
+> > > > program the entire LUT to match, all in one go at controller probe time.
+> > > > Rather like what's already commonly done with the parsing of "dma-ranges" to
+> > > > program address-translation LUTs for inbound windows.
+> > > > 
+> > > > Plus that would also give a chance of safely dealing with bad DTs specifying
+> > > > invalid ID mappings (by refusing to probe at all). As it is, returning an
+> > > > error from a child's BUS_NOTIFY_ADD_DEVICE does nothing except prevent any
+> > > > further notifiers from running at that point - the device will still be
+> > > > added, allowed to bind a driver, and able to start sending DMA/MSI traffic
+> > > > without the controller being correctly programmed, which at best won't work
+> > > > and at worst may break the whole system.
+> > > 
+> > > Frank, could the imx LUT be programmed once at boot-time instead of at
+> > > device-add time?  I'm guessing maybe not because apparently there is a
+> > > risk of running out of LUT entries?
+> > 
+> > It is not good idea to depend on boot loader so much.
+> 
+> I meant "could this be programmed once when the Linux imx host
+> controller driver is probed?"  But from the below, it sounds like
+> that's not possible in general because you don't have enough stream
+> IDs to do that.
 
+Oh! sorry miss understand what your means. It is possible like what I did
+at v3 version. But I think it is not good enough. 
+
+> 
+> > Some hot plug devics
+> > (SD7.0) may plug after system boot. Two PCIe instances shared one set
+> > of 6bits stream id (total 64). Assume total 16 assign to two PCIe
+> > controllers. each have 8 stream id. If use uboot assign it static, each
+> > PCIe controller have below 8 devices.  It will be failrue one controller
+> > connect 7, another connect 9. but if dynamtic alloc when devices add, both
+> > controller can work.
+> > 
+> > Although we have not so much devices now,  this way give us possility to
+> > improve it in future.
+> > 
+> > > It sounds like the consequences of running out of LUT entries are
+> > > catastrophic, e.g., memory corruption from mis-directed DMA?  If
+> > > that's possible, I think we need to figure out how to prevent the
+> > > device from being used, not just dev_warn() about it.
+> > 
+> > Yes, but so far, we have not met such problem now. We can improve it when
+> > we really face such problem.
+> 
+> If this controller can only support DMA from a limited number of
+> endpoints below it, I think we should figure out how to enforce that
+> directly.  Maybe we can prevent drivers from enabling bus mastering or
+> something.  I'm not happy with the idea of waiting for and debugging a
+> report of data corruption.
+
+It may add a pre-add hook function to pci bridge. let me do more research.
+
+Frank
+
+> 
+> Bjorn
 
