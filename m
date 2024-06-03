@@ -1,128 +1,156 @@
-Return-Path: <linux-kernel+bounces-199231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0DF8D842C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:40:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD158D842F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33C1D2857D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A3D280AC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C35512D767;
-	Mon,  3 Jun 2024 13:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F4512DD90;
+	Mon,  3 Jun 2024 13:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYi1Rj3g"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKMlBeed"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B615612BF3A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA0412BF3A;
+	Mon,  3 Jun 2024 13:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422013; cv=none; b=SUIL3YnrlKshVIs9ZtsqA8gDd4tVw5GWb8AvYYFQD41n65Po2ImEi86WGmM+LKcWA4r7GFPph5UuU1ySiJgVWE4nhURhvTauktQ20zN1qj6Sc9kFjZ58JCKRUpb77KLGj0/ggmxDwC7VI5jfIw6L+/paoCkKwes90qnzfSEcRWc=
+	t=1717422063; cv=none; b=ln5cSgqRLHsc3NaJvEtdNxQfzpmHKKN5mAPFeQA/4QFAsJ67k3QGjO1v82r7mnUQDwm9xndlOe3jO28uL51BVp7qHXr4/gcJSmIQKZrfBXlRE9STe5/Z915JeyyHVWJ0mAf9Fjl8dGPYwoC8JUfjEWdWGlEAvpvFiMeTE3M4PG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422013; c=relaxed/simple;
-	bh=W2GVBPMqiSQyhG8W8PIaFIc/aN3PASl8BbXqJqq6muY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tlqImhLp0uNhf8ocLtLeH3iLIy1W0QUndtRO4+LOqcOUjJjhLfcM9U4dRR1pwjfy4bi0IHzGZC2o4ltnBkKD98tnWoBMWbT9CPSh/wBie2xYdqmboleeR6Wd9PMDIGGm87ijKJ2Nz0lqhuweYrYvhNvRkLRM5f51BHyhWatpkxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYi1Rj3g; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1717422063; c=relaxed/simple;
+	bh=CNclYiuhtxn52z+HLZMDRgEiJTcrTNaDA8O1iQjku2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z855HivDY5GiJDlUVc/OLL1npVvGHcgHniAJ9O+AeufUHe2mGtemj4Ur7ig1kmq3g9ZIzNSU97fu2tgH8osE/K0ztXSguBXaBOq02r6hVg3/AZjqQgDejdA6TsKXN0TTNvXeOpBYlVsRSjJwoo5lvgt5/hpHeMe/F6cBwSKtwp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kKMlBeed; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52b82d57963so4454756e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:40:11 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4213be171f7so9006085e9.1;
+        Mon, 03 Jun 2024 06:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717422010; x=1718026810; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=A5GgDZ5WUBC3nTc2sLPQ5jCC60M5+GkkN5UTe3tmXis=;
-        b=VYi1Rj3gtTNM1UKfdmjdI4/vGqHCauX+lUbrOXu4IG8FhQmmRr1C45R4kKsS4OnadU
-         J6gWkDFltkZg7t8VZqWVVFUj1j53mcGirIlnep5U639RcEhVwSG4ztMbb5QVLXbQpY10
-         igm9w6WHnZwAxLKUlvMQBWJmXVdbGgSMdyqnzRfufqQ9B1SjD9nKSEPhbBldGecx/O0V
-         MYPg+/j5tzXdoXG35X5eibocBa3edT7zKTUlYFs/VhihcLZgn05ZW8WmPouTydmIrfFw
-         9/TTY+MbmRANz1P2Uopq7hV4yJtEyxDRWNUlqof9LnkA0a5ygSURS620xcnJt9AZ4R7b
-         KMpg==
+        d=gmail.com; s=20230601; t=1717422060; x=1718026860; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ob+4f7qH6Vg5/G2utXpY3kVJwPOBg1pDjvHb44/3ang=;
+        b=kKMlBeed4ASpDMcJC9Y5PqMYytW0Yi1tuc6c0jlL7N+jebxgaF6fUf+iDMSRogoJJ0
+         xWI6s+/XLhid018vqD1pbagJNkhPHltAIUkJdFD6hg3676MxoI11+kiCafrgfvIxm3Ci
+         OQLTuQ/tFn65Iq0f8By1caesjl7RB98pFSKU4tkmAOvcwviVdO/Q/xfRONC392Yt1Hm+
+         ZhK1PHc2ZUGwwaAra3KfMB/1be/ceZdZywYNat3D3XeC5TiSIl1zy1HYZQe+5nKUtIev
+         clKQMC1pvANs25z0DQ/Upnq01JRcuuNJRIGCsmSUr4kO0yElUeB67cmzKd2dUwkxIVp/
+         q09g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717422010; x=1718026810;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A5GgDZ5WUBC3nTc2sLPQ5jCC60M5+GkkN5UTe3tmXis=;
-        b=GOJ2INGIc+X7+6PI/2v+FhYsxWYrTtV6W4sOGd0vwbT/5/cbvZYxCdfJmWi6/JSEc4
-         iGOG9bMvC8K+i/P9I2fcAT9lHzb+OMmI6txADOapmmhtqnoiCWJ02zFD1IIJJfukAO8l
-         JRdCrlow/pVOACok/8zGtQAYXKwddMdYLNOwwPa9OA1CZKgLE7q/pMCU4peCO9wzFVxI
-         TCkDB14O8GIHxGBXjhNtxiU410EPYDiEKbXtOJE1OPZiL2iLlI/YNHD7NugVuXMA4ekw
-         UM1MijKEpTfZRHGM1NaxKAcVqFUOVbkXo9RnfaEY43pZAnO3QTvw25HyrIspzikMRz+T
-         Wueg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLvILhnqYfvuovt/RBieFpqSsnpzTLtsigyM1e0yqyipvlq1tlP9CiCc+bvoOGnu5oX7Bwe4ofDVpbfkTUaoLnUQV85pFiJ9lkxcYY
-X-Gm-Message-State: AOJu0YxjNWfg1IOXhJr8ga55XaCAlgDcQOxzbcte5rPgnZhIk4i9sEnY
-	WBWVZBDRvuefpwjIHpIKuChVwWRXzO79CmC4/89wV4KzQO6ob4BKNDMn0w==
-X-Google-Smtp-Source: AGHT+IFc6qkRqYO2T3R0mqqH2If+PlXgVkB99IpmilHjOpNWm39TLqGrttu8HAXvLurwUjr8u5ctPg==
-X-Received: by 2002:ac2:4296:0:b0:52b:c9a:148 with SMTP id 2adb3069b0e04-52b89581d8amr5427183e87.14.1717422009562;
-        Mon, 03 Jun 2024 06:40:09 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b9f1fa9a7sm61733e87.249.2024.06.03.06.40.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 06:40:08 -0700 (PDT)
-Message-ID: <8085c2b9-f824-4404-9adf-fb8be09e5a86@gmail.com>
-Date: Mon, 3 Jun 2024 16:40:07 +0300
+        d=1e100.net; s=20230601; t=1717422060; x=1718026860;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ob+4f7qH6Vg5/G2utXpY3kVJwPOBg1pDjvHb44/3ang=;
+        b=aPmjiboDSd5yhm3xTPmKsHYvuQ/7NyIksf/uK5LiqMFpIhEKCf7nusBDZDEzPWaMqT
+         1CMZrMt+/h0OxuwL8MgiQuX3uazhb9BKywXTdstwl9rI/VmfvQQiPdyRm9jQzoVLC/XR
+         DRUVXutFTuPkRPr81LknpMDs3t3Ek5sNzk6rVJKxlBJFZXfjyLS3H1hmHbI/bMU1lMYO
+         LWxYppTi7Jj7Fmu8zg2viReVOpQUawmifk46iCgGdp4Ez1u9YBnR1WnxeDqOBcdXF4cF
+         hqKiEkgrerLl+qfJfoVUe57xSZzvD1fguY7TeaYNEu4smhpuwDOOJauYXN6HLH4oYaE+
+         awKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJRbnk9hDR09XjjdbgML8qGcTDL+rf6wwrXHSScO6nZtJ2+eeJ0tjVji/u6wdS2BLtqo6y04vVIwSgVyvSQHOEEZW1kFuXgkDg4lIftD7FQKUbAH86iFAqVdrs89159atko7y6kVHSG+uYGoOTJWRlRrvcvkFST+qZf0pSsjGRx2s8mQ==
+X-Gm-Message-State: AOJu0YxtR4RLSWmQhZT/p99KP9VqIQ4u1D56xLxlEtLBD0eMM3x72HuA
+	Vkw1Yub/PoPNt5ggJ6w/RVkk0dBUiKSx7kjp0STyEMXgC/VCsBh/
+X-Google-Smtp-Source: AGHT+IHM+3rQ8itjEyUlUaHm/XCOUbXppbJ7L9q7d2TX7lh0T9HgF+HLQgadrxRd5FQkWwyk/907bw==
+X-Received: by 2002:a05:600c:3595:b0:41f:fca0:8c09 with SMTP id 5b1f17b1804b1-4212e0bddf6mr65554685e9.40.1717422059985;
+        Mon, 03 Jun 2024 06:40:59 -0700 (PDT)
+Received: from localhost.localdomain ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35e5e3d1902sm1868361f8f.32.2024.06.03.06.40.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 06:40:59 -0700 (PDT)
+From: Mudit Sharma <muditsharma.info@gmail.com>
+To: ivan.orlov0322@gmail.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	robh@kernel.org
+Cc: Mudit Sharma <muditsharma.info@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: iio: light: ROHM BH1745
+Date: Mon,  3 Jun 2024 14:40:13 +0100
+Message-ID: <20240603134015.70388-1-muditsharma.info@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/10] irqdomain: Allow giving name suffix for domain
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <cover.1716533790.git.mazziesaccount@gmail.com>
- <2ea1749587d9e5a74a80a8eee7caf58c3e954a6e.1716533790.git.mazziesaccount@gmail.com>
- <87h6ea72f9.ffs@tglx> <77c64d75-43fa-47bf-bb3a-e0e49d51189d@gmail.com>
-Content-Language: en-US, en-GB
-In-Reply-To: <77c64d75-43fa-47bf-bb3a-e0e49d51189d@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/3/24 15:19, Matti Vaittinen wrote:
+Add ROHM BH1745 - 4 channel I2C colour sensor's dt-bindings.
 
-> Here, when talking about 'parent IRQ', I was referring to ERRB or INTB 
-> as 'parent IRQ'. My thinking was that, the regmap IRQ instance uses INTB 
-> or ERRB as it's parent IRQ, which it splits (demuxes) to separate "child 
-> IRQs" for the rest of the PMIC drivers to use. I'd be grateful if better 
-> terms were suggested so that readers can stay on same page with me.
-> 
-> After talking with Mark:
+Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+---
+ .../bindings/iio/light/rohm,bh1745.yaml       | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
 
-Sorry, I forgot the link:
-https://lore.kernel.org/all/Zjzt8mOW6dO_7XNV@finisterre.sirena.org.uk/
-
-> 
-> we both thought it'd be cleaner to have separate regmap IRQ instances 
-> for the ERRB and INTB lines. This makes sense (to me) because a lot of 
-> (almost all of?) the regmap IRQ internal data describe the IRQ line 
-> related things like registers related to the IRQ line, IRQ line polarity 
-> etc. Hence, making single regmap-IRQ instance to support more than one 
-> <please, add what is the correct term for INTB / ERRB like line> would 
-> require duplicating a plenty of the regmap data. This would make 
-> registering an regmap-IRQ entity much more complex and additionally it'd 
-> also complicate the internals of the regmap-IRQ. It'd be a bit like 
-> trying to fill and drink a six-pack of lemonade at once, instead of 
-> going a bottle by bottle :)
-
-Yours,
-	-- Matti
-
+diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+new file mode 100644
+index 000000000000..b6abfbf609cb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/light/rohm,bh1745.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BH1745 colour sensor
++
++maintainers:
++  Mudit Sharma <muditsharma.info@gmail.com>
++
++description: |
++  BH1745 is an I2C colour sensor with red, green, blue and clear
++  channels. It has a programmable active low interrupt pin.
++  Interrupt occurs when the signal from the selected interrupt
++  source channel crosses set interrupt threshold high/low level.
++
++properties:
++  compatible:
++    const: rohm,bh1745
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        colour-sensor@38 {
++            compatible = "rohm,bh1745";
++            reg = <0x38>;
++            interrupt-parent = <&gpio>;
++            interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
++        };
++    };
++
++...
 -- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+2.43.0
 
 
