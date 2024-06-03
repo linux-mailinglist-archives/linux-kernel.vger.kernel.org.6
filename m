@@ -1,160 +1,143 @@
-Return-Path: <linux-kernel+bounces-199527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EBE8D8823
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:43:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87ED8D8829
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42AB8288ED9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1516D1C20988
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5436B137C33;
-	Mon,  3 Jun 2024 17:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71901137925;
+	Mon,  3 Jun 2024 17:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oIaFus9/"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="T6t9OcPu"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1ABC135A6F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8DB137902;
+	Mon,  3 Jun 2024 17:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717436569; cv=none; b=ok9/4XIT3i1sG2HEDo4TOa1XEr1fgyN3/PheDm3aBYdME5iMMu2RcxTx4qtEO5TCKBNPNnYL7JyboxEK43E9KJtaT2U4erKZeCAxrcZN8/Sxe6yitSnciHz/mOl7atq48LD7sW99TeeB6OzDzRtOGV8EGDtmwKVvSjZv61HBZsk=
+	t=1717436657; cv=none; b=qDiUAMfoBdaS9JwMlCbxjxB5QbesdmS9h21R14dmotMw1kZ+JLbzoFbH3m4VTyYaYoPIMhJXQ1D0CWh4bG3SO9gyQ3ramivcSD0g4AeYTjPQ0VHKGfXafWF0M2u1uSHOOC4k6I4Iv17tHjteELL+c0vUhEbxu0/m3XxmgJ0x1Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717436569; c=relaxed/simple;
-	bh=rPAoZy6vxBtVU7x0pj3UdhVhA7bFxTF9Tss9xmCjp8M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WJq3iof6nvE51isYCe+YhusoW7QcsOWaw0r6Qx6zBeDbYC/VRuejgb/OeUOcrK6h7suLBLKKXxqgC2uyq/OffZezzx1sloNx5EajixovmcZE7ohElsts86EXjoLyj1U69E071xG0GIpfWmn4a9OiB7njJnYAxhX7ZdqHS6MrxNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oIaFus9/; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a2f27090aso5938445a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 10:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717436566; x=1718041366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cX46hsOnvcHYWQ2/08aJP6HMfOKz/H2iKz5LdOxxIiY=;
-        b=oIaFus9/oBerxQMTo6NcQ0OmtrzbzjrX9z6s6pVYRayTVWbyOzBtKMKYikdhUbIHMy
-         FouGfFbcoFPRiDM90aN7G5K9zMwgRTir1toWGRZJhiPhGLnWF5vHTzAup2pMCtM+s/lQ
-         ZsIU7T+Vo22Vcf2SjHcPRy+4RT0zfXJyDGDxeN+uIfJOMtjGxbi81v7jVQT9NitPLwVs
-         475SNAT5R4WXf5pd0UNvBFi92f5iJCKi76ZLEeujm13QGLtyX8BcwahjYi+Xj6qgAuXw
-         8lERZebgRkK0rWX4KNFuLB0uF83QOO5W7Wxvp5AoDkvxOhm6pWrQr4hbYlb3D+9eiZK0
-         hi4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717436566; x=1718041366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cX46hsOnvcHYWQ2/08aJP6HMfOKz/H2iKz5LdOxxIiY=;
-        b=MsztaVjyooKk90leWEIlh79MSUB41BnofWYYYfXZrJdeL5RNha0MQk//6iZWelePzm
-         TY0kuc8LEbyzTcsPZ+aHLGWer72qZ3y3X0K2VAUlKvkaHk7w/f28Y2fV1XqHSXSYPw/c
-         UfVT6Y7bzJuEPEm768DY8DsOYUl9W2PzEsbhfHdSLLG2Rqu9pwIzZOCXLyBwUMLsF6qw
-         E2JsiVKAwXfoxQhiiKPA4WgDgXBJeJX0mgL82vhZ4O5H/oWg9L3B/Iug3Ze6/S1W9aU5
-         AEKoAaTc3G1hMTGxhk0bW0Rcq7LvIopOb99WuCnBwDk/Gdh6/IghXf5Wy1qyv8oWE/pZ
-         jG6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVG3moLJM1coDbG4oNge9CoPcLZHl6vTtnV+FhZzyq+5WJn5BzkKhpf4IFQBB4ga1N3rCEqCtjoN53w9YkqACkzQW2ZlvwUh5wbw9mT
-X-Gm-Message-State: AOJu0YwQiVOXssv8t930r0OBQSBLOJVN2RzZ3sY1TBkXwH6LhPqpKrjw
-	mpXVKJh5quLmZHBgsTEAGLxN1VlbLwKXdlbJvptKlE4yQoU5jhTsP7cb+aaWECIaD1Zv7XGeKOC
-	2fnClwjnVe6pafh8i445kq9lI9rzk+yth/mQa
-X-Google-Smtp-Source: AGHT+IHi+ZsXWMd56cnJoCCuxUXLuaKUiF6CkEcw+xlGa1Gq7gdbgvhyC/+OuXMSzHHUjT2c42a3lstZlU6g7HMSpZw=
-X-Received: by 2002:a17:906:d0d4:b0:a59:be21:3587 with SMTP id
- a640c23a62f3a-a69541453d3mr31147066b.8.1717436565933; Mon, 03 Jun 2024
- 10:42:45 -0700 (PDT)
+	s=arc-20240116; t=1717436657; c=relaxed/simple;
+	bh=tmo0LZxMdzvSoYgPSGhR2ipRgjphQMohkpxHGkKaTFU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pOeONbOkdIeITjrFl27thMZZTeaabhFZC3bhsYrc2RXDrgHCuc9Brd7lXVm85BtTuRLd9SlKdlctqdyDRECYv35HbYLdwIBkMtqxCoIlnNmBmlJ99R1dwyBiICeZMoWawQ3CsTlnXezu/Q4oWbKdc8pcDd5wmiaa+/AU2qRLmUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=T6t9OcPu; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1717436654;
+	bh=tmo0LZxMdzvSoYgPSGhR2ipRgjphQMohkpxHGkKaTFU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=T6t9OcPue/Gq30YaSX3aQDQfihwjieNxwm9BETQhPd6cp27uZzkYR6KpHHXtbgxlk
+	 ezvofmMb0AxhkLkXaR+Atu74hu8NHWywohAoSI0Hx5FxeDdAdNuTOgY7yW91FxHN63
+	 oMeETO6JsnHpVo9tzQudIXoLnsGM/9Ap9Wak20J4=
+Received: from [IPv6:240e:358:117b:e900:dc73:854d:832e:4] (unknown [IPv6:240e:358:117b:e900:dc73:854d:832e:4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 0FD8A66E7C;
+	Mon,  3 Jun 2024 13:44:12 -0400 (EDT)
+Message-ID: <48eba83030e155f703b4248e9c1ae65aa44b1a83.camel@xry111.site>
+Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
+ global.turbo_disabled after initialization
+From: Xi Ruoyao <xry111@xry111.site>
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>, "Rafael J.
+ Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Date: Tue, 04 Jun 2024 01:44:08 +0800
+In-Reply-To: <c3526e7a0e80ec1a3a011259c38ab4b772040ea4.camel@linux.intel.com>
+References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
+	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
+	 <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
+	 <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
+	 <f382e06635b3b52841d1e0c11dcf639d225edae0.camel@xry111.site>
+	 <29d69252dcdc398f147c9139a8666d09e7bd831d.camel@linux.intel.com>
+	 <0324bc3a88654855719cd48a5ed69a34eea31037.camel@xry111.site>
+	 <c3526e7a0e80ec1a3a011259c38ab4b772040ea4.camel@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGFP0L+BaNAtCF7c7cJ1bvbjomp03Fy0=6=w6dj29Fnr0ygSCA@mail.gmail.com>
- <CAJHvVchjzxLVfg844SNjK9EWmC+yhVneGaf1vVscmjomH_aaow@mail.gmail.com>
-In-Reply-To: <CAJHvVchjzxLVfg844SNjK9EWmC+yhVneGaf1vVscmjomH_aaow@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 3 Jun 2024 10:42:07 -0700
-Message-ID: <CAJD7tkaV8a-fVv4D_6_5LgmOHnMFXJWy-DwqvRDCTjEqyJkdKA@mail.gmail.com>
-Subject: Re: [PATCH] fix: Prevent memory leak by checking for NULL buffer
- before calling css_put()
-To: Axel Rasmussen <axelrasmussen@google.com>
-Cc: Geunsik Lim <geunsik.lim@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, Ingo Molnar <mingo@elte.hu>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <a.p.zijlstra@chello.nl>, Hugh Dickins <hughd@google.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 3, 2024 at 10:32=E2=80=AFAM Axel Rasmussen <axelrasmussen@googl=
-e.com> wrote:
->
-> On Mon, Jun 3, 2024 at 5:33=E2=80=AFAM Geunsik Lim <geunsik.lim@gmail.com=
-> wrote:
-> >
-> > This commit addresses a potential memory leak in the
-> > `get_mm_memcg_path()` function
-> > by explicitly checking if the allocated buffer (`buf`) is NULL before
-> > calling the
-> > `css_put()` function. The prefix 'css' means abbreviation of cgroup_sub=
-sys_state
-> >
-> > Previously, the code would directly call `css_put()` without checking
-> > the value of
-> > `buf`, which could lead to a memory leak if the buffer allocation faile=
-d.
-> > This commit introduces a conditional check to ensure that `css_put()`
-> > is only called
-> > if `buf` is not NULL.
-> >
-> > This change enhances the code's robustness and prevents memory leaks, i=
-mproving
-> > overall system stability.
-> >
-> > **Specific Changes:**
-> >
-> > * In the `out_put` label, an `if` statement is added to check
-> >   if `buf` is not NULL before calling `css_put()`.
-> >
-> > **Benefits:**
-> >
-> > * Prevents potential memory leaks
-> > * Enhances code robustness
-> > * Improves system stability
-> >
-> > Signed-off-by: Geunsik Lim <leemgs@gmail.com>
-> > Signed-off-by: Geunsik Lim <geunsik.lim@samsung.com>
-> > ---
-> >  mm/mmap_lock.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-> > index 1854850b4b89..7314045b0e3b 100644
-> > --- a/mm/mmap_lock.c
-> > +++ b/mm/mmap_lock.c
-> > @@ -213,7 +213,8 @@ static const char *get_mm_memcg_path(struct mm_stru=
-ct *mm)
-> >         cgroup_path(memcg->css.cgroup, buf, MEMCG_PATH_BUF_SIZE);
-> >
-> >  out_put:
-> > -       css_put(&memcg->css);
-> > +        if (buf !=3D NULL)
-> > +                css_put(&memcg->css);
-> >  out:
-> >         return buf;
-> >  }
->
-> I think the existing code is correct, and this change actually
-> introduces a memory leak where there was none before.
->
-> In the case where get_memcg_path_buf() returns NULL, we *still* need
-> to css_put() what we got from get_mem_cgroup_from_mm() before.
->
-> NAK, unless I'm missing something.
+On Mon, 2024-06-03 at 10:11 -0700, srinivas pandruvada wrote:
+> On Mon, 2024-06-03 at 21:12 +0800, Xi Ruoyao wrote:
+> > On Sun, 2024-06-02 at 16:11 -0700, srinivas pandruvada wrote:
+> >=20
+> > /* snip */
+> >=20
+> > > What is the output of:
+> > > grep . /sys/devices/system/cpu/intel_pstate/*
+> > >=20
+> > > Also=C2=A0
+> > > rdmsr 0x771
+> > > rdmsr 0x774
+> > >=20
+> > >=20
+> > > Try these three patches. Don't worry about the commit description
+> > > for
+> > > this issue.
+> >=20
+> > Unfortunately they still do not fix the issue for me.
+> >=20
+> > The outputs of grep and rdmsr commands are initially:
+> >=20
+> > /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost:0
+> > /sys/devices/system/cpu/intel_pstate/max_perf_pct:100
+> > /sys/devices/system/cpu/intel_pstate/min_perf_pct:9
+> > /sys/devices/system/cpu/intel_pstate/no_turbo:1
+> > /sys/devices/system/cpu/intel_pstate/num_pstates:41
+> > /sys/devices/system/cpu/intel_pstate/status:active
+> > /sys/devices/system/cpu/intel_pstate/turbo_pct:33
+> > rdmsr 0x771: 10d1f2c
+> > rdmsr 0x774: 1f04
+> >=20
+> > But it then changes to:
+> >=20
+> > /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost:0
+> > /sys/devices/system/cpu/intel_pstate/max_perf_pct:100
+> > /sys/devices/system/cpu/intel_pstate/min_perf_pct:9
+> > /sys/devices/system/cpu/intel_pstate/no_turbo:1
+> > /sys/devices/system/cpu/intel_pstate/num_pstates:41
+> > /sys/devices/system/cpu/intel_pstate/status:active
+> > /sys/devices/system/cpu/intel_pstate/turbo_pct:33
+> > rdmsr 0x771: 10c1f2c
+> > rdmsr 0x774: 1f04
+> >=20
+> > It seems only the output of rdmsr 0x771 has changed.=C2=A0 And if I rea=
+d
+> > the
+> > SDM correctly it's a "Most_Efficient_Performance" change.
+> That is fine.
+>=20
+> We don't have any notifications either via ACPI or via HWP interrupt.
+> I think it was working by chance before this change as by the cpufreq
+> core is trying to set policy, the turbo is enabled by the firmware.
+>=20
+> What is this laptop make and model?
 
-+1
+It's a Hasee X5-2021S5H.
 
-We already skip css_put() if get_mem_cgroup_from_mm() returns NULL.
-Whether or not get_memcg_path_buf() succeeds is irrelevant here.
+Hasee is known for producing some laptops very cheap but often having
+"minor" issues.  So I guess the firmware is doing some stupid thing.
+
+But turbo works just fine on Windows 11 so it'd be better if we could
+make it work for Linux too.
+
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
