@@ -1,144 +1,71 @@
-Return-Path: <linux-kernel+bounces-198665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133048D7BCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:43:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086DD8D7BD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D00282717
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A0DC1C20E45
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2597481A7;
-	Mon,  3 Jun 2024 06:40:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E914C39850;
-	Mon,  3 Jun 2024 06:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4E72AEE1;
+	Mon,  3 Jun 2024 06:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uqxOBull"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BE92942A;
+	Mon,  3 Jun 2024 06:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396823; cv=none; b=TRL8e7JtjbOM43LuzQUTvZQXZB+6fOU/3rcwsJKEIcVNPcMxN7X5KPqDqfGxrIgo+QTwY9/zM5ZCic1wZICZSn+UL/bZhr8gJenAjqSOz4qmCthp8A5T1Vqj3CotcLabY/h64g9/diZ+mX7F84CePJKaNlZv/qPcVmVdTNEJxUo=
+	t=1717396858; cv=none; b=Ss9lrs+dxlvSbhZIJ9m4I1xY4eOX2Vq13I0ZQJBuIu9tAN083Bs//tQkSmG6lBAHpRodkA80HSvRJXi+IELLn5IVRz/qzSN/XSQkTpsEa6PJH02koyn011P9Qs+rMBAKMh+9VCz/MRyE9m+ANvz1nCGH/DjTZoEHzFmNfdPANgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396823; c=relaxed/simple;
-	bh=4qCOD28+gDDPVxKSgnmdGBRMHQNm8b5CkFtYsnujVjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cMYB07yG43SDv4mYfFEFt2uT4CGutI2IWoPirCZ/W0vHjOsrbAn4PpVNLuHf2id+zAiYcdLHkX2KrJ7/iQiUsccOxIeiqCjUkYp1cU7PCIrxJ95gtcqqb2WGINdecS9Gtd0MjHc5MvL8M426TQmy/8PODA9mvPVlWPJutFlgQRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 484E11042;
-	Sun,  2 Jun 2024 23:40:44 -0700 (PDT)
-Received: from [10.162.40.16] (a077893.blr.arm.com [10.162.40.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59D243F792;
-	Sun,  2 Jun 2024 23:40:15 -0700 (PDT)
-Message-ID: <8ec0f93a-a1f9-4b04-875c-dd4a9172e339@arm.com>
-Date: Mon, 3 Jun 2024 12:10:12 +0530
+	s=arc-20240116; t=1717396858; c=relaxed/simple;
+	bh=Ixgu9gEpoO7nBwh5VUEu4mUMBJ7nDgpJMH3OkVxAQHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bTrWnEMGrVRtUk4HyrcGMQMJ4C27xERLyFn/DHQ32KFmHKh8Eyl2j9/tgk6cjk2XPiHT+kbdzV3BQfKVf3OYNCdFEQe07GTvGhuxKv5jfWZNtEwRE3aOYm1XLiU1ndumpqL4vEzyyk9b/3JsmYSByVFF7kmDPIt9rpdwtV4mDdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uqxOBull; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 018E9C2BD10;
+	Mon,  3 Jun 2024 06:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717396857;
+	bh=Ixgu9gEpoO7nBwh5VUEu4mUMBJ7nDgpJMH3OkVxAQHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uqxOBullKy/kLR6dCqAW2ltEtgOT+3uwMkTkByyPkVepQEB8eTOcEeGSe3Nd3HYP4
+	 0Z4AVORhYT9QuT8uyC38ZIEpE5tDkFbQKeAvIHm4La3jFOtKaBYiR+e7Jx69hojRkd
+	 orUls1T+QTJnXk6AeS6nXkJzXI8snIzjyIFbO+R0=
+Date: Mon, 3 Jun 2024 08:41:05 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: "Qianbin Zheng (NSB)" <qianbin.zheng@nokia-sbell.com>
+Cc: "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: gadget: fsl: Enable usb snoop on PPC64
+Message-ID: <2024060342-neuron-trapeze-4e2d@gregkh>
+References: <20240531091926.3324847-1-qianbin.zheng@nokia-sbell.com>
+ <HE1PR07MB4169B7A47CC7105A9FC3E993ACFF2@HE1PR07MB4169.eurprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V17 3/9] drivers: perf: arm_pmu: Add infrastructure for
- branch stack sampling
-Content-Language: en-US
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- will@kernel.org, catalin.marinas@arm.com, Mark Brown <broonie@kernel.org>,
- James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Suzuki Poulose <suzuki.poulose@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, linux-perf-users@vger.kernel.org
-References: <20240405024639.1179064-1-anshuman.khandual@arm.com>
- <20240405024639.1179064-4-anshuman.khandual@arm.com>
- <ZkylUT0R9lwseF4a@J2N7QTR9R3>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <ZkylUT0R9lwseF4a@J2N7QTR9R3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HE1PR07MB4169B7A47CC7105A9FC3E993ACFF2@HE1PR07MB4169.eurprd07.prod.outlook.com>
 
+On Mon, Jun 03, 2024 at 01:46:50AM +0000, Qianbin Zheng (NSB) wrote:
+> Turn on usb snooping on PPC64.
 
+This says what you are doing, but not _why_ you are doing it?
 
-On 5/21/24 19:14, Mark Rutland wrote:
-> On Fri, Apr 05, 2024 at 08:16:33AM +0530, Anshuman Khandual wrote:
->> In order to support the Branch Record Buffer Extension (BRBE), we need to
->> extend the arm_pmu framework with some basic infrastructure for the branch
->> stack sampling which arm_pmu drivers can opt-in using a new feature flag
->> called 'has_branch_stack'. Subsequent patches will use this to add support
->> for BRBE in the PMUv3 driver.
-> 
-> Please, just use ther *exact* wording I asked for last time:
-> 
-> | In order to support the Branch Record Buffer Extension (BRBE), we need to
-> | extend the arm_pmu framework with some basic infrastructure for branch stack
-> | sampling which arm_pmu drivers can opt-in to using. Subsequent patches will
-> | use this to add support for BRBE in the PMUv3 driver.
-> 
-> At this point in the commit message, the 'has_branch_stack' flag doesn't
-> matter, and dropping the 'to' after 'opt-in' makes this painful to read.
+What changed to allow this to now work properly?
 
-Okay, will replace with the original paragraph.
+thanks,
 
-> 
->> Branch stack sampling support i.e capturing branch records during execution
->> in core perf, rides along with normal HW events being scheduled on the PMU.
->> This prepares ARMV8 PMU framework for branch stack support on relevant PMUs
->> with required HW implementation.
-> 
-> Please delete this paragraph.
-
-Done.
-
-> 
->> With BRBE, the hardware records branches into a hardware FIFO, which will
->> be sampled by software when perf events overflow. A task may be context-
->> switched an arbitrary number of times between overflows, and to avoid
->> losing samples we need to save the current records when a task is context-
->> switched out. To do these we'll need to use the pmu::sched_task() callback,
->> and we'll also need to allocate some per-task storage space via event flag
->> PERF_ATTACH_TASK_DATA.
-> 
-> [...]
-> 
->>  /* The events for a given PMU register set. */
->>  struct pmu_hw_events {
->>  	/*
->> @@ -66,6 +78,17 @@ struct pmu_hw_events {
->>  	struct arm_pmu		*percpu_pmu;
->>  
->>  	int irq;
->> +
->> +	struct branch_records	*branches;
->> +
->> +	/* Active context for task events */
->> +	void			*branch_context;
->> +
->> +	/* Active events requesting branch records */
->> +	unsigned int		branch_users;
->> +
->> +	/* Active branch sample type filters */
->> +	unsigned long		branch_sample_type;
->>  };
-> 
-> At this point in the series I understand why we have the 'branches' and
-> 'branch_users' fields, but the 'branch_context' and 'branch_sample_type'
-> fields haven't been introduced and are not obvious.
-> 
-> What exactly is branch_context, and why is that a 'void *' ?
-
-branch_context tracks event->ctx which is 'struct perf_event_context *'. The
-'void *' seemed more generic in case this tracking structure changes later.
-But this could be changed as 'struct perf_event_context *' if required.
-
-> 
-> I can understand if that's a PMU-specific structure to track the active
-> branch records, but if so I don't understand why 'branch_sample_type'
-> isn't folded into that.
-
-branch_sample_type is applicable both for cpu and task bound events, where as
-branch_context is applicable only for task bound events tracking their active
-branch records that need to be dropped (or saved), in case a cpu bound event
-comes in.
+greg k-h
 
