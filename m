@@ -1,471 +1,227 @@
-Return-Path: <linux-kernel+bounces-199412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6338D86E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:06:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441B78D86E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34D51C21D73
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D911C211C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF4413792A;
-	Mon,  3 Jun 2024 16:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B1D135A7F;
+	Mon,  3 Jun 2024 16:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="34L6QY8w"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="drTWvcZr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE04137750
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83513440A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717430736; cv=none; b=O2KTz7rVrerqJ3q4Gkl2+yMjGGHA8mw97VhFri2tgKRcn7bxrTbucdO9Qe+KeRs7F1we4AP2Ug0153Zuawlzl2nG7jXY4HqHB8kJJBX2X1Cs+4hX9l4PKKXuIsgyi2it7o1U+JLJw5TzFaB7WfeS4zzz7E0WbPdpKvHw0uU8I2Q=
+	t=1717430768; cv=none; b=lmurdkUX2VwnuB1FNtg+YWFtDYPQEzWq9/QsibMLREjIzDjtZbn38IBIWz0QHa3kGeAQZ231rGVnpcvjRElE1RsOX3NZhWTv3pIJGllDVkvEL8gX4ijyD/kFHX6xl/vV6WUKWbLdvuwdTVwX/NiZiry40hvqr5LqxeLrzY7Hm5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717430736; c=relaxed/simple;
-	bh=hbIF3VdzA1h11RWGBmHJYykHr6DCqzLLXYw2McsydXg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=carkCNK5hcBVa/eE3pObBctnIArKT6wOkJb+huF8ybCx/ziauyQT3hAZPwARJiIo2kANAi+4fVr+ImiAzt57IAwdxXn82VzSc8uZgZZQvnhRy4rXvjbSBB3sW3EWvOUC4aPq9/wALU1TzpcEXVauhLTimyxRL4/BqhhFR75G2II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=34L6QY8w; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dee902341c0so6393312276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717430733; x=1718035533; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMT8CTSAE1ar5ACVEgVc6nI+Orm70U7TRi9AI+gad1c=;
-        b=34L6QY8wwJX0XLRVA/TqA/qMS7SD9d8YgKawsK01UxxrfAu6q+5A33/fjmQcGUWhGr
-         dPmwzhzCV2klxqV2OGyuSDCeoRdX7PhZXaI+W9Zo3yf6N46Bu7kcClPBETVYqINCA8s4
-         UcuWjphf7Pq2AkP9Iwp0LI3wHkwdM6BKwXjQ+U2iEakTMoOpLisqRWRGhfiSEZ5kEgqN
-         iJxwecCnNVaBdPUn4EcxJDezOvr1Er9IzEftU648QML09qm/sdENg/STSsqh4J7zIE6J
-         qT3bZg4S7I40Q5nRkRdxkoxiw2NuDsFZDQCv76MsdLlwm5W61Ooi1anfD3F9/IgjyXDK
-         IJXA==
+	s=arc-20240116; t=1717430768; c=relaxed/simple;
+	bh=zYNxgr3mh86TTFviDHIf0to4jRAG5zs+1pwawyqvWWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bQr7LLG+hyUbMawtfSnkJuCFLtW5YmUj0YljoJq40/sNOaG9Jr+TSCV8FE17nEzePJ3PHx1U6fAz4M79pcMzdNTzup19FtbP5xIEOXd6he39voRUzGepeAOdfuEKrozRhw4xibx4zRPg+//H2T74j9jPKWiXhaKg95vdzAc171A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=drTWvcZr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717430765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6YYOmc9J0jvCNTXsCieefmRf3VmfB99xriXTk6X1dRE=;
+	b=drTWvcZrjew8XwprDv/qJnW+JaxZja6qaVMPSIp8khdHKe7yO22ITcgP5CSowooZO58JOE
+	T/BVMzgaAXo/B5p1Qq5f6w0JBDRcdlVYbOuPGzHtkbbomwExb1OvlyVV5grzkgbrFmF6WT
+	NAHcFG52KcVbW8RN/E3HOm6Yl8a2AHk=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-9tH_zdYfOBqpupsQVcWIAg-1; Mon, 03 Jun 2024 12:06:01 -0400
+X-MC-Unique: 9tH_zdYfOBqpupsQVcWIAg-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4212a921370so31952155e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:06:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717430733; x=1718035533;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMT8CTSAE1ar5ACVEgVc6nI+Orm70U7TRi9AI+gad1c=;
-        b=ZbzYgTHK2EC236i/b0ICgBHJvlJjaWxm5u7OoaHCEk5vcFpgTXFFL2R3PTu8pQNMgN
-         +vlC8qSd0YbAPw/HcdmYA/o7wJhBw35LgA809vl6aTl8ZtmJHVdOzn/liw03f2nKhyAb
-         fBZOtnozetAjAGAIpuTWHur6dtg8kFRESdwBaV5wRuZbNjYnyW3N7DeyoXRZBuVSMDRw
-         mZ6Q3WwB1gMGYE3prhbokoRBRDQ2bERX2fsFHljdjO8vnIMtcvQy2PeWgw69Y7e0q6d6
-         6zj+m1qtCiOKaELe1DvIwJIiNRDxI/mJPiRfVW36xNDHfMQX94XSGgd2e4jHjSWW5Xyf
-         1dbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeDYpUA8fyvCCevC+aSs1GFO1v6zBuGlSgeplYVJQEzimGySZOsZJUJlRKldoBrgSLhGZqGQHmSX80LPu5bWcreOZsYmiKsxWQAZPI
-X-Gm-Message-State: AOJu0YwWXotA/iriD6UZQ+av0wL3O1sgCWjYNJGIjS2nz8ZnQI8CckXo
-	MI6nLbGnykPY6qNBM4fytVc2kK1xuAgQHQXN+O14ucGCBi7ilkRTQek7YqretSf1W3nY+EqhiWt
-	X59/y38fQUogGBfP/0OVmZKPcpA==
-X-Google-Smtp-Source: AGHT+IGOGxMgAea8xyJpxxoC357juoCYvRpMPcOj1F2J+vJUSlGW08YKkHwghVXkIqxzLl9XEFyfs3BIcrA2lyidk+c=
-X-Received: from mattgilbride.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2ac5])
- (user=mattgilbride job=sendgmr) by 2002:a05:6902:c06:b0:dee:7bdf:3fc8 with
- SMTP id 3f1490d57ef6-dfa73bc14b9mr747057276.2.1717430733227; Mon, 03 Jun 2024
- 09:05:33 -0700 (PDT)
-Date: Mon, 03 Jun 2024 16:05:21 +0000
-In-Reply-To: <20240603-b4-rbtree-v4-0-308e43d6abfc@google.com>
+        d=1e100.net; s=20230601; t=1717430761; x=1718035561;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6YYOmc9J0jvCNTXsCieefmRf3VmfB99xriXTk6X1dRE=;
+        b=TtwQyggsLP9rxN/FdPE0BA6V/Qi3zsyBFzNnkSmFlPBAeHDGf21Py+lfkqVgPVcQtW
+         +ayEo2HpQnlkJQOAxnuoIUGFdhc1GrkosctSwVaGBzFP7IOdpt8eZBr8jLnK76VmLj9R
+         Ivigri4Bd8QtXVBbNgeX/+uDgRB7xVaFX7Jn5vJav3Q4PrI5gZ8OrCfhTV7skJQWHzrg
+         ey3zo7KpkrPPr0+WpPDZymghYS0jB2AxfKRx/1Af9gg74BPkvDQrt2QGC+JgoQvPv0MF
+         2dl/ZvNdCfGiCFoFfdYZMtSke4l+JVAaY97w7/rub8CBTH489USJt58onyyLEAq0veFF
+         YSDw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2HS7rcZD5DegNflGlliR+ye1h27vdhfYg4wugF00sZENl6q084ZTm3V1oNnVr6F2c5UM/QQroEUjcKchSkViNcBkeCvfdRm/Gd9FG
+X-Gm-Message-State: AOJu0Yy9eFgopvvwc3r8KLVtU/02Gz3d+HVC8p+FHbFyvss/tIz70ysY
+	XJDb0MHMkMMTWxD8EH7rVG7ZFEbVOl3Kw1AJ1VKq+i3HYJoGQeue2+uACHtcRlmQpa8nW0ZK/+J
+	N1iOQfaAto3fd2m8gm0y+Bn2lJxWkJOnGn2sE6JNUXOZTEvElKS4RyJS3yfLY4A==
+X-Received: by 2002:adf:f9d2:0:b0:354:f447:9f27 with SMTP id ffacd0b85a97d-35e0f325bd0mr8480532f8f.55.1717430760784;
+        Mon, 03 Jun 2024 09:06:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnGVCU2M5Mi9wlZTX+o9uuWC8bZL+Zru5IKS3M/wNKQmcr9eS8/UrSZF4LiuclAxxxzzttlg==
+X-Received: by 2002:adf:f9d2:0:b0:354:f447:9f27 with SMTP id ffacd0b85a97d-35e0f325bd0mr8480499f8f.55.1717430760307;
+        Mon, 03 Jun 2024 09:06:00 -0700 (PDT)
+Received: from ?IPV6:2a01:599:908:c963:af9b:c64c:dfd8:5999? ([2a01:599:908:c963:af9b:c64c:dfd8:5999])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd066eb35sm9016009f8f.115.2024.06.03.09.05.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 09:05:59 -0700 (PDT)
+Message-ID: <35866f91-7d96-462a-aa0a-ac8a6b8cbcf8@redhat.com>
+Date: Mon, 3 Jun 2024 18:05:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240603-b4-rbtree-v4-0-308e43d6abfc@google.com>
-X-Mailer: b4 0.12.4
-Message-ID: <20240603-b4-rbtree-v4-6-308e43d6abfc@google.com>
-Subject: [PATCH v4 6/6] rust: rbtree: add `RBTree::entry`
-From: Matt Gilbride <mattgilbride@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
-Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Matt Gilbride <mattgilbride@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
+ tlb flush when folios get unmapped
+To: Dave Hansen <dave.hansen@intel.com>, Byungchul Park <byungchul@sk.com>
+Cc: Byungchul Park <lkml.byungchul.park@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com,
+ akpm@linux-foundation.org, ying.huang@intel.com, vernhao@tencent.com,
+ mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
+ peterz@infradead.org, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, rjgolo@gmail.com
+References: <20240531092001.30428-1-byungchul@sk.com>
+ <20240531092001.30428-10-byungchul@sk.com>
+ <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
+ <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
+ <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
+ <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
+ <20240603093505.GA12549@system.software.com>
+ <d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Alice Ryhl <aliceryhl@google.com>
+On 03.06.24 15:23, Dave Hansen wrote:
+> On 6/3/24 02:35, Byungchul Park wrote:
+> ...> In luf's point of view, the points where the deferred flush should be
+>> performed are simply:
+>>
+>> 	1. when changing the vma maps, that might be luf'ed.
+>> 	2. when updating data of the pages, that might be luf'ed.
+> 
+> It's simple, but the devil is in the details as always.
+> 
+>> All we need to do is to indentify the points:
+>>
+>> 	1. when changing the vma maps, that might be luf'ed.
+>>
+>> 	   a) mmap and munmap e.i. fault handler or unmap_region().
+>> 	   b) permission to writable e.i. mprotect or fault handler.
+>> 	   c) what I'm missing.
+> 
+> I'd say it even more generally: anything that installs a PTE which is
+> inconsistent with the original PTE.  That, of course, includes writes.
+> But it also includes crazy things that we do like uprobes.  Take a look
+> at __replace_page().
+> 
+> I think the page_vma_mapped_walk() checks plus the ptl keep LUF at bay
+> there.  But it needs some really thorough review.
+> 
+> But the bigger concern is that, if there was a problem, I can't think of
+> a systematic way to find it.
 
-This mirrors the entry API [1] from the Rust standard library on
-`RBTree`. This API can be used to access the entry at a specific key and
-make modifications depending on whether the key is vacant or occupied.
-This API is useful because it can often be used to avoid traversing the
-tree multiple times.
+Fully agreed!
 
-This is used by binder to look up and conditionally access or insert a
-value, depending on whether it is there or not [2].
+> 
+>> 	2. when updating data of the pages, that might be luf'ed.
+>>
+>> 	   a) updating files through vfs e.g. file_end_write().
+>> 	   b) updating files through writable maps e.i. 1-a) or 1-b).
+>> 	   c) what I'm missing.
+> 
+> Filesystems or block devices that change content without a "write" from
+> the local system.  Network filesystems and block devices come to mind.
+> I honestly don't know what all the rules are around these, but they
+> could certainly be troublesome.
+> 
+> There appear to be some interactions for NFS between file locking and
+> page cache flushing.
+> 
+> But, stepping back ...
+> 
+> I'd honestly be a lot more comfortable if there was even a debugging LUF
+> mode that enforced a rule that said:
+> 
+>    1. A LUF'd PTE can't be rewritten until after a luf_flush() occurs
 
-Link: https://doc.rust-lang.org/stable/std/collections/btree_map/enum.Entry.html [1]
-Link: https://android-review.googlesource.com/c/kernel/common/+/2849906 [2]
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Tested-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Matt Gilbride <mattgilbride@google.com>
----
- rust/kernel/rbtree.rs | 295 +++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 221 insertions(+), 74 deletions(-)
+I was playing with the idea of using a PTE marker. Then it's clear for 
+munmap/mremap/page faults that there is an outstanding flush required. 
+the alternative might be a VMA flag, but that's harder to actually 
+enforce an invariant.
 
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index 1aa8370f4f06..f08df5affd48 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -297,12 +297,18 @@ pub fn try_create_and_insert(
-     /// key/value pair). Returns [`None`] if a node with the same key didn't already exist.
-     ///
-     /// This function always succeeds.
--    pub fn insert(&mut self, RBTreeNode { node }: RBTreeNode<K, V>) -> Option<RBTreeNode<K, V>> {
--        let node = Box::into_raw(node);
--        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
--        // the node is removed or replaced.
--        let node_links = unsafe { addr_of_mut!((*node).links) };
-+    pub fn insert(&mut self, node: RBTreeNode<K, V>) -> Option<RBTreeNode<K, V>> {
-+        match self.raw_entry(&node.node.key) {
-+            RawEntry::Occupied(entry) => Some(entry.replace(node)),
-+            RawEntry::Vacant(entry) => {
-+                entry.insert(node);
-+                None
-+            }
-+        }
-+    }
- 
-+    fn raw_entry(&mut self, key: &K) -> RawEntry<'_, K, V> {
-+        // The returned `RawEntry` is used to call either `rb_link_node` or `rb_replace_node`.
-         // The parameters of `rb_link_node` are as follows:
-         // - `node`: A pointer to an uninitialized node being inserted.
-         // - `parent`: A pointer to an existing node in the tree. One of its child pointers must be
-@@ -322,61 +328,52 @@ pub fn insert(&mut self, RBTreeNode { node }: RBTreeNode<K, V>) -> Option<RBTree
-         // we find an empty subtree, we can insert the new node using `rb_link_node`.
-         let mut parent = core::ptr::null_mut();
-         let mut child_field_of_parent: &mut *mut bindings::rb_node = &mut self.root.rb_node;
--        while !child_field_of_parent.is_null() {
--            parent = *child_field_of_parent;
-+        while !(*child_field_of_parent).is_null() {
-+            let curr = *child_field_of_parent;
-+            // SAFETY: All links fields we create are in a `Node<K, V>`.
-+            let node = unsafe { container_of!(curr, Node<K, V>, links) };
- 
--            // We need to determine whether `node` should be the left or right child of `parent`,
--            // so we will compare with the `key` field of `parent` a.k.a. `this` below.
--            //
--            // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
--            // point to the links field of `Node<K, V>` objects.
--            let this = unsafe { container_of!(parent, Node<K, V>, links) };
--
--            // SAFETY: `this` is a non-null node so it is valid by the type invariants. `node` is
--            // valid until the node is removed.
--            match unsafe { (*node).key.cmp(&(*this).key) } {
--                // We would like `node` to be the left child of `parent`.  Move to this child to check
--                // whether we can use it, or continue searching, at the next iteration.
--                //
--                // SAFETY: `parent` is a non-null node so it is valid by the type invariants.
--                Ordering::Less => child_field_of_parent = unsafe { &mut (*parent).rb_left },
--                // We would like `node` to be the right child of `parent`.  Move to this child to check
--                // whether we can use it, or continue searching, at the next iteration.
--                //
--                // SAFETY: `parent` is a non-null node so it is valid by the type invariants.
--                Ordering::Greater => child_field_of_parent = unsafe { &mut (*parent).rb_right },
-+            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-+            match key.cmp(unsafe { &(*node).key }) {
-+                // SAFETY: `curr` is a non-null node so it is valid by the type invariants.
-+                Ordering::Less => child_field_of_parent = unsafe { &mut (*curr).rb_left },
-+                // SAFETY: `curr` is a non-null node so it is valid by the type invariants.
-+                Ordering::Greater => child_field_of_parent = unsafe { &mut (*curr).rb_right },
-                 Ordering::Equal => {
--                    // There is an existing node in the tree with this key, and that node is
--                    // parent.  Thus, we are replacing parent with a new node.
--                    //
--                    // INVARIANT: We are replacing an existing node with a new one, which is valid.
--                    // It remains valid because we "forgot" it with `Box::into_raw`.
--                    // SAFETY: All pointers are non-null and valid.
--                    unsafe { bindings::rb_replace_node(parent, node_links, &mut self.root) };
--
--                    // INVARIANT: The node is being returned and the caller may free it, however,
--                    // it was removed from the tree. So the invariants still hold.
--                    return Some(RBTreeNode {
--                        // SAFETY: `this` was a node in the tree, so it is valid.
--                        node: unsafe { Box::from_raw(this.cast_mut()) },
--                    });
-+                    return RawEntry::Occupied(OccupiedEntry {
-+                        rbtree: self,
-+                        node_links: curr,
-+                    })
-                 }
-             }
-+            parent = curr;
-         }
- 
--        // INVARIANT: We are linking in a new node, which is valid. It remains valid because we
--        // "forgot" it with `Box::into_raw`.
--        // SAFETY: All pointers are non-null and valid (`*child_field_of_parent` is null, but `child_field_of_parent` is a
--        // mutable reference).
--        unsafe { bindings::rb_link_node(node_links, parent, child_field_of_parent) };
-+        RawEntry::Vacant(RawVacantEntry {
-+            parent,
-+            child_field_of_parent,
-+            rbtree: self,
-+        })
-+    }
- 
--        // SAFETY: All pointers are valid. `node` has just been inserted into the tree.
--        unsafe { bindings::rb_insert_color(node_links, &mut self.root) };
--        None
-+    /// Gets the given key's corresponding entry in the map for in-place manipulation.
-+    pub fn entry(&mut self, key: K) -> Entry<'_, K, V> {
-+        match self.raw_entry(&key) {
-+            RawEntry::Occupied(entry) => Entry::Occupied(entry),
-+            RawEntry::Vacant(entry) => Entry::Vacant(VacantEntry { raw: entry, key }),
-+        }
-     }
- 
--    /// Returns a node with the given key, if one exists.
--    fn find(&self, key: &K) -> Option<NonNull<Node<K, V>>> {
-+    /// Used for accessing the given node, if it exists.
-+    pub fn find_mut(&mut self, key: &K) -> Option<OccupiedEntry<'_, K, V>> {
-+        match self.raw_entry(key) {
-+            RawEntry::Occupied(entry) => Some(entry),
-+            RawEntry::Vacant(_entry) => None,
-+        }
-+    }
-+
-+    /// Returns a reference to the value corresponding to the key.
-+    pub fn get(&self, key: &K) -> Option<&V> {
-         let mut node = self.root.rb_node;
-         while !node.is_null() {
-             // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
-@@ -388,47 +385,30 @@ fn find(&self, key: &K) -> Option<NonNull<Node<K, V>>> {
-                 Ordering::Less => unsafe { (*node).rb_left },
-                 // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-                 Ordering::Greater => unsafe { (*node).rb_right },
--                Ordering::Equal => return NonNull::new(this.cast_mut()),
-+                // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-+                Ordering::Equal => return Some(unsafe { &(*this).value }),
-             }
-         }
-         None
-     }
- 
--    /// Returns a reference to the value corresponding to the key.
--    pub fn get(&self, key: &K) -> Option<&V> {
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        self.find(key).map(|node| unsafe { &node.as_ref().value })
--    }
--
-     /// Returns a mutable reference to the value corresponding to the key.
-     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        self.find(key)
--            .map(|mut node| unsafe { &mut node.as_mut().value })
-+        self.find_mut(key).map(|node| node.into_mut())
-     }
- 
-     /// Removes the node with the given key from the tree.
-     ///
-     /// It returns the node that was removed if one exists, or [`None`] otherwise.
--    fn remove_node(&mut self, key: &K) -> Option<RBTreeNode<K, V>> {
--        let mut node = self.find(key)?;
--
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        unsafe { bindings::rb_erase(&mut node.as_mut().links, &mut self.root) };
--
--        // INVARIANT: The node is being returned and the caller may free it, however, it was
--        // removed from the tree. So the invariants still hold.
--        Some(RBTreeNode {
--            // SAFETY: The `find` return value was a node in the tree, so it is valid.
--            node: unsafe { Box::from_raw(node.as_ptr()) },
--        })
-+    pub fn remove_node(&mut self, key: &K) -> Option<RBTreeNode<K, V>> {
-+        self.find_mut(key).map(OccupiedEntry::remove_node)
-     }
- 
-     /// Removes the node with the given key from the tree.
-     ///
-     /// It returns the value that was removed if one exists, or [`None`] otherwise.
-     pub fn remove(&mut self, key: &K) -> Option<V> {
--        self.remove_node(key).map(|node| node.node.value)
-+        self.find_mut(key).map(OccupiedEntry::remove)
-     }
- 
-     /// Returns a cursor over the tree nodes based on the given key.
-@@ -1124,6 +1104,173 @@ unsafe impl<K: Send, V: Send> Send for RBTreeNode<K, V> {}
- // [`RBTreeNode`] without synchronization.
- unsafe impl<K: Sync, V: Sync> Sync for RBTreeNode<K, V> {}
- 
-+impl<K, V> RBTreeNode<K, V> {
-+    /// Drop the key and value, but keep the allocation.
-+    ///
-+    /// It then becomes a reservation that can be re-initialised into a different node (i.e., with
-+    /// a different key and/or value).
-+    ///
-+    /// The existing key and value are dropped in-place as part of this operation, that is, memory
-+    /// may be freed (but only for the key/value; memory for the node itself is kept for reuse).
-+    pub fn into_reservation(self) -> RBTreeNodeReservation<K, V> {
-+        RBTreeNodeReservation {
-+            node: Box::drop_contents(self.node),
-+        }
-+    }
-+}
-+
-+/// A view into a single entry in a map, which may either be vacant or occupied.
-+///
-+/// This enum is constructed from the [`RBTree::entry`].
-+///
-+/// [`entry`]: fn@RBTree::entry
-+pub enum Entry<'a, K, V> {
-+    /// This [`RBTree`] does not have a node with this key.
-+    Vacant(VacantEntry<'a, K, V>),
-+    /// This [`RBTree`] already has a node with this key.
-+    Occupied(OccupiedEntry<'a, K, V>),
-+}
-+
-+/// Like [`Entry`], except that it doesn't have ownership of the key.
-+enum RawEntry<'a, K, V> {
-+    Vacant(RawVacantEntry<'a, K, V>),
-+    Occupied(OccupiedEntry<'a, K, V>),
-+}
-+
-+/// A view into a vacant entry in a [`RBTree`]. It is part of the [`Entry`] enum.
-+pub struct VacantEntry<'a, K, V> {
-+    key: K,
-+    raw: RawVacantEntry<'a, K, V>,
-+}
-+
-+/// Like [`VacantEntry`], but doesn't hold on to the key.a
-+///
-+/// # Invariants
-+/// - `parent` may be null if the new node becomes the root.
-+/// - `child_field_of_parent` is a valid pointer to the left-child or right-child of `parent`. If `parent` is
-+///     null, it is a pointer to the root of the [`RBTree`].
-+struct RawVacantEntry<'a, K, V> {
-+    rbtree: &'a mut RBTree<K, V>,
-+    /// The node that will become the parent of the new node if we insert one.
-+    parent: *mut bindings::rb_node,
-+    /// This points to the left-child or right-child field of `parent`, or `root` if `parent` is
-+    /// null.
-+    child_field_of_parent: *mut *mut bindings::rb_node,
-+}
-+
-+impl<'a, K, V> RawVacantEntry<'a, K, V> {
-+    /// Inserts the given node into the [`RBTree`] at this entry.
-+    ///
-+    /// The `node` must have a key such that inserting it here does not break the ordering of this
-+    /// [`RBTree`].
-+    fn insert(self, node: RBTreeNode<K, V>) -> &'a mut V {
-+        let node = Box::into_raw(node.node);
-+
-+        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-+        // the node is removed or replaced.
-+        let node_links = unsafe { addr_of_mut!((*node).links) };
-+
-+        // INVARIANT: We are linking in a new node, which is valid. It remains valid because we
-+        // "forgot" it with `Box::into_raw`.
-+        // SAFETY: The type invariants of `RawVacantEntry` are exactly the safety requirements of `rb_link_node`.
-+        unsafe { bindings::rb_link_node(node_links, self.parent, self.child_field_of_parent) };
-+
-+        // SAFETY: All pointers are valid. `node` has just been inserted into the tree.
-+        unsafe { bindings::rb_insert_color(node_links, &mut self.rbtree.root) };
-+
-+        // SAFETY: The node is valid until we remove it from the tree.
-+        unsafe { &mut (*node).value }
-+    }
-+}
-+
-+impl<'a, K, V> VacantEntry<'a, K, V> {
-+    /// Inserts the given node into the [`RBTree`] at this entry.
-+    pub fn insert(self, value: V, reservation: RBTreeNodeReservation<K, V>) -> &'a mut V {
-+        self.raw.insert(reservation.into_node(self.key, value))
-+    }
-+}
-+
-+/// A view into an occupied entry in a [`RBTree`]. It is part of the [`Entry`] enum.
-+///
-+/// # Invariants
-+/// - `node_links` is a valid, non-null pointer to a tree node in `self.rbtree`
-+pub struct OccupiedEntry<'a, K, V> {
-+    rbtree: &'a mut RBTree<K, V>,
-+    /// The node that this entry corresponds to.
-+    node_links: *mut bindings::rb_node,
-+}
-+
-+impl<'a, K, V> OccupiedEntry<'a, K, V> {
-+    fn node_ptr(&self) -> *mut Node<K, V> {
-+        // SAFETY: By the type invariant of `Self`, all `node_links` pointers stored in `self`
-+        // point to the links field of `Node<K, V>` objects.
-+        unsafe { container_of!(self.node_links, Node<K, V>, links) }.cast_mut()
-+    }
-+
-+    /// Gets a reference to the value in the entry.
-+    pub fn get(&self) -> &V {
-+        // SAFETY: `self.node_ptr` produces a valid pointer to a node in the tree.
-+        unsafe { &(*self.node_ptr()).value }
-+    }
-+
-+    /// Gets a mutable reference to the value in the entry.
-+    pub fn get_mut(&mut self) -> &mut V {
-+        // SAFETY: `self.node_ptr` produces a valid pointer to a node in the tree.
-+        unsafe { &mut (*self.node_ptr()).value }
-+    }
-+
-+    /// Converts the entry into a mutable reference to its value.
-+    ///
-+    /// If you need multiple references to the `OccupiedEntry`, see [`self#get_mut`].
-+    pub fn into_mut(self) -> &'a mut V {
-+        // SAFETY: `self.node_ptr` produces a valid pointer to a node in the tree.
-+        unsafe { &mut (*self.node_ptr()).value }
-+    }
-+
-+    /// Remove this entry from the [`RBTree`].
-+    pub fn remove_node(self) -> RBTreeNode<K, V> {
-+        // SAFETY: The node is a node in the tree, so it is valid.
-+        unsafe { bindings::rb_erase(self.node_links, &mut self.rbtree.root) };
-+
-+        // INVARIANT: The node is being returned and the caller may free it, however, it was
-+        // removed from the tree. So the invariants still hold.
-+        RBTreeNode {
-+            // SAFETY: The node was a node in the tree, but we removed it, so we can convert it
-+            // back into a box.
-+            node: unsafe { Box::from_raw(self.node_ptr()) },
-+        }
-+    }
-+
-+    /// Takes the value of the entry out of the map, and returns it.
-+    pub fn remove(self) -> V {
-+        self.remove_node().node.value
-+    }
-+
-+    /// Swap the current node for the provided node.
-+    ///
-+    /// The key of both nodes must be equal.
-+    fn replace(self, node: RBTreeNode<K, V>) -> RBTreeNode<K, V> {
-+        let node = Box::into_raw(node.node);
-+
-+        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-+        // the node is removed or replaced.
-+        let new_node_links = unsafe { addr_of_mut!((*node).links) };
-+
-+        // SAFETY: This updates the pointers so that `new_node_links` is in the tree where
-+        // `self.node_links` used to be.
-+        unsafe {
-+            bindings::rb_replace_node(self.node_links, new_node_links, &mut self.rbtree.root)
-+        };
-+
-+        // SAFETY:
-+        // - `self.node_ptr` produces a valid pointer to a node in the tree.
-+        // - Now that we removed this entry from the tree, we can convert the node to a box.
-+        let old_node = unsafe { Box::from_raw(self.node_ptr()) };
-+
-+        RBTreeNode { node: old_node }
-+    }
-+}
-+
- struct Node<K, V> {
-     links: bindings::rb_node,
-     key: K,
+>    2. A LUF'd page's position in the page cache can't be replaced until
+>       after a luf_flush()
+
+That's the most tricky bit. I think these are the VFS concerns like
+
+1) Page migration/reclaim ends up freeing the old page. TLB not flushed.
+2) write() to the new page / write from other process to the new page
+3) CPU reads stale content from old page
+
+PTE markers can't handle that.
 
 -- 
-2.45.1.288.g0e0cd299f1-goog
+Cheers,
+
+David / dhildenb
 
 
