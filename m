@@ -1,203 +1,108 @@
-Return-Path: <linux-kernel+bounces-199258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F4A8D8483
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:59:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C268D8486
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0429F1C22458
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:59:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D230D28A779
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8301712E1D4;
-	Mon,  3 Jun 2024 13:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C028381207;
+	Mon,  3 Jun 2024 14:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lYDdyh9D"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vnk9rxj2"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60201E892
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5BF1E504
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717423166; cv=none; b=odzTcpLs/7XKEyWv1/6aI5WUd/PUx4nTnFW1iOhiM2dgnPbjKrAb//frilY98Km2goZmLuHTYSCubQBOPQ3u/e1+83s+4q0NzxhjRGRcq97dg1eGiSiP/Qw0ivdEGmRvkZ3Lhn1jrh43iLvnkljCkjJjVAwlTyibGFjQhwrPW70=
+	t=1717423234; cv=none; b=agU8pfOq/ffI8AkdXW6l7j6kZJ9j9Bv7rxO86zDsWUrQ7HV+PbQzAxInE0+ne6+9UKmGljXDI08jGdpD0/nR7FTQfBcN1mjQzu1a7ITR8iv2aElacAsn19WdAaLQ0ux42m71+Qo+ujsF+CdJCg564RZyeUbL0J+W/J4zciY2PQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717423166; c=relaxed/simple;
-	bh=cp0EWn+6r/LDs36eodL94/fGja5GAeIBzCYRxpW1QoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hXv6JPvcOp0ytPkCQ2aHPQXcpFr+jABIGzyWBWLcMz7BWP7RmqmqUcS2W5exoWXwuTaTmTYbNKTsXdzavFUQIJi81im8oBJAF4EH8gJON+AvgJr30tNvgFpy3iZGKkJvueyX+d+il9lXDWT55ReIwx0N287kz9UVZ8xoskHpMT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lYDdyh9D; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-df7722171bcso4304038276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 06:59:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717423164; x=1718027964; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o2BkymhQ/db2q0Xr2SvTMdgw34Lx4ntfmiWk5iS8ce4=;
-        b=lYDdyh9DSxC8f0IuGLcT7CDeWTvZcmaYqLJrGECfN4NcTa8cQnzervbRRG+b4DDgK3
-         2RUASGHSsZZamZV1/zQD6R0lpRpvSIE0s20ZFXE+vTNth+1Zh7Wsd89Gc/m42s5yplWz
-         XJ0wo0s5cM0X5ZKj5QtpTN+o8HlcJ/aEOsZ37e7W+KyBQsUgA0ERXjUl/zDNfhaaProM
-         EuRNEFIPZ+LDBlIEOkwL6N0S1qzbyvdoMGfE8xGqZztuzMmLzK78T0TsxCvHa5tUmXqX
-         sTe0XC7LvAAaKvW63yWK3iwZjZ46A9MQ11KHgo0TM46ULrkCtwshujEp8rZfyL8YvsWp
-         aTfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717423164; x=1718027964;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o2BkymhQ/db2q0Xr2SvTMdgw34Lx4ntfmiWk5iS8ce4=;
-        b=LqwuB+7YeCX1B5D4f3QnLFoweEcpyRjkta4CeuTyPRNH/gihhIDQAq+7poSOcXRuPC
-         qOcFxJ3r09bdqIE5rxvgXfHV+n//meFVZfwy2bh6RENuLd9Cd2SfmlFGyHvwSICYPRNB
-         nPvGjAAdxPr9XU2o7Pqxfn1Gc0H3j4CHQEhybpVwJjc7HQgt4rfAHVvnrO3ELL7fbWpp
-         j/82EEqV2wVuQpybVRdOneFo36UXK1/93hY5IjP01YL8PRcWSZfqoY3vQHS5yIPcapFp
-         EGTjZ7Q1HXAWh6YZMlVfytufqBTWKZTlQXJrXzKqcCthGdnC5ViqIHBKmoXKB/tVbLEp
-         nMYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMurpmIsc8szsC4T8fWo2+ft4N1V3SWo48dYo7/4z0VCEOmXaDQuE1HRlE86PmD0dF6a9QaidrFKN2pCHI3aSfwd8PGMk7bIr2XTHF
-X-Gm-Message-State: AOJu0Yx8eF2CNMthjMQ6fyaVYcaXrReTBJkJGidRpOaVBO+Q86sB+nbF
-	Va4JULgreP45SjX2/E/5cEINpUhpyeojytchgZxFj5GoOo/BR4C9YuIL7pqR/2i+Wft/2HTNbBP
-	Ic/kMam8iOGLPWivtU8HyZWSwn4KorytxypLyOw==
-X-Google-Smtp-Source: AGHT+IE+Sp67UTouHkbbALinQ0QcvpOUd55hi+8TrM3/1VlCwjirTrjQWAm0YMJPdgvUF3kqgf48s/3BvbWC4dkjd7A=
-X-Received: by 2002:a05:6902:260c:b0:de6:dcd:20ae with SMTP id
- 3f1490d57ef6-dfa73c229e7mr10000393276.27.1717423163818; Mon, 03 Jun 2024
- 06:59:23 -0700 (PDT)
+	s=arc-20240116; t=1717423234; c=relaxed/simple;
+	bh=Tq+fTOP9a85zGx81hI5MmId6I7YXI6owwkdLPoka3YQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VnhWhKOI+0AIjKcjajt+b8V6t5703NN6m2DKfQ+lG1OmI1sEoceAaSuLC9Pe7CrHS+dAW5DJGHJVHxhFTpf0HT1RXetB07HgPBcpGr566NqdoWTUCoxJnAMpK1YAKPnJqOXd+IGITSckCPLIGJTSwlpqq8Ck0DLX3cUYXbwIyTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vnk9rxj2; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5293F40019;
+	Mon,  3 Jun 2024 14:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717423223;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eUiKeSDAw5PSWaHAWumiSmz2tV9iwBOhkTk5YbNtRJw=;
+	b=Vnk9rxj2LrJ31ASbDAuodEeVDzQEiuJI6BXER38I5f8OLktmjqg4+Ot1G7uXJrLWYDCMPj
+	r4c1Ejhl02HzHSrCCx+M31d9nMPrNl6Ewk55kp1kGd1EowRllfKsbSxfY8PiOVyq6xH6YD
+	m/8WOmH+Ojb/qlevO6BD5LPiCUpo0HG5MHXTF+fRt4pjI0aJ7vdJBFRg8appj96hZhvHQf
+	KtEY+gP+5Ao7sQMYTeQqKbNEi9AsPbIK+yKoVP4sbrORpGDW2PLjnyj+P7OUfwMkUAasAX
+	+39x0pHa2zrVb3Rwxi931X2VeKDeY7yNKIX0zirc72/gyF1cUoQEeq40ch5sxA==
+Date: Mon, 3 Jun 2024 16:00:18 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Conor Culhane <conor.culhane@silvaco.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, linux-i3c@lists.infradead.org (moderated
+ list:SILVACO I3C DUAL-ROLE MASTER), linux-kernel@vger.kernel.org (open
+ list), imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] i3c: master: svc: resend target address when get
+ NACK
+Message-ID: <20240603160018.29498c2f@xps-13>
+In-Reply-To: <20240531163301.1401281-1-Frank.Li@nxp.com>
+References: <20240531163301.1401281-1-Frank.Li@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527142557.321610-1-ulf.hansson@linaro.org>
- <20240527142557.321610-2-ulf.hansson@linaro.org> <52dce8d3-acfa-4f2c-92d0-c25aa59d6526@quicinc.com>
- <CAPDyKFq0V9ke30zYAGzS1aU0yq49DdfDkfYzxkLBZuaVGsyGDA@mail.gmail.com> <24570028-42cf-43b1-95f2-b6f48233bef9@quicinc.com>
-In-Reply-To: <24570028-42cf-43b1-95f2-b6f48233bef9@quicinc.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 3 Jun 2024 15:58:47 +0200
-Message-ID: <CAPDyKFoOxa1tmzxY4jrbPET5RKF6s-OAfYV=eZY9sPrJMR6jaQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] pmdomain: core: Enable s2idle for CPU PM domains
- on PREEMPT_RT
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org, 
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Nikunj Kela <nkela@quicinc.com>, 
-	Prasad Sodagudi <psodagud@quicinc.com>, Maulik Shah <quic_mkshah@quicinc.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-rt-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Thu, 30 May 2024 at 16:23, Nikunj Kela <quic_nkela@quicinc.com> wrote:
->
->
-> On 5/30/2024 1:15 AM, Ulf Hansson wrote:
-> > On Tue, 28 May 2024 at 21:56, Nikunj Kela <quic_nkela@quicinc.com> wrote:
-> >>
-> >> On 5/27/2024 7:25 AM, Ulf Hansson wrote:
-> >>> To allow a genpd provider for a CPU PM domain to enter a domain-idle-state
-> >>> during s2idle on a PREEMPT_RT based configuration, we can't use the regular
-> >>> spinlock, as they are turned into sleepable locks on PREEMPT_RT.
-> >>>
-> >>> To address this problem, let's convert into using the raw spinlock, but
-> >>> only for genpd providers that have the GENPD_FLAG_CPU_DOMAIN bit set. In
-> >>> this way, the lock can still be acquired/released in atomic context, which
-> >>> is needed in the idle-path for PREEMPT_RT.
-> >>>
-> >>> Do note that the genpd power-on/off notifiers may also be fired during
-> >>> s2idle, but these are already prepared for PREEMPT_RT as they are based on
-> >>> the raw notifiers. However, consumers of them may need to adopt accordingly
-> >>> to work properly on PREEMPT_RT.
-> >>>
-> >>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >>> ---
-> >>>
-> >>> Changes in v2:
-> >>>       - None.
-> >>>
-> >>> ---
-> >>>  drivers/pmdomain/core.c   | 47 ++++++++++++++++++++++++++++++++++++++-
-> >>>  include/linux/pm_domain.h |  5 ++++-
-> >>>  2 files changed, 50 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> >>> index 623d15b68707..072e6bdb6ee6 100644
-> >>> --- a/drivers/pmdomain/core.c
-> >>> +++ b/drivers/pmdomain/core.c
-> >>> @@ -117,6 +117,48 @@ static const struct genpd_lock_ops genpd_spin_ops = {
-> >>>       .unlock = genpd_unlock_spin,
-> >>>  };
-> >>>
-> >>> +static void genpd_lock_raw_spin(struct generic_pm_domain *genpd)
-> >>> +     __acquires(&genpd->raw_slock)
-> >>> +{
-> >>> +     unsigned long flags;
-> >>> +
-> >>> +     raw_spin_lock_irqsave(&genpd->raw_slock, flags);
-> >>> +     genpd->raw_lock_flags = flags;
-> >>> +}
-> >>> +
-> >>> +static void genpd_lock_nested_raw_spin(struct generic_pm_domain *genpd,
-> >>> +                                     int depth)
-> >>> +     __acquires(&genpd->raw_slock)
-> >>> +{
-> >>> +     unsigned long flags;
-> >>> +
-> >>> +     raw_spin_lock_irqsave_nested(&genpd->raw_slock, flags, depth);
-> >>> +     genpd->raw_lock_flags = flags;
-> >>> +}
-> >>> +
-> >>> +static int genpd_lock_interruptible_raw_spin(struct generic_pm_domain *genpd)
-> >>> +     __acquires(&genpd->raw_slock)
-> >>> +{
-> >>> +     unsigned long flags;
-> >>> +
-> >>> +     raw_spin_lock_irqsave(&genpd->raw_slock, flags);
-> >>> +     genpd->raw_lock_flags = flags;
-> >>> +     return 0;
-> >>> +}
-> >>> +
-> >>> +static void genpd_unlock_raw_spin(struct generic_pm_domain *genpd)
-> >>> +     __releases(&genpd->raw_slock)
-> >>> +{
-> >>> +     raw_spin_unlock_irqrestore(&genpd->raw_slock, genpd->raw_lock_flags);
-> >>> +}
-> >>> +
-> >>> +static const struct genpd_lock_ops genpd_raw_spin_ops = {
-> >>> +     .lock = genpd_lock_raw_spin,
-> >>> +     .lock_nested = genpd_lock_nested_raw_spin,
-> >>> +     .lock_interruptible = genpd_lock_interruptible_raw_spin,
-> >>> +     .unlock = genpd_unlock_raw_spin,
-> >>> +};
-> >>> +
-> >>>  #define genpd_lock(p)                        p->lock_ops->lock(p)
-> >>>  #define genpd_lock_nested(p, d)              p->lock_ops->lock_nested(p, d)
-> >>>  #define genpd_lock_interruptible(p)  p->lock_ops->lock_interruptible(p)
-> >>> @@ -2079,7 +2121,10 @@ static void genpd_free_data(struct generic_pm_domain *genpd)
-> >>>
-> >>>  static void genpd_lock_init(struct generic_pm_domain *genpd)
-> >>>  {
-> >>> -     if (genpd->flags & GENPD_FLAG_IRQ_SAFE) {
-> >>> +     if (genpd->flags & GENPD_FLAG_CPU_DOMAIN) {
-> >>> +             raw_spin_lock_init(&genpd->raw_slock);
-> >>> +             genpd->lock_ops = &genpd_raw_spin_ops;
-> >>> +     } else if (genpd->flags & GENPD_FLAG_IRQ_SAFE) {
-> >> Hi Ulf, though you are targeting only CPU domains for now, I wonder if
-> >> FLAG_IRQ_SAFE will be a better choice?  The description of the flag says
-> >> it is safe for atomic context which won't be the case for PREEMPT_RT?
-> > You have a point!
-> >
-> > However, we also need to limit the use of raw spinlocks, from
-> > PREEMPT_RT point of view. In other words, just because a genpd
-> > provider is capable of executing its callbacks in atomic context,
-> > doesn't always mean that it should use raw spinlocks too.
->
-> Got it! Thanks. Maybe in future, if there is a need, a new GENPD FLAG
-> for RT, something like GENPD_FLAG_IRQ_SAFE_RT, can be added to address this.
+Hi Frank,
 
-Yes, I agree, something along those lines would make sense.
+Frank.Li@nxp.com wrote on Fri, 31 May 2024 12:33:00 -0400:
 
-BTW, did you manage to get some time to test the series on your end?
+> According to I3C Spec 1.1.1, 11-Jun-2021, section: 5.1.2.2.3:
+>=20
+> If the Controller chooses to start an I3C Message with an I3C Dynamic
+> Address, then special provisions shall be made because that same I3C Targ=
+et
+> may be initiating an IBI or a Controller Role Request. So, one of three
+> things may happen: (skip 1, 2)
+>=20
+> 3. The Addresses match and the RnW bits also match, and so neither
+> Controller nor Target will ACK since both are expecting the other side to
+> provide ACK. As a result, each side might think it had "won" arbitration,
+> but neither side would continue, as each would subsequently see that the
+> other did not provide ACK.
+> ...
+> For either value of RnW: Due to the NACK, the Controller shall defer the
+> Private Write or Private Read, and should typically transmit the Target
+> 						    ^^^^^^^^^^^^^^^^^^^
+> Address again after a Repeated START (i.e., the next one or any one prior
+> ^^^^^^^^^^^^^
+> to a STOP in the Frame). Since the Address Header following a Repeated
+> START is not arbitrated, the Controller will always win (see Section
+> 5.1.2.2.4).
+>=20
+> Resend target address again if address is not 7E and controller get NACK.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Kind regards
-Uffe
+I'm not getting 100% of it, but looks okay, so:
+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Thanks,
+Miqu=C3=A8l
 
