@@ -1,72 +1,123 @@
-Return-Path: <linux-kernel+bounces-199785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521A68FA5F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:43:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA8D8FA6A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDEA1F21A24
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41FC11F23DA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BE11386BB;
-	Mon,  3 Jun 2024 22:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBB113D282;
+	Mon,  3 Jun 2024 23:47:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFdaskgv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="FBToC2O4"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40BC13CA80;
-	Mon,  3 Jun 2024 22:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71A113D25F;
+	Mon,  3 Jun 2024 23:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717454609; cv=none; b=kpZ/edI8AwckE64bQ0lpiljSRZvINiXf9XOe7bHDCllTejEx2f3wozuxphi8DHpSneUnmHcfnGTd8cA1LwR/UxcPAKqodixwtFzUbFNw1R0EKsQW3mo9jUCe8fjxgc9Ea3JveFfiooLCkRNFWMrYXZKNx2PNZ8BbpF0ERX1hBzs=
+	t=1717458458; cv=none; b=rbY7A4uBLJdWJOwZgWUns1kCVblq83oYpyhGfbuhjjreK0BWVg/relnz0blER7nCOo5VcuO60rfggZBf+0F+S9PMq/kGhKiPSzjxqLZDFxb47WuaMWAXjVN2Fq0ZjaspYisQsp09g+KkmMHHzFrGLoWEhxArl8gBgHyy97OL38g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717454609; c=relaxed/simple;
-	bh=2Lts55Qq73NAe4bdOXvT2eGFXJrChEFdxylEwk1f/7U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=AB2s1a2L4NYJk7zWMRieOfzbV1u4CsR6K/njdf5oXpZZ5ncfUqakb1UJjkCzKAObsDcok2uiiVU17XbDEBF2NSbj5cqn/W+20Mey8SInvWJmaYJ2O+sn2cdmpiVK1QEnd/mytwjhsyrTsvyJTINiUPvCo9jpmdfM0jVEXJA0YJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFdaskgv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74520C2BD10;
-	Mon,  3 Jun 2024 22:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717454608;
-	bh=2Lts55Qq73NAe4bdOXvT2eGFXJrChEFdxylEwk1f/7U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=pFdaskgvFZ9vxuPu5MDEngXAjsLApT4qcLApX3X18PwhctzA3uAP7RmtQ0Oh/4a+1
-	 ftUhImICQCBHerTE7nbEGydwcbkuzv7XwNkS/un2XhJeSdNtyLWY3cXwJOwEAMgUSX
-	 KtfH1mfFqv6Xcr0QEVkNO5w67va64rU0iP3YPXB/7h0mUH5UqmHafvPGMb/NURwGix
-	 Q6HHYn29COmut4wSBG4aAO9KuMKbeXzTl2E76rMdrRCQKtCTdTBBoHsT7fdcrwxekQ
-	 Itb2RESPRyBhfvZ+uxjNftziX0LXkvH/GE0NgYTjlGCcH8ChhhUW+D7Q7brna/B89B
-	 vshOkrDUkg/BA==
-Message-ID: <6c67a5095998e3814b027480fdafaadd.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717458458; c=relaxed/simple;
+	bh=kSZeBvRXuEwaL+IlHMDX4WGJNsrJcRdd9a4wOhfLKfY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mn6t3e+4u6cATNJyZcJgWEL6l4x+CTQ6eyF4jSpLV9Wg62C6hWhC5+SoigDNxvYYBtJcFJsqzYtiBoyh6vtaogrv2J1VfPImVjVBFQCFpNJu+uIiw92VO9o2oE4ssbMR7UKm6HJtnBDwaPjCGBeZ43lgsozNRUD6kQHk5B6BgDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=FBToC2O4; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2607:fb90:3707:40b:a32e:4449:b3a:891d] ([IPv6:2607:fb90:3707:40b:a32e:4449:b3a:891d])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 453MhgU5475578
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 3 Jun 2024 15:43:42 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 453MhgU5475578
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1717454626;
+	bh=wuD6WLaEWhP4n3Qasi9wvzUCa2upP1PV62NIREW0BKw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FBToC2O4KGQk197cIv7t84JmESw/VZTY3yCo3LqaSIXdLNAqfkAdoAN+wohABjwpV
+	 GG8YdHXGo0U45ht4clybrH6eJ/AiZIL2nz1YNbWGmte1xbtzL3wkn7penFxvDyij1J
+	 w1sPlUp39rOPmBXa3KDRfbxxVxioSumuNPHXOXJoU60YnM/WXbT8vWyCloinAqoZ+E
+	 lAArupSy4TdrTTju+IaHtBBQsQHt8qzCikfK/2TAoD86qTyqGlwTzhL4m2ipVvPsk+
+	 mp0olUR+8EO4Z6RjUV5pc3lZiwOYm3IvGz1v+NNFEsPXVh1CpFmDZisWBu3BX+ytNL
+	 s7upucbc1rdrQ==
+Message-ID: <2b661d91-badc-4c90-9a9a-fe82635cf514@zytor.com>
+Date: Mon, 3 Jun 2024 15:43:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240602-md-clk-sprd-v1-1-de0884ea6fc7@quicinc.com>
-References: <20240602-md-clk-sprd-v1-1-de0884ea6fc7@quicinc.com>
-Subject: Re: [PATCH] clk: sprd: add missing MODULE_DESCRIPTION() macro
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, Michael Turquette <mturquette@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>
-Date: Mon, 03 Jun 2024 15:43:26 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv11 05/19] x86/relocate_kernel: Use named labels for less
+ confusion
+To: Nikolay Borisov <nik.borisov@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Kalra, Ashish"
+ <ashish.kalra@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Baoquan He <bhe@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+        linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-6-kirill.shutemov@linux.intel.com>
+ <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Quoting Jeff Johnson (2024-06-02 08:26:47)
-> make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sprd/clk-sp=
-rd.o
->=20
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
+On 5/29/24 03:47, Nikolay Borisov wrote:
+>>
+>> diff --git a/arch/x86/kernel/relocate_kernel_64.S 
+>> b/arch/x86/kernel/relocate_kernel_64.S
+>> index 56cab1bb25f5..085eef5c3904 100644
+>> --- a/arch/x86/kernel/relocate_kernel_64.S
+>> +++ b/arch/x86/kernel/relocate_kernel_64.S
+>> @@ -148,9 +148,10 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+>>        */
+>>       movl    $X86_CR4_PAE, %eax
+>>       testq    $X86_CR4_LA57, %r13
+>> -    jz    1f
+>> +    jz    .Lno_la57
+>>       orl    $X86_CR4_LA57, %eax
+>> -1:
+>> +.Lno_la57:
+>> +
+>>       movq    %rax, %cr4
+>>       jmp 1f
+> 
 
-Applied to clk-next
+Sorry if this is a duplicate; something strange happened with my email.
+
+If you are cleaning up this code anyway...
+
+this whole piece of code can be simplified to:
+
+	and $(X86_CR4_PAE | X86_CR4_LA57), %r13d
+	mov %r13, %cr4
+
+The PAE bit in %r13 is guaranteed to be set, and %r13 is dead after this.
+
+	-hpa
 
