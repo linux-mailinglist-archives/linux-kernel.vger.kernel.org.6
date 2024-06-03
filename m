@@ -1,150 +1,223 @@
-Return-Path: <linux-kernel+bounces-199492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EFD8D87B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:11:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5704E8D87B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C90841F2299D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:11:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80AD21C2218E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C548F136E1B;
-	Mon,  3 Jun 2024 17:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92151137743;
+	Mon,  3 Jun 2024 17:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fOk2zbJY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzHULEMQ"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3017E12EBCA;
-	Mon,  3 Jun 2024 17:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408E112E1F9;
+	Mon,  3 Jun 2024 17:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717434678; cv=none; b=epLSe1HCoCppaF/im8DZSkgLn3zSwuaJgviQPEzCEmX/E6ejS1SEhkw18SDNidyAQyao8bu5ztfwmSDwc7u7d84Dg+09BVueBYjWJ8igXKFrPao21wZ8RXgOJtpFOW4WV0kD+h6yjbvgXyWmFAsfkdYc6N4/iwyVML+Rm8TMSyk=
+	t=1717434747; cv=none; b=q+5Qz5jz6sAT9sMW+LU1AivG3/nNDJYf9de3b7jJIxR5YB0dmgo9DSCKtf+41nz8RY+17LZrC3osV7zDEByuHKZt8VX1XTQotrwY3bKAmOKhNf6r8s00d2uVTFzdz3C1uL9BV71UQYInIZhaUjy7xguVsyDlvkzqxll40tnHSyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717434678; c=relaxed/simple;
-	bh=NjLDT7cs+dCU+pDcUFffYxuBdRTC85LI9u06hQm0TKk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KU23ABoJGxYZ8Cd8NYcKOYQ2KvvG+tkBTTYrRjBTlWx9DXhFtBCkKWPxTFhdG0V4R3Dgzf4cQUxjH1XzmPmSj2Mw2vYlWqBNTBkh4nhc68gTStKcXnaV/FgR40QZJtH982/8qQMaKQ/qUJe4Qll7u1xOHOF3LxK25x+9PLj6r/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fOk2zbJY; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717434676; x=1748970676;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=NjLDT7cs+dCU+pDcUFffYxuBdRTC85LI9u06hQm0TKk=;
-  b=fOk2zbJYRxDEBSs+xHr4aavFJ0Ipd2GUXsCNxApaHu/hDVjeqxt8ldfS
-   jVOISHlT6JzHks6B9MOayCtrPmFimrLegSnRcZYpHL0QBPjKKmE2o95KQ
-   +Li66xC7oBXqT8jd/ekd34xcDgvfy7kUtOTCVCyjxrYlD1EJcybgzNJ2B
-   8w/qStwh9uDaT5gD6XUc80W36Pvxje3/Bwu3vHOX2QDPdaK19cPrvU3Cd
-   KffnMeKjVNyAvidzEPOoWWw9LNqBMTf5eTrnv0+zv8hazhl4oRsku5n+A
-   qKzeup7gYO4qVAZs90NMfeilC6iNCJm4GITr4bQczmNLGy+kwJIzplhIK
-   g==;
-X-CSE-ConnectionGUID: icVCUYzTRQ69QXxGG0F9eA==
-X-CSE-MsgGUID: TG/8zJD5SOO/ODdTbk6iHQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="31470633"
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="31470633"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 10:11:06 -0700
-X-CSE-ConnectionGUID: EnnN1zeSQouECDC9nrVcig==
-X-CSE-MsgGUID: MDItepmySAyA8KC7ZsTgsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="41881074"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 10:11:02 -0700
-Message-ID: <c3526e7a0e80ec1a3a011259c38ab4b772040ea4.camel@linux.intel.com>
-Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
- global.turbo_disabled after initialization
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Xi Ruoyao <xry111@xry111.site>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-  Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Date: Mon, 03 Jun 2024 10:11:02 -0700
-In-Reply-To: <0324bc3a88654855719cd48a5ed69a34eea31037.camel@xry111.site>
-References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
-	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
-	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
-	 <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
-	 <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
-	 <f382e06635b3b52841d1e0c11dcf639d225edae0.camel@xry111.site>
-	 <29d69252dcdc398f147c9139a8666d09e7bd831d.camel@linux.intel.com>
-	 <0324bc3a88654855719cd48a5ed69a34eea31037.camel@xry111.site>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1717434747; c=relaxed/simple;
+	bh=rbtH+DpYhqBMd0xLDXJmN7RirgQ6wnLGRMVHaZoyBt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2fu9gnHjrB50ZABF1paHfxKsjU6/3IypSyEi2nSVIxqKQofKr17i7ExeJ0n3ebbb/a8Ffu92nb0UU2UNxCv9u5QlRMewSAwhze+6I7WODemrsNOwH7Ge2Uv5WcE5hUXd/kqjsG4VWCXVdH/ZgdMlh9JLnRN5UHMy3XngcdI7Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzHULEMQ; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-794ab01e747so8949185a.1;
+        Mon, 03 Jun 2024 10:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717434745; x=1718039545; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xowQVtG5FrDvjNgj7LbV6txQKMGt2SxrGC16ykxcKRw=;
+        b=HzHULEMQf7QqvnzkLcLLAgGbu/mBmi1Tho5Hhkw896d6Jmrr8IW9w01JGStFtXnN04
+         oTr5GelT9OtR8hW6uFfsMMR/gonjw42VQHGfHjoRitNYFhzz9ECNpQ0n6pYrdjGJYmR6
+         wQdEq8VYRoCooSr0/isdHKfPgP4J5gJ79hyMBIZCDF4hvDWIb29ZpsCf9AzJs/Fkl4hf
+         fy7vioXn06EpD/yFInaQ32LFb+mLF17fSIXIulQ+wzOmZcMahAuUUpyK2HbXuQnM/wiN
+         xb1h/Mg+Vh69quNxGHMkLvqSWKtfC4r35vtxgiZZSX/bkDSaga4/YVBJU7H2Ce+DqS/h
+         ttGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717434745; x=1718039545;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xowQVtG5FrDvjNgj7LbV6txQKMGt2SxrGC16ykxcKRw=;
+        b=XROeovn/HTZGgFGctQDtLxzj+vaHA6ZcsK9JWgM1ExhaOySh1yMKLVZyrAtWhJADeI
+         PgXskJyGEU+2tYlsZlaxHR099cbPlIlBGcfS5akrD2rkr4G1hRDCPUxGqO9v1U98CtPg
+         Bd0R9WhbdbHPlBhfh9snld1lSSqPK+mNpqSI8YHU/CIRXrtnoY9rwMpsTJS4vPOUq4uO
+         6HTc4Hp0q24HIT1HFdViZR1i84pH5QydN8y5yMueiHeZwyU8bQG76xPJLihzvwPU4/Pv
+         TraqTHBb0xvTWaFwzKkfkn8dTd3tRM3qOlsTSm7OhYANWYNAAagKiMDowGhgUE6yc+Uk
+         jMFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWeabnqRFUo07INiKuww9jiI2UbUsedYaj8UyfwC/N1IdjWYtsryDFgowxBDtQNded1/UTs5ehTcyJhcGEW9dIXvCqhiitQnzWEkSdYIh7E6Yh5lPDjJvT1h/q/Ac6RGuajfL589Nw+lUVsupM=
+X-Gm-Message-State: AOJu0YxfZsSf1gg0LLFDR4hJuiw5PVvOP8HpJPKCevrT1U+plYkBnRVk
+	lWhegwdP3uimGAcAWjlMOMoVJDIpctIvtdyOKjY/Vnb1CcCB9KF6rEYYmQ==
+X-Google-Smtp-Source: AGHT+IG1+ImgQlShZJjOVinqc19ZW7tffsoXk/S/ELVIsV9v9S0BiFRQszbLq8XpL1zK1XQ8didDJQ==
+X-Received: by 2002:a05:620a:4691:b0:78e:c890:1aa9 with SMTP id af79cd13be357-794f5c97363mr1194128685a.39.1717434745113;
+        Mon, 03 Jun 2024 10:12:25 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43ff2593ba4sm40794651cf.90.2024.06.03.10.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 10:12:24 -0700 (PDT)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id DC78E1200043;
+	Mon,  3 Jun 2024 13:12:23 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Mon, 03 Jun 2024 13:12:23 -0400
+X-ME-Sender: <xms:d_ldZu-pV7_Pvupb69iz5JKxoz354vxmfK5THE5C7DFvk1j7K4ctrg>
+    <xme:d_ldZuswSm17kqi6ADV-Jnq_2IERMhLmD15C4Cdb0jNENJTTolq3_yjHyH-s3ZAg3
+    ZsHNuDBRd9paEI-oA>
+X-ME-Received: <xmr:d_ldZkBOjgqOhxKuETdhi_dfohwyf-vePb0boAxnAOxNwfzJXTBbJ2QxWf38ZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelvddguddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhepgfelfeetleeivdeigfektddvhefhjeevfeeujeelleejgedtvdfggfff
+    jefftdevnecuffhomhgrihhnpehnohguvgdrrghspdhruhhsthdqlhgrnhhgrdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
+    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
+    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
+    nhgrmhgv
+X-ME-Proxy: <xmx:d_ldZmc9yED-qrYV6w3qJyFagxFhvrH7Vr466_PKVFMTWrSEHinVWA>
+    <xmx:d_ldZjNzpKX9S1a4k8H6hOZ4f7GpiLdbxGQGKkcODx2SR2VMnRNyJw>
+    <xmx:d_ldZgl7bzS34JlitWJRMef1cnQK8Jz91q2kXu3RWMelAVTw0I_B7w>
+    <xmx:d_ldZlsK6yg7Q0vmGOfdklzI5O68Y7AKchREJk73SjVsHv1T0QdhVg>
+    <xmx:d_ldZpv39RV6RJcBadnjxSr5fkCoeCeUBeMYYcSqKjLh69HvaiHDJtwy>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Jun 2024 13:12:23 -0400 (EDT)
+Date: Mon, 3 Jun 2024 10:11:25 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Matt Gilbride <mattgilbride@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>,
+	Michel Lespinasse <michel@lespinasse.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] rust: rbtree: add red-black tree implementation
+ backed by the C version
+Message-ID: <Zl35PQ8LAdw67xaS@boqun-archlinux>
+References: <20240603-b4-rbtree-v4-0-308e43d6abfc@google.com>
+ <20240603-b4-rbtree-v4-2-308e43d6abfc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603-b4-rbtree-v4-2-308e43d6abfc@google.com>
 
-On Mon, 2024-06-03 at 21:12 +0800, Xi Ruoyao wrote:
-> On Sun, 2024-06-02 at 16:11 -0700, srinivas pandruvada wrote:
->=20
-> /* snip */
->=20
-> > What is the output of:
-> > grep . /sys/devices/system/cpu/intel_pstate/*
-> >=20
-> > Also=C2=A0
-> > rdmsr 0x771
-> > rdmsr 0x774
-> >=20
-> >=20
-> > Try these three patches. Don't worry about the commit description
-> > for
-> > this issue.
->=20
-> Unfortunately they still do not fix the issue for me.
->=20
-> The outputs of grep and rdmsr commands are initially:
->=20
-> /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost:0
-> /sys/devices/system/cpu/intel_pstate/max_perf_pct:100
-> /sys/devices/system/cpu/intel_pstate/min_perf_pct:9
-> /sys/devices/system/cpu/intel_pstate/no_turbo:1
-> /sys/devices/system/cpu/intel_pstate/num_pstates:41
-> /sys/devices/system/cpu/intel_pstate/status:active
-> /sys/devices/system/cpu/intel_pstate/turbo_pct:33
-> rdmsr 0x771: 10d1f2c
-> rdmsr 0x774: 1f04
->=20
-> But it then changes to:
->=20
-> /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost:0
-> /sys/devices/system/cpu/intel_pstate/max_perf_pct:100
-> /sys/devices/system/cpu/intel_pstate/min_perf_pct:9
-> /sys/devices/system/cpu/intel_pstate/no_turbo:1
-> /sys/devices/system/cpu/intel_pstate/num_pstates:41
-> /sys/devices/system/cpu/intel_pstate/status:active
-> /sys/devices/system/cpu/intel_pstate/turbo_pct:33
-> rdmsr 0x771: 10c1f2c
-> rdmsr 0x774: 1f04
->=20
-> It seems only the output of rdmsr 0x771 has changed.=C2=A0 And if I read
-> the
-> SDM correctly it's a "Most_Efficient_Performance" change.
-That is fine.
+On Mon, Jun 03, 2024 at 04:05:17PM +0000, Matt Gilbride wrote:
+[...]
+> +/// A memory reservation for a red-black tree node.
+> +///
+> +///
+> +/// It contains the memory needed to hold a node that can be inserted into a red-black tree. One
+> +/// can be obtained by directly allocating it ([`RBTreeNodeReservation::new`]).
+> +pub struct RBTreeNodeReservation<K, V> {
+> +    node: Box<MaybeUninit<Node<K, V>>>,
+> +}
+> +
+> +impl<K, V> RBTreeNodeReservation<K, V> {
+> +    /// Allocates memory for a node to be eventually initialised and inserted into the tree via a
+> +    /// call to [`RBTree::insert`].
+> +    pub fn new(flags: Flags) -> Result<RBTreeNodeReservation<K, V>> {
+> +        Ok(RBTreeNodeReservation {
+> +            node: Box::new_uninit(flags)?,
+> +        })
+> +    }
+> +}
+> +
+> +// SAFETY: This doesn't actually contain K or V, and is just a memory allocation. Those can always
+> +// be moved across threads.
+> +unsafe impl<K, V> Send for RBTreeNodeReservation<K, V> {}
+> +
+> +// SAFETY: This doesn't actually contain K or V, and is just a memory allocation.
+> +unsafe impl<K, V> Sync for RBTreeNodeReservation<K, V> {}
+> +
+> +impl<K, V> RBTreeNodeReservation<K, V> {
+> +    /// Initialises a node reservation.
+> +    ///
+> +    /// It then becomes an [`RBTreeNode`] that can be inserted into a tree.
+> +    pub fn into_node(mut self, key: K, value: V) -> RBTreeNode<K, V> {
+> +        let node_ptr = self.node.as_mut_ptr();
+> +        // SAFETY: `node_ptr` is a valid pointer to a tree node.
+> +        unsafe {
+> +            node_ptr.write(Node {
+> +                key,
+> +                value,
+> +                links: bindings::rb_node::default(),
+> +            })
+> +        }
+> +        RBTreeNode {
+> +            // SAFETY: The pointer came from a `MaybeUninit<Node>` whose fields have all been
+> +            // initialised. Additionally, it has the same layout as `Node`.
+> +            node: unsafe { Box::<MaybeUninit<_>>::assume_init(self.node) },
+> +        }
 
-We don't have any notifications either via ACPI or via HWP interrupt.
-I think it was working by chance before this change as by the cpufreq
-core is trying to set policy, the turbo is enabled by the firmware.
+nit: could you use Box::write()[1] here? It saves two `unsafe` blocks.
 
-What is this laptop make and model?
+[1]: https://doc.rust-lang.org/std/boxed/struct.Box.html#method.write 
 
-Thanks,
-Srinivas
+Regards,
+Boqun
 
->=20
-> > Please send me full dmesg after you see the issue.
->=20
-> Attached.=C2=A0=20
->=20
-
+> +    }
+> +}
+> +
+> +/// A red-black tree node.
+> +///
+> +/// The node is fully initialised (with key and value) and can be inserted into a tree without any
+> +/// extra allocations or failure paths.
+> +pub struct RBTreeNode<K, V> {
+> +    node: Box<Node<K, V>>,
+> +}
+> +
+> +impl<K, V> RBTreeNode<K, V> {
+> +    /// Allocates and initialises a node that can be inserted into the tree via
+> +    /// [`RBTree::insert`].
+> +    pub fn new(key: K, value: V, flags: Flags) -> Result<RBTreeNode<K, V>> {
+> +        Ok(RBTreeNodeReservation::new(flags)?.into_node(key, value))
+> +    }
+> +}
+> +
+> +// SAFETY: If K and V can be sent across threads, then it's also okay to send [`RBTreeNode`] across
+> +// threads.
+> +unsafe impl<K: Send, V: Send> Send for RBTreeNode<K, V> {}
+> +
+> +// SAFETY: If K and V can be accessed without synchronization, then it's also okay to access
+> +// [`RBTreeNode`] without synchronization.
+> +unsafe impl<K: Sync, V: Sync> Sync for RBTreeNode<K, V> {}
+> +
+> +struct Node<K, V> {
+> +    links: bindings::rb_node,
+> +    key: K,
+> +    value: V,
+> +}
+> 
+> -- 
+> 2.45.1.288.g0e0cd299f1-goog
+> 
 
