@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-199187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6B08D8386
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:09:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4A28D8387
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181221C23F20
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:09:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06B81F22549
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65F612CD89;
-	Mon,  3 Jun 2024 13:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2917512D1F6;
+	Mon,  3 Jun 2024 13:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="MxJSGwRr"
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="UADXYjTb"
 Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAC812C7FB
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C3B12C554
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 13:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717420174; cv=none; b=FfysWuR0X8gXnU/tw+jcDWJbrPjiE6obeg5rNYZlnaZZtXlT0J5bFcj5NDQHBwl963qVPkqrUpF5NaPb9MvtjoxSVyUQRHXHY8/WBZ5hYVGrs9GHD8DyzHGvOWuNsqSC++f3Zwiq4d8mksuqO1iYQMfHc2NCkpxEaKqcKqdaxSQ=
+	t=1717420175; cv=none; b=qOA3AsCS5I27Cjgf2cV3vA3TWRUQqtl0kOjodJzwQCEzGrB8aO0BLx6uZhDOmTxQ7IEw62NHU98D8eC/M8Ev81UHBrcIFghkuBPXctPfPMcbdD+0c2KIBe4uMjOHRVMK6XrTYNjYPPD+DFtIdhnwMFloszACVYaUMaB0CukVOJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717420174; c=relaxed/simple;
-	bh=gbet9ula8hiXQ5Q+WCGU8KzDeDurJoyPHFLzhk0cMyY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kWT+cPQl6552XJ2+Ir2sumsrkh4Y/BlJD7GybY8/ipvCFtOinpgJ1JMuI/oCmbiMOjBUy1YXSdQRnPDbZtE1lZcLKeowExtWLxdA+ewqgfWYXn2t3PD1KIrqd6KzUE+iOsm+wc5SHpiigDVbXIT4CBidFUaiE02P0gO3s5omj/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=MxJSGwRr; arc=none smtp.client-ip=188.40.30.78
+	s=arc-20240116; t=1717420175; c=relaxed/simple;
+	bh=gu0DnQSfTDhcc8YVz9dQ+rW0Ug+W3gS4CBp0FJUD1eY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QdIaTBh+Sh1pHKUQ6E72sroEWOkHaBe5zH5ibNxgRIfjanC3otAUTgpJ9JsS8unPvYqFjEpoRNKn3WKnzzlD1RPmgGb7gl9LSxxfdFtVfoH/Nf+x5C787OKCFFdVXuYfQk1UzHC/beTiOItexTRU3OfI+siuTajCmU5DUum9K0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=UADXYjTb; arc=none smtp.client-ip=188.40.30.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References; bh=saSbscj/lc1Vh8GhjtWmIhA6ffszYypeEA6Stg616AQ=; b=Mx
-	JSGwRrsT3NgBJIPap+/fef/f5y07gyzhFnPorvucFoDsLB8JTUxbN7DTTDd1jJNdfOxIbHhfIl8p6
-	BPFvUZG1lT9A4zWgQpNYWs9BLnnvQS4eXmagdxb6t4KfiqgLbr09mD9zoQ5wVdn8wXAJ2E7b8kqNL
-	0Gmdo1QsVl4FtTTIg0qPCMDQuE11SX3DCXnDIAVcumj0n8OcPvR11Cxx+FjW1JppgtVVjDQpOMSn+
-	63ynxg8fcvsaVCV7PugzJ5dXZGTOVQt0nrDoTAcsvA5hj2dAvbQ1YvmMOqKHJpSQvWfpqHG1dJkvv
-	LXEawy3omWF0FCYounOSHHpFDv0WX+Lw==;
+	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=SkkYBGLBX5AMS6+4n3/iKbRmqntG4ThN501YL0l9GAg=; b=UADXYjTbQHNq1JlvmXGCNxTpA5
+	JRs1fqjmLflVnfrfHddyibyPi9TfLHQO9K+QBVtGGsNuT94oTAfLRQlEmXPCXGEMwXjUXtOMmr20D
+	EVle1XOUIRlwz/rlCqiZKZAWppdREx2U/Ex2AMF66Y2Wdr11L+8qtG/QIdawfM4cvCJhZsn/IuKcL
+	aQaJ3cTrHmrsxqXOdZbqezPOlWTWLJ1cU2KUD4H+polMfL1zglWwrylRVXMUOcvRT9780ohhG0u8v
+	ZEgm1sTHDGbixswNwn3aCRbIG+c62ZA4dQ47G7UMBQ1N0B7f6KzIOMDF9QA4aGe8Sd3prXoi8JAuq
+	GQPXV6Ag==;
 Received: from sslproxy01.your-server.de ([78.46.139.224])
 	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <esben@geanix.com>)
-	id 1sE7RF-000Jpp-W5; Mon, 03 Jun 2024 15:09:22 +0200
+	id 1sE7RG-000Jpu-FN; Mon, 03 Jun 2024 15:09:22 +0200
 Received: from [185.17.218.86] (helo=localhost)
 	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <esben@geanix.com>)
-	id 1sE7RC-000O6H-0c;
-	Mon, 03 Jun 2024 15:09:21 +0200
+	id 1sE7RC-000O95-22;
+	Mon, 03 Jun 2024 15:09:22 +0200
 From: Esben Haabendal <esben@geanix.com>
-Subject: [PATCH v2 0/2] mtd: spi-nor: macronix: workaround for device id
- re-use
-Date: Mon, 03 Jun 2024 15:09:14 +0200
-Message-Id: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com>
+Date: Mon, 03 Jun 2024 15:09:15 +0200
+Subject: [PATCH v2 1/2] mtd: spi-nor: core: add flag for doing optional
+ SFDP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,10 +64,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHrAXWYC/42NQQ6CMBBFr0Jm7Rg6UEFW3sOwqHSASYSSVgmG9
- O5WTuDy/f/z/g6BvXCAJtvB8ypB3JyAThl0o5kHRrGJgXIqc00lTqbzbpYNp430s6BcW+xley8
- B65r4Ssy2shUkweI5NYf83iYeJbyc/xxfq/qlf2lXhQqZlSbWF9M/itvAJk3PnZugjTF+AV0U+
- PXFAAAA
+Message-Id: <20240603-macronix-mx25l3205d-fixups-v2-1-ff98da26835c@geanix.com>
+References: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com>
+In-Reply-To: <20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
  Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
  Miquel Raynal <miquel.raynal@bootlin.com>, 
@@ -75,52 +75,59 @@ Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
  Rasmus Villemoes <rasmus.villemoes@prevas.dk>, 
  Esben Haabendal <esben@geanix.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717420161; l=1472;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717420161; l=1626;
  i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=gbet9ula8hiXQ5Q+WCGU8KzDeDurJoyPHFLzhk0cMyY=;
- b=y5ijGA8XqkpyiBGBumNuknoDSMA7jQBonPKQG1Q6NrxAUfdOM7n6kRYO48IQO1A0a2f4gyVDB
- 7Tm6TlO2DMqDpGtihS6mUUl88/ZwKoWZVDvAki7HLnhJlCQfoiNhsVx
+ bh=gu0DnQSfTDhcc8YVz9dQ+rW0Ug+W3gS4CBp0FJUD1eY=;
+ b=LVq4ZvCQ52/lfDLcEa7wZA3VvHM6rWkJzLZ3AY8vciC8VFmqw8E+MeplwLvc7oLoOcaK8f8IQ
+ 9AbF3Q3WekaA0tAiWBGugYTEUHOdFyizyN0XbT3nuB0mEca7502OKb4
 X-Developer-Key: i=esben@geanix.com; a=ed25519;
  pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
 X-Authenticated-Sender: esben@geanix.com
 X-Virus-Scanned: Clear (ClamAV 0.103.10/27295/Mon Jun  3 10:28:26 2024)
 
-I only have access to boards with MX25L3233F flashes, so haven't been
-able to test the backwards compatibility. If anybody has boards with
-MX25L3205D and/or MX25L3206E, please help test this patch. Keep an eye
-for read performance regression.
+A dedicated flag for triggering call to
+spi_nor_sfdp_init_params_deprecated() allows enabling optional SFDP read
+and parse, with fallback to legacy flash parameters, without having dual,
+quad or octal parameters set in the legacy flash parameters.
 
-It is worth nothing that both MX25L3205D and MX25L3206E are
-end-of-life, and is unavailable from Macronix, so any new boards
-featuring a Macronix flash with this ID will likely be using
-MX25L3233F.
+With this, spi-nor flash parts without SFDP that is replaced with a
+different flash NOR flash part that does have SFDP, but shares the same
+manufacturer and device ID is easily handled.
 
 Signed-off-by: Esben Haabendal <esben@geanix.com>
 ---
-Changes in v2:
-- Added new flag (SPI_NOR_TRY_SFDP) to spi-nor core to allow trying
-  SFDP and fallback to legacy parameters without having to specify
-  DUAL/QUAD parameters.
-- Rewrite macronix to use SPI_NOR_TRY_SFDP flag.
-- Use with the ancient EoL MX25L3205D chip will not get speed
-  increase, but stay at 1-bit mode as it is now.
-- Link to v1: https://lore.kernel.org/r/20240524-macronix-mx25l3205d-fixups-v1-1-ee152e56afb3@geanix.com
+ drivers/mtd/spi-nor/core.c | 3 ++-
+ drivers/mtd/spi-nor/core.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
----
-Esben Haabendal (2):
-      mtd: spi-nor: core: add flag for doing optional SFDP
-      mtd: spi-nor: macronix: enable quad/dual speed for mx25l3205d chips
+diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+index 3e1f1913536b..1c4d66fc993b 100644
+--- a/drivers/mtd/spi-nor/core.c
++++ b/drivers/mtd/spi-nor/core.c
+@@ -2933,7 +2933,8 @@ static void spi_nor_init_params_deprecated(struct spi_nor *nor)
+ 
+ 	spi_nor_manufacturer_init_params(nor);
+ 
+-	if (nor->info->no_sfdp_flags & (SPI_NOR_DUAL_READ |
++	if (nor->info->no_sfdp_flags & (SPI_NOR_TRY_SFDP |
++					SPI_NOR_DUAL_READ |
+ 					SPI_NOR_QUAD_READ |
+ 					SPI_NOR_OCTAL_READ |
+ 					SPI_NOR_OCTAL_DTR_READ))
+diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
+index 442786685515..77f61a984cb3 100644
+--- a/drivers/mtd/spi-nor/core.h
++++ b/drivers/mtd/spi-nor/core.h
+@@ -535,6 +535,7 @@ struct flash_info {
+ 	u8 no_sfdp_flags;
+ #define SPI_NOR_SKIP_SFDP		BIT(0)
+ #define SECT_4K				BIT(1)
++#define SPI_NOR_TRY_SFDP		BIT(2)
+ #define SPI_NOR_DUAL_READ		BIT(3)
+ #define SPI_NOR_QUAD_READ		BIT(4)
+ #define SPI_NOR_OCTAL_READ		BIT(5)
 
- drivers/mtd/spi-nor/core.c     | 3 ++-
- drivers/mtd/spi-nor/core.h     | 1 +
- drivers/mtd/spi-nor/macronix.c | 2 +-
- 3 files changed, 4 insertions(+), 2 deletions(-)
----
-base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-change-id: 20240524-macronix-mx25l3205d-fixups-882e92eed7d7
-
-Best regards,
 -- 
-Esben Haabendal <esben@geanix.com>
+2.45.2
 
 
