@@ -1,147 +1,174 @@
-Return-Path: <linux-kernel+bounces-199524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F918D881B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:40:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC268D8826
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE3428508D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADC221F2139E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E01413790F;
-	Mon,  3 Jun 2024 17:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8883F137921;
+	Mon,  3 Jun 2024 17:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="sh+oRTR1"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dn9hWA6d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C93A28382
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BA2137902;
+	Mon,  3 Jun 2024 17:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717436393; cv=none; b=bFhncRxqGiPiC9IKhOJG5eoT926P/UwkHW2oMk6/7/zjOFvehE5Z0JtCxpHU7+WsGPtf3Z+y40hB9gM9+OcQeH6DgGP8BYwr/zPY/JALYOJGK5YhsHRT6oR9RN2vqn3axskl0mV04eAqKE7h9wjnfbAvQfhslCGZC2JECT0M81w=
+	t=1717436611; cv=none; b=HkrdqHG56+80PIqJDO4JMnyOTRS6oFurV0cD0j34bFBD/JCeU3UKup4TwTzs33pOh29qKkceAIYMe0eP1E0ZfOkWODZmxiF5rMiHBca8gQqWj+QbQ14hRJeCAI6Y0MouRZ5Ajbh90i1GBuMHMzZs3W3/6AOjUGhsq9sVoxtgGt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717436393; c=relaxed/simple;
-	bh=3c3w005UvrCNKiI8kJ/KOZjDllrOuRvQ9VhKuduhfhc=;
+	s=arc-20240116; t=1717436611; c=relaxed/simple;
+	bh=j2giooDoELICQ3uc1GkFOkfhcLltnqQzqVBJAIjeHJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGjobVIF+ejHqhFh0/c05wQjKziI0iG56cxcCofLK+bgIqiAv0O1H1NT6heGE789WD4Ny9DtzxRf2EjdJcLXLW6OMxhfVqVevlDllr1d5unjG0Zp3zwprmxu4yx8MgKm/pA97/+Z0g78e+Jv9ZR104wPzSxco5Wh3bnJLPhEQ5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=sh+oRTR1; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=w2SkQCALZUJGPkfKV2Y9xV9yqucWzBmwANClRi5Emqc=; b=sh+oRTR1y8u452VN
-	w99m3VW4s1WyARCaLvp4yYiB5q17GNYc82acCLjQ+5O78SW3WtgT5HX5JcRQiY/WT0LQ8Tn5mdByN
-	A0bqjNU+n7kJ48pTXrIosyszQdIBDuCH1g9sCJMRxC9txi1iOxQDe1hdlVPSLZTEmZJraec/ygFOY
-	pJmBBGkSSt44W9lvqzUeXfUSqaNGk20x2aFeVh3yxF/VbyJ9xcE1JkwU707qT3AyFFSjlgdx3dKY3
-	uvVGYBDu3UTWHgE7v5cOrcUEqNz4uOQc9GrrwEcF5WpbRuABD8SZiK1Usz9hG5eimP0uMjVv3fgac
-	qDPxLhxDjbkR8EMhoA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sEBeu-00400i-38;
-	Mon, 03 Jun 2024 17:39:48 +0000
-Date: Mon, 3 Jun 2024 17:39:48 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: sudipm.mukherjee@gmail.com
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
-	linux-parport@lists.infradead.org
-Subject: Re: [PATCH 0/3] parport: Cleanup some pre-devmodel code
-Message-ID: <Zl3_5MzTNqIiXM_C@gallifrey>
-References: <20240502154823.67235-1-linux@treblig.org>
- <ZkXj9Ip3DoUAe1wt@gallifrey>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IdOooymZc6TTtU0AU+vKKVRnGfai5E6EF6cS2taPfmov5Z/oFCotkDEHr8CgMw9gQXJL4zkjQt+vYwbfkv6PLblWpmwVfn2m44tYnH8Yd9pw27Ybg1lhqHm9XoNT6LgmXZYOl2sZo2YeaygisfM0M3fZfwa/thFkWL20d2zbDFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dn9hWA6d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B072AC2BD10;
+	Mon,  3 Jun 2024 17:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717436610;
+	bh=j2giooDoELICQ3uc1GkFOkfhcLltnqQzqVBJAIjeHJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dn9hWA6dMSiBGPUDMEWP9UIEij5v/bfQHq6dKecKjdLT4o4xF9krfA07ri6VVunxE
+	 4bkjIi0t07Rdx0fuUbeoNfVqxtHB4jCTCodT21dDg9EwLF+sHwtOvTxZaBDdYHu7A+
+	 MPZ6I1itabOTmR5aSmjeztm99+G3aBKTXTa/6KY4kZh+KqC65MRO+arsYQtsH8Q7w6
+	 aL9f1v1HYECrErCeXbf99FAoSpo/PGu3LFHJ64hsUnzXNU56M+VPjGrWrGUHlJ2W3w
+	 buv7fKlUVL+U8OQFLzz1tfcCMEXCVv6CnEfVZ5emUTfC9xIY1d+5mObAeNL2faM4le
+	 a1J8qUIjctEEA==
+Date: Mon, 3 Jun 2024 20:41:29 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, rafael@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, adrian.hunter@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com,
+	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com,
+	michael.roth@amd.com, seanjc@google.com, kai.huang@intel.com,
+	bhe@redhat.com, kirill.shutemov@linux.intel.com, bdas@redhat.com,
+	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
+	jroedel@suse.de, ardb@kernel.org, kexec@lists.infradead.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
+Message-ID: <Zl4ASZfWMkvAcJXO@kernel.org>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <cover.1717111180.git.ashish.kalra@amd.com>
+ <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
+ <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
+ <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
+ <Zl3HfiQ6oHdTdOdA@kernel.org>
+ <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
+ <Zl3hPefvOwPv0Mjn@kernel.org>
+ <141a9666-f3cf-4323-9536-4367f489be43@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZkXj9Ip3DoUAe1wt@gallifrey>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 17:39:38 up 26 days,  4:53,  1 user,  load average: 0.00, 0.02, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <141a9666-f3cf-4323-9536-4367f489be43@amd.com>
 
-* Dr. David Alan Gilbert (dave@treblig.org) wrote:
-> * linux@treblig.org (linux@treblig.org) wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > There are some remenants of the pre-devmodel code
-> > still in the parport drivers; try and clean some of them out.
+On Mon, Jun 03, 2024 at 11:56:01AM -0500, Kalra, Ashish wrote:
+> On 6/3/2024 10:29 AM, Mike Rapoport wrote:
 > 
-> Ping!
-
-Ping^2.
-
-Dave
-
-> Dave
+> > On Mon, Jun 03, 2024 at 09:01:49AM -0500, Kalra, Ashish wrote:
+> > > On 6/3/2024 8:39 AM, Mike Rapoport wrote:
+> > > 
+> > > > On Mon, Jun 03, 2024 at 08:06:56AM -0500, Kalra, Ashish wrote:
+> > > > > On 6/3/2024 3:56 AM, Borislav Petkov wrote
+> > > > > 
+> > > > > > > EFI memory map and due to early allocation it uses memblock allocation.
+> > > > > > > 
+> > > > > > > Later during boot, efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
+> > > > > > > in case of a kexec-ed kernel boot.
+> > > > > > > 
+> > > > > > > This function kexec_enter_virtual_mode() installs the new EFI memory map by
+> > > > > > > calling efi_memmap_init_late() which remaps the efi_memmap physically allocated
+> > > > > > > in efi_arch_mem_reserve(), but this remapping is still using memblock allocation.
+> > > > > > > 
+> > > > > > > Subsequently, when memblock is freed later in boot flow, this remapped
+> > > > > > > efi_memmap will have random corruption (similar to a use-after-free scenario).
+> > > > > > > 
+> > > > > > > The corrupted EFI memory map is then passed to the next kexec-ed kernel
+> > > > > > > which causes a panic when trying to use the corrupted EFI memory map.
+> > > > > > This sounds fishy: memblock allocated memory is not freed later in the
+> > > > > > boot - it remains reserved. Only free memory is freed from memblock to
+> > > > > > the buddy allocator.
+> > > > > > 
+> > > > > > Or is the problem that memblock-allocated memory cannot be memremapped
+> > > > > > because *raisins*?
+> > > > > This is what seems to be happening:
+> > > > > 
+> > > > > efi_arch_mem_reserve() calls efi_memmap_alloc() to allocate memory for
+> > > > > EFI memory map and due to early allocation it uses memblock allocation.
+> > > > > 
+> > > > > And later efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
+> > > > > in case of a kexec-ed kernel boot.
+> > > > > 
+> > > > > This function kexec_enter_virtual_mode() installs the new EFI memory map by
+> > > > > calling efi_memmap_init_late() which does memremap() on memblock-allocated memory.
+> > > > Does the issue happen only with SNP?
+> > > This is observed under SNP as efi_arch_mem_reserve() is only being called
+> > > with SNP enabled and then efi_arch_mem_reserve() allocates EFI memory map
+> > > using memblock.
+> > I don't see how efi_arch_mem_reserve() is only called with SNP. What did I
+> > miss?
 > 
-> > This series should have no visible change, all the drivers
-> > already use the devmodel, it's just removing the flags
-> > that say that, and cleaning out no longer used function pointers.
-> > (To me the most useful bit is removing the no longer used
-> > 'attach' pointer, so if you've got code that's trying to use
-> > it you'll get educated).
-> > 
-> > Trivially tested in qemu, I can still write to the lp;
-> > 
-> > Also checked with grep -r 'struct parport_driver' . -A 9
-> > to see if I've missed any.
-> > 
-> > (I found this while dragging the out-of-tree ppscsi code
-> > into working on head, so that I could use my prehistoric
-> > HP PP scanner)
-> > 
-> > Dave
-> > 
-> > Dr. David Alan Gilbert (3):
-> >   parport: Remove 'drivers' list
-> >   parport: Remove attach function pointer
-> >   parport: Remove parport_driver.devmodel
-> > 
-> >  drivers/ata/pata_parport/pata_parport.c  | 1 -
-> >  drivers/auxdisplay/ks0108.c              | 1 -
-> >  drivers/auxdisplay/panel.c               | 1 -
-> >  drivers/char/lp.c                        | 1 -
-> >  drivers/char/ppdev.c                     | 1 -
-> >  drivers/i2c/busses/i2c-parport.c         | 1 -
-> >  drivers/input/joystick/db9.c             | 1 -
-> >  drivers/input/joystick/gamecon.c         | 1 -
-> >  drivers/input/joystick/turbografx.c      | 1 -
-> >  drivers/input/joystick/walkera0701.c     | 1 -
-> >  drivers/input/serio/parkbd.c             | 1 -
-> >  drivers/net/hamradio/baycom_epp.c        | 1 -
-> >  drivers/net/hamradio/baycom_par.c        | 1 -
-> >  drivers/net/plip/plip.c                  | 1 -
-> >  drivers/parport/daisy.c                  | 1 -
-> >  drivers/parport/share.c                  | 9 ---------
-> >  drivers/pps/clients/pps_parport.c        | 1 -
-> >  drivers/pps/generators/pps_gen_parport.c | 1 -
-> >  drivers/scsi/imm.c                       | 1 -
-> >  drivers/scsi/ppa.c                       | 1 -
-> >  drivers/spi/spi-butterfly.c              | 1 -
-> >  drivers/spi/spi-lm70llp.c                | 1 -
-> >  include/linux/parport.h                  | 6 ------
-> >  sound/drivers/mts64.c                    | 1 -
-> >  sound/drivers/portman2x4.c               | 1 -
-> >  25 files changed, 38 deletions(-)
-> > 
-> > -- 
-> > 2.44.0
-> > 
-> -- 
->  -----Open up your eyes, open up your mind, open up your code -------   
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> \        dave @ treblig.org |                               | In Hex /
->  \ _________________________|_____ http://www.treblig.org   |_______/
+> This is the call stack for efi_arch_mem_reserve():
 > 
+> [    0.310010]  efi_arch_mem_reserve+0xb1/0x220
+> [    0.311382]  efi_mem_reserve+0x36/0x60
+> [    0.311973]  efi_bgrt_init+0x17d/0x1a0
+> [    0.313265]  acpi_parse_bgrt+0x12/0x20
+> [    0.313858]  acpi_table_parse+0x77/0xd0
+> [    0.314463]  acpi_boot_init+0x362/0x630
+> [    0.315069]  setup_arch+0xa88/0xf80
+> [    0.315629]  start_kernel+0x68/0xa90
+> [    0.316194]  x86_64_start_reservations+0x1c/0x30
+> [    0.316921]  x86_64_start_kernel+0xbf/0x110
+> [    0.317582]  common_startup_64+0x13e/0x141
+> 
+> So, probably it is being invoked specifically for AMD platform ?
+
+AFAIU, efi_bgrt_init() can be called for any x86 platform, with or without
+encryption. 
+So if my understating is correct, efi_arch_mem_reserve() will be called with SNP
+disabled as well. And if kexec works ok without SNP but fails with SNP this
+may give as a clue to the root cause of the failure.
+ 
+> > > If we skip efi_arch_mem_reserve() (which should probably be anyway skipped
+> > > for kexec case), then for kexec boot, EFI memmap is memremapped in the same
+> > > virtual address as the first kernel and not the allocated memblock address.
+> > Maybe we should skip efi_arch_mem_reserve() for kexec case, but I think we
+> > still need to understand what's causing memory corruption.
+> 
+> When, efi_arch_mem_reserve() allocates memory for EFI memory map using
+> memblock and then later in boot, kexec_enter_virtual_mode() does memremap on
+> this memblock allocated memory, subsequently after this i see EFI memory map
+> corruption, so are there are any issues doing memremap on memblock-allocated
+> memory ?
+
+memblock-allocated memory is just RAM, so my take is that memremap() cannot
+figure out the encryption bits properly.
+
+You can check if there are issues with memrmapp()ing memblock-allocated
+memory by sticking memblock_phys_alloc() somewhere, filling that memory with a
+pattern and then calling memremap(addr, size, MEMREMAP_WB) and checking if
+the pattern is still there.
+ 
+> Thanks, Ashish
+> 
+> > > > I didn't really dig, but my theory would be that it has something to do
+> > > > with arch_memremap_can_ram_remap() in arch/x86/mm/ioremap.c
+> > > > > Thanks, Ashish
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Sincerely yours,
+Mike.
 
