@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-199291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47DE8D84F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:29:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CB58D8516
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120251C203E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4250128342E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6B912EBF5;
-	Mon,  3 Jun 2024 14:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogNirmqU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B3312EBEC;
+	Mon,  3 Jun 2024 14:32:33 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A6512E1E9;
-	Mon,  3 Jun 2024 14:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AC057C9A;
+	Mon,  3 Jun 2024 14:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424968; cv=none; b=A1o9Mny5i5Jhnioqpl+DGeIX70SIuQPkgSN5creOM4VAbhHXrze7Gv98zSaKhzcD6CNTMCtZ4Ujq5ucohJHebnZmGtTj81A5xKCvTUzaMXmBJE2aiYQeJvBi7TeHub376EbIfZ+0JI1EX/d6BljKnjaelGGa+ag51lfLJSspykE=
+	t=1717425152; cv=none; b=O2mViTCiCXBmOXGAS3/SU6Bug5qkTWypzR7PwabGr1OgT48b6zxaFHk8R7CRXPE1KvgMDV46jT7JPzTInRFNaiEnGgAKfPFDqrIDDP0qEH3PHvCY4JFjrdLmzPtwOIVhpdndMtKyl9gDTDHguWxIWyNeM9AIb3y8zOvegjBHe7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424968; c=relaxed/simple;
-	bh=FRO1GsThD+8G3ac6c2VNDgi7xDQo7ElrPAWbCxkiGG0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=WQ6LHeLKmtkwVAHQ/1NHytFRD3xE8YPKRNaJWiLmJ2mUVH/gja7quyupV6CDbaQPiKiyP1wO2Bkjw9TYXchDc9C98gcJOoSVBM1rGpMCUVraM+WaGBvEniZXXItCdBJWFtfTXzkkuNId8DXkvtRhBDnsw/aevQyWwUt8PA+gIOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ogNirmqU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FF2FC2BD10;
-	Mon,  3 Jun 2024 14:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717424968;
-	bh=FRO1GsThD+8G3ac6c2VNDgi7xDQo7ElrPAWbCxkiGG0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ogNirmqUkVsYlwIKWmQp/sxqgb3P266qOK+5Hpg8XuR3mz4AEnx8KK7TdN82IGzAy
-	 xpP+nI6h55UFDSimz6k0e0J97KBzMlB1ZbwF0KcKBCSP6ntFjtawTtM17r1bz7Qdj7
-	 ZZR+/CZLfNhxoWR1qkRWJpoVpAK2r0R3OWW0ZbOmLV7GLI9B+utj3TKbuIrAa0M3P/
-	 6J+gJlFARURNtb9VO0JRadA/Pvir73AJfVRhjM7qqUTQ4s1CrZDLzS4dtAG8SE0npR
-	 JEz2UxLmXqcz3fYfhOB2bnwZ+bIKvHG2Nn72Ig9RZ2WI7HDBzOGTEsmWDx7OkcWtfY
-	 lfkBVQ4sxEKKg==
-Date: Mon, 03 Jun 2024 09:29:25 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1717425152; c=relaxed/simple;
+	bh=UoCaPevIx3Dxi4FPfP1x19N4RUjXMfRcWhSQxhfe4R8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OrSehntfAWySeSyRlnzgAQ7zsqhn8V4yFjz4hZYcm2wn+TtI5tDGYZUo7By6HrtQ+vJ9KM705mCIgzwYnzOIRnTr/oJBFKJmHFAxD5ePIGjTzXBWXJEmg6vKzOorTqdRgXF60sVTZbQYRz1F5HHZGsYJcXcE2G1+9jednBCkNIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3783C4AF0C;
+	Mon,  3 Jun 2024 14:32:29 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [GIT PULL] LoongArch fixes for v6.10-rc3
+Date: Mon,  3 Jun 2024 22:31:57 +0800
+Message-ID: <20240603143158.2625704-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Mudit Sharma <muditsharma.info@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-iio@vger.kernel.org, lars@metafoo.de, 
- ivan.orlov0322@gmail.com, jic23@kernel.org, conor+dt@kernel.org, 
- linux-kernel@vger.kernel.org, krzk+dt@kernel.org
-In-Reply-To: <20240603134015.70388-1-muditsharma.info@gmail.com>
-References: <20240603134015.70388-1-muditsharma.info@gmail.com>
-Message-Id: <171742496559.385807.12490894623691830136.robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: iio: light: ROHM BH1745
+Content-Transfer-Encoding: 8bit
 
+The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
 
-On Mon, 03 Jun 2024 14:40:13 +0100, Mudit Sharma wrote:
-> Add ROHM BH1745 - 4 channel I2C colour sensor's dt-bindings.
-> 
-> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
-> ---
->  .../bindings/iio/light/rohm,bh1745.yaml       | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
-> 
+  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+are available in the Git repository at:
 
-yamllint warnings/errors:
+  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.10-1
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml: maintainers: 'Mudit Sharma <muditsharma.info@gmail.com>' is not of type 'array'
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+for you to fetch changes up to eb36e520f4f1b690fd776f15cbac452f82ff7bfa:
 
-doc reference errors (make refcheckdocs):
+  LoongArch: Fix GMAC's phy-mode definitions in dts (2024-06-03 15:45:53 +0800)
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240603134015.70388-1-muditsharma.info@gmail.com
+----------------------------------------------------------------
+LoongArch fixes for v6.10-rc3
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+Some bootloader interface fixes, a dts fix, and a trivial cleanup.
+----------------------------------------------------------------
+Huacai Chen (1):
+      LoongArch: Fix GMAC's phy-mode definitions in dts
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Jiaxun Yang (4):
+      LoongArch: Fix built-in DTB detection
+      LoongArch: Add all CPUs enabled by fdt to NUMA node 0
+      LoongArch: Fix entry point in kernel image header
+      LoongArch: Override higher address bits in JUMP_VIRT_ADDR
 
-pip3 install dtschema --upgrade
+Tiezhu Yang (1):
+      LoongArch: Remove CONFIG_ACPI_TABLE_UPGRADE in platform_init()
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+ arch/loongarch/boot/dts/loongson-2k0500-ref.dts |  4 ++--
+ arch/loongarch/boot/dts/loongson-2k1000-ref.dts |  4 ++--
+ arch/loongarch/boot/dts/loongson-2k2000-ref.dts |  2 +-
+ arch/loongarch/include/asm/numa.h               |  1 +
+ arch/loongarch/include/asm/stackframe.h         |  2 +-
+ arch/loongarch/kernel/head.S                    |  2 +-
+ arch/loongarch/kernel/setup.c                   |  6 ++----
+ arch/loongarch/kernel/smp.c                     |  5 ++++-
+ arch/loongarch/kernel/vmlinux.lds.S             | 10 ++++++----
+ drivers/firmware/efi/libstub/loongarch.c        |  2 +-
+ 10 files changed, 21 insertions(+), 17 deletions(-)
 
