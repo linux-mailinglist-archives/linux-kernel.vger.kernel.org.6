@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel+bounces-199359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032178D8603
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:26:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694318D8604
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B0FB24580
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AD281C21E1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3C5130AFF;
-	Mon,  3 Jun 2024 15:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C941311B5;
+	Mon,  3 Jun 2024 15:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="OikmosAw"
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="D9SF5Efa"
 Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1599C12FF71;
-	Mon,  3 Jun 2024 15:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FB012FB0B;
+	Mon,  3 Jun 2024 15:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717428396; cv=none; b=TUs3BPFVlgIK1hzYbE6iY/u24/4QXpXSOrpmqLFOIuGEeIWTUIFXIMxAyCSGQZLNqA+wOGznk0q4NNPKOaQpgcxUnqzdoos4PcqMuucREEzUpQopTNzHLVrYAQSrQfGuesmYTuPK+U8F84tO4HBXn8f0bIpSTllfUUsvSqvBpJs=
+	t=1717428396; cv=none; b=jdjUsr9JTqBWUtDFv16LjecL8VId5lMzL5raKrcc2XE1s67jQe7oFLh9cGfuv1STT8apGZnCgeAl4Go/Khpx80IKxs4wDjcqkJ67hUaBkng/t7FRNP96XhHWPgZ7FWwsID1KOPe5RTF3UyioN4/5YJollcNa5mEclMnPMct0hFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717428396; c=relaxed/simple;
-	bh=JCmpgMiGgIyv7XnOdg2rf7zHPVYaPivGVJaMkoyZHGU=;
-	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=u5ZTlsxejOUKgZVSBd1THxCH1w2OwwxYzZ46QtRhrYCGqvZJg5zegXg3PxAcqnYGC1AI/eqlWNQS2dJzE+16arpBz2dq/LQnnFx/rdhGbnsLA0pji4bA4JBCNvb090PJ+xNyHXfMV/1kM4OW4hAZjrvaL0tWjz70Pk7IVLCelGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=OikmosAw; arc=none smtp.client-ip=162.243.120.170
+	bh=wwoE058iMBVD1kOqaV65txl/L9mXcbQdTteqH1Np/u4=;
+	h=From:To:Cc:Date:Message-Id:In-Reply-To:References:MIME-Version:
+	 Subject; b=CyLsUH/3m8fBPmamHF+SayaD8m5qea5eImliuHH4AkEmmByvyiZ1PTx3kmPmlejq2j2g+u6c+afoz76QFhqw3tZiJkI3gc6OQl32aYb5W0U4Dk/hC3b1aP6Lu9WtipD7LQCa0GVaWCUGIKclE7mKw0i2uyQeJriLeigNeedcLJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=D9SF5Efa; arc=none smtp.client-ip=162.243.120.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
 	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
 	:From:subject:date:message-id:reply-to;
-	bh=4DlPd6ZxkfmBXAbzJO+INo9sFI8HWNVTBaTEg++gh/E=; b=OikmosAwt236m0i5UK4x2hdMyt
-	3Eslc5HwZ37tnXozBOayvCWJCxKaFncbsityaH8T3mJ1J27AyOHgRVkH2KKByosBQe7dNzBRLwMTo
-	ufGcSt63LNyHS3f8Mp+jnVSt9t+ig+btnrAiJ6mPHEm3NuNZZk4Hy/G4r5tbFucl3jX4=;
+	bh=cnPxg46vIGsnzaCwnceBileM7ZObeyNg/esumF2EXeQ=; b=D9SF5EfaB6tywSSOhZ6kfYjYVQ
+	oGL60fShHfB58Fn91Gb7Of2I5OuthIfYjNoZYrakTO5j0+rNE1eNzOexAM911zH2Zl7UAZhnM06zN
+	N7taTCogWmQtbf+3I/5Pu0tKbwX/7R79dFLW1gXR0Sp/sRovP4W1dPJS/NnvK/wHrRMk=;
 Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:34112 helo=pettiford.lan)
 	by mail.hugovil.com with esmtpa (Exim 4.92)
 	(envelope-from <hugo@hugovil.com>)
-	id 1sE9Zt-0000dO-4e; Mon, 03 Jun 2024 11:26:29 -0400
+	id 1sE9Zu-0000dO-8c; Mon, 03 Jun 2024 11:26:30 -0400
 From: Hugo Villeneuve <hugo@hugovil.com>
 To: gregkh@linuxfoundation.org,
 	jirislaby@kernel.org,
 	hvilleneuve@dimonoff.com
 Cc: linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org,
-	hugo@hugovil.com
-Date: Mon,  3 Jun 2024 11:25:59 -0400
-Message-Id: <20240603152601.3689319-1-hugo@hugovil.com>
+	hugo@hugovil.com,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Date: Mon,  3 Jun 2024 11:26:00 -0400
+Message-Id: <20240603152601.3689319-2-hugo@hugovil.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240603152601.3689319-1-hugo@hugovil.com>
+References: <20240603152601.3689319-1-hugo@hugovil.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,37 +67,58 @@ X-Spam-Level:
 X-Spam-Report: 
 	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
 	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-Subject: [PATCH 0/2] serial: sc16is7xx: Kconfig fixes after I2C/SPI driver split
+Subject: [PATCH 1/2] serial: sc16is7xx: rename Kconfig CONFIG_SERIAL_SC16IS7XX_CORE
 X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
 X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
 From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Hello,
-this patch series brings some Kconfig fixes to the sc16is7xx driver. These fixes
-are related to the I2C/SPI driver split:
+Commit d49216438139
+("serial: sc16is7xx: split into core and I2C/SPI parts (core)")
+renamed SERIAL_SC16IS7XX_CORE by SERIAL_SC16IS7XX. This means that some
+configs should have been updated when I submitted the original patch, but
+unfortunately they were not. Geert mentioned for example:
+    arch/mips/configs/cu1??0-neo_defconfig
 
-https://lore.kernel.org/all/20240430090333.5c5f029553cabcdf699310cb@hugovil.com/
+Rename SERIAL_SC16IS7XX to SERIAL_SC16IS7XX_CORE so that existing configs
+will still work correctly.
 
-I have tested the changes on a custom board with two SC16IS752 DUART over
-a SPI interface using a Variscite IMX8MN NANO SOM. The four UARTs are
-configured in RS-485 mode.
-
-I did not test the change on a SC16is7xx using I2C interface, as my custom
-board is only using SPI.
-
-Thank you.
-
-Hugo Villeneuve (2):
-  serial: sc16is7xx: rename Kconfig CONFIG_SERIAL_SC16IS7XX_CORE
-  serial: sc16is7xx: re-add Kconfig SPI or I2C dependency
-
- drivers/tty/serial/Kconfig  | 3 ++-
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Fixes: d49216438139 ("serial: sc16is7xx: split into core and I2C/SPI parts (core)")
+Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+---
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/tty/serial/Kconfig  | 2 +-
  drivers/tty/serial/Makefile | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-
-base-commit: c3f38fa61af77b49866b006939479069cd451173
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 4fdd7857ef4d..2a0da35c0ef8 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1023,7 +1023,7 @@ config SERIAL_SCCNXP_CONSOLE
+ 	help
+ 	  Support for console on SCCNXP serial ports.
+ 
+-config SERIAL_SC16IS7XX_CORE
++config SERIAL_SC16IS7XX
+ 	tristate "NXP SC16IS7xx UART support"
+ 	select SERIAL_CORE
+ 	select SERIAL_SC16IS7XX_SPI if SPI_MASTER
+diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
+index faa45f2b8bb0..6ff74f0a9530 100644
+--- a/drivers/tty/serial/Makefile
++++ b/drivers/tty/serial/Makefile
+@@ -75,7 +75,7 @@ obj-$(CONFIG_SERIAL_SA1100)		+= sa1100.o
+ obj-$(CONFIG_SERIAL_SAMSUNG)		+= samsung_tty.o
+ obj-$(CONFIG_SERIAL_SB1250_DUART)	+= sb1250-duart.o
+ obj-$(CONFIG_SERIAL_SCCNXP)		+= sccnxp.o
+-obj-$(CONFIG_SERIAL_SC16IS7XX_CORE)	+= sc16is7xx.o
++obj-$(CONFIG_SERIAL_SC16IS7XX)		+= sc16is7xx.o
+ obj-$(CONFIG_SERIAL_SC16IS7XX_SPI)	+= sc16is7xx_spi.o
+ obj-$(CONFIG_SERIAL_SC16IS7XX_I2C)	+= sc16is7xx_i2c.o
+ obj-$(CONFIG_SERIAL_SH_SCI)		+= sh-sci.o
 -- 
 2.39.2
 
