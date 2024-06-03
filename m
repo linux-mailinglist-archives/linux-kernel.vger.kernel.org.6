@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-199221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415E28D8400
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:32:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5278D8505
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F210C28DC30
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:32:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D95EB25661
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C798A12D76D;
-	Mon,  3 Jun 2024 13:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A5912FF73;
+	Mon,  3 Jun 2024 14:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgV79tYr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SDMgS2UV"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103C412D1FA;
-	Mon,  3 Jun 2024 13:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F126E12D1FC;
+	Mon,  3 Jun 2024 14:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717421524; cv=none; b=nnpDxLQLZH11+IxZgYtSKHU1V3GJRKxuGVBSapl8rG49Qj5O6YSNRuYiShboLGH6ab7NEU+fv1IjLBAxoyeHPnRNjQN/7wWWYzYlew9EtfbN+8wPkfAcDkmQSoxtkEf5pMWEDRnunSHFF6MomY3/FkwMHgDtC6l8M4q/V1Odkbo=
+	t=1717425012; cv=none; b=ZvTR/gtb8irNOujWYgPlbwJSTYd4xhFZ/5U9Wscg9NDKD1bKLaAOnQJceZoyQVhCFVQzhY4s14nlI8SkAVEZYx5q/WsWYJLk8dAw37PGVduY+VNnfAkI3vz1ElCP4Ye2ItddRwZ4xr+6xpbUkc+vuN9l/fIh3qp5NAiD6YToK4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717421524; c=relaxed/simple;
-	bh=CfNFaBdw1xG9IssterEE6MbYhcLFzsxVaBM/TXav0lE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nJBxovQKb0IZPch9UGRQmJc+llhRW6ZJbVjzH4XMqJiNp9FNtc/QI9cZGg2DienjJrl5TLD2rFiCMRLBg+NW6yHHCpVeVTHL6g3hWY3/L54O5wWleMRBHwZZVuXcZvGN9ZRkcnhc8rhS6zEPRfydRUQkWAB4GeVJVtxvHwzjhlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgV79tYr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 096B7C4AF08;
-	Mon,  3 Jun 2024 13:32:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717421523;
-	bh=CfNFaBdw1xG9IssterEE6MbYhcLFzsxVaBM/TXav0lE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fgV79tYrLH2VJm0N9fppEAqrahRKszmoTNV20ZAuJCegUzvjjEa2Y1xCYnRC586MK
-	 u0J5rn7ekJt7hHrR0SP27q7Wr0qKQ74KW9+zdG6w70qrQHUuc3KFEVLEbQUuRdUmiu
-	 ivL3VYIPytSu1htnCyBY9cyYQncuW7GqZ/c5WwkhBVmYi/Y6YN6Pv/zX0wjerjQQlo
-	 iJ441XqzfB9PdXn9E0PcrDwzJQOw3FO33nmuN8FhmSjsWsw3CY0nlsy+gt9F/+gNuI
-	 cV35Nra/hzqnACnBG7MDuywSjkvwh8sDPRNymaNDZhuGVTIEkuvjic/sxxtsVUqyMs
-	 YjhwzYJBsWmTQ==
-Date: Mon, 3 Jun 2024 14:31:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [Bug Report] selftests: arm64: build errors
-Message-ID: <7b7f4dd1-bc13-4827-84d6-20ebed7119b6@sirena.org.uk>
-References: <5ec0f2f3-5259-41a9-a25d-5baf1680dd10@collabora.com>
+	s=arc-20240116; t=1717425012; c=relaxed/simple;
+	bh=0w3zP0hgy7Op0EkykpMwlsweE7iDTQYTQbzFF77SK48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YE6YOd17vj7XjYvnl19J0fiu39NiLCSjO3A2bvbxUS4GYq38Pep3WRA3ErE3kC6HbiXU9t7nl0N3V+WFt/S4A+H6WFD2aMgF01PEGXuyxeVzUwRSe4e2riPDhPqO/w2WZGhh8MVlnWwzRJShrC62pcfBRpobtwSOFumGHyuYTj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SDMgS2UV; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 1754387ECD;
+	Mon,  3 Jun 2024 16:30:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1717425007;
+	bh=tS16nMscNeuJBS5c0fzS669yLH9RtEi4tcYfyXkUhuo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SDMgS2UVdOI8UvPt8wogrk8xp1A3xjV8ZOsZUD1gY28a8Ya1HY55XyZcmVeX6X+Cm
+	 ROCnzlw9Fp4qyi/4wW2rlEzq8ZlRSms9GkU9Cr9FfJjFYLfDseOmsEMUOkxx6z2r24
+	 SIfotgjkAuf+3cP7a7wUlyoZSfWJe6PyNbGijmIsguRB3PQPMAqNaYnu88jmnxgDNs
+	 sHbmIBytATd4WaV5abPrbDi4sJGG8YrPrSStAMs/GJJakkxcQU6KUTbbSnON1mU/P5
+	 LNyVnEu7Xpz0vcuzYmXQ6w/Ob34Do32T2mc/dYo3kco8LauQ/TYoI6G7GjkQXqw4fq
+	 bQnh5hf++mA3g==
+Message-ID: <a992ecc9-bbb7-41af-9a0a-ff63a55d1652@denx.de>
+Date: Mon, 3 Jun 2024 15:01:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JaJbRFCY2mj2cYSO"
-Content-Disposition: inline
-In-Reply-To: <5ec0f2f3-5259-41a9-a25d-5baf1680dd10@collabora.com>
-X-Cookie: Don't let your status become too quo!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/11] net: ethernet: stmmac: add management of
+ stm32mp13 for stm32
+To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+ Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240603092757.71902-1-christophe.roullier@foss.st.com>
+ <20240603092757.71902-8-christophe.roullier@foss.st.com>
+ <d5ce5037-7b77-42bc-8551-2165b7ed668f@prevas.dk>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <d5ce5037-7b77-42bc-8551-2165b7ed668f@prevas.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
+On 6/3/24 1:30 PM, Rasmus Villemoes wrote:
+> On 03/06/2024 11.27, Christophe Roullier wrote:
+> 
+>> @@ -259,13 +268,17 @@ static int stm32mp1_configure_pmcr(struct plat_stmmacenet_data *plat_dat)
+>>   
+>>   	dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
+>>   
+>> +	/* Shift value at correct ethernet MAC offset in SYSCFG_PMCSETR */
+>> +	val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
+>> +
+>>   	/* Need to update PMCCLRR (clear register) */
+>> -	regmap_write(dwmac->regmap, reg + SYSCFG_PMCCLRR_OFFSET,
+>> -		     dwmac->ops->syscfg_eth_mask);
+>> +	regmap_write(dwmac->regmap, dwmac->ops->syscfg_clr_off,
+>> +		     dwmac->mode_mask);
+>>   
+>>   	/* Update PMCSETR (set register) */
+>>   	return regmap_update_bits(dwmac->regmap, reg,
+>> -				 dwmac->ops->syscfg_eth_mask, val);
+>> +				 dwmac->mode_mask, val);
+>>   }
+>>   
+>>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+> 
+> This hunk is broken, and makes the patch not apply:
+> 
+> Applying: net: ethernet: stmmac: add management of stm32mp13 for stm32
+> error: corrupt patch at line 70
+> 
+> The -259,13 seems correct, and the net lines added by previous hunks is
+> indeed +9, but this hunk only adds three more lines than it removes, not
+> four, so the +268,17 should have been +268,16.
+> 
+> Have you manually edited this patch before sending? If so, please don't
+> do that, it makes people waste a lot of time figuring out what is wrong.
+> 
+> Also, please include a base-id in the cover letter so one knows what it
+> applies to.
 
---JaJbRFCY2mj2cYSO
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Just out of curiosity, I know one can generate cover letter from branch 
+description with git branch --edit-description and git format-patch 
+--cover-from-description= , but is there something to automatically fill 
+in the merge base (I assume that's what you want) ?
 
-On Mon, Jun 03, 2024 at 06:28:16PM +0500, Muhammad Usama Anjum wrote:
-
-> gcc pac.c /pauth/pac_corruptor.o /pauth/helper.o -o /pauth/pac -Wall -O2 =
--g
-> -I/linux_mainline/tools/testing/selftests/  -I/linux_mainline/tools/inclu=
-de
-> -mbranch-protection=3Dpac-ret  -march=3Darmv8.2-a
-> In file included from pac.c:13:
-> ../../kselftest_harness.h: In function =E2=80=98clone3_vfork=E2=80=99:
-> ../../kselftest_harness.h:88:9: error: variable =E2=80=98args=E2=80=99 ha=
-s initializer but
-> incomplete type
->    88 |  struct clone_args args =3D {
-
-This is in the generic code.
-
->   CC       check_prctl
-> check_prctl.c: In function =E2=80=98set_tagged_addr_ctrl=E2=80=99:
-> check_prctl.c:19:14: error: =E2=80=98PR_SET_TAGGED_ADDR_CTRL=E2=80=99 und=
-eclared (first use
-> in this function)
->    19 |  ret =3D prctl(PR_SET_TAGGED_ADDR_CTRL, val, 0, 0, 0);
->=20
-> gcc -mbranch-protection=3Dstandard -DBTI=3D1 -ffreestanding -Wall -Wextra=
- -Wall
-> -O2 -g -I/linux_mainline/tools/testing/selftests/
-> -I/linux_mainline/tools/include  -c -o /bti/test-bti.o test.c
-> test.c: In function =E2=80=98handler=E2=80=99:
-> test.c:85:50: error: =E2=80=98PSR_BTYPE_MASK=E2=80=99 undeclared (first u=
-se in this
-> function); did you mean =E2=80=98PSR_MODE_MASK=E2=80=99?
->    85 |  write(1, &"00011011"[((uc->uc_mcontext.pstate & PSR_BTYPE_MASK)
-
-> I've GCC 8 installed. I'm not expecting the errors because of a little
-> older compiler. Any more ideas about the failures?
-
-You need to run headers_install IIRC.
-
---JaJbRFCY2mj2cYSO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZdxc4ACgkQJNaLcl1U
-h9CX0Qf/Zvgw13gwuY/rn/A9JCGMEvZQENQvG2gs7AyeyVI1tJgGrnfQKXnC9Vte
-L9E8XcfKTAVUag5e/xS4t5rDzfhZGvL7G8ytI64qnhhDZziOfC8HOYuQIaYruhv+
-5ISO5+OxLWRH7LXtO82kif/ObWplhQrIf4Uq0f7TYPuDY33Jpmk/RuHdngTuDrpO
-7QrR8DpZdQMna0f+AQghbXj4ngq89mqBdocktgBFDMf+2qRhnZHU2eJzkKUq88hS
-+AnlPu18DHYYJsoiqE2ucE3r20r5FtXq0n6YIYcN4HkUMzc9Lo/aIibymG5k97Q1
-Nx/7csNI46dhALHilBw1nU2FRJwDLw==
-=pVuw
------END PGP SIGNATURE-----
-
---JaJbRFCY2mj2cYSO--
+Or are you looking for git send-email --subject-prefix="net-next,PATCH" 
+to fill in the net/net-next subject prefix ?
 
