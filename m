@@ -1,420 +1,227 @@
-Return-Path: <linux-kernel+bounces-199502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E908D87CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:20:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC7F8D87CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7731F233A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65CE7285E35
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBFE136E13;
-	Mon,  3 Jun 2024 17:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6F2136E3F;
+	Mon,  3 Jun 2024 17:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ovApsCAl"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2053.outbound.protection.outlook.com [40.107.243.53])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="ur2g7t4c"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2086.outbound.protection.outlook.com [40.107.255.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0391366;
-	Mon,  3 Jun 2024 17:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D401366;
+	Mon,  3 Jun 2024 17:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435217; cv=fail; b=k1qh2HJV+evzbwRYuZaHx/buA1Y1AF1n7CbPZCQ94V4l9lviY+jgiVjkrAOrWiFFM2UxPMpX3RaitDCMnZ+thFehT/3sK7+hBYq/qMy3ZdL+h+fRW0caJSQ+icqCekIMLbnttq7QM2vspELOnLx8Wve+6Jq/6hSlG9XY/M9TTmc=
+	t=1717435315; cv=fail; b=kqoSE+uuoSLs4rUcwNSAnMPXRtalLfSqgLOsoptHRlx3fjT73gy2Uq6SDkVmXi/Wu+YWQZrsWdPOUpejObjCX1kNC/yNRA2kamGEV7I8sKsAeYl22G8aBkzlE92TeHkcibo9I6q1ChGfn2d+vGBqIa5exlI1A5evBMQizOnuXK0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435217; c=relaxed/simple;
-	bh=NOuGWUEomH1uVsYBAzov6xKOyFhpEFC9JkCFvR4UK+I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YEpmOUJZC24VCHTpeQlnQC1AQIMfcigIDGyaze1TivR8nDnSieevyn6JE6vf90MofTgJgUjDktPDXhK3IGNnCZqSFTDqHNX+vV/+uuAaL7/AkDikf46ksncv9bHyhDsqsLtzqNNq2O/nSL2sJuRlSUOJBh9c7Ko21YogPNguNYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ovApsCAl; arc=fail smtp.client-ip=40.107.243.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1717435315; c=relaxed/simple;
+	bh=M+6B3FJf9LMYJRsNV0UEY98hXGAb7HmQt5g62ixIPsc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OS4tK7wmx3q/Weyq+sBymZ1pLlujwC2j5F58eeVl4u3Kc50FFzoU4uf97nVX7k/jAsHx8EFZ3pR6+KGZxyjO5iArt7B2mB/pSg3PaQs6cTscMgHZ+W2cwXgAkzh2lTw8Fus1EATYeaKVfPDV6ZVAtKY+qRumSvTAqQ+2KqIZnX4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=ur2g7t4c; arc=fail smtp.client-ip=40.107.255.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nPUa5xiJZnwo22galkYRrhhhlfP1skP/JEchxJ+DMvgceCoWurjZoBn4pMhqpQPg7h1lxCjubb43xyaEtA/cVHQ7Yg0nJhcK4Kvd1bCW1JRd7KQ5d31LzjSt+zoghgwgG6V+oE8pjf6JeH/WNnapXg+lOx9bh6REyPEkB53zuHw2jR2SAkd7y2GMOK5NZJZZ/QdlYpSkS39FB47IibxCSivebCyz0/hPz+Dflucg78HxpbDtrXzL2hR4Q+t4kzXLooFfxedf4sEKGZqBMtyYNgOJ+kKYRdNy1J/Fitf04vZF213peaz+SOtipOelc6gxHQVJ5xDAJ81T7yIR5C+gpw==
+ b=idvHuX358MpsPkIcOtjmop/fd2jzI2fNNxMhSTx7i1G0BrmigpJG+pYamRQFX5Ly3GI/kEs4J74g0S08vYI0l81G/CrreFKTRaZnF+rCSxvLye+O4xBLroftiFyz9BEF9CmnHHCbE+Bi2c9muL88sVsgm9VGOYnOO2GCMbcwOrXMAl4tzDJWfibHOqFyS+uduftbIsviE/zXmGh6DOZ4priX5KvaNRtHzj91X+mZkwBEETx66XKMgNfDtSb60/Bt+aq2Zpy+Nb7N9a0CLB41KNPOEkJ7cKBhD11V3MftDoPPXvBUoukYW7rVl30KRoyNr++923Eun9QXyiFlK9QZbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ckTC9QEXFNWGn6HgXrxthk26+6Gnxz0KNk4xuzTWRG4=;
- b=LF+lNOsU6gtxHpAC9DxeLu5P94UxNhAHaGm+IpdI7m/PV3X0ydRPi6A01volAs0ZtPmTqdds9zcsx28G5Sx8fvloUxGlWqtkGDBfet5rcMPRfY9IriHIfCHQOhYIIpqnIG+b+D3KTHTJoAFcA82UGdIyZ3me8gom/1lA6wlnZvVwIKQDQoSQzjDxz9+/FRc295BhCGJmPUPaiA98RrU5z1sTD8bLfKs1Lk9uyFRGdh+SDT1m9Hj9Bj+k2VfWEU+365WSzfwYFxmRTejVjNXJFPsj9HYL0AJc6VKVoQlVGCGSi67RFAn1j0Ky5zrkpCs4xHdXDa2mOMMIazHuwF26JQ==
+ bh=o8IQFPnM4F3yz329uWH6fg+C6coLIJSr27xrEvHGXFk=;
+ b=k8AbVY1yPw1KJVPXhZLWmAnHgDgAV20XlzcERXm1TC6kYPQaWjDDuuxSGBjnYIcewiCGzy9t0BbSqoNMJXa2yoptePWGbHLlF1OQsac/kAKnWf1WesHVsILC5U6kpVsqvgKCtjh2lc72FavjWBHbvyxrVk69ylpFZFJ3uCGpaZiUCVtNjS6GDkeWBBpSdUvIIOIJ3OGIQ+GNiNLdIMoZ4+EwM3shQk0ywMp7NC1KiwRnwzO7UJP1Mbwp9GtDHkFXVvhPeR2EOmLvH5CpH8RnZybbLsQ63O1aKXTlLmQauKQtlxSCYc7hkZLVTDYGkYURyr6mrjETcYVNu3NuCvDnKg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ 58.252.5.68) smtp.rcpttodomain=google.com smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
  dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ckTC9QEXFNWGn6HgXrxthk26+6Gnxz0KNk4xuzTWRG4=;
- b=ovApsCAlYczXgNllUewdIAJEFHiaETuKzc1gH4Zfyb3u8/4DuIB7SuO/P0MlnlQEV5UzpXxwHDJI9M/ZvjKyw9CTXD8PSXaequGK6D/pzyxVkhdZFfgq4sqbOHi5LgqaiVwKNJ7wLkdjcUxBrOhS22icpDjPhE9lws7Un3srhhI=
-Received: from SA9PR13CA0075.namprd13.prod.outlook.com (2603:10b6:806:23::20)
- by CY8PR12MB7561.namprd12.prod.outlook.com (2603:10b6:930:94::22) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=o8IQFPnM4F3yz329uWH6fg+C6coLIJSr27xrEvHGXFk=;
+ b=ur2g7t4cJJocOVVxtVZuXc6wUpk55qZ4UTA5t/hZhBQGmklnO+FoO0mHHUvdFRKdLvMCQMT86dnn8wAXoQfVQOyICBo7/vwUo9NNMey8dWnmlqAWwIbKbWa3rwJ6HPx4AsCm7V5phq/jC1yKXkUZXWpXhGV4LpjZBm9MqOKmt88=
+Received: from SG2PR01CA0188.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::10) by KL1PR02MB6627.apcprd02.prod.outlook.com
+ (2603:1096:820:112::5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Mon, 3 Jun
- 2024 17:20:13 +0000
-Received: from SA2PEPF000015CD.namprd03.prod.outlook.com
- (2603:10b6:806:23:cafe::ac) by SA9PR13CA0075.outlook.office365.com
- (2603:10b6:806:23::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.15 via Frontend
- Transport; Mon, 3 Jun 2024 17:20:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF000015CD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ 2024 17:21:50 +0000
+Received: from SG1PEPF000082E2.apcprd02.prod.outlook.com
+ (2603:1096:4:189:cafe::83) by SG2PR01CA0188.outlook.office365.com
+ (2603:1096:4:189::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.30 via Frontend
+ Transport; Mon, 3 Jun 2024 17:21:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ SG1PEPF000082E2.mail.protection.outlook.com (10.167.240.5) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Mon, 3 Jun 2024 17:20:13 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 3 Jun
- 2024 12:20:12 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 3 Jun 2024 12:20:12 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Tanmay Shah" <tanmay.shah@amd.com>
-Subject: [PATCH v3] drivers: remoteproc: xlnx: add attach detach support
-Date: Mon, 3 Jun 2024 10:19:51 -0700
-Message-ID: <20240603171951.905905-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.37.6
+ 15.20.7633.15 via Frontend Transport; Mon, 3 Jun 2024 17:21:49 +0000
+Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 4 Jun
+ 2024 01:21:49 +0800
+Date: Tue, 4 Jun 2024 01:21:48 +0800
+From: Hailong Liu <hailong.liu@oppo.com>
+To: John Stultz <jstultz@google.com>
+CC: Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?=
+	<christian.koenig@amd.com>, <21cnbao@gmail.com>,
+	<linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v1] dma-buf: heaps: move the verification of
+ heap_flags to the corresponding heap
+Message-ID: <20240603172148.gb7txpg2ya43jyxn@oppo.com>
+References: <20240603114008.16235-1-hailong.liu@oppo.com>
+ <CANDhNCq50zPB+TS+_Oo0HY0aUuBAdik2KrC8eJRTygbis293sw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
+In-Reply-To: <CANDhNCq50zPB+TS+_Oo0HY0aUuBAdik2KrC8eJRTygbis293sw@mail.gmail.com>
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
+ (172.16.56.198)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CD:EE_|CY8PR12MB7561:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5a7c61ab-d851-49e2-1044-08dc83f16dbb
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E2:EE_|KL1PR02MB6627:EE_
+X-MS-Office365-Filtering-Correlation-Id: fee480b1-7dfa-449c-3053-08dc83f1a771
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|1800799015|36860700004|82310400017;
+	BCL:0;ARA:13230031|82310400017|7416005|36860700004|376005|1800799015;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?38KE+0eo8aIoTPJc76zsa5G9RZx/ibsYZ1FUfDlHxqkZEBwDOIvbZc9INVHX?=
- =?us-ascii?Q?Zk6BdLexPEFXcjHm6OoRNxSWsm5OeDGzZyaWdq4Q7y62sDy1dM+l3qsyVSAA?=
- =?us-ascii?Q?IgZAGde92OfN8eavcmUNmsV6f/c8RMoAcf75iqZPwAPMhn9BT9Sbj5caKll8?=
- =?us-ascii?Q?iPUxje4fWYf3BE6ubbi/UAdavPt62/K5oaDXod+7Htkk2VubLAeYZYvXLCHa?=
- =?us-ascii?Q?5tl0PElvIRd0e/dqtJ19J1zeMJ1FpWdlDJr3R81wF8wNHKzQRsDjsgQLNtFm?=
- =?us-ascii?Q?EjwIUf0qFO7ZN7dzFCxO9bMK02XzujV+sh52jaGefU+TD8lR2EZXByZdmxjs?=
- =?us-ascii?Q?BRYb07tJOOUhXsJXN1UF9nOilMtV8TQHJ56T/c87nv2ROcniiPjHHyGl6eaZ?=
- =?us-ascii?Q?nqqrl+ZGR19GEgCYcSVqa+ss2NIsxrUASwv8iEj/WSPXFtmlDsPH9yQ0Lxti?=
- =?us-ascii?Q?BXwcVxC4VXMP6BR1FdvvcENZjoKPBmZYhTUCvQh6WYe1azOpMszC6t7ma0hM?=
- =?us-ascii?Q?D5xT/oqEnKEfwJ2sp9W8uMF2zgfhckZjn6BQx33kfyXn6GGuJki5GpJpUcwW?=
- =?us-ascii?Q?tgpRLTMTehhvivv370q3B7x/vtxO6GxH7cVcc+Tlnugq+9PGr3XfcIoslQlR?=
- =?us-ascii?Q?IDsqPEVCLc+uuCiLjlPfnwnVW/LH3jPO8GkHfOc1op0rqt6TJg334EXEsv9z?=
- =?us-ascii?Q?fEKuB0+aaoSbmO1rYmfpuK9Z+dO6Q7ZggeJSgbi02F6BMPGWMAnGrEC5H7lT?=
- =?us-ascii?Q?mZWAV7RAPwriG+1YpHM2yZ5OeKDftk0PgJdEeeDJtM7GAW2gu4n81ap9dXKf?=
- =?us-ascii?Q?CJANvkgVvc3XSLcSSC2ilg5544n4KBLA8CqLnJh4+mCrlKgZ2wMNyZ39lAWv?=
- =?us-ascii?Q?xZzRB0DMJ9BjDpeWSA8S6UPbI1YsNr7vuZk/izN0YZOMYfYpxA3q7dfaLJDb?=
- =?us-ascii?Q?h5ae68ihit2r8oD7rGTwjAumgrVSt9d+0oldOec8+JcIhianQuhAlmfpTHcF?=
- =?us-ascii?Q?x+itZSctMKuNSwLCFhP4zWfXFQMn3bJrBeZlxaZKQ7dcf6WDVxouotiV90Mu?=
- =?us-ascii?Q?ONsLmeM+PCu9XNuYhg6LhzXyKirZOZm08ly+7vzpqSLJ6ygiLgk/PYF4g1ft?=
- =?us-ascii?Q?lKkOdnLZ+YM3+sw9EqrShDl1OpLejTo0VIAyB+g4SuNOL25PssSuD4dc4Pf7?=
- =?us-ascii?Q?foSCN2TjuM6pO8CLEXwGfsSdpBzVI57uY5cIJhAhaiRx2cuhktZ68ltjAVR2?=
- =?us-ascii?Q?GjDsjjx7taf+bfb5i4MA1rBwU+BhfjtoDo7lZUJiLEAJ64YYBh/uLYi9AKv9?=
- =?us-ascii?Q?Osx/Kq6gcePLr/1PHlxLUFFeWdQEgCboM81ir3JvKb9D7zO4ZTyxm/Ncxx0L?=
- =?us-ascii?Q?Foo5Ue6qCNV4gZEpqckmrx5A80IF?=
+	=?utf-8?B?MWRxbStURit3bWU5VDA2MW15Vk1nbGtpYXJ0cEx2ZFIrWDNKaERwT1R1R0pJ?=
+ =?utf-8?B?cDFjVWI1eXk0eDlGSmpzQm9HZlNmellXZmE1cVJvcnRTN05JRUZXMlQ0Z2xO?=
+ =?utf-8?B?QnIrMWVKNTJNZ1ZKZjZvdzJhN0RMUU5YY0gydnNHWUV0Mm9kSGdqeHlwU0tH?=
+ =?utf-8?B?TC9ZRnJFR1BOeUhmajVKVkl5S1BmQUxIQkRuMXNWR2dPeTYwb1pUZUN3MnBD?=
+ =?utf-8?B?cjJUUFBvTEdvMlNjY3M4emMzckN0VVRyMyt3RjFmK2lIaVQxckFWKzJ6RVJu?=
+ =?utf-8?B?Z2RWV2w3L0l6ZEt1MSt3WThGRHdZdDVQZkdhVVFjZm1SNEdSalYxajNxcERO?=
+ =?utf-8?B?ZFJobW5UTzJxUVcwL3NGaWpZTS9Dc3RWeGhLTlcxOFNxUyt0cE96NWJqZVdh?=
+ =?utf-8?B?dXVHaXhTNGljc0RvdUU4NkRPWXFRUTNlSGFDQkNIcjc2dllPNkt4c3p0c3J3?=
+ =?utf-8?B?YkZsa0F2elN1a21ZNUpTOEV1dGJEaktDV0NPRmQ0cUhMRVRTallHT3V0TjYw?=
+ =?utf-8?B?eGpQUnpHRXR0c0hPMEROTjgrZUhQUDhYU2hsNUY4MXBWd3J0K0c5ejlzMHhS?=
+ =?utf-8?B?TG54OCtROVRBSm9wOW0vYTUvVFlzeFQzNjNuNkFTSmNSSVdGc0ZwSjhDZlBX?=
+ =?utf-8?B?bHYxbC9BMkl2dUtoc3k5NFJZVFIxRHoxS3lUSVc2N1ZtOHdEZDUvdFVtTHc4?=
+ =?utf-8?B?d0xKL0VvdlNyRzExTVFzVzN1OXBTdWJUV3NPTi9Ka3d3Q3g0YUJ2dTlMSmIy?=
+ =?utf-8?B?aVI5MnhuS1pPWnYrV2ZLaCs2bWk0OEh4d2hvdTR1Q0hyZ05ORW96WElPZVIv?=
+ =?utf-8?B?My9lRnQ1czhBRTNxZXpaRE1nTER3WXdjenFPR1JPRUd4ck4wVHV5OVRwZzc1?=
+ =?utf-8?B?ZENjdzJwdnU4VVEvQ3MzTWZxZUYvZndmdklzaXdScmROdTlRSEo4VVZYUkFO?=
+ =?utf-8?B?cjRHQWFDZitiM21WSnRBbW1EWnU3VVhyU3dTSFVjeUEwd2lFN1RHNi9WWTQr?=
+ =?utf-8?B?dlNIbUFFTW5PMDYrVHo1NDJtRzI5b2FicHVCbnNaRHlDbXpWUmx4aWZoeDVG?=
+ =?utf-8?B?c2FMbHlwUXRFTTNXUG1ycitQVTlXMjR0aEd4SEY5WThZNjVhMDE5U0FYYWJy?=
+ =?utf-8?B?Tjd1WVphTW5tdDBjYktKKzRycGlQSm5RUy9GbnlTdUl4dWZDbEpqV2lmNEFa?=
+ =?utf-8?B?VEduZit3MzhIbGk1Nk5JeVVEL1N6eVk2OGFFODdRalAvSUhpVkdub0NmSml2?=
+ =?utf-8?B?S2I5NzFYNUkzaVVRV3hXNDJJSjlhN3BaMFM1OXM0UWczZjBRZ2tqSVRYOEtH?=
+ =?utf-8?B?clpzZmJ6WE9PbjkyY3NiTmpNSHpvc0hBQnQ5VWlXLzcwZU9hWERVY3dOSFlS?=
+ =?utf-8?B?Qko5ckpKYW9pdDE2VlJLaG4yZG5kTU9HejBOU2Z3dUpZS2hjOEJ5VGhKcG5u?=
+ =?utf-8?B?RDdrOWtvV3g5TzVSdS9GRWFjRkVkcC9URVAwMEh0M0JwenZPeUo5T2p0ZmhY?=
+ =?utf-8?B?UlNtaC9peUZtOE1VVDlHK0ZZUndONXd1dkUrTFRTU3hsakE0SS9tNWxTL2E5?=
+ =?utf-8?B?eVh4TVF5Zy80eHNqeDdQT3kyYTlyd21XOWM0Nyt0VHRQMndzY1JxMXZmTEwx?=
+ =?utf-8?B?M1JjUTFOQXJpUGxNTW1oSE14SW40cEJCVTBnQ2JlbjA3c2hsSmxlVkZ3aElG?=
+ =?utf-8?B?ajV4T2JJNTlPdzhNRE0zWHBHdStPNlplTDdpMzU1L0RYaFZVRGk4Sm1sSHB6?=
+ =?utf-8?B?eklqL1lmZk53SXFqUkd6MGJxT1pQSWQ4dVRabXNBTzNFUVBwaTdGYjdkbGRF?=
+ =?utf-8?B?Nm1yQThTT3hJVmxYUTZ6enprV0g5c1JEZ2drVFFBYTcrSTdnS1k2Y3dhVUxC?=
+ =?utf-8?Q?ThFJOzIK539Vo?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(1800799015)(36860700004)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 17:20:13.0631
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(7416005)(36860700004)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 17:21:49.8244
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a7c61ab-d851-49e2-1044-08dc83f16dbb
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: fee480b1-7dfa-449c-3053-08dc83f1a771
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CD.namprd03.prod.outlook.com
+	SG1PEPF000082E2.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7561
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6627
 
-It is possible that remote processor is already running before
-linux boot or remoteproc platform driver probe. Implement required
-remoteproc framework ops to provide resource table address and
-connect or disconnect with remote processor in such case.
+On Mon, 03. Jun 09:01, John Stultz wrote:
+> On Mon, Jun 3, 2024 at 4:40 AM <hailong.liu@oppo.com> wrote:
+> >
+> > From: "Hailong.Liu" <hailong.liu@oppo.com>
+> >
+> > This help module use heap_flags to determine the type of dma-buf,
+> > so that some mechanisms can be used to speed up allocation, such as
+> > memory_pool, to optimize the allocation time of dma-buf.
+>
+> This feels like it's trying to introduce heap specific flags, but
+> doesn't introduce any details about what those flags might be?
+>
+> This seems like it would re-allow the old opaque vendor specific heap
+> flags that we saw in the ION days, which was problematic as different
+> userspaces would use the same interface with potentially colliding
+> heap flags with different meanings. Resulting in no way to properly
+> move to an upstream solution.
+>
+> With the dma-heaps interface, we're trying to make sure it is well
+> defined. One can register a number of heaps with different behaviors,
+> and the heap name is used to differentiate the behavior. Any flags
+> introduced will need to be well defined and behaviorally consistent
+> between heaps. That way when an upstream solution lands, if necessary
+> we can provide backwards compatibility via symlinks.
+>
+> So I don't think this is a good direction to go for dma-heaps.
+>
+> It would be better if you were able to clarify what flag requirements
+> you need, so we can better understand how they might apply to other
+> heaps, and see if it was something we would want to define as a flag
+> (see the discussion here for similar thoughts:
+> https://lore.kernel.org/lkml/CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com/
+> )
+>
+> But if your vendor heap really needs some sort of flags argument that
+> you can't generalize, you can always implement your own dmabuf
+> exporter driver with whatever ioctl interface you'd prefer.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+Thanks for your reply. Let’s continue our discussion here instead
+of on android-review. We aim to enhance memory allocation on each
+all heaps. Your pointer towards heap_flags used in /dev/ion for heap
+identification was helpful.
 
-Changes in v3:
+We now aim to improve priority dma-buf allocation. Consider android
+animations scene:
 
-- Drop SRAM patch from the series
-- Change type from "struct resource_table *" to void __iomem *
-- Change comment format from /** to /*
-- Remove unmap of resource table va address during detach, allowing
-  attach-detach-reattach use case.
-- Unmap rsc_data_va after retrieving resource table data structure.
-- Unmap resource table va during driver remove op
+when device is in low memory, Allocating dma-buf as animation
+buffers enter direct_reclaimation, longer allocation time result in a
+laggy UI. But if we know the usage of the dma-buf, we can use some
+mechanisms to boost, e.g. animation-memory-pool.
 
-Changes in v2:
+However, dma-buf usage identification becomes a challenge. A potential
+solution could be heap_flags. the use of heap_flags seems ugly and
+contrary to the intended design as you said, How aboult extending
+dma_heap_allocation_data as follows?
 
-  - Fix typecast warnings reported using sparse tool.
-  - Fix following sparse warnings:
+struct dma_heap_allocation_data {
+	__u64 len;
+	__u32 fd;
+	__u32 fd_flags;
+	__u64 heap_flags;
+	__u64 buf_flags: // buf usage
+};
 
-drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse: warning: incorrect type in assignment (different address spaces)
-drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse: warning: incorrect type in assignment (different address spaces)
-drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse: warning: incorrect type in argument 1 (different address spaces)
----
- drivers/remoteproc/xlnx_r5_remoteproc.c | 173 +++++++++++++++++++++++-
- 1 file changed, 169 insertions(+), 4 deletions(-)
+Do you have any better suggestion?
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 84243d1dff9f..6898d4761566 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -25,6 +25,10 @@
- /* RX mailbox client buffer max length */
- #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
- 				 sizeof(struct zynqmp_ipi_message))
-+
-+#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
-+				 (uint32_t)'m' << 8 | (uint32_t)'p')
-+
- /*
-  * settings for RPU cluster mode which
-  * reflects possible values of xlnx,cluster-mode dt-property
-@@ -73,6 +77,26 @@ struct mbox_info {
- 	struct mbox_chan *rx_chan;
- };
- 
-+/**
-+ * struct rsc_tbl_data
-+ *
-+ * Platform specific data structure used to sync resource table address.
-+ * It's important to maintain order and size of each field on remote side.
-+ *
-+ * @version: version of data structure
-+ * @magic_num: 32-bit magic number.
-+ * @comp_magic_num: complement of above magic number
-+ * @rsc_tbl_size: resource table size
-+ * @rsc_tbl: resource table address
-+ */
-+struct rsc_tbl_data {
-+	const int version;
-+	const u32 magic_num;
-+	const u32 comp_magic_num;
-+	const u32 rsc_tbl_size;
-+	const uintptr_t rsc_tbl;
-+} __packed;
-+
- /*
-  * Hardcoded TCM bank values. This will stay in driver to maintain backward
-  * compatibility with device-tree that does not have TCM information.
-@@ -95,20 +119,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
- /**
-  * struct zynqmp_r5_core
-  *
-+ * @rsc_tbl_va: resource table virtual address
-  * @dev: device of RPU instance
-  * @np: device node of RPU instance
-  * @tcm_bank_count: number TCM banks accessible to this RPU
-  * @tcm_banks: array of each TCM bank data
-  * @rproc: rproc handle
-+ * @rsc_tbl_size: resource table size retrieved from remote
-  * @pm_domain_id: RPU CPU power domain id
-  * @ipi: pointer to mailbox information
-  */
- struct zynqmp_r5_core {
-+	void __iomem *rsc_tbl_va;
- 	struct device *dev;
- 	struct device_node *np;
- 	int tcm_bank_count;
- 	struct mem_bank_data **tcm_banks;
- 	struct rproc *rproc;
-+	u32 rsc_tbl_size;
- 	u32 pm_domain_id;
- 	struct mbox_info *ipi;
- };
-@@ -621,10 +649,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
- {
- 	int ret;
- 
--	ret = add_tcm_banks(rproc);
--	if (ret) {
--		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
--		return ret;
-+	/*
-+	 * For attach/detach use case, Firmware is already loaded so
-+	 * TCM isn't really needed at all. Also, for security TCM can be
-+	 * locked in such case and linux may not have access at all.
-+	 * So avoid adding TCM banks. TCM power-domains requested during attach
-+	 * callback.
-+	 */
-+	if (rproc->state != RPROC_DETACHED) {
-+		ret = add_tcm_banks(rproc);
-+		if (ret) {
-+			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-+			return ret;
-+		}
- 	}
- 
- 	ret = add_mem_regions_carveout(rproc);
-@@ -662,6 +699,120 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
- 	return 0;
- }
- 
-+static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
-+							     size_t *size)
-+{
-+	struct zynqmp_r5_core *r5_core;
-+
-+	r5_core = rproc->priv;
-+
-+	*size = r5_core->rsc_tbl_size;
-+
-+	return (struct resource_table *)r5_core->rsc_tbl_va;
-+}
-+
-+static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-+{
-+	struct resource_table *rsc_tbl_addr;
-+	struct device *dev = r5_core->dev;
-+	struct rsc_tbl_data *rsc_data_va;
-+	struct resource res_mem;
-+	struct device_node *np;
-+	int ret;
-+
-+	/*
-+	 * It is expected from remote processor firmware to provide resource
-+	 * table address via struct rsc_tbl_data data structure.
-+	 * Start address of first entry under "memory-region" property list
-+	 * contains that data structure which holds resource table address, size
-+	 * and some magic number to validate correct resource table entry.
-+	 */
-+	np = of_parse_phandle(r5_core->np, "memory-region", 0);
-+	if (!np) {
-+		dev_err(dev, "failed to get memory region dev node\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_address_to_resource(np, 0, &res_mem);
-+	if (ret) {
-+		dev_err(dev, "failed to get memory-region resource addr\n");
-+		return -EINVAL;
-+	}
-+
-+	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
-+							sizeof(struct rsc_tbl_data));
-+	if (!rsc_data_va) {
-+		dev_err(dev, "failed to map resource table data address\n");
-+		return -EIO;
-+	}
-+
-+	/*
-+	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
-+	 * do not consider resource table address valid and don't attach
-+	 */
-+	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
-+	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
-+		dev_dbg(dev, "invalid magic number, won't attach\n");
-+		return -EINVAL;
-+	}
-+
-+	r5_core->rsc_tbl_va = ioremap_wc(rsc_data_va->rsc_tbl,
-+					 rsc_data_va->rsc_tbl_size);
-+	if (!r5_core->rsc_tbl_va) {
-+		dev_err(dev, "failed to get resource table va\n");
-+		return -EINVAL;
-+	}
-+
-+	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
-+
-+	/*
-+	 * As of now resource table version 1 is expected. Don't fail to attach
-+	 * but warn users about it.
-+	 */
-+	if (rsc_tbl_addr->ver != 1)
-+		dev_warn(dev, "unexpected resource table version %d\n",
-+			 rsc_tbl_addr->ver);
-+
-+	iounmap((void __iomem *)rsc_data_va);
-+	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
-+
-+	return 0;
-+}
-+
-+static int zynqmp_r5_attach(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	int i, pm_domain_id, ret;
-+
-+	/*
-+	 * Firmware is loaded in TCM. Request TCM power domains to notify
-+	 * platform management controller that TCM is in use. This will be
-+	 * released during unprepare callback.
-+	 */
-+	for (i = 0; i < r5_core->tcm_bank_count; i++) {
-+		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-+		ret = zynqmp_pm_request_node(pm_domain_id,
-+					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-+					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-+		if (ret < 0)
-+			pr_warn("TCM %d can't be requested\n", i);
-+	}
-+
-+	return 0;
-+}
-+
-+static int zynqmp_r5_detach(struct rproc *rproc)
-+{
-+	/*
-+	 * Generate last notification to remote after clearing virtio flag.
-+	 * Remote can avoid polling on virtio reset flag if kick is generated
-+	 * during detach by host and check virtio reset flag on kick interrupt.
-+	 */
-+	zynqmp_r5_rproc_kick(rproc, 0);
-+
-+	return 0;
-+}
-+
- static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.prepare	= zynqmp_r5_rproc_prepare,
- 	.unprepare	= zynqmp_r5_rproc_unprepare,
-@@ -673,6 +824,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- 	.kick		= zynqmp_r5_rproc_kick,
-+	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
-+	.attach		= zynqmp_r5_attach,
-+	.detach		= zynqmp_r5_detach,
- };
- 
- /**
-@@ -723,6 +877,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 		goto free_rproc;
- 	}
- 
-+	/*
-+	 * Move rproc state to DETACHED to give one time opportunity to attach
-+	 * if firmware is already available in the memory. This can happen if
-+	 * firmware is loaded via debugger or by any other agent in the system.
-+	 * If firmware isn't available in the memory and resource table isn't found,
-+	 * then rproc state stay OFFLINE.
-+	 */
-+	if (!zynqmp_r5_get_rsc_table_va(r5_core))
-+		r5_rproc->state = RPROC_DETACHED;
-+
- 	r5_core->rproc = r5_rproc;
- 	return r5_core;
- 
-@@ -1134,6 +1298,7 @@ static void zynqmp_r5_cluster_exit(void *data)
- 	for (i = 0; i < cluster->core_count; i++) {
- 		r5_core = cluster->r5_cores[i];
- 		zynqmp_r5_free_mbox(r5_core->ipi);
-+		iounmap(r5_core->rsc_tbl_va);
- 		of_reserved_mem_device_release(r5_core->dev);
- 		put_device(r5_core->dev);
- 		rproc_del(r5_core->rproc);
+>
+> thanks
+> -john
 
-base-commit: d7faf9a16886a748c9dd4063ea897f1e68b412f2
--- 
-2.37.6
+--
 
+Best Regards,
+Hailong.
 
