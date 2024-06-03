@@ -1,300 +1,180 @@
-Return-Path: <linux-kernel+bounces-198696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6C38D7C36
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:10:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B198D7C39
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579F51F2153C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7124E28528B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 07:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE0547F45;
-	Mon,  3 Jun 2024 07:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="crukal6q"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EE43C48E;
+	Mon,  3 Jun 2024 07:10:32 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694F447A6C;
-	Mon,  3 Jun 2024 07:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A673B297;
+	Mon,  3 Jun 2024 07:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717398584; cv=none; b=PcoR3GKuXgbmpYdH/OmqV66g6mcfFBuJLULq3aWoTfWmAc2k5j+bXYflVP1HdynzcUsU5Vh4DLeWikP/T8TURLnyReUeaBK+l3AjRur3uDyGiadu/c5MX731CfFgrP7aHaacLcMUtXd2u/40vHPBHy+kJA7gn0Hq9wofV7wzzYA=
+	t=1717398632; cv=none; b=X8dWNl0bnnSj5XaalN7dbHeg0Sm+pevinTu+4i+QdC02ylJLJK3POfIr44o7SpSQkm1z8zEySnDEKfwAl/gwriQy3zmBKAaPZZQDj2bGWrq+FWQr6kEE2/xNCSexcs1hO2XOQz5VRqw5or6ibX9+yjm99ABf3tfbX45VYlAPxS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717398584; c=relaxed/simple;
-	bh=MGKhftAoxpTowHiv0oeOJrpeohaKsDS4/rlu9Zcsyko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feHnvY6H+2WN4HunxOf6wD1jRrQHR9qNQQpiZKs0hX4B/tUHUH/5jyAnx+X9V262rrnk0pK8AqZqxKiaU5gaBDo71z0CsfUjSr7KPEz7mEFtfissKD/J5aXTxQEKZGQ95pYPnqAKjGWps8tPEPqrBYga3ogSF13rvJrC/zlzDus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=crukal6q; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4536kVEl012204;
-	Mon, 3 Jun 2024 07:09:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc : content-type : date
- : from : in-reply-to : message-id : mime-version : references : subject :
- to; s=pp1; bh=PD3QtyIGk6oeWGALWzB54J823YO78nWKEPR6OQkor9w=;
- b=crukal6q3L7fRmamiZViY4nCy7HxPQ1SzJjNWRSIKEvQgM0RavCZLtGi6Tjk27QvF1Nl
- U6i+bJ1DgoXxrjXnnrTD7RiKqxc8aUE2bphiM80b0Ktb30nIDyZY1lERrtvkdwSA1MoO
- G4WgtNXA2+Og8YJ1EIvFMc5yhlmfkq+4ORwlcNwzhbOsOsNrQNXsmPyCYKy0WdJ2dg5+
- sGRWcQxys1k8NYbRk73l+TFcgooXAIlANVg01Ukun/MvJryHlFhQ2gde0yHdmz+86qbJ
- HtEkDJqeMpl9jiR3dza3yf2iifTx5Z91PzVgcnY9pA23pIuSEfVox+qq4lLt1Zofqq6p 7g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yh7pkr7vt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 07:09:26 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45379QPc019761;
-	Mon, 3 Jun 2024 07:09:26 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yh7pkr7vr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 07:09:26 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4535DsRa000781;
-	Mon, 3 Jun 2024 07:09:25 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygdytppc3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 07:09:25 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45379LK451839364
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Jun 2024 07:09:23 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4C3682004F;
-	Mon,  3 Jun 2024 07:09:21 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1FD4B2004E;
-	Mon,  3 Jun 2024 07:09:19 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.204.206.66])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  3 Jun 2024 07:09:18 +0000 (GMT)
-Date: Mon, 3 Jun 2024 12:39:16 +0530
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: mpe@ellerman.id.au, christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
-        naveen.n.rao@linux.ibm.com, corbet@lwn.net,
-        linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v1 RESEND] arch/powerpc/kvm: Fix doorbell emulation by
- adding DPDES support
-Message-ID: <r74chlv6bgs5csvuf4nxxtylmgartvibftp3xuztyfuynqetp5@ythddpzo6yfi>
-References: <20240522084949.123148-1-gautam@linux.ibm.com>
- <D1Q54PY40E3B.22QS5DMQRA58N@gmail.com>
+	s=arc-20240116; t=1717398632; c=relaxed/simple;
+	bh=j9aXwTELLGPGbXulQxflPG1rJKnbAbvE3K4OP3C8uys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CP3uOx5rtQkD9vYg+hNKcsfte4KzddO7cBsCE+al1iZa3nfZ7e2ouwqN8PXRUGbb8M1w5l6uPh+H2DX4cGkvm0/2SD40HscZtoY937OEORn4whoztuYXht/CDiOmWdNqbqCE5DrGuHF+7yruykvSm5qgnLdkY+ypSSzs1mi6m9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a68b41ef3f6so138370466b.1;
+        Mon, 03 Jun 2024 00:10:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717398629; x=1718003429;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aa1bPa/u5cBszkr5yIv73pVk7NzZmNC6oGrBpLcxj3k=;
+        b=FrwT4ezqkXeCskdtTyWM0K6ZjvAaRhodNdJPFbKSzVw8Lium7svuf4uxhgRT8sydVX
+         aV4kHTzlWQ4qI/YiLfFxr1Y+mJtMq73MoKnREq9sbtm4ecxxw5MXatCVKyr3DAVoSneu
+         G1rNMUUm7HRKy/QY/GEi5nYJFhaglR6AxRPT2P+Eaj/TXlm2fMFc1Eapi/73Lyr7JjsX
+         VzN5WIyXZJoADQglOtfgNsdtsOto6wst2USqWR7pCc4sYjHCoZD4kX9ULwG02PraQyJb
+         ek6LlsBXZeIq+n74/3LzP2VdmxZZEXeL5IQG5igKbfBNS3z8KfeM9lFIrA4K5flYlafv
+         pfQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWM47SHPqRmO1JQipvWY7/+0+ya7ks5BOb8EsuG7aRCWDYBxzc/UXuV4+ta1ItwOjffRgE0WxgT4c3Xn2mI9q/07dZVwiWo5xu4gdC1
+X-Gm-Message-State: AOJu0Ywaylav4n7zrtnYN56Jmv+c97HADYpH/VPKd4Uw4ffDVW6LqVts
+	mWpKxBNTHbA/iUk9lD4f6DTz10qnOh7F2GzTSRIWb4RjMF+8lZhS
+X-Google-Smtp-Source: AGHT+IE9W+zhfs5b5nRKuPziS7SDcEIYahat/kFCGBPuODYsf/pve7LGQq43aQQf7nxbzSMM2Vts2A==
+X-Received: by 2002:a17:906:6894:b0:a69:ceb:587 with SMTP id a640c23a62f3a-a690ceb06e2mr98898666b.11.1717398628585;
+        Mon, 03 Jun 2024 00:10:28 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68efe2f1easm205289766b.85.2024.06.03.00.10.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 00:10:27 -0700 (PDT)
+Message-ID: <acfef6bc-08eb-4ab6-b6d4-9ad03c714517@kernel.org>
+Date: Mon, 3 Jun 2024 09:10:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D1Q54PY40E3B.22QS5DMQRA58N@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: uoAnUEoMhWz5bq3pU5HjQOk-GAk36tl3
-X-Proofpoint-GUID: DwVUpsKaAiVwLUFyfEy-lclbLHzjmCl8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_04,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=508 mlxscore=0 clxscore=1015 bulkscore=0 spamscore=0
- adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2406030058
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: drop debugging WARN_ON_ONCE() from uart_write()
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Al Cooper <alcooperx@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+	Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Vineet Gupta <vgupta@kernel.org>,
+	Richard Genoud <richard.genoud@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Baruch Siach <baruch@tkos.co.il>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Neil Armstrong <neil.armstrong@linar.smtp.subspace.kernel.org>
+References: <20240405060826.2521-1-jirislaby@kernel.org>
+ <20240405060826.2521-13-jirislaby@kernel.org>
+ <d775ae2d-a2ac-439e-8e2b-134749f60f30@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <d775ae2d-a2ac-439e-8e2b-134749f60f30@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 03, 2024 at 03:42:22PM GMT, Nicholas Piggin wrote:
-> On Wed May 22, 2024 at 6:49 PM AEST, Gautam Menghani wrote:
-> > Doorbell emulation is broken for KVM on PowerVM guests as support for
-> > DPDES was not added in the initial patch series. Due to this, a KVM on
-> > PowerVM guest cannot be booted with the XICS interrupt controller as
-> > doorbells are to be setup in the initial probe path when using XICS
-> > (pSeries_smp_probe()). Add DPDES support in the host KVM code to fix
-> > doorbell emulation.
+On 28. 05. 24, 17:05, Tetsuo Handa wrote:
+> syzbot is reporting lockdep warning upon
 > 
-> This is broken when the KVM guest has SMT > 1? Or is it broken for SMT=1
-> as well? Can you explain a bit more of what breaks if it's the latter?
+>    int disc = 7;
+>    ioctl(open("/dev/ttyS3", O_RDONLY), TIOCSETD, &disc);
+> 
+> sequence. Do like what commit 5f1149d2f4bf ("serial: drop debugging
+> WARN_ON_ONCE() from uart_put_char()") does.
+> 
+> Reported-by: syzbot+f78380e4eae53c64125c@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=f78380e4eae53c64125c
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-Yes, doorbells are only setup when we use SMT>1 and interrupt controller
-is XICS. So without this patch, L2 KOP guest with XICS IC mode and SMT>1 
-does not boot. SMT 1 is fine in all cases.
+Ugh, definitely:
 
-> 
-> > Fixes: 6ccbbc33f06a ("KVM: PPC: Add helper library for Guest State Buffers")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
-> > ---
-> > v1 -> v1 resend:
-> > 1. Add the stable tag
-> >
-> >  Documentation/arch/powerpc/kvm-nested.rst     |  4 +++-
-> >  arch/powerpc/include/asm/guest-state-buffer.h |  3 ++-
-> >  arch/powerpc/include/asm/kvm_book3s.h         |  1 +
-> >  arch/powerpc/kvm/book3s_hv.c                  | 14 +++++++++++++-
-> >  arch/powerpc/kvm/book3s_hv_nestedv2.c         |  7 +++++++
-> >  arch/powerpc/kvm/test-guest-state-buffer.c    |  2 +-
-> >  6 files changed, 27 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/Documentation/arch/powerpc/kvm-nested.rst b/Documentation/arch/powerpc/kvm-nested.rst
-> > index 630602a8aa00..5defd13cc6c1 100644
-> > --- a/Documentation/arch/powerpc/kvm-nested.rst
-> > +++ b/Documentation/arch/powerpc/kvm-nested.rst
-> > @@ -546,7 +546,9 @@ table information.
-> >  +--------+-------+----+--------+----------------------------------+
-> >  | 0x1052 | 0x08  | RW |   T    | CTRL                             |
-> >  +--------+-------+----+--------+----------------------------------+
-> > -| 0x1053-|       |    |        | Reserved                         |
-> > +| 0x1053 | 0x08  | RW |   T    | DPDES                            |
-> > ++--------+-------+----+--------+----------------------------------+
-> > +| 0x1054-|       |    |        | Reserved                         |
-> >  | 0x1FFF |       |    |        |                                  |
-> >  +--------+-------+----+--------+----------------------------------+
-> >  | 0x2000 | 0x04  | RW |   T    | CR                               |
-> > diff --git a/arch/powerpc/include/asm/guest-state-buffer.h b/arch/powerpc/include/asm/guest-state-buffer.h
-> > index 808149f31576..d107abe1468f 100644
-> > --- a/arch/powerpc/include/asm/guest-state-buffer.h
-> > +++ b/arch/powerpc/include/asm/guest-state-buffer.h
-> > @@ -81,6 +81,7 @@
-> >  #define KVMPPC_GSID_HASHKEYR			0x1050
-> >  #define KVMPPC_GSID_HASHPKEYR			0x1051
-> >  #define KVMPPC_GSID_CTRL			0x1052
-> > +#define KVMPPC_GSID_DPDES			0x1053
-> >  
-> >  #define KVMPPC_GSID_CR				0x2000
-> >  #define KVMPPC_GSID_PIDR			0x2001
-> > @@ -110,7 +111,7 @@
-> >  #define KVMPPC_GSE_META_COUNT (KVMPPC_GSE_META_END - KVMPPC_GSE_META_START + 1)
-> >  
-> >  #define KVMPPC_GSE_DW_REGS_START KVMPPC_GSID_GPR(0)
-> > -#define KVMPPC_GSE_DW_REGS_END KVMPPC_GSID_CTRL
-> > +#define KVMPPC_GSE_DW_REGS_END KVMPPC_GSID_DPDES
-> >  #define KVMPPC_GSE_DW_REGS_COUNT \
-> >  	(KVMPPC_GSE_DW_REGS_END - KVMPPC_GSE_DW_REGS_START + 1)
-> >  
-> > diff --git a/arch/powerpc/include/asm/kvm_book3s.h b/arch/powerpc/include/asm/kvm_book3s.h
-> > index 3e1e2a698c9e..10618622d7ef 100644
-> > --- a/arch/powerpc/include/asm/kvm_book3s.h
-> > +++ b/arch/powerpc/include/asm/kvm_book3s.h
-> > @@ -594,6 +594,7 @@ static inline u##size kvmppc_get_##reg(struct kvm_vcpu *vcpu)		\
-> >  
-> >  
-> >  KVMPPC_BOOK3S_VCORE_ACCESSOR(vtb, 64, KVMPPC_GSID_VTB)
-> > +KVMPPC_BOOK3S_VCORE_ACCESSOR(dpdes, 64, KVMPPC_GSID_DPDES)
-> >  KVMPPC_BOOK3S_VCORE_ACCESSOR_GET(arch_compat, 32, KVMPPC_GSID_LOGICAL_PVR)
-> >  KVMPPC_BOOK3S_VCORE_ACCESSOR_GET(lpcr, 64, KVMPPC_GSID_LPCR)
-> >  KVMPPC_BOOK3S_VCORE_ACCESSOR_SET(tb_offset, 64, KVMPPC_GSID_TB_OFFSET)
-> > diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> > index 35cb014a0c51..cf285e5153ba 100644
-> > --- a/arch/powerpc/kvm/book3s_hv.c
-> > +++ b/arch/powerpc/kvm/book3s_hv.c
-> > @@ -4116,6 +4116,11 @@ static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_limit,
-> >  	int trap;
-> >  	long rc;
-> >  
-> > +	if (vcpu->arch.doorbell_request) {
-> > +		vcpu->arch.doorbell_request = 0;
-> > +		kvmppc_set_dpdes(vcpu, 1);
-> > +	}
-> 
-> This probably looks okay... hmm, is the v1 KVM emulating doorbells
-> correctly for SMT L2 guests? I wonder if doorbell emulation isn't
-> broken there too because the L1 code looks to be passing in vc->dpdes
-> but all the POWER9 emulation code uses doorbell_request.
-> 
+Acked-by: Jiri Slaby <jirislaby@kernel.org>
 
-Yes launching SMT L2 on V1 API fails with a kernel Oops, I'll see if I
-can fix that as well.
+> ---
+> Example is https://syzkaller.appspot.com/text?tag=CrashReport&x=100271ec980000 .
+> But not using this example, for this link will disappear eventually.
+> 
+> By the way, do we want to also guard uart_port_lock'ed section using
+> printk_deferred_enter()/printk_deferred_exit(), for trying to use e.g.
+> WARN_ON() inside such section will result in the same lockdep warning?
+At this point, I don't know the answer.
 
-> > +
-> >  	io = &vcpu->arch.nestedv2_io;
-> >  
-> >  	msr = mfmsr();
-> > @@ -4278,9 +4283,16 @@ static int kvmhv_p9_guest_entry(struct kvm_vcpu *vcpu, u64 time_limit,
-> >  	if (kvmhv_on_pseries()) {
-> >  		if (kvmhv_is_nestedv1())
-> >  			trap = kvmhv_vcpu_entry_p9_nested(vcpu, time_limit, lpcr, tb);
-> > -		else
-> > +		else {
-> >  			trap = kvmhv_vcpu_entry_nestedv2(vcpu, time_limit, lpcr, tb);
-> >  
-> > +			/* Remember doorbell if it is pending  */
-> > +			if (kvmppc_get_dpdes(vcpu)) {
-> > +				vcpu->arch.doorbell_request = 1;
-> > +				kvmppc_set_dpdes(vcpu, 0);
-> > +			}
-> 
-> This is adding an extra get state for every entry, not good. I don't
-> think it's actually needed though. I don't think the L1 cares at this
-> stage what the L2 DPDES state is. So you sholud be able to drop this
-> hunk.
-> 
-Yes ok.
+> --- a/drivers/tty/serial/serial_core.c
+> +++ b/drivers/tty/serial/serial_core.c
+> @@ -622,7 +622,7 @@ static ssize_t uart_write(struct tty_struct *tty, const u8 *buf, size_t count)
+>   		return -EL3HLT;
+>   
+>   	port = uart_port_lock(state, flags);
+> -	if (WARN_ON_ONCE(!state->port.xmit_buf)) {
+> +	if (!state->port.xmit_buf) {
+>   		uart_port_unlock(port, flags);
+>   		return 0;
+>   	}
 
-> > +		}
-> > +
-> >  		/* H_CEDE has to be handled now, not later */
-> >  		if (trap == BOOK3S_INTERRUPT_SYSCALL && !nested &&
-> >  		    kvmppc_get_gpr(vcpu, 3) == H_CEDE) {
-> > diff --git a/arch/powerpc/kvm/book3s_hv_nestedv2.c b/arch/powerpc/kvm/book3s_hv_nestedv2.c
-> > index 8e6f5355f08b..36863fff2a99 100644
-> > --- a/arch/powerpc/kvm/book3s_hv_nestedv2.c
-> > +++ b/arch/powerpc/kvm/book3s_hv_nestedv2.c
-> > @@ -311,6 +311,10 @@ static int gs_msg_ops_vcpu_fill_info(struct kvmppc_gs_buff *gsb,
-> >  			rc = kvmppc_gse_put_u64(gsb, iden,
-> >  						vcpu->arch.vcore->vtb);
-> >  			break;
-> > +		case KVMPPC_GSID_DPDES:
-> > +			rc = kvmppc_gse_put_u64(gsb, iden,
-> > +						vcpu->arch.vcore->dpdes);
-> > +			break;
-> >  		case KVMPPC_GSID_LPCR:
-> >  			rc = kvmppc_gse_put_u64(gsb, iden,
-> >  						vcpu->arch.vcore->lpcr);
-> > @@ -543,6 +547,9 @@ static int gs_msg_ops_vcpu_refresh_info(struct kvmppc_gs_msg *gsm,
-> >  		case KVMPPC_GSID_VTB:
-> >  			vcpu->arch.vcore->vtb = kvmppc_gse_get_u64(gse);
-> >  			break;
-> > +		case KVMPPC_GSID_DPDES:
-> > +			vcpu->arch.vcore->dpdes = kvmppc_gse_get_u64(gse);
-> > +			break;
-> >  		case KVMPPC_GSID_LPCR:
-> >  			vcpu->arch.vcore->lpcr = kvmppc_gse_get_u64(gse);
-> >  			break;
-> 
-> I would split all the wiring up of the DPDES GSID stuff into its own
-> patch, it obviously looks fine.
-> 
-Noted, will do.
+-- 
+js
+suse labs
 
-> > diff --git a/arch/powerpc/kvm/test-guest-state-buffer.c b/arch/powerpc/kvm/test-guest-state-buffer.c
-> > index 4720b8dc8837..91ae660cfe21 100644
-> > --- a/arch/powerpc/kvm/test-guest-state-buffer.c
-> > +++ b/arch/powerpc/kvm/test-guest-state-buffer.c
-> > @@ -151,7 +151,7 @@ static void test_gs_bitmap(struct kunit *test)
-> >  		i++;
-> >  	}
-> >  
-> > -	for (u16 iden = KVMPPC_GSID_GPR(0); iden <= KVMPPC_GSID_CTRL; iden++) {
-> > +	for (u16 iden = KVMPPC_GSID_GPR(0); iden <= KVMPPC_GSID_DPDES; iden++) {
-> >  		kvmppc_gsbm_set(&gsbm, iden);
-> >  		kvmppc_gsbm_set(&gsbm1, iden);
-> >  		KUNIT_EXPECT_TRUE(test, kvmppc_gsbm_test(&gsbm, iden));
-> 
-> It would be good to have a  _LAST define for such loops. It's very easy
-> to miss when adding KVMPPC_GSID_DPDES that you need to grep for
-> KVMPPC_GSID_CTRL. Very easy to see that you need to update _LAST.
-> 
-> You just need to work out a good name for it since there's a few
-> "namespaces" of numbers with similar prefix. Good luck :)
-> 
-
-Well we already have a "KVMPPC_GSE_DW_REGS_END" defined, just missed to
-use that. 
-
-
-> Thanks,
-> Nick
 
