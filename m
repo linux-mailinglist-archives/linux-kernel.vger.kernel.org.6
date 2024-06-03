@@ -1,295 +1,155 @@
-Return-Path: <linux-kernel+bounces-198605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559C38D7AE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:52:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343E58D7AE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890381C2149C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D6B1F21179
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 04:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C0320332;
-	Mon,  3 Jun 2024 04:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73EA1C6BD;
+	Mon,  3 Jun 2024 04:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Z0deRmJz"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gzer7bcA"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A277333D0;
-	Mon,  3 Jun 2024 04:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B8D19E;
+	Mon,  3 Jun 2024 04:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717390323; cv=none; b=ai1R8z1isyBblnkm60waMSU2/ReluwixnBqHIjnkDXb3ob95rzjCyiCyrwR+5XtFkSYh0n4Dm+kRSn4FcBIQGrOOppQGRiQQwO9Qulo0ppgn7jPo171GJI1kp9QLTDqUbf4PQuV7OrTnbrMbyKK8iPtYcMbiRmbESHbczk85vd4=
+	t=1717390544; cv=none; b=cwPEUF8HAFUtXqM7DTCfG4/1366ZksFQKaGI9j+OI9n7bX+BeCr7uFjr2hLbFMluIP3omAXELgfLbA4zu3zc6bxQe5CgREBYtNsfjDjMgrh8s6oRM2iV3F1jX6S6M8WnTiLxhFmKg9TSnmxCdlhSNNidQGN0hmJgNtFTGVABQE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717390323; c=relaxed/simple;
-	bh=rrst0r4IQYykE8BQ78kVOdBfEcAuNNH8aQgRPAmhthM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=QLb7KcRB4uSUY+PcyxpA7l03SagBKfaTcpOrQufuhKWvorDK1k1Xwxy1FEvSt+KCR6fx9X8L3MUYOXu0/6goVNdYsgtF2/mzVOxn8LdlCskg3zYFHsGsTFeSsQ0P+q8tpMXqIZPq55IcY0F7wOkMS2ZZaBcGE5mBdTFarSUABC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Z0deRmJz; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1717390544; c=relaxed/simple;
+	bh=AV2KrnFWAFUsRY9ZYLITcITNmLoIydafWAFTUt+9/Bw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kDpC0nRUNYH3cVACkGPkWuAgyfOTHaMcDwPomDnULRRGKqLVoIut6Xoy2YXC/A+t5hRbhCTjFm6+Q4VU+EiPqaiCYzXOjvYBlZCJbkO07zOBJaMMiyyQYXcWJXWSCeHB/JdrVAIDDNIFs+t6lSxeOICoqD/e56miHAzZMzTphtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gzer7bcA; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c1a99b75d8so2842129a91.3;
+        Sun, 02 Jun 2024 21:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717390542; x=1717995342; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0vgpl2pvD+ZoEuT/KfaO9NrRSypVlYGw9oery+TBtf0=;
+        b=Gzer7bcAU0tgF3wrhGydTV2OYeqTTQhdiyOPXcIpODfGVpfqwe8vfOKwdZtbDP4xMK
+         HVWBnVv8VJVsZy0kq7ROuUBJMJt1zpmNNpGcR9ypA11IORvT4fQiF8RsiWHw5F7AqWiO
+         lGknG9Cd9Yoxx1c6A9Ju8FDfK4FDqy70s87T7Zxq4+jVvwgHsq2/O5bipA+BzZS79lYh
+         c3IsY9naAWLIv5rBFXi1VCJP/uZvmW9RMtMuGu1foSTFoZaToyDzJovgEDSOHxSP5dIZ
+         7XKeyrOFSdsuZqzmajkKua4AJMDWtnmEfGgfh+CG1tEY+VpYXW4Wl9us2CcjNJvH6jtN
+         6fiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717390542; x=1717995342;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0vgpl2pvD+ZoEuT/KfaO9NrRSypVlYGw9oery+TBtf0=;
+        b=HBpFCuwbBe5CJH37QjlAUyTvK6djVcO76OjcTOUWTk9fzEVmvNPwuive838dUo0zQy
+         TBUXvVKwA2nj/RznmfmZatm3O5f7AeP8xv3e4t4PCsgFlyMkPLOew2SJ/mgpCPqSVrCB
+         yVKgH0n4xFmmcIvPgwCIfbrFMW2xlpdCoz1NxksSS9zGiM6athD9TaxjH7mxyO+w/3ma
+         yNNg39zFrDJLXdAi7XYRO4hqPpvs8HU3u1uJilcrBUtvrbEaywP2a7hi0tSdDqQRfvXi
+         mPbA6oTrNVkgjqMa/v45K5DZpLihBeu4R/+ZUdQAfSvcJWV1jLNg4IkrDwiDe+vrFqk4
+         z1AA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS+2zJwjG4xAdiDRNvkT60cergkZJrvPIXdNVXevvXQMn/+6rdzKy+BvpND28U2PAloUp/LDcFa6kSjv40KCx5fVF4KJL18eEDmotehH3O1SWjz34SwByEk2NjlLN5GJjg
+X-Gm-Message-State: AOJu0Yw7n09vpSaRUu9AbL8hBywKIUFFfLwUm2ClM5s7xDeSjPYMEVoD
+	1SJJr2ZH+foqoK4a/Vyal34akt5YyEFrNXvNujKb4l+orjGC8B+q10eKfxsOC9Y6UMizYks/cSA
+	woaT8auh2Izo+qXj6F+HMd6B425A=
+X-Google-Smtp-Source: AGHT+IHEyhaKsUK+k+X1cL0Tk2qMW5U0nA+oNE9TF97gEWvQ5ZDWKnHGufLeOwv7OOeJRXFVuGKAObYwr/xULukjTkg=
+X-Received: by 2002:a17:90b:612:b0:2c1:aa8e:3ca6 with SMTP id
+ 98e67ed59e1d1-2c1dc588b81mr8514194a91.23.1717390542031; Sun, 02 Jun 2024
+ 21:55:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1717390318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k0Gs1/Xm+SzByk7vYVPFQerxO3rIBQQHPSkKE6omxtI=;
-	b=Z0deRmJzRQAkQgM++4cd8mHuJqmI1o8aMCW6P98lQnAE/DWyt+DyOpuL/rVC3ntAzgEv5K
-	PXAGff6IFD5zZbpApP23+WRgo18+r95O509kBaAJi/Cp4C0mdQauXksHphjBDT3FI7h9cj
-	nhzKrfQf1m4k3IxECfWPFr1GMa+GKcb63fuwMdoo30AZvUztxILQAOKqTc/+3Id6NDAoH8
-	XaRzV7hS26vBnL0VdEinnWFbXKl9UjKP+w67Wp/tPsBTr2528YASJhTdi2HJhahQ3clDic
-	Eg/dz+M1MraVl+DAEylVXgbQD79Tpyw7Z2DRgyS0OJ1Jbdp1DNUGoJI+cYwrvg==
-Date: Mon, 03 Jun 2024 06:51:58 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: wens@kernel.org
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Diederik de Haas <didi.debian@cknow.org>
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix the DCDC_REG2 minimum voltage
- on Quartz64 Model B
-In-Reply-To: <ee74c146d1e69bef118e208fdf5cf10f@manjaro.org>
-References: <e70742ea2df432bf57b3f7de542d81ca22b0da2f.1716225483.git.dsimic@manjaro.org>
- <CAGb2v66DPvvRcq+98vF2mCF8URW_qys1+B_FM9kcm6ppuPvyeg@mail.gmail.com>
- <20cf041dcd6f752174bf29d2a53c61b3@manjaro.org> <1994616.CrzyxZ31qj@diego>
- <99ea0e0053d3ada3325bdfaec7a937f0@manjaro.org>
- <CAGb2v64K7fgeV9GVNnpoZ_4BZU7JKXHSCYU0hKxHmnyojFRu7g@mail.gmail.com>
- <ee74c146d1e69bef118e208fdf5cf10f@manjaro.org>
-Message-ID: <d0ab380955c293cf676938be5ea5bf52@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20240528030054.4525-1-qiang.zhang1211@gmail.com>
+ <1195a9a3-db87-465d-a3b0-ee92d67da954@paulmck-laptop> <CALm+0cVZ7GQC+v4Xe7nArh0DHKeax+ok_tYsKaB=JtG-BVgUag@mail.gmail.com>
+In-Reply-To: <CALm+0cVZ7GQC+v4Xe7nArh0DHKeax+ok_tYsKaB=JtG-BVgUag@mail.gmail.com>
+From: Z qiang <qiang.zhang1211@gmail.com>
+Date: Mon, 3 Jun 2024 12:55:30 +0800
+Message-ID: <CALm+0cUQuZDb6nrng+CnOXNGyy6gUWNGq9VoreU98KNkyTw_CQ@mail.gmail.com>
+Subject: Re: [PATCH] rcutorture: Skip debug object testing for cur_ops without
+ ->debug_objects set
+To: paulmck@kernel.org
+Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
+	urezki@gmail.com, rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-06-03 06:41, Dragan Simic wrote:
-> On 2024-06-03 05:49, Chen-Yu Tsai wrote:
->> On Sat, Jun 1, 2024 at 6:41 AM Dragan Simic <dsimic@manjaro.org> 
->> wrote:
->>> On 2024-05-31 20:40, Heiko Stübner wrote:
->>> > Am Freitag, 31. Mai 2024, 00:48:45 CEST schrieb Dragan Simic:
->>> >> On 2024-05-29 18:27, Chen-Yu Tsai wrote:
->>> >> > On Tue, May 21, 2024 at 1:20 AM Dragan Simic <dsimic@manjaro.org>
->>> >> > wrote:
->>> >> >>
->>> >> >> Correct the specified regulator-min-microvolt value for the buck
->>> >> >> DCDC_REG2
->>> >> >> regulator, which is part of the Rockchip RK809 PMIC, in the Pine64
->>> >> >> Quartz64
->>> >> >> Model B board dts.  According to the RK809 datasheet, version 1.01,
->>> >> >> this
->>> >> >> regulator is capable of producing voltages as low as 0.5 V on its
->>> >> >> output,
->>> >> >> instead of going down to 0.9 V only, which is additionally confirmed
->>> >> >> by the
->>> >> >> regulator-min-microvolt values found in the board dts files for the
->>> >> >> other
->>> >> >> supported boards that use the same RK809 PMIC.
->>> >> >>
->>> >> >> This allows the DVFS to clock the GPU on the Quartz64 Model B below
->>> >> >> 700 MHz,
->>> >> >> all the way down to 200 MHz, which saves some power and reduces the
->>> >> >> amount of
->>> >> >> generated heat a bit, improving the thermal headroom and possibly
->>> >> >> improving
->>> >> >> the bursty CPU and GPU performance on this board.
->>> >> >>
->>> >> >> This also eliminates the following warnings in the kernel log:
->>> >> >>
->>> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000,
->>> >> >> not supported by regulator
->>> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
->>> >> >> (200000000)
->>> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000,
->>> >> >> not supported by regulator
->>> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
->>> >> >> (300000000)
->>> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000,
->>> >> >> not supported by regulator
->>> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
->>> >> >> (400000000)
->>> >> >>   core: _opp_supported_by_regulators: OPP minuV: 825000 maxuV: 825000,
->>> >> >> not supported by regulator
->>> >> >>   panfrost fde60000.gpu: _opp_add: OPP not supported by regulators
->>> >> >> (600000000)
->>> >> >>
->>> >> >> Fixes: dcc8c66bef79 ("arm64: dts: rockchip: add Pine64 Quartz64-B
->>> >> >> device tree")
->>> >> >> Cc: stable@vger.kernel.org
->>> >> >> Reported-By: Diederik de Haas <didi.debian@cknow.org>
->>> >> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->>> >> >> ---
->>> >> >>  arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts | 2 +-
->>> >> >>  1 file changed, 1 insertion(+), 1 deletion(-)
->>> >> >>
->>> >> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
->>> >> >> b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
->>> >> >> index 26322a358d91..b908ce006c26 100644
->>> >> >> --- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
->>> >> >> +++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dts
->>> >> >> @@ -289,7 +289,7 @@ vdd_gpu: DCDC_REG2 {
->>> >> >>                                 regulator-name = "vdd_gpu";
->>> >> >>                                 regulator-always-on;
->>> >> >>                                 regulator-boot-on;
->>> >> >> -                               regulator-min-microvolt = <900000>;
->>> >> >> +                               regulator-min-microvolt = <500000>;
->>> >> >
->>> >> > The constraints here are supposed to be the constraints of the
->>> >> > consumer,
->>> >> > not the provider. The latter is already known by the implementation.
->>> >> >
->>> >> > So if the GPU can go down to 0.825V or 0.81V even (based on the
->>> >> > datasheet),
->>> >> > this should say the corresponding value. Surely the GPU can't go down
->>> >> > to
->>> >> > 0.5V?
->>> >> >
->>> >> > Can you send another fix for it?
->>> >>
->>> >> I can confirm that the voltage of the power supply of GPU found inside
->>> >> the RK3566 can be as low as 0.81 V, according to the datasheet, or as
->>> >> low as 0.825 V, according to the GPU OPPs found in rk356x.dtsi.
->>> >>
->>> >> If we want the regulator-min-microvolt parameter to reflect the
->>> >> contraint
->>> >> of the GPU as the consumer, which I agree with, we should do that for
->>> >> other
->>> >> RK3566-based boards as well, and almost surely for the boards based on
->>> >> the
->>> >> RK3568, too.
->>> >
->>> > Hmm, I'm not so sure about that.
->>> >
->>> > The binding does define:
->>> >       regulator-min-microvolt:
->>> >           description: smallest voltage consumers may set
->>> >
->>> > This does not seem to describe it as a constraint solely of the
->>> > consumer.
->>> > At least the wording sounds way more flexible there.
->>> >
->>> > Also any regulator _could_ have multiple consumers, whose value would
->>> > it need then.
->>> 
->>> The way I see it, the regulator-min-microvolt and
->>> regulator-max-microvolt
->>> parameters should be configured in a way that protects the 
->>> consumer(s)
->>> of the particular voltage regulator against undervoltage and 
->>> overvoltage
->>> conditions, which may be useful in some corner cases.
->>> 
->>> If there are multiple consumers, which in this case may actually 
->>> happen
->>> (IIRC, some boards use the same regulator for the GPU and NPU 
->>> portions
->>> of the SoC), the situation becomes far from ideal, because the 
->>> consumers
->>> might have different voltage requirements, but that's pretty much an
->>> unavoidable compromise.
->> 
->> As Dragan mentioned, the min/max voltage constraints are there to 
->> prevent
->> the implementation from setting a voltage that would make the hardware
->> inoperable, either temporarily or permanently. So the range set here
->> should be the intersection of the permitted ranges of all consumers on
->> that power rail.
->> 
->> Now if that intersection happens to be an empty set, then it would up
->> to the implementation to do proper lock-outs. Hopefully no one designs
->> such hardware as it's too easy to fry some part of the hardware.
-> 
-> Yes, such a hardware design would need fixing first on the schematic
-> level.  When it comes to the RK3566's GPU and NPU sharing the same
-> regulator, we should be fine because the RK3566 datasheet states that
-> both the GPU and the NPU can go as low as 0.81 V, and their upper
-> absolute ratings are the same at 1.2 V, so 1.0 V, which is as far as
-> the GPU OPPs go, should be fine for both.
-> 
-> As a note, neither the RK3566 datasheet nor the RK3566 hardware design
-> guide specify the recommended upper voltage limit for the GPU or the
-> NPU.  Though, their upper absolute ratings are the same, as already
-> described above.
+>
+> >
+> > On Tue, May 28, 2024 at 11:00:54AM +0800, Zqiang wrote:
+> > > This commit make rcu_test_debug_objects() early return when the
+> > > specified cur_ops not set the ->debug_objects.
+> > >
+> > > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> > > ---
+> > >  kernel/rcu/rcutorture.c | 5 +++--
+> > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > > index 08bf7c669dd3..9b8c277ab91a 100644
+> > > --- a/kernel/rcu/rcutorture.c
+> > > +++ b/kernel/rcu/rcutorture.c
+> > > @@ -3495,8 +3495,9 @@ static void rcu_test_debug_objects(void)
+> > >               return;
+> > >       }
+> > >
+> > > -     if (WARN_ON_ONCE(cur_ops->debug_objects &&
+> > > -                     (!cur_ops->call || !cur_ops->cb_barrier)))
+> > > +     if (!cur_ops->debug_objects ||
+> > > +                     WARN_ON_ONCE(cur_ops->debug_objects &&
+> >
+> > You lost me here.  Given that we have "!cur_ops->debug_objects" before
+> > that WARN_ON_ONCE(), why do we need "cur_ops->debug_objects" inside of it?
+> >
+> > Also, we don't get here unless the rcutorture.object_debug kernel boot
+> > parameter is specified, don't we really want to WARN_ON_ONCE if the
+> > current flavor does not support that?
 
-Uh-oh, this rabbit hole goes much deeper than expected.  After a quick
-check, I see there are also RK3399-based boards/devices that specify
-the minimum and maximum values for their GPU regulators far outside
-the recommended operating conditions of the RK3399's GPU.
+Maybe I didn't describe it clearly enough, this
+modification is mainly to filter out test types that do not support
+double call_rcu*() checking, for example tasks, tasks-rudes,
+ task-tracing  ;) .
 
-Perhaps the scope of the upcoming patches should be expanded to cover
-other boards as well, not just those based on the RK356x.
+Thanks
+Zqiang
 
->>> > While true, setting it to the lowest the regulator can do in the
->>> > original
->>> > fix patch, might've been a bit much and a saner value might be better.
->>> 
->>> Agreed, but the value was selected according to what the other
->>> RK3566-based
->>> boards use, to establish some kind of consistency.  Now, there's a 
->>> good
->>> chance for the second pass, so to speak, which should establish 
->>> another
->>> different state, but also consistent. :)
->>> 
->>> >> This would ensure consistency, but I'd like to know are all those
->>> >> resulting
->>> >> patches going to be accepted before starting to prepare them?  There
->>> >> will
->>> >> be a whole bunch of small patches.
->>> >
->>> > Hmm, though I'd say that would be one patch per soc?
->>> >
->>> > I.e. you're setting the min-voltage of _one_ regulator used
->>> > on each board to a value to support the defined OPPs.
->>> >
->>> > I.e. in my mind you'd end up with:
->>> >       arm64: dts: rockchip: set better min voltage for vdd_gpu on rk356x
->>> > boards
->>> >
->>> > And setting the lower voltage to reach that lower OPP on all affected
->>> > rk356x boards.
->>> 
->>> Yes, the same thoughts have already crossed my mind, but I thought 
->>> we'd
->>> like those patches to also include Fixes tags, so they also get
->>> propagated
->>> into the long-term kernel versions?  In that case, we'd need one 
->>> patch
->>> per
->>> board, to have a clear relation to the commits referenced in the 
->>> Fixes
->>> tags.
->>> 
->>> OTOH, if we don't want the patches to be propagated into the 
->>> long-term
->>> kernel
->>> versions, then having one patch per SoC would be perfectly fine.
->> 
->> It's really up to Heiko, but personally I don't think it's that 
->> important
->> to have them backported. These would be correctness patches, but don't
->> really affect functionality.
-> 
-> On second thought, I also think that it might be better not to have
-> these changes propagated into the long-term kernel versions.  That
-> would keep the amount of backported changes to the bare minimum, i.e.
-> containing just the really important fixes, while these changes are
-> more on the correctness side.  Maybe together with providing a bit
-> of additional safety.
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>
+> Hi, Paul
+>
+> The rcutorture.object_debug is set true, but the tasks-tracing does not support
+> duplicate cur_ops->call check, but the debug_objects test was still done.
+>
+> insmod rcutorture.ko torture_type=tasks-tracing fwd_progress=4
+> n_barrier_cbs=4 object_debug=1
+>
+> [  106.082416] rcutorture: WARN: Duplicate call_tasks-tracing() test starting.
+> [  106.082533] tasks-tracing-torture: rcu_torture_read_exit: Start of test
+> [  106.082543] tasks-tracing-torture: rcu_torture_read_exit: Start of episode
+> [  106.105552] rcutorture: duplicated callback was invoked.
+> [  106.105567] rcutorture: duplicated callback was invoked.
+> [  106.111269] rcutorture: WARN: Duplicate call_tasks-tracing() test complete.
+>
+> Thanks
+> Zqiang
+>
+> >
+> > Or do you have a use case that needs to silence these warnings?
+> >
+> >                                                         Thanx, Paul
+> >
+> > > +                             (!cur_ops->call || !cur_ops->cb_barrier)))
+> > >               return;
+> > >
+> > >       struct rcu_head *rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
+> > > --
+> > > 2.17.1
+> > >
 
