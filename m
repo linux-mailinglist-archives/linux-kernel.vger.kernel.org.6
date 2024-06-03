@@ -1,237 +1,146 @@
-Return-Path: <linux-kernel+bounces-199455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296B88D8766
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:40:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B8B8D8768
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CD928A0A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DDEF1C2184E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8F81369A0;
-	Mon,  3 Jun 2024 16:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28FD1369A7;
+	Mon,  3 Jun 2024 16:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+nZAGOD"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e1KBklAZ"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0052B7E8;
-	Mon,  3 Jun 2024 16:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65DC7E8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717432792; cv=none; b=tjfqosIEUNuf8mMR6OxWy5k5lKEHawc4O9hZ1ReXzM8Eq+zCMaTpQbJhzIK6TBEkCZt4Jnz27D7qq6TDVK3Q3XB//Hpi7qZcrrQCOY4586rxgCW0jfz3JVck1nyD37ga4H6eVA7NdsGwF7CZqjxJ7pjU8+jm2EbdSpAJMUtY2ko=
+	t=1717432945; cv=none; b=uaVCKwRuc8CevjQsVxL406NCbDgHhfVC+NPS4aHTcXZPi1a7oUB/kDY0Aj3xRH76VmOZiITelmH4XM6p0T3+bBsTbWtDhGDZ2j+5+zBnFHdX8tzEyWnXsxRyrfBBNDvZCy97hT9j2670WyT2PV/8yLOJWrXV93EcQL8yrAjrFWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717432792; c=relaxed/simple;
-	bh=rnR5iPB01lsns52vG/tA2Gfh3HK2RdIOyDH7P6NAYdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pIZ6bRUZLARwp4N/iN12xD68atgD/Xhiue0w1JPLPa0daXUgR2HU/qhOjHevepAVG6synkl678CaSONQnuYXFOW4rfyz29+I8OdmnfvTT5RdmqC+nrf6X9U78m2Jujvbqo/tJExVmwkZbPcHP69e3HkfYALz2yTMQFT5ks5D7j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F+nZAGOD; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4214053918aso263935e9.2;
-        Mon, 03 Jun 2024 09:39:50 -0700 (PDT)
+	s=arc-20240116; t=1717432945; c=relaxed/simple;
+	bh=rCO/0WLOENkK+IPJAT6qBe/hoq8l0TjQG4SW4fVkGBk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UYPQJB+9zJwfBOIyfjXvrUy3S41mWvQj/VM9YLDgMug0MYHwVnbjXhB3mW9/KJExi8lSfEWevq71at26zsGU9KbYZcDo73wMF1eJZGO60E2VZ7wJK6pro7X+nW0f28Z9CyRswjwLVnucejL/mPbq4wodkgFzbjIDrVvfHX+y2x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e1KBklAZ; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43dfe020675so6141cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 09:42:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717432789; x=1718037589; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NmucZefJaS9oSAR+UXzx3NPh83JYXnJgaWeSAXKZsFg=;
-        b=F+nZAGODw+dZ4N83cBoS4/Kz/rB4mJNKsiH6/YAJk4uhn+ORGGb6281YlTdb33S++i
-         ioie4XX2Dyi2B19WAZDHKucliax/JM/tsUSQAds4lDNxnVkwrBYftdYDpbKOd9ZrXUiP
-         IgayVKv3aJmyxHPpLa8msZ5iLAXI7QxMEWH2hP1w807ArI7vGChm1emT0sSJxeiLw5LW
-         sAhAW2LtRJrPEdFmhhmioklUYvkEGGogbA34zRzZwEiMNyYu6GqM0+UgoUyzWJcp6Wvt
-         rWOjKT9spjf9mbYjTmYIttra5L6ME9Q8xvxGdawiSF7LyOGcUxsCB414SmbDISuESjJe
-         VJeA==
+        d=google.com; s=20230601; t=1717432942; x=1718037742; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wiMgs6ofu68NCD36BOAr5OSNcCuY8Lq+ii+XETURtvY=;
+        b=e1KBklAZtq+1ZUq5+qOO+0iWld8E49DV1RHeYGk+H8E1+y+TWzlSv2kHv8ksnCu2pV
+         VCFMTK64ZduNmKSJEhPwrFhRE8ihWoZ200+pI3fwfn2Q0Dvx+sg5gpGZBC9MT/BcOfpq
+         r6XOJwNIHf98kE7aLTr0iaPPoLOxVFK/uTZAQM5QOMltJ7OzzwkwQg/XQt9e7eYKAqzQ
+         FDbBGagEFfkds/vZogxSzrP8Ghbdz4wy+TBfXYw55y+G6KzR5/JeVb1aigpbXggzmKl5
+         ph0nutb5PSn8tvt8+Y/6FgVcLJ+mOIxUGOYOjSKoxN790fKm6Pv7Up0ccuu0dtf21wWg
+         zFIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717432789; x=1718037589;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmucZefJaS9oSAR+UXzx3NPh83JYXnJgaWeSAXKZsFg=;
-        b=HvYGYJMdlo8jP0SKAarQEMNSg/42iWojNaCtkLI/lVDrn2kiDXnTxv0A9Y5uW8wYMf
-         tA8WygIlrqBTa9SAlNv1uhm9nhRzxHoiQDz1RgdhFIMJzg5h/hwCMrcxjcR30corZMOj
-         Db3mzBUr2ps7wMzdTrRvN51bWCgqB7waXnvaniiS86+A/561pvXYF0kU0kqB9m6o6Y7m
-         5sKHnbzjKfx29TD6/R41456v+oSWWASsMaGYMdMLp7l3hyFI2J7bwPs2Soyh8X70X+H/
-         bXjq5yZYglpeC5tlhOPr3nwAj+e6J7fPLD+vFya1qUS6+2MemGI/D/UjXtDRxj/joAjK
-         atHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUndehoYcLG/SfGYbyzNSjXKt5QYmhgaObTIwOPtzq5wl5ObYpi2w/P5bwgvmNcGVQCPZwSQ3wwq3Hva73Lj7+pXKnXAKnZJ4sq7Wf9BjE+Q0shrvj6v+qX+mUXFsKKdAdSTBwMmzNpPc7iUWajLw4QfG+PLkaFc6moQ12gCsBsgpGP0w==
-X-Gm-Message-State: AOJu0Ywnbpo8gZzjCRVB6CT77kozyWnU60HNVy2nMrr46s80aa3EG6g7
-	FqFFGr4k+KPBn6pU+so5STAzjtaW/xe52Qw3roZLUbTV5z04coJ2
-X-Google-Smtp-Source: AGHT+IGcSUsHtQDHF3KX5AZeA/IawTF2iTfkVdyvpmBBr3Hj/bs0e01mGLyruH0gX37jLzXz4SWHgg==
-X-Received: by 2002:a05:600c:4f13:b0:421:418d:8f7 with SMTP id 5b1f17b1804b1-421418d0be6mr10237555e9.12.1717432788875;
-        Mon, 03 Jun 2024 09:39:48 -0700 (PDT)
-Received: from [192.168.242.235] ([109.166.154.147])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0e8fsm9168075f8f.2.2024.06.03.09.39.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 09:39:48 -0700 (PDT)
-Message-ID: <64fd8918-0c5e-462d-8ffe-964ed6404bde@gmail.com>
-Date: Mon, 3 Jun 2024 19:39:46 +0300
+        d=1e100.net; s=20230601; t=1717432942; x=1718037742;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wiMgs6ofu68NCD36BOAr5OSNcCuY8Lq+ii+XETURtvY=;
+        b=l6x1pqo7sBlFJicYj/mar3vyJSo5Rwc6euKC/586J/tuYATVDU5YWZSRnnGR9vS95k
+         ov8FJpzUp3vJjIoNvxfcniYBQ26xjDquiQBO9CPz5JogtN5d/XVEB5j8WW7GszcV/tEg
+         4xT+X1aJ7/U2E6MMzV4QxwEv4ksh23WxzdQ78EsDeWUZ8mwc1VG29Dn4QlRVhUVZkawS
+         7dEXwOcRVI8d9cp28jBDnLHyGyQRrADxfPLf3iiuNShT/93hgf0sTUhytSTz/4v4eyd9
+         P2E9FCNj2hx27hMqwcdp5uvkf3hJT1j4BDdRcT2Yz0f2GHYzgj6PigwR5nfgOOslY4Be
+         lIDg==
+X-Forwarded-Encrypted: i=1; AJvYcCV92YBIMK0P5B5oh6o3I4Lm/t2CoESxEwrEuZRoZVXehSTRz2PMis3G1OC59PFmQcUGABIydbs9uRI38d87qQjgwFi+xyMd1nhk2vNI
+X-Gm-Message-State: AOJu0YyzAQmTRqQLuiWOLrvfVj4vt1Efw4p0b1JpdlcBm77exobH++jy
+	OBnOHKDzVY5Zvo9vB/CzJiIOnIqndDUWvz8GMElx+f/1Ic5Qkfj9KbpG2vJpiMeIdbYXHQ7BGDj
+	aM9T5eZ2J/7jwFl5U9xr3ZCTXFr82ehrPP4/w
+X-Google-Smtp-Source: AGHT+IH6QLcAlf5vaH+UWsvJQZ3C5XzA8iLHk/IQp/niw6y6V1UZ6rx7vSOE8qRJ8e53gphDMK4TwxshkC6hAh95HlA=
+X-Received: by 2002:a05:622a:5509:b0:43a:db0c:ed9c with SMTP id
+ d75a77b69052e-43fff375484mr5104801cf.15.1717432942271; Mon, 03 Jun 2024
+ 09:42:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] iio: adc: ad7173: refactor ain and vref selection
-To: David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <noname.nuno@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240531-ad4111-v4-0-64607301c057@analog.com>
- <20240531-ad4111-v4-3-64607301c057@analog.com>
- <20240601194925.23123071@jic23-huawei>
- <e9ade241e57383d5342d377bc865046e612a7033.camel@gmail.com>
- <d2370ad2-5fed-41b3-bdd5-c6c895283c18@gmail.com>
- <2df46968-ff5f-43bc-98fd-506840c1aaa9@baylibre.com>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <2df46968-ff5f-43bc-98fd-506840c1aaa9@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240603092812.46616-1-yangyicong@huawei.com>
+In-Reply-To: <20240603092812.46616-1-yangyicong@huawei.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 3 Jun 2024 09:42:10 -0700
+Message-ID: <CAP-5=fXw0=dHORC-kObYFiAco64PGP4_uFr__f9YmVctWtGSfA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Perf avoid opening events on offline CPUs
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: will@kernel.org, mark.rutland@arm.com, acme@kernel.org, 
+	namhyung@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	peterz@infradead.org, mingo@redhat.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, james.clark@arm.com, dongli.zhang@oracle.com, 
+	jonathan.cameron@huawei.com, prime.zeng@hisilicon.com, linuxarm@huawei.com, 
+	yangyicong@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/06/2024 19:00, David Lechner wrote:
-> On 6/3/24 8:08 AM, Ceclan, Dumitru wrote:
->> On 03/06/2024 16:00, Nuno Sá wrote:
->>> On Sat, 2024-06-01 at 19:49 +0100, Jonathan Cameron wrote:
->>>> On Fri, 31 May 2024 22:42:29 +0300
->>>> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
->>>>
->>>>> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>>>>
->>>>> Move validation of analog inputs and reference voltage selection to
->>>>> separate functions to reduce the size of the channel config parsing
->>>>> function and improve readability.
->>>>> Add defines for the number of analog inputs in a channel.
->>>>>
->>>>> Reviewed-by: David Lechner <dlechner@baylibre.com>
->>>>> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>>>> ---
->>>>>  drivers/iio/adc/ad7173.c | 71 ++++++++++++++++++++++++++++++++++--------------
->>>>>  1 file changed, 50 insertions(+), 21 deletions(-)
->>>>>
->>>>> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
->>>>> index 6e249628bc64..a20831d99aa5 100644
->>>>> --- a/drivers/iio/adc/ad7173.c
->>>>> +++ b/drivers/iio/adc/ad7173.c
->>>>> @@ -60,6 +60,7 @@
->>>>>  #define AD7173_CH_SETUP_AINPOS_MASK	GENMASK(9, 5)
->>>>>  #define AD7173_CH_SETUP_AINNEG_MASK	GENMASK(4, 0)
->>>>>  
->>>>> +#define AD7173_NO_AINS_PER_CHANNEL	2
->>>>>  #define AD7173_CH_ADDRESS(pos, neg) \
->>>>>  	(FIELD_PREP(AD7173_CH_SETUP_AINPOS_MASK, pos) | \
->>>>>  	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
->>>>> @@ -623,6 +624,7 @@ static int ad7173_setup(struct iio_dev *indio_dev)
->>>>>  static unsigned int ad7173_get_ref_voltage_milli(struct ad7173_state *st,
->>>>>  						 u8 reference_select)
->>>>>  {
->>>>> +	struct device *dev = &st->sd.spi->dev;
->>>>>  	int vref;
->>>>>  
->>>>>  	switch (reference_select) {
->>>>> @@ -646,9 +648,11 @@ static unsigned int ad7173_get_ref_voltage_milli(struct
->>>>> ad7173_state *st,
->>>>>  		return -EINVAL;
->>>>>  	}
->>>>>  
->>>>> -	if (vref < 0)
->>>>> +	if (vref < 0) {
->>>>> +		dev_err(dev, "Cannot use reference %u. Error:%d\n",
->>>>> +			reference_select, vref);
->>>>>  		return vref;
->>>>> -
->>>>> +	}
->>>>>  	return vref / (MICRO / MILLI);
->>>>>  }
->>>>>  
->>>>> @@ -905,13 +909,50 @@ static int ad7173_register_clk_provider(struct iio_dev
->>>>> *indio_dev)
->>>>>  					   &st->int_clk_hw);
->>>>>  }
->>>>>  
->>>>> +static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
->>>>> +					      const unsigned int
->>>>> ain[AD7173_NO_AINS_PER_CHANNEL])
->>>> I was late to the game in replying to previous thread.
->>>>
->>>> This is neater without the loop and with 2 parameters.  Anyhow see reply to v3.
->>>>
->>>
->>> Yeps, even more given that we're passing/copying the complete array which always
->>> fells awkward to me :)
->>>
->>> - Nuno Sá
->>>
->>>
->>
->> I rewrote the function, but it feels a bit awkward, perhaps I could get a bit of
->> advice before sending V5:
-> 
-> Maybe we could make this easier to read with macros?
-> 
->>
->> static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
->> 					      unsigned int ain0, unsigned int ain1)
->> {
->> 	struct device *dev = &st->sd.spi->dev;
->> 	bool special_input0, special_input1;
->>
->> 	special_input0 = ain0 == AD7173_AIN_REF_POS || ain0 == AD7173_AIN_REF_NEG ||
->> 			 ((ain0 == AD7173_AIN_COM_IN_POS || ain0 == AD7173_AIN_COM_IN_NEG) &&
->> 			 (st->info->has_common_input)) || ain0 == AD4111_VINCOM_INPUT;
->> 	special_input1 = (ain1 == AD7173_AIN_REF_POS || ain1 == AD7173_AIN_REF_NEG) ||
->> 			 ((ain1 == AD7173_AIN_COM_IN_POS || ain1 == AD7173_AIN_COM_IN_NEG) &&
->> 			 (st->info->has_common_input)) || ain1 == AD4111_VINCOM_INPUT;
->>
-> 
-> 	special_input0 = AD7173_IS_SPECIAL_INPUT(ain0);
-> 	special_input1 = AD7173_IS_SPECIAL_INPUT(ain1);
-> 
->> 	if (st->info->has_vincom_input) {
->> 		if (ain0 == AD4111_VINCOM_INPUT &&
->> 		    ain1 < st->info->num_voltage_in && /* Normal input */
->> 		    ain1 >= st->info->num_voltage_in_div) /* Input without divider */
->> 			return dev_err_probe(dev, -EINVAL,
->> 				"VINCOM must be paired with inputs having divider.\n");
->>
->> 		if (ain1 == AD4111_VINCOM_INPUT &&
->> 		    ain0 < st->info->num_voltage_in && /* Normal input */
->> 		    ain0 >= st->info->num_voltage_in_div) /* Input without divider */
->> 			return dev_err_probe(dev, -EINVAL,
->> 				"VINCOM must be paired with inputs having divider.\n");
-> 
-> 		if (AD7173_IS_VINCOM_MISMATCH(ain0, ain1) ||
-> 		    AD7173_IS_VINCOM_MISMATCH(ain1, ain0)) {
->  			return dev_err_probe(dev, -EINVAL,
->  				"VINCOM must be paired with inputs having divider.\n");
-> 
->> 	}
->>
->> 	if ((ain0 >= st->info->num_voltage_in && !special_input0) ||
->> 	    (ain1 >= st->info->num_voltage_in && !special_input1))
->> 		return dev_err_probe(dev, -EINVAL,
->> 				     "Input pin number out of range for pair (%d %d).\n",
->> 				     ain0, ain1);
->>
->> 	if (!special_input0 && !special_input1 &&
->> 	    ((ain0 >= st->info->num_voltage_in_div) !=
->> 	     (ain1 >= st->info->num_voltage_in_div)))
->> 		return dev_err_probe(dev, -EINVAL,
->> 			"Both inputs must either have a voltage divider or not have: (%d %d).\n",
->> 			ain0, ain1);
-> 
-> These last two don't seem so bad.
-> 
->>
+On Mon, Jun 3, 2024 at 2:33=E2=80=AFAM Yicong Yang <yangyicong@huawei.com> =
+wrote:
+>
+> From: Yicong Yang <yangyicong@hisilicon.com>
+>
+> If user doesn't specify the CPUs, perf will try to open events on CPUs
+> of the PMU which is initialized from the PMU's "cpumask" or "cpus" sysfs
+> attributes if provided. But we doesn't check whether the CPUs provided
+> by the PMU are all online. So we may open events on offline CPUs if PMU
+> driver provide offline CPUs and then we'll be rejected by the kernel:
+>
+> [root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
 
-Thanks for the quick review :)
+Generally Linux won't let you take CPU0 off line, I'm not able to
+follow this step on x86 Linux. Fwiw, I routinely run perf with the
+core hyperthread siblings offline.
 
+Thanks,
+Ian
+
+> [root@localhost yang]# ./perf_static stat -e armv8_pmuv3_0/cycles/ --time=
+out 100
+> Error:
+> The sys_perf_event_open() syscall returned with 19 (No such device) for e=
+vent (cpu-clock).
+> /bin/dmesg | grep -i perf may provide additional information.
+>
+> This patchset tries to avoid this case by:
+> - Double check the PMU's cpumask in the perf tool and only include online=
+ CPUs
+> - Trying to make the PMU drivers only export online CPUs in its "cpus" or=
+ "cpumask"
+>   attributes
+>
+> Previously discussion can be found at [1]. Will suggested to do it in use=
+rspace.
+> I think it makes sense to do a double check in the perf tool in case the =
+driver
+> doesn't do this. So PATCH 1/3 is added in this version.
+>
+> [1] https://lore.kernel.org/linux-arm-kernel/20240410095833.63934-1-yangy=
+icong@huawei.com/
+>
+> Yicong Yang (3):
+>   perf pmu: Limit PMU cpumask to online CPUs
+>   perf: arm_pmu: Only show online CPUs in device's "cpus" attribute
+>   perf: arm_spe: Only show online CPUs in device's "cpumask" attribute
+>
+>  drivers/perf/arm_pmu.c     | 24 +++++++++++++++++++++++-
+>  drivers/perf/arm_spe_pmu.c | 22 +++++++++++++++++++++-
+>  tools/perf/util/pmu.c      | 13 +++++++++++--
+>  3 files changed, 55 insertions(+), 4 deletions(-)
+>
+> --
+> 2.24.0
+>
 
