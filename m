@@ -1,156 +1,109 @@
-Return-Path: <linux-kernel+bounces-199631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20788D89CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D088D89F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D28228A978
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:17:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A18F2839BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8816513D254;
-	Mon,  3 Jun 2024 19:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67ED137C39;
+	Mon,  3 Jun 2024 19:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="u9IrdIrV"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GMRhhhAX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0241D13CAA5
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A5A23A0;
+	Mon,  3 Jun 2024 19:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717442115; cv=none; b=QEz5aQZa8AdYk3p9aFEy3d56YNClTLB0BLoXUVFTkmym0EoxoMNhBLoNVJuihJzXzVtCpjZh4QBBpG++TqTCe+0g7aPyc0F7sqrClFjmUFF7hR22Cm9Npgu2ZUMMcpCnh92nCKm0wgTP1BgAWHoIiX99Xt6kpAyLqY56LM8ROgY=
+	t=1717442480; cv=none; b=a1s+pxQrgSR8QQCBgLl1oLnFvCTtFTmR0WXRCdn4+t+kzSiTqZl7YKGPUVoeemiToOj9fbZ5TBjPh2VnAU1BwIE14wk1DMsxjV2I/WmuJr0l/9GpSwQZ9aczXCp0mJNboLg/E8N7Ie1nAbDNsQy3QYXwaEcuGNf4gBhnjOAanQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717442115; c=relaxed/simple;
-	bh=juRogTLPO2qs3UM+cO6uXQ3Ufimi9V6rXzS1gdbXpLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=egNdsBAQrBWkQAYUsGcFb/i2PR3dmvkAtHWti5VLZ9K53o1boLZlxC2yI+njcUeQAs3KCLYh22fd6ugsqDBcTzYHD+BWmnpRZInyGBifLaPJWivTzb841rYSuUacLnImr7H7Ers/uWhWPefB/sR4V5TfjKeUJQkLqHOf+h8rsLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=u9IrdIrV; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so2711740a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 12:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1717442111; x=1718046911; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qDSrS2M7i0BNRPCtONpXbPIlnKGYcwSP27wPNDFPtFI=;
-        b=u9IrdIrV7smepPLqH8l303XnRV9EvSo3sNSt+9cNOVkSAnLD8IJxfz05mf1Juui6ju
-         PAF2fNkuz4CXndWza9BpIwUINbMfANbsqRWidBgD6XTYbyJuAE4745WKgeVKa+QYiEOB
-         4IxcAS2Tpq/7tAT/omX9uo4O2zh9CZaYRodXPJEVF+CeMH2jL1O8XZO0RGWdkPXkZIqt
-         T6YaA098KHEgzR22bxw4o8jd7ibP8DByAPajhjyKN9XrZ8pHP9N5v+I9cNxg/Md5rqbN
-         WieuaInmqpdRU9U16lGEImeAatGc5Ao0+sAmoswLbKzld61My3BN/rLYdC2GMhzusihV
-         pAiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717442111; x=1718046911;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qDSrS2M7i0BNRPCtONpXbPIlnKGYcwSP27wPNDFPtFI=;
-        b=F2Y6S0IC3LU0jIIbnJ2bv1i5Q3TfcDhW/K/TnILbsBIe9UfJi0PLShTyxwCuzxnVab
-         QdiU1wkICM34eyykYFHFfGNsimKHkQ80XMeIzqJcRofad40BerBnZ+nLWYK0l3sQkNYT
-         xr7C4AX9KpvLuE9wn/QjOBaqbniV7buFDIqiT5fHzijmwsRYc73NP/+bqa94DOi7knzY
-         SeEmnz6QAWW6PXwifrdCvyHsLzUzhAKdkglsTwwlmfpdV2z71YXCEjRFnTjLJp6Cplag
-         d+0sMz3fZdUyYNBrwzADcTyrXhhQ0wS+URrDLGotkljzZYtfXtGEE3O2ZPLIo5eYh/Vs
-         v28g==
-X-Forwarded-Encrypted: i=1; AJvYcCVMsgfDtS+v0mc2J2TicvtA5i/5utosbK8CP2NAG3ekkyTHsw5WoVou5us8mgzrndbGfwIflRkLFZ3LZgz00E2/kbA/3s467POCvvTK
-X-Gm-Message-State: AOJu0YyQb2OIwbxrZJ98LNvMWMFCND+BV/5d/ssYkJHhuxzGnE8CoV/I
-	hSBW/iB5sKGoBocnyuL4jInGQ/haxB26+8Gs7AxAWwWWOLgApGihpObvreC0mbo=
-X-Google-Smtp-Source: AGHT+IEIe0DVsYmJPScMiomtpDfWdZZhVOCyF8cqTfzaZhruhdjXi0NCVul3W26F1naNI0AuycktXw==
-X-Received: by 2002:a50:d7dc:0:b0:57a:2158:bbef with SMTP id 4fb4d7f45d1cf-57a3635558cmr6349251a12.8.1717442111367;
-        Mon, 03 Jun 2024 12:15:11 -0700 (PDT)
-Received: from localhost ([79.142.230.34])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b9943asm5809571a12.14.2024.06.03.12.15.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 12:15:11 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Hannes Reinecke <hare@suse.de>,
-	Ming Lei <ming.lei@redhat.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yexuan Yang <1182282462@bupt.edu.cn>,
-	=?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>,
-	Joel Granados <j.granados@samsung.com>,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Niklas Cassel <Niklas.Cassel@wdc.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Conor Dooley <conor@kernel.org>,
-	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-	=?UTF-8?q?Matias=20Bj=C3=B8rling?= <m@bjorling.me>,
-	open list <linux-kernel@vger.kernel.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	"lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>
-Subject: [PATCH v5 3/3] MAINTAINERS: add entry for Rust block device driver API
-Date: Mon,  3 Jun 2024 21:14:55 +0200
-Message-ID: <20240603191455.968301-4-nmi@metaspace.dk>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240603191455.968301-1-nmi@metaspace.dk>
-References: <20240603191455.968301-1-nmi@metaspace.dk>
+	s=arc-20240116; t=1717442480; c=relaxed/simple;
+	bh=KHFlsjY60/++eC7FyVbiA7jM9GUOj78cXYpH6S2IMw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3rGA8383GGXfyUfTPX027Cw9tmSkfxYEo201BaG0HkbJwJ72e7hyygoKoW1FJmmhzB42P9P85XWJfmdlb61PedtnWT/drTdSoc/7PNuh3OJZfWDKMvK0DmeP+y838qquRUIcAuSUIfNC/ufbpRo2oynZFgOwQIeOwfEYUlURkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GMRhhhAX; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717442479; x=1748978479;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KHFlsjY60/++eC7FyVbiA7jM9GUOj78cXYpH6S2IMw0=;
+  b=GMRhhhAXvEMn3u1FwVifChF0dPgj+ui0G41GnuwIC4BUvVsKh1bDq8oA
+   M685bA5McBXWTkgroTBrFGyKwDtwm6E8t98g9qhgA2E7T5c0GQ1gkdXNo
+   XbrOEeV5xAJ4VzkKarPcVUdVr2sjZeQScGLY29ETQH5Xfsc7fS/B/cGCK
+   YDLuAe0j3ncZSHua6GaH5yGXMH2XY+s3vE4UfITdAc1qF6V+VSRBQnimU
+   1n1uENXH0kWuRcSo4IEwEYB9aypxgH0PkumxhNIs+c9QaXzuVxxRV4WAz
+   Seem5Ahq82aK14NgzUCyOG5YT+GLz0E/jBPaqFCtR7fFVrvQCIZIC59CA
+   w==;
+X-CSE-ConnectionGUID: UGwm/FBaSoqvJ2UlElHEsw==
+X-CSE-MsgGUID: TMRz7PHwTuSAB4lVVdtgYQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="25354179"
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="25354179"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:21:18 -0700
+X-CSE-ConnectionGUID: V5utEDVASUCecZ6Mtl1Prw==
+X-CSE-MsgGUID: 7eD3kgCmQx6XUQlrxb+b5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="37090878"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:21:14 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sEDF1-0000000DMvb-01r8;
+	Mon, 03 Jun 2024 22:21:11 +0300
+Date: Mon, 3 Jun 2024 22:21:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Thangaraj Samynathan <thangaraj.s@microchip.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Cc: Serge Semin <fancer.lancer@gmail.com>, Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v1 5/8] spi: pxa2xx: Use new spi_xfer_is_dma_mapped()
+ helper
+Message-ID: <Zl4XphMgxEwzPCKA@smile.fi.intel.com>
+References: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
+ <20240531194723.1761567-6-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531194723.1761567-6-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Andreas Hindborg <a.hindborg@samsung.com>
+On Fri, May 31, 2024 at 10:42:37PM +0300, Andy Shevchenko wrote:
+> Replace a few lines of code by calling a spi_xfer_is_dma_mapped() helper.
 
-Add an entry for the Rust block device driver abstractions.
+It appears that this patch is based on the cleanup series against the driver
+that had been sent earlier. Namely this:
+[v2] spi: pxa2xx: Get rid of an additional layer in PCI driver
 
-Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
----
- MAINTAINERS | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+https://lore.kernel.org/linux-spi/20240530151117.1130792-1-andriy.shevchenko@linux.intel.com/T/#t
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..698515b0b0b3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3782,6 +3782,20 @@ F:	include/linux/blk*
- F:	kernel/trace/blktrace.c
- F:	lib/sbitmap.c
- 
-+BLOCK LAYER DEVICE DRIVER API [RUST]
-+M:	Andreas Hindborg <a.hindborg@samsung.com>
-+R:	Boqun Feng <boqun.feng@gmail.com>
-+L:	linux-block@vger.kernel.org
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://rust-for-linux.com
-+B:	https://github.com/Rust-for-Linux/linux/issues
-+C:	https://rust-for-linux.zulipchat.com/#narrow/stream/Block
-+T:	git https://github.com/Rust-for-Linux/linux.git rust-block-next
-+F:	drivers/block/rnull.rs
-+F:	rust/kernel/block.rs
-+F:	rust/kernel/block/
-+
- BLOCK2MTD DRIVER
- M:	Joern Engel <joern@lazybastard.org>
- L:	linux-mtd@lists.infradead.org
+And as others already said, this series is pure cleanup, no need to be backported.
+
 -- 
-2.45.1
+With Best Regards,
+Andy Shevchenko
+
 
 
