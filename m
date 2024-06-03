@@ -1,78 +1,106 @@
-Return-Path: <linux-kernel+bounces-199451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4928D875D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:36:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B588D875F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 18:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67BADB20B5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:36:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C895328A0C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ED5136997;
-	Mon,  3 Jun 2024 16:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318E9136674;
+	Mon,  3 Jun 2024 16:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9prRXjT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="IQ3YWtlu"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14177E8;
-	Mon,  3 Jun 2024 16:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752D27E8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 16:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717432595; cv=none; b=R9V+f3QqgLiTFt9D9H1vrgg2QX/qLHgojIf7BQ94bKFXnlyQ71fBmVfPNCq+4+AUzZ1Qu/bjfD/ndmprrqQjof6NhDxe4gpR2BJnPL1lSbC6DRgfYJ3d8H8DkUI9AMz4GAMvpxnu4V2wvZ8cUKL2TCiR+J5CteGJMFtTqTXIYPc=
+	t=1717432649; cv=none; b=oas8Q2Ul5OQI4g5Zmpa1oITA8H31ncJxPX58TqrycBSs5H4vKmquDk28kXvxTQN3sjPY+VPkAJ1cXDbgq68yPCVq9gZOebNzKK1t61UFRuqki1AJPVplHTe9MB09xVI0Ujla/7ZBTDVIcNUsO3GNrhJoCKmyokRpz8H1yiZ9s7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717432595; c=relaxed/simple;
-	bh=cN/du6aSTMzl08k/VN4ACbbSNT3SAGtqX9W9ddPQnOA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JPQghilZiRMLo+hu0tA6rEeTqp5IQhzqxLE29oyzCEjlqjciB1YOwWKpU7+ZUZ7vXeD4ij1CvYjo6rIti1/tR8HxQqTF3jGj5SjFdsZBDgPnMYmoLDIzIZTbp4VT/cWZ1D069WpJ32bTybX3hTy9mI8vWM6dGWW3+gffRy9c0I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9prRXjT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B5CB0C2BD10;
-	Mon,  3 Jun 2024 16:36:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717432594;
-	bh=cN/du6aSTMzl08k/VN4ACbbSNT3SAGtqX9W9ddPQnOA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=H9prRXjTwRB4t0rTRXWtNQ/LJYad5Il01DSQ/k+r+DbW+sD7jk/Rse/PR79q2X+c+
-	 9WpAcb8MdSA8xDpoZcdD2kq0sAfqchOi0TmChTzXKYbMNapCs8uku0Bwy/Sgffgsl9
-	 sVGr130KH0Pi72SXrrcFICxFmDRcRCg862rKCLzEBaWerrTKHu92tEiN2tuGU4Roo6
-	 CMpWMiNN+fpvhSjK/I0arMboAXMjDzO97rUnwr9a9iSj/5qSeuLOO5vDkFLD/Z1ndk
-	 uJMMmN2aMYC7KDjehLO8CCmswy+35gko4XFNQ7d0R0o8FaUxwxC+Q+h/KZLOfdDiGu
-	 2FYsuoJaSajWg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AC8B8C4361C;
-	Mon,  3 Jun 2024 16:36:34 +0000 (UTC)
-Subject: Re: [GIT PULL] LoongArch fixes for v6.10-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240603143158.2625704-1-chenhuacai@loongson.cn>
-References: <20240603143158.2625704-1-chenhuacai@loongson.cn>
-X-PR-Tracked-List-Id: <loongarch.lists.linux.dev>
-X-PR-Tracked-Message-Id: <20240603143158.2625704-1-chenhuacai@loongson.cn>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.10-1
-X-PR-Tracked-Commit-Id: eb36e520f4f1b690fd776f15cbac452f82ff7bfa
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f06ce441457d4abc4d76be7acba26868a2d02b1c
-Message-Id: <171743259469.18580.3203876992620951432.pr-tracker-bot@kernel.org>
-Date: Mon, 03 Jun 2024 16:36:34 +0000
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@loongson.cn>
+	s=arc-20240116; t=1717432649; c=relaxed/simple;
+	bh=TIb7j5QgHLOHbyD3iLQ52ZT/GFl+mYp9eWgpKEUfaMY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SrLyOG16w/2itXxN8z8yFo62kUNAc//oK1o9Mj4HDXLOUh18I7c0VvA5NbrUG0/XmlP1RxIZcJJKvCOS33HG89MQsJSKiaRnEGP3ctZwfVQVX0cbjm9yzaR+bViousNNH1dSFtfqCFVsmr12VOpKrQftSP6Sop80pj+DOX2qrGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=IQ3YWtlu; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=zqP9S4nbMBeYlOfeJab+B5j1vuo4Z8qBfN99sVGKJkU=;
+  b=IQ3YWtluCXBYIvyU71GLgHBfJJOmMIvU9vb/vtTu4PqLjlOR/hOsptEE
+   NsvezDG3Mw0gignZUfbFJelCDqiwRy9LNyq7oYUnvM0WLDsURql4mcuY/
+   PDSVs/mIVRCFh7o009U7Faf8ADNzTEp+nd8eZ3ebPI0XGfgoou0mwc3/0
+   M=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.08,212,1712613600"; 
+   d="scan'208";a="88703209"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 18:37:17 +0200
+Date: Mon, 3 Jun 2024 18:37:17 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+cc: nicolas.palix@imag.fr, cocci@inria.fr, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts: coccicheck: Replace http with https
+In-Reply-To: <20240603155648.93989-1-thorsten.blum@toblux.com>
+Message-ID: <4bc15f4-d93e-8c84-41d3-7fdc8c1117ba@inria.fr>
+References: <20240603155648.93989-1-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-The pull request you sent on Mon,  3 Jun 2024 22:31:57 +0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.10-1
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f06ce441457d4abc4d76be7acba26868a2d02b1c
+On Mon, 3 Jun 2024, Thorsten Blum wrote:
 
-Thank you!
+> The Coccinelle website is also available via https.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks for the suggestion, but that link is actually completely out of
+date.  I will change it to the correct one.
+
+julia
+
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  scripts/coccicheck | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/coccicheck b/scripts/coccicheck
+> index e52cb43fede6..9b6b29fb8224 100755
+> --- a/scripts/coccicheck
+> +++ b/scripts/coccicheck
+> @@ -11,7 +11,7 @@ DIR="$(dirname $(readlink -f $0))/.."
+>  SPATCH="`which ${SPATCH:=spatch}`"
+>
+>  if [ ! -x "$SPATCH" ]; then
+> -    echo 'spatch is part of the Coccinelle project and is available at http://coccinelle.lip6.fr/'
+> +    echo 'spatch is part of the Coccinelle project and is available at https://coccinelle.lip6.fr/'
+>      exit 1
+>  fi
+>
+> @@ -233,7 +233,7 @@ coccinelle () {
+>  	echo " in $FILE."
+>  	echo ''
+>  	echo ' More information about semantic patching is available at'
+> -	echo ' http://coccinelle.lip6.fr/'
+> +	echo ' https://coccinelle.lip6.fr/'
+>  	echo ''
+>
+>  	if [ "`sed -ne 's|^//#||p' $COCCI`" ] ; then
+> --
+> 2.39.2
+>
+>
 
