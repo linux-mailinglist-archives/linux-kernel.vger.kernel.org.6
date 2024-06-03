@@ -1,137 +1,176 @@
-Return-Path: <linux-kernel+bounces-199063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C758D8183
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:47:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AE88D8186
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB304B22F04
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1BC1C223B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C0985650;
-	Mon,  3 Jun 2024 11:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A8A8564D;
+	Mon,  3 Jun 2024 11:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSlPDIH/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YYb3zl00"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D960D85291
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1E38562C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717415244; cv=none; b=PRFBqAnQaLDAa1El/kwSCMBgztUuNXN2dx+cCJWXR8wSxOs9jrblZEBMhfB+pJpjsTgfwEjnh42SoYSXZPg+mOrB97spopQbsKn7WzkOsGiFh1U75R/KzEtF/FdlmN0X7coCdG7Szm0xKXC+KoDT3S1YxsHgcpZBHOw2CUjVuPo=
+	t=1717415297; cv=none; b=ii3fveev/kHZIZFXxY4B584K2pdIxpA8okO5WsQMszAVGTV5Yv7ggIUkaeh5ZST/6otf8BVC8YLgOKsFDIXnzGBkkZBx1x02MQuWwpgXeWwofcu00UsseBTpOawA33Vhap/cBj346POw5NIxGXyuQOYV1tejaue6OxEJPJZJipg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717415244; c=relaxed/simple;
-	bh=3Im1QpDdWkDh0sb6TFhqrVvzJ24+046kZtmwGLRL/Jk=;
-	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
-	 In-Reply-To; b=bDAAdxf+otRCn2StO724Uly5wLB2zZI6YpGEQGyZ85hDTrKUoYdgb6U8YjARotJq9ipBTOgyjKS4q7NSnE01YRkPeKPRXIQ/QkHpB01sCwYII16ha7RCQA6IAnMwopi8OTOFqSNoxhDAQDmIPCNcYEsuHooBcQV9hFMgZQI9qQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSlPDIH/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 419B4C4AF09;
-	Mon,  3 Jun 2024 11:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717415244;
-	bh=3Im1QpDdWkDh0sb6TFhqrVvzJ24+046kZtmwGLRL/Jk=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=tSlPDIH/gvTaPGlTgTDQUmrEB6CAdfgyZ/5kDLkDs7vbBlI/Pymu4Om48sGbmFPCA
-	 6+CD1r/ZA4L81E/q6P6S+Gjq8DOZ2aHj9JaX1aXHiE2SuUADHKMCiYxTL+ScKsC/8Q
-	 Yt9q3mq7nVNVyYlWYCjxk4m9jWeVym667qQr0rKxw3FvC+EhhsA9N0M10phRAR6tP1
-	 uHp/pSygLH1l6mqFqTsbE69SC9gN9OS1b+L4uNN3DBE7oTYvPh7m8zS/IBkR4sgOc4
-	 KF+4Rn+j5gueKjR1/4oCmeX0acmRsUUFVxPBFmogw46N+kd6KbppQf1fAnzf3dQ3cq
-	 5QZbui0BORiVQ==
-Content-Type: multipart/signed;
- boundary=65f0fc295269b97015ccf49f95fa8248b459b679f76c7412027362baf4cb;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 03 Jun 2024 13:47:20 +0200
-Message-Id: <D1QCW5G2I7E0.2MM683BWHR5N1@kernel.org>
-Cc: "Daniel Semkowicz" <dse@thaumatec.com>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <linux-mediatek@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Michael Walle" <mwalle@kernel.org>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>, "Chun-Kuang Hu"
- <chunkuang.hu@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
- <angelogioacchino.delregno@collabora.com>, "Sam Ravnborg"
- <sam@ravnborg.org>, "Vinay Simha BN" <simhavcs@gmail.com>, "Tony Lindgren"
- <tony@atomide.com>
-Subject: Re: [PATCH 00/20] drm/bridge: tc358775: proper bridge bringup and
- code cleanup
-X-Mailer: aerc 0.16.0
-References: <20240506-tc358775-fix-powerup-v1-0-545dcf00b8dd@kernel.org>
-In-Reply-To: <20240506-tc358775-fix-powerup-v1-0-545dcf00b8dd@kernel.org>
+	s=arc-20240116; t=1717415297; c=relaxed/simple;
+	bh=wR5A6hecpARoRRWZgd2NYKAO1k8JQZFj4SPbmOoOjAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/3RgCksDv49Q9DMNarCUk32R8BNsn6qghTKu/ZsLBY2oLFM8YefcHJxLv2X8yTfQ3T7TZW9xlginX8gBb8HzLIwZSsYYVMqpmmM9Rs6/sxUCJAAdkuO7UmWhwwWsHImEPuqjZTxLfhGnBhiQGFk1Hh7Iviv3nE1PphUh88Qm1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YYb3zl00; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f44b594deeso30849515ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 04:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717415295; x=1718020095; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KUzNVhckUaLfnqSSoRN0c/kRmpAdIiK8FmQ6QGiwkFQ=;
+        b=YYb3zl00qkJt7e0C0w4HfgSp8Z0vn0D4E+S0nSlRmfNNRDqFy0Yeu91S1j1UTKhIkM
+         MXCd2BpE3htM7Z5HdpRCMdfTtTeu66Hic1mr5BwCbggZVGj/8Qzb4qtNKQJhrVZqHfpm
+         Udr35Qq1Vuwmu/PCCWdx19ax+bKGE9ftyFeSf9/YAFi97sNKr8/sIlp4NwNFjC6O7e/m
+         Gyh3SNZnMOsfccm6mQqyoibn9o3nHjlN7nW3EB0Ro8tiOFq+qIySPJGlgrFGyhd7y6qB
+         RLe+HcElFWbPZDkgJpTI51eMhIdoacf6iUje/fQxd9DU2KgS0lohkmHmkkF+DtUHCI5H
+         47Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717415295; x=1718020095;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KUzNVhckUaLfnqSSoRN0c/kRmpAdIiK8FmQ6QGiwkFQ=;
+        b=bMZNolwz6FQ5CIz2/9VFUkSH6HTRqO2s0+gBkkOKfxqX59XSiMuCxpuuFKlD3je8j6
+         uWsdnbDnZnWUa8/JROrms/xUdrukHL3wQR9wPepFxm/Tk8IMh2ZPYaNqO9fM+IORqmyn
+         ekpov7MPP3otnFeOsm4jSzgPk6X0os9xan5W2xBkh/OWmgcaTafn0CfrwQCl1yV1puG+
+         WcyGy3v4GP69ss6JVzCQQk+4EYIlcobgbbuowEBsn+4/byfSn0QUzkbSJvs0eWpmWO0v
+         GwwYyidL2ELznt5YV15Adz2ho3L2ZQXMAQ1KGC8r6MKf3Yh8wMJsS1g/DkDV2sQjii8X
+         Zh/A==
+X-Gm-Message-State: AOJu0YyyRbYfRDsKoBq83E24IJoz4oaCpY2lQktcQHuEz8+cau8iXrw6
+	dtdapWNmCveM6kxNgV4lyE+F3pRahZNMoHhFEzxwe3CRw/0mpMkjTIdTRqN06MZR/SRDCgjGnxM
+	1
+X-Google-Smtp-Source: AGHT+IFap6u0+MFzW2YY2ja6/0cIlNs1i1vSu0Ls8bPRsbMzAYM3cdtNrv8q//r7PbFzWcfbtOc6Zg==
+X-Received: by 2002:a17:902:f683:b0:1f4:5477:4be6 with SMTP id d9443c01a7336-1f6370529damr87187545ad.41.1717415294647;
+        Mon, 03 Jun 2024 04:48:14 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f681a8b8c1sm13070565ad.253.2024.06.03.04.48.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 04:48:13 -0700 (PDT)
+Date: Mon, 3 Jun 2024 17:18:11 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	rafael@kernel.org, len.brown@intel.com, ionela.voinescu@arm.com,
+	vanshikonda@os.amperecomputing.com, sumitg@nvidia.com
+Subject: Re: [PATCH 1/1] cpufreq: Rewire arch specific feedback for
+ cpuinfo/scaling_cur_freq
+Message-ID: <20240603114811.oio3uemniib5uaa2@vireshk-i7>
+References: <20240603081331.3829278-1-beata.michalska@arm.com>
+ <20240603081331.3829278-2-beata.michalska@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603081331.3829278-2-beata.michalska@arm.com>
 
---65f0fc295269b97015ccf49f95fa8248b459b679f76c7412027362baf4cb
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Hi Beata,
 
-On Mon May 6, 2024 at 3:34 PM CEST, Michael Walle wrote:
-> This patchset fixes the bridge initialization according to the
-> datasheet. Not sure how that even worked before. Maybe because the
-> initialization was done prior to linux (?).
->
-> The bridge has some peculiarities:
->  (1) The reset has to be deasserted in LP-11 mode
->  (2) For I2C access the bridge needs the DSI clock
->  (3) The bridge has to be configured while the video stream is
->      disabled.
->  (4) The bridge has limitations on the display timings. In particular,
->      the horizontal pulse width has to be at least 8 pixels wide and
->      both the horizontal pulse width as well as the back porch has to
->      be even. According to the datasheet the horizontal front porch as
->      well but in line sync mode, this is ignored. Also line sync is the
->      only supported mode for this bridge, therefore, the front porch
->      is always ignored.
->
-> The most controversial patch is probably "drm/bridge: add
-> dsi_lp11_notify mechanism" which is needed for (1) above. Some time ago
-> there was a series [1] to add a manual power-up, which was abandoned and
-> which didn't suite the needs for this bridge anyway.
->
-> Also, this will gradually change the tc_ prefix to tc358775_ while the
-> functions are refactored.
->
-> The bridge was successfully tested on a Mediatek MT8195 SoC with the
-> following panels:
->  - Innolux G101ICE
->  - AUO G121EAN01.0
->  - Innolux G156HCE (dual-link LVDS)
->
-> [1] https://lore.kernel.org/r/20231016165355.1327217-1-dmitry.baryshkov@l=
-inaro.org/
+Thanks for taking this forward.
 
-Any comments on this series, besides the discussion on how to do the
-reset during LP11?
+On 03-06-24, 09:13, Beata Michalska wrote:
+> Some architectures provide a way to determine an average frequency over
+> a certain period of time, based on available performance monitors (AMU on
+> ARM or APERF/MPERf on x86). With those at hand, enroll arch_freq_get_on_cpu
+> into cpuinfo_cur_freq policy sysfs attribute handler, which is expected to
+> represent the current frequency of a given CPU,as obtained by the hardware.
+> This is the type of feedback that counters do provide.
 
-Most of the other patches should be more or less self contained.
+Please add blank line between paragraphs, it makes it easier to read
+them.
 
--michael
+> At the same time, keep the scaling_cur_freq attribute align with the docs
+> and make it provide most recently requested frequency, still allowing to
+> fallback to using arch_freq_get_on_cpu for cases when cpuinfo_cur_freq is
+> not available.
 
---65f0fc295269b97015ccf49f95fa8248b459b679f76c7412027362baf4cb
-Content-Type: application/pgp-signature; name="signature.asc"
+Please split this patch into two parts, they are very distinct changes
+and should be kept separate.
 
------BEGIN PGP SIGNATURE-----
+> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> ---
+>  drivers/cpufreq/cpufreq.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index a45aac17c20f..3b0eabe4a983 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -758,7 +758,8 @@ static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
+>  	ssize_t ret;
+>  	unsigned int freq;
+>  
+> -	freq = arch_freq_get_on_cpu(policy->cpu);
+> +	freq = !cpufreq_driver->get ? arch_freq_get_on_cpu(policy->cpu)
+> +				    : 0;
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZl2tSBIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/gPqAGAvrp3hTLYUbjIYBOpNYq9pcLyYAkX0L1M
-pnxRMxFhmPLqiUGqptlFhUG/89N83cXRAYDf5X6gn9jZ6lVGmpOmSM8iYxeTgaBT
-q/FJmhXj6+H0qREQl40LYeF7XWWiPR5wO9c=
-=K1xu
------END PGP SIGNATURE-----
+This is getting trickier than I thought as I dived into more details
+of all the changes to the file.
 
---65f0fc295269b97015ccf49f95fa8248b459b679f76c7412027362baf4cb--
+Rafael,
+
+We probably need to decide on a policy for these two files, it is
+getting a bit confusing.
+
+cpuinfo_cur_freq:
+
+The purpose of this file is abundantly clear. This returns the best
+possible guess of the current hardware frequency. It should rely on
+arch_freq_get_on_cpu() or ->get() to get the value.  Perhaps we can
+make this available all the time, instead of conditionally on ->get()
+callback (which isn't present for intel-pstate for example).
+
+scaling_cur_freq:
+
+This should better reflect the last requested frequency, but since a
+significant time now it is trying to show what cpuinfo_cur_freq shows.
+
+commit c034b02e213d ("cpufreq: expose scaling_cur_freq sysfs file for set_policy() drivers")
+commit f8475cef9008 ("x86: use common aperfmperf_khz_on_cpu() to calculate KHz using APERF/MPERF")
+
+What should we do ? I wonder if we will break some userspace tools
+(which may have started relying on these changes).
+
+>  	if (freq)
+>  		ret = sprintf(buf, "%u\n", freq);
+>  	else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
+> @@ -795,7 +796,10 @@ store_one(scaling_max_freq, max);
+>  static ssize_t show_cpuinfo_cur_freq(struct cpufreq_policy *policy,
+>  					char *buf)
+>  {
+> -	unsigned int cur_freq = __cpufreq_get(policy);
+> +	unsigned int cur_freq = arch_freq_get_on_cpu(policy->cpu);
+> +
+> +	if (!cur_freq)
+> +		cur_freq = __cpufreq_get(policy);
+
+This change is fine and can be merged earlier I guess.
+
+>  	if (cur_freq)
+>  		return sprintf(buf, "%u\n", cur_freq);
+
+-- 
+viresh
 
