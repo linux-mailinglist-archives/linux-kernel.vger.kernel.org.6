@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-198668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B64D8D7BD8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:46:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F378D7BDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA91228304A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:46:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 013CC1C21400
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1A337707;
-	Mon,  3 Jun 2024 06:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55DD39FCE;
+	Mon,  3 Jun 2024 06:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeSelYwV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F8e5OijO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFC42C1BA;
-	Mon,  3 Jun 2024 06:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8271138382;
+	Mon,  3 Jun 2024 06:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717397153; cv=none; b=dEkmrMmkHmgWKLh9Uequi0wMxf23jR6nG18zkjWgkfFgi9i1MNejNqa3nz3iWxYf18JfFGbcWnYckTgWwjS+tcKXgsji1Ra8+dIuiPDWi2SsNPLHT18A03hyedTuocP1PKxZPULwID9NouOrMVcW1rZJesWZVmYeUxKN3Kw/xZY=
+	t=1717397480; cv=none; b=lBtuEMFNJoXFg7TWmz7pTYXzzY2w86DtQvRtO7RkePEmU8kknX9Oam5vxYB6YZR01WTLlUIUZfEuszuC2jOH4tPSzDH+KW2AcLL6d2JKb7/q/TjfWIC13ddr+xDYAX4dUuEaQqmXt9nx4XihXg2ysLn+rkwWxgaC9qOsJicobp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717397153; c=relaxed/simple;
-	bh=Pyy4ovwtosXvgy2lviTvJPTsT5T7HV7laF3GNbepqV0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Vcy9zmT9TQ5ly2FGVR67jftsSfAvHPYMpO75fMt8s3kHArzwC1RGNSJbKeL82nmvbY3bUJ6S/PNEz6ctUpAFX4VwsVo37HuMsIXpJF6QSpYNGsWsFgM6xqucrFnLX9fmHu+i0nf+fvVKG/MySifS838A0wRNv804upyZc3O+mtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeSelYwV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DA60C2BD10;
-	Mon,  3 Jun 2024 06:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717397153;
-	bh=Pyy4ovwtosXvgy2lviTvJPTsT5T7HV7laF3GNbepqV0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JeSelYwVyATu2d0wuRrkm6e1MRFGHHe72Da39BIBi3U+N1y3TXLokPnU+WxakED6/
-	 +fZosFTt9Y0Ioskn1LRKbfX2Czi67V89SAgviKFaUDotkVO3B2Z3asoglIbVSdljYO
-	 hgmphj9FjS3srvCXSxpuhGuK2oP7OyS2eEXARmV7WjRok4tri/oRRv5p82FA2GuxW6
-	 4JS8F9CLD0vuuQ7x3v97dgKtg5bz3/svlPTsthCo6Sj6jLjdzIVuOOmsBtCG+yZYpN
-	 wDhBwFT19Ap9dlVnp5FSH1NoPdASV44swkuhRpbQurZDFiNxeJpJnGAPfNqY7zEgOD
-	 v0vR2cJCQB3Hg==
-Date: Mon, 3 Jun 2024 15:45:49 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: "wuqiang.matt" <wuqiang.matt@bytedance.com>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib: test_objpool: add missing MODULE_DESCRIPTION()
- macro
-Message-Id: <20240603154549.4a338c065e42f07c8c3d1b82@kernel.org>
-In-Reply-To: <7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
-References: <20240531-md-lib-test_objpool-v1-1-516efee92a05@quicinc.com>
-	<7ba64e00-373b-4c13-a30a-113646dad588@bytedance.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717397480; c=relaxed/simple;
+	bh=9nY8Zj3mcfH4cslV1UOEl0jFhRwdGpet7DG1rhJjVk0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dWLiMDVMnE7BS+Fi5DhfmfRZq6gnvgri6c11FNaFxEtP5+7CIjtUVMeGEFua6zsXgTY24g9FCoQFAQskMY/ncGSGwbZ5fJKl60JxdP+4+/5Ejz+FF96s0w5ZaS41hs0/f1sjqNTO73ioisqIrvyQmD2bPON+2wN6OCQyZRABcME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F8e5OijO; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717397478; x=1748933478;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=9nY8Zj3mcfH4cslV1UOEl0jFhRwdGpet7DG1rhJjVk0=;
+  b=F8e5OijOmekvrXixlDFUwOAOf5JnW4ycebxab/mL7LFIgbuX+moLlWxV
+   Q2Umtc7BEpedNahXYNv4DpRWE6EfOF4fsvQn+SKk2oSpVowmabyDE1MMy
+   H2mzND7P68m4nvZS/WNZ1ess55cdv9n88xaUf8bc9CxCsZWFVF8bjL7et
+   cSd/ssBiaVaZqsNHFFoQzmOiKOLTkszZ1FFMqDVEaNOFkQEXIcR0u1JEq
+   92ZWJtU9p/iTA/Fm0jW1f46TaPmMc93ZtWKrctb8bh17XRj60Ei5nHn1k
+   Rn2gKd+zNG0j3l4eZMLXnA1TcAR0eyuSz+YxfDWDuFmZxKMU/UwYffNcr
+   w==;
+X-CSE-ConnectionGUID: NnQ1iPCsTJu5uzZk9vCMQA==
+X-CSE-MsgGUID: OCnygjvZSOepJu5pHfltzQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="25280583"
+X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
+   d="scan'208";a="25280583"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 23:51:17 -0700
+X-CSE-ConnectionGUID: VbJ77d1bRLSfnDxj5WfB9Q==
+X-CSE-MsgGUID: /I5RyRRnQM6SHEmFEazmOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
+   d="scan'208";a="67951579"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.161])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 23:51:15 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>, Tony Luck <tony.luck@intel.com>
+Cc: platform-driver-x86@vger.kernel.org, x86@kernel.org, 
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev
+In-Reply-To: <20240531203706.233365-1-tony.luck@intel.com>
+References: <20240531203706.233365-1-tony.luck@intel.com>
+Subject: Re: [PATCH 00/11] New Intel CPU model defines for x86/platform
+Message-Id: <171739747091.1954.13124707407721308581.b4-ty@linux.intel.com>
+Date: Mon, 03 Jun 2024 09:51:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Mon, 3 Jun 2024 11:25:59 +0800
-"wuqiang.matt" <wuqiang.matt@bytedance.com> wrote:
+On Fri, 31 May 2024 13:36:56 -0700, Tony Luck wrote:
 
-> On 2024/6/1 08:31, Jeff Johnson wrote:
-> > make allmodconfig && make W=1 C=1 reports:
-> > WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
-> > 
-> > Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> > 
-> > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > ---
-> >   lib/test_objpool.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/lib/test_objpool.c b/lib/test_objpool.c
-> > index bfdb81599832..5a3f6961a70f 100644
-> > --- a/lib/test_objpool.c
-> > +++ b/lib/test_objpool.c
-> > @@ -687,4 +687,5 @@ static void __exit ot_mod_exit(void)
-> >   module_init(ot_mod_init);
-> >   module_exit(ot_mod_exit);
-> >   
-> > -MODULE_LICENSE("GPL");
-> > \ No newline at end of file
-> > +MODULE_DESCRIPTION("Test module for lockless object pool");
-> > +MODULE_LICENSE("GPL");
-> > 
-> > ---
-> > base-commit: b050496579632f86ee1ef7e7501906db579f3457
-> > change-id: 20240531-md-lib-test_objpool-338d937f8666
-> > 
+> These patches were part of the v6 patch bomb converting everything.
+> Link: https://lore.kernel.org/all/20240520224620.9480-1-tony.luck@intel.com/
 > 
-> Looks good to me. Thanks for the update.
+> This reposting as requested by maintainer to make it easier to
+> pick up and apply.
 > 
-> I added Masami Hiramatsu and linux-trace in the loop.
+> Changes since that post:
 > 
-> Reviewed-by: Matt Wu <wuqiang.matt@bytedance.com>
-
-Thanks, let me pick this to probes/for-next branch.
-
-Thank you,
-
-> 
-> Regards,
-> Matt Wu
-> 
+> [...]
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[01/11] platform/x86/intel/pmc: Switch to new Intel CPU model defines
+        commit: 33af65ad67495e61e5008beb1f7fbede22f85318
+[02/11] platform/x86: intel_telemetry: Switch to new Intel CPU model defines
+        commit: 0ff9c76fda20fbd5af079f38581db64b55832929
+[03/11] x86/platform/atom: Switch to new Intel CPU model defines
+        commit: 5b3eaf10e2e0a3df5c8dfd6aabc6aec435383ba0
+[04/11] platform/x86: p2sb: Switch to new Intel CPU model defines
+        commit: fad21268dc3141bbe63a8556fe5f771af4e11ecc
+[05/11] platform/x86: intel_turbo_max_3: Switch to new Intel CPU model defines
+        commit: 70a4fa3f4fc14599aae7af22d649420ab0ac7d23
+[06/11] platform/x86: intel_ips: Switch to new Intel CPU model defines
+        commit: 12929ac3ef8d24f8931020135786e0b8a773e7c9
+[07/11] platform/x86: intel-uncore-freq: Switch to new Intel CPU model defines
+        commit: 568e639a617f0a571bf7ee75488637a10d3d02af
+[08/11] platform/x86: intel_speed_select_if: Switch to new Intel CPU model defines
+        commit: a42f41466f986d0f607fa727242b6e0f871993ca
+[09/11] platform/x86: intel_scu_wdt: Switch to new Intel CPU model defines
+        commit: d30f57b7413fc02d9899effd4084512603c134a7
+
+--
+ i.
+
 
