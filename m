@@ -1,255 +1,243 @@
-Return-Path: <linux-kernel+bounces-199693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82928D8AEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:34:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3768C8D8AF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 22:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F59B280DCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9FC51F23DEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 20:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E24813B588;
-	Mon,  3 Jun 2024 20:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664AC13B58D;
+	Mon,  3 Jun 2024 20:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="poBqRGcg"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2138.outbound.protection.outlook.com [40.107.101.138])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LcLRTKrY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD23720ED
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 20:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717446890; cv=fail; b=RoPScRnjwDkfXOvwUhgVug55IoyQBWBeAfxthGaCNWYbw4/oyPs2WXBcbRiRIpDSMWplBl0T8En8K1+VmhSQiPL5y7Ms7TqDt5pV9iIqLubJpfz0a7rzUT5cYLq0twcqVeZEFMTD3lBkvnngRtwjyeFPmT5Dpr02vpp1k2m11tI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717446890; c=relaxed/simple;
-	bh=fF9NKl8oWG3ex4lVft7G6X031gXMyuNPNAYSj0JNvDk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gOcJss3fLvfbeucoyERR881AauGNa6qWjhuOeNxa3LgrFoJXbb8CzMwJ7s7B/9H6JB5g907UsXzjyesPBzBHfbIBq4jcuG1VkivPn/O4EF/Sg+KJbASr0lyjYI0QC41pfA4P9vdBng0M+5fi3x+2kuYI3Lhugq0dZUSH2iw0yy8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=poBqRGcg; arc=fail smtp.client-ip=40.107.101.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CxhfnZXC8GBGqJsiSl2d9YAcnN1O15AfakFeNep4e6wPk74sfoOOkT1BgZq1MoWA074JLIj/T5omA6coz7AcOfF+4/eACRAReyQdEUtRVjx+JOh5lhhn/ZgNHUXFqoILifxetxN/bvSWrBEfwzaJ9I80d9E+PlM+//EYDVtjlkM9Ad/45pULeoiSDkKJkGoHwYpAC1/MNGFnggLiZ978cUn9BQebrA6fr+UHguk4ib1ABgzP4uhAjG5opRWca+uKw0+Ha8vxX8YNovEL725hdanB9pg6jaw+wymL0vfWg3l8A3i4P42egByVfWCGM3CeYPGvs4n90mwtozdHH9Zljw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UJyWY+PLOrAlVxzPnLXqpn7rn3Jx/Uv4Nsc8leJ8u8g=;
- b=SgBUISlaXgimyUj3AB7pA+qs49L2eYQVyBBvmEZyle9GZflCUCV9hoUYw2/mOIidGWZyhXkNXQT3+3XKvFjiW/m8Owyr0dtVcJHPNe7oTzb+lf4OOXzQjbMyPrcPTsiMkFjNhe1n/fCipVOVLRB/HaJ7moyaIU+6jmGLiiRB9q4uCeSFiezD7bdVlJdzkccCh1HUJV210QSrihS7yUza6M4EP0hTrgKKKJotRIIEuISs8Jm7a5m2T96MOYkvHUbEEC4W0V+n85ItXQiJqAAXkGQWetKYqxzDIqd3R/yEYtuwKd6tLz+CFd93bExMvbHPTH+a6JJ6y4UzaUdflgMvtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UJyWY+PLOrAlVxzPnLXqpn7rn3Jx/Uv4Nsc8leJ8u8g=;
- b=poBqRGcgVGnGH8RJRg46VmDSaqEk2vd3XmxR20YwfphW978L23IgND7y6gO+OwSkRp9Fn8mXxlaFdBqFF70vRjughZXIA+R48d4lxy3QZEQ2ZucVt/U6BifRUcgwf6FbRKIxByMXBAh6dvDxxZrOiIArW+3SysAo/T3F1SVTh5o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from BYAPR01MB5463.prod.exchangelabs.com (2603:10b6:a03:11b::20) by
- SN4PR01MB7504.prod.exchangelabs.com (2603:10b6:806:207::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.25; Mon, 3 Jun 2024 20:34:45 +0000
-Received: from BYAPR01MB5463.prod.exchangelabs.com
- ([fe80::4984:7039:100:6955]) by BYAPR01MB5463.prod.exchangelabs.com
- ([fe80::4984:7039:100:6955%6]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 20:34:45 +0000
-Message-ID: <0c89a5e6-ab77-4028-9779-d8db77525b0c@os.amperecomputing.com>
-Date: Mon, 3 Jun 2024 13:34:42 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: "Christoph Lameter (Ampere)" <cl@linux.com>, will@kernel.org,
- anshuman.khandual@arm.com, scott@os.amperecomputing.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240520165636.802268-1-yang@os.amperecomputing.com>
- <Zk93vBqAD3LgmbGb@arm.com> <640f8606-2757-4e82-721f-9625d48ded65@gentwo.org>
- <Zk-SNVyEHT1UsxqD@arm.com> <ad87bb77-a9a5-2c0d-b4b2-13db09615d7c@linux.com>
- <Zk-2a7s2pvkVsm2C@arm.com>
- <d18611c7-9108-46f7-a5a5-6c8e0069de9b@os.amperecomputing.com>
- <Zl3qCajhEbC9pNAm@arm.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <Zl3qCajhEbC9pNAm@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR07CA0036.namprd07.prod.outlook.com
- (2603:10b6:a02:bc::49) To BYAPR01MB5463.prod.exchangelabs.com
- (2603:10b6:a03:11b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F6C131182
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 20:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717447084; cv=none; b=dtbqynCup8hIAhKOUDliMugk9hEePJbrWv8QNvZdTLpTr/vzd/7qxJ9UjtntbxVGcKaMaoEknX/V/Vt3ouEHWijec9nI7Hgps9iy49cCt44m4yNKuUqzffIqC84oM53xwi+M1A/QTpEEP7gnnXXLk1Zyj5R2MvIW4qDXetQhLuA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717447084; c=relaxed/simple;
+	bh=4KIRU7ZVDX/QQW+kDkIXzxLZjuH2BLYVitKBRD1fxx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kxl/X3PTgWuFV37Qzo8izQ7q9I1xzp/PI9t1tk0r6QUlQVzPU2nprskZ9+8+wZa/Psue3YPS+in7WuhLoqwzwRNGGJd+hLJhqCpN8IExvOno8w7GqULjimZ3w91yH9FU1sjKc+/1373nQIFF0QZYYXDZHlQakR6GjU+TmLsQzTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LcLRTKrY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717447080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HKSm9A5ufiogkvYFFsodU+FOMLdpXmspNUNT5OJpXjM=;
+	b=LcLRTKrYIw8plxAtIxDybQNQoHCEVS5ymQgiFn3ftn/Jd72KRg1EZ5LBw6lbnRV02tql0s
+	4UENkD1FReZXSstzgjER4+3FGQVRvOPweLn4DVk9LI/CW9PxgA3nUC62/YJCdZuo/Gc71D
+	DKELBfIsQs7/Jhb2LdsCKvjrDPRRvqc=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629-pHH8C9fXOWi7dVSvuf4sOA-1; Mon, 03 Jun 2024 16:37:58 -0400
+X-MC-Unique: pHH8C9fXOWi7dVSvuf4sOA-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35e0f8bcc3cso1857110f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 13:37:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717447077; x=1718051877;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HKSm9A5ufiogkvYFFsodU+FOMLdpXmspNUNT5OJpXjM=;
+        b=M44tSG7rbQqKduuC8IoBWAIUBT1/4i3ZmZ9VcoeUGtiCw1s+kc7ccJf1IEdoc3ioUM
+         Q1USXNlTo8kVNRx0zYMtTGAFTZXnAHN8XczjL/MO2BM7gxHy8gZ9ZS2CM9J/6rhfvbAe
+         ReV3vpGj/8KoEqw4Clo3yWv5dHaa4WwF0VmEsSvYL37RbXmxWMmUcDZccs5p/3JDlOda
+         7+ffzRGIofL1xEHpM6Us59uAeRpKVVcDAJikL+uSP2WOjSRSdpfq6AVjTjfcxmdGRa/U
+         eWJQQeq9zYfMVWW8h1g3K6jWSSTpXpzEV0JXkAkalxQDRweJOTlFTzmtx4Jz3u3xIns9
+         2low==
+X-Forwarded-Encrypted: i=1; AJvYcCW5qANha93BdjJPvpUIgGqU1MwUIBsYQnMBiuxxIvhd0R85FXl4AZQsSs74eCn9sEktrpPAT3tSKJwfxLrC3m/1PZNaK63fBu+Jg1a8
+X-Gm-Message-State: AOJu0YxbE7/andNUAIMlpFRXzXqBrRHymk0TRvyPgVHZVsi+jTBW1wAL
+	RFVV3sVPgywAUmKJXP++Z+63/zutP/oLjaGVDl1jVFHW7iaA62tt3ION7VSUNlsNWWltjl9M8Y9
+	Rq03C2kCqViVOGNFrXGb5JTr5C8Pp2d89MrmwDwztbpiadsOSDeTjlaVzv38udg==
+X-Received: by 2002:a05:6000:b0e:b0:351:c9b4:8eff with SMTP id ffacd0b85a97d-35e0f285c38mr6875763f8f.36.1717447077074;
+        Mon, 03 Jun 2024 13:37:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHErJMHgWuWTcHWPUSEktoYAA3XSLb0ZPnT2qpYVF2yw/eeRijes6eExxbh1w907JGtFSG03g==
+X-Received: by 2002:a05:6000:b0e:b0:351:c9b4:8eff with SMTP id ffacd0b85a97d-35e0f285c38mr6875751f8f.36.1717447076578;
+        Mon, 03 Jun 2024 13:37:56 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c731:3d00:918f:ce94:4280:80f0? (p200300cbc7313d00918fce94428080f0.dip0.t-ipconnect.de. [2003:cb:c731:3d00:918f:ce94:4280:80f0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04d6e5asm9666133f8f.45.2024.06.03.13.37.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 13:37:56 -0700 (PDT)
+Message-ID: <9d9a5730-161b-4a9d-a696-1cf6d0c5123c@redhat.com>
+Date: Mon, 3 Jun 2024 22:37:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR01MB5463:EE_|SN4PR01MB7504:EE_
-X-MS-Office365-Filtering-Correlation-Id: 095912bd-4fb4-4616-4a3b-08dc840c9ad6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bldXRWtyYWZqaEtzZmw3RlhkOHN0N28wTjQvN3ljVnRxblhhZTR2R0VHcUwx?=
- =?utf-8?B?NE5jaGNNUEU4NkZ2ZGxhbHZiTFRaWnJ0YktHeUJ1cVYzR3ZSajdMN2Z6cnFt?=
- =?utf-8?B?czhSSU9wMkFPR3Vzby9WK0lsNjNKMjQ5WFk1dUlYYUdwc05KR0ZYY3Rvd3Bq?=
- =?utf-8?B?Z0NZWWVJY3Vkd3lxQkVndS9jcWN1ekx2V29pZWc3ZWRwYnd1UTgrNlg3OE1l?=
- =?utf-8?B?bjhyU3IwQitCUURIOHlQaDlvczVEWnc4UFEyaXpTeDM0anFXeXY1NmZueWs5?=
- =?utf-8?B?eTRlei9WVS9JTnJSeW5PeUlYMW1USzhZUU8vVmV6YWhpK2N6czV5b3QrNGxj?=
- =?utf-8?B?SkJZZWFCak11NzNJR3lGQUVxMUY4YnFpTFp4aHFsZ1ZHM3NDRS9OVFNhUXEy?=
- =?utf-8?B?ZCtJRkdmV1EwSUgxRnVjU2FhSEloWmwzc2ZKU0VQNU9lcXdnUlBYWjM5TnBU?=
- =?utf-8?B?Rjl0UVVSenRVNzkvTVU4ZHMyekkyTTJhSHZLWDdacGZTdWZWSk9SdjRqcXJh?=
- =?utf-8?B?SEhoMTNwMDh2U0VWdENYcXlMeWc2UWYvVkVoMkIvOTU4SmRWUjBNV2cvL2Z6?=
- =?utf-8?B?ZVZlZnpLT1h2dlFSN2FpbW5NNFNJTDR0UmZJS0ZIZ09jSFdMdmt5aU0ydzlq?=
- =?utf-8?B?MzJJTWFjK25xUjRiTU13d3UyUEtPMHNWYjJtNzlPalNIM2I2cEJweElOQzRF?=
- =?utf-8?B?dVZSdlhEWG5SSys5dnF2dUx6QkZpRHowRno4L09oRnRJQjUrMHNsMktkWVJa?=
- =?utf-8?B?N2luZHFzSEppMk50M1Frait5b3lYbFFXbURlMStWTlliN1hpQUo2c2ZJTnZt?=
- =?utf-8?B?eVlCb2dqSTd3M2tTOHFhc3cxWHR6b1lHeEpseTM0d21mT2hpZmwvdDdPT1VH?=
- =?utf-8?B?emxVZ05ZZ0M2K2ZNb0I2THJ1a3dHczRZZGtTT3ZUUTA2MGNHRFo3U2tLYTk1?=
- =?utf-8?B?bjBaNGtibWEzSjRubkFPZm1CRHBweXVPL0VxUUc1ZnZGSFZ1YUMvSTdnM2lu?=
- =?utf-8?B?Y0d1RlNjek9ueWlXa2o5MkpldlViRklNS2x6WUFIWVF5c2VPNDlCZTVtRDVZ?=
- =?utf-8?B?L25SZkpidUx1SlNKMDI0dEVVUDE5OFJSOVBOem9hY3Fabnh6V0sza3RkVUVv?=
- =?utf-8?B?aUpselNjTGRadlZtdVZ6ZkhiYWRIa25sRmxqS0dDODVTa1BuUlRPb0RvTDZO?=
- =?utf-8?B?UWpGeGhyMEhOTFpwQnd4cmtLM1hMSzJoRCtnaFdEaUV0VTFxRmFTSVlSUWlN?=
- =?utf-8?B?anJVRnZMd3YrWEhtWWZpTkZOY2FhZkJCYSszTEh3YTFxbDVTTDFaWkk3di8z?=
- =?utf-8?B?OHJLUDJmTGs5MWwydmxOTkRDbEpocGNKMUFUYmc0QzBLRW9TUXd4TTRLUlNr?=
- =?utf-8?B?Y3d4OVNtNHNVVDBnTXRISDZtaEkrc2dpalR3N0NnOUR4VnZZNU5RRlQrRTBl?=
- =?utf-8?B?Q3JLTEZXeVVaSkV4MkwwTEZ0anVYVEszL0N3ejdpRTUrKzNSWjEzVlhsQlds?=
- =?utf-8?B?WCt4OFk2RlpLTjlGVHY3NTJJQlB3Ti8zUjNpc1o1THFWR2ZuY2lZL2lpNjU0?=
- =?utf-8?B?OXkyVnorbjFySTRoVHhDNFpxNHJLVDBQV09xY2kyeDdFUjVJbEZkTHRwUFFz?=
- =?utf-8?B?eUp2cXUzaW5pR1R3QmpuVGRpVlJDOE5KUEs0aVBmMW93dm5tTmFRbTRJUFp3?=
- =?utf-8?B?UDRwenRDRnN4cjBaRHlNM2hCNDhjMjJEUk5qdHFVRG4yU04zM0FOVlBnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR01MB5463.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bm1aMHlSREw4OERIVThWcjlKUGtmK0xJQ094SXhOTWw4YWEzem9GWkNwOWQw?=
- =?utf-8?B?dmF1RTFhb0RUWVBHM3VYSG9QNjYwVXlabHFFalp0TWYwOGt2NWlSc2F0S05Q?=
- =?utf-8?B?L0tuMXhFRy8xd3hNblZHR0xaYmdHYUs5S1M2dDl1ek92eStoSm0vaFNsMEw4?=
- =?utf-8?B?aUhsL1JhT0t4cHVkbEp0dFJJTStoWndYR1BxanM3dFpmTnN3ODFacmFzUTVS?=
- =?utf-8?B?TEtEWjk3Ym9pT1EvZnhDOGIzUEl1N05WMHhsK0xTNkE0dlZZendNbk0xQzlL?=
- =?utf-8?B?V3phdFBQd3B0UllNL0ppK3lTQVJpVFgzZWRZQ2VHUEpLRDZPN1JZOWdoVTNa?=
- =?utf-8?B?ODBsWDRxWU9XZE82REhpaDRXcFlhYlp2RkgzbFNiRllCS0JuUXRJaENLczI4?=
- =?utf-8?B?Q1ExSlFZLytwT3BrUFV1Ny9YZ2RaQ1dtdThYZCs2WUxtVVJoSENBeENqQkc4?=
- =?utf-8?B?dlJ5eGQ2UWJuTVFDbW00Qnc1TG5YMytIR0FWSG40dXJGaVlVOXNyS29sUzdh?=
- =?utf-8?B?VThPb2R1L3hSMlI3a1gxNk05bzJocWFZdkdYUzViWGVyMExkZXVHbjd0VnJU?=
- =?utf-8?B?NmhXdTJHZXVGNEI2U0xFMHRvYlBBc0U1ZVkzS3NvN3NJK3g3SmxyYngydCs4?=
- =?utf-8?B?QWY2OUZPdUZHWG9pTHdvZWJFalBwVVgrajJSRjEzYXRMVlI2dFBxZUxmZkZT?=
- =?utf-8?B?RVBYQUVhMDVIWnpMQUNzMlFVNm1IUCtzN3dhdWMvYmJDb2QweGR5SDJBQ3p1?=
- =?utf-8?B?UkMyM29QNWxNd1BYcFI0TzNpWFJ5N00rb1p0UWtqTkFSQzBJVGVrNjVHTkdN?=
- =?utf-8?B?OURkbk05OGQwd3NwZ05pUnhTUjQwVjUvbmlBVXNzWWNGNzJvQ3JTVTc0TSt0?=
- =?utf-8?B?L01WSDdzbTg2Qk1Ob09tTXVaQXVhTlRXQmUybWRWVkhhbGVWM3RlMk9PL3BO?=
- =?utf-8?B?cDgrMDViUDczVW9tVmV2VFR5NmdtZkhMdmtmOHlkZUpta3dpYk9sUTVBcmhM?=
- =?utf-8?B?KzErOXUrLzFRY0JIUW95WWViOGRpODZGcU81SjdaTUQ4NExYSnU2TDJRUnlR?=
- =?utf-8?B?bjNBbWovVFhiekp5T08yTVFiSWZlNE5IMWw0Zkh0NjQ4WWpiU25qbi9MOHAw?=
- =?utf-8?B?UVBKeHAwQ1JOVzZqaFlneVJzUi9YRUk2VXlxb0FNb1BuRFRKODRHNEZMNkw1?=
- =?utf-8?B?YWc0cENjc3VKa0pEWDV0VStjb3p3RmY5dTRaTkpzSXl3bEJNVDVjVHpTWElm?=
- =?utf-8?B?b1FKc2dwMytSdktGd2NSMFlRYTIzK0k4aGJsRUp0QVNaTDRlSWpJdjk1MWF0?=
- =?utf-8?B?TStXSm5rYVcyallIdnpOckpqZkFkV2hUTGRCazBINW94R0tHaEEwRmRrYnEz?=
- =?utf-8?B?ejVWL2VBSVFSK0JGNDlGTUJJRjdMSFZ4Q3VMNmZzbFEyMGRyRTNRS09zeHFw?=
- =?utf-8?B?allXZFhPcXRqNENVczFDUzgxdFpodDJyRnNuZUxBNFA1ZVVTbVd4QlRmVk9F?=
- =?utf-8?B?cUtkWXluV1R3RzhmbVViK2w4VWZOS1VoNlYvZ3FEMnMyZGw3NWx4RU5NTjhS?=
- =?utf-8?B?MkJzUnVkRjUxbVRKODlFU1hMZWlCVjFzNWlSdURRWldrVktCckhFSmpEMm9L?=
- =?utf-8?B?VWZ1Zmc3L0FCdjVQVmZlTThDMzJLRnY3UlJJQ1o1YlRnV2pwRk1haXZoOVZj?=
- =?utf-8?B?dHF3ZlVGTDJONFhjdndQbXpqQ2NjSCt2MVNHZExrWG1SdHNBVEFFeWdEOUh0?=
- =?utf-8?B?eDF5Qmx5V1NISmRXSUdqREgrenVPNEhEUFVJVEVKZTlJU3R6ZHhDRjAzOTdr?=
- =?utf-8?B?aVMzQ0JwL1BrbjNlZmZNdlM3M2ZEM0s0bTVvOU9Gc0owajQ1TXNPQ2RML0Ji?=
- =?utf-8?B?WUxnZDV1N1ZPQS9QbU15eTVSMEdaYWxFN2dFK3paUFA0RmZkdmZXMWl4U2c3?=
- =?utf-8?B?ZWRHK3VGL3RMS29uUWUyZkJueTRNenFBUUJjYlkvcnhMTmU5Sk1vbDRUSmVk?=
- =?utf-8?B?RWFJSXBPV2hDdVJyUUdTNEtaYWYzMnJqTWNrTzM5R3E1TjVuaGFQSmZIZUpx?=
- =?utf-8?B?VVdPekRaR1ZQUHVPUktJZThyMXFhL1lhNVhrUllya0N5VXNEWnBBaGlUcG1h?=
- =?utf-8?B?Z3VOazc0MnpkaDJpd1p1M3NINjRQem4xWGU5a1J1SDFrUjFKSndXYkNCMW10?=
- =?utf-8?Q?4oX40T3v1n+O4VTKfXvtprA=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 095912bd-4fb4-4616-4a3b-08dc840c9ad6
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR01MB5463.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 20:34:45.4485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wwJY1gR6QwhZHPn7efYC0IjtGtkw+iOYd/hK0xAWWVI4T7eUMgwJPZI3UcG/WZdPkoLLOwlt7ymt5FYDtzTvag7No6EddksjZ2QarpNTQuc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR01MB7504
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linus:master] [mm] efa7df3e3b:
+ kernel_BUG_at_include/linux/page_ref.h
+To: Peter Xu <peterx@redhat.com>
+Cc: Yang Shi <shy828301@gmail.com>, kernel test robot
+ <oliver.sang@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Vivek Kasireddy <vivek.kasireddy@intel.com>, Rik van Riel
+ <riel@surriel.com>, oe-lkp@lists.linux.dev, lkp@intel.com,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Christopher Lameter <cl@linux.com>,
+ linux-mm@kvack.org
+References: <202405311534.86cd4043-lkp@intel.com>
+ <CAHbLzkpMhEuGkQDGWrK1LhvZ-ZxTJkV1xjmn-nRGZMH4U+F5ZA@mail.gmail.com>
+ <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com> <ZlpcRnuZUEYJJ0JA@x1n>
+ <CAHbLzkrRw-xf819gYJwRQ=-u971LQYnB2FNJMkN=s6u-pJ4Z8g@mail.gmail.com>
+ <CAHbLzkoB+oFTxtVYpeXQvko2q9HUVzUYrr83S6M6PUmXDQpkag@mail.gmail.com>
+ <0edfcfed-e8c4-4c46-bbce-528c07084792@redhat.com> <Zl3cakfiRsPQDb8q@x1n>
+ <8da12503-839d-459f-a2fa-4abd6d21935d@redhat.com> <Zl4m-sAhZknHOHdb@x1n>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zl4m-sAhZknHOHdb@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+>> try_get_folio() is all about grabbing a folio that might get freed
+>> concurrently. That's why it calls folio_ref_try_add_rcu() and does
+>> complicated stuff.
+> 
+> IMHO we can define it.. e.g. try_get_page() wasn't defined as so.
+> 
+> If we want to be crystal clear on that and if we think that's what we want,
+> again I would suggest we rename it differently from try_get_page() to avoid
+> future misuses, then add documents. We may want to also even assert the
 
+Yes, absolutely.
 
-On 6/3/24 9:06 AM, Catalin Marinas wrote:
-> On Thu, May 23, 2024 at 03:13:23PM -0700, Yang Shi wrote:
->> On 5/23/24 2:34 PM, Catalin Marinas wrote:
->>> On Thu, May 23, 2024 at 12:43:34PM -0700, Christoph Lameter (Ampere) wrote:
->>>> On Thu, 23 May 2024, Catalin Marinas wrote:
->>>>>>> While this class includes all atomics that currently require write
->>>>>>> permission, there's some unallocated space in this range and we don't
->>>>>>> know what future architecture versions may introduce. Unfortunately we
->>>>>>> need to check each individual atomic op in this class (not sure what the
->>>>>>> overhead will be).
->>>>>> Can you tell us which bits or pattern is not allocated? Maybe we can exclude
->>>>>> that from the pattern.
->>>>> Yes, it may be easier to exclude those patterns. See the Arm ARM K.a
->>>>> section C4.1.94.29 (page 791).
->>>> Hmmm. We could consult an exception table once the pattern matches to reduce
->>>> the overhead.
->>> Yeah, check the atomic class first and then go into the finer-grained
->>> details. I think this would reduce the overhead for non-atomic
->>> instructions.
->> If I read the instruction encoding correctly, the unallocated instructions
->> are decided by the below fields:
+> rcu/irq implications in try_get_folio() at entrance, then that'll be
+> detected even without TINY_RCU config.
+> 
 >>
->>    - size
->>    - VAR
->>    - o3
->>    - opc
+>> On !CONFIG_TINY_RCU, it performs a folio_ref_add_unless(). That's
+>> essentially a atomic_add_unless(), which in the worst case ends up being a
+>> cmpxchg loop.
 >>
->> To exclude them I think we can do something like:
 >>
->> if atomic instructions {
->>      if V == 1
->>          return false;
->>      if o3 opc == 111x
->>          return false;
->>      switch VAR {
->>          000
->>              check o3 and opc
->>          001
->>              check 03 and opc
->>          010
->>              check o3 and opc
->>          011
->>              check o3 and opc
->>          default
->>              if size != 11
->>                  check o3 and opc
->>      }
->> }
+>> Stating that we should be using try_get_folio() in paths where we are sure
+>> the folio refcount is not 0 is the same as using folio_try_get() where
+>> folio_get() would be sufficient.
 >>
->> So it may take 4 + the possible unallocated combos of o3 and opc branches
->> for the worst case. I saw 5 different combos for o3 and opc, so 9 branches
->> for worst cases.
-> Or we have a sorted table of exclusions and do a binary search. Not sure
-> which one is faster.
->
->> But if they will be allocated to non-atomic instructions, we have to do
->> fine-grained decoding, but it may be easier since we can just filter out
->> those non-atomic instructions? Anyway it depends on how they will be used.
->> Hopefully this won't happen.
-> Actually, the atomics table has LD64B and LDAPR already which are load
-> instructions, no write permission needed. So we need to exclude these
-> and all the unallocated space in this range.
+>> The VM_BUG_ON in folio_ref_try_add_rcu() really tells us here that we are
+>> using a function in the wrong context, although in our case, it is safe to
+>> use (there is now BUG). Which is true, because we know we have a folio
+>> reference and can simply use a simple folio_ref_add().
+>>
+>> Again, just like we have folio_get() and folio_try_get(), we should
+>> distinguish in GUP whether we are adding more reference to a folio (and
+>> effectively do what folio_get() would), or whether we are actually grabbing
+>> a folio that could be freed concurrently (what folio_try_get() would do).
+> 
+> Yes we can.  Again, IMHO it's a matter of whether it will worth it.
+> 
+> Note that even with SMP and even if we keep this code, the
+> atomic_add_unless only affects gup slow on THP only, and even with that
+> overhead it is much faster than before when that path was introduced.. and
+> per my previous experience we don't care too much there, really.
+> 
+> So it's literally only three paths that are relevant here on the "unless"
+> overhead:
+> 
+>    - gup slow on THP (I just added it; used to be even slower..)
+> 
+>    - vivik's new path
+> 
+>    - hugepd (which may be gone for good in a few months..)
+>    
+> IMHO none of them has perf concerns.  The real perf concern paths is
+> gup-fast when pgtable entry existed, but that must use atomic_add_unless()
+> anyway.  Even gup-slow !thp case won't regress as that uses try_get_page().
 
-OK. Excluding LD64B and LDAPR actually makes the check much simpler if 
-we return true for supported instructions instead of checking 
-unallocated instructions. It looks like:
+My point is primarily that we should be clear that the one thing is 
+GUP-fast, and the other is for GUP-slow.
 
-((val & 0x3f207c00) == 0x38200000) |
-((val & 0x3f208c00) == 0x38200000) |
-((val & 0x7fe06c00) == 0x78202000) |
-((val & 0xbf204c00) == 0x38200000)
+Sooner or later we'll see more code that uses try_grab_page() to be 
+converted to folios, and people might naturally use try_grab_folio(), 
+just like we did with Vivik's code.
 
-Thanks D Scott help figure this out.
+And I don't think we'll want to make GUP-slow in general using 
+try_grab_folio() in the future.
 
->
+So ...
+
+> 
+> So again, IMHO the easist way to fix this WARN is we drop the TINY_RCU bit,
+> if nobody worries on UP perf.
+> 
+> I don't have a strong opinion, if any of us really worry about above three
+> use cases on "unless" overhead, and think it worthwhile to add the code to
+> support it, I won't object. But to me it's adding pain with no real benefit
+> we could ever measure, and adding complexity to backport too since we'll
+> need a fix for as old as 6.6.
+
+... for the sake of fixing this WARN, I don't primarily care. Adjusting 
+the TINY_RCU feels wrong because I suspect somebody had good reasons to 
+do it like that, and it actually reported something valuable (using the 
+wrong function for the job).
+
+In any case, if we take the easy route to fix the WARN, I'll come back 
+and clean the functions here up properly.
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
