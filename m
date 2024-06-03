@@ -1,90 +1,55 @@
-Return-Path: <linux-kernel+bounces-198901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEC98D7EEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:38:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BF28D7F01
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0ABC1C203A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 570B51C21949
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D87E12D1FF;
-	Mon,  3 Jun 2024 09:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1WOse9Dz"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D318529E;
+	Mon,  3 Jun 2024 09:33:46 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCE812C54A;
-	Mon,  3 Jun 2024 09:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5632282D86;
+	Mon,  3 Jun 2024 09:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717407076; cv=none; b=eFFZUgqXw0n9G64yCPZEBPUrqmSFRvdYnnZ/EkQGQUQf9DeYFMVUm0MpzuuEurZHbPPg3/tXOHA4lsOEIpTc7+ZZfQYKAuFKkv3TFJahvIAdhTp7jOlDn03093VqvdXFzWf3tL9AcX++EcHV4M3c0OyDDZiGl+CcEoYTFZ8DMR4=
+	t=1717407226; cv=none; b=Kl22NDWBopGYRobKNYO3A5VlgQlUZfH/95JWgpkSilluJ7vkWouwLBHK1+oSuoDX3vtqIZl1kFDh3i0MjP8CoEyC5yywL3IPpWhn36MGtIeaIPjIoKJ0+l0PhYXX+BsgqNBs7iRjgAcQ1zfyvBFS9Tq3N8dUFXKHLed0IPbJAbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717407076; c=relaxed/simple;
-	bh=ASPyOvafeU8VnD2cU1j9pdX2DUV8CS9oyXQ6p597/n4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=npHJKZyBgHY2C7MnjdhkqhQtII/ARKhPkYB0b/5DQBcnmrkaGkEyq7pNoFri+kE3DT2bxMrVCETeuZmAOcHHmAo5Op8bGW0h02tkJGhdz+u1Oh1oUF/3M47/04GgoVvFBmzKBHsETZN+oGJP1PgFRFx7r91XQ1/LquAM2qMcI94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1WOse9Dz; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4539Bmdg019015;
-	Mon, 3 Jun 2024 11:30:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	lPzEVJUMCFm6veKb1Y3KHWri4JNgUORxCYZTZgJtc6A=; b=1WOse9DzLaP1JAMS
-	tqBuxIXpldlrNPWUvpBGL00H8nejHMZJjFTs3c/T3I5RG354hqcbQ+aQ6em38BmI
-	GDZ+hRGNdbCr/rN4Dby2/5jyWp5ngu5VVKWK2UJ4emd+aQpK8X9Peve9Ie0kHxPT
-	6iuUhEdifH1WI+X5U4MyEgsJLYqhg7Td9fg13oVmY0VguSKizkBahOq5Le7LcmKn
-	vovD/daNOsSSc2ARFgK7gsd3MjOliUYDcGLN0P0tRPXn+EqZjJTzA0y2rn4MhApu
-	8+rNtecO7lZMdjHphmq3yi4QRhCJiBtfdPZL9wFdldMalQ8lG+UdPolfc3+SwuRK
-	0m603Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yfw9164kn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 11:30:52 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 17BC840046;
-	Mon,  3 Jun 2024 11:30:49 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6131C21514D;
-	Mon,  3 Jun 2024 11:30:44 +0200 (CEST)
-Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 3 Jun
- 2024 11:30:44 +0200
-From: Christophe Roullier <christophe.roullier@foss.st.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>,
-        Christophe Roullier
-	<christophe.roullier@foss.st.com>,
-        Marek Vasut <marex@denx.de>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 11/11] ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
-Date: Mon, 3 Jun 2024 11:27:57 +0200
-Message-ID: <20240603092757.71902-12-christophe.roullier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240603092757.71902-1-christophe.roullier@foss.st.com>
-References: <20240603092757.71902-1-christophe.roullier@foss.st.com>
+	s=arc-20240116; t=1717407226; c=relaxed/simple;
+	bh=irUYFkAM4ysrKF+H1+xbc54MGs1P7MFJrAkGBeKcA2s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cZKNNN+zXCEJUKJWyTeITjb01SEoza8H5a5V6lf/A/Ud3pyVMUL5MHIZ6zYSeBeF1MkpGdkfVzSJvUPzUhZolBIbTR8SigMO0Kw+RtW2UQuG5ymUnjVJZHgsv4W7g4ew+y/qKC83yz4Zyw9azJnV9QQ4sHOs4d/Bl6Ui2c7xfwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Vt7jQ2TGNzwRJy;
+	Mon,  3 Jun 2024 17:29:46 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4866118006E;
+	Mon,  3 Jun 2024 17:33:40 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 3 Jun 2024 17:33:39 +0800
+From: Yicong Yang <yangyicong@huawei.com>
+To: <will@kernel.org>, <mark.rutland@arm.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <peterz@infradead.org>, <mingo@redhat.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <james.clark@arm.com>, <dongli.zhang@oracle.com>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>
+Subject: [PATCH 0/3] Perf avoid opening events on offline CPUs
+Date: Mon, 3 Jun 2024 17:28:09 +0800
+Message-ID: <20240603092812.46616-1-yangyicong@huawei.com>
+X-Mailer: git-send-email 2.31.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,35 +58,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_06,2024-05-30_01,2024-05-17_01
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-Need to enable MCP23S08 I/O expanders to manage Ethernet phy
-reset in STM32MP135F-DK board
-STMMAC driver defer is not silent, need to put this config in
-built-in to avoid huge of Ethernet messages
+From: Yicong Yang <yangyicong@hisilicon.com>
 
-Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+If user doesn't specify the CPUs, perf will try to open events on CPUs
+of the PMU which is initialized from the PMU's "cpumask" or "cpus" sysfs
+attributes if provided. But we doesn't check whether the CPUs provided
+by the PMU are all online. So we may open events on offline CPUs if PMU
+driver provide offline CPUs and then we'll be rejected by the kernel:
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 86bf057ac3663..9758f3d41ad70 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -469,6 +469,7 @@ CONFIG_SPI_XILINX=y
- CONFIG_SPI_SPIDEV=y
- CONFIG_SPMI=y
- CONFIG_PINCTRL_AS3722=y
-+CONFIG_PINCTRL_MCP23S08=y
- CONFIG_PINCTRL_MICROCHIP_SGPIO=y
- CONFIG_PINCTRL_OCELOT=y
- CONFIG_PINCTRL_PALMAS=y
+[root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
+[root@localhost yang]# ./perf_static stat -e armv8_pmuv3_0/cycles/ --timeout 100
+Error:
+The sys_perf_event_open() syscall returned with 19 (No such device) for event (cpu-clock).
+/bin/dmesg | grep -i perf may provide additional information.
+
+This patchset tries to avoid this case by:
+- Double check the PMU's cpumask in the perf tool and only include online CPUs
+- Trying to make the PMU drivers only export online CPUs in its "cpus" or "cpumask"
+  attributes
+
+Previously discussion can be found at [1]. Will suggested to do it in userspace.
+I think it makes sense to do a double check in the perf tool in case the driver
+doesn't do this. So PATCH 1/3 is added in this version.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240410095833.63934-1-yangyicong@huawei.com/
+
+Yicong Yang (3):
+  perf pmu: Limit PMU cpumask to online CPUs
+  perf: arm_pmu: Only show online CPUs in device's "cpus" attribute
+  perf: arm_spe: Only show online CPUs in device's "cpumask" attribute
+
+ drivers/perf/arm_pmu.c     | 24 +++++++++++++++++++++++-
+ drivers/perf/arm_spe_pmu.c | 22 +++++++++++++++++++++-
+ tools/perf/util/pmu.c      | 13 +++++++++++--
+ 3 files changed, 55 insertions(+), 4 deletions(-)
+
 -- 
-2.25.1
+2.24.0
 
 
