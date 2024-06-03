@@ -1,191 +1,249 @@
-Return-Path: <linux-kernel+bounces-198794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27FB98D7D7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:37:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C70A8D7D80
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627BEB2381E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:37:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F22A0B22EAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2206823AF;
-	Mon,  3 Jun 2024 08:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC9A60BBF;
+	Mon,  3 Jun 2024 08:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FPxEJbrq"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IxTzXags"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267D17F7D1
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6031366
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717403788; cv=none; b=Kxpi0e/pzIHxaxNao2ETIQ0mPJxHRsslWybVqrizCCdHULenI0iBNrlNaBv3E+fC48PofPujy4+Yh5ePr9QYQKnkU5zCXgV7XR2yHgmTe04dm5gneCwJ8+9orXnpP6ZfzyyDqZv7FAu1GDFJqIW0BxfbYV9KDjw0PeYWK8HcUCc=
+	t=1717403872; cv=none; b=CdmEoAqnBtgz2YAaI6j9mivh1LOuNolCJ9leD7FsN8bAIsfErvODMLiyq79uRkyqhXymP1PfE+6UTT7lxb/34Xt78fCkHatyKQf4oZOx0Z+6CHOgVYvboSKmBRnAyR94ZwpnXLWypFpjjCw+RP12Pcqgt2AzEfSFl9e/ZzWUx0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717403788; c=relaxed/simple;
-	bh=ax0iRHdz96YP7f3j9nn4F+5uHRSqxLUFy88RU9iHAyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=S/bWxpUr5nU/KndgwCZOdkTgpztLVsvv0KtH2o3e/Qvmu2SxcWTImTp358lsDysutP5f10TycR1wjpxqmAwQQpozjiO7jpuni9a+x9zSUrsGdgIkCySebSY7CElMVZQcaQebcVQ/90Nntlqe00S8qOmb8oysa31E0LinZcHBa0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FPxEJbrq; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240603083624epoutp02c2de4f9dc6082bd323d0e08ef6b8cd07~VcaSC1cgU1754517545epoutp02x
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 08:36:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240603083624epoutp02c2de4f9dc6082bd323d0e08ef6b8cd07~VcaSC1cgU1754517545epoutp02x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717403784;
-	bh=1i4h+U/OjuDvnO0eABaI14pGNFllzrKbyYDQLcQT6jw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FPxEJbrqtZU6HOoYsqqhWth6F/E5/xyV976FYCHa/hZDYFjUao89fMvD+8ZQURz3d
-	 T6Xb+h8gt4DVc0hBZ2K5SANp0okOIQi2Du06qusdPLW39k6v4Ys0GRVsyFg8+BjhZF
-	 lyE9YNPDae5nPhCUB4Rdn+szi0iZq9jVCRT7c140=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240603083623epcas2p24502b63cd55099780b32b04a138f34d3~VcaRZ_mMu2494824948epcas2p2G;
-	Mon,  3 Jun 2024 08:36:23 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.97]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Vt6Wq1kB8z4x9Q3; Mon,  3 Jun
-	2024 08:36:23 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C4.A7.09806.7808D566; Mon,  3 Jun 2024 17:36:23 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240603083622epcas2p44b6fb5135a5b9e719a06322b487f8e13~VcaQvVSTL1343513435epcas2p4U;
-	Mon,  3 Jun 2024 08:36:22 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240603083622epsmtrp256c9f310045c64276bf51fcda59d1382~VcaQuSs3N1638016380epsmtrp2m;
-	Mon,  3 Jun 2024 08:36:22 +0000 (GMT)
-X-AuditID: b6c32a47-4f767a800000264e-05-665d808738de
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0E.EE.18846.6808D566; Mon,  3 Jun 2024 17:36:22 +0900 (KST)
-Received: from ubuntu (unknown [10.229.95.128]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240603083622epsmtip2757069851c5ffb92ed1f10f9da516d1c~VcaQjGHGH1582715827epsmtip2X;
-	Mon,  3 Jun 2024 08:36:22 +0000 (GMT)
-Date: Mon, 3 Jun 2024 17:36:57 +0900
-From: Jung Daehwan <dh10.jung@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Mathias
-	Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, "open
- list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>, "open list:OPEN FIRMWARE
- AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: usb: snps,dwc3: Add
- 'snps,xhci-write-64-hi-lo-quirk' quirk
-Message-ID: <20240603083657.GE23593@ubuntu>
+	s=arc-20240116; t=1717403872; c=relaxed/simple;
+	bh=Hwm1zxJoxo7mHP6u6NcvEVm5mXGfFJ/baK5G6lRz4QY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C8rE4CGzvpswCezzJbk4jo2UFOXAGfu5BoSR/BRQaYmvWXxMGpCg9gbbS57yRCV9XKqqmqzHt/BAI1o+gH5TdLJBOu+xtx0Vti6urepTigrA9ibXBf/wKjDgJ/RxMhy44cY0SVmIYin4eJaZx/qzfGElzkB7ofQ/eK3QYoEjgIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IxTzXags; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717403869;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8e8q8npI4BWFuuZD5vXqbpol84lHYO8aD1sXcrhsQy4=;
+	b=IxTzXags0s5R5RrQAHTJ2V7PznALUbbnfdLwUuaCemvtR5sAuQWoGckFV7oJDEgS8nGm0X
+	XCUINNdz8EzqcacxgwPte9jrRjtseqdZFmVt5DcUEKzwDJYcaBjTBmkn4zSw7hq0fgiiEG
+	rC/b17WiUFjv2ASdHT+/yQbchzi2dm4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-317-T8SqkF0IPBqlE9pnkqtGww-1; Mon, 03 Jun 2024 04:37:47 -0400
+X-MC-Unique: T8SqkF0IPBqlE9pnkqtGww-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4212e2a3a1bso18842575e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 01:37:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717403867; x=1718008667;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8e8q8npI4BWFuuZD5vXqbpol84lHYO8aD1sXcrhsQy4=;
+        b=FmC07HBQXsyxzXxSu3so0zSdbLuUgtpodw0sZyVcjl2VzJU/YTnRHydDZYPqBPeZPU
+         nENxGhyUv+g5hhJR13nKPZUwtN6z6dRI4Z6NlQXx2s5JrRZRRujfpL69Q5frmIJ/a7Kx
+         yyM75PJEuEvkID0uKBdJfshi7OY23NsTBQ8srvOLG0NbFSet/StwZKeY9oxekqDKHbEN
+         lPp1v/TdXzgdy2zyz9JiayZkP2ifonOjqD3uZUcvgavNl2rAHkfm7IV5/5tDZJpI/wMN
+         wr02AoTBYkBUggvR+c/QGZbTXsjWISO1CdXDXOm8hlkPQVw5VipM2YMB+ii6AyKcalW1
+         r7vA==
+X-Gm-Message-State: AOJu0Yxe/iPTAwXzRyFEhxdWrf93rM9w7VVW4mBws3tm/QkuUwI+yRNs
+	tYUhAsEzWM2l83Fee7ALU+gFt0cRgovpYvnuoMGd/4u4OhqbR7UBb5SiR850W2nd6s56TFNofwt
+	vrxs4uQH0aLGdIOniKpM/G7oS97lwlRhf/Rpi4Dli7XSMPuCJDXZb67joKmYQiQ==
+X-Received: by 2002:a05:600c:190b:b0:421:29f4:4f33 with SMTP id 5b1f17b1804b1-4212e047540mr66098275e9.1.1717403866800;
+        Mon, 03 Jun 2024 01:37:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH14GND+NAEOhU1EsAF3onAJIsXZRs73v32c4deKhza+UFKNQz2d+ymwUdwTAyxxwYLIPXLlA==
+X-Received: by 2002:a05:600c:190b:b0:421:29f4:4f33 with SMTP id 5b1f17b1804b1-4212e047540mr66098085e9.1.1717403866296;
+        Mon, 03 Jun 2024 01:37:46 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c731:3d00:918f:ce94:4280:80f0? (p200300cbc7313d00918fce94428080f0.dip0.t-ipconnect.de. [2003:cb:c731:3d00:918f:ce94:4280:80f0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42132471e01sm95128555e9.13.2024.06.03.01.37.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 01:37:45 -0700 (PDT)
+Message-ID: <4da9da2f-73e4-45fd-b62f-a8a513314057@redhat.com>
+Date: Mon, 3 Jun 2024 10:37:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <eb13e81c-2669-4e82-86eb-d61203475962@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLJsWRmVeSWpSXmKPExsWy7bCmhW57Q2yawaoVXBbH2p6wW6zZe47J
-	Yv6Rc6wWzYvXs1m8nHWPzeL8+Q3sFpd3zWGzWLSsldmiedMUVov/e3awW6xacIDdgdtj8Z6X
-	TB6bVnWyeeyfu4bdY8v+z4wenzfJBbBGZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoa
-	WlqYKynkJeam2iq5+AToumXmAJ2mpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkw
-	L9ArTswtLs1L18tLLbEyNDAwMgUqTMjO2PpiKmvBEb6KQ2/PMzcw3uTuYuTkkBAwkbi3+z5z
-	FyMXh5DADkaJfe8vsUI4nxglnuxZywbnPPr6iQ2m5fKECVAtOxklFj75xwLhPGGUODf1MhNI
-	FYuAisTP3q9gHWwCWhL3fpxgBrFFBDQlrv/9DraDWeAOs8SkdSfAioQFUiVeH+sGa+YV0Ja4
-	13IKyhaUODnzCQuIzSlgJ/F42gHGLkYODlGgBa8O1oPMkRCYyiHx9sNsJojzXCS+HT/HDmEL
-	S7w6vgXKlpL4/G4v1AvFEreeP2OGaG5hlFjxqoUZImEsMetZOyOIzSyQIdE64wMLyDIJAWWJ
-	I7dYIMJ8Eh2H/7JDhHklOtqEIDqVJaZfnsAKYUtKHHx9Dmqih8SSwyuhwfiQSeJr81PmCYzy
-	s5C8NgvJNghbR2LB7k9ss4BWMAtISyz/xwFhakqs36W/gJF1FaNYakFxbnpqsVGBMTy6k/Nz
-	NzGC062W+w7GGW8/6B1iZOJgPMQowcGsJMLbVxedJsSbklhZlVqUH19UmpNafIjRFBhRE5ml
-	RJPzgQk/ryTe0MTSwMTMzNDcyNTAXEmc917r3BQhgfTEktTs1NSC1CKYPiYOTqkGJoOZa87E
-	T9h+JU/xhnDPwvX1NmabTT9Hrl8XzJMYxR9tMCW6PG0yU6rgzEgFcaeVQivcxX+2TTH9fkh0
-	pczfC64Hlu5r2e3EevaqtZSrBP/9dcHGV1+/S9IrWbprssKEic8k5/+7e0vn++2fK+0vvrh5
-	VEd3y2qN/nZdEbZD/9v+a0x2r/rm0HThQdrdiWu6OGMv7lXvb/C+UrX0Q1xe6KQdj6ZLsno/
-	SHggKby5he32qQVPArIP/Lt2Xqj68zWJmpZ6N9Fg71kt5TtmZzMWRhayzLJd3Hj/S5b/zN8q
-	NoYLjmcs5FokNuV5B5tuT0hLX+SbH0cva5WknEv5fTW8g4V/olLshcnPgkpLGo50iyixFGck
-	GmoxFxUnAgAw+gi2QAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsWy7bCSvG5bQ2yawZ8ZBhbH2p6wW6zZe47J
-	Yv6Rc6wWzYvXs1m8nHWPzeL8+Q3sFpd3zWGzWLSsldmiedMUVov/e3awW6xacIDdgdtj8Z6X
-	TB6bVnWyeeyfu4bdY8v+z4wenzfJBbBGcdmkpOZklqUW6dslcGWceHmPpaCFp+LWsQ1MDYyb
-	OLsYOTkkBEwkLk+YwNzFyMUhJLCdUWLvljMsEAlJiaVzb7BD2MIS91uOsEIUPWKUaD1xigkk
-	wSKgIvGz9ysbiM0moCVx78cJZhBbREBT4vrf72ANzAKPmCWmv3gCViQskCrx+lg3WDOvgLbE
-	vRaQQSBTHzJJ7Hl3iBUiIShxcuYTsDOYgabe+PcSqIgDyJaWWP6PAyTMKWAn8XjaAUaQsCjQ
-	Ea8O1k9gFJyFpHkWkuZZCM0LGJlXMYqmFhTnpucmFxjqFSfmFpfmpesl5+duYgRHiVbQDsZl
-	6//qHWJk4mA8xCjBwawkwttXF50mxJuSWFmVWpQfX1Sak1p8iFGag0VJnFc5pzNFSCA9sSQ1
-	OzW1ILUIJsvEwSnVwNRx5eHZlR+8d25TCLtplfCyWGbXLvU/N1nn1dk8+NH07n/I65KlRel3
-	iwMLQyXNNhZF1/xRWtL/i0+hqF8tpXrHvODrbnyBf85NseheHSswtzJk3hS3/MPZoRuauDf/
-	bF/3YFnrqro/i4uKXbynpiwQ2CrBHfq0ddZhCXaTpE3XttbKf2VkfSSXniu7fObCM3LBwb5n
-	M7n0z77aP2fy22kbu8+oTDWeGJw/r31uYduDta2vFVrkzwuZX3S9HVOxJulZ5nHj+oKA/b+y
-	f+ilTHopftSlhWVZXWKJ3nvvI2nbZijJ7Sgte7Z0qtmnhKv6Brd0stJXTJkq+o/re1P3sxsq
-	p1eyP3x8au43l5ViyeJKLMUZiYZazEXFiQCNEuwdAQMAAA==
-X-CMS-MailID: 20240603083622epcas2p44b6fb5135a5b9e719a06322b487f8e13
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----pMGQB5Kx8CcFe4a2OrTD1laxas9T8E6znMm-R6uZIIDZNQ_y=_3b5a7_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240531060728epcas2p358edd115ee217a50712f1ca3b3b22bd7
-References: <1717135657-120818-1-git-send-email-dh10.jung@samsung.com>
-	<CGME20240531060728epcas2p358edd115ee217a50712f1ca3b3b22bd7@epcas2p3.samsung.com>
-	<1717135657-120818-2-git-send-email-dh10.jung@samsung.com>
-	<57966949-8080-4aa5-8d38-63ded1c2b467@kernel.org>
-	<20240603030316.GA23593@ubuntu>
-	<eb13e81c-2669-4e82-86eb-d61203475962@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: init_mlocked_on_free_v3
+To: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org,
+ yjnworkstation@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+ 00107082@163.com, libang.li@antgroup.com
+References: <8118eabf-de9c-41a7-9892-3a1a5bd2071c@redhat.com>
+ <20240601140917.43562-1-ioworker0@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240601140917.43562-1-ioworker0@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-------pMGQB5Kx8CcFe4a2OrTD1laxas9T8E6znMm-R6uZIIDZNQ_y=_3b5a7_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-
-On Mon, Jun 03, 2024 at 08:57:16AM +0200, Krzysztof Kozlowski wrote:
-> On 03/06/2024 05:03, Jung Daehwan wrote:
-> > On Fri, May 31, 2024 at 10:10:30AM +0200, Krzysztof Kozlowski wrote:
-> >> On 31/05/2024 08:07, Daehwan Jung wrote:
-> >>> Add a new quirk for dwc3 core to support writing high-low order.
-> >>
-> >> This does not tell me more. Could be OS property as well... please
-> >> describe hardware and provide rationale why this is suitable for
-> >> bindings (also cannot be deduced from compatible).
-> >>
-> >>
-> > 
-> > Hi,
-> > 
-> > I'm sorry I didn't describe it in dt-bindings patches.
-> > It's described in cover-letter and other patches except in dt-bindings.
-> > I will add it in next submission.
-> > 
-> > I've found out the limitation of Synopsys dwc3 controller. This can work
-> > on Host mode using xHCI. A Register related to ERST should be written
-> > high-low order not low-high order. Registers are always written low-high order
-> > following xHCI spec.(64-bit written is done in each 2 of 32-bit)
-> > That's why new quirk is needed for workaround. This quirk is used not in
-> > dwc3 controller itself, but passed to xhci quirk eventually. That's because
-> > this issue occurs in Host mode using xHCI.
-> > 
+On 01.06.24 16:09, Lance Yang wrote:
+> Completely agree with David's point[1]. I'm also not convinced that this is the
+> right approach :)
 > 
-> If there is only one register then you should just program it
-> differently and it does not warrant quirk property.
-> 
+> It seems like this patch won't handle all cases, as David mentioned[1] before.
+> folio_remove_rmap_ptes() will immediately munlock a large folio (as large folios
+> are not allowed to be batch-added to the LRU list) via munlock_vma_folio() when
+> it is fully unmapped, so this patch does not work in this case. Even worse, if
+> we encounter a COW mlocked folio, we would run into trouble (data corruption).
 
-Could you tell me why you think it does not warrant? I think this is
-good to use quirk.
-
-Best Regards,
-Jung Deahwan
-
-> Best regards,
-> Krzysztof
-> 
-> 
-
-------pMGQB5Kx8CcFe4a2OrTD1laxas9T8E6znMm-R6uZIIDZNQ_y=_3b5a7_
-Content-Type: text/plain; charset="utf-8"
+Adding to what Lance said regarding COW, here is a simple reproducer:
 
 
-------pMGQB5Kx8CcFe4a2OrTD1laxas9T8E6znMm-R6uZIIDZNQ_y=_3b5a7_--
+[root@localhost ~]# cat mlock.c
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <sys/wait.h>
+
+int main(void)
+{
+         size_t size = getpagesize();
+         volatile char *mem;
+         int rc;
+
+         mem = mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+         if (mem == MAP_FAILED) {
+                 fprintf(stderr, "mmap() failed\n");
+                 return -1;
+         }
+
+         rc = mlock((char *) mem, size);
+         if (rc) {
+                 fprintf(stderr, "mlock() failed\n");
+                 return -1;
+         }
+
+         memset((char *) mem, 1, size);
+
+         rc = fork();
+         if (rc < 0) {
+                 fprintf(stderr, "fork() failed\n");
+                 return -1;
+         } else if (!rc) {
+                 return 0;
+         }
+
+         waitpid(rc, NULL, 0);
+         sleep(2);
+
+         if (mem[0] != 1) {
+                 fprintf(stderr, "[FAIL] Memory content changed!\n");
+                 return -1;
+         }
+         fprintf(stderr, "[PASS] Memory content did not change!\n");
+
+         return 0;
+}
+
+[root@localhost ~]# ./mlock
+[FAIL] Memory content changed!
+
+In contrast, when it's not enabled on the cmdline:
+
+[root@localhost ~]# ./mlock
+[PASS] Memory content did not change!
+
+
+Further, rebooting with this enabled gives me (retried once to make sure enabling/disabling
+this feature makes a difference):
+
+[  105.057230] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000008b
+[  105.059491] CPU: 29 PID: 1 Comm: systemd-shutdow Not tainted 6.10.0-rc1+ #16
+[  105.061545] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
+[  105.063884] Call Trace:
+[  105.064548]  <TASK>
+[  105.065088]  dump_stack_lvl+0x5d/0x80
+[  105.066036]  panic+0x118/0x2c8
+[  105.066837]  do_exit.cold+0x18/0x18
+[  105.067759]  do_group_exit+0x36/0xa0
+[  105.069177]  get_signal+0x9bc/0x9e0
+[  105.070191]  arch_do_signal_or_restart+0x3b/0x240
+[  105.071538]  irqentry_exit_to_user_mode+0x1c2/0x230
+[  105.072913]  asm_exc_page_fault+0x26/0x30
+[  105.074057] RIP: 0033:0x0
+[  105.074803] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+[  105.076647] RSP: 002b:00007fff0d9a41a8 EFLAGS: 00010206
+[  105.078090] RAX: 0000000000000011 RBX: 0000000006d8cef9 RCX: 0000000000000005
+[  105.080046] RDX: 00007fff0d9a4250 RSI: 00000000000008c7 RDI: 0000000000000001
+[  105.082139] RBP: 00007fff0d9a4310 R08: 0019fa9fcd800000 R09: 00000029e0b9a6f0
+[  105.084038] R10: 0000000000000008 R11: 0000000000000202 R12: 00007fff0d9a4250
+[  105.085852] R13: 00007fff0d9a41d0 R14: 00000000000008c7 R15: 0000000000000000
+[  105.087653]  </TASK>
+[  105.090686] Kernel Offset: 0x1e000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  105.093359] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000008b ]---
+
+
+This needs to be reverted.
+
+@Andrew, to you want us to send an official revert patch?
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
