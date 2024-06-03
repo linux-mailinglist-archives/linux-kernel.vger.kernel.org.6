@@ -1,211 +1,180 @@
-Return-Path: <linux-kernel+bounces-198968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774988D7FCD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB16D8D7FD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5D82861F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9118B2858A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D25082D6C;
-	Mon,  3 Jun 2024 10:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD29982885;
+	Mon,  3 Jun 2024 10:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZeaB8o4"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0+QHCsi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2837FBA3;
-	Mon,  3 Jun 2024 10:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F4D7FBA3;
+	Mon,  3 Jun 2024 10:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717409499; cv=none; b=DKyTQCfX3vefzPTmOLZSKNA9kLFC80VhEHutFg5RIF0KWEX6nAyXQHozoRQz/DF7oUQEu+rl6JtN9QHDiia8Uez4RtF0RDUS4/cSDsVCx2cJ2WKdy4bXzcbWl/n0xLsMPyP2XkAcA0Udv8dMyfWQGDw2hZQDMcM7kOUzUOWYQ4o=
+	t=1717409587; cv=none; b=Q7yS3IyryNTwHuqbybnql3XFMe+Iuouce96J6gaNFhXiEmhTv9G8PAPugFBRGI0Et7KRIzKxg8b8lnZK4y89IjHxEiSxPwi+tLplJgjX8rgYlmnxBEhOfxUTLbzAOWSXNLijqtr1myrKXoSBxMuj6+omqg4IqeqPwLUasFp9wU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717409499; c=relaxed/simple;
-	bh=N2+1b4UvL2h8BghC0xvtCBiF9o0kiifts/5HQ9Tplak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ULFA4yROkkgohKp3Bi7CYS/QqZcGwB5DKeQzLtDK1qNf1ABMCOx0q5o3cb5++/k+86R/6Iu5CCs8bYcr408+47eKsDL1seMPy29oGPAP3DCJmRxqgu7YkfMHh54OukpFrM5BeDHEnQ+jBisOgbEWbBc64grAtAoUv8E7XdPVm5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZeaB8o4; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b7c82e39eso4067869e87.1;
-        Mon, 03 Jun 2024 03:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717409496; x=1718014296; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6NGoqdJtENVZUa+qRol7I9OdMjwyIhmPcJwjIRPRNrg=;
-        b=XZeaB8o4EHXFcVFqoWwd4v9wFAZ+pnYoVf4lodcMzCoEhkpFTSS2lO0zkeFPCgBCXo
-         LjVPW5t8o2NMnmR5YIubJw0bIzsxbGB6GJ7zMAG1hBIxnK44gzm4b92XFhWI56mLoAly
-         8rF/YPJL/cgUgTikV5hZZ7BrJfoVfqJjlbm2g23sMQjHjfEtMmguvUN5NM8bKa96BJEM
-         C+8u7Uu+rrxbzw0pPHCdB4ZxM7PYpoiNV+6i32W7km/IR4IznTU1Xa0CeVNa81MDalMM
-         HTvTPazPJnCRF3uww74aN6JNGLMCoeHHcU4nzm7sDt7xPv2Rr3sxksfZQSB4WHviIrjo
-         ftKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717409496; x=1718014296;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6NGoqdJtENVZUa+qRol7I9OdMjwyIhmPcJwjIRPRNrg=;
-        b=WZVqNqfaH/LZNtu/Pe+DvXdvm659mx3ea2MDEdjTSsWnDPiyNZvYjjWKdtf9NuAwkF
-         KIIKp1tilbjnu3+fBcgvGDDu+ND9++4EYLmtTlClP3J1SLk48L1mldvlQgcmgUY7Znue
-         nDCgrOFsS7QTXFhmxdQt/y9lT8G9/3T7QAkqiAeWpscXJxGm1AyzeZiW6lUdH+FDXUxi
-         aaK2freCyPf06s1JFoPq6AVlV5+NAfJToUiQznB+MF67dtJWxYbCqp2qMW84Ln6htTHD
-         fheE/Y/z9XM7mxtlyU8bV86Bswxpe2WLBTEjt31o77VmH/3piy5FMy+DRZeNQxjL68uS
-         d+UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkvZlU3s/A1SFQGDhNBy2sNx0Fhb5jo6LnH3GGIYUW95teErPtdsqx8ouXULNpYrhucxvjy6ax95Jkh/y+/J+XvZinsLRQbVxiS+AoN72L3gVFQbTA2Nkx4gWEyVfN53qyBqmuRD9vS7Kx2LP2iuYEgsHBuW3Uf9w+tQTxwET0IUiKXg==
-X-Gm-Message-State: AOJu0YwGHZt32o09C8fSkFcRiaGUFmw6naZjA5LzdRWtCZ5YEOt0X3wt
-	juOQSkqiOXdbOdeorh1q5L7D53MPgY0UdcFZ48SCJC6qPdgI2etQ
-X-Google-Smtp-Source: AGHT+IEcX9mOOMxH+a53YuuVbcvysJP9F7UT5wYgpTKNO0VJka12hKDGJZvicsmRPhRtvDwuSYpSyg==
-X-Received: by 2002:a19:9111:0:b0:52a:5fa8:d565 with SMTP id 2adb3069b0e04-52b896dad9cmr6184155e87.68.1717409495155;
-        Mon, 03 Jun 2024 03:11:35 -0700 (PDT)
-Received: from [10.76.84.176] ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68f1797afbsm222711966b.40.2024.06.03.03.11.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 03:11:34 -0700 (PDT)
-Message-ID: <93ebe75b-5a7d-4d69-9515-7cbeb66c8e7e@gmail.com>
-Date: Mon, 3 Jun 2024 13:11:33 +0300
+	s=arc-20240116; t=1717409587; c=relaxed/simple;
+	bh=N4oZOeI5QrjgnGp3SssH8o31kJ57VtQSEiQ2DCumK4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XRGQ+1dzpKm1ODEIhZ8/ObMe7gcqFGS9c9JZVDB/PNxNwxo5WKUi0nQhA//r9gfTetTHA2fTujn9J2DIBFuCI4X5zV8rW4vzIGIfkTiCB2Y19o6eyikvgCJSBSnPzChn3DZxg03w2dsrJ92JbXQgBh1mKGL5PNuPEcIkpmKvoZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0+QHCsi; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717409585; x=1748945585;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N4oZOeI5QrjgnGp3SssH8o31kJ57VtQSEiQ2DCumK4M=;
+  b=B0+QHCsi9b3GoakD1GxVMkVF7FVm+A/3Jvv9aVucyJFoYwYLGhLhwnFc
+   aHXxr1L5sEZoqikv83GB7lSAvZJROEKvvogBQudXAzBqb2gFjUBUpnIdL
+   0HFF4ZuBdO+NhTrBg2UKVUkuN9FXCwWg9nwiZ+HP+G+uSfQM7bOxPrNnf
+   J6k1bKOS0PuTYzt66tgRyJecY8MIyaTTHB5OvwNzbaG+noAIQbBwtUtaM
+   FA0vWViYEm98BzIrR7O4ZO/iy2yXxvradYonB8rEExB3hkJJKLD9YwgkP
+   vdrwKEwgfXtYrSOuTB4bD7r2lGZ08G/p43sa5Tb7bZeeE3ELzYI6wmGYp
+   Q==;
+X-CSE-ConnectionGUID: 31u6H1gFQF6wPtIVnDeJKw==
+X-CSE-MsgGUID: r7mGNLCGSLqkrQYUA6DNbg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="14082037"
+X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
+   d="scan'208";a="14082037"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 03:13:05 -0700
+X-CSE-ConnectionGUID: 8ASaOD0gSx+/CFtYNYuC+A==
+X-CSE-MsgGUID: 4yavY1VEQWGXdS5R4EpFXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
+   d="scan'208";a="36733139"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmviesa007.fm.intel.com with SMTP; 03 Jun 2024 03:13:03 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 03 Jun 2024 13:13:01 +0300
+Date: Mon, 3 Jun 2024 13:13:01 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+	linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v1 1/1] usb: typec: tcpm: avoid resets for missing source
+ capability messages
+Message-ID: <Zl2XLbOfAgYq6yWE@kuha.fi.intel.com>
+References: <20240523171806.223727-1-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] iio: adc: ad7173: Add support for AD411x devices
-To: Jonathan Cameron <jic23@kernel.org>,
- Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240531-ad4111-v4-0-64607301c057@analog.com>
- <20240531-ad4111-v4-6-64607301c057@analog.com>
- <20240601201912.32fe3524@jic23-huawei>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <20240601201912.32fe3524@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523171806.223727-1-sebastian.reichel@collabora.com>
 
-On 01/06/2024 22:19, Jonathan Cameron wrote:
-> On Fri, 31 May 2024 22:42:32 +0300
-> Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> wrote:
+On Thu, May 23, 2024 at 07:17:52PM +0200, Sebastian Reichel wrote:
+> When the Linux Type-C controller drivers probe, they requests a soft
+> reset, which should result in the source restarting to send Source
+> Capability messages again independently of the previous state.
+> Unfortunately some USB PD sources do not follow the specification and
+> do not send them after a soft reset when they already negotiated a
+> specific contract before. The current way (and what is described in the
+> specificiation) to resolve this problem is triggering a hard reset.
 > 
->> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->>
->> Add support for AD4111/AD4112/AD4114/AD4115/AD4116.
->>
->> The AD411X family encompasses a series of low power, low noise, 24-bit,
->> sigma-delta analog-to-digital converters that offer a versatile range of
->> specifications.
->>
->> This family of ADCs integrates an analog front end suitable for processing
->> both fully differential and single-ended, bipolar voltage inputs
->> addressing a wide array of industrial and instrumentation requirements.
->>
->> - All ADCs have inputs with a precision voltage divider with a division
->>   ratio of 10.
->> - AD4116 has 5 low level inputs without a voltage divider.
->> - AD4111 and AD4112 support current inputs (0 mA to 20 mA) using a 50ohm
->>   shunt resistor.
->>
->> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> Hi Dumitru,
+> But a hard reset is fatal on batteryless platforms powered via USB-C PD,
+> since that removes VBUS for some time. Since this is triggered at boot
+> time, the system will be stuck in a boot loop. Examples for platforms
+> affected by this are the Radxa Rock 5B or the Libre Computer Renegade
+> Elite ROC-RK3399-PC.
 > 
-> A follow on comment on the validation code.
-> Also there is some good docs for the sampling frequency but are they
-> actually related to the rest of this change?  They also raise
-> questions about ABI compliance that we may want to deal with as
-> a follow up patch.
+> Instead of directly trying a hard reset when no Source Capability
+> message is send by the USB-PD source automatically, this changes the
+> state machine to try explicitly asking for the capabilities by sending
+> a Get Source Capability control message.
 > 
-> A few other trivial things inline.
+> For me this solves issues with 2 different USB-PD sources - a RAVPower
+> powerbank and a Lemorele USB-C dock. Every other PD source I own
+> follows the specification and automatically sends the Source Capability
+> message after a soft reset, which works with or without this change.
 > 
-> This is looking pretty good, so hopefully we'll get the last few corners
-> sorted in v5.
+> I decided against making this extra step limited to devices not having
+> the self_powered flag set, since I don't see any huge drawbacks in this
+> approach and it keeps the logic simpler. The worst case scenario would
+> be a power source, which is really stuck. In that case the hard reset
+> is delayed by another 310ms.
 > 
-> Thanks,
-> 
-> Jonathan
-> 
-> 
->> ---
->>  drivers/iio/adc/ad7173.c | 336 +++++++++++++++++++++++++++++++++++++++++++----
->>  1 file changed, 307 insertions(+), 29 deletions(-)
->>
->> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
->> index ed8ff8c5f343..91ff984eedf4 100644
->> --- a/drivers/iio/adc/ad7173.c
->> +++ b/drivers/iio/adc/ad7173.c
->> @@ -1,8 +1,9 @@
-> 
->>  #define AD7173_INTERFACE_DATA_STAT	BIT(6)
->> @@ -125,26 +132,46 @@
->>  #define AD7173_VOLTAGE_INT_REF_uV	2500000
->>  #define AD7173_TEMP_SENSIIVITY_uV_per_C	477
->>  #define AD7177_ODR_START_VALUE		0x07
->> +#define AD4111_SHUNT_RESISTOR_OHM	50
->> +#define AD4111_DIVIDER_RATIO		10
->> +#define AD411X_VCOM_INPUT		0X10
-> 
-> AD4111_VCOM_INPUT . Looks like one wildcard escaped an earlier edit?
-> 
->> +#define AD4111_CURRENT_CHAN_CUTOFF	16
->>  
->> @@ -736,6 +918,21 @@ static int ad7173_write_raw(struct iio_dev *indio_dev,
->>  		return ret;
->>  
->>  	switch (info) {
->> +	/*
->> +	 * This attribute sets the sampling frequency to each channel individually.
-> 
-> frequency for each channel?
-> 
->> +	 * There are no issues for raw or buffered reads of an individual channel.
->> +	 *
->> +	 * When multiple channels are enabled in buffered mode, the effective
->> +	 * sampling rate of a channel is lowered in correlation to the number
->> +	 * of channels enabled and the sampling rate of the other channels.
->> +	 *
->> +	 * Example: 3 channels enabled with rates CH1:6211sps CH2,CH3:10sps
->> +	 * While the reading of CH1 takes only 0.16ms, the reading of CH2 and CH3
->> +	 * will take 100ms each.
->> +	 *
->> +	 * This will cause the reading of CH1 to be actually done once every
->> +	 * 200.16ms, an effective rate of 4.99sps.
-> 
-> Hmm. This is a bit unfortunate as if I understand correctly that's not really what
-> people will expect when they configure the sampling frequency.  However I can't immediately
-> think of a better solution.  You could let userspace write a value that is cached
-> then attempt to get as near as possible as channels are enabled.
-> 
-> Still this looks like a documentation enhancement of existing behavior
-> in which case any functional change can be in a future patch.
-> However I don't think the docs update belongs in this patch unless
-> I'm missing some reason for it?
->
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Well, it would seem like this exact behaviour is already documented:
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
- "
- What:		/sys/bus/iio/devices/iio:deviceX/in_voltageX_sampling_frequency
- What:		/sys/bus/iio/devices/iio:deviceX/in_powerY_sampling_frequency
- What:		/sys/bus/iio/devices/iio:deviceX/in_currentZ_sampling_frequency
- KernelVersion:	5.20
- Contact:	linux-iio@vger.kernel.org
- Description:
-		Some devices have separate controls of sampling frequency for
-		individual channels. If multiple channels are enabled in a scan,
-		then the sampling_frequency of the scan may be computed from the
-		per channel sampling frequencies.
- "
-Does it still make sense to keep this comment here? But if kept, yeah, a different patch
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c | 27 +++++++++++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 375bc84d14a2..bac6866617c8 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -57,6 +57,7 @@
+>  	S(SNK_DISCOVERY_DEBOUNCE),		\
+>  	S(SNK_DISCOVERY_DEBOUNCE_DONE),		\
+>  	S(SNK_WAIT_CAPABILITIES),		\
+> +	S(SNK_WAIT_CAPABILITIES_TIMEOUT),	\
+>  	S(SNK_NEGOTIATE_CAPABILITIES),		\
+>  	S(SNK_NEGOTIATE_PPS_CAPABILITIES),	\
+>  	S(SNK_TRANSITION_SINK),			\
+> @@ -3108,7 +3109,8 @@ static void tcpm_pd_data_request(struct tcpm_port *port,
+>  						   PD_MSG_CTRL_REJECT :
+>  						   PD_MSG_CTRL_NOT_SUPP,
+>  						   NONE_AMS);
+> -		} else if (port->state == SNK_WAIT_CAPABILITIES) {
+> +		} else if (port->state == SNK_WAIT_CAPABILITIES ||
+> +			   port->state == SNK_WAIT_CAPABILITIES_TIMEOUT) {
+>  		/*
+>  		 * This message may be received even if VBUS is not
+>  		 * present. This is quite unexpected; see USB PD
+> @@ -5039,10 +5041,31 @@ static void run_state_machine(struct tcpm_port *port)
+>  			tcpm_set_state(port, SNK_SOFT_RESET,
+>  				       PD_T_SINK_WAIT_CAP);
+>  		} else {
+> -			tcpm_set_state(port, hard_reset_state(port),
+> +			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
+>  				       PD_T_SINK_WAIT_CAP);
+>  		}
+>  		break;
+> +	case SNK_WAIT_CAPABILITIES_TIMEOUT:
+> +		/*
+> +		 * There are some USB PD sources in the field, which do not
+> +		 * properly implement the specification and fail to start
+> +		 * sending Source Capability messages after a soft reset. The
+> +		 * specification suggests to do a hard reset when no Source
+> +		 * capability message is received within PD_T_SINK_WAIT_CAP,
+> +		 * but that might effectively kil the machine's power source.
+> +		 *
+> +		 * This slightly diverges from the specification and tries to
+> +		 * recover from this by explicitly asking for the capabilities
+> +		 * using the Get_Source_Cap control message before falling back
+> +		 * to a hard reset. The control message should also be supported
+> +		 * and handled by all USB PD source and dual role devices
+> +		 * according to the specification.
+> +		 */
+> +		if (tcpm_pd_send_control(port, PD_CTRL_GET_SOURCE_CAP, TCPC_TX_SOP))
+> +			tcpm_set_state_cond(port, hard_reset_state(port), 0);
+> +		else
+> +			tcpm_set_state(port, hard_reset_state(port), PD_T_SINK_WAIT_CAP);
+> +		break;
+>  	case SNK_NEGOTIATE_CAPABILITIES:
+>  		port->pd_capable = true;
+>  		tcpm_set_partner_usb_comm_capable(port,
+> -- 
+> 2.43.0
 
-...
+-- 
+heikki
 
