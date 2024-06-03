@@ -1,170 +1,159 @@
-Return-Path: <linux-kernel+bounces-198662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EAA8D7BCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:42:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B48588D7BAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 08:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F151F225A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D1B12817DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 06:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BC87F47B;
-	Mon,  3 Jun 2024 06:40:00 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E132C859;
+	Mon,  3 Jun 2024 06:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDt2XIKu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAA23FB1C;
-	Mon,  3 Jun 2024 06:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E841A1799B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 06:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717396799; cv=none; b=mm+kbQIZqHBG3Kyzj/41bz4lNTm91dhANJsUTjyhmMcC1zeIPI9zBeRTf8uj7/sY2p56RYhkuqe4nGWIGaOmEj/3rCucqS2kQz/exozQCSkNSgctmG4zSiG/nZ20a/AlKvBvDKNvyfNSNaaVKrhweJgHsIhuJgzO1peD+Lm+LRU=
+	t=1717396700; cv=none; b=Ntd2vdGikfZYtd7OowkFmUkVcFwr8foSa567MVMPrICB+PLpIP8zpfLLQS3bQUANf7ngDjCWqdlZv6eeQnRI82F5DTBowzGN0y96dMt8dyE3UzhC1ccBmOGbdXd2zCTVz7BqIFVtTeuHs3XfFzSEoCSjgpX8PRZ12yRukxau9II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717396799; c=relaxed/simple;
-	bh=wy1kEIFNWuIKDXwii9P9BWgUPVTkXwG6PerXplT8Hik=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZZyroz+m0qkzelszAII5nI9g55+Kj5r8gXYNpnCtvzLzaXtytwRMVADu0xo6O9JE8Y2PS2F4JiPdcxEQ7QRI8/+VUVTm8qbpaykV6E/6qDpbO7PgJlb0awGUJ5cxCI/zQRC4BLDx1WsSAJjfNgfSPxbMPTMJpnWZ9GMybZLY6Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5D3301A155E;
-	Mon,  3 Jun 2024 08:39:56 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 237E51A153F;
-	Mon,  3 Jun 2024 08:39:56 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B3F9A180222A;
-	Mon,  3 Jun 2024 14:39:54 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com
-Subject: [PATCH v1 1/1] Bluetooth: btnxpuart: Add handling for boot-signature timeout errors
-Date: Mon,  3 Jun 2024 12:07:53 +0530
-Message-Id: <20240603063753.134272-1-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717396700; c=relaxed/simple;
+	bh=sWk1wjilan0FFkoMfarqiXPdTbXDabBugnGDpneW2S0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NLZZGpTmZLvNVbWFoMH1PEI9PFIRDjfTlTTovqjp395lqYJ45UbxcXwZDV/FdaK7OUkhOSrcKX60U9ioU0II6bRBXxsY4ntV2LDXfHnhwubHvLFxyZQ7nayoFrSp7CEQvzj0+KmBbRehRBCIm9kVDFOMsfHcyEKsWaPuOLsSUaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDt2XIKu; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717396698; x=1748932698;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=sWk1wjilan0FFkoMfarqiXPdTbXDabBugnGDpneW2S0=;
+  b=iDt2XIKuLmqfIPMz9OdEzxKFbGqSj0MkHrylYdUiQdsZg5rytjoSxtdr
+   vCbyNNVBX1fe1LX5d/KYHtTdAe13ifgSS1Oqh56dKas+FJsxVf6T93QxK
+   Z+aPT217z2mpn3THc+DH/w+TmVxlNBl86PR0fvU92skjAX43KAQma2u/D
+   8adzqUUvRzM9mHX7nf2MZz+JVApXfplzCpRz1uJgLdffAIBdqHtOAuHGj
+   UbSZfbSC86Z05bOw2guW1A4CF42mSn9OfHCQzDyG7CGCiFggBaLpK9W9U
+   oorctdw6lB7suJNylpHGz10xQzkRswqc3JX5yr9lc5C3oTIkk5cjRoVgT
+   A==;
+X-CSE-ConnectionGUID: PAzzZ8H2Qn+oPV4d0MBeYg==
+X-CSE-MsgGUID: K+XXk+UGROiUdfU+l3nJdA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11091"; a="24450898"
+X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
+   d="scan'208";a="24450898"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2024 23:38:17 -0700
+X-CSE-ConnectionGUID: 0LpvD4CmR6efmfyTX6pFjg==
+X-CSE-MsgGUID: cfxoBYY6Ql25MZ5fM1ITyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,210,1712646000"; 
+   d="scan'208";a="67620487"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 02 Jun 2024 23:38:16 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sE1KX-000L6z-16;
+	Mon, 03 Jun 2024 06:38:10 +0000
+Date: Mon, 3 Jun 2024 14:37:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kees Cook <keescook@chromium.org>
+Subject: drivers/iommu/io-pgtable-arm.c:330:13: error: void value not ignored
+ as it ought to be
+Message-ID: <202406031408.wNSVlKLV-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This handles the timeout errors seen in the bootloader signatures during
-FW download.
+Hi Mark,
 
-When the bootloader does not receive a response packet from the host
-within a specific time, it adds an error code to the bootloader
-signature while requesting for the FW chunk from the same offset.
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
-The host is expected to clear this error code with a NAK, and reply to
-only those bootloader signatures which have error code 0.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c3f38fa61af77b49866b006939479069cd451173
+commit: 9257959a6e5b4fca6fc8e985790bff62c2046f20 locking/atomic: scripts: restructure fallback ifdeffery
+date:   12 months ago
+config: arc-randconfig-r022-20230104 (https://download.01.org/0day-ci/archive/20240603/202406031408.wNSVlKLV-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240603/202406031408.wNSVlKLV-lkp@intel.com/reproduce)
 
-This error handling is valid for data_req bootloader signatures for V3
-and future bootloader versions.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406031408.wNSVlKLV-lkp@intel.com/
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
----
- drivers/bluetooth/btnxpuart.c | 46 ++++++++++++++++++++++++++++++++---
- 1 file changed, 42 insertions(+), 4 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index 0b93c2ff29e4..2018513fb961 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -187,6 +187,10 @@ struct btnxpuart_dev {
- #define NXP_NAK_V3		0x7b
- #define NXP_CRC_ERROR_V3	0x7c
- 
-+#define NXP_ACK_RX_TIMEOUT	0x0002
-+#define NXP_HDR_RX_TIMEOUT	0x0003
-+#define NXP_DATA_RX_TIMEOUT	0x0004
-+
- #define HDR_LEN			16
- 
- #define NXP_RECV_CHIP_VER_V1 \
-@@ -277,6 +281,12 @@ struct nxp_bootloader_cmd {
- 	__be32 crc;
- } __packed;
- 
-+struct nxp_v3_rx_timeout_nak {
-+	u8 nak;
-+	__le32 offset;
-+	u8 crc;
-+} __packed;
-+
- static u8 crc8_table[CRC8_TABLE_SIZE];
- 
- /* Default configurations */
-@@ -899,6 +909,32 @@ static int nxp_recv_chip_ver_v3(struct hci_dev *hdev, struct sk_buff *skb)
- 	return 0;
- }
- 
-+static void nxp_handle_fw_dnld_error(struct hci_dev *hdev, struct v3_data_req *req)
-+{
-+	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
-+	__u32 offset = __le32_to_cpu(req->offset);
-+	__u16 err = __le16_to_cpu(req->error);
-+	struct nxp_v3_rx_timeout_nak nak_tx_buf;
-+
-+	switch (err) {
-+	case NXP_ACK_RX_TIMEOUT:
-+	case NXP_HDR_RX_TIMEOUT:
-+	case NXP_DATA_RX_TIMEOUT:
-+		nak_tx_buf.nak = NXP_NAK_V3;
-+		nak_tx_buf.offset = __cpu_to_le32(offset);
-+		nak_tx_buf.crc = crc8(crc8_table, (u8 *)&nak_tx_buf,
-+				      sizeof(nak_tx_buf) - 1, 0xff);
-+		serdev_device_write_buf(nxpdev->serdev, (u8 *)&nak_tx_buf,
-+					sizeof(nak_tx_buf));
-+		break;
-+	default:
-+		bt_dev_dbg(hdev, "Unknown bootloader error: %d", err);
-+		break;
-+
-+	}
-+
-+}
-+
- static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
- {
- 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
-@@ -913,7 +949,12 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
- 	if (!req || !nxpdev->fw)
- 		goto free_skb;
- 
--	nxp_send_ack(NXP_ACK_V3, hdev);
-+	if (!req->error) {
-+		nxp_send_ack(NXP_ACK_V3, hdev);
-+	} else {
-+		nxp_handle_fw_dnld_error(hdev, req);
-+		goto free_skb;
-+	}
- 
- 	len = __le16_to_cpu(req->len);
- 
-@@ -940,9 +981,6 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
- 		wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
- 		goto free_skb;
- 	}
--	if (req->error)
--		bt_dev_dbg(hdev, "FW Download received err 0x%02x from chip",
--			   req->error);
- 
- 	offset = __le32_to_cpu(req->offset);
- 	if (offset < nxpdev->fw_v3_offset_correction) {
+   drivers/iommu/io-pgtable-arm.c: In function 'arm_lpae_install_table':
+>> drivers/iommu/io-pgtable-arm.c:330:13: error: void value not ignored as it ought to be
+     330 |         old = cmpxchg64_relaxed(ptep, curr, new);
+         |             ^
+--
+   drivers/iommu/io-pgtable-dart.c: In function 'dart_install_table':
+>> drivers/iommu/io-pgtable-dart.c:168:13: error: void value not ignored as it ought to be
+     168 |         old = cmpxchg64_relaxed(ptep, curr, new);
+         |             ^
+   drivers/iommu/io-pgtable-dart.c:157:25: warning: variable 'new' set but not used [-Wunused-but-set-variable]
+     157 |         dart_iopte old, new;
+         |                         ^~~
+
+
+vim +330 drivers/iommu/io-pgtable-arm.c
+
+c896c132b01895 Laurent Pinchart   2014-12-14  310  
+fb3a95795da53d Robin Murphy       2017-06-22  311  static arm_lpae_iopte arm_lpae_install_table(arm_lpae_iopte *table,
+fb3a95795da53d Robin Murphy       2017-06-22  312  					     arm_lpae_iopte *ptep,
+2c3d273eabe8b1 Robin Murphy       2017-06-22  313  					     arm_lpae_iopte curr,
+9abe2ac834851a Hector Martin      2021-11-20  314  					     struct arm_lpae_io_pgtable *data)
+fb3a95795da53d Robin Murphy       2017-06-22  315  {
+2c3d273eabe8b1 Robin Murphy       2017-06-22  316  	arm_lpae_iopte old, new;
+9abe2ac834851a Hector Martin      2021-11-20  317  	struct io_pgtable_cfg *cfg = &data->iop.cfg;
+e1d3c0fd701df8 Will Deacon        2014-11-14  318  
+9abe2ac834851a Hector Martin      2021-11-20  319  	new = paddr_to_iopte(__pa(table), data) | ARM_LPAE_PTE_TYPE_TABLE;
+fb3a95795da53d Robin Murphy       2017-06-22  320  	if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_NS)
+fb3a95795da53d Robin Murphy       2017-06-22  321  		new |= ARM_LPAE_PTE_NSTABLE;
+e1d3c0fd701df8 Will Deacon        2014-11-14  322  
+77f3445866c39d Will Deacon        2017-06-23  323  	/*
+77f3445866c39d Will Deacon        2017-06-23  324  	 * Ensure the table itself is visible before its PTE can be.
+77f3445866c39d Will Deacon        2017-06-23  325  	 * Whilst we could get away with cmpxchg64_release below, this
+77f3445866c39d Will Deacon        2017-06-23  326  	 * doesn't have any ordering semantics when !CONFIG_SMP.
+77f3445866c39d Will Deacon        2017-06-23  327  	 */
+77f3445866c39d Will Deacon        2017-06-23  328  	dma_wmb();
+2c3d273eabe8b1 Robin Murphy       2017-06-22  329  
+2c3d273eabe8b1 Robin Murphy       2017-06-22 @330  	old = cmpxchg64_relaxed(ptep, curr, new);
+2c3d273eabe8b1 Robin Murphy       2017-06-22  331  
+4f41845b340783 Will Deacon        2019-06-25  332  	if (cfg->coherent_walk || (old & ARM_LPAE_PTE_SW_SYNC))
+2c3d273eabe8b1 Robin Murphy       2017-06-22  333  		return old;
+2c3d273eabe8b1 Robin Murphy       2017-06-22  334  
+2c3d273eabe8b1 Robin Murphy       2017-06-22  335  	/* Even if it's not ours, there's no point waiting; just kick it */
+41e1eb2546e9c8 Isaac J. Manjarres 2021-06-16  336  	__arm_lpae_sync_pte(ptep, 1, cfg);
+2c3d273eabe8b1 Robin Murphy       2017-06-22  337  	if (old == curr)
+2c3d273eabe8b1 Robin Murphy       2017-06-22  338  		WRITE_ONCE(*ptep, new | ARM_LPAE_PTE_SW_SYNC);
+2c3d273eabe8b1 Robin Murphy       2017-06-22  339  
+2c3d273eabe8b1 Robin Murphy       2017-06-22  340  	return old;
+e1d3c0fd701df8 Will Deacon        2014-11-14  341  }
+e1d3c0fd701df8 Will Deacon        2014-11-14  342  
+
+:::::: The code at line 330 was first introduced by commit
+:::::: 2c3d273eabe8b1ed3b3cffe2c79643b1bf7e2d4a iommu/io-pgtable-arm: Support lockless operation
+
+:::::: TO: Robin Murphy <robin.murphy@arm.com>
+:::::: CC: Will Deacon <will.deacon@arm.com>
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
