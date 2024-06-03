@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-199057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923C78D815E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6998D8172
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35EC1C21E82
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361351F25CB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9602F84D05;
-	Mon,  3 Jun 2024 11:36:36 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEB684D07;
+	Mon,  3 Jun 2024 11:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="QjS7K5y1"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A755C288DF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 11:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5BD84A58;
+	Mon,  3 Jun 2024 11:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717414596; cv=none; b=XAiqDO4aXpKrHZZK48HdweH/TwrG1Svyd9Q+7d7c3qetg5gz88QEfZDQCCA9X+uAvHhi0PtuCzlnGz3vKynj8i8pgcmtwawUIOjKxWpXGQE6hB5ZySbl/M0Hz3izh5K0VwabtU4PwAiJxMGwduoBqwuxeNJbQG/3Qm2yPoGoXck=
+	t=1717414868; cv=none; b=iCyEpm+y2nVhMTbR3he8HRktTr99x3ui9x9BxXZOthXo8AahFiJ2iArOS4pE3p1mjtEe/97ta/McHlyK7a6GkmXBQby/jqBi2IKu9UJ0wJk3WUPLokwxwLVSx+DXhad+zLxO4dP6Y3jnD4peL0EindN30vG6GpDAjk47BGKBr7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717414596; c=relaxed/simple;
-	bh=TwqEhT3Eq9GXxaWgVaAmkXRxpQVBdJZerofTbNCVbDs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i4qnfMcIEaYAZmkPGm7wY0WQDg/upbxS0V3edFuvic7iSu1YOTea7Pq4aZNK7zuVXKvqSidjLIo7FI5nlsRdvmXYq4TzItHYx6hbw/VqXqWQJJ8exNtOGOWJ/gC3+jujA7iXWu1wpGxNHDLKFM/Z5tIkTTowvi2tF/5nrR9nllc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 453BZgc6074903;
-	Mon, 3 Jun 2024 19:35:42 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VtBQ96W5fz2Qn07V;
-	Mon,  3 Jun 2024 19:31:45 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Mon, 3 Jun 2024 19:35:40 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>
-Subject: [PATCH V2] f2fs: use new ioprio Macro to get ckpt thread ioprio level
-Date: Mon, 3 Jun 2024 19:35:26 +0800
-Message-ID: <1717414526-19658-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1717414868; c=relaxed/simple;
+	bh=NvJwpxgM+A3vRQjH6kJCJstSMvsWw3Ln7YVQYKZAyHk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MlCCsBLHuL8F1/KvsUK0gWBYYnvJVJu8WwWYaf9m26o8KYn0Go1igEI4VZ8c3uMAl4PrDWUpo1ou8/oN4CaaplbYh8whA4zGDKCHrhe7U1aHI5O1+0/Q0VR8z9pcwsC2OjmciUCFjty4gath36OdxD1hId6xAGcDPPNiTdaEkRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=QjS7K5y1; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=BkjlszsnJOcjOnwmTLpVxgc/BqFI39QeF4SVAWs2h/E=; t=1717414862; x=1718019662; 
+	b=QjS7K5y1Z9rxLui4TGxW2ZQNliDMeoRQu8wflb+OEK2oa9Gq/bW6g6+kR13PS9d9LgDnQ6iwnz3
+	fODN+68wy6U0GFagH3OKT3snbaJc1reTYDgtlZ2uPZUq5IqmM9wRB4qmRhLRXaC9G20ae4koJBqaH
+	mLekYjKFs9ZnMIErQRWpioaInPtAP7VB5IW6q/7s6gfk+APz7vWMp6zKgskgGwO2U+xaSd6XJAVFX
+	jkGfEy7Dc5qMlwAAb8Fyp01a9FMAVwq3Qg+yesp017EoOXmveM9/FzyRTDKK1C7UN8PsqwO2v1jwL
+	KP8B4qP4pQqqPdb9DtVIRqrpoFM6J/vD7iAA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sE5zV-00000002rYI-1aCb; Mon, 03 Jun 2024 13:36:41 +0200
+Received: from dynamic-089-012-009-156.89.12.pool.telefonica.de ([89.12.9.156] helo=suse-laptop.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sE5zV-00000002oi4-0eeX; Mon, 03 Jun 2024 13:36:41 +0200
+Message-ID: <34c519412fbaca9d5f08990ff96c4c928869bf84.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 00/14] alpha: cleanups for 6.10
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Arnd Bergmann
+ <arnd@kernel.org>,  linux-alpha@vger.kernel.org, Arnd Bergmann
+ <arnd@arndb.de>, Richard Henderson <richard.henderson@linaro.org>, Ivan
+ Kokshaysky <ink@jurassic.park.msu.ru>,  Matt Turner <mattst88@gmail.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Marc Zyngier <maz@kernel.org>, 
+ linux-kernel@vger.kernel.org, Michael Cree <mcree@orcon.net.nz>, Frank
+ Scheiner <frank.scheiner@web.de>
+Date: Mon, 03 Jun 2024 13:36:40 +0200
+In-Reply-To: <alpine.DEB.2.21.2405310457060.23854@angie.orcam.me.uk>
+References: <20240503081125.67990-1-arnd@kernel.org>
+	 <272a909522f2790a30b9a8be73ab7145bf06d486.camel@physik.fu-berlin.de>
+	 <alpine.DEB.2.21.2405280041550.23854@angie.orcam.me.uk>
+	 <aa397ad5-a08a-48a1-a9c0-75cfd5f6a3a5@paulmck-laptop>
+	 <alpine.DEB.2.21.2405291432450.23854@angie.orcam.me.uk>
+	 <CAHk-=wi7WfDSfunEXmCqDnH+55gumjhDar-KO_=66ziuP33piw@mail.gmail.com>
+	 <alpine.DEB.2.21.2405302115130.23854@angie.orcam.me.uk>
+	 <CAHk-=whiH6g+T7+YWSYgAhJ9HsJ2bUUDJfLLo_Yhbi8CVgkHDg@mail.gmail.com>
+	 <alpine.DEB.2.21.2405310457060.23854@angie.orcam.me.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 453BZgc6074903
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-IOPRIO_PRIO_DATA in the new kernel version includes level and hint,
-So Macro IOPRIO_PRIO_LEVEL is more accurate to get ckpt thread
-ioprio data/level, and it is also consisten with the way setting
-ckpt thread ioprio by IOPRIO_PRIO_VALUE(class, data/level).
+Hi Maciej,
 
-Besides, change variable name from "data" to "level" for more readable.
+On Mon, 2024-06-03 at 12:09 +0100, Maciej W. Rozycki wrote:
+>  Anyway, back to my point.  A feasible solution non-intrusive for Linux=
+=20
+> and low-overhead for GCC has been found.  I can expedite implementation=
+=20
+> and I'll see if I can regression-test it too, but I may have to rely on=
+=20
+> other people to complete it after all, as I haven't been prepared for thi=
+s=20
+> effort in the light of certain issues I have recently suffered from in my=
+=20
+> lab.
 
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
-v2: also change variable name from "data" to "level"
----
----
- fs/f2fs/sysfs.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+That's really great to hear! Please let me know if you have something to te=
+st,
+I would love to help with this effort.
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 72676c5..c0b0468 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -340,13 +340,13 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 	if (!strcmp(a->attr.name, "ckpt_thread_ioprio")) {
- 		struct ckpt_req_control *cprc = &sbi->cprc_info;
- 		int class = IOPRIO_PRIO_CLASS(cprc->ckpt_thread_ioprio);
--		int data = IOPRIO_PRIO_DATA(cprc->ckpt_thread_ioprio);
-+		int level = IOPRIO_PRIO_LEVEL(cprc->ckpt_thread_ioprio);
- 
- 		if (class != IOPRIO_CLASS_RT && class != IOPRIO_CLASS_BE)
- 			return -EINVAL;
- 
- 		return sysfs_emit(buf, "%s,%d\n",
--			class == IOPRIO_CLASS_RT ? "rt" : "be", data);
-+			class == IOPRIO_CLASS_RT ? "rt" : "be", level);
- 	}
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
-@@ -450,7 +450,7 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		const char *name = strim((char *)buf);
- 		struct ckpt_req_control *cprc = &sbi->cprc_info;
- 		int class;
--		long data;
-+		long level;
- 		int ret;
- 
- 		if (!strncmp(name, "rt,", 3))
-@@ -461,13 +461,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 			return -EINVAL;
- 
- 		name += 3;
--		ret = kstrtol(name, 10, &data);
-+		ret = kstrtol(name, 10, &level);
- 		if (ret)
- 			return ret;
--		if (data >= IOPRIO_NR_LEVELS || data < 0)
-+		if (level >= IOPRIO_NR_LEVELS || level < 0)
- 			return -EINVAL;
- 
--		cprc->ckpt_thread_ioprio = IOPRIO_PRIO_VALUE(class, data);
-+		cprc->ckpt_thread_ioprio = IOPRIO_PRIO_VALUE(class, level);
- 		if (test_opt(sbi, MERGE_CHECKPOINT)) {
- 			ret = set_task_ioprio(cprc->f2fs_issue_ckpt,
- 					cprc->ckpt_thread_ioprio);
--- 
-1.9.1
+>  Is that going to be enough to bring the platform bits back?
 
+That would be awesome. Would love to be able to keep running a current kern=
+el
+on my AlphaStation 233 which is pre-EV56.
+
+>  FAOD, with all the hacks so eagerly being removed now happily left in th=
+e=20
+> dust bin where they belong, and which I wholeheartedly agree with: we=20
+> shouldn't be suffering from design mistakes of systems that are no longer=
+=20
+> relevant, but I fail to see the reason why we should disallow their use=
+=20
+> where the burden is confined or plain elsewhere.
+
+Agreed.
+
+>  For example we continue supporting old UP MIPS platforms that predate=
+=20
+> LL/SC, by just trapping and emulating these instructions.  Surely it suck=
+s=20
+> performance-wise and it's possibly hundreds of cycles too, but it works=
+=20
+> and the burden is confined to the exception handler, so not a big deal.
+
+Fully agreed.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
