@@ -1,104 +1,121 @@
-Return-Path: <linux-kernel+bounces-199301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAD68D852E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:35:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F908D8536
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D8C1F2153C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:35:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91211F222FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35D912FB15;
-	Mon,  3 Jun 2024 14:35:42 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7561304B0;
+	Mon,  3 Jun 2024 14:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQ9MhxV/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C1A12EBE6;
-	Mon,  3 Jun 2024 14:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99B512F37C;
+	Mon,  3 Jun 2024 14:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717425342; cv=none; b=NbzTF9GRVegzYBzvCWL9Q/IdVZe8uVYLfIGjxv7Jj0txtVAG6Mym0XDWpXSSsT0hKNkbZubyiW65B/wTZvbtLl/uETx0zYW2VLsHhrDWiLxmpb2u5CrjnML7w4oFJEZH3X4mVSUiBvwHftKKqgv2+Ny/xFu/uHsJnTcGe2Szud8=
+	t=1717425356; cv=none; b=XOwd9C6DLMDOk8tKcHQU0QFc/M9VrXQCRzO5TXY01CN9fUd0nEufWsEh35aRH2KnerJc9zlGLLVBz3lMEC3cAHWKuohVyXywHptWnXY1CifPqub7wAMw3Nur/mZpiupK3uXWaafRBLP148tKJTzQ37u/XDVP8yNo7qUEuWE0hGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717425342; c=relaxed/simple;
-	bh=aS7WNKyb79nHjkRKjId2BNPG35Iq9xA2er2JeQ/uKJA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rrwMWhg7LKqQcxGxJGo0dLnpMv/m7sXE8eSbNNuijnyJH0BfoNhTKZEKzhPGuUb0xAohwUEUqN5tPkdsQJuu2Wg//wIqCGRRZVK7a77PIYjxVP21PfObFWQlCOUfgnlScHotdyegcWcR+gUHmo/82vAWlCl/PPin9Ro/D+bmqEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VtGV96W3Vz4f3jkk;
-	Mon,  3 Jun 2024 22:35:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 2D4441A0170;
-	Mon,  3 Jun 2024 22:35:36 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgDnCg621F1mAppQOw--.29601S3;
-	Mon, 03 Jun 2024 22:35:36 +0800 (CST)
-Subject: Re: [RFC PATCH v4 6/8] xfs: correct the truncate blocksize of
- realtime inode
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
- willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-7-yi.zhang@huaweicloud.com>
- <ZlnSTAg15vWjc1Qm@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <67a811e0-6723-3bb6-5f74-a66610b884a0@huaweicloud.com>
-Date: Mon, 3 Jun 2024 22:35:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1717425356; c=relaxed/simple;
+	bh=CqpiIEY0jUYpxZBkg+/zP23MGObqx0ALYW+Tv52LcX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUQ0MbakJgTisvhfV19SnZYRMi3TKMI5BvcyelXazvF7P7MEg8xTEGeZD7MZqgoWRnBkwTBAUAxpiFtJ2lB7PRHI9X5k7UTP/egaAR+w3r/GeTagQoEkP3j4Cmb6JYm1M0FRPKrB1b9ZU/nOMqwyGd/XKuuJ93rf42nfEkByvEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQ9MhxV/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07EBEC2BD10;
+	Mon,  3 Jun 2024 14:35:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717425355;
+	bh=CqpiIEY0jUYpxZBkg+/zP23MGObqx0ALYW+Tv52LcX0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OQ9MhxV/czJfHAJDX9p8R4lCsPJSaqEO/MuihWFvW7bASDSvJjLQgE2YbFomuKZg+
+	 Pg35xYo1x84qJAChiaCl334NvQxvoizQPoXW+xyGdGqKZ7A2Sd6hkNIc8NQMXQw4Ud
+	 /UG0ffOCyUKC8RicTezLqXg8ydyrmIjD0b0mrsdTTy5IbmFsgNAnGxa9ttN2IZ9Yfc
+	 GZWid1iqiNfmVItya0eFEDZVqbZPeGj7dEPtri75WiaYy1gVOO1CyjshHwoNFSyUO6
+	 t5DGDVpqspGrPdL5ePtcjA6THAWpaopvEhyvbub257TlFDam+SxYSXRPoHypIUOh5H
+	 UTVOy9VO/4glg==
+Date: Mon, 3 Jun 2024 09:35:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [RESEND PATCH v5 3/7] dt-bindings: remoteproc: Add processor
+ identifier property
+Message-ID: <20240603143553.GA391578-robh@kernel.org>
+References: <20240521122458.3517054-1-arnaud.pouliquen@foss.st.com>
+ <20240521122458.3517054-4-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZlnSTAg15vWjc1Qm@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDnCg621F1mAppQOw--.29601S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrury3tryDtr4xWw18Jr4xJFb_yoWxZrc_ua
-	y5Ar92g3WkWFn5Aa17Cr15GFsxKFW2krsrXw15XFsFq3sxtas5ta1qyrWFkF1DKFsrtrn8
-	ZryI9r4avrnFgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI
-	1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU1zuWJUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240521122458.3517054-4-arnaud.pouliquen@foss.st.com>
 
-On 2024/5/31 21:36, Christoph Hellwig wrote:
-> On Wed, May 29, 2024 at 05:52:04PM +0800, Zhang Yi wrote:
->> +	if (xfs_inode_has_bigrtalloc(ip))
->> +		first_unmap_block = xfs_rtb_roundup_rtx(mp, first_unmap_block);
+On Tue, May 21, 2024 at 02:24:54PM +0200, Arnaud Pouliquen wrote:
+> Add the "st,proc-id" property allowing to identify the remote processor.
+> This ID is used to define an unique ID, common between Linux, U-boot and
+> OP-TEE to identify a coprocessor.
+> This ID will be used in request to OP-TEE remoteproc Trusted Application
+> to specify the remote processor.
 > 
-> Given that first_unmap_block is a xfs_fileoff_t and not a xfs_rtblock_t,
-> this looks a bit confusing.  I'd suggest to just open code the
-> arithmetics in xfs_rtb_roundup_rtx.  For future proofing my also
-> use xfs_inode_alloc_unitsize() as in the hunk below instead of hard
-> coding the rtextsize.  I.e.:
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml     | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> 	first_unmap_block = XFS_B_TO_FSB(mp,
-> 		roundup_64(new_size, xfs_inode_alloc_unitsize(ip)));
-> 
-Sure, makes sense to me.
+> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> index 36ea54016b76..409123cd4667 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> @@ -48,6 +48,10 @@ properties:
+>            - description: The offset of the hold boot setting register
+>            - description: The field mask of the hold boot
+>  
+> +  st,proc-id:
+> +    description: remote processor identifier
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+>    st,syscfg-tz:
+>      deprecated: true
+>      description:
+> @@ -182,6 +186,8 @@ allOf:
+>          st,syscfg-holdboot: false
+>          reset-names: false
+>          resets: false
+> +      required:
+> +        - st,proc-id
 
-Thanks,
-Yi.
+New required properties are an ABI break. If that is okay, explain why 
+in the commit message.
 
+>  
+>  additionalProperties: false
+>  
+> @@ -220,6 +226,7 @@ examples:
+>        reg = <0x10000000 0x40000>,
+>              <0x30000000 0x40000>,
+>              <0x38000000 0x10000>;
+> +      st,proc-id = <0>;
+>        st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+>        st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+>      };
+> -- 
+> 2.25.1
+> 
 
