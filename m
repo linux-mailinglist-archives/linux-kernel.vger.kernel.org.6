@@ -1,51 +1,94 @@
-Return-Path: <linux-kernel+bounces-198862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C714B8D7E6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:24:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85048D7E70
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E851C214C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E436283199
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 09:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CC87F48E;
-	Mon,  3 Jun 2024 09:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8611D7E777;
+	Mon,  3 Jun 2024 09:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="GEi6pGeA"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KTQ0Xdje";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sXpTYDg2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z0tdEgK4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OwxJfucO"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067B153392;
-	Mon,  3 Jun 2024 09:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF74C5FDA7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 09:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717406677; cv=none; b=e0bblhG1Km+ouwtnkUhAV+hpxjtQ4aIBd1BCvE1C3xkP3jK13o1aShAZA1WK8t/HwwZLvkmriOywkLbats7DV/NF8T2jZ5e8CiBrUTxLy3WQzRrUKbhOqAx7LF93V0dld0dnkHbadIYvdqwu2Ui7fFTWI7Lut0Wf2UkB4USsHEs=
+	t=1717406749; cv=none; b=q1DFW0+3Z8jViyHCXOLCPo+x5O+zqdvMRU7LIUtS6T/+VeLw/wIgxqzyamEuWTUtzD43B5yHAvSextcPvE9+7jb75ZIauX+yIUmBwJVGL8BqA5BX2ZtkFj+RjdO9U0Fo/mjzehUyZAEjP6NHHqYh3ccUHwfWhoEoug5aY4sxG1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717406677; c=relaxed/simple;
-	bh=sZV9sGIYSh32X5aVunx+X2ZqSTjZPK2NT/Sq952/+IM=;
+	s=arc-20240116; t=1717406749; c=relaxed/simple;
+	bh=6e7EFjYVIFKKGFSnmJhwLxifmLhnZEVY9OcFSk87wZg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p0raopD2Lhmg24eKXHKjW0fn8+gm3ktbMoT9ErwfQkpcJqIq7t52WmA4zZ6MC3Ure/oOcVt18lNJTF11lDf3X7ETXuv2NotEMfzi5yDtQgUwlrd2OxSRymqe9gjaealHqvkC/mH37nCRhsDv7rH3ncvKcqbbzrnSDoGzbLVkPrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=GEi6pGeA; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=4BPrmksCSYYF0YoAvQOx1MdXjMUjY3TOtCFspO/clO8=; t=1717406675;
-	x=1717838675; b=GEi6pGeA0SqqzsGnSeST0BR+0GEbolCOMP5GEQFl2JQUd5NmU9WWNsx+tsS5Y
-	woa6oQUtzS89cfn0gaplwUVd6sKIwT/479LlWPhk4cgPvh6W4IJ4TUj39lhgZThHFCemHo6YHrfJF
-	K5WwWvr12ERnK+1G13eVUgShzsRKdfWYRMuwk7xr2Tuxndnxu4p1o5H4YNC1IK1QuxLwMdST2JFuG
-	0Fy4V8TlvIawALgfBD/PrjdEla4UJT3fBwRqAaQnBDI9kwuma34aKxPmms47XMkv02VZo2HHR1C62
-	0ihOGdchLqLW8f9yva8buh48l9hWHzQbGSAN1tJZFL44c3sjSA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sE3vU-00070K-Ue; Mon, 03 Jun 2024 11:24:25 +0200
-Message-ID: <7d22ac7e-c505-430b-82cc-6b14b04f3c90@leemhuis.info>
-Date: Mon, 3 Jun 2024 11:24:23 +0200
+	 In-Reply-To:Content-Type; b=uIjYLyf/IXUx8mJ+Zo3vvpkXnWzHBGQirpSJsWbatPKFLu/1qFOrGCYjf8boMWeOY0e/WiiDWJ5m0AYDDMUmMAJSjG0+M4JlccjteO+qZTdQa+n3Aywk5s18FSz8hJdK87vYwFuCR49VzTa78L7/bhaStTAhLkk4cFRaZNF1CSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KTQ0Xdje; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sXpTYDg2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z0tdEgK4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OwxJfucO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DDA5422239;
+	Mon,  3 Jun 2024 09:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717406746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YCVlp6tqy0Lfw4pwRsglQ1xUSbV/yrMGt8kgMUKIWpo=;
+	b=KTQ0XdjeFkuuPIxFdUX3/E5sTw4Mp+ELZUtdVuhOxumhQ9d1SyCWDWxWrgUyWvgar93YQe
+	VTCzqf6FaE7bSlrc9nDcUsb5ZcG6b2C9tGqSMMExC03REW3VAOUYKHvoQpt+Oeb13NBGEJ
+	CHxILInrH233d+7QRhzOSlWw6ukWGdM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717406746;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YCVlp6tqy0Lfw4pwRsglQ1xUSbV/yrMGt8kgMUKIWpo=;
+	b=sXpTYDg2GUEbDjEtqgvm3LKiOHMj5bR2ObvG2bDGV2+UD3w1FLsmX9Mb3fIZYwb+r8H2hY
+	gMmG6TXGeGJgYpCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717406745; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YCVlp6tqy0Lfw4pwRsglQ1xUSbV/yrMGt8kgMUKIWpo=;
+	b=Z0tdEgK4ftWiqI220aQJrowTImlICDL6S2ws7G5UYAvVUM5jMviOt07CXUj6H9B7JdP2eV
+	J/88zVoDkMJ8xjLHNhjyNZvrrRyVGLzNgSbjIPFd6Oxd7YvQwAGZrpvg8uy/PYAkOnqW6W
+	VcdwrdzK4JgSS+jhOmnfyun/cxLS1Ho=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717406745;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YCVlp6tqy0Lfw4pwRsglQ1xUSbV/yrMGt8kgMUKIWpo=;
+	b=OwxJfucOPMM7lIuNU5VFpT/vsLjj5ajuyIpGkCIIQWt0aYiZYXie/xixgtyCsc54qOuou+
+	wQ9GMR9N+zPEuNCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C0CB5139CB;
+	Mon,  3 Jun 2024 09:25:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lmeULhmMXWbkAQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 03 Jun 2024 09:25:45 +0000
+Message-ID: <5a09e348-9eeb-4502-9aa9-ef5da2f94218@suse.cz>
+Date: Mon, 3 Jun 2024 11:25:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,131 +96,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: "ERROR: modpost: "icssg_queue_pop" [...] undefined" on arm64
-To: MD Danish Anwar <danishanwar@ti.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Jan Kiszka
- <jan.kiszka@siemens.com>, Simon Horman <horms@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Niklas Schnelle <schnelle@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
- Diogo Ivo <diogo.ivo@siemens.com>, Roger Quadros <rogerq@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, srk@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240528113734.379422-1-danishanwar@ti.com>
- <20240528113734.379422-2-danishanwar@ti.com>
- <de980a49-b802-417a-a57e-2c47f67b08e4@leemhuis.info>
- <b4256b15-997d-4e10-a6a9-a1b41011c867@ti.com>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <b4256b15-997d-4e10-a6a9-a1b41011c867@ti.com>
+Subject: Re: [PATCH 2/3] slab: don't put freepointer outside of object if only
+ orig_size
+Content-Language: en-US
+To: Chengming Zhou <chengming.zhou@linux.dev>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20240528-b4-slab-debug-v1-0-8694ef4802df@linux.dev>
+ <20240528-b4-slab-debug-v1-2-8694ef4802df@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240528-b4-slab-debug-v1-2-8694ef4802df@linux.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1717406675;4e76c9a1;
-X-HE-SMSGID: 1sE3vU-00070K-Ue
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.73 / 50.00];
+	BAYES_HAM(-2.94)[99.75%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[linux.dev,linux.com,kernel.org,google.com,lge.com,linux-foundation.org,gmail.com,intel.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email]
+X-Spam-Score: -2.73
+X-Spam-Flag: NO
 
-On 03.06.24 10:14, MD Danish Anwar wrote:
-> On 03/06/24 12:39 pm, Thorsten Leemhuis wrote:
->> On 28.05.24 13:37, MD Danish Anwar wrote:
->>> Introduce helper functions to configure firmware FDB tables, VLAN tables
->>> and Port VLAN ID settings to aid adding Switch mode support.
->>>
->>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>
->> Hi! Since Friday I get a compile error in my -next builds for Fedora:
->>
->> ERROR: modpost: "icssg_queue_push"
->> [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
->> ERROR: modpost: "icssg_queue_pop"
->> [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
+On 5/28/24 9:16 AM, Chengming Zhou wrote:
+> The commit 946fa0dbf2d8 ("mm/slub: extend redzone check to extra
+> allocated kmalloc space than requested") will extend right redzone
+> when allocating for orig_size < object_size. So we can't overlay the
+> freepointer in the object space in this case.
 > 
-> Before posting the patches I had tested them with defconfig and I didn't
-> see any ERRORs.
+> But the code looks like it forgot to check SLAB_RED_ZONE, since there
+> won't be extended right redzone if only orig_size enabled.
 > 
-> I think in the config that you are using most probably
-> CONFIG_TI_ICSSG_PRUETH_SR1 is enabled. The patch adds APIs in
-> icssg_config.c which uses APIs added in icssg_qeueus.c.
+> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+
+Seems OK.
+
+> ---
+>  mm/slub.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Now CONFIG_TI_ICSSG_PRUETH_SR1 also uses icssg_config.c but
-> icssg_queues.c is not built for SR1 as a result this error is coming.
+> diff --git a/mm/slub.c b/mm/slub.c
+> index de57512734ac..b92d9a557852 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -5150,7 +5150,7 @@ static int calculate_sizes(struct kmem_cache *s)
+>  	 */
+>  	s->inuse = size;
+>  
+> -	if (slub_debug_orig_size(s) ||
+> +	if (((flags & SLAB_RED_ZONE) && slub_debug_orig_size(s)) ||
+>  	    (flags & (SLAB_TYPESAFE_BY_RCU | SLAB_POISON)) ||
+>  	    ((flags & SLAB_RED_ZONE) && s->object_size < sizeof(void *)) ||
+
+Should we consolidate the two cases with flags & SLAB_RED_ZONE?
+
+Also below this is a comment that could also mention the slub_debug_orig_size().
+
+>  	    s->ctor) {
 > 
-> Fix for this will be to build icssg_queues as well for SR1 driver.
-> 
-> I will test the fix and post it to net-next soon.
 
-thx!
-
->> Looks like this problem was found and reported mid May by the kernel
->> test robot already, which identified a earlier version of the patch I'm
->> replying to to be the cause:
->> https://lore.kernel.org/all/202405182038.ncf1mL7Z-lkp@intel.com/
->>
->> That and the fact that the patch showed up in -next on Friday makes me
->> assume that my problem is caused by this change as well as well. A build
->> log can be found here:
->> https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-39-aarch64/07523690-next-next-all/builder-live.log.gz
->>
->> I don't have the .config at hand, but can provide it when needed.
-> 
-> Yes that would be helpful. If possible just check in the .config what
-> symbols are enabled related to ICSS. (`cat .config | grep ICSS`)
-
-I can't easily access the .config used the build system used for the
-build, but unless I did something stupid it should be identical to this one:
-https://www.leemhuis.info/files/misc/kernel-6.10.0-aarch64.config
-
-FWIW, that .config is generated by some scripts Fedora uses when
-building their kernels.
-
-$ grep ICSS kernel-6.10.0-aarch64.config
-CONFIG_TI_ICSSG_PRUETH=m
-CONFIG_TI_ICSSG_PRUETH_SR1=m
-CONFIG_TI_ICSS_IEP=m
-
-HTH, Ciao, Thorsten
 
