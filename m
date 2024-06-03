@@ -1,135 +1,107 @@
-Return-Path: <linux-kernel+bounces-199504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C120F8D87D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834138D87DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B956B23121
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EDD728543C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92028137769;
-	Mon,  3 Jun 2024 17:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590BC136E1C;
+	Mon,  3 Jun 2024 17:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShGdTUIW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ewxxzmI2"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE80C1366;
-	Mon,  3 Jun 2024 17:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7034225622
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 17:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435360; cv=none; b=DWtorLhX/bCEnlAnjHI0COvSlOKrdLtetpcivTxXu7Wu61y466X76zaP1GSftJh3bh6Jf/dLrupyvnYNzOpJm2uTQC42sKDCpx3B31xAKcExUU2CYOhfZuALGuMzljOqSuXDS4Bm2/Cp6mu0apOKX2y8yqGhWHaoHubtjEmWWTQ=
+	t=1717435496; cv=none; b=NpOfRThhLKbYgGOdvPStgJU9Qlwlhs6XWa320bo3NGa+1yzMiCcO3YEDkFqsPfPKAFhUdBBdBqzJhavVIZPm5ewoZQxgGnlrQtZtw3JRq9jcDhS5rc7lxKamzyBWKdyzMJ/kEx20m94zg0+hb4ExleJuWH14p1XoXBMzPRmiUcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435360; c=relaxed/simple;
-	bh=PAcBig0jr2i/6jcLdHClnRIG0MzC33BZQfOwMSR1CeY=;
+	s=arc-20240116; t=1717435496; c=relaxed/simple;
+	bh=xXRVFeBg/HCnPP+EMU2VyBEWFYJSrj6BdfkaWItyw8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ua7Vu2pnTaNp7oV+s+RiWP6mr1ZMuGrufafjK7/ic6ubQoGII/YKes5+diJMQ6zaQSQoNHXArzOuBc6CGKshGicy4nhmR0z8EjSGNhrP9wlbctm3SCZ2vtno1jxycOpzjrVh9EgCWAD9GN5NU97F+PT/aUuIgwoQYkkQvvMIMSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShGdTUIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E2BCC2BD10;
-	Mon,  3 Jun 2024 17:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717435360;
-	bh=PAcBig0jr2i/6jcLdHClnRIG0MzC33BZQfOwMSR1CeY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ShGdTUIWtmzffiVjGvECIt5B2x/fwBnoKj6QesSZaUgfY9ZNM4xxYh+FB/v5gNubB
-	 Y6hlpiaX2JT+xl4m9pwrbdO+z9xe1ENN75Wgi/WWNVRWe+LN8IZNjJQuF6umoh2kKN
-	 DaaN2G5lLIXuOoVucv4Rap3sKiGmv7ehqOZG5q4V8RzX3oZgf2J0nut/frhmfVi/Ny
-	 LQctRCkYzDWzYub9hJAGYVrK7+vXbb8jfPN6EDYBbO+4v6/tHW2RBDI5MmrJiDkk+Y
-	 L83CD+yokh0imQYenPefjX+kpnycLECwQ0cJuh9I7ZAG1kvwyXNhhE+XaOj1uMftcN
-	 yfaxAgcuhkzzA==
-Date: Mon, 3 Jun 2024 18:22:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jakub Kicinski <kuba@kernel.org>, Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Shengyu Li <shengyu.li.evgeny@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>,
-	Ronald Warsow <rwarsow@gmx.de>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Will Drewry <wad@chromium.org>,
-	kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v7 04/10] selftests/harness: Fix interleaved scheduling
- leading to race conditions
-Message-ID: <9eb1e48e-b273-475a-9740-52deedf11ee2@sirena.org.uk>
-References: <20240511171445.904356-1-mic@digikod.net>
- <20240511171445.904356-5-mic@digikod.net>
- <9341d4db-5e21-418c-bf9e-9ae2da7877e1@sirena.org.uk>
- <187423fb-ec78-4318-9da0-5b27df62b71f@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=biaMFfBQXedGkowj6dUW5ZFSADQTOi/JYNr2CulBaDh4HmKHVyvpo4TAm8elNhenaF0m23e9PTEs9D1mLtTgDLYj6hQtJX3ZpRhoYfRowc50PhrOaocsGCfRH5uvJyd7iiNV72S8iLs9aIZoHVfI8Pme2ZpInNkHl19vOmJTNAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ewxxzmI2; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=iwxVgDKgpII9YwB+g1rLq5aAZrKLOtuFQoD3t7nzPuk=; b=ewxxzmI2dZ1KiJRS
+	YLOAoOTNEBjRnVpNLVkbJ8jiuJ1VYzqKuQaAFUvK0qw60+1dWHsFzsyvfiaSzMRh11srltfLzd/gi
+	gu+2OPHm1HfV3Qotv2tKhTdpSw1LHoaOPHxOo6281klS9cJpM/43vC3LlBsyyBWhoitjYy0BSdlRS
+	fYv21e+55BmIMBx/j6xbkLTXmO6wYS3LH5TzXelFhuiHMidVvXOF/SdDlP/P071DxDYD/+wQbcViE
+	Unv8lGVCVPBx1/+bhL1/ELvg+2Q82nbguN8oYl56mjz8i/tqeDsPGoOHHU9ZSsqY5O9YbZuP/Jphf
+	jfkKFZWwxWQmZkglxw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sEBQL-003zrJ-2E;
+	Mon, 03 Jun 2024 17:24:45 +0000
+Date: Mon, 3 Jun 2024 17:24:45 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: zack.rusin@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de
+Cc: daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] drm/vmwgfx: remove unused struct 'vmw_stdu_dma'
+Message-ID: <Zl38XRm7TAfb3azW@gallifrey>
+References: <20240517232858.230860-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="46cg5PHekJwEmoXH"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <187423fb-ec78-4318-9da0-5b27df62b71f@sirena.org.uk>
-X-Cookie: Don't let your status become too quo!
+In-Reply-To: <20240517232858.230860-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 17:21:53 up 26 days,  4:35,  1 user,  load average: 0.00, 0.00, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> 'vmw_stdu_dma' is unused since
+> commit 39985eea5a6d ("drm/vmwgfx: Abstract placement selection")
+> Remove it.
 
---46cg5PHekJwEmoXH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ping.
 
-On Mon, Jun 03, 2024 at 05:27:52PM +0100, Mark Brown wrote:
-> On Mon, May 27, 2024 at 08:07:40PM +0100, Mark Brown wrote:
-
-> > This is now in mainline and appears to be causing several tests (at
-> > least the ptrace vmaccess global_attach test on arm64, possibly also
-> > some of the epoll tests) that previously were timed out by the harness
-> > to to hang instead.  A bisect seems to point at this patch in
-> > particular, there was a bunch of discussion of the fallout of these
-> > patches but I'm afraid I lost track of it, is there something in flight
-> > for this?  -next is affected as well from the looks of it.
-
-> FWIW I'm still seeing this on -rc2...
-
-AFAICT this is due to the switch to using clone3() with CLONE_VFORK
-to start the test which means we never even call alarm() to set up the
-timeout for the test, let alone have the signal for it delivered.  I'm a
-confused about how this could ever work, with clone_vfork() the parent
-shouldn't run until the child execs (which won't happen here) or exits.
-Since we don't call alarm() until after we started the child we never
-actually get that far, but even if we reorder things we'll not get the
-signal for the alarm if the child messes up since the parent is
-suspended.
-
-I'm not clear what the original race being fixed here was but it seems
-like we should revert this since the timeout functionality is pretty
-important?
-
---46cg5PHekJwEmoXH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZd+9cACgkQJNaLcl1U
-h9Dq9Qf/ayW5k2h3cIM8VUJF25GNHiI9zuUbaWYwfO31cGn2pVzpron7bMjMPquc
-mSEU7tXShn2QIvp2ihL+DGLgAWH8YPqoE6U47ifgpIU2CNHJhd6kqdqr8gBSqqoh
-qJ6UnxIlpcMRaudyTcBD+6Jp5riheZnt7Fhaiysdlrp0ba8ByRGktZQ6aRWCy0tp
-pRTY1U/MdKZ7dJ7jfNx2fKsmpgZnesoMnCjDePEc4/UqOatbJ8Yug9F1+CgmKM8J
-YPNU9qRl7KqV+1J/FAbSN1Ncla7G24E5xZHk+wlg2+YVfEGSuOqETgviczCbglPs
-u3axeb+jU57c8gYgrDhSASu5UN5IMw==
-=SmQ4
------END PGP SIGNATURE-----
-
---46cg5PHekJwEmoXH--
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c b/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
+> index 2041c4d48daa..50022e9e3519 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
+> @@ -85,11 +85,6 @@ struct vmw_stdu_update {
+>  	SVGA3dCmdUpdateGBScreenTarget body;
+>  };
+>  
+> -struct vmw_stdu_dma {
+> -	SVGA3dCmdHeader     header;
+> -	SVGA3dCmdSurfaceDMA body;
+> -};
+> -
+>  struct vmw_stdu_surface_copy {
+>  	SVGA3dCmdHeader      header;
+>  	SVGA3dCmdSurfaceCopy body;
+> -- 
+> 2.45.1
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
