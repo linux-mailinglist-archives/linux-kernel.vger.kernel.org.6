@@ -1,183 +1,110 @@
-Return-Path: <linux-kernel+bounces-198983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-198981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A56A8D801B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:36:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D938D8016
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1F82849E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:36:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E117CB254A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 10:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C559184D09;
-	Mon,  3 Jun 2024 10:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="HqjbIreP"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99EC83CB7;
+	Mon,  3 Jun 2024 10:35:47 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752B683CDA;
-	Mon,  3 Jun 2024 10:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E7B839FE;
+	Mon,  3 Jun 2024 10:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717410950; cv=none; b=sXdxQWF8OUK1JECXegCdkP5gq+spQT/UExJ1NuimsdU4C2vAx7ZI549aeMJ8USDb85+DEDRtHeDXgHMSZy9TNaufvPyP7kqP2LsZ5ZxxgKpWxqMjvA5jcqdL30jJ3taLPuCYjYisJGRIldkYKjqw0COinZhmUsNuOKcrDlLTPxs=
+	t=1717410947; cv=none; b=WFQPrYDiDuYgBZ/peVSnxgvthMxSxLY3/j0qGv28ru2yKNUwXLbxKQ/uobfdP4zaxX08gQHgBp0ELvrzuoH3DNQfyjAxWGg8rJ7nZP+/yD5Q0O+fTaGSwXD3DUeqVYKUUDrxFsjW6L0+Vgc7dzrof2/XOLdO4OL72DT7YwZWaXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717410950; c=relaxed/simple;
-	bh=tyHcTilPJBf1ZtldFADW7DKJj5yP1ToJmKxXcIXtfGI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pyp7Of7odbOASUFgoMl50PnHXzAHKzaSyh+Ny8hkMKGlLzAWSfkzxn3oeo/U6IbXqdTCMSU6RB0eSu3+tymSzbaAaggl9mB1waMQPx3DQrdcdzNfGjEG4TSHl4+zfA1M9uhrl2IrWH5ivlu6n4pVs4j8Ra0CWV6FgvufmuaaTtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=HqjbIreP; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4535SpqV028069;
-	Mon, 3 Jun 2024 05:35:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=+0kLEE8LRxxWUa9qJB+cByKX7sWs5TP2HYGpu4CAWoU=; b=
-	HqjbIrePigF45RLHqnlnRFfAo4N1yaSqaJNKtfIrC+6fR0NaFXnOoUac00Q3M2Zd
-	NGAp7gWv6cTAwN80EwoPyW+kOqKEsEakKtclvVBP63MgBwG0CwoNYkeh4WZgIiQE
-	OVpZ7++CJyQG+phhQHVm0bR8RHkkqEg9+ijQTvtmDefiDJ5pXo2csp8ArYGuEGkL
-	BCIQgf1xN8hVkVLQJluGcgSGazAcCmepMl2LlVRLegqGvsPV+X8n/jzmv1wg/Yo+
-	8CWFUNGQG/au7xVh+557ntOOBP5Mhcr6Iz1TZuH1aqYhYwCmwGyEhxuSXDxYXhIF
-	Yuihb1i0Rb3MziqxL439cg==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3yg11xscbs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 05:35:31 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 11:35:29 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 3 Jun 2024 11:35:29 +0100
-Received: from EDIN6ZZ2FY3.ad.cirrus.com (EDIN6ZZ2FY3.ad.cirrus.com [198.61.64.166])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id DBD1982024A;
-	Mon,  3 Jun 2024 10:35:28 +0000 (UTC)
-From: Simon Trimmer <simont@opensource.cirrus.com>
-To: <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <soyer@irl.hu>, <shenghao-ding@ti.com>, <kevin-lu@ti.com>,
-        <baojun.xu@ti.com>, <kailang@realtek.com>,
-        Simon Trimmer
-	<simont@opensource.cirrus.com>
-Subject: [PATCH 7/7] ALSA: hda: hda_component: Protect shared data with a mutex
-Date: Mon, 3 Jun 2024 11:35:24 +0100
-Message-ID: <20240603103524.32442-8-simont@opensource.cirrus.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240603103524.32442-1-simont@opensource.cirrus.com>
-References: <20240603103524.32442-1-simont@opensource.cirrus.com>
+	s=arc-20240116; t=1717410947; c=relaxed/simple;
+	bh=g03U2T+ZSiDQhRck4HsL2XZ+Ag9dfNCNHACg+gxiuJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=baSubHMeUuZIMlZzsp8c935vNTlG1GbNrpTgjXUfccO4txGGQ1pu+QSxSpqJ06/mMzi7Lx2KAbhbJJcMbnUFNQ19lkZp8I7OylJPF3l1D/hTVuGbqdFVtozOmoY4kO11Nwbw/eLnlQIa3+o3AM/OGBM9dcih5rbvYZyFUpXva7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42137366995so18082315e9.3;
+        Mon, 03 Jun 2024 03:35:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717410944; x=1718015744;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yQSggjIOQS2XbswQ4LbCkfSppAvW/BDbYHoAyzOGG3A=;
+        b=aToB/5W821gBp/7HH1EFEG9miTXw8FcoCRkyiX7N9YI3J7S3CZe1j8uU+iGFlZYWlx
+         CAp8wpXrl2qW4iit98VlymFPuZmfeLYNePrqOZuM0tXBaoEN0S3v5UDAFe2uSjvzTdEF
+         roWjgWxJa49JwgqZvhX6vAk6zp0KdfgCcwF+sgfCRtY45sMsBi8jmzftHCqfmf/JTudq
+         Sy4nEy/p5tcYIRUeil+X9Vm9BLBiNtLN5TQSuag9VCdzMIfMUnq7xHFNu2QNyhOpChEd
+         2oREhmLakMggYFmBUDdfza6M5TdNVjfYkTqnhHvFu3HXAyMhLdK1xyX04hPrNfxj5vMf
+         AnOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhjlrdkvSxGVBfdgBVNnKWSbfGZauhFnxjUHIpronZglVUjKQIpxCM27DNotb4I+0DuSUwdsQUAeCYemNgBdTXK3/QIha0l/rvMXDZSvTWragYeCWTPolXWhNOPzZbVHv4P3KPZjauMJ4V+4Db
+X-Gm-Message-State: AOJu0YzdruKvUp9uFa4kwh7g9Ajkyfl59vf4RPNLc+da65T1LAr2pbv7
+	uN6L8iZG3nn+2xLF+e8pE8kHR8dqEFXhbEYEnHPslyERW6QY0bpu
+X-Google-Smtp-Source: AGHT+IH3ijTEeyQxiZtNFYEU1o6Dtn6/zM66j2TUsJDbN6NpiEOXCDlWqxK3e2nmeIy4gb5/k94w/A==
+X-Received: by 2002:a05:600c:4704:b0:41b:eaf2:f7e6 with SMTP id 5b1f17b1804b1-4212e046c83mr84943375e9.2.1717410943697;
+        Mon, 03 Jun 2024 03:35:43 -0700 (PDT)
+Received: from [192.168.1.20] ([31.215.5.80])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b83d4e2sm113796005e9.2.2024.06.03.03.35.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 03:35:43 -0700 (PDT)
+Message-ID: <f3a27dbe-091a-43d0-aac8-eebb4e2833d4@linux.com>
+Date: Mon, 3 Jun 2024 14:35:40 +0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 0nwIrSmRf_IfMTA0X0QcMZBbFF3xBT3x
-X-Proofpoint-ORIG-GUID: 0nwIrSmRf_IfMTA0X0QcMZBbFF3xBT3x
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Reply-To: efremov@linux.com
+Subject: Re: [PATCH] floppy: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
+Content-Language: en-US, ru-RU
+From: "Denis Efremov (Oracle)" <efremov@linux.com>
+In-Reply-To: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The hda_component contains information shared from the amp drivers to
-the codec that can be altered (for example as the driver unloads). Guard
-the update and use of these to prevent use of stale data.
+On 6/3/24 04:05, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/floppy.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/block/floppy.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+> index 25c9d85667f1..854a88cf56bd 100644
+> --- a/drivers/block/floppy.c
+> +++ b/drivers/block/floppy.c
+> @@ -5016,6 +5016,7 @@ module_param(floppy, charp, 0);
+>  module_param(FLOPPY_IRQ, int, 0);
+>  module_param(FLOPPY_DMA, int, 0);
+>  MODULE_AUTHOR("Alain L. Knaff");
+> +MODULE_DESCRIPTION("Normal floppy disk support");
+>  MODULE_LICENSE("GPL");
+>  
+>  /* This doesn't actually get used other than for module information */
+> 
+> ---
+> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+> change-id: 20240602-md-block-floppy-1984117350ec
+> 
 
-Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
----
- sound/pci/hda/hda_component.c | 13 ++++++++++++-
- sound/pci/hda/hda_component.h |  4 ++++
- 2 files changed, 16 insertions(+), 1 deletion(-)
+Reviewed-by: Denis Efremov <efremov@linux.com>
 
-diff --git a/sound/pci/hda/hda_component.c b/sound/pci/hda/hda_component.c
-index 1a9950b76866..7b19cb38b4e0 100644
---- a/sound/pci/hda/hda_component.c
-+++ b/sound/pci/hda/hda_component.c
-@@ -21,11 +21,13 @@ void hda_component_acpi_device_notify(struct hda_component_parent *parent,
- 	struct hda_component *comp;
- 	int i;
- 
-+	mutex_lock(&parent->mutex);
- 	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
- 		comp = hda_component_from_index(parent, i);
- 		if (comp->dev && comp->acpi_notify)
- 			comp->acpi_notify(acpi_device_handle(comp->adev), event, comp->dev);
- 	}
-+	mutex_unlock(&parent->mutex);
- }
- EXPORT_SYMBOL_NS_GPL(hda_component_acpi_device_notify, SND_HDA_SCODEC_COMPONENT);
- 
-@@ -87,6 +89,7 @@ void hda_component_manager_playback_hook(struct hda_component_parent *parent, in
- 	struct hda_component *comp;
- 	int i;
- 
-+	mutex_lock(&parent->mutex);
- 	for (i = 0; i < ARRAY_SIZE(parent->comps); i++) {
- 		comp = hda_component_from_index(parent, i);
- 		if (comp->dev && comp->pre_playback_hook)
-@@ -102,6 +105,7 @@ void hda_component_manager_playback_hook(struct hda_component_parent *parent, in
- 		if (comp->dev && comp->post_playback_hook)
- 			comp->post_playback_hook(comp->dev, action);
- 	}
-+	mutex_unlock(&parent->mutex);
- }
- EXPORT_SYMBOL_NS_GPL(hda_component_manager_playback_hook, SND_HDA_SCODEC_COMPONENT);
- 
-@@ -134,11 +138,18 @@ static int hda_comp_match_dev_name(struct device *dev, void *data)
- int hda_component_manager_bind(struct hda_codec *cdc,
- 			       struct hda_component_parent *parent)
- {
-+	int ret;
-+
- 	/* Init shared and component specific data */
- 	memset(parent, 0, sizeof(*parent));
-+	mutex_init(&parent->mutex);
- 	parent->codec = cdc;
- 
--	return component_bind_all(hda_codec_dev(cdc), parent);
-+	mutex_lock(&parent->mutex);
-+	ret = component_bind_all(hda_codec_dev(cdc), parent);
-+	mutex_unlock(&parent->mutex);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_NS_GPL(hda_component_manager_bind, SND_HDA_SCODEC_COMPONENT);
- 
-diff --git a/sound/pci/hda/hda_component.h b/sound/pci/hda/hda_component.h
-index dd4dabeae9ee..9f786608144c 100644
---- a/sound/pci/hda/hda_component.h
-+++ b/sound/pci/hda/hda_component.h
-@@ -11,6 +11,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/component.h>
-+#include <linux/mutex.h>
- #include <sound/hda_codec.h>
- 
- #define HDA_MAX_COMPONENTS	4
-@@ -28,6 +29,7 @@ struct hda_component {
- };
- 
- struct hda_component_parent {
-+	struct mutex mutex;
- 	struct hda_codec *codec;
- 	struct hda_component comps[HDA_MAX_COMPONENTS];
- };
-@@ -93,7 +95,9 @@ static inline struct hda_component *hda_component_from_index(struct hda_componen
- static inline void hda_component_manager_unbind(struct hda_codec *cdc,
- 						struct hda_component_parent *parent)
- {
-+	mutex_lock(&parent->mutex);
- 	component_unbind_all(hda_codec_dev(cdc), parent);
-+	mutex_unlock(&parent->mutex);
- }
- 
- #endif /* ifndef __HDA_COMPONENT_H__ */
--- 
-2.34.1
-
+Thanks,
+Denis
 
