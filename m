@@ -1,165 +1,198 @@
-Return-Path: <linux-kernel+bounces-199268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE318D849D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:09:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB7D8D849F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 224B828CDF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9154F28D0E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C0B12E1D4;
-	Mon,  3 Jun 2024 14:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B100212EBE9;
+	Mon,  3 Jun 2024 14:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BwX+r8p2"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SoSDEYSE"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F8212DD90
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CE512E1ED;
+	Mon,  3 Jun 2024 14:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717423792; cv=none; b=GExnwVatVmOHW10cbi5zgUVU9AVu/WYyo4K0l5KTi8N+jPPUJLvUlrZbohiP1VsiZ8eOrrDjHNBzyklabQt4QUggx9DR+snNPczeb/S5+yoRkahyq1eqsb95thRI6fp6UoMrRFMiPBVwE6y7DffhXNJ9cVmiVRPbdOz627/DWkw=
+	t=1717423796; cv=none; b=J6CGxCcCtxlesXGN/5KDh/lVqKlYqx5Wr6ageBJrAyJ3hJUaFaglI8ay5XX1Ty+iXBjN94N+Xb7kBERakRsELQ38PQIG8YpMWeqLnlMgmHhqW9aXcHN6FKQb3cTw1WUq9xdwPG5EDKPcla7KgGsaa2tbNTgXBv1QP5YMboiV+qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717423792; c=relaxed/simple;
-	bh=YyRPCKbfkwQ1wrNaEwDVnzUmUDH6XRribciN2yI0W8I=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pxeUcFkHCNLUPQH8QC57ahC2pgMf/MdqUrMWFWxl2buQVbqRkE2ScEF+0TeocO6/s6gJHFMYm36Tvj8b+PntoVR+PQm20IgXWYjEbMtwun9OtwGXu13TDX4XrRf1FBGcCgP13SK8S2Aj8n9abVovtFFW/Apr5oKYeXd0Sey5Q44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BwX+r8p2; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-579fa270e53so4847446a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 07:09:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717423788; x=1718028588; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cMBySiVcTX3BrHRQ0ZZ8x1UxOKdXwr5BWpTZuLbvO8Q=;
-        b=BwX+r8p2X8o7evWQbVfc7DmkGObsc6g5WluXO8CuMMgrt/k9iM4HmqcG8D88+XCs+e
-         m3IDkOqs75jnod1zWzb/+xGFwCu+Pt0WpMdvhjKDZzeJ+l5jb9grecCRvB6lM/jlGkZs
-         CAberTCuPv+1ma0ieamXaGTMmxRZfS1sSmTDeoynPEia2MyoirP3wnAd9CEEwmYdu/TP
-         XA5qznxwZ/F0pCTD1berkzWk0TLyZ1bWF8WqbtdyUOb35sefBZorosR0p36VuH55PELk
-         fzLWDYTiG+8pWBggY6CZZaUsXoTntL+cNqkesSDfLOpo2w15BwFqYUzOtgttSU71UQ9+
-         yZoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717423788; x=1718028588;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cMBySiVcTX3BrHRQ0ZZ8x1UxOKdXwr5BWpTZuLbvO8Q=;
-        b=Xos7cH7ZnjBAu5vf41VqlVM+QI0zju98Kt4v5OIFAiWjGPCmbedRA6d9Si2YTuiU1E
-         hDBIckDeYRRnCYoMMaTfOAkrQdXXR+XqNcjy8DdPklkDc2Dcq8s8x8+6JaEAwfgyXNPK
-         PAT9IRJUketDTRkNDPoB8JX8a0eEfgeMapzo7s7ZSPcwN56SJnnCTk4Qdj34QbwxhS+n
-         ENpn6JI1mdRgPrENh22axXG9LhSrz+RFnuSe/Jjr1JzlsIcewP3CdlzuiJApyY6NqFCG
-         USN6/iRE4hAm5TKbBvlxxqkMaNLyAdFruxVXEQzHoMhMVy7ElWEuvhX3ThlW4F1AcEEI
-         Pbtw==
-X-Gm-Message-State: AOJu0YwHrvghDNLWQ7tN8H/+n5TnXqQslVo8qNIIqDQ7+/LQlodUd8Nj
-	Cy+HXYTbPLPhbit0FFkK+ZRAPKmtgLtW2CA3xIIIWluTH4Qy69LRJ/Fz1WyslMLMvVY956Y0iEQ
-	PcwAlI3uk4ID76877kPBAMBEhA89TdStC5lxAi6tGAd4oBuXHcgq+3g==
-X-Google-Smtp-Source: AGHT+IEVz9Q9THonmg55KCp1sWeRzvHp+0nI4wBgSoPvuH6SA7/QZc+rrtiLGD4Lofvv3X7rXOoQpL7AB0+gVX88cg8=
-X-Received: by 2002:a50:9e05:0:b0:57a:2400:3a56 with SMTP id
- 4fb4d7f45d1cf-57a3651f208mr6341450a12.23.1717423787864; Mon, 03 Jun 2024
- 07:09:47 -0700 (PDT)
+	s=arc-20240116; t=1717423796; c=relaxed/simple;
+	bh=FQqaLmBaWDtSGtOuMjx2GHg2BieXKhdlIDZ/Msf5qAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q6n4zrZ59ltp1l1C2G9mMDvISU9zxIOmY4ZfO3InCj5wmU+arSJCP85WW/w64ZsL2WNWIhCPVUZiNDZeZEUOv4aTd3dT1/dYk5SHlV3nin2pZj2MLzVo05PBUnOmrSoqQ1PwreUBHBH2jVk6ErHEbDyXhDiEQzz4nZgofO7jBeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SoSDEYSE; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 453E9eWu022117;
+	Mon, 3 Jun 2024 09:09:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717423780;
+	bh=Eu5Np3YTXow4+O3qauwSXf1yWRKJT2/WJoEK+Fr2qT4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=SoSDEYSEB4y9WCt03kIYLxW+qF3qz0VPuMvYL2j7DSGut2hm8B07jZpNdEx5M/2H+
+	 t6bM2i38QmO1MaDgooomUib6pk7OV5w7wG1Aye5F/7gj0EbGYXUn6oNj7ApUFTU0SM
+	 WviVJZ9cGJm1An9pPYsIozEny4foNJB8MxB100rU=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 453E9eKU003858
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 09:09:40 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 09:09:40 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 09:09:40 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 453E9doE020923;
+	Mon, 3 Jun 2024 09:09:39 -0500
+Message-ID: <086fa11e-10f8-463d-8966-1a33a52a3146@ti.com>
+Date: Mon, 3 Jun 2024 09:09:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 3 Jun 2024 19:39:24 +0530
-Message-ID: <CA+G9fYuJtUV_Z4x74qYZDDOkbHP3SJbGvHskFNnsOCxOmPvr=Q@mail.gmail.com>
-Subject: kunit_test: KASAN: null-ptr-deref in range - kunit_generic_run_threadfn_adapter
- on qemu_arm64
-To: open list <linux-kernel@vger.kernel.org>, kunit-dev@googlegroups.com, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: smayhew@redhat.com, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Ivan Orlov <ivan.orlov0322@gmail.com>, npache@redhat.com, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] arm64: dts: ti: am62p: Rename am62p-{}.dtsi to
+ am62p-j722s-common-{}.dtsi
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <rogerq@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>
+References: <20240601121554.2860403-1-s-vadapalli@ti.com>
+ <20240601121554.2860403-2-s-vadapalli@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240601121554.2860403-2-s-vadapalli@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The following kernel null pointer dereference is noticed on qemu-arm64
-while running
-kunit tests with the Linux next-20240603 tag kernel.
+On 6/1/24 7:15 AM, Siddharth Vadapalli wrote:
+> The AM62P and J722S SoCs share most of the peripherals. With the aim of
+> reusing the existing k3-am62p-{mcu,main,wakeup}.dtsi files for J722S SoC,
+> rename them to indicate that they are shared with J722S SoC.
+> 
+> The peripherals that are not shared will be moved in the upcoming patches
+> to the respective k3-{soc}-{mcu,main,wakeup}.dtsi files without "common" in
+> the filename, emphasizing that they are not shared.
+> 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> No changelog since this patch is introduced in this version of the
+> series.
+> 
+>   .../{k3-am62p-main.dtsi => k3-am62p-j722s-common-main.dtsi} | 2 +-
+>   .../{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi}   | 2 +-
+>   ...-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} | 2 +-
+>   .../dts/ti/{k3-am62p.dtsi => k3-am62p-j722s-common.dtsi}    | 6 +++---
+>   arch/arm64/boot/dts/ti/k3-am62p5.dtsi                       | 2 +-
+>   5 files changed, 7 insertions(+), 7 deletions(-)
+>   rename arch/arm64/boot/dts/ti/{k3-am62p-main.dtsi => k3-am62p-j722s-common-main.dtsi} (99%)
+>   rename arch/arm64/boot/dts/ti/{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi} (98%)
+>   rename arch/arm64/boot/dts/ti/{k3-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} (97%)
+>   rename arch/arm64/boot/dts/ti/{k3-am62p.dtsi => k3-am62p-j722s-common.dtsi} (97%)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> similarity index 99%
+> rename from arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+> rename to arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> index 900d1f9530a2..ea214f649ebd 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> @@ -1,6 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0-only OR MIT
+>   /*
+> - * Device Tree file for the AM62P main domain peripherals
+> + * Device Tree file for the main domain peripherals shared by AM62P and J722S
+>    * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
+>    */
+>   
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> similarity index 98%
+> rename from arch/arm64/boot/dts/ti/k3-am62p-mcu.dtsi
+> rename to arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> index b973b550eb9d..a5dbaf3ff41b 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-mcu.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi
+> @@ -1,6 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0-only OR MIT
+>   /*
+> - * Device Tree file for the AM62P MCU domain peripherals
+> + * Device Tree file for the mcu domain peripherals shared by AM62P and J722S
 
-This is always reproducible and the system is stable after this.
+s/mcu/MCU
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Same for the other domains (WAKEUP, MAIN, MCU), makes it more clear these are names,
+and not just adjectives for the domains.
 
-Boot log:
------------
-<6>[  114.143436]     # Subtest: kunit_fault
-<6>[  114.143983]     # module: kunit_test
-<6>[  114.144252]     1..1
-<1>[  114.150801] Unable to handle kernel paging request at virtual
-address dfff800000000000
-<1>[  114.151837] KASAN: null-ptr-deref in range
-[0x0000000000000000-0x0000000000000007]
-<1>[  114.153897] Mem abort info:
-<1>[  114.154370]   ESR = 0x0000000096000005
-<1>[  114.155537]   EC = 0x25: DABT (current EL), IL = 32 bits
-<1>[  114.156222]   SET = 0, FnV = 0
-<1>[  114.157238]   EA = 0, S1PTW = 0
-<1>[  114.157971]   FSC = 0x05: level 1 translation fault
-<1>[  114.158886] Data abort info:
-<1>[  114.159543]   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-<1>[  114.161296]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-<1>[  114.161892]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-<1>[  114.162950] [dfff800000000000] address between user and kernel
-address ranges
-<0>[  114.164434] Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-<4>[  114.164730] Modules linked in:
-<4>[  114.164974] CPU: 0 PID: 601 Comm: kunit_try_catch Tainted: G
-B            N 6.10.0-rc1-next-20240603 #1
-<4>[  114.165058] Tainted: [B]=BAD_PAGE, [N]=TEST
-<4>[  114.165088] Hardware name: linux,dummy-virt (DT)
-<4>[  114.165198] pstate: 12400009 (nzcV daif +PAN -UAO +TCO -DIT
--SSBS BTYPE=--)
-<4>[  114.165290] pc : kunit_test_null_dereference+0x70/0x170
-<4>[  114.165390] lr : kunit_generic_run_threadfn_adapter+0x88/0x100
-<4>[  114.165446] sp : ffff800082d97dc0
-<4>[  114.165513] x29: ffff800082d97e20 x28: 0000000000000000 x27:
-0000000000000000
-<4>[  114.165678] x26: 0000000000000000 x25: 0000000000000000 x24:
-fff00000c1dec280
-<4>[  114.165763] x23: ffff9bc22413e7c0 x22: ffff9bc2241469f8 x21:
-fff00000c1dec288
-<4>[  114.165846] x20: 1ffff000105b2fb8 x19: ffff8000800879f0 x18:
-0000000000000068
-<4>[  114.165929] x17: ffff9bc2231cf524 x16: ffff9bc2231cf29c x15:
-ffff9bc2240feb9c
-<4>[  114.166014] x14: ffff9bc22384b8d0 x13: 6461657268745f68 x12:
-fffd8000195d88b2
-<4>[  114.166098] x11: 1ffe0000195d88b1 x10: fffd8000195d88b1 x9 :
-ffff9bc22413e848
-<4>[  114.166219] x8 : ffff800082d97cb8 x7 : 0000000000000000 x6 :
-0000000041b58ab3
-<4>[  114.166302] x5 : ffff7000105b2fb8 x4 : 00000000f1f1f1f1 x3 :
-0000000000000003
-<4>[  114.166383] x2 : dfff800000000000 x1 : fff00000caec3cc0 x0 :
-ffff8000800879f0
-<4>[  114.166494] Call trace:
-<4>[  114.166526]  kunit_test_null_dereference+0x70/0x170
-<4>[  114.166585]  kunit_generic_run_threadfn_adapter+0x88/0x100
-<4>[  114.166638]  kthread+0x24c/0x2d0
-<4>[  114.166687]  ret_from_fork+0x10/0x20
-<0>[  114.167025] Code: b90004a3 d5384101 52800063 aa0003f3 (39c00042)
-<4>[  114.167311] ---[ end trace 0000000000000000 ]---
-<3>[  114.184100]     # kunit_test_fault_null_dereference: try
-faulted: last line seen lib/kunit/kunit-test.c:95
-<6>[  114.189639]     ok 1 kunit_test_fault_null_dereference
+>    * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
+>    */
+>   
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> similarity index 97%
+> rename from arch/arm64/boot/dts/ti/k3-am62p-wakeup.dtsi
+> rename to arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> index c71d9624ea27..ca493f4e1acd 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-wakeup.dtsi
+> @@ -1,6 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0-only OR MIT
+>   /*
+> - * Device Tree file for the AM62P wakeup domain peripherals
+> + * Device Tree file for the wakeup domain peripherals shared by AM62P and J722S
 
-metadata:
- git_ref: master
- git_describe: next-20240603
- git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+While we are here, might be good to add a newline here between the description
+and the copyright line to match the other SoCs DT files.
 
-Links:
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240603/testrun/24170958/suite/log-parser-boot/tests/
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2hM1PsJeaL7kuebSowrouZKyCLa/
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2hM1PsJeaL7kuebSowrouZKyCLa/config
+Otherwise,
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Acked-by: Andrew Davis <afd@ti.com>
+
+>    * Copyright (C) 2023-2024 Texas Instruments Incorporated - https://www.ti.com/
+>    */
+>   
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common.dtsi
+> similarity index 97%
+> rename from arch/arm64/boot/dts/ti/k3-am62p.dtsi
+> rename to arch/arm64/boot/dts/ti/k3-am62p-j722s-common.dtsi
+> index 94babc412575..d85d05e0792a 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common.dtsi
+> @@ -120,6 +120,6 @@ cbass_wakeup: bus@b00000 {
+>   };
+>   
+>   /* Now include peripherals for each bus segment */
+> -#include "k3-am62p-main.dtsi"
+> -#include "k3-am62p-mcu.dtsi"
+> -#include "k3-am62p-wakeup.dtsi"
+> +#include "k3-am62p-j722s-common-main.dtsi"
+> +#include "k3-am62p-j722s-common-mcu.dtsi"
+> +#include "k3-am62p-j722s-common-wakeup.dtsi"
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5.dtsi b/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> index 41f479dca455..b7bb04a7968f 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p5.dtsi
+> @@ -8,7 +8,7 @@
+>   
+>   /dts-v1/;
+>   
+> -#include "k3-am62p.dtsi"
+> +#include "k3-am62p-j722s-common.dtsi"
+>   
+>   / {
+>   	cpus {
 
