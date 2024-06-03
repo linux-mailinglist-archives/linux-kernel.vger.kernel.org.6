@@ -1,115 +1,117 @@
-Return-Path: <linux-kernel+bounces-199664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1998D8A84
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:52:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884408D8A88
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 21:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4182E1C236B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:52:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D1A1C20B4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076CD13B287;
-	Mon,  3 Jun 2024 19:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970B413A87C;
+	Mon,  3 Jun 2024 19:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PA53yrNX"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ju9AruhJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B44413A252
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 19:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4D920ED;
+	Mon,  3 Jun 2024 19:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717444334; cv=none; b=eO3b30e/8Zh/QK9d4Nw2weSvjM/QIC5vnFUYPBk4Hm61gaInS/GXI84WijiBy0mDmTUR6iHIQaaVHLgLFNtGGFqEzC6cBuF+7LSNwwbd9CQXsTEf00odfbuliBP6F7kf8Lln7kT8p9k6jTgph/w4SS/PE5ICudAwDKlyyjk/l04=
+	t=1717444424; cv=none; b=TsQGENIepWTbAfq+5HYrsuOYaqO/8vD37D9GXRosZG4QXIJg0wSvEmp4FW8FbG5GEqnKTNyqpavRuNcLicCVo7j5URmNlUnEYpQHLZxjoVCC8vJ4LU7hIorIvYRfftrrWY2+q0/fmcucoxQIOg/ZgNTZTL1GKoajxLcO/Hm/o84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717444334; c=relaxed/simple;
-	bh=ycipNAyZv8lr2sKL8eIKshyoPFGMPBYVwhKD907X/n0=;
+	s=arc-20240116; t=1717444424; c=relaxed/simple;
+	bh=Orq+SyElfsbYvHcrO7XyS2T+sd6zoBkyydwM/TlmYmM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHSN0C7rNMGqDyKIovDEhFphOelseUE9589TFXKqNEbpp8OJJD5oHt5hkhFkLkpyP7Vg6IYzq3GyON7rTsnNvw0mrrku3hLZ1P6T9GcJtJIrune/EvwRBVYktOKpFQV3ogDKaHSnFWgpU5H5Bl0Ju2bg14aM1Ww7vqreYJtHOv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PA53yrNX; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=ycip
-	NAyZv8lr2sKL8eIKshyoPFGMPBYVwhKD907X/n0=; b=PA53yrNXqMk2P8wnc/yj
-	klnm/zcqtv71pnkyA8u8tI+1iVJ0zb1yk4IMt+Pb6csg71t2khz0qX7vFSQxXVsM
-	/d3gxm3EBf9oGP7n2vvJetrQp2+8W3QR5MsgRymzFunSXCqfalLNGvCb9b91bRS4
-	B62Lpjv0+NQ5lMLQwmzylf5WuYxtjupj8J/uRyDneJ3920uLL5xI1hK7QFx/M7s9
-	MCJmQh8PQMBG7Onj05y52D4+E712/XVtZnKjNDNXChVHXoHYk64iNr4Y7bCV+7k0
-	0tg0TYtPRNgOAiEBESttVWLY24t+IlgJHRgZ40xt8Txgx5WAwuV3x43PuGFkWyAR
-	3Q==
-Received: (qmail 2061899 invoked from network); 3 Jun 2024 21:52:07 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Jun 2024 21:52:07 +0200
-X-UD-Smtp-Session: l3s3148p1@IlQQqwEa/OVehhtB
-Date: Mon, 3 Jun 2024 21:52:07 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-Message-ID: <clozc33lz7y4audw2nkgvuehqjbpurqr2ematmjs4vgxvnct3l@4wxkkmhjke54>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Eric Sandeen <sandeen@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <20240527100618.np2wqiw5mz7as3vk@ninjato>
- <20240527-pittoresk-kneipen-652000baed56@brauner>
- <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
- <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
- <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BRbz0hSeX4kPbar/7XbFIffjaVTwaqvyHA4CZFYVR9P4+EmwFUeK75zmaa7oZgv/k486dAyhZp1FjLsom/476yyixPBVQAD/hJV+EBepqAdWymETmfIpUF+8n8JMXAU9YFOmTrqaeIZ7MQYr8qmY8e/sISMVTwhSE+b7GWHfctc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ju9AruhJ; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717444424; x=1748980424;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Orq+SyElfsbYvHcrO7XyS2T+sd6zoBkyydwM/TlmYmM=;
+  b=ju9AruhJbx2zIQ45NRv+wtYVY9fwXd02zPuXJ5+B/vsxKkfbLY1ufgLe
+   qiOCBKwIbzbdvI/iKe3iOuL1wzMeOE/WW13oNiKj84dlfC/wWALgIikqv
+   pXEEd+htLuYm0Lp+yQJ2fAEI5B0aj8vJlsUUL58FboUNgUGPm0criJds9
+   5wsjLB2LbTMjlqFOCXtAjEKIFD2jSG1QGw25EBaca53R20ezXhEZLEyUV
+   kdnAr6/8ZJbRycEhqbScpTWvKA09Yy7x890M3DtOsxmVNcPGvuY3wiTOE
+   rJm6WNoX2IQBVJF78dbhsGnVF+IoEN9YvInDdfUmqAhETdc9luLjSn4Kr
+   Q==;
+X-CSE-ConnectionGUID: evtM6oD3QSaeXKZ829+lQw==
+X-CSE-MsgGUID: vc92k8mhRD+OE192FTW+Wg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="39362986"
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="39362986"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:53:43 -0700
+X-CSE-ConnectionGUID: ki/+eLWPSsKFTFuiPTAY8Q==
+X-CSE-MsgGUID: JzQLYm4VRqCidLoh2MmWAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
+   d="scan'208";a="36917327"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 12:53:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sEDkN-0000000DNMT-2sGD;
+	Mon, 03 Jun 2024 22:53:35 +0300
+Date: Mon, 3 Jun 2024 22:53:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Thangaraj Samynathan <thangaraj.s@microchip.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v1 0/8] spi: Rework DMA mapped flag
+Message-ID: <Zl4fP8Jl4PXqNbBG@smile.fi.intel.com>
+References: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
+ <e9f6e8fe-7147-4caf-a7fc-e612069c2eaf@notapiano>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uv5iqsmng6shuhb3"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e9f6e8fe-7147-4caf-a7fc-e612069c2eaf@notapiano>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Mon, Jun 03, 2024 at 03:49:04PM -0400, Nícolas F. R. A. Prado wrote:
+> On Fri, May 31, 2024 at 10:42:32PM +0300, Andy Shevchenko wrote:
+
+...
+
+> Tested on next-20240603. No issue noticed on sc7180-trogdor-kingoftown and
+> sc7180-trogdor-lazor-limozeen. So,
+> 
+> Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Thank you!
+
+> Although patch 5 (pxa2xx) didn't apply, so I skipped it (but it's not used on
+> my platforms).
+
+Yeah, I just commented on that, it appears that I have based this on the
+previous driver cleanups (it was published a week ago).
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---uv5iqsmng6shuhb3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-> See my other reply, are you sure we should make this change? From a
-> "keep the old behavior" POV maybe so, but this looks to me like a
-> bug in busybox, passing fstab hint "options" like "auto" as actual mount
-> options being the root cause of the problem. debugfs isn't uniquely
-> affected by this behavior.
-
-For the record, I plan to fix busybox. However, there are still a lot of
-old versions around...
-
-
---uv5iqsmng6shuhb3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZeHuMACgkQFA3kzBSg
-KbZBARAAo4+DwSklHeObgKZ3QYHcKwh3O9XQefTdCw0cmV/UXijzCw8OKj5pwQN7
-Jx1vU/YMnODQ1WO2+HhAC7DpTLFXhctfzqqNxLbww05x4UH7rH74mTaLOIyHQ/ad
-THTfAKC8Ig5H437eQpikKsQC3fUW0lgCjqaYbTP1JLQu5Eohyl67JenjCRf04O0S
-vAko8vvPOjc/pgst970csJQrrCvIgQS/uFlXDZjxjWSK8Yz2tUzRNPH+1OKvoqNB
-XYf4Q/78IhTjv8iktMkQDNfshLxi9dFDKqwWaIicInyldsjIZGwB9+gygrJUkF+m
-wcuNAHobiF5OGE4Acco9LREKp/LXS9AyGhUwq8ZZFy7dEiQKA4tu5QVheMWpAyAb
-f5x5w2FM8kx2cHbivNGKvB0EjZ4JOVZP+nwa34FOjrpIuaT3W4cPNyhOMpICLFZi
-XKtjmGFwM/y06O6rjz5ys7AwLWB0IOqkCWpythVKl2wrp1fYg4ckFGQ9j2fAg4Gq
-Q8W4pZulKbqhew1OIXSUynwsiTaplxUkASq/Umh06YyT7FwMbbuNljT71Acia4Ue
-FPD6a1Vp6G8ZiiLvKZLrNoW9GxJDuRE213hEdFHjcz0faxW89KIIgrRJpxXXTO4O
-+YExcbUUiXSAYAhnNVu1De2k458U5K+z00tBA++k2OO60yR9lYs=
-=wj9/
------END PGP SIGNATURE-----
-
---uv5iqsmng6shuhb3--
 
