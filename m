@@ -1,87 +1,64 @@
-Return-Path: <linux-kernel+bounces-199123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4750E8D8293
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:43:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C2C8D829B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83001F2639A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:43:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A429B1C21445
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1126D12C47A;
-	Mon,  3 Jun 2024 12:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A9212C549;
+	Mon,  3 Jun 2024 12:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dRUKEDrH"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNyzT3G8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C177105
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A47912C49E;
+	Mon,  3 Jun 2024 12:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717418580; cv=none; b=uSgMAmYPcTRqOgx7ftPpmQ4SkK9+YRD2z9Y/Y02JaVAr/0GJSS6wLueb9qx88F04Z4guR9dBXO3mSbOKLmOoGVbOBDKXK0FaK6Rt0bVBrcCdIew79NXJ7ObFOQVOEEp02SXHtQVXbgAbKHqmWx9PJmbQljq1xgd+awjgLRIjFg4=
+	t=1717418597; cv=none; b=Va9fzDRMuWPsijRbyUpyC5om34GJVfP91rnVLQ5QjgT8nmjYCAIj8amRBnJV3JAzVOf/OKhDXqUwIWO+nWitUgQ30JJTwtzcP6ynIxD5VH1mcFXp8TZcOduwhudkN/lvlpnNUHy+8rn9p39/e2eX6gDyYz5wUx7m7MFK+vdCSiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717418580; c=relaxed/simple;
-	bh=hyw7FeH5zXqqRiWwpndpSm83YNiACzGxeYh4iQDnAcg=;
+	s=arc-20240116; t=1717418597; c=relaxed/simple;
+	bh=i3lDKw5djP+fp83cE4kSzg6UdwUoiQZr2LDyo4bms+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0vz7QsHDUkZawHahG/xeTGFhhTWwNf8WCcLTKM8LEJ4DafPVPlB4JtGe39DjLdV6aKJMAYcT+xsNQ98axeGCgiOWUY3prQXkZ+N5dnKxWLmaM/g+44N49J5EteOZy30XTK8eCsi2F9wYLWVeZJvfjbRfO1v5oyiXlwnQaGZGJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dRUKEDrH; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso64299491fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 05:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717418575; x=1718023375; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hyw7FeH5zXqqRiWwpndpSm83YNiACzGxeYh4iQDnAcg=;
-        b=dRUKEDrH18KKqvNnix+v6zWrZ0N/TbSPxz48S3e2naiFWT+YfyYsY6E9yxuiuAT2Ni
-         CL1mPOAPFN5oCIIxg2ocOijU/IHCZMSjrnv232oqfBtmkrpbwojpXX0SmOEeiYe3vxqn
-         6ZuZHrJx0+21ZPTFFaU7GhWApTGVGnx+vxKZQydRWEcRYtmjKjtSpLQfvMPJLBX4kyOx
-         MnRTDYZNHsmx7NFq68TjIYlk+JSykWO0f0DXeyn2Za2cc0YHzaxoScOqhzR2g7OIyj6o
-         CCQuptNQ+BRBvnLmYxT0+AfK79Q/R8cHzkEs2eTnNTJ0tV8lalPPlWl4vQ9A6rqILHz+
-         l68A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717418575; x=1718023375;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hyw7FeH5zXqqRiWwpndpSm83YNiACzGxeYh4iQDnAcg=;
-        b=HbHgMV2wN6GuhE3lGkSQii66w2MpZcpWfQ7pZqzmktnMZyTeHFWqVjmZaGypeNdDTF
-         o/DCYOcqzK+ZbszxqITOT2jIuYStnHuq45Zoi+UtIKKFGw/uqF3tgPZyzF8cm3FTBS/s
-         1bBJsMhG7C2UusnJn1ZeIHGahMxCLM4UTjV3KBtIIeIWC5L0E+p267KnfWDcKP1k4XJQ
-         cavfpaE/JIfGhPp99dtz7gveqZs+lq/otUmemoqvy4nn7LhQ/zrwqv1LabSWaQGTiVgw
-         EQq9FMigYOeS/SosP+qNe9lnI/DaFggq0lirol8/SeMh9ACgZPnmdL+sSvTHWHoawgAU
-         RgVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkx833g5qsK6BfECDkAoeQI2F+MgP/geaMAWvNSDSA75uz9WipVNxBU3kPXahvSEAGBL/sW61g+p8GscY9+QnpEvHuxAKJNyNo3ijM
-X-Gm-Message-State: AOJu0Ywqpv8p7mUB/5LarnbvPphkWigY/lkU2uHXY7Ty470j4YtEVtaf
-	wNu+9Wf7bed9dmrvkunYSh6tNYrQgJLvMq0+dlEnmx0o/O78l3l1tHRmQ+C92or181f4nFBLi6J
-	u
-X-Google-Smtp-Source: AGHT+IH1AoUhmWaH2/VV/vmujB3NiMF/fudntLa6lvqqGwFso05mADVd2hsufbrTRxe5dUYxXGRgCg==
-X-Received: by 2002:a2e:2a43:0:b0:2de:8697:e08b with SMTP id 38308e7fff4ca-2ea9515426amr64684751fa.26.1717418575172;
-        Mon, 03 Jun 2024 05:42:55 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a77baebcsm8365156a91.53.2024.06.03.05.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 05:42:54 -0700 (PDT)
-Date: Mon, 3 Jun 2024 14:42:44 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: "gxxa03070307@gmail.com" <gxxa03070307@gmail.com>
-Cc: "john.ogness" <john.ogness@linutronix.de>,
-	rostedt <rostedt@goodmis.org>,
-	senozhatsky <senozhatsky@chromium.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	fengqi <fengqi@xiaomi.com>,
-	=?utf-8?B?6auY57+U?= <gaoxiang19870307@163.com>
-Subject: Re: [PATCH] printk: Increase PRINTK_PREFIX_MAX and the buf size in
- print_caller.
-Message-ID: <Zl26LDOV_v946kOv@pathway.suse.cz>
-References: <20240527091929.316471-1-gxxa03070307@gmail.com>
- <ZlSewPTyQ-jMpW5n@pathway.suse.cz>
- <87y17tktze.fsf@jogness.linutronix.de>
- <1717404421510.qmo40jy5kubcunlrdknzajsf@android.mail.163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qe0+vFKYeZ+f7PGh/YO5Nlc3nGTxIXvYEMukdOXMUBvpAlrlKifox8+gS7fTYlj6CpZ97IqU3jfa2rW1PoQ+91jMb3ehbX7mpR8xhEckm6QzXJznGErVXkrooOUPhc2Bj25FNezYziNcjGtTVyR2x1IKpWVlW+yLg2EmVEM195k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNyzT3G8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16362C32789;
+	Mon,  3 Jun 2024 12:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717418597;
+	bh=i3lDKw5djP+fp83cE4kSzg6UdwUoiQZr2LDyo4bms+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pNyzT3G8I584aMxukYR+m/77Zul0hA0vZzt3Us/VprrUcEJv2N/66PX7gSM4JvNAK
+	 V1gCR99VlB+ECWzZ39Rl4MEz97JiI72VUE1r1VoK9wHBaBHgApciO1GKJgIlZn2M2g
+	 mvNd+GRYmbpbEqExwFsdoD/JUW2NuzL6qPReTqNZJk6Ac7x4BQcgi4c5fAkykObqqx
+	 0uoGdwk/Ga4KNhpu3lKAdXx4Y/nyvAlTEM6JDIIoKzLadeYK1MFof0ejWchwHOfKiN
+	 qf0nWw9HRlhmwCFQsEKju9pWEphCJLU8o+v0nkU7TXaOmiTMwcA75T5Z34FC5U6Ioc
+	 ROYrBz460yfdA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sE71v-000000000hP-0EBr;
+	Mon, 03 Jun 2024 14:43:15 +0200
+Date: Mon, 3 Jun 2024 14:43:15 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Document the X1E80100 QMP PCIe PHY Gen4 x4
+Message-ID: <Zl26Y0VklPmiirem@hovoldconsulting.com>
+References: <20240531-x1e80100-phy-add-gen4x4-v1-0-5c841dae7850@linaro.org>
+ <20240531-x1e80100-phy-add-gen4x4-v1-1-5c841dae7850@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,19 +67,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1717404421510.qmo40jy5kubcunlrdknzajsf@android.mail.163.com>
+In-Reply-To: <20240531-x1e80100-phy-add-gen4x4-v1-1-5c841dae7850@linaro.org>
 
-On Mon 2024-06-03 16:47:01, gxxa03070307@gmail.com wrote:
-> I need to populate the temporary variable "caller" in "print_caller" func with the additional information. And it's no use defining a buf in out-of-tree patch.
-> In out-of-tree patch, I can only add hooks (special cases), I can't change anything else, because it needs to be consistent with mainline linux.
-> caller buf in mainline linux is it better to make the buf bigger and leave some space?
+On Fri, May 31, 2024 at 07:06:44PM +0300, Abel Vesa wrote:
+> The PCIe 6th instance from X1E80100 can be used in both 4-lane mode or
 
-I do not understand. Why the buffer size has to be consistent with
-mainline linux?
+nit: s/PCIe 6th/sixth PCIe/
+nit: s/from/on/
+nit: s/both/either/
 
-Really, it does not make much sense to upstream just this part
-of your out-of-tree patch?
+> 2-lane mode. Document the 4-lane mode as a separate compatible.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-Best Regards,
-Petr
+Johan
 
