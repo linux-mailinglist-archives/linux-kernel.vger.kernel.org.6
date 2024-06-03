@@ -1,154 +1,89 @@
-Return-Path: <linux-kernel+bounces-199244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A6D8D8452
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:48:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5385D8D8454
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458F0283CBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534A91C222C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBBA12DDA1;
-	Mon,  3 Jun 2024 13:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D60712EBC2;
+	Mon,  3 Jun 2024 13:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PQaseuCQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtjiVMAm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11628839EA;
-	Mon,  3 Jun 2024 13:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4E712DDBC;
+	Mon,  3 Jun 2024 13:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717422482; cv=none; b=KzK6+nRL2LWrjYdQWTF9Tim+iTihuY4JqGPH0kraNaoYitzQyb4LxXW9I/Thqixf7nn14S6+EIyYn6y+jQFKm7FswKZKG+WF3vdQ5RKE+V6JGqY9vkBrcXaIp8xXSvE58TiXSFzf7qpOKmS2sIJI/gZYBMpObatSvLmuG1jOrm8=
+	t=1717422486; cv=none; b=NaJeu5pmvyWyP6Q3mZFtGRfTPYRZmHh3D7S1hAnsZEY/FDLWTfc3IzG+cCEibkpE6Ws1nerbkBm5CdzRB4Q2AQQfamUOazKHRvJCIa2lSe1s9fSRHfwPPChA6LNxtgY8KsysgyZYVRywdSusj5QF/mUCEyFmAq22V2MbRVz6woY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717422482; c=relaxed/simple;
-	bh=B2comQGPWiA3xBp9uUkroEcDm6wjkalHIm57nIP3IqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
-	 In-Reply-To:Content-Type; b=SdGlrVM3Lw4hV0lZMrO4lKYqjdVfNUZz/3NFe/C8PuLdCNbWNlHe4a8D0TC90U05Z1lBfL8GQwe9TPcHO8G/gvB1NSODYVUFzeOusbzvSDTY1d2KOhPSoxaja+OxCC6PbNrrUhEGDxcc4xQbqc/4vXo10KK97tRCLX/e4KUgw4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PQaseuCQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453AvFeR026168;
-	Mon, 3 Jun 2024 13:47:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YbV79DXRW1o1/8XJ18egV70PRdZOxFk/z/HkiX7J25k=; b=PQaseuCQDVWNUx89
-	5yE3FNJYeTc1U4CVLjGbJUbIZ2iMncW/j3BDoBIpWzCc9hJ5vmbV9kwcUmU5136j
-	FLDeQG/yfhoNS6DvXT7aFM+o6s69xIGdQLJLxoVDVe7WJB9baYxpIMt+bAbRCMoU
-	GbF708i2ReOR8xq6vPv1jYzWa9XVIexFxjGwkmMVn0UYv9dYuVh/FMpQOyp1CezM
-	8+bO4uLJ8YpoBER5T5PoZkcPwTvR7DNTqYIJeQCDK8Kll2j/PGqiJC2774wHZA6b
-	bML5N85lCAqK8HGX/FAqfND8gwGC3KhQP86AiggxTYg+BaYaeKSp8pj0jYFyM9JE
-	ZNhPsQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5wm1uf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Jun 2024 13:47:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453DluaM006477
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 3 Jun 2024 13:47:56 GMT
-Received: from [10.218.29.219] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 06:47:53 -0700
-Message-ID: <44e2840e-06b9-4900-bfe6-881d27081ff0@quicinc.com>
-Date: Mon, 3 Jun 2024 19:17:50 +0530
+	s=arc-20240116; t=1717422486; c=relaxed/simple;
+	bh=pNs6i46eu8WKhrahud/8KXnGovcuD9UWUC7h0pxtUng=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WQaD8zT8/pPm0008v6Ngcu7xf5JYxOXZg2KKKrfpT3Ia4yfAeZa/7S4PNlv+Oi2zbUbe0f1RjL513tWTK779OnIKaGi3w/Wexgyo3BErqfS8bKqAv08NdcJ4SlAqEg8ktMWbJkpvM4kKviumxQaUm7y6z/Lo7egKv+yiiGnkTBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtjiVMAm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 579D1C32781;
+	Mon,  3 Jun 2024 13:48:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717422486;
+	bh=pNs6i46eu8WKhrahud/8KXnGovcuD9UWUC7h0pxtUng=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WtjiVMAmFBuw+20u783NITpEIiI1h2ZFWn8/d4wa1kqjyBOyg9uGp2by0PWjAXsdM
+	 CVLP1I35lc3OqX2fv2ZLYG33VVokFu9Uips/F0Xljv9HYxdrLesaUmADIO4NPNpvDP
+	 KfCUzu5JXBktw/GDIzlts5QuAma3yI+Kro7VhwQz+Ta24VD0OtU+eiCSOfOC+fKbmd
+	 EFDBK5QGTyLG4SZR3w+w3hzdIRGDHar5ttieSt4f1GrDj0OiG42F/459ANNY/iws8F
+	 XErUChJVODlaft6zzObHh+v3EvUaBVtKF4zMmArF6WGfIeQTnX3Yb1pfftQrP5IeuD
+	 FgGW1wHVn+d9g==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: replace WARN(down_read_trylock, ...) abuse with proper asserts
+Date: Mon,  3 Jun 2024 15:47:56 +0200
+Message-ID: <20240603-autark-vorgibt-f63b210cd4cf@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240602123720.775702-1-mjguzik@gmail.com>
+References: <20240602123720.775702-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: FW: [PATCH] PENDING: Bluetooth: Increase settling time for
- baudrate change VSC
-Content-Language: en-US
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-References: <20240603125357.3035-1-quic_janathot@quicinc.com>
- <SA1PR02MB8694BA5D75CF5FF8C86C7274E1FF2@SA1PR02MB8694.namprd02.prod.outlook.com>
-CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_hbandi@quicinc.com>, <quic_mohamull@quicinc.com>
-From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-In-Reply-To: <SA1PR02MB8694BA5D75CF5FF8C86C7274E1FF2@SA1PR02MB8694.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: t7jyk-zsv-nLGduq1CA6BH_i6UELT1hQ
-X-Proofpoint-ORIG-GUID: t7jyk-zsv-nLGduq1CA6BH_i6UELT1hQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_09,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406030114
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=902; i=brauner@kernel.org; h=from:subject:message-id; bh=pNs6i46eu8WKhrahud/8KXnGovcuD9UWUC7h0pxtUng=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTFnuxfszNJ40/10Q0qdT4LtNe8DljCccIs/8fNB39+K R/fbqyj0lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARnWeMDO+/7vz4Q7FzmczN 7ZOUlYrWJXH/S2vOnmt+zNLwzTPF7ccY/hkzW996a3CJwXvmle33j2leOagy1fGVxqu4CzPUAi5 tl2AEAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Sun, 02 Jun 2024 14:37:19 +0200, Mateusz Guzik wrote:
+> Note the macro used here works regardless of LOCKDEP.
+> 
+> 
 
-> From: Janaki Ramaiah Thota (Temp) (QUIC) <quic_janathot@quicinc.com>
-> Sent: Monday, June 3, 2024 6:24 PM
-> To: Marcel Holtmann <marcel@holtmann.org>; Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-> Cc: Mohammed Sameer Mulla (QUIC) <quic_mohamull@quicinc.com>; Harish Bandi (QUIC) <quic_hbandi@quicinc.com>; linux-bluetooth@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH] PENDING: Bluetooth: Increase settling time for baudrate change VSC
-> 
-> From: Harish Bandi <quic_hbandi@quicinc.com>
-> 
-> This change is done to align the settling time and synchronization for baudrate VSC for WCN6750.
-> 
-> In logging disabled builds and few devices baudrate change and flow control is taking time so increasing the wait time to controller and uart to handle baudrate change request properly.
-> 
-> Change-Id: If0631cb886e53817f963f075e626c89a791b7be4
-> Signed-off-by: Harish Bandi <quic_hbandi@quicinc.com>
-> ---
-> 
-> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c index eba9165..a59b35e 100644
-> --- a/drivers/bluetooth/btqca.c
-> +++ b/drivers/bluetooth/btqca.c
-> @@ -600,7 +600,6 @@
->                  rom_ver = ((soc_ver & 0x00000f00) >> 0x04) | (soc_ver & 0x0000000f);
-> 
->          if (soc_type == QCA_WCN6750) {
-> -               msleep(100);
->                  qca_send_patch_config_cmd(hdev);
->          }
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c index d8abd27..0b41214 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -1356,11 +1356,13 @@
->          case QCA_WCN3990:
->          case QCA_WCN3991:
->          case QCA_WCN3998:
-> -       case QCA_WCN6750:
->          case QCA_WCN6855:
->          case QCA_WCN7850:
->                  usleep_range(1000, 10000);
->                  break;
-> +       case QCA_WCN6750:
-> +               msleep(30);
-> +               break;
-> 
->          default:
->                  msleep(300);
-> @@ -1904,7 +1906,6 @@
->                  qca_set_speed(hu, QCA_INIT_SPEED);
->          }
-> 
-> -       usleep_range(1000, 20000);
->          /* Setup user speed if needed */
->          speed = qca_get_speed(hu, QCA_OPER_SPEED);
->          if (speed) {
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Please ignore the above patch.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
--Janaki Ram
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] vfs: replace WARN(down_read_trylock, ...) abuse with proper asserts
+      https://git.kernel.org/vfs/vfs/c/43bcd0a6aa46
 
