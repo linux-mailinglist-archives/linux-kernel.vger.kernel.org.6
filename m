@@ -1,390 +1,217 @@
-Return-Path: <linux-kernel+bounces-199507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CE18D87E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:26:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7561B8D87E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 19:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644FB1F2105D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAC12849B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E1613698B;
-	Mon,  3 Jun 2024 17:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="QMv/sq9l";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="aTQMV4Vu"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F2A25622;
-	Mon,  3 Jun 2024 17:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C648137758;
+	Mon,  3 Jun 2024 17:29:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8329925622;
+	Mon,  3 Jun 2024 17:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717435613; cv=none; b=RIuWc5lDryteDR1ye+Xge3+canpFI188f3ZKP6xXD5hllPCr/p5WTx6AclWdUNBAlIsLqxenZ6omCAq0R66dqUO+nRcZgZA3ASOBGhz1c2AmJW44YFjm/eSVBwTulqguypyKcKbGY9xzGyF5suZJLaUubcoBISetPwTGL7rcQCQ=
+	t=1717435740; cv=none; b=OZldw19/ZAPmOerXulL5apL/YAWxcnxoyZ45ATX+JXhZNnmPpqT8mw6H6NmBputhS5MJceh9zTlENLQ/wAE14xnpU28kOinj00TS/UPt3/WwAej27lt5wirY8f74vqwRaOIw7h/tWwBe7jWPWepat1KWAqDnwuSlSyAkm4XskZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717435613; c=relaxed/simple;
-	bh=tohLD1yKYUlomeLNDMncipUmAMreIJUHy9J6Kz4ndEY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JNPwasXE9gHzTHgZrnnnjezwUadZiqDWE/JUKktzknOaxq5MV9cCoYQ7GgmCkHYv8KB0UeXwcJHjU9jjiOyYGjto1OQI/zznH25c92ghhedU7P+6S42LCB13taOXKqDp6eqRQgW+eLjRq+H7cI0upKWViIUNBbG420HQKk4YiIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=QMv/sq9l; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=aTQMV4Vu; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A6E9C1F387;
-	Mon,  3 Jun 2024 17:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717435609; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XqKXNtV1CrsKsGKUGtvKhf9a3rqvl/LN5KF8liPNUjo=;
-	b=QMv/sq9lFk+A8fpKR1w0ZtDWtAy/Y+n5VCPvRAG/dUNffUWhtxFAP5p8CazBByQWUs69aX
-	OQWMAx+fOxTKKHE4DNTSR2U7e2Jvy78+8dFMKjkbOE9Z9aLvNH/Ci+lgAme4RQAMXNq93k
-	Ud6JdlpdksrSe2pJGn5c04EOWGEuE74=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=aTQMV4Vu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717435607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XqKXNtV1CrsKsGKUGtvKhf9a3rqvl/LN5KF8liPNUjo=;
-	b=aTQMV4Vuv2NRmgQX/TEupW4Ns9sLTklaJs3VZ0vL/Km5t+EQ0udO82kgG206pCTqwaMHqM
-	f5dhCFOTT6ZMtplcz0/iNNxM3n1+PC5vcxKDvJJDnIGPOWiYUKGLDu+TIviz2c+MMbXkNw
-	rlE4p8Opz0KQNHs+ZS+QmbOD1igJUeI=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C57213A93;
-	Mon,  3 Jun 2024 17:26:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jOOSOdb8XWYGIAAAD6G6ig
-	(envelope-from <mpdesouza@suse.com>); Mon, 03 Jun 2024 17:26:46 +0000
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Mon, 03 Jun 2024 14:26:19 -0300
-Subject: [PATCH v3] selftests: livepatch: Test atomic replace against
- multiple modules
+	s=arc-20240116; t=1717435740; c=relaxed/simple;
+	bh=+tB52iHPbmCXMHOeWlpQnCHMtEmXi/u7YpuslWqxPqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e5jFvk8FbLlLblVcgrECOFRVqzgUVW0EJpZMxo+Zxa0U3QzQIrrna/h/Bjz5PAskvMTqZkClc+dczPxjWvEKScJ9JXrTvCg7x7LoeJtaZIcyebBVSSCfQoyJ1NwcO6gLNnKcrvZ6U8gXQvSqWFWTHAOBWIfgsK4VKW9/Ymuq8rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1A151042;
+	Mon,  3 Jun 2024 10:29:21 -0700 (PDT)
+Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B2A83F792;
+	Mon,  3 Jun 2024 10:28:56 -0700 (PDT)
+Message-ID: <3c7c9b07-78b2-4b8d-968e-0c395c8f22b3@arm.com>
+Date: Mon, 3 Jun 2024 18:28:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
-X-B4-Tracking: v=1; b=H4sIALr8XWYC/33OQQ6CMBAF0KuYrh3TTqkBV97DsChlkCZASVurh
- nB3Cxt27uYv5v2/sEDeUmC308I8JRusm3KQ5xMzvZ6eBLbNmSHHgitUMMygoxutAU/zoA1BxRs
- pqeWibA3Lf7Onzn5281Hn3Hk3Quw96UOSAjcp0NBFChEmesN+JAECKlMWklCRLOkeXoEuxo0b3
- dsQnf/uaxNuBf+GJcyWKFBUVdNclRaHVa/r+gNP3YA+/AAAAA==
-To: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
- Joe Lawrence <joe.lawrence@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Marcos Paulo de Souza <mpdesouza@suse.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717435604; l=10660;
- i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=tohLD1yKYUlomeLNDMncipUmAMreIJUHy9J6Kz4ndEY=;
- b=4M7x2jwB5f1b1Sr/JBs58HJ6Z34OHAKkFCS7Ni/WC9qW7ezL3LEe3fBScNnnlMKDKVJUwe5xc
- r+Uv0AUwwzEBfjZsPlTQDbWakWun160PGacGRXQE/eTtIOYa1jhX+Nd
-X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
- pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
-X-Spam-Flag: NO
-X-Spam-Score: -5.51
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A6E9C1F387
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	DWL_DNSWL_LOW(-1.00)[suse.com:dkim];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim,suse.com:email,test-livepatch.sh:url];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_TRACE(0.00)[suse.com:+]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+Content-Language: en-GB
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ Dan Williams <dan.j.williams@intel.com>
+Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>,
+ Gregory Price <gregory.price@memverge.com>, John Groves <John@groves.net>,
+ axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+ Mark Rutland <mark.rutland@arm.com>
+References: <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
+ <20240508164417.00006c69@Huawei.com>
+ <3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
+ <20240509132134.00000ae9@Huawei.com>
+ <a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
+ <664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <8f161b2d-eacd-ad35-8959-0f44c8d132b3@easystack.cn>
+ <ZldIzp0ncsRX5BZE@memverge.com>
+ <5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
+ <20240530143813.00006def@Huawei.com>
+ <665a9402445ee_166872941d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <20240603134819.00001c5f@Huawei.com>
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <20240603134819.00001c5f@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Adapt the current test-livepatch.sh script to account the number of
-applied livepatches and ensure that an atomic replace livepatch disables
-all previously applied livepatches.
+Hi guys,
 
-Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
----
-Changes since v2:
-* Used variables to stop the name of other livepatches applied to test
-  the atomic replace. (Joe)
+On 03/06/2024 13:48, Jonathan Cameron wrote:
+> On Fri, 31 May 2024 20:22:42 -0700
+> Dan Williams <dan.j.williams@intel.com> wrote:
+>> Jonathan Cameron wrote:
+>>> On Thu, 30 May 2024 14:59:38 +0800
+>>> Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
+>>>> 在 2024/5/29 星期三 下午 11:25, Gregory Price 写道:  
+>>>>> It's not just a CXL spec issue, though that is part of it. I think the
+>>>>> CXL spec would have to expose some form of puncturing flush, and this
+>>>>> makes the assumption that such a flush doesn't cause some kind of
+>>>>> race/deadlock issue.  Certainly this needs to be discussed.
+>>>>>
+>>>>> However, consider that the upstream processor actually has to generate
+>>>>> this flush.  This means adding the flush to existing coherence protocols,
+>>>>> or at the very least a new instruction to generate the flush explicitly.
+>>>>> The latter seems more likely than the former.
+>>>>>
+>>>>> This flush would need to ensure the data is forced out of the local WPQ
+>>>>> AND all WPQs south of the PCIE complex - because what you really want to
+>>>>> know is that the data has actually made it back to a place where remote
+>>>>> viewers are capable of percieving the change.
+>>>>>
+>>>>> So this means:
+>>>>> 1) Spec revision with puncturing flush
+>>>>> 2) Buy-in from CPU vendors to generate such a flush
+>>>>> 3) A new instruction added to the architecture.
+>>>>>
+>>>>> Call me in a decade or so.
+>>>>>
+>>>>>
+>>>>> But really, I think it likely we see hardware-coherence well before this.
+>>>>> For this reason, I have become skeptical of all but a few memory sharing
+>>>>> use cases that depend on software-controlled cache-coherency.    
+>>>>
+>>>> Hi Gregory,
+>>>>
+>>>> 	From my understanding, we actually has the same idea here. What I am 
+>>>> saying is that we need SPEC to consider this issue, meaning we need to 
+>>>> describe how the entire software-coherency mechanism operates, which 
+>>>> includes the necessary hardware support. Additionally, I agree that if 
+>>>> software-coherency also requires hardware support, it seems that 
+>>>> hardware-coherency is the better path.  
+>>>>>
+>>>>> There are some (FAMFS, for example). The coherence state of these
+>>>>> systems tend to be less volatile (e.g. mappings are read-only), or
+>>>>> they have inherent design limitations (cacheline-sized message passing
+>>>>> via write-ahead logging only).    
+>>>>
+>>>> Can you explain more about this? I understand that if the reader in the 
+>>>> writer-reader model is using a readonly mapping, the interaction will be 
+>>>> much simpler. However, after the writer writes data, if we don't have a 
+>>>> mechanism to flush and invalidate puncturing all caches, how can the 
+>>>> readonly reader access the new data?  
+>>>
+>>> There is a mechanism for doing coarse grained flushing that is known to
+>>> work on some architectures. Look at cpu_cache_invalidate_memregion().
+>>> On intel/x86 it's wbinvd_on_all_cpu_cpus()  
+>>
+>> There is no guarantee on x86 that after cpu_cache_invalidate_memregion()
+>> that a remote shared memory consumer can be assured to see the writes
+>> from that event.
+> 
+> I was wondering about that after I wrote this...  I guess it guarantees
+> we won't get a late landing write or is that not even true?
+> 
+> So if we remove memory, then added fresh memory again quickly enough
+> can we get a left over write showing up?  I guess that doesn't matter as
+> the kernel will chase it with a memset(0) anyway and that will be ordered
+> as to the same address.
+> 
+> However we won't be able to elide that zeroing even if we know the device
+> did it which is makes some operations the device might support rather
+> pointless :(
 
-Changes since v1:
-* Added checks in the existing test-livepatch.sh instead of creating a
-  new test file. (Joe)
-* Fixed issues reported by ShellCheck (Joe)
----
-Changes in v3:
-- EDITME: describe what is new in this series revision.
-- EDITME: use bulletpoints and terse descriptions.
-- Link to v2: https://lore.kernel.org/r/20240525-lp-atomic-replace-v2-1-142199bb65a1@suse.com
----
- .../testing/selftests/livepatch/test-livepatch.sh  | 138 +++++++++++++--------
- 1 file changed, 89 insertions(+), 49 deletions(-)
+>>> on arm64 it's a PSCI firmware call CLEAN_INV_MEMREGION (there is a
+>>> public alpha specification for PSCI 1.3 with that defined but we
+>>> don't yet have kernel code.)  
 
-diff --git a/tools/testing/selftests/livepatch/test-livepatch.sh b/tools/testing/selftests/livepatch/test-livepatch.sh
-index e3455a6b1158..ca770b8c62fc 100755
---- a/tools/testing/selftests/livepatch/test-livepatch.sh
-+++ b/tools/testing/selftests/livepatch/test-livepatch.sh
-@@ -4,7 +4,9 @@
- 
- . $(dirname $0)/functions.sh
- 
--MOD_LIVEPATCH=test_klp_livepatch
-+MOD_LIVEPATCH1=test_klp_livepatch
-+MOD_LIVEPATCH2=test_klp_syscall
-+MOD_LIVEPATCH3=test_klp_callbacks_demo
- MOD_REPLACE=test_klp_atomic_replace
- 
- setup_config
-@@ -16,33 +18,33 @@ setup_config
- 
- start_test "basic function patching"
- 
--load_lp $MOD_LIVEPATCH
-+load_lp $MOD_LIVEPATCH1
- 
--if [[ "$(cat /proc/cmdline)" != "$MOD_LIVEPATCH: this has been live patched" ]] ; then
-+if [[ "$(cat /proc/cmdline)" != "$MOD_LIVEPATCH1: this has been live patched" ]] ; then
- 	echo -e "FAIL\n\n"
- 	die "livepatch kselftest(s) failed"
- fi
- 
--disable_lp $MOD_LIVEPATCH
--unload_lp $MOD_LIVEPATCH
-+disable_lp $MOD_LIVEPATCH1
-+unload_lp $MOD_LIVEPATCH1
- 
--if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live patched" ]] ; then
-+if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH1: this has been live patched" ]] ; then
- 	echo -e "FAIL\n\n"
- 	die "livepatch kselftest(s) failed"
- fi
- 
--check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
--livepatch: enabling patch '$MOD_LIVEPATCH'
--livepatch: '$MOD_LIVEPATCH': initializing patching transition
--livepatch: '$MOD_LIVEPATCH': starting patching transition
--livepatch: '$MOD_LIVEPATCH': completing patching transition
--livepatch: '$MOD_LIVEPATCH': patching complete
--% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
--livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
--livepatch: '$MOD_LIVEPATCH': starting unpatching transition
--livepatch: '$MOD_LIVEPATCH': completing unpatching transition
--livepatch: '$MOD_LIVEPATCH': unpatching complete
--% rmmod $MOD_LIVEPATCH"
-+check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH1'
-+livepatch: '$MOD_LIVEPATCH1': initializing patching transition
-+livepatch: '$MOD_LIVEPATCH1': starting patching transition
-+livepatch: '$MOD_LIVEPATCH1': completing patching transition
-+livepatch: '$MOD_LIVEPATCH1': patching complete
-+% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH1/enabled
-+livepatch: '$MOD_LIVEPATCH1': initializing unpatching transition
-+livepatch: '$MOD_LIVEPATCH1': starting unpatching transition
-+livepatch: '$MOD_LIVEPATCH1': completing unpatching transition
-+livepatch: '$MOD_LIVEPATCH1': unpatching complete
-+% rmmod $MOD_LIVEPATCH1"
- 
- 
- # - load a livepatch that modifies the output from /proc/cmdline and
-@@ -53,7 +55,7 @@ livepatch: '$MOD_LIVEPATCH': unpatching complete
- 
- start_test "multiple livepatches"
- 
--load_lp $MOD_LIVEPATCH
-+load_lp $MOD_LIVEPATCH1
- 
- grep 'live patched' /proc/cmdline > /dev/kmsg
- grep 'live patched' /proc/meminfo > /dev/kmsg
-@@ -69,26 +71,26 @@ unload_lp $MOD_REPLACE
- grep 'live patched' /proc/cmdline > /dev/kmsg
- grep 'live patched' /proc/meminfo > /dev/kmsg
- 
--disable_lp $MOD_LIVEPATCH
--unload_lp $MOD_LIVEPATCH
-+disable_lp $MOD_LIVEPATCH1
-+unload_lp $MOD_LIVEPATCH1
- 
- grep 'live patched' /proc/cmdline > /dev/kmsg
- grep 'live patched' /proc/meminfo > /dev/kmsg
- 
--check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
--livepatch: enabling patch '$MOD_LIVEPATCH'
--livepatch: '$MOD_LIVEPATCH': initializing patching transition
--livepatch: '$MOD_LIVEPATCH': starting patching transition
--livepatch: '$MOD_LIVEPATCH': completing patching transition
--livepatch: '$MOD_LIVEPATCH': patching complete
--$MOD_LIVEPATCH: this has been live patched
-+check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH1'
-+livepatch: '$MOD_LIVEPATCH1': initializing patching transition
-+livepatch: '$MOD_LIVEPATCH1': starting patching transition
-+livepatch: '$MOD_LIVEPATCH1': completing patching transition
-+livepatch: '$MOD_LIVEPATCH1': patching complete
-+$MOD_LIVEPATCH1: this has been live patched
- % insmod test_modules/$MOD_REPLACE.ko replace=0
- livepatch: enabling patch '$MOD_REPLACE'
- livepatch: '$MOD_REPLACE': initializing patching transition
- livepatch: '$MOD_REPLACE': starting patching transition
- livepatch: '$MOD_REPLACE': completing patching transition
- livepatch: '$MOD_REPLACE': patching complete
--$MOD_LIVEPATCH: this has been live patched
-+$MOD_LIVEPATCH1: this has been live patched
- $MOD_REPLACE: this has been live patched
- % echo 0 > /sys/kernel/livepatch/$MOD_REPLACE/enabled
- livepatch: '$MOD_REPLACE': initializing unpatching transition
-@@ -96,35 +98,57 @@ livepatch: '$MOD_REPLACE': starting unpatching transition
- livepatch: '$MOD_REPLACE': completing unpatching transition
- livepatch: '$MOD_REPLACE': unpatching complete
- % rmmod $MOD_REPLACE
--$MOD_LIVEPATCH: this has been live patched
--% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
--livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
--livepatch: '$MOD_LIVEPATCH': starting unpatching transition
--livepatch: '$MOD_LIVEPATCH': completing unpatching transition
--livepatch: '$MOD_LIVEPATCH': unpatching complete
--% rmmod $MOD_LIVEPATCH"
-+$MOD_LIVEPATCH1: this has been live patched
-+% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH1/enabled
-+livepatch: '$MOD_LIVEPATCH1': initializing unpatching transition
-+livepatch: '$MOD_LIVEPATCH1': starting unpatching transition
-+livepatch: '$MOD_LIVEPATCH1': completing unpatching transition
-+livepatch: '$MOD_LIVEPATCH1': unpatching complete
-+% rmmod $MOD_LIVEPATCH1"
- 
- 
- # - load a livepatch that modifies the output from /proc/cmdline and
- #   verify correct behavior
--# - load an atomic replace livepatch and verify that only the second is active
--# - remove the first livepatch and verify that the atomic replace livepatch
--#   is still active
-+# - load two addtional livepatches and check the number of livepatch modules
-+#   applied
-+# - load an atomic replace livepatch and check that the other three modules were
-+#   disabled
-+# - remove all livepatches besides the atomic replace one and verify that the
-+#   atomic replace livepatch is still active
- # - remove the atomic replace livepatch and verify that none are active
- 
- start_test "atomic replace livepatch"
- 
--load_lp $MOD_LIVEPATCH
-+load_lp $MOD_LIVEPATCH1
- 
- grep 'live patched' /proc/cmdline > /dev/kmsg
- grep 'live patched' /proc/meminfo > /dev/kmsg
- 
-+for mod in $MOD_LIVEPATCH2 $MOD_LIVEPATCH3; do
-+	load_lp "$mod"
-+done
-+
-+mods=(/sys/kernel/livepatch/*)
-+nmods=${#mods[@]}
-+if [ "$nmods" -ne 3 ]; then
-+	die "Expecting three modules listed, found $nmods"
-+fi
-+
- load_lp $MOD_REPLACE replace=1
- 
- grep 'live patched' /proc/cmdline > /dev/kmsg
- grep 'live patched' /proc/meminfo > /dev/kmsg
- 
--unload_lp $MOD_LIVEPATCH
-+mods=(/sys/kernel/livepatch/*)
-+nmods=${#mods[@]}
-+if [ "$nmods" -ne 1 ]; then
-+	die "Expecting only one moduled listed, found $nmods"
-+fi
-+
-+# These modules were disabled by the atomic replace
-+for mod in $MOD_LIVEPATCH3 $MOD_LIVEPATCH2 $MOD_LIVEPATCH1; do
-+	unload_lp "$mod"
-+done
- 
- grep 'live patched' /proc/cmdline > /dev/kmsg
- grep 'live patched' /proc/meminfo > /dev/kmsg
-@@ -135,13 +159,27 @@ unload_lp $MOD_REPLACE
- grep 'live patched' /proc/cmdline > /dev/kmsg
- grep 'live patched' /proc/meminfo > /dev/kmsg
- 
--check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
--livepatch: enabling patch '$MOD_LIVEPATCH'
--livepatch: '$MOD_LIVEPATCH': initializing patching transition
--livepatch: '$MOD_LIVEPATCH': starting patching transition
--livepatch: '$MOD_LIVEPATCH': completing patching transition
--livepatch: '$MOD_LIVEPATCH': patching complete
--$MOD_LIVEPATCH: this has been live patched
-+check_result "% insmod test_modules/$MOD_LIVEPATCH1.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH1'
-+livepatch: '$MOD_LIVEPATCH1': initializing patching transition
-+livepatch: '$MOD_LIVEPATCH1': starting patching transition
-+livepatch: '$MOD_LIVEPATCH1': completing patching transition
-+livepatch: '$MOD_LIVEPATCH1': patching complete
-+$MOD_LIVEPATCH1: this has been live patched
-+% insmod test_modules/$MOD_LIVEPATCH2.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH2'
-+livepatch: '$MOD_LIVEPATCH2': initializing patching transition
-+livepatch: '$MOD_LIVEPATCH2': starting patching transition
-+livepatch: '$MOD_LIVEPATCH2': completing patching transition
-+livepatch: '$MOD_LIVEPATCH2': patching complete
-+% insmod test_modules/$MOD_LIVEPATCH3.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH3'
-+livepatch: '$MOD_LIVEPATCH3': initializing patching transition
-+$MOD_LIVEPATCH3: pre_patch_callback: vmlinux
-+livepatch: '$MOD_LIVEPATCH3': starting patching transition
-+livepatch: '$MOD_LIVEPATCH3': completing patching transition
-+$MOD_LIVEPATCH3: post_patch_callback: vmlinux
-+livepatch: '$MOD_LIVEPATCH3': patching complete
- % insmod test_modules/$MOD_REPLACE.ko replace=1
- livepatch: enabling patch '$MOD_REPLACE'
- livepatch: '$MOD_REPLACE': initializing patching transition
-@@ -149,7 +187,9 @@ livepatch: '$MOD_REPLACE': starting patching transition
- livepatch: '$MOD_REPLACE': completing patching transition
- livepatch: '$MOD_REPLACE': patching complete
- $MOD_REPLACE: this has been live patched
--% rmmod $MOD_LIVEPATCH
-+% rmmod $MOD_LIVEPATCH3
-+% rmmod $MOD_LIVEPATCH2
-+% rmmod $MOD_LIVEPATCH1
- $MOD_REPLACE: this has been live patched
- % echo 0 > /sys/kernel/livepatch/$MOD_REPLACE/enabled
- livepatch: '$MOD_REPLACE': initializing unpatching transition
+I have an RFC for that - but I haven't had time to update and re-test it.
 
----
-base-commit: 6d69b6c12fce479fde7bc06f686212451688a102
-change-id: 20240525-lp-atomic-replace-90b33ed018dc
+If you need this, and have a platform where it can be implemented, please get in touch
+with the people that look after the specs to move it along from alpha.
 
-Best regards,
--- 
-Marcos Paulo de Souza <mpdesouza@suse.com>
 
+>> That punches visibility through CXL shared memory devices?
+
+> It's a draft spec and Mark + James in +CC can hopefully confirm.
+> It does say
+> "Cleans and invalidates all caches, including system caches".
+> which I'd read as meaning it should but good to confirm.
+
+It's intended to remove any cached entries - including lines in what the arm-arm calls
+"invisible" system caches, which typically only platform firmware can touch. The next
+access should have to go all the way to the media. (I don't know enough about CXL to say
+what a remote shared memory consumer observes)
+
+Without it, all we have are the by-VA operations which are painfully slow for large
+regions, and insufficient for system caches.
+
+As with all those firmware interfaces - its for the platform implementer to wire up
+whatever is necessary to remove cached content for the specified range. Just because there
+is an (alpha!) spec doesn't mean it can be supported efficiently by a particular platform.
+
+
+>>> These are very big hammers and so unsuited for anything fine grained.
+
+You forgot really ugly too!
+
+
+>>> In the extreme end of possible implementations they briefly stop all
+>>> CPUs and clean and invalidate all caches of all types. So not suited
+>>> to anything fine grained, but may be acceptable for a rare setup event,
+>>> particularly if the main job of the writing host is to fill that memory
+>>> for lots of other hosts to use.
+>>>
+>>> At least the ARM one takes a range so allows for a less painful
+>>> implementation. 
+
+That is to allow some ranges to fail. (e.g. you can do this to the CXL windows, but not
+the regular DRAM).
+
+On the less painful implementation, arm's interconnect has a gadget that does "Address
+based flush" which could be used here. I'd hope platforms with that don't need to
+interrupt all CPUs - but it depends on what else needs to be done.
+
+
+>>> I'm assuming we'll see new architecture over time
+>>> but this is a different (and potentially easier) problem space
+>>> to what you need.  
+>>
+>> cpu_cache_invalidate_memregion() is only about making sure local CPU
+>> sees new contents after an DPA:HPA remap event. I hope CPUs are able to
+>> get away from that responsibility long term when / if future memory
+>> expanders just issue back-invalidate automatically when the HDM decoder
+>> configuration changes.
+> 
+> I would love that to be the way things go, but I fear the overheads of
+> doing that on the protocol means people will want the option of the painful
+> approach.
+
+
+
+Thanks,
+
+James
 
