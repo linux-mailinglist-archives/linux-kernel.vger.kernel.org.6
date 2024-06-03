@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-199085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378C98D81F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:11:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E888D81F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92371F2618D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E8D1F261B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13192128393;
-	Mon,  3 Jun 2024 12:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56682128835;
+	Mon,  3 Jun 2024 12:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPYbTcsK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nn0sYgQ3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5207C8665A;
-	Mon,  3 Jun 2024 12:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C79012839D;
+	Mon,  3 Jun 2024 12:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717416681; cv=none; b=ng28KSm8XGAPPxnJw1o1p75s7r27Yxlh6a41421kZxs09D01E+TktCoXwvpIge9/X0ElXiMLx/IEPQHsS2we4d7sB1XES8QGrUrx1sxHYaM/RgYvL+QY2hhHSZON/dr4qaMrarntV8UowO8cUqPYHjCRzosLS4PQZP/mbg7lD9w=
+	t=1717416683; cv=none; b=RrrfTZrxd8kU8QEZI2yjuAZ49HKZpyBKu+k4/fskECHfiNsFPNOIcjBKonte7X24oSaNAlwacfozPJRiG2+svjs9tdmOPFPJzfwx0K+u6DwhELHU2N9oKJV01b0iiv2lk34SF3zZG/7SUZEuqZov2VBvVEasQqkCfnfVDtWLhFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717416681; c=relaxed/simple;
-	bh=lwXfUIxWMJe9RXmv+TjDhCZ/l7pIOBcTR+FEij0bPLU=;
+	s=arc-20240116; t=1717416683; c=relaxed/simple;
+	bh=Z1VQcOBfabeFNBfEE96dXjrYsDFp4g9Bz7gyu+XOLAM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c/hab1znKb3t82/WzJTdmt0VGTjyS3fiBFgiAvpgKzDTjAjrDshdUOZt7bkYDhejL1hb72u2TQjJ5qWVYZKQzHWSQhgntH1vtcIx1krUgImqpOXkRXTzGvob8FXCmrW+Q7/hdYPA6FKD8ArjFWfA3+pbEJGNED2Q5PuhFM3U2jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPYbTcsK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F5AAC2BD10;
-	Mon,  3 Jun 2024 12:11:19 +0000 (UTC)
+	 MIME-Version:Content-Type; b=XNEGPPzPiWC8ADpwNcz117Vrs54i3BrgMo9Mr6nuac6HjJzZZur36PY0oFd1I/JfrYAooGAwq86fDycbtgKw8n/+QIFZ3eGr8anPYhkHxAvBNuPEP1AksjoimC726ahscDSRxsCqhSKcGnaFRoLZBcSxo5xTETQ2AseyXaQXgwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nn0sYgQ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C46E7C2BD10;
+	Mon,  3 Jun 2024 12:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717416681;
-	bh=lwXfUIxWMJe9RXmv+TjDhCZ/l7pIOBcTR+FEij0bPLU=;
+	s=k20201202; t=1717416683;
+	bh=Z1VQcOBfabeFNBfEE96dXjrYsDFp4g9Bz7gyu+XOLAM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=OPYbTcsKnbf60GJbHzK3/e/HwV42HgGtSegoP8sUi3/9O5VlDspxe4A7vFrkf5q4d
-	 PIf7RlksvQZgnXY44JTGA8zGQQidLT1qwOVZjlDFvGT88AYxK9WeA5qDbScWm/YfID
-	 WSClflZA4KsXqkdZmu2jncUp2btgzYVUKzxVPIFXQB6ZtzNmTFnZovReQRaMSs0pI3
-	 bd/mJgtSwpGdWeR+rkDIIt7PlC/GcNNXFLWsnItSEfDewCQ9b5aVpjuaauUvhwpT+M
-	 OC0UlFBtrRH6Woec1jSF6epbmiOKMq0Zf9jD0rOLiG8xJPgkPuB4t/xxyQJIZf2ZYe
-	 BLWQ6B/u9ba4A==
+	b=nn0sYgQ31pMNGzTzXasWppWF4nBr/6FA+ZNYdtGfLWzWWnVHRnqY6UvdHorvqrzdO
+	 tUlknxX5P+NKjxC1NhRp0LqjQIf6o2fSlPTH6W4nkS/NlU9tRxCodyGu+/+ABGmdJV
+	 CHqRBnATkmFuHGt9wLquPUr8oHbKLa22A4FQB+7iK+hBlWCEhp4mmTn+gvbFOaNGVi
+	 5pBIZRDLxszopBg6dg7nOU2w9TXmkQBsRF6m3GVAAJXMX38lZBi6MV4FQ1fbgcjQE9
+	 D5nnB5V/ztamwclNQmrdxLV90g5Jo0yFqaP1fZ92Nj3Jpl6P2HJqClL7T9NFKUZaYg
+	 BK4TNKlg3rzsA==
 From: Vinod Koul <vkoul@kernel.org>
 To: linux-sound@vger.kernel.org, 
  Bard Liao <yung-chuan.liao@linux.intel.com>
 Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org, 
  pierre-louis.bossart@linux.intel.com, bard.liao@intel.com
-In-Reply-To: <20240603065841.4860-1-yung-chuan.liao@linux.intel.com>
-References: <20240603065841.4860-1-yung-chuan.liao@linux.intel.com>
-Subject: Re: [PATCH RESEND 1/2] soundwire: debugfs: add interface to
- read/write commands
-Message-Id: <171741667913.28073.818443345292581461.b4-ty@kernel.org>
-Date: Mon, 03 Jun 2024 17:41:19 +0530
+In-Reply-To: <20240603070240.5165-1-yung-chuan.liao@linux.intel.com>
+References: <20240603070240.5165-1-yung-chuan.liao@linux.intel.com>
+Subject: Re: [PATCH] soundwire: intel_ace2.x: add AC timing extensions for
+ PantherLake
+Message-Id: <171741668141.28073.5332128212277671708.b4-ty@kernel.org>
+Date: Mon, 03 Jun 2024 17:41:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,22 +62,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 03 Jun 2024 14:58:40 +0800, Bard Liao wrote:
-> We have an existing debugfs files to read standard registers
-> (DP0/SCP/DPn).
+On Mon, 03 Jun 2024 15:02:40 +0800, Bard Liao wrote:
+> The ACE3 IP used in PantherLake exposes new bitfields in the ACTMCTL
+> register to better control clocks/delays. These bitfields were
+> reserved/zero in the ACE2.x IP, to simplify the integration the new
+> bifields are added unconditionally. The behavior will only be impacted
+> when the firmware exposes DSD properties to set non-zero values.
 > 
-> This patch provides a more generic interface to ANY set of read/write
-> contiguous registers in a peripheral device. In follow-up patches,
-> this interface will be extended to use BRA transfers.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] soundwire: debugfs: add interface to read/write commands
-      commit: fe46d2a4301de1299fb32c0317ec316706ceaad6
-[2/2] soundwire: bus: add stream refcount
-      commit: a5b7365f28c191df6b93f60942d2b9a9fe71746c
+[1/1] soundwire: intel_ace2.x: add AC timing extensions for PantherLake
+      commit: 9b5fd115e7d5a98b82054cff5c96f6768ee06845
 
 Best regards,
 -- 
