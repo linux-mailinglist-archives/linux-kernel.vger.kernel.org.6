@@ -1,166 +1,164 @@
-Return-Path: <linux-kernel+bounces-199047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1C38D8130
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AC28D8135
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 13:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051AB28479C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2574E284FC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 11:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBAB84D09;
-	Mon,  3 Jun 2024 11:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569FE84A5A;
+	Mon,  3 Jun 2024 11:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y6W/tjwL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p2RIwMKT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="flPfk7AO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FUz/Pj4g"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GJW63uya"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6482C6A3;
-	Mon,  3 Jun 2024 11:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FECB84A23;
+	Mon,  3 Jun 2024 11:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717414035; cv=none; b=p8kD0k5JkZyR3doAe5gJmsVR/RbCG0MtsxjD6PVFb29dYlzVbszi4EwmjBSKGwjtPfKOtCtbGwlTlklO7MhUMk97ZHSUH1NzhAGV/MPar3xZdJcYitHeseCbT/5l3zlilZAw6LvyKBkFdgfBQrVQzazFHWiJwnESWHzPQVJ0O3w=
+	t=1717414075; cv=none; b=KCXabN11sJpMo3zmMa+wTvxWMH1dZyagrZ2LUNIS+TqrI3FvYhsJBIIvnPPIA9ZcAYUd26ilURlIeDS8WV7bw9apQIDXsovBL06o1hmJiH5Z7QWBi2tTALWRbsb691rTJDEkc4qa9WOH+7iPJXzfrNEA8n7zqnxsfUNjJc9soQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717414035; c=relaxed/simple;
-	bh=cJPnpg2hCwgHukR1vYoWJ+DVnA03/FFtOwtTCUJ8wkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YMs2O09di+tB4XMzUfMUv/nXqsLLfeTKOLs4EwYrOkWKppwk7D+uRuivGFsQekBYqaX9r+tu8UdjKofIzZ5xoCPq9uCpJ+LalTB1Iy6pUFZs/lAnQlyjCrHA1BbYcEd2p+yXpi3NQYYr5rRELQAtzEE2NMeyBw51FL2L5Xe8lCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y6W/tjwL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p2RIwMKT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=flPfk7AO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FUz/Pj4g; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 63A272224D;
-	Mon,  3 Jun 2024 11:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717414031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
-	b=y6W/tjwLyJFxYOMqAVNiil/WQmavDW8lR/py1GpPK1u/XNM6fc+gV0qTEt47HpLOW1/hh5
-	PxMOJvMm4dp6wluFyY5UtrEO0BIEH67CI8b0a4TdpSMtj1pS+ULuY7XCKL7hK+gy1lSLAA
-	I6CDN8g9JIBJoxujiCClmPECcCM4g00=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717414031;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
-	b=p2RIwMKT1kTsj9NXcpvegHJol5lw/KUIDeHqirTbn039oAQbu8V8mzDa3yH6SBTEjIrlTa
-	ts0FHhDL8vR+S0Bw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=flPfk7AO;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="FUz/Pj4g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717414030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
-	b=flPfk7AOOeYAnUfLtCpiJv36/Q16dFQN4aXjltYqF/2fKTOb1Xw4Qoxp34/tZvKvR5tb1K
-	Pav9u71FY5VZRtJowJ4bon3w0m134DzwyfCGDFQSW6S6Msg2qSpjft255ZXFkLlexH4Sjf
-	8REr4OA0CUrTdkFoqT27hgkFO7z1znY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717414030;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pfFFXzKIW4SMjbgPuQqcNQPPQGz7PtcZJ46Fj089Is=;
-	b=FUz/Pj4gT+sjqZWtu+0NyY8suUgunZRzh1/vNXe92rZEbWS7Ha0DJnNTVHro4FGrP5i/C9
-	29QjW+mtQUuUzOBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59687139CB;
-	Mon,  3 Jun 2024 11:27:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nr/PFY6oXWb/JwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Jun 2024 11:27:10 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0799EA087F; Mon,  3 Jun 2024 13:27:05 +0200 (CEST)
-Date: Mon, 3 Jun 2024 13:27:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+42986aeeddfd7ed93c8b@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [ext4?] INFO: task hung in vfs_rmdir (2)
-Message-ID: <20240603112705.hafr4gh5foxccw7f@quack3>
-References: <00000000000054d8540619f43b86@google.com>
+	s=arc-20240116; t=1717414075; c=relaxed/simple;
+	bh=kUTQmeXZ9JnfFH7l8tLPGSFoIQ1XtIy3E+4CIkRnQRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mQujJSDBmT2jmUpybbXDCXGjw1OfzM6j1sSC3erGyosHKMiGR15a03xB+XbZaTpKG0ys508tZDM1orRFn/wcoP7ILQ0epMdqf1CZkUy6fNRd6aJjlQwBNJqBJvO5qWNJyeILo97mXrlwjA5E35vQvG0yWwo7sQE7tiwP3e1eOec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GJW63uya; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4539iu4O031125;
+	Mon, 3 Jun 2024 11:27:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UOksZSJ5PozHDIJoVWdlMTf6jW6RoBLoVXN1Y8S/oII=; b=GJW63uyaQBHZzyEf
+	J5lu4ervzIqtP58piB/ifoOU/b0sgRdKdYW/12oXSPHwLMea0CKGKmB75y1mv2fz
+	jjgYe/HLuhwpqMBrmGx87Q6UwA1fsG9ZK9IGXd7nrIybRW1WO6+TZHO5mI5w2ZEp
+	sUwHOQpjSRCe6GX3g2s6loyptFx5VKFt9GOQ3rmMLFRAuSF6CHlQaTKdme0HdVkI
+	CAy2hh/SlSFkqmF+o2eV+4g2zM/moetQalUNwY+x5wrI3jZKnXGYsKG1KoJ4ogkm
+	MMXiUa5eAZ1OdrVjmA32Uuaw86MauSIkIOqMKqy5QCa0ahgo31/kikDd1P5procz
+	MCNRgA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6v3x8u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Jun 2024 11:27:28 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 453BRRMc032665
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 3 Jun 2024 11:27:27 GMT
+Received: from [10.217.90.34] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
+ 04:27:19 -0700
+Message-ID: <0ef00c92-b88f-48df-b9ba-2973c62285af@quicinc.com>
+Date: Mon, 3 Jun 2024 16:57:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000054d8540619f43b86@google.com>
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.92 / 50.00];
-	BAYES_HAM(-2.41)[97.28%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[42986aeeddfd7ed93c8b];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Queue-Id: 63A272224D
-X-Spam-Flag: NO
-X-Spam-Score: -0.92
-X-Spamd-Bar: /
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: stmmac: dwmac-qcom-ethqos: Add support for
+ 2.5G SGMII
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+References: <20231218071118.21879-1-quic_snehshah@quicinc.com>
+ <4zbf5fmijxnajk7kygcjrcusf6tdnuzsqqboh23nr6f3rb3c4g@qkfofhq7jmv6>
+ <8b80ab09-8444-4c3d-83b0-c7dbf5e58658@quicinc.com>
+ <wvzhz4fmtheculsiag4t2pn2kaggyle2mzhvawbs4m5isvqjto@lmaonvq3c3e7>
+ <8f94489d-5f0e-4166-a14e-4959098a5c80@quicinc.com>
+ <ZlNi11AsdDpKM6AM@shell.armlinux.org.uk>
+ <d246bd64-18b3-4002-bc71-eccd67bbd61f@quicinc.com>
+ <ZleLb+dtJ8Uspq4S@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Sneh Shah <quic_snehshah@quicinc.com>
+In-Reply-To: <ZleLb+dtJ8Uspq4S@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jqtoM667x7WK9C9nDRZQZsjynG8xdZXN
+X-Proofpoint-ORIG-GUID: jqtoM667x7WK9C9nDRZQZsjynG8xdZXN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-03_07,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ impostorscore=0 mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ clxscore=1015 spamscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406030096
 
-On Sun 02-06-24 20:50:18, syzbot wrote:
-> syzbot found the following issue on:
+
+
+On 5/30/2024 1:39 AM, Russell King (Oracle) wrote:
+> On Wed, May 29, 2024 at 07:43:15PM +0530, Sneh Shah wrote:
+>> In this version of qualcomm ethernet, PCS is not an independent HW
+>> block. It is integrated to MAC block itself. It has very limited
+>> configuration.Here PCS doesn't have it's own link speed/duplex
+>> capabities. Hence we are bypassing all this PCS related functionalities.
 > 
-> HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1466269a980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=42986aeeddfd7ed93c8b
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a5b3ec980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=103820f2980000
+> I want to concentrate on this part first - we'll address the 2.5G
+> issues separately once I've got a picture of this hardware (and thus
+> can work out what needs to change in my phylink_pcs implementation to
+> support the standard Cisco SGMII speeds.
+> 
+> From what I understand you're saying, your integrated PCS is different
+> from the DesignWare integrated PCS?
+It's an inbuilt PCS block within designware ETHQoS core.
+> 
+> Which core does it use? dwmac4_core.c or dwmac1000_core.c, or some
+> other? Not knowing which core makes asking the following questions
+> harder, since I'm having to double them up to cover both cores with
+> their different definitions.
 
-Based on strace (and also the reproducer) this looks purely in exfat
-driver. So:
+it is dwmac4 core with 0xe0 offset.
+> 
+> Does it only present its status via the GMAC_PHYIF_CONTROL_STATUS or
+> GMAC_RGSMIIIS register?
 
-#syz set subsystems: exfat
+It is present via GMAC_PHYIF_CONTROL_STATUS.
+> 
+> From what you're saying:
+> - if using the dwmac1000 core, then for the registers at GMAC_PCS_BASE
+>   (0xc0 offset)...
+> - if using the dwmac4 core, then for registers at GMAC_PCS_BASE
+>   (0xe0 offset)...
+> ... is it true that only the GMAC_AN_CTRL() register is implemented
+> and none of the other registers listed in stmmac_pcs.h?
+> 
+> In terms of interrupts when the link status changes, how do they
+> present? Are they through the GMAC_INT_RGSMIIS interrupt only?
+> What about GMAC_INT_PCS_LINK or GMAC_INT_PCS_ANE? Or in the case
+> of the other core, is it through the PCS_RGSMIIIS_IRQ interrupt
+> only? Similarly, what about PCS_LINK_IRQ or PCS_ANE_IRQ?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+we only have GMAC_AN_CTRL and GMAC_AN_STATUS register.
+There is no separate IRQ line for PCS link or autoneg. 
+It is notified via MAC interrupt line only.
+> 
+> Thanks.
+> 
 
