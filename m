@@ -1,324 +1,228 @@
-Return-Path: <linux-kernel+bounces-199111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060AD8D8247
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D36A58D8246
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C0E284725
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8776A282DF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191848062B;
-	Mon,  3 Jun 2024 12:31:51 +0000 (UTC)
-Received: from r3-19.sinamail.sina.com.cn (r3-19.sinamail.sina.com.cn [202.108.3.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9EA12C520;
+	Mon,  3 Jun 2024 12:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="paHICZLC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="f3qWbxyI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WHXig8Ks";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AcmevNMq"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4A4126F2A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F8364F;
+	Mon,  3 Jun 2024 12:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717417910; cv=none; b=Oha+iFdf/euvQTjrDT0cmiSeeEjyn3enJdiXxkBvqq0lOCCXeo/O4Q0Z7vVmWaanoGEE//3Pvgv81gNbTCC0GZhamT4RNGNhyAE4OAT3WSM/GuBR8FzK8BECogu+dq/xTldmv5qDJa1bPvy/cXV4JBBJw9X/f+We+1T+NfYRM60=
+	t=1717417870; cv=none; b=HjDN3ALHs7s7uyenSMaGYqZjHj0FnH06ShJrJOyHb7hY2iUHjVLCRGLIbhn/pY4829EvOGdYoXAfV4ZGhg0zhuT4XRT7NsQRl9Ljz9Oi6hj1bo7MmTJrWuB7nt+T2QwWFSPChFytdq23Uot4xL5pihtNGEXT3B/RKLAe2WlGJfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717417910; c=relaxed/simple;
-	bh=F0Jf8OiTTvwdi30OQ3QHk+13cYz4+woNcq0c6+ItnoY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mRsxsf6m//jD1E7oVJ8VGpuLdeqd5mHFigovaCv4P+Rhws7+jwvcAs1moUI5Qq/oUeUWteXH01LqiaAKyeePDs7qhqxEsJ8s9OM+fGMqXAXVLpgwmLcOC5kfmDvTsz32GKO347z362yUPA2/Y9u4iZxGdW8UjkK3QE8cTD9nmHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=202.108.3.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost
-Received: from unknown (HELO localhost)([101.132.132.191])
-	by sina.com (10.182.253.24) with ESMTP
-	id 665DB788000035BE; Mon, 3 Jun 2024 20:31:05 +0800 (CST)
-X-Sender: ghostxavier@sina.com
-X-Auth-ID: ghostxavier@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=ghostxavier@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=ghostxavier@sina.com
-X-SMAIL-MID: 4516241049099
-X-SMAIL-UIID: 12FB1F5EF9944B87A4329F8B41F467E7-20240603-203105-1
-From: Xavier <ghostxavier@sina.com>
-To: longman@redhat.com
-Cc: lizefan.x@bytedance.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xavier <ghostxavier@sina.com>
-Subject: [PATCH v3] cpuset: use Union-Find to optimize the merging of cpumasks
-Date: Mon,  3 Jun 2024 20:31:01 +0800
-Message-Id: <20240603123101.590760-1-ghostxavier@sina.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240531024837.255293-1-ghostxavier@sina.com>
-References: <20240531024837.255293-1-ghostxavier@sina.com>
+	s=arc-20240116; t=1717417870; c=relaxed/simple;
+	bh=hOHeohRDUTCtFvpXo1EE1vFQ8GgEnhiXTAPgDM3uzXk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N7NcAFdLcLu7QbhtPOa+MnOaqmZoqkvQO6f7aWsLraPu/PMdNPNO5UTiSeihEegSmkp4TfW6OU7hajs+BsLivvTvTXE8WNYRkwZ8/n/Y5QyPMVd+JkiztFdzwoxy6LLrBw7HkIjQb10tBOpHRRXDYpDVQGJ1PF/eD2KFVZTpjp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=paHICZLC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=f3qWbxyI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WHXig8Ks; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AcmevNMq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6C15D2003F;
+	Mon,  3 Jun 2024 12:31:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717417866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O5KLPAXOU7O9Zmy/g/FuaV4GngJI7olAqvrZ4Kvt6hI=;
+	b=paHICZLCGp80ONqknHFalzAt1kkCRlR0Z9QSlZS4VszonEOlvJ3549kiqbSPbi/sSKXb4z
+	cIvqTWDSWb2+YFpYGCicZX7c8WhDo+fYxDHtiofhOfjyxWj+kv/rj+7rJekm3sBbVedKQe
+	GqKVeKKc4GyC6Ca/ZZrc7Lg+P01viXs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717417866;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O5KLPAXOU7O9Zmy/g/FuaV4GngJI7olAqvrZ4Kvt6hI=;
+	b=f3qWbxyI4YiJPerFsADqhlSLCuCoSY8XWlG2k6PmVp9TDTJfvqlv86qzZ+wwguEc0UK4CB
+	87xNqQZoJmCVJODQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WHXig8Ks;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AcmevNMq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717417865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O5KLPAXOU7O9Zmy/g/FuaV4GngJI7olAqvrZ4Kvt6hI=;
+	b=WHXig8KsBN2t3SUFevfVGyCz0n3zjib6BofjLAXbEnk6I9rI6rY0tt89NkEzGzcndOh6nB
+	UIvvKPubgrTlcdXvJ+wG4Za5mTVoOg3crxM+lrDIK1+QBFEsH97TaFYt1ffeBMABV7MQVC
+	IndNek6ci1hwNLbIPlnx60PaK1ItRSc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717417865;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O5KLPAXOU7O9Zmy/g/FuaV4GngJI7olAqvrZ4Kvt6hI=;
+	b=AcmevNMqwwEvq6QfSVtCAq/epBZVDnBBs4orcsVinsWji4hpwhqC922nY+0+DXu+wAcwvZ
+	4hSsbwob3Wki4FCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 27F5313A93;
+	Mon,  3 Jun 2024 12:31:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 28xHCYm3XWb7PAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 03 Jun 2024 12:31:05 +0000
+Message-ID: <ee20a47d-3131-41c2-a2fc-39017f535527@suse.de>
+Date: Mon, 3 Jun 2024 14:31:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/9] block: Add core atomic write support
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org,
+ hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, dchinner@redhat.com, jack@suse.cz
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+ ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+ io-uring@vger.kernel.org, nilay@linux.ibm.com, ritesh.list@gmail.com,
+ willy@infradead.org, Himanshu Madhani <himanshu.madhani@oracle.com>
+References: <20240602140912.970947-1-john.g.garry@oracle.com>
+ <20240602140912.970947-5-john.g.garry@oracle.com>
+ <749f9615-2fd2-49a3-9c9e-c725cb027ad3@suse.de>
+ <a84ad9de-a274-4bdf-837a-03c38a32288a@oracle.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <a84ad9de-a274-4bdf-837a-03c38a32288a@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -3.00
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 6C15D2003F
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.infradead.org,mit.edu,google.com,linux.ibm.com,kvack.org,gmail.com,infradead.org,oracle.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	R_RATELIMIT(0.00)[to_ip_from(RL7q43nzpr7is614unuocxbefr)];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-The process of constructing scheduling domains involves multiple loops
-and repeated evaluations, leading to numerous redundant and ineffective
-assessments that impact code efficiency.
+On 6/3/24 13:38, John Garry wrote:
+> On 03/06/2024 10:26, Hannes Reinecke wrote:
+>>>
+>>> +static bool rq_straddles_atomic_write_boundary(struct request *rq,
+>>> +                    unsigned int front_adjust,
+>>> +                    unsigned int back_adjust)
+>>> +{
+>>> +    unsigned int boundary = queue_atomic_write_boundary_bytes(rq->q);
+>>> +    u64 mask, start_rq_pos, end_rq_pos;
+>>> +
+>>> +    if (!boundary)
+>>> +        return false;
+>>> +
+>>> +    start_rq_pos = blk_rq_pos(rq) << SECTOR_SHIFT;
+>>> +    end_rq_pos = start_rq_pos + blk_rq_bytes(rq) - 1;
+>>> +
+>>> +    start_rq_pos -= front_adjust;
+>>> +    end_rq_pos += back_adjust;
+>>> +
+>>> +    mask = ~(boundary - 1);
+>>> +
+>>> +    /* Top bits are different, so crossed a boundary */
+>>> +    if ((start_rq_pos & mask) != (end_rq_pos & mask))
+>>> +        return true;
+>>> +
+>>> +    return false;
+>>> +}
+>>
+>> But isn't that precisely what 'chunk_sectors' is doing?
+>> IE ensuring that requests never cross that boundary?
+>>
+> 
+>> Q1: Shouldn't we rather use/modify/adapt chunk_sectors for this thing?
+> 
+> So you are saying that we can re-use blk_chunk_sectors_left() to 
+> determine whether merging a bio/req would cross the boundary, right?
+> 
+> It seems ok in principle - we would just need to ensure that it is 
+> watertight.
+> 
 
-Here, we use Union-Find to optimize the merging of cpumasks. By employing
-path compression and union by rank, we effectively reduce the number of
-lookups and merge comparisons.
+We currently use chunk_sectors for quite some different things, most 
+notably zones boundaries, NIOIB, raid stripes etc.
+So I don't have an issue adding another use-case for it.
 
-Signed-off-by: Xavier <ghostxavier@sina.com>
+>> Q2: If we don't, shouldn't we align the atomic write boundary to the 
+>> chunk_sectors setting to ensure both match up?
+> 
+> Yeah, right. But we can only handle what HW tells.
+> 
+> The atomic write boundary is only relevant to NVMe. NVMe NOIOB - which 
+> we use to set chunk_sectors - is an IO optimization hint, AFAIK. However 
+> the atomic write boundary is a hard limit. So if NOIOB is not aligned 
+> with the atomic write boundary - which seems unlikely - then the atomic 
+> write boundary takes priority.
+> 
+Which is what I said; we need to check. And I would treat a NOIOB value 
+not aligned to the atomic write boundary as an error.
 
-Hi Longman,
+But the real issue here is that the atomic write boundary only matters
+for requests, and not for the entire queue.
+So using chunk_sectors is out of question as this would affect all 
+requests, and my comment was actually wrong.
+I'll retract it.
 
-Thank you for your feedback on the previous version of the patch.
+Cheers,
 
-Now I will respond to the three questions you raised:
-1) The function comment describes the algorithm to find the set of
-domains. If you change the algorithm, you have to update the comment as
-well.
-
-Reply: Sorry for not paying attention to the comments before. The new patch (v3) has updated the comment content. 
-
-2) generate_sched_domains() is not in a performance critical path, so
-its performance is not as important. Also the csn array is typically not
-that big. Changing the algorithm may introduce new bugs which leads to
-the next point.
-
-Reply: Indeed, this function is not a critical path impacting performance, but it's always good to optimize efficiency. The optimization is limited to the internals of this function and does not affect other modules, so fixing the internal bug should have manageable risks.
-
-3) How do you test your code to ensure its correctness?
-I applied your patch and run the ./test_cpuset_prs.sh got the following...
-
-Reply: I'm very sorry, this is my first time submitting a kernel patch and I don't know which test cases need to be run. I just constructed some scenarios locally to test, so the testing scope is limited. Thank you for providing the test cases. I have reproduced and resolved the issue, and have passed several other test cases in CGroup. But currently, I only have QEMU simulation environment, so my testing ability is limited. I hope you can help me with some comprehensive testing of my new version patch. Thank you very much.
-
-I hope you can pay further attention to the new patch.
-
-Best regards,
-Xavier
-
----
- kernel/cgroup/cpuset.c | 148 +++++++++++++++++++++++------------------
- 1 file changed, 82 insertions(+), 66 deletions(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index c12b9fdb2..c2d030a30 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -891,6 +891,44 @@ static inline int nr_cpusets(void)
- 	return static_key_count(&cpusets_enabled_key.key) + 1;
- }
- 
-+/*define a union find node struct*/
-+struct uf_node {
-+	int parent;
-+	int rank;
-+};
-+
-+static int find_root(struct uf_node *nodes, int x)
-+{
-+	int root = x;
-+	int parent;
-+
-+	/*Find the root node and perform path compression at the same time*/
-+	while (nodes[root].parent != root) {
-+		parent = nodes[root].parent;
-+		nodes[root].parent = nodes[parent].parent;
-+		root = parent;
-+	}
-+	return root;
-+}
-+
-+/*Function to merge two sets, using union by rank*/
-+static void union_sets(struct uf_node *nodes, int a, int b)
-+{
-+	int root_a = find_root(nodes, a);
-+	int root_b = find_root(nodes, b);
-+
-+	if (root_a != root_b) {
-+		if (nodes[root_a].rank < nodes[root_b].rank) {
-+			nodes[root_a].parent = root_b;
-+		} else if (nodes[root_a].rank > nodes[root_b].rank) {
-+			nodes[root_b].parent = root_a;
-+		} else {
-+			nodes[root_b].parent = root_a;
-+			nodes[root_a].rank++;
-+		}
-+	}
-+}
-+
- /*
-  * generate_sched_domains()
-  *
-@@ -930,17 +968,13 @@ static inline int nr_cpusets(void)
-  *	   value to determine what partition elements (sched domains)
-  *	   were changed (added or removed.)
-  *
-- * Finding the best partition (set of domains):
-- *	The triple nested loops below over i, j, k scan over the
-- *	load balanced cpusets (using the array of cpuset pointers in
-- *	csa[]) looking for pairs of cpusets that have overlapping
-- *	cpus_allowed, but which don't have the same 'pn' partition
-- *	number and gives them in the same partition number.  It keeps
-- *	looping on the 'restart' label until it can no longer find
-- *	any such pairs.
-+ *  By creating a union-find data structure for all load-balanced cpusets,
-+ *  cpusets with overlapping cpus_allowed are found and marked with the
-+ *  same parent node. Path compression is performed during the search to
-+ *  improve comparison efficiency.
-  *
-  *	The union of the cpus_allowed masks from the set of
-- *	all cpusets having the same 'pn' value then form the one
-+ *	all cpusets having the same parent then form the one
-  *	element of the partition (one sched domain) to be passed to
-  *	partition_sched_domains().
-  */
-@@ -950,13 +984,15 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	struct cpuset *cp;	/* top-down scan of cpusets */
- 	struct cpuset **csa;	/* array of all cpuset ptrs */
- 	int csn;		/* how many cpuset ptrs in csa so far */
--	int i, j, k;		/* indices for partition finding loops */
-+	int i, j;		/* indices for partition finding loops */
- 	cpumask_var_t *doms;	/* resulting partition; i.e. sched domains */
- 	struct sched_domain_attr *dattr;  /* attributes for custom domains */
- 	int ndoms = 0;		/* number of sched domains in result */
- 	int nslot;		/* next empty doms[] struct cpumask slot */
- 	struct cgroup_subsys_state *pos_css;
- 	bool root_load_balance = is_sched_load_balance(&top_cpuset);
-+	struct uf_node *nodes;
-+	int nslot_update;
- 
- 	doms = NULL;
- 	dattr = NULL;
-@@ -1022,40 +1058,38 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	}
- 	rcu_read_unlock();
- 
--	for (i = 0; i < csn; i++)
--		csa[i]->pn = i;
--	ndoms = csn;
--
--restart:
--	/* Find the best partition (set of sched domains) */
--	for (i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		int apn = a->pn;
-+	nodes = kmalloc_array(csn, sizeof(struct uf_node), GFP_KERNEL);
-+	if (!nodes)
-+		goto done;
- 
--		for (j = 0; j < csn; j++) {
--			struct cpuset *b = csa[j];
--			int bpn = b->pn;
- 
--			if (apn != bpn && cpusets_overlap(a, b)) {
--				for (k = 0; k < csn; k++) {
--					struct cpuset *c = csa[k];
-+	/* Each node is initially its own parent */
-+	for (i = 0; i < csn; i++) {
-+		nodes[i].parent = i;
-+		nodes[i].rank = 0;
-+	}
- 
--					if (c->pn == bpn)
--						c->pn = apn;
--				}
--				ndoms--;	/* one less element */
--				goto restart;
--			}
-+	/* Merge overlapping cpusets */
-+	for (i = 0; i < csn; i++) {
-+		for (j = i + 1; j < csn; j++) {
-+			if (cpusets_overlap(csa[i], csa[j]))
-+				union_sets(nodes, i, j);
- 		}
- 	}
- 
-+	/* Calculate the number of domains after merging */
-+	for (i = 0; i < csn; i++) {
-+		if (nodes[i].parent == i)
-+			ndoms++;
-+	}
-+
- 	/*
- 	 * Now we know how many domains to create.
- 	 * Convert <csn, csa> to <ndoms, doms> and populate cpu masks.
- 	 */
- 	doms = alloc_sched_domains(ndoms);
- 	if (!doms)
--		goto done;
-+		goto free;
- 
- 	/*
- 	 * The rest of the code, including the scheduler, can deal with
-@@ -1065,47 +1099,29 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 			      GFP_KERNEL);
- 
- 	for (nslot = 0, i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		struct cpumask *dp;
--		int apn = a->pn;
--
--		if (apn < 0) {
--			/* Skip completed partitions */
--			continue;
--		}
--
--		dp = doms[nslot];
--
--		if (nslot == ndoms) {
--			static int warnings = 10;
--			if (warnings) {
--				pr_warn("rebuild_sched_domains confused: nslot %d, ndoms %d, csn %d, i %d, apn %d\n",
--					nslot, ndoms, csn, i, apn);
--				warnings--;
--			}
--			continue;
--		}
--
--		cpumask_clear(dp);
--		if (dattr)
--			*(dattr + nslot) = SD_ATTR_INIT;
-+		nslot_update = 0;
- 		for (j = i; j < csn; j++) {
--			struct cpuset *b = csa[j];
--
--			if (apn == b->pn) {
--				cpumask_or(dp, dp, b->effective_cpus);
-+			if (find_root(nodes, j) == i) {
-+				struct cpumask *dp = doms[nslot];
-+
-+				if (i == j) {
-+					nslot_update = 1;
-+					cpumask_clear(dp);
-+					if (dattr)
-+						*(dattr + nslot) = SD_ATTR_INIT;
-+				}
-+				cpumask_or(dp, dp, csa[j]->effective_cpus);
- 				cpumask_and(dp, dp, housekeeping_cpumask(HK_TYPE_DOMAIN));
- 				if (dattr)
--					update_domain_attr_tree(dattr + nslot, b);
--
--				/* Done with this partition */
--				b->pn = -1;
-+					update_domain_attr_tree(dattr + nslot, csa[j]);
- 			}
- 		}
--		nslot++;
-+		if (nslot_update)
-+			nslot++;
- 	}
- 	BUG_ON(nslot != ndoms);
--
-+free:
-+	kfree(nodes);
- done:
- 	kfree(csa);
- 
--- 
-2.34.1
+Hannes
 
 
