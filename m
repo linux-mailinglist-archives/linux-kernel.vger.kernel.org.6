@@ -1,149 +1,102 @@
-Return-Path: <linux-kernel+bounces-199349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087DC8D85DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:16:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C938D85E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977F1B2540D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:16:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DDF282A5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10FE130A49;
-	Mon,  3 Jun 2024 15:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CB512FB0B;
+	Mon,  3 Jun 2024 15:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AqCUBfUJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IoRfee5w"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8546E619;
-	Mon,  3 Jun 2024 15:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D8D6E619
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717427768; cv=none; b=qG8rn4HdFCTaBYeFjtrBVrXEfRDefdhcDPxyxUo4o2qPpQCvJr4myP0BiCsMf2WONbZ0Y2/0AbbX6ohiTw8O8Jm58bmlVeZNx5hJ+Fapzxt5WNexfvqITD7F/JvEZmTyDtrPspf/Kx0H8Z7M5g/DfEAc5JKae3MLgMOrpcvqBQk=
+	t=1717427945; cv=none; b=l0OgHULzJmNx1Z13lKNbfUeUDJcBS/6d2EHd4hV31/s7PbVQN6IqT45XTpEua5CH/tDDdb8F9NrdBtbuLrcm/xWyc+X6Q2U540Py4vEXI+396F7Xoghkx3M6KYVxDca/O/gTX85rC3DsRJPVWzdQhGVE1ecD5cojVPalfMr+kI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717427768; c=relaxed/simple;
-	bh=wn74DGayn2LhHF1DS4AIgDk5E4v/Hiu+0yxvri0+M6Y=;
+	s=arc-20240116; t=1717427945; c=relaxed/simple;
+	bh=WrF1PqVK7BBRiK2Msk3KzTt3BWtdAC/HrKmBU9+7HSo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IG7uMri/j16bKbt3ekkkACLUy+F3WhFEl7NkoK9FmnVNPUP+wojC4oGOg3LUjRKOdzAYOl5jlv97OrJq85uRwYH5NuAkUxPEvRnUdujJjFZvOXYW3ktdxjlvsH5Xyxx6Ov+UaiOxBzAyl+0sP6B3lMM8/PAef27g4ZoVReF1jbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AqCUBfUJ; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717427766; x=1748963766;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wn74DGayn2LhHF1DS4AIgDk5E4v/Hiu+0yxvri0+M6Y=;
-  b=AqCUBfUJmBXUJu20t9z3b6GR5o03Nr9QNdJV84tvWlcLkR+JI5yqCX3E
-   1/JRZn6zaQCfIMIhutPVrzXSKRgpg7ie77y/P2F1ObLtuntpWFDLpAjDt
-   ls2guuWEKC2Jpo5b5Nxn6HUzwAG0RoveCORHrvpiOxAaTBVP3MS/eP4fj
-   ah910qyBzW5sB/8nNrbCM4qRxHrr56Bq5wp8nbHatmcZLaTy50IKa1FXY
-   GZBdBCuIiJSopOs8KIwSMK2iQ6VU0C/xW6K1VhN0GSzCWlZ9CUEuXi7aP
-   TXRRoV5zbLLvfcwCAxXlTLTWXaqDFx0onsN4QI/5v+vha6nXd+mKmCdno
-   w==;
-X-CSE-ConnectionGUID: GbivCDjjQw6wucZg4dtJLQ==
-X-CSE-MsgGUID: mukK42OFRMmYlxyx2mQRAA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="14050604"
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="14050604"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 08:16:05 -0700
-X-CSE-ConnectionGUID: E5y3S27MSJOx6GJBW1SKRg==
-X-CSE-MsgGUID: uTkr4zqHT6Cip7CLKCXx7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,211,1712646000"; 
-   d="scan'208";a="37493984"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 03 Jun 2024 08:16:01 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sE9Pi-000LnG-2U;
-	Mon, 03 Jun 2024 15:15:58 +0000
-Date: Mon, 3 Jun 2024 23:15:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mao Jinlong <quic_jinlmao@quicinc.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Tingwei Zhang <quic_tingweiz@quicinc.com>,
-	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-	Tao Zhang <quic_taozha@quicinc.com>,
-	songchai <quic_songchai@quicinc.com>
-Subject: Re: [PATCH v2 2/3] coresight: Add support to get preferred id for
- system trace sources
-Message-ID: <202406032259.9poyd8Ts-lkp@intel.com>
-References: <20240603094354.2348-3-quic_jinlmao@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HXWh/Dw978y3FX7JuhQdlz7pDiWLVtBFfLuDAPJS3CYCTxUIa65kMvT34mtUwHBpNyxvky0rGz2IckNFsCKJPRM+1tD2AVLCyXjn5WMmkAw4BtBrTLMv6BXz5jeyIGgP00/rGA+8UxjGpe06FiO+3pAjC/eHyxut+JACPv/dAks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IoRfee5w; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DF6CE40E016A;
+	Mon,  3 Jun 2024 15:19:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id hDswJJ7JDKdp; Mon,  3 Jun 2024 15:18:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717427937; bh=r4AxofPCNiuX2W8ZoKSi2lk7pfbcJt99dVTm8crU1LI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IoRfee5wzMYlcIcBm4rWSO3fRRMPzXZYh1f8QEaSNJvCyy86E7Lu7eYK+zwUgGN1w
+	 jJDRsDot6Ojy+j+we4U9j6m46Z7b3Kk1EpcAAzICJ6HAXWe5BZSotYXYW8fZJfi23y
+	 BfeToEtCjoBoYyMuNgAA2/W9UgVwWUeYf9EtDsdtyG9Srq2vNRnfH/Y0//Gj3HUFeN
+	 p7Sg7mxyvbrqjkxWuSMGgYogXzIp6/iZjXQD9mUR2z4ab2rGuCmbc14+b7tBq4+HC8
+	 D6BR14Mw83MLLb6Ukr9l/ra3lLXw9XxGBczG6bCulYV0/yGlBO8zmae4N4JwMrjI88
+	 6Ks+W7nHxYc7Ama5Gpp3mx0oXAepPCavWLy+ESFt2xc9Wqt+sBjJASv9Saisqvpgpv
+	 iF98WE+t8Fupb07XHd4AHpNNmc0Evqm5TV2cvSFyZTbkTuhvwj3Wdjv3aOpxg5J9DW
+	 9oHYi3HpveLszTv4BCqi+QVAW9bAE86Cm0nRwCTyBe/eRrrJjIQjRSPY0gbycZtCFW
+	 1KzGAhs+/b0Latl71JCEbcCxYdsrfNYPDMRXDHu0ZJYRgW3VaPGjdC3/y9fSpiGeCh
+	 RqpAo8LekxFBKGKX1n8YSCqJ/Usq1uj0p6CQFbJatnHAJ3Zkzu0kIK0ykXwZQw4KYE
+	 gU/HXS1Z3ih9tMLhzu9pcvdA=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 48B0540E0081;
+	Mon,  3 Jun 2024 15:18:52 +0000 (UTC)
+Date: Mon, 3 Jun 2024 17:18:46 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	David Kaplan <david.kaplan@amd.com>
+Subject: Re: [PATCH] x86/kexec: Fix bug with call depth tracking
+Message-ID: <20240603151846.GDZl3e1kNpOkjE2ALW@fat_crate.local>
+References: <20240603083036.637-1-bp@kernel.org>
+ <16622c3a-034e-9f78-3afa-b0c273ee4949@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240603094354.2348-3-quic_jinlmao@quicinc.com>
+In-Reply-To: <16622c3a-034e-9f78-3afa-b0c273ee4949@amd.com>
 
-Hi Mao,
+On Mon, Jun 03, 2024 at 08:30:26AM -0500, Tom Lendacky wrote:
+> Does it need a Fixes: tag for call depth tracking (before the change to
+> cc_platform_has() it was a call to sme_active())?
 
-kernel test robot noticed the following build errors:
+Yeah, something like
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on atorgue-stm32/stm32-next linus/master v6.10-rc2 next-20240603]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Fixes: 5d8213864ade ("x86/retbleed: Add SKL return thunk")
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mao-Jinlong/dt-bindings-arm-Add-trace-id-for-coresight-dummy-source/20240603-175023
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240603094354.2348-3-quic_jinlmao%40quicinc.com
-patch subject: [PATCH v2 2/3] coresight: Add support to get preferred id for system trace sources
-config: arm-randconfig-001-20240603 (https://download.01.org/0day-ci/archive/20240603/202406032259.9poyd8Ts-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240603/202406032259.9poyd8Ts-lkp@intel.com/reproduce)
+I guess.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406032259.9poyd8Ts-lkp@intel.com/
+> Looks like spaces used here instead of tabs.
 
-All error/warnings (new ones prefixed by >>):
-
->> drivers/hwtracing/coresight/coresight-platform.c:797:12: error: redefinition of 'of_coresight_get_trace_id'
-     797 | static int of_coresight_get_trace_id(struct device *dev, u32 *id)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hwtracing/coresight/coresight-platform.c:191:12: note: previous definition of 'of_coresight_get_trace_id' with type 'int(struct device *, u32 *)' {aka 'int(struct device *, unsigned int *)'}
-     191 | static int of_coresight_get_trace_id(struct device *dev, u32 *id)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/hwtracing/coresight/coresight-platform.c:191:12: warning: 'of_coresight_get_trace_id' defined but not used [-Wunused-function]
---
-   drivers/hwtracing/coresight/coresight-tpda.c: In function 'tpda_init_default_data':
->> drivers/hwtracing/coresight/coresight-tpda.c:254:16: error: too few arguments to function 'coresight_trace_id_get_system_id'
-     254 |         atid = coresight_trace_id_get_system_id();
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/hwtracing/coresight/coresight-tpda.c:20:
-   drivers/hwtracing/coresight/coresight-trace-id.h:126:5: note: declared here
-     126 | int coresight_trace_id_get_system_id(int id);
-         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/of_coresight_get_trace_id +797 drivers/hwtracing/coresight/coresight-platform.c
-
-   796	
- > 797	static int of_coresight_get_trace_id(struct device *dev, u32 *id)
-   798	{
-   799		return -ENODEV;
-   800	}
-   801	
+I was fixing those and forgot to refresh before sending - it is fixed
+here locally.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
