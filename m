@@ -1,379 +1,161 @@
-Return-Path: <linux-kernel+bounces-199272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECD38D84B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:15:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCFC8D84C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 16:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729441C21D1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:15:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A7AFB21401
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7637E12EBCC;
-	Mon,  3 Jun 2024 14:15:33 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5177912FB2F;
+	Mon,  3 Jun 2024 14:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rLzUrvJN"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B140757E0;
-	Mon,  3 Jun 2024 14:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FFC757E0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 14:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717424132; cv=none; b=kcNpj7NQgQpitwW7NUcW2vJRBkNsmlxLjwND9qvw5pyKdGLJGfHRysMwF3pbqK2iXEKFXxhDs6vOdsWA6WyHrbltvsLo8ovIat9mwK3CtNCYU5soC2Pep4WEctFNVOVnqnT2bNtc36QlVzfASp44LlCp2LLN3xasV/huEGIDQcM=
+	t=1717424245; cv=none; b=YCpK2LyRx+qAMFZzd8DxKI9M/DK/8jagggb37kTCJuNAma22EjccpclU8RH4QZeGGWVHrgkx2DSM1CWzkW+8trPhK4gXWfqVkaSooTaReFAMwhNX1wdpnOmVnkhUBBrYSolDCv1j5hUUwfc/2neqno35/RfSlfsAJqSXsBsZUjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717424132; c=relaxed/simple;
-	bh=ZHYDKpcdSoeZxdhVpyMxTink1TrnNK2idMe7QsWzkLQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UVnC8AJdog9ZlHrlVdIunqODTdJeVZqMCfqve6WLbPw2aLDlO/CefVPLED4eceGo8CnS0xRk1mLR/f74dXWxGq7m5Y9A4XKuqJn+Y1U+6bvstTcWByFBYNiF0LdAf79pof7bybm/b5Qr7K3k7/K+Q1H6VSrk6+frwbW1y9DwmFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VtG2q5430z4f3m7g;
-	Mon,  3 Jun 2024 22:15:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id B98971A0A1E;
-	Mon,  3 Jun 2024 22:15:26 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgBHaw78z11mfUdPOw--.15169S3;
-	Mon, 03 Jun 2024 22:15:26 +0800 (CST)
-Subject: Re: [RFC PATCH v4 5/8] xfs: refactor the truncating order
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
- david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
- willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-6-yi.zhang@huaweicloud.com>
- <20240531154420.GO52987@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <680a8658-e0e9-25c6-545d-a09d63e7d016@huaweicloud.com>
-Date: Mon, 3 Jun 2024 22:15:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1717424245; c=relaxed/simple;
+	bh=HKIk/fziZZuLGu58aSs/+3iSct4B2ZtBElSDQxdl5rg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sn59ClksE7Y/E/n9SK/UK1dHj9P9dBPkxjL1FCIy60JT7FQsQw/yT4CjTaBu14CQsyU09ASki+JC4xThukPCmjb13oAT5tj8cEW4FERyimp2PmymxGRc5MEaj1dwrnvyL2jwTsPa8QZ2Id5aNHc4R/kaxBmgriBpFri2j4N7SjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rLzUrvJN; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a68b41ef3f6so199921366b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 07:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717424241; x=1718029041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hX960fiFK86sEZShyroAmINX+eMw+I3MOlcUpYKxHw8=;
+        b=rLzUrvJNelG5IifUyrBqPAuZ27DXkGZdNLTVIgE2RqSs5A9CsgD5a0aaaIiKhm2CJ7
+         XSfqjyqppFk6v7c+gwrCBqMQoS1VNXZnknkjzOy6lORVOYwDrFYiGULyBnhFNNeiqSVM
+         ZtsYYdsil+io5g5BBgmWVjP4z3BMxEL7J8+gPKJ/9HdCDUV4IyE9094HWD/Bo/SrM1a8
+         fRPXzYAQHspXUsJcY1dNhiLnldU7POcqj89aVM7MPFMdukQSSPLkyqGgOdueDXL2AxHd
+         ya/iH/QiL7ZR1wMDVu/LdOm3wLpPYIYoDzqcaBmc+Uaoas13AP0GYWillEcgKkRA/G3K
+         6c5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717424242; x=1718029042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hX960fiFK86sEZShyroAmINX+eMw+I3MOlcUpYKxHw8=;
+        b=IObKN/cG3Hxe7/UhZ6nSvUZVwSre2de54WDEMQyArOiZXaq2d1HhA6GxzE21WfppC8
+         7PoXQBmI68A3kshnld51dtbSoo44Drv0pnyDITdgyXpB7UKhB7G5Ja8CVzEnEAplHHAn
+         KWO5x1hDOstPJsE76Af7teU99nmOCTQ4J38mmcPhfbbaJMVond9ScRad9Js6ZbDRRVtB
+         BGi9BklYjSjaKm6t684ThM8GNOM4I3lb2H9xlbQU05KGWBfDTYA4AKAzd5RRIdGNZN0f
+         momvnvMHtcsqErbxo2tsOVwIwNsh45ALmBP87r/NA4ihjFie5hIBvQd66dxjBsXpt+ws
+         8UaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSIOgPVD/XdfhPqn+w1BwQxfgD8QX3cCiQaHtkd8dID6J4WtMkKCD9amdhvEX/YohVLKpn4rngZwwqg9gpXUxV39axLnTFMCpLpHnx
+X-Gm-Message-State: AOJu0YwIaEmlYOdi+wszT86Oyewjw8ZGb04GwWdAQ1e5G90Hu3nJcjJo
+	Umzyp7WhQYReN3k1pvjEyGV50cIym0wFfZY7AsBpieRvgOtrIlCABctfkkqC3TkiYR6GNoeotdE
+	l+Bvf2ddN4r9MVEyAC6UCHr+aSvKx9kqMXinN
+X-Google-Smtp-Source: AGHT+IF2dM971g+G40jgbxNlCnWLD2vDmcmV06zLLO0GJhjluR0VCD0WMHMSdMpVvOnlSN5qx4LmzaU7Z6g2TUlHcjM=
+X-Received: by 2002:a17:907:914e:b0:a68:9621:a93c with SMTP id
+ a640c23a62f3a-a689621ab6fmr371329366b.8.1717424241215; Mon, 03 Jun 2024
+ 07:17:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240531154420.GO52987@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBHaw78z11mfUdPOw--.15169S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3KryxCFy8Aw4DXF17KFW7Jwb_yoWDCFyDpr
-	93Gas8Gr4kGFyUZr1kZF1jqw1Sg3WkJrWIkFyIgF97uas8Zr1xtF97Kry0ga1jkrs3Ww4F
-	9F4kJayfu3Z5AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20240530201616.1316526-1-almasrymina@google.com>
+ <20240530201616.1316526-3-almasrymina@google.com> <ZlqzER_ufrhlB28v@infradead.org>
+In-Reply-To: <ZlqzER_ufrhlB28v@infradead.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 3 Jun 2024 07:17:05 -0700
+Message-ID: <CAHS8izMU_nMEr04J9kXiX6rJqK4nQKA+W-enKLhNxvK7=H2pgA@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 02/14] net: page_pool: create hooks for
+ custom page providers
+To: Christoph Hellwig <hch@infradead.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/31 23:44, Darrick J. Wong wrote:
-> On Wed, May 29, 2024 at 05:52:03PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When truncating down an inode, we call xfs_truncate_page() to zero out
->> the tail partial block that beyond new EOF, which prevents exposing
->> stale data. But xfs_truncate_page() always assumes the blocksize is
->> i_blocksize(inode), it's not always true if we have a large allocation
->> unit for a file and we should aligned to this unitsize, e.g. realtime
->> inode should aligned to the rtextsize.
->>
->> Current xfs_setattr_size() can't support zeroing out a large alignment
->> size on trucate down since the process order is wrong. We first do zero
->> out through xfs_truncate_page(), and then update inode size through
->> truncate_setsize() immediately. If the zeroed range is larger than a
->> folio, the write back path would not write back zeroed pagecache beyond
->> the EOF folio, so it doesn't write zeroes to the entire tail extent and
->> could expose stale data after an appending write into the next aligned
->> extent.
->>
->> We need to adjust the order to zero out tail aligned blocks, write back
->> zeroed or cached data, update i_size and drop cache beyond aligned EOF
->> block, preparing for the fix of realtime inode and supporting the
->> upcoming forced alignment feature.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/xfs/xfs_iomap.c |   2 +-
->>  fs/xfs/xfs_iomap.h |   3 +-
->>  fs/xfs/xfs_iops.c  | 107 ++++++++++++++++++++++++++++-----------------
->>  3 files changed, 69 insertions(+), 43 deletions(-)
->>
->> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
->> index 8cdfcbb5baa7..0369b64cc3f4 100644
->> --- a/fs/xfs/xfs_iomap.c
->> +++ b/fs/xfs/xfs_iomap.c
->> @@ -1468,10 +1468,10 @@ int
->>  xfs_truncate_page(
->>  	struct xfs_inode	*ip,
->>  	loff_t			pos,
->> +	unsigned int		blocksize,
->>  	bool			*did_zero)
->>  {
->>  	struct inode		*inode = VFS_I(ip);
->> -	unsigned int		blocksize = i_blocksize(inode);
->>  
->>  	if (IS_DAX(inode))
->>  		return dax_truncate_page(inode, pos, blocksize, did_zero,
->> diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
->> index 4da13440bae9..feb1610cb645 100644
->> --- a/fs/xfs/xfs_iomap.h
->> +++ b/fs/xfs/xfs_iomap.h
->> @@ -25,7 +25,8 @@ int xfs_bmbt_to_iomap(struct xfs_inode *ip, struct iomap *iomap,
->>  
->>  int xfs_zero_range(struct xfs_inode *ip, loff_t pos, loff_t len,
->>  		bool *did_zero);
->> -int xfs_truncate_page(struct xfs_inode *ip, loff_t pos, bool *did_zero);
->> +int xfs_truncate_page(struct xfs_inode *ip, loff_t pos,
->> +		unsigned int blocksize, bool *did_zero);
->>  
->>  static inline xfs_filblks_t
->>  xfs_aligned_fsb_count(
->> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
->> index d44508930b67..d24927075022 100644
->> --- a/fs/xfs/xfs_iops.c
->> +++ b/fs/xfs/xfs_iops.c
->> @@ -812,6 +812,7 @@ xfs_setattr_size(
->>  	int			error;
->>  	uint			lock_flags = 0;
->>  	bool			did_zeroing = false;
->> +	bool			write_back = false;
->>  
->>  	xfs_assert_ilocked(ip, XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL);
->>  	ASSERT(S_ISREG(inode->i_mode));
->> @@ -853,30 +854,7 @@ xfs_setattr_size(
->>  	 * the transaction because the inode cannot be unlocked once it is a
->>  	 * part of the transaction.
->>  	 *
->> -	 * Start with zeroing any data beyond EOF that we may expose on file
->> -	 * extension, or zeroing out the rest of the block on a downward
->> -	 * truncate.
->> -	 */
->> -	if (newsize > oldsize) {
->> -		trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
->> -		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
->> -				&did_zeroing);
->> -	} else if (newsize != oldsize) {
->> -		error = xfs_truncate_page(ip, newsize, &did_zeroing);
->> -	}
->> -
->> -	if (error)
->> -		return error;
->> -
->> -	/*
->> -	 * We've already locked out new page faults, so now we can safely remove
->> -	 * pages from the page cache knowing they won't get refaulted until we
->> -	 * drop the XFS_MMAP_EXCL lock after the extent manipulations are
->> -	 * complete. The truncate_setsize() call also cleans partial EOF page
->> -	 * PTEs on extending truncates and hence ensures sub-page block size
->> -	 * filesystems are correctly handled, too.
->> -	 *
->> -	 * We have to do all the page cache truncate work outside the
->> +	 * And we have to do all the page cache truncate work outside the
-> 
-> Style nit: don't start a paragraph with "and".
+On Fri, May 31, 2024 at 10:35=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
+>
+> On Thu, May 30, 2024 at 08:16:01PM +0000, Mina Almasry wrote:
+> > I'm unsure if the discussion has been resolved yet. Sending the series
+> > anyway to get reviews/feedback on the (unrelated) rest of the series.
+>
+> As far as I'm concerned it is not.  I've not seen any convincing
+> argument for more than page/folio allocator including larger order /
+> huge page and dmabuf.
+>
 
-Sure, thanks for point this out.
+Thanks Christoph, this particular patch series adds dmabuf, so I
+assume no objection there. I assume the objection is that you want the
+generic, extensible hooks removed.
 
-> 
->>  	 * transaction context as the "lock" order is page lock->log space
->>  	 * reservation as defined by extent allocation in the writeback path.
->>  	 * Hence a truncate can fail with ENOMEM from xfs_trans_alloc(), but
->> @@ -884,27 +862,74 @@ xfs_setattr_size(
->>  	 * user visible changes). There's not much we can do about this, except
->>  	 * to hope that the caller sees ENOMEM and retries the truncate
->>  	 * operation.
->> -	 *
->> -	 * And we update in-core i_size and truncate page cache beyond newsize
->> -	 * before writeback the [i_disk_size, newsize] range, so we're
->> -	 * guaranteed not to write stale data past the new EOF on truncate down.
->>  	 */
->> -	truncate_setsize(inode, newsize);
->> +	write_back = newsize > ip->i_disk_size && oldsize != ip->i_disk_size;
->> +	if (newsize < oldsize) {
->> +		unsigned int blocksize = i_blocksize(inode);
->>  
->> -	/*
->> -	 * We are going to log the inode size change in this transaction so
->> -	 * any previous writes that are beyond the on disk EOF and the new
->> -	 * EOF that have not been written out need to be written here.  If we
->> -	 * do not write the data out, we expose ourselves to the null files
->> -	 * problem. Note that this includes any block zeroing we did above;
->> -	 * otherwise those blocks may not be zeroed after a crash.
->> -	 */
->> -	if (did_zeroing ||
->> -	    (newsize > ip->i_disk_size && oldsize != ip->i_disk_size)) {
->> -		error = filemap_write_and_wait_range(VFS_I(ip)->i_mapping,
->> -						ip->i_disk_size, newsize - 1);
->> +		/*
->> +		 * Zeroing out the partial EOF block and the rest of the extra
->> +		 * aligned blocks on a downward truncate.
->> +		 */
->> +		error = xfs_truncate_page(ip, newsize, blocksize, &did_zeroing);
->>  		if (error)
->>  			return error;
->> +
->> +		/*
->> +		 * We are going to log the inode size change in this transaction
->> +		 * so any previous writes that are beyond the on disk EOF and
->> +		 * the new EOF that have not been written out need to be written
->> +		 * here.  If we do not write the data out, we expose ourselves
->> +		 * to the null files problem. Note that this includes any block
->> +		 * zeroing we did above; otherwise those blocks may not be
->> +		 * zeroed after a crash.
->> +		 */
->> +		if (did_zeroing || write_back) {
->> +			error = filemap_write_and_wait_range(inode->i_mapping,
->> +					min_t(loff_t, ip->i_disk_size, newsize),
->> +					roundup_64(newsize, blocksize) - 1);
->> +			if (error)
->> +				return error;
->> +		}
->> +
->> +		/*
->> +		 * Updating i_size after writing back to make sure the zeroed
-> 
-> "Update the incore i_size after flushing dirty tail pages to disk, and
-> drop all the pagecache beyond the allocation unit containing EOF." ?
+To be honest, I don't think the hooks are an integral part of the
+design, and at this point I think we've argued for them enough. I
+think we can easily achieve the same thing with just raw if statements
+in a couple of places. We can always add the hooks if and only if we
+actually justify many memory providers.
 
-Yep.
+Any objections to me removing the hooks and directing to memory
+allocations via simple if statements? Something like (very rough
+draft, doesn't compile):
 
-> 
->> +		 * blocks could been written out, and drop all the page cache
->> +		 * range that beyond blocksize aligned new EOF block.
->> +		 *
->> +		 * We've already locked out new page faults, so now we can
->> +		 * safely remove pages from the page cache knowing they won't
->> +		 * get refaulted until we drop the XFS_MMAP_EXCL lock after the
->> +		 * extent manipulations are complete.
->> +		 */
->> +		i_size_write(inode, newsize);
->> +		truncate_pagecache(inode, roundup_64(newsize, blocksize));
-> 
-> I'm not sure why we need to preserve the pagecache beyond eof having
-> zeroed and then written the post-eof blocks out to disk, but I'm
-> guessing this is why you open-code truncate_setsize?
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 92be1aaf18ccc..2cc986455bce6 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -557,8 +557,8 @@ netmem_ref page_pool_alloc_netmem(struct page_pool
+*pool, gfp_t gfp)
+                return netmem;
 
-Yeah, xfs_truncate_page() already done the zero out, if we keep passing the
-newsize to truncate_pagecache() through truncate_setsize(), it would zero out
-partial folio which cover the already zeroed blocks. What we should do at
-this moment is just drop all the page cache beyond aligned EOF block, so I
-roundup the newsize, just a small optimization.
+        /* Slow-path: cache empty, do real allocation */
+-       if (static_branch_unlikely(&page_pool_mem_providers) && pool->mp_op=
+s)
+-               netmem =3D pool->mp_ops->alloc_pages(pool, gfp);
++       if (unlikely(page_pool_is_dmabuf(pool)))
++               netmem =3D mp_dmabuf_devmem_alloc_pages():
+        else
+                netmem =3D __page_pool_alloc_pages_slow(pool, gfp);
+        return netmem;
 
-> 
->> +	} else {
->> +		/*
->> +		 * Start with zeroing any data beyond EOF that we may expose on
->> +		 * file extension.
->> +		 */
->> +		if (newsize > oldsize) {
->> +			trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
->> +			error = xfs_zero_range(ip, oldsize, newsize - oldsize,
->> +					       &did_zeroing);
->> +			if (error)
->> +				return error;
->> +		}
->> +
->> +		/*
->> +		 * The truncate_setsize() call also cleans partial EOF page
->> +		 * PTEs on extending truncates and hence ensures sub-page block
->> +		 * size filesystems are correctly handled, too.
->> +		 */
->> +		truncate_setsize(inode, newsize);
->> +
->> +		if (did_zeroing || write_back) {
->> +			error = filemap_write_and_wait_range(inode->i_mapping,
->> +					ip->i_disk_size, newsize - 1);
->> +			if (error)
->> +				return error;
->> +		}
->>  	}
-> 
-> At this point I wonder if these three truncate cases (down, up, and
-> unchanged) should just be broken out into three helpers without so much
-> twisty logic.
-> 
-> xfs_setattr_truncate_down():
-> 	xfs_truncate_page(..., &did_zeroing);
-> 
-> 	if (did_zeroing || extending_ondisk_eof)
-> 		filemap_write_and_wait_range(...);
-> 
-> 	truncate_setsize(...); /* or your opencoded version */
-> 
-> xfs_setattr_truncate_up():
-> 	xfs_zero_range(..., &did_zeroing);
-> 
-> 	truncate_setsize(...);
-> 
-> 	if (did_zeroing || extending_ondisk_eof)
-> 		filemap_write_and_wait_range(...);
-> 
-> xfs_setattr_truncate_unchanged():
-> 	truncate_setsize(...);
-> 
-> 	if (extending_ondisk_eof)
-> 		filemap_write_and_wait_range(...);
-> 
-> So then the callsite becomes:
-> 
-> 	if (newsize > oldsize)
-> 		xfs_settattr_truncate_up();
-> 	else if (newsize < oldsize)
-> 		xfs_setattr_truncate_down();
-> 	else
-> 		xfs_setattr_truncate_unchanged();
 
-Sounds good.
-
-> 
-> But, I dunno.  Most of the code is really just extensive commenting.
-> 
-
-Yeah, the extensive comments also bothers me, too. I will try to make
-it more clear in the next iteration, I hope.
-
+--=20
 Thanks,
-Yi.
-
-> --D
-> 
->> +			if (error)
->> +				return error;
->> +		}
->> +
->> +		/*
->> +		 * The truncate_setsize() call also cleans partial EOF page
->> +		 * PTEs on extending truncates and hence ensures sub-page block
->> +		 * size filesystems are correctly handled, too.
->> +		 */
->> +		truncate_setsize(inode, newsize);
->> +
->> +		if (did_zeroing || write_back) {
->> +			error = filemap_write_and_wait_range(inode->i_mapping,
->> +					ip->i_disk_size, newsize - 1);
-> 
-> 
-> 
->>  
->>  	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, 0, 0, 0, &tp);
->> -- 
->> 2.39.2
->>
->>
-
+Mina
 
