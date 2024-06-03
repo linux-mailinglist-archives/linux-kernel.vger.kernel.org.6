@@ -1,123 +1,94 @@
-Return-Path: <linux-kernel+bounces-199341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F5C8D85C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:09:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F69A8D85CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 17:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24B6A1F2283E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:09:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ACAE1F22FB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 15:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CC212DDB3;
-	Mon,  3 Jun 2024 15:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3280A130E40;
+	Mon,  3 Jun 2024 15:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoHbFe7G"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EACXZVwm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04212130A47
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 15:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E2212FF73;
+	Mon,  3 Jun 2024 15:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717427365; cv=none; b=tJHhdxMMKKL9IdbPJ6CIsMPOIdfNhavgq1+TIcuPOxPkIuqKf4G6Tjg0H5NvCSGCfGvuhGHY5IYrKgCePFDR7+XWLk0NZ9rU3ujS5WwQT2hpKMcsBuNeyWJlTtuEUikHatOplFhUqBrHjU/FfeXpaK/ZJBzr265RQ0QXwCOqsHI=
+	t=1717427429; cv=none; b=f+4A7kLKiEAx8fKDVLK527fHobiDq/0Vkr/QB95/XA/Ctq+s3jwcwC/5982pS5T4JU6MwLKF2jT2UuPEqTxdiuLucLbn3j3ZAl81QWCRJ4HxLUgNW4E9A642+23QwAW9+7NA0md0g8fSiYAsDyMDpi8QbjFv92hM5Q7ADjlAoOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717427365; c=relaxed/simple;
-	bh=pp6PaQicwBJNm0g3BSIAdlQfiRdOCfcFDk1LxZ1CVrM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C3c3NzW7NwOkhryaEEvPpHNsPtDOLG0ymc5DMMbKU1ytPMSPWXYraU/nVgfQa8AwHPKQFLe110uEXU9TWkYhAFtqk4IP7Rz90g8p3fY/kn13DdCxyQuWq2h2e1NpJc8d9A1UFBuLSeB1QxSsc55DJZFR1NdpF7nSblc25uKBvHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoHbFe7G; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a68c5524086so3660466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 08:09:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717427362; x=1718032162; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pp6PaQicwBJNm0g3BSIAdlQfiRdOCfcFDk1LxZ1CVrM=;
-        b=WoHbFe7GOcb6/DwdsKgdEudPYkBrx6WF65g1LsAye8fVAnk3xrZpfsSxnj6Ovxowva
-         myRw4wT6kUJjQV5oX7iYsiAY5RoyhqRVQvdI31ECqmmgxtw9gGakF51Qcig7yOptoOOs
-         1wD0gnkYrH8tuD4fC4oEpEcLI2+/yDtdzf9ezzva3/4qFfgCmgaLscGmifixh9H/nxmY
-         G7mHpqfmj/De4vwvOqpMODOSupd3lE0Ci8hcTnPCqUD7IC04m9u7Y0xvTrRcdKriZ8AG
-         3oHBoUnjAquDtABTiJaGKstCv7KHD+xdCObynXqfQ9mkS/BfCJCj4VSYKlIZqBmussF9
-         ISpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717427362; x=1718032162;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pp6PaQicwBJNm0g3BSIAdlQfiRdOCfcFDk1LxZ1CVrM=;
-        b=r+0aTNcUYKr03N7fjcPNDGL9y16ilnkL35bKEWHesGzexO63lfLoLiA42XxkRkRY0O
-         kvnja1qBek+5+cg6ldzXrUqQcyO8sfwpKHRD3iHHJMxgBS3KDA3f1/qQP675yY0Yj+/7
-         LM565F6pyGGaEf91p8b/lGWJtIUUtNQ0gDLoFmt/zNjncBKBNbL1NKW1f/rmYmDtKubO
-         7mYc/Fj24sWAzlVKBwES5YwyzQwWsCRv5oTXKzDUcGNi/SxIHx4UpoWyXQ2zjP8haGpW
-         oUGRIWIQhzLb+P50E+im/YLNOb7LjTmnxChaLd2tTQlrloOm9mm1cjR8WZmuerzdrxnV
-         08sA==
-X-Forwarded-Encrypted: i=1; AJvYcCVy/nXWPwXeN1q4RXcdiGRxnU8tTCDBzgIakR9zUzuzlrHUV/kihunAp7H0kYGxNE+mptkkiNpXVHe6TOQ4y132jO5qIR1G3qeiymmE
-X-Gm-Message-State: AOJu0Yx8O0M9/HV/Gmi5YH+7/TvGEI9Vx43iSMTl7sshHfUEQ1uyxHzP
-	wl0IU3eZmVlijlCE5y8yScdMoQMSCsF0G48H+8qhYUE/MivPj76SeDjxLmd3H51aOZMhGISpl8G
-	ziP3hMXXmJUcM01aivdODBimBjxE=
-X-Google-Smtp-Source: AGHT+IE6b9O7VxJ/MlwnUxzc9k1t10GWuccmSK66WzSEy0nfQ5hxBoOaBj+LVMlzwGzS0tHl8lC/kp1tb86x9ahWnng=
-X-Received: by 2002:a17:906:fa99:b0:a68:e018:a09a with SMTP id
- a640c23a62f3a-a68e018a101mr337538766b.6.1717427362228; Mon, 03 Jun 2024
- 08:09:22 -0700 (PDT)
+	s=arc-20240116; t=1717427429; c=relaxed/simple;
+	bh=rNBDGAVUSqxZbk8Bj4sgiaMLerDh+0JJ9wWeRX3afuU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=gWNa9zZcNaP8vXpu9/ja9N9eb20B7geMjNNvRmzP18vsNnxA5ywnSl6cJyyEA5s4DwHO2ecpTUXwQTSfTUMg7k/4oc+5wgsgWG4U6Oxd5/5fg2XdXpqdCiLLG/E4K+PlsgRILS9SGth1FjDbKtyh5yKmECCFs+QSkcp2H01q3Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EACXZVwm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EB2A2C4AF12;
+	Mon,  3 Jun 2024 15:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717427429;
+	bh=rNBDGAVUSqxZbk8Bj4sgiaMLerDh+0JJ9wWeRX3afuU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EACXZVwmhKooPq6AETvauDSxLa2IxFk2MFzuSMjLsANHLJJceMfW0ogqWmfgJk/nu
+	 LoVS/5NSKLpXyVSkMklriWC58FEwDN64sKxAGN5XlCY81SescN7nDqLULs/ONfQumc
+	 9taULNjKdb5MuNXFY/dynuyL0MgfCoFvdvdftNT9FOq2VWjrIaRrUmr/LC4rWxrWwW
+	 2Ag5cppUalG2omP6wmu5loh19FQU/09xDzWYmwvVUc1oG80b0Tgj8O1ej0PkkVoWnP
+	 baLKAP7psEbwV4HYdACakR9ybdxyaSkowciUIYt/zgkNqeYA7Gxbnw8Bb18yMRNKwy
+	 GNyy0Vv4SDQDA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E0671C32766;
+	Mon,  3 Jun 2024 15:10:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230601075333.14021-1-ihuguet@redhat.com> <CAMZ6RqLoRVHD_M8Jh2ELurhL8E=HWt2DZZFGQvmfFyxKjtNKhg@mail.gmail.com>
- <874jiikr6e.fsf@meer.lwn.net> <CAMZ6RqLJmTjM0dYvixMEAo+uW+zfhdL1n4rnajsHCZcq971oRA@mail.gmail.com>
- <CACT4oudYAK07+PJzJMhTazKe3LP-F4tpQf8CF0vs1pJLEE_4aA@mail.gmail.com>
- <CAK7LNATqNNVX8ECNoO82kY503ArfRPa9GdbYd9tOok_6tGOsew@mail.gmail.com>
- <thbrfziusf37nj5mwsj2a6zmjtenj5b5vhzwu2z5zkhr7ajsg6@whvx46y6mxbz>
- <20240603121853.GA19897@nvidia.com> <CAGudoHEe=AiRpkyLJTZzU8MtiGC86Kivbyi1xF-Hh0hGJKWhCg@mail.gmail.com>
- <CANiq72kPH_gZrGAEr7WvjzNiNUZz2YtgRV0=PP0LuxaecckUoA@mail.gmail.com>
-In-Reply-To: <CANiq72kPH_gZrGAEr7WvjzNiNUZz2YtgRV0=PP0LuxaecckUoA@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 3 Jun 2024 17:09:09 +0200
-Message-ID: <CAGudoHEQ9ZDLJ5Dhjg=9Y25wmoef4GpDNL5XBZEk57KCtMHUYg@mail.gmail.com>
-Subject: Re: [PATCH v4] Add .editorconfig file for basic formatting
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	Vincent MAILHOL <mailhol.vincent@wanadoo.fr>, Jonathan Corbet <corbet@lwn.net>, ojeda@kernel.org, 
-	danny@kdrag0n.dev, mic@digikod.net, linux-kernel@vger.kernel.org, 
-	joe@perches.com, linux@rasmusvillemoes.dk, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] test_bpf: add missing MODULE_DESCRIPTION()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171742742891.507.1892910666937536494.git-patchwork-notify@kernel.org>
+Date: Mon, 03 Jun 2024 15:10:28 +0000
+References: <20240531-md-lib-test_bpf-v1-1-868e4bd2f9ed@quicinc.com>
+In-Reply-To: <20240531-md-lib-test_bpf-v1-1-868e4bd2f9ed@quicinc.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Mon, Jun 3, 2024 at 3:38=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Mon, Jun 3, 2024 at 2:52=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
-> >
-> > At this point I suspect this *is* the intended behavior and other
-> > people don't run into it because their editor does not look at
-> > .editorconfig to begin with.
->
-> This is https://github.com/editorconfig/editorconfig/issues/208 -- a
-> `modified` value is proposed for just trimming modified lines.
->
-> Given the latest version of the specification, it sounds to me like
-> the intention is to trim all lines: "... to remove all whitespace
-> characters ... in the file".
->
+Hello:
 
-Looks like a dead report.
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-I suggest someone whacks this file or at least moves it away from top
-of the repo (somewhere into Documentation maybe?)
+On Fri, 31 May 2024 09:28:43 -0700 you wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bpf.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> 
+> [...]
 
-I did my civic duty. I'm disabling the file in my local neovim config,
-so the entire ordeal is no longer my problem.
+Here is the summary with links:
+  - test_bpf: add missing MODULE_DESCRIPTION()
+    https://git.kernel.org/bpf/bpf-next/c/ec1249d32781
 
-Cheers,
---=20
-Mateusz Guzik <mjguzik gmail.com>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
