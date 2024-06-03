@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-199126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B808D82A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:46:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540BD8D82AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 14:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58DD61C214EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:46:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106C0282F1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 12:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF3912C526;
-	Mon,  3 Jun 2024 12:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF0312C7FB;
+	Mon,  3 Jun 2024 12:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssboo9KI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LohHcb5c"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A9E1E491;
-	Mon,  3 Jun 2024 12:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6529F12C7E3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2024 12:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717418774; cv=none; b=OgKUXRRKptIH/ZYDxDr4rEz0c4zTfrVeMGaBXU2pt5Pzu0ZepUZaQroW4MRZmozNMdEawZQDS0dBpeRFjRJrHR+HxjK1CcgtH/OASB/c/HQQVPHDPKw3Obk6w7Q6tiAU29sK8RfAFvV+rhlBTgYlOEedn2GYOOmn3ypCWjcX7Ek=
+	t=1717418798; cv=none; b=NcRcfwqDR96M4xFU31X4R4tOdyqU7llYKHETOG1b0L5tTCzhIa/rbdL4hiyk6UchDplpjYhOgvXxh2/0rodSw9efuzxv/nEV987NQxWItcqrAvyyjoRUQLW3/V9f/ynCyoUvTADdmNBo6Lr+r7sLgUpiVZWxHdEmZhEncZQatUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717418774; c=relaxed/simple;
-	bh=4RsD9/C3pEBXc6FiOISGRqAdcjs1/UJEsDEwucWnhkM=;
+	s=arc-20240116; t=1717418798; c=relaxed/simple;
+	bh=lQ61YxZVUBj/F8hh+Ierb08BzryUCSUJ1lFXGMMdj74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IMYiMIVFxBIqgFeXMl5RjVsXXM4T9z95mcZwprOfAlOmW4aYeecFm1S9ZeGIC59ViCpkIMTS8i+LeB4EqI5y2dar8sEpFJ0Uz368RkiaKZ9rKT/0CZicqBxVBZxkHQC6MYWg1PXyzGipU6qkdTzX9ADigqV+Ecp85QZ9+sJutRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssboo9KI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62CADC2BD10;
-	Mon,  3 Jun 2024 12:46:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717418774;
-	bh=4RsD9/C3pEBXc6FiOISGRqAdcjs1/UJEsDEwucWnhkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ssboo9KIENmb5gqh+naudYKIJ+9RWIpHdaOIXmtVsWHL3kLHI3zxKd8E671GAccVs
-	 /UN76bXZeO5KUDuLi8QHumctJ6pw2U96o7qAG6oHtKDtl1gzglObXGYY0+3xbfq48m
-	 wDlRDLR47Kp5lnh6fPck8e+V8eWFHMkwU1WXCRGIGcwKjJzdEP9MgqXN+qm9Vlfn74
-	 VpCiER07m726Eq3t+m+cyLn2X3mnbDWfMBzJLoYhfqGOnXJkLKFS9P1JvSz0PuZu8o
-	 g+tosvKVkqjCN1bPwUhOpMAFJMQqsYeuqjfRD5dntj2wF/uGIWpYEdzuSued/aHjpN
-	 Hm3/EYfjqXCNg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sE74m-000000000jf-1Gj3;
-	Mon, 03 Jun 2024 14:46:12 +0200
-Date: Mon, 3 Jun 2024 14:46:12 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] phy: qcom: qmp-pcie: Add X1E80100 Gen4 4-lane mode
- support
-Message-ID: <Zl27FJVU_YHokCiD@hovoldconsulting.com>
-References: <20240531-x1e80100-phy-add-gen4x4-v1-0-5c841dae7850@linaro.org>
- <20240531-x1e80100-phy-add-gen4x4-v1-2-5c841dae7850@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDxG6xVpJ01Km0rDH5jYIukgTzTiQ5TJmVcUnCTCaOIY15OXZSaaETcrVNlYbBZOS99jc/wS65EuJBBGHJbh4r56XLaqQZhEj33y/MfbL7FapT0YwuwMTxKyTqkVfzY6etzjRtG2SmKKrIFKqOl1huzzQzzs68Jr6gIztLx6HKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LohHcb5c; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=bmfnZKfCgRwsGkioRJvWkyb/LftuLHVcEkZkw3PqV9I=; b=LohHcb5cctuvUz3a5kcQbgijDG
+	sFnYZEmcYHNULmLvAVCSC1rVsUXgSxB4j6rfy3UqXiNE5AAdlhBYGrMDT7OXy6+0/CyAGZnzGKTCV
+	RJgmabMYOetaESMkQmkC8aoa4Whxi7Xlh/26/REZGwAGhjICXdKwgvsjXe4+R4QT3BZ8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sE754-00Ghw0-Fx; Mon, 03 Jun 2024 14:46:30 +0200
+Date: Mon, 3 Jun 2024 14:46:30 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Benjamin Schneider <bschnei@gmail.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Benjamin Schneider <ben@bens.haus>
+Subject: Re: [PATCH] cpufreq: enable 1200Mhz clock speed for armada-37xx
+Message-ID: <f2284d6b-2e75-4896-9e10-caf2f72854a0@lunn.ch>
+References: <20240603012804.122215-1-ben@bens.haus>
+ <20240603012804.122215-2-ben@bens.haus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,25 +60,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531-x1e80100-phy-add-gen4x4-v1-2-5c841dae7850@linaro.org>
+In-Reply-To: <20240603012804.122215-2-ben@bens.haus>
 
-On Fri, May 31, 2024 at 07:06:45PM +0300, Abel Vesa wrote:
-> The PCIe 6th instance from X1E80100 can be used in both 4-lane mode or
-> 2-lane mode. Add the configuration and compatible for the 4-lane mode.
+On Sun, Jun 02, 2024 at 06:26:38PM -0700, Benjamin Schneider wrote:
+> This frequency was disabled because of unresolved stability problems.
+> However, based on several months of testing, the source of the
+> stability problems seems to be the bootloader, not the kernel.
+> Marvell has recently merged changes to their bootloader source that
+> addresses the stability issues when frequency scaling is enabled at
+> all frequencies including 1.2Ghz.
 
-Same language nits as for patch 1/1.
+The problem is, most systems don't have the new bootloader. And so if
+you enable 1.2GHz, they are going to be unstable.
 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+Rather than making this unconditional, i think it needs to be
+conditional on knowing the bootloader has been upgraded. Could you add
+code which looks in the DDRPHY and see if 0xC0001004 has the correct
+value. Only then enable the additional clock speed.
 
-I tried this patch along with the DT changes and the link on the CRD
-still comes up as 2-lane:
-
-	qcom-pcie 1bf8000.pci: PCIe Gen.4 x2 link up
-
-so something appears to be wrong here. (I noticed the same with your
-next branch last week.)
-
-How did you test this? Does the link actually come up as 4-lane for you?
-
-Johan
+	Andrew
 
