@@ -1,221 +1,162 @@
-Return-Path: <linux-kernel+bounces-200787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 250698FB4EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:13:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85158FB4F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5901F262C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:13:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524881F26CF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9951F54916;
-	Tue,  4 Jun 2024 14:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14DE82D6D;
+	Tue,  4 Jun 2024 14:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSrrG135"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="LnI1lWQY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K6QFe6mY"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BE912B14B;
-	Tue,  4 Jun 2024 14:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5C439851;
+	Tue,  4 Jun 2024 14:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717510359; cv=none; b=BsdhanfWTF+9zmw4Oz3v9CqeBk8AmQRvdeYePw1UGRJqRKJI6LKvegV9MKRSZBJBUpz8xQloTFjKeEYWo+dVvu1llsj/S5yFCn3ggrRGuaG73gSOiGASjmnh8hIP1ettz0px0+RxoVIHGXweqOPJQzSGY6GySb0k3ian2NoqGRs=
+	t=1717510411; cv=none; b=C604MlTht4us+m+Czw5PJhCk/lTdhXeJxh24ehZGatq55HzVQ2JBGbFMsWdxAnUGpnO+AiqCyE+28TLBAh81t5BWijx21CE7K1PE08DUuv9M99PRuFP0PG7OCtHO0p1nIBYKhZ/E+JaUSx9592XeBbf2O1SP2oQL6myInlKKWr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717510359; c=relaxed/simple;
-	bh=QRLlM2u8ZhW9M94JeTRqj7E4RsizD2fIsY2GA02A/8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YBv7wKjOF5eH1315zfkXIb5qetN+KA1wdQ6rJs5beDsdRjHbHBLV3PCmQ/+l12cF48z4mUoRfc/GIVADao9+3kmLZSy2N1lWIS6msN4M6bpmOUjvi2dr6TgrYawLN1FvqNtt+cEQK3nboj/q/ab2LwQ6T9XlYHdhApHKerIDNm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSrrG135; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA7BC4AF07;
-	Tue,  4 Jun 2024 14:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717510359;
-	bh=QRLlM2u8ZhW9M94JeTRqj7E4RsizD2fIsY2GA02A/8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZSrrG135YH7otMz7zP6kDuCrEqsxNCb78oNONQJA7DWQe4c+4aAqNk/PRCNZn7p6s
-	 r87AtL2iiJ2mWk+OgOOPLS8bRzsxD6NV19n4ejGNNxxzFdYky4v0nn30TAMWfHZr24
-	 9EPUCA1vP4xPsiyMM7YO/Do0NKEwFUgeKht+xn2h8dzavH+Km1Dknsw8nE5Qq/kqiQ
-	 E22IdYbSNJVpLerqYauFtDHfZaFUnjKUwEo+yYTZtoDbk97iK0MbIcdJ8Wa1nk2t3h
-	 0YuBYRncSGZMJD8tvr6/Rh5MEDiD4kMatw32YRZq4NAgZeciDlRCNOXLxe07lFRh1f
-	 QKX0/EAn+j1WQ==
-Date: Tue, 4 Jun 2024 11:12:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Milian Wolff <milian.wolff@kdab.com>
-Cc: linux-perf-users@vger.kernel.org, Ian Rogers <irogers@google.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kenel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: perf 6.9-1 (archlinux) crashes during recording of cycles +
- raw_syscalls
-Message-ID: <Zl8g1LxRCYgTSxhy@x1>
-References: <23879991.0LEYPuXRzz@milian-workstation>
- <Zl8bhWfHSXxs35r2@x1>
+	s=arc-20240116; t=1717510411; c=relaxed/simple;
+	bh=pHj9l9kQFVZFehRR9CxhpyoLan7FS/CeDWnrGomxTEM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R/xv2hdl44yVHifyDhobMUIhEnnEbiGUZ8RitEXqZExeASZIopQotOopEFeEVqkTjHrr0S6BKmUntemjccSl5lDovJde1HxQAWR7D2cX8cPE9BIex5I5PxatPrMeRZ++SXPZmtaoGXNPHV6DqKoBZGt0MJqUR/dzVxQCZC6ov64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=LnI1lWQY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=K6QFe6mY; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 28417138008E;
+	Tue,  4 Jun 2024 10:13:29 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Tue, 04 Jun 2024 10:13:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1717510409;
+	 x=1717596809; bh=bJi9vz7z4EpKqStQ/qCCfjVPwNnCLYGxaXBygPSxRPs=; b=
+	LnI1lWQYJtuFz9P4HtDVK8ExuCGoD8ouuMKe1wg4L3qcgf/TdhQ3xZNC+TVXe420
+	ZcL4xA1F60aBc4AgFHNMiMSFzS/UyGlzZl+E4t6DqsbiJvhJHS7DxwsVgDFT1uQT
+	Xih3S+oIXadAPxxO6BqJK+Of9DAJvuI7FFYjKVA34/rQX2JHRXBuO/nHmYDBQAFU
+	KPsv8i/SEn/Io5I6y3e1pbZC7csYJfW7rKA2LVo72IAxBqQVwsHFvmYJEu0Wk5fx
+	duJB1Jwiyyqs6LbajPE70hEGrhxr/6xFRoEUPpPUvMtKozrvq7yzBf4+BzySsoYR
+	Jwtm+LusCfMsb6sXbsXqww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717510409; x=
+	1717596809; bh=bJi9vz7z4EpKqStQ/qCCfjVPwNnCLYGxaXBygPSxRPs=; b=K
+	6QFe6mYDipWGIJpnzI46+v3KCBt01QX+rKTNS6Bw42gXW/fuZwRLMIhCYPND562v
+	XQYuIC0+VlnM5w8IboGtAKG7i1h9EHGIveTzERqbjFl3MnMm/6vb6iy/kZKVZRcP
+	COBdE0hhDAtMmJ0HcCBffSaBrqFzf7rnRR2Ep/1I8C4f9mN8XI3nxHN7JnWj0GWW
+	SD9xa9RHpcvA0AMvK5xN0J2mVwFsWxqz9Z7KMxXiVgB7bb+RNINr2yGiqFELs7Pp
+	qRR+yPeGrOfJrcCydJJL6qLPbCfBFYfHVzmF0fTahCACZO2F0oL9mR5zDtOGQCE3
+	xCHd50vVz+KI7WxAYBRgA==
+X-ME-Sender: <xms:ByFfZnPZKeaxEveE2H2b48RN31IAOBVaugey2gRLNfV2iNQ3oTXiPA>
+    <xme:ByFfZh8EKRGkbOY2eJmxuTPUn3dNnpAepuEvfI0MDvFUrtTKxe7tUqIpqAPMvyNbc
+    dicifMXUX4Oh0_H>
+X-ME-Received: <xmr:ByFfZmTzHs647IA5nggdjS5uHWv9VCzB02CBbL6MrOUb49x47Jf2Wte6ey57ENR3aE_GUFIcIGhGdz6cJBS_Yoml3FcSdW9D-wq-i-yKklPkcCSzOn5D>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelgedgieelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
+    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:ByFfZrvl7O67NN4u6BJyLQE9O3APIugDH4qjtxVPQpN2luh4HJIdFg>
+    <xmx:ByFfZveW678kYRubf_J4OKAAQ-6UB7beVE8NK38e_RlGdnvGT7s-yA>
+    <xmx:ByFfZn3Niz_-NfyBQyhWoL35hP3LtSID2TN3koay5iUvTqqggQZOtA>
+    <xmx:ByFfZr9d_vAzPa3L9YzPPaeSTK-xm_MJD9a-9RkT9Bo2DnAh0yKYnQ>
+    <xmx:CSFfZhvU5x2dBWiKgKVqt3VT9Rakrl1kwx3DBpUuYhcOo9-L87iAyhgm>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 4 Jun 2024 10:13:26 -0400 (EDT)
+Message-ID: <21741978-a604-4054-8af9-793085925c82@fastmail.fm>
+Date: Tue, 4 Jun 2024 16:13:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zl8bhWfHSXxs35r2@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ lege.wang@jaguarmicro.com, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+ <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+ <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
+ <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+ <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com>
+ <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
+ <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 04, 2024 at 10:50:00AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, Jun 04, 2024 at 01:44:18PM +0200, Milian Wolff wrote:
-> > the following command crashes perf for me, is this still an issue upstream and 
-> > should I report it to arch for backporting? I cannot build the official perf/
-> > core branch, so I am afraid I cannot test it myself there:
 
-> > ```
-> > sudo /usr/bin/perf record -z --call-graph dwarf -e cycles -e 
-> > raw_syscalls:sys_enter ls
-> > ...
-> > [ perf record: Woken up 3 times to write data ]
-> > malloc(): invalid next size (unsorted)
-> > Aborted
-> > ```
-> > Backtrace with GDB + debuginfod:
-> > ```
-> > malloc(): invalid next size (unsorted)
 
-> I reproduced this all the way back to 6.8, trying to bisect now, thanks
-> for the report,
+On 6/4/24 12:02, Miklos Szeredi wrote:
+> On Tue, 4 Jun 2024 at 11:32, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+> 
+>> Back to the background for the copy, so it copies pages to avoid
+>> blocking on memory reclaim. With that allocation it in fact increases
+>> memory pressure even more. Isn't the right solution to mark those pages
+>> as not reclaimable and to avoid blocking on it? Which is what the tmp
+>> pages do, just not in beautiful way.
+> 
+> Copying to the tmp page is the same as marking the pages as
+> non-reclaimable and non-syncable.
+> 
+> Conceptually it would be nice to only copy when there's something
+> actually waiting for writeback on the page.
+> 
+> Note: normally the WRITE request would be copied to userspace along
+> with the contents of the pages very soon after starting writeback.
+> After this the contents of the page no longer matter, and we can just
+> clear writeback without doing the copy.
+> 
+> But if the request gets stuck in the input queue before being copied
+> to userspace, then deadlock can still happen if the server blocks on
+> direct reclaim and won't continue with processing the queue.   And
+> sync(2) will also block in that case.>
+> So we'd somehow need to handle stuck WRITE requests.   I don't see an
+> easy way to do this "on demand", when something actually starts
+> waiting on PG_writeback.  Alternatively the page copy could be done
+> after a timeout, which is ugly, but much easier to implement.
 
-Can you please try with the attached and perhaps provide your Tested-by?
+I think the timeout method would only work if we have already allocated
+the pages, under memory pressure page allocation might not work well.
+But then this still seems to be a workaround, because we don't take any
+less memory with these copied pages.
+I'm going to look into mm/ if there isn't a better solution.
+
+> 
+> Also splice from the fuse dev would need to copy those pages, but that
+> shouldn't be a problem, since it's just moving the copy from one place
+> to another.
+
+Ok, at least I need to keep an eye on it that it doesn't break when I
+write a patch.
+
 
 Thanks,
-
-- Arnaldo
-
-From ab355e2c6b4cf641a9fff7af38059cf69ac712d5 Mon Sep 17 00:00:00 2001
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date: Tue, 4 Jun 2024 11:00:22 -0300
-Subject: [PATCH 1/1] Revert "perf record: Reduce memory for recording
- PERF_RECORD_LOST_SAMPLES event"
-
-This reverts commit 7d1405c71df21f6c394b8a885aa8a133f749fa22.
-
-This causes segfaults in some cases, as reported by Milian:
-
-  ```
-  sudo /usr/bin/perf record -z --call-graph dwarf -e cycles -e
-  raw_syscalls:sys_enter ls
-  ...
-  [ perf record: Woken up 3 times to write data ]
-  malloc(): invalid next size (unsorted)
-  Aborted
-  ```
-
-  Backtrace with GDB + debuginfod:
-
-  ```
-  malloc(): invalid next size (unsorted)
-
-  Thread 1 "perf" received signal SIGABRT, Aborted.
-  __pthread_kill_implementation (threadid=<optimized out>, signo=signo@entry=6,
-  no_tid=no_tid@entry=0) at pthread_kill.c:44
-  Downloading source file /usr/src/debug/glibc/glibc/nptl/pthread_kill.c
-  44            return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_ERRNO
-  (ret) : 0;
-  (gdb) bt
-  #0  __pthread_kill_implementation (threadid=<optimized out>,
-  signo=signo@entry=6, no_tid=no_tid@entry=0) at pthread_kill.c:44
-  #1  0x00007ffff6ea8eb3 in __pthread_kill_internal (threadid=<optimized out>,
-  signo=6) at pthread_kill.c:78
-  #2  0x00007ffff6e50a30 in __GI_raise (sig=sig@entry=6) at ../sysdeps/posix/
-  raise.c:26
-  #3  0x00007ffff6e384c3 in __GI_abort () at abort.c:79
-  #4  0x00007ffff6e39354 in __libc_message_impl (fmt=fmt@entry=0x7ffff6fc22ea
-  "%s\n") at ../sysdeps/posix/libc_fatal.c:132
-  #5  0x00007ffff6eb3085 in malloc_printerr (str=str@entry=0x7ffff6fc5850
-  "malloc(): invalid next size (unsorted)") at malloc.c:5772
-  #6  0x00007ffff6eb657c in _int_malloc (av=av@entry=0x7ffff6ff6ac0
-  <main_arena>, bytes=bytes@entry=368) at malloc.c:4081
-  #7  0x00007ffff6eb877e in __libc_calloc (n=<optimized out>,
-  elem_size=<optimized out>) at malloc.c:3754
-  #8  0x000055555569bdb6 in perf_session.do_write_header ()
-  #9  0x00005555555a373a in __cmd_record.constprop.0 ()
-  #10 0x00005555555a6846 in cmd_record ()
-  #11 0x000055555564db7f in run_builtin ()
-  #12 0x000055555558ed77 in main ()
-  ```
-
-  Valgrind memcheck:
-  ```
-  ==45136== Invalid write of size 8
-  ==45136==    at 0x2B38A5: perf_event__synthesize_id_sample (in /usr/bin/perf)
-  ==45136==    by 0x157069: __cmd_record.constprop.0 (in /usr/bin/perf)
-  ==45136==    by 0x15A845: cmd_record (in /usr/bin/perf)
-  ==45136==    by 0x201B7E: run_builtin (in /usr/bin/perf)
-  ==45136==    by 0x142D76: main (in /usr/bin/perf)
-  ==45136==  Address 0x6a866a8 is 0 bytes after a block of size 40 alloc'd
-  ==45136==    at 0x4849BF3: calloc (vg_replace_malloc.c:1675)
-  ==45136==    by 0x3574AB: zalloc (in /usr/bin/perf)
-  ==45136==    by 0x1570E0: __cmd_record.constprop.0 (in /usr/bin/perf)
-  ==45136==    by 0x15A845: cmd_record (in /usr/bin/perf)
-  ==45136==    by 0x201B7E: run_builtin (in /usr/bin/perf)
-  ==45136==    by 0x142D76: main (in /usr/bin/perf)
-  ==45136==
-  ==45136== Syscall param write(buf) points to unaddressable byte(s)
-  ==45136==    at 0x575953D: __libc_write (write.c:26)
-  ==45136==    by 0x575953D: write (write.c:24)
-  ==45136==    by 0x35761F: ion (in /usr/bin/perf)
-  ==45136==    by 0x357778: writen (in /usr/bin/perf)
-  ==45136==    by 0x1548F7: record__write (in /usr/bin/perf)
-  ==45136==    by 0x15708A: __cmd_record.constprop.0 (in /usr/bin/perf)
-  ==45136==    by 0x15A845: cmd_record (in /usr/bin/perf)
-  ==45136==    by 0x201B7E: run_builtin (in /usr/bin/perf)
-  ==45136==    by 0x142D76: main (in /usr/bin/perf)
-  ==45136==  Address 0x6a866a8 is 0 bytes after a block of size 40 alloc'd
-  ==45136==    at 0x4849BF3: calloc (vg_replace_malloc.c:1675)
-  ==45136==    by 0x3574AB: zalloc (in /usr/bin/perf)
-  ==45136==    by 0x1570E0: __cmd_record.constprop.0 (in /usr/bin/perf)
-  ==45136==    by 0x15A845: cmd_record (in /usr/bin/perf)
-  ==45136==    by 0x201B7E: run_builtin (in /usr/bin/perf)
-  ==45136==    by 0x142D76: main (in /usr/bin/perf)
-  ==45136==
- -----
-
-Closes: https://lore.kernel.org/linux-perf-users/23879991.0LEYPuXRzz@milian-workstation/
-Reported-by: Milian Wolff <milian.wolff@kdab.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: stable@kernel.org # 6.8+
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-record.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 66a3de8ac66186b0..0a8ba1323d64be6b 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1956,8 +1956,7 @@ static void record__read_lost_samples(struct record *rec)
- 
- 				if (count.lost) {
- 					if (!lost) {
--						lost = zalloc(sizeof(*lost) +
--							      session->machines.host.id_hdr_size);
-+						lost = zalloc(PERF_SAMPLE_MAX_SIZE);
- 						if (!lost) {
- 							pr_debug("Memory allocation failed\n");
- 							return;
-@@ -1973,8 +1972,7 @@ static void record__read_lost_samples(struct record *rec)
- 		lost_count = perf_bpf_filter__lost_count(evsel);
- 		if (lost_count) {
- 			if (!lost) {
--				lost = zalloc(sizeof(*lost) +
--					      session->machines.host.id_hdr_size);
-+				lost = zalloc(PERF_SAMPLE_MAX_SIZE);
- 				if (!lost) {
- 					pr_debug("Memory allocation failed\n");
- 					return;
--- 
-2.45.1
-
+Bernd
 
