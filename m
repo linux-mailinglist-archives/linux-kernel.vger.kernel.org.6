@@ -1,193 +1,238 @@
-Return-Path: <linux-kernel+bounces-200527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805998FB147
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:41:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 212D58FB14A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5B9D1C221B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD777282066
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7123C38B;
-	Tue,  4 Jun 2024 11:41:26 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D7E145A03;
+	Tue,  4 Jun 2024 11:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="csPMHLCE"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E07145355
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5151C38B;
+	Tue,  4 Jun 2024 11:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717501285; cv=none; b=Sj7jRVqjtFT1dVah94/LewtwI7RDKfcDYpMwr5gJN4mmChmUrduuxB5f+dp2GrhJcCPT7QYFexXJkXE+mpTo8kjaEPe1LGs6fNyrrKj3A+5ftI7x65x7JbwUKhtebDbL1GNWI9X5iuqmdK8OKa/1kDTlUqVD3hwVe+QI0TzJXFk=
+	t=1717501467; cv=none; b=L+otrAaH/e8T/m74j9szFbJRDzgpM5kmEF+ce2waaPHYZgdbAMHq3vkCuK6uXOhvjZ5KdVXH8493kRwG152KwMiJYpVXPDrNGy6YnhNktkGGCOFWTdXuzLfTO8HUC9AtYBJ3U028oWm+WHh6Uy4GntwHzP4vbys8fZRvx7QujZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717501285; c=relaxed/simple;
-	bh=gHACCEMoOIJa9RmUyIRHfHOzk5s4iq3m2RGLK9LJ/W8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YZ5ZNI+IwjUn48eF2ceeqwNE8inKqDsPSk0QD1ZS50GUynyDXqmHxK8CambiClQFrlWItDTxr5OZYRRtBVPq0jwtgHBh3BllEWaLNeYeaCJgULJ+19/+TgdCjgVvAnDgi0JtIlIXOSly2S5t9B676Wr4ScMJRBW++EqLQgUV3Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-374ad7fa4bbso3195805ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:41:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717501283; x=1718106083;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PTpb3uKczqp0F+PBMbqK9H6iMeeem8QEL5nf5oF+VAI=;
-        b=r1BgAeU/MMF4ZOlEP37dyIhw5GmWVCqwHvGnXVKIl8tibx/VOMQixLQlIZZcR/PQgT
-         ptck+yANxrxJi0396GlpUnfteKdW4k0xWCeGF3H8Ad26BoPuawW83smX8kl4mCWLihbT
-         y/5Rvs9WykhGBcd3hVNYd30ixqYuTxBAeUfXZyp3xHCr4OORhhyhcalPGm6ODg2lC560
-         EeBWz0rimf/DTCAg7vpuTP9AI9pLMV7DPIpveu6JWvFcSfc+ZbnAUpDv+oi7rqio0kl+
-         UojuznNwNp3eW3/XTG/ufXoDpKLvu993aIAmK/FGSGsnEkumnFiFdert4YwZIOu/uIe0
-         Cpqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVl0w9E5/LbGRvoPMpBG3I+qL4ivy9dJJ5nhmlNBikJgUEFjJACjHCryMtFzUcUnbeIiue3yKkGQFXz7fOXw7b0NCirqQY25Zofh5fE
-X-Gm-Message-State: AOJu0YyltRF6kcDo16An2KWIbU8vJ4u/NOPtr8GX8HEKswQFJsxZUhfq
-	bB+tS9RETR+3P5VrTNYQB/tlwya9Lq/eGCmC1DSFeH/hF3nZtq6+I6vlaeeDdGlLo6FBWa1pJHK
-	r88OuoZptelGgVL9FkRJCDa9Jilno8IhaziH0oULmmOuoEcMcFlitacY=
-X-Google-Smtp-Source: AGHT+IFoeslpOI+LQbyCqA+o2joY689BYWfQLzxVtxK5pkY3YJ7uG1CFSaCaeA6V6yi2a6kObIQ5Cmd3WKrbR06ze6pTe6Ap3HTG
+	s=arc-20240116; t=1717501467; c=relaxed/simple;
+	bh=GyWiXwi+C4XQpWenOLErDVKWqcsO2RL3DBOKE06RJHA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QV5dPH0eOTUP4X5F9zRwxqnHvalx9JzUNn03FC2iDMNBIcJkfeY+38In5nzalYBkepx6H3PIUKQKZ4+ZsG6AkjqihD6RFGzxQ/koyC76MZYJUYGumGlkIzPghpoGZJqYDGZUR3RWb28iG9gcFWTvnfZKx99bACO8pK2xMA6v9lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=csPMHLCE; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454Bi6b1114677;
+	Tue, 4 Jun 2024 06:44:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717501446;
+	bh=8cMYbVxYDA4UBQAYxdo5KK8U6XsBARlMjGQd9dkeC4s=;
+	h=From:To:CC:Subject:Date;
+	b=csPMHLCEacoiDxjqLULAAlKqzuCg/522SoCIv113shrieSNlPLoylT3cr2zUHEnck
+	 zmAfHRRLBVA51P04X6kdyUrjuvxw7yi8TRolAfy9c5fMt2ddwJRT0EDnxH7J9T6NnV
+	 DYsIZV9o2bJQTpXHw2MQRba/34AUKA3sCP65tNx0=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454Bi635089587
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 06:44:06 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 06:44:06 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 06:44:06 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454Bi6eX017524;
+	Tue, 4 Jun 2024 06:44:06 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 454Bi50k003940;
+	Tue, 4 Jun 2024 06:44:05 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Jan Kiszka
+	<jan.kiszka@siemens.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        MD Danish Anwar
+	<danishanwar@ti.com>
+Subject: [PATCH net-next v2] net: ti: icssg-prueth: Add multicast filtering support
+Date: Tue, 4 Jun 2024 17:14:02 +0530
+Message-ID: <20240604114402.1835973-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1887:b0:374:9aa2:9155 with SMTP id
- e9e14a558f8ab-3749aa2952bmr6213855ab.2.1717501283485; Tue, 04 Jun 2024
- 04:41:23 -0700 (PDT)
-Date: Tue, 04 Jun 2024 04:41:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e75d35061a0eed82@google.com>
-Subject: [syzbot] [bcachefs?] general protection fault in gen_poly_key
-From: syzbot <syzbot+0c7a9c4a5a4b3730d4f6@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello,
+Add multicast filtering support for ICSSG Driver.
 
-syzbot found the following issue on:
+The driver will keep a copy of multicast addresses in emac->mcast_list.
+This list will be kept in sync with the netdev list and to add / del
+multicast address icssg_prueth_mac_add_mcast / icssg_prueth_mac_del_mcast
+APIs will be called.
 
-HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ae4d14980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=238430243a58f702
-dashboard link: https://syzkaller.appspot.com/bug?extid=0c7a9c4a5a4b3730d4f6
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101c3162980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1432099a980000
+To add a mac_address for a port, driver need to call icssg_fdb_add_del()
+and pass the mac_address and BIT(port_id) to the API. The ICSSG firmware
+will then configure the rules and allow filtering.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-4a4be1ad.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e90895495e65/vmlinux-4a4be1ad.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9e28d1589c72/bzImage-4a4be1ad.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/83e4344d1bf8/mount_0.gz
+If a mac_address is added to port0 and the same mac_address needs to be
+added for port1, driver needs to pass BIT(port0) | BIT(port1) to the
+icssg_fdb_add_del() API. If driver just pass BIT(port1) then the entry for
+port0 will be overwritten / lost. This is a design constraint on the
+firmware side.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0c7a9c4a5a4b3730d4f6@syzkaller.appspotmail.com
+To overcome this in the driver, to add any mac_address for let's say portX
+driver first checks if the same mac_address is already added for any other
+port. If yes driver calls icssg_fdb_add_del() with BIT(portX) |
+BIT(other_existing_port). If not, driver calls icssg_fdb_add_del() with
+BIT(portX).
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000903d: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: probably user-memory-access in range [0x00000000000481e8-0x00000000000481ef]
-CPU: 1 PID: 5189 Comm: syz-executor842 Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:gen_poly_key.isra.0+0x10d/0x330 fs/bcachefs/checksum.c:191
-Code: 00 00 00 00 05 00 00 00 80 89 44 24 0c e8 db 56 f0 fd 49 8d bd e8 81 04 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 ce 01 00 00 4c 89 fa 4d 8b 8d e8 81 04 00 48 b8
-RSP: 0018:ffffc900031eee48 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 1ffff9200063ddcb RCX: 0000000000000000
-RDX: 000000000000903d RSI: 0000000000000000 RDI: 00000000000481e8
-RBP: ffffc900031eef20 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffc900031eee98 R11: 0000000000000000 R12: ffffc900031eee98
-R13: 0000000000000000 R14: ffffc900031ef028 R15: ffffc900031eee84
-FS:  0000555568ecb380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055954aed89d8 CR3: 00000000236b0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_checksum+0x1f9/0x2e0 fs/bcachefs/checksum.c:227
- read_one_super+0x567/0x1530 fs/bcachefs/super-io.c:672
- __bch2_read_super+0xc81/0x12a0 fs/bcachefs/super-io.c:797
- bch2_fs_open+0x3e5/0x1110 fs/bcachefs/super.c:2070
- bch2_mount+0xdcc/0x1130 fs/bcachefs/fs.c:1917
- legacy_get_tree+0x109/0x220 fs/fs_context.c:662
- vfs_get_tree+0x8f/0x380 fs/super.c:1780
- do_new_mount fs/namespace.c:3352 [inline]
- path_mount+0x14e6/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc8c1cf78fa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdfeaaa7e8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffdfeaaa800 RCX: 00007fc8c1cf78fa
-RDX: 0000000020005d80 RSI: 0000000020005dc0 RDI: 00007ffdfeaaa800
-RBP: 0000000000000004 R08: 00007ffdfeaaa840 R09: 0000000000005d9b
-R10: 0000000000000480 R11: 0000000000000282 R12: 0000000000000480
-R13: 00007ffdfeaaa840 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:gen_poly_key.isra.0+0x10d/0x330 fs/bcachefs/checksum.c:191
-Code: 00 00 00 00 05 00 00 00 80 89 44 24 0c e8 db 56 f0 fd 49 8d bd e8 81 04 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 ce 01 00 00 4c 89 fa 4d 8b 8d e8 81 04 00 48 b8
-RSP: 0018:ffffc900031eee48 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 1ffff9200063ddcb RCX: 0000000000000000
-RDX: 000000000000903d RSI: 0000000000000000 RDI: 00000000000481e8
-RBP: ffffc900031eef20 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffc900031eee98 R11: 0000000000000000 R12: ffffc900031eee98
-R13: 0000000000000000 R14: ffffc900031ef028 R15: ffffc900031eee84
-FS:  0000555568ecb380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055954aed89d8 CR3: 00000000236b0000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	00 00                	add    %al,(%rax)
-   4:	05 00 00 00 80       	add    $0x80000000,%eax
-   9:	89 44 24 0c          	mov    %eax,0xc(%rsp)
-   d:	e8 db 56 f0 fd       	call   0xfdf056ed
-  12:	49 8d bd e8 81 04 00 	lea    0x481e8(%r13),%rdi
-  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  20:	fc ff df
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 ce 01 00 00    	jne    0x202
-  34:	4c 89 fa             	mov    %r15,%rdx
-  37:	4d 8b 8d e8 81 04 00 	mov    0x481e8(%r13),%r9
-  3e:	48                   	rex.W
-  3f:	b8                   	.byte 0xb8
+The same thing is applicable for deleting mac_addresses as well. This
+logic is in icssg_prueth_mac_add_mcast / icssg_prueth_mac_del_mcast APIs.
 
-
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v1 -> v2:
+*) Rebased on latest net-next/main.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+NOTE: This series can be applied cleanly on the tip of net-next/main. This
+series doesn't depend on any other ICSSG driver related series that is
+floating around in netdev.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+v1 https://lore.kernel.org/all/20240516091752.2969092-1-danishanwar@ti.com/
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 50 ++++++++++++++++++--
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h |  3 ++
+ 2 files changed, 49 insertions(+), 4 deletions(-)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+index 6e65aa0977d4..03dd49f0afb7 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -439,6 +439,37 @@ const struct icss_iep_clockops prueth_iep_clockops = {
+ 	.perout_enable = prueth_perout_enable,
+ };
+ 
++static int icssg_prueth_mac_add_mcast(struct net_device *ndev, const u8 *addr)
++{
++	struct prueth_emac *emac = netdev_priv(ndev);
++	int port_mask = BIT(emac->port_id);
++
++	port_mask |= icssg_fdb_lookup(emac, addr, 0);
++	icssg_fdb_add_del(emac, addr, 0, port_mask, true);
++	icssg_vtbl_modify(emac, 0, port_mask, port_mask, true);
++
++	return 0;
++}
++
++static int icssg_prueth_mac_del_mcast(struct net_device *ndev, const u8 *addr)
++{
++	struct prueth_emac *emac = netdev_priv(ndev);
++	int port_mask = BIT(emac->port_id);
++	int other_port_mask;
++
++	other_port_mask = port_mask ^ icssg_fdb_lookup(emac, addr, 0);
++
++	icssg_fdb_add_del(emac, addr, 0, port_mask, false);
++	icssg_vtbl_modify(emac, 0, port_mask, port_mask, false);
++
++	if (other_port_mask) {
++		icssg_fdb_add_del(emac, addr, 0, other_port_mask, true);
++		icssg_vtbl_modify(emac, 0, other_port_mask, other_port_mask, true);
++	}
++
++	return 0;
++}
++
+ /**
+  * emac_ndo_open - EMAC device open
+  * @ndev: network adapter device
+@@ -547,6 +578,8 @@ static int emac_ndo_open(struct net_device *ndev)
+ 
+ 	prueth->emacs_initialized++;
+ 
++	__hw_addr_init(&emac->mcast_list);
++
+ 	queue_work(system_long_wq, &emac->stats_work.work);
+ 
+ 	return 0;
+@@ -599,6 +632,9 @@ static int emac_ndo_stop(struct net_device *ndev)
+ 
+ 	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
+ 
++	__dev_mc_unsync(ndev, icssg_prueth_mac_del_mcast);
++	__hw_addr_init(&emac->mcast_list);
++
+ 	atomic_set(&emac->tdown_cnt, emac->tx_ch_num);
+ 	/* ensure new tdown_cnt value is visible */
+ 	smp_mb__after_atomic();
+@@ -675,10 +711,15 @@ static void emac_ndo_set_rx_mode_work(struct work_struct *work)
+ 		return;
+ 	}
+ 
+-	if (!netdev_mc_empty(ndev)) {
+-		emac_set_port_state(emac, ICSSG_EMAC_PORT_MC_FLOODING_ENABLE);
+-		return;
+-	}
++	/* make a mc list copy */
++
++	netif_addr_lock_bh(ndev);
++	__hw_addr_sync(&emac->mcast_list, &ndev->mc, ndev->addr_len);
++	netif_addr_unlock_bh(ndev);
++
++	__hw_addr_sync_dev(&emac->mcast_list, ndev,
++			   icssg_prueth_mac_add_mcast,
++			   icssg_prueth_mac_del_mcast);
+ }
+ 
+ /**
+@@ -767,6 +808,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+ 	SET_NETDEV_DEV(ndev, prueth->dev);
+ 	spin_lock_init(&emac->lock);
+ 	mutex_init(&emac->cmd_lock);
++	__hw_addr_init(&emac->mcast_list);
+ 
+ 	emac->phy_node = of_parse_phandle(eth_node, "phy-handle", 0);
+ 	if (!emac->phy_node && !of_phy_is_fixed_link(eth_node)) {
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+index 5eeeccb73665..2bfda26b5901 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+@@ -155,6 +155,9 @@ struct prueth_emac {
+ 	unsigned int tx_ts_enabled : 1;
+ 	unsigned int half_duplex : 1;
+ 
++	/* List for storing multicast addresses */
++	struct netdev_hw_addr_list mcast_list;
++
+ 	/* DMA related */
+ 	struct prueth_tx_chn tx_chns[PRUETH_MAX_TX_QUEUES];
+ 	struct completion tdown_complete;
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+base-commit: 2589d668e1a6ebe85329f1054cdad13647deac06
+-- 
+2.34.1
 
-If you want to undo deduplication, reply with:
-#syz undup
 
