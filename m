@@ -1,165 +1,175 @@
-Return-Path: <linux-kernel+bounces-200121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ADD8FAB32
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:48:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B68E8FAB40
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93FBA1C23B7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 270301F257FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F28513E888;
-	Tue,  4 Jun 2024 06:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1425B13FD6D;
+	Tue,  4 Jun 2024 06:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+89om5o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KiJcuOEp"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8641EB27;
-	Tue,  4 Jun 2024 06:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF83013E04D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717483678; cv=none; b=koBwn+3mAsUIRcqXiJ8AO8ZcR9sZBYskqRueedRJt/8B7PgTv4HwMxc5qZd2PH6QY6rzFOKF6LrW8zbJeVZcBqfyo3YgSBh8TFLPzFhB7g0IekYQCmE+MZapM/Aj+yPCQX3PNFK8FppbARZlxGz+uuHN9uL1go3Xu4zkm1UTIRs=
+	t=1717483738; cv=none; b=jCDyTsDrsUTE4hRKTTKipHTOrfPY4zSaKyS7hW21M2V6DY613up//41e4SaJSWRREZfn1TMwoxxo8eCVIJ5DnzmhcrIWv5WK0fzX7cdBg3XRSf+IvDtG3tR4xXn4fkbsT77uQQbb40s2OcXTOKPr6jVv4FajRVzi7pSPRfg+tVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717483678; c=relaxed/simple;
-	bh=uIPygomYm0DY0O7nBPio+VmPX9sGfx6Xe1aUI6RthGM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o/CAWnuxO5i5M9b44pUGGMAy8l/n8+uJifHKrhDMGiCiVv8pII3gEpp3yizqT/LTBd61wWMKZtAr1WjEZbyQzO/l+SPBQl8h5zzPJxrpaiprutaLYmjSZbNNN1j/Rpi7pXYnRDCwiNtzwx6XYM7727j6i6dzua3jK1EJNoYlPL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+89om5o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68D98C2BBFC;
-	Tue,  4 Jun 2024 06:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717483678;
-	bh=uIPygomYm0DY0O7nBPio+VmPX9sGfx6Xe1aUI6RthGM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l+89om5oc2QsWo1rjcmO9gf5d4Alm3lYVtDlF9G93VenB8ryL3JOfeVCe4dJkmrCJ
-	 uLNvLPWjcVORWqvf/vzKZ+R89Uxy73CYZHlorC9KV18U6ZMv2RGxcnqU0F39+629Nk
-	 ZNi3ZP6cfGGaaHz9CdRuFynMKTENr1xFItFLriglC7lvcS3h7XOlQnDRVqTV3nxOgZ
-	 wSMM96rSfPrvrzKlItELkXk+d008YEu3+wOIcT6WPxB3jNZB7cObijkJ1yqEMwnd5A
-	 Jg2Z9Ht/kd7xjIuI86mDwMzQQpP8HDSlDye385F2iaIRBw8T5L70GgrQyIdxLvsNHK
-	 jY6wkYDu2+y5g==
-Message-ID: <c4651a18-316b-42e0-a67b-673fedb05b5a@kernel.org>
-Date: Tue, 4 Jun 2024 08:47:52 +0200
+	s=arc-20240116; t=1717483738; c=relaxed/simple;
+	bh=O1UfMaKD/hmWFcGVX0dHXqkE0XTi/7iwjX0Urne5AX0=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=KT1EFQVN+5d1XUAa3MWvrSbWer+tF7+Ai3BD3Y0Kd1KODsjtCjeOTpYuJvJMowsuIMkAaNp5RD1LVthsiygEtVFg9yykrPEwlzv6ZMAw28vgK8YjMB/KMBZxZI/vwCq9hczE2sXB+buzLq9ZuM2Y7HjLLE/a1v1DhODkFzIXd30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KiJcuOEp; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240604064853euoutp02ccf8bb280b348f96e46d889ffa7e1932~VulsRJ6nJ1624716247euoutp02L
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:48:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240604064853euoutp02ccf8bb280b348f96e46d889ffa7e1932~VulsRJ6nJ1624716247euoutp02L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717483733;
+	bh=QbTrIPhFImjlKnd/ohqIcW3b/iR9Pfpr+J0VPVe1xtU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=KiJcuOEp0bmxzmLWz26L/CKL9Uy1Jrkh2EThm1VuZfJKp/W5MYRnq8MC6Y4QqDQz4
+	 S+gBnPR7KqdRUcFuAx1RehG0Ue2fsvKxjMnA62wYwIBPE8cyDwnzyjP4IHKZGYEdaw
+	 9Vxmz12NHonqKK0YOlJz2FwJOYsBbPEknfqGyC5U=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240604064852eucas1p1d00075de5770a5fa8593c734aef9db91~Vulr3Drz81683916839eucas1p1C;
+	Tue,  4 Jun 2024 06:48:52 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id F8.C4.09875.4D8BE566; Tue,  4
+	Jun 2024 07:48:52 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240604064852eucas1p2db69f8d2d13b82887fbb3a4dd535c024~Vulra1_of1670216702eucas1p2K;
+	Tue,  4 Jun 2024 06:48:52 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240604064852eusmtrp1071da7d58997076776fcc54baf4f28c8~VulrZuwRy1417014170eusmtrp1I;
+	Tue,  4 Jun 2024 06:48:52 +0000 (GMT)
+X-AuditID: cbfec7f4-131ff70000002693-87-665eb8d42702
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 7E.87.08810.4D8BE566; Tue,  4
+	Jun 2024 07:48:52 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240604064852eusmtip1d292ba451e2cc73f72b5fe4a618458fc~VulrNK7321516115161eusmtip1R;
+	Tue,  4 Jun 2024 06:48:52 +0000 (GMT)
+Received: from localhost (106.210.248.71) by CAMSVWEXC01.scsc.local
+	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 4 Jun 2024 07:48:51 +0100
+Date: Tue, 4 Jun 2024 08:48:47 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Eric
+	Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, <netdev@vger.kernel.org>
+Subject: Re: [PATCH 3/8] sysctl: Remove check for sentinel element in
+ ctl_table arrays
+Message-ID: <20240604064847.4os2h42bj3cg6ptl@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
-To: David Lechner <dlechner@baylibre.com>,
- Kim Seer Paller <kimseer.paller@analog.com>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
-References: <20240603012200.16589-1-kimseer.paller@analog.com>
- <20240603012200.16589-5-kimseer.paller@analog.com>
- <2942a938-19b9-4642-8ed0-8e17e4825bc5@baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2942a938-19b9-4642-8ed0-8e17e4825bc5@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240604-jag-sysctl_remset-v1-3-2df7ecdba0bd@samsung.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTURSF8zoz7VAtmRa0N6AgdYuoKEpw4orGZaJiNMbdII0MSwQ0U4u7
+	4o6tEqAgSpVUolbLEjMS4oq2xDaIYdEacWviGlQUShVxSbV0cPn33XfPefeel0diigoihEzL
+	3Mxymep0lViK19i/NY11XklIHu/yjqJPNR3A6Tf2lxL6nj6Dbq7JJegbN+tx+sG1U2LaVfGL
+	oFvz3iDabhpIdze0ozgpY8xuwZnqi49FjInXMrzliJjhuwokTEftQzHj4cMWS1ZLpyax6WlZ
+	LDdueqI0lbfUiTd5pFu7PDlYNmogdSiABCoGeMtxiQ5JSQV1AUFpURESis8IblV1E0LhQbDv
+	V4/oj8Ww14gLDTMCy7sq9Ff1pPasWCguI2gzvyB6LTg1DD7xd/12MTUGmtqfYb2iYKoQgfN5
+	qX8IRt1GcMLl8quCqJVgtRr8LKPiQFdhxASWQ/3J13gvY76bTNe7fONIH4eC2euPFEDNgzNf
+	jH27qsDa0oELvAsq7ff8UYE6HACFukpCaMyGvOzDmMBB8N5RLRF4EDQYjuKCweB7Dm9nn7sc
+	wfm9X/pGTIEDztd9jplwOqdO1LsRUIHQ+lEuLBoIBTXFmHAsg5xDCkE9Aspd7XgeGlryX7SS
+	/6KV/ItmQpgFKVmtJiOF1UzIZLdEadQZGm1mStT6jRk88n2oBq/j8xVkfu+OsiERiWwISEwV
+	LMvdvSZZIUtSb9vOchvXcdp0VmNDoSSuUsqGJ4WzCipFvZndwLKbWO5PV0QGhGSLipWdr/Al
+	nZfSTEvpujTP4MZIjyQ2CVIjrOvuFC6zL3iI5kdY7Q+S14Zt6dBONoSX6XpWrl44qYy7vqGt
+	bH+WLObqKvdH5dvmOSXh7mnnh14Ywti+ypVUTv9jcSmDSiOseqs9/pFeHhSSoMdD5/ItH3aw
+	gd9mO9OZ78Oejpwc614UzfFzTtcb3iUYssZNit41a3kzufO4jagcHq8vXkDcGB07NtFBjvnR
+	r6dt2Yx25ytiYePTi2tES/fg536aHR0f3EXBYXeDqu6Y8w2OajLfCO7y2rfXqgcv6n7RvD8x
+	XhYjP6sZ0Dg+knsWPOI5mft1yLHdqfcfH5zoWlHgNaHWQhWuSVVHR2KcRv0b5vVlPL8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBIsWRmVeSWpSXmKPExsVy+t/xu7pXdsSlGcw/wW0x53wLi8XTY4/Y
+	Lc5051pc2NbHarFn70kWi8u75rBZ3Fvzn9XixoSnjBbHFohZfDv9htGBy2N2w0UWjy0rbzJ5
+	LNhU6rFpVSebx6ZPk9g93u+7yubxeZNcAHuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWe
+	obF5rJWRqZK+nU1Kak5mWWqRvl2CXsamVYfZCj5zVXz63MHcwHiao4uRk0NCwERicuNsli5G
+	Lg4hgaWMEq8+PmaBSMhIbPxylRXCFpb4c62LDaLoI6PEqVtNUB2bGSXOPHsFVsUioCLxbtMp
+	JhCbTUBH4vybO8wgRSICUxglXrxZwg7iMAscYJSYce8eWJWwQITEwYOTwWxeAQeJrjWzmSHG
+	XmeU2PZ1BlRCUOLkzCdgRzEDjV2w+xPQIRxAtrTE8n9gT3AKuEss/DqbCeJWJYmDF99D/VAr
+	8er+bsYJjMKzkEyahWTSLIRJCxiZVzGKpJYW56bnFhvqFSfmFpfmpesl5+duYgRG6bZjPzfv
+	YJz36qPeIUYmDsZDjBIczEoivH110WlCvCmJlVWpRfnxRaU5qcWHGE2BgTGRWUo0OR+YJvJK
+	4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpiSmxraVvFr3flXfCSr
+	zH26gLjZvjaTNV5LrppqPDy/5H/k8YNsQSWTnUTmLy1PivznfGAH8wNGG2b5PxN493l8Lgo9
+	+9K0zGZx31UV6wchCoHrJ/2VEOTyerjs55k5C2IXXe892Ro9Z+NyppU3th2b4ij++4HYpDkz
+	omNexexbeibkl6RIwXHOefdYlxR72J6crzzxdqXFld0TmXSbYzfyHV74K9vslIHJu8Cqz0Xz
+	libnrRDv2i0t+OzUulPJGTeOXeEoNeB2S6+fXqF0Iz5tluWdSQ4vWIVcL7tYl/w/XtgitK/p
+	+rqjYV5fZhz65tG/7qnZ11gHBpbfL7RLWCJapXpdN7Htj3T4tOzkcsbtSizFGYmGWsxFxYkA
+	DqYi+FsDAAA=
+X-CMS-MailID: 20240604064852eucas1p2db69f8d2d13b82887fbb3a4dd535c024
+X-Msg-Generator: CA
+X-RootMTR: 20240604063005eucas1p2a0ea8cbe2d925b1e63f0854f719d0b01
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240604063005eucas1p2a0ea8cbe2d925b1e63f0854f719d0b01
+References: <20240604-jag-sysctl_remset-v1-0-2df7ecdba0bd@samsung.com>
+	<CGME20240604063005eucas1p2a0ea8cbe2d925b1e63f0854f719d0b01@eucas1p2.samsung.com>
+	<20240604-jag-sysctl_remset-v1-3-2df7ecdba0bd@samsung.com>
 
-On 03/06/2024 21:59, David Lechner wrote:
-> On 6/2/24 8:21 PM, Kim Seer Paller wrote:
->> Add documentation for ltc2672.
->>
->> Reported-by: Rob Herring (Arm) <robh@kernel.org>
->> Closes: https://lore.kernel.org/all/171643825573.1037396.2749703571529285460.robh@kernel.org/
->> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
->> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
->> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
->> ---
->>  .../bindings/iio/dac/adi,ltc2672.yaml         | 158 ++++++++++++++++++
->>  MAINTAINERS                                   |   1 +
->>  2 files changed, 159 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
->> new file mode 100644
->> index 000000000000..d143a9db7010
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
->> @@ -0,0 +1,158 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/dac/adi,ltc2672.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Analog Devices LTC2672 DAC
->> +
->> +maintainers:
->> +  - Michael Hennerich <michael.hennerich@analog.com>
->> +  - Kim Seer Paller <kimseer.paller@analog.com>
->> +
->> +description: |
->> +  Analog Devices LTC2672 5 channel, 16 bit, 300mA DAC
->> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc2672.pdf
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - adi,ltc2672
-> 
-> The linked datasheet describes 12-bit and 16-bit versions, so should we have
-> two compatibles here? adi,ltc2672-12, adi,ltc2672-16
+On Tue, Jun 04, 2024 at 08:29:21AM +0200, Joel Granados via B4 Relay wrote:
+> From: Joel Granados <j.granados@samsung.com>
+> --- a/net/sysctl_net.c
+> +++ b/net/sysctl_net.c
+> @@ -127,7 +127,7 @@ static void ensure_safe_net_sysctl(struct net *net, const char *path,
+>  
+>  	pr_debug("Registering net sysctl (net %p): %s\n", net, path);
+>  	ent = table;
+> -	for (size_t i = 0; i < table_size && ent->procname; ent++, i++) {
+> +	for (size_t i = 0; i < table_size; ent++, i++) {
+>  		unsigned long addr;
+>  		const char *where;
+>  
+> @@ -165,17 +165,10 @@ struct ctl_table_header *register_net_sysctl_sz(struct net *net,
+>  						struct ctl_table *table,
+>  						size_t table_size)
+>  {
+> -	int count;
+> -	struct ctl_table *entry;
+> -
+>  	if (!net_eq(net, &init_net))
+>  		ensure_safe_net_sysctl(net, path, table, table_size);
+>  
+> -	entry = table;
+> -	for (count = 0 ; count < table_size && entry->procname; entry++, count++)
+> -		;
+> -
+> -	return __register_sysctl_table(&net->sysctls, path, table, count);
+> +	return __register_sysctl_table(&net->sysctls, path, table, table_size);
+>  }
+>  EXPORT_SYMBOL_GPL(register_net_sysctl_sz);
+>  
 
-Is their programming model different?
+Given that this is a very small network related patch, I'm queueing this
+in through the sysctl-next branch. Please let me know if you would
+rather take it through the networking workflow.
 
-Best regards,
-Krzysztof
+Best
 
+-- 
+
+Joel Granados
 
