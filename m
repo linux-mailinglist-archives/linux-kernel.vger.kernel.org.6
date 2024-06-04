@@ -1,269 +1,144 @@
-Return-Path: <linux-kernel+bounces-201275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A6B8FBC68
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:18:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 240348FBC6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58ABB28636D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D576E286697
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E806A14B089;
-	Tue,  4 Jun 2024 19:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lEfy7KFv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ApTIBBZg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lEfy7KFv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ApTIBBZg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC0414B061;
+	Tue,  4 Jun 2024 19:18:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418B713E8BF;
-	Tue,  4 Jun 2024 19:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C50801;
+	Tue,  4 Jun 2024 19:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717528672; cv=none; b=mEX1F9fLsb5iqYRpvCobNdsFqlxESG1GWs4s/Yk2mHvPGHRFoSYoxx+uTKfBRytSnGUOK+7Z/DleY4v220iYwAaATS+JEnB8QL6vhQ2J7D2+akjyVtakZm73ePpSLBdkSUgAHtIQ6uFTEPeIOZuSEd7m9U08YrqylskiU2XjlSs=
+	t=1717528703; cv=none; b=kJc+3aa5Ps+Y1gfOl93ukpICF1rE4w1eKwr1nYkVtyxc9R/OQaoxK3fDwL3xVceGFdpq647Uz9srn+2k3KcKns7Ie+IYXQZptb13ASUdylCD+bSX9MHkVL0i0zy7hENFRzmAT/Oh8fHLJ19woyNdyA+IdXzjgM6NdBw9fqWjGHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717528672; c=relaxed/simple;
-	bh=bhz6beSoZHU0cD/b+1WGcJg+4R07D7ffbbCwhG5yiv0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fbHukTugZMx39cSXjS0LUKWDBEht3FSVaANifzHXrCegfzz44u5d7W2nBUW6EXijnKAA3wNbzZ6NQGpqY+hBBeNjEIjmybl2fnEOvIME+dJka4yNCdwxHH6DjW4ilgQL1nkHuT+dmq3ZZOm4WibW2hfeBB/4BMAz6HIXHO1kCaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lEfy7KFv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ApTIBBZg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lEfy7KFv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ApTIBBZg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 44A8F21A49;
-	Tue,  4 Jun 2024 19:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717528667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rO2JAWmDJtlVxTQDorgmfpM/zzgopthZzmv/CylN0UA=;
-	b=lEfy7KFvbYAu5Gy+ndRbat4fzOU68RDR7fbdoOvM8TNr+eLnWDKN3NLWHNk5nTEB+RBK/J
-	VVk1aglcyJbAa95ekP89831ZhX+bpi36WVN+SgUs1vlh9OZrCfhOshwyHnQrQUseKv5/yt
-	4429yG93oPOP/VXrBtWeE3tCOPD+aho=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717528667;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rO2JAWmDJtlVxTQDorgmfpM/zzgopthZzmv/CylN0UA=;
-	b=ApTIBBZgztLzgx2iXdTJhOWHbFiIpXmzJZXspoqfRyp+gK25RM6uuwfp5piowKx1ScboFA
-	x7Mzq2DSvBYLAsCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717528667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rO2JAWmDJtlVxTQDorgmfpM/zzgopthZzmv/CylN0UA=;
-	b=lEfy7KFvbYAu5Gy+ndRbat4fzOU68RDR7fbdoOvM8TNr+eLnWDKN3NLWHNk5nTEB+RBK/J
-	VVk1aglcyJbAa95ekP89831ZhX+bpi36WVN+SgUs1vlh9OZrCfhOshwyHnQrQUseKv5/yt
-	4429yG93oPOP/VXrBtWeE3tCOPD+aho=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717528667;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rO2JAWmDJtlVxTQDorgmfpM/zzgopthZzmv/CylN0UA=;
-	b=ApTIBBZgztLzgx2iXdTJhOWHbFiIpXmzJZXspoqfRyp+gK25RM6uuwfp5piowKx1ScboFA
-	x7Mzq2DSvBYLAsCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E55BD13A93;
-	Tue,  4 Jun 2024 19:17:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mLlRMVpoX2bXYwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 04 Jun 2024 19:17:46 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
-  jaegeuk@kernel.org,  adilger.kernel@dilger.ca,  tytso@mit.edu,
-  chao@kernel.org,  viro@zeniv.linux.org.uk,  brauner@kernel.org,
-  jack@suse.cz,  ebiggers@google.com,  kernel@collabora.com,  Gabriel
- Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v17 4/7] ext4: Reuse generic_ci_match for ci comparisons
-In-Reply-To: <20240529082634.141286-5-eugen.hristev@collabora.com> (Eugen
-	Hristev's message of "Wed, 29 May 2024 11:26:31 +0300")
-Organization: SUSE
-References: <20240529082634.141286-1-eugen.hristev@collabora.com>
-	<20240529082634.141286-5-eugen.hristev@collabora.com>
-Date: Tue, 04 Jun 2024 15:17:41 -0400
-Message-ID: <87cyowldpm.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717528703; c=relaxed/simple;
+	bh=XngVXlaW0L7tH68pFG/Glx9+GjRa4NOjVuZqlf21XUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K98cPWovZ5nlECNzbEWVG4K065bGigu00ad355kdmYuSAi6ISc6/EYxDq88UaStKqGVIyopSX+1FakYldh0NeXHSs1tCyrUsMPuA67rahs8I64BCV3urionkPCZggjZtecpjJh9JRzPy59kOYpH19le4GSNGjpvt3hIdb8dpeu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F561C2BBFC;
+	Tue,  4 Jun 2024 19:18:21 +0000 (UTC)
+Date: Tue, 4 Jun 2024 15:18:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH v3 00/27] function_graph: Allow multiple users for
+ function graph tracing
+Message-ID: <20240604151821.5694e908@gandalf.local.home>
+In-Reply-To: <20240604145742.5703d074@gandalf.local.home>
+References: <20240603190704.663840775@goodmis.org>
+	<20240604081850.59267aa9@rorschach.local.home>
+	<Zl8oWNhkEPleJ3B_@J2N7QTR9R3>
+	<20240604123124.456d19cf@gandalf.local.home>
+	<Zl9JFnzKGuUM10X2@J2N7QTR9R3>
+	<20240604145742.5703d074@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+On Tue, 4 Jun 2024 14:57:42 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> From: Gabriel Krisman Bertazi <krisman@collabora.com>
->
-> Instead of reimplementing ext4_match_ci, use the new libfs helper.
->
-> It also adds a comment explaining why fname->cf_name.name must be
-> checked prior to the encryption hash optimization, because that tripped
-> me before.
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
-> Reviewed-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/ext4/namei.c | 91 +++++++++++++++----------------------------------
->  1 file changed, 27 insertions(+), 64 deletions(-)
->
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index ec4c9bfc1057..20668741a23c 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -1390,58 +1390,6 @@ static void dx_insert_block(struct dx_frame *frame, u32 hash, ext4_lblk_t block)
->  }
->  
->  #if IS_ENABLED(CONFIG_UNICODE)
-> -/*
-> - * Test whether a case-insensitive directory entry matches the filename
-> - * being searched for.  If quick is set, assume the name being looked up
-> - * is already in the casefolded form.
-> - *
-> - * Returns: 0 if the directory entry matches, more than 0 if it
-> - * doesn't match or less than zero on error.
-> - */
-> -static int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
-> -			   u8 *de_name, size_t de_name_len, bool quick)
-> -{
-> -	const struct super_block *sb = parent->i_sb;
-> -	const struct unicode_map *um = sb->s_encoding;
-> -	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
-> -	struct qstr entry = QSTR_INIT(de_name, de_name_len);
-> -	int ret;
-> -
-> -	if (IS_ENCRYPTED(parent)) {
-> -		const struct fscrypt_str encrypted_name =
-> -				FSTR_INIT(de_name, de_name_len);
-> -
-> -		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-> -		if (!decrypted_name.name)
-> -			return -ENOMEM;
-> -		ret = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
-> -						&decrypted_name);
-> -		if (ret < 0)
-> -			goto out;
-> -		entry.name = decrypted_name.name;
-> -		entry.len = decrypted_name.len;
-> -	}
-> -
-> -	if (quick)
-> -		ret = utf8_strncasecmp_folded(um, name, &entry);
-> -	else
-> -		ret = utf8_strncasecmp(um, name, &entry);
-> -	if (ret < 0) {
-> -		/* Handle invalid character sequence as either an error
-> -		 * or as an opaque byte sequence.
-> -		 */
-> -		if (sb_has_strict_encoding(sb))
-> -			ret = -EINVAL;
-> -		else if (name->len != entry.len)
-> -			ret = 1;
-> -		else
-> -			ret = !!memcmp(name->name, entry.name, entry.len);
-> -	}
-> -out:
-> -	kfree(decrypted_name.name);
-> -	return ret;
-> -}
-> -
->  int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
->  				  struct ext4_filename *name)
->  {
-> @@ -1503,20 +1451,35 @@ static bool ext4_match(struct inode *parent,
->  #if IS_ENABLED(CONFIG_UNICODE)
->  	if (IS_CASEFOLDED(parent) &&
->  	    (!IS_ENCRYPTED(parent) || fscrypt_has_encryption_key(parent))) {
-> -		if (fname->cf_name.name) {
-> -			if (IS_ENCRYPTED(parent)) {
-> -				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
-> -					fname->hinfo.minor_hash !=
-> -						EXT4_DIRENT_MINOR_HASH(de)) {
-> +		int ret;
->  
-> -					return false;
-> -				}
-> -			}
-> -			return !ext4_ci_compare(parent, &fname->cf_name,
-> -						de->name, de->name_len, true);
-> +		/*
-> +		 * Just checking IS_ENCRYPTED(parent) below is not
-> +		 * sufficient to decide whether one can use the hash for
-> +		 * skipping the string comparison, because the key might
-> +		 * have been added right after
-> +		 * ext4_fname_setup_ci_filename().  In this case, a hash
-> +		 * mismatch will be a false negative.  Therefore, make
-> +		 * sure cf_name was properly initialized before
-> +		 * considering the calculated hash.
-> +		 */
-> +		if (IS_ENCRYPTED(parent) && fname->cf_name.name &&
-> +		    (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
-> +		     fname->hinfo.minor_hash != EXT4_DIRENT_MINOR_HASH(de)))
-> +			return false;
-> +
-> +		ret = generic_ci_match(parent, fname->usr_fname,
-> +				       &fname->cf_name, de->name,
-> +				       de->name_len);
-> +		if (ret < 0) {
-> +			/*
-> +			 * Treat comparison errors as not a match.  The
-> +			 * only case where it happens is on a disk
-> +			 * corruption or ENOMEM.
-> +			 */
-> +			return false;
->  		}
-> -		return !ext4_ci_compare(parent, fname->usr_fname, de->name,
-> -						de->name_len, false);
+> Bah, I just ran the test.d/ftrace/func-filter-pid.tc and it fails too. This
+> did pass my other tests that do run ftracetests. Hmm, I just ran it on my
+> test box that does the tests and it passes there. I wonder if there's some
+> config option that makes it fail :-/
+> 
+> Well, now that I see it fail, I can investigate.
 
-With the changes to patch 3 in this iteration, This could become:
+Ah, figured it out. The updated pid test isn't working. This explains why
+my test machine didn't fail, as it doesn't have the updated ftracetests.
 
-/*
- * Treat comparison errors as not a match.  The
- * only case where it happens is disk corruption
- * or ENOMEM.
- */
-return ext4_ci_compare(parent, fname->usr_fname, de->name,
-		       de->name_len, false) > 0;
+The problem was that I never set the funcgraph-proc option, even though I
+saved it :-p
 
--- 
-Gabriel Krisman Bertazi
+That is, it shows:
+
+> 	+ cat trace
+> 	# tracer: function_graph
+> 	#
+> 	# CPU  DURATION                  FUNCTION CALLS
+> 	# |     |   |                     |   |   |   |
+> 	 3) ! 143.685 us  |  kernel_clone();
+> 	 3) ! 127.055 us  |  kernel_clone();
+> 	 1) ! 127.170 us  |  kernel_clone();
+> 	 3) ! 126.840 us  |  kernel_clone();
+
+But when you do: echo 1 > options/funcgraph-proc
+
+You get:
+
+# cat trace
+# tracer: function_graph
+#
+# CPU  TASK/PID         DURATION                  FUNCTION CALLS
+# |     |    |           |   |                     |   |   |   |
+ 4)    bash-939    | # 1070.009 us |  kernel_clone();
+ 4)    bash-939    | # 1116.903 us |  kernel_clone();
+ 5)    bash-939    | ! 976.133 us  |  kernel_clone();
+ 5)    bash-939    | ! 954.012 us  |  kernel_clone();
+ 5)    bash-939    | ! 905.825 us  |  kernel_clone();
+ 5)    bash-939    | # 1130.922 us |  kernel_clone();
+ 7)    bash-939    | # 1097.648 us |  kernel_clone();
+ 0)    bash-939    | # 1008.000 us |  kernel_clone();
+ 3)    bash-939    | # 1023.391 us |  kernel_clone();
+ 4)    bash-939    | # 1033.008 us |  kernel_clone();
+ 4)    bash-939    | ! 949.072 us  |  kernel_clone();
+ 4)    bash-939    | # 1027.990 us |  kernel_clone();
+ 4)    bash-939    | ! 954.678 us  |  kernel_clone();
+ 4)    bash-939    | ! 996.557 us  |  kernel_clone();
+
+Without that option, function graph does no show what process is being
+recorded (except at sched switch)
+
+Can you add this patch to the test and see if it works again?
+
+-- Steve
+
+diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
+index c6fc9d31a496..8dcce001881d 100644
+--- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
++++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
+@@ -8,6 +8,7 @@
+ # Also test it on an instance directory
+ 
+ do_function_fork=1
++do_funcgraph_proc=1
+ 
+ if [ ! -f options/function-fork ]; then
+     do_function_fork=0
+@@ -28,6 +29,7 @@ fi
+ 
+ if [ $do_funcgraph_proc -eq 1 ]; then
+     orig_value2=`cat options/funcgraph-proc`
++    echo 1 > options/funcgraph-proc
+ fi
+ 
+ do_reset() {
 
