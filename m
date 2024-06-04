@@ -1,234 +1,151 @@
-Return-Path: <linux-kernel+bounces-200621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F918FB27B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:44:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AB88FB280
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850EF1F25FFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416E328330E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E54146010;
-	Tue,  4 Jun 2024 12:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A46146596;
+	Tue,  4 Jun 2024 12:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IUkxx1rS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tAOJBFRc"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C644144D1E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04C9146585
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717505040; cv=none; b=QptZKKWlolwKW4DIqaDWHjwsNxw2PjaqHMeILOsDPGEZ5GO7PW/HXzEjS7dq8HQuy11qlryHKjnA0vmVVLZiH2P4jH+r+mUfUtJZxOJo7zVfK8WXpcjklhFnG3hrA+ujLA2xxUXC8csdxT7jROvPl+vakSX4SuxjY0NDblIYinw=
+	t=1717505112; cv=none; b=AXc88JkEXSkDJriAbiX2rnxyNqzRO8FtSAmMoECOvvPb7SKzWaKinsNSQ9w2UILo+mBTpdeIVH+3RnzG6EtjyKHNBAmuFnBx2bGCPlN93abWRzP33r+mT/J9Qr+FuB9pcZnXdH5FsTp27G+WHqGUB6KKSeU3w4N0DUf8GEahv68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717505040; c=relaxed/simple;
-	bh=lS6YuUMmLtcwBksv5K6E8cLhLtBCWtRmxX8rHhWTd0s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mODVKF3nwdWKdcVAzKgGJD90sLALYn9q0vg9F66yDE8Np6Nx1IAHMmTxXO8Rz1Ht4t6xSmfeqUXVqsxCsfSGcUh3yIvfooYGyKNcUMCAMafZq9PErvqtQqWs1Mgr80+4MsP3dlvqt/pPYq6PbmS+sWThgpYGaZYw1nr+MRkfuJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IUkxx1rS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717505037;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EhCfiVXPEvR/+5TViwRD3SJ00fC3/I6EnddHHFID5P0=;
-	b=IUkxx1rSFR5lO9y3vr2k0WdRrS7zmMZNRsS6k5eQ3ILmJgSehSbhJ0Ylgq3j1ASsgV+UOe
-	54ZoTYAv4JlY3+syT/hqGey9wseNX9NnCaoS0obI4abqKY7crMEOD3tRSRYty17uNHe8R6
-	4qkEOOCsjqPAsKL9/68uwLHQpWodFSo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-UUFHEERiOCeY1VVD0ciUDQ-1; Tue, 04 Jun 2024 08:43:53 -0400
-X-MC-Unique: UUFHEERiOCeY1VVD0ciUDQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42133728a50so32174265e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 05:43:53 -0700 (PDT)
+	s=arc-20240116; t=1717505112; c=relaxed/simple;
+	bh=FS2meUHyqAFzj3ZwOILxZCEhyOYL5YlmGh67XCjBmN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rGOj4xgAgUby+FR3Ft5p00Qa0S36BpcW7u5tYFbS8BmJd4igzMj61FPTlOzRjOX2sgxXsJO/5NntpNHnx3TvxleePatQrNyiaqRT2gHmjsidyGtTlWQpxCSX4+BpzyZd01GIfYnqWzttGldI4WHMzIYwcjiW3cMIb0sVf4jyTKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tAOJBFRc; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52b82d57963so5761321e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 05:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717505109; x=1718109909; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sTSWP21QZ+eqjBfIIWcv/YErfD1pgnAWKFQYJnk3e7Y=;
+        b=tAOJBFRcY4EiEdYTyDUAVO94+G93of9ZvNso6zHXIUd5Pl9WfuWYHaw9XYhGgckoti
+         /lBwwNiUTZuOZyqu914bqRJ7Yvj77BfVvVIfb1FZSeYB/jh7SH4isRR7/51prRNt9mGu
+         1QfBZGzFIeRh3MBICIhd6/9XCxMvh4VeQILTLDRGjEifSnlYhLAxrwpdW/PTZsOGPWBb
+         PV83iz54qnbqdPNwBEdLIvoC9E3/M5/MB/Wq4+2Do7Av+pW9HITL3SWp200mhm8MihLH
+         Iw9RBrA2ZAAEKeQMVkaVk3MiB3vMqWQyV6dcaJ8u8iK/Gmf1vxh63G4IloKlHI2F2YNY
+         mq9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717505032; x=1718109832;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EhCfiVXPEvR/+5TViwRD3SJ00fC3/I6EnddHHFID5P0=;
-        b=RpkD7TyLKzMBx3tkzzA2i7v6RhCSZiECJbaISIm5WyfxN51B9Uc9dzAtmPIOhfL41i
-         DyKNFatiG0ns5wLOqWAKzkrky87f6LclOTamZirp/syQ1Y9NUoZG6RepAhh7sPWmkzzf
-         Nkfczqhm191ghielSWBmdrLq19jVqPdCRCkrH/pWqjh0F1J5xPatIDuXLXD9Vx9k+HbB
-         dIT6kxf8qvNoL7zNFr+iMraBrrHc8N72wEZVFJgbBYPGuq/VUc+OnbOQWtA/WnYV/OT4
-         G74YKx33lF4VoOaauGfTH/3kqg3Ws//0mwwprPhQHWSpSB3b31kEUYDCFcmxdvZ1FmYn
-         pZ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWVduZ1V46H2xXOXxhajHGWc4bbhq4NbH+uhXDGfQ5A6vXpgXnb6lqUXHhJXZPJBv9n7Tf4k/DnJDPqVw5XDbhzQOVc7NMiYGgFc3U3
-X-Gm-Message-State: AOJu0YwcecBtYJlSGHJ2vRFC3fZZNgSEObKK3/wKfLK9XkIRhNzFtOZ8
-	Z+z7OfMJw7xZTKp9SEFHNdtHvjglIecD9xpGjhu9nbOPUw7PJthsKWphT33UejN5H/hTOEZqXu4
-	ELPw23jpcczruYM+v3lVtsBuE3xIZPLt6xCZP/wcwP4RNuTwiYa27lQsManQfww==
-X-Received: by 2002:a05:600c:365a:b0:421:2dae:24c4 with SMTP id 5b1f17b1804b1-4212e0a5317mr123938365e9.25.1717505032642;
-        Tue, 04 Jun 2024 05:43:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFbbe2T2u/1oVTqF789zLlbtQnA88Sd8d4fqMqY61SSsc/ot/w/Vh5KT0KCHSFvcCQ7fbC6Cg==
-X-Received: by 2002:a05:600c:365a:b0:421:2dae:24c4 with SMTP id 5b1f17b1804b1-4212e0a5317mr123938075e9.25.1717505032159;
-        Tue, 04 Jun 2024 05:43:52 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73a:3a00:a025:9b06:549e:c16b? (p200300cbc73a3a00a0259b06549ec16b.dip0.t-ipconnect.de. [2003:cb:c73a:3a00:a025:9b06:549e:c16b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212f9b9ef1sm142213095e9.9.2024.06.04.05.43.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 05:43:51 -0700 (PDT)
-Message-ID: <f26a6ac2-48a9-4bae-89b9-a3f9b97ae9dc@redhat.com>
-Date: Tue, 4 Jun 2024 14:43:50 +0200
+        d=1e100.net; s=20230601; t=1717505109; x=1718109909;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sTSWP21QZ+eqjBfIIWcv/YErfD1pgnAWKFQYJnk3e7Y=;
+        b=ncrv63ca0SKOBNQVLSbPxWlEoh8O+AnfA64hoN1Q07gKB71Hi2H3oizz4tp9jfDHIs
+         IRbDMpzw9FhFhKR6q0x9IT8x4J1uK3j5apQDC8VhrvN23KXn7COcfGnYy1AQF0t/VoSq
+         RBCDOJnwTGg6vCPKwJOG141lyDKxphb97DJdcA+GDCGTgasXkLa8yUcg0K6gu4TMSI0C
+         AtZgtLUqOhNYOsk6/aB04UUuUOIDiAMj8xBf1LEAkQkNWXgSo1zoQZutHVFu1YyF39ku
+         zgR28Zrbh4cKKndjsFttNP/o3Ssis01WWyJyyzqp4iuq6sNhYsZQ3kg+EBnacpZ7QzV0
+         yNkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUByt7FRUgco/fL9JUUuUTYqLbthdTn7RzxlEfIyGRMX3XReu0wLWp3rGJKYs1v3XztWJ1EKUVKxLQXKVz38f/7Uy2zf3wEeZ5GFdDw
+X-Gm-Message-State: AOJu0YyJHBFtj0b6lDXQz/Cv427UVsoiX9EN7mcbla1Nx5a9xHmQneFv
+	GnJaKQEscmGXIPFqlX03cnsc4kIDgXgCmY0Nty3MC9DChdr9PL3IURdXHi0LCFE=
+X-Google-Smtp-Source: AGHT+IFm2FI2pRnzHQ9nL48l/MAYYryy+SOdMrgt6P5LxDtGzf5oycvSKJISwo5n1Y/8T5hXK2lPng==
+X-Received: by 2002:ac2:43cc:0:b0:524:339:4375 with SMTP id 2adb3069b0e04-52b896b69eemr7446350e87.40.1717505108618;
+        Tue, 04 Jun 2024 05:45:08 -0700 (PDT)
+Received: from linaro.org ([188.27.161.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68519892c8sm587367066b.65.2024.06.04.05.45.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 05:45:08 -0700 (PDT)
+Date: Tue, 4 Jun 2024 15:45:06 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100: Make the PCIe 6a PHY
+ support 4 lanes mode
+Message-ID: <Zl8MUpfy/2Khw+wD@linaro.org>
+References: <20240531-x1e80100-dts-fixes-pcie6a-v1-0-1573ebcae1e8@linaro.org>
+ <20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org>
+ <Zl28nvnpGFRsYpGh@hovoldconsulting.com>
+ <d93fe55e-7c65-48cb-bdaf-5e15bc22be30@linaro.org>
+ <Zl8GoRoY9lXRtg2R@hovoldconsulting.com>
+ <402aa998-8b3c-4c3c-8dcb-f128b6ddac46@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: clear pte for folios that are zero filled
-From: David Hildenbrand <david@redhat.com>
-To: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org, willy@infradead.org, yosryahmed@google.com,
- nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20240604105950.1134192-1-usamaarif642@gmail.com>
- <20240604105950.1134192-2-usamaarif642@gmail.com>
- <6b1485b6-c2a1-45b8-8afe-7b211689070b@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6b1485b6-c2a1-45b8-8afe-7b211689070b@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <402aa998-8b3c-4c3c-8dcb-f128b6ddac46@linaro.org>
 
-On 04.06.24 14:30, David Hildenbrand wrote:
-> On 04.06.24 12:58, Usama Arif wrote:
->> Approximately 10-20% of pages to be swapped out are zero pages [1].
->> Rather than reading/writing these pages to flash resulting
->> in increased I/O and flash wear, the pte can be cleared for those
->> addresses at unmap time while shrinking folio list. When this
->> causes a page fault, do_pte_missing will take care of this page.
->> With this patch, NVMe writes in Meta server fleet decreased
->> by almost 10% with conventional swap setup (zswap disabled).
->>
->> [1] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
->>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->> ---
->>    include/linux/rmap.h |   1 +
->>    mm/rmap.c            | 163 ++++++++++++++++++++++---------------------
->>    mm/vmscan.c          |  89 ++++++++++++++++-------
->>    3 files changed, 150 insertions(+), 103 deletions(-)
->>
->> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
->> index bb53e5920b88..b36db1e886e4 100644
->> --- a/include/linux/rmap.h
->> +++ b/include/linux/rmap.h
->> @@ -100,6 +100,7 @@ enum ttu_flags {
->>    					 * do a final flush if necessary */
->>    	TTU_RMAP_LOCKED		= 0x80,	/* do not grab rmap lock:
->>    					 * caller holds it */
->> +	TTU_ZERO_FOLIO		= 0x100,/* zero folio */
->>    };
->>    
->>    #ifdef CONFIG_MMU
->> diff --git a/mm/rmap.c b/mm/rmap.c
->> index 52357d79917c..d98f70876327 100644
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -1819,96 +1819,101 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->>    			 */
->>    			dec_mm_counter(mm, mm_counter(folio));
->>    		} else if (folio_test_anon(folio)) {
->> -			swp_entry_t entry = page_swap_entry(subpage);
->> -			pte_t swp_pte;
->> -			/*
->> -			 * Store the swap location in the pte.
->> -			 * See handle_pte_fault() ...
->> -			 */
->> -			if (unlikely(folio_test_swapbacked(folio) !=
->> -					folio_test_swapcache(folio))) {
->> +			if (flags & TTU_ZERO_FOLIO) {
->> +				pte_clear(mm, address, pvmw.pte);
->> +				dec_mm_counter(mm, MM_ANONPAGES);
-> 
-> Is there an easy way to reduce the code churn and highlight the added code?
-> 
-> Like
-> 
-> } else if (folio_test_anon(folio) && (flags & TTU_ZERO_FOLIO)) {
-> 
-> } else if (folio_test_anon(folio)) {
+On 24-06-04 14:38:40, Konrad Dybcio wrote:
 > 
 > 
+> On 6/4/24 14:20, Johan Hovold wrote:
+> > On Tue, Jun 04, 2024 at 02:00:10PM +0200, Konrad Dybcio wrote:
+> > > On 6/3/24 14:52, Johan Hovold wrote:
+> > 
+> > > > As I just mentioned in my reply on the PHY patch, this does not seem to
+> > > > work on the CRD were the link still come up as 2-lane (also with the
+> > > > clocks fixed):
+> > > > 
+> > > > 	qcom-pcie 1bf8000.pci: PCIe Gen.4 x2 link up
+> > > > 
+> > > > So something appears to be wrong here or in the PHY changes.
+> > > 
+> > > Is the device on the other end x4-capable? Or does it not matter in
+> > > this log line?
+> > 
+> > Yes, of course. It's the CRD as I wrote above, and you can tell from
+> > other log entries:
+> > 
+> > 	pci 0007:01:00.0: 31.506 Gb/s available PCIe bandwidth, limited by 16.0 GT/s PCIe x2 link at 0007:00:00.0 (capable of 63.012 Gb/s with 16.0 GT/s PCIe x4 link)
+> > 
+> > lspci and what Windows reports.
+> Ok, good. I was scared of double-sourcing of parts that are not identical
+> in spec..
 > 
-> Also to concerns that I want to spell out:
-> 
-> (a) what stops the page from getting modified in the meantime? The CPU
->       can write it until the TLB was flushed.
-> 
-> (b) do you properly handle if the page is pinned (or just got pinned)
->       and we must not discard it?
 
-Oh, and I forgot, are you handling userfaultd as expected? IIRC there 
-are some really nasty side-effects with userfaultfd even when 
-userfaultfd is currently not registered for a VMA [1].
+On my CRD, there is a KBG50ZNS256G.
 
-[1] 
-https://lore.kernel.org/linux-mm/3a4b1027-df6e-31b8-b0de-ff202828228d@redhat.com/
+> [1] suggests this wasn't ever achieved.. which makes the cover letter of
+> this series a bit misleading..
 
-What should work is replacing all-zero anonymous pages by the shared 
-zeropage iff the anonymous page is not pinned and we synchronize against 
-GUP fast. Well, and we handle possible concurrent writes accordingly.
+True ...
 
-KSM does essentially that when told to de-duplicate the shared zeropage, 
-and I was thinking a while ago if we would want a zeropage-only KSM 
-version that doesn't need stable tress and all that, but only 
-deduplicates zero-filled pages into the shared zeropage in a safe way.
+> 
+> What does the TCSR check return? If 0, can you hardcode it to 1 and see if
+> the link comes up at x4?
 
--- 
-Cheers,
+TCSR check returns 1. But that is not enough. The PCIe controller needs to
+handles some stuff about margining. See the following patchset.
 
-David / dhildenb
+https://lore.kernel.org/linux-pci/20240501163610.8900-3-quic_schintav@quicinc.com/
 
+But even with this, I'm not able to get 4-lanes mode to work (yet).
+So it must be something else in the controller driver that is needed.
+
+IIRC, this is the first Qualcomm platform that would support Gen4 with
+4-lanes upstream. Maybe I'm wrong.
+
+> 
+> Konrad
+> 
+> [1] https://lore.kernel.org/all/Zl8H0KOrfuF91kpZ@linaro.org/
 
