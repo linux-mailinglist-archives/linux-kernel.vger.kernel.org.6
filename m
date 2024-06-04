@@ -1,53 +1,73 @@
-Return-Path: <linux-kernel+bounces-201157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9128FBA62
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:29:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140E08FB9F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D88B281A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:28:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4559C1C220BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B06B149DED;
-	Tue,  4 Jun 2024 17:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8BB149E1D;
+	Tue,  4 Jun 2024 17:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="fRYQaIBk"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i3E6SxfJ"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5D814A4D9;
-	Tue,  4 Jun 2024 17:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE3E149C77
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717522036; cv=none; b=ZTYy3EoUxTLC57cHdPjVPEpJyTqa9Db0SZCOXbuRqQJaubVhUCJNRj/hlyuoqimBLvVnW64+SEPAB8aBO/tE7pwaJ9XOtMGM4TIfRI00zhS6WuyJLrFhcQwD7tIARDCCZsmtQM+SS34Em5hoFzmyS5yGq9Bx9lYSJadnhwXPIsM=
+	t=1717520776; cv=none; b=WaEzKqPaL9KQgKO9DdzHdd5cTp9bx87oFwCSXz7b9BhwIRi/Ttldu/tff1p13jNIwmg/NJE/6+aIwpy1q/AFexyvloHmRvotVGDGz0q4ih6/Ydhd92ed22Bx6mwosL5Sxh4kn3KMQ/nU/Q3SgKI/gyS0bWijhpaWt+KKRIX/KvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717522036; c=relaxed/simple;
-	bh=AhkZuPpHQ3cux+x+mZLwO0uQb8cbs9T4dTiGLFrCc7Q=;
+	s=arc-20240116; t=1717520776; c=relaxed/simple;
+	bh=7FZMerzyumByug0YBJaZePO62jxn9Zgedg66wnJtGLQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSzuro6o8CbI6yLOVI/0doRhMsDDDxK5FACmwkgH+MLRP7Dx9yT+9YqW87JB+/BbvHHM/m8oaQPWN88PxJH3sGy63Wm9C43MQ02dG4H+QHX+fESEhr+9uWWy4NKFWaxC9/TRDaTqzRcB2+++ye8bz6naufQc7pLXbbvZJ8aoq+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=fRYQaIBk; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 9C08688481;
-	Tue,  4 Jun 2024 19:27:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1717522032;
-	bh=3NtwaV0lVIbVvfefAVmPkJRULKlNZkvRewz4sAE2MzQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fRYQaIBkivP15jB/9X0FMmdKthdY+zvzdWW92V4p6yGsqzOGdWqpb9FRfQKpDSLAd
-	 Y51mmCbzifnmHvC0MvNGQ6pmx1jLWIQNuclUNV68E+1Zq1YuNPBX8AFccRjsAwREV9
-	 MWLZIRuIJPS5m4BtikgjEzKEPzJe9lSq+N0nc74/+civjx6Tqv2Junym+QPeZuzX5+
-	 cNLw5XdO80KCpfw8zO5E13IvyO+poL6K3ptYTQmKt3WokfCYL4rCC9NwiJx0m4RoZz
-	 jB1ucAFMzuLhRdH2aJy0/hT13GDA5GwizjfWubH/taAzqnuZlYWM/jQlUZx6GIwrwd
-	 6lWUekjtvuF1g==
-Message-ID: <3c40352b-ad69-4847-b665-e7b2df86a684@denx.de>
-Date: Tue, 4 Jun 2024 19:05:59 +0200
+	 In-Reply-To:Content-Type; b=ft9e50d+eSeMJRwDwhJJJMOy8nQbpusfBHocgy/cREYtE6fJzm9eU0I+czfDqU8oyMK63cs3OlxW7bOuBKq6ls12uuvkLQCKKBojfD9IvHRHkc/W6g58dExfEWcNZ1Y4cK06fE5it213rJIB/TaLe3IPKcRqt/xQNcTh5V3xTgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i3E6SxfJ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a68c8b90c85so392056666b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717520773; x=1718125573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4aUMBd6S6vH1Fq76iwhEyjBkvlh36Pc3VvYRxup98QU=;
+        b=i3E6SxfJRRCVXelXM9VViV381xYdplJpsdn/xfmEDSpzUS50fakhUXufIKuM3wHvkm
+         iKj0beU/ibLDnZtvyzkSWR1oT91xa+FJCuH24iubMbhjPa5hZ4yfaja/w7Lr52cXvS3w
+         Wny81Gj1+tnHjsFK39Y/wBvp25uSglOyoiJQH2pwyFHhUHbX+/PVpdOFhPpwDt9lP7u6
+         +ARARApUmnnmEN9fmS2gEtVFQf6MPjtZ047hyIvTtLLOcDxN+5hgKptliA9gh1HylDl0
+         ES42ncwvuZuAZ+f95x0GLkOJbPb2Qkv+Ei/4Qtkv2JH9ievmLFB6TcOMMvnS3E9U1QxW
+         htHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717520773; x=1718125573;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4aUMBd6S6vH1Fq76iwhEyjBkvlh36Pc3VvYRxup98QU=;
+        b=PmQXeKclBeIIZwhTffX77dkqF1qP/PTbyDZTtX0JPUhzECsHMv9b+Yd3TKITO54o7V
+         52wOrV+H26IOgM89cqWUe2S2zLJ8oWbwfS0mVIcIljkZzDvmRHai7PEmKyE2p1ThjzGc
+         F6gpptg0yxf8YfvqraWmjcBTzVo2g5sEYyKrJN0anpfy0S479cfi9i/7ffH7ant2wrkH
+         alBbLf/5+X+s4QXyAlzEF/5QEv2I9ggX+EKiCqQRSn6VddAZZdjWJn/2mUbKOqOP50Ew
+         NiaMH+m8BYsElCfUqycu2N6Td6Z07YzRtk8kCUPisyj2H58HGGmkiTZNeHcRkXf/eSiq
+         01pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdR8aF9tRqifYXfmP4jgCao3/Pzy9ZabtMdmo2AnckBOjfe6TEfZtF+N2keGmh5y5L9ug/jtfJvrjay4Knw0O9IyGtfQOjR666uQRs
+X-Gm-Message-State: AOJu0YyFwmH4I7osRg5llh+AO6Wlws9PbGo0odQVCpa2H5fgOtolHa27
+	a7CCxfoQG26+553/EunrC93BdyKfebiDCbL7BYPezBBC5hkJurlMfX/qW2v26so=
+X-Google-Smtp-Source: AGHT+IHT8X9AMfx+BZpwbKKAI0BGP41IwtZlUxVZrzOm9sWMjqE5bRIO+v8abCGhYG5qwitWIODsOA==
+X-Received: by 2002:a17:907:770c:b0:a67:7649:3c3c with SMTP id a640c23a62f3a-a69a000e966mr10970966b.56.1717520772786;
+        Tue, 04 Jun 2024 10:06:12 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:909a:a11e:b2c0:1360:9a97:b2b8? ([2a00:f41:909a:a11e:b2c0:1360:9a97:b2b8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a69127f2901sm291675066b.48.2024.06.04.10.06.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 10:06:12 -0700 (PDT)
+Message-ID: <37b0404d-bba5-4a77-ad86-62c6dd308d37@linaro.org>
+Date: Tue, 4 Jun 2024 19:06:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,198 +75,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/11] net: ethernet: stmmac: add management of
- stm32mp13 for stm32
-To: Christophe Roullier <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
- <20240604143502.154463-8-christophe.roullier@foss.st.com>
+Subject: Re: [PATCH] drm/msm/adreno: Add support for Adreno 505 GPU
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Daniil Titov <daniilt971@gmail.com>
+References: <20240604-a505-v1-1-82ee1c04d200@gmail.com>
+ <49fe3b01-4f00-4ffc-80cf-2a0add1ebaad@linaro.org>
+ <CAGsSOWV=i2JHsYNvi5EC6q=NoD8v7SiTjbVQhTDLNw35+irTCQ@mail.gmail.com>
+ <CAGsSOWV9SRK1VUJiQfavEM1hL0PapxUBG6CNeD+Q=0qPT5ZnSA@mail.gmail.com>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240604143502.154463-8-christophe.roullier@foss.st.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <CAGsSOWV9SRK1VUJiQfavEM1hL0PapxUBG6CNeD+Q=0qPT5ZnSA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 
-On 6/4/24 4:34 PM, Christophe Roullier wrote:
-> Add Ethernet support for STM32MP13.
-> STM32MP13 is STM32 SOC with 2 GMACs instances.
-> GMAC IP version is SNPS 4.20.
-> GMAC IP configure with 1 RX and 1 TX queue.
-> DMA HW capability register supported
-> RX Checksum Offload Engine supported
-> TX Checksum insertion supported
-> Wake-Up On Lan supported
-> TSO supported
-> 
-> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
-> ---
->   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 50 +++++++++++++++----
->   1 file changed, 40 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> index bed2be129b2d2..e59f8a845e01e 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> @@ -84,12 +84,14 @@ struct stm32_dwmac {
->   	struct clk *clk_eth_ck;
->   	struct clk *clk_ethstp;
->   	struct clk *syscfg_clk;
-> +	bool is_mp13;
->   	int ext_phyclk;
->   	int enable_eth_ck;
->   	int eth_clk_sel_reg;
->   	int eth_ref_clk_sel_reg;
->   	int irq_pwr_wakeup;
->   	u32 mode_reg;		 /* MAC glue-logic mode register */
-> +	u32 mode_mask;
->   	struct regmap *regmap;
->   	u32 speed;
->   	const struct stm32_ops *ops;
-> @@ -102,8 +104,8 @@ struct stm32_ops {
->   	void (*resume)(struct stm32_dwmac *dwmac);
->   	int (*parse_data)(struct stm32_dwmac *dwmac,
->   			  struct device *dev);
-> -	u32 syscfg_eth_mask;
->   	bool clk_rx_enable_in_suspend;
-> +	u32 syscfg_clr_off;
->   };
->   
->   static int stm32_dwmac_clk_enable(struct stm32_dwmac *dwmac, bool resume)
-> @@ -227,7 +229,14 @@ static int stm32mp1_configure_pmcr(struct plat_stmmacenet_data *plat_dat)
->   
->   	switch (plat_dat->mac_interface) {
->   	case PHY_INTERFACE_MODE_MII:
-> -		val = SYSCFG_PMCR_ETH_SEL_MII;
-> +		/*
-> +		 * STM32MP15xx supports both MII and GMII, STM32MP13xx MII only.
-> +		 * SYSCFG_PMCSETR ETH_SELMII is present only on STM32MP15xx and
-> +		 * acts as a selector between 0:GMII and 1:MII. As STM32MP13xx
-> +		 * supports only MII, ETH_SELMII is not present.
-> +		 */
-> +		if (!dwmac->is_mp13)	/* Select MII mode on STM32MP15xx */
-> +			val |= SYSCFG_PMCR_ETH_SEL_MII;
->   		break;
->   	case PHY_INTERFACE_MODE_GMII:
->   		val = SYSCFG_PMCR_ETH_SEL_GMII;
-> @@ -256,13 +265,16 @@ static int stm32mp1_configure_pmcr(struct plat_stmmacenet_data *plat_dat)
->   
->   	dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
->   
-> +	/* Shift value at correct ethernet MAC offset in SYSCFG_PMCSETR */
-> +	val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
-> +
->   	/* Need to update PMCCLRR (clear register) */
-> -	regmap_write(dwmac->regmap, reg + SYSCFG_PMCCLRR_OFFSET,
-> -		     dwmac->ops->syscfg_eth_mask);
-> +	regmap_write(dwmac->regmap, dwmac->ops->syscfg_clr_off,
-> +		     dwmac->mode_mask);
->   
->   	/* Update PMCSETR (set register) */
->   	return regmap_update_bits(dwmac->regmap, reg,
-> -				 dwmac->ops->syscfg_eth_mask, val);
-> +				 dwmac->mode_mask, val);
->   }
->   
->   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
-> @@ -303,7 +315,7 @@ static int stm32mcu_set_mode(struct plat_stmmacenet_data *plat_dat)
->   	dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
->   
->   	return regmap_update_bits(dwmac->regmap, reg,
-> -				 dwmac->ops->syscfg_eth_mask, val << 23);
-> +				 SYSCFG_MCU_ETH_MASK, val << 23);
->   }
->   
->   static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, bool suspend)
-> @@ -348,8 +360,15 @@ static int stm32_dwmac_parse_data(struct stm32_dwmac *dwmac,
->   		return PTR_ERR(dwmac->regmap);
->   
->   	err = of_property_read_u32_index(np, "st,syscon", 1, &dwmac->mode_reg);
-> -	if (err)
-> +	if (err) {
->   		dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
-> +		return err;
-> +	}
-> +
-> +	dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
-> +	err = of_property_read_u32_index(np, "st,syscon", 2, &dwmac->mode_mask);
-> +	if (err)
-> +		pr_debug("Warning sysconfig register mask not set\n");
 
-I _think_ you need to left-shift the mode mask by 8 for STM32MP13xx 
-second GMAC somewhere in here, right ?
 
->   	return err;
->   }
-> @@ -361,6 +380,8 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
->   	struct device_node *np = dev->of_node;
->   	int err = 0;
->   
-> +	dwmac->is_mp13 = of_device_is_compatible(np, "st,stm32mp13-dwmac");
+On 6/4/24 18:45, Barnabás Czémán wrote:
+> On Tue, Jun 4, 2024 at 2:27 PM Barnabás Czémán <trabarni@gmail.com> wrote:
+>>
+>> On Tue, Jun 4, 2024 at 1:55 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>>
+>>>
+>>>
+>>> On 6/4/24 02:20, Barnabás Czémán wrote:
+>>>> From: Daniil Titov <daniilt971@gmail.com>
+>>>>
+>>>> This GPU is found on SoCs such as MSM8937 (450 MHz), MSM8940 (475 MHz),
+>>>> SDM439 (650 MHz).
+>>>>
+>>>> Signed-off-by: Daniil Titov <daniilt971@gmail.com>
+>>>> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+>>>> ---
+>>>
+>>> This all looks very good, just a nit
+>>>
+>>> [...]
+>>>
+>>>> +             /*
+>>>> +              * Increase inactive period to 250 to avoid bouncing
+>>>> +              * the GDSC which appears to make it grumpy
+>>>> +              */
+>>>> +             .inactive_period = 250,
+>>>
+>>> Are you sure this is actually necessary?
+>> Every A5XX GPU is using the same value, but i have never tried with
+>> DRM_MSM_INACTIVE_PERIOD.
+> This was the original patch
+> https://lore.kernel.org/all/20180507224750.9383-1-jcrouse@codeaurora.org/
+> where the inactive period was increased for a530. I cannot test
+> suspend on msm8937 yet.
 
-You could make is_mp13 part of struct stm32_ops {} just like 
-syscfg_clr_off is part of struct stm32_ops {} .
+The suspend here refers to device suspend, not system suspend. Adreno
+goes into device suspend every time you stop using it, i.e. after the
+rendering is done and there's no more work to do.
 
->   	/* Ethernet PHY have no crystal */
->   	dwmac->ext_phyclk = of_property_read_bool(np, "st,ext-phyclk");
->   
-> @@ -540,8 +561,7 @@ static SIMPLE_DEV_PM_OPS(stm32_dwmac_pm_ops,
->   	stm32_dwmac_suspend, stm32_dwmac_resume);
->   
->   static struct stm32_ops stm32mcu_dwmac_data = {
-> -	.set_mode = stm32mcu_set_mode,
-> -	.syscfg_eth_mask = SYSCFG_MCU_ETH_MASK
-> +	.set_mode = stm32mcu_set_mode
+I suppose a good test scenario here would be to keep running and closing
+kmscube in a rapid fashion and checking if the GPU starts crashing for
+unknown reasons (the dmesg would denote that)
 
-It is not necessary to remove the trailing comma ','
+> I can check on msm8953 with a506 maybe if a506 works fine with
+> DRM_MSM_INACTIVE_PERIOD
+> then a505 would be fine with it also.
 
->   };
->   
->   static struct stm32_ops stm32mp1_dwmac_data = {
-> @@ -549,13 +569,23 @@ static struct stm32_ops stm32mp1_dwmac_data = {
->   	.suspend = stm32mp1_suspend,
->   	.resume = stm32mp1_resume,
->   	.parse_data = stm32mp1_parse_data,
-> -	.syscfg_eth_mask = SYSCFG_MP1_ETH_MASK,
-> +	.syscfg_clr_off = 0x44,
-> +	.clk_rx_enable_in_suspend = true
-> +};
-> +
-> +static struct stm32_ops stm32mp13_dwmac_data = {
-> +	.set_mode = stm32mp1_set_mode,
-> +	.suspend = stm32mp1_suspend,
-> +	.resume = stm32mp1_resume,
-> +	.parse_data = stm32mp1_parse_data,
-> +	.syscfg_clr_off = 0x08,
->   	.clk_rx_enable_in_suspend = true
->   };
->   
->   static const struct of_device_id stm32_dwmac_match[] = {
->   	{ .compatible = "st,stm32-dwmac", .data = &stm32mcu_dwmac_data},
->   	{ .compatible = "st,stm32mp1-dwmac", .data = &stm32mp1_dwmac_data},
-> +	{ .compatible = "st,stm32mp13-dwmac", .data = &stm32mp13_dwmac_data},
->   	{ }
->   };
->   MODULE_DEVICE_TABLE(of, stm32_dwmac_match);
+The more testing the merrier :)
 
-This patch definitely looks MUCH better than what this series started 
-with, it is much easier to grasp the MP13 specific changes.
-
-You could possibly improve this further and split the 
-dwmac->ops->syscfg_eth_mask to dwmac->mode_mask conversion into separate 
-preparatory patch (as a 6.5/11 in context of this series), and then add 
-the few MP13 changes on top (as 7/11 patch).
+Konrad
 
