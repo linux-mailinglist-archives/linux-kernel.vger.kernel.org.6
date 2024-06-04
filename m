@@ -1,94 +1,67 @@
-Return-Path: <linux-kernel+bounces-200051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD408FA9D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F038FA9DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC8F92861B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930F91F2531A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B0913DDA6;
-	Tue,  4 Jun 2024 05:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292CC13D630;
+	Tue,  4 Jun 2024 05:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeWBkxiC"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NfUbw6W7"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90CB13F447;
-	Tue,  4 Jun 2024 05:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AA62F30;
+	Tue,  4 Jun 2024 05:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717478144; cv=none; b=bTdZM+zIX9bOMoaYCnCR3JmtF1+C19ySUyNqUcFGO765BpPV1/udqGoi9oXnNVfDwoncfjhoh7aa6LJtNnS6hIt7ayBhDki4c3QnQqhxwb3fkhLrO8k/nq+J5NmBAch1oUIZ8i3uc1rTNtwDiBdzxdsF7KBLztWkWsmb2RcteqE=
+	t=1717478253; cv=none; b=MPwYxXSpAkWJmw2tiMmTEJhuWFND4CUZGTnx1KSx0q9Cp/Yd+Q/837E+Va/D2mMtMKdP5wzjJa79WPQ/Dy3LZozdMZRLBYDC5bOIuTSc5A3zrNfWSigdO4Inl/bkoWAYwTSD9Xf0YKJe9eEwEUW8Qc3S1+YBu90FzaDgQn1+Nb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717478144; c=relaxed/simple;
-	bh=DEfGGNbbf6mS0MilM1GKmovkDe2QE6KoBd+BZ/dvfkE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YH70zHCSTMIlsROYn05KKqSjZWkk5osKp8JdI9teprEZ8L9WvSqNWkS/mpTlnEjWI0yDUw9ZAdjGsej1NjRjTHJFLt/qKr0RtdOq+TxQC0+6SNKgy8h3saahyYVGfIqlAXbrrJqh03uTVX+zQkrIRbsrPv6SHV1pOCryEiHolKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YeWBkxiC; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a30b3a6cbso653735a12.1;
-        Mon, 03 Jun 2024 22:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717478141; x=1718082941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8SJccidjsLYGh4yEPOhnunVr6ljOJkGUx3ObCldCrBM=;
-        b=YeWBkxiCV+yXIJff/qQMwLJntNEqwQkE+SBwP9ZCGHVdYAFeMUGo9OvlCCG4y8NfLP
-         wzaujEoXxKrmHzaI4IdOs4JQ50xtpKrOU9fl3eZOmwjUwMxGRKs8JWc58zi9apIwHJO6
-         h8lPae4UeowoPKozFCEtaRO8jj8DAdhJHb4FWU9ci/WkNRa4+dGJhfTG+u1SLjsEZQj+
-         b1iFeHbB1kA9SPGZg8KO3rTYC2gNW1i0fecl6v4DreXeALsqXzhehzbhSYLcgzxqR5/3
-         cb36BZtx5AambKXYxOheR8Hupfub2rAMv2HOxTcw39CSJJZZjEymXo3hhr3eqGC4fh5E
-         Ogpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717478141; x=1718082941;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8SJccidjsLYGh4yEPOhnunVr6ljOJkGUx3ObCldCrBM=;
-        b=o/OHlxduiVN9N7x/mehBJwBWxLMAfeaNlzBbwoIjt/X0Rfvh77gVvntSVZkrYpcJ+d
-         gRbJiU/x+FgICl/pZtwrc8pVKuAl8ub/nL6G4Syx8hKb8uSyh0tmUCFvjwxYKAQW8qMt
-         c36p0Xlt9HbeD2z69vewFdavz0O3XA5r/yVyOm7mEjNy+d7dUaqEVuQd9r5o8LmBuxdY
-         JysD7QCIrkgvsFrgfECvv7jb5Q8ltScoMozyKAQERLRJIy+x575ScyvEElVDwyNEeNhK
-         tDKY+XW1fXOlWoexYCIGQMqusWrcTgqZzbSlr1G5gh0VUHEAdqBB05S1L1jH2gBCKxl7
-         WwUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTyxwsjhCslPPxh3s8/7ewfbQ1MZwX+aQe1IVJbXQcjYBSVFfUX3QuN6xnNk4TSlq2Y9gEPKY97yXd5z5sX1PAM1kniVDv38qJjNlKthg/ehAD9Ov4WzzIbBqQI5/gkgNupZg/Xwh3rUQkM1iV8hlVzqjOhrQnpn1ew06nqO+SLVj5qDM1
-X-Gm-Message-State: AOJu0YzEWZH9miykdXXkLDNbCGXN/F/PI8iNr++/LubunCKIbLQXQzxT
-	f8iDxxLj//R+mKh78riIk4VzNHbG2P5Li3hUJ6Dy/CMUgxtDiel5
-X-Google-Smtp-Source: AGHT+IGZ8TPHTibom2cLxGJgP0J5h41ltwlDrg51oTsOx+WeTH4ROT9lb8ZKceTCPjvT/pMzBjeQoQ==
-X-Received: by 2002:a17:906:3718:b0:a68:cf22:ebdb with SMTP id a640c23a62f3a-a68cf22ee12mr383305766b.43.1717478140978;
-        Mon, 03 Jun 2024 22:15:40 -0700 (PDT)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68afbaac03sm451896566b.149.2024.06.03.22.15.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 22:15:40 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-media@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Hewitt <christianshewitt@gmail.com>
-Subject: [PATCH 2/2] media: meson: vdec: add GXLX SoC platform
-Date: Tue,  4 Jun 2024 05:15:33 +0000
-Message-Id: <20240604051533.3312944-2-christianshewitt@gmail.com>
+	s=arc-20240116; t=1717478253; c=relaxed/simple;
+	bh=vz7g+Vy8etMz3ItiT/90hkhv9t1iog2ipHtSzbpvCr8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iHGki1JOnCub6quoibEtqmbuRr0X2C3+YWkuoYGcXDLJdwVZzuqXwx/Rtv56amLcreR4Vtpa13DQ9BGgW2+qR20KU85Ir2CTDEfWdnKUIJYHlMo31SxIh5u2RNCYXWNHVe82wDjNtxnWhG9ojv36KGxSxEiQfqhu2s191Cy/Cb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NfUbw6W7; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4545HQxV041003;
+	Tue, 4 Jun 2024 00:17:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717478246;
+	bh=kQdpZ4YUeWwRVQ6Z+ae9gy0QKj4zL29BKyGpvG/1Y3k=;
+	h=From:To:CC:Subject:Date;
+	b=NfUbw6W7v0F2JE10jVP4WQd2y+2yHKW9CYmWx5lhiApKZ55PW571EaL4BVVd4/fxu
+	 rUIzRD7eS4ZsB6dgins+h3+fchhUjfxFoOXL0g5QNb4gEZK6BrKrjwf6Nl1hgR2qqr
+	 GEDbLS9rE2EYXMNkwpkBPoWjXav+iGMgQpv0JPEc=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4545HQLc107125
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 00:17:26 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 00:17:26 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 00:17:26 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.69.66])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4545HNG4067975;
+	Tue, 4 Jun 2024 00:17:24 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <afd@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/3] Defer TI's Remoteproc's Probe until Mailbox is Probed
+Date: Tue, 4 Jun 2024 10:47:19 +0530
+Message-ID: <20240604051722.3608750-1-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240604051533.3312944-1-christianshewitt@gmail.com>
-References: <20240604051533.3312944-1-christianshewitt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,111 +69,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add the GXLX SoC platform which is based on GXL but omits the VP9 codec.
+Hello All,
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
- drivers/staging/media/meson/vdec/vdec.c       |  2 +
- .../staging/media/meson/vdec/vdec_platform.c  | 44 +++++++++++++++++++
- .../staging/media/meson/vdec/vdec_platform.h  |  2 +
- 3 files changed, 48 insertions(+)
+This series adds deferred probe functionality in the TI's Remoteproc
+drivers. The remoteproc drivers are dependent on the omap-mailbox driver
+for mbox functionalities. Sometimes, the remoteproc driver could be
+probed before the mailbox driver leading to rproc boot failures. Thus,
+defer the probe routine of remoteproc drivers until mailbox driver is
+probed by checking the mbox_request_channel handle in probe. 
 
-diff --git a/drivers/staging/media/meson/vdec/vdec.c b/drivers/staging/media/meson/vdec/vdec.c
-index de3e0345ab7c..5e5b296f93ba 100644
---- a/drivers/staging/media/meson/vdec/vdec.c
-+++ b/drivers/staging/media/meson/vdec/vdec.c
-@@ -982,6 +982,8 @@ static const struct of_device_id vdec_dt_match[] = {
- 	  .data = &vdec_platform_gxm },
- 	{ .compatible = "amlogic,gxl-vdec",
- 	  .data = &vdec_platform_gxl },
-+	{ .compatible = "amlogic,gxlx-vdec",
-+	  .data = &vdec_platform_gxlx },
- 	{ .compatible = "amlogic,g12a-vdec",
- 	  .data = &vdec_platform_g12a },
- 	{ .compatible = "amlogic,sm1-vdec",
-diff --git a/drivers/staging/media/meson/vdec/vdec_platform.c b/drivers/staging/media/meson/vdec/vdec_platform.c
-index 70c9fd7c8bc5..66bb307db85a 100644
---- a/drivers/staging/media/meson/vdec/vdec_platform.c
-+++ b/drivers/staging/media/meson/vdec/vdec_platform.c
-@@ -101,6 +101,44 @@ static const struct amvdec_format vdec_formats_gxl[] = {
- 	},
- };
- 
-+static const struct amvdec_format vdec_formats_gxlx[] = {
-+	{
-+		.pixfmt = V4L2_PIX_FMT_H264,
-+		.min_buffers = 2,
-+		.max_buffers = 24,
-+		.max_width = 3840,
-+		.max_height = 2160,
-+		.vdec_ops = &vdec_1_ops,
-+		.codec_ops = &codec_h264_ops,
-+		.firmware_path = "meson/vdec/gxl_h264.bin",
-+		.pixfmts_cap = { V4L2_PIX_FMT_NV12M, 0 },
-+		.flags = V4L2_FMT_FLAG_COMPRESSED |
-+			 V4L2_FMT_FLAG_DYN_RESOLUTION,
-+	}, {
-+		.pixfmt = V4L2_PIX_FMT_MPEG1,
-+		.min_buffers = 8,
-+		.max_buffers = 8,
-+		.max_width = 1920,
-+		.max_height = 1080,
-+		.vdec_ops = &vdec_1_ops,
-+		.codec_ops = &codec_mpeg12_ops,
-+		.firmware_path = "meson/vdec/gxl_mpeg12.bin",
-+		.pixfmts_cap = { V4L2_PIX_FMT_NV12M, V4L2_PIX_FMT_YUV420M, 0 },
-+		.flags = V4L2_FMT_FLAG_COMPRESSED,
-+	}, {
-+		.pixfmt = V4L2_PIX_FMT_MPEG2,
-+		.min_buffers = 8,
-+		.max_buffers = 8,
-+		.max_width = 1920,
-+		.max_height = 1080,
-+		.vdec_ops = &vdec_1_ops,
-+		.codec_ops = &codec_mpeg12_ops,
-+		.firmware_path = "meson/vdec/gxl_mpeg12.bin",
-+		.pixfmts_cap = { V4L2_PIX_FMT_NV12M, V4L2_PIX_FMT_YUV420M, 0 },
-+		.flags = V4L2_FMT_FLAG_COMPRESSED,
-+	},
-+};
-+
- static const struct amvdec_format vdec_formats_gxm[] = {
- 	{
- 		.pixfmt = V4L2_PIX_FMT_VP9,
-@@ -263,6 +301,12 @@ const struct vdec_platform vdec_platform_gxl = {
- 	.revision = VDEC_REVISION_GXL,
- };
- 
-+const struct vdec_platform vdec_platform_gxlx = {
-+	.formats = vdec_formats_gxlx,
-+	.num_formats = ARRAY_SIZE(vdec_formats_gxlx),
-+	.revision = VDEC_REVISION_GXLX,
-+};
-+
- const struct vdec_platform vdec_platform_gxm = {
- 	.formats = vdec_formats_gxm,
- 	.num_formats = ARRAY_SIZE(vdec_formats_gxm),
-diff --git a/drivers/staging/media/meson/vdec/vdec_platform.h b/drivers/staging/media/meson/vdec/vdec_platform.h
-index 731877a771f4..88ca4a9db8a8 100644
---- a/drivers/staging/media/meson/vdec/vdec_platform.h
-+++ b/drivers/staging/media/meson/vdec/vdec_platform.h
-@@ -14,6 +14,7 @@ struct amvdec_format;
- enum vdec_revision {
- 	VDEC_REVISION_GXBB,
- 	VDEC_REVISION_GXL,
-+	VDEC_REVISION_GXLX,
- 	VDEC_REVISION_GXM,
- 	VDEC_REVISION_G12A,
- 	VDEC_REVISION_SM1,
-@@ -28,6 +29,7 @@ struct vdec_platform {
- extern const struct vdec_platform vdec_platform_gxbb;
- extern const struct vdec_platform vdec_platform_gxm;
- extern const struct vdec_platform vdec_platform_gxl;
-+extern const struct vdec_platform vdec_platform_gxlx;
- extern const struct vdec_platform vdec_platform_g12a;
- extern const struct vdec_platform vdec_platform_sm1;
- 
+Also, use the acquired mbox handle in probe during rproc start/attach
+routine instead of re-requesting. Do not free mbox handle during
+stop/detach routine or error paths. This makes our k3_rproc_attach() &
+k3_rproc_detach() functions NOP.
+
+Also, use the devm_rproc_alloc() helper to automatically free created
+rprocs incase of a probe defer.
+
+v2: Changelog:
+1) Added a check in k3_mbox_callback() to prevent forwarding messages to
+a detached core.
+2) Addressed Andrew's comments in v1 regarding some cleanup (Using
+dev_err_probe, removing unused labels, adding matching mbox_free_channel
+call during device removal).
+
+Link to v1:
+https://lore.kernel.org/all/20240530090737.655054-1-b-padhi@ti.com/
+
+Beleswar Padhi (3):
+  remoteproc: k3-r5: Use devm_rproc_alloc() helper
+  remoteproc: k3-r5: Acquire mailbox handle during probe
+  remoteproc: k3-dsp: Acquire mailbox handle during probe routine
+
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 76 ++++++++-------------
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 80 ++++++++---------------
+ 2 files changed, 54 insertions(+), 102 deletions(-)
+
 -- 
 2.34.1
 
