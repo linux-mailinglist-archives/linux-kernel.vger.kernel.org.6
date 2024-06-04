@@ -1,119 +1,186 @@
-Return-Path: <linux-kernel+bounces-200825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386DE8FB569
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:33:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CDC8FB561
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6DC2843D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:33:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ED0F1C220A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A527C145A1F;
-	Tue,  4 Jun 2024 14:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E821F1448D4;
+	Tue,  4 Jun 2024 14:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p/Eygaex"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XO4ZL1q5"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AB4144D22
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A97113B5B7;
+	Tue,  4 Jun 2024 14:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511514; cv=none; b=htdRO8NX3IoWZbzGBDxo7mHsi/xlxU5M34R6OrAPcwyOuqV+lJp+iLUlfyi2Q/hil0XJ8GNpbb0SJq3wzJuCcABxm292X77EvpxCOKtGjLQYwIFJevSTwggdQjdb1XeWJTVPm6gGMqgEmY9CbM1ISrEgzPmjGFLJP7MOEjb1lJE=
+	t=1717511512; cv=none; b=N/Td9l/n/pLDJD9tU5+2RoM2Cc59zB4L8+D3rXGmrNSPTN0/OtHQFWVoAHxvUobXkDduoAoLytZxk/akMyxs88+AQrn0/jt8P2JoI+zXYgFKlHIJSHWhxNksV/TECP2YZRUIubr/B+Ax18omrdBz80t6EVdzc4ELVD+WJwjo//Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511514; c=relaxed/simple;
-	bh=gGDKWu3B5VRRZlu7zBNJnku5j12cvC/da0ucF6mg0aE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ga/4T1ywOcQhGZC5R7meI1QyBPpKnh2o4JA/dv3sPi1UspRr3bvFFNoqKWynOneCpDM6P/2ZFz1v3M5xzi86fFysGT+xdMekX+2u+VYuO++souo5k8jmqYZV+Mm8RBSpkc+vqYrqtq0j9wTIS+Iv/OEDF6Nb6ngpY0n0aLMe/KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p/Eygaex; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-43dfe020675so355841cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 07:31:53 -0700 (PDT)
+	s=arc-20240116; t=1717511512; c=relaxed/simple;
+	bh=RM+SjVMkg/K7DFppKMcbKWOM/ucNqttsWoRCyloK3M0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QuOKF9oFTKkOOZ2+95Mfl+y/2dXYBl9VQAy6bvPuxkS3aNJzbAep5iB/kJn6mTlgkFbmsFW9a7ThlpHQnWQuGf4HWLrUkimhJQIhK0XrWIuyK6iwqzA1kHuWfNt+plpP+1TBjOhEPH1xxahan0/W/kJa/TexAAkF+5UZkiO5XMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XO4ZL1q5; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f44b5d0c50so42498165ad.2;
+        Tue, 04 Jun 2024 07:31:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717511512; x=1718116312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w8l00WT5M+hkw2d4NnjSJbqOkW1RZzStGuA1CvK2sUM=;
-        b=p/EygaexJi7LiNUYm14Ga7G/St6vgZsjA1Cb63va3SQhJc/tb41xAgPHSjkhe0nATs
-         ZQ4NvaSkYer9B/COM8Buefb9bTtzQLdPKZD/NGgra8FFvvcmSafjPJqZS5jCtcQV8A8f
-         mwBHemakOoFwylGIUl4JcFjUjRQDhfdgn3g7ueSOVHndqGfm6Xg+iRV5z6JGapYkqckn
-         F8Y+D1YFv1jtFGafYI2NxQb9BRpc6CAVBq9TWhU2mPrUVVHhw805+/ZNd+zFgRQb+Hv5
-         7u85aQ//pfdjbuNdC+5yDiiqK9wPwyK+WbOXgsT41UQtgWfnmsODkZ4gEjUL2Yz2LdxD
-         f7JA==
+        d=gmail.com; s=20230601; t=1717511510; x=1718116310; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=btxrm+NJ1/xNKhjXV8pJNpI5p98TsdjFZzhEY1yUR+o=;
+        b=XO4ZL1q5Ew+X4qTeHyOhMulVEyE9bRGiut1mkP/abZj2XR9OLrjeuDgdTJQo1iwyYb
+         qE8I5yU7M8iT6N0cMRKjNFESEOZao9vPpBbE+kiRYpaKvLV5jboypWfzYwwGL8tstHLL
+         3HJKwzftJLAlpH6Fn3wwgpolUudMjbEWVsnYYy3MsX6NCBO1j/2OPtu1aRYoKngjY0Wp
+         v7vhkKNNNIHdzYEs8qS0XjNVkjPW5u3d55rh9JCAzsWnkH5Ndv6SLoSRzzy6e9RIs4JY
+         qEv/Dv1OROq8fRAudY3BsJfsb3fwauoFn8HTnnDsdqBtyr6l01j/qAG7QnBm9rKMw7I6
+         jj3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717511512; x=1718116312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w8l00WT5M+hkw2d4NnjSJbqOkW1RZzStGuA1CvK2sUM=;
-        b=DCCcMj4bCaLixsZTkgtuqmmjKX2iegPQLyHvK+fypyjarFk5pc0Pp5lQfrxI59NuQH
-         TFR/TIOuj0GoSFKwTp2GwrumALjzOesFFTZiaCHOLpRl+B2Nj4ZGFtqNoP4YXFHudBw1
-         XcJ2nk0neRUwUbKNRIoQah/r9KY4g0N+No7fjQJLDtgwGA4E6RSI2QyT0UOO+RUhQKhb
-         WmMT/BOxcKxuCbzMTU3Ogd+dqMgUQ4WQ44YbtV5dVjkCIh3cv60Hn3aiTZDN+IC++C62
-         r5KhjZAlG9qxZUjOaXeAe1oBnRX2ZyG7priY34ifV24kYtlA5CNwFkKtcjew5sg2YgQC
-         yOHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQsjqsazQxrx5FMs2NxUriOHIOeFiOlhePgpFvZ7ma93UNCaoSjXh4toQLArPFOKvlTMKXIebz9Xti1ZvvE5eXTtI6wEs2QSkef0EX
-X-Gm-Message-State: AOJu0Yy/l6b8Jkvbg/V4j0/glOE7xWSW5K4FRSH/xq28QEGOXzAqlm1u
-	H2nDE9SHooY4W8WqXLYWF5uldWWAa6PZIIvdbeBwwbuu6n5VtTh5S62Db+K9v5nUixVEOn3BaQI
-	6oePqBgzQcXUicKNpUJXYFVsJKLkx079fOAem
-X-Google-Smtp-Source: AGHT+IH/O61+QNBbKWIt4c3u1Z1AJi93HK8DE8/RW5ricyD3nsufx056k6EOeUUTHgwQelBTxwPZMgXy8F51jYSIh54=
-X-Received: by 2002:a05:622a:6116:b0:43a:db0c:ed9c with SMTP id
- d75a77b69052e-4401e63ced6mr2558031cf.15.1717511512081; Tue, 04 Jun 2024
- 07:31:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717511510; x=1718116310;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=btxrm+NJ1/xNKhjXV8pJNpI5p98TsdjFZzhEY1yUR+o=;
+        b=pt2WqIMr45y5JKU20ZxyhDv2bzCwnoqM6GRwnCsVYfbc30Ec2CYnSBzuEzCgTP5U/k
+         w3aIXia12VJooypwxyHLrEaJaihAtHnQt/RmuLmuM3fG0ATZXcBCEgEo0UNuA6qG6K3M
+         n+Hcdj0LnD7+ivh6LxzjCyp3GBCO227IOCd0izISmTjsVpSVHI2CpokVEyPqMZPpG0OF
+         +C55v1XaNAfkrVY2G0HOjLDbT981u2j5TNWazFqV5WSYVuFAnu1lMbekoMgKN+n2kx3R
+         gV475asx1WraRRaNJpXPNtizoWeu3Xg9zq9ypcw2osucTtddqzpVpnLgXHRwApWpAmcl
+         GXCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKuckHThmOua+rI8RbLf0zei5GFttQCQ+HlR1HZU5fEg77902WKKDLANmzA86u6UcD6i17g5RGG3b62R3EclmysfVZNCDZH1Y81Sd6mTK8WS1bwDkKjvqhfE/DbP5xjWG+yYc2daBmVUDPyr6DXGg2tduxgTr3kIsdmIWFfFFG9wh0MX5a
+X-Gm-Message-State: AOJu0Yx7YrA1iR+edfz8afguLZZModdTU/ywk437J9jpvi3WXOhv65BN
+	/wKFxMtCg9+vnMb8+g8w9FJwCfPYsxmB6OGiSB3JYP8hyvSOw4Of
+X-Google-Smtp-Source: AGHT+IGfgO9f/KQcrZNeBmHYEnduCT8loWCjHxpEbGwARcRqv9BttQMFRx9GiCUS8Qh+vo45YcDpSA==
+X-Received: by 2002:a17:902:fc48:b0:1f6:792c:6372 with SMTP id d9443c01a7336-1f6792c66e0mr70220135ad.47.1717511509717;
+        Tue, 04 Jun 2024 07:31:49 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dde56sm86252335ad.165.2024.06.04.07.31.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 07:31:49 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c25ff311-7742-46b3-a2f3-77d7b6a37ab7@roeck-us.net>
+Date: Tue, 4 Jun 2024 07:31:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604060659.1449278-1-quic_kriskura@quicinc.com> <20240604060659.1449278-2-quic_kriskura@quicinc.com>
-In-Reply-To: <20240604060659.1449278-2-quic_kriskura@quicinc.com>
-From: Doug Anderson <dianders@google.com>
-Date: Tue, 4 Jun 2024 07:31:35 -0700
-Message-ID: <CAD=FV=XKKtd3vArUzo+5_o17Prm-G5_tLBCzv+5q3gp_UfR8gQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: sc7180: Disable SuperSpeed
- instances in park mode
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <swboyd@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Kaehlcke <mka@chromium.org>, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] hwmon: Add support for SPD5118 compliant
+ temperature sensors
+To: Stephen Horvath <s.horvath@outlook.com.au>, linux-hwmon@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Armin Wolf <W_Armin@gmx.de>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-3-linux@roeck-us.net>
+ <SY4P282MB30639393B10CC313292C936BC5F82@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <SY4P282MB30639393B10CC313292C936BC5F82@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 6/4/24 01:48, Stephen Horvath wrote:
+> Hi,
+> 
+> On 4/6/24 14:02, Guenter Roeck wrote:
+>> Add support for SPD5118 (Jedec JESD300) compliant temperature
+>> sensors. Such sensors are typically found on DDR5 memory modules.
+>>
+>> Cc: René Rebe <rene@exactcode.de>
+>> Cc: Thomas Weißschuh <linux@weissschuh.net>
+>> Reviewed-by: Thomas Weißschuh <linux@weissschuh.net>
+>> Tested-by: Thomas Weißschuh <linux@weissschuh.net>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>> v4: No change
+>>
+>> v3: Shorten JESD300-5B.01 to JESD300; 5B.01 refers to the version
+>>      of the standard
+>>      Drop unnecessary 'attr' parameter from spd5118_{read,write}_enable()
+>>
+>> v2: Drop PEC property documentation
+>>      Add note indicating that alarm attributes are sticky until read
+>>      to documentation
+>>      Fix detect function
+>>      Fix misspelling in Makefile (CONFIG_SENSORS_SPD5118->CONFIG_SENSORS_SPD5118)
+>>
+>>   Documentation/hwmon/index.rst   |   1 +
+>>   Documentation/hwmon/spd5118.rst |  55 ++++
+>>   drivers/hwmon/Kconfig           |  12 +
+>>   drivers/hwmon/Makefile          |   1 +
+>>   drivers/hwmon/spd5118.c         | 481 ++++++++++++++++++++++++++++++++
+>>   5 files changed, 550 insertions(+)
+>>   create mode 100644 Documentation/hwmon/spd5118.rst
+>>   create mode 100644 drivers/hwmon/spd5118.c
+>>
+> 
+> It seems to report correct temperatures for my sticks, so I guess:
+> 
+> Tested-by: Stephen Horvath <s.horvath@outlook.com.au>
+> 
 
-On Mon, Jun 3, 2024 at 11:07=E2=80=AFPM Krishna Kurapati
-<quic_kriskura@quicinc.com> wrote:
->
-> On SC7180, in host mode, it is observed that stressing out controller
-> results in HC died error:
->
->  xhci-hcd.12.auto: xHCI host not responding to stop endpoint command
->  xhci-hcd.12.auto: xHCI host controller not responding, assume dead
->  xhci-hcd.12.auto: HC died; cleaning up
->
-> And at this instant only restarting the host mode fixes it. Disable
-> SuperSpeed instances in park mode for SC7180 to mitigate this issue.
->
-> Reported-by: Doug Anderson <dianders@google.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: 0b766e7fe5a2 ("arm64: dts: qcom: sc7180: Add USB related nodes")
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> ---
-> Removed RB/TB tag from Doug as commit text was updated.
+Thanks!
 
-It was a minor change so you could have kept my tags (especially the
-Tested-by, which isn't affected by the commit text), but in any case:
+Guenter
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Tested-by: Douglas Anderson <dianders@chromium.org>
+
 
