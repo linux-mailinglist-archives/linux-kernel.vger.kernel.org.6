@@ -1,100 +1,193 @@
-Return-Path: <linux-kernel+bounces-200936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1668FB6C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F07EB8FB6CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9EF1C224DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:18:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD251C21895
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E415613D2B6;
-	Tue,  4 Jun 2024 15:18:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85564D30B;
+	Tue,  4 Jun 2024 15:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOnvISgi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234A9D30B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63FB12B148;
+	Tue,  4 Jun 2024 15:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717514286; cv=none; b=nbE8YUuTJzrYpKnelOdXDcGPEhow+oZ0RkH/LcHSPoPMHzhL3vj8NBG6I5z7z8qh3SFBY0zPtARl02fvGCYBm37IDwyoNo+j7kAvZ6ZFPlvkJXtxTOCYFt0/bxF42xz/EDnDIZoDSU5n4UCWn81ujFeYRXMcwnhpRFm4f5oHHHQ=
+	t=1717514330; cv=none; b=dsl8mlZm/KoAHRu/SCp69YZDYvS6F3cWFpowRp6U44bL0TbWGcB47cZrqHBdMTBRhsLYciTnxggbS88J6Xt0zc8BQPTY1HWz3smgR8lYKeX7BccGKmJSfNgSikEr8GKQTX+cw32Srvgilp5fsI2wPMXD6sEBeWU6H8676xFPSok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717514286; c=relaxed/simple;
-	bh=tpfkNgTZfcuH+VTfOn91EPfqnUg6JbERugDkeEYrt5A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Icd6lykEhA0r+BeQ43R6TvL+ZmmSFmhiNoYGaaN8WvO4a3SjU/yXfzqptD1sr41KLLMeMBKhe9Z34bDRUlCI2DRrpaivg7Cxy2nS08vN+Ly4ex1Gjxk2dWCeoSllcRv4V4ohZlAM1gQoBfCfNI2tPezUjVLZNEOOtKk2FTcFOpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37497fe0362so29572435ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:18:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717514284; x=1718119084;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tOzCTNHICNLa8r7l1K030oTI8NwjqIBvUy4yex2WErw=;
-        b=XeQO3L/TurttyaQ1ckqG9MVQiSCC+nxmvIoLLCqnZQITZYk5KLdx4D7my1z/mGGL8z
-         gNZlDQTWRw1VNvc9PbqjVBlEP6pwV2zac258GRM7+ufTIIHYu0eGfZLKvxiSBktxDlsl
-         2TqBUntGpLCr14KdXMSysG46jRSJwhEXZd709+rxnjK59PovkK7L+KP12zrsqLxNf9UQ
-         x0eCy7MCKqGN8baatE56PCLNXhnXjNK2s0i23tEK6BFyqAhCbiBoTKjKxLreagM2kdQj
-         YU8e/i2Q/RoW7elHhC1MgRh0KqQW1HolGuk4qTdzPDHIHxaMIC2RaJJAQJYe36UkuGzb
-         srAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWT0yIpxaZ6Y+cKVEdE78gtp2vS9VHZB2avzdjuKqgSU/uFQBZ6s3b/CTTvo1n+aXMEOkYQZVtr0yZujBDBhKu8R2tQkNJquH8oPlVm
-X-Gm-Message-State: AOJu0YxvNcQQmTsdIpYUKbOMr3wUt1t9c4zAhKHKufzPxOYCqVJ2vq52
-	dE2JXqYpiz4f2iHeQMlMTtuv4/VXzmTMAIzzT3v9RIXtr5R8XaxmjUmZ9MKKwypX0PO/GmlewQg
-	v20I6cOo5ljF2FsVboEMtc/S4OXC8g9vLhbdQ+3nHRUP+aZM/qK+uNOk=
-X-Google-Smtp-Source: AGHT+IEc+y/vX0hgXVTa79rvG2pXkFnykeX6p1ndZh1+Zm75/ZC5/DBkVL90QW5i8WSQ2aylTwUbzTPubz6DLLZsTcLJUBuaYkGB
+	s=arc-20240116; t=1717514330; c=relaxed/simple;
+	bh=byrbxIeFUv8qWRieFnQIoYcmf1QHDFVOAfsLUq8svpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UK/u1F2OZ1koIoMAzfBVIHVvnWS9lON6g+TQ63iMfD8DfcZGXC55O/cTOSoozxv8u5GFVYGf1BpxAOosZ53NV+Maom580ufo6n8qKmx4JgvRO2a6sKbYBFSfUdizqs/Djvg1qEB5z5vc66Wvu94uCNF/ZayHu8ZnDkwkGGOgD8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOnvISgi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1F9C2BBFC;
+	Tue,  4 Jun 2024 15:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717514330;
+	bh=byrbxIeFUv8qWRieFnQIoYcmf1QHDFVOAfsLUq8svpE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iOnvISgipa8sPei/yu3VCtfmhHJoLFBLrLVKJbtOFCuqZHd8SjkdH1AyULTqsRhsb
+	 CnO0oizgC628CRjLtDyd+ciqhOCDbv5s8inMCn0qUq89WXzz1wEZg5beAvZBShkw1T
+	 R/U1U3NakpSaW6037Af5tInvV8vUUB3luOPFHTAUwUneu9qbFKujk4NYROApiDpPh8
+	 UgPuL1cBSvxvgXIiunAg8MH7k/02u/2zyW+L8E9N5shV99Fuw8MaM2cTIHVzrUJC8+
+	 Ol2bJrUsJnrADN7HxgaeuQLEue5m4AysrEcjEaqTvlwYnqN9I/Lo9fMottTFgp80xV
+	 EvV9CtUvbqGmw==
+Date: Tue, 4 Jun 2024 12:18:47 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 2/4] perf hist: Simplify __hpp_fmt() using hpp_fmt_data
+Message-ID: <Zl8wVwNaKDXLTWbq@x1>
+References: <20240603224412.1910049-1-namhyung@kernel.org>
+ <20240603224412.1910049-3-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6b:b0:373:89cf:c491 with SMTP id
- e9e14a558f8ab-3748b8f3693mr8474465ab.0.1717514284336; Tue, 04 Jun 2024
- 08:18:04 -0700 (PDT)
-Date: Tue, 04 Jun 2024 08:18:04 -0700
-In-Reply-To: <ifehf7xjxklocicvvbsidy65zidgtkfofc34s7y7eopbkokpmn@or2u6znvtren>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d09b25061a11f454@google.com>
-Subject: Re: [syzbot] [maple-tree?] BUG: unable to handle kernel paging
- request in mas_walk
-From: syzbot <syzbot+c67d06ab25a9bc4adf35@syzkaller.appspotmail.com>
-To: liam.howlett@oracle.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603224412.1910049-3-namhyung@kernel.org>
 
-Hello,
+On Mon, Jun 03, 2024 at 03:44:10PM -0700, Namhyung Kim wrote:
+> The struct hpp_fmt_data is to keep the values for each group members so
+> it doesn't need to check the event index in the group.
+> 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/ui/hist.c | 75 +++++++++++++++++++++-----------------------
+>  1 file changed, 36 insertions(+), 39 deletions(-)
+> 
+> diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
+> index e30fcb1e87e7..539978c95cfd 100644
+> --- a/tools/perf/ui/hist.c
+> +++ b/tools/perf/ui/hist.c
+> @@ -46,65 +46,62 @@ static int __hpp__fmt_print(struct perf_hpp *hpp, struct hists *hists, u64 val,
+>  	return hpp__call_print_fn(hpp, print_fn, fmt, len, val);
+>  }
+>  
+> +struct hpp_fmt_data {
+> +	struct hists *hists;
+> +	u64 val;
+> +	int samples;
+> +};
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: unable to handle kernel paging request in corrupted
+Can we try to avoid vague terms like 'data' and use a hopefully more
+clear 'hpp_fmt_value' instead?
 
-Unable to handle kernel paging request at virtual address 007f8000826099b8
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[007f8000826099b8] address between user and kernel address ranges
+>  static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
+>  		      hpp_field_fn get_field, const char *fmt, int len,
+>  		      hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
+>  {
+> -	int ret;
+> +	int ret = 0;
+>  	struct hists *hists = he->hists;
+>  	struct evsel *evsel = hists_to_evsel(hists);
+> +	struct evsel *pos;
+>  	char *buf = hpp->buf;
+>  	size_t size = hpp->size;
+> +	int i, nr_members = 1;
+> +	struct hpp_fmt_data *data;
+
+Here we then use:
+
+	struct hpp_fmt_value *values;
+
+> +
+> +	if (evsel__is_group_event(evsel))
+> +		nr_members = evsel->core.nr_members;
+> +
+> +	data = calloc(nr_members, sizeof(*data));
+> +	if (data == NULL)
+> +		return 0;
 
 
-Tested on:
-
-commit:         63ab6007 maple_tree: Check dead node in mas_walk() whe..
-git tree:       git://git.infradead.org/users/jedix/linux-maple.git syz_20240603
-console output: https://syzkaller.appspot.com/x/log.txt?x=14842a16980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bd6024aedb15e15c
-dashboard link: https://syzkaller.appspot.com/bug?extid=c67d06ab25a9bc4adf35
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Note: no patches were applied.
+> +
+> +	i = 0;
+> +	for_each_group_evsel(pos, evsel)
+> +		data[i++].hists = evsel__hists(pos);
+>  
+> -	ret = __hpp__fmt_print(hpp, hists, get_field(he), he->stat.nr_events,
+> -			       fmt, len, print_fn, fmtype);
+> +	data[0].val = get_field(he);
+> +	data[0].samples = he->stat.nr_events;
+>  
+>  	if (evsel__is_group_event(evsel)) {
+> -		int prev_idx, idx_delta;
+>  		struct hist_entry *pair;
+> -		int nr_members = evsel->core.nr_members;
+> -
+> -		prev_idx = evsel__group_idx(evsel);
+>  
+>  		list_for_each_entry(pair, &he->pairs.head, pairs.node) {
+> -			u64 period = get_field(pair);
+> -			u64 total = hists__total_period(pair->hists);
+> -			int nr_samples = pair->stat.nr_events;
+> -
+> -			if (!total)
+> -				continue;
+> +			for (i = 0; i < nr_members; i++) {
+> +				if (data[i].hists != pair->hists)
+> +					continue;
+>  
+> -			evsel = hists_to_evsel(pair->hists);
+> -			idx_delta = evsel__group_idx(evsel) - prev_idx - 1;
+> -
+> -			while (idx_delta--) {
+> -				/*
+> -				 * zero-fill group members in the middle which have
+> -				 * no samples, pair->hists is not correct but it's
+> -				 * fine since the value is 0.
+> -				 */
+> -				ret += __hpp__fmt_print(hpp, pair->hists, 0, 0,
+> -							fmt, len, print_fn, fmtype);
+> +				data[i].val = get_field(pair);
+> +				data[i].samples = pair->stat.nr_events;
+> +				break;
+>  			}
+> -
+> -			ret += __hpp__fmt_print(hpp, pair->hists, period, nr_samples,
+> -						fmt, len, print_fn, fmtype);
+> -
+> -			prev_idx = evsel__group_idx(evsel);
+>  		}
+> +	}
+>  
+> -		idx_delta = nr_members - prev_idx - 1;
+> -
+> -		while (idx_delta--) {
+> -			/*
+> -			 * zero-fill group members at last which have no sample.
+> -			 * the hists is not correct but it's fine like above.
+> -			 */
+> -			ret += __hpp__fmt_print(hpp, evsel__hists(evsel), 0, 0,
+> -						fmt, len, print_fn, fmtype);
+> -		}
+> +	for (i = 0; i < nr_members; i++) {
+> +		ret += __hpp__fmt_print(hpp, data[i].hists, data[i].val,
+> +					data[i].samples, fmt, len,
+> +					print_fn, fmtype);
+>  	}
+>  
+> +	free(data);
+> +
+>  	/*
+>  	 * Restore original buf and size as it's where caller expects
+>  	 * the result will be saved.
+> -- 
+> 2.45.1.288.g0e0cd299f1-goog
 
