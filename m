@@ -1,260 +1,174 @@
-Return-Path: <linux-kernel+bounces-200147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3D48FABCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:23:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557B38FABCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB810285DA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:23:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC814B2155D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5332140397;
-	Tue,  4 Jun 2024 07:23:44 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843D112C466
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABFB140E58;
+	Tue,  4 Jun 2024 07:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ezn05q3A"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61C483CB4;
+	Tue,  4 Jun 2024 07:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717485824; cv=none; b=bYJsTtVzWeAA63/1b3lI26pLUb0KuwsGDDYdONZWIMP4TONzY0PyzUs5qMMcIxqcbTna+XOgrvyf9dgthgZ4jcaxKdQU2LotKT3+IvAru4vpK5v+z0zIxL8S/9xY+HjCGT0SzWNnWld+zPlqt1le6u3kKUm72QeGz7lnopYO2+c=
+	t=1717485901; cv=none; b=VaP2PEwh2XifzwfZBI/bnCv6QIyPvZjS4ZZ9bxxVXKIA9NujHAIsMtv21jsRyar8MusOP9fN4S08YxS631ttS4RNbo5IO/R5A434d+sxeA67VaPT5b4ZkME6nlVmROXHlWVYjGrcnW54yoUOkK82e94HWDYBbMj7KSch70+xRh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717485824; c=relaxed/simple;
-	bh=5fg8vE5d2ihZd6njkwTGwkgjRTSrYmoR91+fBVonnBA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=gx8RTlsOrV/PWv0pJoHzLv99B+k39J1/2kt3/SmWp8CElzy1v3df6VwvtJwCHidv1ke/SVaaaN+zs5zhZzv1u21OSB7InWpX/kkCW9ahgqrWqMNPjaNzhYDdLwn69QdVdgFDs+iDKdLfeWKxst+z4PT+UTnBPWOZspHkGtjU5Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-c7-665ec0f6918b
-From: Byungchul Park <byungchul@sk.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel_team@skhynix.com,
-	hannes@cmpxchg.org,
-	iamjoonsoo.kim@lge.com,
-	rientjes@google.com,
-	ying.huang@intel.com
-Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
-Date: Tue,  4 Jun 2024 16:23:23 +0900
-Message-Id: <20240604072323.10886-1-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgluLIzCtJLcpLzFFi42LhesuzSPfbgbg0g4U7pSzmrF/DZrF6k6/F
-	yu5mNovLu+awWdxb85/Vom3JRiaLk7Mmsziwexx+857ZY8GmUo/Fe14yeWz6NIndo+vtFSaP
-	EzN+s3h83iQXwB7FZZOSmpNZllqkb5fAlTH303a2gt1mFV3zshoYH2t3MXJySAiYSMyZ+oQZ
-	xt539CMLiM0moC5x48ZPsLiIgKzE1L/ngeJcHMwCGxglNpz9wQqSEBaIl9hwbykjiM0ioCqx
-	8eIDsGZeAVOJU9N3sEAMlZdYveEAM0izhMBLVonpZ64yQiQkJQ6uuMEygZF7ASPDKkahzLyy
-	3MTMHBO9jMq8zAq95PzcTYzAcFlW+yd6B+OnC8GHGAU4GJV4eA0WxaYJsSaWFVfmHmKU4GBW
-	EuHtq4tOE+JNSaysSi3Kjy8qzUktPsQozcGiJM5r9K08RUggPbEkNTs1tSC1CCbLxMEp1cBo
-	op3dWa5dfk1s7+OYD4e33t+vWTa3ITxU2vaxrp7xEWmfIvWAj2+sJ623v56WUrz5zdLlS3Zv
-	XDt17Zy+V8kCG/tyIsoD3olsVL8w4WTNosWBJ73blJwdVKcc/VlyP4WDc+p+oy+OJ/nj4h7c
-	FJGZ7ppdzmfiYHAzdVroIYZFbCed1nHO0n+mxFKckWioxVxUnAgAWqpnDhMCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJMWRmVeSWpSXmKPExsXC5WfdrPvtQFyawePjHBZz1q9hs1i9yddi
-	ZXczm8XhuSdZLS7vmsNmcW/Nf1aLtiUbmSxOzprM4sDhcfjNe2aPBZtKPRbvecnksenTJHaP
-	rrdXmDxOzPjN4rH4xQcmj8+b5AI4orhsUlJzMstSi/TtErgy5n7azlaw26yia15WA+Nj7S5G
-	Tg4JAROJfUc/soDYbALqEjdu/GQGsUUEZCWm/j0PFOfiYBbYwCix4ewPVpCEsEC8xIZ7SxlB
-	bBYBVYmNFx+ANfMKmEqcmr6DBWKovMTqDQeYJzByLGBkWMUokplXlpuYmWOqV5ydUZmXWaGX
-	nJ+7iRHo/WW1fybuYPxy2f0QowAHoxIPr8XK2DQh1sSy4srcQ4wSHMxKIrx9ddFpQrwpiZVV
-	qUX58UWlOanFhxilOViUxHm9wlMThATSE0tSs1NTC1KLYLJMHJxSDYx15dFNv125rAOWz381
-	m98lvNRg7sxPenw3vvofTC5xmVm6N+uPsd/dFZuTnivWrgs7qjP7hl1Oe+m5dHnLtb1a/Sd+
-	br231rz2VMe8XJVZyZbfXF+H3xaJ/1nDXPTp8v/DmvNKq/bqT4ux2/RyTYb0ku/qgZFTtnFa
-	VlYIHjC9JSDh4Bm9w0OJpTgj0VCLuag4EQBHvAI2+gEAAA==
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1717485901; c=relaxed/simple;
+	bh=DpEH2NbFw1m9Pv6+h2HbMRW9uEXYC1Z3v4mpBVv5ld4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rKrp1roSKMhyM2MPZJ0NMuvZ54hCEZ+cDrm2opZ/ITS1qGUzTI6bheuTIiaiTRLFthVwdHE0B23qX18ihK8pYRQ6y2Xr9zU4OId1slj/8Uehn9lrldOpmQHxW+pqdg0BfmC4WA7rPQIfNp+1a9lvQSxQXlFLYJUtx3W08my6iXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ezn05q3A; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4546oZFa012250;
+	Tue, 4 Jun 2024 07:24:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=TtL2QBVjGNwMRr4Cw76yWWTalIAKrI0zspJ0pw5e688=;
+ b=Ezn05q3AMgqIJ0Jx09VQAWnNbkfe+E0vIlDzRC0fd6IgWKzAcEZkDq245UgzlXUjkuN1
+ 43iRkAMASj04GxCNALAEIGpcUNb+SoGV6uLst2skFclSa7U8vHzYPrA2fjY8SSEIIb1f
+ IBO4kIu5j6H/bKpmUO0+HTmVwsrJ2fC1dX/W2IZYiBzGNMdXHIr6XHZ3IXRerVpma1ZB
+ FoZ+ipI4pS+lm4q3atu37JAbLu6bv5uQ18eMaM8imTUeuNOf4YvAb4FKZTyK8fV0tDKF
+ qK494Adcv/dufcj0qNQ6OAmUJUrE90y2jxF8hl94L98r0I3DHFpDsjyZbC8PlLjZab8j 6w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yhw35r7av-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 07:24:55 +0000
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4547MAZd008349;
+	Tue, 4 Jun 2024 07:24:54 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yhw35r7at-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 07:24:54 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4546xZga022840;
+	Tue, 4 Jun 2024 07:24:53 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygg6m4dgw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 07:24:53 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4547Om7u46858632
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Jun 2024 07:24:50 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 16E4A2004F;
+	Tue,  4 Jun 2024 07:24:48 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 94AE82004B;
+	Tue,  4 Jun 2024 07:24:47 +0000 (GMT)
+Received: from [9.171.41.81] (unknown [9.171.41.81])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Jun 2024 07:24:47 +0000 (GMT)
+Message-ID: <211b39ae-af0c-4db9-8931-a1446f34c832@linux.ibm.com>
+Date: Tue, 4 Jun 2024 09:24:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: drivers/s390x: Use SKIP() during FIXTURE_SETUP
+To: Kees Cook <keescook@chromium.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, Steffen Eiden <seiden@linux.ibm.com>
+References: <20240518001806.work.381-kees@kernel.org>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20240518001806.work.381-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: F1D71ipIsyXGVV7YisShVYtUIgHGDYPE
+X-Proofpoint-ORIG-GUID: 8UteM9o0JBq9NV-bJRO4cCVimPRh_KlO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-04_03,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=393
+ clxscore=1011 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406040059
 
-Changes from v1:
-	1. Don't allow to resume kswapd if the system is under memory
-	   pressure that might affect direct reclaim by any chance, like
-	   if NR_FREE_PAGES is less than (low wmark + min wmark)/2.
+On 5/18/24 02:18, Kees Cook wrote:
+> Instead of mixing selftest harness and ksft helpers, perform SKIP
+> testing from the FIXTURE_SETUPs. This also means TEST_HARNESS_MAIN does
+> not need to be open-coded.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
 
---->8---
-From 6c73fc16b75907f5da9e6b33aff86bf7d7c9dd64 Mon Sep 17 00:00:00 2001
-From: Byungchul Park <byungchul@sk.com>
-Date: Tue, 4 Jun 2024 15:27:56 +0900
-Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
+Adding the author in CC.
 
-A system should run with kswapd running in background when under memory
-pressure, such as when the available memory level is below the low water
-mark and there are reclaimable folios.
 
-However, the current code let the system run with kswapd stopped if
-kswapd has been stopped due to more than MAX_RECLAIM_RETRIES failures
-until direct reclaim will do for that, even if there are reclaimable
-folios that can be reclaimed by kswapd.  This case was observed in the
-following scenario:
+This changes the skip behavior from one single skip to a skip per test.
+Not an issue, but a change.
 
-   CONFIG_NUMA_BALANCING enabled
-   sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
-   numa node0 (500GB local DRAM, 128 CPUs)
-   numa node1 (100GB CXL memory, no CPUs)
-   swap off
+But also we're generating invalid TAP AFAIK which we also have been 
+before but we can fix that in this patch.
 
-   1) Run a workload with big anon pages e.g. mmap(200GB).
-   2) Continue adding the same workload to the system.
-   3) The anon pages are placed in node0 by promotion/demotion.
-   4) kswapd0 stops because of the unreclaimable anon pages in node0.
-   5) Kill the memory hoggers to restore the system.
-
-After restoring the system at 5), the system starts to run without
-kswapd.  Even worse, tiering mechanism is no longer able to work since
-the mechanism relies on kswapd for demotion.
-
-However, the node0 has pages newly allocated after 5), that might or
-might not be reclaimable.  Since those are potentially reclaimable, it's
-worth hopefully trying reclaim by allowing kswapd to work again.
-
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- include/linux/mmzone.h |  4 ++++
- mm/page_alloc.c        | 12 ++++++++++
- mm/vmscan.c            | 52 ++++++++++++++++++++++++++++++++++++++----
- 3 files changed, 63 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index c11b7cde81ef..7c0ba90ea7b4 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1331,6 +1331,10 @@ typedef struct pglist_data {
- 	enum zone_type kswapd_highest_zoneidx;
- 
- 	int kswapd_failures;		/* Number of 'reclaimed == 0' runs */
-+	int nr_may_reclaimable;		/* Number of pages that have been
-+					   allocated since considered the
-+					   node is hopeless due to too many
-+					   kswapd_failures. */
- 
- #ifdef CONFIG_COMPACTION
- 	int kcompactd_max_order;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 14d39f34d336..1dd2daede014 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1538,8 +1538,20 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
- static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags,
- 							unsigned int alloc_flags)
- {
-+	pg_data_t *pgdat = page_pgdat(page);
-+
- 	post_alloc_hook(page, order, gfp_flags);
- 
-+	/*
-+	 * New pages might or might not be reclaimable depending on how
-+	 * these pages are going to be used.  However, since these are
-+	 * potentially reclaimable, it's worth hopefully trying reclaim
-+	 * by allowing kswapd to work again even if there have been too
-+	 * many ->kswapd_failures, if ->nr_may_reclaimable is big enough.
-+	 */
-+	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
-+		pgdat->nr_may_reclaimable += 1 << order;
-+
- 	if (order && (gfp_flags & __GFP_COMP))
- 		prep_compound_page(page, order);
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 3ef654addd44..6cf7ff164c2a 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4943,6 +4943,7 @@ static void lru_gen_shrink_node(struct pglist_data *pgdat, struct scan_control *
- done:
- 	/* kswapd should never fail */
- 	pgdat->kswapd_failures = 0;
-+	pgdat->nr_may_reclaimable = 0;
- }
- 
- /******************************************************************************
-@@ -5991,9 +5992,10 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 	 * sleep. On reclaim progress, reset the failure counter. A
- 	 * successful direct reclaim run will revive a dormant kswapd.
- 	 */
--	if (reclaimable)
-+	if (reclaimable) {
- 		pgdat->kswapd_failures = 0;
--	else if (sc->cache_trim_mode)
-+		pgdat->nr_may_reclaimable = 0;
-+	} else if (sc->cache_trim_mode)
- 		sc->cache_trim_mode_failed = 1;
- }
- 
-@@ -6636,6 +6638,42 @@ static void clear_pgdat_congested(pg_data_t *pgdat)
- 	clear_bit(PGDAT_WRITEBACK, &pgdat->flags);
- }
- 
-+static bool may_reclaimable(pg_data_t *pgdat, int order,
-+		int highest_zoneidx)
-+{
-+	int i;
-+	bool may_reclaimable;
-+
-+	may_reclaimable = pgdat->nr_may_reclaimable >= 1 << order;
-+	if (!may_reclaimable)
-+		return false;
-+
-+	/*
-+	 * Check watermarks bottom-up as lower zones are more likely to
-+	 * meet watermarks.
-+	 */
-+	for (i = 0; i <= highest_zoneidx; i++) {
-+		unsigned long mark;
-+		struct zone *zone;
-+
-+		zone = pgdat->node_zones + i;
-+		if (!managed_zone(zone))
-+			continue;
-+
-+		/*
-+		 * Don't bother the system by resuming kswapd if the
-+		 * system is under memory pressure that might affect
-+		 * direct reclaim by any chance.  Conservatively allow it
-+		 * unless NR_FREE_PAGES is less than (low + min)/2.
-+		 */
-+		mark = (low_wmark_pages(zone) + min_wmark_pages(zone)) >> 1;
-+		if (zone_watermark_ok_safe(zone, order, mark, highest_zoneidx))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- /*
-  * Prepare kswapd for sleeping. This verifies that there are no processes
-  * waiting in throttle_direct_reclaim() and that watermarks have been met.
-@@ -6662,7 +6700,8 @@ static bool prepare_kswapd_sleep(pg_data_t *pgdat, int order,
- 		wake_up_all(&pgdat->pfmemalloc_wait);
- 
- 	/* Hopeless node, leave it to direct reclaim */
--	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
-+	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES &&
-+	    !may_reclaimable(pgdat, order, highest_zoneidx))
- 		return true;
- 
- 	if (pgdat_balanced(pgdat, order, highest_zoneidx)) {
-@@ -6940,8 +6979,10 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
- 		goto restart;
- 	}
- 
--	if (!sc.nr_reclaimed)
-+	if (!sc.nr_reclaimed) {
- 		pgdat->kswapd_failures++;
-+		pgdat->nr_may_reclaimable = 0;
-+	}
- 
- out:
- 	clear_reclaim_active(pgdat, highest_zoneidx);
-@@ -7204,7 +7245,8 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
- 		return;
- 
- 	/* Hopeless node, leave it to direct reclaim if possible */
--	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ||
-+	if ((pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES &&
-+	     !may_reclaimable(pgdat, order, highest_zoneidx)) ||
- 	    (pgdat_balanced(pgdat, order, highest_zoneidx) &&
- 	     !pgdat_watermark_boosted(pgdat, highest_zoneidx))) {
- 		/*
--- 
-2.17.1
+ From what I understand this line should have a "#" prefix to show that 
+it's a comment:
+Enable CONFIG_S390_UV_UAPI and check the access rights on /dev/uv.
 
 
