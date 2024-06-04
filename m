@@ -1,131 +1,89 @@
-Return-Path: <linux-kernel+bounces-201079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514308FB90F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:32:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFE88FB92B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDEBD1F22B5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:32:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DB70B225D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9855814901A;
-	Tue,  4 Jun 2024 16:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0EE14882A;
+	Tue,  4 Jun 2024 16:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="HgXnE0hF"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qcfP5Nwm"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36E31487FF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F18B1474D9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518726; cv=none; b=pE1hMx2mcIfJgc5iE/C/pzSm5Pea01t3OBKin798TZ1MDk3HtswJPF3U25X7YGNl18lGBLQu+yFxHs9LF0zIDEqzYz8FEhieoJvzLCuIxYpaxO0LiKVY+szy1zogjL0pkk8bVdX8Kg/5DUsQZwR/2APbah5CDvAsSlZcBl/j9Uo=
+	t=1717518750; cv=none; b=C4yOmKtq1JmuLWyLeCzVitIYCTpqJ0SJlkynBYo6DeRM2qpYnnpmHLipuPVKtrTNJJV3A2kJyo6U5T/V03duEnhCEY11GFbNLB/KljJEE5r3ydErTVFaMjhVgxMhrlc51vjwikmFtFLy1pJZmQ3oBh6p0hL5ltxfdTAyVUwtwjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518726; c=relaxed/simple;
-	bh=i4Ogx5/mcBgPe8sS8F8X3tQ7eWEg2sGB2TGn7q/9bMU=;
+	s=arc-20240116; t=1717518750; c=relaxed/simple;
+	bh=vhN1H/Zne01aMVCWtuHqzGpgEeAz4cXGQxiMxD7JVjw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZeE6guR7YRo8Bclxyepj2zzvnqr6fo1TpxMl2TlsvNVxHAyVki9FbdbeA0591MEfL1TBMwQHRYK7IxhdM1rmWqsM/2WN/HGvlRQ9+wlJvZNDXx7N7Q/NKGeHyWL1y8624y7K4ZjYdq/qrYIHMlcZlrdFugjGSjeAROswerOo9X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=HgXnE0hF; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7951e24db3bso34289985a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:32:03 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hr4F9tfYoXJzmyYwGJnR4QxcjHSXCiIeTZQzVH+ZSJPc7IUauoN11uAUdI7/GTEgoYWrz7Jf10J7lhbSvSB2YXq6JOW/Is3a2Qolw8zv+fP2jY+0B1ke5er5Hrr4+v2sa1sYxgci+i5gvM6uUkD7ESRT9xs711pXwSnOAumhw04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qcfP5Nwm; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a68a4a9946cso380105466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:32:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1717518723; x=1718123523; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717518745; x=1718123545; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EYr0Y7RICrMaykessJ15jPU9wen2fALKwAvygZWhRiU=;
-        b=HgXnE0hFGN5LPcj1volHEzaktqS39wRLFKsfdPOjrGSzbcgM8iKqyoaryZ52o2p4vz
-         Nqvfru5A3eCMEsddtspDtceHVmvigeqFj0/Ij/SWd9KTnXD3bn3UyKCelhqIg83GURRF
-         fFg+ZD+ksUXGFmVvcZM3sQHu0HhfE3BnJEeapN441cKgo1NE6skc9DQJuhi8ACyH2mpO
-         g7g7WrO8weGOIJ+4PgW52LK2eVAJR4zyWFW45r8R/V5Y79eksxGmoaNkh+uA5pmk4kNf
-         qJ1+8x1GntZWXPuug9UqtquGS0oy8GcsbydN/4pkBCLAOHYhUNroafSvXiAUP8FEdYJq
-         2oBw==
+        bh=IZl68xNZAGCK8WLU3JtmGvlaBazODQUjqFiGmezC9ZA=;
+        b=qcfP5NwmCrjUluhj9DTcXVgp1TSwRv48xwlt/UwKFNiYvV/cwdJ7l1M1bjEM/LWbA1
+         zy6FY0XYyfTHzJFQ7wv0CQG0K1xIqw+sV5LOI+waawlmTGNUM7HYEBVFmB45ttQifuqu
+         CnDYNzvqP4SsgzdwAnH55hGcM8qFbxF2ggRBcJ0g4a3R17F9koA+J32oUl14waK8VyUY
+         8fRZ7qlyVIegRW3y/1fS73phmBIbTwUM61fnLmidFpJSHFNSq8sMcQed5p6Wj3pdA5Bn
+         ULfcRzp0uC4xYsoFpPPx+GLMFz81R4jqfL7cANpDr/UZR61wA7GmPc1NVJFqbpj8YZ65
+         Snng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717518723; x=1718123523;
+        d=1e100.net; s=20230601; t=1717518745; x=1718123545;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EYr0Y7RICrMaykessJ15jPU9wen2fALKwAvygZWhRiU=;
-        b=gVS76MK+gpemVNp55s1T8pIcAbvfXmBM6MrjLeOOdentBMHjlU3/bMeteWYcobuTV0
-         Ull3ovSyDju8yakUH52Xm5hdq4fxPDjRgi76gDiTROFZ0z8gGr3p9A/9opVk7EnSWWRp
-         Bw13uxcqTKmRX0vZDPpu16R0pecx88g4e7iZIqgKQGjdWvnRnpHDJnbdcyQBRm5EH44h
-         +Vii8b3jAHmhjEXGl0vI22QNuxgTwP5C9WeaIhhbgNzmUG8YKZV7ev8PAUeeKDFHHX7n
-         4R4QgJv8FZMPiePWdVHzM1cyZgwkjgZTmqojhmVpavJ6IBL/nw0QmscYDY9TZxg/g7mb
-         gKjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIYlQA8VaXxf/IZOzpJkajp1ZXgp8IQFPpVW5VIuyBJ1k/iNjtOn0fSlOJJxQ5B9LxUGpByGe5Cx2PxWxj/IYoMf2nCydd927nPGaQ
-X-Gm-Message-State: AOJu0Yy0O4kwzfe2LHXAX+OKO7W85jjciXBQBGbmYYvSIepHlFjljORf
-	6ZQ/i7lPDZsX+IGiAm/PmElDhvaMqLvykskLO5cxtoQYevOf9ELpzbQOe4FzqVQ=
-X-Google-Smtp-Source: AGHT+IHcNJm5ltpG2mf7+3csAwiL5eKctuS7MAmZ+C2lRHB7rHiUktaBSt3TzVqwSkXLa2Nb4dRvUA==
-X-Received: by 2002:a05:620a:271a:b0:792:c5c7:e90d with SMTP id af79cd13be357-794f5cc687emr1510000185a.49.1717518722779;
-        Tue, 04 Jun 2024 09:32:02 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.89])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7951a7b3314sm48813285a.40.2024.06.04.09.32.01
+        bh=IZl68xNZAGCK8WLU3JtmGvlaBazODQUjqFiGmezC9ZA=;
+        b=rICLPewrQwXC1R5VJRvoxdMonHQF6daHrOchRdfAn1EROdp55B8kglFtEaSzdLh9wG
+         zUK4LvkgvKiAJPknwnfA+p9AkvNmEOoNkX3T+vg+ewYiJnDa13Fx2OVeTBzNjuoRIX4l
+         36xXanGXG4MUS4BfE7p7rWUuuFqvgjAvkc+n8Q8h1wEdWERCij4YlCs9ru8/y0vBYqy1
+         SVh2tg0YH4VpumYXfcBhXjTxQxpZsJP2/hXG5mKiLnoViuD1+atVsEAc7VNzrk0oYfGJ
+         EfdTScZqYwfPLmKxoowMyeAeFLHVcK8y1En2xHeo0U0bxmwzKkPE5b8u4Pjrd0E7qI4C
+         L1MA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3TCza8X+EaVe5jTzjKaOpNRKtYCE4NPZae3yQxdBhIyHHn3LtEJkBft5XNU8mOPmCZcF6/aauU7sfVQiBiK4y9w6aibqw/Rh/8F6g
+X-Gm-Message-State: AOJu0YweCLk1aafNPDV2gZovTXmlF7PCwxxpD87m2qxbF1sqbH9SMz96
+	qN6j/rhPCkbN8hO8VZphjC8mrI9hQbobtQPdXVKVhDmHcVjsK6hpE7FSOoZyY4F5ctoIJQT+Owd
+	U
+X-Google-Smtp-Source: AGHT+IFOOVIcN2aRDbb5aHSw3p0bc1NVJmEzyLH4sAbz28u/NJNN0/RgeJtw8+aYC4M+i+BeQktspA==
+X-Received: by 2002:a17:906:c383:b0:a62:cef2:5711 with SMTP id a640c23a62f3a-a699fab8c84mr2534766b.6.1717518745428;
+        Tue, 04 Jun 2024 09:32:25 -0700 (PDT)
+Received: from linaro.org ([188.27.161.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68ff23ffa2sm359655266b.67.2024.06.04.09.32.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:32:01 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sEX4o-002rQm-Kw;
-	Tue, 04 Jun 2024 13:31:58 -0300
-Date: Tue, 4 Jun 2024 13:31:58 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Paolo Abeni <pabeni@redhat.com>, Mina Almasry <almasrymina@google.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Ahern <dsahern@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Shailend Chand <shailend@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Kaiyuan Zhang <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v10 05/14] netdev: netdevice devmem allocator
-Message-ID: <20240604163158.GB21513@ziepe.ca>
-References: <20240530201616.1316526-1-almasrymina@google.com>
- <20240530201616.1316526-6-almasrymina@google.com>
- <bea8b8bf1630309bb004f614e4a3c7f684a6acb6.camel@redhat.com>
- <20240604121551.07192993@gandalf.local.home>
+        Tue, 04 Jun 2024 09:32:25 -0700 (PDT)
+Date: Tue, 4 Jun 2024 19:32:23 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: PCI: qcom: Fix register maps items and add
+ 3.3V supply
+Message-ID: <Zl9Bl3HalMHAsvpY@linaro.org>
+References: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -134,56 +92,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604121551.07192993@gandalf.local.home>
+In-Reply-To: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
 
-On Tue, Jun 04, 2024 at 12:15:51PM -0400, Steven Rostedt wrote:
-> On Tue, 04 Jun 2024 12:13:15 +0200
-> Paolo Abeni <pabeni@redhat.com> wrote:
+On 24-06-04 19:05:12, Abel Vesa wrote:
+> All PCIe controllers found on X1E80100 have MHI register region and
+> VDDPE supplies. Add them to the schema as well.
 > 
-> > On Thu, 2024-05-30 at 20:16 +0000, Mina Almasry wrote:
-> > > diff --git a/net/core/devmem.c b/net/core/devmem.c
-> > > index d82f92d7cf9ce..d5fac8edf621d 100644
-> > > --- a/net/core/devmem.c
-> > > +++ b/net/core/devmem.c
-> > > @@ -32,6 +32,14 @@ static void net_devmem_dmabuf_free_chunk_owner(struct gen_pool *genpool,
-> > >  	kfree(owner);
-> > >  }
-> > >  
-> > > +static inline dma_addr_t net_devmem_get_dma_addr(const struct net_iov *niov)  
-> > 
-> > Minor nit: please no 'inline' keyword in c files.
+> Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> This patchset fixes the following warning:
+> https://lore.kernel.org/all/171751454535.785265.18156799252281879515.robh@kernel.org/
 > 
-> I'm curious. Is this a networking rule? I use 'inline' in my C code all the
-> time.
+> Also fixes a MHI reg region warning that will be triggered by the following patch:
 
-It mostly comes from Documentation/process/coding-style.rst:
+Correction here. This schema patch will trigger an MHI reg region
+warning until the following patch will also be merged.
 
-15) The inline disease
-----------------------
-
-There appears to be a common misperception that gcc has a magic "make me
-faster" speedup option called ``inline``. While the use of inlines can be
-appropriate (for example as a means of replacing macros, see Chapter 12), it
-very often is not. Abundant use of the inline keyword leads to a much bigger
-kernel, which in turn slows the system as a whole down, due to a bigger
-icache footprint for the CPU and simply because there is less memory
-available for the pagecache. Just think about it; a pagecache miss causes a
-disk seek, which easily takes 5 milliseconds. There are a LOT of cpu cycles
-that can go into these 5 milliseconds.
-
-A reasonable rule of thumb is to not put inline at functions that have more
-than 3 lines of code in them. An exception to this rule are the cases where
-a parameter is known to be a compiletime constant, and as a result of this
-constantness you *know* the compiler will be able to optimize most of your
-function away at compile time. For a good example of this later case, see
-the kmalloc() inline function.
-
-Often people argue that adding inline to functions that are static and used
-only once is always a win since there is no space tradeoff. While this is
-technically correct, gcc is capable of inlining these automatically without
-help, and the maintenance issue of removing the inline when a second user
-appears outweighs the potential value of the hint that tells gcc to do
-something it would have done anyway.
-
-Jason
+> https://lore.kernel.org/all/20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org/
+> ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> index 1074310a8e7a..7ceba32c4cf9 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> @@ -19,11 +19,10 @@ properties:
+>      const: qcom,pcie-x1e80100
+>  
+>    reg:
+> -    minItems: 5
+> +    minItems: 6
+>      maxItems: 6
+>  
+>    reg-names:
+> -    minItems: 5
+>      items:
+>        - const: parf # Qualcomm specific registers
+>        - const: dbi # DesignWare PCIe registers
+> @@ -71,6 +70,9 @@ properties:
+>        - const: pci # PCIe core reset
+>        - const: link_down # PCIe link down reset
+>  
+> +  vddpe-3v3-supply:
+> +    description: A phandle to the PCIe endpoint power supply
+> +
+>  allOf:
+>    - $ref: qcom,pcie-common.yaml#
+>  
+> 
+> ---
+> base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
+> change-id: 20240604-x1e80100-pci-bindings-fix-196925d15260
+> 
+> Best regards,
+> -- 
+> Abel Vesa <abel.vesa@linaro.org>
+> 
 
