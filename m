@@ -1,354 +1,409 @@
-Return-Path: <linux-kernel+bounces-201367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE2F8FBD9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:55:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1068FBD9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9313E1F216D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:55:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83EC283495
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEAF14658E;
-	Tue,  4 Jun 2024 20:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B009714BF99;
+	Tue,  4 Jun 2024 20:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHj/eJs6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vwCk8V8u";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3rCI3neq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vwCk8V8u";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3rCI3neq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2713D14B974;
-	Tue,  4 Jun 2024 20:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7498814B97D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 20:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717534493; cv=none; b=RRooQlrOzLsIPza6riZShGbP/2Syd+X1YYvCbUuTZaZv6J/0bqshOM6eyrZv8Vt5Y6pFssWXWkk55H5WqE9EibOyJdvDLsE+xtrAEqe1rdyDNvq767eT+Dyxb1tvZ3jeVflCFJzavj+9OIEdgcjqQVNHaAbg7D06xaAvciqPvjo=
+	t=1717534504; cv=none; b=F2vMHSH/BBzGB1AXzSmJaBh3V0y6dUIA7//VmCZHirQW6xKGY/z1gZn7xmC68aAM7W04DmR8YfgwLuFQ8FiWuOtWMIhGD242WU2DfIFTnVqtj9fpZGVufLhe9X71OgrgieOwTSYmliqyWVXDgn62OSrSpaf/JXrKQNs3R0zMj/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717534493; c=relaxed/simple;
-	bh=jOW+1OdDSCmwWCebegpjQkPqvOoqBmesdA2lp4CRyvg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OpTuqXg0VeWFgOCZux3vin6wwRMLFYfBDoGuu3NStkJxb2TFcnTovXpyLQm6HmCwZ9+n+pn94NYffF8/f6Xy627+rRG2qSHlkkIbBan9Uicr/njELX7jev1f0265kpSJKC+w1cTJUdxAN+Gc2Ic/1ocZ6Og43yzbbRltTRlxQQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rHj/eJs6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3787C4AF0F;
-	Tue,  4 Jun 2024 20:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717534492;
-	bh=jOW+1OdDSCmwWCebegpjQkPqvOoqBmesdA2lp4CRyvg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rHj/eJs6FDv+FP8Pp+EwPfjeHNiYP6KKDBJAPsvRfBDXawsFtjsLQDvVGbc96Rjcb
-	 GR1d0d0orzMjAq+uk/3hWZkJxOeHMUBFxmyrD/u23Y4SUor4lC64HH2ErRSBpKyQzC
-	 mQ1+WvazSBhmn6AL1cLr8gnHHZPVPksRplG8/8E8s2bgf21W8Tq6AUZ8B+xH5aYytz
-	 QkaHnOrQbx3q87D6AJtJfDoOnZAU7T8Qc2XbqNu0I8rzVKBXpjyI9LQrcOuEvdpoUu
-	 VIV4Ka7CtYk66kVcm7x32YUGa5dnhurvI73M0VDYZEDxWS1rWgrWA6E3dnQGa/ScJA
-	 vTDmVdalAYgoQ==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ea9386cde0so61424911fa.2;
-        Tue, 04 Jun 2024 13:54:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0xiLw82jGxVlAfSGYUy6aC6uiTI/q6T6f1CMs92flIptC2lcrma2xD+GbJXzzb31RFHdZxybW7kd7oT88MX2dLoOm3dcqx8GRDKIwUVjeq3DIhf9Nl6619KsJ9RMJ0JRzoyQbtnSQBOJo9oiS4pCetZyd/ZwclYKrBXYnUElzrgRksDKXoo0lyVCBUiOOY81ak9Gu2tca+rLnB3MYAmP35YX3
-X-Gm-Message-State: AOJu0Yw2Zwu4/mqx1TOR48B9tqQxGwf7S60+B/OvchZVShyGnhDME+II
-	bk9TK0AmCkEfZOPbXEWVV05Z/9WWIDEQWeHLKg7YYnjlBAXEc97PoWHEqG6cQLtIOFv0TNQfYVI
-	qkirsnR5to6wZiIfDuYsOeuipZ48=
-X-Google-Smtp-Source: AGHT+IHJDS7RbesWDkwWk7Ew2fQrx3H0XBYwx+Z4jx1MSnR1LYyQbaYNK9w0BYZBfeO823xz4XgpKZDKbAn9kgetWNo=
-X-Received: by 2002:a2e:a7c9:0:b0:2e9:756f:cde0 with SMTP id
- 38308e7fff4ca-2eac79ed71fmr2534751fa.23.1717534490810; Tue, 04 Jun 2024
- 13:54:50 -0700 (PDT)
+	s=arc-20240116; t=1717534504; c=relaxed/simple;
+	bh=gbOBWVD+xEHfsIlvSPwQ2phfTctiJ5vr6ufoh4w0apE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s4SSrh+TY87bEBNv4+tOtdLINr7rKKiZWskB68SYaUbKqrdGht+uhvRf+gK9w22Lh9NvGz/tWHWJ0/B0r+TEr63pw7v7OpTuXuiXblXnBIzfQrQUPOrzWp08KUqiDQmMmSGr+NfkICjWY3JZ1JLslJ9Y4zwZRAPZR0IO4U9sKuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vwCk8V8u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3rCI3neq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vwCk8V8u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3rCI3neq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B45721A2E;
+	Tue,  4 Jun 2024 20:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717534500; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8nhrgz2vR/AdUZfOm8MElpEy8/0DQfmNxSsIR7PvCtM=;
+	b=vwCk8V8umOZQcSwAQ4W6gBYHPNiX8fhEHABOZUj/Uqt2FJtb8xgcmoojY4PRbK36DtZxR+
+	JMS27RVUf9/ZsPQa3voJRGPGalVls4UKt8Do1N/PlDE5XhMvO7wXo1e8X4m/NM1B2ODWeT
+	Lmx+tP8gFd1BfR5xLwgdWI3QFkpH+eg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717534500;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8nhrgz2vR/AdUZfOm8MElpEy8/0DQfmNxSsIR7PvCtM=;
+	b=3rCI3neqRhEjrfPpWzber3s/VezZTEoXwEghxyFLt0vOTk0UQivOGBS/XfTeARehklc3xC
+	hhbbYHDYLNp6DcDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1717534500; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8nhrgz2vR/AdUZfOm8MElpEy8/0DQfmNxSsIR7PvCtM=;
+	b=vwCk8V8umOZQcSwAQ4W6gBYHPNiX8fhEHABOZUj/Uqt2FJtb8xgcmoojY4PRbK36DtZxR+
+	JMS27RVUf9/ZsPQa3voJRGPGalVls4UKt8Do1N/PlDE5XhMvO7wXo1e8X4m/NM1B2ODWeT
+	Lmx+tP8gFd1BfR5xLwgdWI3QFkpH+eg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1717534500;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8nhrgz2vR/AdUZfOm8MElpEy8/0DQfmNxSsIR7PvCtM=;
+	b=3rCI3neqRhEjrfPpWzber3s/VezZTEoXwEghxyFLt0vOTk0UQivOGBS/XfTeARehklc3xC
+	hhbbYHDYLNp6DcDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 34D871398F;
+	Tue,  4 Jun 2024 20:55:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OcR6DCR/X2aBfAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 04 Jun 2024 20:55:00 +0000
+Message-ID: <62921f15-8172-462e-8ca7-8ab8236fd7b5@suse.cz>
+Date: Tue, 4 Jun 2024 22:54:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-9-ross.philipson@oracle.com> <CAMj1kXHaH6atsvwr6oVPdZuhR5YEXU33-2kYEn6xb1e=gidOCw@mail.gmail.com>
- <CAMj1kXHcYOPTLTh-hEtfHk+JaORGK+fEatTT+UOqLJww+_cNTg@mail.gmail.com>
- <5bffa507-75e8-4cce-ac0c-fe13d6efd3bb@oracle.com> <CAMj1kXHLaqyPAw5Jjg91pqFbHoMT2jDqui4rosyerHVudRsq-w@mail.gmail.com>
- <5b32106b-bb7b-463d-8b0b-589e3d466bf3@oracle.com>
-In-Reply-To: <5b32106b-bb7b-463d-8b0b-589e3d466bf3@oracle.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 4 Jun 2024 22:54:39 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEak-_D=B9qLsvo-M5+qJKSCrBwkoQkmC7_NoPR34+r-w@mail.gmail.com>
-Message-ID: <CAMj1kXEak-_D=B9qLsvo-M5+qJKSCrBwkoQkmC7_NoPR34+r-w@mail.gmail.com>
-Subject: Re: [PATCH v9 08/19] x86: Secure Launch kernel early boot stub
-To: ross.philipson@oracle.com
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, 
-	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, mjg59@srcf.ucam.org, 
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, jarkko@kernel.org, 
-	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
-	ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
-	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
-	trenchboot-devel@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: zsmalloc: share slab caches for all zsmalloc zpools
+Content-Language: en-US
+To: Yosry Ahmed <yosryahmed@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
+ Erhard Furtner <erhard_f@mailbox.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240604175340.218175-1-yosryahmed@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240604175340.218175-1-yosryahmed@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.29
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
 
-On Tue, 4 Jun 2024 at 19:34, <ross.philipson@oracle.com> wrote:
->
-> On 6/4/24 10:27 AM, Ard Biesheuvel wrote:
-> > On Tue, 4 Jun 2024 at 19:24, <ross.philipson@oracle.com> wrote:
-> >>
-> >> On 5/31/24 6:33 AM, Ard Biesheuvel wrote:
-> >>> On Fri, 31 May 2024 at 13:00, Ard Biesheuvel <ardb@kernel.org> wrote:
-> >>>>
-> >>>> Hello Ross,
-> >>>>
-> >>>> On Fri, 31 May 2024 at 03:32, Ross Philipson <ross.philipson@oracle.com> wrote:
-> >>>>>
-> >>>>> The Secure Launch (SL) stub provides the entry point for Intel TXT (and
-> >>>>> later AMD SKINIT) to vector to during the late launch. The symbol
-> >>>>> sl_stub_entry is that entry point and its offset into the kernel is
-> >>>>> conveyed to the launching code using the MLE (Measured Launch
-> >>>>> Environment) header in the structure named mle_header. The offset of the
-> >>>>> MLE header is set in the kernel_info. The routine sl_stub contains the
-> >>>>> very early late launch setup code responsible for setting up the basic
-> >>>>> environment to allow the normal kernel startup_32 code to proceed. It is
-> >>>>> also responsible for properly waking and handling the APs on Intel
-> >>>>> platforms. The routine sl_main which runs after entering 64b mode is
-> >>>>> responsible for measuring configuration and module information before
-> >>>>> it is used like the boot params, the kernel command line, the TXT heap,
-> >>>>> an external initramfs, etc.
-> >>>>>
-> >>>>> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-> >>>>> ---
-> >>>>>    Documentation/arch/x86/boot.rst        |  21 +
-> >>>>>    arch/x86/boot/compressed/Makefile      |   3 +-
-> >>>>>    arch/x86/boot/compressed/head_64.S     |  30 +
-> >>>>>    arch/x86/boot/compressed/kernel_info.S |  34 ++
-> >>>>>    arch/x86/boot/compressed/sl_main.c     | 577 ++++++++++++++++++++
-> >>>>>    arch/x86/boot/compressed/sl_stub.S     | 725 +++++++++++++++++++++++++
-> >>>>>    arch/x86/include/asm/msr-index.h       |   5 +
-> >>>>>    arch/x86/include/uapi/asm/bootparam.h  |   1 +
-> >>>>>    arch/x86/kernel/asm-offsets.c          |  20 +
-> >>>>>    9 files changed, 1415 insertions(+), 1 deletion(-)
-> >>>>>    create mode 100644 arch/x86/boot/compressed/sl_main.c
-> >>>>>    create mode 100644 arch/x86/boot/compressed/sl_stub.S
-> >>>>>
-> >>>>> diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
-> >>>>> index 4fd492cb4970..295cdf9bcbdb 100644
-> >>>>> --- a/Documentation/arch/x86/boot.rst
-> >>>>> +++ b/Documentation/arch/x86/boot.rst
-> >>>>> @@ -482,6 +482,14 @@ Protocol:  2.00+
-> >>>>>               - If 1, KASLR enabled.
-> >>>>>               - If 0, KASLR disabled.
-> >>>>>
-> >>>>> +  Bit 2 (kernel internal): SLAUNCH_FLAG
-> >>>>> +
-> >>>>> +       - Used internally by the setup kernel to communicate
-> >>>>> +         Secure Launch status to kernel proper.
-> >>>>> +
-> >>>>> +           - If 1, Secure Launch enabled.
-> >>>>> +           - If 0, Secure Launch disabled.
-> >>>>> +
-> >>>>>      Bit 5 (write): QUIET_FLAG
-> >>>>>
-> >>>>>           - If 0, print early messages.
-> >>>>> @@ -1028,6 +1036,19 @@ Offset/size:     0x000c/4
-> >>>>>
-> >>>>>      This field contains maximal allowed type for setup_data and setup_indirect structs.
-> >>>>>
-> >>>>> +============   =================
-> >>>>> +Field name:    mle_header_offset
-> >>>>> +Offset/size:   0x0010/4
-> >>>>> +============   =================
-> >>>>> +
-> >>>>> +  This field contains the offset to the Secure Launch Measured Launch Environment
-> >>>>> +  (MLE) header. This offset is used to locate information needed during a secure
-> >>>>> +  late launch using Intel TXT. If the offset is zero, the kernel does not have
-> >>>>> +  Secure Launch capabilities. The MLE entry point is called from TXT on the BSP
-> >>>>> +  following a success measured launch. The specific state of the processors is
-> >>>>> +  outlined in the TXT Software Development Guide, the latest can be found here:
-> >>>>> +  https://urldefense.com/v3/__https://www.intel.com/content/dam/www/public/us/en/documents/guides/intel-txt-software-development-guide.pdf__;!!ACWV5N9M2RV99hQ!Mng0gnPhOYZ8D02t1rYwQfY6U3uWaypJyd1T2rsWz3QNHr9GhIZ9ANB_-cgPExxX0e0KmCpda-3VX8Fj$
-> >>>>> +
-> >>>>>
-> >>>>
-> >>>> Could we just repaint this field as the offset relative to the start
-> >>>> of kernel_info rather than relative to the start of the image? That
-> >>>> way, there is no need for patch #1, and given that the consumer of
-> >>>> this field accesses it via kernel_info, I wouldn't expect any issues
-> >>>> in applying this offset to obtain the actual address.
-> >>>>
-> >>>>
-> >>>>>    The Image Checksum
-> >>>>>    ==================
-> >>>>> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-> >>>>> index 9189a0e28686..9076a248d4b4 100644
-> >>>>> --- a/arch/x86/boot/compressed/Makefile
-> >>>>> +++ b/arch/x86/boot/compressed/Makefile
-> >>>>> @@ -118,7 +118,8 @@ vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
-> >>>>>    vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
-> >>>>>    vmlinux-objs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-> >>>>>
-> >>>>> -vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o
-> >>>>> +vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o \
-> >>>>> +       $(obj)/sl_main.o $(obj)/sl_stub.o
-> >>>>>
-> >>>>>    $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
-> >>>>>           $(call if_changed,ld)
-> >>>>> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-> >>>>> index 1dcb794c5479..803c9e2e6d85 100644
-> >>>>> --- a/arch/x86/boot/compressed/head_64.S
-> >>>>> +++ b/arch/x86/boot/compressed/head_64.S
-> >>>>> @@ -420,6 +420,13 @@ SYM_CODE_START(startup_64)
-> >>>>>           pushq   $0
-> >>>>>           popfq
-> >>>>>
-> >>>>> +#ifdef CONFIG_SECURE_LAUNCH
-> >>>>> +       /* Ensure the relocation region is coverd by a PMR */
-> >>>>
-> >>>> covered
-> >>>>
-> >>>>> +       movq    %rbx, %rdi
-> >>>>> +       movl    $(_bss - startup_32), %esi
-> >>>>> +       callq   sl_check_region
-> >>>>> +#endif
-> >>>>> +
-> >>>>>    /*
-> >>>>>     * Copy the compressed kernel to the end of our buffer
-> >>>>>     * where decompression in place becomes safe.
-> >>>>> @@ -462,6 +469,29 @@ SYM_FUNC_START_LOCAL_NOALIGN(.Lrelocated)
-> >>>>>           shrq    $3, %rcx
-> >>>>>           rep     stosq
-> >>>>>
-> >>>>> +#ifdef CONFIG_SECURE_LAUNCH
-> >>>>> +       /*
-> >>>>> +        * Have to do the final early sl stub work in 64b area.
-> >>>>> +        *
-> >>>>> +        * *********** NOTE ***********
-> >>>>> +        *
-> >>>>> +        * Several boot params get used before we get a chance to measure
-> >>>>> +        * them in this call. This is a known issue and we currently don't
-> >>>>> +        * have a solution. The scratch field doesn't matter. There is no
-> >>>>> +        * obvious way to do anything about the use of kernel_alignment or
-> >>>>> +        * init_size though these seem low risk with all the PMR and overlap
-> >>>>> +        * checks in place.
-> >>>>> +        */
-> >>>>> +       movq    %r15, %rdi
-> >>>>> +       callq   sl_main
-> >>>>> +
-> >>>>> +       /* Ensure the decompression location is covered by a PMR */
-> >>>>> +       movq    %rbp, %rdi
-> >>>>> +       movq    output_len(%rip), %rsi
-> >>>>> +       callq   sl_check_region
-> >>>>> +#endif
-> >>>>> +
-> >>>>> +       pushq   %rsi
-> >>>>
-> >>>> This looks like a rebase error.
-> >>>>
-> >>>>>           call    load_stage2_idt
-> >>>>>
-> >>>>>           /* Pass boot_params to initialize_identity_maps() */
-> >>>>> diff --git a/arch/x86/boot/compressed/kernel_info.S b/arch/x86/boot/compressed/kernel_info.S
-> >>>>> index c18f07181dd5..e199b87764e9 100644
-> >>>>> --- a/arch/x86/boot/compressed/kernel_info.S
-> >>>>> +++ b/arch/x86/boot/compressed/kernel_info.S
-> >>>>> @@ -28,6 +28,40 @@ SYM_DATA_START(kernel_info)
-> >>>>>           /* Maximal allowed type for setup_data and setup_indirect structs. */
-> >>>>>           .long   SETUP_TYPE_MAX
-> >>>>>
-> >>>>> +       /* Offset to the MLE header structure */
-> >>>>> +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
-> >>>>> +       .long   rva(mle_header)
-> >>>>
-> >>>> ... so this could just be mle_header - kernel_info, and the consumer
-> >>>> can do the math instead.
-> >>>>
-> >>>>> +#else
-> >>>>> +       .long   0
-> >>>>> +#endif
-> >>>>> +
-> >>>>>    kernel_info_var_len_data:
-> >>>>>           /* Empty for time being... */
-> >>>>>    SYM_DATA_END_LABEL(kernel_info, SYM_L_LOCAL, kernel_info_end)
-> >>>>> +
-> >>>>> +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
-> >>>>> +       /*
-> >>>>> +        * The MLE Header per the TXT Specification, section 2.1
-> >>>>> +        * MLE capabilities, see table 4. Capabilities set:
-> >>>>> +        * bit 0: Support for GETSEC[WAKEUP] for RLP wakeup
-> >>>>> +        * bit 1: Support for RLP wakeup using MONITOR address
-> >>>>> +        * bit 2: The ECX register will contain the pointer to the MLE page table
-> >>>>> +        * bit 5: TPM 1.2 family: Details/authorities PCR usage support
-> >>>>> +        * bit 9: Supported format of TPM 2.0 event log - TCG compliant
-> >>>>> +        */
-> >>>>> +SYM_DATA_START(mle_header)
-> >>>>> +       .long   0x9082ac5a  /* UUID0 */
-> >>>>> +       .long   0x74a7476f  /* UUID1 */
-> >>>>> +       .long   0xa2555c0f  /* UUID2 */
-> >>>>> +       .long   0x42b651cb  /* UUID3 */
-> >>>>> +       .long   0x00000034  /* MLE header size */
-> >>>>> +       .long   0x00020002  /* MLE version 2.2 */
-> >>>>> +       .long   rva(sl_stub_entry) /* Linear entry point of MLE (virt. address) */
-> >>>>
-> >>>> and these should perhaps be relative to mle_header?
-> >>>>
-> >>>>> +       .long   0x00000000  /* First valid page of MLE */
-> >>>>> +       .long   0x00000000  /* Offset within binary of first byte of MLE */
-> >>>>> +       .long   rva(_edata) /* Offset within binary of last byte + 1 of MLE */
-> >>>>
-> >>>> and here
-> >>>>
-> >>>
-> >>> Ugh never mind - these are specified externally.
-> >>
-> >> Can you clarify your follow on comment here?
-> >>
-> >
-> > I noticed that -as you pointed out in your previous reply- these
-> > fields cannot be repainted at will, as they are defined by an external
-> > specification.
-> >
-> > I'll play a bit more with this code tomorrow - I would *really* like
-> > to avoid the need for patch #1, as it adds another constraint on how
-> > we construct the boot image, and this is already riddled with legacy
-> > and other complications.
->
-> Yea I should have read forward through all your replies before
-> responding to the first one but I think it clarified things as you point
-> out here. We appreciate you help and suggestions.
->
+On 6/4/24 7:53 PM, Yosry Ahmed wrote:
+> Zswap creates multiple zpools to improve concurrency. Each zsmalloc
+> zpool creates its own 'zs_handle' and 'zspage' slab caches. Currently we
+> end up with 32 slab caches of each type.
+> 
+> Since each slab cache holds some free objects, we end up with a lot of
+> free objects distributed among the separate zpool caches. Slab caches
+> are designed to handle concurrent allocations by using percpu
+> structures, so having a single instance of each cache should be enough,
+> and avoids wasting more memory than needed due to fragmentation.
+> 
+> Additionally, having more slab caches than needed unnecessarily slows
+> down code paths that iterate slab_caches.
+> 
+> In the results reported by Eric in [1], the amount of unused slab memory
+> in these caches goes down from 242808 bytes to 29216 bytes (-88%). This
+> is calculated by (num_objs - active_objs) * objsize for each 'zs_handle'
+> and 'zspage' cache. Although this patch did not help with the allocation
+> failure reported by Eric with zswap + zsmalloc, I think it is still
+> worth merging on its own.
+> 
+> [1]https://lore.kernel.org/lkml/20240604134458.3ae4396a@yea/
+> 
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-OK, so I have a solution that does not require kernel_info at a fixed offset:
+As mentioned in the thread, CONFIG_SLAB_MERGE_DEFAULT would normally cover
+the zsmalloc caches case too, but was disabled. I agree with the arguments
+for this change though, so it doesn't depend on the general merging.
 
-- put this at the end of arch/x86/boot/compressed/vmlinux.lds.S
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-#ifdef CONFIG_SECURE_LAUNCH
-PROVIDE(kernel_info_offset      = ABSOLUTE(kernel_info - startup_32));
-PROVIDE(mle_header_offset       = kernel_info_offset +
-ABSOLUTE(mle_header - startup_32));
-PROVIDE(sl_stub_entry_offset    = kernel_info_offset +
-ABSOLUTE(sl_stub_entry - startup_32));
-PROVIDE(_edata_offset           = kernel_info_offset + ABSOLUTE(_edata
-- startup_32));
-#endif
+> ---
+>  mm/zsmalloc.c | 87 ++++++++++++++++++++++++++-------------------------
+>  1 file changed, 44 insertions(+), 43 deletions(-)
+> 
+> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> index b42d3545ca856..76d9976442a4a 100644
+> --- a/mm/zsmalloc.c
+> +++ b/mm/zsmalloc.c
+> @@ -220,8 +220,6 @@ struct zs_pool {
+>  	const char *name;
+>  
+>  	struct size_class *size_class[ZS_SIZE_CLASSES];
+> -	struct kmem_cache *handle_cachep;
+> -	struct kmem_cache *zspage_cachep;
+>  
+>  	atomic_long_t pages_allocated;
+>  
+> @@ -289,50 +287,29 @@ static void init_deferred_free(struct zs_pool *pool) {}
+>  static void SetZsPageMovable(struct zs_pool *pool, struct zspage *zspage) {}
+>  #endif
+>  
+> -static int create_cache(struct zs_pool *pool)
+> -{
+> -	pool->handle_cachep = kmem_cache_create("zs_handle", ZS_HANDLE_SIZE,
+> -					0, 0, NULL);
+> -	if (!pool->handle_cachep)
+> -		return 1;
+> -
+> -	pool->zspage_cachep = kmem_cache_create("zspage", sizeof(struct zspage),
+> -					0, 0, NULL);
+> -	if (!pool->zspage_cachep) {
+> -		kmem_cache_destroy(pool->handle_cachep);
+> -		pool->handle_cachep = NULL;
+> -		return 1;
+> -	}
+> -
+> -	return 0;
+> -}
+> +static struct kmem_cache *zs_handle_cache;
+> +static struct kmem_cache *zspage_cache;
+>  
+> -static void destroy_cache(struct zs_pool *pool)
+> +static unsigned long cache_alloc_handle(gfp_t gfp)
+>  {
+> -	kmem_cache_destroy(pool->handle_cachep);
+> -	kmem_cache_destroy(pool->zspage_cachep);
+> -}
+> -
+> -static unsigned long cache_alloc_handle(struct zs_pool *pool, gfp_t gfp)
+> -{
+> -	return (unsigned long)kmem_cache_alloc(pool->handle_cachep,
+> +	return (unsigned long)kmem_cache_alloc(zs_handle_cache,
+>  			gfp & ~(__GFP_HIGHMEM|__GFP_MOVABLE));
+>  }
+>  
+> -static void cache_free_handle(struct zs_pool *pool, unsigned long handle)
+> +static void cache_free_handle(unsigned long handle)
+>  {
+> -	kmem_cache_free(pool->handle_cachep, (void *)handle);
+> +	kmem_cache_free(zs_handle_cache, (void *)handle);
+>  }
+>  
+> -static struct zspage *cache_alloc_zspage(struct zs_pool *pool, gfp_t flags)
+> +static struct zspage *cache_alloc_zspage(gfp_t flags)
+>  {
+> -	return kmem_cache_zalloc(pool->zspage_cachep,
+> +	return kmem_cache_zalloc(zspage_cache,
+>  			flags & ~(__GFP_HIGHMEM|__GFP_MOVABLE));
+>  }
+>  
+> -static void cache_free_zspage(struct zs_pool *pool, struct zspage *zspage)
+> +static void cache_free_zspage(struct zspage *zspage)
+>  {
+> -	kmem_cache_free(pool->zspage_cachep, zspage);
+> +	kmem_cache_free(zspage_cache, zspage);
+>  }
+>  
+>  /* pool->lock(which owns the handle) synchronizes races */
+> @@ -837,7 +814,7 @@ static void __free_zspage(struct zs_pool *pool, struct size_class *class,
+>  		page = next;
+>  	} while (page != NULL);
+>  
+> -	cache_free_zspage(pool, zspage);
+> +	cache_free_zspage(zspage);
+>  
+>  	class_stat_dec(class, ZS_OBJS_ALLOCATED, class->objs_per_zspage);
+>  	atomic_long_sub(class->pages_per_zspage, &pool->pages_allocated);
+> @@ -950,7 +927,7 @@ static struct zspage *alloc_zspage(struct zs_pool *pool,
+>  {
+>  	int i;
+>  	struct page *pages[ZS_MAX_PAGES_PER_ZSPAGE];
+> -	struct zspage *zspage = cache_alloc_zspage(pool, gfp);
+> +	struct zspage *zspage = cache_alloc_zspage(gfp);
+>  
+>  	if (!zspage)
+>  		return NULL;
+> @@ -967,7 +944,7 @@ static struct zspage *alloc_zspage(struct zs_pool *pool,
+>  				dec_zone_page_state(pages[i], NR_ZSPAGES);
+>  				__free_page(pages[i]);
+>  			}
+> -			cache_free_zspage(pool, zspage);
+> +			cache_free_zspage(zspage);
+>  			return NULL;
+>  		}
+>  
+> @@ -1338,7 +1315,7 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
+>  	if (unlikely(size > ZS_MAX_ALLOC_SIZE))
+>  		return (unsigned long)ERR_PTR(-ENOSPC);
+>  
+> -	handle = cache_alloc_handle(pool, gfp);
+> +	handle = cache_alloc_handle(gfp);
+>  	if (!handle)
+>  		return (unsigned long)ERR_PTR(-ENOMEM);
+>  
+> @@ -1363,7 +1340,7 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
+>  
+>  	zspage = alloc_zspage(pool, class, gfp);
+>  	if (!zspage) {
+> -		cache_free_handle(pool, handle);
+> +		cache_free_handle(handle);
+>  		return (unsigned long)ERR_PTR(-ENOMEM);
+>  	}
+>  
+> @@ -1441,7 +1418,7 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
+>  		free_zspage(pool, class, zspage);
+>  
+>  	spin_unlock(&pool->lock);
+> -	cache_free_handle(pool, handle);
+> +	cache_free_handle(handle);
+>  }
+>  EXPORT_SYMBOL_GPL(zs_free);
+>  
+> @@ -2111,9 +2088,6 @@ struct zs_pool *zs_create_pool(const char *name)
+>  	if (!pool->name)
+>  		goto err;
+>  
+> -	if (create_cache(pool))
+> -		goto err;
+> -
+>  	/*
+>  	 * Iterate reversely, because, size of size_class that we want to use
+>  	 * for merging should be larger or equal to current size.
+> @@ -2234,16 +2208,41 @@ void zs_destroy_pool(struct zs_pool *pool)
+>  		kfree(class);
+>  	}
+>  
+> -	destroy_cache(pool);
+>  	kfree(pool->name);
+>  	kfree(pool);
+>  }
+>  EXPORT_SYMBOL_GPL(zs_destroy_pool);
+>  
+> +static void zs_destroy_caches(void)
+> +{
+> +	kmem_cache_destroy(zs_handle_cache);
+> +	kmem_cache_destroy(zspage_cache);
+> +	zs_handle_cache = NULL;
+> +	zspage_cache = NULL;
+> +}
+> +
+> +static int zs_create_caches(void)
+> +{
+> +	zs_handle_cache = kmem_cache_create("zs_handle", ZS_HANDLE_SIZE,
+> +					    0, 0, NULL);
+> +	zspage_cache = kmem_cache_create("zspage", sizeof(struct zspage),
+> +					 0, 0, NULL);
+> +
+> +	if (!zs_handle_cache || !zspage_cache) {
+> +		zs_destroy_caches();
+> +		return -1;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static int __init zs_init(void)
+>  {
+>  	int ret;
+>  
+> +	ret = zs_create_caches();
+> +	if (ret)
+> +		goto out;
+> +
+>  	ret = cpuhp_setup_state(CPUHP_MM_ZS_PREPARE, "mm/zsmalloc:prepare",
+>  				zs_cpu_prepare, zs_cpu_dead);
+>  	if (ret)
+> @@ -2258,6 +2257,7 @@ static int __init zs_init(void)
+>  	return 0;
+>  
+>  out:
+> +	zs_destroy_caches();
+>  	return ret;
+>  }
+>  
+> @@ -2269,6 +2269,7 @@ static void __exit zs_exit(void)
+>  	cpuhp_remove_state(CPUHP_MM_ZS_PREPARE);
+>  
+>  	zs_stat_exit();
+> +	zs_destroy_caches();
+>  }
+>  
+>  module_init(zs_init);
 
-
-and use this for the header fields:
-
-        /* Offset to the MLE header structure */
-#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
-        .long   mle_header_offset - kernel_info
-#else
-        .long   0
-#endif
-
-
-
-SYM_DATA_START(mle_header)
-        .long   0x9082ac5a  /* UUID0 */
-        .long   0x74a7476f  /* UUID1 */
-        .long   0xa2555c0f  /* UUID2 */
-        .long   0x42b651cb  /* UUID3 */
-        .long   0x00000034  /* MLE header size */
-        .long   0x00020002  /* MLE version 2.2 */
-        .long   sl_stub_entry_offset - kernel_info /* Linear entry
-point of MLE (virt. address) */
-        .long   0x00000000  /* First valid page of MLE */
-        .long   0x00000000  /* Offset within binary of first byte of MLE */
-        .long   _edata_offset - kernel_info /* Offset within binary of
-last byte + 1 of MLE */
-        .long   0x00000227  /* Bit vector of MLE-supported capabilities */
-        .long   0x00000000  /* Starting linear address of command line
-(unused) */
-        .long   0x00000000  /* Ending linear address of command line (unused) */
 
