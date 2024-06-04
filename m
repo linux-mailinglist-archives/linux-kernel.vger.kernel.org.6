@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-201297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0178FBCAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7338D8FBCAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ABFC2847C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 008D4286554
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427D914B094;
-	Tue,  4 Jun 2024 19:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC25D14B093;
+	Tue,  4 Jun 2024 19:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eubmOaYP"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="E6U7aZLj"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17957147C91;
-	Tue,  4 Jun 2024 19:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2495514B07E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717529919; cv=none; b=cltUQAmjLo4Xe6hX8FQg/Joh0Mh/qWbrD8VrwIjvwfCEGiMku+t2PAuSRjd1Wj/Fh14hQyrnvopBosDXCx0DJ5GOQAEELNq8dQBE8pGW8JLeMPpPNaGYKHtkA+fasag+RimjfwFkpA7n7IQKl5skz5kenQT3ds6v4803CaR1fos=
+	t=1717529962; cv=none; b=sqGMXe8vqZQdlP35uZjNS2POuU6DE+4kiknjA+TCBUbbs9KAvFbczEVCYcN4snCxnJp3kYfMRuEolttZLHMDepfm1VWFK2TO/e1NMjZNxshtZmOt6IdB8CpZgTECY5CUYEBPQdKiFzxNoCJyomAX8WMSz2nM3IMqnBxLMk3gAqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717529919; c=relaxed/simple;
-	bh=vzpA7PhiRZMIE5wHE8wHo0Nvafg+sm213PxA91ONTYM=;
+	s=arc-20240116; t=1717529962; c=relaxed/simple;
+	bh=I8Na0X1lr4Anj/n0WwNbTpdssCH6TSBbBWFAR7jHJaY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSgqeGoL373B9IkNnIJlVbMC/t3ODZtgX/+EjlPfvgyxsSpDC6s2jiuezXIrqq4/zumkl91sQJm3bg5jMZ+ANm0EPCSerri2y7V2hfcD5Sxu/NG3Z4jiD+q8T2k/bwkE9eaPrmN37gsgvoEEVNcEDkMy6RnyWMk9Jx10dXZz4wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eubmOaYP; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35dc04717a1so4476374f8f.2;
-        Tue, 04 Jun 2024 12:38:37 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=rxr8I3nVxgVRtxOQEeHrPwgy6Sf/uTAgSMYqjrRtr9/XgKKrUBunIhiyBWxjY1Sihwe4sugfb1tVsIlMcjz+wPTxLrD5uxFNjV1le+724EvLCZhehSTvieOKSn2CnB2sAxqR607FiaqB6aPYGlxmXqWySEB0nR14uSsULeq0eRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=E6U7aZLj; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-6f943a34a83so88643a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 12:39:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717529916; x=1718134716; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717529960; x=1718134760; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=H4t2g0PVVuuW+v+1R4uuv5ecvQtI5NuL9WT54hihDiE=;
-        b=eubmOaYPggZMRWJ3QqGv7kWv/DDYrsDi6tu4q7yl9/Osf+/FpB6CtRjcoGi2pgVz1F
-         tlLhcPl13piOwoGBvMiNne1aQOm3HoXHGfbrz/HGMl08XV5jF8BmYuBIVm/c3M0rtyhA
-         mNrxussSc1wCxjW19VoXXCi5lEb1zxVzyCZNGhBEVL04UFQDNPyXuBQzbelZAABiR9qA
-         atV4EReAnjpp7GnJbjrMTO55qE9ns0TgZwbiyIwkoS+PA9C9x50j4PU1DhzFlJTXKBzE
-         IYj1lh9bLnvzXeatbqY2FP40MVO181XS2nsSrvAVl73WbAnTgRVeB+x/2q1FU0okXMGC
-         aPAg==
+        bh=o8gskDRDbtXP6DbwUmFPk9QCXBH4Q1DxOfYZZF3juho=;
+        b=E6U7aZLjEB1cb5AwDYzuty37NO5Xg4XtHiQVf6wqkhx6je/8VxR+bMdfQIFtZhf9O1
+         3sjLHZ9dzjnB0EfNynLyHnjwBWkaWUH5gVALq+xpUcZO8e2ZGwGjCwRwBfLMeBlyP2F1
+         FgziUgJyPmo7h1qBFPfuUkGS2Q+MbLbnwxkeNhFEDvUs2uSAVF8BpLAUPldYrJI2UNmd
+         p5pzsMiu/n7C/oR6NEE0+/4jlBSydEH7FTHhpZNFNvLl64RobRrBc1voRyaGlvQ4UHGy
+         HkxeMnVJv2PUS7jKS+4Tw7QOXLw577JeiLPgFDx70hm1zgsKUxDJexpw1NbQZyUjpdEb
+         LizQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717529916; x=1718134716;
+        d=1e100.net; s=20230601; t=1717529960; x=1718134760;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H4t2g0PVVuuW+v+1R4uuv5ecvQtI5NuL9WT54hihDiE=;
-        b=hIk9O0Mghp1f5jPBtr2ZCSOCOfhds7NcO/n4HB4riE60cjagjOz/T3mURwmpLR9Z9Y
-         0CpnfCckqv7nj3AXsZ5iXIplInGs6TuCm7ZXl/4kQMD91wVwqiMje+9oJSHWeToqXPTg
-         t4iRJof4HGKRJchvoMCcRL5kKgJILldb2OfICuAmO0a50AxR8f1XkUdxcGvfzBIUZzzA
-         FS4iKywBeBtmg6Sdng50UjOumjxEbNb/978flsn42OipVtQxgfiNBHHMY0IQ+6rnLUIs
-         K7EMtudtMJETbeOlsMGRMXcyH0vUMiBY28AGiubtZOOhQ4DKXcnQHxqXJnpNyi2QNfaU
-         9Lxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKIqcSedfG9V+44Xtu+07qULKblWDJgsXEldJVDefjS1OE1FN/LwLkcz3KLTEp4fEZemodvo/apWT4wT9y84wFxjkJi5JNF67LaUjgj9ho5tyteFDKQSSWxwqgQJ5mNmsFRoh4
-X-Gm-Message-State: AOJu0Yy6r4wc/jXG+SZbl+shfXdLAXdFLN1kCjvTcccfL49uAZlRz5J8
-	Jhdbfp5KILAjux+fYwCeslTlnRqZ/+paFMdrKKl3axLpjmaiWpWj
-X-Google-Smtp-Source: AGHT+IEZkAaMD+sJQk/rpTCEjZ9+/enh6XV1jxIl/bz9yZxLYzVOYt3YtG79oKakWeHmm7OoGGr6GA==
-X-Received: by 2002:a5d:5846:0:b0:35e:6166:2e1e with SMTP id ffacd0b85a97d-35e8ef90cc6mr333885f8f.50.1717529916248;
-        Tue, 04 Jun 2024 12:38:36 -0700 (PDT)
-Received: from [192.168.0.5] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0f2asm12536869f8f.3.2024.06.04.12.38.34
+        bh=o8gskDRDbtXP6DbwUmFPk9QCXBH4Q1DxOfYZZF3juho=;
+        b=PhDvdLSAtH9f+SgDCACAvo+0AEquct2c+253ePALY+QXlxnygq/YD0ufMa/EDtEpzh
+         kg2szCk+QK7VyGJbAvaE4wfSOEsWSH+D8qF4dAQ1ZO10AbK2rg3yfk4DETJ5Pdbnwl6R
+         Zz6Ow0BIeUB6+9bEV2/zDNEeVmH8M/fwzgXsu2MaEp+W4ZTYiGnU6bRlZDvZTkpT96yZ
+         iAVLcAOKP36GE4uI+HcMzjgt/PXrrCbl/HQxnQ3iNDa/OE1nDxaXU6cNhcdRILEmx3Ld
+         GEBGUY3o/oHkRpH6JEBi299XFURwdpbc4CpnXEc8JJPJbRQNGssQaZ/IZ+8ufqH4q1gT
+         njsA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+z1CDNBfVzRsQm/aubmZJJaPyfqPCy5R0lITRGbPb5umwrkZL1DOeTMiCjg8RMcmugfAC2xREoWptYBpYdGGvnG7QV7yHfj9z4DxD
+X-Gm-Message-State: AOJu0YxcDfDr9PA9fgDUnt9GdDM7vjo1tZcWTbz3rFPMrBR5x5Sk/Dg2
+	js+r+9H6FwZYfaKqnS4Vm+26uMaNQfMQL0hC16non/DtdElwND5BjuX8ys5k+1A=
+X-Google-Smtp-Source: AGHT+IGWUBqQJOc0LHLzKdUR+del2BWW0rhqTnu+2S39NuLIHBVHgE7vqg/VdKu40BelYN5BpLWjyQ==
+X-Received: by 2002:a9d:6d0c:0:b0:6f0:e870:e3e8 with SMTP id 46e09a7af769-6f943486643mr519655a34.21.1717529960085;
+        Tue, 04 Jun 2024 12:39:20 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f910539e69sm2092702a34.28.2024.06.04.12.39.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 12:38:35 -0700 (PDT)
-Message-ID: <cff64803-3eaf-432b-9217-67c8fa8cdc77@gmail.com>
-Date: Tue, 4 Jun 2024 22:39:09 +0300
+        Tue, 04 Jun 2024 12:39:19 -0700 (PDT)
+Message-ID: <97246fdc-bb33-45bc-a24a-c2595920421f@baylibre.com>
+Date: Tue, 4 Jun 2024 14:39:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,35 +75,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: wwan: iosm: Fix tainted pointer delete is case
- of region creation fail
-To: Aleksandr Mishin <amishin@t-argos.ru>,
- M Chetan Kumar <m.chetan.kumar@intel.com>
-Cc: Loic Poulain <loic.poulain@linaro.org>,
- Johannes Berg <johannes@sipsolutions.net>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-References: <20240604082500.20769-1-amishin@t-argos.ru>
+Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
+ spi-offloads property
+To: Conor Dooley <conor@kernel.org>
+Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
+ <20240516-rudder-reburial-dcf300504c0a@spud>
+ <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
+ <20240519-abreast-haziness-096a57ef57d3@spud>
+ <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
+ <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
+ <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
+ <20240526-peculiar-panama-badda4f02336@spud>
+ <10991373cb9603803df63d8236c475807f6dde68.camel@gmail.com>
+ <6db8ba66-841b-4425-9dd4-9d6e7b0463bf@baylibre.com>
+ <20240604-oink-recognize-682c553a18e5@spud>
 Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <20240604082500.20769-1-amishin@t-argos.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240604-oink-recognize-682c553a18e5@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 04.06.2024 11:25, Aleksandr Mishin wrote:
-> In case of region creation fail in ipc_devlink_create_region(), previously
-> created regions delete process starts from tainted pointer which actually
-> holds error code value.
-> Fix this bug by decreasing region index before delete.
+On 6/4/24 2:33 PM, Conor Dooley wrote:
+> On Thu, May 30, 2024 at 02:24:17PM -0500, David Lechner wrote:
+>> On 5/29/24 3:07 AM, Nuno Sá wrote:
+>>> On Sun, 2024-05-26 at 18:35 +0100, Conor Dooley wrote:
+>>
+>>
+>>>> It might be easy to do it this way right now, but be problematic for a
+>>>> future device or if someone wants to chuck away the ADI provided RTL and
+>>>> do their own thing for this device. Really it just makes me wonder if
+>>>> what's needed to describe more complex data pipelines uses an of_graph,
+>>>> just like how video pipelines are handled, rather than the implementation
+>>>> of io-backends that don't really seem to model the flow of data.
+>>>>
+>>>
+>>> Yeah, backends is more for devices/soft-cores that extend the functionality of the
+>>> device they are connected too. Like having DACs/ADCs hdl cores for connecting to high
+>>> speed controllers. Note that in some cases they also manipulate or even create data
+>>> but since they fit in IIO, having things like the DMA property in the hdl binding was
+>>> fairly straight.
+>>>
+>>> Maybe having an offload dedicated API (through spi) to get/share a DMA handle would
+>>> be acceptable. Then we could add support to "import" it in the IIO core. Then it
+>>> would be up to the controller to accept or not to share the handle (in some cases the
+>>> controller could really want to have the control of the DMA transfers).
+>>
+>> I could see this working for some SPI controllers, but for the AXI SPI Engine
+>> + DMA currently, the DMA has a fixed word size, so can't be used as a generic
+>> DMA with arbitrary SPI xfers. For example, if the HDL is compiled with a 32-bit
+>> word size, then even if we are reading 16-bit sample data, the DMA is going to
+>> put it in a 32-bit slot. So one could argue that this is still doing some data
+>> manipulation similar to the CRC checker example.
+>>
+>>>
+>>> Not familiar enough with of_graph so can't argue about it but likely is something
+>>> worth looking at.
+>>
+>> I did try implementing something using graph bindings when I first started
+>> working on this, but it didn't seem to really give us any extra useful
+>> information. It was just describing connections (endpoints) that I thought
+>> we could just implicitly assume. After this discussion though, maybe worth
+>> a second look. I'll have to think about it more.
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 4dcd183fbd67 ("net: wwan: iosm: devlink registration")
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> Could you elaborate on why you think you can assume the connections? What
+> happens when you have multiple stages of data processing and/or multiple
+> ADCs in your system? As I've previously said, I work on FPGA stuff, and
+> everyone here seems to fawn over having <insert custom DSP IP here> in
+> their data pipelines. I can't imagine it being any different for ADC data,
+> and an io-backend property that doesn't describe how the data flows is
+> gonna become lacklustre I think.
 
-Nice catch!
+I was more ignorant back then. :-)
 
-Acked-by: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+That is is why I said "thought" instead of "think". I am more enlightened now.
 
