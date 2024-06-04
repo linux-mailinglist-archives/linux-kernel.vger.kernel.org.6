@@ -1,73 +1,64 @@
-Return-Path: <linux-kernel+bounces-201064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F868FB8DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:26:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BE98FB8E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA04D1F2790B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:26:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671242811F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6CC33F6;
-	Tue,  4 Jun 2024 16:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B42E1487EF;
+	Tue,  4 Jun 2024 16:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="khSw4mWj"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NuRpy5Q6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E9E14830B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D78F1465AA;
+	Tue,  4 Jun 2024 16:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518397; cv=none; b=aPLu1j8XeMd4H4Cnen019zNLSblTb0QQPv9S4rbxDXJI13vE4kPIqtFIMmPdhs1DKxezL2fuHQFUj42Ajc23F73WUs5QlYLd7txF97sc1f6/3pzx5MRcUUeCGQxlSVglfrfwJJS9/e/j7QcUKGuBt8q5n98MqlQ7VTVjVfaoDAE=
+	t=1717518483; cv=none; b=GJ+vQm0PL3VxGlnPmpCm9YzKkkNbN/HnxDiRlEvaDjmjjwMnVt0jUOI6at8QGwrmM0qk2fTVHk+X5GylHZMrTPro7NEKsuyiWWmvlBtMFb2+IiUu5UVFzGnRqyX+dNijmh76bw4z1iQUNtc6CgkF6SrMEBpRf6uc6Vj42CJTgcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518397; c=relaxed/simple;
-	bh=iQ2gF2aw3EqtVz6mXx/ihGp7xrtcrjNwJoL3Ih+kJYM=;
+	s=arc-20240116; t=1717518483; c=relaxed/simple;
+	bh=/lnf6CYK7u74rxaN3J//73iP7uRLzgmeeUan2mDXC58=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GM03Oq3ep0xkWEGmfn7BKMyVGpXNf8aIOj6UVbdpsLjHf/rkmcJTzXyjRQi8P/1JoYz/VBF6Cx7IaUNyonsMDM+T5yQeApjg/D2au1UwaHay0vjFpY6+4dxz+Y4PVnbItjSd1UXjL3uLQpwzaxWJMh3sQfAAvFknRhIxrr72xE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=khSw4mWj; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-354be94c874so4826467f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717518394; x=1718123194; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yUCeKEvxZz0HcOYxIJIcV5v8P469mjR1k6zX1etfeFc=;
-        b=khSw4mWjDBSa6XWHjGJRXbZx+V0WWgRLYRcVLBHg2HVjwwUO76gOvKh7yFtOZyQtDi
-         etn8AH/PzNrCUkSplpYsgArXNe5EjzuLXv55dO3sImXpL8J2WFL6+bF07CchOxusy5OQ
-         zV8BxjUDLYTpWLfgccVm6XIi5fdVhvxzp6otnExDCp/HoNpFYiui2e4AWIWAj3Nba6Zm
-         /7e3CLZGoWXp4LWQUJUEpAZvBuQU1KtGTstDpnFg12kJMmFXRvFLZ/iDJaxGBOcoHIX4
-         DyCZRScZ/oNJSJUll7+H1pbcfTwaKmzsBfq4H6iwMS0RsDFTzVPc6Y6UYgdWgT44Gnih
-         hDMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717518394; x=1718123194;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yUCeKEvxZz0HcOYxIJIcV5v8P469mjR1k6zX1etfeFc=;
-        b=PAYQyc5gmEXUEy584Hcz6FqwESLoBym1gCwggBTuojuFnSwQR/tYvVPyoO/GytJ4TM
-         DhDebjD3IbSAqVw/igSqdgIQDQFDCivtkvdSl0h0P/tfcHo2z6M/19LEGJc1PGkPyxCU
-         fa6SeX/Kss2rOHz9KXvSRNZYN2QuY/GPiYej0gGSWXMkIXSy6s502efqi1LC9ZJKqppl
-         ZOQkh6lpFpPhFi0Buxp7ecDaupZrkPi/n/aqIA3zWShfDHB+zcPX2KvbalPJ8PWfdI7Q
-         PijCOVzVJnOQbGUcYpDJDJOInLdv/kZiAu4rCBAIBTn4kO84hbrCHwXj+creO5tJV8eN
-         ZZog==
-X-Forwarded-Encrypted: i=1; AJvYcCUazWK9xoiO4Tj585aMvqXlTKlenomBMcl0rDgOnOw9JNNfRaTdG8Nf2A9jUS5fbBaf+O1DlR80NsH5kGfXCxORCqqu6ofI6FQVoBM4
-X-Gm-Message-State: AOJu0YybP21L0WH75p/joCtSs1p+ROOv6TKe8ahVRiPSe9EfD6QDDzMf
-	Hg2UkucugV/HlEd9HZ1/OuiFk7Xoe1LtmH61c/twdHP1TVOtM3z9lBtOCcXO7hE=
-X-Google-Smtp-Source: AGHT+IGK57QEvZAxhgQzPqjoqwkElo9aa4K3ynD1xAtn0P8/VrG1nhjr5im/3WDHATMN2L5PdEq7og==
-X-Received: by 2002:a05:6000:b90:b0:359:b737:51e4 with SMTP id ffacd0b85a97d-35e0f2599f2mr11664148f8f.2.1717518394363;
-        Tue, 04 Jun 2024 09:26:34 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:e559:5ee:5c4:82bc? ([2a05:6e02:1041:c10:e559:5ee:5c4:82bc])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35dd064dfd1sm12164509f8f.108.2024.06.04.09.26.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 09:26:34 -0700 (PDT)
-Message-ID: <246f3565-8d54-4569-a9b0-164b653b3f81@linaro.org>
-Date: Tue, 4 Jun 2024 18:26:33 +0200
+	 In-Reply-To:Content-Type; b=fluuJGI17BqMTFipKDNNqWX+NWUQeC1f6ljoyvZKO0+lptFTipSPr5maX1IjVoEKcqU9gIzAOjjjHHW+egUsGOWPSamvpWF8weeW202HWksrl8yUzBDeG+LC7FsZfdSgIEtbIyaAsV5OyNxbtSzvZsLszxQcbz8WwHGpWzfNiZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NuRpy5Q6; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717518483; x=1749054483;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/lnf6CYK7u74rxaN3J//73iP7uRLzgmeeUan2mDXC58=;
+  b=NuRpy5Q6GMQ5nM0/AfRw2PDsQtzPZcC2l/agxlE9SFiC8hNM6gYn8CII
+   XnJQSje9TjtG7aTvCkOO+laCQPXGqXGycHavZW3Ty2ETD5q5Jc7wQiqWb
+   MmZdxjeMDw4cpwflvjlAvoPRNJHJRJxSnUwGC2IG8CFXFQUj/cSbiAMd/
+   PKw6CIxlAHJLiua3yb19C7Df+jVjIEzUEHkHFO4stBuzymNno9yAX9o8D
+   7JNBlGjJFzmPTXmyS1drB41M0E+jDwn2JjfCuB+X3pJ8ve2lfSDvvNyEp
+   NYyHhMSKuJg7IX7e+JECfVHdPu8jlTsJ5Qa3lbFNLB9CYuVWXs2344XPj
+   w==;
+X-CSE-ConnectionGUID: DEkNfhGyTGmkFMH+B/K/oA==
+X-CSE-MsgGUID: 6AyIXTyHTm6w4FJZXSUMog==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="31615676"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="31615676"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:28:02 -0700
+X-CSE-ConnectionGUID: 2bpf4B91TpKpUNHk9CEgqw==
+X-CSE-MsgGUID: Ur5EqPltQjyX9vlxq9vRCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="37230836"
+Received: from cdpresto-mobl2.amr.corp.intel.com.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:28:00 -0700
+Message-ID: <68943e0b-8d82-42de-8f09-058e97d9a392@intel.com>
+Date: Tue, 4 Jun 2024 09:27:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,38 +66,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Return error in
- case of invalid efuse data
-To: Julien Panis <jpanis@baylibre.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Nicolas Pitre <npitre@baylibre.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240603-mtk-thermal-calib-check-v1-1-5d6bf040414c@baylibre.com>
+Subject: Re: [PATCHv11 11/19] x86/tdx: Convert shared memory back to private
+ on kexec
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Elena Reshetova <elena.reshetova@intel.com>,
+ Jun Nakajima <jun.nakajima@intel.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish"
+ <ashish.kalra@amd.com>, Sean Christopherson <seanjc@google.com>,
+ "Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Baoquan He <bhe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+ linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Tao Liu <ltao@redhat.com>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-12-kirill.shutemov@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240603-mtk-thermal-calib-check-v1-1-5d6bf040414c@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240528095522.509667-12-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 03/06/2024 14:06, Julien Panis wrote:
-> This patch prevents from registering thermal entries and letting the
-> driver misbehave if efuse data is invalid. A device is not properly
-> calibrated if the golden temperature is zero.
-> 
-> Signed-off-by: Julien Panis <jpanis@baylibre.com>
-> ---
+On 5/28/24 02:55, Kirill A. Shutemov wrote:
+> +/* Stop new private<->shared conversions */
+> +static void tdx_kexec_begin(bool crash)
+> +{
+> +	/*
+> +	 * Crash kernel reaches here with interrupts disabled: can't wait for
+> +	 * conversions to finish.
+> +	 *
+> +	 * If race happened, just report and proceed.
+> +	 */
+> +	if (!set_memory_enc_stop_conversion(!crash))
+> +		pr_warn("Failed to stop shared<->private conversions\n");
+> +}
 
-Applied, thanks
+I don't like having to pass 'crash' in here.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+If interrupts are the problem we have ways of testing for those directly.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+If it's being in an oops that's a problem, we have 'oops_in_progress'
+for that.
 
+In other words, I'd much rather this function (or better yet
+set_memory_enc_stop_conversion() itself) use some existing API to change
+its behavior in a crash rather than have the context be passed down and
+twiddled through several levels of function calls.
+
+There are a ton of these in the console code:
+
+	if (oops_in_progress)
+		foo_trylock();
+	else
+		foo_lock();
+
+To me, that's a billion times more clear than a 'wait' argument that
+gets derives from who-knows-what that I have to trace through ten levels
+of function calls.
+
+	
 
