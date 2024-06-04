@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-199851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5238FA6AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:56:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12D68FA6B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10601C22D1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2024 23:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2C361C225D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F349F13D29F;
-	Mon,  3 Jun 2024 23:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CC62AEE4;
+	Tue,  4 Jun 2024 00:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlRi+oWm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L/UbOzGM"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A91513D27C;
-	Mon,  3 Jun 2024 23:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5426D2F5A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 00:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717458945; cv=none; b=ZK+we3iWSOlswZQeBWEzHyg3SWi0B7d3gXkUygEAkoUdMeZ3AecqXWLON+z9iLHqmPgpWMPIJq6Yv/H9kxpXII8O/uPcRgEJPm7ByWNccg7s3CGEWQEsk5DpmPUWeKQvaZ0WL0a568C4ay7IhObprFZjcm+OOiyhoQDeRyKRzrc=
+	t=1717459238; cv=none; b=obRUsExZ72z9WRLETFZ6xQ+vm1uuWk6GW3ZbPJrNfVEZ8ZHr72EtD6IXq3fuH4Vn+/NcwJxbXGqPgxVMCdGjiwAwA0p+lHs3SPj+wRyp5/z3BafIocZdNfRc6lq0hbKGcdFqlPEdPXBv/Fc3QT9fvEjBZRST8pn+taRYAR2jYr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717458945; c=relaxed/simple;
-	bh=49k/N76rSkVbMyCGLrPhdc2JjNR5PlQ62XZdNfocVbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L9mr/AZVYiIh9uDc1tc+LvRFKTuouiEIASQGq/N+7HLEor/CJ0HGv21AgD+L11b2F+KVSCPdUVUxiGfgCfVVvi6MHX47kl++v1yNhnROM6BLhRi3CqnvHqa90lx3DNTGo8wnSGi3dWld5OCj6WpkjIobGiaOF/NssH3PFNujN7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlRi+oWm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81023C4AF08;
-	Mon,  3 Jun 2024 23:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717458944;
-	bh=49k/N76rSkVbMyCGLrPhdc2JjNR5PlQ62XZdNfocVbs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WlRi+oWmLYzBZTR6yAynA1gYroOpWQjYROAm3XdTW6F7sdZE+3zLn0NXGq+dP3tqg
-	 jhADpCe+kTJgFJVxKpk8qQqlVLcxqYFhrNYn0PjaefenZtiggA9AFqW3Lp3Q3UYM/y
-	 dQ8ao6cnwSympOJ2LS5FctYKLXPGlUNLcFeunQgB3ysZ2w5j4PhjPny3jHo/0x4NLW
-	 ZphXB3cIEfn/6vYUc9BM1c6NR093v4Xuq0dvs2oqhku2u9RMhpojrqO9tSqAu8KXzy
-	 KxmjHx1nhpFglnFenNc3jSQCp2MtBOUWG6dFd902ktdrnhCLg6v/m2tFjiu6yUXDgp
-	 WSPxjnBLZVPew==
-Date: Mon, 3 Jun 2024 16:55:43 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Stefan Schmidt <stefan@datenfreihafen.org>
-Cc: Yunshui Jiang <jiangyunshui@kylinos.cn>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-wpan@vger.kernel.org, alex.aring@gmail.com,
- miquel.raynal@bootlin.com, davem@davemloft.net
-Subject: Re: [PATCH] net: mac802154: Fix racy device stats updates by
- DEV_STATS_INC() and DEV_STATS_ADD()
-Message-ID: <20240603165543.46c7d3b4@kernel.org>
-In-Reply-To: <41e4b0e3-ecc0-43ca-a6cd-4a6beb0ceb8f@datenfreihafen.org>
-References: <20240531080739.2608969-1-jiangyunshui@kylinos.cn>
-	<41e4b0e3-ecc0-43ca-a6cd-4a6beb0ceb8f@datenfreihafen.org>
+	s=arc-20240116; t=1717459238; c=relaxed/simple;
+	bh=qmzipbdBY6KqUjrHfBG3VzqriXpHdWHYlYyt1ENKvq0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IfDq3YB9vzIPclX2DgxABrF9wnzxYyZPYXjvsFzQTFc+tRgUR35Kz9bbvJAMtECTXNPCdn+Q5qWG7TnliCZHE0JJxR+Ak4Bp3wbQAaJs2ZzaWIYBKV9ggdqO8KY10Y9r6jgUugInD6Bs3jtd3w5/frZGE57cvxwZH2v+TbrhOH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L/UbOzGM; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6c380e03048so4172970a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 17:00:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717459236; x=1718064036; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X9TixsbS4vucV54Qx239yWNe5AZLJZTOJio74oth8eo=;
+        b=L/UbOzGM+TfjsttBDwqw33Jk2b3DMth2bsOfI0nx0kMDL9mricxF3qHUygEPoIVJsI
+         kmKU5HFZfHxPgqZKx+Ookt7D93FVhWNcs4pldtc3MJVpo4ASkqhxFtWk+q0DNW1Q7HE5
+         +g79iYBtGE24rwLOqTvKBYIzgjp+edcJP9K6RzhJWskZOrlHcajJAt/TsNTLbM1mVrY+
+         RrXlLlo97JYib8+godLvSKWCK/hl5GE8/eD8Rpxgjv0i+cwjSboSQchZ0Dva88BJR3C+
+         XwwzcOq+XkBIX8gYMWWMRKt2CmPNQ9MP5k5oBklF0WBN/3laSaLvCOQRU6NolCxs7zWc
+         IrgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717459236; x=1718064036;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X9TixsbS4vucV54Qx239yWNe5AZLJZTOJio74oth8eo=;
+        b=HG6/0HnvIgEpsBpqOXj/uE/0Ywr/FVtUqXM6FidszoYwoNPsKWCFKne/PDfdxbuH/A
+         B5Y6/MNcztDv/qi+h3Ljd02aOfWbwOdQyNOMq/jzdYW9sMd4N1MRmrwrC7fsSCm0qMJK
+         aZg+RNoIipg578vR+uosMKSiwgzhS8qBesVI8w7KTOIch/wcUB7bS1DGNgZ0Zz25+97d
+         wngYILxUXpoPPTE6arP5OK6TIoAhcsnApCK51UktAlQcWJwJgDICAq0CRiWfTLZ7aT2I
+         DUyrqNgftLKfkszNrhNETXOnqU8Z4pSXom+B/do2f2P0A9Ko9n9H3gEfV8gJcmka1dRo
+         8G0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVO8mqSsYxu+H4RyeE/7cYMfI3jCCXujLF4nuE+KDEQKiisaF4VBhrxcbAv7H1uZ7W+7BiKZbQbiqbUgeodlDqFSx0ahOqwJJ4z7FOe
+X-Gm-Message-State: AOJu0YyQC2daf1d0GdjvUQrPPe5xvSgeEouHw+VdKyEm+NDVGyVCvelq
+	673+bOv9oZ6zFNc3W7ihEIV9WZYWrlns7gthlJ2rhi8xQwQKSAdjyJsTHQs2wrGf0kqToNs8puO
+	i2A==
+X-Google-Smtp-Source: AGHT+IEZPsEeD1Zd/VZMKCyFxGi7l593WU5W4++SYV2nnpe1UGIt5x3H32mkoIcyVAOGihn5nlLRW2Z7atY=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:ab0a:b0:2c2:4117:2409 with SMTP id
+ 98e67ed59e1d1-2c241172c69mr8738a91.8.1717459234737; Mon, 03 Jun 2024 17:00:34
+ -0700 (PDT)
+Date: Mon, 3 Jun 2024 17:00:33 -0700
+In-Reply-To: <20240520143220.340737-2-julian.stecklina@cyberus-technology.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240520143220.340737-1-julian.stecklina@cyberus-technology.de> <20240520143220.340737-2-julian.stecklina@cyberus-technology.de>
+Message-ID: <Zl5ZIXOXzaTryibL@google.com>
+Subject: Re: [PATCH 2/2] KVM: fix spelling of KVM_RUN_X86_BUS_LOCK in docs
+From: Sean Christopherson <seanjc@google.com>
+To: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 3 Jun 2024 11:33:28 +0200 Stefan Schmidt wrote:
-> Hello.
+On Mon, May 20, 2024, Julian Stecklina wrote:
+> The documentation refers to KVM_RUN_BUS_LOCK, but the constant is
+> actually called KVM_RUN_X86_BUS_LOCK.
 > 
-> On 31.05.24 10:07, Yunshui Jiang wrote:
-> > mac802154 devices update their dev->stats fields locklessly. Therefore
-> > these counters should be updated atomically. Adopt SMP safe DEV_STATS_INC()
-> > and DEV_STATS_ADD() to achieve this.
-> > 
-> > Signed-off-by: Yunshui Jiang <jiangyunshui@kylinos.cn>
-> > ---
-> >   net/mac802154/tx.c | 8 ++++----
-> >   1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/net/mac802154/tx.c b/net/mac802154/tx.c
-> > index 2a6f1ed763c9..6fbed5bb5c3e 100644
-> > --- a/net/mac802154/tx.c
-> > +++ b/net/mac802154/tx.c
-> > @@ -34,8 +34,8 @@ void ieee802154_xmit_sync_worker(struct work_struct *work)
-> >   	if (res)
-> >   		goto err_tx;
-> >   
-> > -	dev->stats.tx_packets++;
-> > -	dev->stats.tx_bytes += skb->len;
-> > +	DEV_STATS_INC(dev, tx_packets);
-> > +	DEV_STATS_ADD(dev, tx_bytes, skb->len);
-> >   
-> >   	ieee802154_xmit_complete(&local->hw, skb, false);
-> >   
-> > @@ -90,8 +90,8 @@ ieee802154_tx(struct ieee802154_local *local, struct sk_buff *skb)
-> >   		if (ret)
-> >   			goto err_wake_netif_queue;
-> >   
-> > -		dev->stats.tx_packets++;
-> > -		dev->stats.tx_bytes += len;
-> > +		DEV_STATS_INC(dev, tx_packets);
-> > +		DEV_STATS_ADD(dev, tx_bytes, len);
-> >   	} else {
-> >   		local->tx_skb = skb;
-> >   		queue_work(local->workqueue, &local->sync_tx_work);  
+> Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+> ---
+>  Documentation/virt/kvm/api.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> This patch has been applied to the wpan tree and will be
-> part of the next pull request to net. Thanks!
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 2d45b21b0288..5050535140ab 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -6418,7 +6418,7 @@ affect the device's behavior. Current defined flags::
+>    /* x86, set if the VCPU is in system management mode */
+>    #define KVM_RUN_X86_SMM     (1 << 0)
+>    /* x86, set if bus lock detected in VM */
+> -  #define KVM_RUN_BUS_LOCK    (1 << 1)
+> +  #define KVM_RUN_X86_BUS_LOCK    (1 << 1)
+>    /* arm64, set for KVM_EXIT_DEBUG */
+>    #define KVM_DEBUG_ARCH_HSR_HIGH_VALID  (1 << 0)
+>  
+> @@ -7776,10 +7776,10 @@ its own throttling or other policy based mitigations.
+>  This capability is aimed to address the thread that VM can exploit bus locks to
+>  degree the performance of the whole system. Once the userspace enable this
+>  capability and select the KVM_BUS_LOCK_DETECTION_EXIT mode, KVM will set the
+> -KVM_RUN_BUS_LOCK flag in vcpu-run->flags field and exit to userspace. Concerning
+> +KVM_RUN_X86_BUS_LOCK flag in vcpu-run->flags field and exit to userspace. Concerning
+>  the bus lock vm exit can be preempted by a higher priority VM exit, the exit
+>  notifications to userspace can be KVM_EXIT_BUS_LOCK or other reasons.
+> -KVM_RUN_BUS_LOCK flag is used to distinguish between them.
+> +KVM_RUN_X86_BUS_LOCK flag is used to distinguish between them.
 
-Hi! I haven't looked in detail, but FWIW
+There's a patch[*] that does this clean-up and more, which I'm going to grab for
+6.11.  I am planning on grabbing patch 1 though.  Thanks!
 
-$ git grep LLTX net/mac802154/
-$
-
-and similar patch from this author has been rejected:
-
-https://lore.kernel.org/all/CANn89iLPYoOjMxNjBVHY7GwPFBGuxwRoM9gZZ-fWUUYFYjM1Uw@mail.gmail.com/
+[*] https://lore.kernel.org/all/20231116133628.5976-1-clopez@suse.de
 
