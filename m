@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-201073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CAF78FB8F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:30:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F978FB8FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4016C1F21E2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89281C21402
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC1814901A;
-	Tue,  4 Jun 2024 16:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC9613D526;
+	Tue,  4 Jun 2024 16:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LuTfpSvx"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfKXckxj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6B31487E7;
-	Tue,  4 Jun 2024 16:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F624135A51;
+	Tue,  4 Jun 2024 16:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518602; cv=none; b=CYREqe+jxmXPKGLOHWSOgLgHWO1+niq0aY3VK7tr3YSK4b/0Ae9ACkJ89VLHA1xCgeNizmpftvadUwePByRaSf5xUdgOX/gR1ayvql/N6A+hIINTmM+3b+BvdRtbKiWS6XM41DKaDpMJEZvVsKvKGj9OuMis5cvx94x/U+Bwzkg=
+	t=1717518633; cv=none; b=OeCSkQBZMpiVagHX2ayFuw5qmglo87Ttjlk7gnyMIGVZqFtcvJgIXIwQvYa1/AZMPTklUkXImrpyCHzwJMIWOruGkL4O7oXYyxq1GAWvOei9aQjvnpg04bLqiFiozt0ho0MEsdTOEIi1gNBMcxzHKeNsMmVnIhIp36l8vuVFs8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518602; c=relaxed/simple;
-	bh=zzYkFvKYex68lFbcEumkWIRNilyKlRoCRjm2QfKYCYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QqZvfuVLxbqRahAvh87Ot7LLPwCYlWpH9OkVvDYG0wNfgvNOU0Q9OMeCMy+v86QJtOMU+Mf3C49LKt+KHjwzNdD4u1J7mfdkOfG9vdR529g8fAUTwDtVbaIwv54+QOdD0n/jeXw0bJcnVhMb/N9KQ2jsznrQ1CaDI4c34AfIe7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LuTfpSvx; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717518599;
-	bh=zzYkFvKYex68lFbcEumkWIRNilyKlRoCRjm2QfKYCYI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LuTfpSvx77y3cFBgUuKy6/VtKdGfhRAFnKnsdpuSRjSysWrElI548NJjDUA986Qxu
-	 /hHklctq0p9l2AQ6nTkiDLwJOCmQTZMNgndn7d2mFNa+OQ6zqjRXK4tKUXiwH38Um2
-	 pRG8oHEIhekBwVmM6RE3xY9AHb++2L/XWywja7g9ZeigtEE3oPG/HcRmPBSZzFV4HW
-	 w5HDMUsmi14ZC7D/zkgH4V2Qno9h/wQkBNoAvnC4eeR+v28s+tEjuxVz7iTAZH614b
-	 H6KhWVhZYy57O0ZvyFCGxyqsMxnHttLifoSe4aeW9TwsCxdxRzvifIHJZjwKcyFEDU
-	 Nn3k6Yk/ogwTg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 63A7B3781104;
-	Tue,  4 Jun 2024 16:29:58 +0000 (UTC)
-Message-ID: <af024ad1-93f6-4d7a-b139-7eb2fa12eb81@collabora.com>
-Date: Tue, 4 Jun 2024 18:29:57 +0200
+	s=arc-20240116; t=1717518633; c=relaxed/simple;
+	bh=VYfxBurXHxczP7ZhLOxXOA47hVbiObZ0mU1zWkMrQyQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=f6Q9tf+mhxe3nmk+yNftRDL8Vur40Blt9YyH6XueWLPIrAr+nrQByMC0YVEYaN8MngyCMWP4N1Kx/KvcaMYe/7J4dmwPfNlXbs6a+zDpP01W4hYYmYIRgg/zhoqv1S91gFf9m3HpbgEqwN1mfmb4SLQU0XFUVOqqDb/W36UatbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfKXckxj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126E3C2BBFC;
+	Tue,  4 Jun 2024 16:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717518632;
+	bh=VYfxBurXHxczP7ZhLOxXOA47hVbiObZ0mU1zWkMrQyQ=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=qfKXckxjQLUqiYOxFkKaC03gn8b9ipaeDRcL6JGuedSSW5cOK1snl8pAGCLTwfltl
+	 kWfLOK2/E3ee29537Gn3hX2MWiKlzSR/gWOy3/zgQjDlMyukkrDuZFqcLznwbpRrrE
+	 Stz/BhKKTY/1Ns2bH8Wh+5vzeXu3XhiT0rUgFbUS8og3IWNcxvbvadyQgwq2ir0OgY
+	 fACud7eB8Hn1NyVv4R7OvtiAvM6oOIAaYFORPwk5w7F6G6S6hT4hZ3fybbbU5J8yqW
+	 epTmfBNGwLBZcDzcBX9Ka5kgIX8NcT+qp8BxyDhnq/zHi2J/+hdGQl/HdaB9ADblWQ
+	 D8BE5g+I2TftQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Return error in
- case of invalid efuse data
-To: Julien Panis <jpanis@baylibre.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Nicolas Pitre <npitre@baylibre.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240603-mtk-thermal-calib-check-v1-1-5d6bf040414c@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240603-mtk-thermal-calib-check-v1-1-5d6bf040414c@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Jun 2024 19:30:29 +0300
+Message-Id: <D1RDJHOKPWC2.HFDE4WLHATVA@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>, <keyrings@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <herbert@gondor.apana.org.au>,
+ <davem@davemloft.net>
+Cc: <linux-kernel@vger.kernel.org>, <lukas@wunner.de>
+Subject: Re: [PATCH 0/2] ecdsa: Use ecc_digits_from_bytes to simplify code
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240529230827.379111-1-stefanb@linux.ibm.com>
+ <D1MPWI6C2ZCW.F08I9ILD63L4@kernel.org>
+ <435d756d-2404-4f66-9ce3-363813997629@linux.ibm.com>
+In-Reply-To: <435d756d-2404-4f66-9ce3-363813997629@linux.ibm.com>
 
-Il 03/06/24 14:06, Julien Panis ha scritto:
-> This patch prevents from registering thermal entries and letting the
-> driver misbehave if efuse data is invalid. A device is not properly
-> calibrated if the golden temperature is zero.
-> 
-> Signed-off-by: Julien Panis <jpanis@baylibre.com>
+On Thu May 30, 2024 at 3:16 PM EEST, Stefan Berger wrote:
+>
+>
+> On 5/30/24 01:08, Jarkko Sakkinen wrote:
+> > On Thu May 30, 2024 at 2:08 AM EEST, Stefan Berger wrote:
+> >> Simplify two functions that were using temporary byte arrays for
+> >> converting too-short input byte arrays to digits. Use ecc_digits_from_=
+bytes
+> >> since this function can now handle an input byte array that provides
+> >> less bytes than what a coordinate of a curve requires - the function
+> >> provides zeros for the missing (leading) bytes.
+> >>
+> >> See: c6ab5c915da4 ("crypto: ecc - Prevent ecc_digits_from_bytes from r=
+eading too many bytes")
+> >>
+> >> Regards,
+> >>     Stefan
+> >>
+> >> Stefan Berger (2):
+> >>    crypto: ecdsa - Use ecc_digits_from_bytes to create hash digits arr=
+ay
+> >>    crypto: ecdsa - Use ecc_digits_from_bytes to convert signature
+> >>
+> >>   crypto/ecdsa.c | 29 ++++++-----------------------
+> >>   1 file changed, 6 insertions(+), 23 deletions(-)
+> >=20
+> > BTW, would it make sense split ecdsa signature encoding to its own patc=
+h
+> > in my next patch set version and name it ecdsa_* style and put it to
+> > ecdsa.c?
+>
+> I would only put it into ecdsa.c if functions inside this file (can)=20
+> make use of it, otherwise leave it in your file.
 
-Fixes tag, please.
+Yep, that specific part has no binding per se to anything related to
+TPM2. It is also dead easy to detach.
 
-Regards,
-Angelo
+Here I would suggest to take a similar angle as with CRYPTO_LIB_AES so
+that it is easily and directly callable from either side with no fuss.
 
-> ---
-> Guard against invalid calibration data, following this discussion:
-> https://lore.kernel.org/all/ad047631-16b8-42ce-8a8d-1429e6af4517@collabora.com/
-> ---
->   drivers/thermal/mediatek/lvts_thermal.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-> index 0bb3a495b56e..185d5a32711f 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-> @@ -769,7 +769,11 @@ static int lvts_golden_temp_init(struct device *dev, u8 *calib,
->   	 */
->   	gt = (((u32 *)calib)[0] >> lvts_data->gt_calib_bit_offset) & 0xff;
->   
-> -	if (gt && gt < LVTS_GOLDEN_TEMP_MAX)
-> +	/* A zero value for gt means that device has invalid efuse data */
-> +	if (!gt)
-> +		return -ENODATA;
-> +
-> +	if (gt < LVTS_GOLDEN_TEMP_MAX)
->   		golden_temp = gt;
->   
->   	golden_temp_offset = golden_temp * 500 + lvts_data->temp_offset;
-> 
-> ---
-> base-commit: 632483ea8004edfadd035de36e1ab2c7c4f53158
-> change-id: 20240603-mtk-thermal-calib-check-ba2ec24a1c32
-> 
-> Best regards,
+I'll mangle it that way at least for the next version and we can see
+then how it looks like.
 
-
+BR, Jarkko
 
