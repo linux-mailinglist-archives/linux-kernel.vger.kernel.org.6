@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-200097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5904C8FAAB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38B38FAAB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FDE6B2245A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FFD61C219E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0AE13DDDB;
-	Tue,  4 Jun 2024 06:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D67E13E04D;
+	Tue,  4 Jun 2024 06:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="l/3EhE7M"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKk1T5Ll"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE7065F;
-	Tue,  4 Jun 2024 06:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BD9136E2B;
+	Tue,  4 Jun 2024 06:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717482275; cv=none; b=MK0jGWbjcT4QUuSA98hubDCelqspaeTMIW7t+mUxFTcZq04bQaXiZr9REqMTMv6AXTJOFHxsHVzwUQljCvej1BBntiIBM+N+DwqzBT25vj9IFw8b40Y4lw6xg3iPIb2+VFUoMFTpBH2MpnFAOFNpCdITheuC7CTL/Slh5e/owB8=
+	t=1717482326; cv=none; b=DJE1USR9OCH/NEk22dloazBUSzirTjf2NipuuuzhqiWx805Q5yJnbueVm+a5HjNqfSSqPGxpCGc2w3K0Cx/ftnO28+wV4DqMANH7517qBgdwcq+O9KONt3npukgaHS2uVo2HIOqg5QWIYiZH84SCBiYrir116RB9bAhlWuRCFk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717482275; c=relaxed/simple;
-	bh=p4sDxzHb1i63Q3DbEaEGPZwxCj7DN2Lzc6JSzJfd700=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=MLS1kcG1fAhfMdtkkCaS/KkJ840d4TvstdABos/Sx07hag8QQTeCkGLX58pqOwwGGsRKkmDMeiy0sEnopTdvX3MQaanPeypTCQMJXKaiTPSN/0WIpBNzdf0yFViZDqukJfK/Sbz8G7dhrsz03lPMeXpRobIlAlMCVWMCOpljn+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=l/3EhE7M; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4546O2F1046223;
-	Tue, 4 Jun 2024 01:24:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717482242;
-	bh=4PfyFitsGdAkgl1MpNcDs7QMz8YZYOUgHQQGXhlK6lQ=;
-	h=Date:From:Subject:To:CC:References:In-Reply-To;
-	b=l/3EhE7MnRRGxMQro003GZ88IJMnTnEaIg60bnDn4CmwDgw5w40jmMkH+wmbbVNbI
-	 1atdzkt66or2eAPFwOq6S8vwf14XV5kDtPpH4EjJrstwh/5Z0h/uXHDKl8D2hqilFu
-	 /E9g/ZJgHAZ5b53SAlwbwvPfytX5AIcLdidAi6RI=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4546O2GI006058
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Jun 2024 01:24:02 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Jun 2024 01:24:01 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Jun 2024 01:24:01 -0500
-Received: from [172.24.227.57] (linux-team-01.dhcp.ti.com [172.24.227.57])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4546NtpM088843;
-	Tue, 4 Jun 2024 01:23:56 -0500
-Message-ID: <2d65aa06-cadd-4462-b8b9-50c9127e6a30@ti.com>
-Date: Tue, 4 Jun 2024 11:53:55 +0530
+	s=arc-20240116; t=1717482326; c=relaxed/simple;
+	bh=mCsJVlBGHrWeE4KFPD49aRGqy7VhcWnDdonpJUSrQVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BM3f4CFCm/+LBG0bz1fFOJexVziibuLGDkCtDxnyByI1u0igxPd3OiT9iHBy270WJ1ygw4MM2Cd3TtoX4O+VMSgFCo/rBJue99772VDWf+edEmLYpPPmkjILaN3FDiaDlIdo9/+UBMVQLC3iD+/l/zJlrMpiES3neU66zBcLPNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKk1T5Ll; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BBC4C2BBFC;
+	Tue,  4 Jun 2024 06:25:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717482325;
+	bh=mCsJVlBGHrWeE4KFPD49aRGqy7VhcWnDdonpJUSrQVk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qKk1T5Ll90Od3mFvUMJFl4TpWWvu+EWQWZ3mw0MHI1W4t4N+1K8utkHWoTvcJMkwo
+	 UZQTU6IhhKp3tePLdHWVM5WjV8K1ZzBgVwdA9kyJqMIIor8T3k+4ZBQyU0i4zR+0WI
+	 ohPwQdpyPZSVDA2B9x/rruuAjsjxiYf+7mVDDry0Lr+nbwqn2FWpxd5I0wTL71PDmT
+	 el5ybM6y/sFXiavN5cJG4QaVv7vXlSksZ3xKkRYrP4LTqHX57rKIujkqXhCl/dCsue
+	 9zNWVChrBUhFE7P7t/NLWAysJoQ+adXbywXCR/9FO+8k/fkERMZAIRTeoaJRHl+5Od
+	 /COVXN/5Bgyeg==
+Message-ID: <d66a184a-22f4-4d5f-9f91-2034e798423d@kernel.org>
+Date: Tue, 4 Jun 2024 08:25:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,147 +49,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Yojana Mallik <y-mallik@ti.com>
-Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
- driver as network device
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <schnelle@linux.ibm.com>, <wsa+renesas@sang-engineering.com>,
-        <diogo.ivo@siemens.com>, <rdunlap@infradead.org>, <horms@kernel.org>,
-        <vigneshr@ti.com>, <rogerq@ti.com>, <danishanwar@ti.com>,
-        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>, <y-mallik@ti.com>
-References: <20240531064006.1223417-1-y-mallik@ti.com>
- <20240531064006.1223417-3-y-mallik@ti.com>
- <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
+Subject: Re: [PATCH 1/1] dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
+To: Frank Li <Frank.li@nxp.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..."
+ <linux-mmc@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ imx@lists.linux.dev
+References: <20240531193745.1714046-1-Frank.Li@nxp.com>
+ <b78b14c7-e71c-4403-a606-80564a31e107@kernel.org>
+ <Zl3ajFd05VKULEyO@lizhi-Precision-Tower-5810>
 Content-Language: en-US
-In-Reply-To: <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Zl3ajFd05VKULEyO@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Andrew,
-
-On 6/2/24 22:15, Andrew Lunn wrote:
->> +enum icve_rpmsg_type {
->> +	/* Request types */
->> +	ICVE_REQ_SHM_INFO = 0,
->> +	ICVE_REQ_SET_MAC_ADDR,
->> +
->> +	/* Response types */
->> +	ICVE_RESP_SHM_INFO,
->> +	ICVE_RESP_SET_MAC_ADDR,
->> +
->> +	/* Notification types */
->> +	ICVE_NOTIFY_PORT_UP,
->> +	ICVE_NOTIFY_PORT_DOWN,
->> +	ICVE_NOTIFY_PORT_READY,
->> +	ICVE_NOTIFY_REMOTE_READY,
->> +};
+On 03/06/2024 17:00, Frank Li wrote:
+> On Sat, Jun 01, 2024 at 05:25:46PM +0200, Krzysztof Kozlowski wrote:
+>> On 31/05/2024 21:37, Frank Li wrote:
+>>> Convert layerscape fsl-esdhc binding doc from txt to yaml format.
+>>>
+>>> Addtional change during convert:
+>>> - deprecate "sdhci,wp-inverted", "sdhci,1-bit-only".
+>>> - Add "reg" and "interrupts" property.
+>>> - change example "sdhci@2e000" to "mmc@2e000".
+>>> - compatible string require fsl,<chip>-esdhc followed by fsl,esdhc to match
+>>> most existed dts file.
+>>>
+>>
+>>
+>>> -};
+>>> diff --git a/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml b/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml
+>>> new file mode 100644
+>>> index 0000000000000..cafc09c4f1234
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/mmc/fsl-ls-esdhc.yaml
+>>
+>> Filename: fsl,esdhc.yaml
 > 
-> +struct message_header {
-> +       u32 src_id;
-> +       u32 msg_type; /* Do not use enum type, as enum size is compiler dependent */
-> +} __packed;
-> 
-> 
-> Given how you have defined icve_rpmsg_type, what is the point of
-> message_header.msg_type?
-> 
+> There is fsl-imx-esdhc.yaml for freescale imx esdhc. If use "fsl,esdhc.yam",
+> it may confuse user, which will cover imx chips also, actually it is only
+> used for layerscape chips.
+
+The compatible already did the confusion, so now you have to leave with it.
 
 
-+	rpmsg_send(common->rpdev->ept, (void *)(&common->send_msg),
-+		   sizeof(common->send_msg));
 
-rpmsg_send in icve_create_send_request is sending message_header.msg_type to R5
-core using (void *)(&common->send_msg).
-In icve_rpmsg_cb function switch case statements for option msg_type are used
-and cases are from enum icve_rpmsg_type.
+Best regards,
+Krzysztof
 
-> It seems like this would make more sense:
-> 
-> enum icve_rpmsg_request_type {
-> 	ICVE_REQ_SHM_INFO = 0,
-> 	ICVE_REQ_SET_MAC_ADDR,
-> }
-> 
-> enum icve_rpmsg_response_type {
-> 	ICVE_RESP_SHM_INFO,
-> 	ICVE_RESP_SET_MAC_ADDR,
-> }
-> enum icve_rpmsg_notify_type {
-> 	ICVE_NOTIFY_PORT_UP,
-> 	ICVE_NOTIFY_PORT_DOWN,
-> 	ICVE_NOTIFY_PORT_READY,
-> 	ICVE_NOTIFY_REMOTE_READY,
-> };
-> 
-
-Since msg_hdr.msg_type which takes value from enum icve_msg_type is being used
-in rpmsg_send and icve_rpmsg_cb, I would prefer to continue with the 2 separate
-enums, that is enum icve_msg_type and enum icve_rpmsg_type. However I am always
-open to make improvements and would be happy to discuss this further if you
-have additional insights.
-
-> Also, why SET_MAC_ADDR? It would be good to document where the MAC
-> address are coming from. And what address this is setting.
-> 
-
-The interface which is controlled by Linux and interacting with the R5 core is
-assigned mac address 00:00:00:00:00:00 by default. To ensure reliable
-communication and compliance with network standards a different MAC address is
-set for this interface using icve_set_mac_address.
-
-> In fact, please put all the protocol documentation into a .rst
-> file. That will help us discuss the protocol independent of the
-> implementation. The protocol is an ABI, so needs to be reviewed well.
-> 
-
-I will do it.
-
->> +struct icve_shm_info {
->> +	/* Total shared memory size */
->> +	u32 total_shm_size;
->> +	/* Total number of buffers */
->> +	u32 num_pkt_bufs;
->> +	/* Per buff slot size i.e MTU Size + 4 bytes for magic number + 4 bytes
->> +	 * for Pkt len
->> +	 */
-> 
-> What is your definition of MTU?
-> 
-> enp2s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000
-> 
-> Typically, MTU does not include the Ethernet header or checksum. Is
-> that what you mean here?
-> 
-
-MTU is only the Payload. I have realized the macro names are misleading and I
-will change them as
-#define ICVE_PACKET_BUFFER_SIZE   1540
-#define MAX_MTU   ICVE_PACKET_BUFFER_SIZE - (ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN)
-Hence value of max mtu is 1518 bytes.
-
->> +	u32 buff_slot_size;
->> +	/* Base Address for Tx or Rx shared memory */
->> +	u32 base_addr;
->> +} __packed;
-> 
-> What do you mean by address here? Virtual address, physical address,
-> DMA address? And whos address is this, you have two CPUs here, with no
-> guaranteed the shared memory is mapped to the same address in both
-> address spaces.
-> 
-> 	Andrew
-
-The address referred above is physical address. It is the address of Tx and Rx
-buffer under the control of Linux operating over A53 core. The check if the
-shared memory is mapped to the same address in both address spaces is checked
-by the R5 core.
-
-Thanks for the feedback.
-Regards
-Yojana Mallik
 
