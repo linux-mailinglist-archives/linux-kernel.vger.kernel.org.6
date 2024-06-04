@@ -1,186 +1,187 @@
-Return-Path: <linux-kernel+bounces-200646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD258FB319
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:01:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22128FB2EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 610EDB29E44
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58491C24B53
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF665146A8C;
-	Tue,  4 Jun 2024 12:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4bKT20b"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C18145FF1;
-	Tue,  4 Jun 2024 12:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C554414882A;
+	Tue,  4 Jun 2024 12:50:22 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46065146A70;
+	Tue,  4 Jun 2024 12:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717505417; cv=none; b=H9D34N5nwFTq26LPhGr6v8C4Da+neNLcbs7AJUBB8w83j6QutrzZWkO51peR5mztpj3rVPoxn+oERRYRGoeOviqlRYwo2pGHdkW7DfRsHZG+FeAUrnYSkrYVyXQcb8QsvH5/H7ZClBDeMFqLBg/Xa/Anwky1qP1mvrVNytE69HE=
+	t=1717505422; cv=none; b=hZv3RE7a5FJaz32iTC4/WE3rSRqQ1do7oBeSrWr2bkpQ28Hd0ft37ObiMq3yM4DKbwYJNwmUuI3r+zrdjcXnhUWCqFCaI7EdwrfGJbwrB0takiTKO0R8vjBf30ES0krz+QdRlNI0OqguhmglvX5EasPpEg9HrAS10v3Zc9kcn+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717505417; c=relaxed/simple;
-	bh=uL/t7pm9AK4sEcDXmw3Mra5gJjxVZIFJK9MXRYF5SCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JzgkMzeTR8poymTuyMufW0IH/Da9rELUi1eaFZvSlg+YLiFKKHqtyKJWsoI6diWl30qEpqgCIc61kXrocVuDD39H5QMPrIGDuksKj6kaS0Ht5TqENmLZF9xRO0YmBiCPf+yCP3Y0WNGV2CWZwkoXLuSQwlVsmLZ9Voj6d2SoPss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4bKT20b; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a677d3d79so3342259a12.1;
-        Tue, 04 Jun 2024 05:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717505414; x=1718110214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l5A5/CwMQp+giK6dA3QbmX6y5Z0nir0CTmgUL04kHgE=;
-        b=Z4bKT20bGMXD/hk6vaMlGYEtJU15SQFFGJF0FO93kOVnrFOkPoYb1MJ/1VShuoAyem
-         syYNMKa6g5kbjkqLb3yTYj3OTv1iWT1CnVpKKrLzHMa9Ttl6PNcKaEAC2mMiN4y/CHO2
-         eJm67iJT/ndfWtIFsH9/5UZzdv+3dI8w7Ecdip+yk32SKy5c+pYIHoaLFbpCy1/B2Wuk
-         vQK57JT9Pw9wcdvg5/iFe7qViq1/2s1kfyEShnoGDbDxC/jycH3Sx7tk01BUhJkA5xCh
-         J0cX3ls4XbAW5W7dt0GB65hX3QZy+v3KJdx0kE+WFnMJj8k4/rG0jZwS6l74Ek6SJ1t4
-         Ldaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717505414; x=1718110214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l5A5/CwMQp+giK6dA3QbmX6y5Z0nir0CTmgUL04kHgE=;
-        b=T1D1u2hdB02XKS88FFFSpXWeyYy+2ImWI/9Bphe6gCPYRVUUViNVp6CxBp/caepC2v
-         59+4hdiF7gyoCEwcAL5mxDh0a1NrboBpL4p9BCbSInchI0qFpO8a2edipFpsu63pI6EJ
-         jaVA4pS7lIMg9V5LU1pU2xeb/fnJkYXBLQBfvRQVSeiLDSTBW/tPoQ9uFb44/R+zsI3l
-         V/vrhfng80PdOqif/FPUHclLGpPGWiCoIrGWPwCjWICQPZvD1rVh8G3Ay0FbPEc/eGoI
-         eeRXnzqozyuqjMFFqdT0OO3A1VNryqMxQbuG7rnYNLzW5rL3qX1yiQ1h0Rc9PicoVhUu
-         Yw/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXfTbcwtnEdwhv8o+OJ2jKoQDKwc2QvWZap3ALg2bloQiR+faq0aLhFCziKd/ugfTnuvZ7DF0zs2zagbUGQN/od1wWIE0HgT1EkVpyECdVKPdnuG/8eOWQfvruhVNSUHiGcsMD93xu9EsxDIfypU+yi3JyPQAxRgIJd1i8qxQt7/XaXBA==
-X-Gm-Message-State: AOJu0Yw2ayA/0ivlJyQbuOiZgPYkLOCq6USQKIscjaY2S7AVwt5Ia/Vb
-	IkPqkD1e5iCwr82pIWs0ajKNCtEg5m3oEPRskVvfWvweBXj1Hq1W7r+5Nn1YsA9f9vpwvNufma8
-	OvfiQH/bUhHYQJiJK2ux3bVEjGB0=
-X-Google-Smtp-Source: AGHT+IF2c7GJir+XPdRoLTFlUuzDsKkGSNria5acCbGeioFwEyDr0OUN028acb+qeCgAnoaY523IZwylbZbhdOiDrCo=
-X-Received: by 2002:a50:9ea5:0:b0:578:6484:24ff with SMTP id
- 4fb4d7f45d1cf-57a7a6a29a2mr2227617a12.6.1717505413457; Tue, 04 Jun 2024
- 05:50:13 -0700 (PDT)
+	s=arc-20240116; t=1717505422; c=relaxed/simple;
+	bh=oTyWyoQ6DV2/i77kbwUYPK5JR9US69MX44FaIuO5w3o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Xwo+he2LE0nWGOLSA3nHgCoEtL4ZqB2kPWEdd0pDxxo6wYrA7CYYrBcWyo5oxGWD86GXpfl0gkerY49c3RVCqtmRoaiuElWvy1JkUl/3amXVJfpd/8wQvZ0uE6nlzUdkNNsZ49qsgX/dO9+KrHeqb5Dwi4907NDhMbUaWM/Jiu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.10.34])
+	by gateway (Coremail) with SMTP id _____8DxP_CJDV9mo2MDAA--.14500S3;
+	Tue, 04 Jun 2024 20:50:17 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.10.34])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxssSIDV9mxEEUAA--.39592S2;
+	Tue, 04 Jun 2024 20:50:16 +0800 (CST)
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	corbet@lwn.net,
+	alexs@kernel.org,
+	siyanteng@loongson.cn
+Cc: loongarch@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tianyang Zhang <zhangtianyang@loongson.cn>
+Subject: [PATCH V1 1/2] docs: Add advanced extended IRQ model description
+Date: Tue,  4 Jun 2024 20:50:15 +0800
+Message-Id: <20240604125015.18678-1-zhangtianyang@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530072113.30410-1-animeshagarwal28@gmail.com> <Zlij+FgY4ul7ZwbA@lizhi-Precision-Tower-5810>
-In-Reply-To: <Zlij+FgY4ul7ZwbA@lizhi-Precision-Tower-5810>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 4 Jun 2024 15:50:01 +0300
-Message-ID: <CAEnQRZBsBOAHiwZDNKyPRinXdEOhdu2dBdGpMrq-e9kWasukSQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: dma: fsl,imx-dma: Convert to dtschema
-To: Frank Li <Frank.li@nxp.com>
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8DxssSIDV9mxEEUAA--.39592S2
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUU9vb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x02
+	67AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wASzI0E04IjxsIE14AKx2xKxw
+	AqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8I
+	cVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjc
+	xG0xvY0x0EwIxGrwAKzVC20s0267AEwI8IwI0ExsIj0wCF04k20xvY0x0EwIxGrwCFx2Iq
+	xVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r
+	1j6r18MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AK
+	xVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7
+	xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_
+	GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UUUUU==
 
-On Thu, May 30, 2024 at 7:06=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Thu, May 30, 2024 at 12:51:07PM +0530, Animesh Agarwal wrote:
-> > Convert the fsl i.MX DMA controller bindings to DT schema
->
-> nit: need "." after sentence.
->
-> >
-> > Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> > ---
-> >  .../devicetree/bindings/dma/fsl,imx-dma.yaml  | 58 +++++++++++++++++++
-> >  .../devicetree/bindings/dma/fsl-imx-dma.txt   | 50 ----------------
-> >  2 files changed, 58 insertions(+), 50 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/dma/fsl,imx-dma.y=
-aml
-> >  delete mode 100644 Documentation/devicetree/bindings/dma/fsl-imx-dma.t=
-xt
-> >
-> > diff --git a/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml b/D=
-ocumentation/devicetree/bindings/dma/fsl,imx-dma.yaml
-> > new file mode 100644
-> > index 000000000000..f36ab5425bdb
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
-> > @@ -0,0 +1,58 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/dma/fsl,imx-dma.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Freescale Direct Memory Access (DMA) Controller for i.MX
-> > +
-> > +maintainers:
-> > +  - Animesh Agarwal <animeshagarwal28@gmail.com>
-> > +
-> > +allOf:
-> > +  - $ref: dma-controller.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - fsl,imx1-dma
-> > +      - fsl,imx21-dma
-> > +      - fsl,imx27-dma
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    description: |
-> > +      First item should be DMA interrupt, second one is optional and
-> > +      should contain DMA Error interrupt.
->
-> items:
->   - description: DMA complete interrupt
->   - description: DMA Error interrupt
->
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +
-> > +  "#dma-cells":
-> > +    const: 1
-> > +
-> > +  dma-channels:
-> > +    const: 16
->
-> I think it should be maximum: 16
+From 3C6000, Loongarch began to support advanced extended
+interrupt mode, in which each CPU has an independent interrupt
+vector number.This will enhance the architecture's ability
+to support modern devices
 
-As Krzysztof pointed out and looking at datasheet and driver implementation=
-, we
-always use 16 channels. Nothing less or variable.
+Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+---
+ .../arch/loongarch/irq-chip-model.rst         | 33 +++++++++++++++++
+ .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 +++++++++++++++++--
+ 2 files changed, 67 insertions(+), 3 deletions(-)
 
-So const: 16 I think it is correct!
+diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
+index 7988f4192363..4fb24077b23b 100644
+--- a/Documentation/arch/loongarch/irq-chip-model.rst
++++ b/Documentation/arch/loongarch/irq-chip-model.rst
+@@ -85,6 +85,39 @@ to CPUINTC directly::
+     | Devices |
+     +---------+
+ 
++Advanced Extended IRQ model
++===========================
++
++In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt go
++to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, MSI interrupts go to AVEC,
++and then go to CPUINTC, Other devices interrupts go to PCH-PIC/PCH-LPC and gathered
++by EIOINTC, and then go to CPUINTC directly::
++
++ +-----+     +--------------------------+     +-------+
++ | IPI | --> |           CPUINTC        | <-- | Timer |
++ +-----+     +--------------------------+     +-------+
++              ^        ^             ^
++              |        |             |
++      +--------+  +---------+ +---------+     +-------+
++      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
++      +--------+  +---------+ +---------+     +-------+
++           ^            ^
++           |            |
++         +---------+  +---------+
++         |   MSI   |  | PCH-PIC |
++         +---------+  +---------+
++            ^          ^       ^
++            |          |       |
++    +---------+ +---------+ +---------+
++    | Devices | | PCH-LPC | | Devices |
++    +---------+ +---------+ +---------+
++                     ^
++                     |
++                +---------+
++                | Devices |
++                +---------+
++
++
+ ACPI-related definitions
+ ========================
+ 
+diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+index f1e9ab18206c..cadf38589059 100644
+--- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
++++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+@@ -9,9 +9,8 @@
+ LoongArch的IRQ芯片模型（层级关系）
+ ==================================
+ 
+-目前，基于LoongArch的处理器（如龙芯3A5000）只能与LS7A芯片组配合工作。LoongArch计算机
+-中的中断控制器（即IRQ芯片）包括CPUINTC（CPU Core Interrupt Controller）、LIOINTC（
+-Legacy I/O Interrupt Controller）、EIOINTC（Extended I/O Interrupt Controller）、
++LoongArch计算机中的中断控制器（即IRQ芯片）包括CPUINTC（CPU Core Interrupt Controller）、
++LIOINTC（Legacy I/O Interrupt Controller）、EIOINTC（Extended I/O Interrupt Controller）、
+ HTVECINTC（Hyper-Transport Vector Interrupt Controller）、PCH-PIC（LS7A芯片组的主中
+ 断控制器）、PCH-LPC（LS7A芯片组的LPC中断控制器）和PCH-MSI（MSI中断控制器）。
+ 
+@@ -87,6 +86,38 @@ PCH-LPC/PCH-MSI，然后被EIOINTC统一收集，再直接到达CPUINTC::
+     | Devices |
+     +---------+
+ 
++高级扩展IRQ模型
++=======================
++
++在这种模型里面，IPI（Inter-Processor Interrupt）和CPU本地时钟中断直接发送到CPUINTC，
++CPU串口（UARTs）中断发送到LIOINTC，MSI中断发送到AVEC，而后通过AVEC送达CPUINTC，而
++其他所有设备的中断则分别发送到所连接的PCH-PIC/PCH-LPC，然后由EIOINTC统一收集，再直
++接到达CPUINTC::
++
++ +-----+     +--------------------------+     +-------+
++ | IPI | --> |           CPUINTC        | <-- | Timer |
++ +-----+     +--------------------------+     +-------+
++              ^        ^             ^
++              |        |             |
++      +--------+  +---------+ +---------+     +-------+
++      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
++      +--------+  +---------+ +---------+     +-------+
++              ^        ^
++              |        |
++      +---------+  +-------------+
++      |   MSI   |  |   PCH-PIC   |
++      +---------+  +-------------+
++            ^          ^       ^
++            |          |       |
++    +---------+ +---------+ +---------+
++    | Devices | | PCH-LPC | | Devices |
++    +---------+ +---------+ +---------+
++                     ^
++                     |
++                +---------+
++                | Devices |
++                +---------+
++
+ ACPI相关的定义
+ ==============
+ 
+-- 
+2.20.1
 
-Another, thing. Should we keep both
-
-dma-channels
-and
-#dma-channels?
-
-I wonder what is the correct way to put #dma-channels
-
-Like this:
-
-#dma-channels:
-     deprecated
-
-or
-
-'#dma-channels':
-    deprecated
-
-
-The rest looks good to me.
-
-Thanks for doing this Animesh!
 
