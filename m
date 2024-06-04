@@ -1,125 +1,112 @@
-Return-Path: <linux-kernel+bounces-199957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EA28FA832
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E9B8FA833
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BED1C21D09
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F1CC1C231B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4F313D2BF;
-	Tue,  4 Jun 2024 02:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0s6wGdH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA71A1E485;
-	Tue,  4 Jun 2024 02:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC6F13D2BA;
+	Tue,  4 Jun 2024 02:09:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052411E485
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 02:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717466955; cv=none; b=DXhiCs3tyQiiifTHqRt3sZG6Zgsmb5hCoH4i5AF8OfdfT8jRjKUcFycdBIs951oAIeBfoLVkaVMOnN1OEoS1w8QtBqxGkBv3/MtH1Q1LB1Teh+QxYgZEj1Jx7w1rF/D+HU5h9lQPtSVew0NvbhNNAsGX+XxPmAkpXQSL9LbDYy0=
+	t=1717466987; cv=none; b=HAPoEJ69EWbevt083W+dZc+pNqvYwAu3uytm/qSQQ9eew7NwzX61plABJqNpC/3/now58C+tg+NYB3vpacGQOyCpJpFKIuLT6AZJjqtO5AyRl3onACWP0SK78w++VfAzIN9tevyNvWnexJXXbX6LL46Bs3tlT+Ww1x2N9WHk8BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717466955; c=relaxed/simple;
-	bh=l4iBGvNBf69vv5P6FLxJp6TeJ+5tm1BdEhdf14FB064=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IeUcf8CVtLcSVzGGMkVd+Eg51JKnnyPQe3QE8aRoqd0yB1OQlhrcTPtq6gV9LuBcP02D3csNyh5UBM3xtwDfMVm3H/soS47yljTjpu1VWQ+ji+TvacKB8ojf7VUhAiYz553AYDNxpMXdn7OsDMJe3fyFGzHpWUuoW57LXB1X458=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0s6wGdH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E08FC2BD10;
-	Tue,  4 Jun 2024 02:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717466955;
-	bh=l4iBGvNBf69vv5P6FLxJp6TeJ+5tm1BdEhdf14FB064=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P0s6wGdHYmN8oqLJjh/LcmpZmQ7m7woCatCZXi9ojb3EBBOmtnGIlSpS27rkzedrO
-	 scdICB03NhQ9fYMUREgkhZXmQhv73GZiTRTQn+dHx6q73AALidbm97izx1otPm2B5i
-	 ln4M3KWgSM3VrvYQ5Xjh8NJbCdJ8YUxes1kEP6lKDVF2KBy0JKz6XDUwnpPncQ6tiA
-	 wYh/6dEh3j51Mr/IiSHYR09gyvjOwgMTm92NAY3Y19/BsKnQRzt+xUuA0H3UWeJM2h
-	 wk1WuPZ6IzeO6kSTNUXxOQxDHw7SZyFk35kE9L9V/g/CuJSuQaieLPA6Xue0iRq94e
-	 rWxKXepkTXB5g==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so22938881fa.3;
-        Mon, 03 Jun 2024 19:09:15 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzOBChCC/x2M1uFQwJZXB7ANBgHSO4+yChTDofoKiVcgFxMVehU
-	SkYS2BmGUvX2LUSaxVFz1uJbjlWsm+C0RaQF5hBO4KdPDIcKtkSUX3XeoMW4292xYhhyIfm9wDF
-	xct7OsfKYO31o5j4Lm5ODJI5OSoA=
-X-Google-Smtp-Source: AGHT+IHSKYy0d5Zn6MAm/KGMJybmrNW8ut9VWH+ZNpE7TILVgiDDZhFrzV/afImkfNTgt38DdQ+FVTH56snR+YJ6nEI=
-X-Received: by 2002:a2e:9dd9:0:b0:2e3:4f79:4d26 with SMTP id
- 38308e7fff4ca-2ea950af008mr70492251fa.11.1717466953879; Mon, 03 Jun 2024
- 19:09:13 -0700 (PDT)
+	s=arc-20240116; t=1717466987; c=relaxed/simple;
+	bh=hwvOZyv7/mIIoFPw5rwuqHls+HkrfuvtmKl9JDFGQiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l/jTbJ58dcPIlgN2xKkPTKFMtxjBRRbnguwgw456IIKq1kfFRRq6nsg8Ej1zhf2R65kI6G8b99oT9NlAb/0gVHEfBWoMKDGeA473yILx0xH27One74LV5j1Ek0gjvb2wxHlLspMOTrsQJ7Y9AuQoBTNUoyeUmvflD9R4ivr/WJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 627C81042;
+	Mon,  3 Jun 2024 19:10:07 -0700 (PDT)
+Received: from [10.162.40.15] (a077893.blr.arm.com [10.162.40.15])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A6B63F792;
+	Mon,  3 Jun 2024 19:09:41 -0700 (PDT)
+Message-ID: <52773c75-916a-42df-b60f-531770a3cc82@arm.com>
+Date: Tue, 4 Jun 2024 07:39:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603161904.1663388-1-masahiroy@kernel.org> <20240603161904.1663388-3-masahiroy@kernel.org>
-In-Reply-To: <20240603161904.1663388-3-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 4 Jun 2024 11:08:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATNMcUR9j+tLRynJH5tFPcET0kzDeRuSBhC7uoTbEB_wQ@mail.gmail.com>
-Message-ID: <CAK7LNATNMcUR9j+tLRynJH5tFPcET0kzDeRuSBhC7uoTbEB_wQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] kconfig: remove wrong expr_trans_bool()
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 4, 2024 at 1:19=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
-> expr_trans_bool() performs an incorrect transformation.
->
-> [Test Code]
->
->     config MODULES
->             def_bool y
->             modules
->
->     config A
->             def_bool y
->             select C if B !=3D n
->
->     config B
->             def_tristate m
->
->     config C
->             tristate
->
-> [Result]
->
->     CONFIG_MODULES=3Dy
->     CONFIG_A=3Dy
->     CONFIG_B=3Dm
->     CONFIG_C=3Dm
->
-> This result is incorrect because CONFIG_C=3Dy is expected.
->
-> Documentation/kbuild/kconfig-language.rst clearly explains the function
-> of the '!=3D' operator:
->
->   (3) If the values of both symbols are equal, it returns 'n',
->       otherwise 'y'.
->
-> Therefore, the statement:
->
->     select C if A !=3D n
-
-This is wrong.
-
-I meant this:
-
-
-      select C if B !=3D n
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: sparse: Consistently use _nr
+Content-Language: en-US
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240531124144.240399-1-dev.jain@arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240531124144.240399-1-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
+On 5/31/24 18:11, Dev Jain wrote:
+> Consistenly name the return variable with an _nr suffix, whenever calling
+> pfn_to_section_nr(), to avoid confusion with a (struct mem_section *).
+> 
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-
---=20
-Best Regards
-Masahiro Yamada
+> ---
+>  mm/sparse.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index de40b2c73406..731f781e91b6 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -192,13 +192,13 @@ static void subsection_mask_set(unsigned long *map, unsigned long pfn,
+>  
+>  void __init subsection_map_init(unsigned long pfn, unsigned long nr_pages)
+>  {
+> -	int end_sec = pfn_to_section_nr(pfn + nr_pages - 1);
+> -	unsigned long nr, start_sec = pfn_to_section_nr(pfn);
+> +	int end_sec_nr = pfn_to_section_nr(pfn + nr_pages - 1);
+> +	unsigned long nr, start_sec_nr = pfn_to_section_nr(pfn);
+>  
+>  	if (!nr_pages)
+>  		return;
+>  
+> -	for (nr = start_sec; nr <= end_sec; nr++) {
+> +	for (nr = start_sec_nr; nr <= end_sec_nr; nr++) {
+>  		struct mem_section *ms;
+>  		unsigned long pfns;
+>  
+> @@ -229,17 +229,17 @@ static void __init memory_present(int nid, unsigned long start, unsigned long en
+>  	start &= PAGE_SECTION_MASK;
+>  	mminit_validate_memmodel_limits(&start, &end);
+>  	for (pfn = start; pfn < end; pfn += PAGES_PER_SECTION) {
+> -		unsigned long section = pfn_to_section_nr(pfn);
+> +		unsigned long section_nr = pfn_to_section_nr(pfn);
+>  		struct mem_section *ms;
+>  
+> -		sparse_index_init(section, nid);
+> -		set_section_nid(section, nid);
+> +		sparse_index_init(section_nr, nid);
+> +		set_section_nid(section_nr, nid);
+>  
+> -		ms = __nr_to_section(section);
+> +		ms = __nr_to_section(section_nr);
+>  		if (!ms->section_mem_map) {
+>  			ms->section_mem_map = sparse_encode_early_nid(nid) |
+>  							SECTION_IS_ONLINE;
+> -			__section_mark_present(ms, section);
+> +			__section_mark_present(ms, section_nr);
+>  		}
+>  	}
+>  }
 
