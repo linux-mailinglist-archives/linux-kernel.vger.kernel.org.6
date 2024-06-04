@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-201558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6C68FBFFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:39:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9A38FC000
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3491F25EFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:39:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9DFAB2107E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D037114EC77;
-	Tue,  4 Jun 2024 23:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D0414D6FE;
+	Tue,  4 Jun 2024 23:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IuOSeUJZ"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XgmDUgQV"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50E114EC6A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EA714D6FC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717544308; cv=none; b=Dr6FxW/e/yHGALQtEl9u5RYnXdxVZrb8kmMO50dJgX2OjuG8wGE89YaplhpyNzvtqnC8aJ4WY7PnZDj1gRkpk8prpSBDQX8ArsSNcigC9TwB+g/vTMpZAQP9vG+5XZSQFt3miuHFLBM/Nxa2nm7RJ+q2O6HPNCIQUiwCQxm9rZg=
+	t=1717544318; cv=none; b=onIxiE29VRrY4gWZlI+TaGowNtRhl29yLgi5xewRVEUkT69L4q9eBB1WxpfbaQedWHT9RdqnSVsSJAwNFcXxJjSBEyNsoJ8hlSiHWUXGsO1EOwa2YTzr+yjTuVVes2eYS05LaQ2lV/oPgPxvaDNjBIJciM0SJuDFxZyIgXm1yMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717544308; c=relaxed/simple;
-	bh=BwM/Os4KBTmVspcHVSCHvte4rPtpmmrdzsSMdfB8t54=;
+	s=arc-20240116; t=1717544318; c=relaxed/simple;
+	bh=4F8pZ57BLKSPOg0dC7ifh8ipWL6/ST+th0aJ7rMuLGg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NQ70UEFQjRuoBC5O8cdJov3qg7mdPVK2JraM54sc+pTarl+WIXd4OzXcHu+sBhBHs6Zh7Yu1VRB2UBIKM71m2i6NWlbbksr4ipWZmDYZNZWr6mUWzSjLfauw6BmZvfXUcCftDQVi8NsAQ2mv85kfuB7HEuaNyDCUtELrJdR3d60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IuOSeUJZ; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=nE3ck66p5cZ4b5aXnk1FHwx6g3MmrdUzMltvDtZ3hegjxbfTeHMfas9VaoNg3cON3qOtGeYJEaYDnaldCTz1gYNlRpcC+QVgm/6uUd7io/eRVEB/bi7jk09ah/YHxTdMTRdLSGqO3royWdWDbFNiV675IkObs3pMdDfBeb+4Bvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XgmDUgQV; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1f621072a44so38435985ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 16:38:26 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6cc288a7ee6so257024a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 16:38:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717544306; x=1718149106; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717544317; x=1718149117; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ErQRA4AMy3XWNUVtztRHO4ECy31oAB3jfpLBipdw7ZE=;
-        b=IuOSeUJZWZLs1rZM7UGBAWvyrYtiqqK29uaXyOVxhzSr4bz/ZKW/owGBaCYc0x3a78
-         PcCfH1JEMCXVIiBuGQzmcnZ4G0wo+W9eUD3JVRH53njLrVlM5HAPVgS26dYq0r/ZZyla
-         AZWGstH7cGJueRCVITVhCIUzuLE7nVPbjYEsVYGJ2KD2cM0NWtDXa27OX6qG8WuKIHUw
-         dCFUEXLC/FhzV9pOsm5oNNCMJPILS48913GL6POCZAZmd3GNKsMWLwofqKQfhHyWJWXk
-         mO81JECfCyjgHf6fGmwpKIRRdVwmFkiwD4lkB3n9Axza6mdZXctpLMG8UFuXKlZ4M8A+
-         Rl5g==
+        bh=9mbTpsLfEktMeOXsmxxA2gpvF0wwozR5+EDvFmfQ7ts=;
+        b=XgmDUgQVqhYNcoyd8An6LyRGkyA90bSe9uSczVyiY1Il54Wp2THuKWPEArWjuU3eqB
+         8N4aoVr6SkQCH6oWYqjFOPpNZETy8PrN4Ps87Z9oUPz+RS08gV6S57rkyA0kxZFeYjaf
+         CqWGxOX1TEjbY0heJWBWSkclDHlzvVsakWPNzAC+ZaaUdRtC5SuISqGLs2C5DAhSeAFJ
+         +M3/uA6cxv18/tB9VN4eB4YuD1i6MXB1X96jEGyrlnzpQi/TyeLz6mNIUaPbXr2shHH1
+         Ow0DqVwZeMX2GXtwPWsBmhQZ4bdPfq64S1Zv2I4WMA2bbjpy+gcc6dAgVL19G6eN6wba
+         xm8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717544306; x=1718149106;
+        d=1e100.net; s=20230601; t=1717544317; x=1718149117;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ErQRA4AMy3XWNUVtztRHO4ECy31oAB3jfpLBipdw7ZE=;
-        b=HlkGe7lsMHjg91ll7Xn07fiwI6Ur45xNeFNnSCFdK0Mt0iyHBkL6glxZsZTpZDXAu2
-         ubXpkWnepRZ105HXFlyv/cgHbWMF38P2fzLWKSr2qIZV/YFeRoXM4ySL7xDuYqjmq3Os
-         Z1dbmGSG/597ntSVWAg8vC6L6+ijrEJ/eQmYleQyUAO1EbvG6PDw8YfVISj+ZlddjA4Z
-         za6u4MPv8JS3IaHsjfLxR+7B7nMzgoJx/al8BjuxQdyaNiPx/duH4zqGoMIQejjI8N1L
-         HwQIj2+4q5SA6gbX7shMgtunab+hruBoOtzV1csWyAu3O4xJhptDlKsxoE/6vfgtZC32
-         tVsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVI+XAaArK+KcXdFOQiy4JtXYmK8W3IaEss1HIew8LU57CWCXA0toGAxcgG0cIPbgMSbAGMWn/E30U9kxCPVkN74zCURmV4qpK371ea
-X-Gm-Message-State: AOJu0YzVBwZ9OrX4UulI6V8wJ3TSg9XSjZNjOK/9hceLNrWHAU3nQlp7
-	PnIMeB9mflMH3LpsTakiXpUSHO+bKNcOsHFzh1k7IzB0gpYvX+RGJtwouU+4t21DwG/v6ZDgu3x
-	1Sg==
-X-Google-Smtp-Source: AGHT+IHN3cqzNcnm3C3UZ1Isf/IVeA2/aICMXKNKfdksQ1tq7WWRpJ2J61he5DBCW5Wt08nJcw0DRAMYOyg=
+        bh=9mbTpsLfEktMeOXsmxxA2gpvF0wwozR5+EDvFmfQ7ts=;
+        b=M5a63Cz7Fg4zevP5NgLT+AcNBIU3DGkY50x+smoOGz8Nd/4BeJRCUL5YqwW1l1n5KB
+         cE16yzwj4eDQlP7aVrrFZsVj6sS72xK/CI20+8zCMKIYSiT6bkpE76GOt7R2Pwhmzw69
+         17SCGCf1PsvpmOikVFzKilwBf0Xld66pCqa1Z81fBqw9l2uyO9IpYeWI4CBjMcFh/O37
+         dtiA48MVDN2+3B+gSd8AXJz8VwOjEoOjoEhsYxd9r9azTP5uE1MeqQQ38fTjDI8g7wYL
+         dxgCjJfb0VoOMvnmMyeycikhnbL9P4cwOYqKnvxxKJ8uGBEeOUJ8Wg2qQ87GBVwFOeHH
+         HcSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeXAA7xSjMpEsS2LCeQlE7GfrQBFApjgPyYRzVQL+Hxf/dnJM4PPP+8y/IiGVkh2AsIFyiKdSyF/yHO/g1PiLNXf8HDhrKLglxCXf8
+X-Gm-Message-State: AOJu0Yx1JMDdmLnDsd3POJmW5Cho/dZ5ElRu2o7gJ+npyrwuCIHIgf3N
+	ny5UjHIXcc8lnp9U0rzwRW1Qec/rTUbBj9TpHbwHNO5LN2jMrhu35MqT0Mq8+8B5MAI7z3AAJQw
+	Ing==
+X-Google-Smtp-Source: AGHT+IFquzPD2lzjLhm17gQSbKN5QrbdeOKywzZQZb9ynG7yQ8wD/Isj+DDXyMQUMK7YtLMy69bDCZNbFS4=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ec81:b0:1f6:8033:f361 with SMTP id
- d9443c01a7336-1f6a5a12dcbmr287285ad.6.1717544306034; Tue, 04 Jun 2024
- 16:38:26 -0700 (PDT)
-Date: Tue,  4 Jun 2024 16:29:35 -0700
-In-Reply-To: <cover.1714081725.git.reinette.chatre@intel.com>
+ (user=seanjc job=sendgmr) by 2002:a17:902:da8e:b0:1f4:8ba7:72c0 with SMTP id
+ d9443c01a7336-1f6a572fd0bmr742735ad.5.1717544316849; Tue, 04 Jun 2024
+ 16:38:36 -0700 (PDT)
+Date: Tue,  4 Jun 2024 16:29:37 -0700
+In-Reply-To: <20240423221521.2923759-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <cover.1714081725.git.reinette.chatre@intel.com>
+References: <20240423221521.2923759-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <171754361450.2780320.9936421038178572773.b4-ty@google.com>
-Subject: Re: [PATCH V5 0/4] KVM: x86: Make bus clock frequency for vAPIC timer configurable
+Message-ID: <171754330706.2779254.12749909442900108234.b4-ty@google.com>
+Subject: Re: [PATCH 0/4] KVM: x86: Collect host state snapshots into a struct
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, isaku.yamahata@intel.com, pbonzini@redhat.com, 
-	erdemaktas@google.com, vkuznets@redhat.com, vannapurve@google.com, 
-	jmattson@google.com, mlevitsk@redhat.com, xiaoyao.li@intel.com, 
-	chao.gao@intel.com, rick.p.edgecombe@intel.com, 
-	Reinette Chatre <reinette.chatre@intel.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Thu, 25 Apr 2024 15:06:58 -0700, Reinette Chatre wrote:
-> Changes from v4:
-> - v4: https://lore.kernel.org/lkml/cover.1711035400.git.reinette.chatre@intel.com/
-> - Rename capability from KVM_CAP_X86_APIC_BUS_FREQUENCY to
->   KVM_CAP_X86_APIC_BUS_CYCLES_NS. (Xiaoyao Li).
-> - Include "Testing" section in cover letter.
-> - Add Rick's Reviewed-by tags.
-> - Rebased on latest of "next" branch of https://github.com/kvm-x86/linux.git
+On Tue, 23 Apr 2024 15:15:17 -0700, Sean Christopherson wrote:
+> Add a global "kvm_host" structure to hold various host values, e.g. for
+> EFER, XCR0, raw MAXPHYADDR etc., instead of having a bunch of one-off
+> variables that inevitably need to be exported, or in the case of
+> shadow_phys_bits, are buried in a random location and are awkward to use,
+> leading to duplicate code.
+> 
+> Sean Christopherson (4):
+>   KVM: x86: Add a struct to consolidate host values, e.g. EFER, XCR0,
+>     etc...
+>   KVM: SVM: Use KVM's snapshot of the host's XCR0 for SEV-ES host state
+>   KVM: x86/mmu: Snapshot shadow_phys_bits when kvm.ko is loaded
+>   KVM: x86: Move shadow_phys_bits into "kvm_host", as "maxphyaddr"
 > 
 > [...]
 
-Applied the KVM changes to kvm-x86 misc (I'm feeling lucky).  Please prioritize
-refreshing the selftests patch, I'd like to get it applied sooner than later
-for obvious reasons (I'm not feeling _that_ lucky).
+Applied to kvm-x86 misc, thanks!
 
-[1/4] KVM: x86: hyper-v: Calculate APIC bus frequency for Hyper-V
-      https://github.com/kvm-x86/linux/commit/41c7b1bb656c
-[2/4] KVM: x86: Make nsec per APIC bus cycle a VM variable
-      https://github.com/kvm-x86/linux/commit/01de6ce03b1e
-[3/4] KVM: x86: Add a capability to configure bus frequency for APIC timer
-      https://github.com/kvm-x86/linux/commit/937296fd3deb
-[4/4] KVM: selftests: Add test for configure of x86 APIC bus frequency
-      (not applied)
+[1/4] KVM: x86: Add a struct to consolidate host values, e.g. EFER, XCR0, etc...
+      https://github.com/kvm-x86/linux/commit/7974c0643ee3
+[2/4] KVM: SVM: Use KVM's snapshot of the host's XCR0 for SEV-ES host state
+      https://github.com/kvm-x86/linux/commit/52c47f5897b6
+[3/4] KVM: x86/mmu: Snapshot shadow_phys_bits when kvm.ko is loaded
+      https://github.com/kvm-x86/linux/commit/c043eaaa6be0
+[4/4] KVM: x86: Move shadow_phys_bits into "kvm_host", as "maxphyaddr"
+      https://github.com/kvm-x86/linux/commit/82897db91215
 
 --
 https://github.com/kvm-x86/linux/tree/next
