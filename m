@@ -1,236 +1,233 @@
-Return-Path: <linux-kernel+bounces-201292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6097D8FBCA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:33:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFA48FBCA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180792841D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:33:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF581B21BA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846CE14B07E;
-	Tue,  4 Jun 2024 19:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="szbjZZPs"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CFD14B077;
+	Tue,  4 Jun 2024 19:35:02 +0000 (UTC)
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC45B644
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717529610; cv=none; b=nlXLD7RsctAFoEMHRyTc1Lp1ADunP9DJFkVfPgJH8gHyoUAryF6H9m4gruYYxGFSu0KbxWI2TLbiVQD3LsH97xbi7NdqvgBQ3aZUF/odjMcI4k33WnmJaq8AkfP/jQOYlub2BEQl7otwUflr+QXpXnyAi/NMLVUNKZSwSYNYibs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717529610; c=relaxed/simple;
-	bh=vgdxlTZ9zAtW+udxA8m6PAK22JHwIYNVn5vlP5QV7to=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ThgVIc8tsyQ2g4w8e1oULgyi7hyecGo3DT7CGqp+cOxRkYrMv5b/f+GDxK0K3tf6tSfi4OoilyfIGHfk1vWx4aJFXvZ1LOwDlZmnT9FylU9TrM7tGpuJ1aJoW9MERBvqBGyHjlntZvFaGioeQZXcqaJ6FYIglGzjjmvxP+d+X0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=szbjZZPs; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42135a497c3so24545e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 12:33:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1772414B945
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717529701; cv=fail; b=Ob2sPrXn3XzwwFMkrQyp1SVMFYteKleM9FT3pKPvlujhJDcGHg6fdfN9dJOJyurbgIP8iOMIVNiqVEoI5PyjnMF26wg31EM0C0ub8KsI5BiFFYCuYRWpW+cJxfUnYOaFuMCN7N5MYbg61GSgg/hSwhGRQt2a0vui62myND4+yv4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717529701; c=relaxed/simple;
+	bh=2QPvmna++U008XhJgEMCW+Gyym0d8+PiOcjWqkdPIeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Ffd0V5XNw6IecOBtpgS8C29CyQNuaX7vFUDFBi00E4QWXU8tgz38Wx498bf7YZVa2Wf334IUdnYxxZ1gFaKSs6WbOsY7YvWSWb+L2PrifK9wPaFA62SXLnkkHtqN2sfnDXHlhVH2kUir/9VHKy63KZFDP1g7JR7Abu1Hk+C57/g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 454JFkFu024630;
+	Tue, 4 Jun 2024 19:34:41 GMT
+DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
+ =?UTF-8?Q?=3Dcc:content-transfer-encoding:content-type:date:from:in-reply?=
+ =?UTF-8?Q?-to:message-id:mime-version:references:subject:to;_s=3Dcorp-202?=
+ =?UTF-8?Q?3-11-20;_bh=3Dco10d3lQC88M20IyXskdzzJdaLATeibvbUB5Esx7WY0=3D;_b?=
+ =?UTF-8?Q?=3DWrD6FXAUvkyMXt2dwCRNKHRgKHk13SH5dRYBex53WldSv1w/vGIiAsi96yy2?=
+ =?UTF-8?Q?ZZl5PsbS_EMgbRxTkdt3BEblKx6uFe9cHOdNXBQnH6U37gmzvJybIwJ5pKGx7dY?=
+ =?UTF-8?Q?w4evaW2gKw/h9+_7lqqHGFY+yjS2NB70T6At53PSlr8mCsHeUW1oIUexxWPuEao?=
+ =?UTF-8?Q?C6zFSBXsOfzm1GKYUm99_7pa4bhoOGtqPqmtpfE5Yim9QGb6FFi1zXM6ASTRcBV?=
+ =?UTF-8?Q?RyYJA7Au9UR3AuDvPPpF00LN9J_Dn5EMtXl/KfVyQBb9b+vJ0k0PfEyn4DRPfFf?=
+ =?UTF-8?Q?sb6DZVVnV2qKcbHmKrAudHihkO0yhOK8_CQ=3D=3D_?=
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yfv3nwrsf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 04 Jun 2024 19:34:41 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 454JV2Pe015598;
+	Tue, 4 Jun 2024 19:34:40 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2100.outbound.protection.outlook.com [104.47.70.100])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrjcsj6a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 04 Jun 2024 19:34:40 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lsAud1O2g39DoJQbs1aIv7LSv4ouNIkvcXIuE1ZxLlRqR8a/W3UpTBE7CvhIkgwvMPkyDvQweaUCsbyyLRtjL2mRnLrfiMuWTg2XeJQihqAV/+1Ye3DA7f3y/4lV+ZtmHVoKg05f4ZSIAZVcHjbUavmqnZUJSBQXT/q9A72SCeHJVYEo4FbnIJCkFglZfAlg6vxpvlAv6EgoOaE5QFi72lBA4wGxpxWISe8W9Ih5tBUde7JxhPCDuC0KJCIuFzMJ6s3+uZPaFdDTETpkU6cSalEy2rLN0YnmnFcsEbobR/H6uyKWJ39LFKP93kc/R2uG40z5N9hjFHZwxSR5eAhgUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=co10d3lQC88M20IyXskdzzJdaLATeibvbUB5Esx7WY0=;
+ b=bf72TSWpMuUQfjLVToc+v2fB5wR7hjtyomRIerPppDGEjNjoBoGp6C4bt/zAySRxYrEDbb3NbBkJHAMWPprtDmii3xhF2DYNhVdcZfV88sWr4cRcKVqtbP+RiiEfX35Kxg5qp2DfzuO2g6UahYKek+CXLNsei4cD83WljMWSscQh5mNP7Qw/nlWLlzTxKnNRogy9oBCHGGhT+iiZMEzhpRTNUyOtoyLZD6bcI+fmkvskONRhBD9/q4IZ2Nh6skbVWcdgHejxOLeofgad5o9tQfUhfCtgFbgokGyUQbkzs17nhzBq6uJsF5qHCFjMc1URRjp7M/Ec+s5kQ/K5IrgCFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717529607; x=1718134407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6u4W0V48gzoTjx+GgS8SoKFrcT3JitnB4OcgYHGtwKE=;
-        b=szbjZZPspA1L/yAfHDjMCfBrhyyX8LtbPkeOLFWA3MaJSLkM8iv3/HdeB1OhW6Z89c
-         1MK8Lw4CePz2ftcLTG+TbTewi7j/Jzubbfvqa3VfBzo772J25vfp08IAgE4UE/+vnIGy
-         xkUADcg+d0aj57vNuZ6vOhBoZQFZytodqwexzZ4Z0VcUm4fe+YRIC3xbzzB5eIvsvmUO
-         ZOMpjwndC8mobPBmYWUSDkpeifPT9yOjv3jXlvtaW3ihq7Rmny4Pkl4zLL27UPjeolZ9
-         fa8/rb1W9grsfd6Moihzy4gEwtBZpUtMQ+Bqb7VMpjMbksrjI8bHh4Z5WbyW2jXSidUM
-         Nnwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717529607; x=1718134407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6u4W0V48gzoTjx+GgS8SoKFrcT3JitnB4OcgYHGtwKE=;
-        b=tZ21EdtSMVLjiNDfrFHSji3iVs/orgAUSWAkEOuDjGWPujU7P1rFUekXb5qg1kgEyu
-         hZTJQSwug9r7mAlZVQPL3lR+IIr58Y8QcS3RaRXSWKS0tuh3PlzFyzxxEqUQNrV2mji6
-         eJYFec0UoQErI/k/1fopid/V/GfaBipJHK/EVhQT/2L7BueS77cd25jJe6Khiqr3Buc1
-         DBvQ0LFqWdO52eAJHIDqbFNFL2PdhfdSDdLamA/xnN+4RkNIAp6ngfke3HLp5mH/Umu1
-         LUA5WLyhdLb2YA2GFjl0Cz3eey+epby22dVX/cmwgsjqhzaxDvbK0mZm0jxrf9hsOZ0K
-         Q7jA==
-X-Gm-Message-State: AOJu0YwORNNxC8Mu2QF6jlG0Fc+wiQcnZfu+QPh2q/DUVS716LcLtQeb
-	N+MonqnfVsH0RUVtvDip1OJmagZNvMmOVy5TZ7E9pPquomc7acP32VpFVA0Hss73zcF5eSAClt6
-	mFlyW4EmkIm5laEgsrNnjLR4TOeQY1xdIozU=
-X-Google-Smtp-Source: AGHT+IEguA7ci4IQoa7s9OhrhwKylnWarPFnJ+m0ihTS3IrNE6auL4B6uKUrRjEEGqnhNfOoc8N7yHFfTKYKH7HLXhE=
-X-Received: by 2002:a05:600c:2104:b0:418:5aaa:7db1 with SMTP id
- 5b1f17b1804b1-421571d2366mr276055e9.1.1717529606869; Tue, 04 Jun 2024
- 12:33:26 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=co10d3lQC88M20IyXskdzzJdaLATeibvbUB5Esx7WY0=;
+ b=h2a/deip/1u3sljnLQCKXrjUyEDeB1Pel2Sfi6mU8Grqcs8zHIj9EuHF7CsR7C9/vYk5KZiJ4E7pNEP2DnKzvHL2PN+EQlc9dYCQGfehDCtixWwq2iyQDmz1s+dRQP5b/MtYiGh0DnmYAul0vYn4jiGDoMkH2m8x2RjIVu1p5OU=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by BL3PR10MB6042.namprd10.prod.outlook.com (2603:10b6:208:3b2::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Tue, 4 Jun
+ 2024 19:34:37 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7633.021; Tue, 4 Jun 2024
+ 19:34:37 +0000
+Date: Tue, 4 Jun 2024 15:34:35 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        zhangpeng.00@bytedance.com, willy@infradead.org
+Subject: Re: [PATCH 13/18] maple_tree: simplify mas_commit_b_node()
+Message-ID: <zhbyib7htf37f6sw6futnsjqy4w6ru442jd3v2f3i7hhz35hgz@jkv7i6osu5jz>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, zhangpeng.00@bytedance.com, 
+	willy@infradead.org
+References: <20240604174145.563900-1-sidhartha.kumar@oracle.com>
+ <20240604174145.563900-14-sidhartha.kumar@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240604174145.563900-14-sidhartha.kumar@oracle.com>
+User-Agent: NeoMutt/20231103
+X-ClientProxiedBy: YT4PR01CA0081.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:ff::15) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507045450.895430-1-jstultz@google.com> <20240507045450.895430-8-jstultz@google.com>
- <20240604141103.idwodwyeecml4keh@airbuntu>
-In-Reply-To: <20240604141103.idwodwyeecml4keh@airbuntu>
-From: John Stultz <jstultz@google.com>
-Date: Tue, 4 Jun 2024 12:33:13 -0700
-Message-ID: <CANDhNCrDqK=hmK3w5P74twM6YFPhp9VKsvSfbcGh1xwO1PjHNQ@mail.gmail.com>
-Subject: Re: [PATCH v10 7/7] sched: Split scheduler and execution contexts
-To: Qais Yousef <qyousef@layalina.io>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Joel Fernandes <joelaf@google.com>, Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, 
-	Youssef Esmat <youssefesmat@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Metin Kaya <Metin.Kaya@arm.com>, Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com, 
-	"Connor O'Brien" <connoro@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|BL3PR10MB6042:EE_
+X-MS-Office365-Filtering-Correlation-Id: f524396a-d06c-49b8-3f19-08dc84cd5f0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?Z3gk6SfUm/LssMPw5yFmjrsd4Uiie7PqfdwmnhaPSTGfnxPVpyMVGIkpLOJc?=
+ =?us-ascii?Q?KyRyjSBv7wm5D6F2nr6yyD2YKm8oD7gi1d3dnEFbwMzNKdyszbpClXM2ERjb?=
+ =?us-ascii?Q?ydgD8glGCOq4yJKVMuLtdWJfVL1/A6V2w3MmvXK9PSfC5WJ3F8Z9WB2elfIH?=
+ =?us-ascii?Q?dWUhWOTGxeBjRQSQpMbx+g7JATDNwMTYUO/QPqTKGWzcmasVUXdtbiio/iQu?=
+ =?us-ascii?Q?Bvc75CV/GemtEXrVESkkUEwxFM5Jxq+7zEj0d9M97uDLSnmel0DdkRgkzPXr?=
+ =?us-ascii?Q?Qi1oYNH0qvckgH78nBPONCOf2drJqI750XaLXUR0LJuv/h2GsXUIwuz6zN8+?=
+ =?us-ascii?Q?JJ4Zc2TZO2PMOMtGyvIGn7WE4T5SgYZKYLROYIa0xub6su25Abuw7O37IQGG?=
+ =?us-ascii?Q?1oqfV5gztpxxM0hhL3NEr8TuNEdJXd6j22rjg97qKrLEdRKtjbkv1yXN9nzQ?=
+ =?us-ascii?Q?DcpyZvFnLbiachd+KkP9Wo9+bOavUR4ILqO9X5GxMP5HCPvJfAfRr1r8wbvZ?=
+ =?us-ascii?Q?dRujAJJJxtlu8ekkrmGVsHcZbirloheN/++ucEZhMph4R3A95mgtEBxwHUTW?=
+ =?us-ascii?Q?tsp3GanBjvIknTvxNAN180jvznQMvFFfaZgqc2ATFH6f2Bt5Vm+oO7nOyO2j?=
+ =?us-ascii?Q?0LxIuBCkjPpCGaaPwy8nB2GFh8B7nGwMOQ8LFWMTA0deDWkkOKISGlkIXCl8?=
+ =?us-ascii?Q?pFtVmoLC0VOT2S2w2VYxtFJrWxD7t7rntHOID2DKLlcvh/Er5MbuAonVhghc?=
+ =?us-ascii?Q?o/aDkmE/QgG9b7gApMxbU/HkFiIZ3CeVGrGEr8Wo0phT8oYTk9WK1R05nxVV?=
+ =?us-ascii?Q?81dk57thMw+1oir3H1F53xMNutSAdSblY25UT3ECXPkQ7ON78tcyrE+hB+Cs?=
+ =?us-ascii?Q?3FGBIh2XJxD1AHYLmmqRuVmV2Ol/mzEStdcH3KKjrKIP6eXyEQmm2F6PK8C6?=
+ =?us-ascii?Q?MwuXpjmLtAMzsTISN/Bdzq9J0SeKcftNRQaCPv5w3dZOQZWCrMChFcTc8nsg?=
+ =?us-ascii?Q?Y2uIoL3E22ZdgoE/5SZZpuubzonH2EomDbCrNxbPzrDiGvqOA3zI32n+6KWI?=
+ =?us-ascii?Q?oour3H0T7TQLAHzfdUmT03ia12HzQjODnP6rdgrTAXE7sQ0kGpp0WmJbgB9Q?=
+ =?us-ascii?Q?P9hYhjVgCLz8SJ3GDZqrLVYfffMVqzdmOnmHmTqB95LZ1ehUqUrCTHuqhwj2?=
+ =?us-ascii?Q?hGSW3JrqOJhicB1Z3rnP3rfGz5cxmCE2SjtS9s1EWlfKZJJ65dVkM5Gn8sFt?=
+ =?us-ascii?Q?7objY6ZFRMP4BxeKhQW7iDiYF5btC6OZqm/zQpqc3mxbaa6MbwByee+sWk5s?=
+ =?us-ascii?Q?7g/xmlc6IlYQ3/DnKfO1/sZJ?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?XrXyv3iECQYJorzttDGI4QCK2RckFEGtpxylqmHmOM2mLbyDLXZuMJuOW9mW?=
+ =?us-ascii?Q?jgz1aR84Wx9rizOkJpdRfw3QnEebGRd4Zu6BOVzu/cPjQxJJbEsvOsKS6L3t?=
+ =?us-ascii?Q?bup5sSAx8AbYVHZC3xEtH93iwFw3WglS6TOGuz0JUISt9SqwiTC+QVRWErzk?=
+ =?us-ascii?Q?fbe+pzajvFDXeLinxcvdB+n+w7Sxdjt0n1yvDNACm/ghye+PMl3Is2gPlaxW?=
+ =?us-ascii?Q?jjFyxCFZozOzCluGrHUnkd8Gc0fiw6WhUcBisWKSmAgTwscplDp1tzXJE4pr?=
+ =?us-ascii?Q?hKdE/wlGmMzgCUCtc4xs5s4FRoe8/0o/zcGVQkXyMN4jLKOwuUWd1972v/xG?=
+ =?us-ascii?Q?mY1hvmJfd9ZCcekAc6+ZLdpiDFIgT+zDAVWNYVZjMz+4WGzr0SrP3jyb7+jC?=
+ =?us-ascii?Q?PK36ZTJDgof8BOzv9jFTxHR+t9k3mcBstQi2x+/fE4nzDnInCjTo2YacASLc?=
+ =?us-ascii?Q?soMssoO9yZyVDaosBxJQXLFvbT2h6K3E+TJNdI5nqqAMpPLiuaPgcc5k2eb9?=
+ =?us-ascii?Q?7ZLtgGVYN+ZR/g2z9rBPbo7GbPD2/7baGcFDBP1Bij0Yl+By2Dpwt9hTHJRu?=
+ =?us-ascii?Q?5WDq7hiIqdfLNYpAUBxoI1JPCxiCS9AsVloioE0ncAlQWJ+LXsNMLgF9fFRH?=
+ =?us-ascii?Q?nJg0O8LGBu45gUwSXYzJy86lcyXiDi6D7k7oNTs5SpOSKDPTRmZ2nrLKD4NC?=
+ =?us-ascii?Q?gevo9inV34qZBUegtOJYjEy8U1/nCa9cZoKcOfBh1MNSTuYWFV5U4uE/cfm5?=
+ =?us-ascii?Q?QJVKrDUQxPDQB+XuUwyjegH1AY904/9TGEbjiGjydWs0b6hxMIe7Asd2/w3S?=
+ =?us-ascii?Q?omtaT7zWPclvbusXdCczyrks8cT0pDBqPzmMfAQThkIdV0DCzv1Aa5H5QNkY?=
+ =?us-ascii?Q?Bam3MH9HCcA5j0ys+HpFD2XnyIRZhwEXTfFaCP9pcyMtSFniQZrWvudiQHVG?=
+ =?us-ascii?Q?9dakIspweANl7iP1R6ubspxqO4Pk+lfuWlgX4yMqqBZWQiKN9zEHoaRMkOla?=
+ =?us-ascii?Q?+7T1m8+MD99u7EHX0LkS0aWXG3DA5yBA/47iYf2efOChoaqJ3Nk3j9YP0ug2?=
+ =?us-ascii?Q?DLUYX01U8MKjkk/LIEjIKinqdaEUwl4Wr/QjEU8L5FQl8a28X/U6wTZjx3IN?=
+ =?us-ascii?Q?o+bUwjpK6VuMfBVY4Kp5g14alNJMdEgKfKYsZo3btVHG/iBa/PaE2UUVj6Iu?=
+ =?us-ascii?Q?1R0yr+jOnsi6sxdt2Qah1uHtu1rDOdZYcMGFhOQOxIrK5leDm+IwjcE9eyB/?=
+ =?us-ascii?Q?7ZBqRhW3ZktiEuORg58l2ORAGDVUdunr2TmdcMqxxYwx4CPR0ouIlGD1ImJo?=
+ =?us-ascii?Q?fpx5Ia+CenME5V0Jon7cRn8OU6MrCjKcPdrCZiaoVzv4+UTZtFNKhvajynbk?=
+ =?us-ascii?Q?e/BTYOZtaALG2rPfkFYxy3EKC3rKYCPc7Tq1iqx64a4S8TvKRTM2bN1MQXNV?=
+ =?us-ascii?Q?meTlfIdUoh7572jrsHxdZasgzsrk6eRb8r3qGBiW5jxvb745yQ1WxZMi7VVk?=
+ =?us-ascii?Q?XtsDTvmG8e1O1W2DsUYaAStDmzs74DX3hrz3Wc7AVnKwDm+rCQUvLm7hoS2q?=
+ =?us-ascii?Q?DqfvhbYtTXx7obZeKTCz1S9FLCuzM4OFmi90MYll0eYFRnOgl6k2x/0qEgZa?=
+ =?us-ascii?Q?wg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	CysA0FZwNxBBgjuez1Kw9aH5ZhCOffxyHF/b6fFuhz4KoYXQocLLbLeqG+V+YWFMvjjReVS+4ONgBGZ4JJS6UkJ9zgdmxFysBDRH/9aaAXwI3gif0nphJ8jBEmW/uH0eD9AkSqGZsMpCPZsO3pBTC2R91tSOxDQAggDBLswkJbQgHN353tCA3Jqu4t/Zn5D4DZwRtT62vGeYPzAF7a2O8pOVCYNyBse+/sMTN/g5Shrajt00y/3TAy4fW4rKLpfN5hZX0Ce63++hnQj+j0rozNX7FbIZp9ktUE7wCn7ZFOICnfZJ3NXg26LumUxVkSJF5lZbIv1knEgBJDNX8q5uMJ9JCL1OlQYsDzlXi0T8S7Y3MRtmJ/xE8PAdGLgs331VxIvWFICvYgKLZ+sTwzEXPWnWtT2FdUPbEH3e64gs09HP6ZAPe+efujNosDo8Q5d0e2Ct9XHTgeKE6MtqWqCfPM/2OYot6aSgacwdMT2VcL3W/K20JfbV/CBdyJ2/TGJjVsw3tHT6glX7i8oyhHcyA6MeLrNyNqR5NCamOibDwQnrMGkhCzo3e0BaTxpdqplJidRThdyAtx+tv+ZQTZGy/WeIFTlwJaZu68K3ABwXQu8=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f524396a-d06c-49b8-3f19-08dc84cd5f0d
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 19:34:37.8466
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rprMWALVspGy+cZCTNk12dyQ7B71QNnNzIlTu8ziSiXvJaHL3RtbKlkj2VSUimiAavIbH3FxWXbxYoCMAEIpzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR10MB6042
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_09,2024-06-04_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406040157
+X-Proofpoint-ORIG-GUID: -eWVeXr26t2Oguao0N5eRuNy8WR2m7_g
+X-Proofpoint-GUID: -eWVeXr26t2Oguao0N5eRuNy8WR2m7_g
 
-On Tue, Jun 4, 2024 at 7:11=E2=80=AFAM Qais Yousef <qyousef@layalina.io> wr=
-ote:
->
-> On 05/06/24 21:54, John Stultz wrote:
-> > From: Peter Zijlstra <peterz@infradead.org>
-> >
-> > Let's define the scheduling context as all the scheduler state
-> > in task_struct for the task selected to run, and the execution
-> > context as all state required to actually run the task.
-> >
-> > Currently both are intertwined in task_struct. We want to
-> > logically split these such that we can use the scheduling
-> > context of the task selected to be scheduled, but use the
-> > execution context of a different task to actually be run.
-> >
-> > To this purpose, introduce rq_selected() macro to point to the
-> > task_struct selected from the runqueue by the scheduler, and
-> > will be used for scheduler state, and preserve rq->curr to
-> > indicate the execution context of the task that will actually be
-> > run.
->
-> This is subjective opinion of course. But I am not a fan of rq_selected()=
-.
-> I think we are better with more explicit
->
->         rq->currs       /* current sched context */
->         rq->currx       /* current execution context */
+* Sidhartha Kumar <sidhartha.kumar@oracle.com> [240604 13:42]:
+> Use mas->store_type to simplify the logic of identifying the type of
+> write.
 
-Yeah. While I've got my own opinions, I'm very flexible on names/style
-details if maintainers want it any specific way.
+Since b_type is now only used in one location, we can use
+mas_new_ma_node() instead of mt_mk_node() and remove b_type entirely
+from this function.  This is also true of the maple_node *node pointer.
 
-But just personally, this strikes me as easier to misread, and not as
-descriptive as the "selected" vs the "executing" task.
+old_enode and b_end could also be moved below all the returns as they
+are only used after all the other options.
 
-> and the helpers
->
->         task_curr_sctx()
->         task_curr_xctx()
-
-Though would rq_curr_sctx() and rq_curr_xctx() make more sense, as
-it's a property of the runqueue (not the task)?
-
-> This will ensure all current users of rq->curr will generate a build erro=
-r and
-> be better audited what they are supposed to be. And I think the code is m=
-ore
-> readable this way.
-
-So earlier I had changed it to: rq_curr() and rq_selected(), but Peter
-complained about the rq_curr() macro making things indirect, so I
-dropped it (though I kept the rq_selected() macro because it allowed
-things to collapse down better if SCHED_PROXY_EXEC was not
-configured).  I do agree the macro (along with renaming the field)
-helps ensure each use is considered properly, but I also want to align
-with the feedback Peter gave previously.
-
-> Another way to do it is to split task_struct to sched and exec context (r=
-ather
-> than control the reference to curr as done here). Then curr would be alwa=
-ys the
-> same, but reference to its sched context would change with inheritance.
->
-> ie:
->
->         struct task_sctx {
->                 ...
->         };
->
->         struct task_struct {
->                 struct task_sctx *sctx;
->                 /* exec context is embedded as-is */
->                 ...
->         };
->
-> Which means would just have to update all accessors to sched context to d=
-o
-> extra dereference. Which I am not sure if a problematic extra level of
-> indirection.
->
-> I see the latter approach  more intuitive and explicit about what is a sc=
-hed
-> context that is supposed to be inherited and what is not.
-
-Hrm. So I think I see what you're saying. Particularly with the logic
-where we sometimes care about the execution context and sometimes care
-about the scheduler context, I can understand wanting to better define
-that separation with structures.  One thing to note from your example
-above for unblocked tasks, the scheduler and execution contexts can be
-the same. So you'd likely want the task_struct to not just have a
-reference to the scheduler context, but its own internal scheduler
-context structure as well.
-
-That said, I'm not sure if adding the current scheduler context
-reference into the task struct as you propose above is the right
-approach. Particularly because while this is a generalization of
-priority inheritance, it isn't actually implemented in the same way as
-priority inheritance.  We don't raise and lower the lock owner task's
-priority.  Instead we pick a task from the rq, and if its blocked, we
-traverse the blocked_on chain to find the runnable owner.  So the two
-are really properties of the rq and not really part of the task. And
-remember there can be multiple blocked waiters on a mutex, and they
-can both be used to run the lock owner. So one would have to be
-setting the owner's scheduler context reference on each selection,
-which seems a bit noisy (I also will have to think about the
-serialization as you may need to hold the rq lock to keep the donor's
-sched context in place (as your crossing task to task), which might be
-an unintuitive/unexpected dependency).
-
-Instead as the two contexts are really attributes of the runqueue, it
-would seem like one could have what is currently rq_selected() just
-return the struct task_sctx from the selected task (instead of an
-entire task), but that might also cause some annoyance for things like
-debugging (as having both selected and current task's comm and pid
-available together are very useful for understanding what's going on).
-
-> I generally think breaking down task structure would be good. Hopefully t=
-he new
-> data perf can help us make better decision on what attributes to group
-> together. And generally this might be a good exercise to rethink its cont=
-ent
-> which grown organicaly over the year. Maybe we want to create similar suc=
-h
-> smaller wrapper structs for other fields too.
->
-> I **think** with this approach we would just need go fix compilation erro=
-rs to
-> do p->sctx->{attribute}.
->
-> Proxy exec later would only update the reference to this struct to enforc=
-e
-> inheritance for rq->curr->sctx to point to the donor's context.
-
-I'll need to think about this a bit more (and hopefully others can
-chime in on if they see it as worth it). It would be a *lot* of churn
-to tweak all the users to have the extra structure indirection, so I'm
-hesitant to go running after this without wider agreement. But I do
-see there would be some benefit to avoiding some of the confusion that
-can come from having to deal with two full separate tasks in much of
-the logic.
-
-thanks
--john
+>=20
+> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> ---
+>  lib/maple_tree.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index 314691fd1c67..faadddbe2086 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -3437,12 +3437,10 @@ static noinline_for_kasan int mas_commit_b_node(s=
+truct ma_wr_state *wr_mas,
+>  	enum maple_type b_type =3D b_node->type;
+> =20
+>  	old_enode =3D wr_mas->mas->node;
+> -	if ((b_end < mt_min_slots[b_type]) &&
+> -	    (!mte_is_root(old_enode)) &&
+> -	    (mas_mt_height(wr_mas->mas) > 1))
+> +	if (wr_mas->mas->store_type =3D=3D wr_rebalance)
+>  		return mas_rebalance(wr_mas->mas, b_node);
+> =20
+> -	if (b_end >=3D mt_slots[b_type])
+> +	if (wr_mas->mas->store_type =3D=3D wr_split_store)
+>  		return mas_split(wr_mas->mas, b_node);
+> =20
+>  	if (mas_reuse_node(wr_mas, b_node, end))
+> --=20
+> 2.45.1
+>=20
 
