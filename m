@@ -1,198 +1,129 @@
-Return-Path: <linux-kernel+bounces-201482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F1D8FBEEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE858FBEEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99FE5287C6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD8F2879A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5741914D2B3;
-	Tue,  4 Jun 2024 22:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8F014C5A0;
+	Tue,  4 Jun 2024 22:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmffyjHA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1zUDT/p"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B5914B95E;
-	Tue,  4 Jun 2024 22:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E292B14B97F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 22:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717540107; cv=none; b=JOZ542J5+jY3K4InUv38ze0yO/4uy/OEyeb9gHfO8DKHehhgvSJOr2aEaIELjHVVm12UGeh3rf1ndXIKdNNfCmnOetRf5akkIZ6nThSbWhn8AvKG7O9+rbcrv0ziSRa4VtN1bDx/qir3LhNu64KLjIWD6ZRdCUWIdpbc0CgTaO8=
+	t=1717540158; cv=none; b=hlK0WbyJI48CWBDdERWqhtkmPdvzfRB7rvqqiQedbSBCXyV0doUicqIK1KySNSg8m+drPHRrmAQEy0uxn9rW8XLXJ9gCSmT/C7PHkXxY+m3He8oTc0WVgJVHgJkXQyeO053ukZ+oHOgWWzyQ9qAfJ8LUwKrNr0ya1YyjmydNKoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717540107; c=relaxed/simple;
-	bh=S5r11hWMMb3bhioaf+RARqPwFaq69Pt+JjuYSAcNtyg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CP/Kv5UCEbyWxs+1SnW4Ds6Cf1CdMj32AF5v8yYZ1+uGCwiMfmD09BCEu0sxopdVOiHlc22Lq1v8Ku2W9vv+/B0cZA/N+O00Yl7KOVauOxP9IoN+7lhZbNqciKXU/Hc2loA/6MJFVFVwBesDlcxb8+58OYfEOeKKjXC7JjwjrkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmffyjHA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B784C4AF08;
-	Tue,  4 Jun 2024 22:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717540107;
-	bh=S5r11hWMMb3bhioaf+RARqPwFaq69Pt+JjuYSAcNtyg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mmffyjHAU4Ic+EQWdSW3OWTvCQ18c4vt+3iNvUW3YmmfS/FaiFu6FjHt7fN5JnFq9
-	 ahq+/K1t0SARPTJJHbClNFCp9ig1kGmgTU4ny8ex2+Qozchr6y+GYCbDeVSu1LKa4o
-	 rfmdbEZgKLTYjJC+KBRRAWRgg0GH3IttB5VTrKycG3JmdJPsTah3I+Man7+TdSizHC
-	 CJ2EGASLMWjpjF48dqM0IreRHdXi2wjoIMdb2IKFBy7qu+Y4ZoQiX08kKAWYdauIhx
-	 yBhJ3YpbuY82XOaVVzabYIqmdU8SQPzG3kHxqqfeY36KOr6p+aqMw6TZr9SDHLsKJD
-	 TXI4x2yuD7P+g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C905BCE3F27; Tue,  4 Jun 2024 15:28:26 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 4/4] rcu/nocb: Remove buggy bypass lock contention mitigation
-Date: Tue,  4 Jun 2024 15:28:25 -0700
-Message-Id: <20240604222825.2371133-4-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <f750378b-1eaf-4d22-80c3-a6a086c79702@paulmck-laptop>
-References: <f750378b-1eaf-4d22-80c3-a6a086c79702@paulmck-laptop>
+	s=arc-20240116; t=1717540158; c=relaxed/simple;
+	bh=5jbZaRhnMJPW1tcuh8F+0dQdkhJQQKzpxeeSaP6I6gE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k7wyqaZ2DBtI1Y75Dg+m+3vpc41kNzEIORiWbrDX0QAsrxKAKQLZM+ME4G9xgtjwVKTkrj0ZyRyNk8+DAqFNbFn2hoWp9yS6Fcn+H4/QPX9/a7Ebs3k1/uiasKwDTE7UbXGflneHrm21VqfH22lMYkGqHgBumBFx82XmeqwuDXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f1zUDT/p; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a68ca4d6545so56901466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 15:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717540155; x=1718144955; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GqM2hxS4FR6EOD/ApBIrT8QZc14gXJNY9tub2xlKA5E=;
+        b=f1zUDT/p51xWkelOHdYFEGQoMy5VU2TWPDpPXL/l2AB0nVNB9fiN/9qD+pVgbsra1e
+         ipnLGbJREaFnSVI8lT5wOKm/RnYKKLiLFlQevmufjFceK9dEHGYrJxZuK7mr7BKCtqIS
+         0g+wRp7cN4iAY+mnh6DYqkpnCxjcWpbrACER1fNSaE4PBRDPp95sVa87n8jJxETVj1pN
+         vv0c8+ZoYVBiXaMkCGpBT/vnrX/KgHEhovarkSsF5pwg/c+a+kwZ8tcJUYFYECP7dXFD
+         0Zcr6YwE+C1I3kFcUKYjYfg6xEJvOVzzxMIDGoQwC3Alv6ZfitwI4ndqoA+R48GQRb3g
+         whcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717540155; x=1718144955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GqM2hxS4FR6EOD/ApBIrT8QZc14gXJNY9tub2xlKA5E=;
+        b=BHo/DLWhSNANp9JW6drB/hP988sNhvnulm1cyvvfiX9WibtjluBCitXKMS3NXPAqfz
+         2dvy1pcAHADTyv9uA0mlChS9h/YDxWB0XRPa67kh+LspGtefUbjIMcG5ZIl412h2yxt3
+         AMX9XxIh8fsHv8gb7MxsWDcgKdwTQbqvROx1dcNsYoksRMJXf68fJ921eS6tABkYKvqE
+         boQJOFSaMmg6VH9jjY2a8U4bbL++W3acK+q/hMCWbprfDrvLnl5nNV4Slkk1oWtCwQDU
+         J0iKhjtfF8JkE6loqtk9EDkqjjaB1aJWMoIgPRPR+YmylAwD/LauoVtMYBfz+XEdm/qq
+         Iy+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVZOUMU8adJUrB9M128xAzY+leKlP+a4ugkWjXe/3hXtfS4YRaXHfYRzTdA1aqCFhsM8EfaYYq5aQNMSkN/tyyTHX8GzRJ9VfotM4n
+X-Gm-Message-State: AOJu0YzDHoN7+QQil7qBIFPN9Px7rIXlm/tNY8EzV5EOJICpcHYMKRwl
+	9ml6xupp7lGVYRodhcpS9M9JXLwPDfJmZHQBZ2jRtLZQyXWZAcUVgztcXaHHgKgZrFvOT/PY/ym
+	JUyZwJzVmMuZSTrqLCDP5OevUCcVDRw==
+X-Google-Smtp-Source: AGHT+IHIe8oojZHH3BSc04qDCY6rnCKtmhfue3eiADcCFUkd8n3J7o617bnUH1b9t9siCp6QOzcAxh569eqIcgKG92w=
+X-Received: by 2002:a17:907:8f0a:b0:a68:f43c:57dd with SMTP id
+ a640c23a62f3a-a699d63f681mr58766666b.23.1717540154999; Tue, 04 Jun 2024
+ 15:29:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240602190959.2981-1-thomas.hellstrom@linux.intel.com>
+In-Reply-To: <20240602190959.2981-1-thomas.hellstrom@linux.intel.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Wed, 5 Jun 2024 08:29:03 +1000
+Message-ID: <CAPM=9ty=EMpFTumUCeAcHzn7j2Trs6r3_46jEvo_-CzPmAXcyg@mail.gmail.com>
+Subject: Re: [PATCH v2] MAINTAINERS: Update Xe driver maintainers
+To: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Dave Airlie <airlied@redhat.com>
 
-The bypass lock contention mitigation assumes there can be at most
-2 contenders on the bypass lock, following this scheme:
+Please merge through xe-fixes
 
-1) One kthread takes the bypass lock
-2) Another one spins on it and increment the contended counter
-3) A third one (a bypass enqueuer) sees the contended counter on and
-  busy loops waiting on it to decrement.
+Dave.
 
-However this assumption is wrong. There can be only one CPU to find the
-lock contended because call_rcu() (the bypass enqueuer) is the only
-bypass lock acquire site that may not already hold the NOCB lock
-beforehand, all the other sites must first contend on the NOCB lock.
-Therefore step 2) is impossible.
-
-The other problem is that the mitigation assumes that contenders all
-belong to the same rdp CPU, which is also impossible for a raw spinlock.
-In theory the warning could trigger if the enqueuer holds the bypass
-lock and another CPU flushes the bypass queue concurrently but this is
-prevented from all flush users:
-
-1) NOCB kthreads only flush if they successfully _tried_ to lock the
-   bypass lock. So no contention management here.
-
-2) Flush on callbacks migration happen remotely when the CPU is offline.
-   No concurrency against bypass enqueue.
-
-3) Flush on deoffloading happen either locally with IRQs disabled or
-   remotely when the CPU is not yet online. No concurrency against
-   bypass enqueue.
-
-4) Flush on barrier entrain happen either locally with IRQs disabled or
-   remotely when the CPU is offline. No concurrency against
-   bypass enqueue.
-
-For those reasons, the bypass lock contention mitigation isn't needed
-and is even wrong. Remove it but keep the warning reporting a contended
-bypass lock on a remote CPU, to keep unexpected contention awareness.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/tree.h      |  1 -
- kernel/rcu/tree_nocb.h | 32 ++++++--------------------------
- 2 files changed, 6 insertions(+), 27 deletions(-)
-
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index bae7925c497fe..179f60ca03130 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -223,7 +223,6 @@ struct rcu_data {
- 	struct swait_queue_head nocb_state_wq; /* For offloading state changes */
- 	struct task_struct *nocb_gp_kthread;
- 	raw_spinlock_t nocb_lock;	/* Guard following pair of fields. */
--	atomic_t nocb_lock_contended;	/* Contention experienced. */
- 	int nocb_defer_wakeup;		/* Defer wakeup of nocb_kthread. */
- 	struct timer_list nocb_timer;	/* Enforce finite deferral. */
- 	unsigned long nocb_gp_adv_time;	/* Last call_rcu() CB adv (jiffies). */
-diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-index 808c9a19fe1d0..3ce30841119ad 100644
---- a/kernel/rcu/tree_nocb.h
-+++ b/kernel/rcu/tree_nocb.h
-@@ -91,8 +91,7 @@ module_param(nocb_nobypass_lim_per_jiffy, int, 0);
- 
- /*
-  * Acquire the specified rcu_data structure's ->nocb_bypass_lock.  If the
-- * lock isn't immediately available, increment ->nocb_lock_contended to
-- * flag the contention.
-+ * lock isn't immediately available, perform minimal sanity check.
-  */
- static void rcu_nocb_bypass_lock(struct rcu_data *rdp)
- 	__acquires(&rdp->nocb_bypass_lock)
-@@ -100,29 +99,12 @@ static void rcu_nocb_bypass_lock(struct rcu_data *rdp)
- 	lockdep_assert_irqs_disabled();
- 	if (raw_spin_trylock(&rdp->nocb_bypass_lock))
- 		return;
--	atomic_inc(&rdp->nocb_lock_contended);
-+	/*
-+	 * Contention expected only when local enqueue collide with
-+	 * remote flush from kthreads.
-+	 */
- 	WARN_ON_ONCE(smp_processor_id() != rdp->cpu);
--	smp_mb__after_atomic(); /* atomic_inc() before lock. */
- 	raw_spin_lock(&rdp->nocb_bypass_lock);
--	smp_mb__before_atomic(); /* atomic_dec() after lock. */
--	atomic_dec(&rdp->nocb_lock_contended);
--}
--
--/*
-- * Spinwait until the specified rcu_data structure's ->nocb_lock is
-- * not contended.  Please note that this is extremely special-purpose,
-- * relying on the fact that at most two kthreads and one CPU contend for
-- * this lock, and also that the two kthreads are guaranteed to have frequent
-- * grace-period-duration time intervals between successive acquisitions
-- * of the lock.  This allows us to use an extremely simple throttling
-- * mechanism, and further to apply it only to the CPU doing floods of
-- * call_rcu() invocations.  Don't try this at home!
-- */
--static void rcu_nocb_wait_contended(struct rcu_data *rdp)
--{
--	WARN_ON_ONCE(smp_processor_id() != rdp->cpu);
--	while (WARN_ON_ONCE(atomic_read(&rdp->nocb_lock_contended)))
--		cpu_relax();
- }
- 
- /*
-@@ -510,7 +492,6 @@ static bool rcu_nocb_try_bypass(struct rcu_data *rdp, struct rcu_head *rhp,
- 	}
- 
- 	// We need to use the bypass.
--	rcu_nocb_wait_contended(rdp);
- 	rcu_nocb_bypass_lock(rdp);
- 	ncbs = rcu_cblist_n_cbs(&rdp->nocb_bypass);
- 	rcu_segcblist_inc_len(&rdp->cblist); /* Must precede enqueue. */
-@@ -1631,12 +1612,11 @@ static void show_rcu_nocb_state(struct rcu_data *rdp)
- 
- 	sprintf(bufw, "%ld", rsclp->gp_seq[RCU_WAIT_TAIL]);
- 	sprintf(bufr, "%ld", rsclp->gp_seq[RCU_NEXT_READY_TAIL]);
--	pr_info("   CB %d^%d->%d %c%c%c%c%c%c F%ld L%ld C%d %c%c%s%c%s%c%c q%ld %c CPU %d%s\n",
-+	pr_info("   CB %d^%d->%d %c%c%c%c%c F%ld L%ld C%d %c%c%s%c%s%c%c q%ld %c CPU %d%s\n",
- 		rdp->cpu, rdp->nocb_gp_rdp->cpu,
- 		nocb_next_rdp ? nocb_next_rdp->cpu : -1,
- 		"kK"[!!rdp->nocb_cb_kthread],
- 		"bB"[raw_spin_is_locked(&rdp->nocb_bypass_lock)],
--		"cC"[!!atomic_read(&rdp->nocb_lock_contended)],
- 		"lL"[raw_spin_is_locked(&rdp->nocb_lock)],
- 		"sS"[!!rdp->nocb_cb_sleep],
- 		".W"[swait_active(&rdp->nocb_cb_wq)],
--- 
-2.40.1
-
+On Mon, 3 Jun 2024 at 05:13, Thomas Hellstr=C3=B6m
+<thomas.hellstrom@linux.intel.com> wrote:
+>
+> Add Rodrigo Vivi as an Xe driver maintainer.
+>
+> v2:
+> - Cc also Lucas De Marchi (Rodrigo vivi)
+> - Remove a blank line in commit the commit message (Lucas De Marchi)
+>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Acked-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 572be0546e21..8f9982c99257 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11037,6 +11037,7 @@ F:      include/uapi/drm/i915_drm.h
+>  INTEL DRM XE DRIVER (Lunar Lake and newer)
+>  M:     Lucas De Marchi <lucas.demarchi@intel.com>
+>  M:     Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> +M:     Rodrigo Vivi <rodrigo.vivi@intel.com>
+>  L:     intel-xe@lists.freedesktop.org
+>  S:     Supported
+>  W:     https://drm.pages.freedesktop.org/intel-docs/
+> --
+> 2.44.0
+>
 
