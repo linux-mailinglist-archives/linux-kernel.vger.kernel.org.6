@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-200699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255848FB396
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7928FB393
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7FC287715
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 097381C21A07
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECE1146A74;
-	Tue,  4 Jun 2024 13:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBC3146A6B;
+	Tue,  4 Jun 2024 13:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWemrCxh"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="axaEJRhT"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A489146587;
-	Tue,  4 Jun 2024 13:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76478144D23
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717507404; cv=none; b=Fw8gTbhMl2yKmTlCuDRwdOrZf7ZKRpvPG9LKy2ieHhSN2cIose/7AtUyIIFce4vvGzzLkm1vrWc96HhB8q/sHA1ZqpiDRY83aDPJTkkWx6fp1vJbPHwgplKc2jonWh/iMuWm1HlbuSrh+jzxPw11H7yOrMEm6+WsJtY2zm2GSXY=
+	t=1717507393; cv=none; b=N1W6713j4P4ZgfISIPQSBkc9WwIUiB4ONo85lt35k6pwmwBcRCyJYmBv+OUBeVb4BOVwiu6+5me7H88DOZZrD8e77j+qYTUvcpZ9l0tIcHUI6KDnpawB6s0l1c1riNxHHzMu3jSzZ9JT7W9DIh+I4d8dPLAdhgixxj+gP3D+XEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717507404; c=relaxed/simple;
-	bh=D4HtLoTVU3H+eyUhPZTSVo5LCusxKwB+BLH0C2Ip7jQ=;
+	s=arc-20240116; t=1717507393; c=relaxed/simple;
+	bh=OOpAIZhf7VAtMnJp97lf+JMAONnXTB09IET4RwPRDCE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kuIT9a21E9Z+Xp8xvjm35Vx1UtPuwhJQtmTKhvZeRj9nTUZL6cIG21iD6qMa/Y0c/MgNY5TVD6ShAzo0Cpl+9MYg3L/DxU+8ULSrO7VkzICC2P79b3eDygfHA+rC5UAhLGaLYQ1kprRIQDYAFMz6u4I0W/LkAaEpxXMlXFXL7OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWemrCxh; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a63359aaaa6so721905066b.2;
-        Tue, 04 Jun 2024 06:23:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=vFXXG/kkey8sJreym0yEzkEz2dHqHFYaZsTaCRxcwUM5Shjkwzglw6KGICKpF+w8m0ZY7NTx9440mWF1D8PgXOF2on6lMOBcFgCtB2YVrZedayQQ8JQae3IoyJkXenksuKAn/A9dGo8Y3F/zqE7+Xfjlh6DjNcpDAo+myVR3IN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=axaEJRhT; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a68b0a229so2174768a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:23:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717507401; x=1718112201; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1717507389; x=1718112189; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D4HtLoTVU3H+eyUhPZTSVo5LCusxKwB+BLH0C2Ip7jQ=;
-        b=NWemrCxhYCNnMM0EfqVJkc1B3z0I8MWk4l1Lnbcnmr0g/SOhyQliL029/rGzzNypPy
-         sXBXjOgUDISzsplbcfFH6OMxdVwnEvXhJW4l9RYDndx8+zZgZTzepga+yE+yug9wLsTk
-         JvWZhSsyPAn+1LyfSiqfZJHCfvt+1jRHwFk0Dq7sHu/aNF0ZgNBnqcwM4MwQl+kHmUSF
-         yeQmI7CZTdLGm6mi4WTt1ryYS8WgPa7AWEeKWpjP+DjPpECijBkDdFFxYwk07wt9sBd8
-         Ez2d4wzW1OSaqYUmjIKnsmT4l4HeP2yhqU4ZuEF4SjXjwJRBLrQJ7EACazkEcM7ml/bo
-         H7ww==
+        bh=jAbWUnTOBRaeWPYklSpI20QraPgo9d0o855WcgCKVIY=;
+        b=axaEJRhT2kyfkVjA6WvAUJ+iKmMyJxLlcjaGY7HvsHEni88u7NjS0iiiRhHCZczSDe
+         d9SZJTzSqrKKzt3tSqwoFugPwArjc9L5EG88E20jgWIaaQy48F67hCxvCS4epmtSNzU2
+         XNDOvWgPU2nUp5JusWEZLv5RCUdL6XC2m7g3mYvURR3KI05KpN/6y1AZsC/xSEM9sGXY
+         QM6S6P/wKJ2S3/oZQpLR+49zuuPmXeyZZRH4o3c3QtEa6Lk7Yh5tijr+rrgjC2EfMP3s
+         bL9eKphHAioIA/X7jaRFW7exwbQA86jJVRaZ9zO67zxHOnj3oMzYgOCVIyWFN96CTFO2
+         ynuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717507401; x=1718112201;
+        d=1e100.net; s=20230601; t=1717507389; x=1718112189;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D4HtLoTVU3H+eyUhPZTSVo5LCusxKwB+BLH0C2Ip7jQ=;
-        b=JPnl3Y7N96XOPTwLNrznsJJgOQIsNTnQiYOuYkSjT/L/eD/TT8ei6OdYyWTy9jtu6V
-         4tJYTokLMgTl4MGgErMsaTnM7P1LjCDG/WeHWa8NuImSO9KOoqtGJTQQfXJP3c2EAnae
-         c1y8bqnHTXZZn6vsdqWmSNThxV0wYS+lPN1ubE81rYMEIZ9Quu4gP4GP5lQ6H1752IOR
-         /Q4/SzB374HTMjvD9HiJOkVrr5cxtKuXtusdWRt7AEN3UpHcEv7sdU1HS5vZgnyRUpJ+
-         6346IGYQnpz4ckTswJzlpsClFQk92X2WMs/1ZbiGTNfBayVopL6Q7w8DYHM4a1E7yqqG
-         26Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Fg0UG4qU009TIbWRySmei6MepRpNdclOODPOaxGjLRIz4DyRHyrp3g1toSpI+NHZfoAeM2dE/aB2vHF2GJt3+GGIjKXAqsNd4nYzuks7c7VCuCSGoF/3Yg2xN2ggDdTmJqrlvXIlggkngUaKmLTp7JyrHtUFbzaEZItLCFUqjx+wwQ==
-X-Gm-Message-State: AOJu0YyMZOfN4jfY7w3HnsAgrmdEf/xX7NA+Zwvr10tXzqS/g324Eo+T
-	aYDBaMFWsNi/08x20gqrwpbIMijV/G30hVPsLzvzk89XLe1uvtBKj7ARkSWzgL6A++ics9Vee2o
-	A0oqUMS1xh6iFL+SKs6KBEjYwUnU=
-X-Google-Smtp-Source: AGHT+IE5s5ADNfYnbPI8bDw/CpMfi1LzejGDjcTFcbYzZnvQgliM5/TmXHdkT9xdHYahqyYsZ6pgxgeQxvDpCe8I2qg=
-X-Received: by 2002:a17:906:2b51:b0:a68:cc6f:cb5a with SMTP id
- a640c23a62f3a-a68cc6fcc2emr493202266b.68.1717507400768; Tue, 04 Jun 2024
- 06:23:20 -0700 (PDT)
+        bh=jAbWUnTOBRaeWPYklSpI20QraPgo9d0o855WcgCKVIY=;
+        b=hPf23eQAfhIqxbKu/febxjvLAcqjoUwO5iMvtRHmnVzuEvaQ4+pJolWAoSg70tz/UR
+         VZcevE9jc8wVJOe5VBygHcCU4POoQ+6VBGHDM3wyUsfTWlvuLYQQa9LviBqWUNin1Tli
+         R3OK81DITruHtwGXSP0pK2oz/LJ/NuhNiIiiRAKeCb67S8FLw3nMYMS/DLLhHngLZMcW
+         j0WUmUjFM5hRcFapOhov/vmA4jSW55JDdFH3pzAGTRd83qhZFC6hC76F7EXvf7k+014C
+         t8s67PVb/1LXd9yf2BLgsMZN8Us8D13Ccz8YijDrFzdYmjOCSmRKGY9EfTJiyX02M6yE
+         Rnow==
+X-Forwarded-Encrypted: i=1; AJvYcCWC1i3yN42sSnUEMNgJkp3boDf6NLtpQXvq1+TVB1TX+gYifOm3DdDTvOaF02pmkYospnXdL/yvWZhMGA7LPA3dfImSJSNdXAfqY1gJ
+X-Gm-Message-State: AOJu0Yy+acYoGNRrQLvZog0iVTk0DR3TOO/Q6Hjh7Vxpsa5PSnOxWsRB
+	h2SAXIDVxwISCo7J3Q09UkNyC9Dv9atUf0aziORBijBCeZZfqx/9L0EciK80NT9K/bMY1ZUihCn
+	TLT45yNuZJoShI8y4M8R5HHRfyZUC2W/I83qQgg==
+X-Google-Smtp-Source: AGHT+IHGGIMDZFU+gPynoc4Ujgj4qTVbZoLInIZYMo4VimoK30MrU/t+0tJSyI98tUhjB9Z3/I214BGwLD8bL8fSTko=
+X-Received: by 2002:a17:907:7ea1:b0:a68:ea13:f68 with SMTP id
+ a640c23a62f3a-a68ea131343mr538713166b.54.1717507388810; Tue, 04 Jun 2024
+ 06:23:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com> <20240604123008.327424-5-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240604123008.327424-5-angelogioacchino.delregno@collabora.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 4 Jun 2024 16:22:44 +0300
-Message-ID: <CAHp75Ve8qPLu+gS8o5Q5A20j_+AP_UVkOzdKqcnhUawA_sW+VA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] iio: adc: Add support for MediaTek MT6357/8/9
- Auxiliary ADC
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org, andy@kernel.org, 
-	nuno.sa@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com, 
-	marius.cristea@microchip.com, marcelo.schmitt@analog.com, fr0st61te@gmail.com, 
-	mitrutzceclan@gmail.com, mike.looijmans@topic.nl, marcus.folkesson@gmail.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20240604090845.2182265-1-max.kellermann@ionos.com> <Zl8QW91FwZ9UpulZ@casper.infradead.org>
+In-Reply-To: <Zl8QW91FwZ9UpulZ@casper.infradead.org>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Tue, 4 Jun 2024 15:22:57 +0200
+Message-ID: <CAKPOu+8R_KUudoNNGM5m2q6oS0oGY3Hyc_7bKM+-DtFFjJicsg@mail.gmail.com>
+Subject: Re: [PATCH v6 00/15] Fast kernel headers: split linux/mm.h
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, david@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 3:30=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Add a driver to support reading the Auxiliary ADC IP found in the
-> MediaTek MT6357, MT6358 and MT6359 Power Management ICs, featuring
-> a different register layout, configurationm reset and ADC reading
+On Tue, Jun 4, 2024 at 3:02=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
+ wrote:
+> I am not a fan of these patches.  They will make it harder to work on
+> the MM system.  We briefly discussed them at LSFMM and nobody was in
+> favour of them.  I'm afraid you're shouting into the wind.
 
-configuration
+Thanks for letting me know, but I'm confused because similar patches
+have been merged pretty often.
 
-> sequence from the other already supported MediaTek SoC or PMIC
-> (aux)ADC HW.
->
-> This driver provides multiple ADC channels for system monitoring,
-> such as battery voltage, PMIC temperature, PMIC-internal voltage
-> regulators temperature, and others.
+For a very weird example, look at commit adeb04362d74 ("kernel.h: Move
+upper_*_bits() and lower_*_bits() to wordpart.h") which was submitted
+on Feb 14th; and then look at
+https://lore.kernel.org/lkml/20240209164027.2582906-34-max.kellermann@ionos=
+.com/
+- it's exactly the same patch, but I submitted it 5 days earlier, yet
+the other one was merged.
 
-Seems all my concerns were addressed, so
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Other recent examples (though without offending earlier patches from me):
+- d186eb1ee885 ("cpumask: split out include/linux/cpumask_types.h")
+- f7515d9fe8fc4 ("objtool: Add objtool_types.h")
+- cb5a065b4ea9 ("headers/deps: mm: Split <linux/gfp_types.h> out of
+<linux/gfp.h>")
+- 50d91c765825 ("hrtimers: Split out hrtimer_types.h")
+- 9983deb26d90 ("Split out irqflags_types.h")
+- 6d5e9d636830 ("pid: Split out pid_types.h")
+.... and so on ...
 
---=20
-With Best Regards,
-Andy Shevchenko
+If there is a general agreement that nobody is in favor of these
+patches, why are they merged when other people submit them?
+
+Max
 
