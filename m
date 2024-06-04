@@ -1,176 +1,99 @@
-Return-Path: <linux-kernel+bounces-200067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027358FAA15
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:43:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6D68FAA19
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2021F255C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:43:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3AA2865DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CEC13F425;
-	Tue,  4 Jun 2024 05:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734CA13FD9B;
+	Tue,  4 Jun 2024 05:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcZeWNDg"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XCrPu5sT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7898527735;
-	Tue,  4 Jun 2024 05:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A879027735;
+	Tue,  4 Jun 2024 05:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717479805; cv=none; b=Y2f+DnQUTBAO3xf1hJq6Ar2sOq6rnoIcmQMpd0wdriYZj2S222/JeN6HsiIPNHj7oJAdK8broRGjbg5yEY9gTlzdCjDlhW4+NSzzERTdXzYXykz5LLCjUaSHgkANmVXn4jrAR9KoURHt1a8RuZ6KU1c164QYtsFVPZzxp8GNaKg=
+	t=1717479811; cv=none; b=Nuy2MTWurQt3ELtJs0Lg8uwdBQOG7INQ6VdOoezoPzGm4xGLu3lBDMmT7E+A76OXvktx14sXNysbGYD/7OR4ctup9hsV2j94Lu2aaWbJsazfiryGsgkYuKQa+3Y77F8uWidmy3VNwQW+VM11w298igh7pOecY1/rk1RCcllWavc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717479805; c=relaxed/simple;
-	bh=94pr6mja6RET09OSlFzqamlX1Yqde8yukT9lCk+ycKw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=sg90gpWJa9b/78mUKuQOF2DV9f5AEfdboCQMEnq7Y7dMwHp8x/TBID7dM4J/cZc6roLgPEygG8s5bWcaV22JI+YAtqBsq0ytQXHJ5GpANjqsPhVdpKUIRnjoD8n4ybvNPgfFo9ZTm2Gjb4O6BLIg9TpNT2owU8yMGrxheZN0JvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OcZeWNDg; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f44b45d6abso6121195ad.0;
-        Mon, 03 Jun 2024 22:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717479804; x=1718084604; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hMZI3zkaSwcqdd78+yzxe31y+FOMl2y7kr8jaeztLAE=;
-        b=OcZeWNDgwwpE0B3zB+PEaZeqp7ASDKCNltSYJ57/atPPlZrEJgvNYsMd5jURKa1VA7
-         oHVcYTuscBWOqe7Q0l7Y6uNCPEy9w97ALK1aL0V1/o30hTlhhspIONXPNHaSnjEudgFD
-         kitHiwsX7C+0/bSjYXMj+F8HJdPea6stTI/4IRG7d0NsB+SLWKY4bR1jXqIBokdxI+jH
-         ZQF0SvM0jNAbXZESwz6mKNNfljlX4SY3OMKDayZntKeau+o9uHo0zVPosGCTa0qBcPFR
-         AIA4vkVRhlyJkMiz2AyKvDPHfwRjNL4GeAS6FUcsn1pb7JpzWetCqYs8ndjDuBavvpS6
-         043A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717479804; x=1718084604;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hMZI3zkaSwcqdd78+yzxe31y+FOMl2y7kr8jaeztLAE=;
-        b=CAYLRh8/Y3g/M+IzRpQP3Xs7+QLKluQkVtlZXGuAju1hi8jAdcCT2aKXPSF+z5JVz8
-         8oYZvxZhxKdxuqIxR2GWJXy2Y8Q8sy7kYFiqEJ6ZMhbuavOGrlUdYwUieynzLTQG872V
-         4KT2kj8yBwpnFgb7Kwjeaq+6ZRq+Mue4vWaoX/Z+GqH5zDkXvwL9Ll3x3Nbv3YWAMbU7
-         TRzPGfWkP6nYBs+unv1dNAvxLnvIj2EjmnH4GJNrLhuleZoOoEUraTdArTGiw9pkIGFe
-         FWyZ38wDF1uQKIYKaf4l6NDBWnHzWzqphvwpv8JXAl/tM4zB4xEXsXjpAKyM9WVDupu8
-         485w==
-X-Forwarded-Encrypted: i=1; AJvYcCXiJNN07o65DpyhKGZ7KiOXoz9kPcfaiPjR5eJ6vAtWyoFMVVs2+SidbUS7IsTlAFmog7sBbRXwsBmuSm9tGxKZoMg6vWEfTiktGk00lEEe0GzZxQTPfrxLKstAzooKXrVKhJbiI7K7eU7L45BDwb5PdafoQ+gkBBjLPC6z
-X-Gm-Message-State: AOJu0YydiMQNzotYsVR9Bhv6fFiK4xhr3VyttAFQ6seIFA4uLPBWwluR
-	jsIzEF5Ch9u6oxMwhCLX2OaZud2F0n8S857zgXb5hn6dYuteUlCY
-X-Google-Smtp-Source: AGHT+IGM8f/is09yOrScZQFiLhzRjIF8KXB5oZ0fJ6eQPy8HEQtZ3rnCf8+ghDsA/19r/3L7vU6BCA==
-X-Received: by 2002:a17:903:1cc:b0:1f6:74f3:ac0a with SMTP id d9443c01a7336-1f674f3b0b9mr65335635ad.64.1717479803719;
-        Mon, 03 Jun 2024 22:43:23 -0700 (PDT)
-Received: from localhost ([1.146.11.115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632358519sm75196065ad.82.2024.06.03.22.43.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 22:43:23 -0700 (PDT)
+	s=arc-20240116; t=1717479811; c=relaxed/simple;
+	bh=K4RIn52C4629tpAJrB1DNztACdKMcNhUOgQZtSagcuc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ELftq1/jIB5exWgAUPyJqTZk/SY0ITjIagTcQzpY4KSqXuhK0iyKC745vV9HP/O7VsD5u0bXvYr0uZbCjhgsH1kUynkVZ4O61A188AblHjXuuf+w375yxFDGeQAOE/WjprPaL88uM5LfTaj/PHIa0nU5TZulttTyGmNW6SNoppQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XCrPu5sT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82BB1C2BBFC;
+	Tue,  4 Jun 2024 05:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717479810;
+	bh=K4RIn52C4629tpAJrB1DNztACdKMcNhUOgQZtSagcuc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=XCrPu5sTVtMkHlbQlOUn29wOkTwRKGedBoQliD2UelJ/rWRclj1alcNnY0nvvEIxP
+	 /fVdH895VpN3FEAunruYC9TkdrkVG6UYGlYSLS/7nI15Kqysm5ZNhv01HnwhOpqcv4
+	 Xzx5QGQn87oRpbMmfCR08dHrVErqE4R0EYbe1LiU7i4fTL0O1HnnwTid+ZtR6p6LYc
+	 beRAQZbIvT1nw+ko56xJquvpDzww9otbMoHsq0pVnYrK/ICUDPuc5KsrOUsrmoijFK
+	 M+ah0IlnrUlAWML4S7GPADlCoH3B8OxK1o2QTHTmlJhKnyaopG1Ve0grsYhqYIpj6N
+	 TJoS89qMZ5S6A==
+Date: Mon, 03 Jun 2024 22:43:31 -0700
+From: Kees Cook <kees@kernel.org>
+To: Christoph Hellwig <hch@lst.de>, Terry Tritton <terry.tritton@linaro.org>
+CC: hch@lst.de, "ttritton@google.com" <ttritton@google.com>, edliaw@google.com,
+ keescook@chromium.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: Change in splice() behaviour after 5.10?
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240604045030.GA29276@lst.de>
+References: <CABeuJB1RP8wty0AObsmw+FCWMNyAmrutL-ZXy9ZwnZ8oK1iGSg@mail.gmail.com> <20240604045030.GA29276@lst.de>
+Message-ID: <7F3B484F-9555-486A-B19A-5A8EB6442988@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 04 Jun 2024 15:43:16 +1000
-Message-Id: <D1QZRY6L192K.12B6FYKGAHZH8@gmail.com>
-Cc: <pbonzini@redhat.com>, <naveen.n.rao@linux.ibm.com>,
- <christophe.leroy@csgroup.eu>, <corbet@lwn.net>, <mpe@ellerman.id.au>,
- <namhyung@kernel.org>, <pbonzini@redhat.com>, <jniethe5@gmail.com>,
- <atrajeev@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] KVM: PPC: Book3S HV: Add one-reg interface for
- HASHKEYR register
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Shivaprasad G Bhat" <sbhat@linux.ibm.com>, <kvm@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-X-Mailer: aerc 0.17.0
-References: <171741323521.6631.11242552089199677395.stgit@linux.ibm.com>
- <171741330411.6631.10739157625274499060.stgit@linux.ibm.com>
-In-Reply-To: <171741330411.6631.10739157625274499060.stgit@linux.ibm.com>
 
-On Mon Jun 3, 2024 at 9:15 PM AEST, Shivaprasad G Bhat wrote:
-> The patch adds a one-reg register identifier which can be used to
-> read and set the virtual HASHKEYR for the guest during enter/exit
-> with KVM_REG_PPC_HASHKEYR. The specific SPR KVM API documentation
-> too updated.
 
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 
+On June 3, 2024 9:50:30 PM PDT, Christoph Hellwig <hch@lst=2Ede> wrote:
+>On Mon, Jun 03, 2024 at 10:59:15AM +0100, Terry Tritton wrote:
+>> Hi,
+>> We've found a change in behaviour while testing the splice07 LTP test=
+=2E
+>> In versions before 5=2E10 the test will hang on certain combinations bu=
+t after
+>> 5=2E10 the splice call will return=2E
+>> I bisected the change to the following commit:
+>>     36e2c7421f02a22f71c9283e55fdb672a9eb58e7
+>>     fs: don't allow splice read/write without explicit ops
+>>=20
+>> There has been some discussion on the LTP github page already:
+>>     https://github=2Ecom/linux-test-project/ltp/issues/1156
 >
-> Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-> ---
->  Documentation/virt/kvm/api.rst            |    1 +
->  arch/powerpc/include/uapi/asm/kvm.h       |    1 +
->  arch/powerpc/kvm/book3s_hv.c              |    6 ++++++
->  tools/arch/powerpc/include/uapi/asm/kvm.h |    1 +
->  4 files changed, 9 insertions(+)
+>In that case the return probably is an error because epoll doesn't
+>support read_iter/write_iter and thus completely expected=2E
 >
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.=
-rst
-> index 81077c654281..0c22cb4196d8 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -2439,6 +2439,7 @@ registers, find a list below:
->    PPC     KVM_REG_PPC_PSSCR               64
->    PPC     KVM_REG_PPC_DEC_EXPIRY          64
->    PPC     KVM_REG_PPC_PTCR                64
-> +  PPC     KVM_REG_PPC_HASHKEYR            64
->    PPC     KVM_REG_PPC_DAWR1               64
->    PPC     KVM_REG_PPC_DAWRX1              64
->    PPC     KVM_REG_PPC_DEXCR               64
-> diff --git a/arch/powerpc/include/uapi/asm/kvm.h b/arch/powerpc/include/u=
-api/asm/kvm.h
-> index fcb947f65667..23a0af739c78 100644
-> --- a/arch/powerpc/include/uapi/asm/kvm.h
-> +++ b/arch/powerpc/include/uapi/asm/kvm.h
-> @@ -646,6 +646,7 @@ struct kvm_ppc_cpu_char {
->  #define KVM_REG_PPC_DAWR1	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0xc4)
->  #define KVM_REG_PPC_DAWRX1	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0xc5)
->  #define KVM_REG_PPC_DEXCR	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0xc6)
-> +#define KVM_REG_PPC_HASHKEYR	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0xc7)
-> =20
->  /* Transactional Memory checkpointed state:
->   * This is all GPRs, all VSX regs and a subset of SPRs
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index 1294c6839d37..ccc9564c5a31 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -2352,6 +2352,9 @@ static int kvmppc_get_one_reg_hv(struct kvm_vcpu *v=
-cpu, u64 id,
->  	case KVM_REG_PPC_DEXCR:
->  		*val =3D get_reg_val(id, kvmppc_get_dexcr_hv(vcpu));
->  		break;
-> +	case KVM_REG_PPC_HASHKEYR:
-> +		*val =3D get_reg_val(id, kvmppc_get_hashkeyr_hv(vcpu));
-> +		break;
->  	case KVM_REG_PPC_CIABR:
->  		*val =3D get_reg_val(id, kvmppc_get_ciabr_hv(vcpu));
->  		break;
-> @@ -2598,6 +2601,9 @@ static int kvmppc_set_one_reg_hv(struct kvm_vcpu *v=
-cpu, u64 id,
->  	case KVM_REG_PPC_DEXCR:
->  		kvmppc_set_dexcr_hv(vcpu, set_reg_val(id, *val));
->  		break;
-> +	case KVM_REG_PPC_HASHKEYR:
-> +		kvmppc_set_hashkeyr_hv(vcpu, set_reg_val(id, *val));
-> +		break;
->  	case KVM_REG_PPC_CIABR:
->  		kvmppc_set_ciabr_hv(vcpu, set_reg_val(id, *val));
->  		/* Don't allow setting breakpoints in hypervisor code */
-> diff --git a/tools/arch/powerpc/include/uapi/asm/kvm.h b/tools/arch/power=
-pc/include/uapi/asm/kvm.h
-> index fcb947f65667..23a0af739c78 100644
-> --- a/tools/arch/powerpc/include/uapi/asm/kvm.h
-> +++ b/tools/arch/powerpc/include/uapi/asm/kvm.h
-> @@ -646,6 +646,7 @@ struct kvm_ppc_cpu_char {
->  #define KVM_REG_PPC_DAWR1	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0xc4)
->  #define KVM_REG_PPC_DAWRX1	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0xc5)
->  #define KVM_REG_PPC_DEXCR	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0xc6)
-> +#define KVM_REG_PPC_HASHKEYR	(KVM_REG_PPC | KVM_REG_SIZE_U64 | 0xc7)
-> =20
->  /* Transactional Memory checkpointed state:
->   * This is all GPRs, all VSX regs and a subset of SPRs
+>If the underlying bug hasn't been fix in the mean time that probably
+>means it will be back if Jens' conversion of all misc file operations
+>to the iter based ones every gets merged=2E
+>
+>If you are interested more in this please discuss it on the relevant
+>mailing lists instead of in private mail=2E
 
+Eh? LKML is in CC=2E=2E=2E
+
+I've added fsdevel and Jens now too, though=2E=20
+
+-Kees
+
+--=20
+Kees Cook
 
