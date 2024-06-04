@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-200473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA738FB091
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8928FB095
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 417B81F21507
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:54:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 285E81C23313
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF7C1459E5;
-	Tue,  4 Jun 2024 10:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527DA145A0E;
+	Tue,  4 Jun 2024 10:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XoGCQM1u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CtLwSL70"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286D3145331
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8320144D03;
+	Tue,  4 Jun 2024 10:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717498426; cv=none; b=rvpzXFPix+9esvrsRpxk4k78DM3HMviQ2NxaQhhmIOB+WYTOgZmqo3o0c6CfEeBOpcUrL1c+kT7oVMGkceac6H7QoZ0AaYwMOn+PZ0CctdhHi40UNl6SkriHMU19qCb2Oon0RSJX//Kom6RoiziWMA7vNsOY3Ec5pm/YEDySQvs=
+	t=1717498434; cv=none; b=TokivlMN2TF90mZFYx91OJZHSHDToPfdoyeuORn5UNJEDZFdTMAQ5cqdNMki0oVR2pAhMnS5UjbYS+pPlAbpBBF9ipGd6IKBOs5iChzlmZKeBfBE88sZcZJy9s+1Oi042eS7ksDFAh3BXIgdYql2iVZtwC3vkqFvQMY0BPWttjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717498426; c=relaxed/simple;
-	bh=sWJfxrg7DaNSgc2gmCC3cAQqrzVJfSocaCuwhh48x1I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JcCwy09KRQnVZVFolBkZALLpV6JxKjSn1dQXFWpfPE++VTk5Nqi04n0bVj+RQtA0gpN7c6qeLD2YytliWsppcMJRt/QlUhfonimmL4g5iMVBZS3DWOkhGZt3dEbZuzdCVShsBKkPHzMcIqu+wMonNlmYm1Aa8+hdqdtXCskI9wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XoGCQM1u; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717498422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=woIW2rG36WjVplYf1XFEiaOd0JQOnrJYxOcJXRhrDbw=;
-	b=XoGCQM1uUREZhqrTKNRLKWVMpMs8507DrbhTwSPlwV25zBascauDjOxHZHw5rVU/iIXB7F
-	Fgn88wjHOnmQ5QM2pZDDAkU8XQbCPZIxQa+G9PhajFiIZl0Ysihas57XURxOHTpvHnXvXU
-	/9ULqSruHN6JdMZYEwLOSNOk/dEhwg8=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168--idcQRBxOsO23WxaJq5bSQ-1; Tue, 04 Jun 2024 06:53:40 -0400
-X-MC-Unique: -idcQRBxOsO23WxaJq5bSQ-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ea940c4061so5141061fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:53:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717498419; x=1718103219;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=woIW2rG36WjVplYf1XFEiaOd0JQOnrJYxOcJXRhrDbw=;
-        b=YzP55F+JOIRvzK9TkEkFatzjr2Yk5p1WYlYImVL4H6+uAOvxhW0GeDAIw3Yol900Xg
-         49y9X9dFz1pzbXkon4+MjkqhRzCu/Iu1NXQ6fDmN393lQY6IS3mr6JbMdQpX0/xZQ7Zj
-         /qL47z3YDksJe68F2q1iQdAJKFFVMhnRZuxJfafKFhkz03dp0P656wYUha0CHL1Vu3RN
-         NNp36ejY9Oi4Ar4LavXwxBkX9HZQ3k+qIE3xSHERndo4U57KhXDwxIJxyhNXeHbkEWc0
-         V3L5IVsXGgMfgH8/f5oWy7cJgHZAwMJEDtma+2xcJhQHR9UAshoKJiVxADaZPb1B+3Ul
-         Redw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Vfap/R6djRaeXSvJrIaqkMiA8eHQAVwKtVuygEerIejo7fLgpkRDT/WRFsFMKSXehstKy3ZwruO8Da3hQ8ChggBkfIo1ihy1mqSr
-X-Gm-Message-State: AOJu0YyzPa1Psj+tWVvljBTFmvP3VYk9t03pR4P/Oj8ncdYunKxqQvkf
-	n9LpawYy9iqiXOdtbiclF3spYPI0x0lMM3VWafe6QgeveEqkeBauQmdzXwF05DVwwTUyj1F7yFc
-	Yj9dfkce7hGop62jMU0mvlrJBEqT8S8rji5LIrtDSDfL5NS6VJ30p8GDLxmVUVw==
-X-Received: by 2002:a2e:8949:0:b0:2ea:9449:7713 with SMTP id 38308e7fff4ca-2ea94f5a049mr64304161fa.0.1717498419102;
-        Tue, 04 Jun 2024 03:53:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmvWfpwajfG6uAbSLakYYmoy41vLEHP3DZ25SAdv9f73cp/s3ZE335ECe8kt5W34Xy9/SQtA==
-X-Received: by 2002:a2e:8949:0:b0:2ea:9449:7713 with SMTP id 38308e7fff4ca-2ea94f5a049mr64303521fa.0.1717498418643;
-        Tue, 04 Jun 2024 03:53:38 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3344:1b74:3a10::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b84f8e7sm148788635e9.20.2024.06.04.03.53.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 03:53:38 -0700 (PDT)
-Message-ID: <9c302fffa10085760eac3d0c64fa66063be3f407.camel@redhat.com>
-Subject: Re: [PATCH net-next v10 11/14] tcp: RX path for devmem TCP
-From: Paolo Abeni <pabeni@redhat.com>
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Donald Hunter
- <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Richard
- Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>,  Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,  Shuah Khan
- <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Pavel Begunkov
- <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe
- <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand
- <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-Date: Tue, 04 Jun 2024 12:53:35 +0200
-In-Reply-To: <20240530201616.1316526-12-almasrymina@google.com>
-References: <20240530201616.1316526-1-almasrymina@google.com>
-	 <20240530201616.1316526-12-almasrymina@google.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1717498434; c=relaxed/simple;
+	bh=zIi+rQm13ErlIx/zeUByBpBclT5laiaNC0ssvXS+RKI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R6eWnv839oeUH9s9tFb7PZBz0Q3Xyz/yOCNfE1Uxy6/5GHE1slv52Yj8UdkGvdA2EXFh70MoEGIHF6xsjU8nErsK+XgCI4S7d5s4RKVO0mlOeF7ap9PR+Lt9xkI8xxHwAS+jVsPAlPy0zCvCNJkNNZoEPAgcjT21B0EahzPC4bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CtLwSL70; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454Arb7N104586;
+	Tue, 4 Jun 2024 05:53:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717498417;
+	bh=d3r0wLtyLKE2OgIyTtkCM29t6IlewSqA7H9LkkdsBPw=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=CtLwSL70keUHFBB50CFPyV9Xe97veEwA50r8GiS2g8ibyISqDgrThKS9IERvz/5Ui
+	 oNoNsbDrjjNuxt91C93nuS6iggmV1MQG9TKtzukpkENILf/5QDLj12f8O5We4iEhes
+	 U3p1G4b3SHuZHsbcgt2Na+cG3rH+ltMC0rDpColA=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454ArbZC033176
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 05:53:37 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 05:53:37 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 05:53:37 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454Arado075929;
+	Tue, 4 Jun 2024 05:53:36 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <dri-devel@lists.freedesktop.org>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <akpm@linux-foundation.org>,
+        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
+        <adobriyan@gmail.com>, <jani.nikula@intel.com>
+Subject: [PATCH v12 12/13] media: imagination: Round to closest multiple for cropping region
+Date: Tue, 4 Jun 2024 16:23:35 +0530
+Message-ID: <20240604105335.2257629-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240604104001.2235082-1-devarsht@ti.com>
+References: <20240604104001.2235082-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, 2024-05-30 at 20:16 +0000, Mina Almasry wrote:
-> @@ -2317,6 +2318,213 @@ static int tcp_inq_hint(struct sock *sk)
->  	return inq;
->  }
-> =20
-> +/* batch __xa_alloc() calls and reduce xa_lock()/xa_unlock() overhead. *=
-/
-> +struct tcp_xa_pool {
-> +	u8		max; /* max <=3D MAX_SKB_FRAGS */
-> +	u8		idx; /* idx <=3D max */
-> +	__u32		tokens[MAX_SKB_FRAGS];
-> +	netmem_ref	netmems[MAX_SKB_FRAGS];
-> +};
-> +
-> +static void tcp_xa_pool_commit(struct sock *sk, struct tcp_xa_pool *p,
-> +			       bool lock)
-> +{
-> +	int i;
-> +
-> +	if (!p->max)
-> +		return;
-> +	if (lock)
-> +		xa_lock_bh(&sk->sk_user_frags);
+If neither of the flags to round down (V4L2_SEL_FLAG_LE) or round up
+(V4L2_SEL_FLAG_GE) are specified by the user, then round to nearest
+multiple of requested value while updating the crop rectangle coordinates.
 
-The conditional lock here confuses sparse.
+Use the rounding macro which gives preference to rounding down in case two
+nearest values (high and low) are possible to raise the probability of
+cropping rectangle falling inside the bound region.
 
-I think you can avoid it providing a unlocked version (no need to check
-for '!p->max' the only caller wanting the unlocked version already
-performs such check) and a locked one, calling the other.
+This complies with the VIDIOC_G_SELECTION, VIDIOC_S_SELECTION ioctl
+description as documented in v4l uapi [1] which specifies that driver
+should choose crop rectangle as close as possible if no flags are passed by
+user-space, as quoted below :
 
-Cheers,
+"``0`` - The driver can adjust the rectangle size freely and shall choose a
+crop/compose rectangle as close as possible to the requested
+ one."
 
-Paolo
+Link: https://www.kernel.org/doc/Documentation/userspace-api/media/v4l/vidioc-g-selection.rst [1]
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+V12: No change
+V11: No change
+V10: No change
+V9:  No change
+V8:  Update commit message with specification reference
+V1->V7 (No change, patch introduced in V7)
+---
+ drivers/media/platform/imagination/e5010-jpeg-enc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/imagination/e5010-jpeg-enc.c b/drivers/media/platform/imagination/e5010-jpeg-enc.c
+index e701d573a26a..d65646f0c38c 100644
+--- a/drivers/media/platform/imagination/e5010-jpeg-enc.c
++++ b/drivers/media/platform/imagination/e5010-jpeg-enc.c
+@@ -517,10 +517,10 @@ static int e5010_s_selection(struct file *file, void *fh, struct v4l2_selection
+ 
+ 	switch (s->flags) {
+ 	case 0:
+-		s->r.width = round_down(s->r.width, queue->fmt->frmsize.step_width);
+-		s->r.height = round_down(s->r.height, queue->fmt->frmsize.step_height);
+-		s->r.left = round_down(s->r.left, queue->fmt->frmsize.step_width);
+-		s->r.top = round_down(s->r.top, 2);
++		s->r.width = round_closest_down(s->r.width, queue->fmt->frmsize.step_width);
++		s->r.height = round_closest_down(s->r.height, queue->fmt->frmsize.step_height);
++		s->r.left = round_closest_down(s->r.left, queue->fmt->frmsize.step_width);
++		s->r.top = round_closest_down(s->r.top, 2);
+ 
+ 		if (s->r.left + s->r.width > queue->width)
+ 			s->r.width = round_down(s->r.width + s->r.left - queue->width,
+-- 
+2.39.1
 
 
