@@ -1,210 +1,133 @@
-Return-Path: <linux-kernel+bounces-201170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18BB08FBA94
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:36:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF0A8FBA97
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A4B1F27E4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:36:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19ADA1C2161F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EB914A624;
-	Tue,  4 Jun 2024 17:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199F9149E01;
+	Tue,  4 Jun 2024 17:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IoxwzwXK"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CF5ZD1vl"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010F714A0AE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8D714A0AE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717522511; cv=none; b=sRSNGIOFFf+/GzCd++iOe7jhJ1499GPAGD/UWEJ3ZUAF5emrn3eWRJumXn4nZlN4jW+CChLmjpV1CwV/cvfM6AXMW/+Hn3NsQI8FQqcQaWbhM+SQs0KbQYusk9g8H6k66t36NJl96S2oy9rqdVpUSn2KHKcxY9K++lFb0XlIOeA=
+	t=1717522519; cv=none; b=C0uFUyEp06TXtoPqgkFkQ9Uo+f7feyJeMwRjC+ncwqSBoitAXxP/ylMrHPggnVlCEOJ8escwl9tHe43Ns+GKdHbVS5BX5Fjsn5L4YyW53CChDAb+QP0BIaCxTfh3+WjLQhaLDFTdusFW/RoG/jIaGzGDilhMlVNn0iXNOv61lso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717522511; c=relaxed/simple;
-	bh=NaVx3uI645FZo6SowLbCrdVh3hn49VjVzM7/DLBmF34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LgkmDC5pjJEUe/xdxL6YKGf+WpiTDEiXAuZEUaSA0CqHgqGOhWKyERHAFRKluNVSu0y5/uwjq92Z2wNkr+T6wszCh28LDWByYrvx4eU2aWmfp8WzLNCCccOR8ZCCdf8t8zcz0dH8FXAdNkOF/l2IMiGM0JHWokO4v4xu5UYsBJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IoxwzwXK; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a68ca4d6545so11811066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:35:09 -0700 (PDT)
+	s=arc-20240116; t=1717522519; c=relaxed/simple;
+	bh=lxElhNb6+LLAOwSRzJUjOlUE1gCjxcVourbCmwIjDc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lc+vlXvY3R3aItql1my6aHv0UK2KjSjpP4bGwuotKtsl+6zSt4CT/0Mhy+H0DPRLoIsZ9ezfsT2aH0oO2OT4UYSZe5q5vZplmkcWQfEfKFupvOuFHVC9E6bHJdbzfSDT9YJhRhIjBdOdYst9mBL2w5a0Oj54hp6I7Fnl+sUJuBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CF5ZD1vl; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso88184a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:35:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717522508; x=1718127308; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vCsbwFVhaLIbM7WR4Y1tBA9sw9ajFsgDjNJvygL98eI=;
-        b=IoxwzwXKJxmKyiiF64397xpa3gsIAjWEL5Yr55gOL/+tXkfBxrHz4sAwuPXfZFsn83
-         5wfbo0lu7U/EQPirsZakQ07OijYjLgUzsruWejCtfr9hpwf1ZBoCx8QtdcdnIeK+XlLw
-         C63WcK/FIHGnGKqZHn2XYhz/bZqG3FN35KI9bmIYoaXgwU24Blwmb8lXPd95WxrPKecX
-         hgkevmH0RFRQOos66VgCu1ujas901Zi5vGBG2rhQFGOg8beFfIRPQGnmsFG0NG79LWvD
-         2vxxDGe8bvRcTBodFd7P0ifSELv+Uo3e/z7ZQHvSg0g2G3qmmDTcw/9nEI5OadGFLYJl
-         LnvA==
+        d=gmail.com; s=20230601; t=1717522516; x=1718127316; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QnqJOAf1Q2Nckvls20fL4xWcgC3Wkf+wvlijKAtyrII=;
+        b=CF5ZD1vlubTegKWW+/xN5r+Y2tslC6HWVC2vtr+PfuHO6GZvA3FX/iLbFoN6vn2n9P
+         dlt2z5DF2dWE4CUoRv8BJ608mscTyREWTs6MB3ML0akgWcFL5B5ZNsG2Q4nbrqlVq2yE
+         ZWj0WMg6C+yRcEQcnp9jxDRuvcEucE4339p0FhKg2xT5YH32yA/eo0xN9stpF+Jl4WzT
+         IT+8bpNjxCxG79Bt45g9O2lxtMKDZn/JvYaqR6dQrJKIolz5pXjDu+GzOt//Kf+HcIPd
+         YwgAunk37OmZgrb62fC3vHlW5eyNEUQ020Urd20AlWbo17RJdR7+wvjttokvpsg34r3I
+         9FLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717522508; x=1718127308;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vCsbwFVhaLIbM7WR4Y1tBA9sw9ajFsgDjNJvygL98eI=;
-        b=ANSAwKGIMWF8TcIqAw3lGAHm+uWK58TkHppM5Gs9AggThfGOEGHOkjIbjuK1dElFzK
-         /U38rku6sx3Pc4Gw2LtINtVJdJPbERypRFsUZOdsodANbvKMrsRccgr+PbTe+a5WWvtG
-         qUYrCK4uJFxUVj8hwUaro5xAbtj44R8yjxc+1TSUbV0q4bMt6KV2++3O3gBOA4R3vUN6
-         z/tsSJeYpXvpcNk5laIe56PhBpd3Xwz5KcL6b0pjxHI3APoPdhJyqxSbZskbMxWFdS7U
-         tmuLqS8JLthC+Gnf+cBkd+nBW4xDI9JdknAf3i8a/r1TFbc7XSjIdTJa/A8AqGwvKGmd
-         gVyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKsIPtNNKQ9NBxhDvDvxvFGoOBAemqxlK0FqV59FPOyL6wRn9MIhuBJtyUHTfSDGP8DkMvpPyUZZn+45IacgWpUjEeXuIa0bxb0k1b
-X-Gm-Message-State: AOJu0Yx4+tXFhjlAfRoJwF8mkQMSuVmHpnM1jtRiqfzqaqRQZoUdvkMS
-	4U97OswT4D22vvpnX4SVzZkcE/5hcWGiLWHDydg24CiQ+v3xnR/rvSRytHhk06s=
-X-Google-Smtp-Source: AGHT+IEjcOF9+M6MP95PhiB5Ty/rvfO3P6Z5ngoFQ7Ttj8s1F/LJ0uoAhwyd0wUEzTYOq5frGLeA+A==
-X-Received: by 2002:a17:906:6951:b0:a68:fe44:91f7 with SMTP id a640c23a62f3a-a6954bb13bfmr237231866b.31.1717522508091;
-        Tue, 04 Jun 2024 10:35:08 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:909a:a11e:b2c0:1360:9a97:b2b8? ([2a00:f41:909a:a11e:b2c0:1360:9a97:b2b8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a685b935b5csm614209666b.206.2024.06.04.10.35.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 10:35:07 -0700 (PDT)
-Message-ID: <5ff40fba-e45a-4a5c-b5a7-7ef5a799a008@linaro.org>
-Date: Tue, 4 Jun 2024 19:35:04 +0200
+        d=1e100.net; s=20230601; t=1717522516; x=1718127316;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QnqJOAf1Q2Nckvls20fL4xWcgC3Wkf+wvlijKAtyrII=;
+        b=GWvOZhondwlR3H2N9HjRbdJQYkC4crqkm/UiT5K6EYH6+a6eDHCexDOahoG0ulTXyY
+         vr7Y0xBEXGkVZJitdRhryyqKXeD2ux+hr3NUQpGgJvJyilXyd1qiWn0a0ilSEOSCoJCi
+         3JTxqugPanYi5JououkhQZY7ujTyq3xUMokOiWpxgNO/4mwg4qquHaV02EFm0A/xK0t8
+         t6k/fLye/M91tMIi8AHjxzmfzoinZBA37rZYwbwUZvjD7JMzRXgdhf5oa1njWSJeffk5
+         IsWEc66MIkuVKwPziLS1WrmB1gMP6h8Iw30PmDQTeV+NtXRTNsXmVi+NEVXbBu4wiqHG
+         Xdhg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuCkrlTHi70As2Kr/nSX8K/7qZ+F9MyIRPMHBULJgHOiDAywEMCNB/aFtSkMZmAKxOB2DuZl0bFC4olos8UUH77qSJ9k6i9VuY++p/
+X-Gm-Message-State: AOJu0YxuJL37QLp/hvUz2xhK9eyO+ErRSWlOY5oZmTqoOz/w/SuAmgJX
+	sqJVraGoreYSL9noq/G58fKVeGaIFOXRf77aZHTK/Uttiwuxn4xqoxmZKXdtF5FqtwPsntoG5QP
+	Wx5CHLjv2Pej2F6//sQHpY/xgjvc=
+X-Google-Smtp-Source: AGHT+IHXpNuf2BcjrXTd+QUegb227fWnqENFLc7DunocDDJ5GF80C+wRoVoBVJRNKJ8qmzJC/IrELCqiSRzMfhrbbvQ=
+X-Received: by 2002:a50:a414:0:b0:579:c37c:1b36 with SMTP id
+ 4fb4d7f45d1cf-57a8bcc896emr242557a12.17.1717522515985; Tue, 04 Jun 2024
+ 10:35:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Clark <robdclark@chromium.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
- <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <ZlpcRnuZUEYJJ0JA@x1n> <CAHbLzkrRw-xf819gYJwRQ=-u971LQYnB2FNJMkN=s6u-pJ4Z8g@mail.gmail.com>
+ <CAHbLzkoB+oFTxtVYpeXQvko2q9HUVzUYrr83S6M6PUmXDQpkag@mail.gmail.com>
+ <0edfcfed-e8c4-4c46-bbce-528c07084792@redhat.com> <Zl3cakfiRsPQDb8q@x1n>
+ <8da12503-839d-459f-a2fa-4abd6d21935d@redhat.com> <Zl4m-sAhZknHOHdb@x1n>
+ <9d9a5730-161b-4a9d-a696-1cf6d0c5123c@redhat.com> <Zl4vlGJsbHiahYil@x1n>
+ <54ce029f-b16f-4607-bdf1-a1efe904029a@redhat.com> <821cf1d6-92b9-4ac4-bacc-d8f2364ac14f@paulmck-laptop>
+In-Reply-To: <821cf1d6-92b9-4ac4-bacc-d8f2364ac14f@paulmck-laptop>
+From: Yang Shi <shy828301@gmail.com>
+Date: Tue, 4 Jun 2024 10:35:04 -0700
+Message-ID: <CAHbLzkpuZx7cHoY6vLyetJ9T+KJrTKi1vt=wFv8YMhab7awDxQ@mail.gmail.com>
+Subject: Re: [linus:master] [mm] efa7df3e3b: kernel_BUG_at_include/linux/page_ref.h
+To: paulmck@kernel.org
+Cc: David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, 
+	kernel test robot <oliver.sang@intel.com>, Jason Gunthorpe <jgg@nvidia.com>, 
+	Vivek Kasireddy <vivek.kasireddy@intel.com>, Rik van Riel <riel@surriel.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Christopher Lameter <cl@linux.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
+> >
+> > I chased it further to:
+> >
+> > commit 8375ad98cc1defc36adf4a77d9ea1e71db51a371
+> > Author: Paul E. McKenney <paulmck@kernel.org>
+> > Date:   Mon Apr 29 15:06:13 2013 -0700
+> >
+> >     vm: adjust ifdef for TINY_RCU
+> >     There is an ifdef in page_cache_get_speculative() that checks for !SMP
+> >     and TREE_RCU, which has been an impossible combination since the advent
+> >     of TINY_RCU.  The ifdef enables a fastpath that is valid when preemption
+> >     is disabled by rcu_read_lock() in UP systems, which is the case when
+> >     TINY_RCU is enabled.  This commit therefore adjusts the ifdef to
+> >     generate the fastpath when TINY_RCU is enabled.
+> >
+> >
+> > Where Paul explicitly restored that fastpath for TINY_RCU instead of removing that code.
+> >
+> > So maybe Paul can comment if that is still worth having. CCing him.
+>
+> It is currently an atomic operation either way, though the folio_ref_add()
+> avoids full ordering, but that is immaterial on x86.  Some say that it is
+> in the noise on server-class ARMv8 as well, though they have also said
+> a great many things in the past.  But if that is true, the big benefit
+> of the TINY_RCU check is that folio_ref_try_add_rcu() is guaranted not
+> to fail in that case (single CPU with preemption disabled).  Except that
+> everyone has to check the return value anyway, right?
+>
+> So the usual advice, unsatisfying though it might be, is to remove that
+> #ifdef and see if anyone notices.
+>
+> After all, both 2013 and 2008 were quite some time ago.  ;-)
 
+Thanks, Paul.
 
-On 5/14/24 20:38, Akhil P Oommen wrote:
-> On Wed, May 08, 2024 at 07:46:31PM +0200, Konrad Dybcio wrote:
->> Memory barriers help ensure instruction ordering, NOT time and order
->> of actual write arrival at other observers (e.g. memory-mapped IP).
->> On architectures employing weak memory ordering, the latter can be a
->> giant pain point, and it has been as part of this driver.
->>
->> Moreover, the gpu_/gmu_ accessors already use non-relaxed versions of
->> readl/writel, which include r/w (respectively) barriers.
->>
->> Replace the barriers with a readback that ensures the previous writes
->> have exited the write buffer (as the CPU must flush the write to the
->> register it's trying to read back) and subsequently remove the hack
->> introduced in commit b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt
->> status in hw_init").
->>
->> Fixes: b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt status in hw_init")
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
->>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c |  5 ++---
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 ++++----------
->>   2 files changed, 6 insertions(+), 13 deletions(-)
-> 
-> I prefer this version compared to the v2. A helper routine is
-> unnecessary here because:
-> 1. there are very few scenarios where we have to read back the same
-> register.
-> 2. we may accidently readback a write only register.
+I will submit a patch to remove the #ifdef as the fix for the bug
+report. And do the clean up in a separate patch which is preferred by
+David.
 
-Which would still trigger an address dependency on the CPU, no?
-
-> 
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> index 0e3dfd4c2bc8..4135a53b55a7 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> @@ -466,9 +466,8 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
->>   	int ret;
->>   	u32 val;
->>   
->> -	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1 << 1);
->> -	/* Wait for the register to finish posting */
->> -	wmb();
->> +	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
->> +	gmu_read(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ);
-> 
-> This is unnecessary because we are polling on a register on the same port below. But I think we
-> can replace "wmb()" above with "mb()" to avoid reordering between read
-> and write IO instructions.
-
-Ok on the dropping readback part
-
-+ AFAIU from Will's response, we can drop the barrier as well
-
-> 
->>   
->>   	ret = gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
->>   		val & (1 << 1), 100, 10000);
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> index 973872ad0474..0acbc38b8e70 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->> @@ -1713,22 +1713,16 @@ static int hw_init(struct msm_gpu *gpu)
->>   	}
->>   
->>   	/* Clear GBIF halt in case GX domain was not collapsed */
->> +	gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-> 
-> We need a full barrier here to avoid reordering. Also, lets add a
-> comment about why we are doing this odd looking sequence.
-> 
->> +	gpu_read(gpu, REG_A6XX_GBIF_HALT);
->>   	if (adreno_is_a619_holi(adreno_gpu)) {
->> -		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
->>   		gpu_write(gpu, REG_A6XX_RBBM_GPR0_CNTL, 0);
->> -		/* Let's make extra sure that the GPU can access the memory.. */
->> -		mb();
-> 
-> We need a full barrier here.
-> 
->> +		gpu_read(gpu, REG_A6XX_RBBM_GPR0_CNTL);
->>   	} else if (a6xx_has_gbif(adreno_gpu)) {
->> -		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
->>   		gpu_write(gpu, REG_A6XX_RBBM_GBIF_HALT, 0);
->> -		/* Let's make extra sure that the GPU can access the memory.. */
->> -		mb();
-> 
-> We need a full barrier here.
-
-Not sure we do between REG_A6XX_GBIF_HALT & REG_A6XX_RBBM_(GBIF_HALT/GPR0_CNTL),
-but I suppose keeping the one after REG_A6XX_RBBM_(GBIF_HALT/GPR0_CNTL) makes
-sense to avoid the possibility of configuring the GPU before it can access DRAM..
-
-> 
->> +		gpu_read(gpu, REG_A6XX_RBBM_GBIF_HALT);
->>   	}
->>   
->> -	/* Some GPUs are stubborn and take their sweet time to unhalt GBIF! */
->> -	if (adreno_is_a7xx(adreno_gpu) && a6xx_has_gbif(adreno_gpu))
->> -		spin_until(!gpu_read(gpu, REG_A6XX_GBIF_HALT_ACK));
->> -
-> 
-> Why is this removed?
-
-Because it was a hack in the first place and the enforcement of GBIF
-unhalt requests coming through before proceeding further removes the
-necessity to check this (unless there's some hw-mandated delay we should
-keep in mind, but kgsl doesn't have that and there doesn't seem to be
-any from testing on 8[456]50).
-
-Konrad
+>
+>                                                         Thanx, Paul
 
