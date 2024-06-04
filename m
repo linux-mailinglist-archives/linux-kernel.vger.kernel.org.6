@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-201395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD1A8FBDFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:23:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E688FBDFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2585AB24690
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A5A1F224FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12FC14D296;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0286E14C592;
 	Tue,  4 Jun 2024 21:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TcP+bXez"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IJnTxOZx"
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847ED84E1C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 21:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07DC143751
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 21:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717536179; cv=none; b=J2uGVQ7s9nnWL6E8JR5m7IpOtjGNvsTnIM5nXS1pU+p2pJiHU7vNj0D753sCQX4gbo+jm7gCWTq8Ky22MIeALMnYSv/Cem3Qs8DbIgZ/XYQ8UyK3+iaza3DxgjiqwwfSiryHN3V2q0SYVZlptfHWLhE5PbqdIu1oSZ4RHAjb/z8=
+	t=1717536178; cv=none; b=bsZRyC+9ultteakw8QJmUxCzP1YRnCrgRr0aKZCAewnO9WfMNGU7LIn8EI5IzN7EH5ksoSCPeg9lzOBvajEQxwzOAdj276sjbvYJpsgMf8bpUMxR9P1xsb+E2mCy3HIqlcKuDTZc6GSVdIxXPpiAAtvlChvxOCVGGa88lkSlmag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717536179; c=relaxed/simple;
-	bh=fmVvY+JNZpsEx1YEUwXw+sagzKkVZJYhIwWRBRO3PPQ=;
+	s=arc-20240116; t=1717536178; c=relaxed/simple;
+	bh=DFk9HGUZ1dn/QPKuOhev6jWzX0n9LtYQ4BOE0bxA2m0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b97TDRnhVE3ln0HhbLi3EP6+EwRv0776EROrvk7bGPoHWwWOfcWAViCAj3OjxsHN4vVwqkEapnHOfQSEgRlICqU1ky9P3kS/WOA8yiCfza1XEvPPbLkbG8LDILWV525OVipHRpRds4/VcR6kwRx7oQVh7h7yQ2qChNwr6F4l+AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TcP+bXez; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=MyPtBx8vXlQQzozW9ab6CKO1WXA7bt1A383Ni6emJEERJME/mEwaw3qgMDjc44OtX64QMDblEbiSN0ZHyuOy83cxR44g36eMf3yECtJRTQDVLEvQmh98vNcxIYakpnTxntR2m9ECxEwn2/P0jotpCSx4sWrPF7B2efrBzUfXtN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IJnTxOZx; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=ipB+dIDL7p2Y85aj9rGKHn6fFGIdgaCRl3bJhyD9eCA=; b=TcP+bX
-	ez/Q27NRvYItnMWHJ64kQB3dT7Kil81i4X3R82XMbuQl+4obYVBWUqNYbqZ+LW1V
-	KV8G6LRRSIEQiv6iX+PUsxlzeY/DrqTRDKyVvrdPDhp9jSHm7Wtxq7X5hPek74B7
-	ClUqB2P69JBFpAfgMd5Qq5XsIGo+ErZkCBmWSa9a6tmH3tpA8nm1rqc+UNw/EpQr
-	/U35lm4ivT27EjDdy6tVa1bgKat9bi/6sxDNbmNPLn586m3kKLbX4yw7G2MPwgG7
-	vl/zM1SZWi3NicDVp2htNvegPpqX1K2evo7+ZrDztgTyqgfPcGB+xC+h6Rcd7vji
-	e2KSqyBDGVOCaHaA==
-Received: (qmail 2449471 invoked from network); 4 Jun 2024 23:22:52 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2024 23:22:52 +0200
-X-UD-Smtp-Session: l3s3148p1@ILFzDRcaNN1ehhtB
+	 s=k1; bh=SvCvXJcfmWPlEV++5++kUpd9aH8wU2Nv8Sax1bHiMk4=; b=IJnTxO
+	ZxydCmYTevZlBfAC4WX1PuEaCHF8XzKFu58gmnWJ1dclq1I7h5yp37li+TN9TKM+
+	LQsbWHb6w2UbgCjSTEC3D/inuEM1/U2xT+A7unEraQpBfkc/DmBXmVVWlxT+aV8v
+	4c4qdQ+4HVn3gSoxtDnURjEnWI86YrfJbIifHJgBfmp3RcX6IgwXUWlpTqgbD4Ck
+	FPy2rekP3vsUjvlQJe3mDvE7QRtCh63ha09jdrFEcnEu2Cbw7hDzzouxCeWt0MOa
+	2slaZQiDfejiyyDpwD0oXlTIRMul1PR/VGxTkewjYpezQiiWTO6lebD5R9kbZiJE
+	epX1nzBUQHGlVUQA==
+Received: (qmail 2449499 invoked from network); 4 Jun 2024 23:22:53 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2024 23:22:53 +0200
+X-UD-Smtp-Session: l3s3148p1@dC9/DRcaRN1ehhtB
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Alex Dubov <oakad@yahoo.com>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 3/4] misc: tifm: use 'time_left' variable with wait_for_completion_timeout()
-Date: Tue,  4 Jun 2024 23:22:38 +0200
-Message-ID: <20240604212240.4529-4-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 4/4] misc: ti-st: st_kim: use 'time_left' variable with wait_for_completion_interruptible_timeout()
+Date: Tue,  4 Jun 2024 23:22:39 +0200
+Message-ID: <20240604212240.4529-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240604212240.4529-1-wsa+renesas@sang-engineering.com>
 References: <20240604212240.4529-1-wsa+renesas@sang-engineering.com>
@@ -64,9 +63,9 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 There is a confusing pattern in the kernel to use a variable named 'timeout' to
-store the result of wait_for_completion_timeout() causing patterns like:
+store the result of wait_for_completion_interruptible_timeout() causing patterns like:
 
-	timeout = wait_for_completion_timeout(...)
+	timeout = wait_for_completion_interruptible_timeout(...)
 	if (!timeout) return -ETIMEDOUT;
 
 with all kinds of permutations. Use 'time_left' as a variable to make the code
@@ -74,33 +73,37 @@ self explaining.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/misc/tifm_7xx1.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/misc/ti-st/st_kim.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/tifm_7xx1.c b/drivers/misc/tifm_7xx1.c
-index 7dd86a9858ab..1d54680d6ed2 100644
---- a/drivers/misc/tifm_7xx1.c
-+++ b/drivers/misc/tifm_7xx1.c
-@@ -229,7 +229,7 @@ static int __maybe_unused tifm_7xx1_resume(struct device *dev_d)
- 	struct pci_dev *dev = to_pci_dev(dev_d);
- 	struct tifm_adapter *fm = pci_get_drvdata(dev);
- 	int rc;
--	unsigned long timeout;
-+	unsigned long time_left;
- 	unsigned int good_sockets = 0, bad_sockets = 0;
- 	unsigned long flags;
- 	/* Maximum number of entries is 4 */
-@@ -265,8 +265,8 @@ static int __maybe_unused tifm_7xx1_resume(struct device *dev_d)
- 	if (good_sockets) {
- 		fm->finish_me = &finish_resume;
- 		spin_unlock_irqrestore(&fm->lock, flags);
--		timeout = wait_for_completion_timeout(&finish_resume, HZ);
--		dev_dbg(&dev->dev, "wait returned %lu\n", timeout);
-+		time_left = wait_for_completion_timeout(&finish_resume, HZ);
-+		dev_dbg(&dev->dev, "wait returned %lu\n", time_left);
- 		writel(TIFM_IRQ_FIFOMASK(good_sockets)
- 		       | TIFM_IRQ_CARDMASK(good_sockets),
- 		       fm->addr + FM_CLEAR_INTERRUPT_ENABLE);
+diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
+index c4f963cf96f2..ff172cf4614d 100644
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -198,7 +198,7 @@ static long read_local_version(struct kim_data_s *kim_gdata, char *bts_scr_name)
+ {
+ 	unsigned short version = 0, chip = 0, min_ver = 0, maj_ver = 0;
+ 	static const char read_ver_cmd[] = { 0x01, 0x01, 0x10, 0x00 };
+-	long timeout;
++	long time_left;
+ 
+ 	pr_debug("%s", __func__);
+ 
+@@ -208,11 +208,11 @@ static long read_local_version(struct kim_data_s *kim_gdata, char *bts_scr_name)
+ 		return -EIO;
+ 	}
+ 
+-	timeout = wait_for_completion_interruptible_timeout(
++	time_left = wait_for_completion_interruptible_timeout(
+ 		&kim_gdata->kim_rcvd, msecs_to_jiffies(CMD_RESP_TIME));
+-	if (timeout <= 0) {
++	if (time_left <= 0) {
+ 		pr_err(" waiting for ver info- timed out or received signal");
+-		return timeout ? -ERESTARTSYS : -ETIMEDOUT;
++		return time_left ? -ERESTARTSYS : -ETIMEDOUT;
+ 	}
+ 	reinit_completion(&kim_gdata->kim_rcvd);
+ 	/*
 -- 
 2.43.0
 
