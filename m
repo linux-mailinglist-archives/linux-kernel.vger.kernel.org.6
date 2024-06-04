@@ -1,160 +1,134 @@
-Return-Path: <linux-kernel+bounces-201117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4678FB9C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3EC8FB9CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B6581F23776
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:03:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687791F23612
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC5E1494DB;
-	Tue,  4 Jun 2024 17:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k+ujUwTU"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B6E4A11
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA3A149C53;
+	Tue,  4 Jun 2024 17:04:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0BE148820;
+	Tue,  4 Jun 2024 17:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717520592; cv=none; b=XWpzEAFIxSZmvBwkOwQ/BPk6stpyw1qsrc5J8g8D/jiUQejHrZyl9Z2cso0RTiuTV26rBrqTfdj/5W9pjQgKNxY0n2YsJKtxAfkxcrRlCY4Yt9FybMZA9mgukOgAYROTrejeMi5ddrRXmLWBf8CMW6vesDe/7kUpIJzpWYvHv+E=
+	t=1717520681; cv=none; b=r8bqTlEBFKhzSSXM8AZkYrPxj5ovu/40viMo8/Oiwt/PPGa4KchaLg60ZCclPpnd/tppmKGYeVycD9FnM4uG1J4DXXiwsVMTth0y/yHOIq0KDjDCVk3u3LJFVlpBerz6YITnznKwGXSM1rBsKn+xMX38h2rhYN0qpLzDo1eFlkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717520592; c=relaxed/simple;
-	bh=fbN1yn1WXmD47S/yfZkaPl28JFLqrk+dTSapV7zB4iQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GP5wXZzxD5NsdYaohobZNzwYrgw1z260tUPRpfRVKuJHrkheo7wdfJzdgQoi839GBpI/cAj2unUHGFpA05sqrbvYcd3XX7d29Qx53P5+d52nufZLVqUTsKe/RmWGgQj/cnVgVieFpaGIH8Nw013lLanF8fXO10GqTRA7tJRxSEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k+ujUwTU; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a50fecbadso3851594a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717520589; x=1718125389; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vT4NRPNeixA+G6MuIymamVECCUZ9IQFLGyEaqSpBSHg=;
-        b=k+ujUwTUyHx0n4F2Rk414a49iZKZczaBvpvmjsA5urLP7xd6xBE3GqXFQmnUBbSxfA
-         pg8ANbcEZASEC73haS+g2SkLAO3E34tQLFHVzP9xsOoCnbOLWmoz7P2U9f9xc5qTLMLl
-         KtT2gwTMOb7fIf2NSvWzVJzaifVaz7VMPllge7z8D3mgULB1cIAp6pKoif7IdzfUdmm1
-         Kg2HNrcQWImk0wg2P9BRx5fW3HwfkjMVmbceReP1Jfo4nPJTW3ySHpjxATLW8GLDNvHc
-         vk2DJ3F8LFD7hNFFAcRgLzVF/uQnL/lSR+pnVA3ZwOUEht+ZaexnfNIoBkjNonvSnqLO
-         Zk+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717520589; x=1718125389;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vT4NRPNeixA+G6MuIymamVECCUZ9IQFLGyEaqSpBSHg=;
-        b=dn0vMOndxCkpqtruW0zshLoA/a0O2RozvY5rlDDqnj6Oqu2hzysiLQTHU4WXvPdUp8
-         5O35o6qZcJVRUhDUzCaNvOcgfMg6/D8nGhhvT9TL0GdxTgZ0Zo9SElKr4OlDJB234vsz
-         EUZNGA5/nGI8H6CgAHXi834c9URLlXGRRRpPGHeP+WtagAOC6bibNXlhntP1RyIYEEY2
-         endG/78j+w0Jq2UriLjgZdY6YRiMSBngq6tu+pnazlCDEN8PZ8J6ZKp49pDX/YI0rSG8
-         OOozEvkYzZE0bCfYa6A2eDBU8biZ2U7mkLbNb+ZDmh6iphsiZ+7DHZV7ygGdP9nPm9uJ
-         ml7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSVaKQc2CEhiNGh8ZyFnehiRty7bXEIVJX+G2NDoJRsKL0o4bjatkEg40HRVyaWqkEagVpncKL4lISaJIbBWty+N4sme1QxGoPxuZm
-X-Gm-Message-State: AOJu0YwkxlRyXQHJrS3TfjUypj1j3fFc8BCrO4D40JtkvOpT4kJJGml9
-	xLq5e29tQGlDCW8mF1dHcBSl8HQtkl+V3Hcu67K2DCCzofQTbi9vEZY/q5Q2DDM=
-X-Google-Smtp-Source: AGHT+IEgWg2pjUKwHDa6bycaIJ0McqADKPUWZ9CMQ7XIFyoVyQxXnFBcVvb3dOZX9DbeyDkuE6usRA==
-X-Received: by 2002:a50:8e07:0:b0:579:c393:82ad with SMTP id 4fb4d7f45d1cf-57a8bca2eabmr121356a12.30.1717520588716;
-        Tue, 04 Jun 2024 10:03:08 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:909a:a11e:b2c0:1360:9a97:b2b8? ([2a00:f41:909a:a11e:b2c0:1360:9a97:b2b8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31be7c04sm7774939a12.58.2024.06.04.10.03.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 10:03:08 -0700 (PDT)
-Message-ID: <4a8a9984-efd4-4aaa-ba48-5ff6b641349c@linaro.org>
-Date: Tue, 4 Jun 2024 19:03:04 +0200
+	s=arc-20240116; t=1717520681; c=relaxed/simple;
+	bh=LJWf3QoCZ3rFmQ9GULoPGURQSMideMDjJ/XO70462sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RGJYTcz74XgEfSssw39Ku0oGib9go4QCtvpTyj8prFosoFlmQJ/5bsrxBS9F3bgVD8tIuIvZLITUbBt5noj7/w0lk+Vx84ZhkPRtYPfNo/+ZEZ6qp+DY9Gjutd+kleRBb6BQyrJ4B8QjpoCRTtj+7MmCCWpGKwuec2rTNS8ccaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F64C1042;
+	Tue,  4 Jun 2024 10:04:55 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 097E53F762;
+	Tue,  4 Jun 2024 10:04:27 -0700 (PDT)
+Date: Tue, 4 Jun 2024 18:04:22 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Florent Revest <revest@chromium.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH v3 00/27] function_graph: Allow multiple users for
+ function graph tracing
+Message-ID: <Zl9JFnzKGuUM10X2@J2N7QTR9R3>
+References: <20240603190704.663840775@goodmis.org>
+ <20240604081850.59267aa9@rorschach.local.home>
+ <Zl8oWNhkEPleJ3B_@J2N7QTR9R3>
+ <20240604123124.456d19cf@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/a6xx: Print SQE fw version
-To: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240604154846.500357-1-robdclark@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240604154846.500357-1-robdclark@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604123124.456d19cf@gandalf.local.home>
 
-
-
-On 6/4/24 17:48, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
+On Tue, Jun 04, 2024 at 12:31:24PM -0400, Steven Rostedt wrote:
+> On Tue, 4 Jun 2024 15:44:40 +0100
+> Mark Rutland <mark.rutland@arm.com> wrote:
 > 
-> Add the SQE fw version to dmesg and devcoredump.
+> > Hi Steve, Masami,
+> > 
+> > On Tue, Jun 04, 2024 at 08:18:50AM -0400, Steven Rostedt wrote:
+> > > 
+> > > Masami,
+> > > 
+> > > This series passed all my tests, are you comfortable with me pushing
+> > > them to linux-next?  
+> > 
+> > As a heads-up (and not to block pushing this into next), I just gave
+> > this a spin on arm64 atop v6.10-rc2, and running the selftests I see:
+> > 
+> > 	ftrace - function pid filters
+> > 	(instance)  ftrace - function pid filters
+> > 
+> > ... both go from [PASS] to [FAIL].
+> > 
+> > Everything else looks good -- I'll go dig into why that's happening.
+> > 
+> > It's possible that's just something odd with the filesystem I'm using
+> > (e.g. the wnership test failed because this lacks 'stat').
 > 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.c       | 32 +++++++++++++++++++--
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.h       |  1 +
->   drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c |  2 ++
->   3 files changed, 33 insertions(+), 2 deletions(-)
+> Thanks for the update. I could be something I missed in patch 13 that had
+> to put back the pid code.
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index 56bfb228808d..5a2a005003c8 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -665,6 +665,32 @@ static int a7xx_cp_init(struct msm_gpu *gpu)
->   	return a6xx_idle(gpu, ring) ? 0 : -EINVAL;
->   }
->   
-> +static uint32_t get_ucode_version(const uint32_t *data)
-> +{
-> +	uint32_t version;
-> +
-> +	/* NOTE: compared to kgsl, we've already stripped off the first dword: */
-> +	version = data[0];
-> +
-> +	if ((version & 0xf) != 0xa)
-> +		return version;
-> +
-> +	version &= ~0xfff;
-> +	return  version | ((data[2] & 0xfff000) >> 12);
+> There may have been something arch specific that I'm unaware about. I'll
+> look at that deeper.
 
-double space
+It looks like e are lines in the trace that it doesn't expect:
 
-Some GENMASKy defines w/ FIELD_GET would be nice here..
+	+ cat trace
+	+ grep -v ^#
+	+ grep 970
+	+ wc -l
+	+ count_pid=0
+	+ cat trace
+	+ grep -v ^#
+	+ grep -v 970
+	+ wc -l
+	+ count_other=3
+	+ [ 0 -eq 0 -o 3 -ne 0 ]
+	+ fail PID filtering not working?
 
-[...]
+... where we expect that count_other to be 0.
 
->   
-> +	DRM_DEV_INFO(&gpu->pdev->dev, "Have SQE version %03x\n", get_ucode_version(buf));
+I hacked in a 'cat trace' just before the 'fail' and that shows:
 
+	+ cat trace
+	# tracer: function_graph
+	#
+	# CPU  DURATION                  FUNCTION CALLS
+	# |     |   |                     |   |   |   |
+	 3) ! 143.685 us  |  kernel_clone();
+	 3) ! 127.055 us  |  kernel_clone();
+	 1) ! 127.170 us  |  kernel_clone();
+	 3) ! 126.840 us  |  kernel_clone();
 
-"SQE FW version: [...]" instead?
+I'm not sure if that's legitimate output the test is failing to account
+for or if that indicates a kernel-side issue.
 
-> +
->   	/* A7xx is safe! */
->   	if (adreno_is_a7xx(adreno_gpu) || adreno_is_a702(adreno_gpu))
->   		return true;
-> @@ -714,7 +742,7 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu *a6xx_gpu,
->   		}
->   
->   		DRM_DEV_ERROR(&gpu->pdev->dev,
-> -			"a630 SQE ucode is too old. Have version %x need at least %x\n",
-> +			"a630 SQE ucode is too old. Have version %03x need at least %03x\n",
->   			buf[0] & 0xfff, 0x190);
-
-This func should probably get updated to use the new getter too,
-getting rid of magic masks for e.g.
-
-if (FIELD_GET(SQE_FW_MINMAJ, ver) > 0x190)
-	foobarbaz
-
-Konrad
+Mark.
 
