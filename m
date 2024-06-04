@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-200182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD118FAC87
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:52:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1B58FAC8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A437CB2157E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88C91F22463
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092051420A0;
-	Tue,  4 Jun 2024 07:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33249142E7D;
+	Tue,  4 Jun 2024 07:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+XYvvT5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lmd+Glju"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6981411CA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B3D13FD9B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717487555; cv=none; b=WpgBq3iey6TrsnOO1bYUJTCPqK0A8qIYL2loCqW3a0krxnxN7YnYdgN3ILDHfiXcQq7TjoA9/KkSJclRfc4Gjy7l++4MYg5muHZpQZvHpQgCS7XKnFhG2+5HqfgekF5qN3j4KBFkFP8J2od/XBcvOJv+ftNNK0cpohiV8GyCjMU=
+	t=1717487556; cv=none; b=EMkNRDFqF1TEW458RCPMWz1tx/QCKWB/FmvgzU6VMg/zDkz0KO8AzHjCC12uItnYYz8bB8sw95Z0d2bPMZCKhVstTwwjLhOdHSW57kH3l7JtYn2Zyj0PDj++WS60h9ttNkWqCK8VjlnS7JW0cA3sbUtzTnGkqJ0ceP2crAVJHVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717487555; c=relaxed/simple;
-	bh=hi7PWtwphuTNKYoU1XS9MRhf81ClVkiQ1xJd4IkXUsg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H2fuReHtgAD2ByQy97DoWBS8D6F5XE52pKU0GrX8q8qWI8a2e2I5s5A0HEci913MCNJMK1/3xh1d93t0FMvGYLb3WaUgyIwfcg1T29Kcu5iGpW4ncSUWJCFjlfs40PnS6/svchnESeKIJuPj/m50+biLE1jfnIDvIQ2ZqllnP1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+XYvvT5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C508C4AF08;
-	Tue,  4 Jun 2024 07:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717487555;
-	bh=hi7PWtwphuTNKYoU1XS9MRhf81ClVkiQ1xJd4IkXUsg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E+XYvvT5XpJaP1NvyduzcIpGyiIREifzDW8WqTsMx0GDH02HpxMjUk3CSQeKZdFKd
-	 t6M3E9lDRO2KpOhZnl5YykJXmipfY+cUhmbRUZ3ODgSdU+KlyUJWU5cEsGSUQh3x1t
-	 9f2dZyUNLuVAi51/X6yolNV9BNrJwC3filbeBTn3uZqeJQe4I/W2pEwB1inZIc6CDK
-	 bR6VclVvYeys2vfTgdnwxf+4lbhXORPWyzBQY1rUvy4G8pUeYnSG8JbjFxkpMg6Cwh
-	 fr4htXNh5ciBZybh02rmJB23kcbTzmgQkanCtTOJTyKt4pqlSvvLN9w7IInp2WNuWJ
-	 x1LPpQnfVpmYQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sEOy9-000000005QT-3oXW;
-	Tue, 04 Jun 2024 09:52:33 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Sanyog Kale <sanyog.r.kale@intel.com>,
-	alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v2 4/4] soundwire: bus: drop redundant probe debug message
-Date: Tue,  4 Jun 2024 09:52:13 +0200
-Message-ID: <20240604075213.20815-5-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240604075213.20815-1-johan+linaro@kernel.org>
-References: <20240604075213.20815-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1717487556; c=relaxed/simple;
+	bh=7FwB3nh1ferhUN8F1AXZaJmUS/9xCv9OYccjoPM7BDg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AwPxK+PP0EAFpNoaRjWnjoQJobDLuJIVyhCwoEhk06AG7e2ma1m8WD35jrs37X4D1aJLnQqNm+tRssCDm//+87wxYY26CWO7pc0dJwO4JrnJ5oTHJDv0hCffSZjDJsSNP6fphAWxAaQ5Y/lV/3lSH/l8d9WNc0bAeurE0lNV8vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lmd+Glju; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=7FwB
+	3nh1ferhUN8F1AXZaJmUS/9xCv9OYccjoPM7BDg=; b=lmd+GljuCk2T/uoLtVq6
+	vdhfRilml3TuNPNpb3hfMvYkbP6WJR01wbk64BFCSOtOAS6RGDUGY62XGZj01Xmv
+	n5n0ttdRE1xjWA7c/sZICWiVhA9mzI4FgKfQgKNayR8tX1LVgTsIQ63EsYWLqDKV
+	ww0DIipdtvxt2W4v4P0lB+26ZnxV2tXmOlhMIXwrl9wMjKkOLaBKVR0e1fz3fY3I
+	oo5YknZEQlBtbsVgJfMY6Q9nY5OQPs3soST+kSKBcL8heiWUStJ28ZZQqwYD5X3d
+	DnaObnx6fvQHuzJ7sXzzfopgRZYTQwpuYUpsLn/4AsnHTuYoxiXE6BcUXPleGfdJ
+	aA==
+Received: (qmail 2210011 invoked from network); 4 Jun 2024 09:52:32 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2024 09:52:32 +0200
+X-UD-Smtp-Session: l3s3148p1@s/10uwsabN0gAwDPXzLGAH1eNELjOc3g
+Date: Tue, 4 Jun 2024 09:52:32 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Paul Menzel <pmenzel@molgen.mpg.de>, Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: smbus: Log (LP)DDR5 type specific unimplemented
+ message in `i2c_register_spd()`
+Message-ID: <pdxpacfmgmyqltigevalitf2q3tdty5nud3wdyjgmjfswwkmg7@vuwuirl3vpmz>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>, Paul Menzel <pmenzel@molgen.mpg.de>, 
+	Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240530183444.9312-2-pmenzel@molgen.mpg.de>
+ <66acde9a-b453-465d-8b44-2bfc2164cdbb@t-8ch.de>
+ <tdia472d4pow2osabef24y2ujkkquplfajxmmtk5pnxllsdxsz@wxzynz7llasr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oknbffertqzdv6fi"
+Content-Disposition: inline
+In-Reply-To: <tdia472d4pow2osabef24y2ujkkquplfajxmmtk5pnxllsdxsz@wxzynz7llasr>
 
-Drop the redundant probe debug message which is already provided by
-driver core. Whether probe succeeded can also be determined through
-sysfs.
 
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/soundwire/bus_type.c | 2 --
- 1 file changed, 2 deletions(-)
+--oknbffertqzdv6fi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
-index 43e732ca73c0..5b9b129badff 100644
---- a/drivers/soundwire/bus_type.c
-+++ b/drivers/soundwire/bus_type.c
-@@ -152,8 +152,6 @@ static int sdw_drv_probe(struct device *dev)
- 
- 	mutex_unlock(&slave->sdw_dev_lock);
- 
--	dev_dbg(dev, "probe complete\n");
--
- 	return 0;
- }
- 
--- 
-2.44.1
 
+> Sadly, no cigar yet, we need the EEPROM support.
+
+Things got better! This patch can be discarded then.
+
+https://lore.kernel.org/all/20240604040237.1064024-1-linux@roeck-us.net/
+
+
+--oknbffertqzdv6fi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZex8AACgkQFA3kzBSg
+KbZbuhAAmQmch08GVo3n/SoI8jV6HEZTyurA4gvdABpzHap9TLOgD67x027iddH7
+HOc5CGuzCK6Uyy8lHVDhIbpfucLgLVWdI+8TuNHHKpRJEuFmKMCP8Cv+vvjAsVeM
+LjgQ175SeiC145RTHtEGyBVOgJE9Sy9W/B8VONDJqqWPUMSBZiB6e0TXJh92ojyj
+HgKeKRgWqTk52W9C278W9Sb+yGlRniv8u+z4Bod2cX1gbBbagT3DBCw6e/LNgL50
+jQOJMayOjYjqkU+Vbxh+y7lhk51R2moI1YoGNdZgXTOVIYxWu4BmQF9j0rzuYlsv
+U+0+rDsQq365Mjbo/omS9BQP9B11reqlTLbZb5h022/lIi4LF2cMJMDvyzn7Z8/u
+vrA/a2g5TkR7DIFLgek73DbqXBAi1RcdNgg+WMQwxCetdtnyMTvee+VA9xeHfmnv
+KEY4Sq6TOqkOOTfbGIysrBnBe+cfEDymG0zKFYrsp523DYGT2+VW3S2kfETk9YVf
+kNA3wgkemA9scJE+E9q+5zuBp7TrPefCz4xxfxDksmbe8ZJT6uIudi1TVWG4g9L/
+4osKfPfMNMrhPX6W36C4LAVO3SKBOT+QmE8/XR9oaC9lkjyRyceaCaSY0eo7Y3ol
+Px5v9wfJSzA/URCohXhNxT1g9fAb+K9xUWiL0kXgreXTCDMxWUM=
+=ommU
+-----END PGP SIGNATURE-----
+
+--oknbffertqzdv6fi--
 
