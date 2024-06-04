@@ -1,203 +1,176 @@
-Return-Path: <linux-kernel+bounces-200128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44928FAB80
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:03:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797258FAB7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1031F24623
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:03:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E989BB21D91
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF17D13E05B;
-	Tue,  4 Jun 2024 07:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZU1RH9Lr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148AD13F45B;
+	Tue,  4 Jun 2024 07:01:38 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9BF136E26
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E242209B;
+	Tue,  4 Jun 2024 07:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717484593; cv=none; b=h+NsciQq2dLh8AOXmgnM7DtF9EAAYzlJZJG5SApOiDzcVwLyyy8gxChmiofIqmvIMX3cWS2jNf2HUsyaJTv0i11Eqwf44F6Oinjf7oosncfrR0CSsn9uOADe/+6fIRNkQ5raUpAEZhkVozlt6z2H0uyHi03MNCcL/lpI3W/xf3E=
+	t=1717484497; cv=none; b=VMQ29rNZ9W0tcpMo1KjUdrT0wCoVnwi6/Xp2HCBsMiPEYhr++/xs+ZBSWwU5BzYOQg7f2jif/2gi3winuy4MpGsSPTQLH9skz1KYZwVUFB6hTwou9V/S5CcfHt7U1bu5gCYkZ5v0J5AL7acWFJPrcQgt0yj9q8eA3ht2ndL++N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717484593; c=relaxed/simple;
-	bh=FmtZE0QDhnWtssc5nt4OLbqQeX0Q//9bpFfVcjIAA6Y=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JONMgPSSxOlHuNU+Kn2UV8NQsw6orNQJ5CetvPSmVkDe2olLpXcvXjl5Sbt0gWOFQtNpLnwbZePQOlDEJ6DoCg3WMaw1d4V+2ZjaABoAZTZcTcEGT7FmozDWLB7nxUJQooSg1A6/rXsqeGoF5HxevK4nPIRkExTNdHMlWfwMNNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZU1RH9Lr; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717484591; x=1749020591;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FmtZE0QDhnWtssc5nt4OLbqQeX0Q//9bpFfVcjIAA6Y=;
-  b=ZU1RH9LrtgwL0PV5gPp6YZ6UoLVJryBrGn84SqSVFE/EKi6aMcoDYDp1
-   bVRW/F6odawXf3ZRaaYMmhdOOPO3N/XoL3bJO6YLHTwQT++jce6vXLcYF
-   esbCL1xwaiNO7Y8xoUlwrptViGVpRtoC6hgNhBk9tz8+lEHApdiLQgVyo
-   WpwHS2t8RLS7t3E/DjB4NUPEtuYpjL6RO1eRR966R+Tsmio5DZcSgXN2X
-   3cTflyRQzk3lh2wIkZZL059u9ZB/nJ7lTkHHR4l/qiCXHpGrR6HY0djqd
-   0r5uepHBkHmU2QVJWVfJC5W4vm3TQzKJQ4VThf3PYrBaN3KPTaApvZZy/
-   g==;
-X-CSE-ConnectionGUID: fzu+52jaQMe5sYGqJgNAIA==
-X-CSE-MsgGUID: F6T1OCJDQmqPFmtUCmvx/A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17843703"
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="17843703"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 00:03:10 -0700
-X-CSE-ConnectionGUID: MRQ8mHfJTKyKyFvLEmuY2A==
-X-CSE-MsgGUID: VJWzSxe+RWeCmcJRzriSmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="37776292"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa007.jf.intel.com with ESMTP; 04 Jun 2024 00:03:08 -0700
-Message-ID: <74992544-de5d-40a3-a68d-7a9bcd03ae71@linux.intel.com>
-Date: Tue, 4 Jun 2024 15:01:00 +0800
+	s=arc-20240116; t=1717484497; c=relaxed/simple;
+	bh=PYwQcc4hO1AFYN/zQdNCGfsqlcAjCdxu5bhH8nLjHv0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QVujDSvBLXFvki4oV5Ho8+YqLVPpSKZGaSadAeqplflO7e1VPacuQ/Zrsbax1GVeST20NT78enrZIf46H8BPifKjwfcUtJx1DGhBoKHxOxNPtsky+KPyR5MQKPSC9y1gFS4PIz1+bS35lxBUQPXynHyzXodncip29avoPWMpDDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VthMg6H2hz4f3n6k;
+	Tue,  4 Jun 2024 15:01:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id ED10F1A0184;
+	Tue,  4 Jun 2024 15:01:30 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgAn9g7Ju15mYh0cOg--.37550S3;
+	Tue, 04 Jun 2024 15:01:30 +0800 (CST)
+Subject: Re: [PATCH -next] blk-wbt: don't throttle swap writes in direct
+ reclaim
+To: libaokun@huaweicloud.com, linux-block@vger.kernel.org
+Cc: axboe@kernel.dk, hch@infradead.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, houtao1@huawei.com, libaokun1@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240604030522.3686177-1-libaokun@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <8b17831e-0132-17af-7ec0-6e05057c3530@huaweicloud.com>
+Date: Tue, 4 Jun 2024 15:01:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] iommu/vt-d: Support batching IOTLB/dev-IOTLB
- invalidation commands
-To: "Zhang, Tina" <tina.zhang@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>
-References: <20240517003728.251115-1-tina.zhang@intel.com>
- <20240517003728.251115-2-tina.zhang@intel.com>
- <2b390228-190c-4508-b98f-1811c54c9e5c@linux.intel.com>
- <MW5PR11MB588165376224FEA74A0426D989FF2@MW5PR11MB5881.namprd11.prod.outlook.com>
- <7440cd36-41e0-4705-a597-f2ce3f841a70@linux.intel.com>
- <MW5PR11MB58814B632958A5776B6C31FF89F82@MW5PR11MB5881.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <MW5PR11MB58814B632958A5776B6C31FF89F82@MW5PR11MB5881.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20240604030522.3686177-1-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn9g7Ju15mYh0cOg--.37550S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFW8Xry5Kr48Cr45uw4Durg_yoW5uw47pr
+	43Kas0yFyqvFn7Xws7XayxX3yru3y8Jr43A345Kr1SvrW3Kr13WF4vkw1a9F4UAr97uw42
+	gF4Fyry7Jr4avaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
+	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrR6zUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 6/4/24 1:59 PM, Zhang, Tina wrote:
->> -----Original Message-----
->> From: Baolu Lu<baolu.lu@linux.intel.com>
->> Sent: Tuesday, June 4, 2024 9:15 AM
->> To: Zhang, Tina<tina.zhang@intel.com>; Tian, Kevin<kevin.tian@intel.com>
->> Cc:baolu.lu@linux.intel.com;iommu@lists.linux.dev; linux-
->> kernel@vger.kernel.org
->> Subject: Re: [PATCH 1/2] iommu/vt-d: Support batching IOTLB/dev-IOTLB
->> invalidation commands
->>
->> On 6/3/24 3:37 PM, Zhang, Tina wrote:
->>>> -----Original Message-----
->>>> From: Baolu Lu<baolu.lu@linux.intel.com>
->>>> Sent: Sunday, May 19, 2024 5:43 PM
->>>> To: Zhang, Tina<tina.zhang@intel.com>; Tian,
->>>> Kevin<kevin.tian@intel.com>
->>>> Cc:baolu.lu@linux.intel.com;iommu@lists.linux.dev; linux-
->>>> kernel@vger.kernel.org
->>>> Subject: Re: [PATCH 1/2] iommu/vt-d: Support batching IOTLB/dev-IOTLB
->>>> invalidation commands
->>>>
->>>> On 5/17/24 8:37 AM, Tina Zhang wrote:
->>>>> Introduce a new parameter batch_desc to the QI based IOTLB/dev-IOTLB
->>>>> invalidation operations to support batching invalidation descriptors.
->>>>> This batch_desc is a pointer to the descriptor entry in a batch cmds
->>>>> buffer. If the batch_desc is NULL, it indicates that batch
->>>>> submission is not being used, and descriptors will be submitted individually.
->>>>>
->>>>> Also fix an issue reported by checkpatch about "unsigned mask":
->>>>>            "Prefer 'unsigned int' to bare use of 'unsigned'"
->>>>>
->>>>> Signed-off-by: Tina Zhang<tina.zhang@intel.com>
->>>>> ---
->>>>>     drivers/iommu/intel/cache.c | 33 +++++++++++-------
->>>>>     drivers/iommu/intel/dmar.c  | 67 ++++++++++++++++++++-----------------
->>>>>     drivers/iommu/intel/iommu.c | 27 +++++++++------
->>>>>     drivers/iommu/intel/iommu.h | 21 ++++++++----
->>>>>     drivers/iommu/intel/pasid.c | 20 ++++++-----
->>>>>     5 files changed, 100 insertions(+), 68 deletions(-)
->>>>>
->>>>> diff --git a/drivers/iommu/intel/cache.c
->>>>> b/drivers/iommu/intel/cache.c index e8418cdd8331..dcf5e0e6af17
->>>>> 100644
->>>>> --- a/drivers/iommu/intel/cache.c
->>>>> +++ b/drivers/iommu/intel/cache.c
->>>>> @@ -278,7 +278,7 @@ void cache_tag_flush_range(struct dmar_domain
->>>> *domain, unsigned long start,
->>>>>     		case CACHE_TAG_NESTING_IOTLB:
->>>>>     			if (domain->use_first_level) {
->>>>>     				qi_flush_piotlb(iommu, tag->domain_id,
->>>>> -						tag->pasid, addr, pages, ih);
->>>>> +						tag->pasid, addr, pages, ih,
->>>> NULL);
->>>>>     			} else {
->>>> I'd like to have all batched descriptors code inside this file to
->>>> make it easier for maintenance. Perhaps we can add the below
->>>> infrastructure in the dmar_domain structure together with the cache tag.
->>> Does it suggest we need to add a batch version of
->> qi_flush_iotlb/qi_flush_dev_iotlb/qi_flush_piotlb/qi_flush_dev_iotlb_pasid() in
->> the cache.c file? It doesn't sound like an easy to maintain those functions, does
->> it?
->>
->> Yes. I don't think it's that difficult as the helpers just compose a qi descriptor and
->> insert it in a local queue. This local queue will be flushed after finishing iterating
->> all cache tags, or there's no room for more descriptors, or switches to a different
->> iommu. Have I missed anything?
-> In current VT-d driver, only qi_flush_xxx() functions have the knowledge about how to make IOTLB invalidation descriptors. In qi_flush_xxx() functions, VT-d invalidation descriptors are populated and submitted to hardware immediately.
+ÔÚ 2024/06/04 11:05, libaokun@huaweicloud.com Ð´µÀ:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> To support batching command, I think we can have two choices:
-> 1. Extend qi_flush_xxx() functions to support batching descriptors. (Just like the implementation in this version)
-> In this way, the knowledge of populating an IOTLB invalidation descriptor in qi_flush_xxx() is reused. Additional code change is for batching the descriptor command into a buffer.
+> Now we avoid throttling swap writes by determining whether the current
+> process is kswapd (aka current_is_kswapd()), but swap writes can come
+> from either kswapd or direct reclaim, so the swap writes from direct
+> reclaim will still be throttled.
 > 
-> 2. Introduce a new set of interfaces to populate IOTLB descriptors and batch them into a batch buffer.
-> The new set of interfaces is implemented in the cache.c file and we need to copy the knowledge about how to populate IOTLB descriptors from qi_flush_xxx() interfaces into the new interfaces. I hesitated to choose this option because it would duplicate code. Maybe we can generalize the knowledge of populating IOTLB descriptors into lower level interfaces and make the current qi_flush_xxx() and the new set of interfaces call them.
+> When a process holds a lock to allocate a free page, and enters direct
+> reclaim because there is no free memory, then it might trigger a hung
+> due to the wbt throttling that causes other processes to fail to get
+> the lock.
 > 
-> Which option do you think is better?
+> Both kswapd and direct reclaim set the REQ_SWAP flag, so use REQ_SWAP
+> instead of current_is_kswapd() to avoid throttling swap writes. Also
+> renamed WBT_KSWAPD to WBT_SWAP and WBT_RWQ_KSWAPD to WBT_RWQ_SWAP.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-We can share the common code without changing the current helper
-interfaces. Something like this,
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-static inline void qi_desc_iotlb(struct intel_iommu *iommu, u16 did, u64 
-addr,
-                                  unsigned int size_order, u64 type,
-                                  struct qi_desc *desc)
-{
-         u8 dw = 0, dr = 0;
-         int ih = 0;
+> ---
+>   block/blk-wbt.c | 18 +++++++++---------
+>   1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+> index 64472134dd26..aaacf2f5b223 100644
+> --- a/block/blk-wbt.c
+> +++ b/block/blk-wbt.c
+> @@ -37,7 +37,7 @@
+>   enum wbt_flags {
+>   	WBT_TRACKED		= 1,	/* write, tracked for throttling */
+>   	WBT_READ		= 2,	/* read */
+> -	WBT_KSWAPD		= 4,	/* write, from kswapd */
+> +	WBT_SWAP		= 4,	/* write, from swap_writepage() */
+>   	WBT_DISCARD		= 8,	/* discard */
+>   
+>   	WBT_NR_BITS		= 4,	/* number of bits */
+> @@ -45,7 +45,7 @@ enum wbt_flags {
+>   
+>   enum {
+>   	WBT_RWQ_BG		= 0,
+> -	WBT_RWQ_KSWAPD,
+> +	WBT_RWQ_SWAP,
+>   	WBT_RWQ_DISCARD,
+>   	WBT_NUM_RWQ,
+>   };
+> @@ -172,8 +172,8 @@ static bool wb_recent_wait(struct rq_wb *rwb)
+>   static inline struct rq_wait *get_rq_wait(struct rq_wb *rwb,
+>   					  enum wbt_flags wb_acct)
+>   {
+> -	if (wb_acct & WBT_KSWAPD)
+> -		return &rwb->rq_wait[WBT_RWQ_KSWAPD];
+> +	if (wb_acct & WBT_SWAP)
+> +		return &rwb->rq_wait[WBT_RWQ_SWAP];
+>   	else if (wb_acct & WBT_DISCARD)
+>   		return &rwb->rq_wait[WBT_RWQ_DISCARD];
+>   
+> @@ -528,7 +528,7 @@ static bool close_io(struct rq_wb *rwb)
+>   		time_before(now, rwb->last_comp + HZ / 10);
+>   }
+>   
+> -#define REQ_HIPRIO	(REQ_SYNC | REQ_META | REQ_PRIO)
+> +#define REQ_HIPRIO	(REQ_SYNC | REQ_META | REQ_PRIO | REQ_SWAP)
+>   
+>   static inline unsigned int get_limit(struct rq_wb *rwb, blk_opf_t opf)
+>   {
+> @@ -539,13 +539,13 @@ static inline unsigned int get_limit(struct rq_wb *rwb, blk_opf_t opf)
+>   
+>   	/*
+>   	 * At this point we know it's a buffered write. If this is
+> -	 * kswapd trying to free memory, or REQ_SYNC is set, then
+> +	 * swap trying to free memory, or REQ_SYNC is set, then
+>   	 * it's WB_SYNC_ALL writeback, and we'll use the max limit for
+>   	 * that. If the write is marked as a background write, then use
+>   	 * the idle limit, or go to normal if we haven't had competing
+>   	 * IO for a bit.
+>   	 */
+> -	if ((opf & REQ_HIPRIO) || wb_recent_wait(rwb) || current_is_kswapd())
+> +	if ((opf & REQ_HIPRIO) || wb_recent_wait(rwb))
+>   		limit = rwb->rq_depth.max_depth;
+>   	else if ((opf & REQ_BACKGROUND) || close_io(rwb)) {
+>   		/*
+> @@ -622,8 +622,8 @@ static enum wbt_flags bio_to_wbt_flags(struct rq_wb *rwb, struct bio *bio)
+>   	if (bio_op(bio) == REQ_OP_READ) {
+>   		flags = WBT_READ;
+>   	} else if (wbt_should_throttle(bio)) {
+> -		if (current_is_kswapd())
+> -			flags |= WBT_KSWAPD;
+> +		if (bio->bi_opf & REQ_SWAP)
+> +			flags |= WBT_SWAP;
+>   		if (bio_op(bio) == REQ_OP_DISCARD)
+>   			flags |= WBT_DISCARD;
+>   		flags |= WBT_TRACKED;
+> 
 
-         if (cap_write_drain(iommu->cap))
-                 dw = 1;
-
-         if (cap_read_drain(iommu->cap))
-                 dr = 1;
-
-         desc->qw0 = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) | QI_IOTLB_DW(dw)
-                 | QI_IOTLB_GRAN(type) | QI_IOTLB_TYPE;
-         desc->qw1 = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
-                 | QI_IOTLB_AM(size_order);
-         desc->qw2 = 0;
-         desc->qw3 = 0;
-}
-
-void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
-                     unsigned int size_order, u64 type)
-{
-         struct qi_desc desc;
-
-         qi_desc_iotlb(iommu, did, addr, size_order, type, &desc)
-         qi_submit_sync(iommu, &desc, 1, 0);
-}
-
-The qi_desc_iotlb() can be used in both batched and non-batched paths.
-Does this work for you?
-
-Best regards,
-baolu
 
