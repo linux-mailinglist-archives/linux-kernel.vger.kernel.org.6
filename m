@@ -1,145 +1,206 @@
-Return-Path: <linux-kernel+bounces-201077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B910F8FB901
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:31:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A01988FB905
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C001C21C0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2971F2376F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B259E1487DD;
-	Tue,  4 Jun 2024 16:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB841487CC;
+	Tue,  4 Jun 2024 16:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPcmO3Bx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gqXUki6x"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E446713A25B;
-	Tue,  4 Jun 2024 16:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AA3135A51
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518697; cv=none; b=S0QZCu99U/Kjt9JfniFL5De5kM2OHnlCy4BubgNa9Hdo0Sq18LsJC5OF2p4BmYdGijfofnUQAlsDTo3d1iYSjYR5JGOF9woTyNapA8Gfyou1BfwE5t2JH8XlP3Kl7R+sd6pXU3u7xGSr0eFr/V1VF+cmLXfXfAJ0fqgG9TALYz4=
+	t=1717518714; cv=none; b=iQqnOawdnaeSMwSqzbpijx9aZmuwGEBVbLIrBdqOo+T9GE96FnFmXM4ICz5+yOUSVJJHOhm/QxBie6CiA7+HAFOnmLIf5KKgZ2d4hMNc+NP8UMtsSwbD/bps6GerpgwJxVac/gV7At9L2uFLSathxXlCJaOph4J9kufiNyiAsMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518697; c=relaxed/simple;
-	bh=gx2z9MIvVzpD3fMjmYWHHK/bgF7kgmwdQt0O+eHtnPA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=mGJnSltQUs9EwuJDW+xoTjwVk1LYFWxMWZ8u9BvmU2U+yPgzkwweG1FmPos+Cz7ithlTd1jvJp3TDxKIaQswWJH2oVx//zdKIaaZefRR34V/s91QZ6Kf/whXKjPw1UFAJ041EbVTkgjSr4eFUQih/yQtNFqdvbQLSKQynzZttNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPcmO3Bx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F3C9C2BBFC;
-	Tue,  4 Jun 2024 16:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717518696;
-	bh=gx2z9MIvVzpD3fMjmYWHHK/bgF7kgmwdQt0O+eHtnPA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=qPcmO3Bxoyn5nW9FJUB4gxkjQpxX+6MmsVqL8SQ8jYONwGociecl8XCM1oZL7NnUQ
-	 DBsrr/5TLyue1SrorVFuOlrnnS2OIcUe5hu9mHCBgNBihvWPKweMj3B4IUq591MnMx
-	 W2CTYN+i50vr9Uc1+vHPPPt/huq1+i/r4zlImccg67nIRf5AajldRibrI7kbddohgW
-	 93LMSj80l9g7a7OctQgfzbiklUsN+338LZ8AGvPAc9a2gcOzHcnm+zosnM/8ynL/hW
-	 4tkEh80acprZXpbSuh3aEP7uAfsp+CVPXWSlMIpbiB/iUuEOj1CJEo2oWW9v9JQ29K
-	 BOQ4770sdIivg==
+	s=arc-20240116; t=1717518714; c=relaxed/simple;
+	bh=IDCFtXscME4uSG075kgF7PgMeKgAKevJIaJ+C5SFD5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mUWRJt+37z3Pd5RGY2tRq35ZVloH+QA+ZBa2Cbh7qPGuF92N8b82TFI74ukXnP4VvVfJhJDCUWcrVm50xKuiCzZeMMdQrHAdvkUDmrnALuyLsuuBFQKuUngxJC7bKeDX2L/1rHDQ6b9gqb5w2cai/jO6BOoQSooI1nXcwDrT/pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gqXUki6x; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dfab5f7e749so1381275276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717518711; x=1718123511; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9DPwzzySNOh5jKdiFXhLh5D+q0fux/GGS8qouK+GFc=;
+        b=gqXUki6xVmHl62ZBK6U6+i8r5bjeod5JQLzw4MXXWfSbPFSI/jlw9I7if96YZVQdhu
+         lwWQ9658N7PFIK43+rL3xWDvF2d/qYI8BVRvqfyRWE2VxsMo2QOTJz+SkxUugEKC9n3C
+         orDPtF81D2RxXPCwEroXSsa25CS3ulLP5Y0zLzoD0bF6Xm5OqrVywhHlN2cY8PvVeX+9
+         09ojV7t0Qf1lFJz0cTx1F9l64kf/WaO2BT7BdEoHUabIV2qnIS9s+p8j5zx9+TNPmDZb
+         oTN8ulWIcmJeDASG32EMMQPZl15tLci6Qc75F1Z1F1TsS1mxz6LlcFnlBYgl7HeJtQ68
+         Z4IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717518711; x=1718123511;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z9DPwzzySNOh5jKdiFXhLh5D+q0fux/GGS8qouK+GFc=;
+        b=ZSw6JgdyRvIWEHYWn8gmNNnAhEgC3Ds3+mv25lt4MMcLMtjK+ead6a/Wl9zsuIzg7X
+         U889VC1/qxSJ+rb6UHKrDVs08uzYmY4f9Q2IKp+hr6Qol5nEXDoPiWQZcHm16Gu1BRAy
+         gocgOX2fIEvtT4zndRUQrDFUyhqBr55DJp6rKz9xUxWtehAadQj2H4TJwnDCDily3znv
+         JmuSIbvDf6579m6mhsQNuY9UjY3Bw42PNr3OSgFDo+wiW/crfZwGQF9uxcSfhuujCDxT
+         AGm/uisEdv6cdTr65TFPplE8YaOVMiHJIIucM0OaZGmjDNh2jHBbVqFmcBs7HMPahFk1
+         6zTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqTKxkqT658EG9AUbwT/KxOgEumaEbXZq+4640PkEsS1+ZUg6k6gbMfeuk1mIWSAL2OKt+Unnw2n4p6Tt11ovsHpuafbuwmnmWMKWH
+X-Gm-Message-State: AOJu0YzOocuMmA2x70M6F8Allos9U4nRG3lgTmp8HsFZz1Gk7wu1ZcBR
+	envyk5Hl/EHqtomzwEvtDxPPXzZlTkFzubguAq8zJgq5Fr7k7FncPoJ+FYhAiaZHl7pwYvjoN7k
+	9KZGyNUOnryD3yOvANPX37m9lP0Z20iL7EFR6bw==
+X-Google-Smtp-Source: AGHT+IG9nfkGErWgX+Z7kHFPw4NIX7CtJVxIwkdUh4P9tSgvXArctZcIqdy++fD/2bNlzKiw1xHKgyYr+lpeKljr+WU=
+X-Received: by 2002:a25:d6d4:0:b0:df7:a75c:28e0 with SMTP id
+ 3f1490d57ef6-dfa73c40be0mr11980521276.36.1717518711395; Tue, 04 Jun 2024
+ 09:31:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 04 Jun 2024 19:31:33 +0300
-Message-Id: <D1RDKBAGB7DD.CML0Z8K8Z5KI@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <lukas@wunner.de>
-Subject: Re: [PATCH 1/2] crypto: ecdsa - Use ecc_digits_from_bytes to create
- hash digits array
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Stefan Berger" <stefanb@linux.ibm.com>, <keyrings@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <herbert@gondor.apana.org.au>,
- <davem@davemloft.net>
-X-Mailer: aerc 0.17.0
-References: <20240529230827.379111-1-stefanb@linux.ibm.com>
- <20240529230827.379111-2-stefanb@linux.ibm.com>
- <D1MQBJSYUBRS.12KH2S8FUK0XS@kernel.org>
- <899c3637-dc2a-4c73-9b8a-91e7b4da1638@linux.ibm.com>
-In-Reply-To: <899c3637-dc2a-4c73-9b8a-91e7b4da1638@linux.ibm.com>
+MIME-Version: 1.0
+References: <20240604154846.500357-1-robdclark@gmail.com>
+In-Reply-To: <20240604154846.500357-1-robdclark@gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 4 Jun 2024 19:31:40 +0300
+Message-ID: <CAA8EJpooN4gJMfBPam+iVS6rbYWgdk835UB4ruDBxLryHoOy5w@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/a6xx: Print SQE fw version
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu May 30, 2024 at 3:24 PM EEST, Stefan Berger wrote:
+On Tue, 4 Jun 2024 at 18:48, Rob Clark <robdclark@gmail.com> wrote:
 >
+> From: Rob Clark <robdclark@chromium.org>
 >
-> On 5/30/24 01:28, Jarkko Sakkinen wrote:
-> > On Thu May 30, 2024 at 2:08 AM EEST, Stefan Berger wrote:
-> >> Since ecc_digits_from_bytes will provide zeros when an insufficient nu=
-mber
-> >> of bytes are passed in the input byte array, use it to create the hash
-> >> digits directly from the input byte array. This avoids going through a=
-n
-> >> intermediate byte array (rawhash) that has the first few bytes filled =
-with
-> >> zeros.
-> >>
-> >> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> >> ---
-> >>   crypto/ecdsa.c | 17 ++++-------------
-> >>   1 file changed, 4 insertions(+), 13 deletions(-)
-> >>
-> >> diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
-> >> index 258fffbf623d..fa029f36110b 100644
-> >> --- a/crypto/ecdsa.c
-> >> +++ b/crypto/ecdsa.c
-> >> @@ -142,10 +142,8 @@ static int ecdsa_verify(struct akcipher_request *=
-req)
-> >>   	struct ecdsa_signature_ctx sig_ctx =3D {
-> >>   		.curve =3D ctx->curve,
-> >>   	};
-> >> -	u8 rawhash[ECC_MAX_BYTES];
-> >>   	u64 hash[ECC_MAX_DIGITS];
-> >>   	unsigned char *buffer;
-> >> -	ssize_t diff;
-> >>   	int ret;
-> >>  =20
-> >>   	if (unlikely(!ctx->pub_key_set))
-> >> @@ -164,18 +162,11 @@ static int ecdsa_verify(struct akcipher_request =
-*req)
-> >>   	if (ret < 0)
-> >>   		goto error;
-> >>  =20
-> >> -	/* if the hash is shorter then we will add leading zeros to fit to n=
-digits */
-> >> -	diff =3D bufsize - req->dst_len;
-> >> -	if (diff >=3D 0) {
-> >> -		if (diff)
-> >> -			memset(rawhash, 0, diff);
-> >> -		memcpy(&rawhash[diff], buffer + req->src_len, req->dst_len);
-> >> -	} else if (diff < 0) {
-> >> -		/* given hash is longer, we take the left-most bytes */
-> >> -		memcpy(&rawhash, buffer + req->src_len, bufsize);
-> >> -	}
-> >> +	if (bufsize > req->dst_len)
-> >> +		bufsize =3D req->dst_len;
-> >>  =20
-> >> -	ecc_swap_digits((u64 *)rawhash, hash, ctx->curve->g.ndigits);
-> >> +	ecc_digits_from_bytes(buffer + req->src_len, bufsize,
-> >> +			      hash, ctx->curve->g.ndigits);
-> >>  =20
-> >>   	ret =3D _ecdsa_verify(ctx, hash, sig_ctx.r, sig_ctx.s);
-> >>  =20
-> >=20
-> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> >=20
-> > I don't think it'd be even nit-picking to say that the function
-> > called would really need kdoc. I had to spend about 20 minutes
-> > to reacall ecc_digits_from_bytes().
+> Add the SQE fw version to dmesg and devcoredump.
 >
-> Here's the file with all the kdocs:=20
-> https://elixir.bootlin.com/linux/v6.10-rc1/source/include/crypto/internal=
-/ecc.h#L67
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c       | 32 +++++++++++++++++++--
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h       |  1 +
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c |  2 ++
+>  3 files changed, 33 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index 56bfb228808d..5a2a005003c8 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -665,6 +665,32 @@ static int a7xx_cp_init(struct msm_gpu *gpu)
+>         return a6xx_idle(gpu, ring) ? 0 : -EINVAL;
+>  }
+>
+> +static uint32_t get_ucode_version(const uint32_t *data)
+> +{
+> +       uint32_t version;
+> +
+> +       /* NOTE: compared to kgsl, we've already stripped off the first dword: */
+> +       version = data[0];
+> +
+> +       if ((version & 0xf) != 0xa)
+> +               return version;
+> +
+> +       version &= ~0xfff;
+> +       return  version | ((data[2] & 0xfff000) >> 12);
+> +}
+> +
+> +uint32_t a6xx_get_sqe_version(struct msm_gpu *gpu)
+> +{
+> +       struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+> +       struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+> +       uint32_t *buf = msm_gem_get_vaddr(a6xx_gpu->sqe_bo);
+> +       uint32_t version = get_ucode_version(buf);
+> +
+> +       msm_gem_put_vaddr(a6xx_gpu->sqe_bo);
 
-LOL, sorry I forgot this. I think this was the 2nd time I complained
-about this ;-) I'm sorry, yeah that WFM.
+Wouldn't it be easier to save the SQE version when the firmware is
+loaded and then just return it?
+Or the point is about reading the SQE version at runtime?
 
-Just not used to this convention but I don't mind actually if it is
-that way.
+> +
+> +       return version;
+> +}
+> +
+>  /*
+>   * Check that the microcode version is new enough to include several key
+>   * security fixes. Return true if the ucode is safe.
+> @@ -681,6 +707,8 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu *a6xx_gpu,
+>         if (IS_ERR(buf))
+>                 return false;
+>
+> +       DRM_DEV_INFO(&gpu->pdev->dev, "Have SQE version %03x\n", get_ucode_version(buf));
 
-BR, Jarkko
+I'd suggest drm_dbg_driver() instead. I think the motto is to keep the
+kernel more or less quiet.
+
+> +
+>         /* A7xx is safe! */
+>         if (adreno_is_a7xx(adreno_gpu) || adreno_is_a702(adreno_gpu))
+>                 return true;
+> @@ -714,7 +742,7 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu *a6xx_gpu,
+>                 }
+>
+>                 DRM_DEV_ERROR(&gpu->pdev->dev,
+> -                       "a630 SQE ucode is too old. Have version %x need at least %x\n",
+> +                       "a630 SQE ucode is too old. Have version %03x need at least %03x\n",
+>                         buf[0] & 0xfff, 0x190);
+>         } else if (!strcmp(sqe_name, "a650_sqe.fw")) {
+>                 if ((buf[0] & 0xfff) >= 0x095) {
+> @@ -723,7 +751,7 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu *a6xx_gpu,
+>                 }
+>
+>                 DRM_DEV_ERROR(&gpu->pdev->dev,
+> -                       "a650 SQE ucode is too old. Have version %x need at least %x\n",
+> +                       "a650 SQE ucode is too old. Have version %03x need at least %03x\n",
+>                         buf[0] & 0xfff, 0x095);
+>         } else if (!strcmp(sqe_name, "a660_sqe.fw")) {
+>                 ret = true;
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+> index 1c3cc6df70fe..c206dab8bc08 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+> @@ -109,6 +109,7 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
+>                        bool suspended);
+>  unsigned long a6xx_gmu_get_freq(struct msm_gpu *gpu);
+>
+> +uint32_t a6xx_get_sqe_version(struct msm_gpu *gpu);
+>  void a6xx_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
+>                 struct drm_printer *p);
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> index 0a7717a4fc2f..1acfe39eb8e0 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+> @@ -1957,6 +1957,8 @@ void a6xx_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
+>
+>         adreno_show(gpu, state, p);
+>
+> +       drm_printf(p, "sqe-version: 0x%08x\n", a6xx_get_sqe_version(gpu));
+> +
+>         drm_puts(p, "gmu-log:\n");
+>         if (a6xx_state->gmu_log) {
+>                 struct msm_gpu_state_bo *gmu_log = a6xx_state->gmu_log;
+> --
+> 2.45.1
+>
+
+
+-- 
+With best wishes
+Dmitry
 
