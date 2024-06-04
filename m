@@ -1,142 +1,270 @@
-Return-Path: <linux-kernel+bounces-201329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19358FBD11
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:07:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 947658FBD13
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51AFEB213CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C8BC286452
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EC814C58E;
-	Tue,  4 Jun 2024 20:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4878914D297;
+	Tue,  4 Jun 2024 20:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rYzgXPGN"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bTHccH/S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD3B1350FD;
-	Tue,  4 Jun 2024 20:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B2B14B095
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 20:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717531601; cv=none; b=Mxk2v4biQfCHKujK7FI1zj5qfxtkexUfy8K+d81ovlArP1iAqk73l8paGZkHrxQX6Vr+ub1riMtLghXCba/paSp4wqvayTe1J13+/4bYFBmtJcQi597xNB3ixobGx+Mxk8/KdrGwG/9IgqTzTB/8td5uN1EmPU09nYI/Q56E6O4=
+	t=1717531607; cv=none; b=LQStS146YFDKXLULNkMoyFqAl8Z3zCp6jZHN+kvFQiMsUlbg3As5QA1oDqc5CFSUAtNwr43DOK6g47BLol9vMi1sVKyqJJeda7LXtl6VqpjWu4Ucg5vf2LamDiScdhydeXAkRsc2N4V7J3o3Aavd9lL93AoTosj0t/7skacOV+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717531601; c=relaxed/simple;
-	bh=UyYvcyDzvOULQA5s2EXEzktbfL5xmUY+eN5IYMYeDPE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=EbKgkb7EUpxQele3blrndPnf2wLV2wFcADtDu/FTXRjf1CMAugF69fqM3mUAYUKbMqlRE1Ljj6c/RJEbDpZrVtBo7XeYwvI5Pli7oAhaxmA4PTaN92KGGyE8Dfzud+OJ9C667C6/OqHGJp237y9E/ZY2kQPLkiBtF0uCuu37nSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rYzgXPGN; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717531581; x=1718136381; i=markus.elfring@web.de;
-	bh=uhHW9GGQMJyeKuzBVKGCIeAGb0QutdaJfivNQuDOQqg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=rYzgXPGNju40m3dtl+VNlpzgxfCNptFUl4EL+/gtnyN5uUp28+yWnmOlPyGEFmgO
-	 kNlK8f6hqLSfIE+M1WVlUHPpktTDywxRrpbxHHxfN1nci0xBvgRijfzN6KiMdYFt9
-	 mmNcCwoYuteM61RJ3ao9PBmdH4PbpRMKPJsaZbJE+l4KOzTZupzd4Tt0mHp+Nj0Lc
-	 pYI+mSGvvHLkrLcNiqIehL7Co/DFoBF+RU8R8yEIlgLlQ9AHB30Jvc88rrFLSSF6r
-	 Ea/uwy/6uvOOSW9gwfUN2+ZYSX1LbNVeqa0Ej99m8X/BAqUXWzgXPaEOPZ53zgjuH
-	 j21sBwlox4ZXBJfQPA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MsaRt-1sTEak1TQJ-00u3fa; Tue, 04
- Jun 2024 22:06:21 +0200
-Message-ID: <532aa50e-b8e5-4e8e-a2bd-a05fd81274dc@web.de>
-Date: Tue, 4 Jun 2024 22:06:14 +0200
+	s=arc-20240116; t=1717531607; c=relaxed/simple;
+	bh=aSCQYI2hmOCD/IbP1xwsFpZTAcY2IeBlcORVlIkjZRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kr8omZWjYG238D09LTItUZZCmPVBkfz5RW1Br+nqaBW4UFghEhtg+EnCWjstqILGspSzXHmBIiQKEZ3OkxC4LIrDQ11sWdcIAjQWNYjIZfXXHblrGbFslKmvaBWWEQHYeIBZinOksttkG+V57in+ox9wLraQC+cPmzKECByvj18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bTHccH/S; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717531602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZOQwPW0aG2Foum3BxxDnBe7vRUHsrv0pioUfgn6NI/E=;
+	b=bTHccH/S5s18t5GBpKN4T5WBHvLPvccvvgZwvaRdpvsdTIC567TihxQUlcacTosr2ojELi
+	quDN330KVQJdufwoOd8M7nWgbEJc1BuIzDUyqvEeEqB/2Guz4EkFIyU0vGs4oOsbCFsh/s
+	cAE2H6bKHXAPamuhQfrw4bi/5O8/yEc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-307-6WKM0hL3N0qkz-og6vFqVA-1; Tue, 04 Jun 2024 16:06:37 -0400
+X-MC-Unique: 6WKM0hL3N0qkz-og6vFqVA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42156af89afso1314925e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 13:06:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717531596; x=1718136396;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZOQwPW0aG2Foum3BxxDnBe7vRUHsrv0pioUfgn6NI/E=;
+        b=XVhkZX0XZE5gl3M/j5ewSN7aPXa/bsoWUmUFC1vU1NMS547M/aK+Fz+jUbMrKbrlc/
+         gIFYBSFh/WTHgAIvZVVHrQ3AmQajlFC63gAjfeLLuv4tRaenMuUjeAM3R/HlWrZjYeAc
+         Cbb/6ErAkcbFdIfKde8BAR3dzdvwEug2iMQ3rOvE/HYQc3uSO53ikd5TrRP4uDLO8ARa
+         h0k8vKsy5sjdY9L8gBew8mts/+ABFMLAVDwCWy3xH/Vk/vGVLPjD+7UFa6L61/ddrnrg
+         q6a0S5SDqVQefIE4VVDoTOBeNBlCLj4Lut4mgFUqg5mHD/+HVB0vz/rlu1lDT2ProGte
+         H31g==
+X-Forwarded-Encrypted: i=1; AJvYcCWumpl0ilzudRz0bwL8L3uV0jZxSPbyYRPkTi4pevibFaCc/52FIaaevimyEGBPzwVbj/ld9U8Ktx+4vGqOOBZPfCjxrirw1kUv/4Ox
+X-Gm-Message-State: AOJu0YwxSrnBKN7B4S+bwMKjnSB/fXC1F5i4BF4RHgCvSJu3NYa/mVzM
+	aD6apV0OIYzWPRsznILshTIFZfxhpiFKNZc5tu1ejyZ2jR3UgCbFoO7MUgaGARCYhwoNoclJcsd
+	DKHHKz8WguVBh6WzF+H8Zw1Ctr0aji8hAbQF8sOvSViby75y9LkDG4BgO4+2h8g==
+X-Received: by 2002:a05:600c:3c97:b0:41a:c170:701f with SMTP id 5b1f17b1804b1-42156356ac6mr3558115e9.38.1717531596377;
+        Tue, 04 Jun 2024 13:06:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvgnv3dsKpQRLAsQ3oX8Eyk4WLvjXVlc3Cl2eoNi52H9/3hBfkpYiRdpbspAeOhGIOZiuWIQ==
+X-Received: by 2002:a05:600c:3c97:b0:41a:c170:701f with SMTP id 5b1f17b1804b1-42156356ac6mr3557815e9.38.1717531595889;
+        Tue, 04 Jun 2024 13:06:35 -0700 (PDT)
+Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42138260c5asm123349765e9.41.2024.06.04.13.06.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 13:06:35 -0700 (PDT)
+Date: Tue, 4 Jun 2024 22:06:33 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
+Message-ID: <Zl9zybWIeZqt8tWc@pollux>
+References: <20240520172554.182094-1-dakr@redhat.com>
+ <20240520172554.182094-3-dakr@redhat.com>
+ <2024052045-lived-retiree-d8b9@gregkh>
+ <ZkvPDbAQLo2/7acY@pollux.localdomain>
+ <2024052155-pulverize-feeble-49bb@gregkh>
+ <Zk0egew_AxvNpUG-@pollux>
+ <2024060432-chloride-grappling-cf95@gregkh>
+ <Zl81oUmNO5TX063x@cassiopeiae>
+ <2024060404-figment-resolute-7c6c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: kernel-janitors@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Stanley Chang <stanley_chang@realtek.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] extcon: realtek: Use scope-based resource management in
- extcon_rtk_type_c_init()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0bU/ob+7kOatF+Jz8t5uLaM4o08nrxHMvPvk17RGGz5HLVViqNf
- qfYph/J4pM7wUvoDWFDckjjDi7jyfZQGyF6wPNDWq/tpstxR6SPkGdaQyw4euoWWTily9pW
- G+kDuJVD5kxkQjvr61PUe1fH/0qiSPhp3pk8dhhKfruf4zlZtMsNRPUaRreugj7ZzxGzasH
- bBFVGpJN2omsakJnVmBGw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:G+pSpadvric=;2EdbEimaqR1zhnAl1Odt2yDHrIZ
- j2XPfbzrkmiVTG1OeuCx1a58gDVUOCVQDgt4HrCeckwzyUJItFRZr5RLKcgILgsXljwUNISWs
- G+HdNEoh1BSOq7MXaELkRfimlCsdGh3ijPMTYz+g/apY2j5xoJTwaztHvWET7w5pbmTdZvd6E
- SWfMIjf2LL3TuDb9SKBHKJe5XcvGNxZ9awzL/c+TAxP4xhNL2ubBa9R6/wlp3n6HDFvBfq/CX
- 0pInHr5v5AdBe2GTVgrlaOKZK0uQYGsLGtlTklHq0CUB/HVa9g2oRGy39UXWBkDitznLbsrSZ
- AUKMCN/OKHirU61Tj+l7z4WhmM6vbnCXcOQQqUHoN9SGePYyftjx4NDger5+vsGaifqDrKsKO
- jEu79XqxIOWlvZ7KGJYjT6MOnoXNU/737tBd/j5hPtEqsk5GbeOTIb89XhPEbsgsmZH9PZzOg
- 4KOQ3QtwP5OfEBSbNYSQnFezCYGg0wUNFz4Fm2Zk0vBfkyTptelpRoUxn9wdQEaZmLb/Vw4pe
- 6J+aVk/0x9fenrmtBWnxxbhDly4h9ZwtnDkVfOdGqBRnqcZl3HcBHRcl2AtDa9BQ5+uSWfKu6
- I77mQAddGs9BXVoXNJMOAmy4QZao0Lt6Rj3EKhzfpMnAgYyOxlxZO1+lEtjKqW84mCsL6vxtJ
- Xo89EdpnbF4SnwM/ev7PMeIJzg7Or9PCRusN/VRtQ3Atai16K+dnNo4Coyb1cucXQIAhPJZmb
- YvNDZak7utenWSF+ifoDY7KAHw/UNvdVCcsOFwRYh9Pd0V7PN6HImgizXTcVO2C8Se86M0mtd
- GyqZf7GOqtoyOyznNWtN3K41G2vWCcNzFs72Eob1tFF0s=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024060404-figment-resolute-7c6c@gregkh>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Jun 2024 21:55:08 +0200
+On Tue, Jun 04, 2024 at 06:00:11PM +0200, Greg KH wrote:
+> On Tue, Jun 04, 2024 at 05:41:21PM +0200, Danilo Krummrich wrote:
+> > On Tue, Jun 04, 2024 at 04:27:31PM +0200, Greg KH wrote:
+> > > On Wed, May 22, 2024 at 12:21:53AM +0200, Danilo Krummrich wrote:
+> > > > On Tue, May 21, 2024 at 11:35:43AM +0200, Greg KH wrote:
+> > > > > On Tue, May 21, 2024 at 12:30:37AM +0200, Danilo Krummrich wrote:
+> > > > > > On Mon, May 20, 2024 at 08:14:18PM +0200, Greg KH wrote:
+> > > > > > > On Mon, May 20, 2024 at 07:25:39PM +0200, Danilo Krummrich wrote:
+> > > > > > > > From: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > > > > > > 
+> > > > > > > > This defines general functionality related to registering drivers with
+> > > > > > > > their respective subsystems, and registering modules that implement
+> > > > > > > > drivers.
+> > > > > > > > 
+> > > > > > > > Co-developed-by: Asahi Lina <lina@asahilina.net>
+> > > > > > > > Signed-off-by: Asahi Lina <lina@asahilina.net>
+> > > > > > > > Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
+> > > > > > > > Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+> > > > > > > > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > > > > > > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> > > > > > > > ---
+> > > > > > > >  rust/kernel/driver.rs        | 492 +++++++++++++++++++++++++++++++++++
+> > > > > > > >  rust/kernel/lib.rs           |   4 +-
+> > > > > > > >  rust/macros/module.rs        |   2 +-
+> > > > > > > >  samples/rust/rust_minimal.rs |   2 +-
+> > > > > > > >  samples/rust/rust_print.rs   |   2 +-
+> > > > > > > >  5 files changed, 498 insertions(+), 4 deletions(-)
+> > > > > > > >  create mode 100644 rust/kernel/driver.rs
+> > > > > > > > 
+> > > > > > > > diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+> > > > > > > > new file mode 100644
+> > > > > > > > index 000000000000..e0cfc36d47ff
+> > > > > > > > --- /dev/null
+> > > > > > > > +++ b/rust/kernel/driver.rs
+> > > > > > > > @@ -0,0 +1,492 @@
+> > > > > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > > > > +
+> > > > > > > > +//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
+> > > > > > > > +//!
+> > > > > > > > +//! Each bus/subsystem is expected to implement [`DriverOps`], which allows drivers to register
+> > > > > > > > +//! using the [`Registration`] class.
+> > > > > > > 
+> > > > > > > Why are you creating new "names" here?  "DriverOps" is part of a 'struct
+> > > > > > > device_driver' why are you separating it out here?  And what is
+> > > > > > 
+> > > > > > DriverOps is a trait which abstracts a subsystems register() and unregister()
+> > > > > > functions to (un)register drivers. It exists such that a generic Registration
+> > > > > > implementation calls the correct one for the subsystem.
+> > > > > > 
+> > > > > > For instance, PCI would implement DriverOps::register() by calling into
+> > > > > > bindings::__pci_register_driver().
+> > > > > > 
+> > > > > > We can discuss whether DriverOps is a good name for the trait, but it's not a
+> > > > > > (different) name for something that already exists and already has a name.
+> > > > > 
+> > > > > It's a name we don't have in the C code as the design of the driver core
+> > > > > does not need or provide it.  It's just the section of 'struct
+> > > > > device_driver' that provides function callbacks, why does it need to be
+> > > > > separate at all?
+> > > > 
+> > > > I'm confused by the relationship to `struct device_driver` you seem to imply.
+> > > > How is it related?
+> > > > 
+> > > > Again, this is just a trait for subsystems to provide their corresponding
+> > > > register and unregister implementation, e.g. pci_register_driver() and
+> > > > pci_unregister_driver(), such that they can be called from the generic
+> > > > Registration code below.
+> > > > 
+> > > > See [1] for an example implementation in PCI.
+> > > 
+> > > registering and unregistering drivers belongs in the bus code, NOT in
+> > > the driver code.
+> > 
+> > Why? We're not (re-)implementing a bus here. Again, those are just abstractions
+> > to call the C functions to register a driver. The corresponding C functions are
+> > e.g. driver_register() or __pci_register_driver(). Those are defined in
+> > drivers/base/driver.c and drivers/pci/pci-driver.c respectively.
+> > 
+> > Why wouldn't we follow the same scheme in Rust abstractions?
+> 
+> It's the bus that does the registering, so yeah, don't put it here at
+> all as it's not going to be needed (i.e. unless you write a bus in rust
+> you will never call driver_register())  So this can just be a wrapper
+> for the pci bus logic, keeping it simpler.
 
-Scope-based resource management became supported also for another
-programming interface by contributions of Jonathan Cameron on 2024-02-17.
-See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
-property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
+We never call driver_register() of course, I gave this example for another
+reason above. Sorry if that was confusing.
 
-* Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
+> 
+> So you might be able to delete a lot of code here, only deal with a
+> "dumb" struct device wrapper to handle reference counts, and then do the
+> rest for the specific bus bindings?  Or is that too much to dream?
 
-* Reduce the scope for the local variable =E2=80=9Cfwnode=E2=80=9D.
+Again, this is a generalization such that we do not have to replicate code for
+every subsystem / bus. Please see the full explanation below.
 
-Fixes: 8a590d7371f0 ("extcon: add Realtek DHC RTD SoC Type-C driver")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/extcon/extcon-rtk-type-c.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> You aren't writing a "raw" driver here, no one does that, it's a bus
+> that handles that logic for you, and you should not have to expose any
+> "raw" driver attributes.
 
-diff --git a/drivers/extcon/extcon-rtk-type-c.c b/drivers/extcon/extcon-rt=
-k-type-c.c
-index 19a01e663733..8a4b074fd745 100644
-=2D-- a/drivers/extcon/extcon-rtk-type-c.c
-+++ b/drivers/extcon/extcon-rtk-type-c.c
-@@ -18,6 +18,7 @@
- #include <linux/syscalls.h>
- #include <linux/suspend.h>
- #include <linux/debugfs.h>
-+#include <linux/property.h>
- #include <linux/extcon.h>
- #include <linux/extcon-provider.h>
- #include <linux/sys_soc.h>
-@@ -1237,7 +1238,6 @@ static int extcon_rtk_type_c_init(struct type_c_data=
- *type_c)
+Indeed - we're not doing that here.
 
- 	if (!type_c->port) {
- 		struct typec_capability typec_cap =3D { };
--		struct fwnode_handle *fwnode;
- 		const char *buf;
- 		int ret;
+> 
+> Yes, for some busses, they like to force a driver to set the "raw"
+> driver attribute, but I don't think that's a good idea and for the pci
+> driver layer, that shouldn't be necessary now, right?  If not, what
+> fields are you wanting to get direct access to?
 
-@@ -1246,7 +1246,8 @@ static int extcon_rtk_type_c_init(struct type_c_data=
- *type_c)
- 		typec_cap.driver_data =3D type_c;
- 		typec_cap.ops =3D &type_c_port_ops;
+Honestly, this all reads as if you did not (carefully) read the code we're
+discussing about in the first place, did you?
 
--		fwnode =3D device_get_named_child_node(dev, "connector");
-+		struct fwnode_handle *fwnode __free(fwnode_handle)
-+					     =3D device_get_named_child_node(dev, "connector");
- 		if (!fwnode)
- 			return -EINVAL;
+It reads more as if you take assumptions based on my previous explanations, and
+since communication is difficult, it looks like we're talking past each other.
+Maybe also my explanations were just not good enough. :(
 
-=2D-
-2.45.1
+Either way, I suggest to focus more on the actual code. In particular let's have
+a look at the `Registration` and `DriverOps` struct from this patch and how
+they're used in the PCI code and in an actual driver.
+
+Please have a look at how the PCI code implements the `DriverOps` trait (or
+interface as many other languages would call it) [1]. In `DriverOps::register`
+and `DriverOps::unregister` the PCI code simply calls the C functions
+__pci_register_driver() and pci_unregister_driver().
+
+A driver can use the `module_pci_driver!` macro [2] to declare a kernel module
+that registers a single PCI driver. This is equivalent to C's
+module_pci_driver() macro.
+
+The `module_pci_driver!` macro calls the generic `module_driver!` macro [3] and
+passes the `pci::Adapter` [1] (the PCI thing that actually calls the C
+pci_{un}register_driver() functions).
+
+The `module_driver!` macro creates a new `Module` structure [4] that holds the
+`Registration` structure. This `Registration` structure has a generic argument
+which is the `pci::Adapter` [1]. Which means that once the `Registration` is
+created C's __pci_register_driver() is called and once it is destroyed C's
+pci_unregister_driver() is called. The `Registration` is created in
+module_init() and destroyed in module_exit() accordingly.
+
+So, as you can see a `Registration` is really just the parts generalized that
+otherwise every subsystem would need to implement and `DriverOps` is the glue
+between a driver `Registration` and the subsystem (e.g. PCI) defining which
+function to call on driver register() or driver unregister().
+
+My argument above is simply that since  all this is just the abstraction to
+declare a driver structure and register it, it belongs into driver.rs. At least
+if we want to go along with where the C side places the correspong functions on
+the C side.
+
+(The links already point to the new code that allocates the driver statically,
+but this should not matter, since conceptually it's the same.)
+
+[1] https://gitlab.freedesktop.org/drm/nova/-/blob/989338f129146af9952304c2cc6b33fbd90e8909/rust/kernel/pci.rs#L24
+[2] https://gitlab.freedesktop.org/drm/nova/-/blob/989338f129146af9952304c2cc6b33fbd90e8909/rust/kernel/pci.rs#L135
+[3] https://gitlab.freedesktop.org/drm/nova/-/blob/989338f129146af9952304c2cc6b33fbd90e8909/rust/kernel/driver.rs#L453
+[4] https://gitlab.freedesktop.org/drm/nova/-/blob/989338f129146af9952304c2cc6b33fbd90e8909/rust/kernel/driver.rs#L435
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
 
