@@ -1,147 +1,105 @@
-Return-Path: <linux-kernel+bounces-201094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBFD8FB94E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:43:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D698FB958
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FBD51F22E51
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:43:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 285D8B27067
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B53E1494D6;
-	Tue,  4 Jun 2024 16:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91176149C77;
+	Tue,  4 Jun 2024 16:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ta4+C5HW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BF1148847;
-	Tue,  4 Jun 2024 16:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C431487EA;
+	Tue,  4 Jun 2024 16:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717519384; cv=none; b=OlCJephw07T+5wvKsyAOGxJ1edQZ/0O0T6Y4aSahpKs3XXLgB03Fo+dCHRuNOCx2SbBWc2QED+gY7rnW3Nb8Qr0ECi8rFyhe6Ct6drLDYTpekI5vclA07hkBXtZPPeKs3SYvXYjMBTR0/n5ofKPveqKYvqlldfXp50K6aOzmi1I=
+	t=1717519389; cv=none; b=RqYJcNe194xZOhN21ChSBdA+dekGbENWGHYH9DvTV0RM5aAwPLt3tk2a4FzVweIwoXUwRvmKQHqJmS3lx+d96qCkSbem6QnAdcuHIk2lb8GgJ6s/tk9hVLuWukHPaDmCOXOrTHIoqg3hMy2H0tQkafDl/NT8g6RK+2KsIAwYMa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717519384; c=relaxed/simple;
-	bh=oPp4w96Wn+D5XlEch5Zme9OLK7LhiUVGAGTFRFKOodA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CWbYMHgM1cifiFHLmlbP09OUtTS+Ry8+r19Gr0bqFWtyd+wPaV/Cj+EygfiwmeegBBZjSvzaTldp5y96y09bPFf2cXFMEAHQQqZy3rolER7p7J/LM4AbixTbhjCSsP8BJ4KQaNo1UqHfzC91m503+RhV/tS+fKrrcNewc+/KBnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0BBAC2BBFC;
-	Tue,  4 Jun 2024 16:42:46 +0000 (UTC)
-Date: Tue, 4 Jun 2024 12:42:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Paolo Abeni <pabeni@redhat.com>, Mina Almasry <almasrymina@google.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Arnd Bergmann <arnd@arndb.de>, Alexei
- Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan
- <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
- =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Pavel Begunkov
- <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, Kaiyuan
- Zhang <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v10 05/14] netdev: netdevice devmem allocator
-Message-ID: <20240604124243.66203a46@gandalf.local.home>
-In-Reply-To: <20240604163158.GB21513@ziepe.ca>
-References: <20240530201616.1316526-1-almasrymina@google.com>
-	<20240530201616.1316526-6-almasrymina@google.com>
-	<bea8b8bf1630309bb004f614e4a3c7f684a6acb6.camel@redhat.com>
-	<20240604121551.07192993@gandalf.local.home>
-	<20240604163158.GB21513@ziepe.ca>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717519389; c=relaxed/simple;
+	bh=1p99fCGxODxrIiIt9XeDCfRuJ+kqg3lvOH++vIvpUAA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Dv8zeINuPD/Jwg1TtPuj6gM8BQ6Ax8keJJqlAXnmyb3tLsGSBTMRaqOTC2FsjJXaUel87LcVkFQS8DL9ZaEsrfZ8BXUha04vEGUCTQTiTffL5XDl6LiyRgtME2T5GAx8Wg8SMj4WcS4NCaYCh1mbCOzIQ+hp6htOIjVhrHlD+0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ta4+C5HW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AC6C2BBFC;
+	Tue,  4 Jun 2024 16:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717519389;
+	bh=1p99fCGxODxrIiIt9XeDCfRuJ+kqg3lvOH++vIvpUAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ta4+C5HWSlUb+AKDacytBH7eL9iXvO7U7HHIWIxf9ZCDJanoA1+wK78DEcNXhM2or
+	 OYwVopQxjtOuuyrflAqE+Y2VhwqoTlNA0/kU3NvEaVAmrFJQykkeliBXj1QU5YxuzG
+	 5G3sG8DyV2iWlmsMC1Un2WqLmt9jfGq/yAL87Oiexmto+J9mlJTTZw+qHtGvtEaI76
+	 oimZpNV9FQrKwkGh0oRsvJfz8CkapqDxjfIcI95jPsGIAXQ6gUNcLB/NKs3EEk7VGg
+	 5ZlRYtwAZim/glGC5L6QnVAWTMm5BjpXhNGuIqQrtV2zY2Oz11DQwO2mPEsCuF3rXD
+	 4+gqXgF7z8qMA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Jun 2024 19:43:05 +0300
+Message-Id: <D1RDT52OY7S6.J625EB7S0KVR@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jeff Johnson" <quic_jjohnson@quicinc.com>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] KEYS: trusted: add missing MODULE_DESCRIPTION()
+X-Mailer: aerc 0.17.0
+References: <20240530-md-trusted-v2-1-151f0c7be272@quicinc.com>
+In-Reply-To: <20240530-md-trusted-v2-1-151f0c7be272@quicinc.com>
 
-On Tue, 4 Jun 2024 13:31:58 -0300
-Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On Thu May 30, 2024 at 5:43 PM EEST, Jeff Johnson wrote:
+> kbuild reports:
+>
+> WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-k=
+eys/trusted.o
+>
+> Add the missing MODULE_DESCRIPTION() macro invocation.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Changes in v2:
+> - reword commit text per Jarkko's guidance
+> - Link to v1: https://lore.kernel.org/r/20240529-md-trusted-v1-1-56c9a0ae=
+8e28@quicinc.com
+> ---
+>  security/keys/trusted-keys/trusted_core.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/tr=
+usted-keys/trusted_core.c
+> index 5113aeae5628..f4ab16d59663 100644
+> --- a/security/keys/trusted-keys/trusted_core.c
+> +++ b/security/keys/trusted-keys/trusted_core.c
+> @@ -395,4 +395,5 @@ static void __exit cleanup_trusted(void)
+>  late_initcall(init_trusted);
+>  module_exit(cleanup_trusted);
+> =20
+> +MODULE_DESCRIPTION("Trusted Key support");
 
-> On Tue, Jun 04, 2024 at 12:15:51PM -0400, Steven Rostedt wrote:
-> > On Tue, 04 Jun 2024 12:13:15 +0200
-> > Paolo Abeni <pabeni@redhat.com> wrote:
-> >   
-> > > On Thu, 2024-05-30 at 20:16 +0000, Mina Almasry wrote:  
-> > > > diff --git a/net/core/devmem.c b/net/core/devmem.c
-> > > > index d82f92d7cf9ce..d5fac8edf621d 100644
-> > > > --- a/net/core/devmem.c
-> > > > +++ b/net/core/devmem.c
-> > > > @@ -32,6 +32,14 @@ static void net_devmem_dmabuf_free_chunk_owner(struct gen_pool *genpool,
-> > > >  	kfree(owner);
-> > > >  }
-> > > >  
-> > > > +static inline dma_addr_t net_devmem_get_dma_addr(const struct net_iov *niov)    
-> > > 
-> > > Minor nit: please no 'inline' keyword in c files.  
-> > 
-> > I'm curious. Is this a networking rule? I use 'inline' in my C code all the
-> > time.  
-> 
-> It mostly comes from Documentation/process/coding-style.rst:
-> 
-> 15) The inline disease
-> ----------------------
-> 
-> There appears to be a common misperception that gcc has a magic "make me
-> faster" speedup option called ``inline``. While the use of inlines can be
-> appropriate (for example as a means of replacing macros, see Chapter 12), it
-> very often is not. Abundant use of the inline keyword leads to a much bigger
-> kernel, which in turn slows the system as a whole down, due to a bigger
-> icache footprint for the CPU and simply because there is less memory
-> available for the pagecache. Just think about it; a pagecache miss causes a
-> disk seek, which easily takes 5 milliseconds. There are a LOT of cpu cycles
-> that can go into these 5 milliseconds.
-> 
-> A reasonable rule of thumb is to not put inline at functions that have more
-> than 3 lines of code in them. An exception to this rule are the cases where
-> a parameter is known to be a compiletime constant, and as a result of this
-> constantness you *know* the compiler will be able to optimize most of your
-> function away at compile time. For a good example of this later case, see
-> the kmalloc() inline function.
-> 
-> Often people argue that adding inline to functions that are static and used
-> only once is always a win since there is no space tradeoff. While this is
-> technically correct, gcc is capable of inlining these automatically without
-> help, and the maintenance issue of removing the inline when a second user
-> appears outweighs the potential value of the hint that tells gcc to do
-> something it would have done anyway.
-> 
+First this should be just "Trusted key type".
 
-Interesting, as I sped up the ftrace ring buffer by a substantial amount by
-adding strategic __always_inline, noinline, likely() and unlikely()
-throughout the code. It had to do with what was considered the fast path
-and slow path, and not actually the size of the function. gcc got it
-horribly wrong.
+Second: neither encrypted keys has the description.
 
--- Steve
+So I'd consider also "Encrypted key type" for that one.
+
+So this really needs two patches to be done properly.
+
+BR, Jarkko
 
