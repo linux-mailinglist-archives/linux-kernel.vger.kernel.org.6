@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-200907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E3A8FB65A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:58:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE8F8FB65E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65D3D1C216B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7130286480
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5926D13C818;
-	Tue,  4 Jun 2024 14:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1044813D51F;
+	Tue,  4 Jun 2024 14:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6mH6Pe4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1j72Tpd"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A6813D27F;
-	Tue,  4 Jun 2024 14:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA956131BDF;
+	Tue,  4 Jun 2024 14:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513057; cv=none; b=SjWPpzFlGsQIUWcS/+K7Lr9nlKt6kOeKNB8Cxbg3nXxwWWHNQwY+m5+iY+R9l/tqK08BR1c3Xe/1fT6JnHU+PPHFOS+ORbqG0uxFp9RqwHrtmVJxuWQoHTBxNHP6cwPKxKs5Hm6W4QeQRxMcci/ZB9HvMGYsVk3QplHpw833P6g=
+	t=1717513087; cv=none; b=TpwGVs5sfiY1SJk19uKiIExRrSI9Tpeebr9aoSO+UA5bFDbogwx4C2zVzLKU7imlMX3OqM16hVfZ28D5m2rVlwK/t4MeEzoD0cmFKKIXC1/47kdYbUHIEUElnRjP5Dr0t/haeOp5EnjM3LQnSHVBBHX0PoTejDL2w8QUigFE/sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513057; c=relaxed/simple;
-	bh=Hw5Ybma83LE3gsoYJgdMutncohvjo2uI46dvXlhU088=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=R8EgDxTJxz+5fQaugwfk4YjXlHPg9op0XxosnE27ITSgXXkPOvApIxbC13DqryTVVaY67DLGzPVl6x4oEs80gMwSHq5CKEJneS0FXv1eVOgzthLFNfOGCLOg62aG/tJGEK0hBxiUR5A2zO9gq7wd9CRMe7X65v6socfUES8c//U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6mH6Pe4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61967C2BBFC;
-	Tue,  4 Jun 2024 14:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717513056;
-	bh=Hw5Ybma83LE3gsoYJgdMutncohvjo2uI46dvXlhU088=;
-	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
-	b=C6mH6Pe4kfGChXPXEsCsWwuQmDZp/jm0H7Tfi7izknyfbUCZfvAkR8ZuTuHiC+mip
-	 e7yWFTBpz2Wgoefw6kLonjTw+bHxF0nB6McqG1N8wp057pd/waGLMbZaqm54vfkiMa
-	 0LJHevaKAxOnV72TQY322XxSN3ndu9V81pB5/zE0ZeiHYEvE2kLBPw+04IOSd8qqwd
-	 ua3T2oKHumI195Cni5+I8dyRcr5Owjbt39gdF9Xhd6z50uxmni9MTMIkMImOxnuqS0
-	 vpvaN20MHBcaLGtzrdDrdMeN+0bsjwPsrle+3D4GN8LXASCw+uJkce0vQN9Aw/uf2p
-	 4lfEeJU1kjt/w==
-Message-ID: <eb8e5711-a7cd-4c69-9712-97b0cebfbc34@kernel.org>
-Date: Tue, 4 Jun 2024 22:57:34 +0800
+	s=arc-20240116; t=1717513087; c=relaxed/simple;
+	bh=T43lrNapWOLooExytun/Gy25CB4L+nh1m5pMJhH+qho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NdCIC3BQxLm3QYtKFhti5ST6gmInC9uA6UIjizCPda+KbHR76DtiNHoiDLAnqcJyqLRhyVNU2sobK7hqkGLrFKTkyB3o6FcHoATZPGIJwh4OSIH4ZIgbkKcd51jOLGOfyN+YybpZH/RTIoDC6fGum9L6ZbZQQ50KJzEKo15T9Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A1j72Tpd; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63947so5163179a12.1;
+        Tue, 04 Jun 2024 07:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717513084; x=1718117884; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DLpjHJ3RU/g4rNd8s6q450nQr0WrZqzWOMku/dTJ6DE=;
+        b=A1j72TpdRwiMv0v8gGlEgCW4dxEsbbsFnC75aA3b3NHVdM0ZRWVQoluVzqY63UJxkv
+         bMEvGhFA+TGZyH+Ip7E+fFmM5lEzcgF6CAT3LvnEGLTxpUr4XltEXLH9e4HhgbtGeQZs
+         TO+I/FI05sAGPEtC7qnMhxnFh7i3ByxHHf9J6LgIfaiwYT3BWL3A7vNLU54db3plP+JH
+         iK8ddkkY5c2cDsy7fPFWwNGf8rvsq871V6N7cbiaHIS8m7sNkrqbExsfRVhc3JdXLbtB
+         e204eKeDcFcj4f8f3U7dBkLjkSLdKu6fdP5gmYeZ7Yk8ToKvcRlReoZVlRw5c3aRNzwB
+         ASIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717513084; x=1718117884;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DLpjHJ3RU/g4rNd8s6q450nQr0WrZqzWOMku/dTJ6DE=;
+        b=RH6EUcTVBMRfOjZPCXKC5WoNI/KS+cetRQRQ92+JKNIKr60rL/0px9UU8KL3SwjNWI
+         FYjtFOM8xBERSEuUGD/NRKDoIsckbggcAPVu3OSfvBdWVsGvzy6ttYcFhSAbl+1lpIUy
+         Koduaks+JAmlTNKvFYmZQUmLuKRVymNuXVNGTjRbTnyah1qeXrU6VpxnaJlRiYCSgrEQ
+         7YmBLCSlozkNbS0t1w1ra1EhVN3Karh7UwfCnJvO6xfEUT6OEZBrTiBWQEP42kTPFF9d
+         McSc5CjRCazkarXro98lTWLvJdz0SK5vRsZ9eoURbob8qvPJYDgsVxJxKyJy13AZ5JWE
+         JMsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzIqY7BNhoM9BDuvK1a8EfYbDA3nwRsvzBgjdBcoffFtsk81os/dgnF9ay2hIXrsQNSTc82e1WaJRz7ceZCL+A1RUKAuSyKwkdzcAVqv2FKlg9O32lRz1oYnqw4Mdq67OvrXQGHQ==
+X-Gm-Message-State: AOJu0YxhPEZWMmpLaTtaGfeWfGdHdw04DDMUiiCpC/4f15q/1LsONkl5
+	5smrkXaS7tgJUF9Sd1oNtD1NqDs11QVfShs3shjHK/R5MIGkKwGo
+X-Google-Smtp-Source: AGHT+IFK1XZXfQ8hTQX6Z6GPHvE2aAl5JPwa1niHNSnk0qXQV2f2tcR+rJ+hBhXdB1G3pckdQZufqg==
+X-Received: by 2002:a50:9f6a:0:b0:574:ec8a:5267 with SMTP id 4fb4d7f45d1cf-57a3653bb47mr8726674a12.31.1717513083751;
+        Tue, 04 Jun 2024 07:58:03 -0700 (PDT)
+Received: from [192.168.0.31] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b991a6sm7474027a12.7.2024.06.04.07.58.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 07:58:03 -0700 (PDT)
+Message-ID: <5c4800f4-3345-415b-b4e0-0099f1d22770@gmail.com>
+Date: Tue, 4 Jun 2024 16:58:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,247 +75,380 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [exfat?] INFO: task hung in do_new_mount (2)
-To: syzbot <syzbot+f59c2feaf7cb5988e877@syzkaller.appspotmail.com>,
- syzkaller-bugs@googlegroups.com
-References: <00000000000093ea0d06142c361a@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Cc: linkinjeon@kernel.org, sj1557.seo@samsung.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <00000000000093ea0d06142c361a@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 2/3] iio: light: ROHM BH1745 colour sensor
+To: Mudit Sharma <muditsharma.info@gmail.com>, ivan.orlov0322@gmail.com,
+ jic23@kernel.org, lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+ robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240603162122.165943-1-muditsharma.info@gmail.com>
+ <20240603162122.165943-2-muditsharma.info@gmail.com>
+ <39710806-3151-4b57-9af4-c0b4a4d21c28@gmail.com>
+ <c0732554-0742-444b-910d-55052e2c0f92@gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <c0732554-0742-444b-910d-55052e2c0f92@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-#syz set subsystems: fs
+On 04/06/2024 16:24, Mudit Sharma wrote:
+> On 04/06/2024 00:10, Javier Carrasco wrote:
+>> On 03/06/2024 18:21, Mudit Sharma wrote:
+>>> Add support for BH1745, which is an I2C colour sensor with red, green,
+>>> blue and clear channels. It has a programmable active low interrupt pin.
+>>> Interrupt occurs when the signal from the selected interrupt source
+>>> channel crosses set interrupt threshold high or low level.
+>>>
+>>> This driver includes device attributes to configure the following:
+>>> - Interrupt pin latch: The interrupt pin can be configured to
+>>>    be latched (until interrupt register (0x60) is read or initialized)
+>>>    or update after each measurement.
+>>> - Interrupt source: The colour channel that will cause the interrupt
+>>>    when channel will cross the set threshold high or low level.
+>>>
+>>> This driver also includes device attributes to present valid
+>>> configuration options/values for:
+>>> - Integration time
+>>> - Interrupt colour source
+>>> - Hardware gain
+>>>
+>>> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+>>
+>> Hi Mudit,
+>>
+>> a few minor comments inline.
+>>
+>>> ---
+>>> v1->v2:
+>>> - No changes
+>>>
+>>>   drivers/iio/light/Kconfig  |  12 +
+>>>   drivers/iio/light/Makefile |   1 +
+>>>   drivers/iio/light/bh1745.c | 879 +++++++++++++++++++++++++++++++++++++
+>>>   3 files changed, 892 insertions(+)
+>>>   create mode 100644 drivers/iio/light/bh1745.c
+>>>
+>>> diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+>>> index 9a587d403118..6e0bd2addf9e 100644
+>>> --- a/drivers/iio/light/Kconfig
+>>> +++ b/drivers/iio/light/Kconfig
+>>> @@ -114,6 +114,18 @@ config AS73211
+>>>        This driver can also be built as a module.  If so, the module
+>>>        will be called as73211.
+>>>   +config BH1745
+>>> +    tristate "ROHM BH1745 colour sensor"
+>>> +    depends on I2C
+>>> +    select REGMAP_I2C
+>>> +    select IIO_BUFFER
+>>> +    select IIO_TRIGGERED_BUFFER
+>>> +    help
+>>> +      Say Y here to build support for the ROHM bh1745 colour sensor.
+>>> +
+>>> +      To compile this driver as a module, choose M here: the module
+>>> will
+>>> +      be called bh1745.
+>>> +
+>>>   config BH1750
+>>>       tristate "ROHM BH1750 ambient light sensor"
+>>>       depends on I2C
+>>> diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+>>> index a30f906e91ba..939a701a06ac 100644
+>>> --- a/drivers/iio/light/Makefile
+>>> +++ b/drivers/iio/light/Makefile
+>>> @@ -13,6 +13,7 @@ obj-$(CONFIG_APDS9300)        += apds9300.o
+>>>   obj-$(CONFIG_APDS9306)        += apds9306.o
+>>>   obj-$(CONFIG_APDS9960)        += apds9960.o
+>>>   obj-$(CONFIG_AS73211)        += as73211.o
+>>> +obj-$(CONFIG_BH1745)        += bh1745.o
+>>>   obj-$(CONFIG_BH1750)        += bh1750.o
+>>>   obj-$(CONFIG_BH1780)        += bh1780.o
+>>>   obj-$(CONFIG_CM32181)        += cm32181.o
+>>> diff --git a/drivers/iio/light/bh1745.c b/drivers/iio/light/bh1745.c
+>>> new file mode 100644
+>>> index 000000000000..a7b660a1bdc8
+>>> --- /dev/null
+>>> +++ b/drivers/iio/light/bh1745.c
+>>> @@ -0,0 +1,879 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * ROHM BH1745 digital colour sensor driver
+>>> + *
+>>> + * Copyright (C) Mudit Sharma <muditsharma.info@gmail.com>
+>>> + *
+>>> + * 7-bit I2C slave addresses:
+>>> + *  0x38 (ADDR pin low)
+>>> + *  0x39 (ADDR pin high)
+>>> + *
+>>> + */
+>>> +
+>>> +#include <linux/i2c.h>
+>>> +#include <linux/mutex.h>
+>>> +#include <linux/util_macros.h>
+>>> +#include <linux/iio/events.h>
+>>> +#include <linux/regmap.h>
+>>> +
+>>> +#include <linux/iio/iio.h>
+>>> +#include <linux/iio/sysfs.h>
+>>> +#include <linux/iio/trigger.h>
+>>> +#include <linux/iio/trigger_consumer.h>
+>>> +#include <linux/iio/triggered_buffer.h>
+>>> +
+>>> +#define BH1745_MOD_NAME "bh1745"
+>>
+>> Given that this define is only used in one place, using the string
+>> directly is common practice in iio.
+>>
+>>> +
+>>> +/* BH1745 config regs */
+>>> +#define BH1745_SYS_CTRL 0x40
+>>> +
+>>> +#define BH1745_MODE_CTRL_1 0x41
+>>> +#define BH1745_MODE_CTRL_2 0x42
+>>> +#define BH1745_MODE_CTRL_3 0x44
+>>> +
+>>> +#define BH1745_INTR 0x60
+>>> +#define BH1745_INTR_STATUS BIT(7)
+>>> +
+>>> +#define BH1745_PERSISTENCE 0x61
+>>> +
+>>> +#define BH1745_TH_LSB 0X62
+>>> +#define BH1745_TH_MSB 0X63
+>>> +
+>>> +#define BH1745_TL_LSB 0X64
+>>> +#define BH1745_TL_MSB 0X65
+>>> +
+>>> +#define BH1745_THRESHOLD_MAX 0xFFFF
+>>> +#define BH1745_THRESHOLD_MIN 0x0
+>>> +
+>>> +#define BH1745_MANU_ID 0X92
+>>> +
+>>> +/* BH1745 output regs */
+>>> +#define BH1745_R_LSB 0x50
+>>> +#define BH1745_R_MSB 0x51
+>>> +#define BH1745_G_LSB 0x52
+>>> +#define BH1745_G_MSB 0x53
+>>> +#define BH1745_B_LSB 0x54
+>>> +#define BH1745_B_MSB 0x55
+>>> +#define BH1745_CLR_LSB 0x56
+>>> +#define BH1745_CLR_MSB 0x57
+>>> +
+>>> +#define BH1745_SW_RESET BIT(7)
+>>> +#define BH1745_INT_RESET BIT(6)
+>>> +
+>>> +#define BH1745_MEASUREMENT_TIME_MASK GENMASK(2, 0)
+>>> +
+>>> +#define BH1745_RGBC_EN BIT(4)
+>>> +
+>>> +#define BH1745_ADC_GAIN_MASK GENMASK(1, 0)
+>>> +
+>>> +#define BH1745_INT_ENABLE BIT(0)
+>>> +#define BH1745_INT_SIGNAL_ACTIVE BIT(7)
+>>> +
+>>> +#define BH1745_INT_SIGNAL_LATCHED BIT(4)
+>>> +#define BH1745_INT_SIGNAL_LATCH_OFFSET 4
+>>> +
+>>> +#define BH1745_INT_SOURCE_MASK GENMASK(3, 2)
+>>> +#define BH1745_INT_SOURCE_OFFSET 2
+>>> +
+>>> +#define BH1745_INT_TIME_AVAILABLE "0.16 0.32 0.64 1.28 2.56 5.12"
+>>> +#define BH1745_HARDWAREGAIN_AVAILABLE "1 2 16"
+>>> +#define BH1745_INT_COLOUR_CHANNEL_AVAILABLE \
+>>> +    "0 (Red Channel) 1 (Green Channel) 2 (Blue channel) 3 (Clear
+>>> channel)"
+>>> +
+>>> +static const int bh1745_int_time[][2] = {
+>>> +    { 0, 160000 }, /* 160 ms */
+>>> +    { 0, 320000 }, /* 320 ms */
+>>> +    { 0, 640000 }, /* 640 ms */
+>>> +    { 1, 280000 }, /* 1280 ms */
+>>> +    { 2, 560000 }, /* 2560 ms */
+>>> +    { 5, 120000 }, /* 5120 ms */
+>>> +};
+>>> +
+>>> +static const u8 bh1745_gain_factor[] = { 1, 2, 16 };
+>>> +
+>>> +enum {
+>>> +    BH1745_INT_SOURCE_RED,
+>>> +    BH1745_INT_SOURCE_GREEN,
+>>> +    BH1745_INT_SOURCE_BLUE,
+>>> +    BH1745_INT_SOURCE_CLEAR,
+>>> +} bh1745_int_source;
+>>> +
+>>> +enum {
+>>> +    BH1745_ADC_GAIN_1X,
+>>> +    BH1745_ADC_GAIN_2X,
+>>> +    BH1745_ADC_GAIN_16X,
+>>> +} bh1745_gain;
+>>> +
+>>> +enum {
+>>> +    BH1745_MEASUREMENT_TIME_160MS,
+>>> +    BH1745_MEASUREMENT_TIME_320MS,
+>>> +    BH1745_MEASUREMENT_TIME_640MS,
+>>> +    BH1745_MEASUREMENT_TIME_1280MS,
+>>> +    BH1745_MEASUREMENT_TIME_2560MS,
+>>> +    BH1745_MEASUREMENT_TIME_5120MS,
+>>> +} bh1745_measurement_time;
+>>> +
+>>> +enum {
+>>> +    BH1745_PRESISTENCE_UPDATE_TOGGLE,
+>>> +    BH1745_PRESISTENCE_UPDATE_EACH_MEASUREMENT,
+>>> +    BH1745_PRESISTENCE_UPDATE_FOUR_MEASUREMENT,
+>>> +    BH1745_PRESISTENCE_UPDATE_EIGHT_MEASUREMENT,
+>>> +} bh1745_presistence_value;
+>>> +
+>>> +struct bh1745_data {
+>>> +    struct mutex lock;
+>>> +    struct regmap *regmap;
+>>> +    struct i2c_client *client;
+>>> +    struct iio_trigger *trig;
+>>> +    u8 mode_ctrl1;
+>>> +    u8 mode_ctrl2;
+>>> +    u8 int_src;
+>>> +    u8 int_latch;
+>>> +    u8 interrupt;
+>>> +};
+>>> +
+>>> +static const struct regmap_range bh1745_volatile_ranges[] = {
+>>> +    regmap_reg_range(BH1745_MODE_CTRL_2, BH1745_MODE_CTRL_2), /*
+>>> VALID */
+>>> +    regmap_reg_range(BH1745_R_LSB, BH1745_CLR_MSB), /* Data */
+>>> +    regmap_reg_range(BH1745_INTR, BH1745_INTR), /* Interrupt */
+>>> +};
+>>> +
+>>> +static const struct regmap_access_table bh1745_volatile_regs = {
+>>> +    .yes_ranges = bh1745_volatile_ranges,
+>>> +    .n_yes_ranges = ARRAY_SIZE(bh1745_volatile_ranges),
+>>> +};
+>>> +
+>>> +static const struct regmap_range bh1745_read_ranges[] = {
+>>> +    regmap_reg_range(BH1745_SYS_CTRL, BH1745_MODE_CTRL_2),
+>>> +    regmap_reg_range(BH1745_R_LSB, BH1745_CLR_MSB),
+>>> +    regmap_reg_range(BH1745_INTR, BH1745_INTR),
+>>> +    regmap_reg_range(BH1745_PERSISTENCE, BH1745_TL_MSB),
+>>> +    regmap_reg_range(BH1745_MANU_ID, BH1745_MANU_ID),
+>>> +};
+>>> +
+>>> +static const struct regmap_access_table bh1745_ro_regs = {
+>>> +    .yes_ranges = bh1745_read_ranges,
+>>> +    .n_yes_ranges = ARRAY_SIZE(bh1745_read_ranges),
+>>> +};
+>>> +
+>>> +static const struct regmap_range bh1745_writable_ranges[] = {
+>>> +    regmap_reg_range(BH1745_SYS_CTRL, BH1745_MODE_CTRL_2),
+>>> +    regmap_reg_range(BH1745_PERSISTENCE, BH1745_TL_MSB),
+>>> +};
+>>> +
+>>> +static const struct regmap_access_table bh1745_wr_regs = {
+>>> +    .yes_ranges = bh1745_writable_ranges,
+>>> +    .n_yes_ranges = ARRAY_SIZE(bh1745_writable_ranges),
+>>> +};
+>>> +
+>>> +static const struct regmap_config bh1745_regmap = {
+>>> +    .reg_bits = 8,
+>>> +    .val_bits = 8,
+>>> +    .max_register = BH1745_MANU_ID,
+>>> +    .cache_type = REGCACHE_RBTREE,
+>>> +    .volatile_table = &bh1745_volatile_regs,
+>>> +    .wr_table = &bh1745_wr_regs,
+>>> +    .rd_table = &bh1745_ro_regs,
+>>> +};
+>>> +
+>>> +static const struct iio_event_spec bh1745_event_spec[] = {
+>>> +    {
+>>> +        .type = IIO_EV_TYPE_THRESH,
+>>> +        .dir = IIO_EV_DIR_RISING,
+>>> +        .mask_shared_by_type = BIT(IIO_EV_INFO_VALUE),
+>>> +    },
+>>> +    {
+>>> +        .type = IIO_EV_TYPE_THRESH,
+>>> +        .dir = IIO_EV_DIR_FALLING,
+>>> +        .mask_shared_by_type = BIT(IIO_EV_INFO_VALUE),
+>>> +    },
+>>> +    {
+>>> +        .type = IIO_EV_TYPE_THRESH,
+>>> +        .dir = IIO_EV_DIR_EITHER,
+>>> +        .mask_shared_by_type = BIT(IIO_EV_INFO_PERIOD),
+>>> +    },
+>>> +};
+>>> +
+>>> +#define BH1745_CHANNEL(_colour, _si,
+>>> _addr)                                   \
+>>> +   
+>>> {                                                                     \
+>>> +        .type = IIO_INTENSITY, .modified = 1,                         \
+>>> +        .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),                 \
+>>> +        .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_HARDWAREGAIN) | \
+>>> +                        BIT(IIO_CHAN_INFO_INT_TIME),      \
+>>> +        .event_spec = bh1745_event_spec,                              \
+>>> +        .num_event_specs = ARRAY_SIZE(bh1745_event_spec),             \
+>>> +        .channel2 = IIO_MOD_LIGHT_##_colour, .address = _addr,        \
+>>> +        .scan_index = _si,                                            \
+>>> +        .scan_type = {                                                \
+>>> +            .sign = 'u',                                          \
+>>> +            .realbits = 16,                                       \
+>>> +            .storagebits = 16,                                    \
+>>> +            .endianness = IIO_CPU,                                \
+>>> +        },                                                            \
+>>> +    }
+>>> +
+>>> +static const struct iio_chan_spec bh1745_channels[] = {
+>>> +    BH1745_CHANNEL(RED, 0, BH1745_R_LSB),
+>>> +    BH1745_CHANNEL(GREEN, 1, BH1745_G_LSB),
+>>> +    BH1745_CHANNEL(BLUE, 2, BH1745_B_LSB),
+>>> +    BH1745_CHANNEL(CLEAR, 3, BH1745_CLR_LSB),
+>>> +    IIO_CHAN_SOFT_TIMESTAMP(4),
+>>> +};
+>>> +
+>>> +static int bh1745_write_value(struct bh1745_data *data, u8 reg, void
+>>> *value,
+>>> +                  size_t len)
+>>> +{
+>>
+>> The initial assignment is unnecessary, as a new assignment is made
+>> immediately. This applies to several declarations of ret in this driver,
+>> but not always (e.g. bh1745_setup_trigger()).
+>>
+>>> +    int ret = 0;
+>>> +
+>>> +    ret = regmap_bulk_write(data->regmap, reg, value, len);
+>>> +    if (ret < 0) {
+>>> +        dev_err(&data->client->dev,
+>>> +            "Failed to write to sensor. Reg: 0x%x\n", reg);
+>>> +        return ret;
+>>> +    }
+>>
+>> Nit: black line before return (it applies to several functions in this
+>> driver, but again, not in all of them).
+> 
+> Hi Javier,
+> 
+> Thank you for the review on this.
+> 
+> Can you please point me to resource/section of code style guide for
+> reference which talks about new line before 'return'.
+> 
+> Best regards,
+> Mudit Sharma
+> 
+> 
+> 
 
-On 2024/3/21 22:06, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=156b7946180000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f59c2feaf7cb5988e877
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1075d2c9180000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161012a5180000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f6c04726a2ae/disk-fe46a7dd.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/09c26ce901ea/vmlinux-fe46a7dd.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/134acf7f5322/bzImage-fe46a7dd.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/8eeb4ed4feec/mount_2.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f59c2feaf7cb5988e877@syzkaller.appspotmail.com
-> 
-> INFO: task syz-executor238:5068 blocked for more than 143 seconds.
->        Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor238 state:D stack:25616 pid:5068  tgid:5068  ppid:5063   flags:0x00004006
-> Call Trace:
->   <TASK>
->   context_switch kernel/sched/core.c:5409 [inline]
->   __schedule+0x1781/0x49d0 kernel/sched/core.c:6736
->   __schedule_loop kernel/sched/core.c:6813 [inline]
->   schedule+0x14b/0x320 kernel/sched/core.c:6828
->   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6885
->   rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
->   __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
->   inode_lock include/linux/fs.h:793 [inline]
->   do_lock_mount+0x112/0x3a0 fs/namespace.c:2460
->   lock_mount fs/namespace.c:2502 [inline]
->   do_new_mount_fc fs/namespace.c:3289 [inline]
->   do_new_mount+0x43d/0xb40 fs/namespace.c:3354
->   do_mount fs/namespace.c:3692 [inline]
->   __do_sys_mount fs/namespace.c:3898 [inline]
->   __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
->   do_syscall_64+0xfb/0x240
->   entry_SYSCALL_64_after_hwframe+0x6d/0x75
-> RIP: 0033:0x7f180bc1f26a
-> RSP: 002b:00007ffce5f8f508 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007ffce5f8f520 RCX: 00007f180bc1f26a
-> RDX: 0000000020001500 RSI: 0000000020000140 RDI: 00007ffce5f8f520
-> RBP: 0000000000000005 R08: 00007ffce5f8f560 R09: 00000000000014f8
-> R10: 0000000000000800 R11: 0000000000000286 R12: 0000000000000800
-> R13: 00007ffce5f8f560 R14: 0000000000000004 R15: 0000000000020000
->   </TASK>
-> INFO: task syz-executor238:5071 blocked for more than 143 seconds.
->        Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor238 state:D stack:25336 pid:5071  tgid:5071  ppid:5066   flags:0x00004006
-> Call Trace:
->   <TASK>
->   context_switch kernel/sched/core.c:5409 [inline]
->   __schedule+0x1781/0x49d0 kernel/sched/core.c:6736
->   __schedule_loop kernel/sched/core.c:6813 [inline]
->   schedule+0x14b/0x320 kernel/sched/core.c:6828
->   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6885
->   rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
->   __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
->   inode_lock include/linux/fs.h:793 [inline]
->   do_lock_mount+0x112/0x3a0 fs/namespace.c:2460
->   lock_mount fs/namespace.c:2502 [inline]
->   do_new_mount_fc fs/namespace.c:3289 [inline]
->   do_new_mount+0x43d/0xb40 fs/namespace.c:3354
->   do_mount fs/namespace.c:3692 [inline]
->   __do_sys_mount fs/namespace.c:3898 [inline]
->   __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
->   do_syscall_64+0xfb/0x240
->   entry_SYSCALL_64_after_hwframe+0x6d/0x75
-> RIP: 0033:0x7f180bc1f26a
-> RSP: 002b:00007ffce5f8f508 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007ffce5f8f520 RCX: 00007f180bc1f26a
-> RDX: 0000000020001500 RSI: 0000000020000140 RDI: 00007ffce5f8f520
-> RBP: 0000000000000005 R08: 00007ffce5f8f560 R09: 00000000000014f8
-> R10: 0000000000000800 R11: 0000000000000286 R12: 0000000000000800
-> R13: 00007ffce5f8f560 R14: 0000000000000004 R15: 0000000000020000
->   </TASK>
-> INFO: task syz-executor238:5073 blocked for more than 143 seconds.
->        Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor238 state:D stack:25456 pid:5073  tgid:5073  ppid:5069   flags:0x00004006
-> Call Trace:
->   <TASK>
->   context_switch kernel/sched/core.c:5409 [inline]
->   __schedule+0x1781/0x49d0 kernel/sched/core.c:6736
->   __schedule_loop kernel/sched/core.c:6813 [inline]
->   schedule+0x14b/0x320 kernel/sched/core.c:6828
->   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6885
->   rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
->   __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
->   inode_lock include/linux/fs.h:793 [inline]
->   do_lock_mount+0x112/0x3a0 fs/namespace.c:2460
->   lock_mount fs/namespace.c:2502 [inline]
->   do_new_mount_fc fs/namespace.c:3289 [inline]
->   do_new_mount+0x43d/0xb40 fs/namespace.c:3354
->   do_mount fs/namespace.c:3692 [inline]
->   __do_sys_mount fs/namespace.c:3898 [inline]
->   __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
->   do_syscall_64+0xfb/0x240
->   entry_SYSCALL_64_after_hwframe+0x6d/0x75
-> RIP: 0033:0x7f180bc1f26a
-> RSP: 002b:00007ffce5f8f508 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007ffce5f8f520 RCX: 00007f180bc1f26a
-> RDX: 0000000020001500 RSI: 0000000020000140 RDI: 00007ffce5f8f520
-> RBP: 0000000000000005 R08: 00007ffce5f8f560 R09: 00000000000014f8
-> R10: 0000000000000800 R11: 0000000000000286 R12: 0000000000000800
-> R13: 00007ffce5f8f560 R14: 0000000000000004 R15: 0000000000020000
->   </TASK>
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/29:
->   #0: ffffffff8e132020 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:298 [inline]
->   #0: ffffffff8e132020 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:750 [inline]
->   #0: ffffffff8e132020 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-> 2 locks held by getty/4822:
->   #0: ffff88802a7690a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
->   #1: ffffc900031332f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-> 1 lock held by syz-executor238/5068:
->   #0: ffff88807b2a02b8 (&sb->s_type->i_mutex_key#14){++++}-{3:3}, at: inode_lock include/linux/fs.h:793 [inline]
->   #0: ffff88807b2a02b8 (&sb->s_type->i_mutex_key#14){++++}-{3:3}, at: do_lock_mount+0x112/0x3a0 fs/namespace.c:2460
-> 3 locks held by syz-executor238/5072:
-> 1 lock held by syz-executor238/5071:
->   #0: ffff88807b2a02b8 (&sb->s_type->i_mutex_key#14){++++}-{3:3}, at: inode_lock include/linux/fs.h:793 [inline]
->   #0: ffff88807b2a02b8 (&sb->s_type->i_mutex_key#14){++++}-{3:3}, at: do_lock_mount+0x112/0x3a0 fs/namespace.c:2460
-> 1 lock held by syz-executor238/5073:
->   #0: ffff88807b2a02b8 (&sb->s_type->i_mutex_key#14){++++}-{3:3}, at: inode_lock include/linux/fs.h:793 [inline]
->   #0: ffff88807b2a02b8 (&sb->s_type->i_mutex_key#14){++++}-{3:3}, at: do_lock_mount+0x112/0x3a0 fs/namespace.c:2460
-> 2 locks held by syz-executor238/5141:
->   #0: ffff88801ff6efc8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0x259/0x320 fs/file.c:1191
->   #1: ffff88807b2a02b8 (&sb->s_type->i_mutex_key#14){++++}-{3:3}, at: iterate_dir+0x436/0x6f0 fs/readdir.c:103
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 0
-> CPU: 0 PID: 29 Comm: khungtaskd Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:88 [inline]
->   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->   nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
->   nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
->   trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
->   check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
->   watchdog+0xfb0/0xff0 kernel/hung_task.c:379
->   kthread+0x2f0/0x390 kernel/kthread.c:388
->   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
->   </TASK>
-> Sending NMI from CPU 0 to CPUs 1:
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 5072 Comm: syz-executor238 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-> RIP: 0010:__sanitizer_cov_trace_cmp8+0x7d/0x90 kernel/kcov.c:285
-> Code: c1 e1 05 48 8d 41 28 4c 39 c8 77 1e 49 ff c2 4c 89 12 48 c7 44 11 08 06 00 00 00 48 89 7c 11 10 48 89 74 11 18 4c 89 44 11 20 <c3> cc cc cc cc 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 90 90 90
-> RSP: 0018:ffffc90004277398 EFLAGS: 00000093
-> RAX: 0000000000000000 RBX: 00000000000000a0 RCX: ffff888011465a00
-> RDX: ffff888011465a00 RSI: 00000000000000a0 RDI: 0000000000000080
-> RBP: ffffc900042774e0 R08: ffffffff8217736e R09: 1ffffffff289d8e4
-> R10: dffffc0000000000 R11: fffffbfff289d8e5 R12: ffff88807b1262b8
-> R13: 0000000000039030 R14: 0000000000000000 R15: 0000000000000080
-> FS:  00005555679ce380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f180361f000 CR3: 000000007721e000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <NMI>
->   </NMI>
->   <TASK>
->   lookup_bh_lru fs/buffer.c:1370 [inline]
->   __find_get_block+0x46e/0x10d0 fs/buffer.c:1397
->   bdev_getblk+0x38/0x610 fs/buffer.c:1423
->   __bread_gfp+0xac/0x430 fs/buffer.c:1474
->   sb_bread include/linux/buffer_head.h:321 [inline]
->   exfat_get_dentry+0x53b/0x730 fs/exfat/dir.c:770
->   exfat_readdir fs/exfat/dir.c:121 [inline]
->   exfat_iterate+0xbd7/0x33e0 fs/exfat/dir.c:261
->   wrap_directory_iterator+0x94/0xe0 fs/readdir.c:67
->   iterate_dir+0x539/0x6f0 fs/readdir.c:110
->   __do_sys_getdents64 fs/readdir.c:409 [inline]
->   __se_sys_getdents64+0x20d/0x4f0 fs/readdir.c:394
->   do_syscall_64+0xfb/0x240
->   entry_SYSCALL_64_after_hwframe+0x6d/0x75
-> RIP: 0033:0x7f180bc1ded9
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffce5f8f698 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
-> RAX: ffffffffffffffda RBX: 00007f180bc67082 RCX: 00007f180bc1ded9
-> RDX: 0000000000000646 RSI: 0000000020000240 RDI: 0000000000000005
-> RBP: 0030656c69662f2e R08: 00005555679cf378 R09: 00005555679cf378
-> R10: 00000000000014f8 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00007ffce5f8f6d0 R14: 00007ffce5f8f6bc R15: 00007f180bc6703b
->   </TASK>
-> INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.453 msecs
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+AFAIK that is not written in stone, but many common practices are not
+documented anywhere (e.g. names of error/ret variables). They just copy
+what the majority of the code in that subsystem does. There is indeed a
+tendency to add a blank line before the last (unconditional, not
+labeled) return, but I am sure that some code does not follow that.
 
+Having said that, I don't have a strong opinion (it was a nitpick) on
+that, but what I would definitely recommend you is following **some**
+pattern. There are some functions where you added a blank line, and some
+others (the majority, I think), where you didn't. Given that this is new
+code, uniformity would be appreciated.
+
+Unless an IIO maintainer (I am NOT one) says otherwise, I would find
+both approaches (blank/no line) reasonable, even though I like the blank
+line in that particular case :)
+
+Best regards,
+Javier Carrasco
 
