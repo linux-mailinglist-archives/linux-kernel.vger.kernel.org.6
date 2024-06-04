@@ -1,182 +1,173 @@
-Return-Path: <linux-kernel+bounces-200848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECEF8FB5A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:39:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04EB68FB5B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0B31F24D4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:39:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14BD6B27E6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF17148317;
-	Tue,  4 Jun 2024 14:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BC31494AB;
+	Tue,  4 Jun 2024 14:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uN71wiXf"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R+hWca0I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1C91448CD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314AC1494A1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511835; cv=none; b=V8BVjhhOhf1/dfeMMoMHRSWqZoEiqZv25rU5ncB2dpAaTZsxnQmFHJvzy+WLWmbHkCsCIX24q92rJJGH5J9JPu7A/FogAxlAa9x8PrUPwLnGy/deJVCiXxfVPXB12x/iV24NzRORJ1ZRY5rkITXKyXfPCtOsGjzPH6Xw/ADCOgQ=
+	t=1717511861; cv=none; b=eV/pqr2tfuJsB3RWlQPycbRE5kVe0DAkV+H0eS+UY6DcxBX849lQqgAGzWnjVDTmj9eZrTaa56u36tsawOmMVnbkl/rAzzVdsbP7yScr4jA/3kkb0OBSAOtMXF7+yphtRWui5O4zwdNWb4mZuRASq0vUA+LWtGnMG2lLkU6dUaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511835; c=relaxed/simple;
-	bh=2WBhKCzER5QRGkKRjRUD6vjeP7GmCbMDiVmEYcy6VWs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZK0VNkHyQA+wxKJ0edB0OmGBqr5wF2e7k1VEll2eVzFW81D+sGa5II+p7UH2WQf/wnlYUC2z3Trz+j49+19McjF2W7sjfb4Ggwv6BKCpM3hm23w8PHZnP0qJaiU1AWizgcvWvbvQbY3FGet9mFaI2BcaNgKKvXG3CkOpjyivDm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uN71wiXf; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2c24115469bso1428549a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 07:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717511833; x=1718116633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tPDa51h3OIPRRca1pNet9C1r9RXUkNln6BVibPfIQ7k=;
-        b=uN71wiXfvgps2SQksC9bA5qWj3lNngDaeHBj8t2Vkht13/sdRJKZMxMMCmFQlkKgE0
-         /QrFU6NAUzHik/pr7R5aVMNj88/HjNncMDIlfhBMOCRsYDnKppSTthlnJ+m7OLeC3Sgm
-         LYN1j0WoNPMJb5JgBVYFSiSOfCAxd89zdxtWSX6pZ8HpAbahXLO1BP14mGoucPmlhZ8V
-         0gjYFrkLoqMHUn1ZIbyiGC64hOlx+nWljj8rZsv6HIfTqawC9jNyU8fr3TMZY9rfla1c
-         y66+tKnrxOPlfh+pUTQ/44VAwDO/sECnTg7TlagLZM4fsrnpIz0IOFBMjJc4nRFW/uXX
-         cH4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717511833; x=1718116633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tPDa51h3OIPRRca1pNet9C1r9RXUkNln6BVibPfIQ7k=;
-        b=vv9BR6rh4bJOXM5FbGjjRnYSX5zvxRwMvKH5R93ixv1PAcr6S4lUvykWEZkwPje9R9
-         75bq4679tkyJVBwzQ8CGRT6VO23dCTu4RiVWOIXfDikOydtArhe4ooGRkUipDCuTCTQJ
-         FYa6gArZicy5o1SziDUVW65tXxUuaym/xl/wO2cyvHVcgGr3KXYFuL1VEq/XT7EYxMQj
-         DyFVR47EWUWeTe5LjIADTSXOC7Y6+HvcSTHtNdZr/Ugt9S7s8Iu2tZ7Nu/kwBruuIjo+
-         n+dOxp2hLUq6ULwgj7Jv+CTsWYZKMI+Z7TPy7z/5klkbonfseyKtisrEfO+S++Mlxa+W
-         EoCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXM5TBHhTYWyW9l+t/zJaJUeZAjfY0DmQXU3vcswO57SSMmPPc90QcEqWrtI2f7mIb7JEkslcwdmMP342FgR9tczSwLF7w1AHCwUTGr
-X-Gm-Message-State: AOJu0YyRBG2dQ4av2TZ/yBKUCAAxJRUDXoAf+ypTI66qOFETce21ozh6
-	c9l1izUNYYDyaYs+QNFgVgQkxUH6U5LcaiM+uUERvqjAOvc1DkS+nZIdOX4XnxJ/q2H6C1u049E
-	X/95NuvusiUDCzglqQeJnFiQKnaAeqZb51UbzwQ==
-X-Google-Smtp-Source: AGHT+IHhtLFnwXdi+R2aXFv/HWKu0gUi4bBbmBkB66/ECfTiepU3GYfXWnmtFIAj5DEGbHV1/7WutsAAAScuKUavKgQ=
-X-Received: by 2002:a17:90b:11c8:b0:2bd:d6c6:f454 with SMTP id
- 98e67ed59e1d1-2c2530cf172mr4071854a91.21.1717511832821; Tue, 04 Jun 2024
- 07:37:12 -0700 (PDT)
+	s=arc-20240116; t=1717511861; c=relaxed/simple;
+	bh=GSe0K72YrdDKsD9ccEAxSP2G9RITqEcmzRd91s6iNuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iRdqijo+HizTpkRFx0ID3RFBiE6dtMX8uktr49UXSc6E1RQqnw5dFOP2lV3uEsbZFGd1i2VTPe1RYP/ifywofZQ7304rNhyFeIsPM+L4lz/bp5rnrIrjeqawiaA0R219hKAAG3c2fIqY8l/ClHVZHlELmvdviHeJb7QN6my+5VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R+hWca0I; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717511859;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WH8AS3lVorPueuVFarM2V4L81baIisvkBg5pdJlXfEI=;
+	b=R+hWca0IJDg6a8uT0Nrk+wMnv8K9cXJyIqzNa6QxPgWZ3R4qn9YReIrgIQahEJ3zAWqOEg
+	mnvMsBPTL51NeyYFyFrfCInN5pxPHxHa6+Y3kGghDtdqjWKBkeWcDIXpXeS8502wF76ssX
+	/wcogWnCj0vHKi3SSY1Tc297Mg8j1HQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-125-DCICH841MYyBgLkbsaYwQQ-1; Tue, 04 Jun 2024 10:37:33 -0400
+X-MC-Unique: DCICH841MYyBgLkbsaYwQQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A8963101A521;
+	Tue,  4 Jun 2024 14:37:32 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.32.74])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 440661C1CEAB;
+	Tue,  4 Jun 2024 14:37:32 +0000 (UTC)
+Date: Tue, 4 Jun 2024 10:37:30 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: zhang warden <zhangwarden@gmail.com>
+Cc: Miroslav Benes <mbenes@suse.cz>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>, Petr Mladek <pmladek@suse.com>,
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+Message-ID: <Zl8mqq6nFlZL+6sb@redhat.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+ <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
+ <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
+ <Zloh/TbRFIX6UtA+@redhat.com>
+ <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531205452.65781-1-tim.c.chen@linux.intel.com>
-In-Reply-To: <20240531205452.65781-1-tim.c.chen@linux.intel.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 4 Jun 2024 16:37:01 +0200
-Message-ID: <CAKfTPtAm5wTM3TB_s6H=4gs8VmbuFvkHbFMTqn5-ptFPdktHLQ@mail.gmail.com>
-Subject: Re: [PATCH] sched/balance: Skip unnecessary updates to idle load
- balancer's flags
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
-	Chen Yu <yu.c.chen@intel.com>, Vinicius Gomes <vinicius.gomes@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On Fri, 31 May 2024 at 22:52, Tim Chen <tim.c.chen@linux.intel.com> wrote:
->
-> We observed that the overhead on trigger_load_balance(), now renamed
-> sched_balance_trigger(), has risen with a system's core counts.
->
-> For an OLTP workload running 6.8 kernel on a 2 socket x86 systems
-> having 96 cores/socket, we saw that 0.7% cpu cycles are spent in
-> trigger_load_balance(). On older systems with fewer cores/socket, this
-> function's overhead was less than 0.1%.
->
-> The cause of this overhead was that there are multiple cpus calling
-> kick_ilb(flags), updating the balancing work needed to a common idle
-> load balancer cpu. The ilb_cpu's flags field got updated unconditionally
-> with atomic_fetch_or().  The atomic read and writes to ilb_cpu's flags
-> causes much cache bouncing and cpu cycles overhead. This is seen in the
-> annotated profile below.
->
->              kick_ilb():
->              if (ilb_cpu < 0)
->                test   %r14d,%r14d
->              =E2=86=91 js     6c
->              flags =3D atomic_fetch_or(flags, nohz_flags(ilb_cpu));
->                mov    $0x2d600,%rdi
->                movslq %r14d,%r8
->                mov    %rdi,%rdx
->                add    -0x7dd0c3e0(,%r8,8),%rdx
->              arch_atomic_read():
->   0.01         mov    0x64(%rdx),%esi
->  35.58         add    $0x64,%rdx
->              arch_atomic_fetch_or():
->
->              static __always_inline int arch_atomic_fetch_or(int i, atomi=
-c_t *v)
->              {
->              int val =3D arch_atomic_read(v);
->
->              do { } while (!arch_atomic_try_cmpxchg(v, &val, val | i));
->   0.03  157:   mov    %r12d,%ecx
->              arch_atomic_try_cmpxchg():
->              return arch_try_cmpxchg(&v->counter, old, new);
->   0.00         mov    %esi,%eax
->              arch_atomic_fetch_or():
->              do { } while (!arch_atomic_try_cmpxchg(v, &val, val | i));
->                or     %esi,%ecx
->              arch_atomic_try_cmpxchg():
->              return arch_try_cmpxchg(&v->counter, old, new);
->   0.01         lock   cmpxchg %ecx,(%rdx)
->  42.96       =E2=86=93 jne    2d2
->              kick_ilb():
->
-> With instrumentation, we found that 81% of the updates do not result in
-> any change in the ilb_cpu's flags.  That is, multiple cpus are asking
-> the ilb_cpu to do the same things over and over again, before the ilb_cpu
-> has a chance to run NOHZ load balance.
->
-> Skip updates to ilb_cpu's flags if no new work needs to be done.
-> Such updates do not change ilb_cpu's NOHZ flags.  This requires an extra
-> atomic read but it is less expensive than frequent unnecessary atomic
-> updates that generate cache bounces.
->
-> We saw that on the OLTP workload, cpu cycles from trigger_load_balance()
-> (or sched_balance_trigger()) got reduced from 0.7% to 0.2%.
+On Tue, Jun 04, 2024 at 04:14:51PM +0800, zhang warden wrote:
+> 
+> 
+> > On Jun 1, 2024, at 03:16, Joe Lawrence <joe.lawrence@redhat.com> wrote:
+> > 
+> > Adding these attributes to livepatch sysfs would be expedient and
+> > probably easier for us to use, but imposes a recurring burden on us to
+> > maintain and test (where is the documentation and kselftest for this new
+> > interface?).  Or, we could let the other tools handle all of that for
+> > us.
+> How this attribute imposes a recurring burden to maintain and test?
+> 
 
-Make sense, we have seen other variables being a bottleneck in the
-scheduler like task_group's load_avg or root domain's overload.
+Perhaps "responsibility" is a better description.  This would introduce
+an attribute that someone's userspace utility is relying on.  It should
+at least have a kselftest to ensure a random patch in 2027 doesn't break
+it.
 
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > Perhaps if someone already has an off-the-shelf script that is using
+> > ftrace to monitor livepatched code, it could be donated to
+> > Documentation/livepatch/?  I can ask our QE folks if they have something
+> > like this.
+> 
+> My intention to introduce this attitude to sysfs is that user who what to see if this function is called can just need to show this function attribute in the livepatch sysfs interface.
+> 
+> User who have no experience of using ftrace will have problems to get the calling state of the patched function. After all, ftrace is a professional kernel tracing tools.
+> 
+> Adding this attribute will be more easier for us to show if this patched function is called. Actually, I have never try to use ftrace to trace a patched function. Is it OK of using ftrace for a livepatched function?
+> 
 
->
-> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> ---
->  kernel/sched/fair.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 8a5b1ae0aa55..9ab6dff6d8ac 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -11891,6 +11891,13 @@ static void kick_ilb(unsigned int flags)
->         if (ilb_cpu < 0)
->                 return;
->
-> +       /*
-> +        * Don't bother if no new NOHZ balance work items for ilb_cpu,
-> +        * i.e. all bits in flags are already set in ilb_cpu.
-> +        */
-> +       if ((atomic_read(nohz_flags(ilb_cpu)) & flags) =3D=3D flags)
-> +               return;
-> +
->         /*
->          * Access to rq::nohz_csd is serialized by NOHZ_KICK_MASK; he who=
- sets
->          * the first flag owns it; cleared by nohz_csd_func().
-> --
-> 2.32.0
->
+If you build with CONFIG_SAMPLE_LIVEPATCH=m, you can try it out (or with
+one of your own livepatches):
+
+# Convenience variable
+  $ SYSFS=/sys/kernel/debug/tracing
+
+# Install the livepatch sample demo module
+  $ insmod samples/livepatch/livepatch-sample.ko
+
+# Verify that ftrace can filter on our functions
+  $ grep cmdline_proc_show $SYSFS/available_filter_functions
+  cmdline_proc_show
+  livepatch_cmdline_proc_show [livepatch_sample]
+
+# Turn off any existing tracing and filter functions
+  $ echo 0 > $SYSFS/tracing_on
+  $ echo > $SYSFS/set_ftrace_filter
+
+# Set up the function tracer and add the kernel's cmdline_proc_show()
+# and livepatch-sample's livepatch_cmdline_proc_show()
+  $ echo function > $SYSFS/current_tracer
+  $ echo cmdline_proc_show >> $SYSFS/set_ftrace_filter
+  $ echo livepatch_cmdline_proc_show >> $SYSFS/set_ftrace_filter
+  $ cat $SYSFS/set_ftrace_filter
+  cmdline_proc_show
+  livepatch_cmdline_proc_show [livepatch_sample]
+
+# Turn on the ftracing and force execution of the original and
+# livepatched functions
+  $ echo 1 > $SYSFS/tracing_on
+  $ cat /proc/cmdline 
+  this has been live patched
+
+# Checkout out the trace file results
+  $ cat $SYSFS/trace
+  # tracer: function
+  #
+  # entries-in-buffer/entries-written: 2/2   #P:8
+  #
+  #                                _-----=> irqs-off/BH-disabled
+  #                               / _----=> need-resched
+  #                              | / _---=> hardirq/softirq
+  #                              || / _--=> preempt-depth
+  #                              ||| / _-=> migrate-disable
+  #                              |||| /     delay
+  #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+  #              | |         |   |||||     |         |
+               cat-254     [002] ...2.   363.043498: cmdline_proc_show <-seq_read_iter
+               cat-254     [002] ...1.   363.043501: livepatch_cmdline_proc_show <-seq_read_iter
+
+
+The kernel docs provide a lot of explanation of the complete ftracing
+interface.  It's pretty power stuff, though you may also go the other
+direction and look into using the trace-cmd front end to simplify all of
+the sysfs manipulation.  Julia Evans wrote a blog [1] a while back that
+provides a some more examples.
+
+[1] https://jvns.ca/blog/2017/03/19/getting-started-with-ftrace/
+
+--
+Joe
+
 
