@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-200265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972698FADD9
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5598FADD8
 	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CFE02822F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C0D281FBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7EA142E80;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99286142E7E;
 	Tue,  4 Jun 2024 08:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=OUTLOOK.COM.AU header.i=@OUTLOOK.COM.AU header.b="bibi9F64"
-Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2163.outbound.protection.outlook.com [40.92.62.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C92F140384;
-	Tue,  4 Jun 2024 08:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.163
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717490747; cv=fail; b=Vd2P/d+okwAeTFGtrFsJWFK4Sl99ppRZhdB2XfmyMVgHiMBGFD0DGgqlsKde3s5Y3e3SkqEIXhAJiT/JoGHdeN8P6J98rK899IZ2k39jm+RW8sX/frP1ACN96rkPS67TFjs3piTJ0nChYBaKgJQAkbS9hoHOJ8UK3VSAid+un/0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717490747; c=relaxed/simple;
-	bh=+Puh0gKnGwBRRB2HKf/WH13Mrk8HrKjtgqajyhtDTnE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EeokDNL54y5HTLMRQL/zLMIzf26mxypdmKlrABGoYM6kNCW3Iq9IrqYJNmAcG1j77AVYoHb/B9Q54QrEZNN7eOFZX6qujR1gmmJHVIawKwh9m/n3ii6Vd8XVRmw9ZAfCUlk9ergcwJEnfFaqZc75eLn+LVU3F3Clca2BGZBB5Tk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com.au; spf=pass smtp.mailfrom=outlook.com.au; dkim=pass (2048-bit key) header.d=OUTLOOK.COM.AU header.i=@OUTLOOK.COM.AU header.b=bibi9F64; arc=fail smtp.client-ip=40.92.62.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com.au
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ROQxSu2M+7mJGdnFfiUsMMEmtOfu72/A+LRX+tgnrSfuG3FxPfO4nN15RW8YgbRx7aMoZcJX5TN6KQeN9HSpK0h+J79qyuLc0LmVHBa6ORm7Cs9B31+J1ArRnO2m3PrZc47q6eHZ/UXmE7cAXTobTxYhbo1pEgA1EBBGiatA7lyNlAmw1d2Wqbbgwezep1lusbacF8bjWo1zjgG2H+5oMEM/ZJyAm3AXRWjnwzLv0CnEQXjZsbDWnbRkO0mu1hqVALI0ADzPRUdp/cUM6Vs/r7/HVOhIBCEO4JstZ/7VK64QtAFeLWCuMzq+svc8emaXwr08FoLwO++QOXGHPSN7hQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=srG2tahIHRjdsnh8I4SpQQT6WhmS9Axb26IIR9ZW/yg=;
- b=FwarwHGUx7C412YlBcuhk5V+DR9GazSp+BsbwrO2+2e8M3Mrwo1w7CZmzAQPVVyIyJWBAEQNMix0CpRuidoEa1w62cEiDeehxQV5zsVMlCWkmspioONrqEn6aOfeEV1SoiPSAjiW5JGpaAWcJWP4WI6OeaxlWGqZPX2C+lMVv7FexhUlumhLrE3UeFFWv93dvkQNcGYFoZ1JxedNOmRxpIuc+IWohCKRFRY0RCILbHsxUriSaHlwv8v9+hUnn+ypfwq3z+sp38k9ptZypV60P7WgFze7SoD6IkSh5D4MBBDfGd8Mw70hQOoUBDjDT8wUKeFlSUAaF91GuDuqgaFYpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=OUTLOOK.COM.AU;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=srG2tahIHRjdsnh8I4SpQQT6WhmS9Axb26IIR9ZW/yg=;
- b=bibi9F648hVj+wQWCgOyANylQPAm5gt1wpOKKXEnI5aRTDMiEPrjM30rr3V0T0Kv4vswmHx3/+PzuaVlPkloPOiA6RCdE/y29TQrJg4CVPOwGgtMWUfB6jIFJaRwoD5DHp5HLbWJZXRdq7tVS5WghRXT5b54HrQSMOtl/tE05KzWCHcp/mzsW+Gw02AB9C8/vR52gYbCTRbD/Zczub8xCoVVAYHbSkPt2Y7yYN6680Fm0n2Nl3pyLC/Azq36a7FO8o5jWLTjVqMjLcNIw8Faz1odska4N/HSmxlygCnkMPJ769yQaVu1lBRtbICqHqGR4gGOZGeboCMvcVb4vtpnHg==
-Received: from SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:159::9) by
- SY7P282MB4571.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:27c::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7409.15; Tue, 4 Jun 2024 08:45:40 +0000
-Received: from SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM
- ([fe80::37cc:3733:d1e9:d8e4]) by SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM
- ([fe80::37cc:3733:d1e9:d8e4%3]) with mapi id 15.20.7633.021; Tue, 4 Jun 2024
- 08:45:40 +0000
-Message-ID:
- <SY4P282MB3063FE1968B72C3187042917C5F82@SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM>
-Date: Tue, 4 Jun 2024 18:45:32 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6] hwmon: (spd5118) Add suspend/resume support
-To: Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- =?UTF-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Armin Wolf <W_Armin@gmx.de>
-References: <20240604040237.1064024-1-linux@roeck-us.net>
- <20240604040237.1064024-4-linux@roeck-us.net>
-Content-Language: en-AU, en-US, en-GB
-From: Stephen Horvath <s.horvath@outlook.com.au>
-In-Reply-To: <20240604040237.1064024-4-linux@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [/ivfvdM1y5H9c1P3/2ITQS0SBxd5X+fGbl3n57VyyskfbuA0GiisLm1pDl69VwcH]
-X-ClientProxiedBy: SYYP282CA0001.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:b4::11) To SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:159::9)
-X-Microsoft-Original-Message-ID:
- <60a00f05-0cca-4762-a4fb-87e49d0ec106@outlook.com.au>
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2201411F9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717490748; cv=none; b=uf751IFQEqNrd4pULg5DI2Y6Tn4ew57R1UzFHX2zLjYRj2AAyJkhER78MySLu7PoknEWuQvLkvcfwC/WYrzdNye2Uzd1i7DM0mGyIQv3t0/JTTg0WTcWccrPPlQYUDZhDcRRXNwsN/N7sAARkGcE/gh+ARL6aoRNSrGP6LRPuB0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717490748; c=relaxed/simple;
+	bh=OQIffwSMMzPTLMkbkLwlXwwOwo3Bx6H8Zm5F5P0mvfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j7Zt8jm1r4dllnBhqvJVoIwV8bGEs6x3hYG9E/ZHU0HwPclfb5HsTAxG/DXtCXlIbIaDoTPMUqSJn25/DFCKHZueI6rGWgO8m5RZ9JYyIHcmCfXzQJmZln2J0JE+nxNOjV33OF3Uy5NcHoSgYdRddrc00jFCZCWOiMBpyWjRXRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d85ff70000001748-9a-665ed43276cc
+Date: Tue, 4 Jun 2024 17:45:33 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com, hannes@cmpxchg.org,
+	iamjoonsoo.kim@lge.com, rientjes@google.com
+Subject: Re: [PATCH v2] mm: let kswapd work again for node that used to be
+ hopeless but may not now
+Message-ID: <20240604084533.GA68919@system.software.com>
+References: <20240604072323.10886-1-byungchul@sk.com>
+ <87bk4hcf7h.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SY4P282MB3063:EE_|SY7P282MB4571:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ab923d1-310d-41fb-e2e1-08dc8472b50c
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	YMd5odYv00y4+ciCzzApd19o2BY13azjxdN2miKZso8/nR1DcUK3JFJzF8DXb/7WRZUoaqgJwRs6bMxZqwKbROPbewFvucLA34aatdDQgg0OkDQYmRRsvcchCjxW4VK2XmVdWtjAB6Lp3d5TbbF3wn8TE0S76lEcp79YmHlGWxeq99Xv9yeOtBLtB2lJjp2bd3O5T4qeXzbNjPtUqPMOZsKlOosVvZYZljtuf0702k7G5p6ST6Sh6RRffw+KvqZIWWxIqixD/mzvxzABBojreNYB92uTDH4Ocwe3DHfHs8gfC90Tdpj4OjJHepu9WDKvWDQExmMBamJm2HCC98Ubadyu/amlnivBR1AMK0V8s+oWry5ZVoJr/kuL6R9pUlpTYNFAyH0ZwEUQB+78B4TT+0uivbq2Dt5l/0vCN9jAtFbUyjR7XHXZ4VauwH9SfX5PEgpQO0D0eMAzZHcxSyOHk28AKVn6k4T3ifo/X2Z4DckmgqgPKA84t2JUvqXOAkhrscLhPuc7jmIBg6kAUIwRYYNKEMmdTyAl7sZHkoydqPO8wpdxaato10NHb6O6qfw0
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M3g5U1NpNk5GeG5QTXpaZElzZEphQlVZNEN5QUVxZWlVV0RsRmRBcWF4Vnh4?=
- =?utf-8?B?bjd3LzJxWmR4Y1dYUlJvUy83M2VrWHd5VmlaTGkzcU1mR2ZOSytQd3YraVYx?=
- =?utf-8?B?K25mMzloc2JLdDBESmRjelZNdkhhVHRKcG0wRnQ5Z2Z1MGhJTlMyRmxXYnN6?=
- =?utf-8?B?dmlZcjRWVlFXUDlET01YSEJ5RU9IamthOVFHcVBQODRpVE0vSzFEK3hZbTZW?=
- =?utf-8?B?RjZhVHN4T2lFVFY4Z2F5SXJJNGwzMW81NURkeXgwYjlad200RW51bjB1U1pq?=
- =?utf-8?B?Njk2Y3pnRVZtOEFRRzF0SVlvb2F4cnZQNGlKT21tdDNDYUEwbEJwelJZT2Fs?=
- =?utf-8?B?RmlGQTlOVDhYM2I3RlpMQzZFQy9kRFJlQUhDbWVZOGJBcWVFWDlwYzNoLzMr?=
- =?utf-8?B?MUdmczJqNEkwY1R6TUwxREdyTy9KM2hvSEFsRWY1cXU3QmdBOFlyZytZTW52?=
- =?utf-8?B?OTREb1RrejUwZjVSeFdjeEh4OWEzeVNkbzRWQW1OdnhjSFRUY2lUNEpkTVM3?=
- =?utf-8?B?MGJMT2xLUUlVQmF2Z3RYbTQvb2k5UDFyMnU0ajJKc09hVVBUeW9GMUxTbC9U?=
- =?utf-8?B?S0tCNnpSWnZGWms2TE1reHpuc1Zyck1CMHM0aEsrVUNPdHNYbWpoVlBGY0JS?=
- =?utf-8?B?c2VTVWZCQlR6cnppMHRxWFZSdjh0dzB2NTlBQmpNeEF0YkJQcmQyUktsN1Ju?=
- =?utf-8?B?dlE3OGtLbGdsT0s0Tm11QWV1aW1QVHhsV2FhSHdyQVlSTCtXM250bFN3MUcy?=
- =?utf-8?B?YmFxYkxRby9Ua2xNemhXWEFsSXZveHl0aXhyNUgwd2hqN2VTdWMyNUs4WXVP?=
- =?utf-8?B?cFlzeVozK0syd2dFdVJpQ2lxUVp4VnZzbjBLQVV4YVBPd3JDajdtbG9IWUZm?=
- =?utf-8?B?TVBLYXJ3MDNoZTQ5clF5WThZdHBmb095eENrazhUOTNwdWpWdEJDYlVQV0VW?=
- =?utf-8?B?QVJaTG80VVZNNWFaRDhLSmdzT2U2SVBOTktxd2RZbWZyZnVaNGRqUFdaREVI?=
- =?utf-8?B?RTc5N2dIK0FNdExsWTdTaFJCd3A4ZHJuR0VwWlZVdThWUmxnOUF4VjgxMytQ?=
- =?utf-8?B?Y050bHd0NUhCd05GTmFaekNpOThON29QZE9IQmtNSXZhbWljQXhGRUkzVFF0?=
- =?utf-8?B?OVNjS0g4WFNIWEN4T2FBdk9XVjhsK3ZCcVRNM3NyemhLdzF6Z25IR3d6dllx?=
- =?utf-8?B?Sjd3S2NhcFdZdlJZdVptOUJEb25nOHJqWHd5ZElXS0tmc1llM2VnNEhkT1c0?=
- =?utf-8?B?cUdlVnVOVVN6NEphNHJSMzVJdGtZc2t2YTJtb2RFKzc0cDhKOG1xdnZoZ0tX?=
- =?utf-8?B?Wkp6L0ViZGNDTGNKeUhtZmgvT08vZjB1R2RseXNLQnJKQnp6bDVrclNQVFJl?=
- =?utf-8?B?YUpzbEN4dlBmZ0ZOckZrSUpGNzJTSFNrN1Z5RksyUWdNeXZ4b0xrMmwwZGNI?=
- =?utf-8?B?c1FVNkNrbW5xUG5zS1JYZU8xajg2VVA1K1F5MDZvWUR1Qkx4bFl0bVpKVnJw?=
- =?utf-8?B?UWVucDVZQW1jbnd1YWpPbGwydEFxR0paT2FGenFkY1NEdDE2Wm1neU95RjYy?=
- =?utf-8?B?cnNEQWxCd2NoSFFMSWlWcFZLc0VIS09nR2ZFdFdRelNYQ0xFK0hqS3BuYXpU?=
- =?utf-8?B?Q0VPc0dhVEJSaUxGLzJBVnF6VTlBRTJvZjNoVUQ2ajZrT2h2a21aRVc4c0tY?=
- =?utf-8?B?REw0NGlVZVZtWHhHbEYwa2hyb1ZOWGJVN2EwTlBadmVLZ0lPT1BBclZub0p0?=
- =?utf-8?Q?m3wbFFAWFdB84XHxX6Muy4c1EXFglzk/nUPvqyB?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-746f3.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ab923d1-310d-41fb-e2e1-08dc8472b50c
-X-MS-Exchange-CrossTenant-AuthSource: SY4P282MB3063.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 08:45:40.2921
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY7P282MB4571
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87bk4hcf7h.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNLMWRmVeSWpSXmKPExsXC9ZZnoa7Rlbg0g/ZzOhZz1q9hs1i9yddi
+	ZXczm8XlXXPYLO6t+c9q0bZkI5PFyVmTWRzYPQ6/ec/ssWBTqcfiPS+ZPDZ9msTu0fX2CpPH
+	iRm/WTw+b5ILYI/isklJzcksSy3St0vgytixSr/gq0TF/kV3mRsYzwt3MXJySAiYSGzffIKt
+	i5EDzF7RYAQSZhFQkVh05CoriM0moC5x48ZPZhBbREBD4tPC5exdjFwczAJrGSWOXG1hBekV
+	FkiVOL49AKSGV8BC4t2xj2wgtpBApsSDnXuZIeKCEidnPmEBsZkFtCRu/HvJBNLKLCAtsfwf
+	B4jJKWAnseOqFUiFqICyxIFtx5lANkkI7GGTaN01jR3iYkmJgytusExgFJiFZOosJFNnIUxd
+	wMi8ilEoM68sNzEzx0QvozIvs0IvOT93EyMwyJfV/onewfjpQvAhRgEORiUeXoNFsWlCrIll
+	xZW5hxglOJiVRHj76qLThHhTEiurUovy44tKc1KLDzFKc7AoifMafStPERJITyxJzU5NLUgt
+	gskycXBKNTDapPX/Ngqcc/vqn09y+ic049a/9NJIvN9i8iL3+B1T7Tls9ZN+BTTJbJ2gxT/f
+	qt1ueU55CnOnzOa1s1OOrvux9IVT8uZXijGp0/obnKPPPu6u/b5PgIcx5a+hvNL3o+u3L+1U
+	4zii9PIZ40bDJyG9hwvlNlcem/Bdee7NxZ+6+aSdW8/UP1uuxFKckWioxVxUnAgAsAtk0m4C
+	AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsXC5WfdrGt0JS7NoPuPqMWc9WvYLFZv8rVY
+	2d3MZnF47klWi8u75rBZ3Fvzn9WibclGJouTsyazOHB4HH7zntljwaZSj8V7XjJ5bPo0id2j
+	6+0VJo8TM36zeCx+8YHJ4/MmuQCOKC6blNSczLLUIn27BK6MHav0C75KVOxfdJe5gfG8cBcj
+	B4eEgInEigajLkZODhYBFYlFR66ygthsAuoSN278ZAaxRQQ0JD4tXM7excjFwSywllHiyNUW
+	VpBeYYFUiePbA0BqeAUsJN4d+8gGYgsJZEo82LmXGSIuKHFy5hMWEJtZQEvixr+XTCCtzALS
+	Esv/cYCYnAJ2EjuuWoFUiAooSxzYdpxpAiPvLCTNs5A0z0JoXsDIvIpRJDOvLDcxM8dUrzg7
+	ozIvs0IvOT93EyMwZJfV/pm4g/HLZfdDjAIcjEo8vBYrY9OEWBPLiitzDzFKcDArifD21UWn
+	CfGmJFZWpRblxxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgskycXBKNTD2vS5dvWlx
+	DFtc/h/Xr4v1nzjOXPM39h8bk8le7bcT24+sSJhaemtfkve3wF9u77dUFlzo8X/xJ+bfzIse
+	j39tbWc8nPb39eaw+/HHF0+3PhHZ5LGy8uyiig5mX4dG95/VHtImYU13fh1I8/5ov/SBWtDt
+	BEalJ29Z0iOWL9rEEff2zJpb05ZMVmIpzkg01GIuKk4EAL/tOjJVAgAA
+X-CFilter-Loop: Reflected
 
-Hi,
-
-On 4/6/24 14:02, Guenter Roeck wrote:
-> Add suspend/resume support to ensure that limit and configuration
-> registers are updated and synchronized after a suspend/resume cycle.
+On Tue, Jun 04, 2024 at 03:57:54PM +0800, Huang, Ying wrote:
+> Byungchul Park <byungchul@sk.com> writes:
 > 
-> Cc: Armin Wolf <W_Armin@gmx.de>
-> Cc: Stephen Horvath <s.horvath@outlook.com.au>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> v4: Fix bug seen if the enable attribute was never read prior
->      to a suspend/resume cycle.
+> > Changes from v1:
+> > 	1. Don't allow to resume kswapd if the system is under memory
+> > 	   pressure that might affect direct reclaim by any chance, like
+> > 	   if NR_FREE_PAGES is less than (low wmark + min wmark)/2.
+> >
+> > --->8---
+> > From 6c73fc16b75907f5da9e6b33aff86bf7d7c9dd64 Mon Sep 17 00:00:00 2001
+> > From: Byungchul Park <byungchul@sk.com>
+> > Date: Tue, 4 Jun 2024 15:27:56 +0900
+> > Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
+> >
+> > A system should run with kswapd running in background when under memory
+> > pressure, such as when the available memory level is below the low water
+> > mark and there are reclaimable folios.
+> >
+> > However, the current code let the system run with kswapd stopped if
+> > kswapd has been stopped due to more than MAX_RECLAIM_RETRIES failures
+> > until direct reclaim will do for that, even if there are reclaimable
+> > folios that can be reclaimed by kswapd.  This case was observed in the
+> > following scenario:
+> >
+> >    CONFIG_NUMA_BALANCING enabled
+> >    sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
+> >    numa node0 (500GB local DRAM, 128 CPUs)
+> >    numa node1 (100GB CXL memory, no CPUs)
+> >    swap off
+> >
+> >    1) Run a workload with big anon pages e.g. mmap(200GB).
+> >    2) Continue adding the same workload to the system.
+> >    3) The anon pages are placed in node0 by promotion/demotion.
+> >    4) kswapd0 stops because of the unreclaimable anon pages in node0.
+> >    5) Kill the memory hoggers to restore the system.
+> >
+> > After restoring the system at 5), the system starts to run without
+> > kswapd.  Even worse, tiering mechanism is no longer able to work since
+> > the mechanism relies on kswapd for demotion.
+> 
+> We have run into the situation that kswapd is kept in failure state for
+> long in a multiple tiers system.  I think that your solution is too
 
-I can confirm this works for my devices, so:
+My solution just gives a chance for kswapd to work again even if
+kswapd_failures >= MAX_RECLAIM_RETRIES, if there are potential
+reclaimable folios.  That's it.
 
-Tested-by: Stephen Horvath <s.horvath@outlook.com.au>
+> limited, because OOM killing may not happen, while the access pattern of
 
-Thanks,
-Steve
+I don't get this.  OOM will happen as is, through direct reclaim.
+
+> the workloads may change.  We have a preliminary and simple solution for
+> this as follows,
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=17a24a354e12d4d4675d78481b358f668d5a6866
+
+Whether tiering is involved or not, the same problem can arise if
+kswapd gets stopped due to kswapd_failures >= MAX_RECLAIM_RETRIES.
+
+	Byungchul
+
+> where we will try to wake up kswapd to check every 10 seconds if kswapd
+> is in failure state.  This is another possible solution.
+> 
+> > However, the node0 has pages newly allocated after 5), that might or
+> > might not be reclaimable.  Since those are potentially reclaimable, it's
+> > worth hopefully trying reclaim by allowing kswapd to work again.
+> >
+> 
+> [snip]
+> 
+> --
+> Best Regards,
+> Huang, Ying
 
