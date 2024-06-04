@@ -1,119 +1,102 @@
-Return-Path: <linux-kernel+bounces-200930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3068FB6AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:12:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A198FB4EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9832C282695
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A65DA1C22575
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4C213D533;
-	Tue,  4 Jun 2024 15:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DD313C90F;
+	Tue,  4 Jun 2024 14:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QxpV0Ufu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pd1OgHOf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C924C91
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A526A134409;
+	Tue,  4 Jun 2024 14:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513945; cv=none; b=Obqr0u7DPuLoyr+yMjyNWitjtAmSjVdIeyNcBfGzUmmBlbW+G3x4CtHPxYnJJBMimDBKao4KYx0pY5srp0xof85AGMEg6kddQA2gQaz2r8/8TNEJN4fi5IjU5Wlod6dVil84gaKF2ArbjpDjE/4Fr+IKLf6lRQ/Lj+hjchtlI2I=
+	t=1717510340; cv=none; b=UDpmcvsbddak9Gn/32awk7JxTqqnNW+8IYNo3M4fhe++wTwHkhr9daI3jQYRVV0toAvuHCNRpwVphJPy4oIXQWe7xDmN2ntUzN3efmh04Sb6hGPnPQpQbMFK9KJ3DXJScyIYwmJ4yUJxpl9aI/0/US2fBEqvVVCV6ZysdauBGzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513945; c=relaxed/simple;
-	bh=WI66YXFhtMtD9v7S0j/6cTY9ceJOboCB3afTlXQhJXI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJhp0SZnvm886npzGGT5MyXCvkowPWlF4LcCpuPfa676VmJTM40TnTlA95zodFJpAlE10K6ziaIUAcgzZd3hP+DY0lFOxVsoDSu4KkfBolLYgTj4F9Sh7myRFxq2pRN1WPiZ00f4ZeuCXtPHXd6aSB+0uvbsNSR0h0h3ylPEGvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QxpV0Ufu; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717513944; x=1749049944;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WI66YXFhtMtD9v7S0j/6cTY9ceJOboCB3afTlXQhJXI=;
-  b=QxpV0UfukzWfNwhfrdYg3C0EjxrY5utGwSYu/8yHRxgHKY0r027+H9Or
-   Jg4Y/5PWHARtVjXcNlbXfpUSVDAAVUxYkZMBBTzAPaN2oADSke1Ce59e7
-   EFBCnxmLXdAYc7i6mn+Eg98weLIEUxCZZif1iDCxTtgloRWRrvOaVYQDG
-   DGAdWlQJIEb2/pmN1Ab4C4aRtt/Jit/4MUtw1TRLVnCSrPKZD19lj7SCJ
-   vXFUA4JRbv6oEfG6mp3DpBd6jSuF4UkDot0d4bmaJLj2Eolbu5QEGdfNj
-   edk6V9NnaUtD1GRR+5LUz4tAY4ya46JtRhGVF8L5IwfLi6RUJjFjRCC70
-   w==;
-X-CSE-ConnectionGUID: TfwOX+/7SeW8MV6KlREK5Q==
-X-CSE-MsgGUID: fuNnVbq5QsOkPg79kYu71A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="31602488"
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="31602488"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 08:12:06 -0700
-X-CSE-ConnectionGUID: ISWGZxwKQBW4ys7I1KD4VA==
-X-CSE-MsgGUID: XTj7vXuSQGWxND4FIYegeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="37139624"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.246.143]) ([10.245.246.143])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 08:12:04 -0700
-Message-ID: <60a99290-b71e-41e4-844b-f46d8f959c81@linux.intel.com>
-Date: Tue, 4 Jun 2024 15:29:56 +0200
+	s=arc-20240116; t=1717510340; c=relaxed/simple;
+	bh=a+dh7jhzlHhwln90offyZoiN+B1RFJofWEM3+SwHlVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rTtR5yqnjCKNwYjpd0+0gu+1P4joD7L2YAP55Mk2+ehaptlJzNY7zdtdevVXNMZkRqscZa0/ANLXUlTKsWzZHniLZsW7wtCOQWFl9Woqg9jED/stHvPlTo99jkfMt0cLNunVN6GfaXYbdeRow4LrqbQqFrpW9nF7YnSUBB0PjEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pd1OgHOf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61F7BC32786;
+	Tue,  4 Jun 2024 14:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717510340;
+	bh=a+dh7jhzlHhwln90offyZoiN+B1RFJofWEM3+SwHlVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pd1OgHOfoDM8EnggG7+pJFqnZGPBRXKf1p19Hkw8gIOj0vTIDFd8tqcqkmGwpKdyo
+	 tofQyVfh5WlIA/S31F61Z5naCXDj855GpWEYV+cYU7QcJnHh9hNoMCXgKsAsf0lmV1
+	 AUb21ZBtGnjdRUE3Nyb6ltfmQ4lRiHCQxMQ8wVJo=
+Date: Tue, 4 Jun 2024 15:48:58 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	patches@lists.linux.dev, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Daniel Latypov <dlatypov@google.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Ripard <maxime@cerno.tech>
+Subject: Re: [PATCH v5 06/11] platform: Add test managed
+ platform_device/driver APIs
+Message-ID: <2024060445-reverse-defendant-ec52@gregkh>
+References: <20240603223811.3815762-1-sboyd@kernel.org>
+ <20240603223811.3815762-7-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] soundwire: bus: suppress probe deferral errors
-To: Johan Hovold <johan@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org
-References: <20240604075213.20815-1-johan+linaro@kernel.org>
- <20240604075213.20815-2-johan+linaro@kernel.org>
- <c5ecc0cd-c2ba-4f71-ac2a-9a81793a8f0c@linux.intel.com>
- <Zl7ZyEkmm8kHeRvL@hovoldconsulting.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <Zl7ZyEkmm8kHeRvL@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603223811.3815762-7-sboyd@kernel.org>
 
-
-
-On 6/4/24 11:09, Johan Hovold wrote:
-> On Tue, Jun 04, 2024 at 10:30:21AM +0200, Pierre-Louis Bossart wrote:
->> On 6/4/24 02:52, Johan Hovold wrote:
->>> Soundwire driver probe errors are currently being logged both by the bus
->>> code and driver core:
->>>
->>> 	wsa884x-codec sdw:4:0:0217:0204:00:0: Probe of wsa884x-codec failed: -12
->>> 	wsa884x-codec sdw:4:0:0217:0204:00:0: probe with driver wsa884x-codec failed with error -12
->>>
->>> Drop the redundant bus error message, which is also incorrectly being
->>> logged on probe deferral:
->>
->> It's only redundant in the QCOM case... This would remove all error logs
->> for other codecs, e.g. see
->>
->> rt711_sdca_sdw_probe
->> cs35l56_sdw_probe
->> wcd9390_probe
->>
->> Looks like the wsa884x-codec is the chatty driver, others are just fine
->> with the existing code.
+On Mon, Jun 03, 2024 at 03:38:03PM -0700, Stephen Boyd wrote:
+> Introduce KUnit resource wrappers around platform_driver_register(),
+> platform_device_alloc(), and platform_device_add() so that test authors
+> can register platform drivers/devices from their tests and have the
+> drivers/devices automatically be unregistered when the test is done.
 > 
-> I believe you misunderstood this patch. The error messages above are not
-> printed by the wsa884x-codec driver, but by the soundwire bus code and
-> driver core, so the redundant error message will be printed for all
-> codecs on probe failures.
+> This makes test setup code simpler when a platform driver or platform
+> device is needed. Add a few test cases at the same time to make sure the
+> APIs work as intended.
 > 
-> And specifically, driver core will still log probe failures after this
-> change.
+> Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> Cc: David Gow <davidgow@google.com>
+> Cc: Rae Moar <rmoar@google.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  Documentation/dev-tools/kunit/api/index.rst   |   5 +
+>  .../dev-tools/kunit/api/platformdevice.rst    |  10 +
+>  include/kunit/platform_device.h               |  20 ++
+>  lib/kunit/Makefile                            |   4 +-
+>  lib/kunit/platform-test.c                     | 223 +++++++++++++
+>  lib/kunit/platform.c                          | 302 ++++++++++++++++++
+>  6 files changed, 563 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/dev-tools/kunit/api/platformdevice.rst
+>  create mode 100644 include/kunit/platform_device.h
+>  create mode 100644 lib/kunit/platform-test.c
+>  create mode 100644 lib/kunit/platform.c
 
-Ah yes, you're right I read 'driver core' sideways, my bad. That's fine
-then.
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
