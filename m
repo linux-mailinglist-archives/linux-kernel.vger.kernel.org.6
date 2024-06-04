@@ -1,167 +1,261 @@
-Return-Path: <linux-kernel+bounces-200090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8888FAA85
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:09:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCCE8FAA69
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19658B23410
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:09:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 108E6B2370F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F005E13FD94;
-	Tue,  4 Jun 2024 06:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C5D13793F;
+	Tue,  4 Jun 2024 06:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FOQCvNDj"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L9YONRBB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939F813F44D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40281385;
+	Tue,  4 Jun 2024 06:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717481290; cv=none; b=c15iAEyn1rENtcNnc0qXF/4lw+3th2/tRfmMaDsnKMlpOkDtOjRKrRV6zu4HoTTQcWdSyi4zx5Fs9W6uWlNx3fGpzdbrsugi/bp8YzGJzH5Q3jyinvpGf8/OXNpeQxCC/57xLM0XZTZhu2QtI2SYl860gANYDDgweQrt8dK+apA=
+	t=1717481048; cv=none; b=dVbvbK/KyaR/YDSzA8p73BHri4GerLZL19vZgbJbArbVR8AbhQDGEMGXyVGRnru7gBhRWwyeenYNim+qJ1wek4oDc/W3TT7muQOWo6Nvf2noM994f4oUoQP4MPKZUAIgvYTNgp55rgGyxiBPF/E6ZZ22qsGNbmz7LuQnhntVkks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717481290; c=relaxed/simple;
-	bh=uBSMT/rJCeQH+/WQQglX9BDaLJwuZrWJKb3tRGMkiPg=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=cz2TbOlCS5Vj8b3IF/7IKS3aTQMPk3GbwMlVMsWjURNxjvFjbteLMqUNqyDPnaGvIOmxP4cTDISayVchpWHoeIBDiaSrfeENc5QDsx5Xdz2lbqMVqWpJEpglcpf5Byutchc+35eCZ1z8F35RyqCa/DIDGSvzl/B/OtaG19AV8i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FOQCvNDj; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240604060807euoutp02c7e28627cc2be18645db30eebb6181ad~VuCGLgp5U3231132311euoutp02i
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:08:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240604060807euoutp02c7e28627cc2be18645db30eebb6181ad~VuCGLgp5U3231132311euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717481287;
-	bh=fXwWGleR7MHxbZ9YCCDvKWivlC67g5iAbwjZphmcEeo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=FOQCvNDjITCsVlOK5DnP7AKdUUhnBoTxmx++M1JNSbYwNy17ppTni8OiPszB1Fi3i
-	 UBEmU0yZv+O/n60AxEBLD9MvFY2gztGx3P8MK83pmTO34sBzguMV5ifT2vNxP1AKXP
-	 DDpiowbDAe9oc06geVgINEEbaADEW4BnJVVez44M=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240604060806eucas1p2b5d355cdd13db417969c9a1b4a4f89ad~VuCF4AeEm1450314503eucas1p2L;
-	Tue,  4 Jun 2024 06:08:06 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id F6.49.09620.64FAE566; Tue,  4
-	Jun 2024 07:08:06 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240604060806eucas1p22862dbc5e160cc485614c823ba1f77a3~VuCFhbCqT1406314063eucas1p2q;
-	Tue,  4 Jun 2024 06:08:06 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240604060806eusmtrp162ffe2f0926e959a7292f45cf7162b99~VuCFg4hoQ2337423374eusmtrp1J;
-	Tue,  4 Jun 2024 06:08:06 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-78-665eaf460f05
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 31.A0.09010.64FAE566; Tue,  4
-	Jun 2024 07:08:06 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240604060806eusmtip13627c1055fc783b6978f153609ec32c3~VuCFTUs_T2258622586eusmtip10;
-	Tue,  4 Jun 2024 06:08:06 +0000 (GMT)
-Received: from localhost (106.210.248.71) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 4 Jun 2024 07:08:05 +0100
-Date: Mon, 3 Jun 2024 15:23:05 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] kernel/sysctl-test: add MODULE_DESCRIPTION()
-Message-ID: <20240603132305.ji6mpwao6q4hnsfl@joelS2.panther.com>
+	s=arc-20240116; t=1717481048; c=relaxed/simple;
+	bh=M4B30GIS1d4lGziHl2ETRAmpCx3XEZtVoNK45XulINE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OVxUc/6kYtGLCmRRid8K5zzUQMX1tHDTe5l5lCe4EpdtGlTfNyZG3p6YvRsmo1fRwS0xVZZTIhRP0taoyfTpVJ2Kr6YWWtemx2dAj3gSyH7FfyUFxmtyf+IfCoj9Npc7Gcsim7/kiXOONFodPKJTxoT0d+GFDzpEOgBjaiTDIG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L9YONRBB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD7AC4AF08;
+	Tue,  4 Jun 2024 06:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717481047;
+	bh=M4B30GIS1d4lGziHl2ETRAmpCx3XEZtVoNK45XulINE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=L9YONRBBvOyMLNAxTKGyxKrbkg5yDz5lKVyT/qK/teTXo3O/Coa90mwmoDF6gldfZ
+	 549bZ0rtqFr0xSJEK9zQrls4yBpqvFYw2RCRynJvUIt7ZclNHyzPMACWbx5NuC0yk4
+	 H9zlo4T0NwCR0H4F6tNNurbKzj7bHbBqnMngubuq+bs1YYwpsORpVtyf1vSV0ANwj0
+	 2cnTDPxIQ5iitlGxygFMoAL+PvyR5NarSWwqa9h3MRnlgF7NwNvsqrt6bes2Z/vlz5
+	 gp1FJrx31sV2EszXnZPxcOhZIADgRLMe0TcIdkmVyOE8Two0WsFw7u1f3FX5mM8sd3
+	 0I1s/FHoLPH3g==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so58332501fa.2;
+        Mon, 03 Jun 2024 23:04:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXA1Hpir+JcHdu5N4N5A0brijcysvcdAxzT0vAnhC29dtpJYdt0FFBIBC+4vhEvux1/2G50XVj29Pp6OKIeZjmE+8/Eed/sjO8ydgzoMHcpC+NzRe1MVztCgCEUjxApCVl01BE++jIaYvax0gWlDfN24UDl
+X-Gm-Message-State: AOJu0YzNTOsyvedsSEr469u3KRqZRCgjf1TpHkpmO/XJBCNF8O+03S7u
+	FwHb1Aiy0+uW9E9w/ZpXEB5r1l+ldiYUyhlBgKj/0HXRV8uw7PCcKFa6vUP6Y30WWvpRNjfQPuJ
+	RQE3rOMhvxxmrycK6+oFtpzP12WE=
+X-Google-Smtp-Source: AGHT+IHVlviNMyuiDTy8BXSpmmQsquH1nttnEqb9GRM155e1DzpJqqQMSfDQX+2d+pZK5cfpuPeWpv6RYnrY2Ix/7UU=
+X-Received: by 2002:a2e:980d:0:b0:2d8:67a0:61b2 with SMTP id
+ 38308e7fff4ca-2ea9512c01dmr60165791fa.20.1717481045999; Mon, 03 Jun 2024
+ 23:04:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240529-md-kernel-sysctl-test-v1-1-32597f712634@quicinc.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleLIzCtJLcpLzFFi42LZduznOV239XFpBrO2aFuc6c612HpL2mLP
-	3pMsFpd3zWGzuDHhKaNF45a7rA5sHrMbLrJ4bFrVyeYxcU+dx+dNcgEsUVw2Kak5mWWpRfp2
-	CVwZ267OZS64xlFx5fYZlgbGXvYuRk4OCQETiSvvVjF2MXJxCAmsYJTY1baeHcL5wijRtOsc
-	VOYzo8Tsp2uZYVqmf/rCBJFYzijx7+9vhKobjxdCOZsZJSa+WAXWwiKgInF2UgMbiM0moCNx
-	/s0dsLgIkN36dAsbSAMzSMO5H/vAioQFHCXu7J4HVsQr4CDRdmMTC4QtKHFy5hMwmxmoecHu
-	T0D1HEC2tMTyfxwgYU4Bb4mZH/czQpyqJHHw4nsWCLtWYu2xM2DPSQic4ZA4d/whVMJFYvmX
-	XjYIW1ji1fEt0KCRkTg9uYcFomEyo8T+fx+gulczSixr/MoEUWUt0XLlCTvIFRJAV+8/bA1h
-	8knceCsIcSefxKRt05khwrwSHW1CEI1qEqvvvWGZwKg8C8lns5B8NgvhswWMzKsYxVNLi3PT
-	U4uN81LL9YoTc4tL89L1kvNzNzEC08rpf8e/7mBc8eqj3iFGJg7GQ4wSHMxKIrx9ddFpQrwp
-	iZVVqUX58UWlOanFhxilOViUxHlVU+RThQTSE0tSs1NTC1KLYLJMHJxSDUyTVnqeKV7q1vDu
-	/1r+bU8eHQptvrOh/dTcqa+D455oh706mPjTeNn5bX/45Iw13/578k3wlg2f+pr8g0t+8V5c
-	uybMb/7E5yc+y+YtT71mPJdh2/4Ze20fCIou40i4paWl9fD6u2MFm6q7/U7dvRZ9IOHnscbt
-	X08/nDFV9ofuP49jXpI9BfMFVh8PWb+2+x1fL1sBW2D/+wurhNjcJUz5Nh0P3LeY5cVdpayw
-	iQfKt08tPXcgxOGz9JFn81oXPDt6e3HkToPfO544vbnT1SndahoiG9e1//wJf6+MAJ5Nvjd7
-	v/1+698YxL5+rv6JB1Wbi6V+NZZmyJp8n1M5/6P83gSuF+oTRNTFfjHfKNiePFOJpTgj0VCL
-	uag4EQDm2WNKmgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsVy+t/xu7pu6+PSDD7eEbQ4051rsfWWtMWe
-	vSdZLC7vmsNmcWPCU0aLxi13WR3YPGY3XGTx2LSqk81j4p46j8+b5AJYovRsivJLS1IVMvKL
-	S2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQytl2dy1xwjaPiyu0zLA2M
-	vexdjJwcEgImEtM/fWHqYuTiEBJYyijx8tw1JoiEjMTGL1dZIWxhiT/Xutggij4ySpy8eA/K
-	2cwosePzVmaQKhYBFYmzkxrYQGw2AR2J82/ugMVFgOzWp1vAGphBGs792AdWJCzgKHFn9zyw
-	Il4BB4m2G5tYIKbOY5T4PmkRG0RCUOLkzCcsIDYz0KQFuz8BxTmAbGmJ5f84QMKcAt4SMz/u
-	Z4Q4VUni4MX3LBB2rcSr+7sZJzAKz0IyaRaSSbMQJi1gZF7FKJJaWpybnltspFecmFtcmpeu
-	l5yfu4kRGF3bjv3csoNx5auPeocYmTgYDzFKcDArifD21UWnCfGmJFZWpRblxxeV5qQWH2I0
-	BYbFRGYp0eR8YHznlcQbmhmYGpqYWRqYWpoZK4nzehZ0JAoJpCeWpGanphakFsH0MXFwSjUw
-	LVCdF7MwIsLxY1Yo45HFWVtSmpeed+t/zHNrQ94h6YpDB+y6D/29duLvi2PmjJ2ynZVPyueJ
-	m10JYmvyfPae+6XrLs12VS+pp7v/3mOo3HrXPGDbhkYLpQaxDyZ7mS9caFQ5776oxeEy2+28
-	X/w84RnvzzOfmnNPrirTRfz85MunTVt/yShl/NbdnP7Wr66jWCNR6V16uO7Eww+EpcMe/16o
-	fdCLw/hwWHNPaxDDwReq71dsVZPeP+vezXSnKwIzHx53TNKzvrFCd18Z35IdcpaF4VPk2ETk
-	7Ivddh5SbfIPSrsl7M08Xbi5TsBcLrirSO3CeSGVrgzn6TIvVQ2XJd7yOmSaoT5/5yru+weU
-	WIozEg21mIuKEwHXFM0GNwMAAA==
-X-CMS-MailID: 20240604060806eucas1p22862dbc5e160cc485614c823ba1f77a3
-X-Msg-Generator: CA
-X-RootMTR: 20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23
-References: <CGME20240529212552eucas1p1810ee5a1c17fb966eada0b0562338c23@eucas1p1.samsung.com>
-	<20240529-md-kernel-sysctl-test-v1-1-32597f712634@quicinc.com>
+References: <20240603233330.801075898@goodmis.org> <20240603233631.452433539@goodmis.org>
+In-Reply-To: <20240603233631.452433539@goodmis.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 4 Jun 2024 08:03:54 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFoNT25+ZTFaqF8zj4VkN6FFbtX5Fntf+J-c33tW3TPUA@mail.gmail.com>
+Message-ID: <CAMj1kXFoNT25+ZTFaqF8zj4VkN6FFbtX5Fntf+J-c33tW3TPUA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook <keescook@chromium.org>, 
+	Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+	linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+	Ross Zwisler <zwisler@google.com>, wklin@google.com, 
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Suleiman Souhlal <suleiman@google.com>, Linus Torvalds <torvalds@linuxfoundation.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Mike Rapoport <rppt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 29, 2024 at 02:25:41PM -0700, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/sysctl-test.o
+On Tue, 4 Jun 2024 at 01:35, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+>
+> In order to allow for requesting a memory region that can be used for
+> things like pstore on multiple machines where the memory layout is not the
+> same, add a new option to the kernel command line called "reserve_mem".
+>
+> The format is:  reserve_mem=nn:align:name
+>
+> Where it will find nn amount of memory at the given alignment of align.
+> The name field is to allow another subsystem to retrieve where the memory
+> was found. For example:
+>
+>   reserve_mem=12M:4096:oops ramoops.mem_name=oops
+>
+> Where ramoops.mem_name will tell ramoops that memory was reserved for it
+> via the reserve_mem option and it can find it by calling:
+>
+>   if (reserve_mem_find_by_name("oops", &start, &size)) {
+>         // start holds the start address and size holds the size given
+>
+> Link: https://lore.kernel.org/all/ZjJVnZUX3NZiGW6q@kernel.org/
+>
+> Suggested-by: Mike Rapoport <rppt@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-I changed the message to this
-"""
-sysctl: Add module description to sysctl-testing
+You failed to point out in the commit message that the assumption here
+is that this memory will retain its contents across a soft reboot. Or
+am I misunderstanding this?
 
-    Added a module description to sysctl Kunit self test module to fix the
-    'make W=1' warning (" WARNING: modpost: missing MODULE_DESCRIPTION() in
-    kernel/sysctl-test.o")
-"""
+In any case, as I pointed out before, playing these games unilaterally
+from the kernel side, i.e., without any awareness whatsoever from the
+firmware and bootloader (which will not attempt to preserve RAM
+contents), is likely to have a rather disappointing success ratio in
+the general case. I understand this may be different for vertically
+integrated software stacks like ChromeOS so perhaps it should live
+there as a feature.
 
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Then, as Kees points out, there is also the risk that the kernel
+itself may be stepping on this memory before having realized that it
+is reserved. At least ARM and x86 have decompressors with a
+substantial amount of non-trivial placement logic that would need to
+be made aware of this reservation. Note that EFI vs. non-EFI boot also
+makes a difference here.
+
+
 > ---
->  kernel/sysctl-test.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/sysctl-test.c b/kernel/sysctl-test.c
-> index 6ef887c19c48..92f94ea28957 100644
-> --- a/kernel/sysctl-test.c
-> +++ b/kernel/sysctl-test.c
-> @@ -388,4 +388,5 @@ static struct kunit_suite sysctl_test_suite = {
->  
->  kunit_test_suites(&sysctl_test_suite);
->  
-> +MODULE_DESCRIPTION("KUnit test of proc sysctl");
->  MODULE_LICENSE("GPL v2");
-> 
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240529-md-kernel-sysctl-test-2bbad793ac62
-> 
-
--- 
-
-Joel Granados
+>  include/linux/mm.h |  2 +
+>  mm/memblock.c      | 97 ++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 99 insertions(+)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 9849dfda44d4..b4455cc02f2c 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -4263,4 +4263,6 @@ static inline bool pfn_is_unaccepted_memory(unsigned long pfn)
+>  void vma_pgtable_walk_begin(struct vm_area_struct *vma);
+>  void vma_pgtable_walk_end(struct vm_area_struct *vma);
+>
+> +int reserve_mem_find_by_name(const char *name, unsigned long *start, unsigned long *size);
+> +
+>  #endif /* _LINUX_MM_H */
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index d09136e040d3..a8bf0ee9e2b4 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -2244,6 +2244,103 @@ void __init memblock_free_all(void)
+>         totalram_pages_add(pages);
+>  }
+>
+> +/* Keep a table to reserve named memory */
+> +#define RESERVE_MEM_MAX_ENTRIES                8
+> +#define RESERVE_MEM_NAME_SIZE          16
+> +struct reserve_mem_table {
+> +       char                    name[RESERVE_MEM_NAME_SIZE];
+> +       unsigned long           start;
+> +       unsigned long           size;
+> +};
+> +static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRIES];
+> +static int reserved_mem_count;
+> +
+> +/* Add wildcard region with a lookup name */
+> +static int __init reserved_mem_add(unsigned long start, unsigned long size,
+> +                                  const char *name)
+> +{
+> +       struct reserve_mem_table *map;
+> +
+> +       if (!name || !name[0] || strlen(name) >= RESERVE_MEM_NAME_SIZE)
+> +               return -EINVAL;
+> +
+> +       if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
+> +               return -1;
+> +
+> +       map = &reserved_mem_table[reserved_mem_count++];
+> +       map->start = start;
+> +       map->size = size;
+> +       strscpy(map->name, name);
+> +       return 0;
+> +}
+> +
+> +/**
+> + * reserve_mem_find_by_name - Find reserved memory region with a given name
+> + * @name: The name that is attached to a reserved memory region
+> + * @start: If found, holds the start address
+> + * @size: If found, holds the size of the address.
+> + *
+> + * Returns: 1 if found or 0 if not found.
+> + */
+> +int reserve_mem_find_by_name(const char *name, unsigned long *start, unsigned long *size)
+> +{
+> +       struct reserve_mem_table *map;
+> +       int i;
+> +
+> +       for (i = 0; i < reserved_mem_count; i++) {
+> +               map = &reserved_mem_table[i];
+> +               if (!map->size)
+> +                       continue;
+> +               if (strcmp(name, map->name) == 0) {
+> +                       *start = map->start;
+> +                       *size = map->size;
+> +                       return 1;
+> +               }
+> +       }
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Parse early_reserve_mem=nn:align:name
+> + */
+> +static int __init reserve_mem(char *p)
+> +{
+> +       phys_addr_t start, size, align;
+> +       char *oldp;
+> +       int err;
+> +
+> +       if (!p)
+> +               return -EINVAL;
+> +
+> +       oldp = p;
+> +       size = memparse(p, &p);
+> +       if (p == oldp)
+> +               return -EINVAL;
+> +
+> +       if (*p != ':')
+> +               return -EINVAL;
+> +
+> +       align = memparse(p+1, &p);
+> +       if (*p != ':')
+> +               return -EINVAL;
+> +
+> +       start = memblock_phys_alloc(size, align);
+> +       if (!start)
+> +               return -ENOMEM;
+> +
+> +       p++;
+> +       err = reserved_mem_add(start, size, p);
+> +       if (err) {
+> +               memblock_phys_free(start, size);
+> +               return err;
+> +       }
+> +
+> +       p += strlen(p);
+> +
+> +       return *p == '\0' ? 0: -EINVAL;
+> +}
+> +__setup("reserve_mem=", reserve_mem);
+> +
+>  #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+>  static const char * const flagname[] = {
+>         [ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",
+> --
+> 2.43.0
+>
+>
+>
 
