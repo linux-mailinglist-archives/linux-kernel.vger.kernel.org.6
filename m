@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-200569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F85D8FB1D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:09:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922478FB1D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08BC21C21E99
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:08:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2749DB20D4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FAD145B32;
-	Tue,  4 Jun 2024 12:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09383145B2C;
+	Tue,  4 Jun 2024 12:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAsEoXk0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZnKwfN36"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C58145B0F;
-	Tue,  4 Jun 2024 12:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD86FBE7F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717502932; cv=none; b=fvmxOvjGXiV9b0KfOlFvng9QsZAfHstFgXfixm9ds2vZAAV91bOmstyWZ1zz719oMSkGj9uoQNc4EiNSAaUWJ4/eXgZmjXGaOoZLjBTMC7wFIwa/okv5I9l/PDuNMAhNp17Bcf6qQN4846HgJpciD1qMkAYywTvcMP/x0dOhao0=
+	t=1717503069; cv=none; b=ZkXdX0PFOn4TNGbc08N/irFhiOVQy27XkQpAcp9xoohO6TfKnk88rKQJUnsoVEcoC08G5AJ9/Ny5KG/AYzPduFPF83RZt1mu/rBgUE9wZLixg3R4oOKjPMcvGfCug5PQQMn4oBAiiWY30VhoV0Vj7nxMKo12bQvuDkyrUyW+ZtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717502932; c=relaxed/simple;
-	bh=bgxIOsYWBKkIBR8cDcwU+wqQbc2n7LDeFJWgK0XOkx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XWftyO6K2n6ab4K+2pfMYlpv9vxkhH/G0a2XrOHoVpMltu+hWcJVoIELSVwLezitDIyO91LdWixRaTb+JlUoTEXBRmJTJ5K8e3Qso3RnwLMdQL+68Ixv4ZIkwPckxhfOS9bRPhmGYyEiOkdyQNPGWDMiUiasKOcBQiPflIIGISU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAsEoXk0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A4BC2BBFC;
-	Tue,  4 Jun 2024 12:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717502932;
-	bh=bgxIOsYWBKkIBR8cDcwU+wqQbc2n7LDeFJWgK0XOkx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cAsEoXk0PkW2z9iOxKVFVDH7hWoRF32USmdchbfexaYO9CEisnuvfjwVHwcfZADjM
-	 x1RfxvkkmXvZMLrZY7ptMRuPrYiGYbs4nehEtRpwchXus4OD6W2/sbI2KYaUGMisaa
-	 9Z2EmXcQYDZNxwkmI9KSLCNSUXdZ5ZIpD838y95GA8eyB1/eg8LtUzIl/zyactoc/O
-	 u80oGsBN6+J3G4XzbnLCAGzIOQ7oXN72sRle5L7AfzCy5E2taPujtybzNcT7an5p+E
-	 bjXF/srQ6HUBG6Zl7uaiOQAD6yv6ALV8NcnIs28Ch2eyexFZmiOwGyoIZoBKO2Wf/w
-	 RLqWpDBJ8rNmw==
-Date: Tue, 4 Jun 2024 15:08:46 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Konstantin Taranov <kotaranov@linux.microsoft.com>
-Cc: kotaranov@microsoft.com, weh@microsoft.com, sharmaajay@microsoft.com,
-	longli@microsoft.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH rdma-next 1/1] RDMA/mana_ib: process QP error events
-Message-ID: <20240604120846.GQ3884@unreal>
-References: <1717500963-1108-1-git-send-email-kotaranov@linux.microsoft.com>
+	s=arc-20240116; t=1717503069; c=relaxed/simple;
+	bh=cYoCw0cWrDBA71x9+7VlnNNbqsna+8WEUar3FnpAabo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QzBMEQOXmPsNAfOPvGwUHmUS19e1kHLVWOIII+CPKCkXjWTQaqU5X3ZRZaYE4iIu83pzIVsla61UYbiEeGOuTej6UrZo5WkHFJY2HcgsOJ9rnW+HdZGHoMpu35F8f+jhyB0gRIOuSicUT8eqFJC+NLPxxri+cpLd9uDiWQ/qLGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZnKwfN36; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454CAtO3104651;
+	Tue, 4 Jun 2024 07:10:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717503055;
+	bh=wd3MyBFfOQB202CPOKP7GsOQAYwHBrhhzyKsh6sdjdI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=ZnKwfN36qdlzvl71Qr17+5gXO0YOQFoMIPWcE232shscCICP8qqUSdVDl0dMnQRlj
+	 ZMOTfrJC6fBlVtBwR4Bh/ZV5yfxutlMUvbCZ/bb/Zdr+VZt4/rGTMdLVz4gi0IvPCJ
+	 EVrw4WprXgC+ITzjDzByp3Kn1aFISqXfWYqDsnXQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454CAtFn105087
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 07:10:55 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 07:10:55 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 07:10:55 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454CAt1L060606;
+	Tue, 4 Jun 2024 07:10:55 -0500
+Date: Tue, 4 Jun 2024 07:10:55 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Thomas Richard <thomas.richard@bootlin.com>
+CC: <lgirdwood@gmail.com>, <broonie@kernel.org>, <m.nirmaladevi@ltts.com>,
+        <bhargav.r@ltts.com>, <lee@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <gregory.clement@bootlin.com>, <thomas.petazzoni@bootlin.com>,
+        <u-kumar1@ti.com>
+Subject: Re: [PATCH] regulator: tps6594-regulator: Fix the number of irqs for
+ TPS65224 and TPS6594
+Message-ID: <20240604121055.lztvn2wu62qqrla6@maximize>
+References: <20240603170100.2394402-1-thomas.richard@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1717500963-1108-1-git-send-email-kotaranov@linux.microsoft.com>
+In-Reply-To: <20240603170100.2394402-1-thomas.richard@bootlin.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jun 04, 2024 at 04:36:03AM -0700, Konstantin Taranov wrote:
-> From: Konstantin Taranov <kotaranov@microsoft.com>
+On 19:01-20240603, Thomas Richard wrote:
+> The number of irqs is computed to allocate the right amount of memory for
+> the irq data. An array of struct tps6594_regulator_irq_data is allocated
+> one time for all the irqs. Each irq uses one cell of the array.
 > 
-> Process QP fatal events from the error event queue.
-> For that, find the QP, using QPN from the event, and then call its
-> event_handler. To find the QPs, store created RC QPs in an xarray.
+> If the computed number of irqs is not correct, not allocated memory could
+> be used.
 > 
-> Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
-> Reviewed-by: Wei Hu <weh@microsoft.com>
+> Fix the	values used in the calculation for TPS6594 and TPS65224.
+> 
+> Fixes: 00c826525fba (regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators)
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 > ---
->  drivers/infiniband/hw/mana/device.c           |  3 ++
->  drivers/infiniband/hw/mana/main.c             | 37 ++++++++++++++++++-
->  drivers/infiniband/hw/mana/mana_ib.h          |  4 ++
->  drivers/infiniband/hw/mana/qp.c               | 11 ++++++
->  .../net/ethernet/microsoft/mana/gdma_main.c   |  1 +
->  include/net/mana/gdma.h                       |  1 +
->  6 files changed, 55 insertions(+), 2 deletions(-)
 
-<...>
 
-> +static void
-> +mana_ib_event_handler(void *ctx, struct gdma_queue *q, struct gdma_event *event)
-> +{
-> +	struct mana_ib_dev *mdev = (struct mana_ib_dev *)ctx;
-> +	struct mana_ib_qp *qp;
-> +	struct ib_event ev;
-> +	unsigned long flag;
-> +	u32 qpn;
-> +
-> +	switch (event->type) {
-> +	case GDMA_EQE_RNIC_QP_FATAL:
-> +		qpn = event->details[0];
-> +		xa_lock_irqsave(&mdev->qp_table_rq, flag);
-> +		qp = xa_load(&mdev->qp_table_rq, qpn);
-> +		if (qp)
-> +			refcount_inc(&qp->refcount);
-> +		xa_unlock_irqrestore(&mdev->qp_table_rq, flag);
-> +		if (!qp)
-> +			break;
-> +		if (qp->ibqp.event_handler) {
-> +			ev.device = qp->ibqp.device;
-> +			ev.element.qp = &qp->ibqp;
-> +			ev.event = IB_EVENT_QP_FATAL;
-> +			qp->ibqp.event_handler(&ev, qp->ibqp.qp_context);
-> +		}
-> +		if (refcount_dec_and_test(&qp->refcount))
-> +			complete(&qp->free);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +}
+Thanks a ton for fixing this - this solved a bunch of random regressions
+we were tracking:
+am62axx_sk, am69_sk, j721e-idk, j721s2-evm in addition to J7200 evm as
+well.
 
-<...>
+Tested-by: Nishanth Menon <nm@ti.com>
 
-> @@ -620,6 +626,11 @@ static int mana_ib_destroy_rc_qp(struct mana_ib_qp *qp, struct ib_udata *udata)
->  		container_of(qp->ibqp.device, struct mana_ib_dev, ib_dev);
->  	int i;
->  
-> +	xa_erase_irq(&mdev->qp_table_rq, qp->ibqp.qp_num);
-> +	if (refcount_dec_and_test(&qp->refcount))
-> +		complete(&qp->free);
-> +	wait_for_completion(&qp->free);
 
-This flow is unclear to me. You are destroying the QP and need to make
-sure that mana_ib_event_handler is not running at that point and not
-mess with refcount and complete.
+This was definitely a 6.10 regression, could we fast track it in?
 
-Thanks
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
