@@ -1,174 +1,169 @@
-Return-Path: <linux-kernel+bounces-199963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB118FA843
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:23:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DB38FA844
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2451AB23F03
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:23:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE55928BEF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42B5139CFA;
-	Tue,  4 Jun 2024 02:22:55 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2E51386B9;
+	Tue,  4 Jun 2024 02:23:27 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D6E53BE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 02:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B07353BE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 02:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717467775; cv=none; b=A8eq2wMTiKzxKGkFQWiUYbi2dIDBQrb7R9a7I4ceSrEJsSY9xvRFfGSKqGsi23g88cAIn/TCQfbtgsbBM2utxKFYDIW5PQrTO2PJO8PgN45ip6MBa9n+VuU7ayedNQIbbjac9WLOVO51W1X+Gr0DjNf7xI+CV2XcdG5WByhH0ZE=
+	t=1717467806; cv=none; b=MkdY2le12DZVHDb0WPiePQdwr/XW6dz0wlA/ZENKC+YRidqngLh5kynYvWVQCtKxJDn7AChmGx87WM9XRp9vO5VTk+xtqvl9Ooveg/QgNoPNNvvaMS9iA5elDuC3RsK9q/BpDfrCQI6GItJ9rHl3jEn/KWoPFxRWp6saz+bwmbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717467775; c=relaxed/simple;
-	bh=j7SmNnf2IJ7HtGtXQrqOdQgWBu66WrwLsS5J2Vr5gCE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IHQu+XDxfx5JQhSmBwwUTk5zqTozbGnzhjX8yl1GPu0ogF7cktFHWANhWQD9D76G3cgg5B3JEQDdrM4mftIIME+vDnJN/6cnnw2LNFtZHiqKe+pFsJ3B7kWnj//8+a6yO0W0/a/lbN9s3rUDTiaOLL2ZHEJGSniY5BH3r/aTXsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 4542Mg2p074077;
-	Tue, 4 Jun 2024 10:22:42 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VtZ5c3Zc2z2R4pwY;
-	Tue,  4 Jun 2024 10:18:44 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Tue, 4 Jun 2024 10:22:40 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki
-	<urezki@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lorenzo Stoakes
-	<lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>,
-        Thomas Gleixner
-	<tglx@linutronix.de>,
-        hailong liu <hailong.liu@oppo.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang
-	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [PATCHv4 1/1] mm: fix incorrect vbq reference in purge_fragmented_block
-Date: Tue, 4 Jun 2024 10:22:32 +0800
-Message-ID: <20240604022232.1669983-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717467806; c=relaxed/simple;
+	bh=PFA4yFsUfUp2ef+U8bZYG3BcqyZr2x50xxUIz7B2WBM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gOGyhRnov9VjWC1A3YcQ55LfUHwgUM3kOTxXkoyD3iXl8BqxjKTXS6rYC3rj4hRTLXcBYIdH79MdrYiN+6q44J++aCjDDcdyFufLSAA08C/o7E4eztOCMYqi2xAxgVSo+J3w3+1au/rtsD7M56uG4+q+/HnfFs28r6FZGkgdrpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7ead5f29d93so441029439f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 19:23:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717467804; x=1718072604;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KnvBbhLgw3ykl4/EWV2UjLKuh8Wl4nUC86g+G8Z780M=;
+        b=HMfchXmX5Er249o5o7dsjpchlVdwoY0ltxEmUDBXz0zqvf/w3nxmWcczpUkePCWTN0
+         XLh6VJGEQtjyi+3dzzjEOJ2tdfneC2rgJAt26kybTLMjKf2hkRCmQeO4yhZUGSxZtIV8
+         wexlqhkjPtng3C3ylolKaoWvR+P2CvgyZBKQ3k4YJes38qcymzrimoE+w0gsY8oQj6Y3
+         T5mExFfuahNmQfTtkYcmY/53otCM1AM1VA0HOP13GNlD0i07dwdpxsZISHpOAKfZ7LND
+         C6r7XjhvqokMUHaNa4wLa8JzyiLGCf1mZhfIACfby8kuL9lnxMQVvqie+Nu0lISvhYlX
+         bWOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUCsZqKjaiO/FWpCq5+XfEMVGCHIdQ5xBoyDpsu//h494K28QfJv+JevtKX2YIGvdSIr3OOBQLuDKQE+rp8Z5I66HRiwdBNEd5vViV
+X-Gm-Message-State: AOJu0Yxson6dSAuA7d6zSOKwj6t+gHRajafNYVe/TYgajUfknB1sXB7m
+	fF1gbgJxPc0x6Bx4bOf0AHW9r/+PNfID6bjZFrHqPvqXTVA/58pKL6+xuaYHj0qrqL8/uVdLOZG
+	1+JVNytdkfdyZ7abLqFCN6fIH8MOZ6+1YIwOozYy854y6tQRfqmwmCBQ=
+X-Google-Smtp-Source: AGHT+IEaAouq3noXywR7xOD/Ca7BV/pLgrt88/Td/P3uw9YesZAEvaHq6/CnsB+bu8Vh0J7cw1KCj2u8yzSvB1ESUFP6WrS/Hm1Y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 4542Mg2p074077
+X-Received: by 2002:a05:6602:6d0b:b0:7de:d6a0:d9c4 with SMTP id
+ ca18e2360f4ac-7eafff3deecmr78281639f.2.1717467804505; Mon, 03 Jun 2024
+ 19:23:24 -0700 (PDT)
+Date: Mon, 03 Jun 2024 19:23:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000066aa68061a072231@google.com>
+Subject: [syzbot] [maple-tree?] BUG: unable to handle kernel paging request in mas_walk
+From: syzbot <syzbot+c67d06ab25a9bc4adf35@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	maple-tree@lists.infradead.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+Hello,
 
-vmalloc area runs out in our ARM64 system during an erofs test as
-vm_map_ram failed[1]. By following the debug log, we find that
-vm_map_ram()->vb_alloc() will allocate new vb->va which corresponding
-to 4MB vmalloc area as list_for_each_entry_rcu returns immediately
-when vbq->free->next points to vbq->free. That is to say, 65536 times
-of page fault after the list's broken will run out of the whole
-vmalloc area. This should be introduced by one vbq->free->next point to
-vbq->free which makes list_for_each_entry_rcu can not iterate the list
-and find the BUG.
+syzbot found the following issue on:
 
-[1]
-PID: 1        TASK: ffffff80802b4e00  CPU: 6    COMMAND: "init"
- #0 [ffffffc08006afe0] __switch_to at ffffffc08111d5cc
- #1 [ffffffc08006b040] __schedule at ffffffc08111dde0
- #2 [ffffffc08006b0a0] schedule at ffffffc08111e294
- #3 [ffffffc08006b0d0] schedule_preempt_disabled at ffffffc08111e3f0
- #4 [ffffffc08006b140] __mutex_lock at ffffffc08112068c
- #5 [ffffffc08006b180] __mutex_lock_slowpath at ffffffc08111f8f8
- #6 [ffffffc08006b1a0] mutex_lock at ffffffc08111f834
- #7 [ffffffc08006b1d0] reclaim_and_purge_vmap_areas at ffffffc0803ebc3c
- #8 [ffffffc08006b290] alloc_vmap_area at ffffffc0803e83fc
- #9 [ffffffc08006b300] vm_map_ram at ffffffc0803e78c0
+HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=128638ba980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd6024aedb15e15c
+dashboard link: https://syzkaller.appspot.com/bug?extid=c67d06ab25a9bc4adf35
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106f71aa980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b4ffc6980000
 
-Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-4a4be1ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/75957361122b/vmlinux-4a4be1ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6c766b0ec377/Image-4a4be1ad.gz.xz
 
-For detailed reason of broken list, please refer to below URL
-https://lore.kernel.org/all/20240531024820.5507-1-hailong.liu@oppo.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c67d06ab25a9bc4adf35@syzkaller.appspotmail.com
 
-Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+Unable to handle kernel paging request at virtual address 00700000077b9b78
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[00700000077b9b78] address between user and kernel address ranges
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 3186 Comm: syz-executor162 Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+Hardware name: linux,dummy-virt (DT)
+pstate: 81400009 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : ma_data_end lib/maple_tree.c:1419 [inline]
+pc : mtree_range_walk lib/maple_tree.c:2771 [inline]
+pc : mas_state_walk lib/maple_tree.c:3678 [inline]
+pc : mas_walk+0x194/0x328 lib/maple_tree.c:4909
+lr : lock_vma_under_rcu+0x58/0x134 mm/memory.c:5840
+sp : ffff800088cabd50
+x29: ffff800088cabd50 x28: f2f0000005e50000 x27: 0000000000000000
+x26: 0000000000000004 x25: f7f0000005c03900 x24: 0000000082000007
+x23: 0000ffff82687800 x22: 0000000000000354 x21: 0000ffff82687800
+x20: 0000ffff82687800 x19: ffff800088cabeb0 x18: ff7ffffffffffbff
+x17: 0000aaaadab2dc00 x16: 1e4e000000ef7371 x15: 0000000000000001
+x14: ffffffffffffffff x13: 0000000000000000 x12: ffff800081e3d1e8
+x11: 0000000000000001 x10: f2700000077b9b8c x9 : f2700000077b9b00
+x8 : 0000ffff82687800 x7 : 0000000000000001 x6 : 000000000000000e
+x5 : 0000000000000001 x4 : ffff800088cabd78 x3 : 0000aaaadab2dc00
+x2 : 000000000000000e x1 : 000000000000000f x0 : f2700000077b9b08
+Call trace:
+ ma_data_end lib/maple_tree.c:1418 [inline]
+ mtree_range_walk lib/maple_tree.c:2771 [inline]
+ mas_state_walk lib/maple_tree.c:3678 [inline]
+ mas_walk+0x194/0x328 lib/maple_tree.c:4909
+ do_page_fault+0xd4/0x480 arch/arm64/mm/fault.c:567
+ do_translation_fault+0xac/0xbc arch/arm64/mm/fault.c:690
+ do_mem_abort+0x44/0x94 arch/arm64/mm/fault.c:826
+ el0_ia+0xa4/0x118 arch/arm64/kernel/entry-common.c:598
+ el0t_64_sync_handler+0xd0/0x12c arch/arm64/kernel/entry-common.c:736
+ el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:598
+Code: 91002120 51000426 92401cc2 12001cc6 (f8627802) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	91002120 	add	x0, x9, #0x8
+   4:	51000426 	sub	w6, w1, #0x1
+   8:	92401cc2 	and	x2, x6, #0xff
+   c:	12001cc6 	and	w6, w6, #0xff
+* 10:	f8627802 	ldr	x2, [x0, x2, lsl #3] <-- trapping instruction
+
+
 ---
-v2: introduce cpu in vmap_block to record the right CPU number
-v3: use get_cpu/put_cpu to prevent schedule between core
-v4: replace get_cpu/put_cpu by another API to avoid disabling preemption
----
----
- mm/vmalloc.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 22aa63f4ef63..89eb034f4ac6 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2458,6 +2458,7 @@ struct vmap_block {
- 	struct list_head free_list;
- 	struct rcu_head rcu_head;
- 	struct list_head purge;
-+	unsigned int cpu;
- };
- 
- /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
-@@ -2585,8 +2586,15 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 		free_vmap_area(va);
- 		return ERR_PTR(err);
- 	}
--
--	vbq = raw_cpu_ptr(&vmap_block_queue);
-+	/*
-+	 * list_add_tail_rcu could happened in another core
-+	 * rather than vb->cpu due to task migration, which
-+	 * is safe as list_add_tail_rcu will ensure the list's
-+	 * integrity together with list_for_each_rcu from read
-+	 * side.
-+	 */
-+	vb->cpu = raw_smp_processor_id();
-+	vbq = per_cpu_ptr(&vmap_block_queue, vb->cpu);
- 	spin_lock(&vbq->lock);
- 	list_add_tail_rcu(&vb->free_list, &vbq->free);
- 	spin_unlock(&vbq->lock);
-@@ -2614,9 +2622,10 @@ static void free_vmap_block(struct vmap_block *vb)
- }
- 
- static bool purge_fragmented_block(struct vmap_block *vb,
--		struct vmap_block_queue *vbq, struct list_head *purge_list,
--		bool force_purge)
-+		struct list_head *purge_list, bool force_purge)
- {
-+	struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, vb->cpu);
-+
- 	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
- 	    vb->dirty == VMAP_BBMAP_BITS)
- 		return false;
-@@ -2664,7 +2673,7 @@ static void purge_fragmented_blocks(int cpu)
- 			continue;
- 
- 		spin_lock(&vb->lock);
--		purge_fragmented_block(vb, vbq, &purge, true);
-+		purge_fragmented_block(vb, &purge, true);
- 		spin_unlock(&vb->lock);
- 	}
- 	rcu_read_unlock();
-@@ -2801,7 +2810,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
- 			 * not purgeable, check whether there is dirty
- 			 * space to be flushed.
- 			 */
--			if (!purge_fragmented_block(vb, vbq, &purge_list, false) &&
-+			if (!purge_fragmented_block(vb, &purge_list, false) &&
- 			    vb->dirty_max && vb->dirty != VMAP_BBMAP_BITS) {
- 				unsigned long va_start = vb->va->va_start;
- 				unsigned long s, e;
--- 
-2.25.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
