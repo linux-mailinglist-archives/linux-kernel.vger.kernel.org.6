@@ -1,102 +1,83 @@
-Return-Path: <linux-kernel+bounces-201493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08F98FBF0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEEE8FBF08
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D37A71C21AAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:36:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A71B1C219C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C26014D2AE;
-	Tue,  4 Jun 2024 22:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F7914BFA2;
+	Tue,  4 Jun 2024 22:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wa1jwYWe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQc/+Ogn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD43014C5AE;
-	Tue,  4 Jun 2024 22:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00C128DC7;
+	Tue,  4 Jun 2024 22:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717540589; cv=none; b=vBDWcH56j5zVBLP7sYhbec3pbJqcXk9s+oXheTFj6mCJ71uAVa/yveCyXJZK7555FMWsfmKDtxzX/vC9XWA60obAAjJGveLDGlx640H+clJ0ZNPRcIoE/D6Px0c4GoRzIkcdMs8N72MBPrnDquEKzcd8cOu8+3O/7bmqDU5NQq8=
+	t=1717540587; cv=none; b=B1IXZmxZwWlU6VQVkWsZ8Svt+cUUAuk3UY6LpeNrUiKKOMApfRbp8qzjeQPgb8gurPkLqckveqs/uKwzuruVGzJ8wTNlhbZ6uhuYxTSex860juew1U0GKgNm3EA/VvYdlIzpUxIJKfgOz+6JPQPPU/DS7RQBoK+i0L4xQDTjtCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717540589; c=relaxed/simple;
-	bh=vkh29LcZuA4Sz0xUo0Giq6q/HmkTXs9ahlbNzKVYxng=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=MHkSXC+ksEis5d5AMH+OQ4QDBfr7Y26BfSm4BAyXqv5cT7qM1ZMdrGicPoXYrDIrrTACYXfhH2sOezAHcQaQQj/0WHY6/8+i70JVX//Ag7PrtjrAF0h1r2hDYba2bDiGSt2epudTKXiilVcPnQFQPtS92yd3WYWqnrht9hmPnOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wa1jwYWe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7037C2BBFC;
-	Tue,  4 Jun 2024 22:36:23 +0000 (UTC)
+	s=arc-20240116; t=1717540587; c=relaxed/simple;
+	bh=9Bn48OKZlqwf9LNsqYGIsbAU20Y/V6Nb+Uy1v4Lwyu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=X2DyNdPxZfE/x2fy4mts5FexE1lY4wSov/j9ypA7VeDJuFsJcJ71kv+9DOtaeZsmdrXKRxAg5Aq6vQo8PsDGve3z5la1YGBxRs9HfoTywtIWYJZh8zQhnfXoXiO9qb8Vmnw//HwtG/FBzdjJsJIhPWIXL5NOW7vWjA2M9xpEfYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQc/+Ogn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48F51C3277B;
+	Tue,  4 Jun 2024 22:36:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717540589;
-	bh=vkh29LcZuA4Sz0xUo0Giq6q/HmkTXs9ahlbNzKVYxng=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Wa1jwYWe1gDKB/JcdKkJd5eqvpX/bLh954mEJEiY5sfp1Jsl9BzcS7gIADAcpRFQ8
-	 5b2Z+KR0PO7iC+UefSD+nWYWgv5dim7w3OceDBruFV/tyaWv7LDlGrITfKmLGoAM6a
-	 57yxX26az1npx87W6+VsZxy1l3ruChkkm4Pzk7eYQK0dOcyeNIoegwdV1vps+HxRSO
-	 FcPOpucMgOCpo9fUxHYSbyfugusoq5loIrWUAewdkYAUpoUYvEe7Kv6HTcEuWk8TxF
-	 QgIqjzR2Sq65KRa0Piil1C789ZsmBR+bfL1YZBun7IlsuINQyGQLIitVySKAf4bAbN
-	 puw6F6rCHqlBg==
+	s=k20201202; t=1717540587;
+	bh=9Bn48OKZlqwf9LNsqYGIsbAU20Y/V6Nb+Uy1v4Lwyu4=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=hQc/+OgnRppaSrW5W812wwHZeuoXW9jtyj762VxpsEMKJWDTi+Jsc0iTesSZ5psJw
+	 srCxSNFMVaASZ4PAMTVukhdH51EVN9j8XzQ8ZcMj89hXfSek8epAiAhQ8yk/KmxgUR
+	 iWwgxn8fKFq6KJW79EZ69xDu+oNYvIL4RK9HN3hSy2TYAEln4P6hSl17G+IpzC9l0e
+	 CfAPX/BC5I6emxSM26iFFHXxRasuPBT26+Yut4fDZVHVWHVtipeD2ok/Cp4x6LIyAd
+	 OlqfdQX5iB+BSA7QvzKqZ4kQdxLbyBrBzBGkXV+HGVgDHQ+kDvGGn78D+rSZHAdMZa
+	 xDjQh9UUIqWhA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 00DBECE3ED6; Tue,  4 Jun 2024 15:36:26 -0700 (PDT)
+Date: Tue, 4 Jun 2024 15:36:26 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: [PATCH rcu 0/4] Torture-test updates for v6.11
+Message-ID: <e14ba19e-53aa-4ec1-b58d-6444ffec07c6@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Jun 2024 01:36:22 +0300
-Message-Id: <D1RLBMTUKRFN.34KQXEFZTBA08@kernel.org>
-Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v9 04/19] x86: Secure Launch Resource Table header file
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
- <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
- <iommu@lists.linux-foundation.org>
-X-Mailer: aerc 0.17.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-5-ross.philipson@oracle.com>
- <D1RFWFIJEYWL.2FC7V79321264@kernel.org>
- <1eca8cb1-4b3b-402b-993b-53de7c810016@oracle.com>
-In-Reply-To: <1eca8cb1-4b3b-402b-993b-53de7c810016@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue Jun 4, 2024 at 11:31 PM EEST,  wrote:
-> On 6/4/24 11:21 AM, Jarkko Sakkinen wrote:
-> > On Fri May 31, 2024 at 4:03 AM EEST, Ross Philipson wrote:
-> >> Introduce the Secure Launch Resource Table which forms the formal
-> >> interface between the pre and post launch code.
-> >>
-> >> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-> >=20
-> > If a uarch specific, I'd appreciate Intel SDM reference here so that I
-> > can look it up and compare. Like in section granularity.
->
-> This table is meant to not be architecture specific though it can=20
-> contain architecture specific sub-entities. E.g. there is a TXT specific=
-=20
-> table and in the future there will be an AMD and ARM one (and hopefully=
-=20
-> some others). I hope that addresses what you are pointing out or maybe I=
-=20
-> don't fully understand what you mean here...
+Hello!
 
-At least Intel SDM has a definition of any possible architecture
-specific data structure. It is handy to also have this available
-in inline comment for any possible such structure pointing out the
-section where it is defined.
+This series contains RCU torture-test updates:
 
-BR, Jarkko
+1.	Make rcutorture support srcu double call test, courtesy of Zqiang.
+
+2.	Fix rcu_torture_fwd_cb_cr() data race.
+
+3.	Add missing MODULE_DESCRIPTION() macros, courtesy of Jeff Johnson.
+
+4.	Add rcu-updaters.sh script.
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ b/kernel/rcu/rcuscale.c     |    1 
+ b/kernel/rcu/rcutorture.c   |   46 ++++++++++++++++++++++----------------
+ b/kernel/rcu/refscale.c     |    1 
+ b/tools/rcu/rcu-updaters.sh |   52 ++++++++++++++++++++++++++++++++++++++++++++
+ kernel/rcu/rcutorture.c     |    3 +-
+ 5 files changed, 82 insertions(+), 21 deletions(-)
 
