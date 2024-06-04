@@ -1,117 +1,97 @@
-Return-Path: <linux-kernel+bounces-200145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2148FABB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D058FABCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D1828272C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907CA1F22295
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D6C140366;
-	Tue,  4 Jun 2024 07:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908ED140E2F;
+	Tue,  4 Jun 2024 07:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="pBijYBAz"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="IyASznn4"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D031384B3;
-	Tue,  4 Jun 2024 07:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4176783CB4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717485549; cv=none; b=K8GD+O7gJRtJcCY1uuGApDi1S4HxIfyjuUwTYCsFRlGUay28XQYkk0BQWrd+LQTIw+aQ8I7zyiELi/hivt/+FS5ihmX11hIKZeLl5EIZocb8D7bfj4ZdeUpeaNBtDzHBR+6B7+vhmdz308dnkjBQlEULjxW5k0+s4OvZTeLrlvE=
+	t=1717485646; cv=none; b=vDP3B1KLM71E6OPYvGI8xGjsb8hlJQ+slcnRc7oPGf0exHA6nzXOfI62zs7GqUd6v0mYyBqvSv9ha47bllAIiRqqEYvRKnft7TojGbF88xk8vJL2WmffCOx5CRIGvCAVSA4FHqb1HZk87iSbtu4DKtVe+/jp0DN4q5GSz/0Ag8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717485549; c=relaxed/simple;
-	bh=xrGEEFvoeXT5v2MKDHwCNgGHXWgoxI6p1f8dDx6tgUg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ExV3z3t/JaDY1a/uD8RJoyjJU5l+TuBZTo/n68otGI2LhO7NwkEh3ZiIv8VURerBEop0YQfMNKXGtHYfu55N9FoPSrNe2ipQYuXpe+9lrdVrNJsCLa0c2Vh4QOOokbRN2NGFNF9zO2Yy15tS15ilMY8OrVoQvNN8w1LOpY2jEXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=pBijYBAz; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1717485646; c=relaxed/simple;
+	bh=gk96MhHZ+qD4z+JC/CqDk/UP4VIXuPLVFDICmyRSxQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UM5dA7FpBYunX38ocVzw5QxnntS5Ajg0tdFeiIxYWAOdMFY/ku63VvgPAEe1V4DP9FUqIXy9o2YYY7ndtB0aBIuc6lDvQYe3rtV/TZqRkyy/Pvh7EkUFFCRRO60kx+VeAlG2c6MA2tizJndNiWcGDrIscYgNxksHVLEObOb0z94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=IyASznn4; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6269885572so916445966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 00:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1717485547; x=1749021547;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kclrf8KySIptVgJEtPJnsHbvRaXwlOgrkvZYDe1s2Ao=;
-  b=pBijYBAzLrhqFpEp7cTNTIt2mKt9aBDg8fY32cblg3jX/kJxEQSRA3be
-   0xTiRzzcsMKBYsjM/3T5m7jSk87oHaFPiGLDC7+++e2zrCUL3WYtxBsbf
-   OZdhSLFBaDzCkWAHBA17EhSh0mIHs/IYI+BGN7k5O153H8v984Ao9eW93
-   A=;
-X-IronPort-AV: E=Sophos;i="6.08,213,1712620800"; 
-   d="scan'208";a="637067064"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 07:19:05 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:9626]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.6.62:2525] with esmtp (Farcaster)
- id a4b5c5d6-02c3-4a6a-9783-2c0d9fef58cb; Tue, 4 Jun 2024 07:19:04 +0000 (UTC)
-X-Farcaster-Flow-ID: a4b5c5d6-02c3-4a6a-9783-2c0d9fef58cb
-Received: from EX19D008EUA002.ant.amazon.com (10.252.50.179) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Tue, 4 Jun 2024 07:19:03 +0000
-Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
- EX19D008EUA002.ant.amazon.com (10.252.50.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 4 Jun 2024 07:19:03 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
- (10.253.65.58) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Tue, 4 Jun 2024 07:19:02 +0000
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id 7F73220C65; Tue,  4 Jun 2024 07:19:02 +0000 (UTC)
-From: Hagar Hemdan <hagarhem@amazon.com>
-To:
-CC: Maximilian Heyne <mheyne@amazon.de>, Norbert Manthey <nmanthey@amazon.de>,
-	Hagar Hemdan <hagarhem@amazon.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Patrice Chotard <patrice.chotard@st.com>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] pinctrl: fix deadlock in create_pinctrl() when handling -EPROBE_DEFER
-Date: Tue, 4 Jun 2024 07:19:01 +0000
-Message-ID: <20240604071901.3343-1-hagarhem@amazon.com>
-X-Mailer: git-send-email 2.40.1
+        d=szeredi.hu; s=google; t=1717485643; x=1718090443; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HvkJ2QsK5Vmmx/tl05h2LcGE0mbAgMwnA13TfKa1R1A=;
+        b=IyASznn4cRNFaqUdupbE1heCLuT5urEiTz5tvhE/2drAaBklfjF1vuMttgcx0uoSPi
+         PmQTl2rYJky1fg00u0ndwZSvdoJR0iT6zEZzELIdXLC/EsII/KqsMtlI8mr40eO/FtNy
+         vPkhDrKDAs03AxYSpoWsNaw4b347C4x8tZc9s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717485643; x=1718090443;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HvkJ2QsK5Vmmx/tl05h2LcGE0mbAgMwnA13TfKa1R1A=;
+        b=HlVugYhcoj0rwL3wu61bn6P/IgfhtXVCFuULyuqKd7/A8K2qkTe83i91JNNETv1aXs
+         TCHo9DSdAfcp4Y91/s0UNcJfPi5Lr5Nnb0UzOg29DUzFnEDcLB7Hkvyg83rSAcmSw3XF
+         3A/NgsnHyvvLt7+Eq9oCjBYZEllMPi2Scnb+juSir+r32bZDd9gctvEFFddl+giNnETH
+         kr+GTTBz3YE6NwLEM2T+ntJU6kg+Qho4S54N0AyVFCsYSOWl5Ofis3qyd8p+/ivYlsLv
+         9WSzqES/og0G/66CsO2E8HB2FsMoeehoKexwv/OOaYDmHJU+VDm9Fb09fiqVhmKwRvt1
+         HPJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfqVfSOo8BlIBfbtCJWbWKz1shr9u8L6sFkJ6ssewVNBHJMD7ifE/zcb1u+7LLk05OF/sf38C6agEkDIemVl7uKxBHgwhMsprFvsnT
+X-Gm-Message-State: AOJu0Yz7eX0Cpz5tJtVMw0Zg65fONUUwWvsMkVqVyuKFvu8HrMkkUy24
+	egraPGnAXr/hc10Qj5OFQZSz9GK/YyuWqmm4ViSnKcnFgTHIA34vnAD5DfqnMC0Eeb9YsY0rFXm
+	LfIb0xbJEXnjHU/Bkn0CK74APuJ+hhbDnmgyIDw==
+X-Google-Smtp-Source: AGHT+IHpybo+v5p/7tG/go/8QTBu4G8QfZEZnk6qWoL5XNl83JV3TBTOXUdyGwIOk4Yi+ClINF38k48a4Lpz0k/65Qg=
+X-Received: by 2002:a17:906:f299:b0:a59:c698:41ae with SMTP id
+ a640c23a62f3a-a69545681d7mr135855966b.34.1717485643547; Tue, 04 Jun 2024
+ 00:20:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm> <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+ <Zl4/OAsMiqB4LO0e@dread.disaster.area>
+In-Reply-To: <Zl4/OAsMiqB4LO0e@dread.disaster.area>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 4 Jun 2024 09:20:32 +0200
+Message-ID: <CAJfpegvYpWuTbKOm1hoySHZocY+ki07EzcXBUX8kZx92T8W6uQ@mail.gmail.com>
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Dave Chinner <david@fromorbit.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, lege.wang@jaguarmicro.com
+Content-Type: text/plain; charset="UTF-8"
 
-In create_pinctrl(), pinctrl_maps_mutex is acquired before calling
-add_setting(). If add_setting() returns -EPROBE_DEFER, create_pinctrl()
-calls pinctrl_free(). However, pinctrl_free() attempts to acquire
-pinctrl_maps_mutex, which is already held by create_pinctrl(), leading to
-a potential deadlock.
+On Tue, 4 Jun 2024 at 00:10, Dave Chinner <david@fromorbit.com> wrote:
 
-This patch resolves the issue by releasing pinctrl_maps_mutex before
-calling pinctrl_free(), preventing the deadlock.
+> I thought we had PR_SET_IO_FLUSHER for that. Requires
+> CAP_SYS_RESOURCES but no other privileges, then the userspace
+> server will then always operate in PF_MEMALLOC_NOIO |
+> PF_LOCAL_THROTTLE memory allocation context.
 
-Fixes: 42fed7ba44e4 ("pinctrl: move subsystem mutex to pinctrl_dev struct")
-Suggested-by: Maximilian Heyne <mheyne@amazon.de>
-Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
----
-Only compile-tested.
----
- drivers/pinctrl/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There could be any number of services that are being used while
+serving a fuse request.  There's no well defined "fuse server
+process", as many people seem to think.  Any approach depending on
+somehow marking the fuse server as a special entity will fail.
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index ee56856cb80c..29d9ef535dbe 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1102,8 +1102,8 @@ static struct pinctrl *create_pinctrl(struct device *dev,
- 		 * an -EPROBE_DEFER later, as that is the worst case.
- 		 */
- 		if (ret == -EPROBE_DEFER) {
--			pinctrl_free(p, false);
- 			mutex_unlock(&pinctrl_maps_mutex);
-+			pinctrl_free(p, false);
- 			return ERR_PTR(ret);
- 		}
- 	}
--- 
-2.40.1
-
+Thanks,
+Miklos
 
