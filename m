@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-200118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC918FAB22
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF788FAB2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386031F25487
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2F91F2546E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CE61386B7;
-	Tue,  4 Jun 2024 06:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C2113F429;
+	Tue,  4 Jun 2024 06:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kzxD40Xk"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XkIUbueb"
 Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EA81386A7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E9E13D639
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717483583; cv=none; b=d++YG95fuaN+RQpjpNtQNgdZFrdMyewwPLfknvSYK3bOZQyCdNu02c2ZyJryTbZIomCZO9reiuIiWCWFybI1xOSZJ10s/XXnxZtRYfXX5AY5hy+YJyvnyGy3GGP6TT25dRnJFWy4PgqI163qJ5WxK7sKf8fYxssTelFwNAvDCTs=
+	t=1717483614; cv=none; b=hxvc/K8R591bvkYz2JH+ZptWn15fGNugJS88IjZFia3Qu5CQK6GejjZYbR3YNlCnz+yQgBT3WAGsw04Bf/3/lT9l6PQWmbvMNeR+GIWVqd/l9Z3P+y8peEtn7uYE3yUXqUgMeBMf/87wa+05PN8ol68DaTDeZvaVUXSekdiWJXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717483583; c=relaxed/simple;
-	bh=UhHLC2tOVmeSnYy+wtZRokMH/TpuuX1fMeaOvPUNGhw=;
+	s=arc-20240116; t=1717483614; c=relaxed/simple;
+	bh=Cl72QNknmYgdT0UUolQbps0KeCjidlSH9Qeuk7JK82s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YqXjTYuQ47kD4mjT7kBCbsWSvg0BrmUoksVlTZ/f7lJZ8oz6aOo41o5mF+83HVwh93ko+FvrdqSCjnagwZWI4d9XfnqY2dISI5jC0NRNr0aX2w05VI7EWIbb/+VEOZf09Bvr+E7e9myfgRyGNrZqVcGIx65XJaSxTypyk/fPUF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kzxD40Xk; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=IYtQ/MS+nVfj6KOzSR49YVPTKyUo/BB1Xl0QAFQnNRXNLirdXW8b0BdCL/EvbOVjCc5slzlw31uWWQ94XJmie6QtDYaibuAUgZ7kBuJ+bU3XBWeg/N0FrkVUqfKyLz4LWeCtOrQbLDerJW7uQ2r0xnbLG+N+OenktFCzzVvadqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XkIUbueb; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4214fe0067fso2195765e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 23:46:21 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42139c66027so6911245e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 23:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717483580; x=1718088380; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717483611; x=1718088411; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UhHLC2tOVmeSnYy+wtZRokMH/TpuuX1fMeaOvPUNGhw=;
-        b=kzxD40XklQibaA/OSgdTl+eRjmTO2+19WOJXNhiNc62CaHpo0po1ixWckklLOcRSZz
-         ompq8JvZFqgt/m4fP75H7ihaWXhIHAFTO0KTwd2b0scfn20aZukCLW8cG/QSMXq1aEAw
-         tQ6b1/1+pqO9p2f9QcUHPjIqJb+vP459AonoTixPr+XY9gKCxBPJmUFQ+wPh1T9fq+vB
-         6HZlNsL2J4sSVhjT0X0ViZzTKTz2ZBZFEdGEqY94GtQXnLaeh97pkCdwMHDIbBBHjCke
-         YBprUqNmssWgilfD4GIYAXF7apNzJ/I18Km3oUng4NH5P4oYRVzziTiNrHMcI+9pO1k+
-         YRuA==
+        bh=wPrx0yZlt+EbCH8kNf3BCGB18tgfTooBI7KZciIyzV4=;
+        b=XkIUbuebjDkYy+o+tj+k4iy8au30kV0EJXwSlJnydWBjSBzvrdAmVDegEOgK0rsewO
+         8uzfvKNYMKnwQ9C87FznepZfEswf8zZTzn2+egRxcryg7dfo6/hTWMna8Saa5fWO0teq
+         hv40f1BqUrjS9PXNylS4ABputS41RpOHZr7mzNV+USIzXhqChWIHQbVftujSxPESJDkv
+         a/apCNMXEqxv+KK3EQUb9pyj8aaKoSEL57cWgsKmM04ECD5v5L1qJ2IisB+aqlt3DmiK
+         ZxSeqJyNzeNLCpffLaXStlZsiTsWOX4F+XQDpdwhsd7907N0kHC0YBc6SER6XXcFzU+j
+         HnOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717483580; x=1718088380;
+        d=1e100.net; s=20230601; t=1717483611; x=1718088411;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UhHLC2tOVmeSnYy+wtZRokMH/TpuuX1fMeaOvPUNGhw=;
-        b=bUm3jeTVhWZJ7krVD+6VDuNdmhadBUmJ25cAa0+X6P7FACBAXtRDvdL3cTkUauynF0
-         gWWCgqriob4NMw+7+r8TeFRfMLXdjV49iVeQ789CQEBwERo8nLPMcV9OgR96zUZlhDXX
-         PBNA9gIWf2qybDA0GWSG4opLmjZeRcF4fjz8Muh9sREZwsDCaHcHTxcI3POdlpOAUOgh
-         xPzNYUor7i0cCayXtlhhQQUNBnKJJKxGcdKHsJUu36HJYtkIjaJDexA37w5hk4NCn1b0
-         YMez1IpcK76a6b8E5fIwrKceLXvoELJDDX7JRq64JYl6s58CKpoJbkTiynS2gdFhpL4N
-         XcDQ==
-X-Gm-Message-State: AOJu0Ywpu5dHmy3Ec0PmvopsgDc1vlKu2IznP2PF2VIGe8wcPuqHsmov
-	zH3iveyLp8Uns3az8hbjyEbBQg8fFqqR8E9Aae3MxJ27oe0ATeAJbHZ504eHDj8=
-X-Google-Smtp-Source: AGHT+IE2a4G2t3DbwFTuJosbbC3UvMZ5E4YzQHQkz+6uyhj9Wws+7Da7eGi52BcOaJPgvpTESKcRvA==
-X-Received: by 2002:a05:600c:1d17:b0:419:d5cd:5ba with SMTP id 5b1f17b1804b1-4212e0441e7mr88545155e9.7.1717483580520;
-        Mon, 03 Jun 2024 23:46:20 -0700 (PDT)
+        bh=wPrx0yZlt+EbCH8kNf3BCGB18tgfTooBI7KZciIyzV4=;
+        b=j/BVVMIYZpIJr20XA5ItOw62Lw4yDxJF+TcPQdigU2fOSbEwJkMfvSWnC5efnEs1Cg
+         1vMLYY1h1r5u91UI+gbHF0Gn23BOHCp9UPoIhXP5llEeSrd8iiYwguL0ST90uHMah1y3
+         745m6VEc9YH9ihqGQPu2nzNqHSB9nJ3e1b+Ty7mJuXNDBWf1MKcjJmJ0a4gc2Z43c7Wq
+         w5A6tOwRhL1pa1JoQBDUR5OHWWCeiQ1GCmLFm7e+X7l8XqnEHv195EEjOfNOa7/fZwNu
+         79uzdVYbW2nCIMDZyS/3/3FywD/sz4v6QPny7j/xLMIujYx9hNgOWTPxH3KdyPP9V/3V
+         ZBrw==
+X-Gm-Message-State: AOJu0YzdT96PORspSx3+bnmpcVd/cZubzRO7LqeL1RLW6r1+zdSpqPEm
+	opN7uL8Ku8x4A7v/m3NfWCIxzdwKCHA3DwJvdE7ZbHeBWoE7S1rN5ndJ0i03aEX0tCSngB0L7JH
+	K8vQ=
+X-Google-Smtp-Source: AGHT+IHITZ4TpC02vnuRbtGk25tPQ7+NZSroa5tBuHu9A05VKGkm9mjU1OhZrwaeyY+YwIeVNVd8+g==
+X-Received: by 2002:a05:600c:4f13:b0:421:418d:8f7 with SMTP id 5b1f17b1804b1-421418d0be6mr24036985e9.12.1717483590547;
+        Mon, 03 Jun 2024 23:46:30 -0700 (PDT)
 Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04caf05sm10480937f8f.42.2024.06.03.23.46.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b85c628sm142434075e9.25.2024.06.03.23.46.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 23:46:20 -0700 (PDT)
-Message-ID: <5e5f052b-df59-47fb-aed0-10b4f980f151@linaro.org>
-Date: Tue, 4 Jun 2024 08:46:18 +0200
+        Mon, 03 Jun 2024 23:46:30 -0700 (PDT)
+Message-ID: <85b5909d-8586-4f15-9fa1-d7e74bb0216d@linaro.org>
+Date: Tue, 4 Jun 2024 08:46:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,8 +76,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] soc: qcom: icc-bwmon: Allow for interrupts to be
- shared across instances
+Subject: Re: [PATCH 1/4] dt-bindings: interconnect: qcom,msm8998-bwmon: Add
+ X1E80100 BWMON instances
 To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
  konrad.dybcio@linaro.org, djakov@kernel.org, robh+dt@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, srinivas.kandagatla@linaro.org
@@ -85,7 +86,7 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org,
  dmitry.baryshkov@linaro.org, abel.vesa@linaro.org
 References: <20240604011157.2358019-1-quic_sibis@quicinc.com>
- <20240604011157.2358019-3-quic_sibis@quicinc.com>
+ <20240604011157.2358019-2-quic_sibis@quicinc.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -132,18 +133,19 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240604011157.2358019-3-quic_sibis@quicinc.com>
+In-Reply-To: <20240604011157.2358019-2-quic_sibis@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 04/06/2024 03:11, Sibi Sankar wrote:
-> The multiple BWMONv4 instances available on the X1E80100 SoC use the
-> same interrupt number. Mark them are shared to allow for re-use across
-> instances.
+> Document X1E80100 BWMONs, which has multiple (one per cluster) BWMONv4
+> instances for the CPU->LLCC path and one BWMONv5 instance for LLCC->DDR
+> path.
+> 
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
 
-Would be nice if you also mention you checked that it is safe to have
-both devm and shared interrupts (so you investigated possibility of race
-on exit path).
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
