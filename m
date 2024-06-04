@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-200920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F858FB68C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA75B8FB693
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0B71F22064
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E0F1F2162C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115F913D52C;
-	Tue,  4 Jun 2024 15:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FD7143C47;
+	Tue,  4 Jun 2024 15:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gEFNSrwK"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLZzefoO"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E029B846D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8B013D635
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513559; cv=none; b=kDiRahYHK3V2P5UlAbuIo2u95C5vMrZ5VcMgG/XhJ/6YUSJHZypD5OJtjZE6pv2EIi/ltpfTCdEHr1s2ZpGRIFxrdJD8AXwwsbcpZ0s1hoHzJoOCTaMF3z0eZjoIARCrnBP4H1f/7XeMZxYW9/Ye5Mz+6zjcj2P1S5gG9HS+8Z8=
+	t=1717513609; cv=none; b=lahOiaKtrKbIIj1FRQ9dwQqC3IJ4OwCPcr6D+IYkyFhJ/AU58pvuI8jfvONmkw0G2CjVkY7K5h56VCn/Am30mQOXNG/uitF1x0YfhYihuma5dzrvR8BT/wTtoUBLFINU8TSppGsO0wDPYMeEKwHXpLRD9yIC7m9j9s9KOaSFSCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513559; c=relaxed/simple;
-	bh=ro445i7VHeW4uYqUrduMUsb3oj6AuWo1wqWAZgg/XQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cRTinLXruActKE2VONxM0U7+ZRJslO7pIYFfg223rZwmZXERqwRLbRv/n79s0jgMVMMn9qVjFwvJAamM0lUi426tJ4VHjHLFjN+rGrno60AO4bWkKCAC/HS+4jLoXu06BBfyKPYQLLDXPNv2VMwdPS8hB6VHaV5p20K+thUi+ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gEFNSrwK; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a20ccafc6so5247813a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:05:57 -0700 (PDT)
+	s=arc-20240116; t=1717513609; c=relaxed/simple;
+	bh=2+qXDfAbhYUn/QH8iwQCLN4+AhhRWmxUefIYty9tvjQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=rRPEEwJ1hcU8OVKHDm7pWiIXXRf1LZFMyDkumX4gfizAiLm2DFQocLykXiYT1kXSWkhzpXugcO1jr2njxVz5e36e325z69AH4jNDDtlAe0G4mKDBYJPk/ei9CpGM+XUVTzgHxsBSC72eD7kXy0UnYWM6ZCDIbBdP0fLo/n2sdms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLZzefoO; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70255d5ddb8so2318507b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:06:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717513556; x=1718118356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7i7GhF6dlRREfvJkAzXH+kI3G+fzObsSDo4YlfDK3J0=;
-        b=gEFNSrwKDtsNE4NgIesXAeDB/vEFq1XxZILC0YpL8wypgR7/X04D2b/hz2bFKL0VOH
-         kdsHJ4exCYcH1TfF2wwoq0sXFW5ejz7k0ABGYdIy1Sep8AzZwB0AF7wFhWPJOMteJOol
-         IUDeHqUS5UmXYb+BLfBy4+WMAJf8kdhsob/G+Z3kWyv9ejg9d5CKfczcTupF16T1YPQN
-         PmdeBNckH7ptTYP4fOssNDcP7lUUDplDIulOOeH1W2SvyJKmWdBiqiIxAOVM20Zozvhq
-         /0Qtpvrce5w+vCuXA9/54EmukmoDJ7NqHKhhqXj1PbntSEUGPcWoZUsalxH00Z8TzxaR
-         /+NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717513556; x=1718118356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1717513607; x=1718118407; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7i7GhF6dlRREfvJkAzXH+kI3G+fzObsSDo4YlfDK3J0=;
-        b=gTsI0D8ESBOU4epaYFqG2CmOVY7xucSN8dCVyPzMmPC1fL1+0KcgQSszkCuNM10WV7
-         MEwhRSf+inbGjsB9Ocu1WNKzuu86AeTmJmirWySPj+DiR+DxHJaQKo/esFWYH1oavZKq
-         ME9gMLQDIbvK7Ge/3hjLnxj+fzJHbXzNx5Le/YR5IvsZ9VS38pknJmR6o5961KDj3Yt3
-         BWUNXheNtZH3T2XA5CmBnfsZrmsWiI8vP1T4YbvGB6WFJiRU2panuEx2UASLQwGtqB8w
-         RsJsAMtj3KG4iHEgt2SB/YIsce/rZr+P/ednqFFuI8n2nZI4jnfe8frq6OIPzM+94bfh
-         7GJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+DAb0eXZ8Y5H/aZhsoXEJIkET0zIXhPHVgKqFz/Y0YLp9grVMPFjWYrVEUXPkda4CRfXq/+jHXq33oBJBJua4r120RNHuB/eg8722
-X-Gm-Message-State: AOJu0YyfF2+YnlOYQbD9Vx3BLIzawsljC2qe+9tyAepL8ttNkNOZEgu3
-	PaB9J6xbyQzwXgMb87vAJLtH8N6+w5LVKxX/A0s8stoPW4l/XbP8xFZXlSjPRwU=
-X-Google-Smtp-Source: AGHT+IGHlq8e17y+3YCHVKE24FcpXnHf5Vb2Kosie/7mCqEOX2TFC+ggm5U4vZqBl1jL5xdJIrHEYw==
-X-Received: by 2002:a50:9b43:0:b0:57a:23eb:13b3 with SMTP id 4fb4d7f45d1cf-57a363713eemr8130395a12.12.1717513555940;
-        Tue, 04 Jun 2024 08:05:55 -0700 (PDT)
-Received: from linaro.org ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b98e0csm7473460a12.13.2024.06.04.08.05.54
+        bh=qJhh363fbWRlNJvkWAmkbwBisq5XC+2LXzyAvBxQ2pk=;
+        b=dLZzefoOWsblE1dZrr9sh1dAQI6+mjS0Y50tONrTK3i4T54vpOavmZFM0iiUOxKPge
+         4H/xhBPqpPe9+jFg1f6+RXJVvgN/oLMOtwryvlaJlTSuOIFmH+twmcqrzsoBlCinoEg1
+         a0LWyGsyZX6ACisTWcnoWMSixIJlpD2rP7vVxhGmHuNssLheP0KbsuFCT8kQFBE7tx+2
+         BZaGCONdwgZcYnr3JO8rVTvfcD88an9hip6XIW+rgGVsDvpdMqh79+IwU7Y+8lG+gQ6p
+         PRhSEqwFNHjli/XbAIFS0JFMa8leim7ueVezR78/SmtRh+3Y9ibkq44DbKP4KGIph0dz
+         mUWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717513607; x=1718118407;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qJhh363fbWRlNJvkWAmkbwBisq5XC+2LXzyAvBxQ2pk=;
+        b=cxIrxukAfVKcikevc9bzwzL5xDzR6MZo/KTXSyxO+5xNJ9sYb0grc2zQVZak8QyHeF
+         ZWnPVtvSwzvtpVhd4zLogalOySdaAQnpxu32jZwX6AlmAnkBSuQJKN4OBe+vyqciAPGr
+         LOPGe6YIIOq9cbYufBQBC5GxHVFnQKl3DTDcc6zfJp42GcHyHsjTIzjMw/tjZHvpzw39
+         nkYLFVWQt0nui0xgG58FVmKE190ClHV7wwpkjbCDdk4Yi5WYdkicIpwf5y+XPMpEFVwx
+         srG5g1U/YfzFoilI1IjJqHLcxNAUpROqWdedTurSdu7gRFQshbkzdzpImnX12fYf9ojV
+         k/0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXzHo+JkLkn39/PrLZWE3NMyFmfMiBBXSnAmU/WD4iL7Y3nG50dLohIB18N9g8JJEWswk205NBeR2bfGSe62VH3ap0mgEsW6PIS2RdK
+X-Gm-Message-State: AOJu0YyEPhNB3USaQvI8H3ztHOWm24FUyQJudHOpnizHVe03TnexxYsc
+	ZRNd4eMw5/Wim9VGbRQDGZIlysMeEIKbM1SCsqpub3Umtl9zKCjS+5Qz/fe1
+X-Google-Smtp-Source: AGHT+IH010tpZVdxgd9Yw449UqLipwVxZfsbDuz06jA5aRVTAA4YUmp64TMXqKVnkaKczlNteTqLig==
+X-Received: by 2002:a05:6a00:23d2:b0:702:36a0:a28d with SMTP id d2e1a72fcca58-702477bc037mr12205994b3a.7.1717513607178;
+        Tue, 04 Jun 2024 08:06:47 -0700 (PDT)
+Received: from localhost.localdomain ([180.69.210.41])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70248dc56d8sm6740666b3a.80.2024.06.04.08.06.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 08:05:55 -0700 (PDT)
-Date: Tue, 4 Jun 2024 18:05:54 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Disable the SMB2360 4th
- instance by default
-Message-ID: <Zl8tUr+r423Tbw6l@linaro.org>
-References: <20240603-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v2-1-fb63973cc07d@linaro.org>
- <4c1d77e3-3fe7-4ee6-8872-3924a1b2ef9f@linaro.org>
+        Tue, 04 Jun 2024 08:06:46 -0700 (PDT)
+From: Jung-JaeJoon <rgbi3307@gmail.com>
+X-Google-Original-From: Jung-JaeJoon <rgbi3307@naver.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Jung-JaeJoon <rgbi3307@gmail.com>,
+	maple-tree@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] maple_tree: modified return type of mas_wr_store_entry()
+Date: Wed,  5 Jun 2024 00:06:29 +0900
+Message-Id: <20240604150629.30536-1-rgbi3307@naver.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c1d77e3-3fe7-4ee6-8872-3924a1b2ef9f@linaro.org>
 
-On 24-06-04 14:01:11, Konrad Dybcio wrote:
-> 
-> 
-> On 6/3/24 10:17, Abel Vesa wrote:
-> > The CRD board doesn't have the 4th SMB2360 PMIC populated while the QCP
-> > does. So enable it on QCP only. This fixes the warning for the missing
-> > PMIC on CRD as well.
-> > 
-> > Fixes: 2559e61e7ef4 ("arm64: dts: qcom: x1e80100-pmics: Add the missing PMICs")
-> > Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> > Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> > Changes in v2:
-> > - Fetched all R-b and T-b tags
-> 
-> Almost..
-> 
-> gotta do it twice to make sure it's posted
+From: Jung-JaeJoon <rgbi3307@gmail.com>
 
-Actually you sent your R-b tag to v1 exactly one day after v2 was
-already sent. :)
+Since the return value of mas_wr_store_entry() is not used,
+the return type can be changed to void
 
-But I think b4 would've picked up the one from v1 anyway.
+Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
+---
+ lib/maple_tree.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> Konrad
+diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+index 2d7d27e6ae3c..da30977aab0f 100644
+--- a/lib/maple_tree.c
++++ b/lib/maple_tree.c
+@@ -4203,31 +4203,28 @@ static inline void mas_wr_modify(struct ma_wr_state *wr_mas)
+  *
+  * Return: The contents that was stored at the index.
+  */
+-static inline void *mas_wr_store_entry(struct ma_wr_state *wr_mas)
++static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
+ {
+ 	struct ma_state *mas = wr_mas->mas;
+ 
+ 	wr_mas->content = mas_start(mas);
+ 	if (mas_is_none(mas) || mas_is_ptr(mas)) {
+ 		mas_store_root(mas, wr_mas->entry);
+-		return wr_mas->content;
++		return;
+ 	}
+ 
+ 	if (unlikely(!mas_wr_walk(wr_mas))) {
+ 		mas_wr_spanning_store(wr_mas);
+-		return wr_mas->content;
++		return;
+ 	}
+ 
+ 	/* At this point, we are at the leaf node that needs to be altered. */
+ 	mas_wr_end_piv(wr_mas);
+ 	/* New root for a single pointer */
+-	if (unlikely(!mas->index && mas->last == ULONG_MAX)) {
++	if (unlikely(!mas->index && mas->last == ULONG_MAX))
+ 		mas_new_root(mas, wr_mas->entry);
+-		return wr_mas->content;
+-	}
+-
+-	mas_wr_modify(wr_mas);
+-	return wr_mas->content;
++        else
++	        mas_wr_modify(wr_mas);
+ }
+ 
+ /**
+-- 
+2.17.1
+
 
