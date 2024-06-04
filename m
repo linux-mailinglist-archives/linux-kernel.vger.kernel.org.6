@@ -1,87 +1,154 @@
-Return-Path: <linux-kernel+bounces-200927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22B18FB6A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:10:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD9B8FB6AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2D1282314
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92B728178D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7401442E8;
-	Tue,  4 Jun 2024 15:10:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DF114387B;
+	Tue,  4 Jun 2024 15:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gpmdXhgr"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6961420C9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B5B15E83;
+	Tue,  4 Jun 2024 15:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513804; cv=none; b=GbTe1wQ5bNQfFoN7dhH+MnQIllpNW6yAxld5Q+YJPi/OlVcHa9XLRkWg9A7tlzTJQ4/3yHABqLeso7pR2OQIWggT1SZv87cbnLMktq05VR8DFLutW7qNqpjQ4TrhTd3NToHpGokEKIQEE8CUBo+XPrnGIFBu0hLg3Zv42MaQ330=
+	t=1717513826; cv=none; b=CBc2CotA/qy3TyfA2VYQcwpIAujCTe7dvaIzJmJHoUo8G/DBMD9mTQ0tUcZia6yXdyZfw60Akf5seF+lDqbWbpQ3ecvcsr2CMDwuBP5SUFy4zcCT0hQ+AksG8JxrqUgGGBU2L6y1wzX+jKM/KejJ4pqnNK4IYlZ+Bjs5aR2OsEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513804; c=relaxed/simple;
-	bh=4TVIQNR/6Z1YPfoSmoDWBbA3PwRL01qZEuT1YwNgKmA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kRD/T5mXpeY34ey/330AVjt/F7eRcO11fLmwMya2RtEE+LzWFFWi9L/PqVNCynRZVaMztGHwCKklUUKd0dTi3vJFK5qJCYiubF4Z+5z5xP0cTIwACLUt7XE29+M5O1npWfrtWVamOeJSjnGWtUPjNFmeUfZysUHu/xOU7yrh27E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-374a23b72c9so17104555ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:10:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717513802; x=1718118602;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kkSWCLUC3Z5zZI+v8VL/vR1g1iAlgwx4yL/ydA03F9s=;
-        b=RoqT8Jsol5Hw7vkEjQH17tY4XqbqRRZUSt7Jf6vQ55ANlAlBDbMWh3XIEgg84KX8M4
-         4M3l5eTvjX4so1Vdq8kZ3OJvDZcnzR8QZ7lxP/zKKbFD3ZKjAX8LbRj9cLVIgSeFCmCl
-         Y6wdha9f0nuQIJ2UNhl/5pGLZo7nJ4oKHGupDdeD3QKWfGf0LhDzlSEy11NSi/W/zIaR
-         jm4VkyTWjtQjrFNf3zNCZ80kxCbSo8hcxc2AuJ45Hn/z7Nnd/8vmvLhoZ2AZaVrAmjqW
-         iQIwv9ijfuCGmvD3qovPgUGq5QL0yNVJkfQSy0nO0WDuyF6VDnWo5w40Ak+00PiCluIV
-         ofQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUio4k+Mgz2vsGq5Wk2f4aRG8nQMp1MCStWvD6H0Gy9pCXgokPzA303Jwky4oOYKQexcBWHaRK6SZ8Jlx9xOiwzVAvY7wHyv8z7UkFP
-X-Gm-Message-State: AOJu0Ywno1xWxn8rdyY3P0DUz+pSYS3kPPP4QYgeLgTmg/atmMxbrgEX
-	5hsdmvVyqoBbbu+mlsP1w0+jNo4goDGta6e2Q2xHHKFL9at50hVFTz4Q/7zkQk2Mt9EiFK2BG6d
-	nn3kgImhcXjXUZ817NRWgS1F2ywfnPmddrJX0iXyseVTWQ/esorqGD4c=
-X-Google-Smtp-Source: AGHT+IE76CJ+LLRsvygb6B1IMZFAirzuRPp9Osu7vnH6Gg/0Ka8ZM9cU532pf4uWHpLGjHKlut+XzzpYCOiZVmQk5K76Vnz92ZG5
+	s=arc-20240116; t=1717513826; c=relaxed/simple;
+	bh=AlE9DgWtRIT3Sl1kuWd/rWKZ1j/Yhf4kD3Y4KDvJzig=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=X6zDMestTYakQJkR6fl9b9CSvZ+j1xcrjIvl+p4UmEdUqnVcWZ4lAEFOSkUWs5nkisA8JwpSR6A5XHi5rWm952VuhExewOGfM4oCkaboew7dK0Eyvy9Vx8IxzM5HenQxMgQjuLGoqizViRCiWIwI+Bn7CKmYdLpSFxh53/Wru7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gpmdXhgr; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 454ENLXt005287;
+	Tue, 4 Jun 2024 15:10:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=EfYv5g/Zd/sx7KqBxGNFgf5KwapbaCyVevFzqEDsdxE=;
+ b=gpmdXhgr/uN6nuEaX3GXtGNl5jr8DFLej9LnwMMvFFz8j5XexWt5DAMeZJUvdbvAOIak
+ Vf1MzG05SVZ4YK+dZ44JfyJz/zThLI14TdjTd5UFibJRhH2CERT0UsR0WCxbxSR7nYU2
+ iu86Hw1nd4UBwmHhop9IpUDGSVWydtkChGntpGlWSWB8JT10AUnm/rt8mPdwgkVjlovS
+ 8R0MJ7KeJWJTZLobh8PH5B+i72RZ9YoJ0L089lPiUvVcvFigm+Ah6tzaXTLEZRh/IgQm
+ 5vzdP2fWXUOawzcdvDWP+BtrrqGdD8uqO3z7FyuaDDObZE965X+mVfYG6Rm45HyF5sI6 vA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj4mrr5at-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 15:10:20 +0000
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 454FAKjx023916;
+	Tue, 4 Jun 2024 15:10:20 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj4mrr5am-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 15:10:20 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 454F9LLj008468;
+	Tue, 4 Jun 2024 15:10:18 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygec0pwhy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 15:10:18 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 454FAFo98979186
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Jun 2024 15:10:17 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4E25A58065;
+	Tue,  4 Jun 2024 15:10:15 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8BEA858058;
+	Tue,  4 Jun 2024 15:10:13 +0000 (GMT)
+Received: from [9.155.211.217] (unknown [9.155.211.217])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Jun 2024 15:10:13 +0000 (GMT)
+Message-ID: <9f9fca15-9139-40c9-bd24-2e0f2b7e4d6e@linux.ibm.com>
+Date: Tue, 4 Jun 2024 17:10:12 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net/smc: avoid overwriting when adjusting sock
+ bufsizes
+To: Paolo Abeni <pabeni@redhat.com>, Wen Gu <guwen@linux.alibaba.com>,
+        gbayer@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240531085417.43104-1-guwen@linux.alibaba.com>
+ <d5e4c3093a68f38657b8061bcbf51396e1d23bab.camel@redhat.com>
+Content-Language: en-US
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <d5e4c3093a68f38657b8061bcbf51396e1d23bab.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: pmYrMHbQCBj2dDIroL0AfLjkIQ6r3fZW
+X-Proofpoint-ORIG-GUID: Tv4icvBosYcQtaS2GYnIMkwwCz5R2xZG
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b27:b0:36d:d06c:5c10 with SMTP id
- e9e14a558f8ab-3748b9e5b86mr9243325ab.4.1717513802615; Tue, 04 Jun 2024
- 08:10:02 -0700 (PDT)
-Date: Tue, 04 Jun 2024 08:10:02 -0700
-In-Reply-To: <a67e82fc-4658-4784-8d5b-e8a048e749e2@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001a2419061a11d885@google.com>
-Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_evict_inode (2)
-From: syzbot <syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=992 spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406040121
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-and-tested-by: syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com
+On 04.06.24 16:04, Paolo Abeni wrote:
+> On Fri, 2024-05-31 at 16:54 +0800, Wen Gu wrote:
+>> When copying smc settings to clcsock, avoid setting clcsock's sk_sndbuf
+>> to sysctl_tcp_wmem[1], since this may overwrite the value set by
+>> tcp_sndbuf_expand() in TCP connection establishment.
+>>
+>> And the other setting sk_{snd|rcv}buf to sysctl value in
+>> smc_adjust_sock_bufsizes() can also be omitted since the initialization
+>> of smc sock and clcsock has set sk_{snd|rcv}buf to smc.sysctl_{w|r}mem
+>> or ipv4_sysctl_tcp_{w|r}mem[1].
+>>
+>> Fixes: 30c3c4a4497c ("net/smc: Use correct buffer sizes when switching between TCP and SMC")
+>> Link: https://lore.kernel.org/r/5eaf3858-e7fd-4db8-83e8-3d7a3e0e9ae2@linux.alibaba.com
+>> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+>> ---
+>> FYI,
+>> The detailed motivation and testing can be found in the link above.
+> 
+> My understanding is that there is an open question here if this is the
+> expected and desired behavior.
+> 
+> @Wenjia, @Jan: could you please have a look?
+> 
+> Thanks!
+> 
+> Paolo
+> 
+> @Paolo, thank you for reminding us!
 
-Tested on:
+@Wen, Gerd and I have looked into your patch and discussed on it. Gerd 
+would send the concrete answer to your question soon.
 
-commit:         4d419837 f2fs: fix to don't dirty inode for readonly f..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
-console output: https://syzkaller.appspot.com/x/log.txt?x=17a597d6980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eab577c7808ea52b
-dashboard link: https://syzkaller.appspot.com/bug?extid=31e4659a3fe953aec2f4
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Regarding to this patch, it looks good to me. Here you are:
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
+
+Thanks,
+Wenjia
+
 
