@@ -1,291 +1,299 @@
-Return-Path: <linux-kernel+bounces-200501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033C68FB0E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:17:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EEB58FB066
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FB91280FD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E796E1F218DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E973142E8C;
-	Tue,  4 Jun 2024 11:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC7F144D0B;
+	Tue,  4 Jun 2024 10:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="m9vmAwAY"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="foYrXDon"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27F520ED
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BD01448E3;
+	Tue,  4 Jun 2024 10:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717499819; cv=none; b=L5iDSj7ELIdaUfCWZjLAIlxl98VoTr9+bJHrJoWeooX6B2Od4q8a+XmZoQF/Q7YuMnQwAo85eJx2CMYlaOZUAjYH5td78ub2bkvavxdM9CfMYoLrquYQ2Ikp7P/xostl5R5rqnSQ5e+bk9TbUigVFOqygCxIZJi163LrKZdxK9E=
+	t=1717498249; cv=none; b=Fufn8whD+Y8BMtaUBMuNLHW5f0LafRP6Fmp86CkKeYh416AvmT10i0a33q8KMnadN+FHC8AStSNAAtUbn/rcOrfBFdRmhoUI75C7Ejer7rMOd5rY5xO0dxECAb8p0l47rEVI3QemCiWNVpQtT033A8T4W3QKfau74NdL4RvZAFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717499819; c=relaxed/simple;
-	bh=w1qLzV6HLbncwtVgujIXk3Ig+Tx0IuJ6cVsXrxxlnIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=d0aHCjXebnU1noFziT79wD+tbWsXSfoPBXf119jNBuCIz8DQKaptCjY/1pcXsxF0g3/ln+tA20vJNBpTPCIpQC15Idq+UVwbQt9QJd3r6HI3FmX3LolJOtRtGkD6i0oNQqv4NTSmrPzjwtKGTyl36XU0QWEu+1n3UYsTn0E5p6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=m9vmAwAY; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240604111654epoutp02261151981767d56846fefe1404abd4f0~VyPtEkYXy2365123651epoutp02M
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:16:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240604111654epoutp02261151981767d56846fefe1404abd4f0~VyPtEkYXy2365123651epoutp02M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717499814;
-	bh=W7mPVzQZKRnQDYV+JCtWF0MGoPHuyGT3TYodiOO+3YY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m9vmAwAYD9ZesX8pO9KnR/yMfiQ00Kho/W5I/6d5Z6Uj+zp6fiWCif8ROFnT1PSr/
-	 UIZDfdAr7DSKkLHKyRHmhERSgk7MUnu2rd6fMgjDgAzN2wYGcj9Jm3ru5NWsv48Mby
-	 7sPIJOsKrk4kRjxZdVy3rYV9TTU6mTKGIT0f3Wvo=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240604111652epcas5p2fb3ff3af2b3a5585597af0238a75772f~VyPrPc7rW2355423554epcas5p2h;
-	Tue,  4 Jun 2024 11:16:52 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Vtp2T6y1Mz4x9Q2; Tue,  4 Jun
-	2024 11:16:49 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C2.66.10047.1A7FE566; Tue,  4 Jun 2024 20:16:49 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240604105019epcas5p421855f0d2b36c064b41d485af4e2b0cc~Vx4fR6XxJ1521215212epcas5p4c;
-	Tue,  4 Jun 2024 10:50:19 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240604105019epsmtrp2dc2736f53c71be92ea56db72bbf4b564~Vx4fP8yoS0411204112epsmtrp2U;
-	Tue,  4 Jun 2024 10:50:19 +0000 (GMT)
-X-AuditID: b6c32a49-1d5fa7000000273f-2e-665ef7a1bfea
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	42.D4.08336.A61FE566; Tue,  4 Jun 2024 19:50:18 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240604105014epsmtip21cc93a7a862e372e31a4b74374219763~Vx4bJDtP80565705657epsmtip2z;
-	Tue,  4 Jun 2024 10:50:14 +0000 (GMT)
-Date: Tue, 4 Jun 2024 10:50:26 +0000
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Sagi Grimberg
-	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, martin.petersen@oracle.com, bvanassche@acm.org,
-	david@fromorbit.com, hare@suse.de, damien.lemoal@opensource.wdc.com,
-	anuj20.g@samsung.com, joshi.k@samsung.com, nitheshshetty@gmail.com,
-	gost.dev@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 03/12] block: add copy offload support
-Message-ID: <20240604105026.yqza6ahoo52bbvle@nj.shetty@samsung.com>
+	s=arc-20240116; t=1717498249; c=relaxed/simple;
+	bh=gxAAsvnSVyLNIudYnqJvErBHS0yme+Oo0sQ/LiyMic8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EokD9NdxX5q/rU/4Pdwp5+1rAla51MGqhbV6ORK3QMvRN+A4fDjERbeSS30EGubZ8/oSjIoQG+EHRPOFT/o96t0KobsQqmAnR9uQIECeIqoO/DJZbnNiJhxbNYTtCq+fCqKsPf7IIXyZEFbCFj/ksDl8arqumCFoA+Z0nl0sn8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=foYrXDon; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454AoX2v104206;
+	Tue, 4 Jun 2024 05:50:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717498233;
+	bh=pckwibFh0Fdny/2MEzAnIKrJ5AZEWCwcI6pZs+BV4h4=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=foYrXDonRLdAHLkheBJQxAh4F9roUaZFlDUZ0V6V96Vt2elsjtQH4JjZxktQa7q4a
+	 JfHejTe6tkU7/T31fDQAi16ZXbAW6MoFxlK80Qt9gPCEXvr/VZz14PmMek/69zcmnu
+	 Z+lLI8NCzrePbC2tavIe6+bdjCR/4eKWjasu8Z0s=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454AoXc4117151
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 05:50:33 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 05:50:33 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 05:50:33 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454AoWc3071621;
+	Tue, 4 Jun 2024 05:50:33 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <ezequiel@vanguardiasur.com.ar>, <p.zabel@pengutronix.de>,
+        <linux-rockchip@lists.infradead.org>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>
+Subject: [PATCH v12 06/13] media: verisilicon : Use exported tables from v4l2-jpeg for hantro codec
+Date: Tue, 4 Jun 2024 16:20:31 +0530
+Message-ID: <20240604105031.2252329-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240604104001.2235082-1-devarsht@ti.com>
+References: <20240604104001.2235082-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240601061653.GA5877@lst.de>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta1BUZRjHfc/ZPSxOq4eL9gKDwZHJYOOyucALgjSKzCH6AKM1pgbuwOEi
-	y+62u2SRU9wRBOQSNiyiK6ErlwSEiKshCgi1EnEbELAS0riHATGM0i67NH77Pf957s88HNz0
-	upElJ0qsYGRioYgitrPq79nbO15bDQ53WR4SoKqeThwl5rzAUcX4RQLN3FsC6NLiGo4m29IA
-	Wtf04qiucwIgVUkxC420NWKopSQPQ2UVHRgq+iYJQx0bcwTKax8CaGpQiaHWUR66llrKQi2t
-	3SzU33SZQFdvTBkhdddLDOWeH8RQw2QCQLdmFljowagV6n3RxX7Xiu4fCKB7SiDdqBw3onsn
-	alh0vyaWvl2eTtC1pV/Rz2oLAd08Ek/Q32bns+mspHmCbkx5zKb/nhpl0Qt3Bgk6u64c0D+r
-	7hsFmp2I9opkhGGMzIYRh0rCosQR3lTA0ZDDIa5uLnxHvgdyp2zEwhjGm/J9P9DRL0qkXQ5l
-	86lQFKuVAoVyOeV80EsmiVUwNpESucKbYqRhIqlA6iQXxshjxRFOYkbhyXdxecdV63g6OrIl
-	Z42Qprz9WfVAKRYP6vZmAGMOJAWwNb0IywDbOaZkM4CTCfVsvbEEYH6JkqU3VgAs7nwEtkIG
-	ljS4jk3JVgCHMwz8HMBf1mx1zCLt4Fz5U6MMwOEQJA/+tMHRyeYkBaemNZtpcLKAgBtKKx2b
-	kQfhj6l3N3UueRheuFJgYBPYXTjJ0rGxNk1efjeh6weSD41h4g9P2Pp+fOH9O5W4ns3gdFed
-	kZ4t4fP5VkLPZ2HZ1zcNwckAKoeVhmF8YErPRVzfUSRs+avUkMgaFvTcwvT6Dpi1PonpdS5s
-	uLLFe2FllcpQwAIOrSYYmIbKPt2Uus2NATg2m87KAXuUr0ykfKWenj1h+mIiW6ldGE5aQfVL
-	jh7tYVWTswqwy4EFI5XHRDByVylfzJz9/8ihkpjbYPNfHPwbwPhvi07tAOOAdgA5OGXOzf7y
-	ZLgpN0z4eRwjk4TIYkWMvB24ag+Ui1vuCpVoH06sCOELPFwEbm5uAo/9bnzqde5MSnGYKRkh
-	VDDRDCNlZFtxGMfYMh7z7/B7aqPmWqoeV/rffLKslhSuVh6nM8Ufjg0kWqSdW87WaMIbd69Y
-	N5PAAf9+/t+l9tPJV8k3XCKDDsQ93Gl7LPiYfZ0ka1/PJytH4Zszw7yPRkVq3q6+U8Hj7h1V
-	H8xmBqhNTGw9D9Hni9x3z03gNSd8ugXnAJX28Vt3k0YGHgQe+qKv9ddAdpprfmKB1/Emu6qO
-	5f3rSkk6d4f5H+ZN/u9lTo8sbStbexbUW1b0p6ra2ndPk8wjZtqrxC5oQfHPdwdqbBwvWbV1
-	i0h6J3XSC3ilnyra5jPV7epsWfja7/sq8nwOHalMTeZVq+p4DTc6eusbzlxHj/zkuW1HLp+Z
-	jRuvpVjySCHfAZfJhf8Bt94OkLgEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsWy7bCSvG7Wx7g0g+8fjC3WnzrGbNE04S+z
-	xeq7/WwWrw9/YrSY9uEns8WTA+2MFr/Pnme22HLsHqPFgkVzWSxuHtjJZLFn0SQmi5WrjzJZ
-	zJ7ezGRx9P9bNotJh64xWjy9OovJYu8tbYuFbUtYLPbsPclicXnXHDaL+cueslssP/6PyWJi
-	x1Umix1PGhkt1r1+z2Jx4pa0xfm/x1kdpD0uX/H2OLVIwmPnrLvsHufvbWTxuHy21GPTqk42
-	j81L6j1ebJ7J6LH7ZgObx+K+yawevc3v2Dx2tt5n9fj49BaLx/t9V9k8+rasYvQ4s+AIe4Bw
-	FJdNSmpOZllqkb5dAlfGpb/5Bds1K/oO9bE0MDYodjFyckgImEhc+XSWuYuRi0NIYDejxJOz
-	U5kgEpISy/4eYYawhSVW/nvODmILCXxklLiyOxLEZhFQkXi7CiTOwcEmoC1x+j8HSFhEQEni
-	6auzjCA2s8BMNokz83NBbGEBO4n9bQfB4rwCzhLd86YyQuy9xygxbdcbFoiEoMTJmU9YIJrN
-	JOZtfsgMMp9ZQFpi+T+w+ZxAqyZNPsk2gVFgFpKOWUg6ZiF0LGBkXsUomVpQnJueW2xYYJiX
-	Wq5XnJhbXJqXrpecn7uJEZwStDR3MG5f9UHvECMTB+MhRgkOZiUR3r666DQh3pTEyqrUovz4
-	otKc1OJDjNIcLErivOIvelOEBNITS1KzU1MLUotgskwcnFINTOs+bj92WPe7Q1ZYfL/AE+cV
-	uzTSbO2zBA4Wxm6JO7J9o96KUpHG6eW6CRxNrHc/nWzI+/lq8d865tisE0V1AofZvvUpe9br
-	JL3XzBMoyl/76CTnInZRpb7dXhkCT91PyRxRy//byPvadunJhr4J00NimFdcZz32kV880d3x
-	/+rtXtuDqj87Pbg399Ndn6cPfuW8lPtUuHLFvZMil561RLWcvfS61UEv88TqSoUjLzhFmVT2
-	/9r7YntAo+tRwfMmc9nVn7NqvOoXuyq5d6G8yKmTS3lkmteeXVEbtdH8pNW+D4qSm/ve7dVP
-	mbjfKPNyZR/Pwt32cUfezr3afShkoZm5p3dSje4vj4pL1d5v1yqxFGckGmoxFxUnAgC7zesq
-	eAMAAA==
-X-CMS-MailID: 20240604105019epcas5p421855f0d2b36c064b41d485af4e2b0cc
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----NniuWcEa.zZVU-iq4JS_ZFjyXsesTFtE.O7X-O5.k3Ud19D7=_58104_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102853epcas5p42d635d6712b8876ea22a45d730cb1378
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102853epcas5p42d635d6712b8876ea22a45d730cb1378@epcas5p4.samsung.com>
-	<20240520102033.9361-4-nj.shetty@samsung.com> <20240601061653.GA5877@lst.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-------NniuWcEa.zZVU-iq4JS_ZFjyXsesTFtE.O7X-O5.k3Ud19D7=_58104_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+Use v4l2-jpeg core API to import reference quantization and huffman tables
+used for JPEG Encoding.
 
-On 01/06/24 08:16AM, Christoph Hellwig wrote:
->> +/* Keeps track of all outstanding copy IO */
->> +struct blkdev_copy_io {
->> +	atomic_t refcount;
->> +	ssize_t copied;
->> +	int status;
->> +	struct task_struct *waiter;
->> +	void (*endio)(void *private, int status, ssize_t copied);
->> +	void *private;
->> +};
->> +
->> +/* Keeps track of single outstanding copy offload IO */
->> +struct blkdev_copy_offload_io {
->> +	struct blkdev_copy_io *cio;
->> +	loff_t offset;
->> +};
->
->The structure names confuse me, and the comments make things even worse.
->
->AFAICT:
->
->blkdev_copy_io is a per-call structure, I'd name it blkdev_copy_ctx.
->blkdev_copy_offload_io is per-bio pair, and something like blkdev_copy_chunk
-Acked, your suggestion for structure name looks better.
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Acked-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+---
+V11->V12: No change
+V10: Fix typo in commit message title
+V9: No change
+V8: Add Reviewed-by and Acked-by tags
+V1->V6 (No change, patch introduced in V7)
+---
+ .../media/platform/verisilicon/hantro_jpeg.c  | 128 ++----------------
+ 1 file changed, 14 insertions(+), 114 deletions(-)
 
->might be a better idea.  Or we could just try to kill it entirely and add
->a field to struct bio in the union currently holding the integrity
->information.
-We will explore this.
+diff --git a/drivers/media/platform/verisilicon/hantro_jpeg.c b/drivers/media/platform/verisilicon/hantro_jpeg.c
+index d07b1b449b61..fa4e8ee92c05 100644
+--- a/drivers/media/platform/verisilicon/hantro_jpeg.c
++++ b/drivers/media/platform/verisilicon/hantro_jpeg.c
+@@ -11,6 +11,7 @@
+ #include <linux/build_bug.h>
+ #include <linux/kernel.h>
+ #include <linux/string.h>
++#include <media/v4l2-jpeg.h>
+ #include "hantro_jpeg.h"
+ #include "hantro.h"
+ 
+@@ -24,42 +25,6 @@
+ #define HUFF_CHROMA_DC_OFF	394
+ #define HUFF_CHROMA_AC_OFF	427
+ 
+-/* Default tables from JPEG ITU-T.81
+- * (ISO/IEC 10918-1) Annex K, tables K.1 and K.2
+- */
+-static const unsigned char luma_q_table[] = {
+-	0x10, 0x0b, 0x0a, 0x10, 0x18, 0x28, 0x33, 0x3d,
+-	0x0c, 0x0c, 0x0e, 0x13, 0x1a, 0x3a, 0x3c, 0x37,
+-	0x0e, 0x0d, 0x10, 0x18, 0x28, 0x39, 0x45, 0x38,
+-	0x0e, 0x11, 0x16, 0x1d, 0x33, 0x57, 0x50, 0x3e,
+-	0x12, 0x16, 0x25, 0x38, 0x44, 0x6d, 0x67, 0x4d,
+-	0x18, 0x23, 0x37, 0x40, 0x51, 0x68, 0x71, 0x5c,
+-	0x31, 0x40, 0x4e, 0x57, 0x67, 0x79, 0x78, 0x65,
+-	0x48, 0x5c, 0x5f, 0x62, 0x70, 0x64, 0x67, 0x63
+-};
+-
+-static const unsigned char chroma_q_table[] = {
+-	0x11, 0x12, 0x18, 0x2f, 0x63, 0x63, 0x63, 0x63,
+-	0x12, 0x15, 0x1a, 0x42, 0x63, 0x63, 0x63, 0x63,
+-	0x18, 0x1a, 0x38, 0x63, 0x63, 0x63, 0x63, 0x63,
+-	0x2f, 0x42, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
+-	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
+-	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
+-	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
+-	0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63
+-};
+-
+-static const unsigned char zigzag[] = {
+-	 0,  1,  8, 16,  9,  2,  3, 10,
+-	17, 24, 32, 25, 18, 11,  4,  5,
+-	12, 19, 26, 33, 40, 48, 41, 34,
+-	27, 20, 13,  6,  7, 14, 21, 28,
+-	35, 42, 49, 56, 57, 50, 43, 36,
+-	29, 22, 15, 23, 30, 37, 44, 51,
+-	58, 59, 52, 45, 38, 31, 39, 46,
+-	53, 60, 61, 54, 47, 55, 62, 63
+-};
+-
+ static const u32 hw_reorder[] = {
+ 	 0,  8, 16, 24,  1,  9, 17, 25,
+ 	32, 40, 48, 56, 33, 41, 49, 57,
+@@ -71,73 +36,6 @@ static const u32 hw_reorder[] = {
+ 	38, 46, 54, 62, 39, 47, 55, 63
+ };
+ 
+-/* Huffman tables are shared with CODA */
+-static const unsigned char luma_dc_table[] = {
+-	0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01,
+-	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+-	0x08, 0x09, 0x0a, 0x0b,
+-};
+-
+-static const unsigned char chroma_dc_table[] = {
+-	0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+-	0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+-	0x08, 0x09, 0x0a, 0x0b,
+-};
+-
+-static const unsigned char luma_ac_table[] = {
+-	0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03,
+-	0x05, 0x05, 0x04, 0x04, 0x00, 0x00, 0x01, 0x7d,
+-	0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
+-	0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07,
+-	0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x08,
+-	0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0,
+-	0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0a, 0x16,
+-	0x17, 0x18, 0x19, 0x1a, 0x25, 0x26, 0x27, 0x28,
+-	0x29, 0x2a, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
+-	0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+-	0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59,
+-	0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
+-	0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
+-	0x7a, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89,
+-	0x8a, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98,
+-	0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7,
+-	0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6,
+-	0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3, 0xc4, 0xc5,
+-	0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2, 0xd3, 0xd4,
+-	0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xe1, 0xe2,
+-	0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea,
+-	0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8,
+-	0xf9, 0xfa,
+-};
+-
+-static const unsigned char chroma_ac_table[] = {
+-	0x00, 0x02, 0x01, 0x02, 0x04, 0x04, 0x03, 0x04,
+-	0x07, 0x05, 0x04, 0x04, 0x00, 0x01, 0x02, 0x77,
+-	0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
+-	0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71,
+-	0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91,
+-	0xa1, 0xb1, 0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0,
+-	0x15, 0x62, 0x72, 0xd1, 0x0a, 0x16, 0x24, 0x34,
+-	0xe1, 0x25, 0xf1, 0x17, 0x18, 0x19, 0x1a, 0x26,
+-	0x27, 0x28, 0x29, 0x2a, 0x35, 0x36, 0x37, 0x38,
+-	0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+-	0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
+-	0x59, 0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+-	0x69, 0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
+-	0x79, 0x7a, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
+-	0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 0x95, 0x96,
+-	0x97, 0x98, 0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5,
+-	0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4,
+-	0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3,
+-	0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2,
+-	0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda,
+-	0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9,
+-	0xea, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8,
+-	0xf9, 0xfa,
+-};
+-
+ /* For simplicity, we keep a pre-formatted JPEG header,
+  * and we'll use fixed offsets to change the width, height
+  * quantization tables, etc.
+@@ -291,10 +189,11 @@ jpeg_scale_quant_table(unsigned char *file_q_tab,
+ 		       const unsigned char *tab, int scale)
+ {
+ 	int i;
++	const u8 *zigzag;
+ 
+-	BUILD_BUG_ON(ARRAY_SIZE(zigzag) != JPEG_QUANT_SIZE);
+ 	BUILD_BUG_ON(ARRAY_SIZE(hw_reorder) != JPEG_QUANT_SIZE);
+ 
++	v4l2_jpeg_get_zig_zag_scan(&zigzag);
+ 	for (i = 0; i < JPEG_QUANT_SIZE; i++) {
+ 		file_q_tab[i] = jpeg_scale_qp(tab[zigzag[i]], scale);
+ 		reordered_q_tab[i] = jpeg_scale_qp(tab[hw_reorder[i]], scale);
+@@ -304,6 +203,7 @@ jpeg_scale_quant_table(unsigned char *file_q_tab,
+ static void jpeg_set_quality(struct hantro_jpeg_ctx *ctx)
+ {
+ 	int scale;
++	const u8 *luma_q_table, *chroma_q_table;
+ 
+ 	/*
+ 	 * Non-linear scaling factor:
+@@ -314,21 +214,23 @@ static void jpeg_set_quality(struct hantro_jpeg_ctx *ctx)
+ 	else
+ 		scale = 200 - 2 * ctx->quality;
+ 
+-	BUILD_BUG_ON(ARRAY_SIZE(luma_q_table) != JPEG_QUANT_SIZE);
+-	BUILD_BUG_ON(ARRAY_SIZE(chroma_q_table) != JPEG_QUANT_SIZE);
+ 	BUILD_BUG_ON(ARRAY_SIZE(ctx->hw_luma_qtable) != JPEG_QUANT_SIZE);
+ 	BUILD_BUG_ON(ARRAY_SIZE(ctx->hw_chroma_qtable) != JPEG_QUANT_SIZE);
+ 
++	v4l2_jpeg_get_reference_quantization_tables(&luma_q_table, &chroma_q_table);
+ 	jpeg_scale_quant_table(ctx->buffer + LUMA_QUANT_OFF,
+-			       ctx->hw_luma_qtable, luma_q_table, scale);
++			       ctx->hw_luma_qtable, (const unsigned char *)luma_q_table, scale);
+ 	jpeg_scale_quant_table(ctx->buffer + CHROMA_QUANT_OFF,
+-			       ctx->hw_chroma_qtable, chroma_q_table, scale);
++			       ctx->hw_chroma_qtable, (const unsigned char *)chroma_q_table, scale);
+ }
+ 
+ void hantro_jpeg_header_assemble(struct hantro_jpeg_ctx *ctx)
+ {
+ 	char *buf = ctx->buffer;
++	const u8 *luma_dc_table, *chroma_dc_table, *luma_ac_table, *chroma_ac_table;
+ 
++	v4l2_jpeg_get_reference_huffman_tables(&luma_dc_table,  &luma_ac_table, &chroma_dc_table,
++					       &chroma_ac_table);
+ 	memcpy(buf, hantro_jpeg_header,
+ 	       sizeof(hantro_jpeg_header));
+ 
+@@ -337,12 +239,10 @@ void hantro_jpeg_header_assemble(struct hantro_jpeg_ctx *ctx)
+ 	buf[WIDTH_OFF + 0] = ctx->width >> 8;
+ 	buf[WIDTH_OFF + 1] = ctx->width;
+ 
+-	memcpy(buf + HUFF_LUMA_DC_OFF, luma_dc_table, sizeof(luma_dc_table));
+-	memcpy(buf + HUFF_LUMA_AC_OFF, luma_ac_table, sizeof(luma_ac_table));
+-	memcpy(buf + HUFF_CHROMA_DC_OFF, chroma_dc_table,
+-	       sizeof(chroma_dc_table));
+-	memcpy(buf + HUFF_CHROMA_AC_OFF, chroma_ac_table,
+-	       sizeof(chroma_ac_table));
++	memcpy(buf + HUFF_LUMA_DC_OFF, luma_dc_table, V4L2_JPEG_REF_HT_DC_LEN);
++	memcpy(buf + HUFF_LUMA_AC_OFF, luma_ac_table, V4L2_JPEG_REF_HT_AC_LEN);
++	memcpy(buf + HUFF_CHROMA_DC_OFF, chroma_dc_table, V4L2_JPEG_REF_HT_DC_LEN);
++	memcpy(buf + HUFF_CHROMA_AC_OFF, chroma_ac_table, V4L2_JPEG_REF_HT_AC_LEN);
+ 
+ 	jpeg_set_quality(ctx);
+ }
+-- 
+2.39.1
 
->I'm also quite confused what kind of offset this offset field is.  The
->type and name suggest it is an offset in a file, which for a block device
->based helper is pretty odd to start with.  blkdev_copy_offload
->initializes it to len - rem, so it kind is an offset, but relative
->to the operation and not to a file. blkdev_copy_offload_src_endio then
->uses to set the ->copied field, but based on a min which means
->->copied can only be decreased.  Something is really off there.
->
-Offset in this context, is with respect to the operation.
-Overall idea was to handle partial copy, where in some of the split copy IO fails.
-In this case we want to return minimum bytes copied.
-We can try to store the offset in a temporary variable similar to
-pos_out, pos_in instead of current (len - rem), to avoid the confusion.
-We will update this in next version.
-
->Taking about types and units: blkdev_copy_offload obviously can only
->work in terms of LBAs.  Any reason to not make it work in terms of
->512-byte block layer sectors instead of in bytes?
->
-Just that number of places where we need to sector shift were
-comparatively more. We will update this to 512-byte sectors in next
-version.
-
->> +	if ((pos_in & align) || (pos_out & align) || (len & align) || !len ||
->> +	    len >= BLK_COPY_MAX_BYTES)
->> +		return -EINVAL;
->
->This can be cleaned up an optimized a bit:
->
->	if (!len || len >= BLK_COPY_MAX_BYTES)
->		return -EINVAL;
->	if ((pos_in | pos_out | len) & align)
->		return -EINVAL;
->	
-Acked.
-
->> + *
->> + * For synchronous operation returns the length of bytes copied or error
->> + * For asynchronous operation returns -EIOCBQUEUED or error
->> + *
->> + * Description:
->> + *	Copy source offset to destination offset within block device, using
->> + *	device's native copy offload feature.
->> + *	We perform copy operation using 2 bio's.
->> + *	1. We take a plug and send a REQ_OP_COPY_DST bio along with destination
->> + *	sector and length. Once this bio reaches request layer, we form a
->> + *	request and wait for dst bio to arrive.
->> + *	2. We issue REQ_OP_COPY_SRC bio along with source sector, length.
->> + *	Once this bio reaches request layer and find a request with previously
->> + *	sent destination info we merge the source bio and return.
->> + *	3. Release the plug and request is sent to driver
->> + *	This design works only for drivers with request queue.
->
->The wording with all the We here is a bit odd.  Much of this also seem
->superfluous or at least misplaced in the kernel doc comment as it doesn't
->document the API, but just what is done in the code below.
->
-Since we were doing IO in unconventional way, we felt would be better to
-document this, for easy followup.
-We will remove this in next version and document just API.
-
->> +	cio = kzalloc(sizeof(*cio), gfp);
->> +	if (!cio)
->> +		return -ENOMEM;
->> +	atomic_set(&cio->refcount, 1);
->> +	cio->waiter = current;
->> +	cio->endio = endio;
->> +	cio->private = private;
->
->For the main use this could be allocated on-stack.  Is there any good
->reason to not let callers that really want an async version to implement
->the async behavior themselves using suitable helpers?
->
-We cannot do on-stack allocation of cio as we use it in endio handler.
-cio will be used to track partial IO completion as well.
-Callers requiring async implementation would need to manage all this
-bookkeeping themselves, leading to duplication of code. We felt it is
-better to do it here onetime.
-Do you see it any differently ?
-
->> +		src_bio = blk_next_bio(dst_bio, bdev, 0, REQ_OP_COPY_SRC, gfp);
->
->Please switch to use bio_chain_and_submit, which is a easier to
->understand API.  I'm trying to phase out blk_next_bio in favour of
->bio_chain_and_submit over the next few merge windows.
->
-Acked
-
->> +		if (!src_bio)
->> +			goto err_free_dst_bio;
->> +		src_bio->bi_iter.bi_size = chunk;
->> +		src_bio->bi_iter.bi_sector = pos_in >> SECTOR_SHIFT;
->> +		src_bio->bi_end_io = blkdev_copy_offload_src_endio;
->> +		src_bio->bi_private = offload_io;
->> +
->> +		atomic_inc(&cio->refcount);
->> +		submit_bio(src_bio);
->> +		blk_finish_plug(&plug);
->
->plugs should be hold over all  I/Os, submitted from the same caller,
->which is the point of them.
->
-Acked
-
-Thank You,
-Nitesh Shetty
-
-------NniuWcEa.zZVU-iq4JS_ZFjyXsesTFtE.O7X-O5.k3Ud19D7=_58104_
-Content-Type: text/plain; charset="utf-8"
-
-
-------NniuWcEa.zZVU-iq4JS_ZFjyXsesTFtE.O7X-O5.k3Ud19D7=_58104_--
 
