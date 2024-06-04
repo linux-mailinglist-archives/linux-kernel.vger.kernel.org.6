@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-201282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9933B8FBC7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:25:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A388FBC7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37B4F1F22503
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:25:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FE46B2476A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBFF1494C2;
-	Tue,  4 Jun 2024 19:25:51 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A17D14B06B;
+	Tue,  4 Jun 2024 19:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kZHYxDO/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74209801;
-	Tue,  4 Jun 2024 19:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD9F801;
+	Tue,  4 Jun 2024 19:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717529151; cv=none; b=Ws6+vV2euuEClgrjw8G2j1ZyJfrmuRTbrSZQxqs9qUmLplxd82/96LC2TPJkSvz0HIpXnkAmRz4yQxTrWtW9Au8Fi6hOSBXIylRaV3OLZm8CjjI0T50kd+didhu3p7sbij+SdTvAbRcs3xsqlrnRW/NpZ6AQMhAmJsIojw07AzU=
+	t=1717529219; cv=none; b=A7ga2kf+aTp5jrsw6N5ccvCplubkG1lH+Y7C4EpI3CV1lHQ82JgsYgp3pknK4rMPgTuMtuh4qAeW/7yspsykdCMGheLG8Va9yYrfQHETVizF9XZTBj4Lf0QXu5ZWDHaLTOl+xWRTEnkvcCWy7+06eZpScXpy0RiURV73oiIqGPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717529151; c=relaxed/simple;
-	bh=5k7gRhciOuBbwTDEYqzm+9sLuvG1nIhAitQwJrGdHMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aXXVI+pZGvg9yV01hMTgBGFmR54W5SYi2w1eDHPZ0tGu0tfIiFPra0TL8VpBQxPR9R/6H1NWe9pePtbVZIKiGqFYyeCCcxOYvVKjc6oFouTjVKD8xhHQKsEQ2s9R7MbRbMI4dLYLc3bIu0F9hRfF8P90RuHAXRgURo3SmO5+LqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6871CC2BBFC;
-	Tue,  4 Jun 2024 19:25:50 +0000 (UTC)
-Date: Tue, 4 Jun 2024 15:25:50 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] ftrace/selftests: Fix pid test with function graph not
- showing pids
-Message-ID: <20240604152550.0c01d7cd@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717529219; c=relaxed/simple;
+	bh=RfYADli4pR43LR8z8+OGq/B16AAsfprRCkUGcCgzMbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qihTp39lqd/gg3s5YsRYiIwf4Nwr5V5N5YvuBoCaU1XhrApdvA00LSSFZr/NdXIt9xRYLJgjxKZf2glGVeDUU9n861gLc+txRNg/7NbBJr9FMK56hGhu+/TxxNyEjDDcM4nNVZp9ERpbMFP1/Emv0m3osVDF+fDxVmtX1/C1hbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kZHYxDO/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=wsZATjoAW728C9PCBeyQtYSddogYGOk05sPShVwPjac=; b=kZHYxDO/WVRlIL3QNyFnI4rCsk
+	YgvhSkh9mfhdWR2/JAqlpW0Wm1xbMoXf1OfqcG2i8nQPHDS6Nyn9WFlVsg6jcCjFUP8DcarUZlL10
+	c0F9boXbmKWcoT01q59knzKrEBXXaQal4jFdnx6tMjlKBFYYKQEnCtDfAiD8Q8OzkHP8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sEZnp-00Gq9r-2O; Tue, 04 Jun 2024 21:26:37 +0200
+Date: Tue, 4 Jun 2024 21:26:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Ng, Boon Khai" <boon.khai.ng@intel.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Ang, Tien Sung" <tien.sung.ang@intel.com>,
+	"G Thomas, Rohan" <rohan.g.thomas@intel.com>,
+	"Looi, Hong Aun" <hong.aun.looi@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Tham, Mun Yew" <mun.yew.tham@intel.com>
+Subject: Re: [Enable Designware XGMAC VLAN Stripping Feature v2 1/1] net:
+ stmmac: dwxgmac2: Add support for HW-accelerated VLAN Stripping
+Message-ID: <734c0d46-63f2-457d-85bf-d97159110583@lunn.ch>
+References: <20240527093339.30883-1-boon.khai.ng@intel.com>
+ <20240527093339.30883-2-boon.khai.ng@intel.com>
+ <48176576-e1d2-4c45-967a-91cabb982a21@lunn.ch>
+ <DM8PR11MB5751469FAA2B01EB6CEB7B50C1F12@DM8PR11MB5751.namprd11.prod.outlook.com>
+ <48673551-cada-4194-865f-bc04c1e19c29@lunn.ch>
+ <DM8PR11MB5751194374C75EC5D5889D6AC1F32@DM8PR11MB5751.namprd11.prod.outlook.com>
+ <322d8745-7eae-4a68-4606-d9fdb19b4662@linux.intel.com>
+ <BL3PR11MB57488DF9B08EACD88D938E2FC1F82@BL3PR11MB5748.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BL3PR11MB57488DF9B08EACD88D938E2FC1F82@BL3PR11MB5748.namprd11.prod.outlook.com>
 
-From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+On Tue, Jun 04, 2024 at 06:05:35AM +0000, Ng, Boon Khai wrote:
+>  
+> > You should generalize the existing functions into some other file within
+> > stmmac/ folder and call those functions from both dwmac4_core and
+> > dwxgmac2_core.
+> > Do the rework of existing function & callers first and add the new bits in
+> > another patch in the patch series.
+> >
+> 
+> Hi Ilpo, do you mean I should create a new file for example,
+> stammc_vlan.c,  and move the common vlan function inside?
+> so that it can be called either from dwmac4_core, dwxgmac2_core 
+> or stmmac_main.c? or maybe I should just consolidate them into
+> stmmac_main.c?
 
-The pid filtering test will set the pid filters and make sure that both
-function and function_graph tracing honors the filters. But the
-function_graph tracer test was failing because the PID was not being
-filtered properly. That's because the funcgraph-proc option wasn't getting
-set. Without that option the PID is not shown.
+Do you have access to all the reference documentation for the IP
+driven in dwmac4_core.c, dwxgmac2_core.c and stmmac_main.c? Is it just
+VLAN which is the same, and everything else is different? Or are other
+blocks of the hardware also identical and the code should be shared?
+If VLAN is all that is identical, then stammc_vlan.c would make sense.
 
-Instead we get:
+If there is more in common, you can start the cleanup of the mess this
+driver is by moving the VLAN code into a shared file, but make the
+naming of that file more generic so more shared code can be added with
+later cleanups.
 
-	+ cat trace
-	# tracer: function_graph
-	#
-	# CPU  DURATION                  FUNCTION CALLS
-	# |     |   |                     |   |   |   |
-	 3) ! 143.685 us  |  kernel_clone();
-	 3) ! 127.055 us  |  kernel_clone();
-	 1) ! 127.170 us  |  kernel_clone();
-	 3) ! 126.840 us  |  kernel_clone();
-
-When we should be getting:
-
-	+ cat trace
-	# tracer: function_graph
-	#
-	# CPU  TASK/PID         DURATION                  FUNCTION CALLS
-	# |     |    |           |   |                     |   |   |   |
-	 4)    bash-939    | # 1070.009 us |  kernel_clone();
-	 4)    bash-939    | # 1116.903 us |  kernel_clone();
-	 5)    bash-939    | ! 976.133 us  |  kernel_clone();
-	 5)    bash-939    | ! 954.012 us  |  kernel_clone();
-
-The test looks for the pids it is filtering and will fail if it can not
-find them. Without fungraph-proc option set, it will not be displayed and
-the test will fail.
-
-Link: https://lore.kernel.org/all/Zl9JFnzKGuUM10X2@J2N7QTR9R3/
-
-Fixes: 35b944a997e2 ("selftests/ftrace: Add function_graph tracer to func-filter-pid test")
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
-index c6fc9d31a496..8dcce001881d 100644
---- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
-@@ -8,6 +8,7 @@
- # Also test it on an instance directory
- 
- do_function_fork=1
-+do_funcgraph_proc=1
- 
- if [ ! -f options/function-fork ]; then
-     do_function_fork=0
-@@ -28,6 +29,7 @@ fi
- 
- if [ $do_funcgraph_proc -eq 1 ]; then
-     orig_value2=`cat options/funcgraph-proc`
-+    echo 1 > options/funcgraph-proc
- fi
- 
- do_reset() {
--- 
-2.43.0
-
+       Andrew
 
