@@ -1,166 +1,136 @@
-Return-Path: <linux-kernel+bounces-200733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C0288FB482
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 166C18FB41B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ECB9B26A93
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:44:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34ED28244C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EF11487E7;
-	Tue,  4 Jun 2024 13:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD45145A15;
+	Tue,  4 Jun 2024 13:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwwA667s"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4QzNjO9"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BFB144D23;
-	Tue,  4 Jun 2024 13:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4738146013;
+	Tue,  4 Jun 2024 13:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717508541; cv=none; b=SRtayE3kLDlMmtoF0ZoBuUK0a+CxgJr9ZNmbQHaxG8m9iOeOFHRJ4U6BlQTFKzqAm4dQZjRjHe+jcqlbfDY0WatKBHVJnYSQYdEERdzAth3VxYJU9yIGeTLqykrGAE65q521koCA87Okd3RsTtiXaFFFTV0EYWey/EovXvNyn9c=
+	t=1717508526; cv=none; b=Xj234ak+oI4rKRbHYGiZvkoI5rgc69OwGtPp/YFDoh6GbuL8PCmRzwimIyjm4OWMR8YqyyMPC5IElXVhripBVYbHTYlTKOcwRN0LNDdzI90B+XXftFMxWUbE45zS0uFSbWc+Y62O1Xa4nHeTGHw2yKDA0pXowaiLpWeji8+UPAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717508541; c=relaxed/simple;
-	bh=JzvpitEF6afef78A6BqMKn7sGkEtB3biXCt3XCWqeog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tTyMmsMenKeUuMHZ8R3QnyQ35KpVK7m5faYaXjwAUw78MWaEyU/V9dtm1Hbcnjz6wDn9pITWTVfFh5KnkiZVoVCOyr4Q8xj9Eaincw7WEoFybU/yLfPuw7QuybdEpf6QFNVMzRO1rv9Vw8ylkP1qXOSrsVbhYAJxi7ghlWYPGiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YwwA667s; arc=none smtp.client-ip=209.85.221.171
+	s=arc-20240116; t=1717508526; c=relaxed/simple;
+	bh=NpiGOU/wc8bprEs+G3H4btUN0UKgYT+8jImA/+loXlU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gw7bQMSXRBoRXtSzUV2Owr0GcvFt8xa4/pi6K7UMkI6Xz49bouG4uWV0MyJIv8QqbaQYcZh7QQjOxjtmtHcvz8vwgcqrA4R6SN1lUUmlOin9duMEt7FHABSaKVlHvls9NSo7pJHQQHV1Va+WJrfPxKQqLkcuzpNjjxWExjRXlng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4QzNjO9; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4eb0f868f2aso1029548e0c.3;
-        Tue, 04 Jun 2024 06:42:19 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-701b0b0be38so4935696b3a.0;
+        Tue, 04 Jun 2024 06:42:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717508539; x=1718113339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1717508524; x=1718113324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I/wDaAVsUoMEE2XkQjQGVHqiZEip+VWTpwMBzDDOubw=;
-        b=YwwA667sY8kcgKRArClihxuwUyj+kPxpXb40LQpzrhsAn3+I5K/p6hKggyjWdS8Vrz
-         2BvufJEiHteSRBWyBCxu5LGQdorahH0ojz5o+OIIhInu2L4A2Md3mYd7+w9qC6EYNDRs
-         zaOVcYeFodLg75svb4vPddg8oyho2CV+gAAp1uT1CnOWykuFkceGWhc0z6U2xO98sBjT
-         BV3nUB9lRfMr0X1jYTDugD7V4h5Xgo8B36pAkicqgYDRw6yF/llso2dINjCoMUaHuRBD
-         mvj7dhfa01EvhGOXnyIISPnO3wGVL5QUeyKLBbJW6ZfV0LmnnkMv7BNjRjPzPH46Hslr
-         gVSA==
+        bh=rj3ma7MoGTsKwEShYWgennrGInTihdBJ4l4EKp81zZk=;
+        b=D4QzNjO9eS9aFctXGeeUgrQUspWyzIX8aTmS/wkvNfHWNh9LKqPK988HmUf+3v+2Wo
+         2x31lpdgLVCtIIluEyUhCmhQ3dS53EZSOy5B0WX31FF3iljAejYKe1Ulq5C6MQne78Ed
+         pf8QdIuARSyMY6UXnJsQYX8IpRsvPwqgI0LsSVOGFSgdWHSQbBXJQ7oDOu/BZBsf48A8
+         RBkmhDyhhoySeVzNdcmJ4wjz6xZzW19JUBbQ8dSd9ufePcPGPsXf2sHZhcjPXDbix3On
+         UqEDZ8axMkNGXkb84ybx+pu0y1A8J32iWOQ/gjFM3r6F2oJxn8MEZDU768fLscauRYqq
+         GhxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717508539; x=1718113339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717508524; x=1718113324;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I/wDaAVsUoMEE2XkQjQGVHqiZEip+VWTpwMBzDDOubw=;
-        b=leNLlxvDEXmpfYIzuExDcqmMdIy0k57W7t8JAfwikNTMGXBq6O0S/rggAKknGX3Oo0
-         v2qbM+xHlxKKqI4VyX6gpDifAMXa0807LIehgew/xbcCCwtTvafIH5xp/3eYZBeQCuNE
-         zjtMB3cEUrdKN+n6H2Ji5wLdSXS1y3CklT6fcNJvYose3K6nl7N0CvqGFSnmOP3uxaus
-         7a/8vhmOuC0BX6EJ2HocZFUr/5jefgdHdxVhhCuqPxyry5qn7yRSQPmIo3Kv/s8eEs45
-         RdLVg1grs6ziqQanaRN6JlDEsqTfMOZWtMjdVxbcrYP9JEQdV+BdLlhAwnQY0WmHGYsN
-         IB2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUtpcpWyjr/jPmgu/w27PzbIKZUmIv/pLyIjox0S3Cf4jasVRMPEUxNUp8yn3zkalBb78iIzRCNJtKC7u29NeYaSl9QSChooWM1Ufz590H90aDeWBmMCnXdsXNztmybsrGD99K8q0X/hcL9MzOut3zFiyRrrBVbdfaBeImsQRcB7IWB9oZ7g7V9KFwdGvFkTW6U9gnSlh7AlpoUgcPkgcTUC0+Zs9p8gdL1
-X-Gm-Message-State: AOJu0YxDfGnkGohIuBAJ+pse2YH/aCdDefq3iBVDxTFlNcD2IljiBmcI
-	xCcFpGbOEKgbQByR/lnPy9dI5nhl7vK+NQNqoKO4tj9q8nt1TiFdLv8Udq/pF/Z1ZKQUevWYDrQ
-	067PXmaTSnEiSTPlFEWWdFTV3X3A=
-X-Google-Smtp-Source: AGHT+IHgpZyV5AZDRDVpQ9136VhNSmZNg2lCdWNHz35AYccw+Xew1tUvamXCslfWnHhTU0ar0AqXutM9VZt8VyRop7A=
-X-Received: by 2002:a05:6122:4685:b0:4e9:7e39:cc9f with SMTP id
- 71dfb90a1353d-4eb02eec147mr13378784e0c.11.1717508536659; Tue, 04 Jun 2024
- 06:42:16 -0700 (PDT)
+        bh=rj3ma7MoGTsKwEShYWgennrGInTihdBJ4l4EKp81zZk=;
+        b=nuUvY63IHhmFIu97NZJoOhD0VQq5zG/Fge1RjoZWCdvh7tHNucUj6nUdbN3/bVzYo+
+         zt9UyPtB16os8thPywruwsrcm+/qZqvhz1hcc8NgDxpwUGyDtR/Z8YmcMaJ9uP+ZWzwx
+         qt8KYc9bmtG9EGZurqMCHyHVofU1bwlnATDMmbvUUklC0Xyp4QngvSRhReXzhV3Jt6Cy
+         L+gktN5Pm1FEEI4sSGWPYO0YuzoNhW9DPtKTXl1i15zdB4woAYvVm7NSrBMP2ZDh5G7T
+         vInyUbDcwlybTMWfVJAf+mI76QRmcZJG4NHCc6/VJlrJ1uci/hVb7EjcwGSpbP+peSlG
+         a2HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWICCZyDfJkb+8qBtEITi712wdygJPEQk16Xr3LQvGhk75OBr9wU6PcvcnGuCD5whzWz8HnIAdC2O8FsbtMoco+Xzx9lhM+0NYu+MXh
+X-Gm-Message-State: AOJu0YzMEufDpOZxXUuoIrv5XDo+/8l5xJRjTwFCIcygAv2fxrbXjOBI
+	BbSgitmPDy+Vq09DtJQ1vZ5pnXpGJ+MQC9xJxsiOgUg3net75J+6IwyxOw==
+X-Google-Smtp-Source: AGHT+IFsLgU6qa4slPEBxZVz54BIxZGe3KUMxrE3IkM4CUIAOHQZ7w8G80dMd9GZn28i7cNNiqKQnA==
+X-Received: by 2002:a05:6a20:9187:b0:1b2:2893:4c30 with SMTP id adf61e73a8af0-1b26f2cc0efmr13513674637.43.1717508523859;
+        Tue, 04 Jun 2024 06:42:03 -0700 (PDT)
+Received: from carrot.. (i223-217-95-32.s42.a014.ap.plala.or.jp. [223.217.95.32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323f6dadsm82903925ad.221.2024.06.04.06.42.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 06:42:03 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	syzbot <syzbot+c8166c541d3971bf6c87@syzkaller.appspotmail.com>,
+	syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nilfs2: fix nilfs_empty_dir() misjudgment and long loop on I/O errors
+Date: Tue,  4 Jun 2024 22:42:55 +0900
+Message-Id: <20240604134255.7165-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <00000000000020f6700619e765c8@google.com>
+References: <00000000000020f6700619e765c8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240322144355.878930-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CA+V-a8vQr2jxrW+C5VTcmEHmDgNp6S8=3KcAT1SzcKusFaP7Gw@mail.gmail.com>
- <2024052955-phrase-portion-8d1f@gregkh> <2024060426-radiance-reappear-c77a@gregkh>
-In-Reply-To: <2024060426-radiance-reappear-c77a@gregkh>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 4 Jun 2024 14:41:49 +0100
-Message-ID: <CA+V-a8sJ2o3HckW_YdwAraihXuDtnsqguHd8msKFe12BhCCy=g@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] Add SCIF support for Renesas RZ/V2H(P) SoC
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Greg,
+The error handling in nilfs_empty_dir() when a directory folio/page
+read fails is incorrect, as in the old ext2 implementation, and if the
+folio/page cannot be read or nilfs_check_folio() fails, it will falsely
+determine the directory as empty and corrupt the file system.
 
-On Tue, Jun 4, 2024 at 1:06=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, May 29, 2024 at 09:42:50AM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, May 29, 2024 at 07:15:23AM +0100, Lad, Prabhakar wrote:
-> > > Hi Greg,
-> > >
-> > > On Fri, Mar 22, 2024 at 2:45=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
-mail.com> wrote:
-> > > >
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Hi All,
-> > > >
-> > > > This patch series updates DT binding doc and scif driver to add sup=
-port
-> > > > for the Renesas RZ/V2H(P) SoC. RZ/V2H(P) SoC supports one channel S=
-CIF
-> > > > interface.
-> > > >
-> > > > v3->v4
-> > > > - patch 2/4 reverted back to version 2
-> > > > - new patch 3/5 added
-> > > > - Added new reg type for RZ/V2H
-> > > >
-> > > > v2->v3
-> > > > - Included DT validation patches
-> > > > - Added a new compat string for RZ/V2H(P) SoC
-> > > > - Added driver changes for RZ/V2H(P) SoC
-> > > > - Listed interrupts and interrupt-names for every SoC in if check
-> > > >
-> > > > Cheers,
-> > > > Prabhakar
-> > > >
-> > > > Lad Prabhakar (5):
-> > > >   dt-bindings: serial: renesas,scif: Move ref for serial.yaml at th=
-e end
-> > > >   dt-bindings: serial: renesas,scif: Validate 'interrupts' and
-> > > >     'interrupt-names'
-> > > >   dt-bindings: serial: renesas,scif: Make 'interrupt-names' propert=
-y as
-> > > >     required
-> > > >   dt-bindings: serial: Add documentation for Renesas RZ/V2H(P)
-> > > >     (R9A09G057) SCIF support
-> > > >   serial: sh-sci: Add support for RZ/V2H(P) SoC
-> > > >
-> > > Gentle ping.
-> >
-> > It is only 3 days since the merge window ended, please be patient for
-> > maintainers to catch up with their pending review queue.  Especially fo=
-r
-> > non-bugfixes like these that will be included in the 6.11-rc1 release,
-> > there is not any rush here for anyone just yet.
-> >
-> > For example, my todo queue currently has 1458 emails to process in it,
-> > this thread is somewhere in the middle.
-> >
-> > In the meantime, please help review other pending patches for the
-> > subsystem to help enable your patches to move toward the top of the
-> > queue.
->
-> And this patch series does not even apply, so how could it be accepted?
->
-Oops I'll rebase the changes now.
+In addition, since nilfs_empty_dir() does not immediately return on
+a failed folio/page read, but continues to loop, this can cause a long
+loop with I/O if i_size of the directory's inode is also corrupted,
+causing the log writer thread to wait and hang, as reported by syzbot.
 
-> Please fix and resend with the proper reviews added.
->
-Sure will do.
+Fix these issues by making nilfs_empty_dir() immediately return a false
+value (0) if it fails to get a directory folio/page.
 
-Cheers,
-Prabhakar
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Reported-by: syzbot+c8166c541d3971bf6c87@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c8166c541d3971bf6c87
+Fixes: 2ba466d74ed7 ("nilfs2: directory entry operations")
+Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: stable@vger.kernel.org
+---
+Hi Andrew, please apply this as a bug fix.
+
+This fixes a bug in the empty directory function and the resulting
+hang issue reported by syzbot.
+
+Thanks,
+Ryusuke Konishi
+
+ fs/nilfs2/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+index a002a44ff161..52e50b1b7f22 100644
+--- a/fs/nilfs2/dir.c
++++ b/fs/nilfs2/dir.c
+@@ -607,7 +607,7 @@ int nilfs_empty_dir(struct inode *inode)
+ 
+ 		kaddr = nilfs_get_folio(inode, i, &folio);
+ 		if (IS_ERR(kaddr))
+-			continue;
++			return 0;
+ 
+ 		de = (struct nilfs_dir_entry *)kaddr;
+ 		kaddr += nilfs_last_byte(inode, i) - NILFS_DIR_REC_LEN(1);
+-- 
+2.34.1
+
 
