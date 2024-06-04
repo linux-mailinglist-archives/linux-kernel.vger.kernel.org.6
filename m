@@ -1,106 +1,227 @@
-Return-Path: <linux-kernel+bounces-201172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 665B88FBA99
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:36:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACEE8FBA9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C2CD28A6B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDF581C21914
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBEB14A0A2;
-	Tue,  4 Jun 2024 17:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEE714A4C5;
+	Tue,  4 Jun 2024 17:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QS9JgKcI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B8k/+m3H"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2C1146D6E;
-	Tue,  4 Jun 2024 17:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8456414A0B8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717522546; cv=none; b=WzZFJIvbKg8K06vr089tfnVEZkyFK5S7lVgQbu1MX9virftEf6U2SPNobRME1Q4IVaJ+cm3OfhneeFEmKBxgKKKKP5QjOUVVGnwf90/EkeRWoVX7Y+IsO2FiYTSJcJKY2xcmSGA6ePdANzHAHn7RpzKKCbGtXG3tbmgU/8QQSQE=
+	t=1717522573; cv=none; b=Dj5aLSkM3gIonieujMWUKZdiYMFkUATcIul1KlvgrqpLHjv1tlLShPvqY4HCm9ZNQ+m/Ma69A/AFFnXpTN7QA4Wu4moSC1rypDEGGY2bO/uCJSZhgPPArtQ3oJPDmu+Ol6nlmMj3et8rMFHkVOSx4p4jntx4f3FouGPTbXL0g4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717522546; c=relaxed/simple;
-	bh=LZ2gZVAxd7B/Z2dlVqxhZwIjcAne3l5f3dO6vlVXRfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uU0Hq2lmcyj7wxnJXKMpHnKH0ZwXZS00H1qU7LeBz2Iyyc4SnFHKd3eZurp5lHPFd842QwBh0em4JnI4BfN+VMlTVfIJmLaLLMC6z5UHjOvgjmrUQJ87yDJOaXzNKX5BCd6gVEnUWbOh/DyaLkj5k9TbhlD4zvpWo5esO/FOxs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QS9JgKcI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D55C2BBFC;
-	Tue,  4 Jun 2024 17:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717522546;
-	bh=LZ2gZVAxd7B/Z2dlVqxhZwIjcAne3l5f3dO6vlVXRfI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QS9JgKcIiNG6uXtpVgBhRgZb55zKms71XzqF/eG9cvf5dD5lGUtH54nyYFI7D9SRD
-	 JvJXcXaD2QFeelL7XW6A0qpWSMR6sO7je1NCpdeYc838qQAGlrZMDSdyqroujk7Mcj
-	 obOX5E6L+94VWonx1vl3wawwOj86bbxsRqBe1gI8+RucbsbyO9u7KBcfqjwf05x/af
-	 8zFsQ7HdUwflojN/7w7Sg8KmJQBulENlN6yLBpQboU59Hsc5oSRYjkczw1zTwYKR66
-	 DAJmgYwbhpfJ6ESbYlHra5AAE1d+IJrCDwrnxqo+Y9vmmAI+cuJmJZdWRfJjrX6UmD
-	 LyCF61lPrrOow==
-Date: Tue, 4 Jun 2024 18:35:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>
-Subject: Re: [PATCH v5 1/9] dt-bindings: iio: adc: Add common-mode-channel
- property
-Message-ID: <20240604-sandpaper-aliens-05dbab5b2df5@spud>
-References: <20240603-ad4111-v5-0-9a9c54d9ac78@analog.com>
- <20240603-ad4111-v5-1-9a9c54d9ac78@analog.com>
+	s=arc-20240116; t=1717522573; c=relaxed/simple;
+	bh=r5L86LKo0SdTsCjI9YO8qd+i5Ww1vAx2jexZe2Csz04=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CjfwULq3CxTYM4hBl3qibLpD7cdUMOFV6fL+McvvsT/1B+L6Dh9pRAZzPd2EFOqY+WwxAfsALzthvlEjV6iuwqJX+2CWsv4bGgli7KQSEJNu71I7SGxXnARr9qsB4jqfdufeLq24DgSvXvKc+8J76ECvGS+dpqET9vKSa1Gl8rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B8k/+m3H; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfa74682897so6909644276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:36:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717522570; x=1718127370; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jjwPD4TVq3EAmy5AS/FS3mLLstD1BC2BCaYeSVtKmJY=;
+        b=B8k/+m3HrZONejieKsZWQTIvuiA2GYX0OiSCQOdEWy5er/+3ecDJgfvofr4v9L+m76
+         vjLADnDX01cPND/IGcTWtlZIJ01gZHHWKEStekRWe75o8mCGmc5H4pRnSAQ6iXuFBU3f
+         SGe4qSL/t5ey1G7K7j1mC5z/4yeF0UZcMuwoOVyUqKA88s6sm48nG8PQaBb2RR2w43cJ
+         LSUB2H8PYHnPn+3YNGxNDJtnAsxmNmgXld0gsJASd+ZdcayG7+EgXLa3als8UWXKa403
+         Xf3b5qrSREweyW8NF0DeZL24FNBjgthXiBze1amoEnAEYOPTFYN2Hnc+LuU7Whpt8TfF
+         sFaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717522570; x=1718127370;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jjwPD4TVq3EAmy5AS/FS3mLLstD1BC2BCaYeSVtKmJY=;
+        b=Q3B6szogR4ZRiUoal3thtxeqMmPds9SKyR+adyiKGM0JF3xSwMtVj/ngJCi+JVfnTX
+         C0q+u4cJeVnvZwKIfmYsqKPIhbgISJc9T/6FrMUUa5A7XARePixO2Wd0+9n2Lr5zlQ4w
+         opLY+MvuaoCcIbrcPKWzMrZGslN27of2MFjU7oNSKsv12+/uI4GYvHVlcCnH5GtIav2U
+         xw6iY/jstN90PDSVkqeAbAqrpEBysTa04Fit7lOd/kyBlpKoF1+pIXQ9Rw6gOmXqTZBl
+         qN0jL5ojAwWiCAkAIvZ3XKcRvtefYrFICc8/YOq2LWDP5KCJeTCq5kf49t7iv3cDiC42
+         RZFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlEP4vGKiBQjaRdyWVFHl2ZNYZpZaRJrfSy90R0CfOOA2B6DSYFfrt+174/5SY1O/YrjmNJ4tMbc57a8teiqzKR3s01wiK9nJaSrW2
+X-Gm-Message-State: AOJu0YxkKREUS2EhSMevJPLxDzWqYk9v4Utg8VmS9vxmrXpu2zdB3CVK
+	xLHBhT2d8BBm1oG6Isp6ERhc2WKi3GP4d7FwyHRSrFzJfC1a0diYHVSyG/3+jIqq5Fnuoj4vLX/
+	NOzdBJTF8kWj0Cv3G9cb9U/A2JgoY22KV1A==
+X-Google-Smtp-Source: AGHT+IGWZBCkb99CdZemgYb1TH9b4V00EvD9miGhNkE959QFgAV4ufaUIy9yZ7w8/4w6zld/raNyUl/+diRbsxR8fC//NQ==
+X-Received: from isaacmanjarres.irv.corp.google.com ([2620:15c:2d:3:b345:5eb0:8af2:5eb0])
+ (user=isaacmanjarres job=sendgmr) by 2002:a05:6902:1101:b0:dfa:48f9:186a with
+ SMTP id 3f1490d57ef6-dfacab1eaf7mr472276.3.1717522570543; Tue, 04 Jun 2024
+ 10:36:10 -0700 (PDT)
+Date: Tue,  4 Jun 2024 10:36:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="S+XBbKqsoN+A5IiA"
-Content-Disposition: inline
-In-Reply-To: <20240603-ad4111-v5-1-9a9c54d9ac78@analog.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240604173606.998721-1-isaacmanjarres@google.com>
+Subject: [PATCH v4] fs: Improve eventpoll logging to stop indicting timerfd
+From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+To: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: saravanak@google.com, Manish Varma <varmam@google.com>, 
+	Kelly Rossmoyer <krossmo@google.com>, "Isaac J . Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+From: Manish Varma <varmam@google.com>
 
---S+XBbKqsoN+A5IiA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
+it names them after the underlying file descriptor, and since all
+timerfd file descriptors are named "[timerfd]" (which saves memory on
+systems like desktops with potentially many timerfd instances), all
+wakesources created as a result of using the eventpoll-on-timerfd idiom
+are called... "[timerfd]".
 
-On Mon, Jun 03, 2024 at 07:22:59PM +0300, Dumitru Ceclan via B4 Relay wrote:
-> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
->=20
-> There are ADCs that are differential but support to measure single-ended
-> signals on the same channels by connecting a constant voltage to the
-> negative input pin.
->=20
-> This property allows to properly define a single-ended channel that
-> requires two inputs to be specified. Software can use the presence of
-> this property to mark the channel as not differential.
->=20
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+However, it becomes impossible to tell which "[timerfd]" wakesource is
+affliated with which process and hence troubleshooting is difficult.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+This change addresses this problem by changing the way eventpoll
+wakesources are named:
 
-Thanks,
-Conor.
+1) the top-level per-process eventpoll wakesource is now named
+"epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
+and P is the PID of the creating process.
+2) individual per-underlying-file descriptor eventpoll wakesources are
+now named "epollitemN:P.F", where N is a unique ID token and P is PID
+of the creating process and F is the name of the underlying file
+descriptor.
 
---S+XBbKqsoN+A5IiA
-Content-Type: application/pgp-signature; name="signature.asc"
+Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
+Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
+Signed-off-by: Manish Varma <varmam@google.com>
+Co-developed-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+---
+ drivers/base/power/wakeup.c | 10 ++++++++--
+ fs/eventpoll.c              | 11 +++++++++--
+ include/linux/pm_wakeup.h   |  4 ++--
+ 3 files changed, 19 insertions(+), 6 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+ v1 -> v2:
+ - Renamed instance count to wakesource_create_id to better describe
+   its purpose.
+ - Changed the wakeup source naming convention for wakeup sources
+   created by eventpoll to avoid changing the timerfd names.
+ - Used the PID of the process instead of the process name for the
+   sake of uniqueness when creating wakeup sources.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZl9QbQAKCRB4tDGHoIJi
-0s69AQCGC0ulZogpvt2PjR9FhR2Kajq4+cr21kDIPAPAvYplqQEAlLQ+9SbyGuPb
-HbMhaYbM2JEWx6RqWpi7jSIWZNaANgk=
-=L/dt
------END PGP SIGNATURE-----
+v2 -> v3:
+ - Changed wakeup_source_register() to take in a format string
+   and arguments to avoid duplicating code to construct wakeup
+   source names.
+ - Moved the definition of wakesource_create_id so that it is
+   always defined to fix an compilation error.
 
---S+XBbKqsoN+A5IiA--
+v3 -> v4:
+ - Changed the naming convention for the top-level epoll wakeup
+   sources to include an ID for uniqueness. This is needed in
+   cases where a process is using two epoll fds.
+ - Edited commit log to reflect new changes and add new tags.
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 752b417e8129..86276f904be8 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -209,13 +209,19 @@ EXPORT_SYMBOL_GPL(wakeup_source_remove);
+ /**
+  * wakeup_source_register - Create wakeup source and add it to the list.
+  * @dev: Device this wakeup source is associated with (or NULL if virtual).
+- * @name: Name of the wakeup source to register.
++ * @fmt: format string for the wakeup source name
+  */
+ struct wakeup_source *wakeup_source_register(struct device *dev,
+-					     const char *name)
++					     const char *fmt, ...)
+ {
+ 	struct wakeup_source *ws;
+ 	int ret;
++	char name[128];
++	va_list args;
++
++	va_start(args, fmt);
++	vsnprintf(name, sizeof(name), fmt, args);
++	va_end(args);
+ 
+ 	ws = wakeup_source_create(name);
+ 	if (ws) {
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index f53ca4f7fced..941df15208a4 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -338,6 +338,7 @@ static void __init epoll_sysctls_init(void)
+ #define epoll_sysctls_init() do { } while (0)
+ #endif /* CONFIG_SYSCTL */
+ 
++static atomic_t wakesource_create_id  = ATOMIC_INIT(0);
+ static const struct file_operations eventpoll_fops;
+ 
+ static inline int is_file_epoll(struct file *f)
+@@ -1545,15 +1546,21 @@ static int ep_create_wakeup_source(struct epitem *epi)
+ {
+ 	struct name_snapshot n;
+ 	struct wakeup_source *ws;
++	pid_t task_pid;
++	int id;
++
++	task_pid = task_pid_nr(current);
+ 
+ 	if (!epi->ep->ws) {
+-		epi->ep->ws = wakeup_source_register(NULL, "eventpoll");
++		id = atomic_inc_return(&wakesource_create_id);
++		epi->ep->ws = wakeup_source_register(NULL, "epoll:%d:%d", id, task_pid);
+ 		if (!epi->ep->ws)
+ 			return -ENOMEM;
+ 	}
+ 
++	id = atomic_inc_return(&wakesource_create_id);
+ 	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
+-	ws = wakeup_source_register(NULL, n.name.name);
++	ws = wakeup_source_register(NULL, "epollitem%d:%d.%s", id, task_pid, n.name.name);
+ 	release_dentry_name_snapshot(&n);
+ 
+ 	if (!ws)
+diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+index 76cd1f9f1365..40972ca262cc 100644
+--- a/include/linux/pm_wakeup.h
++++ b/include/linux/pm_wakeup.h
+@@ -100,7 +100,7 @@ extern void wakeup_source_destroy(struct wakeup_source *ws);
+ extern void wakeup_source_add(struct wakeup_source *ws);
+ extern void wakeup_source_remove(struct wakeup_source *ws);
+ extern struct wakeup_source *wakeup_source_register(struct device *dev,
+-						    const char *name);
++						    const char *fmt, ...);
+ extern void wakeup_source_unregister(struct wakeup_source *ws);
+ extern int wakeup_sources_read_lock(void);
+ extern void wakeup_sources_read_unlock(int idx);
+@@ -141,7 +141,7 @@ static inline void wakeup_source_add(struct wakeup_source *ws) {}
+ static inline void wakeup_source_remove(struct wakeup_source *ws) {}
+ 
+ static inline struct wakeup_source *wakeup_source_register(struct device *dev,
+-							   const char *name)
++							   const char *fmt, ...)
+ {
+ 	return NULL;
+ }
+-- 
+2.45.1.288.g0e0cd299f1-goog
+
 
