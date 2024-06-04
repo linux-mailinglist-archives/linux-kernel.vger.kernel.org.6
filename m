@@ -1,260 +1,145 @@
-Return-Path: <linux-kernel+bounces-201337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E528FBD2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:17:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366C28FBD30
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15B581F25A3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:17:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DC4CB216CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9B614B095;
-	Tue,  4 Jun 2024 20:17:26 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB9814B095;
+	Tue,  4 Jun 2024 20:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoZ0l1zC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B738213E8BF;
-	Tue,  4 Jun 2024 20:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06F283CD6;
+	Tue,  4 Jun 2024 20:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717532246; cv=none; b=FMuaU3aG4N1GL5WlTSFW000Lt4T+t6DqU5ddZFamk5YkPJbuIfQfa3S72hlHWrMzhzCkaqlxPAGPWQ9Xnx8NiMqgKYg4irbgyRsK+x78Pef8Y9LYq3DkoEwrhnUAEO33jcfLixNQ5ia2v1qyfa07IymRuYAs6ET8J1pzqaCJKlE=
+	t=1717532280; cv=none; b=KWFCB3HNrtUQAJiPqob49Yxl286SNosuvmuuVI6rjVVDdHx7xKUqZeb90HE5ZN5Wx5n5mByiI4Pi/yrxnuVO969lRJJx3NtA3gzOHlMrW+D9i7LEExyDIBBk8NQg9opJnkTnSMh6E9qQGd5TPCLfJrOD72U9pfKpD2T+DHikIIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717532246; c=relaxed/simple;
-	bh=Rae1lQHqGHsOD8fTcik48b495suxjyvSUpsD0bTw8RM=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=kBoIK3lUXMMW2GmOZFP+BaI4es+BKvS8mSKkGq75G609ML7YomhY6XAOmkNEPcajVdfjEkQUEEt0wFWDMF1+fKOBFJpBlkH7rSbE2zf89M+BDzLKeJNI6kYPfAPQy7bCpqBJTj+KQQwWeE/vG0z0DfiI6nZxt+iUeVkhNjI4Jv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.78.182) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 4 Jun
- 2024 23:17:11 +0300
-Subject: Re: [PATCH] ata: pata_buddha: pata_gayle: consolidate .sff_data_xfer
- around libata::ata_sff_data_xfer()
-To: Paolo Pisati <p.pisati@gmail.com>, Damien Le Moal <dlemoal@kernel.org>
-CC: <linux-m68k@lists.linux-m68k.org>, <linux-ide@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240604162217.484789-1-p.pisati@gmail.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <eebb2da9-1253-8404-1f79-50a95679df03@omp.ru>
-Date: Tue, 4 Jun 2024 23:17:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1717532280; c=relaxed/simple;
+	bh=hzO5VxyNboH0UxSA8oeS3DN/P0lxl1+qVDrF4lH35fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJvdXMnKQ3y0fCG1/wZsuar6CzM7tITqReqJZQ4Nlfz+GOcvqoSVPqDOgUEt4hbidPPe3Ea+ytG1ltIP4fJqNsQ52iUILXc/fCg6s/7QhSapD8skUyE8sSZGt8THqyD/wXWV5FWOXZ856CFXAb+1FczACvxPcpvJldNlj5AYELo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoZ0l1zC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50DD4C2BBFC;
+	Tue,  4 Jun 2024 20:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717532280;
+	bh=hzO5VxyNboH0UxSA8oeS3DN/P0lxl1+qVDrF4lH35fg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YoZ0l1zC3xE7XjFm6AyGqJGICJLDpBXsff7pMRSlEudgDhIe2FAqUIlZOHMrcDAr3
+	 JFMzUTUWby1raWnTIk9qkVwqwtiz6/Z6smnBNReiuYlHT8eUSl0Z+Aqd5Gb2Mvh34S
+	 wAKOpf6ZGKyFw6YsjI3fHnZC+rpMWQawCWhKqPCdn6EmlNin9YkQkOohgJvSm0Jfdq
+	 EA1DmGUVMobN6eu67mYDQTP4RfwK6SHx4st2n6F8wStZwJn0RmP6KpiZmkZX3cYHhC
+	 s3AwyJtNeSyuaNXCJfi8TiyYPNzftuerF7VkPZyKLtWbcx/eMh95QAsbx5XROxuYBO
+	 Zsx5ZvhbZVrFA==
+Date: Tue, 4 Jun 2024 21:17:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: yunhui cui <cuiyunhui@bytedance.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ved Shanbhogue <ved@rivosinc.com>, Matt Evans <mev@rivosinc.com>,
+	Dylan Jhong <dylan@andestech.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org
+Subject: Re: [External] [PATCH RFC/RFT v2 3/4] riscv: Stop emitting
+ preventive sfence.vma for new vmalloc mappings
+Message-ID: <20240604-finalist-screen-c9f35b5cfc56@spud>
+References: <20240131155929.169961-1-alexghiti@rivosinc.com>
+ <20240131155929.169961-4-alexghiti@rivosinc.com>
+ <CAEEQ3wnT-K18R1KQjJbeSdnFnRFQZt=wCuAHeDrf7EohwZ7n=w@mail.gmail.com>
+ <CAHVXubiKAY_L04ZwYSp-MpPPT5sPzxm4wB6HVFPzsMcB-3zq9w@mail.gmail.com>
+ <CAEEQ3wkkNyrjVCDxprNP5Z=NzO=EYeKeWf3CDvVNJHY1uovmMQ@mail.gmail.com>
+ <CAHVXubi+s2Q0y_xLbHpQJpz+yXvKWJ8e96wwAHP6A9C7U-He7g@mail.gmail.com>
+ <CAHVXubg4vtfjSJ-w8-7suzZ9L5ZmTo8udUMaYjJ5veKBmikNjA@mail.gmail.com>
+ <20240604-dazzling-envy-1dcf111eb2c5@spud>
+ <CAHVXubhy1yEKOx91gc9S++yKOoQa+sJ5EDSiMFwR6qepwzRMew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240604162217.484789-1-p.pisati@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/04/2024 19:51:05
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185716 [Jun 04 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.182 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.182 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;178.176.78.182:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.78.182
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/04/2024 19:55:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/4/2024 4:23:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rwD0Txngxq5MBoPY"
+Content-Disposition: inline
+In-Reply-To: <CAHVXubhy1yEKOx91gc9S++yKOoQa+sJ5EDSiMFwR6qepwzRMew@mail.gmail.com>
 
-Hello!
 
-  Please do 2 separate patches (for each driver), or at last name the
-patch s/th like "ata: pata_{buddha,gayle}: consolidate .sff_data_xfer around libata-sff.c::ata_sff_data_xfer()"...
+--rwD0Txngxq5MBoPY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/4/24 7:22 PM, Paolo Pisati wrote:
+On Tue, Jun 04, 2024 at 01:44:15PM +0200, Alexandre Ghiti wrote:
+> On Tue, Jun 4, 2024 at 10:52=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > On Tue, Jun 04, 2024 at 09:17:26AM +0200, Alexandre Ghiti wrote:
+> > > On Tue, Jun 4, 2024 at 9:15=E2=80=AFAM Alexandre Ghiti <alexghiti@riv=
+osinc.com> wrote:
+> > > > On Tue, Jun 4, 2024 at 8:21=E2=80=AFAM yunhui cui <cuiyunhui@byteda=
+nce.com> wrote:
+> > > > >
+> > > > > As for the current status of the patch, there are two points that=
+ can
+> > > > > be optimized:
+> > > > > 1. Some chip hardware implementations may not cache TLB invalid
+> > > > > entries, so it doesn't matter whether svvptc is available or not.=
+ Can
+> > > > > we consider adding a CONFIG_RISCV_SVVPTC to control it?
+> > >
+> > > That would produce a non-portable kernel. But I'm not opposed to that
+> > > at all, let me check how we handle other extensions. Maybe @Conor
+> > > Dooley has some feedback here?
+> >
+> > To be honest, not really sure what to give feedback on. Could you
+> > elaborate on exactly what the option is going to do? Given the
+> > portability concern, I guess you were proposing that the option would
+> > remove the preventative fences, rather than your current patch that
+> > removes them via an alternative?
+>=20
+> No no, I won't do that, we need a generic kernel for distros so that's
+> not even a question. What Yunhui was asking about (to me) is: can we
+> introduce a Kconfig option to always remove the preventive fences,
+> bypassing the use of alternatives altogether?
+>=20
+> To me, it won't make a difference in terms of performance. But if we
+> already offer such a possibility for other extensions, well I'll do
+> it. Otherwise, the question is: should we start doing that?
 
-> pata_buddha_data_xfer(), pata_gayle_data_xfer() and ata_sff_data_xfer() are the
-> same function, consolidate around libata::ata_sff_data_xfer().
-> 
-> Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
-> ---
->  drivers/ata/pata_buddha.c | 40 ++-------------------------------------
->  drivers/ata/pata_gayle.c  | 40 ++-------------------------------------
->  2 files changed, 4 insertions(+), 76 deletions(-)
-> 
-> diff --git a/drivers/ata/pata_buddha.c b/drivers/ata/pata_buddha.c
-> index c36ee991d5e5..234278eb26e1 100644
-> --- a/drivers/ata/pata_buddha.c
-> +++ b/drivers/ata/pata_buddha.c
-> @@ -60,42 +60,6 @@ static const struct scsi_host_template pata_buddha_sht = {
->  	ATA_PIO_SHT(DRV_NAME),
->  };
->  
-> -/* FIXME: is this needed? */
-> -static unsigned int pata_buddha_data_xfer(struct ata_queued_cmd *qc,
-> -					 unsigned char *buf,
-> -					 unsigned int buflen, int rw)
-> -{
-> -	struct ata_device *dev = qc->dev;
-> -	struct ata_port *ap = dev->link->ap;
-> -	void __iomem *data_addr = ap->ioaddr.data_addr;
-> -	unsigned int words = buflen >> 1;
-> -
-> -	/* Transfer multiple of 2 bytes */
-> -	if (rw == READ)
-> -		raw_insw((u16 *)data_addr, (u16 *)buf, words);
-> -	else
-> -		raw_outsw((u16 *)data_addr, (u16 *)buf, words);
+We don't do that for other extensions yet, because currently all the
+extensions we have options for are additive. There's like 3 alternative
+patchsites, and they are all just one nop? I don't see the point of
+having a Kconfig knob for that.
 
-   Hm, are you sure these calls are equivalent to io{read,write}16_rep()?
+--rwD0Txngxq5MBoPY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> -
-> -	/* Transfer trailing byte, if any. */
-> -	if (unlikely(buflen & 0x01)) {
-> -		unsigned char pad[2] = { };
-> -
-> -		/* Point buf to the tail of buffer */
-> -		buf += buflen - 1;
-> -
-> -		if (rw == READ) {
-> -			raw_insw((u16 *)data_addr, (u16 *)pad, 1);
-> -			*buf = pad[0];
-> -		} else {
-> -			pad[0] = *buf;
-> -			raw_outsw((u16 *)data_addr, (u16 *)pad, 1);
-> -		}
-> -		words++;
-> -	}
-> -
-> -	return words << 1;
-> -}
-> -
->  /*
->   * Provide our own set_mode() as we don't want to change anything that has
->   * already been configured..
-> @@ -131,7 +95,7 @@ static void pata_xsurf_irq_clear(struct ata_port *ap)
->  
->  static struct ata_port_operations pata_buddha_ops = {
->  	.inherits	= &ata_sff_port_ops,
-> -	.sff_data_xfer	= pata_buddha_data_xfer,
-> +	.sff_data_xfer	= ata_sff_data_xfer,
+-----BEGIN PGP SIGNATURE-----
 
-   There should be no need -- this method is preperly init'ed in ata_sff_port_ops...
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZl92cgAKCRB4tDGHoIJi
+0jejAP4q4iC1BCvHT6xTV9Sna0UEFmTHPbvuyI/Dr8hN0BftCQEA2HLRmlNNqiPJ
+abULfaYTpyjXRctzj8H5FL5kCUjY6gs=
+=929z
+-----END PGP SIGNATURE-----
 
->  	.sff_irq_check	= pata_buddha_irq_check,
->  	.cable_detect	= ata_cable_unknown,
->  	.set_mode	= pata_buddha_set_mode,
-> @@ -139,7 +103,7 @@ static struct ata_port_operations pata_buddha_ops = {
->  
->  static struct ata_port_operations pata_xsurf_ops = {
->  	.inherits	= &ata_sff_port_ops,
-> -	.sff_data_xfer	= pata_buddha_data_xfer,
-> +	.sff_data_xfer	= ata_sff_data_xfer,
-
-   Here as well...
-
->  	.sff_irq_check	= pata_buddha_irq_check,
->  	.sff_irq_clear	= pata_xsurf_irq_clear,
->  	.cable_detect	= ata_cable_unknown,
-> diff --git a/drivers/ata/pata_gayle.c b/drivers/ata/pata_gayle.c
-> index 3bdbe2b65a2b..febffc36a18f 100644
-> --- a/drivers/ata/pata_gayle.c
-> +++ b/drivers/ata/pata_gayle.c
-> @@ -38,42 +38,6 @@ static const struct scsi_host_template pata_gayle_sht = {
->  	ATA_PIO_SHT(DRV_NAME),
->  };
->  
-> -/* FIXME: is this needed? */
-> -static unsigned int pata_gayle_data_xfer(struct ata_queued_cmd *qc,
-> -					 unsigned char *buf,
-> -					 unsigned int buflen, int rw)
-> -{
-> -	struct ata_device *dev = qc->dev;
-> -	struct ata_port *ap = dev->link->ap;
-> -	void __iomem *data_addr = ap->ioaddr.data_addr;
-> -	unsigned int words = buflen >> 1;
-> -
-> -	/* Transfer multiple of 2 bytes */
-> -	if (rw == READ)
-> -		raw_insw((u16 *)data_addr, (u16 *)buf, words);
-> -	else
-> -		raw_outsw((u16 *)data_addr, (u16 *)buf, words);
-> -
-> -	/* Transfer trailing byte, if any. */
-> -	if (unlikely(buflen & 0x01)) {
-> -		unsigned char pad[2] = { };
-> -
-> -		/* Point buf to the tail of buffer */
-> -		buf += buflen - 1;
-> -
-> -		if (rw == READ) {
-> -			raw_insw((u16 *)data_addr, (u16 *)pad, 1);
-> -			*buf = pad[0];
-> -		} else {
-> -			pad[0] = *buf;
-> -			raw_outsw((u16 *)data_addr, (u16 *)pad, 1);
-> -		}
-> -		words++;
-> -	}
-> -
-> -	return words << 1;
-> -}
-> -
-
-   Same question as above here...
-
->  /*
->   * Provide our own set_mode() as we don't want to change anything that has
->   * already been configured..
-> @@ -110,7 +74,7 @@ static void pata_gayle_irq_clear(struct ata_port *ap)
->  
->  static struct ata_port_operations pata_gayle_a1200_ops = {
->  	.inherits	= &ata_sff_port_ops,
-> -	.sff_data_xfer	= pata_gayle_data_xfer,
-> +	.sff_data_xfer	= ata_sff_data_xfer,
->  	.sff_irq_check	= pata_gayle_irq_check,
->  	.sff_irq_clear	= pata_gayle_irq_clear,
->  	.cable_detect	= ata_cable_unknown,
-> @@ -119,7 +83,7 @@ static struct ata_port_operations pata_gayle_a1200_ops = {
->  
->  static struct ata_port_operations pata_gayle_a4000_ops = {
->  	.inherits	= &ata_sff_port_ops,
-> -	.sff_data_xfer	= pata_gayle_data_xfer,
-> +	.sff_data_xfer	= ata_sff_data_xfer,
->  	.cable_detect	= ata_cable_unknown,
->  	.set_mode	= pata_gayle_set_mode,
->  };
-> 
-
-    Same comments as to pata_buddha.c here...
-
-MBR, Sergey
+--rwD0Txngxq5MBoPY--
 
