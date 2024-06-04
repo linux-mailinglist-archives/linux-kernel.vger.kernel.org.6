@@ -1,46 +1,54 @@
-Return-Path: <linux-kernel+bounces-200558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67538FB1B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D2E8FB1B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 146981C22322
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:02:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DED1C220AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D540145B04;
-	Tue,  4 Jun 2024 12:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85622145B10;
+	Tue,  4 Jun 2024 12:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aF3qRNJR"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="q2iURE3A"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9519D1411E9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D036A6FC3;
+	Tue,  4 Jun 2024 12:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717502523; cv=none; b=Ibk+bJDFex89UQQB8mycDZoTWS5YBSlz2CdEy2IMXAm74YgP68EOz9LtDJUlz5ONGQiI4osfIPUzwWh3OIodopNZb2gnHkhQK686y1HsAtS2nMeL0f7XXttdCm1tLdzwHI2Oggn9vS5QlUPwK242WOZU3eoRk+WXQCILJWRtPE8=
+	t=1717502532; cv=none; b=UddNzaduNM6SbEbOuE3Vq+UUMxGwQc+HuCNFFP11/6E6rjuGDAl4F3CYi4vcsph0pFx1DeFAfhGoJLMWVX/LYAH+YsqjqeVC5S+tOdiXwCzrRdS1SP19/CQV+vJS9SxfPd4jndsISwumGiPVFOFVFxxAZ2zeUYUhu2CFMWLhejA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717502523; c=relaxed/simple;
-	bh=vtntBnIejSYUixurJH5mLsIFDrhSlkp9RiJD8WK+5Oo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A7YWXyWPE+jBolX2Y6yopfODNjRAQ5uRFph6CmHsP9a4lLXS4/isW4NuhN6R8IUL7kk+hLYPSGx8UAeBjFjkr6FFOU51TjC4GkD/zpIg/JSCecxLzuxtw1U49T6jYuPkYYYVFtal76K2TpRqcnq4krCm5p5Mdd8adrVMsTolkeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aF3qRNJR; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717502516; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=wyzfS+26xWdhAEKu22Jk/trE6TdLI2JG9ktldvYMwZg=;
-	b=aF3qRNJRusm1X4cEiIbOv3j3VWZqymagb0KCp1ZLXPyLAe5yhiFAbAibTqXcp8A9es/lGXj5bcMRC25q/xyH/+Xh8HbEwsho2Nz6qEKDDnr9Smas0oyxtmzwEFRF93lUt/a4Yw8LQNV6LQTUhnzPVSX0rTJLheey9YQB5xyb2OI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R421e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W7r2oJB_1717502514;
-Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7r2oJB_1717502514)
-          by smtp.aliyun-inc.com;
-          Tue, 04 Jun 2024 20:01:55 +0800
-Message-ID: <c180d2a0-1e34-41f0-bae8-1205d04a5f6b@linux.alibaba.com>
-Date: Tue, 4 Jun 2024 20:01:54 +0800
+	s=arc-20240116; t=1717502532; c=relaxed/simple;
+	bh=RPokp8KoGwM0k25xUQr9w8oEeLy2cIEiE4e2CbX+uf8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=J8vRWzfXvTW3HDZ2skIlzelG9Muo1RuTj+e4/Gv0hQlDVN68whgB5OUgfidhaqJJpJL2q1XXPUg4spTog0TeBqLl79c2z3S2ZTGBVuvP4fblE11k4Ez2tPA7eztp8Htodeuh5ICMH87Htu1tcoIH/caOCVxcqoDW1QgFmllKk4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=q2iURE3A; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1717502524; x=1718107324; i=w_armin@gmx.de;
+	bh=DYfX5asiSQ5TGa/Edpy4+l0LBbjxyMvWoqp83X0yK/o=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=q2iURE3AXuGiBlDreeV4hiQrh4qjTnIujmX/eoZsfHQyipSjAiFPyFLA8+25sTmj
+	 Q6SI6Tt6HwLLoe61AhrAU+IhaKzBpg4YpskHIdBMjwmJtR//diLUTgFmsMcLcpxsR
+	 jNDKUkcEvo7ER9Wmg9dI2QVSmtTRpLN9lh+8c3ZVYfPW20KA4xFOufh0yxnmb50yC
+	 vRjw/IgLUXUjGr6GgFG+GmoqhYS5lVmdlChInQojBFoYiFaECLkTUnyQAOpGBhH5L
+	 pclWV8Z65+NIPt795V99vGPrpLIvQIwaaHlFyZQhtQtn0qthAm+MdfBkcjrhEZUYx
+	 oD2k+IkoQkvZcbCmEg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.104.27] ([141.76.182.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N8ofO-1sZ4dW1Emc-015tvq; Tue, 04
+ Jun 2024 14:02:04 +0200
+Message-ID: <dbb9dfe5-8812-482a-b384-8e86e0a8eb8f@gmx.de>
+Date: Tue, 4 Jun 2024 14:02:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,66 +56,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
- non-CMA THP-sized page
-To: yangge1116@126.com, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn,
- Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>,
- Zi Yan <ziy@nvidia.com>
-References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <1717492460-19457-1-git-send-email-yangge1116@126.com>
+Subject: Re: [PATCH] power: supply: hwmon: Add support for power sensors
+From: Armin Wolf <W_Armin@gmx.de>
+To: sre@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240528222115.791511-1-W_Armin@gmx.de>
+Content-Language: en-US
+In-Reply-To: <20240528222115.791511-1-W_Armin@gmx.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:MogaJJ0Q6ymVcMiBnjZyHWDa/2IRqoo4Z4nqDkkQiwwZqmUvn1g
+ ieC0a2IavPQiaBTaCgM+ZqauO8ABVQ/1Rw34wzWNou4MsV9F5eHmvCfFdCqoviB6TcsaLYe
+ XqcqTW5GLrFlbwkasO2tHSRVVgHt+bHpOIsG4j1aqjFZCyL5imrhR84Mk8AVfqOJqVsCFoA
+ pZiEc6NBpqeaEV5Se8JiQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iT6Rdzp9fZk=;MgFU7dgpZqTBoBPmsFhNCV8J163
+ D3BtPVx6vp9dGvWv1/098HAfNW42tuvLwVRlhDkJnwNSGF89nnSQUs/CtZJTmjl9NKWWkBdOa
+ nse9igQ9no5HpeBP8NHh3Jg2v1SyVD+OSbJ3gwC1yVG44PGBxIwDvUdBArY/CYXTyfgu1uZII
+ nuSwoQhYgyczUza+9UJjBxNu305THAuZ0mzcDYzcn3wVvW1kH1w7wjfh1aXCQh/5vLW1u1AzX
+ iIZCu6IeXLOmu+7voRsEs1pwwXnAYD69R7eK9wBEQJH6vVvFsYI4kyM8oa+/1zf+/tGPQzg7p
+ 9oyTMHM7eCIZhaVBHSPfu/vFNMU64c96olFJttbLPWfYDwajXNSSlaSxz3xS949uiYB6uNayf
+ Qmmi2p8sIYP47x+pbyMxuDXnSbXKiakq0N8T7ZdWRB/W/j7PgGAXXIMW2lVZfZML60AOnooZP
+ KOT8CIVNxpWKRloodY/95k8m8ZoxtzXp0Gcqg9lw1Iw/Q5x4mvEgm4nVkC92IHPnNi8A32oG6
+ VkDtgrLlwIbJLnqdIhxL7fzBoTU9ki7IzZItWSzxraZO2txCxtTZOgS5ValGKO330cTCzzWT+
+ ov7sY/GOBwz/Tu7zMINHxl7Pa99vztH+O38ACtEnSjDLYjG2528XC5RFKfT1/H9/XGNwYABpE
+ /NNc2BK7YTt9rtiSlzXPY/R08SaWVYF/CoF/lI3TEkoHEFtJY7cz5YdcaMoj77tZUe88WNCGg
+ PsHKUCblrRAW4vGfELbmvpHJFEJDPOJUvERyJy+/iqwy2rxMDYoO6UR/6Ke5rJLgyEyZeqPqE
+ YHF2JiXC+T+v7EzbC53OYY+WTnV74Z1RDFEVCmeXZkAio=
 
-Cc Johannes, Zi and Vlastimil.
+Am 29.05.24 um 00:21 schrieb Armin Wolf:
 
-On 2024/6/4 17:14, yangge1116@126.com wrote:
-> From: yangge <yangge1116@126.com>
-> 
-> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-> THP-sized allocations") no longer differentiates the migration type
-> of pages in THP-sized PCP list, it's possible to get a CMA page from
-> the list, in some cases, it's not acceptable, for example, allocating
-> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
-> 
-> The patch forbids allocating non-CMA THP-sized page from THP-sized
-> PCP list to avoid the issue above.
-> 
-> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized allocations")
-> Signed-off-by: yangge <yangge1116@126.com>
+> Currently, more than seven power supply drivers are supporting
+> POWER_SUPPLY_PROP_POWER_NOW, but their power readings are not being
+> reported through the hwmon subsystem.
+>
+> Fix this by adding support for power sensors to the power supply
+> hwmon integration.
+
+Hi, what is the status of this patch? Are there any obvious errors which
+need to be fixed?
+
+Thanks,
+Armin Wolf
+
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 > ---
->   mm/page_alloc.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 2e22ce5..0bdf471 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone *preferred_zone,
->   	WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
->   
->   	if (likely(pcp_allowed_order(order))) {
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +		if (!IS_ENABLED(CONFIG_CMA) || alloc_flags & ALLOC_CMA ||
-> +						order != HPAGE_PMD_ORDER) {
-
-Seems you will also miss the non-CMA THP from the PCP, so I wonder if we 
-can add a migratetype comparison in __rmqueue_pcplist(), and if it's not 
-suitable, then fallback to buddy?
-
-> +			page = rmqueue_pcplist(preferred_zone, zone, order,
-> +						migratetype, alloc_flags);
-> +			if (likely(page))
-> +				goto out;
-> +		}
-> +#else
->   		page = rmqueue_pcplist(preferred_zone, zone, order,
->   				       migratetype, alloc_flags);
->   		if (likely(page))
->   			goto out;
-> +#endif
+>   drivers/power/supply/power_supply_hwmon.c | 25 +++++++++++++++++++++++
+>   1 file changed, 25 insertions(+)
+>
+> diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/supply/power_supply_hwmon.c
+> index c97893d4c25e..baacefbdf768 100644
+> --- a/drivers/power/supply/power_supply_hwmon.c
+> +++ b/drivers/power/supply/power_supply_hwmon.c
+> @@ -48,6 +48,18 @@ static int power_supply_hwmon_curr_to_property(u32 attr)
 >   	}
->   
->   	page = rmqueue_buddy(preferred_zone, zone, order, alloc_flags,
+>   }
+>
+> +static int power_supply_hwmon_power_to_property(u32 attr)
+> +{
+> +	switch (attr) {
+> +	case hwmon_power_input:
+> +		return POWER_SUPPLY_PROP_POWER_NOW;
+> +	case hwmon_power_average:
+> +		return POWER_SUPPLY_PROP_POWER_AVG;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>   static int power_supply_hwmon_temp_to_property(u32 attr, int channel)
+>   {
+>   	if (channel) {
+> @@ -90,6 +102,8 @@ power_supply_hwmon_to_property(enum hwmon_sensor_types type,
+>   		return power_supply_hwmon_in_to_property(attr);
+>   	case hwmon_curr:
+>   		return power_supply_hwmon_curr_to_property(attr);
+> +	case hwmon_power:
+> +		return power_supply_hwmon_power_to_property(attr);
+>   	case hwmon_temp:
+>   		return power_supply_hwmon_temp_to_property(attr, channel);
+>   	default:
+> @@ -229,6 +243,11 @@ power_supply_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+>   	case hwmon_in:
+>   		pspval.intval = DIV_ROUND_CLOSEST(pspval.intval, 1000);
+>   		break;
+> +	case hwmon_power:
+> +		/*
+> +		 * Power properties are already in microwatts.
+> +		 */
+> +		break;
+>   	/*
+>   	 * Temp needs to be converted from 1/10 C to milli-C
+>   	 */
+> @@ -311,6 +330,10 @@ static const struct hwmon_channel_info * const power_supply_hwmon_info[] = {
+>   			   HWMON_C_MAX     |
+>   			   HWMON_C_INPUT),
+>
+> +	HWMON_CHANNEL_INFO(power,
+> +			   HWMON_P_INPUT |
+> +			   HWMON_P_AVERAGE),
+> +
+>   	HWMON_CHANNEL_INFO(in,
+>   			   HWMON_I_AVERAGE |
+>   			   HWMON_I_MIN     |
+> @@ -359,6 +382,8 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
+>   		case POWER_SUPPLY_PROP_CURRENT_AVG:
+>   		case POWER_SUPPLY_PROP_CURRENT_MAX:
+>   		case POWER_SUPPLY_PROP_CURRENT_NOW:
+> +		case POWER_SUPPLY_PROP_POWER_AVG:
+> +		case POWER_SUPPLY_PROP_POWER_NOW:
+>   		case POWER_SUPPLY_PROP_TEMP:
+>   		case POWER_SUPPLY_PROP_TEMP_MAX:
+>   		case POWER_SUPPLY_PROP_TEMP_MIN:
+> --
+> 2.39.2
+>
+>
 
