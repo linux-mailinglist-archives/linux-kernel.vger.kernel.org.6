@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-200006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2088FA91F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:22:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A01FD8FA921
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4935CB24B33
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:22:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1855A1F268AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D433913DDD5;
-	Tue,  4 Jun 2024 04:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E8D13E889;
+	Tue,  4 Jun 2024 04:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cs1MCtQ5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVNkYZ54"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B5D13DDB8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 04:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C18C13E3F9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 04:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717474898; cv=none; b=UaJ0kHAVA0XxIpFRxlnOPCElApdEDz8qmfuzxsty1zq2oII9lbGSUKD4DEWz/OtLfLk/oB9ZpCIpTmyB1Bh+mpalZwvaEL/eDhfGUYxcrxivPEcQFjC8N6JdPVuc5n3z07dx411XETPfI+8tjMpIcgwqKr/6RoXbOhMM/up0bTI=
+	t=1717474901; cv=none; b=cpuQYR1JG6gJZXH+qPGU4irxtJOMpqMDBu2CXxLGdewaq2OlBgZX+DqwvfP7QZOfIkxQdW3HN0qc1SdUqIu+ZqS3Pr42EfccTB0zTA9v4UYbYshFHOOWV3k32lZy+B4MV/z3kAMt0KfoinG3UKTlSsZWnxZM9Q6OiuDgfMbSBV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717474898; c=relaxed/simple;
-	bh=P0itGeZCXEfvARIWHRoE92wg+ZB0+ncoLLqA7cA6dRA=;
+	s=arc-20240116; t=1717474901; c=relaxed/simple;
+	bh=CfvlQ2M9KWnaqxKPXvUUKqZr9diZgDumxJiDtxK8xLg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DWtsHRRUSQ7ptpGzii289x9xrBgahV25k9JkbMVQedlZHwVCt1vT9lnB4pTNlxuhvdwqxLGaJM2ysU7oiV9dGsFZjR/jK2h9c+AiHVt5kZwXuGXybbEfZZLgCyDvptJ7aHTJ1OUMMF+lT1Za6cGsVnzzqSxOShmKZcfy+GWjwh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cs1MCtQ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4F92C4AF0A;
-	Tue,  4 Jun 2024 04:21:35 +0000 (UTC)
+	 MIME-Version; b=h2rLiFrtFOCl+KnRj0qbfGN09UhVyxLmnHe6p0Q353GvjRLCOQshC42rL1WtEQNSHQh0Cw/7yhutXgfbiCgT1N3Yd7gXU/Mmm4Jut5FUQCySxqxc92ya0Krg62iyYZMo57IX3LFxO/Z0g/qo6EUctQZ1+0JRlFQnbATceYsyaO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVNkYZ54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F25C32786;
+	Tue,  4 Jun 2024 04:21:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717474898;
-	bh=P0itGeZCXEfvARIWHRoE92wg+ZB0+ncoLLqA7cA6dRA=;
+	s=k20201202; t=1717474900;
+	bh=CfvlQ2M9KWnaqxKPXvUUKqZr9diZgDumxJiDtxK8xLg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Cs1MCtQ5uXJAEfguDsl9n6PCoX3lPNYo1TZbsFptY7tRN/JeBiGX7aLwjXVkjEjP6
-	 gzJtAWsoo23HZ4+Xwld8DivVjPrM/axC3AWBXBgFbVhFye8646fQl0FEVCgnus7ErB
-	 +xhs2Tfn2Qkp41rTdPVsTbIPRBi9scA3yz80vVEF60NFVyYUYLBqx+ldEpKMUtAznx
-	 QkC9gXYgaUuhdCohrrJoGYJs4e1pF7R0beiZ+UQ+PqqbfZ8KpYJG13ms3sw4fzDZqf
-	 x+9aM6ykvs/PQUHdUrVeSR+BU7KapA9qAI2obkv+dWjpqjmNZ7trkgxufE2OkJYsC+
-	 SdXnLZW54tSSw==
+	b=LVNkYZ54FWWO0xDgawCPCmAKsUuesOzTQxtIVVhIDWRFB+BRrf0loqYP6nhYl+ZxY
+	 4/FZDa5Z71YUuEhj74spNoj9ub6BKUBfz6kLqA4rTWFIZUJHInhVTnX/Q73H75AiZE
+	 85lX1fl8SDh3Q25c6Noz3NN0Wl8T/1GRCbq6062CnvkbylpQ2xwZz64V3O1XnQv1GD
+	 rbF+PTkdvZSFnKI6OjAVUsldEzoxEUdBOuyOnpHHZA6UHSgFrSTxZfnCboZeZh5zMn
+	 hdaK9PWG/w+vABWb3fmiH/Jgh1v2eloKrI0GKrme2D4X1hpN3ameLMF8M7ylbqpR3O
+	 9mJ/sbzJPl4rA==
 From: alexs@kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>,
 	linux-mm@kvack.org,
@@ -51,9 +51,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	hughd@google.com,
 	david@redhat.com
 Cc: "Alex Shi (tencent)" <alexs@kernel.org>
-Subject: [PATCH 02/10] mm/ksm: skip subpages of compound pages
-Date: Tue,  4 Jun 2024 12:24:44 +0800
-Message-ID: <20240604042454.2012091-3-alexs@kernel.org>
+Subject: [PATCH 03/10] mm/ksm: use folio in try_to_merge_one_page
+Date: Tue,  4 Jun 2024 12:24:45 +0800
+Message-ID: <20240604042454.2012091-4-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240604042454.2012091-1-alexs@kernel.org>
 References: <20240604042454.2012091-1-alexs@kernel.org>
@@ -67,55 +67,162 @@ Content-Transfer-Encoding: 8bit
 
 From: "Alex Shi (tencent)" <alexs@kernel.org>
 
-When a folio isn't fit for KSM, the subpages are unlikely to be good,
-So let's skip the rest page checking to save some actions.
+scan_get_next_rmap_item() return folio actually now. So in the calling
+path to try_to_merge_one_page() parameter pages are actually folios.
+So let's use folio instead of of page in the function to save few
+compound checking in callee functions.
+
+The 'page' left here since flush functions still not support folios yet.
 
 Signed-off-by: Alex Shi (tencent) <alexs@kernel.org>
 ---
- mm/ksm.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ mm/ksm.c | 61 ++++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 35 insertions(+), 26 deletions(-)
 
 diff --git a/mm/ksm.c b/mm/ksm.c
-index 97e5b41f8c4b..e2fdb9dd98e2 100644
+index e2fdb9dd98e2..21bfa9bfb210 100644
 --- a/mm/ksm.c
 +++ b/mm/ksm.c
-@@ -2644,6 +2644,8 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
- 		goto no_vmas;
+@@ -1462,24 +1462,29 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
+ }
  
- 	for_each_vma(vmi, vma) {
-+		int nr = 1;
+ /*
+- * try_to_merge_one_page - take two pages and merge them into one
+- * @vma: the vma that holds the pte pointing to page
+- * @page: the PageAnon page that we want to replace with kpage
+- * @kpage: the PageKsm page that we want to map instead of page,
+- *         or NULL the first time when we want to use page as kpage.
++ * try_to_merge_one_page - take two folios and merge them into one
++ * @vma: the vma that holds the pte pointing to folio
++ * @folio: the PageAnon page that we want to replace with kfolio
++ * @kfolio: the PageKsm page that we want to map instead of folio,
++ *         or NULL the first time when we want to use folio as kfolio.
+  *
+- * This function returns 0 if the pages were merged, -EFAULT otherwise.
++ * This function returns 0 if the folios were merged, -EFAULT otherwise.
+  */
+-static int try_to_merge_one_page(struct vm_area_struct *vma, struct page *page,
+-				 struct ksm_rmap_item *rmap_item, struct page *kpage)
++static int try_to_merge_one_page(struct vm_area_struct *vma, struct folio *folio,
++				 struct ksm_rmap_item *rmap_item, struct folio *kfolio)
+ {
+ 	pte_t orig_pte = __pte(0);
+ 	int err = -EFAULT;
++	struct page *page = folio_page(folio, 0);
++	struct page *kpage;
+ 
+-	if (page == kpage)			/* ksm page forked */
++	if (kfolio)
++		kpage = folio_page(kfolio, 0);
 +
- 		if (!(vma->vm_flags & VM_MERGEABLE))
- 			continue;
- 		if (ksm_scan.address < vma->vm_start)
-@@ -2660,6 +2662,9 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
- 				cond_resched();
- 				continue;
- 			}
++	if (folio == kfolio)			/* ksm page forked */
+ 		return 0;
+ 
+-	if (!PageAnon(page))
++	if (!folio_test_anon(folio))
+ 		goto out;
+ 
+ 	/*
+@@ -1489,11 +1494,11 @@ static int try_to_merge_one_page(struct vm_area_struct *vma, struct page *page,
+ 	 * prefer to continue scanning and merging different pages,
+ 	 * then come back to this page when it is unlocked.
+ 	 */
+-	if (!trylock_page(page))
++	if (!folio_trylock(folio))
+ 		goto out;
+ 
+-	if (PageTransCompound(page)) {
+-		if (split_huge_page(page))
++	if (folio_test_large(folio)) {
++		if (split_folio(folio))
+ 			goto out_unlock;
+ 	}
+ 
+@@ -1506,35 +1511,36 @@ static int try_to_merge_one_page(struct vm_area_struct *vma, struct page *page,
+ 	 * ptes are necessarily already write-protected.  But in either
+ 	 * case, we need to lock and check page_count is not raised.
+ 	 */
+-	if (write_protect_page(vma, page_folio(page), &orig_pte) == 0) {
+-		if (!kpage) {
++	if (write_protect_page(vma, folio, &orig_pte) == 0) {
++		if (!kfolio) {
+ 			/*
+ 			 * While we hold page lock, upgrade page from
+ 			 * PageAnon+anon_vma to PageKsm+NULL stable_node:
+ 			 * stable_tree_insert() will update stable_node.
+ 			 */
+-			folio_set_stable_node(page_folio(page), NULL);
+-			mark_page_accessed(page);
++			folio_set_stable_node(folio, NULL);
++			folio_mark_accessed(folio);
+ 			/*
+ 			 * Page reclaim just frees a clean page with no dirty
+ 			 * ptes: make sure that the ksm page would be swapped.
+ 			 */
+-			if (!PageDirty(page))
+-				SetPageDirty(page);
++			if (!folio_test_dirty(folio))
++				folio_set_dirty(folio);
+ 			err = 0;
+ 		} else if (pages_identical(page, kpage))
+ 			err = replace_page(vma, page, kpage, orig_pte);
+ 	}
+ 
+ out_unlock:
+-	unlock_page(page);
++	folio_unlock(folio);
+ out:
+ 	return err;
+ }
+ 
+ /*
+  * try_to_merge_with_ksm_page - like try_to_merge_two_pages,
+- * but no new kernel page is allocated: kpage must already be a ksm page.
++ * but no new kernel page is allocated, kpage is a ksm page or NULL
++ * if we use page as first ksm page.
+  *
+  * This function returns 0 if the pages were merged, -EFAULT otherwise.
+  */
+@@ -1544,13 +1550,17 @@ static int try_to_merge_with_ksm_page(struct ksm_rmap_item *rmap_item,
+ 	struct mm_struct *mm = rmap_item->mm;
+ 	struct vm_area_struct *vma;
+ 	int err = -EFAULT;
++	struct folio *kfolio;
+ 
+ 	mmap_read_lock(mm);
+ 	vma = find_mergeable_vma(mm, rmap_item->address);
+ 	if (!vma)
+ 		goto out;
+ 
+-	err = try_to_merge_one_page(vma, page, rmap_item, kpage);
++	if (kpage)
++		kfolio = page_folio(kpage);
 +
-+			VM_WARN_ON(PageTail(*page));
-+			nr = compound_nr(*page);
- 			if (is_zone_device_page(*page))
- 				goto next_page;
- 			if (PageAnon(*page)) {
-@@ -2672,7 +2677,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
++	err = try_to_merge_one_page(vma, page_folio(page), rmap_item, kfolio);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2385,8 +2395,8 @@ static void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_ite
+ 		mmap_read_lock(mm);
+ 		vma = find_mergeable_vma(mm, rmap_item->address);
+ 		if (vma) {
+-			err = try_to_merge_one_page(vma, page, rmap_item,
+-					ZERO_PAGE(rmap_item->address));
++			err = try_to_merge_one_page(vma, page_folio(page), rmap_item,
++						    page_folio(ZERO_PAGE(rmap_item->address)));
+ 			trace_ksm_merge_one_page(
+ 				page_to_pfn(ZERO_PAGE(rmap_item->address)),
+ 				rmap_item, mm, err);
+@@ -2671,8 +2681,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+ 				rmap_item = get_next_rmap_item(mm_slot,
+ 					ksm_scan.rmap_list, ksm_scan.address);
+ 				if (rmap_item) {
+-					ksm_scan.rmap_list =
+-							&rmap_item->rmap_list;
++					ksm_scan.rmap_list = &rmap_item->rmap_list;
+ 
  					if (should_skip_rmap_item(*page, rmap_item))
  						goto next_page;
- 
--					ksm_scan.address += PAGE_SIZE;
-+					ksm_scan.address += nr * PAGE_SIZE;
- 				} else
- 					put_page(*page);
- 				mmap_read_unlock(mm);
-@@ -2680,7 +2685,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
- 			}
- next_page:
- 			put_page(*page);
--			ksm_scan.address += PAGE_SIZE;
-+			ksm_scan.address += nr * PAGE_SIZE;
- 			cond_resched();
- 		}
- 	}
 -- 
 2.43.0
 
