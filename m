@@ -1,149 +1,230 @@
-Return-Path: <linux-kernel+bounces-199899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C9A8FA76E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:17:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06018FA76A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77CA91F24D45
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CDB228100D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F379F944E;
-	Tue,  4 Jun 2024 01:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3759454;
+	Tue,  4 Jun 2024 01:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZzKlS9xV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="gOX4dm+g"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239F08F68
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 01:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530254A2C;
+	Tue,  4 Jun 2024 01:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717463820; cv=none; b=OU2lMTZv8FLliovrsalef2vD8Pv1QzjVypymhvZFWqdo+5ZAfK88aK7Qz+f0/fnPkUXqbgKIiS4aN7yNCKeBZOwRFCczMrEKGgEdq66VxBqCsTHvwNe5gIhBdqdgckon3JwBb6n8ebOSwGP6bZRyak8Xkhh1xp2BiXITSZG2dlk=
+	t=1717463768; cv=none; b=eMLEzYn7q2rtd95x9lmbO+vbttOEbE5qL1OA371quexnDoxE4f+aWh1qbgka+notFVymxkwuLZM7648HHKmYVpS/1jbNeKhxwpH/LxWd3S0QFEnmlOcQksl/T+oUHKZhiQ95Lz84u92YWCP6fqVpF8cku6vYW/JkFN4V/3+BQ94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717463820; c=relaxed/simple;
-	bh=nS1vioMmlFcL+wVN5+oD9svb1qqgpoWUq++JjBbAvNg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cHNF7aEwiap+GE4Aa5Oij7Y83AvE4m7/FdWCVS5UGwLH8Rui9sJY5J5cP7tyJMNhpng+LFW9LrQ01NzKtK37E+h+UB0uETM3AoBBbdtLDNFejPkGfNu3b40aKbjW4oOIuXRsBk2wfqHXJwApjS+oc63XTAQa73xvz0oK3WUNlRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZzKlS9xV; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717463818; x=1748999818;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nS1vioMmlFcL+wVN5+oD9svb1qqgpoWUq++JjBbAvNg=;
-  b=ZzKlS9xVkKfhg1C99ImIe5RL04EjrDXPXaXY4RNoTXixPxKEK19ga8VV
-   ChgDh42gi6KQtL2h7bYRfDYHhrIhlrAOy5D/vechsX0sk55jjlU99aEog
-   3WFNx8H4ah1qrFUGBpFIduPKXM4+VhcxdBxuSf1LziqWxZA46KrvlM819
-   clHu929TLx0tJ+kZvK1abC1YMnzhTmfI7uircapXStJmDvYP1LGw5s2Sz
-   6wjt4T4Aq+vxlIzhCOy7/tUDFZM+WQd0l6fTWTEEDB2wr82nEUNinDSrl
-   MaiacaNKavOZSDOo/YDB2e9jlPlncDCbIRLZCA+V9k6ZZJvoZLKDlINDq
-   Q==;
-X-CSE-ConnectionGUID: ROzvJeG/TxO9CWRDXwtnOQ==
-X-CSE-MsgGUID: v0ZMKJqeQriaElahD1lrcg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="25382605"
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="25382605"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 18:16:58 -0700
-X-CSE-ConnectionGUID: kRC8iBJbR2i0JqodLPwaQw==
-X-CSE-MsgGUID: So2ZWZ+cTzSMU59ww0/KbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="37044864"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa008.fm.intel.com with ESMTP; 03 Jun 2024 18:16:57 -0700
-Message-ID: <7440cd36-41e0-4705-a597-f2ce3f841a70@linux.intel.com>
-Date: Tue, 4 Jun 2024 09:14:42 +0800
+	s=arc-20240116; t=1717463768; c=relaxed/simple;
+	bh=3k4VVgF3vzvK7xLsva37al3VhH6jC2ecwaxPsYlpRLM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DYgvMbMs3LapG+op8t1eBRR1w2MNbxEOB75X37KgpxxpQdlzeZ7JvlmNDtTOmRv8huZ9Eo/A09YsQTcY14s4PIbOKY30jqKWIdDXqNo29m0dsrXzB8hZQIVcnecypyZaacH2PejU0KVSOy7a1tssgrAwruCADqrEvByqCMsa97E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=gOX4dm+g; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7112D2013B;
+	Tue,  4 Jun 2024 09:15:53 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1717463754;
+	bh=PwovlZCKdFMr+QpQpCC2tTBSTOMUP4TYt99tDEe4S2I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=gOX4dm+gp8roOZb0OqKy6dQGgS+HWCAZMLSIAd+e1g3mY5T+MplAbFKjPIJq5gx6u
+	 6bjVU8MOVsKbcDNFifflHT9Z2xmlHmx5b7yL2KcmWhQneoMfD4pHcv6Kvx4nu0WGw5
+	 pjiVw98XyF9L38Tjy60+PO/z1psXD29DCicFlNpWrEjE5yqeImaev/W/JIpeoNZedO
+	 yXpUOJrejGTcPj//+TGXrPGV7Vpy9QJNI2vIlWKgwCi51+4tmjVT+okygjJtYBHfVr
+	 g/4pTo1czHWKHggVqz9p2BQ6m8r1DnXlKhAR9N4EJIZrIffx3UCltzENMza994Oa0r
+	 frCn6JFNyxxvQ==
+Message-ID: <4eefd134bec51482655018bbbd7c4d5c7668a7fa.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Adam Young <admiyo@amperemail.onmicrosoft.com>, 
+ admiyo@os.amperecomputing.com, Matt Johnston <matt@codeconstruct.com.au>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 04 Jun 2024 09:15:53 +0800
+In-Reply-To: <1a38b394-30ae-42c6-b363-9f3a00166259@amperemail.onmicrosoft.com>
+References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
+	 <20240528191823.17775-1-admiyo@os.amperecomputing.com>
+	 <20240528191823.17775-4-admiyo@os.amperecomputing.com>
+	 <6a01ffb4ef800f381d3e494bf1862f6e4468eb7d.camel@codeconstruct.com.au>
+	 <1a38b394-30ae-42c6-b363-9f3a00166259@amperemail.onmicrosoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] iommu/vt-d: Support batching IOTLB/dev-IOTLB
- invalidation commands
-To: "Zhang, Tina" <tina.zhang@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>
-References: <20240517003728.251115-1-tina.zhang@intel.com>
- <20240517003728.251115-2-tina.zhang@intel.com>
- <2b390228-190c-4508-b98f-1811c54c9e5c@linux.intel.com>
- <MW5PR11MB588165376224FEA74A0426D989FF2@MW5PR11MB5881.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <MW5PR11MB588165376224FEA74A0426D989FF2@MW5PR11MB5881.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 6/3/24 3:37 PM, Zhang, Tina wrote:
->> -----Original Message-----
->> From: Baolu Lu<baolu.lu@linux.intel.com>
->> Sent: Sunday, May 19, 2024 5:43 PM
->> To: Zhang, Tina<tina.zhang@intel.com>; Tian, Kevin<kevin.tian@intel.com>
->> Cc:baolu.lu@linux.intel.com;iommu@lists.linux.dev; linux-
->> kernel@vger.kernel.org
->> Subject: Re: [PATCH 1/2] iommu/vt-d: Support batching IOTLB/dev-IOTLB
->> invalidation commands
->>
->> On 5/17/24 8:37 AM, Tina Zhang wrote:
->>> Introduce a new parameter batch_desc to the QI based IOTLB/dev-IOTLB
->>> invalidation operations to support batching invalidation descriptors.
->>> This batch_desc is a pointer to the descriptor entry in a batch cmds
->>> buffer. If the batch_desc is NULL, it indicates that batch submission
->>> is not being used, and descriptors will be submitted individually.
->>>
->>> Also fix an issue reported by checkpatch about "unsigned mask":
->>>           "Prefer 'unsigned int' to bare use of 'unsigned'"
->>>
->>> Signed-off-by: Tina Zhang<tina.zhang@intel.com>
->>> ---
->>>    drivers/iommu/intel/cache.c | 33 +++++++++++-------
->>>    drivers/iommu/intel/dmar.c  | 67 ++++++++++++++++++++-----------------
->>>    drivers/iommu/intel/iommu.c | 27 +++++++++------
->>>    drivers/iommu/intel/iommu.h | 21 ++++++++----
->>>    drivers/iommu/intel/pasid.c | 20 ++++++-----
->>>    5 files changed, 100 insertions(+), 68 deletions(-)
->>>
->>> diff --git a/drivers/iommu/intel/cache.c b/drivers/iommu/intel/cache.c
->>> index e8418cdd8331..dcf5e0e6af17 100644
->>> --- a/drivers/iommu/intel/cache.c
->>> +++ b/drivers/iommu/intel/cache.c
->>> @@ -278,7 +278,7 @@ void cache_tag_flush_range(struct dmar_domain
->> *domain, unsigned long start,
->>>    		case CACHE_TAG_NESTING_IOTLB:
->>>    			if (domain->use_first_level) {
->>>    				qi_flush_piotlb(iommu, tag->domain_id,
->>> -						tag->pasid, addr, pages, ih);
->>> +						tag->pasid, addr, pages, ih,
->> NULL);
->>>    			} else {
->> I'd like to have all batched descriptors code inside this file to make it easier for
->> maintenance. Perhaps we can add the below infrastructure in the
->> dmar_domain structure together with the cache tag.
-> Does it suggest we need to add a batch version of qi_flush_iotlb/qi_flush_dev_iotlb/qi_flush_piotlb/qi_flush_dev_iotlb_pasid() in the cache.c file? It doesn't sound like an easy to maintain those functions, does it?
+Hi Adam,
 
-Yes. I don't think it's that difficult as the helpers just compose a qi
-descriptor and insert it in a local queue. This local queue will be
-flushed after finishing iterating all cache tags, or there's no room for
-more descriptors, or switches to a different iommu. Have I missed
-anything?
+> > And can you include a brief summary of changes since the prior version
+> > you have sent?
+> >=20
+> They are all in the header patch.
 
-> 
-> In this patch, we reuse the current qi_flush_xxx() for both batching and non-batching processing, so that we don't need to duplicate the logic of qi_flush_xxx() in two places with one for batching processing and the other one for non-batching processing. What do you think?
+Ah, neat. Can you include reviewers on CC for that 0/n patch then?
 
-I don't like to put different things in a single helper. They share some
-code, for example, composing the descriptor's dw words. Others are just
-different. You can move that code into a static inline if you would
-like, but the batching and non-batching processing should be in
-different helpers.
+> > > +static struct list_head mctp_pcc_ndevs;
+> > I'm not clear on what this list is doing; it seems to be for freeing
+> > devices on module unload (or device remove).
+> >=20
+> > However, the module will be refcounted while there are devices bound, s=
+o
+> > module unload shouldn't be possible in that state. So the only time
+> > you'll be iterating this list to free everything will be when it's
+> > empty.
+> >=20
+> > You could replace this with the mctp_pcc_driver_remove() just removing =
+the
+> > device passed in the argument, rather than doing any list iteration.
+> >=20
+> > ... unless I've missed something?
+>=20
+> There is no requirement that all the devices=C2=A0 be unloaded in order f=
+or=20
+> the module to get unloaded.
 
-Best regards,
-baolu
+... aside from the driver refcounting. You're essentially replicating
+the driver core's own facility for device-to-driver mappings here.
+
+> It someone wants to disable the MCTP devices, they can unload the=20
+> module, and it gets cleaned up.
+>=20
+> With ACPI, the devices never go away, they are defined in a table read=
+=20
+> at start up and stay there.
+
+Sure, the ACPI bus devices may always be present, but you can still
+unbind the driver from one device:
+
+   echo '<device-id>' > /sys/bus/acpi/drivers/mctp_pcc/unbind
+
+- where device-id is one of the links to a device in that mctp_pcc dir.
+
+then:
+
+> So without this change there is no way to unload the module.
+
+... with no devices bound, you can safely unload the module (but the
+unload path will also perform that unbind anyway, more on that below).
+
+> Maybe it is just a convenience for development, but I think most
+> modules behave this way.
+
+If you can avoid holding internal references to devices, you have a
+whole class of bugs you can avoid.
+
+> > Any benefit in including the pcc_hdr in the skb?
+> >=20
+> > (not necessarily an issue, just asking...)
+> It shows up in=C2=A0 tracing of the packet.=C2=A0 Useful for debugging.
+
+Sounds good!
+
+> > Does anything need to tell the mailbox driver to do that ack after
+> > setting ack_rx?
+>=20
+> Yes.=C2=A0 It is in the previous patch, in the pcc_mailbox code.=C2=A0 I=
+=20
+> originally had it as a follow on, but reordered to make it a pre-req.=C2=
+=A0=20
+> That allows me to inline this logic, making the driver easier to review=
+=20
+> (I hope).
+
+OK. As far as I can tell here this is just setting a member of the
+mailbox interface, but not calling back into the mailbox code. If this
+is okay, then all good.
+
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0netif_stop_queue(ndev);
+> > Do you need to stop and restart the queue? Your handling is atomic.
+> I guess not.=C2=A0 This was just from following the examples of others. W=
+ill=20
+> remove.
+
+Those examples (at least, in the MCTP drivers) will not have been able
+to complete transmission until way later - say, after a separate
+completion, or after a separate thread has processed the outgoing skb.
+While that is happening, we may have stopped the queue.
+
+In your case, you complete transmission entirely within the start_xmit
+operation (*and* that path is atomic), so the queue is fine to remain
+enabled.
+
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0if (adev && mctp_pcc_dev->acpi_device =3D=3D adev)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0con=
+tinue;
+> > I think you meant '!=3D' instead of '=3D=3D'?
+> Yes.=C2=A0 Yes I did.=C2=A0 This is code that has to be there for complet=
+eness,
+> but I don't really have a way to test, except for the "delete all" case.
+
+The 'unbind' example above will test this.
+
+> > > +static int __init mctp_pcc_mod_init(void)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int rc;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pr_debug("Initializing MCT=
+P over PCC transport driver\n");
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0INIT_LIST_HEAD(&mctp_pcc_n=
+devs);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D acpi_bus_register_d=
+river(&mctp_pcc_driver);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc < 0)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Error registering=
+ driver\n"));
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return rc;
+> > > +}
+> > > +
+> > > +static __exit void mctp_pcc_mod_exit(void)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pr_debug("Removing MCTP ov=
+er PCC transport driver\n");
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mctp_pcc_driver_remove(NUL=
+L);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0acpi_bus_unregister_driver=
+(&mctp_pcc_driver);
+> > > +}
+> > > +
+> > > +module_init(mctp_pcc_mod_init);
+> > > +module_exit(mctp_pcc_mod_exit);
+> > If you end up removing the mctp_pcc_ndevs list, these can all be
+> > replaced with module_acpi_driver(mctp_pcc_driver);
+>=20
+> Yeah, I can't get away with that.=C2=A0 The ACPI devices may still be the=
+re=20
+> when some one calls rmmod, and so we need to clean up the ndevs.
+
+The core driver unregister path should unbind all devices before the
+module is removed, so your mctp_pcc_driver_remove() should get invoked
+on each individual device during that process.
+
+(with the above !=3D vs. =3D=3D bug fixed, you'll probably find that
+"delete-all" case will always hit an empty list)
+
+... this is unless something is different about the ACPI bus type, but
+it all looks standard from a brief look!
+
+Cheers,
+
+
+Jeremy
 
