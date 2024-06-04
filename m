@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-201449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F2D8FBEB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:17:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB2E8FBEB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CABAB1C24D68
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:17:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 463FDB24C57
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0890C14D29D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088D014D29C;
 	Tue,  4 Jun 2024 22:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHp6q+80"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEpQweZ4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4635B1422C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462C7140366;
 	Tue,  4 Jun 2024 22:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717539448; cv=none; b=uRPCjseZDUYeKIPmIdv1piycRdXA+N9nf0UpY6eIyYl9Phz4L+zaInEpH+i7RXx99/VC/kqQfZ6mwTIOtAiGQs6NArkhIhXqaUyhOtH1PpO0d+g0IEGkOc/PeVvreY3DrCEv98byKKj7KWAJfzO6Delm3rxd8vD9Z37XN3v1mRA=
+	t=1717539448; cv=none; b=q1AwsXo0gOIPvl4TMz93zTQQtZgxXf4bUITXtoTSUzIoVUfgwa6r5SNa3YzEBwgOjr86zB7ylYsQh867KBLGWf9tA4IPo4F6ULeb/j+t08cSDgVmKawQ0tOthb+7kuwJJcNwoGuRIm4njDMC4rsyCgz6wVfGqYxzmADrlij2xK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717539448; c=relaxed/simple;
-	bh=fqpNZXPwEgyr90N3bPs/G8cQ7vpf2l91LdZ7mfjML8k=;
+	bh=3sTuhEIqki7FaL4kwzJkR9X049T4EZBPLj2WC4tkn4c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HK3/YGEaHvEcwPwbWOUNzlJFK9ev/JmO3cGyRtPvdRK1iwQf8dKhKNtrKnlYzmw7Uy0v6RZtwzI+TIqgx7V4ozVus3zncE+liYo8KXpUpBJG9VsycTetb/9pkzoKJ1yUlIOzwL/ZWPD+iy7CTl5OfxGUTTZMhuThTov1aPv6NJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHp6q+80; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03D7C3277B;
+	 MIME-Version; b=nOoXpr5Di8ug9mRapn5PFdd4qfJfb3ddEupjrF7AriiRgF2G/rnjfoAVqsW1E/MnNu5M7p/CXeN3NnmCOsem9/cI0khrdUaUd3g+l2sIiGywcViAChC1n6mZ1yvXfsV6FW/DwVKRV8SXZ9avW2cDaFhY7aw6mbFzohR64dguNQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEpQweZ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE74C4AF08;
 	Tue,  4 Jun 2024 22:17:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717539447;
-	bh=fqpNZXPwEgyr90N3bPs/G8cQ7vpf2l91LdZ7mfjML8k=;
+	s=k20201202; t=1717539448;
+	bh=3sTuhEIqki7FaL4kwzJkR9X049T4EZBPLj2WC4tkn4c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZHp6q+80cIgE9/mSGlWQ1iezV7lqZYXl2/1nG/x/1Gk7bILYExbdKHlarfDzc/D7F
-	 sxtQLh9ABsPx8ytkCIeT2HpPIpKyaGHu+avnnhKJRS+bVUEvU1fg3XI1SYtT0o6rBG
-	 G8GAB0Mj8iaaDItADCH2Lo1D9Hfx8yKeM2/0evNpZsLt6sFbm+4oR1lVQixBI9ipwq
-	 byvvKgXAxxHpwAhYjRPdpGJm0wk+3rqsQlfgfCBXeuh1Y59zGkXM3g4XgrKTIMjOjY
-	 odVBR0Qx3y8jXEqUEPTc9/zIAZCpxTdnCOpEdbbvevjpTJB4uqdB6tVvbYnshUc2n7
-	 JMPTKUJ9d+RnQ==
+	b=CEpQweZ4QVm5yucgSuujvq4aP7PN3Mak2dmbpmT+ye6PHkoDZ/uZTU4qBY3C51sYr
+	 YXHD5CC6aE2hEA8OWiPq2ETReSvM5REP6IcDDd5KsPt4Q84iKsa0PW8os7z1ahjbi2
+	 0NqbJWBNsUy20o54YPIFTCJd59SQql2Y1Wc99OlrUOrhLpd/kD0Yz2sizRiWNPq3UM
+	 9zHboM7s/t5VBeBYEo/S4damtUqcGvGURTr7iaGR1BKLWeCKYdDsQjmpoLagVKXfT9
+	 c5ldU2cClHpQu1dY0shfXKWo/+JqRdcvqlqiI2pc1NFcli0Aszh63Y78fESMvoEA4+
+	 Po3/xBQaBtodw==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 90F8ACE3F0F; Tue,  4 Jun 2024 15:17:27 -0700 (PDT)
+	id 940B1CE3F26; Tue,  4 Jun 2024 15:17:27 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	rostedt@goodmis.org,
 	Jeff Johnson <quic_jjohnson@quicinc.com>,
 	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH torture 2/4] locktorture: Add MODULE_DESCRIPTION()
-Date: Tue,  4 Jun 2024 15:17:24 -0700
-Message-Id: <20240604221726.2370316-2-paulmck@kernel.org>
+Subject: [PATCH torture 3/4] scftorture: Add MODULE_DESCRIPTION()
+Date: Tue,  4 Jun 2024 15:17:25 -0700
+Message-Id: <20240604221726.2370316-3-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <0b6e7177-5620-4bb4-832e-908f871b081d@paulmck-laptop>
 References: <0b6e7177-5620-4bb4-832e-908f871b081d@paulmck-laptop>
@@ -66,25 +66,25 @@ Content-Transfer-Encoding: 8bit
 From: Jeff Johnson <quic_jjohnson@quicinc.com>
 
 Fix the 'make W=1' warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/scftorture.o
 
 Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/locking/locktorture.c | 1 +
+ kernel/scftorture.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-index 415d81e6ce707..de95ec07e4771 100644
---- a/kernel/locking/locktorture.c
-+++ b/kernel/locking/locktorture.c
-@@ -30,6 +30,7 @@
- #include <linux/torture.h>
- #include <linux/reboot.h>
+diff --git a/kernel/scftorture.c b/kernel/scftorture.c
+index 59032aaccd183..c20c6eb8389d2 100644
+--- a/kernel/scftorture.c
++++ b/kernel/scftorture.c
+@@ -43,6 +43,7 @@
  
-+MODULE_DESCRIPTION("torture test facility for locking");
+ #define SCFTORTOUT_ERRSTRING(s, x...) pr_alert(SCFTORT_FLAG "!!! " s "\n", ## x)
+ 
++MODULE_DESCRIPTION("Torture tests on the smp_call_function() family of primitives");
  MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com>");
+ MODULE_AUTHOR("Paul E. McKenney <paulmck@kernel.org>");
  
 -- 
 2.40.1
