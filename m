@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-200467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2818FB070
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A32BE8FB077
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E55E285049
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58B9D1F22772
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6914A1459E7;
-	Tue,  4 Jun 2024 10:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C18914532F;
+	Tue,  4 Jun 2024 10:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN/DpX8B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZcUM7Cah"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C14144D1A;
-	Tue,  4 Jun 2024 10:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB6A144D03;
+	Tue,  4 Jun 2024 10:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717498309; cv=none; b=L6uh5KurbnPJqVUGzdYCbOj/VO4+Kt00ycSGhl7+PnlAFhpDnZFaJmhIkWME2HZIn22lQ2ja5Sl5TK5fdgPw2ExXuskanYnLMydR3kRGp8pgAHC4dHsP/JSQWHnrReSJZUOanlTjFpL7bnMjovARzkls2x2f/0k/MGkPRPHaNgw=
+	t=1717498360; cv=none; b=bx4uD991TvfMcfVldWRShzsgiiZ+r3kfE7qYHUWtbuZPuetzcLYG/bIjARB9+Waa9FhnbC73ZTrIqoVqU2211VnQu19r7EVqykIdrEh9O0KAkQK4VmAhHV/GBW0+fbCh9lEMIZRvmDpoQjOvmGwFEpavy9qC6YgRGNjcKZ9Ph+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717498309; c=relaxed/simple;
-	bh=dDFtLAPrbCWFw67uOUgzc5PB0wqcAOjBbz+GAOH3WwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSw8LvabfQfAGovO3oKoQvInQ/oXRubz4nu1EIbEWUA1Cl0TDxEpioEpNl5lAu47UGE2gs/CrRBE06KnZU2Y0IcVTbZmKPf9EGQaMgcA2QJou1sIoh/fPyijvHkL+9ILwgPSmXTuB06673LDjOu754dPAq6Se3mX3SuL+X0j5Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN/DpX8B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E4F2C2BBFC;
-	Tue,  4 Jun 2024 10:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717498309;
-	bh=dDFtLAPrbCWFw67uOUgzc5PB0wqcAOjBbz+GAOH3WwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HN/DpX8B41dOmqn89bNy/yYXnXP1XKB9vqGTDnOuHhh6+OqcQAOoOXN61IJ025NY2
-	 ND108xDiXy7bN6JDhc0XibCKS+4xduOfJcs7Ls/d/eEkaYkHzfzltyycFoalqNYriP
-	 4XzZIlNI6ugzBC/lLDWOhKlnO8uQhQREjSStGHqpbdJyI9qCcFdeqHbrSBC9XQ5Cn4
-	 UHBJ1DLV/IrFh+r3t8YyMVHEB8nNho4yE6NZGQzNKjZs63jVS+nSzRHu1LIj9eKEDo
-	 08SUwFzDnrB5wYtRi0xY4yhBHwKiyse2qsqKaHR6xaX1n0aeK+xyPSS9hdA+z9oJfM
-	 aMWlA10s4i7KQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sERlb-000000002uY-1Jgj;
-	Tue, 04 Jun 2024 12:51:48 +0200
-Date: Tue, 4 Jun 2024 12:51:47 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
-Subject: Re: [PATCH] dt-bindings: usb: qcom,dwc3: set minItems for
- interrupt-names
-Message-ID: <Zl7xw4ER-BBvcuct@hovoldconsulting.com>
-References: <20240527144538.155704-1-brgl@bgdev.pl>
- <f709f17d-c20c-4777-b23b-8275f6d4f3f5@kernel.org>
+	s=arc-20240116; t=1717498360; c=relaxed/simple;
+	bh=p8RmQjWju6YwnZ7CZmFezlveQX8QHnpPcm1uFVN4HLQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RLyiCMaxTRjGRGxmisaklWR1SkwmE5eRewsj/VJvlRA54sC3gLjoa0vPO9zA/3vXs/6fPnRQ4l9NSxnfaPBnGZyKbTJNxxQLN0i9BYDxVq8fe3hivgy4HHhDt8sbrC60N7E2AcmDM+WYN+t4iuB/C+tik8Dp6f2Ky0hp6wx7QgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZcUM7Cah; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454AqFMx005296;
+	Tue, 4 Jun 2024 05:52:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717498335;
+	bh=fdbp4Ke8IMl5fhviwUSq+Cwwqel7fwsn4xw3/GtV4g0=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ZcUM7Cahlrhn5uVPltGVWDcw/bB5IprFGWl+EY9fMtLAWekvUOG31ii3qdgn01/Cg
+	 ApFb+1k+2r/UsA4JN1RivyiyxlmkEJmA045CwvpM7HC0GAKKqWKekCM7ZpnwMcUK97
+	 8UUYKnEun20nJKZywQkz+TMQkzdocg+U6BMaP8f0=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454AqFWZ032544
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 05:52:15 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 05:52:15 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 05:52:15 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454AqEr5074325;
+	Tue, 4 Jun 2024 05:52:15 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <andriy.shevchenko@linux.intel.com>, <adobriyan@gmail.com>,
+        <jani.nikula@intel.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <rdunlap@infradead.org>,
+        <linux-doc@vger.kernel.org>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>
+Subject: [PATCH v12 09/13] Documentation: core-api: Add math.h macros and functions
+Date: Tue, 4 Jun 2024 16:22:14 +0530
+Message-ID: <20240604105214.2255251-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240604104001.2235082-1-devarsht@ti.com>
+References: <20240604104001.2235082-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f709f17d-c20c-4777-b23b-8275f6d4f3f5@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, May 27, 2024 at 05:13:39PM +0200, Krzysztof Kozlowski wrote:
-> On 27/05/2024 16:45, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > 
-> > There's a set of compatibles for which we set a strict list of 5 interrupt
-> > names even though minItems for the interrupts property is 4. One of the
-> > USB controllers on sa8775p only consumes 4 interrupts which leads to
-> > dtbs_check errors. Make the last entry optional by setting minItems to 4.
-> > 
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> 
-> Can you also fix other cases? I found there at least two other. I missed
-> that during review... or maybe we discussed it? I remember that commit
-> was a pain :/
+Add documentation for rounding, scaling, absolute value and 32-bit division
+related macros and functions exported by math.h header file.
 
-Yes, please make sure to fix those two remaining instances at the same
-time.
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+V12: Add Reviewed-by
+V11: Fix title for math function header
+V10: Patch introduced
+V1->V9 (No change)
+---
+ Documentation/core-api/kernel-api.rst | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
+index ae92a2571388..7de494e76fa6 100644
+--- a/Documentation/core-api/kernel-api.rst
++++ b/Documentation/core-api/kernel-api.rst
+@@ -185,6 +185,12 @@ Division Functions
+ .. kernel-doc:: lib/math/gcd.c
+    :export:
  
-> But be sure that this is what we actually want. Maybe intention was to
-> have fixed number of interrupts (so no minItems in interrupts)?
++Rounding, absolute value, division and 32-bit scaling functions
++---------------------------------------------------------------
++
++.. kernel-doc:: include/linux/math.h
++   :internal:
++
+ UUID/GUID
+ ---------
+ 
+-- 
+2.39.1
 
-I'm pretty sure the intention was to keep the SuperSpeed interrupts
-optional.
-
-Johan
 
