@@ -1,118 +1,118 @@
-Return-Path: <linux-kernel+bounces-201202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07148FBADB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 392828FBADF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7751C22CE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE641C22521
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1FA14A4C9;
-	Tue,  4 Jun 2024 17:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mS8LbfmJ"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB3914A635
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A42214B961;
+	Tue,  4 Jun 2024 17:45:21 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 294C214B09E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717523108; cv=none; b=FWRpTcJoU77zPpfVQGxJbf9CIshqaUKTGLjNyOBU5PXNZl93UU8EK3Ch8e9QPMG8qFxMYSjxPjgNiajflgWmIWYE69ZjhggHAZaEPHJKp7l/oiM1wylQjGDQ6pmdCc+B+jP6A72nVD3YLrXuEfhy3r85qsAN03v4wKDEMyt3orY=
+	t=1717523120; cv=none; b=MjmVlhCF4pqlFNPM3HCeI+sSkWrobN9Cp2n04Eq7h+86C1BEg6XMWu85skWAWp61lQgAL0hkc/zH1Kh6XliaKr6os8cbXdOJJ/0Ww5J3irjQ+dTV2ufMuzs4XnnoTzCv4C0XZaeQ1oHEFaH4ILMOyikNxG0KCRdodTisgHIiGwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717523108; c=relaxed/simple;
-	bh=vc8ZT2GNbFtwqQqhzl5qiHaSZfj03wCMJ+C1x7kZANQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bo1QxGnb4DyMbF2rKUAWNKULfs6JlSA0wsmOns/yTzSnyfP7m946zcTvez+4CVAJUa104ZON8FtLNWkaj0rauUD2JtXb7tDIhUupZ+6CyK6ogruZjnKcaAK5Rege2JwrqcYgT5eefe6ROIq/tbRyVFPfln4zDqLPqDBJMOuRUqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mS8LbfmJ; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e719bab882so12621501fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717523104; x=1718127904; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ytq0Oo7HEBwVwlcYfKpnL3CTax18r1U5YqO94Iax+L0=;
-        b=mS8LbfmJ9svRhOEW7ohc1aatikfScIxPbt2B53PdCru39VaU1Fof1OJyHocNQnfFf5
-         hma0AUaD+k75O+IJa7C6JWE1I2dOtIrukQ9uhs5s3AfFDYFqEImE255XnjbEVqtFxAuT
-         3gBE9IoEe/xf8SISfykjgrRl1v2bc45pdnxAsEb7h2B30DpqN705FzKKOd7JtAhMwjIu
-         7cqS6l1Kop5zlZqhvbcOB06H5++r8exWrdsKlmjmtJcuYo2lScRuNP0RReSsLTKZSvGM
-         vKsLrraY5e4KoI/L3Vc7QN8N1xtpQLhycDHCffKUetBPm5tKL8YVi6j7WASiJ17Rp1Bc
-         yjFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717523104; x=1718127904;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ytq0Oo7HEBwVwlcYfKpnL3CTax18r1U5YqO94Iax+L0=;
-        b=PiEsj77yyjsyX0cqp3B2qQ0hDRT6pDb6xGAPTM9FgEk4ExVj4JOwgyYFLZ8Rk5Y+Tx
-         F21/QMKMLO3NNUOyT8MMsqVLFFkaKq/d6utHji4gJFH7j1LfMAKeTHobGVCPEjyaj8bq
-         PE2OeW0tCi1mNrYD3Kaey4CMoKsFBLbJmqfxoWE0Ff/5qRV/NDx8WfX7X3bLw+Iyp+fX
-         GmgWUUoK0WyXURU+BDzxr2LlqTmbZNjHnnGxCZ+A9Pn/wV6m44YtAWJGmE1uj8N4mYei
-         6CepNMGSVwsKYLEGnNRqbdcCYXllF0KDi65vzMoRKv4hLLauf2V+vQ4ArpuH9rmm3elh
-         9Xww==
-X-Forwarded-Encrypted: i=1; AJvYcCUPLARml0oqC+7fRNUXpfrH7KtaA3O4DJUywi9TCYAb/IUmuNXo+oGJeqHwBAbIi/0ySrp1SfsOag1p4PLedGE0/ShZu4ibH6YKVhnV
-X-Gm-Message-State: AOJu0YxQcfnGzggq87XEH1XCekMmky+yRcx8+u7HQb8c+oJjoBNoZIx0
-	Va/8M9hEGj1c37ihyQ7DzQeR7tCisYsE+oVMGwb7aM9T5iAnc2AIR03s66Ngn9g=
-X-Google-Smtp-Source: AGHT+IEEU4GODvXNmuOAaDu40512E0+kzwzk/nx1qRfocHGkyEprhLia63Wonh+Hi1Lwq+VCgrVf2Q==
-X-Received: by 2002:a2e:8e7c:0:b0:2e9:841a:814d with SMTP id 38308e7fff4ca-2ea950e9c37mr81938541fa.21.1717523104333;
-        Tue, 04 Jun 2024 10:45:04 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:e559:5ee:5c4:82bc? ([2a05:6e02:1041:c10:e559:5ee:5c4:82bc])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4214a4aab93sm21423665e9.0.2024.06.04.10.45.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 10:45:03 -0700 (PDT)
-Message-ID: <145ba1e5-628c-4e07-bae7-039d1655885d@linaro.org>
-Date: Tue, 4 Jun 2024 19:45:03 +0200
+	s=arc-20240116; t=1717523120; c=relaxed/simple;
+	bh=Ddf0qc15ARD9S0pv1k9Mm0ZFp3pL46h9tOnJ56TQick=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PwySSLEwaaY4bKK0sW/WrLlD9wdCyCirLrL2gzB5HweSQsicxolQdUM8O4x0/W68eY1T8CrWG6XJ4fdmQ/MLN7gmZYE21T8bYasvEzht05RihShl3Fd036tzMkWjuRn9il7rUqM2jWXHnykcRTR7Uj7fiPUn/6GrBv7CBcFlZn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 165513 invoked by uid 1000); 4 Jun 2024 13:45:18 -0400
+Date: Tue, 4 Jun 2024 13:45:18 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Kees Cook <kees@kernel.org>
+Cc: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+  Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+  linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
+  syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+  syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com,
+  linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] HID: usbhid: fix recurrent out-of-bounds bug in
+ usbhid_parse()
+Message-ID: <d1ad84e3-7da9-4dc8-a095-b9fbe191eb56@rowland.harvard.edu>
+References: <20240524120112.28076-1-n.zhandarovich@fintech.ru>
+ <nycvar.YFH.7.76.2406041015210.16865@cbobk.fhfr.pm>
+ <E62FA5CB-D7AE-4A11-9D2E-7D78D7C10ADA@kernel.org>
+ <nycvar.YFH.7.76.2406041614210.24940@cbobk.fhfr.pm>
+ <2a38e355-af5c-4b3d-81be-0cc97376c1f5@fintech.ru>
+ <202406041019.BCD0A93C@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] thermal/drivers/mediatek/lvts_thermal: Return error in
- case of invalid efuse data
-To: Julien Panis <jpanis@baylibre.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Nicolas Pitre <npitre@baylibre.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240604-mtk-thermal-calib-check-v2-1-8f258254051d@baylibre.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240604-mtk-thermal-calib-check-v2-1-8f258254051d@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202406041019.BCD0A93C@keescook>
 
-On 04/06/2024 18:46, Julien Panis wrote:
-> This patch prevents from registering thermal entries and letting the
-> driver misbehave if efuse data is invalid. A device is not properly
-> calibrated if the golden temperature is zero.
+On Tue, Jun 04, 2024 at 10:21:15AM -0700, Kees Cook wrote:
+> On Tue, Jun 04, 2024 at 10:09:43AM -0700, Nikita Zhandarovich wrote:
+> > Hi,
+> > 
+> > On 6/4/24 07:15, Jiri Kosina wrote:
+> > > On Tue, 4 Jun 2024, Kees Cook wrote:
+> > > 
+> > >> This isn't the right solution. The problem is that hid_class_descriptor 
+> > >> is a flexible array but was sized as a single element fake flexible 
+> > >> array:
+> > >>
+> > >> struct hid_descriptor {
+> > >> 	   __u8  bLength;
+> > >> 	   __u8  bDescriptorType;
+> > >> 	   __le16 bcdHID;
+> > >> 	   __u8  bCountryCode;
+> > >> 	   __u8  bNumDescriptors;
+> > >>
+> > >> 	   struct hid_class_descriptor desc[1];
+> > >> } __attribute__ ((packed));
+> > >>
+> > >> This likely needs to be: 
+> > >>
+> > >> struct hid_class_descriptor desc[] __counted_by(bNumDescriptors);
+> > >>
+> > >> And then check for any sizeof() uses of the struct that might have changed.
+> > > 
+> > > Ah, you are of course right, not sure what I was thinking. Thanks a lot 
+> > > for catching my brainfart.
+> > > 
+> > > I am dropping the patch for now; Nikita, will you please send a refreshed 
+> > > one?
+> > > 
+> > 
+> > Thanks for catching my mistake.
+> > 
+> > I'll gladly send a revised version, hoping to do it very soon.
 > 
-> Fixes: f5f633b18234 ("thermal/drivers/mediatek: Add the Low Voltage Thermal Sensor driver")
-> Signed-off-by: Julien Panis <jpanis@baylibre.com>
-> ---
-> Guard against invalid calibration data, following this discussion:
-> https://lore.kernel.org/all/ad047631-16b8-42ce-8a8d-1429e6af4517@collabora.com/
-> ---
+> I spent a little more time looking at this, and I'm not sure I
+> understand where the actual space for the descriptors comes from?
+> There's interface->extra that is being parsed, and effectively
+> hid_descriptor is being mapped into it, but it uses "sizeof(struct
+> hid_descriptor)" for the limit.
 
-Applied for v6.10-rc3
+That's a lower limit, not an upper limit.  The hid_descriptor must 
+include at least one hid_class_descriptor, but it can include more.
+That's what the min_t() calculation of num_descriptors is meant to 
+figure out.
 
-Thanks
+>  Is more than 1 descriptor expected to
+> work correctly?
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+More than one hid_class_descriptor -- yes.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>  Or is the limit being ignored? I'm a bit confused by
+> this code...
 
+Does this explain it?
+
+Alan Stern
 
