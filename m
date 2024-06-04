@@ -1,134 +1,169 @@
-Return-Path: <linux-kernel+bounces-201118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3EC8FB9CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1CA8FB9D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687791F23612
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B99B91C24A81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA3A149C53;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9150C14A089;
+	Tue,  4 Jun 2024 17:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNF05O/z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4AF149C62;
 	Tue,  4 Jun 2024 17:04:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0BE148820;
-	Tue,  4 Jun 2024 17:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717520681; cv=none; b=r8bqTlEBFKhzSSXM8AZkYrPxj5ovu/40viMo8/Oiwt/PPGa4KchaLg60ZCclPpnd/tppmKGYeVycD9FnM4uG1J4DXXiwsVMTth0y/yHOIq0KDjDCVk3u3LJFVlpBerz6YITnznKwGXSM1rBsKn+xMX38h2rhYN0qpLzDo1eFlkA=
+	t=1717520681; cv=none; b=uN2CT/nkV617qa+b4UMQFgvs/74EEKXbmgqdjpTWwLElgkEK13QcMz54+04bc1VcAHar+7TEGeQkuyghg8rcPkwbQvkbXYO+SMqC3QYBCshDJTk0E7uvMxaxk5WlIzGyVo9+Bxrkrlj5k2mmeXl8XO5dO5wiDig3Ls3jlilPsZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717520681; c=relaxed/simple;
-	bh=LJWf3QoCZ3rFmQ9GULoPGURQSMideMDjJ/XO70462sI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGJYTcz74XgEfSssw39Ku0oGib9go4QCtvpTyj8prFosoFlmQJ/5bsrxBS9F3bgVD8tIuIvZLITUbBt5noj7/w0lk+Vx84ZhkPRtYPfNo/+ZEZ6qp+DY9Gjutd+kleRBb6BQyrJ4B8QjpoCRTtj+7MmCCWpGKwuec2rTNS8ccaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F64C1042;
-	Tue,  4 Jun 2024 10:04:55 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 097E53F762;
-	Tue,  4 Jun 2024 10:04:27 -0700 (PDT)
-Date: Tue, 4 Jun 2024 18:04:22 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Florent Revest <revest@chromium.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH v3 00/27] function_graph: Allow multiple users for
- function graph tracing
-Message-ID: <Zl9JFnzKGuUM10X2@J2N7QTR9R3>
-References: <20240603190704.663840775@goodmis.org>
- <20240604081850.59267aa9@rorschach.local.home>
- <Zl8oWNhkEPleJ3B_@J2N7QTR9R3>
- <20240604123124.456d19cf@gandalf.local.home>
+	bh=m6rqAOBQ64nAVbwfoMwra9NFlfK4T5G41qjNyF62BxA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hKGwDRcUmhCNocGgcxI1pUEtT9ltzuVIJH8yP7s5BHh17zYl+9A2Ks3+92/J+DxUYxjPoapSkE4ERhC9VUzRB9n6mEaNhXp6FxoWd/BE1vg3m4Fj7czqKiu72IV4+fYZwbKYF9IZrd09OYwj8+JJeVKqDiJfv7CKuYmz+f0PsrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNF05O/z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C318C2BBFC;
+	Tue,  4 Jun 2024 17:04:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717520681;
+	bh=m6rqAOBQ64nAVbwfoMwra9NFlfK4T5G41qjNyF62BxA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HNF05O/z83KdgySpuamBtdJNQPd+6KMd8DXn+woZXtYeUdCI1eSQfGWa6KtuuXFmR
+	 MteA50UrqjFRjOjHRs/udBUOaJWKJe0HyRtAwUJgDy8V6V7k/GVcnEjUbX2MMmS/mK
+	 P+lpopMYf4HzqNyqG1TKE6SyW1bm1zrwdUPGYZSPh9/ueugXY2d3O8MQphL6kohvDp
+	 Qodja9iSGJwXRX+ySo0tt7Q1/2EOIm8z+DEO7fEMgFbUSH52SBB47s0hmw7B/Gk84Q
+	 zzGFnjfhHlwGcq1Pny93N1jAVngBGUrVq4eXMBrbCCMihe9FGaegY6MEzlXhVHxyis
+	 prjhj0VWrTClA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id F3F2DCE3F09; Tue,  4 Jun 2024 10:04:40 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	elver@google.com,
+	akpm@linux-foundation.org,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	dianders@chromium.org,
+	pmladek@suse.com,
+	torvalds@linux-foundation.org,
+	arnd@arndb.de,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Vineet Gupta <vgupta@kernel.org>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-snps-arc@lists.infradead.org
+Subject: [PATCH v3 cmpxchg 1/4] ARC: Emulate one-byte cmpxchg
+Date: Tue,  4 Jun 2024 10:04:34 -0700
+Message-Id: <20240604170437.2362545-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <1dee481f-d584-41d6-a5f1-d84375be5fe8@paulmck-laptop>
+References: <1dee481f-d584-41d6-a5f1-d84375be5fe8@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604123124.456d19cf@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 04, 2024 at 12:31:24PM -0400, Steven Rostedt wrote:
-> On Tue, 4 Jun 2024 15:44:40 +0100
-> Mark Rutland <mark.rutland@arm.com> wrote:
-> 
-> > Hi Steve, Masami,
-> > 
-> > On Tue, Jun 04, 2024 at 08:18:50AM -0400, Steven Rostedt wrote:
-> > > 
-> > > Masami,
-> > > 
-> > > This series passed all my tests, are you comfortable with me pushing
-> > > them to linux-next?  
-> > 
-> > As a heads-up (and not to block pushing this into next), I just gave
-> > this a spin on arm64 atop v6.10-rc2, and running the selftests I see:
-> > 
-> > 	ftrace - function pid filters
-> > 	(instance)  ftrace - function pid filters
-> > 
-> > ... both go from [PASS] to [FAIL].
-> > 
-> > Everything else looks good -- I'll go dig into why that's happening.
-> > 
-> > It's possible that's just something odd with the filesystem I'm using
-> > (e.g. the wnership test failed because this lacks 'stat').
-> 
-> Thanks for the update. I could be something I missed in patch 13 that had
-> to put back the pid code.
-> 
-> There may have been something arch specific that I'm unaware about. I'll
-> look at that deeper.
+Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on arc.
 
-It looks like e are lines in the trace that it doesn't expect:
+[ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
+[ paulmck: Apply feedback from Naresh Kamboju. ]
+[ paulmck: Apply kernel test robot feedback. ]
 
-	+ cat trace
-	+ grep -v ^#
-	+ grep 970
-	+ wc -l
-	+ count_pid=0
-	+ cat trace
-	+ grep -v ^#
-	+ grep -v 970
-	+ wc -l
-	+ count_other=3
-	+ [ 0 -eq 0 -o 3 -ne 0 ]
-	+ fail PID filtering not working?
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Vineet Gupta <vgupta@kernel.org>
+Cc: Andi Shyti <andi.shyti@linux.intel.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: <linux-snps-arc@lists.infradead.org>
+---
+ arch/arc/Kconfig               |  1 +
+ arch/arc/include/asm/cmpxchg.h | 33 ++++++++++++++++++++++++---------
+ 2 files changed, 25 insertions(+), 9 deletions(-)
 
-... where we expect that count_other to be 0.
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index fd0b0a0d4686a..163608fd49d18 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -13,6 +13,7 @@ config ARC
+ 	select ARCH_HAS_SETUP_DMA_OPS
+ 	select ARCH_HAS_SYNC_DMA_FOR_CPU
+ 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
++	select ARCH_NEED_CMPXCHG_1_EMU
+ 	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
+ 	select ARCH_32BIT_OFF_T
+ 	select BUILDTIME_TABLE_SORT
+diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
+index e138fde067dea..2102ce076f28b 100644
+--- a/arch/arc/include/asm/cmpxchg.h
++++ b/arch/arc/include/asm/cmpxchg.h
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/build_bug.h>
+ #include <linux/types.h>
++#include <linux/cmpxchg-emu.h>
+ 
+ #include <asm/barrier.h>
+ #include <asm/smp.h>
+@@ -46,6 +47,9 @@
+ 	__typeof__(*(ptr)) _prev_;					\
+ 									\
+ 	switch(sizeof((_p_))) {						\
++	case 1:								\
++		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
++		break;							\
+ 	case 4:								\
+ 		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
+ 		break;							\
+@@ -65,16 +69,27 @@
+ 	__typeof__(*(ptr)) _prev_;					\
+ 	unsigned long __flags;						\
+ 									\
+-	BUILD_BUG_ON(sizeof(_p_) != 4);					\
++	switch(sizeof((_p_))) {						\
++	case 1:								\
++		__flags = cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
++		_prev_ = (__typeof__(*(ptr)))__flags;			\
++		break;							\
++		break;							\
++	case 4:								\
++		/*							\
++		 * spin lock/unlock provide the needed smp_mb()		\
++		 * before/after						\
++		 */							\
++		atomic_ops_lock(__flags);				\
++		_prev_ = *_p_;						\
++		if (_prev_ == _o_)					\
++			*_p_ = _n_;					\
++		atomic_ops_unlock(__flags);				\
++		break;							\
++	default:							\
++		BUILD_BUG();						\
++	}								\
+ 									\
+-	/*								\
+-	 * spin lock/unlock provide the needed smp_mb() before/after	\
+-	 */								\
+-	atomic_ops_lock(__flags);					\
+-	_prev_ = *_p_;							\
+-	if (_prev_ == _o_)						\
+-		*_p_ = _n_;						\
+-	atomic_ops_unlock(__flags);					\
+ 	_prev_;								\
+ })
+ 
+-- 
+2.40.1
 
-I hacked in a 'cat trace' just before the 'fail' and that shows:
-
-	+ cat trace
-	# tracer: function_graph
-	#
-	# CPU  DURATION                  FUNCTION CALLS
-	# |     |   |                     |   |   |   |
-	 3) ! 143.685 us  |  kernel_clone();
-	 3) ! 127.055 us  |  kernel_clone();
-	 1) ! 127.170 us  |  kernel_clone();
-	 3) ! 126.840 us  |  kernel_clone();
-
-I'm not sure if that's legitimate output the test is failing to account
-for or if that indicates a kernel-side issue.
-
-Mark.
 
