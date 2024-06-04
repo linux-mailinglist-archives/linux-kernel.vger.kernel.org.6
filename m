@@ -1,125 +1,93 @@
-Return-Path: <linux-kernel+bounces-201402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958078FBE0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:29:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 957478FBE10
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030C71F2173A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552382851D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2E914D71F;
-	Tue,  4 Jun 2024 21:28:56 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB0314B976;
+	Tue,  4 Jun 2024 21:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZdJZDbBc"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FAD14D294;
-	Tue,  4 Jun 2024 21:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51C145C1C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 21:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717536534; cv=none; b=OpDvC/z97/fvv7MEyHBadHscHAlWNsCc07eHduNKiDGair7XKLJR2l6p1HZp5Tjj/Y+f444g82z809PISFscYE+5CjH99Xr1dycc19NnDHbfpewHKHHP8Svp0UfijgvAJVKHzMQUrpUQLgos684v2Oc1KIb5qfVcq8cZvtTzmac=
+	t=1717536569; cv=none; b=mtFKhQqUamnV/X9gumKzF3tJp97gC0FHeLzeyx52bSQkTjwvNC8d6B6mKmIgt39aTX2yLA0I0fmhWTSoiI0mJsKsnhI/DfMMmKWVvROjO0GJJx1v8lEjNcJSySVJe6+t9uurFjQU0/jmFmsfaQ/YjhHJ9zH4DGAjc6j2EfJCTJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717536534; c=relaxed/simple;
-	bh=cbZW4vL3SMGQ0M8GRVOAdEPhzxcmYTygyL7401g8GNk=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=bFYggO0eTS3Db/336bP9t2o82F8G0GkA7iKuuNiGZyalYUyc4R6JJSubTNghS06VUrZ9gsFJ2x0DV5Gowyceecpglu9T6prJKpsz+GeVT9mGR5MRBBH358CNZ/flH4huyOhamKvXdNrtY2VGzwzkJ7zy+IhmVPfRXaXp9WVDhGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F9D7C4AF0A;
-	Tue,  4 Jun 2024 21:28:54 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.97)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1sEbiB-00000000bFI-1T5m;
-	Tue, 04 Jun 2024 17:28:55 -0400
-Message-ID: <20240604212855.208119464@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 04 Jun 2024 17:28:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 5/5] ftrace: Add comments to ftrace_hash_move() and friends
-References: <20240604212817.384103202@goodmis.org>
+	s=arc-20240116; t=1717536569; c=relaxed/simple;
+	bh=MCqrxBa4S8U5u7MCmrYYze0aL09UL2JVbSqJf0mQYOo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hMidYGXBOT2R4wHdm3VyE4TpjrBrNsfIPUhBac5+XPN0h++P3K5aR/f9oPTe0BbCTSSLHCfmgYHTaG+qO+pvR88fnHWAl80wGMtztL66jbx4CERgkDkkxaF6CdgW9RxWUqeNLeGSqyxjRfGZYrFVxZcYfV3ps6ZTvzlYYrnBOBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZdJZDbBc; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=LWsYD8EI4ECNkK
+	uHeAZPt+ug0/S0KoVB/ZZVlAu0SMU=; b=ZdJZDbBc22cv9m8UWoeg3yme/4+yOz
+	5SvA0tZgBV57Tu33GOr7OtENrx14IZG2qyt7+YVjdxZc6Tibo4FcrqP+TMNOCH+3
+	puOvlB6M4WHRhxot2aZMyXpF+HwWSL1rvvp8rqhl5ZO+Wb/z4N07sfYImA0w2og5
+	0Laf7IZrs5TfuHuIUvQTippQT6rNZEZW1P74P+3GFsEVigZ3S5I42jSl5tQwNNJx
+	ficrJSiBkB+AUfdOb96FCckH4fRl05EujAq9jwd2P6dWcH5qecH76TgyEy/qB1xX
+	mtSVl5TXqbpQJi2A1rlN8V4y1Y/E2/Xgb6/o/uoEMsLo5gfLxfk+QAZw==
+Received: (qmail 2450878 invoked from network); 4 Jun 2024 23:29:25 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2024 23:29:25 +0200
+X-UD-Smtp-Session: l3s3148p1@yqDgJBca7tlehhtB
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mtd@lists.infradead.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH 0/2] mtd: use 'time_left' instead of 'timeout' with wait_*() functions
+Date: Tue,  4 Jun 2024 23:29:19 +0200
+Message-ID: <20240604212919.5038-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+There is a confusing pattern in the kernel to use a variable named 'timeout' to
+store the result of wait_*() functions causing patterns like:
 
-Describe what ftrace_hash_move() does and add some more comments to some
-other functions to make it easier to understand.
+        timeout = wait_for_completion_timeout(...)
+        if (!timeout) return -ETIMEDOUT;
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ftrace.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+with all kinds of permutations. Use 'time_left' as a variable to make the code
+obvious and self explaining.
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 021024164938..2d955f0c688f 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -169,6 +169,7 @@ static inline void ftrace_ops_init(struct ftrace_ops *ops)
- #endif
- }
- 
-+/* Call this function for when a callback filters on set_ftrace_pid */
- static void ftrace_pid_func(unsigned long ip, unsigned long parent_ip,
- 			    struct ftrace_ops *op, struct ftrace_regs *fregs)
- {
-@@ -1317,7 +1318,7 @@ static struct ftrace_hash *alloc_ftrace_hash(int size_bits)
- 	return hash;
- }
- 
--
-+/* Used to save filters on functions for modules not loaded yet */
- static int ftrace_add_mod(struct trace_array *tr,
- 			  const char *func, const char *module,
- 			  int enable)
-@@ -1431,6 +1432,7 @@ static struct ftrace_hash *__move_hash(struct ftrace_hash *src, int size)
- 	return new_hash;
- }
- 
-+/* Move the @src entries to a newly allocated hash */
- static struct ftrace_hash *
- __ftrace_hash_move(struct ftrace_hash *src)
- {
-@@ -1445,6 +1447,26 @@ __ftrace_hash_move(struct ftrace_hash *src)
- 	return __move_hash(src, size);
- }
- 
-+/**
-+ * ftrace_hash_move - move a new hash to a filter and do updates
-+ * @ops: The ops with the hash that @dst points to
-+ * @enable: True if for the filter hash, false for the notrace hash
-+ * @dst: Points to the @ops hash that should be updated
-+ * @src: The hash to update @dst with
-+ *
-+ * This is called when an ftrace_ops hash is being updated and the
-+ * the kernel needs to reflect this. Note, this only updates the kernel
-+ * function callbacks if the @ops is enabled (not to be confused with
-+ * @enable above). If the @ops is enabled, its hash determines what
-+ * callbacks get called. This function gets called when the @ops hash
-+ * is updated and it requires new callbacks.
-+ *
-+ * On success the elements of @src is moved to @dst, and @dst is updated
-+ * properly, as well as the functions determined by the @ops hashes
-+ * are now calling the @ops callback function.
-+ *
-+ * Regardless of return type, @src should be freed with free_ftrace_hash().
-+ */
- static int
- ftrace_hash_move(struct ftrace_ops *ops, int enable,
- 		 struct ftrace_hash **dst, struct ftrace_hash *src)
+This is part of a tree-wide series. The rest of the patches can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/time_left
+
+Because these patches are generated, I audit them before sending. This is why I
+will send series step by step. Build bot is happy with these patches, though.
+No functional changes intended.
+
+Wolfram Sang (2):
+  mtd: nand: mxc_nand: use 'time_left' variable with
+    wait_for_completion_timeout()
+  mtd: rawnand: intel: use 'time_left' variable with
+    wait_for_completion_timeout()
+
+ drivers/mtd/nand/raw/intel-nand-controller.c | 6 +++---
+ drivers/mtd/nand/raw/mxc_nand.c              | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
 -- 
 2.43.0
-
 
 
