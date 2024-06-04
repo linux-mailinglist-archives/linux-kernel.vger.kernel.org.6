@@ -1,230 +1,137 @@
-Return-Path: <linux-kernel+bounces-199897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06018FA76A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:16:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B088FA76B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CDB228100D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21761C23468
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3759454;
-	Tue,  4 Jun 2024 01:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="gOX4dm+g"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9087A8F6A;
+	Tue,  4 Jun 2024 01:16:34 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530254A2C;
-	Tue,  4 Jun 2024 01:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959E58472
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 01:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717463768; cv=none; b=eMLEzYn7q2rtd95x9lmbO+vbttOEbE5qL1OA371quexnDoxE4f+aWh1qbgka+notFVymxkwuLZM7648HHKmYVpS/1jbNeKhxwpH/LxWd3S0QFEnmlOcQksl/T+oUHKZhiQ95Lz84u92YWCP6fqVpF8cku6vYW/JkFN4V/3+BQ94=
+	t=1717463794; cv=none; b=jjgxa01CIP1cBkrFwt/cGu494h929wxwcf97vj+hHF5Ok6QvrLK+ePJVQbrdXOGRFmsh1XKYVcGB9MDOtlBrYqrgIFLZPj4vq1shnBpRQLYWll6h/SEzzQfKlxX/sfM4tbHTi5PTiGLWfBqTzxi3eDhZk0wxTQg1iLPO9cVvIxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717463768; c=relaxed/simple;
-	bh=3k4VVgF3vzvK7xLsva37al3VhH6jC2ecwaxPsYlpRLM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DYgvMbMs3LapG+op8t1eBRR1w2MNbxEOB75X37KgpxxpQdlzeZ7JvlmNDtTOmRv8huZ9Eo/A09YsQTcY14s4PIbOKY30jqKWIdDXqNo29m0dsrXzB8hZQIVcnecypyZaacH2PejU0KVSOy7a1tssgrAwruCADqrEvByqCMsa97E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=gOX4dm+g; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7112D2013B;
-	Tue,  4 Jun 2024 09:15:53 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1717463754;
-	bh=PwovlZCKdFMr+QpQpCC2tTBSTOMUP4TYt99tDEe4S2I=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=gOX4dm+gp8roOZb0OqKy6dQGgS+HWCAZMLSIAd+e1g3mY5T+MplAbFKjPIJq5gx6u
-	 6bjVU8MOVsKbcDNFifflHT9Z2xmlHmx5b7yL2KcmWhQneoMfD4pHcv6Kvx4nu0WGw5
-	 pjiVw98XyF9L38Tjy60+PO/z1psXD29DCicFlNpWrEjE5yqeImaev/W/JIpeoNZedO
-	 yXpUOJrejGTcPj//+TGXrPGV7Vpy9QJNI2vIlWKgwCi51+4tmjVT+okygjJtYBHfVr
-	 g/4pTo1czHWKHggVqz9p2BQ6m8r1DnXlKhAR9N4EJIZrIffx3UCltzENMza994Oa0r
-	 frCn6JFNyxxvQ==
-Message-ID: <4eefd134bec51482655018bbbd7c4d5c7668a7fa.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>, 
- admiyo@os.amperecomputing.com, Matt Johnston <matt@codeconstruct.com.au>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 04 Jun 2024 09:15:53 +0800
-In-Reply-To: <1a38b394-30ae-42c6-b363-9f3a00166259@amperemail.onmicrosoft.com>
-References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
-	 <20240528191823.17775-1-admiyo@os.amperecomputing.com>
-	 <20240528191823.17775-4-admiyo@os.amperecomputing.com>
-	 <6a01ffb4ef800f381d3e494bf1862f6e4468eb7d.camel@codeconstruct.com.au>
-	 <1a38b394-30ae-42c6-b363-9f3a00166259@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1717463794; c=relaxed/simple;
+	bh=Eqh/AtuHMdxOjBiZKaHZvSpUFcM+NAehA9EHqDldqTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=k6LgHsqQe/gSfNjs6UXrSBR5IMu9gQw60xOjfTqHVGsSe2LfAejvQbdK/Nq0A5Tn69kqEnOeWndBKHf6U8k6NQ/+JCw+Ag46c4vDQ8PFXOcZdfFBhCgtKE6h0a9f2Al//lKaFWHlaEfB9usiR81y0wK+ctmylmrZT/kT3cf1mAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VtXdD3dyczxPxC;
+	Tue,  4 Jun 2024 09:12:32 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id BBEE9140109;
+	Tue,  4 Jun 2024 09:16:27 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 4 Jun 2024 09:16:27 +0800
+Message-ID: <3b030437-4571-7a87-55e0-5fc3f5711a6e@huawei.com>
+Date: Tue, 4 Jun 2024 09:16:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-Hi Adam,
-
-> > And can you include a brief summary of changes since the prior version
-> > you have sent?
-> >=20
-> They are all in the header patch.
-
-Ah, neat. Can you include reviewers on CC for that 0/n patch then?
-
-> > > +static struct list_head mctp_pcc_ndevs;
-> > I'm not clear on what this list is doing; it seems to be for freeing
-> > devices on module unload (or device remove).
-> >=20
-> > However, the module will be refcounted while there are devices bound, s=
-o
-> > module unload shouldn't be possible in that state. So the only time
-> > you'll be iterating this list to free everything will be when it's
-> > empty.
-> >=20
-> > You could replace this with the mctp_pcc_driver_remove() just removing =
-the
-> > device passed in the argument, rather than doing any list iteration.
-> >=20
-> > ... unless I've missed something?
->=20
-> There is no requirement that all the devices=C2=A0 be unloaded in order f=
-or=20
-> the module to get unloaded.
-
-... aside from the driver refcounting. You're essentially replicating
-the driver core's own facility for device-to-driver mappings here.
-
-> It someone wants to disable the MCTP devices, they can unload the=20
-> module, and it gets cleaned up.
->=20
-> With ACPI, the devices never go away, they are defined in a table read=
-=20
-> at start up and stay there.
-
-Sure, the ACPI bus devices may always be present, but you can still
-unbind the driver from one device:
-
-   echo '<device-id>' > /sys/bus/acpi/drivers/mctp_pcc/unbind
-
-- where device-id is one of the links to a device in that mctp_pcc dir.
-
-then:
-
-> So without this change there is no way to unload the module.
-
-... with no devices bound, you can safely unload the module (but the
-unload path will also perform that unbind anyway, more on that below).
-
-> Maybe it is just a convenience for development, but I think most
-> modules behave this way.
-
-If you can avoid holding internal references to devices, you have a
-whole class of bugs you can avoid.
-
-> > Any benefit in including the pcc_hdr in the skb?
-> >=20
-> > (not necessarily an issue, just asking...)
-> It shows up in=C2=A0 tracing of the packet.=C2=A0 Useful for debugging.
-
-Sounds good!
-
-> > Does anything need to tell the mailbox driver to do that ack after
-> > setting ack_rx?
->=20
-> Yes.=C2=A0 It is in the previous patch, in the pcc_mailbox code.=C2=A0 I=
-=20
-> originally had it as a follow on, but reordered to make it a pre-req.=C2=
-=A0=20
-> That allows me to inline this logic, making the driver easier to review=
-=20
-> (I hope).
-
-OK. As far as I can tell here this is just setting a member of the
-mailbox interface, but not calling back into the mailbox code. If this
-is okay, then all good.
-
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0netif_stop_queue(ndev);
-> > Do you need to stop and restart the queue? Your handling is atomic.
-> I guess not.=C2=A0 This was just from following the examples of others. W=
-ill=20
-> remove.
-
-Those examples (at least, in the MCTP drivers) will not have been able
-to complete transmission until way later - say, after a separate
-completion, or after a separate thread has processed the outgoing skb.
-While that is happening, we may have stopped the queue.
-
-In your case, you complete transmission entirely within the start_xmit
-operation (*and* that path is atomic), so the queue is fine to remain
-enabled.
-
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (adev && mctp_pcc_dev->acpi_device =3D=3D adev)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0con=
-tinue;
-> > I think you meant '!=3D' instead of '=3D=3D'?
-> Yes.=C2=A0 Yes I did.=C2=A0 This is code that has to be there for complet=
-eness,
-> but I don't really have a way to test, except for the "delete all" case.
-
-The 'unbind' example above will test this.
-
-> > > +static int __init mctp_pcc_mod_init(void)
-> > > +{
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int rc;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pr_debug("Initializing MCT=
-P over PCC transport driver\n");
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0INIT_LIST_HEAD(&mctp_pcc_n=
-devs);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D acpi_bus_register_d=
-river(&mctp_pcc_driver);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc < 0)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Error registering=
- driver\n"));
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return rc;
-> > > +}
-> > > +
-> > > +static __exit void mctp_pcc_mod_exit(void)
-> > > +{
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pr_debug("Removing MCTP ov=
-er PCC transport driver\n");
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mctp_pcc_driver_remove(NUL=
-L);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0acpi_bus_unregister_driver=
-(&mctp_pcc_driver);
-> > > +}
-> > > +
-> > > +module_init(mctp_pcc_mod_init);
-> > > +module_exit(mctp_pcc_mod_exit);
-> > If you end up removing the mctp_pcc_ndevs list, these can all be
-> > replaced with module_acpi_driver(mctp_pcc_driver);
->=20
-> Yeah, I can't get away with that.=C2=A0 The ACPI devices may still be the=
-re=20
-> when some one calls rmmod, and so we need to clean up the ndevs.
-
-The core driver unregister path should unbind all devices before the
-module is removed, so your mctp_pcc_driver_remove() should get invoked
-on each individual device during that process.
-
-(with the above !=3D vs. =3D=3D bug fixed, you'll probably find that
-"delete-all" case will always hit an empty list)
-
-... this is unless something is different about the ACPI bus type, but
-it all looks standard from a brief look!
-
-Cheers,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next 2/3] mm/hugetlb_cgroup: prepare cftypes based on
+ template
+Content-Language: en-US
+To: kernel test robot <lkp@intel.com>, <akpm@linux-foundation.org>,
+	<muchun.song@linux.dev>
+CC: <oe-kbuild-all@lists.linux.dev>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240603120506.1837322-3-xiujianfeng@huawei.com>
+ <202406040437.z2Iel9db-lkp@intel.com>
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <202406040437.z2Iel9db-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
 
-Jeremy
+
+On 2024/6/4 5:25, kernel test robot wrote:
+> Hi Xiu,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on akpm-mm/mm-everything]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Xiu-Jianfeng/mm-hugetlb_cgroup-identify-the-legacy-using-cgroup_subsys_on_dfl/20240603-201513
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+> patch link:    https://lore.kernel.org/r/20240603120506.1837322-3-xiujianfeng%40huawei.com
+> patch subject: [PATCH -next 2/3] mm/hugetlb_cgroup: prepare cftypes based on template
+> config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240604/202406040437.z2Iel9db-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406040437.z2Iel9db-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406040437.z2Iel9db-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    mm/hugetlb_cgroup.c: In function 'hugetlb_cgroup_cfttypes_init':
+>>> mm/hugetlb_cgroup.c:828:21: warning: the comparison will always evaluate as 'true' for the address of 'name' will never be NULL [-Waddress]
+>      828 |                 if (tmpl->name)
+>          |                     ^~~~
+>    In file included from include/linux/cgroup.h:27,
+>                     from mm/hugetlb_cgroup.c:20:
+>    include/linux/cgroup-defs.h:605:14: note: 'name' declared here
+>      605 |         char name[MAX_CFTYPE_NAME];
+>          |              ^~~~
+> 
+
+Thanks, will fix in the next version.
+
+> 
+> vim +828 mm/hugetlb_cgroup.c
+> 
+>    814	
+>    815	static void __init
+>    816	hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
+>    817				     struct cftype *tmpl, int tmpl_size)
+>    818	{
+>    819		char buf[32];
+>    820		int i, idx = hstate_index(h);
+>    821	
+>    822		/* format the size */
+>    823		mem_fmt(buf, sizeof(buf), huge_page_size(h));
+>    824	
+>    825		for (i = 0; i < tmpl_size; cft++, tmpl++, i++) {
+>    826			*cft = *tmpl;
+>    827			/* rebuild the name */
+>  > 828			if (tmpl->name)
+>    829				snprintf(cft->name, MAX_CFTYPE_NAME, "%s.%s", buf, tmpl->name);
+>    830			/* rebuild the private */
+>    831			if (tmpl->private)
+>    832				cft->private = MEMFILE_PRIVATE(idx, tmpl->private);
+>    833			/* rebuild the file_offset */
+>    834			if (tmpl->file_offset) {
+>    835				unsigned int offset = tmpl->file_offset;
+>    836	
+>    837				cft->file_offset = MEMFILE_OFFSET0(offset) +
+>    838						   MEMFILE_FIELD_SIZE(offset) * idx;
+>    839			}
+>    840		}
+>    841	}
+>    842	
+> 
 
