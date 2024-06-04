@@ -1,110 +1,105 @@
-Return-Path: <linux-kernel+bounces-201262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF798FBBF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93088FBBF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3411C23E88
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92A59285DA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2625714A62F;
-	Tue,  4 Jun 2024 18:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7774E14A62E;
+	Tue,  4 Jun 2024 18:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUdLj4Md"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6784266A7;
-	Tue,  4 Jun 2024 18:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3134A11;
+	Tue,  4 Jun 2024 18:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717527465; cv=none; b=DW+r+/MM5kIZ5OZLn2CsHODUEtqyqVqbAq7B17thCMJxJwPjk+5akqQLWjP5/WNuNUa78UCN+/Uue8CoIPmUErTUKD88Aop+do1Vp09qZSeWKO4Jp4cyACnXV1r03Vku1eY9P5S9H4w9fq2++mLd/g0LCm755DQ1kHbpTMHoCvg=
+	t=1717527489; cv=none; b=XIieI9XOQd7xd7ICEfcYOKutYCUqrl/FADH3CpAeO9xT+Ur/cJaU1qWP0hGs18HdokO7d5cHZHwPUXtLr9FyQE34UarniQX/u+4d1ZGvaEA9rc8R/HziP5big5OSk2CPD+5jWQYfVr5/Q7RbaZmwFnb0EeDxwQVrAinHFZ/B4h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717527465; c=relaxed/simple;
-	bh=0NuMZA+WVFtyutWRLVlJhs7dCTyIUhAUZXdDsCOc6Tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MFlEX1RZvRk4Vc9pXsEp738gJV60D5pAm8OvTShTq9xEmFi1BbgQ85NB6+PEFVEAh7r84cgGG34laPMOL/fEjeGZ/a/Zeqrd4dLPzujNPi+8YqzeBHp8selh+veDrFb+gosIHxXwdKmhW2qVJrag9bH+kGKiPm9MPQDA/KrgPF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF52C2BBFC;
-	Tue,  4 Jun 2024 18:57:43 +0000 (UTC)
-Date: Tue, 4 Jun 2024 14:57:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH v3 00/27] function_graph: Allow multiple users for
- function graph tracing
-Message-ID: <20240604145742.5703d074@gandalf.local.home>
-In-Reply-To: <Zl9JFnzKGuUM10X2@J2N7QTR9R3>
-References: <20240603190704.663840775@goodmis.org>
-	<20240604081850.59267aa9@rorschach.local.home>
-	<Zl8oWNhkEPleJ3B_@J2N7QTR9R3>
-	<20240604123124.456d19cf@gandalf.local.home>
-	<Zl9JFnzKGuUM10X2@J2N7QTR9R3>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717527489; c=relaxed/simple;
+	bh=7nozJoS27TnUtwEyt01rUHz8ZytmR7cN5oUHgzupIyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ckdo4ZD+U5vWfA8kuFB7A2sNJm2pvIqWN3DF6npTZYqacvFZeiv9kIRoVTJ3+SsuR3XtoBxyzM0mcR2LRKtzTnx/0iAbjRYIaOoFw5INvG/nlfyzvGNP0nStoRhQFz4iufA19+Sg94Zq8qzoW58p4oHByQHrfnwmeebb9Ea+SBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUdLj4Md; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD2FC2BBFC;
+	Tue,  4 Jun 2024 18:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717527489;
+	bh=7nozJoS27TnUtwEyt01rUHz8ZytmR7cN5oUHgzupIyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aUdLj4Mdi847j2rt8G31dUu+LngXPIo5Y7OfpGAHnqACt9pfar2v9fejJjW5UR9j5
+	 98hh6DW1U8Ds80qB9ufxDNw1lpZR5wAnBuvgAnfedHPD+Jqq9MZNUBXfGPhmPyYVdw
+	 cHhxnGLCEkPBG0i9k1Z+QIfQZU6g2iltouQZVtgMqkwNtHgoTEqZ/Nc6Pb6uis2oIb
+	 08ea49kKVVKyZb8Aeypgo0C1JO/+VCSZK+3Bzj8oxiDUX2+d2Ye/egolK3mAfrv4CF
+	 JsrEKF1ooBTgvbMshG9MlExosHPcytMxoHOcNpnkWfYzoFZyA7jFFLR5Qgy7UrUTOr
+	 Ec1wDVb88BNqA==
+Date: Tue, 4 Jun 2024 21:58:04 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Hillf Danton <hdanton@sina.com>, Peter Zijlstra <peterz@infradead.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
+ worning
+Message-ID: <20240604185804.GT3884@unreal>
+References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+ <ZljyqODpCD0_5-YD@slm.duckdns.org>
+ <20240531034851.GF3884@unreal>
+ <Zl4jPImmEeRuYQjz@slm.duckdns.org>
+ <20240604105456.1668-1-hdanton@sina.com>
+ <20240604113834.GO3884@unreal>
+ <Zl9BOaPDsQBc8hSL@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zl9BOaPDsQBc8hSL@slm.duckdns.org>
 
-On Tue, 4 Jun 2024 18:04:22 +0100
-Mark Rutland <mark.rutland@arm.com> wrote:
+On Tue, Jun 04, 2024 at 06:30:49AM -1000, Tejun Heo wrote:
+> Hello, Leon.
+> 
+> On Tue, Jun 04, 2024 at 02:38:34PM +0300, Leon Romanovsky wrote:
+> > Thanks, it is very rare situation where call to flush/drain queue
+> > (in our case kthread_flush_worker) in the middle of the allocation
+> > flow can be correct. I can't remember any such case.
+> >
+> > So even we don't fully understand the root cause, the reimplementation
+> > is still valid and improves existing code.
+> 
+> It's not valid. pwq release is async and while wq free in the error path
+> isn't. The flush is there so that we finish the async part before
+> synchronize error handling. The patch you posted will can lead to double
+> free after a pwq allocation failure. We can make the error path synchronous
+> but the pwq free path should be updated first so that it stays synchronous
+> in the error path. Note that it *needs* to be asynchronous in non-error
+> paths, so it's going to be a bit subtle one way or the other.
 
-> > There may have been something arch specific that I'm unaware about. I'll
-> > look at that deeper.  
-> 
-> It looks like e are lines in the trace that it doesn't expect:
-> 
-> 	+ cat trace
-> 	+ grep -v ^#
-> 	+ grep 970
-> 	+ wc -l
-> 	+ count_pid=0
-> 	+ cat trace
-> 	+ grep -v ^#
-> 	+ grep -v 970
-> 	+ wc -l
-> 	+ count_other=3
-> 	+ [ 0 -eq 0 -o 3 -ne 0 ]
-> 	+ fail PID filtering not working?
-> 
-> ... where we expect that count_other to be 0.
-> 
-> I hacked in a 'cat trace' just before the 'fail' and that shows:
-> 
-> 	+ cat trace
-> 	# tracer: function_graph
-> 	#
-> 	# CPU  DURATION                  FUNCTION CALLS
-> 	# |     |   |                     |   |   |   |
-> 	 3) ! 143.685 us  |  kernel_clone();
-> 	 3) ! 127.055 us  |  kernel_clone();
-> 	 1) ! 127.170 us  |  kernel_clone();
-> 	 3) ! 126.840 us  |  kernel_clone();
-> 
-> I'm not sure if that's legitimate output the test is failing to account
-> for or if that indicates a kernel-side issue.
+But at that point, we didn't add newly created WQ to any list which will execute
+that asynchronous release. Did I miss something?
 
-Bah, I just ran the test.d/ftrace/func-filter-pid.tc and it fails too. This
-did pass my other tests that do run ftracetests. Hmm, I just ran it on my
-test box that does the tests and it passes there. I wonder if there's some
-config option that makes it fail :-/
+Anyway, I understand that the lockdep_register_key() corruption comes
+from something else. Do you have any idea what can cause it? How can we
+help debug this issue?
 
-Well, now that I see it fail, I can investigate.
+Thanks
 
--- Steve
+> 
+> Thanks.
+> 
+> -- 
+> tejun
+> 
 
