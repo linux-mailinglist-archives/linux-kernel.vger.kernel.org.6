@@ -1,270 +1,166 @@
-Return-Path: <linux-kernel+bounces-201330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947658FBD13
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40BF98FBD29
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C8BC286452
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:07:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0072842EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4878914D297;
-	Tue,  4 Jun 2024 20:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D86514B09E;
+	Tue,  4 Jun 2024 20:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bTHccH/S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Beev9rSt"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B2B14B095
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 20:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8718F1422DE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 20:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717531607; cv=none; b=LQStS146YFDKXLULNkMoyFqAl8Z3zCp6jZHN+kvFQiMsUlbg3As5QA1oDqc5CFSUAtNwr43DOK6g47BLol9vMi1sVKyqJJeda7LXtl6VqpjWu4Ucg5vf2LamDiScdhydeXAkRsc2N4V7J3o3Aavd9lL93AoTosj0t/7skacOV+8=
+	t=1717532128; cv=none; b=Lw15gQXK+hdQpIBgjbAJDU5ScfyHgZTyAYdm32L/N/JrXYYVxm+6Elj56vd9BRLIzorVsKlrjKEm17wcbNEU1wnQ7slVcbtJhkI3ApRDiwTRzwCzr4xfdYZoSUoBS+gXbR/sAkYSUlwyewhEPxn6fK1FykkhMcJf/RNAcZuvlR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717531607; c=relaxed/simple;
-	bh=aSCQYI2hmOCD/IbP1xwsFpZTAcY2IeBlcORVlIkjZRc=;
+	s=arc-20240116; t=1717532128; c=relaxed/simple;
+	bh=843Pxj9q/wszPDCTdOObwl7gl9BDaaPWFGEg1gnkF10=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kr8omZWjYG238D09LTItUZZCmPVBkfz5RW1Br+nqaBW4UFghEhtg+EnCWjstqILGspSzXHmBIiQKEZ3OkxC4LIrDQ11sWdcIAjQWNYjIZfXXHblrGbFslKmvaBWWEQHYeIBZinOksttkG+V57in+ox9wLraQC+cPmzKECByvj18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bTHccH/S; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717531602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZOQwPW0aG2Foum3BxxDnBe7vRUHsrv0pioUfgn6NI/E=;
-	b=bTHccH/S5s18t5GBpKN4T5WBHvLPvccvvgZwvaRdpvsdTIC567TihxQUlcacTosr2ojELi
-	quDN330KVQJdufwoOd8M7nWgbEJc1BuIzDUyqvEeEqB/2Guz4EkFIyU0vGs4oOsbCFsh/s
-	cAE2H6bKHXAPamuhQfrw4bi/5O8/yEc=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-307-6WKM0hL3N0qkz-og6vFqVA-1; Tue, 04 Jun 2024 16:06:37 -0400
-X-MC-Unique: 6WKM0hL3N0qkz-og6vFqVA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42156af89afso1314925e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 13:06:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717531596; x=1718136396;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZOQwPW0aG2Foum3BxxDnBe7vRUHsrv0pioUfgn6NI/E=;
-        b=XVhkZX0XZE5gl3M/j5ewSN7aPXa/bsoWUmUFC1vU1NMS547M/aK+Fz+jUbMrKbrlc/
-         gIFYBSFh/WTHgAIvZVVHrQ3AmQajlFC63gAjfeLLuv4tRaenMuUjeAM3R/HlWrZjYeAc
-         Cbb/6ErAkcbFdIfKde8BAR3dzdvwEug2iMQ3rOvE/HYQc3uSO53ikd5TrRP4uDLO8ARa
-         h0k8vKsy5sjdY9L8gBew8mts/+ABFMLAVDwCWy3xH/Vk/vGVLPjD+7UFa6L61/ddrnrg
-         q6a0S5SDqVQefIE4VVDoTOBeNBlCLj4Lut4mgFUqg5mHD/+HVB0vz/rlu1lDT2ProGte
-         H31g==
-X-Forwarded-Encrypted: i=1; AJvYcCWumpl0ilzudRz0bwL8L3uV0jZxSPbyYRPkTi4pevibFaCc/52FIaaevimyEGBPzwVbj/ld9U8Ktx+4vGqOOBZPfCjxrirw1kUv/4Ox
-X-Gm-Message-State: AOJu0YwxSrnBKN7B4S+bwMKjnSB/fXC1F5i4BF4RHgCvSJu3NYa/mVzM
-	aD6apV0OIYzWPRsznILshTIFZfxhpiFKNZc5tu1ejyZ2jR3UgCbFoO7MUgaGARCYhwoNoclJcsd
-	DKHHKz8WguVBh6WzF+H8Zw1Ctr0aji8hAbQF8sOvSViby75y9LkDG4BgO4+2h8g==
-X-Received: by 2002:a05:600c:3c97:b0:41a:c170:701f with SMTP id 5b1f17b1804b1-42156356ac6mr3558115e9.38.1717531596377;
-        Tue, 04 Jun 2024 13:06:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvgnv3dsKpQRLAsQ3oX8Eyk4WLvjXVlc3Cl2eoNi52H9/3hBfkpYiRdpbspAeOhGIOZiuWIQ==
-X-Received: by 2002:a05:600c:3c97:b0:41a:c170:701f with SMTP id 5b1f17b1804b1-42156356ac6mr3557815e9.38.1717531595889;
-        Tue, 04 Jun 2024 13:06:35 -0700 (PDT)
-Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42138260c5asm123349765e9.41.2024.06.04.13.06.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 13:06:35 -0700 (PDT)
-Date: Tue, 4 Jun 2024 22:06:33 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
-Message-ID: <Zl9zybWIeZqt8tWc@pollux>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-3-dakr@redhat.com>
- <2024052045-lived-retiree-d8b9@gregkh>
- <ZkvPDbAQLo2/7acY@pollux.localdomain>
- <2024052155-pulverize-feeble-49bb@gregkh>
- <Zk0egew_AxvNpUG-@pollux>
- <2024060432-chloride-grappling-cf95@gregkh>
- <Zl81oUmNO5TX063x@cassiopeiae>
- <2024060404-figment-resolute-7c6c@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UR7HzPQm95U3C8RFrKDpXSNsbNwcbQdvOrOHZclezZzTFAGAEJj1qVmo9OHvBc1DjXDi5XcJ+IQKA8C9q39P6tx4Xd5cEMnTuJM1akRKAwIZWNM2WlP6/mzNBZVee3eMISvSSVwPyso+SchIG7mxpZ4gbkkzSiyoTosHxS1uNw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Beev9rSt; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=80M9
+	/oFeQrdHA5qzmIt/EiiNd4PHMkgSxg0oOqw3y5U=; b=Beev9rStyx1sTek2gs0e
+	VVLK3gieGjFU6iGVBwpNVS9US/BFN25KxB6txKVv7eTWTkoIzuXH+7CJtv/ipJJu
+	zzCIh9x9Avn1dZ8u4x7O6oUcHRrb4GqPWPHfsrYopdtQkOyPlI8DQr9VWHyhM4kg
+	coh1nGvp2+kzJ1rFxm3cFXDcjLfBsyYwiOJVm11uzw9JxBt69UCMmeNT9qd0FUAG
+	/IWdEpDNS+/Shc4PlipLA850UO1CnSSqFXk8j6GUZnwEa8MNT65VnTfvXMGfIONz
+	tfC7BC5EqEa8rcyHfl/dTFM4jYdJ77QoyhhIpeNm9Vaso3BZgmzbuv1PO72/8Jvj
+	gA==
+Received: (qmail 2434857 invoked from network); 4 Jun 2024 22:08:41 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2024 22:08:41 +0200
+X-UD-Smtp-Session: l3s3148p1@VjAmBBYawNFehhtB
+Date: Tue, 4 Jun 2024 22:08:41 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: linux-renesas-soc@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH] i2c: smbus: fix NULL function pointer dereference
+Message-ID: <bk6rgqfcn5op5iuojoisogvtrp24ldblgkq4g62ffr4z7wnzug@xlp3ce5bx7bs>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Jean Delvare <jdelvare@suse.de>, linux-renesas-soc@vger.kernel.org, 
+	Baruch Siach <baruch@tkos.co.il>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Rosin <peda@axentia.se>
+References: <20240426064408.7372-1-wsa+renesas@sang-engineering.com>
+ <1e626d93f4220cc348300bbc61089de32300122d.camel@suse.de>
+ <b2tnimag62ty6wndyjsy7u5fay6y52zn47vvifw6rh5abeqzpu@pqyyczutxcwu>
+ <20240604171113.232628f9@endymion.delvare>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4bhsazqdizvel7kz"
+Content-Disposition: inline
+In-Reply-To: <20240604171113.232628f9@endymion.delvare>
+
+
+--4bhsazqdizvel7kz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024060404-figment-resolute-7c6c@gregkh>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 04, 2024 at 06:00:11PM +0200, Greg KH wrote:
-> On Tue, Jun 04, 2024 at 05:41:21PM +0200, Danilo Krummrich wrote:
-> > On Tue, Jun 04, 2024 at 04:27:31PM +0200, Greg KH wrote:
-> > > On Wed, May 22, 2024 at 12:21:53AM +0200, Danilo Krummrich wrote:
-> > > > On Tue, May 21, 2024 at 11:35:43AM +0200, Greg KH wrote:
-> > > > > On Tue, May 21, 2024 at 12:30:37AM +0200, Danilo Krummrich wrote:
-> > > > > > On Mon, May 20, 2024 at 08:14:18PM +0200, Greg KH wrote:
-> > > > > > > On Mon, May 20, 2024 at 07:25:39PM +0200, Danilo Krummrich wrote:
-> > > > > > > > From: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > > > > > > > 
-> > > > > > > > This defines general functionality related to registering drivers with
-> > > > > > > > their respective subsystems, and registering modules that implement
-> > > > > > > > drivers.
-> > > > > > > > 
-> > > > > > > > Co-developed-by: Asahi Lina <lina@asahilina.net>
-> > > > > > > > Signed-off-by: Asahi Lina <lina@asahilina.net>
-> > > > > > > > Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
-> > > > > > > > Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-> > > > > > > > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > > > > > > > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> > > > > > > > ---
-> > > > > > > >  rust/kernel/driver.rs        | 492 +++++++++++++++++++++++++++++++++++
-> > > > > > > >  rust/kernel/lib.rs           |   4 +-
-> > > > > > > >  rust/macros/module.rs        |   2 +-
-> > > > > > > >  samples/rust/rust_minimal.rs |   2 +-
-> > > > > > > >  samples/rust/rust_print.rs   |   2 +-
-> > > > > > > >  5 files changed, 498 insertions(+), 4 deletions(-)
-> > > > > > > >  create mode 100644 rust/kernel/driver.rs
-> > > > > > > > 
-> > > > > > > > diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
-> > > > > > > > new file mode 100644
-> > > > > > > > index 000000000000..e0cfc36d47ff
-> > > > > > > > --- /dev/null
-> > > > > > > > +++ b/rust/kernel/driver.rs
-> > > > > > > > @@ -0,0 +1,492 @@
-> > > > > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > > > > +
-> > > > > > > > +//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
-> > > > > > > > +//!
-> > > > > > > > +//! Each bus/subsystem is expected to implement [`DriverOps`], which allows drivers to register
-> > > > > > > > +//! using the [`Registration`] class.
-> > > > > > > 
-> > > > > > > Why are you creating new "names" here?  "DriverOps" is part of a 'struct
-> > > > > > > device_driver' why are you separating it out here?  And what is
-> > > > > > 
-> > > > > > DriverOps is a trait which abstracts a subsystems register() and unregister()
-> > > > > > functions to (un)register drivers. It exists such that a generic Registration
-> > > > > > implementation calls the correct one for the subsystem.
-> > > > > > 
-> > > > > > For instance, PCI would implement DriverOps::register() by calling into
-> > > > > > bindings::__pci_register_driver().
-> > > > > > 
-> > > > > > We can discuss whether DriverOps is a good name for the trait, but it's not a
-> > > > > > (different) name for something that already exists and already has a name.
-> > > > > 
-> > > > > It's a name we don't have in the C code as the design of the driver core
-> > > > > does not need or provide it.  It's just the section of 'struct
-> > > > > device_driver' that provides function callbacks, why does it need to be
-> > > > > separate at all?
-> > > > 
-> > > > I'm confused by the relationship to `struct device_driver` you seem to imply.
-> > > > How is it related?
-> > > > 
-> > > > Again, this is just a trait for subsystems to provide their corresponding
-> > > > register and unregister implementation, e.g. pci_register_driver() and
-> > > > pci_unregister_driver(), such that they can be called from the generic
-> > > > Registration code below.
-> > > > 
-> > > > See [1] for an example implementation in PCI.
-> > > 
-> > > registering and unregistering drivers belongs in the bus code, NOT in
-> > > the driver code.
-> > 
-> > Why? We're not (re-)implementing a bus here. Again, those are just abstractions
-> > to call the C functions to register a driver. The corresponding C functions are
-> > e.g. driver_register() or __pci_register_driver(). Those are defined in
-> > drivers/base/driver.c and drivers/pci/pci-driver.c respectively.
-> > 
-> > Why wouldn't we follow the same scheme in Rust abstractions?
-> 
-> It's the bus that does the registering, so yeah, don't put it here at
-> all as it's not going to be needed (i.e. unless you write a bus in rust
-> you will never call driver_register())  So this can just be a wrapper
-> for the pci bus logic, keeping it simpler.
+Hi Jean,
 
-We never call driver_register() of course, I gave this example for another
-reason above. Sorry if that was confusing.
+> Note that we still want I2C_FUNC_I2C to be set properly, because it
+> allows device drivers to optimize transfers (the at24 driver is a prime
+> example of that) or even just to bind to the I2C bus (for device
+> drivers which properly check for it).
 
-> 
-> So you might be able to delete a lot of code here, only deal with a
-> "dumb" struct device wrapper to handle reference counts, and then do the
-> rest for the specific bus bindings?  Or is that too much to dream?
+I agree. We definitely want I2C_FUNC_I2C to be set and make use of it as
+much as possible. We should just not completely rely on it.
 
-Again, this is a generalization such that we do not have to replicate code for
-every subsystem / bus. Please see the full explanation below.
+> > (There is a CVE for it??) For Baruch's case, this is true. But there are
+> > __i2c_transfer users all over the tree, they are all potentially
+> > vulnerable, or?
+>=20
+> Yes there are many, but I think we shall differentiate between 2 cases:
+> * Missing check in a specific kernel device driver. These are unlikely
+>   to be a problem in practice because (1) these devices are typically
+>   instantiated explicitly, and such explicit code or device tree
+>   description would not exist in the first place if said device was not
+>   compatible with said I2C bus, and (2) if such an incompatibility was
+>   really present then it would have been spotted and fixed very
+>   quickly. Arbitrary binding through sysfs attributes is still possible
+>   but would definitely require root access and evil intentions (at
+>   which point we are screwed no matter what). I'm honestly not worried
+>   about this scenario.
 
-> 
-> You aren't writing a "raw" driver here, no one does that, it's a bus
-> that handles that logic for you, and you should not have to expose any
-> "raw" driver attributes.
+OK, can be argued.
 
-Indeed - we're not doing that here.
+> * The issue being triggered from user-space through i2c-dev, which is
+>   what Baruch reported. The user doing that can target any arbitrary
+>   I2C bus and thus cause the oops by accident or even on purpose. For
+>   me this is what CVE-2024-35984 is about. What limits the attack
+>   surface here is that slave-only I2C buses are rare and you typically
+>   need to be root to use i2c-dev. But this is still a serious issue.
 
-> 
-> Yes, for some busses, they like to force a driver to set the "raw"
-> driver attribute, but I don't think that's a good idea and for the pci
-> driver layer, that shouldn't be necessary now, right?  If not, what
-> fields are you wanting to get direct access to?
+Agreed.
 
-Honestly, this all reads as if you did not (carefully) read the code we're
-discussing about in the first place, did you?
+> Also note that the first case could happen ever since __i2c_transfer()
+> was introduced (kernel v3.6, commit b37d2a3a75cb) and is not limited to
+> slave-only adapters, as any SMBus-only i2c_adapter would also be
+> vulnerable.
 
-It reads more as if you take assumptions based on my previous explanations, and
-since communication is difficult, it looks like we're talking past each other.
-Maybe also my explanations were just not good enough. :(
+Which makes handling this gracefully even more important.
 
-Either way, I suggest to focus more on the actual code. In particular let's have
-a look at the `Registration` and `DriverOps` struct from this patch and how
-they're used in the PCI code and in an actual driver.
+> So the "Fixes:" tag in commit 91811a31b68d is incorrect for both
+> scenarios.
 
-Please have a look at how the PCI code implements the `DriverOps` trait (or
-interface as many other languages would call it) [1]. In `DriverOps::register`
-and `DriverOps::unregister` the PCI code simply calls the C functions
-__pci_register_driver() and pci_unregister_driver().
+Ack. Sorry! :)
 
-A driver can use the `module_pci_driver!` macro [2] to declare a kernel module
-that registers a single PCI driver. This is equivalent to C's
-module_pci_driver() macro.
+> > gracefully because kicking off I2C transfers is not a hot path. Maybe we
+> > could turn the dev_dbg into something louder to make people aware that
+> > there is a bug?
+>=20
+> My previous message initially had a suggestion in that direction ;-)
+> but I first wanted your opinion on the check itself. dev_dbg() is
+> definitely not appropriate for a condition which should never happen
+> and implies there's a bug somewhere else. A WARN_ON_ONCE would probably
+> be better, so that the bug gets spotted and fixed quickly.
 
-The `module_pci_driver!` macro calls the generic `module_driver!` macro [3] and
-passes the `pci::Adapter` [1] (the PCI thing that actually calls the C
-pci_{un}register_driver() functions).
+So, are you okay with keeping the check where it is now and turning the
+dev_dbg into WARN_ON_ONCE? I am.
 
-The `module_driver!` macro creates a new `Module` structure [4] that holds the
-`Registration` structure. This `Registration` structure has a generic argument
-which is the `pci::Adapter` [1]. Which means that once the `Registration` is
-created C's __pci_register_driver() is called and once it is destroyed C's
-pci_unregister_driver() is called. The `Registration` is created in
-module_init() and destroyed in module_exit() accordingly.
+All the best,
 
-So, as you can see a `Registration` is really just the parts generalized that
-otherwise every subsystem would need to implement and `DriverOps` is the glue
-between a driver `Registration` and the subsystem (e.g. PCI) defining which
-function to call on driver register() or driver unregister().
+   Wolfram
 
-My argument above is simply that since  all this is just the abstraction to
-declare a driver structure and register it, it belongs into driver.rs. At least
-if we want to go along with where the C side places the correspong functions on
-the C side.
 
-(The links already point to the new code that allocates the driver statically,
-but this should not matter, since conceptually it's the same.)
+--4bhsazqdizvel7kz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1] https://gitlab.freedesktop.org/drm/nova/-/blob/989338f129146af9952304c2cc6b33fbd90e8909/rust/kernel/pci.rs#L24
-[2] https://gitlab.freedesktop.org/drm/nova/-/blob/989338f129146af9952304c2cc6b33fbd90e8909/rust/kernel/pci.rs#L135
-[3] https://gitlab.freedesktop.org/drm/nova/-/blob/989338f129146af9952304c2cc6b33fbd90e8909/rust/kernel/driver.rs#L453
-[4] https://gitlab.freedesktop.org/drm/nova/-/blob/989338f129146af9952304c2cc6b33fbd90e8909/rust/kernel/driver.rs#L435
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> thanks,
-> 
-> greg k-h
-> 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZfdEUACgkQFA3kzBSg
+Kba6Tw//ZXtwgs1Z64LmhwEfpaTqY+W5nFX6jknwWjmZovfxNwQw8d/YqCuQKKfP
+07P18mNfynJxN/H/QQZi6QW4XSyW0vEv18co4QNmW9YRRWRcyT18U0Onhf4NzwH2
+uZBta6T2zoPiCAAiALKUCXCg1KTG0rm2usWZzuBG6dtlNnTQtmbNj6GyqTg9+NkB
+i5Il7D9Vq2OvryNAe0dBgJYbd58rESLNeTYk99+4vqzR+bzTt3DPWvwuFa8JBEaH
+RvQHHEMxYol3Jdp60WwRaWDIvMvFdVT6qmxkrSZDTLGSw3VwZdJ+YMY1B2dPAXPr
+JFPwNEQftVaf7uRFj7lsBqgtzHkDtvAWbJtZP4DCdaMPOZKSV4oc0qm4iF8MV/Oj
+jtBWFEJ68H4DCd89l2Y4I5EbA8eTpDRHQNLsjI7cMw5+bg8/z71rqSLa5nLNetLY
+roHH/3+hMvOACaxKxv7EVGGZXoSfTid/hp7CpSciiwcI5h8uFkEnw3QHWgyS7b7v
+EORXybfUyv/CCPJNybhoJdCsupmtFohn48NiWr1fVcvpCimvpiTatXuBP7uuOspN
+EwqUW31YYobHybDmaIhD7DetIWPwGMZItcztkUfM3T7LbWFxGh44mbmGdfEobscT
+AW0o7GioHbwSeU78vAUrjje8hVmmQwJE1DQ8gda/RtmFmjQEmoY=
+=8vSS
+-----END PGP SIGNATURE-----
 
+--4bhsazqdizvel7kz--
 
