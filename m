@@ -1,64 +1,63 @@
-Return-Path: <linux-kernel+bounces-200374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29EA08FAF17
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:43:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3138FAF10
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6A2D285349
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6243C1F220BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAD61459F9;
-	Tue,  4 Jun 2024 09:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43F6145322;
+	Tue,  4 Jun 2024 09:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Sb2AxVIq"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ILLOBiVs"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1B21459E0;
-	Tue,  4 Jun 2024 09:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACCD1448DD;
+	Tue,  4 Jun 2024 09:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717494120; cv=none; b=bDTqnbz3jbC/B656/82V5ZNaI9f1ZpoAFBt4KHZmc4tljAihGRotFuZswwDe9THP9FRu8yl5hPAcXGk0NTQTDgw/5qluE891op+dwiZJHIf2iMYdYfyl/KTQPz/AqmMvGwJBTibbIlOLJEC7oajI0ciKeS01r6UQw2WgRzruw6w=
+	t=1717494107; cv=none; b=HOo5Zj426nck9INQ4g24xRfJD4vhl1ooqCUnWjZzcvDZGM+N4UjC5F/r41QAu28DDEEjZCuCmRMV5hkhmJ97j3U7QbNT0URfo93x6t+kFoRk86Yqo/0/+0jzVCN164bRnTTMkD9P3nGaDHzw1KfxZX1Ak8mbzP47GI8epBNOZ+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717494120; c=relaxed/simple;
-	bh=4rolmuJywtA0nXiMzdaaC4yGO3ohzYuqIv5e1oCvaYk=;
+	s=arc-20240116; t=1717494107; c=relaxed/simple;
+	bh=5Is0yddajOPaJJk52Hdu+rt0g50Q4Ula+4kChQDeTQE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=j2AAe+039k7TJmuc0oRf1KSD3SUJdbk4YS4ffFZt9llpwDtgLY7IHgPYN5CCoPDYP8KYCzbZMvx555RzZouxcLCAMZfBw/Ql2meT2mAKt8XOiurYf/ynJP83/hRb/ogKRqSlihD5bBoSQfnQnFpJUvGOzqv7Ezj20oCEog8qtlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Sb2AxVIq; arc=none smtp.client-ip=198.47.23.248
+	 In-Reply-To:To:CC; b=gB35oGpfbZqQ7v7cqr1s6Wd6Th8CUB34YdJAE9SCVgSM1doUeMcWCToYUnBkhNmH5pbYkowuF3a6gedL1WEXvBcRN3N3z5jGyFRImMSK6V/v9NEmOtvqnG41co+ibs2SXG+HVbcMXf3TeDFvRXoF0tdtq2Kl6714QnVJg7YD4s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ILLOBiVs; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4549fZs8086575;
-	Tue, 4 Jun 2024 04:41:35 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4549faPT069672;
+	Tue, 4 Jun 2024 04:41:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717494095;
-	bh=9KNkRQA/HZK5dQIOIPJx88REWuE8drN2RxmNzWzrk+w=;
+	s=ti-com-17Q1; t=1717494096;
+	bh=IEsB6wi8UzpSLuomzX+sFoDGZGJkBWTnpg8kWtmrd7Y=;
 	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=Sb2AxVIq7mhF0z2ttwrrh0ojaGETSALDFcijZvAWfwADieDQU82JD8l4oKzgx04ot
-	 mEyLo9D8KSm5UVNi9Mea1+gbu1gkdKXkQqECqKQYb7iB144L2OXIqz3/3znMu+VtLm
-	 pFZWEWQeaZ1+6075g9ZBT35Gx+11RBsL4zOqqgnM=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4549fZvT024879
+	b=ILLOBiVsec93PH1xa9szfEhaJiFQ8IvB+PSqCRcn5q95ON6HcRCqGIIHMkl0ylM9c
+	 3FYz43ho3KpQ0ns1Q5srasG6KdxYaLfqeP9JvgSn/bZrF0G4DeqeZgj7Mmc5XXuMAH
+	 psLtC4rGFia5O/KKy/28+uEQnzCiFLAdZBKUdyKo=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4549faJS120225
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Jun 2024 04:41:35 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 4 Jun 2024 04:41:36 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Jun 2024 04:41:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2024 04:41:36 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Jun 2024 04:41:34 -0500
+ Frontend Transport; Tue, 4 Jun 2024 04:41:36 -0500
 Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4549fYTH011834;
-	Tue, 4 Jun 2024 04:41:34 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4549fZEV011865;
+	Tue, 4 Jun 2024 04:41:36 -0500
 From: Jai Luthra <j-luthra@ti.com>
-Date: Tue, 4 Jun 2024 15:11:07 +0530
-Subject: [PATCH 6/7] arm64: dts: ti: k3-am625-phyboard-lyra-rdk: Drop McASP
- AFIFOs
+Date: Tue, 4 Jun 2024 15:11:08 +0530
+Subject: [PATCH 7/7] arm64: dts: ti: k3-am62p5-sk: Fix pinmux for McASP1 TX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,7 +66,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240604-mcasp_fifo_drop-v1-6-03ebe25f47db@ti.com>
+Message-ID: <20240604-mcasp_fifo_drop-v1-7-03ebe25f47db@ti.com>
 References: <20240604-mcasp_fifo_drop-v1-0-03ebe25f47db@ti.com>
 In-Reply-To: <20240604-mcasp_fifo_drop-v1-0-03ebe25f47db@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
@@ -88,47 +87,47 @@ CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         Jai Luthra
 	<j-luthra@ti.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=773; i=j-luthra@ti.com;
- h=from:subject:message-id; bh=4rolmuJywtA0nXiMzdaaC4yGO3ohzYuqIv5e1oCvaYk=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBmXuFCs5kIwx0KdcvQtPyboJ9x82UWJmxva16zt
- xA90sSLQj6JAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZl7hQgAKCRBD3pH5JJpx
- Rdv+D/9wolSIhdAoEuwOe6ESqhJTPbajW+0IdUazn9soshFxlUkdh2kAg2sUp/3Xf69+tQ7K0ZL
- u4odWMNNXwOPf9NFS0Vl/s9V1AwTc4Mun1s91EtjAMVcY/jH2mG6xY9bnnm/aIGwe0I+7FB+CAX
- CzB0zfT81QsYE127YdHaF0/IJkrcWEDUmmGT/2/ydbbPwvUU3abjHSErOQqjfZr4rmZjb7Y3swQ
- SlIqQcNSQei3b5jzm1IDdof0W6zaVYCMyBZtBaSt2H40rTrNxN97F9L29fr71EZOqdJiZoqBvRx
- 9mgfUraQl2dqR5/D20DYweJCICVxelip+l4H7vMdaXeSE/ksIzo7hw6R52Iq8smUJ1/xbo3h6dT
- 32zPKT6AtY2FIIxoNZ0SoO+XH2+SpkDfjpa78h25zEasqA9hMMJQ23j3fxqGSy0Jy3qDmhOKdgm
- 1fefOGZwMs6+bnmNGu8bt8jLAnL4DF3Yu3MekIfvDqgw4nm4+MlwDP6JLczKwtY6y3ZjhKaIvTG
- oREC+qNRBeTjcI/63sWJ8KufAwq+1qsLtj/B2coWBqRBRU0o+dsDu3rSD+TNyc/K4iUOXeqQDe5
- mZ2C3CYJ62T1+mC93ET0wuThRLgIHMxxMwFklyKPyyfZ5HO6MkNggicU/rqJCyTiOCIgWqyNgLG
- KVfMsAHS/pE/j2g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1163; i=j-luthra@ti.com;
+ h=from:subject:message-id; bh=5Is0yddajOPaJJk52Hdu+rt0g50Q4Ula+4kChQDeTQE=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBmXuFDpzzutBfFbiypbikrf1LAIxmT1vAnADWAg
+ shXGttbt92JAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZl7hQwAKCRBD3pH5JJpx
+ RadpEACRXdFVegwXA+rZFHmlZ7gZZEKuwW/emV8Uj9vxZ40qxQxv2gaC7pmUVALFSqP9smRV3hx
+ jNW/EvSg4DWnSADLt29fJsL7Me0vdXkYTjQgoJxNZ6oY6CPXZBlZYIC96q6KXi+l2aEEeJpdq0U
+ 05g3dOxnXJ+mUHycZRBxvkduGWud58PXEal6f/UeXApyhMB+LFYXtG2YxIMO5J/kRnrsSu3g/pX
+ J3YCylUZPwpXsO+S2yVSTFVJyrHkcYnG9TpEp6u8GKqNldu4NPYK/v26een5gztOnylsHuWhOMo
+ 9yvbhbePFEP3usAa7xULmxn1KeyhmEcx6hvOXDMzooQL0pIEm4Yk1mabX7+lIsQuadj8/wqHlLo
+ fk+yIq1adxOQ8Wogb4dn4zvlHT4uvT0c5ch5UaMhCOgftaHCzK40+c/OomI0D1e1mOe+qDBwRfj
+ Xbl2wBk7K6TWmtBdxdrjCMmTKY65Bx8epxC2MB3XKmGvksjuLAAfkuGEpaN06e1n23EMP0S49Bf
+ Rw8qxZDIwutM7lASpN8Z+8dI0Ri6bucHJy8GFXTgtoS58p8kzFkDCW27z8KVm8HLhoijjjPog0g
+ 7qhI5/d4es5EW6nWn+e4Xsvl2yQEagWrYjrFQpBkqmNMmhYP4OwH6RbZ+mfp4Cew2z5PkEDHcgP
+ 0ZCrfSIQEtM3H1Q==
 X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
  fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-McASP AFIFOs are not necessary with UDMA-P/BCDMA as there is buffering
-on the DMA IP. Drop these for better audio latency.
+On SK-AM62P, McASP1 uses two pins for communicating with the codec over
+I2S protocol. One of these pins (AXR0) is used for audio playback (TX)
+so the direction of the pin should be OUTPUT.
 
+Fixes: c00504ea42c0 ("arm64: dts: ti: k3-am62p5-sk: Updates for SK EVM")
 Signed-off-by: Jai Luthra <j-luthra@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dts b/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dts
-index 50d2573c840e..77c86ba3849f 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-rdk.dts
-@@ -441,8 +441,8 @@ &mcasp2 {
- 			0 0 0 0
- 			0 0 0 0
- 	>;
--	tx-num-evt = <32>;
--	rx-num-evt = <32>;
-+	tx-num-evt = <0>;
-+	rx-num-evt = <0>;
- 	status = "okay";
- };
- 
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+index 2aaf7d490c77..aa45a6fa6e0b 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+@@ -207,7 +207,7 @@ main_mcasp1_pins_default: main-mcasp1-default-pins {
+ 		pinctrl-single,pins = <
+ 			AM62PX_IOPAD(0x0090, PIN_INPUT, 2) /* (U24) GPMC0_BE0n_CLE.MCASP1_ACLKX */
+ 			AM62PX_IOPAD(0x0098, PIN_INPUT, 2) /* (AA24) GPMC0_WAIT0.MCASP1_AFSX */
+-			AM62PX_IOPAD(0x008c, PIN_INPUT, 2) /* (T25) GPMC0_WEn.MCASP1_AXR0 */
++			AM62PX_IOPAD(0x008c, PIN_OUTPUT, 2) /* (T25) GPMC0_WEn.MCASP1_AXR0 */
+ 			AM62PX_IOPAD(0x0084, PIN_INPUT, 2) /* (R25) GPMC0_ADVn_ALE.MCASP1_AXR2 */
+ 		>;
+ 	};
 
 -- 
 2.43.0
