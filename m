@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-200739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967068FB437
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:46:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201068FB489
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A53A2824F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:46:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C921B27A8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3256C8F68;
-	Tue,  4 Jun 2024 13:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F77D182D2;
+	Tue,  4 Jun 2024 13:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KbZIfDOM"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="baj0BDsg"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D860063E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DEE1755B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717508720; cv=none; b=UJ3FMcit1MXmEzNPD9kLtNFdCMCMnpiQHPXhhr5Yddz33vQbw3rWl3x6x2NmhZRpwaf2h3cmhzqQAM1FdNY/GSNKhdl+QupE8KzF9BDuy2WMRGCQEGmrov0N2bSkvnJvV/LAbLsBwTuuTt0DllIWH804vyKRnoSbeYp+2XoAXWg=
+	t=1717508724; cv=none; b=so71U+WRO5bEb1prFdZ2QYnlwzfT8i8OEJh+B69908Ej30QDLZ6N4Nfw/nDcfc/v7JenBHxm2QKLYFyHkI6sctM+EWxrEx6O+SIuUwLMl6TyZDLIjmO8Bzk0bXskWGHKVU5QLEqjILoeciz133ME0pnzS7INtyYZnhLR4yQ7MNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717508720; c=relaxed/simple;
-	bh=frboxRgAfUv+GKJapbgwQIbwJyHgxcCvYSSnLVeO6+U=;
+	s=arc-20240116; t=1717508724; c=relaxed/simple;
+	bh=hKlh8wSLpHYjQZ00z5cSoH3V/VHXsRFhCXxLunpXjZI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DgAcuj2eByIjMIXBsDUe4hU9lfjLfUYkpkhZHbjm9l4BLrrGEoBuC8xizwLo+twxEdD6BMwBqYyrE1Os7Aijm5acrzmA90MCuXkh6OrH4LQYrYEYnEe1YOddjE105wNJfHvj80d/pOS5Q5AUlWJqw7HLHmTO5XGYL+6ZYYkAj1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KbZIfDOM; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=mc6Q1reXZQaXx7cfbLVjCxpG0hyRknURoUL2u3Mr1MOHekoHsZhHtbtf7L4TgX1Efg+ebzEe1mevKjEVXlQoyPQscXPpAfIhX2jPZJHBeqjTgME/bYUho+Grsbc6X5EWGJaIrOa4383JdsR77LUw66dugERyUQZfI5VmVOo2QyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=baj0BDsg; arc=none smtp.client-ip=209.85.208.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62c7a4f8cd6so79853017b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:45:18 -0700 (PDT)
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-57a32f2f782so602760a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:45:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717508718; x=1718113518; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717508721; x=1718113521; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZZ3cUtQegabfCatPhpVz93lfzqoV7rdzjimbbupxJg8=;
-        b=KbZIfDOMV4Xs/nxNp/xJnVtB/EJ8ERPuCeu/HcrbLpoIc29kQYO8egrId5AhZ7gSpj
-         P2164+DvvR+F83RxJ5D5bLY53tXbT2Ol18oaDR1cD8CmtyZ51Bgz9T3NXzvrESpKqCcq
-         ACH0e1EM2nvfre8QKM4IFrR/ywH8YHWmEAbC9acqrcmDjGW5OYTzhdeaAKKbwb9fgaHG
-         kZeQVBSrVOEQjDgRa+g+bhrCTKcw2uRhvqM8Tc5Akx+CpEg9gZQjYaWdOUjLvpmsKAYI
-         e5MEQl/dBlx9gbXf5eOoENoLlq7H901Uwh23QHufL9RbzB8lXCDh3keDYGz14qCbk6QK
-         dxNg==
+        bh=t6EPyYWpPcV+5NfvSnZb4FIJDEsQgnCMX3rGaAHKq7k=;
+        b=baj0BDsgksOwfM0b7rZDPQYaTnCBjRdyzl7C1HTLnGkNXgL35hAicPup7b6wpvAo65
+         assCzdDwhlUIgavFxGWm7uZFxAuxCcLuwc+/P/JrW34wLlsx9uTRjDkiGDtq60OTKjXA
+         jC2bCeap80uPKvPwNpFnRV4TJkqt2+H/NSEWc/Do0/M7qB5VTxejnDitQunC8GL9tAG4
+         tFt8tQB4BlZVVseIAsEzJu+meWWjAfyACr1D4bNCVU8CyGCZwzEvP2OdmmpkUy8/9XtP
+         w+RBc1ouyrMlzooVUr0VnqM1Fd7IZiYYFDyHOogDvdDdl6vLiPmMr4DpaaqzTWVlav4D
+         EubQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717508718; x=1718113518;
+        d=1e100.net; s=20230601; t=1717508721; x=1718113521;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZZ3cUtQegabfCatPhpVz93lfzqoV7rdzjimbbupxJg8=;
-        b=Q26KougC9aYTbBg6qxRVqpDFiwqe1UjscM51rF/D7/ja1RDbwxbj47uewMS8o3U0rx
-         6D4zH+XFqN6A87DkUQ39ZVF53/BJEFRdWL2s+/cxj7YSCCdnHE9QG2OeivDr9iJFyqBP
-         0WQpI9x2xz/2oSf0aqcx0izFch5ccjcDgA+dqkFNj1lCNz1ybl3RcbEmKc4vj/TqMDHe
-         gpY6Eokin+TQNzk62cYNGSFQ/rTAj7mOJitDktrtVXWMrp1g7ZWUMrr1/2PIOAjShznj
-         NRJo3C5yJliFNuCMGxZm5gU01d6Mk/whLvNBBPAJIA4W+GDWTbm3VeYrGALxFgZji0qS
-         2Q/w==
-X-Gm-Message-State: AOJu0Yz7ui0pQe744b1Hu2m6avG60OJ4y3Knv12SX4gLHxw/1eSBppfP
-	0RIDJiX4szIRVqggj8IhY53TA8F/UoFT0fJs3KB6nPoVazH/tBqXV5v6lCcuMkNAGBrnHhDhxZr
-	7WR8XnQ==
-X-Google-Smtp-Source: AGHT+IEkbNeSKC24YXNp8hEAS/4YltjsT2mzNRgclESiFRqUSFfQm058/Kdmud9BhwszYySoplorz7Dc+9sJ
+        bh=t6EPyYWpPcV+5NfvSnZb4FIJDEsQgnCMX3rGaAHKq7k=;
+        b=UJ2lutcJnOmQ4xpSMAUz7mv70OP38Olw8Fz+hqZyiltN25lEA0Qvw+G41FAUfK1EBF
+         Oem43EtG+rl5KoF2FKg4TqTis8sFKPmFx5CFoksy943ica+TDe5CbPOE8fiRzj+oCW6p
+         tQibhffVc+UFKYlT4mnhEm7TXbbOyQFr1Ti6HvdozrUmE7kFUkrhuFG9Uaor6cIP5vBD
+         /PTSUVExK2BX8bGG/P5pB5fJUzFpXZ+bFvWn2sAwUJ3UP2HRHJGtewaL7sBi7s4wFWWN
+         Z/jP9s2CHA0FVVXUObMFL9mdU+hdn237zHffXVgZ8M91PAV8N4dKhEaUpU73t3lDQTnS
+         d5Hw==
+X-Gm-Message-State: AOJu0YxOVjUIHZsOd2RdkmCN1m7zlS7fkLAn5RnRVR9m/P3XsHjFldS8
+	t6BVqFGaRBc5p9w9Xa60EMWHEWcvC3y+6Gu4x0ors8hWOgp8RMsrbfw7vEddq8/rxgccQqN+Fsq
+	+BH2A9A==
+X-Google-Smtp-Source: AGHT+IE77ud1956R29vGZAYu63z48AEP617RiQyEfP6nSn1grWpFCRZzwp0bmaj7cTS2Uw50c0BJt91Ko4lo
 X-Received: from dvyukov-desk.muc.corp.google.com ([2a00:79e0:9c:201:789f:7f5b:3f40:46c8])
- (user=dvyukov job=sendgmr) by 2002:a05:690c:3506:b0:61b:e6d8:1c01 with SMTP
- id 00721157ae682-62c79896e11mr27605477b3.10.1717508717741; Tue, 04 Jun 2024
- 06:45:17 -0700 (PDT)
-Date: Tue,  4 Jun 2024 15:45:02 +0200
+ (user=dvyukov job=sendgmr) by 2002:a05:6402:5309:b0:57a:5e7c:d9ef with SMTP
+ id 4fb4d7f45d1cf-57a5e7cdac6mr7044a12.6.1717508720597; Tue, 04 Jun 2024
+ 06:45:20 -0700 (PDT)
+Date: Tue,  4 Jun 2024 15:45:03 +0200
 In-Reply-To: <cover.1717507310.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1717507310.git.dvyukov@google.com>
 X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
-Message-ID: <1ada3be307bbd076c4ea63530cf445e7fbd0e4e7.1717507310.git.dvyukov@google.com>
-Subject: [PATCH 1/4] x86/entry: Remove unwanted instrumentation in common_interrupt()
+Message-ID: <80972769ad2ebebc7ab0c39bd48f31ce080f0394.1717507310.git.dvyukov@google.com>
+Subject: [PATCH 2/4] kcov: add interrupt handling self test
 From: Dmitry Vyukov <dvyukov@google.com>
 To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
 	dave.hansen@linux.intel.com, x86@kernel.org
@@ -82,104 +82,106 @@ Cc: linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, elver@google.com,
 	Dmitry Vyukov <dvyukov@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-common_interrupt() and friends call kvm_set_cpu_l1tf_flush_l1d(),
-which is not marked as noinstr nor __always_inline.
-So compiler outlines it and adds instrumentation to it.
-Since the call is inside of instrumentation_begin/end(),
-objtool does not warn about it.
-
-The manifestation is that KCOV produces spurious coverage
-in kvm_set_cpu_l1tf_flush_l1d() in random places because
-the call happens when preempt count is not yet updated
-to say that we are in an interrupt.
-
-Mark kvm_set_cpu_l1tf_flush_l1d() as __always_inline and move
-out of instrumentation_begin/end() section.
-It only calls __this_cpu_write() which is already safe to call
-in noinstr contexts.
+Add a boot self test that can catch sprious coverage from interrupts.
+The coverage callback filters out interrupt code, but only after the
+handler updates preempt count. Some code periodically leaks out
+of that section and leads to spurious coverage.
+Add a best-effort (but simple) test that is likely to catch such bugs.
+If the test is enabled on CI systems that use KCOV, they should catch
+any issues fast.
 
 Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Fixes: 6368558c3710 ("x86/entry: Provide IDTENTRY_SYSVEC")
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: syzkaller@googlegroups.com
----
- arch/x86/include/asm/hardirq.h  | 8 ++++++--
- arch/x86/include/asm/idtentry.h | 6 +++---
- 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
-index c67fa6ad098a..6ffa8b75f4cd 100644
---- a/arch/x86/include/asm/hardirq.h
-+++ b/arch/x86/include/asm/hardirq.h
-@@ -69,7 +69,11 @@ extern u64 arch_irq_stat(void);
- #define local_softirq_pending_ref       pcpu_hot.softirq_pending
+---
+
+In my local testing w/o the previous fix,
+it immidiatly produced the following splat:
+
+kcov: running selftest
+BUG: TASK stack guard page was hit at ffffc90000147ff8
+Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN PTI
+...
+ kvm_set_cpu_l1tf_flush_l1d+0x5/0x20
+ sysvec_call_function+0x15/0xb0
+ asm_sysvec_call_function+0x1a/0x20
+ kcov_init+0xe4/0x130
+ do_one_initcall+0xbc/0x470
+ kernel_init_freeable+0x4fc/0x930
+ kernel_init+0x1c/0x2b0
+---
+ kernel/kcov.c     | 28 ++++++++++++++++++++++++++++
+ lib/Kconfig.debug |  9 +++++++++
+ 2 files changed, 37 insertions(+)
+
+diff --git a/kernel/kcov.c b/kernel/kcov.c
+index c3124f6d5536..04136f80042f 100644
+--- a/kernel/kcov.c
++++ b/kernel/kcov.c
+@@ -1057,6 +1057,30 @@ u64 kcov_common_handle(void)
+ }
+ EXPORT_SYMBOL(kcov_common_handle);
  
- #if IS_ENABLED(CONFIG_KVM_INTEL)
--static inline void kvm_set_cpu_l1tf_flush_l1d(void)
-+/*
-+ * This function is called from noinstr interrupt contexts
-+ * and must be inlined to not get instrumentation.
-+ */
-+static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void)
++#ifdef CONFIG_KCOV_TEST
++static void __init selftest(void)
++{
++	volatile int i;
++
++	pr_err("running self test\n");
++	/*
++	 * Test that interrupts don't produce spurious coverage.
++	 * The coverage callback filters out interrupt code, but only
++	 * after the handler updates preempt count. Some code periodically
++	 * leaks out of that section and leads to spurious coverage.
++	 * It's hard to call the actual interrupt handler directly,
++	 * so we just loop here for ~400 ms waiting for a timer interrupt.
++	 * We set kcov_mode to enable tracing, but don't setup the area,
++	 * so any attempt to trace will crash.
++	 */
++	current->kcov_mode = KCOV_MODE_TRACE_PC;
++	for (i = 0; i < (1 << 28); i++)
++		;
++	current->kcov_mode = 0;
++	pr_err("done running self test\n");
++}
++#endif
++
+ static int __init kcov_init(void)
  {
- 	__this_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
- }
-@@ -84,7 +88,7 @@ static __always_inline bool kvm_get_cpu_l1tf_flush_l1d(void)
- 	return __this_cpu_read(irq_stat.kvm_cpu_l1tf_flush_l1d);
- }
- #else /* !IS_ENABLED(CONFIG_KVM_INTEL) */
--static inline void kvm_set_cpu_l1tf_flush_l1d(void) { }
-+static __always_inline void kvm_set_cpu_l1tf_flush_l1d(void) { }
- #endif /* IS_ENABLED(CONFIG_KVM_INTEL) */
+ 	int cpu;
+@@ -1076,6 +1100,10 @@ static int __init kcov_init(void)
+ 	 */
+ 	debugfs_create_file_unsafe("kcov", 0600, NULL, NULL, &kcov_fops);
  
- #endif /* _ASM_X86_HARDIRQ_H */
-diff --git a/arch/x86/include/asm/idtentry.h b/arch/x86/include/asm/idtentry.h
-index d4f24499b256..ad5c68f0509d 100644
---- a/arch/x86/include/asm/idtentry.h
-+++ b/arch/x86/include/asm/idtentry.h
-@@ -212,8 +212,8 @@ __visible noinstr void func(struct pt_regs *regs,			\
- 	irqentry_state_t state = irqentry_enter(regs);			\
- 	u32 vector = (u32)(u8)error_code;				\
- 									\
-+	kvm_set_cpu_l1tf_flush_l1d();                                   \
- 	instrumentation_begin();					\
--	kvm_set_cpu_l1tf_flush_l1d();					\
- 	run_irq_on_irqstack_cond(__##func, regs, vector);		\
- 	instrumentation_end();						\
- 	irqentry_exit(regs, state);					\
-@@ -250,7 +250,6 @@ static void __##func(struct pt_regs *regs);				\
- 									\
- static __always_inline void instr_##func(struct pt_regs *regs)		\
- {									\
--	kvm_set_cpu_l1tf_flush_l1d();					\
- 	run_sysvec_on_irqstack_cond(__##func, regs);			\
- }									\
- 									\
-@@ -258,6 +257,7 @@ __visible noinstr void func(struct pt_regs *regs)			\
- {									\
- 	irqentry_state_t state = irqentry_enter(regs);			\
- 									\
-+	kvm_set_cpu_l1tf_flush_l1d();                                   \
- 	instrumentation_begin();					\
- 	instr_##func (regs);						\
- 	instrumentation_end();						\
-@@ -288,7 +288,6 @@ static __always_inline void __##func(struct pt_regs *regs);		\
- static __always_inline void instr_##func(struct pt_regs *regs)		\
- {									\
- 	__irq_enter_raw();						\
--	kvm_set_cpu_l1tf_flush_l1d();					\
- 	__##func (regs);						\
- 	__irq_exit_raw();						\
- }									\
-@@ -297,6 +296,7 @@ __visible noinstr void func(struct pt_regs *regs)			\
- {									\
- 	irqentry_state_t state = irqentry_enter(regs);			\
- 									\
-+	kvm_set_cpu_l1tf_flush_l1d();                                   \
- 	instrumentation_begin();					\
- 	instr_##func (regs);						\
- 	instrumentation_end();						\
++#ifdef CONFIG_KCOV_TEST
++	selftest();
++#endif
++
+ 	return 0;
+ }
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 59b6765d86b8..79836a15b6cb 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2171,6 +2171,15 @@ config KCOV_IRQ_AREA_SIZE
+ 	  soft interrupts. This specifies the size of those areas in the
+ 	  number of unsigned long words.
+ 
++config KCOV_TEST
++	bool "Test CONFIG_KCOV feature"
++	depends on KCOV
++	help
++	  Sanity check for KCOV coverage collection.
++	  Runs built-in self test on boot to detect some common issues.
++
++	  If unsure, say N.
++
+ menuconfig RUNTIME_TESTING_MENU
+ 	bool "Runtime Testing"
+ 	default y
 -- 
 2.45.1.467.gbab1589fc0-goog
 
