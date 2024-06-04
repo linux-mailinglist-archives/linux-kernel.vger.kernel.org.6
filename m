@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-200685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720008FB372
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:21:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C4E8FB358
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3234DB26DE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:17:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C77B283870
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6067B146A79;
-	Tue,  4 Jun 2024 13:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF2414659B;
+	Tue,  4 Jun 2024 13:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="ntCq18NB"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lDoW2IOo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CDF3236;
-	Tue,  4 Jun 2024 13:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45A6144D2E;
+	Tue,  4 Jun 2024 13:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717507043; cv=none; b=MhO2aP569eTkCWpVENkDhsHr4abuenxgXS7p4hmsxTFKVrG5s0LpDLnrVVWSy3j6Su1g0R7JZmS6eUKxv45A3Lpo9Mtw0EIKuEQrQo9QfOdKCMNKXSmRu3qZUnejbTC0wou2gGFeCxR7yfp+FEvxmHlSjFr6+1hyZEhU1yZd9zU=
+	t=1717507082; cv=none; b=MdVa1+ax1LfQu3ko2jbhAcKJrNXDVS84O7tGuQtlcZxckoojYGdOlj7pnHunM90s4yRM7hcD3T+V7JCYrDFW1jKL2RT5My0mXpv0/Z80hJrAtGo/Zi0D77lNOZpzYtWjSrzuTI/fLSKnX8nNLncbFk4ZMVeYFYc6oQIHvBl0RmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717507043; c=relaxed/simple;
-	bh=0hGLjFWiIFMsbI4JKLKav0MyVHp4ycP2Ma6r3nGdAEM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H361g0aCa8WAoINIkp91YG8SP4idXih2G7aI456BkCn3MHUk62fNx8i04SBYdVNq3SHyrHuBWxUcA/MSl4mSOA5CzBJxcXYLd9vKttxlRsdzJNezOZUWKkn23e6vXJ7Mr6tUBuHTiiCzO/Bb468nBHFx/h314NhgPx0Yt6haO04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=ntCq18NB; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4547dupi018474;
-	Tue, 4 Jun 2024 08:17:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=F+8rxQO7RSXvZbQV
-	W2ms+ZsRV/idSK+u4TSZFYJeK28=; b=ntCq18NBIkTKGGyWrDZUMIswciWzGQZc
-	X6WtTV6z8I4Zh9pb8zOG92ifpGi8uRVsctst4vzS3WxAlodevfxm92PHPv/4pJhA
-	/iwWF4OJ/jI9GV1Z5yqFDPea5DNv0f0xndOgNJEFRqalLw3ITZUw2VIxrWaKGGrJ
-	rVER+eok9x9LeLwlJo8UpFbO6+WIGqYHDBS+CTGb+NaCSG7lh4x900XCZuZ4YhmD
-	orQt+XNfdBX07cZTJq/sLpQaGEBg4pXIp+k/A8mvtsiLyJEnK+to6HAGrA5er3vv
-	oDFDee29tnAJZgPBSjH/1LFmY4JTN8K6dXFxQExNXTkzm9AQZsjP6g==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3yg02hjp90-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 08:17:06 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 14:17:05 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Tue, 4 Jun 2024 14:17:05 +0100
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E3994820249;
-	Tue,  4 Jun 2024 13:17:04 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH] spi: cs42l43: Correct SPI root clock speed
-Date: Tue, 4 Jun 2024 14:17:04 +0100
-Message-ID: <20240604131704.3227500-1-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717507082; c=relaxed/simple;
+	bh=lH1YSHW+QRtl0PgeKbxOgI/6+SHrKNvBO9ZLRDA4uzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t5zHCvnQFcX6GttsljEUCvS1BBob5oOZUW6KFdQLa2wx4REExlLWs5myRCjnw5czRlH5l8a/6vY8txzxz5FVWIzU7oIxyvTpY2o1M336V9cE8hR1c6cTWI6sbpIsNuOEjTXF0C1Mfu8INwHx4rSJE9ekJ16wcmc3vFe67oUVC00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lDoW2IOo; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717507081; x=1749043081;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lH1YSHW+QRtl0PgeKbxOgI/6+SHrKNvBO9ZLRDA4uzw=;
+  b=lDoW2IOoc+MgLuenK33eRCe/PyOyz/o+KvHkp3MT96+44SVO7j3ZJHh/
+   3JaDoNK4z5RFvA/b5TndDC5CBBNVHSBTVQTP9GGuzS9aoBqTaCYgE6J8m
+   40V+IwuZWmSb87eo2CIrMFF9Ge5+5pJ7ZagJ49DN4FjxuuXAr+FFBfiUb
+   FSMq6aN3PcytviqNtRdiV9X+Dvrg1uVLYN51Kun273XeHMKMVo/LG8WKb
+   QeqxD4YpeJOe4O1LLXzOIfVErn5Kxr4E+k0hM9yHa/XSes2XvDg3jEW6A
+   6tWcYCeC13p9MvchkwC2lYn/k3SztW2c3VTKEnuIbzujRzC71gXcQxf0v
+   w==;
+X-CSE-ConnectionGUID: H6GjsBv/Q0mYKrWfFnA3yQ==
+X-CSE-MsgGUID: zBr33mITRBKwbplH7aMNgg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14275845"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="14275845"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 06:18:00 -0700
+X-CSE-ConnectionGUID: npG3c61kQDeJTyufGWscDw==
+X-CSE-MsgGUID: x8TPzEm0SRi7mLbo0hmLQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="60426903"
+Received: from unknown (HELO tlindgre-MOBL1) ([10.245.247.168])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 06:17:54 -0700
+Date: Tue, 4 Jun 2024 16:17:47 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Tony Lindgren <tony@atomide.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Johan Hovold <johan@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v7 1/7] printk: Save console options for
+ add_preferred_console_match()
+Message-ID: <Zl8T-0zpTYy5GFau@tlindgre-MOBL1>
+References: <20240327110021.59793-1-tony@atomide.com>
+ <20240327110021.59793-2-tony@atomide.com>
+ <ZlC6_Um4P4b-_WQE@pathway.suse.cz>
+ <Zll0Mg-Ovqx0n7Zd@tlindgre-MOBL1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: vUp6eeGzQsDwNkFkiGDvoxSdY-deO_LX
-X-Proofpoint-ORIG-GUID: vUp6eeGzQsDwNkFkiGDvoxSdY-deO_LX
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zll0Mg-Ovqx0n7Zd@tlindgre-MOBL1>
 
-The root clock is actually 49.152MHz not 40MHz, as it is derived from
-the primary audio clock, update the driver to match. This error can
-cause the actual clock rate to be higher than the requested clock rate
-on the SPI bus.
+On Fri, May 31, 2024 at 09:54:42AM +0300, Tony Lindgren wrote:
+> On Fri, May 24, 2024 at 06:06:21PM +0200, Petr Mladek wrote:
+> > A solution might be to store "devname" separately in
+> > struct console_cmdline and allow empty "name". We could
+> > implement then a function similar to
+> > add_preferred_console_match() which would try to match
+> > "devname" and set/update "name", "index" value when matched.
+> 
+> This sounds nice, the empty name can be used to defer consoles that
+> are not known early. And on console_setup() we only set the devname
+> for such cases.
 
-Fixes: ef75e767167a ("spi: cs42l43: Add SPI controller support")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/spi/spi-cs42l43.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yup reserving a slot for a devname console at console_setup() time
+in console_commandline[] allows keeping the consoles in the right
+order again :)
 
-diff --git a/drivers/spi/spi-cs42l43.c b/drivers/spi/spi-cs42l43.c
-index 9d747ea69926..902a0734cc36 100644
---- a/drivers/spi/spi-cs42l43.c
-+++ b/drivers/spi/spi-cs42l43.c
-@@ -26,7 +26,7 @@
- #include <linux/units.h>
- 
- #define CS42L43_FIFO_SIZE		16
--#define CS42L43_SPI_ROOT_HZ		(40 * HZ_PER_MHZ)
-+#define CS42L43_SPI_ROOT_HZ		49152000
- #define CS42L43_SPI_MAX_LENGTH		65532
- 
- enum cs42l43_spi_cmd {
--- 
-2.39.2
+> To me it seems we additionally still need to save the kernel command
+> line position of the console too in struct kernel_cmdline so we can
+> set the preferred_console for the deferred cases.
 
+Then with the command line consoles in the right order, there's no need
+to save the position separately.
+
+And I think then we can also revert commit b73c9cbe4f1f ("printk: Flag
+register_console() if console is set on command line"). But I need to
+test the fixes some more before sending out.
+
+Regards,
+
+Tony
 
