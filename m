@@ -1,117 +1,106 @@
-Return-Path: <linux-kernel+bounces-199900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D3E8FA773
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D608FA775
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034691C23802
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98C41C238D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87993BE6F;
-	Tue,  4 Jun 2024 01:18:00 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690DC138495;
+	Tue,  4 Jun 2024 01:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oLCjYGrM"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D146FD5;
-	Tue,  4 Jun 2024 01:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A173F1A28B;
+	Tue,  4 Jun 2024 01:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717463880; cv=none; b=UXcd/lXO43be06IRnhPj+9hfYXmzpGEhzaFhV/hl4pClP8vw6sXE+R5vaFIdKitHA5hIRkR5kui3yD25esK73AxLui3FAx7Ml5cj4ZHVRF4Nx0uXBm/uLXt/m1ngGLWx+C/EJEoeFtMRqaHEIt8kI/jherNADAlJSA1n9kxtMq8=
+	t=1717464019; cv=none; b=Vc6INRkPPCtHPSK3e4igICBCM8eP4277lyaTbZuE+1wiqkNGKaBAxudiPu/4mbTAQcUM/vFmKMVPAUbYorSRUVHqp7kspjvyCwwPY4K9EcwZJrtSbyFOiyLmIbiO8QT2vbCYjYsy8OW1e8qS4I7NV3o7xGLxJWwmD00qN3gYJKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717463880; c=relaxed/simple;
-	bh=OzRQPXtvsFdD9jyp6q+9LTW2h0h6y9O369n2NTJKpDE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aKb5g+0H4C3YkGsT6ZHnaKu9jOzKcdak4VM9Cb7uFD3CXiqQrWCZU5ZzwlNeVSH4EYGpj7c+qS3p101K1mGWYzEZsyT5pHP9Z0Kbi1Za8V1NuqNYprwNFtuPTLoHdKUHEqh7GmmEzsriBybFt4eTxnBS9TWZY2SHOvU6rI6WCs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453NrBxt028282;
-	Mon, 3 Jun 2024 18:17:24 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yg35f24n9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 03 Jun 2024 18:17:24 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 3 Jun 2024 18:17:23 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Mon, 3 Jun 2024 18:17:18 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <krisman@suse.de>
-CC: <adilger.kernel@dilger.ca>, <coreteam@netfilter.org>,
-        <davem@davemloft.net>, <ebiggers@kernel.org>, <fw@strlen.de>,
-        <jaegeuk@kernel.org>, <kadlec@netfilter.org>, <kuba@kernel.org>,
-        <linux-ext4@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <lkp@intel.com>, <llvm@lists.linux.dev>, <netdev@vger.kernel.org>,
-        <netfilter-devel@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
-        <pablo@netfilter.org>,
-        <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>, <tytso@mit.edu>
-Subject: Re: [PATCH V5] ext4: check hash version and filesystem casefolded consistent
-Date: Tue, 4 Jun 2024 09:17:17 +0800
-Message-ID: <20240604011718.3360272-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <87plsym65w.fsf@mailhost.krisman.be>
-References: <87plsym65w.fsf@mailhost.krisman.be>
+	s=arc-20240116; t=1717464019; c=relaxed/simple;
+	bh=UUJqDpRj4P4C23hAk/wb3/k8mutmc6OeiJneaKPzMWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=d6Vbx/akY3bm3N7Nyv2PoEwEcrJEfVgdtQVU44wC9zx3Kc0inPhV376F1NySft3FU/76Cmn06AflyPshcwrcTijEdGFHZNYcUQo3c946QVxI6KawSsycPaVYOa5nVkYUGKH9foKoR1K6R5+hntkT+ybpiqQMbBkz62qUjNfSwCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oLCjYGrM; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717464012;
+	bh=QywYSDQzzJCBqdmfZO2R9b64PaxhNweFd1QnMPYEZiU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oLCjYGrM1R3u74fQG+Cj+dioaLRCDjjvdmZvNhB/zAEXbWkG55v9NMHFknliYHFZp
+	 Kq++8eCn8AKsUP1vLeN6hJ4yN0CBq0tYRtZsAgxoCmh27Z6MXBBJM/AH5W9WqFeaYS
+	 iTgtGts2JKe4HWGxxcAIQpXxpVHiX3jJEcaU0MwlxDe4EkN7mOP1rRiX1PJH0Vl2iZ
+	 BxDLY77ox79gTzjHMd7au8+0eCjRfMH4kha16rjiTkwGzUeanIi79Y8idxj2u9DUql
+	 //agfSyU5XWo5LnuJLq1e+vft6K7YrmfpBRqtFXmc9Sw6dquJITADWAiqxSVnYQv3b
+	 1h2SPvmTO42hQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VtXp41NRbz4wyl;
+	Tue,  4 Jun 2024 11:20:12 +1000 (AEST)
+Date: Tue, 4 Jun 2024 11:20:10 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the i2c-host tree
+Message-ID: <20240604112010.4b29ffe7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: gfcExZLBCFyH3mjBVyUMLZjSXIlULXV0
-X-Proofpoint-ORIG-GUID: gfcExZLBCFyH3mjBVyUMLZjSXIlULXV0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 priorityscore=1501 adultscore=0 mlxscore=0 phishscore=0
- clxscore=1011 malwarescore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2405170001 definitions=main-2406040008
+Content-Type: multipart/signed; boundary="Sig_/IR._oIounaqgrxGobPXISQP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, 03 Jun 2024 10:50:51 -0400, Gabriel Krisman Bertazi wrote:
-> > When mounting the ext4 filesystem, if the hash version and casefolded are not
-> > consistent, exit the mounting.
-> >
-> > Reported-by: syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com
-> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > ---
-> >  fs/ext4/super.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index c682fb927b64..0ad326504c50 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -5262,6 +5262,11 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
-> >  		goto failed_mount;
-> >  
-> >  	ext4_hash_info_init(sb);
-> > +	if (es->s_def_hash_version == DX_HASH_SIPHASH && 
-> > +	    !ext4_has_feature_casefold(sb)) {
-> 
-> Can we ever have DX_HASH_SIPHASH set up in the super block?  I thought
-> it was used solely for directories where ext4_hash_in_dirent(inode) is
-> true.
-The value of s'def_hash_version is obtained by reading the super block from the
-buffer cache of the block device in ext4_load_super().
-> 
-> If this is only for the case of a superblock corruption, perhaps we
-> should always reject the mount, whether casefold is enabled or not?
-Based on the existing information, it cannot be confirmed whether the superblock
-is corrupt, but one thing is clear: if the default hash version of the superblock
-is set to DX_HASH_SIPHASH, but the casefold feature is not set at the same time,
-it is definitely an error.
+--Sig_/IR._oIounaqgrxGobPXISQP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Lizhi
+Hi all,
+
+The following commits are also in the i2c tree as different commits
+(but the same patches):
+
+  5fb9780aa910 ("i2c: Remove I2C_CLASS_SPD")
+  fe69f7d19df7 ("i2c: synquacer: Remove a clk reference from struct synquac=
+er_i2c")
+
+These are commits
+
+  e61bcf42d290 ("i2c: Remove I2C_CLASS_SPD")
+  e6722ea6b9ed ("i2c: synquacer: Remove a clk reference from struct synquac=
+er_i2c")
+
+in the i2c tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/IR._oIounaqgrxGobPXISQP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZea8oACgkQAVBC80lX
+0GxVdgf/VduVTmPeMF/6GmvX8svTVezCjdR/Tahy1I7hJhDnFuphjNfRZIKaz95U
+rtjJmyI0NM6tqxseA+WGbsiZ9DecKEJj6tqhhidCrZKArIHkhMF27arpUG6L0KIY
+mZDDuaSNqOPHcKraS6C4erjCteQR+gP8IEvpd3+zPnAPRmNQh6QNgMuiGLe7Q175
+3kkuWRj9/hXEXpERhx7iYt/Ok9YyCbd6NYZcyYpLe4bLSDYAp4Cvg1TQdnJPq7QT
+pQZt1IjDOeaj33fAShWltOWTKmeik8D+Jmx6eyYtdgdr4MgJ16c7HDqDZfMNE8wu
+UThbK558zzRtnUlDsfs8OTnODgEXEw==
+=AOfs
+-----END PGP SIGNATURE-----
+
+--Sig_/IR._oIounaqgrxGobPXISQP--
 
