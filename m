@@ -1,193 +1,169 @@
-Return-Path: <linux-kernel+bounces-200455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1268FB042
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9E08FB04D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953151C2323F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CE4A1C2338F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9058C1448EE;
-	Tue,  4 Jun 2024 10:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5FF1459FE;
+	Tue,  4 Jun 2024 10:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="COT1BMKx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YT1+KKEi"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232F522F14
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60C7144D39
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717497955; cv=none; b=ZqoksnJEggH7MkX5HGaHC5M5vpDtkfyHnS7gSyFlYrXcQeP/zlxmGtu904ayTUy1laG9DxdN6Yas5fn155ypfAjwvw3z9WNBj/Q78B0AkFftXtKzvlfFpHV81fF4VS8Ndy0ffkgDo+NYMdBNO6oloUa68u7bqZp5REDWwhpp3YQ=
+	t=1717497970; cv=none; b=qnHG462TcB9I4l1irGzyuP0MmzvEnMMI8zYrLzq2rNyhg1lW1PIYci6KQQbNbhoxq0wmoMU6787iE7CCfbxRESuxi2Z53xQ8yaC6r68ocGWF5Ykw/lqOdbLLMdzycvZWFeUwE49+IiAVoAWXBE4aWvjhWqJ54V4AIEWhkNo5ocY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717497955; c=relaxed/simple;
-	bh=B2/nT1cG4jKC4NmbLwlGBPm8cRm2uK1rxj4/nZNSGIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rIUSUXhV9tqlbzj/l5aisZ9o0e67egyHMH6OSmPexfUo+GBsSz78TNcYoyKU59E+vyQr/DtNvXOafYYJMfGCzbdZGqdfrNChXkTNdjoEtB4QDIR6USiUQv7y56eGcNffr8GGziW+8Dsp83K1W/f3hkxsoSl/vDDq8Ow2yBTkco0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=COT1BMKx; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1717497970; c=relaxed/simple;
+	bh=hZouHW3Be7oHDmJaYU8Pk6X1E3qcjMSGo2PmSWsTIao=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fzO2wNvIXBNwrcD74c0NqPoGzD1lVYmCfDvj64aCjcSWiLp5soH1qsgvNVdoHgjKxgvsihm+bB0LbLbQXvB5ULOCAFeDduT3MzmY2itiyRJd+9jxaoNGgPk8jbZ10rZH8Cuyq7VQWGoQDVhVvRkimhUPDC4WI2PYfhI4A14VRFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YT1+KKEi; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717497952;
+	s=mimecast20190719; t=1717497968;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9HPM0o2rvx0/bFV4qmRXd0NqDxdmnpbCI/tYptEl7x8=;
-	b=COT1BMKxE2ixXCFbr1JNI+ME/pP909uN3xctbArGVQyz8S64SbK+bi9hzRe+mYBbqOolsd
-	tmQG21a5Y3mMcVXXZDx0RBpcCSR7HCrEzf5awzzi5w8ZrT9rIdtoff7utUGWOL/SnsYeKx
-	tSrOMgtbSs68LfdUin6viuRYZmU816o=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=2INWL2HfkCEOUaQcejz/ZeHkVaV6BSYyKwTdM3007eI=;
+	b=YT1+KKEiNxdCOtFtsQjXJhhtgRZzrgUHIg+L2vZqIw5ppNNNrsHkB2l+E8wnY9Fj1n2ZvK
+	zKbylNFIfQ6LdeQ40nfhDTTvqkJaObZ+P1rjt0OZMN2wMSzqHG/xS/d1Fd98gBHWTd3ZCC
+	uEEwwWlCKW0yvbeyDV+9UzwUwriHskQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-135-q1awNP8DOpCdARQBC2i7pA-1; Tue, 04 Jun 2024 06:45:51 -0400
-X-MC-Unique: q1awNP8DOpCdARQBC2i7pA-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52b9ea6e320so1121269e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:45:51 -0700 (PDT)
+ us-mta-663-qlIC1bTiPD-i7d0onJMFZg-1; Tue, 04 Jun 2024 06:46:06 -0400
+X-MC-Unique: qlIC1bTiPD-i7d0onJMFZg-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-354dfd4971dso145877f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:46:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717497950; x=1718102750;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9HPM0o2rvx0/bFV4qmRXd0NqDxdmnpbCI/tYptEl7x8=;
-        b=Q1T5axPoHWdOkctZAAQmDz6JQL2yeTOdMahafJhsVauPeEOytgsGrMl0I2n2WIR64j
-         sxI0xFqRgf4RGEK4qXRvLIZClcURQehRXnrb14ceVlKiBqBOdgx8dPhoNcU3091xbHa1
-         cFt7MHkkW4O5QBIxgkP83NOjURn0qvZsBqJwhVD+M6Lwwz/DQpEdCBVbqTjs9XM6b3z+
-         9HQts+kVRgEh/P9KzKBdIW/Q6v+HGBWbilcSYcfRzkiN9MRB5tSfjnc9e7N6EdGIMq1G
-         YDBzm1eZSLUKE5aKpJkPSe82+gX5cIC9eIkcVEqQYXxIt0+m9CdTFNyPlxZAueS4BSf0
-         tLVg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1upXkx0c/rFikQjGMTd2QJH0u4hk1RoDh9QglICqZANS3Pq5sofNkI6Wmt1FFqBVGMeOGbEGbSCgSISsCMDdWPYzAp553CDz/PXEG
-X-Gm-Message-State: AOJu0YzRgZsW41XMzsWQlazOJhSzn6TNuJoOltt88WVFjKuTt/NypPWE
-	Ph/YItdTYmqmkWYz+/2j/dDU04aWfr4VYKLUE7Y5jv4kQc4TUtVPfNk6dSOcSIxz3pJYEIDUJQc
-	F9KVVduMDHrdYITQ4H/sa8h2D1GWgr3nsjfolXcqAHy1jHnMHose2mkO/pc8CeQ==
-X-Received: by 2002:ac2:4a9a:0:b0:51f:4096:dbca with SMTP id 2adb3069b0e04-52b896d8785mr6857693e87.62.1717497950149;
-        Tue, 04 Jun 2024 03:45:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYG4IrwksvZP3MoLvphLDi6zoGDHlCeqi18mwapWVaqnHicwb5LLwKcle3GYS5cWbJc8acsA==
-X-Received: by 2002:ac2:4a9a:0:b0:51f:4096:dbca with SMTP id 2adb3069b0e04-52b896d8785mr6857680e87.62.1717497949702;
-        Tue, 04 Jun 2024 03:45:49 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73a:3a00:a025:9b06:549e:c16b? (p200300cbc73a3a00a0259b06549ec16b.dip0.t-ipconnect.de. [2003:cb:c73a:3a00:a025:9b06:549e:c16b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062edbcsm11213042f8f.84.2024.06.04.03.45.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 03:45:49 -0700 (PDT)
-Message-ID: <7c6ae2a3-8ec3-4c9b-81c3-125f6973f0f3@redhat.com>
-Date: Tue, 4 Jun 2024 12:45:48 +0200
+        d=1e100.net; s=20230601; t=1717497965; x=1718102765;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2INWL2HfkCEOUaQcejz/ZeHkVaV6BSYyKwTdM3007eI=;
+        b=hGx/qw1vluYF5hBKLvAl7exo0BXuI0EcLjjd9+f2DicXA4ui6EwceDXdwpZZKP6RhG
+         T23GbnwTzeTUNsmc5s5rLFJYCkQJaSXlgxzCPybwnsQ/xy/zgCmAINPEQC1GCbopvBel
+         G0P2ybeKsM3rZxbY1S/GTJmy1ZOpN8mma57iYF1f2TW/usVLMIxtrFDK5hb7xXu/Uydw
+         3aJ8ISWZBhOh5Hk37ONqQdlRHk4sbzIDn2EkpONp8FPlzTgtnVJjBwysqcKcM5WHcUED
+         DanuYNt0fn2oSgkwvaEBxXzh0k0JTCofldwHhe0rNOP00aJx2ykxIbIuVnjtmAEHqhFd
+         UyfA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0ZvqecEYcIqt86NvPx5UxzFR1cwj4uZpiT/wbtkK0u08twSVhQi4L+0FU7upR3zaW6QWQUv3Sbyyw+2cBxrf4rAlDpUTdBdrBIVLv
+X-Gm-Message-State: AOJu0YwJdT6R0i2nNq5kGHhoMlHJPpyv7HhPwT80VVl0OgMEXB8h6TzY
+	Zz4CMCIHAuljkGKhOE9ksLr0raHDs4bb+Yp/y9qgXCX1wn30jUQDAo9Y8cgyCMgcKIdc1rS17/j
+	In39Z4m9uyQZPIOMWmnRddctr7MOMuqLaQsD77/eiwBtiFw9xHvuQ957jd1WC6g==
+X-Received: by 2002:a05:600c:1c1d:b0:41f:9c43:574f with SMTP id 5b1f17b1804b1-4212e0c3a8amr93112455e9.3.1717497965476;
+        Tue, 04 Jun 2024 03:46:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhZkg/0Z/sKJT7J3TWrid9lXiu2XPNT//okkfjNQbBrbPkwkDbEMZqKI/3Co973LwwfL0QWQ==
+X-Received: by 2002:a05:600c:1c1d:b0:41f:9c43:574f with SMTP id 5b1f17b1804b1-4212e0c3a8amr93112015e9.3.1717497965040;
+        Tue, 04 Jun 2024 03:46:05 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:1b74:3a10::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b84f8e7sm148593855e9.20.2024.06.04.03.46.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 03:46:04 -0700 (PDT)
+Message-ID: <84162ef4c695cb764454087ca0bc81082d4fac8d.camel@redhat.com>
+Subject: Re: [PATCH net-next v10 10/14] net: add support for skbs with
+ unreadable frags
+From: Paolo Abeni <pabeni@redhat.com>
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Donald Hunter
+ <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Richard
+ Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>,  Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,  Shuah Khan
+ <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Pavel Begunkov
+ <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe
+ <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand
+ <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+Date: Tue, 04 Jun 2024 12:46:01 +0200
+In-Reply-To: <20240530201616.1316526-11-almasrymina@google.com>
+References: <20240530201616.1316526-1-almasrymina@google.com>
+	 <20240530201616.1316526-11-almasrymina@google.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] mm/ksm: reduce the flush action for ksm merging
- page
-To: Alex Shi <seakeel@gmail.com>, alexs@kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
- willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
- hughd@google.com
-References: <20240604042454.2012091-1-alexs@kernel.org>
- <20240604042454.2012091-2-alexs@kernel.org>
- <9ca730ce-2b2f-42d2-8c7a-78735a995c64@redhat.com>
- <4d299245-3166-4810-b22b-2a5b4f54a049@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <4d299245-3166-4810-b22b-2a5b4f54a049@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 04.06.24 12:26, Alex Shi wrote:
-> 
-> 
-> On 6/4/24 4:07 PM, David Hildenbrand wrote:
->> On 04.06.24 06:24, alexs@kernel.org wrote:
->>> From: "Alex Shi (tencent)" <alexs@kernel.org>
->>>
->>> We can put off the flush action util a merging is realy coming. That
->>> could reduce some unmerge page flushing.
->>> BTW, flushing only do at arm, mips and few other archs.
->>>
->>
->> I'm no expert on that flushing, but I thought we would have to do the flushing before accessing page content -- before calculating the checksum etc.
->>
->> Now you would only do it before the pages_identical() check, but not when calculating the checksum.
->>
-> 
-> Hi David,
-> 
-> Thanks a lot for comments!
-> 
-> If calc_checksum() is wrong before pages_idential(), (that's just after page was write_protected, that's a real guarantee for page context secured) pages_identical could recheck and make thing right.
-> 
+On Thu, 2024-05-30 at 20:16 +0000, Mina Almasry wrote:
+> diff --git a/net/core/gro.c b/net/core/gro.c
+> index 26f09c3e830b7..7b9d018f552bd 100644
+> --- a/net/core/gro.c
+> +++ b/net/core/gro.c
+> @@ -422,6 +422,9 @@ static void gro_pull_from_frag0(struct sk_buff *skb, =
+int grow)
+>  {
+>  	struct skb_shared_info *pinfo =3D skb_shinfo(skb);
+> =20
+> +	if (WARN_ON_ONCE(!skb_frags_readable(skb)))
+> +		return;
+> +
+>  	BUG_ON(skb->end - skb->tail < grow);
+> =20
+>  	memcpy(skb_tail_pointer(skb), NAPI_GRO_CB(skb)->frag0, grow);
+> @@ -443,7 +446,7 @@ static void gro_try_pull_from_frag0(struct sk_buff *s=
+kb)
+>  {
+>  	int grow =3D skb_gro_offset(skb) - skb_headlen(skb);
+> =20
+> -	if (grow > 0)
+> +	if (grow > 0 && skb_frags_readable(skb))
+>  		gro_pull_from_frag0(skb, grow);
+>  }
 
-Yes, but you would get more wrong checksums, resulting in more 
-unnecessary pages_identical() checks.
+I'm unsure if this was already mentioned, so please pardon the eventual
+duplicate...
 
-That is missing from the description, and why we want to change that 
-behavior.
+The above code is quite critical performance wise, and the previous
+patch already prevent frag0 from being set to a non paged frag, so what
+about dropping the above additional checks?
 
-What's the net win?
+thanks!
 
-> And as to 2 flush functions here, I didn't see the guarantee for other writer from any other place. So maybe we should remove these flush action?
-
-"I didn't see the guarantee for other writer from any other place" can 
-you rephrase your comment?
-
-If you mean "the process could modify that page concurrently", then you 
-are right. But that's different than "the process modified the page in 
-the past and we are reading stale content because we missed a flush".
-
--- 
-Cheers,
-
-David / dhildenb
+Paolo
 
 
