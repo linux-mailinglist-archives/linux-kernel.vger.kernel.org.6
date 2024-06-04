@@ -1,289 +1,196 @@
-Return-Path: <linux-kernel+bounces-199961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DB68FA83D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:19:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0ED8FA83E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA4C01C23C5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:19:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA0A1F26A77
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B3F13D897;
-	Tue,  4 Jun 2024 02:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3537813D608;
+	Tue,  4 Jun 2024 02:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ZYHhTJok"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010001.outbound.protection.outlook.com [52.101.128.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJIjaV31"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E6213D886;
-	Tue,  4 Jun 2024 02:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717467551; cv=fail; b=qWGGl6bNWOjkzRFzcQ2ce7uSSQ4ZlawzN0j+NdcIj7izZSh4QCZQtyah78K1htKHeulPsMncD0eoA3qE7+QamUqZz+AnIExsrSf0z2/H2h8IjuMVCpZIxBEF7qHPly8A3JMYpntCQW5NlA9N0bOhZObwOUD5WgLTlKErCNERSns=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717467551; c=relaxed/simple;
-	bh=gOcZkaJwvkmT7oEE1lzEI5iQoTY15+nnHRJV9h5aF6c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=I3wvTzWXPEQp8Hlw9PDGFlDu8QQqnjUI85TdBZUVxJIMgLvhixzDl5mTS9GDBdxivarGGz8uL5fA/XIa0WIDARQyA+WoJ+qxU26unf5MDtGkB11b82NZgMv0cVaEWD5caIDKCtIW+P4jMJYEj2OrPmD3xaGXWtKJEaKw24M/fz8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ZYHhTJok; arc=fail smtp.client-ip=52.101.128.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=N56mr3DUr+VJmEMHi69REIngL+TxYAqsmHu+NVRr5uNh7IWpX4oIyNBGgzI4ygCkrqGTh+rn5FSvmWQ8mlcoqZbthLUtyvbukfFRGW9mlMfq8ZETXLkVARifqptcZWpAFahLzZAfAV1BXzDZg6Kfb1QVxj6BWwwfBLc9sTZjcCHu4cIiwso4+FiGc7saM24LmTwOjkhOjBiihOOMsM2cuRob/BeyP7QPbBA8n9uRyEPdDDkGXQcNDMPxUjKhr4joG0UWPQjXinalAOwA/LUJWrCuJ9Ljo32W5FRKFK2EPNY02h9DlEOR7z5n+gocHXV4ejPq++QpbAzdq4/7Sun4eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RDuI3S4oC3/uupXWLOF+caYuZ5D8gNLb1ccESyRaWws=;
- b=XtDyShXBkdtIKsjpBjbs/XNImsI8A54wwD/+o14pzzi9qvAANqts5aMsiBtC0vnLxLfQVlR1IpDHE+5JZYgPWN64brpoaogrVewv4CZCaUfjNektiD+9twUip80gunthaWhPK/XWWcWX420c0I1ZjGsSRgLyj2q/KFG8zN1HQlOIspY+h9upvevQJMH6eW7i3V0XhsWsCiR4uUFG7JiLnzqHmnJD2WCAtB4uzYjDC4eWPGbJWjvOQEsR++huKMH6k/cYs0dbmjqhMGcSbgi3peKgZpGaiiS+k7jalRo/licLUvFEhmUnebHHcSHk9FGP/KvUNXUUztcY3PdTTWJP3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RDuI3S4oC3/uupXWLOF+caYuZ5D8gNLb1ccESyRaWws=;
- b=ZYHhTJokScPFeBsxYb6X1g7ukUkhXVfNH1cUr0w2EbVlLuQrs/1oSoOREwesYsoePH16Cyeq/FMNd/ebt2RTKROX7n6/iMdaWlXP9gVbbXd31T2Qu0DDNZn4FCZi5YxXV4Z6dSMvLBZ2C9A8mrFFhlwzngmtkCSSuFXwCslWu5cgCHz0fmBC3ctT3kvdoUnSl1WZvKbcY+Zm09rvPIdJ6pgn7yxFb1xAjPpU/42lHkpjHJyAud3x88kXYIoFdkOzNmaWAk21IQhkjpuFH8yTDlmf4Vxxsw0vfe4ZHPlgu+r0mJNClUBD2oAbXlqKHN/pSR67J7pOU0N2jlxre3EWxA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
- by PUZPR06MB5452.apcprd06.prod.outlook.com (2603:1096:301:ea::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.30; Tue, 4 Jun
- 2024 02:19:06 +0000
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e%4]) with mapi id 15.20.7633.021; Tue, 4 Jun 2024
- 02:19:06 +0000
-Message-ID: <3f1b7f90-5de3-45c5-87c1-c09687d9e623@vivo.com>
-Date: Tue, 4 Jun 2024 10:19:01 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] sbitmap: fix io hung due to race on
- sbitmap_word::cleared
-Content-Language: en-US
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
- Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org
-References: <20240527042654.2404-1-yang.yang@vivo.com>
- <Zl5sj6IC5sBqgAF2@fedora>
-From: YangYang <yang.yang@vivo.com>
-In-Reply-To: <Zl5sj6IC5sBqgAF2@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYAPR01CA0077.jpnprd01.prod.outlook.com
- (2603:1096:404:2c::17) To KL1PR06MB7401.apcprd06.prod.outlook.com
- (2603:1096:820:146::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC7F13D50F;
+	Tue,  4 Jun 2024 02:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717467562; cv=none; b=M1PTKAPYQZdWJpz9Y7UYWKHHJd8CyxNaoTxaFfQures1FIJ44cLvNy6zsM+rv6r6XlhhKLMbTUVhE6SzvkhfKubQX7IaD+vad4/81XasAbLkpiNpfFb6gbTbWwSi0BwThuSyfPY8cnCr0EGnzd91b0dlJATX+trvUZHEKeHJDLM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717467562; c=relaxed/simple;
+	bh=ae09Bok+7c40U7+a/HBGd5hON5Y5Ex8pTOtiKczukCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iAEncXl6hecLJTbEheWs1q5PjHimncd7joeKJQ3Yhqaj+GNvMRBTl1kGPdN3uTsL17zzkgxejA5zpwnU82h7znvOM/zT4AnYNwrP9Qq42g1xh8muo3+ehX+2oa/DRgsqyA4tu04ePMP0nHAGhJA54jhGRCrOZ7o0WAekAqwfzLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJIjaV31; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-702621d8725so2281939b3a.0;
+        Mon, 03 Jun 2024 19:19:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717467560; x=1718072360; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfeY666rk1f2+TdD4mCmpU8biTw6zhseS8B25qhfvhY=;
+        b=EJIjaV31fYvrkiDt3cn1uIPWepfmItnSmBz/QhDvCeKu6/JJ8M9wgI4EL4rpYhQgib
+         aNhwUGIRnaLuLdJtbfuafpVMq2YJMXc+vtoaczjimlCQsHNeORSsvLM+RIHU7Swu/Rjt
+         AW4QFfpSCR2oDAjnJo7KIdaRIiIV1kqZF4p17NkJUlYXUokXtqgJil3g6sphR4vqHEJr
+         /8G2POLo1YKgc8Z2KdTjv0NVIOQlToS8eVdJDbhXISdDSKQaLqpserCjyGBqGxpG1uwO
+         TcO7vMJseMB+WZcZOEG+gYQOFMipj5LY6KkOauj6QkGEOqMOBS5rnZmQ7OGPgPd39bLC
+         Cnsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717467560; x=1718072360;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bfeY666rk1f2+TdD4mCmpU8biTw6zhseS8B25qhfvhY=;
+        b=Fh0XysT1MPSl0VBBt9BshFFDkRxkMayLxiOtagTmr5GZ6Y7AnYzUKWT1GZNatSqrFN
+         NA66b503tPJTJVlZf6KWYGxA7lFfLELQSNqPyah5AOjLotSR/JjIkPd2xkAMsa4ij3if
+         GoIm8Epg+2DhxJvFyJkt3xZhnUDd+onQK8tcs5kxF9sSSx6GJFDh08Cs+bj/KHO4k7mp
+         6PWk7+8YG5YDPVrxa/Xv2hWQaC2U4/d+xhr3C76UhRN3Waip+a6i9H7CorEpBF//RIu1
+         Ft753CQZMxkPuJh4IkCtRsoegXnHbdjmIUkA3CIxPqvDftYEmpqzz55BY4CYI+E6uPRZ
+         TGnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFRu21vhgHjJkg0dntHUjQ/tcApHj4bJwSFpKYBYsVA/TpDC27tqcznV05EBRGHSJiSubtd6eIWHotRkOylqiOf/8f9swgXV+yz+ONjlwWjukJQnWVN3f0MPMI9FbTZ3O6
+X-Gm-Message-State: AOJu0YzAb49sQ/iu0O5+aniZPXCnBgva/athLdGKJ9BAJW7jOszVdJ/L
+	Aay/q84u/+90ml0vpnzYaZFwp6qzmjE4SUzTA5xJCVf4GeexbQ+vnEl3sf/eFR2usOLNN3jqZel
+	VSCX88XYeUeg64Mlr5HpcFeICr69DvnYO
+X-Google-Smtp-Source: AGHT+IGzmPU+zRpnVlFuldWTKzqZo5wJODzcCnXHR+S7Pn1YefmWqQ0EErc9Oh5J3te1IPu4S8l3xP0EiZy6JXcQeFE=
+X-Received: by 2002:a05:6a20:2444:b0:1af:d9df:d8de with SMTP id
+ adf61e73a8af0-1b26f146b92mr11991213637.21.1717467560114; Mon, 03 Jun 2024
+ 19:19:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|PUZPR06MB5452:EE_
-X-MS-Office365-Filtering-Correlation-Id: 36dcea3c-c60e-4e51-3f89-08dc843cb5a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VUh1NHlZNHZTeU5UcHFyTU1YbEVqMFkwRi9LbDJadlhnNlJUbGh6aWVLWEox?=
- =?utf-8?B?ZEdtc0lSMm0rNllOMVdqRE1FbjNscGY1bzRkTDRMTlNCeVd4eUFrak05TE9Q?=
- =?utf-8?B?Uk5rd1lsZ21KdWVXRVArTFRoWWRFYzk5a1N4SXpXanhsbEltOWh4UE9EQXFX?=
- =?utf-8?B?VE8zL3ZIamFnVGxGQmJMdEtYcndWajhwWjhFUjE1UmRrZ3hVaFJJcGc3dnlt?=
- =?utf-8?B?aXJ4L3ZQb3ZxNkJqTEJRVG8wQnRmV3cwd3UycXZ1WFVXREtuMGdtQWwvSE56?=
- =?utf-8?B?MHV0VzBsUFhrK0dLbHc3RXlOOE5USWpHNU1XMTk1MUFqOTNGWCtUYnNyb091?=
- =?utf-8?B?VWMwdXpRVm5KNG84TEVnQWhjdVh5S2FaY0pDblY1cElyVTZPaWhWRkpxWSs4?=
- =?utf-8?B?V05TSE10V3NpcTl6K2tKMTZoVEFvRXdOMWY3OEVtNmMxZG1iRXNlVDBvdito?=
- =?utf-8?B?YnlObWEvOHNJZDRIdFNmeUM2Y1JBVmhZYWdwVUtqS202RktTVVpCRW9pemV6?=
- =?utf-8?B?YXpHSXkrNm9LS0YwVmxUZTNNNXdYSFRiUHR0bU4xUGdmbW53M1BjM2V4bmt2?=
- =?utf-8?B?anVNdmFCUWF2d2piNW1RU2RxM2g2QjJZRFhFd0ZCcW1EUWVyNjFYNFkvb2c4?=
- =?utf-8?B?dFpzMU5FN1BqOWtKNy9xTEN4ZlJackhzWE9IWkpnRUxEN3g3Y0UxRXNqdlpY?=
- =?utf-8?B?VlVMZytmT281eTJyTmtVeVVRUG5zOCtDbzF6bk5LWGNaTVpqUGdDcXJTeWVo?=
- =?utf-8?B?RGlrSURHWmxCZTZZenRzSEtYUHhLUmJHZURYbTFiTE5XNHI1ZlY5dHJPY2Yx?=
- =?utf-8?B?MU14R2pvRk9jekRRakdGQXZKNlpKUVczOFQrV1BreTVSL21Ia1RLYkRKOW9s?=
- =?utf-8?B?dmQwL1ZsYlJRNENsbmNhWks0ODJjWTB6QjZKdU1hOFU5QllzOTdSS0VBaWh5?=
- =?utf-8?B?eUVGTUhOdHUwM2s4WVp5WFJXUnNFdEZVN3gvYk5UWHNMV3NONHhRNGRpTFIr?=
- =?utf-8?B?NHBMa3NONHVOaUNaazgvdjRRaGsxbFRtekNsOEdyTGtZNUQvanE3L2g2UEhE?=
- =?utf-8?B?RnJma0kwRUxsQkgzR0pBT3o0dWk0Nm1wSnZXVFNWQ284ZmUrVW9UTWplOGFQ?=
- =?utf-8?B?bWVKOUd2WlNpOHlJbmpkLzczQmpzVmFTa1NjT3lJWGdST3M3ZVpBK295VjdK?=
- =?utf-8?B?Yk1ZTW9lcy85ZUw2NXpDWTczaVJFd3RxcVEwY2RUTGIrVXdnNXNwR1NJMnBq?=
- =?utf-8?B?MmRUOENaeEZBTERKOWlyQ0xZTmVsYTJUV3Q2TXREU2E5OTA2OHJ3YXNHdDZ2?=
- =?utf-8?B?aU9TRzV6WHlVRUJTemFyT1NGejR0YUh6MkZmU2ZtQ01HRFFXVWlyWEJsRElK?=
- =?utf-8?B?YmsyM1gxQU9LWG1wS0svUER1MU5wQUxvUllZZEZ5MTBvbHg5UlZKc3FIc0Mr?=
- =?utf-8?B?NS9EWnNXT3NJU3NkVDNEdmYzaWo0emRnK1F0TlNoWXpaVTlmNnYvTTc5V1lP?=
- =?utf-8?B?QSs3T1U1MWJCK2RnZFpBei9SSmNWV1ptcEh4c3BORUpORElPS29zTTVNdWJn?=
- =?utf-8?B?bldoWThtY2NFMlloOEFVblU2NWxjSkpKcHBZTEZYNThYUDEydlVlOTBPai8x?=
- =?utf-8?B?dkR3eVdLQW5SU202V21keVFzNWl3NmphZVppakxqNitFdC9TWnFCZ3JKQVJa?=
- =?utf-8?B?Vm9Bd3NHSmlWelhvaHJVakU4blIvQVp1NlNYWmViL2pBaC9yaTBDc0t3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MlB6bjZyKzhHV24zaURDU1JSTmJxT3dCZ21QdnBVdG04czdSNGlQLzIwVndl?=
- =?utf-8?B?SjhoSEsySHJPWW9NcXZmNU5NT0QvbERlZ1B0dXJWc0ZOSjlucHVPWHhha08y?=
- =?utf-8?B?bGJXdFNWaG9XMmk3eW9yQlNDK2xHZ051NzNZZDB1VDhSUFJza3JzdGVsUXBH?=
- =?utf-8?B?VGNCSzRvSDdzeENWSG51SE4rZThncEJlM3doT3psNzBBZUU3ZlVJaWJkcjZB?=
- =?utf-8?B?YlFlbk9jZ0ZOQnR4cGEwRzlYY3Q5VDhLZzZDOHhycjR4WG9jdTFNWjgzSUhF?=
- =?utf-8?B?bll4dkxZRzFRbDZOanUvdEp0ejlxNkJFNnJjQmNmcEJ0R0wzdVNJZWpwWWVJ?=
- =?utf-8?B?T0p4S1l4SDVjSVhsRDYyTjZaNjlMazBPUjE0QU5va0hzSWwzZ2VQdXNMOEI4?=
- =?utf-8?B?WURhODdOQnhpS0NTNXFudkNGM3MzY1pnQlRhdnNwWHNRUHRMbnR2aEw4L3B0?=
- =?utf-8?B?Y2VmK0o5bDZhT0YzTnVmNlcvdkhmQnFJQ3dybXc5Z1lvTmhRSXlHaExobGc3?=
- =?utf-8?B?c3pxQWRIREVmRzgrTTFWaEZrMmFHNXpOUGZyaU05TWpzTTBhU0RIc3lqdXF3?=
- =?utf-8?B?c1ptdWx3UUF2a3k3MW5kdWRYWXpwYnFtaVpINURoUHhXUmErbHkvL1N6cjN3?=
- =?utf-8?B?YXFKOWlYWVhNOGllN3BBUVhjL1ptU3ZPRmxiWFUwcHBiWldjaFhyQ0lURVJu?=
- =?utf-8?B?cCs3aGV1VGU1UzBYZHJhUEwrWG56N244VVl5VTlVNkhIVld1TzBaV2JlMWxI?=
- =?utf-8?B?YTg2cmRiOVNpbmdKbFkvM0Rld1R3M2k5TmNYMzBXeWlNQXBHWFJJMDl6bkJN?=
- =?utf-8?B?VmNFeTluMkRQTnV1T3BmKzlCcVh5dlByMnk3dGJ6cEN5QXJ6YkpsdTM2OWsx?=
- =?utf-8?B?bDY4YU8zYklSaGNZbXFqejZpc1pHbXBXdkFGU3N0WDZ3YjE3ZHRFTy9neWF2?=
- =?utf-8?B?WC8wZkM1TW1VK25Wak95S1VTbTczYUUvWGQ3MER4OFErMlRuTS9hRkhURlRE?=
- =?utf-8?B?OGpoVHBhSzZVTU5adEYvVHh0aStxVVZGVk52SG02dWVqLzNtNStXNUhuTUZW?=
- =?utf-8?B?WkZ2ZmR1bUpLUUR5SU10UzBPajJaWEF0b3pNenI0WUQ1bG9SVkpXQTJSTFZ0?=
- =?utf-8?B?RkdzTkx2TllLa2pZWXBJUSs5RmFHdVM5WS9qZGlSenRRcXJqR0dsdEo4Wlpa?=
- =?utf-8?B?dmZSSS92R0xvYXp0QU1vaTVIcDNYLy9ETW5idUJLWEZEZnhTSzZ3MExHM0x4?=
- =?utf-8?B?ZjdMb3ZTc2pYbUptRW9EaVE5WmRUaThEL2doMUdTQnhrYkk4ME9ybEk0Z05u?=
- =?utf-8?B?Mm1Fc1d1ZWxQZVhpOWY5R2M1bG1DMzNpRTcySmEzaFVqMlBaakorQWkzVDYx?=
- =?utf-8?B?djFzZ3NNdWNqZ1RUWnpibm5GK1NKbE0zQ3dnQlVjK08wWVlIWlpNc3NNU0tT?=
- =?utf-8?B?blBZTWsvQlRCa2FmaGgwVE5vV0xWQ2d5bWNNZVlUUWJPWGx2MElFZW9iUzZj?=
- =?utf-8?B?b3c1NlpNZE9wbWd4UTd4b3hndHZ4NndVenVsN1MySW1TNEppaXJyTUJhT1U0?=
- =?utf-8?B?TW1LS2hkajdBRVFQazVvZVBMYnBqcEE0dTIyalJwUVQzUHVGZ09QT0x3QVQ5?=
- =?utf-8?B?dUJoYjdoQmhTazI2Qml4N3BoVkYyWkljU1lMZVJWcUl5U0U4Y3FQTUxIZU5q?=
- =?utf-8?B?NEJ1ZlRMdWVIa2dmcitEckZDMXNqamhyWUhIWHIxY0FWZWRHL05ydERza2xa?=
- =?utf-8?B?azVzSy9kM2hTcW15OFNsWkJTTXd0bFM0OHBDZEtsMVoyd0V2amFpUjZWek1L?=
- =?utf-8?B?RGR5Q0Evb0lsSmFFNUptN0JsaXJaSlBaVnNmanlXTTROU3VHc0RVQ3hwL3lh?=
- =?utf-8?B?aVl4YWwxZGNCaWNDbHRIS3BTdFQveTRKNkV3WDNSb1FJL2lxRzdYbE5vWnk1?=
- =?utf-8?B?anQycy9UL0F3YVU0SjhmcExkSll2VGUrazlWUFhJMkUvbk8ycWlUamlQOFJC?=
- =?utf-8?B?WmxmUVAvQTYwWWt2TnhmNTJLZVVtTGdvNmJyMzdXczUrYzB6Vm1RWWd1Y29L?=
- =?utf-8?B?bGhZaXlJNUlzMnlmeHAweGozZHp0ZTBsRXB3Ui83SXA3bjZraVo4MG4zQWkr?=
- =?utf-8?Q?yF1EqvdIigJZNUlH6q+t7npgv?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36dcea3c-c60e-4e51-3f89-08dc843cb5a8
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 02:19:06.2183
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FV33m8B7p6X+Iy3oTkGztcjmcfE0qreXkQs71hIdFAwOJojGmiTmzan8FVYRxD4HGpLgFXbIwTqh9tJB0/d4ZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5452
+References: <20240528030054.4525-1-qiang.zhang1211@gmail.com>
+ <1195a9a3-db87-465d-a3b0-ee92d67da954@paulmck-laptop> <CALm+0cVZ7GQC+v4Xe7nArh0DHKeax+ok_tYsKaB=JtG-BVgUag@mail.gmail.com>
+ <CALm+0cUQuZDb6nrng+CnOXNGyy6gUWNGq9VoreU98KNkyTw_CQ@mail.gmail.com> <4a6d1e70-ec91-4b6d-8f69-290c4ef57b7f@paulmck-laptop>
+In-Reply-To: <4a6d1e70-ec91-4b6d-8f69-290c4ef57b7f@paulmck-laptop>
+From: Z qiang <qiang.zhang1211@gmail.com>
+Date: Tue, 4 Jun 2024 10:19:08 +0800
+Message-ID: <CALm+0cVjjL98+QRO7a=18JjUB2-1R0oFyksgkH9ZEAr2NsBniQ@mail.gmail.com>
+Subject: Re: [PATCH] rcutorture: Skip debug object testing for cur_ops without
+ ->debug_objects set
+To: paulmck@kernel.org
+Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
+	urezki@gmail.com, rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/6/4 9:23, Ming Lei wrote:
-> On Mon, May 27, 2024 at 12:26:50PM +0800, Yang Yang wrote:
->> Configuration for sbq:
->>    depth=64, wake_batch=6, shift=6, map_nr=1
->>
->> 1. There are 64 requests in progress:
->>    map->word = 0xFFFFFFFFFFFFFFFF
->> 2. After all the 64 requests complete, and no more requests come:
->>    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
->> 3. Now two tasks try to allocate requests:
->>    T1:                                       T2:
->>    __blk_mq_get_tag                          .
->>    __sbitmap_queue_get                       .
->>    sbitmap_get                               .
->>    sbitmap_find_bit                          .
->>    sbitmap_find_bit_in_word                  .
->>    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
->>    sbitmap_deferred_clear                    __sbitmap_queue_get
->>    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
->>      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
->>        return false;                         __sbitmap_get_word -> nr=-1
->>      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
->>      atomic_long_andnot()                    /* map->cleared=0 */
->>                                                if (!(map->cleared))
->>                                                  return false;
->>                                       /*
->>                                        * map->cleared is cleared by T1
->>                                        * T2 fail to acquire the tag
->>                                        */
->>
->> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
->> up due to the wake_batch being set at 6. If no more requests come, T1
->> will wait here indefinitely.
->>
->> Fix this issue by adding a new flag swap_inprogress to indicate whether
->> the swap is ongoing.
->>
->> Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
-> 
-> Indeed, commit 661d4f55a794 ("sbitmap: remove swap_lock") causes this
-> issue, and ->cleared and ->word should have been checked & updated
-> atomically.
-> 
->> Signed-off-by: Yang Yang <yang.yang@vivo.com>
->> ---
->>   include/linux/sbitmap.h |  5 +++++
->>   lib/sbitmap.c           | 22 ++++++++++++++++++++--
->>   2 files changed, 25 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
->> index d662cf136021..b88a9e4997ab 100644
->> --- a/include/linux/sbitmap.h
->> +++ b/include/linux/sbitmap.h
->> @@ -36,6 +36,11 @@ struct sbitmap_word {
->>   	 * @cleared: word holding cleared bits
->>   	 */
->>   	unsigned long cleared ____cacheline_aligned_in_smp;
->> +
->> +	/**
->> +	 * @swap_inprogress: set to 1 when swapping word <-> cleared
->> +	 */
->> +	atomic_t swap_inprogress;
->>   } ____cacheline_aligned_in_smp;
->>   
->>   /**
->> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
->> index 1e453f825c05..d4bb258fe8b0 100644
->> --- a/lib/sbitmap.c
->> +++ b/lib/sbitmap.c
->> @@ -62,10 +62,19 @@ static inline void update_alloc_hint_after_get(struct sbitmap *sb,
->>    */
->>   static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
->>   {
->> -	unsigned long mask;
->> +	unsigned long mask, flags;
->> +	int zero = 0;
->>   
->> -	if (!READ_ONCE(map->cleared))
->> +	if (!READ_ONCE(map->cleared)) {
->> +		if (atomic_read(&map->swap_inprogress))
->> +			goto out_wait;
->>   		return false;
->> +	}
->> +
->> +	if (!atomic_try_cmpxchg(&map->swap_inprogress, &zero, 1))
->> +		goto out_wait;
->> +
->> +	local_irq_save(flags);
->>   
->>   	/*
->>   	 * First get a stable cleared mask, setting the old mask to 0.
->> @@ -77,6 +86,15 @@ static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
->>   	 */
->>   	atomic_long_andnot(mask, (atomic_long_t *)&map->word);
->>   	BUILD_BUG_ON(sizeof(atomic_long_t) != sizeof(map->word));
->> +
->> +	atomic_set(&map->swap_inprogress, 0);
->> +	smp_mb__after_atomic();
->> +	local_irq_restore(flags);
->> +	return true;
->> +
->> +out_wait:
->> +	while (atomic_read(&map->swap_inprogress))
->> +		;
->>   	return true;
->>   }
-> 
-> IMO, the above fix looks a bit complicated, and I'd suggest to revert
-> 661d4f55a794 ("sbitmap: remove swap_lock") if no clean & simple solution
-> can be figured out.
+>
+> On Mon, Jun 03, 2024 at 12:55:30PM +0800, Z qiang wrote:
+> > >
+> > > >
+> > > > On Tue, May 28, 2024 at 11:00:54AM +0800, Zqiang wrote:
+> > > > > This commit make rcu_test_debug_objects() early return when the
+> > > > > specified cur_ops not set the ->debug_objects.
+> > > > >
+> > > > > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> > > > > ---
+> > > > >  kernel/rcu/rcutorture.c | 5 +++--
+> > > > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > > > > index 08bf7c669dd3..9b8c277ab91a 100644
+> > > > > --- a/kernel/rcu/rcutorture.c
+> > > > > +++ b/kernel/rcu/rcutorture.c
+> > > > > @@ -3495,8 +3495,9 @@ static void rcu_test_debug_objects(void)
+> > > > >               return;
+> > > > >       }
+> > > > >
+> > > > > -     if (WARN_ON_ONCE(cur_ops->debug_objects &&
+> > > > > -                     (!cur_ops->call || !cur_ops->cb_barrier)))
+> > > > > +     if (!cur_ops->debug_objects ||
+> > > > > +                     WARN_ON_ONCE(cur_ops->debug_objects &&
+> > > >
+> > > > You lost me here.  Given that we have "!cur_ops->debug_objects" before
+> > > > that WARN_ON_ONCE(), why do we need "cur_ops->debug_objects" inside of it?
+> > > >
+> > > > Also, we don't get here unless the rcutorture.object_debug kernel boot
+> > > > parameter is specified, don't we really want to WARN_ON_ONCE if the
+> > > > current flavor does not support that?
+> >
+> > Maybe I didn't describe it clearly enough, this
+> > modification is mainly to filter out test types that do not support
+> > double call_rcu*() checking, for example tasks, tasks-rudes,
+> >  task-tracing  ;) .
+>
+> Understood.
+>
+> It is just that in my experience, it is a good thing for rcutorture to
+> splat when asked to do something that it cannot do.  Or do you have a
+> use case where this is problematic?
+>
 
-Thanks. I will send a patch to revert that change.
+Hi, Paul
 
-> 
-> Thanks,
-> Ming
-> 
 
+This is a scene I mentioned before:
+
+The rcutorture.object_debug is set true, but the tasks-tracing does not support
+duplicate cur_ops->call check, but the debug_objects test was still done.
+
+insmod rcutorture.ko torture_type=tasks-tracing fwd_progress=4
+n_barrier_cbs=4 object_debug=1
+
+[  106.082416] rcutorture: WARN: Duplicate call_tasks-tracing() test starting.
+[  106.082533] tasks-tracing-torture: rcu_torture_read_exit: Start of test
+[  106.082543] tasks-tracing-torture: rcu_torture_read_exit: Start of episode
+[  106.105552] rcutorture: duplicated callback was invoked.
+[  106.105567] rcutorture: duplicated callback was invoked.
+
+for call_rcu*()  that does not support double call checking, if
+continue to test,
+"rcutorture: duplicated callback was invoked". will output,
+I just want to avoid the output of this error message :)
+
+Thanks
+Zqiang
+
+
+> I don't count the fuzzers because they are supposed to avoid specifying
+> things that are supposed to fail.  ;-)
+>
+>                                                         Thanx, Paul
+>
+> > Thanks
+> > Zqiang
+> >
+> > >
+> > > Hi, Paul
+> > >
+> > > The rcutorture.object_debug is set true, but the tasks-tracing does not support
+> > > duplicate cur_ops->call check, but the debug_objects test was still done.
+> > >
+> > > insmod rcutorture.ko torture_type=tasks-tracing fwd_progress=4
+> > > n_barrier_cbs=4 object_debug=1
+> > >
+> > > [  106.082416] rcutorture: WARN: Duplicate call_tasks-tracing() test starting.
+> > > [  106.082533] tasks-tracing-torture: rcu_torture_read_exit: Start of test
+> > > [  106.082543] tasks-tracing-torture: rcu_torture_read_exit: Start of episode
+> > > [  106.105552] rcutorture: duplicated callback was invoked.
+> > > [  106.105567] rcutorture: duplicated callback was invoked.
+> > > [  106.111269] rcutorture: WARN: Duplicate call_tasks-tracing() test complete.
+> > >
+> > > Thanks
+> > > Zqiang
+> > >
+> > > >
+> > > > Or do you have a use case that needs to silence these warnings?
+> > > >
+> > > >                                                         Thanx, Paul
+> > > >
+> > > > > +                             (!cur_ops->call || !cur_ops->cb_barrier)))
+> > > > >               return;
+> > > > >
+> > > > >       struct rcu_head *rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
+> > > > > --
+> > > > > 2.17.1
+> > > > >
 
