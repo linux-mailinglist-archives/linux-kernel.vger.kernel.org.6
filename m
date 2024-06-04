@@ -1,84 +1,51 @@
-Return-Path: <linux-kernel+bounces-200329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19068FAE79
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:13:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B358FAE70
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C561C243CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:13:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB3D1C233EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629701442FF;
-	Tue,  4 Jun 2024 09:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kZ/d6+Zf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9FB143C6F;
-	Tue,  4 Jun 2024 09:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB5B143860;
+	Tue,  4 Jun 2024 09:11:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377FF1428F5;
+	Tue,  4 Jun 2024 09:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717492308; cv=none; b=DsssOr7VN8TeKABJJpywagEJ94vYMMzjyzjbyH1CslTirOMaXnRy/Q8mDlwdrTwBQUyPMBj/6FjCDF1scWIGTc3QwkwNFVPciaFJE8Y2evCHgvbjZrziW51+Hyfu9P0GVN90XikeBLixubUdsH/RtaJ7jFwwDeJIHhLfcU7vg5U=
+	t=1717492290; cv=none; b=Ck1EhbCXiHgbB/S2zIOKVIGWyplghPOGQLsi4ejMpdrSku6483NGgVWOkuctTv/r6riCTG6jLtaw9LHMeH1me+oXwed2wTIYT6tU9UblqCd8dSL7B7fFBdzTOiLYpY4qJ1u9U8AaTRbJNCpNzx2aClFDA0Z1TgAIIIsCL8Hjrk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717492308; c=relaxed/simple;
-	bh=ImJhbNsrIco+qebnToiezXtyMfSwI41zKI18NzCQA3A=;
+	s=arc-20240116; t=1717492290; c=relaxed/simple;
+	bh=zPO+/aKjmZiAU7rnr7JcIcsudeId+P/k7gqQdD755KA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KS+BymIXs6rynMfG+Zs6QeisCJ8YoPRk3i1vdyLO+O2MPW1LxPMD7f1ostyg0tRdOJHKev/XoTngWCDWHXRWOUde9M42KKWac2yrvwVhgUgGYpxP9ChdRw39oQynyqKZHUKQ4IOkyQJSaGHP+GjNL2k6PJnAtT5d8T5WWejtCXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kZ/d6+Zf; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717492307; x=1749028307;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ImJhbNsrIco+qebnToiezXtyMfSwI41zKI18NzCQA3A=;
-  b=kZ/d6+ZfxrE5VP8Vymde6mxBJYlXIP0c3RKwijGsq/jcN4DqJXicb4+d
-   xRE0/emWGyH2j9Hz7pwKV3ojWLsdy4RchHXmwDAO07yCuZMa2pFvXQfue
-   w03XCJiZ0oYZ3CxX60XqehDpDVrZpliBmWAVQbbnv0wtTkfT7+puIK1jM
-   j18PSEI18lL5ECfUoEMYzNL2ytS400E+6E7/vg+cRL/Um1V8n/Rh5ntVz
-   vUQdeRiNEZj44UvSJG6o2o5Sk0h3psjIv2IarvXT7VcYG305OLS3PsuHI
-   WLYcCnq/MlEWU8pNuaYWkdv/95py6FjTij/QckQy6DpUUwByskM3aLnV/
-   Q==;
-X-CSE-ConnectionGUID: 3rGwVxPCT8iffda50Lbf3g==
-X-CSE-MsgGUID: 2ZEx3e0xTMO4b4Z3nwIXJA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17854993"
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="17854993"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 02:11:45 -0700
-X-CSE-ConnectionGUID: UTy3s7lEQtCIAKPlMIJ4mw==
-X-CSE-MsgGUID: xOhWAYg1T8Kfg7RJFjH19g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="37299303"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 04 Jun 2024 02:11:41 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sEQCg-000MzT-1r;
-	Tue, 04 Jun 2024 09:11:38 +0000
-Date: Tue, 4 Jun 2024 17:10:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Hewitt <christianshewitt@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 2/2] iio: adc: meson: add support for the GXLX SoC
-Message-ID: <202406041751.elQWr6cj-lkp@intel.com>
-References: <20240604055431.3313961-2-christianshewitt@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQAjgeC5kzmzDylotS2/cTduAQa2b6fFid5MVkSi9ap554zytp4o5PXFR4ae0N9NYHvHT03JbWZQGQZpXkFmnBcwKo7dhR1f0NwGhH7aCqt9pKNtAmMYHJKHaRpBCSoE9L1QWta3w3HPkBufOsmx0ky69ytXYoKeAReQoBCg42Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE33B1042;
+	Tue,  4 Jun 2024 02:11:51 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 83D9B3F762;
+	Tue,  4 Jun 2024 02:11:25 -0700 (PDT)
+Date: Tue, 4 Jun 2024 10:11:22 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Besar Wicaksono <bwicaksono@nvidia.com>, Will Deacon <will@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [RFC/PATCH 1/1] tools headers arm64: Sync arm64's cputype.h with
+ the kernel sources
+Message-ID: <Zl7aOk2h4_73JmUu@J2N7QTR9R3>
+References: <Zl4MYzhP0NB-Z1DW@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,55 +54,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604055431.3313961-2-christianshewitt@gmail.com>
+In-Reply-To: <Zl4MYzhP0NB-Z1DW@x1>
 
-Hi Christian,
+Hi Arnaldo,
 
-kernel test robot noticed the following build errors:
+On Mon, Jun 03, 2024 at 03:33:07PM -0300, Arnaldo Carvalho de Melo wrote:
+> To get the changes in:
+> 
+>   0ce85db6c2141b7f ("arm64: cputype: Add Neoverse-V3 definitions")
+>   02a0a04676fa7796 ("arm64: cputype: Add Cortex-X4 definitions")
+>   f4d9d9dcc70b96b5 ("arm64: Add Neoverse-V2 part")
 
-[auto build test ERROR on jic23-iio/togreg]
-[also build test ERROR on robh/for-next linus/master v6.10-rc2 next-20240604]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+As a heads-up, there are likely to be a couple more updates here
+shortly:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Hewitt/iio-adc-meson-add-support-for-the-GXLX-SoC/20240604-135606
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240604055431.3313961-2-christianshewitt%40gmail.com
-patch subject: [PATCH 2/2] iio: adc: meson: add support for the GXLX SoC
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20240604/202406041751.elQWr6cj-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406041751.elQWr6cj-lkp@intel.com/reproduce)
+  https://lore.kernel.org/linux-arm-kernel/20240603111812.1514101-1-mark.rutland@arm.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406041751.elQWr6cj-lkp@intel.com/
+> That makes this perf source code to be rebuilt:
+> 
+>   CC      /tmp/build/perf-tools/util/arm-spe.o
+> 
+> The changes in the above patch add MIDR_NEOVERSE_V[23] and
+> MIDR_NEOVERSE_V1 is used in arm-spe.c, so probably we need to add those
+> and perhaps MIDR_CORTEX_X4 to that array? Or maybe we need to leave this
+> for later when this is all tested on those machines?
 
-All errors (new ones prefixed by >>):
+Hmm... looking at where that was added this is somewhat misnamed, this
+is really saying that these cores use the same IMPLEMENTATION DEFINED
+encoding of the source field. That's not really a property of Neoverse
+specifically, and I'm not sure what Arm's policy is here going forwards.
 
->> drivers/iio/adc/meson_saradc.c:1262:18: error: use of undeclared identifier 'VREF_VOLTAGE_1V8'
-           .vref_voltage = VREF_VOLTAGE_1V8,
-                           ^
-   1 error generated.
+We should probably rename that to something like
+common_data_source_encoding, with a big comment about exactly what it
+implies.
 
+I would not touch this for now -- someone would have to go audit the
+TRMs to check that those other cores have the same encoding, and I think
+it'd be better to do that as a follow-up.
 
-vim +/VREF_VOLTAGE_1V8 +1262 drivers/iio/adc/meson_saradc.c
+The relevant commit was:
 
-  1255	
-  1256	static const struct meson_sar_adc_param meson_sar_adc_gxlx_param = {
-  1257		.has_bl30_integration = true,
-  1258		.clock_rate = 1200000,
-  1259		.regmap_config = &meson_sar_adc_regmap_config_gxbb,
-  1260		.resolution = 12,
-  1261		.disable_ring_counter = 1,
-> 1262		.vref_voltage = VREF_VOLTAGE_1V8,
-  1263		.cmv_select = true,
-  1264		.mpll_clock_bits = true,
-  1265	};
-  1266	
+  4e6430cbb1a9f1dc ("perf arm-spe: Use SPE data source for neoverse cores")
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mark.
+
+>   static const struct midr_range neoverse_spe[] = {
+>           MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
+>           MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
+>           MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
+>           {},
+>   };
+> 
+> That addresses this perf build warning:
+> 
+>   Warning: Kernel ABI header differences:
+>     diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+> 
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Besar Wicaksono <bwicaksono@nvidia.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Link: https://lore.kernel.org/lkml/
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/arch/arm64/include/asm/cputype.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/tools/arch/arm64/include/asm/cputype.h b/tools/arch/arm64/include/asm/cputype.h
+> index 52f076afeb96006c..7b32b99023a21d3a 100644
+> --- a/tools/arch/arm64/include/asm/cputype.h
+> +++ b/tools/arch/arm64/include/asm/cputype.h
+> @@ -86,6 +86,9 @@
+>  #define ARM_CPU_PART_CORTEX_X2		0xD48
+>  #define ARM_CPU_PART_NEOVERSE_N2	0xD49
+>  #define ARM_CPU_PART_CORTEX_A78C	0xD4B
+> +#define ARM_CPU_PART_NEOVERSE_V2	0xD4F
+> +#define ARM_CPU_PART_CORTEX_X4		0xD82
+> +#define ARM_CPU_PART_NEOVERSE_V3	0xD84
+>  
+>  #define APM_CPU_PART_XGENE		0x000
+>  #define APM_CPU_VAR_POTENZA		0x00
+> @@ -159,6 +162,9 @@
+>  #define MIDR_CORTEX_X2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X2)
+>  #define MIDR_NEOVERSE_N2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N2)
+>  #define MIDR_CORTEX_A78C	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78C)
+> +#define MIDR_NEOVERSE_V2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_V2)
+> +#define MIDR_CORTEX_X4 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X4)
+> +#define MIDR_NEOVERSE_V3 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_V3)
+>  #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
+>  #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
+>  #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
+> -- 
+> 2.44.0
+> 
 
