@@ -1,73 +1,91 @@
-Return-Path: <linux-kernel+bounces-200221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD728FAD23
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:10:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFAD8FAD1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C809D283C18
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:10:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9098D1C20E23
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA31D1420B0;
-	Tue,  4 Jun 2024 08:10:03 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 0B0BF446CF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9272C142630;
+	Tue,  4 Jun 2024 08:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1MRxCEM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24EA446CF;
+	Tue,  4 Jun 2024 08:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717488603; cv=none; b=RVoR2dYAyAiV3ixDZT1xOK3g+I3oDk+2/wh5JoaZZFME4JfK3s7n/5bUtu7V+BvSWvyXorwwGCftKMPXDyUHg0BRsU30x9Tyb5FmyEWH8gu8tldJk1sBgt63Q3dhxZK0+ijaUiZGP8QvLKGvrpgJzhALMymjUSPpF8zHsrNoqYQ=
+	t=1717488571; cv=none; b=u90VSFXbC2w8XD4K5+zCaEm1tRw1txKl8Hko9r4xJit5luxFwjJNZVtbxPxSheid9waEYOV3LVQD7dvtmJUqEh1wzI23IjyvpvIi3t3gIhaDRtobKEqGIkyiGvYMSnp9jIMw1u1u7nSa6Ecdk9rge2hENdsBT8hR6kVTBMHrgY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717488603; c=relaxed/simple;
-	bh=+G9mKjMwEOKUczjE7ezwTf4S8G52vs1HHeC05ItUBNw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=oct2jv38BYpuBibYnITwmtXfzAvKhrGNFZAQVZh1acqlYOuXBKgjiImKNslb9fg13P/UCa2gAvvxy3JqYVqZjtNm/cFGTi8auulU3ukGUAuGuuPLlhcGhmvWHD/iaG7TpjuAw8KEogjyo48rQmaBFyq4Sei5tRrq3ITWMeyMaXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [219.141.250.2])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 25BA56047F7C7;
-	Tue,  4 Jun 2024 16:09:51 +0800 (CST)
-X-MD-Sfrom: zeming@nfschina.com
-X-MD-SrcIP: 219.141.250.2
-From: Li zeming <zeming@nfschina.com>
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	Li zeming <zeming@nfschina.com>
-Subject: [PATCH] irq: chip: Optimize the irq_set_irq_type function code
-Date: Tue,  4 Jun 2024 16:09:14 +0800
-Message-Id: <20240604080914.38019-1-zeming@nfschina.com>
-X-Mailer: git-send-email 2.18.2
+	s=arc-20240116; t=1717488571; c=relaxed/simple;
+	bh=Ks/5HXLLA3BlNGAruV2BQLpNqH2NplEnN5LmiJ/z4Cg=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=qlddUFXb1BHDdZpwva5vcDXzVGaAeFDJovvGTWBoYeS1E1m9ptc8zZbplWspTF4FIopAntocAtfMDUMHA1sEwA31qwJPeKsoWDNWEDL1FUcjoZWFl3WzjuzTlJuGKgCE8olQA08iu4waJTuwjrO0IWEN4a/XTlhnTX7rs4SKJpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1MRxCEM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B6ECC2BBFC;
+	Tue,  4 Jun 2024 08:09:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717488570;
+	bh=Ks/5HXLLA3BlNGAruV2BQLpNqH2NplEnN5LmiJ/z4Cg=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=o1MRxCEMsm/rvMeAAJBPCYWpYQyAFd8BIGgeQvMSn7f/STx63dNix0p3AdGHdZgHO
+	 VpJz0TOInXj39V5PtD1yEF+NaPIlHvxQyN6RxRjF55oj3yFnPSF6kAdy6xZoSDHHF8
+	 uFmfQLaIUcNUKv1NYmxjir4bIWQYSbjQb2VcekRvPSTuUmUGpobXBYYjpH/pVzZSO8
+	 5mj4vvnZes5pcoFC9qdoLII1gSie8vbQ6FVHKFbBDT3w6IZIgxBPY/CwY/WAR1Th7W
+	 PGtpqFlZXM5ZneNCb8ZcE0Ar/w4EbNdRtAHV6nqSQqZJm6gZrHzagtxpP5PSB2kX/I
+	 mykRDonmv/rmQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,  Dave Jiang <dave.jiang@intel.com>,
+  Bjorn Helgaas <bhelgaas@google.com>,  <linux-wireless@vger.kernel.org>,
+  <ath11k@lists.infradead.org>,  <regressions@lists.linux.dev>,  Jeff
+ Johnson <quic_jjohnson@quicinc.com>,  <linux-kernel@vger.kernel.org>,
+  <linux-cxl@vger.kernel.org>,  <linux-pci@vger.kernel.org>
+Subject: Re: [regression] BUG: KASAN: use-after-free in
+ lockdep_register_key+0x755/0x8f0
+References: <20240603165342.GA685076@bhelgaas> <87wmn5ubfo.fsf@kernel.org>
+	<665e162ec4b2d_2a90e294c8@dwillia2-xfh.jf.intel.com.notmuch>
+Date: Tue, 04 Jun 2024 11:09:26 +0300
+In-Reply-To: <665e162ec4b2d_2a90e294c8@dwillia2-xfh.jf.intel.com.notmuch> (Dan
+	Williams's message of "Mon, 3 Jun 2024 12:14:54 -0700")
+Message-ID: <87cyoxt9hl.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Optimize the position of ret and remove initialization assignments,
-making the function look more aesthetically pleasing internally.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Signed-off-by: Li zeming <zeming@nfschina.com>
----
- kernel/irq/chip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Kalle Valo wrote:
+> [..]
+>> > Thanks for reporting the issue and testing the fix!  Can you please
+>> > respond with your Tested-by to the actual patch(es) you tested?
+>> 
+>> Not easily as I'm not subscribed to linux-pci list and I haven't
+>> researched how to import mbox files to my mailer :) So feel free to
+>> ignore my Tested-by tag in this case.
+>
+> I have had success with "b4 mbox" and importing that into Evolution, but
+> your mileage may vary with your mailer setup.
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index dc94e0bf2c94..1ce3d29abc90 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -64,9 +64,9 @@ EXPORT_SYMBOL(irq_set_chip);
-  */
- int irq_set_irq_type(unsigned int irq, unsigned int type)
- {
-+	int ret;
- 	unsigned long flags;
- 	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, IRQ_GET_DESC_CHECK_GLOBAL);
--	int ret = 0;
- 
- 	if (!desc)
- 		return -EINVAL;
+Heh, I'm old school and don't use anything modern like Evolution :) But
+it was actually really easy with Gnus ('G f') and looks like I managed
+to do it succesfully now:
+
+https://lore.kernel.org/all/87h6e9t9qt.fsf@kernel.org/
+
 -- 
-2.18.2
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
