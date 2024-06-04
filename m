@@ -1,225 +1,125 @@
-Return-Path: <linux-kernel+bounces-201326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAD18FBD09
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:06:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4938FBCFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A48F1F25E31
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:06:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B79E1C23550
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B7414D28F;
-	Tue,  4 Jun 2024 20:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C812F14C592;
+	Tue,  4 Jun 2024 20:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szzlgn//"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcrQlQdx"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E7414B061;
-	Tue,  4 Jun 2024 20:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEE514BFA8;
+	Tue,  4 Jun 2024 20:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717531476; cv=none; b=kY02hPtxJml6LlbqsSxG7aK5o6g/rg7YniFRqNlg8HH0QneLD9NoF2Xh8QB2GZMwXCJXQDByk+qd4XPU9NbD1gbpKDD1WOHS/dkjpTVorNm7TNdaDewf86qt6Mb/FYOqNtUfViWdssgxT8OnxGYNcKOT2utQ/nE8ucozgkRku+c=
+	t=1717531452; cv=none; b=suuXopYSshV3EdqdNaPEPzXTUTjyiJ9irsxQLJZmvTONNWU75TmXaYjsPuz78FMdbYBVI4DzQUZmXeLjAuxStEKKJlU1JZYFjLr5bf6TcReyv+wUz5/VIE4HkW04/HmUuaduLSt4TE3WS04iDeMk/JatZSYs1e2F69IQjHHh4P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717531476; c=relaxed/simple;
-	bh=TMgn7zTEGzLC10FmODgIHZC1q/TA7cHJbeHkzDcrUJo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MoH/Fve0KqJGfJXLXrDuBy0tUBCZvSfKYQNt6cqOzkxWLO+ytW7lUgrNVnx8NRxYtWWe2m1R+obglCbdffppq6ZmCXdqK1SH+oETCPZhyOjRjBXgJb7VO67wgyNwYwd9h7YyPFuY3/0wYbBzlYq7HUQMIugvEMMi05C0xk8i11k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szzlgn//; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EA1BC2BBFC;
-	Tue,  4 Jun 2024 20:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717531475;
-	bh=TMgn7zTEGzLC10FmODgIHZC1q/TA7cHJbeHkzDcrUJo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=szzlgn//rhriiVwGMiESgp+pG34SMvZuLTTEd5+ZaU29XJbvqzIQfMtQJqJiPC8sG
-	 kqEa8C0w4mcHqyMpeGnJH5JHkLch2S9p+Ms4lavBg2MRvp7sp59qQyW+pAwo5G1vyA
-	 auD/2RQAJfbEpUSlwmw5saLZ7v/H9W4uKX5poF2luHUwxzswQ3bYmH2MmePdGxUrpc
-	 q4ywXjUuWBmHayDnO0tdTM+iIvHznUnHdXQkoFqRKpeFG39f5ooEk0ujQhHebvEGtV
-	 jkUHrYvaVld2NXxwqm6Wu3gI66X9hzE/cRzKpJHijPL9xM4zK2349CS6MuyD0Ip61h
-	 JFZeaJxfBiWCA==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [RFC bpf-next 10/10] selftests/bpf: Add uprobe session recursive test
-Date: Tue,  4 Jun 2024 22:02:21 +0200
-Message-ID: <20240604200221.377848-11-jolsa@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240604200221.377848-1-jolsa@kernel.org>
-References: <20240604200221.377848-1-jolsa@kernel.org>
+	s=arc-20240116; t=1717531452; c=relaxed/simple;
+	bh=NoZ60/3I8sWKWSOxRd8whX5XG2JH2IMU+VUKv74CMn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z3lkXVsrcM9o6I+3TfCb6C1jjxcaeLdknc2mb0iOJQTUnADad97RxJx3aSWw76tGq9ViOtWMpVWQMC3L9Ia8d/tMMzRM8eQlN20+STaiHYk2bNcQf1Yi9woLEnJJ6ML5aoiiw1opwIfQkkDJD2CNMRsveYSXqbobzwtBcl1P/7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PcrQlQdx; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-702555eb23bso2898599b3a.1;
+        Tue, 04 Jun 2024 13:04:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717531450; x=1718136250; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D+24MUcJLTqMTxLtXfNfOk4eUSJDfkxN4hOKkJZ8yq8=;
+        b=PcrQlQdxW+q0VtepoOLrwbbTk4J2BYjEYoBprRvFo5faLHwc3DXhuaHVHjqVHeyplY
+         y5O2onI4s1eCnefAo6F6hRzKkb6RM0SUsLw8A4Sski51hKAMQHNLYRLIguDSa6wS+RXr
+         +Rpi1/RU4VeqoMSLzN9gfBkrPoE8NxZvfDCfs+fifpHDnIaVVgfoLvltfkdxYxaEY7Yz
+         AHrkUq/nr/9mw8SkbiIagzyoDsU6GM+9LG4avcNPzmCtTErJNdIysLcEC3LIwhFpFbWN
+         6CrUk5dHjt6KsPxLtUQ5bRoRkX+AzQ7qEEu8gMcicqj9wm0JbmOiLzgSi6cnVQ25KSYe
+         ojPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717531450; x=1718136250;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D+24MUcJLTqMTxLtXfNfOk4eUSJDfkxN4hOKkJZ8yq8=;
+        b=LyrXA0uSzydxQ6KigYCkWRJslJi211b4C+syWafYEsIJzOr72d1UFx43fV70ykeK+h
+         rNairxPCK6BWTBJ6E0CSdMGy9pS8H+S4a39QG7pIaE+XUdirO8TBPwXm2dB/+ufp2doy
+         Tb7zbAHCLqpryFjW93RuV9FT/XU6quN5xLBRvBbE4KYfOojSXk/U3z06C+klhOWYUgQP
+         U4u35hcSOOFZsv15Sa0nKR9EyZLbvi+Q/CNh7TYtT8VlTd97+vwqXmahTHz1r3v1w+m6
+         IcbbD53ZzWDnJCv57Gf+fc9XR0sA4oLTU43GgFG++7nBEkL8Ah64mhgf1L5mkyzGi6rz
+         x5bw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0G+WQ4U7IU7I6O6ifX4op6QZAYKAqkGK0YXW3hqQnkkbY+8uoxD6yQJKoOD0ruCox0Jmsj2R3BxCRYLUwHWBOlobxqjaf+qE40tuRDP/zKN3s5yu5uEJjhDUOd/J1IiRFrpRWUsjY/g==
+X-Gm-Message-State: AOJu0YwhbbdikXz+pmbEMgWLIHk4FgpdgVqdStcQ/YxO07Xeviq3Epoq
+	iRpOYlp2Nn+mFRLqSQcWMalrLdqNJWdQL4UGOJuZrOZdHPWZhkgw
+X-Google-Smtp-Source: AGHT+IELiEtMOAJZph6bIqKZ/dy/Dy80YTBB9pmkx9dxb+1OVSPKQaenfPO7D+Vdt9pTlBdXvD6LiA==
+X-Received: by 2002:a05:6a00:2e13:b0:6f8:f020:af02 with SMTP id d2e1a72fcca58-703e5a498ffmr518330b3a.34.1717531449911;
+        Tue, 04 Jun 2024 13:04:09 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242af1288sm7408029b3a.134.2024.06.04.13.04.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 13:04:09 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 4 Jun 2024 10:04:08 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Hillf Danton <hdanton@sina.com>, Peter Zijlstra <peterz@infradead.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
+ worning
+Message-ID: <Zl9zOH2hUramwNSi@slm.duckdns.org>
+References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+ <ZljyqODpCD0_5-YD@slm.duckdns.org>
+ <20240531034851.GF3884@unreal>
+ <Zl4jPImmEeRuYQjz@slm.duckdns.org>
+ <20240604105456.1668-1-hdanton@sina.com>
+ <20240604113834.GO3884@unreal>
+ <Zl9BOaPDsQBc8hSL@slm.duckdns.org>
+ <20240604185804.GT3884@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604185804.GT3884@unreal>
 
-Adding uprobe session test that verifies the cookie value is stored
-properly when single uprobe-ed function is executed recursively.
+Hello,
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- .../bpf/prog_tests/uprobe_multi_test.c        | 57 +++++++++++++++++++
- .../progs/uprobe_multi_session_recursive.c    | 44 ++++++++++++++
- 2 files changed, 101 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
+On Tue, Jun 04, 2024 at 09:58:04PM +0300, Leon Romanovsky wrote:
+> But at that point, we didn't add newly created WQ to any list which will execute
+> that asynchronous release. Did I miss something?
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-index 34671253e130..cdd7c327e16d 100644
---- a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-+++ b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-@@ -7,6 +7,7 @@
- #include "uprobe_multi_usdt.skel.h"
- #include "uprobe_multi_session.skel.h"
- #include "uprobe_multi_session_cookie.skel.h"
-+#include "uprobe_multi_session_recursive.skel.h"
- #include "bpf/libbpf_internal.h"
- #include "testing_helpers.h"
- 
-@@ -27,6 +28,12 @@ noinline void uprobe_multi_func_3(void)
- 	asm volatile ("");
- }
- 
-+noinline void uprobe_session_recursive(int i)
-+{
-+	if (i)
-+		uprobe_session_recursive(i - 1);
-+}
-+
- struct child {
- 	int go[2];
- 	int pid;
-@@ -587,6 +594,54 @@ static void test_session_cookie_skel_api(void)
- 	uprobe_multi_session_cookie__destroy(skel);
- }
- 
-+static void test_session_recursive_skel_api(void)
-+{
-+	struct uprobe_multi_session_recursive *skel = NULL;
-+	int i, err;
-+
-+	skel = uprobe_multi_session_recursive__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "uprobe_multi_session_recursive__open_and_load"))
-+		goto cleanup;
-+
-+	skel->bss->pid = getpid();
-+
-+	err = uprobe_multi_session_recursive__attach(skel);
-+	if (!ASSERT_OK(err, "uprobe_multi_session_recursive__attach"))
-+		goto cleanup;
-+
-+	for (i = 0; i < ARRAY_SIZE(skel->bss->test_uprobe_cookie_entry); i++)
-+		skel->bss->test_uprobe_cookie_entry[i] = i + 1;
-+
-+	uprobe_session_recursive(5);
-+
-+	/*
-+	 *                                         entry uprobe:
-+	 * uprobe_session_recursive(5) {             *cookie = 1, return 0
-+	 *   uprobe_session_recursive(4) {           *cookie = 2, return 1
-+	 *     uprobe_session_recursive(3) {         *cookie = 3, return 0
-+	 *       uprobe_session_recursive(2) {       *cookie = 4, return 1
-+	 *         uprobe_session_recursive(1) {     *cookie = 5, return 0
-+	 *           uprobe_session_recursive(0) {   *cookie = 6, return 1
-+	 *                                          return uprobe:
-+	 *           } i = 0                          not executed
-+	 *         } i = 1                            test_uprobe_cookie_return[0] = 5
-+	 *       } i = 2                              not executed
-+	 *     } i = 3                                test_uprobe_cookie_return[1] = 3
-+	 *   } i = 4                                  not executed
-+	 * } i = 5                                    test_uprobe_cookie_return[2] = 1
-+	 */
-+
-+	ASSERT_EQ(skel->bss->idx_entry, 6, "idx_entry");
-+	ASSERT_EQ(skel->bss->idx_return, 3, "idx_return");
-+
-+	ASSERT_EQ(skel->bss->test_uprobe_cookie_return[0], 5, "test_uprobe_cookie_return[0]");
-+	ASSERT_EQ(skel->bss->test_uprobe_cookie_return[1], 3, "test_uprobe_cookie_return[1]");
-+	ASSERT_EQ(skel->bss->test_uprobe_cookie_return[2], 1, "test_uprobe_cookie_return[2]");
-+
-+cleanup:
-+	uprobe_multi_session_recursive__destroy(skel);
-+}
-+
- static void test_bench_attach_uprobe(void)
- {
- 	long attach_start_ns = 0, attach_end_ns = 0;
-@@ -681,4 +736,6 @@ void test_uprobe_multi_test(void)
- 		test_session_error_multiple_instances();
- 	if (test__start_subtest("session_cookie"))
- 		test_session_cookie_skel_api();
-+	if (test__start_subtest("session_cookie_recursive"))
-+		test_session_recursive_skel_api();
- }
-diff --git a/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c b/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
-new file mode 100644
-index 000000000000..7babc180c28f
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <stdbool.h>
-+#include "bpf_kfuncs.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+int pid = 0;
-+
-+int idx_entry = 0;
-+int idx_return = 0;
-+
-+__u64 test_uprobe_cookie_entry[6];
-+__u64 test_uprobe_cookie_return[3];
-+
-+static int check_cookie(void)
-+{
-+	long *cookie = bpf_session_cookie();
-+
-+	if (bpf_session_is_return()) {
-+		if (idx_return >= ARRAY_SIZE(test_uprobe_cookie_return))
-+			return 1;
-+		test_uprobe_cookie_return[idx_return++] = *cookie;
-+		return 0;
-+	}
-+
-+	if (idx_entry >= ARRAY_SIZE(test_uprobe_cookie_entry))
-+		return 1;
-+	*cookie = test_uprobe_cookie_entry[idx_entry];
-+	return idx_entry++ % 2;
-+}
-+
-+
-+SEC("uprobe.session//proc/self/exe:uprobe_session_recursive")
-+int uprobe_recursive(struct pt_regs *ctx)
-+{
-+	if (bpf_get_current_pid_tgid() >> 32 != pid)
-+		return 1;
-+
-+	return check_cookie();
-+}
+So, wq itself is not the problem. There are multiple pwq's that get attached
+to a wq and each pwq is refcnt'd and released asynchronously. Over time,
+during wq init, how the error paths behave diverged - pwq's still take the
+async path while wq error path stayed synchronous. The flush is there to
+match them. A cleaner solution would be either turning everything async or
+sync.
+
+> Anyway, I understand that the lockdep_register_key() corruption comes
+> from something else. Do you have any idea what can cause it? How can we
+> help debug this issue?
+
+It looks like other guys are already looking at another commit, but focusing
+on the backtrace which prematurely freed the reported object (rather than
+the backtrace which stumbled upon it while walking shared data structure)
+should help finding the actual culprit.
+
+Thanks.
+
 -- 
-2.45.1
-
+tejun
 
