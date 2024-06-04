@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-200396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0AE98FAF84
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:03:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B769C8FAF87
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BADE1F22713
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:03:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E731A1C21DE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFF61448D7;
-	Tue,  4 Jun 2024 10:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35641144D1D;
+	Tue,  4 Jun 2024 10:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="S3w8LXbq"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JLLNPyxR"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD9438B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0295D1448D7;
+	Tue,  4 Jun 2024 10:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717495377; cv=none; b=FoH+X+xSJ4kMkcIWZXRAxplCgkB5Fd+cNSi49vYNbXm4TxHc2/BUW8cgldrrqY1lmy8+q+F+IQyBsvKi1I0DDbJL0iI6ciBpu04nNIGXZuT7fjuWHkftJTI9PyaZz2Qo2FHEicDJmqseoS9m3iy/kp4ReDB5tjsXlQFvLZcbyWo=
+	t=1717495461; cv=none; b=d0d0EsICpNLmCWgnN6qglVTN3hUOY7vDKxZo99aSZ9i34ueOpTNvwMaaYqXAuVi2wMJ6nxrUQ7lLrpcnExKnLYoBU5PC11XZHkvQzx/zcQ3kcrbQAH5Z8rFlzz0vFXD4g1Gs4EuB/PeyYX1/rb/AqXC1T6cH1OugOiE+AXCHgsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717495377; c=relaxed/simple;
-	bh=KmFXORb2yt5DuY/K2IoFpc+0VDLo4L9lk+l/JXxqBHg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VmFLvHqLvBNEz4t7+xigTc913yyvHnWqj4J0I27j7l+LmISCeguuhff8n4PWxX4W9p6pqMKGo8wLDLygyYwuuJzFZ4gnmxYYRgEvgfbjdS4qqCZux36DcT4lxz5JFVhT1Fyc2EM4uf4tDBkuzau8wmSRR/F6w8HDEWTwdBdDMao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=S3w8LXbq; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a68e7538cfaso291823266b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:02:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1717495374; x=1718100174; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Le/ddYXHWhX53i9qIi9hulgRRWo7gp0FcrSDy4OJL6E=;
-        b=S3w8LXbqp2dOuWm8GSbzRrjE/aVeq1ouhnVW1IC/4BDXEoEud5SOZ5s9+8C2DHKRpy
-         DZT0k947t7MB3trmXZZ1jksFr3m3CsboeJBuodxBevpdfoDMukGSxauFGVBdDMkBJini
-         Y1njkUVOfH2qqOGPkNKy0Cfo+D5f/YbCxuwPg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717495374; x=1718100174;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Le/ddYXHWhX53i9qIi9hulgRRWo7gp0FcrSDy4OJL6E=;
-        b=JTP2EnGvwv8Wm4b/79F88T09SPvsHwdSqmfo+zFy0Cy3Qc47JVVKzA9fvEf0WIWN5v
-         lZ2cO3/xg97FDgqkBaqLjA7Hx4EsRHrKknc9vmsAcCwAEn4qYVcukfBjEJEaMBsd+BfM
-         skvZna8qA6tVMKiYtmY4WksyuarqRpe40BpDwaiXH/hhJfaejg84qQtiikm+IfD5bilP
-         nQx21+L5W07lyoMvGrhhsZfqGU+XdFppXyyipm4lNWQxMF8ecibzhTRi9pv9Tf9JIRnQ
-         KpX3GoCPQbokKPW39EWWCBgd+Vz3UVMGKS8DiliXcMTpQ2c5mjqkhCBSrOgmi1MzzDK6
-         0yKg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4yBeSQmCyvJbA9h1wMtD5KCS5mMbyk2KW8dmqTrfFkAUbcTqQZDLjGsvk18/CnBUU6/HqBgEyPQwqOYpqlB/N9qktdv9guHkb3jZz
-X-Gm-Message-State: AOJu0YxkFIaMoa77MbkzcIK9iixmKmy0EOJVyQ6MiIs8f6SeIoUw5U4+
-	G9dRBshRSDDP0xAYp0+H9y1YVMPToNFcQL0KE6VC4sIdStAJdgrwvXaHN6pYcjmh+dhwmGUj+p8
-	pL/XTQUTup0qcvcJhDSZtYn0ES5bxaD8r5o1gbQ==
-X-Google-Smtp-Source: AGHT+IEydtpbcQ3+TaA0iWlzJhJL0iIGS1Jc2F5dm0s3zwbofudHPfZLYiJf5Va09F6m9a/kI80mbXTFZt5MKzATyJM=
-X-Received: by 2002:a17:906:b0c6:b0:a67:7d34:3205 with SMTP id
- a640c23a62f3a-a68208fe45emr768858166b.35.1717495373577; Tue, 04 Jun 2024
- 03:02:53 -0700 (PDT)
+	s=arc-20240116; t=1717495461; c=relaxed/simple;
+	bh=mT1/rVVdWV+5QoTSApPnuEEIlkiQJf0kw1vPslyrMIY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Zz/x3vPuFJjVPrcYdF2hzxPQamaCIlqveV90kqxGDw0DVvcMN7yIYT+A74WVA+556xtHWJkNX72+8fg/R7Gt5tHU3TQgKcALOd4fhCutGEISfk2TiD1Z8NdJJz5XYdueoSQEoWjfuiacfsgVRz+aYS/Ytugvfnt9hL4lCbJ3C88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JLLNPyxR; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454A2DmO090283;
+	Tue, 4 Jun 2024 05:02:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717495333;
+	bh=lEeeA5XVGydla/KRte/WAZAqdb4muiovvZrIFmRss1s=;
+	h=From:Subject:Date:To:CC;
+	b=JLLNPyxR1w5+lmhYx9ZbWHXKfrSIa7/v6lEB+XvtUusMK0Yuzknk+sbqSrAVYd1xk
+	 OiV92W0Z46cWH1GVjAo5FErQPN+MQkde10gOxWMnZRLyfR6KpkSYXQjzdK2UuyB0+m
+	 z2o/Y3KWPkbiUFi/MgZ6nKASyUFW3An8WmnexC1A=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454A2CJU007010
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 05:02:12 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 05:02:12 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 05:02:12 -0500
+Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454A2BRB130365;
+	Tue, 4 Jun 2024 05:02:12 -0500
+From: Jai Luthra <j-luthra@ti.com>
+Subject: [PATCH 0/2] Fixes for McASP and dmaengine_pcm
+Date: Tue, 4 Jun 2024 15:31:49 +0530
+Message-ID: <20240604-asoc_next-v1-0-e895c88e744d@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
- <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm> <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
- <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com> <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
- <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com> <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
-In-Reply-To: <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 4 Jun 2024 12:02:42 +0200
-Message-ID: <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
-Subject: Re: [HELP] FUSE writeback performance bottleneck
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, lege.wang@jaguarmicro.com, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA3mXmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMwMT3cTi/OT4vNSKEt1kAzPjtORkQ0uDZDMloPqCotS0zAqwWdGxtbU
+ AE2GY9VsAAAA=
+To: Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, Jai Luthra <j-luthra@ti.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=915; i=j-luthra@ti.com;
+ h=from:subject:message-id; bh=mT1/rVVdWV+5QoTSApPnuEEIlkiQJf0kw1vPslyrMIY=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBmXuYgB8FlkmaUfeYeISFrnAiKrV3JaFHoPcw3e
+ zYjan9orCqJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZl7mIAAKCRBD3pH5JJpx
+ RXaTD/9mm61MjSw+c7tSjgOLv58uadvLpqkDpKp5w8Twl1roQ+6Y/taGUyWg27a1LrAa1LYObpk
+ rlHA30idq7AIFHTFvj1cBE8GUekfbnzqXYlbjsBqV11/A8qAAwCf/U/AoqHq9TqDb8xSSTHgT3c
+ GhTPbvpsxp5VQDKU5jQu23LEstByqjE1IIvkQxodPNl56G+BlOmKyhnewT7fi5xwzgH/fSnxaRH
+ Ak2BKvE4mwjNBk0dtKt9q7hnrLdqVmhMy6gQGLZbJYj2p+Yl0Ql2OayzDKF1Ak8346YIJXvfHf7
+ rMxS47tzEFll+D2fRHQTbu1ICPJK78jg2quD0rwOPXRFFEfNI+8UuGfxFdfLGvj+GiOV3Auy3Rd
+ vS+NwJwJ5NnnV50viG/mjbARnLVlTSljB5yIHP85PcNLIq678IjLL9ad42O8UKkusHIhYLB8veY
+ Uasuz0kLgig8uvxk3YtewOiTQlkIXIPp9RlYlNp4PasX8V+hGrLbfUXqYN2TfMKslvxZyL2PRLU
+ m2aZBx3FWwLR3n47o7yBcoDIqU1nIHCJBDLDhjpAaKYG0R252XBXiYmvyEuHZAPnUt/R4aSu86i
+ IiwHTfJ12nBbkLxagoaHh7TEXHChwLM95Gw/Un88WY+ffEYAVjpBAhNlbJKeAaSj3a7pnBjg08w
+ Ja3MzA2SG36zlaw==
+X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, 4 Jun 2024 at 11:32, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+This series fixes two patches:
 
-> Back to the background for the copy, so it copies pages to avoid
-> blocking on memory reclaim. With that allocation it in fact increases
-> memory pressure even more. Isn't the right solution to mark those pages
-> as not reclaimable and to avoid blocking on it? Which is what the tmp
-> pages do, just not in beautiful way.
+1. Fix the dmaengine API usage by calling dmaengine_synchronize() after
+   dmaengine_terminate_async() when xrun events occur in application
+2. Use the McASP AFIFO property from DT to refine the period size,
+   instead of hardcoding minimum to 64 samples
 
-Copying to the tmp page is the same as marking the pages as
-non-reclaimable and non-syncable.
+Signed-off-by: Jai Luthra <j-luthra@ti.com>
+---
+Jai Luthra (2):
+      ALSA: dmaengine: Synchronize dma channel in prepare()
+      ASoC: ti: davinci-mcasp: Set min period size using FIFO config
 
-Conceptually it would be nice to only copy when there's something
-actually waiting for writeback on the page.
+ include/sound/dmaengine_pcm.h         |  1 +
+ sound/core/pcm_dmaengine.c            | 10 ++++++++++
+ sound/soc/soc-generic-dmaengine-pcm.c |  8 ++++++++
+ sound/soc/ti/davinci-mcasp.c          |  9 +++++++--
+ 4 files changed, 26 insertions(+), 2 deletions(-)
+---
+base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
+change-id: 20240604-asoc_next-c063fcc190c6
 
-Note: normally the WRITE request would be copied to userspace along
-with the contents of the pages very soon after starting writeback.
-After this the contents of the page no longer matter, and we can just
-clear writeback without doing the copy.
+Best regards,
+-- 
+Jai Luthra <j-luthra@ti.com>
 
-But if the request gets stuck in the input queue before being copied
-to userspace, then deadlock can still happen if the server blocks on
-direct reclaim and won't continue with processing the queue.   And
-sync(2) will also block in that case.
-
-So we'd somehow need to handle stuck WRITE requests.   I don't see an
-easy way to do this "on demand", when something actually starts
-waiting on PG_writeback.  Alternatively the page copy could be done
-after a timeout, which is ugly, but much easier to implement.
-
-Also splice from the fuse dev would need to copy those pages, but that
-shouldn't be a problem, since it's just moving the copy from one place
-to another.
-
-Thanks,
-Miklos
 
