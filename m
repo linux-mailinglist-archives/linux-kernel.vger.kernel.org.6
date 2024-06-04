@@ -1,147 +1,140 @@
-Return-Path: <linux-kernel+bounces-200488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD278FB0B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:06:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 244038FB0BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD7D1F22772
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:06:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B041F22F62
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740901459FA;
-	Tue,  4 Jun 2024 11:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TS9EyaBP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3958814533F;
+	Tue,  4 Jun 2024 11:08:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB5A4A07;
-	Tue,  4 Jun 2024 11:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD654A07;
+	Tue,  4 Jun 2024 11:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717499150; cv=none; b=uxrkOA1svpo9fdNjn5GEhEvHJBYZOzyOxpR3YzE+oBCoTSSvCuiyjW4G/O9uJZ8G0dHL00kXrW0MWPLeorUNXYxbb29ml69ATn1V7EB5bY9d86aamkVt0g3621grYdEq/pyxPlv+f6lP9NFpG48n3o/tW+t26+zGgDX4rknsLuQ=
+	t=1717499311; cv=none; b=B2ZL9wQk1FhVO8UDp4g6ph/5flM2Xx0vqsBQPcSrFRiPxpPsLNp/uhR2A8jm5pNVsb2YdTXdiL9RGErfF4Lhpv6SZp1Lne9D8VmFDYmrkTeNhDs2VfCGLaPVxaNUIGZ1I9fXJHd01gNfWVLWV4/3UQCbGg/wAGNU2wUObpGYPoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717499150; c=relaxed/simple;
-	bh=FD+umT/nkmEtU1quUGT39hfACl2LbDDL01+n5KdBb1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cHbBwyLoRmLr4VLTLj0E9Xa7rNOtkS3QN9opvewshEem/Dzo8EMGtIccI2L38dF/cnee2r7EmCKaKwFo8Jv/wVmZancX6Vljs5PhLKc9RGBbantS4vrjS2V/aXa+a2zhJlaaaUV7zAaaiHLxVAUa5aKWsEjcqM/uqIcOXoFMyBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TS9EyaBP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4BD0A40E016E;
-	Tue,  4 Jun 2024 11:05:46 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id PiQqpMuj9QBX; Tue,  4 Jun 2024 11:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717499142; bh=6dDFTHhj/f5+7yxLUr3fDZt4RZlOlJ9nxFX0/vuWp5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TS9EyaBP23Y2qQjBPCxFnFbdKnNNLZsd3+SoOIwlKT7j3ArZJnZtY53gm3PxkaRAI
-	 qV7KH0PY+ZitB6T2WYmznfKmGjwArobkUpb2QnyCxfEPw2fgcmTfScMb9PBhVgJwuq
-	 v6VRO1XvlOk7Wla7UiPPvjdLeg2vXcU079zCtUZzHTyVElgZJ2kNDQ8K0ob7bL4wHl
-	 J26OEoeXNPzcv6OUPGyEXRmZD2/k0te4bqywuSRwKFMl4mfrUE2TYZoDcwcK4d0rNU
-	 4lPuAa5X1CLzAe/X4mSHm1nD9m6jnH33djVCun8ZG528zX2p0OJJzG1pGetMItlX1A
-	 egQW+uBV94VUk2WmG5y4yH18kVfWBuO9Dzi1W2LGbBmmHBOA/xBQbNnfymWkEvHb7G
-	 9LxoY/kukAwraLRSnVL2gsna4KQGWM7J4y+Qm0CUgI5PRjxu27W9xvGynm9BrC5SBD
-	 Tm1CbL2Vbt7ZjE30oxpf3l740DOPC5XHHBRsfAwz5UWDjcQsJQRy/gNRCF2Fuu9VtG
-	 wENHRsXgHngddm+u4R2VLKSBTUtV4oH/WKWryMZipDq5I0ym6VOV7pK0NTuEIN5fEw
-	 PU2/9dJTzGgXLRHzeB6R2gLEnqqHJUh58kpr26vdZ7hZoaojvb2w6d8wgHs8U/S4vi
-	 J+Dz5Sdc9BP6D4Bu6Ud68GCs=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2021C40E016A;
-	Tue,  4 Jun 2024 11:05:35 +0000 (UTC)
-Date: Tue, 4 Jun 2024 13:05:28 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com
-Subject: Re: [PATCH 7/9] x86/mce: Unify AMD DFR handler with MCA Polling
-Message-ID: <20240604110528.GRZl70-MFo-EikWRHs@fat_crate.local>
-References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
- <20240523155641.2805411-8-yazen.ghannam@amd.com>
+	s=arc-20240116; t=1717499311; c=relaxed/simple;
+	bh=O/y6u8vfxnyc9M0sYToQE9eckbW/BoNY61LnLEuAsXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YM18s0GC1sZyN5/PEdUB+3SyM8qKJCbK/+7DV30y7RJAC15cpjixI6g6vBY8IFxQ/xZIkPU6Zj2/lHPOggtcDL1fSYUrFGtmuEHUbRXBgRNGmpzdY4BUh7Wficv2l6sLxKzZ1ulWBYk0bI5W9/RKOhjgZwNYLiBQ0MCpvHOMRPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E82C2BBFC;
+	Tue,  4 Jun 2024 11:08:27 +0000 (UTC)
+Date: Tue, 4 Jun 2024 07:08:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook
+ <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, "Guilherme G.
+ Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org, Guenter
+ Roeck <linux@roeck-us.net>, Ross Zwisler <zwisler@google.com>,
+ wklin@google.com, Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Joel
+ Fernandes <joel@joelfernandes.org>, Suleiman Souhlal <suleiman@google.com>,
+ Linus Torvalds <torvalds@linuxfoundation.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Mike Rapoport
+ <rppt@kernel.org>
+Subject: Re: [PATCH 1/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <20240604070826.030c5202@gandalf.local.home>
+In-Reply-To: <CAMj1kXFoNT25+ZTFaqF8zj4VkN6FFbtX5Fntf+J-c33tW3TPUA@mail.gmail.com>
+References: <20240603233330.801075898@goodmis.org>
+	<20240603233631.452433539@goodmis.org>
+	<CAMj1kXFoNT25+ZTFaqF8zj4VkN6FFbtX5Fntf+J-c33tW3TPUA@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240523155641.2805411-8-yazen.ghannam@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 23, 2024 at 10:56:39AM -0500, Yazen Ghannam wrote:
-> +static bool smca_log_poll_error(struct mce *m, u32 *status_reg)
+On Tue, 4 Jun 2024 08:03:54 +0200
+Ard Biesheuvel <ardb@kernel.org> wrote:
 
-That handing of *status_reg back'n'forth just to clear it in the end is
-not nice. Let's get rid of it:
+> On Tue, 4 Jun 2024 at 01:35, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> >
+> > In order to allow for requesting a memory region that can be used for
+> > things like pstore on multiple machines where the memory layout is not the
+> > same, add a new option to the kernel command line called "reserve_mem".
+> >
+> > The format is:  reserve_mem=nn:align:name
+> >
+> > Where it will find nn amount of memory at the given alignment of align.
+> > The name field is to allow another subsystem to retrieve where the memory
+> > was found. For example:
+> >
+> >   reserve_mem=12M:4096:oops ramoops.mem_name=oops
+> >
+> > Where ramoops.mem_name will tell ramoops that memory was reserved for it
+> > via the reserve_mem option and it can find it by calling:
+> >
+> >   if (reserve_mem_find_by_name("oops", &start, &size)) {
+> >         // start holds the start address and size holds the size given
+> >
+> > Link: https://lore.kernel.org/all/ZjJVnZUX3NZiGW6q@kernel.org/
+> >
+> > Suggested-by: Mike Rapoport <rppt@kernel.org>
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> 
+> You failed to point out in the commit message that the assumption here
+> is that this memory will retain its contents across a soft reboot. Or
+> am I misunderstanding this?
 
----
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 0a9cff329487..a0ba82fe6de3 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -669,7 +669,7 @@ static void reset_thr_limit(unsigned int bank)
- 
- DEFINE_PER_CPU(unsigned, mce_poll_count);
- 
--static bool smca_log_poll_error(struct mce *m, u32 *status_reg)
-+static bool smca_log_poll_error(struct mce *m, u32 status_reg)
- {
- 	/*
- 	 * If this is a deferred error found in MCA_STATUS, then clear
-@@ -686,8 +686,8 @@ static bool smca_log_poll_error(struct mce *m, u32 *status_reg)
- 	 * If the MCA_DESTAT register has valid data, then use
- 	 * it as the status register.
- 	 */
--	*status_reg = MSR_AMD64_SMCA_MCx_DESTAT(m->bank);
--	m->status = mce_rdmsrl(*status_reg);
-+	status_reg = MSR_AMD64_SMCA_MCx_DESTAT(m->bank);
-+	m->status = mce_rdmsrl(status_reg);
- 
- 	if (!(m->status & MCI_STATUS_VAL))
- 		return false;
-@@ -695,6 +695,8 @@ static bool smca_log_poll_error(struct mce *m, u32 *status_reg)
- 	if (m->status & MCI_STATUS_ADDRV)
- 		m->addr = mce_rdmsrl(MSR_AMD64_SMCA_MCx_DEADDR(m->bank));
- 
-+	mce_wrmsrl(status_reg, 0);
-+
- 	return true;
- }
- 
-@@ -714,7 +716,7 @@ static bool ser_log_poll_error(struct mce *m)
- 	return false;
- }
- 
--static bool log_poll_error(enum mcp_flags flags, struct mce *m, u32 *status_reg)
-+static bool log_poll_error(enum mcp_flags flags, struct mce *m, u32 status_reg)
- {
- 	if (mce_flags.smca)
- 		return smca_log_poll_error(m, status_reg);
-@@ -789,7 +791,7 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
- 		if (!mca_cfg.cmci_disabled)
- 			mce_track_storm(&m);
- 
--		if (!log_poll_error(flags, &m, &status_reg))
-+		if (!log_poll_error(flags, &m, status_reg))
- 			continue;
- 
- 		if (flags & MCP_DONTLOG)
+Yes that is the intention. I should update the commit message.
 
+> 
+> In any case, as I pointed out before, playing these games unilaterally
+> from the kernel side, i.e., without any awareness whatsoever from the
+> firmware and bootloader (which will not attempt to preserve RAM
+> contents), is likely to have a rather disappointing success ratio in
+> the general case. I understand this may be different for vertically
+> integrated software stacks like ChromeOS so perhaps it should live
+> there as a feature.
 
--- 
-Regards/Gruss,
-    Boris.
+I have been using this on two different test machines, as well as a
+chromebook, and it appears to work on all ofthem. As well as for VMs. I
+plan on adding this to my workstation and server too (they use EFI).
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> Then, as Kees points out, there is also the risk that the kernel
+> itself may be stepping on this memory before having realized that it
+> is reserved. At least ARM and x86 have decompressors with a
+> substantial amount of non-trivial placement logic that would need to
+> be made aware of this reservation. Note that EFI vs. non-EFI boot also
+> makes a difference here.
+
+Agreed. Note, it should definitely state that this is not 100% reliable,
+and depending on the setup it may not be reliable at all. Whatever uses it
+should add something to confirm that the memory is the same.
+
+If corner cases become an issue, this could be extended to work with them.
+We could update KASLR to be aware of this allocation. The documentation
+update to kernel-parameters.txt on this usage should definitely stress that
+this can be unreliable, and use should be tested to see if it works. And
+also stress that if it does work, it may not work all the time. The best
+usage for this is for statistical debugging. For instance, in our use case,
+we have 1000s of crashes that we have no idea why. If this worked only 10%
+of the time, the data retrieved from 100 of those crashes would be very
+valuable.
+
+-- Steve
 
