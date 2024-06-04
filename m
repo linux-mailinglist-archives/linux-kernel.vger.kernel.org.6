@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-200731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166C18FB41B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:43:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F898FB429
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34ED28244C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38FB12817AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD45145A15;
-	Tue,  4 Jun 2024 13:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA54F145A15;
+	Tue,  4 Jun 2024 13:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4QzNjO9"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WHTPGKRX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4738146013;
-	Tue,  4 Jun 2024 13:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F20146A8C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717508526; cv=none; b=Xj234ak+oI4rKRbHYGiZvkoI5rgc69OwGtPp/YFDoh6GbuL8PCmRzwimIyjm4OWMR8YqyyMPC5IElXVhripBVYbHTYlTKOcwRN0LNDdzI90B+XXftFMxWUbE45zS0uFSbWc+Y62O1Xa4nHeTGHw2yKDA0pXowaiLpWeji8+UPAU=
+	t=1717508633; cv=none; b=L1azhHQH6a5XcLNFwtXXirQee9B7Nsepmio10hGngerJ5bE7msHrgh+7oEe4zGAqbhI1tG1QAYImhv2vB6BaExdp3JkZ4GKxL8KwcycsxEHwBGO1/vS9d6ufrq+WidAhWgCNNR4sJyK+NBG/ab8LelWVz7RfndDiq1tC3m3vMCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717508526; c=relaxed/simple;
-	bh=NpiGOU/wc8bprEs+G3H4btUN0UKgYT+8jImA/+loXlU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gw7bQMSXRBoRXtSzUV2Owr0GcvFt8xa4/pi6K7UMkI6Xz49bouG4uWV0MyJIv8QqbaQYcZh7QQjOxjtmtHcvz8vwgcqrA4R6SN1lUUmlOin9duMEt7FHABSaKVlHvls9NSo7pJHQQHV1Va+WJrfPxKQqLkcuzpNjjxWExjRXlng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4QzNjO9; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-701b0b0be38so4935696b3a.0;
-        Tue, 04 Jun 2024 06:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717508524; x=1718113324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rj3ma7MoGTsKwEShYWgennrGInTihdBJ4l4EKp81zZk=;
-        b=D4QzNjO9eS9aFctXGeeUgrQUspWyzIX8aTmS/wkvNfHWNh9LKqPK988HmUf+3v+2Wo
-         2x31lpdgLVCtIIluEyUhCmhQ3dS53EZSOy5B0WX31FF3iljAejYKe1Ulq5C6MQne78Ed
-         pf8QdIuARSyMY6UXnJsQYX8IpRsvPwqgI0LsSVOGFSgdWHSQbBXJQ7oDOu/BZBsf48A8
-         RBkmhDyhhoySeVzNdcmJ4wjz6xZzW19JUBbQ8dSd9ufePcPGPsXf2sHZhcjPXDbix3On
-         UqEDZ8axMkNGXkb84ybx+pu0y1A8J32iWOQ/gjFM3r6F2oJxn8MEZDU768fLscauRYqq
-         GhxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717508524; x=1718113324;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rj3ma7MoGTsKwEShYWgennrGInTihdBJ4l4EKp81zZk=;
-        b=nuUvY63IHhmFIu97NZJoOhD0VQq5zG/Fge1RjoZWCdvh7tHNucUj6nUdbN3/bVzYo+
-         zt9UyPtB16os8thPywruwsrcm+/qZqvhz1hcc8NgDxpwUGyDtR/Z8YmcMaJ9uP+ZWzwx
-         qt8KYc9bmtG9EGZurqMCHyHVofU1bwlnATDMmbvUUklC0Xyp4QngvSRhReXzhV3Jt6Cy
-         L+gktN5Pm1FEEI4sSGWPYO0YuzoNhW9DPtKTXl1i15zdB4woAYvVm7NSrBMP2ZDh5G7T
-         vInyUbDcwlybTMWfVJAf+mI76QRmcZJG4NHCc6/VJlrJ1uci/hVb7EjcwGSpbP+peSlG
-         a2HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWICCZyDfJkb+8qBtEITi712wdygJPEQk16Xr3LQvGhk75OBr9wU6PcvcnGuCD5whzWz8HnIAdC2O8FsbtMoco+Xzx9lhM+0NYu+MXh
-X-Gm-Message-State: AOJu0YzMEufDpOZxXUuoIrv5XDo+/8l5xJRjTwFCIcygAv2fxrbXjOBI
-	BbSgitmPDy+Vq09DtJQ1vZ5pnXpGJ+MQC9xJxsiOgUg3net75J+6IwyxOw==
-X-Google-Smtp-Source: AGHT+IFsLgU6qa4slPEBxZVz54BIxZGe3KUMxrE3IkM4CUIAOHQZ7w8G80dMd9GZn28i7cNNiqKQnA==
-X-Received: by 2002:a05:6a20:9187:b0:1b2:2893:4c30 with SMTP id adf61e73a8af0-1b26f2cc0efmr13513674637.43.1717508523859;
-        Tue, 04 Jun 2024 06:42:03 -0700 (PDT)
-Received: from carrot.. (i223-217-95-32.s42.a014.ap.plala.or.jp. [223.217.95.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323f6dadsm82903925ad.221.2024.06.04.06.42.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 06:42:03 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	syzbot <syzbot+c8166c541d3971bf6c87@syzkaller.appspotmail.com>,
-	syzkaller-bugs@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nilfs2: fix nilfs_empty_dir() misjudgment and long loop on I/O errors
-Date: Tue,  4 Jun 2024 22:42:55 +0900
-Message-Id: <20240604134255.7165-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <00000000000020f6700619e765c8@google.com>
-References: <00000000000020f6700619e765c8@google.com>
+	s=arc-20240116; t=1717508633; c=relaxed/simple;
+	bh=73TacqsCpBZ+SAUPu6XyT+doqzn3pkKU04z3oNydmok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BxZJ7wL3uoRrxr0Cs6pfnQq+x9gjpXqPtAdGagJc6vMKE8G8koDiavzbKa2bfJBFvvu5BuAaAvEFO1Fn/uAkyt2OGWGN4fek/ARo9fK+UBS4MrbOODWbHeOkdMbH0cRwKkJ+GPJklWTtLUwIUkcbsSkAxGkS47V5me4O0khneWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WHTPGKRX; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717508631; x=1749044631;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=73TacqsCpBZ+SAUPu6XyT+doqzn3pkKU04z3oNydmok=;
+  b=WHTPGKRX/f7VzNypXPul4JfLlowd5h/F7SAUfCxezSUySmNKA/wdEM7r
+   dC027YJua2qZj8+SzZdctX0zZQwfg6jYVVwEUNul6H4ePgPjEXHjkQDid
+   ko0DB0TwrrXxbz4fJeeUK0XsBCCdwwd9sCqrSTtIbXyQady85onyPbKmz
+   Rlbrrkp+pYF3wQmNPRj9Oz/tRRZLGM7u4OJdRr8hJzKFOEpczVWneoct4
+   b03DVeopCcAaLfZ1+UEBNa0/cjtaTv3gpMgwqiGdBQKl1A7KlYAvBsPPM
+   +NV48oSOIh8Pzq14f0FE++K9N2hk0J1MGAtTnZCzjnhmzDhcdt6j1QVxb
+   Q==;
+X-CSE-ConnectionGUID: 4IOfeBGlRqiLmwBis0p9pw==
+X-CSE-MsgGUID: 69M/osSxQjaDvntGco+IaQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13804621"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="13804621"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 06:43:51 -0700
+X-CSE-ConnectionGUID: 9s6zS/BhQt67arFy2ujWnQ==
+X-CSE-MsgGUID: 6auYehRnRBeQO0y66DqDhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="41793773"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.246.143]) ([10.245.246.143])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 06:43:50 -0700
+Message-ID: <970501b1-09ae-4f2c-a078-2b4f23fe460e@linux.intel.com>
+Date: Tue, 4 Jun 2024 15:43:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] soundwire: bus: clean up probe warnings
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org
+References: <20240604075213.20815-1-johan+linaro@kernel.org>
+ <20240604075213.20815-4-johan+linaro@kernel.org>
+ <8dd7cadc-138c-4ef5-b06f-7177550b1215@linux.intel.com>
+ <Zl7boEkMpQaELARP@hovoldconsulting.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <Zl7boEkMpQaELARP@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The error handling in nilfs_empty_dir() when a directory folio/page
-read fails is incorrect, as in the old ext2 implementation, and if the
-folio/page cannot be read or nilfs_check_folio() fails, it will falsely
-determine the directory as empty and corrupt the file system.
 
-In addition, since nilfs_empty_dir() does not immediately return on
-a failed folio/page read, but continues to loop, this can cause a long
-loop with I/O if i_size of the directory's inode is also corrupted,
-causing the log writer thread to wait and hang, as reported by syzbot.
 
-Fix these issues by making nilfs_empty_dir() immediately return a false
-value (0) if it fails to get a directory folio/page.
+On 6/4/24 11:17, Johan Hovold wrote:
+> On Tue, Jun 04, 2024 at 10:33:02AM +0200, Pierre-Louis Bossart wrote:
+>> On 6/4/24 02:52, Johan Hovold wrote:
+>>> Clean up the probe warning messages by using a common succinct format
+>>> (e.g. without __func__ and with a space after ':').
+> 
+>>> @@ -123,7 +123,7 @@ static int sdw_drv_probe(struct device *dev)
+>>>  	/* init the dynamic sysfs attributes we need */
+>>>  	ret = sdw_slave_sysfs_dpn_init(slave);
+>>>  	if (ret < 0)
+>>> -		dev_warn(dev, "Slave sysfs init failed:%d\n", ret);
+>>> +		dev_warn(dev, "failed to initialise sysfs: %d\n", ret);
+>>>  
+>>>  	/*
+>>>  	 * Check for valid clk_stop_timeout, use DisCo worst case value of
+>>> @@ -147,7 +147,7 @@ static int sdw_drv_probe(struct device *dev)
+>>>  	if (drv->ops && drv->ops->update_status) {
+>>>  		ret = drv->ops->update_status(slave, slave->status);
+>>>  		if (ret < 0)
+>>> -			dev_warn(dev, "%s: update_status failed with status %d\n", __func__, ret);
+>>> +			dev_warn(dev, "failed to update status: %d\n", ret);
+>>
+>> the __func__ does help IMHO, 'failed to update status' is way too general...
+> 
+> Error messages printed with dev_warn will include the device and driver
+> names so this message will be quite specific still.
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Reported-by: syzbot+c8166c541d3971bf6c87@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c8166c541d3971bf6c87
-Fixes: 2ba466d74ed7 ("nilfs2: directory entry operations")
-Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: stable@vger.kernel.org
----
-Hi Andrew, please apply this as a bug fix.
+The goal isn't to be 'quite specific' but rather 'completely
+straightforward'. Everyone can lookup a function name in a xref tool and
+ quickly find out what happened. Doing 'git grep' on message logs isn't
+great really, and over time logs tend to be copy-pasted. Just look at
+the number of patches where we had to revisit the dev_err logs to make
+then really unique/useful.
 
-This fixes a bug in the empty directory function and the resulting
-hang issue reported by syzbot.
+>> Replacing 'with status' by ":" is fine, but do we really care about 10
+>> chars in a log?
+> 
+> It's not primarily about the numbers of characters but about consistency.
 
-Thanks,
-Ryusuke Konishi
+I am advocating for inclusion of __func__ everywhere...It's simpler for
+remote support and bug chasing.
 
- fs/nilfs2/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-index a002a44ff161..52e50b1b7f22 100644
---- a/fs/nilfs2/dir.c
-+++ b/fs/nilfs2/dir.c
-@@ -607,7 +607,7 @@ int nilfs_empty_dir(struct inode *inode)
- 
- 		kaddr = nilfs_get_folio(inode, i, &folio);
- 		if (IS_ERR(kaddr))
--			continue;
-+			return 0;
- 
- 		de = (struct nilfs_dir_entry *)kaddr;
- 		kaddr += nilfs_last_byte(inode, i) - NILFS_DIR_REC_LEN(1);
--- 
-2.34.1
-
+The exception to the rule would be dev_dbg where you can get the
+function name with module options.
 
