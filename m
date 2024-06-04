@@ -1,228 +1,223 @@
-Return-Path: <linux-kernel+bounces-200449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB608FB036
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:45:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD2F8FB037
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4C51C232F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:45:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D5081C20F23
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B005D1459FE;
-	Tue,  4 Jun 2024 10:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E78144D3A;
+	Tue,  4 Jun 2024 10:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DC9xw6k6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CvYjR7Fw";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DC9xw6k6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CvYjR7Fw"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gK0BlZrU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1CA143755;
-	Tue,  4 Jun 2024 10:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97D51A286
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717497715; cv=none; b=XosmlXCZKUCLvuH6A9Y6ssFV6BSLwf/cy8P1ufxEEb9bteyH+GabfKhR0LVuTQJ3qIhOPoXHJDDnGLNJisHpAYbFwqPIcHUZUmebzQSxCZzd2nPwH8+Rkyf1st0qc9vif4zoH/Rkd//YHxi4lTmdBNVuZF5YTCCJEFAgAdQ/Sgw=
+	t=1717497814; cv=none; b=MuVedZ5Xo8q9TkpkulWJBcu2WUj3lfTdt778C8EBJTXNCQIdzSpApVhum3Q11cgRQpznFObLO6Xn0IqDioi1ZOtS4+9YpiGbezBND4EP/82Bc2e5foNihNJXRBBa1i1qN+dZe1idsYTXxtEKYZ9QNkEq7SdfmewwfJJ8wu0Kvac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717497715; c=relaxed/simple;
-	bh=dp0fo3XdeqZlYypGl9DeIj5tcmNB7aysxjzk84H8XLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q6osS0DlXs2MBCQYdRUyaS9Y5FLSLIaG1XA9LPYapI5dYZxJS+I/+4MrlJwWAznR1eRsD6tpGzFpF5o/O7Gp2eTta7gz2YcY0uYtkktRZDVYkiHyILkqU2XjYjn0QA8TLBjyC4XuwU4g8cfs64mm+0HWLbfVc51wDRfGQbL/a6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DC9xw6k6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CvYjR7Fw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DC9xw6k6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CvYjR7Fw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8C0651F7E1;
-	Tue,  4 Jun 2024 10:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717497711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VwFOiU/WbAmM69GrLyMIrhX7BpOE7tyHdXUtBfNPkvA=;
-	b=DC9xw6k6BGTGAmaiJWgeOUFIL0h6Nok4Ol0RGeCiIMDyhIFIbOrI/4ozp5hFb5CucGJCTJ
-	4G8NF9ID5nE0gV2ziqoj3AtkRs2xk/XPiQmFLqKw+OYON9+WHXbuAADDAeVblM4lvhnxf0
-	YjwP5eHXnoRwOrNScpO57UO5MRRc19o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717497711;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VwFOiU/WbAmM69GrLyMIrhX7BpOE7tyHdXUtBfNPkvA=;
-	b=CvYjR7FwREKuPNr9YcV1PPc7aMaUHAk1Mt90+xMoRHT7OoIkh0h3GBZ/zs1joWWPtIIQES
-	8lA5cSjQJJoI1WBw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DC9xw6k6;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=CvYjR7Fw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717497711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VwFOiU/WbAmM69GrLyMIrhX7BpOE7tyHdXUtBfNPkvA=;
-	b=DC9xw6k6BGTGAmaiJWgeOUFIL0h6Nok4Ol0RGeCiIMDyhIFIbOrI/4ozp5hFb5CucGJCTJ
-	4G8NF9ID5nE0gV2ziqoj3AtkRs2xk/XPiQmFLqKw+OYON9+WHXbuAADDAeVblM4lvhnxf0
-	YjwP5eHXnoRwOrNScpO57UO5MRRc19o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717497711;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VwFOiU/WbAmM69GrLyMIrhX7BpOE7tyHdXUtBfNPkvA=;
-	b=CvYjR7FwREKuPNr9YcV1PPc7aMaUHAk1Mt90+xMoRHT7OoIkh0h3GBZ/zs1joWWPtIIQES
-	8lA5cSjQJJoI1WBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 753FD13A93;
-	Tue,  4 Jun 2024 10:41:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pZSbHG/vXmYRRAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 04 Jun 2024 10:41:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2D054A086D; Tue,  4 Jun 2024 12:41:51 +0200 (CEST)
-Date: Tue, 4 Jun 2024 12:41:51 +0200
-From: Jan Kara <jack@suse.cz>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	hch@infradead.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] fs/splice: don't block splice_direct_to_actor() after
- data was read
-Message-ID: <20240604104151.73n3zmn24hxmmwj6@quack3>
-References: <20240604092431.2183929-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1717497814; c=relaxed/simple;
+	bh=G0PC1VWFHONCr+ZR7tdJV+B68sO5R+uwJMuFfODQc1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=StUuH2oGk4Io4NMlc0ycQVUbW+CuPr7zAx+UEK5OuR+ZRZPnbSqW4f9UdkIdpzHuJkfcrkESJGuShtmZ3NpDR7OhVSEZCRknqwBlqAkjk8tPE8vtxxU0hJae9trrE1ixRX1qYAgGXGE5LXA3eWtHmiZQH2dmCYmBtgWXWDU0I1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gK0BlZrU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717497811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ajdsOZR0w0yo30qaDX6u90Ek5kU2b88kP4PAC8KC4fo=;
+	b=gK0BlZrU+id6hJAc3h0Goe2Tn8iQ8je0y40sauyu118nRhu9hbJyJ2PKD7nFll9UdhPAvc
+	Ib/czdd3fgeog2dTqdVgAm8k0sbR+h5NXokC85Qc9UG8g24nrasIR7xtiwL6KcLl0dd/zH
+	Q15n7swuEXXi7Q+kSC6X8oCcefkKMJo=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-507-snCUzMj3Praw3d9ok9gT1g-1; Tue, 04 Jun 2024 06:43:30 -0400
+X-MC-Unique: snCUzMj3Praw3d9ok9gT1g-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35e0f8bcc3cso2215792f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:43:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717497809; x=1718102609;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ajdsOZR0w0yo30qaDX6u90Ek5kU2b88kP4PAC8KC4fo=;
+        b=vd0NtKOLZP3z1/N9WaQPZAK9Rmh7stzhYti/bJSMDdJp0gEAS6dtN2of9rZRQ71w/R
+         sL7P4q91dUOASDf+1TWfcsPjYjaEGmqokzX7r/gW+S8SML/4HabPakzgYsT6VzMLvUcH
+         AgtQk3PnIh4O18lynxfH1Ab9faimIHfyuQBqZPlcUbWwv76xGUwP+BvABR0NiyhnplKp
+         mwoUVCPNy/RM+ll+6R19uQm8cg4R70hn6kSTxH6VlGjNdR39vBTqlWy4QFTTnkxh6WSu
+         Udsq/sokjjQVuv6xtRrHgFWIrzZKKMviDGBfcg7O3S/jQoi1pKPjnT2HQhgZshIVtuKI
+         fcOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaJV2844sAF7ite0PJJMs8FWLjf9paLwpEd2Pl5ejBL1sHLfJCEuBeeEdvE13VM7tlMhq1nlDr2hQj2FVW5nOwCp/9mPFzsq73UUm4
+X-Gm-Message-State: AOJu0YxEc8X2QmwxKzXkoI1qZwIgtruklGk/OWYaIe5uXs+ZKSgpCjFL
+	I1p0qseYaWcUir9y4h8zYCbYe1ypxK8BceqYHBzCxgY03GEc/8LIu6SmKMOFavt7B8qUeHlIy4n
+	h/Mm4WMegbj0qruo5K4raqZHVT1BGutYyZnuH8qIDk6z8V8bL3gbT1prMFoANgg==
+X-Received: by 2002:adf:e386:0:b0:354:db90:6df1 with SMTP id ffacd0b85a97d-35e0f28590emr9252332f8f.38.1717497809369;
+        Tue, 04 Jun 2024 03:43:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjwxmPwn62C6Nq0puMDiUKK2NN+CXbdv7oUo4JOG7HJoIdbxXPJPESEIlDlqHsZo1Ec6blRA==
+X-Received: by 2002:adf:e386:0:b0:354:db90:6df1 with SMTP id ffacd0b85a97d-35e0f28590emr9252309f8f.38.1717497808903;
+        Tue, 04 Jun 2024 03:43:28 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73a:3a00:a025:9b06:549e:c16b? (p200300cbc73a3a00a0259b06549ec16b.dip0.t-ipconnect.de. [2003:cb:c73a:3a00:a025:9b06:549e:c16b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062fe96sm11133331f8f.67.2024.06.04.03.43.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 03:43:28 -0700 (PDT)
+Message-ID: <00dcd224-6333-4f1e-9087-bdb5024ac236@redhat.com>
+Date: Tue, 4 Jun 2024 12:43:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604092431.2183929-1-max.kellermann@ionos.com>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 8C0651F7E1
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] mm/ksm: skip subpages of compound pages
+To: Alex Shi <seakeel@gmail.com>, alexs@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
+ willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
+ hughd@google.com
+References: <20240604042454.2012091-1-alexs@kernel.org>
+ <20240604042454.2012091-3-alexs@kernel.org>
+ <8d3a60d5-06c5-4df4-aeda-2fbec45a8ae0@redhat.com>
+ <b3e242b5-c589-47fd-9a02-1e488bed9d15@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <b3e242b5-c589-47fd-9a02-1e488bed9d15@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue 04-06-24 11:24:31, Max Kellermann wrote:
-> If userspace calls sendfile() with a very large "count" parameter, the
-> kernel can block for a very long time until 2 GiB (0x7ffff000 bytes)
-> have been read from the hard disk and pushed into the socket buffer.
+On 04.06.24 12:31, Alex Shi wrote:
 > 
-> Usually, that is not a problem, because the socket write buffer gets
-> filled quickly, and if the socket is non-blocking, the last
-> direct_splice_actor() call will return -EAGAIN, causing
-> splice_direct_to_actor() to break from the loop, and sendfile() will
-> return a partial transfer.
 > 
-> However, if the network happens to be faster than the hard disk, and
-> the socket buffer keeps getting drained between two
-> generic_file_read_iter() calls, the sendfile() system call can keep
-> running for a long time, blocking for disk I/O over and over.
+> On 6/4/24 4:12 PM, David Hildenbrand wrote:
+>> On 04.06.24 06:24, alexs@kernel.org wrote:
+>>> From: "Alex Shi (tencent)" <alexs@kernel.org>
+>>>
+>>> When a folio isn't fit for KSM, the subpages are unlikely to be good,
+>>> So let's skip the rest page checking to save some actions.
+>>>
+>>> Signed-off-by: Alex Shi (tencent) <alexs@kernel.org>
+>>> ---
+>>>    mm/ksm.c | 9 +++++++--
+>>>    1 file changed, 7 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/mm/ksm.c b/mm/ksm.c
+>>> index 97e5b41f8c4b..e2fdb9dd98e2 100644
+>>> --- a/mm/ksm.c
+>>> +++ b/mm/ksm.c
+>>> @@ -2644,6 +2644,8 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+>>>            goto no_vmas;
+>>>          for_each_vma(vmi, vma) {
+>>> +        int nr = 1;
+>>> +
+>>>            if (!(vma->vm_flags & VM_MERGEABLE))
+>>>                continue;
+>>>            if (ksm_scan.address < vma->vm_start)
+>>> @@ -2660,6 +2662,9 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+>>>                    cond_resched();
+>>>                    continue;
+>>>                }
+>>> +
+>>> +            VM_WARN_ON(PageTail(*page));
+>>> +            nr = compound_nr(*page);
+>>>                if (is_zone_device_page(*page))
+>>>                    goto next_page;
+>>>                if (PageAnon(*page)) {
+>>> @@ -2672,7 +2677,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+>>>                        if (should_skip_rmap_item(*page, rmap_item))
+>>>                            goto next_page;
+>>>    -                    ksm_scan.address += PAGE_SIZE;
+>>> +                    ksm_scan.address += nr * PAGE_SIZE;
+>>>                    } else
+>>>                        put_page(*page);
+>>>                    mmap_read_unlock(mm);
+>>> @@ -2680,7 +2685,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+>>>                }
+>>>    next_page:
+>>>                put_page(*page);
+>>> -            ksm_scan.address += PAGE_SIZE;
+>>> +            ksm_scan.address += nr * PAGE_SIZE;
+>>>                cond_resched();
+>>>            }
+>>>        }
+>>
+>> You might be jumping over pages that don't belong to that folio. What you would actually want to do is somehow use folio_pte_batch() to really know the PTEs point at the same folio, so you can skip them. But that's not that easy when using follow_page() ...
+>>
+>> So I suggest dropping this change for now.
+>>
 > 
-> That is undesirable, because it can block the calling process for too
-> long.  I discovered a problem where nginx would block for so long that
-> it would drop the HTTP connection because the kernel had just
-> transferred 2 GiB in one call, and the HTTP socket was not writable
-> (EPOLLOUT) for more than 60 seconds, resulting in a timeout:
+> Hi David,
 > 
->   sendfile(4, 12, [5518919528] => [5884939344], 1813448856) = 366019816 <3.033067>
->   sendfile(4, 12, [5884939344], 1447429040) = -1 EAGAIN (Resource temporarily unavailable) <0.000037>
->   epoll_wait(9, [{EPOLLOUT, {u32=2181955104, u64=140572166585888}}], 512, 60000) = 1 <0.003355>
->   gettimeofday({tv_sec=1667508799, tv_usec=201201}, NULL) = 0 <0.000024>
->   sendfile(4, 12, [5884939344] => [8032418896], 2147480496) = 2147479552 <10.727970>
->   writev(4, [], 0) = 0 <0.000439>
->   epoll_wait(9, [], 512, 60000) = 0 <60.060430>
->   gettimeofday({tv_sec=1667508869, tv_usec=991046}, NULL) = 0 <0.000078>
->   write(5, "10.40.5.23 - - [03/Nov/2022:21:5"..., 124) = 124 <0.001097>
->   close(12) = 0 <0.000063>
->   close(4)  = 0 <0.000091>
-> 
-> In newer nginx versions (since 1.21.4), this problem was worked around
-> by defaulting "sendfile_max_chunk" to 2 MiB:
-> 
->  https://github.com/nginx/nginx/commit/5636e7f7b4
+> Forgive my stupidity, where I jump over normal page that not to belong to the folio?
 
-Well, I can see your pain but after all the kernel does exactly what
-userspace has asked for?
+IIUC, you assume that the folio is fully mapped by all PTEs that could 
+span it, and that follow_page() would give you the head page, correct?
 
-> Instead of asking userspace to provide an artificial upper limit, I'd
-> like the kernel to block for disk I/O at most once, and then pass back
-> control to userspace.
-> 
-> There is prior art for this kind of behavior in filemap_read():
-> 
-> 	/*
-> 	 * If we've already successfully copied some data, then we
-> 	 * can no longer safely return -EIOCBQUEUED. Hence mark
-> 	 * an async read NOWAIT at that point.
-> 	 */
-> 	if ((iocb->ki_flags & IOCB_WAITQ) && already_read)
-> 		iocb->ki_flags |= IOCB_NOWAIT;
+As a simple example, assume only a single page of a large folio is still 
+mapped, which could be any tail page. You couldn't jump over any PTEs.
 
-Do note the IOCB_WAITQ test - this means that the request is coming from
-io_uring and that has a retry logic to handle short reads. I'm really
-nervous about changing sendfile behavior to unconditionally returning short
-writes. In particular see this in do_sendfile():
+Or am I missing something?
 
-#if 0
-        /*
-         * We need to debate whether we can enable this or not. The
-         * man page documents EAGAIN return for the output at least,
-         * and the application is arguably buggy if it doesn't expect
-         * EAGAIN on a non-blocking file descriptor.
-         */
-        if (in.file->f_flags & O_NONBLOCK)
-                fl = SPLICE_F_NONBLOCK;
-#endif
-
-We have been through these discussions in the past and so far we have
-always decided the chances for userspace breakage are too big. After all
-there's no substantial difference between userspace issuing a 2GB read(2) and
-2GB sendfile(2). In both cases you are going to be blocked for a long
-time and there are too many userspace applications that depend on this
-behavior...
-
-So I don't think we want to change the current behavior. We could create a
-new interface to provide the semantics you want (like a flag to sendfile(2)
-- which would mean a new syscall) but I'm wondering whether these days
-io_uring isn't a better answer if you want to more closely control IO
-behavior of your application and are willing to change used interface.
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+
+David / dhildenb
+
 
