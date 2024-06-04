@@ -1,135 +1,134 @@
-Return-Path: <linux-kernel+bounces-200423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962438FAFDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8A58FAFDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C4B1F237DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 509211F23D17
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AE0144D0A;
-	Tue,  4 Jun 2024 10:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624F7145326;
+	Tue,  4 Jun 2024 10:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="rp6HJoAr"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbs4N7Zk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B2329401;
-	Tue,  4 Jun 2024 10:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1B029401;
+	Tue,  4 Jun 2024 10:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717496981; cv=none; b=PWbM3M/8aTmw4tC+YVoU1GrOLmNJr+r2hx++QH7rpRtubRkNeQ7p5bMnn3fJzyeiVzmiNQq8pygO9CZ8n0eIlB2l2tRRD/E8kxuMuJeNgTlQTR3wUqm3XyrcbIClgOszNB2ue9yxzcCpjl5wi7v19oC5iM0lSpAARsge9MYrHg8=
+	t=1717496987; cv=none; b=n0a5AMqRmYw8Zqgp750JdoYOSV3/0BgwPfwTcUiVKfOIEAoN7WStvk7URariV6bMsPiPnR8cy3NS54RvGLXAn3GT6mOg5w+mi2ySioymjKxuaqtlmh3M1dIQBLeqSdPlrXnD+qBik2GN5/4S8NltTgxmaYs0OCFUWNjO/8bPKds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717496981; c=relaxed/simple;
-	bh=BQ+qiq72QPdaBXb30EQGfPMHadzeqg43TjzADDa4iJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6Mr6sxo3byVovmgpJxFDHr3vzE7ZQuRRP7QKitZsmcZZsIwRwsKi/LUex98YEGkNNb0U8H/Vq/eI0eHFg1yxdMhh0FqBgXF5G/naZydm+0F+pWe87h92oBdwS9al7YZz/O4NZXLk/x+rR7KjAyjFVCx0fR7ocqNMZMPIv5QcX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=rp6HJoAr; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Vtmzt1dBjz9sS2;
-	Tue,  4 Jun 2024 12:29:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717496970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6DG7DXE2JJh9dM3bhGo7RQTMbF5V2xeF0wZaeXe7lOs=;
-	b=rp6HJoAr4fgn8D/Lj3iM+i2F/Bkkah1tOkbOY3bFKl3+D6oskWV+IVl4f4fY7q49kt4oJY
-	PecYhtX+D45PzWEvv0NaHqK+hDsMs1YUuzzdS02RRSMarCRks2Zh+RxHJAEv7lPhiecDGT
-	O4RHqW3zPVzx+TjgEPU6GT1fveYC5d+NpIRI23HIpf4KndEokN/ti0YAjO10KfJfT8JVl3
-	D397p4GHT6fAhAWQyZ54Vx3o0yDI1oDRZfzRWLzy+qZcoNBb0DnOjyMqPZVvVZFX5axh7N
-	DjrOhaIEALi7giAnw0mqMUlY0PCNOnLlOJkHlkH3aHfHlm+S8+0KypkCo1uuSg==
-Date: Tue, 4 Jun 2024 10:29:24 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, akpm@linux-foundation.org,
-	brauner@kernel.org, djwong@kernel.org, linux-kernel@vger.kernel.org,
-	hare@suse.de, john.g.garry@oracle.com, gost.dev@samsung.com,
-	yang@os.amperecomputing.com, p.raghav@samsung.com,
-	cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	mcgrof@kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 05/11] mm: split a folio in minimum folio order chunks
-Message-ID: <20240604102924.u6n35x4rfzdvis3l@quentin>
-References: <20240529134509.120826-1-kernel@pankajraghav.com>
- <20240529134509.120826-6-kernel@pankajraghav.com>
- <Zl243qf2WiPHIMWN@casper.infradead.org>
+	s=arc-20240116; t=1717496987; c=relaxed/simple;
+	bh=YnGXqvFYemOK4oAa8u+jvIolcn9ttr1HWGnsulGYRQw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IGvtDARW7hiEYp0jIDHzKEr7ntsBhIB4OMa3OEJqn2NilyILfW0gZGRFZCGTYfcNWL4/GXjOWshpVYTewaJR88owLWoeo6+Stvpri+i+5pefoxysTkLIZy2selgzEscTKrSMODkMpA/eP6X7T5HOUKjHHyuAv4F91V7ctVp2WyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbs4N7Zk; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717496986; x=1749032986;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=YnGXqvFYemOK4oAa8u+jvIolcn9ttr1HWGnsulGYRQw=;
+  b=lbs4N7Zk5R0Bw1CdoHPNqqw9mUyXxY9qEHoOd8E6bj7KSci06H9sP17u
+   gagjqcChxpfTaImnDCPqEqVuu2WEpmu6L/N7hkSdbJIeAOelZMHkbmS1f
+   sUr8TNa0L6I3L+laJHf+3ubAEmStTW7Z88t2b6mM3jKFtgjKpJD0j77aq
+   uQ6PbgRYttuW4Ru2ter5/Bd2ktITq1KuLZIkb4Iu+wHXm/d9bIbaehSqW
+   sh7UDJgQQaCxqQzv3FN9J1v75ZwKlziUrQ51LDEDC9FC2UTaHW5rwhs2+
+   Ib6gauv15MfChznK/yrlMGuw0FYbFE1xybazV9hfT8MQutemBCGJAFK2D
+   A==;
+X-CSE-ConnectionGUID: A23+fNJrQfCA4WwN/NHDJQ==
+X-CSE-MsgGUID: 2YCpqckRS3mxfypKwEZYyg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="13874763"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="13874763"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 03:29:45 -0700
+X-CSE-ConnectionGUID: bQeZwrfRQTqQ7akfNCvZdQ==
+X-CSE-MsgGUID: CzaMVoSjToGuY7h0sNMbrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="37788938"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 03:29:45 -0700
+Message-ID: <63e98f2151ef64de92cf7e3da796937755ea5552.camel@linux.intel.com>
+Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
+ global.turbo_disabled after initialization
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Xi Ruoyao <xry111@xry111.site>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+ <linux-pm@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>
+Date: Tue, 04 Jun 2024 03:29:45 -0700
+In-Reply-To: <aa643910265b9d92a397d5148b31d37b2c421b8b.camel@xry111.site>
+References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
+	 <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+	 <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
+	 <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
+	 <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
+	 <f382e06635b3b52841d1e0c11dcf639d225edae0.camel@xry111.site>
+	 <29d69252dcdc398f147c9139a8666d09e7bd831d.camel@linux.intel.com>
+	 <0324bc3a88654855719cd48a5ed69a34eea31037.camel@xry111.site>
+	 <c3526e7a0e80ec1a3a011259c38ab4b772040ea4.camel@linux.intel.com>
+	 <48eba83030e155f703b4248e9c1ae65aa44b1a83.camel@xry111.site>
+	 <CAJZ5v0jjLgG3VY_kBYc4mTrL2ybD2LfBTk2_H7xY0+Aq5g827A@mail.gmail.com>
+	 <f34c20ae3feac0e3570125f124e440d51c5e4d9b.camel@linux.intel.com>
+	 <1da736da33a61de92314934ecf7fa0420d6d6b81.camel@linux.intel.com>
+	 <aa643910265b9d92a397d5148b31d37b2c421b8b.camel@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zl243qf2WiPHIMWN@casper.infradead.org>
-X-Rspamd-Queue-Id: 4Vtmzt1dBjz9sS2
 
-On Mon, Jun 03, 2024 at 01:36:46PM +0100, Matthew Wilcox wrote:
-> On Wed, May 29, 2024 at 03:45:03PM +0200, Pankaj Raghav (Samsung) wrote:
-> > @@ -3572,14 +3600,19 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
-> >  
-> >  	for (index = off_start; index < off_end; index += nr_pages) {
-> >  		struct folio *folio = filemap_get_folio(mapping, index);
-> > +		unsigned int min_order, target_order = new_order;
-> >  
-> >  		nr_pages = 1;
-> >  		if (IS_ERR(folio))
-> >  			continue;
-> >  
-> > -		if (!folio_test_large(folio))
-> > +		if (!folio->mapping || !folio_test_large(folio))
-> >  			goto next;
-> 
-> This check is useless.  folio->mapping is set to NULL on truncate,
-> but you haven't done anything to prevent truncate yet.  That happens
-> later when you lock the folio.
-> 
-> > +		min_order = mapping_min_folio_order(mapping);
-> 
-> You should hoist this out of the loop.
-> 
-> > +		if (new_order < min_order)
-> > +			target_order = min_order;
+On Tue, 2024-06-04 at 17:30 +0800, Xi Ruoyao wrote:
+> On Mon, 2024-06-03 at 21:31 -0700, srinivas pandruvada wrote:
+>=20
+> > > > Second, a delayed work can be added to check the MSR long
+> > > > enough
+> > > > after
+> > > > initialization and update global.turbo_disabled if it is 1.=20
+> > > > However,
+> > > > that would require some code surgery.
+> > >=20
+> > Something like the attached which does same way as user space
+> > no_turbo
+> > update.
+>=20
+> > =C2=A0static int intel_pstate_register_driver(struct cpufreq_driver
+> > *driver)
+> > =C2=A0{
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
+> > @@ -3114,6 +3137,9 @@ static int
+> > intel_pstate_register_driver(struct cpufreq_driver *driver)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0global.turbo_disabled =
+=3D turbo_is_disabled();
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0global.no_turbo =3D glo=
+bal.turbo_disabled;
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (global.turbo_disabled)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0schedule_delayed_work(&turbo_work, HZ);
 > > +
-> >  		total++;
-> >  		nr_pages = folio_nr_pages(folio);
-> >  
-> > @@ -3589,7 +3622,18 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
-> >  		if (!folio_trylock(folio))
-> >  			goto next;
-> >  
-> > -		if (!split_folio_to_order(folio, new_order))
-> > +		if (!folio_test_anon(folio)) {
-> 
-> Please explain how a folio _in a file_ can be anon?
-> 
-> > +			unsigned int min_order;
-> > +
-> > +			if (!folio->mapping)
-> > +				goto next;
-> > +
-> > +			min_order = mapping_min_folio_order(folio->mapping);
-> > +			if (new_order < target_order)
-> > +				target_order = min_order;
-> 
-> Why is this being repeated?
-> 
-> > +		}
+>=20
+> I have to change it to 20 * HZ to make it work for me.=C2=A0 15 * HZ does
+> not
+> work.
 
-You are right. There are some repetition and checks that are not needed.
-I will clean this function for the next revision. 
+Is there any consistency or it is changing every time?
 
-Thanks.
+Thanks,
+Srinivas
 
---
-Pankaj
+>=20
+
 
