@@ -1,295 +1,333 @@
-Return-Path: <linux-kernel+bounces-200811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754038FB535
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:27:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BA88FB57C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D001F219FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:27:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09CB9286349
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBD9135414;
-	Tue,  4 Jun 2024 14:26:55 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7911C149C59;
+	Tue,  4 Jun 2024 14:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LzrZWvlq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B19A12CD98;
-	Tue,  4 Jun 2024 14:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A96149C41;
+	Tue,  4 Jun 2024 14:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511215; cv=none; b=HwL85Qd9j2xwR3whdAo4V1rx8XFZ5FrMJev7QUKZmpdsYR4JftBytXYGZT7TBBMd7aueEVBRqi23cvynkc5FCGve8KPmpenHxPdkniJnvlwkKtvmzoP2592MksE7iKVZVUZDJIuX+PIM/M6HhtXlosBdwke6WvDpl9WgKD0Osig=
+	t=1717511585; cv=none; b=k2f8yokvKVwu2BMfcAlvSb0no0UiuKxV22XlQvWtUx1N79V9PRJv5aT21/YmCWhZODSM9t/bt3gg9e6FUlgyrN85/OYTlpR27422iTTNE8DPZmvSVImBg+xOAMBPJb7jT7LoPuyJJMmkK9zyMTj27uXT5jjpZQqPTbiW4dXLIug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511215; c=relaxed/simple;
-	bh=7+91b/Mzn/+lSMt/L+Per4bli8Defp55Ltg9xOXNCLI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VdDxc9LrG2d+2oGwbgPEjUtKegT3fZ1t1ft2tVReSkg6dB8QDlV5YXn2HqwwzP73zEHxG4b7Zpy/mSpy9Y6Ul0n4NDFXGVNnihxcm0Ia7gj1V7/DHVZWeCV4m0kJE/80Ujjfmf4/6c0TwdfRmxwgcGVyfZmMekfyJepexPZ8pZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Vtt8n1FWTz6JBWr;
-	Tue,  4 Jun 2024 22:22:33 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5968C140D37;
-	Tue,  4 Jun 2024 22:26:49 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 4 Jun
- 2024 15:26:48 +0100
-Date: Tue, 4 Jun 2024 15:26:48 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: Dan Williams <dan.j.williams@intel.com>, Dongsheng Yang
-	<dongsheng.yang@easystack.cn>, Gregory Price <gregory.price@memverge.com>,
-	John Groves <John@groves.net>, <axboe@kernel.dk>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>, Mark Rutland
-	<mark.rutland@arm.com>
-Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
-Message-ID: <20240604152648.000071f8@Huawei.com>
-In-Reply-To: <3c7c9b07-78b2-4b8d-968e-0c395c8f22b3@arm.com>
-References: <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
-	<20240508164417.00006c69@Huawei.com>
-	<3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
-	<20240509132134.00000ae9@Huawei.com>
-	<a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
-	<664cead8eb0b6_add32947d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	<8f161b2d-eacd-ad35-8959-0f44c8d132b3@easystack.cn>
-	<ZldIzp0ncsRX5BZE@memverge.com>
-	<5db870de-ecb3-f127-f31c-b59443b4fbb4@easystack.cn>
-	<20240530143813.00006def@Huawei.com>
-	<665a9402445ee_166872941d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	<20240603134819.00001c5f@Huawei.com>
-	<3c7c9b07-78b2-4b8d-968e-0c395c8f22b3@arm.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1717511585; c=relaxed/simple;
+	bh=WGX0LQIKn31QilnSgdvEzuanRgd2jUzWguiy+MLJlIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvF54RzXjIhNBgtBOuhP8z7R1kVsQ4dZS8I5ci2LGVv1HIF+Ve2eJM+PxOGetp+cjH4aU6SFdgXTEHnixwjnAe/F0yWFHziE+L6gxxoU2ShziixRPcmcEe3VNvwat0bFlkGPpc1nCYS9SZoz31Ro2Twgnno+MfShhu4Y4s/nB1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LzrZWvlq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C233C4AF07;
+	Tue,  4 Jun 2024 14:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717511584;
+	bh=WGX0LQIKn31QilnSgdvEzuanRgd2jUzWguiy+MLJlIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LzrZWvlq8L8jwmqGds51i6DDRahz5Qvr2WtODwlXP+Mr0fk6rmP7uFYNHNhom311G
+	 I2dfEkZM8XmgnTfYLaKYngLaG1eLY+W+1s77r8FmIqBwFC1iNaergB0r+8eqw688is
+	 9dApN1U1US7NaDbFpGTSUDM0deJ7yNYfiTjO/xBI=
+Date: Tue, 4 Jun 2024 16:27:31 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
+Message-ID: <2024060432-chloride-grappling-cf95@gregkh>
+References: <20240520172554.182094-1-dakr@redhat.com>
+ <20240520172554.182094-3-dakr@redhat.com>
+ <2024052045-lived-retiree-d8b9@gregkh>
+ <ZkvPDbAQLo2/7acY@pollux.localdomain>
+ <2024052155-pulverize-feeble-49bb@gregkh>
+ <Zk0egew_AxvNpUG-@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zk0egew_AxvNpUG-@pollux>
 
-On Mon, 3 Jun 2024 18:28:51 +0100
-James Morse <james.morse@arm.com> wrote:
+On Wed, May 22, 2024 at 12:21:53AM +0200, Danilo Krummrich wrote:
+> On Tue, May 21, 2024 at 11:35:43AM +0200, Greg KH wrote:
+> > On Tue, May 21, 2024 at 12:30:37AM +0200, Danilo Krummrich wrote:
+> > > On Mon, May 20, 2024 at 08:14:18PM +0200, Greg KH wrote:
+> > > > On Mon, May 20, 2024 at 07:25:39PM +0200, Danilo Krummrich wrote:
+> > > > > From: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > > > 
+> > > > > This defines general functionality related to registering drivers with
+> > > > > their respective subsystems, and registering modules that implement
+> > > > > drivers.
+> > > > > 
+> > > > > Co-developed-by: Asahi Lina <lina@asahilina.net>
+> > > > > Signed-off-by: Asahi Lina <lina@asahilina.net>
+> > > > > Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
+> > > > > Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+> > > > > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > > > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> > > > > ---
+> > > > >  rust/kernel/driver.rs        | 492 +++++++++++++++++++++++++++++++++++
+> > > > >  rust/kernel/lib.rs           |   4 +-
+> > > > >  rust/macros/module.rs        |   2 +-
+> > > > >  samples/rust/rust_minimal.rs |   2 +-
+> > > > >  samples/rust/rust_print.rs   |   2 +-
+> > > > >  5 files changed, 498 insertions(+), 4 deletions(-)
+> > > > >  create mode 100644 rust/kernel/driver.rs
+> > > > > 
+> > > > > diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+> > > > > new file mode 100644
+> > > > > index 000000000000..e0cfc36d47ff
+> > > > > --- /dev/null
+> > > > > +++ b/rust/kernel/driver.rs
+> > > > > @@ -0,0 +1,492 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > +
+> > > > > +//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
+> > > > > +//!
+> > > > > +//! Each bus/subsystem is expected to implement [`DriverOps`], which allows drivers to register
+> > > > > +//! using the [`Registration`] class.
+> > > > 
+> > > > Why are you creating new "names" here?  "DriverOps" is part of a 'struct
+> > > > device_driver' why are you separating it out here?  And what is
+> > > 
+> > > DriverOps is a trait which abstracts a subsystems register() and unregister()
+> > > functions to (un)register drivers. It exists such that a generic Registration
+> > > implementation calls the correct one for the subsystem.
+> > > 
+> > > For instance, PCI would implement DriverOps::register() by calling into
+> > > bindings::__pci_register_driver().
+> > > 
+> > > We can discuss whether DriverOps is a good name for the trait, but it's not a
+> > > (different) name for something that already exists and already has a name.
+> > 
+> > It's a name we don't have in the C code as the design of the driver core
+> > does not need or provide it.  It's just the section of 'struct
+> > device_driver' that provides function callbacks, why does it need to be
+> > separate at all?
+> 
+> I'm confused by the relationship to `struct device_driver` you seem to imply.
+> How is it related?
+> 
+> Again, this is just a trait for subsystems to provide their corresponding
+> register and unregister implementation, e.g. pci_register_driver() and
+> pci_unregister_driver(), such that they can be called from the generic
+> Registration code below.
+> 
+> See [1] for an example implementation in PCI.
 
-> Hi guys,
->=20
-> On 03/06/2024 13:48, Jonathan Cameron wrote:
-> > On Fri, 31 May 2024 20:22:42 -0700
-> > Dan Williams <dan.j.williams@intel.com> wrote: =20
-> >> Jonathan Cameron wrote: =20
-> >>> On Thu, 30 May 2024 14:59:38 +0800
-> >>> Dongsheng Yang <dongsheng.yang@easystack.cn> wrote: =20
-> >>>> =E5=9C=A8 2024/5/29 =E6=98=9F=E6=9C=9F=E4=B8=89 =E4=B8=8B=E5=8D=88 1=
-1:25, Gregory Price =E5=86=99=E9=81=93:   =20
-> >>>>> It's not just a CXL spec issue, though that is part of it. I think =
-the
-> >>>>> CXL spec would have to expose some form of puncturing flush, and th=
-is
-> >>>>> makes the assumption that such a flush doesn't cause some kind of
-> >>>>> race/deadlock issue.  Certainly this needs to be discussed.
-> >>>>>
-> >>>>> However, consider that the upstream processor actually has to gener=
-ate
-> >>>>> this flush.  This means adding the flush to existing coherence prot=
-ocols,
-> >>>>> or at the very least a new instruction to generate the flush explic=
-itly.
-> >>>>> The latter seems more likely than the former.
-> >>>>>
-> >>>>> This flush would need to ensure the data is forced out of the local=
- WPQ
-> >>>>> AND all WPQs south of the PCIE complex - because what you really wa=
-nt to
-> >>>>> know is that the data has actually made it back to a place where re=
-mote
-> >>>>> viewers are capable of percieving the change.
-> >>>>>
-> >>>>> So this means:
-> >>>>> 1) Spec revision with puncturing flush
-> >>>>> 2) Buy-in from CPU vendors to generate such a flush
-> >>>>> 3) A new instruction added to the architecture.
-> >>>>>
-> >>>>> Call me in a decade or so.
-> >>>>>
-> >>>>>
-> >>>>> But really, I think it likely we see hardware-coherence well before=
- this.
-> >>>>> For this reason, I have become skeptical of all but a few memory sh=
-aring
-> >>>>> use cases that depend on software-controlled cache-coherency.     =
-=20
-> >>>>
-> >>>> Hi Gregory,
-> >>>>
-> >>>> 	From my understanding, we actually has the same idea here. What I a=
-m=20
-> >>>> saying is that we need SPEC to consider this issue, meaning we need =
-to=20
-> >>>> describe how the entire software-coherency mechanism operates, which=
-=20
-> >>>> includes the necessary hardware support. Additionally, I agree that =
-if=20
-> >>>> software-coherency also requires hardware support, it seems that=20
-> >>>> hardware-coherency is the better path.   =20
-> >>>>>
-> >>>>> There are some (FAMFS, for example). The coherence state of these
-> >>>>> systems tend to be less volatile (e.g. mappings are read-only), or
-> >>>>> they have inherent design limitations (cacheline-sized message pass=
-ing
-> >>>>> via write-ahead logging only).     =20
-> >>>>
-> >>>> Can you explain more about this? I understand that if the reader in =
-the=20
-> >>>> writer-reader model is using a readonly mapping, the interaction wil=
-l be=20
-> >>>> much simpler. However, after the writer writes data, if we don't hav=
-e a=20
-> >>>> mechanism to flush and invalidate puncturing all caches, how can the=
-=20
-> >>>> readonly reader access the new data?   =20
-> >>>
-> >>> There is a mechanism for doing coarse grained flushing that is known =
-to
-> >>> work on some architectures. Look at cpu_cache_invalidate_memregion().
-> >>> On intel/x86 it's wbinvd_on_all_cpu_cpus()   =20
-> >>
-> >> There is no guarantee on x86 that after cpu_cache_invalidate_memregion=
-()
-> >> that a remote shared memory consumer can be assured to see the writes
-> >> from that event. =20
-> >=20
-> > I was wondering about that after I wrote this...  I guess it guarantees
-> > we won't get a late landing write or is that not even true?
-> >=20
-> > So if we remove memory, then added fresh memory again quickly enough
-> > can we get a left over write showing up?  I guess that doesn't matter as
-> > the kernel will chase it with a memset(0) anyway and that will be order=
-ed
-> > as to the same address.
-> >=20
-> > However we won't be able to elide that zeroing even if we know the devi=
-ce
-> > did it which is makes some operations the device might support rather
-> > pointless :( =20
->=20
-> >>> on arm64 it's a PSCI firmware call CLEAN_INV_MEMREGION (there is a
-> >>> public alpha specification for PSCI 1.3 with that defined but we
-> >>> don't yet have kernel code.)   =20
->=20
-> I have an RFC for that - but I haven't had time to update and re-test it.
+registering and unregistering drivers belongs in the bus code, NOT in
+the driver code.
 
-If it's useful, I might either be able to find time to take that forwards
-(or get someone else to do it).
+I think lots of the objections I had here will be fixed up when you move
+the bus logic out to it's own file, it does not belong here in a driver
+file (device ids, etc.)
 
-Let me know if that would be helpful; I'd love to add this to the list
-of things I can forget about because it just works for kernel
-(and hence is a problem for the firmware and uarch folk).
+> Please also consider that some structures might be a 1:1 representation of C
+> structures, some C structures are not required at the Rust side at all, and
+> then there might be additional structures and traits that abstract things C has
+> no data structure for.
 
->=20
-> If you need this, and have a platform where it can be implemented, please=
- get in touch
-> with the people that look after the specs to move it along from alpha.
->=20
->=20
-> >> That punches visibility through CXL shared memory devices? =20
->=20
-> > It's a draft spec and Mark + James in +CC can hopefully confirm.
-> > It does say
-> > "Cleans and invalidates all caches, including system caches".
-> > which I'd read as meaning it should but good to confirm. =20
->=20
-> It's intended to remove any cached entries - including lines in what the =
-arm-arm calls
-> "invisible" system caches, which typically only platform firmware can tou=
-ch. The next
-> access should have to go all the way to the media. (I don't know enough a=
-bout CXL to say
-> what a remote shared memory consumer observes)
+That's fine, but let's keep the separate of what we have today at the
+very least and not try to lump it all into one file, that makes it
+harder to review and maintain over time.
 
-If it's out of the host bridge buffers (and known to have succeeded in writ=
-e back) which I
-think the host should know, I believe what happens next is a device impleme=
-nter problem.
-Hopefully anyone designing a device that does memory sharing has built that=
- part right.
+> > > > 'Registration'?  That's a bus/class thing, not a driver thing.
+> > > 
+> > > A Registration is an object representation of the driver's registered state.
+> > 
+> > And that representation should not ever need to be tracked by the
+> > driver, that's up to the driver core to track that.
+> 
+> The driver doesn't need it, the Registration abstraction does need it. Please
+> see my comments below.
 
->=20
-> Without it, all we have are the by-VA operations which are painfully slow=
- for large
-> regions, and insufficient for system caches.
->=20
-> As with all those firmware interfaces - its for the platform implementer =
-to wire up
-> whatever is necessary to remove cached content for the specified range. J=
-ust because there
-> is an (alpha!) spec doesn't mean it can be supported efficiently by a par=
-ticular platform.
->=20
->=20
-> >>> These are very big hammers and so unsuited for anything fine grained.=
- =20
->=20
-> You forgot really ugly too!
+Great, put it elsewhere please, it does not belong in driver.rs.
 
-I was being polite :)
+> > > Having an object representation for that is basically the Rust way to manage the
+> > > lifetime of this state.
+> > 
+> > This all should be a static chunk of read-only memory that should never
+> > have a lifetime, why does it need to be managed at all?
+> 
+> What I meant here is that if a driver was registered, we need to make sure it's
+> going to be unregistered eventually, e.g. when the module is removed or when
+> something fails after registration and we need to unwind.
+> 
+> When the Registration structure goes out of scope, which would happen in both
+> the cases above, it will automatically unregister the driver, due to the
+> automatic call to `drop()`.
 
->=20
->=20
-> >>> In the extreme end of possible implementations they briefly stop all
-> >>> CPUs and clean and invalidate all caches of all types. So not suited
-> >>> to anything fine grained, but may be acceptable for a rare setup even=
-t,
-> >>> particularly if the main job of the writing host is to fill that memo=
-ry
-> >>> for lots of other hosts to use.
-> >>>
-> >>> At least the ARM one takes a range so allows for a less painful
-> >>> implementation.  =20
->=20
-> That is to allow some ranges to fail. (e.g. you can do this to the CXL wi=
-ndows, but not
-> the regular DRAM).
->=20
-> On the less painful implementation, arm's interconnect has a gadget that =
-does "Address
-> based flush" which could be used here. I'd hope platforms with that don't=
- need to
-> interrupt all CPUs - but it depends on what else needs to be done.
->=20
->=20
-> >>> I'm assuming we'll see new architecture over time
-> >>> but this is a different (and potentially easier) problem space
-> >>> to what you need.   =20
-> >>
-> >> cpu_cache_invalidate_memregion() is only about making sure local CPU
-> >> sees new contents after an DPA:HPA remap event. I hope CPUs are able to
-> >> get away from that responsibility long term when / if future memory
-> >> expanders just issue back-invalidate automatically when the HDM decoder
-> >> configuration changes. =20
-> >=20
-> > I would love that to be the way things go, but I fear the overheads of
-> > doing that on the protocol means people will want the option of the pai=
-nful
-> > approach. =20
->=20
->=20
->=20
-> Thanks,
->=20
-> James
+That's fine, but again, this all should just be static code, not
+dynamic.
 
-Thanks for the info,
+> > > Once the Registration is dropped, the driver is
+> > > unregistered. For instance, a PCI driver Registration can be bound to a module,
+> > > such that the PCI driver is unregistered when the module is unloaded (the
+> > > Registration is dropped in the module_exit() callback).
+> > 
+> > Ok, that's fine, but note that your module_exit() function will never be
+> > called if your module_init() callback fails, so why do you need to track
+> > this state?  Again, C drivers never need to track this state, why is
+> > rust requiring more logic here for something that is NOT a dynamic chunk
+> > of memory (or should not be a dynamic chunk of memory, let's get it
+> > correct from the start and not require us to change things later on to
+> > make it more secure).
+> 
+> That's fine, if module_init() would fail, the Registration would be dropped as
+> well.
+> 
+> As for why doesn't C need this is a good example of what I wrote above. Because
+> it is useful for Rust, but not for C.
+> 
+> In Rust we get drop() automatically called when a structure is destroyed. This
+> means that if we let drivers put the Registration structure (e.g. representing
+> that a PCI driver was registered) into its `Module` representation structure
+> (already upstream) then this Registration is automatically destroyed once the
+> module representation is destroyed (which happens on module_exit()). This leads
+> to `drop()` of the `Registration` structure being called, which unregisteres the
+> (e.g. PCI) driver.
+> 
+> This way the driver does not need to take care of unregistering the PCI driver
+> explicitly. The driver can also place multiple registrations into the `Module`
+> structure. All of them would be unregistered automatically in module_exit().
 
-Jonathan
+Ok, I think we are agreeing here, except that you do not need a "am I
+registered" flag, as the existance of the "object" defines if it is
+registered or not (i.e. if it exists and the "destructor" is called,
+it's been registered, otherwise it hasn't been and the check is
+pointless.)
 
->=20
+> > Again, 'class' means something different here in the driver model, so be
+> > careful with terms, language matters, especially when many of our
+> > developers do not have English as their native language.
+> > 
+> > > > > +/// The registration of a driver.
+> > > > > +pub struct Registration<T: DriverOps> {
+> > > > > +    is_registered: bool,
+> > > > 
+> > > > Why does a driver need to know if it is registered or not?  Only the
+> > > > driver core cares about that, please do not expose that, it's racy and
+> > > > should not be relied on.
+> > > 
+> > > We need it to ensure we do not try to register the same thing twice
+> > 
+> > Your logic in your code is wrong if you attempt to register it twice,
+> > AND the driver core will return an error if you do so, so a driver
+> > should not need to care about this.
+> 
+> We want it to be safe, if the driver logic is wrong and registers it twice, we
+> don't want it to blow up.
 
+How could that happen?
+
+> The driver core takes care, but I think there are subsystems that do
+> initializations that could make things blow up when registering the driver
+> twice.
+
+Nope, should not be needed, see above.  Rust should make this _easier_
+not harder, than C code here :)
+
+> > > , some subsystems might just catch fire otherwise.
+> > 
+> > Which ones?
+> 
+> Let's take the one we provide abstractons for, PCI.
+> 
+> In __pci_register_driver() we call spin_lock_init() and INIT_LIST_HEAD() before
+> driver_register() could bail out [1].
+> 
+> What if this driver is already registered and in use and we're randomly altering
+> the list pointers or call spin_lock_init() on a spin lock that's currently being
+> held?
+
+I don't understand, why would you ever call "register driver" BEFORE the
+driver was properly set up to actually be registered?
+
+PCI works properly here, you don't register unless everything is set up.
+Which is why it doesn't have a "hey, am I registered or not?" type flag,
+it's not needed.
+
+> > 
+> > > > > +        }
+> > > > > +    }
+> > > > > +}
+> > > > > +
+> > > > > +/// Conversion from a device id to a raw device id.
+> > > > > +///
+> > > > > +/// This is meant to be implemented by buses/subsystems so that they can use [`IdTable`] to
+> > > > > +/// guarantee (at compile-time) zero-termination of device id tables provided by drivers.
+> > > > > +///
+> > > > > +/// Originally, RawDeviceId was implemented as a const trait. However, this unstable feature is
+> > > > > +/// broken/gone in 1.73. To work around this, turn IdArray::new() into a macro such that it can use
+> > > > > +/// concrete types (which can still have const associated functions) instead of a trait.
+> > > > > +///
+> > > > > +/// # Safety
+> > > > > +///
+> > > > > +/// Implementers must ensure that:
+> > > > > +///   - [`RawDeviceId::ZERO`] is actually a zeroed-out version of the raw device id.
+> > > > > +///   - [`RawDeviceId::to_rawid`] stores `offset` in the context/data field of the raw device id so
+> > > > > +///     that buses can recover the pointer to the data.
+> > > > > +pub unsafe trait RawDeviceId {
+> > > > > +    /// The raw type that holds the device id.
+> > > > > +    ///
+> > > > > +    /// Id tables created from [`Self`] are going to hold this type in its zero-terminated array.
+> > > > > +    type RawType: Copy;
+> > > > > +
+> > > > > +    /// A zeroed-out representation of the raw device id.
+> > > > > +    ///
+> > > > > +    /// Id tables created from [`Self`] use [`Self::ZERO`] as the sentinel to indicate the end of
+> > > > > +    /// the table.
+> > > > > +    const ZERO: Self::RawType;
+> > > > 
+> > > > All busses have their own way of creating "ids" and that is limited to
+> > > > the bus code itself, why is any of this in the rust side?  What needs
+> > > > this?  A bus will create the id for the devices it manages, and can use
+> > > > it as part of the name it gives the device (but not required), so all of
+> > > > this belongs to the bus, NOT to a driver, or a device.
+> > > 
+> > > This is just a generalized interface which can be used by subsystems to
+> > > implement the subsystem / bus specific ID type.
+> > 
+> > Please move this all to a different file as it has nothing to do with
+> > the driver core bindings with the include/device/driver.h api.
+> 
+> I don't think driver.rs in an unreasonable place for a generic device ID
+> representation that is required by every driver structure.
+
+It has nothing to do with drivers on their own, it's a bus attribute,
+please put that in bus.rs at the least.  Or it's own file if you need
+lots of code for simple arrays like this :)
+
+> But I'm also not overly resistant to move it out. What do you think would be a
+> good name?
+> 
+> Please consider that this name will also be the namespace for this trait.
+> Currently you can reference it with `kernel::driver::RawDeviceId`. If you move
+> it to foo.rs, it'd be `kernel::foo::RawDeviceId`.
+
+I don't see why this isn't just unique to each bus type, it is not a
+driver attribute, but a bus-specific-driver type.  Please put it there
+and don't attempt to make it "generic".
+
+thanks,
+
+greg k-h
 
