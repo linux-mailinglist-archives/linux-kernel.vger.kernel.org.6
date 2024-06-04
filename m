@@ -1,154 +1,145 @@
-Return-Path: <linux-kernel+bounces-200219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501668FAD20
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:10:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D6B8FAD22
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADA4283E39
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF5E1C20D71
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296541422A7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BDA1422CC;
 	Tue,  4 Jun 2024 08:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XK+QEUpC"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iD54TRUT"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2971420B0;
-	Tue,  4 Jun 2024 08:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802191420C8;
+	Tue,  4 Jun 2024 08:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717488593; cv=none; b=SEZOzk5KIyDOc5Jn0svpPOqaN1YqNJHQmPtuF/pm9Cf4LMD/EOEWeNpjlyajsOUc84lIUeRHShlo06QAMNnAojQkjD5m6kX0H2uf/Q+5Gl2ig2Te61YHhgDoO44BJU/mf/uFHeVscnVEVr/GAWBhWu6PMFdFH/H9waidx4kz4Sw=
+	t=1717488593; cv=none; b=cenFM9dH8hKyNN+/GaT/sz8VexmyflwCYsdwsD737X4eac/qjFBJ9AWSzEiiJV0Jj2zUNOvYs9zrDeKwUbNGWLhHvQeRppIjnOdMXPht0AAr7h53yExQSoAuWlZA8xy9XIO13f1dlJQI4ISuzMirrnNsncdanrWUxJUEXYeBPFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717488593; c=relaxed/simple;
-	bh=8tM5Zb6kQUVVQg/vsAjv/R/zJWorjd3aEehGuNdx6l4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sqZt65OK/BMfz8ZTBkT8m5Hs3ymAiadGqQy+PHxuwB4U1YTDyvnW2yB8bn7pMPpfse5r0ZDyS7+B6mTX67VofcvOAJpMAvUfqS66Sv8yA68PZsxOGfHC1mfLa9DlsTyCLAFtk09Zhb82riQVO2M8S094P9uiI7NxPT2alv17xTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XK+QEUpC; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AC7FA20008;
-	Tue,  4 Jun 2024 08:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717488588;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0vmUIZ3RHApQ8liyK5HZsUjHttqDUp4gSBPYlUPRHpE=;
-	b=XK+QEUpCNM4bUkE+3p8pLAotZEBwCZxnpuPMbgICJo7MVH6kkbG9TEk89TIn75OWFZhczz
-	ppxSR5/WDhJ21ab1qyrUg7vGKMKtw7n2CzrCWsessyX7scaR2vaSptcgwYb6ncbljM2ack
-	E6GZnsbHCKJbeo4zlWPsSWFcaGsBs34VMQr1w4t6teyB+kIthDibNGWB2SraHYNhyUcKRM
-	r+WkjJuw0XCt8L2CykWUNg9gaz7SE73g1etahqOnXRvf3tm4qTPlejjWf/QQWVC3b49Ury
-	mSrIofKPQa0/yno1IL1Mm4uM2i15Pwy+sohj/e3i+o8k2M49zpUk5MLxck0rxw==
-Date: Tue, 4 Jun 2024 10:09:42 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav
- <pratyush@kernel.org>, Richard Weinberger <richard@nod.at>, Vignesh
- Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@pengutronix.de>, Thorsten Scherer
- <t.scherer@eckelmann.de>, Marek Vasut <marex@denx.de>, Imre Kaloz
- <kaloz@openwrt.org>, Andrew Lunn <andrew@lunn.ch>, Flavio Suligoi
- <f.suligoi@asem.it>
-Subject: Re: [PATCH] dt-bindings: mtd: spi-nor: deprecate Everspin MRAM
- devices
-Message-ID: <20240604100942.3e663d60@xps-13>
-In-Reply-To: <20240604074231.1874972-1-mwalle@kernel.org>
-References: <20240604074231.1874972-1-mwalle@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	bh=QfMx1s4NYbFECh0KMXY2fQonXfPgUZeHg/AMZB1cqh8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D1nmb33OT5KFiqb8klV/9hVkXoGWrPJJE4lWqBX6aZPROTOucuPRFIP0OtyUDRam4reQhLFdr6cgmHRMPJZFrf3GrNlk5zqIu1kYJGfWNYXnd2IEi9tC7q5OSowOOqbpH1+HhUQekTA6drrLxsvr7hcRYxOsdGhce6STivxbswA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iD54TRUT; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d1bc6e5f01so487952b6e.0;
+        Tue, 04 Jun 2024 01:09:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717488591; x=1718093391; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n/JzBlxPKXhRdUDPgfYR8R62q7BdNA63+MhngvZbY1c=;
+        b=iD54TRUT2JuHQu+FGmD08Vaj5FUgQcBh5DM/ii5g6nzmI9A0St96IpAoToMtNI7WhO
+         cs5ZPBmy0pXbR/fgDO4ofeU55TGUFp8JUoG253EQcPR4857WZNBeplvYQzgthVT8Qhmr
+         xMvpC56B1k9YSn15ad7w+ezPRLiB7rU90HevzadnTy+Q6sAj1Cyh9HizeWdEQ4kdi+LZ
+         5XH0kgWmyjZO/Kws9pvRiyoHuymciT2bfC+Wqv9YSq/1OQ4QeH3bzCxjiroD7VqSXavN
+         KYSyhLPJzfQB6RJgamDH3cNNvZ9rRd2MnoLq2NjeVnbOFh/9nH+dbhGQMR4eI4RRd3CY
+         6FZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717488591; x=1718093391;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n/JzBlxPKXhRdUDPgfYR8R62q7BdNA63+MhngvZbY1c=;
+        b=Fr/e5FToxFO9eBcR2n8uWPb/CZk7cUJ6OxEsz4hS/rQG2F83iEydpYNlKjoiMTcYHX
+         aCdQKSrgtTgL3nRvgV9DWLfjktXLpDxIbW29d1FK1LsS/CwdInEhOE3dNrwvLEJM2DWd
+         sKKsz42h0EDryHapWYtsHM+pRVb6JmgiPKhUrrYMXHRn4sefEFj2EcyjMZeu+X35ne94
+         7U66SnRfLcvLRxk4aj+ceuVtxP86Nmlpx3K/HMm2eo8m4FXl40BviS83iIPISK+pRUJp
+         rd46R5hIeDwutFR20k1Bs5oE7h6yzSZbSqWEX1bsniTiQbF9LUzup+KAzSdacmzShl9d
+         UdOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVc+8Wb0gmuYsppr9nU5XSrrhcCSt0GHygO3bycVwO9OCXCDwtizfzYTsGmzFPJuhFVGdrYHEYJ3gwCTfD54Jdy9xMYPge6JfifoJKjff8IwSzHSJLHakqQctT/r1n8rqw7YnWk4E4fnA==
+X-Gm-Message-State: AOJu0YyQH/LWevGtkRzszCYC5l0w9FoeLzBO7DzYMsjqpb6Ahqgu6sGt
+	+GZj8VNZtvt+QSSxV1QIx9CEaQkHYnzenMeLaJQ1cLfCuFS9h/Z6
+X-Google-Smtp-Source: AGHT+IFFCg2DPiMUJICWLo5W4SVKZNhaNvQA589SkV9jdqKnV5/xLOmdgqG+XDZkhXbK9TcxaAHIpA==
+X-Received: by 2002:a05:6808:b17:b0:3d2:c8:7efb with SMTP id 5614622812f47-3d200c87f13mr196016b6e.30.1717488591489;
+        Tue, 04 Jun 2024 01:09:51 -0700 (PDT)
+Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702425e20f8sm6594838b3a.86.2024.06.04.01.09.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 01:09:51 -0700 (PDT)
+From: Jacky Huang <ychuang570808@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	schung@nuvoton.com,
+	Jacky Huang <ychuang3@nuvoton.com>
+Subject: [PATCH V1] arm64: dts: nuvoton: ma35d1: add rtc node
+Date: Tue,  4 Jun 2024 08:09:46 +0000
+Message-Id: <20240604080946.80-1-ychuang570808@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Michael,
+From: Jacky Huang <ychuang3@nuvoton.com>
 
-mwalle@kernel.org wrote on Tue,  4 Jun 2024 09:42:31 +0200:
+Add RTC node on MA35D1 and enable the RTC module on SOM and IoT boards.
 
-> These devices are more like an AT25 compatible EEPROM instead of
-> flashes. Like an EEPROM the user doesn't need to explicitly erase the
-> memory, nor are there sectors or pages. Thus, instead of the SPI-NOR
-> (flash) driver, one should instead use the at25 EEPROM driver.
->=20
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> Cc: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> Cc: Thorsten Scherer <t.scherer@eckelmann.de>
-> Cc: Marek Vasut <marex@denx.de>
-> Cc: Imre Kaloz <kaloz@openwrt.org>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Flavio Suligoi <f.suligoi@asem.it>
-> ---
-> The referenced binding only supports the true AT25 compatible EEPROMs
-> where you have to specify additional properties like size and page size
-> or cypress FRAM devices where all the properties are discovered by the
-> driver. I don't have the actual hardware, therefore I can't work on a
-> proper driver and binding. But I really want to deprecate the use of
-> these EEPROM like devices in SPI-NOR. So as a first step, mark the
-> devices in the DT bindings as deprecated.
->=20
-> There are three in-tree users of this. I hope I've CCed all the relevant
-> people. With the switch to the at25 driver also comes a user-space
-> facing change: there is no more MTD device. Instead there is an "eeprom"
-> file in /sys now, just like for every other EEPROM.
->=20
-> Marek already expressed, that the sps1 dts can likely be removed
-> altogether. I'd like to hear from the other board DTS maintainers if
-> they seem some problems moving to the EEPROM interface - or maybe that
-> device isn't used at all anyway. So in the end, we can hopefully move
-> all the users over to the at25 driver.
-> ---
->  Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/D=
-ocumentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> index 6e3afb42926e..2dccb6b049ea 100644
-> --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> @@ -21,7 +21,6 @@ properties:
->                (m25p(40|80|16|32|64|128)|\
->                n25q(32b|064|128a11|128a13|256a|512a|164k)))|\
->                atmel,at25df(321a|641|081a)|\
-> -              everspin,mr25h(10|40|128|256)|\
->                (mxicy|macronix),mx25l(4005a|1606e|6405d|8005|12805d|25635=
-e)|\
->                (mxicy|macronix),mx25u(4033|4035)|\
->                (spansion,)?s25fl(128s|256s1|512s|008k|064k|164k)|\
-> @@ -42,6 +41,14 @@ properties:
->                - spansion,s25fs512s
->            - const: jedec,spi-nor
->        - const: jedec,spi-nor
-> +
-> +      # Deprecated bindings
-> +      - items:
-> +          - pattern: "^everspin,mr25h(10|40|128|256)$"
-> +          - const: jedec,spi-nor
-> +        description:
-> +          Deprecated binding, use Documentation/devicetree/bindings/eepr=
-om/at25.yaml.
-> +        deprecated: true
->      description:
->        SPI NOR flashes compatible with the JEDEC SFDP standard or which m=
-ay be
->        identified with the READ ID opcode (0x9F) do not deserve a specific
+Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+---
+ arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts | 4 ++++
+ arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts | 4 ++++
+ arch/arm64/boot/dts/nuvoton/ma35d1.dtsi         | 8 ++++++++
+ 3 files changed, 16 insertions(+)
 
-Makes sense.
+diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
+index b89e2be6abae..b3be4331abcf 100644
+--- a/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
++++ b/arch/arm64/boot/dts/nuvoton/ma35d1-iot-512m.dts
+@@ -54,3 +54,7 @@ &clk {
+ 			   "integer",
+ 			   "integer";
+ };
++
++&rtc {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
+index a1ebddecb7f8..9858788a589c 100644
+--- a/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
++++ b/arch/arm64/boot/dts/nuvoton/ma35d1-som-256m.dts
+@@ -54,3 +54,7 @@ &clk {
+ 			   "integer",
+ 			   "integer";
+ };
++
++&rtc {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+index 781cdae566a0..394395bfd3ae 100644
+--- a/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
++++ b/arch/arm64/boot/dts/nuvoton/ma35d1.dtsi
+@@ -95,6 +95,14 @@ clk: clock-controller@40460200 {
+ 			clocks = <&clk_hxt>;
+ 		};
+ 
++		rtc: rtc@40410000 {
++			compatible = "nuvoton,ma35d1-rtc";
++			reg = <0x0 0x40410000 0x0 0x200>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clk RTC_GATE>;
++			status = "disabled";
++		};
++
+ 		uart0: serial@40700000 {
+ 			compatible = "nuvoton,ma35d1-uart";
+ 			reg = <0x0 0x40700000 0x0 0x100>;
+-- 
+2.34.1
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miqu=C3=A8l
 
