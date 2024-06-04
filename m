@@ -1,229 +1,281 @@
-Return-Path: <linux-kernel+bounces-200149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EE48FABE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:28:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00BB8FAC14
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07BAE1F2136C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:28:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B243B234E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBED1420DA;
-	Tue,  4 Jun 2024 07:27:43 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A668914199C;
+	Tue,  4 Jun 2024 07:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y9JRVmVd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6A383CB4;
-	Tue,  4 Jun 2024 07:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CD31411F4
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717486063; cv=none; b=LCu9MIpVvSc5gssbhKg9IeGt7WQK+jVa2d2xCeoxkFX2NF8In7VO/i+5pf9+4GCZBod+XvQ+ml7ahnVQKPzpVOS/oqW+X9fn3OLX0fuf/YXrisRngxs10LW90wJiUUO8H90Y56sD4zaaDTfGvJuqmT466V0LCUZZOPS/gKobLZM=
+	t=1717486160; cv=none; b=GZnp5DOUAfyfZbtITToQ5eX9ASDJ2Xsk36bDThTglvBLTZksIRQyz/W28RVTdqTbHfC2vjkNgC1nkOt36gPH4nryA7KA1tYw3WgzY6m3nx8QUKxc38SugzcGbdk2MqU8u3mYWzrenATDkLriin9Msx5aMG6RyLrBgoxS/7jNpF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717486063; c=relaxed/simple;
-	bh=lCumE3JR7T40ZXQnDd/6XmXr+8gAkKcJGnbNXigrgeE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z5lZ5OZv/kWSQIGycrmJSGxMQ8F3GC8kGyNfJFiVekJGaWkzKzfh0+pzyS+bdAno5AYNyqggQQPlh25Q0UaEipO5CkSO5QASFxGSPsQlEb8wgHYiAQm3lamzr0ZUw0/L/shqdZu6u7u0rsArdJKQDReCfEfTCbUkvainNGKWWmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sEOYO-00059Y-9F; Tue, 04 Jun 2024 09:25:56 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Corey Minyard <minyard@acm.org>, Allen Pais <apais@linux.microsoft.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Perry Yuan <perry.yuan@amd.com>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Nuno Sa <nuno.sa@analog.com>,
- Guenter Roeck <linux@roeck-us.net>, Randy Dunlap <rdunlap@infradead.org>,
- Andi Shyti <andi.shyti@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
- Lee Jones <lee@kernel.org>, Samuel Holland <samuel@sholland.org>,
- Elad Nachman <enachman@marvell.com>,
- Arseniy Krasnov <AVKrasnov@sberdevices.ru>,
- Johannes Berg <johannes.berg@intel.com>,
- Gregory Greenman <gregory.greenman@intel.com>,
- Benjamin Berg <benjamin.berg@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Robert Richter <rrichter@amd.com>, Vinod Koul <vkoul@kernel.org>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Hans de Goede <hdegoede@redhat.com>,
- Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Nikita Kravets <teackot@gmail.com>, Jiri Slaby <jirislaby@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Stanley Chang <stanley_chang@realtek.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Abdel Alkuor <abdelalkuor@geotab.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Eric Biggers <ebiggers@google.com>, Kees Cook <keescook@chromium.org>,
- Ingo Molnar <mingo@kernel.org>,
- "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- Daniel Bristot de Oliveira <bristot@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Abel Wu <wuyun.abel@bytedance.com>,
- John Johansen <john.johansen@canonical.com>,
- Mimi Zohar <zohar@linux.ibm.com>, Stefan Berger <stefanb@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, Takashi Iwai <tiwai@suse.de>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
- Mark Brown <broonie@kernel.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-ide@vger.kernel.org,
- openipmi-developer@lists.sourceforge.net, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-pm@vger.kernel.org, qat-linux@intel.com,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-usb@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-bcachefs@vger.kernel.org,
- linux-hardening@vger.kernel.org, cgroups@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- David Howells <dhowells@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Sergey Shtylyov <s.shtylyov@omp.ru>, Damien Le Moal <dlemoal@kernel.org>,
- Niklas Cassel <cassel@kernel.org>, Daniel Scally <djrscally@gmail.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Huang Rui <ray.huang@amd.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>,
- Jean Delvare <jdelvare@suse.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Pavel Machek <pavel@ucw.cz>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Hu Ziji <huziji@marvell.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Potnuri Bharat Teja <bharat@chelsio.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Kalle Valo <kvalo@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- JC Kuo <jckuo@nvidia.com>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Sebastian Reichel <sre@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Helge Deller <deller@gmx.de>, Brian Foster <bfoster@redhat.com>,
- Zhihao Cheng <chengzhihao1@huawei.com>, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>
-Subject:
- Re: [PATCH v1 1/1] treewide: Align match_string() with sysfs_match_string()
-Date: Tue, 04 Jun 2024 09:25:48 +0200
-Message-ID: <10804325.aFP6jjVeTY@diego>
-In-Reply-To: <20240603211538.289765-1-andriy.shevchenko@linux.intel.com>
-References: <20240603211538.289765-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1717486160; c=relaxed/simple;
+	bh=M3ZJ1uTI0ViwBLZWES2skfKCKpFt9Qmq5SM/24HXduY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CBL6HB1eygsUWtY6FmRi0Uuo1/jf/tBiu5Jn1IVMMJUuZ89+qUXgyG2x33ZvTQ2pcv6sDip8UtMup3bOm2jtw/50sfGN8tW1GVYGOgGegrPx7b/Ln+Y+L/xKPKuxLwbJMXioa88XTXJ6r0dWuaiW7rdrqHyhjIZF8SGw/3bdomM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y9JRVmVd; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717486158; x=1749022158;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=M3ZJ1uTI0ViwBLZWES2skfKCKpFt9Qmq5SM/24HXduY=;
+  b=Y9JRVmVdhTUkmlGMxKfbT9seCHjXKQoN+MMRJQdTkFSkYOiT4m9lS594
+   KbRmoYgpRmhs7k8xwuiD+fjnl0vCQ6VhpXrBqLTMW/Mn0I+/VEc9ZxxM7
+   XAgFDaAC4fjQTmjB1QBk71+gOaOAbnJUoTH3J5KAmL6SETbGnnSJeRP4Z
+   ClS5gWWP5lZGca+Yhd8wV8NGNzgvExiwaBvXwr5Q4+OtHBBkGYVP7/Je/
+   brbkP7pGup1E4KEmbhMqxYSRIS6vWZkrUAvPzZ+4WlAaZD2xW6AQ7hnqO
+   yzXkMV6KvHyDTHRWhiJaR7+347YU/Q6gnfJdHLG0X7mdsIxyoTtF5BbUI
+   g==;
+X-CSE-ConnectionGUID: AlrmMXquSw6+OQ/3AIK4xg==
+X-CSE-MsgGUID: QR34go5fT+GxT19dDstkOA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="13960829"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="13960829"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 00:29:17 -0700
+X-CSE-ConnectionGUID: W6Z9teJ6QwGgAXsAry/lcw==
+X-CSE-MsgGUID: iSpJryjGTKCgWXy0FqUdzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="37086174"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 00:29:15 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Chris Li <chrisl@kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Ryan Roberts <ryan.roberts@arm.com>,
+  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Barry Song
+ <baohua@kernel.org>
+Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster
+ order
+In-Reply-To: <CAMgjq7C+rtbbnH+utGkUmwaTzB82zrO8qvotPx9Z6A4fMiO_4A@mail.gmail.com>
+	(Kairui Song's message of "Fri, 31 May 2024 20:40:11 +0800")
+References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
+	<CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
+	<87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
+	<875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAF8kJuMc3sXKarq3hMPYGFfeqyo81Q63HrE0XtztK9uQkcZacA@mail.gmail.com>
+	<87o78mzp24.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAMgjq7C+rtbbnH+utGkUmwaTzB82zrO8qvotPx9Z6A4fMiO_4A@mail.gmail.com>
+Date: Tue, 04 Jun 2024 15:27:23 +0800
+Message-ID: <87frttcgmc.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Am Sonntag, 2. Juni 2024, 17:57:12 CEST schrieb Andy Shevchenko:
-> Make two APIs look similar. Hence convert match_string() to be
-> a 2-argument macro. In order to avoid unneeded churn, convert
-> all users as well. There is no functional change intended.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> 
-> Compile tested with `make allyesconfig` and `make allmodconfig`
-> on x86_64, arm, aarch64, powerpc64 (8 builds total).
-> 
-> I guess the best is to apply it to Linus' tree directly.
-> And now it seems a good timing as there are no new users
-> of this API either in v6.10-rcX, or in Linux Next.
-> 
-> But if you think differently, tell me.
-> 
+Kairui Song <ryncsn@gmail.com> writes:
 
-For the Rockchip clock part
+> On Fri, May 31, 2024 at 10:37=E2=80=AFAM Huang, Ying <ying.huang@intel.co=
+m> wrote:
+>>
+>> Chris Li <chrisl@kernel.org> writes:
+>>
+>> > On Wed, May 29, 2024 at 7:54=E2=80=AFPM Huang, Ying <ying.huang@intel.=
+com> wrote:
+>> >>
+>> >> Chris Li <chrisl@kernel.org> writes:
+>> >>
+>> >> > Hi Ying,
+>> >> >
+>> >> > On Wed, May 29, 2024 at 1:57=E2=80=AFAM Huang, Ying <ying.huang@int=
+el.com> wrote:
+>> >> >>
+>> >> >> Chris Li <chrisl@kernel.org> writes:
+>> >> >>
+>> >> >> > I am spinning a new version for this series to address two issues
+>> >> >> > found in this series:
+>> >> >> >
+>> >> >> > 1) Oppo discovered a bug in the following line:
+>> >> >> > +               ci =3D si->cluster_info + tmp;
+>> >> >> > Should be "tmp / SWAPFILE_CLUSTER" instead of "tmp".
+>> >> >> > That is a serious bug but trivial to fix.
+>> >> >> >
+>> >> >> > 2) order 0 allocation currently blindly scans swap_map disregard=
+ing
+>> >> >> > the cluster->order.
+>> >> >>
+>> >> >> IIUC, now, we only scan swap_map[] only if
+>> >> >> !list_empty(&si->free_clusters) && !list_empty(&si->nonfull_cluste=
+rs[order]).
+>> >> >> That is, if you doesn't run low swap free space, you will not do t=
+hat.
+>> >> >
+>> >> > You can still swap space in order 0 clusters while order 4 runs out=
+ of
+>> >> > free_cluster
+>> >> > or nonfull_clusters[order]. For Android that is a common case.
+>> >>
+>> >> When we fail to allocate order 4, we will fallback to order 0.  Still
+>> >> don't need to scan swap_map[].  But after looking at your below reply=
+, I
+>> >> realized that the swap space is almost full at most times in your cas=
+es.
+>> >> Then, it's possible that we run into scanning swap_map[].
+>> >> list_empty(&si->free_clusters) &&
+>> >> list_empty(&si->nonfull_clusters[order]) will become true, if we put =
+too
+>> >> many clusters in si->percpu_cluster.  So, if we want to avoid to scan
+>> >> swap_map[], we can stop add clusters in si->percpu_cluster when swap
+>> >> space runs low.  And maybe take clusters out of si->percpu_cluster
+>> >> sometimes.
+>> >
+>> > One idea after reading your reply. If we run out of the
+>> > nonfull_cluster[order], we should be able to use other cpu's
+>> > si->percpu_cluster[] as well. That is a very small win for Android,
+>>
+>> This will be useful in general.  The number CPU may be large, and
+>> multiple orders may be used.
+>>
+>> > because android does not have too many cpu. We are talking about a
+>> > handful of clusters, which might not justify the code complexity. It
+>> > does not change the behavior that order 0 can pollut higher order.
+>>
+>> I have a feeling that you don't really know why swap_map[] is scanned.
+>> I suggest you to do more test and tracing to find out the reason.  I
+>> suspect that there are some non-full cluster collection issues.
+>>
+>> >> Another issue is nonfull_cluster[order1] cannot be used for
+>> >> nonfull_cluster[order2].  In definition, we should not fail order 0
+>> >> allocation, we need to steal nonfull_cluster[order>0] for order 0
+>> >> allocation.  This can avoid to scan swap_map[] too.  This may be not
+>> >> perfect, but it is the simplest first step implementation.  You can
+>> >> optimize based on it further.
+>> >
+>> > Yes, that is listed as the limitation of this cluster order approach.
+>> > Initially we need to support one order well first. We might choose
+>> > what order that is, 16K or 64K folio. 4K pages are too small, 2M pages
+>> > are too big. The sweet spot might be some there in between.  If we can
+>> > support one order well, we can demonstrate the value of the mTHP. We
+>> > can worry about other mix orders later.
+>> >
+>> > Do you have any suggestions for how to prevent the order 0 polluting
+>> > the higher order cluster? If we allow that to happen, then it defeats
+>> > the goal of being able to allocate higher order swap entries. The
+>> > tricky question is we don't know how much swap space we should reserve
+>> > for each order. We can always break higher order clusters to lower
+>> > order, but can't do the reserves. The current patch series lets the
+>> > actual usage determine the percentage of the cluster for each order.
+>> > However that seems not enough for the test case Barry has. When the
+>> > app gets OOM kill that is where a large swing of order 0 swap will
+>> > show up and not enough higher order usage for the brief moment. The
+>> > order 0 swap entry will pollute the high order cluster. We are
+>> > currently debating a "knob" to be able to reserve a certain % of swap
+>> > space for a certain order. Those reservations will be guaranteed and
+>> > order 0 swap entry can't pollute them even when it runs out of swap
+>> > space. That can make the mTHP at least usable for the Android case.
+>>
+>> IMO, the bottom line is that order-0 allocation is the first class
+>> citizen, we must keep it optimized.  And, OOM with free swap space isn't
+>> acceptable.  Please consider the policy we used for page allocation.
+>>
+>> > Do you see another way to protect the high order cluster polluted by
+>> > lower order one?
+>>
+>> If we use high-order page allocation as reference, we need something
+>> like compaction to guarantee high-order allocation finally.  But we are
+>> too far from that.
+>>
+>> For specific configuration, I believe that we can get reasonable
+>> high-order swap entry allocation success rate for specific use cases.
+>> For example, if we only do limited maximum number order-0 swap entries
+>> allocation, can we keep high-order clusters?
+>
+> Isn't limiting order-0 allocation breaks the bottom line that order-0
+> allocation is the first class citizen, and should not fail if there is
+> space?
 
->  drivers/clk/rockchip/clk.c                    |  4 +--
+Sorry for confusing words.  I mean limiting maximum number order-0 swap
+entries allocation in workloads, instead of limiting that in kernel.
 
-[...]
+> Just my two cents...
+>
+> I had a try locally based on Chris's work, allowing order 0 to use
+> nonfull_clusters as Ying has suggested, and starting with low order
+> and increase the order until nonfull_cluster[order] is not empty, that
+> way higher order is just better protected, because unless we ran out
+> of free_cluster and nonfull_cluster, direct scan won't happen.
+>
+> More concretely, I applied the following changes, which didn't change
+> the code much:
+> - In scan_swap_map_try_ssd_cluster, check nonfull_cluster first, then
+> free_clusters, then discard_cluster.
+> - If it's order 0, also check for (int i =3D 0; i < SWAP_NR_ORDERS; ++i)
+> nonfull_clusters[i] cluster before scan_swap_map_try_ssd_cluster
+> returns false.
+>
+> A quick test still using the memtier test, but decreased the swap
+> device size from 10G to 8g for higher pressure.
+>
+> Before:
+> hugepages-32kB/stats/swpout:34013
+> hugepages-32kB/stats/swpout_fallback:266
+> hugepages-512kB/stats/swpout:0
+> hugepages-512kB/stats/swpout_fallback:77
+> hugepages-2048kB/stats/swpout:0
+> hugepages-2048kB/stats/swpout_fallback:1
+> hugepages-1024kB/stats/swpout:0
+> hugepages-1024kB/stats/swpout_fallback:0
+> hugepages-64kB/stats/swpout:35088
+> hugepages-64kB/stats/swpout_fallback:66
+> hugepages-16kB/stats/swpout:31848
+> hugepages-16kB/stats/swpout_fallback:402
+> hugepages-256kB/stats/swpout:390
+> hugepages-256kB/stats/swpout_fallback:7244
+> hugepages-128kB/stats/swpout:28573
+> hugepages-128kB/stats/swpout_fallback:474
+>
+> After:
+> hugepages-32kB/stats/swpout:31448
+> hugepages-32kB/stats/swpout_fallback:3354
+> hugepages-512kB/stats/swpout:30
+> hugepages-512kB/stats/swpout_fallback:33
+> hugepages-2048kB/stats/swpout:2
+> hugepages-2048kB/stats/swpout_fallback:0
+> hugepages-1024kB/stats/swpout:0
+> hugepages-1024kB/stats/swpout_fallback:0
+> hugepages-64kB/stats/swpout:31255
+> hugepages-64kB/stats/swpout_fallback:3112
+> hugepages-16kB/stats/swpout:29931
+> hugepages-16kB/stats/swpout_fallback:3397
+> hugepages-256kB/stats/swpout:5223
+> hugepages-256kB/stats/swpout_fallback:2351
+> hugepages-128kB/stats/swpout:25600
+> hugepages-128kB/stats/swpout_fallback:2194
+>
+> High order (256k) swapout rate are significantly higher, 512k is now
+> possible, which indicate high orders are better protected, lower
+> orders are sacrificed but seems worth it.
 
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index 73d2cbdc716b..30414d081f46 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -266,8 +266,8 @@ static struct clk *rockchip_clk_register_frac_branch(
->  		struct clk *mux_clk;
->  		int ret;
->  
-> -		frac->mux_frac_idx = match_string(child->parent_names,
-> -						  child->num_parents, name);
-> +		frac->mux_frac_idx = __match_string(child->parent_names,
-> +						    child->num_parents, name);
->  		frac->mux_ops = &clk_mux_ops;
->  		frac->clk_nb.notifier_call = rockchip_clk_frac_notifier_cb;
->  
+Yes.  I think that this reflects another aspect of the problem.  In some
+situations, it's better to steal one high-order cluster and use it for
+order-0 allocation instead of scattering order-0 allocation in random
+high-order clusters.
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-
-
+--
+Best Regards,
+Huang, Ying
 
