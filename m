@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-200381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6DB8FAF2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:46:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38908FAF30
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A30C1C20906
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A741F20F5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336BF1442F7;
-	Tue,  4 Jun 2024 09:46:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E857713B58A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EDD1448D7;
+	Tue,  4 Jun 2024 09:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="thGn6ET+"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FED21448C1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717494384; cv=none; b=aWz7h3VHv2Go3FSgk6V3E0FDu58lJU/QBK/0B5oBq/P6F1ebOwVdijjncAudOIm8YjYnWPZx0AWwoLk6d6zZwEEd8WB4nWY5htO6H7BwTdSx3ol+ASb7z2u5KhkLRI/oTCXkF48wo8PMa9pjlkok5AW3QlSZiLoG4LkvNWtA+r0=
+	t=1717494404; cv=none; b=ttGDKqB4td+Yx7nf8gR0uHq3fH6JPLrYrvxts5ga6P1kWaMbQNKoEgCfqXLnxUKqczGghofExY33yL+/X0qQLsrkCZBKfrtrZKmXdpmzSptjuOrqLf6tsuh37y2we7iiZ2pDfFAu7c5O4CmP2D90qp2o1PpyhhnuguXWhyh2MHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717494384; c=relaxed/simple;
-	bh=/zpny/ZM3LBzpHP+P5Rl8ivFh/8aquswNIcUNFLBxoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4QAI3JFg/Xfe5iDlfXzyMIGhjaevqjAwsm6Y12IIB8aeRFAz9u2tWGNyiavW9psrK2bGinGTWc8tGBdh1w1yh9m/Naeml3Z9qHfPO5Hf21G5SAPRKZPejPVTi3KMTQGyMXA1f8+Jvb1y312u/ZjliIvla0merusjbcAxDqukQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 995E71042;
-	Tue,  4 Jun 2024 02:46:46 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EC6B3F762;
-	Tue,  4 Jun 2024 02:46:21 -0700 (PDT)
-Date: Tue, 4 Jun 2024 10:46:19 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mailbox: ARM_MHU_V3 should depend on ARM64
-Message-ID: <Zl7ia0t2O2xS8PXU@pluto>
-References: <e00498fccf6dcbcf63bd24a137bfc7abd1b98345.1716967720.git.geert+renesas@glider.be>
- <Zlb_txl4CqCfxWZz@pluto>
- <CAMuHMdUyW_RxfUaxnyWVzPsdXQWqCQbgZ+avHskinXkrSFqhtw@mail.gmail.com>
- <Zl3HiBX8ih6Sret6@bogus>
- <CAMuHMdVkeKbUa45okF8qGOVVLRcOOtq=54yett+4dbyktCHxeg@mail.gmail.com>
- <20240604070718.ypymfv6j2smvxldr@bogus>
+	s=arc-20240116; t=1717494404; c=relaxed/simple;
+	bh=7iOI2gyIz09ZExE7MThuktVMvBjq3HebuNyhlEujrSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iW6HXP61Wq+68Rtd2qz98kvZ9nZahIxibsNL+g+u5tpBPnOCVGwzeuKKhL0mQO+cN4a5y5sHRq4RRXKrtqqcQNlj7RWDNC127xQGsxiq0NIlDn4HAXJaMx9yop9/i+NqrZg7LHib1z/vtljuEm0su3G1KATOXNkllT90n88k3KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=thGn6ET+; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ea903cd11bso56507141fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717494401; x=1718099201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h8w3PHphluD8h1jsOJr+esaBLa0WpV3tSQ0DXHRhrVg=;
+        b=thGn6ET++oTRwFg7vwsIG2IXKFmWdbIbN8iWtbVd2O4Vc2bI+PMCLlBdUe+NWvfiNm
+         G+48HEBwugK4RY0z28c8HMt4XdsPZor6G/qHgBhJIiXXVJvXJ0kzbYjkXO0+2zPpR6t2
+         6DG9wIBB8MIBFSY2a+SjVogihuua1jVW44BFAUQ1+kvzFfnoyzkI2O0HSO1SH9cOZmei
+         avbqsRMwNk4RmYeKwFzjrjVPSLcyJ+QhwAQ7IfZHq5dM0e0Tj/VBfsNc6wKIcvX4Y3qH
+         gbj8uBwsbkD/utaf6ugJzE6wZmdpn5iYbWk5dZeDq33vNHp/aHXadA2UiFjeIVeXt7I1
+         /3VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717494401; x=1718099201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h8w3PHphluD8h1jsOJr+esaBLa0WpV3tSQ0DXHRhrVg=;
+        b=H/nnkZoBzJyBaWdnmRUk8iJDDZGVxbsIuHq8+MYT01dZZ5EFE9mLGVzLGIi6KlRM6i
+         N1naznpnDazXFmR7Zx1jnLNUu/Hu+Yh5qsK+cfVdq9khO3ZPF3G8BK79+YXjwMc14j8w
+         emXZbOqVaV7FGbQoi0VNDji7iOojfo/I83WuehBJ+as7C9WtzillsyCScrt++F3doFkt
+         KYT7nIJisSiKs4F/OnOD2nqAvJXLgNoiRR8c+Zu9STnDNzRy4GVawXy+RuLD9gHKTB/N
+         9A+/8wn5U2l3X8DjIzuZ3SX3nrzFMp1IJ8GHZxQEodZk9z05Hv29mPKGGexA82FETSMn
+         fElw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrbTeK7hahnViBnTv8qsmc7ikfg7qIbQ9Qs2eQsaK/73erN63Kutqfb+/nfKNhybikyAeISuHiHLpO4cSg27ZndqQHKnvtENPDungH
+X-Gm-Message-State: AOJu0YzP344vwCsKkpYAlgkk8L6blsNH1V7DT34IJFAdmq8p3bYyFSLF
+	Gk4D6Z2i0fPD18cR0IP7IbR29uefNJajmZO5ad3fjQaTW232MEPno0YSlPfo6ZU=
+X-Google-Smtp-Source: AGHT+IHmnuqj5RmW/dGeIKGHajzkpP8hr3o/H52znLirAojQLFtRIWcisscJHUffN4MHWiqHDEGJUw==
+X-Received: by 2002:ac2:58d8:0:b0:52b:82d5:b361 with SMTP id 2adb3069b0e04-52b8959629amr8278360e87.37.1717494401183;
+        Tue, 04 Jun 2024 02:46:41 -0700 (PDT)
+Received: from krzk-bin.. ([110.93.11.116])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd0649fb5sm10903837f8f.94.2024.06.04.02.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 02:46:40 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] ASoC: qcom: x1e80100: Add USB DisplayPort plug support
+Date: Tue,  4 Jun 2024 11:46:38 +0200
+Message-ID: <20240604094638.97780-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240604070718.ypymfv6j2smvxldr@bogus>
 
-On Tue, Jun 04, 2024 at 08:07:18AM +0100, Sudeep Holla wrote:
-> On Mon, Jun 03, 2024 at 07:52:56PM +0200, Geert Uytterhoeven wrote:
-> > Hi Sudeep,
-> >
-> > On Mon, Jun 3, 2024 at 3:39 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > > On Wed, May 29, 2024 at 01:36:42PM +0200, Geert Uytterhoeven wrote:
-> > > > On Wed, May 29, 2024 at 12:13 PM Cristian Marussi
-> > > > <cristian.marussi@arm.com> wrote:
-> > > > > On Wed, May 29, 2024 at 09:30:45AM +0200, Geert Uytterhoeven wrote:
-> > > > > > The ARM MHUv3 controller is only present on ARM64 SoCs.  Hence add a
-> > > > > > dependency on ARM64, to prevent asking the user about this driver when
-> > > > > > configuring a kernel for a different architecture than ARM64.
-> > > > >
-> > > > > the ARM64 dependency was dropped on purpose after a few iterations of
-> > > > > this series since, despite this being an ARM IP, it has really no technical
-> > > > > dependency on ARM arch, not even the usual one on ARM AMBA bus, being this a
-> > > > > platform driver, so it seemed an uneeded artificial restriction to impose...
-> > > > > ...having said that, surely my live testing were performed only on arm64 models
-> > > > > as of now.
-> > > >
-> > > > For that, we have COMPILE_TEST=y.
-> > > >
-> > > > > So, I am not saying that I am against this proposed fix but what is the
-> > > > > issue that is trying to solve, have you seen any compilation error ? or
-> > > > > is it just to avoid the user-prompting ?
-> > > >
-> > > > I did not see a compile error (I didn't enable it on any non-ARM
-> > > > platform).
-> > > >
-> > > > But it is rather futile to ask the user about (thousands of) drivers
-> > > > for hardware that cannot possibly be present on the system he is
-> > > > configuring a kernel for.
-> > >
-> > > I am fine with this fix but I have seen quite opposite argument. That is
-> > > not to add dependency if it is not strictly required.
-> >
-> > Can you please point me to that reference?
-> >
-> 
-> I don't have one handy, I need to dig but I have been asked to remove
-> in the past.
-> 
-> > > Also since you state that the fix is to avoid users of other archs being
-> > > posed with the question that they may get annoyed or can't answer, I
-> > > wonder if the right approach is to make this driver default "n" instead.
-> >
-> > The driver already defaults to "n" (which is the default default ;-)
-> 
-> Ah Cristian mentioned the same in private. I may have misunderstood
-> then, for some reason I thought explicit default "n" would avoid getting
-> the prompt.
-> 
+Add support for handling jack events of USB (DisplayPort).
 
-I just tried this trick, it does not seem to work: an explict default-n will
-anyway trigger a prompt.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> As I said I am fine with the proposed change, just took this discussion
-> as a way to learn little more about Kconfig.
-> 
+---
 
-Can this be at least
+Depends on:
+https://lore.kernel.org/all/20240422134354.89291-1-srinivas.kandagatla@linaro.org/
+---
+ sound/soc/qcom/x1e80100.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-	depends on ARM || ARM64 || COMPILE_TEST
-
-Thanks,
-Cristian
+diff --git a/sound/soc/qcom/x1e80100.c b/sound/soc/qcom/x1e80100.c
+index d7e0bd03dffd..bc00722b7fdd 100644
+--- a/sound/soc/qcom/x1e80100.c
++++ b/sound/soc/qcom/x1e80100.c
+@@ -20,12 +20,32 @@ struct x1e80100_snd_data {
+ 	struct snd_soc_card *card;
+ 	struct sdw_stream_runtime *sruntime[AFE_PORT_MAX];
+ 	struct snd_soc_jack jack;
++	struct snd_soc_jack hdmi_jack[8];
+ 	bool jack_setup;
+ };
+ 
+ static int x1e80100_snd_init(struct snd_soc_pcm_runtime *rtd)
+ {
+ 	struct x1e80100_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
++	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
++	struct snd_soc_jack *hdmi_jack = NULL;
++	int hdmi_pcm_id = 0;
++
++	switch (cpu_dai->id) {
++	case DISPLAY_PORT_RX_0:
++		hdmi_pcm_id = 0;
++		hdmi_jack = &data->hdmi_jack[hdmi_pcm_id];
++		break;
++	case DISPLAY_PORT_RX_1 ... DISPLAY_PORT_RX_7:
++		hdmi_pcm_id = cpu_dai->id - DISPLAY_PORT_RX_1 + 1;
++		hdmi_jack = &data->hdmi_jack[hdmi_pcm_id];
++		break;
++	default:
++		break;
++	}
++
++	if (hdmi_jack)
++		return qcom_snd_dp_jack_setup(rtd, hdmi_jack, hdmi_pcm_id);
+ 
+ 	return qcom_snd_wcd_jack_setup(rtd, &data->jack, &data->jack_setup);
+ }
+-- 
+2.43.0
 
 
