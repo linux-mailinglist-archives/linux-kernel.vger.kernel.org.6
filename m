@@ -1,170 +1,109 @@
-Return-Path: <linux-kernel+bounces-199974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDAD8FA8A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:05:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1111A8FA8A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D262898A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:05:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4DADB25508
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB7613D602;
-	Tue,  4 Jun 2024 03:05:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D6713D62B;
+	Tue,  4 Jun 2024 03:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="0mQwofby"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F6F22066;
-	Tue,  4 Jun 2024 03:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE61322066
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 03:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717470336; cv=none; b=YxUWqErGlJ/AMQ9lcPT+Vef7wC/oN9A2V4utFEHH4Qy9EiPqSiJu5mC2TuxvW5yIQM+4cvYBjTpoLmvOlrMigZM5bS26cZkZxBdjVqnBhgRsvjYmv8LLEbszPPJ9TxRjwqCnH0gWYZGZBZuMRdONsubdlKjwt6kwgvTot7fsalA=
+	t=1717470628; cv=none; b=UJcZqlHRPnqb9KPvT9w2COWLSAVIlayL6yzrusRlUqsPw6HedHxuvmeUdf1Rkm9KZEqxiicpjBWJ7z13qvx2u3im7F/HGCUTBWduI+gTeMUKE6yWhb8ru4PnVsSG5qJuPrwke/eycV4dU75d+PJwskJ+Z3qhjxxigsmTNoKcjrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717470336; c=relaxed/simple;
-	bh=TjaFwGrFwaGILWgco03ETMMoCWc9v2lfQI1Zp4UqB+E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n5SceV7gu6tLiai08zdx6BgbewQ6yuJVidFFTJ3CApI0pOyZwlP01AdsuHInwQrUK2Va2EAEOHTprd3RXY02uqG7Ngnn3lSin0z1QXUCW3Fqp9rzZxXqqyqzrrOepJ4apaPPfy0b/fRqbXFBji6S3dxzbNJwQ5ZAM55NzhDB3Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vtb7D2tcjz4f3mHW;
-	Tue,  4 Jun 2024 11:05:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 764471A0C1D;
-	Tue,  4 Jun 2024 11:05:23 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6RFxhF5mc+oMOg--.44342S4;
-	Tue, 04 Jun 2024 11:05:23 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: linux-block@vger.kernel.org
-Cc: axboe@kernel.dk,
-	hch@infradead.org,
+	s=arc-20240116; t=1717470628; c=relaxed/simple;
+	bh=r/KulotwnindLZundgEfHdVGhEAYwldtPiohbaSnvcE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nEMsx59eHp8HnfCMT2V5JgFEI81++0bKl70CUWKfDXRjC9yDHlEQk3OgRfxBwIqsscbw/GPHITF5w+XkBFbiB50u+0ALymvP73aCo1U6oln60Qgzo7rMUEWVg8udlYC4GcTXKXCOPD/g1TO5UkX/HCmC3Omke7fT+eTXl6R6RUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=0mQwofby; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 42A042C0304;
+	Tue,  4 Jun 2024 15:10:22 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1717470622;
+	bh=pnm4VvNxff61Xbs7PCXNlnP5w/sI2C5GXRKzsvs5upk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=0mQwofbyDlXjFvSFo8IKIOVNmtmWIo13N0QwPgW6heK55zxL6uzFRiOVCe7v/dN50
+	 GDfnp5mbUxoapQ/oTcdyr53F7JWnBWMq4ioi5LNDUyB6Vn8jFmV7yB8+elZc/T6iOg
+	 rQxtpum0U3HblpWaDAqFUyGW0+EiQmXosyeUyp6hSBsv8rbRoJpnS1d+RvcoLX6o2a
+	 cRaAJGf3oG4ECnQIw+ZJ+FkKdpYDr0ZhtWTqRmnqsiY1HFBFjY3W0/VbxooibhMxxt
+	 j37b8yr2lP24z/XbUwI8oWrpJ4ZuxvWl0AJMX3Pe+gaEVqkjmo9gQy6n0wJnuNfigI
+	 HM0XDx1c7M+tA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B665e859e0000>; Tue, 04 Jun 2024 15:10:22 +1200
+Received: from jackiej-dl.ws.atlnz.lc (jackiej-dl.ws.atlnz.lc [10.33.25.29])
+	by pat.atlnz.lc (Postfix) with ESMTP id 0FD8713EE2B;
+	Tue,  4 Jun 2024 15:10:22 +1200 (NZST)
+Received: by jackiej-dl.ws.atlnz.lc (Postfix, from userid 1927)
+	id 08F1A1C0747; Tue,  4 Jun 2024 15:10:22 +1200 (NZST)
+From: jackie.jone@alliedtelesis.co.nz
+To: davem@davemloft.net
+Cc: jesse.brandeburg@intel.com,
+	anthony.l.nguyen@intel.com,
+	kuba@kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	yukuai3@huawei.com,
-	libaokun1@huawei.com
-Subject: [PATCH -next] blk-wbt: don't throttle swap writes in direct reclaim
-Date: Tue,  4 Jun 2024 11:05:22 +0800
-Message-Id: <20240604030522.3686177-1-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	chris.packham@alliedtelesis.co.nz,
+	jackie.jone@alliedtelesis.co.nz
+Subject: [PATCH] igb: Add MII write support
+Date: Tue,  4 Jun 2024 15:10:20 +1200
+Message-ID: <20240604031020.2313175-1-jackie.jone@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX6RFxhF5mc+oMOg--.44342S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxurWxKFyrJr15AF4xCry3Arb_yoW5Zr4kpr
-	43K3WDtFyqvFs7Xrn7XayxX3yru3yUtr43Ary5Kr1SvrW3Kr1aqa1vkw13KF4UZrZ3uw42
-	qr4Fyry7Jr43ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAIw28IcxkI7VAKI48J
-	MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
-	v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UuVbkUUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=F9L0dbhN c=1 sm=1 tr=0 ts=665e859e a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=YmqHs4GwyjAq34ObVysA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-From: Baokun Li <libaokun1@huawei.com>
+From: Jackie Jone <jackie.jone@alliedtelesis.co.nz>
 
-Now we avoid throttling swap writes by determining whether the current
-process is kswapd (aka current_is_kswapd()), but swap writes can come
-from either kswapd or direct reclaim, so the swap writes from direct
-reclaim will still be throttled.
+To facilitate running PHY parametric tests, add support for the SIOCSMIIR=
+EG
+ioctl. This allows a userspace application to write to the PHY registers
+to enable the test modes.
 
-When a process holds a lock to allocate a free page, and enters direct
-reclaim because there is no free memory, then it might trigger a hung
-due to the wbt throttling that causes other processes to fail to get
-the lock.
-
-Both kswapd and direct reclaim set the REQ_SWAP flag, so use REQ_SWAP
-instead of current_is_kswapd() to avoid throttling swap writes. Also
-renamed WBT_KSWAPD to WBT_SWAP and WBT_RWQ_KSWAPD to WBT_RWQ_SWAP.
-
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Signed-off-by: Jackie Jone <jackie.jone@alliedtelesis.co.nz>
 ---
- block/blk-wbt.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/intel/igb/igb_main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-index 64472134dd26..aaacf2f5b223 100644
---- a/block/blk-wbt.c
-+++ b/block/blk-wbt.c
-@@ -37,7 +37,7 @@
- enum wbt_flags {
- 	WBT_TRACKED		= 1,	/* write, tracked for throttling */
- 	WBT_READ		= 2,	/* read */
--	WBT_KSWAPD		= 4,	/* write, from kswapd */
-+	WBT_SWAP		= 4,	/* write, from swap_writepage() */
- 	WBT_DISCARD		= 8,	/* discard */
- 
- 	WBT_NR_BITS		= 4,	/* number of bits */
-@@ -45,7 +45,7 @@ enum wbt_flags {
- 
- enum {
- 	WBT_RWQ_BG		= 0,
--	WBT_RWQ_KSWAPD,
-+	WBT_RWQ_SWAP,
- 	WBT_RWQ_DISCARD,
- 	WBT_NUM_RWQ,
- };
-@@ -172,8 +172,8 @@ static bool wb_recent_wait(struct rq_wb *rwb)
- static inline struct rq_wait *get_rq_wait(struct rq_wb *rwb,
- 					  enum wbt_flags wb_acct)
- {
--	if (wb_acct & WBT_KSWAPD)
--		return &rwb->rq_wait[WBT_RWQ_KSWAPD];
-+	if (wb_acct & WBT_SWAP)
-+		return &rwb->rq_wait[WBT_RWQ_SWAP];
- 	else if (wb_acct & WBT_DISCARD)
- 		return &rwb->rq_wait[WBT_RWQ_DISCARD];
- 
-@@ -528,7 +528,7 @@ static bool close_io(struct rq_wb *rwb)
- 		time_before(now, rwb->last_comp + HZ / 10);
- }
- 
--#define REQ_HIPRIO	(REQ_SYNC | REQ_META | REQ_PRIO)
-+#define REQ_HIPRIO	(REQ_SYNC | REQ_META | REQ_PRIO | REQ_SWAP)
- 
- static inline unsigned int get_limit(struct rq_wb *rwb, blk_opf_t opf)
- {
-@@ -539,13 +539,13 @@ static inline unsigned int get_limit(struct rq_wb *rwb, blk_opf_t opf)
- 
- 	/*
- 	 * At this point we know it's a buffered write. If this is
--	 * kswapd trying to free memory, or REQ_SYNC is set, then
-+	 * swap trying to free memory, or REQ_SYNC is set, then
- 	 * it's WB_SYNC_ALL writeback, and we'll use the max limit for
- 	 * that. If the write is marked as a background write, then use
- 	 * the idle limit, or go to normal if we haven't had competing
- 	 * IO for a bit.
- 	 */
--	if ((opf & REQ_HIPRIO) || wb_recent_wait(rwb) || current_is_kswapd())
-+	if ((opf & REQ_HIPRIO) || wb_recent_wait(rwb))
- 		limit = rwb->rq_depth.max_depth;
- 	else if ((opf & REQ_BACKGROUND) || close_io(rwb)) {
- 		/*
-@@ -622,8 +622,8 @@ static enum wbt_flags bio_to_wbt_flags(struct rq_wb *rwb, struct bio *bio)
- 	if (bio_op(bio) == REQ_OP_READ) {
- 		flags = WBT_READ;
- 	} else if (wbt_should_throttle(bio)) {
--		if (current_is_kswapd())
--			flags |= WBT_KSWAPD;
-+		if (bio->bi_opf & REQ_SWAP)
-+			flags |= WBT_SWAP;
- 		if (bio_op(bio) == REQ_OP_DISCARD)
- 			flags |= WBT_DISCARD;
- 		flags |= WBT_TRACKED;
--- 
-2.39.2
-
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethe=
+rnet/intel/igb/igb_main.c
+index 03a4da6a1447..7fbfcf01fbf9 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -8977,6 +8977,10 @@ static int igb_mii_ioctl(struct net_device *netdev=
+, struct ifreq *ifr, int cmd)
+ 			return -EIO;
+ 		break;
+ 	case SIOCSMIIREG:
++		if (igb_write_phy_reg(&adapter->hw, data->reg_num & 0x1F,
++				     data->val_in))
++			return -EIO;
++		break;
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
 
