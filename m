@@ -1,150 +1,107 @@
-Return-Path: <linux-kernel+bounces-200335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB798FAE88
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:16:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B425C8FAE7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00A71F21CB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E9A1F24C7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FC8143890;
-	Tue,  4 Jun 2024 09:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2232142651;
+	Tue,  4 Jun 2024 09:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="27LETLlo"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B41F142E95;
-	Tue,  4 Jun 2024 09:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ddFR8wsg"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D731428F5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717492572; cv=none; b=pTncufPio9NhKIEN/sjrgg9oiocsNoyogOIPpTU7Gr8VJibStzR2bRRsgdi+dEn2lr7xWD7eTOcrHmWfgqKMDaGYe8inI2+QZrp0kO7YJp+r7GwSsKc4+jVZtufU/E8Spvxe+C6OxvWscjAGbUVznUF30I2HrFzrPBPnU/Zosbc=
+	t=1717492534; cv=none; b=QiY3Lwr8Yct4E6/+mOJLRhUQQBezcWeaFA8H13NUvZu842S1gCT1im1PBq8Ip8GGbEla5qYxZNwBTkiecWpDrb5ZLvpzMyBmF+AFHnAF2hTvqvYz6HwhE1mabPh/8GeHVVR3C+ICesS/mlWf7KjNeKODutyMl3RmnTm/iQj71Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717492572; c=relaxed/simple;
-	bh=BQ4ARc7ym83EjP1ZdLfO7G30wIOuzKX+3fzcU4koyFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=D5cAlhbC6g0rYXnG3FL0H+Jy3XhvK/w2bJvv4tol66mWMCmTtcmwLZM01FGl/SXv09J267rdB2rCQ0tvJ5ZEyTisy00dYIP6nyzr3WAG3oFkNl8rWemCFNJBQeSBSuZuB6lOSWxw+PzjZ634yu+9znfL0bUySMiHg/ebAvGDGvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=27LETLlo; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45494lCn031129;
-	Tue, 4 Jun 2024 11:15:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	qffrjtKMkRwftEA2tT5fwaxuwB2L0SM4mOqEx2NwZOo=; b=27LETLloblnKW1ze
-	OguMztGrFKSJuOveeUHYxriGpmF2JVXJVDwEb8sXBWU9u8R0fQjb3HRfU+EUUBFb
-	24RZZ8KJd5JYG7mcmrlxbS5VmJhZFGM2Y/PRTkmAahmIfwMLQYj2xHuPq01JpIUu
-	Fd3pjfYyhBwZ8t0BbwkhynDsgUTfNyS+zqwPaApvO/O9kvprpvgM6gyqsUBex37s
-	IeEKv6EdGHf8Yl9MR+B/glTcq4VhG0hzOb8BZhytzlnirrOprMmFPlfcujaVoPE8
-	1HUHjYLDyYSmuGBIw0ZXTub9PQ73zSUegc8h2I3V0B/Feh4FITQmgo17wIYQaPb2
-	HkPAkQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ygd70sd70-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 11:15:20 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3D29F40047;
-	Tue,  4 Jun 2024 11:15:12 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B6222216851;
-	Tue,  4 Jun 2024 11:13:54 +0200 (CEST)
-Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 4 Jun
- 2024 11:13:51 +0200
-Message-ID: <627a2182-527c-444d-9485-817c69f57036@foss.st.com>
-Date: Tue, 4 Jun 2024 11:13:50 +0200
+	s=arc-20240116; t=1717492534; c=relaxed/simple;
+	bh=Nta7iN+WFvRet05k6qlyoPpxSdKuLhWbm5NL+lqsFH4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=twFEIz08mxdXyUMtWybwZCNKHZs/4VFbPak4gE2lZhvQdJ/ZANarcL+Qdrrm2reAlNfUVAWeKnSdMxD+C5jFh0SMlipiOSpJRgaMnUGoPwLxUD5584nI50mYUL4e1rr9jwROMNDIY3Jg1oifXhb9f9Zg+EH1Wpdp1LN8GeGZdV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ddFR8wsg; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=OttNBT7tDdR+8AIHQK
+	EdCnsXbEagpDW5BlvkbCVKymI=; b=ddFR8wsgl8hZrgVsG8OTgCSXkrFUJhIVwf
+	v2H66v3QqIt65zB3rSIOvAhmve4LvEWC4aaldZKPoTqKc1DxuoB69mulzhyjTf0b
+	ano9jtjGSmJBeM0gt1pPqvoNayaB5ghn7hz1u40wOOT0NNfN1FDr3aAHKfhWKuqW
+	U86hDftYk=
+Received: from hg-OptiPlex-7040.hygon.cn (unknown [118.242.3.34])
+	by gzga-smtp-mta-g1-3 (Coremail) with SMTP id _____wAnFS7u2l5mNA2KAQ--.319S2;
+	Tue, 04 Jun 2024 17:14:23 +0800 (CST)
+From: yangge1116@126.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	baolin.wang@linux.alibaba.com,
+	liuzixing@hygon.cn,
+	yangge <yangge1116@126.com>
+Subject: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating non-CMA THP-sized page
+Date: Tue,  4 Jun 2024 17:14:20 +0800
+Message-Id: <1717492460-19457-1-git-send-email-yangge1116@126.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID:_____wAnFS7u2l5mNA2KAQ--.319S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KFykXw18Ww1DXFy8GF1UAwb_yoW8XryxpF
+	Wxua4jyayfXw13Ca97J3Wqkrsxuw4vgFWUCF4fXw1UZw13ta1293s7GF90vF1fAr98AF18
+	tr4ktr95ZF4qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jxJ5rUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiGBPzG2VLblbknQABsN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/11] net: stmmac: dwmac-stm32: Separate out external
- clock rate validation
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240603092757.71902-1-christophe.roullier@foss.st.com>
- <20240603092757.71902-3-christophe.roullier@foss.st.com>
- <Zl2O+eJF9vOTqFx2@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Christophe ROULLIER <christophe.roullier@foss.st.com>
-In-Reply-To: <Zl2O+eJF9vOTqFx2@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-04_03,2024-05-30_01,2024-05-17_01
 
+From: yangge <yangge1116@126.com>
 
-On 6/3/24 11:38, Russell King (Oracle) wrote:
-> On Mon, Jun 03, 2024 at 11:27:48AM +0200, Christophe Roullier wrote:
->> +static int stm32mp1_validate_ethck_rate(struct plat_stmmacenet_data *plat_dat)
->> +{
->> +	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
->> +	const u32 clk_rate = clk_get_rate(dwmac->clk_eth_ck);
->> +
->> +	switch (plat_dat->mac_interface) {
-> Should these be phy_interface?
+Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+THP-sized allocations") no longer differentiates the migration type
+of pages in THP-sized PCP list, it's possible to get a CMA page from
+the list, in some cases, it's not acceptable, for example, allocating
+a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
 
-Hi,
+The patch forbids allocating non-CMA THP-sized page from THP-sized
+PCP list to avoid the issue above.
 
-The code is validating the clock frequency of clock that are INPUT into 
-the MAC. These clock can be generated by either the PHY, or Xtal, or 
-some other source, but they are still the clock which are INPUT into the 
-MAC. Therefore I believe mac_interface is correct here.
+Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized allocations")
+Signed-off-by: yangge <yangge1116@126.com>
+---
+ mm/page_alloc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> Does this clock depend on the interface
-> mode used with the PHY?
->
-I don't think the clock depend on the PHY mode. Look at 
-drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c :
-"
-458         plat->phy_interface = phy_mode;
-459         rc = stmmac_of_get_mac_mode(np);
-460         plat->mac_interface = rc < 0 ? plat->phy_interface : rc;
-"
-and this comment:
-"
-382 /**
-383  * stmmac_of_get_mac_mode - retrieves the interface of the MAC
-384  * @np: - device-tree node
-385  * Description:
-386  * Similar to `of_get_phy_mode()`, this function will retrieve (from
-387  * the device-tree) the interface mode on the MAC side. This assumes
-388  * that there is mode converter in-between the MAC & PHY
-389  * (e.g. GMII-to-RGMII).
-390  */
-391 static int stmmac_of_get_mac_mode(struct device_node *np)
-"
-I think in the unlikely case that you would have a mode converter 
-between the MAC and PHY, the clock that are validated by this code would 
-still be the clock that are INPUT into the MAC, i.e. clock on the MAC 
-side of the mode converter and NOT on the PHY side , and those clock 
-would not depend on the PHY mode, they would depend on the MAC mode .
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 2e22ce5..0bdf471 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone *preferred_zone,
+ 	WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
+ 
+ 	if (likely(pcp_allowed_order(order))) {
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++		if (!IS_ENABLED(CONFIG_CMA) || alloc_flags & ALLOC_CMA ||
++						order != HPAGE_PMD_ORDER) {
++			page = rmqueue_pcplist(preferred_zone, zone, order,
++						migratetype, alloc_flags);
++			if (likely(page))
++				goto out;
++		}
++#else
+ 		page = rmqueue_pcplist(preferred_zone, zone, order,
+ 				       migratetype, alloc_flags);
+ 		if (likely(page))
+ 			goto out;
++#endif
+ 	}
+ 
+ 	page = rmqueue_buddy(preferred_zone, zone, order, alloc_flags,
+-- 
+2.7.4
+
 
