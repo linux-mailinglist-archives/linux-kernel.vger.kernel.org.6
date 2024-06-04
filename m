@@ -1,103 +1,124 @@
-Return-Path: <linux-kernel+bounces-201214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CEE88FBB08
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:56:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A1F8FBB0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B5E1F22272
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A8E288C6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3048714A0AD;
-	Tue,  4 Jun 2024 17:56:15 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 216FB149E03
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B089214A0A9;
+	Tue,  4 Jun 2024 17:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="lW0XgdXM"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B9B1487DC;
+	Tue,  4 Jun 2024 17:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717523774; cv=none; b=cefViAkWRBvvJKhEXc/GvVDUXr4n3Qt2YpTOKeyYYZKXk1eacEjgb93xDjHXA3V8YJjb9B4gJdA3Vct++Rn8oXVcbipyQwpyTeHnmHIkmAYeXE+e08JZYkqQlinAULW7E6jODoVaFaHDZa6HuEJ5FIdAyehPiiUMWx7rb9Bibx0=
+	t=1717523818; cv=none; b=H77gYtss1D04XO9KqEsVME0AjkytI1QsivhyAPeeYUzG8FRUMGguXtURLeB9Orgu8RsIaf5jCE6GLee00RcpjTUlxwf2eH6rsUPoZX0vHczzRTPojADy5BO04RKcOBrVXv6c9cuGg0elgMCnRRKDaB87XdzV5zxHD41qAfIPqMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717523774; c=relaxed/simple;
-	bh=3wAIXqH/S9/iZ/LgCLChcaYhPeYIkh1fRM8lbxS7ikk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cv/3BLX2YJDoEQFEuHHHNB6y2ef6r7nWphy8GP5ucUksZ1kRNcfQFdlseeELxbPIAufMZBouP8bK6/brMVEJ4yBScx65Oiec4Vlp0aBGSNRJkok8OUmCFPUbtCBcH9pt8sPGcps3e/D/5Z87ul0GIodizC5lg9+ngWoRdFHFZU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 165846 invoked by uid 1000); 4 Jun 2024 13:56:12 -0400
-Date: Tue, 4 Jun 2024 13:56:12 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
-  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-  urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
- tools/memory-model
-Message-ID: <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
-References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+	s=arc-20240116; t=1717523818; c=relaxed/simple;
+	bh=01/796tP5PbyAszPkhz/4rw8qfREIO3W6R5nzVRXffo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IjBG1RN6LzEFWa+V6SngDc4DNoy2+qpN0XXuJqnUCTvwV9oaqa/Jg08PL9OLtEGnGg7OLxEhJo8PuCWu905uCmfE3pthQGyLmrWp4CRAce1hpYujJQLO9FDyki+b5GsHx5EmZqpS02NpUc5Q76ZQ3cQwmOaJb9yyJgzA4lUMO24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=lW0XgdXM; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ex0/jsAU2z4rnu2Iz/lqMEV9TPAG1zSwQM+2P/IPTq4=; t=1717523814; x=1718128614; 
+	b=lW0XgdXMLQkKJytNBxhoNv0/U4VaijYVljCUu5CjwuhFalTSauUenxaxcgzmiJkGE1MK/aUAXB+
+	82fhBOLidNgS0kjqtTsks4enFgcMLY40gEAXrXurSPZFMESjB14tkI7ADmLKdcnwfEo8arKoOWRfR
+	D1UTgoqmaKAXin8nrRkmXuYfJ9L4uYpzOo85CaSQhEPI1x+SwHu2QwrqhW1vF7uZ7oYs7RQaoNi9x
+	+bTN7EzZH/4YETxMuFXUtMTFZZ3b5oQeye1i3qPNkh+BVVn1mONS056UYyO7i9mdJTDRyYkvjNEYB
+	Zu/do8MQOWwHl/p+RLR9BYJIwIAQ9+2xIZmg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sEYOw-00000000cPV-3eyW; Tue, 04 Jun 2024 19:56:50 +0200
+Received: from p57bd9a40.dip0.t-ipconnect.de ([87.189.154.64] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sEYOw-00000002mlm-2duq; Tue, 04 Jun 2024 19:56:50 +0200
+Message-ID: <fc6bbbcd0b2a79d8fdcbde576ae3e5a52ffab02a.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3 cmpxchg 2/4] sh: Emulate one-byte cmpxchg
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: paulmck@kernel.org
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, elver@google.com, akpm@linux-foundation.org, 
+ tglx@linutronix.de, peterz@infradead.org, dianders@chromium.org,
+ pmladek@suse.com,  torvalds@linux-foundation.org, arnd@arndb.de, Andi Shyti
+ <andi.shyti@linux.intel.com>, Palmer Dabbelt <palmer@rivosinc.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, linux-sh@vger.kernel.org
+Date: Tue, 04 Jun 2024 19:56:49 +0200
+In-Reply-To: <fcfa4d17-ea05-46f2-840d-9486923fd01d@paulmck-laptop>
+References: <1dee481f-d584-41d6-a5f1-d84375be5fe8@paulmck-laptop>
+	 <20240604170437.2362545-2-paulmck@kernel.org>
+	 <c44890de1c3d54d93fbde09ada558e7cb4a7177c.camel@physik.fu-berlin.de>
+	 <fcfa4d17-ea05-46f2-840d-9486923fd01d@paulmck-laptop>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Tue, Jun 04, 2024 at 05:29:18PM +0200, Jonas Oberhauser wrote:
-> Currently, the effect of several tag on operations is defined only in
-> the herd7 tool's OCaml code as syntax transformations, while the effect
-> of all other tags is defined in tools/memory-model.
-> This asymmetry means that two seemingly analogous definitions in 
-> tools/memory-model behave quite differently because the generated
-> representation is sometimes modified by hardcoded behavior in herd7.
-> 
-> It also makes it hard to see that the behavior of the formalization 
-> matches the intuition described in explanation.txt without delving into
-> the implementation of herd7.
-> 
-> Furthermore, this hardcoded behavior is hard to maintain inside herd7 and
-> other tools implementing WMM, and has caused several bugs and confusions
-> with the tool maintainers, e.g.:
-> 
->   https://github.com/MPI-SWS/genmc/issues/22
->   https://github.com/herd/herdtools7/issues/384#issuecomment-1132859904
->   https://github.com/hernanponcedeleon/Dat3M/issues/254
-> 
-> It also means that potential future extensions of LKMM with new tags may
-> not work without changing internals of the herd7 tool.
-> 
-> In this patch series, we first emulate the effect of herd7 transformations
-> in tools/memory-model through explicit rules in .cat and .bell files that
-> reference the transformed tags.
-> These transformations do not have any immediate effect with the current
-> herd7 implementation, because they apply after the syntax transformations
-> have already modified those tags.
-> 
-> In a second step, we then distinguish between syntactic tags (that are
-> placed by the programmer on operations, e.g., an 'ACQUIRE tag on both the
-> read and write of an xchg_acquire() operation) and sets of events (that
-> would be defined after the (emulated) transformations, e.g., an Acquire
-> set that includes only on the read of the xchg_acquire(), but "has been
-> removed" from the write).
-> 
-> This second step is incompatible with the current herd7 implementation,
-> since herd7 uses hardcoded tag names to decide what to do with LKMM;
-> therefore, the newly introduced syntactic tags will be ignored or
-> processed incorrectly by herd7.
+Hello,
 
-The patches look good to me.
+On Tue, 2024-06-04 at 10:50 -0700, Paul E. McKenney wrote:
+> > Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> >=20
+> > I can pick this up through my SH tree unless someone insists this to
+> > go through some other tree.
+>=20
+> Please do take it, and thank you!  When I see it in -next, I will drop
+> it from my tree.
 
-Just to clarify: Your first step encompasses patches 1 - 3, and the 
-second step is patch 4.  The first three patches can be applied now, but 
-the last one needs to wait until herd7 has been updated.  Is this all 
-correct?
+I'll pick it up over the weekend for which I have planned my usual kernel
+review and merge session.
 
-Alan
+> > Adrian
+> >=20
+> > PS: I'm a bit stumped that I'm not CC'ed as the SH maintainer.
+>=20
+> Me too, now that you mention it.  I did generate the list some time
+> back, but "git blame" shows you being maintainer for more than a year.
+> Yet I do have the linux-sh email list, so it is unlikely that I pasted
+> the get_maintainer.pl output from the wrong commit.
+>=20
+> I am forced to hypothesize that I fat-fingered the output of
+> get_maintainer.pl when adding the Cc lines to that commit.
+>=20
+> Please accept my apologies for having left you out!
+
+No worries. I was just surprised as I assume get_maintainer.pl should have
+done the right thing and spit out the names of the responsible maintainers.
+
+Thanks,
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
