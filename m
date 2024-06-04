@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-201074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F978FB8FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:30:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8088FB91E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89281C21402
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:30:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34E8CB29718
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC9613D526;
-	Tue,  4 Jun 2024 16:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F10148314;
+	Tue,  4 Jun 2024 16:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfKXckxj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkzPk0Mk"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F624135A51;
-	Tue,  4 Jun 2024 16:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15936BFC7;
+	Tue,  4 Jun 2024 16:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518633; cv=none; b=OeCSkQBZMpiVagHX2ayFuw5qmglo87Ttjlk7gnyMIGVZqFtcvJgIXIwQvYa1/AZMPTklUkXImrpyCHzwJMIWOruGkL4O7oXYyxq1GAWvOei9aQjvnpg04bLqiFiozt0ho0MEsdTOEIi1gNBMcxzHKeNsMmVnIhIp36l8vuVFs8k=
+	t=1717518653; cv=none; b=aH2yF+pm6NQHKvDaTIfSVkAspeoyEv4SLbAxRRCQoZzHNUWDDLH5jsON8gm9DFQT/Vtpe1/kPVCfSrhCLC30g1y6cEMsjFGWjljDrMMO4Y/cu2i5qmAAVlxar31stJgMmW4N5wh6wlksArhnh9+TA0v7C3iZB69B8VuOYDv3Jxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518633; c=relaxed/simple;
-	bh=VYfxBurXHxczP7ZhLOxXOA47hVbiObZ0mU1zWkMrQyQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=f6Q9tf+mhxe3nmk+yNftRDL8Vur40Blt9YyH6XueWLPIrAr+nrQByMC0YVEYaN8MngyCMWP4N1Kx/KvcaMYe/7J4dmwPfNlXbs6a+zDpP01W4hYYmYIRgg/zhoqv1S91gFf9m3HpbgEqwN1mfmb4SLQU0XFUVOqqDb/W36UatbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfKXckxj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126E3C2BBFC;
-	Tue,  4 Jun 2024 16:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717518632;
-	bh=VYfxBurXHxczP7ZhLOxXOA47hVbiObZ0mU1zWkMrQyQ=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=qfKXckxjQLUqiYOxFkKaC03gn8b9ipaeDRcL6JGuedSSW5cOK1snl8pAGCLTwfltl
-	 kWfLOK2/E3ee29537Gn3hX2MWiKlzSR/gWOy3/zgQjDlMyukkrDuZFqcLznwbpRrrE
-	 Stz/BhKKTY/1Ns2bH8Wh+5vzeXu3XhiT0rUgFbUS8og3IWNcxvbvadyQgwq2ir0OgY
-	 fACud7eB8Hn1NyVv4R7OvtiAvM6oOIAaYFORPwk5w7F6G6S6hT4hZ3fybbbU5J8yqW
-	 epTmfBNGwLBZcDzcBX9Ka5kgIX8NcT+qp8BxyDhnq/zHi2J/+hdGQl/HdaB9ADblWQ
-	 D8BE5g+I2TftQ==
+	s=arc-20240116; t=1717518653; c=relaxed/simple;
+	bh=g2nNoE/jBPYFHGgG9KjF1D6qbp8g+/CUpdddbyNM52A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+NvyQYtq9oAWC9Wpi06AdX/Ektlz+0gTv4hZXRHBp/ouLU4fy4fIHPObSG0EcuqyZw8l5tIE/Cmc+H7Vu3ApjZncHXEl3iX2Ub8Hf76D2v8qjBap+JQmB2DlUwUTTf1TYJyGhMVGlIc5DCtI9HH0IL9xt1Gk3ICXney5kX0P0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkzPk0Mk; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-656d8b346d2so4155053a12.2;
+        Tue, 04 Jun 2024 09:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717518651; x=1718123451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=83p7cdIpWkem+14akSHUhV9KHZt6lrNKJIFaFfNsCQ8=;
+        b=fkzPk0MkIfdJBKQ/4xyl+35Sv0S+Ji/9NeTx5BqhMvMB4P8/duH22kbxxAkYmm4uWQ
+         ik6h4XIOIjiihPvGiKMNr7slKsCLUR0cRbcU93zmgX5WJwmLlbyvx1kG5d3xgtH4uNq6
+         QNC2dVTQdllpnxh80lLyoPb+mdDRz8ThXz9UsHX7M8Cp9zZ3zJsHBzozgmwLKwxPl7Ez
+         /3HwVqpfM8Nfeu8HfqCe4OoXegTxfMJDbe6rcOQ84FAhXSuOMW/CCG9ImxHc6RwVyEyD
+         WHzZ3Bxa7wtN8elDaHi2CmZdftldomox9RKi/6IW46JOjp5eILFw2Unu1lbRmXIcka/R
+         pZ8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717518651; x=1718123451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=83p7cdIpWkem+14akSHUhV9KHZt6lrNKJIFaFfNsCQ8=;
+        b=wnLh/iOwsRC80BoNK1D3nJTwHGgih8Cso6gV3ZQcndf5EClhjfkFsjrXETQKO6QVUh
+         QmUm7MkWqn/toYK+XFdAFwE4j8KQ86tVWI/nbd+NR6RgjvIFgD6mANS3xRAbqJqp5dhx
+         ZLOz4Y6JrttWmn+M7xA1DMrrsG2nihIWGgtXSbX1bw+Kip4HxzDqDJXfn0oQHUp/dVNR
+         AYYA8ZdmdVWfAUBRPb7bytHycAwxJZ+YLraxRSHE1QWRddGsz5hP2GEbyjXORWSyIjMA
+         tVjmV5l2XBA0RUedFabI7slpxr+hgYPHiIRvg8ZSexsWo2sxz3SYTwqj4i2NRSgcKWK6
+         Irdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpQRb6XUJTg0rLDcU1mBFZ3ef8SaFMrFH9wtsblnRlUkzcXLo3SFnAiy9VXuHUrlhTEruOHgtUvW2gQWfXwMP9BfIVW441ywKgP5E4IsncQ5BQE5ceji7KudSYpCc+hwnWQBGx5lXutw==
+X-Gm-Message-State: AOJu0Yz3ivJHySsOLAz1TqqAWRgE6RWnsHbHfz6vei9Euo1SbdI/sY/+
+	DD9toCRlqfOWhmQqidNLGsRI9aoDXgbZIgfFxuKlMvTwsCOyHdWF
+X-Google-Smtp-Source: AGHT+IGbkr/+UVTzFi7G9OeRqFeDuNm4MstFausB0aD6oMWnYAXlTX9dceI60eLswRG8OkmRHFl7bA==
+X-Received: by 2002:a05:6a20:7289:b0:1af:d51a:1ba9 with SMTP id adf61e73a8af0-1b2b6ecaff2mr204228637.3.1717518650902;
+        Tue, 04 Jun 2024 09:30:50 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c37e984267sm7122382a12.42.2024.06.04.09.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 09:30:50 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 4 Jun 2024 06:30:49 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Hillf Danton <hdanton@sina.com>, Peter Zijlstra <peterz@infradead.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+	RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
+ worning
+Message-ID: <Zl9BOaPDsQBc8hSL@slm.duckdns.org>
+References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+ <ZljyqODpCD0_5-YD@slm.duckdns.org>
+ <20240531034851.GF3884@unreal>
+ <Zl4jPImmEeRuYQjz@slm.duckdns.org>
+ <20240604105456.1668-1-hdanton@sina.com>
+ <20240604113834.GO3884@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 04 Jun 2024 19:30:29 +0300
-Message-Id: <D1RDJHOKPWC2.HFDE4WLHATVA@kernel.org>
-To: "Stefan Berger" <stefanb@linux.ibm.com>, <keyrings@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <herbert@gondor.apana.org.au>,
- <davem@davemloft.net>
-Cc: <linux-kernel@vger.kernel.org>, <lukas@wunner.de>
-Subject: Re: [PATCH 0/2] ecdsa: Use ecc_digits_from_bytes to simplify code
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240529230827.379111-1-stefanb@linux.ibm.com>
- <D1MPWI6C2ZCW.F08I9ILD63L4@kernel.org>
- <435d756d-2404-4f66-9ce3-363813997629@linux.ibm.com>
-In-Reply-To: <435d756d-2404-4f66-9ce3-363813997629@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604113834.GO3884@unreal>
 
-On Thu May 30, 2024 at 3:16 PM EEST, Stefan Berger wrote:
+Hello, Leon.
+
+On Tue, Jun 04, 2024 at 02:38:34PM +0300, Leon Romanovsky wrote:
+> Thanks, it is very rare situation where call to flush/drain queue
+> (in our case kthread_flush_worker) in the middle of the allocation
+> flow can be correct. I can't remember any such case.
 >
->
-> On 5/30/24 01:08, Jarkko Sakkinen wrote:
-> > On Thu May 30, 2024 at 2:08 AM EEST, Stefan Berger wrote:
-> >> Simplify two functions that were using temporary byte arrays for
-> >> converting too-short input byte arrays to digits. Use ecc_digits_from_=
-bytes
-> >> since this function can now handle an input byte array that provides
-> >> less bytes than what a coordinate of a curve requires - the function
-> >> provides zeros for the missing (leading) bytes.
-> >>
-> >> See: c6ab5c915da4 ("crypto: ecc - Prevent ecc_digits_from_bytes from r=
-eading too many bytes")
-> >>
-> >> Regards,
-> >>     Stefan
-> >>
-> >> Stefan Berger (2):
-> >>    crypto: ecdsa - Use ecc_digits_from_bytes to create hash digits arr=
-ay
-> >>    crypto: ecdsa - Use ecc_digits_from_bytes to convert signature
-> >>
-> >>   crypto/ecdsa.c | 29 ++++++-----------------------
-> >>   1 file changed, 6 insertions(+), 23 deletions(-)
-> >=20
-> > BTW, would it make sense split ecdsa signature encoding to its own patc=
-h
-> > in my next patch set version and name it ecdsa_* style and put it to
-> > ecdsa.c?
->
-> I would only put it into ecdsa.c if functions inside this file (can)=20
-> make use of it, otherwise leave it in your file.
+> So even we don't fully understand the root cause, the reimplementation
+> is still valid and improves existing code.
 
-Yep, that specific part has no binding per se to anything related to
-TPM2. It is also dead easy to detach.
+It's not valid. pwq release is async and while wq free in the error path
+isn't. The flush is there so that we finish the async part before
+synchronize error handling. The patch you posted will can lead to double
+free after a pwq allocation failure. We can make the error path synchronous
+but the pwq free path should be updated first so that it stays synchronous
+in the error path. Note that it *needs* to be asynchronous in non-error
+paths, so it's going to be a bit subtle one way or the other.
 
-Here I would suggest to take a similar angle as with CRYPTO_LIB_AES so
-that it is easily and directly callable from either side with no fuss.
+Thanks.
 
-I'll mangle it that way at least for the next version and we can see
-then how it looks like.
-
-BR, Jarkko
+-- 
+tejun
 
