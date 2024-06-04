@@ -1,196 +1,466 @@
-Return-Path: <linux-kernel+bounces-201001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757348FB7F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:51:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDDF8FB7FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997201C21AC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0FE71C23E81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0D9149C6F;
-	Tue,  4 Jun 2024 15:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F2B14A0A2;
+	Tue,  4 Jun 2024 15:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RipAK1rZ"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pr50L4oA"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70365145A1F;
-	Tue,  4 Jun 2024 15:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F97B149DF0;
+	Tue,  4 Jun 2024 15:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516131; cv=none; b=FfhUxKjOBqvP2OB2nsECbtOsQFFs4JfMOBzYOo+86yddnqVUGVh5GdCNSW/8gp7lUN6gLfxtyCv7+9YVWsctX7qNuz/OinJtqTtJPDaiIwszxqmllnccoTn0XOgIO2L6sjaIak0uix9lFLzHA3542EwlUV0hZ2/3oHqhHADXpj0=
+	t=1717516155; cv=none; b=fN12GD1Im/HQAySPXJGwhkCLwtpCT0nUsbR+JcOjSwAxMqft5vWCMwnkU+ORP4UCdhCA62jfZXyKUuriBdovBk/DvdCfKJnaMESvnglKXEvxK42+eriGeimHyaXUBNysVqLRaOhY8fc8lFwebqF3HKN+fkcdHgkPhRzv13jOeuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516131; c=relaxed/simple;
-	bh=rl0V1efIkBWcPNXf1GY2r+h8AP6zylGJu5kf/w2ddgM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m9BnnRpf4JuI5C23BD+fGlCxTFmmNqVHlTyLGgMS6y8HH8t5LizOBiyBuqPwdVai4xx3UJfxZhL6Sa6hTFTfsWN+cs5QgKOIXjissb9PDpjxqvIOJEp+5TPJOieMZctbxZQs+krWdFYEbAE5cRLceyvdkVJ3QGMtTokoaBxKfa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RipAK1rZ; arc=none smtp.client-ip=209.85.216.52
+	s=arc-20240116; t=1717516155; c=relaxed/simple;
+	bh=j1FZNLO74F5TERxEHjL5jyasm4jrBG4v95mmRrZi3mk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gYZLvs159hcYbijBVIh3QQ7S3I6yJ1hel8ZxnDoDwg0SoVbABTqY8bPgp4K+Lu4MizH5XyIncCyU3CEbXxnHpDMkg9NL8f7jh7QxA9xFfpVgTaRP7PcMe1ouhixUNYaNLxAhJtAkgN/0QWmIEwzkipgjvQPV8Nu8sTJSj+Widzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pr50L4oA; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c2070e1579so2221225a91.3;
-        Tue, 04 Jun 2024 08:48:50 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so33676005e9.1;
+        Tue, 04 Jun 2024 08:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717516130; x=1718120930; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Q70FeNK1/2wRB7vpNO0oOJ1GgfoQ2PpKwWEQ3Wdqpg=;
-        b=RipAK1rZDcJWxXt0m+Hr9IqiyBNS96Vq5ZU7ZyJgn43dGOwLPUVEGDsunvIrZJIU6l
-         Ws2QGBQ5NSTIiY9aII6V7SLCJOvNFkLGqHCstIjqzTfplJZHc/pYTaJBczwfL2xWKwdn
-         tWi/Ofkli/KcNkHeGiGG8ubNU9hBEaEBerCSe1hAhrBUkQ5fXc/Bm3FafOMlD3kjktDK
-         GabGMStYUuBQi0PMoobAaFz8pgIwwz63QPdAvZJKpG3QwqSxs64gnkQUJifZ6FAHGUVf
-         79oKdCN9t42TZ14Mc7vW79JAlDjTumMW+vLcwT+DjqRSG2xBx0J6+Qw5D4dlJaAWoTt3
-         pCsQ==
+        d=gmail.com; s=20230601; t=1717516151; x=1718120951; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w0o74OzmLILdRfjT7ra8B4bUu6tDPeAazZ6fkFINKgs=;
+        b=Pr50L4oAjBteIdfPUoTEBe9gHA+xv9wxiDZhARUzxBQAoUo4JMu0RpGMm2lABILhOc
+         U3Rl+LLJcRzR+yJ7mzVFogWTDsawvVyBWGgmZhPiSDRdTqYzZfn7LL+yd/+qreJdOiuQ
+         RknyvAxTAPHNkRVgH8FrLHR34EhXx3YFyLQGbhrStOTKt4dYaMIinQdfYea5UisGZytF
+         eTmXCajB4GgG5gBrViaVIqFVQQbSw0l9Yx0ACqS16JurU+0nqQHYHJQsgNepmMAODVWq
+         nkXRBUZ/LGGsEvPLv3ukZ369AGXMT0c39w9BftbRCRxS02xEJRnq67GrRxstEpyxD6Bo
+         iGAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717516130; x=1718120930;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7Q70FeNK1/2wRB7vpNO0oOJ1GgfoQ2PpKwWEQ3Wdqpg=;
-        b=MiepFanXGca/170YTB8vZjOzmmbuKbQTvvbBERudVLMNCdTIYUy5sg+eyV12qI3V3L
-         yR4DHukPI/471kYlUqT+sEharB35K4C3JVMJ7gcCTruBXM9QLoVKBX9ZTF8ruA77BQH0
-         MFN7aMup1twxWpw82aYHk8R4dAl2o5y1hsV6gg9ANOxKakIq3CqL+PQU52q01KssXLfH
-         JbPcXMHx0yK4872h73oSZ34AH2nxD8v1SIHfDNCJcO+3Z3CopsSFUWNCzL9BPmd0sGpt
-         4ZP+vR205x3GgYqOgpGtL/nNfOVae+R3Rjw52ZT/nH4iWYzThK2oQSEG/xr2K51eecR2
-         Vxgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXk6vQ3NzPO9+frHcJL7gfDiXsuUCvI9wU3A+T8xuEEmbYqSmcMFVnNCjM3nsSWrIqhSEWSpMIpqxppRV54mhiFPcYzMVBc/RYwsiiA
-X-Gm-Message-State: AOJu0Yzk6slzksuyzHV1tqS/n4wa/GdHQG/8tHmdaKT06xayvpS5wvwg
-	pQCb0k4I26SFV10syWOfxKUKbXOFgyFYzrzbOGHHfP9YTB2vUSN4
-X-Google-Smtp-Source: AGHT+IETdb/v65fN1hSr8RwtXZ9wGqMKKKZp/iq5lA8SpMG6PGllSWGbwuTvA5+zM0FaJ/bEI1ZTMA==
-X-Received: by 2002:a17:90b:889:b0:2bd:f713:800e with SMTP id 98e67ed59e1d1-2c1dc575163mr11404129a91.14.1717516129658;
-        Tue, 04 Jun 2024 08:48:49 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a775d5c3sm10792383a91.5.2024.06.04.08.48.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 08:48:48 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Rob Clark <robdclark@chromium.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/msm/a6xx: Print SQE fw version
-Date: Tue,  4 Jun 2024 08:48:45 -0700
-Message-ID: <20240604154846.500357-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.1
+        d=1e100.net; s=20230601; t=1717516151; x=1718120951;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w0o74OzmLILdRfjT7ra8B4bUu6tDPeAazZ6fkFINKgs=;
+        b=Kx3wk8rSyvkU8ClWNZCeUVq8MrNiZkGeF3jwFxd8xn0nuV0Qs2Y1ZHLTN8rsHhdH7C
+         NHxpB9cUrf+kD8BPdQQRlMRdgLOb2JfhhZZuaeWSUqkFjDIUqSYQuZOQLJIPP4ASATm1
+         egXy/mwxAHD2b1+DDTDnyqE8s5LID0cjw+NiGYifxv2v6/oDPpEUcq5rpGCM51YJPcve
+         DZWY41afP11nHweQQeYi7OprKhTpeFVlQG6ZhToq1FAbQxBySMzcNeVsNieBmfPTdVwP
+         Mw/H4FebCoA6UsNhCNi6J7yIK39xpu3FNh1t1o9WY80xB2x0DScjJW3AbfyyVja1hdZi
+         tuIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYFlJzMy2zAEhECtTtW56R5TxI2Y0mLm9+rKunLTjK8Z0io9lzRZT81KpXYIAplX1uC2mrnxsryTzQtLuDmCzMwo1pUJCdPLc51YQVQNc8zApttCubKH48s4U9JPeGZfppTk+ZqQ==
+X-Gm-Message-State: AOJu0YwCUD6DsrTiKu+f+9Dee2i3om3TJNWC3LYqfKjK3pDdA/Hj32u/
+	RAWp3Wqlz12Dp0m6eEvWvsnVD/xdyDp6p0qFWaTSMTt90UEX7ML/FvWUTeqOBjsPiA==
+X-Google-Smtp-Source: AGHT+IFLL4mOYJyAmeChFmGOOt9BwS8W1j6YiFkY6lMF7N0FUfAsFyCbqX0ag8QcZQt/AxZwUxSfVw==
+X-Received: by 2002:a05:600c:3b03:b0:421:2933:f625 with SMTP id 5b1f17b1804b1-4214511ba9dmr28696925e9.11.1717516151151;
+        Tue, 04 Jun 2024 08:49:11 -0700 (PDT)
+Received: from [172.16.100.125] ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4214a4a9aa9sm25095145e9.0.2024.06.04.08.49.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 08:49:10 -0700 (PDT)
+Message-ID: <14ac1188-a018-4ebb-bf64-7818fab9ab7b@gmail.com>
+Date: Tue, 4 Jun 2024 16:49:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] iio: light: ROHM BH1745 colour sensor
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ ivan.orlov0322@gmail.com, jic23@kernel.org, lars@metafoo.de,
+ krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240603162122.165943-1-muditsharma.info@gmail.com>
+ <20240603162122.165943-2-muditsharma.info@gmail.com>
+ <39710806-3151-4b57-9af4-c0b4a4d21c28@gmail.com>
+ <c0732554-0742-444b-910d-55052e2c0f92@gmail.com>
+ <5c4800f4-3345-415b-b4e0-0099f1d22770@gmail.com>
+Content-Language: en-US
+From: Mudit Sharma <muditsharma.info@gmail.com>
+In-Reply-To: <5c4800f4-3345-415b-b4e0-0099f1d22770@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Rob Clark <robdclark@chromium.org>
+On 04/06/2024 15:58, Javier Carrasco wrote:
+> On 04/06/2024 16:24, Mudit Sharma wrote:
+>> On 04/06/2024 00:10, Javier Carrasco wrote:
+>>> On 03/06/2024 18:21, Mudit Sharma wrote:
+>>>> Add support for BH1745, which is an I2C colour sensor with red, green,
+>>>> blue and clear channels. It has a programmable active low interrupt pin.
+>>>> Interrupt occurs when the signal from the selected interrupt source
+>>>> channel crosses set interrupt threshold high or low level.
+>>>>
+>>>> This driver includes device attributes to configure the following:
+>>>> - Interrupt pin latch: The interrupt pin can be configured to
+>>>>     be latched (until interrupt register (0x60) is read or initialized)
+>>>>     or update after each measurement.
+>>>> - Interrupt source: The colour channel that will cause the interrupt
+>>>>     when channel will cross the set threshold high or low level.
+>>>>
+>>>> This driver also includes device attributes to present valid
+>>>> configuration options/values for:
+>>>> - Integration time
+>>>> - Interrupt colour source
+>>>> - Hardware gain
+>>>>
+>>>> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+>>>
+>>> Hi Mudit,
+>>>
+>>> a few minor comments inline.
+>>>
+>>>> ---
+>>>> v1->v2:
+>>>> - No changes
+>>>>
+>>>>    drivers/iio/light/Kconfig  |  12 +
+>>>>    drivers/iio/light/Makefile |   1 +
+>>>>    drivers/iio/light/bh1745.c | 879 +++++++++++++++++++++++++++++++++++++
+>>>>    3 files changed, 892 insertions(+)
+>>>>    create mode 100644 drivers/iio/light/bh1745.c
+>>>>
+>>>> diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+>>>> index 9a587d403118..6e0bd2addf9e 100644
+>>>> --- a/drivers/iio/light/Kconfig
+>>>> +++ b/drivers/iio/light/Kconfig
+>>>> @@ -114,6 +114,18 @@ config AS73211
+>>>>         This driver can also be built as a module.  If so, the module
+>>>>         will be called as73211.
+>>>>    +config BH1745
+>>>> +    tristate "ROHM BH1745 colour sensor"
+>>>> +    depends on I2C
+>>>> +    select REGMAP_I2C
+>>>> +    select IIO_BUFFER
+>>>> +    select IIO_TRIGGERED_BUFFER
+>>>> +    help
+>>>> +      Say Y here to build support for the ROHM bh1745 colour sensor.
+>>>> +
+>>>> +      To compile this driver as a module, choose M here: the module
+>>>> will
+>>>> +      be called bh1745.
+>>>> +
+>>>>    config BH1750
+>>>>        tristate "ROHM BH1750 ambient light sensor"
+>>>>        depends on I2C
+>>>> diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+>>>> index a30f906e91ba..939a701a06ac 100644
+>>>> --- a/drivers/iio/light/Makefile
+>>>> +++ b/drivers/iio/light/Makefile
+>>>> @@ -13,6 +13,7 @@ obj-$(CONFIG_APDS9300)        += apds9300.o
+>>>>    obj-$(CONFIG_APDS9306)        += apds9306.o
+>>>>    obj-$(CONFIG_APDS9960)        += apds9960.o
+>>>>    obj-$(CONFIG_AS73211)        += as73211.o
+>>>> +obj-$(CONFIG_BH1745)        += bh1745.o
+>>>>    obj-$(CONFIG_BH1750)        += bh1750.o
+>>>>    obj-$(CONFIG_BH1780)        += bh1780.o
+>>>>    obj-$(CONFIG_CM32181)        += cm32181.o
+>>>> diff --git a/drivers/iio/light/bh1745.c b/drivers/iio/light/bh1745.c
+>>>> new file mode 100644
+>>>> index 000000000000..a7b660a1bdc8
+>>>> --- /dev/null
+>>>> +++ b/drivers/iio/light/bh1745.c
+>>>> @@ -0,0 +1,879 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * ROHM BH1745 digital colour sensor driver
+>>>> + *
+>>>> + * Copyright (C) Mudit Sharma <muditsharma.info@gmail.com>
+>>>> + *
+>>>> + * 7-bit I2C slave addresses:
+>>>> + *  0x38 (ADDR pin low)
+>>>> + *  0x39 (ADDR pin high)
+>>>> + *
+>>>> + */
+>>>> +
+>>>> +#include <linux/i2c.h>
+>>>> +#include <linux/mutex.h>
+>>>> +#include <linux/util_macros.h>
+>>>> +#include <linux/iio/events.h>
+>>>> +#include <linux/regmap.h>
+>>>> +
+>>>> +#include <linux/iio/iio.h>
+>>>> +#include <linux/iio/sysfs.h>
+>>>> +#include <linux/iio/trigger.h>
+>>>> +#include <linux/iio/trigger_consumer.h>
+>>>> +#include <linux/iio/triggered_buffer.h>
+>>>> +
+>>>> +#define BH1745_MOD_NAME "bh1745"
+>>>
+>>> Given that this define is only used in one place, using the string
+>>> directly is common practice in iio.
+>>>
+>>>> +
+>>>> +/* BH1745 config regs */
+>>>> +#define BH1745_SYS_CTRL 0x40
+>>>> +
+>>>> +#define BH1745_MODE_CTRL_1 0x41
+>>>> +#define BH1745_MODE_CTRL_2 0x42
+>>>> +#define BH1745_MODE_CTRL_3 0x44
+>>>> +
+>>>> +#define BH1745_INTR 0x60
+>>>> +#define BH1745_INTR_STATUS BIT(7)
+>>>> +
+>>>> +#define BH1745_PERSISTENCE 0x61
+>>>> +
+>>>> +#define BH1745_TH_LSB 0X62
+>>>> +#define BH1745_TH_MSB 0X63
+>>>> +
+>>>> +#define BH1745_TL_LSB 0X64
+>>>> +#define BH1745_TL_MSB 0X65
+>>>> +
+>>>> +#define BH1745_THRESHOLD_MAX 0xFFFF
+>>>> +#define BH1745_THRESHOLD_MIN 0x0
+>>>> +
+>>>> +#define BH1745_MANU_ID 0X92
+>>>> +
+>>>> +/* BH1745 output regs */
+>>>> +#define BH1745_R_LSB 0x50
+>>>> +#define BH1745_R_MSB 0x51
+>>>> +#define BH1745_G_LSB 0x52
+>>>> +#define BH1745_G_MSB 0x53
+>>>> +#define BH1745_B_LSB 0x54
+>>>> +#define BH1745_B_MSB 0x55
+>>>> +#define BH1745_CLR_LSB 0x56
+>>>> +#define BH1745_CLR_MSB 0x57
+>>>> +
+>>>> +#define BH1745_SW_RESET BIT(7)
+>>>> +#define BH1745_INT_RESET BIT(6)
+>>>> +
+>>>> +#define BH1745_MEASUREMENT_TIME_MASK GENMASK(2, 0)
+>>>> +
+>>>> +#define BH1745_RGBC_EN BIT(4)
+>>>> +
+>>>> +#define BH1745_ADC_GAIN_MASK GENMASK(1, 0)
+>>>> +
+>>>> +#define BH1745_INT_ENABLE BIT(0)
+>>>> +#define BH1745_INT_SIGNAL_ACTIVE BIT(7)
+>>>> +
+>>>> +#define BH1745_INT_SIGNAL_LATCHED BIT(4)
+>>>> +#define BH1745_INT_SIGNAL_LATCH_OFFSET 4
+>>>> +
+>>>> +#define BH1745_INT_SOURCE_MASK GENMASK(3, 2)
+>>>> +#define BH1745_INT_SOURCE_OFFSET 2
+>>>> +
+>>>> +#define BH1745_INT_TIME_AVAILABLE "0.16 0.32 0.64 1.28 2.56 5.12"
+>>>> +#define BH1745_HARDWAREGAIN_AVAILABLE "1 2 16"
+>>>> +#define BH1745_INT_COLOUR_CHANNEL_AVAILABLE \
+>>>> +    "0 (Red Channel) 1 (Green Channel) 2 (Blue channel) 3 (Clear
+>>>> channel)"
+>>>> +
+>>>> +static const int bh1745_int_time[][2] = {
+>>>> +    { 0, 160000 }, /* 160 ms */
+>>>> +    { 0, 320000 }, /* 320 ms */
+>>>> +    { 0, 640000 }, /* 640 ms */
+>>>> +    { 1, 280000 }, /* 1280 ms */
+>>>> +    { 2, 560000 }, /* 2560 ms */
+>>>> +    { 5, 120000 }, /* 5120 ms */
+>>>> +};
+>>>> +
+>>>> +static const u8 bh1745_gain_factor[] = { 1, 2, 16 };
+>>>> +
+>>>> +enum {
+>>>> +    BH1745_INT_SOURCE_RED,
+>>>> +    BH1745_INT_SOURCE_GREEN,
+>>>> +    BH1745_INT_SOURCE_BLUE,
+>>>> +    BH1745_INT_SOURCE_CLEAR,
+>>>> +} bh1745_int_source;
+>>>> +
+>>>> +enum {
+>>>> +    BH1745_ADC_GAIN_1X,
+>>>> +    BH1745_ADC_GAIN_2X,
+>>>> +    BH1745_ADC_GAIN_16X,
+>>>> +} bh1745_gain;
+>>>> +
+>>>> +enum {
+>>>> +    BH1745_MEASUREMENT_TIME_160MS,
+>>>> +    BH1745_MEASUREMENT_TIME_320MS,
+>>>> +    BH1745_MEASUREMENT_TIME_640MS,
+>>>> +    BH1745_MEASUREMENT_TIME_1280MS,
+>>>> +    BH1745_MEASUREMENT_TIME_2560MS,
+>>>> +    BH1745_MEASUREMENT_TIME_5120MS,
+>>>> +} bh1745_measurement_time;
+>>>> +
+>>>> +enum {
+>>>> +    BH1745_PRESISTENCE_UPDATE_TOGGLE,
+>>>> +    BH1745_PRESISTENCE_UPDATE_EACH_MEASUREMENT,
+>>>> +    BH1745_PRESISTENCE_UPDATE_FOUR_MEASUREMENT,
+>>>> +    BH1745_PRESISTENCE_UPDATE_EIGHT_MEASUREMENT,
+>>>> +} bh1745_presistence_value;
+>>>> +
+>>>> +struct bh1745_data {
+>>>> +    struct mutex lock;
+>>>> +    struct regmap *regmap;
+>>>> +    struct i2c_client *client;
+>>>> +    struct iio_trigger *trig;
+>>>> +    u8 mode_ctrl1;
+>>>> +    u8 mode_ctrl2;
+>>>> +    u8 int_src;
+>>>> +    u8 int_latch;
+>>>> +    u8 interrupt;
+>>>> +};
+>>>> +
+>>>> +static const struct regmap_range bh1745_volatile_ranges[] = {
+>>>> +    regmap_reg_range(BH1745_MODE_CTRL_2, BH1745_MODE_CTRL_2), /*
+>>>> VALID */
+>>>> +    regmap_reg_range(BH1745_R_LSB, BH1745_CLR_MSB), /* Data */
+>>>> +    regmap_reg_range(BH1745_INTR, BH1745_INTR), /* Interrupt */
+>>>> +};
+>>>> +
+>>>> +static const struct regmap_access_table bh1745_volatile_regs = {
+>>>> +    .yes_ranges = bh1745_volatile_ranges,
+>>>> +    .n_yes_ranges = ARRAY_SIZE(bh1745_volatile_ranges),
+>>>> +};
+>>>> +
+>>>> +static const struct regmap_range bh1745_read_ranges[] = {
+>>>> +    regmap_reg_range(BH1745_SYS_CTRL, BH1745_MODE_CTRL_2),
+>>>> +    regmap_reg_range(BH1745_R_LSB, BH1745_CLR_MSB),
+>>>> +    regmap_reg_range(BH1745_INTR, BH1745_INTR),
+>>>> +    regmap_reg_range(BH1745_PERSISTENCE, BH1745_TL_MSB),
+>>>> +    regmap_reg_range(BH1745_MANU_ID, BH1745_MANU_ID),
+>>>> +};
+>>>> +
+>>>> +static const struct regmap_access_table bh1745_ro_regs = {
+>>>> +    .yes_ranges = bh1745_read_ranges,
+>>>> +    .n_yes_ranges = ARRAY_SIZE(bh1745_read_ranges),
+>>>> +};
+>>>> +
+>>>> +static const struct regmap_range bh1745_writable_ranges[] = {
+>>>> +    regmap_reg_range(BH1745_SYS_CTRL, BH1745_MODE_CTRL_2),
+>>>> +    regmap_reg_range(BH1745_PERSISTENCE, BH1745_TL_MSB),
+>>>> +};
+>>>> +
+>>>> +static const struct regmap_access_table bh1745_wr_regs = {
+>>>> +    .yes_ranges = bh1745_writable_ranges,
+>>>> +    .n_yes_ranges = ARRAY_SIZE(bh1745_writable_ranges),
+>>>> +};
+>>>> +
+>>>> +static const struct regmap_config bh1745_regmap = {
+>>>> +    .reg_bits = 8,
+>>>> +    .val_bits = 8,
+>>>> +    .max_register = BH1745_MANU_ID,
+>>>> +    .cache_type = REGCACHE_RBTREE,
+>>>> +    .volatile_table = &bh1745_volatile_regs,
+>>>> +    .wr_table = &bh1745_wr_regs,
+>>>> +    .rd_table = &bh1745_ro_regs,
+>>>> +};
+>>>> +
+>>>> +static const struct iio_event_spec bh1745_event_spec[] = {
+>>>> +    {
+>>>> +        .type = IIO_EV_TYPE_THRESH,
+>>>> +        .dir = IIO_EV_DIR_RISING,
+>>>> +        .mask_shared_by_type = BIT(IIO_EV_INFO_VALUE),
+>>>> +    },
+>>>> +    {
+>>>> +        .type = IIO_EV_TYPE_THRESH,
+>>>> +        .dir = IIO_EV_DIR_FALLING,
+>>>> +        .mask_shared_by_type = BIT(IIO_EV_INFO_VALUE),
+>>>> +    },
+>>>> +    {
+>>>> +        .type = IIO_EV_TYPE_THRESH,
+>>>> +        .dir = IIO_EV_DIR_EITHER,
+>>>> +        .mask_shared_by_type = BIT(IIO_EV_INFO_PERIOD),
+>>>> +    },
+>>>> +};
+>>>> +
+>>>> +#define BH1745_CHANNEL(_colour, _si,
+>>>> _addr)                                   \
+>>>> +
+>>>> {                                                                     \
+>>>> +        .type = IIO_INTENSITY, .modified = 1,                         \
+>>>> +        .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),                 \
+>>>> +        .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_HARDWAREGAIN) | \
+>>>> +                        BIT(IIO_CHAN_INFO_INT_TIME),      \
+>>>> +        .event_spec = bh1745_event_spec,                              \
+>>>> +        .num_event_specs = ARRAY_SIZE(bh1745_event_spec),             \
+>>>> +        .channel2 = IIO_MOD_LIGHT_##_colour, .address = _addr,        \
+>>>> +        .scan_index = _si,                                            \
+>>>> +        .scan_type = {                                                \
+>>>> +            .sign = 'u',                                          \
+>>>> +            .realbits = 16,                                       \
+>>>> +            .storagebits = 16,                                    \
+>>>> +            .endianness = IIO_CPU,                                \
+>>>> +        },                                                            \
+>>>> +    }
+>>>> +
+>>>> +static const struct iio_chan_spec bh1745_channels[] = {
+>>>> +    BH1745_CHANNEL(RED, 0, BH1745_R_LSB),
+>>>> +    BH1745_CHANNEL(GREEN, 1, BH1745_G_LSB),
+>>>> +    BH1745_CHANNEL(BLUE, 2, BH1745_B_LSB),
+>>>> +    BH1745_CHANNEL(CLEAR, 3, BH1745_CLR_LSB),
+>>>> +    IIO_CHAN_SOFT_TIMESTAMP(4),
+>>>> +};
+>>>> +
+>>>> +static int bh1745_write_value(struct bh1745_data *data, u8 reg, void
+>>>> *value,
+>>>> +                  size_t len)
+>>>> +{
+>>>
+>>> The initial assignment is unnecessary, as a new assignment is made
+>>> immediately. This applies to several declarations of ret in this driver,
+>>> but not always (e.g. bh1745_setup_trigger()).
+>>>
+>>>> +    int ret = 0;
+>>>> +
+>>>> +    ret = regmap_bulk_write(data->regmap, reg, value, len);
+>>>> +    if (ret < 0) {
+>>>> +        dev_err(&data->client->dev,
+>>>> +            "Failed to write to sensor. Reg: 0x%x\n", reg);
+>>>> +        return ret;
+>>>> +    }
+>>>
+>>> Nit: black line before return (it applies to several functions in this
+>>> driver, but again, not in all of them).
+>>
+>> Hi Javier,
+>>
+>> Thank you for the review on this.
+>>
+>> Can you please point me to resource/section of code style guide for
+>> reference which talks about new line before 'return'.
+>>
+>> Best regards,
+>> Mudit Sharma
+>>
+>>
+>>
+> 
+> AFAIK that is not written in stone, but many common practices are not
+> documented anywhere (e.g. names of error/ret variables). They just copy
+> what the majority of the code in that subsystem does. There is indeed a
+> tendency to add a blank line before the last (unconditional, not
+> labeled) return, but I am sure that some code does not follow that.
+> 
+> Having said that, I don't have a strong opinion (it was a nitpick) on
+> that, but what I would definitely recommend you is following **some**
+> pattern. There are some functions where you added a blank line, and some
+> others (the majority, I think), where you didn't. Given that this is new
+> code, uniformity would be appreciated.
+> 
+> Unless an IIO maintainer (I am NOT one) says otherwise, I would find
+> both approaches (blank/no line) reasonable, even though I like the blank
+> line in that particular case :)
+> 
+> Best regards,
+> Javier Carrasco
 
-Add the SQE fw version to dmesg and devcoredump.
+Thanks for the explanation here.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c       | 32 +++++++++++++++++++--
- drivers/gpu/drm/msm/adreno/a6xx_gpu.h       |  1 +
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c |  2 ++
- 3 files changed, 33 insertions(+), 2 deletions(-)
+I agree with having a consistent pattern and will make the necessary 
+changes to v3.
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index 56bfb228808d..5a2a005003c8 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -665,6 +665,32 @@ static int a7xx_cp_init(struct msm_gpu *gpu)
- 	return a6xx_idle(gpu, ring) ? 0 : -EINVAL;
- }
- 
-+static uint32_t get_ucode_version(const uint32_t *data)
-+{
-+	uint32_t version;
-+
-+	/* NOTE: compared to kgsl, we've already stripped off the first dword: */
-+	version = data[0];
-+
-+	if ((version & 0xf) != 0xa)
-+		return version;
-+
-+	version &= ~0xfff;
-+	return  version | ((data[2] & 0xfff000) >> 12);
-+}
-+
-+uint32_t a6xx_get_sqe_version(struct msm_gpu *gpu)
-+{
-+	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-+	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
-+	uint32_t *buf = msm_gem_get_vaddr(a6xx_gpu->sqe_bo);
-+	uint32_t version = get_ucode_version(buf);
-+
-+	msm_gem_put_vaddr(a6xx_gpu->sqe_bo);
-+
-+	return version;
-+}
-+
- /*
-  * Check that the microcode version is new enough to include several key
-  * security fixes. Return true if the ucode is safe.
-@@ -681,6 +707,8 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu *a6xx_gpu,
- 	if (IS_ERR(buf))
- 		return false;
- 
-+	DRM_DEV_INFO(&gpu->pdev->dev, "Have SQE version %03x\n", get_ucode_version(buf));
-+
- 	/* A7xx is safe! */
- 	if (adreno_is_a7xx(adreno_gpu) || adreno_is_a702(adreno_gpu))
- 		return true;
-@@ -714,7 +742,7 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu *a6xx_gpu,
- 		}
- 
- 		DRM_DEV_ERROR(&gpu->pdev->dev,
--			"a630 SQE ucode is too old. Have version %x need at least %x\n",
-+			"a630 SQE ucode is too old. Have version %03x need at least %03x\n",
- 			buf[0] & 0xfff, 0x190);
- 	} else if (!strcmp(sqe_name, "a650_sqe.fw")) {
- 		if ((buf[0] & 0xfff) >= 0x095) {
-@@ -723,7 +751,7 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu *a6xx_gpu,
- 		}
- 
- 		DRM_DEV_ERROR(&gpu->pdev->dev,
--			"a650 SQE ucode is too old. Have version %x need at least %x\n",
-+			"a650 SQE ucode is too old. Have version %03x need at least %03x\n",
- 			buf[0] & 0xfff, 0x095);
- 	} else if (!strcmp(sqe_name, "a660_sqe.fw")) {
- 		ret = true;
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-index 1c3cc6df70fe..c206dab8bc08 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-@@ -109,6 +109,7 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
- 		       bool suspended);
- unsigned long a6xx_gmu_get_freq(struct msm_gpu *gpu);
- 
-+uint32_t a6xx_get_sqe_version(struct msm_gpu *gpu);
- void a6xx_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
- 		struct drm_printer *p);
- 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-index 0a7717a4fc2f..1acfe39eb8e0 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-@@ -1957,6 +1957,8 @@ void a6xx_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
- 
- 	adreno_show(gpu, state, p);
- 
-+	drm_printf(p, "sqe-version: 0x%08x\n", a6xx_get_sqe_version(gpu));
-+
- 	drm_puts(p, "gmu-log:\n");
- 	if (a6xx_state->gmu_log) {
- 		struct msm_gpu_state_bo *gmu_log = a6xx_state->gmu_log;
--- 
-2.45.1
+Best regards,
+Mudit Sharma
+
 
 
