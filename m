@@ -1,133 +1,269 @@
-Return-Path: <linux-kernel+bounces-201274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CE68FBC65
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:17:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A6B8FBC68
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD171C24FB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58ABB28636D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0526214036F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E806A14B089;
 	Tue,  4 Jun 2024 19:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XRYRl1tQ"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lEfy7KFv";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ApTIBBZg";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lEfy7KFv";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ApTIBBZg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB4413E05B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418B713E8BF;
+	Tue,  4 Jun 2024 19:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717528671; cv=none; b=BdhgPokQ8TBijxI86AF4Y+jCg0dOSHwhdKB1bK5n8w70TNYVXMSRTsUPQ4VDnzp0pvoJg1jhBvdFgo2qehsLv0xIbOpPDenzhEn3pT7Sj2JVa7lmqVEq+Z/iWLjQ05iWb34EGz76TSHitCAAldihYhnrHIZEjtDlC+FP8a6Cxnc=
+	t=1717528672; cv=none; b=mEX1F9fLsb5iqYRpvCobNdsFqlxESG1GWs4s/Yk2mHvPGHRFoSYoxx+uTKfBRytSnGUOK+7Z/DleY4v220iYwAaATS+JEnB8QL6vhQ2J7D2+akjyVtakZm73ePpSLBdkSUgAHtIQ6uFTEPeIOZuSEd7m9U08YrqylskiU2XjlSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717528671; c=relaxed/simple;
-	bh=KRAztcWiZ8YpnDUFZntL/bepzxhmQz1if9fPwSufqBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lKAQuPLHUjIqXlL9zHbRhbS4/UOXGF/wbynm97lI5lj6ePWrs4TOO7+jnKftx/KG+Cuug0pThL7t4WX+9ltu0XQHl+U4XDvb8hCm+riWCZhQiWjjg0GZLD2FQLq5lIvdaCCo8OLVyox+ivOkopL28e3Wc0jVkxnjcPoEVvaVIU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XRYRl1tQ; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: broonie@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717528667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1717528672; c=relaxed/simple;
+	bh=bhz6beSoZHU0cD/b+1WGcJg+4R07D7ffbbCwhG5yiv0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fbHukTugZMx39cSXjS0LUKWDBEht3FSVaANifzHXrCegfzz44u5d7W2nBUW6EXijnKAA3wNbzZ6NQGpqY+hBBeNjEIjmybl2fnEOvIME+dJka4yNCdwxHH6DjW4ilgQL1nkHuT+dmq3ZZOm4WibW2hfeBB/4BMAz6HIXHO1kCaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lEfy7KFv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ApTIBBZg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lEfy7KFv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ApTIBBZg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 44A8F21A49;
+	Tue,  4 Jun 2024 19:17:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717528667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nZG8z3Pz30/HG+CdbBQquLuRRuC2lKE2oX6hSJa2byY=;
-	b=XRYRl1tQjiEWpAEy4yfhRu68yQvlO6M4RRLsRJNr0eOvOvyihYYGmh2i7UG2GjGxHwAN+Q
-	Be/6+g3n+rSrRAXBPqIOsAgjN20rCOs7SIuzVAMj2u27mVUvtinb4WCQslkAZ62lPcKNM6
-	W9zJZyqEFvL6zzB1ctSqXV5udBm+CCk=
-X-Envelope-To: maz@kernel.org
-X-Envelope-To: james.morse@arm.com
-X-Envelope-To: suzuki.poulose@arm.com
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: tabba@google.com
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: kvmarm@lists.linux.dev
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Tue, 4 Jun 2024 12:17:41 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Mark Brown <broonie@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Fix confusion in documentation for pKVM SME
- assert
-Message-ID: <Zl9oVUriFDYbLFW8@linux.dev>
-References: <20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org>
+	bh=rO2JAWmDJtlVxTQDorgmfpM/zzgopthZzmv/CylN0UA=;
+	b=lEfy7KFvbYAu5Gy+ndRbat4fzOU68RDR7fbdoOvM8TNr+eLnWDKN3NLWHNk5nTEB+RBK/J
+	VVk1aglcyJbAa95ekP89831ZhX+bpi36WVN+SgUs1vlh9OZrCfhOshwyHnQrQUseKv5/yt
+	4429yG93oPOP/VXrBtWeE3tCOPD+aho=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717528667;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rO2JAWmDJtlVxTQDorgmfpM/zzgopthZzmv/CylN0UA=;
+	b=ApTIBBZgztLzgx2iXdTJhOWHbFiIpXmzJZXspoqfRyp+gK25RM6uuwfp5piowKx1ScboFA
+	x7Mzq2DSvBYLAsCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717528667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rO2JAWmDJtlVxTQDorgmfpM/zzgopthZzmv/CylN0UA=;
+	b=lEfy7KFvbYAu5Gy+ndRbat4fzOU68RDR7fbdoOvM8TNr+eLnWDKN3NLWHNk5nTEB+RBK/J
+	VVk1aglcyJbAa95ekP89831ZhX+bpi36WVN+SgUs1vlh9OZrCfhOshwyHnQrQUseKv5/yt
+	4429yG93oPOP/VXrBtWeE3tCOPD+aho=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717528667;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rO2JAWmDJtlVxTQDorgmfpM/zzgopthZzmv/CylN0UA=;
+	b=ApTIBBZgztLzgx2iXdTJhOWHbFiIpXmzJZXspoqfRyp+gK25RM6uuwfp5piowKx1ScboFA
+	x7Mzq2DSvBYLAsCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E55BD13A93;
+	Tue,  4 Jun 2024 19:17:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mLlRMVpoX2bXYwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 04 Jun 2024 19:17:46 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
+  jaegeuk@kernel.org,  adilger.kernel@dilger.ca,  tytso@mit.edu,
+  chao@kernel.org,  viro@zeniv.linux.org.uk,  brauner@kernel.org,
+  jack@suse.cz,  ebiggers@google.com,  kernel@collabora.com,  Gabriel
+ Krisman Bertazi <krisman@collabora.com>
+Subject: Re: [PATCH v17 4/7] ext4: Reuse generic_ci_match for ci comparisons
+In-Reply-To: <20240529082634.141286-5-eugen.hristev@collabora.com> (Eugen
+	Hristev's message of "Wed, 29 May 2024 11:26:31 +0300")
+Organization: SUSE
+References: <20240529082634.141286-1-eugen.hristev@collabora.com>
+	<20240529082634.141286-5-eugen.hristev@collabora.com>
+Date: Tue, 04 Jun 2024 15:17:41 -0400
+Message-ID: <87cyowldpm.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Hi,
+Eugen Hristev <eugen.hristev@collabora.com> writes:
 
-On Tue, Jun 04, 2024 at 07:47:01PM +0100, Mark Brown wrote:
-> As raised in the review comments for the original patch the assert and
-> comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
-> disabled in protected mode") are bogus. The comments says that we check
-> that we do not have SME enabled for a pKVM guest but the assert actually
-> checks to see if the host has anything set in SVCR which is unrelated to
-> the guest features or state, regardless of if those guests are protected
-> or not.
-> 
-> What I believe the check is actually intended to validate is that we do
-> not enter the pKVM hypervisor with SME enabled since the pKVM hypervisor
-> does not yet understand SME and is therefore unable to save or restore
-> host state with SME enabled, indeed attempting to save SVE state would
-> fault if streaming mode is enabled on a system without FA64 due to FFR.
-> Update the comment to reflect this.
-
-The added context likely isn't necessary in what winds up getting
-applied. Can this just directly state the WARN_ON() exists b/c the
-protected mode hypervisor doesn't know how to manage SME state?
-
-> Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> From: Gabriel Krisman Bertazi <krisman@collabora.com>
+>
+> Instead of reimplementing ext4_match_ci, use the new libfs helper.
+>
+> It also adds a comment explaining why fname->cf_name.name must be
+> checked prior to the encryption hash optimization, because that tripped
+> me before.
+>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
+> Reviewed-by: Eric Biggers <ebiggers@google.com>
 > ---
->  arch/arm64/kvm/fpsimd.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
-> index 521b32868d0d..f720ba47b85c 100644
-> --- a/arch/arm64/kvm/fpsimd.c
-> +++ b/arch/arm64/kvm/fpsimd.c
-> @@ -92,8 +92,9 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
->  	}
+>  fs/ext4/namei.c | 91 +++++++++++++++----------------------------------
+>  1 file changed, 27 insertions(+), 64 deletions(-)
+>
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index ec4c9bfc1057..20668741a23c 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -1390,58 +1390,6 @@ static void dx_insert_block(struct dx_frame *frame, u32 hash, ext4_lblk_t block)
+>  }
 >  
->  	/*
-> -	 * If normal guests gain SME support, maintain this behavior for pKVM
-> -	 * guests, which don't support SME.
-> +	 * The pKVM hypervisor does not yet understand how to save or
-> +	 * restore SME state for the host so double check that if we
-> +	 * are running with pKVM we have disabled SME.
->  	 */
->  	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
->  		read_sysreg_s(SYS_SVCR));
+>  #if IS_ENABLED(CONFIG_UNICODE)
+> -/*
+> - * Test whether a case-insensitive directory entry matches the filename
+> - * being searched for.  If quick is set, assume the name being looked up
+> - * is already in the casefolded form.
+> - *
+> - * Returns: 0 if the directory entry matches, more than 0 if it
+> - * doesn't match or less than zero on error.
+> - */
+> -static int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
+> -			   u8 *de_name, size_t de_name_len, bool quick)
+> -{
+> -	const struct super_block *sb = parent->i_sb;
+> -	const struct unicode_map *um = sb->s_encoding;
+> -	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
+> -	struct qstr entry = QSTR_INIT(de_name, de_name_len);
+> -	int ret;
+> -
+> -	if (IS_ENCRYPTED(parent)) {
+> -		const struct fscrypt_str encrypted_name =
+> -				FSTR_INIT(de_name, de_name_len);
+> -
+> -		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
+> -		if (!decrypted_name.name)
+> -			return -ENOMEM;
+> -		ret = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
+> -						&decrypted_name);
+> -		if (ret < 0)
+> -			goto out;
+> -		entry.name = decrypted_name.name;
+> -		entry.len = decrypted_name.len;
+> -	}
+> -
+> -	if (quick)
+> -		ret = utf8_strncasecmp_folded(um, name, &entry);
+> -	else
+> -		ret = utf8_strncasecmp(um, name, &entry);
+> -	if (ret < 0) {
+> -		/* Handle invalid character sequence as either an error
+> -		 * or as an opaque byte sequence.
+> -		 */
+> -		if (sb_has_strict_encoding(sb))
+> -			ret = -EINVAL;
+> -		else if (name->len != entry.len)
+> -			ret = 1;
+> -		else
+> -			ret = !!memcmp(name->name, entry.name, entry.len);
+> -	}
+> -out:
+> -	kfree(decrypted_name.name);
+> -	return ret;
+> -}
+> -
+>  int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+>  				  struct ext4_filename *name)
+>  {
+> @@ -1503,20 +1451,35 @@ static bool ext4_match(struct inode *parent,
+>  #if IS_ENABLED(CONFIG_UNICODE)
+>  	if (IS_CASEFOLDED(parent) &&
+>  	    (!IS_ENCRYPTED(parent) || fscrypt_has_encryption_key(parent))) {
+> -		if (fname->cf_name.name) {
+> -			if (IS_ENCRYPTED(parent)) {
+> -				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
+> -					fname->hinfo.minor_hash !=
+> -						EXT4_DIRENT_MINOR_HASH(de)) {
+> +		int ret;
+>  
+> -					return false;
+> -				}
+> -			}
+> -			return !ext4_ci_compare(parent, &fname->cf_name,
+> -						de->name, de->name_len, true);
+> +		/*
+> +		 * Just checking IS_ENCRYPTED(parent) below is not
+> +		 * sufficient to decide whether one can use the hash for
+> +		 * skipping the string comparison, because the key might
+> +		 * have been added right after
+> +		 * ext4_fname_setup_ci_filename().  In this case, a hash
+> +		 * mismatch will be a false negative.  Therefore, make
+> +		 * sure cf_name was properly initialized before
+> +		 * considering the calculated hash.
+> +		 */
+> +		if (IS_ENCRYPTED(parent) && fname->cf_name.name &&
+> +		    (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
+> +		     fname->hinfo.minor_hash != EXT4_DIRENT_MINOR_HASH(de)))
+> +			return false;
+> +
+> +		ret = generic_ci_match(parent, fname->usr_fname,
+> +				       &fname->cf_name, de->name,
+> +				       de->name_len);
+> +		if (ret < 0) {
+> +			/*
+> +			 * Treat comparison errors as not a match.  The
+> +			 * only case where it happens is on a disk
+> +			 * corruption or ENOMEM.
+> +			 */
+> +			return false;
+>  		}
+> -		return !ext4_ci_compare(parent, fname->usr_fname, de->name,
+> -						de->name_len, false);
 
-While we're here, this should be WARN_ON_ONCE() or WARN_RATELIMIT() if
-we _really_ want some spam. But a single WARN ought to be enough.
+With the changes to patch 3 in this iteration, This could become:
 
-It'd be a good idea to also document why we're testing for SME state
-twice on the KVM_RUN path, as any WARN() in the hyp code is currently
-fatal. I'm guessing Fuad meant to have a non-fatal way of getting some
-debug information out.
+/*
+ * Treat comparison errors as not a match.  The
+ * only case where it happens is disk corruption
+ * or ENOMEM.
+ */
+return ext4_ci_compare(parent, fname->usr_fname, de->name,
+		       de->name_len, false) > 0;
 
 -- 
-Thanks,
-Oliver
+Gabriel Krisman Bertazi
 
