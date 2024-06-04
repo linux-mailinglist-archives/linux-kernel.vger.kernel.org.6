@@ -1,123 +1,152 @@
-Return-Path: <linux-kernel+bounces-199864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126A68FA6DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C46A08FA6DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3680284F33
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C570286898
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9524A04;
-	Tue,  4 Jun 2024 00:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D668A8C11;
+	Tue,  4 Jun 2024 00:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jwgrhMkW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YOtUEOUs"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9581C2F28;
-	Tue,  4 Jun 2024 00:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D152B4A2C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 00:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717460192; cv=none; b=kFxGoREPyvMih4S7tXOeaX1GxJBaHprgI/w2P8bVmCm2vdXlljXYLcWEqidelnshvk1cXINx7cvP5Tg6Wu4AJ4/j3gPwpaJYOgXjs+ikPQ7EuOHf6fj1Dzwu/+JYB+d67g3l3kow2IlGX3vngXOhGgMBrdiw28bAdqzx5Tq4BoA=
+	t=1717460195; cv=none; b=cFJq/WaMlTx/FQV36TQJqn8zdZ5++Du2U+XYwQ1/8Nud3yIxECEj+ni8ZgaKn8u2pZ6fo7eME0m92nt4r0reoPpdG2F45Dbx+7oluxXAwGltcP7JDR3L+HU6WVaReLibUGO/JAuuq2smn9FmwONSSXIXlnoBPfc5VDtZgugo+28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717460192; c=relaxed/simple;
-	bh=gb0aibxD4JVxwoDEk+4ZywdBaq63dDjTiom7H+cVRAM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BHvG+SCiDol/j+e2HXF3kIjBKSCZIRi/ZhqstOery5FzmaNQBAt53k/1TjRM9PuELJScrw7vLI1Z/2EY/u/zuP89k3S5QDXl95DqfifbKBnUJ1Rsy2mBFJEYCiljTwopMANndYPN8VHE1D4DsRB5FcuodAhWC0gMf3fCClYqOjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jwgrhMkW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453AvFJ3026168;
-	Tue, 4 Jun 2024 00:16:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=TfJSvsxZchNsACT0iSDrom
-	+R4Q6rBRlptZTHzpVSPWY=; b=jwgrhMkWHQg2+omKPlkDYcVZ19/7DaLM8iE8d3
-	jD0/fPUVeQenqq+d6ajyxwlBnVuGsrops5Vse0D2ZWuMP06DAr1+A3cy0VDIDcQk
-	3vO7SzWDpUFZEKW8PyzB/Mz/oVHCBGGzYyyxHHcEEwO2UIQyWoPdIa+OXjS5arIS
-	J4WjpoOVzTNTUOTLUKB1pk/CvNTMZrXgnH9PAsiA7OVLbJlmHV5aSKhcu9QE7uFE
-	RADWepgrQoIYKYj7suUBHcrB1YWiEnG79XJFV2X9tCFpEvbLgmfLoT9xWAJgghoW
-	UnL57//yxlnMLJYMQlgqbvuG4wqrRmrvmWzrX92WmMBBWylg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5wn9x6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 00:16:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4540GCR5005442
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 00:16:12 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 17:16:09 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 3 Jun 2024 17:16:07 -0700
-Subject: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1717460195; c=relaxed/simple;
+	bh=nwUxXuGO/V+qs74FXe4f9EFw4ZB9RigLc/DpnKdr0IQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=C5eByLCcGpOtV1g4BukK0GucsqDktE459kx8R7aAFRYia9B8+bWCTItFlud2kaSwTnuaJ2L8Yn6uEGMGqG7zSFRHAIeAi9H9bLDUVIcPrmNrCrpzZi9CsybVEIIqMirFRmsi2Hp9+n6cBQj3JaEBILExLwt7Ttx4RRKB9fUCGDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YOtUEOUs; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-702345d4ad2so3491993b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 17:16:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717460193; x=1718064993; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/TfS4/60UepRstkKEdbSidSYhzWazLDql3xTTEsWh4=;
+        b=YOtUEOUs+eu1Cfex72x1qvNEl0TRqacvHAxUdT/ssuKZ4v1OBk37LmCGDjnt6BROfw
+         r4SJBnEBw0Pkdo/ocMS9ehi2Taq2oA5hVTynI72yIlyx2btF6R34clqT5TS56RYHSLqQ
+         4rkS7nUpddBVM+1cKbxKE8gT5JVmnfySHhEGVsT+jKFKnLYpy22zTL7cSoXK2EQ7ZQFl
+         3YwOAZSyi6CkInPVA0c7yvUVkeKwir7NyAkzLjL4HxvAWey1qAyLXMfWOoXDrq3bVFFl
+         bUMoecTJ8n1f0vtVRcTi+z79aun+5KHvWojHk8o/wpGIGPklAeeUEvpUI1w+TkN/w7rB
+         nupg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717460193; x=1718064993;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/TfS4/60UepRstkKEdbSidSYhzWazLDql3xTTEsWh4=;
+        b=b0CIBsPuvgrq2pOGDatniXfZp+lrmApGF/KDvMArmJPQmn6hwFH5JdA6QQvpuBJlpR
+         2Ou3uNomPZ5PSEZBTci2fDm0gJbdkMPgmiHos85blHlaGyz86qJNjGhZzOISL3Cggfu/
+         50qWAaoBRvBnO/cI+zYDAJIEChFQqhIEIfFC0WA6H+botd9/66HtFYpTIpNTA37s4Npc
+         RQJF8goKC5Jmob84jOAIuUnv7U4i82tYpKx5vFw/omNswAyTsUF7XmgEEczPVNqGSPLn
+         fRUyg0xMPC6U7CITUVcl1gqNI/hnTQCH9QUV5k4svd4RZi/ToRKswcLXUITCW6rZp2R8
+         cUbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Igu/ROdHlDC074mprSLIQB7PiyJAIcqiG3E+dIZacjTbf91wWm+N8CixBvTNhzxeOg2vFsAPQ+MJrUYo228ZJ78SrkLAcv7pyLo9
+X-Gm-Message-State: AOJu0YxnvVEBPUJSSq2hcASG6Pa6df5NS3n/e5aR8Gk8jTjjdkwTKLTt
+	b/btcA+FEI5unHykf/i4HE0+Y5xGiFAFIcMCjuwMne1Ke9wfdkxlDQEIHxpc0vOx90f5LIpoSRA
+	Dmw==
+X-Google-Smtp-Source: AGHT+IGTSMZYKIH0TeYtxNg3xOg8cg5cbWdRWnDwg6Z5X5N6kUWscY0EAB1d+worwMMhTZexh5N31tzrjdk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:2d15:b0:6f3:ea4b:d232 with SMTP id
+ d2e1a72fcca58-7024765c8f2mr419284b3a.0.1717460193037; Mon, 03 Jun 2024
+ 17:16:33 -0700 (PDT)
+Date: Mon, 3 Jun 2024 17:16:31 -0700
+In-Reply-To: <20240429155738.990025-2-alejandro.j.jimenez@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMZcXmYC/32OTQ6CMBCFr0K6dkzbQFFX3sOwKG2RSaSVDlQM4
- e4WDuDiLb7k/a2MXERH7FasLLqEhMFnEKeCmV77pwO0mZnksuSKSxgskM8KBkYTBiD7AV5bbap
- WSasqlpPv6DpcjtZHk7nV5KCN2pt+73qhnxcYNE0u7vYeaQrxe3xIYg/9n0sCBFQXeVWdqIXS5
- X2c0aA35+xgzbZtP7tvClTXAAAA
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami
-	<bgoswami@quicinc.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <kernel@quicinc.com>, Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tepnMV2vBTpmIIg10KvVcq97gzJq5yEQ
-X-Proofpoint-ORIG-GUID: tepnMV2vBTpmIIg10KvVcq97gzJq5yEQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- adultscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 mlxlogscore=847 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040000
+Mime-Version: 1.0
+References: <20240429155738.990025-1-alejandro.j.jimenez@oracle.com> <20240429155738.990025-2-alejandro.j.jimenez@oracle.com>
+Message-ID: <Zl5c3-k0-a7Vvlo5@google.com>
+Subject: Re: [PATCH 1/4] KVM: x86: Expose per-vCPU APICv status
+From: Sean Christopherson <seanjc@google.com>
+To: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, linux-kernel@vger.kernel.org, 
+	suravee.suthikulpanit@amd.com, vashegde@amd.com, mlevitsk@redhat.com, 
+	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, mark.kanda@oracle.com
+Content-Type: text/plain; charset="us-ascii"
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/qcom/snd-soc-qcom-sdw.o
+On Mon, Apr 29, 2024, Alejandro Jimenez wrote:
+> Expose the APICv activation status of individual vCPUs via the stats
+> subsystem. In special cases a vCPU's APICv can be deactivated/disabled
+> even though there are no VM-wide inhibition reasons. The only current
+> example of this is AVIC for a vCPU running in nested mode. This type of
+> inhibition is not recorded in the VM inhibit reasons or visible in
+> current tracepoints.
+> 
+> Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h | 1 +
+>  arch/x86/kvm/lapic.c            | 1 +
+>  arch/x86/kvm/x86.c              | 2 ++
+>  3 files changed, 4 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 1d13e3cd1dc5..12f30cb5c842 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1573,6 +1573,7 @@ struct kvm_vcpu_stat {
+>  	u64 preemption_other;
+>  	u64 guest_mode;
+>  	u64 notify_window_exits;
+> +	u64 apicv_active;
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Hrm, do we really have no way to effectively symlink stats to internal state?
+That seems like a flaw.  It's obviously not the end of the world, but having to
+burn 8 bytes per vCPU for boolean stats that are 1:1 reflections of KVM state is
+going to be a deterrent for future stats.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- sound/soc/qcom/sdw.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/qcom/sdw.c b/sound/soc/qcom/sdw.c
-index eaa8bb016e50..f2eda2ff46c0 100644
---- a/sound/soc/qcom/sdw.c
-+++ b/sound/soc/qcom/sdw.c
-@@ -160,4 +160,5 @@ int qcom_snd_sdw_hw_free(struct snd_pcm_substream *substream,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(qcom_snd_sdw_hw_free);
-+MODULE_DESCRIPTION("Qualcomm ASoC SoundWire helper functions");
- MODULE_LICENSE("GPL");
-
----
-base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
-change-id: 20240602-md-snd-soc-qcom-sdw-07dac5b62d65
-
+>  };
+>  
+>  struct x86_instruction_info;
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index cf37586f0466..37fe75a5db8c 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -2872,6 +2872,7 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
+>  	 */
+>  	if (enable_apicv) {
+>  		apic->apicv_active = true;
+> +		vcpu->stat.apicv_active = apic->apicv_active;
+>  		kvm_make_request(KVM_REQ_APICV_UPDATE, vcpu);
+>  	}
+>  
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index e9ef1fa4b90b..0451c4c8d731 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -304,6 +304,7 @@ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
+>  	STATS_DESC_COUNTER(VCPU, preemption_other),
+>  	STATS_DESC_IBOOLEAN(VCPU, guest_mode),
+>  	STATS_DESC_COUNTER(VCPU, notify_window_exits),
+> +	STATS_DESC_IBOOLEAN(VCPU, apicv_active),
+>  };
+>  
+>  const struct kvm_stats_header kvm_vcpu_stats_header = {
+> @@ -10625,6 +10626,7 @@ void __kvm_vcpu_update_apicv(struct kvm_vcpu *vcpu)
+>  		goto out;
+>  
+>  	apic->apicv_active = activate;
+> +	vcpu->stat.apicv_active = apic->apicv_active;
+>  	kvm_apic_update_apicv(vcpu);
+>  	static_call(kvm_x86_refresh_apicv_exec_ctrl)(vcpu);
+>  
+> -- 
+> 2.39.3
+> 
 
