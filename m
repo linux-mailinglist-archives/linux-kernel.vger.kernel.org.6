@@ -1,100 +1,136 @@
-Return-Path: <linux-kernel+bounces-201098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C833E8FB96E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:47:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4365D8FB971
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C1C1F262C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:47:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFDB285525
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7F4148830;
-	Tue,  4 Jun 2024 16:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688E8C2F2;
+	Tue,  4 Jun 2024 16:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b="hP7bzKYm"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VublYuka"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91C113D607
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FF813D607;
+	Tue,  4 Jun 2024 16:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717519623; cv=none; b=Qb1XeIORkkKB7md4lAyLIgzAF/zFzPqkXh0Fy6d4XXDaoK8EsjVIuPe6urQO/4u74ujLWH4xNPAF7TiVcBv3i5kBl5XJ7cRWZ0ZlZLEqA7QhmRYEGVDb+P4iZj+laCZ3yvZZmmUnM5xnR+cj808oYn6tdd5xHaCm/x6NL1/9F5A=
+	t=1717519626; cv=none; b=eEJIXn3luBrCdvDsaziYmf0Dr+O2jBe0WDsVxt5minUwI2ZjQkLCk5pEsa2H6qin9kRiEmE2FoYk30cC6dseu+h42beUHMVIX6E371qxjTfIyOXd7SZOnxDV42viU9HB+wmMv/7BCEV+TmXdqtMoaDfqTjic6Cjm1hndLMRq2N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717519623; c=relaxed/simple;
-	bh=oVSrnWYW3Dy+qbnzyP2YK4spEY/t8FU2eqyIxSQiOCk=;
+	s=arc-20240116; t=1717519626; c=relaxed/simple;
+	bh=NaQPL/mB5WOAFakIMpjp+LfKzjoD3bgZCruovf/5aIM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lw/zj2eUpQElEyXC6Pyd8YsBMgPLP0yUY52J0LXIXg5uJ3AAQ3xhaDu1lTywq88rGZaFYW/hT5BgAGTkuSsL+tiuhf1arb6vU+v/dqn6IFNfWeewaCwhBMU91NW902B64H9wG1JYtqWZARkTMui4yJTVzW10lQQC/iemJrpfeso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b=hP7bzKYm; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfa7ab78ef2so4424773276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=howett-net.20230601.gappssmtp.com; s=20230601; t=1717519620; x=1718124420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oVSrnWYW3Dy+qbnzyP2YK4spEY/t8FU2eqyIxSQiOCk=;
-        b=hP7bzKYmi+nZBbMB0RvCeSSXA9djGswKA39IVSq+SqKE0nnLxmE04+ydxts+vMPY+T
-         wB+hjENSqc4hvPBg2Pi7i+qbd5UGNqe1VhcYljf0Zjdqo7MCPJZDWYWlSgsMYTxxUg5z
-         kWdJdZwKup5I1oIyDEzwQvQd8fFPIbD+ppO2efG9jRd0g6AuiolPLwmMivBKEsunKBbZ
-         DKpVnH5r2cKw1ukwJ4KZNtu7fKGuGHjcT9tYNiTZe+suDg3zc8q2lUsRdoJUU4TaTxPi
-         OXVTLDxMVw1cVcxU3XD1r/tKkbHAwr2sAnHzXVfTRuzTHoIxa/CGyqL7pWTk6PPv6X6e
-         NBhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717519620; x=1718124420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oVSrnWYW3Dy+qbnzyP2YK4spEY/t8FU2eqyIxSQiOCk=;
-        b=i+b8V+2inY6fph1rcopouZYybkk7W/EHfXp/a6Qb4lPoCON6Ki073i4EJ8oNYIQiT1
-         pVq0vdQP7VCXw9Bf+WJh7HpI8ttIrmPahFBy2EaEwK8DdQqinxJq1OqShxgJAGwYIhp8
-         Ro0I0zL068G3hICB+xMZ3EAIVwdOeQm2n1AEZMXoQJcG/w2CmH/8ugXgZIXoanm/dc4P
-         /Uyj4D+03OXB7QNDNa1q0cJ+b/vNPeady572Jst9i8tkYAnF/mb8quVhO8gcVAWSxsja
-         H4eXjAdNBeSge4HHMsdqVWowZQOQum6qPIXqtaF+P6avu5HJzjH8vAHqpV3Bdy6mZK+H
-         H2uw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6rxBI+1pQ+ZUgGQyPrAZwhG2ddyXZ2n0fAK2hxNMeSwsgncbT4huzO19QUu5NKRGAiCaM05W7xrHf8gYO+wBxgzYcQRf9YUhFL3fS
-X-Gm-Message-State: AOJu0YyzHfwhy45DSa62sMWDMDRRni/qnez9GpdE/TTXgoZ0U9qe7yZM
-	fEPBFH0T0HdgJsFvAlB8E7tYRSGIGQE9YODsIZWK0gyKaSH6OtO4jhzqWMdcv1XGtC09BS5ywxi
-	ax17X/pEmbFbgzJ/Sz/L/fEUf6GVvFed7iBt82O6kj1pCmYOBmQ==
-X-Google-Smtp-Source: AGHT+IHMdgVbp4edXz1RYg3r+v3zS6jex/OYdamIOc4mz+GjXYTa50U8xGQcjwpv2rX/qXq+oLJeXSLJiUuBGNHgjT4=
-X-Received: by 2002:a25:aba7:0:b0:df4:dd91:4524 with SMTP id
- 3f1490d57ef6-dfa73dbb8bfmr12794384276.44.1717519619696; Tue, 04 Jun 2024
- 09:46:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=HlHtPQy+xy3vXqtntpYK/EUJkumLbKl0yyuHCQi/k1b60cqKDp0oeO1ATN24/a6Ps3VDdj31+BXHXL47cYjHOhhshcFSV7bMXEArzLTXqTnZPHbT10tpoZEd2pkYE+r1WrwK0s7mnxXDylGP0b4naE7MM7QUZ/v0y6u5QPj5X0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VublYuka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20364C4AF0D;
+	Tue,  4 Jun 2024 16:47:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717519626;
+	bh=NaQPL/mB5WOAFakIMpjp+LfKzjoD3bgZCruovf/5aIM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VublYukalkFdLt7uNJTqbYX2nA8pMe4HhFmgp7LSKBTA43Tu2EvgBc7Ikzc6GpmOa
+	 +NZXnu8mcHxBy3nRb7/ZpXKPU2TngmbvO8BGQr74eipICqZelmvFqeu/Ta+klFIf+X
+	 fHdbc38tmyltHQ0fc/wysNlZ15u6v3iQrPLoE69Q4cTKjU8YomvljaseE0vgiC2Obk
+	 CW8VHP1n4qKcOOOVFu5WiFEmAa66jlMcX5Ioyi7JXrr+6RTXgkhgDL6ykBcvZFgkqf
+	 e2ACCq8eGDOSKTHGu9QftzvcD7xYevf1zn8tcz+DP+SR/fOU6D+//nPci4clElpXol
+	 RRns+uspxVf9g==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5b99ba97d89so499505eaf.1;
+        Tue, 04 Jun 2024 09:47:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5EXmA1DHAnbK0mCvBd8WsFjRFen//la2zCUCZBqGQ4DYaCiHAB5/VusHBz+ZsUX+Z5S0beFOZGRWcg/947h70Iv9nJNoLU8765ej9OM2Ec3o2rc/VshBgmGofv51MoQH1VmvTWLM=
+X-Gm-Message-State: AOJu0YySd7+FETE9EFvohfGoBXvPyTgWhYbVbClfLv98JR69rLjkCiPE
+	OND8DBOy0J2HHCdy1RymSgoOiwbwYTGvSstYCvKWdwZ0d+DVcIE0B8HN4zx+xF5CLkIajFFPH9b
+	IaSCLBJPiQFP6q5pT+GeWWKAlpi8=
+X-Google-Smtp-Source: AGHT+IH0MT+IPbDGKP0RcQA6aQMggoqeQNDQvmGYOnjoS8zXXu3J4swmJC3r87UemTbydKGgpdGWhJYzQfL+zqJdzjY=
+X-Received: by 2002:a4a:ea38:0:b0:5b2:f29:93f0 with SMTP id
+ 006d021491bc7-5ba78d42df7mr222079eaf.0.1717519625410; Tue, 04 Jun 2024
+ 09:47:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603-led-trigger-flush-v1-1-c904c6e2fb34@weissschuh.net>
-In-Reply-To: <20240603-led-trigger-flush-v1-1-c904c6e2fb34@weissschuh.net>
-From: Dustin Howett <dustin@howett.net>
-Date: Tue, 4 Jun 2024 11:46:48 -0500
-Message-ID: <CA+BfgNKowam5s==47KcrO-JRc2QfR2od1T=9z52t1AJZFkc0yw@mail.gmail.com>
-Subject: Re: [PATCH] leds: triggers: flush pending brightness before
- activating trigger
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <13494237.uLZWGnKmhe@kreacher> <8366982.T7Z3S40VBb@kreacher>
+ <bf3ebf1571a4788e97daf861eb493c12d42639a3.camel@xry111.site>
+ <6d5ee74605bd9574baa5ed111cb54e959414437a.camel@linux.intel.com>
+ <6ebadacd8aaa307a5766cdb1b4d4a5c69acd87ac.camel@xry111.site>
+ <30a30c5107a47a2cc3fd39306728f70dd649d7fe.camel@linux.intel.com>
+ <f382e06635b3b52841d1e0c11dcf639d225edae0.camel@xry111.site>
+ <29d69252dcdc398f147c9139a8666d09e7bd831d.camel@linux.intel.com>
+ <0324bc3a88654855719cd48a5ed69a34eea31037.camel@xry111.site>
+ <c3526e7a0e80ec1a3a011259c38ab4b772040ea4.camel@linux.intel.com>
+ <48eba83030e155f703b4248e9c1ae65aa44b1a83.camel@xry111.site>
+ <CAJZ5v0jjLgG3VY_kBYc4mTrL2ybD2LfBTk2_H7xY0+Aq5g827A@mail.gmail.com>
+ <f34c20ae3feac0e3570125f124e440d51c5e4d9b.camel@linux.intel.com>
+ <1da736da33a61de92314934ecf7fa0420d6d6b81.camel@linux.intel.com>
+ <aa643910265b9d92a397d5148b31d37b2c421b8b.camel@xry111.site>
+ <63e98f2151ef64de92cf7e3da796937755ea5552.camel@linux.intel.com>
+ <258ce61c155c28937620f6abe57a39f2b4b0ff56.camel@xry111.site> <101b903e58f2ebae60934edc374c7cda09f83de1.camel@linux.intel.com>
+In-Reply-To: <101b903e58f2ebae60934edc374c7cda09f83de1.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 4 Jun 2024 18:46:53 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jBBgjBny0Ps9bvHc7q1Un_6sdudpNL0==Z5HB+gHH0Hw@mail.gmail.com>
+Message-ID: <CAJZ5v0jBBgjBny0Ps9bvHc7q1Un_6sdudpNL0==Z5HB+gHH0Hw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/6] cpufreq: intel_pstate: Do not update
+ global.turbo_disabled after initialization
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Xi Ruoyao <xry111@xry111.site>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 3, 2024 at 4:45=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
+On Tue, Jun 4, 2024 at 6:41=E2=80=AFPM srinivas pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
 >
-> Dustin, could you validate that this fixes the issue you encountered in
-> the cros_ec led driver?
+> On Tue, 2024-06-04 at 18:32 +0800, Xi Ruoyao wrote:
+> > On Tue, 2024-06-04 at 03:29 -0700, srinivas pandruvada wrote:
+> > > On Tue, 2024-06-04 at 17:30 +0800, Xi Ruoyao wrote:
+> > > > On Mon, 2024-06-03 at 21:31 -0700, srinivas pandruvada wrote:
+> > > >
+> > > > > > > Second, a delayed work can be added to check the MSR long
+> > > > > > > enough
+> > > > > > > after
+> > > > > > > initialization and update global.turbo_disabled if it is 1.
+> > > > > > > However,
+> > > > > > > that would require some code surgery.
+> > > > > >
+> > > > > Something like the attached which does same way as user space
+> > > > > no_turbo
+> > > > > update.
+> > > >
+> > > > >  static int intel_pstate_register_driver(struct cpufreq_driver
+> > > > > *driver)
+> > > > >  {
+> > > > >         int ret;
+> > > > > @@ -3114,6 +3137,9 @@ static int
+> > > > > intel_pstate_register_driver(struct cpufreq_driver *driver)
+> > > > >         global.turbo_disabled =3D turbo_is_disabled();
+> > > > >         global.no_turbo =3D global.turbo_disabled;
+> > > > >
+> > > > > +       if (global.turbo_disabled)
+> > > > > +               schedule_delayed_work(&turbo_work, HZ);
+> > > > > +
+> > > >
+> > > > I have to change it to 20 * HZ to make it work for me.  15 * HZ
+> > > > does
+> > > > not
+> > > > work.
+> > >
+> > > Is there any consistency or it is changing every time?
+> >
+> > It seems consistent.
+> With such a delay, I am not sure how this even worked before.
+> Can you revert the patch in question and use kernel dynamic debug
+> dyndbg=3D"file intel_pstate.c +p" kernel command line and collect log for
+> 30 seconds?
 
-Thanks for the quick patch. Yes, it fixes the issue I encountered with
-leds_cros_ec!
-
-Tested-by: Dustin L. Howett <dustin@howett.net>
-
-Cheers,
-d
+I think that it worked because the MSR was read every time
+intel_pstate ran, so it got updated at one point and stayed that way.
 
