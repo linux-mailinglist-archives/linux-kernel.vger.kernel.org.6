@@ -1,238 +1,142 @@
-Return-Path: <linux-kernel+bounces-200528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212D58FB14A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4659F8FB14C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD777282066
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED32228241C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D7E145A03;
-	Tue,  4 Jun 2024 11:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22027145B03;
+	Tue,  4 Jun 2024 11:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="csPMHLCE"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="PUNm465m"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5151C38B;
-	Tue,  4 Jun 2024 11:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EC01459E5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717501467; cv=none; b=L+otrAaH/e8T/m74j9szFbJRDzgpM5kmEF+ce2waaPHYZgdbAMHq3vkCuK6uXOhvjZ5KdVXH8493kRwG152KwMiJYpVXPDrNGy6YnhNktkGGCOFWTdXuzLfTO8HUC9AtYBJ3U028oWm+WHh6Uy4GntwHzP4vbys8fZRvx7QujZ0=
+	t=1717501469; cv=none; b=DBxTIVjzE4vEAfHqELdvcGaI4UjVvLAAct2Zg8X7zTAnMI1ZkwFclWhFLDT3S9MFa9+ayjT7Hc55xEcGRg1s1M+1LwF447JhOksmFFarnWVREENNykUXqigtG+hIoPDAOadiGgX8xYmqWk27YXVu2Frd924yBZfZRvDaiulQhl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717501467; c=relaxed/simple;
-	bh=GyWiXwi+C4XQpWenOLErDVKWqcsO2RL3DBOKE06RJHA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QV5dPH0eOTUP4X5F9zRwxqnHvalx9JzUNn03FC2iDMNBIcJkfeY+38In5nzalYBkepx6H3PIUKQKZ4+ZsG6AkjqihD6RFGzxQ/koyC76MZYJUYGumGlkIzPghpoGZJqYDGZUR3RWb28iG9gcFWTvnfZKx99bACO8pK2xMA6v9lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=csPMHLCE; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454Bi6b1114677;
-	Tue, 4 Jun 2024 06:44:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717501446;
-	bh=8cMYbVxYDA4UBQAYxdo5KK8U6XsBARlMjGQd9dkeC4s=;
-	h=From:To:CC:Subject:Date;
-	b=csPMHLCEacoiDxjqLULAAlKqzuCg/522SoCIv113shrieSNlPLoylT3cr2zUHEnck
-	 zmAfHRRLBVA51P04X6kdyUrjuvxw7yi8TRolAfy9c5fMt2ddwJRT0EDnxH7J9T6NnV
-	 DYsIZV9o2bJQTpXHw2MQRba/34AUKA3sCP65tNx0=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454Bi635089587
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Jun 2024 06:44:06 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Jun 2024 06:44:06 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Jun 2024 06:44:06 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454Bi6eX017524;
-	Tue, 4 Jun 2024 06:44:06 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 454Bi50k003940;
-	Tue, 4 Jun 2024 06:44:05 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Andrew Lunn
-	<andrew@lunn.ch>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        MD Danish Anwar
-	<danishanwar@ti.com>
-Subject: [PATCH net-next v2] net: ti: icssg-prueth: Add multicast filtering support
-Date: Tue, 4 Jun 2024 17:14:02 +0530
-Message-ID: <20240604114402.1835973-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717501469; c=relaxed/simple;
+	bh=3BXu54JL29te3bk0JIakNdnue3MoNyfA1fQ0KpkafnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R6qo8qgZPKAiuu261rneoOMuP3XuMgfCm/BcLfaF4Fnv4r0RkKArQAjGiIg1vXsLfxClM0lP06G5pzuxSlI3jCHvni3+Hqq/rdyBPQ7qfn1NGwcPRhutgTMd5E0Na/iEoSNxfjA295xeTPzN71xF22RDg2IJAgsdK0ak3LMEM2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=PUNm465m; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a4d7ba501so967844a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:44:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717501466; x=1718106266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3BXu54JL29te3bk0JIakNdnue3MoNyfA1fQ0KpkafnY=;
+        b=PUNm465mt0L+oMsosDaaJ7pHYyJCaIEQFFn6bbrPcdwVwl0DvmsVU0FjLUKb2SCUK3
+         OpV+aZDTG1E7CUmKBDpFk6rW42+hWu/k9bZtOPElGsoyHDd3+EOlNqCDxc4Oxcoqab1C
+         EsuE7Sw4lJyTu6SmglSltu4RvZnByV4qp91pt9eM6w3YMsHisr4gaErBQ8FIe+L/MJGK
+         0L9Txovpgdh4UwXc6ULR+L4TTEjTcr2Rr5QgO4FNI0yCXXcHIvWHgJr4NQnAQIDkcCjl
+         ydBgOuIpXaMuTksEyS+I7hYz7CYJ6S2NwQm2vAtWNScKJ+FqhBNrheBnCaAG2QSncbSj
+         Eu1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717501466; x=1718106266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3BXu54JL29te3bk0JIakNdnue3MoNyfA1fQ0KpkafnY=;
+        b=EDkPWnzGLRt1WjxvkQyz81tS9dvErW60sdz9w7iiGnuLpFQbyISwRRTcnzHrwbg9Ai
+         lqEr9COwiCGYLgBoQwgw+bXweWRO9xws9b2PBiu7kYUBJg1bYfpGYL8iU8H2ljNXARSu
+         JS6VxNX4celb/lUG6OLSa2UcHm+ofGkOMjm8yStHKzLuw/C8SGJlTxHSMeIqhhLAC83r
+         x+HziKeM76scqZRypdTvxee4OGrLSHMy8KfXd6Zp4MHu0q5nJ4m1f8flug3kz72l4MsW
+         aPnjz3Sm3K+9dMmw68r/ejb9fX10BQ0M70FKa4V2AKDYAYbiNPf7Smw626+rM7qu6qcR
+         f92A==
+X-Forwarded-Encrypted: i=1; AJvYcCVkZI31oMi7YuYrdi/z9tqWIHKKKHKn7G1De+rmLMEel/t9FSthFm3i568RougvY5Co9GPk3YkCNsmEFZzKKMIqtLn0/srMy/+1uJly
+X-Gm-Message-State: AOJu0Yxsi4W3bn09BYxk1IYoOP4xxrrJ5jyubwiXnEkM3/+WFQO/HSuY
+	vMeUVPKiKMI056VpGcAfXZXFPHolFGXdNI+AETKzDGNcXjFMIPLOS6sB4qMMGqQ0XutJAirX68D
+	wyiui2mxuge2mlQlQxptYEU/6zilHB4fTwZv5/w==
+X-Google-Smtp-Source: AGHT+IF5j0HlHcUwqZev1qhJa4XLMrGdrhzyscNN/jd+ZNq5k0ymbm8yvqEpsVyAB4LEq75CK9UuVo8NGyvZXeKaCp4=
+X-Received: by 2002:a17:907:7ea1:b0:a68:e9dc:b07 with SMTP id
+ a640c23a62f3a-a68e9dc0feemr501609066b.60.1717501465846; Tue, 04 Jun 2024
+ 04:44:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240131155929.169961-1-alexghiti@rivosinc.com>
+ <20240131155929.169961-4-alexghiti@rivosinc.com> <CAEEQ3wnT-K18R1KQjJbeSdnFnRFQZt=wCuAHeDrf7EohwZ7n=w@mail.gmail.com>
+ <CAHVXubiKAY_L04ZwYSp-MpPPT5sPzxm4wB6HVFPzsMcB-3zq9w@mail.gmail.com>
+ <CAEEQ3wkkNyrjVCDxprNP5Z=NzO=EYeKeWf3CDvVNJHY1uovmMQ@mail.gmail.com>
+ <CAHVXubi+s2Q0y_xLbHpQJpz+yXvKWJ8e96wwAHP6A9C7U-He7g@mail.gmail.com>
+ <CAHVXubg4vtfjSJ-w8-7suzZ9L5ZmTo8udUMaYjJ5veKBmikNjA@mail.gmail.com> <20240604-dazzling-envy-1dcf111eb2c5@spud>
+In-Reply-To: <20240604-dazzling-envy-1dcf111eb2c5@spud>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Tue, 4 Jun 2024 13:44:15 +0200
+Message-ID: <CAHVXubhy1yEKOx91gc9S++yKOoQa+sJ5EDSiMFwR6qepwzRMew@mail.gmail.com>
+Subject: Re: [External] [PATCH RFC/RFT v2 3/4] riscv: Stop emitting preventive
+ sfence.vma for new vmalloc mappings
+To: Conor Dooley <conor@kernel.org>
+Cc: yunhui cui <cuiyunhui@bytedance.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Andrew Morton <akpm@linux-foundation.org>, Ved Shanbhogue <ved@rivosinc.com>, 
+	Matt Evans <mev@rivosinc.com>, Dylan Jhong <dylan@andestech.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add multicast filtering support for ICSSG Driver.
+On Tue, Jun 4, 2024 at 10:52=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Tue, Jun 04, 2024 at 09:17:26AM +0200, Alexandre Ghiti wrote:
+> > On Tue, Jun 4, 2024 at 9:15=E2=80=AFAM Alexandre Ghiti <alexghiti@rivos=
+inc.com> wrote:
+> > > On Tue, Jun 4, 2024 at 8:21=E2=80=AFAM yunhui cui <cuiyunhui@bytedanc=
+e.com> wrote:
+> > > >
+> > > > As for the current status of the patch, there are two points that c=
+an
+> > > > be optimized:
+> > > > 1. Some chip hardware implementations may not cache TLB invalid
+> > > > entries, so it doesn't matter whether svvptc is available or not. C=
+an
+> > > > we consider adding a CONFIG_RISCV_SVVPTC to control it?
+> >
+> > That would produce a non-portable kernel. But I'm not opposed to that
+> > at all, let me check how we handle other extensions. Maybe @Conor
+> > Dooley has some feedback here?
+>
+> To be honest, not really sure what to give feedback on. Could you
+> elaborate on exactly what the option is going to do? Given the
+> portability concern, I guess you were proposing that the option would
+> remove the preventative fences, rather than your current patch that
+> removes them via an alternative?
 
-The driver will keep a copy of multicast addresses in emac->mcast_list.
-This list will be kept in sync with the netdev list and to add / del
-multicast address icssg_prueth_mac_add_mcast / icssg_prueth_mac_del_mcast
-APIs will be called.
+No no, I won't do that, we need a generic kernel for distros so that's
+not even a question. What Yunhui was asking about (to me) is: can we
+introduce a Kconfig option to always remove the preventive fences,
+bypassing the use of alternatives altogether?
 
-To add a mac_address for a port, driver need to call icssg_fdb_add_del()
-and pass the mac_address and BIT(port_id) to the API. The ICSSG firmware
-will then configure the rules and allow filtering.
+To me, it won't make a difference in terms of performance. But if we
+already offer such a possibility for other extensions, well I'll do
+it. Otherwise, the question is: should we start doing that?
 
-If a mac_address is added to port0 and the same mac_address needs to be
-added for port1, driver needs to pass BIT(port0) | BIT(port1) to the
-icssg_fdb_add_del() API. If driver just pass BIT(port1) then the entry for
-port0 will be overwritten / lost. This is a design constraint on the
-firmware side.
-
-To overcome this in the driver, to add any mac_address for let's say portX
-driver first checks if the same mac_address is already added for any other
-port. If yes driver calls icssg_fdb_add_del() with BIT(portX) |
-BIT(other_existing_port). If not, driver calls icssg_fdb_add_del() with
-BIT(portX).
-
-The same thing is applicable for deleting mac_addresses as well. This
-logic is in icssg_prueth_mac_add_mcast / icssg_prueth_mac_del_mcast APIs.
-
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
-v1 -> v2:
-*) Rebased on latest net-next/main.
-
-NOTE: This series can be applied cleanly on the tip of net-next/main. This
-series doesn't depend on any other ICSSG driver related series that is
-floating around in netdev.
-
-v1 https://lore.kernel.org/all/20240516091752.2969092-1-danishanwar@ti.com/
-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 50 ++++++++++++++++++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.h |  3 ++
- 2 files changed, 49 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 6e65aa0977d4..03dd49f0afb7 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -439,6 +439,37 @@ const struct icss_iep_clockops prueth_iep_clockops = {
- 	.perout_enable = prueth_perout_enable,
- };
- 
-+static int icssg_prueth_mac_add_mcast(struct net_device *ndev, const u8 *addr)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	int port_mask = BIT(emac->port_id);
-+
-+	port_mask |= icssg_fdb_lookup(emac, addr, 0);
-+	icssg_fdb_add_del(emac, addr, 0, port_mask, true);
-+	icssg_vtbl_modify(emac, 0, port_mask, port_mask, true);
-+
-+	return 0;
-+}
-+
-+static int icssg_prueth_mac_del_mcast(struct net_device *ndev, const u8 *addr)
-+{
-+	struct prueth_emac *emac = netdev_priv(ndev);
-+	int port_mask = BIT(emac->port_id);
-+	int other_port_mask;
-+
-+	other_port_mask = port_mask ^ icssg_fdb_lookup(emac, addr, 0);
-+
-+	icssg_fdb_add_del(emac, addr, 0, port_mask, false);
-+	icssg_vtbl_modify(emac, 0, port_mask, port_mask, false);
-+
-+	if (other_port_mask) {
-+		icssg_fdb_add_del(emac, addr, 0, other_port_mask, true);
-+		icssg_vtbl_modify(emac, 0, other_port_mask, other_port_mask, true);
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * emac_ndo_open - EMAC device open
-  * @ndev: network adapter device
-@@ -547,6 +578,8 @@ static int emac_ndo_open(struct net_device *ndev)
- 
- 	prueth->emacs_initialized++;
- 
-+	__hw_addr_init(&emac->mcast_list);
-+
- 	queue_work(system_long_wq, &emac->stats_work.work);
- 
- 	return 0;
-@@ -599,6 +632,9 @@ static int emac_ndo_stop(struct net_device *ndev)
- 
- 	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
- 
-+	__dev_mc_unsync(ndev, icssg_prueth_mac_del_mcast);
-+	__hw_addr_init(&emac->mcast_list);
-+
- 	atomic_set(&emac->tdown_cnt, emac->tx_ch_num);
- 	/* ensure new tdown_cnt value is visible */
- 	smp_mb__after_atomic();
-@@ -675,10 +711,15 @@ static void emac_ndo_set_rx_mode_work(struct work_struct *work)
- 		return;
- 	}
- 
--	if (!netdev_mc_empty(ndev)) {
--		emac_set_port_state(emac, ICSSG_EMAC_PORT_MC_FLOODING_ENABLE);
--		return;
--	}
-+	/* make a mc list copy */
-+
-+	netif_addr_lock_bh(ndev);
-+	__hw_addr_sync(&emac->mcast_list, &ndev->mc, ndev->addr_len);
-+	netif_addr_unlock_bh(ndev);
-+
-+	__hw_addr_sync_dev(&emac->mcast_list, ndev,
-+			   icssg_prueth_mac_add_mcast,
-+			   icssg_prueth_mac_del_mcast);
- }
- 
- /**
-@@ -767,6 +808,7 @@ static int prueth_netdev_init(struct prueth *prueth,
- 	SET_NETDEV_DEV(ndev, prueth->dev);
- 	spin_lock_init(&emac->lock);
- 	mutex_init(&emac->cmd_lock);
-+	__hw_addr_init(&emac->mcast_list);
- 
- 	emac->phy_node = of_parse_phandle(eth_node, "phy-handle", 0);
- 	if (!emac->phy_node && !of_phy_is_fixed_link(eth_node)) {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 5eeeccb73665..2bfda26b5901 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -155,6 +155,9 @@ struct prueth_emac {
- 	unsigned int tx_ts_enabled : 1;
- 	unsigned int half_duplex : 1;
- 
-+	/* List for storing multicast addresses */
-+	struct netdev_hw_addr_list mcast_list;
-+
- 	/* DMA related */
- 	struct prueth_tx_chn tx_chns[PRUETH_MAX_TX_QUEUES];
- 	struct completion tdown_complete;
-
-base-commit: 2589d668e1a6ebe85329f1054cdad13647deac06
--- 
-2.34.1
-
+> I don't think we have any extension
+> related options that work like that at the moment, and making that an
+> option will just mean that distros that look to cater for multiple
+> platforms won't be able to turn it on.
+>
+> Thanks,
+> Conor.
 
