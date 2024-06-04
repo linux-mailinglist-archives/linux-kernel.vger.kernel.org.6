@@ -1,175 +1,105 @@
-Return-Path: <linux-kernel+bounces-200174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FAA8FAC57
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:43:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD2F8FAC5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552E7282A67
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:43:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EBE51F2134E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1211411E5;
-	Tue,  4 Jun 2024 07:43:44 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BF21411F7;
+	Tue,  4 Jun 2024 07:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q/AQN3J0"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB841411CA;
-	Tue,  4 Jun 2024 07:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB331411C3
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717487023; cv=none; b=fEoU36hyzL5rkQgyw925UfhlJgeAVIFqcMEgkNHmIofMV3wub1Fl/x71DZ+CJQxqMzu80CjTU51A4xHtYn4jURRo7LlC+bnyr4Xls3P5BK6SwAWmbQ+5QNNsksy9L539PD+cGsKBdJ4Y5Tws4KmJ0sOl0ujHphMHhAFxzN7UpZw=
+	t=1717487094; cv=none; b=F2rLVBzngNrtvd1U5z5FTWD/9MlhahJQjKP7+bpAB9wmnI27BevXzjLyVFMTDwqkMx5IZT9krojFfp3pQJPaD/wWlHnl6woC3Paq7dX4kWX1DrB8BgypxKe7eOPd6Kg8nD4y92S+hv1BUnWcDiOYri/eEzmpZPdsZ6LV/gjENUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717487023; c=relaxed/simple;
-	bh=rmrq0CC543j83YlXev509NtGiSbQwtYK4+nRu8TmMLk=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=KM19n/rNY8TIlz1TxfYs8TE1HjNYPpoCxZtJ35w8Lxw274s+YJhYyg98Pj7ZRRoaolCJrUv+soU8tG8nCMibfS5F8Rj895jRZiQwU3GlUPwuLWr6YuRtWP0t0jlHGpi2nULKQvgMHoz9weW5ZFcPtj370ZbhtTyqzpAGro+Rkog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4VtjDD30zXz1S66v;
-	Tue,  4 Jun 2024 15:39:56 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 24B071A0188;
-	Tue,  4 Jun 2024 15:43:37 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 4 Jun 2024 15:43:36 +0800
-CC: <yangyicong@hisilicon.com>, <will@kernel.org>, <mark.rutland@arm.com>,
-	<acme@kernel.org>, <namhyung@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<james.clark@arm.com>, <dongli.zhang@oracle.com>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>
-Subject: Re: [PATCH 2/3] perf: arm_pmu: Only show online CPUs in device's
- "cpus" attribute
-To: Ian Rogers <irogers@google.com>
-References: <20240603092812.46616-1-yangyicong@huawei.com>
- <20240603092812.46616-3-yangyicong@huawei.com>
- <CAP-5=fXDPor-WsO-TGB3z6QpSWZOFJC31GJpuwZUA3qz_3WsYQ@mail.gmail.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <b348d9dd-75cb-6b83-a4be-cfd29e15eb99@huawei.com>
-Date: Tue, 4 Jun 2024 15:43:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1717487094; c=relaxed/simple;
+	bh=K3JztJJNDmxWgE8NZyb5e/BN4rv4y/pr6l7o7i2SxDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AIY6Da2MK/OGnYjJOdKKufUARC9UyxgGxvbj5nT+F4QqgICjGAZ7RDX8vhpbMumR52Iy+Kmlrj5oaKj5aZDlNCkdP3XeUVS3hYrXhhbHeKvVG329gWvB7n+8b8fj17t/sn2QOgf+l4v3/CAYvzwoNiMcO2ZIFeaoc56qKiAWZMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q/AQN3J0; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e73359b900so7154221fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 00:44:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717487090; x=1718091890; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UcYWYntWAO2W3LAxMAaPVJr5Ylhpz9Mj9naAFGZsCvE=;
+        b=q/AQN3J0lmuofO9t1KTBuJoY1vEKpZE7l6GNwd723NtJYXiYKedPfNx4wmd7W22vfl
+         ++2GCQviMLJeO/o73zfTQkvhZsZYDUFuhDCxbmzVaCIfFg5LJJxLvQzwvKl3sQqYvB9m
+         nD0m9IsQkxkY5s2Xlg/YDt4m2g5FgRh+BS9gjVl3jyDu1Ubxv/ADnJ7TC3YJxRiTCVvQ
+         OZ4XMrDYVZL320PQJrZ2N59PRFbxQcvEi2qFH2dJb3dvcim5+oi5vTLUS5Qp/FztIhbV
+         CYqHRBB88MZ+tuXCh9/LyoRiaY5EXvVkd5nA3y/ugrvwtt2y1R0MVutC4pQtbtI+jHG+
+         Ug/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717487090; x=1718091890;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UcYWYntWAO2W3LAxMAaPVJr5Ylhpz9Mj9naAFGZsCvE=;
+        b=tp62Jxy/bMb70cdobWAEAw60JywoZ/mATaNugDbBOwn86l9L9xuk5ETO9kqQHwSibK
+         GZnM+NRazards1hEaKEG+aht1v7omwf46UTvdNwd5yjXKrK/apdBLdzE05oCoyDgve5F
+         75kBJfGeyxQzzsOdwiiswAY/Rn6lrg8NwOdwjC5UK6JW9kFWuFkLoqhMYrwCq7p48FMN
+         3sPBO1+8yiaDT5JirB/NyTAi/oeVvaKNqbyFNeuGVqsH6APsKjBWtzjn8qxd9/yKy4v5
+         C4pcRTKG074M3qmT/IOsen9uTAPz6tIwiLQ4FhNRMRcL8bNvbjxDzBIss9TvT7w/DVwk
+         WH4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUdpeY1b8sugrmhojuPApdX6CyD4pY389MMZCmOBM1tdAOUrtRKz6V4fHladoieGnowQk4QoZvKEFVZMM6ufYa0/OCdams5zNJqiD/j
+X-Gm-Message-State: AOJu0Yy3XTgTBudziX32OTEDKOhjKRtGq3WA+Mmz0pbu7XyO8DUQXxez
+	FaDAjOKV22pPWlRGNBnTvB/Uuzj/QV4NYZ5qndUvn6wJVnWsST8ukE5IyElSnA4=
+X-Google-Smtp-Source: AGHT+IHqZb9LYTpAH7wKglm6YhvwHz6YjOAKROkXHiyd6z8lsMM1DOFC6a++Wkm2gmrWAq+7DRwBww==
+X-Received: by 2002:a2e:9d12:0:b0:2ea:7cca:31aa with SMTP id 38308e7fff4ca-2ea950e64ebmr74116151fa.16.1717487089638;
+        Tue, 04 Jun 2024 00:44:49 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91b9d5f0sm14300931fa.21.2024.06.04.00.44.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 00:44:49 -0700 (PDT)
+Date: Tue, 4 Jun 2024 10:44:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [PATCH] soc: qcom: spm: add missing MODULE_DESCRIPTION()
+Message-ID: <wuozxhrtce5udbn5aqxb65e5ox6hqs7tncb6biutqoetlhtouj@rew5b25dc2tg>
+References: <20240603-md-soc-qcom-spm-v1-1-617730f08d22@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAP-5=fXDPor-WsO-TGB3z6QpSWZOFJC31GJpuwZUA3qz_3WsYQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603-md-soc-qcom-spm-v1-1-617730f08d22@quicinc.com>
 
-Hi Ian,
-
-On 2024/6/4 0:20, Ian Rogers wrote:
-> On Mon, Jun 3, 2024 at 2:33 AM Yicong Yang <yangyicong@huawei.com> wrote:
->>
->> From: Yicong Yang <yangyicong@hisilicon.com>
->>
->> When there're CPUs offline after system booting, perf will failed:
->> [root@localhost ~]# /home/yang/perf stat -a -e armv8_pmuv3_0/cycles/
->> Error:
->> The sys_perf_event_open() syscall returned with 19 (No such device) for event (cpu-clock).
->> /bin/dmesg | grep -i perf may provide additional information.
+On Mon, Jun 03, 2024 at 05:09:34PM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 warns:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/qcom/spm.o
 > 
-> Thanks for debugging this Yicong! The fact cycles is falling back on
-> cpu-clock I'm confused by, on ARM the PMU type generally isn't
-> PERF_TYPE_HARDWARE and so this fallback shouldn't happen:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/evsel.c?h=perf-tools-next#n2900
-> I note your command line is for system wide event opening rather than
-> for a process. It is more strange the fallback is giving "No such
-> device".
+> Add the missing MODULE_DESCRIPTION(), using the same description as
+> the underlying QCOM_SPM Kconfig item.
 > 
->> This is due to PMU's "cpus" is not updated and still contains offline
->> CPUs and perf will try to open perf event on the offlined CPUs.
-> 
-> The perf tool will try to only open online CPUs. Unfortunately the
-> naming around this is confusing:
-> 
-> - any - an event may follow a task and schedule on "any" CPU. We
-> encode this with -1.
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n24
-> - online - the set of online CPU.
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n33
-> - all - I try to avoid this but it may still be in the code, "all"
-> usually is another name for online. Hopefully when we use this name it
-> is clearly defined:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/internal/evlist.h?h=perf-tools-next#n23
-> 
->> Make "cpus" attribute only shows online CPUs and introduced a new
->> "supported_cpus" where users can get the range of the CPUs this
->> PMU supported monitoring.
-> 
-> I don't think this should be necessary as by default the CPUs the perf
-> tool will use will be the "online" CPUs:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=perf-tools-next#n40
-> 
-> Could you create a reproduction of the problem you are encountering?
-> My expectation is for a core PMU to advertise the online and offline
-> CPUs it is valid for, and for perf to intersect:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n44
-> those CPUs with the online CPUs so the perf_event_open doesn't fail.
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/soc/qcom/spm.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Thanks for the comments and detailed illustration!
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Actually it can be reproduced easily using the armv8_pmuv3's events. Tested on 6.10-rc1 with
-perf version 6.10.rc1.g1613e604df0c:
-# offline any CPU
-[root@localhost tmp]# echo 0 > /sys//devices/system/cpu/cpu1/online
-# try any event of armv8_pmuv3, with -a or without
-[root@localhost tmp]# ./perf stat -e armv8_pmuv3_0/ll_cache/ -vvv
-Control descriptor is not initialized
-Opening: armv8_pmuv3_0/ll_cache/
-------------------------------------------------------------
-perf_event_attr:
-  type                             10 (armv8_pmuv3_0)
-  size                             136
-  config                           0x32 (ll_cache)
-  sample_type                      IDENTIFIER
-  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-  disabled                         1
-  inherit                          1
-  exclude_guest                    1
-------------------------------------------------------------
-sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 3
-Opening: armv8_pmuv3_0/ll_cache/
-------------------------------------------------------------
-perf_event_attr:
-  type                             10 (armv8_pmuv3_0)
-  size                             136
-  config                           0x32 (ll_cache)
-  sample_type                      IDENTIFIER
-  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-  disabled                         1
-  inherit                          1
-  exclude_guest                    1
-------------------------------------------------------------
-sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8
-sys_perf_event_open failed, error -19
-Error:
-The sys_perf_event_open() syscall returned with 19 (No such device) for event (armv8_pmuv3_0/ll_cache/).
-/bin/dmesg | grep -i perf may provide additional information.
-
-As you can see, we're trying to open event on CPU 0 first (succeed) and then CPU 1 but
-failed on CPU1. Actually we don't enter any branch which handle the evsel->cpus in
-__perf_evlist__propagate_maps() so the evsel->cpus keeps as is which should be initialized
-from the pmu->cpumask. You referenced to [1] but in this case perf_evsel->system_wide == false
-as I checked. perf_evsel->system_wide will set to true in perf_evlist__go_system_wide() and it
-maybe only set for dummy events. Please correct me if I misread here.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=perf-tools-next#n40
-
-Thanks.
-
+-- 
+With best wishes
+Dmitry
 
