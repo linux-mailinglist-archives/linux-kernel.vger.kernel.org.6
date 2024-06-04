@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-200126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757FA8FAB78
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:58:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44928FAB80
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3052A288F4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1031F24623
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFE113F45B;
-	Tue,  4 Jun 2024 06:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF17D13E05B;
+	Tue,  4 Jun 2024 07:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=malaika-12.net header.i=@malaika-12.net header.b="Ap8XBRmg"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZU1RH9Lr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0BD4A0F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9BF136E26
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717484283; cv=none; b=ECvMykXe9xkpi4zWLTRWilrc82eAB3fU437lDl2NmsfaJ/JMHRAkoPLOxCVHYmpgYdOiyqV2TZyFCUSMLHujNBQchRj/X5cRnyTyKG0J/OSMVWkXcAjIfMjY+TA7uqy+kuKMV/dsAm0/zT6MFpvT32GDSWLq/tsC9C8PUTu+mok=
+	t=1717484593; cv=none; b=h+NsciQq2dLh8AOXmgnM7DtF9EAAYzlJZJG5SApOiDzcVwLyyy8gxChmiofIqmvIMX3cWS2jNf2HUsyaJTv0i11Eqwf44F6Oinjf7oosncfrR0CSsn9uOADe/+6fIRNkQ5raUpAEZhkVozlt6z2H0uyHi03MNCcL/lpI3W/xf3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717484283; c=relaxed/simple;
-	bh=ASSOnbAEeJoFPMVEQvO8tAvU43+GCrWup9rr1201dwA=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=sxPEt9fdwHurKssaI+PaQjord4icH+k+05+YDCTUi4/OXPe7DQOkdMqoTEEMxOqlEaso6vwC7+f0zo5BV/vEZoqS6lTATQ/kEDKmMTIAaq/LM0g4pjnTPeohEuKKTu/k+uQnkM6Mhl2eZHGAjw/o9IV0SjpYDs05Yq+WNnw0oSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=malaika-12.net; spf=pass smtp.mailfrom=malaika-12.net; dkim=pass (2048-bit key) header.d=malaika-12.net header.i=@malaika-12.net header.b=Ap8XBRmg; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=malaika-12.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=malaika-12.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=malaika-12.net; s=ds202404; h=Content-Transfer-Encoding:Content-Type:
-	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JxrBbmJGldZAqjeIDM6lVnMmXx/fwNNk7j28tGNP99Y=; b=Ap8XBRmgZHqaPodA+kQJ37Exv0
-	xarAvJ6ZWehNllfakoc+nNLXJtVbx7n7GytRX8kL4n7XieNwOrfe9HX+dziJQc1fkhxqaA2LNf3k0
-	lFIk5LG4BUDh/GwtXjPsM7WXRBJ/6pWH3yfaMdjsu3303OCG5Sm2Mm/olZPaqRnMo7p+UNYUkAnLy
-	m33F1FGHmQNIVMc03qHcVwl7LpVv2yZLqKMYZUyzC2uujNiKtg2WziizoDxXLgDWUgCRbgOGKYR3u
-	rCWzIbCSllYjDkpxTYaMq+m5WeHyiFtM9mI75HkeUPL5EgHlSw/2LYcMhHyNaLD78ApOiEiXOobvc
-	6c71RM/Q==;
-Received: from [2a02:fe1:716d:5f00:8929:82fc:8c1c:ac3f] (port=57019)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <BIT@malaika-12.net>)
-	id 1sEO7L-001JGP-CZ
-	for linux-kernel@vger.kernel.org;
-	Tue, 04 Jun 2024 08:57:59 +0200
-Message-ID: <2113911d-c988-4ea5-b379-e58ae4944684@malaika-12.net>
-Date: Tue, 4 Jun 2024 08:57:58 +0200
+	s=arc-20240116; t=1717484593; c=relaxed/simple;
+	bh=FmtZE0QDhnWtssc5nt4OLbqQeX0Q//9bpFfVcjIAA6Y=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JONMgPSSxOlHuNU+Kn2UV8NQsw6orNQJ5CetvPSmVkDe2olLpXcvXjl5Sbt0gWOFQtNpLnwbZePQOlDEJ6DoCg3WMaw1d4V+2ZjaABoAZTZcTcEGT7FmozDWLB7nxUJQooSg1A6/rXsqeGoF5HxevK4nPIRkExTNdHMlWfwMNNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZU1RH9Lr; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717484591; x=1749020591;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FmtZE0QDhnWtssc5nt4OLbqQeX0Q//9bpFfVcjIAA6Y=;
+  b=ZU1RH9LrtgwL0PV5gPp6YZ6UoLVJryBrGn84SqSVFE/EKi6aMcoDYDp1
+   bVRW/F6odawXf3ZRaaYMmhdOOPO3N/XoL3bJO6YLHTwQT++jce6vXLcYF
+   esbCL1xwaiNO7Y8xoUlwrptViGVpRtoC6hgNhBk9tz8+lEHApdiLQgVyo
+   WpwHS2t8RLS7t3E/DjB4NUPEtuYpjL6RO1eRR966R+Tsmio5DZcSgXN2X
+   3cTflyRQzk3lh2wIkZZL059u9ZB/nJ7lTkHHR4l/qiCXHpGrR6HY0djqd
+   0r5uepHBkHmU2QVJWVfJC5W4vm3TQzKJQ4VThf3PYrBaN3KPTaApvZZy/
+   g==;
+X-CSE-ConnectionGUID: fzu+52jaQMe5sYGqJgNAIA==
+X-CSE-MsgGUID: F6T1OCJDQmqPFmtUCmvx/A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17843703"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="17843703"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 00:03:10 -0700
+X-CSE-ConnectionGUID: MRQ8mHfJTKyKyFvLEmuY2A==
+X-CSE-MsgGUID: VJWzSxe+RWeCmcJRzriSmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="37776292"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa007.jf.intel.com with ESMTP; 04 Jun 2024 00:03:08 -0700
+Message-ID: <74992544-de5d-40a3-a68d-7a9bcd03ae71@linux.intel.com>
+Date: Tue, 4 Jun 2024 15:01:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,31 +66,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <BIT@malaika-12.net>
-Subject: Disassociating from OpenSUSE (The Vast X, was low jitter, fair pay
- philosophy)
+Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] iommu/vt-d: Support batching IOTLB/dev-IOTLB
+ invalidation commands
+To: "Zhang, Tina" <tina.zhang@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>
+References: <20240517003728.251115-1-tina.zhang@intel.com>
+ <20240517003728.251115-2-tina.zhang@intel.com>
+ <2b390228-190c-4508-b98f-1811c54c9e5c@linux.intel.com>
+ <MW5PR11MB588165376224FEA74A0426D989FF2@MW5PR11MB5881.namprd11.prod.outlook.com>
+ <7440cd36-41e0-4705-a597-f2ce3f841a70@linux.intel.com>
+ <MW5PR11MB58814B632958A5776B6C31FF89F82@MW5PR11MB5881.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <MW5PR11MB58814B632958A5776B6C31FF89F82@MW5PR11MB5881.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-OpenSUSE was considered for forking. It seemed close to The Vast X, but 
-SUSE is source for schizophrenics, and the toad is a total put off.
+On 6/4/24 1:59 PM, Zhang, Tina wrote:
+>> -----Original Message-----
+>> From: Baolu Lu<baolu.lu@linux.intel.com>
+>> Sent: Tuesday, June 4, 2024 9:15 AM
+>> To: Zhang, Tina<tina.zhang@intel.com>; Tian, Kevin<kevin.tian@intel.com>
+>> Cc:baolu.lu@linux.intel.com;iommu@lists.linux.dev; linux-
+>> kernel@vger.kernel.org
+>> Subject: Re: [PATCH 1/2] iommu/vt-d: Support batching IOTLB/dev-IOTLB
+>> invalidation commands
+>>
+>> On 6/3/24 3:37 PM, Zhang, Tina wrote:
+>>>> -----Original Message-----
+>>>> From: Baolu Lu<baolu.lu@linux.intel.com>
+>>>> Sent: Sunday, May 19, 2024 5:43 PM
+>>>> To: Zhang, Tina<tina.zhang@intel.com>; Tian,
+>>>> Kevin<kevin.tian@intel.com>
+>>>> Cc:baolu.lu@linux.intel.com;iommu@lists.linux.dev; linux-
+>>>> kernel@vger.kernel.org
+>>>> Subject: Re: [PATCH 1/2] iommu/vt-d: Support batching IOTLB/dev-IOTLB
+>>>> invalidation commands
+>>>>
+>>>> On 5/17/24 8:37 AM, Tina Zhang wrote:
+>>>>> Introduce a new parameter batch_desc to the QI based IOTLB/dev-IOTLB
+>>>>> invalidation operations to support batching invalidation descriptors.
+>>>>> This batch_desc is a pointer to the descriptor entry in a batch cmds
+>>>>> buffer. If the batch_desc is NULL, it indicates that batch
+>>>>> submission is not being used, and descriptors will be submitted individually.
+>>>>>
+>>>>> Also fix an issue reported by checkpatch about "unsigned mask":
+>>>>>            "Prefer 'unsigned int' to bare use of 'unsigned'"
+>>>>>
+>>>>> Signed-off-by: Tina Zhang<tina.zhang@intel.com>
+>>>>> ---
+>>>>>     drivers/iommu/intel/cache.c | 33 +++++++++++-------
+>>>>>     drivers/iommu/intel/dmar.c  | 67 ++++++++++++++++++++-----------------
+>>>>>     drivers/iommu/intel/iommu.c | 27 +++++++++------
+>>>>>     drivers/iommu/intel/iommu.h | 21 ++++++++----
+>>>>>     drivers/iommu/intel/pasid.c | 20 ++++++-----
+>>>>>     5 files changed, 100 insertions(+), 68 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/iommu/intel/cache.c
+>>>>> b/drivers/iommu/intel/cache.c index e8418cdd8331..dcf5e0e6af17
+>>>>> 100644
+>>>>> --- a/drivers/iommu/intel/cache.c
+>>>>> +++ b/drivers/iommu/intel/cache.c
+>>>>> @@ -278,7 +278,7 @@ void cache_tag_flush_range(struct dmar_domain
+>>>> *domain, unsigned long start,
+>>>>>     		case CACHE_TAG_NESTING_IOTLB:
+>>>>>     			if (domain->use_first_level) {
+>>>>>     				qi_flush_piotlb(iommu, tag->domain_id,
+>>>>> -						tag->pasid, addr, pages, ih);
+>>>>> +						tag->pasid, addr, pages, ih,
+>>>> NULL);
+>>>>>     			} else {
+>>>> I'd like to have all batched descriptors code inside this file to
+>>>> make it easier for maintenance. Perhaps we can add the below
+>>>> infrastructure in the dmar_domain structure together with the cache tag.
+>>> Does it suggest we need to add a batch version of
+>> qi_flush_iotlb/qi_flush_dev_iotlb/qi_flush_piotlb/qi_flush_dev_iotlb_pasid() in
+>> the cache.c file? It doesn't sound like an easy to maintain those functions, does
+>> it?
+>>
+>> Yes. I don't think it's that difficult as the helpers just compose a qi descriptor and
+>> insert it in a local queue. This local queue will be flushed after finishing iterating
+>> all cache tags, or there's no room for more descriptors, or switches to a different
+>> iommu. Have I missed anything?
+> In current VT-d driver, only qi_flush_xxx() functions have the knowledge about how to make IOTLB invalidation descriptors. In qi_flush_xxx() functions, VT-d invalidation descriptors are populated and submitted to hardware immediately.
+> 
+> To support batching command, I think we can have two choices:
+> 1. Extend qi_flush_xxx() functions to support batching descriptors. (Just like the implementation in this version)
+> In this way, the knowledge of populating an IOTLB invalidation descriptor in qi_flush_xxx() is reused. Additional code change is for batching the descriptor command into a buffer.
+> 
+> 2. Introduce a new set of interfaces to populate IOTLB descriptors and batch them into a batch buffer.
+> The new set of interfaces is implemented in the cache.c file and we need to copy the knowledge about how to populate IOTLB descriptors from qi_flush_xxx() interfaces into the new interfaces. I hesitated to choose this option because it would duplicate code. Maybe we can generalize the knowledge of populating IOTLB descriptors into lower level interfaces and make the current qi_flush_xxx() and the new set of interfaces call them.
+> 
+> Which option do you think is better?
 
-I talked in their Reddit forum, and moderators took the side of "Shabbos 
-Goy" for jews. Basically jews think they need a Shabbos Goy, to insert a 
-lightbulb. (Wellknown). In Linux circles Linus Torvalds IS that Shabbos 
-Goy, to Greg Kroah Hartman (jewish). We can see such things reflected in 
-supposedly intelligent computer culture.
+We can share the common code without changing the current helper
+interfaces. Something like this,
 
-This I can´t have nothing to do with. I am always on the islamic side in 
-such a debate, without a "Shabbos Goy", or just "Boy" to racists.
+static inline void qi_desc_iotlb(struct intel_iommu *iommu, u16 did, u64 
+addr,
+                                  unsigned int size_order, u64 type,
+                                  struct qi_desc *desc)
+{
+         u8 dw = 0, dr = 0;
+         int ih = 0;
 
-This is where the polarisation goes. And I totally diassociate from such 
-things, and encourage that any sane person, does so aswell.
+         if (cap_write_drain(iommu->cap))
+                 dw = 1;
 
-Rather Islam, for fair pay and natural potential.
+         if (cap_read_drain(iommu->cap))
+                 dr = 1;
 
-The Light Be With You.
-Ywe Cærlyn, Ruhban
-https://www.reddit.com/r/The_Vast_X/
+         desc->qw0 = QI_IOTLB_DID(did) | QI_IOTLB_DR(dr) | QI_IOTLB_DW(dw)
+                 | QI_IOTLB_GRAN(type) | QI_IOTLB_TYPE;
+         desc->qw1 = QI_IOTLB_ADDR(addr) | QI_IOTLB_IH(ih)
+                 | QI_IOTLB_AM(size_order);
+         desc->qw2 = 0;
+         desc->qw3 = 0;
+}
+
+void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+                     unsigned int size_order, u64 type)
+{
+         struct qi_desc desc;
+
+         qi_desc_iotlb(iommu, did, addr, size_order, type, &desc)
+         qi_submit_sync(iommu, &desc, 1, 0);
+}
+
+The qi_desc_iotlb() can be used in both batched and non-batched paths.
+Does this work for you?
+
+Best regards,
+baolu
 
