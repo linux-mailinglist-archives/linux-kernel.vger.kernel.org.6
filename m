@@ -1,432 +1,219 @@
-Return-Path: <linux-kernel+bounces-200895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E291A8FB628
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:52:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BEF8FB62A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97546287C2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A024287DBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE81143C76;
-	Tue,  4 Jun 2024 14:44:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB0813A863;
-	Tue,  4 Jun 2024 14:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7CE1465BD;
+	Tue,  4 Jun 2024 14:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnyxY9H1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7F713CFA0;
+	Tue,  4 Jun 2024 14:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717512289; cv=none; b=p2jlfGKL8KD6cUZA5Vm8/DvvOsK9EGojqblcgOi54uk8kKceiqgQg2QkNQL/07N2itJzSDGlPOEXqmpk2uEWs6/NNTAiNqamErN/eLQw2E2y/pGW6U5mXiBDqcBSbpLIOGBq4VycC2z5+K6VxAvy05u2Wnv0+NhH7Q5YRb02/us=
+	t=1717512297; cv=none; b=qgwM9Pcq3eLU6S7aRv2OZzbakzZ33ABvqvU4xVTNKJ2kDboCDMJFz07Xzot/IVR5aRLicZT49ULBhb7XxQoMqfZOJye6q385C0FhUrDl9zd7sQbtoCqUB3KBLXM0QcA4Sm1GJj+ZCtbaE5oPC9W0TxA4qOrFcohvKxyOzaOr6Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717512289; c=relaxed/simple;
-	bh=Ptj2vnRcn+8Koe3QLVKz3J3lbtlSAOO3krekDH4wPXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJVsxO1TY/eyclOTBfXL3hS4j43QMIGgWCyx/BLgQLJthax0kAo/dXIBK+OiZ5K6AZuwUYQ/NSL70XVoI//ZngiU9Fl0RvygTnBAZcLh63HKP/bNCOPmQBpEV0kPvjtzZANlB8Jwdfp1uyMuCdtxrDMlF7iSd0rESQyiKIB7nnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF03A1042;
-	Tue,  4 Jun 2024 07:45:10 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DF283F64C;
-	Tue,  4 Jun 2024 07:44:43 -0700 (PDT)
-Date: Tue, 4 Jun 2024 15:44:40 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Florent Revest <revest@chromium.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH v3 00/27] function_graph: Allow multiple users for
- function graph tracing
-Message-ID: <Zl8oWNhkEPleJ3B_@J2N7QTR9R3>
-References: <20240603190704.663840775@goodmis.org>
- <20240604081850.59267aa9@rorschach.local.home>
+	s=arc-20240116; t=1717512297; c=relaxed/simple;
+	bh=3luimiBYat2ale2rBuxxg5iPFTGpNL4uMLOTpn+g+dA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SafuVp2hZrr3o4oxcuQ5v++BurKgaHWssWmAbisZieGfNheNMNWme5W8rd6kAlehdkZLIricPbONb42nLAKKVAL4+xN4Ae5rKok4GJcgHA/QspSNFJHC5MiUVfbGsVElhbxRgBT7RK8SzLgl5ZHbLBJCT08Xrda+CN6Hc9dU/cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnyxY9H1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA6CC2BBFC;
+	Tue,  4 Jun 2024 14:44:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717512296;
+	bh=3luimiBYat2ale2rBuxxg5iPFTGpNL4uMLOTpn+g+dA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=fnyxY9H1e5mH32IRhHzadoKHggB3/iD+UAIvFEayqmtGpUO62LSlu7sFz4D7iWF9T
+	 ZJo+MkOBd46wRF9ZMgfrblHZ7ndkbde2ZZDwRzfxIqonjPGakmLqE3/k+Aak7UVu0N
+	 b9kyJ0wJTCOlLCHrRcJ6X4UHOCGaEAI2XK/tQ5A21I4EDWCxaAD/RmNslO0zpTrWqp
+	 Rnjnrkho9X1s10Lfu1seV+lwhOVxL/M9LrRf7QXrknQf4b4ybLhcZkHZna2Qph/ZEF
+	 1FWjweaHXnuMW6DorvbWYO5xhIO+RQYQkRV/qXG4x1GIiA5Fp1Hh6CIvlEVWqc5TxL
+	 GlnOejAXlo1Tg==
+Message-ID: <a67e82fc-4658-4784-8d5b-e8a048e749e2@kernel.org>
+Date: Tue, 4 Jun 2024 22:44:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604081850.59267aa9@rorschach.local.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_evict_inode (2)
+To: syzbot <syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <000000000000e890bc0609a55cff@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <000000000000e890bc0609a55cff@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Steve, Masami,
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
 
-On Tue, Jun 04, 2024 at 08:18:50AM -0400, Steven Rostedt wrote:
+On 2023/11/8 23:01, syzbot wrote:
+> Hello,
 > 
-> Masami,
+> syzbot found the following issue on:
 > 
-> This series passed all my tests, are you comfortable with me pushing
-> them to linux-next?
-
-As a heads-up (and not to block pushing this into next), I just gave
-this a spin on arm64 atop v6.10-rc2, and running the selftests I see:
-
-	ftrace - function pid filters
-	(instance)  ftrace - function pid filters
-
-... both go from [PASS] to [FAIL].
-
-Everything else looks good -- I'll go dig into why that's happening.
-
-It's possible that's just something odd with the filesystem I'm using
-(e.g. the wnership test failed because this lacks 'stat').
-
-Mark.
-
+> HEAD commit:    90b0c2b2edd1 Merge tag 'pinctrl-v6.7-1' of git://git.kerne..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=10222eeb680000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=93ac5233c138249e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=31e4659a3fe953aec2f4
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a2847b680000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1579d0df680000
 > 
-> -- Steve
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/10c213d23300/disk-90b0c2b2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/0c55e6e441c1/vmlinux-90b0c2b2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c7f0436ea052/bzImage-90b0c2b2.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/dbf260983b94/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> kernel BUG at fs/f2fs/inode.c:933!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 5054 Comm: syz-executor410 Not tainted 6.6.0-syzkaller-14142-g90b0c2b2edd1 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
+> RIP: 0010:f2fs_evict_inode+0x1576/0x1590 fs/f2fs/inode.c:933
+> Code: fd 31 ff 89 de e8 5a 4f bf fd 40 84 ed 75 29 e8 c0 4c bf fd 4c 8b 74 24 08 e9 c9 eb ff ff e8 b1 4c bf fd 0f 0b e8 aa 4c bf fd <0f> 0b e8 a3 4c bf fd 0f 0b e9 f6 fe ff ff e8 97 4c bf fd e8 72 e7
+> RSP: 0018:ffffc900039df918 EFLAGS: 00010293
+> RAX: ffffffff83cf9f56 RBX: 0000000000000002 RCX: ffff888014b30000
+> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffffffff83cf984a R09: 1ffff1100ed0061d
+> R10: dffffc0000000000 R11: ffffed100ed0061e R12: 1ffff1100ed0058f
+> R13: ffff888076802c38 R14: ffff8880768030e8 R15: dffffc0000000000
+> FS:  00005555556ae3c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffdbe23ce18 CR3: 00000000727e8000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   evict+0x2a4/0x620 fs/inode.c:664
+>   dispose_list fs/inode.c:697 [inline]
+>   evict_inodes+0x5f8/0x690 fs/inode.c:747
+>   generic_shutdown_super+0x9d/0x2c0 fs/super.c:675
+>   kill_block_super+0x44/0x90 fs/super.c:1667
+>   kill_f2fs_super+0x303/0x3b0 fs/f2fs/super.c:4894
+>   deactivate_locked_super+0xc1/0x130 fs/super.c:484
+>   cleanup_mnt+0x426/0x4c0 fs/namespace.c:1256
+>   task_work_run+0x24a/0x300 kernel/task_work.c:180
+>   ptrace_notify+0x2cd/0x380 kernel/signal.c:2399
+>   ptrace_report_syscall include/linux/ptrace.h:411 [inline]
+>   ptrace_report_syscall_exit include/linux/ptrace.h:473 [inline]
+>   syscall_exit_work kernel/entry/common.c:251 [inline]
+>   syscall_exit_to_user_mode_prepare kernel/entry/common.c:278 [inline]
+>   __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
+>   syscall_exit_to_user_mode+0x15c/0x280 kernel/entry/common.c:296
+>   do_syscall_64+0x50/0x110 arch/x86/entry/common.c:88
+>   entry_SYSCALL_64_after_hwframe+0x63/0x6b
+> RIP: 0033:0x7fa1a5e8ee77
+> Code: 08 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
+> RSP: 002b:00007ffdbe23d5c8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+> RAX: 0000000000000000 RBX: 0000000000021a97 RCX: 00007fa1a5e8ee77
+> RDX: 0000000000000000 RSI: 000000000000000a RDI: 00007ffdbe23d680
+> RBP: 00007ffdbe23d680 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000ffffffff R11: 0000000000000202 R12: 00007ffdbe23e740
+> R13: 00005555556af700 R14: 431bde82d7b634db R15: 00007ffdbe23e6e4
+>   </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:f2fs_evict_inode+0x1576/0x1590 fs/f2fs/inode.c:933
+> Code: fd 31 ff 89 de e8 5a 4f bf fd 40 84 ed 75 29 e8 c0 4c bf fd 4c 8b 74 24 08 e9 c9 eb ff ff e8 b1 4c bf fd 0f 0b e8 aa 4c bf fd <0f> 0b e8 a3 4c bf fd 0f 0b e9 f6 fe ff ff e8 97 4c bf fd e8 72 e7
+> RSP: 0018:ffffc900039df918 EFLAGS: 00010293
+> RAX: ffffffff83cf9f56 RBX: 0000000000000002 RCX: ffff888014b30000
+> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffffffff83cf984a R09: 1ffff1100ed0061d
+> R10: dffffc0000000000 R11: ffffed100ed0061e R12: 1ffff1100ed0058f
+> R13: ffff888076802c38 R14: ffff8880768030e8 R15: dffffc0000000000
+> FS:  00005555556ae3c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffdbe23ce18 CR3: 00000000727e8000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > 
 > 
-> On Mon, 03 Jun 2024 15:07:04 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 > 
-> > This is a continuation of the function graph multi user code.
-> > I wrote a proof of concept back in 2019 of this code[1] and
-> > Masami started cleaning it up. I started from Masami's work v10
-> > that can be found here:
-> > 
-> >  https://lore.kernel.org/linux-trace-kernel/171509088006.162236.7227326999861366050.stgit@devnote2/
-> > 
-> > This is *only* the code that allows multiple users of function
-> > graph tracing. This is not the fprobe work that Masami is working
-> > to add on top of it. As Masami took my proof of concept, there
-> > was still several things I disliked about that code. Instead of
-> > having Masami clean it up even more, I decided to take over on just
-> > my code and change it up a bit.
-> > 
-> > Changes since v2: https://lore.kernel.org/linux-trace-kernel/20240602033744.563858532@goodmis.org
-> > 
-> > - Added comments describing which hashes the append and intersect
-> >   functions were used for.
-> > 
-> > - Replaced checks of (NULL or EMPTY_HASH) with ftrace_hash_empty()
-> >   helper function.
-> > 
-> > - Added check at the end of intersect_hash() to convert the hash
-> >   to EMPTY hash if it doesn't have any functions.
-> > 
-> > - Renamed compare_ops() to ops_equal() and return boolean (inversed return
-> >   value).
-> > 
-> > - Broke out __ftrace_hash_move_and_update_ops() to use in both
-> >   ftrace_hash_move_and_update_ops() and ftrace_hash_move_and_update_subops().
-> > 
-> > Diff between last version at end of this email.
-> > 
-> > Masami Hiramatsu (Google) (3):
-> >       function_graph: Handle tail calls for stack unwinding
-> >       function_graph: Use a simple LRU for fgraph_array index number
-> >       ftrace: Add multiple fgraph storage selftest
-> > 
-> > Steven Rostedt (Google) (9):
-> >       ftrace: Add subops logic to allow one ops to manage many
-> >       ftrace: Allow subops filtering to be modified
-> >       function_graph: Add pid tracing back to function graph tracer
-> >       function_graph: Use for_each_set_bit() in __ftrace_return_to_handler()
-> >       function_graph: Use bitmask to loop on fgraph entry
-> >       function_graph: Use static_call and branch to optimize entry function
-> >       function_graph: Use static_call and branch to optimize return function
-> >       selftests/ftrace: Add function_graph tracer to func-filter-pid test
-> >       selftests/ftrace: Add fgraph-multi.tc test
-> > 
-> > Steven Rostedt (VMware) (15):
-> >       function_graph: Convert ret_stack to a series of longs
-> >       fgraph: Use BUILD_BUG_ON() to make sure we have structures divisible by long
-> >       function_graph: Add an array structure that will allow multiple callbacks
-> >       function_graph: Allow multiple users to attach to function graph
-> >       function_graph: Remove logic around ftrace_graph_entry and return
-> >       ftrace/function_graph: Pass fgraph_ops to function graph callbacks
-> >       ftrace: Allow function_graph tracer to be enabled in instances
-> >       ftrace: Allow ftrace startup flags to exist without dynamic ftrace
-> >       function_graph: Have the instances use their own ftrace_ops for filtering
-> >       function_graph: Add "task variables" per task for fgraph_ops
-> >       function_graph: Move set_graph_function tests to shadow stack global var
-> >       function_graph: Move graph depth stored data to shadow stack global var
-> >       function_graph: Move graph notrace bit to shadow stack global var
-> >       function_graph: Implement fgraph_reserve_data() and fgraph_retrieve_data()
-> >       function_graph: Add selftest for passing local variables
-> > 
-> > ----
-> >  include/linux/ftrace.h                             |   43 +-
-> >  include/linux/sched.h                              |    2 +-
-> >  include/linux/trace_recursion.h                    |   39 -
-> >  kernel/trace/fgraph.c                              | 1044 ++++++++++++++++----
-> >  kernel/trace/ftrace.c                              |  522 +++++++++-
-> >  kernel/trace/ftrace_internal.h                     |    5 +-
-> >  kernel/trace/trace.h                               |   94 +-
-> >  kernel/trace/trace_functions.c                     |    8 +
-> >  kernel/trace/trace_functions_graph.c               |   96 +-
-> >  kernel/trace/trace_irqsoff.c                       |   10 +-
-> >  kernel/trace/trace_sched_wakeup.c                  |   10 +-
-> >  kernel/trace/trace_selftest.c                      |  259 ++++-
-> >  .../selftests/ftrace/test.d/ftrace/fgraph-multi.tc |  103 ++
-> >  .../ftrace/test.d/ftrace/func-filter-pid.tc        |   27 +-
-> >  14 files changed, 1945 insertions(+), 317 deletions(-)
-> >  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-multi.tc
-> > 
-> > 
-> > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> > index 41fabc6d30e4..da7e6abf48b4 100644
-> > --- a/kernel/trace/ftrace.c
-> > +++ b/kernel/trace/ftrace.c
-> > @@ -3170,7 +3170,7 @@ int ftrace_shutdown(struct ftrace_ops *ops, int command)
-> >  /* Simply make a copy of @src and return it */
-> >  static struct ftrace_hash *copy_hash(struct ftrace_hash *src)
-> >  {
-> > -	if (!src || src == EMPTY_HASH)
-> > +	if (ftrace_hash_empty(src))
-> >  		return EMPTY_HASH;
-> >  
-> >  	return alloc_and_copy_ftrace_hash(src->size_bits, src);
-> > @@ -3187,6 +3187,9 @@ static struct ftrace_hash *copy_hash(struct ftrace_hash *src)
-> >   *
-> >   *  Otherwise, go through all of @new_hash and add anything that @hash
-> >   *  doesn't already have, to @hash.
-> > + *
-> > + *  The filter_hash updates uses just the append_hash() function
-> > + *  and the notrace_hash does not.
-> >   */
-> >  static int append_hash(struct ftrace_hash **hash, struct ftrace_hash *new_hash)
-> >  {
-> > @@ -3195,11 +3198,11 @@ static int append_hash(struct ftrace_hash **hash, struct ftrace_hash *new_hash)
-> >  	int i;
-> >  
-> >  	/* An empty hash does everything */
-> > -	if (!*hash || *hash == EMPTY_HASH)
-> > +	if (ftrace_hash_empty(*hash))
-> >  		return 0;
-> >  
-> >  	/* If new_hash has everything make hash have everything */
-> > -	if (!new_hash || new_hash == EMPTY_HASH) {
-> > +	if (ftrace_hash_empty(new_hash)) {
-> >  		free_ftrace_hash(*hash);
-> >  		*hash = EMPTY_HASH;
-> >  		return 0;
-> > @@ -3217,7 +3220,12 @@ static int append_hash(struct ftrace_hash **hash, struct ftrace_hash *new_hash)
-> >  	return 0;
-> >  }
-> >  
-> > -/* Add to @hash only those that are in both @new_hash1 and @new_hash2 */
-> > +/*
-> > + * Add to @hash only those that are in both @new_hash1 and @new_hash2
-> > + *
-> > + * The notrace_hash updates uses just the intersect_hash() function
-> > + * and the filter_hash does not.
-> > + */
-> >  static int intersect_hash(struct ftrace_hash **hash, struct ftrace_hash *new_hash1,
-> >  			  struct ftrace_hash *new_hash2)
-> >  {
-> > @@ -3229,8 +3237,7 @@ static int intersect_hash(struct ftrace_hash **hash, struct ftrace_hash *new_has
-> >  	 * If new_hash1 or new_hash2 is the EMPTY_HASH then make the hash
-> >  	 * empty as well as empty for notrace means none are notraced.
-> >  	 */
-> > -	if (!new_hash1 || new_hash1 == EMPTY_HASH ||
-> > -	    !new_hash2 || new_hash2 == EMPTY_HASH) {
-> > +	if (ftrace_hash_empty(new_hash1) || ftrace_hash_empty(new_hash2)) {
-> >  		free_ftrace_hash(*hash);
-> >  		*hash = EMPTY_HASH;
-> >  		return 0;
-> > @@ -3245,6 +3252,11 @@ static int intersect_hash(struct ftrace_hash **hash, struct ftrace_hash *new_has
-> >  				return -ENOMEM;
-> >  		}
-> >  	}
-> > +	/* If nothing intersects, make it the empty set */
-> > +	if (ftrace_hash_empty(*hash)) {
-> > +		free_ftrace_hash(*hash);
-> > +		*hash = EMPTY_HASH;
-> > +	}
-> >  	return 0;
-> >  }
-> >  
-> > @@ -3266,7 +3278,7 @@ static struct ftrace_hash *append_hashes(struct ftrace_ops *ops)
-> >  			return NULL;
-> >  		}
-> >  		/* Nothing more to do if new_hash is empty */
-> > -		if (new_hash == EMPTY_HASH)
-> > +		if (ftrace_hash_empty(new_hash))
-> >  			break;
-> >  	}
-> >  	return new_hash;
-> > @@ -3300,59 +3312,76 @@ static struct ftrace_hash *intersect_hashes(struct ftrace_ops *ops)
-> >  			return NULL;
-> >  		}
-> >  		/* Nothing more to do if new_hash is empty */
-> > -		if (new_hash == EMPTY_HASH)
-> > +		if (ftrace_hash_empty(new_hash))
-> >  			break;
-> >  	}
-> >  	return new_hash;
-> >  }
-> >  
-> > -/* Returns 0 on equal or non-zero on non-equal */
-> > -static int compare_ops(struct ftrace_hash *A, struct ftrace_hash *B)
-> > +static bool ops_equal(struct ftrace_hash *A, struct ftrace_hash *B)
-> >  {
-> >  	struct ftrace_func_entry *entry;
-> >  	int size;
-> >  	int i;
-> >  
-> > -	if (!A || A == EMPTY_HASH)
-> > -		return !(!B || B == EMPTY_HASH);
-> > +	if (ftrace_hash_empty(A))
-> > +		return ftrace_hash_empty(B);
-> >  
-> > -	if (!B || B == EMPTY_HASH)
-> > -		return !(!A || A == EMPTY_HASH);
-> > +	if (ftrace_hash_empty(B))
-> > +		return ftrace_hash_empty(A);
-> >  
-> >  	if (A->count != B->count)
-> > -		return 1;
-> > +		return false;
-> >  
-> >  	size = 1 << A->size_bits;
-> >  	for (i = 0; i < size; i++) {
-> >  		hlist_for_each_entry(entry, &A->buckets[i], hlist) {
-> >  			if (!__ftrace_lookup_ip(B, entry->ip))
-> > -				return 1;
-> > +				return false;
-> >  		}
-> >  	}
-> >  
-> > -	return 0;
-> > +	return true;
-> >  }
-> >  
-> > -static int ftrace_hash_move_and_update_ops(struct ftrace_ops *ops,
-> > -					   struct ftrace_hash **orig_hash,
-> > -					   struct ftrace_hash *hash,
-> > -					   int enable);
-> > +static void ftrace_ops_update_code(struct ftrace_ops *ops,
-> > +				   struct ftrace_ops_hash *old_hash);
-> > +
-> > +static int __ftrace_hash_move_and_update_ops(struct ftrace_ops *ops,
-> > +					     struct ftrace_hash **orig_hash,
-> > +					     struct ftrace_hash *hash,
-> > +					     int enable)
-> > +{
-> > +	struct ftrace_ops_hash old_hash_ops;
-> > +	struct ftrace_hash *old_hash;
-> > +	int ret;
-> > +
-> > +	old_hash = *orig_hash;
-> > +	old_hash_ops.filter_hash = ops->func_hash->filter_hash;
-> > +	old_hash_ops.notrace_hash = ops->func_hash->notrace_hash;
-> > +	ret = ftrace_hash_move(ops, enable, orig_hash, hash);
-> > +	if (!ret) {
-> > +		ftrace_ops_update_code(ops, &old_hash_ops);
-> > +		free_ftrace_hash_rcu(old_hash);
-> > +	}
-> > +	return ret;
-> > +}
-> >  
-> >  static int ftrace_update_ops(struct ftrace_ops *ops, struct ftrace_hash *filter_hash,
-> >  			     struct ftrace_hash *notrace_hash)
-> >  {
-> >  	int ret;
-> >  
-> > -	if (compare_ops(filter_hash, ops->func_hash->filter_hash)) {
-> > -		ret = ftrace_hash_move_and_update_ops(ops, &ops->func_hash->filter_hash,
-> > -						      filter_hash, 1);
-> > +	if (!ops_equal(filter_hash, ops->func_hash->filter_hash)) {
-> > +		ret = __ftrace_hash_move_and_update_ops(ops, &ops->func_hash->filter_hash,
-> > +							filter_hash, 1);
-> >  		if (ret < 0)
-> >  			return ret;
-> >  	}
-> >  
-> > -	if (compare_ops(notrace_hash, ops->func_hash->notrace_hash)) {
-> > -		ret = ftrace_hash_move_and_update_ops(ops, &ops->func_hash->notrace_hash,
-> > -						      notrace_hash, 0);
-> > +	if (!ops_equal(notrace_hash, ops->func_hash->notrace_hash)) {
-> > +		ret = __ftrace_hash_move_and_update_ops(ops, &ops->func_hash->notrace_hash,
-> > +							notrace_hash, 0);
-> >  		if (ret < 0)
-> >  			return ret;
-> >  	}
-> > @@ -3438,8 +3467,8 @@ int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int
-> >  	 *   o If either notrace_hash is empty then the final stays empty
-> >  	 *      o Otherwise, the final is an intersection between the hashes
-> >  	 */
-> > -	if (ops->func_hash->filter_hash == EMPTY_HASH ||
-> > -	    subops->func_hash->filter_hash == EMPTY_HASH) {
-> > +	if (ftrace_hash_empty(ops->func_hash->filter_hash) ||
-> > +	    ftrace_hash_empty(subops->func_hash->filter_hash)) {
-> >  		filter_hash = EMPTY_HASH;
-> >  	} else {
-> >  		size_bits = max(ops->func_hash->filter_hash->size_bits,
-> > @@ -3454,8 +3483,8 @@ int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int
-> >  		}
-> >  	}
-> >  
-> > -	if (ops->func_hash->notrace_hash == EMPTY_HASH ||
-> > -	    subops->func_hash->notrace_hash == EMPTY_HASH) {
-> > +	if (ftrace_hash_empty(ops->func_hash->notrace_hash) ||
-> > +	    ftrace_hash_empty(subops->func_hash->notrace_hash)) {
-> >  		notrace_hash = EMPTY_HASH;
-> >  	} else {
-> >  		size_bits = max(ops->func_hash->filter_hash->size_bits,
-> > @@ -3591,7 +3620,7 @@ static int ftrace_hash_move_and_update_subops(struct ftrace_ops *subops,
-> >  	}
-> >  
-> >  	/* Move the hash over to the new hash */
-> > -	ret = ftrace_hash_move_and_update_ops(ops, orig_hash, new_hash, enable);
-> > +	ret = __ftrace_hash_move_and_update_ops(ops, orig_hash, new_hash, enable);
-> >  
-> >  	free_ftrace_hash(new_hash);
-> >  
-> > @@ -4822,11 +4851,6 @@ static int ftrace_hash_move_and_update_ops(struct ftrace_ops *ops,
-> >  					   struct ftrace_hash *hash,
-> >  					   int enable)
-> >  {
-> > -	struct ftrace_ops_hash old_hash_ops;
-> > -	struct ftrace_hash *old_hash;
-> > -	struct ftrace_ops *op;
-> > -	int ret;
-> > -
-> >  	if (ops->flags & FTRACE_OPS_FL_SUBOP)
-> >  		return ftrace_hash_move_and_update_subops(ops, orig_hash, hash, enable);
-> >  
-> > @@ -4838,6 +4862,8 @@ static int ftrace_hash_move_and_update_ops(struct ftrace_ops *ops,
-> >  	 * it will not affect subops that share it.
-> >  	 */
-> >  	if (!(ops->flags & FTRACE_OPS_FL_ENABLED)) {
-> > +		struct ftrace_ops *op;
-> > +
-> >  		/* Check if any other manager subops maps to this hash */
-> >  		do_for_each_ftrace_op(op, ftrace_ops_list) {
-> >  			struct ftrace_ops *subops;
-> > @@ -4851,15 +4877,7 @@ static int ftrace_hash_move_and_update_ops(struct ftrace_ops *ops,
-> >  		} while_for_each_ftrace_op(op);
-> >  	}
-> >  
-> > -	old_hash = *orig_hash;
-> > -	old_hash_ops.filter_hash = ops->func_hash->filter_hash;
-> > -	old_hash_ops.notrace_hash = ops->func_hash->notrace_hash;
-> > -	ret = ftrace_hash_move(ops, enable, orig_hash, hash);
-> > -	if (!ret) {
-> > -		ftrace_ops_update_code(ops, &old_hash_ops);
-> > -		free_ftrace_hash_rcu(old_hash);
-> > -	}
-> > -	return ret;
-> > +	return __ftrace_hash_move_and_update_ops(ops, orig_hash, hash, enable);
-> >  }
-> >  
-> >  static bool module_exists(const char *module)
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 > 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
