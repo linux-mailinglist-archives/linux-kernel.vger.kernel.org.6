@@ -1,137 +1,134 @@
-Return-Path: <linux-kernel+bounces-200133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B41C8FAB92
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0B08FAB94
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8561C23EFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1A01C23FDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EAF14037E;
-	Tue,  4 Jun 2024 07:09:16 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81A713FD9D;
+	Tue,  4 Jun 2024 07:09:28 +0000 (UTC)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4959C2209B;
-	Tue,  4 Jun 2024 07:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04861411C3;
+	Tue,  4 Jun 2024 07:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717484956; cv=none; b=f5eCi6NDobIXXV4u2W5RH4DFIuX3UVGQpbcOiatmceKt0zflf0w0bkoPlQrC8zP0qGU7GEhzKJNe9PIJrQudMZTL8xK0Ft70+ZJXHHgOEquVTHudOdBerzzSnpvzKksrTKYiBHW/9GguMTk5dTvuyhC/hCDOP+6ZTdD+qQ8iZk8=
+	t=1717484968; cv=none; b=FeDyQi6dtBArveAX4YbVWhXhcOK8GTr8vEZuiV+ZbRnnilrC+CavdE/TIzhHDxY/UweYqYNLwHAZdNgtOJzoVzkQh7kth50GDaYaVQNspgUlq1rot9hMF9XMmMsjPHGaIIw2lFW0z4o5pJYycaVF8heIw6RL61qgcKszR8Cl2IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717484956; c=relaxed/simple;
-	bh=4iq3XeNrs7ltIrmz0ZFJGziDx9dE933s9OG2qHDTALw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VggV+qJ3AerzTMhbuKMzulihhSaFJCL5QLh8Q4yc7AvxgM6f1/8REyOiu3htxKTUuVn6Di+BnpRFrUsIVykGMy//ctrkG6F6sPQOQQsLwblDjFVYXUf0LvUojF9p9HJsdU3WAw8RwVqF6weGdBZPBYO8QMpwT2Kx1i2Ve0ljLHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VthXQ1B46z4f3jJ3;
-	Tue,  4 Jun 2024 15:08:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id BF0101A0185;
-	Tue,  4 Jun 2024 15:09:03 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgC32w6NvV5mPr6ROw--.1471S3;
-	Tue, 04 Jun 2024 15:09:03 +0800 (CST)
-Subject: Re: [RFC PATCH v4 8/8] xfs: improve truncate on a realtime inode with
- huge extsize
-To: "Darrick J. Wong" <djwong@kernel.org>,
- Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, brauner@kernel.org, david@fromorbit.com,
- chandanbabu@kernel.org, jack@suse.cz, willy@infradead.org,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
- <20240529095206.2568162-9-yi.zhang@huaweicloud.com>
- <ZlnUorFO2Ptz5gcq@infradead.org> <20240531141210.GI52987@frogsfrogsfrogs>
- <Zlnbht9rCiv-d2un@infradead.org> <20240531150016.GL52987@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <7b7d8062-65c3-9659-230a-bc8dea4785f6@huaweicloud.com>
-Date: Tue, 4 Jun 2024 15:09:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1717484968; c=relaxed/simple;
+	bh=A3/3UWbr7tB6Pwqmw5cQ4r6ZRN3gWJ7+oVpZNka9V2k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nMxQUMM4Sq8b8lJkjULp+GFinjGfFmzWtMsT7eDWafqRjCL0VGN8r2iycL9PjjwMnqadTCN2EQEPs78h+pfAPbP9bK7rPN2ABLBnnpNFpQQduUf10gfJuRqN+4OlF6KiHrt1iWxSbLuiw3RkGt3Mxx6XYHj5VCcpSaHjMPQP87U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62a052f74c1so40300587b3.1;
+        Tue, 04 Jun 2024 00:09:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717484965; x=1718089765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H80MceH/Axu7a3UTONeNo9Hwh9a4GRgNTJAXzjxJWVk=;
+        b=NMRDfF1ghiEXCbtYXCjzudaZyLeXkZT9CNy1A+Uvc1XhRIWjfeazyz0ztCUSV93jPs
+         Xjv/202aaEYjims5WZigwrARUmcL8nR/mmSolH/Olwlv0cuwHfyAXFLX7Z05EHm8HASl
+         V55Sj6ezAwVbmWN9QyOg6enQKpTmjhM91ORgLrq1vX1cVzOi+5BT87f3w2UdvDdis/En
+         nxk6iAKyRByvrx1516Rg2PZYEO0iXnq36tI53KQYQtgMz50vhsBJCwaLX8DHFV8oFJli
+         Fv76Z/CJk/A17z11Mgp7zGoO+yhZYS7aGGoSCmR2i4zEw+mlahWMkttWStzjvdFmkt5q
+         +sTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQLCqmEom90ElOb8PVaW63EbW4H/tBXM8F20F3q0WH07ZNWDNq5ZHen2tn6RRH/iz8dlff7OFJ88xsf6GF0Br+4tC4WeIh/QGiNBoj753+niQ0ahBGQdMW2rSSz/txXjZoyE+TSA/IcYhg
+X-Gm-Message-State: AOJu0YwMgdPm1fZLAAD32yccCOKfy2VwdN3DxruNycvlLbf+a32vK8jW
+	oRWlFQ8m1UjcYGN+JjJTIE0+a5OsYSs+8q/rmQoJxudHiQTjXLnksARUKDje
+X-Google-Smtp-Source: AGHT+IEGEEfymXaJmH9/ja3NDM9JMaZN+LyHVTpB/PXffFTuLgzz9Vd3FXcMohLkWjHooEvSBdSjcQ==
+X-Received: by 2002:a05:690c:4445:b0:61b:e13c:e3f4 with SMTP id 00721157ae682-62cabc89d17mr12181577b3.15.1717484964885;
+        Tue, 04 Jun 2024 00:09:24 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c7667d5bbsm17269447b3.97.2024.06.04.00.09.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 00:09:24 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfac121b6a6so97454276.0;
+        Tue, 04 Jun 2024 00:09:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW86EC7kePORvYsXiFBcvvx354gLBxNxNfhwOCADOQzYOsyNAryrTaUo6T5exIlpU3VUPi5nBihO7ujaP8LNsjNgsHdvFR3bFoe0NeYzdQ/57o18VJGlWf9mDth+J9fPUYJC6Mjixo29jEz
+X-Received: by 2002:a25:31d5:0:b0:dc6:c670:c957 with SMTP id
+ 3f1490d57ef6-dfab8b463b7mr1214769276.32.1717484964217; Tue, 04 Jun 2024
+ 00:09:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240531150016.GL52987@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgC32w6NvV5mPr6ROw--.1471S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF4Utw1rGrWxurWftryxXwb_yoW8CFyrpF
-	WUtF9rKr4vy34DX392qr47X3WYqrn3JaySv34FqrW0kFnxu3yayrn3trW5Jws0qFs3J340
-	v395t34fJr9YqrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20240603152601.3689319-1-hugo@hugovil.com> <20240603152601.3689319-3-hugo@hugovil.com>
+In-Reply-To: <20240603152601.3689319-3-hugo@hugovil.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Jun 2024 09:09:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUo7yPdkPKHXYiWqsqM9Zs4rr2G1tQbH9mZ=bjNLgKamw@mail.gmail.com>
+Message-ID: <CAMuHMdUo7yPdkPKHXYiWqsqM9Zs4rr2G1tQbH9mZ=bjNLgKamw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] serial: sc16is7xx: re-add Kconfig SPI or I2C dependency
+To: Hugo Villeneuve <hugo@hugovil.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, hvilleneuve@dimonoff.com, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/31 23:00, Darrick J. Wong wrote:
-> On Fri, May 31, 2024 at 07:15:34AM -0700, Christoph Hellwig wrote:
->> On Fri, May 31, 2024 at 07:12:10AM -0700, Darrick J. Wong wrote:
->>> There are <cough> some users that want 1G extents.
->>>
->>> For the rest of us who don't live in the stratosphere, it's convenient
->>> for fsdax to have rt extents that match the PMD size, which could be
->>> large on arm64 (e.g. 512M, or two smr sectors).
->>
->> That's fine.  Maybe to rephrase my question.  With this series we
->> have 3 different truncate path:
->>
->>  1) unmap all blocks (!rt || rtextsizse == 1)
->>  2) zero leftover blocks in an rtextent (small rtextsize, but > 1)
->>  3) converted leftover block in an rtextent to unwritten (large
->>    rtextsize)
->>
->> What is the right threshold to switch between 2 and 3?  And do we
->> really need 2) at all?
-> 
-> I don't think we need (2) at all.
-> 
-> There's likely some threshold below where it's a wash -- compare with
-> ext4 strategy of trying to write 64k chunks even if that requires
-> zeroing pagecache to cut down on fragmentation on hdds -- but I don't
-> know if we care anymore. ;)
-> 
+Hi Hugo,
 
-I supplemented some tests for small > 1 rtextsizes on my ramdisk,
+On Mon, Jun 3, 2024 at 5:26=E2=80=AFPM Hugo Villeneuve <hugo@hugovil.com> w=
+rote:
+> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+>
+> Commit d49216438139
+> ("serial: sc16is7xx: split into core and I2C/SPI parts (core)")
+> removed Kconfig SPI_MASTER or I2C dependency for SERIAL_SC16IS7XX (core).
+> This removal was done because I inadvertently misinterpreted some review
+> comments.
+>
+> Because of that, the driver question now pops up if both I2C and
+> SPI_MASTER are disabled.
+>
+> Re-add Kconfig SPI_MASTER or I2C dependency to fix the problem.
+>
+> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: d49216438139 ("serial: sc16is7xx: split into core and I2C/SPI part=
+s (core)")
+> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-  mkfs.xfs -f -m reflink=0,rmapbt=0, -d rtinherit=1 \
-           -r rtdev=/dev/pmem1s,extsize=$rtextsize /dev/pmem2s
-  mount -ortdev=/dev/pmem1s /dev/pmem2s /mnt/scratch
-  for i in {1..1000}; \
-  do dd if=/dev/zero of=/mnt/scratch/$i bs=$rtextsize count=1; done
-  sync
-  time for i in {1..1000}; \
-  do xfs_io -c "truncate 4k" /mnt/scratch/$i; done
+Thanks for your patch!
 
-rtextsize            8k      16k      32k      64k     256k     1024k
-zero out:          9.601s  10.229s  11.153s  12.086s  12.259s  20.141s
-convert unwritten: 9.710s   9.642s   9.958s   9.441s  10.021s  10.526s
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -1025,6 +1025,7 @@ config SERIAL_SCCNXP_CONSOLE
+>
+>  config SERIAL_SC16IS7XX
+>         tristate "NXP SC16IS7xx UART support"
+> +       depends on SPI_MASTER || I2C
 
-The test showed that there is no much difference between (2) and (3)
-with small rtextsize, but if the size gets progressively larger, (3)
-will be better, so I agree with you that we could just drop (2) for
-rt device.
+You may want to add "|| COMPILE_TEST".
 
-Thanks,
-Yi.
+>         select SERIAL_CORE
+>         select SERIAL_SC16IS7XX_SPI if SPI_MASTER
+>         select SERIAL_SC16IS7XX_I2C if I2C
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
