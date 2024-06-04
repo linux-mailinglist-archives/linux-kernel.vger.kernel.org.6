@@ -1,156 +1,112 @@
-Return-Path: <linux-kernel+bounces-200835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1C68FB579
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:35:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C2A8FB50A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F022845E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85B721C20B91
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4165C1494C1;
-	Tue,  4 Jun 2024 14:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3958139851;
+	Tue,  4 Jun 2024 14:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2Tl32S+f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcLUXyHJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A0E144313;
-	Tue,  4 Jun 2024 14:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C14D179AF;
+	Tue,  4 Jun 2024 14:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511577; cv=none; b=VYG7Gs0FGPwKSCvuAEtD/Ye32DmP38MuxKOBio3sw3MvS1UyZvEfGTNsotP5u7fI0r3+IfdIi/lcrF0JX7n8Dz/cAllnu5cJBRZGGggWgGOqc1REKpWn9QDIpcTcV1Wj92i/TmfQUfyn3PUN2VRkLM1skvAHYobwW28gIwKz76k=
+	t=1717510713; cv=none; b=ab9DCXtmvO0L+Z09GiPnYijuYhjAGZTXCC/J/MnFVv4n04bwwpk+MiZvTEEEy4z2a1ws/O356+KU6A45DIES+7b3V2ittQeabTBidRKQWtYQEEq337NSW94e+AzB7pF9+PnPnj5ppf2Oacv4YjIpjYb4c9VptrclBP78aYADouU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511577; c=relaxed/simple;
-	bh=o2mxzel60r7gCRivC5Z4TUDgKE+d9kjE+8mhknQD8YM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nd1/l3dRy36g1Dt1Bmri3HOd6N5s/0jC3kcNgKlhg8JR1ZC2yJKDwzdh4JGTfh9k38VRuAQ3pv1onVxiBVzt6myB4wOIrjxUzOButPLYEvQerxs27bJ0dEecuq/uE+OsQmeE3Q/D0n/m3Zf62XvysWAJrXX5Frd0RYfkcV7WrgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2Tl32S+f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44CA5C4AF08;
-	Tue,  4 Jun 2024 14:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1717511577;
-	bh=o2mxzel60r7gCRivC5Z4TUDgKE+d9kjE+8mhknQD8YM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2Tl32S+f0uYVyDTYPdJKeLmAq5C7wR3ltmjeG9Hk45252TkQrW6BOA02wijrNgVqu
-	 1RYzMpiz6b2mKESpa4q/yLcU0j7uA5lm9D3ZfAjAHCRH1njiVH2H5vvXFm19nN4pQH
-	 vrmhg48+g8pdeHO6xd0cHGkmVsarK4CZkEBT2o08=
-Date: Tue, 4 Jun 2024 16:17:29 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH 01/11] rust: add abstraction for struct device
-Message-ID: <2024060428-whoops-flattop-7f43@gregkh>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-2-dakr@redhat.com>
- <2024052038-deviancy-criteria-e4fe@gregkh>
- <Zkuw/nOlpAe1OesV@pollux.localdomain>
- <2024052144-alibi-mourner-d463@gregkh>
- <Zk0HG5Ot-_e0o89p@pollux>
+	s=arc-20240116; t=1717510713; c=relaxed/simple;
+	bh=pvPs7V3cXWF0iTPQLtBmOn4r0QtFbU+zXkNlnCR94Z0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=O26yis7N4ZuJiKOycNeLnKUr8SUSICxGyvVPfZoAZkudHSxi8Q9ECOW2uVS7ZsnVRRqS2c3/ZSx893wYb4khK6Y/KtgE0XXQwHqahsM9IUYsAEbEBRw28ezfOmFDaIRB6igLr5rhmQgmAdjVUkgof7y0xMbXz+ukGMzQ/skpejE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcLUXyHJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8FF3C32786;
+	Tue,  4 Jun 2024 14:18:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717510712;
+	bh=pvPs7V3cXWF0iTPQLtBmOn4r0QtFbU+zXkNlnCR94Z0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TcLUXyHJDe0+47voJSe8NWV+gi7KKtVnk990WzJKPVnnTGUzmXMsqzgj/Ln05kBeR
+	 cypi6Dx8RrUbmuy11i/vwPc9T9Jay7ZipYwhJBzhJB8To/dCAp+bHFx4wtcvDGCtpL
+	 riH1koHSM7xhuEeh90WRHLjnpcUPG3lXJsgoATkJmFDlhDx5MyxD7SwfIGfn9y0KWw
+	 ZCU6DzqANLDnZZoKV0nAwM217CczrH6VT/+Woe6f6fG4gg/Pii53AVl7At+nDpYy4O
+	 8PJy4zCq0ikmMN/hiAH4zlowebcBBYOk/3tIBhCkOI3XAxX8Uiy1/0hMk6eMXjbke3
+	 R+W3D8DNgpB8g==
+Date: Tue, 4 Jun 2024 23:18:29 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>, LKML
+ <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] tracing: Fix some selftest issues
+Message-Id: <20240604231829.16b49c8868d310bcdcd78cab@kernel.org>
+In-Reply-To: <20240604095746.1bbb003c@gandalf.local.home>
+References: <171671825710.39694.6859036369216249956.stgit@devnote2>
+	<20240527192907.49c9220f@rorschach.local.home>
+	<20240529014640.3a04f7301f12eb44738f9f2d@kernel.org>
+	<20240529083818.b7835de167191d4567405ce6@kernel.org>
+	<3a7e679712fb47b6c75af84163b5d3ea252f4da9.camel@linux.intel.com>
+	<20240531113721.c0314e0cdb3beb70c1a6ba7d@kernel.org>
+	<20240531032425.3635dc93@rorschach.local.home>
+	<20240531232047.fca5712a98e360d4a27fd92c@kernel.org>
+	<20240604095746.1bbb003c@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zk0HG5Ot-_e0o89p@pollux>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 10:42:03PM +0200, Danilo Krummrich wrote:
-> On Tue, May 21, 2024 at 11:24:38AM +0200, Greg KH wrote:
-> > On Mon, May 20, 2024 at 10:22:22PM +0200, Danilo Krummrich wrote:
-> > > > > +impl Device {
-> > > > > +    /// Creates a new ref-counted instance of an existing device pointer.
-> > > > > +    ///
-> > > > > +    /// # Safety
-> > > > > +    ///
-> > > > > +    /// Callers must ensure that `ptr` is valid, non-null, and has a non-zero reference count.
-> > > > 
-> > > > Callers NEVER care about the reference count of a struct device, anyone
-> > > > poking in that is asking for trouble.
-> > > 
-> > > That's confusing, if not the caller who's passing the device pointer somewhere,
-> > > who else?
-> > > 
-> > > Who takes care that a device' reference count is non-zero when a driver's probe
-> > > function is called?
+On Tue, 4 Jun 2024 09:57:46 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Fri, 31 May 2024 23:20:47 +0900
+> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> 
+> > The major conflict happens when the boot-time test cleans up the kprobe
+> > events by
 > > 
-> > A device's reference count will be non-zero, I'm saying that sometimes,
-> > some driver core functions are called with a 'struct device' that is
-> > NULL, and it can handle it just fine.  Hopefully no callbacks to the
-> > rust code will happen that way, but why aren't you checking just "to be
-> > sure!" otherwise you could have a bug here, and it costs nothing to
-> > verify it, right?
-> 
-> I get your point on that one. But let me explain a bit more why I think that
-> check is not overly helpful here.
-> 
-> In Rust we have the concept of marking functions as 'unsafe'. Unsafe functions
-> need to document their safety preconsitions, i.e. the conditions the caller of
-> the function must guarantee. The caller of an unsafe function needs an unsafe
-> block for it to compile and every unsafe block needs an explanation why it is
-> safe to call this function with the corresponding arguments.
-> 
-> (Ideally, we want to avoid having them in the first place, but for C abstractions
-> we have to deal with raw pointers we receive from the C side and dereferencing a
-> raw pointer is unsafe by definition.)
-> 
-> In this case we have a function that constructs the Rust `Device` structure from
-> a raw (device) pointer we potentially received from the C side. Now we have to
-> decide whether this function is going to be unsafe or safe.
-> 
-> In order for this function to be safe we would need to be able to guarantee that
-> this is a valid, non-null pointer with a non-zero reference count, which
-> unfortunately we can't. Hence, it's going to be an unsafe function.
-
-But you can verify it is non-null, so why not?
-
-> A NULL pointer check would not make it a safe function either, since the pointer
-> could still be an invalid one, or a pointer to a device it's not guaranteed that
-> the reference count is held up for the duration of the function call.
-
-True, but you just took one huge swatch of "potential crashes" off the
-table.  To ignore that feels odd.
-
-> Given that, we could add the NULL check and change the safety precondition to
-> "valid pointer to a device with non-zero reference count OR NULL", but I don't
-> see how this improves the situation for the caller, plus we'd need to return
-> `Result<Device>` instead and let the caller handle that the `Device` was not
-> created.
-
-It better be able to handle if `Device` was not created, as you could
-have been out of memory and nothing would have been allocated.  To not
-check feels very broken.
-
-> > Ok, if you say so, should we bookmark this thread for when this does
-> > happen?  :)
-> 
-> I'm just saying the caller has to validate that or provide a rationale why this
-> is safe anyways, hence it'd be just a duplicate check.
-> 
+> >   dyn_events_release_all(&trace_kprobe_ops);
 > > 
-> > What will the rust code do if it is passed in a NULL pointer?  Will it
-> > crash like C code does?  Or something else?
+> > And I removed it by [3/3] patch in this series :) because it does not
+> > needed and not confirmed there is no other kprobe events when the test
+> > starts. Also the warning message are redundant so I removed it by [2/3].
+> > 
+> > So without this [1/3], if we apply [2/3] and [3/3], the problem will be
+> > mitigated, but I think the root cause is that these modules are built-in.
 > 
-> It mostly calls into C functions with this pointer, depends on what they do.
+> I'm OK with making them module only, but I don't see any selftests for
+> sythetic events. I think they should have a boot up test as well. If we
+> remove them, let's add something to test them at boot up. Then the boot up
+> code could clean it up.
 > 
-> Checking a few random places, e.g. [1], it seems to crash in most cases.
+> Or change the test module to be a boot up test that cleans itself up if it
+> is compiled in as not a module?
+
+Yeah, I think we may need another test code for synthetic events, which
+also triggering the synthetic events.
+
+BTW, some these bootup tests can be ported on KUnit. Do you have a plan to
+use KUnit?
+
+Thank you,
+
 > 
-> [1] https://elixir.free-electrons.com/linux/latest/source/drivers/base/core.c#L3863
+> -- Steve
+> 
 
-Great, then you should check :)
 
-thanks,
-
-greg k-h
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
