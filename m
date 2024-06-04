@@ -1,146 +1,390 @@
-Return-Path: <linux-kernel+bounces-201022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3185A8FB84A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:01:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49928FB85D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE00B28349F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:01:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6854828679A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C0513D24C;
-	Tue,  4 Jun 2024 16:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HpwwDhn7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8954E149DEE;
+	Tue,  4 Jun 2024 16:02:01 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB8D1420C9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB4E149C55;
+	Tue,  4 Jun 2024 16:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516864; cv=none; b=Z3bhAn6fo38tl3s2RZ8tTThKI9u3IP/+i0n4STrtsz0mVWb4hmScUabYH4Z+YH8Fj+k0J2hsHu40H05+GQExq9FPKJshLoa2mgYrVrV3PlBxuikohXzviKlPQVP7CW//aC6qkpeA3HkGGGULNPszGhoG8/Tn/vcBhsYUKvUNHL4=
+	t=1717516920; cv=none; b=tHiO5wiwkh1i7P84MbJWTpB1wnpy7SOvWKh++m0M6TwrvGzfJF/LD+fWP5VRNylqRiJQE1A6GCsBvKVahrWVzWa/iCsYyPZPtuGZz2HbPQccSD9Motbm6NcWZmZoHKx7xcSl5Y5A3npR0YoHyIF4Ee0LQ4L/vqNausZVDhI0Qzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516864; c=relaxed/simple;
-	bh=cearPzUutPsAMGH1Y6EdkHOgarYAuOPoDbddxCp4K44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y8cjoxxgdkIKiZKeU8fe7kaFyiqqezP4jxtF9OYcbxqaJH2OIHBR1EapyiID1qlySBBLYA+8mQPKXWeTAiX4S3RB8bXCZp+nXHvKETBM4FeTBV9GdmZTiW0k93WM1aAZO+mTMlVPQsXzix7c6yeCDIu2GTmNtUJGNbc2BHsMhrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HpwwDhn7; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717516862; x=1749052862;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cearPzUutPsAMGH1Y6EdkHOgarYAuOPoDbddxCp4K44=;
-  b=HpwwDhn7S2nM7LbikrUrZSBjm92hhtgY2iRYz6h8vbDPxHoP7n1qQVKy
-   5iUzUIvX4IqY75gLn9BsxmYCW9YNiA59n32FMb9pYblf6F4teMOeDMD15
-   fFYKALfMRuPJaqPJ/M71hUnfuVnxULK9JHZE7n+hXK5/LlXjr8JrBeVfZ
-   Bb3DibK3bD4q0vlaEwIpI4mHKZI44Tq9MSY0+Z7YotvlLWut0+4ZfCOAb
-   p+UmmvpP2FMQnNxUYmqalX3P7QVjNTfjMDupVceJm/p95RBgXHigpcsoX
-   8P5QMcxc67JVM4EMx0nPqa1uVsQMHTBZqxYrJqgpTXVypVMdhcoHUUpLb
-   w==;
-X-CSE-ConnectionGUID: GXvnw0QkS/a1tlZxjnIz3g==
-X-CSE-MsgGUID: fytc5eYHT6+IV+F8zpHNZw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14207007"
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="14207007"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:01:01 -0700
-X-CSE-ConnectionGUID: nye2neQtRJSZaJn3uapRtA==
-X-CSE-MsgGUID: 5W+Z/73WSKuecZp17OX15Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="37362374"
-Received: from cdpresto-mobl2.amr.corp.intel.com.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:01:00 -0700
-Message-ID: <3f15814c-de9c-4aa6-b56d-82761bb6520a@intel.com>
-Date: Tue, 4 Jun 2024 09:00:59 -0700
+	s=arc-20240116; t=1717516920; c=relaxed/simple;
+	bh=SMBSb3Dc2fwROkWUlxe5ulZUXFb6LfXWCv/+EQodzsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VXWKvRqQ9wq8PY5OoNRdg9DEIDRkC4p1/K3J2OkAfmcQQ3HUhtsUCDeXUJtIHahaIFzI/em7xrusmGEfuGiLrJ5NAVJYmHpofMPJn3znOrMSXdJqqcXesi3/bDhWYBNkEwR1coyhEu+biFMqJ0cJhHn0DPj2ZFWkhXBsk+DR7kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a08091c2bso63310217b3.0;
+        Tue, 04 Jun 2024 09:01:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717516916; x=1718121716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XIOf757GnuZR9iGqOgRzuj9wVjjOZufKYrP2krAzxUo=;
+        b=oFsQ0r1n5jRZ4Q6BirAA972SV6spu+Cyk3Bs9bdZPlyg+Vt39cYru9j7hpxK9szW/X
+         y8a41EBUHLFBBiUmyHnop9P9OVjt8MS1+2YU0Lce0GW9FlZOEPrxOYw2P50/325w7Txc
+         9xPxtN37pfJLFOPocmCTKEEwZQQ3mMFmJNvA9Dqvyje0vyyZZvPZZM+6JXZnGQY0tWtE
+         fPBrV5R4xekaZL6n2jBEDmogTMQBmZXP9PF3VCEeqHWtr4y9YBdLDel5+seUR41xL3JQ
+         1hnVtM8/Smtq5UqhBnAYA08J/iYT1RCGnDjC5kEZdyrK1K4sMaHInn6GktZ7kyOPHcvI
+         xdrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaoq7ogx4+0xxeEfrjxZxcwUuGbCB+cWFT1quKdd04Aw7hJXuwsuonRjgoreC7YwGjHYgiwh48govsAvRSgsUjHsACnecaSclWI187hukfsenOsJH5QOkdSs+dUyoeSszZH9JnQyVApXbE8W4C/+ldI5qRNv/UKhcXNyEtR2sr8J5LdEx9riaW2ijfnrVuSiV0WqyPRBy3HQuLTZM7egFcRDvecwsU
+X-Gm-Message-State: AOJu0YzTmG2XPltwL6BWm5IyOrXdLF03ChFxwZ9sQ7KgfWb1qH1rxeQS
+	YCMK7uGyDNf+PLqRHerS+1cv/rVixlnfwMIm0/s8msP4NxQW48e684DWlWtg
+X-Google-Smtp-Source: AGHT+IGMjHqqLU8NcQLUDocL6X+Aagi8Hu1AijdF21DssrTbF3gBcoOSON6V9NZbxlBhbnQmaDRvpQ==
+X-Received: by 2002:a81:4f93:0:b0:627:dfbd:89e with SMTP id 00721157ae682-62c7969b500mr114778237b3.11.1717516915930;
+        Tue, 04 Jun 2024 09:01:55 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766b3259sm18453877b3.109.2024.06.04.09.01.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 09:01:55 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfa682a4025so5261930276.2;
+        Tue, 04 Jun 2024 09:01:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXghGfvVDRq7y497cEE70dfqaXDhL/dOoiMu7V2zR04f9TdTYmFYChBXXSs6IZN2a+/TqWIeiOiUJBd/qUJoKjXzx13rp3NBuZ2HJKoZAas9eGl9rrhtsYYxjI6vmfcLS7AjylX6NGDuqfamNgEymRMjgwEVAlPDGWz+MHQ/3r5FEerC/n6Zv9jRIxB2QHtGdBDexJt5gKwFwFNejNOkP2hEyq2/99T
+X-Received: by 2002:a25:6c89:0:b0:dfa:b412:20ae with SMTP id
+ 3f1490d57ef6-dfab41221efmr4047424276.7.1717516915044; Tue, 04 Jun 2024
+ 09:01:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] x86/entry: Remove unwanted instrumentation in
- common_interrupt()
-To: Dmitry Vyukov <dvyukov@google.com>, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
- elver@google.com, glider@google.com, nogikh@google.com,
- tarasmadan@google.com, Peter Zijlstra <peterz@infradead.org>
-References: <cover.1717507310.git.dvyukov@google.com>
- <1ada3be307bbd076c4ea63530cf445e7fbd0e4e7.1717507310.git.dvyukov@google.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <1ada3be307bbd076c4ea63530cf445e7fbd0e4e7.1717507310.git.dvyukov@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240524082800.333991-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240524082800.333991-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Jun 2024 18:01:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVPZgxsM1OsFt-+802mzajKR6CO8B9ofFzaThKsBAdGTQ@mail.gmail.com>
+Message-ID: <CAMuHMdVPZgxsM1OsFt-+802mzajKR6CO8B9ofFzaThKsBAdGTQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk: renesas: Add RZ/V2H CPG core wrapper driver
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/4/24 06:45, Dmitry Vyukov wrote:
-> The manifestation is that KCOV produces spurious coverage
-> in kvm_set_cpu_l1tf_flush_l1d() in random places because
-> the call happens when preempt count is not yet updated
-> to say that we are in an interrupt.
-> 
-> Mark kvm_set_cpu_l1tf_flush_l1d() as __always_inline and move
-> out of instrumentation_begin/end() section.
-> It only calls __this_cpu_write() which is already safe to call
-> in noinstr contexts.
+Hi Prabhakar,
 
-I've internalized the main rules around noinstr to basically be: Only
-call noinstr functions before begin_instrumentation().  Second, try to
-minimize the amount of noinstr code.
+Thanks for your patch!
 
-This patch seems to be adding another rule which is that all code before
-preempt_count manipulation needs to be noinstr.
+On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add CPG core helper wrapper driver for RZ/V2H SoC.
 
-_Is_ that a new rule, or was it something I was missing?
+What is a "core helper wrapper"? ;-)
+
+Looking at the structure, this looks like a family-specific clock driver?
+Will there be more RZ/V2H-alike SoCs?
+
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/clk/renesas/Kconfig     |   5 +
+>  drivers/clk/renesas/Makefile    |   1 +
+>  drivers/clk/renesas/rzv2h-cpg.c | 673 ++++++++++++++++++++++++++++++++
+>  drivers/clk/renesas/rzv2h-cpg.h | 149 +++++++
+>  4 files changed, 828 insertions(+)
+>  create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
+>  create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
+>
+> diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+> index d252150402e8..254203c2cb2e 100644
+> --- a/drivers/clk/renesas/Kconfig
+> +++ b/drivers/clk/renesas/Kconfig
+> @@ -40,6 +40,7 @@ config CLK_RENESAS
+>         select CLK_R9A07G054 if ARCH_R9A07G054
+>         select CLK_R9A08G045 if ARCH_R9A08G045
+>         select CLK_R9A09G011 if ARCH_R9A09G011
+> +       select CLK_R9A09G057 if ARCH_R9A09G057
+>         select CLK_SH73A0 if ARCH_SH73A0
+>
+>  if CLK_RENESAS
+> @@ -193,6 +194,10 @@ config CLK_R9A09G011
+>         bool "RZ/V2M clock support" if COMPILE_TEST
+>         select CLK_RZG2L
+>
+> +config CLK_R9A09G057
+> +       bool "Renesas RZ/V2H(P) clock support" if COMPILE_TEST
+
+Please drop "Renesas "
+(few other symbols have it, I'll fix the remaining).
+
+> +       select RESET_CONTROLLER
+> +
+>  config CLK_SH73A0
+>         bool "SH-Mobile AG5 clock support" if COMPILE_TEST
+>         select CLK_RENESAS_CPG_MSTP
+> diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+> index f7e18679c3b8..79cc7c4d77c6 100644
+> --- a/drivers/clk/renesas/Makefile
+> +++ b/drivers/clk/renesas/Makefile
+> @@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_R9A07G044)           +=3D r9a07g044-cp=
+g.o
+>  obj-$(CONFIG_CLK_R9A07G054)            +=3D r9a07g044-cpg.o
+>  obj-$(CONFIG_CLK_R9A08G045)            +=3D r9a08g045-cpg.o
+>  obj-$(CONFIG_CLK_R9A09G011)            +=3D r9a09g011-cpg.o
+> +obj-$(CONFIG_CLK_R9A09G057)            +=3D rzv2h-cpg.o
+
+If this is a family-specific clock driver, please use a separate Kconfig
+symbol, like other families do, and move it ...
+
+>  obj-$(CONFIG_CLK_SH73A0)               +=3D clk-sh73a0.o
+>
+>  # Family
+
+... here.
+
+> --- /dev/null
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+
+> +/**
+> + * struct rzv2h_cpg_priv - Clock Pulse Generator Private Data
+> + *
+> + * @rcdev: Reset controller entity
+> + * @dev: CPG device
+> + * @base: CPG register block base address
+> + * @rmw_lock: protects register accesses
+> + * @clks: Array containing all Core and Module Clocks
+> + * @num_core_clks: Number of Core Clocks in clks[]
+> + * @num_mod_clks: Number of Module Clocks in clks[]
+> + * @num_resets: Number of Module Resets in info->resets[]
+> + * @info: Pointer to platform data
+> + */
+> +struct rzv2h_cpg_priv {
+> +       struct reset_controller_dev rcdev;
+> +       struct device *dev;
+> +       void __iomem *base;
+> +       spinlock_t rmw_lock;
+
+Unused
+
+> +
+> +       struct clk **clks;
+> +       unsigned int num_core_clks;
+> +       unsigned int num_mod_clks;
+> +       unsigned int num_resets;
+> +
+> +       const struct rzv2h_cpg_info *info;
+> +};
+
+> +static struct clk
+> +*rzv2h_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
+> +                              void *data)
+> +{
+> +       unsigned int clkidx =3D clkspec->args[1];
+> +       struct rzv2h_cpg_priv *priv =3D data;
+> +       struct device *dev =3D priv->dev;
+> +       const char *type;
+> +       struct clk *clk;
+> +
+> +       switch (clkspec->args[0]) {
+> +       case CPG_CORE:
+> +               type =3D "core";
+> +               clk =3D priv->clks[clkidx];
+
+No range checking?
+
+> +               break;
+> +
+> +       case CPG_MOD:
+> +               type =3D "module";
+> +               if (clkidx >=3D priv->num_mod_clks) {
+> +                       dev_err(dev, "Invalid %s clock index %u\n", type,
+> +                               clkidx);
+> +                       return ERR_PTR(-EINVAL);
+> +               }
+> +               clk =3D priv->clks[priv->num_core_clks + clkidx];
+> +               break;
+> +
+> +       default:
+> +               dev_err(dev, "Invalid CPG clock type %u\n", clkspec->args=
+[0]);
+> +               return ERR_PTR(-EINVAL);
+> +       }
+> +
+> +       if (IS_ERR(clk))
+> +               dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
+> +                       PTR_ERR(clk));
+> +       else
+> +               dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
+> +                       clkspec->args[0], clkspec->args[1], clk,
+> +                       clk_get_rate(clk));
+> +       return clk;
+> +}
+
+> +static void __init
+> +rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
+> +                          const struct rzv2h_cpg_info *info,
+> +                          struct rzv2h_cpg_priv *priv)
+> +{
+> +       struct mstp_clock *clock =3D NULL;
+> +       struct device *dev =3D priv->dev;
+> +       unsigned int id =3D mod->id;
+> +       struct clk_init_data init;
+> +       struct clk *parent, *clk;
+> +       const char *parent_name;
+> +       unsigned int i;
+> +
+> +       WARN_DEBUG(id < priv->num_core_clks);
+> +       WARN_DEBUG(id >=3D priv->num_core_clks + priv->num_mod_clks);
+> +       WARN_DEBUG(mod->parent >=3D priv->num_core_clks + priv->num_mod_c=
+lks);
+> +       WARN_DEBUG(PTR_ERR(priv->clks[id]) !=3D -ENOENT);
+> +
+> +       if (!mod->name) {
+> +               /* Skip NULLified clock */
+> +               return;
+> +       }
+
+Do you have NULLified clocks?
+
+
+> new file mode 100644
+> index 000000000000..689c123d01c5
+> --- /dev/null
+> +++ b/drivers/clk/renesas/rzv2h-cpg.h
+
+> +/**
+> + * struct rzv2h_mod_clk - Module Clocks definitions
+> + *
+> + * @name: handle between common and hardware-specific interfaces
+> + * @id: clock index in array containing all Core and Module Clocks
+> + * @parent: id of parent clock
+> + * @off: register offset
+
+control register offset
+
+> + * @bit: ON/MON bit
+
+> + * @monoff: monitor register offset
+> + * @monbit: monitor bit
+> + */
+> +struct rzv2h_mod_clk {
+> +       const char *name;
+> +       unsigned int id;
+> +       unsigned int parent;
+> +       u16 off;
+> +       u8 bit;
+
+Perhaps name them ctrl{off,bit}?
+
+However, as all CPG_CLKONn registers are contiguous, storing
+the register index (u8) might be better than the register offset (u16)?
+
+> +       u16 monoff;
+> +       u8 monbit;
+
+Likewise for the CPG_CLKMONx registers...
+
+> +};
+> +
+> +#define DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _monoff, _monbit) =
+       \
+> +       { \
+> +               .name =3D _name, \
+> +               .id =3D MOD_CLK_BASE + (_id), \
+> +               .parent =3D (_parent), \
+> +               .off =3D (_off), \
+> +               .bit =3D (_bit), \
+> +               .monoff =3D (_monoff), \
+> +               .monbit =3D (_monbit), \
+> +       }
+> +
+> +#define DEF_MOD(_name, _id, _parent, _off, _bit, _monoff, _monbit)     \
+> +       DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _monoff, _monbit)
+> +
+> +/**
+> + * struct rzv2h_reset - Reset definitions
+> + *
+> + * @off: reset register offset
+> + * @bit: reset bit
+> + * @monoff: monitor register offset
+> + * @monbit: monitor bit
+> + */
+> +struct rzv2h_reset {
+> +       u16 resoff;
+> +       u8 resbit;
+> +       u16 monoff;
+> +       u8 monbit;
+
+... and the CPG_RSTx and CPG_RSTMONx registers.
+
+
+> +};
+> +
+> +#define DEF_RST(_id, _resoff, _resbit, _monoff, _monbit)       \
+> +       [_id] =3D { \
+> +               .resoff =3D (_resoff), \
+> +               .resbit =3D (_resbit), \
+> +               .monoff =3D (_monoff), \
+> +               .monbit =3D (_monbit) \
+> +       }
+> +
+> +/**
+> + * struct rzv2h_cpg_info - SoC-specific CPG Description
+> + *
+> + * @core_clks: Array of Core Clock definitions
+> + * @num_core_clks: Number of entries in core_clks[]
+> + * @num_total_core_clks: Total number of Core Clocks (exported + interna=
+l)
+> + *
+> + * @mod_clks: Array of Module Clock definitions
+> + * @num_mod_clks: Number of entries in mod_clks[]
+> + * @num_hw_mod_clks: Number of Module Clocks supported by the hardware
+> + *
+> + * @resets: Array of Module Reset definitions
+> + * @num_resets: Number of entries in resets[]
+> + *
+> + * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
+> + *                 should not be disabled without a knowledgeable driver
+> + * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
+> + * @pll_get_clk1_offset: Function pointer to get PLL CLK1 offset
+> + * @pll_get_clk2_offset: Function pointer to get PLL CLK2 offset
+> + */
+> +struct rzv2h_cpg_info {
+
+> +       /* function pointers for PLL information */
+> +       int (*pll_get_clk1_offset)(int clk);
+> +       int (*pll_get_clk2_offset)(int clk);
+
+Why are these function pointers?
+
+> +};
+> +
+> +#endif /* __RENESAS_RZV2H_CPG_H__ */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
