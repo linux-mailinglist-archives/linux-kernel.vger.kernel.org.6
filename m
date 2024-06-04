@@ -1,166 +1,218 @@
-Return-Path: <linux-kernel+bounces-200515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8BE8FB11D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:27:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D5A8FB126
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F85A1C21FB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:27:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706CD1F224B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C654145FE0;
-	Tue,  4 Jun 2024 11:26:43 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0567D145A1B;
+	Tue,  4 Jun 2024 11:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OdRrewFP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E278F145343;
-	Tue,  4 Jun 2024 11:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355153236;
+	Tue,  4 Jun 2024 11:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717500403; cv=none; b=fnSZQJBm3OuqOd+v2L26GZLH2dBJm2L9gKTU2EUDoak6Sc+pS3gW67oFVkJmrnN2ZGZzmfwFGTI3CifwCAW6nIAMHDJLEOYhiTa6r/tgiQz5VUt5nVjBdfUhztBelBmoBY3OrSIOecDEuxQ8R6NURh9P03wxoH2kPGekuOK4LfY=
+	t=1717500616; cv=none; b=WGiLTnQHZQokUbWjcurFwV9OYL0kiYLIurtsgaeiPn+j3zrgvd5k1A90BUHCZHpG9BHRh6tP+cMqTphO5tziPZuQysupldxKSd1TGXoJf5EHa66Fsv6l5kTZkKsaIGKFflSsRCKpgG3HW186kHT/JbzCCk8u/Jz781FbNoXd214=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717500403; c=relaxed/simple;
-	bh=2sqRP+cDWakjPW2TLGsMmWbJp1y1dv+ct4RW2zKc/Jg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ovaM7Cbv1o0/0QFRYuoL7trceEwRa352OEwnSLSo0PohalmudRVYbzSubsOePK9f/f+yNsC6qLaueK4/Iyh0DSbgIWZkgrVi8Ji7+8ZQD22T1tMMkXyNMOofT4n8J6Z5hztyHNiWHyvrc+PNU1J/Xi7jJu/L6czCHlocZ/38IiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VtpFZ2z71z4f3mJP;
-	Tue,  4 Jun 2024 19:26:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 78BD21A0CB7;
-	Tue,  4 Jun 2024 19:26:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAXKwTp+V5mJkItOg--.61165S6;
-	Tue, 04 Jun 2024 19:26:36 +0800 (CST)
-From: Li Lingfeng <lilingfeng@huaweicloud.com>
-To: dhowells@redhat.com,
-	marc.dionne@auristor.com,
-	raven@themaw.net,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	miklos@szeredi.hu,
-	trond.myklebust@hammerspace.com,
-	anna@kernel.org,
-	sfrench@samba.org,
-	pc@manguebit.com,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	bharathsm@microsoft.com,
-	djwong@kernel.org
-Cc: linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	autofs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	zhangxiaoxu5@huawei.com,
-	lilingfeng@huaweicloud.com,
-	lilingfeng3@huawei.com
-Subject: [PATCH RFC 2/2] NFSv4: set sb_flags to second superblock
-Date: Tue,  4 Jun 2024 19:26:36 +0800
-Message-Id: <20240604112636.236517-3-lilingfeng@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240604112636.236517-1-lilingfeng@huaweicloud.com>
-References: <20240604112636.236517-1-lilingfeng@huaweicloud.com>
+	s=arc-20240116; t=1717500616; c=relaxed/simple;
+	bh=TSTA2G2LQUoLI818l9IzE6WcYMZFTkdSN3J60PlP/OM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oUK6K1LtbYSCJ0YdbuSatG5du47SttAExr+uHpWPjePti8Th4cBiGjkhXHpJQ525u9wYF6bmUj5gLKOX1hemBxzmozqIPIwuHooxEWPRCwFeDl8Yc2tQyyfUmFQmpJoxm6yc7SEYe7Qoe3EAbR6dm+B3u1rVkl0XMmQ/Lc2j1tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OdRrewFP; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717500614; x=1749036614;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TSTA2G2LQUoLI818l9IzE6WcYMZFTkdSN3J60PlP/OM=;
+  b=OdRrewFP5MUVENDRqkkcuHEBPp/VmaAIOHBfvDoyeVA4sPjbgEcgCn+S
+   mxS1mSQ8fZGnK1y1AclN/EBBmcyRA4VeNzfzYc7xIXy8mzC92z0Z9OQo6
+   8T90/gbKrZdzLAdL51tZ4FSlZ+7DHBP+h779lyRKiylWQwPL7EQ2KTNfQ
+   SclejSY99WDVb806Iqa+nbC+Eucb5tpLuztueF/LV5BnzorMWgL/VCKDR
+   vIVEASKy38b2JvYomtHUuGQp55sQa4iO/DYQ14gvZm8llWbPP3IJdXPTE
+   cri0RB0+ANh7CRRBNsvbq8HGCgQAu+FW9GUnj4c8YD1/WjRmRxRwYZfyW
+   A==;
+X-CSE-ConnectionGUID: yoedKoM6S3+44ld1Z20dUw==
+X-CSE-MsgGUID: WKEPKTdaRlmfMrXI8MXxvA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="14263076"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="14263076"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 04:30:13 -0700
+X-CSE-ConnectionGUID: SpeJQ3pTRt+lLlyUgBliTg==
+X-CSE-MsgGUID: PDxX2zhER16Ox+JxrCjxVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="41670248"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 04 Jun 2024 04:30:09 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sESMh-000N8x-06;
+	Tue, 04 Jun 2024 11:30:07 +0000
+Date: Tue, 4 Jun 2024 19:29:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andreas Kemnade <andreas@kemnade.info>, marcel@holtmann.org,
+	luiz.dentz@gmail.com, johan@kernel.org, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, pmenzel@molgen.mpg.de,
+	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>,
+	tomi.valkeinen@ideasonboard.com,
+	=?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@gmail.com>,
+	robh@kernel.org, hns@goldelico.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 3/4] gnss: Add driver for AI2 protocol
+Message-ID: <202406041854.1Ad8rnRn-lkp@intel.com>
+References: <20240603144400.2195564-4-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAXKwTp+V5mJkItOg--.61165S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF1DCFW3ur1xAr1UGF1Utrb_yoW5CF1rpF
-	WfAryUGrWkJF1UXa10yFWrXa4Sy34kZF4UAFn3ua4kAryDXr1xX3W3tFWY9a48Zr4fZr98
-	XFWftF13C3ZrJFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbvtC7UU
-	UUU==
-X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603144400.2195564-4-andreas@kemnade.info>
 
-From: Li Lingfeng <lilingfeng3@huawei.com>
+Hi Andreas,
 
-During the process of mounting an NFSv4 client, two superblocks will be
-created in sequence. The first superblock corresponds to the root
-directory exported by the server, and the second superblock corresponds to
-the directory that will be actually mounted. The first superblock will
-eventually be destroyed.
-The flag passed from user mode will only be passed to the first
-superblock, resulting in the actual used superblock not carrying the flag
-passed from user mode(fs_context_for_submount() will set sb_flags as 0).
+kernel test robot noticed the following build errors:
 
-If the 'ro' parameter is used in two consecutive mount commands, only the
-first execution will create a new vfsmount, and the kernel will return
-EBUSY on the second execution. However, if a remount command with the 'ro'
-parameter is executed between the two mount commands, both mount commands
-will create new vfsmounts.
+[auto build test ERROR on bluetooth/master]
+[also build test ERROR on bluetooth-next/master char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.10-rc2 next-20240604]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The superblock generated after the first mount command does not have the
-'ro' flag, and the read-only status of the file system is implemented by
-checking the read-only flag of the vfsmount. After executing the remount
-command, the 'ro' flag will be added to the superblock. When the second
-mount command is executed, the comparison result between the superblock
-with the 'ro' flag and the fs_context without the flag in the
-nfs_compare_mount_options() function will be different, resulting in the
-creation of a new vfsmount.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andreas-Kemnade/gnss-Add-AI2-protocol-used-by-some-TI-combo-chips/20240603-224753
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
+patch link:    https://lore.kernel.org/r/20240603144400.2195564-4-andreas%40kemnade.info
+patch subject: [PATCH v3 3/4] gnss: Add driver for AI2 protocol
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20240604/202406041854.1Ad8rnRn-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406041854.1Ad8rnRn-lkp@intel.com/reproduce)
 
-This problem can be reproduced by performing the following operations:
-mount -t nfs -o ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
-mount -t nfs -o remount,ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
-mount -t nfs -o ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
-Two vfsmounts are generated:
-[root@localhost ~]# mount | grep nfs
-192.168.240.250:/sdb on /mnt/sdb type nfs4 (ro,relatime,vers=4.0,
-rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,
-sec=sys,clientaddr=192.168.240.251,local_lock=none,addr=192.168.240.250)
-192.168.240.250:/sdb on /mnt/sdb type nfs4 (ro,relatime,vers=4.0,
-rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2,
-sec=sys,clientaddr=192.168.240.251,local_lock=none,addr=192.168.240.250)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406041854.1Ad8rnRn-lkp@intel.com/
 
-Fix this by setting sb_flags to second superblock.
+All errors (new ones prefixed by >>):
 
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- fs/nfs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   In file included from drivers/gnss/ai2.c:9:
+   In file included from include/linux/gnss.h:13:
+   In file included from include/linux/kfifo.h:42:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2210:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/gnss/ai2.c:9:
+   In file included from include/linux/gnss.h:13:
+   In file included from include/linux/kfifo.h:42:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/gnss/ai2.c:9:
+   In file included from include/linux/gnss.h:13:
+   In file included from include/linux/kfifo.h:42:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/gnss/ai2.c:9:
+   In file included from include/linux/gnss.h:13:
+   In file included from include/linux/kfifo.h:42:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/gnss/ai2.c:340:6: error: call to undeclared function 'get_unaligned_le16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     340 |         if (get_unaligned_le16(data + i) != sum) {
+         |             ^
+   7 warnings and 1 error generated.
 
-diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-index 887aeacedebd..8b3d75af60d4 100644
---- a/fs/nfs/namespace.c
-+++ b/fs/nfs/namespace.c
-@@ -158,7 +158,7 @@ struct vfsmount *nfs_d_automount(struct path *path, unsigned int sb_flags)
- 	/* Open a new filesystem context, transferring parameters from the
- 	 * parent superblock, including the network namespace.
- 	 */
--	fc = fs_context_for_submount(path->mnt->mnt_sb->s_type, path->dentry, 0);
-+	fc = fs_context_for_submount(path->mnt->mnt_sb->s_type, path->dentry, sb_flags);
- 	if (IS_ERR(fc))
- 		return ERR_CAST(fc);
- 
+
+vim +/get_unaligned_le16 +340 drivers/gnss/ai2.c
+
+   324	
+   325	/* do some sanity checks and split frame into packets */
+   326	static void process_ai2_frame(struct ai2_device *ai2dev)
+   327	{
+   328		u16 sum;
+   329		int i;
+   330		u8 *head;
+   331		u8 *data;
+   332	
+   333		sum = 0;
+   334		data = ai2dev->recv_skb->data;
+   335		for (i = 0; i < ai2dev->recv_skb->len - 2; i++)
+   336			sum += data[i];
+   337	
+   338		print_hex_dump_bytes("ai2 frame: ", DUMP_PREFIX_OFFSET, data, ai2dev->recv_skb->len);
+   339	
+ > 340		if (get_unaligned_le16(data + i) != sum) {
+   341			dev_dbg(ai2dev->dev,
+   342				"checksum error in reception, dropping frame\n");
+   343			return;
+   344		}
+   345	
+   346		/* reached if byte 1 in the command packet is set to 1 */
+   347		if (data[1] == AI2_ACK)
+   348			return;
+   349	
+   350		head = skb_pull(ai2dev->recv_skb, 2); /* drop frame start marker */
+   351		while (head && (ai2dev->recv_skb->len >= 3)) {
+   352			u8 cmd;
+   353			u16 pktlen;
+   354	
+   355			cmd = head[0];
+   356			pktlen = get_unaligned_le16(head + 1);
+   357			data = skb_pull(ai2dev->recv_skb, 3);
+   358			if (!data)
+   359				break;
+   360	
+   361			if (pktlen > ai2dev->recv_skb->len)
+   362				break;
+   363	
+   364			head = skb_pull(ai2dev->recv_skb, pktlen);
+   365	
+   366			process_ai2_packet(ai2dev, cmd, data, pktlen);
+   367		}
+   368	}
+   369	
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
