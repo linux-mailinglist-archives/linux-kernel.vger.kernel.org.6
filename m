@@ -1,106 +1,139 @@
-Return-Path: <linux-kernel+bounces-201111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A648FB9B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EACD8FB9BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779941C21359
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:58:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E5D1F22AE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6588A1494DA;
-	Tue,  4 Jun 2024 16:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7D6147C98;
+	Tue,  4 Jun 2024 17:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L51wCm3/"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U7csEkel"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2172AF16;
-	Tue,  4 Jun 2024 16:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A973953BE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717520301; cv=none; b=TJjiElbozJZ0NQDOM3Mas48x8EAI+3Hu/J57McK2i01vbiE+D/nowDkI3VGWxS1StH+tmuXUlhH6GEOFFGPBcuNxcb/PRgzbrowvUpIHowiUZq+xuiNtarqKeZ+w68FoWX2v4ROyXlgWfWiS3Oh0J2mtusokYDVkvp7LV3vF6fk=
+	t=1717520419; cv=none; b=eua1UJXFMKMhVNXKPEgKBOQf2YucJvBWvpot9KJHDoN4XAzVRzy7CuQwyqxRzoEMdappaadpqBrVQDd/Ax9qziYTngpaZD4C43eUKXm42Hgpv2/TQQJ9yGjk6TZ9Xjfx6yBpyCJGCwLfumH0r+TF1Qo8ZqD4aM9Ht/4ingdDNBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717520301; c=relaxed/simple;
-	bh=1DyR+KMxq8QLa249kWyuPsFZ6goVO/jlv/qaOX5W1wE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ka8S3lNPwYi4LnNMVWtBXWr2qPXO2vZam0n6u53Dmgny7cFCM2GMQtzO6vuPDqZhdqOgN31lvqIjkZvYQEp8N42xYz66ySqaDZ5dATESRNw4bWpudPM/BCHydRAiHxSDCIKMm32lXk7dHLox6Yzqe6Cn4i/uYsHm8+EHPU2ufps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L51wCm3/; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f8ec7e054dso4039199b3a.2;
-        Tue, 04 Jun 2024 09:58:20 -0700 (PDT)
+	s=arc-20240116; t=1717520419; c=relaxed/simple;
+	bh=fF0TXTSu9ZdxYplCWZn8PgJSYBNCY54cocf6M2ubMLI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rt+NBCUyz0ajsTc5l7NcoeRcL6oa07rmvPhIlJu8CmKZv1eXZfWxb5RkYbLxl93ColnTFC9cHiRAgpb/aWC8c5wmk6wNL5wNgihSIwC02BTW2oJczEYy593mbQ9W0XgcxcLuMmRLYYccTLUO/AxvH2f8wrA1J9D/PpxcbyZXmG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U7csEkel; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4401c9f5893so5932891cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:00:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717520299; x=1718125099; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=liqanKwgSqpdVt/zzwunTLjcxyz9wXPZJfeDuELZgNU=;
-        b=L51wCm3/yOU8x9vUTrteaAnf477gzml+Oztj4GcrtJi5VmSw3R1l7L/P2BXb1jhhlE
-         LKfNtKQdjsNPT+82Jchi/x9dkNxthSdDFXgBidLAKr9d0NZFDZW9/6JnPHHFLmuGPB2j
-         yzIlGdEa66DFkzVnA0IrHrzZ0FYiKIhelTX4ZsJtoE1rbz310aQvZnIeyw0Y3Z9sweAL
-         MVTWn4QXnL6exAZjXT2tCce5MORlADUlsmD+WDPGAwgnBn/0PtPVJF/miGYxFCbaY9qD
-         EKfYLRvrsCzongRvn31rzhyKinNvdxBauFBcH92nTFQy3SfTaKh8A7nOjWS1aydTmkaS
-         D1lA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717520416; x=1718125216; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FXev4Iglq7vn8M9/xJrlzCWzECxyOY6UHQcKBzcM8E=;
+        b=U7csEkelxllbgJ92PlXTAMf3YGNAAwLkrUFiGQBYuyVntZsVhLsomQh73YKvhraVg1
+         uukir5ycPNgk5aMgcwWx5KzVa0o/BbKbnzmNDsWytQwi3jtZpTR/1NRl20XMD2dFx2JB
+         JaLGAo5W/KGGgFnIbKklKs7RM3JZ7Q01OBaSV1diWtqjNsveUv3ef9IeFo32T/+CDBOQ
+         JXdRDnjhE3y8aHm96CyweqF23oTHeVW2kLvjfDdCvi5+Dr3vKrJHtBJtonk5vKtvTyho
+         ND4TE/kCL+/W0oq7r7u9Pj6VslMTvQE85ybrA2UHoRFeSyGAK0BOAszbg4oS1MLn3knU
+         ylIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717520299; x=1718125099;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=liqanKwgSqpdVt/zzwunTLjcxyz9wXPZJfeDuELZgNU=;
-        b=PwI4f4RdKSoJQMLoqBdkvXCjXNF4F6qa12xecHuRi4nKEP1oMdfVSffYn5Zs2xbefD
-         zGzJuMTXkxv49P3UkdPEhMCWwEe6hl55cxlbz6RG3ZEgEvH623Nz168cVd276beb+Cwm
-         oPfFOK/A2m6e4SEeT6/9pWLqstXVqDnySYsVFY0MfKqfz/8+QKXJeZUOjcUIvEFVnGw8
-         l5ot2NsOYJRvJ3i5eGV9ia4sQZAJVByvge0QAOlBfcVTnrUuTpo5ZzKoZENNcpK3GCuZ
-         Tu1wE5Mg35CR3yrh932CGz6XLfS8Lw4zt8TEPx38bRZKe9N2PJ32pzp896lkzoXarcJ6
-         lpcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsV7drCMT8T/FKblxtGLsqy+L/LoKME1YKj6cLJO+cm6cAhCOBIopg2/Fb6A3Uez/NOlG8fjX77oIpY3oGEATPqXI81BLScL7rh9hsws8qqRL5v4LCzeSUqfiUe7SQSNhwuPvzknAONquoFsP/Mb1LQbly6CAX94yqv17mosNDLKkl0H3R
-X-Gm-Message-State: AOJu0YxQjWCaQVk86RNRvkln5n1Xzs45E/E9Q51L9R/AwdzkhyO1nnwa
-	Y6e5NZmz6RZq/FN5nEVtmf8m5uNH3fz2Wr5sf6Hg5IQW4R5GkHsw
-X-Google-Smtp-Source: AGHT+IH8ywKVlBvDJdTBKuOHbudOmAAo2HK0Bqbj2hA1VKQcKk1uFzt3Lc1xCAqQ6DjypaIBneWPVg==
-X-Received: by 2002:a05:6a20:7f8c:b0:1b2:55e6:836e with SMTP id adf61e73a8af0-1b2b6f4f14emr216669637.24.1717520299484;
-        Tue, 04 Jun 2024 09:58:19 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1c27e44d9sm8392645a91.29.2024.06.04.09.58.18
+        d=1e100.net; s=20230601; t=1717520416; x=1718125216;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FXev4Iglq7vn8M9/xJrlzCWzECxyOY6UHQcKBzcM8E=;
+        b=BxeHuV6YpHcYoAkffo2YNDmfhgaTcLed3wlhO0VUX/vhVoGhbxGcxtIA4NFBVLYbwx
+         uMrSwu/jnj0W1yZ7MZxlfCdnxCnT8cdYUjvEpyZMBmZvOiktdSqcQhRx5hu89uApX9C3
+         6ZyOivAGdsNl0I30XdFHCvhzSLsjHDwvSetmGEgHdkHpVQgp/zVdYqmWWn/bQCqUkjaM
+         qlp6qNVS9pQHnt4ntoHpc2QrEXBe+0BxMuJEyT/uPPqHiQWNFxo4cIx1B5Yc4VZ7eat0
+         mwIDaO6nslYW9E4X0fJic6wHXEErlxmfXptkhT4kqiUb12Ns8LOZhXtjiJPWitZEVt1C
+         dRgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWd9k6zve7KRYVWXHADkotHpACMUJRIonsoRpLb56fkohzJLj6WuqdeN1fb56MsMZ80VM4ezSXQjxGzrBrmwbGIOQsHYZFB6CpCUwdn
+X-Gm-Message-State: AOJu0YxaXMmlPKWYJVq4xWsf7aQc0YDUUpfSIcPftDBdXpSMVXeVSq7L
+	ezpXhBf6ApvUKZd6MSEKRYmcrLjT+fYnNx3bS+7RWoRR18yVB41SeGsf0wqwVPY=
+X-Google-Smtp-Source: AGHT+IEQ+mgjmHq05bdk7xACEVNcsSDNdul6POVLs6t8LHbGadcCJYvlJlevhDqW8d5ZOSNb/8F20Q==
+X-Received: by 2002:a05:622a:20b:b0:43a:f89a:6631 with SMTP id d75a77b69052e-43ff5250db8mr133406231cf.8.1717520410432;
+        Tue, 04 Jun 2024 10:00:10 -0700 (PDT)
+Received: from xanadu (modemcable018.15-162-184.mc.videotron.ca. [184.162.15.18])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-440204b5420sm7471591cf.17.2024.06.04.10.00.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:58:19 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 4 Jun 2024 09:58:18 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: hwmon: g76x: Add support for g761
-Message-ID: <48a05fd5-50da-4790-ac7f-2b2a1c40e07e@roeck-us.net>
-References: <20240604164348.542-1-ansuelsmth@gmail.com>
- <20240604164348.542-2-ansuelsmth@gmail.com>
+        Tue, 04 Jun 2024 10:00:10 -0700 (PDT)
+Date: Tue, 4 Jun 2024 13:00:08 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: Julien Panis <jpanis@baylibre.com>
+cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>, 
+    Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+    Matthias Brugger <matthias.bgg@gmail.com>, 
+    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+    linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2] thermal/drivers/mediatek/lvts_thermal: Return error
+ in case of invalid efuse data
+In-Reply-To: <20240604-mtk-thermal-calib-check-v2-1-8f258254051d@baylibre.com>
+Message-ID: <25528q8o-73p2-25s2-5o2q-on72no5s91qr@onlyvoer.pbz>
+References: <20240604-mtk-thermal-calib-check-v2-1-8f258254051d@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604164348.542-2-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Jun 04, 2024 at 06:43:42PM +0200, Christian Marangi wrote:
-> Add support for g761 PWM Fan controller. This is an exact copy of g763
-> with the difference that it does also support an internal clock
-> oscillator.
+On Tue, 4 Jun 2024, Julien Panis wrote:
+
+> This patch prevents from registering thermal entries and letting the
+> driver misbehave if efuse data is invalid. A device is not properly
+> calibrated if the golden temperature is zero.
 > 
-> With clocks property not defined, the internal clock oscillator is used.
+> Fixes: f5f633b18234 ("thermal/drivers/mediatek: Add the Low Voltage Thermal Sensor driver")
+> Signed-off-by: Julien Panis <jpanis@baylibre.com>
+
+Reviewed-by: Nicolas Pitre <npitre@baylibre.com>
+
+> ---
+> Guard against invalid calibration data, following this discussion:
+> https://lore.kernel.org/all/ad047631-16b8-42ce-8a8d-1429e6af4517@collabora.com/
+> ---
+> Changes in v2:
+> - Add Fixes tag.
+> - Link to v1: https://lore.kernel.org/r/20240603-mtk-thermal-calib-check-v1-1-5d6bf040414c@baylibre.com
+> ---
+>  drivers/thermal/mediatek/lvts_thermal.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Applied.
-
-Thanks,
-Guenter
+> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+> index 0bb3a495b56e..185d5a32711f 100644
+> --- a/drivers/thermal/mediatek/lvts_thermal.c
+> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+> @@ -769,7 +769,11 @@ static int lvts_golden_temp_init(struct device *dev, u8 *calib,
+>  	 */
+>  	gt = (((u32 *)calib)[0] >> lvts_data->gt_calib_bit_offset) & 0xff;
+>  
+> -	if (gt && gt < LVTS_GOLDEN_TEMP_MAX)
+> +	/* A zero value for gt means that device has invalid efuse data */
+> +	if (!gt)
+> +		return -ENODATA;
+> +
+> +	if (gt < LVTS_GOLDEN_TEMP_MAX)
+>  		golden_temp = gt;
+>  
+>  	golden_temp_offset = golden_temp * 500 + lvts_data->temp_offset;
+> 
+> ---
+> base-commit: 632483ea8004edfadd035de36e1ab2c7c4f53158
+> change-id: 20240603-mtk-thermal-calib-check-ba2ec24a1c32
+> 
+> Best regards,
+> -- 
+> Julien Panis <jpanis@baylibre.com>
+> 
+> 
 
