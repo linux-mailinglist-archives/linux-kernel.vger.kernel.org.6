@@ -1,154 +1,234 @@
-Return-Path: <linux-kernel+bounces-200928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD9B8FB6AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:10:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4408FB6AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92B728178D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F6431C21D25
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DF114387B;
-	Tue,  4 Jun 2024 15:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEB413D635;
+	Tue,  4 Jun 2024 15:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gpmdXhgr"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1UKubv5G";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zicZU98k";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1UKubv5G";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zicZU98k"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B5B15E83;
-	Tue,  4 Jun 2024 15:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9445F4C91;
+	Tue,  4 Jun 2024 15:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513826; cv=none; b=CBc2CotA/qy3TyfA2VYQcwpIAujCTe7dvaIzJmJHoUo8G/DBMD9mTQ0tUcZia6yXdyZfw60Akf5seF+lDqbWbpQ3ecvcsr2CMDwuBP5SUFy4zcCT0hQ+AksG8JxrqUgGGBU2L6y1wzX+jKM/KejJ4pqnNK4IYlZ+Bjs5aR2OsEg=
+	t=1717513887; cv=none; b=upJMUWp2FM4xi3vsp969L4gXhuvlc+cE42loq1xXrVgdTnyfqpkjYkp/pqIzWAxlU26zxgOuP49B/m7v3jcJUvOmYDb8AOQqVMqdAesMcDNQDSWTnVXpR9FVN9mWqqMjMVvzL/Q8Wg2RYNjIbue0AzLmXzMDk08kDNNtoGSzUnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513826; c=relaxed/simple;
-	bh=AlE9DgWtRIT3Sl1kuWd/rWKZ1j/Yhf4kD3Y4KDvJzig=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=X6zDMestTYakQJkR6fl9b9CSvZ+j1xcrjIvl+p4UmEdUqnVcWZ4lAEFOSkUWs5nkisA8JwpSR6A5XHi5rWm952VuhExewOGfM4oCkaboew7dK0Eyvy9Vx8IxzM5HenQxMgQjuLGoqizViRCiWIwI+Bn7CKmYdLpSFxh53/Wru7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gpmdXhgr; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 454ENLXt005287;
-	Tue, 4 Jun 2024 15:10:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=EfYv5g/Zd/sx7KqBxGNFgf5KwapbaCyVevFzqEDsdxE=;
- b=gpmdXhgr/uN6nuEaX3GXtGNl5jr8DFLej9LnwMMvFFz8j5XexWt5DAMeZJUvdbvAOIak
- Vf1MzG05SVZ4YK+dZ44JfyJz/zThLI14TdjTd5UFibJRhH2CERT0UsR0WCxbxSR7nYU2
- iu86Hw1nd4UBwmHhop9IpUDGSVWydtkChGntpGlWSWB8JT10AUnm/rt8mPdwgkVjlovS
- 8R0MJ7KeJWJTZLobh8PH5B+i72RZ9YoJ0L089lPiUvVcvFigm+Ah6tzaXTLEZRh/IgQm
- 5vzdP2fWXUOawzcdvDWP+BtrrqGdD8uqO3z7FyuaDDObZE965X+mVfYG6Rm45HyF5sI6 vA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj4mrr5at-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 15:10:20 +0000
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 454FAKjx023916;
-	Tue, 4 Jun 2024 15:10:20 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj4mrr5am-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 15:10:20 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 454F9LLj008468;
-	Tue, 4 Jun 2024 15:10:18 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygec0pwhy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 15:10:18 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 454FAFo98979186
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Jun 2024 15:10:17 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4E25A58065;
-	Tue,  4 Jun 2024 15:10:15 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8BEA858058;
-	Tue,  4 Jun 2024 15:10:13 +0000 (GMT)
-Received: from [9.155.211.217] (unknown [9.155.211.217])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Jun 2024 15:10:13 +0000 (GMT)
-Message-ID: <9f9fca15-9139-40c9-bd24-2e0f2b7e4d6e@linux.ibm.com>
-Date: Tue, 4 Jun 2024 17:10:12 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net/smc: avoid overwriting when adjusting sock
- bufsizes
-To: Paolo Abeni <pabeni@redhat.com>, Wen Gu <guwen@linux.alibaba.com>,
-        gbayer@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20240531085417.43104-1-guwen@linux.alibaba.com>
- <d5e4c3093a68f38657b8061bcbf51396e1d23bab.camel@redhat.com>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <d5e4c3093a68f38657b8061bcbf51396e1d23bab.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pmYrMHbQCBj2dDIroL0AfLjkIQ6r3fZW
-X-Proofpoint-ORIG-GUID: Tv4icvBosYcQtaS2GYnIMkwwCz5R2xZG
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1717513887; c=relaxed/simple;
+	bh=QEz05DuTsIvHAwj2T7TyXVgPHATwBc4k25U6wzxI1fM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HKKLjOeoDSus3BevKeH1JES+pHa9mSsgsm04vFxcz509TSAdZcP/t49maLr8LGNr8fi2dGYR29VPFR6fuRbHGwlcuTYG7ue6hfkpun0pf9x+mWOUe/9opwyK4tFRmyr7Tr/gOe4Ag5PP1wizAklaRoKnfTTQICQ0Q65vDRKmA7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1UKubv5G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zicZU98k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1UKubv5G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zicZU98k; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 94E541F803;
+	Tue,  4 Jun 2024 15:11:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717513882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suG/UwcmICtQXRCel+rkvU09OoVD7nEthrbtfU0L2LU=;
+	b=1UKubv5G1QmsZNeH6WNzmwGBJahPo70aYyMUqME4cgTkgvCyQed03TyvzaQzfjGOb4Ti0O
+	Mq8XnTUSkv2H+S7scAQjFJb4h1yrTNJFZuJsjLtXDQp/xaa0V8w7gdstOpQxE1HOW8EqRY
+	Jo0KbjxEYi+IxlPUyzZncF5DZdF7cZA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717513882;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suG/UwcmICtQXRCel+rkvU09OoVD7nEthrbtfU0L2LU=;
+	b=zicZU98kiHvP2nllYoLgmyLu5LG4Gwm5U+32RLTv2B2BhdFuzRNZZWZLEQUpBSu58b3/hm
+	DYYqSDFgU2SOKdAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1UKubv5G;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zicZU98k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717513882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suG/UwcmICtQXRCel+rkvU09OoVD7nEthrbtfU0L2LU=;
+	b=1UKubv5G1QmsZNeH6WNzmwGBJahPo70aYyMUqME4cgTkgvCyQed03TyvzaQzfjGOb4Ti0O
+	Mq8XnTUSkv2H+S7scAQjFJb4h1yrTNJFZuJsjLtXDQp/xaa0V8w7gdstOpQxE1HOW8EqRY
+	Jo0KbjxEYi+IxlPUyzZncF5DZdF7cZA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717513882;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suG/UwcmICtQXRCel+rkvU09OoVD7nEthrbtfU0L2LU=;
+	b=zicZU98kiHvP2nllYoLgmyLu5LG4Gwm5U+32RLTv2B2BhdFuzRNZZWZLEQUpBSu58b3/hm
+	DYYqSDFgU2SOKdAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7499413ABC;
+	Tue,  4 Jun 2024 15:11:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GQ6uFZQuX2YIIAAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Tue, 04 Jun 2024 15:11:16 +0000
+Date: Tue, 4 Jun 2024 17:11:13 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin
+ <peda@axentia.se>
+Subject: Re: [PATCH] i2c: smbus: fix NULL function pointer dereference
+Message-ID: <20240604171113.232628f9@endymion.delvare>
+In-Reply-To: <b2tnimag62ty6wndyjsy7u5fay6y52zn47vvifw6rh5abeqzpu@pqyyczutxcwu>
+References: <20240426064408.7372-1-wsa+renesas@sang-engineering.com>
+	<1e626d93f4220cc348300bbc61089de32300122d.camel@suse.de>
+	<b2tnimag62ty6wndyjsy7u5fay6y52zn47vvifw6rh5abeqzpu@pqyyczutxcwu>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=992 spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 impostorscore=0 clxscore=1015 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406040121
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 94E541F803
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[renesas];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
 
+Hi Wolfram,
 
+Thanks for your answer.
 
-On 04.06.24 16:04, Paolo Abeni wrote:
-> On Fri, 2024-05-31 at 16:54 +0800, Wen Gu wrote:
->> When copying smc settings to clcsock, avoid setting clcsock's sk_sndbuf
->> to sysctl_tcp_wmem[1], since this may overwrite the value set by
->> tcp_sndbuf_expand() in TCP connection establishment.
->>
->> And the other setting sk_{snd|rcv}buf to sysctl value in
->> smc_adjust_sock_bufsizes() can also be omitted since the initialization
->> of smc sock and clcsock has set sk_{snd|rcv}buf to smc.sysctl_{w|r}mem
->> or ipv4_sysctl_tcp_{w|r}mem[1].
->>
->> Fixes: 30c3c4a4497c ("net/smc: Use correct buffer sizes when switching between TCP and SMC")
->> Link: https://lore.kernel.org/r/5eaf3858-e7fd-4db8-83e8-3d7a3e0e9ae2@linux.alibaba.com
->> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
->> ---
->> FYI,
->> The detailed motivation and testing can be found in the link above.
+On Tue, 4 Jun 2024 10:50:30 +0200, Wolfram Sang wrote:
+> Hi Jean,
 > 
-> My understanding is that there is an open question here if this is the
-> expected and desired behavior.
+> > I have a hard time establishing a formal link between the reported bug
+> > and the commit listed above. I do understand that it wouldn't make
+> > sense to register an i2c_adapter with neither .master_xfer nor
+> > .smbus_xfer set before .reg_slave was added to struct i2c_algorithm,
+> > but there were no checks in i2c-core preventing it from happening.  
 > 
-> @Wenjia, @Jan: could you please have a look?
+> Well, yes, correct.
 > 
-> Thanks!
+> > It was also possible for any (broken) device driver to call
+> > __i2c_transfer() without first checking if plain I2C transfers were
+> > actually supported by the i2c_adapter. I would argue that such an issue
+> > should have been fixed at the device driver level by checking for the
+> > I2C_FUNC_I2C functionality flag before calling __i2c_transfer(). That's
+> > a theoretical issue though as I'm not aware of any device driver having
+> > this issue.  
 > 
-> Paolo
+> In theory, checking against I2C_FUNC_I2C should happen. In practice,
+> most I2C drivers do not do this. Being picky here could results in bad
+> user experience because of OOPS. If we really want to enforce checking
+> I2C_FUNC_I2C, then we should have this safety net while we convert all
+> users. No, actually, I think we always should have some safety nets.
+
+Point taken, makes sense.
+
+Note that we still want I2C_FUNC_I2C to be set properly, because it
+allows device drivers to optimize transfers (the at24 driver is a prime
+example of that) or even just to bind to the I2C bus (for device
+drivers which properly check for it).
+
+> > The call stack in Baruch's report shows that the real issue is with
+> > i2c_smbus_xfer_emulated() being called with the i2c bus lock already
+> > held, and thus having to call __i2c_transfer() instead of
+> > i2c_transfer(). This code path did not exist before commit 63453b59e411
+> > ("i2c: smbus: add unlocked __i2c_smbus_xfer variant"), which was added
+> > in kernel v4.19. Therefore I claim that CVE-2024-35984 only affects
+> > kernel v4.19 and newer. Do we agree on that?  
 > 
-> @Paolo, thank you for reminding us!
+> (There is a CVE for it??) For Baruch's case, this is true. But there are
+> __i2c_transfer users all over the tree, they are all potentially
+> vulnerable, or?
 
-@Wen, Gerd and I have looked into your patch and discussed on it. Gerd 
-would send the concrete answer to your question soon.
+Yes there are many, but I think we shall differentiate between 2 cases:
+* Missing check in a specific kernel device driver. These are unlikely
+  to be a problem in practice because (1) these devices are typically
+  instantiated explicitly, and such explicit code or device tree
+  description would not exist in the first place if said device was not
+  compatible with said I2C bus, and (2) if such an incompatibility was
+  really present then it would have been spotted and fixed very
+  quickly. Arbitrary binding through sysfs attributes is still possible
+  but would definitely require root access and evil intentions (at
+  which point we are screwed no matter what). I'm honestly not worried
+  about this scenario.
+* The issue being triggered from user-space through i2c-dev, which is
+  what Baruch reported. The user doing that can target any arbitrary
+  I2C bus and thus cause the oops by accident or even on purpose. For
+  me this is what CVE-2024-35984 is about. What limits the attack
+  surface here is that slave-only I2C buses are rare and you typically
+  need to be root to use i2c-dev. But this is still a serious issue.
 
-Regarding to this patch, it looks good to me. Here you are:
+Also note that the first case could happen ever since __i2c_transfer()
+was introduced (kernel v3.6, commit b37d2a3a75cb) and is not limited to
+slave-only adapters, as any SMBus-only i2c_adapter would also be
+vulnerable.
 
-Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
+So the "Fixes:" tag in commit 91811a31b68d is incorrect for both
+scenarios.
 
-Thanks,
-Wenjia
+> (...)
+> I see the performance penalty, yet I prefer handling the buggy driver
+> gracefully because kicking off I2C transfers is not a hot path. Maybe we
+> could turn the dev_dbg into something louder to make people aware that
+> there is a bug?
 
+My previous message initially had a suggestion in that direction ;-)
+but I first wanted your opinion on the check itself. dev_dbg() is
+definitely not appropriate for a condition which should never happen
+and implies there's a bug somewhere else. A WARN_ON_ONCE would probably
+be better, so that the bug gets spotted and fixed quickly.
+
+-- 
+Jean Delvare
+SUSE L3 Support
 
