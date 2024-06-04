@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-200919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6180A8FB68A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:05:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F858FB68C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 517EDB247CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0B71F22064
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD1C13D2B6;
-	Tue,  4 Jun 2024 15:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115F913D52C;
+	Tue,  4 Jun 2024 15:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oT5aDXwb"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gEFNSrwK"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849C313D273
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E029B846D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513532; cv=none; b=MIQ8wAgi71aWgC2RHA3swLqhhhjnvYpeEt1JMxAiP5SZ9HKh7v+c0A2Wp9ApEiGziesVKD6DWyJ0WHvu20FokBpI2GLk7dMWYdiHnj+ZIgauWkX/WfsWOjUwHo+5TJf2MWIu4yeHT1fVuKfB0ChYQf7hM+6spen/AWmqMJMpD30=
+	t=1717513559; cv=none; b=kDiRahYHK3V2P5UlAbuIo2u95C5vMrZ5VcMgG/XhJ/6YUSJHZypD5OJtjZE6pv2EIi/ltpfTCdEHr1s2ZpGRIFxrdJD8AXwwsbcpZ0s1hoHzJoOCTaMF3z0eZjoIARCrnBP4H1f/7XeMZxYW9/Ye5Mz+6zjcj2P1S5gG9HS+8Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513532; c=relaxed/simple;
-	bh=94VDYsHzzBLioUYgp5PTC7zmAaWzB9RDh5pArOzfqZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tcIGBeE3OzXrrpdexCECqBvq9IxigPYF/gl1lKTYZRFMTCwh2UIyRG+URDpag5okf92XYqzlWD2hIkPaBdL1QrDfxvoh+qiRROjqx+MlKCAewW6wijFBFZRAjZsv467h/qO59OhbwkBjN0ZeSJ4CkY0PJ/22m8NXqWxfZcpOUKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oT5aDXwb; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6afbbc87967so13586876d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:05:30 -0700 (PDT)
+	s=arc-20240116; t=1717513559; c=relaxed/simple;
+	bh=ro445i7VHeW4uYqUrduMUsb3oj6AuWo1wqWAZgg/XQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRTinLXruActKE2VONxM0U7+ZRJslO7pIYFfg223rZwmZXERqwRLbRv/n79s0jgMVMMn9qVjFwvJAamM0lUi426tJ4VHjHLFjN+rGrno60AO4bWkKCAC/HS+4jLoXu06BBfyKPYQLLDXPNv2VMwdPS8hB6VHaV5p20K+thUi+ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gEFNSrwK; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a20ccafc6so5247813a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:05:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717513529; x=1718118329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=94VDYsHzzBLioUYgp5PTC7zmAaWzB9RDh5pArOzfqZg=;
-        b=oT5aDXwb226Z6dVsXoYbKmHKXQgfnChKKd0XCWWQ/3bAZmpD635cjTyoopweSsOdBo
-         m5kk6qfJZEE7PWGG0mAZ6qqw4DjMsuMjuB2N5nTCLLAKYl/9S7BinM0m7aOhTD5JhR8g
-         HTvNhZ3eI3xfu5tcnPsETUd0ufUhqm7CwrLs7k4rQbNU1Kqu6q11z21MPRV42YW88u5o
-         yuYaFuF59bbto2pEW3aE8CMMIfv5jkIjIULF1gUWUcakSMUWGJxSqQ0g4osqpz59BZpn
-         Aa5tgz9Bc9WEGMMn+um0f57CoTe2uz5sCnVVhf2LMmsdE+EacMy7d1PBwbwiLr+67YCn
-         3U+w==
+        d=linaro.org; s=google; t=1717513556; x=1718118356; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7i7GhF6dlRREfvJkAzXH+kI3G+fzObsSDo4YlfDK3J0=;
+        b=gEFNSrwKDtsNE4NgIesXAeDB/vEFq1XxZILC0YpL8wypgR7/X04D2b/hz2bFKL0VOH
+         kdsHJ4exCYcH1TfF2wwoq0sXFW5ejz7k0ABGYdIy1Sep8AzZwB0AF7wFhWPJOMteJOol
+         IUDeHqUS5UmXYb+BLfBy4+WMAJf8kdhsob/G+Z3kWyv9ejg9d5CKfczcTupF16T1YPQN
+         PmdeBNckH7ptTYP4fOssNDcP7lUUDplDIulOOeH1W2SvyJKmWdBiqiIxAOVM20Zozvhq
+         /0Qtpvrce5w+vCuXA9/54EmukmoDJ7NqHKhhqXj1PbntSEUGPcWoZUsalxH00Z8TzxaR
+         /+NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717513529; x=1718118329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=94VDYsHzzBLioUYgp5PTC7zmAaWzB9RDh5pArOzfqZg=;
-        b=wbvi/iYzKnEGTeuYfz83T7tUg3i93YKUVbtHzoBdm8/+oygzq6QRqsT8PyUOpO1r9u
-         Egz9O7whpDZZwfgq/t2uiIpZzHAq9aObjXRGpgOPpx8GWhwcL4oUv8f5IOtsxpdXnX4b
-         qPKKQAy1IV296dlt7YNX9ch7M/xpvNwOqf0XN5K8gPr7vm+IrTR0iHhmlPMCakT6UkoT
-         Z9CLLMzYc6Dkgar/rn6vIG8XP4HS2dIWCWQlYrdNBOQGH340pMEctrIdN2uVTjboYAn4
-         CanOnNvjYmzSDJ796voBLGanZJyaXMN9Q+/mAiyqE6HFuorPRyw9iOaE4G9I1Y5cRgCh
-         gEKA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6d/fiheij4jpMYpkhixP7oub5Lnq310NN6fEia5wP7U5QWDsvDRUutL9UZiakDeVcOpuxVKfTgkLQwC9DXPo43BZQM0lsM1K3dXzF
-X-Gm-Message-State: AOJu0YzsVE2n4nLxMZ2DqFQ635+qaXTuvMZbEb+NfZwNZFRQ+iixOeND
-	9b1DAnDLauornaaLc6GNtumlhebnDEJq2IDrdS9fQ/wBPtiEEEL9ftHETwmtVRpY8z28E+l3rY1
-	/FXxtERmkHO1vmVqjGdeRtAeo7qYacP930ZdE
-X-Google-Smtp-Source: AGHT+IEBPKAlTho4CJOxYPwToOjLi3MGkFqiqRbt+SKyCfAhGYPuYLlY7I5nyZfftddOLf9CkxG6MIav6O6REeodHsk=
-X-Received: by 2002:a05:6214:3b89:b0:6af:5056:da89 with SMTP id
- 6a1803df08f44-6af5056dd5cmr81784966d6.11.1717513529108; Tue, 04 Jun 2024
- 08:05:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717513556; x=1718118356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7i7GhF6dlRREfvJkAzXH+kI3G+fzObsSDo4YlfDK3J0=;
+        b=gTsI0D8ESBOU4epaYFqG2CmOVY7xucSN8dCVyPzMmPC1fL1+0KcgQSszkCuNM10WV7
+         MEwhRSf+inbGjsB9Ocu1WNKzuu86AeTmJmirWySPj+DiR+DxHJaQKo/esFWYH1oavZKq
+         ME9gMLQDIbvK7Ge/3hjLnxj+fzJHbXzNx5Le/YR5IvsZ9VS38pknJmR6o5961KDj3Yt3
+         BWUNXheNtZH3T2XA5CmBnfsZrmsWiI8vP1T4YbvGB6WFJiRU2panuEx2UASLQwGtqB8w
+         RsJsAMtj3KG4iHEgt2SB/YIsce/rZr+P/ednqFFuI8n2nZI4jnfe8frq6OIPzM+94bfh
+         7GJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+DAb0eXZ8Y5H/aZhsoXEJIkET0zIXhPHVgKqFz/Y0YLp9grVMPFjWYrVEUXPkda4CRfXq/+jHXq33oBJBJua4r120RNHuB/eg8722
+X-Gm-Message-State: AOJu0YyfF2+YnlOYQbD9Vx3BLIzawsljC2qe+9tyAepL8ttNkNOZEgu3
+	PaB9J6xbyQzwXgMb87vAJLtH8N6+w5LVKxX/A0s8stoPW4l/XbP8xFZXlSjPRwU=
+X-Google-Smtp-Source: AGHT+IGHlq8e17y+3YCHVKE24FcpXnHf5Vb2Kosie/7mCqEOX2TFC+ggm5U4vZqBl1jL5xdJIrHEYw==
+X-Received: by 2002:a50:9b43:0:b0:57a:23eb:13b3 with SMTP id 4fb4d7f45d1cf-57a363713eemr8130395a12.12.1717513555940;
+        Tue, 04 Jun 2024 08:05:55 -0700 (PDT)
+Received: from linaro.org ([188.27.161.69])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b98e0csm7473460a12.13.2024.06.04.08.05.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 08:05:55 -0700 (PDT)
+Date: Tue, 4 Jun 2024 18:05:54 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Disable the SMB2360 4th
+ instance by default
+Message-ID: <Zl8tUr+r423Tbw6l@linaro.org>
+References: <20240603-x1e80100-dts-pmics-drop-4th-smb2360-from-crd-v2-1-fb63973cc07d@linaro.org>
+ <4c1d77e3-3fe7-4ee6-8872-3924a1b2ef9f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1717507310.git.dvyukov@google.com> <1ada3be307bbd076c4ea63530cf445e7fbd0e4e7.1717507310.git.dvyukov@google.com>
-In-Reply-To: <1ada3be307bbd076c4ea63530cf445e7fbd0e4e7.1717507310.git.dvyukov@google.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 4 Jun 2024 17:04:51 +0200
-Message-ID: <CAG_fn=UHSA9upL02GdtbeG0qUCwU=bAvfkmkOZDnwS3nzFZnJw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] x86/entry: Remove unwanted instrumentation in common_interrupt()
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com, elver@google.com, nogikh@google.com, 
-	tarasmadan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c1d77e3-3fe7-4ee6-8872-3924a1b2ef9f@linaro.org>
 
-On Tue, Jun 4, 2024 at 3:45=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com> w=
-rote:
->
-> common_interrupt() and friends call kvm_set_cpu_l1tf_flush_l1d(),
-> which is not marked as noinstr nor __always_inline.
-> So compiler outlines it and adds instrumentation to it.
-> Since the call is inside of instrumentation_begin/end(),
-> objtool does not warn about it.
->
-> The manifestation is that KCOV produces spurious coverage
-> in kvm_set_cpu_l1tf_flush_l1d() in random places because
-> the call happens when preempt count is not yet updated
-> to say that we are in an interrupt.
->
-> Mark kvm_set_cpu_l1tf_flush_l1d() as __always_inline and move
-> out of instrumentation_begin/end() section.
-> It only calls __this_cpu_write() which is already safe to call
-> in noinstr contexts.
->
-> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reviewed-by: Alexander Potapenko <glider@google.com>
+On 24-06-04 14:01:11, Konrad Dybcio wrote:
+> 
+> 
+> On 6/3/24 10:17, Abel Vesa wrote:
+> > The CRD board doesn't have the 4th SMB2360 PMIC populated while the QCP
+> > does. So enable it on QCP only. This fixes the warning for the missing
+> > PMIC on CRD as well.
+> > 
+> > Fixes: 2559e61e7ef4 ("arm64: dts: qcom: x1e80100-pmics: Add the missing PMICs")
+> > Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> > Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> > Changes in v2:
+> > - Fetched all R-b and T-b tags
+> 
+> Almost..
+> 
+> gotta do it twice to make sure it's posted
+
+Actually you sent your R-b tag to v1 exactly one day after v2 was
+already sent. :)
+
+But I think b4 would've picked up the one from v1 anyway.
+
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> Konrad
 
