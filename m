@@ -1,170 +1,180 @@
-Return-Path: <linux-kernel+bounces-199877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB668FA71D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF1B48FA720
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 639E8283A92
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BE91F225E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933F4C91;
-	Tue,  4 Jun 2024 00:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B375B6FD3;
+	Tue,  4 Jun 2024 00:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="POQizCQL"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="h64O2c+v"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDED611B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 00:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0CB7E2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 00:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717461936; cv=none; b=VEHcFZ9jzbnw9u9FAi+HbTjZRlonaXp4SbZgwIHowtvSAQcc+fBp6RCnZiPXwU2bFQFnHWWCRbjY3TW5H1iui8wkPuHGdSIeKqAABjd4dxZdA2OMc7Ss40tEV86gZqhVtgiF6iJI2LAUMnfdsE5Y34KEGlJKy9/w3ai+GrWv0Bw=
+	t=1717462000; cv=none; b=fI5kqLcy7pTk3RRCnxvrZcNKOArV7wkoeNhoxzK+XVM1Ieuo5cy6CNm3rZTus3txp6R8pUddELyhdM9Z+SWJprcXHyTQx7I0X/vPvk9nXWxyj1MthiI2XgiY9Yk27xuHnK2mPIj/Q/LRArLY/PYkKd9JWBV/7qV8st9ZPz17k20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717461936; c=relaxed/simple;
-	bh=0feO/7C+CrLgGRjOb5ae1CaJ7O4SHCcHI6Yy37sOBhI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iDpGvwvopKnBKjn2hmxGbz3PktXJ7M3155g8GCcGXzvwRbfJKI2FLld5c/z34hDtvO7OOa6KFQ5a6pLeHK1sD+9is0KUoe7Odq6wQjwoXx842OYf5W4I9IaEX4/EfHNNSCTMD+SHP1AlMvxlUPkqELq+5kDwXUC4wDkcU4tQ6lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=POQizCQL; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7027585df9bso1289310b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 17:45:34 -0700 (PDT)
+	s=arc-20240116; t=1717462000; c=relaxed/simple;
+	bh=CcYTAVWyB3ymSj/OaY1OftSd6VsNT505IUtr0hifhfE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BcH0WbNj9rNUfwrT6win+eFfV5IOVnCpxnX3IEsrlvkG3OVNpbYiC/UDHdmCQA0MndDP+YE69DBFXcCmtocjPD6lDMJK4W1n9uxB2DDFMyu9jnK2xOP3HTdKnsEuuOY3B7uyq3/55NAyw3nbd7ZRtNetsZ/IbNxAcEYuRHgFbXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=h64O2c+v; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7025f4f4572so1384517b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 17:46:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717461934; x=1718066734; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Bm5sO14VbwMd1xIPVmZquFgInZWUqDJbdvBe8VoG78=;
-        b=POQizCQLBooCYBuuAVFjMjuPaUY6s0WvhqBuNap7OOV6sTO+diQg4pU1S5cLtFwt2l
-         tKx86irXweu37F6G+lGQa+WBW+pqFYJKMRXOpn25hcS6TvMSoiMWGTbhn7LpxSevKtvn
-         79H97BLzw5NgSSdRH6mTQKnIDrb4YOGLIL+ucg0hcag2L3Ab+ktFeRp6e5+kXhse8wi5
-         9tSBARBRo5np0avYWAu4GXzeRKzGm9Eb2jaO/VX7rhqaiKL54hHz+Di9Xd3oY8Vh/nHT
-         kALnedrWrOKl+78HqUcbVboxsXHP0NY2ZFzApluLvr8dJWdnPPBFM3fdx/jcUCM1vPEC
-         vNxA==
+        d=fastly.com; s=google; t=1717461999; x=1718066799; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j6qJ3cMHA2ZvV0BHrtuqD+iovtfIMHyhYFzDZ7OtxxQ=;
+        b=h64O2c+vb0/hkqU+j9xiH+oAo/4BANflqg4hW7j+kVwpE7XHPT2g9KvMqWp1OONrBo
+         G91IdPe6AVx0cowx4wB70eyAgmss4XprBoq3GZVQffhyGOCsSZBjUm5QG2d2pMUmvNWu
+         nAyQZL8hNYYovwlqCHv+qhxC86OZdHK0Tq3h0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717461934; x=1718066734;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Bm5sO14VbwMd1xIPVmZquFgInZWUqDJbdvBe8VoG78=;
-        b=GUAULxvmMjGIcRW5kfHPVBMGznvqoGuFW8fdsRbxeCp9aJPW5X+iyHZ94zksm/uHW5
-         FBboc4u1pzMKUMzUtF+n9744yL3xxkqG/cw8tUiN4EN3epfxVWBX+BhI5UK3Kzd/jmQC
-         747eP1giZgaArvzrxoKym+GvnlhQm+kI6UNg3/Mkfgnihl7ZuCV0B7LGvgsBdVT2PkvK
-         MVkyLI5v9Upho+0sJRZt1Jjivib4KpzfEQrZFKR4lqF1Z9twBxk1VbnsnbKC6YUPBWbB
-         S1EzBc3kQGBD6B8wE1taVYi/KRN5/kL66ou0/qEwxEfakXz6liQK3tAdzbwbtIJLr//s
-         SAWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLq2YxvxOLVf+HXcJAj1eGEFDwXDzPqgOcVnoCjxi49CcBlsACN2l9ar31IXdO9XcaU9SEtfN8QPjWxfEYkm0MwcYWOl/4NHtmH+Dz
-X-Gm-Message-State: AOJu0Ywioun4GjPIYHymJBOpwznF+1t+9h8OVQLM9gKu++/gXtgKLkIv
-	NA0QjbBXcbcrx13T8Ncbi64xEyb8DZ/zygVr/tiJKBow/Q+odBvmjMTGOaLeJ+7cfJ7imPVTx4X
-	YTA==
-X-Google-Smtp-Source: AGHT+IFJPIM5O78GbEgTJkoYIbaMsDfaMyloYqJ1aZGLTAMlZeqHlKfhFkYbfVbqXlLT1sYbBZGJlR/eHek=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:27a1:b0:6ec:f407:ec0c with SMTP id
- d2e1a72fcca58-7024785a3ccmr349295b3a.2.1717461933286; Mon, 03 Jun 2024
- 17:45:33 -0700 (PDT)
-Date: Mon, 3 Jun 2024 17:45:31 -0700
-In-Reply-To: <20240429060643.211-4-ravi.bangoria@amd.com>
+        d=1e100.net; s=20230601; t=1717461999; x=1718066799;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j6qJ3cMHA2ZvV0BHrtuqD+iovtfIMHyhYFzDZ7OtxxQ=;
+        b=B1U/Ey7AiibBtVe4ZA+2iJwgc66aKsXquYHFvCm5SoCtpZAuvVhA+lfqDX6KuUs/dj
+         R5VX5XINkU3gjHs2NzIAAmLn6DByz3F3vpipri+EZsReiW8QeMupPeLcC2FAGoiKIf8M
+         Se99nmrmbsISt6eFIWWwly0qBmvmJLqD4p906myifYCtOsH5TJlYy30nOartHsicXM75
+         /WO4UX/bHhMWnd7PD7Pmpw2SrO6TUJbrYnnxyy0dpFe6kKXGt/kPRW5oeEzQA4skZPmZ
+         JV+cgh/rACsT4YIwwEXRbugFIdgwZlCFKC02Dcq8y1Zjvcs3M70e9IDRZbvP2QxFEoiG
+         wGPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXU/hXz10bX7M+aJI7nNCWvkgU4FPSEE+hVsuM1AzKeTEzWllxb2ad12q1KV1DxdwboIMNYNyHPxzvueWkx/0IAPN/PCRY/n+fZqA+j
+X-Gm-Message-State: AOJu0YyDdXKZUr1/EGRVDFJp/rC8MYU0WPUL4zhtW/ct9VrAdRt0qiL8
+	lgmUNHuRiGvrdvmc/ZnpPsn8duUWCASEQwsaJu7CU+Wvg91lVGr0pfHzt3cm0WU=
+X-Google-Smtp-Source: AGHT+IHiXBgr5xgcd9sLnnfdN+CIcxTRhmG+sm41M8+12g0FN0OWcYs//B0JiJ/pC845y6AvHYrpUw==
+X-Received: by 2002:a05:6a20:8418:b0:1a7:590e:279e with SMTP id adf61e73a8af0-1b2a2b84011mr1872915637.5.1717461998677;
+        Mon, 03 Jun 2024 17:46:38 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242c26067sm6049316b3a.218.2024.06.03.17.46.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 17:46:38 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: nalramli@fastly.com,
+	Joe Damato <jdamato@fastly.com>,
+	Carolina Jubran <cjubran@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Gal Pressman <gal@nvidia.com>,
+	Hariprasad Kelam <hkelam@marvell.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver),
+	Naveen Mamindlapalli <naveenm@marvell.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>
+Subject: [RFC net-next v4 0/2] mlx5: Add netdev-genl queue stats
+Date: Tue,  4 Jun 2024 00:46:24 +0000
+Message-Id: <20240604004629.299699-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240429060643.211-1-ravi.bangoria@amd.com> <20240429060643.211-4-ravi.bangoria@amd.com>
-Message-ID: <Zl5jqwWO4FyawPHG@google.com>
-Subject: Re: [PATCH 3/3] KVM SVM: Add Bus Lock Detect support
-From: Sean Christopherson <seanjc@google.com>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, pbonzini@redhat.com, thomas.lendacky@amd.com, 
-	hpa@zytor.com, rmk+kernel@armlinux.org.uk, peterz@infradead.org, 
-	james.morse@arm.com, lukas.bulwahn@gmail.com, arjan@linux.intel.com, 
-	j.granados@samsung.com, sibs@chinatelecom.cn, nik.borisov@suse.com, 
-	michael.roth@amd.com, nikunj.dadhania@amd.com, babu.moger@amd.com, 
-	x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 29, 2024, Ravi Bangoria wrote:
-> Upcoming AMD uarch will support Bus Lock Detect. Add support for it
-> in KVM. Bus Lock Detect is enabled through MSR_IA32_DEBUGCTLMSR and
-> MSR_IA32_DEBUGCTLMSR is virtualized only if LBR Virtualization is
-> enabled. Add this dependency in the KVM.
+Greetings:
 
-This is woefully incomplete, e.g. db_interception() needs to be updated to decipher
-whether the #DB is the responsbility of the host or of the guest.
+Welcome to rfc v4.
 
-Honestly, I don't see any point in virtualizing this in KVM.  As Jim alluded to,
-what's far, far more interesting for KVM is "Bus Lock Threshold".  Virtualizing
-this for the guest would have been nice to have during the initial split-lock #AC
-support, but now I'm skeptical the complexity is worth the payoff.
+Significant rewrite from v3 and hopefully getting closer to correctly
+exporting per queue stats from mlx5. Please see changelog below for
+detailed changes, especially regarding PTP stats.
 
-I suppose we could allow it if #DB isn't interecepted, at which point the enabling
-required is minimal?
+Note that my NIC does not seem to support PTP and I couldn't get the
+mlnx-tools mlnx_qos script to work, so I was only able to test the
+following cases:
 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> ---
->  arch/x86/kvm/svm/nested.c |  3 ++-
->  arch/x86/kvm/svm/svm.c    | 16 +++++++++++++++-
->  2 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index 55b9a6d96bcf..6e93c2d9e7df 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -586,7 +586,8 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
->  	/* These bits will be set properly on the first execution when new_vmc12 is true */
->  	if (unlikely(new_vmcb12 || vmcb_is_dirty(vmcb12, VMCB_DR))) {
->  		vmcb02->save.dr7 = svm->nested.save.dr7 | DR7_FIXED_1;
-> -		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_ACTIVE_LOW;
-> +		/* DR6_RTM is not supported on AMD as of now. */
-> +		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_FIXED_1 | DR6_RTM;
->  		vmcb_mark_dirty(vmcb02, VMCB_DR);
->  	}
->  
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index d1a9f9951635..60f3af9bdacb 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -1038,7 +1038,8 @@ void svm_update_lbrv(struct kvm_vcpu *vcpu)
->  {
->  	struct vcpu_svm *svm = to_svm(vcpu);
->  	bool current_enable_lbrv = svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK;
-> -	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & DEBUGCTLMSR_LBR) ||
-> +	u64 dbgctl_buslock_lbr = DEBUGCTLMSR_BUS_LOCK_DETECT | DEBUGCTLMSR_LBR;
-> +	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & dbgctl_buslock_lbr) ||
->  			    (is_guest_mode(vcpu) && guest_can_use(vcpu, X86_FEATURE_LBRV) &&
->  			    (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK));
->  
-> @@ -3119,6 +3120,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->  		if (data & DEBUGCTL_RESERVED_BITS)
->  			return 1;
->  
-> +		if ((data & DEBUGCTLMSR_BUS_LOCK_DETECT) &&
-> +		    !guest_cpuid_has(vcpu, X86_FEATURE_BUS_LOCK_DETECT))
-> +			return 1;
-> +
->  		svm_get_lbr_vmcb(svm)->save.dbgctl = data;
->  		svm_update_lbrv(vcpu);
->  		break;
-> @@ -5157,6 +5162,15 @@ static __init void svm_set_cpu_caps(void)
->  
->  	/* CPUID 0x8000001F (SME/SEV features) */
->  	sev_set_cpu_caps();
-> +
-> +	/*
-> +	 * LBR Virtualization must be enabled to support BusLockTrap inside the
-> +	 * guest, since BusLockTrap is enabled through MSR_IA32_DEBUGCTLMSR and
-> +	 * MSR_IA32_DEBUGCTLMSR is virtualized only if LBR Virtualization is
-> +	 * enabled.
-> +	 */
-> +	if (!lbrv)
-> +		kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
->  }
->  
->  static __init int svm_hardware_setup(void)
-> -- 
-> 2.44.0
-> 
+- device up at booot
+- adjusting queue counts
+- device down (e.g. ip link set dev eth4 down)
+
+Please see the commit message of patch 2/2 for more details on output
+and test cases.
+
+v3 thread: https://lore.kernel.org/lkml/20240601113913.GA696607@kernel.org/T/
+
+Thanks,
+Joe
+
+rfcv3 -> rfcv4:
+ - Patch 1/2 now creates a mapping (priv->txq2sq_stats) which maps txq
+   indices to sq_stats structures so stats can be accessed directly.
+   This mapping is kept up to date along side txq2sq.
+
+ - Patch 2/2:
+   - All mutex_lock/unlock on state_lock has been dropped.
+   - mlx5e_get_queue_stats_rx now uses ASSERT_RTNL() and has a special
+     case for PTP. If PTP was ever opened, is currently opened, and the
+     channel index matches, stats for PTP RX are output.
+   - mlx5e_get_queue_stats_tx rewritten to use priv->txq2sq_stats. No
+     corner cases are needed here because any txq idx (passed in as i)
+     will have an up to date mapping in priv->txq2sq_stats.
+   - mlx5e_get_base_stats:
+     - in the RX case:
+       - iterates from [params.num_channels, stats_nch) collecting
+         stats.
+       - if ptp was ever opened but is currently closed, add the PTP
+         stats.
+     - in the TX case:
+       - handle 2 cases:
+         - the channel is available, so sum only the unavailable TCs
+           [mlx5e_get_dcb_num_tc, max_opened_tc).
+         - the channel is unavailable, so sum all TCs [0, max_opened_tc).
+       - if ptp was ever opened but is currently closed, add the PTP
+         sq stats.
+
+v2 -> rfcv3:
+ - Added patch 1/2 which creates some helpers for computing the txq_ix
+   and ch_ix/tc_ix.
+
+ - Patch 2/2 modified in several ways:
+   - Fixed variable declarations in mlx5e_get_queue_stats_rx to be at
+     the start of the function.
+   - mlx5e_get_queue_stats_tx rewritten to access sq stats directly by
+     using the helpers added in the previous patch.
+   - mlx5e_get_base_stats modified in several ways:
+     - Took the state_lock when accessing priv->channels.
+     - For the base RX stats, code was simplified to call
+       mlx5e_get_queue_stats_rx instead of repeating the same code.
+     - For the base TX stats, I attempted to implement what I think
+       Tariq suggested in the previous thread:
+         - for available channels, only unavailable TC stats are summed
+	 - for unavailable channels, all stats for TCs up to
+	   max_opened_tc are summed.
+
+v1 - > v2:
+  - Essentially a full rewrite after comments from Jakub, Tariq, and
+    Zhu.
+
+Joe Damato (2):
+  net/mlx5e: Add txq to sq stats mapping
+  net/mlx5e: Add per queue netdev-genl stats
+
+ drivers/net/ethernet/mellanox/mlx5/core/en.h  |   2 +
+ .../net/ethernet/mellanox/mlx5/core/en/qos.c  |  13 +-
+ .../net/ethernet/mellanox/mlx5/core/en_main.c | 149 +++++++++++++++++-
+ 3 files changed, 161 insertions(+), 3 deletions(-)
+
+-- 
+2.25.1
+
 
