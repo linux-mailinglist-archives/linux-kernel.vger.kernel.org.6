@@ -1,101 +1,187 @@
-Return-Path: <linux-kernel+bounces-201267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3828FBC0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:05:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71308FBC18
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3109A1C215FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C41C283A54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A4214AD1A;
-	Tue,  4 Jun 2024 19:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E1F14B077;
+	Tue,  4 Jun 2024 19:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Yp9kDAM+"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xpVmld3U";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Sub/LDfg";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xpVmld3U";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Sub/LDfg"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40871494CA;
-	Tue,  4 Jun 2024 19:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1A214AD0D;
+	Tue,  4 Jun 2024 19:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717527946; cv=none; b=Ik1glt7KsIXTgldS5Ergz0Ofmd9PTJt/bX9wAND6UJhz6kGjLHdu71saObyOOXb7B2TZI7xRMUodSIFECg2zwvcyYBqUBNmgUu343jfKlxgSqFCrXDFJHaoFb/e5bWuCx7iJquBCiNSlKglVa4PeDUgmiFQkxR/1LUhvb0yuvv8=
+	t=1717528010; cv=none; b=FtHm1Hm8gG23o+HxgPo+daI5Z2RYIRx7GU2KdAWQxWihrFbI40uPI8JDD9hXFZCzFst9WnIBFGtPQ5swTBupYdlUgfUh/XfRLFP+/ia9LDdO9KcO0/ARQkI/pwTn5Ccud4axRDkLqRo630SypdojwaMeoTiiijt77k02Ls3Ex7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717527946; c=relaxed/simple;
-	bh=7H1NlymcCUPLEYCBRoR+N/uLzpyO2oc7z52xOA7HhqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JJji0lE/2imEkxQ2ONsh5uqcKz7iB/PPd1OU4g7acc1W3m1dIosTJZRFyTUz/lPqp72P9shCLJbp0MczHSBhJDR0vRSA8cg07JH+dev1yuImBkcVfLTfWYQVGkUGr/XlE5je7OHfLtNxf3E8Xcs7/GjQXY56gqJKUdWzAnuxpxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Yp9kDAM+; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kBZjuDjeGfjdZptZZCrUbh8WS65dvQlWt6oSaNd1zeY=; b=Yp9kDAM+7pM3XD6NqBRYW0czB6
-	tcLmBLZ2mKYtMDMEDiCqeWhEWSr39QEX+0GI+B63X7iLx1JTtz9KCQyaph9z5Ark45yINsqgVe3BX
-	2wBDS3a4F/bmKCTdSTkT+e4TvHFM/swX3YjyF3A+G9yO1LKmeJRi9N2LBQ3chQGwvuc3KIPtCCHun
-	XqFxjLUo3RujBVegeuGcSliW9PQnjIG4OUH+VoeTIDQskFmx9CTJe6WcCGkO/VRwinZp6U7EGXD1x
-	8oI/8tUIhaIQWj679JqsEEhRMcRmA/WTXDBo6uIdJD2ET6qzsKNQAXUKlesJhkJ2pdsCmA3O7H8kU
-	Ku9zqRAw==;
-Received: from [189.79.117.74] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sEZTK-00Gufo-LY; Tue, 04 Jun 2024 21:05:26 +0200
-Message-ID: <28a9290e-b8af-93bb-26d3-3b12864ada4e@igalia.com>
-Date: Tue, 4 Jun 2024 16:05:18 -0300
+	s=arc-20240116; t=1717528010; c=relaxed/simple;
+	bh=w+z51GOxz6CgOvEKGk3Y4qP1o260i7X7s60eVfx6w8g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IKcbQ1rtaR3MZ+T4V80c66IJIjTLrICeyDES8QMqTTm3jvwIud+OaeGrVHE4arlAS1kWNl+w+2L4I6A6Tdh4bEhs9fdgxpGV33RVfSLNissEeW7NL1xXM+msZ6kIH1n878GvnN5FLjaWebmCmQAJBkDGpaV5/n6IL1RXgKxg/SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xpVmld3U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Sub/LDfg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xpVmld3U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Sub/LDfg; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 398E21F37C;
+	Tue,  4 Jun 2024 19:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717528007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TXBboWW451VBPbHdzoF/IPP9YUNWIilu8/IAXa2j64I=;
+	b=xpVmld3U5rCSlYA+RS3LZvZSmgEP04a9DhPwJTUWgJ6Mqdan4i7dfYHA4JH+u4Rr6GzE2P
+	GK06r+QZDHElrI4eDogAq3kYyd9GvsOpXf6dfJEn6QoPPmuva1wI+ic/K/tU2OmKmqdaad
+	52fu0xlxtHW7AmnDbEecQpzxYKdW6ok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717528007;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TXBboWW451VBPbHdzoF/IPP9YUNWIilu8/IAXa2j64I=;
+	b=Sub/LDfgBk8LEnfeHQ5e0GjMGwc+RlDeU1LiGDsIpcv2LArYPL7mmsyoi6FdC4RTqmZ3EU
+	ajAGh0JzEvzQgqBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717528007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TXBboWW451VBPbHdzoF/IPP9YUNWIilu8/IAXa2j64I=;
+	b=xpVmld3U5rCSlYA+RS3LZvZSmgEP04a9DhPwJTUWgJ6Mqdan4i7dfYHA4JH+u4Rr6GzE2P
+	GK06r+QZDHElrI4eDogAq3kYyd9GvsOpXf6dfJEn6QoPPmuva1wI+ic/K/tU2OmKmqdaad
+	52fu0xlxtHW7AmnDbEecQpzxYKdW6ok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717528007;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TXBboWW451VBPbHdzoF/IPP9YUNWIilu8/IAXa2j64I=;
+	b=Sub/LDfgBk8LEnfeHQ5e0GjMGwc+RlDeU1LiGDsIpcv2LArYPL7mmsyoi6FdC4RTqmZ3EU
+	ajAGh0JzEvzQgqBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E6E1B13A93;
+	Tue,  4 Jun 2024 19:06:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pNiQMsZlX2YBYQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 04 Jun 2024 19:06:46 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <adilger.kernel@dilger.ca>,  <coreteam@netfilter.org>,
+  <davem@davemloft.net>,  <ebiggers@kernel.org>,  <fw@strlen.de>,
+  <jaegeuk@kernel.org>,  <kadlec@netfilter.org>,  <kuba@kernel.org>,
+  <linux-ext4@vger.kernel.org>,  <linux-fscrypt@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <lkp@intel.com>,
+  <llvm@lists.linux.dev>,  <netdev@vger.kernel.org>,
+  <netfilter-devel@vger.kernel.org>,  <oe-kbuild-all@lists.linux.dev>,
+  <pablo@netfilter.org>,
+  <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>,
+  <syzkaller-bugs@googlegroups.com>,  <tytso@mit.edu>
+Subject: Re: [PATCH V5] ext4: check hash version and filesystem casefolded
+ consistent
+In-Reply-To: <20240604011718.3360272-1-lizhi.xu@windriver.com> (Lizhi Xu's
+	message of "Tue, 4 Jun 2024 09:17:17 +0800")
+Organization: SUSE
+References: <87plsym65w.fsf@mailhost.krisman.be>
+	<20240604011718.3360272-1-lizhi.xu@windriver.com>
+Date: Tue, 04 Jun 2024 15:06:32 -0400
+Message-ID: <87le3kle87.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 7/8] efi: pstore: Follow convention for the efi-pstore
- backend name
-Content-Language: en-US
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: kernel-dev@igalia.com, kernel@gpiccoli.net,
- linux-fsdevel@vger.kernel.org, keescook@chromium.org, anton@enomsg.org,
- ccross@android.com, tony.luck@intel.com, linux-efi@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org
-References: <20221006224212.569555-1-gpiccoli@igalia.com>
- <20221006224212.569555-8-gpiccoli@igalia.com>
- <CAE-0n50vo5xkUNK0-cF9HZRXShsxbikqmdVnmMzRsn+Z7MEJTg@mail.gmail.com>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <CAE-0n50vo5xkUNK0-cF9HZRXShsxbikqmdVnmMzRsn+Z7MEJTg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[340581ba9dceb7e06fb3];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email]
 
-On 03/06/2024 20:02, Stephen Boyd wrote:
-> [...]
-> This patch broke ChromeOS' crash reporter when running on EFI[1], which
-> luckily isn't the typical mode of operation for Chromebooks. The problem
-> was that we had hardcoded something like dmesg-efi-<number> into the
-> regex logic that finds EFI pstore records. I didn't write the original
-> code but I think the idea was to speed things up by parsing the
-> filenames themselves to collect the files related to a crash record
-> instead of opening and parsing the header from the files to figure out
-> which file corresponds to which record.
-> 
-> I suspect the fix is pretty simple (make the driver name match either
-> one via a regex) but I just wanted to drop a note here that this made
-> some lives harder, not easier.
+Lizhi Xu <lizhi.xu@windriver.com> writes:
 
-Oh, many apologies for that Stephen - of course if I was aware of the
-hardcoding in the tool, I'd not mess it up or would fix the tooling
-first, before changing the kernel code.
+> On Mon, 03 Jun 2024 10:50:51 -0400, Gabriel Krisman Bertazi wrote:
+>> > When mounting the ext4 filesystem, if the hash version and casefolded are not
+>> > consistent, exit the mounting.
+>> >
+>> > Reported-by: syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com
+>> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+>> > ---
+>> >  fs/ext4/super.c | 5 +++++
+>> >  1 file changed, 5 insertions(+)
+>> >
+>> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> > index c682fb927b64..0ad326504c50 100644
+>> > --- a/fs/ext4/super.c
+>> > +++ b/fs/ext4/super.c
+>> > @@ -5262,6 +5262,11 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+>> >  		goto failed_mount;
+>> >  
+>> >  	ext4_hash_info_init(sb);
+>> > +	if (es->s_def_hash_version == DX_HASH_SIPHASH && 
+>> > +	    !ext4_has_feature_casefold(sb)) {
+>> 
+>> Can we ever have DX_HASH_SIPHASH set up in the super block?  I thought
+>> it was used solely for directories where ext4_hash_in_dirent(inode) is
+>> true.
+> The value of s'def_hash_version is obtained by reading the super block from the
+> buffer cache of the block device in ext4_load_super().
 
-At least, as a bright side here you found the tool's limitation and
-there's the obvious improvement/fix for that =)
+Yes, I know.  My point is whether this check should just be:
 
-Cheers,
+if (es->s_def_hash_version == DX_HASH_SIPHASH)
+	goto failed_mount;
+
+Since, IIUC, DX_HASH_SIPHASH is done per-directory and not written to
+the sb.
+
+>> If this is only for the case of a superblock corruption, perhaps we
+>> should always reject the mount, whether casefold is enabled or not?
+> Based on the existing information, it cannot be confirmed whether the superblock
+> is corrupt, but one thing is clear: if the default hash version of the superblock
+> is set to DX_HASH_SIPHASH, but the casefold feature is not set at the same time,
+> it is definitely an error.
 
 
-Guilherme
+-- 
+Gabriel Krisman Bertazi
 
