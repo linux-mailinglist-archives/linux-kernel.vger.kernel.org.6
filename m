@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-201462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF2E8FBED4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:24:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03568FBED6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895EA2872ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:24:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AD12B25B1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC82114D2BB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4E914D2BA;
 	Tue,  4 Jun 2024 22:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTjPybFM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ReR8ITPj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2824E1442FE;
-	Tue,  4 Jun 2024 22:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282E214658E;
+	Tue,  4 Jun 2024 22:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717539837; cv=none; b=XKFCA6rbRB2koH6BuOI/543T7AnC/heUbWV1qKh9/0EPt3ibiu4CFp+MfBVx2sexYxYB9HUeF0zHt5uZPOQLf73101Vj7mraknqgVd8B/2CfVBRAW6HUna4atxcoslS1+ehAW54HmJykvJ0b3Ezt+w77eOCDFcJPePTILtBR2QQ=
+	t=1717539837; cv=none; b=DnAaHZsEdQ+up1lmXSgnAZU8JWMwx8URYaSSiqdTS0w3H1oI4hOwvFSEgjQL6xzPMPQN/fma8eRIaaaSRTf8flCR+YeiCmWMjq03O0JLll+CnXJhWwoFmcWkX8lqowkv2gQ40tGAQnjfDKHK3DeGRdEZ7n9gzRI7vuiLCFir/po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717539837; c=relaxed/simple;
-	bh=cSJFd+VMxpJPGTTylKf3LUw/sJdSsIpeVfT0Z+nfmlg=;
+	bh=rhuvEgtcACTNn6ax1Ziuj5pEwRCIs7jJ27srtcjn1HU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ANlO6qIAJpy6wZ13c9FITFqbqm8TmtTe7qlADWxZQgHzcchr6F6ntW2kuPgvLhya9MNY4whTby6ggjGn/9Gg9IAdLg1Bc0bYiRETNpribNqSZl4oNbMOPrfX3h5/9m6LGY9wHbIupt7tZPfKt0PJCHm6vZWankGWRkOir8Mzu4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTjPybFM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C839CC4AF07;
+	 MIME-Version; b=dOc/rXC/fETodbfabDJLexBQoYpRfI8CuEPfFGpk5kDsAnPKN5BwZIrNhH09Ky5641rixmaRDSmAEWkiECFUHAwCFDbiOEGFKMQioq9nRb3mwxMIADjCMIqFsGwO/CK0uvJk6VRQUVpVSk26R9bACtQmANC8ge4ZSJhSgccSk+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ReR8ITPj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEDECC4AF0C;
 	Tue,  4 Jun 2024 22:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1717539836;
-	bh=cSJFd+VMxpJPGTTylKf3LUw/sJdSsIpeVfT0Z+nfmlg=;
+	bh=rhuvEgtcACTNn6ax1Ziuj5pEwRCIs7jJ27srtcjn1HU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oTjPybFMsz8Iy9BYREe5CNlP0iHsbid6J1MzhckH7NnNXuNvG6DPvUuph59muncRX
-	 aMQ8w9r+pdiHW8iKsY696KjC8anAhA7x1FX0KSBTxvyOYqALJboSydbDNUsoJ14MLG
-	 qhmnwKY0IeiKWPiLQPDePHvhRVZaeiT+YmFGit2EGUpjukN1LvmdCWBTbqULDxFACy
-	 7v5oA9ZqAUVFIryEc41YIn4bdMkYwTXr8kt1xoRpHnCvk63CNEO8FN8OUpWwSUmy6y
-	 BPTVWwxl45PCDYEu7ptZk/fXslfM6M9GwrO1ei3BCxpo7XCshNvMRHYTo2nqUG1xmP
-	 zslkg7oXr3iaQ==
+	b=ReR8ITPjfVvne78bEQaAxExpg3RF0XUt4R8qbyytwNbtj1rg9Uu/DTwB5RDlx8eWs
+	 xcD+EGg3oETsALlRitka2BSNwJcNrf5LUdFHtxMB4dU1ecBJbQeDmTVwKqzCFudNOu
+	 jPuqz0dn2orXdacMJ/boYrrzjNPMd2wk655zYXP0PnCH+pasb/CBqS2xHdEGwUMH6L
+	 p6Lt/kjUmu3nHHcFggUbeE9Ylt2X5gYkBl3wPeVxjJYAuhJrZ4XInHuBkIL34urcJH
+	 L78EYU4svrkUP/jzbV96TMh3bv/8LzVMPFMXVE5QShtkg60QWwexbDs9Bs3SK69iVb
+	 6aGxE1h23cmGA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 61E6BCE3F27; Tue,  4 Jun 2024 15:23:56 -0700 (PDT)
+	id 645E4CE3F2C; Tue,  4 Jun 2024 15:23:56 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>,
 	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH rcu 4/9] rcu: Disable interrupts directly in rcu_gp_init()
-Date: Tue,  4 Jun 2024 15:23:50 -0700
-Message-Id: <20240604222355.2370768-4-paulmck@kernel.org>
+Subject: [PATCH rcu 5/9] srcu: Disable interrupts directly in srcu_gp_end()
+Date: Tue,  4 Jun 2024 15:23:51 -0700
+Message-Id: <20240604222355.2370768-5-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
 References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
@@ -63,49 +63,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Interrupts are enabled in rcu_gp_init(), so this commit switches from
-local_irq_save() and local_irq_restore() to local_irq_disable() and
-local_irq_enable().
+Interrupts are enabled in srcu_gp_end(), so this commit switches from
+spin_lock_irqsave_rcu_node() and spin_unlock_irqrestore_rcu_node()
+to spin_lock_irq_rcu_node() and spin_unlock_irq_rcu_node().
 
 Link: https://lore.kernel.org/all/febb13ab-a4bb-48b4-8e97-7e9f7749e6da@moroto.mountain/
 
 Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/rcu/srcutree.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 2fe08e6186b4d..35bf4a3736765 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1841,7 +1841,7 @@ static noinline_for_stack bool rcu_gp_init(void)
- 	WRITE_ONCE(rcu_state.gp_state, RCU_GP_ONOFF);
- 	/* Exclude CPU hotplug operations. */
- 	rcu_for_each_leaf_node(rnp) {
--		local_irq_save(flags);
-+		local_irq_disable();
- 		arch_spin_lock(&rcu_state.ofl_lock);
- 		raw_spin_lock_rcu_node(rnp);
- 		if (rnp->qsmaskinit == rnp->qsmaskinitnext &&
-@@ -1849,7 +1849,7 @@ static noinline_for_stack bool rcu_gp_init(void)
- 			/* Nothing to do on this leaf rcu_node structure. */
- 			raw_spin_unlock_rcu_node(rnp);
- 			arch_spin_unlock(&rcu_state.ofl_lock);
--			local_irq_restore(flags);
-+			local_irq_enable();
- 			continue;
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index bc4b58b0204e9..d14d350f505f4 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -845,7 +845,6 @@ static void srcu_gp_end(struct srcu_struct *ssp)
+ 	bool cbs;
+ 	bool last_lvl;
+ 	int cpu;
+-	unsigned long flags;
+ 	unsigned long gpseq;
+ 	int idx;
+ 	unsigned long mask;
+@@ -907,12 +906,12 @@ static void srcu_gp_end(struct srcu_struct *ssp)
+ 	if (!(gpseq & counter_wrap_check))
+ 		for_each_possible_cpu(cpu) {
+ 			sdp = per_cpu_ptr(ssp->sda, cpu);
+-			spin_lock_irqsave_rcu_node(sdp, flags);
++			spin_lock_irq_rcu_node(sdp);
+ 			if (ULONG_CMP_GE(gpseq, sdp->srcu_gp_seq_needed + 100))
+ 				sdp->srcu_gp_seq_needed = gpseq;
+ 			if (ULONG_CMP_GE(gpseq, sdp->srcu_gp_seq_needed_exp + 100))
+ 				sdp->srcu_gp_seq_needed_exp = gpseq;
+-			spin_unlock_irqrestore_rcu_node(sdp, flags);
++			spin_unlock_irq_rcu_node(sdp);
  		}
  
-@@ -1886,7 +1886,7 @@ static noinline_for_stack bool rcu_gp_init(void)
- 
- 		raw_spin_unlock_rcu_node(rnp);
- 		arch_spin_unlock(&rcu_state.ofl_lock);
--		local_irq_restore(flags);
-+		local_irq_enable();
- 	}
- 	rcu_gp_slow(gp_preinit_delay); /* Races with CPU hotplug. */
- 
+ 	/* Callback initiation done, allow grace periods after next. */
 -- 
 2.40.1
 
