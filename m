@@ -1,87 +1,122 @@
-Return-Path: <linux-kernel+bounces-200665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01E98FB31E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FD68FB325
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C4C1C243C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3CD281A94
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C79146010;
-	Tue,  4 Jun 2024 13:04:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79B41465A3;
+	Tue,  4 Jun 2024 13:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qif0UDwL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90AE145B27
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB08144D2E;
+	Tue,  4 Jun 2024 13:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717506247; cv=none; b=SUOHCQJAXarCipr2y3D1h4X/VrfO9qXxQM9dCKaeaUSrpip+hKUInvRnswrZXPJtStFkGAPK9SCRnbGoo/FxD1VSaBOqLCk26Xt+PhKKlLclnjZNW51FYqcKpBbRfB+I3kkBUU+5X15cuh2PHGvSHoYchjp6pZZdLP4b2zNox60=
+	t=1717506330; cv=none; b=jtILjBWvKa9cSRVXXLQiqtImDatPeh8k0FwK2MGveWca2GyxC8dWN6nMeCtEPTG0RUm+jzdBiDik/FpGR/n8X1XsXwctlvNCF8iPPJNJJDmpQieNXZBTiwPHXtGmgwTGH0nMLoxDw+AGqDWDvTtx7ofMlmxqpug6cWtEvu2zCAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717506247; c=relaxed/simple;
-	bh=T82aw7Fpj21f88lzPdno3fpEjbQRYfFzL+k+rLk0xiA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uNwVNYvXgT6iYZ1aJFZN5tTO/hB07YlV67fEZ7fwDvlDbw5ka4jzRRiAFtre8wes2vQ08oa1bzQEjeBPe0sT/PZiQ3sqSjtE0yezwPoebg4hrUTFNCRtFIJFGbC/mZuZg6/Pu4W0O4UPve1zYdNsENAQdUJWhfXc0isdzxKgOIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-37481e2793eso41325795ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:04:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717506245; x=1718111045;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nw/tThhWCHkHloMeX9fThExXMhZwmGS7k7p/KTeKvYw=;
-        b=cYGbdVTl8Nd5jHjNTGMeED38rbD97pxIiPcF7gMIgjz7gXP225YCFMKP1fHENiNdlL
-         EhPow26BWKr/YwdPbG5LQVBFVOnT22rmHy7Wn+Mf/cnIGRfgZe0L4gNBFHJXVDSVbefM
-         q6/tUcHcrTkveOeWJOEzSEXAlP/b0KXYi2h941iTfRDeE7qAgtZYGFpPYazFPDSme16a
-         QO7sZ6SDBghun8vhARdo6dT8eDhndIYodVXRSv3bQuCHjOjldsU9SZP/b1Ey1xfSEXYg
-         wV3TG++dH//jPXt/Z3RoL9NrfnQsyaAzubnKshi956hoHS9d0pQe7zca/cZ2nYzWSRyS
-         GtZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxZWoOxr3gxwo98LHdrERjXO73px4AJyRqV8hCP+NOdsC7Yc8+QK4hbB9bUeHHD10uqE3RWtyLysRGBW2QYL/IWby8Tnq7N0blQPqJ
-X-Gm-Message-State: AOJu0YwkEVHgFJY+xImhYiRM4vEky/n/pNL+4wJnbMJ1Dn6T6+x9bexz
-	stKCHKxBLB4ErIduOKA9x54gRrCb6rBqDV5b6ZwCgiud5d4qrCk88Zw8Z3Z1aukQalxsuQUmasR
-	H6jJTsikvhjf+pCiCVZEFC7vgz08EQsKw0syM93p98fQAvH5LR3i2D1w=
-X-Google-Smtp-Source: AGHT+IHKWmn40BeYhgMpDyeFHftsrJuJM990+N+AT+ehS/LyH+++SAfGjXFq45B2WUbLAY3ZcKC0n6XDK/+WLKiz3pD91u2wzbIJ
+	s=arc-20240116; t=1717506330; c=relaxed/simple;
+	bh=9EKMSE4WwZwbHhI87SmvVkxv+6q5bsofM8XJUDQ9ajY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H/c8McqzPtAElAqRW8vXnx2RzUc9KD1U1LGeUC+IflVj5dnzeOEVc5gfASEvc9vSBonK+hc/oDjccslmKIQ2Ak17HWf4L0CCQ8jbfoNieJR3IExrJe2ZoT3GLODjDl7uRQG0xqCZJm0YY27NSsCv++c3Z+vk8l0td4BQ54yytg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qif0UDwL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 594BAC2BBFC;
+	Tue,  4 Jun 2024 13:05:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717506329;
+	bh=9EKMSE4WwZwbHhI87SmvVkxv+6q5bsofM8XJUDQ9ajY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qif0UDwLifv6BkCrZFJHf9Cga0EV9h0UEzXW4e7t/NLrlVc2YyZA4aDCZbF0JkZ2N
+	 ekOvCmlyXm+3Efwig/zKswIc+QfBfwOAsX1DflYCuPijz6wcol6BEmO5LDOF18CjMh
+	 PAmKXffV7aWgrx9UkHxJ3E4DldyYCCLMXlp/V5QFQCJpKc9FrWBegt9HpUZ3AXPleV
+	 xvbxT06FF2WAp6DAb3VVCQCOm1X3uDgQMTaWpK/QD+9QpNCOHteqgSTD892vn9sCkd
+	 +mcb9I/Ad2Jp7XJ6eGe4HsdHW2XaX3nhUDSXLZ6mlxYSawDKpHS04eEIZOgzNOA6F+
+	 6QFQx+xkg4QyQ==
+Date: Tue, 4 Jun 2024 08:05:26 -0500
+From: Rob Herring <robh@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	patches@lists.linux.dev, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Daniel Latypov <dlatypov@google.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Ripard <maxime@cerno.tech>
+Subject: Re: [PATCH v5 07/11] dt-bindings: test: Add single clk consumer
+Message-ID: <20240604130526.GA12945-robh@kernel.org>
+References: <20240603223811.3815762-1-sboyd@kernel.org>
+ <20240603223811.3815762-8-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20e1:b0:374:9305:62be with SMTP id
- e9e14a558f8ab-374a850a1fcmr1526135ab.2.1717506245110; Tue, 04 Jun 2024
- 06:04:05 -0700 (PDT)
-Date: Tue, 04 Jun 2024 06:04:05 -0700
-In-Reply-To: <20240604123656.1730-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a3bf64061a101538@google.com>
-Subject: Re: [syzbot] [mm?] kernel panic: corrupted stack end in userfaultfd_ioctl
-From: syzbot <syzbot+5a1cb2c00e895afca87e@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603223811.3815762-8-sboyd@kernel.org>
 
-Hello,
+On Mon, Jun 03, 2024 at 03:38:04PM -0700, Stephen Boyd wrote:
+> Describe a binding for a device that consumes a single clk in DT. This
+> will initially be used by a KUnit test to clk_get() the clk registered
+> by of_fixed_clk_setup() and test that it is setup properly.
+> 
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> Cc: David Gow <davidgow@google.com>
+> Cc: Rae Moar <rmoar@google.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  .../test/test,single-clk-consumer.yaml        | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml b/Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml
+> new file mode 100644
+> index 000000000000..8c384c48707d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml
+> @@ -0,0 +1,34 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/test/test,single-clk-consumer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Test consumer of a single clock
+> +
+> +maintainers:
+> +  - Stephen Boyd <sboyd@kernel.org>
+> +
+> +description:
+> +  A consumer of a single clock used in tests.
+> +
+> +properties:
+> +  compatible:
+> +    const: test,single-clk-consumer
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I don't know if there's much value in defining bindings for tests. We 
+could alternatively make 'test,' opt out of everything. There's already 
+some support in dtschema for this with 'foo,'.
 
-Reported-and-tested-by: syzbot+5a1cb2c00e895afca87e@syzkaller.appspotmail.com
+I need something for the DT unittest as well. 
 
-Tested on:
-
-commit:         2ab79514 Merge tag 'cxl-fixes-6.10-rc3' of git://git.k..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=108249bc980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48aeb395bedeb71f
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a1cb2c00e895afca87e
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14d60c26980000
-
-Note: testing is done by a robot and is best-effort only.
+Rob
 
