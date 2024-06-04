@@ -1,203 +1,150 @@
-Return-Path: <linux-kernel+bounces-201052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A768FB8AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7626E8FB8AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF101F243A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A581F24378
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F6B14884B;
-	Tue,  4 Jun 2024 16:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01335148318;
+	Tue,  4 Jun 2024 16:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eC1xsCLQ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b45s049t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A05148305;
-	Tue,  4 Jun 2024 16:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978DD17597;
+	Tue,  4 Jun 2024 16:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717517799; cv=none; b=unW5wUBbOj0Da0vyiM/mVbLoMV8Otp3S9X1dFoOKXPWqk08ZvSoQ6WOVys5iiBc8iH1WUSXThtT+NA6mSvn/MHa7PCvXX20mXYajAgs34u/EU+mrgIIU1rSp93+rCOSoabb3ZJ0B2spEaoWjKHvMOxEQJYv+Tij4Unxozbxzmm4=
+	t=1717517865; cv=none; b=HKgOCRdqFgjuCN1241LKnew6HVRDEJ6uMNtOMi164OH082JIIV0dmF2knmsfuW2NZKumJYxKtxj2pdWm0xVJYK++qeeX9HiGpX2CABKFWNKU1jTd3eLSHI1qe1n/D0c2x7OZSZ4MFtBZZoFbmF0yGNz4gLYQ0+bl7SutN2F/6eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717517799; c=relaxed/simple;
-	bh=1e9RG+2Ze+kSjju4jnURgtLVyboPBj/hCLl0BkLzV0Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=d+kv+ZxUdQ9Gv1PTL72an4DLedgrNgXLr7q+UTpH4VJr7QrSr4/0Ox58G+OHtP+RgekJgn5cVXwZuTb2X6aKivly8n0XgELGwmiSIm8rNCG92YCrP5lVdYxtZ2JJABgnfjSQUP4ehvQ+xl0Sr2mEgNooyWLKSvtT+CkgT/Ida3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eC1xsCLQ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 454Fq8A4023070;
-	Tue, 4 Jun 2024 16:16:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=pp1;
- bh=ZtCksyZ8jmBRtowIXUVm+kXmHPyAtzAyf+9pX8s/W/I=;
- b=eC1xsCLQFLTbJDYWlntSfEYu9x7FLtoitYrbbuSuCvsAm+418OyjUQ9Yop/qdHld5cMc
- HCE0k6BL0J1sPLyTBKUDvsLv2dkNF/tu9ruOrtmL/hfYpoRJuim2tNuNUW7rsqBZJkFl
- 03HqZ94O9FR8mFO68zP191GbzYIvuFj8kBpxrxMrhgS5rerhMPGn+Xm9D7CeeZEaAzMH
- PftX5NXRaB6Jimm5NA7qmzxpVS/nKLeOTcKPbDHA6jq2xN+PWsMiYlYnVVzfXiN1FGCF
- STOL+DwRiY9+C+Dq2jICQaRWvcRCi0Zkquw1vO4nvW3lAkIqfC/V+2IVUH9auWVuDIun Aw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj5xm82dx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 16:16:34 +0000
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 454GCs5c026187;
-	Tue, 4 Jun 2024 16:16:33 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj5xm82dr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 16:16:33 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 454DvW5w022794;
-	Tue, 4 Jun 2024 16:16:32 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ygg6m6q0n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 16:16:32 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 454GGQ8X49086932
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Jun 2024 16:16:28 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7CC6920049;
-	Tue,  4 Jun 2024 16:16:26 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3619420040;
-	Tue,  4 Jun 2024 16:16:26 +0000 (GMT)
-Received: from [9.152.224.39] (unknown [9.152.224.39])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Jun 2024 16:16:26 +0000 (GMT)
-Message-ID: <cc606c7b6fb53d00d80122b987c94bd7cb385af0.camel@linux.ibm.com>
-Subject: Re: [PATCH net] net/smc: avoid overwriting when adjusting sock
- bufsizes
-From: Gerd Bayer <gbayer@linux.ibm.com>
-To: Wen Gu <guwen@linux.alibaba.com>, wenjia@linux.ibm.com, jaka@linux.ibm.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 04 Jun 2024 18:16:21 +0200
-In-Reply-To: <20240531085417.43104-1-guwen@linux.alibaba.com>
-References: <20240531085417.43104-1-guwen@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40app1) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 30IDO0IliIBx3wuhW8Ez_EelcRsmh699
-X-Proofpoint-GUID: qdyy8YkF-p-cxQRE0l5eaAmfYc0BlW3z
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1717517865; c=relaxed/simple;
+	bh=NzEgbKYLBKQwPYQxe2HLyToyWOI1KcXhJmqeIP7v8Bc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g4zMP/hCBKVdD0q/TA4/V5toV5QqOmg83/Wk0PAlh13OjfBL5zn22cK9+En3uLwZWxejVskJqpKTk9BECH6s+zV7OvLJAL2KvczPzTKTxSp0sw3wJb8fjMY/j8VYFb5bK6VOBQ46zgdG/fwuWPSMBZ5jXnEiskpDVc6j/Fn/1PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b45s049t; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717517864; x=1749053864;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NzEgbKYLBKQwPYQxe2HLyToyWOI1KcXhJmqeIP7v8Bc=;
+  b=b45s049t1DnG77QA+nDAgYyhXUH+XMUuze6HPA0SqmRJx7R21WTDEpqV
+   R1JVCJ0cmPkYTwN0oSmR3m920NVN4rLISyPLFf5/z0bItU1BCsKb80jVM
+   x+k8SygC9emxgO8XLEvQuLDVd57bOGwfNSTFwHC/NsjBDQ+zFsvazqBn1
+   UxV2SKTlpJmi8+xeVSZBvxN0J+Ssokt63LB72fUPWzFIyQFrkbsDsRvYw
+   o0j2Le0TsS9QC/ITyvqQz4clu+kOm5yI/m01Jf82cnphu4N6O/AeTsFVn
+   D5xQ2pBIfWy5Co/oj/RAqqvIdHwXgydVojHCf1l4012cNTFPk50srhfRv
+   g==;
+X-CSE-ConnectionGUID: SLVlkw1zS9+G09xlbSTR1w==
+X-CSE-MsgGUID: evWh/CInSU2ukXSfvI0f/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14211423"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="14211423"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:16:56 -0700
+X-CSE-ConnectionGUID: KwBZ/72oRgCpxLYNfeJoRQ==
+X-CSE-MsgGUID: E2xC8Y5HS7qAEOeWTlWbuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="42250217"
+Received: from cdpresto-mobl2.amr.corp.intel.com.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:16:56 -0700
+Message-ID: <ae6c3717-bafb-48cd-ad7b-fa87703257f0@intel.com>
+Date: Tue, 4 Jun 2024 09:16:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 spamscore=0
- malwarescore=0 phishscore=0 mlxscore=0 adultscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2406040130
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv11 10/19] x86/mm: Add callbacks to prepare encrypted
+ memory for kexec
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Elena Reshetova <elena.reshetova@intel.com>,
+ Jun Nakajima <jun.nakajima@intel.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>, "Kalra, Ashish"
+ <ashish.kalra@amd.com>, Sean Christopherson <seanjc@google.com>,
+ "Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Baoquan He <bhe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+ linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Nikolay Borisov <nik.borisov@suse.com>, Tao Liu <ltao@redhat.com>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-11-kirill.shutemov@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240528095522.509667-11-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wen Gu,
+On 5/28/24 02:55, Kirill A. Shutemov wrote:
+> +	x86_platform.guest.enc_kexec_begin(true);
+> +	x86_platform.guest.enc_kexec_finish();
 
-sorry for the late reply, I'm just catching up after a bit of a
-vacation.
+I really despise the random, unlabeled true/false/0/1 arguments to
+functions like this.
 
-On Fri, 2024-05-31 at 16:54 +0800, Wen Gu wrote:
-> When copying smc settings to clcsock, avoid setting clcsock's
-> sk_sndbuf to sysctl_tcp_wmem[1], since this may overwrite the value
-> set by tcp_sndbuf_expand() in TCP connection establishment.
->=20
-> And the other setting sk_{snd|rcv}buf to sysctl value in
-> smc_adjust_sock_bufsizes() can also be omitted since the
-> initialization of smc sock and clcsock has set sk_{snd|rcv}buf to
-> smc.sysctl_{w|r}mem or ipv4_sysctl_tcp_{w|r}mem[1].
->=20
-> Fixes: 30c3c4a4497c ("net/smc: Use correct buffer sizes when
-> switching between TCP and SMC")
-> Link:
-> https://lore.kernel.org/r/5eaf3858-e7fd-4db8-83e8-3d7a3e0e9ae2@linux.alib=
-aba.com
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> ---
-> FYI,
-> The detailed motivation and testing can be found in the link above.
-> ---
-> =C2=A0net/smc/af_smc.c | 22 ++--------------------
-> =C2=A01 file changed, 2 insertions(+), 20 deletions(-)
->=20
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index 9389f0cfa374..a35281153067 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -459,29 +459,11 @@ static int smc_bind(struct socket *sock, struct
-> sockaddr *uaddr,
-> =C2=A0static void smc_adjust_sock_bufsizes(struct sock *nsk, struct sock
-> *osk,
-> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long mask)
-> =C2=A0{
-> -	struct net *nnet =3D sock_net(nsk);
-> -
-> =C2=A0	nsk->sk_userlocks =3D osk->sk_userlocks;
-> -	if (osk->sk_userlocks & SOCK_SNDBUF_LOCK) {
-> +	if (osk->sk_userlocks & SOCK_SNDBUF_LOCK)
-> =C2=A0		nsk->sk_sndbuf =3D osk->sk_sndbuf;
-> -	} else {
-> -		if (mask =3D=3D SK_FLAGS_SMC_TO_CLC)
-> -			WRITE_ONCE(nsk->sk_sndbuf,
-> -				=C2=A0=C2=A0 READ_ONCE(nnet-
-> >ipv4.sysctl_tcp_wmem[1]));
-> -		else
-> -			WRITE_ONCE(nsk->sk_sndbuf,
-> -				=C2=A0=C2=A0 2 * READ_ONCE(nnet-
-> >smc.sysctl_wmem));
-> -	}
-> -	if (osk->sk_userlocks & SOCK_RCVBUF_LOCK) {
-> +	if (osk->sk_userlocks & SOCK_RCVBUF_LOCK)
-> =C2=A0		nsk->sk_rcvbuf =3D osk->sk_rcvbuf;
-> -	} else {
-> -		if (mask =3D=3D SK_FLAGS_SMC_TO_CLC)
-> -			WRITE_ONCE(nsk->sk_rcvbuf,
-> -				=C2=A0=C2=A0 READ_ONCE(nnet-
-> >ipv4.sysctl_tcp_rmem[1]));
-> -		else
-> -			WRITE_ONCE(nsk->sk_rcvbuf,
-> -				=C2=A0=C2=A0 2 * READ_ONCE(nnet-
-> >smc.sysctl_rmem));
-> -	}
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void smc_copy_sock_settings(struct sock *nsk, struct sock
-> *osk,
-
-As Wenjia already said, we've discussed this a bit.
-As I remember, I've added the sections to copy over the sysctl values=20
-as a "safety measure" when moving between smc/clc sockets - but had the
-wrong assumption in mind that e.g. in a fall-back a new TCP handshake
-would be done. Apparently, we didn't test the buffer size behavior in
-these scenarios enough to notice the "weird" behavior.
-
-So we reviewed your initial report of the oddity per your message in
-the link above, too.
-
-We fully agree that if no connection at the SMC level could be
-established, you should expect the socket buffersizes be used that had
-been established for the TCP connection - regardless if the fallback is
-due to the server or the client.
-
-So feel free to add my
-Reviewed-by: Gerd Bayer <gbayer@linux.ibm.com>, too.
-
-Thanks,
-Gerd
+I'll bring it up in the non-noop patch though.
 
