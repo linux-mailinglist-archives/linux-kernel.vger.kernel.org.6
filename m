@@ -1,277 +1,139 @@
-Return-Path: <linux-kernel+bounces-201575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3188FC039
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:54:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 767D38FC03A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3231F2843A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:54:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F0E3283E82
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A8414E2E4;
-	Tue,  4 Jun 2024 23:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF7D14E2D2;
+	Tue,  4 Jun 2024 23:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N63wcX3K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efdYZXem"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA591D535;
-	Tue,  4 Jun 2024 23:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AF014B97A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717545234; cv=none; b=p5nBrAMbHK/7w4Cp1iL3toYnHH7k7GPz/rt1vwTDuxbjoXgZqXCEYyL+4x4ahhGnSbx1EiXxn8iwaU0OfXzgl7oTXOtAcQhP7Jv9to4WQu4+BUE2CQOQTQrIcUnp6J//dq8dJXt4590Wf9eXcLUm5PHoM1fUVafDo6+E4Ce5u4c=
+	t=1717545251; cv=none; b=uWqQvwx6B+B18OuUx9nmE9hNK1+7NkmwHdZZDFomvEALSONC2/7O7jiD3Z/QrnTDbXm+1oe/TIu95vjYUcz2OiqsIluO7wjsmHgHR+KzJzBQeN8x2p1rY28PG3H1sw+Q7xOYwzO+g54BgfUs9pX+BNnUA2U+Ful47apK5t+hdcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717545234; c=relaxed/simple;
-	bh=FZh/FIXyEigTjCFJyIyylMlixwHk6vrOpwsPnd7fovE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TaUR399c0U+wQmtq0ZSOzFnzU0q5KuDCKbJWYFsp8Ao5/TwCOBq7EwlWJVIej+EdHfqU88q2nrWFwB/+WUGuNbboCnMJhrsIszBOe61EuNde1TszDStuBxJ0sSwm5KXbCLEk5/prKbs99lnc9OY9o4+Sq85eM1+1AEq2sXe4hU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N63wcX3K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B05C2BBFC;
-	Tue,  4 Jun 2024 23:53:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717545234;
-	bh=FZh/FIXyEigTjCFJyIyylMlixwHk6vrOpwsPnd7fovE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N63wcX3KpIZBgWVJEQrRpqqETuhjgPOFNBBZwn3H2Tj+IYLlPO9ftmUGEWFMvzKQy
-	 qacq6mf87l+Dayqb+cEM5KoEVGDV4pyolAC1E4S/zlDjz5ZB8fgTajzSC1FUbA9cYI
-	 kYmHAZA/xi9Xd9LMCgwu1EK5Nsl5nswavO9aAYMNeNrY8kc6ANl43c9TLUMqs5LlCO
-	 dzJeM8zRgt3zObsFYQ6j9z3DrGU28TH5HbmJHL8a67xVz1jRlHsQb8MAv1g4EBQHyv
-	 325ISWJWBhwIcc/IeEkk5XXmrreTValL4m3LTGfKXiTrUfNO9AltXLjP6bq0srGuG8
-	 Sq7MrWHYS6Fzw==
-Date: Tue, 4 Jun 2024 16:53:53 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Zizhi Wo <wozizhi@huawei.com>, chandan.babu@oracle.com,
-	dchinner@redhat.com, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH] xfs: Fix file creation failure
-Message-ID: <20240604235353.GG52987@frogsfrogsfrogs>
-References: <20240604071121.3981686-1-wozizhi@huawei.com>
- <Zl+cjKxrncOKbas7@dread.disaster.area>
+	s=arc-20240116; t=1717545251; c=relaxed/simple;
+	bh=6n5yBPEPKuLBc16hNZxPmgwPkIO5nIyaN/aHQt8Cc1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VhyQJIxvsLnP9AGZ60WyHOY4yzMKJUNlrjyBbFsQg8oAIpxMzbcE7a4OvjRfKhHYtZqUiPZ7of9UgNj6IhH90rnXXp2tHLZQpTQ3216zhIqXSSNIl1pt3WGNGkHRs1xJqddex/fqExa1xskftNUo8p+BN42CAeq20F8U9hgFq6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efdYZXem; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421338c4c3bso16231105e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 16:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717545248; x=1718150048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6n5yBPEPKuLBc16hNZxPmgwPkIO5nIyaN/aHQt8Cc1Q=;
+        b=efdYZXemIkdk8AOLMlFaqVnIsBKaHoTov6mSHPDvkDQrg8ZDhY6dlAvZGiszEz14VT
+         fzr4I9f++ZUShCelPQzDHUocZgW9L2+ohCBfE0bLxf+MUwI4jmD2NRN4Ajv6f7qUNM+S
+         X8Vv8jncIIMWw51JsuBUPLxLh9kOqd1ZhyfoPJ63dlHU8GSSI97BsvNy4WIHFV1q/zXm
+         A/Cbl2vuID/F7BFKWlDk1R0hd5o3eWXL3GqUzHqFg6514jynDq9OLzd4dTauMjf7qV+J
+         ixtuJu6luuo7uQyrq9hhZy/RpNE1a+Ev795KWK0axVgieJ83IWOhTakJdiwNcUxZvuXI
+         HiFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717545248; x=1718150048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6n5yBPEPKuLBc16hNZxPmgwPkIO5nIyaN/aHQt8Cc1Q=;
+        b=rr8yrRlJnNSpL+NaG5l0wWwISpJDSp8qQBCKi7rvo44B9CpqvEUQNYGpHQzXPngv3c
+         Vtj5GnYujL/kaiZas82S+fKeGHEK+qBB3/+vgjxG+UTrGTJmGSOSsOxLA+lFVP4GsXZw
+         oqVZoNVhnJoZ/rE02inM6mx0aP5XLjElImMPC76ij3okLKv4INFzQgNOWvcese4HSRKX
+         BFpB8zK08SCRKVGUpwuzfSQZ/TpUHOD5aOcHU1xziQFEJR4dA0+HdAYjNY7B2oNYm6QP
+         za40lHNyva6bc+dRgl15mzLGJW0ZzW0cp5EN7RzdZl8cYW1PT+bCG+j5WuNe11nA7Ibx
+         fMgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVwttVowJlt1BhHrZ8MFTnJXZsUIKho32DIDnUdmaXeyd4uHNTRn+Q2llcSaqC5BoGiV/Gi8hmGDIlRFN1taH9b04QNXnNLpqaAyaW
+X-Gm-Message-State: AOJu0Yz6kDMy3ZBE/roGaHlwHWcndoSTS/iRToORd2vHDB1YvidXLWwo
+	pJoPIZW3AL5dwad/xq8PLMGoZZmGH5z+uY5F10mlnNtNrFSy8kOgWY+ioz3ivCHVuHnLScPo+RV
+	buQazRgrn0egTPJs3Vmz9kDDW4VA=
+X-Google-Smtp-Source: AGHT+IEFa69ZUCNNBYc+8Bm37HfM1r9rsWHOXTP1G8B6R46/+68QCImeVcPzFFNbacw5tmIOxlJAgbHRWt0rfzbs7Mw=
+X-Received: by 2002:a05:600c:3550:b0:41b:fc3a:f1ef with SMTP id
+ 5b1f17b1804b1-42156339013mr6380615e9.33.1717545248325; Tue, 04 Jun 2024
+ 16:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zl+cjKxrncOKbas7@dread.disaster.area>
+References: <202405311534.86cd4043-lkp@intel.com> <CAHbLzkpMhEuGkQDGWrK1LhvZ-ZxTJkV1xjmn-nRGZMH4U+F5ZA@mail.gmail.com>
+ <890e5a79-8574-4a24-90ab-b9888968d5e5@redhat.com> <CAHbLzkqphyX473LBCXXf8rWEr-8m2PB--CT0cwCax3mUyZPGhA@mail.gmail.com>
+ <CAHbLzkqG=9VmAcOgFr-50ZdZtf7xj2PqpfD3UHUsMX3jR=+snw@mail.gmail.com>
+ <f4599bd2-72af-4e8d-a0fe-153b69816133@redhat.com> <CAHbLzkrOspjVuQw=BN2+RZmV_Ydpz_50yY7FEakJw8Zm14Y9-Q@mail.gmail.com>
+ <a088b5cf-503e-4ed7-b427-f17a9ec5d1a8@redhat.com> <CAHbLzkpnDPYWq=HnaJcKhKnppdNikX4YG+1Ysu8Z+XJCoKK4SQ@mail.gmail.com>
+ <CAHbLzkr5K=4Shiyb5KgPTQ20jE2Zo08wK=mT3Ez9ADEdJe0Z9A@mail.gmail.com>
+ <Zl3M7iniPQaPFDrW@xsang-OptiPlex-9020> <CAHbLzkrOTAaYahG4JYMNrJDhQNZZxW9u+2n71J=v1XYJEVpUdw@mail.gmail.com>
+In-Reply-To: <CAHbLzkrOTAaYahG4JYMNrJDhQNZZxW9u+2n71J=v1XYJEVpUdw@mail.gmail.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Tue, 4 Jun 2024 16:53:56 -0700
+Message-ID: <CAHbLzkr16YZ80ES5U4BEWJ+ueL22nDJtgH=eOztdHfy080diPw@mail.gmail.com>
+Subject: Re: [linus:master] [mm] efa7df3e3b: kernel_BUG_at_include/linux/page_ref.h
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Vivek Kasireddy <vivek.kasireddy@intel.com>, 
+	Rik van Riel <riel@surriel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Christopher Lameter <cl@linux.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 05, 2024 at 09:00:28AM +1000, Dave Chinner wrote:
-> On Tue, Jun 04, 2024 at 03:11:21PM +0800, Zizhi Wo wrote:
-> > We have an xfs image that contains only 2 AGs, the first AG is full and
-> > the second AG is empty, then a concurrent file creation and little writing
-> > could unexpectedly return -ENOSPC error since there is a race window that
-> > the allocator could get the wrong agf->agf_longest.
-> > 
-> > Write file process steps:
-> > 1) Find the entry that best meets the conditions, then calculate the start
-> > address and length of the remaining part of the entry after allocation.
-> > 2) Delete this entry. Because the second AG is empty, the btree in its agf
-> > has only one record, and agf->agf_longest will be set to 0 after deletion.
-> > 3) Insert the remaining unused parts of this entry based on the
-> > calculations in 1), and update the agf->agf_longest.
-> > 
-> > Create file process steps:
-> > 1) Check whether there are free inodes in the inode chunk.
-> > 2) If there is no free inode, check whether there has space for creating
-> > inode chunks, perform the no-lock judgment first.
-> > 3) If the judgment succeeds, the judgment is performed again with agf lock
-> > held. Otherwire, an error is returned directly.
-> > 
-> > If the write process is in step 2) but not go to 3) yet, the create file
-> > process goes to 2) at this time, it will be mistaken for no space,
-> > resulting in the file system still has space but the file creation fails.
-> > 
-> > 	Direct write				Create file
-> > xfs_file_write_iter
-> >  ...
-> >  xfs_direct_write_iomap_begin
-> >   xfs_iomap_write_direct
-> >    ...
-> >    xfs_alloc_ag_vextent_near
-> >     xfs_alloc_cur_finish
-> >      xfs_alloc_fixup_trees
-> >       xfs_btree_delete
-> >        xfs_btree_delrec
-> > 	xfs_allocbt_update_lastrec
-> > 	// longest = 0 because numrec == 0.
-> > 	 agf->agf_longest = len = 0
-> > 					   xfs_create
-> > 					    ...
-> > 					     xfs_dialloc
-> > 					      ...
-> > 					      xfs_alloc_fix_freelist
-> > 					       xfs_alloc_space_available
-> > 					-> as longest=0, it will return
-> > 					false, no space for inode alloc.
-> 
-> Ok, so this is a another attempt to address the problem Ye Bin
-> attempted to fix here:
-> 
-> https://lore.kernel.org/linux-xfs/20240419061848.1032366-1-yebin10@huawei.com/
-> 
-> > Fix this issue by adding the bc_free_longest field to the xfs_btree_cur_t
-> > structure to store the potential longest count that will be updated. The
-> > assignment is done in xfs_alloc_fixup_trees() and xfs_free_ag_extent().
-> 
-> I outlined how this should be fixed in the above thread:
-> 
-> https://lore.kernel.org/linux-xfs/ZiWgRGWVG4aK1165@dread.disaster.area/
-> 
-> This is what I said:
-> 
-> | What we actually want is for pag->pagf_longest not to change
-> | transiently to zero in xfs_alloc_fixup_trees(). If the delrec that
-> | zeroes the pagf_longest field is going to follow it up with an
-> | insrec that will set it back to a valid value, we really should not
-> | be doing the zeroing in the first place.
-> | 
-> | Further, the only btree that tracks the right edge of the btree is
-> | the by-count allocbt. This isn't "generic" functionality, even
-> | though it is implemented through the generic btree code. If we lift
-> | ->update_lastrec from the generic code and do it directly in
-> | xfs_alloc.c whenever we are finished with a by-count tree update
-> | and the cursor points to a record in the right-most leaf of the
-> | tree, then we run the lastrec update directly at that point. 
-> | By decoupling the lastrec updates from the individual record
-> | manipulations, we can make the transients disappear completely.
-> 
-> I'm not sure if this patch is an attempt to implement this - there
-> is no reference in the commit description to this previous attempt
-> to fix the issue, nor is the any discussion of why this particular
-> solution was chosen.
-> 
-> In future, when you are trying to fix an issue that has previously
-> been discussed/presented on the list, please reference it and
-> provide a link to the previous discussions in the changelog for the
-> new version of the patchset fixing the issue.
+On Mon, Jun 3, 2024 at 9:54=E2=80=AFAM Yang Shi <shy828301@gmail.com> wrote=
+:
+>
+> On Mon, Jun 3, 2024 at 7:02=E2=80=AFAM Oliver Sang <oliver.sang@intel.com=
+> wrote:
+> >
+> > hi, Yang Shi,
+> >
+> > On Fri, May 31, 2024 at 01:57:06PM -0700, Yang Shi wrote:
+> > > Hi Oliver,
+> > >
+> > > I just came up with a quick patch (just build test) per the discussio=
+n
+> > > and attached, can you please to give it a try? Once it is verified, I
+> > > will refine the patch and submit for review.
+> >
+> > what's the base of this patch? I tried to apply it upon efa7df3e3b or
+> > v6.10-rc2. both failed.
+>
+> Its base is mm-unstable. The head commit is 8e06d6b9274d ("mm: add
+> swappiness=3D arg to memory.reclaim"). Sorry for the confusion, I should
+> have mentioned this.
 
-Aha, that's why this seemed oddly familiar.
+I just figured out a bug in the patch. Anyway, we are going to take a
+different approach to fix the issue per the discussion. I already sent
+the series to the mailing list. Please refer to
+https://lore.kernel.org/linux-mm/20240604234858.948986-1-yang@os.amperecomp=
+uting.com/
 
---D
-
-> > Reported by: Ye Bin <yebin10@huawei.com>
-> > Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
-> > ---
-> >  fs/xfs/libxfs/xfs_alloc.c       | 14 ++++++++++++++
-> >  fs/xfs/libxfs/xfs_alloc_btree.c |  9 ++++++++-
-> >  fs/xfs/libxfs/xfs_btree.h       |  1 +
-> >  3 files changed, 23 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-> > index 6c55a6e88eba..86ba873d57a8 100644
-> > --- a/fs/xfs/libxfs/xfs_alloc.c
-> > +++ b/fs/xfs/libxfs/xfs_alloc.c
-> > @@ -577,6 +577,13 @@ xfs_alloc_fixup_trees(
-> >  		nfbno2 = rbno + rlen;
-> >  		nflen2 = (fbno + flen) - nfbno2;
-> >  	}
-> > +
-> > +	/*
-> > +	 * Record the potential maximum free length in advance.
-> > +	 */
-> > +	if (nfbno1 != NULLAGBLOCK || nfbno2 != NULLAGBLOCK)
-> > +		cnt_cur->bc_ag.bc_free_longest = XFS_EXTLEN_MAX(nflen1, nflen2);
-> > +
-> 
-> Why do we store the length of a random extent being freed here?
-> nflen1/2 almost always have nothing to do with the longest free
-> space extent in the tree, they are just the new free space extents
-> we are insering into a random location in the free space tree.
-> 
-> >  	/*
-> >  	 * Delete the entry from the by-size btree.
-> >  	 */
-> > @@ -2044,6 +2051,13 @@ xfs_free_ag_extent(
-> >  	 * Now allocate and initialize a cursor for the by-size tree.
-> >  	 */
-> >  	cnt_cur = xfs_cntbt_init_cursor(mp, tp, agbp, pag);
-> > +	/*
-> > +	 * Record the potential maximum free length in advance.
-> > +	 */
-> > +	if (haveleft)
-> > +		cnt_cur->bc_ag.bc_free_longest = ltlen;
-> > +	if (haveright)
-> > +		cnt_cur->bc_ag.bc_free_longest = gtlen;
-> 
-> That doesn't look correct. At this point in the code, ltlen/gtlen
-> are the sizes of the physically adjacent freespace extents that we
-> are going to merge the newly freed extent with. i.e. the new
-> freespace extent is going to have one of 4 possible values:
-> 
-> 	no merge: len
-> 	left merge: ltlen + len
-> 	right merge: gtlen + len
-> 	both merge: ltlen + gtlen + len
-> 
-> So regardless of anything else, this code isn't setting the longest
-> freespace extent in teh AGF to the lenght of the longest freespace
-> extent in the filesystem.
-> 
-> Which leads me to ask: how did you test this code? This bug should
-> have been triggering verifier, repair and scrub failures quite
-> quickly with fstests....
-> 
-> >  	/*
-> >  	 * Have both left and right contiguous neighbors.
-> >  	 * Merge all three into a single free block.
-> > diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
-> > index 6ef5ddd89600..8e7d1e0f1a63 100644
-> > --- a/fs/xfs/libxfs/xfs_alloc_btree.c
-> > +++ b/fs/xfs/libxfs/xfs_alloc_btree.c
-> > @@ -161,7 +161,14 @@ xfs_allocbt_update_lastrec(
-> >  			rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
-> >  			len = rrp->ar_blockcount;
-> >  		} else {
-> > -			len = 0;
-> > +			/*
-> > +			 * Update in advance to prevent file creation failure
-> > +			 * for concurrent processes even though there is no
-> > +			 * numrec currently.
-> > +			 * And there's no need to worry as the value that no
-> > +			 * less than bc_free_longest will be inserted later.
-> > +			 */
-> > +			len = cpu_to_be32(cur->bc_ag.bc_free_longest);
-> >  		}
-> 
-> So this is in the LASTREC_DELREC case when the last record is
-> removed from the btree. This is what causes the transient state
-> as we do this when deleting a record to trim it and then re-insert
-> the remainder back into the by-count btree.
-> 
-> Writing some random transient value into the AGF *and journalling
-> it* means we creating a transient on-disk format structure
-> corruption and potentially writing it to persistent storage (i.e.
-> the journal). The structure is, at least, not consistent in memory
-> because the free space tree is empty at this point in time, whilst
-> the agf->longest field says it has a free space available. This
-> could trip verifiers, be flagged as corruption by xfs_scrub/repair,
-> etc.
-> 
-> Now, this *might be safe* because we *may* clean it up later in the
-> transaction, but if this really is the last extent being removed
-> from the btree and a cursor has previously been used to do other
-> insert and free operations that set this field, then we trip over
-> this stale inforamtion and write a corrupt structure to disk. That's
-> not good.
-> 
-> As I said above, this "last record tracking" needs to be ripped out
-> of the generic btree code because only the by-count btree uses it.
-> Then it can be updated at the end of the by-count btree update
-> process in the allocation code (i.e. after all record manipulations
-> are done in the transaction) and that avoids this transient caused
-> by updating the last record on every btree record update that is
-> done.
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+>
+> >
+> > >
+> > > Thanks,
+> > > Yang
+> > >
+> > > >
+> > > > >
+> > > > >
+> > > > > --
+> > > > > Cheers,
+> > > > >
+> > > > > David / dhildenb
+> > > > >
+> >
+> >
 
