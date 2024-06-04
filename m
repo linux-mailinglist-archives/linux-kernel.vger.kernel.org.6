@@ -1,123 +1,115 @@
-Return-Path: <linux-kernel+bounces-201015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936CB8FB82B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:55:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31A38FB80C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4905A1F22C76
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F961284F6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A215145B09;
-	Tue,  4 Jun 2024 15:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1111311A1;
+	Tue,  4 Jun 2024 15:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BNod94XJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdIqqpH7"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF675946C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FC9946C;
+	Tue,  4 Jun 2024 15:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516472; cv=none; b=aRh3NkBnA2qnYp7FCmtNwz5QQJw1R2IHeO2aP4mzvj6+Xgq+3JLUCji1Up7tsMWuZrszXAjbA/psMMJ9qp1WGewXPBdd/IG3zVkc7S2M0v0SPW03ht3FH/ecIFZ6VKIA8GBm7mEZi8KSMqQoISHMjn9oJEUuUldXsO4sFHmG5xQ=
+	t=1717516394; cv=none; b=rz1rwWvY9vA6RBF7sR+XqwHmPrs7YVuKY7hzr3RPgxSCqWmyQ2TMBHF064hdis1z7PdbuGVidQ+wJQ1vpKuK8i7tG6qKf5EO25A4X3oB6DrhR3EWSMVN1RxxWOu99s3f2116VE7Vwyi+6RvG2hyO03nRU0kAeu0sguP2Uc3rS7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516472; c=relaxed/simple;
-	bh=pN9UH5Mgl6rogQEhBrUTMDaicXknjjwunkhQGsXjFnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=niKX/uXK9kks1ix8hmsdX3ijpK3K8M2gqT0Us+Jd9h8Bl/zBPp4KsvAYc7CyVh7Z22rG7Hald0cdITa0rEfdlxelqiGeI0OeEgulu+0mKyV6axF+XtDRlOetIanbFjjwhf5siQqC1klTfVKVD+jUrsChdqEaf/JbwM+/u8Ury+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BNod94XJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87472C2BBFC;
-	Tue,  4 Jun 2024 15:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1717516472;
-	bh=pN9UH5Mgl6rogQEhBrUTMDaicXknjjwunkhQGsXjFnM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BNod94XJLOLZKAvkR9aGZF4eA+WrPBhblN1Aba4TSN5nfd+2D8/K5qlOqsIu0vjMG
-	 s422+vL679m3pq8SsBlOfgEJK6pq8/ekxh+c5R5KHz4eTQOUDXXL/l6+fGPb4Le0us
-	 F7j0U5rP6xY/zxJ66ds7vzfCN/6uDv4Jl2vzX7Zw=
-Date: Tue, 4 Jun 2024 17:52:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vamsi Attunuru <vattunuru@marvell.com>
-Cc: jerinj@marvell.com, schalla@marvell.com, arnd@arndb.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/1] misc: mrvl-cn10k-dpi: add Octeon CN10K DPI
- administrative driver
-Message-ID: <2024060412-amulet-unflawed-f37a@gregkh>
-References: <2024042950-refurbish-duckbill-77b4@gregkh>
- <20240520110630.2568767-1-vattunuru@marvell.com>
+	s=arc-20240116; t=1717516394; c=relaxed/simple;
+	bh=aSzmxffLT7xQZWhpjpSVznQm9u7RY3I60GUWBZuzKb4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HSFgrPckardychhDLI4Jg+sJ7FgjIKt5lOXMtdLnQ5YbtDpTMoTO+E4z+HN03zo/UL8q/pu0z8YamIY+6+QhTQzu6uZ9YW3B86iRFYv8Qk1suod4GFMM28oxrB7A7QEUETSEENvJM0qF2y7u1eveNpeCQGr6y/hqOI+GRYuGzpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdIqqpH7; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57a677d3d79so3767144a12.1;
+        Tue, 04 Jun 2024 08:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717516391; x=1718121191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aLWnc7JHma6VN/R7uX8zeGLyZqDO4slq0l0l53iTXbI=;
+        b=HdIqqpH7HV3Kkc/62R7E36BZz39krUl3EcMsn2qSbc+HTTWLE4IGx8YvgG+LhV8y/f
+         yawCwGK+ebJbQbDvEsttrux8neTxp2BRsq1OmA5hMxi6z6+48anc9xtq0DaMTk2xSCKa
+         wUGSW/uHAc2gW+MdJ2uMWgZhMiW4kxkIGZilhpvoM88i3UY3lSjw3nJGF/cnJ9LHrbeK
+         LbRYSNu/UFvfos2KifXp1sVPpsHdSlAVhT06GM5It1k6ur67Dfsd0ySTHpxVl9U0ntlj
+         lceymvz9ebzG92NdrNsRG00FoHK88oZeOEai6A0GaIZUBIM0FuJYPOllgK8/C7oYHNKf
+         /RmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717516391; x=1718121191;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aLWnc7JHma6VN/R7uX8zeGLyZqDO4slq0l0l53iTXbI=;
+        b=TUzgdFwgUJM1NYWiXbWU4A9TUUGEg0fVZxytqzasO/7B9t27PMkBaBpspXhFZkcsDu
+         NIfpfe/50RZ8A5MK25lBrtrQmNRSPBoZR+pb5I4iEUTlTQFylQ/Nwvl9k5KINcI1sWDA
+         mG2ih8IFVpZFdCciwU8/2k/dM1j8qfbmXxbuDt9LqWfj0wOY7fAE8NSa/Tz9GRGmJ3eW
+         U7UQDEZgxcBzamBsLjLoFDuBzYkCfvLlVEnUQ0R9Ntsjma46OSU1SH+rAovRwWyUvyaO
+         97s+dNMW1Qo9LTSXZDjy6VlHYVFEAU6MNbudx24JvWsYHgMK0dqvWsjPuvdegiDFSZlk
+         Dknw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu9ntlWrNpVtsmfPnAAsZFeLz0rlpSxQAdS5DWS04gbroaRy0sPv2FjB73Uf7czW6ghKJkxXkc4APGFF14j8bUvan5GGm4IRaisMyOWOSauLPR6XiQkT6SNFtsP/EzCjJ+6sVLhRHq23m4Ag==
+X-Gm-Message-State: AOJu0Yyg31h/O2/PUMfjlwG+twM/DuYJ3+EC10NlSiU+wWONtUHaG7Ab
+	CT8TxRioWvka6G4VGE/3wTxIPADyJF0tiODpFXqxOj04XeHosbAn
+X-Google-Smtp-Source: AGHT+IGFZ0l1gtDovbb086G8tFW/Ft2wcKlYGv5ipkwKsDOEVzD4v7NbKDh7A4tzdZgBoLn90tYWhg==
+X-Received: by 2002:a17:907:8f0a:b0:a68:f43c:57dd with SMTP id a640c23a62f3a-a699d63f681mr2013266b.23.1717516390844;
+        Tue, 04 Jun 2024 08:53:10 -0700 (PDT)
+Received: from f.. (cst-prg-5-143.cust.vodafone.cz. [46.135.5.143])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e624db7esm423380066b.66.2024.06.04.08.53.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 08:53:09 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH 0/3] whack user_path_at_empty, cleanup getname_flags
+Date: Tue,  4 Jun 2024 17:52:54 +0200
+Message-ID: <20240604155257.109500-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520110630.2568767-1-vattunuru@marvell.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 20, 2024 at 04:06:30AM -0700, Vamsi Attunuru wrote:
-> +union dpi_mbox_message {
-> +	u64 word[2];
-> +	struct {
-> +#if defined(__BIG_ENDIAN_BITFIELD)
-> +		/* SSO PF function */
-> +		u64 sso_pf_func  :16;
-> +		/* Aura of the command buffer */
-> +		u64 aura         :20;
-> +		/* Command buffer size in 8-byte words */
-> +		u64 csize        :16;
-> +		/* Command code */
-> +		u64 cmd          :4;
-> +		/* VF ID to configure */
-> +		u64 vfid         :8;
-> +		/* Reserved for future use */
-> +		u64 rsvd_85_127  :40;
-> +		/* Work queue completion status byte offset */
-> +		u64 wqecsoff     :7;
-> +		/* Work queue completion status enable */
-> +		u64 wqecs        :1;
-> +		/* NPA PF function */
-> +		u64 npa_pf_func  :16;
-> +#else
-> +		/* VF ID to configure */
-> +		u64 vfid         :8;
-> +		/* Command code */
-> +		u64 cmd          :4;
-> +		/* Command buffer size in 8-byte words */
-> +		u64 csize        :16;
-> +		/* Aura of the command buffer */
-> +		u64 aura         :20;
-> +		/* SSO PF function */
-> +		u64 sso_pf_func  :16;
-> +		/* NPA PF function */
-> +		u64 npa_pf_func  :16;
-> +		/* Work queue completion status enable */
-> +		u64 wqecs        :1;
-> +		/* Work queue completion status byte offset */
-> +		u64 wqecsoff     :7;
-> +		/* Reserved for future use */
-> +		u64 rsvd_85_127  :40;
-> +#endif
-> +	};
-> +};
+I tried to take a stab at the atomic filename refcount thing [1], found
+some easy cleanup to do as a soft prerequisite.
 
-The ifdef is cute, but not correct, sorry.  Please use bit shifts to
-handle this properly without any #ifdef needed at all.
+user_path_at_empty saddles getname_flags with an int * argument nobody
+else uses, so it only results in everyone else having to pass NULL
+there. This is trivially avoidable.
 
+Should a need for user_path_at_empty it can probably be implemented in a
+nicer manner than it was.
 
+1: https://lore.kernel.org/linux-fsdevel/20240604132448.101183-1-mjguzik@gmail.com/T/#u
 
+Mateusz Guzik (3):
+  vfs: stop using user_path_at_empty in do_readlinkat
+  vfs: retire user_path_at_empty and drop empty arg from getname_flags
+  vfs: shave a branch in getname_flags
 
-> +
-> +static inline void dpi_reg_write(struct dpipf *dpi, u64 offset, u64 val)
-> +{
-> +	writeq(val, dpi->reg_base + offset);
+ fs/fsopen.c           |  2 +-
+ fs/namei.c            | 41 +++++++++++++++++++------------------
+ fs/stat.c             | 47 ++++++++++++++++++++++++-------------------
+ include/linux/fs.h    |  2 +-
+ include/linux/namei.h |  8 +-------
+ io_uring/statx.c      |  3 +--
+ io_uring/xattr.c      |  4 ++--
+ 7 files changed, 53 insertions(+), 54 deletions(-)
 
-No read needed after a write to ensure the write made it to the hardware
-properly?
+-- 
+2.39.2
 
-thanks,
-
-greg k-h
 
