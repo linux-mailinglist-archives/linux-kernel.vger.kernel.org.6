@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-199869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F9C8FA6F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:23:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754A18FA71C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07878B22365
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:23:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A794C1C222AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3C363A5;
-	Tue,  4 Jun 2024 00:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3542063A5;
+	Tue,  4 Jun 2024 00:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c1m8ckvv"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="IcBtkMGI"
+Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A875D1FA5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 00:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20160399;
+	Tue,  4 Jun 2024 00:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717460590; cv=none; b=AT81JCxgPeXIz/tqzPpZFfvNbdtCdct7BHf0rwHYGEUYqvwjUMvHm+zrYMDEei/6aPrZhOAijChlc2viDKUJtAhnjt0x4Mi8wohLTG7tOF644y0WkIQFLElLIS98dygO06s6i96huaRgtVK+G7RbYbBoWK9kNaJT4p7jvFT8AV0=
+	t=1717461910; cv=none; b=jcLSdkocjdnAFsiiFOKLg8ZACdJAiORboQTib3EH0WNoQlKTpc8a5VCoE84WWGhCi84V9qvmTolBsvuT3UMvHl2n+1OTh2GLq2oL+YS9xwWYdw2zbZiyfVUJBLobFWQ/Q88GHysrhdOpL/phHQYU5xtSKEoZL3uJBCq849ba+GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717460590; c=relaxed/simple;
-	bh=ouvtVl7K0PAyNCf/CqS8kHiqugncCwG8s3P79l84eTI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PYSuFlcShJydTgXpDwo8K4p4mFqMIuCNhNjlZigardY0dOudge8rC4engaM9PI6BtAgnSR3kMir39wbJEuuj51W00JKs/xWmuFD/7mq+NjvpZZcVUK2ctlVET+bLjMbOSfmzL0p9fOk1z0zZIq9Yd8DaW5GExCanYDByTs1lolc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c1m8ckvv; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfa4b878450so7327011276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 17:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717460588; x=1718065388; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HRuXM8qP8LdDvX6fn1r8scesSI9q9pU2JyFDr4cXXhA=;
-        b=c1m8ckvvboOwe3KrhHvNr9scMkhS5hbZHC4OO/9AxaPB6cCwQnHZkr1ZxTFGKbGpkm
-         U21tzIPxW2xS0YzG453o80rah9rxwfBOjzEmsykJnWgK1SAIOVPBUwK0zkGXDxnLvj9Y
-         AW52RCSShShES3RR2ozc8dVWoh4Rol47IrwsXyYIjm9WoimEaT/lmnet4RIuodPntggB
-         plcafDYVXkQZKOa2/m+6wAbjOL8xRJ4yw2rmCGeDmLiOFT4aRZX2dRsU0hNekfENabM1
-         QUUPAvur26jvp92Z4K1CWzFxCO3JvEs1jfPGBZr3MkUhu/xkSfVGyyCe838x5bftgUlq
-         UPfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717460588; x=1718065388;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HRuXM8qP8LdDvX6fn1r8scesSI9q9pU2JyFDr4cXXhA=;
-        b=oROqeeMLxipGlNwrbFcSz6z7N5TvAP5YE8arKpB8/zxIGYPUJvBOOSyZxxLgebp0Eb
-         NQp2KeZ9rTLQOMBJ/vPtIcfl/JURhYhHF6mzraGqrbdMtz64HZrH/JJE7N1KNy2jBlIG
-         UghkKN+C4wmzXZoYBl8l/x16pIrWZiObreJ4lY3lIrQjP0grA11q82ZAg8Y/00wdgMXv
-         NrbOQfRQPsQXYC0PTwLm17zowyTGPbbeoxiKaIK0x6gwsGWaCK1Tbg338m7+xlpquwDt
-         zWgm1bTwE4obzn0+c94dM71hkNE12x+d5fNiq5pXr2UgP5tlzQjNXaCNYIxouSR+g1QQ
-         kQ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIsw3PCt9fiae3MC5K+QXANTFQF2MzS791ZJh6FZDUR+ta+LhoMtwl1IL/dudZGrXtetVeotRiKD/jTyPIFku38P9S5VlFZPSwVCtS
-X-Gm-Message-State: AOJu0Yx7hFM+8MqBC/P4KdSBNky8PcBJ8vTv2CZ3qGHQahMuhSJ30gnO
-	xNkc3XEGHdaoUwUmB0BeMleMMFY25MJk847IYwIhM/QvHz4IuUBxhlqiQLmablzHeYy7SmYqg+l
-	e+A==
-X-Google-Smtp-Source: AGHT+IEk24C6d/QoiBbCyIExMW7OdPZLjaBEK4ZPTTj/IX3O1NfqjnOFuoealUEhXp84xV+hhBOGjvPTh7s=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:707:b0:dfa:ba40:6f43 with SMTP id
- 3f1490d57ef6-dfaba407295mr112473276.2.1717460587664; Mon, 03 Jun 2024
- 17:23:07 -0700 (PDT)
-Date: Mon, 3 Jun 2024 17:23:06 -0700
-In-Reply-To: <CADrL8HU734C_OQhzszWJWMXEXLN6HkBo4yweN2fX4BbOegXrFA@mail.gmail.com>
+	s=arc-20240116; t=1717461910; c=relaxed/simple;
+	bh=7mlxyKX/tSYlAa4UsecWzVPrQObeMubwDYBXeApQ3Po=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EhI2csFK/VT1uyqj+FIGQO/tuPaZz2FvUvenxGnZCGjzihLxJ4h7bgS8x+3UIR6DO5wyxT57ik+Pgfp19YH+dply3sEqlpaqFqrkIKxK+Gpv0S6XGMWeTYk6lWWJhmoL0oT7VViF2hss03NwE7NWd8X8BJxECIkH3x22nILj2vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=IcBtkMGI; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8002:4641:eb14:ad94:2806:1c1a] ([IPv6:2601:646:8002:4641:eb14:ad94:2806:1c1a])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 4540O6GP697624
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 3 Jun 2024 17:24:06 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4540O6GP697624
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1717460652;
+	bh=hPNX3NSLHYNb2TcI1l7fuFsWwNCcNc5ytF4+K+xW86o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IcBtkMGIO/Y/xzeu3xUgo0V2bIRkGJWdFYBCuvM7FvQFv4DD5SqW52rOMi1M1NXq0
+	 UbpxLqPThJOMWS5OGoH5JDJTneX9Fz4WB6HCAlD3DdwNRoR6DOySE7liMPJ2OoJXwk
+	 kN0YOjNf4IHAm/j/fRONallpudtEaMW7a9guw+zMWdMJsw0v5yTE4w+UjP4qPSHwDW
+	 +lzLAyxf6BQR+J+gKWA9WL4tVNflr3bNAQgvUQ8ZJY3ET9y22IPwofcNUeVC+3avqJ
+	 UFYXxzGbHKtq+nJW3AUi/L4zQrxGWhTvCCXwlR00kYfSxD0xpWVzLtMVCBflrX/zBr
+	 fTdcJY72jn6bw==
+Message-ID: <748d3b70-60b4-44e0-bd81-9117f1ab699d@zytor.com>
+Date: Mon, 3 Jun 2024 17:24:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240529180510.2295118-3-jthoughton@google.com>
- <CAOUHufYFHKLwt1PWp2uS6g174GZYRZURWJAmdUWs5eaKmhEeyQ@mail.gmail.com>
- <ZlelW93_T6P-ZuSZ@google.com> <CAOUHufZdEpY6ra73SMHA33DegKxKaUM=Os7A7aDBFND6NkbUmQ@mail.gmail.com>
- <Zley-u_dOlZ-S-a6@google.com> <CADrL8HXHWg_MkApYQTngzmN21NEGNWC6KzJDw_Lm63JHJkR=5A@mail.gmail.com>
- <CAOUHufZq6DwpStzHtjG+TOiHaQ6FFbkTfHMCe8Yy0n_M9MKdqw@mail.gmail.com>
- <CADrL8HW44Hx_Ejx_6+FVKt1V17PdgT6rw+sNtKzumqc9UCVDfA@mail.gmail.com>
- <Zl5LqcusZ88QOGQY@google.com> <CADrL8HU734C_OQhzszWJWMXEXLN6HkBo4yweN2fX4BbOegXrFA@mail.gmail.com>
-Message-ID: <Zl5eat0sh7rrspUG@google.com>
-Subject: Re: [PATCH v4 2/7] mm: multi-gen LRU: Have secondary MMUs participate
- in aging
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Ankit Agrawal <ankita@nvidia.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Bibo Mao <maobibo@loongson.cn>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, James Morse <james.morse@arm.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv11 05/19] x86/relocate_kernel: Use named labels for less
+ confusion
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nikolay Borisov <nik.borisov@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Kalra, Ashish"
+ <ashish.kalra@amd.com>,
+        Sean Christopherson <seanjc@google.com>,
+        "Huang, Kai" <kai.huang@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Baoquan He <bhe@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+        linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-6-kirill.shutemov@linux.intel.com>
+ <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+ <t3zx4f6ynru7qp4oel4syza2alcuxz7q7hxqgf2lxusgobnsnh@vtnecqrsxci5>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <t3zx4f6ynru7qp4oel4syza2alcuxz7q7hxqgf2lxusgobnsnh@vtnecqrsxci5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 03, 2024, James Houghton wrote:
-> On Mon, Jun 3, 2024 at 4:03=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> > But before we do that, I think we need to perform due dilegence (or pro=
-vide data)
-> > showing that having KVM take mmu_lock for write in the "fast only" API =
-provides
-> > better total behavior.  I.e. that the additional accuracy is indeed wor=
-th the cost.
->=20
-> That sounds good to me. I'll drop the Kconfig. I'm not really sure
-> what to do about the self-test, but that's not really all that
-> important.
+Trying one more time; sorry (again) if someone receives this in duplicate.
 
-Enable it only on architectures+setups that are guaranteed to implement the
-fast-only API?  E.g. on x86, it darn well better be active if the TDP MMU i=
-s
-enabled.  If the test fails because that doesn't hold true, then we _want_ =
-the
-failure.
+>>>
+>>> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+>>> index 56cab1bb25f5..085eef5c3904 100644
+>>> --- a/arch/x86/kernel/relocate_kernel_64.S
+>>> +++ b/arch/x86/kernel/relocate_kernel_64.S
+>>> @@ -148,9 +148,10 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+>>>    	 */
+>>>    	movl	$X86_CR4_PAE, %eax
+>>>    	testq	$X86_CR4_LA57, %r13
+>>> -	jz	1f
+>>> +	jz	.Lno_la57
+>>>    	orl	$X86_CR4_LA57, %eax
+>>> -1:
+>>> +.Lno_la57:
+>>> +
+>>>    	movq	%rax, %cr4
+
+If we are cleaning up this code... the above can simply be:
+
+	andl $(X86_CR4_PAE | X86_CR4_LA54), %r13
+	movq %r13, %cr4
+
+%r13 is dead afterwards, and the PAE bit *will* be set in %r13 anyway.
+
+	-hpa
+
 
