@@ -1,353 +1,176 @@
-Return-Path: <linux-kernel+bounces-201507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739BF8FBF3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:44:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD59F8FBF42
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993A11C226E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:44:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21781C21D7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4A414D29B;
-	Tue,  4 Jun 2024 22:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4237F14D2B4;
+	Tue,  4 Jun 2024 22:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="lkQdQptW"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hZAwvL8n"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EF514C58A;
-	Tue,  4 Jun 2024 22:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD8814D2B5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 22:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717541069; cv=none; b=LsGyz4QmNknfB5kM3+G2e+C93Z83W531sLoH3l6Y2g4KYViMKKBEydAyqWdCqk8eFiHVJOROtEgzG/c29rshSFYVhw+CpMrw4kpbUUklU8VX7k+6nLl94fsTRnN1zrtNMFRQ1nJA3ZpGzdp/iuhr9GAzmuESyr22Rq4afz01qDA=
+	t=1717541130; cv=none; b=ZAcAp7ghLZm7srEJyx1rtpkBGMI31ql5IxtoPFfLENVN1SV6p2BbgUx0uMIZh1Wzfeg6ufSif5g3c+ZFj9wCCxxGuHlfKxFitO0GvLawFGUeov/oBLt6ai7ltGi3xvqkKWf8rRVjAhkhvVUYPynY/+1v53FLPm0FMYEX6rHKZGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717541069; c=relaxed/simple;
-	bh=ivPwrYTq+vRnj37RSY64wulzYjdkOp5wkXzYaqR7tDo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ceZ39YsKf4wtf+x7y0zmvSNMoEezjvTMLCwgZbOiKU4ibjqyAvvPu/SImvtGvrWuLrNA/2xzIA4hgiiv8HYsgJmdpjqf62+MoPUYjXo1Gn92GeTPhxZ/00dN7VL9jfc83GsoTHRvP5NyKC0VWOT2tHCfySls57OZE0F8MyhdCf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=lkQdQptW; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454LiBfo024201;
-	Tue, 4 Jun 2024 18:44:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=zQbB8
-	yW5qEMo220BkUS6kkHP95TQWPMU57n41F7KHHA=; b=lkQdQptWWi9NdpK2nOdv5
-	7jGzGcAvW7Ez8R1jTEKd40OCxf8SDaoLOebMcySln24B1XhklIAlbSonH3xG1LZ1
-	VDSQK2nvi2/C8B5jYNZvocG78AlTXvi2RBp9rtpeevtSXcViaLpnUGFV4WFEsWlL
-	4X0EZuBvFn6sp4DKTigazXKhAo3kP4fkj7/NE6TVkIwfBYh3+uYihYs92cP27SWN
-	QLfTBV/YlZwKbXtaPHUkg8mSJsOCRLebE7uDNlqmFWFfTGK7lmTDrvWcNrUSQ2Ld
-	wUYjd9T71fMsa1+aovLUmHgryBsL4glkVYE+xHtTJoIrjAc7q0ejoj32f/IvPvtI
-	w==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yjb3r8597-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 18:44:11 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 454MiAbE025162
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Jun 2024 18:44:10 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 4 Jun 2024
- 18:44:09 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 4 Jun 2024 18:44:09 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.129])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 454MhsHH001223;
-	Tue, 4 Jun 2024 18:43:57 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <jic23@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <nuno.sa@analog.com>, <dlechner@baylibre.com>,
-        <marcelo.schmitt1@gmail.com>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 5/6] dt-bindings: iio: adc: Add AD4000
-Date: Tue, 4 Jun 2024 19:43:53 -0300
-Message-ID: <b8a211e09c17f5a9f0a6aa6e11d6375ff398c918.1717539384.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1717539384.git.marcelo.schmitt@analog.com>
-References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1717541130; c=relaxed/simple;
+	bh=mXAGe3YINODB6h+MbBkIPYf536ptCXDV0Tp3NMe+dO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHD3eThsbyDYFXhyayGIBNWWkDrnhFBAQxKz07f8yiKFopCeuF6BvMhjge430Dbdvn7xGrDe/q6R1Tft8XOIMDBFcYJ+2DqNv3B0uImjVnEqcj393g2dsnkiFj89WiwLVFbaDm9SPXl67KzC2CAx+L54tFa0+Yhhz9beu8WYr1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hZAwvL8n; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717541128; x=1749077128;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mXAGe3YINODB6h+MbBkIPYf536ptCXDV0Tp3NMe+dO8=;
+  b=hZAwvL8nbl4FjLTP3iqtEQvJq4AsHJWvlx4wHpwZs2bvbdcy3zafDvKX
+   I7sEuVOqrrpgkL4g4GRh2Raan1sScHqF+viuTUo2walQKvOPJQmQYyQH3
+   qbWit0JLhXKgIRpAcTl47hhlFeCp3RMggXubrF45Z7DLRHr0uD2K/S97K
+   +oEbHBFRwW+GnDhFNBFmNXUqZ4szxDcFHpStqKKdUuYrHoOXVIQCzOyrb
+   cV+5pZUUgnLKFMpwKPHF+AwkgZ6T8puIeb+OHyeKlKyLVN72CAkXtVdLQ
+   X2zkY6mktASSwUOcONpW+QS4lH8mS58szYywOvZhT1fx6ugJnp1+IGDhE
+   Q==;
+X-CSE-ConnectionGUID: jWdyBp1bToyN5varlVOirQ==
+X-CSE-MsgGUID: lZWO96EbRI6y0YTA/cq4sg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14253163"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="14253163"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 15:45:28 -0700
+X-CSE-ConnectionGUID: 31zVMKuHSCKIFD6pq35g3A==
+X-CSE-MsgGUID: cYrlB2C1T329o8h4VgUFIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="60576089"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 04 Jun 2024 15:45:24 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sEcuA-0000dH-12;
+	Tue, 04 Jun 2024 22:45:22 +0000
+Date: Wed, 5 Jun 2024 06:44:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+	linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	akpm@linux-foundation.org, liam.howlett@oracle.com,
+	zhangpeng.00@bytedance.com, willy@infradead.org,
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Subject: Re: [PATCH 12/18] maple_tree: convert mas_insert() to preallocate
+ nodes
+Message-ID: <202406050614.NwHTjXFD-lkp@intel.com>
+References: <20240604174145.563900-13-sidhartha.kumar@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: P_svA2_nYsDNLd9ZknOvEw70YmgonR9t
-X-Proofpoint-ORIG-GUID: P_svA2_nYsDNLd9ZknOvEw70YmgonR9t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0 adultscore=0
- malwarescore=0 spamscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040184
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604174145.563900-13-sidhartha.kumar@oracle.com>
 
-Add device tree documentation for AD4000 series of ADC devices.
+Hi Sidhartha,
 
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4000-4004-4008.pdf
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4001-4005.pdf
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4002-4006-4010.pdf
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4003-4007-4011.pdf
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
+kernel test robot noticed the following build warnings:
 
-Suggested-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
-Even though didn't pick all suggestions to the dt-bindings, I did pick most them
-so kept David's Suggested-by tag.
+[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
+[also build test WARNING on linus/master v6.10-rc2 next-20240604]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
- .../bindings/iio/adc/adi,ad4000.yaml          | 207 ++++++++++++++++++
- MAINTAINERS                                   |   7 +
- 2 files changed, 214 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+url:    https://github.com/intel-lab-lkp/linux/commits/Sidhartha-Kumar/maple_tree-introduce-store_type-enum/20240605-014633
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20240604174145.563900-13-sidhartha.kumar%40oracle.com
+patch subject: [PATCH 12/18] maple_tree: convert mas_insert() to preallocate nodes
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240605/202406050614.NwHTjXFD-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406050614.NwHTjXFD-lkp@intel.com/reproduce)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-new file mode 100644
-index 000000000000..7470d386906b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-@@ -0,0 +1,207 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/adi,ad4000.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices AD4000 and similar Analog to Digital Converters
-+
-+maintainers:
-+  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-+
-+description: |
-+  Analog Devices AD4000 family of Analog to Digital Converters with SPI support.
-+  Specifications can be found at:
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4000-4004-4008.pdf
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4001-4005.pdf
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4002-4006-4010.pdf
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4003-4007-4011.pdf
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
-+
-+$ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ad4000
-+      - adi,ad4001
-+      - adi,ad4002
-+      - adi,ad4003
-+      - adi,ad4004
-+      - adi,ad4005
-+      - adi,ad4006
-+      - adi,ad4007
-+      - adi,ad4008
-+      - adi,ad4010
-+      - adi,ad4011
-+      - adi,ad4020
-+      - adi,ad4021
-+      - adi,ad4022
-+      - adi,adaq4001
-+      - adi,adaq4003
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    maximum: 102040816 # for VIO > 2.7 V, 81300813 for VIO > 1.7 V
-+
-+  adi,spi-mode:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    enum: [ single, chain ]
-+    description: |
-+      This property indicates the SPI wiring configuration.
-+
-+      When this property is omitted, it is assumed that the device is using what
-+      the datasheet calls "4-wire mode". This is the conventional SPI mode used
-+      when there are multiple devices on the same bus. In this mode, the CNV
-+      line is used to initiate the conversion and the SDI line is connected to
-+      CS on the SPI controller.
-+
-+      When this property is present, it indicates that the device is using one
-+      of the following alternative wiring configurations:
-+
-+      * single: The datasheet calls this "3-wire mode". (NOTE: The datasheet's
-+        definition of 3-wire mode is NOT at all related to the standard
-+        spi-3wire property!) This mode is often used when the ADC is the only
-+        device on the bus. In this mode, SDI is connected to MOSI or to VIO, and
-+        the CNV line can be connected to the CS line of the SPI controller or to
-+        a GPIO, in which case the CS line of the controller is unused.
-+      * chain: The datasheet calls this "chain mode". This mode is used to save
-+        on wiring when multiple ADCs are used. In this mode, the SDI line of
-+        one chip is tied to the SDO of the next chip in the chain and the SDI of
-+        the last chip in the chain is tied to GND. Only the first chip in the
-+        chain is connected to the SPI bus. The CNV line of all chips are tied
-+        together. The CS line of the SPI controller can be used as the CNV line
-+        only if it is active high.
-+
-+  '#daisy-chained-devices': true
-+
-+  vdd-supply:
-+    description: A 1.8V supply that powers the chip (VDD).
-+
-+  vio-supply:
-+    description:
-+      A 1.8V to 5.5V supply for the digital inputs and outputs (VIO).
-+
-+  ref-supply:
-+    description:
-+      A 2.5 to 5V supply for the external reference voltage (REF).
-+
-+  cnv-gpios:
-+    description:
-+      The Convert Input (CNV). This input has multiple functions. It initiates
-+      the conversions and selects the SPI mode of the device (chain or CS). In
-+      'single' mode, this property is omitted if the CNV pin is connected to the
-+      CS line of the SPI controller.
-+    maxItems: 1
-+
-+  adi,high-z-input:
-+    type: boolean
-+    description:
-+      High-Z mode allows the amplifier and RC filter in front of the ADC to be
-+      chosen based on the signal bandwidth of interest, rather than the settling
-+      requirements of the switched capacitor SAR ADC inputs.
-+
-+  adi,gain-milli:
-+    description: |
-+      The hardware gain applied to the ADC input (in milli units).
-+      The gain provided by the ADC input scaler is defined by the hardware
-+      connections between chip pins OUT+, R1K-, R1K1-, R1K+, R1K1+, and OUT-.
-+      If not present, default to 1000 (no actual gain applied).
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [454, 909, 1000, 1900]
-+    default: 1000
-+
-+  interrupts:
-+    description:
-+      The SDO pin can also function as a busy indicator. This node should be
-+      connected to an interrupt that is triggered when the SDO line goes low
-+      while the SDI line is high and the CNV line is low ('single' mode) or the
-+      SDI line is low and the CNV line is high ('multi' mode); or when the SDO
-+      line goes high while the SDI and CNV lines are high (chain mode),
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - vdd-supply
-+  - vio-supply
-+  - ref-supply
-+
-+allOf:
-+  # in '4-wire' mode, cnv-gpios is required, for other modes it is optional
-+  - if:
-+      not:
-+        required:
-+          - adi,spi-mode
-+    then:
-+      required:
-+        - cnv-gpios
-+  # chain mode has lower SCLK max rate
-+  - if:
-+      required:
-+        - adi,spi-mode
-+      properties:
-+        adi,spi-mode:
-+          const: chain
-+    then:
-+      properties:
-+        spi-max-frequency:
-+          maximum: 50000000 # for VIO > 2.7 V, 40000000 for VIO > 1.7 V
-+      required:
-+        - '#daisy-chained-devices'
-+    else:
-+      properties:
-+        '#daisy-chained-devices': false
-+  # Gain property only applies to ADAQ devices
-+  - if:
-+      properties:
-+        compatible:
-+          not:
-+            contains:
-+              enum:
-+                - adi,adaq4001
-+                - adi,adaq4003
-+    then:
-+      properties:
-+        adi,gain-milli: false
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        /* Example for a AD devices */
-+        adc@0 {
-+            compatible = "adi,ad4020";
-+            reg = <0>;
-+            spi-max-frequency = <71000000>;
-+            vdd-supply = <&supply_1_8V>;
-+            vio-supply = <&supply_1_8V>;
-+            ref-supply = <&supply_5V>;
-+            cnv-gpios = <&gpio0 88 GPIO_ACTIVE_HIGH>;
-+        };
-+    };
-+  - |
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        /* Example for a ADAQ devices */
-+        adc@0 {
-+            compatible = "adi,adaq4003";
-+            reg = <0>;
-+            adi,spi-mode = "single";
-+            spi-max-frequency = <80000000>;
-+            vdd-supply = <&supply_1_8V>;
-+            vio-supply = <&supply_1_8V>;
-+            ref-supply = <&supply_5V>;
-+            adi,high-z-input;
-+            adi,gain-milli = <454>;
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bff979a507ba..1f052b9cd912 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1200,6 +1200,13 @@ W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
- F:	drivers/iio/dac/ad3552r.c
- 
-+ANALOG DEVICES INC AD4000 DRIVER
-+M:	Marcelo Schmitt <marcelo.schmitt@analog.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Supported
-+W:	https://ez.analog.com/linux-software-drivers
-+F:	Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-+
- ANALOG DEVICES INC AD4130 DRIVER
- M:	Cosmin Tanislav <cosmin.tanislav@analog.com>
- L:	linux-iio@vger.kernel.org
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406050614.NwHTjXFD-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   lib/maple_tree.c:4304: warning: Function parameter or struct member 'entry' not described in 'mas_prealloc_calc'
+>> lib/maple_tree.c:4449: warning: Function parameter or struct member 'gfp' not described in 'mas_insert'
+
+
+vim +4449 lib/maple_tree.c
+
+e0c5446b52f6a9 Sidhartha Kumar 2024-06-04  4439  
+54a611b605901c Liam R. Howlett 2022-09-06  4440  /**
+54a611b605901c Liam R. Howlett 2022-09-06  4441   * mas_insert() - Internal call to insert a value
+54a611b605901c Liam R. Howlett 2022-09-06  4442   * @mas: The maple state
+54a611b605901c Liam R. Howlett 2022-09-06  4443   * @entry: The entry to store
+54a611b605901c Liam R. Howlett 2022-09-06  4444   *
+54a611b605901c Liam R. Howlett 2022-09-06  4445   * Return: %NULL or the contents that already exists at the requested index
+54a611b605901c Liam R. Howlett 2022-09-06  4446   * otherwise.  The maple state needs to be checked for error conditions.
+54a611b605901c Liam R. Howlett 2022-09-06  4447   */
+9d36d13535c7c8 Sidhartha Kumar 2024-06-04  4448  static inline void *mas_insert(struct ma_state *mas, void *entry, gfp_t gfp)
+54a611b605901c Liam R. Howlett 2022-09-06 @4449  {
+54a611b605901c Liam R. Howlett 2022-09-06  4450  	MA_WR_STATE(wr_mas, mas, entry);
+54a611b605901c Liam R. Howlett 2022-09-06  4451  
+54a611b605901c Liam R. Howlett 2022-09-06  4452  	/*
+54a611b605901c Liam R. Howlett 2022-09-06  4453  	 * Inserting a new range inserts either 0, 1, or 2 pivots within the
+54a611b605901c Liam R. Howlett 2022-09-06  4454  	 * tree.  If the insert fits exactly into an existing gap with a value
+54a611b605901c Liam R. Howlett 2022-09-06  4455  	 * of NULL, then the slot only needs to be written with the new value.
+54a611b605901c Liam R. Howlett 2022-09-06  4456  	 * If the range being inserted is adjacent to another range, then only a
+54a611b605901c Liam R. Howlett 2022-09-06  4457  	 * single pivot needs to be inserted (as well as writing the entry).  If
+54a611b605901c Liam R. Howlett 2022-09-06  4458  	 * the new range is within a gap but does not touch any other ranges,
+54a611b605901c Liam R. Howlett 2022-09-06  4459  	 * then two pivots need to be inserted: the start - 1, and the end.  As
+54a611b605901c Liam R. Howlett 2022-09-06  4460  	 * usual, the entry must be written.  Most operations require a new node
+54a611b605901c Liam R. Howlett 2022-09-06  4461  	 * to be allocated and replace an existing node to ensure RCU safety,
+54a611b605901c Liam R. Howlett 2022-09-06  4462  	 * when in RCU mode.  The exception to requiring a newly allocated node
+54a611b605901c Liam R. Howlett 2022-09-06  4463  	 * is when inserting at the end of a node (appending).  When done
+54a611b605901c Liam R. Howlett 2022-09-06  4464  	 * carefully, appending can reuse the node in place.
+54a611b605901c Liam R. Howlett 2022-09-06  4465  	 */
+54a611b605901c Liam R. Howlett 2022-09-06  4466  	wr_mas.content = mas_start(mas);
+54a611b605901c Liam R. Howlett 2022-09-06  4467  	if (wr_mas.content)
+54a611b605901c Liam R. Howlett 2022-09-06  4468  		goto exists;
+54a611b605901c Liam R. Howlett 2022-09-06  4469  
+9d36d13535c7c8 Sidhartha Kumar 2024-06-04  4470  	mas_wr_preallocate(&wr_mas, entry, gfp);
+9d36d13535c7c8 Sidhartha Kumar 2024-06-04  4471  	if (mas_is_err(mas))
+54a611b605901c Liam R. Howlett 2022-09-06  4472  		return NULL;
+54a611b605901c Liam R. Howlett 2022-09-06  4473  
+54a611b605901c Liam R. Howlett 2022-09-06  4474  	/* spanning writes always overwrite something */
+9d36d13535c7c8 Sidhartha Kumar 2024-06-04  4475  	if (mas->store_type == wr_spanning_store)
+54a611b605901c Liam R. Howlett 2022-09-06  4476  		goto exists;
+54a611b605901c Liam R. Howlett 2022-09-06  4477  
+54a611b605901c Liam R. Howlett 2022-09-06  4478  	/* At this point, we are at the leaf node that needs to be altered. */
+9d36d13535c7c8 Sidhartha Kumar 2024-06-04  4479  	if (mas->store_type != wr_new_root && mas->store_type != wr_store_root) {
+54a611b605901c Liam R. Howlett 2022-09-06  4480  		wr_mas.offset_end = mas->offset;
+54a611b605901c Liam R. Howlett 2022-09-06  4481  		wr_mas.end_piv = wr_mas.r_max;
+54a611b605901c Liam R. Howlett 2022-09-06  4482  
+54a611b605901c Liam R. Howlett 2022-09-06  4483  		if (wr_mas.content || (mas->last > wr_mas.r_max))
+54a611b605901c Liam R. Howlett 2022-09-06  4484  			goto exists;
+9d36d13535c7c8 Sidhartha Kumar 2024-06-04  4485  	}
+54a611b605901c Liam R. Howlett 2022-09-06  4486  
+9d36d13535c7c8 Sidhartha Kumar 2024-06-04  4487  	mas_wr_store_entry(&wr_mas);
+54a611b605901c Liam R. Howlett 2022-09-06  4488  	return wr_mas.content;
+54a611b605901c Liam R. Howlett 2022-09-06  4489  
+54a611b605901c Liam R. Howlett 2022-09-06  4490  exists:
+54a611b605901c Liam R. Howlett 2022-09-06  4491  	mas_set_err(mas, -EEXIST);
+54a611b605901c Liam R. Howlett 2022-09-06  4492  	return wr_mas.content;
+54a611b605901c Liam R. Howlett 2022-09-06  4493  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
