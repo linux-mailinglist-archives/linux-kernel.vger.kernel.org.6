@@ -1,110 +1,84 @@
-Return-Path: <linux-kernel+bounces-201237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BBB8FBB6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:19:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39AE8FBB75
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D164A1F228CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53FF91F225BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A642F14A4EF;
-	Tue,  4 Jun 2024 18:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B1B14A4FC;
+	Tue,  4 Jun 2024 18:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQfXZ7qA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jImRPbGP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8064149009;
-	Tue,  4 Jun 2024 18:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C27149009;
+	Tue,  4 Jun 2024 18:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717525145; cv=none; b=k1tISUBGBLQQz6aroYSldscJ6QHRnwciEnUWVMy02hxHT/5RVzzjYeVc1O92fa7yo5ZkHX0hAJmAEbPI9SwlOwQPFpB3M8E33YN9DMerTyl+DfEcyXGw+D1HYR6/jhFIVDjOQq0CO/PhPdc0Nu6ObDLxgYtl9Xl+j3v44PtdauE=
+	t=1717525293; cv=none; b=EWmIeEYmA2yDjgnxs4M6GXLWtzre5Myqr+b9e1n9AcZLSjXKb32sLleNW96XAv+WvsvNGe/EDit0SXjSE40FU9HHXMyJMyOCxZKPUdkVX4YAU1DTk/6UDKTp+QBSkJaDU3XIk5ECOOe2UgL5OVxo+Y/dg77vLVOi7P4QS++3MZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717525145; c=relaxed/simple;
-	bh=Fj2iv3w04YP3vwjFljiCyn/pZZfn1H3lpJDW7soKt1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D4xYQAnm7pIB7IFEaonaU4AY2NblEyYcXs9gOvWvptWaeVsjfYFYylSNfXkuHtecr7zebztQyG0Zu58dAsEer+as1NU+76Md7bmHVmpRzV2xWRxl+iKy82kBLWxmh3m3m3Q3YqRCxl1xBtYNCGGsmT0OT53Tqj1F4I7ZnRrXrG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQfXZ7qA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B135CC2BBFC;
-	Tue,  4 Jun 2024 18:19:01 +0000 (UTC)
+	s=arc-20240116; t=1717525293; c=relaxed/simple;
+	bh=rJen4p/W7Qw4c91Xr9BpGnLPEjJLClcQzjp1Wn6mzUk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=RETQq0Qup2Blpu4NlCyoV3jM2IX2hLo0ivp27TBngc/eB/++riUJB6RsmSBEkAioKlFvD0An0DUQll92jSrc7PQ+3kmM4AycZqUstBGbrMdvYRKMTwhk/NDLXNutH3XG1K6rhRXBFjscQqBZwDmCvhNXS031lA6RtIDOXkirnWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jImRPbGP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05055C2BBFC;
+	Tue,  4 Jun 2024 18:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717525144;
-	bh=Fj2iv3w04YP3vwjFljiCyn/pZZfn1H3lpJDW7soKt1A=;
+	s=k20201202; t=1717525292;
+	bh=rJen4p/W7Qw4c91Xr9BpGnLPEjJLClcQzjp1Wn6mzUk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FQfXZ7qAEwiL2AlMpVQpMU2RxUuNigU3AM7Iakr6rTtcSCkuHId3Af1Q65rLy8ZJ6
-	 NbnklDEEiB3KI9WffSVVGYXxfSFpPvKjUyUyTiYdYqqym/x+E9rT5q7h5pSo2wGkFf
-	 A4OkPk3aB6K4dJqidvLZzrojdjVrp06jv4Aeo7WgnKew9ILOMwU+Iz9zUEhb6/UIFC
-	 ddjs0+20sl6yGd/1ArYQjHkPC88GbhB/+QcKitPCICeiXBl9E+jDgZV/5n8wusZcY4
-	 U6vaxfldHAp03E7Mdtgw0dmw2bbL7ozvjFHY+I6TJ/S9NImETdh25vmHaKCxTbVNgf
-	 bYDAl/eCZELRg==
-Date: Tue, 4 Jun 2024 19:18:59 +0100
-From: Simon Horman <horms@kernel.org>
-To: Anshumali Gaur <agaur@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [net-next PATCH v3] octeontx2-af: Add debugfs support to dump
- NIX TM topology
-Message-ID: <20240604181859.GD791188@kernel.org>
-References: <20240603112249.6403-1-agaur@marvell.com>
+	b=jImRPbGPC31H3Lp5sDakUcWNcoHmB1MSC8DZsrgV4n4jN8IRnrKQN9FNSGA+F666V
+	 ixNdbhn5DqJdm5jlYRGVpYwtyWwFT1R5NGqAgJ4c4dWV9ce4Aw3wlT0CGDrdqU91gY
+	 2+SIqS5xZGyKN1Oi4WurYpYLnlLKubqE9we2LEL7GMTYRezo7XmT078tfQ1n24Sto5
+	 bn+3T9AII3RuOHzXf1l8M9F+1wKLINvwAyzmHlxz6PQeBJ2zTDxvouJRXIaBYXs5ya
+	 NKO7D8Uhz/+o8s4tIoiA6n2EMXU3TmqFLMGeQ5gpgr8bsfN/dAlEWc9gIsakqS6dW/
+	 Qb3MFnYgR6ONw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603112249.6403-1-agaur@marvell.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Jun 2024 21:21:25 +0300
+Message-Id: <D1RFWFIJEYWL.2FC7V79321264@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Ross Philipson" <ross.philipson@oracle.com>,
+ <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
+ <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v9 04/19] x86: Secure Launch Resource Table header file
+X-Mailer: aerc 0.17.0
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-5-ross.philipson@oracle.com>
+In-Reply-To: <20240531010331.134441-5-ross.philipson@oracle.com>
 
-On Mon, Jun 03, 2024 at 04:52:48PM +0530, Anshumali Gaur wrote:
-> This patch adds support to dump NIX transmit queue topology.
-> There are multiple levels of scheduling/shaping supported by
-> NIX and a packet traverses through multiple levels before sending
-> the packet out. At each level, there are set of scheduling/shaping
-> rules applied to a packet flow.
-> 
-> Each packet traverses through multiple levels
-> SQ->SMQ->TL4->TL3->TL2->TL1 and these levels are mapped in a parent-child
-> relationship.
-> 
-> This patch dumps the debug information related to all TM Levels in
-> the following way.
-> 
-> Example:
-> $ echo <nixlf> > /sys/kernel/debug/octeontx2/nix/tm_tree
-> $ cat /sys/kernel/debug/octeontx2/nix/tm_tree
-> 
-> A more desriptive set of registers at each level can be dumped
-> in the following way.
-> 
-> Example:
-> $ echo <nixlf> > /sys/kernel/debug/octeontx2/nix/tm_topo
-> $ cat /sys/kernel/debug/octeontx2/nix/tm_topo
-> 
-> Signed-off-by: Anshumali Gaur <agaur@marvell.com>
-> ---
-> v3:
->     - Addressed review comments given by Wojciech Drewek
-> 	1. Removed unnecessary goto statement
-> 	2. Moved valid SQ check before AF mbox
-> v2:
->     - Addressed review comments given by Simon Horman
-> 	1. Resolved indentation issues
+On Fri May 31, 2024 at 4:03 AM EEST, Ross Philipson wrote:
+> Introduce the Secure Launch Resource Table which forms the formal
+> interface between the pre and post launch code.
+>
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
 
-Hi Anshumali,
+If a uarch specific, I'd appreciate Intel SDM reference here so that I
+can look it up and compare. Like in section granularity.
 
-Thanks for the updates.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+BR, Jarkko
 
