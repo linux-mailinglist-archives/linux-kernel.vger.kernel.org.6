@@ -1,126 +1,91 @@
-Return-Path: <linux-kernel+bounces-200512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A01B8FB111
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:26:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AF08FB11E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBEE51F2332C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:26:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A56E31C21F32
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041451459F7;
-	Tue,  4 Jun 2024 11:26:42 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8928145FE6;
+	Tue,  4 Jun 2024 11:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="cgZVxJ/I"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130BD1442E3;
-	Tue,  4 Jun 2024 11:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C114145339;
+	Tue,  4 Jun 2024 11:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717500401; cv=none; b=niW+C+dORK+AvZEEOU5O6kB/nlp9unq2og5+ZAtgTWQFBXi2XZtK8JUMxc+KSTDdKsxJ2wjCG7gzzgJuVUTeFDzIELrA6659gZyJqic/+9Y9JqWvnmAuCIsxsvtqrpPbEGj9xvldQ6yRkBvZJYUSMA5dZc/LtlxYDTmTsutO/9Q=
+	t=1717500403; cv=none; b=largmorjDHY2HKsujptxlt0/hOSTMozevnG6yle7Akwz1UrRuNENqyNih/cJ/ANxryukveTZPPlkfxFik/ZnfezdhW6MKPIQIQ42IWkhwarBwV/ssHa1O3YgvINHpf/lwWdbEVCXX/w4aijktuHT5tmb3T8jCblis+WsS79ZKaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717500401; c=relaxed/simple;
-	bh=ZExI+57O0zbDnRE+F0agz7VJP6zV/CMKBCosJpqOa0k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j1gWO7CYeayg/S7SFDjUCqlSyhEKP49ztqkmv5FU03EPXHvJ2npT8bq5tWHgBjC9V6G/uK6Zulm1fT/iOdBT2DyrbFzIU8Lk9+hbFRmYVPqBmPQ5dY4rj+MVfkLeaiuceHrNnY8o/IyOdDNVo6ndrxuwbTGWn8XGSbb5jRtXog8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VtpFY4zM8z4f3jsq;
-	Tue,  4 Jun 2024 19:26:25 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 4BF6C1A0874;
-	Tue,  4 Jun 2024 19:26:35 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAXKwTp+V5mJkItOg--.61165S4;
-	Tue, 04 Jun 2024 19:26:34 +0800 (CST)
-From: Li Lingfeng <lilingfeng@huaweicloud.com>
-To: dhowells@redhat.com,
-	marc.dionne@auristor.com,
-	raven@themaw.net,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	miklos@szeredi.hu,
-	trond.myklebust@hammerspace.com,
-	anna@kernel.org,
-	sfrench@samba.org,
-	pc@manguebit.com,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	bharathsm@microsoft.com,
-	djwong@kernel.org
-Cc: linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	autofs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	zhangxiaoxu5@huawei.com,
-	lilingfeng@huaweicloud.com,
-	lilingfeng3@huawei.com
-Subject: [PATCH RFC 0/2] NFSv4: set sb_flags to second superblock
-Date: Tue,  4 Jun 2024 19:26:34 +0800
-Message-Id: <20240604112636.236517-1-lilingfeng@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717500403; c=relaxed/simple;
+	bh=oL8M6qgTb/wgbH/ov5kWUJvU9JDEZKsp2ohmacVuXdE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fVz6nAGwIbIhuv7K70Mzhcxzit/kOyk7l0Jgz+MvdOD2jxjGAISJ3QjXK6Qa6BSpO1mzX8bhSNOOI7FeL6H9JaeMRMYIEiCp7J8bLTXZw6248hsY0n/lAqDE+E1j1scvkyxdeOGPThVVtcWEAOLvnoHO03xRbigI4PXdDPR51sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=cgZVxJ/I; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1717500397;
+	bh=t+rduEbfoUs0dyalxeI4cE9kdl/8hw6YLtlweC8/mmU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cgZVxJ/IkfjcygyfjaxKzIN6nXEks1+/rN8K8kQC6kV9KOUB/5jRXuLrYvjL+I+vk
+	 Omx8HBYUidKGjWDSRBt/aSwhY07m/X0W6F3R2iFWlG4PMhRWYNBnu7cO1TLIZlb2fE
+	 KnGvYSou/YepCcoQGUo7i7+zJcKDjOTrIFzQi7DtsguCqDGX0bCmf2enFrNQUFD72y
+	 H0DEcVA3Hp9YCIyo8hQPI2pR8LJFrBkCK+I1Wm5had/4lKaL5otgv9gX94ZfDipBji
+	 UL3oBzjRp2SB4/q/G4O2/0nmG1HnaXIQb/DqLHgFRnwoVhho6Vqr6M0R5iEG7JHrmA
+	 vsINwfgMCYe0g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VtpFm2NqBz4x12;
+	Tue,  4 Jun 2024 21:26:36 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Shivaprasad G Bhat <sbhat@linux.ibm.com>, kvm@vger.kernel.org,
+ linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: pbonzini@redhat.com, naveen.n.rao@linux.ibm.com,
+ christophe.leroy@csgroup.eu, corbet@lwn.net, namhyung@kernel.org,
+ npiggin@gmail.com, pbonzini@redhat.com, sbhat@linux.ibm.com,
+ jniethe5@gmail.com, atrajeev@linux.vnet.ibm.com,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] KVM: PPC: Book3S HV: Add one-reg interface for
+ DEXCR register
+In-Reply-To: <171741327891.6631.10339033341166150910.stgit@linux.ibm.com>
+References: <171741323521.6631.11242552089199677395.stgit@linux.ibm.com>
+ <171741327891.6631.10339033341166150910.stgit@linux.ibm.com>
+Date: Tue, 04 Jun 2024 21:26:34 +1000
+Message-ID: <87cyox2bkl.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAXKwTp+V5mJkItOg--.61165S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr15KrWfZr4UXr1xJr1kKrg_yoWxCrg_J3
-	97XF48ArWxXry2kr4fCwn7trWxK3yfCF13XryftryUXryDZFyYk3WDAry8uFs3WF4ftr1f
-	CF1jkrn0vr1a9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbx8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r4j
-	6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ6p
-	PUUUUU=
-X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain
 
-Added sb_flags parameter to d_automount callback function and
-fs_context_for_submount().
-NFSv4 uses this parameter to set the second superblock.
+Shivaprasad G Bhat <sbhat@linux.ibm.com> writes:
+> The patch adds a one-reg register identifier which can be used to
+> read and set the DEXCR for the guest during enter/exit with
+> KVM_REG_PPC_DEXCR. The specific SPR KVM API documentation
+> too updated.
+>
+> Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+> ---
+>  Documentation/virt/kvm/api.rst            |    1 +
+>  arch/powerpc/include/uapi/asm/kvm.h       |    1 +
+>  arch/powerpc/kvm/book3s_hv.c              |    6 ++++++
+>  tools/arch/powerpc/include/uapi/asm/kvm.h |    1 +
+ 
+Headers under tools/ are not supposed to be updated directly, they're
+synced later by the perf developers.
 
-Li Lingfeng (2):
-  fs: pass sb_flags to submount
-  NFSv4: set sb_flags to second superblock
+See: https://lore.kernel.org/all/ZlYxAdHjyAkvGtMW@x1/
 
- fs/afs/internal.h          | 2 +-
- fs/afs/mntpt.c             | 4 ++--
- fs/autofs/root.c           | 4 ++--
- fs/debugfs/inode.c         | 2 +-
- fs/fs_context.c            | 5 +++--
- fs/fuse/dir.c              | 4 ++--
- fs/namei.c                 | 3 ++-
- fs/nfs/internal.h          | 2 +-
- fs/nfs/namespace.c         | 4 ++--
- fs/smb/client/cifsfs.h     | 2 +-
- fs/smb/client/namespace.c  | 2 +-
- include/linux/dcache.h     | 2 +-
- include/linux/fs_context.h | 3 ++-
- 13 files changed, 21 insertions(+), 18 deletions(-)
-
--- 
-2.39.2
-
+cheers
 
