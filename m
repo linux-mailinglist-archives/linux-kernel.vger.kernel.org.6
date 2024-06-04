@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-200476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3058FB09B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF7B8FB0A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF42F1C20BCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:55:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C25C1C20D79
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5165F14533F;
-	Tue,  4 Jun 2024 10:55:27 +0000 (UTC)
-Received: from smtp134-31.sina.com.cn (smtp134-31.sina.com.cn [180.149.134.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76935145347;
+	Tue,  4 Jun 2024 10:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WyBW3uB9"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D79144D00
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A118144D2E;
+	Tue,  4 Jun 2024 10:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717498526; cv=none; b=fRVhpX5uPZWJ0F2otRfCen4OEgMubpZsU856g4v+3KpQyckiaBQBaLsvNCNz+lEFKV/WbMVBGrSSHYWxwYHvL19AUjfgi4CAVL6z3IU2oEpH1tWwQQYaJtk17Vr7LJgHyyc/6qf82I1HBdaOLrUC6/LMhwDgUQX2G1gSgr9Tlxg=
+	t=1717498545; cv=none; b=iho8uNE7lq151a7S4CCj/UEcp9BbTcTdWo29H4Rxg9rut+WzfQ+XuNbXoVF8JWUNQd/SmYlV/wV2a3PQz5ePAYBhQlU7kvaD1XRexCp9tweqJb3ipnU0RP3dQXeDfERLasib7EviKBlt86uZ+w3SREgJ5Ok2G+tyGiJQPGhjft0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717498526; c=relaxed/simple;
-	bh=wV5Cq68GjGdP5oijvBuOZFA7zgkjpyxF8ip/BZcMOw4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r0lECyVWShMx1aqqcf2+an49dNc6aMWjf4XR2kb8kXJgSphGRBPGGSx3qMNLqjs2cRzonW8ViqZaInbQFJ1y+Ls9AwmqClsvlwZ7v/qTYBpVvDHxS5kx3ivVTusw+P54Bn+AKk/0HLTQ4Xb2g9H6HWkVSMqeYg3HNsX0o3+isF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.69.129])
-	by sina.com (10.185.250.21) with ESMTP
-	id 665EF28900003DE7; Tue, 4 Jun 2024 18:55:08 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 3986503408482
-X-SMAIL-UIID: 0DC135B6AE7141AE9B325C5C6B26B03A-20240604-185508-1
-From: Hillf Danton <hdanton@sina.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Gal Pressman <gal@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	RDMA mailing list <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep worning
-Date: Tue,  4 Jun 2024 18:54:56 +0800
-Message-Id: <20240604105456.1668-1-hdanton@sina.com>
-In-Reply-To: <20240604080958.GL3884@unreal>
-References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org> <ZljyqODpCD0_5-YD@slm.duckdns.org> <20240531034851.GF3884@unreal> <Zl4jPImmEeRuYQjz@slm.duckdns.org>
+	s=arc-20240116; t=1717498545; c=relaxed/simple;
+	bh=+qlsn2D0Bl9bAT/zCHb1kX2iWwIp82kUn+lzQwccsqA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JK2CP7J54jwkxmwx0FedgJVz9Pz1+PUe7fuyrTGJF568BQ8Ne+1wseYh0p/mls3JaSrPhm62U3tEXy5IQinqbJMuOP/o+QyvI7Rt4dD36Go3n9oKan5GnFZPUWmEpKySiY4VGx2c76Ax56+KNff/f5ffNXRwnVphNyZ9K1uslUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WyBW3uB9; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a85cc2d96so457742a12.2;
+        Tue, 04 Jun 2024 03:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717498542; x=1718103342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IDj6XyLMkdypUs5XebPk9O6Y/tAg4OP0rl7m8sDWpro=;
+        b=WyBW3uB9G4oeSv/fUK4tP/WdFdoXUnj9zlnLu154/k7HfFWdVJJX1zo5h3JQfcbeec
+         n+AgfiWL4KCvqtapKYLp7jfr+tpdsinH8TSNjcx7apuNU3kyC/xHs6ubvOeJunzRGel+
+         nuw8+Q0O4kEwdm/47+X7Agg1ImEyHEgYQDHwXLSxsVCJFqcY9xogRqfNwVhWG0u0SpMN
+         DYQiQs1Bhu+2IrbyJGLpcOXQRmOfICPu7bSpBJdUP0ihSqFsBSKBMk9Vd1qzjFO7OvzQ
+         JKKlrNm7WMqcRwM7hiWSjaC81Qq/GBv3hW7Exptsotk+Y6D/HYfwQnwK9vRqTeFbo40c
+         Ka4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717498542; x=1718103342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IDj6XyLMkdypUs5XebPk9O6Y/tAg4OP0rl7m8sDWpro=;
+        b=BBdRo4tBoVPNA8TehchHXyzq5h6Lj2Pw4GH+WUAeeSX+aSuGI/q5/+PRPynMY61xPF
+         8sTN0R4k8wNDovG2c11doYNFRH3gFinU+OyDie+yQYFYpEJ7/W/IGlGyuGc4w/Q8JPJv
+         pQFYdO/DctM/FKX2xCAEUDPG/rkGEctfKBDgJZkYgSXxhg2S4RxCE2LgtLatePhTPIXW
+         9VSzqtR7omib2AOKVDsGnGIwdgpEIu1yl4OslKKFM60YgUy5Z8PaCRS++jwCZ0nbzOn/
+         HIAfkVgyeNjp3xh7n3pkkZ3XmPSK7mJPe+zOT1/vPdj57pcS1eGlEXLnoklcgGH8OOeK
+         Yu0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUeN4jZIVM0cM1Hywq8kegPrqxs5CMDwiiBln8M+FL1uwF3yTVBO8rC7qWaYrRMAFW9GKCHuROkEk1ooNVD0754B+FGZ+U+AMbxycpXRSE8q8OGkZkOoZnDmQB7VrRs1rngDp9WJ97xGE5AOhvvH4gd4ZaH2+WtLZ3bF5zZMQn8FzLWXg==
+X-Gm-Message-State: AOJu0YxPxpgBpUUOTVhQi02DgusyJp0ksbvymiTzsATGhpuzWlXHQwgm
+	Ew6O1zHMilmIubIR7KG2vOnN0pvjDXfyh6O0nXoe9pNK/KY8WV9LBOXO9x1OEnLGdIrgpAslTeI
+	9sRmDfq3nqNNzDUyCICRaALZsxhc=
+X-Google-Smtp-Source: AGHT+IFmZt6Y9UJZxMqsQKH1greIZFtT4Z7hrqbjSEJ/dY7Mmt/YlBYihOWjiM0e7kzDgcBKFTWWMMLnuGmhwMU9t2Q=
+X-Received: by 2002:a17:906:6acd:b0:a65:26dc:3c25 with SMTP id
+ a640c23a62f3a-a6821b71ea0mr796196266b.54.1717498542174; Tue, 04 Jun 2024
+ 03:55:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
+ <20240530093410.112716-3-angelogioacchino.delregno@collabora.com>
+ <20240602111141.0058f39e@jic23-huawei> <60e55919-2a8c-4d83-89a1-6e4ae156d34d@collabora.com>
+In-Reply-To: <60e55919-2a8c-4d83-89a1-6e4ae156d34d@collabora.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 4 Jun 2024 13:55:05 +0300
+Message-ID: <CAHp75Vf5a8VVyOXQRt9P1QnM6GHZ3rLuvnBF63H_83QBHOTJ9w@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] iio: adc: Add support for MediaTek MT6357/8/9
+ Auxiliary ADC
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org, andy@kernel.org, 
+	nuno.sa@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com, 
+	marius.cristea@microchip.com, marcelo.schmitt@analog.com, fr0st61te@gmail.com, 
+	mitrutzceclan@gmail.com, mike.looijmans@topic.nl, marcus.folkesson@gmail.com, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 4 Jun 2024 11:09:58 +0300 Leon Romanovsky <leon@kernel.org>
-> On Mon, Jun 03, 2024 at 10:10:36AM -1000, Tejun Heo wrote:
-> > 
-> > And KASAN is reporting use-after-free on a completely unrelated VFS object.
-> > I can't tell for sure from the logs alone but lockdep_register_key()
-> > iterates entries in the hashtable trying to find whether the key is a
-> > duplicate and it could be that that walk is triggering the use-after-free
-> > warning. If so, it doesn't really have much to do with workqueue. The
-> > corruption happened elsewhere and workqueue just happens to traverse the
-> > hashtable afterwards.
-> 
-> The problem is that revert of commit 643445531829
-> ("workqueue: Fix UAF report by KASAN in pwq_release_workfn()")
-> fixed these use-after-free reports.
-> 
-Given revert makes sense,
+On Tue, Jun 4, 2024 at 12:42=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+> Il 02/06/24 12:11, Jonathan Cameron ha scritto:
+> > On Thu, 30 May 2024 11:34:08 +0200
+> > AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wr=
+ote:
 
-	if (alloc_and_link_pwqs(wq) < 0)
-		goto err_unreg_lockdep;
+...
 
-err_unreg_lockdep:
-	wq_unregister_lockdep(wq);
-	wq_free_lockdep(wq);
-err_free_wq:
-	free_workqueue_attrs(wq->unbound_attrs);
-	kfree(wq);	<-- freed
-	return NULL;
+> > What are IMP channels?
+>
+> Honestly? Well, it's called like that. I don't have any clear description=
+ of that
+> and not even datasheets are unrolling the meaning of "IMP". So.. I don't =
+know.
+>
+> What I know is what I wrote in the driver, and this is:
+> * IMP has IBAT and VBAT ADCs
+> * It needs different handling from the other ADCs, as shown.
+>
+> ...and nothing else :-(
 
-the difference 643445531829 makes is double free.
+I could speculate with confidence that this means IMPedance (since it's ADC=
+).
 
-	alloc_and_link_pwqs(struct workqueue_struct *wq)
-	if (ret)
-		kthread_flush_worker(pwq_release_worker);
-		  pwq_release_workfn()
-		  if (is_last) {
-			wq_unregister_lockdep(wq);
-			call_rcu(&wq->rcu, rcu_free_wq); <-- freed again
-		  }
+From MTK6329  datasheet:
+"The hardware also includes necessary modes to allow for simultaneous
+current and voltage measurement
+which can be utilized to estimate the battery impedance."
+And googling in vendor trees also suggests the same.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
