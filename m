@@ -1,451 +1,231 @@
-Return-Path: <linux-kernel+bounces-200140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30FF98FABA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:15:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E378FABA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6041F227E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3071C2138C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B9C13E88B;
-	Tue,  4 Jun 2024 07:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE5913E88B;
+	Tue,  4 Jun 2024 07:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="YN25Cf9i"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Z0Seid78"
 Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D1F13A253
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD83372
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717485315; cv=none; b=IUp3hA6d7GZeQ7xO5yOusHa3RW4qOeJcxH2Wen5nP8JG2/mzZODqOBgCBAAQySbJ3VKWAVuQ6KQSZaUml/vG0weNwYaTQnBdW3Qj912fJNw0zZ5PQITIFP67cMAbtqJgGPmA5TSUwRpaXJqB36U7hip5QLfrQktQwyoKKl3LLIY=
+	t=1717485407; cv=none; b=fjSw4HUPhafIVoTAuD92aspCfMNaqkcFu8nxVFkue0dNBiaf6KkPqeDr0LDa5FKeT8q2pfPROnlNreDFhXbnbwXltvotroJH3E7+k6XDnwN00ozAkm6VTLicsiyC0y+ebrgBp42CM3swd7VyY4mavFtgYM+wfWE+/QkHBCnp1Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717485315; c=relaxed/simple;
-	bh=MFsZGziZHFE5D1ndNfPCBePAxVAxx+FpbkEdKVMoKQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GpKEfKSaHUQc6ug9itTcpkzqOkFcyuOTMQATjuh5lfmikF4pk8xcwJxMLp2Q17eZ0QFJEiUeazalxsSKZn1zk0/UQOhnC1WRuVJDgsruZsis4PhGro0vm5Igd/1lIDoetUHBCSx7TEKBp4v5fPVuXBJiat7xnSRNDiYKqjuFsv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=YN25Cf9i; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a68b5f18fc5so310240066b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 00:15:12 -0700 (PDT)
+	s=arc-20240116; t=1717485407; c=relaxed/simple;
+	bh=SSHp8bcgTpYjd7WUeRnHbZD2iwivFkh/GoxEtOLHF3I=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=d6GmHPeQtIc9S51RTayZyFEnlGQqplD/6AHjSkR+PQ4DWyNKXijeJM55Fqdlf8IX1cmZYSk/pA4IVfj7o2uqJ8UAOqtklnfHpF4ZI7WPNsEZrT5DFfk2WRQd2h51B1cDFrf5fatsX6BaXA0I6ga5pITNzuPYjV2Emcv/t/3RfJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Z0Seid78; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6265d48ec3so545546366b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 00:16:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717485311; x=1718090111; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xGfwkYu7JVFXZOdUmCyYR2r+fVgJf4gONLr+u0dZ9y0=;
-        b=YN25Cf9iAgXkXdYA2RaaYeWNHidKR9IKOQxprUHYhIunHol3Ss/qsFtCAa/u/xnB/k
-         pOfnt/M3cuUxTMcILTm/pHGvsx5GXG8pCyWsbFXuwCWAcE0kldUbnAYr+A7pbHGnQ7If
-         Fkf0Jklpg30g8A1fd1OBy102LuWida9yy8JWlWi9jJu5xUGmL6Fov4tTEfTVRq8bULUi
-         mijQAazgJNQipZM8wO7/HzSU5mDWGKeQHbzS1+DURlFKy7gs9MItgCxkaf4HHpWFXyfF
-         9iFiP+jv6KaUxDa9V8NFimW1QQAjsvtTZW9qxey2eAITkXxmcljx/2j9rGJsveQgZODZ
-         tZFg==
+        d=ionos.com; s=google; t=1717485403; x=1718090203; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5fiGzyt6U1DvtZABjI1WEbvyTI1XSXmtITKe1nhJLbw=;
+        b=Z0Seid7810YWhGtXjeitefNISEJQ08D0H/R3m5Je0kTaNRuiKddtrne19qI+V4hSUl
+         nHjfJR24qjt+6IQodg3gM/jqoijmRdTvsxMZg5n9OaUvO+rasEFVHHnepOcONegF82tz
+         /p+HcmBGMFrc4LsJFged3TG3dqWHXdq+/Ai/AGMB9Rvpa8kFhZMzmQFwHRgmZB+62w5L
+         UKI/YI2umwCTKoxRUHcrNDB9CARLMcDb/KSia7G0SwmQ8F0FzKybgPq6DMjhLLfoLSmo
+         ogySLqJdtUKYPNegrms/1o/6HsEK/Q4EV3wx3tpahZtjUtOnsL0wJsS4o8/zTpBEqH9u
+         IFEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717485311; x=1718090111;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xGfwkYu7JVFXZOdUmCyYR2r+fVgJf4gONLr+u0dZ9y0=;
-        b=CbWizvdwRsMQnmFgOToa0Rc+zRFg2t+u3i6kDAWwHuZ4mcY6quE8T7O2EieTo2ITkw
-         hFV1bq6mq/cp2NfpjPoXum/o/ia1DGQ/hSSDjrmAiz8RxRmVkd7255Su+FIp0/DJOHcB
-         uoZZ+UP5Uvvmds+zxbDCZYai4kWmVcgydFxK1w89Oe1y24DA0HDtqjSjrIdLwTLM76Fs
-         tqyxl2u4u+e1/dLB/gJ4S7MTGD8g7xr/bRb+VqVnhrUiC6/Yy0xRndsGU0KmhEmUoeLL
-         F9IRaT7ho2nl6La8DjAgcciuHUHoVKoN76z6Kw8mMUCam5CyabdTQKwxsnX3grAmnnvo
-         e/Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwyJpHbyZxOLbNw9iYvfa18Mt6kPQcMi88FeFLS4dbLTq60fyITWv+CzVMlPt/5ioz26NmMcWaoesBveaUSoVRs975Kz4UL3I6UWPt
-X-Gm-Message-State: AOJu0Yyo+jtjcMsb2+eoB8KSW8qh3g57M68wuMR/6IHbqcCQKXH54yyD
-	SMFiAwq/FPNu3eQue94Fuo73p9MAguJxMV4sUDvikHupctU87tgsO30Q2Mvfgxyl0ks2xNbcFdL
-	WtSpShkdWBLbMKZcwH8F54ikZ0nFtchy1gJYBsg==
-X-Google-Smtp-Source: AGHT+IHarWc6Pn5Ik6tsXrxjrWuTOVIndSB1/IuRfaYcNBnRUoto132QzfDv328/hbJp5jRKeRYQLyvJSTBmGsNUy1M=
-X-Received: by 2002:a17:906:3656:b0:a68:b8cc:842f with SMTP id
- a640c23a62f3a-a68b8cc861dmr531801066b.56.1717485311250; Tue, 04 Jun 2024
- 00:15:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717485403; x=1718090203;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5fiGzyt6U1DvtZABjI1WEbvyTI1XSXmtITKe1nhJLbw=;
+        b=MCIT5NmC5RDQ/d8mxnxMospRRTbinVymkf/hXl+CnBAXxuNuSkgFNn4x6x0NpBBhwg
+         A1RPsPbE5Rq/l1R5AXC3JIkuI2ojDdxjB8qLyWmlDPfjwfT/xXe8yiJB2rNicVlhK78x
+         aAwNuu65oV2jtTIK6J0RkQsVu+eaADV4Vn33bVYiNmo07qIPEenq6F1Ztm4x6yKuRDs5
+         rjQa9l+cL6QWkqQJLTn/mp5bMDsEW9B4CWta9asxGYdyKq7/1r74KJU+ut7kBQyXAAAN
+         1vWFMMalMpyUiiHxP2R90MAXK7+oofl+g0jdcl5jvrHxm3mbO37e3I1ovZzWr64UTs5Z
+         Hd/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUrf9CdHL0EHOnkyyhcEOcYKTB/G5UxZCgvhL9LjAF/dQC3B10wuBdjfZeDaHoGXoaBGhzK2vq+umJ2FT+5m/ewFbxAjhufrT5K/IOQ
+X-Gm-Message-State: AOJu0Yy7kKcmkp0KTQHKiSuuJJdi74+iSHx2elV4xGYsnj5ON/9drvw2
+	Vghuyz1uh1dx6kO21d/U8qJYJpkIPD8ublt5Etb6GUjwN0NIjv52WlPUlAw1GUDEaiPGD2rLLeX
+	E58r7mfzNMNvOPIerv+4RsqtcRQ2yG5q19wiabA==
+X-Google-Smtp-Source: AGHT+IHeLMrB7kFD7fY+kEcfLU701b+D88C5q6WDLjkKTnKnvo53RWt2bB2eBRKTfs3qrHa2XZefNg8PEIA27flJZxU=
+X-Received: by 2002:a17:906:799:b0:a68:e70f:c715 with SMTP id
+ a640c23a62f3a-a68e70fc9dcmr420193566b.68.1717485402790; Tue, 04 Jun 2024
+ 00:16:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131155929.169961-1-alexghiti@rivosinc.com>
- <20240131155929.169961-4-alexghiti@rivosinc.com> <CAEEQ3wnT-K18R1KQjJbeSdnFnRFQZt=wCuAHeDrf7EohwZ7n=w@mail.gmail.com>
- <CAHVXubiKAY_L04ZwYSp-MpPPT5sPzxm4wB6HVFPzsMcB-3zq9w@mail.gmail.com> <CAEEQ3wkkNyrjVCDxprNP5Z=NzO=EYeKeWf3CDvVNJHY1uovmMQ@mail.gmail.com>
-In-Reply-To: <CAEEQ3wkkNyrjVCDxprNP5Z=NzO=EYeKeWf3CDvVNJHY1uovmMQ@mail.gmail.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Tue, 4 Jun 2024 09:15:00 +0200
-Message-ID: <CAHVXubi+s2Q0y_xLbHpQJpz+yXvKWJ8e96wwAHP6A9C7U-He7g@mail.gmail.com>
-Subject: Re: [External] [PATCH RFC/RFT v2 3/4] riscv: Stop emitting preventive
- sfence.vma for new vmalloc mappings
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton <akpm@linux-foundation.org>, 
-	Ved Shanbhogue <ved@rivosinc.com>, Matt Evans <mev@rivosinc.com>, Dylan Jhong <dylan@andestech.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-mm@kvack.org
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Tue, 4 Jun 2024 09:16:32 +0200
+Message-ID: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
+Subject: Bad psi_group_cpu.tasks[NR_MEMSTALL] counter
+To: Johannes Weiner <hannes@cmpxchg.org>, surenb@google.com, 
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Yunhui,
+Hi kernel people,
+I have a problem that I have been trying to debug for a few days, but
+I got lost in the depths of the scheduler code; I'm stuck and I need
+your help.
+We have several servers which show a constant memory.pressure value of
+30 to 100 (or more), even when the server is idle. I tracked this down
+to psi_group_cpu.tasks[NR_MEMSTALL]==1 even though no such process
+exists, but I can't figure out why the kernel thinks there is still
+one task stuck in memstall. I tried to track down all the code paths
+that lead to psi_group_change(), but found nothing conclusive, and
+failed to reproduce it on a test machine with kernel patches injecting
+delays (trying to cause data race bugs that may have caused this
+problem).
 
-On Tue, Jun 4, 2024 at 8:21=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.com>=
- wrote:
->
-> Hi Alexandre,
->
-> On Mon, Jun 3, 2024 at 8:02=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosin=
-c.com> wrote:
-> >
-> > Hi Yunhui,
-> >
-> > On Mon, Jun 3, 2024 at 4:26=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.=
-com> wrote:
-> > >
-> > > Hi Alexandre,
-> > >
-> > > On Thu, Feb 1, 2024 at 12:03=E2=80=AFAM Alexandre Ghiti <alexghiti@ri=
-vosinc.com> wrote:
-> > > >
-> > > > In 6.5, we removed the vmalloc fault path because that can't work (=
-see
-> > > > [1] [2]). Then in order to make sure that new page table entries we=
-re
-> > > > seen by the page table walker, we had to preventively emit a sfence=
-.vma
-> > > > on all harts [3] but this solution is very costly since it relies o=
-n IPI.
-> > > >
-> > > > And even there, we could end up in a loop of vmalloc faults if a vm=
-alloc
-> > > > allocation is done in the IPI path (for example if it is traced, se=
-e
-> > > > [4]), which could result in a kernel stack overflow.
-> > > >
-> > > > Those preventive sfence.vma needed to be emitted because:
-> > > >
-> > > > - if the uarch caches invalid entries, the new mapping may not be
-> > > >   observed by the page table walker and an invalidation may be need=
-ed.
-> > > > - if the uarch does not cache invalid entries, a reordered access
-> > > >   could "miss" the new mapping and traps: in that case, we would ac=
-tually
-> > > >   only need to retry the access, no sfence.vma is required.
-> > > >
-> > > > So this patch removes those preventive sfence.vma and actually hand=
-les
-> > > > the possible (and unlikely) exceptions. And since the kernel stacks
-> > > > mappings lie in the vmalloc area, this handling must be done very e=
-arly
-> > > > when the trap is taken, at the very beginning of handle_exception: =
-this
-> > > > also rules out the vmalloc allocations in the fault path.
-> > > >
-> > > > Link: https://lore.kernel.org/linux-riscv/20230531093817.665799-1-b=
-jorn@kernel.org/ [1]
-> > > > Link: https://lore.kernel.org/linux-riscv/20230801090927.2018653-1-=
-dylan@andestech.com [2]
-> > > > Link: https://lore.kernel.org/linux-riscv/20230725132246.817726-1-a=
-lexghiti@rivosinc.com/ [3]
-> > > > Link: https://lore.kernel.org/lkml/20200508144043.13893-1-joro@8byt=
-es.org/ [4]
-> > > > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > > > ---
-> > > >  arch/riscv/include/asm/cacheflush.h  | 18 +++++-
-> > > >  arch/riscv/include/asm/thread_info.h |  5 ++
-> > > >  arch/riscv/kernel/asm-offsets.c      |  5 ++
-> > > >  arch/riscv/kernel/entry.S            | 84 ++++++++++++++++++++++++=
-++++
-> > > >  arch/riscv/mm/init.c                 |  2 +
-> > > >  5 files changed, 113 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/inclu=
-de/asm/cacheflush.h
-> > > > index a129dac4521d..b0d631701757 100644
-> > > > --- a/arch/riscv/include/asm/cacheflush.h
-> > > > +++ b/arch/riscv/include/asm/cacheflush.h
-> > > > @@ -37,7 +37,23 @@ static inline void flush_dcache_page(struct page=
- *page)
-> > > >         flush_icache_mm(vma->vm_mm, 0)
-> > > >
-> > > >  #ifdef CONFIG_64BIT
-> > > > -#define flush_cache_vmap(start, end)           flush_tlb_kernel_ra=
-nge(start, end)
-> > > > +extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
-> > > > +extern char _end[];
-> > > > +#define flush_cache_vmap flush_cache_vmap
-> > > > +static inline void flush_cache_vmap(unsigned long start, unsigned =
-long end)
-> > > > +{
-> > > > +       if (is_vmalloc_or_module_addr((void *)start)) {
-> > > > +               int i;
-> > > > +
-> > > > +               /*
-> > > > +                * We don't care if concurrently a cpu resets this =
-value since
-> > > > +                * the only place this can happen is in handle_exce=
-ption() where
-> > > > +                * an sfence.vma is emitted.
-> > > > +                */
-> > > > +               for (i =3D 0; i < ARRAY_SIZE(new_vmalloc); ++i)
-> > > > +                       new_vmalloc[i] =3D -1ULL;
-> > > > +       }
-> > > > +}
-> > > >  #define flush_cache_vmap_early(start, end)     local_flush_tlb_ker=
-nel_range(start, end)
-> > > >  #endif
-> > > >
-> > > > diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/incl=
-ude/asm/thread_info.h
-> > > > index 5d473343634b..32631acdcdd4 100644
-> > > > --- a/arch/riscv/include/asm/thread_info.h
-> > > > +++ b/arch/riscv/include/asm/thread_info.h
-> > > > @@ -60,6 +60,11 @@ struct thread_info {
-> > > >         void                    *scs_base;
-> > > >         void                    *scs_sp;
-> > > >  #endif
-> > > > +       /*
-> > > > +        * Used in handle_exception() to save a0, a1 and a2 before =
-knowing if we
-> > > > +        * can access the kernel stack.
-> > > > +        */
-> > > > +       unsigned long           a0, a1, a2;
-> > > >  };
-> > > >
-> > > >  #ifdef CONFIG_SHADOW_CALL_STACK
-> > > > diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/as=
-m-offsets.c
-> > > > index a03129f40c46..939ddc0e3c6e 100644
-> > > > --- a/arch/riscv/kernel/asm-offsets.c
-> > > > +++ b/arch/riscv/kernel/asm-offsets.c
-> > > > @@ -35,6 +35,8 @@ void asm_offsets(void)
-> > > >         OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
-> > > >         OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
-> > > >         OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
-> > > > +
-> > > > +       OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
-> > > >         OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
-> > > >         OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.pree=
-mpt_count);
-> > > >         OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_s=
-p);
-> > > > @@ -42,6 +44,9 @@ void asm_offsets(void)
-> > > >  #ifdef CONFIG_SHADOW_CALL_STACK
-> > > >         OFFSET(TASK_TI_SCS_SP, task_struct, thread_info.scs_sp);
-> > > >  #endif
-> > > > +       OFFSET(TASK_TI_A0, task_struct, thread_info.a0);
-> > > > +       OFFSET(TASK_TI_A1, task_struct, thread_info.a1);
-> > > > +       OFFSET(TASK_TI_A2, task_struct, thread_info.a2);
-> > > >
-> > > >         OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
-> > > >         OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
-> > > > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> > > > index 9d1a305d5508..c1ffaeaba7aa 100644
-> > > > --- a/arch/riscv/kernel/entry.S
-> > > > +++ b/arch/riscv/kernel/entry.S
-> > > > @@ -19,6 +19,78 @@
-> > > >
-> > > >         .section .irqentry.text, "ax"
-> > > >
-> > > > +.macro new_vmalloc_check
-> > > > +       REG_S   a0, TASK_TI_A0(tp)
-> > > > +       REG_S   a1, TASK_TI_A1(tp)
-> > > > +       REG_S   a2, TASK_TI_A2(tp)
-> > > > +
-> > > > +       csrr    a0, CSR_CAUSE
-> > > > +       /* Exclude IRQs */
-> > > > +       blt     a0, zero, _new_vmalloc_restore_context
-> > > > +       /* Only check new_vmalloc if we are in page/protection faul=
-t */
-> > > > +       li      a1, EXC_LOAD_PAGE_FAULT
-> > > > +       beq     a0, a1, _new_vmalloc_kernel_address
-> > > > +       li      a1, EXC_STORE_PAGE_FAULT
-> > > > +       beq     a0, a1, _new_vmalloc_kernel_address
-> > > > +       li      a1, EXC_INST_PAGE_FAULT
-> > > > +       bne     a0, a1, _new_vmalloc_restore_context
-> > > > +
-> > > > +_new_vmalloc_kernel_address:
-> > > > +       /* Is it a kernel address? */
-> > > > +       csrr    a0, CSR_TVAL
-> > > > +       bge     a0, zero, _new_vmalloc_restore_context
-> > > > +
-> > > > +       /* Check if a new vmalloc mapping appeared that could expla=
-in the trap */
-> > > > +
-> > > > +       /*
-> > > > +        * Computes:
-> > > > +        * a0 =3D &new_vmalloc[BIT_WORD(cpu)]
-> > > > +        * a1 =3D BIT_MASK(cpu)
-> > > > +        */
-> > > > +       REG_L   a2, TASK_TI_CPU(tp)
-> > > > +       /*
-> > > > +        * Compute the new_vmalloc element position:
-> > > > +        * (cpu / 64) * 8 =3D (cpu >> 6) << 3
-> > > > +        */
-> > > > +       srli    a1, a2, 6
-> > > > +       slli    a1, a1, 3
-> > > > +       la      a0, new_vmalloc
-> > > > +       add     a0, a0, a1
-> > > > +       /*
-> > > > +        * Compute the bit position in the new_vmalloc element:
-> > > > +        * bit_pos =3D cpu % 64 =3D cpu - (cpu / 64) * 64 =3D cpu -=
- (cpu >> 6) << 6
-> > > > +        *         =3D cpu - ((cpu >> 6) << 3) << 3
-> > > > +        */
-> > > > +       slli    a1, a1, 3
-> > > > +       sub     a1, a2, a1
-> > > > +       /* Compute the "get mask": 1 << bit_pos */
-> > > > +       li      a2, 1
-> > > > +       sll     a1, a2, a1
-> > > > +
-> > > > +       /* Check the value of new_vmalloc for this cpu */
-> > > > +       REG_L   a2, 0(a0)
-> > > > +       and     a2, a2, a1
-> > > > +       beq     a2, zero, _new_vmalloc_restore_context
-> > > > +
-> > > > +       /* Atomically reset the current cpu bit in new_vmalloc */
-> > > > +       amoxor.w        a0, a1, (a0)
-> > > > +
-> > > > +       /* Only emit a sfence.vma if the uarch caches invalid entri=
-es */
-> > > > +       ALTERNATIVE("sfence.vma", "nop", 0, RISCV_ISA_EXT_SVVPTC, 1=
-)
-> > > > +
-> > > > +       REG_L   a0, TASK_TI_A0(tp)
-> > > > +       REG_L   a1, TASK_TI_A1(tp)
-> > > > +       REG_L   a2, TASK_TI_A2(tp)
-> > > > +       csrw    CSR_SCRATCH, x0
-> > > > +       sret
-> > > > +
-> > > > +_new_vmalloc_restore_context:
-> > > > +       REG_L   a0, TASK_TI_A0(tp)
-> > > > +       REG_L   a1, TASK_TI_A1(tp)
-> > > > +       REG_L   a2, TASK_TI_A2(tp)
-> > > > +.endm
-> > > > +
-> > > > +
-> > > >  SYM_CODE_START(handle_exception)
-> > > >         /*
-> > > >          * If coming from userspace, preserve the user thread point=
-er and load
-> > > > @@ -30,6 +102,18 @@ SYM_CODE_START(handle_exception)
-> > > >
-> > > >  .Lrestore_kernel_tpsp:
-> > > >         csrr tp, CSR_SCRATCH
-> > > > +
-> > > > +       /*
-> > > > +        * The RISC-V kernel does not eagerly emit a sfence.vma aft=
-er each
-> > > > +        * new vmalloc mapping, which may result in exceptions:
-> > > > +        * - if the uarch caches invalid entries, the new mapping w=
-ould not be
-> > > > +        *   observed by the page table walker and an invalidation =
-is needed.
-> > > > +        * - if the uarch does not cache invalid entries, a reorder=
-ed access
-> > > > +        *   could "miss" the new mapping and traps: in that case, =
-we only need
-> > > > +        *   to retry the access, no sfence.vma is required.
-> > > > +        */
-> > > > +       new_vmalloc_check
-> > > > +
-> > > >         REG_S sp, TASK_TI_KERNEL_SP(tp)
-> > > >
-> > > >  #ifdef CONFIG_VMAP_STACK
-> > > > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> > > > index eafc4c2200f2..54c9fdeda11e 100644
-> > > > --- a/arch/riscv/mm/init.c
-> > > > +++ b/arch/riscv/mm/init.c
-> > > > @@ -36,6 +36,8 @@
-> > > >
-> > > >  #include "../kernel/head.h"
-> > > >
-> > > > +u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
-> > > > +
-> > > >  struct kernel_mapping kernel_map __ro_after_init;
-> > > >  EXPORT_SYMBOL(kernel_map);
-> > > >  #ifdef CONFIG_XIP_KERNEL
-> > > > --
-> > > > 2.39.2
-> > > >
-> > > >
-> > >
-> > > Can we consider using new_vmalloc as a percpu variable, so that we
-> > > don't need to add a0/1/2 in thread_info?
-> >
-> > At first, I used percpu variables. But then I realized that percpu
-> > areas are allocated in the vmalloc area, so if somehow we take a trap
-> > when accessing the new_vmalloc percpu variable, we could not recover
-> > from this as we would trap forever in new_vmalloc_check. But
-> > admittedly, not sure that can happen.
-> >
-> > And how would that remove a0, a1 and a2 from thread_info? We'd still
-> > need to save some registers somewhere to access the percpu variable
-> > right?
-> >
-> > > Also, try not to do too much
-> > > calculation logic in new_vmalloc_check, after all, handle_exception i=
-s
-> > > a high-frequency path. In this case, can we consider writing
-> > > new_vmalloc_check in C language to increase readability?
-> >
-> > If we write that in C, we don't have the control over the allocated
-> > registers and then we can't correctly save the context.
->
-> If we use C language, new_vmalloc_check is written just like do_irq(),
-> then we need _save_context, but for new_vmalloc_check, it is not worth
-> the loss, because exceptions from user mode do not need
-> new_vmalloc_check, which also shows that it is reasonable to put
-> new_vmalloc_check after _restore_kernel_tpsp.
->
-> Saving is necessary. We can save a0, a1, a2 without using thread_info.
-> We can choose to save on the kernel stack of the current tp, but we
-> need to add the following instructions:
-> REG_S sp, TASK_TI_USER_SP(tp)
-> REG_L sp, TASK_TI_KERNEL_SP(tp)
-> addi sp, sp, -(PT_SIZE_ON_STACK)
-> It seems that saving directly on thread_info is more direct, but
-> saving on the kernel stack is more logically consistent, and there is
-> no need to increase the size of thread_info.
+This happened on servers that were very busy and indeed were in
+memstall often due to going over memory.high frequently. We have one
+"main" cgroup with memory.high configured, and all the workload
+processes live in sub-cgroups, of which we always have a few thousand.
+When memory.events gets triggered, our process manager stops a bunch
+of idle processes to free up memory, which then deletes the sub-cgroup
+they belong to. In other words: sub-cgroups get created and deleted
+very often, and they get deleted when there is indeed memory stall
+happening. My theory was that there could be a data race bug that
+forgets to decrement tasks[NR_MEMSTALL], maybe when a stalled child
+cgroup gets deleted.
+On our Grafana, I can easily track the beginning of this bug to a
+point two weeks ago; in the system log, I can see that hundreds of
+processes needed to be terminated due to memory pressure at that time.
 
-You can't save on the kernel stack since kernel stacks are allocated
-in the vmalloc area.
+The affected servers run kernel 6.8.7 with a few custom patches, but
+none of these patches affect the scheduler or cgroups; they're about
+unrelated things like denying access to Ceph snapshots and adjusting
+debugfs permissions. (I submitted most of those patches to LKML long
+ago but nobody cared.)
+Newer kernels don't seem to have fixes for my problem; the relevant
+parts of the code are unchanged.
 
->
-> As for the current status of the patch, there are two points that can
-> be optimized:
-> 1. Some chip hardware implementations may not cache TLB invalid
-> entries, so it doesn't matter whether svvptc is available or not. Can
-> we consider adding a CONFIG_RISCV_SVVPTC to control it?
->
-> 2. .macro new_vmalloc_check
-> REG_S a0, TASK_TI_A0(tp)
-> REG_S a1, TASK_TI_A1(tp)
-> REG_S a2, TASK_TI_A2(tp)
-> When executing blt a0, zero, _new_vmalloc_restore_context, you can not
-> save a1, a2 first
+One of the servers is still running with this problem, and I can
+access it with gdb on /proc/kcore. I'll keep it that way for some more
+time, so if you have any idea what to look for, let me know.
 
-Ok, I can do that :)
+This is the psi_group of the "main" cgroup:
 
-Thanks again for your inputs,
+ $1 = {parent = 0xffff9de707287800, enabled = true, avgs_lock = {owner
+= {counter = 0}, wait_lock = {raw_lock = {{val = {counter = 0},
+{locked = 0 '\000', pending = 0 '\000'}, {locked_pending = 0, tail =
+0}}}}, osq = {tail = {
+        counter = 0}}, wait_list = {next = 0xffff9de70f772820, prev =
+0xffff9de70f772820}}, pcpu = 0x3fb640033900, avg_total =
+{6133960836647, 5923217690044, 615319825665255, 595479374843164,
+19259777147170, 12847590051880},
+  avg_last_update = 1606208471280060, avg_next_update =
+1606210394507082, avgs_work = {work = {data = {counter = 321}, entry =
+{next = 0xffff9de70f772880, prev = 0xffff9de70f772880}, func =
+0xffffffff880dcc00}, timer = {entry = {
+        next = 0x0 <fixed_percpu_data>, pprev = 0xffff9e05bef5bc48},
+expires = 4455558105, function = 0xffffffff880a1ca0, flags =
+522190853}, wq = 0xffff9de700051400, cpu = 64}, avg_triggers = {next =
+0xffff9de70f7728d0,
+    prev = 0xffff9de70f7728d0}, avg_nr_triggers = {0, 0, 0, 0, 0, 0},
+total = {{6133960836647, 5923217690044, 615328415599847,
+595487964777756, 19281251983650, 12869064888360}, {6092994926,
+5559819737, 105947464151, 100672353730,
+      8196529519, 7678536634}}, avg = {{0, 0, 0}, {0, 0, 0}, {203596,
+203716, 198499}, {203596, 203716, 198288}, {0, 0, 60}, {0, 0, 0}},
+rtpoll_task = 0x0 <fixed_percpu_data>, rtpoll_timer = {entry = {next =
+0xdead000000000122,
+      pprev = 0x0 <fixed_percpu_data>}, expires = 4405010639, function
+= 0xffffffff880dac50, flags = 67108868}, rtpoll_wait = {lock = {{rlock
+= {raw_lock = {{val = {counter = 0}, {locked = 0 '\000', pending = 0
+'\000'}, {
+                locked_pending = 0, tail = 0}}}}}}, head = {next =
+0xffff9de70f772a20, prev = 0xffff9de70f772a20}}, rtpoll_wakeup =
+{counter = 0}, rtpoll_scheduled = {counter = 0}, rtpoll_trigger_lock =
+{owner = {counter = 0},
+    wait_lock = {raw_lock = {{val = {counter = 0}, {locked = 0 '\000',
+pending = 0 '\000'}, {locked_pending = 0, tail = 0}}}}, osq = {tail =
+{counter = 0}}, wait_list = {next = 0xffff9de70f772a48, prev =
+0xffff9de70f772a48}},
+  rtpoll_triggers = {next = 0xffff9de70f772a58, prev =
+0xffff9de70f772a58}, rtpoll_nr_triggers = {0, 0, 0, 0, 0, 0},
+rtpoll_states = 0, rtpoll_min_period = 18446744073709551615,
+rtpoll_total = {6092994926, 5559819737, 105947464151,
+    100672353730, 8196529519, 7678536634}, rtpoll_next_update =
+1100738436720135, rtpoll_until = 0}
 
-Alex
+This is a summary of all psi_group_pcpu for the 32 CPU cores (on the
+way, I wrote a small gdb script to dump interesting details like these
+but that went nowhere):
 
->
-> >
-> > Thanks for your interest in this patchset :)
-> >
-> > Alex
-> >
-> > >
-> > > Thanks,
-> > > Yunhui
->
-> Thanks,
-> Yunhui
+  state_mask 0 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 1 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 2 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 3 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 4 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 5 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 6 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 7 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 8 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 9 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 10 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 11 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 12 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 13 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 14 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 15 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 16 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 17 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 18 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 19 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 20 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 21 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 22 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 23 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 24 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 25 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 26 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 27 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 28 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 29 = 0x0 tasks {0, 0, 0, 0}
+  state_mask 30 = 0x4c tasks {0, 1, 0, 0}
+  state_mask 31 = 0x0 tasks {0, 0, 0, 0}
+
+CPU core 30 is stuck with this bogus value. state_mask 0x4c =
+PSI_MEM_SOME|PSI_MEM_FULL|PSI_NONIDLE.
+
+The memory pressure at the time of this writing:
+
+ # cat /sys/fs/cgroup/system.slice/system-cm4all.slice/bp-spawn.scope/memory.pressure
+ some avg10=99.22 avg60=99.39 avg300=97.62 total=615423620626
+ full avg10=99.22 avg60=99.39 avg300=97.54 total=595583169804
+ # cat /sys/fs/cgroup/system.slice/system-cm4all.slice/bp-spawn.scope/_/memory.pressure
+ some avg10=0.00 avg60=0.00 avg300=0.00 total=0
+ full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+ # cat /sys/fs/cgroup/system.slice/system-cm4all.slice/bp-spawn.scope/cgroup.stat
+ nr_descendants 1
+ nr_dying_descendants 2224
+
+There is currently no worker process; there is only one idle dummy
+process in a single sub-cgroup called "_", only there to keep the
+systemd scope populated. It should therefore be impossible to have
+memory.pressure when the only leaf cgroup has pressure=0.
+
+(nr_dying_descendants is decremented extremely slowly; I deactivated
+the server shortly before collecting these numbers, to make sure it's
+really idle and there are really no processes left to cause this
+pressure. I don't think nr_dying_descendants is relevant for this
+problem; even after two days of full idle, the counter and the
+pressure didn't go back to zero.)
+
+Please help :-)
+
+Max
 
