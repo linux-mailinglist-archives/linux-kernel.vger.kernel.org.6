@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-201542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6FA78FBFCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:24:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48188FBFCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E93411C2259A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:24:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 327CFB22639
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A28614E2CA;
-	Tue,  4 Jun 2024 23:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLiPBDnK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2EA14D708;
+	Tue,  4 Jun 2024 23:26:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5EE1442F5;
-	Tue,  4 Jun 2024 23:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A4B145B05
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717543430; cv=none; b=Z2sIp53nvEbgZkn4Ps1WbSFU+5ACKyKNfYCvWPMvKiRVt0+p+8zOp1ekWaGwJMGju0gEscF0LqE8EvQNLvZHGMpOTCGd3M0eYP8f6KmDow5PYUjJPWu77UP8jX4lqcLDT8oaT61LrcTl8GJWXkv45KHDmHa0bXhAPuB9tjyJtVE=
+	t=1717543566; cv=none; b=odW1EvoTEfLOpxdQZ77fcgbP8MaQTgGB+H1iogdBJtyZQKXnnvyU9Pi1mtuyGXDAyQb6YeY8sP1NpGdAgJNvg3bhGhhligQhOyhw9jpoc6WLLIhK13CdZ9c564aGsoJSn7201yGVc8Q5n9hhseaCLXJQvL7BuxjXQdjgWA7/jjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717543430; c=relaxed/simple;
-	bh=TcM91AOH5mARdOX+sC1EAXIn04cXXNDDk3iF8SmOPds=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZC+4MBiOncvQHflM4Suy6R2rD2UKjB7NFhppXg/sAWDhIdMzaHxo8jDGD3vEEv0iJTpUxCt0OaTgm+J6PGU4GjSg4BAsEDvQDPCvpgndpfSEEPfox9vvrKezYPei6Wjgk4rVMOANiWsbTYASRIc6zeHIuVuCYPeFuyHdY49lEiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLiPBDnK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E83C3277B;
-	Tue,  4 Jun 2024 23:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717543429;
-	bh=TcM91AOH5mARdOX+sC1EAXIn04cXXNDDk3iF8SmOPds=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HLiPBDnKEroIafHmkKhjL6ZMtwQGyKIKNbO+TcKl/05kSJIwg0yO1zoMMQbmOFtv3
-	 BPwiExtk5Je89Q0RCvCcP3KlX4Gh/9Y/96+4Th9xJSJREAr9tGTnYtD0hKHOUVm8i0
-	 rjrBa1hjbTsB2cAxnsTkD0mIW0nAt1HupIBiC4A3ABFImA1myBc45JQ3fI68abpMiw
-	 FrSRmzcAkYkvGQ9Cux3ZCT6BXB2Q07caU5VI5TY6DxiGtNCxTfI+3q8uT3jeG6ugDG
-	 bMO4Zbad0NPDHHGrNKyQfl8QS8RH9L5uVpcBiiwcQRkGeBpZCcqKAFD5AbiCUxhYJc
-	 Hrn3BtBW16vpg==
-Date: Tue, 4 Jun 2024 18:23:47 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
-	Rocky Liao <quic_rjliao@quicinc.com>, Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Alex Elder <elder@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	ath12k@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	kernel@quicinc.com, Amit Pundir <amit.pundir@linaro.org>
-Subject: Re: [PATCH v8 16/17] PCI/pwrctl: add a PCI power control driver for
- power sequenced devices
-Message-ID: <20240604232347.GA740032@bhelgaas>
+	s=arc-20240116; t=1717543566; c=relaxed/simple;
+	bh=uOxO572PIMYk4UD1AMdP6QiZNSv5xA+cPBiAG1f4D1I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZYrwhAGEMRNsVQlRAJ3GfCsCDX5tm7KvovZk03wG2aIklZVm9UhAycpNrkUMcDR+2RrB4d4weH/mStF/of2evEioMTkgKqlatl0ppiSzgp0mWhySAK8yWcsogxyLHbp8mqa8I2zFFAx1dCbn4qCMBIwe38n5wpH5e2RVJ/wL1j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3745fb76682so62128755ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 16:26:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717543564; x=1718148364;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i6eAuVeWTDMsF1yEe0WIVH8Cs9Fqf92OWhWU5p1no/4=;
+        b=FmwhUWxI8xYlmWQVVlVjSANl4P2Lxo6IbKGmGm18BBd++brxA91uWCdnYgbFoa4zX0
+         uwDAPyFL98CjIKzVqyKaTUcmiRiMZDhg4heNWG9dEI4j6UZT8VME7hhJQoDGhx74rMRX
+         c8nGwWKeNbIj9HtJj+6vZzjwZJbUvacODtawzOsNwzVBiLd/8/DlienZ2wrs55VvzLWr
+         abMbSWEK2AIrpZhVCTVbKsqECCOWLDfGGdAKEpS3gFtSTbWYm1e/M7lZ0yvV6DnuTq9u
+         wYaH+Q7TbQi4adCuCZ/07fuCslFhHJUOikUSCCOSoyw6IC+1LB4bWbFklppdwkddt0WL
+         PtFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoWZFKTG3Wu0XO4hwEuO3vB23PIKV15t7GBezsecYGTGfbQU8WZYOFxE+Njrh/2jAjQyrZEJOKVX9oF/7pZMIxpF/9nlzb91GOz5xO
+X-Gm-Message-State: AOJu0YyNDbJRrj4GNGYWxjC5r2fjDiVXKQ/7sbaJ1X1FVKsSOEauB2BD
+	C9gc6+SFUJxldnzO0Kbr7STlNzcdssOA1CDHwyqvNEjIK2fNzHFBnT9biOGy2IoEog76DaJFse6
+	xwF4BaR/7Mz8uh0KxLKeQvID59MZJkBgdRS216PKut6ljow3NgMvLX1I=
+X-Google-Smtp-Source: AGHT+IF5vyONmiDcpL1Vn1ikfQ9FuJdcA7AQfBqFl0c9bGxvp4BtLQVTyajhYTtMfn8Ff5AgREPlf6px3j7XUvVzCm5vX4mikeym
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528-pwrseq-v8-16-d354d52b763c@linaro.org>
+X-Received: by 2002:a92:c261:0:b0:374:a12c:30e0 with SMTP id
+ e9e14a558f8ab-374b1f47739mr473255ab.3.1717543564732; Tue, 04 Jun 2024
+ 16:26:04 -0700 (PDT)
+Date: Tue, 04 Jun 2024 16:26:04 -0700
+In-Reply-To: <0000000000003d63410605a18363@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000100905061a18c63a@google.com>
+Subject: Re: [syzbot] [usb?] [input?] INFO: task hung in __input_unregister_device
+ (5)
+From: syzbot <syzbot+78e2288f58b881ed3c45@syzkaller.appspotmail.com>
+To: Henk.Vergonet@gmail.com, dmitry.torokhov@gmail.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux1394-devel@lists.sourceforge.net, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, o-takashi@sakamocchi.jp, ricardo@marliere.net, 
+	rostedt@goodmis.org, rydberg@bitmath.org, syzkaller-bugs@googlegroups.com, 
+	usbb2k-api-dev@nongnu.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 28, 2024 at 09:03:24PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Add a PCI power control driver that's capable of correctly powering up
-> devices using the power sequencing subsystem. The first users of this
-> driver are the ath11k module on QCA6390 and ath12k on WCN7850.
+syzbot has bisected this issue to:
 
-Can you add a little detail here about what benefit we will see from
-this driver?  E.g., something that doesn't work correctly now, but
-will work with this driver?
+commit 6b0b708f12d18f9cccfb1c418bea59fcbff8798c
+Author: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Date:   Wed May 1 07:32:38 2024 +0000
 
-> +static const struct of_device_id pci_pwrctl_pwrseq_of_match[] = {
-> +	{
-> +		/* ATH11K in QCA6390 package. */
-> +		.compatible = "pci17cb,1101",
-> +		.data = "wlan",
-> +	},
-> +	{
-> +		/* ATH12K in WCN7850 package. */
-> +		.compatible = "pci17cb,1107",
-> +		.data = "wlan",
-> +	},
+    firewire: core: add tracepoint event for handling bus reset
 
-IIUC, "pci17cb,1101" and "pci17cb,1107" exist partly so we can check
-that a DTS conforms to the schema, e.g., a "pci17cb,1101" node
-contains all the required regulators.  For that use, we obviously need
-a very specific "compatible" string.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14969a16980000
+start commit:   e0cce98fe279 Merge tag 'tpmdd-next-6.10-rc2' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12969a16980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=238430243a58f702
+dashboard link: https://syzkaller.appspot.com/bug?extid=78e2288f58b881ed3c45
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1318e162980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122e8eaa980000
 
-Is there any opportunity to add a more generic "compatible" string in
-addition to those so this list doesn't have to be updated for every
-PMU?  The .data here is "wlan" in both cases, and for this purpose, we
-don't care whether it's "pci17cb,1101" or "pci17cb,1107".
+Reported-by: syzbot+78e2288f58b881ed3c45@syzkaller.appspotmail.com
+Fixes: 6b0b708f12d1 ("firewire: core: add tracepoint event for handling bus reset")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
