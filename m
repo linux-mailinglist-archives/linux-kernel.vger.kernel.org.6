@@ -1,109 +1,58 @@
-Return-Path: <linux-kernel+bounces-201439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8533A8FBEA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 333F18FBEA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4D34B21E44
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:14:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A939DB22169
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E4614B96B;
-	Tue,  4 Jun 2024 22:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2221459F4;
+	Tue,  4 Jun 2024 22:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="IMrQfajn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MFeTNtxF"
-Received: from flow1-smtp.messagingengine.com (flow1-smtp.messagingengine.com [103.168.172.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jET1b6dD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5815E14D2BC;
-	Tue,  4 Jun 2024 22:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A998A2AEEC;
+	Tue,  4 Jun 2024 22:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717539222; cv=none; b=JyvPIeJgHId8IdRRshs7AxY17Gf9O98I1WmjHNwtRSB6Dg+o9nBxepOcwDHLdxVBHcMUkkE3pknRuIT0JySSOZu8D0dDutJB0bXRr1hHSoW4eZluA+cGxz1536soIovrSmzChg3aB1LhQb+h5CN1K/MryI9RsZZPdMQNkoA5FMw=
+	t=1717539252; cv=none; b=b+UjjDP7r1m+7aWOnhooL9KvfUv7kOt7/dpmQfCgDgRhKEZ3VglkSChk7iUH112zGDRnwsvqnYkIOBvIJ4/D6fJIqZQ4VDicYeRaWqv4LQTPM9rl/kHgRJKqudHR0a9EBclQKpeu6XFlFnmek3Rjqny3b3K2NsfFCo5GUCENnhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717539222; c=relaxed/simple;
-	bh=lYwlsFpXaffIux9v8UtowemAJ7x4EV5zC+20r626z6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kf52LgliuAkOFFvPdTXgKSBdsaFpEnsJCWBcCiHYqqHA5bwDRiCK5XGGqFjTMDExgrMQbaZTc751hZEi3hYvVi/1sP97zdFAbZjp9JpxLHBtVETGsiIVrr5zQ4PRdYy20BBUdp8I682mudKrYOI1HH+KjqS287kdZtZPzntHgSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=IMrQfajn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MFeTNtxF; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 33B85200178;
-	Tue,  4 Jun 2024 18:13:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 04 Jun 2024 18:13:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1717539219; x=1717546419; bh=muU5qJkRVr
-	c/WJXrwBT0sJpUEwClb+SER/+HMwaSXbE=; b=IMrQfajnu+GoDRKlk7ICyJN2RB
-	df07iUJTJhJdTdXsskFVN2YBYUA0ThPeeOJem8mlAf9L/GG0pOaXA/mfnqMtNioG
-	Qg3eRDQefaetISlfIU3LvnYBFS+0WfChDyq/P0xWTWF51tbK50H/wqxB/DhcA16S
-	ESVlf1iBwEBLJtPI18jyJFnVr5yiVI4at14G7PWsafABea8ghLtpKp3bfz8cO6/t
-	O0WKTNLW57ZU36nkLt573ORKn1AUo/KT70eGo6mN4Y2LxhgmjlaNFtA0ZP9f2HmQ
-	UxyyOOm10AqNUBs8MGdFCAnMfEjrdZfoimbLr5GfyIa537l6G6SLZuOKapuQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717539219; x=1717546419; bh=muU5qJkRVrc/WJXrwBT0sJpUEwCl
-	b+SER/+HMwaSXbE=; b=MFeTNtxFI2QMwDPKwN42XQzf9AsNmhYWklo3WTFDkq+5
-	O30Ex0pMTHobmgDJZPvk60WZp0Y9jCn6VNa9vEgyiOSzlNHUpOQDbOogCzi4Uu7Z
-	LBpp7nP4M9ACiqmwIWUnhzCxldVtsnGoId+TKQAYhl3S+zgxq+Wuss+OlxQoEyI/
-	cLsXZYNpL/7MFJ6/vrwp+JsjJrekEHgVZ7hbSAwqRFbaVkDYbUkLvGIAYafIRftJ
-	B6BtvThMJSEW4ZgPFzrmcDcEl36/UVQkZt1E0yaIPJO9pbgwusQ/npmm4pG/wEml
-	ssfZc73DIRmqIheoviOdqsABd1gYrWz1kn1tRms8og==
-X-ME-Sender: <xms:kZFfZkdczehyMxOFzsQWStdbFQ9b_QnsP8-cO963kDUl_5iQHuMzgw>
-    <xme:kZFfZmMwwotOef-QBESG11xPxv4kufSeBLHUnWfVipehkWwj2HYKMY7_aOgKjhdIs
-    NN_0UmcxggN_kWCURw>
-X-ME-Received: <xmr:kZFfZljky2XQYlmljv4plW43mwdPMdcXj1oXDsqjBpnx6m9OzEkTlSIS-h8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelhedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
-    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
-    grthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifeduleegjedutdefffetkeel
-    hfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epthihtghhohesthihtghhohdrphhiiiiirg
-X-ME-Proxy: <xmx:kZFfZp-1-pydffRIz4D7o3Ys2rwPeXZDWXsz6edwEcpxSH78j0sH6Q>
-    <xmx:kZFfZgvzw6K8AoUay1km6TqbozmkIXVzkTjfxixAkdESpiw0RZJedA>
-    <xmx:kZFfZgH61HKuJqAWVBTl4U4ScrOzd--4_lbpEocMhnidVq0jL_PTdA>
-    <xmx:kZFfZvPp1AaskAuObiWsuU2zH7F8XYzrqL_GdJ-gG1Ka5nk-u4xyHA>
-    <xmx:k5FfZhMRoPPM3AKMDF8th_eGWbzp_pkz6ZrW8V0ZEi_kEBCeYT6ZplaT>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Jun 2024 18:13:35 -0400 (EDT)
-Date: Tue, 4 Jun 2024 16:13:32 -0600
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Simon Horman <horms@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	jvoisin <julien.voisin@dustri.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
-	Thomas Graf <tgraf@suug.ch>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] mm/slab: Introduce kmem_buckets_create() and
- family
-Message-ID: <Zl+RjJDOX45DH6gR@tycho.pizza>
-References: <20240531191304.it.853-kees@kernel.org>
- <20240531191458.987345-4-kees@kernel.org>
- <20240604150228.GS491852@kernel.org>
+	s=arc-20240116; t=1717539252; c=relaxed/simple;
+	bh=bUOsEDPQnmxdM2WgVeYh3t/PFaIuahUtbiya2U26DLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dSupFwd4hyFLEeqIOqrbAMRCyIavceAPVefv0EWLy0yvWmXBfecyX8E4eBn8zie7wfjsJu6TcudGzFBlwg1Aq5NOAEVZFLG3xTKIQCI1VltpcgB1eQw+EnoVGFqKkPFgQ2ShBfnBYxUXR1XK6/eOZokJnXlel5aZmRfqbF3Sx0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jET1b6dD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 115D3C2BBFC;
+	Tue,  4 Jun 2024 22:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717539252;
+	bh=bUOsEDPQnmxdM2WgVeYh3t/PFaIuahUtbiya2U26DLQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=jET1b6dDAHPDRAqpQY6cppBUDv2yPVGBejsOgjGr6WHYEQj/e9UYDyJMGAAfBHsMb
+	 3SJ/1B8tVa5oC5tZK8B+aK8Tmpyq2Ch2DTNWcnGTGLUzS1takKXcR3FStfjP4oa/6W
+	 f7dCkXGgrsvioyefCClYwVE4WnBWtIUPqoLM0gukaRUcbJK44Ltj8AdeSgjTenXWfV
+	 LE7wYubm/eVFcndtiqhj5/QluBlOgOhRYmhGIVcXkDXeoHfePLDkxM37dZuEO7kPAy
+	 qndubwqMs/+PyTbBClIiKfN2KPBG56sSRYE2MTMcTi4/vjzMZyQ4eJgwbeJ5PbekDc
+	 igNtEsRZhYjuA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 9CAF3CE3ED6; Tue,  4 Jun 2024 15:14:11 -0700 (PDT)
+Date: Tue, 4 Jun 2024 15:14:11 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	kernel-team@meta.com, mingo@kernel.org
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com
+Subject: [PATCH memory-model 0/3] LKMM updates for v6.11
+Message-ID: <b290acd5-074f-4e17-a8bf-b444e553d986@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,55 +61,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604150228.GS491852@kernel.org>
 
-On Tue, Jun 04, 2024 at 04:02:28PM +0100, Simon Horman wrote:
-> On Fri, May 31, 2024 at 12:14:56PM -0700, Kees Cook wrote:
-> > +	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
-> > +		char *short_size, *cache_name;
-> > +		unsigned int cache_useroffset, cache_usersize;
-> > +		unsigned int size;
-> > +
-> > +		if (!kmalloc_caches[KMALLOC_NORMAL][idx])
-> > +			continue;
-> > +
-> > +		size = kmalloc_caches[KMALLOC_NORMAL][idx]->object_size;
-> > +		if (!size)
-> > +			continue;
-> > +
-> > +		short_size = strchr(kmalloc_caches[KMALLOC_NORMAL][idx]->name, '-');
-> > +		if (WARN_ON(!short_size))
-> > +			goto fail;
-> > +
-> > +		cache_name = kasprintf(GFP_KERNEL, "%s-%s", name, short_size + 1);
-> > +		if (WARN_ON(!cache_name))
-> > +			goto fail;
-> > +
-> > +		if (useroffset >= size) {
-> > +			cache_useroffset = 0;
-> > +			cache_usersize = 0;
-> > +		} else {
-> > +			cache_useroffset = useroffset;
-> > +			cache_usersize = min(size - cache_useroffset, usersize);
-> > +		}
-> > +		(*b)[idx] = kmem_cache_create_usercopy(cache_name, size,
-> > +					align, flags, cache_useroffset,
-> > +					cache_usersize, ctor);
-> > +		kfree(cache_name);
-> > +		if (WARN_ON(!(*b)[idx]))
-> > +			goto fail;
-> > +	}
-> > +
-> > +	return b;
-> > +
-> > +fail:
-> > +	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
-> > +		if ((*b)[idx])
-> > +			kmem_cache_destroy((*b)[idx]);
-> 
-> nit: I don't think it is necessary to guard this with a check for NULL.
+Hello!
 
-Isn't it? What if a kasprintf() fails halfway through the loop?
+This series adds a few atomic operations and some documentation:
 
-Tycho
+1.	tools/memory-model: Add atomic_and()/or()/xor() and add_negative,
+	courtesy of Puranjay Mohan.
+
+2.	tools/memory-model: Add atomic_andnot() with its variants,
+	courtesy of Puranjay Mohan.
+
+3.	tools/memory-model: Add KCSAN LF mentorship session citation.
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ b/tools/memory-model/Documentation/access-marking.txt |   10 ++++++--
+ b/tools/memory-model/linux-kernel.def                 |   21 ++++++++++++++++++
+ tools/memory-model/linux-kernel.def                   |    6 +++++
+ 3 files changed, 34 insertions(+), 3 deletions(-)
 
