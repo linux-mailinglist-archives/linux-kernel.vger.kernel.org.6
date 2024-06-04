@@ -1,73 +1,68 @@
-Return-Path: <linux-kernel+bounces-201273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F068FBC58
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:12:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CE68FBC65
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D3E284957
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:12:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD171C24FB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E833A14AD38;
-	Tue,  4 Jun 2024 19:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0526214036F;
+	Tue,  4 Jun 2024 19:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g4dyiM5h"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XRYRl1tQ"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A59314A629
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB4413E05B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717528357; cv=none; b=CJ6JkxIDLsv6WcH22YMRR5i1knxP8KyeqqWfx7g0U5aWRXblwoJ8KIsT3bpePMZDG6MAwTUK0jpEGj8LFxuV6WtY+6KfBwmC3mnpwCEgujghm9ffjabdu8xCEko9nVtkZ0JY2ME5dF2/B46TT1BgjZmdjp+olSIZq5rezgvF75Y=
+	t=1717528671; cv=none; b=BdhgPokQ8TBijxI86AF4Y+jCg0dOSHwhdKB1bK5n8w70TNYVXMSRTsUPQ4VDnzp0pvoJg1jhBvdFgo2qehsLv0xIbOpPDenzhEn3pT7Sj2JVa7lmqVEq+Z/iWLjQ05iWb34EGz76TSHitCAAldihYhnrHIZEjtDlC+FP8a6Cxnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717528357; c=relaxed/simple;
-	bh=uth3pBz50kuBxtutu24UCRZ5v8bN+byDA5nfgsuMcls=;
+	s=arc-20240116; t=1717528671; c=relaxed/simple;
+	bh=KRAztcWiZ8YpnDUFZntL/bepzxhmQz1if9fPwSufqBk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hh/JPsatiVsqB/MBa4DchCCL9qI1Nfy2edCBxLfb+PQL/LIxiH+Og58NALUIUDD7yQog7VXD5noX2b9IDJvpx9W+OeEWatmYOizn3EEEg/FYZkSuSTjWWR7/rZUCZh68pa9CmqwowV+/XohJajlN1jcsDSFvhKTpZnbKRmFKkaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g4dyiM5h; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DIpk3jRNpFdid58ZOeWexYwMoUALCO2h2dO4SitkQuY=; b=g4dyiM5h7sbERLaUgik2FP6h+d
-	evFYtJlV6rkhnawHiNZsnrBdo8E6zDkDc1gTQ4JQN/FAIWonQ1Ltj9xq7JErbe8TtJxM7WTUGIadw
-	+NzbYBHbZsatv4f+4fQPkjDVcCtUEB8WUtDzXFbo/+4IThMWBnJHp81Dv3dvfydlAg4+kjz2Txpe1
-	3XyI5c7yju3x7O0CGFaY/dAaFe43MUVVg4sqv5bjqh6auSksml61+jRTwkAc64V6jdaUnyvizThNN
-	rFHYYM49Ks4tlq/DR2O4iuloPEMLRZbCb52uHVe90UB2LXbYt/aESqSt3PBzxNIYZEf8UekPYI1nz
-	zwG4VOSA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sEZa1-0000000F2sH-1ggI;
-	Tue, 04 Jun 2024 19:12:21 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C0B9230068B; Tue,  4 Jun 2024 21:12:20 +0200 (CEST)
-Date: Tue, 4 Jun 2024 21:12:20 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Luis Machado <luis.machado@arm.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
-	wuyun.abel@bytedance.com, tglx@linutronix.de, efault@gmx.de,
-	nd <nd@arm.com>, John Stultz <jstultz@google.com>,
-	Hongyan.Xia2@arm.com
-Subject: Re: [RFC][PATCH 08/10] sched/fair: Implement delayed dequeue
-Message-ID: <20240604191220.GP40213@noisy.programming.kicks-ass.net>
-References: <1461277e-af68-41e7-947c-9178b55810b1@arm.com>
- <20240425104220.GE21980@noisy.programming.kicks-ass.net>
- <20240425114949.GH12673@noisy.programming.kicks-ass.net>
- <20240426093241.GI12673@noisy.programming.kicks-ass.net>
- <c6152855-ef92-4c24-a3f5-64d4256b6789@arm.com>
- <2fba04b0-e55e-41f4-8b7a-723734fe1ad2@arm.com>
- <20240529225036.GN40213@noisy.programming.kicks-ass.net>
- <7eac0774-0f9d-487c-97b6-ab0e85f0ae3a@arm.com>
- <20240604101107.GO26599@noisy.programming.kicks-ass.net>
- <24e09046-74ee-4ebb-ac1a-bdc84568e825@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lKAQuPLHUjIqXlL9zHbRhbS4/UOXGF/wbynm97lI5lj6ePWrs4TOO7+jnKftx/KG+Cuug0pThL7t4WX+9ltu0XQHl+U4XDvb8hCm+riWCZhQiWjjg0GZLD2FQLq5lIvdaCCo8OLVyox+ivOkopL28e3Wc0jVkxnjcPoEVvaVIU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XRYRl1tQ; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: broonie@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717528667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nZG8z3Pz30/HG+CdbBQquLuRRuC2lKE2oX6hSJa2byY=;
+	b=XRYRl1tQjiEWpAEy4yfhRu68yQvlO6M4RRLsRJNr0eOvOvyihYYGmh2i7UG2GjGxHwAN+Q
+	Be/6+g3n+rSrRAXBPqIOsAgjN20rCOs7SIuzVAMj2u27mVUvtinb4WCQslkAZ62lPcKNM6
+	W9zJZyqEFvL6zzB1ctSqXV5udBm+CCk=
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: tabba@google.com
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Tue, 4 Jun 2024 12:17:41 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Fix confusion in documentation for pKVM SME
+ assert
+Message-ID: <Zl9oVUriFDYbLFW8@linux.dev>
+References: <20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,51 +71,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <24e09046-74ee-4ebb-ac1a-bdc84568e825@arm.com>
+In-Reply-To: <20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jun 04, 2024 at 03:23:41PM +0100, Luis Machado wrote:
-> On 6/4/24 11:11, Peter Zijlstra wrote:
+Hi,
 
-> > Note how dequeue_task() does uclamp_rq_dec() unconditionally, which is
-> > then not balanced in the case below.
-> > 
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -3664,6 +3664,7 @@ static int ttwu_runnable(struct task_str
-> >  			/* mustn't run a delayed task */
-> >  			SCHED_WARN_ON(task_on_cpu(rq, p));
-> >  			enqueue_task(rq, p, ENQUEUE_DELAYED);
-> > +			uclamp_rq_inc(rq, p);
-> >  		}
-> >  		if (!task_on_cpu(rq, p)) {
-> >  			/*
+On Tue, Jun 04, 2024 at 07:47:01PM +0100, Mark Brown wrote:
+> As raised in the review comments for the original patch the assert and
+> comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+> disabled in protected mode") are bogus. The comments says that we check
+> that we do not have SME enabled for a pKVM guest but the assert actually
+> checks to see if the host has anything set in SVCR which is unrelated to
+> the guest features or state, regardless of if those guests are protected
+> or not.
 > 
-> As Hongyan pointed out in a separate message, the above makes things
-> worse, as we end up with even more leftover tasks in the uclamp
-> buckets.
-> 
-> I'm trying a fix in kernel/sched/core.c:enqueue_task that only
-> calls uclamp_rq_inc if the task is not sched_delayed, so:
-> 
-> -       uclamp_rq_inc(rq, p);
-> +       if (!p->se.sched_delayed)
-> +         uclamp_rq_inc(rq, p);
-> 
-> I'm not entirely sure it is correct, but it seems to fix things,
-> but I'm still running some tests.
-> 
-> With the current code, given uclamp_rq_inc and uclamp_rq_dec get
-> called in enqueue_task and dequeue_task, the additional enqueue_task
-> call from ttwu_runnable for a delayed_dequeue task may do an additional
-> unconditional call to uclamp_rq_inc, no?
+> What I believe the check is actually intended to validate is that we do
+> not enter the pKVM hypervisor with SME enabled since the pKVM hypervisor
+> does not yet understand SME and is therefore unable to save or restore
+> host state with SME enabled, indeed attempting to save SVE state would
+> fault if streaming mode is enabled on a system without FA64 due to FFR.
+> Update the comment to reflect this.
 
-Yes, I got enqueue_task() and class->enqueue_task() confused this
-morning.
+The added context likely isn't necessary in what winds up getting
+applied. Can this just directly state the WARN_ON() exists b/c the
+protected mode hypervisor doesn't know how to manage SME state?
 
-But with the above, you skip inc for sched_delayed, but dequeue_task()
-will have done the dec, so isn't it then still unbalanced?
+> Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/kvm/fpsimd.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+> index 521b32868d0d..f720ba47b85c 100644
+> --- a/arch/arm64/kvm/fpsimd.c
+> +++ b/arch/arm64/kvm/fpsimd.c
+> @@ -92,8 +92,9 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+>  	}
+>  
+>  	/*
+> -	 * If normal guests gain SME support, maintain this behavior for pKVM
+> -	 * guests, which don't support SME.
+> +	 * The pKVM hypervisor does not yet understand how to save or
+> +	 * restore SME state for the host so double check that if we
+> +	 * are running with pKVM we have disabled SME.
+>  	 */
+>  	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+>  		read_sysreg_s(SYS_SVCR));
 
-Oh well, I'll go stare at this in tomorrow.
+While we're here, this should be WARN_ON_ONCE() or WARN_RATELIMIT() if
+we _really_ want some spam. But a single WARN ought to be enough.
 
-In any case, is there a uclamp self-test somewhere?
+It'd be a good idea to also document why we're testing for SME state
+twice on the KVM_RUN path, as any WARN() in the hyp code is currently
+fatal. I'm guessing Fuad meant to have a non-fatal way of getting some
+debug information out.
+
+-- 
+Thanks,
+Oliver
 
