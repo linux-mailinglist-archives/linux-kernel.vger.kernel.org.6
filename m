@@ -1,163 +1,122 @@
-Return-Path: <linux-kernel+bounces-201038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5632C8FB8C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:24:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2DA8FB881
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A3FB32DB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E071C219AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2275149C44;
-	Tue,  4 Jun 2024 16:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E079614884B;
+	Tue,  4 Jun 2024 16:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RcIK3ePu"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hFtnqX57"
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBCC148305
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2B51487DF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717517124; cv=none; b=UaaI0BapAt/T0pGrtGqQMobZyhn89gZQoyjN7QtG4Y+8p2IjrxPEnzDNovAn9cobbFcA+UCEEUUtbiRgBIVSqRXcyczVHkP/+p0waGDigUQ6J8RUBovJgvwXgGNVNTyzSPn37MCU/dZ1T8n+h9qClnBe8P0rXObXaQ+P2RoCrYA=
+	t=1717517226; cv=none; b=dnRYgcB9V559cSxtq5yPI3P+Sg3uBt1JeeMDzLAplEu3a+XvQWoX5VY5CDfmo4Dfjjtdt5hJC21mkYmUiROryqQxY3FAVtAIxivwvORLgXmluALO2U8GbBMkAeYHD8IgTNclc6A/1h+rLmxN9Nm3+WuN7Ocy3QW2zNJO5xmK0cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717517124; c=relaxed/simple;
-	bh=lK7XgRDgm6NLV9YDi+57KADrhvh+ft7/KXPT0pDDjfQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A/95LJ4RrOUzlU/vy0o7n3qN/NaJ/JZ9JJ6Y94ODhKdhBuBMJnbW5TSOuXOfTmkL8oI5kjZ1mU4Gwn2IJieB097nRyGWOYiTy3EfvpthTa2gn6+epGlWGWfX3vgddrJU7aEo2fdIPFB70pkJ+krAjeNCg9EO+P1Epv+pzl6/Ur8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RcIK3ePu; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a32b0211aso1511123a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717517120; x=1718121920; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6I7pG6ei8jb1MvrUAVB+vxp5YXuMn0OESUr7tOflIE=;
-        b=RcIK3ePuC7acSR9Fg5mys5wB3ZWfQkloziasgCGx5i8HumOfkLsQtIVxL4ANs31hyj
-         2dXTL6xQ0usJgh7Z9y9FisE3hJnZJxW0Ac5RUyfblNXHmvf7jZyZ7kfVogSeq1yFe+iA
-         zEWNLR1BbNJLmpAZu3v12dtGVUo1q5ICV25oOD3XMD2AZ+zQEvwMA+95csoSS+/kIlm0
-         rDjQd7QTrzd+YRRYEbEEXWYE0w1lJqpvYBEoxD5NW2uWonkZtfY8fGytGaKovXxxpw9E
-         JbEGV+RbI9Myax3uFYP164Xq6GO1VkvZp4RFCWx7jRF7mdL1oZS8Qk5Xzw0bbfExq28G
-         o4Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717517120; x=1718121920;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h6I7pG6ei8jb1MvrUAVB+vxp5YXuMn0OESUr7tOflIE=;
-        b=rJyKaGu7AOXzgI5WNHDz1+CAfJgIwfoqU6cA0VG4YeYWDqHHsxpT/IidwkQNyEopr/
-         1UFzqMrUnb8HOSieknhMg5pJiU0HK/BLHWAqMhtoWoMf2+yhe5CxfgX590HKNI1JrmgL
-         0hVEiSvYbey26gMtbAW3oXMghGsfU+11c5C7fMECqnVoAYyTWlF+dCDk4r7+q0IsFPix
-         ePlCBOu62fluHmuEP6JSr6RM1Zu9AhIsdoRqj6vkSjAAisJQIfx77cnqzhPTDajZ4gSo
-         9jYTXzKrU4M5jO6zBkrPlc73MlFJ8G+05bF3xT1OHVeFKIy5pffvQJiaJBHVysiU9U30
-         yDtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxLRdd74JTDdGm2uBNB8s6sgNu3sax5L5KQEmw4HXaInKs3NNf02I1b1Q9+8PSXKAzXfktsJu6H7BZ4Bvbrpl+voUGHfU/8wHEUy15
-X-Gm-Message-State: AOJu0Yz7N6rX4YGeynAnGDufBImQejMazlRaOmpZqgMVW5QI6UXiSOE+
-	zIQq5GVYAqYMPTvcvt0fYTTxJ3EsyiBaBJb2atKqiAK2hPP2Py4P13C1W2phevM=
-X-Google-Smtp-Source: AGHT+IGyFpwLh8EYFqnnvBFP2+xBQeKzRmSmqbTGHmWaAzgXn4hhyh1OwJsjh8oQyEmDxBv146JrxQ==
-X-Received: by 2002:a50:c303:0:b0:57a:2de8:c47d with SMTP id 4fb4d7f45d1cf-57a8b6b88b6mr52931a12.21.1717517119629;
-        Tue, 04 Jun 2024 09:05:19 -0700 (PDT)
-Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a4f172062sm5872471a12.90.2024.06.04.09.05.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:05:19 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Tue, 04 Jun 2024 19:05:12 +0300
-Subject: [PATCH] dt-bindings: PCI: qcom: Fix register maps items and add
- 3.3V supply
+	s=arc-20240116; t=1717517226; c=relaxed/simple;
+	bh=LiSw4cTkRlKkl50Td/1EOWuYousa7uj5W+u2v+62BuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=scU4YaDR0zRJepYovtYNzbBiNAeeKBy22UojSO4gqlb0LqZJvtTamg+Hd1O6WAMmA6zNuj3Rj95VIVim2m+7Zi2Y8hNBYZ9J+jnVttWBy1lGalyHwdQ/DQlEvaECdw1gHYWNdAMBVinBL01WY3ayujUwPq/khFmC5IAK/THFrKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=hFtnqX57; arc=none smtp.client-ip=45.157.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VtwTB71FQzR2Y;
+	Tue,  4 Jun 2024 18:06:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1717517214;
+	bh=aNLMmrtRqyR3S0obQrH4DObn3P8MphMPMTJP3cciKvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hFtnqX57SJl/4Fh9aQvCi1KoonGg5N4DjhRPZByVGizbDmtLtvsZMh03LYRvUKPzh
+	 oluqoBSNi6W59lxCYFr6Va/1Ifx551otm6KY9D1p5DEAHJdc3nW+DCr57SHC9r3grY
+	 pCgBICWchLUQPM8ecx8uhp9WxlYZ68yjuYOOyKQc=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VtwT80YykzC0N;
+	Tue,  4 Jun 2024 18:06:51 +0200 (CEST)
+Date: Tue, 4 Jun 2024 18:06:48 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jakub Kicinski <kuba@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Sasha Levin <sashal@kernel.org>, Sean Christopherson <seanjc@google.com>, 
+	Shengyu Li <shengyu.li.evgeny@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+	Brendan Higgins <brendanhiggins@google.com>, David Gow <davidgow@google.com>, 
+	"David S . Miller" <davem@davemloft.net>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>, 
+	Ronald Warsow <rwarsow@gmx.de>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Will Drewry <wad@chromium.org>, kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v7 04/10] selftests/harness: Fix interleaved scheduling
+ leading to race conditions
+Message-ID: <20240604.KaT6shae5eip@digikod.net>
+References: <20240511171445.904356-1-mic@digikod.net>
+ <20240511171445.904356-5-mic@digikod.net>
+ <9341d4db-5e21-418c-bf9e-9ae2da7877e1@sirena.org.uk>
+ <187423fb-ec78-4318-9da0-5b27df62b71f@sirena.org.uk>
+ <9eb1e48e-b273-475a-9740-52deedf11ee2@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
-X-B4-Tracking: v=1; b=H4sIADc7X2YC/x2MQQqAMAzAviI9W2iHDvUr4kFdnb1M2UCEsb87P
- CaQZEgSVRJMTYYojya9QgVuG9jPNXhBdZXBkOnIUocvy0BMhPeuuGlwGnzCQ1/k0Y6md9wbS1D
- 7O0rV/3teSvkA3d08gGsAAAA=
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1740; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=lK7XgRDgm6NLV9YDi+57KADrhvh+ft7/KXPT0pDDjfQ=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmXzs9IM2pMk4U72XrkJ7mmaIAX9bV3TjQqNqEv
- KiYUrDwv/2JAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZl87PQAKCRAbX0TJAJUV
- VtpeEACCJhIqJeqoq2V2hr8/xu6fMUfQl04+UrveMvK32zf8IaySoCABSQ17NKCBygP7j4M19+5
- zJgdf5QP178RvQ5cZ8KWLSSxFFUSKUbq96DP/rJ86xpARajp7O1OH2hW+Kjk545QXZVz3Aiof05
- r4hyMCjNUmHuKODFTrtua0BR2TcQGak6LabwaQ8LVCOTP4rRr/OYdNeKq0AVPHxarZ3Qdo0mAmi
- ZRhbHhCzc6Th+uBaJeFGzvArY2ZRWQLkadiuCux16f5MXNYBpamAGyFpeeI1PJcmZIC2ODg7Yxi
- 7J0JW0SIPdJ9DW5fiLbdvFe5GNb0AjoLuJnZ7QnfCkc8x+BHmL6lI3BdAVmMVxc5G2w7DFrkuKn
- /yhhlptuBtnLHAafCfEX3pTbDETOAoSEENng4qbTOBZki/i2gomuSM7UNlw79cXwuUuMIUEVcDs
- 0ChnaOCfQHIUrEgreRao8tI9nHdhI6e7zTi24pqfSgy2oq4ACmTisUx2ow9WRx21rT/O9Vr8NBF
- 43+ZjdrFrIl35cnB5pT1JkzQPuaqgpcXqFSAX3JwjL6WobjhpjyuaK0qJwow3YkGFbGnz2/1mrG
- c0Q4Gs2TaOsMRKRFofZ2PS8aN7pevaO99VawgmFGLdx2TX3raE6xYqlOM0UfEqOS7SpQty7axjV
- 5AAl6YeGHFetKnQ==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9eb1e48e-b273-475a-9740-52deedf11ee2@sirena.org.uk>
+X-Infomaniak-Routing: alpha
 
-All PCIe controllers found on X1E80100 have MHI register region and
-VDDPE supplies. Add them to the schema as well.
+On Mon, Jun 03, 2024 at 06:22:32PM +0100, Mark Brown wrote:
+> On Mon, Jun 03, 2024 at 05:27:52PM +0100, Mark Brown wrote:
+> > On Mon, May 27, 2024 at 08:07:40PM +0100, Mark Brown wrote:
+> 
+> > > This is now in mainline and appears to be causing several tests (at
+> > > least the ptrace vmaccess global_attach test on arm64, possibly also
+> > > some of the epoll tests) that previously were timed out by the harness
+> > > to to hang instead.  A bisect seems to point at this patch in
+> > > particular, there was a bunch of discussion of the fallout of these
+> > > patches but I'm afraid I lost track of it, is there something in flight
+> > > for this?  -next is affected as well from the looks of it.
 
-Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-This patchset fixes the following warning:
-https://lore.kernel.org/all/171751454535.785265.18156799252281879515.robh@kernel.org/
+Thanks for the heads up.  I warned about not being able to test
+everything when fixing kselftest last time, but nobody show up.  Is
+there an easy way to run most kselftests?  We really need a (more
+accessible) CI...
 
-Also fixes a MHI reg region warning that will be triggered by the following patch:
-https://lore.kernel.org/all/20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org/
----
- Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> > FWIW I'm still seeing this on -rc2...
+> 
+> AFAICT this is due to the switch to using clone3() with CLONE_VFORK
 
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-index 1074310a8e7a..7ceba32c4cf9 100644
---- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-@@ -19,11 +19,10 @@ properties:
-     const: qcom,pcie-x1e80100
- 
-   reg:
--    minItems: 5
-+    minItems: 6
-     maxItems: 6
- 
-   reg-names:
--    minItems: 5
-     items:
-       - const: parf # Qualcomm specific registers
-       - const: dbi # DesignWare PCIe registers
-@@ -71,6 +70,9 @@ properties:
-       - const: pci # PCIe core reset
-       - const: link_down # PCIe link down reset
- 
-+  vddpe-3v3-supply:
-+    description: A phandle to the PCIe endpoint power supply
-+
- allOf:
-   - $ref: qcom,pcie-common.yaml#
- 
+I guess it started with the previous vfork() that was later replaced
+with CLONE_VFORK.
 
----
-base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
-change-id: 20240604-x1e80100-pci-bindings-fix-196925d15260
+> to start the test which means we never even call alarm() to set up the
+> timeout for the test, let alone have the signal for it delivered.  I'm a
+> confused about how this could ever work, with clone_vfork() the parent
+> shouldn't run until the child execs (which won't happen here) or exits.
+> Since we don't call alarm() until after we started the child we never
+> actually get that far, but even if we reorder things we'll not get the
+> signal for the alarm if the child messes up since the parent is
+> suspended.
+> 
+> I'm not clear what the original race being fixed here was but it seems
+> like we should revert this since the timeout functionality is pretty
+> important?
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+It took me a while to fix all the previous issues and it would be much
+easier to just fix this issue too.
 
+I'm working on it.
 
