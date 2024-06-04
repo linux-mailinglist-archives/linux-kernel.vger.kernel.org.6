@@ -1,103 +1,194 @@
-Return-Path: <linux-kernel+bounces-200549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C0E8FB18B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 408918FB169
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988722843B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:56:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36772818F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AFA145A06;
-	Tue,  4 Jun 2024 11:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PjeqMhKn"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A86145A1F;
+	Tue,  4 Jun 2024 11:51:06 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D68145A1D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E76F145A06;
+	Tue,  4 Jun 2024 11:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717502194; cv=none; b=LMM42xRWltDsYzV/tgqDw/E3FmIqFct4vlzWt5+LI2D4K4LOxjg1eF24yl6NtmXTSdByyHQoU8byJunNly2sT2HCOOTyNcqb4O+ZfDI3I4QhYJczU6P7bzyMiV5mZxNV4fuFiajOHxMK2rkahcjRnrLFtt0dG7CYxLJXnS0Gf/I=
+	t=1717501865; cv=none; b=md2vFZbu+1NZouqw5OYqqwGGsywtClyAPInnpxlUVkS3EgTGVwyWW0R6pDpazqS31/7xUYO4Iqm/lZHVepvGApG5PubS5thIxVzY9n7MOK9BRNxSX3jfe3CyBFakTpzfhmCpDjKB8qnpSP0IbLPObA45HOWWhrcXYQprceHidPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717502194; c=relaxed/simple;
-	bh=WSiabmZiPb5SL1hbkSXdP1+e7Ad1uHfhxRB4tWveGA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uFYk3TCyaYPa9LJMCErSYDeK90h6wzZEjYdmjc902jpb/rXUmWIBfU+5ME/LzHT+ZH4/KF3HvLhZ9y3SBXKnZwG4o/sjTbAxU4C/8Et71jNZqgQDGwWk3l38lkcgELX8G5Ly9PNFhVAYMthgNrBKnNMt748zzSLJstyu0XN4a80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PjeqMhKn; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6265d48ec3so573591466b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:56:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717502191; x=1718106991; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IlxQpEl9GwYRWbsz3F/VhoHqrB46zrMMPBzYj2DcSkU=;
-        b=PjeqMhKnRIXgCPHFOwqMElhSCRZcvzZ9BJ/igAjFMCqo2YkzoMj5OQ561O8a7LThLW
-         qMpTj8XKYuLCdSeoSRGUEEt56pcmGXpCysUMKOyL4Z4IhkznipxPmJ7py/jLa3g4MmXZ
-         dkZDMvjU7ZVj0ElqOF1t9vvJ4MfSo78r8c0YQflYA+kIVSeiIsWlA+Lr1LFzjNU+8o/R
-         CzESSz7CAofae33gCT7dZ2YDQXtSzpl9DlzIh5R64xvLj69jLjOFuI+XGhmr0Q2kqeVM
-         UOAqnVjTwwMA3YVxhNYCyKH9pCoPRUMJNgjGEGCK+Tzf3B0vxZVL0en9LAseN9y5YxN3
-         oONA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717502191; x=1718106991;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IlxQpEl9GwYRWbsz3F/VhoHqrB46zrMMPBzYj2DcSkU=;
-        b=sA/0okk8oOTJrhbA9BCIRMS5487ZFSDBq6B64UbAIbKHpgTEGdktU8wxv+7emSmP8u
-         kJhfJ8xvtPci8r0II1GYkEdb5k7Wex0ik4u93zwC3a4dCOf35oW4JAKeaTuPDIKu1hII
-         +dI/xUpp9S0PJaITB6fBAyQvrwgcMAufrFS6C/iAjC5WhzwKqMnylkpk40KKsZn7B4PF
-         QWRgQM0zQib1Jp22yQp23LoKiEwVYJRmzFSmYaMYPrS2mUy9qOnqemTiYfIbL/N/80Av
-         afLQxQ5FZFuj7ZtB4WoFIeSvycjgzSlaWlMVBv/ZJH/8WPbqTVaPPYtW22li0bCU1jyl
-         mKeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUYMX5DbJeJOpv1lOLDYtI8Zsr3qTXTn5mke8Yjrf4ar70PGLO+9kBvs2W/oXRzSw/j1aiRruLt1b5WBmm/xX7U01xq4HJxzroVI/l
-X-Gm-Message-State: AOJu0YwD9l4qHoHlm2wsIrKdpUyF6A+OZfN28l+QwGIpu9dXqqsmslzq
-	w9DzNIZ6yyM6q1GesxMCPJpSzwhDRRqlyDfdUJAe+1IjPiQsdMknttud2P8GZR4=
-X-Google-Smtp-Source: AGHT+IFC4ZEOeRR+G/N2/nkWfd500F8oJTkhhtC2Oqw82+b4cCdnJ7sQhzorOM1l4IvQwgpYEEg7rQ==
-X-Received: by 2002:a17:906:cd10:b0:a59:a356:3f6d with SMTP id a640c23a62f3a-a6822049b1dmr694154166b.54.1717502191240;
-        Tue, 04 Jun 2024 04:56:31 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:909a:a11e:a035:2af2:8d85:1f72? ([2a00:f41:909a:a11e:a035:2af2:8d85:1f72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a69043af942sm310073666b.72.2024.06.04.04.56.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 04:56:30 -0700 (PDT)
-Message-ID: <c3a922e4-0b34-4b53-bdbd-a62817a68db2@linaro.org>
-Date: Tue, 4 Jun 2024 13:56:21 +0200
+	s=arc-20240116; t=1717501865; c=relaxed/simple;
+	bh=JT1cwdj7kPcar/9vB3M3rkQGDKpmZj4FtWdTQaiaBf8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Czv/vjw0lPXbq+Mkl0glbT0Q046hT0SdLSriMYOV+YVTFbcaZ0fdDD3eKrnb3zYWEnxqhOz5oLtKqgu4TRtHSgDYpAq5KkyvA8bHdTEIsSh7e3u9X0h3ERs/l5/riyQ4yfKEJEJE17bsKdhG7WsuetBRo6RgouEEmQJM87gdO8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vtpng2VG5z4f3nV1;
+	Tue,  4 Jun 2024 19:50:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 6D5801A01D2;
+	Tue,  4 Jun 2024 19:50:58 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.193])
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBGd_15metYuOg--.43086S4;
+	Tue, 04 Jun 2024 19:50:55 +0800 (CST)
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+To: linux-kernel@vger.kernel.org
+Cc: mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	naveen.n.rao@linux.ibm.com,
+	akpm@linux-foundation.org,
+	trix@redhat.com,
+	dianders@chromium.org,
+	luogengkun@huaweicloud.com,
+	mhocko@suse.com,
+	pmladek@suse.com,
+	kernelfans@gmail.com,
+	lecopzer.chen@mediatek.com,
+	song@kernel.org,
+	yaoma@linux.alibaba.com,
+	tglx@linutronix.de,
+	linuxppc-dev@lists.ozlabs.org,
+	bpf@vger.kernel.org
+Subject: [PATCH] watchdog/core: Fix AA deadlock causeb by watchdog
+Date: Tue,  4 Jun 2024 11:57:36 +0000
+Message-Id: <20240604115736.1013341-1-luogengkun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-crd: add USB DisplayPort audio
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240604094947.98191-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240604094947.98191-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnOBGd_15metYuOg--.43086S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxArW5tFykAF47Aw4UAFWDJwb_yoW5AF47pr
+	9FvFy7tw4UCr4kZayfJ3sxGry8Ca4vgr43GF4DG3yFkF1YkFn8Xrna9FnxXrZ0vrZxZF4j
+	vwn0qrWfta4UtaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	fUOmhFUUUUU
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
+We found an AA deadlock problem as shown belowed:
 
+TaskA				TaskB				WatchDog			system_wq
 
-On 6/4/24 11:49, Krzysztof Kozlowski wrote:
-> Add support for playing audio over USB DisplayPort (the two left USB-C
-> ports on the CRD device).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+...
+css_killed_work_fn:
+P(cgroup_mutex)
+...
+								...
+								__lockup_detector_reconfigure:
+								P(cpu_hotplug_lock.read)
+								...
+				...
+				percpu_down_write:
+				P(cpu_hotplug_lock.write)
+												...
+												cgroup_bpf_release:
+												P(cgroup_mutex)
+								smp_call_on_cpu:
+								Wait system_wq
 
-Looks sane. Are any UCM changes necessary?
+cpuset_css_offline:
+P(cpu_hotplug_lock.read)
 
-Konrad
+WatchDog is waitting for system_wq, who is waitting for cgroup_mutex, to finish
+the jobs, but the owner of the cgroup_mutex is waitting for cpu_hotplug_lock.
+The key point is the cpu_hotplug_lock, cause the system_wq may be waitting other
+lock. What's more, it seems that smp_call_on_cpu doesn't need protection from
+cpu_hotplug_lock. I try to revert the old patch to fix this problem, but I
+encountered some conflicts. Or I should just release and acquire cpu_hotplug_lock
+during between smp_call_on_cpu? I'm looking forward any suggestion :).
+
+Fixes: e31d6883f21c ("watchdog/core, powerpc: Lock cpus across reconfiguration")
+
+Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+---
+ arch/powerpc/kernel/watchdog.c | 4 ++++
+ kernel/watchdog.c              | 9 ---------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/arch/powerpc/kernel/watchdog.c b/arch/powerpc/kernel/watchdog.c
+index 8c464a5d8246..f33f532ea7fa 100644
+--- a/arch/powerpc/kernel/watchdog.c
++++ b/arch/powerpc/kernel/watchdog.c
+@@ -550,17 +550,21 @@ void watchdog_hardlockup_stop(void)
+ {
+ 	int cpu;
+ 
++	cpus_read_lock();
+ 	for_each_cpu(cpu, &wd_cpus_enabled)
+ 		stop_watchdog_on_cpu(cpu);
++	cpus_read_unlock();
+ }
+ 
+ void watchdog_hardlockup_start(void)
+ {
+ 	int cpu;
+ 
++	cpus_read_lock();
+ 	watchdog_calc_timeouts();
+ 	for_each_cpu_and(cpu, cpu_online_mask, &watchdog_cpumask)
+ 		start_watchdog_on_cpu(cpu);
++	cpus_read_unlock();
+ }
+ 
+ /*
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 51915b44ac73..13303a932cde 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -867,7 +867,6 @@ int lockup_detector_offline_cpu(unsigned int cpu)
+ 
+ static void __lockup_detector_reconfigure(void)
+ {
+-	cpus_read_lock();
+ 	watchdog_hardlockup_stop();
+ 
+ 	softlockup_stop_all();
+@@ -877,12 +876,6 @@ static void __lockup_detector_reconfigure(void)
+ 		softlockup_start_all();
+ 
+ 	watchdog_hardlockup_start();
+-	cpus_read_unlock();
+-	/*
+-	 * Must be called outside the cpus locked section to prevent
+-	 * recursive locking in the perf code.
+-	 */
+-	__lockup_detector_cleanup();
+ }
+ 
+ void lockup_detector_reconfigure(void)
+@@ -916,11 +909,9 @@ static __init void lockup_detector_setup(void)
+ #else /* CONFIG_SOFTLOCKUP_DETECTOR */
+ static void __lockup_detector_reconfigure(void)
+ {
+-	cpus_read_lock();
+ 	watchdog_hardlockup_stop();
+ 	lockup_detector_update_enable();
+ 	watchdog_hardlockup_start();
+-	cpus_read_unlock();
+ }
+ void lockup_detector_reconfigure(void)
+ {
+-- 
+2.34.1
+
 
