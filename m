@@ -1,46 +1,73 @@
-Return-Path: <linux-kernel+bounces-200616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AB98FB26F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:40:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3A48FB270
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7BA91C23A3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:40:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D618B26164
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1CE146D53;
-	Tue,  4 Jun 2024 12:39:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915D4145B08
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C64E146D65;
+	Tue,  4 Jun 2024 12:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="n6zvlhQJ"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E63146598;
+	Tue,  4 Jun 2024 12:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717504769; cv=none; b=KbOaezEM9heCcvRRQ4dNVNelLlgNYVBczzoq8E9Kyh6BNT8ff/scgzS22R4Qz7dG8t3FTAdtIeypwESxEStKlB9My4SXEBGz6SN0FIKmexdlcBjA50g5D/xSqEBr/Za2u2GSRPN95sbar8QXxeiUX/Ug9PMInzDP++IKNdDOJT0=
+	t=1717504769; cv=none; b=GXhxjQUJQN4HXK37QCGb1Wr3e/eItmeLoWHyqvGij8CUZwlEmoMF5MywrqJKgn7wjq6A7dLpRPtQ6wxX4C9NEvydkYxxi7ZPHop8QaqLdxsMPWDPa1MKNjigP5nI3j5IZ8EGqILw00r580f4SEf/eZ0tTdMvPjjZbraPRgFcDq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717504769; c=relaxed/simple;
-	bh=CJQznAmjsNRBqVvAYQkJGFd2j6BoG6NkYtH9+N8AqEA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UmLFuPMXO+hXb3wcX4SKQ7SqT6i3TXNeaDyVp1c173CWYixf5mYDcnS6AHtGygqo2sJmpcexPOupOLJXYNQheDgOygdoNDmVQ6IYMEroUWq5JE2PkmMR84/TIkZnckCpK2ANfk1boCZi5Vbb/MhfnQRqLelCct4PZq/dmhg4q9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 683761042;
-	Tue,  4 Jun 2024 05:39:51 -0700 (PDT)
-Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 508A33F64C;
-	Tue,  4 Jun 2024 05:39:26 -0700 (PDT)
-From: Robin Murphy <robin.murphy@arm.com>
-To: joro@8bytes.org
-Cc: will@kernel.org,
-	hch@infradead.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iommu/dma: Prune redundant pgprot arguments
-Date: Tue,  4 Jun 2024 13:39:09 +0100
-Message-Id: <c2a81b72df59a71a13f8bad94f834e627c4c93dd.1717504749.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
+	bh=neyavww+fmoXtsq8dOJETlMstKR82zPDydDGrfHscoE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QLKhyxDF07MsFHjLUrNYzfRIKHb4lgz2C9/w6Pk9vPiorbf/d7DhmNA1NiIVGFfmCni990wM0xSfrz/W5GMYsgggLYwVgXo+OcMZzT4PRFUbk9QRkOrapzW/JkQEUU6ULQopANOqGv9d4RnmxrzoAq7aPMXm9b7Aceaf7RJ8An4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=n6zvlhQJ; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717504766;
+	bh=neyavww+fmoXtsq8dOJETlMstKR82zPDydDGrfHscoE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n6zvlhQJC6+IwBALtX7My3wR3eEKc19cyRlxukQVC0fDN8oCxD2DTC4y1HK08oO8b
+	 ZISIgVpR1FxiqqPT3sjOhLtJDyOwjSLNJjLkctM+j9duvxD9Vl2V+x39qI2KFfpiaj
+	 79oL6Hqy50WnIqKLg0oddv0Nxm8aS0ye6dpIp+86S3OaU6FCI09lsoCSFJq8w9Vb9K
+	 OkNCnbClVMXKR89hT1wxN/4kUNorECTC57Ds/GqQTIuoyWLxMxNT0AFyS2D95VNYwJ
+	 cOqTSKG7xS8aNzx0EBVlaQIBNN3n/M38k6WO7ikHZnUnAdKzWTxLto3BV9pUksop2n
+	 FAhph6kGZjonw==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DBEAC37821A8;
+	Tue,  4 Jun 2024 12:39:24 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: boris.brezillon@collabora.com
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	steven.price@arm.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 0/2] drm/panfrost: Add MT8188 support
+Date: Tue,  4 Jun 2024 14:39:20 +0200
+Message-ID: <20240604123922.331469-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,70 +76,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Somewhere amongst previous refactorings, the pgprot value in
-__iommu_dma_alloc_noncontiguous() became entirely unused, and the one
-used in iommu_dma_alloc_remap() can be computed locally rather than by
-its one remaining caller. Clean 'em up.
+Changes in v2:
+ - Fixed bindings to restrict number of power domains for MT8188's
+   GPU to three like MT8183(b).
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- drivers/iommu/dma-iommu.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+This series adds support for MT8188's Mali-G57 MC3.
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index f731e4b2a417..a30a2f3c8f97 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -939,8 +939,7 @@ static struct page **__iommu_dma_alloc_pages(struct device *dev,
-  * but an IOMMU which supports smaller pages might not map the whole thing.
-  */
- static struct page **__iommu_dma_alloc_noncontiguous(struct device *dev,
--		size_t size, struct sg_table *sgt, gfp_t gfp, pgprot_t prot,
--		unsigned long attrs)
-+		size_t size, struct sg_table *sgt, gfp_t gfp, unsigned long attrs)
- {
- 	struct iommu_domain *domain = iommu_get_dma_domain(dev);
- 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-@@ -1014,15 +1013,14 @@ static struct page **__iommu_dma_alloc_noncontiguous(struct device *dev,
- }
- 
- static void *iommu_dma_alloc_remap(struct device *dev, size_t size,
--		dma_addr_t *dma_handle, gfp_t gfp, pgprot_t prot,
--		unsigned long attrs)
-+		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
- {
- 	struct page **pages;
- 	struct sg_table sgt;
- 	void *vaddr;
-+	pgprot_t prot = dma_pgprot(dev, PAGE_KERNEL, attrs);
- 
--	pages = __iommu_dma_alloc_noncontiguous(dev, size, &sgt, gfp, prot,
--						attrs);
-+	pages = __iommu_dma_alloc_noncontiguous(dev, size, &sgt, gfp, attrs);
- 	if (!pages)
- 		return NULL;
- 	*dma_handle = sgt.sgl->dma_address;
-@@ -1049,8 +1047,7 @@ static struct sg_table *iommu_dma_alloc_noncontiguous(struct device *dev,
- 	if (!sh)
- 		return NULL;
- 
--	sh->pages = __iommu_dma_alloc_noncontiguous(dev, size, &sh->sgt, gfp,
--						    PAGE_KERNEL, attrs);
-+	sh->pages = __iommu_dma_alloc_noncontiguous(dev, size, &sh->sgt, gfp, attrs);
- 	if (!sh->pages) {
- 		kfree(sh);
- 		return NULL;
-@@ -1619,8 +1616,7 @@ static void *iommu_dma_alloc(struct device *dev, size_t size,
- 
- 	if (gfpflags_allow_blocking(gfp) &&
- 	    !(attrs & DMA_ATTR_FORCE_CONTIGUOUS)) {
--		return iommu_dma_alloc_remap(dev, size, handle, gfp,
--				dma_pgprot(dev, PAGE_KERNEL, attrs), attrs);
-+		return iommu_dma_alloc_remap(dev, size, handle, gfp, attrs);
- 	}
- 
- 	if (IS_ENABLED(CONFIG_DMA_DIRECT_REMAP) &&
+AngeloGioacchino Del Regno (2):
+  dt-bindings: gpu: mali-bifrost: Add compatible for MT8188 SoC
+  drm/panfrost: Add support for Mali on the MT8188 SoC
+
+ .../devicetree/bindings/gpu/arm,mali-bifrost.yaml        | 5 ++++-
+ drivers/gpu/drm/panfrost/panfrost_drv.c                  | 9 +++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
 -- 
-2.39.2.101.g768bb238c484.dirty
+2.45.1
 
 
