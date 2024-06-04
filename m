@@ -1,164 +1,158 @@
-Return-Path: <linux-kernel+bounces-201114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D348FB9C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 119CE8FB9EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8D81C23278
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFAD0282BC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DAF1494DB;
-	Tue,  4 Jun 2024 17:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE286149C79;
+	Tue,  4 Jun 2024 17:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ip1BNRF/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KdU73S0M"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDB64A11;
-	Tue,  4 Jun 2024 17:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EE2149C77
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717520489; cv=none; b=m6BETPiIlTq14lu6hG+XlwlQHsdINbsjG9Sa3p0rQ5G3KzsuEeFn/OLY7FYITrL7eqc3sbMvPLBcK6fd+MgimMQieF+PjSO3mSHMheS4/hqCGSrEK9iTZyJ0UMCfaSB4sp7msXiQGiynB19L67OSwh0Mai8jKnSgmdmjNs5/zzQ=
+	t=1717520766; cv=none; b=gRBJzsp0jo7xU37BGnMwNDfr0ZrW56YUHHxs+b38ymcUxbzg3uSH2husfgCzLiq/KpNk/iVGEkjmp8wbTNd0eV4RzFvYF2ARK1mhTsmaX+AtYRKYqDL9fe3B02mecgGRLak2hbs4LNTmLufbI0Q6neWXADTRR4IMa+EEHFfSzyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717520489; c=relaxed/simple;
-	bh=R6BbQWmZ4P9fschyN5itAlWnBsUdPsq0nefia1AQqJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCWCDM1SaJ8j4QK7IkWaROFiyBuMGJE8GrIvDryv3OGVX1sq6o6efLdLh5aYeIZGLnAQQjsaATRZliMdln5vimjmEcV3JL4f37NV4VgA+2rntbwxz5+AD91XTEzDGobNBvVMELSc65VK0r6PREE4Ua4oU2Vf5Pg7aP+uHq1XKnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ip1BNRF/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D40C2BBFC;
-	Tue,  4 Jun 2024 17:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717520488;
-	bh=R6BbQWmZ4P9fschyN5itAlWnBsUdPsq0nefia1AQqJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ip1BNRF/dND0ElXHf+t3tJJ9w39d706EeHlpD8aicjNPUPRAQKV1tZn3o8oe0G6i9
-	 Zc7suHix4wIxOTZ3KsvuBg9DIKFwDR05kqn3rnIuH5l0VQ3D0YJvFlGfplOUHdh7GM
-	 Zwc95653ntre+06ZScGg3XT8JwDnX+VFVBJ19hZx1EiAm+8Faz7bLuty58k+1vIV05
-	 bhQQa/hpD8CWXsul+EQoTlhF5fQUH96vAoC+UtmvijgO49t/FFhiPp4/FGEB2s4Wjn
-	 CJnbBCJvjEDub39mjIdALz7Fh01rbRZy8IvrQTnDT2QVjGCQrsQAd0WwDnOEoI26Lk
-	 7lguoLO8//HdQ==
-Date: Tue, 4 Jun 2024 18:01:23 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Thorsten Scherer <t.scherer@eckelmann.de>,
-	Marek Vasut <marex@denx.de>, Imre Kaloz <kaloz@openwrt.org>,
-	Andrew Lunn <andrew@lunn.ch>, Flavio Suligoi <f.suligoi@asem.it>
-Subject: Re: [PATCH] dt-bindings: mtd: spi-nor: deprecate Everspin MRAM
- devices
-Message-ID: <20240604-ladylike-gout-6fd6ae992712@spud>
-References: <20240604074231.1874972-1-mwalle@kernel.org>
+	s=arc-20240116; t=1717520766; c=relaxed/simple;
+	bh=rEVud8jYCenY75ArS4e4npQEZOeDDa8qDxgOauldd3U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DFfUsNMARHTBzAckBUSlgbYhP0WJoVC7obuXbrRiH7hRbxYOqW4U5OazlX30aDipR08NRONVtvnbuVPRcRCJE0Z7j8bTcrE0Af2XTfezz/lpOejr9t+ntjU4FxvB01zVRLWQDkgJ4E38HCMWVf3UGIwm2Yf0yuFO41Kk8KM9QG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KdU73S0M; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f4603237e0so23402b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1717520761; x=1718125561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fgJ5+iEOSgKZgq1LxXHnvCk2860Dw4BLXVAkjQni18I=;
+        b=KdU73S0MrArtUIvzdV8S/zE81viRGPgVg6TDvu3lu1z9mrer6UhcSvBd1I13bjF4G6
+         QlR0EQPJZuhXaSoLsGeytQ3lLdXeOGiiOO3uIUrOQL/JIe83HN+4d04xy18q4piGg9cT
+         1t5/59cHgaafiVN6OlYS/aqZfCGFGqR+RXE6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717520761; x=1718125561;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fgJ5+iEOSgKZgq1LxXHnvCk2860Dw4BLXVAkjQni18I=;
+        b=usHPuKn8fwpxzafoslfZB/OOHF2bRip0L5Ph4XS33s3gZoBJHM/6XFJyc80IQyWN49
+         tPoozOUh7qoaWF8W/T/RDmEV+628LBY5QsthICWKzJXHoQgd2nZPsZDpUEbAjDY1kkr3
+         /sMV4Tm6n8qdWOhmjdjvIkCxzWu4b63SzY2dMy0aN/6ek5rnntXes9aLcSIyLn9Zpx9V
+         +m+FGrV1J/wWyPDqMWsehVtRhd7wr9x1cH/s9jAed2XiCxXspVIad9N8F9Xa5FiXxcMo
+         i3VoHz5GA1Lpk1I0ksANAJ/5x+pVWzHUMoMiiwa822KkFzReCp6FYmuCnfjJFLvmju16
+         wgJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVifz9KVo+Z6QxlGc3INe4v44E/+xhXdJByxyfEmDRyXHacmrAMnBbZUCxoza06rGccQjDO28JHM2lLKNsg8jz7Yav/KRGqMrs55yWQ
+X-Gm-Message-State: AOJu0YwPEVfbs4hPvbpI5LQniDPZdhLWlV69m/lUsOq9Fvi3KXIhl1Ti
+	O9oygLTeydR+5saKFqg81Lbc9s8J+Zp2T85lJ/o8bPcFTDTRohudGbAxJ5WJ6Q==
+X-Google-Smtp-Source: AGHT+IFGAiCt40jA5/yhChT2c5Qddf9o2Q57U/QnPJLBpXj9m7oYVO4h6NEpzDCXz6oyMA7cKGh7fA==
+X-Received: by 2002:a05:6a00:2d1d:b0:6f4:d5d8:e0a3 with SMTP id d2e1a72fcca58-703e4bf60cfmr331030b3a.9.1717520760886;
+        Tue, 04 Jun 2024 10:06:00 -0700 (PDT)
+Received: from pc98uv11.mtv.corp.google.com ([2620:15c:9d:2:6203:d1ca:c560:52f1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b0914dsm7510672b3a.179.2024.06.04.10.05.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 10:06:00 -0700 (PDT)
+From: Daisuke Nojiri <dnojiri@chromium.org>
+To: 
+Cc: Daisuke Nojiri <dnojiri@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Reka Norman <rekanorman@chromium.org>,
+	Tzung-Bi Shih <tzungbi@chromium.org>,
+	Abhishek Pandit-Subedi <abhishekpandit@google.com>,
+	Gwendal Grignou <gwendal@chromium.org>,
+	Pavan Holla <pholla@chromium.org>,
+	Ching-Kang Yen <chingkang@chromium.org>,
+	Lukasz Majczak <lma@chromium.org>,
+	chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] platform/chrome: Add struct ec_response_get_next_event_v3
+Date: Tue,  4 Jun 2024 10:01:48 -0700
+Message-ID: <20240604170552.2517189-1-dnojiri@chromium.org>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+In-Reply-To: <20240604005354.2294468-1-dnojiri@chromium.org>
+References: <20240604005354.2294468-1-dnojiri@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HGv9EZxHu5PamIl2"
-Content-Disposition: inline
-In-Reply-To: <20240604074231.1874972-1-mwalle@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+Add struct ec_response_get_next_event_v3 to upgrade
+EC_CMD_GET_NEXT_EVENT to version 3.
 
---HGv9EZxHu5PamIl2
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
+---
+ .../linux/platform_data/cros_ec_commands.h    | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-On Tue, Jun 04, 2024 at 09:42:31AM +0200, Michael Walle wrote:
-> These devices are more like an AT25 compatible EEPROM instead of
-> flashes. Like an EEPROM the user doesn't need to explicitly erase the
-> memory, nor are there sectors or pages. Thus, instead of the SPI-NOR
-> (flash) driver, one should instead use the at25 EEPROM driver.
->=20
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> Cc: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> Cc: Thorsten Scherer <t.scherer@eckelmann.de>
-> Cc: Marek Vasut <marex@denx.de>
-> Cc: Imre Kaloz <kaloz@openwrt.org>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Flavio Suligoi <f.suligoi@asem.it>
-> ---
-> The referenced binding only supports the true AT25 compatible EEPROMs
-> where you have to specify additional properties like size and page size
-> or cypress FRAM devices where all the properties are discovered by the
-> driver. I don't have the actual hardware, therefore I can't work on a
-> proper driver and binding. But I really want to deprecate the use of
-> these EEPROM like devices in SPI-NOR. So as a first step, mark the
-> devices in the DT bindings as deprecated.
->=20
-> There are three in-tree users of this. I hope I've CCed all the relevant
-> people. With the switch to the at25 driver also comes a user-space
-> facing change: there is no more MTD device. Instead there is an "eeprom"
-> file in /sys now, just like for every other EEPROM.
->=20
-> Marek already expressed, that the sps1 dts can likely be removed
-> altogether. I'd like to hear from the other board DTS maintainers if
-> they seem some problems moving to the EEPROM interface - or maybe that
-> device isn't used at all anyway. So in the end, we can hopefully move
-> all the users over to the at25 driver.
-> ---
->  Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/D=
-ocumentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> index 6e3afb42926e..2dccb6b049ea 100644
-> --- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> +++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-> @@ -21,7 +21,6 @@ properties:
->                (m25p(40|80|16|32|64|128)|\
->                n25q(32b|064|128a11|128a13|256a|512a|164k)))|\
->                atmel,at25df(321a|641|081a)|\
-> -              everspin,mr25h(10|40|128|256)|\
->                (mxicy|macronix),mx25l(4005a|1606e|6405d|8005|12805d|25635=
-e)|\
->                (mxicy|macronix),mx25u(4033|4035)|\
->                (spansion,)?s25fl(128s|256s1|512s|008k|064k|164k)|\
-> @@ -42,6 +41,14 @@ properties:
->                - spansion,s25fs512s
->            - const: jedec,spi-nor
->        - const: jedec,spi-nor
-> +
-> +      # Deprecated bindings
-> +      - items:
-> +          - pattern: "^everspin,mr25h(10|40|128|256)$"
-> +          - const: jedec,spi-nor
-> +        description:
-> +          Deprecated binding, use Documentation/devicetree/bindings/eepr=
-om/at25.yaml.
-> +        deprecated: true
+diff --git a/include/linux/platform_data/cros_ec_commands.h b/include/linux/platform_data/cros_ec_commands.h
+index 070e49c5381e..fff191a8d413 100644
+--- a/include/linux/platform_data/cros_ec_commands.h
++++ b/include/linux/platform_data/cros_ec_commands.h
+@@ -3527,6 +3527,34 @@ union __ec_align_offset1 ec_response_get_next_data_v1 {
+ };
+ BUILD_ASSERT(sizeof(union ec_response_get_next_data_v1) == 16);
+ 
++union __ec_align_offset1 ec_response_get_next_data_v3 {
++	uint8_t key_matrix[18];
++
++	/* Unaligned */
++	uint32_t host_event;
++	uint64_t host_event64;
++
++	struct __ec_todo_unpacked {
++		/* For aligning the fifo_info */
++		uint8_t reserved[3];
++		struct ec_response_motion_sense_fifo_info info;
++	} sensor_fifo;
++
++	uint32_t buttons;
++
++	uint32_t switches;
++
++	uint32_t fp_events;
++
++	uint32_t sysrq;
++
++	/* CEC events from enum mkbp_cec_event */
++	uint32_t cec_events;
++
++	uint8_t cec_message[16];
++};
++BUILD_ASSERT(sizeof(union ec_response_get_next_data_v3) == 18);
++
+ struct ec_response_get_next_event {
+ 	uint8_t event_type;
+ 	/* Followed by event data if any */
+@@ -3539,6 +3567,12 @@ struct ec_response_get_next_event_v1 {
+ 	union ec_response_get_next_data_v1 data;
+ } __ec_align1;
+ 
++struct ec_response_get_next_event_v3 {
++	uint8_t event_type;
++	/* Followed by event data if any */
++	union ec_response_get_next_data_v3 data;
++} __ec_align1;
++
+ /* Bit indices for buttons and switches.*/
+ /* Buttons */
+ #define EC_MKBP_POWER_BUTTON	0
+-- 
+2.45.1.288.g0e0cd299f1-goog
 
-The idea here seems okay, but directing people to use the at25 binding,
-without actually documenting the replacement compatibles etc is far from
-ideal. I think even a wording change that points out that that these
-devices need to be documented in that file would be an improvement, the
-current wording makes it seem like the works been done.
-Until there's a replacement driver, I don't think you could really
-expect anyone to move to a new binding anyway.
-
---HGv9EZxHu5PamIl2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZl9IYwAKCRB4tDGHoIJi
-0teVAP9+WE9Aa+SjNHv9SwetwqU+ib6o+pUyU7AnhGLRW5bKSgD/Q9iMrnHzSIg3
-MshQhm2puWAwgGZUaoE1eXPubreqxww=
-=z7/H
------END PGP SIGNATURE-----
-
---HGv9EZxHu5PamIl2--
 
