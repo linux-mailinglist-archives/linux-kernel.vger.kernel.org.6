@@ -1,209 +1,245 @@
-Return-Path: <linux-kernel+bounces-201018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEDD8FB832
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:57:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BCE8FB830
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20181C24A0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A081F2248E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31EE145A03;
-	Tue,  4 Jun 2024 15:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1C1143C7A;
+	Tue,  4 Jun 2024 15:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hDhmZVox"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2073.outbound.protection.outlook.com [40.107.243.73])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kw7yXs5d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404CF12B17A;
-	Tue,  4 Jun 2024 15:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516631; cv=fail; b=OziUqpR6M70IL+98YUNrf76D6uwxGUbyCVMdTihDIXgmlt9zOiFK7zSv0Vt4pc7q76PW9GPstIqfjT2AV8DpyrEyBtN+8f3xVYjimPRbePlvRd25JaqI1QVWOyNycJEGtpW8udGzZIJoyAsiaAg5E2e3Zycjf9TCZmyzcX0Ss20=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516631; c=relaxed/simple;
-	bh=OzQHBuYCevC3QMLOHmUugapdlyVZ/Vufcvdwq4dAuwQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FMvyRPYboNUz0s4eHsZH40UqyK01goczIIsScpyxmJtRMXDOSVVZU1WqID49x577oR/2aJa9aLA366MNG3zcVRd35X3DmRoKvWpNcY4+IcluMJCfQBWqX8bvzhO/MOEw/z24XqBsszYb+/+v98RmQ/ajKoX8wCVo9RHwmT3yoCk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hDhmZVox; arc=fail smtp.client-ip=40.107.243.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VKA/vpMBkK5qYGUguIgA8rkA6mTcuiGAmCJowFITiJdvY3p/lRHxPO4Or2EA1WMGVreyn8m9xsF/yL8u86LQU8vGHnlwhdp9M3HAVoxbmSgQojflHTP+xMR2NxC0Rgy2r8Fq5mz45FTcBXw3NQDzh7Iy25KA+pUP6A+3T9t4CYYnKtDValsTiwXzpq0cpSg26+OPWqX0nkGxfZCKonczVWdBvf+6gDRd0q3s2wHK87SXYRRb1WqpRhN/snosdcgUcUPQC6pOrThVTy+bY/mzu5dncWRkzguo7knca0e04q0ap7F1F82AqrGEfEKKv3JUSZRDSpBsORsNlBKTYkz8zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RKlcO9YF6T/DTBc2NhO1L+SJ5LXiqrhNhnvx3x8eVyw=;
- b=UnMi3GqKKc6TB7orsoxEGQF7Bo92ETZ2OdOQfw20SiIesgyXr5fSNWW86ljWW7g29p6QZKz/Q22wOK1QFeb3cMSl8KYrqNSKRMl4iCKMZIa8h1bs5ELk/DWYcIEBxu5X2OoP974obMqDoqqi1zhtowM72h/5BExjI5rvZWfAfKsDDk+V121AcFdixVGKxNN2dNjgxRLxHrqI17jAvxd//+35iqZiQv4EnIRfdgEppXZFWNRPxV8mDlQjenlDRhOZNS65shGxmNSkSIDRXTnkKNoWFVuGmF54bvB5E0VEud9Y/lx+aw2LbCQAdvE9S5Wp3nM5NiGu97AH9uH+ph5Ncw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RKlcO9YF6T/DTBc2NhO1L+SJ5LXiqrhNhnvx3x8eVyw=;
- b=hDhmZVoxvk5k55TgTgFco/pdzRLODDSaizVtPGIYr7L1bXAGBydSF1mwST7umJ4IsAh1rlb7osazqHnLU+tsDCsKrwtLduT5JlBzIuw3A/qMP+dM3AfkQ9bWJFzeKudcIyLBEH6UBwRfu25T75TSX5+OcbczIGn+Zgh+QoFIdeg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by BY5PR12MB4036.namprd12.prod.outlook.com (2603:10b6:a03:210::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Tue, 4 Jun
- 2024 15:57:05 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7633.018; Tue, 4 Jun 2024
- 15:57:04 +0000
-Message-ID: <5b4155c9-35d4-499e-9256-148b3ed7a491@amd.com>
-Date: Tue, 4 Jun 2024 10:56:40 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq: amd-pstate: add check for cpufreq_cpu_get's
- return value
-To: Anastasia Belova <abelova@astralinux.ru>, Huang Rui <ray.huang@amd.com>
-Cc: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-References: <20240603110741.24818-1-abelova@astralinux.ru>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240603110741.24818-1-abelova@astralinux.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0072.namprd13.prod.outlook.com
- (2603:10b6:806:23::17) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061833236;
+	Tue,  4 Jun 2024 15:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717516610; cv=none; b=mgxocLGQ9xGJs666Z3EBZ0Y8ht7bu4kOQUhkcaBZgppcC2S8XEu0XczrLU1dlM6Thj2CIsSKeSJ+TBU54fsaIiHCM9ifMJFcbNv7+viiLu9IW1XDojLNLAzC/UVld9706p0JRF82p5XPqNlv3X/ZkCytnAy/NEHDEyurUKk6x8E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717516610; c=relaxed/simple;
+	bh=OjqQLm6ztta8QrQg9UbvZS7LmKeXUKHD0lmi31Sk8PE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSOhlaumU2o2iXRAIJ9rOqipNGM7yruAfkVNvsAeGK33oRjEPOZddMdaiXcEAwYlGZleMzqvsWmKY8tzm1ZY4rBXDHTPDbbDdABjNW7hBCjUR74XRJCZqbQSKGR9tHxJisIcEuY5JTJ6Uk+c8Rh9Xwvhm9JbrD/QuJZdVBp/I6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kw7yXs5d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 871E9C2BBFC;
+	Tue,  4 Jun 2024 15:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717516609;
+	bh=OjqQLm6ztta8QrQg9UbvZS7LmKeXUKHD0lmi31Sk8PE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kw7yXs5dyNJ02LttL0xvKphFeSOAsXCidZH93L1hIL27xrOpq1no3Vu3Ip6CgUl12
+	 pUgFj45rKJO/3j+Mpa20tlUtBwLmxgRf6eDO/4BbtHIg5b3on2MXtbeFP3Q0d1qNIj
+	 Y2nZkQJPK1eBlt5fzCrGsBfLCB+mZFmKB2tuCAj2SdJQ78T8lpOAIGFw4amxIbtJs4
+	 JISAHzGiocUXSdYOGFP1GJrGfgFBWbEhmt1DotCYco3T5+lT8B67tMhrm/0B1bhKIQ
+	 wlYS83m5/xto6wEfNHnFuNG/jkPC6X3DANRFq/bkOHZb8CkkTG+7BrcxRAPx9YuW9T
+	 CWuZNfc1r7ikA==
+Date: Tue, 4 Jun 2024 08:56:48 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yangerkun@huawei.com
+Subject: Re: [PATCH] xfs: Fix file creation failure
+Message-ID: <20240604155648.GF52987@frogsfrogsfrogs>
+References: <20240604071121.3981686-1-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|BY5PR12MB4036:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32300e11-b5f3-42f9-3aaf-08dc84aefad0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Zjc2RWhjYlRob1h6cFV4TlJUeVh0QkMraG9TUWZUbkJCVUFCaHQrUlBkWlFw?=
- =?utf-8?B?WWxsdHM2QmlhdkVuQTdMTFFLM1dSeElUS0lIWnN2TlFHdmtjaXJkaFhkUklX?=
- =?utf-8?B?RzIzaVBxdUZDRERreWdHWDVtcjRNVG9jNGlSMnZtRkdxc2NiUHRNY0p0RXgw?=
- =?utf-8?B?ZlJhMVlCd1pBbzJLTzE5S3lIbG1TanViTHI0VVlES0F6RXhGSzl1WEVGaGpx?=
- =?utf-8?B?ZFRxYkZPeGgyR2REdkpXMmc3aTNHYm1QY1cxVWkydW9wSlorODltZXVPNENI?=
- =?utf-8?B?K1BUdW9PbmVQdHRkZjBRYy9aTFptUEd5T3dSRS8xbzh3YjRGclQ2WUhpY0Y5?=
- =?utf-8?B?Z0xrNEFtUmtGdDdXY2o4TWRRNW1td3lKb0JKaDBVZmk5Sm1GTXFWM0l6dmJn?=
- =?utf-8?B?SHJBMkZQRjF2SlJuaEh4QXVkQ2lteFhxYWFxNWFGZ09Ha1VKeWU0Q0FaYk9p?=
- =?utf-8?B?TENWblBhNUxSaVVaS3JOalRNSUY0aVU5MVpXSHgxZ1F4aXIzbENBcmZFOStj?=
- =?utf-8?B?ODNMa25KY0E2ZlV0cHc0blA5R2dldlB1cUF4RTZoNE5wNkJRMlhNdkRuU3k2?=
- =?utf-8?B?TE9pMjNEVzc5Q2ttYXhLd3FPbllvcHdoYnl2MVgwb1JmMysrdFVUVlloT3k4?=
- =?utf-8?B?YXUxS2JHSVFDVGFtQjErVFljalFjS1lORWtRdmpoRUJpUW8rOXNqSkl4V2VG?=
- =?utf-8?B?dmI2Q1dGZlRucVVUbHBvSXljNnJRR1VBNnF6dGdDWng3L0U4ZS9kOU9HdXdX?=
- =?utf-8?B?NkFqd1loSy9nQkJSMUxiUythNEgyeHZyNHJFQzN4N0lOcWJTWnVvWXJybW1T?=
- =?utf-8?B?WkkrMnRsV3kzTmFJVmFUam8rSzdQU0x1R1RWaFlyU3RwRnE0bGNLV3B3Z004?=
- =?utf-8?B?RzhibVJlaDFuWU1zYXF2SlBHT00wUHBZdEE1UVNIa0c2ckdHYzNKRGx3Um1n?=
- =?utf-8?B?dEl1b0w3RUVvbVc5cTF4bDU4Qm5BMGZmZE9qTHc3cWdDY1FNbklrTkRWcmNq?=
- =?utf-8?B?dXA4V0NwNnpMZ0hSQXJNSythVHAzdXk1Qm9rWVRYM0FFK2N2R04vUmZ1VlF6?=
- =?utf-8?B?Mlp2TXZlK3lVOVg4Z0dYNjVRbzRjVFNqM3hFZHpHWm5ZTFp2MmxhbkRiSHhL?=
- =?utf-8?B?cGIwQUJaL1hxRVVOWU90VTZJOUFpa1hNSXE0OHEvdGg0WHl2V0VDOXVyQ2gy?=
- =?utf-8?B?VjBGZXpwd2kwdGsrVDA4Y2lUUE1nKzI1ZERBZFhjcDNGYVRDYTh4cmxrU2FT?=
- =?utf-8?B?My9CUnBWNEpXRVA5cU9nNzdraDdoNjJheUZyT1pveHlOTEhrc1BtM3NYNUgy?=
- =?utf-8?B?Tllqd25FcHBOUTBjTmozTGtIUlgra0hNSTQvcmtMalNjSzFVbHp1b1Qvdyt2?=
- =?utf-8?B?dFJ2UmZDMlpSSFBYWDBYcWF6U0ZjY3dQWHArQXFuY0xLUnZiY1ZQWlk3SmJW?=
- =?utf-8?B?d1ZiT2VwWmVvcTBJb3dNb1pzVDVza0hRSEkzT1hCYk5OK0dIUGw4WE8vR0cr?=
- =?utf-8?B?c3A1OXdOZlRLamdaSG1pTVRObFNIN2V2NXlUdG1zNzJZS3JLbHcza1JZSElD?=
- =?utf-8?B?dkgvMGd5cDE5ZWNxQ1VtQWhYOWM1ZlhpSnV0OGxJbnJvYitEUW96MGNGTnQr?=
- =?utf-8?B?dEhUVUk2VTh6OEl2Z3BDOXUwNXZZejlaTHo3aS9LQnhtWVZudzltSTBHOTNt?=
- =?utf-8?B?aDREMjk2TUIzZ1F1dElkMkx2K2ZTMDhTc3VDRDNDaXIyUWE2bEFlZjJBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RW91RGlDVDZTR2o3ZVJyemlvQmxwNXFGRDZiem84dGpGZE0rM2lJVDIvQ0hp?=
- =?utf-8?B?Slp0ZHJkOGlJY3UySzZBQkZucU1nclRYUkYzOW0yN3lsbVN4c0E1U2RaWW0r?=
- =?utf-8?B?a1cvYWNHMXIwNlVwdW5VRDR2R1NqN2Y5eWNJcFYxaU9yR1UrWTFpTEU0bHNz?=
- =?utf-8?B?bDJWdnhCalM1Z3plYU1uTStWN2x5YWRGVmtTZ1M1MmFTdkZMY0VqZDVEKy90?=
- =?utf-8?B?Wjc3K1FOTzUzbHVBQjJSKzBYYkdyMWRUdDRKSUIzTFJMSmNwQWMvV1k5cCsz?=
- =?utf-8?B?U3ZkdnlIKzRuRHlFcTc2RW5xVnVGYWllVTRvQU5VV0lEVjNrdW8rNnJpWEYx?=
- =?utf-8?B?UFZtTmo3Z1NCMEY0OFZuMTg1OWZkY2ZVWHdoVE10dldNdXIxTlVkTnBCd3dr?=
- =?utf-8?B?anp5bW9Mc1RMaHlobUxra2I4UWlYcmZJK0FVRXpjV2lMbEJhZTR3ajRRRXJp?=
- =?utf-8?B?TmtVTDdHbzB3ZFFSZFhCYUo4UkhiUGdYaFBwM3hhSjFvRzFrN01vR3g2ZG9O?=
- =?utf-8?B?a3Q4WEFHRlZDMGtBdi9UUmZabDZ0cmZoV1VHcmM0WVhkNzAxSUFSdWlzYXA2?=
- =?utf-8?B?OHNmTmRTOEVQRkpLNncwMUFXbzRuekhERW1oOWhENHZHa0syMURqVUxnRUxx?=
- =?utf-8?B?cWJPSEZseTQ5cHlDWk1ZNVlFZW0zRzdMQmlYWGlhcEdTbFFRWTRWVDVLYkRu?=
- =?utf-8?B?NWtUdVM3b0JtczdKdEFXVnhmelVUKzhoVE40U1JrS3JpaGR6Sks1TXU4NFZx?=
- =?utf-8?B?TXR4VjVnQ1RiYzF0NXRNeUh3MlZEM3p6SDlPSitraTdiRjJ4UC9TclIrYkps?=
- =?utf-8?B?WVdndUxhS0libG1Jajd0MHBaS2c1b1RweXBjcXVHN1FZazIyc3hRSERqUGFS?=
- =?utf-8?B?MTR2SHk4dG9HM1FjelhLVnFFcFFSbWh3bGZXTGFjZy9JbjlzUk8rd01WNk95?=
- =?utf-8?B?clpxSFR5cmlqSWozQmh3Q1ZXUm5XS0hKdXcyQWNDSG5qNlRCRmlva2xMMVJC?=
- =?utf-8?B?Sml5SjA2elZhelBQdVo1M1lhaisxaEx3UnliQnhvNjdYdU5EQkFNcHI3ZDVz?=
- =?utf-8?B?ZFpiZnUrTGcrK0JjYWF1OE9sTGJmQWxGRFJqQk5DeTR5MEQxZWUvbi9xcVN1?=
- =?utf-8?B?V0NrTzFNY3RDanViSU1CWDBIODNhdFRGMXA1dVBscUxxNmNRYWtYQnBtVkw2?=
- =?utf-8?B?dlo4dHJNVVl2TkpQTXlNbERHb0t2ODNmNGhVbERtNEkrazJabnFQQ1hvV1pi?=
- =?utf-8?B?amZuemdwaURjR0t4eHhpYjMyZkdXTzdkU2N0MnhFZWJET3UrdnlZaEM0THE2?=
- =?utf-8?B?WmUxSjU5UDF5ek9IM1A2OUZKelhxRXFtaWxZd05rRDEwS2NSL1pIQlJ5VU9D?=
- =?utf-8?B?SXhqU3l2SEU3TG5ScVQrQU9YVkhRRC9COU1wMTJ2OHNaRVVCZE1tcTZhNS9M?=
- =?utf-8?B?SEN4SGFNOWNPclBPeGZoeHpqUDZrMWNaUFA2UXZDWUdTeDRwRDh1bjRJdFEy?=
- =?utf-8?B?T0lBU01YNUZDOEFtR3ZlMWNobjgyR0NPbk1SN3pnRTNDRWVQQ1k1d0lvbGRV?=
- =?utf-8?B?by9XSlgyT3dpVjhaZGhPVGhDVTRsd0VIZmlSRHhGYmZQUlZjL283Y2dHdWFF?=
- =?utf-8?B?RGR1cFBJZk90RERnUThpTDlQdG5UODV2d20xdVBJcUJidUZYY2JXL3hxRisx?=
- =?utf-8?B?Y1diazk2K0NLcHRkNmxaRGVVaFE0cisvRi90VXlsOE5xTFFhcHpMbVE5Qi80?=
- =?utf-8?B?R0hsaUc4OFpzQVpVN0NmS2xnWEZsZW9ldlMwOTMyMlphWXUxT2dQLzZwdS80?=
- =?utf-8?B?aWcxTy85ajJiT1J3eXJ1VllTbjBRQ1FzVVJ5ZktCdmMrS1FYSXdxN0xrbkFH?=
- =?utf-8?B?dDhXK1daS1lZdDFNOTBMWWlCeFAxTXFBNmd2YmVNUHJkb2twKzltWGFjYUdL?=
- =?utf-8?B?MjVrbmlUQUQzY3lQcFl2TFcxY2dUd0lFRnRZUnU2WjYyMzZrZTkwZW9TNXk2?=
- =?utf-8?B?T2ZpYmJrZ0krQ0NwWXVGR21IQ1BKSThyR0xrWjhiaHJ0QzYzQk9vSksvS1hr?=
- =?utf-8?B?MTRGWEh4VmJWL2lSeThMWGc1dVJ6dzF5Mk9uMTR0clR1RGFQTVcrWVphNDNq?=
- =?utf-8?Q?L4/0h4x68KiX8mb0FJIvutyun?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32300e11-b5f3-42f9-3aaf-08dc84aefad0
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 15:57:04.8379
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fdhhKqLDzO1EgwgY5MevrlSyMrl/vWvgyevPvGYyJg983YgC6+dHtjhAeI2m4ez+DJiGwM6XKdwlJSwWxc2skQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4036
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604071121.3981686-1-wozizhi@huawei.com>
 
-On 6/3/2024 06:07, Anastasia Belova wrote:
-> cpufreq_cpu_get may return NULL. To avoid NULL-dereference check it
-> and return in case of error.
+On Tue, Jun 04, 2024 at 03:11:21PM +0800, Zizhi Wo wrote:
+> We have an xfs image that contains only 2 AGs, the first AG is full and
+> the second AG is empty, then a concurrent file creation and little writing
+> could unexpectedly return -ENOSPC error since there is a race window that
+> the allocator could get the wrong agf->agf_longest.
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> Write file process steps:
+> 1) Find the entry that best meets the conditions, then calculate the start
+> address and length of the remaining part of the entry after allocation.
+> 2) Delete this entry. Because the second AG is empty, the btree in its agf
+> has only one record, and agf->agf_longest will be set to 0 after deletion.
+> 3) Insert the remaining unused parts of this entry based on the
+> calculations in 1), and update the agf->agf_longest.
 > 
-> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
-Thank you!
+> Create file process steps:
+> 1) Check whether there are free inodes in the inode chunk.
+> 2) If there is no free inode, check whether there has space for creating
+> inode chunks, perform the no-lock judgment first.
+> 3) If the judgment succeeds, the judgment is performed again with agf lock
+> held. Otherwire, an error is returned directly.
+> 
+> If the write process is in step 2) but not go to 3) yet, the create file
+> process goes to 2) at this time, it will be mistaken for no space,
+> resulting in the file system still has space but the file creation fails.
+> 
+> 	Direct write				Create file
+> xfs_file_write_iter
+>  ...
+>  xfs_direct_write_iomap_begin
+>   xfs_iomap_write_direct
+>    ...
+>    xfs_alloc_ag_vextent_near
+>     xfs_alloc_cur_finish
+>      xfs_alloc_fixup_trees
+>       xfs_btree_delete
+>        xfs_btree_delrec
+> 	xfs_allocbt_update_lastrec
+> 	// longest = 0 because numrec == 0.
+> 	 agf->agf_longest = len = 0
+> 					   xfs_create
+> 					    ...
+> 					     xfs_dialloc
+> 					      ...
+> 					      xfs_alloc_fix_freelist
+> 					       xfs_alloc_space_available
+> 					-> as longest=0, it will return
+> 					false, no space for inode alloc.
+> 
+> Fix this issue by adding the bc_free_longest field to the xfs_btree_cur_t
+> structure to store the potential longest count that will be updated. The
+> assignment is done in xfs_alloc_fixup_trees() and xfs_free_ag_extent().
 
-Acked-by: Mario Limonciello <mario.limonciello@amd.com>
+This is going to be a reverse-order review due to the way that diff
+ordered the chunks, which means that the bulk of my questions are at the
+end.
 
+> Reported by: Ye Bin <yebin10@huawei.com>
+> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
 > ---
->   drivers/cpufreq/amd-pstate.c | 4 ++++
->   1 file changed, 4 insertions(+)
+>  fs/xfs/libxfs/xfs_alloc.c       | 14 ++++++++++++++
+>  fs/xfs/libxfs/xfs_alloc_btree.c |  9 ++++++++-
+>  fs/xfs/libxfs/xfs_btree.h       |  1 +
+>  3 files changed, 23 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 1b7e82a0ad2e..672cb6c280a4 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -621,6 +621,8 @@ static void amd_pstate_adjust_perf(unsigned int cpu,
->   	unsigned long max_perf, min_perf, des_perf,
->   		      cap_perf, lowest_nonlinear_perf, max_freq;
->   	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> +	if (!policy)
-> +		return;
->   	struct amd_cpudata *cpudata = policy->driver_data;
->   	unsigned int target_freq;
->   
-> @@ -777,6 +779,8 @@ static void amd_pstate_init_prefcore(struct amd_cpudata *cpudata)
->   static void amd_pstate_update_limits(unsigned int cpu)
->   {
->   	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> +	if (!policy)
-> +		return;
->   	struct amd_cpudata *cpudata = policy->driver_data;
->   	u32 prev_high = 0, cur_high = 0;
->   	int ret;
+> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+> index 6c55a6e88eba..86ba873d57a8 100644
+> --- a/fs/xfs/libxfs/xfs_alloc.c
+> +++ b/fs/xfs/libxfs/xfs_alloc.c
+> @@ -577,6 +577,13 @@ xfs_alloc_fixup_trees(
+>  		nfbno2 = rbno + rlen;
+>  		nflen2 = (fbno + flen) - nfbno2;
+>  	}
+> +
+> +	/*
+> +	 * Record the potential maximum free length in advance.
+> +	 */
+> +	if (nfbno1 != NULLAGBLOCK || nfbno2 != NULLAGBLOCK)
+> +		cnt_cur->bc_ag.bc_free_longest = XFS_EXTLEN_MAX(nflen1, nflen2);
 
+Ok, so if we're allocating space then this sets bc_free_longest to the
+longer of the two remaining sections, if any.  But if we just allocated
+the entirety of the longest extent in the cntbt, then we don't set
+bc_free_longest, which means its zero, right?  I guess that's ok because
+that implies there's zero space left in the AG, so the longest freespace
+is indeed zero.
+
+If we just allocated the entirety of a non-longest extent in the cntbt
+then we don't call ->lastrec_update so the value of bc_free_longest
+doesn't matter?
+
+> +
+>  	/*
+>  	 * Delete the entry from the by-size btree.
+>  	 */
+> @@ -2044,6 +2051,13 @@ xfs_free_ag_extent(
+>  	 * Now allocate and initialize a cursor for the by-size tree.
+>  	 */
+>  	cnt_cur = xfs_cntbt_init_cursor(mp, tp, agbp, pag);
+> +	/*
+> +	 * Record the potential maximum free length in advance.
+> +	 */
+> +	if (haveleft)
+> +		cnt_cur->bc_ag.bc_free_longest = ltlen;
+> +	if (haveright)
+> +		cnt_cur->bc_ag.bc_free_longest = gtlen;
+
+What happens in the haveleft && haveright case?  Shouldn't
+bc_free_longest be set to ltlen + len + gtlen?  You could just push the
+setting of bc_free_longest into the haveleft/haveright code below.
+
+>  	/*
+>  	 * Have both left and right contiguous neighbors.
+>  	 * Merge all three into a single free block.
+> diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
+> index 6ef5ddd89600..8e7d1e0f1a63 100644
+> --- a/fs/xfs/libxfs/xfs_alloc_btree.c
+> +++ b/fs/xfs/libxfs/xfs_alloc_btree.c
+> @@ -161,7 +161,14 @@ xfs_allocbt_update_lastrec(
+>  			rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
+>  			len = rrp->ar_blockcount;
+>  		} else {
+> -			len = 0;
+> +			/*
+> +			 * Update in advance to prevent file creation failure
+> +			 * for concurrent processes even though there is no
+> +			 * numrec currently.
+> +			 * And there's no need to worry as the value that no
+> +			 * less than bc_free_longest will be inserted later.
+> +			 */
+> +			len = cpu_to_be32(cur->bc_ag.bc_free_longest);
+
+Humm.  In this case, we've called ->update_lastrec on the cntbt cursor
+having deleted all the records in this record block.  Presumably that
+means that we're going to add rec->alloc.ar_blockcount blocks to the
+rightmost record in the left sibling of @block?  Or already have?
+
+Ahh, right, the pagf_longest checks are done without holding AGF lock.
+The concurrent creat call sees this intermediate state (DELREC sets
+pagf_longest to zero, a moment later INSREC/UPDATE set it to the correct
+nonzero value) and decides to ENOSPC because "nobody" has sufficient
+free space.
+
+I think this phony zero never gets written to disk because although
+we're logging zero into the ondisk and incore agf_longest here, the next
+btree operation will reset it to the correct value.  Right?
+
+Would it be simpler to handle this case by duplicating the cntbt cursor
+and walking one record leftward in the tree to find the longest extent,
+rather than using this "bc_free_longest" variable?
+
+>  		}
+>  
+>  		break;
+> diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
+> index f93374278aa1..985b1885a643 100644
+> --- a/fs/xfs/libxfs/xfs_btree.h
+> +++ b/fs/xfs/libxfs/xfs_btree.h
+> @@ -281,6 +281,7 @@ struct xfs_btree_cur
+>  			struct xfs_perag	*pag;
+>  			struct xfs_buf		*agbp;
+>  			struct xbtree_afakeroot	*afake;	/* for staging cursor */
+> +			xfs_extlen_t		bc_free_longest; /* potential longest free space */
+
+This is only used for bnobt/cntbt trees, put it in the per-format
+private data area, please.
+
+If the answer to the question about duplicating the btree cursor is "no"
+then I think this deserves a much longer comment that captures the fact
+that the variable exists to avoid setting pagf_longest to zero for
+benefit of the code that does unlocked scanning of AGs for free space.
+
+I also wonder if the unlocked ag scan should just note that it observed
+a zero pagf_longest and if no space can be found across all the AGs, to
+try again with locks?
+
+--D
+
+>  		} bc_ag;
+>  		struct {
+>  			struct xfbtree		*xfbtree;
+> -- 
+> 2.39.2
+> 
+> 
 
