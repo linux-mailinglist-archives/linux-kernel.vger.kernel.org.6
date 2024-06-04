@@ -1,197 +1,172 @@
-Return-Path: <linux-kernel+bounces-200582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DB68FB217
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:24:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78708FB21D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000E61F21ED8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D949282FF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B898614600C;
-	Tue,  4 Jun 2024 12:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BCA145FFE;
+	Tue,  4 Jun 2024 12:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="wYr4Iky7"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D+BGbWSd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF99145FF6;
-	Tue,  4 Jun 2024 12:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B427D145FFF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717503881; cv=none; b=X8+IX/73mbs9UO1E7I3lFyokhE19hzK2XXCDnmYU9yBmkWYbjhujDMTIweExabVs1GAtJcg7Beel+RGhJ0sFLviektSPevscC+1TlViC2Esx3lMtkYXK7fzVgYDnWhxqF4sBA8DxzmLQIvnYXFVM2tG/Or4STPW6MCPAq6szo9k=
+	t=1717503967; cv=none; b=U7jgqeJucXt9yaniJe7uLiwZNjwcycAigs1hv1V2whuUFOaS74wdaH4fpxnJeBnamlsrdXT0oXbSm1FHPovRaog9PY7BcJl38fsyWxkagiKgR+uhF6Vz40+weedZZ9+9zOiZHPqJc5ox5IS9pMiISVLy1dqNV2TMqB33HVFZyEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717503881; c=relaxed/simple;
-	bh=Lv9Ndc3v7OplGgEuObrkLWF5jfo0VwmttjMAF0BC7Yg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GJdXuNY7QH2EYEVPJAB9ngQV9eY+xyvaNUZ5//7EHkVTlXtek8ludwmHJP78TwNPfsxWQqBADPOA16Ehd8OsckwS1y2rUpt8PqWWMamF0+w0OJcXICI5WAUNvziTsiCto/vuQ0hHzWp4mwijeZ1qhtyn656RrA4timSQSjwP8NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=wYr4Iky7; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717503877;
-	bh=Lv9Ndc3v7OplGgEuObrkLWF5jfo0VwmttjMAF0BC7Yg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wYr4Iky7YMflG9JtezhvZtRBcZeFnpjwTSMcpN+b5X5cESTbE3GoiK7IFx9Qgw/sQ
-	 6d/NUKDtM1reDJRZotpXohQC2N+7opEJiqseoukugOvnse6Pin5MpMgeMq8uE9ArWm
-	 nm6OvNACcVFYGZjjGCpXQeR0nh9owN2hSJyo0pzFNRuc2p5Xvla51cRS9SsWa47dRv
-	 74xee2CHTTmMsHkw4kY6reOt9KRaq1hWuass2Ls5E9iobh8YQbegJhA78kHlJ3020W
-	 KF2vtCtt/JUF8+Fi2QdtGbtYEHbuQoPVrpeIUeD6ZE86udgWVwzvyU3+V//duffumK
-	 pACLCgDn2sBPQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1717503967; c=relaxed/simple;
+	bh=C0m1q9sQFto++NXEm5lo0SSe/c2H/tzIMnQtwBN17pk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tUAeNA2RyTdOg8/Dqjse2Y6VSIH00ZLyk5vVeoCzyfb0Pbsje136epuAJIUhtk3f+KhxhyW770xAzZSa8w3a6T+HibV1bt+kQIDF78piNkolgAvuCs5U/LCAWGI9RdSWG+WIlWlSLo7tsXsQORIqjWTfayZhBkK3HIW4ZuGsQPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D+BGbWSd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717503964;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=g9xu8CO6FcwPIS6aRjJr9urN6rt6ZyZUoWGzoofY+lc=;
+	b=D+BGbWSdnUu575pFWlf6WUaigVRJFG3ZmoZBMJHUFcmJms4pGVe+wgKy0FpSXcrXmWMzul
+	sHd+377IqHAJdr+TcyZh8eGDTmre8s6ha+al8g0nto8GhNw6CDF3osaFfMM6wD0+1drjRO
+	oQAXWT/FkrSNruaqmBfnqWau6v36ZIM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-404-6cKNhcoxPuygImNn1gcRmw-1; Tue,
+ 04 Jun 2024 08:26:01 -0400
+X-MC-Unique: 6cKNhcoxPuygImNn1gcRmw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2C687378214D;
-	Tue,  4 Jun 2024 12:24:36 +0000 (UTC)
-Message-ID: <c9066432-8849-49cb-8027-4f9c7f5d7686@collabora.com>
-Date: Tue, 4 Jun 2024 14:24:35 +0200
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B184B18FF939;
+	Tue,  4 Jun 2024 12:25:57 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.39.193.118])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0BEB91955D92;
+	Tue,  4 Jun 2024 12:25:49 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guillaume Morin <guillaume@morinfr.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Subject: [PATCH RFC 0/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
+Date: Tue,  4 Jun 2024 14:25:45 +0200
+Message-ID: <20240604122548.359952-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] dt-bindings: iio: adc: Add MediaTek MT6359 PMIC
- AUXADC
-To: Krzysztof Kozlowski <krzk@kernel.org>, jic23@kernel.org
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org,
- andy@kernel.org, nuno.sa@analog.com, bigunclemax@gmail.com,
- dlechner@baylibre.com, marius.cristea@microchip.com,
- marcelo.schmitt@analog.com, fr0st61te@gmail.com, mitrutzceclan@gmail.com,
- mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
- <20240530093410.112716-2-angelogioacchino.delregno@collabora.com>
- <c2b97c8e-177e-4169-b001-ab0e3303734f@kernel.org>
- <dc46258b-caf9-46a7-84b4-2f229d48b8f7@collabora.com>
- <0d7d9f61-2590-4c72-9498-dc6540b571d5@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <0d7d9f61-2590-4c72-9498-dc6540b571d5@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Il 04/06/24 11:38, Krzysztof Kozlowski ha scritto:
-> On 04/06/2024 10:55, AngeloGioacchino Del Regno wrote:
->> Il 01/06/24 17:32, Krzysztof Kozlowski ha scritto:
->>> On 30/05/2024 11:34, AngeloGioacchino Del Regno wrote:
->>>> Add a new binding for the MT6350 Series (MT6357/8/9) PMIC AUXADC,
->>>> providing various ADC channels for both internal temperatures and
->>>> voltages, audio accessory detection (hp/mic/hp+mic and buttons,
->>>> usually on a 3.5mm jack) other than some basic battery statistics
->>>> on boards where the battery is managed by this PMIC.
->>>>
->>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>> ---
->>>>    .../iio/adc/mediatek,mt6359-auxadc.yaml       | 43 +++++++++++++++++++
->>>>    .../iio/adc/mediatek,mt6357-auxadc.h          | 21 +++++++++
->>>>    .../iio/adc/mediatek,mt6358-auxadc.h          | 22 ++++++++++
->>>>    .../iio/adc/mediatek,mt6359-auxadc.h          | 22 ++++++++++
->>>>    4 files changed, 108 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->>>>    create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
->>>>    create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
->>>>    create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->>>> new file mode 100644
->>>> index 000000000000..dd6c331905cf
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->>>> @@ -0,0 +1,43 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: MediaTek MT6350 series PMIC AUXADC
->>>> +
->>>> +maintainers:
->>>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>> +
->>>> +description:
->>>> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
->>>> +  in some MediaTek PMICs, performing various PMIC related measurements
->>>> +  such as battery and PMIC internal voltage regulators temperatures,
->>>> +  accessory detection resistance (usually, for a 3.5mm audio jack)
->>>> +  other than voltages for various PMIC internal components.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    enum:
->>>> +      - mediatek,mt6357-auxadc
->>>> +      - mediatek,mt6358-auxadc
->>>> +      - mediatek,mt6359-auxadc
->>>> +
->>>> +  "#io-channel-cells":
->>>> +    const: 1
->>>> +
->>>> +additionalProperties: false
->>>
->>> If there is going to be a re-spin, please move this below required: block.
->>>
->>
->> Yep, will do. Fixed up for v2.
->>
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - "#io-channel-cells"
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    pmic {
->>>> +        pmic_adc: adc {
->>>> +            compatible = "mediatek,mt6359-auxadc";
->>>> +            #io-channel-cells = <1>;
->>>> +        };
->>>
->>> This suggests that you should grow (make complete) the parent PMIC example.
->>
->> Uhm, should I instead add that to bindings/mfd/mediatek,mt6357.yaml and avoid
->> growing the parent example?
-> 
-> No. You should avoid this example and grow the parent example. Not avoid
-> parent example...
-> 
+Against mm/mm-unstable.
 
-I will remove examples from here and move the example that I wrote in here
-to mediatek,mt6357.yaml.
+There is interest in supporting uprobes on hugetlb pages [1]. Having
+uprobe_write_opcode() implement COW-breaking itself is really far from
+optimal, and having to add hugetlb COW-breaking to implement hugetlb
+support really does sound wrong.
 
->>
->>     adc:
->>       type: object
->>       $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml
->>       unevaluatedProperties: false
->>
->>>
->>> Actually having this as a separate node is not really needed. Why it
->>> cannot be just part of the MFD/parent node?
->>>
->>
->> (glossary: PWRAP = PMIC [SPI] WRAPper)
->>
->> The top node is the PWRAP, an IP that is (mostly) used to dispatch commands to
->> the PMIC, but the AUXADC is not integrated into the PWRAP, but into the PMIC.
-> 
-> Eh? mediatek,mt6357.yaml says it is a PMIC...
-> 
+Further, I think the current code doesn't really handle some things
+properly (see patch #3) when replacing/zapping pages.
 
-Eh, apparently my brain cells are somewhere else today.
-I was thinking about the HW, and some synapse got disconnected in the process, lol.
+Let's rewrite it, to leave COW-breaking to the fault handler, and handle
+registration/unregistration by temporarily unmapping the anonymous page,
+modifying it, and mapping it again. We still have to implement
+zapping of anonymous pages ourselves, unfortunately.
 
-Just pretend I never wrote this useless wall of text, sorry. Ugh :-)
+Note that we now won't have to allocate another anonymous folio when
+unregistering (which will be beneficial for hugetlb as well), we can simply
+modify the already-mapped one from the registration (if any). When
+registering a uprobe, we'll first trigger a write fault to break COW to
+then modify the already-mapped page.
 
-Cheers,
-Angelo
+Briefly sanity tested with perf:
+  [root@localhost ~]# perf probe -x /usr/bin/bash -a main
+  ...
+  [root@localhost ~]# perf record -e probe_bash:main -aR sleep 10 &
+  [1] 2196
+  [root@localhost ~]# bash
+  [root@localhost ~]# exit
+  exit
+  [root@localhost ~]# bash
+  [root@localhost ~]# exit
+  exit
+  [root@localhost ~]# [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.287 MB perf.data (8 samples) ]
+  ...
+  [root@localhost ~]# perf report --stdio
+  # To display the perf.data header info, please use --header/--header-only optio>
+  #
+  #
+  # Total Lost Samples: 0
+  #
+  # Samples: 8  of event 'probe_bash:main'
+  # Event count (approx.): 8
+  #
+  # Overhead  Command      Shared Object  Symbol  
+  # ........  ...........  .............  ........
+  #
+      75.00%  grepconf.sh  bash           [.] main
+      25.00%  bash         bash           [.] main
+  ...
+
+Are there any uprobe tests / benchmarks that are worth running?
+
+[1] https://lkml.kernel.org/r/ZiK50qob9yl5e0Xz@bender.morinfr.org
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Guillaume Morin <guillaume@morinfr.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>
+
+David Hildenbrand (3):
+  kernel/events/uprobes: pass VMA instead of MM to install_breakpoint()
+  kernel/events/uprobes: pass VMA to set_swbp(), set_orig_insn() and
+    uprobe_write_opcode()
+  kernel/events/uprobes: uprobe_write_opcode() rewrite
+
+ arch/arm/probes/uprobes/core.c |   4 +-
+ include/linux/uprobes.h        |   6 +-
+ kernel/events/uprobes.c        | 387 +++++++++++++++++++--------------
+ 3 files changed, 223 insertions(+), 174 deletions(-)
+
+
+base-commit: 065d3634d60843b8e338d405b844cc7f2e5e1c66
+-- 
+2.45.1
 
 
