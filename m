@@ -1,390 +1,185 @@
-Return-Path: <linux-kernel+bounces-201029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49928FB85D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:03:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA9D8FB87B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6854828679A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:03:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27F66B2A238
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8954E149DEE;
-	Tue,  4 Jun 2024 16:02:01 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C70814A09A;
+	Tue,  4 Jun 2024 15:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sYygzvkv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yPxC7BH8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB4E149C55;
-	Tue,  4 Jun 2024 16:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250111487DF;
+	Tue,  4 Jun 2024 15:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516920; cv=none; b=tHiO5wiwkh1i7P84MbJWTpB1wnpy7SOvWKh++m0M6TwrvGzfJF/LD+fWP5VRNylqRiJQE1A6GCsBvKVahrWVzWa/iCsYyPZPtuGZz2HbPQccSD9Motbm6NcWZmZoHKx7xcSl5Y5A3npR0YoHyIF4Ee0LQ4L/vqNausZVDhI0Qzs=
+	t=1717515893; cv=none; b=shpgB1rfxNOIMmA5LGZCIyyNum5T0vqxSQTLr/DnMLziUCYkqqAPODVrSv+H6rEDS6MZhr0uZ/FnQ8yiPc29X/64eEfAnBC2ZaWBFqtuX/uCOmm0y7DVt4jWG+a/mQVT9kDIVul5ihBXUnxBAbbEGI/okvhXe2prHJwr99wVfIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516920; c=relaxed/simple;
-	bh=SMBSb3Dc2fwROkWUlxe5ulZUXFb6LfXWCv/+EQodzsg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VXWKvRqQ9wq8PY5OoNRdg9DEIDRkC4p1/K3J2OkAfmcQQ3HUhtsUCDeXUJtIHahaIFzI/em7xrusmGEfuGiLrJ5NAVJYmHpofMPJn3znOrMSXdJqqcXesi3/bDhWYBNkEwR1coyhEu+biFMqJ0cJhHn0DPj2ZFWkhXBsk+DR7kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a08091c2bso63310217b3.0;
-        Tue, 04 Jun 2024 09:01:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717516916; x=1718121716;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XIOf757GnuZR9iGqOgRzuj9wVjjOZufKYrP2krAzxUo=;
-        b=oFsQ0r1n5jRZ4Q6BirAA972SV6spu+Cyk3Bs9bdZPlyg+Vt39cYru9j7hpxK9szW/X
-         y8a41EBUHLFBBiUmyHnop9P9OVjt8MS1+2YU0Lce0GW9FlZOEPrxOYw2P50/325w7Txc
-         9xPxtN37pfJLFOPocmCTKEEwZQQ3mMFmJNvA9Dqvyje0vyyZZvPZZM+6JXZnGQY0tWtE
-         fPBrV5R4xekaZL6n2jBEDmogTMQBmZXP9PF3VCEeqHWtr4y9YBdLDel5+seUR41xL3JQ
-         1hnVtM8/Smtq5UqhBnAYA08J/iYT1RCGnDjC5kEZdyrK1K4sMaHInn6GktZ7kyOPHcvI
-         xdrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWaoq7ogx4+0xxeEfrjxZxcwUuGbCB+cWFT1quKdd04Aw7hJXuwsuonRjgoreC7YwGjHYgiwh48govsAvRSgsUjHsACnecaSclWI187hukfsenOsJH5QOkdSs+dUyoeSszZH9JnQyVApXbE8W4C/+ldI5qRNv/UKhcXNyEtR2sr8J5LdEx9riaW2ijfnrVuSiV0WqyPRBy3HQuLTZM7egFcRDvecwsU
-X-Gm-Message-State: AOJu0YzTmG2XPltwL6BWm5IyOrXdLF03ChFxwZ9sQ7KgfWb1qH1rxeQS
-	YCMK7uGyDNf+PLqRHerS+1cv/rVixlnfwMIm0/s8msP4NxQW48e684DWlWtg
-X-Google-Smtp-Source: AGHT+IGMjHqqLU8NcQLUDocL6X+Aagi8Hu1AijdF21DssrTbF3gBcoOSON6V9NZbxlBhbnQmaDRvpQ==
-X-Received: by 2002:a81:4f93:0:b0:627:dfbd:89e with SMTP id 00721157ae682-62c7969b500mr114778237b3.11.1717516915930;
-        Tue, 04 Jun 2024 09:01:55 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766b3259sm18453877b3.109.2024.06.04.09.01.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 09:01:55 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfa682a4025so5261930276.2;
-        Tue, 04 Jun 2024 09:01:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXghGfvVDRq7y497cEE70dfqaXDhL/dOoiMu7V2zR04f9TdTYmFYChBXXSs6IZN2a+/TqWIeiOiUJBd/qUJoKjXzx13rp3NBuZ2HJKoZAas9eGl9rrhtsYYxjI6vmfcLS7AjylX6NGDuqfamNgEymRMjgwEVAlPDGWz+MHQ/3r5FEerC/n6Zv9jRIxB2QHtGdBDexJt5gKwFwFNejNOkP2hEyq2/99T
-X-Received: by 2002:a25:6c89:0:b0:dfa:b412:20ae with SMTP id
- 3f1490d57ef6-dfab41221efmr4047424276.7.1717516915044; Tue, 04 Jun 2024
- 09:01:55 -0700 (PDT)
+	s=arc-20240116; t=1717515893; c=relaxed/simple;
+	bh=YiPmxaRADsJsN55xVT2BOQ/1LOJuKBNEnf9YIUI4CIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kSKSMItjZ/Yp14nVHNDoqwlilVI/P/3tMH6FYbNEcuvCUj35IfBIhOt3MIV/YiLQStr8uO8ONTNU936y4o2q9CqR6zg1Fg25WPvbA60t9O1HcphcMjgwRr/JAE+kJTzAG5gMSn6bWM9C0D3y1hGBzZNMnW3H3hDon28LDrdLMVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sYygzvkv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yPxC7BH8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717515888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4qaNAKLFhAtWg8AIcUa7hYCunt+INJ3A0lAqwiwMQAI=;
+	b=sYygzvkvuXGawfX4CE9FGBWApWn5wFFD0uTbfXPaZBedk8i1PcvZr1y+3zPgStBSlqD7Qh
+	8sgt5976MkMpMeMLgDcnzKJhhi/sTrru6pT11YC1BqyV1kYx1vfl6nbQQt/VEq0kiZYyBM
+	0ONth+PY/r7YyePIImF5zO7NE6sjjsX5xFUnVhSwtynZdr7vVqjwf3SLdsQ0hqV7omT5dM
+	hO8VbFX8uPeMfuopbfDCxuboxhJJjdZb8tlgLQLu93NkuNFy4sZlQkmfNKOUofq/+4DiTY
+	JZskjJmD4FB8lQog/WvargAiMEbu1wfr30AD0LZl6aFgbfHl6Mlq6fTs6ThXrQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717515888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4qaNAKLFhAtWg8AIcUa7hYCunt+INJ3A0lAqwiwMQAI=;
+	b=yPxC7BH8RhnqGb/gqn4/oqBnBn0boo0vJ0Fz+w97f8Qcjq1oSN8Xckq/G6DbN4pTrNNCSi
+	zSqzDarDQUfCsCBQ==
+To: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	David Ahern <dsahern@kernel.org>
+Subject: [PATCH v4 net-next 05/14] net/ipv4: Use nested-BH locking for ipv4_tcp_sk.
+Date: Tue,  4 Jun 2024 17:24:12 +0200
+Message-ID: <20240604154425.878636-6-bigeasy@linutronix.de>
+In-Reply-To: <20240604154425.878636-1-bigeasy@linutronix.de>
+References: <20240604154425.878636-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240524082800.333991-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240524082800.333991-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Jun 2024 18:01:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVPZgxsM1OsFt-+802mzajKR6CO8B9ofFzaThKsBAdGTQ@mail.gmail.com>
-Message-ID: <CAMuHMdVPZgxsM1OsFt-+802mzajKR6CO8B9ofFzaThKsBAdGTQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk: renesas: Add RZ/V2H CPG core wrapper driver
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
+ipv4_tcp_sk is a per-CPU variable and relies on disabled BH for its
+locking. Without per-CPU locking in local_bh_disable() on PREEMPT_RT
+this data structure requires explicit locking.
 
-Thanks for your patch!
+Make a struct with a sock member (original ipv4_tcp_sk) and a
+local_lock_t and use local_lock_nested_bh() for locking. This change
+adds only lockdep coverage and does not alter the functional behaviour
+for !PREEMPT_RT.
 
-On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add CPG core helper wrapper driver for RZ/V2H SoC.
+Cc: David Ahern <dsahern@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/net/sock.h  |  5 +++++
+ net/ipv4/tcp_ipv4.c | 15 +++++++++++----
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
-What is a "core helper wrapper"? ;-)
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 5f4d0629348f3..365bf676023f8 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -544,6 +544,11 @@ struct sock {
+ 	netns_tracker		ns_tracker;
+ };
+=20
++struct sock_bh_locked {
++	struct sock *sock;
++	local_lock_t bh_lock;
++};
++
+ enum sk_pacing {
+ 	SK_PACING_NONE		=3D 0,
+ 	SK_PACING_NEEDED	=3D 1,
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index 8f70b8d1d1e56..34c852a4e202d 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -93,7 +93,9 @@ static int tcp_v4_md5_hash_hdr(char *md5_hash, const stru=
+ct tcp_md5sig_key *key,
+ struct inet_hashinfo tcp_hashinfo;
+ EXPORT_SYMBOL(tcp_hashinfo);
+=20
+-static DEFINE_PER_CPU(struct sock *, ipv4_tcp_sk);
++static DEFINE_PER_CPU(struct sock_bh_locked, ipv4_tcp_sk) =3D {
++	.bh_lock =3D INIT_LOCAL_LOCK(bh_lock),
++};
+=20
+ static u32 tcp_v4_init_seq(const struct sk_buff *skb)
+ {
+@@ -885,7 +887,9 @@ static void tcp_v4_send_reset(const struct sock *sk, st=
+ruct sk_buff *skb,
+ 	arg.tos =3D ip_hdr(skb)->tos;
+ 	arg.uid =3D sock_net_uid(net, sk && sk_fullsock(sk) ? sk : NULL);
+ 	local_bh_disable();
+-	ctl_sk =3D this_cpu_read(ipv4_tcp_sk);
++	local_lock_nested_bh(&ipv4_tcp_sk.bh_lock);
++	ctl_sk =3D this_cpu_read(ipv4_tcp_sk.sock);
++
+ 	sock_net_set(ctl_sk, net);
+ 	if (sk) {
+ 		ctl_sk->sk_mark =3D (sk->sk_state =3D=3D TCP_TIME_WAIT) ?
+@@ -910,6 +914,7 @@ static void tcp_v4_send_reset(const struct sock *sk, st=
+ruct sk_buff *skb,
+ 	sock_net_set(ctl_sk, &init_net);
+ 	__TCP_INC_STATS(net, TCP_MIB_OUTSEGS);
+ 	__TCP_INC_STATS(net, TCP_MIB_OUTRSTS);
++	local_unlock_nested_bh(&ipv4_tcp_sk.bh_lock);
+ 	local_bh_enable();
+=20
+ #ifdef CONFIG_TCP_MD5SIG
+@@ -1005,7 +1010,8 @@ static void tcp_v4_send_ack(const struct sock *sk,
+ 	arg.tos =3D tos;
+ 	arg.uid =3D sock_net_uid(net, sk_fullsock(sk) ? sk : NULL);
+ 	local_bh_disable();
+-	ctl_sk =3D this_cpu_read(ipv4_tcp_sk);
++	local_lock_nested_bh(&ipv4_tcp_sk.bh_lock);
++	ctl_sk =3D this_cpu_read(ipv4_tcp_sk.sock);
+ 	sock_net_set(ctl_sk, net);
+ 	ctl_sk->sk_mark =3D (sk->sk_state =3D=3D TCP_TIME_WAIT) ?
+ 			   inet_twsk(sk)->tw_mark : READ_ONCE(sk->sk_mark);
+@@ -1020,6 +1026,7 @@ static void tcp_v4_send_ack(const struct sock *sk,
+=20
+ 	sock_net_set(ctl_sk, &init_net);
+ 	__TCP_INC_STATS(net, TCP_MIB_OUTSEGS);
++	local_unlock_nested_bh(&ipv4_tcp_sk.bh_lock);
+ 	local_bh_enable();
+ }
+=20
+@@ -3627,7 +3634,7 @@ void __init tcp_v4_init(void)
+=20
+ 		sk->sk_clockid =3D CLOCK_MONOTONIC;
+=20
+-		per_cpu(ipv4_tcp_sk, cpu) =3D sk;
++		per_cpu(ipv4_tcp_sk.sock, cpu) =3D sk;
+ 	}
+ 	if (register_pernet_subsys(&tcp_sk_ops))
+ 		panic("Failed to create the TCP control socket.\n");
+--=20
+2.45.1
 
-Looking at the structure, this looks like a family-specific clock driver?
-Will there be more RZ/V2H-alike SoCs?
-
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/clk/renesas/Kconfig     |   5 +
->  drivers/clk/renesas/Makefile    |   1 +
->  drivers/clk/renesas/rzv2h-cpg.c | 673 ++++++++++++++++++++++++++++++++
->  drivers/clk/renesas/rzv2h-cpg.h | 149 +++++++
->  4 files changed, 828 insertions(+)
->  create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
->  create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
->
-> diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-> index d252150402e8..254203c2cb2e 100644
-> --- a/drivers/clk/renesas/Kconfig
-> +++ b/drivers/clk/renesas/Kconfig
-> @@ -40,6 +40,7 @@ config CLK_RENESAS
->         select CLK_R9A07G054 if ARCH_R9A07G054
->         select CLK_R9A08G045 if ARCH_R9A08G045
->         select CLK_R9A09G011 if ARCH_R9A09G011
-> +       select CLK_R9A09G057 if ARCH_R9A09G057
->         select CLK_SH73A0 if ARCH_SH73A0
->
->  if CLK_RENESAS
-> @@ -193,6 +194,10 @@ config CLK_R9A09G011
->         bool "RZ/V2M clock support" if COMPILE_TEST
->         select CLK_RZG2L
->
-> +config CLK_R9A09G057
-> +       bool "Renesas RZ/V2H(P) clock support" if COMPILE_TEST
-
-Please drop "Renesas "
-(few other symbols have it, I'll fix the remaining).
-
-> +       select RESET_CONTROLLER
-> +
->  config CLK_SH73A0
->         bool "SH-Mobile AG5 clock support" if COMPILE_TEST
->         select CLK_RENESAS_CPG_MSTP
-> diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-> index f7e18679c3b8..79cc7c4d77c6 100644
-> --- a/drivers/clk/renesas/Makefile
-> +++ b/drivers/clk/renesas/Makefile
-> @@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_R9A07G044)           +=3D r9a07g044-cp=
-g.o
->  obj-$(CONFIG_CLK_R9A07G054)            +=3D r9a07g044-cpg.o
->  obj-$(CONFIG_CLK_R9A08G045)            +=3D r9a08g045-cpg.o
->  obj-$(CONFIG_CLK_R9A09G011)            +=3D r9a09g011-cpg.o
-> +obj-$(CONFIG_CLK_R9A09G057)            +=3D rzv2h-cpg.o
-
-If this is a family-specific clock driver, please use a separate Kconfig
-symbol, like other families do, and move it ...
-
->  obj-$(CONFIG_CLK_SH73A0)               +=3D clk-sh73a0.o
->
->  # Family
-
-... here.
-
-> --- /dev/null
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-
-> +/**
-> + * struct rzv2h_cpg_priv - Clock Pulse Generator Private Data
-> + *
-> + * @rcdev: Reset controller entity
-> + * @dev: CPG device
-> + * @base: CPG register block base address
-> + * @rmw_lock: protects register accesses
-> + * @clks: Array containing all Core and Module Clocks
-> + * @num_core_clks: Number of Core Clocks in clks[]
-> + * @num_mod_clks: Number of Module Clocks in clks[]
-> + * @num_resets: Number of Module Resets in info->resets[]
-> + * @info: Pointer to platform data
-> + */
-> +struct rzv2h_cpg_priv {
-> +       struct reset_controller_dev rcdev;
-> +       struct device *dev;
-> +       void __iomem *base;
-> +       spinlock_t rmw_lock;
-
-Unused
-
-> +
-> +       struct clk **clks;
-> +       unsigned int num_core_clks;
-> +       unsigned int num_mod_clks;
-> +       unsigned int num_resets;
-> +
-> +       const struct rzv2h_cpg_info *info;
-> +};
-
-> +static struct clk
-> +*rzv2h_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
-> +                              void *data)
-> +{
-> +       unsigned int clkidx =3D clkspec->args[1];
-> +       struct rzv2h_cpg_priv *priv =3D data;
-> +       struct device *dev =3D priv->dev;
-> +       const char *type;
-> +       struct clk *clk;
-> +
-> +       switch (clkspec->args[0]) {
-> +       case CPG_CORE:
-> +               type =3D "core";
-> +               clk =3D priv->clks[clkidx];
-
-No range checking?
-
-> +               break;
-> +
-> +       case CPG_MOD:
-> +               type =3D "module";
-> +               if (clkidx >=3D priv->num_mod_clks) {
-> +                       dev_err(dev, "Invalid %s clock index %u\n", type,
-> +                               clkidx);
-> +                       return ERR_PTR(-EINVAL);
-> +               }
-> +               clk =3D priv->clks[priv->num_core_clks + clkidx];
-> +               break;
-> +
-> +       default:
-> +               dev_err(dev, "Invalid CPG clock type %u\n", clkspec->args=
-[0]);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       if (IS_ERR(clk))
-> +               dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
-> +                       PTR_ERR(clk));
-> +       else
-> +               dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-> +                       clkspec->args[0], clkspec->args[1], clk,
-> +                       clk_get_rate(clk));
-> +       return clk;
-> +}
-
-> +static void __init
-> +rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
-> +                          const struct rzv2h_cpg_info *info,
-> +                          struct rzv2h_cpg_priv *priv)
-> +{
-> +       struct mstp_clock *clock =3D NULL;
-> +       struct device *dev =3D priv->dev;
-> +       unsigned int id =3D mod->id;
-> +       struct clk_init_data init;
-> +       struct clk *parent, *clk;
-> +       const char *parent_name;
-> +       unsigned int i;
-> +
-> +       WARN_DEBUG(id < priv->num_core_clks);
-> +       WARN_DEBUG(id >=3D priv->num_core_clks + priv->num_mod_clks);
-> +       WARN_DEBUG(mod->parent >=3D priv->num_core_clks + priv->num_mod_c=
-lks);
-> +       WARN_DEBUG(PTR_ERR(priv->clks[id]) !=3D -ENOENT);
-> +
-> +       if (!mod->name) {
-> +               /* Skip NULLified clock */
-> +               return;
-> +       }
-
-Do you have NULLified clocks?
-
-
-> new file mode 100644
-> index 000000000000..689c123d01c5
-> --- /dev/null
-> +++ b/drivers/clk/renesas/rzv2h-cpg.h
-
-> +/**
-> + * struct rzv2h_mod_clk - Module Clocks definitions
-> + *
-> + * @name: handle between common and hardware-specific interfaces
-> + * @id: clock index in array containing all Core and Module Clocks
-> + * @parent: id of parent clock
-> + * @off: register offset
-
-control register offset
-
-> + * @bit: ON/MON bit
-
-> + * @monoff: monitor register offset
-> + * @monbit: monitor bit
-> + */
-> +struct rzv2h_mod_clk {
-> +       const char *name;
-> +       unsigned int id;
-> +       unsigned int parent;
-> +       u16 off;
-> +       u8 bit;
-
-Perhaps name them ctrl{off,bit}?
-
-However, as all CPG_CLKONn registers are contiguous, storing
-the register index (u8) might be better than the register offset (u16)?
-
-> +       u16 monoff;
-> +       u8 monbit;
-
-Likewise for the CPG_CLKMONx registers...
-
-> +};
-> +
-> +#define DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _monoff, _monbit) =
-       \
-> +       { \
-> +               .name =3D _name, \
-> +               .id =3D MOD_CLK_BASE + (_id), \
-> +               .parent =3D (_parent), \
-> +               .off =3D (_off), \
-> +               .bit =3D (_bit), \
-> +               .monoff =3D (_monoff), \
-> +               .monbit =3D (_monbit), \
-> +       }
-> +
-> +#define DEF_MOD(_name, _id, _parent, _off, _bit, _monoff, _monbit)     \
-> +       DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _monoff, _monbit)
-> +
-> +/**
-> + * struct rzv2h_reset - Reset definitions
-> + *
-> + * @off: reset register offset
-> + * @bit: reset bit
-> + * @monoff: monitor register offset
-> + * @monbit: monitor bit
-> + */
-> +struct rzv2h_reset {
-> +       u16 resoff;
-> +       u8 resbit;
-> +       u16 monoff;
-> +       u8 monbit;
-
-... and the CPG_RSTx and CPG_RSTMONx registers.
-
-
-> +};
-> +
-> +#define DEF_RST(_id, _resoff, _resbit, _monoff, _monbit)       \
-> +       [_id] =3D { \
-> +               .resoff =3D (_resoff), \
-> +               .resbit =3D (_resbit), \
-> +               .monoff =3D (_monoff), \
-> +               .monbit =3D (_monbit) \
-> +       }
-> +
-> +/**
-> + * struct rzv2h_cpg_info - SoC-specific CPG Description
-> + *
-> + * @core_clks: Array of Core Clock definitions
-> + * @num_core_clks: Number of entries in core_clks[]
-> + * @num_total_core_clks: Total number of Core Clocks (exported + interna=
-l)
-> + *
-> + * @mod_clks: Array of Module Clock definitions
-> + * @num_mod_clks: Number of entries in mod_clks[]
-> + * @num_hw_mod_clks: Number of Module Clocks supported by the hardware
-> + *
-> + * @resets: Array of Module Reset definitions
-> + * @num_resets: Number of entries in resets[]
-> + *
-> + * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
-> + *                 should not be disabled without a knowledgeable driver
-> + * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
-> + * @pll_get_clk1_offset: Function pointer to get PLL CLK1 offset
-> + * @pll_get_clk2_offset: Function pointer to get PLL CLK2 offset
-> + */
-> +struct rzv2h_cpg_info {
-
-> +       /* function pointers for PLL information */
-> +       int (*pll_get_clk1_offset)(int clk);
-> +       int (*pll_get_clk2_offset)(int clk);
-
-Why are these function pointers?
-
-> +};
-> +
-> +#endif /* __RENESAS_RZV2H_CPG_H__ */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
