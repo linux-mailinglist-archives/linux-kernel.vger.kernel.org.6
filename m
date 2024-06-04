@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-200802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BF78FB518
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6C48FB53A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5627B2549B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:21:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1609EB22684
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCB612D214;
-	Tue,  4 Jun 2024 14:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A85712C54A;
+	Tue,  4 Jun 2024 14:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pHlLmqBa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IJ39MTu8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67B754903;
-	Tue,  4 Jun 2024 14:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C83F1B809;
+	Tue,  4 Jun 2024 14:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717510856; cv=none; b=s0lAVfUDI5JGeE5TNQNRziHWw3L+WDl6HueJYYYLYFDgT8yyDvtEjHBAwLVRTf/y3ExoiGz6/4HS7na4sCUzcZUR23BqLJjv/R9IbqbewNOOywerxlUQMbVqU0ZYeoB4XbX5fBrx7jE5rg9tbzizqIdtmpgH6O7Ps4qsUaxUuoU=
+	t=1717510912; cv=none; b=loP4Bj2yc4LCT+jkZmpf/Ijdce3ory8DAGZW1vG/RvsldQODRWL2oC576JEO7E6EBZyY3u5GnMn9Sqw0Pw6ZBNp9PEFpNRaoEJHvkInnRXpDgbbSPybUVIdtq+fj//REkvAPn3ZyBxjWNhBJG0P9jAnvy48YuA3jy8C5FteLVqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717510856; c=relaxed/simple;
-	bh=bIOHR/btpct5Q2UC4EFEu5+yUn5Es6SR84QLRAuu0nc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jjtxjtJjnQBHpO7zB75IRCXzCjiVKF73LbudnIthIfdND1Tps0evrYKyHlZm+TZHwI2WM59ULmaZkGqMpxWsX1TkpmvJ65Id4onFbcksfYv0aj0oVZDSTmiJXWsQuhAoSePi7E1dR4vInPiCISSAtW+xyctjuQdm6JTdAhUf6p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pHlLmqBa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454D90Lo031534;
-	Tue, 4 Jun 2024 14:20:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=vrAfWtgxQuLdUkSCcMaxbA
-	DDZKLTIx/U9+nlzEtGl1s=; b=pHlLmqBae1Vp/nQNV+RjCBi2CzXQr3PSphvQnj
-	XqIur6rS2Skp3UN/i/H4+c6P3Pqq5+YeC7kQLeWHyKHLz6od5SgRuWzUxLqqrqnT
-	AbDwwuLSG/dEc/B4Ybb5Q79OamuwXKCswFuZXZAWxDWHGgcgbb8EsUFdyCJ20L/P
-	WQtjnd67ewi8vWCfwDNhgTVKdcfE02Gr1asRvEq/tiX4y9H+oPhrSVlN/+XfoZLa
-	mLV+MrPHnfr5S1R6B54tOCxehRGnDSd0Lf/6MT/Rt1wE8gblcl9LushtrTg1/kp5
-	f+sdvONonuHfl+oDGiAbAPwKCNye+rvmA9NkJd9ZeEFUQhYQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4beykj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 14:20:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454EKnRN032104
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 14:20:49 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 07:20:48 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 4 Jun 2024 07:20:47 -0700
-Subject: [PATCH] HID: letsketch: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1717510912; c=relaxed/simple;
+	bh=eRJpt9PCLXP0/RSE6C8YUTUohYxAi/Axl+foQTY055s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=X+hLVDFXqzbjirIMbXENM5mY9YQgnqn92oBNoVldg8aYAweG/kpwTARkmXhHSBGrr0DOpgT61bL5k2I2/9aGq3gvPxjxEFdbKPiL6PO/BZfXoeFtccE/eYsP+bo3uas2V9uqL0ZkGzW/+eyS7HG+HxnE7dlWDpRLrLVnRER8e0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IJ39MTu8; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717510911; x=1749046911;
+  h=date:from:to:cc:subject:message-id:reply-to:mime-version;
+  bh=eRJpt9PCLXP0/RSE6C8YUTUohYxAi/Axl+foQTY055s=;
+  b=IJ39MTu8tykVSoLpxGTOguX5KBH0SDIIc3a6AFoSZ2zQx2FZw0haizix
+   csabr1hsmV1irDSi7Hu3acSL6tKTXtst0PMSsySRKFKYu+467kAnoBcWK
+   2zBFogDK4A/SywN7bpDV3r1EZ5kE/JtPnvUViC9SOPee8dBt4yDf9oFbb
+   xxS56R8VfvAt/XaDKumJQTqTwtCFdoS2Yp3fxrFKyY9lKCk8+HS5dzHxK
+   +ensY2ExX+X/wzG4frOqZ35W1LrPvSXsMV7Qu9IpmJZFdw4c7zj5CWFvU
+   EjpfYJjFK2epOaDSvZcKe9bmyHO/aszu9/NyYCoDHyb5nImM5HlvJuvLB
+   A==;
+X-CSE-ConnectionGUID: ebKYIfEjSmaTl0HkhNo4Jw==
+X-CSE-MsgGUID: ZOwcBaO2SRux5dqadQRfQQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13902479"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="13902479"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 07:21:50 -0700
+X-CSE-ConnectionGUID: EGfyRFPBTyudj+eM5T2AnQ==
+X-CSE-MsgGUID: gsf4b1s6QN+uivwMzhV3Cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="42215280"
+Received: from ideak-desk.fi.intel.com ([10.237.72.78])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 07:21:45 -0700
+Date: Tue, 4 Jun 2024 17:21:51 +0300
+From: Imre Deak <imre.deak@intel.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, Gal Pressman <gal@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	RDMA mailing list <linux-rdma@vger.kernel.org>,
+	Hillf Danton <hdanton@sina.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
+ worning
+Message-ID: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+Reply-To: imre.deak@intel.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240604-md-hid-letsketch-v1-1-ff38ae7b4cb0@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAL4iX2YC/x3MwQ6CMAyA4VchPdtkTsToqxgPZSuuEaZppyEhv
- DvD43f4/wWMVdjg1iyg/BOTd644HhoIifKTUWI1eOdb17kWp4hJIo5c7MUlJDyfvOvIDUSXK9T
- sozzI/F/eH9U9GWOvlEPaR6Pk74wTWWGFdd0A0lmm8oEAAAA=
-To: Hans de Goede <hdegoede@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <bentiss@kernel.org>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: lhu3zGEf2zxiu32zFXEf1vwXzScnxSYl
-X-Proofpoint-GUID: lhu3zGEf2zxiu32zFXEf1vwXzScnxSYl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_05,2024-06-04_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- phishscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- bulkscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406040114
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-letsketch.o
+Hi,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+I see a similar issue, a corruption in the lock_keys_hash while
+alloc_workqueue()->lockdep_register_key() iterates it, see [1] for the
+stacktrace.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/hid/hid-letsketch.c | 1 +
- 1 file changed, 1 insertion(+)
+Not sure if related or even will solve [1], but [2] will revert
 
-diff --git a/drivers/hid/hid-letsketch.c b/drivers/hid/hid-letsketch.c
-index 97f047f18136..229820fda960 100644
---- a/drivers/hid/hid-letsketch.c
-+++ b/drivers/hid/hid-letsketch.c
-@@ -319,4 +319,5 @@ static struct hid_driver letsketch_driver = {
- module_hid_driver(letsketch_driver);
- 
- MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-+MODULE_DESCRIPTION("Driver for the LetSketch / VSON WP9620N drawing tablet");
- MODULE_LICENSE("GPL");
+commit 7e89efc6e9e4 ("PCI: Lock upstream bridge for pci_reset_function()")
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240604-md-hid-letsketch-53206a0faa79
+which does
 
+lockdep_register_key(&dev->cfg_access_key);
+
+in pci_device_add() and doesn't unregister the key when the pci device is
+removed (and potentially freed); so basically 7e89efc6e9e4 was missing a
+
+lockdep_unregister_key();
+
+in pci_destroy_dev().
+
+Based on the above I wonder if 7e89efc6e9e4 could also lead to the
+corruption of lock_keys_hash after a pci device is removed.
+
+--Imre
+
+[1] https://intel-gfx-ci.01.org/tree/drm-tip/IGT_7875/bat-atsm-1/dmesg0.txt
+[2] https://lore.kernel.org/all/171711746402.1628941.14575335981264103013.stgit@dwillia2-xfh.jf.intel.com/
 
