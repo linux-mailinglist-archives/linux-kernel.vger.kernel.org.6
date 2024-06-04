@@ -1,107 +1,99 @@
-Return-Path: <linux-kernel+bounces-201265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CAB8FBC05
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:02:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498B28FBC09
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03AD81C23E24
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:02:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C047EB26361
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5918414A63C;
-	Tue,  4 Jun 2024 19:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B12714B06B;
+	Tue,  4 Jun 2024 19:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrTiIcOC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hb0BpmH5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BwP54sH+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EFB1482E7;
-	Tue,  4 Jun 2024 19:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B2D14A61E;
+	Tue,  4 Jun 2024 19:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717527735; cv=none; b=RVGix98LnrgOfr4us5Q/VhN2zIwv5VNrrodxQLI8INWrMYyLbW5E4ojbuiZB+a1108FrcG492HC6zbnOf+gv/J+N8mJGlPeCL4Ps3F5M2Z1m+xKiztD0UhvuAP/vY5V68HpFxhFue1PHkyC7tS7CblKmBKUe2SbdGNXxmuNWDxg=
+	t=1717527746; cv=none; b=qFeKWpj+Z8ppvVqdS8G10oH3Vuepnn+TNoFRjGZs6Ko/rjzIVU29GAZjvZ5ynST57SkTU3s1TAO8C6fPIcR7umFc7RGSRRcpRT7t4evcy1TX0SpP4rC4hvzCiIYf+N5OPQQSvm6zwqSzS01e6j7BaYRVkfVdxRh3smZ/Xf0Gx78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717527735; c=relaxed/simple;
-	bh=RkN5Y3HmGlKLDqvR91ATdvyLyqquL2+fSb4Vj+4qCXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=McWI99pYjd1UsuEDwouSuNjqHmLiwr3pZdjYeb6ngVVDqQC3BnMe1SOnjQpJELQkno7bK/auUgaM8aAvRwjAvVdzzG9ZvEFPllXgdY7EbvJx9S2iwbE2HdJ681A0BwZfBvKRCYG3Dwsu6sS9KcxBhpeKq4rLacV8bmbeZNHVHTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrTiIcOC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90958C2BBFC;
-	Tue,  4 Jun 2024 19:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717527735;
-	bh=RkN5Y3HmGlKLDqvR91ATdvyLyqquL2+fSb4Vj+4qCXg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JrTiIcOCw5JPVRMul/mUQjyu+td7oOtApNUepXHrPNp47lp8/lbdZHAwUOj1JamyH
-	 IG+rhfcbtIb5Jn/I7SQEBvUbcs1WhAORSiQ9FqiANc0cbnNKy2AvXwl3QELlb39ute
-	 Qswr2DlBIct3ErRXEPtYM7cEKC/R0bbogwbPNPDfyRBCkgwo5lN6v+YHD8KV9K0B0Y
-	 GYmtX0mGXSrJDsOZgRnbJiALdfQQKRo8miov9b7X8BbrTd8Qy26Q92HfIJCzVJjLoT
-	 ivCBjOZDmAEQa/w5baIJkwwl6WbpgZJ0rZlmYurSNl7mCX9kcMaCVjs+WQLpcaZeVb
-	 zTQUbnXDScCaw==
-Date: Tue, 4 Jun 2024 16:02:08 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Milian Wolff <milian.wolff@kdab.com>, linux-perf-users@vger.kernel.org,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kenel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: perf 6.9-1 (archlinux) crashes during recording of cycles +
- raw_syscalls
-Message-ID: <Zl9ksOlHJHnKM70p@x1>
-References: <23879991.0LEYPuXRzz@milian-workstation>
- <Zl8bhWfHSXxs35r2@x1>
- <Zl8g1LxRCYgTSxhy@x1>
- <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
+	s=arc-20240116; t=1717527746; c=relaxed/simple;
+	bh=uMSkJk+dg2LQhDExTLD4gnvTBLV3WzNCYPdVHfzYj30=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GeiLamy02+FlCpsXMK/hvKoPGQRLH0WwWgr603jlHQ5l00YRk/HvBxnN21TYMZZ2JIth4vMtvBzfhsZRJLWCNKoFHkiqki1fyJ3Hf2NqWvTb6xk/x4t8QliphUmPgVajIZV8rH45XX/k26BYwafMapU9gr2qK96sPAp3YLh8lMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hb0BpmH5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BwP54sH+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717527742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pl9qr7709UaFfhmIja99nnTUkZ499nGLto2FNA0uIZM=;
+	b=hb0BpmH5b+ZVhpGp4TCKwC5yHotiztytRSO9V3WGSPbH1IZz6BUNqnb6N6SePJ2p6DQzTX
+	3Dy9aqAMjrAk9uCOMVK9h22D9c31na8bTAf8liWiwaeuv0EYU3JaRncaN7mR68w79pVRjw
+	AXvs2XUTvEoz2s00117MAGBslsnt/oB9dZMHQuCmyW9FAMsd5mRI9GKmiqdHrMcKo3+H/g
+	J/GoUnc2RP6ALi7EbT40ZD3seQXI4WaYogYhuqmBTNE4bOwiFReAZJ9qa4jONEnlCsjJ+P
+	ssyWqesiO15U2rYyZcF3WKp0Yvhv+Py6jwZBEwz85/n7Bws4qV+qNQrUnEDjBA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717527742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pl9qr7709UaFfhmIja99nnTUkZ499nGLto2FNA0uIZM=;
+	b=BwP54sH+bWPx8hCny5NetHZnXQZU/QaHTApPp9/H5JcQbMvk7BrA4oJ7b3VxrvyeqOxXaa
+	bxGw/FNs+kzBtUBw==
+To: Herve Codina <herve.codina@bootlin.com>, Simon Horman
+ <horms@kernel.org>, Sai Krishna Gajula <saikrishnag@marvell.com>, Herve
+ Codina <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Lee Jones <lee@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Lars
+ Povlsen <lars.povlsen@microchip.com>, Steen Hegelund
+ <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 09/19] irqdomain: Add missing parameter descriptions
+ in docs
+In-Reply-To: <20240527161450.326615-10-herve.codina@bootlin.com>
+References: <20240527161450.326615-1-herve.codina@bootlin.com>
+ <20240527161450.326615-10-herve.codina@bootlin.com>
+Date: Tue, 04 Jun 2024 21:02:22 +0200
+Message-ID: <87a5k05y69.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
+Content-Type: text/plain
 
-On Tue, Jun 04, 2024 at 11:48:09AM -0700, Ian Rogers wrote:
-> On Tue, Jun 4, 2024 at 7:12 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > Can you please try with the attached and perhaps provide your Tested-by?
+On Mon, May 27 2024 at 18:14, Herve Codina wrote:
+> During compilation, several warning of the following form were raised:
+>   Function parameter or struct member 'x' not described in 'yyy'
+>
+> Add the missing function parameter descriptions.
 
-> > From ab355e2c6b4cf641a9fff7af38059cf69ac712d5 Mon Sep 17 00:00:00 2001
-> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Date: Tue, 4 Jun 2024 11:00:22 -0300
-> > Subject: [PATCH 1/1] Revert "perf record: Reduce memory for recording
-> >  PERF_RECORD_LOST_SAMPLES event"
-
-> > This reverts commit 7d1405c71df21f6c394b8a885aa8a133f749fa22.
- 
-> I think we should try to fight back reverts when possible. Reverts are
-> removing something somebody poured time and attention into. When a
-
-While in the development phase, yeah, but when we find a regression and
-the revert makes it go away, that is the way to go.
-
-The person who poured time on the development gets notified and can
-decide if/when to try again.
-
-Millian had to pour time to figure out why something stopped working,
-was kind enough to provide the output from multiple tools to help in
-fixing the problem and I had to do the bisect to figure out when the
-problem happened and to check if reverting it we would have the tool
-working again.
-
-If we try to fix this for v6.10 we may end up adding yet another bug, so
-the safe thing to do at this point is to do the revert.
-
-We can try improving this once again for v6.11.
-
-> regression has occurred then I think we should add the regression case
-> as a test.
-
-Sure, I thought about that as well, will try and have one shell test
-with that, referring to this case, for v6.11.
-
-- Arnaldo
+Sigh. Why is such a cleanup burried in the middle of patch series which
+tries to add a network driver?
 
