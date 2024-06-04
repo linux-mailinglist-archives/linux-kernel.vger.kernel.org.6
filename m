@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-201475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D523E8FBEE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:27:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311578FBEE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A6DAB25483
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6331F1C24D39
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720E714D2BE;
-	Tue,  4 Jun 2024 22:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E86F14EC54;
+	Tue,  4 Jun 2024 22:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9JSUeq9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNP9oZK0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACDC14C5AA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B828014B09F;
 	Tue,  4 Jun 2024 22:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717540014; cv=none; b=SIaUXBEBghiO62S+nhqkoVVKcVxt7g2wjB8IYyJZsDco9/Qufx7yTe+vNCAA0C46vQ3rM6nvHlVdQakZnaH1KpWpMgBb4s+USnF8l3U9f7+jPDJI9qy9xZG2y8ZAMEe2V8Ek5EMGh3+Q/Ef3u8FXoeXW859hXwXjBdWXPcFFtgk=
+	t=1717540014; cv=none; b=mqTaxE8FeBDYL1yulrMNwEkRI/J12gw0BGrzHsFWVPOML+6P4FB1nMCorQYjWZN/hbozezG16P49BXq5cswD6/aj9jcE8Txh5URHMR2gqGcYTZUCMCNadAUVVp+9d0UaIUaE3k4e3fAcrT5QdISC0G0K/1uh6blX/eltEA1sIZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717540014; c=relaxed/simple;
-	bh=d/J2eAs8W8ieRKshFNI5ALv15WcIcn5ewASod+OGMGA=;
+	bh=EJa2/B/2JEA6GDpzIc1X8nYf8o99b9S13mmhOSyFJjQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TtXcpDQUcmC4VZvCYJog7jqYxZAyipOUbmT3ubvHyG/hkPPxLmM8klMma6QblUVcOCBATloJad2413RZi2BPvfrnvvEVCgyvYhI30ijNU80r7kRjK4A43EQ71Q6SK0KW4iFSBbeuroCp1PvgtN33/ZbuwkEQR2unEkamLoJZgbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9JSUeq9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6781CC4AF0C;
+	 MIME-Version; b=IZ+C4DT8jm9/uyyni0IaclAzlu6r4P/2gjhEeaaohDZQ1ROZCmKJQLWl4XtO24COuCsZkc07M87B9rBoaZ7sNH6lnMt2QSftC055b2COHH6ifOOUe09AKAlNj/LfvO+DiEVHLA7ozryefBsLp/7+fF6r2INx5nBgoJJtNLTYD3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNP9oZK0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94CAFC4AF11;
 	Tue,  4 Jun 2024 22:26:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1717540014;
-	bh=d/J2eAs8W8ieRKshFNI5ALv15WcIcn5ewASod+OGMGA=;
+	bh=EJa2/B/2JEA6GDpzIc1X8nYf8o99b9S13mmhOSyFJjQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f9JSUeq9wRJSr8RmfHHb9fWhqMY2YPWhkA8E/eH1+KJVOHnbxiPj1Ek6WIk0V5cpR
-	 WNLWhbSEGI4wWoxUeRpeP3/vemriELGexloi1rnC0VFq/IgMxf9BJb8dskLbjBQBaS
-	 sitqP6m3kH2MDNL2OE4XaL7wJSUPbovbWFjYhzi205elMvZBnqVgZZ8j0zA4jdr8s2
-	 FrZdteoodqUbbQYyJcDGwBBUAdYv9nRPLoSf0Ke0VSA1V1PoLgMaStW7YVmpG1Piiz
-	 mcMU3cB8SOQf/0NbOGp0cr3hrFSkUGPkjCotD4z5Hde7nuJne0RqwDbpW5b6LQdUqG
-	 vJel83o6uMfuw==
+	b=WNP9oZK04DbR4/EDzSV05mXsdh1GSeulV1RssYxdMCv9AvT/L+hDvS71a8+nWwi/S
+	 yXKf9kwMM0CeLDPh5c1QbTH8Og14ds02FRyeRWMBvyw6zGfWAeRzykf4GvH1fxvZyY
+	 6DGyzmqtITU3Y7Ctpn8cVHvyJVJyt8bcVomaW/azeDS3qTMGtG1USQWAsIVREd2aOC
+	 msNRKXeStwciMR8rUy58BB2wfnY7zGlZZAx6Z92DFG1OiXIXtQkZ4Haz1Ipdjq2ool
+	 rzIzSxUuA2EdBL3+kR21nLvIqcz5q+PfLLv62AzeUkd4LXo3eSZJyfDGpqqBDuBO0B
+	 HJn9QzTSzSjwg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 01FC7CE3F2C; Tue,  4 Jun 2024 15:26:54 -0700 (PDT)
+	id 0487ECE3F30; Tue,  4 Jun 2024 15:26:54 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	rostedt@goodmis.org,
 	Frederic Weisbecker <frederic@kernel.org>,
 	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 5/6] rcu: Remove full memory barrier on RCU stall printout
-Date: Tue,  4 Jun 2024 15:26:51 -0700
-Message-Id: <20240604222652.2370998-5-paulmck@kernel.org>
+Subject: [PATCH rcu 6/6] rcu/exp: Remove redundant full memory barrier at the end of GP
+Date: Tue,  4 Jun 2024 15:26:52 -0700
+Message-Id: <20240604222652.2370998-6-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
 References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
@@ -65,64 +65,52 @@ Content-Transfer-Encoding: 8bit
 
 From: Frederic Weisbecker <frederic@kernel.org>
 
-RCU stall printout fetches the EQS state of a CPU with a preceding full
-memory barrier. However there is nothing to order this read against at
-this debugging stage. It is inherently racy when performed remotely.
+A full memory barrier is necessary at the end of the expedited grace
+period to order:
 
-Do a plain read instead.
+1) The grace period completion (pictured by the GP sequence
+   number) with all preceding accesses. This pairs with rcu_seq_end()
+   performed by the concurrent kworker.
 
-This was the last user of rcu_dynticks_snap().
+2) The grace period completion and subsequent post-GP update side
+   accesses. Pairs again against rcu_seq_end().
+
+This full barrier is already provided by the final sync_exp_work_done()
+test, making the subsequent explicit one redundant. Remove it and
+improve comments.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/tree.c       | 10 ----------
- kernel/rcu/tree_stall.h |  4 ++--
- 2 files changed, 2 insertions(+), 12 deletions(-)
+ kernel/rcu/tree_exp.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 9fa6d2b557d6c..db9ca6c0c9b30 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -295,16 +295,6 @@ static void rcu_dynticks_eqs_online(void)
- 	ct_state_inc(RCU_DYNTICKS_IDX);
- }
- 
--/*
-- * Snapshot the ->dynticks counter with full ordering so as to allow
-- * stable comparison of this counter with past and future snapshots.
-- */
--static int rcu_dynticks_snap(int cpu)
--{
--	smp_mb();  // Fundamental RCU ordering guarantee.
--	return ct_dynticks_cpu_acquire(cpu);
--}
--
- /*
-  * Return true if the snapshot returned from rcu_dynticks_snap()
-  * indicates that RCU is in an extended quiescent state.
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index 460efecd077be..4b0e9d7c4c68e 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -501,7 +501,7 @@ static void print_cpu_stall_info(int cpu)
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index bec24ea6777e8..721cb93b1fece 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -265,7 +265,12 @@ static bool sync_exp_work_done(unsigned long s)
+ {
+ 	if (rcu_exp_gp_seq_done(s)) {
+ 		trace_rcu_exp_grace_period(rcu_state.name, s, TPS("done"));
+-		smp_mb(); /* Ensure test happens before caller kfree(). */
++		/*
++		 * Order GP completion with preceding accesses. Order also GP
++		 * completion with post GP update side accesses. Pairs with
++		 * rcu_seq_end().
++		 */
++		smp_mb();
+ 		return true;
  	}
- 	delta = rcu_seq_ctr(rdp->mynode->gp_seq - rdp->rcu_iw_gp_seq);
- 	falsepositive = rcu_is_gp_kthread_starving(NULL) &&
--			rcu_dynticks_in_eqs(rcu_dynticks_snap(cpu));
-+			rcu_dynticks_in_eqs(ct_dynticks_cpu(cpu));
- 	rcuc_starved = rcu_is_rcuc_kthread_starving(rdp, &j);
- 	if (rcuc_starved)
- 		// Print signed value, as negative values indicate a probable bug.
-@@ -515,7 +515,7 @@ static void print_cpu_stall_info(int cpu)
- 			rdp->rcu_iw_pending ? (int)min(delta, 9UL) + '0' :
- 				"!."[!delta],
- 	       ticks_value, ticks_title,
--	       rcu_dynticks_snap(cpu) & 0xffff,
-+	       ct_dynticks_cpu(cpu) & 0xffff,
- 	       ct_dynticks_nesting_cpu(cpu), ct_dynticks_nmi_nesting_cpu(cpu),
- 	       rdp->softirq_snap, kstat_softirqs_cpu(RCU_SOFTIRQ, cpu),
- 	       data_race(rcu_state.n_force_qs) - rcu_state.n_force_qs_gpstart,
+ 	return false;
+@@ -959,7 +964,6 @@ void synchronize_rcu_expedited(void)
+ 	rnp = rcu_get_root();
+ 	wait_event(rnp->exp_wq[rcu_seq_ctr(s) & 0x3],
+ 		   sync_exp_work_done(s));
+-	smp_mb(); /* Work actions happen before return. */
+ 
+ 	/* Let the next expedited grace period start. */
+ 	mutex_unlock(&rcu_state.exp_mutex);
 -- 
 2.40.1
 
