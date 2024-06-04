@@ -1,151 +1,135 @@
-Return-Path: <linux-kernel+bounces-201356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A875F8FBD79
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:42:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC48FBD7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F2E282F67
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:42:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2378F282D9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E89214B974;
-	Tue,  4 Jun 2024 20:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F5814B960;
+	Tue,  4 Jun 2024 20:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="N61vra7C";
-	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="r4JvKN3M"
-Received: from mailrelay1-1.pub.mailoutpod3-cph3.one.com (mailrelay1-1.pub.mailoutpod3-cph3.one.com [46.30.211.240])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYUkD4Us"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EEB1350FD
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 20:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755E717C96;
+	Tue,  4 Jun 2024 20:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717533744; cv=none; b=lHxOH/1RsFivC/DS57Vlg8xefso7DuMaSV/MFgIFbjFnID96vllBUL5zXeyan38zGDXRjiLWYahr8Z5cWcCJI4+oOjB8/JRzZbOM9pdPS9/VXUCvRmHLB37aOMsLDF62ca/tKFTMGps/pdamrbpyLEHvl3M5pUw+WGjToN8PlkE=
+	t=1717533757; cv=none; b=n/ebQ5E5Mau9bzSfr3esnRfro+PWm9JBB9QltVHY03M2cVF4cSh8FX9cU3Rnz16hhfQx1oj84bxi8qZz8h9SxwGhdHtYLKLNRZ//kp1xxj5nhNVI88+/L4szJ13gJql+oUkgJECfWVcrmmaB3cXvhbN2hlnuCTQ4chN115JOzwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717533744; c=relaxed/simple;
-	bh=1dWSYg0dVf/rqsLrOmw8N6/UvJ03wpNFLYhrom2Lml0=;
+	s=arc-20240116; t=1717533757; c=relaxed/simple;
+	bh=uQLOOzbWqSKTADuADTiMo4MekQ86BWWGFWy1aSoS7xQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QCk7zTw4zuVu0owWMdk7wMSnOwESBA8Bup9r44G9FXg5Sx0b8/732scmuSlDsZUu3j6x8vXxZ++Jj8MYm+pR2RI/JZqnRupmZbj6bLp0tv//DP7FBUWt17R7YRq6/3qUh2E0xkFM9SFFbJLbWGo1lRLeHos2gIq5PvAkvwz2/0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=N61vra7C; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=r4JvKN3M; arc=none smtp.client-ip=46.30.211.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ravnborg.org; s=rsa1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=Dk4sfgI36ZWaPJ+eBS/GI/TZ8w55X9bgUEDY5cQtdtU=;
-	b=N61vra7CHLZfKe5uIUlYx3GQv9YGIc7bLyEhl3+9zNcLfrg/064TgGMDdyq/ZA10mlYXb06vgNF0h
-	 qwxtSmeWRmsmmd3wrCCBBvUY+SFythORAs9pyE4otLatq0n/0MIHh8STbOiAKmU9DUOex9d1E4YSfX
-	 x8KwPBxjY/1bPXa3W4ZVzNJZE8vyRU4ysM0VrCOe55RkF7hCRcl+V9ySXs0kbLERYnt8ZjSy6kIePK
-	 853Zbg7dZnTvyDX2GrBxleUad6prFsi1lEZKiKL68eW9CCm5QisalqofZTtORQWuI1bSEXtwK7zLcI
-	 Xu0tUkNa02dSjD3QS04pgnpBnbZ1OSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
-	d=ravnborg.org; s=ed1;
-	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
-	 from:date:from;
-	bh=Dk4sfgI36ZWaPJ+eBS/GI/TZ8w55X9bgUEDY5cQtdtU=;
-	b=r4JvKN3MaF/e09yO6vz7gW/+Vs/xVKV1CvUIVwJnko5Bqds84IFN0/PUeYg4Zdo1itqPMmJMDSrRa
-	 fTI/wgXCg==
-X-HalOne-ID: c619a21d-22b2-11ef-9886-bf3d7f4c9d3b
-Received: from ravnborg.org (2-105-16-150-cable.dk.customer.tdc.net [2.105.16.150])
-	by mailrelay1.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id c619a21d-22b2-11ef-9886-bf3d7f4c9d3b;
-	Tue, 04 Jun 2024 20:41:12 +0000 (UTC)
-Date: Tue, 4 Jun 2024 22:41:10 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Yao <markyao0591@gmail.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
-	Luis de Arquer <ldearquer@gmail.com>,
-	Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller
- driver
-Message-ID: <20240604204110.GA84949@ravnborg.org>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
- <20240601143226.GA2003970@ravnborg.org>
- <59519381-2729-4839-9882-65a981a0c551@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yr0bD/FfU6jjjjdROtDYe3TBYG17JQ+c6p7isdwRWPmRe8L+8751C+Zj3VBF/jNhASsud1W9CfGHMpy4eO2AtRvP4DtmnyQKmypO1RGk9/uoGzOZQMK83vjJE4wzOEAeYeQn2Eo3u/PfN5MUYDY+GYjxoBj78h8/R0Ae/oowJhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYUkD4Us; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA435C2BBFC;
+	Tue,  4 Jun 2024 20:42:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717533757;
+	bh=uQLOOzbWqSKTADuADTiMo4MekQ86BWWGFWy1aSoS7xQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OYUkD4Usqn60C9R0lp44HfgE+h1mDo/yoEBsBIJcUlLvoY5rom3AxalWO2O5Eqo5Z
+	 5ZJnN4EKNnZvEklMlJhgclPLHS4aGSSJJAE/U6sNUUG0CYnaO+P7pqeHAuPHhZhEwx
+	 nCeZepAhMjTgd5a3yBV7XYXk9R3U02rzSm90Q2QSdKmb0Ls4HocmtluAF/AEjbdRR/
+	 zwWif3NWxk+ZQMRLo0YZgWblL/TBYEbbU23hT1AyeBOcYKGY/SEVp8wuwln5udszDN
+	 8z+Z/jZJuA4ndvxwPaBuhcqvn3QtWBNreVmC9gtC2cAd2x/QB8AI9vvC94Q7BFEXyX
+	 YbAoTwaE8h/Vw==
+Date: Tue, 4 Jun 2024 21:42:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Fix confusion in documentation for pKVM SME
+ assert
+Message-ID: <97fab321-21fb-40cd-b90e-daf42b5db62e@sirena.org.uk>
+References: <20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org>
+ <Zl9oVUriFDYbLFW8@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OssUhU3cRSMRch4o"
+Content-Disposition: inline
+In-Reply-To: <Zl9oVUriFDYbLFW8@linux.dev>
+X-Cookie: Is it clean in other dimensions?
+
+
+--OssUhU3cRSMRch4o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <59519381-2729-4839-9882-65a981a0c551@collabora.com>
 
-Hi Cristian.
+On Tue, Jun 04, 2024 at 12:17:41PM -0700, Oliver Upton wrote:
+> On Tue, Jun 04, 2024 at 07:47:01PM +0100, Mark Brown wrote:
 
-On Tue, Jun 04, 2024 at 10:32:04PM +0300, Cristian Ciocaltea wrote:
-> Hi Sam,
-> 
-> On 6/1/24 5:32 PM, Sam Ravnborg wrote:
-> > Hi Cristian,
-> > 
-> > a few drive-by comments below.
-> > 
-> > 	Sam
-> > 
-> > 
-> >> +
-> >> +static const struct drm_connector_funcs dw_hdmi_qp_connector_funcs = {
-> >> +	.fill_modes = drm_helper_probe_single_connector_modes,
-> >> +	.detect = dw_hdmi_connector_detect,
-> >> +	.destroy = drm_connector_cleanup,
-> >> +	.force = dw_hdmi_qp_connector_force,
-> >> +	.reset = drm_atomic_helper_connector_reset,
-> >> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-> >> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-> >> +};
-> >> +
-> >> +static int dw_hdmi_qp_bridge_attach(struct drm_bridge *bridge,
-> >> +				    enum drm_bridge_attach_flags flags)
-> >> +{
-> >> +	struct dw_hdmi *hdmi = bridge->driver_private;
-> >> +
-> >> +	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
-> >> +		return drm_bridge_attach(bridge->encoder, hdmi->next_bridge,
-> >> +					 bridge, flags);
-> >> +
-> >> +	return dw_hdmi_connector_create(hdmi, &dw_hdmi_qp_connector_funcs);
-> >> +}
-> > 
-> > Are there any users left that requires the display driver to create the
-> > connector?
-> > In other words - could this driver fail if DRM_BRIDGE_ATTACH_NO_CONNECTOR
-> > is not passed and drop dw_hdmi_connector_create()?
-> > 
-> > I did not try to verify this - just a naive question.
-> 
-> I've just tested this and it doesn't work - dw_hdmi_connector_create()
-> is still needed.
+> > As raised in the review comments for the original patch the assert and
+> > comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+> > disabled in protected mode") are bogus. The comments says that we check
+> > that we do not have SME enabled for a pKVM guest but the assert actually
+> > checks to see if the host has anything set in SVCR which is unrelated to
+> > the guest features or state, regardless of if those guests are protected
+> > or not.
 
-Hmm, seems the display driver or some other bridge driver fails to
-support "DRM_BRIDGE_ATTACH_NO_CONNECTOR".
-what other drivers are involved?
+> > What I believe the check is actually intended to validate is that we do
+> > not enter the pKVM hypervisor with SME enabled since the pKVM hypervisor
+> > does not yet understand SME and is therefore unable to save or restore
+> > host state with SME enabled, indeed attempting to save SVE state would
+> > fault if streaming mode is enabled on a system without FA64 due to FFR.
+> > Update the comment to reflect this.
 
-Note that my comments here should be seen as potential future
-improvements, and do not block the patch from being used.
+> The added context likely isn't necessary in what winds up getting
+> applied. Can this just directly state the WARN_ON() exists b/c the
+> protected mode hypervisor doesn't know how to manage SME state?
 
-	Sam
+It could definitely be briefer, I was being super detailed because I was
+guessing between the intent being what the comment says or what the code
+says, or if we want an assert here at all for that matter.  It seemed
+better to be verbose.
+
+> >  	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+> >  		read_sysreg_s(SYS_SVCR));
+
+> While we're here, this should be WARN_ON_ONCE() or WARN_RATELIMIT() if
+> we _really_ want some spam. But a single WARN ought to be enough.
+
+Good point, and I agree that WARN_ON_ONCE is the better option.
+
+> It'd be a good idea to also document why we're testing for SME state
+> twice on the KVM_RUN path, as any WARN() in the hyp code is currently
+> fatal. I'm guessing Fuad meant to have a non-fatal way of getting some
+> debug information out.
+
+Yes, this was one of the reasons I was unclear if the check or the
+comment was the intention.  Possibly it's due to getting much better
+diagnostics for a warning generated in the host kernel than an error
+returned from the hypervisor when we try to run the guest?
+
+--OssUhU3cRSMRch4o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZffDcACgkQJNaLcl1U
+h9DSkQf8CCVg3xupmEhXxr52ob2JwQvQsUfHWim7KvttAq/EtITOJlK3tovzZyv1
+cIVLi8HGI0tgfLFUL5GEXj14V47etBLAWBJrMJWYTS6830EWjAr5nPKk3tMkDlke
+9PpdWP4rKZcpD1G6Lw4MUobCOE1tkrLq9AI/y9ZNidpF9iGkB0+gr2NZWZk0uikR
+hoZ06Dr3pNLzFVzBBehURrPVvWIk1ZaZnCQX/XlKrpAItMEiaNn1rNnStzC6hzbe
+K0ap59Tu6icxcgRHjzAVTU8eRKhKa2+0pT95RFZWaJFfFnpkgeUvq61shLeV18Mo
+ICb6001h8LqRoHRV44uEYU9fudLyag==
+=r54Z
+-----END PGP SIGNATURE-----
+
+--OssUhU3cRSMRch4o--
 
