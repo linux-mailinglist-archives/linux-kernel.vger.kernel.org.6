@@ -1,247 +1,195 @@
-Return-Path: <linux-kernel+bounces-201006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C378FB802
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:52:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB6E8FB803
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A89C282B93
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B9861F213A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1291474D4;
-	Tue,  4 Jun 2024 15:50:06 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BA7148317;
+	Tue,  4 Jun 2024 15:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="vVi27sCh"
+Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [208.125.0.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9705B946C;
-	Tue,  4 Jun 2024 15:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FD414830C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516205; cv=none; b=fwyaWSBWkdb5AwCG1G5QwSu91j9h8kpzA6DLh4zaOHGWBncPkAcTzZgprA050/o1xvZenHELDD2kjBxcJqR0qCs2J/UYVf7RlJGdbGSXe7hs0EDzBguFJBzDtzyfHK9OjjeWl8qRElPIxRKJgmi40NguFMP7D9lIjXvRJMoUVOU=
+	t=1717516220; cv=none; b=dbTnnNPe9elsp8n5NhDct1klVK9uamyaLFwfcN6h5TtFwIylLhibPDK1Vuu0MVNhaVksU9vBh6FsSd+h7b2QailBaCLCSAwcG76rnJNxFvxnFCIsMPiJmndZ7Ebn24/utwtzoXPOfIufANy1Glb1rhiZPOCIZfRfqdmULbjOSQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516205; c=relaxed/simple;
-	bh=H7+KBIj+XhYX0G3IfUFHqSGj8MwKV6m8R2fUal8uXJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tvJzJCzyX95MSadzRp3grrJZR0bH4+JFdXmkb1eSB8Kg8JEsNQR6I/FgHdUZAqYYhd+iDS5p6rE1/Mu1EbxG8PQXj/4xoFG5jYY84SAssnjYut/iq8D6n2d5Cc7TEz726ekivz1nZ3CILpWfebTxuU8D6FpoyhVomlTt/JhucZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62a145e0bb2so56137007b3.0;
-        Tue, 04 Jun 2024 08:50:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717516202; x=1718121002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jdl8ZvZjrswfXtiaYupkzfGxYwNns5foQkdy/ZL8qPo=;
-        b=wYmhmGyGGWLq/08/gzR88hN5vIX3yc0dZeh/7xQ7oYOByUsUX9kbmsj7g1Tlm+J1kz
-         vnBKAnCGp4MrUCsuURXioZ7CUGF+ojcwaOuTgqG+SudP4f7fdOGwRm7zlprQGMgySfzf
-         v6yIX1mfikQTe2k6VU7PM+WsFzE/r8qVJIdLKLOoh3an7jW5D98X36DWYUtGmb92Ve4A
-         np/HLmnqYKxLHvquZfbBRtxVNxGeUzwcGi6I6CnhtRncQ59Q3wavSTZk9nMnbXiXg9Eq
-         L51h/f9xkWVMLfj2hDv+2Yoxl72KDDi8twC/wu2k2MCrTQ6hHGuzxULQvp9kNbN0Wqhl
-         b+JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVCygffeyO6x3p7bO5RVtv/FQ0yXTR49d0SOWQO86YRfsAmpvfjoCMsEadSEFhawmUxdp31+T4ofz+on1ybetiVfuPfh0H7MVkpn7OAPh7N3+mwi6cy12ss3t87S5swtyouz7duASfkntWZAnu2yOdI+N5C/TY39DmZDzF+KTPAdrIunCDGtAJ30zbruYFGgd4TMookiuJvsauSlHZKUp0WdOxAFLC
-X-Gm-Message-State: AOJu0YzWUWeE+kIHgU/2oUnDsw6q4V9nsrtQbYfMDkFhcnCQ4DLWIHKt
-	WDIv9ASGRu7JazSrFvpI5WOs1ebUvnjol2qxjFjNCrvTYuOK62TZga7JF8+N
-X-Google-Smtp-Source: AGHT+IFCgbSmnuaH8FTde07Q4cJUUU9SXFffH8ErkByzRf0oazsc+zwvRaDkMe4pQnOVTk0qG/CpxA==
-X-Received: by 2002:a0d:c3c4:0:b0:61b:69f:4c24 with SMTP id 00721157ae682-62c796c3d61mr129326827b3.20.1717516201571;
-        Tue, 04 Jun 2024 08:50:01 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766b42b3sm18788207b3.111.2024.06.04.08.50.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 08:50:01 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfa72c9d426so4642166276.3;
-        Tue, 04 Jun 2024 08:50:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUL8XHXNeK2j1xUeCJRtS3mY7ARhyo6C99yw8V+WJUFhLvXt2dOIKj+bxMs8QcbElG5N/ASsZI/YvLWuP3zb2IwE5RAv3OV7Lv+ZNF3s/vAYJIN1TEnffG215iN0OYqciIdjYUCfR5AJ5Bnj59qu9T6Ep+HYy5sStym2L1hYXfQMh/nIHgRWxhwaLAzmSiiVtm9fYDPbOLQw1fzM9e6KFXUycfN1LPC
-X-Received: by 2002:a25:c794:0:b0:df7:c087:579b with SMTP id
- 3f1490d57ef6-dfa73ddb7famr12853703276.58.1717516200826; Tue, 04 Jun 2024
- 08:50:00 -0700 (PDT)
+	s=arc-20240116; t=1717516220; c=relaxed/simple;
+	bh=eTS3qggKfNXIcZS3HhPFTZ3CZLn2MtRFMbTLGi23A9o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=I5rpwyfTRtG+dVqwBKIkVyRJf+ddtdI+SSeu30qJzy8N2NhytqHsbOhLv7QqILRXrJw165C5Y7JP259uCt6enBSB2KizbVnwXn8V+GTAM55mVTzhec4Ug4j0nhBKW8bqw97wjsuEEKTHJCrHxdaLSRNLv8WVROXrlhFzK6fp8Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=vVi27sCh; arc=none smtp.client-ip=208.125.0.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
+	d=auristor.com; s=MDaemon; r=y; t=1717516211; x=1718121011;
+	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
+	MIME-Version:User-Agent:From:Subject:To:Content-Language:Cc:
+	Organization:Content-Type; bh=eTS3qggKfNXIcZS3HhPFTZ3CZLn2MtRFMb
+	TLGi23A9o=; b=vVi27sCh55c4GugIpFpOM1+yDU4D4S8/bMtZte3hysYLJaU/+9
+	sweIRb5yG0XQV7X8TeKn31QTB65hhPf5ZdU+HziPkSv0foNxQ/A5li8yiQI2jRKE
+	4/ox3Qgi1OlFdtH9ejWurJCl1LReMBkx4ODzfJqxR1sXpw6Qb5pf26dRw=
+X-MDAV-Result: clean
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Tue, 04 Jun 2024 11:50:11 -0400
+Received: from [IPV6:2603:7000:73c:bb00:c087:9c97:5161:1e05] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v24.0.0) 
+	with ESMTPSA id md5001003966242.msg; Tue, 04 Jun 2024 11:50:10 -0400
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Tue, 04 Jun 2024 11:50:10 -0400
+	(not processed: message from trusted or authenticated source)
+X-MDRemoteIP: 2603:7000:73c:bb00:c087:9c97:5161:1e05
+X-MDHelo: [IPV6:2603:7000:73c:bb00:c087:9c97:5161:1e05]
+X-MDArrival-Date: Tue, 04 Jun 2024 11:50:10 -0400
+X-MDOrigin-Country: US, NA
+X-Authenticated-Sender: jaltman@auristor.com
+X-Return-Path: prvs=18857024df=jaltman@auristor.com
+X-Envelope-From: jaltman@auristor.com
+X-MDaemon-Deliver-To: linux-kernel@vger.kernel.org
+Message-ID: <2f3691b1-4f19-4a21-b235-a46ae54b8424@auristor.com>
+Date: Tue, 4 Jun 2024 11:50:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240524082800.333991-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240524082800.333991-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Jun 2024 17:49:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWzrEKFHauJ=6UnsufJjDO3LfJ45eJXx1V72AmVzvsjyw@mail.gmail.com>
-Message-ID: <CAMuHMdWzrEKFHauJ=6UnsufJjDO3LfJ45eJXx1V72AmVzvsjyw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: renesas: Document RZ/V2H(P) SoC
- CPG driver
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Jeffrey E Altman <jaltman@auristor.com>
+Subject: Backport request: commit 29be9100aca2915fab54b5693309bc42956542e5
+ ("afs: Don't cross .backup mountpoint from backup volume")
+To: linux-stable <stable@vger.kernel.org>
+Content-Language: en-US
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Organization: AuriStor, Inc.
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms000009010305020908030208"
+X-MDCFSigsAdded: auristor.com
 
-Hi Prabhakar,
+This is a cryptographically signed message in MIME format.
 
-Thanks for your patch!
+--------------ms000009010305020908030208
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Please drop "driver" from the one-line summary.
-
-On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Document the device tree bindings of the Renesas RZ/V2H(P) SoC
-
-s/of/for/
-
-> Clock Pulse Generator (CPG).
->
-> CPG block handles the below operations:
-> - Handles the generation and control of clock signals for the IP modules
-
-Please drop "Handles the"
-
-> - The generation and control of resets
-
-Please drop "The".
-
-> - Control over booting
-> - Low power consumption and the power supply domains
-
-Please drop "the".
-
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,rzv2h-cpg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas RZ/V2H(P) Clock Pulse Generator (CPG)
-> +
-> +maintainers:
-> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> +
-> +description: |
-> +  On Renesas RZ/V2H(P) SoC's, the CPG (Clock Pulse Generator) handles th=
-e generation
-
-SoCs
-
-> +  and control of clock signals for the IP modules, the generation and co=
-ntrol of resets,
-> +  and control over booting, low power consumption and the power supply d=
-omains.
-
-Please drop "the".
-
-> +
-> +properties:
-> +  compatible:
-> +    const: renesas,r9a09g057-cpg
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    description:
-> +      Clock source to CPG can be either from external clock input (EXCLK=
-) or
-> +      crystal oscillator (XIN/XOUT).
-> +    const: extal
-
-According to Figure 4.4-1 ("CPG Functional Block Diagram"), there are 3
-(RTC, audio, main).
-
-> +
-> +  '#clock-cells':
-> +    description: |
-> +      - For CPG core clocks, the two clock specifier cells must be "CPG_=
-CORE"
-> +        and a core clock reference, as defined in
-> +        <dt-bindings/clock/r9a09g057-cpg.h>,
-> +      - For module clocks, the two clock specifier cells must be "CPG_MO=
-D" and
-> +        a module number, as defined in <dt-bindings/clock/r9a09g057-cpg.=
-h>.
-> +    const: 2
-
-I understand this will be changed to 1, the clock number?
-
-> +  '#power-domain-cells':
-> +    description:
-> +      SoC devices that are part of the CPG/Module Standby Mode Clock Dom=
-ain and
-> +      can be power-managed through Module Standby should refer to the CP=
-G device
-> +      node in their "power-domains" property, as documented by the gener=
-ic PM
-> +      Domain bindings in Documentation/devicetree/bindings/power/power-d=
-omain.yaml.
-> +      The power domain specifiers defined in <dt-bindings/clock/r9a09g05=
-7-cpg.h> could
-> +      be used to reference individual CPG power domains.
-
-The latter suggests "const: 1".
-But the example below uses zero, as does the code?
-
-> +
-> +  '#reset-cells':
-> +    description:
-> +      The single reset specifier cell must be the module number, as defi=
-ned in
-
-reset number (or index).
-
-> +      <dt-bindings/clock/r9a09g057-cpg.h>.
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#power-domain-cells'
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    cpg: clock-controller@10420000 {
-> +            compatible =3D "renesas,r9a09g057-cpg";
-> +            reg =3D <0x10420000 0x10000>;
-> +            clocks =3D <&extal_clk>;
-> +            clock-names =3D "extal";
-> +            #clock-cells =3D <2>;
-> +            #power-domain-cells =3D <0>;
-> +            #reset-cells =3D <1>;
-> +    };
-
-Gr{oetje,eeting}s,
-
-                        Geert
+UGxlYXNlIGJhY2twb3J0IHRvIHRoZSBmb2xsb3dpbmcgcGF0Y2ggd2hpY2ggd2FzIG1lcmdl
+ZCB1cHN0cmVhbS4NCg0KSXQgc2hvdWxkIGFwcGx5IHRvIGxpbnV4LTUuNC55IGFuZCBsYXRl
+ci4NCg0KY29tbWl0IDI5YmU5MTAwYWNhMjkxNWZhYjU0YjU2OTMzMDliYzQyOTU2NTQyZTUN
+CkF1dGhvcjogTWFyYyBEaW9ubmUgPG1hcmMuZGlvbm5lQGF1cmlzdG9yLmNvbT4xDQpEYXRl
+OsKgwqAgRnJpIE1heSAyNCAxNzoxNzo1NSAyMDI0ICswMTAwDQoNCiDCoMKgwqAgYWZzOiBE
+b24ndCBjcm9zcyAuYmFja3VwIG1vdW50cG9pbnQgZnJvbSBiYWNrdXAgdm9sdW1lDQoNCiDC
+oMKgwqAgRG9uJ3QgY3Jvc3MgYSBtb3VudHBvaW50IHRoYXQgZXhwbGljaXRseSBzcGVjaWZp
+ZXMgYSBiYWNrdXAgdm9sdW1lDQogwqDCoMKgICh0YXJnZXQgaXMgPHZvbD4uYmFja3VwKSB3
+aGVuIHN0YXJ0aW5nIGZyb20gYSBiYWNrdXAgdm9sdW1lLg0KDQogwqDCoMKgIEl0IGl0IG5v
+dCB1bmNvbW1vbiB0byBtb3VudCBhIHZvbHVtZSdzIGJhY2t1cCBkaXJlY3RseSBpbiB0aGUg
+dm9sdW1lDQogwqDCoMKgIGl0c2VsZi7CoCBUaGlzIGNhbiBjYXVzZSB0b29scyB0aGF0IGFy
+ZSBub3QgcGF5aW5nIGF0dGVudGlvbiB0byBnZXQNCiDCoMKgwqAgaW50byBhIGxvb3AgbW91
+bnRpbmcgdGhlIHZvbHVtZSBvbnRvIGl0c2VsZiBhcyB0aGV5IGF0dGVtcHQgdG8NCiDCoMKg
+wqAgdHJhdmVyc2UgdGhlIHRyZWUsIGxlYWRpbmcgdG8gYSB2YXJpZXR5IG9mIHByb2JsZW1z
+Lg0KDQogwqDCoMKgIFRoaXMgZG9lc24ndCBwcmV2ZW50IHRoZSBnZW5lcmFsIGNhc2Ugb2Yg
+bG9vcHMgaW4gYSBzZXF1ZW5jZSBvZg0KIMKgwqDCoCBtb3VudHBvaW50cywgYnV0IGFkZHJl
+c3NlcyBhIGNvbW1vbiBzcGVjaWFsIGNhc2UgaW4gdGhlIHNhbWUgd2F5DQogwqDCoMKgIGFz
+IG90aGVyIGFmcyBjbGllbnRzLg0KDQogwqDCoMKgIFJlcG9ydGVkLWJ5OiBKYW4gSGVucmlr
+IFN5bHZlc3RlciA8amFuLmhlbnJpay5zeWx2ZXN0ZXJAdW5pLWhhbWJ1cmcuZGU+DQogwqDC
+oMKgIExpbms6IA0KaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvcGlwZXJtYWlsL2xpbnV4
+LWFmcy8yMDI0LU1heS8wMDg0NTQuaHRtbA0KIMKgwqDCoCBSZXBvcnRlZC1ieTogTWFya3Vz
+IFN1dmFudG8gPG1hcmt1cy5zdXZhbnRvQGdtYWlsLmNvbT4NCiDCoMKgwqAgTGluazogDQpo
+dHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9waXBlcm1haWwvbGludXgtYWZzLzIwMjQtRmVi
+cnVhcnkvMDA4MDc0Lmh0bWwNCiDCoMKgwqAgU2lnbmVkLW9mZi1ieTogTWFyYyBEaW9ubmUg
+PG1hcmMuZGlvbm5lQGF1cmlzdG9yLmNvbT4NCiDCoMKgwqAgU2lnbmVkLW9mZi1ieTogRGF2
+aWQgSG93ZWxscyA8ZGhvd2VsbHNAcmVkaGF0LmNvbT4NCiDCoMKgwqAgTGluazogDQpodHRw
+czovL2xvcmUua2VybmVsLm9yZy9yLzc2ODc2MC4xNzE2NTY3NDc1QHdhcnRob2cucHJvY3lv
+bi5vcmcudWsNCiDCoMKgwqAgUmV2aWV3ZWQtYnk6IEplZmZyZXkgQWx0bWFuIDxqYWx0bWFu
+QGF1cmlzdG9yLmNvbT4NCiDCoMKgwqAgY2M6IGxpbnV4LWFmc0BsaXN0cy5pbmZyYWRlYWQu
+b3JnDQogwqDCoMKgIFNpZ25lZC1vZmYtYnk6IENocmlzdGlhbiBCcmF1bmVyIDxicmF1bmVy
+QGtlcm5lbC5vcmc+DQoNClRoYW5rIHlvdS4NCg0KSmVmZnJleSBBbHRtYW4NCg0KDQoNCg==
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+--------------ms000009010305020908030208
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
+BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
+MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
+MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
+YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
+xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
+fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
+EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
+9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
+IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
+BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
+BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
+My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
+A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
+L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
+bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
+aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
+YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
+ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
+dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
+MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
+gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
+eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
+WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
+utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
+Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
+a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
+AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
+Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
+wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
+15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
+o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
+3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
+VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
+CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
+dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
+L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
+5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
+dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
+eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
+YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
+dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
+Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
+dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
+bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
+CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
+bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
+0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
+6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
+QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
+Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
+db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
+rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
+UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
+p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
+MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
+A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
+ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYwNDE1
+NTAwNlowLwYJKoZIhvcNAQkEMSIEICL/KHOSzn3Nh14QOeDxWuiKUc4gi/+PwqKnYwlwsDLr
+MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
+MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
+AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
+dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
+AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
+hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAWXA+
+bR0YfQnMoqQea0LpLNf5zd3Toe5COoPJmWJFR7ISpD/RRncwu1PnHA4BiEoGuzyV5GkAAEip
+4W36UX1qAyi7mT2L3+0ENqHKOaKuLA3EMf2xI4rQi7V4yYbTjFnoS2IMYIfJSfrKQlLbu8or
+i/P+hpSw3Qjcg5/rDvGaDXiifQeX9PMfCSMn5iT75kk17/HU/ZXWtSOdZtIA3E4P/7Wt+Crb
+fSQVKQapfGY3apHPDV7uyxvDyyOgzGT+UGyoNDDOTf0oel+tXYPUvQDgHOOgwe0tJb6nm7CU
+rMEs0mCe/YX16zj8xS/Di0zH/bapWc5bA/Buo9bruhYO47+5gAAAAAAAAA==
+--------------ms000009010305020908030208--
+
 
