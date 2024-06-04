@@ -1,72 +1,68 @@
-Return-Path: <linux-kernel+bounces-200851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EB68FB5B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0658FB5BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14BD6B27E6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9366228185B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BC31494AB;
-	Tue,  4 Jun 2024 14:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B358C145FF7;
+	Tue,  4 Jun 2024 14:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R+hWca0I"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ri3VbhIu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314AC1494A1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39A01411FA;
+	Tue,  4 Jun 2024 14:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511861; cv=none; b=eV/pqr2tfuJsB3RWlQPycbRE5kVe0DAkV+H0eS+UY6DcxBX849lQqgAGzWnjVDTmj9eZrTaa56u36tsawOmMVnbkl/rAzzVdsbP7yScr4jA/3kkb0OBSAOtMXF7+yphtRWui5O4zwdNWb4mZuRASq0vUA+LWtGnMG2lLkU6dUaU=
+	t=1717511904; cv=none; b=tUv7Ekv6XucdrjXHDwZ+5e4/bxcVSwz+M9aLDYm67jYvnXeikKETUrd449Jf+0xw5SIrc4kpcV1JgbYZ/NRaQCLNqhkPJsuFhv9dlzoT9+VkBQhoKxWFdzOXOrZ6a1gv9UarWr8uj3Dw5DR6dO9d4I25T0EsWsX8JlSzg6kBptM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511861; c=relaxed/simple;
-	bh=GSe0K72YrdDKsD9ccEAxSP2G9RITqEcmzRd91s6iNuY=;
+	s=arc-20240116; t=1717511904; c=relaxed/simple;
+	bh=HZmqNGoKVXJoo6fKv9SQ0VkpZqIxY2Mm9g76flJoWtk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iRdqijo+HizTpkRFx0ID3RFBiE6dtMX8uktr49UXSc6E1RQqnw5dFOP2lV3uEsbZFGd1i2VTPe1RYP/ifywofZQ7304rNhyFeIsPM+L4lz/bp5rnrIrjeqawiaA0R219hKAAG3c2fIqY8l/ClHVZHlELmvdviHeJb7QN6my+5VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R+hWca0I; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717511859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WH8AS3lVorPueuVFarM2V4L81baIisvkBg5pdJlXfEI=;
-	b=R+hWca0IJDg6a8uT0Nrk+wMnv8K9cXJyIqzNa6QxPgWZ3R4qn9YReIrgIQahEJ3zAWqOEg
-	mnvMsBPTL51NeyYFyFrfCInN5pxPHxHa6+Y3kGghDtdqjWKBkeWcDIXpXeS8502wF76ssX
-	/wcogWnCj0vHKi3SSY1Tc297Mg8j1HQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-125-DCICH841MYyBgLkbsaYwQQ-1; Tue, 04 Jun 2024 10:37:33 -0400
-X-MC-Unique: DCICH841MYyBgLkbsaYwQQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A8963101A521;
-	Tue,  4 Jun 2024 14:37:32 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.32.74])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 440661C1CEAB;
-	Tue,  4 Jun 2024 14:37:32 +0000 (UTC)
-Date: Tue, 4 Jun 2024 10:37:30 -0400
-From: Joe Lawrence <joe.lawrence@redhat.com>
-To: zhang warden <zhangwarden@gmail.com>
-Cc: Miroslav Benes <mbenes@suse.cz>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>, Petr Mladek <pmladek@suse.com>,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-Message-ID: <Zl8mqq6nFlZL+6sb@redhat.com>
-References: <20240520005826.17281-1-zhangwarden@gmail.com>
- <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
- <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
- <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
- <Zloh/TbRFIX6UtA+@redhat.com>
- <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=azXIYYqrXgCq7qxJk31NvZqXR9OfZylVP6GW3oQAGHNM5PSPU4vZlh9P0HTw1/dhY/5UD9AikWLdOJ7nTdQbDEO6QlmQ95FrWOKDI13T4lysdhq3ZREoSR8GTZB4ufBJc2jSCJjQBQzywAL9PstI7F5sXB6O3LwujZwkEt3t0mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ri3VbhIu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 277D6C2BBFC;
+	Tue,  4 Jun 2024 14:38:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717511903;
+	bh=HZmqNGoKVXJoo6fKv9SQ0VkpZqIxY2Mm9g76flJoWtk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ri3VbhIu5ayMdsVd5PqIosUS5sdfGQ5lMDfvBuFMMWrdjqMmwi4wzRchT+ZietzBM
+	 zr2tPbHDBfW28F4sZ2HnK3mxbqi/R7Jknt+J0iv22h0Q0TBaUS+qDunmYZsquTAFxW
+	 8aoKs1L6L4lavTg3NETdxGTUsKNQxd04Fqh8ICzQ5Y1LilgQd88iLEB+lrECIjvbP/
+	 ARfIiqE7ZhSF6ElwqFpf3Hm0aqf4gNjui8dG0/TkZnIK86otyXpnj5IOtxJhwP52mp
+	 kH1Usan12cS1QXY8pZHI7AKiz754h48GJiF9TRba1gQNBIknzZhlV77AJ2il1RopBD
+	 TIpHlAHctDEAw==
+Date: Tue, 4 Jun 2024 09:38:20 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Das Srinagesh <quic_gurus@quicinc.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Lee Jones <lee@kernel.org>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: [PATCH v2 09/14] dt-bindings: pinctrl: qcom,pmic-gpio: drop
+ pm8008
+Message-ID: <171751189805.570385.12837768964635934798.robh@kernel.org>
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
+ <20240529162958.18081-10-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,99 +71,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+In-Reply-To: <20240529162958.18081-10-johan+linaro@kernel.org>
 
-On Tue, Jun 04, 2024 at 04:14:51PM +0800, zhang warden wrote:
-> 
-> 
-> > On Jun 1, 2024, at 03:16, Joe Lawrence <joe.lawrence@redhat.com> wrote:
-> > 
-> > Adding these attributes to livepatch sysfs would be expedient and
-> > probably easier for us to use, but imposes a recurring burden on us to
-> > maintain and test (where is the documentation and kselftest for this new
-> > interface?).  Or, we could let the other tools handle all of that for
-> > us.
-> How this attribute imposes a recurring burden to maintain and test?
-> 
 
-Perhaps "responsibility" is a better description.  This would introduce
-an attribute that someone's userspace utility is relying on.  It should
-at least have a kselftest to ensure a random patch in 2027 doesn't break
-it.
-
-> > Perhaps if someone already has an off-the-shelf script that is using
-> > ftrace to monitor livepatched code, it could be donated to
-> > Documentation/livepatch/?  I can ask our QE folks if they have something
-> > like this.
+On Wed, 29 May 2024 18:29:53 +0200, Johan Hovold wrote:
+> The binding for PM8008 is being reworked so that internal details like
+> interrupts and register offsets are no longer described. This
+> specifically also involves dropping the gpio child node and its
+> compatible string which is no longer needed.
 > 
-> My intention to introduce this attitude to sysfs is that user who what to see if this function is called can just need to show this function attribute in the livepatch sysfs interface.
+> Note that there are currently no users of the upstream binding and
+> driver.
 > 
-> User who have no experience of using ftrace will have problems to get the calling state of the patched function. After all, ftrace is a professional kernel tracing tools.
-> 
-> Adding this attribute will be more easier for us to show if this patched function is called. Actually, I have never try to use ftrace to trace a patched function. Is it OK of using ftrace for a livepatched function?
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
 
-If you build with CONFIG_SAMPLE_LIVEPATCH=m, you can try it out (or with
-one of your own livepatches):
-
-# Convenience variable
-  $ SYSFS=/sys/kernel/debug/tracing
-
-# Install the livepatch sample demo module
-  $ insmod samples/livepatch/livepatch-sample.ko
-
-# Verify that ftrace can filter on our functions
-  $ grep cmdline_proc_show $SYSFS/available_filter_functions
-  cmdline_proc_show
-  livepatch_cmdline_proc_show [livepatch_sample]
-
-# Turn off any existing tracing and filter functions
-  $ echo 0 > $SYSFS/tracing_on
-  $ echo > $SYSFS/set_ftrace_filter
-
-# Set up the function tracer and add the kernel's cmdline_proc_show()
-# and livepatch-sample's livepatch_cmdline_proc_show()
-  $ echo function > $SYSFS/current_tracer
-  $ echo cmdline_proc_show >> $SYSFS/set_ftrace_filter
-  $ echo livepatch_cmdline_proc_show >> $SYSFS/set_ftrace_filter
-  $ cat $SYSFS/set_ftrace_filter
-  cmdline_proc_show
-  livepatch_cmdline_proc_show [livepatch_sample]
-
-# Turn on the ftracing and force execution of the original and
-# livepatched functions
-  $ echo 1 > $SYSFS/tracing_on
-  $ cat /proc/cmdline 
-  this has been live patched
-
-# Checkout out the trace file results
-  $ cat $SYSFS/trace
-  # tracer: function
-  #
-  # entries-in-buffer/entries-written: 2/2   #P:8
-  #
-  #                                _-----=> irqs-off/BH-disabled
-  #                               / _----=> need-resched
-  #                              | / _---=> hardirq/softirq
-  #                              || / _--=> preempt-depth
-  #                              ||| / _-=> migrate-disable
-  #                              |||| /     delay
-  #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-  #              | |         |   |||||     |         |
-               cat-254     [002] ...2.   363.043498: cmdline_proc_show <-seq_read_iter
-               cat-254     [002] ...1.   363.043501: livepatch_cmdline_proc_show <-seq_read_iter
-
-
-The kernel docs provide a lot of explanation of the complete ftracing
-interface.  It's pretty power stuff, though you may also go the other
-direction and look into using the trace-cmd front end to simplify all of
-the sysfs manipulation.  Julia Evans wrote a blog [1] a while back that
-provides a some more examples.
-
-[1] https://jvns.ca/blog/2017/03/19/getting-started-with-ftrace/
-
---
-Joe
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
