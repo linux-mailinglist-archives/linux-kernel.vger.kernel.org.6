@@ -1,101 +1,99 @@
-Return-Path: <linux-kernel+bounces-201289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D988FBC93
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:30:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A143A8FBC8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1064DB22E69
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2D51F21B77
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3400D14B976;
-	Tue,  4 Jun 2024 19:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="NHYIEzd4"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB8D14B092;
+	Tue,  4 Jun 2024 19:30:14 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95E8149E00;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7772E64C;
 	Tue,  4 Jun 2024 19:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717529416; cv=none; b=BTrSY0qM1Fc6FfvoipTd+8UHoqkZymbIBRjKmI5C0dJfTdLNdvqZKB0mjlp0MOZW2Xgn+H+GSnBMqrG/GKzMhuBFnCSO8gKnqKZB5/qO7HiWes3UZ6VjguL4z6OmZireg6FN9oxMCk6UnRwMU1I3nKrEMM4k9tS6G0olX2i7tJw=
+	t=1717529414; cv=none; b=gBbMPUtHSjhTeBIdyP/QNdxSsxjdyi7/DCEWzdxsqzFIYh1iSNJuit4oH5esoZ8ehr5g6NWYAbWKHhB0vhxadsxzrYr/IWvhWV9AiDiP5KfGecnLDfutDd5w7ZsNXyNF5ejwlhqgweM10GLM2F5SHrEB8yqFpPQucEOQwWBqlpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717529416; c=relaxed/simple;
-	bh=ndt5DjQLSxNaMRiN5lWMogKV1y5Mo8iJXJhz3aNywNU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m6I0JCSFywjzslM1h2a99G8MT20dN5rV/k+j8S1Gx3hyMAO9CQY5TCbrm7nb1X8ZEplJxcT/AXzTN6FXaYg5Kx76rUqthsrwIYaWUZ98YNEuGTbA/YiTP6gpC8TgFldFIOXTlIOl+9T8Oq/m7bW/TP8S1r0lFBrDBv8NRr63i7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=NHYIEzd4; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=SjfoPtdjADSbT41zcd4TQ1qMWoklnCAhWIpkfEJKm1Q=;
-	t=1717529413; x=1718739013; b=NHYIEzd4h3I05y9SHIkqwUaFy9wL1RY6nRwgO9qhjGoJ+BO
-	t3M8Aut/gyFurhcII4Mt8BeKGpoXn+23NPH5h39ijQ6o9UyCZWDg3gpcOCqGZowklzPIgCboDwVgC
-	SNH4ASHQtOy824JkeZ09TjFb2USBCXUmFB1xCETtykWO3Kv2kMfkWNsOXqfOK2MXNxB7U3+ljjz7L
-	2OxVz2Ig+rPOArLKKVkQap2OFJbA1tDUkfVC+kGWLfLoyDHUMZ15kuS3VbDMJ7Lc8L8x2rGQAbFVn
-	LTzKndGgFR6hzfl/BgjPhUxAd2houkv1MeRQAhAmb4dki1gNW5WKseWGGkb8nr4Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sEZr5-0000000CoV1-2UFL;
-	Tue, 04 Jun 2024 21:30:00 +0200
-Message-ID: <ab59089feac4cfbc1d681fcaa4a828ca13088ce1.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] wifi: mac80211: Avoid address calculations via out
- of bounds array indexing
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Kenton Groombridge <concord@gentoo.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com,  linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-  linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, Kees Cook
- <keescook@chromium.org>
-Date: Tue, 04 Jun 2024 21:29:57 +0200
-In-Reply-To: <cx2oet5b5lavjywcbf7u4c32krtoglvt3xbe2sxac55e36iibw@lrd5iuhtxz2g>
-References: <20240517145420.8891-1-concord@gentoo.org>
-	 <d1fea590e53cb1b00dc64f4f8a4c8aec84610401.camel@sipsolutions.net>
-	 <cx2oet5b5lavjywcbf7u4c32krtoglvt3xbe2sxac55e36iibw@lrd5iuhtxz2g>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1717529414; c=relaxed/simple;
+	bh=oULadjP6P41q089ExSQ5/oAxT/vKrEmTUYcwve21ydY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tf6cD7vuLQ7jjBsYIJpqSKbRjPNxHNZHJYsB3DuvJlV4IQ30IJ4zUfVsYiQ6KnidZa+4rO32MLyr9Zpke0dClliljsKMSXNM3lTF2jDyKsukLqkbWM91wAVIel4RQp9mP769zqkeZQPJqmKS9MVa/xl6YDGgpnUbBZcfsA+Z8gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 1Cvi0cF8TK+EeU5TvQsCOA==
+X-CSE-MsgGUID: c9JEqBabSyKe2dY58hwyWA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14257589"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="14257589"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 12:30:12 -0700
+X-CSE-ConnectionGUID: lYBHTnAjSPer6lvyayjErg==
+X-CSE-MsgGUID: D8aIAmoOQISCjC8b7LQjgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="68488808"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 12:30:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy@kernel.org>)
+	id 1sEZrD-0000000Ddrd-3tyz;
+	Tue, 04 Jun 2024 22:30:07 +0300
+Date: Tue, 4 Jun 2024 22:30:07 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin van der Gracht <robin@protonic.nl>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: auxdisplay: ht16k33: Drop device node reference after
+ registration failure in ht16k33_led_probe()
+Message-ID: <Zl9rPy3hD-Hk-gxm@smile.fi.intel.com>
+References: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
+ <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
+ <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, 2024-06-04 at 14:53 -0400, Kenton Groombridge wrote:
-> On 24/05/29 04:54PM, Johannes Berg wrote:
-> > On Fri, 2024-05-17 at 10:54 -0400, Kenton Groombridge wrote:
-> > > req->n_channels must be set before req->channels[] can be used.
-> > >=20
-> >=20
-> > I don't know why, but this patch breaks a number of hwsim test cases.
-> >=20
-> > https://w1.fi/cgit/hostap/tree/tests/hwsim/
-> >=20
-> > johannes
->=20
-> Pardon my absence.
->=20
-> I'm also not sure why these tests are failing. Unless I'm missing
-> something, the runtime behavior of these code paths shouldn't have
-> changed significantly.
->=20
+On Tue, Jun 04, 2024 at 08:15:35PM +0200, Markus Elfring wrote:
+> > But, by design we don't use reference counting after we registered LED,
+> > hence both error and successful paths need to have this,
+> 
+> Do you indicate really special data processing constraints here?
 
-Looking at your patch again, this seems wrong?
+Nothing special, either we hold reference for the entire life time of the
+device or not. For LEDS the convention is not to hold.
 
-> +				local->hw_scan_req->req.channels[*n_chans++] =3D
->  							req->channels[i];
->=20
 
-This will increment n_chans rather than *n_chans, no?
+> > so add another fwnode_handle_put() after this branch.
+> 
+> Will this suggestion trigger any further clarifications for the affected software?
 
-johannes
+You need to put an fwnode handle in both paths: inside the if branch as you
+have done (error path) and missing one is after that needs to be added.
+
+Just address my comments and I believe everyone will be happy about it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
