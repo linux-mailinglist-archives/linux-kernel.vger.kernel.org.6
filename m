@@ -1,175 +1,124 @@
-Return-Path: <linux-kernel+bounces-200123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B68E8FAB40
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:49:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA508FAB69
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 270301F257FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:49:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395A71F23EB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1425B13FD6D;
-	Tue,  4 Jun 2024 06:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5538A13FD9B;
+	Tue,  4 Jun 2024 06:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KiJcuOEp"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NqNM5DeU"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF83013E04D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158C913E888
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717483738; cv=none; b=jCDyTsDrsUTE4hRKTTKipHTOrfPY4zSaKyS7hW21M2V6DY613up//41e4SaJSWRREZfn1TMwoxxo8eCVIJ5DnzmhcrIWv5WK0fzX7cdBg3XRSf+IvDtG3tR4xXn4fkbsT77uQQbb40s2OcXTOKPr6jVv4FajRVzi7pSPRfg+tVQ=
+	t=1717483987; cv=none; b=rFwI4kPFkJAx6dviy5HWaSHhtA6TiMqcPVwC+Yh4z/1wvKnqiADurV5W6GcjxqNQ7SF529sXgT1TLrHRap7169t65jNIv0rCD3f3kvr/iRA2EeWdcsAGvr7SBjAsLw5dI+LSQumc7ZeUy048/fuRcCqjwKpZolsG+V4zgWGuqjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717483738; c=relaxed/simple;
-	bh=O1UfMaKD/hmWFcGVX0dHXqkE0XTi/7iwjX0Urne5AX0=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=KT1EFQVN+5d1XUAa3MWvrSbWer+tF7+Ai3BD3Y0Kd1KODsjtCjeOTpYuJvJMowsuIMkAaNp5RD1LVthsiygEtVFg9yykrPEwlzv6ZMAw28vgK8YjMB/KMBZxZI/vwCq9hczE2sXB+buzLq9ZuM2Y7HjLLE/a1v1DhODkFzIXd30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KiJcuOEp; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240604064853euoutp02ccf8bb280b348f96e46d889ffa7e1932~VulsRJ6nJ1624716247euoutp02L
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:48:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240604064853euoutp02ccf8bb280b348f96e46d889ffa7e1932~VulsRJ6nJ1624716247euoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717483733;
-	bh=QbTrIPhFImjlKnd/ohqIcW3b/iR9Pfpr+J0VPVe1xtU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=KiJcuOEp0bmxzmLWz26L/CKL9Uy1Jrkh2EThm1VuZfJKp/W5MYRnq8MC6Y4QqDQz4
-	 S+gBnPR7KqdRUcFuAx1RehG0Ue2fsvKxjMnA62wYwIBPE8cyDwnzyjP4IHKZGYEdaw
-	 9Vxmz12NHonqKK0YOlJz2FwJOYsBbPEknfqGyC5U=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240604064852eucas1p1d00075de5770a5fa8593c734aef9db91~Vulr3Drz81683916839eucas1p1C;
-	Tue,  4 Jun 2024 06:48:52 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id F8.C4.09875.4D8BE566; Tue,  4
-	Jun 2024 07:48:52 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240604064852eucas1p2db69f8d2d13b82887fbb3a4dd535c024~Vulra1_of1670216702eucas1p2K;
-	Tue,  4 Jun 2024 06:48:52 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240604064852eusmtrp1071da7d58997076776fcc54baf4f28c8~VulrZuwRy1417014170eusmtrp1I;
-	Tue,  4 Jun 2024 06:48:52 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-87-665eb8d42702
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 7E.87.08810.4D8BE566; Tue,  4
-	Jun 2024 07:48:52 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240604064852eusmtip1d292ba451e2cc73f72b5fe4a618458fc~VulrNK7321516115161eusmtip1R;
-	Tue,  4 Jun 2024 06:48:52 +0000 (GMT)
-Received: from localhost (106.210.248.71) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Tue, 4 Jun 2024 07:48:51 +0100
-Date: Tue, 4 Jun 2024 08:48:47 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Eric
-	Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>, <netdev@vger.kernel.org>
-Subject: Re: [PATCH 3/8] sysctl: Remove check for sentinel element in
- ctl_table arrays
-Message-ID: <20240604064847.4os2h42bj3cg6ptl@joelS2.panther.com>
+	s=arc-20240116; t=1717483987; c=relaxed/simple;
+	bh=Q/s+/2HLOEshSXyevA+kwwuV9LKh61E8wNAoTbTnOcA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DsMTls6iVeTgjeH/u+A2Unw6MI+0EJdYY7CS/v5ah24ly1Xlmcw76tWh4MwcBuFnZH8TMxiONYIOsgiaQcCs2j2GJ+StF5zZl4H3eqjU4xcAhlt7/L64YSMbwLz+WJ9mEJNYhEi8Z7NumPmOr3Udt1/YFnnmIrqF1oEP94MOLs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NqNM5DeU; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e96f29884dso6740251fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 23:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717483983; x=1718088783; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wxQuguER/BLQYm1ZxDJ/qSzZSNtAmQOi2t1QHj9aOVI=;
+        b=NqNM5DeUKXfcBuHHiexLviXzsrj8yeBF8DLFI7inoLjekwHDBLbj9KnuG1hjzr/AP0
+         dSqCRHsIrGOS5svJcLvUF7Egf2lJa2ybYsGugqXz2n02KLLxw/hKFQuENQ48SjwFbrR9
+         Q2y/xw3JYOsHYcrLaAvSvmmGBVkaHzOBKyHatvpVnblES9/YlQGj91HhXPWIEyyeHraA
+         sm+y02xkbqc7NBkM+OTdNXlpUq+XH+0vr4aopphqHMrpjLFV1mJwHqekAHoVzjyyYdYy
+         Z06dDGmk7dIIu7fD11Iq9j4PHmyX6rH3vGqOvfxTxzuWcnt3zOJHni5hWscUvAu4XWfS
+         MH3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717483983; x=1718088783;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wxQuguER/BLQYm1ZxDJ/qSzZSNtAmQOi2t1QHj9aOVI=;
+        b=HPOtd3/vnhF6vl4zEwFc+kGY6aaEUZKG5yzP3d/y7lhivfCsMG1cUL120gVNTPIYHT
+         oxCT3udPk8fNGkNW1SewG1LcQEbyVr5NeohMBqfBCwXLI5tEB+A5C6w9GGWESLwaDbLi
+         vt3QI97anaailsW6GCGSaaYd0SosonvcHtC31xsy56K1FO5Ob/J24wArI8UI2/ejSOAR
+         WAe0PeToB6xtOp7wURCW0I2sCAvsuXI/OKX6ttR/3NhxgKU2lZkHN2hpD9ocxedZN4Lu
+         T7ma92/Tm+axBkil+/4Qr0+YuFUw+u/biVcqtJIlaX6OQoPhIRlUbvQxpNzWEFU9oLht
+         B9Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoqqDk8eF/pJfFW6N5dXSbx0bmfRS44ZjHOC5nmlSc0tQ1o6onoaOa3vqtoUpPJ8yZbRxUPeoeGuSv6EITgMgWgwmoZD5+WFrBwPV/
+X-Gm-Message-State: AOJu0YyvzT2UFMjuNpJHJIyvAOqPL0X7/3z3m7nUjnIZeTrvlIgfegha
+	+G2L2s689cuQGPJZ8IbAVdHfdNAfNEoYeb+lBwS4zGdlme6NfL8zIw25L1zqh5c1V3STtt2lRaN
+	rmVw3rNKoL7GDDfM1bR7DMWKyVd2wBv5LsA4ulg==
+X-Google-Smtp-Source: AGHT+IHggwyuAzryxCFutJC1tfJ+3ZKkr//fbN9+PVWQCSu4HBedgiEUAp7ppj5bkGkwiOXOwRFyEwgRUKUmWYk9oag=
+X-Received: by 2002:a2e:9016:0:b0:2e6:f1f6:7dbe with SMTP id
+ 38308e7fff4ca-2ea951e1cccmr71890431fa.34.1717483982951; Mon, 03 Jun 2024
+ 23:53:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240604-jag-sysctl_remset-v1-3-2df7ecdba0bd@samsung.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTURSF8zoz7VAtmRa0N6AgdYuoKEpw4orGZaJiNMbdII0MSwQ0U4u7
-	4o6tEqAgSpVUolbLEjMS4oq2xDaIYdEacWviGlQUShVxSbV0cPn33XfPefeel0diigoihEzL
-	3Mxymep0lViK19i/NY11XklIHu/yjqJPNR3A6Tf2lxL6nj6Dbq7JJegbN+tx+sG1U2LaVfGL
-	oFvz3iDabhpIdze0ozgpY8xuwZnqi49FjInXMrzliJjhuwokTEftQzHj4cMWS1ZLpyax6WlZ
-	LDdueqI0lbfUiTd5pFu7PDlYNmogdSiABCoGeMtxiQ5JSQV1AUFpURESis8IblV1E0LhQbDv
-	V4/oj8Ww14gLDTMCy7sq9Ff1pPasWCguI2gzvyB6LTg1DD7xd/12MTUGmtqfYb2iYKoQgfN5
-	qX8IRt1GcMLl8quCqJVgtRr8LKPiQFdhxASWQ/3J13gvY76bTNe7fONIH4eC2euPFEDNgzNf
-	jH27qsDa0oELvAsq7ff8UYE6HACFukpCaMyGvOzDmMBB8N5RLRF4EDQYjuKCweB7Dm9nn7sc
-	wfm9X/pGTIEDztd9jplwOqdO1LsRUIHQ+lEuLBoIBTXFmHAsg5xDCkE9Aspd7XgeGlryX7SS
-	/6KV/ItmQpgFKVmtJiOF1UzIZLdEadQZGm1mStT6jRk88n2oBq/j8xVkfu+OsiERiWwISEwV
-	LMvdvSZZIUtSb9vOchvXcdp0VmNDoSSuUsqGJ4WzCipFvZndwLKbWO5PV0QGhGSLipWdr/Al
-	nZfSTEvpujTP4MZIjyQ2CVIjrOvuFC6zL3iI5kdY7Q+S14Zt6dBONoSX6XpWrl44qYy7vqGt
-	bH+WLObqKvdH5dvmOSXh7mnnh14Ywti+ypVUTv9jcSmDSiOseqs9/pFeHhSSoMdD5/ItH3aw
-	gd9mO9OZ78Oejpwc614UzfFzTtcb3iUYssZNit41a3kzufO4jagcHq8vXkDcGB07NtFBjvnR
-	r6dt2Yx25ytiYePTi2tES/fg536aHR0f3EXBYXeDqu6Y8w2OajLfCO7y2rfXqgcv6n7RvD8x
-	XhYjP6sZ0Dg+knsWPOI5mft1yLHdqfcfH5zoWlHgNaHWQhWuSVVHR2KcRv0b5vVlPL8DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBIsWRmVeSWpSXmKPExsVy+t/xu7pXdsSlGcw/wW0x53wLi8XTY4/Y
-	Lc5051pc2NbHarFn70kWi8u75rBZ3Fvzn9XixoSnjBbHFohZfDv9htGBy2N2w0UWjy0rbzJ5
-	LNhU6rFpVSebx6ZPk9g93u+7yubxeZNcAHuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWe
-	obF5rJWRqZK+nU1Kak5mWWqRvl2CXsamVYfZCj5zVXz63MHcwHiao4uRk0NCwERicuNsli5G
-	Lg4hgaWMEq8+PmaBSMhIbPxylRXCFpb4c62LDaLoI6PEqVtNUB2bGSXOPHsFVsUioCLxbtMp
-	JhCbTUBH4vybO8wgRSICUxglXrxZwg7iMAscYJSYce8eWJWwQITEwYOTwWxeAQeJrjWzmSHG
-	XmeU2PZ1BlRCUOLkzCdgRzEDjV2w+xPQIRxAtrTE8n9gT3AKuEss/DqbCeJWJYmDF99D/VAr
-	8er+bsYJjMKzkEyahWTSLIRJCxiZVzGKpJYW56bnFhvqFSfmFpfmpesl5+duYgRG6bZjPzfv
-	YJz36qPeIUYmDsZDjBIczEoivH110WlCvCmJlVWpRfnxRaU5qcWHGE2BgTGRWUo0OR+YJvJK
-	4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpiSmxraVvFr3flXfCSr
-	zH26gLjZvjaTNV5LrppqPDy/5H/k8YNsQSWTnUTmLy1PivznfGAH8wNGG2b5PxN493l8Lgo9
-	+9K0zGZx31UV6wchCoHrJ/2VEOTyerjs55k5C2IXXe892Ro9Z+NyppU3th2b4ij++4HYpDkz
-	omNexexbeibkl6RIwXHOefdYlxR72J6crzzxdqXFld0TmXSbYzfyHV74K9vslIHJu8Cqz0Xz
-	libnrRDv2i0t+OzUulPJGTeOXeEoNeB2S6+fXqF0Iz5tluWdSQ4vWIVcL7tYl/w/XtgitK/p
-	+rqjYV5fZhz65tG/7qnZ11gHBpbfL7RLWCJapXpdN7Htj3T4tOzkcsbtSizFGYmGWsxFxYkA
-	DqYi+FsDAAA=
-X-CMS-MailID: 20240604064852eucas1p2db69f8d2d13b82887fbb3a4dd535c024
-X-Msg-Generator: CA
-X-RootMTR: 20240604063005eucas1p2a0ea8cbe2d925b1e63f0854f719d0b01
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240604063005eucas1p2a0ea8cbe2d925b1e63f0854f719d0b01
-References: <20240604-jag-sysctl_remset-v1-0-2df7ecdba0bd@samsung.com>
-	<CGME20240604063005eucas1p2a0ea8cbe2d925b1e63f0854f719d0b01@eucas1p2.samsung.com>
-	<20240604-jag-sysctl_remset-v1-3-2df7ecdba0bd@samsung.com>
+References: <20240527144538.155704-1-brgl@bgdev.pl>
+In-Reply-To: <20240527144538.155704-1-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 4 Jun 2024 08:52:52 +0200
+Message-ID: <CAMRc=McurmN4Hs2MVGCjF0z_FX+84v0psGuTse0K7caSVF445A@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: usb: qcom,dwc3: set minItems for interrupt-names
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 04, 2024 at 08:29:21AM +0200, Joel Granados via B4 Relay wrote:
-> From: Joel Granados <j.granados@samsung.com>
-> --- a/net/sysctl_net.c
-> +++ b/net/sysctl_net.c
-> @@ -127,7 +127,7 @@ static void ensure_safe_net_sysctl(struct net *net, const char *path,
->  
->  	pr_debug("Registering net sysctl (net %p): %s\n", net, path);
->  	ent = table;
-> -	for (size_t i = 0; i < table_size && ent->procname; ent++, i++) {
-> +	for (size_t i = 0; i < table_size; ent++, i++) {
->  		unsigned long addr;
->  		const char *where;
->  
-> @@ -165,17 +165,10 @@ struct ctl_table_header *register_net_sysctl_sz(struct net *net,
->  						struct ctl_table *table,
->  						size_t table_size)
->  {
-> -	int count;
-> -	struct ctl_table *entry;
-> -
->  	if (!net_eq(net, &init_net))
->  		ensure_safe_net_sysctl(net, path, table, table_size);
->  
-> -	entry = table;
-> -	for (count = 0 ; count < table_size && entry->procname; entry++, count++)
-> -		;
-> -
-> -	return __register_sysctl_table(&net->sysctls, path, table, count);
-> +	return __register_sysctl_table(&net->sysctls, path, table, table_size);
->  }
->  EXPORT_SYMBOL_GPL(register_net_sysctl_sz);
->  
+On Mon, May 27, 2024 at 4:45=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> There's a set of compatibles for which we set a strict list of 5 interrup=
+t
+> names even though minItems for the interrupts property is 4. One of the
+> USB controllers on sa8775p only consumes 4 interrupts which leads to
+> dtbs_check errors. Make the last entry optional by setting minItems to 4.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Docum=
+entation/devicetree/bindings/usb/qcom,dwc3.yaml
+> index cf633d488c3f..4251dc25ee9a 100644
+> --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> @@ -468,6 +468,7 @@ allOf:
+>            minItems: 4
+>            maxItems: 5
+>          interrupt-names:
+> +          minItems: 4
+>            items:
+>              - const: pwr_event
+>              - const: hs_phy_irq
+> --
+> 2.43.0
+>
 
-Given that this is a very small network related patch, I'm queueing this
-in through the sysctl-next branch. Please let me know if you would
-rather take it through the networking workflow.
+Gentle ping.
 
-Best
-
--- 
-
-Joel Granados
+Bart
 
