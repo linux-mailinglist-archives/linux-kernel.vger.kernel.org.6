@@ -1,92 +1,126 @@
-Return-Path: <linux-kernel+bounces-200511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21638FB10C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:26:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A01B8FB111
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE341C21F3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:26:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBEE51F2332C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AF914535E;
-	Tue,  4 Jun 2024 11:26:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041451459F7;
+	Tue,  4 Jun 2024 11:26:42 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E5B145335
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130BD1442E3;
+	Tue,  4 Jun 2024 11:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717500364; cv=none; b=j3XYTeH/q94n1/sD6VFDickm/4CHQmLDII0lvtLuQYZYP4jnLjlBZWUVcdYh4J+5nhc3XNqvZNr81bl+A+eB9sy/2EMKKhjMxxq0dE4h8D/5UiMYkIVIQIzEZk927XcriqfGIEgf55tE1lLh1c/Y7udCkMNQanS8nMjmypS1mxI=
+	t=1717500401; cv=none; b=niW+C+dORK+AvZEEOU5O6kB/nlp9unq2og5+ZAtgTWQFBXi2XZtK8JUMxc+KSTDdKsxJ2wjCG7gzzgJuVUTeFDzIELrA6659gZyJqic/+9Y9JqWvnmAuCIsxsvtqrpPbEGj9xvldQ6yRkBvZJYUSMA5dZc/LtlxYDTmTsutO/9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717500364; c=relaxed/simple;
-	bh=GRpZtExmKZkFFuBkT38w2ZzBsG54iEBNWsQimsUe2yI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qiJ0IwbZH5taBTkLBVQYBmenT8hxisXFWaf6m8qWnPOxigmSta9foBCB4oIv6LcWgSlF3ZjGW1jBlIMPG2oV680t0JkcvtKDlkIMPqccuo1lSqIa0p4S4ryEE1spJx5cmD/yp3ElnRv4w22XdRWVKEskWp+hvLQulGPvfM7oMb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb314a0cecso51731139f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:26:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717500362; x=1718105162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aDWs8Qf6oC8uzuae/Q/CxGzelgua/8H3R+rkuuIVFeY=;
-        b=BomYw2uGbP8HdpUhhWQoC51QfTReAtIHQ6I9xZbB00H9xDJ+vH4vVainoq3mFlqUYk
-         Zm/ObwkJXCBvmUM/uxStaIYpCd1Xzrm6fpWZQYhldN5rPZHVQH53lvgvfL42UzGsK4FA
-         d7WVUdAmhUs9hgioxhied1+Vu/dPnjiSjO+Ybh5mLL1vMc7W/0/AxwAX7bk1VoSoQwbp
-         hOOYhMMp28Y3bRaPkmhDZzjTlM4qPlu4YD9H2BiktN9vCSPpZIXHBsi07jTfLSL3lsFq
-         hNG8NQUxrPJU1tyM297D51mMr+3uF/AS6wMDqt+K3x3zj+IVl08SxsreC0JS9s4ouTwv
-         QO8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVrd1MB8h3deTSU+AZpf4tlFWOnNeSJtGyvN5VJq0WZuxudAqy2O2mU9q5B0lQIY6c1gup2aK+LoSfyXMDXgi9X0+1DE7ThlMHPJGNF
-X-Gm-Message-State: AOJu0YwGEcYj5fkDvUIKfdUB7EZq/9k0vS5HrSwQDX0mo+d15VX+L0l5
-	8m3FMNy23MHk+AmzDAvk2Rg2V7bxCVPjkNoBXOKzRSulY705iKzObMpr0/dLSlPf1iAGscq5LWS
-	Lz2tEozYLnlCsZqoMawVJJryc4I3pWogT6CdQtq/7j5+pTiA2lzKecpE=
-X-Google-Smtp-Source: AGHT+IFqjayrCHItg5/UFPa9My7gZ+vTAstDursZj5wFpPAiNxTgpNaNTd6nnx4LypkdJBWeZEL2bJGFuJXvEXIUiSgKTiFpzhMA
+	s=arc-20240116; t=1717500401; c=relaxed/simple;
+	bh=ZExI+57O0zbDnRE+F0agz7VJP6zV/CMKBCosJpqOa0k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j1gWO7CYeayg/S7SFDjUCqlSyhEKP49ztqkmv5FU03EPXHvJ2npT8bq5tWHgBjC9V6G/uK6Zulm1fT/iOdBT2DyrbFzIU8Lk9+hbFRmYVPqBmPQ5dY4rj+MVfkLeaiuceHrNnY8o/IyOdDNVo6ndrxuwbTGWn8XGSbb5jRtXog8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VtpFY4zM8z4f3jsq;
+	Tue,  4 Jun 2024 19:26:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 4BF6C1A0874;
+	Tue,  4 Jun 2024 19:26:35 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAXKwTp+V5mJkItOg--.61165S4;
+	Tue, 04 Jun 2024 19:26:34 +0800 (CST)
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+To: dhowells@redhat.com,
+	marc.dionne@auristor.com,
+	raven@themaw.net,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	miklos@szeredi.hu,
+	trond.myklebust@hammerspace.com,
+	anna@kernel.org,
+	sfrench@samba.org,
+	pc@manguebit.com,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	tom@talpey.com,
+	bharathsm@microsoft.com,
+	djwong@kernel.org
+Cc: linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	autofs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	zhangxiaoxu5@huawei.com,
+	lilingfeng@huaweicloud.com,
+	lilingfeng3@huawei.com
+Subject: [PATCH RFC 0/2] NFSv4: set sb_flags to second superblock
+Date: Tue,  4 Jun 2024 19:26:34 +0800
+Message-Id: <20240604112636.236517-1-lilingfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:871e:b0:488:75e3:f3ce with SMTP id
- 8926c6da1cb9f-4b53e35e64fmr296451173.0.1717500362096; Tue, 04 Jun 2024
- 04:26:02 -0700 (PDT)
-Date: Tue, 04 Jun 2024 04:26:02 -0700
-In-Reply-To: <000000000000e9b6ff0618356b26@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fc10a4061a0eb684@google.com>
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_fs_read_only_work
-From: syzbot <syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAXKwTp+V5mJkItOg--.61165S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr15KrWfZr4UXr1xJr1kKrg_yoWxCrg_J3
+	97XF48ArWxXry2kr4fCwn7trWxK3yfCF13XryftryUXryDZFyYk3WDAry8uFs3WF4ftr1f
+	CF1jkrn0vr1a9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbx8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r4j
+	6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ6p
+	PUUUUU=
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-syzbot has bisected this issue to:
+Added sb_flags parameter to d_automount callback function and
+fs_context_for_submount().
+NFSv4 uses this parameter to set the second superblock.
 
-commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sat Sep 23 22:41:51 2023 +0000
+Li Lingfeng (2):
+  fs: pass sb_flags to submount
+  NFSv4: set sb_flags to second superblock
 
-    bcachefs: Ignore unknown mount options
+ fs/afs/internal.h          | 2 +-
+ fs/afs/mntpt.c             | 4 ++--
+ fs/autofs/root.c           | 4 ++--
+ fs/debugfs/inode.c         | 2 +-
+ fs/fs_context.c            | 5 +++--
+ fs/fuse/dir.c              | 4 ++--
+ fs/namei.c                 | 3 ++-
+ fs/nfs/internal.h          | 2 +-
+ fs/nfs/namespace.c         | 4 ++--
+ fs/smb/client/cifsfs.h     | 2 +-
+ fs/smb/client/namespace.c  | 2 +-
+ include/linux/dcache.h     | 2 +-
+ include/linux/fs_context.h | 3 ++-
+ 13 files changed, 21 insertions(+), 18 deletions(-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1526df2c980000
-start commit:   f06ce441457d Merge tag 'loongarch-fixes-6.10-1' of git://g..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1726df2c980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1326df2c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eb72437243175f22
-dashboard link: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164255f2980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16174432980000
+-- 
+2.39.2
 
-Reported-by: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
