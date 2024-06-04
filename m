@@ -1,82 +1,116 @@
-Return-Path: <linux-kernel+bounces-200492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39668FB0CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:13:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880718FB0CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309E61C212B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8FF81C212C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDF7142E8C;
-	Tue,  4 Jun 2024 11:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3244145A0F;
+	Tue,  4 Jun 2024 11:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CsJtr6d4"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fso+L++o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DD81420D7;
-	Tue,  4 Jun 2024 11:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021331420D7;
+	Tue,  4 Jun 2024 11:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717499604; cv=none; b=UavOWi7urgB4eIwHHYedDMKJwcGDwmFx30HMZW07eSZJlYh+gmCDxe8lxLUj9Dt47gDVC7PuElHf4EIi5EuVGO6nMcqlsEkj3CfPgyWv7vgh0H0jRjKUDvL57oFr+mQO6UtNswv33xo4zG3upYw070QcXrCvXqmFVZi4ZepYP0I=
+	t=1717499609; cv=none; b=mQN+RfukTrSIj4yG184Z8tkUWXZaLK0USwAcmPgtV2axFhR8SMrj8enBmIoD3GxqlgBo6nhmVzaxs+L7J4FNF47U7e23tCFdFCwBJBEUAwLbwv9YOoO9Bf0ByX6uAAQy/C5RXsVNa76GAAUDHVNbMF4dtSNC26gt39o6DORp1fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717499604; c=relaxed/simple;
-	bh=rGoLCX1QYySnp5WODctYy3wdo/rDyPEq2AVRp8GdPdk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:Content-Type; b=KshcFMW6opnXmUL+C3NmMXVTAC/1FN3r/60fRkShhzFCTT5dj3CV+scNa9oZReh2nuNHNlA/5woW5K0WIDJGP0Sqyi6R9GsB9z9Ha5d46OIa0MV9lPy5+E65DsIdt7eUMqZgVlTghf0WwbkJLm30JIlfhrNDWchCOI2eHSbVWyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CsJtr6d4; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717499599; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=N5NUh30145zgOTyWygnNBSJ5byygJdHeU6hO+TwHwK0=;
-	b=CsJtr6d4n7IQfu1oAXMBVdRjjdDN9lbwDR3fAXbWb9F/G17jbFbNFQlBINERVv9p2MDhApj/htOQh+tegyUdSaUBq/F240VMmK5zChkmrtitp5FikpOJkDP9kVHvEWNIJsV82fYzl2FBJo6OQstSfSgc4CLJvBVONI0ZJVOsmrE=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W7qye4e_1717499588;
-Received: from 30.221.129.74(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W7qye4e_1717499588)
-          by smtp.aliyun-inc.com;
-          Tue, 04 Jun 2024 19:13:18 +0800
-Message-ID: <bebf60d1-866a-495b-b218-05e0aa5128a1@linux.alibaba.com>
-Date: Tue, 4 Jun 2024 19:13:08 +0800
+	s=arc-20240116; t=1717499609; c=relaxed/simple;
+	bh=G4bcdfSkhr9b1oEzgL3rS01ajLXZ3Z5wtjM+zkVc240=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iORFApmKL8KN5lbvTiRqx6dcZYIpnbDiSPELvmvWJYkoN677lpLJCjiv547iJ3StBcZgEvA7I0o5/290xMl7xK3fRyzQBnZQAQV/TRThqVeJ7cz0FjBb4TLlggYhvJmqfLM3AZ8p9pnYq6y8AP6a/12YihWfjCz6TKcI11fL0l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fso+L++o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C17EC2BBFC;
+	Tue,  4 Jun 2024 11:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717499608;
+	bh=G4bcdfSkhr9b1oEzgL3rS01ajLXZ3Z5wtjM+zkVc240=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fso+L++ob6iiEnRG2ve+9AvufqnkHrJQ4v2N/L9WAYC6CeCfOYLb6QIlyE+/4F/2I
+	 jAnKkEsBgwy43qLzJJe+lPBw+5vxsRxPfdrdvIiUHxDsi73HkWxyZNx8nB/nXoIY9Q
+	 hKl2Ifq3lN/h/aLEc1RfcZ+UMo8rXnwA3lX+i4BxKLnHVUtKeE6prhp7ibO/Hx+Q9T
+	 yTzVRcHScq7Uezq4xZWIRgkZ4fPrQyZkK+cuUCf1Ogoi5purO2x1ZY86suQZmj8fhv
+	 CvxJVbPQoCNCn/A8QWVv/4Xx05rBltVQdWzBmwMj1yLgLr1oqXKPb3ZuinzHO+mu4s
+	 lOVwwoTzXwcsw==
+Date: Tue, 4 Jun 2024 13:13:25 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 5/6] rcu: Remove full memory barrier on RCU stall printout
+Message-ID: <Zl721Qcu34ppCTuu@localhost.localdomain>
+References: <20240515125332.9306-1-frederic@kernel.org>
+ <20240515125332.9306-6-frederic@kernel.org>
+ <5bc2d72a-ae27-43f0-893e-afb202abd61b@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net/smc: avoid overwriting when adjusting sock
- bufsizes
-To: gbayer@linux.ibm.com, wenjia@linux.ibm.com, jaka@linux.ibm.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Wen Gu <guwen@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5bc2d72a-ae27-43f0-893e-afb202abd61b@paulmck-laptop>
 
-
-
-On 2024/5/31 16:54, Wen Gu wrote:
-> When copying smc settings to clcsock, avoid setting clcsock's sk_sndbuf
-> to sysctl_tcp_wmem[1], since this may overwrite the value set by
-> tcp_sndbuf_expand() in TCP connection establishment.
+Le Mon, Jun 03, 2024 at 05:10:54PM -0700, Paul E. McKenney a écrit :
+> On Wed, May 15, 2024 at 02:53:31PM +0200, Frederic Weisbecker wrote:
+> > RCU stall printout fetches the EQS state of a CPU with a preceding full
+> > memory barrier. However there is nothing to order this read against at
+> > this debugging stage. It is inherently racy when performed remotely.
+> > 
+> > Do a plain read instead.
+> > 
+> > This was the last user of rcu_dynticks_snap().
+> > 
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 > 
-> And the other setting sk_{snd|rcv}buf to sysctl value in
-> smc_adjust_sock_bufsizes() can also be omitted since the initialization
-> of smc sock and clcsock has set sk_{snd|rcv}buf to smc.sysctl_{w|r}mem
-> or ipv4_sysctl_tcp_{w|r}mem[1].
-> 
-> Fixes: 30c3c4a4497c ("net/smc: Use correct buffer sizes when switching between TCP and SMC")
-> Link: https://lore.kernel.org/r/5eaf3858-e7fd-4db8-83e8-3d7a3e0e9ae2@linux.alibaba.com
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> ---
-> FYI,
-> The detailed motivation and testing can be found in the link above.
-> ---
+> I went through all of these, and the look good.  Though I am a bit
+> nervous about this one.  The RCU CPU stall warning code used to be
+> completely unordered, but the hardware taught me better.  I did not
+> add these in response to a problem (just lazily used the existing fully
+> ordered primitive), but you never know.
 
-Hi, Gerd and Wenjia, do you think this makes sense? Thanks!
+At least I haven't found against what it is ordering the dynticks counter here.
+
+> Me, I would have kept the extra
+> memory barriers in all six patches because they are not on a fastpath,
+
+It is still time to discard the patches :-)
+
+> but you are quite correct that they are redundant.
+
+Yes and it's not so much for optimization purpose, like you said it's
+not a fast-path, although in the case of fqs round scan it _might_ be
+debatable in the presence of hurry callbacks, but I use those changes
+more for documentation purpose. My opinion on that being that having
+memory barriers when they are not necessary doesn't help reviewers and
+doesn't bring the incentive to actually verify that the ordering is
+correct when it is really required, since there is so much of it
+everywhere anyway. I'd rather have a clear, well visible and precise
+picture. But that's just personal belief.
+
+> 
+> So I have queued these, and intend to send them into the next merge
+> window.  However, you now own vanilla RCU grace-period memory ordering,
+> both normal and expedited.  As in if someone else breaks it, you already
+> bought it.  ;-)
+
+Sure, but it's a bet. That one day a younger person will buy it from me
+double the price ;-)
+
+Thanks.
 
