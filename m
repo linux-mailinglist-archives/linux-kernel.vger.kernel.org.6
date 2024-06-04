@@ -1,125 +1,128 @@
-Return-Path: <linux-kernel+bounces-200380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332BD8FAF29
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:45:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF508FAF2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64E481C20DB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:45:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F135AB212CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC551442F7;
-	Tue,  4 Jun 2024 09:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963631448FF;
+	Tue,  4 Jun 2024 09:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FeAVMx5R"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGO90VT5"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A18143724
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949EE13B58A;
+	Tue,  4 Jun 2024 09:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717494329; cv=none; b=C1RTm/StzJ9Ed9fkjuH0A+/j7WYS/LK0XntYPw0tL1fLtt+Xa2EbVuez3FfBZuvVz8YTi3qVXPByBD+tzgYTgjJAUy4Do40YiywHpa5dh1IcbNXRPZTfSH5woSEqjkYLEBgJlTEukDwLoXd+z4hhWMqRWsWUONa6sXHuTiKqv8U=
+	t=1717494387; cv=none; b=t3o0N120IPSAhZN3JN/Gb6nhIaAJlJ7vD2RXxoIpVaWbV3bxe5wj03ySt8nr+qFrlDzfH90Efm24vBfPAjQ/oNtNBPA+sQ4oQcLGPHI4dxuXLAsJRmRd1ZPIKYujunluW3ETo8Nbr94xB8CsKno2/IKMmOZnCW4nijYSFDMr1t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717494329; c=relaxed/simple;
-	bh=q6OwPnDB/7iRSRzcquIUgaQdPaEF7T8E9hWdTrF07tU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n5Zg1wYDLoPX2ETE2lfnPjptbhGOSPbDjW5nBjHDwSjN8NFPwXaZbA1Ir0o5gBPozVXGhVTMet1kZavBiGg0UJPdqLVPFNzNVGPQemF2aZJsLd2pM1DHexCmVcyPGVBzYxDBZy9gXEcatER66h/ukY6b3kbrVbWgT8tqNarFvVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FeAVMx5R; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717494323; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=vbTEU+QReOv/YXLhMYe94JXt/EprrLouNKIL/3NbTqU=;
-	b=FeAVMx5RZW+bo6Hy9n0D8tG7AKOe/LoXzYAXit7nhq8pf7z7M2R2//lqWPoemiL7z8kGZOmxbkfsopiEnQ0V8WcpsONM7hUlGtwPDyNNzEEFwUyD7umSyh95pKurwCOGjCZEi7j3txdAaQdL+JLgqm2IVtO2ZUtGgSWeBBbHCs4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R371e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W7qjMx5_1717494320;
-Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7qjMx5_1717494320)
-          by smtp.aliyun-inc.com;
-          Tue, 04 Jun 2024 17:45:21 +0800
-Message-ID: <f11c1b52-67d1-4c2a-834b-47302b0054bc@linux.alibaba.com>
-Date: Tue, 4 Jun 2024 17:45:20 +0800
+	s=arc-20240116; t=1717494387; c=relaxed/simple;
+	bh=VelLrgCyVufY769kxGVathE8QdW2VKCazGNXXN/11xQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MRC5143GTso/MPgKw86Qsds9VO4t8tC7snO6DAjBmN4CuASrelK2ZsVxh9df9rd5QJurXVrivXApXC7BV0laH19HC8Sp0gNrS5CnXWPgM0oDDWLlCsHae+2mktAz613n6eFCH0QXldcp6A1MHv8qd2/k3CcAwMO6NbhSBdcFJDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGO90VT5; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c1a272c96cso901726a91.1;
+        Tue, 04 Jun 2024 02:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717494386; x=1718099186; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l4Iy/95Cu2HrlzBSr5TKl0e7xBU0QDGnX2eGXYKgDdg=;
+        b=BGO90VT5XzsIbp8+8+tw4ewQFvh99pGB6iprMCFt5Xb6ilkxOUVhr6BHwS/v6FkW4m
+         EGftatoMMK2ST0LnPsCKgaNb8kFeMJeagw3QuafIUnjTdWhehYlx5T9DstK4wy0eaZzS
+         J80JBXqslTf4qlqqgCYKzJyhM11I8NnpCVsLfhYVtd5SkRaWIUeesycSq7/zkeDmH8I1
+         9pcmaNyL6Btqxn4dkMaHGHh/B3c32+W8NZEWB9WHThTLFJ5Bz7FJmXfmivFegSodbNwM
+         jMjx58kckb2xsEYuaXzF4g+bh3+ASmghyMGsVYiQMx3N3osQmxd/N5F9wkUi7CXR97qV
+         Y1uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717494386; x=1718099186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l4Iy/95Cu2HrlzBSr5TKl0e7xBU0QDGnX2eGXYKgDdg=;
+        b=WaDxMCR+FvWrT9+J5F/17on/H3XLMStN1n/rb0/wvJpvVWVWNUf0f8/fHGTo/skCBP
+         1gSjU79jD5OfJndkHZz0wUpGnipCsOFCCsLPRJvBxuLzv5FaG6zaPvdSOnUNb2esXKtX
+         nLM3pKEPZTP8FtwuyTTnvJW9YxZDqu/nTTFyMjLhEiFiy2RmFT+R8eZhsYwuc+AQjtXq
+         Pc0KC/RDR/DHCh2sjoe1L+u3wfnbsr2v0t7JhRRGe3PHI+JCS4jr40qKLY01WoU0cI6Z
+         UpaFwyM4io3uO/k1lZWee4sJLfqXvWB/D3xhXclOJxnYm0cmxsOo6X7GrMGF3mk9pJdb
+         eB/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW/Bl4+vBGeSqLuP0Bgbty6u9pz072X2YMse4tuIR0RXg+HsSIc4lJ/qEAt7riPTJXpHr66CItxjNz+19JBVUFp0LRb7vQsJqZbk6gTvhJU9TxlhVIunoBzur2PtgtTIZZxhPZfKmYaBMfs6zZqRJoOBdq+xwbCudA/TNPjoqGFjX5qmw==
+X-Gm-Message-State: AOJu0YwWBmprp6HteeQQz4nJaGT+IARjsUOToX+WeWU290I/hfP31EzO
+	MoNPdfT2jnUn/WfCFZQBiUlRcM3Ia3HwhTIFU/WRiEOyfSWZ8tFpzDUp68M6CT8RbnnVMC/qldM
+	pzrB1NgCN0ccKvu52YjtdCWr7eUc=
+X-Google-Smtp-Source: AGHT+IGQu/cJn1x0sA5BtqSnIZFVL97WUuQok1tV3pUcfO+SZxiGMkxxQbIzQbdbfMNIlTn164Rr8DvSHK2haHzzUy4=
+X-Received: by 2002:a17:90a:12c9:b0:2bf:9370:5a55 with SMTP id
+ 98e67ed59e1d1-2c1dc5be130mr10619514a91.2.1717494385767; Tue, 04 Jun 2024
+ 02:46:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] add mTHP support for anonymous shmem
-To: Daniel Gomez <da.gomez@samsung.com>, David Hildenbrand <david@redhat.com>
-Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "hughd@google.com" <hughd@google.com>,
- "willy@infradead.org" <willy@infradead.org>,
- "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
- "ying.huang@intel.com" <ying.huang@intel.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
- <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
- Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
- <f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com>
- <db3517d0-54b1-4d3a-b798-1c13572d07be@linux.alibaba.com>
- <CGME20240531111357eucas1p2338be7f326d8d9176d2ee212a10fc9db@eucas1p2.samsung.com>
- <502fb3df-b42b-4f0c-a98d-348c3d544721@redhat.com>
- <slkkien5nc3weyzebdlxs5jjvealqzmctbom7sfvijvkolhsjj@athcc2aqq77p>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <slkkien5nc3weyzebdlxs5jjvealqzmctbom7sfvijvkolhsjj@athcc2aqq77p>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
+ <20240510-unfounded-syrup-d1263d57d05a@spud> <NTZPR01MB0956D48361098E8AA4B3930A9FE02@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+ <20240511-unbiased-dainty-ccb5ece9b1b9@spud> <NTZPR01MB0956A7393097129D3CD048EB9FE32@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+ <20240514-congenial-smother-1e4b0fc6a5df@spud> <NTZPR01MB0956CF1AA9EA5A20A174FD8A9FEC2@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+ <20240515-reorder-even-8b9eebd91b45@spud>
+In-Reply-To: <20240515-reorder-even-8b9eebd91b45@spud>
+From: David Abdurachmanov <david.abdurachmanov@gmail.com>
+Date: Tue, 4 Jun 2024 12:45:48 +0300
+Message-ID: <CAEn-LTrKn079kbs2Wx5AuTs5+_sB4zaJsTf=MKn_nZZL04E5gA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
+To: Conor Dooley <conor@kernel.org>
+Cc: Xingyu Wu <xingyu.wu@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Hal Feng <hal.feng@starfivetech.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, May 15, 2024 at 7:31=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Wed, May 15, 2024 at 02:23:47AM +0000, Xingyu Wu wrote:
+> > On 15/05/2024 02:08, Conor Dooley wrote:
+>
+> > > There's a push in U-Boot to move devicestrees to use "OF_UPSTREAM", w=
+hich
+> > > means importing devicetrees directly from Linux and using them in U-B=
+oot. I
+> > > don't really want to merge a patch that would present U-Boot with a p=
+roblem if
+> > > the VisionFive 2 moved to that model there.
+>
+> > Would it be better  if I  change the rates of PLL0 and CPU core in the =
+driver not dts,
+> > and avoid the dts of Linux and U-Boot being different?
+>
+> I'd definitely prefer if we don't include stuff in the kernel tree that
+> would cause problems for U-Boot if imported there, yeah.
+>
 
+What is the current state of this patchset?
 
-On 2024/6/4 16:18, Daniel Gomez wrote:
-> On Fri, May 31, 2024 at 01:13:48PM +0200, David Hildenbrand wrote:
->>>>
->>>> As a default, we should not be using large folios / mTHP for any shmem,
->>>> just like we did with THP via shmem_enabled. This is what this series
->>>> currently does, and is aprt of the whole mTHP user-space interface design.
->>>>
->>>> Further, the mTHP controls should control all of shmem, not only
->>>> "anonymous shmem".
->>>
->>> Yes, that's what I thought and in my TODO list.
->>
->> Good, it would be helpful to coordinate with Daniel and Pankaj.
-> 
-> I've integrated patches 11 and 12 from the lsf RFC thread [1] on top of Baolin's
-> v3 patches. You may find a version in my integration branch here [2]. I can
-> attach them here if it's preferred.
-> 
-> [1] https://lore.kernel.org/all/20240515055719.32577-1-da.gomez@samsung.com/
-> [2] https://gitlab.com/dkruces/linux-next/-/commits/next-20240604-shmem-mthp
-> 
-> The point here is to combine the large folios strategy I proposed with mTHP
-> user controls. Would it make sense to limit the orders to the mapping order
-> calculated based on the size and index?
+I noticed this patchset on the U-Boot side from Hal Feng:
+[PATCH v1 0/4] Sync StarFive JH7110 clock and reset dt-bindings with Linux
 
-IMO, for !anon shmem, this change makes sense to me. We should respect 
-the size and mTHP should act as a order filter.
+It seems to indicate that there is WIP for OF_UPSTREAM support.
 
-For anon shmem, we should ignore the length, which you always set it to 
-PAGE_SIZE in patch [1].
-
-[1] 
-https://gitlab.com/dkruces/linux-next/-/commit/edf02311fd6d86b355d3aeb74e67c8da6de3c569
-
-> @@ -1765,6 +1798,10 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
-> 
->                  order = highest_order(suitable_orders);
->                  while (suitable_orders) {
-> +                       if (order > mapping_order) {
-> +                               order = next_order(&suitable_orders, order);
-> +                               continue;
-> +                       }
->                          pages = 1UL << order;
->                          index = round_down(index, pages);
->                          folio = shmem_alloc_folio(gfp, order, info, index);
-> 
-> Note: The branch still need to be adapted to include !anon mm.
+Cheers,
+david
 
