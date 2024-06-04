@@ -1,261 +1,269 @@
-Return-Path: <linux-kernel+bounces-201253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE7758FBBD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:49:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24898FBBDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74849286AC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3476C1F258D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B858814A4D4;
-	Tue,  4 Jun 2024 18:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTXX0GZD"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2394914A4CC;
+	Tue,  4 Jun 2024 18:50:31 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445C218028;
-	Tue,  4 Jun 2024 18:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E3A4A11
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 18:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717526968; cv=none; b=d9NUBy37eQGVe8wedFjhXu9/415zDsnYMoGDwDGt90/3Gf9MVEuHa2BWTh0IQ6txw444eYlgXFOeA+zBbgNazdDb0WZcV+WXBe7kUlchEQT0UAh7MCrmx9MESJOCbrNRUHEHfGCvKuMf4+7lMdY6Kj9YDmz4RaEJ6dW6R4m+Zj4=
+	t=1717527030; cv=none; b=MmrGDPI0V2LB8qzRkk5ymHBiSqu9HEV9urOxxKcOWsKUv1bHC8+DYCuyDaVnOJwHG3v5RpOgA8NbcXv89q11IRq+NKb4O63Uj4ORsiQ96a3gQhxDjEdqS32pvMsvSFcDg5NMwdVbK/uWWq73FMBRcIn4Vlkl+7iUf1RWHXkj5no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717526968; c=relaxed/simple;
-	bh=a1zun8HL6lepv1ujLISq6+xEZ0ZnO4qy/lSJiqqhavo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CmCP2fONInsC6xeyjUvbYM397GES5HFBNZfZNii5ju16yeireA3yk8+3zBN59xxyKv7A5nFst+ATg0rVQ1n2/q3QvnFmMqrzW4Is4VqozVwc/qfVynTga+FovajDKwNJaSaIsVdhukKGv1qqODgMX6zDBvxnjUlFHa3Ss+tktZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTXX0GZD; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so230848a12.0;
-        Tue, 04 Jun 2024 11:49:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717526966; x=1718131766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bb27sFgRlG0Tk9BuaJtsYRuhNJ3jYbY3tEhCWfnKOSg=;
-        b=MTXX0GZDZta/N8f78Syfoxt7FmPFFY9lurDnHtuvlz/LzOtd6tMN6gLVDzfljOk6f/
-         tyDoYVDP6BlWYSQ/nOYEXdSwHoZJOggEFQ4QC+HuS21K96qNma8gKBABIhWwSFO5Vn7a
-         ppM6tGmRaOPstF/qpIQn4XZQ9tIuxp0TZlQHsM9jTGJUR9hoE7+R7dVeg2yed6JLJYO9
-         Z98tE8K+f/ed7TUuJOb4URynwsTkFLtlV/G3R778RuWkkRE8o/MLWinPYn+t6jB41A55
-         YvpR4x/IO2UPEH/MeG03SqALsHofpssYp+RWLfPkhNr4RLCKNX65qbFL6Cj6jX3Q0Cyt
-         PU+g==
+	s=arc-20240116; t=1717527030; c=relaxed/simple;
+	bh=krSPU5pOGZIAztx1Wl/6rjG1rE9uG42eSwQTDza2NMY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LlemOe1GKGMlMpZmPN2CXVqc9KI11ReDRPgyWSmHbhUfeUsBvR/NzR7MOVJEuEnpk2sFrbs3S17ywpSXxREU080TqWiANFNdH13Uo9VIAUIv3O2M8zKj1XDQIeVdBLEutSiRjxmRovUHfZz6tWsN2knUVdO7OFgH9bJ/P96BK/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-374ab3e4a5fso13007975ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 11:50:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717526966; x=1718131766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bb27sFgRlG0Tk9BuaJtsYRuhNJ3jYbY3tEhCWfnKOSg=;
-        b=HNGKUeRgg4tycRdoqB4dtz/VJiKkle5YLenZ1PxiCVPD+mdXng/Te4iuWxZjDnYG/S
-         kLoGiyKwBvUaSPkM1SB4OD3SkUEyg+4aUX9JGlpt4dVCDMCuMv98rgJSHA/Oq5SKYLNU
-         G1gAl8+/VMN3qaYGqPliqKtUMt1qXqqsDm4Ws+3HCxhXWkI12+L9SGOsiQLo3kJGOA3a
-         3D+fjekOCb6dyzve/ELPw08/vQrZyaVnGEgs2QihDO7b4MjoEXovSk4zydpv96IRl9wG
-         esb65ejYmIjguxhkxxHEkLgYKT7uHD3jLJJuiRDYhWD8EXt/k0oNQVjm74NK5zztTtdG
-         KxUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWO+arFEkNzPZXCESGs5SNTgxIX6M6Z0aF+hmcIRSNBWNZePWCcKN105fu4SUlTMSUiyBO95WlIbS59sYowvxna4OxDuqNkR9wL6vXEFR3HMN8TgAVP/9spp70xfzFfpGW96PsZ0nqbwyWAw==
-X-Gm-Message-State: AOJu0YxFCfedSqOMLWInXKDvrBZMjOO3ssgqKl1ou3oeSbTZCeVzM4X2
-	JCgymRaUSHrRxmOOOSxSvWtJKwahvZC5KQ/1+ZutTBnm/q0uy330BakzAlgZQ4j+tlB4NNTPUfC
-	3857f7tSIqparAO/qVcijCPm+rbs=
-X-Google-Smtp-Source: AGHT+IFWkdL+wQ72daSRO1P7tTzDvc9m9YMF90o5MlhZaIpy3wrX/gSyeDidoV+f0/qTjEPQhAglVyN6XWP5BsXJN00=
-X-Received: by 2002:a50:8a92:0:b0:574:ec3d:262a with SMTP id
- 4fb4d7f45d1cf-57a8b6a4d4emr430003a12.5.1717526965479; Tue, 04 Jun 2024
- 11:49:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717527028; x=1718131828;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T2+QoTfTwrlWaCODQk6HKVoeseQOgSTMFKHIgcLAPAI=;
+        b=lwhz6Q++rMVpb8GBBDK3JIAVvpAppL3lTVKVziESHlCemtP/hHFJmNOC7zGVdKWbJk
+         abxs6RiYwnRNosTh406cL9sRXFGBF1E5GCPfzOB8lM6XrwO1dua0g6x+w4BTIcF4SaHo
+         OgGKVk3jdzVbFxtGRNKkB7eLSYJX2tzb+iMjgZ/JLElRo+NuGy703hClDzkw/JC32/7d
+         xi/fmvm9ILmqdSCuJN17YNtBLyihkP7n4kcMmsVj39VK9FdSDCHPO3KOU8lYFztzgIQn
+         +rT2Z+3lQ/oJpL9S7zq3IFm+yCg/K/c+d6KL4gvAA4HxasJNbkJlUoA472Xu7Kc0xXte
+         l0ig==
+X-Forwarded-Encrypted: i=1; AJvYcCXHL6LSc1/2mk29SE4FduKoOhS5Gx7GOtofKcU8B38xrWoJ9O6dzp8sA4+8tnCciObcH/+0KDjdTG9eENUcOnLzhFz01hC6+hQ+weKr
+X-Gm-Message-State: AOJu0YyyH3c+aEKFIfiRkzwrBvtmK0G2D2mDae3SxRjLDzKSV2DDqScp
+	klMiTrl0gOxqUdNT37heBuyiHt7cY3HQpO1cD4Ck/5kqsIHJH+P4TSsQgU/qPu1wgbUenJigHuH
+	LjxD9H+6x8E0eYcf1nIZz1mAfZ1kwayaFRJjxyaHgUyHoXE1SgtXaQdc=
+X-Google-Smtp-Source: AGHT+IFMmkq9LUlnObuOg19vG4/2PM1sJneKxfvtoUUF24p037G1AY3/r76wSeDcAAfyEtgiihzjK/yf/8eOXU6/ZEz/to3XQIQi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240123144543.9405-1-quic_bibekkum@quicinc.com>
- <20240123144543.9405-4-quic_bibekkum@quicinc.com> <CAF6AEGs3_wBNo58EbGicFoQuq8--fDohTGv1JSFgoViygLS5Lg@mail.gmail.com>
- <f2222714-1e00-424e-946d-c314d55541b8@quicinc.com> <51b2bd40-888d-4ee4-956f-c5239c5be9e9@linaro.org>
- <0a867cd1-8d99-495e-ae7e-a097fc9c00e9@quicinc.com> <7140cdb8-eda4-4dcd-b5e3-c4acdd01befb@linaro.org>
- <omswcicgc2kqd6gp4bebd43sklfs2wqyaorhfyb2wumoeo6v74@gaay3p5m46xi>
- <CAF6AEGub2b5SRw7kDUGfKQQ35VSsMkQ9LNExSkyHHczdFa2T4Q@mail.gmail.com> <9992067e-51c5-4a55-8d66-55a102a001b6@quicinc.com>
-In-Reply-To: <9992067e-51c5-4a55-8d66-55a102a001b6@quicinc.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 4 Jun 2024 11:49:13 -0700
-Message-ID: <CAF6AEGsxKwzX6it4vipggOdGqNVzPbwMj6a0h871a=GfwUp0Cg@mail.gmail.com>
-Subject: Re: [PATCH v9 3/5] iommu/arm-smmu: introduction of ACTLR for custom
- prefetcher settings
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jsnitsel@redhat.com, 
-	quic_bjorande@quicinc.com, mani@kernel.org, quic_eberman@quicinc.com, 
-	robdclark@chromium.org, u.kleine-koenig@pengutronix.de, robh@kernel.org, 
-	vladimir.oltean@nxp.com, quic_pkondeti@quicinc.com, quic_molvera@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:c26b:0:b0:371:139d:ba7e with SMTP id
+ e9e14a558f8ab-374b1f6585fmr114445ab.3.1717527028008; Tue, 04 Jun 2024
+ 11:50:28 -0700 (PDT)
+Date: Tue, 04 Jun 2024 11:50:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000065b2f6061a14ecde@google.com>
+Subject: [syzbot] [overlayfs?] possible deadlock in iter_file_splice_write (4)
+From: syzbot <syzbot+5ce16f43e888965f009d@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 2:22=E2=80=AFAM Bibek Kumar Patro
-<quic_bibekkum@quicinc.com> wrote:
->
->
->
-> On 5/28/2024 9:38 PM, Rob Clark wrote:
-> > On Tue, May 28, 2024 at 6:06=E2=80=AFAM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> >>
-> >> On Tue, May 28, 2024 at 02:59:51PM +0200, Konrad Dybcio wrote:
-> >>>
-> >>>
-> >>> On 5/15/24 15:59, Bibek Kumar Patro wrote:
-> >>>>
-> >>>>
-> >>>> On 5/10/2024 6:32 PM, Konrad Dybcio wrote:
-> >>>>> On 10.05.2024 2:52 PM, Bibek Kumar Patro wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 5/1/2024 12:30 AM, Rob Clark wrote:
-> >>>>>>> On Tue, Jan 23, 2024 at 7:00=E2=80=AFAM Bibek Kumar Patro
-> >>>>>>> <quic_bibekkum@quicinc.com> wrote:
-> >>>>>>>>
-> >>>>>>>> Currently in Qualcomm  SoCs the default prefetch is set to 1 whi=
-ch allows
-> >>>>>>>> the TLB to fetch just the next page table. MMU-500 features ACTL=
-R
-> >>>>>>>> register which is implementation defined and is used for Qualcom=
-m SoCs
-> >>>>>>>> to have a custom prefetch setting enabling TLB to prefetch the n=
-ext set
-> >>>>>>>> of page tables accordingly allowing for faster translations.
-> >>>>>>>>
-> >>>>>>>> ACTLR value is unique for each SMR (Stream matching register) an=
-d stored
-> >>>>>>>> in a pre-populated table. This value is set to the register duri=
-ng
-> >>>>>>>> context bank initialisation.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> >>>>>>>> ---
-> >>>>>
-> >>>>> [...]
-> >>>>>
-> >>>>>>>> +
-> >>>>>>>> +               for_each_cfg_sme(cfg, fwspec, j, idx) {
-> >>>>>>>> +                       smr =3D &smmu->smrs[idx];
-> >>>>>>>> +                       if (smr_is_subset(smr, id, mask)) {
-> >>>>>>>> +                               arm_smmu_cb_write(smmu, cbndx, A=
-RM_SMMU_CB_ACTLR,
-> >>>>>>>> +                                               actlrcfg[i].actl=
-r);
-> >>>>>>>
-> >>>>>>> So, this makes ACTLR look like kind of a FIFO.  But I'm looking a=
-t
-> >>>>>>> downstream kgsl's PRR thing (which we'll need to implement vulkan
-> >>>>>>> sparse residency), and it appears to be wanting to set BIT(5) in =
-ACTLR
-> >>>>>>> to enable PRR.
-> >>>>>>>
-> >>>>>>>            val =3D KGSL_IOMMU_GET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACT=
-LR);
-> >>>>>>>            val |=3D FIELD_PREP(KGSL_IOMMU_ACTLR_PRR_ENABLE, 1);
-> >>>>>>>            KGSL_IOMMU_SET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR, val)=
-;
-> >>>>>>>
-> >>>>>>> Any idea how this works?  And does it need to be done before or a=
-fter
-> >>>>>>> the ACTLR programming done in this patch?
-> >>>>>>>
-> >>>>>>> BR,
-> >>>>>>> -R
-> >>>>>>>
-> >>>>>>
-> >>>>>> Hi Rob,
-> >>>>>>
-> >>>>>> Can you please help provide some more clarification on the FIFO pa=
-rt? By FIFO are you referring to the storing of ACTLR data in the table?
-> >>>>>>
-> >>>>>> Thanks for pointing to the downstream implementation of kgsl drive=
-r for
-> >>>>>> the PRR bit. Since kgsl driver is already handling this PRR bit's
-> >>>>>> setting, this makes setting the PRR BIT(5) by SMMU driver redundan=
-t.
-> >>>>>
-> >>>>> The kgsl driver is not present upstream.
-> >>>>>
-> >>>>
-> >>>> Right kgsl is not present upstream, it would be better to avoid conf=
-iguring the PRR bit and can be handled by kgsl directly in downstream.
-> >>>
-> >>> No! Upstream is not a dumping ground to reduce your technical debt.
-> >>>
-> >>> There is no kgsl driver upstream, so this ought to be handled here, i=
-n
-> >>> the iommu driver (as poking at hardware A from driver B is usually no=
-t good
-> >>> practice).
-> >>
-> >> I'd second the request here. If another driver has to control the
-> >> behaviour of another driver, please add corresponding API for that.
-> >
-> > We have adreno_smmu_priv for this purpose ;-)
-> >
->
-> Thanks Rob for pointing to this private interface structure between smmu
-> and gpu. I think it's similar to what you're trying to implement here
-> https://lore.kernel.org/all/CAF6AEGtm-KweFdMFvahH1pWmpOq7dW_p0Xe_13aHGWt0=
-jSbg8w@mail.gmail.com/#t
-> I can add an api "set_actlr_prr()" with smmu_domain cookie, page pointer
-> as two parameters. This api then can be used by drm/msm driver to carry
-> out the prr implementation by simply calling this.
-> Would this be okay Rob,Konrad,Dmitry?
-> Let me know if any other suggestions you have in mind as well regarding
-> parameters and placement.
+Hello,
 
-Hey Bibek, quick question.. is ACTLR preserved across a suspend/resume
-cycle?  Or does it need to be reprogrammed on resume?  And same
-question for these two PRR related regs:
+syzbot found the following issue on:
 
-  /* Global SMMU register offsets */
-  #define KGSL_IOMMU_PRR_CFG_LADDR        0x6008
-  #define KGSL_IOMMU_PRR_CFG_UADDR        0x600c
+HEAD commit:    f06ce441457d Merge tag 'loongarch-fixes-6.10-1' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1435a032980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=eb72437243175f22
+dashboard link: https://syzkaller.appspot.com/bug?extid=5ce16f43e888965f009d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-(ie. high/low 32b of the PRR page)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I was starting to type up a patch to add PRR configuration, but
-depending on whether it interacts with suspend/resume, it might be
-better form arm-smmu-qcom.c to just always enable and configure PRR
-(including allocating a page to have an address to program into
-PRR_CFG_LADDR/UADDR), and instead add an interface to return the PRR
-page?  I think there is no harm in unconditionally configuring PRR for
-gpu smmu.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/00ecb7bdd1a8/disk-f06ce441.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3926ab949197/vmlinux-f06ce441.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/36849eea4fc5/bzImage-f06ce441.xz
 
-BR,
--R
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5ce16f43e888965f009d@syzkaller.appspotmail.com
 
-> Thanks & regards,
-> Bibek
->
-> > BR,
-> > -R
-> >
-> >>>
-> >>>>
-> >>>>>> Thanks for bringing up this point.
-> >>>>>> I will send v10 patch series removing this BIT(5) setting from the=
- ACTLR
-> >>>>>> table.
-> >>>>>
-> >>>>> I think it's generally saner to configure the SMMU from the SMMU dr=
-iver..
-> >>>>
-> >>>> Yes, agree on this. But since PRR bit is not directly related to SMM=
-U
-> >>>> configuration so I think it would be better to remove this PRR bit
-> >>>> setting from SMMU driver based on my understanding.
-> >>>
-> >>> Why is it not related? We still don't know what it does.
-> >>>
-> >>> Konrad
-> >>
-> >> --
-> >> With best wishes
-> >> Dmitry
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc2-syzkaller-00007-gf06ce441457d #0 Not tainted
+------------------------------------------------------
+syz-executor.3/17052 is trying to acquire lock:
+ffff888022903468 (&pipe->mutex){+.+.}-{3:3}, at: iter_file_splice_write+0x335/0x14e0 fs/splice.c:687
+
+but task is already holding lock:
+ffff8880292be420 (sb_writers#4){.+.+}-{0:0}, at: do_splice+0xcf0/0x1900 fs/splice.c:1353
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #4 (sb_writers#4){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1655 [inline]
+       sb_start_write+0x4d/0x1c0 include/linux/fs.h:1791
+       mnt_want_write+0x3f/0x90 fs/namespace.c:409
+       ovl_create_object+0x13b/0x370 fs/overlayfs/dir.c:642
+       lookup_open fs/namei.c:3505 [inline]
+       open_last_lookups fs/namei.c:3574 [inline]
+       path_openat+0x1425/0x3280 fs/namei.c:3804
+       do_filp_open+0x235/0x490 fs/namei.c:3834
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+       do_sys_open fs/open.c:1420 [inline]
+       __do_sys_openat fs/open.c:1436 [inline]
+       __se_sys_openat fs/open.c:1431 [inline]
+       __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #3 (&ovl_i_mutex_dir_key[depth]
+){++++}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+       inode_lock_shared include/linux/fs.h:801 [inline]
+       lookup_slow+0x45/0x70 fs/namei.c:1708
+       walk_component+0x2e1/0x410 fs/namei.c:2004
+       lookup_last fs/namei.c:2469 [inline]
+       path_lookupat+0x16f/0x450 fs/namei.c:2493
+       filename_lookup+0x256/0x610 fs/namei.c:2522
+       kern_path+0x35/0x50 fs/namei.c:2630
+       lookup_bdev+0xc5/0x290 block/bdev.c:1157
+       resume_store+0x1a0/0x710 kernel/power/hibernate.c:1235
+       kernfs_fop_write_iter+0x3a1/0x500 fs/kernfs/file.c:334
+       new_sync_write fs/read_write.c:497 [inline]
+       vfs_write+0xa72/0xc90 fs/read_write.c:590
+       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&of->mutex){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       kernfs_seq_start+0x53/0x3b0 fs/kernfs/file.c:154
+       seq_read_iter+0x3d0/0xd60 fs/seq_file.c:225
+       do_iter_readv_writev+0x5a4/0x800
+       vfs_readv+0x2b6/0xa90 fs/read_write.c:932
+       do_preadv fs/read_write.c:1049 [inline]
+       __do_sys_preadv fs/read_write.c:1099 [inline]
+       __se_sys_preadv fs/read_write.c:1094 [inline]
+       __x64_sys_preadv+0x1c7/0x2d0 fs/read_write.c:1094
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&p->lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       seq_read_iter+0xb7/0xd60 fs/seq_file.c:182
+       copy_splice_read+0x662/0xb60 fs/splice.c:365
+       do_splice_read fs/splice.c:985 [inline]
+       splice_file_to_pipe+0x299/0x500 fs/splice.c:1295
+       do_sendfile+0x515/0xe10 fs/read_write.c:1301
+       __do_sys_sendfile64 fs/read_write.c:1356 [inline]
+       __se_sys_sendfile64+0x100/0x1e0 fs/read_write.c:1348
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&pipe->mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       iter_file_splice_write+0x335/0x14e0 fs/splice.c:687
+       do_splice_from fs/splice.c:941 [inline]
+       do_splice+0xd77/0x1900 fs/splice.c:1354
+       __do_splice fs/splice.c:1436 [inline]
+       __do_sys_splice fs/splice.c:1652 [inline]
+       __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  
+&pipe->mutex --> &ovl_i_mutex_dir_key[depth] --> sb_writers#4
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(sb_writers#4);
+                               lock(&ovl_i_mutex_dir_key[depth]);
+                               lock(sb_writers#4);
+  lock(&pipe->mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.3/17052:
+ #0: ffff8880292be420 (sb_writers#4){.+.+}-{0:0}, at: do_splice+0xcf0/0x1900 fs/splice.c:1353
+
+stack backtrace:
+CPU: 1 PID: 17052 Comm: syz-executor.3 Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ iter_file_splice_write+0x335/0x14e0 fs/splice.c:687
+ do_splice_from fs/splice.c:941 [inline]
+ do_splice+0xd77/0x1900 fs/splice.c:1354
+ __do_splice fs/splice.c:1436 [inline]
+ __do_sys_splice fs/splice.c:1652 [inline]
+ __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f93d627cf69
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f93d5dde0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
+RAX: ffffffffffffffda RBX: 00007f93d63b4070 RCX: 00007f93d627cf69
+RDX: 0000000000000005 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f93d62da706 R08: 00000000ffffffe1 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f93d63b4070 R15: 00007ffc1c7ac468
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
