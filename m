@@ -1,193 +1,147 @@
-Return-Path: <linux-kernel+bounces-200487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798958FB0B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:05:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD278FB0B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E18381F21B01
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD7D1F22772
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880AD145344;
-	Tue,  4 Jun 2024 11:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740901459FA;
+	Tue,  4 Jun 2024 11:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jnbMkOk7"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TS9EyaBP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F4F4A07;
-	Tue,  4 Jun 2024 11:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB5A4A07;
+	Tue,  4 Jun 2024 11:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717499143; cv=none; b=buLRckyZj2TZeurHYHOCcBr0h6FY9ceR78FW2esKZwVGpTFFUk5ZR+f6ZS2Sr72N9ullqJeGKvozl19sGMXXAsb8rRzHOhGuBYHVgXEiD6mZWR3KiSGHwxBeXHkTveuxfPb71YVwOtrAn9U8Z79HF6l4zGkcoumIHJt0uIq8N3w=
+	t=1717499150; cv=none; b=uxrkOA1svpo9fdNjn5GEhEvHJBYZOzyOxpR3YzE+oBCoTSSvCuiyjW4G/O9uJZ8G0dHL00kXrW0MWPLeorUNXYxbb29ml69ATn1V7EB5bY9d86aamkVt0g3621grYdEq/pyxPlv+f6lP9NFpG48n3o/tW+t26+zGgDX4rknsLuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717499143; c=relaxed/simple;
-	bh=TY7XvU4SbXdxEdswCoVLHuqEj9CxfdQLBwmuALZPUxA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HzIY+oXAB9DZTo26MrRFq1r1jGItqGxHQTkTPtRC0DDUr2uNi8apbwYCZZLAefNkxaIQzMLFFgRvtTat3eA8u0Apo+gYmwxnoxgHMA8mgcorOyKbeydBsPZilSLzVHAKKBiJJe38lnaYcSoRo+V5FOXT+B2ccwXSiDXA0765QfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jnbMkOk7; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b98fb5c32so3052228e87.1;
-        Tue, 04 Jun 2024 04:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717499140; x=1718103940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pjJNON3xbO+Yh03gyOu9rx6tlrOQ/KcMrKYC4qdTMT4=;
-        b=jnbMkOk7tUVVy8fW44JZSGZea3OUJCuffIqYc1j/lGfLowPTnPJsmTvgzHd/kh5emR
-         fgUu0JFObDkAZ6PapU2t48Ac07rna4vRODWpvCx8yxX+bEIfGEHdEYusTlaWDVkkKnfD
-         rklotBjrth/1VS1Sib0AkjAbZtswr7zBxEvENCRUoYPYc1Wl4TTmgm9Ix2ne2UFCKU69
-         1++jE/3SYSHXBVZQjr0jv3D4R4BO1+3XqPhiryBL2N1hd+YC21NKLBofOYQHgOmKCZkv
-         tGHXkMoDwv+VAq/NxH/KVzn/a0JewAQpKUVdsJy9cwc22SPx7B61/SCE7jU/rCm7qEos
-         qisA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717499140; x=1718103940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pjJNON3xbO+Yh03gyOu9rx6tlrOQ/KcMrKYC4qdTMT4=;
-        b=IAa1wb6uOg5MpfMekEv8zNVfwCuX+o+Kso+GfvpvLWDvz9v1fheomwA+xEiHp+ua4B
-         Bda3H3lk8liKv6gl838wAV58aH8qXoRYjoHNDvpuQ8vRdIlCnocyvTbZTgVQAcxu5GI2
-         TPazZ/nx/+HMLY11dakKFMqgex3LZWXt8VfabK2Zn9l53mElGcfOIBsVVTudb2cVaiYr
-         remiIvYHU6jpb835iXbWiJdA/aiwXsTe1feZktTcb3J+6Tvnf4nZseQBbk1zY68RGtDy
-         HsZR0Z0/VKvd5ZiZY2/803PtzsivJpayEvJoBL89yHiI5vyZ4AF2mGobgPZILqB2Bc9u
-         z0Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWvXedEk/eskLraoXJRRMC6sLfE2VgfRLSOIV2QlXtg9W86PGa8/ZO/AMRUA+yXWNYq8fkQzWeQgUist6T7mQhIQPJ7lhP60MpHNYSagEs8PI+Y5sXsTY8qJ08AmhYApLXCUiMDG7jxga0Cvi3EcGcov7Ckb2z4UzwwNSBRDd0qT1s3w==
-X-Gm-Message-State: AOJu0YwY2xLTmNuvFrz2VO01t956I+KTD/3dNwCgCmzxEy9tPMJ0irch
-	OIRHKY83JoUvUGxU5CP0HnwJmvlIuXCkaRrzzRuS2xstxZgAr2n00en0oW8zaByUXP+wpIK6lOz
-	s/1VlHEWfPc5Z869oB1+opl6s+L8=
-X-Google-Smtp-Source: AGHT+IGKVX7EW81SfP255Jyii0GXmIvdQOfcnZjcozuN3AC14wMPa/o28MFGzPREGwZRW/+wCvISJRXveGKYPM4NcEU=
-X-Received: by 2002:ac2:5de5:0:b0:52b:9955:43b3 with SMTP id
- 2adb3069b0e04-52b99554482mr4801820e87.60.1717499140011; Tue, 04 Jun 2024
- 04:05:40 -0700 (PDT)
+	s=arc-20240116; t=1717499150; c=relaxed/simple;
+	bh=FD+umT/nkmEtU1quUGT39hfACl2LbDDL01+n5KdBb1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHbBwyLoRmLr4VLTLj0E9Xa7rNOtkS3QN9opvewshEem/Dzo8EMGtIccI2L38dF/cnee2r7EmCKaKwFo8Jv/wVmZancX6Vljs5PhLKc9RGBbantS4vrjS2V/aXa+a2zhJlaaaUV7zAaaiHLxVAUa5aKWsEjcqM/uqIcOXoFMyBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TS9EyaBP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4BD0A40E016E;
+	Tue,  4 Jun 2024 11:05:46 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id PiQqpMuj9QBX; Tue,  4 Jun 2024 11:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717499142; bh=6dDFTHhj/f5+7yxLUr3fDZt4RZlOlJ9nxFX0/vuWp5g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TS9EyaBP23Y2qQjBPCxFnFbdKnNNLZsd3+SoOIwlKT7j3ArZJnZtY53gm3PxkaRAI
+	 qV7KH0PY+ZitB6T2WYmznfKmGjwArobkUpb2QnyCxfEPw2fgcmTfScMb9PBhVgJwuq
+	 v6VRO1XvlOk7Wla7UiPPvjdLeg2vXcU079zCtUZzHTyVElgZJ2kNDQ8K0ob7bL4wHl
+	 J26OEoeXNPzcv6OUPGyEXRmZD2/k0te4bqywuSRwKFMl4mfrUE2TYZoDcwcK4d0rNU
+	 4lPuAa5X1CLzAe/X4mSHm1nD9m6jnH33djVCun8ZG528zX2p0OJJzG1pGetMItlX1A
+	 egQW+uBV94VUk2WmG5y4yH18kVfWBuO9Dzi1W2LGbBmmHBOA/xBQbNnfymWkEvHb7G
+	 9LxoY/kukAwraLRSnVL2gsna4KQGWM7J4y+Qm0CUgI5PRjxu27W9xvGynm9BrC5SBD
+	 Tm1CbL2Vbt7ZjE30oxpf3l740DOPC5XHHBRsfAwz5UWDjcQsJQRy/gNRCF2Fuu9VtG
+	 wENHRsXgHngddm+u4R2VLKSBTUtV4oH/WKWryMZipDq5I0ym6VOV7pK0NTuEIN5fEw
+	 PU2/9dJTzGgXLRHzeB6R2gLEnqqHJUh58kpr26vdZ7hZoaojvb2w6d8wgHs8U/S4vi
+	 J+Dz5Sdc9BP6D4Bu6Ud68GCs=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2021C40E016A;
+	Tue,  4 Jun 2024 11:05:35 +0000 (UTC)
+Date: Tue, 4 Jun 2024 13:05:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com
+Subject: Re: [PATCH 7/9] x86/mce: Unify AMD DFR handler with MCA Polling
+Message-ID: <20240604110528.GRZl70-MFo-EikWRHs@fat_crate.local>
+References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
+ <20240523155641.2805411-8-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
- <20240530093410.112716-3-angelogioacchino.delregno@collabora.com>
- <CAHp75Vexddt1xUGogRDZA9pM1pFp2=ZtCQnCfXePahSCb+oKpg@mail.gmail.com> <84f1c58c-0a5d-4131-a16b-b76bf28862ee@collabora.com>
-In-Reply-To: <84f1c58c-0a5d-4131-a16b-b76bf28862ee@collabora.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 4 Jun 2024 14:05:03 +0300
-Message-ID: <CAHp75VcwnjrsAY1qF68MpBWV-NLFSxTP_PDL+ER==KNdBAFFTA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] iio: adc: Add support for MediaTek MT6357/8/9
- Auxiliary ADC
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org, andy@kernel.org, 
-	nuno.sa@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com, 
-	marius.cristea@microchip.com, marcelo.schmitt@analog.com, fr0st61te@gmail.com, 
-	mitrutzceclan@gmail.com, mike.looijmans@topic.nl, marcus.folkesson@gmail.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240523155641.2805411-8-yazen.ghannam@amd.com>
 
-On Tue, Jun 4, 2024 at 1:38=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
-> Il 30/05/24 15:34, Andy Shevchenko ha scritto:
-> > On Thu, May 30, 2024 at 12:34=E2=80=AFPM AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com> wrote:
+On Thu, May 23, 2024 at 10:56:39AM -0500, Yazen Ghannam wrote:
+> +static bool smca_log_poll_error(struct mce *m, u32 *status_reg)
 
-...
+That handing of *status_reg back'n'forth just to clear it in the end is
+not nice. Let's get rid of it:
 
-> >> +#define PMIC_RG_RESET_VAL              (BIT(0) | BIT(3))
-> >
-> > In this form it requires a comment explaining each mentioned bit.
->
-> I don't have an explanation for this, I know it's two different bits from=
- some
-> reveng, but the downstream driver declares that simply as 0x9.
->
-> Should I just "mask" this as 0x9 instead?
+---
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 0a9cff329487..a0ba82fe6de3 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -669,7 +669,7 @@ static void reset_thr_limit(unsigned int bank)
+ 
+ DEFINE_PER_CPU(unsigned, mce_poll_count);
+ 
+-static bool smca_log_poll_error(struct mce *m, u32 *status_reg)
++static bool smca_log_poll_error(struct mce *m, u32 status_reg)
+ {
+ 	/*
+ 	 * If this is a deferred error found in MCA_STATUS, then clear
+@@ -686,8 +686,8 @@ static bool smca_log_poll_error(struct mce *m, u32 *status_reg)
+ 	 * If the MCA_DESTAT register has valid data, then use
+ 	 * it as the status register.
+ 	 */
+-	*status_reg = MSR_AMD64_SMCA_MCx_DESTAT(m->bank);
+-	m->status = mce_rdmsrl(*status_reg);
++	status_reg = MSR_AMD64_SMCA_MCx_DESTAT(m->bank);
++	m->status = mce_rdmsrl(status_reg);
+ 
+ 	if (!(m->status & MCI_STATUS_VAL))
+ 		return false;
+@@ -695,6 +695,8 @@ static bool smca_log_poll_error(struct mce *m, u32 *status_reg)
+ 	if (m->status & MCI_STATUS_ADDRV)
+ 		m->addr = mce_rdmsrl(MSR_AMD64_SMCA_MCx_DEADDR(m->bank));
+ 
++	mce_wrmsrl(status_reg, 0);
++
+ 	return true;
+ }
+ 
+@@ -714,7 +716,7 @@ static bool ser_log_poll_error(struct mce *m)
+ 	return false;
+ }
+ 
+-static bool log_poll_error(enum mcp_flags flags, struct mce *m, u32 *status_reg)
++static bool log_poll_error(enum mcp_flags flags, struct mce *m, u32 status_reg)
+ {
+ 	if (mce_flags.smca)
+ 		return smca_log_poll_error(m, status_reg);
+@@ -789,7 +791,7 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
+ 		if (!mca_cfg.cmci_disabled)
+ 			mce_track_storm(&m);
+ 
+-		if (!log_poll_error(flags, &m, &status_reg))
++		if (!log_poll_error(flags, &m, status_reg))
+ 			continue;
+ 
+ 		if (flags & MCP_DONTLOG)
 
-In this case for all of the questionable forms, please add a oneline
-comment suggesting that "these are different bits without known
-purpose of each." or something like that.
 
-...
+-- 
+Regards/Gruss,
+    Boris.
 
-> >> +#define MT6358_IMP0_CLEAR              (BIT(14) | BIT(7))
-> >
-> > As per above.
-> >
->
-> Same, I don't have any explanation for that.
->
-> If you prefer, I can define this as 0x4080, but honestly I prefer keeping
-> it as-is since I am sure it's not a magic number but really two bits to f=
-lip
-> in a register.
-
-As per above.
-
-...
-
-> >> +       u8 r_numerator;
-> >> +       u8 r_denominator;
-> >
-> > Can you add struct u8_fract to the math.h and use it? I will Ack/R the
-> > respective patch.
->
-> Yeah, I did that exactly because u8_fract wasn't there and I didn't want
-> to waste more bits, but since you just asked for it... well, I'm happier =
-:-)
-
-Note, it's enough to have my Rb tag and route that change via IIO
-tree. We have done similar way for other changes in math.h (or aline)
-in the past.
-
-...
-
-> >> +       /* Assert ADC reset */
-> >> +       regmap_set_bits(regmap, pdata->regs[PMIC_HK_TOP_RST_CON0], PMI=
-C_RG_RESET_VAL);
-> >
-> > No required delay in between?
->
-> No, as strange as it may look, there is no delay required in between: thi=
-s is
-> because the register R/W is behind the PMIC Wrapper as much as all of the=
- other
-> MediaTek PMIC (sub)devices, so, missing delays was intentional here, yes.
-
-Maybe a comment?
-
-...
-
-> >> +       mutex_lock(&adc_dev->lock);
-> >
-> > Why not use cleanup.h?
->
-> I want to unlock the mutex immediately right after executing read_imp() o=
-r
-> mt6359_auxadc_read_adc(), and I don't want the reset to be done while a m=
-utex
-> is being held, as that makes no sense for this driver.
-
-That's why we have scoped_guard(). Exactly for such cases.
-
-> Besides, I find the macros in cleanup.h to be cryptic - in my opinion, th=
-ey
-> require better documentation as, for example, I don't understand when the
-> guard(mutex)(my_mutex) is supposed to acquire the lock and when it's supp=
-osed
-> to release it.
-
-They are cryptic due to limitations in C language. But for the end
-user it doesn't matter. The behaviour is well understandable and makes
-code cleaner and less prone for errors such as missing unlocks. So,
-please use cleanup.h.
-
---=20
-With Best Regards,
-Andy Shevchenko
+https://people.kernel.org/tglx/notes-about-netiquette
 
