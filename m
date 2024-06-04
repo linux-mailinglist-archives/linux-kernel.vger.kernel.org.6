@@ -1,416 +1,277 @@
-Return-Path: <linux-kernel+bounces-200972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9E18FB79C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:41:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A5A8FB7B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2936283B15
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:41:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E9B1C24197
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90811448DE;
-	Tue,  4 Jun 2024 15:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA851144D23;
+	Tue,  4 Jun 2024 15:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DBZgaHCo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="I4a4/T1o"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66511BE4A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5B6144303
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717515690; cv=none; b=NzrErnrdpuKRzxlVaDmS7AP+DvY7zQ2ANVr5n56JpukkDNocP6vMEh1ceCz8kDgV+tt1X0u1XkdBOIXXooz1LSD7CPBoHWqiVKU8R35oTTMf3R6cyEhUx31l1f5YZU2mrraJoBui0JSOMcEGrDQm31c0TIEB72Gnlwwng5J2z7Q=
+	t=1717515771; cv=none; b=hQ77eQQAZ+nptvNCfwQYRAg0fIW5bqhjUijXeS9HoP4b0usTIrHlUaMldqwMvz51en4KHk+RYwNBnQiP9nBmMofQ1gCxn/bZ7YF/FUdOY5pBltiqhoKyTeR5wz1h2OfgqoARXJoVP3shYybagzKBGmfRp6lsf/fO8qfziNHm6U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717515690; c=relaxed/simple;
-	bh=XxSUaDcVciyhPOXdjvOw1YcAxIcm7l6PsBDBbcU5kFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U182xwwVgMI6DBcjev6jQ2iExnwPQHnaK5n2tNCwDI1r2m0qRfOkgVHJQqm9Lg+ui9A9L+5q58ALK3rJrz72J0vNgYrSK1Dail5U5Y6lXeP36cMVdNHPGzQ55OEVeNV1HMqGq4FeuZ/sY4H1gRDAFKkIACsf0DJpu/kIS3+a3as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DBZgaHCo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717515687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Km5F10mW+lSOaW0ZqHxygOfF3jSHDpEX8SFgVZH0Uu8=;
-	b=DBZgaHCoMyEZR3wEyz8YzVhLthtTmyl/jmdpDaB9MqIP61EKvxIXMct02JSYXK/tAFKY59
-	l0I7qpWYBv0s7uBBVfH6teugXa/rZsHmuelDzrsabRnuquMm+4uy0VW19OllBvXHqwlgYE
-	kXc0I2wvT68VyUzjVJHUGgXdI1fUnXo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-FSGIZVu0MEqXiXMqOC9ulg-1; Tue, 04 Jun 2024 11:41:25 -0400
-X-MC-Unique: FSGIZVu0MEqXiXMqOC9ulg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-421292df2adso8792495e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:41:25 -0700 (PDT)
+	s=arc-20240116; t=1717515771; c=relaxed/simple;
+	bh=zUig3LFnbOZFizQhvImLYF4yPkzpA3wfhYaOksTtYeI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hxyV/YLfAycgesWjNdLOvF3EjcgvF8C1loPsHwAUsZ6WwWtlyvxQPVgtkde5ZRaDwj0wHEWiy3dnthPSRrUKDjJH0hFfLs9YUiYk+T3eL/y9lqbzjflxUww2JEEoZPcbygx8JUUxz70M5jcjVA8hzEl1ELOzlbF39fC20xaTfqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=I4a4/T1o; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-250aa4e8306so1637873fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:42:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1717515769; x=1718120569; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YTdWE72afDYsK1q1OenbgjxdrmLtbuaHew5UjnF896Q=;
+        b=I4a4/T1ol1BPfo5asHRsY8fJZV3OhD+01VrEwlZIgSh3w65TvWGjNOAyffSFmLFPjC
+         KUQ5ITxkd+/yQ+/tXV2WhFEEMw14a5Tgo/GXwgkLzofKClgQ3wkfS5D9rUOUBapCHVoJ
+         ZlVGV+c2wdn90LBrec+lPQ4eK/OVVtqz9fmU4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717515685; x=1718120485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Km5F10mW+lSOaW0ZqHxygOfF3jSHDpEX8SFgVZH0Uu8=;
-        b=I+b09lek0ychtIobbrFAmyVCcxjeC5bGr7ttyHu+9871/Zy/CYY5Ji3meCSanERaNO
-         8MTvRrLA+f/221tPJjNGld6CINABAsqNKLqzZZe4IDh2dq1FZ2t222EVzGZIYkAd94hC
-         Q4orfnxdYMX3aF65qndpce5T0wvZ/HScH5G2V0xvvnQk/xxJK2gbaMtDvrSRGo4uNvN7
-         wPaEqVxtY4dQJ2ZYuKVwy0UStZZU3tQZzLVmdItBpNUjh+ekfeFv32PpWN58n23NHLSY
-         OwDRVZZrMf1h2F17v+xLvcC8nVLTZUbuzr040bfFwGqhPt1LuhWqnVys4U0kysDEbyFH
-         RwRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHyL9w37NBdElHpHW8cT0Ymh8fD8E+QnMIdayMl01M+XQA4MaZFh6Zm9NGH0aoAPfBJMN/18GYPnu2ov/4cmwJ2UKOhJ2K3HaapCkC
-X-Gm-Message-State: AOJu0YxqmHoVkr9idFEFaeFME0/2H/4fEIK9YwNVfKVD58JzASzeUei1
-	YHvNkVs7wDGEzirw1+XHdDMaf4OqsnsKYMNAXXsJJTS7LGHloyV3YxNaDHmEvlrlYBh/XlqekVJ
-	A4pPr+qm/FJY3g0AvKTlX6Oo6UPJXFBFeuy3bnVeBfwwX4pL6QK2r2HhHhRXEbA==
-X-Received: by 2002:a05:600c:4583:b0:416:2471:e102 with SMTP id 5b1f17b1804b1-4212e0ae621mr95526935e9.37.1717515684693;
-        Tue, 04 Jun 2024 08:41:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQGMJTF33Hst794NpTk6SjJ9YG0K8w+ZjkAluCMrDS2lWSBCo6+x2DyKQRAkH4p8bEQxKh1A==
-X-Received: by 2002:a05:600c:4583:b0:416:2471:e102 with SMTP id 5b1f17b1804b1-4212e0ae621mr95526525e9.37.1717515684138;
-        Tue, 04 Jun 2024 08:41:24 -0700 (PDT)
-Received: from cassiopeiae ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b8a758csm157966275e9.36.2024.06.04.08.41.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 08:41:23 -0700 (PDT)
-Date: Tue, 4 Jun 2024 17:41:21 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
-Message-ID: <Zl81oUmNO5TX063x@cassiopeiae>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-3-dakr@redhat.com>
- <2024052045-lived-retiree-d8b9@gregkh>
- <ZkvPDbAQLo2/7acY@pollux.localdomain>
- <2024052155-pulverize-feeble-49bb@gregkh>
- <Zk0egew_AxvNpUG-@pollux>
- <2024060432-chloride-grappling-cf95@gregkh>
+        d=1e100.net; s=20230601; t=1717515769; x=1718120569;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YTdWE72afDYsK1q1OenbgjxdrmLtbuaHew5UjnF896Q=;
+        b=QZnFzqLmN0AJeHTKqyq4W2auLNRusrazQs4HOO7kApvqPbvU+r7xg2VbUmcQqYXZsO
+         xv9DIIaykyZAN8EU5ucZ723GkJTlsxLtLhiIKV/qzSkAqzQSu+rxE9H1uhWEwxUVRVRL
+         2mJv68SHzWYxDQ3+zXdQ2wRiGSXRVvDkrhjyUmTrE+sI3Q6KnX2YE+8mTjkROvmpzOBJ
+         /FY3/SZYCCxgk8ibi5gduQVIbAvdLj0samCNWN94+BRzxUGmcF1+eTXOtNRx2vvV01CF
+         PyRdZ0HPfdU8DrSn/iRRHNBR8mF7/+fF0Ch27x7alGxZHm9CN5BCgEEOsU1fvGYSrSjf
+         Fidw==
+X-Gm-Message-State: AOJu0Yzu8/QY10YWwmRfiG/DRc7FN3LICdCA7QfVscn6E/1fv8KMdnm1
+	zj93lxa+FWBPDQOT9MoZreS0cF2gVn0cyPZ+4pigvNf2hNwmO9kKU+RO/7I4JnLzOOkJ1cIFpAa
+	UyyOMfDzTa3Y/LYFiQqEtBZxpei7WgP9RFfee
+X-Google-Smtp-Source: AGHT+IGB/rduOe7VuUnqKKPTpxby23105z+u+FGKaOfGxDOzBmoKc4Rdtq6ADa5DDVWLsYkCNGB3fzck976BtNYJJw4=
+X-Received: by 2002:a05:6870:e9a0:b0:24f:ca0b:a416 with SMTP id
+ 586e51a60fabf-2508b993cfamr15623795fac.25.1717515768507; Tue, 04 Jun 2024
+ 08:42:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024060432-chloride-grappling-cf95@gregkh>
+References: <20240603220834.21989-1-kamal.dasu@broadcom.com>
+ <20240603220834.21989-2-kamal.dasu@broadcom.com> <CAPDyKFqk4uzSm_ti=66wU22GM8TqeM83aCz6=j9Gr9-sCUuR8Q@mail.gmail.com>
+In-Reply-To: <CAPDyKFqk4uzSm_ti=66wU22GM8TqeM83aCz6=j9Gr9-sCUuR8Q@mail.gmail.com>
+From: Kamal Dasu <kamal.dasu@broadcom.com>
+Date: Tue, 4 Jun 2024 11:42:12 -0400
+Message-ID: <CAKekbetJT1hob1Bd9ZOsf+J9JVfjRanq6GUdKF7oZr6xkPCzZw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] mmc: sdhci-brcmstb: check R1_STATUS for erase/trim/discard
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	ludovic.barre@st.com, f.fainelli@gmail.com, 
+	bcm-kernel-feedback-list@broadcom.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000053859d061a124da9"
 
-On Tue, Jun 04, 2024 at 04:27:31PM +0200, Greg KH wrote:
-> On Wed, May 22, 2024 at 12:21:53AM +0200, Danilo Krummrich wrote:
-> > On Tue, May 21, 2024 at 11:35:43AM +0200, Greg KH wrote:
-> > > On Tue, May 21, 2024 at 12:30:37AM +0200, Danilo Krummrich wrote:
-> > > > On Mon, May 20, 2024 at 08:14:18PM +0200, Greg KH wrote:
-> > > > > On Mon, May 20, 2024 at 07:25:39PM +0200, Danilo Krummrich wrote:
-> > > > > > From: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > > > > > 
-> > > > > > This defines general functionality related to registering drivers with
-> > > > > > their respective subsystems, and registering modules that implement
-> > > > > > drivers.
-> > > > > > 
-> > > > > > Co-developed-by: Asahi Lina <lina@asahilina.net>
-> > > > > > Signed-off-by: Asahi Lina <lina@asahilina.net>
-> > > > > > Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
-> > > > > > Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-> > > > > > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > > > > > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> > > > > > ---
-> > > > > >  rust/kernel/driver.rs        | 492 +++++++++++++++++++++++++++++++++++
-> > > > > >  rust/kernel/lib.rs           |   4 +-
-> > > > > >  rust/macros/module.rs        |   2 +-
-> > > > > >  samples/rust/rust_minimal.rs |   2 +-
-> > > > > >  samples/rust/rust_print.rs   |   2 +-
-> > > > > >  5 files changed, 498 insertions(+), 4 deletions(-)
-> > > > > >  create mode 100644 rust/kernel/driver.rs
-> > > > > > 
-> > > > > > diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..e0cfc36d47ff
-> > > > > > --- /dev/null
-> > > > > > +++ b/rust/kernel/driver.rs
-> > > > > > @@ -0,0 +1,492 @@
-> > > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > > +
-> > > > > > +//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
-> > > > > > +//!
-> > > > > > +//! Each bus/subsystem is expected to implement [`DriverOps`], which allows drivers to register
-> > > > > > +//! using the [`Registration`] class.
-> > > > > 
-> > > > > Why are you creating new "names" here?  "DriverOps" is part of a 'struct
-> > > > > device_driver' why are you separating it out here?  And what is
-> > > > 
-> > > > DriverOps is a trait which abstracts a subsystems register() and unregister()
-> > > > functions to (un)register drivers. It exists such that a generic Registration
-> > > > implementation calls the correct one for the subsystem.
-> > > > 
-> > > > For instance, PCI would implement DriverOps::register() by calling into
-> > > > bindings::__pci_register_driver().
-> > > > 
-> > > > We can discuss whether DriverOps is a good name for the trait, but it's not a
-> > > > (different) name for something that already exists and already has a name.
-> > > 
-> > > It's a name we don't have in the C code as the design of the driver core
-> > > does not need or provide it.  It's just the section of 'struct
-> > > device_driver' that provides function callbacks, why does it need to be
-> > > separate at all?
-> > 
-> > I'm confused by the relationship to `struct device_driver` you seem to imply.
-> > How is it related?
-> > 
-> > Again, this is just a trait for subsystems to provide their corresponding
-> > register and unregister implementation, e.g. pci_register_driver() and
-> > pci_unregister_driver(), such that they can be called from the generic
-> > Registration code below.
-> > 
-> > See [1] for an example implementation in PCI.
-> 
-> registering and unregistering drivers belongs in the bus code, NOT in
-> the driver code.
+--00000000000053859d061a124da9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Why? We're not (re-)implementing a bus here. Again, those are just abstractions
-to call the C functions to register a driver. The corresponding C functions are
-e.g. driver_register() or __pci_register_driver(). Those are defined in
-drivers/base/driver.c and drivers/pci/pci-driver.c respectively.
+On Tue, Jun 4, 2024 at 7:14=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.org>=
+ wrote:
+>
+> On Tue, 4 Jun 2024 at 00:09, Kamal Dasu <kamal.dasu@broadcom.com> wrote:
+> >
+> > When erase/trim/discard completion was converted to mmc_poll_for_busy()=
+,
+> > optional ->card_busy() host ops support was added as part of
+> > dd0d84c3e6a5b2 ("mmc: core: Convert to mmc_poll_for_busy() for erase/tr=
+im/discard").
+>
+> I can't find the above commit hash. You probably want "0d84c3e6a5b2"?
+>
+> > sdhci card->busy() could return busy for long periods to cause
+> > mmc_do_erase() to block during discard operation as shown below
+> > during mkfs.f2fs :
+> >
+> >     Info: [/dev/mmcblk1p9] Discarding device
+> >     [   39.597258] sysrq: Show Blocked State
+> >     [   39.601183] task:mkfs.f2fs       state:D stack:0     pid:1561  t=
+gid:1561  ppid:1542   flags:0x0000000d
+> >     [   39.610609] Call trace:
+> >     [   39.613098]  __switch_to+0xd8/0xf4
+> >     [   39.616582]  __schedule+0x440/0x4f4
+> >     [   39.620137]  schedule+0x2c/0x48
+> >     [   39.623341]  schedule_hrtimeout_range_clock+0xe0/0x114
+> >     [   39.628562]  schedule_hrtimeout_range+0x10/0x18
+> >     [   39.633169]  usleep_range_state+0x5c/0x90
+> >     [   39.637253]  __mmc_poll_for_busy+0xec/0x128
+> >     [   39.641514]  mmc_poll_for_busy+0x48/0x70
+> >     [   39.645511]  mmc_do_erase+0x1ec/0x210
+> >     [   39.649237]  mmc_erase+0x1b4/0x1d4
+> >     [   39.652701]  mmc_blk_mq_issue_rq+0x35c/0x6ac
+> >     [   39.657037]  mmc_mq_queue_rq+0x18c/0x214
+> >     [   39.661022]  blk_mq_dispatch_rq_list+0x3a8/0x528
+> >     [   39.665722]  __blk_mq_sched_dispatch_requests+0x3a0/0x4ac
+> >     [   39.671198]  blk_mq_sched_dispatch_requests+0x28/0x5c
+> >     [   39.676322]  blk_mq_run_hw_queue+0x11c/0x12c
+> >     [   39.680668]  blk_mq_flush_plug_list+0x200/0x33c
+> >     [   39.685278]  blk_add_rq_to_plug+0x68/0xd8
+> >     [   39.689365]  blk_mq_submit_bio+0x3a4/0x458
+> >     [   39.693539]  __submit_bio+0x1c/0x80
+> >     [   39.697096]  submit_bio_noacct_nocheck+0x94/0x174
+> >     [   39.701875]  submit_bio_noacct+0x1b0/0x22c
+> >     [   39.706042]  submit_bio+0xac/0xe8
+> >     [   39.709424]  blk_next_bio+0x4c/0x5c
+> >     [   39.712973]  blkdev_issue_secure_erase+0x118/0x170
+> >     [   39.717835]  blkdev_common_ioctl+0x374/0x728
+> >     [   39.722175]  blkdev_ioctl+0x8c/0x2b0
+> >     [   39.725816]  vfs_ioctl+0x24/0x40
+> >     [   39.729117]  __arm64_sys_ioctl+0x5c/0x8c
+> >     [   39.733114]  invoke_syscall+0x68/0xec
+> >     [   39.736839]  el0_svc_common.constprop.0+0x70/0xd8
+> >     [   39.741609]  do_el0_svc+0x18/0x20
+> >     [   39.744981]  el0_svc+0x68/0x94
+> >     [   39.748107]  el0t_64_sync_handler+0x88/0x124
+> >     [   39.752455]  el0t_64_sync+0x168/0x16c
+> >
+> > This problem is obsereved with BLKSECDISCARD ioctl on brcmstb mmc
+> > controllers. Fix makes mmc_host_ops.card_busy NULL and forces
+> > MMC_SEND_STATUS and R1_STATUS check in mmc_busy_cb() function.
+> >
+> > Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+>
+> We probably want a fixes/stable tag for this too, right?
+>
+> Fixes: 0d84c3e6a5b2 ("mmc: core: Convert to mmc_poll_for_busy() for
+> erase/trim/discard")
+>
+> I have amended the commit message and applied this for fixes, thanks!
+>
 
-Why wouldn't we follow the same scheme in Rust abstractions?
+Thank you Ulffe.
 
-> 
-> I think lots of the objections I had here will be fixed up when you move
-> the bus logic out to it's own file, it does not belong here in a driver
-> file (device ids, etc.)
-> 
-> > Please also consider that some structures might be a 1:1 representation of C
-> > structures, some C structures are not required at the Rust side at all, and
-> > then there might be additional structures and traits that abstract things C has
-> > no data structure for.
-> 
-> That's fine, but let's keep the separate of what we have today at the
-> very least and not try to lump it all into one file, that makes it
-> harder to review and maintain over time.
-> 
-> > > > > 'Registration'?  That's a bus/class thing, not a driver thing.
-> > > > 
-> > > > A Registration is an object representation of the driver's registered state.
-> > > 
-> > > And that representation should not ever need to be tracked by the
-> > > driver, that's up to the driver core to track that.
-> > 
-> > The driver doesn't need it, the Registration abstraction does need it. Please
-> > see my comments below.
-> 
-> Great, put it elsewhere please, it does not belong in driver.rs.
+> Kind regards
+> Uffe
+>
+>
+> > ---
+> >  drivers/mmc/host/sdhci-brcmstb.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-=
+brcmstb.c
+> > index 9053526fa212..150fb477b7cc 100644
+> > --- a/drivers/mmc/host/sdhci-brcmstb.c
+> > +++ b/drivers/mmc/host/sdhci-brcmstb.c
+> > @@ -24,6 +24,7 @@
+> >  #define BRCMSTB_MATCH_FLAGS_NO_64BIT           BIT(0)
+> >  #define BRCMSTB_MATCH_FLAGS_BROKEN_TIMEOUT     BIT(1)
+> >  #define BRCMSTB_MATCH_FLAGS_HAS_CLOCK_GATE     BIT(2)
+> > +#define BRCMSTB_MATCH_FLAGS_USE_CARD_BUSY      BIT(4)
+> >
+> >  #define BRCMSTB_PRIV_FLAGS_HAS_CQE             BIT(0)
+> >  #define BRCMSTB_PRIV_FLAGS_GATE_CLOCK          BIT(1)
+> > @@ -384,6 +385,9 @@ static int sdhci_brcmstb_probe(struct platform_devi=
+ce *pdev)
+> >         if (match_priv->flags & BRCMSTB_MATCH_FLAGS_BROKEN_TIMEOUT)
+> >                 host->quirks |=3D SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
+> >
+> > +       if (!(match_priv->flags & BRCMSTB_MATCH_FLAGS_USE_CARD_BUSY))
+> > +               host->mmc_host_ops.card_busy =3D NULL;
+> > +
+> >         /* Change the base clock frequency if the DT property exists */
+> >         if (device_property_read_u32(&pdev->dev, "clock-frequency",
+> >                                      &priv->base_freq_hz) !=3D 0)
+> > --
+> > 2.17.1
+> >
 
-This `Registration` structure is a generic abstraction to call some
-$SUBSYSTEM_driver_register() function (e.g. pci_register_driver()). Why would it
-belong somewhere else? Again, the corresponding C functions are in some driver.c
-file as well.
+--00000000000053859d061a124da9
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-> 
-> > > > Having an object representation for that is basically the Rust way to manage the
-> > > > lifetime of this state.
-> > > 
-> > > This all should be a static chunk of read-only memory that should never
-> > > have a lifetime, why does it need to be managed at all?
-> > 
-> > What I meant here is that if a driver was registered, we need to make sure it's
-> > going to be unregistered eventually, e.g. when the module is removed or when
-> > something fails after registration and we need to unwind.
-> > 
-> > When the Registration structure goes out of scope, which would happen in both
-> > the cases above, it will automatically unregister the driver, due to the
-> > automatic call to `drop()`.
-> 
-> That's fine, but again, this all should just be static code, not
-> dynamic.
-
-I agree. As already mentioned in another thread, this will be static in v2.
-
-I got the code for that in place already. :)
-
-> 
-> > > > Once the Registration is dropped, the driver is
-> > > > unregistered. For instance, a PCI driver Registration can be bound to a module,
-> > > > such that the PCI driver is unregistered when the module is unloaded (the
-> > > > Registration is dropped in the module_exit() callback).
-> > > 
-> > > Ok, that's fine, but note that your module_exit() function will never be
-> > > called if your module_init() callback fails, so why do you need to track
-> > > this state?  Again, C drivers never need to track this state, why is
-> > > rust requiring more logic here for something that is NOT a dynamic chunk
-> > > of memory (or should not be a dynamic chunk of memory, let's get it
-> > > correct from the start and not require us to change things later on to
-> > > make it more secure).
-> > 
-> > That's fine, if module_init() would fail, the Registration would be dropped as
-> > well.
-> > 
-> > As for why doesn't C need this is a good example of what I wrote above. Because
-> > it is useful for Rust, but not for C.
-> > 
-> > In Rust we get drop() automatically called when a structure is destroyed. This
-> > means that if we let drivers put the Registration structure (e.g. representing
-> > that a PCI driver was registered) into its `Module` representation structure
-> > (already upstream) then this Registration is automatically destroyed once the
-> > module representation is destroyed (which happens on module_exit()). This leads
-> > to `drop()` of the `Registration` structure being called, which unregisteres the
-> > (e.g. PCI) driver.
-> > 
-> > This way the driver does not need to take care of unregistering the PCI driver
-> > explicitly. The driver can also place multiple registrations into the `Module`
-> > structure. All of them would be unregistered automatically in module_exit().
-> 
-> Ok, I think we are agreeing here, except that you do not need a "am I
-> registered" flag, as the existance of the "object" defines if it is
-> registered or not (i.e. if it exists and the "destructor" is called,
-> it's been registered, otherwise it hasn't been and the check is
-> pointless.)
-
-The static implementation does not need this anymore, since there is no separate
-register() function anymore that we need to protect.
-
-> 
-> > > Again, 'class' means something different here in the driver model, so be
-> > > careful with terms, language matters, especially when many of our
-> > > developers do not have English as their native language.
-> > > 
-> > > > > > +/// The registration of a driver.
-> > > > > > +pub struct Registration<T: DriverOps> {
-> > > > > > +    is_registered: bool,
-> > > > > 
-> > > > > Why does a driver need to know if it is registered or not?  Only the
-> > > > > driver core cares about that, please do not expose that, it's racy and
-> > > > > should not be relied on.
-> > > > 
-> > > > We need it to ensure we do not try to register the same thing twice
-> > > 
-> > > Your logic in your code is wrong if you attempt to register it twice,
-> > > AND the driver core will return an error if you do so, so a driver
-> > > should not need to care about this.
-> > 
-> > We want it to be safe, if the driver logic is wrong and registers it twice, we
-> > don't want it to blow up.
-> 
-> How could that happen?
-> 
-> > The driver core takes care, but I think there are subsystems that do
-> > initializations that could make things blow up when registering the driver
-> > twice.
-> 
-> Nope, should not be needed, see above.  Rust should make this _easier_
-> not harder, than C code here :)
-
-Agree, and as mentioned above, with v2 Rust drivers can't register the same
-thing twice anymore.
-
-> 
-> > > > , some subsystems might just catch fire otherwise.
-> > > 
-> > > Which ones?
-> > 
-> > Let's take the one we provide abstractons for, PCI.
-> > 
-> > In __pci_register_driver() we call spin_lock_init() and INIT_LIST_HEAD() before
-> > driver_register() could bail out [1].
-> > 
-> > What if this driver is already registered and in use and we're randomly altering
-> > the list pointers or call spin_lock_init() on a spin lock that's currently being
-> > held?
-> 
-> I don't understand, why would you ever call "register driver" BEFORE the
-> driver was properly set up to actually be registered?
-> 
-> PCI works properly here, you don't register unless everything is set up.
-> Which is why it doesn't have a "hey, am I registered or not?" type flag,
-> it's not needed.
-
-That's not what I meant, but I think we can drop this specific part of the
-discussion anyways, since with v2 we can't hit this anymore. :)
-
-> 
-> > > 
-> > > > > > +        }
-> > > > > > +    }
-> > > > > > +}
-> > > > > > +
-> > > > > > +/// Conversion from a device id to a raw device id.
-> > > > > > +///
-> > > > > > +/// This is meant to be implemented by buses/subsystems so that they can use [`IdTable`] to
-> > > > > > +/// guarantee (at compile-time) zero-termination of device id tables provided by drivers.
-> > > > > > +///
-> > > > > > +/// Originally, RawDeviceId was implemented as a const trait. However, this unstable feature is
-> > > > > > +/// broken/gone in 1.73. To work around this, turn IdArray::new() into a macro such that it can use
-> > > > > > +/// concrete types (which can still have const associated functions) instead of a trait.
-> > > > > > +///
-> > > > > > +/// # Safety
-> > > > > > +///
-> > > > > > +/// Implementers must ensure that:
-> > > > > > +///   - [`RawDeviceId::ZERO`] is actually a zeroed-out version of the raw device id.
-> > > > > > +///   - [`RawDeviceId::to_rawid`] stores `offset` in the context/data field of the raw device id so
-> > > > > > +///     that buses can recover the pointer to the data.
-> > > > > > +pub unsafe trait RawDeviceId {
-> > > > > > +    /// The raw type that holds the device id.
-> > > > > > +    ///
-> > > > > > +    /// Id tables created from [`Self`] are going to hold this type in its zero-terminated array.
-> > > > > > +    type RawType: Copy;
-> > > > > > +
-> > > > > > +    /// A zeroed-out representation of the raw device id.
-> > > > > > +    ///
-> > > > > > +    /// Id tables created from [`Self`] use [`Self::ZERO`] as the sentinel to indicate the end of
-> > > > > > +    /// the table.
-> > > > > > +    const ZERO: Self::RawType;
-> > > > > 
-> > > > > All busses have their own way of creating "ids" and that is limited to
-> > > > > the bus code itself, why is any of this in the rust side?  What needs
-> > > > > this?  A bus will create the id for the devices it manages, and can use
-> > > > > it as part of the name it gives the device (but not required), so all of
-> > > > > this belongs to the bus, NOT to a driver, or a device.
-> > > > 
-> > > > This is just a generalized interface which can be used by subsystems to
-> > > > implement the subsystem / bus specific ID type.
-> > > 
-> > > Please move this all to a different file as it has nothing to do with
-> > > the driver core bindings with the include/device/driver.h api.
-> > 
-> > I don't think driver.rs in an unreasonable place for a generic device ID
-> > representation that is required by every driver structure.
-> 
-> It has nothing to do with drivers on their own, it's a bus attribute,
-> please put that in bus.rs at the least.  Or it's own file if you need
-> lots of code for simple arrays like this :)
-
-It's not a lot of code actually, probably less than 100 lines, there is a lot of
-documentation / examples though. :)
-
-The corresponding C structure definitions are in
-include/linux/mod_devicetable.h. Maybe we can move it to a separte device_id.rs
-if you prefer that?
-
-> 
-> > But I'm also not overly resistant to move it out. What do you think would be a
-> > good name?
-> > 
-> > Please consider that this name will also be the namespace for this trait.
-> > Currently you can reference it with `kernel::driver::RawDeviceId`. If you move
-> > it to foo.rs, it'd be `kernel::foo::RawDeviceId`.
-> 
-> I don't see why this isn't just unique to each bus type, it is not a
-> driver attribute, but a bus-specific-driver type.  Please put it there
-> and don't attempt to make it "generic".
-
-If we don't make it generic we end up with a lot of duplicate code in every
-subsystem that has some kind of device ID, e.g. OF, PCI, etc. Why would we want
-to do that? I think moving the generic abstraction into a separate device_id.rs
-seems to be the better option.
-
-> 
-> thanks,
-> 
-> greg k-h
-> 
-
+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
+DxuNuBlySpn/GYqPcDcRZd8EENWqnZrjtjHMk0j7ZfrPGXq8sQkbG3OX+DOwSaefPRq1pLGWBZaZ
+YuUo5O7CNHo7h7Hc9GgjiW+6X9BjKAzSaDy8jwIDAQABo4IB2DCCAdQwDgYDVR0PAQH/BAQDAgWg
+MIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUFBzABhjVo
+dHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMDBNBgNV
+HSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2ln
+bi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRwOi8vY3Js
+Lmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAiBgNVHREEGzAZ
+gRdrYW1hbC5kYXN1QGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAW
+gBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUcRYSWvAVyA3hgTrQ2c4AFquBsG0wDQYJ
+KoZIhvcNAQELBQADggEBAIKB2IOweF2sIYGBZTDm+Hwmhga+sjekM167Sk/KwxxvQFwZYP6i0SnR
+7aR59vbfVQVaAiZH/a+35EYxP/sXaIM4+E3bFykBuXwcGEnYyEn6MceiOCkjkWQq1Co2JyOdNvkP
+nAxyPoWlsJtr+N/MF1EYKGpYMdPM7S2T/gujjO9N56BCGu9yJElszWcXHmBl5IsaQqMS36vhsV0b
+NxffjNkeAdgfN/SS9S9Rj4WXD7pF1M0Xq8gPLCLyXrx1i2KkYOYJsj0PWlC6VRg6E1xXkYDte0VL
+fAAG4QsETU27E1HBNQyp5zF1PoPCPvq3EnWQnbLgYk+Jz2iwIUwiqwr/bDgxggJtMIICaQIBATBr
+MFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9i
+YWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgw89WX2Pp7ue922QVkwDQYJYIZI
+AWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIOBTFgWLQQBjz+trPDKlf7VieljOl91AU8rEPK0X
+WFTeMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYwNDE1NDI0
+OVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQB
+AjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkq
+hkiG9w0BAQEFAASCAQCHDitsVrSIBqEBfi+BtUh/VV4n01E3KUZmMiIeHPu26bc/VPdvyKtajqAM
+WcXtKSxa/LIduy33Uf9rBZIbMYXAMetjJeD1ez4diXNfgtDhy94kokDyIRP7MdmN5yivsr111KXs
+inzTLpTxSanh5pGzsyWCdqVOPoZWaxXfc5T9l2Lb2eHa7onxds3wqFe2qA7fIY6gTsKoRxlD9oR9
+ixEzo5s6kxydsYO7olMixGTpbVwiC+0GKNOTzM1PKRxAPQB7nQhNhdzoPRn3Bes0hsP8HkFoDE20
+s1Et24gsdM6Q3loughwUE0Eif4Am5EKHx9Sf2KsAvWA2aYgxzU72IvVv
+--00000000000053859d061a124da9--
 
