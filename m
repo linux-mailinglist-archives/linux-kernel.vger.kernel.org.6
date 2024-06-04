@@ -1,202 +1,330 @@
-Return-Path: <linux-kernel+bounces-200276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE1F8FADFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:50:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83548FAE00
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B631F2608D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D965B1C2132D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03EC1420DA;
-	Tue,  4 Jun 2024 08:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31184142E66;
+	Tue,  4 Jun 2024 08:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FJ6agKLZ"
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IWNdRJ/0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D688142E71
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5281411F9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717491038; cv=none; b=U3CJYmGe+9ZvuE1HClfDRGasbtiL/Vr4TLcoZU0X0PFOstPOQD0rAEybxYNJT1yEr9dKIt8Tp+YIqMSrCrysySIRyz1/xtBrqrnKzwntcso3ipWLMZCInvEyRDmyHF83B2unrp2cSHwxHKZkuDJ5LIaTbAG/pOHYVEG3yeigemI=
+	t=1717491083; cv=none; b=OSA84VT9CpJ/7S9GyjWjF6sRI6Qa0Rps3/r27FPumxyS1fFNJpTRodbVLS4y8FcoIdr7FswJ1vz7dJ6JeuEqbcF6nt0pjtMVI620SAc2hPERsfyhxuinoBwPYgCvswYDLkI4pWvjug2yNRpUonpf0ZdzvQc7dpKEQ6WW/Uo//Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717491038; c=relaxed/simple;
-	bh=/82jAxl1bZX5xtR/X9gizbSQ2/4wMrIRGo3/dkUnlT0=;
+	s=arc-20240116; t=1717491083; c=relaxed/simple;
+	bh=ndt/Lo4v6zILLmSOCPQBBlzeEH8xtV1Wk8mzZdUrUB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FUCfRY9CGRsR8KRDWUkEgbXnBorFqWjKhHTcFoHn1qpGD9ilA608GhPGm7TuzsxDxJBN9Gq37d8p/ossX02fhwb+bBlhbtRvnEOS1j/5kHjTE8HgHMQNJSXzAdq4UwGO0Vye1jJDejb9zpUf9mhWTThCGEmaj/qBX7yzcyxB1LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FJ6agKLZ; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=9m0u
-	dGVcBfGslrF6YCgHx585x/QcfuEfa9X406f+ogE=; b=FJ6agKLZJSbSFnGfeZay
-	qwhVAeYvizTy72wVpjvbp6NKJQuYQvoAiah/GQNrLsR7KlZpWQcRlX/RZiA/79pz
-	A+Dwj7VS6SgV82Gb9w80ZhNEmQzUMKXZea7bG2iO9zcbRJU6xq7sRzbDKbSOKT1t
-	TCjbKOAnc6MFqSjlzFuKWESadlK7fGS3BD9XdpwKHk6NF8Ug9qm/DmJdOaL/3c8y
-	UDBQ/R50KXnN5mc8nsKC+1HXz4Q5Rm7PgTuLukTVZTRzvG0fneFZjv6MSxsfOjSe
-	7WONQm+LJ7ON0bI3JbSOVFzsQ8visq03LhDzRRrouI/7XbUEcXYW8rALk8WWYiAS
-	RA==
-Received: (qmail 2254511 invoked from network); 4 Jun 2024 10:50:30 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2024 10:50:30 +0200
-X-UD-Smtp-Session: l3s3148p1@psbEigwakq0gAwDPXzLGAH1eNELjOc3g
-Date: Tue, 4 Jun 2024 10:50:30 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: linux-renesas-soc@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH] i2c: smbus: fix NULL function pointer dereference
-Message-ID: <b2tnimag62ty6wndyjsy7u5fay6y52zn47vvifw6rh5abeqzpu@pqyyczutxcwu>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Jean Delvare <jdelvare@suse.de>, linux-renesas-soc@vger.kernel.org, 
-	Baruch Siach <baruch@tkos.co.il>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Rosin <peda@axentia.se>
-References: <20240426064408.7372-1-wsa+renesas@sang-engineering.com>
- <1e626d93f4220cc348300bbc61089de32300122d.camel@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nS2Qc6ghYnnRZmZKajUfUlvbAtLUHjOm390bPdAEuqbKFXfmqg9xWkXRDNph6oc6VfcbtzuF1vYBf6dlpLmlsZ5rfiRFIH/TJ0aQadh9m6aVxLvSxbhnAxIZ9D1ThsRMiZeB8E9V09O4d8B0bYfLyVWq4jaWKP17GE7w9Wyd/x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IWNdRJ/0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717491079;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5z7HNV48kp54OxKkcQvGwgewNYNdSMm8024Uw3SQs94=;
+	b=IWNdRJ/08K1mQZRxF3q++oWmweIw8xq9nN0rb1vxWqeeAfUbpBo5WB0/Lnv3LZTpToYgMI
+	5MMWPkz3YozsbAa67FgmuGiFSJ3bemVRvW/nbzCoN8mwbvdfs/Gs+1m1t2s+L/58LKb9oq
+	klSVUgfw7dtU6PdIy8c5wqSiDkrXdgE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-99-9jUjf59UNh64OOkq7HiiZg-1; Tue, 04 Jun 2024 04:51:16 -0400
+X-MC-Unique: 9jUjf59UNh64OOkq7HiiZg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 73FE685A5BC;
+	Tue,  4 Jun 2024 08:51:15 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.9])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 07F76408DA22;
+	Tue,  4 Jun 2024 08:51:12 +0000 (UTC)
+Date: Tue, 4 Jun 2024 16:51:03 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Jan Pazdziora <jpazdziora@redhat.com>,
+	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	"open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_byb" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH v4 2/7] crash_dump: make dm crypt keys persist for the
+ kdump kernel
+Message-ID: <Zl7Vd3BqxDXdMHkL@MiWiFi-R3L-srv>
+References: <20240523050451.788754-1-coxu@redhat.com>
+ <20240523050451.788754-3-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ksynbm66oyue3y2r"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e626d93f4220cc348300bbc61089de32300122d.camel@suse.de>
+In-Reply-To: <20240523050451.788754-3-coxu@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
+Hi Coiby,
 
---ksynbm66oyue3y2r
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 05/23/24 at 01:04pm, Coiby Xu wrote:
+> A sysfs /sys/kernel/crash_dm_crypt_keys is provided for user space to make
+> the dm crypt keys persist for the kdump kernel. User space can send the
+> following commands,
+> - "init KEY_NUM"
+>   Initialize needed structures
+> - "record KEY_DESC"
+>   Record a key description. The key must be a logon key.
+> 
+> User space can also read this API to learn about current state.
 
-Hi Jean,
+From the subject, can I think the luks keys will persist forever? or
+only for a while? If need and can only keep it for a while, can you
+mention it and tell why and how it will be used. Because you add a lot
+of codes, but only simply mention the sysfs, that doesn't make sense.
 
-> I have a hard time establishing a formal link between the reported bug
-> and the commit listed above. I do understand that it wouldn't make
-> sense to register an i2c_adapter with neither .master_xfer nor
-> .smbus_xfer set before .reg_slave was added to struct i2c_algorithm,
-> but there were no checks in i2c-core preventing it from happening.
+> 
+> Signed-off-by: Coiby Xu <coxu@redhat.com>
+> ---
+>  include/linux/crash_core.h   |   5 +-
+>  kernel/Kconfig.kexec         |   8 +++
+>  kernel/Makefile              |   1 +
+>  kernel/crash_dump_dm_crypt.c | 113 +++++++++++++++++++++++++++++++++++
+>  kernel/ksysfs.c              |  22 +++++++
+>  5 files changed, 148 insertions(+), 1 deletion(-)
+>  create mode 100644 kernel/crash_dump_dm_crypt.c
+> 
+> diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
+> index 44305336314e..6bff1c24efa3 100644
+> --- a/include/linux/crash_core.h
+> +++ b/include/linux/crash_core.h
+> @@ -34,7 +34,10 @@ static inline void arch_kexec_protect_crashkres(void) { }
+>  static inline void arch_kexec_unprotect_crashkres(void) { }
+>  #endif
+>  
+> -
+> +#ifdef CONFIG_CRASH_DM_CRYPT
+> +int crash_sysfs_dm_crypt_keys_read(char *buf);
+> +int crash_sysfs_dm_crypt_keys_write(const char *buf, size_t count);
+> +#endif
+>  
+>  #ifndef arch_crash_handle_hotplug_event
+>  static inline void arch_crash_handle_hotplug_event(struct kimage *image, void *arg) { }
+> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+> index 6c34e63c88ff..88525ad1c80a 100644
+> --- a/kernel/Kconfig.kexec
+> +++ b/kernel/Kconfig.kexec
+> @@ -116,6 +116,14 @@ config CRASH_DUMP
+>  	  For s390, this option also enables zfcpdump.
+>  	  See also <file:Documentation/arch/s390/zfcpdump.rst>
+>  
+> +config CRASH_DM_CRYPT
+> +	bool "Support saving crash dump to dm-crypt encrypted volume"
+> +	depends on CRASH_DUMP
+> +	help
+> +	  With this option enabled, user space can intereact with
+> +	  /sys/kernel/crash_dm_crypt_keys to make the dm crypt keys
+> +	  persistent for the crash dump kernel.
+> +
+>  config CRASH_HOTPLUG
+>  	bool "Update the crash elfcorehdr on system configuration changes"
+>  	default y
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index 3c13240dfc9f..f2e5b3e86d12 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -72,6 +72,7 @@ obj-$(CONFIG_VMCORE_INFO) += vmcore_info.o elfcorehdr.o
+>  obj-$(CONFIG_CRASH_RESERVE) += crash_reserve.o
+>  obj-$(CONFIG_KEXEC_CORE) += kexec_core.o
+>  obj-$(CONFIG_CRASH_DUMP) += crash_core.o
+> +obj-$(CONFIG_CRASH_DM_CRYPT) += crash_dump_dm_crypt.o
+>  obj-$(CONFIG_KEXEC) += kexec.o
+>  obj-$(CONFIG_KEXEC_FILE) += kexec_file.o
+>  obj-$(CONFIG_KEXEC_ELF) += kexec_elf.o
+> diff --git a/kernel/crash_dump_dm_crypt.c b/kernel/crash_dump_dm_crypt.c
+> new file mode 100644
+> index 000000000000..78809189084a
+> --- /dev/null
+> +++ b/kernel/crash_dump_dm_crypt.c
+> @@ -0,0 +1,113 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +#include <keys/user-type.h>
+> +#include <linux/crash_dump.h>
+> +
+> +#define KEY_NUM_MAX 128
+> +#define KEY_SIZE_MAX 256
+> +
+> +// The key scription has the format: cryptsetup:UUID 11+36+1(NULL)=48
+> +#define KEY_DESC_LEN 48
+> +
+> +static char *STATE_STR[] = {"fresh", "initialized", "recorded", "loaded"};
+> +static enum STATE_ENUM {
+> +	FRESH = 0,
+> +	INITIALIZED,
+> +	RECORDED,
+> +	LOADED,
+> +} state;
+> +
+> +static unsigned int key_count;
+> +static size_t keys_header_size;
+> +
+> +struct dm_crypt_key {
+> +	unsigned int key_size;
+> +	char key_desc[KEY_DESC_LEN];
+> +	u8 data[KEY_SIZE_MAX];
+> +};
+> +
+> +static struct keys_header {
+> +	unsigned int key_count;
+> +	struct dm_crypt_key keys[] __counted_by(key_count);
+> +} *keys_header;
+> +
+> +static size_t get_keys_header_size(struct keys_header *keys_header,
+> +				   size_t key_count)
+> +{
+> +	return struct_size(keys_header, keys, key_count);
+> +}
+> +
+> +static int init(const char *buf)
+              ~~~~ A more interesting name with more description?
+> +{
+> +	unsigned int total_keys;
+> +	char dummy[5];
+> +
+> +	if (sscanf(buf, "%4s %u", dummy, &total_keys) != 2)
+> +		return -EINVAL;
+> +
+> +	if (key_count > KEY_NUM_MAX) {
+> +		pr_err("Exceed the maximum number of keys (KEY_NUM_MAX=%u)\n",
+> +		       KEY_NUM_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	keys_header_size = get_keys_header_size(keys_header, total_keys);
+> +	key_count = 0;
+> +
+> +	keys_header = kzalloc(keys_header_size, GFP_KERNEL);
+> +	if (!keys_header)
+> +		return -ENOMEM;
+> +
+> +	keys_header->key_count = total_keys;
+> +	state = INITIALIZED;
+> +	return 0;
+> +}
+> +
+> +static int record_key_desc(const char *buf, struct dm_crypt_key *dm_key)
+> +{
+> +	char key_desc[KEY_DESC_LEN];
+> +	char dummy[7];
+> +
+> +	if (state != INITIALIZED)
+> +		pr_err("Please send the cmd 'init <KEY_NUM>' first\n");
+> +
+> +	if (sscanf(buf, "%6s %s", dummy, key_desc) != 2)
+> +		return -EINVAL;
+> +
+> +	if (key_count >= keys_header->key_count) {
+> +		pr_warn("Already have %u keys", key_count);
+> +		return -EINVAL;
+> +	}
+> +
+> +	strscpy(dm_key->key_desc, key_desc, KEY_DESC_LEN);
+> +	pr_debug("Key%d (%s) recorded\n", key_count, dm_key->key_desc);
+> +	key_count++;
+> +
+> +	if (key_count == keys_header->key_count)
+> +		state = RECORDED;
+> +
+> +	return 0;
+> +}
+> +
+> +static int process_cmd(const char *buf, size_t count)
+                                                  ~~~~
+If nobody use the count, why do you add it?
+> +{
+> +	if (strncmp(buf, "init ", 5) == 0)
+> +		return init(buf);
+> +	else if (strncmp(buf, "record ", 7) == 0)
+> +		return record_key_desc(buf, &keys_header->keys[key_count]);
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +int crash_sysfs_dm_crypt_keys_write(const char *buf, size_t count)
+> +{
+> +	if (!is_kdump_kernel())
+> +		return process_cmd(buf, count);
+> +	return -EINVAL;
+> +}
+> +EXPORT_SYMBOL(crash_sysfs_dm_crypt_keys_write);
+> +
+> +int crash_sysfs_dm_crypt_keys_read(char *buf)
+> +{
+> +	return sprintf(buf, "%s\n", STATE_STR[state]);
+> +}
+> +EXPORT_SYMBOL(crash_sysfs_dm_crypt_keys_read);
+> diff --git a/kernel/ksysfs.c b/kernel/ksysfs.c
+> index 07fb5987b42b..2ba4dcbf5816 100644
+> --- a/kernel/ksysfs.c
+> +++ b/kernel/ksysfs.c
+> @@ -167,6 +167,25 @@ static ssize_t vmcoreinfo_show(struct kobject *kobj,
+>  }
+>  KERNEL_ATTR_RO(vmcoreinfo);
+>  
+> +#ifdef CONFIG_CRASH_DM_CRYPT
+> +static ssize_t crash_dm_crypt_keys_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	return crash_sysfs_dm_crypt_keys_read(buf);
+> +}
+> +
+> +static ssize_t crash_dm_crypt_keys_store(struct kobject *kobj,
+> +					 struct kobj_attribute *attr,
+> +					 const char *buf, size_t count)
+> +{
+> +	int ret;
+> +
+> +	ret = crash_sysfs_dm_crypt_keys_write(buf, count);
+> +	return ret < 0 ? ret : count;
+> +}
+> +KERNEL_ATTR_RW(crash_dm_crypt_keys);
+> +#endif /* CONFIG_CRASH_DM_CRYPT */
+> +
+>  #ifdef CONFIG_CRASH_HOTPLUG
+>  static ssize_t crash_elfcorehdr_size_show(struct kobject *kobj,
+>  			       struct kobj_attribute *attr, char *buf)
+> @@ -271,6 +290,9 @@ static struct attribute * kernel_attrs[] = {
+>  #endif
+>  #ifdef CONFIG_VMCORE_INFO
+>  	&vmcoreinfo_attr.attr,
+> +#ifdef CONFIG_CRASH_DM_CRYPT
+> +	&crash_dm_crypt_keys_attr.attr,
+> +#endif
+>  #ifdef CONFIG_CRASH_HOTPLUG
+>  	&crash_elfcorehdr_size_attr.attr,
+>  #endif
+> -- 
+> 2.45.0
+> 
 
-Well, yes, correct.
-
-> It was also possible for any (broken) device driver to call
-> __i2c_transfer() without first checking if plain I2C transfers were
-> actually supported by the i2c_adapter. I would argue that such an issue
-> should have been fixed at the device driver level by checking for the
-> I2C_FUNC_I2C functionality flag before calling __i2c_transfer(). That's
-> a theoretical issue though as I'm not aware of any device driver having
-> this issue.
-
-In theory, checking against I2C_FUNC_I2C should happen. In practice,
-most I2C drivers do not do this. Being picky here could results in bad
-user experience because of OOPS. If we really want to enforce checking
-I2C_FUNC_I2C, then we should have this safety net while we convert all
-users. No, actually, I think we always should have some safety nets.
-
-> The call stack in Baruch's report shows that the real issue is with
-> i2c_smbus_xfer_emulated() being called with the i2c bus lock already
-> held, and thus having to call __i2c_transfer() instead of
-> i2c_transfer(). This code path did not exist before commit 63453b59e411
-> ("i2c: smbus: add unlocked __i2c_smbus_xfer variant"), which was added
-> in kernel v4.19. Therefore I claim that CVE-2024-35984 only affects
-> kernel v4.19 and newer. Do we agree on that?
-
-(There is a CVE for it??) For Baruch's case, this is true. But there are
-__i2c_transfer users all over the tree, they are all potentially
-vulnerable, or?
-
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!adap->algo->master_xfer=
-) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0dev_dbg(&adap->dev, "I2C level transfers not supported=
-\n");
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0return -EOPNOTSUPP;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > +
->=20
-> Not related specifically to this commit, as it is only moving a check
-> which already existed before, but this looks inefficient to me.
->=20
-> We end up performing the check with every I2C-level transfer, while the
-> availability of such support can almost always be checked once and for
-> all in the I2C device driver (i2c-dev and i2c_smbus_xfer_emulated being
-> the exceptions).
->=20
-> I see two ways for us to reach this check:
-> * __i2c_transfer() or i2c_transfer() gets called directly by a device
-> driver. This driver should have checked for the I2C_FUNC_I2C
-> functionality flag before calling either function. If they did not,
-> it's a driver bug, which should be fixed in the driver in question.
-
-I see the performance penalty, yet I prefer handling the buggy driver
-gracefully because kicking off I2C transfers is not a hot path. Maybe we
-could turn the dev_dbg into something louder to make people aware that
-there is a bug?
-
-> Note that i2c-dev currently lacks this check, I think it should be
-> added.
-
-True, it should be a role-model of a good citizen :)
-
-> * __i2c_transfer() gets called by i2c_smbus_xfer_emulated(). We should
-> add a check for I2C_FUNC_I2C in __i2c_smbus_xfer() before calling this
-> function. This is more or less what Baruch proposed initially, and I
-> think it would have been a more efficient fix.
-
-As I said above, more efficient but not thorough. One driver not
-checking I2C_FUNC_I2C and boom...
-
-> And if you are concerned about functionality flags not being set
-> properly (specifically I2C_FUNC_I2C being set while .master_xfer isn't
-> set [1]) then we should add a consistency check at i2c_adapter
-> registration time, so again it's done once and for all and we don't
-> have to check again and again at transfer time.
-
-I think this check is worth to have. It is not complete because drivers
-may still not check the flag, but it is one step to be more robust.
-
-> Or is this optimization not worth it?
-
-I think so. It is one pointer check against a kernel oopsing somewhere
-somewhen.
-
-> [1] BTW, looking at the only two in-tree slave-only I2C adapter
-> drivers, i2c-at91-slave and i2c-designware-slave, both are setting
-> functionality flags other than I2C_FUNC_SLAVE. Unless I don't
-> understand how the slave functionality works, this is a bug. I'll
-> prepare and post patches later today.
-
-Thanks for doing that!
-
-Happy hacking,
-
-   Wolfram
-
-
---ksynbm66oyue3y2r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZe1VEACgkQFA3kzBSg
-KbYpeQ//dIw4KlFvx97wH/kz2omtgShRsM4PBlclKbm20ZkoYdTr1F5Rya2uE3tm
-+xEF83Pg/m3t64S2PVpLIhfQmN0u3z7/+hcPH6CpXE0hGpLoO41JHPELd5p9FYB2
-LS300jBoSgcLryw8IAFjR3YQA/UaSeXk5OHKyAZgJPJTdY+aDFCFbJnJnAl2hyEs
-pEirJeX0Ajqp7B01YcCeD5AeImMQQalBV2zHYlKfmmCTN4w9NQj969igBi0O6gSA
-XcLxno7rqOamgSmdcouxEI7e1uSWdnIReAyw8nGKfZ9bzYKJUa8C9cBfJ7JJ6XGt
-Rb3Y8INN6rJZv9V4oi+5xzNCEYaiyYDgALMp0OfMG664isMzaVMT7DqTo8S8Qw7H
-4MMDmSQJTYIKoh2XpKABL8USm3SDKEglAoSN+RD0wEuEOu5BGDKMQqlOIukQwfqf
-ssQuLVklbLrtMgNsxJibDBdMYJnOYfBYoNljVaRs9MIf0oypT6zO7Px7wv2sYyGo
-HpUcbFmovXAlmqwljNACIqAYms9Kw4P/istl//wd+yr6MI5Qkx0IftQiC6/bqf5e
-mdYbqOuXNbwnVLd8nGMVRMYUMxTU+LeC1clNWAXzBhlgAqFo2gQmZMgsEll3X0Jq
-g2qHB8KoF8KlqulH7WBm7SRL2zmbCaV5xqN0BSozutvjqs0kJgY=
-=eDfQ
------END PGP SIGNATURE-----
-
---ksynbm66oyue3y2r--
 
