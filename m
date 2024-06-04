@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-200814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8F98FB540
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0778B8FB57E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 812B11F21EF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380791C24DFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BEE13A25D;
-	Tue,  4 Jun 2024 14:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RmSUYrp7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBE8C13B;
-	Tue,  4 Jun 2024 14:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4301465BD;
+	Tue,  4 Jun 2024 14:33:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B3F1465BB;
+	Tue,  4 Jun 2024 14:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511422; cv=none; b=PtFMcL1ibl7LJGJB6/ftv4jCNlCssVfKn7AJuu2X3pUZ/4t/vrwpLURIxMfhrVlC1SWciBMMyXwojU03uh/aqeZNDmaQpsvukkND5if4jnhXBaYFMB2GVoVBoHR0uvJQk0TmMtnYlHjVedCmWQiXeIHty0PdjMCpqZ3IZzMXiIA=
+	t=1717511598; cv=none; b=jsgveJXw2jemEjHX1CD4bOv4bNS4e79fFIdFN90ju+tOxtJVGvfIkG3LysayuVZvQeoLCL3uVXd0f6HR5I19eKQofREetT5tc4tEft+O02rPUzPEQ4y037EGquE7Kj/KEH+bB7kI8QPfxXNwm4tYcYzvrhgO30C7NBawbUrxZz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511422; c=relaxed/simple;
-	bh=pb5O3feP9MBcD9HFqOeYqFq6wpe3pb56Wi1DLNCgN6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ewLDbEtHWMldCxlQwODz/FmXMSerBEIYgVym3sI0A7zh2KzaqZeCNCbcxIndtyVuKPkfsF5FnNMCBx54DhRnu/fy5R0iPl7b4A/zvL2s7aVT6hRFXbpVQPeVpB1dSFr+UTeGXUcKUMbWC+yby5OSAgEkyCec06BIFfu7w9jQut4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RmSUYrp7; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717511421; x=1749047421;
-  h=date:from:to:cc:subject:message-id:reply-to:mime-version:
-   in-reply-to;
-  bh=pb5O3feP9MBcD9HFqOeYqFq6wpe3pb56Wi1DLNCgN6g=;
-  b=RmSUYrp7Cax6e961lFnaka5V8YpCJbk4wjhFt0olNdxdDafyNyiCF8Mq
-   yIqQs26hpb9R9SSwVF2vPXlOhP+wqcoWvCUNG/j0IOw/tfk2kwglz9W5J
-   bq2vnZrRyJw5o3qgVckaBxqgIwVJRpf9suFtNmtWoG5oxjss+PpU5tXhs
-   rw5IpEmX3TbObmgKIztKyKLQ9h6bJBLDATo2jZYf9g31/WTVzhDU6bP1w
-   8jlSXAkSTOoXOLsarA+OrksMDO78NFJASGIADV9X4y1vYdSt3UDkecF8F
-   hTyIjxSiblytuVDoeq4VwgFmMXkn78vx/fRktRHlZS47iLwfXcq+PGCrr
-   w==;
-X-CSE-ConnectionGUID: NSrcU4NdRFWHxOUCYzR9pA==
-X-CSE-MsgGUID: HzmxIyLsTmmttmRVVNXcSA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13903401"
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="13903401"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 07:30:20 -0700
-X-CSE-ConnectionGUID: wXjjIbI8TRKlbEio1BhF6Q==
-X-CSE-MsgGUID: BTDdzXZPTXyO9p7u4zWRxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="42219615"
-Received: from ideak-desk.fi.intel.com ([10.237.72.78])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 07:30:18 -0700
-Date: Tue, 4 Jun 2024 17:30:23 +0300
-From: Imre Deak <imre.deak@intel.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Gal Pressman <gal@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	RDMA mailing list <linux-rdma@vger.kernel.org>,
-	Hillf Danton <hdanton@sina.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
- worning
-Message-ID: <Zl8k/8/yQLnZcGd3@ideak-desk.fi.intel.com>
-Reply-To: imre.deak@intel.com
+	s=arc-20240116; t=1717511598; c=relaxed/simple;
+	bh=y7xNLn9XuqoEgeGbYseeZwudJQLOaoFCJmiHnIB8mBk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UTlVjO1P1/CkXAMwvar94BNx8wU7q/4qL7BeBKlxqkprud8VKxefLdAJzb51S1DRy/a2ZdhlbsGgQKLWs41BXpNrqjqehZJD9H6SSi+kK56wvbYyrqidRlrQ5MIE2H+fYEIuRDZn3MzLa535OrMOHh+4wbZhdR0nw8NvWK5v1r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2786E1474;
+	Tue,  4 Jun 2024 07:33:41 -0700 (PDT)
+Received: from e127643.broadband (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C4CD43F64C;
+	Tue,  4 Jun 2024 07:33:13 -0700 (PDT)
+From: James Clark <james.clark@arm.com>
+To: coresight@lists.linaro.org,
+	suzuki.poulose@arm.com,
+	gankulkarni@os.amperecomputing.com,
+	mike.leach@linaro.org,
+	leo.yan@linux.dev,
+	anshuman.khandual@arm.com
+Cc: James Clark <james.clark@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2 15/16] coresight: Re-emit trace IDs when the sink changes in per-thread mode
+Date: Tue,  4 Jun 2024 15:30:24 +0100
+Message-Id: <20240604143030.519906-16-james.clark@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240604143030.519906-1-james.clark@arm.com>
+References: <20240604143030.519906-1-james.clark@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+In per-cpu mode there are multiple aux buffers and each one has a
+fixed sink, so the hw ID mappings which only need to be emitted once
+for each buffer, even with the new per-sink trace ID pools.
 
-[Sorry for the previous message, resending it now
- with proper In-reply-to: header added.]
+But in per-thread mode there is only a single buffer which can be
+written to from any sink with now potentially overlapping trace IDs, so
+hw ID mappings need to be re-emitted every time the sink changes.
 
-I see a similar issue, a corruption in the lock_keys_hash while
-alloc_workqueue()->lockdep_register_key() iterates it, see [1] for the
-stacktrace.
+This will require a change in Perf to track this so it knows which
+decode tree to use for each segment of the buffer. In theory it's also
+possible to look at the CPU ID on the AUX records, but this is more
+consistent with the existing system, and allows for correct decode using
+either mechanism.
 
-Not sure if related or even will solve [1], but [2] will revert
+Signed-off-by: James Clark <james.clark@arm.com>
+---
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 14 ++++++++++++++
+ drivers/hwtracing/coresight/coresight-etm-perf.h |  2 ++
+ 2 files changed, 16 insertions(+)
 
-commit 7e89efc6e9e4 ("PCI: Lock upstream bridge for pci_reset_function()")
-
-which does
-
-lockdep_register_key(&dev->cfg_access_key);
-
-in pci_device_add() and doesn't unregister the key when the pci device is
-removed (and potentially freed); so basically 7e89efc6e9e4 was missing a
-
-lockdep_unregister_key();
-
-in pci_destroy_dev().
-
-Based on the above I wonder if 7e89efc6e9e4 could also lead to the
-corruption of lock_keys_hash after a pci device is removed.
-
---Imre
-
-[1] https://intel-gfx-ci.01.org/tree/drm-tip/IGT_7875/bat-atsm-1/dmesg0.txt
-[2] https://lore.kernel.org/all/171711746402.1628941.14575335981264103013.stgit@dwillia2-xfh.jf.intel.com/
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index 17cafa1a7f18..b6f505b50e67 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -499,6 +499,20 @@ static void etm_event_start(struct perf_event *event, int flags)
+ 				      &sink->perf_sink_id_map))
+ 		goto fail_disable_path;
+ 
++	/*
++	 * In per-cpu mode there are multiple aux buffers and each one has a
++	 * fixed sink, so the hw ID mappings which only need to be emitted once
++	 * for each buffer.
++	 *
++	 * But in per-thread mode there is only a single buffer which can be
++	 * written to from any sink with potentially overlapping trace IDs, so
++	 * hw ID mappings need to be re-emitted every time the sink changes.
++	 */
++	if (event->cpu == -1 && event_data->last_sink_hwid != sink) {
++		cpumask_clear(&event_data->aux_hwid_done);
++		event_data->last_sink_hwid = sink;
++	}
++
+ 	/*
+ 	 * output cpu / trace ID in perf record, once for the lifetime
+ 	 * of the event.
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
+index 744531158d6b..bd4553b2a1ec 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.h
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
+@@ -52,6 +52,7 @@ struct etm_filters {
+  * @snk_config:		The sink configuration.
+  * @cfg_hash:		The hash id of any coresight config selected.
+  * @path:		An array of path, each slot for one CPU.
++ * @last_sink_hwid:	Last sink that a hwid was emitted for.
+  */
+ struct etm_event_data {
+ 	struct work_struct work;
+@@ -60,6 +61,7 @@ struct etm_event_data {
+ 	void *snk_config;
+ 	u32 cfg_hash;
+ 	struct list_head * __percpu *path;
++	struct coresight_device *last_sink_hwid;
+ };
+ 
+ int etm_perf_symlink(struct coresight_device *csdev, bool link);
+-- 
+2.34.1
 
 
