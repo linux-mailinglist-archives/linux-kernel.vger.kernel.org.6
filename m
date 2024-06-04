@@ -1,144 +1,128 @@
-Return-Path: <linux-kernel+bounces-201385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E228FBDE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:13:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC5A8FBDE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1696B249C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:13:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BA0128630E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CC714BFA2;
-	Tue,  4 Jun 2024 21:13:29 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93BD14BFBC;
+	Tue,  4 Jun 2024 21:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWHcPG8z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A7B12D215
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 21:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3681E14B95F;
+	Tue,  4 Jun 2024 21:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717535608; cv=none; b=X0goIK3urP5X8eF5c3LU0hIXsQ87NRPjm0G5FvakOJc0sGG7mPQxYigUWcP+USyP1qCdpY8HUVf37ctKA1frS7jJ29yE8tI+Hpikpr3/CNJ2uwI/3ESRcJK7ASl5c+4/ft9YnPRlzPrN7pkGm8f2PI975CmJ+Md4iBEOGGH2uBQ=
+	t=1717535647; cv=none; b=ACMwHeehhaE/vvUYfLgGovWyqz57SpGxLIuS+Wy1Kum1TLXpb5Ymakf+UuHb/34y/It4wi0Ds21g6uEU37L9N3q5qMJu+xU2lA4PzepzMB86s8f2/YGboBgIveCzctdhuaRh+0DuJoF+XU9ezzARfbkSJmDOJJIiPfkgZV8fQSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717535608; c=relaxed/simple;
-	bh=HsCz0ZeYwBA1nTPEYhPRjTcTOHjsSoTaudVR4/nIcT4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=J+mdtsI6r8gRU3fetpZlBVAEPOt8mnNa54SmKLDoIbGH/hXy16zu2TH2TnYxcDGTzzubbS+C+t6nHDna6EVlC8Ac677lUqMUPNC10I8pPvdMw63ljr2bEfQCN2MUg0hPpWFhnTwO1JSGQ9Rd3RgYdiAdjAp5DD/jyTdsH1RoCXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-374a2ada068so25057845ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 14:13:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717535606; x=1718140406;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X02K38cZL0DbnosXLg9Rsk7c+qtdoxUw/8K9g7MIdgE=;
-        b=gI2DzjUTlms8J+ePNb0PQCglttYpalRPyOyivgWReoaQfmshoPlHgKu+UL6+XKnqZH
-         4ZMR5kllgMZN+MG2rEq313NlIQLTPT/g3LyKTv4uPEaMGw4ei62F5H53u27Yt54J33fk
-         txxnrQ80McCF4a/1UUF93hpiAx9ARKoSi1b7kEZ6Z3Qgd/yb/wjlxqhMmYopll82cMZe
-         aWkHfiVcWO0b7gFNsx2jmIi1YW0zwvquUxVE2hkHBEXmNLbAcqahxsVDkggWJBTiOXPF
-         KwZO4xB54NJHAaHb+qZsBa8Xgtw+1sMFnAQ+7/sRHRLrBxUhtlwAmpFNKW/XHIij2Tz6
-         QEvw==
-X-Forwarded-Encrypted: i=1; AJvYcCU98l/+k8JteMh9FE0zl1yEnni/u2DifOodu/GXxIkmxWqqMhuk/cxCrFlPv01hRwqSyj9OYbNKXam+etBNPUD73QnoD7PlcfpbezBT
-X-Gm-Message-State: AOJu0YwfnXWWUQV8M0fidm6jM+pFls3yVxp/NRRjuZDx0ay/t2wlnlq7
-	kmRobF2RYOEusELs/zvmFS4dT/+qBhlNxL01PZHNuXfUEqetAeqXEWoynbJM2HZSUotudQgKlzC
-	eU9TDBGM9c5zzMXgoAkD7Eo0tc9Z0I1+1CN5x+oPLNEybUazJEiOIpQ0=
-X-Google-Smtp-Source: AGHT+IFYJLbdIpkFirEVMTc6tK9RBxgA1XVYj8S9yeKxwETlTpQmsH6fRiahC60hevkQnvOKVlS2LawmhzLmmwy53ho1hqKlz4y3
+	s=arc-20240116; t=1717535647; c=relaxed/simple;
+	bh=CAp13sZ7M4MgUyj523wMYv5f7s1+3dQaiYzmf+CALUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d65bwOazvFLDA+RJPtTBlvijNnhIgBZ52INTmQ5z54XQUBIpWOEcNEk+kUrf+I8pi1D4jEb9RMU44uPLMYQREKIZceFwTGWp8+0Z1xZDhUV/X3g78TW0JIClwMLZknbpZkKaTn3ufHyRAcgKen+LmUTqjk+4K25ExonByCFvPuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWHcPG8z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8BFC2BBFC;
+	Tue,  4 Jun 2024 21:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717535646;
+	bh=CAp13sZ7M4MgUyj523wMYv5f7s1+3dQaiYzmf+CALUE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=YWHcPG8zSzkxbQ2gjOWPg9XOi7yjjgQ7TQGjcnThDcySzE7e/8ZtQBWrO0oaOwGbI
+	 5dSTQVZ1aR+4VB286yYr3o6B2oyNTuAXw8fVDjDLGRJ1mbVgVUcsbzNucAI74Rnw6I
+	 gu/zz1xhOazlSg3yNOcBNSxMOiMzusPUL9eRzXESVC/X3Z8ZPy3p0ww5k01vpSSx1I
+	 sfWb4M1kc8T58kJMPNVoj4xogRQAv/dmEc/3BLy0CodAOcQMAJisxQBqTXsjYFkI2l
+	 YKsnMZaIPuXS0Yy82yEGrm7eG087oIlbjvsx8Mxx2Us6A4/czu0rwYgY0iTX0pp8BR
+	 tCBQG9EroRJJw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3F68CCE3ED6; Tue,  4 Jun 2024 14:14:06 -0700 (PDT)
+Date: Tue, 4 Jun 2024 14:14:06 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, elver@google.com, akpm@linux-foundation.org,
+	tglx@linutronix.de, peterz@infradead.org, dianders@chromium.org,
+	pmladek@suse.com, torvalds@linux-foundation.org, arnd@arndb.de,
+	Mark Brown <broonie@kernel.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Andrew Davis <afd@ti.com>, Eric DeVolder <eric.devolder@oracle.com>,
+	Rob Herring <robh@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 cmpxchg 4/4] ARM: Emulate one-byte cmpxchg
+Message-ID: <2fbe86b7-70f0-46cd-b7b7-9d67e78d72f3@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <1dee481f-d584-41d6-a5f1-d84375be5fe8@paulmck-laptop>
+ <20240604170437.2362545-4-paulmck@kernel.org>
+ <CACRpkdaYQWGsjtDPzbJS4C9Y9z8JGv=3ihQrVKvegJf8ujqSmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26a:0:b0:36c:c4ce:8448 with SMTP id
- e9e14a558f8ab-374b1f83a64mr323165ab.6.1717535606440; Tue, 04 Jun 2024
- 14:13:26 -0700 (PDT)
-Date: Tue, 04 Jun 2024 14:13:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b6111e061a16ebc8@google.com>
-Subject: [syzbot] [jfs?] kernel BUG in jfs_flush_journal (2)
-From: syzbot <syzbot+e66452054e1f161e8d29@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdaYQWGsjtDPzbJS4C9Y9z8JGv=3ihQrVKvegJf8ujqSmA@mail.gmail.com>
 
-Hello,
+On Tue, Jun 04, 2024 at 10:52:23PM +0200, Linus Walleij wrote:
+> Hi Paul,
+> 
+> thanks for your patch! This caught my eye:
+> 
+> On Tue, Jun 4, 2024 at 7:04 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> 
+> > Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on ARM systems
+> > with ARCH < ARMv6K.
+> 
+> ARCH == ARMv6.
+> 
+> This ARCH < ARMv6K comes from inversion of the the a bit terse
+> comment for ifndef CONFIG_CPU_V6, which means "out of the
+> post-v6 CPUs, the following applies to those > V6".
+> 
+> The code in the patch, IIUC make use of cmpxchg_emu_u8()
+> if and only if the CPU is V6.
+> 
+> > -#ifndef CONFIG_CPU_V6  /* min ARCH >= ARMv6K */
+> > +#ifdef CONFIG_CPU_V6   /* min ARCH < ARMv6K */
+> 
+> This is now a set with one member so this comment should say:
+> 
+> /* ARCH == ARMv6 */
+> 
+> After this change.
 
-syzbot found the following issue on:
+Thank you for looking this over!  Does the following patch (to be merged
+into the original) capture it properly?
 
-HEAD commit:    d8ec19857b09 Merge tag 'net-6.10-rc2' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13086d3a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e66452054e1f161e8d29
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+							Thanx, Paul
 
-Unfortunately, I don't have any reproducer for this issue yet.
+------------------------------------------------------------------------
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/42229dacbe9b/disk-d8ec1985.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/963a405f2e94/vmlinux-d8ec1985.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d861a4407dce/bzImage-d8ec1985.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e66452054e1f161e8d29@syzkaller.appspotmail.com
-
-BUG at fs/jfs/jfs_logmgr.c:1588 assert(list_empty(&log->cqueue))
-------------[ cut here ]------------
-kernel BUG at fs/jfs/jfs_logmgr.c:1588!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 29917 Comm: syz-executor.4 Not tainted 6.10.0-rc1-syzkaller-00104-gd8ec19857b09 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:jfs_flush_journal+0xeba/0xec0 fs/jfs/jfs_logmgr.c:1588
-Code: e8 eb 77 57 08 e8 66 07 70 fe 48 c7 c7 40 9d 02 8c 48 c7 c6 40 98 02 8c ba 34 06 00 00 48 c7 c1 80 9d 02 8c e8 c7 7a 54 08 90 <0f> 0b 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90004757b20 EFLAGS: 00010246
-RAX: 0000000000000040 RBX: ffff88802538e1a8 RCX: b07b599e2cc86b00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc90004757c50 R08: ffffffff8176803c R09: fffffbfff1c3998c
-R10: dffffc0000000000 R11: fffffbfff1c3998c R12: 1ffff920008eaf70
-R13: dffffc0000000000 R14: ffff88802538e000 R15: ffff88802538e000
-FS:  000055557b2d6480(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555562804978 CR3: 000000007e4b2000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- jfs_umount+0x170/0x3a0 fs/jfs/jfs_umount.c:58
- jfs_put_super+0x8a/0x190 fs/jfs/super.c:194
- generic_shutdown_super+0x136/0x2d0 fs/super.c:642
- kill_block_super+0x44/0x90 fs/super.c:1676
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_sys
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/arch/arm/include/asm/cmpxchg.h b/arch/arm/include/asm/cmpxchg.h
+index a428e06fe94ee..9beb64d305866 100644
+--- a/arch/arm/include/asm/cmpxchg.h
++++ b/arch/arm/include/asm/cmpxchg.h
+@@ -163,11 +163,11 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
+ 	prefetchw((const void *)ptr);
+ 
+ 	switch (size) {
+-#ifdef CONFIG_CPU_V6	/* min ARCH < ARMv6K */
++#ifdef CONFIG_CPU_V6	/* ARCH == ARMv6 */
+ 	case 1:
+ 		oldval = cmpxchg_emu_u8((volatile u8 *)ptr, old, new);
+ 		break;
+-#else /* min ARCH >= ARMv6K */
++#else /* min ARCH > ARMv6 */
+ 	case 1:
+ 		do {
+ 			asm volatile("@ __cmpxchg1\n"
 
