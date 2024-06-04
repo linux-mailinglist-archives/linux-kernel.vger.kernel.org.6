@@ -1,121 +1,153 @@
-Return-Path: <linux-kernel+bounces-201334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE3B8FBD21
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:14:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A348FBD26
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E8928425D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507111F251AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6639714B949;
-	Tue,  4 Jun 2024 20:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEF914B95D;
+	Tue,  4 Jun 2024 20:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="t0dLhl+H"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9K/+UVI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC0114B071
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 20:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA8B2F25;
+	Tue,  4 Jun 2024 20:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717532081; cv=none; b=SbOCa9S8qt7yU0yPhgubncDm/8sFaa2m6OAHLYA0mnQPXAm5JwcJ3KciTIv9VaLPIlWdsq1BSBg4NtZK9aIsp7oH0dIVzqrZy1rEHx7oHp+CpiGOlH68MpnjGLKabq56CbnKRpsHJzCEouVcoD479L1P+dQlGNc6NIh2wZSBa8c=
+	t=1717532096; cv=none; b=VdxCy+SqQo/MYNeqbfpFvG9K28NhPddlYaHYAAOUvXCCWIXFvWNgYb0CZkoBEeohHHMRZC0ghsn1KyYSXiQK9QzuGf8PWVLpaKVsCao+S5mvy5mBDdmnuMvJLJqedCKCvG2Nzv/2NS8E1YqekR76AFxskxkGn+Wu/BsVSlbg/Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717532081; c=relaxed/simple;
-	bh=U17ajrYHmKdbtsG3hqJxp6fpYyi+RunRtHPSfX9Ggrk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TWd3i4flsUZsx4qV2MjJWifRxAZHtpEIumuBKbZnlO8p/PHeBXZYMoCpytZItWYaygg82aOWfnnVXDlikxCpcaoqFYr5TPZuiHAA2M8zppioPQ4zNn4VR9RuBly5tSOMs4H5Jh1PC1sy53kzHATprYi57t7RoUHPwNx+0VFurOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=t0dLhl+H; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-578517c7ae9so1863057a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 13:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717532078; x=1718136878; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7GVtUk4MKIiXkiZRNH9EfUE8gMvmK5/gt2D4FPc2AY=;
-        b=t0dLhl+HxwJSe6+RoxjPG+FqzH9eCPa+NIXlj4TcpvlQ5B5yh32WEsgtYIxfU1/hjp
-         pfS/g9xAdGDU8vm05HOmF9tz/Z3KKXpe8+46vwCmR7LiNH133P0ksIFp6pskLe/z+Nnr
-         O/7+h3Y5bvZZNQ8UAvDyHjrw0G6g6rZPLI+Fo37y4fxS5pAWYb79fdHDvDkpvvQTLNZv
-         2MY40O19rwojJ0JOipDvRg3z2cLVKsiCzY5El2GzxkHy7GGKWYDE0GKCxABghugZo3y6
-         hToeI9nTnFgg1OFErvUYli4f1IKxjBzOAO9+LlhQ695arl5KUcNu1QaSV3TwOhuX1+gi
-         /ZJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717532078; x=1718136878;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A7GVtUk4MKIiXkiZRNH9EfUE8gMvmK5/gt2D4FPc2AY=;
-        b=XvIYPvcR9CvV9beGbOQ8hHn6FeCufs4SLZhnb2/hLJ3F9p0rw7HYniJjzCAM98O+DE
-         63qcSZfTCBFDgGTvLxxuzO6KWV0reziMu9ikzVKMA2q/gnkOYcAA63mpTwRxG8GAvtIm
-         Dbxkvwh52SkJx08uyGkrfhM4KKB4gBJjpqQhxbA/Wq+k0gC+3uJ2PwA8man1EvfTagqw
-         OoYvZoCbrKb8SU6eoxWu5EVaIj1kXJxqGWrqx+5eN4fUCQL/MQ6QFbM/1ViO8O7fLs5Z
-         HGSYMcOM0LufuGzc4sBIfYhlVnJoqiWGN03gEJqFPE6eYOGgPLAVrldlEM6QceQrW8z6
-         SffA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3wiB+2lL+Xgt+A0hrjwbcWDByhe4VBGHtThk/6IcZEN48izWZ+WA9KBd2K3RklNAoZM85zhYTL6Keig04Kf47UxUgrnkGNeo/uH1P
-X-Gm-Message-State: AOJu0YwI1SrfkhdDyevST+xcKSs98b4OIrjmeezbYn/un4NBpmwndjNM
-	uVo9zC0skad9yoyNrwbp7MSY0WgC8wdgsoAeZBeRTppTneq7H+PmBoo5fqoktdl7C1k1b49QfvX
-	bdDw=
-X-Google-Smtp-Source: AGHT+IFHFfZ1S3gZMG+FikAyDnlbofzMieBA+8KbDVzQeJM7cL8PGdpd9PZxMIBJjxiYCQulgAvObw==
-X-Received: by 2002:a50:d541:0:b0:57a:1c9:bf65 with SMTP id 4fb4d7f45d1cf-57a8bca02a3mr321001a12.31.1717532077500;
-        Tue, 04 Jun 2024 13:14:37 -0700 (PDT)
-Received: from debian.fritz.box. (aftr-82-135-80-160.dynamic.mnet-online.de. [82.135.80.160])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a5ef86458sm4703411a12.78.2024.06.04.13.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 13:14:37 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: dan.j.williams@intel.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [RESEND PATCH] raid6test: Use str_plural() to fix Coccinelle warning
-Date: Tue,  4 Jun 2024 22:13:52 +0200
-Message-Id: <20240604201351.257964-1-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717532096; c=relaxed/simple;
+	bh=1dJyobrXgBY+x5j48CVCOANJ3cfEJFSAQaYi7nvuypo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=JFwSDfEZFdXvSCmCPaD9O9D8N7+QFnGoPBkYbm81JEhX35y/kqPn1NF8HZVUryghkO2sZnzELIRWEeaQQIu3x+WofE24oKOuA3FANMp9MaX5xEAHTasyaPfVjRJ4r2tOBsHkQ3VVstKkEB21iu9rQfU8ZO3wh74B1ibBriN6t80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9K/+UVI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24356C2BBFC;
+	Tue,  4 Jun 2024 20:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717532095;
+	bh=1dJyobrXgBY+x5j48CVCOANJ3cfEJFSAQaYi7nvuypo=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=F9K/+UVI55Cki+Zo9OV87c2eeM0ifYp6hzMMXIULk9SS+odlEkpfVLeUXP4r+oQI6
+	 wfMGyaFnOX6GdfRpZY9TJNS1oJsfXJZ/IJX+nmhl0yKUw8hVNf0D8m74ltEtcmCyco
+	 Ibm1AFdqcrhjN2qr54RkgXTWstymQme4U/+2ZmqA9Nh5hJlq/w8xFHYQXLWKvwZMST
+	 jTybqZsrdfgundyOcDQUAtKTV3IprZxJLaq7OYxtGU3mYBJCYfOw9B6zyfb3iCJ1tI
+	 QImFf84vT1cJ8PQjS/IYtU0wuNW911HYfxYBIB0HbKIa2FXKYvJiHgBoDofVRq/bSK
+	 tkhBei/QCWaHA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Jun 2024 23:14:47 +0300
+Message-Id: <D1RIB8BHWRC5.3RRW0ZKV3KDVM@kernel.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v9 14/19] tpm: Ensure tpm is in known state at startup
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Ross Philipson" <ross.philipson@oracle.com>,
+ <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
+ <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
+X-Mailer: aerc 0.17.0
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-15-ross.philipson@oracle.com>
+In-Reply-To: <20240531010331.134441-15-ross.philipson@oracle.com>
 
-Fixes the following Coccinelle/coccicheck warning reported by
-string_choices.cocci:
+On Fri May 31, 2024 at 4:03 AM EEST, Ross Philipson wrote:
+> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+>
+> When tis core initializes, it assumes all localities are closed. There
 
-	opportunity for str_plural(err)
+s/tis_core/tpm_tis_core/
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- crypto/async_tx/raid6test.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> are cases when this may not be the case. This commit addresses this by
+> ensuring all localities are closed before initializing begins.
+>
+> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> ---
+>  drivers/char/tpm/tpm_tis_core.c | 11 ++++++++++-
+>  include/linux/tpm.h             |  6 ++++++
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_c=
+ore.c
+> index 7c1761bd6000..9fb53bb3e73f 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -1104,7 +1104,7 @@ int tpm_tis_core_init(struct device *dev, struct tp=
+m_tis_data *priv, int irq,
+>  	u32 intmask;
+>  	u32 clkrun_val;
+>  	u8 rid;
+> -	int rc, probe;
+> +	int rc, probe, i;
+>  	struct tpm_chip *chip;
+> =20
+>  	chip =3D tpmm_chip_alloc(dev, &tpm_tis);
+> @@ -1166,6 +1166,15 @@ int tpm_tis_core_init(struct device *dev, struct t=
+pm_tis_data *priv, int irq,
+>  		goto out_err;
+>  	}
+> =20
+> +	/*
+> +	 * There are environments, like Intel TXT, that may leave a TPM
 
-diff --git a/crypto/async_tx/raid6test.c b/crypto/async_tx/raid6test.c
-index d3fbee1e03e5..3826ccf0b9cc 100644
---- a/crypto/async_tx/raid6test.c
-+++ b/crypto/async_tx/raid6test.c
-@@ -11,6 +11,7 @@
- #include <linux/mm.h>
- #include <linux/random.h>
- #include <linux/module.h>
-+#include <linux/string_choices.h>
- 
- #undef pr
- #define pr(fmt, args...) pr_info("raid6test: " fmt, ##args)
-@@ -228,7 +229,7 @@ static int __init raid6_test(void)
- 
- 	pr("\n");
- 	pr("complete (%d tests, %d failure%s)\n",
--	   tests, err, err == 1 ? "" : "s");
-+	   tests, err, str_plural(err));
- 
- 	for (i = 0; i < NDISKS+3; i++)
- 		put_page(data[i]);
--- 
-2.39.2
+What else at this point than Intel TXT reflecting the state of the
+mainline?
 
+> +	 * locality open. Close all localities to start from a known state.
+> +	 */
+> +	for (i =3D 0; i <=3D TPM_MAX_LOCALITY; i++) {
+> +		if (check_locality(chip, i))
+> +			tpm_tis_relinquish_locality(chip, i);
+> +	}
+
+To be strict this should be enabled only for x86 platforms.
+
+I.e. should be flagged.
+
+> +
+>  	/* Take control of the TPM's interrupt hardware and shut it off */
+>  	rc =3D tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
+>  	if (rc < 0)
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index c17e4efbb2e5..363f7078c3a9 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -147,6 +147,12 @@ struct tpm_chip_seqops {
+>   */
+>  #define TPM2_MAX_CONTEXT_SIZE 4096
+> =20
+> +/*
+> + * The maximum locality (0 - 4) for a TPM, as defined in section 3.2 of =
+the
+> + * Client Platform Profile Specification.
+> + */
+> +#define TPM_MAX_LOCALITY		4
+> +
+>  struct tpm_chip {
+>  	struct device dev;
+>  	struct device devs;
+
+
+BR, Jarkko
 
