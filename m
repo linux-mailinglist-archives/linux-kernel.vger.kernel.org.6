@@ -1,191 +1,202 @@
-Return-Path: <linux-kernel+bounces-200391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D6C8FAF5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:58:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6BFF8FAF61
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3689B1C218A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:58:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F801F21189
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148321448D7;
-	Tue,  4 Jun 2024 09:58:00 +0000 (UTC)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0357B144D10;
+	Tue,  4 Jun 2024 09:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X9xs4YMR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5BB14372F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7873D14372F;
+	Tue,  4 Jun 2024 09:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717495079; cv=none; b=lnRrR5TJgQnLgHqCXwin1rbxi5RqhHH4amNWTbVZkBeOWAMGWPfZ2sIYb7aEZeYZfHRgHHzTIdjQQ11Ua7Z5yIC4nBBDlMPlskMfgddhgdtplwkK/VpRBcesaASK0kNOzuPUrNEoMuvp2JSwWs5v/GfbR5MKsJ+u0x9AZzGk9jM=
+	t=1717495086; cv=none; b=GK+CNLxAMbwJ3Nn9A4MUzF7NqUmMmatrq1uKT1TMt5/gVOPtwJjd/DOwPuaLz0eUaSzAe+gpg6oxbUk+OCMX4GFZrw8XMQtJiTMOIQS5TlbYcHLq8i0H/X8IvQCbBuCcTDv1L0o1uZW2Ah+tD+OY6znidF3+YUSiqexhkXPz3pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717495079; c=relaxed/simple;
-	bh=1c8thpbnJn/2l/x22dvU3Yv0tOZFxguoKyAcUSYd0Ic=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sphX4oZv3N2YrcIWKVEGHiXh10C2Gnzx6d64I1p2Io5Bkq5qnWYVqCGwAltl5EMoc8vzFDvssT+fdxlmzZcTYYPNtxcU9ZCU5PTDv4Nb0196+p2J460E7ubmmh1hwuhTYvaYHn73TcSvsi1Z67qZqnexFlWeEQqAOflbmGDEmIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-62a08092c4dso51965057b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:57:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717495076; x=1718099876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kXaK6OgKo/9uKgUwfGucXPROnKA27c2dMDYH7qaPkS4=;
-        b=tsqn5Y2juPNHmzbD77aJ/0zgWRipLDmhyjM0jxOxqf+Hs9Tt6yp8pV6Jc0b6PHsWhv
-         MQlIOElCouv6bTLGgSuf1PekJUgrBNvUMPesfok9dXnQICdz1SYtKjq3Pivbu+0gn0gG
-         nOeEI9FlMNNwv6B7oiTK6N4//NHHKiveqIy7cWdk0CXyaQDjjWmadIDIH7exlhV0eWhy
-         uB0KQ8Qg2ivaeJMOn2tuLTzVlkvaD/RVt0c6gyrEWaZPJa3FGLRlM6Iu8FG9lDtKmN2T
-         xuMNGOj5IBOPqohyH3su18ks9PQ7qRNn+1GZw5Zvt40IWd0aXDHI1GtbNgSvWQzR31vA
-         mhFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVO9te+54/Dk5XM5QY9LE7KzkeDfA4ROXgdjrgfCUk889GZMi7HtifBPQwuLVfVVsvwBYFI5P6In/P1PNv0MixsHlVIQ2P2pwT8RbO+
-X-Gm-Message-State: AOJu0YxznApg30HTGO6vYw5eedFwzaUCM+DLnP3ZyrL/a4VDcrl+eZNa
-	rMJCa0/U080+nLfybsklGfKtqu9ivl2eN8GA/YQ1rHXhEGTo+iD+rfxv25YQ
-X-Google-Smtp-Source: AGHT+IGv9p08DE77XuQumuxOvi+yCTi+88pDRpFRzIJRju0zFXN/vhulkDc6nDS16/E+2cp8vvvovA==
-X-Received: by 2002:a81:e445:0:b0:627:cfe1:1c21 with SMTP id 00721157ae682-62c798274bcmr108016187b3.47.1717495076305;
-        Tue, 04 Jun 2024 02:57:56 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765b9218sm17684447b3.26.2024.06.04.02.57.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 02:57:56 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-df4d5d0b8d0so4812925276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:57:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWQqw5OLvnIqzDhLX9RYuSQGK4IU+Ueg2qEjesJQV4abfuNWDQY7PbGk3Few+kB5wprGMwwjZWJvhZcE9N8jbcXzbaY83EPf4Jg6dqG
-X-Received: by 2002:a25:ad26:0:b0:de5:5693:4e96 with SMTP id
- 3f1490d57ef6-dfa73c43eb4mr11645139276.27.1717495075612; Tue, 04 Jun 2024
- 02:57:55 -0700 (PDT)
+	s=arc-20240116; t=1717495086; c=relaxed/simple;
+	bh=3PPtXn1jPClzorEiZU4odMAQl97QeQz38W5I32jP4Pw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DDVmAda1hCbu9h8BasP0fVBMdie8NM5qboIff955yV9qaNE2gMgnlkoNkmpKJ5Ef9Vpt0th7pyl/u11knrdiNRxzAMrStdtNby/TsLnVX8e9YU6POF+VucZg6kWXJFdnnBx73xKUyT4mGT3+L8fihBDZIPFD0DYuExhGsuL+VDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X9xs4YMR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4542sHBN029983;
+	Tue, 4 Jun 2024 09:57:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2F/p0Z4ulNOQZTPsq3TXnRby97U0xEoSLT1/W0wO2Jo=; b=X9xs4YMRHk+UjVx+
+	4hCk5+u6TUlM959S0lDzSXf5yTzAonTHa2jlsj/5YfpQNOQ1z8tvoe9MvFUkn/1E
+	Hvkoi9YgXUANJAkoKzaKnPogXJfUM0RHDawzenGX4o9k8Sr35sv7M/BvkfVcNXG3
+	mKgYw/BfS1OY9wpEf3zH4YG3V89oibKlYC7y2mESPBQkMvCZ//wWO1z05cse7z3B
+	uDFUX1fdRgx+D+4k1YHorcca5ExqPAjCVWw5ccpqcNNGFVmH521hWR7CsFh4D58p
+	vlKFJA3Uhk+1XRiJGcWTClHntk/ZOiJtIYc0sinUqSCbv2T8ezSLbPPcAEwwhjaT
+	i9+gnQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw7dpbf5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 09:57:58 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4549vvd6008475
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Jun 2024 09:57:57 GMT
+Received: from [10.216.52.99] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 02:57:51 -0700
+Message-ID: <2b8e5810-6883-4b6d-8fa7-f13bbc0e897e@quicinc.com>
+Date: Tue, 4 Jun 2024 15:27:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <e00498fccf6dcbcf63bd24a137bfc7abd1b98345.1716967720.git.geert+renesas@glider.be>
- <Zlb_txl4CqCfxWZz@pluto> <CAMuHMdUyW_RxfUaxnyWVzPsdXQWqCQbgZ+avHskinXkrSFqhtw@mail.gmail.com>
- <Zl3HiBX8ih6Sret6@bogus> <CAMuHMdVkeKbUa45okF8qGOVVLRcOOtq=54yett+4dbyktCHxeg@mail.gmail.com>
- <20240604070718.ypymfv6j2smvxldr@bogus> <Zl7ia0t2O2xS8PXU@pluto>
-In-Reply-To: <Zl7ia0t2O2xS8PXU@pluto>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Jun 2024 11:57:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW8d6_=5Xe8QtmqTzD1dbeE8g8MU183X8uXYp-_hnwDPg@mail.gmail.com>
-Message-ID: <CAMuHMdW8d6_=5Xe8QtmqTzD1dbeE8g8MU183X8uXYp-_hnwDPg@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: ARM_MHU_V3 should depend on ARM64
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: sc7180: Disable SuperSpeed
+ instances in park mode
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <cros-qcom-dts-watchers@chromium.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Matthias Kaehlcke
+	<mka@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>,
+        Doug Anderson
+	<dianders@google.com>, <stable@vger.kernel.org>
+References: <20240604060659.1449278-1-quic_kriskura@quicinc.com>
+ <20240604060659.1449278-2-quic_kriskura@quicinc.com>
+ <le5fe7b4wdpkpgxyucobepvxfvetz3ukhiib3ca3zbnm6nz2t7@sczgscf2m3ie>
+ <e0b102b6-5ea5-4a86-887f-1af8754e490b@quicinc.com>
+ <tbtmtt3cjtcrnjddc37oiipdw7u7pydnp7ir3x5u3tj26whoxu@sg2b7t7dvu2g>
+Content-Language: en-US
+From: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
+In-Reply-To: <tbtmtt3cjtcrnjddc37oiipdw7u7pydnp7ir3x5u3tj26whoxu@sg2b7t7dvu2g>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -qyRPollpA0kgcu67bO212WB4PoIuPym
+X-Proofpoint-GUID: -qyRPollpA0kgcu67bO212WB4PoIuPym
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-04_03,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=969 impostorscore=0 malwarescore=0 phishscore=0 adultscore=0
+ clxscore=1015 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406040080
 
-Hi Cristian,
 
-On Tue, Jun 4, 2024 at 11:46=E2=80=AFAM Cristian Marussi
-<cristian.marussi@arm.com> wrote:
-> On Tue, Jun 04, 2024 at 08:07:18AM +0100, Sudeep Holla wrote:
-> > On Mon, Jun 03, 2024 at 07:52:56PM +0200, Geert Uytterhoeven wrote:
-> > > On Mon, Jun 3, 2024 at 3:39=E2=80=AFPM Sudeep Holla <sudeep.holla@arm=
-.com> wrote:
-> > > > On Wed, May 29, 2024 at 01:36:42PM +0200, Geert Uytterhoeven wrote:
-> > > > > On Wed, May 29, 2024 at 12:13=E2=80=AFPM Cristian Marussi
-> > > > > <cristian.marussi@arm.com> wrote:
-> > > > > > On Wed, May 29, 2024 at 09:30:45AM +0200, Geert Uytterhoeven wr=
-ote:
-> > > > > > > The ARM MHUv3 controller is only present on ARM64 SoCs.  Henc=
-e add a
-> > > > > > > dependency on ARM64, to prevent asking the user about this dr=
-iver when
-> > > > > > > configuring a kernel for a different architecture than ARM64.
-> > > > > >
-> > > > > > the ARM64 dependency was dropped on purpose after a few iterati=
-ons of
-> > > > > > this series since, despite this being an ARM IP, it has really =
-no technical
-> > > > > > dependency on ARM arch, not even the usual one on ARM AMBA bus,=
- being this a
-> > > > > > platform driver, so it seemed an uneeded artificial restriction=
- to impose...
-> > > > > > ...having said that, surely my live testing were performed only=
- on arm64 models
-> > > > > > as of now.
-> > > > >
-> > > > > For that, we have COMPILE_TEST=3Dy.
-> > > > >
-> > > > > > So, I am not saying that I am against this proposed fix but wha=
-t is the
-> > > > > > issue that is trying to solve, have you seen any compilation er=
-ror ? or
-> > > > > > is it just to avoid the user-prompting ?
-> > > > >
-> > > > > I did not see a compile error (I didn't enable it on any non-ARM
-> > > > > platform).
-> > > > >
-> > > > > But it is rather futile to ask the user about (thousands of) driv=
-ers
-> > > > > for hardware that cannot possibly be present on the system he is
-> > > > > configuring a kernel for.
-> > > >
-> > > > I am fine with this fix but I have seen quite opposite argument. Th=
-at is
-> > > > not to add dependency if it is not strictly required.
-> > >
-> > > Can you please point me to that reference?
-> >
-> > I don't have one handy, I need to dig but I have been asked to remove
-> > in the past.
 
-I guess Linus Torvalds has missed the "ARM MHUv3 Mailbox" question
-when configuring his kernel.... Or he has disabled CONFIG_MAILBOX
-(it is not enabled in any but a few arm defconfigs).
-Oh wait, he runs ARM64 now, so the question was valid ;-)
+On 6/4/2024 3:16 PM, Dmitry Baryshkov wrote:
+> On Tue, Jun 04, 2024 at 01:34:44PM +0530, Krishna Kurapati PSSNV wrote:
+>>
+>>
+>> On 6/4/2024 1:16 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Jun 04, 2024 at 11:36:58AM +0530, Krishna Kurapati wrote:
+>>>> On SC7180, in host mode, it is observed that stressing out controller
+>>>> results in HC died error:
+>>>>
+>>>>    xhci-hcd.12.auto: xHCI host not responding to stop endpoint command
+>>>>    xhci-hcd.12.auto: xHCI host controller not responding, assume dead
+>>>>    xhci-hcd.12.auto: HC died; cleaning up
+>>>>
+>>>> And at this instant only restarting the host mode fixes it. Disable
+>>>> SuperSpeed instances in park mode for SC7180 to mitigate this issue.
+>>>
+>>> Let me please repeat the question from v1:
+>>>
+>>> Just out of curiosity, what is the park mode?
+>>>
+>>
+>> Sorry, Missed the mail in v1.
+>>
+>> Databook doesn't give much info on this bit (SS case, commit 7ba6b09fda5e0)
+>> but it does in HS case (commit d21a797a3eeb2).
+>>
+>>  From the mail we received from Synopsys, they described it as follows:
+>>
+>> "Park mode feature allows better throughput on the USB in cases where a
+>> single EP is active. It increases the degree of pipelining within the
+>> controller as long as a single EP is active."
+> 
+> Thank you!
+> 
+>>
+>> Even in the current debug for this test case, Synopsys suggested us to set
+>> this bit to avoid the controller being dead and we are waiting for further
+>> answers from them.
+> 
+> Should these quirks be enabled for other Qualcomm platforms? If so,
+> which platforms should get it?
 
-> > > > Also since you state that the fix is to avoid users of other archs =
-being
-> > > > posed with the question that they may get annoyed or can't answer, =
-I
-> > > > wonder if the right approach is to make this driver default "n" ins=
-tead.
-> > >
-> > > The driver already defaults to "n" (which is the default default ;-)
-> >
-> > Ah Cristian mentioned the same in private. I may have misunderstood
-> > then, for some reason I thought explicit default "n" would avoid gettin=
-g
-> > the prompt.
->
-> I just tried this trick, it does not seem to work: an explict default-n w=
-ill
-> anyway trigger a prompt.
+In downstream we enable this for Gen-1 platforms. On v1 discussion 
+thread, I agreed to send another series for other platforms.
 
-The default value does not control the visibility.
-Visibility can only be controlled through "{bool,tristate} ... if <conditio=
-n>",
-or through "depends on <condition>".
+I could've included it for others as well in this v2, but there are 
+around 30 QC SoCs (or more) on upstream and many are very old. I need to 
+go through all of them and figure out which ones are Gen-1. To not delay 
+this for SC7280 and SC7180 (as chrome platforms need it right away), I 
+sent v2 only for these two targets.
 
-> > As I said I am fine with the proposed change, just took this discussion
-> > as a way to learn little more about Kconfig.
->
-> Can this be at least
->
->         depends on ARM || ARM64 || COMPILE_TEST
+Regards,
+Krishna,
 
-Only if the MHUv3 can also be present on ARM ("aarch32") SoCs.
-Or do people really run 32-bit kernels on ARM64?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> 
+>> I can update thread with more info once we get some data from Synopsys.
+>>
+>> Regards,
+>> Krishna,
+>>
+>>>>
+>>>> Reported-by: Doug Anderson <dianders@google.com>
+>>>> Cc: <stable@vger.kernel.org>
+>>>> Fixes: 0b766e7fe5a2 ("arm64: dts: qcom: sc7180: Add USB related nodes")
+>>>> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+>>>> ---
+>>>> Removed RB/TB tag from Doug as commit text was updated.
+>>>>
+>>>>    arch/arm64/boot/dts/qcom/sc7180.dtsi | 1 +
+>>>>    1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>>>> index 2b481e20ae38..cc93b5675d5d 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+>>>> @@ -3063,6 +3063,7 @@ usb_1_dwc3: usb@a600000 {
+>>>>    				iommus = <&apps_smmu 0x540 0>;
+>>>>    				snps,dis_u2_susphy_quirk;
+>>>>    				snps,dis_enblslpm_quirk;
+>>>> +				snps,parkmode-disable-ss-quirk;
+>>>>    				phys = <&usb_1_hsphy>, <&usb_1_qmpphy QMP_USB43DP_USB3_PHY>;
+>>>>    				phy-names = "usb2-phy", "usb3-phy";
+>>>>    				maximum-speed = "super-speed";
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>>
+> 
 
