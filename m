@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-200481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01CD8FB0A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:00:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 586B78FB0A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081731C21172
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B7341C20EF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065AA1459FE;
-	Tue,  4 Jun 2024 11:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917081420D7;
+	Tue,  4 Jun 2024 11:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkkBC+Ih"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AsUzGGNm"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DBB14533F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD181459FB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717498802; cv=none; b=ld2+YS1Y0O0I4b3hk3TEWU9C85QYuqJcDkF4RYI6d4SUeIV4bi77wNSVv/5sdxdK/66Cpa6q0EzU0eFarLpqT3KqMbzIetYloRKlnqyKHzUCX5fKAltnNA0fTMcPtQ9xIzaQrFC61gFmb/CUi2Pkbc+Ezk+d57Look+E4brB32k=
+	t=1717498804; cv=none; b=pIRyaAeLTL2aJTxlcN56xO6h/z8Df428AdoSthJc7Hj8RtSd4eIkpACNTiaBYTIRV/EXt1YA2+M6Yt17pNXf/lHYk5BKXbesHfhj+bC2SgMsJK5knuP2W4GIhEtcGVEZHd/GG0jpUIT4T1ZkteS9rAwXLByZevhL40ozD5VmdRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717498802; c=relaxed/simple;
-	bh=4/gUhKUqAkATSuExKjP8Vx66XOOcURSzQCEk7ycR0NY=;
+	s=arc-20240116; t=1717498804; c=relaxed/simple;
+	bh=z0AMfVX/Vo5LmLCX4IsjL1mH/g5mb8lIUimQDFV8pCE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sRCteR1S542YNbvEEdouXy9KZemzcaQUXRXePdzy4NrNkYo+/o37uDvmFxifd5uxbTQxfBj/ljHcF9Nyek+FV8MQ1TWzv/ZfXd2aoy7UWwPoBEF1yoUlPjJdxlclcGCX9wR00GkgVpR2+71otGDNY27wT39Nwoqyf+SMLor8gEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkkBC+Ih; arc=none smtp.client-ip=209.85.219.45
+	 MIME-Version; b=HZmA8FbkRiBPqoSJVRgeL9kMSSn6NGoCVYhHxzCSPZn78n5nqzvKfKIOb+aZcxTtdHdVg1+P+r51oaMGY6k/ybHOWCSY79lWk3jBI3TpEI1XETUA0eSw20drixqf5YYXIYqdPUQlG3esZZOkbqHyjdDNedymrz2hNv9bR4yAjRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AsUzGGNm; arc=none smtp.client-ip=209.85.167.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6ae1059a62fso5690346d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:00:00 -0700 (PDT)
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d1d65a471aso3216477b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717498800; x=1718103600; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717498802; x=1718103602; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=asgpbMnZY0t8v6Jl3H5uUs1NISRsXbBHVciypDjEWY8=;
-        b=jkkBC+IhyMHkDOYS9zZNsoVW/fcz6KS4gFwRm/szjOqrPDLns+TTflVogv+zf2NkeW
-         V9TNce7AOUnDEi7HAAsPZYrOGZ8BNkjLzer27e7ak7QcGQIti/dMuLJ8DL+aJ3UbY24D
-         99TNoP+u414fmCJ3Vf0xpQBKoSskgKekKLvTs8rMQNrXfEo8pPg/ffE0tS6SVBzNNPHR
-         xiilAXraYHzICh0KBvmfR+Hg1rVoUtJAfE+3x1B7/McV4Mebqmzcxm4a3v7ANos6cqci
-         VB1M/9EpcyAONy5hbpwk+prJ3At/jVyhK1O8MRIvjMeX09FQra9RTWIqIQfERbEzSRpQ
-         z0eA==
+        bh=5+XY1gPxeVwDTMFWy18KTOJW5+R0TdSJWJS675lM6zM=;
+        b=AsUzGGNm2VrdPd5v9MvutZ+M/YIJjFGyuwT9CZIlN95c8ONEm2uaPozOWrYDU/tS3a
+         vT9YJJ310DqQffF8OW02U8zy1uRhZai5ZtpWysIK2BhOHtd0c7adxCzu1wbtzVSm3Qit
+         5W38hHcqdtFLBPu2Q8mJ9Cci/X0JHvrDsn7pBu8F88/4r4AnoLp/tfO5ZOrX+qu2TtRE
+         vJRb7JWz9sVjgToH3uCEUjoECwO4YmoLG69Y5KadTtzXZTMv11X6117RrCEzrPC+/znM
+         vxkbwW8VNSeefo1ONz9vQKFtNtaT//cZCahyb/8y0qdVbQ3X8Xknt7bxQFOj4y8BHxXc
+         yTdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717498800; x=1718103600;
+        d=1e100.net; s=20230601; t=1717498802; x=1718103602;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=asgpbMnZY0t8v6Jl3H5uUs1NISRsXbBHVciypDjEWY8=;
-        b=mpCaN2o2Z6WG1Ry8dELQxpNCSGOyFeOOeQYxpOn+RIMBaqY9p5CZmv9UDqS0Uq456N
-         VcPIxKu+iGBohT0N92s84BAXT8H7CTHJOHHRvT+C/JVu8q2+ZpaKLRXnF+04ECLkacxE
-         U+vit5N6AvJj44RUJUg2rfFPx+JhcTymFKtL9Zfh0KgXqjBZMN7vzKUa8Uq9XwJU+KQw
-         xfEJW6Mwiorjh7m8LfFOcNPj2bwnSqmTvvjQe+pyuV8H0dSnWzDEgYZ++IcSJpwg+9ai
-         yKzQSmJe7CQxhLh+kBz6id8oj9OENe/WboSdXQBwKldrmIBUso28QkDSELc9gGeSAXq2
-         w7dA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/tK3RcOrL7gXZsceSUsTgoQ79ErpQ9ypMIyimdzY47azZI9Lgh/evg9Gdi6ZibpTvK8Lvwjn33IyW5a/Lfym+L5XNIEqCcA8H83FD
-X-Gm-Message-State: AOJu0YxNEAKS5KcpvZ6022tQprIdmlX77ixb1/QTJAyYmHxaJEKlDSlx
-	2XZvBPoSQRqzKzoogj57jKHOyeo8mnm5ebn/klfciYpuSuLeYEtu
-X-Google-Smtp-Source: AGHT+IElTPVikfDZzSypb4x9WPBEWXCiurpJs66Y0afsj9XrVePVVfBdFKw3gJ79SVsC2AzYhyprtg==
-X-Received: by 2002:a05:6214:2b88:b0:6af:bf15:3600 with SMTP id 6a1803df08f44-6afbf153bd7mr57304046d6.38.1717498799747;
-        Tue, 04 Jun 2024 03:59:59 -0700 (PDT)
-Received: from localhost (fwdproxy-nao-000.fbsv.net. [2a03:2880:23ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6afc6696d05sm13797306d6.73.2024.06.04.03.59.58
+        bh=5+XY1gPxeVwDTMFWy18KTOJW5+R0TdSJWJS675lM6zM=;
+        b=wfdIzFNBC+2/rHk8t/6vIpFMfiI92w8HMrC7W3dZNbvUPNkXGAKFVsaHiSqXwO1anm
+         gV4LuFPzaQ8NGcR5vBzTgK03ae9eoDYToifiHzQHFYRJG+sP3fpRcceCYOGV9PuSllwL
+         jADIfL+5oMeR28UldCC80+YcmNl9FjDW/9rN7ZCxLxVJpOLGh+IICAtWK37WUEGVTIxR
+         madp5j9AazxPuV7pXfjK4ibDukjNjF2S3Bn53B0qjxEs1KRe0pEQFGytWZwGfsa67AX8
+         pq5ET8bI2bFgQIiM9md7e+CRM0cwlfzXbqVI8PQXeZ+5dfsPSE0E3vhBivZ0L/YewvyX
+         X+UA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAZFdLNNU+m7fjveXoVd3wsjflat/Fdl5o8c7SkdW/CriTqiX86PJeQndDccvXxg//RqPVG2KIOQXP4RGhszpL6gzEDmcRZuyRXabi
+X-Gm-Message-State: AOJu0Yy3MkMIBF/mqXD8kkjSdUTtEoCUpfQVuKlCEa9t8ltncbD1/+5y
+	n6dDWVBJxpAqzam0jF30v2PHXjKvZHrE/rKi5mHPJ1/3HYi1zH7x
+X-Google-Smtp-Source: AGHT+IGqjDsQMT9+d5i3I+sV8o2xgyHBJns1JSWePTCCOLgtjISL9ZlqehNIwR0a3myq26CqJC/CfQ==
+X-Received: by 2002:aca:280a:0:b0:3d1:c62a:3e0d with SMTP id 5614622812f47-3d1e35d0120mr10336000b6e.58.1717498801911;
+        Tue, 04 Jun 2024 04:00:01 -0700 (PDT)
+Received: from localhost (fwdproxy-nao-005.fbsv.net. [2a03:2880:23ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6afbf044967sm18003676d6.124.2024.06.04.04.00.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 03:59:58 -0700 (PDT)
+        Tue, 04 Jun 2024 04:00:00 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: akpm@linux-foundation.org
 Cc: hannes@cmpxchg.org,
@@ -77,9 +77,9 @@ Cc: hannes@cmpxchg.org,
 	linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v2 1/2] mm: clear pte for folios that are zero filled
-Date: Tue,  4 Jun 2024 11:58:24 +0100
-Message-ID: <20240604105950.1134192-2-usamaarif642@gmail.com>
+Subject: [PATCH v2 2/2] mm: remove code to handle same filled pages
+Date: Tue,  4 Jun 2024 11:58:25 +0100
+Message-ID: <20240604105950.1134192-3-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240604105950.1134192-1-usamaarif642@gmail.com>
 References: <20240604105950.1134192-1-usamaarif642@gmail.com>
@@ -91,350 +91,193 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Approximately 10-20% of pages to be swapped out are zero pages [1].
-Rather than reading/writing these pages to flash resulting
-in increased I/O and flash wear, the pte can be cleared for those
-addresses at unmap time while shrinking folio list. When this
-causes a page fault, do_pte_missing will take care of this page.
-With this patch, NVMe writes in Meta server fleet decreased
-by almost 10% with conventional swap setup (zswap disabled).
-
-[1] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
+With an earlier commit to handle zero-filled pages in vmscan directly,
+and with only 1% of the same-filled pages being non-zero, zswap no
+longer needs to handle same-filled pages and can just work on compressed
+pages.
 
 Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 ---
- include/linux/rmap.h |   1 +
- mm/rmap.c            | 163 ++++++++++++++++++++++---------------------
- mm/vmscan.c          |  89 ++++++++++++++++-------
- 3 files changed, 150 insertions(+), 103 deletions(-)
+ mm/zswap.c | 86 +++++-------------------------------------------------
+ 1 file changed, 8 insertions(+), 78 deletions(-)
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index bb53e5920b88..b36db1e886e4 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -100,6 +100,7 @@ enum ttu_flags {
- 					 * do a final flush if necessary */
- 	TTU_RMAP_LOCKED		= 0x80,	/* do not grab rmap lock:
- 					 * caller holds it */
-+	TTU_ZERO_FOLIO		= 0x100,/* zero folio */
+diff --git a/mm/zswap.c b/mm/zswap.c
+index b9b35ef86d9b..ca8df9c99abf 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -44,8 +44,6 @@
+ **********************************/
+ /* The number of compressed pages currently stored in zswap */
+ atomic_t zswap_stored_pages = ATOMIC_INIT(0);
+-/* The number of same-value filled pages currently stored in zswap */
+-static atomic_t zswap_same_filled_pages = ATOMIC_INIT(0);
+ 
+ /*
+  * The statistics below are not protected from concurrent access for
+@@ -182,11 +180,9 @@ static struct shrinker *zswap_shrinker;
+  *
+  * swpentry - associated swap entry, the offset indexes into the red-black tree
+  * length - the length in bytes of the compressed page data.  Needed during
+- *          decompression. For a same value filled page length is 0, and both
+- *          pool and lru are invalid and must be ignored.
++ *          decompression.
+  * pool - the zswap_pool the entry's data is in
+  * handle - zpool allocation handle that stores the compressed page data
+- * value - value of the same-value filled pages which have same content
+  * objcg - the obj_cgroup that the compressed memory is charged to
+  * lru - handle to the pool's lru used to evict pages.
+  */
+@@ -194,10 +190,7 @@ struct zswap_entry {
+ 	swp_entry_t swpentry;
+ 	unsigned int length;
+ 	struct zswap_pool *pool;
+-	union {
+-		unsigned long handle;
+-		unsigned long value;
+-	};
++	unsigned long handle;
+ 	struct obj_cgroup *objcg;
+ 	struct list_head lru;
  };
- 
- #ifdef CONFIG_MMU
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 52357d79917c..d98f70876327 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1819,96 +1819,101 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 			 */
- 			dec_mm_counter(mm, mm_counter(folio));
- 		} else if (folio_test_anon(folio)) {
--			swp_entry_t entry = page_swap_entry(subpage);
--			pte_t swp_pte;
--			/*
--			 * Store the swap location in the pte.
--			 * See handle_pte_fault() ...
--			 */
--			if (unlikely(folio_test_swapbacked(folio) !=
--					folio_test_swapcache(folio))) {
-+			if (flags & TTU_ZERO_FOLIO) {
-+				pte_clear(mm, address, pvmw.pte);
-+				dec_mm_counter(mm, MM_ANONPAGES);
-+			} else {
-+				swp_entry_t entry = page_swap_entry(subpage);
-+				pte_t swp_pte;
- 				/*
--				 * unmap_huge_pmd_locked() will unmark a
--				 * PMD-mapped folio as lazyfree if the folio or
--				 * its PMD was redirtied.
-+				 * Store the swap location in the pte.
-+				 * See handle_pte_fault() ...
- 				 */
--				if (!pmd_mapped)
--					WARN_ON_ONCE(1);
--				goto walk_done_err;
--			}
-+				if (unlikely(folio_test_swapbacked(folio) !=
-+						folio_test_swapcache(folio))) {
-+					/*
-+					 * unmap_huge_pmd_locked() will unmark a
-+					 * PMD-mapped folio as lazyfree if the folio or
-+					 * its PMD was redirtied.
-+					 */
-+					if (!pmd_mapped)
-+						WARN_ON_ONCE(1);
-+					goto walk_done_err;
-+				}
- 
--			/* MADV_FREE page check */
--			if (!folio_test_swapbacked(folio)) {
--				int ref_count, map_count;
-+				/* MADV_FREE page check */
-+				if (!folio_test_swapbacked(folio)) {
-+					int ref_count, map_count;
- 
--				/*
--				 * Synchronize with gup_pte_range():
--				 * - clear PTE; barrier; read refcount
--				 * - inc refcount; barrier; read PTE
--				 */
--				smp_mb();
-+					/*
-+					 * Synchronize with gup_pte_range():
-+					 * - clear PTE; barrier; read refcount
-+					 * - inc refcount; barrier; read PTE
-+					 */
-+					smp_mb();
- 
--				ref_count = folio_ref_count(folio);
--				map_count = folio_mapcount(folio);
-+					ref_count = folio_ref_count(folio);
-+					map_count = folio_mapcount(folio);
- 
--				/*
--				 * Order reads for page refcount and dirty flag
--				 * (see comments in __remove_mapping()).
--				 */
--				smp_rmb();
-+					/*
-+					 * Order reads for page refcount and dirty flag
-+					 * (see comments in __remove_mapping()).
-+					 */
-+					smp_rmb();
- 
--				/*
--				 * The only page refs must be one from isolation
--				 * plus the rmap(s) (dropped by discard:).
--				 */
--				if (ref_count == 1 + map_count &&
--				    !folio_test_dirty(folio)) {
--					dec_mm_counter(mm, MM_ANONPAGES);
--					goto discard;
--				}
-+					/*
-+					 * The only page refs must be one from isolation
-+					 * plus the rmap(s) (dropped by discard:).
-+					 */
-+					if (ref_count == 1 + map_count &&
-+					    !folio_test_dirty(folio)) {
-+						dec_mm_counter(mm, MM_ANONPAGES);
-+						goto discard;
-+					}
- 
--				/*
--				 * If the folio was redirtied, it cannot be
--				 * discarded. Remap the page to page table.
--				 */
--				set_pte_at(mm, address, pvmw.pte, pteval);
--				folio_set_swapbacked(folio);
--				goto walk_done_err;
--			}
-+					/*
-+					 * If the folio was redirtied, it cannot be
-+					 * discarded. Remap the page to page table.
-+					 */
-+					set_pte_at(mm, address, pvmw.pte, pteval);
-+					folio_set_swapbacked(folio);
-+					goto walk_done_err;
-+				}
- 
--			if (swap_duplicate(entry) < 0) {
--				set_pte_at(mm, address, pvmw.pte, pteval);
--				goto walk_done_err;
--			}
--			if (arch_unmap_one(mm, vma, address, pteval) < 0) {
--				swap_free(entry);
--				set_pte_at(mm, address, pvmw.pte, pteval);
--				goto walk_done_err;
--			}
-+				if (swap_duplicate(entry) < 0) {
-+					set_pte_at(mm, address, pvmw.pte, pteval);
-+					goto walk_done_err;
-+				}
-+				if (arch_unmap_one(mm, vma, address, pteval) < 0) {
-+					swap_free(entry);
-+					set_pte_at(mm, address, pvmw.pte, pteval);
-+					goto walk_done_err;
-+				}
- 
--			/* See folio_try_share_anon_rmap(): clear PTE first. */
--			if (anon_exclusive &&
--			    folio_try_share_anon_rmap_pte(folio, subpage)) {
--				swap_free(entry);
--				set_pte_at(mm, address, pvmw.pte, pteval);
--				goto walk_done_err;
--			}
--			if (list_empty(&mm->mmlist)) {
--				spin_lock(&mmlist_lock);
--				if (list_empty(&mm->mmlist))
--					list_add(&mm->mmlist, &init_mm.mmlist);
--				spin_unlock(&mmlist_lock);
-+				/* See folio_try_share_anon_rmap(): clear PTE first. */
-+				if (anon_exclusive &&
-+				    folio_try_share_anon_rmap_pte(folio, subpage)) {
-+					swap_free(entry);
-+					set_pte_at(mm, address, pvmw.pte, pteval);
-+					goto walk_done_err;
-+				}
-+				if (list_empty(&mm->mmlist)) {
-+					spin_lock(&mmlist_lock);
-+					if (list_empty(&mm->mmlist))
-+						list_add(&mm->mmlist, &init_mm.mmlist);
-+					spin_unlock(&mmlist_lock);
-+				}
-+				dec_mm_counter(mm, MM_ANONPAGES);
-+				inc_mm_counter(mm, MM_SWAPENTS);
-+				swp_pte = swp_entry_to_pte(entry);
-+				if (anon_exclusive)
-+					swp_pte = pte_swp_mkexclusive(swp_pte);
-+				if (pte_soft_dirty(pteval))
-+					swp_pte = pte_swp_mksoft_dirty(swp_pte);
-+				if (pte_uffd_wp(pteval))
-+					swp_pte = pte_swp_mkuffd_wp(swp_pte);
-+				set_pte_at(mm, address, pvmw.pte, swp_pte);
- 			}
--			dec_mm_counter(mm, MM_ANONPAGES);
--			inc_mm_counter(mm, MM_SWAPENTS);
--			swp_pte = swp_entry_to_pte(entry);
--			if (anon_exclusive)
--				swp_pte = pte_swp_mkexclusive(swp_pte);
--			if (pte_soft_dirty(pteval))
--				swp_pte = pte_swp_mksoft_dirty(swp_pte);
--			if (pte_uffd_wp(pteval))
--				swp_pte = pte_swp_mkuffd_wp(swp_pte);
--			set_pte_at(mm, address, pvmw.pte, swp_pte);
- 		} else {
- 			/*
- 			 * This is a locked file-backed folio,
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index b9170f767353..d54f44b556f0 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1026,6 +1026,38 @@ static bool may_enter_fs(struct folio *folio, gfp_t gfp_mask)
- 	return !data_race(folio_swap_flags(folio) & SWP_FS_OPS);
+@@ -814,13 +807,9 @@ static struct zpool *zswap_find_zpool(struct zswap_entry *entry)
+  */
+ static void zswap_entry_free(struct zswap_entry *entry)
+ {
+-	if (!entry->length)
+-		atomic_dec(&zswap_same_filled_pages);
+-	else {
+-		zswap_lru_del(&zswap_list_lru, entry);
+-		zpool_free(zswap_find_zpool(entry), entry->handle);
+-		zswap_pool_put(entry->pool);
+-	}
++	zswap_lru_del(&zswap_list_lru, entry);
++	zpool_free(zswap_find_zpool(entry), entry->handle);
++	zswap_pool_put(entry->pool);
+ 	if (entry->objcg) {
+ 		obj_cgroup_uncharge_zswap(entry->objcg, entry->length);
+ 		obj_cgroup_put(entry->objcg);
+@@ -1262,11 +1251,6 @@ static unsigned long zswap_shrinker_count(struct shrinker *shrinker,
+ 	 * This ensures that the better zswap compresses memory, the fewer
+ 	 * pages we will evict to swap (as it will otherwise incur IO for
+ 	 * relatively small memory saving).
+-	 *
+-	 * The memory saving factor calculated here takes same-filled pages into
+-	 * account, but those are not freeable since they almost occupy no
+-	 * space. Hence, we may scale nr_freeable down a little bit more than we
+-	 * should if we have a lot of same-filled pages.
+ 	 */
+ 	return mult_frac(nr_freeable, nr_backing, nr_stored);
+ }
+@@ -1370,42 +1354,6 @@ static void shrink_worker(struct work_struct *w)
+ 	} while (zswap_total_pages() > thr);
  }
  
-+static bool is_folio_page_zero_filled(struct folio *folio, int i)
-+{
-+	unsigned long *data;
-+	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
-+	bool ret = false;
-+
-+	data = kmap_local_folio(folio, i * PAGE_SIZE);
-+
-+	if (data[last_pos])
-+		goto out;
-+
-+	for (pos = 0; pos < last_pos; pos++) {
-+		if (data[pos])
-+			goto out;
-+	}
-+	ret = true;
-+out:
-+	kunmap_local(data);
-+	return ret;
-+}
-+
-+static bool is_folio_zero_filled(struct folio *folio)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < folio_nr_pages(folio); i++) {
-+		if (!is_folio_page_zero_filled(folio, i))
-+			return false;
-+	}
-+	return true;
-+}
-+
- /*
-  * shrink_folio_list() returns the number of reclaimed pages
-  */
-@@ -1053,6 +1085,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		enum folio_references references = FOLIOREF_RECLAIM;
- 		bool dirty, writeback;
- 		unsigned int nr_pages;
-+		bool folio_zero_filled = false;
+-/*********************************
+-* same-filled functions
+-**********************************/
+-static bool zswap_is_folio_same_filled(struct folio *folio, unsigned long *value)
+-{
+-	unsigned long *data;
+-	unsigned long val;
+-	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
+-	bool ret = false;
+-
+-	data = kmap_local_folio(folio, 0);
+-	val = data[0];
+-
+-	if (val != data[last_pos])
+-		goto out;
+-
+-	for (pos = 1; pos < last_pos; pos++) {
+-		if (val != data[pos])
+-			goto out;
+-	}
+-
+-	*value = val;
+-	ret = true;
+-out:
+-	kunmap_local(data);
+-	return ret;
+-}
+-
+-static void zswap_fill_folio(struct folio *folio, unsigned long value)
+-{
+-	unsigned long *data = kmap_local_folio(folio, 0);
+-
+-	memset_l(data, value, PAGE_SIZE / sizeof(unsigned long));
+-	kunmap_local(data);
+-}
+-
+ /*********************************
+ * main API
+ **********************************/
+@@ -1417,7 +1365,6 @@ bool zswap_store(struct folio *folio)
+ 	struct zswap_entry *entry, *old;
+ 	struct obj_cgroup *objcg = NULL;
+ 	struct mem_cgroup *memcg = NULL;
+-	unsigned long value;
  
- 		cond_resched();
+ 	VM_WARN_ON_ONCE(!folio_test_locked(folio));
+ 	VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+@@ -1450,13 +1397,6 @@ bool zswap_store(struct folio *folio)
+ 		goto reject;
+ 	}
  
-@@ -1270,6 +1303,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			nr_pages = 1;
- 		}
+-	if (zswap_is_folio_same_filled(folio, &value)) {
+-		entry->length = 0;
+-		entry->value = value;
+-		atomic_inc(&zswap_same_filled_pages);
+-		goto store_entry;
+-	}
+-
+ 	/* if entry is successfully added, it keeps the reference */
+ 	entry->pool = zswap_pool_current_get();
+ 	if (!entry->pool)
+@@ -1474,7 +1414,6 @@ bool zswap_store(struct folio *folio)
+ 	if (!zswap_compress(folio, entry))
+ 		goto put_pool;
  
-+		folio_zero_filled = is_folio_zero_filled(folio);
- 		/*
- 		 * The folio is mapped into the page tables of one or more
- 		 * processes. Try to unmap it here.
-@@ -1295,6 +1329,9 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			if (folio_test_large(folio) && list_empty(&folio->_deferred_list))
- 				flags |= TTU_SYNC;
+-store_entry:
+ 	entry->swpentry = swp;
+ 	entry->objcg = objcg;
  
-+			if (folio_zero_filled)
-+				flags |= TTU_ZERO_FOLIO;
-+
- 			try_to_unmap(folio, flags);
- 			if (folio_mapped(folio)) {
- 				stat->nr_unmap_fail += nr_pages;
-@@ -1358,32 +1395,36 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			 * starts and then write it out here.
- 			 */
- 			try_to_unmap_flush_dirty();
--			switch (pageout(folio, mapping, &plug)) {
--			case PAGE_KEEP:
--				goto keep_locked;
--			case PAGE_ACTIVATE:
--				goto activate_locked;
--			case PAGE_SUCCESS:
--				stat->nr_pageout += nr_pages;
-+			if (folio_zero_filled) {
-+				folio_clear_dirty(folio);
-+			} else {
-+				switch (pageout(folio, mapping, &plug)) {
-+				case PAGE_KEEP:
-+					goto keep_locked;
-+				case PAGE_ACTIVATE:
-+					goto activate_locked;
-+				case PAGE_SUCCESS:
-+					stat->nr_pageout += nr_pages;
+@@ -1522,13 +1461,9 @@ bool zswap_store(struct folio *folio)
+ 	return true;
  
--				if (folio_test_writeback(folio))
--					goto keep;
--				if (folio_test_dirty(folio))
--					goto keep;
-+					if (folio_test_writeback(folio))
-+						goto keep;
-+					if (folio_test_dirty(folio))
-+						goto keep;
+ store_failed:
+-	if (!entry->length)
+-		atomic_dec(&zswap_same_filled_pages);
+-	else {
+-		zpool_free(zswap_find_zpool(entry), entry->handle);
++	zpool_free(zswap_find_zpool(entry), entry->handle);
+ put_pool:
+-		zswap_pool_put(entry->pool);
+-	}
++	zswap_pool_put(entry->pool);
+ freepage:
+ 	zswap_entry_cache_free(entry);
+ reject:
+@@ -1577,10 +1512,7 @@ bool zswap_load(struct folio *folio)
+ 	if (!entry)
+ 		return false;
  
--				/*
--				 * A synchronous write - probably a ramdisk.  Go
--				 * ahead and try to reclaim the folio.
--				 */
--				if (!folio_trylock(folio))
--					goto keep;
--				if (folio_test_dirty(folio) ||
--				    folio_test_writeback(folio))
--					goto keep_locked;
--				mapping = folio_mapping(folio);
--				fallthrough;
--			case PAGE_CLEAN:
--				; /* try to free the folio below */
-+					/*
-+					 * A synchronous write - probably a ramdisk.  Go
-+					 * ahead and try to reclaim the folio.
-+					 */
-+					if (!folio_trylock(folio))
-+						goto keep;
-+					if (folio_test_dirty(folio) ||
-+					    folio_test_writeback(folio))
-+						goto keep_locked;
-+					mapping = folio_mapping(folio);
-+					fallthrough;
-+				case PAGE_CLEAN:
-+					; /* try to free the folio below */
-+				}
- 			}
- 		}
+-	if (entry->length)
+-		zswap_decompress(entry, folio);
+-	else
+-		zswap_fill_folio(folio, entry->value);
++	zswap_decompress(entry, folio);
  
+ 	count_vm_event(ZSWPIN);
+ 	if (entry->objcg)
+@@ -1682,8 +1614,6 @@ static int zswap_debugfs_init(void)
+ 			    zswap_debugfs_root, NULL, &total_size_fops);
+ 	debugfs_create_atomic_t("stored_pages", 0444,
+ 				zswap_debugfs_root, &zswap_stored_pages);
+-	debugfs_create_atomic_t("same_filled_pages", 0444,
+-				zswap_debugfs_root, &zswap_same_filled_pages);
+ 
+ 	return 0;
+ }
 -- 
 2.43.0
 
