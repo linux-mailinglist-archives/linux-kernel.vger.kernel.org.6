@@ -1,58 +1,68 @@
-Return-Path: <linux-kernel+bounces-200937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07EB8FB6CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:18:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88EC08FB6CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD251C21895
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:18:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24160B2787B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85564D30B;
-	Tue,  4 Jun 2024 15:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87980143C59;
+	Tue,  4 Jun 2024 15:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOnvISgi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyrZhOp1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63FB12B148;
-	Tue,  4 Jun 2024 15:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA86D30B;
+	Tue,  4 Jun 2024 15:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717514330; cv=none; b=dsl8mlZm/KoAHRu/SCp69YZDYvS6F3cWFpowRp6U44bL0TbWGcB47cZrqHBdMTBRhsLYciTnxggbS88J6Xt0zc8BQPTY1HWz3smgR8lYKeX7BccGKmJSfNgSikEr8GKQTX+cw32Srvgilp5fsI2wPMXD6sEBeWU6H8676xFPSok=
+	t=1717514342; cv=none; b=Wx5Jj2szk48x/0fJhGqfF541N+0FjyswEJ1l9icHMYDCH1J1/jP9nt5UawZPIr1UOOwBJODga6QuxVuTRWVLry995IPAwczriWtakL1In1opm0ZWdiRi3Z9DWxxxn7d7WKQreo5E1lOAsSaEYS/R+hmqgOEizN3rq6pj+Aq3ObQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717514330; c=relaxed/simple;
-	bh=byrbxIeFUv8qWRieFnQIoYcmf1QHDFVOAfsLUq8svpE=;
+	s=arc-20240116; t=1717514342; c=relaxed/simple;
+	bh=SgYhZ1mbIunBtwN4LKIszTbrQvB7J8eU/XbTXIjeK1I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UK/u1F2OZ1koIoMAzfBVIHVvnWS9lON6g+TQ63iMfD8DfcZGXC55O/cTOSoozxv8u5GFVYGf1BpxAOosZ53NV+Maom580ufo6n8qKmx4JgvRO2a6sKbYBFSfUdizqs/Djvg1qEB5z5vc66Wvu94uCNF/ZayHu8ZnDkwkGGOgD8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOnvISgi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1F9C2BBFC;
-	Tue,  4 Jun 2024 15:18:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TB+VotbM6doXY6PzfCYAEa5gSF0qYKcEdZ4q35KGjW4XYGw4hooa09FWzCQJvh4aDkZgIlf4KjIobc/yL19wa8qnh2+cXNeVhvy5+xktqyBqTCOa3kVIs2xdW1Us9scc90Knt/VvQlZvKt/8SWKoHRUDnZ2xkafeCp+Iq5xEbfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyrZhOp1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AEDCC2BBFC;
+	Tue,  4 Jun 2024 15:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717514330;
-	bh=byrbxIeFUv8qWRieFnQIoYcmf1QHDFVOAfsLUq8svpE=;
+	s=k20201202; t=1717514342;
+	bh=SgYhZ1mbIunBtwN4LKIszTbrQvB7J8eU/XbTXIjeK1I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iOnvISgipa8sPei/yu3VCtfmhHJoLFBLrLVKJbtOFCuqZHd8SjkdH1AyULTqsRhsb
-	 CnO0oizgC628CRjLtDyd+ciqhOCDbv5s8inMCn0qUq89WXzz1wEZg5beAvZBShkw1T
-	 R/U1U3NakpSaW6037Af5tInvV8vUUB3luOPFHTAUwUneu9qbFKujk4NYROApiDpPh8
-	 UgPuL1cBSvxvgXIiunAg8MH7k/02u/2zyW+L8E9N5shV99Fuw8MaM2cTIHVzrUJC8+
-	 Ol2bJrUsJnrADN7HxgaeuQLEue5m4AysrEcjEaqTvlwYnqN9I/Lo9fMottTFgp80xV
-	 EvV9CtUvbqGmw==
-Date: Tue, 4 Jun 2024 12:18:47 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/4] perf hist: Simplify __hpp_fmt() using hpp_fmt_data
-Message-ID: <Zl8wVwNaKDXLTWbq@x1>
-References: <20240603224412.1910049-1-namhyung@kernel.org>
- <20240603224412.1910049-3-namhyung@kernel.org>
+	b=MyrZhOp15I4XFkFD+6fehBKN2mI4y5rGUfIh9flVaQMTk7j+KqUkgTuT4qKqbjHZB
+	 q333b3h11kdC3Wc+/3qNCGkLw8D6Z++35usa8mQ81mqSAD+zMFIquk2uX+Nn7u97B7
+	 c8d4Zu8BgGuSobzdZdqks9FnbB2gYB2UAfZZP/GV+HyY0d6pYuqBsL3hVHGHgQ7fiY
+	 yG1tQoTjmARwBu8+y40vGzGxjBk72VffHwwN1Z/L61agKiHL3vIJ800ryuLvQE5zGQ
+	 4JIlzAEEzVxRTEet/DZexud0+/HeIdANRcpFtK/iDyiYApg0WRrRVOzJdIIGZRAeMC
+	 RU8uo0vqYXLng==
+Date: Tue, 4 Jun 2024 16:18:55 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yan Zhai <yan@cloudflare.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Florian Westphal <fw@strlen.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	David Howells <dhowells@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
+	Jesper Dangaard Brouer <hawk@kernel.org>
+Subject: Re: [RFC v2 net-next 7/7] af_packet: use sk_skb_reason_drop to free
+ rx packets
+Message-ID: <20240604151855.GT491852@kernel.org>
+References: <cover.1717206060.git.yan@cloudflare.com>
+ <b86569aac8c4a2f180e7d3e22389547ff2e26cdc.1717206060.git.yan@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,133 +71,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240603224412.1910049-3-namhyung@kernel.org>
+In-Reply-To: <b86569aac8c4a2f180e7d3e22389547ff2e26cdc.1717206060.git.yan@cloudflare.com>
 
-On Mon, Jun 03, 2024 at 03:44:10PM -0700, Namhyung Kim wrote:
-> The struct hpp_fmt_data is to keep the values for each group members so
-> it doesn't need to check the event index in the group.
+On Fri, May 31, 2024 at 06:43:00PM -0700, Yan Zhai wrote:
+> Replace kfree_skb_reason with sk_skb_reason_drop and pass the receiving
+> socket to the tracepoint.
 > 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Yan Zhai <yan@cloudflare.com>
 > ---
->  tools/perf/ui/hist.c | 75 +++++++++++++++++++++-----------------------
->  1 file changed, 36 insertions(+), 39 deletions(-)
+>  net/packet/af_packet.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
-> index e30fcb1e87e7..539978c95cfd 100644
-> --- a/tools/perf/ui/hist.c
-> +++ b/tools/perf/ui/hist.c
-> @@ -46,65 +46,62 @@ static int __hpp__fmt_print(struct perf_hpp *hpp, struct hists *hists, u64 val,
->  	return hpp__call_print_fn(hpp, print_fn, fmt, len, val);
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index fce390887591..3133d4eb4a1b 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+
+Hi Yan Zhai,
+
+Near the top of packet_rcv,
+immediately after local variable declarations, and
+before sk is initialised is the following:
+
+	if (skb->pkt_type == PACKET_LOOPBACK)
+		goto drop;
+
+> @@ -2226,7 +2226,7 @@ static int packet_rcv(struct sk_buff *skb, struct net_device *dev,
+>  		skb->len = skb_len;
+>  	}
+>  drop:
+> -	kfree_skb_reason(skb, drop_reason);
+> +	sk_skb_reason_drop(sk, skb, drop_reason);
+
+So sk may be used uninitialised here.
+
+Similarly in tpacket_rcv()
+
+Flagged by clang-18 W=1 allmodconfig builds on x86_64.
+
+>  	return 0;
 >  }
 >  
-> +struct hpp_fmt_data {
-> +	struct hists *hists;
-> +	u64 val;
-> +	int samples;
-> +};
-
-Can we try to avoid vague terms like 'data' and use a hopefully more
-clear 'hpp_fmt_value' instead?
-
->  static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
->  		      hpp_field_fn get_field, const char *fmt, int len,
->  		      hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
->  {
-> -	int ret;
-> +	int ret = 0;
->  	struct hists *hists = he->hists;
->  	struct evsel *evsel = hists_to_evsel(hists);
-> +	struct evsel *pos;
->  	char *buf = hpp->buf;
->  	size_t size = hpp->size;
-> +	int i, nr_members = 1;
-> +	struct hpp_fmt_data *data;
-
-Here we then use:
-
-	struct hpp_fmt_value *values;
-
-> +
-> +	if (evsel__is_group_event(evsel))
-> +		nr_members = evsel->core.nr_members;
-> +
-> +	data = calloc(nr_members, sizeof(*data));
-> +	if (data == NULL)
-> +		return 0;
-
-
-> +
-> +	i = 0;
-> +	for_each_group_evsel(pos, evsel)
-> +		data[i++].hists = evsel__hists(pos);
->  
-> -	ret = __hpp__fmt_print(hpp, hists, get_field(he), he->stat.nr_events,
-> -			       fmt, len, print_fn, fmtype);
-> +	data[0].val = get_field(he);
-> +	data[0].samples = he->stat.nr_events;
->  
->  	if (evsel__is_group_event(evsel)) {
-> -		int prev_idx, idx_delta;
->  		struct hist_entry *pair;
-> -		int nr_members = evsel->core.nr_members;
-> -
-> -		prev_idx = evsel__group_idx(evsel);
->  
->  		list_for_each_entry(pair, &he->pairs.head, pairs.node) {
-> -			u64 period = get_field(pair);
-> -			u64 total = hists__total_period(pair->hists);
-> -			int nr_samples = pair->stat.nr_events;
-> -
-> -			if (!total)
-> -				continue;
-> +			for (i = 0; i < nr_members; i++) {
-> +				if (data[i].hists != pair->hists)
-> +					continue;
->  
-> -			evsel = hists_to_evsel(pair->hists);
-> -			idx_delta = evsel__group_idx(evsel) - prev_idx - 1;
-> -
-> -			while (idx_delta--) {
-> -				/*
-> -				 * zero-fill group members in the middle which have
-> -				 * no samples, pair->hists is not correct but it's
-> -				 * fine since the value is 0.
-> -				 */
-> -				ret += __hpp__fmt_print(hpp, pair->hists, 0, 0,
-> -							fmt, len, print_fn, fmtype);
-> +				data[i].val = get_field(pair);
-> +				data[i].samples = pair->stat.nr_events;
-> +				break;
->  			}
-> -
-> -			ret += __hpp__fmt_print(hpp, pair->hists, period, nr_samples,
-> -						fmt, len, print_fn, fmtype);
-> -
-> -			prev_idx = evsel__group_idx(evsel);
->  		}
-> +	}
->  
-> -		idx_delta = nr_members - prev_idx - 1;
-> -
-> -		while (idx_delta--) {
-> -			/*
-> -			 * zero-fill group members at last which have no sample.
-> -			 * the hists is not correct but it's fine like above.
-> -			 */
-> -			ret += __hpp__fmt_print(hpp, evsel__hists(evsel), 0, 0,
-> -						fmt, len, print_fn, fmtype);
-> -		}
-> +	for (i = 0; i < nr_members; i++) {
-> +		ret += __hpp__fmt_print(hpp, data[i].hists, data[i].val,
-> +					data[i].samples, fmt, len,
-> +					print_fn, fmtype);
+> @@ -2494,7 +2494,7 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+>  		skb->len = skb_len;
 >  	}
+>  drop:
+> -	kfree_skb_reason(skb, drop_reason);
+> +	sk_skb_reason_drop(sk, skb, drop_reason);
+>  	return 0;
 >  
-> +	free(data);
-> +
->  	/*
->  	 * Restore original buf and size as it's where caller expects
->  	 * the result will be saved.
+>  drop_n_account:
+> @@ -2503,7 +2503,7 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+>  	drop_reason = SKB_DROP_REASON_PACKET_SOCK_ERROR;
+>  
+>  	sk->sk_data_ready(sk);
+> -	kfree_skb_reason(copy_skb, drop_reason);
+> +	sk_skb_reason_drop(sk, copy_skb, drop_reason);
+>  	goto drop_n_restore;
+>  }
+>  
 > -- 
-> 2.45.1.288.g0e0cd299f1-goog
+> 2.30.2
+> 
+> 
 
