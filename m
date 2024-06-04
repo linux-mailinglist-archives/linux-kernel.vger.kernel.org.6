@@ -1,362 +1,158 @@
-Return-Path: <linux-kernel+bounces-201176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C60C8FBAA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:37:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7438FBAA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 518D528B6CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 891171F233F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D979149E03;
-	Tue,  4 Jun 2024 17:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D0314A082;
+	Tue,  4 Jun 2024 17:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzJgWGJR"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xa8F1eB6"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919F614A09A;
-	Tue,  4 Jun 2024 17:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A62D146D6E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717522641; cv=none; b=ayiHnVF5QA2Axxez0XhXvPEKgxH4wn+EmABaH8ytV8YjSyFY7L8CvzUC1tZrsH2oL/vGtSAEcFQ64VarGj1X1DlG2hGpoUAljrUo0ujOwI65bdUZZZb3pE7RGyQu67FPzK0cXXYG17PORfhOnHkWW1RpZwCCHy+/pihtOAGt5+A=
+	t=1717522730; cv=none; b=XWakVot+pVxAhv4d8xBmPvlT5Xh445ivh3/Ce/110hdsDfdYJuHuO2TNbZg3eVATjf8GOsKYa/z+ZevT94AtVC1uqbZCPX1bck4OAiognml1n+mld353tY9L+l5WuJ+h0WAekK5+SFjWrlMv2It96QcGu5B4TXQ26/lKjs7jDB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717522641; c=relaxed/simple;
-	bh=22g2YRq/yOk6TXxIk8B1NPIgi5iFQvER/ySBUuJME7E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VAehly6NjZzGrbWoemy5MDlgDGMIz2/EaTqZFCXQe3peqRW+wB5qny7Euaj5kmJaLgXn9slmbeA8uYwT+iVNhpZ6w8tq6NX3Veu8HgsIqKYTfkXG2LiGb7hXxaPcdW4pti7ME2JSnVI4/gq777Fj19U7ZGAIky4adMVU3HEfMZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UzJgWGJR; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b90038cf7so4609775e87.0;
-        Tue, 04 Jun 2024 10:37:19 -0700 (PDT)
+	s=arc-20240116; t=1717522730; c=relaxed/simple;
+	bh=BuksyYCQScRNH6DaoM04EBEjib2Y4rHkqfxdMQJGTx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AZ3KpdjiBOtJ5Iy+qPzwiEUVPtBRXL9M20HfKN6F/bMfvRILGOSoPF6EiqaErpJB1TRs3riFpeAnsRN0sdu13xfT5OEXgyXJNOpPUR9AoV56ZDkGpdNbZZehFgN8HYeUeHWQtmv8Zn0JANXYeBR48fz9SceTrZQe8GtAWWaQ+uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xa8F1eB6; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52b894021cbso5500005e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:38:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717522638; x=1718127438; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t9i9+lVOAIcYQ4JpUKOIFfasPtU3V0Xq2VmgmWFAe70=;
-        b=UzJgWGJRukelN1QAgW6loMBQb0PaF84Sl5riBs3ub+wpOZ8ss135FXoS/Xy0m5soI7
-         ey59NKj0Hh4/QlDYi3pJh44pYop6p3+rvhbwrhsBWJcICowQ1fqyAohp8mbfBWjQyxgX
-         f5IIo4ugR1FmJKAKMUxJ3nFATWrvUw2tfPvQSCSz5iNBMOQeanLpU4Acdj/f+Pr7pQf1
-         G2NpR0fZJWTRNqfRqYPHLZlU7yXbv2+/me9szX5IIAMCHAwBVB8ipU4sfi6liykllGHy
-         6c5pXDxtpT+g/KPIXNA5yutMK9jeq67VacM1hdwe8xZX3YW1e3w4bM4UZtsUJNK3J+Zd
-         aLmA==
+        d=linaro.org; s=google; t=1717522727; x=1718127527; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6GeqWLi7NNbGWYRb6N4n2qfBVPfozE0EINuphnmhX3g=;
+        b=xa8F1eB630ImusPYStAx8DBQJtxH188LXnPImZ13ecF8W/mny0paGWXZYyTX8rvdxz
+         gS47MUa/cl/NTyVz7u9DgveEJPwfC4ggTM2c2YFLGEOh5WFJLJuaMfVWbco11vzjIrBr
+         0+Vd0cm6Jlj0bfJypcw7W+d4dIK7fj3Vy4SGqsbTT9LrZWxFS/qkjqH/iNqDqbPXdZMS
+         sNEA1si54JgrVoFBoH87GCCP5NJ5o8f1f01d147fBPrlDaUj8nsGe7pHJ3LMqHVygbfB
+         JK23xp847UzfrptUnKH3hSp8Byinma8qHbnEufZiOi0n05F3sayJz49HyGOz5TOmseAJ
+         j1LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717522638; x=1718127438;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t9i9+lVOAIcYQ4JpUKOIFfasPtU3V0Xq2VmgmWFAe70=;
-        b=NSE0l1txOOz9RuIYUsHhQD0DHAt1mSj2qhWmaBhHrcAw5xXy1hRLDFzqXeddwa2nmH
-         TxZ7h2w+Qa2lQFARnM5gWYcHx4Bhe9C7dat9olggQK4+ymnqbO8RMQCkkk/hYtwiJS9q
-         nH9cXjGByE3EUwj6W3z4z1+3cVw836AofXcnAB7XFkNHJP9GnbJPxkXxkZ450CoscpzJ
-         yBLSgA3v1e0EJMOpeq9R+3LhBGU0zUGY/lGnwOxcFLmS/mv6fTJO1+ouPaGknnH9oaNO
-         KldZg+58ub/tTAEU0xiJEbQaCc8FX1BVCC8ThECG5wdXM1bXn+dTYw1W0IKU+3MaHKQp
-         jDiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBunUlcSl1fb0F2uDYN5Ty/gN5t90KHau5cUEzLbzpC9oImUVXKuo9nRPlLGnqgQ/ozNyNKuz0Ii9BdC9fAuev2Wud6WE0RRdOJ6JEiBw52HUi6ApLcGIYMw82Y4jwjSWsE1s3Y4+irNuforvu
-X-Gm-Message-State: AOJu0YxKYDrb5Gc3MpqSdurPCH/2Kjx3LHDMS1V2Rg1QP4JsVSwiUgSp
-	ipSx54wLsSbHSMFWyjlg/JHkkDmpZxIX2T2SlGTtVKz5GOIb/7e0Ydr6FUNJ
-X-Google-Smtp-Source: AGHT+IHmsXa2GaB3v6/1bzFtgsSEsQ6WiTMpOilk5KogWa7uLarMyOKHJCwHEMEAEB13fB6ZCc4xoQ==
-X-Received: by 2002:ac2:4adc:0:b0:523:41ba:a297 with SMTP id 2adb3069b0e04-52bab4b1291mr159637e87.5.1717522637412;
-        Tue, 04 Jun 2024 10:37:17 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4213c6629bdsm87844085e9.8.2024.06.04.10.37.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 10:37:16 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 2/2] irqchip/renesas-rzg2l: Add support for RZ/Five SoC
-Date: Tue,  4 Jun 2024 18:37:10 +0100
-Message-Id: <20240604173710.534132-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240604173710.534132-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240604173710.534132-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1717522727; x=1718127527;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6GeqWLi7NNbGWYRb6N4n2qfBVPfozE0EINuphnmhX3g=;
+        b=LH7IMYI0fN77Di/yzAZXDwkTDvLgt98Ky/XOqmN+aJZnpXeT2dK/ukejltk4rL9ETK
+         DEyNxUN/75ANTRrHIvqxIBJw211QEEuB+IW70wi7mGew+exW0piUwb2CvqlJQvwRS0q2
+         LGC0vmlUFLuiXW1MXvXP++tKwPukr/j5no8t7GfZbzaIzEoEHBBUnMaQYsgRQykf1ZQw
+         84UvL+fmLvzFpx+qGYPqPrZAlyPrbwLvtol3/DyZ6TTW9TBQtH4xq41y7+f7wiB6EYX5
+         IjRAQGNhy2IjsTqs4y89FQys4rOV8y51K0JW0/by9guuXm895jLF/tNqSJt2eCy1lrAq
+         ehNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJKnjEMddjTd3VQyKEMVYCXdA64I+npVIjKY7QYNqXQafwt8qERfsymfwtc/qdceZZUJXE/kIpqV5dybnfUDPU7++o1k9sR9WyYBvw
+X-Gm-Message-State: AOJu0Yz/Ksrp+kAgeuqDEHWmgh5fD6sZpmmWW5T87MZyuPBwNlqBRnsN
+	c8hmE30eB9tckZ0fPzg/5+WuiL5ZTJ3JVW0Isv5utnDcgocSi3pHRwxowIlX0uM=
+X-Google-Smtp-Source: AGHT+IGHKIQb1LEwTvENZPss+PNdcktLsu+2+zv+ciguUyYJZdKE3p48fX9lg5yWjQ2KXlMpoi2ZSQ==
+X-Received: by 2002:a05:6512:3f14:b0:52a:4217:d6e1 with SMTP id 2adb3069b0e04-52bab4b7c13mr184790e87.4.1717522726713;
+        Tue, 04 Jun 2024 10:38:46 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:909a:a11e:b2c0:1360:9a97:b2b8? ([2a00:f41:909a:a11e:b2c0:1360:9a97:b2b8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6919c82af3sm275604866b.120.2024.06.04.10.38.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 10:38:46 -0700 (PDT)
+Message-ID: <d7cf1848-d39b-43f1-bcd5-b917e0289fcf@linaro.org>
+Date: Tue, 4 Jun 2024 19:38:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/adreno: Add support for Adreno 505 GPU
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Daniil Titov <daniilt971@gmail.com>
+References: <20240604-a505-v1-1-82ee1c04d200@gmail.com>
+ <49fe3b01-4f00-4ffc-80cf-2a0add1ebaad@linaro.org>
+ <CAGsSOWV=i2JHsYNvi5EC6q=NoD8v7SiTjbVQhTDLNw35+irTCQ@mail.gmail.com>
+ <CAGsSOWV9SRK1VUJiQfavEM1hL0PapxUBG6CNeD+Q=0qPT5ZnSA@mail.gmail.com>
+ <37b0404d-bba5-4a77-ad86-62c6dd308d37@linaro.org>
+ <CAGsSOWUNN-PRvojvJR-i7wBDz8QRNnaTt19-6G41g7Hdt6RyTQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <CAGsSOWUNN-PRvojvJR-i7wBDz8QRNnaTt19-6G41g7Hdt6RyTQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The IX45 block has additional mask registers (NMSK/IMSK/TMSK) compared
-to the RZ/G2L (family) SoC.
 
-A new rzfive_irqc_chip irq_chip is introduced for RZ/Five, where function
-pointers for irq_(un)mask and irq_(dis/en)able handle the (un)masking
-of the interrupts. The irq_chip pointer is now passed as an init callback
-and stored in the priv pointer to differentiate between RZ/G2L and RZ/Five.
+On 6/4/24 19:33, Barnabás Czémán wrote:
+> On Tue, Jun 4, 2024 at 7:06 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>>
+>>
+>> On 6/4/24 18:45, Barnabás Czémán wrote:
+>>> On Tue, Jun 4, 2024 at 2:27 PM Barnabás Czémán <trabarni@gmail.com> wrote:
+>>>>
+>>>> On Tue, Jun 4, 2024 at 1:55 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 6/4/24 02:20, Barnabás Czémán wrote:
+>>>>>> From: Daniil Titov <daniilt971@gmail.com>
+>>>>>>
+>>>>>> This GPU is found on SoCs such as MSM8937 (450 MHz), MSM8940 (475 MHz),
+>>>>>> SDM439 (650 MHz).
+>>>>>>
+>>>>>> Signed-off-by: Daniil Titov <daniilt971@gmail.com>
+>>>>>> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+>>>>>> ---
+>>>>>
+>>>>> This all looks very good, just a nit
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>> +             /*
+>>>>>> +              * Increase inactive period to 250 to avoid bouncing
+>>>>>> +              * the GDSC which appears to make it grumpy
+>>>>>> +              */
+>>>>>> +             .inactive_period = 250,
+>>>>>
+>>>>> Are you sure this is actually necessary?
+>>>> Every A5XX GPU is using the same value, but i have never tried with
+>>>> DRM_MSM_INACTIVE_PERIOD.
+>>> This was the original patch
+>>> https://lore.kernel.org/all/20180507224750.9383-1-jcrouse@codeaurora.org/
+>>> where the inactive period was increased for a530. I cannot test
+>>> suspend on msm8937 yet.
+>>
+>> The suspend here refers to device suspend, not system suspend. Adreno
+>> goes into device suspend every time you stop using it, i.e. after the
+>> rendering is done and there's no more work to do.
+>>
+>> I suppose a good test scenario here would be to keep running and closing
+>> kmscube in a rapid fashion and checking if the GPU starts crashing for
+>> unknown reasons (the dmesg would denote that)
+>>
+> I have checked on a505 and a506 with this small script
+> while true; do kmscube; kill kmscube; done
+> none of them crashing, so i am going to change it.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Hi Geert, I've restored your RB tag with v5 change (hope that's OK)
+Hmm.. not sure if it actually idled when tested in a tight loop.. If you're
+running bash, try "while true; do kmscube &; sleep 0.08; pkill -f kmscube; sleep 0.08;done"
 
-Cheers, Prabhakar
-
-v4->v5
-- Reversed the operations in rzfive_irqc_irq_disable().
-
-v3->v4
-- Renamed rzg2l_irqc_init_helper -> rzg2l_irqc_common_init
-- Moved the locks into callers for (un)mask and (en/dis)able functions
-- Collected RB tag from Geert
-
-v2->v3
-- Added RZ/Five specific irqchip instead of polluting the functions
-- Fixed review comments pointed by Biju and Geert
-- Updated commit message
-- moved locking to respective read/write functions
-
-v1->v2
-- Added IRQCHIP_MATCH() for RZ/Five
-- Retaining a copy of OF data in priv
-- Rebased the changes
----
- drivers/irqchip/irq-renesas-rzg2l.c | 148 +++++++++++++++++++++++++++-
- 1 file changed, 145 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index f6484bf15e0b..861a0e5a3e97 100644
---- a/drivers/irqchip/irq-renesas-rzg2l.c
-+++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -37,6 +37,8 @@
- #define TSSEL_SHIFT(n)			(8 * (n))
- #define TSSEL_MASK			GENMASK(7, 0)
- #define IRQ_MASK			0x3
-+#define IMSK				0x10010
-+#define TMSK				0x10020
- 
- #define TSSR_OFFSET(n)			((n) % 4)
- #define TSSR_INDEX(n)			((n) / 4)
-@@ -69,12 +71,14 @@ struct rzg2l_irqc_reg_cache {
- /**
-  * struct rzg2l_irqc_priv - IRQ controller private data structure
-  * @base:	Controller's base address
-+ * @irqchip:	Pointer to struct irq_chip
-  * @fwspec:	IRQ firmware specific data
-  * @lock:	Lock to serialize access to hardware registers
-  * @cache:	Registers cache for suspend/resume
-  */
- static struct rzg2l_irqc_priv {
- 	void __iomem			*base;
-+	const struct irq_chip		*irqchip;
- 	struct irq_fwspec		fwspec[IRQC_NUM_IRQ];
- 	raw_spinlock_t			lock;
- 	struct rzg2l_irqc_reg_cache	cache;
-@@ -138,6 +142,111 @@ static void rzg2l_irqc_eoi(struct irq_data *d)
- 	irq_chip_eoi_parent(d);
- }
- 
-+static void rzfive_irqc_mask_irq_interrupt(struct rzg2l_irqc_priv *priv,
-+					   unsigned int hwirq)
-+{
-+	u32 bit = BIT(hwirq - IRQC_IRQ_START);
-+
-+	writel_relaxed(readl_relaxed(priv->base + IMSK) | bit, priv->base + IMSK);
-+}
-+
-+static void rzfive_irqc_unmask_irq_interrupt(struct rzg2l_irqc_priv *priv,
-+					     unsigned int hwirq)
-+{
-+	u32 bit = BIT(hwirq - IRQC_IRQ_START);
-+
-+	writel_relaxed(readl_relaxed(priv->base + IMSK) & ~bit, priv->base + IMSK);
-+}
-+
-+static void rzfive_irqc_mask_tint_interrupt(struct rzg2l_irqc_priv *priv,
-+					    unsigned int hwirq)
-+{
-+	u32 bit = BIT(hwirq - IRQC_TINT_START);
-+
-+	writel_relaxed(readl_relaxed(priv->base + TMSK) | bit, priv->base + TMSK);
-+}
-+
-+static void rzfive_irqc_unmask_tint_interrupt(struct rzg2l_irqc_priv *priv,
-+					      unsigned int hwirq)
-+{
-+	u32 bit = BIT(hwirq - IRQC_TINT_START);
-+
-+	writel_relaxed(readl_relaxed(priv->base + TMSK) & ~bit, priv->base + TMSK);
-+}
-+
-+static void rzfive_irqc_mask(struct irq_data *d)
-+{
-+	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
-+	unsigned int hwirq = irqd_to_hwirq(d);
-+
-+	raw_spin_lock(&priv->lock);
-+	if (hwirq >= IRQC_IRQ_START && hwirq <= IRQC_IRQ_COUNT)
-+		rzfive_irqc_mask_irq_interrupt(priv, hwirq);
-+	else if (hwirq >= IRQC_TINT_START && hwirq < IRQC_NUM_IRQ)
-+		rzfive_irqc_mask_tint_interrupt(priv, hwirq);
-+	raw_spin_unlock(&priv->lock);
-+	irq_chip_mask_parent(d);
-+}
-+
-+static void rzfive_irqc_unmask(struct irq_data *d)
-+{
-+	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
-+	unsigned int hwirq = irqd_to_hwirq(d);
-+
-+	raw_spin_lock(&priv->lock);
-+	if (hwirq >= IRQC_IRQ_START && hwirq <= IRQC_IRQ_COUNT)
-+		rzfive_irqc_unmask_irq_interrupt(priv, hwirq);
-+	else if (hwirq >= IRQC_TINT_START && hwirq < IRQC_NUM_IRQ)
-+		rzfive_irqc_unmask_tint_interrupt(priv, hwirq);
-+	raw_spin_unlock(&priv->lock);
-+	irq_chip_unmask_parent(d);
-+}
-+
-+static void rzfive_tint_irq_endisable(struct irq_data *d, bool enable)
-+{
-+	struct rzg2l_irqc_priv *priv = irq_data_to_priv(d);
-+	unsigned int hwirq = irqd_to_hwirq(d);
-+
-+	if (hwirq >= IRQC_TINT_START && hwirq < IRQC_NUM_IRQ) {
-+		u32 offset = hwirq - IRQC_TINT_START;
-+		u32 tssr_offset = TSSR_OFFSET(offset);
-+		u8 tssr_index = TSSR_INDEX(offset);
-+		u32 reg;
-+
-+		raw_spin_lock(&priv->lock);
-+		if (enable)
-+			rzfive_irqc_unmask_tint_interrupt(priv, hwirq);
-+		else
-+			rzfive_irqc_mask_tint_interrupt(priv, hwirq);
-+		reg = readl_relaxed(priv->base + TSSR(tssr_index));
-+		if (enable)
-+			reg |= TIEN << TSSEL_SHIFT(tssr_offset);
-+		else
-+			reg &= ~(TIEN << TSSEL_SHIFT(tssr_offset));
-+		writel_relaxed(reg, priv->base + TSSR(tssr_index));
-+		raw_spin_unlock(&priv->lock);
-+	} else {
-+		raw_spin_lock(&priv->lock);
-+		if (enable)
-+			rzfive_irqc_unmask_irq_interrupt(priv, hwirq);
-+		else
-+			rzfive_irqc_mask_irq_interrupt(priv, hwirq);
-+		raw_spin_unlock(&priv->lock);
-+	}
-+}
-+
-+static void rzfive_irqc_irq_disable(struct irq_data *d)
-+{
-+	irq_chip_disable_parent(d);
-+	rzfive_tint_irq_endisable(d, false);
-+}
-+
-+static void rzfive_irqc_irq_enable(struct irq_data *d)
-+{
-+	rzfive_tint_irq_endisable(d, true);
-+	irq_chip_enable_parent(d);
-+}
-+
- static void rzg2l_tint_irq_endisable(struct irq_data *d, bool enable)
- {
- 	unsigned int hw_irq = irqd_to_hwirq(d);
-@@ -321,7 +430,7 @@ static struct syscore_ops rzg2l_irqc_syscore_ops = {
- 	.resume		= rzg2l_irqc_irq_resume,
- };
- 
--static const struct irq_chip irqc_chip = {
-+static const struct irq_chip rzg2l_irqc_chip = {
- 	.name			= "rzg2l-irqc",
- 	.irq_eoi		= rzg2l_irqc_eoi,
- 	.irq_mask		= irq_chip_mask_parent,
-@@ -338,6 +447,23 @@ static const struct irq_chip irqc_chip = {
- 				  IRQCHIP_SKIP_SET_WAKE,
- };
- 
-+static const struct irq_chip rzfive_irqc_chip = {
-+	.name			= "rzfive-irqc",
-+	.irq_eoi		= rzg2l_irqc_eoi,
-+	.irq_mask		= rzfive_irqc_mask,
-+	.irq_unmask		= rzfive_irqc_unmask,
-+	.irq_disable		= rzfive_irqc_irq_disable,
-+	.irq_enable		= rzfive_irqc_irq_enable,
-+	.irq_get_irqchip_state	= irq_chip_get_parent_state,
-+	.irq_set_irqchip_state	= irq_chip_set_parent_state,
-+	.irq_retrigger		= irq_chip_retrigger_hierarchy,
-+	.irq_set_type		= rzg2l_irqc_set_type,
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+	.flags			= IRQCHIP_MASK_ON_SUSPEND |
-+				  IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE,
-+};
-+
- static int rzg2l_irqc_alloc(struct irq_domain *domain, unsigned int virq,
- 			    unsigned int nr_irqs, void *arg)
- {
-@@ -369,7 +495,7 @@ static int rzg2l_irqc_alloc(struct irq_domain *domain, unsigned int virq,
- 	if (hwirq > (IRQC_NUM_IRQ - 1))
- 		return -EINVAL;
- 
--	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq, &irqc_chip,
-+	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq, priv->irqchip,
- 					    (void *)(uintptr_t)tint);
- 	if (ret)
- 		return ret;
-@@ -401,7 +527,8 @@ static int rzg2l_irqc_parse_interrupts(struct rzg2l_irqc_priv *priv,
- 	return 0;
- }
- 
--static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
-+static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *parent,
-+				  const struct irq_chip *irq_chip)
- {
- 	struct irq_domain *irq_domain, *parent_domain;
- 	struct platform_device *pdev;
-@@ -422,6 +549,8 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 	if (!rzg2l_irqc_data)
- 		return -ENOMEM;
- 
-+	rzg2l_irqc_data->irqchip = irq_chip;
-+
- 	rzg2l_irqc_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
- 	if (IS_ERR(rzg2l_irqc_data->base))
- 		return PTR_ERR(rzg2l_irqc_data->base);
-@@ -472,8 +601,21 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 	return ret;
- }
- 
-+static int __init rzg2l_irqc_init(struct device_node *node,
-+				  struct device_node *parent)
-+{
-+	return rzg2l_irqc_common_init(node, parent, &rzg2l_irqc_chip);
-+}
-+
-+static int __init rzfive_irqc_init(struct device_node *node,
-+				   struct device_node *parent)
-+{
-+	return rzg2l_irqc_common_init(node, parent, &rzfive_irqc_chip);
-+}
-+
- IRQCHIP_PLATFORM_DRIVER_BEGIN(rzg2l_irqc)
- IRQCHIP_MATCH("renesas,rzg2l-irqc", rzg2l_irqc_init)
-+IRQCHIP_MATCH("renesas,r9a07g043f-irqc", rzfive_irqc_init)
- IRQCHIP_PLATFORM_DRIVER_END(rzg2l_irqc)
- MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
- MODULE_DESCRIPTION("Renesas RZ/G2L IRQC Driver");
--- 
-2.34.1
-
+Konrad
 
