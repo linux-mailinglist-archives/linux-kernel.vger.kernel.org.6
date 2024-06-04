@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-200944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00338FB6E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:26:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387B28FB6FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF811C226F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6476B1C2259F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D9D1448CD;
-	Tue,  4 Jun 2024 15:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17ED4143C6B;
+	Tue,  4 Jun 2024 15:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBlERkTf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LXfdEtBl"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF4FC13B;
-	Tue,  4 Jun 2024 15:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F03C13B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717514755; cv=none; b=lf/IEspISWALTKlIVd4nfSidzoDUPFCcgy6uwYBm2yPz2nF16uzm20Ld8fOAO2clRVeEYuj48eFk7hUMIAPO97zxf3+XZ4PR+3fGJtDqkNFK7g6EaGOKvWR9Cfg6uNFqVBpIqpMWjKATThDnsptVKIKrQ8KyIR8a02Uo7ebJrYE=
+	t=1717514823; cv=none; b=CC/LCH7M27FlYQX68geVlyezFX8hrtspu4c0pcAvYwsmNA2v+eM0ViiLZB/ihjCRe4V4JvG3y52SWSnMihNrf3lO6k6Fvd3CUeas3uwItvTmvsMOWOQpRZY4mGCZfSbfbCsyOkFgAQDaVnmI9+nB+s+zlUTg0K371+Kidhfvdc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717514755; c=relaxed/simple;
-	bh=W4guxw4l01Fm9wSUJoG6FBoB1xjKNyaC5jSs9toFe60=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pl3NJFjGe/XSgp3pW6fgX8U6T3N2Vmtck0UullHUe3NzV3cg9R9FFoUK3CcQYljXTARU+rRHuEGBSQorpGK3BHPXaJD/Qwrn9cpFIACoypQMLxt73s5qalujRVp/VsMiw/maPbD7w4OI2faZvj3IU2cCjSexaUNPBDgqWtCujaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBlERkTf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A9BC2BBFC;
-	Tue,  4 Jun 2024 15:25:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717514754;
-	bh=W4guxw4l01Fm9wSUJoG6FBoB1xjKNyaC5jSs9toFe60=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uBlERkTfsl6Cc1Hb9rsoZKL3tUhcrxXlmutR3hjFozXXQD+clGNtj1kEfeLvvmwug
-	 ZhWMMQut0D6GHkWtFX8YI98xpkpe0RVwG9dTrBOJAzEEHbM1jrIz+mgFlwhD1+Zkz9
-	 yhcx5lXBjmqbQsJKqOcjTckeEboWdcI5vfGbCKMzwWVElQlzdOzDR+Fsq07m+nAE/3
-	 mt5h/Neh6E82IwLgvYRsrlKqAZ2L/tTnDx4q6APk351MkrsjO1GIWAC0hzcsSj0fLW
-	 DpfNjAfk7nTYj7P3ukQ3kQ4HLc1jPIulxTvauURLNPh0ROtGhBPWE3M0euplY+Qq+k
-	 AIywwb5ieKwlQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sEW2q-000d09-Cz;
-	Tue, 04 Jun 2024 16:25:52 +0100
-Date: Tue, 04 Jun 2024 16:25:51 +0100
-Message-ID: <86cyowlog0.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Robin Murphy <robin.murphy@arm.com>,	Bjorn Helgaas <helgaas@kernel.org>,
-	Richard Zhu <hongxing.zhu@nxp.com>,	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,	Krzysztof =?UTF-8?B?V2lsY3p5?=
- =?UTF-8?B?xYRza2k=?= <kw@linux.com>,	Rob Herring <robh@kernel.org>,	Bjorn
- Helgaas <bhelgaas@google.com>,	Shawn Guo <shawnguo@kernel.org>,	Sascha
- Hauer <s.hauer@pengutronix.de>,	Pengutronix Kernel Team
- <kernel@pengutronix.de>,	Fabio Estevam <festevam@gmail.com>,	NXP Linux Team
- <linux-imx@nxp.com>,	Philipp Zabel <p.zabel@pengutronix.de>,	Liam Girdwood
- <lgirdwood@gmail.com>,	Mark Brown <broonie@kernel.org>,	Manivannan
- Sadhasivam <manivannan.sadhasivam@linaro.org>,	Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>,	Conor Dooley <conor+dt@kernel.org>,
-	linux-pci@vger.kernel.org,	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,	devicetree@vger.kernel.org,	Will Deacon
- <will@kernel.org>,	Joerg Roedel <joro@8bytes.org>,	Jason Gunthorpe
- <jgg@ziepe.ca>,	Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support MSI ITS and IOMMU for i.MX95
-In-Reply-To: <Zl4v10Od99et+tLX@lizhi-Precision-Tower-5810>
-References: <20240603171921.GA685838@bhelgaas>
-	<3d24fecf-1fdb-4804-9a51-d6c34a9d65c6@arm.com>
-	<Zl4v10Od99et+tLX@lizhi-Precision-Tower-5810>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1717514823; c=relaxed/simple;
+	bh=+/m73fd6wwvwn2BK3nQ1qKzu15Ei0WssG1SvvVxJuPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lAP6r2ehWuQvZzOGjKy/h3wPOcWzs5yFqOWAZFH3PO+GxFsZVC4t2cRxiS/1DHE3dDRm+k+VE45tHx2GNZNuMhzYponm7HV3BPbAf2yRZhGHXUYlIpgtosm5Rp4/NXqzmy4Qsin4+P7ek3OXpZdWVRjSlZ2UZJvi80iYDd1oyJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LXfdEtBl; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3c9c36db8eeso3233763b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717514820; x=1718119620; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+/m73fd6wwvwn2BK3nQ1qKzu15Ei0WssG1SvvVxJuPg=;
+        b=LXfdEtBlgURb+1yRL9+LlkQ3xq56uuyPVaXMRL1Iphgd68iNevs9KI84sO6c3twK7G
+         UIwvMt28n1MB27aAOmQbeGJuS3iyDvfM8DedBEVRK5WiCKddIh2CyrL5oEfFdFwpDSzT
+         5lGdcDyjXq21fbquqBJ6OzG/CW4Km+ivbdap8x/xyx58q05PekDUqbTcN2fvqcXq53B/
+         9TxEltIMHvQxNg7tLXRp+y/F+o9ISsAO9jNORWUkTo9o23IOKQLRWutNluQKbQGRqbQy
+         RwgphiC36cDxkfSejcTryfMjrvSkG8e/776suKSVpYk/A6umlxRZY8m9YhHLxX6SYMqW
+         of8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717514820; x=1718119620;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+/m73fd6wwvwn2BK3nQ1qKzu15Ei0WssG1SvvVxJuPg=;
+        b=gBmM0fI0BVS6E3XSymB7jepOw3UtQcruKBLjhZtxoNanbf8zQgqCat1sYHb8pJCUDh
+         2LobFZH0wLAdlNYqK2OhyghAtDEYM+ac70RZk3pn5o8E+8zIpOFASipauRcuSh+qD+Oq
+         luZuA27EgJte+bb7omphObx97y4G7uuYgNUMp7AsPAkcKtsKU9sobRhSFvfaSkn2yrlj
+         Ab3tA193Tf26cnN0+eYZYLdtjY2MzTSbcgo+bA/7pOhUOLzYWajC9EXf+IStk73PO/GN
+         YJtOUwM7/083yIZuM4wEwkigetwhDQRafdRRYeoE0f0psR0L299N2D0Zp+RfVkHMFsIm
+         hJNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWt7R6JnF9gnV/ETms/J95/+fXe8jIXyvl2rGSryzvckgf4E8+Dm2Jjyzn5LvMXqwjF/RNwnQUv61n0nUpUGV3dxKUzUXgEd2VMAUs0
+X-Gm-Message-State: AOJu0YxggIEfIqcczFXUIod33RrUQR4/5QQU8OXAhTAo1spCwQSItEdP
+	brvdAkp8mod+TkXnl3MvNS18swH1IiFuV7DDWeughT70nGZwoazKu8mrEM5DHrimybiG90IC0sG
+	r5NBMgs0kyUJ48U/GfEWd7ZekNRFgIjYT2re7
+X-Google-Smtp-Source: AGHT+IFLDOMwo3T4HpXcVkRPTZIGv3buuS9vCd/Gl/M6Lf/7+v6OGiKrv6Eg9jXvGDshthb7OOBtYx2eHBZ5k4fU044=
+X-Received: by 2002:a05:6808:8eb:b0:3c9:7aef:403 with SMTP id
+ 5614622812f47-3d1e349e4b2mr11834942b6e.26.1717514819911; Tue, 04 Jun 2024
+ 08:26:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Frank.li@nxp.com, robin.murphy@arm.com, helgaas@kernel.org, hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, p.zabel@pengutronix.de, lgirdwood@gmail.com, broonie@kernel.org, manivannan.sadhasivam@linaro.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, linux-pci@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, devicetree@vger.kernel.org, will@kernel.org, joro@8bytes.org, jgg@ziepe.ca, alyssa@rosenzweig.io
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <cover.1717507310.git.dvyukov@google.com> <80972769ad2ebebc7ab0c39bd48f31ce080f0394.1717507310.git.dvyukov@google.com>
+In-Reply-To: <80972769ad2ebebc7ab0c39bd48f31ce080f0394.1717507310.git.dvyukov@google.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 4 Jun 2024 17:26:18 +0200
+Message-ID: <CAG_fn=XNZ-OyjboNctGSL-zZiag4NVFNs+uaPm95Y9Rrc+TOaQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] kcov: add interrupt handling self test
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com, elver@google.com, nogikh@google.com, 
+	tarasmadan@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 03 Jun 2024 22:04:23 +0100,
-Frank Li <Frank.li@nxp.com> wrote:
-> 
-> iommu may share one stream id for multi-devices. but ITS MSI can't. each
-> device's MSI index start from 0. It needs difference stream id for each
-> device.
-
-That's not quite true. We go through all sort of hoops to find about
-device aliasing on PCI and allow devices that translate into the same
-DID to get MSIs.
-
-Of course, just like the IOMMU, you lose any form of isolation, but
-you get what you pay for.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+On Tue, Jun 4, 2024 at 3:45=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com> w=
+rote:
+>
+> Add a boot self test that can catch sprious coverage from interrupts.
+> The coverage callback filters out interrupt code, but only after the
+> handler updates preempt count. Some code periodically leaks out
+> of that section and leads to spurious coverage.
+> Add a best-effort (but simple) test that is likely to catch such bugs.
+> If the test is enabled on CI systems that use KCOV, they should catch
+> any issues fast.
+>
+> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> Cc: x86@kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: syzkaller@googlegroups.com
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
