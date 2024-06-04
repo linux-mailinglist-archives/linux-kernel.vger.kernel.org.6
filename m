@@ -1,126 +1,214 @@
-Return-Path: <linux-kernel+bounces-200088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79B48FAA7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:08:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C2E8FAA88
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51069B24E63
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:08:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EF86B2459D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E7C140387;
-	Tue,  4 Jun 2024 06:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336E513DDA6;
+	Tue,  4 Jun 2024 06:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMO1xokr"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="goswy3rH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7DA13E3EF;
-	Tue,  4 Jun 2024 06:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6E214294;
+	Tue,  4 Jun 2024 06:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717481261; cv=none; b=Y5cbp6ZXMVm7iOZwKwO0of5B36SErrY/qazlWNJXp563BgS7QnFWU7iXJs+DKHDaKpmPVo1IVnD/wuOePU2D2en/m7gcnPgPLxWuoBW/Dp2RauATWMIkMIcjURRdAmGjLwRTQdcn4/sotSy+81xvZC2hWUrx26jWS9d9NtellRI=
+	t=1717481374; cv=none; b=haf0ZjT8ARNx/0XkPVsThgmEyhk/p3ZVFfBVhB6BieyEPwufgYpHnwVOeLdG0bOJilDJ6u6nel4PJUebf6gbyVMpqzLxgdwmX5aP9RZluqkUfI1gcQt0WZDpOtsjrMOO0x0hFyeGXK1ybx5i5ZOURMWqnT15Rf26/wIgdp9wT4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717481261; c=relaxed/simple;
-	bh=iwbFjTc6NZx/ChktlGyF4zKAy/jsfhbthZdM4AE3Gj4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=EZXLmV6AfHhEgcWJsN8wqVkcjERVTz/Nwm7aA7RtbcySi2NTdUYcjyaGtIix4c314wY+umsmdyWinKnvgy4lfKMypIKalwYQN7O+ozxlFw3WVyfag+Ldi74SNseCccozRcA1Dz13TPHmzg79Y/r/fohlMpvaCUA99yB8hvQHGMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMO1xokr; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2bfffa3c748so4143710a91.3;
-        Mon, 03 Jun 2024 23:07:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717481259; x=1718086059; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KHKS9jT7MB7hE/EEMjAH9yW7M5wSwmZc93mWcC255Cs=;
-        b=CMO1xokrMBPY8m5ES6UXrCXC0cIcLFn1h6p00thREyUEcuKBJ/axlnIvn6ORPA+O65
-         7kDDffeM1mZD4m8W/inSjiKtGSNMBJRDTbGpSySJFJYD1LF1AiemyAprDjgm5z/z8O+g
-         wa1AmVZm8np58nTJZQG4wn8zhHBtKH2liHeXt9UaEq8G7M3AI2JQBlIbWz0UcShhHQ5N
-         DlB6EqEErESkOrvOHrYXuWYkyCcgFuyN8+xaNuXxT6klXJ6SOTlouEH4T/RIOgAHZl0G
-         Rh29MIiu+WlZ1sgpbf8R0qA0XJac428wQe5P6vttCoikr0KHU4egDROfns6E/E1PxmuL
-         oHzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717481259; x=1718086059;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KHKS9jT7MB7hE/EEMjAH9yW7M5wSwmZc93mWcC255Cs=;
-        b=bL8/WqJt5lla8FYcSwWWxHmKrObz+JCEa2LS9oL31NYkrYwzbzlIxrnJ/oK+KskDwm
-         6eVtiASuLTfoHWZFFNYqFyN8DXf3oas2Aa6qF98OShJ9W+lNZcgEzw4vDjY1tIdPjv+P
-         CQg00+MTSGXpBGHAOGf96a81hqz/1AKekT7jdZie7K5+5jUdZkvhowJJuz2qah0BUDZD
-         OkwzZupI3vBD5wt/Q7paQcLjyvROcqboI95kIeXbwbmKCZkqXCrFVTKYllrkK72Jr+Kq
-         FzndgIu/xz7tzVhlK0F8o2t2ZT2g19O/hndCfxAp21itNrQJxNMVVKMXtdpW+4DQCZgE
-         znDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4FK551GKvqLoyLr919WtmaUkO4q9kGff45Jq1a0lzEexa8Qfk5Z6bxKmNG/9z9n547svLoY295Md61MVcUMxZGAzJgR55gOHv/FmR182L6+m/7fkoMpPOH1FDt5159SfSjND/t6zhk9+O2Hoa0zGKoy+bYnhjifGyeCAk
-X-Gm-Message-State: AOJu0Yyn942LHViEan8RSpEkqh+H2oMa+Gt2Yyd3qED0dVjQxqEpvwKo
-	eFlgBvQ4UyRoxiQ9HHkqpckEEwAen65jQDhYKpcPT8cAK5SJHRgH
-X-Google-Smtp-Source: AGHT+IGgduKGfFqGFxTIMZY4kIpEo9UbSeOpJKQ2EBgCxLKHZbKJzMZPFI7lJBVexL750l4Obga0Eg==
-X-Received: by 2002:a17:90b:d95:b0:2be:9549:799e with SMTP id 98e67ed59e1d1-2c1dc56db3bmr10075761a91.9.1717481259042;
-        Mon, 03 Jun 2024 23:07:39 -0700 (PDT)
-Received: from localhost ([1.146.11.115])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2411633e0sm2535857a91.30.2024.06.03.23.07.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jun 2024 23:07:38 -0700 (PDT)
+	s=arc-20240116; t=1717481374; c=relaxed/simple;
+	bh=INJo2SidQewMD7hDdbT5P1qF8tQ9+yI/vwd7rHQq24w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sqaqwq1Y/wP0203RbjkIrxxKjILgbgyF7wMbN3JugwNyX/Egsv8EEkSaDK5eBpK37taot8lDn3tKJEQUJHtWOzrWjQb76sL76bMQZ0pvnbJ9IdyNWZs1O6druHZqyIIkvdKG6FZHjYYs5mhxwRjXVTwKlEqY5MVhLBtjzSeff6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=goswy3rH; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717481372; x=1749017372;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=INJo2SidQewMD7hDdbT5P1qF8tQ9+yI/vwd7rHQq24w=;
+  b=goswy3rHrCOXv7HsjLFTyGGfmOT4pXHIV4KxYgBYIVNrdREpheHyJCOj
+   feB6Rvxf9hFPiAoWQaGbHzEl+mcqkd1sYHMMtgU8JBQSithMnmPdCoLJT
+   YRmciXjsvhW76OxxJWVexPltDc22LeVyaINFMZ+ZXRgbYEFib2DAd3JoS
+   ZX9JJyV6HSJZ6td/0WbB69k8oirCTNFrs+UkjHPhUTf+NQSRSRCjqXlKx
+   FS7kH3NaXv0jL5wr38sJUIvO1pCU14Gz2LRLspkCBbZwouvVNdE4/F11r
+   ZlucXzra9WF9ZZt+AdwadOZMJKLjtdfLnP0vU0XkLdvcuJjHbrEnlsRij
+   w==;
+X-CSE-ConnectionGUID: XzWWeFO6TUCMhk6ZsWsZBQ==
+X-CSE-MsgGUID: 9+UhSBa8SMiLLwM0mBeoYQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="14127962"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="14127962"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 23:09:32 -0700
+X-CSE-ConnectionGUID: ou6xFO4KTfC6+UFr/7gGXQ==
+X-CSE-MsgGUID: wahi9MLFSIOb+TqnUEXeuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="42055698"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 03 Jun 2024 23:09:28 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sENML-000Mdv-1k;
+	Tue, 04 Jun 2024 06:09:25 +0000
+Date: Tue, 4 Jun 2024 14:09:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, aconole@redhat.com, echaudro@redhat.com,
+	horms@kernel.org, i.maximets@ovn.org, dev@openvswitch.org,
+	Adrian Moreno <amorenoz@redhat.com>,
+	Pravin B Shelar <pshelar@ovn.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 6/9] net: openvswitch: store sampling
+ probability in cb.
+Message-ID: <202406041339.ytdRh41V-lkp@intel.com>
+References: <20240603185647.2310748-7-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 04 Jun 2024 16:07:29 +1000
-Message-Id: <D1R0AHN2MCOS.BPHUJKSV7YSO@gmail.com>
-Cc: <pbonzini@redhat.com>, <naveen.n.rao@linux.ibm.com>,
- <christophe.leroy@csgroup.eu>, <corbet@lwn.net>, <mpe@ellerman.id.au>,
- <namhyung@kernel.org>, <pbonzini@redhat.com>, <jniethe5@gmail.com>,
- <atrajeev@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] KVM: PPC: Book3S HV: Add one-reg interface for
- HASHKEYR register
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Shivaprasad G Bhat" <sbhat@linux.ibm.com>, <kvm@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-X-Mailer: aerc 0.17.0
-References: <171741323521.6631.11242552089199677395.stgit@linux.ibm.com>
- <171741330411.6631.10739157625274499060.stgit@linux.ibm.com>
-In-Reply-To: <171741330411.6631.10739157625274499060.stgit@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603185647.2310748-7-amorenoz@redhat.com>
 
-On Mon Jun 3, 2024 at 9:15 PM AEST, Shivaprasad G Bhat wrote:
-> The patch adds a one-reg register identifier which can be used to
-> read and set the virtual HASHKEYR for the guest during enter/exit
-> with KVM_REG_PPC_HASHKEYR. The specific SPR KVM API documentation
-> too updated.
->
-> Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-> ---
->  Documentation/virt/kvm/api.rst            |    1 +
->  arch/powerpc/include/uapi/asm/kvm.h       |    1 +
->  arch/powerpc/kvm/book3s_hv.c              |    6 ++++++
->  tools/arch/powerpc/include/uapi/asm/kvm.h |    1 +
->  4 files changed, 9 insertions(+)
->
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.=
-rst
-> index 81077c654281..0c22cb4196d8 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -2439,6 +2439,7 @@ registers, find a list below:
->    PPC     KVM_REG_PPC_PSSCR               64
->    PPC     KVM_REG_PPC_DEC_EXPIRY          64
->    PPC     KVM_REG_PPC_PTCR                64
-> +  PPC     KVM_REG_PPC_HASHKEYR            64
+Hi Adrian,
 
-Just looking at the QEMU side of this change made me think... AFAIKS
-we need to also set and get and migrate the HASHPKEY SPR.
+kernel test robot noticed the following build errors:
 
-The hashst/hashchk test cases might be "working" by chance if the SPR
-is always zero :/
+[auto build test ERROR on net-next/main]
 
-Thanks,
-Nick
+url:    https://github.com/intel-lab-lkp/linux/commits/Adrian-Moreno/net-psample-add-user-cookie/20240604-030055
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240603185647.2310748-7-amorenoz%40redhat.com
+patch subject: [PATCH net-next v2 6/9] net: openvswitch: store sampling probability in cb.
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240604/202406041339.ytdRh41V-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406041339.ytdRh41V-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406041339.ytdRh41V-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zydacron.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-viewsonic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-waltop.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-winwing.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/fbtft/fbtft.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-bootrom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-spilib.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-hid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-light.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-loopback.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-power-supply.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-raw.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-vibrator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-audio-manager.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gbphy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-i2c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-pwm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-sdio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-spi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-uart.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-usb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/chrome/cros_kunit_proto_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mailbox/mtk-cmdq-mailbox.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_simpleondemand.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem-apple-efuses.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_brcm_nvram.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_u-boot-env.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx-interconnect.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mm-interconnect.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mq-interconnect.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mn-interconnect.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mp-interconnect.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hte/hte-tegra194-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
+WARNING: modpost: drivers/parport/parport_amiga: section mismatch in reference: amiga_parallel_driver+0x8 (section: .data) -> amiga_parallel_remove (section: .exit.text)
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/parsers/brcm_u-boot.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/parsers/tplink_safeloader.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_cmdset_0020.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/maps/map_funcs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/spmi-pmic-arb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/i82365.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/gb-es2.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rpmsg/rpmsg_char.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/ingenic-adc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/xilinx-ams.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-ast-cf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/counter/ftm-quaddec.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/oss/dmasound/dmasound_core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/codecs/snd-soc-wm-adsp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/fsl/imx-pcm-dma.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/mxs/snd-soc-mxs-pcm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/qcom/snd-soc-qcom-sdw.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/intel/snd-sof-intel-atom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/intel/snd-sof-acpi-intel-byt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/intel/snd-sof-acpi-intel-bdw.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/imx/snd-sof-imx8.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/imx/snd-sof-imx8m.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/imx/snd-sof-imx8ulp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/imx/imx-common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/mediatek/mtk-adsp-common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/mediatek/mt8195/snd-sof-mt8195.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/mediatek/mt8186/snd-sof-mt8186.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/snd-sof-utils.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/snd-sof-acpi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/sof/snd-sof-of.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mtty.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mdpy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mdpy-fb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-mdev/mbochs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/configfs/configfs_sample.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kfifo/bytestream-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kfifo/dma-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kfifo/inttype-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kfifo/record-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kobject/kobject-example.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in samples/kobject/kset-example.o
+>> ERROR: modpost: "__udivdi3" [net/openvswitch/openvswitch.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
