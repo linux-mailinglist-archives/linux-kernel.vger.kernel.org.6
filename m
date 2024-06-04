@@ -1,181 +1,174 @@
-Return-Path: <linux-kernel+bounces-200921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114F08FB692
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:06:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF928FB6B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3385C1C2099A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625621F2320E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF3E13D503;
-	Tue,  4 Jun 2024 15:06:47 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301CA143C59;
+	Tue,  4 Jun 2024 15:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SyvVE81X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6F0846D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E7513D2B6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513606; cv=none; b=n/pTtN7p94U/3OIG5czsg8KN4xvRLfOXr6raFV4An11p+z63Rp99nXHVfg2Si9hvLajf5ocb/J1RqeP2QmAOCyX09YAIEmkbgvxjgDp+E3tPdi+lyVWq9PdZwB49GbXRqQQhGRJknfbkzLc+mR/Q7XMRUDt3O1KyX2FoY/URYWs=
+	t=1717513947; cv=none; b=b6wEGbr2eAPCc7YyQQpvApj3iYeO7wRGAVP008zvvib09TX/NgvD1kQOwemW24H9kce+zZ0+T5VJmBAmmUVwhH2N9Zzn16z0TAroBT0nh1ej/hw2wsBqEuKqpNVHiePzC9qEE/rEjsy4upe4uq4v4yTZBNH6KtfqsL+wmyojzIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513606; c=relaxed/simple;
-	bh=9gyJDOtgkTIHqAQ+NVULRII3P8qJUO2R5927zJ32Bk4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BNwmzY0KYh94E4FrhLuGCgPS3zO1oWrs+iDAcOUjSZ48s4g9vZQ3gXxLFOdFFMNR9b7tiIBJpj3MZP5jixib4C9txnXPkgkl2z8ynwV/ls6gDEidiDmWskMwno47qM9T0BfSYPuVjUyUlECclVmJFYS1pGwmaviMospOX5rM9rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e8e2ea7b4bso743920039f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:06:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717513604; x=1718118404;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Gu6towcYHBY1dP/fAn0yjbpkodENXFFfZuNjXnHN3Q=;
-        b=hqARrcVnvw80875FLtW7ugRpUCilgAnO+4spBnbU9PeMB+EzNEtz//PIXXIiCFTZzG
-         KBkJkknnGo7TJ7C/G2H5Tgwag/aL5WThNqI6U8dQHHXmtQ2B1BeVrQ9AqA2KSxqyv1wI
-         3VPElQssyictXByWDTrR2N1qrKuC+5dnVsr3JLfUCCoXqLyqZdcWRRdH2BgShMoV9JrO
-         xsvs5zDz+yw8xvlt6P3mQ6JRpd99UGf3htoXbTc4HyJlB4EK/3MGZWRWQXtQ/L5gmknT
-         P7jA637Or9UwEMtGevhrtClQmAzSY1EMjYwMnhBNmpXXhWYnapePMK9E5xslu6vq84+b
-         vtig==
-X-Gm-Message-State: AOJu0YyXWHEkCOpJGy8Lbp7OouKK/VmmB3Bv6nC0fi1+zShfdr7PXOhe
-	GU0cZA8ZhsUjXqWZvzoX7O/il3cjU4RR8iC5YPu08Bx3rGcrjB6fIBznFjPIhCWkWU+6yufdGHn
-	e/mdJPhsW1dZqeMU+Wih0xDQdDkUJWl8qP96u2vI9vu23E2AR3M0/leVv1g==
-X-Google-Smtp-Source: AGHT+IHkXDgx3DzFfMmxJ0iuVz8/LfbnTjCEnotu7Qwuo2C5O1TznHwDorVMw3khPARJoy+sajHlkCTnQMjqR/EJ1fJxIbEZ1H1/
+	s=arc-20240116; t=1717513947; c=relaxed/simple;
+	bh=hSqtnWWeq83bRrdJrf3MfAQNHnxLuRaoyE2ioCIEo0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YFp4neJ94pRss67IoVYinQaQHJIEn/JztOuCcEK7GrYbTIPg9WIe7NUV1jf8xhYmW8+wZUGaP+vK+P3p7baxQgr94wE+JlmNjPY7J0rs35I/mPwh05Y1KmCQk9EtpxPgvYyVDZFZFX0170Zlt93PeiCCG6KLPQZcM63PXJ8n5lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SyvVE81X; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717513946; x=1749049946;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hSqtnWWeq83bRrdJrf3MfAQNHnxLuRaoyE2ioCIEo0M=;
+  b=SyvVE81XOtCj6TxF2mkahSd5qG92jMZRm9+00sgSfysp6PAY7OUBqRKg
+   d/KXoFuIWvdl2SvLjednOevMv7HXrce0Cs/6VWN6cIbIedV8cXlcx2eeI
+   4obPZI/RzEz5dshgKtiegfSSed4BBxg2LBisqOtUNg9SdRxeZS7HD+3Cs
+   Bfa1CfhwPOx4MYWM/L70OGU6jEbO/s9wWgFqE40Zh4HynaJkeSfeP+/XB
+   sxPe3N6l1g5byce37yJKTbB3OaksthEubkEJrmzS4siWmHf+BrX5+UW1x
+   RUOyHBAH9cxf+WFrYFLWpT872uFL0fL7yZfRU9FWRRoC3Xf+aErL2wCmf
+   w==;
+X-CSE-ConnectionGUID: QQQ3GMxhRYOERbYZxXPsLg==
+X-CSE-MsgGUID: 7Ed8jU12S8irzdRk4YTQ5A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="31602499"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="31602499"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 08:12:09 -0700
+X-CSE-ConnectionGUID: XIeU217HRTuXyOfBAck/OQ==
+X-CSE-MsgGUID: Oe+hRJJRQT+iPoQlktO7RQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="37139630"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.246.143]) ([10.245.246.143])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 08:12:07 -0700
+Message-ID: <0d15954f-0158-4a56-afef-f0d043135146@linux.intel.com>
+Date: Tue, 4 Jun 2024 17:07:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d0b:b0:7de:d6a0:d9c4 with SMTP id
- ca18e2360f4ac-7eafff3deecmr90372539f.2.1717513603628; Tue, 04 Jun 2024
- 08:06:43 -0700 (PDT)
-Date: Tue, 04 Jun 2024 08:06:43 -0700
-In-Reply-To: <00000000000066aa68061a072231@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003dd1f6061a11ccae@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [maple-tree?] BUG: unable to handle kernel
- paging request in mas_walk
-From: syzbot <syzbot+c67d06ab25a9bc4adf35@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] soundwire: bus: clean up probe warnings
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org
+References: <20240604075213.20815-1-johan+linaro@kernel.org>
+ <20240604075213.20815-4-johan+linaro@kernel.org>
+ <8dd7cadc-138c-4ef5-b06f-7177550b1215@linux.intel.com>
+ <Zl7boEkMpQaELARP@hovoldconsulting.com>
+ <970501b1-09ae-4f2c-a078-2b4f23fe460e@linux.intel.com>
+ <Zl8iUmOfrjw3gWVX@hovoldconsulting.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <Zl8iUmOfrjw3gWVX@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+\
+>>>>> @@ -123,7 +123,7 @@ static int sdw_drv_probe(struct device *dev)
+>>>>>  	/* init the dynamic sysfs attributes we need */
+>>>>>  	ret = sdw_slave_sysfs_dpn_init(slave);
+>>>>>  	if (ret < 0)
+>>>>> -		dev_warn(dev, "Slave sysfs init failed:%d\n", ret);
+>>>>> +		dev_warn(dev, "failed to initialise sysfs: %d\n", ret);
+>>>>>  
+>>>>>  	/*
+>>>>>  	 * Check for valid clk_stop_timeout, use DisCo worst case value of
+>>>>> @@ -147,7 +147,7 @@ static int sdw_drv_probe(struct device *dev)
+>>>>>  	if (drv->ops && drv->ops->update_status) {
+>>>>>  		ret = drv->ops->update_status(slave, slave->status);
+>>>>>  		if (ret < 0)
+>>>>> -			dev_warn(dev, "%s: update_status failed with status %d\n", __func__, ret);
+>>>>> +			dev_warn(dev, "failed to update status: %d\n", ret);
+>>>>
+>>>> the __func__ does help IMHO, 'failed to update status' is way too general...
+>>>
+>>> Error messages printed with dev_warn will include the device and driver
+>>> names so this message will be quite specific still.
+>>
+>> The goal isn't to be 'quite specific' but rather 'completely
+>> straightforward'. Everyone can lookup a function name in a xref tool and
+>>  quickly find out what happened. Doing 'git grep' on message logs isn't
+>> great really, and over time logs tend to be copy-pasted. Just look at
+>> the number of patches where we had to revisit the dev_err logs to make
+>> then really unique/useful.
+> 
+> Error message should be self-contained and give user's some idea of what
+> went wrong and not leak implementation details like function names (and
+> be greppable, which "%s:" is not).
 
-***
+"Failed to update status" doesn't sound terribly self-contained to me.
 
-Subject: Re: [syzbot] [maple-tree?] BUG: unable to handle kernel paging request in mas_walk
-Author: liam.howlett@oracle.com
+It's actually a great example of making the logs less clear with good
+intentions. How many people know that the SoundWire bus exposes an
+'update_status' callback, and that callback can be invoked from two
+completely different places (probe or on device attachment)?
 
-* syzbot <syzbot+c67d06ab25a9bc4adf35@syzkaller.appspotmail.com> [240603 22:23]:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=128638ba980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bd6024aedb15e15c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c67d06ab25a9bc4adf35
-> compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106f71aa980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b4ffc6980000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-4a4be1ad.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/75957361122b/vmlinux-4a4be1ad.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6c766b0ec377/Image-4a4be1ad.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+c67d06ab25a9bc4adf35@syzkaller.appspotmail.com
-> 
-> Unable to handle kernel paging request at virtual address 00700000077b9b78
+/* Ensure driver knows that peripheral unattached */
+ret = sdw_update_slave_status(slave, status[i]);
+if (ret < 0)
+	dev_warn(&slave->dev, "Update Slave status failed:%d\n", ret);
 
-#syz test: git://git.infradead.org/users/jedix/linux-maple.git syz_20240603
+You absolutely want to know which of these two cases failed, but with
+your changes they now look rather identical except for the order of
+words. one would be 'failed to update status' and the other 'update
+status failed'.
 
-> Mem abort info:
->   ESR = 0x0000000096000004
->   EC = 0x25: DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
->   FSC = 0x04: level 0 translation fault
-> Data abort info:
->   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [00700000077b9b78] address between user and kernel address ranges
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 1 PID: 3186 Comm: syz-executor162 Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 81400009 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> pc : ma_data_end lib/maple_tree.c:1419 [inline]
-> pc : mtree_range_walk lib/maple_tree.c:2771 [inline]
-> pc : mas_state_walk lib/maple_tree.c:3678 [inline]
-> pc : mas_walk+0x194/0x328 lib/maple_tree.c:4909
-> lr : lock_vma_under_rcu+0x58/0x134 mm/memory.c:5840
-> sp : ffff800088cabd50
-> x29: ffff800088cabd50 x28: f2f0000005e50000 x27: 0000000000000000
-> x26: 0000000000000004 x25: f7f0000005c03900 x24: 0000000082000007
-> x23: 0000ffff82687800 x22: 0000000000000354 x21: 0000ffff82687800
-> x20: 0000ffff82687800 x19: ffff800088cabeb0 x18: ff7ffffffffffbff
-> x17: 0000aaaadab2dc00 x16: 1e4e000000ef7371 x15: 0000000000000001
-> x14: ffffffffffffffff x13: 0000000000000000 x12: ffff800081e3d1e8
-> x11: 0000000000000001 x10: f2700000077b9b8c x9 : f2700000077b9b00
-> x8 : 0000ffff82687800 x7 : 0000000000000001 x6 : 000000000000000e
-> x5 : 0000000000000001 x4 : ffff800088cabd78 x3 : 0000aaaadab2dc00
-> x2 : 000000000000000e x1 : 000000000000000f x0 : f2700000077b9b08
-> Call trace:
->  ma_data_end lib/maple_tree.c:1418 [inline]
->  mtree_range_walk lib/maple_tree.c:2771 [inline]
->  mas_state_walk lib/maple_tree.c:3678 [inline]
->  mas_walk+0x194/0x328 lib/maple_tree.c:4909
->  do_page_fault+0xd4/0x480 arch/arm64/mm/fault.c:567
->  do_translation_fault+0xac/0xbc arch/arm64/mm/fault.c:690
->  do_mem_abort+0x44/0x94 arch/arm64/mm/fault.c:826
->  el0_ia+0xa4/0x118 arch/arm64/kernel/entry-common.c:598
->  el0t_64_sync_handler+0xd0/0x12c arch/arm64/kernel/entry-common.c:736
->  el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:598
-> Code: 91002120 51000426 92401cc2 12001cc6 (f8627802) 
-> ---[ end trace 0000000000000000 ]---
-> ----------------
-> Code disassembly (best guess):
->    0:	91002120 	add	x0, x9, #0x8
->    4:	51000426 	sub	w6, w1, #0x1
->    8:	92401cc2 	and	x2, x6, #0xff
->    c:	12001cc6 	and	w6, w6, #0xff
-> * 10:	f8627802 	ldr	x2, [x0, x2, lsl #3] <-- trapping instruction
+What is much better is to know WHEN this failure happens, then folks
+looking at logs to fix a problem don't need to worry about precise
+wording or word order.
+
+It's a constant battle to get meaningful messages that are useful for
+validation/integration folks, and my take is that it's a
+windmill-fighting endeavor. The function name is actually more useful,
+it's not an implementation detail, it's what you're looking for when
+reverse-engineering problematic sequences from a series of CI logs.
+
+>>>> Replacing 'with status' by ":" is fine, but do we really care about 10
+>>>> chars in a log?
+>>>
+>>> It's not primarily about the numbers of characters but about consistency.
+>>
+>> I am advocating for inclusion of __func__ everywhere...It's simpler for
+>> remote support and bug chasing.
+
+I meant everywhere in SoundWire. Other subsystems may have different
+views and different observability tools, that's fine.
+
+> A quick grep seems to suggest you're in a small minority here with some
+> 5k of 65k dev_err() including __func__.
 > 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+> [ And there's only 55 out of 750 dev_err() like that in
+> drivers/soundwire, which is inconsistent at best. ]
+
+As you mentioned yourself, the asynchronous nature of the SoundWire
+probe/attachment/interrupts makes it difficult to reverse-engineer, and
+we want to err on the side of MORE information.
+
+Also not all dev_err() are equal, most are part of paranoid checks and
+never used. An example above is the sysfs log, we've never seen it happen.
+
+That's different to changes that impact probe and interrupts which will
+fail at some point on new platforms. It's not an academic statement,
+I've spent most of my day chasing two such issues.
 
