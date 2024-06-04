@@ -1,107 +1,140 @@
-Return-Path: <linux-kernel+bounces-200333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B425C8FAE7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:15:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F8F8FAE85
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E9A1F24C7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:15:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 951261F24C7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2232142651;
-	Tue,  4 Jun 2024 09:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00736143860;
+	Tue,  4 Jun 2024 09:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ddFR8wsg"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D731428F5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iSXAQOJn"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C111514372F;
+	Tue,  4 Jun 2024 09:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717492534; cv=none; b=QiY3Lwr8Yct4E6/+mOJLRhUQQBezcWeaFA8H13NUvZu842S1gCT1im1PBq8Ip8GGbEla5qYxZNwBTkiecWpDrb5ZLvpzMyBmF+AFHnAF2hTvqvYz6HwhE1mabPh/8GeHVVR3C+ICesS/mlWf7KjNeKODutyMl3RmnTm/iQj71Yc=
+	t=1717492555; cv=none; b=tdYdlxQT2Wi3cxm78CNiiNrfmElY6rDzz5mxLnMgc3c+rKMhHFCY5QyNjqq7V/NNCN60gJhM5bH5LIw4RgM4nLZMYODMhrgYZohkAyxVnL/vrMuq1Cv4Lg3J9VY7fPy4tyooCCyBkJZFfVESDXmpKKAHMPFXSB/aXCWRWTLtqlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717492534; c=relaxed/simple;
-	bh=Nta7iN+WFvRet05k6qlyoPpxSdKuLhWbm5NL+lqsFH4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=twFEIz08mxdXyUMtWybwZCNKHZs/4VFbPak4gE2lZhvQdJ/ZANarcL+Qdrrm2reAlNfUVAWeKnSdMxD+C5jFh0SMlipiOSpJRgaMnUGoPwLxUD5584nI50mYUL4e1rr9jwROMNDIY3Jg1oifXhb9f9Zg+EH1Wpdp1LN8GeGZdV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ddFR8wsg; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=OttNBT7tDdR+8AIHQK
-	EdCnsXbEagpDW5BlvkbCVKymI=; b=ddFR8wsgl8hZrgVsG8OTgCSXkrFUJhIVwf
-	v2H66v3QqIt65zB3rSIOvAhmve4LvEWC4aaldZKPoTqKc1DxuoB69mulzhyjTf0b
-	ano9jtjGSmJBeM0gt1pPqvoNayaB5ghn7hz1u40wOOT0NNfN1FDr3aAHKfhWKuqW
-	U86hDftYk=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [118.242.3.34])
-	by gzga-smtp-mta-g1-3 (Coremail) with SMTP id _____wAnFS7u2l5mNA2KAQ--.319S2;
-	Tue, 04 Jun 2024 17:14:23 +0800 (CST)
-From: yangge1116@126.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	baolin.wang@linux.alibaba.com,
-	liuzixing@hygon.cn,
-	yangge <yangge1116@126.com>
-Subject: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating non-CMA THP-sized page
-Date: Tue,  4 Jun 2024 17:14:20 +0800
-Message-Id: <1717492460-19457-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wAnFS7u2l5mNA2KAQ--.319S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KFykXw18Ww1DXFy8GF1UAwb_yoW8XryxpF
-	Wxua4jyayfXw13Ca97J3Wqkrsxuw4vgFWUCF4fXw1UZw13ta1293s7GF90vF1fAr98AF18
-	tr4ktr95ZF4qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jxJ5rUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiGBPzG2VLblbknQABsN
+	s=arc-20240116; t=1717492555; c=relaxed/simple;
+	bh=Z6h+FaQ2mydG81kK5UyAdLTDhUweVtTAlyL20v2DzGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwy+zrChoDHFaoCzRs9GAJgD/hyJjRdzPx3me0JGoeGn0N0oUHVQ4veFv640V3VaRFrUXg3YJpM74DODZ1rvWwzsdifp8xgbrwOacFA0nTN4OsBcAXHg+0Je7lIiQ8KQuv4vYESGuxgtaBsgKCcoLbUHnQb/llKmCkSmYBf2z5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iSXAQOJn; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A3B6840E0176;
+	Tue,  4 Jun 2024 09:15:43 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ulBYaKGPw-vH; Tue,  4 Jun 2024 09:15:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717492540; bh=m7NFIk8+6rvmt15s5vCen1cbEwqjokjsUgs57ILsKtA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iSXAQOJn+SPDaD84vEh7wouOYiZfNCaoiWTp8IPjbiadFjeUbQ8PgOq9mgi7jWbuB
+	 Rm3LQjYTbnpdicihxVy1yB07uSul8gr+Z1gaL7WeDAiwfwqkFMzX+2TGECuiXmhDA4
+	 iSlqfTMjYs9AfTUpI055P9dnTsOjXQmdcnM5TeuC0Mbgo5lc56brjSNqBpHib4ypnO
+	 gCmeqhMFDjnpAFTpEriJjZiYIQSt6rWHxHZP91+aq119WX55MnsAV/sDeoUt4lWHJ8
+	 KFxtXI6OcP1YDtpUUwXpwY9rTFm6SOFEm9YUAQrKWrjC0TErYpKinePUPvrMt/AjaG
+	 nhHNfSE9qW+YOI94ONFGWjwJqvQV3wtQUoBLS6TWKQFxhe4OUMqebRCfFLLNCYXcEV
+	 U4g3HjizjUXvjeZLEQ55FODZEJkRqyH/e8O+n0MpgewAno8Fovq7xeyInc2IQS3L8A
+	 k96/PUr5SRZjrEXHGz3hIay6/6WYwAPA5Ut5ILbQCy33psGebm4rsFuXUK5NG3Odlh
+	 wWFWvJWDPZXAr+gwwH0jpG8nriHspHEfS6rXaK8FHG5wDXAo0FmyJUSTTPB6KHfG3Q
+	 WhBJ+sqT/SIm6U9Ic2kvopPHvEQpFhwhmfiB1F3kgoVGjpbH+8W7qL4xFSLk/KWhG2
+	 UKgi1KIS3RI6wwRh5/Bu5Muw=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A28D540E016C;
+	Tue,  4 Jun 2024 09:15:12 +0000 (UTC)
+Date: Tue, 4 Jun 2024 11:15:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	Jun Nakajima <jun.nakajima@intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv11 05/19] x86/relocate_kernel: Use named labels for less
+ confusion
+Message-ID: <20240604091503.GQZl7bF14qTSAjqUhN@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <20240528095522.509667-6-kirill.shutemov@linux.intel.com>
+ <1e1d1aea-7346-4022-9f5f-402d171adfda@suse.com>
+ <t3zx4f6ynru7qp4oel4syza2alcuxz7q7hxqgf2lxusgobnsnh@vtnecqrsxci5>
+ <748d3b70-60b4-44e0-bd81-9117f1ab699d@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <748d3b70-60b4-44e0-bd81-9117f1ab699d@zytor.com>
 
-From: yangge <yangge1116@126.com>
+On Mon, Jun 03, 2024 at 05:24:00PM -0700, H. Peter Anvin wrote:
+> Trying one more time; sorry (again) if someone receives this in duplicate.
+> 
+> > > > 
+> > > > diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+> > > > index 56cab1bb25f5..085eef5c3904 100644
+> > > > --- a/arch/x86/kernel/relocate_kernel_64.S
+> > > > +++ b/arch/x86/kernel/relocate_kernel_64.S
+> > > > @@ -148,9 +148,10 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+> > > >    	 */
+> > > >    	movl	$X86_CR4_PAE, %eax
+> > > >    	testq	$X86_CR4_LA57, %r13
+> > > > -	jz	1f
+> > > > +	jz	.Lno_la57
+> > > >    	orl	$X86_CR4_LA57, %eax
+> > > > -1:
+> > > > +.Lno_la57:
+> > > > +
+> > > >    	movq	%rax, %cr4
+> 
+> If we are cleaning up this code... the above can simply be:
+> 
+> 	andl $(X86_CR4_PAE | X86_CR4_LA54), %r13
+> 	movq %r13, %cr4
+> 
+> %r13 is dead afterwards, and the PAE bit *will* be set in %r13 anyway.
 
-Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-THP-sized allocations") no longer differentiates the migration type
-of pages in THP-sized PCP list, it's possible to get a CMA page from
-the list, in some cases, it's not acceptable, for example, allocating
-a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
+Yeah, with a proper comment. The testing of bits is not really needed.
 
-The patch forbids allocating non-CMA THP-sized page from THP-sized
-PCP list to avoid the issue above.
+Thx.
 
-Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized allocations")
-Signed-off-by: yangge <yangge1116@126.com>
----
- mm/page_alloc.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2e22ce5..0bdf471 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone *preferred_zone,
- 	WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
- 
- 	if (likely(pcp_allowed_order(order))) {
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+		if (!IS_ENABLED(CONFIG_CMA) || alloc_flags & ALLOC_CMA ||
-+						order != HPAGE_PMD_ORDER) {
-+			page = rmqueue_pcplist(preferred_zone, zone, order,
-+						migratetype, alloc_flags);
-+			if (likely(page))
-+				goto out;
-+		}
-+#else
- 		page = rmqueue_pcplist(preferred_zone, zone, order,
- 				       migratetype, alloc_flags);
- 		if (likely(page))
- 			goto out;
-+#endif
- 	}
- 
- 	page = rmqueue_buddy(preferred_zone, zone, order, alloc_flags,
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
