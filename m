@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-200773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7428FB4B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:02:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3068FB6AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DEF51C21032
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:02:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9832C282695
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F5F175AD;
-	Tue,  4 Jun 2024 14:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4C213D533;
+	Tue,  4 Jun 2024 15:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFaFTTpD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QxpV0Ufu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2925B171CD;
-	Tue,  4 Jun 2024 14:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C924C91
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717509654; cv=none; b=lZLE5fDq812uoZoYVe9xDlPlYJ1IMnBSMDYosOMBd1vX9/iLEJJFkcCFC0OvV+WmRb64UEcxsFDjeYmF4LeeP0Az8Wa6lb+wrMs3Lal6GwJxd01hqhkWC5dZjGnOfDCOL3F8CQYxoAn4JiJpoj7FtJnqUMbBnQg2nTGRyB5CbFo=
+	t=1717513945; cv=none; b=Obqr0u7DPuLoyr+yMjyNWitjtAmSjVdIeyNcBfGzUmmBlbW+G3x4CtHPxYnJJBMimDBKao4KYx0pY5srp0xof85AGMEg6kddQA2gQaz2r8/8TNEJN4fi5IjU5Wlod6dVil84gaKF2ArbjpDjE/4Fr+IKLf6lRQ/Lj+hjchtlI2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717509654; c=relaxed/simple;
-	bh=OChRvoGJn3GDDG7duSTk/Ej21XJKNGy9RWK0+1RnEIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZtVE35Mf2XHUT7g6Ue41jLvbSYvmFphqJ7P7IV85lipnwX/8iWNo4FqDczPNZra2F6syEOrem9uEfDIWdby1QSTQqKIcuVy5tKzdVWqVPxoQfD3YpzH0NIrSsYgn7brd6M2x4z8ORtWlgl5DdO+3fU+Orvpn56JI4Z3OHHSGKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFaFTTpD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A32F5C2BBFC;
-	Tue,  4 Jun 2024 14:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717509653;
-	bh=OChRvoGJn3GDDG7duSTk/Ej21XJKNGy9RWK0+1RnEIo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=hFaFTTpDXbMcBeKvKDNvYhK3+hWBsA1q6I9/NSY7xnwKe7BGPIG6I0tErMHYKRlWY
-	 DNkAJLEUwPNSuYeHFtoHknSY+1s8sMrlpS/GcIUYA3zL5qAIi6hn3ElGozCx+hCdS/
-	 s1RELxoqHP2GGCNPMvkOva1lCgVgqjHkpzHAYxYiSHd92BObc9E/ItA58dSy7HiZT0
-	 PVdW5eEPvMwutv96GAVY0AW/BBoeZPPC+jVor6E7/NTTJ1kv2gueruq+V7Scd/qxQq
-	 RQ6JKoafBNOkxvTeneXdary7Aur19v1qUIkdDNg5ax/TNXGQa5/FTJ6+lDgEISv0M3
-	 YaiXZ2PqJwcLA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 47109CE147A; Tue,  4 Jun 2024 07:00:53 -0700 (PDT)
-Date: Tue, 4 Jun 2024 07:00:53 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 5/6] rcu: Remove full memory barrier on RCU stall printout
-Message-ID: <0ffd4bf0-bc66-4780-9851-2c3b0031a1bf@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240515125332.9306-1-frederic@kernel.org>
- <20240515125332.9306-6-frederic@kernel.org>
- <5bc2d72a-ae27-43f0-893e-afb202abd61b@paulmck-laptop>
- <Zl721Qcu34ppCTuu@localhost.localdomain>
+	s=arc-20240116; t=1717513945; c=relaxed/simple;
+	bh=WI66YXFhtMtD9v7S0j/6cTY9ceJOboCB3afTlXQhJXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uJhp0SZnvm886npzGGT5MyXCvkowPWlF4LcCpuPfa676VmJTM40TnTlA95zodFJpAlE10K6ziaIUAcgzZd3hP+DY0lFOxVsoDSu4KkfBolLYgTj4F9Sh7myRFxq2pRN1WPiZ00f4ZeuCXtPHXd6aSB+0uvbsNSR0h0h3ylPEGvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QxpV0Ufu; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717513944; x=1749049944;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WI66YXFhtMtD9v7S0j/6cTY9ceJOboCB3afTlXQhJXI=;
+  b=QxpV0UfukzWfNwhfrdYg3C0EjxrY5utGwSYu/8yHRxgHKY0r027+H9Or
+   Jg4Y/5PWHARtVjXcNlbXfpUSVDAAVUxYkZMBBTzAPaN2oADSke1Ce59e7
+   EFBCnxmLXdAYc7i6mn+Eg98weLIEUxCZZif1iDCxTtgloRWRrvOaVYQDG
+   DGAdWlQJIEb2/pmN1Ab4C4aRtt/Jit/4MUtw1TRLVnCSrPKZD19lj7SCJ
+   vXFUA4JRbv6oEfG6mp3DpBd6jSuF4UkDot0d4bmaJLj2Eolbu5QEGdfNj
+   edk6V9NnaUtD1GRR+5LUz4tAY4ya46JtRhGVF8L5IwfLi6RUJjFjRCC70
+   w==;
+X-CSE-ConnectionGUID: TfwOX+/7SeW8MV6KlREK5Q==
+X-CSE-MsgGUID: fuNnVbq5QsOkPg79kYu71A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="31602488"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="31602488"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 08:12:06 -0700
+X-CSE-ConnectionGUID: ISWGZxwKQBW4ys7I1KD4VA==
+X-CSE-MsgGUID: XTj7vXuSQGWxND4FIYegeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="37139624"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.246.143]) ([10.245.246.143])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 08:12:04 -0700
+Message-ID: <60a99290-b71e-41e4-844b-f46d8f959c81@linux.intel.com>
+Date: Tue, 4 Jun 2024 15:29:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zl721Qcu34ppCTuu@localhost.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] soundwire: bus: suppress probe deferral errors
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org
+References: <20240604075213.20815-1-johan+linaro@kernel.org>
+ <20240604075213.20815-2-johan+linaro@kernel.org>
+ <c5ecc0cd-c2ba-4f71-ac2a-9a81793a8f0c@linux.intel.com>
+ <Zl7ZyEkmm8kHeRvL@hovoldconsulting.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <Zl7ZyEkmm8kHeRvL@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 04, 2024 at 01:13:25PM +0200, Frederic Weisbecker wrote:
-> Le Mon, Jun 03, 2024 at 05:10:54PM -0700, Paul E. McKenney a écrit :
-> > On Wed, May 15, 2024 at 02:53:31PM +0200, Frederic Weisbecker wrote:
-> > > RCU stall printout fetches the EQS state of a CPU with a preceding full
-> > > memory barrier. However there is nothing to order this read against at
-> > > this debugging stage. It is inherently racy when performed remotely.
-> > > 
-> > > Do a plain read instead.
-> > > 
-> > > This was the last user of rcu_dynticks_snap().
-> > > 
-> > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > 
-> > I went through all of these, and the look good.  Though I am a bit
-> > nervous about this one.  The RCU CPU stall warning code used to be
-> > completely unordered, but the hardware taught me better.  I did not
-> > add these in response to a problem (just lazily used the existing fully
-> > ordered primitive), but you never know.
+
+
+On 6/4/24 11:09, Johan Hovold wrote:
+> On Tue, Jun 04, 2024 at 10:30:21AM +0200, Pierre-Louis Bossart wrote:
+>> On 6/4/24 02:52, Johan Hovold wrote:
+>>> Soundwire driver probe errors are currently being logged both by the bus
+>>> code and driver core:
+>>>
+>>> 	wsa884x-codec sdw:4:0:0217:0204:00:0: Probe of wsa884x-codec failed: -12
+>>> 	wsa884x-codec sdw:4:0:0217:0204:00:0: probe with driver wsa884x-codec failed with error -12
+>>>
+>>> Drop the redundant bus error message, which is also incorrectly being
+>>> logged on probe deferral:
+>>
+>> It's only redundant in the QCOM case... This would remove all error logs
+>> for other codecs, e.g. see
+>>
+>> rt711_sdca_sdw_probe
+>> cs35l56_sdw_probe
+>> wcd9390_probe
+>>
+>> Looks like the wsa884x-codec is the chatty driver, others are just fine
+>> with the existing code.
 > 
-> At least I haven't found against what it is ordering the dynticks counter here.
+> I believe you misunderstood this patch. The error messages above are not
+> printed by the wsa884x-codec driver, but by the soundwire bus code and
+> driver core, so the redundant error message will be printed for all
+> codecs on probe failures.
 > 
-> > Me, I would have kept the extra
-> > memory barriers in all six patches because they are not on a fastpath,
-> 
-> It is still time to discard the patches :-)
+> And specifically, driver core will still log probe failures after this
+> change.
 
-And there is also still time for you to add comments.  ;-)
-
-> > but you are quite correct that they are redundant.
-> 
-> Yes and it's not so much for optimization purpose, like you said it's
-> not a fast-path, although in the case of fqs round scan it _might_ be
-> debatable in the presence of hurry callbacks, but I use those changes
-> more for documentation purpose. My opinion on that being that having
-> memory barriers when they are not necessary doesn't help reviewers and
-> doesn't bring the incentive to actually verify that the ordering is
-> correct when it is really required, since there is so much of it
-> everywhere anyway. I'd rather have a clear, well visible and precise
-> picture. But that's just personal belief.
-
-Redundant memory barriers can be OK, but only if they make the algorithm
-easier to understand, as we found in SRCU.  It is not clear that these
-fit that bill, or, alternatively, that appropriate comments wouldn't be
-an improvement over the redundant memory barrier.
-
-> > So I have queued these, and intend to send them into the next merge
-> > window.  However, you now own vanilla RCU grace-period memory ordering,
-> > both normal and expedited.  As in if someone else breaks it, you already
-> > bought it.  ;-)
-> 
-> Sure, but it's a bet. That one day a younger person will buy it from me
-> double the price ;-)
-
-;-) ;-) ;-)
-
-							Thanx, Paul
+Ah yes, you're right I read 'driver core' sideways, my bad. That's fine
+then.
 
