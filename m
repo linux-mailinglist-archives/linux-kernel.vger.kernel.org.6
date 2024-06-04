@@ -1,117 +1,95 @@
-Return-Path: <linux-kernel+bounces-200840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDB38FB581
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:36:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872088FB588
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276782865F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:36:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D2321C23A1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A34149E13;
-	Tue,  4 Jun 2024 14:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c3eJ8Wc2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAEF146A8C;
-	Tue,  4 Jun 2024 14:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF9C13CF8A;
+	Tue,  4 Jun 2024 14:34:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022B5C147;
+	Tue,  4 Jun 2024 14:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511605; cv=none; b=ceJyTQkJKVfUgPiPS+WSq+UTN1opSNXVdx4Zu20pnENiKO/P6NG60i6UkRlvbv2Vq9v3K+Fr7muEqrGE5u+2TS4j9gBR4N6oxmXOnIkqPZ5JD7KGn00p7H7X/BFo7GXaWMuW9kCFJaHk7u4AggkicAYmxj9H0OnZh5adqY5Rs3M=
+	t=1717511685; cv=none; b=MQ56Qgo2AxNbBS5AZV2hx0RNY2XUtCX+JgVs2D4P8og0fvpjZG2vpmI9OirjKet7Ptv5KGKhRv0bNzunzIDv5ZhspVY+HtcztqiXFI5z0wPjHneort14FH+yv8nhXM8GGEinM681472Ucb4VSoY6RoWiih3zg60fylX4HlwoGps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511605; c=relaxed/simple;
-	bh=IejdTZ7QImNHuKyVqpJOqRpSxAfyBm1xYYnFYBAeHN4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nXA2yB2YgGH3U5i2JiM6ysQeGctwzmfctF8T1kpeO8/Qdn6CqEVfITknCrhHIn1wXLDI2MeJ+LCLMnXVbPXQHHUjAOsDTsoD89cgZYfO4LMM/+7T25JyB6cRXfHg6ejmRaPQu2T/SzIiRobk2wrGhgI739z4kOXGsnhub9535Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c3eJ8Wc2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454C8Alr007410;
-	Tue, 4 Jun 2024 14:33:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Sv0S6rLXcOFChy33McuSZ0
-	G1mzudvJAnkcoO6e8gceg=; b=c3eJ8Wc2hd6XdrSKvkOoEOjGnFW8T1LP/tHvc7
-	D/Pd06QNXqopnyICE7ogyKricmczbjx8hvTcpg943H+NwkI9NtCt1x4zYYypWnLv
-	1+RnQtD6wwwDcoVZhTzBa+JA9PP+qkyvU0DrjaFhXR1FvnNzX/bUQ9tGD+AJGboS
-	wpNE6zet29frVJOKPZJbDuREdQtJdFMFNVKcSrXAGE/wj0xa0o1Czme6qbv0/wk0
-	s/jRFjGdjcrAFP32kmHPQBngWJwcjS2e3a4pmSeFBFTatJbvTi5mryiNjASBTMA0
-	3K04o0G/cTE+S5LTV70uadjS+RA8ry9x7SWejoRMbFWNH3bQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4d7711-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 14:33:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454EX7iK016477
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 14:33:07 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 07:33:07 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 4 Jun 2024 07:33:01 -0700
-Subject: [PATCH] HID: lg-g15: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1717511685; c=relaxed/simple;
+	bh=VnrLIrbhzUALzkQehAninJgeB7+/iCbWWjBnOYjHgZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqd1CJqG/7qvi+qKMq++FP3Ka5QFYTjJEyxtX1fAbfabBO+nElkIjB2dqbMn1Qrma+EB/snovCiCC0mW2NYrb5ycMwFMAk1wfYQ/lHHLqKI+OaqGqdNmB+45O3TVQ42V1Z6+uaYfunRkokbbtKZiIuQq+jByn1VdhuXmiiiaVF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDA6F1042;
+	Tue,  4 Jun 2024 07:35:07 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA0143F64C;
+	Tue,  4 Jun 2024 07:34:41 -0700 (PDT)
+Date: Tue, 4 Jun 2024 15:34:36 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Besar Wicaksono <bwicaksono@nvidia.com>, Will Deacon <will@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [RFC/PATCH 1/1] tools headers arm64: Sync arm64's cputype.h with
+ the kernel sources
+Message-ID: <Zl8l_NdVEmcrsuSx@J2N7QTR9R3>
+References: <Zl4MYzhP0NB-Z1DW@x1>
+ <Zl7aOk2h4_73JmUu@J2N7QTR9R3>
+ <Zl8cYk0Tai2fs7aM@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240604-md-hid-lg-g15-v1-1-265b094db089@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJwlX2YC/x3MwQrCMAyA4VcZORtoS+3BVxEP6RrbwFYlURmMv
- bvV43f4/x2MVdjgMu2g/BGTRx/wpwnmRr0yShmG4EJ0yUVcCzYpuFSs/owcybuUyYeUYTRP5bt
- s/9/1NpzJGLNSn9vvskh/b7iSvVjhOL7uA4CJfgAAAA==
-To: Hans de Goede <hdegoede@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <bentiss@kernel.org>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fn14VJzAvwWrwWmvuktsTjQDzmPkRoiG
-X-Proofpoint-GUID: fn14VJzAvwWrwWmvuktsTjQDzmPkRoiG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 mlxscore=0 adultscore=0 impostorscore=0 bulkscore=0
- spamscore=0 phishscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zl8cYk0Tai2fs7aM@x1>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lg-g15.o
+On Tue, Jun 04, 2024 at 10:53:38AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Jun 04, 2024 at 10:11:22AM +0100, Mark Rutland wrote:
+> > On Mon, Jun 03, 2024 at 03:33:07PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > The changes in the above patch add MIDR_NEOVERSE_V[23] and
+> > > MIDR_NEOVERSE_V1 is used in arm-spe.c, so probably we need to add those
+> > > and perhaps MIDR_CORTEX_X4 to that array? Or maybe we need to leave this
+> > > for later when this is all tested on those machines?
+> > 
+> > Hmm... looking at where that was added this is somewhat misnamed, this
+> > is really saying that these cores use the same IMPLEMENTATION DEFINED
+> > encoding of the source field. That's not really a property of Neoverse
+> > specifically, and I'm not sure what Arm's policy is here going forwards.
+> > 
+> > We should probably rename that to something like
+> > common_data_source_encoding, with a big comment about exactly what it
+> > implies.
+> > 
+> > I would not touch this for now -- someone would have to go audit the
+> 
+> Ok, you mean not touch tools/perf/util/arm-spe.c, right, can I just go
+> ahead and update the copy of that header so that we have a clean (of
+> build warnings) build?
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Yes: update the header, but leave arm-spe.c unchanged. Sorry for not
+being clear!
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/hid/hid-lg-g15.c | 1 +
- 1 file changed, 1 insertion(+)
+It'd be nice if we could update the commit message to note that we're
+deliberately leaving that as-is.
 
-diff --git a/drivers/hid/hid-lg-g15.c b/drivers/hid/hid-lg-g15.c
-index acbec1dcf196..53e7b90f9cc3 100644
---- a/drivers/hid/hid-lg-g15.c
-+++ b/drivers/hid/hid-lg-g15.c
-@@ -954,4 +954,5 @@ static struct hid_driver lg_g15_driver = {
- module_hid_driver(lg_g15_driver);
- 
- MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-+MODULE_DESCRIPTION("HID driver for gaming keys on Logitech gaming keyboards");
- MODULE_LICENSE("GPL");
+Either way:
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240604-md-hid-lg-g15-e4a106ba126b
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
+Mark.
 
