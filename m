@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-200697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE12B8FB37F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 255848FB396
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E08281F3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:22:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7FC287715
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984741465A7;
-	Tue,  4 Jun 2024 13:22:10 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECE1146A74;
+	Tue,  4 Jun 2024 13:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWemrCxh"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F5714658A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A489146587;
+	Tue,  4 Jun 2024 13:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717507330; cv=none; b=KKUmBe/SJuAoi1B9mjTq05ItjF+t2NbUTCRfiolD6Dcs+nejA/1hqEZDTsQkySdG+LIOcCgkFHg2hNgPfOwtFnpFWOFYtJixIVg6DrCHERtXmdSjsRBzlQOblm+wz/RFH84F/f5I36iTi0Rh06chKPW33V56Ahag+RwbW0vYp/4=
+	t=1717507404; cv=none; b=Fw8gTbhMl2yKmTlCuDRwdOrZf7ZKRpvPG9LKy2ieHhSN2cIose/7AtUyIIFce4vvGzzLkm1vrWc96HhB8q/sHA1ZqpiDRY83aDPJTkkWx6fp1vJbPHwgplKc2jonWh/iMuWm1HlbuSrh+jzxPw11H7yOrMEm6+WsJtY2zm2GSXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717507330; c=relaxed/simple;
-	bh=8F/EhiLs2so7RVQUHfEcWAz1308jhOqznNqQJ8dKJgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ir0yYTQoW7Zupsbp/CYbP119h/8HiPdRdzDxC6sYlVpPdJMklgzZV1N3uFW+w8iWw1iaoHkGw2tw1QdjfnZWijEaf5EvY5DHzxP74sXtM9PtPcPnMR+QWKbsWwn5KE47G06UhHu2GuJYsRayA8KnheMIgZYgHuSZjI0M0s8L44M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8D1C2BBFC;
-	Tue,  4 Jun 2024 13:22:06 +0000 (UTC)
-Date: Tue, 4 Jun 2024 09:22:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yajun Deng <yajun.deng@linux.dev>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com,
- mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/rt: Use 'back' only if CONFIG_RT_GROUP_SCHED
- is enabled
-Message-ID: <20240604092203.7c31b7b5@gandalf.local.home>
-In-Reply-To: <20240603125002.3086-2-yajun.deng@linux.dev>
-References: <20240603125002.3086-1-yajun.deng@linux.dev>
-	<20240603125002.3086-2-yajun.deng@linux.dev>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717507404; c=relaxed/simple;
+	bh=D4HtLoTVU3H+eyUhPZTSVo5LCusxKwB+BLH0C2Ip7jQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kuIT9a21E9Z+Xp8xvjm35Vx1UtPuwhJQtmTKhvZeRj9nTUZL6cIG21iD6qMa/Y0c/MgNY5TVD6ShAzo0Cpl+9MYg3L/DxU+8ULSrO7VkzICC2P79b3eDygfHA+rC5UAhLGaLYQ1kprRIQDYAFMz6u4I0W/LkAaEpxXMlXFXL7OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWemrCxh; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a63359aaaa6so721905066b.2;
+        Tue, 04 Jun 2024 06:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717507401; x=1718112201; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D4HtLoTVU3H+eyUhPZTSVo5LCusxKwB+BLH0C2Ip7jQ=;
+        b=NWemrCxhYCNnMM0EfqVJkc1B3z0I8MWk4l1Lnbcnmr0g/SOhyQliL029/rGzzNypPy
+         sXBXjOgUDISzsplbcfFH6OMxdVwnEvXhJW4l9RYDndx8+zZgZTzepga+yE+yug9wLsTk
+         JvWZhSsyPAn+1LyfSiqfZJHCfvt+1jRHwFk0Dq7sHu/aNF0ZgNBnqcwM4MwQl+kHmUSF
+         yeQmI7CZTdLGm6mi4WTt1ryYS8WgPa7AWEeKWpjP+DjPpECijBkDdFFxYwk07wt9sBd8
+         Ez2d4wzW1OSaqYUmjIKnsmT4l4HeP2yhqU4ZuEF4SjXjwJRBLrQJ7EACazkEcM7ml/bo
+         H7ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717507401; x=1718112201;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D4HtLoTVU3H+eyUhPZTSVo5LCusxKwB+BLH0C2Ip7jQ=;
+        b=JPnl3Y7N96XOPTwLNrznsJJgOQIsNTnQiYOuYkSjT/L/eD/TT8ei6OdYyWTy9jtu6V
+         4tJYTokLMgTl4MGgErMsaTnM7P1LjCDG/WeHWa8NuImSO9KOoqtGJTQQfXJP3c2EAnae
+         c1y8bqnHTXZZn6vsdqWmSNThxV0wYS+lPN1ubE81rYMEIZ9Quu4gP4GP5lQ6H1752IOR
+         /Q4/SzB374HTMjvD9HiJOkVrr5cxtKuXtusdWRt7AEN3UpHcEv7sdU1HS5vZgnyRUpJ+
+         6346IGYQnpz4ckTswJzlpsClFQk92X2WMs/1ZbiGTNfBayVopL6Q7w8DYHM4a1E7yqqG
+         26Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2Fg0UG4qU009TIbWRySmei6MepRpNdclOODPOaxGjLRIz4DyRHyrp3g1toSpI+NHZfoAeM2dE/aB2vHF2GJt3+GGIjKXAqsNd4nYzuks7c7VCuCSGoF/3Yg2xN2ggDdTmJqrlvXIlggkngUaKmLTp7JyrHtUFbzaEZItLCFUqjx+wwQ==
+X-Gm-Message-State: AOJu0YyMZOfN4jfY7w3HnsAgrmdEf/xX7NA+Zwvr10tXzqS/g324Eo+T
+	aYDBaMFWsNi/08x20gqrwpbIMijV/G30hVPsLzvzk89XLe1uvtBKj7ARkSWzgL6A++ics9Vee2o
+	A0oqUMS1xh6iFL+SKs6KBEjYwUnU=
+X-Google-Smtp-Source: AGHT+IE5s5ADNfYnbPI8bDw/CpMfi1LzejGDjcTFcbYzZnvQgliM5/TmXHdkT9xdHYahqyYsZ6pgxgeQxvDpCe8I2qg=
+X-Received: by 2002:a17:906:2b51:b0:a68:cc6f:cb5a with SMTP id
+ a640c23a62f3a-a68cc6fcc2emr493202266b.68.1717507400768; Tue, 04 Jun 2024
+ 06:23:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com> <20240604123008.327424-5-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240604123008.327424-5-angelogioacchino.delregno@collabora.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 4 Jun 2024 16:22:44 +0300
+Message-ID: <CAHp75Ve8qPLu+gS8o5Q5A20j_+AP_UVkOzdKqcnhUawA_sW+VA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] iio: adc: Add support for MediaTek MT6357/8/9
+ Auxiliary ADC
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org, andy@kernel.org, 
+	nuno.sa@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com, 
+	marius.cristea@microchip.com, marcelo.schmitt@analog.com, fr0st61te@gmail.com, 
+	mitrutzceclan@gmail.com, mike.looijmans@topic.nl, marcus.folkesson@gmail.com, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon,  3 Jun 2024 20:50:01 +0800
-Yajun Deng <yajun.deng@linux.dev> wrote:
+On Tue, Jun 4, 2024 at 3:30=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Add a driver to support reading the Auxiliary ADC IP found in the
+> MediaTek MT6357, MT6358 and MT6359 Power Management ICs, featuring
+> a different register layout, configurationm reset and ADC reading
 
-> The 'back' member in struct sched_rt_entity only related to
-> CONFIG_RT_GROUP_SCHED, so there is no need to init it in dequeue_rt_stack.
-> 
-> Init the 'back' member in init_tg_rt_entry and use it only if
-> CONFIG_RT_GROUP_SCHED is enabled.
-> 
-> Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
-> ---
->  kernel/sched/rt.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 63e49c8ffc4d..44bb9087cfe5 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -232,8 +232,10 @@ void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
->  
->  	if (!parent)
->  		rt_se->rt_rq = &rq->rt;
-> -	else
-> +	else {
->  		rt_se->rt_rq = parent->my_q;
-> +		parent->back = rt_se;
-> +	}
+configuration
 
-If one block of an if/else requires brackets, then both do.
+> sequence from the other already supported MediaTek SoC or PMIC
+> (aux)ADC HW.
+>
+> This driver provides multiple ADC channels for system monitoring,
+> such as battery voltage, PMIC temperature, PMIC-internal voltage
+> regulators temperature, and others.
 
+Seems all my concerns were addressed, so
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
->  
->  	rt_se->my_q = rt_rq;
->  	rt_se->parent = parent;
-> @@ -1428,16 +1430,19 @@ static void dequeue_rt_stack(struct sched_rt_entity *rt_se, unsigned int flags)
->  	struct sched_rt_entity *back = NULL;
->  	unsigned int rt_nr_running;
->  
-> -	for_each_sched_rt_entity(rt_se) {
-> -		rt_se->back = back;
-> +	for_each_sched_rt_entity(rt_se)
->  		back = rt_se;
-> -	}
->  
->  	rt_nr_running = rt_rq_of_se(back)->rt_nr_running;
->  
-> -	for (rt_se = back; rt_se; rt_se = rt_se->back) {
-> +	for (rt_se = back; rt_se; ) {
->  		if (on_rt_rq(rt_se))
->  			__dequeue_rt_entity(rt_se, flags);
-> +#ifdef CONFIG_RT_GROUP_SCHED
-> +		rt_se = rt_se->back;
-> +#else
-> +		rt_se = NULL;
-> +#endif
-
-Perhaps make a helper function to get rid of the #ifdef in the code here.
-
-	for (rt_se = back, rt_se; rt_se = rt_se_back(rt_se)) {
-
-Where rt_se_back() above can be defined in the #ifdef blocks for
-CONFIG_RT_GROUP_SCHED as either:
-
-static struct sched_rt_entity *rt_se_back(struct sched_rt_entity *se)
-{
-	return se->back;
-}
-
-Or
-
-static inline struct sched_rt_entity *rt_se_back(struct sched_rt_entity *se)
-{
-	return NULL;
-}
-
--- Steve
-
-
->  	}
->  
->  	dequeue_top_rt_rq(rt_rq_of_se(back), rt_nr_running);
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
