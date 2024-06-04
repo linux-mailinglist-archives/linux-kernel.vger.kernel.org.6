@@ -1,531 +1,125 @@
-Return-Path: <linux-kernel+bounces-200587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0918FB220
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:27:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CA08FB21B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3041B2820CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:27:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86AB4B2263F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309CA146A6F;
-	Tue,  4 Jun 2024 12:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E101E145FFE;
+	Tue,  4 Jun 2024 12:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W8Hl5HrG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FfiliTvn"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1912C1465BF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9364D145FF6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717503985; cv=none; b=RDzZGzK5GKroRTpfEk0oGed+R6GqdTgJHM4tCJkBbHqFxG4YBmkCjLQb47L4BEQNo8RBhRtG0sSGn1StD3T6ZGy20JfrokFhmK60f51Is+Rh+IJllJCg1770FuMXGizW4droaFNahxtrWnvGYimCDsuOSgQI7FLOOGNj82jqvpg=
+	t=1717503958; cv=none; b=XZoCM5eokeJ2t6PLBWfsBue65NHvYn+vfYo5d0t6d+YMroZYMNAOksRgNI/DvsOhOnUphZuaZlJt7uaiIAEDf5pPzvbeUFZmd+crl18DolCyAWohAOuWHhrLnDKBk+sMf1upMLaYbkup/s5WfgQKXoA46qTOVcs5fEMlnoIp6nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717503985; c=relaxed/simple;
-	bh=c5cfExdcFg0Hh81w+M1DIVoQ+9gGtp4qJ5aFJKdMzdw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A0geT/WKVnbbUg7AzDp3xqSp5T7tbWPlJ7V1TOZd56iSMXnogEJagLZYennXwS4hB3J5knmZPMyfxPG5olThJouBF56txnOFYIMyD/jIo3BcPE1zp3NY9ZYGDa0wD/5TeLdAbq5GeXlVGgN1UkZ0+dnn0hwmcYpg2OQrbVfxxik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W8Hl5HrG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717503982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CnFa3KkR11uKBOePM8iHmpy6uffAuJd7k5r6Ny89vc8=;
-	b=W8Hl5HrGPcRjtgyyZq0Ce1j4iz+FZ9y9bq22l6J7ROVv5a2Xqx7tuFojD4ejfwASRR7Zdh
-	yFfGlb5UekJJdVTWFF5s9/GNrUkVJ/3WHAF5Uvc1ZJSrlYStGLoneOUfcipAkCKkD0zDg6
-	MpE5sA7l/SojD9fLxar8y2HcCXLVLXo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-136-TgKOtLjzPtirdHQq3B4p2Q-1; Tue,
- 04 Jun 2024 08:26:20 -0400
-X-MC-Unique: TgKOtLjzPtirdHQq3B4p2Q-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BE98D1895DE9;
-	Tue,  4 Jun 2024 12:26:17 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.39.193.118])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6DBE11955D89;
-	Tue,  4 Jun 2024 12:26:11 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Guillaume Morin <guillaume@morinfr.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>
-Subject: [PATCH RFC 3/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
-Date: Tue,  4 Jun 2024 14:25:48 +0200
-Message-ID: <20240604122548.359952-4-david@redhat.com>
-In-Reply-To: <20240604122548.359952-1-david@redhat.com>
-References: <20240604122548.359952-1-david@redhat.com>
+	s=arc-20240116; t=1717503958; c=relaxed/simple;
+	bh=s1VCyyJJljzsAGyKD0o7mdCoAu+eLFprs/YEVsgvPA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2jI/4Yp1Z5OodVzJRbqZC3vdB3qyV8KzXa7UahSrwMXjKHZAdPfIJNAY9rWALLEmKDKliUGahhosPi1TxINak7z9pv48mcwVqv6aGPI3VsudEFISFfrPae5sZwDgHfo14vbnK8oIm4c04bNa7C+qqFyvpy8mCdw0xS29z4y1Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FfiliTvn; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so9679033a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 05:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717503955; x=1718108755; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9gS0OyJH72V5TfYu3VmbBAJJsXIwwQ21Ck30Dm2cAY=;
+        b=FfiliTvnArvh3SByvoAAV/xMv7XPhD6qoBLnLSUlSJjDfx8kIuHIQtasx2vLbNgEfn
+         EdPeK23fBf46DLNcyzwk7G/EGkPQRXJ19PAi6bv545zVTBJ/bVtc9T7Bm9T6ejNvAoOM
+         TE7OLRtcnNqVkjry8QXaAeLh1Wuqzi5OwPlGF0Ldn9dg0VDaj3gQFVmPuFd4NMRa0Y1w
+         3T24TUCguST8xqYw1o0vmFSDpvOIOAa5SZ9urigwamu+0Ro9OB5CiH8YH4nOTnt9Cbz5
+         19getvDlMcUFhcZPCcT1FoKCtL2WNPHWe+gcAfyoX/Vqu2Giusx4MluiYE5YW6nD/FzR
+         hW2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717503955; x=1718108755;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y9gS0OyJH72V5TfYu3VmbBAJJsXIwwQ21Ck30Dm2cAY=;
+        b=oOYJtsoZGQLuFAw6DnrYB7SYc7FpH6OhX3F8YCmFWDA/mKOlBAx5AdrjcaBEBfJsBi
+         mBHi3Zb/lQAcB+yZGvNsyz/qula6EBPvs99weiHXVDNJMfkLmMAtTXvFrcpcOJWb8n0S
+         PE17sXaQXMpTHnb5tJtaVGxVhjDsIuLA0ez0vJR1UPn+5Dk8lKZGNmyk5sPML5vYhHh3
+         u5Y0zSvGh6uqbTM7JbBRSm1KrRuqz4oRvuS/btB8IZ14+lR4FI8BdAOf5EiiaFndOq8r
+         JXgEbxR0dMnXNtrcSCQrf6gMeMu+NI9BbAGely4f6k54iaAA7h+Rkh+dDWX9HiLl2SzZ
+         84tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUm3Lk1uwq82qMbinHRMLVadPXbBkBNH31aheEy7Z2H+ZrlTleWcDv4nfrvv6ADphE9mzRiKcauR+OiBzMix4jMI3QjGxP1tRHVMTd6
+X-Gm-Message-State: AOJu0YymHNWFrmm/v2Ogf+XvVc/rB869k4AUklOvt0Paj8CRNYjOWHNO
+	9hHwh22fnNmKDEpe/Og2Ju2S1PWeSqLbaccHM5PdBDF7R2gq9gDXlZKDRcaY/bM=
+X-Google-Smtp-Source: AGHT+IEN9f8uev3FXprfAoYc9A1GaTXa2CrF6gqcTsV0n51gFLuo0b534nnOFA35YyhTJtD3rOTrFw==
+X-Received: by 2002:a50:aadc:0:b0:578:5f53:f017 with SMTP id 4fb4d7f45d1cf-57a7a6bb3ddmr2057448a12.6.1717503954639;
+        Tue, 04 Jun 2024 05:25:54 -0700 (PDT)
+Received: from linaro.org ([188.27.161.69])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31bb825esm7298469a12.32.2024.06.04.05.25.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 05:25:54 -0700 (PDT)
+Date: Tue, 4 Jun 2024 15:25:52 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] phy: qcom: qmp-pcie: Add X1E80100 Gen4 4-lane mode
+ support
+Message-ID: <Zl8H0KOrfuF91kpZ@linaro.org>
+References: <20240531-x1e80100-phy-add-gen4x4-v1-0-5c841dae7850@linaro.org>
+ <20240531-x1e80100-phy-add-gen4x4-v1-2-5c841dae7850@linaro.org>
+ <Zl27FJVU_YHokCiD@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zl27FJVU_YHokCiD@hovoldconsulting.com>
 
-uprobe_write_opcode() does some pretty low-level things that really, it
-shouldn't be doing: for example, manually breaking COW by allocating
-anonymous folios and replacing mapped pages.
+On 24-06-03 14:46:12, Johan Hovold wrote:
+> On Fri, May 31, 2024 at 07:06:45PM +0300, Abel Vesa wrote:
+> > The PCIe 6th instance from X1E80100 can be used in both 4-lane mode or
+> > 2-lane mode. Add the configuration and compatible for the 4-lane mode.
+> 
+> Same language nits as for patch 1/1.
+> 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> 
+> I tried this patch along with the DT changes and the link on the CRD
+> still comes up as 2-lane:
+> 
+> 	qcom-pcie 1bf8000.pci: PCIe Gen.4 x2 link up
+> 
+> so something appears to be wrong here. (I noticed the same with your
+> next branch last week.)
+> 
+> How did you test this? Does the link actually come up as 4-lane for you?
 
-Further, it does seem to do some shaky things: for example, writing to
-possible COW-shared anonymous pages or zapping anonymous pages that might
-be pinned. We're also not taking care of uffd, uffd-wp, softdirty ...
-although rather corner cases here. Let's just get it right like ordinary
-ptrace writes would.
+This is the PHY part. The controller needs some changes as well.
 
-Let's rewrite the code, leaving COW-breaking to core-MM, triggered by
-FOLL_FORCE|FOLL_WRITE (note that the code was already using FOLL_FORCE).
+Yes, as of yet, I'm not able to bring the link up in 4-lanes mode.
+This however doesn't mean the PHY sequence is incorrect.
 
-We'll use GUP to lookup/faultin the page and break COW if required. Then,
-we'll walk the page tables using walk_page_range_vma(), to perform our page
-modification atomically by temporarily unmap+flushing the PTE that maps an
-anonymous page.
+But, I agree, maybe I should hold on to the PHY changes as well until
+we get the controller side working as well.
 
-Unfortunately, we still have to implement the zapping logic manually,
-because we only want to zap in specific circumstances (e.g., page
-content identical).
+Thanks for reviewing.
 
-Note that we can handle large folios just fine. walk_page_range_vma() will
-call split_huge_pmd() for us. We can drop the WARN and stop using
-FOLL_SPLIT_PMD. If split_huge_pmd() decides to zap a PMD-mapped file THP,
-there is nothing to do when unregistering. Document that.
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- kernel/events/uprobes.c | 342 +++++++++++++++++++++++-----------------
- 1 file changed, 194 insertions(+), 148 deletions(-)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index f2b1fef7f1d62..a22f2e9fd6456 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -26,6 +26,7 @@
- #include <linux/task_work.h>
- #include <linux/shmem_fs.h>
- #include <linux/khugepaged.h>
-+#include <linux/pagewalk.h>
- 
- #include <linux/uprobes.h>
- 
-@@ -137,80 +138,6 @@ static loff_t vaddr_to_offset(struct vm_area_struct *vma, unsigned long vaddr)
- 	return ((loff_t)vma->vm_pgoff << PAGE_SHIFT) + (vaddr - vma->vm_start);
- }
- 
--/**
-- * __replace_page - replace page in vma by new page.
-- * based on replace_page in mm/ksm.c
-- *
-- * @vma:      vma that holds the pte pointing to page
-- * @addr:     address the old @page is mapped at
-- * @old_page: the page we are replacing by new_page
-- * @new_page: the modified page we replace page by
-- *
-- * If @new_page is NULL, only unmap @old_page.
-- *
-- * Returns 0 on success, negative error code otherwise.
-- */
--static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
--				struct page *old_page, struct page *new_page)
--{
--	struct folio *old_folio = page_folio(old_page);
--	struct folio *new_folio;
--	struct mm_struct *mm = vma->vm_mm;
--	DEFINE_FOLIO_VMA_WALK(pvmw, old_folio, vma, addr, 0);
--	int err;
--	struct mmu_notifier_range range;
--
--	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm, addr,
--				addr + PAGE_SIZE);
--
--	if (new_page) {
--		new_folio = page_folio(new_page);
--		err = mem_cgroup_charge(new_folio, vma->vm_mm, GFP_KERNEL);
--		if (err)
--			return err;
--	}
--
--	/* For folio_free_swap() below */
--	folio_lock(old_folio);
--
--	mmu_notifier_invalidate_range_start(&range);
--	err = -EAGAIN;
--	if (!page_vma_mapped_walk(&pvmw))
--		goto unlock;
--	VM_BUG_ON_PAGE(addr != pvmw.address, old_page);
--
--	if (new_page) {
--		folio_get(new_folio);
--		folio_add_new_anon_rmap(new_folio, vma, addr);
--		folio_add_lru_vma(new_folio, vma);
--	} else
--		/* no new page, just dec_mm_counter for old_page */
--		dec_mm_counter(mm, MM_ANONPAGES);
--
--	if (!folio_test_anon(old_folio)) {
--		dec_mm_counter(mm, mm_counter_file(old_folio));
--		inc_mm_counter(mm, MM_ANONPAGES);
--	}
--
--	flush_cache_page(vma, addr, pte_pfn(ptep_get(pvmw.pte)));
--	ptep_clear_flush(vma, addr, pvmw.pte);
--	if (new_page)
--		set_pte_at(mm, addr, pvmw.pte,
--			   mk_pte(new_page, vma->vm_page_prot));
--
--	folio_remove_rmap_pte(old_folio, old_page, vma);
--	if (!folio_mapped(old_folio))
--		folio_free_swap(old_folio);
--	page_vma_mapped_walk_done(&pvmw);
--	folio_put(old_folio);
--
--	err = 0;
-- unlock:
--	mmu_notifier_invalidate_range_end(&range);
--	folio_unlock(old_folio);
--	return err;
--}
--
- /**
-  * is_swbp_insn - check if instruction is breakpoint instruction.
-  * @insn: instruction to be checked.
-@@ -438,6 +365,120 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
- 	return ret;
- }
- 
-+static bool orig_page_is_identical(struct vm_area_struct *vma,
-+		unsigned long vaddr, struct page *page, bool *large)
-+{
-+	const pgoff_t index = vaddr_to_offset(vma, vaddr) >> PAGE_SHIFT;
-+	struct page *orig_page = find_get_page(vma->vm_file->f_inode->i_mapping,
-+					       index);
-+	struct folio *orig_folio;
-+	bool identical;
-+
-+	if (!orig_page)
-+		return false;
-+	orig_folio = page_folio(orig_page);
-+
-+	*large = folio_test_large(orig_folio);
-+	identical = folio_test_uptodate(orig_folio) &&
-+		    pages_identical(page, orig_page);
-+	folio_put(orig_folio);
-+	return identical;
-+}
-+
-+#define UWO_NO_PGTABLE		0
-+#define UWO_RETRY		1
-+#define UWO_RETRY_WRITE_FAULT	2
-+#define UWO_DONE		3
-+#define UWO_DONE_COLLAPSE	4
-+
-+struct uwo_data {
-+	unsigned long opcode_vaddr;
-+	uprobe_opcode_t opcode;
-+};
-+
-+static int __write_opcode_pte(pte_t *ptep, unsigned long vaddr,
-+		unsigned long next, struct mm_walk *walk)
-+{
-+	struct uwo_data *data = walk->private;
-+	const bool is_register = !!is_swbp_insn(&data->opcode);
-+	pte_t pte = ptep_get(ptep);
-+	struct folio *folio = NULL;
-+	struct page *page;
-+	bool large;
-+
-+	if (!pte_present(pte))
-+		return UWO_RETRY;
-+	page = vm_normal_page(walk->vma, vaddr, pte);
-+	if (page)
-+		folio = page_folio(page);
-+
-+	/*
-+	 * If we don't find an anonymous folio when unregistering, we're done.
-+	 */
-+	if (!folio || !folio_test_anon(folio))
-+		return is_register ? UWO_RETRY_WRITE_FAULT : UWO_DONE;
-+
-+	/*
-+	 * See can_follow_write_pte(): we'd actually prefer a writable PTE here,
-+	 * but when unregistering we might no longer have VM_WRITE ...
-+	 */
-+	if (!pte_write(pte)) {
-+		if (!PageAnonExclusive(page))
-+			return UWO_RETRY_WRITE_FAULT;
-+		if (unlikely(userfaultfd_pte_wp(walk->vma, pte)))
-+			return UWO_RETRY_WRITE_FAULT;
-+		/* SOFTDIRTY is handled via pte_mkdirty() below. */
-+	}
-+
-+	/* Unmap + flush the TLB, such that we can write atomically .*/
-+	flush_cache_page(walk->vma, vaddr, pte_pfn(pte));
-+	pte = ptep_clear_flush(walk->vma, vaddr, ptep);
-+	copy_to_page(page, data->opcode_vaddr, &data->opcode,
-+		     UPROBE_SWBP_INSN_SIZE);
-+
-+	/*
-+	 * When unregistering, we may only zap a PTE if uffd is disabled and
-+	 * there are no unexpected folio references ...
-+	 */
-+	if (is_register || userfaultfd_missing(walk->vma) ||
-+	    (folio_ref_count(folio) != folio_mapcount(folio) +
-+	     folio_test_swapcache(folio) * folio_nr_pages(folio)))
-+		goto remap;
-+
-+	/*
-+	 * ... and the mapped page is identical to the original page that
-+	 * would get faulted in on next access.
-+	 */
-+	if (!orig_page_is_identical(walk->vma, vaddr, page, &large))
-+		goto remap;
-+
-+	/* Zap it and try to reclaim swap space. */
-+	dec_mm_counter(walk->mm, MM_ANONPAGES);
-+	folio_remove_rmap_pte(folio, page, walk->vma);
-+	if (!folio_mapped(folio) && folio_test_swapcache(folio) &&
-+	     folio_trylock(folio)) {
-+		folio_free_swap(folio);
-+		folio_unlock(folio);
-+	}
-+	folio_put(folio);
-+
-+	return large ? UWO_DONE_COLLAPSE : UWO_DONE;
-+remap:
-+	/*
-+	 * Make sure that our copy_to_page() changes become visible before the
-+	 * set_pte_at() write.
-+	 */
-+	smp_wmb();
-+	/* We modified the page. Make sure to mark the PTE dirty. */
-+	set_pte_at(walk->mm, vaddr, ptep, pte_mkdirty(pte));
-+	return UWO_DONE;
-+}
-+
-+static const struct mm_walk_ops write_opcode_ops = {
-+	.pte_entry		= __write_opcode_pte,
-+	.walk_lock		= PGWALK_WRLOCK,
-+};
-+
- /*
-  * NOTE:
-  * Expect the breakpoint instruction to be the smallest size instruction for
-@@ -450,111 +491,116 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
-  * uprobe_write_opcode - write the opcode at a given virtual address.
-  * @auprobe: arch specific probepoint information.
-  * @vma: the probed virtual memory area.
-- * @vaddr: the virtual address to store the opcode.
-- * @opcode: opcode to be written at @vaddr.
-+ * @opcode_vaddr: the virtual address to store the opcode.
-+ * @opcode: opcode to be written at @opcode_vaddr.
-  *
-  * Called with mm->mmap_lock held for write.
-  * Return 0 (success) or a negative errno.
-  */
- int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *vma,
--		unsigned long vaddr, uprobe_opcode_t opcode)
--{
--	struct mm_struct *mm = vma->vm_mm;
--	struct uprobe *uprobe;
--	struct page *old_page, *new_page;
--	int ret, is_register, ref_ctr_updated = 0;
--	bool orig_page_huge = false;
-+		const unsigned long opcode_vaddr, uprobe_opcode_t opcode)
-+{
-+	struct uprobe *uprobe = container_of(auprobe, struct uprobe, arch);
-+	const unsigned long vaddr = opcode_vaddr & PAGE_MASK;
-+	const bool is_register = !!is_swbp_insn(&opcode);
-+	struct uwo_data data = {
-+		.opcode = opcode,
-+		.opcode_vaddr = opcode_vaddr,
-+	};
- 	unsigned int gup_flags = FOLL_FORCE;
-+	struct mm_struct *mm = vma->vm_mm;
-+	struct mmu_notifier_range range;
-+	int ret, ref_ctr_updated = 0;
-+	struct page *page;
- 
--	is_register = is_swbp_insn(&opcode);
--	uprobe = container_of(auprobe, struct uprobe, arch);
-+	if (WARN_ON_ONCE(!is_cow_mapping(vma->vm_flags)))
-+		return -EINVAL;
- 
--retry:
-+	/*
-+	 * When registering, we have to break COW to get an exclusive anonymous
-+	 * page that we can safely modify. Use FOLL_WRITE to trigger a write
-+	 * fault if required. When unregistering, we might be lucky and the
-+	 * anon page is already gone. So defer write faults until really
-+	 * required.
-+	 */
- 	if (is_register)
--		gup_flags |= FOLL_SPLIT_PMD;
--	/* Read the page with vaddr into memory */
--	ret = get_user_pages_remote(mm, vaddr, 1, gup_flags, &old_page, NULL);
-+		gup_flags |= FOLL_WRITE;
-+
-+retry:
-+	ret = get_user_pages_remote(mm, vaddr, 1, gup_flags, &page, NULL);
- 	if (ret != 1)
--		return ret;
-+		goto out;
- 
--	ret = verify_opcode(old_page, vaddr, &opcode);
-+	ret = verify_opcode(page, opcode_vaddr, &opcode);
-+	put_page(page);
- 	if (ret <= 0)
--		goto put_old;
--
--	if (WARN(!is_register && PageCompound(old_page),
--		 "uprobe unregister should never work on compound page\n")) {
--		ret = -EINVAL;
--		goto put_old;
--	}
-+		goto out;
- 
- 	/* We are going to replace instruction, update ref_ctr. */
- 	if (!ref_ctr_updated && uprobe->ref_ctr_offset) {
- 		ret = update_ref_ctr(uprobe, mm, is_register ? 1 : -1);
- 		if (ret)
--			goto put_old;
--
-+			goto out;
- 		ref_ctr_updated = 1;
- 	}
- 
--	ret = 0;
--	if (!is_register && !PageAnon(old_page))
--		goto put_old;
--
--	ret = anon_vma_prepare(vma);
--	if (ret)
--		goto put_old;
--
--	ret = -ENOMEM;
--	new_page = alloc_page_vma(GFP_HIGHUSER_MOVABLE, vma, vaddr);
--	if (!new_page)
--		goto put_old;
--
--	__SetPageUptodate(new_page);
--	copy_highpage(new_page, old_page);
--	copy_to_page(new_page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
--
- 	if (!is_register) {
--		struct page *orig_page;
--		pgoff_t index;
--
--		VM_BUG_ON_PAGE(!PageAnon(old_page), old_page);
--
--		index = vaddr_to_offset(vma, vaddr & PAGE_MASK) >> PAGE_SHIFT;
--		orig_page = find_get_page(vma->vm_file->f_inode->i_mapping,
--					  index);
--
--		if (orig_page) {
--			if (PageUptodate(orig_page) &&
--			    pages_identical(new_page, orig_page)) {
--				/* let go new_page */
--				put_page(new_page);
--				new_page = NULL;
--
--				if (PageCompound(orig_page))
--					orig_page_huge = true;
--			}
--			put_page(orig_page);
--		}
-+		/*
-+		 * In the common case, we'll be able to zap the page when
-+		 * unregistering. So trigger MMU notifiers now, as we won't
-+		 * be able to do it under PTL.
-+		 */
-+		mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm,
-+					vaddr, vaddr + PAGE_SIZE);
-+		mmu_notifier_invalidate_range_start(&range);
- 	}
- 
--	ret = __replace_page(vma, vaddr & PAGE_MASK, old_page, new_page);
--	if (new_page)
--		put_page(new_page);
--put_old:
--	put_page(old_page);
-+	/*
-+	 * Perform another page table walk and perform the actual page
-+	 * modification.
-+	 */
-+	ret = walk_page_range_vma(vma, vaddr, vaddr + PAGE_SIZE,
-+				  &write_opcode_ops, &data);
- 
--	if (unlikely(ret == -EAGAIN))
--		goto retry;
-+	if (!is_register)
-+		mmu_notifier_invalidate_range_end(&range);
- 
-+	switch (ret) {
-+	case UWO_NO_PGTABLE: /* walk_page_range_vma() returned 0. */
-+		/*
-+		 * walk_page_range_vma() did not find anything. If there
-+		 * would have been a PMD-mapped file THP, it could have
-+		 * simply been zapped; in that (unlikely) case, there is
-+		 * nothing to when unregistering.
-+		 *
-+		 * If we had a PMD-mapped anonymous folio,
-+		 * walk_page_range_vma() would have PTE-mapped it for us
-+		 * and walked it.
-+		 */
-+		if (is_register)
-+			goto retry;
-+		break;
-+	case UWO_RETRY_WRITE_FAULT:
-+		gup_flags |= FOLL_WRITE;
-+		fallthrough;
-+	case UWO_RETRY:
-+		goto retry;
-+	case UWO_DONE_COLLAPSE:
-+	case UWO_DONE:
-+		break;
-+	default:
-+		VM_WARN_ON_ONCE(1);
-+	}
-+out:
- 	/* Revert back reference counter if instruction update failed. */
--	if (ret && is_register && ref_ctr_updated)
-+	if (ret < 0 && is_register && ref_ctr_updated)
- 		update_ref_ctr(uprobe, mm, -1);
- 
- 	/* try collapse pmd for compound page */
--	if (!ret && orig_page_huge)
-+	if (ret == UWO_DONE_COLLAPSE)
- 		collapse_pte_mapped_thp(mm, vaddr, false);
- 
--	return ret;
-+	return ret < 0 ? ret : 0;
- }
- 
- /**
--- 
-2.45.1
-
+> 
+> Johan
 
