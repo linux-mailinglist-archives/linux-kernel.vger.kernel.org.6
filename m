@@ -1,197 +1,134 @@
-Return-Path: <linux-kernel+bounces-200912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F7B8FB677
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:01:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86CDD8FB675
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8D31F21FF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:01:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391061F21FC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A6A13D2B6;
-	Tue,  4 Jun 2024 15:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331E013D258;
+	Tue,  4 Jun 2024 15:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/2iz4Nz"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="JaCfY7qJ"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9462B9C5;
-	Tue,  4 Jun 2024 15:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8844C12B17A;
+	Tue,  4 Jun 2024 15:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513309; cv=none; b=rBCKxp79VYxCr+1vo823xvuKYkdKK2nH7NKdSlBrCZISLlEE6R2HN3MRuWrivBrYzT0IA5UU2U/c5ikJBrHJH88yNQHJ1RMxegHj5N8MKXO2+6jkqihpVsqbWsLbGh6ibQuzmw0Z9BYjuyUgIF5/mPPCfpgKWmZ8ujG//v9M8Es=
+	t=1717513293; cv=none; b=lmiZA/emnC0YfOgyPLlVaSK8U26JqkUGTylPT4x3IeW54xrI+6y01WcSpek4jwWpEXnjHYOMt9RZE9oudxLjArjMvKmBm6LJMbq9mS3Evs2thcbeQWsEPzWI3CTLsj9R01o+hvd1IPlRUGvgQgNRe5CZWjvxe3uaYP/R3pwVFWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513309; c=relaxed/simple;
-	bh=FBKiAGtmKJHWNrtxjlG2jSJk1wPquEKW9T6nmOhWZEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z8KxlJ76NG1mDnZiIytN+xhztkkTDq6O467IE2/rWU1XcwMXZlLjt9aXeLy+EmoTPj/JTzNxwgqbOKQcqA00nHJtk2ThjJg1CwGbuk7HoBXznAsTof2NZtL78HDSPOfIQHg5Q5FKNJmNYEtGTKREv4+7QngGM4rGRhB8F4BnkOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/2iz4Nz; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f44b42d1caso43315525ad.0;
-        Tue, 04 Jun 2024 08:01:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717513307; x=1718118107; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+zzDBNu/Km1bywTdzn1zNJ2Ca7zC5GTmKmM9CZqf88E=;
-        b=b/2iz4NzNpSYvpte8HqOw58iz17gwmscwpZmea9mBnIAZ2e8WxfD7KhjFnJbpTMgX5
-         GA4+bG+LfA533IT89IFVbwKovsWiieSrVvIwDYfoqNCmWY6Y/mTI/xlg0bidhz+k4z3O
-         H5sbRLYXKrJIpA6QeYiVpV2sa1TblCWrlpETPhGo97j5+tmEzsvdBoRpUpy35VgUvFLs
-         ZWOIgCaRnrEr0Rt09UihrgdHPFbt+5zpJHhSoyy7apcliuDBA8GYsUeM7dUL3FCeuJFl
-         7UfpDdcwOjpL3uQZ+cyFKZoeVU7IzkwMIf58SMG92G4yOgTY409tvrNIl++joTac6QWC
-         87Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717513307; x=1718118107;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+zzDBNu/Km1bywTdzn1zNJ2Ca7zC5GTmKmM9CZqf88E=;
-        b=kOK+HpqjsrDzqMQu5EuUQ8VukO0Hq0uPK1Bh2kTcXS+hMX3/n/sDsIsDHslAsyzL6t
-         kZ3yEMwj+4zh6BBfq7WeW6B5iDtLR1DlnOfMPNuTxKPTTjb/CQs2/Am/c275WkQegBno
-         jZwoMJ0Chm1nrO1k3Y/OyRe9T+fLSqoyqNCgbXvdPG6llaa//FycP7A2D2hUISHl4GFC
-         bgc8dYf8+sK6r2GBAC306+E7Cu70ERtEQPrIPTLtHuJvZOI9pChZgafox87qfIHX+4fP
-         MPnqXqc2wXduHIvoLCChmXqXOLunkUtKgCxrJy9noeuUZGZZ1R3BkaZRPJu943t2pcvH
-         Nnvw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3vKWKZYJ+W1a6gJgF+1o3t35yGwg0Pq8hwMktNO+r90fQiNOOUqRPrKq30q4m5krCi/+FHilIEZZs6I0geUEyCHYxSOdlniPbG/uq
-X-Gm-Message-State: AOJu0YyEeCWL3t6i62cD7acEaxajszLgTxurohtAqPmOYpHpReNrdjtc
-	d00vq0FGVBjL3efs3d6eM+CFLoc6viqMwk7gYAc2Du9Y8R/xGOO0
-X-Google-Smtp-Source: AGHT+IF1zgJrv6FVFO4d/uMJ9aDbi7Mhv60qd0JUz/GquNgBBdeZzjzd6K0FINdAHBDxfCTjnp5JGg==
-X-Received: by 2002:a17:902:e846:b0:1f3:4d2:7025 with SMTP id d9443c01a7336-1f6370985fcmr137086895ad.49.1717513301179;
-        Tue, 04 Jun 2024 08:01:41 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dd731sm86202895ad.144.2024.06.04.08.01.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 08:01:40 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: iommu@lists.linux.dev
-Cc: linux-arm-msm@vger.kernel.org,
-	Stephen Boyd <swboyd@chromium.org>,
-	Rob Clark <robdclark@chromium.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jerry Snitselaar <jsnitsel@redhat.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] iommu/arm-smmu: Pretty-print context fault related regs
-Date: Tue,  4 Jun 2024 08:01:31 -0700
-Message-ID: <20240604150136.493962-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1717513293; c=relaxed/simple;
+	bh=8Jm8F2/dwM9qEQfz+qJAFkEyVXbrXZXBdNIZ5BuXr2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=smxosSMY+/R1r7CqImjJpiq9oNSU7TntGrgqkE+jooMOHqPyaM61MAAFoB0fVjsIozWHVqbid6Q0AWeNJy9DJeIWlzZMaeHsW5C/cID/4gqrR/4RoEcbQUSGeUjbnDkqEkxJZ4881n8JlemVOk4vzbJt3cgQugQN0atGnWo/m8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=JaCfY7qJ; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1717513289;
+	bh=8Jm8F2/dwM9qEQfz+qJAFkEyVXbrXZXBdNIZ5BuXr2k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JaCfY7qJuYVKmFyud562qOCxarYOInMBFZ+zNXkuL8HMrR0owAPl2oirtBuDY7M5S
+	 rNnxLtlVwqu95t65+edadHe16ZEsPGfj4smGg+RWtUujg1Pngto+uNnzFP+ky5blIA
+	 vlkyr0NSaI0ilAdgKi51KfHdOzPh9Rh2wvSGfsFfr0pcgTjdDJzbykytQkEKkMtVPO
+	 4ZlSFH/T66RXHvbFHjcs7ztgi8rA1CzVoCHlOlPnAoYpF/kdpALKWylLFxlEsioh4G
+	 HcKFAjZEt7G+r0o/BmU6X/KBU8j5andpQvCoSnt3ud5Mv2f0VSYDzsDGva2qGaVdo+
+	 V7gRoS8sz9uOA==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Vtv1h6P9bz132v;
+	Tue,  4 Jun 2024 11:01:28 -0400 (EDT)
+Message-ID: <419b80da-9cbf-4bb2-aabb-dc04f0fb0f37@efficios.com>
+Date: Tue, 4 Jun 2024 11:02:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] tracing/fprobe: Support raw tracepoint events on
+ modules
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, don <zds100@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <171723014778.258703.6731294779199848686.stgit@devnote2>
+ <171723016594.258703.1629777910752596529.stgit@devnote2>
+ <fbfec8d9-d0ed-4384-bbd2-dd5c1e568ed1@efficios.com>
+ <20240604084955.29b9440687522a1347e0e7cd@kernel.org>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240604084955.29b9440687522a1347e0e7cd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Rob Clark <robdclark@chromium.org>
+On 2024-06-03 19:49, Masami Hiramatsu (Google) wrote:
+> On Mon, 3 Jun 2024 15:50:55 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>> On 2024-06-01 04:22, Masami Hiramatsu (Google) wrote:
+>>> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>>>
+>>> Support raw tracepoint event on module by fprobe events.
+>>> Since it only uses for_each_kernel_tracepoint() to find a tracepoint,
+>>> the tracepoints on modules are not handled. Thus if user specified a
+>>> tracepoint on a module, it shows an error.
+>>> This adds new for_each_module_tracepoint() API to tracepoint subsystem,
+>>> and uses it to find tracepoints on modules.
+>>
+>> Hi Masami,
+>>
+>> Why prevent module unload when a fprobe tracepoint is attached to a
+>> module ? This changes the kernel's behavior significantly just for the
+>> sake of instrumentation.
+> 
+> I don't prevent module unloading all the time, just before registering
+> tracepoint handler (something like booking a ticket :-) ).
+> See the last hunk of this patch, it puts the module before exiting
+> __trace_fprobe_create().
 
-Parse out the bitfields for easier-to-read fault messages.
+So at least this is transient, but I still have concerns, see below.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
-Stephen was wanting easier to read fault messages.. so I typed this up.
+>>
+>> As an alternative, LTTng-modules attach/detach to/from modules with the
+>> coming/going notifiers, so the instrumentation gets removed when a
+>> module is unloaded rather than preventing its unload by holding a module
+>> reference count. I would recommend a similar approach for fprobe.
+> 
+> Yes, since tracepoint subsystem provides a notifier API to notify the
+> tracepoint is gone, fprobe already uses it to find unloading and
+> unregister the target function. (see __tracepoint_probe_module_cb)
 
-Resend with the new iommu list address
+I see.
 
- drivers/iommu/arm/arm-smmu/arm-smmu.c | 53 +++++++++++++++++++++++++--
- drivers/iommu/arm/arm-smmu/arm-smmu.h |  5 +++
- 2 files changed, 54 insertions(+), 4 deletions(-)
+It looks like there are a few things we could improve there:
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-index c572d877b0e1..06712d73519c 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-@@ -411,6 +411,8 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
- 	unsigned long iova;
- 	struct arm_smmu_domain *smmu_domain = dev;
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
-+	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
-+				      DEFAULT_RATELIMIT_BURST);
- 	int idx = smmu_domain->cfg.cbndx;
- 	int ret;
- 
-@@ -425,10 +427,53 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
- 	ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
- 		fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
- 
--	if (ret == -ENOSYS)
--		dev_err_ratelimited(smmu->dev,
--		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
--			    fsr, iova, fsynr, cbfrsynra, idx);
-+	if (ret == -ENOSYS && __ratelimit(&rs)) {
-+		static const struct {
-+			u32 mask; const char *name;
-+		} fsr_bits[] = {
-+			{ ARM_SMMU_FSR_MULTI,  "MULTI" },
-+			{ ARM_SMMU_FSR_SS,     "SS"    },
-+			{ ARM_SMMU_FSR_UUT,    "UUT"   },
-+			{ ARM_SMMU_FSR_ASF,    "ASF"   },
-+			{ ARM_SMMU_FSR_TLBLKF, "TLBLKF" },
-+			{ ARM_SMMU_FSR_TLBMCF, "TLBMCF" },
-+			{ ARM_SMMU_FSR_EF,     "EF"     },
-+			{ ARM_SMMU_FSR_PF,     "PF"     },
-+			{ ARM_SMMU_FSR_AFF,    "AFF"    },
-+			{ ARM_SMMU_FSR_TF,     "TF"     },
-+		}, fsynr0_bits[] = {
-+			{ ARM_SMMU_FSYNR0_WNR,    "WNR"    },
-+			{ ARM_SMMU_FSYNR0_PNU,    "PNU"    },
-+			{ ARM_SMMU_FSYNR0_IND,    "IND"    },
-+			{ ARM_SMMU_FSYNR0_NSATTR, "NSATTR" },
-+			{ ARM_SMMU_FSYNR0_PTWF,   "PTWF"   },
-+			{ ARM_SMMU_FSYNR0_AFR,    "AFR"    },
-+		};
-+
-+		pr_err("%s %s: Unhandled context fault: fsr=0x%x (",
-+		       dev_driver_string(smmu->dev), dev_name(smmu->dev), fsr);
-+
-+		for (int i = 0, n = 0; i < ARRAY_SIZE(fsr_bits); i++) {
-+			if (fsr & fsr_bits[i].mask) {
-+				pr_cont("%s%s", (n > 0) ? "|" : "", fsr_bits[i].name);
-+				n++;
-+			}
-+		}
-+
-+		pr_cont("), iova=0x%08lx, fsynr=0x%x (S1CBNDX=%u", iova, fsynr,
-+			(fsynr >> 16) & 0xff);
-+
-+		for (int i = 0; i < ARRAY_SIZE(fsynr0_bits); i++) {
-+			if (fsynr & fsynr0_bits[i].mask) {
-+				pr_cont("|%s", fsynr0_bits[i].name);
-+			}
-+		}
-+
-+		pr_cont("|PLVL=%u), cbfrsynra=0x%x, cb=%d\n",
-+			fsynr & 0x3,   /* FSYNR0.PLV */
-+			cbfrsynra, idx);
-+
-+	}
- 
- 	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
- 	return IRQ_HANDLED;
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-index 836ed6799a80..3b051273718b 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-@@ -223,6 +223,11 @@ enum arm_smmu_cbar_type {
- 
- #define ARM_SMMU_CB_FSYNR0		0x68
- #define ARM_SMMU_FSYNR0_WNR		BIT(4)
-+#define ARM_SMMU_FSYNR0_PNU		BIT(5)
-+#define ARM_SMMU_FSYNR0_IND		BIT(6)
-+#define ARM_SMMU_FSYNR0_NSATTR		BIT(8)
-+#define ARM_SMMU_FSYNR0_PTWF		BIT(10)
-+#define ARM_SMMU_FSYNR0_AFR		BIT(11)
- 
- #define ARM_SMMU_CB_FSYNR1		0x6c
- 
+1) With your approach, modules need to be already loaded before
+attaching an fprobe event to them. This effectively prevents
+attaching to any module init code. Is there any way we could allow
+this by implementing a module coming notifier in fprobe as well ?
+This would require that fprobes are kept around in a data structure
+that matches the modules when they are loaded in the coming notifier.
+
+2) Given that the fprobe module going notifier is protected by the
+event_mutex, can we use locking rather than reference counting
+in fprobe attach to guarantee the target module is not reclaimed
+concurrently ? This would remove the transient side-effect of
+holding a module reference count which temporarily prevents module
+unload.
+
+Thanks,
+
+Mathieu
+
 -- 
-2.45.1
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
