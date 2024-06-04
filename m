@@ -1,232 +1,109 @@
-Return-Path: <linux-kernel+bounces-201317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8398FBCF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:03:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3D38FBCF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C711F20846
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:03:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A07E2855E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB59914B960;
-	Tue,  4 Jun 2024 20:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A56F14BFBF;
+	Tue,  4 Jun 2024 20:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILEvU0gT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhxrVaaA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC45A146D78;
-	Tue,  4 Jun 2024 20:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC9214B061;
+	Tue,  4 Jun 2024 20:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717531407; cv=none; b=XQG8YT2IdSsPg6iow458VgNZIhp9PrDd4kqA+IJZ2Y8HJORGqOdM8gLK5s5kxlO4qG7adaSNJ0iEvyDeFuvgMZSVmwg+Ysf+ZF2XHFUGZYQRWplbPg+IIbKzhqQFCZmKGiTlHokIYVzEGrFDZuYV3/zCkGiASeIdApWMBCMpGW0=
+	t=1717531412; cv=none; b=ZqZ1qFX4qDGlV2aHaZaIHzUP3LeF0i8y6HPaZ/TWGTApZ2sd1iXe6hbbb+vLL5poC66ZH7jNoTELaeXt+rJfDq8tFaDWBu6IbxGJXxha/GJuhyF6ui2AFJvUjmrWIWWMZZQ7qhd3QW9P/6D2Yuj4QmDVUOpSteuCKbjrnRj2XHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717531407; c=relaxed/simple;
-	bh=DggXebc+5AYH4oM8/iWPJWB6VFy1ERgOM6IPvJ6rIjs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GdapsL4AjmEWo/TDMK5A4lliHBFjtvhG/d0tp0zMl0HlmQWrzuwHYB/xskIklrNQazwQIexhzvuIt89JU1xkZZ4ARFXK2TQf2C5N5j1nF9rRPbd5EElaf5r2pIH468ZWK0eugQoXaJaJojajPYN501kihdioqmdPPG/KU6hPvIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILEvU0gT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D32F7C2BBFC;
-	Tue,  4 Jun 2024 20:03:21 +0000 (UTC)
+	s=arc-20240116; t=1717531412; c=relaxed/simple;
+	bh=VCLwUoI/i0JqcxtBWc9VZ9k+0Uwoi+MZSL/jW1yYI90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lc3PWUlWOJJMsljP0ospvgPyy3du9vAu3XACNJXf/OcUx3kOC3FdHZxjK9gIHZ+bQfHRkxZ5hs4/JqoITPI+1LUSLPn3zY3pY9RpPpPta8fSo2a3XVQMQg/Q7T+lVqIMr+3krKQLkhKUN2oQoz+9c4xsec743RkAmaaQsnj8dog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhxrVaaA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E991BC2BBFC;
+	Tue,  4 Jun 2024 20:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717531406;
-	bh=DggXebc+5AYH4oM8/iWPJWB6VFy1ERgOM6IPvJ6rIjs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ILEvU0gTFvCYyzXJcUBLPA4oft6W+BmxISq3P/cmEVVan/6LPmsmuTLbkAhJbgWQn
-	 gIAeCrHBeykLM1cNbVWZcK6qKgTNNnWyCpcRTkYuPTRED6Ne6vcG0Zv1ao/BqxcG/2
-	 E1eT/T6CMjmllRxsluhBxZr/DlnGkIiWqYUGMe7WwGO0gRlbuzGduycAPxnhXvZmsG
-	 Q6YyReZzxwZuMK+gGS9ZV26ycoQtJmQQp8m6VDqVRSVAbyUCGWcJOlv3WViGAymALC
-	 ALMHNn+nkghG0wl/CozwcDe3HDiPtGjvwTHHmCvqVgbyfN8h4Il36CGDp8PumztyMJ
-	 Jh5YUsNhjUKoA==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [RFC bpf-next 04/10] libbpf: Add support for uprobe multi session attach
-Date: Tue,  4 Jun 2024 22:02:15 +0200
-Message-ID: <20240604200221.377848-5-jolsa@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240604200221.377848-1-jolsa@kernel.org>
-References: <20240604200221.377848-1-jolsa@kernel.org>
+	s=k20201202; t=1717531412;
+	bh=VCLwUoI/i0JqcxtBWc9VZ9k+0Uwoi+MZSL/jW1yYI90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PhxrVaaAL/SQLCbWCV8L5NlB9hKWEbEPzK2/sW4rxlhIq+KMW24Bx9K9uvgt7huId
+	 6VSh4oqp3UPYMb6mPQaGu8Sm3M9Ztcw7zuy8Px9HOFUvqEyQnntFm572ywlf8Q8Awy
+	 iDOkZdtSbfD1y3ViXbAA+9w3bdVlNsvrwwHPpn22EgRMM/nkhdFap6U6pHBnsNeRSc
+	 +YuFTeFyYQfH1BKjObU1PuywCfHXzaQ344ey/pEl4+kX1YZy9iYTCWYj7Mxkuz6Ac6
+	 JospFPvxH+bFjKN4lmumpwOxsdbhi2hNc8QToF+UbnKD8XEBevjEKq0SKLKqWAJWSG
+	 b0+M7zQx/rMFg==
+Date: Tue, 4 Jun 2024 15:03:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@somainline.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Del Regno <angelogioacchino.delregno@somainline.org>,
+	Loic Poulain <loic.poulain@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/16] dt-bindings: clock: qcom: reference qcom-gcc.yaml
+Message-ID: <20240604200329.GA1295824-robh@kernel.org>
+References: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
 
-Adding support to attach program in uprobe session mode
-with bpf_program__attach_uprobe_multi function.
+On Fri, May 31, 2024 at 03:52:18PM +0200, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Unify Qualcomm clock controllers by referencing qcom,gcc.yaml where
+> applicable.  Several existing bindings for these display/GPU/CAM clock
+> controllers already do it.
+> 
+> No external dependencies, this CAN be applied independently, but require
+> power-domain-cells in each binding, just like Dmitry's new set is doing.
+> 
+> https://lore.kernel.org/all/20240529-qcom-gdscs-v2-0-69c63d0ae1e7@linaro.org/
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (16):
+>       dt-bindings: clock: qcom,sm8450-videocc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,videocc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,dispcc-sc8280xp: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,dispcc-sm6350: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,dispcc-sm8x50: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,gpucc-sdm660: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,gpucc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,msm8998-gpucc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,qcm2290-dispcc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,sc7180-dispcc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,sc7280-dispcc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,sdm845-dispcc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,sm6115-dispcc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,sm8450-dispcc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,sm8550-dispcc: reference qcom,gcc.yaml
+>       dt-bindings: clock: qcom,sm8450-gpucc: reference qcom,gcc.yaml
 
-Adding session bool to bpf_uprobe_multi_opts struct that allows
-to load and attach the bpf program via uprobe session.
-the attachment to create uprobe multi session.
-
-Also adding new program loader section that allows:
-SEC("uprobe.session/bpf_fentry_test*")
-
-and loads/attaches uprobe program as uprobe session.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/lib/bpf/bpf.c    |  1 +
- tools/lib/bpf/libbpf.c | 50 ++++++++++++++++++++++++++++++++++++++++--
- tools/lib/bpf/libbpf.h |  4 +++-
- 3 files changed, 52 insertions(+), 3 deletions(-)
-
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 2a4c71501a17..becdfa701c75 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -776,6 +776,7 @@ int bpf_link_create(int prog_fd, int target_fd,
- 			return libbpf_err(-EINVAL);
- 		break;
- 	case BPF_TRACE_UPROBE_MULTI:
-+	case BPF_TRACE_UPROBE_SESSION:
- 		attr.link_create.uprobe_multi.flags = OPTS_GET(opts, uprobe_multi.flags, 0);
- 		attr.link_create.uprobe_multi.cnt = OPTS_GET(opts, uprobe_multi.cnt, 0);
- 		attr.link_create.uprobe_multi.path = ptr_to_u64(OPTS_GET(opts, uprobe_multi.path, 0));
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index d1627a2ca30b..a0044448a708 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -9328,6 +9328,7 @@ static int attach_trace(const struct bpf_program *prog, long cookie, struct bpf_
- static int attach_kprobe_multi(const struct bpf_program *prog, long cookie, struct bpf_link **link);
- static int attach_kprobe_session(const struct bpf_program *prog, long cookie, struct bpf_link **link);
- static int attach_uprobe_multi(const struct bpf_program *prog, long cookie, struct bpf_link **link);
-+static int attach_uprobe_session(const struct bpf_program *prog, long cookie, struct bpf_link **link);
- static int attach_lsm(const struct bpf_program *prog, long cookie, struct bpf_link **link);
- static int attach_iter(const struct bpf_program *prog, long cookie, struct bpf_link **link);
- 
-@@ -9346,6 +9347,7 @@ static const struct bpf_sec_def section_defs[] = {
- 	SEC_DEF("kprobe.session+",	KPROBE,	BPF_TRACE_KPROBE_SESSION, SEC_NONE, attach_kprobe_session),
- 	SEC_DEF("uprobe.multi+",	KPROBE,	BPF_TRACE_UPROBE_MULTI, SEC_NONE, attach_uprobe_multi),
- 	SEC_DEF("uretprobe.multi+",	KPROBE,	BPF_TRACE_UPROBE_MULTI, SEC_NONE, attach_uprobe_multi),
-+	SEC_DEF("uprobe.session+",	KPROBE,	BPF_TRACE_UPROBE_SESSION, SEC_NONE, attach_uprobe_session),
- 	SEC_DEF("uprobe.multi.s+",	KPROBE,	BPF_TRACE_UPROBE_MULTI, SEC_SLEEPABLE, attach_uprobe_multi),
- 	SEC_DEF("uretprobe.multi.s+",	KPROBE,	BPF_TRACE_UPROBE_MULTI, SEC_SLEEPABLE, attach_uprobe_multi),
- 	SEC_DEF("ksyscall+",		KPROBE,	0, SEC_NONE, attach_ksyscall),
-@@ -11682,6 +11684,40 @@ static int attach_uprobe_multi(const struct bpf_program *prog, long cookie, stru
- 	return ret;
- }
- 
-+static int attach_uprobe_session(const struct bpf_program *prog, long cookie, struct bpf_link **link)
-+{
-+	char *binary_path = NULL, *func_name = NULL;
-+	LIBBPF_OPTS(bpf_uprobe_multi_opts, opts,
-+		.session = true,
-+	);
-+	int n, ret = -EINVAL;
-+	const char *spec;
-+
-+	*link = NULL;
-+
-+	spec = prog->sec_name + sizeof("uprobe.session/") - 1;
-+	n = sscanf(spec, "%m[^:]:%m[^\n]",
-+		   &binary_path, &func_name);
-+
-+	switch (n) {
-+	case 1:
-+		/* but auto-attach is impossible. */
-+		ret = 0;
-+		break;
-+	case 2:
-+		*link = bpf_program__attach_uprobe_multi(prog, -1, binary_path, func_name, &opts);
-+		ret = *link ? 0 : -errno;
-+		break;
-+	default:
-+		pr_warn("prog '%s': invalid format of section definition '%s'\n", prog->name,
-+			prog->sec_name);
-+		break;
-+	}
-+	free(binary_path);
-+	free(func_name);
-+	return ret;
-+}
-+
- static void gen_uprobe_legacy_event_name(char *buf, size_t buf_sz,
- 					 const char *binary_path, uint64_t offset)
- {
-@@ -11916,10 +11952,12 @@ bpf_program__attach_uprobe_multi(const struct bpf_program *prog,
- 	const unsigned long *ref_ctr_offsets = NULL, *offsets = NULL;
- 	LIBBPF_OPTS(bpf_link_create_opts, lopts);
- 	unsigned long *resolved_offsets = NULL;
-+	enum bpf_attach_type attach_type;
- 	int err = 0, link_fd, prog_fd;
- 	struct bpf_link *link = NULL;
- 	char errmsg[STRERR_BUFSIZE];
- 	char full_path[PATH_MAX];
-+	bool retprobe, session;
- 	const __u64 *cookies;
- 	const char **syms;
- 	size_t cnt;
-@@ -11990,12 +12028,20 @@ bpf_program__attach_uprobe_multi(const struct bpf_program *prog,
- 		offsets = resolved_offsets;
- 	}
- 
-+	retprobe = OPTS_GET(opts, retprobe, false);
-+	session  = OPTS_GET(opts, session, false);
-+
-+	if (retprobe && session)
-+		return libbpf_err_ptr(-EINVAL);
-+
-+	attach_type = session ? BPF_TRACE_UPROBE_SESSION : BPF_TRACE_UPROBE_MULTI;
-+
- 	lopts.uprobe_multi.path = path;
- 	lopts.uprobe_multi.offsets = offsets;
- 	lopts.uprobe_multi.ref_ctr_offsets = ref_ctr_offsets;
- 	lopts.uprobe_multi.cookies = cookies;
- 	lopts.uprobe_multi.cnt = cnt;
--	lopts.uprobe_multi.flags = OPTS_GET(opts, retprobe, false) ? BPF_F_UPROBE_MULTI_RETURN : 0;
-+	lopts.uprobe_multi.flags = retprobe ? BPF_F_UPROBE_MULTI_RETURN : 0;
- 
- 	if (pid == 0)
- 		pid = getpid();
-@@ -12009,7 +12055,7 @@ bpf_program__attach_uprobe_multi(const struct bpf_program *prog,
- 	}
- 	link->detach = &bpf_link__detach_fd;
- 
--	link_fd = bpf_link_create(prog_fd, 0, BPF_TRACE_UPROBE_MULTI, &lopts);
-+	link_fd = bpf_link_create(prog_fd, 0, attach_type, &lopts);
- 	if (link_fd < 0) {
- 		err = -errno;
- 		pr_warn("prog '%s': failed to attach multi-uprobe: %s\n",
-diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
-index 26e4e35528c5..04cdb38f527f 100644
---- a/tools/lib/bpf/libbpf.h
-+++ b/tools/lib/bpf/libbpf.h
-@@ -569,10 +569,12 @@ struct bpf_uprobe_multi_opts {
- 	size_t cnt;
- 	/* create return uprobes */
- 	bool retprobe;
-+	/* create session kprobes */
-+	bool session;
- 	size_t :0;
- };
- 
--#define bpf_uprobe_multi_opts__last_field retprobe
-+#define bpf_uprobe_multi_opts__last_field session
- 
- /**
-  * @brief **bpf_program__attach_uprobe_multi()** attaches a BPF program
--- 
-2.45.1
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
