@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-200950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C713F8FB72B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919238FB731
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82081286C09
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:29:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFA31F272D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7764147C98;
-	Tue,  4 Jun 2024 15:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A6F1487C9;
+	Tue,  4 Jun 2024 15:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUcn6va2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPBsyvsi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC97C1474BF;
-	Tue,  4 Jun 2024 15:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292B41482FD;
+	Tue,  4 Jun 2024 15:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717514931; cv=none; b=PMANM2/oUTD9m3Juf/oivUWpDY/Ow9IW008VIARBrPS3mNaAVst16m2v7ZjhbutxaAcAG6/VmNRAeL+aoCNzL4OI/Kuhu8kBYlaPt2DwUzijCVbnHj3Sjb1h7hPKIkcaGp7UXv6uRL7pQsbgBrdlRfmCWvA/gId05k/0RzfhY1I=
+	t=1717514933; cv=none; b=PL61RrDNqSgLtSbhGTfGTEV7mgjhNyiy7feV0Oi+KabftncATiyswPBYzBk1jzQoj93eOGMJS9eLvE/bGqdnsqsX5rDcyMzbGpcEBwAHy/KKreyEwxYg211O9KjYilRqM4XTQHuLvcdxHi59xJUFzgFvuV18W8yWDJYVx+ZD7J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717514931; c=relaxed/simple;
-	bh=R1YRD2xWbJ4CKWMqqUw5zYxQzZsVAGnyTTQmzDLurbk=;
+	s=arc-20240116; t=1717514933; c=relaxed/simple;
+	bh=x/4us6GB27e8U5onR/kVn8KG91qTiGMupA4imljcjo0=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=s/ubAnHJ3yQZdxNznzQNGQMu1kpnY2vxhVHQ+SWDr7ofdPx15c3OA3kObzbE479OXROrZZ4Q0g49tuPfKBOJDSyCp+/7EfMTP5fi2tbeA/0zoUGQRmpO65Ns9m0NW7yhtwxvQHJAEmrnRh0wU/SNJzS/PITyRqFLdZEXWkYDzNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUcn6va2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90147C2BBFC;
-	Tue,  4 Jun 2024 15:28:50 +0000 (UTC)
+	 Message-Id:Subject; b=BTqpJ91kKh4s/QfUvxtO+Nxvm1jwqnIlOjLpRbWocKUqF4Zp0Lq6IQ9bOT3oUNHA5JAEOgK0lVneGcJO4bWhzIWoz6SOSg/QIzyE/9X+Ng+g+pLhFasL4phLcrXkpiIJ8nVt92wtQSJWWWnnSf92Q+rDqX0YDs+wW/xPWVyzUNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPBsyvsi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC733C4AF07;
+	Tue,  4 Jun 2024 15:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717514930;
-	bh=R1YRD2xWbJ4CKWMqqUw5zYxQzZsVAGnyTTQmzDLurbk=;
+	s=k20201202; t=1717514933;
+	bh=x/4us6GB27e8U5onR/kVn8KG91qTiGMupA4imljcjo0=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=hUcn6va2iO2Svgq2BjnHS2k7iJpLoBCgeIqURzrr3foQWSsbvm3qFmPoZr5y9cMIw
-	 Q3TtZ1s23R3mRAbGvoharsyCtOKLx/WRtOC6mnCK+7cl+hPtXLDVzfOd0Hss44ty7E
-	 ExDmlClfc4BRbqd73lIxKA2Ae/NfymL0urM8EreUFyolUMQDHP2X5JhYJ91skDzFaG
-	 t4toNFuG9AlRxYCIbi61Zwcw6bkcuysdCRZdptyuRuFuLclBeUCVs2rpuic74ZYTaC
-	 M4bHe5uuVSoRgA19XfVWK4RHFdCSld1E4mqvOEwzhZ30bZQ64goqkJAI5caXLk9Bkb
-	 v6m4Otf9kYxYQ==
-Date: Tue, 04 Jun 2024 10:28:48 -0500
+	b=YPBsyvsiAfAIWhD1hc0mcMqzQulHZF5EuqgnkBlF1c3YREo1nr0hU7Z9wZGAXGE9E
+	 iOE8VyzF2NZLvKWXD2mKS8ZKZrmKzBCS7jyIQkAINe4FMx3gfmEyVbTW7jiOHrwsnR
+	 yImw397ONLjUU0conlhC8sygyVPq9ZUGNnhBSiahO03yjPdmKXMWRuX9i2nALIodAr
+	 8iteTWcYiF8YsNnNXd5xPHiskSoTmvelYkNgJpqIb6+nD0M/XOD6tX1qCe/kyulkhO
+	 Rjj7sTArrnN63JO4WTzNpjIFXfkY1u2D2j9kWD2gver+G+7CePcEWxR0ID/gJrLVjl
+	 zAEIkTvfaeaLA==
+Date: Tue, 04 Jun 2024 10:28:51 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,27 +50,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20240602104021.387713-1-amadeus@jmu.edu.cn>
-References: <20240602104021.387713-1-amadeus@jmu.edu.cn>
-Message-Id: <171751454718.785691.9170634580021432127.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: mediatek: Add Bananapi BPI-R3
- mini
+To: Christophe Roullier <christophe.roullier@foss.st.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
+ devicetree@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh+dt@kernel.org>, linux-stm32@st-md-mailman.stormreply.com, 
+ Marek Vasut <marex@denx.de>, Jose Abreu <joabreu@synopsys.com>, 
+ netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240603092757.71902-1-christophe.roullier@foss.st.com>
+References: <20240603092757.71902-1-christophe.roullier@foss.st.com>
+Message-Id: <171751454842.785918.9185314917748906790.robh@kernel.org>
+Subject: Re: [PATCH v3 00/11] Series to deliver Ethernet for STM32MP13
 
 
-On Sun, 02 Jun 2024 18:40:20 +0800, Chukun Pan wrote:
-> Add compatible for Bananapi BPI-R3 mini Router (Filogic 830).
+On Mon, 03 Jun 2024 11:27:46 +0200, Christophe Roullier wrote:
+> STM32MP13 is STM32 SOC with 2 GMACs instances
+>     GMAC IP version is SNPS 4.20.
+>     GMAC IP configure with 1 RX and 1 TX queue.
+>     DMA HW capability register supported
+>     RX Checksum Offload Engine supported
+>     TX Checksum insertion supported
+>     Wake-Up On Lan supported
+>     TSO supported
+> Rework dwmac glue to simplify management for next stm32 (integrate RFC from Marek)
 > 
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> ---
->  Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> V2: - Remark from Rob Herring (add Krzysztof's ack in patch 02/11, update in yaml)
+>       Remark from Serge Semin (upate commits msg)
+> V3: - Remove PHY regulator patch and Ethernet2 DT because need to clarify how to
+>       manage PHY regulator (in glue or PHY side)
+>     - Integrate RFC from Marek
+>     - Remark from Rob Herring in YAML documentation
+> 
+> Christophe Roullier (6):
+>   dt-bindings: net: add STM32MP13 compatible in documentation for stm32
+>   net: ethernet: stmmac: add management of stm32mp13 for stm32
+>   ARM: dts: stm32: add ethernet1 and ethernet2 support on stm32mp13
+>   ARM: dts: stm32: add ethernet1/2 RMII pins for STM32MP13F-DK board
+>   ARM: dts: stm32: add ethernet1 for STM32MP135F-DK board
+>   ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
+> 
+> Marek Vasut (5):
+>   net: stmmac: dwmac-stm32: Separate out external clock rate validation
+>   net: stmmac: dwmac-stm32: Separate out external clock selector
+>   net: stmmac: dwmac-stm32: Extract PMCR configuration
+>   net: stmmac: dwmac-stm32: Clean up the debug prints
+>   net: stmmac: dwmac-stm32: Fix Mhz to MHz
+> 
+>  .../devicetree/bindings/net/stm32-dwmac.yaml  |  41 +++-
+>  arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi   |  71 +++++++
+>  arch/arm/boot/dts/st/stm32mp131.dtsi          |  31 +++
+>  arch/arm/boot/dts/st/stm32mp133.dtsi          |  30 +++
+>  arch/arm/boot/dts/st/stm32mp135f-dk.dts       |  24 +++
+>  arch/arm/configs/multi_v7_defconfig           |   1 +
+>  .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 176 ++++++++++++++----
+>  7 files changed, 327 insertions(+), 47 deletions(-)
+> 
+> --
+> 2.25.1
+> 
+> 
 > 
 
 
@@ -88,18 +131,10 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y mediatek/mt7986a-bananapi-bpi-r3-mini.dtb' for 20240602104021.387713-1-amadeus@jmu.edu.cn:
+New warnings running 'make CHECK_DTBS=y st/stm32mp135f-dk.dtb' for 20240603092757.71902-1-christophe.roullier@foss.st.com:
 
-arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: crypto@10320000: interrupts: [[0, 116, 4], [0, 117, 4], [0, 118, 4], [0, 119, 4]] is too short
-	from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
-arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: crypto@10320000: interrupt-names: ['ring0', 'ring1', 'ring2', 'ring3'] is too short
-	from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
-arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: ethernet@15100000: mac@0: Unevaluated properties are not allowed ('phy-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/mediatek,net.yaml#
-arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: ethernet@15100000: mac@1: Unevaluated properties are not allowed ('phy-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/mediatek,net.yaml#
-arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: rfkill: 'reset-gpios' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/rfkill-gpio.yaml#
+arch/arm/boot/dts/st/stm32mp135f-dk.dtb: adc@48003000: 'ethernet@5800e000' does not match any of the regexes: '^adc@[0-9]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/adc/st,stm32-adc.yaml#
 
 
 
