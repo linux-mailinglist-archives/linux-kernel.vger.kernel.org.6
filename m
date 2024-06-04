@@ -1,109 +1,151 @@
-Return-Path: <linux-kernel+bounces-200213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7CB8FAD0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:04:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84D78FAD0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 536B51F27D5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:04:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71E2228380E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741371419B3;
-	Tue,  4 Jun 2024 08:03:58 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E891419A2;
+	Tue,  4 Jun 2024 08:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="j9mr7DEo"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF57F446CF;
-	Tue,  4 Jun 2024 08:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB460446CF;
+	Tue,  4 Jun 2024 08:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717488238; cv=none; b=a3xGQgrAkAyT7SJK2+2S8DYF4bpc9n8/foz7Dm+i2yHXcJpkW7QIZFxNT7vm6agUctmUnNm0CMrFhMeBGE+nN5G/+m4gW5mC4K3CUYT/pxtpZc/QF3Ia4CkuYfWiuG5kmdggNYY59JU+vjnX8h0DD/jjcqVJZ5v2SJATHUMprsw=
+	t=1717488295; cv=none; b=jAQFwMR3XRkiCDpZJU4MP+/SZU6/G0nfyvqLAs3/cahFBwk58zYhd9PSP72iRTRolQOj6jA05Osh6AKKO+PXF2FxnTwv6ZXzNIYv747LMsmyx73eFZRAkwrH/o9xohNM4a4RtU6wNNb+Lgs+9Mh/ph4/Tk5wUCOBdWrCdSiyUQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717488238; c=relaxed/simple;
-	bh=V0bP/pgginWSfLSzil5x4CQ2ljLMsquK2SkQRT5M5bo=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZOVRWGFBM+NztcNo9x3MwPtWLWu1DDhS+/u5PFs33Qw6ykaWwQPymoGzdKrSDzpYbIkIBpyWfV3EAwDU+IA/N8Hwt6OQ9nLXWUz7v0MbP7etc3viC0GcbYgBDvJc7YsN8IKYq/3Wr1D15pjjVmVSVKr8N1wMaUtg7jiPQODFXHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Vtjh4643hzPnsm;
-	Tue,  4 Jun 2024 16:00:36 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0692A18007E;
-	Tue,  4 Jun 2024 16:03:53 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 4 Jun 2024 16:03:52 +0800
-CC: <yangyicong@hisilicon.com>, <will@kernel.org>, <mark.rutland@arm.com>,
-	<acme@kernel.org>, <namhyung@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<james.clark@arm.com>, <dongli.zhang@oracle.com>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>
-Subject: Re: [PATCH 0/3] Perf avoid opening events on offline CPUs
-To: Ian Rogers <irogers@google.com>
-References: <20240603092812.46616-1-yangyicong@huawei.com>
- <CAP-5=fXw0=dHORC-kObYFiAco64PGP4_uFr__f9YmVctWtGSfA@mail.gmail.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <3f43ecf1-ae3c-3418-9798-9f1aa0dcc3d2@huawei.com>
-Date: Tue, 4 Jun 2024 16:03:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1717488295; c=relaxed/simple;
+	bh=eufJhGzotYQO/wB5pebQ9hNTZ2+IitsAmtf4OoG013c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jcgb2Cvmux4Zvxh3N/Yp2XFOR5qvCM0Iw4HzKDXz3Fe4Bn09GwDuzXPXcRvLp0vRDF30uBc8JUbzHkAtQg4sHxSwV4gKANLDD4DkAyd2vAonJRd0Cn671viPvfzEcjSCQtRmFAePSKCWi/bt2pG2ln6gyZXPpNINxZ11nQr55KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=j9mr7DEo; arc=none smtp.client-ip=217.72.192.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1717488268; x=1718093068;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=UXqCa0XptvgIpred1zczDXpXI9rILjNkiEd9vbGoU9g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=j9mr7DEoWtpcjfsblOEorUc91XcXg/OHaOyzVdCe+2HqCK/0fv0bB9nmyd7Zrolc
+	 qWmt4NZZcLoloXOlBJfJuPwtEpKteiLpj18qZYDyBxo68Q2E8QMJeKNAIN1IRzDCF
+	 E8p8cr7S12Uqg6Ew+KROLTj13vWnHQ6RnCv/uTFBmvtoe/2JhIRHbNo26aWv8caUi
+	 KjGzOB49mg3le1R/mrWQfaoA531qrNL2j+O/cRIiYeABExD8WTeM5AU9ycUxpDTTu
+	 rK2UU3Hi9V1+S8YEtpwynosluMKZe/QP3kqk9cZNX6ke9I7h4ijPVdzPFTBSBl8JF
+	 mwqPn5pFTYgSpvt5WA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.67] ([80.128.165.129]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MOzGc-1rp3DD3Ojk-00PMmU; Tue, 04 Jun 2024 10:04:27 +0200
+Message-ID: <b8237590-e26d-48d4-be44-c0d884e3f703@oldschoolsolutions.biz>
+Date: Tue, 4 Jun 2024 10:04:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAP-5=fXw0=dHORC-kObYFiAco64PGP4_uFr__f9YmVctWtGSfA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/dma: Fix domain init
+To: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org
+Cc: iommu@lists.linux.dev, will@kernel.org, linux-kernel@vger.kernel.org,
+ Jon Hunter <jonathanh@nvidia.com>, Jerry Snitselaar <jsnitsel@redhat.com>
+References: <159193e80b6a7701c61b32d6119ac68989d457bd.1716997607.git.robin.murphy@arm.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <159193e80b6a7701c61b32d6119ac68989d457bd.1716997607.git.robin.murphy@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OcN+soGdAKSKnSO2NjId4WGmnb8wMNc7sZM+XuvY80M36wUuMrv
+ LXE6itywsWLzy6fG02s+qTPgCfCPPnUOz0/vZRj3UJnUiiXKks84Qd0+v6klbuajDX23G3Z
+ 6tvlYjGOk2Glvcemt6O04g7ZbQU8C18cqZEdvGLWxHOHXTt4FLXJDwjXkvnJ2L6rhKMclnb
+ 4p7V+aZQCDYV5Kxz3Bcig==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xdcExhbEqhk=;fOv1j4yEDtoBgX5w5WEtShNXvye
+ W5dbjzXrQJ7vHCNrYTRhX9FzPrMLwsiyCpsJLr5G2Clf6HcwqQukYOEI0344Env/WwgwNAdln
+ XMnL56ud1nu8BY/WX+zhUFAALlX0BGsIwGJLNM+WbWuVHhV90IQLgGyM1pIk4fWRp8FTEaeed
+ foFqSN6AgB/lmxyW5oGnmhtE8iv+KiALyJ2NdA433k15ESNIcb/m1nItr87oWulOkmcL8LNKN
+ bHaRB3sRnc07ATJYAq2VkMbThzaeq/F7XQGw+A5dk1aPCpTGYStCtyKUekWtdwlNa9HunPSEM
+ YGHF3DAUw76erpzzwtS8Tm0XKI2xsxZy7kHB6S2pG6kP1uuoXU4ehGdTB4z0okqGOcHUol82b
+ y5LsrJL3r3gtcodKQFhzhmM59FeOv0nQrCLknfFPmZlGBNHXWQvFwhB+DNTu4fMT7avn+NmdL
+ zyvcMPpck/IoJhzDwbSsW579lDcJIw3mKbgezJYJ7MWhajhSden95punsF3fVG6SDdziXn+ow
+ fITxKStzHPcCZoZpykP03NaI0M6f+9fyWC4akNFiE1EGfNHcUb9c+cL7ke0PAqbQ+tm/YVD8y
+ 9hjjR6AMVj+qRGB7v4keyemB64VFUqJkBxxV9UwTa5GJZZkmvATh25TJvBLZwijFrvg2lQXjW
+ Gvsz4gNx/3fiIkcy3bia8n+0cSYI88Jd8Aus5DDz8VEh5crn5DWJe8xIIyPAl09hlqp873Mcl
+ hchBiY8JuOQhHkegctInW3KjOBlliFUps0S2Yjofy7E3k6gUXCXMnA=
 
-On 2024/6/4 0:42, Ian Rogers wrote:
-> On Mon, Jun 3, 2024 at 2:33 AM Yicong Yang <yangyicong@huawei.com> wrote:
->>
->> From: Yicong Yang <yangyicong@hisilicon.com>
->>
->> If user doesn't specify the CPUs, perf will try to open events on CPUs
->> of the PMU which is initialized from the PMU's "cpumask" or "cpus" sysfs
->> attributes if provided. But we doesn't check whether the CPUs provided
->> by the PMU are all online. So we may open events on offline CPUs if PMU
->> driver provide offline CPUs and then we'll be rejected by the kernel:
->>
->> [root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
-> 
-> Generally Linux won't let you take CPU0 off line, I'm not able to
-> follow this step on x86 Linux. Fwiw, I routinely run perf with the
-> core hyperthread siblings offline.
-> 
+Hi Robin,
 
-It doesn't matter if it's the CPU0 offline or other CPUs. There's no restriction
-for CPU0 can go offline or not on arm64 and I just use this for example.
+I just tested this on my Windows Dev Kit 2023 running on EL2. This works
+now, thank you!
 
-I cannot reproduce it on x86. I think it may because we're initializing the
-pmu->cpus in different routines in pmu_cpumask(). There's no "cpus"
-for x86's core pmu on my x86 machine:
-root@ubuntu204:~# ls /sys/bus/event_source/devices/cpu/
-allow_tsx_force_abort  caps  events  format  freeze_on_smi  perf_event_mux_interval_ms  power  rdpmc  subsystem  type  uevent
+with best regards
 
-So pmu_cpumask() will infer it as an core pmu and initialize the cpus
-with online CPUs [1]. For arm64 there lies a "cpus" sysfs attributes
-so pmu->cpus are initialized from the "cpus" without checking each
-CPUs is online or not. That's what proposed in Patch 1/3.
+Jens
 
-There's a "cpus" sysfs for x86's hybrid machine, reading from the code [2].
-And it seems always reflect the online CPUs supported by that PMU.
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/pmu.c?h=perf-tools-next#n779
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree//arch/x86/events/intel/core.c#n5736
-
-Thanks.
+On 5/29/24 17:54, Robin Murphy wrote:
+> Despite carefully rewording the kerneldoc to describe the new direct
+> interaction with dma_range_map, it seems I managed to confuse myself in
+> removing the redundant force_aperture check and ended up making the code
+> not do that at all. This led to dma_range_maps inadvertently being able
+> to set iovad->start_pfn =3D 0, and all the nonsensical chaos which ensue=
+s
+> from there. Restore the correct behaviour of constraining base_pfn to
+> the domain aperture regardless of dma_range_map, and not trying to apply
+> dma_range_map constraints to the basic IOVA domain since they will be
+> properly handled with reserved regions later.
+>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Fixes: ad4750b07d34 ("iommu/dma: Make limit checks self-contained")
+> Tested-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+>
+> Since I've now got round to rebasing on -rc1, I figured I may as well
+> send a v2 with updated tags to avoid any confusion.
+>
+>   drivers/iommu/dma-iommu.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index f731e4b2a417..43520e7275cc 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -686,15 +686,15 @@ static int iommu_dma_init_domain(struct iommu_doma=
+in *domain, struct device *dev
+>
+>   	/* Check the domain allows at least some access to the device... */
+>   	if (map) {
+> -		dma_addr_t base =3D dma_range_map_min(map);
+> -		if (base > domain->geometry.aperture_end ||
+> +		if (dma_range_map_min(map) > domain->geometry.aperture_end ||
+>   		    dma_range_map_max(map) < domain->geometry.aperture_start) {
+>   			pr_warn("specified DMA range outside IOMMU capability\n");
+>   			return -EFAULT;
+>   		}
+> -		/* ...then finally give it a kicking to make sure it fits */
+> -		base_pfn =3D max(base, domain->geometry.aperture_start) >> order;
+>   	}
+> +	/* ...then finally give it a kicking to make sure it fits */
+> +	base_pfn =3D max_t(unsigned long, base_pfn,
+> +			 domain->geometry.aperture_start >> order);
+>
+>   	/* start_pfn is always nonzero for an already-initialised domain */
+>   	mutex_lock(&cookie->mutex);
 
