@@ -1,266 +1,136 @@
-Return-Path: <linux-kernel+bounces-200063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096F28FAA09
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:35:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9FA8FAA0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 708CDB231D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:35:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D224F1F24E45
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F76B13DDC6;
-	Tue,  4 Jun 2024 05:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BA713E3ED;
+	Tue,  4 Jun 2024 05:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WZAMx6ad"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ECC13D601;
-	Tue,  4 Jun 2024 05:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bK8/7ODJ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A39113D2AB;
+	Tue,  4 Jun 2024 05:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717479321; cv=none; b=TKrXxKfySWqxyAPYjE7b3dbHKz3ZWZk7hhQgNxJY9ogshCS+YuND7kjeQl8T3ZrBK8uk20bDxjiTY1tuWCEMtmT77EU6kiljfMqTPM2qyoI/NsTTwqx8LDHhEmXeivSdyWHwaow/hE+9T5lQMk4LBb74hwPs3NPrNGYTQqR72Xs=
+	t=1717479410; cv=none; b=pRkccZA/97kEIwUi7Sr9IY7E/TYKeye2oPw3M0pqfavlQZykYkVsyZu4aMxTSl5gGAxu+etGOpz5yZ5df/jhB7DfGnO5IqRjJCTzI+0GpHaDi3gg0Hq7wXYmtwzi94DhVUQxfUh6agn76Jd5g3BgtAhAF+GVvMDPEibShlJZxlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717479321; c=relaxed/simple;
-	bh=Rz0cteULpne0ZQB9dwKZjpz0pPmlG/HOPIykIoYlxwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dxjGe4NkX0aliahdrUQtinb+IwKhDBe4iWpDvVLlWPZxA7JHrp2NTiwFSgdIKtnK/aBDkBpfJZWJoDE7kYqen9+55sTYBeSS0xRF5asRdXWvtRvVAlBwR3dg1GaI1230lH9v/f+4/nO+zmOqDV/1OKsxie7HsTC/sEZjDHk7IoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WZAMx6ad; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4544iqpt000456;
-	Tue, 4 Jun 2024 05:35:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jdbbjeQG8RYzi3g6LQb9S6L57zTUKn8HTInOgAFXRZM=; b=WZAMx6adVTPKJkBM
-	jGBK9ifGMbohAW1bkRClLR/X3FYdy/Hww+lYO635U4L8IYPn0UbQqlNmpQQaVjuF
-	TxdcsYXbzg5MjO6i4vG6RWP5FljgU5dWYwuE+wBSTAaY/R+SpklkSFuuZVbQmSVM
-	hLMPGcjMs1brvfumTpB5l8Dtktwhtjm0kOzx1Z8g5ASdX1LYZV6VLjOWjpt4JOHI
-	nCU5QdAWRpPjGhQ95LKQMQQKbvETGf+38wCxOpdfKQMhWWLtDNwOGaS7oL5nLW+M
-	VGRfG9/ogtXHfmi8jcFmKHypUzdTRXDp0pRC7+Z3+xVhvtwFG46n6NJ/IYt6v8Ob
-	mFwuoQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw59nkts-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 05:35:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4545ZEkN022283
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 05:35:14 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 22:35:08 -0700
-Message-ID: <f4b7ecd0-9df6-442f-be91-6f5954e0cd6c@quicinc.com>
-Date: Tue, 4 Jun 2024 13:35:06 +0800
+	s=arc-20240116; t=1717479410; c=relaxed/simple;
+	bh=jXpqd3FK/H/WNfQ5ni71NMR/LyQjoR0FbNVZYK5g1pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=II3WYOVDhkK+vDac/zno5K8erOT9nLyXLGXQebkz6p6u+i9BvhRs5CFmFsq0YUf1pEMRGZBE5YojB3orW38pvqnU6pQrXCeusl8G3I7QuBLJ3v9AXB9mCOqalcnnDBAeegpvcr0DUik0aX8ZKx2181G3u6l3UUjyRs3XQ/Jy+1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bK8/7ODJ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id CFE3120681E8; Mon,  3 Jun 2024 22:36:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CFE3120681E8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1717479408;
+	bh=eG1FDBv4R7lC9lHB6vwHEI8Q/I2FDjn+gY+OQPTwEx4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bK8/7ODJAyp/AdqWEbg21wvN62rRE4DCYtKwZozOr0P9Y7uzei0iX0fVAX9g//0NR
+	 VNc8ZRp9gSDvEKQ1oAQiiSzO2Vy/SlCwo9znaQU1bmGC7ZL2kP6UJxktgZ684D/qsC
+	 Rv5rkF60/Dcq+Sa+B3rnqI5ulPNZ9o8+yBAhSQnk=
+Date: Mon, 3 Jun 2024 22:36:48 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Kees Cook <keescook@chromium.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Long Li <longli@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH net-next v3] net: mana: Allow variable size indirection
+ table
+Message-ID: <20240604053648.GA14220@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1717169861-15825-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <20240603084122.GK3884@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/4] arm64: dts: qcom: aim300: add AIM300 AIoT
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Qiang Yu <quic_qianyu@quicinc.com>,
-        Ziyue Zhang
-	<quic_ziyuzhan@quicinc.com>, <quic_chenlei@quicinc.com>
-References: <20240529100926.3166325-1-quic_tengfan@quicinc.com>
- <20240529100926.3166325-5-quic_tengfan@quicinc.com>
- <s5gt3p6zsd5ebrkop4dhd33tykln33f6ahu3pibymecxsmakyd@lg5wfgec6dat>
- <205de8b7-507f-45c9-83ce-6eceb1466cb2@quicinc.com>
- <CAA8EJpqFq=6YFcUpjdkKikN54iQ76i8Rk_z+mLH1Tt0zFFmciQ@mail.gmail.com>
- <89c5c663-df8a-43d4-91b3-0a84b0c9a324@quicinc.com>
- <CAA8EJpoBi+iWeZz3JLQkRXCTP-9xnCV1hGAGr8J37W=GUd5CPw@mail.gmail.com>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <CAA8EJpoBi+iWeZz3JLQkRXCTP-9xnCV1hGAGr8J37W=GUd5CPw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NHwupYUFVY4Bxic7KNEyLClJPHvF9onj
-X-Proofpoint-ORIG-GUID: NHwupYUFVY4Bxic7KNEyLClJPHvF9onj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-04_02,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 clxscore=1015 mlxlogscore=999 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040043
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603084122.GK3884@unreal>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
+On Mon, Jun 03, 2024 at 11:41:22AM +0300, Leon Romanovsky wrote:
+> On Fri, May 31, 2024 at 08:37:41AM -0700, Shradha Gupta wrote:
+> > Allow variable size indirection table allocation in MANA instead
+> > of using a constant value MANA_INDIRECT_TABLE_SIZE.
+> > The size is now derived from the MANA_QUERY_VPORT_CONFIG and the
+> > indirection table is allocated dynamically.
+> > 
+> > Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> > Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> > ---
+> >  Changes in v3:
+> >  * Fixed the memory leak(save_table) in mana_set_rxfh()
+> > 
+> >  Changes in v2:
+> >  * Rebased to latest net-next tree
+> >  * Rearranged cleanup code in mana_probe_port to avoid extra operations
+> > ---
+> >  drivers/infiniband/hw/mana/qp.c               | 10 +--
+> >  drivers/net/ethernet/microsoft/mana/mana_en.c | 68 ++++++++++++++++---
+> >  .../ethernet/microsoft/mana/mana_ethtool.c    | 27 +++++---
+> >  include/net/mana/gdma.h                       |  4 +-
+> >  include/net/mana/mana.h                       |  9 +--
+> >  5 files changed, 89 insertions(+), 29 deletions(-)
+> 
+> <...>
+> 
+> > +free_indir:
+> > +	apc->indir_table_sz = 0;
+> > +	kfree(apc->indir_table);
+> > +	apc->indir_table = NULL;
+> > +	kfree(apc->rxobj_table);
+> > +	apc->rxobj_table = NULL;
+> >  reset_apc:
+> >  	kfree(apc->rxqs);
+> >  	apc->rxqs = NULL;
+> > @@ -2897,6 +2936,7 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+> >  {
+> 
+> <...>
+> 
+> > @@ -2931,6 +2972,11 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+> >  		}
+> >  
+> >  		unregister_netdevice(ndev);
+> > +		apc->indir_table_sz = 0;
+> > +		kfree(apc->indir_table);
+> > +		apc->indir_table = NULL;
+> > +		kfree(apc->rxobj_table);
+> > +		apc->rxobj_table = NULL;
+> 
+> Why do you need to NULLify here? Will apc is going to be accessible
+> after call to mana_remove? or port probe failure?
+Right, they won't be accessed. This is just for the sake of completeness
+and to prevent double free in case there are code bug in other place.
 
-
-On 6/3/2024 3:52 PM, Dmitry Baryshkov wrote:
-> On Mon, 3 Jun 2024 at 10:38, Tengfei Fan <quic_tengfan@quicinc.com> wrote:
->>
->>
->>
->> On 5/31/2024 4:38 PM, Dmitry Baryshkov wrote:
->>> On Fri, 31 May 2024 at 11:35, Tengfei Fan <quic_tengfan@quicinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 5/29/2024 11:18 PM, Dmitry Baryshkov wrote:
->>>>> On Wed, May 29, 2024 at 06:09:26PM +0800, Tengfei Fan wrote:
->>>>>> Add AIM300 AIoT Carrier board DTS support, including usb, UART, PCIe,
->>>>>> I2C functions support.
->>>>>> Here is a diagram of AIM300 AIoT Carrie Board and SoM
->>>>>>     +--------------------------------------------------+
->>>>>>     |             AIM300 AIOT Carrier Board            |
->>>>>>     |                                                  |
->>>>>>     |           +-----------------+                    |
->>>>>>     |power----->| Fixed regulator |---------+          |
->>>>>>     |           +-----------------+         |          |
->>>>>>     |                                       |          |
->>>>>>     |                                       v VPH_PWR  |
->>>>>>     | +----------------------------------------------+ |
->>>>>>     | |                          AIM300 SOM |        | |
->>>>>>     | |                                     |VPH_PWR | |
->>>>>>     | |                                     v        | |
->>>>>>     | |   +-------+       +--------+     +------+    | |
->>>>>>     | |   | UFS   |       | QCS8550|     |PMIC  |    | |
->>>>>>     | |   +-------+       +--------+     +------+    | |
->>>>>>     | |                                              | |
->>>>>>     | +----------------------------------------------+ |
->>>>>>     |                                                  |
->>>>>>     |                    +----+          +------+      |
->>>>>>     |                    |USB |          | UART |      |
->>>>>>     |                    +----+          +------+      |
->>>>>>     +--------------------------------------------------+
->>>>>>
->>>>>> Co-developed-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>>>> Co-developed-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
->>>>>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
->>>>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->>>>>> ---
->>>>>>     arch/arm64/boot/dts/qcom/Makefile             |   1 +
->>>>>>     .../boot/dts/qcom/qcs8550-aim300-aiot.dts     | 322 ++++++++++++++++++
->>>>>>     2 files changed, 323 insertions(+)
->>>>>>     create mode 100644 arch/arm64/boot/dts/qcom/qcs8550-aim300-aiot.dts
->>>>>
->>>>> [trimmed]
->>>>>
->>>>>> +&remoteproc_adsp {
->>>>>> +    firmware-name = "qcom/qcs8550/adsp.mbn",
->>>>>> +                    "qcom/qcs8550/adsp_dtbs.elf";
->>>>>
->>>>> Please excuse me, I think I missed those on the previous run.
->>>>>
->>>>> adsp_dtb.mbn
->>>>
->>>> Currently, waht we have released is adsp_dtbs.elf. If we modify it to
->>>> adsp_dtb.mbn, it may cause the ADSP functionality can not boot normally.
->>>
->>> Released where? linux-firmware doesn't have such a file. And the modem
->>> partition most likely has a different path for it anyway.
->>
->> Firmware releases can be obtained from
->> https://qpm-git.qualcomm.com/home2/git/qualcomm/qualcomm-linux-spf-1-0_test_device_public.git
->> after users sign up for free accounts on both
->> https://qpm-git.qualcomm.com and https://chipmaster2.qti.qualcomm.com.
+Regards,
+Shradha.
 > 
-> I'm getting 403 when accessing qpm-git (both with my Linaro
-> credentials and with gmail ones).
-> If I try to git-clone the URL you've provided, I'm getting "Not found"
-> when using a gmail account and CURL error when using Linaro
-> createntials.
-> 
-> error: RPC failed; HTTP 302 curl 22 The requested URL returned error: 302
-> 
-> Not to mention that the URL wasn't mentioned anywhere beforehand. So I
-> can hardly call that 'released'
-> 
->>
->>>
->>>>
->>>>>
->>>>>> +    status = "okay";
->>>>>> +};
->>>>>> +
->>>>>> +&remoteproc_cdsp {
->>>>>> +    firmware-name = "qcom/qcs8550/cdsp.mbn",
->>>>>> +                    "qcom/qcs8550/cdsp_dtbs.elf";
->>>>>
->>>>> cdsp_dtb.mbn
->>>>
->>>> CDSP also as above ADSP.
->>>>
->>>>>
->>>
->>>>>> +
->>>>>> +    te_active: te-active-state {
->>>>>> +            pins = "gpio86";
->>>>>> +            function = "mdp_vsync";
->>>>>> +            drive-strength = <2>;
->>>>>> +            bias-pull-down;
->>>>>> +    };
->>>>>> +
->>>>>> +    te_suspend: te-suspend-state {
->>>>>> +            pins = "gpio86"
->>>>>> +            function = "mdp_vsync";
->>>>>> +            drive-strength = <2>;
->>>>>> +            bias-pull-down;
->>>>>> +    };
->>>>>
->>>>> What is the difference between these two?
->>>>
->>>> TE pin needs to be pulled down for both active and suspend states. There
->>>> is no difference.
->>>
->>> So why do you need two different states for it?
->>
->> Dividing into two different states can provide a clearer expression of
->> whether the corresponging functionality is avtive or suspend.
-> 
-> How?
-
-I understand your consideration from the upstream patch link which you 
-shared. Insteading of maintaining two separate state nodes, I will 
-update a default state node in the next patch series.
-
-> 
->>
->> We can also find similar settings in the other SM8550 and SM8650
->> platform dts files, such as sm8550-qrd.dts and sm8650-qrd.dts.
-> 
-> Which means more items to cleanup.
-> 
-> See the discussion starting from
-> https://lore.kernel.org/linux-arm-msm/36f22383-79a3-427e-bf17-35ce2e1dd620@linaro.org/
-> 
->>
->> [1] sm8550-qrd.dts:
->> https://elixir.bootlin.com/linux/v6.9.3/source/arch/arm64/boot/dts/qcom/sm8550-qrd.dts#L1052
->>
->> [2] sm8650-qrd.dts:
->> https://elixir.bootlin.com/linux/v6.9.3/source/arch/arm64/boot/dts/qcom/sm8650-qrd.dts#L1098
->>
->>>
->>>
->>>
->>>
->>>
->>
->> --
->> Thx and BRs,
->> Tengfei Fan
-> 
-> 
-> 
-
--- 
-Thx and BRs,
-Tengfei Fan
+> Thanks
 
