@@ -1,126 +1,190 @@
-Return-Path: <linux-kernel+bounces-201230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C308FBB49
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:09:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB228FBB44
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDCDE1F25AE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39075281B2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856E714A0AD;
-	Tue,  4 Jun 2024 18:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E4814A4E9;
+	Tue,  4 Jun 2024 18:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="icO6sQ9n"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrMIn52w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE6B149006
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 18:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEF5179BC;
+	Tue,  4 Jun 2024 18:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717524581; cv=none; b=Zqv9m93nbK5ceZhtTtv3h3FWbbQrBE88HKt0CNILfhO7GJ7t1ANva1ikOZdBHOLXbJ13OQWHAciNeejplDE0XGFsNoxuy/A+0j0DUi8GBX/OEeXRCUiE1mrJl27CmwR6HIwNHHxFE0TwrLM2ezN7tOlUF5eLki/B8TpnkOqVEm8=
+	t=1717524487; cv=none; b=Xxp/H2XBSY8gZpFwRQKOyY93lgAOZVRHqYXtE6PdfrMb+N8pFWTCO/LMZ+w4YylvRsyVQYD55mp+Tfnkz2iZG7tBpKLv7tMGzXA1VE9/ue9D6Q6KxF8bI8Cwgfscz0gcfKuBWNaBAs4KttZXKHUrLx1GZlMpljmD/lIjkSZ1QRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717524581; c=relaxed/simple;
-	bh=zlFWfsNQMx3Sd1wcaWh6ZJ1CoD/mFgMKL5nAugZkz7c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r/836DSsw+egA4Gxjkm18EWuNcn06XKL5L4YN/EyYR35D1pXyH5d+VZsXUWy3RsGezyv864Dolu930wzA4XQ2gsHjvHRHvOXSGoRvOWhx8MPhB2MZB4VaKvKtMCysh91ww/cl20MTEss9Bd3HDXEaRQ1N+tjwMcvGHZkPBib6/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=icO6sQ9n; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e73359b900so14832421fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 11:09:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1717524578; x=1718129378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3BF8/GItxoat+r6e4T4fHLj85BE2y/O2eJbYc1bfqVo=;
-        b=icO6sQ9nYKhBglMTDc1Q6bEW9B1kSlQ7SIoK2XI3RDoOyqMEWUaoO73UtpTFEkxI4n
-         d016IgL0BRSGE/A4k9yQb+UCNQXepe+uey+Z6fMvQi7tbdlEChx4Mgsqs+KF+neFDDEH
-         kBNZdfHRtykgxbiscS8XtS2ZBTUO2zZozv6Y9ONthxbGHPtZck2qXQcs5lcaPEDy9amk
-         p7G//WxSD4sAwPr+PvpwPE/L1+E2sEAo+5hrQ/qjQpDf0xJp78eMGeoRNpAQTPLcisFk
-         SlvGLErc+YE4o/UYmkB1txiXJWnWWShzkjmls/nPirjqJvcIlazkWPstrozI4SvrZrK1
-         kx6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717524578; x=1718129378;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3BF8/GItxoat+r6e4T4fHLj85BE2y/O2eJbYc1bfqVo=;
-        b=IUzC2QtS1Wwfygo9RUOuW5+t2BRRXqL2Fx+top5d3bsZ+TjvxCPe3E5yECDaKsx+sa
-         soJbp+QniEeyO7tI262pn6+SnekjiOne9g2LaaSmD6/8MP56UbEtzCceVH0roP4kggyV
-         8fQMxDWQWOYdc/6DAxCb5BBmSBKRvDJynktCJQz+NTIVFyX/RECWQI1JTdhVehxdja84
-         LbUWMPVU17o9Zcy0Vp03beyaf+tVoBV+TfqGa6CUU434pNH0xeVhXL87cKsgH1goZtBr
-         gokPLTAjvc4Oss0fjPiGGjLtRYZeKox9UmayMSgHFDPLfrQ5eNfX6AgFUKSnADuYpiYo
-         C9fQ==
-X-Gm-Message-State: AOJu0YxukBENUPfKBFXpDSIpLS3ZZ2JKnjYkKMllftG/ST//6uw9/y3A
-	GSrzViY3TnygjC4R5D9esgPfTjQLoTlxRnMF91iGGomx7AwlNSmXUIofzNCGNpk=
-X-Google-Smtp-Source: AGHT+IF3N6NfG0OENYZjXQOQM6bYvkm+cqHhQ/GSCbJSHvHKe8aILbrtlbcys8kaiBIZmXUTWEMsPw==
-X-Received: by 2002:a2e:800e:0:b0:2ea:8291:c669 with SMTP id 38308e7fff4ca-2eac7aad160mr184191fa.44.1717524577695;
-        Tue, 04 Jun 2024 11:09:37 -0700 (PDT)
-Received: from debian.fritz.box. (aftr-82-135-80-160.dynamic.mnet-online.de. [82.135.80.160])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4214fdf4953sm27451925e9.25.2024.06.04.11.09.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 11:09:37 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	will@kernel.org,
-	longman@redhat.com,
-	boqun.feng@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] locking/ww_mutex/test: Use swap() macro
-Date: Tue,  4 Jun 2024 20:07:07 +0200
-Message-Id: <20240604180705.257033-1-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717524487; c=relaxed/simple;
+	bh=NSPTMuwx9KcCNJAhfWh9J5IIW23EBXou0acUEEypYOw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=jVbbZt7cGsI91qHmzNVGBOUIe/WdF32P+oIX7UXBQKot1Mr3DF2/6Z1SF+LcEkdA6NJQ4JG2p3x1oEtPEbuIQo0BeVyMM3u1u4VqG56OVZeckhHpCl1j7kFTm4sYAGTdLd663rIOtKj8hqdClH1K1rM7mGhPLM6Bjf+ZmbyYh78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrMIn52w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C2AC2BBFC;
+	Tue,  4 Jun 2024 18:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717524487;
+	bh=NSPTMuwx9KcCNJAhfWh9J5IIW23EBXou0acUEEypYOw=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=WrMIn52wdfKfEhHzGwaV1Pr93jMN7MkSqau/TchUVXcoY0bNU77+AfhtzpdY2MCOJ
+	 bprVAdu8kHTBbRtZKz0EXEr3Z445Gl8lpu9FrZURcmOZweOnMRhYDYluxlhIeDEWEi
+	 IgdX2duN3nbCrxA2aTbj29W6FZCo76WpqvtqWdYSAHJo2XgUFKQlOpf/onoGHRZx8M
+	 rSxdo6JZcLR+S7i89QvM7ip0cnzIDx9XbFnzAsRMzQ+Zr8OMTq/0dwUrrvriCqQJv/
+	 nX7kXvZyY0AxVULvlb3Rdp3roE0QB19lXelv9CHABPKSWO55soQUCypRBbM+l791T1
+	 0O7A76W1ZNf/g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Jun 2024 21:08:00 +0300
+Message-Id: <D1RFM5ZWU1O4.1QU546DO1UNKD@kernel.org>
+Subject: Re: [RFC PATCH v2 1/8] certs: Introduce ability to link to a system
+ key
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Eric Snowberg" <eric.snowberg@oracle.com>,
+ <linux-security-module@vger.kernel.org>
+Cc: <dhowells@redhat.com>, <dwmw2@infradead.org>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <ardb@kernel.org>,
+ <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+ <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
+ <dmitry.kasatkin@gmail.com>, <mic@digikod.net>, <casey@schaufler-ca.com>,
+ <stefanb@linux.ibm.com>, <ebiggers@kernel.org>, <rdunlap@infradead.org>,
+ <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <linux-efi@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240531003945.44594-1-eric.snowberg@oracle.com>
+ <20240531003945.44594-2-eric.snowberg@oracle.com>
+In-Reply-To: <20240531003945.44594-2-eric.snowberg@oracle.com>
 
-Fixes the following Coccinelle/coccicheck warning reported by
-swap.cocci:
+On Fri May 31, 2024 at 3:39 AM EEST, Eric Snowberg wrote:
+> Introduce a new function to allow a keyring to link to a key contained
+> within one of the system keyrings (builtin, secondary, or platform).
 
-	WARNING opportunity for swap()
+"Introduce system_key_link(), a new function..."
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- kernel/locking/test-ww_mutex.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+I hate when the exact thing added is not immediately transparent from
+the commit message ;-) Helps a lot when bisecting for instance.
 
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 78719e1ef1b1..252bef786aef 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -402,7 +402,7 @@ static inline u32 prandom_u32_below(u32 ceil)
- static int *get_random_order(int count)
- {
- 	int *order;
--	int n, r, tmp;
-+	int n, r;
- 
- 	order = kmalloc_array(count, sizeof(*order), GFP_KERNEL);
- 	if (!order)
-@@ -413,11 +413,8 @@ static int *get_random_order(int count)
- 
- 	for (n = count - 1; n > 1; n--) {
- 		r = prandom_u32_below(n + 1);
--		if (r != n) {
--			tmp = order[n];
--			order[n] = order[r];
--			order[r] = tmp;
--		}
-+		if (r != n)
-+			swap(order[n], order[r]);
- 	}
- 
- 	return order;
--- 
-2.39.2
+> Depending on how the kernel is built, if the machine keyring is
+> available, it will be checked as well, since it is linked to the secondar=
+y
+> keyring. If the asymmetric key id matches a key within one of these
+> system keyrings, the matching key is linked into the passed in
+> keyring.
+>
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> ---
+>  certs/system_keyring.c        | 31 +++++++++++++++++++++++++++++++
+>  include/keys/system_keyring.h |  7 ++++++-
+>  2 files changed, 37 insertions(+), 1 deletion(-)
+>
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 9de610bf1f4b..94e47b6b3333 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -426,3 +426,34 @@ void __init set_platform_trusted_keys(struct key *ke=
+yring)
+>  	platform_trusted_keys =3D keyring;
+>  }
+>  #endif
+> +
+> +/**
+> + * system_key_link - Link to a system key
 
+"system_key_link() - Link to a system key"
+
+> + * @keyring: The keyring to link into
+> + * @id: The asymmetric key id to look for in the system keyring
+> + */
+
+Really could use some overview keyrings traversed just as a reminder.
+
+> +int system_key_link(struct key *keyring, struct asymmetric_key_id *id)
+> +{
+> +	struct key *system_keyring;
+> +	struct key *key;
+> +
+> +#ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+> +	system_keyring =3D secondary_trusted_keys;
+> +#else
+> +	system_keyring =3D builtin_trusted_keys;
+> +#endif
+
+Why not simply make secondary_trusted_keys in the first place be alias
+to builtin_trusted_keys when it is not enabled?
+
+> +
+> +	key =3D find_asymmetric_key(system_keyring, id, NULL, NULL, false);
+> +	if (!IS_ERR(key))
+> +		goto found;
+> +
+> +	key =3D find_asymmetric_key(platform_trusted_keys, id, NULL, NULL, fals=
+e);
+> +	if (!IS_ERR(key))
+> +		goto found;
+> +
+> +	return -ENOKEY;
+> +
+> +found:
+
+"link:"?
+
+Then you could see already from goto statement what will happen next
+(your call anyway).
+
+> +	key_link(keyring, key);
+> +	return 0;
+> +}
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.=
+h
+> index 8365adf842ef..b47ac8e2001a 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -9,6 +9,7 @@
+>  #define _KEYS_SYSTEM_KEYRING_H
+> =20
+>  #include <linux/key.h>
+> +struct asymmetric_key_id;
+> =20
+>  enum blacklist_hash_type {
+>  	/* TBSCertificate hash */
+> @@ -28,7 +29,7 @@ int restrict_link_by_digsig_builtin(struct key *dest_ke=
+yring,
+>  				    const union key_payload *payload,
+>  				    struct key *restriction_key);
+>  extern __init int load_module_cert(struct key *keyring);
+> -
+> +extern int system_key_link(struct key *keyring, struct asymmetric_key_id=
+ *id);
+>  #else
+>  #define restrict_link_by_builtin_trusted restrict_link_reject
+>  #define restrict_link_by_digsig_builtin restrict_link_reject
+> @@ -38,6 +39,10 @@ static inline __init int load_module_cert(struct key *=
+keyring)
+>  	return 0;
+>  }
+> =20
+> +static inline int system_key_link(struct key *keyring, struct asymmetric=
+_key_id *id)
+> +{
+> +	return 0;
+> +}
+>  #endif
+> =20
+>  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+
+BR, Jarkko
 
