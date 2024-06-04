@@ -1,173 +1,227 @@
-Return-Path: <linux-kernel+bounces-200344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD208FAEA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:24:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005158FAEB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DCB11C2139F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FABF1F2232E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA893143890;
-	Tue,  4 Jun 2024 09:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFBF143C41;
+	Tue,  4 Jun 2024 09:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qJAAXZqj"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="MVp24Rm2"
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1E143C62
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7D414374B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717493032; cv=none; b=qVjjc/LIySwEDI1Sguw1vl4HD0EFA0DiHQFIba0ySlHCnJA3+myYtgL/ZsrDa7N/QAnMRJ/inf/EskBry/Z8SWmUplw71e7p2Uyg1ozSpoMtSd4sZtn1shNWV/+S6746VSnGbqsw3scQqdsesR501+WiAxgQrGsSgQ+a28nrIIE=
+	t=1717493094; cv=none; b=l8rab7rVxKEWwuYQzHY/wkahXWyypAhBlSWkVGYQ8VsuwEzfmufnbXNtrultSJF/e8mVCJ3inRdXMAWz5JRnVwM9CS+MOkGVsF172QRyHQg5ELesaTG3FFcAp55zspo+2pYvzD38OVgDz/sDpphYsBcIlvd4nRfcRx5AkrMyy88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717493032; c=relaxed/simple;
-	bh=hPRDfVN9zrZHHC+fiHl3+xNBPjg/xtoXtIax3D3WLeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SaJmtQv3uM7Rj4qDfejySIbcggbbAane4cxZlzL3ouGB4MQa7ErcGvcAkAuJ7gcEDyCR5pX/R264B4NwAQQHPlQoJ+/+9cT9u9g96aCWdpJEs5VbxPf/j6pqFxask3xhepJR69NsK2ERNGf0f/o+9SxH7+CLCdjcCXzh4N5MaWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qJAAXZqj; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6269885572so936584166b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:23:50 -0700 (PDT)
+	s=arc-20240116; t=1717493094; c=relaxed/simple;
+	bh=3M/8TKMtLd1tf0/P4+WGMCcoSzO6k4NIm/iHpw11Lhw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FpfRk8xOVuQ5BpLNwb9eHBpYP2+UMWJu5cGPZxfo/qHvovAVIkFyI+f6UC1cF2FwqDDue5ADAuLix3z/Uv52rlwrS0cwLQZHyjfcscyEtn/cZfEgY/FaHBYc2Qz0HxC6Qn/Wtyh1wCPPYtgXTRfetMEUUSJZwJCJr5hmXlj3GXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=MVp24Rm2; arc=none smtp.client-ip=209.85.208.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-57a20ccafc6so4717722a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:24:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717493029; x=1718097829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xemicTBwRPyiUNufo8q8iiZLE9eFd5HL26ZHWNiDDh8=;
-        b=qJAAXZqjlHf2y2L0Rb6gSBeqtCRU2PVpKpNFHNbljTAAP748kFkdOYUomjY6qfx3AL
-         RGFnokQcsBlDJ8e1VbNe0w9PlHPyAn6U4uL4ZEgTTRSmrBG3qjMi8A7nAV26Sn27qi3/
-         2w4/vLdMS2k/WLXeWWjZXET43q9xTvUwcd9AU+fgkS9nf8mJDo8sPghV3Y5b3Letca9W
-         2J/RGs5IF3NQ9eTmTMQBv4H88lRuaVwIw5ux45H6EauerWgpupkAyb/ldwnbXqr6RZ2/
-         R/vwMDv85E7DxPiiBDZLC56At5LmKm9MFZQX+puMXmOdJexD0j62VLkNyu8oMZ7V8l9V
-         6lnw==
+        d=ionos.com; s=google; t=1717493091; x=1718097891; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=51xd4qBif5qLulTsk7/5OKYHjeBwqmO8tvfG1w6sQz8=;
+        b=MVp24Rm24/RMCNNCfkrS+XU2VDrxb3bkeNPfdySDU7uoVNm0e9JtcKdlUl+hybQLnA
+         fOklqlkGU5JMB2r1BTlLJ0r37y39EuyvLvYGDllGbWrrfI1dh6skbacaMea4mHJ1jnRg
+         WQydq7aQUmxiBJ4n669Fq/NdilXL+5hq/y6i9keD5hzWQQgyqE+RLuOy+xzZOfXjKM7C
+         gXkvgPK2MjwU/hlH4IKxt7oa4vAmbV0TZJUhAuOUN765P0C78mDZep1FML93qUl6NyWu
+         PqGib1f1hOvRUZdUBhkTVcymBI8t/oCI1R/iK05W9gzsAB7EeTiluKXhvpeHSiKQ3PDD
+         QpXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717493029; x=1718097829;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1717493091; x=1718097891;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xemicTBwRPyiUNufo8q8iiZLE9eFd5HL26ZHWNiDDh8=;
-        b=wdyxwmDIcMauxA7j/xB+ZYAoCe06ViduwMRqRp9IllJwmmd8lrd1cXpPI8wb+p1zgB
-         OkD2T1LjhjY89b28/+f2/maVJpfj3dqeYCxCOwficLV59AHUwfMNUsK/6aHd/jyNfWhq
-         q59xaAHrSg8ZINhH3Zprf67wRPS/NGfLoe2CA77ZZH48LkzGXNB2PRfoa0iBEZulRSNA
-         dxpQeH8M6uAq6qr4NotJOOmRVgTflUK4CEDWtCQMvMSZlJ+UK1EOVqqDsd1uc3Na0Ffz
-         Dvvp5jBigkV9QIECkb/HPnlqwMXpu+WInD+PSHlIJhg//Zm498tNCcjFYF80AfPaYCl7
-         Aq3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Z+cJLV3HBf3YmIZC26qcBO9GVOvHFz43OZPsRsZS5qRUvduZezm2hMXp2J1jxfJLwCNzE+kFtem6V1l+5/xCdGjmcQZAX44iJSoV
-X-Gm-Message-State: AOJu0YyjIWcKdPNVF0AwP3297ZSfXzIMYTHruF9DS9ZEpXOfqL5pjoUV
-	ItRkdQhFmeSi2+FITAuDgVU78SXwWM1QXf88ldV4UjH9m4/G8MnZYkeyTgB+Mqc=
-X-Google-Smtp-Source: AGHT+IGgzFJu020ZVDFJOaUBGqmgiXocPAB8ffUUBJMs4jrthf8Wee4u7s4o7NJ9GYESXPBanDgkdQ==
-X-Received: by 2002:a17:907:bc4:b0:a68:f1ca:a8de with SMTP id a640c23a62f3a-a69545649bbmr126880066b.36.1717493028989;
-        Tue, 04 Jun 2024 02:23:48 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68fa8035adsm332061266b.185.2024.06.04.02.23.48
+        bh=51xd4qBif5qLulTsk7/5OKYHjeBwqmO8tvfG1w6sQz8=;
+        b=OGr4cYjbmYTI5LqEBgKRcfmQGGtwail2Du6bxQp+PwwOK5kEfQ075r8mW7G7gxmAVx
+         GujUbR/y+607h/riWW5mjw9aQ8twJDqOOGrx6Uz/JxnNgcLmSzdgPSq0H01l3ISm3Goy
+         mLiXb3xbhv2lMBhXVDveWE2A9p7tRer8/17Fflv2alesndIspe54zfXRxiMIsvN83kD3
+         fnLFdhkzehsQ3peGQ0MTNaD9UghzaninZBJJgTb5gtq+Xxx0OxMA1xWRxO6B4Z9zq9sD
+         vIzuIUzGkYZ2GOAuXGEaLpjGZErcDAS2g24DHvXhB4YvnFSZG2FoYiOomldXxDAhoNeT
+         0yVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8zJHCyycNCQPPvDcXK4Xj28LR8dLAOnglkT6apDKYu0fpocL4MEpxBLdTzxxj6xgYlPcIxOV1Ojkw69Ud98bsG7ccrXr1EiFq0txU
+X-Gm-Message-State: AOJu0YwmLzDiC8g7RdYik00uY2ixF1KehZlcFjt/Q0bnB09+GivJLLZu
+	m+TRB+F1Qr/T9IVDFB8tlsSV0OzlVKYSCS7PvIXlSeWC+iydik8l81bGLGvqwPQ=
+X-Google-Smtp-Source: AGHT+IFBu712jehkTGREuH0rS+RjNhRk0Wck7Jz32KlzUmxTUHlbcIESU2fsnsMpVNsUMLXvJHg3jA==
+X-Received: by 2002:a50:d503:0:b0:57a:2f68:fe7b with SMTP id 4fb4d7f45d1cf-57a36419606mr7947320a12.31.1717493090867;
+        Tue, 04 Jun 2024 02:24:50 -0700 (PDT)
+Received: from raven.blarg.de (p200300dc6f4f9200023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f4f:9200:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a7e6a8e14sm1226873a12.87.2024.06.04.02.24.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 02:23:48 -0700 (PDT)
-Date: Tue, 4 Jun 2024 12:23:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Baolin Wang <baolin.wang@linux.alibaba.com>,
-	akpm@linux-foundation.org, hughd@google.com
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, willy@infradead.org,
-	david@redhat.com, wangkefeng.wang@huawei.com, ying.huang@intel.com,
-	21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com,
-	ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com,
-	p.raghav@samsung.com, baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mm: shmem: add mTHP support for anonymous shmem
-Message-ID: <ad47dc93-0cdb-45fb-83b3-170f2c09b93a@moroto.mountain>
+        Tue, 04 Jun 2024 02:24:50 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: axboe@kernel.dk,
+	brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	hch@infradead.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH v3] fs/splice: don't block splice_direct_to_actor() after data was read
+Date: Tue,  4 Jun 2024 11:24:31 +0200
+Message-Id: <20240604092431.2183929-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec35a23026dd016705d211e85163cabe07681516.1717033868.git.baolin.wang@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Baolin,
+If userspace calls sendfile() with a very large "count" parameter, the
+kernel can block for a very long time until 2 GiB (0x7ffff000 bytes)
+have been read from the hard disk and pushed into the socket buffer.
 
-kernel test robot noticed the following build warnings:
+Usually, that is not a problem, because the socket write buffer gets
+filled quickly, and if the socket is non-blocking, the last
+direct_splice_actor() call will return -EAGAIN, causing
+splice_direct_to_actor() to break from the loop, and sendfile() will
+return a partial transfer.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+However, if the network happens to be faster than the hard disk, and
+the socket buffer keeps getting drained between two
+generic_file_read_iter() calls, the sendfile() system call can keep
+running for a long time, blocking for disk I/O over and over.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Baolin-Wang/mm-memory-extend-finish_fault-to-support-large-folio/20240530-100805
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/ec35a23026dd016705d211e85163cabe07681516.1717033868.git.baolin.wang%40linux.alibaba.com
-patch subject: [PATCH v3 4/6] mm: shmem: add mTHP support for anonymous shmem
-config: powerpc64-randconfig-r071-20240531 (https://download.01.org/0day-ci/archive/20240602/202406020203.14sT311e-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project bafda89a0944d947fc4b3b5663185e07a397ac30)
+That is undesirable, because it can block the calling process for too
+long.  I discovered a problem where nginx would block for so long that
+it would drop the HTTP connection because the kernel had just
+transferred 2 GiB in one call, and the HTTP socket was not writable
+(EPOLLOUT) for more than 60 seconds, resulting in a timeout:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406020203.14sT311e-lkp@intel.com/
+  sendfile(4, 12, [5518919528] => [5884939344], 1813448856) = 366019816 <3.033067>
+  sendfile(4, 12, [5884939344], 1447429040) = -1 EAGAIN (Resource temporarily unavailable) <0.000037>
+  epoll_wait(9, [{EPOLLOUT, {u32=2181955104, u64=140572166585888}}], 512, 60000) = 1 <0.003355>
+  gettimeofday({tv_sec=1667508799, tv_usec=201201}, NULL) = 0 <0.000024>
+  sendfile(4, 12, [5884939344] => [8032418896], 2147480496) = 2147479552 <10.727970>
+  writev(4, [], 0) = 0 <0.000439>
+  epoll_wait(9, [], 512, 60000) = 0 <60.060430>
+  gettimeofday({tv_sec=1667508869, tv_usec=991046}, NULL) = 0 <0.000078>
+  write(5, "10.40.5.23 - - [03/Nov/2022:21:5"..., 124) = 124 <0.001097>
+  close(12) = 0 <0.000063>
+  close(4)  = 0 <0.000091>
 
-smatch warnings:
-mm/shmem.c:1766 shmem_alloc_and_add_folio() error: uninitialized symbol 'suitable_orders'.
+In newer nginx versions (since 1.21.4), this problem was worked around
+by defaulting "sendfile_max_chunk" to 2 MiB:
 
-vim +/suitable_orders +1766 mm/shmem.c
+ https://github.com/nginx/nginx/commit/5636e7f7b4
 
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1729  static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1730  		gfp_t gfp, struct inode *inode, pgoff_t index,
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1731  		struct mm_struct *fault_mm, unsigned long orders)
-800d8c63b2e989 Kirill A. Shutemov      2016-07-26  1732  {
-3022fd7af9604d Hugh Dickins            2023-09-29  1733  	struct address_space *mapping = inode->i_mapping;
-0f0796945614b7 Mike Rapoport           2017-09-06  1734  	struct shmem_inode_info *info = SHMEM_I(inode);
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1735  	struct vm_area_struct *vma = vmf ? vmf->vma : NULL;
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1736  	unsigned long suitable_orders;
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1737  	struct folio *folio = NULL;
-3022fd7af9604d Hugh Dickins            2023-09-29  1738  	long pages;
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1739  	int error, order;
-800d8c63b2e989 Kirill A. Shutemov      2016-07-26  1740  
-396bcc5299c281 Matthew Wilcox (Oracle  2020-04-06  1741) 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1742  		orders = 0;
-800d8c63b2e989 Kirill A. Shutemov      2016-07-26  1743  
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1744  	if (orders > 0) {
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1745  		if (vma && vma_is_anon_shmem(vma)) {
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1746  			suitable_orders = anon_shmem_suitable_orders(inode, vmf,
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1747  							mapping, index, orders);
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1748  		} else if (orders & BIT(HPAGE_PMD_ORDER)) {
-3022fd7af9604d Hugh Dickins            2023-09-29  1749  			pages = HPAGE_PMD_NR;
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1750  			suitable_orders = BIT(HPAGE_PMD_ORDER);
-3022fd7af9604d Hugh Dickins            2023-09-29  1751  			index = round_down(index, HPAGE_PMD_NR);
-3022fd7af9604d Hugh Dickins            2023-09-29  1752  
-3022fd7af9604d Hugh Dickins            2023-09-29  1753  			/*
-3022fd7af9604d Hugh Dickins            2023-09-29  1754  			 * Check for conflict before waiting on a huge allocation.
-3022fd7af9604d Hugh Dickins            2023-09-29  1755  			 * Conflict might be that a huge page has just been allocated
-3022fd7af9604d Hugh Dickins            2023-09-29  1756  			 * and added to page cache by a racing thread, or that there
-3022fd7af9604d Hugh Dickins            2023-09-29  1757  			 * is already at least one small page in the huge extent.
-3022fd7af9604d Hugh Dickins            2023-09-29  1758  			 * Be careful to retry when appropriate, but not forever!
-3022fd7af9604d Hugh Dickins            2023-09-29  1759  			 * Elsewhere -EEXIST would be the right code, but not here.
-3022fd7af9604d Hugh Dickins            2023-09-29  1760  			 */
-3022fd7af9604d Hugh Dickins            2023-09-29  1761  			if (xa_find(&mapping->i_pages, &index,
-3022fd7af9604d Hugh Dickins            2023-09-29  1762  				    index + HPAGE_PMD_NR - 1, XA_PRESENT))
-3022fd7af9604d Hugh Dickins            2023-09-29  1763  				return ERR_PTR(-E2BIG);
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1764  		}
+Instead of asking userspace to provide an artificial upper limit, I'd
+like the kernel to block for disk I/O at most once, and then pass back
+control to userspace.
 
-suitable_orders uninitialized on else path.
+There is prior art for this kind of behavior in filemap_read():
 
-52cd3b074050dd Lee Schermerhorn        2008-04-28  1765  
-ededbc2c2f28a1 Baolin Wang             2024-05-30 @1766  		order = highest_order(suitable_orders);
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1767  		while (suitable_orders) {
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1768  			pages = 1UL << order;
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1769  			index = round_down(index, pages);
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1770  			folio = shmem_alloc_folio(gfp, order, info, index);
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1771  			if (folio)
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1772  				goto allocated;
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1773  
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1774  			if (pages == HPAGE_PMD_NR)
-3022fd7af9604d Hugh Dickins            2023-09-29  1775  				count_vm_event(THP_FILE_FALLBACK);
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1776  			order = next_order(&suitable_orders, order);
-ededbc2c2f28a1 Baolin Wang             2024-05-30  1777  		}
-3022fd7af9604d Hugh Dickins            2023-09-29  1778  	} else {
-3022fd7af9604d Hugh Dickins            2023-09-29  1779  		pages = 1;
+	/*
+	 * If we've already successfully copied some data, then we
+	 * can no longer safely return -EIOCBQUEUED. Hence mark
+	 * an async read NOWAIT at that point.
+	 */
+	if ((iocb->ki_flags & IOCB_WAITQ) && already_read)
+		iocb->ki_flags |= IOCB_NOWAIT;
 
+This modifies the caller-provided "struct kiocb", which has an effect
+on repeated filemap_read() calls.  This effect however vanishes
+because the "struct kiocb" is not persistent; splice_direct_to_actor()
+doesn't have one, and each generic_file_splice_read() call initializes
+a new one, losing the "IOCB_NOWAIT" flag that was injected by
+filemap_read().
+
+There was no way to make generic_file_splice_read() aware that
+IOCB_NOWAIT was desired because some data had already been transferred
+in a previous call:
+
+- checking whether the input file has O_NONBLOCK doesn't work because
+  this should be fixed even if the input file is not non-blocking
+
+- the SPLICE_F_NONBLOCK flag is not appropriate because it affects
+  only whether pipe operations are non-blocking, not whether
+  file/socket operations are non-blocking
+
+Since there are no other parameters, I suggest adding the
+SPLICE_F_NOWAIT flag, which is similar to SPLICE_F_NONBLOCK, but
+affects the "non-pipe" file descriptor passed to sendfile() or
+splice().  It translates to IOCB_NOWAIT for regular files, just like
+RWF_NOWAIT does.
+
+---
+Changes v1 -> v2:
+- value of SPLICE_F_NOWAIT changed to 0x10
+- added SPLICE_F_NOWAIT to SPLICE_F_ALL to make it part of uapi
+
+v2 -> v3: repost and rebase on linus/master
+
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/splice.c            | 14 ++++++++++++++
+ include/linux/splice.h |  4 +++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/fs/splice.c b/fs/splice.c
+index 60aed8de21f8..6257fef93ec4 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -362,6 +362,8 @@ ssize_t copy_splice_read(struct file *in, loff_t *ppos,
+ 	iov_iter_bvec(&to, ITER_DEST, bv, npages, len);
+ 	init_sync_kiocb(&kiocb, in);
+ 	kiocb.ki_pos = *ppos;
++	if (flags & SPLICE_F_NOWAIT)
++		kiocb.ki_flags |= IOCB_NOWAIT;
+ 	ret = in->f_op->read_iter(&kiocb, &to);
+ 
+ 	if (ret > 0) {
+@@ -1090,6 +1092,18 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+ 		if (unlikely(ret <= 0))
+ 			goto read_failure;
+ 
++		/*
++		 * After at least one byte was read from the input
++		 * file, don't wait for blocking I/O in the following
++		 * loop iterations; instead of blocking for arbitrary
++		 * amounts of time in the kernel, let userspace decide
++		 * how to proceed.  This avoids excessive latency if
++		 * the output is being consumed faster than the input
++		 * file can fill it (e.g. sendfile() from a slow hard
++		 * disk to a fast network).
++		 */
++		flags |= SPLICE_F_NOWAIT;
++
+ 		read_len = ret;
+ 		sd->total_len = read_len;
+ 
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index 9dec4861d09f..0deb87fb8055 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -21,7 +21,9 @@
+ #define SPLICE_F_MORE	(0x04)	/* expect more data */
+ #define SPLICE_F_GIFT	(0x08)	/* pages passed in are a gift */
+ 
+-#define SPLICE_F_ALL (SPLICE_F_MOVE|SPLICE_F_NONBLOCK|SPLICE_F_MORE|SPLICE_F_GIFT)
++#define SPLICE_F_NOWAIT	(0x10) /* do not wait for data which is not immediately available */
++
++#define SPLICE_F_ALL (SPLICE_F_MOVE|SPLICE_F_NONBLOCK|SPLICE_F_MORE|SPLICE_F_GIFT|SPLICE_F_NOWAIT)
+ 
+ /*
+  * Passed to the actors
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.2
 
 
