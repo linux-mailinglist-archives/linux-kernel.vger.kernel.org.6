@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-200400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 957A28FAF8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:05:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE4A8FAF93
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056201F2270B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8DB28391F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B32A1448C8;
-	Tue,  4 Jun 2024 10:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CF4144D00;
+	Tue,  4 Jun 2024 10:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hMHz8RlX"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="dH0pYbAs"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538A938B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C6913D29F;
+	Tue,  4 Jun 2024 10:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717495548; cv=none; b=Cpr0oLXHbnaiixVBiyKVyhGz8+Lo15xuY9H1Kf5xfh19KQfTzhqTOTLdWNK2njEuI+qYd0BcohIzX8LxomdL63jyew9fVZjnWPzhVHcwLniByTAqxU4GamZybBqkh3QORo9PZYw004e6DunoMXrXn4mmQclSrxWQLO53ymMVagk=
+	t=1717495703; cv=none; b=CnmXIGj6cU8HExr2bhXmcJ71LzOuX51Ucbqv4/yQa5uQ85sCiVY2c0YZRnjsw0xLmxCgBYFxcnBtHj4VU7TLOutWtycxApbJSNDlw3rtxX1AfkEWF8B5yTsMUKEbK5eAtGo6tYs7R0010lZORhTXDX0VfaIT1IVgRhRmSQGEsCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717495548; c=relaxed/simple;
-	bh=OAakOdVgjZ4nC9mR9s5+Zmdm0H5Z7NkBLLcGbxvnrqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HU6UdXQJIWe9kszZEJgyXbw8lh7eftystqQ5WOwz0vVK3WVVStnGKqKiM7tltRlAtm55DCEi3HNNOr8RGFZjlZYxd7Dt5jN2GWkF2vgwIVY3V/kmNDPj4pg5cKh+rpfj4BI9hAILJyUV2q8Wu5xCzf3FrzCxr4BuGg+08JHb2Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hMHz8RlX; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfa71ded97bso2897758276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717495546; x=1718100346; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=45XbiKOvHoih0/tmcZdi7EWeN2ZUgWTnO7toZED0rFc=;
-        b=hMHz8RlXz7G+CRjHR5M2/DU7LRShiiP8qcJ1GDc+OTxUSQN00Ul9vLdeHQdJH5gDWn
-         V3ZI1r+LYpMHEFw8hU7Yi1LlBQ2EF16hX+kwepj7Se+ks/HGG9KpMciCHx2kElPfjNry
-         vrQ9vi2t7EA7IZTzC08kYvvkqFSTg2owdsLQzmp3eM1duzlcVR96hKhvb/obrISvXiNi
-         XTVBGXsKxjdcTSrRtLuHLGEdFqxwpgkt9ohUINbCcyKboiBNixCz/hOUl0szyShnF3uY
-         AHCgOxdiWZYoUXwThtU1FBRGA7t6+r8PqnvrtaulKCl4mlt/QXTdLa7dZoffL2u9A4af
-         OBeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717495546; x=1718100346;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=45XbiKOvHoih0/tmcZdi7EWeN2ZUgWTnO7toZED0rFc=;
-        b=WdzkDGvTktHjS0pgwy6ua/VwfcC0mh+zNhAokIPFodlKfYoMkVusgLdE0PnIlRlCLe
-         HSq1vu4SXZN2dta6IGjf80a4hi5w3P1WwmUGEX0r5TjwcgplWXzyA/SnuqHuTkMXE5BG
-         pyS16YGoHjKLLxszV1bD4UNhivVTCjud9H4upyewuVOt4GzsvD/hWr72y6V/gTgwFLtr
-         yvXP/X/ZdMKrd2pAP14JzpPmKWht2ofR23kDe/prWhQarYwTDx6sMnxFtR3P30nzW3hH
-         1Qz0VO2kgg31BLHRGpaWDgrbhLqAlt/jBqangE70dGaIzHMo99A0XxxAhC4SGPLN2AQn
-         VpSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEkcOJ6ZEFgW7Mtz9ItqRyYmEO8lBxWqpnIaqX+b13NsT3eWkKzebnEU8oZfSFqQd/MvNP/QXWbq8NQHXng9G7MAE+0SCuGvkLFpx/
-X-Gm-Message-State: AOJu0Yz2sH/OkIJ7vz6hH0XJ1xsmVyhMNMG92ixEeNZDs7Qd7DOKn8Iv
-	a58GE/uHRVGDUJ/+JAYWEpWE94jySYyB4Q6C6SLKrOO/P6Yu5eios8ct5kKY2gWwZ8ZkPTcFYkZ
-	Mjgy20x6hFEbXSxTqeJzQyFv4h0raHcXiRIpXXA==
-X-Google-Smtp-Source: AGHT+IHToEzjTH40XGqeDWHPED2Ye/fukC8yKkTKMcVBqpRI731pI5udKIlMq+lNHr40OrjBpl5P9fyWg3F/dPP7Olw=
-X-Received: by 2002:a25:dcd0:0:b0:dfa:48d9:b0 with SMTP id 3f1490d57ef6-dfab8b0312fmr1498084276.22.1717495545726;
- Tue, 04 Jun 2024 03:05:45 -0700 (PDT)
+	s=arc-20240116; t=1717495703; c=relaxed/simple;
+	bh=6avz5LUZ/inR3Uyxtt0j62Bs3F4d8DO/HyEZ6uiBHac=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lk971raWZjq02e5YwdWFg4jSiyb12EamFF+PJzca3+fFMNyrHrQJIs5j4wJyzDYlboW/Z2yUeK9vhiwm1X/Y9ucENN+P7Df4j78R7CTdSjJ50BQo0b3xV1ZTE7vJpLesgkY9m9xhc4oe9qNOIBQIWX4VwE96CR4KibP/dHucpLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=dH0pYbAs; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 56B52100002;
+	Tue,  4 Jun 2024 13:07:59 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1717495679; bh=8vE6tl+i2CQkzPeTqs79Tzdv02wtzECjp6uIUogF75g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=dH0pYbAsiDnGl6HYNaimqToe8De/PssZVo8Q8q2TmQ765dUJbpsqpCnmySq16fpo3
+	 /qcIpb9REOCOV8u/yT4W65KapglTZ/0y0qUC8Xj3LlC1V4Qy0+h0WUADdakg5YXo5a
+	 Za5DO73w4bXlYi6Doxw1PH83XVHNOwPSC6IdRNnR+ckGq+pr/tPnPLzAIpSUPpzgLc
+	 KzvwEYscSmOoXAd6nqr1XeGIFkDji1Mgcyd2LvN+Vi4GiAEayVsukYl6Fc6076Fw0b
+	 5UEOh2lt64trvM0I9yWleEpez6qj/W2aXFHvavNj9NyXEByueVBo3A64zbaPR9OJwr
+	 JbJgc//eVcfKw==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Tue,  4 Jun 2024 13:06:20 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.6) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 13:06:00 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Mark Bloch <mbloch@nvidia.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maor Gottlieb
+	<maorg@nvidia.com>, Jacob Keller <jacob.e.keller@intel.com>, Shay Drory
+	<shayd@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>, Jinjie Ruan
+	<ruanjinjie@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net] net/mlx5: Fix tainted pointer delete is case of flow rules creation fail
+Date: Tue, 4 Jun 2024 13:05:52 +0300
+Message-ID: <20240604100552.25201-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604060659.1449278-1-quic_kriskura@quicinc.com>
- <20240604060659.1449278-2-quic_kriskura@quicinc.com> <le5fe7b4wdpkpgxyucobepvxfvetz3ukhiib3ca3zbnm6nz2t7@sczgscf2m3ie>
- <e0b102b6-5ea5-4a86-887f-1af8754e490b@quicinc.com> <tbtmtt3cjtcrnjddc37oiipdw7u7pydnp7ir3x5u3tj26whoxu@sg2b7t7dvu2g>
- <2b8e5810-6883-4b6d-8fa7-f13bbc0e897e@quicinc.com>
-In-Reply-To: <2b8e5810-6883-4b6d-8fa7-f13bbc0e897e@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 4 Jun 2024 13:05:34 +0300
-Message-ID: <CAA8EJppS4+Kv+BTKxxUjEoo8H8XCoPBK-uhdTx6bGWgH6AvK6w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: sc7180: Disable SuperSpeed
- instances in park mode
-To: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <swboyd@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Kaehlcke <mka@chromium.org>, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com, 
-	Doug Anderson <dianders@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185699 [Jun 04 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/06/04 07:46:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/04 05:43:00 #25435061
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Tue, 4 Jun 2024 at 12:58, Krishna Kurapati PSSNV
-<quic_kriskura@quicinc.com> wrote:
->
->
->
-> On 6/4/2024 3:16 PM, Dmitry Baryshkov wrote:
-> > On Tue, Jun 04, 2024 at 01:34:44PM +0530, Krishna Kurapati PSSNV wrote:
-> >>
-> >>
-> >> On 6/4/2024 1:16 PM, Dmitry Baryshkov wrote:
-> >>> On Tue, Jun 04, 2024 at 11:36:58AM +0530, Krishna Kurapati wrote:
-> >>>> On SC7180, in host mode, it is observed that stressing out controller
-> >>>> results in HC died error:
-> >>>>
-> >>>>    xhci-hcd.12.auto: xHCI host not responding to stop endpoint command
-> >>>>    xhci-hcd.12.auto: xHCI host controller not responding, assume dead
-> >>>>    xhci-hcd.12.auto: HC died; cleaning up
-> >>>>
-> >>>> And at this instant only restarting the host mode fixes it. Disable
-> >>>> SuperSpeed instances in park mode for SC7180 to mitigate this issue.
-> >>>
-> >>> Let me please repeat the question from v1:
-> >>>
-> >>> Just out of curiosity, what is the park mode?
-> >>>
-> >>
-> >> Sorry, Missed the mail in v1.
-> >>
-> >> Databook doesn't give much info on this bit (SS case, commit 7ba6b09fda5e0)
-> >> but it does in HS case (commit d21a797a3eeb2).
-> >>
-> >>  From the mail we received from Synopsys, they described it as follows:
-> >>
-> >> "Park mode feature allows better throughput on the USB in cases where a
-> >> single EP is active. It increases the degree of pipelining within the
-> >> controller as long as a single EP is active."
-> >
-> > Thank you!
-> >
-> >>
-> >> Even in the current debug for this test case, Synopsys suggested us to set
-> >> this bit to avoid the controller being dead and we are waiting for further
-> >> answers from them.
-> >
-> > Should these quirks be enabled for other Qualcomm platforms? If so,
-> > which platforms should get it?
->
-> In downstream we enable this for Gen-1 platforms. On v1 discussion
-> thread, I agreed to send another series for other platforms.
->
-> I could've included it for others as well in this v2, but there are
-> around 30 QC SoCs (or more) on upstream and many are very old. I need to
-> go through all of them and figure out which ones are Gen-1. To not delay
-> this for SC7280 and SC7180 (as chrome platforms need it right away), I
-> sent v2 only for these two targets.
+In case of flow rule creation fail in mlx5_lag_create_port_sel_table(),
+instead of previously created rules, the tainted pointer is deleted
+deveral times.
+Fix this bug by using correct flow rules pointers.
 
-Ack, this is fine from my point of view. Thank you!
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
->
-> Regards,
-> Krishna,
->
-> >
-> >> I can update thread with more info once we get some data from Synopsys.
+Fixes: 352899f384d4 ("net/mlx5: Lag, use buckets in hash mode")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/lag/port_sel.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lag/port_sel.c b/drivers/net/ethernet/mellanox/mlx5/core/lag/port_sel.c
+index c16b462ddedf..ab2717012b79 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/lag/port_sel.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/lag/port_sel.c
+@@ -88,9 +88,13 @@ static int mlx5_lag_create_port_sel_table(struct mlx5_lag *ldev,
+ 								      &dest, 1);
+ 			if (IS_ERR(lag_definer->rules[idx])) {
+ 				err = PTR_ERR(lag_definer->rules[idx]);
+-				while (i--)
+-					while (j--)
++				do {
++					while (j--) {
++						idx = i * ldev->buckets + j;
+ 						mlx5_del_flow_rules(lag_definer->rules[idx]);
++					}
++					j = ldev->buckets;
++				} while (i--);
+ 				goto destroy_fg;
+ 			}
+ 		}
 -- 
-With best wishes
-Dmitry
+2.30.2
+
 
