@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-200318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0378FAE65
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BBE8FAE66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F340284A01
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7A51F23A69
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2055B143862;
-	Tue,  4 Jun 2024 09:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CDC144D3B;
+	Tue,  4 Jun 2024 09:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="NLyYdngd"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="G9yMqb+5"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6AC1448DC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485351448FA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717492160; cv=none; b=G2rU3TjX4ht9gk8tkUKxat40s+18FB6vL9r61hxZ4tEzJfOebU1uJMnKJCXHkkOu5SudxPJNcKe9J8V75e+8xbxLIbDOZ8IKSiG89WpqHiD+KbmJ+sabaJw9qF/KaHQnk4g96W+KHAmTXcujChl/KmNUyrGi/aEkdt4SWRC840U=
+	t=1717492161; cv=none; b=YK5CVSpUMN8puR6ee4fkFX5DhhiQgLemKRhV1IOly3E1osjX1Lt1xyzHyB+bLF1SyxBDHstCb2d0XCQn1DwvGm6CZymIMLJ6szk7xqy+r6uoiD8IABU28igQD8lkabJtUZaa5it84++cUZtQFLNhj3StQRgHNgVeTTuqaZ0p0uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717492160; c=relaxed/simple;
-	bh=6CsVTNav/2xxEWRFZ4+7NyJK7QkNGv4emu58fxOVnhM=;
+	s=arc-20240116; t=1717492161; c=relaxed/simple;
+	bh=Cd4N3ppnIKo96UjuDYKqNAWCqoo7sSNwgSH8lYyi25w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rYvNY9mXCWxH8qpjkwTg46jYEmjO9Rb9AB+twQqy9U0B87kKJqQBhPp8XT1zypJtmS/qyPBXY8TCatWDwuFncVaFu5pfdFQYkciQQk8+io3CsJE2TifXSYw0znlwAeTdNTe4deb/IkQxLWuB5hJQC3fPktj2DlSI0uN0giiTemk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=NLyYdngd; arc=none smtp.client-ip=209.85.208.49
+	 MIME-Version; b=f+f+zvXaeny9aQHjTcAV+3iDhe3vyCXpW6nrr8NvCVowdZEaoafIkpEFD2vVVQnzdM6ufz039ecHzR7cyFX9iaG62G1d88jtoPD1kzBrdHTXZ9EMZ7A78IfX8OwDR7wW7mf/Gt31LIXOu/SpvPOz40iosS6XjeArFU2ehvlvvZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=G9yMqb+5; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a50ac2ca1so3261522a12.0
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso75046666b.0
         for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:09:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1717492156; x=1718096956; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1717492157; x=1718096957; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qOL4vXuZ0a4PoiG22TiWEmdORRFE9U+5xK6xKS6y2zU=;
-        b=NLyYdngdQ635dsixX/j4uc9LIreyNhPsO8CsfZywJEcY4baMgxLJuwCBxkl27HgLp5
-         w5SivYR/qXYomWcOYmpmp+AC7xhJdzVuPYSUHz7GjALhar2xRfDtF5odBSuB9bLpkWws
-         5L5lKz8PJz3xJh/qAGEHZEO25LjUPmkezahbIenkyt8AW047ZlwdQG3OZIKPazuRN9o5
-         c8L+8ipkGOkKcRC28UNc378y+SMtuS51CBmQJCqfZ77BNfx7acu/o1bl21c56/BXF2HQ
-         bFu37KhqKVAOyPh6qDoSzw9vJky70HRml7rCF+w169p9rN0f1doY4O+WUolSnCsPy48J
-         710w==
+        bh=HwBsgjYa0IXOImdBe/4+bRIQcCY8SgWsOwsbDkpj0Qk=;
+        b=G9yMqb+5y+fskP0M+Dp9D2JAnx5D8aYx6BCHwZ11OJr63fw0LbLiW79W8MpJHI1EeS
+         /1Sj3Qg/sginyzX/kOyj8Pzszf7n3BZpDu/M8OnKRvlsD96QxTACULYN4rybY5zayT6o
+         EPYXI4dZREftrLIz6fzv6jvSsG55lCpOcBRWKinTSpmKDLL7GdF0SO9u2VeCB0YCyR63
+         L0q3NNaz2y1K9xR4lCXg/mtylQHeIxMt6UmlHJG0rD6GnSIvJTe4M9UDeKOm017tWpiU
+         VO1gHdwbTJyrU59cGsbT2KiWrVzDlLmki+0zqBipRA5lCHKI/oG9jGAY3vsnNRTKAnGh
+         ptow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717492156; x=1718096956;
+        d=1e100.net; s=20230601; t=1717492157; x=1718096957;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qOL4vXuZ0a4PoiG22TiWEmdORRFE9U+5xK6xKS6y2zU=;
-        b=e3rqRiaxiCpiQAYskisn1kxlABgUuC6P1JnieJwzm3CHDHJ9ySg8pOB5ZOCgZx7KE6
-         r6jocj8g7E3xwJb3zrVSoETbCOLhHRFjmRRTkI05ZTjs/vsEn+xnf3hTlCV9ZrS/JTXq
-         hdeyMDiXn20g3EgcGab0yFlAbvGOqj/Xo8RWt/1POUvbiOIMCFwyD8QSpNYj87KlYOk2
-         Y2M6K5MZQguhkY0RPiSjrtOcVNKi9tqfhpQyXLFQzZ8YpYT9I8+muxLBakJPZsFr2Fdl
-         h7gdQZbeFC0TChuZAOkA5SOZxs+VgN722xEcPSXcp5a7AIdUa6Z8OX5Ot7RUTxonLHhJ
-         1dUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3cYp5ejN2apw9HS/0gyIWpItwjba6xKkWxdDPoOlHB0AvOldLmjKgPjdR5y9wMqBHzrMjNNiDT7tClBcNMtS+c2XV7Qj74L6tZRRj
-X-Gm-Message-State: AOJu0YwrdqFSL6S9T1jcCZlgaHr8OvRe3IFhWeVXZ8YbK3h9axw5x8bV
-	AjvDxX2sIO3wlfWJnVrFBl7x6qcSpMBAXctv7pR6xTe8BaBDm2xrPQi8DKi8JTjU+B48zRiM6iu
-	4mrc=
-X-Google-Smtp-Source: AGHT+IHt9F2oYYdhVTvxemPiWIf8QKaB1WXTbOFaVE7w6l+bxeSDT0tJO0j/hkCZ7p0XgmZYIYi9Bw==
-X-Received: by 2002:a17:906:6bc4:b0:a68:d2c:2a23 with SMTP id a640c23a62f3a-a6822049940mr757127166b.76.1717492156465;
-        Tue, 04 Jun 2024 02:09:16 -0700 (PDT)
+        bh=HwBsgjYa0IXOImdBe/4+bRIQcCY8SgWsOwsbDkpj0Qk=;
+        b=I/8ca5HqSmI8ZrvaA0g0So9IVudomKv619mOXAdVimx7jgQ4vrL90gjSjpcgjltsnd
+         PZ+mnR5G0jzKR39cjF6WyCuKL8NJs9Vl1mSmYK/4YpxVQZIFI4NptQtRKrrNg7k2Hr5J
+         UVfheR5niZPfGH4JflaFJPbc2zmGYfjIRDUvQ+WdbFXr3ZFXUwGIhxkJ9E8w0Z0tEoWB
+         WBpOFkWatFHl4JmTjMe7g6vLuvmmJmBLK0DuygPG3CRU+Y8f9Gxte5uKG2ds1zYOPKNT
+         6Bo4FfZ9NZkycKYQuNHzZgJxvyL5MGXdAitSQzwi07P0FXSFivW7rnu3wU9LRbUZ/Pyf
+         d14Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUkXEDPqSNvAVs1hi+Tgjmhr7VdA/d+wew0ErHZ+irEnHkcH9cOfyX/hbIL71uYZhHofBFmZtVlZrETUgV6Eo8gTNu782a6jGx7C73h
+X-Gm-Message-State: AOJu0YyalvCPU5UP1LCm3x2ywC4h8QPnjji7or51JRhn4GOR84zJFUA9
+	vsTeHopnlxRLTjsEgjpgwEdRGzlxH5TUaRjE4Lc1kxkUvXH3DwT484qrRocrWG0=
+X-Google-Smtp-Source: AGHT+IHIJT2BE+IHPYnFS/7wmnu2XAw4mULYk5HJdR9W0oN6DhpUIE6zi6XQ1spmCyvvSqUKhBaXJg==
+X-Received: by 2002:a17:906:4f0d:b0:a68:c6e5:3574 with SMTP id a640c23a62f3a-a68c6e5360bmr467546066b.75.1717492157591;
+        Tue, 04 Jun 2024 02:09:17 -0700 (PDT)
 Received: from raven.blarg.de (p200300dc6f4f9200023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f4f:9200:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68fa49e66fsm328376766b.129.2024.06.04.02.09.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68fa49e66fsm328376766b.129.2024.06.04.02.09.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 02:09:15 -0700 (PDT)
+        Tue, 04 Jun 2024 02:09:17 -0700 (PDT)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org,
@@ -75,9 +74,9 @@ Cc: willy@infradead.org,
 	sfr@canb.auug.org.au,
 	david@redhat.com,
 	Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH v6 08/15] linux/mm.h: move folio_next() to mm/folio_next.h
-Date: Tue,  4 Jun 2024 11:08:38 +0200
-Message-Id: <20240604090845.2182265-9-max.kellermann@ionos.com>
+Subject: [PATCH v6 09/15] linux/mm.h: move devmap-related declarations to mm/devmap_managed.h
+Date: Tue,  4 Jun 2024 11:08:39 +0200
+Message-Id: <20240604090845.2182265-10-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240604090845.2182265-1-max.kellermann@ionos.com>
 References: <20240604090845.2182265-1-max.kellermann@ionos.com>
@@ -91,94 +90,93 @@ Content-Transfer-Encoding: 8bit
 
 Prepare to reduce dependencies on linux/mm.h.
 
-folio_next() is used by linux/bio.h.  Moving it to a separate lean
-header will allow us to avoid the dependency on linux/mm.h.
-
-Having a one-function header may seem excessive, but there is hardly
-another way if we want to distangle linux/mm.h from linux/bio.h.  If
-one day, say, folio_prev() gets added, we can still rename the header
-to something like folio_iterator.h, but until that happens, this
-folio_next.h header seems like the best trade-off to reduce
-dependencies.
+put_devmap_managed_page() is called by put_page().  Moving it to a
+separate header allows us to move put_page() to a separate lean header
+as well.
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- include/linux/mm.h            | 20 +-------------------
- include/linux/mm/folio_next.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 28 insertions(+), 19 deletions(-)
- create mode 100644 include/linux/mm/folio_next.h
+ include/linux/mm.h                | 20 +------------------
+ include/linux/mm/devmap_managed.h | 32 +++++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/mm/devmap_managed.h
 
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index b11bbbdd2754..7be75960e7e1 100644
+index 7be75960e7e1..6ae6961e83bf 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
 @@ -2,6 +2,7 @@
  #ifndef _LINUX_MM_H
  #define _LINUX_MM_H
  
-+#include <linux/mm/folio_next.h>
++#include <linux/mm/devmap_managed.h>
+ #include <linux/mm/folio_next.h>
  #include <linux/mm/folio_size.h>
  #include <linux/mm/page_address.h>
- #include <linux/mm/page_section.h>
-@@ -1916,25 +1917,6 @@ static inline void set_page_links(struct page *page, enum zone_type zone,
- #define MAX_FOLIO_NR_PAGES	MAX_ORDER_NR_PAGES
- #endif
+@@ -1354,25 +1355,6 @@ vm_fault_t finish_fault(struct vm_fault *vmf);
+  *   back into memory.
+  */
  
--/**
-- * folio_next - Move to the next physical folio.
-- * @folio: The folio we're currently operating on.
-- *
-- * If you have physically contiguous memory which may span more than
-- * one folio (eg a &struct bio_vec), use this function to move from one
-- * folio to the next.  Do not use it if the memory is only virtually
-- * contiguous as the folios are almost certainly not adjacent to each
-- * other.  This is the folio equivalent to writing ``page++``.
-- *
-- * Context: We assume that the folios are refcounted and/or locked at a
-- * higher level and do not adjust the reference counts.
-- * Return: The next struct folio.
-- */
--static inline struct folio *folio_next(struct folio *folio)
--{
--	return (struct folio *)folio_page(folio, folio_nr_pages(folio));
--}
+-#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_FS_DAX)
+-DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
 -
- /**
-  * folio_likely_mapped_shared - Estimate if the folio is mapped into the page
-  *				tables of more than one MM
-diff --git a/include/linux/mm/folio_next.h b/include/linux/mm/folio_next.h
+-bool __put_devmap_managed_folio_refs(struct folio *folio, int refs);
+-static inline bool put_devmap_managed_folio_refs(struct folio *folio, int refs)
+-{
+-	if (!static_branch_unlikely(&devmap_managed_key))
+-		return false;
+-	if (!folio_is_zone_device(folio))
+-		return false;
+-	return __put_devmap_managed_folio_refs(folio, refs);
+-}
+-#else /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
+-static inline bool put_devmap_managed_folio_refs(struct folio *folio, int refs)
+-{
+-	return false;
+-}
+-#endif /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
+-
+ /* 127: arbitrary random number, small enough to assemble well */
+ #define folio_ref_zero_or_close_to_overflow(folio) \
+ 	((unsigned int) folio_ref_count(folio) + 127u <= 127u)
+diff --git a/include/linux/mm/devmap_managed.h b/include/linux/mm/devmap_managed.h
 new file mode 100644
-index 000000000000..7016e303439c
+index 000000000000..50357b304d68
 --- /dev/null
-+++ b/include/linux/mm/folio_next.h
-@@ -0,0 +1,27 @@
++++ b/include/linux/mm/devmap_managed.h
+@@ -0,0 +1,32 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_MM_FOLIO_NEXT_H
-+#define _LINUX_MM_FOLIO_NEXT_H
++#ifndef _LINUX_MM_DEVMAP_MANAGED_H
++#define _LINUX_MM_DEVMAP_MANAGED_H
 +
-+#include <linux/mm/folio_size.h> // for folio_nr_pages()
-+#include <linux/mm/page_address.h> // for nth_page(), needed by folio_page()
++#include <linux/types.h> // for bool
 +
-+/**
-+ * folio_next - Move to the next physical folio.
-+ * @folio: The folio we're currently operating on.
-+ *
-+ * If you have physically contiguous memory which may span more than
-+ * one folio (eg a &struct bio_vec), use this function to move from one
-+ * folio to the next.  Do not use it if the memory is only virtually
-+ * contiguous as the folios are almost certainly not adjacent to each
-+ * other.  This is the folio equivalent to writing ``page++``.
-+ *
-+ * Context: We assume that the folios are refcounted and/or locked at a
-+ * higher level and do not adjust the reference counts.
-+ * Return: The next struct folio.
-+ */
-+static inline struct folio *folio_next(struct folio *folio)
++struct page;
++
++#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_FS_DAX)
++
++#include <linux/jump_label.h> // for DECLARE_STATIC_KEY_FALSE(), static_branch_unlikely()
++#include <linux/mmzone.h> // folio_is_zone_device()
++
++DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
++
++bool __put_devmap_managed_folio_refs(struct folio *folio, int refs);
++static inline bool put_devmap_managed_folio_refs(struct folio *folio, int refs)
 +{
-+	return (struct folio *)folio_page(folio, folio_nr_pages(folio));
++	if (!static_branch_unlikely(&devmap_managed_key))
++		return false;
++	if (!folio_is_zone_device(folio))
++		return false;
++	return __put_devmap_managed_folio_refs(folio, refs);
 +}
++#else /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
++static inline bool put_devmap_managed_folio_refs(struct folio *folio, int refs)
++{
++	return false;
++}
++#endif /* CONFIG_ZONE_DEVICE && CONFIG_FS_DAX */
 +
-+#endif /* _LINUX_MM_FOLIO_NEXT_H */
++#endif /* _LINUX_MM_DEVMAP_MANAGED_H */
 -- 
 2.39.2
 
