@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-200916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C669F8FB680
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9338FB683
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78FFE1F219C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A94B1F21B32
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A630413D270;
-	Tue,  4 Jun 2024 15:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBA3143C5A;
+	Tue,  4 Jun 2024 15:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oVqustjF"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fuD+eKfq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F176846D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F22D13D607;
+	Tue,  4 Jun 2024 15:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513469; cv=none; b=fi/UK3diLyqQccU1T3yXFypdfKsavWpB6Hnr0efk/Flp1jwByJSRyLM7b5HN+RcD0WecTRFwqaOX0Eps1H7xjpaIXUbBBdZwHBj4LCVYqRd1aFd7WvQcA9PIcwg8jhIeioBeALJyNI0e2YTlGFYFs7JgpFmIExkSwmcQF83qRTE=
+	t=1717513471; cv=none; b=QBe/RWzCRuGMbug5chH/xM+cft3I97fpewHXYdQGSUEetxpcQg+WHqQ/SeMC+nkESkrU0Q8YNKYaM6hWSZG27flOG8M1qbwysxpOkkL733I4zX5eloq37IXSrGTjaAfe2RnfC7h1t38RDovJJeFLNvYRvKAK56xJJNrE5abFPQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513469; c=relaxed/simple;
-	bh=XuIzMtjidqLr+rmLnKne3/l8kEyJnGzKOsEtJfNXpEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ud8GaNJeuUh77ZNRo7F1axzRyov9QDbj5TPjk3AtkFiunfthepnu+bVm4C4rb9pVQA6bio2HVGUM2rRYeTp4Hrznxq1NhvphyS6OlwV376rf8Z60CeRtz08uUCPd+00nCpv8Y6JRPyggSrs76/m/3TEn8fmo7Et56fJRlCHIcpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oVqustjF; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6ae1b32752aso29411266d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:04:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717513465; x=1718118265; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XuIzMtjidqLr+rmLnKne3/l8kEyJnGzKOsEtJfNXpEM=;
-        b=oVqustjFXuCde0GVz/VF6qxpKhACqWW2BEM0ua+qnEOSutagmVdAPcktZTphUn3XB9
-         0oIOkab7sq7+s6m8IuLeTVozASFaf7GNgvRNHZKySffN4uMrUN79IrBmJcvNA2G+JyKJ
-         EocY3dUCZ0GO5zDmb3qS/GjIqCJMkG783FLz2H3xAXf+YNV6WE8WsYJsxc/w+YI2Xvdx
-         NX/yRnAZ1kXWRsMHmXT+G6rra3llUG0bbaj+HntE7WxHSSFAVXdNHouZuc/FVUwApdSe
-         J44QL6Mpt7FGHnQ5FZIsLm5F+V8+CkZn7dDOOuVH8mQrSKDMc5dPpwhs5RSHEZyBGM9D
-         yVuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717513465; x=1718118265;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XuIzMtjidqLr+rmLnKne3/l8kEyJnGzKOsEtJfNXpEM=;
-        b=wIorYxXD0wZt1brk/pkTG4XE5zS/u6kP917T6f7FHXRG0YaUXsgtDhfMB8z5wc1VJ/
-         C53DFq4gb8DIB5W/KmuBuqXwkn6Y0gA9PQGQKN4ZAifTMTNm6WVy0jaGaV7MwOjUA2Pb
-         OnM+1jYRzGYgyJuvzygRN6mmfyhwzuS93EHTl0J8KgYXwVTeAx2/zViBGb18PnqONzeW
-         tbFlJ3Oom3EODSfCdG+uDbaoiFVkRnAgKoUbguDGJkvvs0WB2zNSFsKDFlzWj/AN5kvj
-         /xb3I92d2tMpRslHjn+wgwogQRksUHH3FQoGuN3oHVpU5WYo8fNsNKimSrhd+vS5GEBL
-         aNOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeVqmzry5vzShjmGBiUTihVQek397Fm1bXYgusxIK0ZYDD/UsKrxr2ql8OnRXi968ihCILmZ48qqI/aafRnKxCd9T4/7OS/kAiZsA7
-X-Gm-Message-State: AOJu0Yyel21E1pimUMSWsH4nH152diSYBgTAl6rK6HdnsKtcEXx190eo
-	FseI3puJy0ORCeDFpEVlQfHnDmXOPkxFGD8GEbNM6xOIt3twDar0Uv1cewN8Qh9mFU7VQLyqffa
-	03PKa7bVTjfyme3JrR7Qwl7sfFwPqJYB+zIog
-X-Google-Smtp-Source: AGHT+IEc2i2uYoZ0LGBr2D5FjAvAhS8oxe9fpEVAc8WRo0Ug/6h91bryBwxupz3K1jNeEdTNHPw2YH54C/01cg/SgVk=
-X-Received: by 2002:a05:6214:5908:b0:6ab:9bd6:cf91 with SMTP id
- 6a1803df08f44-6aecd6f0912mr143798536d6.56.1717513465195; Tue, 04 Jun 2024
- 08:04:25 -0700 (PDT)
+	s=arc-20240116; t=1717513471; c=relaxed/simple;
+	bh=y0EvXNTCYX2JR18tw1pE2t4dZhAe7eyCQbW2UDrWLsQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3ySGfCsbaLDJq4Z9ky9KirUQa7wYJSBPX9aMnSB6cI2lrRAH3WqQAUBgNvnyvLHea+9Cilt3qHzDYaBmfHC1t+pXeQ3vzW5zdoJfmfidZZ2zLFazQOYRGKdmaPhTnyKOvyTWGsJmYd2nSuGr/LwFN+s6jTGcROphWlM9j8GgDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fuD+eKfq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57189C2BBFC;
+	Tue,  4 Jun 2024 15:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717513470;
+	bh=y0EvXNTCYX2JR18tw1pE2t4dZhAe7eyCQbW2UDrWLsQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fuD+eKfqDs42GNyoWVKDNJ7DZd4wjUlntKzmNLRGGMgt3Kb9GlpHDwyP4V1jfJDGM
+	 XRUghYRWspe5Qdu08M6y9Kq5eXSDoy5oJPd3mogEc9mvOVWH9Drv7dFRSmpqvaaTZf
+	 FrxXAmdY0PgLFVAiWp3f0Urqnlnlhr24ghAbrlPfpO2+O3JP9r5wwlqwKqhGaejBln
+	 gsZaF7sK26hdt85qwaBGazzIk3hKMrsZKtx2D4kiJFWeeUCkDTSLzUHZGVDP50jVLV
+	 9OXGdVLLB+WmO8Ynkuc2cLuDYbNDMFr1SjRBUykIRA8EilmqWshtEAfHISrOxttl4K
+	 BAAFHBE5qzh4w==
+Date: Wed, 5 Jun 2024 00:04:26 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Patrick Havelange <patrick.havelange@essensium.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] counter: ftm-quaddec: add missing MODULE_DESCRIPTION()
+ macro
+Message-ID: <Zl8s-uujP1lXBAQY@ishi>
+References: <20240602-md-ftm-quaddec-v1-1-1bbdf705ad31@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1717507310.git.dvyukov@google.com> <8e7115affb70513cdd9d5ce83547b98c4c5e419f.1717507310.git.dvyukov@google.com>
-In-Reply-To: <8e7115affb70513cdd9d5ce83547b98c4c5e419f.1717507310.git.dvyukov@google.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Tue, 4 Jun 2024 17:03:43 +0200
-Message-ID: <CAG_fn=WPX+T7XQUe9rYfv3zR9Ovh8wT_xORv7GCSREoi99ZRwA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] module: Fix KCOV-ignored file name
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com, elver@google.com, nogikh@google.com, 
-	tarasmadan@google.com, Aaron Tomlin <atomlin@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="95b6PXuy/W1LLJyf"
+Content-Disposition: inline
+In-Reply-To: <20240602-md-ftm-quaddec-v1-1-1bbdf705ad31@quicinc.com>
+
+
+--95b6PXuy/W1LLJyf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 3:45=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com> w=
-rote:
->
-> Module.c was renamed to main.c, but the Makefile directive
-> was copy-pasted verbatim with the old file name.
-> Fix up the file name.
->
-> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-> Fixes: cfc1d277891e ("module: Move all into module/")
-> Cc: Aaron Tomlin <atomlin@redhat.com>
-> Cc: x86@kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: syzkaller@googlegroups.com
-Reviewed-by: Alexander Potapenko <glider@google.com>
+On Sun, Jun 02, 2024 at 03:05:20PM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/counter/ftm-qua=
+ddec.o
+>=20
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>=20
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+Hi Jeff,
+
+Would you add a Fixes tag as well so we can merge this into the stable
+trees that need it?
+
+Thanks,
+
+William Breathitt Gray
+
+--95b6PXuy/W1LLJyf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZl8s+gAKCRC1SFbKvhIj
+K8iUAQD0WaPsQ1/zAB3wIwDz0z898/41skahP1lX0wY/Lx+nsQEA8ySLyHqHIKwM
+2Cb836x0NIpN1w7mhADuAIfml7csww8=
+=PzGZ
+-----END PGP SIGNATURE-----
+
+--95b6PXuy/W1LLJyf--
 
