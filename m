@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-201459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AD78FBED1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:22:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5498FBED5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BAF61C209CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:22:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07F12851B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B6014C5BA;
-	Tue,  4 Jun 2024 22:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E919C14D2BC;
+	Tue,  4 Jun 2024 22:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzC72Mkg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SS+UH7cu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C08B13777A;
-	Tue,  4 Jun 2024 22:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282A2145322;
+	Tue,  4 Jun 2024 22:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717539718; cv=none; b=uh06qRZbZBKbat68ZGcJ3NiYrsq39W9oZQDoDLP9PYpV2RZF4SuRPJFd7E8jKtdt32RSCSyfsZE03gtOeXUT1VqBxFRzPpp88ZLkqJz4iBhkztzDVPISV3zVXsaRjfMzvfDi9OxpFyfT2sgiH5q6m8SpvpKJsHRv+Xb4Razfako=
+	t=1717539837; cv=none; b=gO5KqU7hcuBR8PgfhPuxdkW2aIz0WG47tu2NB7Um+Z93PrysUb9jA5N3nTU4U1N0N/lwFpYvwGRKQwy14GF3aUkzxqjVakVpLhkyoTj7MYT8YB+EiCf/7jo+jxDrDtCP78GPzWEtun2dut9rVy0/D2booqY5D7Km65ffT1V3oGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717539718; c=relaxed/simple;
-	bh=CuXVALkORaJs+PqG5WX2Eg3IMr6JUZzWBMU3JPWUmF8=;
+	s=arc-20240116; t=1717539837; c=relaxed/simple;
+	bh=Zg9sZgSfw8tshKxAzI3tRPCKrOIhzkGKLv0XgiHxsM8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VSm5qYLnYMcNDaGbxjzZf/owcC48oPqliDKHxqmO3xVGAqjbClYLy5W2O1tjPOh688KNjiUgAYm5uilUo7A2j16j0Le8K3pDJ1ceD13AYsxXhsYG19XcxbJu04kjFT6FwKEhN/TZOHIbKGoM+eg021+tuNMmD+O4wc1KdRVPj+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzC72Mkg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC7B4C3277B;
-	Tue,  4 Jun 2024 22:21:57 +0000 (UTC)
+	 MIME-Version; b=WAGx8X1ly7Z82GQwUeE5dRpLWMCTnP9bFdD4XoicZuPunNlag2F1F5WWBFPoEcH8kX+D1B3P1vOH5TzBUMzld6Tl9VpN22kcmm58o/tw3e3opcBIFvaHs5aEAjTtsmrXsC8NYnNM3pNht88WiXbPBbdkpWW/zUZQuECRENDwn7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SS+UH7cu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DF9C2BBFC;
+	Tue,  4 Jun 2024 22:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717539717;
-	bh=CuXVALkORaJs+PqG5WX2Eg3IMr6JUZzWBMU3JPWUmF8=;
+	s=k20201202; t=1717539836;
+	bh=Zg9sZgSfw8tshKxAzI3tRPCKrOIhzkGKLv0XgiHxsM8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nzC72MkgI40MmdAy+a5Hc+L0zUpGCRcdQNi0mZ7aE0OQebJYZ7NSOu9DhXMmoZ/e6
-	 Xq5o5BgAJtoNJs3yBa86pwWfCkOkgUxs+46WbB9movXVoEioPFceQlNgvTNngmWAL4
-	 Kw1EwyW4XWtVRJ0r9emdImWskZtKTe+VhYlheW+KjYCGxzR4A+p7gIbWAJNzo9axAp
-	 b8W7uA0+Yrv2rAt5DJ9+uxtTa/bBakiUNeRp7Xu0/xqcGFxpfyElV7hWdQhF5+ADvb
-	 76Rq+UOJ0X4p9rlQJQ0vw+P+bmnQKUAhLtX97XdWuvwGBE3EiAwZN34+8UUgSabFfE
-	 Ay21pHsqH4xrA==
+	b=SS+UH7cuLvDau5uNM/gzwumHyeUhSvhZjWKDAh0R08pe+kWTHr6B0sW3nIobnTbPK
+	 pfIbzPhGCS9fSN+RpdylGD4JVJ1NxKbrNn2vYu25HgrwNlSDgtSzh1y9YNSXiFSf75
+	 LTH8hQaiRPEUYnTq4cnuRYOycWkVi9gItuDKzPNiivBTfobmL3QdheLQC916jhqbS3
+	 GpvwxexASDXfWgRqvGI/ZweGSYeIYs5K/VuARYV7wH9K/JvVfbkmKs4X+/bLmtwLYW
+	 /L/uMR6JdJU149Pd6/lcbmTpfgH/p+HWhrow2hD3nOv/4tT84A7BqGXm3O7UNu9BDZ
+	 LSiZrHadbpZ2A==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 89832CE3F0F; Tue,  4 Jun 2024 15:21:57 -0700 (PDT)
+	id 5A049CE3ED6; Tue,  4 Jun 2024 15:23:56 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>,
-	Rao Shoaib <rao.shoaib@oracle.com>
-Subject: [PATCH rcu 2/2] doc: Clarify rcu_assign_pointer() and rcu_dereference() ordering
-Date: Tue,  4 Jun 2024 15:21:55 -0700
-Message-Id: <20240604222155.2370541-2-paulmck@kernel.org>
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH rcu 1/9] rcu: Add lockdep_assert_in_rcu_read_lock() and friends
+Date: Tue,  4 Jun 2024 15:23:47 -0700
+Message-Id: <20240604222355.2370768-1-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <e5dc5f14-04c1-494b-9044-e837279a7bcd@paulmck-laptop>
-References: <e5dc5f14-04c1-494b-9044-e837279a7bcd@paulmck-laptop>
+In-Reply-To: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
+References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,68 +63,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit expands on the ordering properties of rcu_assign_pointer()
-and rcu_dereference(), outlining their constraints on CPUs and compilers.
+There is no direct RCU counterpart to lockdep_assert_irqs_disabled()
+and friends.  Although it is possible to construct them, it would
+be more convenient to have the following lockdep assertions:
 
-Reported-by: Rao Shoaib <rao.shoaib@oracle.com>
+lockdep_assert_in_rcu_read_lock()
+lockdep_assert_in_rcu_read_lock_bh()
+lockdep_assert_in_rcu_read_lock_sched()
+lockdep_assert_in_rcu_reader()
+
+This commit therefore creates them.
+
+Reported-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- Documentation/RCU/whatisRCU.rst | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ include/linux/rcupdate.h | 60 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
-index 94838c65c7d97..d585a5490aeec 100644
---- a/Documentation/RCU/whatisRCU.rst
-+++ b/Documentation/RCU/whatisRCU.rst
-@@ -250,21 +250,25 @@ rcu_assign_pointer()
- ^^^^^^^^^^^^^^^^^^^^
- 	void rcu_assign_pointer(p, typeof(p) v);
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index dfd2399f2cde0..8470a85f65634 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -421,11 +421,71 @@ static inline void rcu_preempt_sleep_check(void) { }
+ 				 "Illegal context switch in RCU-sched read-side critical section"); \
+ 	} while (0)
  
--	Yes, rcu_assign_pointer() **is** implemented as a macro, though it
--	would be cool to be able to declare a function in this manner.
--	(Compiler experts will no doubt disagree.)
-+	Yes, rcu_assign_pointer() **is** implemented as a macro, though
-+	it would be cool to be able to declare a function in this manner.
-+	(And there has been some discussion of adding overloaded functions
-+	to the C language, so who knows?)
- 
- 	The updater uses this spatial macro to assign a new value to an
- 	RCU-protected pointer, in order to safely communicate the change
- 	in value from the updater to the reader.  This is a spatial (as
- 	opposed to temporal) macro.  It does not evaluate to an rvalue,
--	but it does execute any memory-barrier instructions required
--	for a given CPU architecture.  Its ordering properties are that
--	of a store-release operation.
--
--	Perhaps just as important, it serves to document (1) which
--	pointers are protected by RCU and (2) the point at which a
--	given structure becomes accessible to other CPUs.  That said,
-+	but it does provide any compiler directives and memory-barrier
-+	instructions required for a given compile or CPU architecture.
-+	Its ordering properties are that of a store-release operation,
-+	that is, any prior loads and stores required to initialize the
-+	structure are ordered before the store that publishes the pointer
-+	to that structure.
++// See RCU_LOCKDEP_WARN() for an explanation of the double call to
++// debug_lockdep_rcu_enabled().
++static inline bool lockdep_assert_rcu_helper(bool c)
++{
++	return debug_lockdep_rcu_enabled() &&
++	       (c || !rcu_is_watching() || !rcu_lockdep_current_cpu_online()) &&
++	       debug_lockdep_rcu_enabled();
++}
 +
-+	Perhaps just as important, rcu_assign_pointer() serves to document
-+	(1) which pointers are protected by RCU and (2) the point at which
-+	a given structure becomes accessible to other CPUs.  That said,
- 	rcu_assign_pointer() is most frequently used indirectly, via
- 	the _rcu list-manipulation primitives such as list_add_rcu().
++/**
++ * lockdep_assert_in_rcu_read_lock - WARN if not protected by rcu_read_lock()
++ *
++ * Splats if lockdep is enabled and there is no rcu_read_lock() in effect.
++ */
++#define lockdep_assert_in_rcu_read_lock() \
++	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_lock_map)))
++
++/**
++ * lockdep_assert_in_rcu_read_lock_bh - WARN if not protected by rcu_read_lock_bh()
++ *
++ * Splats if lockdep is enabled and there is no rcu_read_lock_bh() in effect.
++ * Note that local_bh_disable() and friends do not suffice here, instead an
++ * actual rcu_read_lock_bh() is required.
++ */
++#define lockdep_assert_in_rcu_read_lock_bh() \
++	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_bh_lock_map)))
++
++/**
++ * lockdep_assert_in_rcu_read_lock_sched - WARN if not protected by rcu_read_lock_sched()
++ *
++ * Splats if lockdep is enabled and there is no rcu_read_lock_sched()
++ * in effect.  Note that preempt_disable() and friends do not suffice here,
++ * instead an actual rcu_read_lock_sched() is required.
++ */
++#define lockdep_assert_in_rcu_read_lock_sched() \
++	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_sched_lock_map)))
++
++/**
++ * lockdep_assert_in_rcu_reader - WARN if not within some type of RCU reader
++ *
++ * Splats if lockdep is enabled and there is no RCU reader of any
++ * type in effect.  Note that regions of code protected by things like
++ * preempt_disable, local_bh_disable(), and local_irq_disable() all qualify
++ * as RCU readers.
++ *
++ * Note that this will never trigger in PREEMPT_NONE or PREEMPT_VOLUNTARY
++ * kernels that are not also built with PREEMPT_COUNT.  But if you have
++ * lockdep enabled, you might as well also enable PREEMPT_COUNT.
++ */
++#define lockdep_assert_in_rcu_reader()								\
++	WARN_ON_ONCE(lockdep_assert_rcu_helper(!lock_is_held(&rcu_lock_map) &&			\
++					       !lock_is_held(&rcu_bh_lock_map) &&		\
++					       !lock_is_held(&rcu_sched_lock_map) &&		\
++					       preemptible()))
++
+ #else /* #ifdef CONFIG_PROVE_RCU */
  
-@@ -283,7 +287,11 @@ rcu_dereference()
- 	executes any needed memory-barrier instructions for a given
- 	CPU architecture.  Currently, only Alpha needs memory barriers
- 	within rcu_dereference() -- on other CPUs, it compiles to a
--	volatile load.
-+	volatile load.	However, no mainstream C compilers respect
-+	address dependencies, so rcu_dereference() uses volatile casts,
-+	which, in combination with the coding guidelines listed in
-+	rcu_dereference.rst, prevent current compilers from breaking
-+	these dependencies.
+ #define RCU_LOCKDEP_WARN(c, s) do { } while (0 && (c))
+ #define rcu_sleep_check() do { } while (0)
  
- 	Common coding practice uses rcu_dereference() to copy an
- 	RCU-protected pointer to a local variable, then dereferences
++#define lockdep_assert_in_rcu_read_lock() do { } while (0)
++#define lockdep_assert_in_rcu_read_lock_bh() do { } while (0)
++#define lockdep_assert_in_rcu_read_lock_sched() do { } while (0)
++#define lockdep_assert_in_rcu_reader() do { } while (0)
++
+ #endif /* #else #ifdef CONFIG_PROVE_RCU */
+ 
+ /*
 -- 
 2.40.1
 
