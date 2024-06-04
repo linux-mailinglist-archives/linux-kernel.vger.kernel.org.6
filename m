@@ -1,118 +1,109 @@
-Return-Path: <linux-kernel+bounces-200206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6408FAD14
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7CB8FAD0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614811F27200
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:06:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 536B51F27D5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E544F1422AF;
-	Tue,  4 Jun 2024 07:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfoLU4/R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741371419B3;
+	Tue,  4 Jun 2024 08:03:58 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C1C1411CA;
-	Tue,  4 Jun 2024 07:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF57F446CF;
+	Tue,  4 Jun 2024 08:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717487932; cv=none; b=W8CQCf4UfAgvqjazmH9a6QJDs9pRVaFxaSYGZAVjWzXArM/Jk2xETux6Q8cuGc1txXcfL9Y6OKIPfczvgsOfQJlH5iX35aPPE13epxcbmyFSWZkXM3nv4ayZdyXK1+zcVUQsfNSaokJ3SAVkDrDGYDsEpWUlq6fjeVNSGoEECjM=
+	t=1717488238; cv=none; b=a3xGQgrAkAyT7SJK2+2S8DYF4bpc9n8/foz7Dm+i2yHXcJpkW7QIZFxNT7vm6agUctmUnNm0CMrFhMeBGE+nN5G/+m4gW5mC4K3CUYT/pxtpZc/QF3Ia4CkuYfWiuG5kmdggNYY59JU+vjnX8h0DD/jjcqVJZ5v2SJATHUMprsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717487932; c=relaxed/simple;
-	bh=/2h304tkOJFnFlQMxg3EG6MI/HuME1XtmAEkjVrYmYY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KirDxwB7PqVAHrXXDd4njxY8p2ws3bKXUVvohxGSdD9W4w4jNCPIuLbmqhJO4uVKXnCq8dLAsO9VT7nQSxqUFoyzNFlLZ0YJ8Hgz3zUdYCo9+1YHbX4/wLAomUdS80ueUjJPMjNUG0R5U2ST0oxCGakCRw4ffD9AXlht3g+egTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfoLU4/R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AD1BC2BBFC;
-	Tue,  4 Jun 2024 07:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717487931;
-	bh=/2h304tkOJFnFlQMxg3EG6MI/HuME1XtmAEkjVrYmYY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=FfoLU4/Rw1RAUN1Ww+rsMTdeA1C0zktNuV7DVFFartqRjRUWC72cr6+Iy8lTssqya
-	 +F9a+yR0qD35AhleNxWSrCKwRqj112IL6hJtu7SN0pvYuoausgWlbDsjBM4GGFoQO9
-	 mkPiHgXe/i353/szgViaRzUHEynzpTy5bqFzRNrFAECPI5X1f9Amqjmig4ejTuEZjm
-	 KxMtnaQOGdCBMLovnIR5LmiJcnKtxEjs0tZKwwNSDITcekKklMDG0Q75SzDmMp+kBX
-	 q7axmSh2tcDoBilsNvWT8y3vYTZQgfBU7u81KJ2G6E2noenkiwErbF/Be22Cj1W6uH
-	 9EqqHakY8rM2A==
-Date: Tue, 4 Jun 2024 09:58:48 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: "Hailong.Liu" <hailong.liu@oppo.com>
-cc: benjamin.tissoires@redhat.com, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, 21cnbao@gmail.com
-Subject: Re: [PATCH] HID: Use kvzalloc instead of kzalloc in
- hid_register_field()
-In-Reply-To: <20240522080328.12317-1-hailong.liu@oppo.com>
-Message-ID: <nycvar.YFH.7.76.2406040958380.16865@cbobk.fhfr.pm>
-References: <20240522080328.12317-1-hailong.liu@oppo.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1717488238; c=relaxed/simple;
+	bh=V0bP/pgginWSfLSzil5x4CQ2ljLMsquK2SkQRT5M5bo=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ZOVRWGFBM+NztcNo9x3MwPtWLWu1DDhS+/u5PFs33Qw6ykaWwQPymoGzdKrSDzpYbIkIBpyWfV3EAwDU+IA/N8Hwt6OQ9nLXWUz7v0MbP7etc3viC0GcbYgBDvJc7YsN8IKYq/3Wr1D15pjjVmVSVKr8N1wMaUtg7jiPQODFXHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Vtjh4643hzPnsm;
+	Tue,  4 Jun 2024 16:00:36 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0692A18007E;
+	Tue,  4 Jun 2024 16:03:53 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 4 Jun 2024 16:03:52 +0800
+CC: <yangyicong@hisilicon.com>, <will@kernel.org>, <mark.rutland@arm.com>,
+	<acme@kernel.org>, <namhyung@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<james.clark@arm.com>, <dongli.zhang@oracle.com>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>
+Subject: Re: [PATCH 0/3] Perf avoid opening events on offline CPUs
+To: Ian Rogers <irogers@google.com>
+References: <20240603092812.46616-1-yangyicong@huawei.com>
+ <CAP-5=fXw0=dHORC-kObYFiAco64PGP4_uFr__f9YmVctWtGSfA@mail.gmail.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <3f43ecf1-ae3c-3418-9798-9f1aa0dcc3d2@huawei.com>
+Date: Tue, 4 Jun 2024 16:03:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+In-Reply-To: <CAP-5=fXw0=dHORC-kObYFiAco64PGP4_uFr__f9YmVctWtGSfA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On Wed, 22 May 2024, hailong.liu@oppo.com wrote:
+On 2024/6/4 0:42, Ian Rogers wrote:
+> On Mon, Jun 3, 2024 at 2:33 AM Yicong Yang <yangyicong@huawei.com> wrote:
+>>
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> If user doesn't specify the CPUs, perf will try to open events on CPUs
+>> of the PMU which is initialized from the PMU's "cpumask" or "cpus" sysfs
+>> attributes if provided. But we doesn't check whether the CPUs provided
+>> by the PMU are all online. So we may open events on offline CPUs if PMU
+>> driver provide offline CPUs and then we'll be rejected by the kernel:
+>>
+>> [root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
+> 
+> Generally Linux won't let you take CPU0 off line, I'm not able to
+> follow this step on x86 Linux. Fwiw, I routinely run perf with the
+> core hyperthread siblings offline.
+> 
 
-> From: "Hailong.Liu" <hailong.liu@oppo.com>
->=20
-> The function hid_register_field() might allocate more than 32k, which
-> would use order-4 contiguous memory if the parameter usage exceeds
-> 1024. However, after the system runs for a while, the memory can
-> become heavily fragmented. This increases the likelihood of order-4 page
-> allocation failure. Here=E2=80=99s the relevant log.
->=20
-> [71553.093623]kworker/1: 0: page allocation failure: order:4, mode:0x40dc=
-0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=3D(null),cpuset=3D/,mems_allo=
-wed=3D0
-> [71553.093669]Workqueue: events uhid_device_add_worker
-> [71553.093683]Call trace:
-> [71553.093687]: dump_backtrace+0xf4/0x118
-> [71553.093696]: show_stack+0x18/0x24
-> [71553.093702]: dump_stack_lvl+0x60/0x7c
-> [71553.093710]: dump_stack+0x18/0x3c
-> [71553.093717]: warn_alloc+0xf4/0x174
-> [71553.093725]: __alloc_pages_slowpath+0x1ba0/0x1cac
-> [71553.093732]: __alloc_pages+0x460/0x560
-> [71553.093738]: __kmalloc_large_node+0xbc/0x1f8
-> [71553.093746]: __kmalloc+0x144/0x254
-> [71553.093752]: hid_add_field+0x13c/0x308
-> [71553.093758]: hid_parser_main+0x250/0x298
-> [71553.093765]: hid_open_report+0x214/0x30c
-> [71553.093771]: mt_probe+0x130/0x258
-> [71553.093778]: hid_device_probe+0x11c/0x1e4
-> [71553.093784]: really_probe+0xe4/0x388
-> [71553.093791]: __driver_probe_device+0xa0/0x12c
-> [71553.093798]: driver_probe_device+0x44/0x214
-> [71553.093804]: __device_attach_driver+0xdc/0x124
-> [71553.093812]: bus_for_each_drv+0x88/0xec
-> [71553.093818]: __device_attach+0x84/0x170
-> [71553.093824]: device_initial_probe+0x14/0x20
-> [71553.093831]: bus_probe_device+0x48/0xd0
-> [71553.093836]: device_add+0x248/0x928
-> [71553.093844]: hid_add_device+0xf8/0x1a4
-> [71553.093850]: uhid_device_add_worker+0x24/0x144
-> [71553.093857]: process_one_work+0x158/0x804
-> [71553.093865]: worker_thread+0x15c/0x494
-> [71553.093872]: kthread+0xf4/0x1e4
-> [71553.093880]: ret_from_fork+0x10/0x20
->=20
-> To fix the allocation failure, use kvzalloc() instead of kzalloc().
->=20
-> Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
+It doesn't matter if it's the CPU0 offline or other CPUs. There's no restriction
+for CPU0 can go offline or not on arm64 and I just use this for example.
 
-Applied, thanks.
+I cannot reproduce it on x86. I think it may because we're initializing the
+pmu->cpus in different routines in pmu_cpumask(). There's no "cpus"
+for x86's core pmu on my x86 machine:
+root@ubuntu204:~# ls /sys/bus/event_source/devices/cpu/
+allow_tsx_force_abort  caps  events  format  freeze_on_smi  perf_event_mux_interval_ms  power  rdpmc  subsystem  type  uevent
 
---=20
-Jiri Kosina
-SUSE Labs
+So pmu_cpumask() will infer it as an core pmu and initialize the cpus
+with online CPUs [1]. For arm64 there lies a "cpus" sysfs attributes
+so pmu->cpus are initialized from the "cpus" without checking each
+CPUs is online or not. That's what proposed in Patch 1/3.
 
+There's a "cpus" sysfs for x86's hybrid machine, reading from the code [2].
+And it seems always reflect the online CPUs supported by that PMU.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/pmu.c?h=perf-tools-next#n779
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree//arch/x86/events/intel/core.c#n5736
+
+Thanks.
 
