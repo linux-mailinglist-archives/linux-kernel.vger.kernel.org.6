@@ -1,172 +1,120 @@
-Return-Path: <linux-kernel+bounces-200395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1578FAF80
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AE98FAF84
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C061C21DB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BADE1F22713
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA211448F1;
-	Tue,  4 Jun 2024 10:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFF61448D7;
+	Tue,  4 Jun 2024 10:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qPiU3yZ8"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2002613BC39;
-	Tue,  4 Jun 2024 10:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="S3w8LXbq"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD9438B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717495245; cv=none; b=m/czUxiS4SF4VVxcJNVi96M3PYRroYPv6nKZBiKd5vBVgf8Gn1ZwGr536MkW7cjrxpOMujfr6HPwWN4hG99b+5pOUKx2ZR9ywdPvq/v0DFZjUCAgI/b8d1PffYbSR5Ez4vKq/3mS9POEKu1VS4fTTRDtDKDbJri7sdwy+viS4M0=
+	t=1717495377; cv=none; b=FoH+X+xSJ4kMkcIWZXRAxplCgkB5Fd+cNSi49vYNbXm4TxHc2/BUW8cgldrrqY1lmy8+q+F+IQyBsvKi1I0DDbJL0iI6ciBpu04nNIGXZuT7fjuWHkftJTI9PyaZz2Qo2FHEicDJmqseoS9m3iy/kp4ReDB5tjsXlQFvLZcbyWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717495245; c=relaxed/simple;
-	bh=a+/pXEb0n+Lxm+BrKmisw+Kn7zWpdQvG+7DWDNmT3Pw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Chx5Mq8MrQJ9EgJSjJyxWweab6w/naFJOPEJU9L1z496/zsK5ca7sppSpK/OJo1HtPHxkSQtm0xfG/Z7a70KLjgyitu/3/9niaW5AkTtbQK2Sc4y6LMntPHcWPJ/NCV0vmUkOU+PeoyjSJeWp8oFVrTEMDtCYp7IYFHk3D5WlOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qPiU3yZ8; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=UZzpK7RAnvb5v4Rf56gbIEbrxmYlFHstUELrFhF6ayM=;
-	b=qPiU3yZ83ANkNuG6yPgEXyIspmAFFuieu1Zq6mkUrdO4xB44xMh6AO6rHW4W6M
-	1FX0+E77tSySYdaDdjAGXkXjXS2HdKBPVAmgAcwukRdkUi//ajFVEZh2fuXR3oTY
-	xPnzfZdX1gmONgcWyT43dalOp2+Z1XUKELF4iCSQtgAcI=
-Received: from [10.0.2.15] (unknown [111.205.43.230])
-	by gzga-smtp-mta-g3-2 (Coremail) with SMTP id _____wC3X0yk5V5mlhwCBw--.18854S2;
-	Tue, 04 Jun 2024 18:00:05 +0800 (CST)
-Message-ID: <67c92052-24d0-4bce-858a-ebed0aab5738@163.com>
-Date: Tue, 4 Jun 2024 18:00:04 +0800
+	s=arc-20240116; t=1717495377; c=relaxed/simple;
+	bh=KmFXORb2yt5DuY/K2IoFpc+0VDLo4L9lk+l/JXxqBHg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VmFLvHqLvBNEz4t7+xigTc913yyvHnWqj4J0I27j7l+LmISCeguuhff8n4PWxX4W9p6pqMKGo8wLDLygyYwuuJzFZ4gnmxYYRgEvgfbjdS4qqCZux36DcT4lxz5JFVhT1Fyc2EM4uf4tDBkuzau8wmSRR/F6w8HDEWTwdBdDMao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=S3w8LXbq; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a68e7538cfaso291823266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:02:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1717495374; x=1718100174; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Le/ddYXHWhX53i9qIi9hulgRRWo7gp0FcrSDy4OJL6E=;
+        b=S3w8LXbqp2dOuWm8GSbzRrjE/aVeq1ouhnVW1IC/4BDXEoEud5SOZ5s9+8C2DHKRpy
+         DZT0k947t7MB3trmXZZ1jksFr3m3CsboeJBuodxBevpdfoDMukGSxauFGVBdDMkBJini
+         Y1njkUVOfH2qqOGPkNKy0Cfo+D5f/YbCxuwPg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717495374; x=1718100174;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Le/ddYXHWhX53i9qIi9hulgRRWo7gp0FcrSDy4OJL6E=;
+        b=JTP2EnGvwv8Wm4b/79F88T09SPvsHwdSqmfo+zFy0Cy3Qc47JVVKzA9fvEf0WIWN5v
+         lZ2cO3/xg97FDgqkBaqLjA7Hx4EsRHrKknc9vmsAcCwAEn4qYVcukfBjEJEaMBsd+BfM
+         skvZna8qA6tVMKiYtmY4WksyuarqRpe40BpDwaiXH/hhJfaejg84qQtiikm+IfD5bilP
+         nQx21+L5W07lyoMvGrhhsZfqGU+XdFppXyyipm4lNWQxMF8ecibzhTRi9pv9Tf9JIRnQ
+         KpX3GoCPQbokKPW39EWWCBgd+Vz3UVMGKS8DiliXcMTpQ2c5mjqkhCBSrOgmi1MzzDK6
+         0yKg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4yBeSQmCyvJbA9h1wMtD5KCS5mMbyk2KW8dmqTrfFkAUbcTqQZDLjGsvk18/CnBUU6/HqBgEyPQwqOYpqlB/N9qktdv9guHkb3jZz
+X-Gm-Message-State: AOJu0YxkFIaMoa77MbkzcIK9iixmKmy0EOJVyQ6MiIs8f6SeIoUw5U4+
+	G9dRBshRSDDP0xAYp0+H9y1YVMPToNFcQL0KE6VC4sIdStAJdgrwvXaHN6pYcjmh+dhwmGUj+p8
+	pL/XTQUTup0qcvcJhDSZtYn0ES5bxaD8r5o1gbQ==
+X-Google-Smtp-Source: AGHT+IEydtpbcQ3+TaA0iWlzJhJL0iIGS1Jc2F5dm0s3zwbofudHPfZLYiJf5Va09F6m9a/kI80mbXTFZt5MKzATyJM=
+X-Received: by 2002:a17:906:b0c6:b0:a67:7d34:3205 with SMTP id
+ a640c23a62f3a-a68208fe45emr768858166b.35.1717495373577; Tue, 04 Jun 2024
+ 03:02:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: vmd: Create domain symlink before
- pci_bus_add_devices
-To: Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>,
- nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
- bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, sunjw10@lenovo.com, ahuang12@lenovo.com
-References: <20240603140329.7222-1-sjiwei@163.com>
- <e10398dc-53b7-446f-b22f-f992ba1cc37e@intel.com>
-Content-Language: en-US
-From: Jiwei Sun <sjiwei@163.com>
-In-Reply-To: <e10398dc-53b7-446f-b22f-f992ba1cc37e@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC3X0yk5V5mlhwCBw--.18854S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWDuw43GFyrXFWUWw1kuFg_yoWrGw1kpF
-	W5GayjyFsrKr47XayDA3y8Xa4Yva1vv3y5J3s8K347Zr9xAFyI9rW0gF45AFWqvF4q93W2
-	vwsrXF1a9rs0kaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UYD7-UUUUU=
-X-CM-SenderInfo: 5vml4vrl6rljoofrz/1tbiWxnzmWV4JQdC4wABs3
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm> <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+ <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com> <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+ <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com> <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
+In-Reply-To: <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 4 Jun 2024 12:02:42 +0200
+Message-ID: <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, lege.wang@jaguarmicro.com, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 4 Jun 2024 at 11:32, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
 
+> Back to the background for the copy, so it copies pages to avoid
+> blocking on memory reclaim. With that allocation it in fact increases
+> memory pressure even more. Isn't the right solution to mark those pages
+> as not reclaimable and to avoid blocking on it? Which is what the tmp
+> pages do, just not in beautiful way.
 
-On 6/3/24 23:47, Paul M Stillwell Jr wrote:
-> On 6/3/2024 7:03 AM, Jiwei Sun wrote:
->> From: Jiwei Sun <sunjw10@lenovo.com>
->>
->> During booting into the kernel, the following error message appears:
->>
->>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device''
->>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: /dev/nvme1n1 is not attached to Intel(R) RAID controller.'
->>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: No OROM/EFI properties for /dev/nvme1n1'
->>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: no RAID superblock on /dev/nvme1n1.'
->>    (udev-worker)[2149]: nvme1n1: Process '/sbin/mdadm -I /dev/nvme1n1' failed with exit code 1.
->>
->> This symptom prevents the OS from booting successfully.
->>
-> 
-> I'm just curious: has this been doing this forever or has this just started recently?
+Copying to the tmp page is the same as marking the pages as
+non-reclaimable and non-syncable.
 
-Thanks for your reply. 
+Conceptually it would be nice to only copy when there's something
+actually waiting for writeback on the page.
 
-The issue was only reproduced in certain specific servers (VROC configuration
-with RAID1 in two NVMe drives, 7mm NVME 2-bay rear RAID enablement kits),
-and the VROC RAID1 disk was installed with SLES15.6 (kernel 6.4). According
-to our test, the issue has been easily reproduced on this configured server
-since kernel 6.2. 
-And according to the journalctl log, we found that the systemd-udevd starts 
-running earlier than NVMe device added, it exposes this timing issue.
+Note: normally the WRITE request would be copied to userspace along
+with the contents of the pages very soon after starting writeback.
+After this the contents of the page no longer matter, and we can just
+clear writeback without doing the copy.
+
+But if the request gets stuck in the input queue before being copied
+to userspace, then deadlock can still happen if the server blocks on
+direct reclaim and won't continue with processing the queue.   And
+sync(2) will also block in that case.
+
+So we'd somehow need to handle stuck WRITE requests.   I don't see an
+easy way to do this "on demand", when something actually starts
+waiting on PG_writeback.  Alternatively the page copy could be done
+after a timeout, which is ugly, but much easier to implement.
+
+Also splice from the fuse dev would need to copy those pages, but that
+shouldn't be a problem, since it's just moving the copy from one place
+to another.
 
 Thanks,
-Regards,
-Jiwei
-
-> 
-> Paul
-> 
->> After a NVMe disk is probed/added by the nvme driver, the udevd executes
->> some rule scripts by invoking mdadm command to detect if there is a
->> mdraid associated with this NVMe disk. The mdadm determines if one
->> NVMe devce is connected to a particular VMD domain by checking the
->> domain symlink. Here is the root cause:
->>
->> Thread A                   Thread B             Thread mdadm
->> vmd_enable_domain
->>    pci_bus_add_devices
->>      __driver_probe_device
->>       ...
->>       work_on_cpu
->>         schedule_work_on
->>         : wakeup Thread B
->>                             nvme_probe
->>                             : wakeup scan_work
->>                               to scan nvme disk
->>                               and add nvme disk
->>                               then wakeup udevd
->>                                                  : udevd executes
->>                                                    mdadm command
->>         flush_work                               main
->>         : wait for nvme_probe done                ...
->>      __driver_probe_device                        find_driver_devices
->>      : probe next nvme device                     : 1) Detect the domain
->>      ...                                            symlink; 2) Find the
->>      ...                                            domain symlink from
->>      ...                                            vmd sysfs; 3) The
->>      ...                                            domain symlink is not
->>      ...                                            created yet, failed
->>    sysfs_create_link
->>    : create domain symlink
->>
->> sysfs_create_link is invoked at the end of vmd_enable_domain. However,
->> this implementation introduces a timing issue, where mdadm might fail
->> to retrieve the vmd symlink path because the symlink has not been
->> created yet.
->>
->> Fix the issue by creating VMD domain symlinks before invoking
->> pci_bus_add_devices.
->>
->> Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
->> Suggested-by: Adrian Huang <ahuang12@lenovo.com>
->> ---
->>   drivers/pci/controller/vmd.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
->> index 87b7856f375a..3f208c5f9ec9 100644
->> --- a/drivers/pci/controller/vmd.c
->> +++ b/drivers/pci/controller/vmd.c
->> @@ -961,12 +961,12 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
->>       list_for_each_entry(child, &vmd->bus->children, node)
->>           pcie_bus_configure_settings(child);
->>   +    WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
->> +                   "domain"), "Can't create symlink to domain\n");
->> +
->>       pci_bus_add_devices(vmd->bus);
->>         vmd_acpi_end();
->> -
->> -    WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
->> -                   "domain"), "Can't create symlink to domain\n");
->>       return 0;
->>   }
->>   
-
+Miklos
 
