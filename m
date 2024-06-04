@@ -1,202 +1,156 @@
-Return-Path: <linux-kernel+bounces-201247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 214E58FBBBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E438FBBC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595E8285671
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F611F229F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BE914039A;
-	Tue,  4 Jun 2024 18:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DD0149E05;
+	Tue,  4 Jun 2024 18:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="k/ryAEwm"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tL8xvdVq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C04A5F;
-	Tue,  4 Jun 2024 18:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309E312BF18;
+	Tue,  4 Jun 2024 18:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717526324; cv=none; b=j2qjE+WKCMV9CRyeatDsAfFotTrS3LYM1PCXpZeTt2scpDjUStWMt+4NL72y5wWok2D2gD5D9DEyaTRPtegdnzC0gMakQt0DG4LI2uvwOfIVeO/W0iXyfE7F3bXqsrjGpBpd8QRJNHNiGFpncqnVsmf6YmAsXB8kQbx1PUEBp4g=
+	t=1717526544; cv=none; b=DeHl12454eCdzaKQLk6KzJME5cW6+VwGrX03iK2YFhhXMSp7RZcsr5cUH34Aapc6Z/c7VuiAIocpZVWETDoN8NolBq0GNWTOwnf8VIEWWI55gCr2IGEietSCekjarcwxMrQmF6esny8Vz6nIBNa5asiDHovQWxApj42nv48ZcmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717526324; c=relaxed/simple;
-	bh=qKilePeUYl4N0owePs1i85TmPQCrdSEykDz+72qVKzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zg0r84A4PyrZ/2clZ2hD+pJM3c+OWuTWqnqFIJbAmUskiY+HtUv+Bb6tIYte61tKc/kOsqSoA0sZXAuaDbr4J1Jq4lGjVE6WwyxraO+IPeOwOv3ujJAKXIz9UCK4XuUczuic//6VvYHib2UJvpOz/B0Ff2Ez4nt/2bxedHDWObI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=k/ryAEwm reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EEF4040E016A;
-	Tue,  4 Jun 2024 18:38:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CWzbnTfk6O2c; Tue,  4 Jun 2024 18:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717526316; bh=Hkxfp90gizC3m2qlcIHQ6IKrCEoG2r2lC0hRXpfclZw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k/ryAEwmWyR2iwGsf6tb3FMc46HvAsyOYU1sgQw7pe+jU8tP8sLvef3Ne4QJkZxuY
-	 Q8g2NsOoooDMheR7WP3KSfiAIpu2/8A01e3wH47Wch00PCEZhU4BZAO0vOjeknW45A
-	 moIMJaDsO4MkGUPVNg/jF3llFWOBaXXB3xYqAY8kgIt/1CV6aYt1mvZrCSt42eo4Gv
-	 /XbUO6rzZVeMXwMSMgxD1+xuJ1z4NYTCfJM+u+Qj9jU64vPe8A5/L1mIFkgRpFK5ep
-	 PcFVHTm9Vle1BRhPSgR/hzRSbllzRFpTu+qhIgH4DEM0yuG+XaNfPMQDxEUz6aLXj+
-	 R8LheoixFY1KI1SjK8MGPNg4aF7FDjR6UZbn4k9tvpymajk7XlC9HJpbnxAo58buKd
-	 WXgh+d/uf5FLkQsbrmAAQ7SdSLVtfpAu/NwzxVEEsrKLKwj2paGvNc9P4zRA6rK2+F
-	 39qrdaeS7pHBRgd5bSGapp+7Y7DWrIIIFP0eN2HIXtlNSHveO8PSidG/4E7FmrPQSM
-	 MowXRkejuNtg1zBEqMbmRoL3LoXjJxd98aIeOVF8daZi5u6mgOxZ4IGr1dMhoN86PR
-	 Dp2r/32O28x/0zQWcLIoyM7qG5IaUgzHWRgke1VY+tLu/oT1h2nNtFCE7+ZptG7I5w
-	 NadrARPLyRxb/Y0CCto0/FK0=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 03BA640E0081;
-	Tue,  4 Jun 2024 18:38:20 +0000 (UTC)
-Date: Tue, 4 Jun 2024 20:38:15 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Michal Simek <michal.simek@amd.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Manish Narani <manish.narani@xilinx.com>,
-	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>,
-	Dinh Nguyen <dinguyen@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/20] EDAC/synopsys: Fix generic device type
- detection procedure
-Message-ID: <20240604183803.GJZl9fC9R5M2NSQ01O@fat_crate.local>
-References: <20240222181324.28242-1-fancer.lancer@gmail.com>
- <20240222181324.28242-3-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1717526544; c=relaxed/simple;
+	bh=qgbdL3XgkUmsP7El5caXTlwZqyNDhmeJrKRWHyoam3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eGNEzWxjJccCLK5FFQNdUq3ECXIsrBfj1HGjdoYbZEt7sx99wGY3OnoiJ8/aBN6HGMbgjg4cYhCfCRJBhN0O37eiWvRizo8y0xmRMmthFeO9TB5bhaCPgYxJG/KkNo72kR5C9m+CIR7sruk5f1ZBxIFCq7hBz0NERQt4wLjI8yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tL8xvdVq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 454IKHdR030016;
+	Tue, 4 Jun 2024 18:41:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=Awnrs9s7Dn+rSu3FZcgywEz7ggEw1I9fqEwMmZnbofc=;
+ b=tL8xvdVqwmS7c+2Q6bQY7DWNUJPPBbzV2z99CItiW14nFJpGXaM7jkzRZhXxCgWaWHmV
+ vuDM6aiZXPNPIzDw+e3Ths3H1JYI6hwsRlPdFUtqQqlAcKnDkPVXdLIXkLZ1DlHv2T7O
+ inqbqZBqrb0eYvbwYOg+l0rdwyg6Jr/Z9XEPOrE1bmdA40M/PlhrL+tDQghUzo+jj/+H
+ AJ5hL1FuNaw5UBwpq/5M+mIOVCE5UlyWVKI8MrmfKmcWiSC3uRtNQBf7oWo2KbMLr4aI
+ g6jPRD6nhqi2hcPvpdFCavVtLNbb6f7D+bQhF63QJ9RDOm9ToOIUgWc9dhjhwvLB1BvC yg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj7py042q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 18:41:51 +0000
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 454IfpgQ032364;
+	Tue, 4 Jun 2024 18:41:51 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj7py042h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 18:41:50 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 454GuJGq026671;
+	Tue, 4 Jun 2024 18:41:49 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygffmygp8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 18:41:49 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 454Ifk3m40305334
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Jun 2024 18:41:49 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8EAA65805B;
+	Tue,  4 Jun 2024 18:41:46 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0763C58060;
+	Tue,  4 Jun 2024 18:41:45 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Jun 2024 18:41:44 +0000 (GMT)
+Message-ID: <6f0e04c2-4602-4407-9af5-f72610021a6a@linux.ibm.com>
+Date: Tue, 4 Jun 2024 14:41:44 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240222181324.28242-3-fancer.lancer@gmail.com>
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/5] crypto: tpm2_key: Introduce a TPM2 key type
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Andreas.Fuchs@infineon.com, James Prestwood <prestwoj@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-crypto@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-4-jarkko@kernel.org>
+ <97dd7485-51bf-4e47-83ab-957710fc2182@linux.ibm.com>
+ <D1REOCZ2XHRY.4U47RZ20QET1@kernel.org>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <D1REOCZ2XHRY.4U47RZ20QET1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: w_DQGgAQ2dwu6MnVHL0p-sJPe_stY7lc
+X-Proofpoint-GUID: Pdci5PsERwmMjAj19oUSTHaQnLm7SV5N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 mlxscore=0
+ mlxlogscore=605 clxscore=1015 malwarescore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2406040150
 
-On Thu, Feb 22, 2024 at 09:12:47PM +0300, Serge Semin wrote:
-> First of all the enum dev_type constants describe the memory DRAM chips
-> used at the stick, not the entire DQ-bus width (see the enumeration kdo=
-c
 
-Which kdoc?
 
-The kernel doc above enum dev_type in include/linux/edac.h?
+On 6/4/24 13:23, Jarkko Sakkinen wrote:
+> On Fri May 31, 2024 at 3:35 AM EEST, Stefan Berger wrote:
+>>
 
-In any case, you need to be precise pls.
+>>>    
+>>> -	rc = tpm2_key_decode(payload, options, &blob);
+>>> -	if (rc) {
+>>> -		/* old form */
+>>> +	key = tpm2_key_decode(payload->blob, payload->blob_len);
+>>> +	if (IS_ERR(key)) {
+>>> +		/* Get the error code and reset the pointer to the key: */
+>>> +		rc = PTR_ERR(key);
+>>> +		key = NULL;
+>>> +
+>>> +		if (rc == -ENOMEM)
+>>> +			return -ENOMEM;
+>>> +
+>>> +		/* A sanity check, as only -EBADMSG or -ENOMEM are expected: */
+>>> +		if (rc != -EBADMSG)
+>>> +			pr_err("tpm2_key_decode(): spurious error code %d\n", rc);
+>>
+>> tpm2_key_decode seems simple enough that it only returns key, -ENOMEM or
+>> EBADMSG.
+> 
+> So what is your suggestion here?
 
-> for details). So what is returned from the zynqmp_get_dtype() function =
-and
-> then specified to the dimm_info->dtype field is definitely incorrect.
+You can remove the check resuling in pr_err().
 
-Whoops, you lost me here. Why is it incorrect?
-
-You want
-
-"zynqmp_get_dtype - Return the controller memory width."
-
-to return the memory width supported by the controller?
-
-	dimm->dtype     =3D p_data->get_dtype(priv->baseaddr);
-
-	enum dev_type dtype;    /* memory device type */
-
-Yeah, no, that function returns the DIMM device type.
-
-/me looks at the code.
-
-Aha, so you mean the device width should be determined from that
-DDRC_MSTR_CFG* thing.
-
-> Secondly the DRAM chips type has nothing to do with the data bus width
-> specified in the MSTR.data_bus_width CSR field. That CSR field just
-> determines the part of the whole DQ-bus currently used to access the da=
-ta
-> from the all DRAM memory chips. So it doesn't indicate the individual
-> chips type. Thirdly the DRAM chips type can be determined only in case =
-of
-> the DDR4 protocol by means of the MSTR.device_config field state (it is
-
-Hold on, this driver runs on all kinds of hardware I presume. Are you
-thinking about older ones which don't do DDR4?
-
-Or does that thing do DDR4 only?
-
-> supposed to be set by the system firmware). Finally the DW uMCTL2 DDRC =
-ECC
-> capability doesn't depend on the memory chips type. Moreover it doesn't
-> depend on the utilized data bus width in runtime either. The IP-core
-> reference manual says in [1,2] that the ECC support can't be enabled
-> during the IP-core synthesizes for the DRAM data bus widths other than =
-16,
-
-This sentence is missing something.
-
-> 32 or 64.  At the same time the bus width mode (MSTR.data_bus_width)
-> doesn't change the ECC feature availability. Thus it was wrong to
-> determine the ECC state with respect to the DQ-bus width mode.
-
-You need to split your paragraphs with newlines to help readability.
-Right now it is a blob of hard to parse text. For example, when you have
-to write "Secondly, " that's your split right there. "Thirdly," is your
-next newline. And so on.
-
-> Fix all of the mistakes described above in the zynqmp_get_dtype() and
-> zynqmp_get_ecc_state() methods: specify actual DRAM chips data width on=
-ly
-> for the DDR4 protocol and return that it's UNKNOWN in the rest of the
-> cases;
-
-What are the rest of the cases and why is it ok to return UNKNOWN all of
-a sudden? IOW, how was the old code even tested?!
-
-> determine ECC availability by the ECCCFG0.ecc_mode field state
-> only (that field can't be modified anyway if the IP-core was synthesize=
-d
-> with no ECC support).
->=20
-> [1] DesignWare=C2=AE Cores Enhanced Universal DDR Memory Controller (uM=
-CTL2)
-> Databook, Version 3.91a, October 2020, p. 421.
-> [2] DesignWare=C2=AE Cores Enhanced Universal DDR Memory Controller (uM=
-CTL2)
-> Databook, Version 3.91a, October 2020, p. 633.
-
-Can those be freely accessed?
-
-If not, you should say so.
-
-> Fixes: b500b4a029d5 ("EDAC, synopsys: Add ECC support for ZynqMP DDR co=
-ntroller")
-
-So this commit is in 4.20.
-
-Does that mean that this fix needs to get backported to all stable
-kernels?
-
-Have you tested this on all hw this driver supports and made sure no
-regressions are introduced?
-
-Thx.
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> The reasoning here is that asymmetric keys use -EBADMSG not only as
+> error but also iterator, when probing which can load a specific key.
+> 
 
