@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-201033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F65B8FB865
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:05:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BC08FB878
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A3B286CB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D6F28029B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A94E148829;
-	Tue,  4 Jun 2024 16:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Y28Tz/MN"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF68E1482FC;
+	Tue,  4 Jun 2024 16:05:23 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD5D13CFA3
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3481D145A03
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717517066; cv=none; b=iNIHszPyR68xN76oSoNNESPPmm5o77hy+clsbOLVdD2bNmdhVD32pbR+Ywrbc2iNbxYvO+PmadSWB8kFsHjkI7tuSVWMZ0zXMLsyg7pWVLcQvaVt9lBGZ1ee75eibe+Ia4y9F+dxcYYqYJdQoTVA5B96bViiBlHQOV2m1eeEKUU=
+	t=1717517123; cv=none; b=Le37VeW0myioU7Mwn1QeOOhaPRcYFROQMqQN31d6dc25mmHxTqDAZQo6/7ZlVITqPyF5QgWvSc+c9Od6JAYMl4MDkrc1b/DkOxqyfSVDMCluqoe/kYH2Yx51t5wYzVcOW6uZWUrn+GpA3V8ng9l8+eT47Hlw9qDss6T3ryq2SWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717517066; c=relaxed/simple;
-	bh=ZTDPHfz+ZLKFkaS9Uj2wyZOe/rzR+Q30+9E9A39ICy0=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=f46yX/cRmJytrb4opLwIXWdVLHwbX3DF9ERQaSYxo8eC/cPuDBRuYOtHh7vaYMBSF1pXRl7eVBDBcZnGZ/rKIleiirFTYgSVy+mt62HgaWQ7hwZtiLQzSGps6FnOwjS0DAKsFQW/YcWiRRPFN78MI6gsbfk4QehmFNEIlL/od1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Y28Tz/MN; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f62fae8c1aso37458435ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:04:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717517064; x=1718121864; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R2gKQIHSX9mPWT/OX1hOPZ0VNPVmzrzMvvwZ15iSblg=;
-        b=Y28Tz/MNaYgL2mlPaKmzq2RVokZ2fK3yQ1vYjGxTBIeud4ovKENnVXorG0TqDxcSTT
-         mfHKS5mY8SHRNrWKFWy8Z/q/qszcQXg6qSRt36Ns0ImhjlDzzc5UIrbLzWPJp9DIs5FE
-         ureXeWor0CBlmIwH9eKASV+uuW4gIYXkYxl8K95lovZH+l2xxBk7Na1DtOVjSmbdlsag
-         wvs9T4jj7kzcBXLu3GZ894ftQD8khMyWl+WO9uQOB/Wv1wk99Xhi8miXhaIYy5MlyesA
-         0VjFeUe0fu75qZyR4NTMNXEY8HsOXxJxtRXkd5nMLPfWjmxz4l98PYw37cuiiJ9kgQUZ
-         Aw3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717517064; x=1718121864;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R2gKQIHSX9mPWT/OX1hOPZ0VNPVmzrzMvvwZ15iSblg=;
-        b=eGCOU5Rz4Q64/FZx/PG4qAiZcWU4LgQrEv/Bj4QmcDclS0nHiyWLfZEjrRha+lDSzw
-         Y/PB1wFVUfkMUGGudlbxJPeV2yQdMKxlw/C5HfaJYPr73F5fb/y9tqumf+uppsI67eRD
-         +YDbcYsQL99D705CvA647Oal2AT7HRZgBPKamq9xBgM+/9xEvaHn9cblwc8Wi/CSqSH+
-         atCtaucefoFxBV+6va/ZbPcC7KRXMUEWwEjHw5QuTp9L/XBP9amw56jSZzHSnPPyf45u
-         4tvpftHdsGLs4Cj6HB8j97nbPKOkwZGJoqhqNp9tXjdFg7XXGo1anN6kv6AvBvptg0UH
-         RpeA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8IAab65Ornv8giccKsn2G5d+Xw+APvZpibkpqzYnlxcckoixCnbMFZBlowK2X4B2tcBDf3ifoY68RVwmmapYS3V21KW1hD2ZGyG5x
-X-Gm-Message-State: AOJu0YxnLu7lP+5RrDnbe0HZ79UW+0rUlbBJE74UxLkUMOiXO11oIC6H
-	vErWSruyvHhUS7BHdhKaGpfjpzC/ACYHxO7INdLf5bxNa4/ANEGSnzDDLbxmau8=
-X-Google-Smtp-Source: AGHT+IFk2/CHkCYOgoIKNRsQIUaLysshP8KYOXeegGgQt9s1XMcyvOM8xjJ+kaYxNqLDHalCVqGY9A==
-X-Received: by 2002:a17:902:d507:b0:1f4:7713:8f6 with SMTP id d9443c01a7336-1f6370a0cd6mr163627915ad.52.1717517063799;
-        Tue, 04 Jun 2024 09:04:23 -0700 (PDT)
-Received: from localhost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63232dcc5sm85466225ad.26.2024.06.04.09.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:04:23 -0700 (PDT)
-Date: Tue, 04 Jun 2024 09:04:23 -0700 (PDT)
-X-Google-Original-Date: Tue, 04 Jun 2024 09:04:21 PDT (-0700)
-Subject:     Re: [PATCH] drm/amd/display: Increase frame-larger-than warning limit
-In-Reply-To: <20240603222948.GB1802995@thelio-3990X>
-CC: alexander.deucher@amd.com, harry.wentland@amd.com, sunpeng.li@amd.com,
-  Rodrigo.Siqueira@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
-  daniel@ffwll.ch, Qingqing.Zhuo@amd.com, hamza.mahfooz@amd.com, chenhuacai@kernel.org,
-  amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: nathan@kernel.org
-Message-ID: <mhng-f1fc5ef0-9e72-4b12-9a28-145bbc8938d8@palmer-ri-x1c9a>
+	s=arc-20240116; t=1717517123; c=relaxed/simple;
+	bh=ppigp21ZNg99k5SITpZMtUx3HYzasDubNk9q/zf7x3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aif8CwIG9FauVwBYO825DdVVv/7u30j1Fcr/gFPFhgV8+IRgifNNieN8isdm5I+k5kOxSSBehoNVPlXsPSpy+kxR4R/7++WYMU+8hoAFraoACJNQuDppDmeYzC0HuCUOELPqxc41yvfxpLpALy+4EMw8AHVCzAd1GUCQIDz35qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VtvxQ6GRkz9v7JM
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:42:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id E4982140FAA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 00:04:58 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.206.133.88])
+	by APP2 (Coremail) with SMTP id GxC2BwBnoCQdO19myvaGCQ--.14358S2;
+	Tue, 04 Jun 2024 17:04:58 +0100 (CET)
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+To: paulmck@kernel.org
+Cc: stern@rowland.harvard.edu,
+	parri.andrea@gmail.com,
+	will@kernel.org,
+	peterz@infradead.org,
+	boqun.feng@gmail.com,
+	npiggin@gmail.com,
+	dhowells@redhat.com,
+	j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr,
+	akiyks@gmail.com,
+	dlustig@nvidia.com,
+	joel@joelfernandes.org,
+	urezki@gmail.com,
+	quic_neeraju@quicinc.com,
+	frederic@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	Viktor Vafeiadis <viktor@mpi-sws.org>
+Subject: [PATCHv2 3/4] tools/memory-model: Define effect of Mb tags on RMWs in tools/...
+Date: Tue,  4 Jun 2024 18:04:40 +0200
+Message-Id: <20240604160440.498332-1-jonas.oberhauser@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwBnoCQdO19myvaGCQ--.14358S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFWUZry5tFWkCFW8JrWDurg_yoW8WFy3pr
+	ZYgw15Gr4kKryUu3Z3ZanxZF1rWa1xtF13WFn7A34fZr43XrW7Z34rtan0qF9xXFsI9a45
+	Zr4jv3WkCa4kAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv014x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
+	W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb
+	CPfPUUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Mon, 03 Jun 2024 15:29:48 PDT (-0700), nathan@kernel.org wrote:
-> Hi Palmer,
->
-> On Thu, May 30, 2024 at 07:57:42AM -0700, Palmer Dabbelt wrote:
->> From: Palmer Dabbelt <palmer@rivosinc.com>
->>
->> I get a handful of build errors along the lines of
->>
->>     linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn32/display_mode_vba_32.c:58:13: error: stack frame size (2352) exceeds limit (2048) in 'DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation' [-Werror,-Wframe-larger-than]
->>     static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation(
->>                 ^
->>     linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn32/display_mode_vba_32.c:1724:6: error: stack frame size (2096) exceeds limit (2048) in 'dml32_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than]
->>     void dml32_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_lib)
->>          ^
->
-> Judging from the message, this is clang/LLVM? What version?
+Herd7 transforms successful RMW with Mb tags by inserting smp_mb() fences
+around them. We emulate this by considering imaginary po-edges before the
+RMW read and before the RMW write, and extending the smp_mb() ordering
+rule, which currently only applies to real po edges that would be found
+around a really inserted smp_mb(), also to cases of the only imagined po
+edges.
 
-Yes, LLVM.  Looks like I'm on 16.0.6.  Probably time for an update, so 
-I'll give it a shot.
+Reported-by: Viktor Vafeiadis <viktor@mpi-sws.org>
+Suggested-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+---
+ tools/memory-model/linux-kernel.cat | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> I assume
-> this showed up in 6.10-rc1 because of commit 77acc6b55ae4 ("riscv: add
-> support for kernel-mode FPU"), which allows this driver to be built for
-> RISC-V.
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index adf3c4f41229..d7e7bf13c831 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -34,6 +34,16 @@ let R4rmb = R \ Noreturn	(* Reads for which rmb works *)
+ let rmb = [R4rmb] ; fencerel(Rmb) ; [R4rmb]
+ let wmb = [W] ; fencerel(Wmb) ; [W]
+ let mb = ([M] ; fencerel(Mb) ; [M]) |
++	(*
++	 * full-barrier RMWs (successful cmpxchg(), xchg(), etc.) act as
++	 * though there were enclosed by smp_mb().
++	 * The effect of these virtual smp_mb() is formalized by adding
++	 * Mb tags to the read and write of the operation, and providing
++	 * the same ordering as though there were additional po edges
++	 * between the Mb tag and the read resp. write.
++	 *)
++	([M] ; po ; [Mb & R]) |
++	([Mb & W] ; po ; [M]) |
+ 	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
+ 	([M] ; po? ; [RMW] ; fencerel(After-atomic) ; [M]) |
+ 	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
+-- 
+2.34.1
 
-Seems reasonable.  This didn't show up until post-merge, not 100% sure 
-why.  I didn't really dig any farther.
-
-> Is this allmodconfig or some other configuration?
-
-IIRC both "allmodconfig" and "allyesconfig" show it, but I don't have a 
-build tree sitting around to be 100% sure.
-
->> as of 6.10-rc1.
->>
->> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
->> ---
->>  drivers/gpu/drm/amd/display/dc/dml/Makefile | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/display/dc/dml/Makefile b/drivers/gpu/drm/amd/display/dc/dml/Makefile
->> index c4a5efd2dda5..b2bd72e63734 100644
->> --- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
->> +++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
->> @@ -62,9 +62,9 @@ endif
->>
->>  ifneq ($(CONFIG_FRAME_WARN),0)
->>  ifeq ($(filter y,$(CONFIG_KASAN)$(CONFIG_KCSAN)),y)
->> -frame_warn_flag := -Wframe-larger-than=3072
->> +frame_warn_flag := -Wframe-larger-than=4096
->>  else
->> -frame_warn_flag := -Wframe-larger-than=2048
->> +frame_warn_flag := -Wframe-larger-than=3072
->>  endif
->>  endif
->>
->> --
->> 2.45.1
->>
 
