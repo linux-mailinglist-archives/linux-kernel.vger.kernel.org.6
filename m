@@ -1,191 +1,107 @@
-Return-Path: <linux-kernel+bounces-201264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F5A8FBC03
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6CAB8FBC05
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B552E1F23D27
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03AD81C23E24
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E91114AD2B;
-	Tue,  4 Jun 2024 19:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5918414A63C;
+	Tue,  4 Jun 2024 19:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b2BIlCYJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrTiIcOC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F72314A0AE;
-	Tue,  4 Jun 2024 19:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EFB1482E7;
+	Tue,  4 Jun 2024 19:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717527669; cv=none; b=QpOtXEXDEWbNvgB+94SQhAIpzzgovm8iqTweG0r1ejLLxlRd50n2QNrCtq1EQISbXw2arxJTIgrafOCC/MjTtfCyByQ6AUa95jJX/unV31bQ4ZfPdDnUaPsMqllgLdCnN299VS0goDJlxpp/ZQUisFvwmWv9ROtRCbZabfWRhTM=
+	t=1717527735; cv=none; b=RVGix98LnrgOfr4us5Q/VhN2zIwv5VNrrodxQLI8INWrMYyLbW5E4ojbuiZB+a1108FrcG492HC6zbnOf+gv/J+N8mJGlPeCL4Ps3F5M2Z1m+xKiztD0UhvuAP/vY5V68HpFxhFue1PHkyC7tS7CblKmBKUe2SbdGNXxmuNWDxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717527669; c=relaxed/simple;
-	bh=RqzDd6PqyNpUbR3KegZSUVXG8pajX9LJcIatMv0cgDU=;
+	s=arc-20240116; t=1717527735; c=relaxed/simple;
+	bh=RkN5Y3HmGlKLDqvR91ATdvyLyqquL2+fSb4Vj+4qCXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eF0y2/PBBoMj1SGwOR+69Rs9XZCmz6UmxT044E9hxh4qmrFAU4u+K7sOzr7NG/k46VJ2Tltq3EPvo7DjPLOLY/eeAdWpv87wZN9HpMBEhOETJbg7HHfXXWkykT2kfPpUPPHzysW0Xz53aleEPEB7SX+aK3aTEoQMHpJJDqwr2Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b2BIlCYJ; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717527668; x=1749063668;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RqzDd6PqyNpUbR3KegZSUVXG8pajX9LJcIatMv0cgDU=;
-  b=b2BIlCYJI2tCpsrr6JiHhLrJIh1TyxqGz1m18R9B1irD7Q+7ITW3rbxD
-   hbdWYNmrtiddH9mDYBv1GGDKeoHUwcTs75wc3X0YHc6CcuhjK2iSKDdrr
-   v5tZj8yJ17Dg+QbR5rWn7kAnUaxphsv8WTqEuk4JzOFLSLiwh9zTgqqKI
-   PdoI1NHfHMM/5WtQay+Zy52arX7Nh97EF8Rrve3UOAXaECV9RQqSHN+Si
-   pvRNXxCWzVOTweKDK0zF82olDV56mRhE9hW2CajBgXM1DeWC0xyOnPOov
-   pc845enTKOs2vK2Jjt7yz9gAdzmN3sP43HAVmqQiFXjw2VKIMjsrRK4f8
-   A==;
-X-CSE-ConnectionGUID: eMuvmdE8TUO3W7wImiWzCA==
-X-CSE-MsgGUID: X3uMotcjSOyVNlYjWSpI/g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="11903040"
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="11903040"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 12:01:07 -0700
-X-CSE-ConnectionGUID: iY0xvanZRzqrvzsDJnXbdg==
-X-CSE-MsgGUID: sth1H5/sS2yVeM9gjrFlaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="68149973"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 04 Jun 2024 12:01:02 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sEZP0-0000Pz-2Y;
-	Tue, 04 Jun 2024 19:00:58 +0000
-Date: Wed, 5 Jun 2024 03:00:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christophe Roullier <christophe.roullier@foss.st.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 07/11] net: ethernet: stmmac: add management of
- stm32mp13 for stm32
-Message-ID: <202406050248.rGgTkevY-lkp@intel.com>
-References: <20240604143502.154463-8-christophe.roullier@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=McWI99pYjd1UsuEDwouSuNjqHmLiwr3pZdjYeb6ngVVDqQC3BnMe1SOnjQpJELQkno7bK/auUgaM8aAvRwjAvVdzzG9ZvEFPllXgdY7EbvJx9S2iwbE2HdJ681A0BwZfBvKRCYG3Dwsu6sS9KcxBhpeKq4rLacV8bmbeZNHVHTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrTiIcOC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90958C2BBFC;
+	Tue,  4 Jun 2024 19:02:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717527735;
+	bh=RkN5Y3HmGlKLDqvR91ATdvyLyqquL2+fSb4Vj+4qCXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JrTiIcOCw5JPVRMul/mUQjyu+td7oOtApNUepXHrPNp47lp8/lbdZHAwUOj1JamyH
+	 IG+rhfcbtIb5Jn/I7SQEBvUbcs1WhAORSiQ9FqiANc0cbnNKy2AvXwl3QELlb39ute
+	 Qswr2DlBIct3ErRXEPtYM7cEKC/R0bbogwbPNPDfyRBCkgwo5lN6v+YHD8KV9K0B0Y
+	 GYmtX0mGXSrJDsOZgRnbJiALdfQQKRo8miov9b7X8BbrTd8Qy26Q92HfIJCzVJjLoT
+	 ivCBjOZDmAEQa/w5baIJkwwl6WbpgZJ0rZlmYurSNl7mCX9kcMaCVjs+WQLpcaZeVb
+	 zTQUbnXDScCaw==
+Date: Tue, 4 Jun 2024 16:02:08 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Milian Wolff <milian.wolff@kdab.com>, linux-perf-users@vger.kernel.org,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kenel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: perf 6.9-1 (archlinux) crashes during recording of cycles +
+ raw_syscalls
+Message-ID: <Zl9ksOlHJHnKM70p@x1>
+References: <23879991.0LEYPuXRzz@milian-workstation>
+ <Zl8bhWfHSXxs35r2@x1>
+ <Zl8g1LxRCYgTSxhy@x1>
+ <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240604143502.154463-8-christophe.roullier@foss.st.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
 
-Hi Christophe,
+On Tue, Jun 04, 2024 at 11:48:09AM -0700, Ian Rogers wrote:
+> On Tue, Jun 4, 2024 at 7:12 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > Can you please try with the attached and perhaps provide your Tested-by?
 
-kernel test robot noticed the following build warnings:
+> > From ab355e2c6b4cf641a9fff7af38059cf69ac712d5 Mon Sep 17 00:00:00 2001
+> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Date: Tue, 4 Jun 2024 11:00:22 -0300
+> > Subject: [PATCH 1/1] Revert "perf record: Reduce memory for recording
+> >  PERF_RECORD_LOST_SAMPLES event"
 
-[auto build test WARNING on cd0057ad75116bacf16fea82e48c1db642971136]
+> > This reverts commit 7d1405c71df21f6c394b8a885aa8a133f749fa22.
+ 
+> I think we should try to fight back reverts when possible. Reverts are
+> removing something somebody poured time and attention into. When a
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-Roullier/dt-bindings-net-add-STM32MP13-compatible-in-documentation-for-stm32/20240604-224324
-base:   cd0057ad75116bacf16fea82e48c1db642971136
-patch link:    https://lore.kernel.org/r/20240604143502.154463-8-christophe.roullier%40foss.st.com
-patch subject: [PATCH v4 07/11] net: ethernet: stmmac: add management of stm32mp13 for stm32
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20240605/202406050248.rGgTkevY-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406050248.rGgTkevY-lkp@intel.com/reproduce)
+While in the development phase, yeah, but when we find a regression and
+the revert makes it go away, that is the way to go.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406050248.rGgTkevY-lkp@intel.com/
+The person who poured time on the development gets notified and can
+decide if/when to try again.
 
-All warnings (new ones prefixed by >>):
+Millian had to pour time to figure out why something stopped working,
+was kind enough to provide the output from multiple tools to help in
+fixing the problem and I had to do the bisect to figure out when the
+problem happened and to check if reverting it we would have the tool
+working again.
 
->> drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c:239:4: warning: variable 'val' is uninitialized when used here [-Wuninitialized]
-                           val |= SYSCFG_PMCR_ETH_SEL_MII;
-                           ^~~
-   drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c:228:9: note: initialize the variable 'val' to silence this warning
-           int val;
-                  ^
-                   = 0
-   1 warning generated.
+If we try to fix this for v6.10 we may end up adding yet another bug, so
+the safe thing to do at this point is to do the revert.
 
+We can try improving this once again for v6.11.
 
-vim +/val +239 drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> regression has occurred then I think we should add the regression case
+> as a test.
 
-   223	
-   224	static int stm32mp1_configure_pmcr(struct plat_stmmacenet_data *plat_dat)
-   225	{
-   226		struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
-   227		u32 reg = dwmac->mode_reg;
-   228		int val;
-   229	
-   230		switch (plat_dat->mac_interface) {
-   231		case PHY_INTERFACE_MODE_MII:
-   232			/*
-   233			 * STM32MP15xx supports both MII and GMII, STM32MP13xx MII only.
-   234			 * SYSCFG_PMCSETR ETH_SELMII is present only on STM32MP15xx and
-   235			 * acts as a selector between 0:GMII and 1:MII. As STM32MP13xx
-   236			 * supports only MII, ETH_SELMII is not present.
-   237			 */
-   238			if (!dwmac->is_mp13)	/* Select MII mode on STM32MP15xx */
- > 239				val |= SYSCFG_PMCR_ETH_SEL_MII;
-   240			break;
-   241		case PHY_INTERFACE_MODE_GMII:
-   242			val = SYSCFG_PMCR_ETH_SEL_GMII;
-   243			if (dwmac->enable_eth_ck)
-   244				val |= SYSCFG_PMCR_ETH_CLK_SEL;
-   245			break;
-   246		case PHY_INTERFACE_MODE_RMII:
-   247			val = SYSCFG_PMCR_ETH_SEL_RMII;
-   248			if (dwmac->enable_eth_ck)
-   249				val |= SYSCFG_PMCR_ETH_REF_CLK_SEL;
-   250			break;
-   251		case PHY_INTERFACE_MODE_RGMII:
-   252		case PHY_INTERFACE_MODE_RGMII_ID:
-   253		case PHY_INTERFACE_MODE_RGMII_RXID:
-   254		case PHY_INTERFACE_MODE_RGMII_TXID:
-   255			val = SYSCFG_PMCR_ETH_SEL_RGMII;
-   256			if (dwmac->enable_eth_ck)
-   257				val |= SYSCFG_PMCR_ETH_CLK_SEL;
-   258			break;
-   259		default:
-   260			dev_err(dwmac->dev, "Mode %s not supported",
-   261				phy_modes(plat_dat->mac_interface));
-   262			/* Do not manage others interfaces */
-   263			return -EINVAL;
-   264		}
-   265	
-   266		dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
-   267	
-   268		/* Shift value at correct ethernet MAC offset in SYSCFG_PMCSETR */
-   269		val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
-   270	
-   271		/* Need to update PMCCLRR (clear register) */
-   272		regmap_write(dwmac->regmap, dwmac->ops->syscfg_clr_off,
-   273			     dwmac->mode_mask);
-   274	
-   275		/* Update PMCSETR (set register) */
-   276		return regmap_update_bits(dwmac->regmap, reg,
-   277					 dwmac->mode_mask, val);
-   278	}
-   279	
+Sure, I thought about that as well, will try and have one shell test
+with that, referring to this case, for v6.11.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Arnaldo
 
