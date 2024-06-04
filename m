@@ -1,345 +1,142 @@
-Return-Path: <linux-kernel+bounces-201030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376D88FB85E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:03:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9B28FB849
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BB6286779
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50DEB1F226A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAD814A081;
-	Tue,  4 Jun 2024 16:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC29D1474D4;
+	Tue,  4 Jun 2024 16:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hHhfR9E2"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxb6Zu+n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CC6149C6E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0416013D24C;
+	Tue,  4 Jun 2024 16:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516921; cv=none; b=VxfUnOZmeyLwlyjKAazNHVvOvo+wZO4C1FdE5aP7D/q7B1usChsPl1F39dOt08QX8h9uA9CPuy9IrpzMvqDfpQnOHpTUD6TVAg2917+m4bWv4H1+RFi3x7dmR0F0dUzi3jLSx/QyNUcUcALXswg0B9iG/797F273F4vlXfEJlzM=
+	t=1717516856; cv=none; b=ahlU7nnBwEBRtMCdxVbQ+g0Kugvb6PKTTZscszwyY3kOsllvV+hSCmk5rtWAwhGPsug1bxHkUqgLWWqTmg88SJYSJVSdW6z9afQOXlaja+oHo9w5cMLrAOoeOBApnEwwc1C8Twx4dhdKx3mBIjjUp8+UoAq4V5rC2PvxfZGy+Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516921; c=relaxed/simple;
-	bh=ObtNj6rjCVjW2T5iMzjYuSOL8U7EWQcPv2CwxAiHVwY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bEd76IrNQcx8bM1J8N8M+HJuD5HLYxQ+l3T+WewK2wHO3F/J/JSkNyxwWeFRlXI0tJp3bQ08Dkb5Z0ypZ9YwBzanJj1LLCB6YOKSVqsYnf/r0N11Y1Ed1ERLNy01VxVzEJ0Gepcsh8V3GV+2ND2XLNZOv4SJvj8m5PVkBGUcy44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hHhfR9E2; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f6559668e1so23918885ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:02:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717516919; x=1718121719; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u97ZAbEtZ1L64P2LpaM/3tu5it6GPftWXFpfcFUjbZI=;
-        b=hHhfR9E2zruTiNJDOIGnySmpUmqbh3fxLZgvbcfid4M0epWKPQp0gaYNzu1s8PLpf0
-         T51xMdrrpb/suzeURwhfQ4au7UXqc7cpF5kLtFIpzox7E/osb7Z6TFdDsUUpAdmfzddt
-         onJl6rSORlkTArrpv5WXUSfuNs45jkJqOwTOg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717516919; x=1718121719;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u97ZAbEtZ1L64P2LpaM/3tu5it6GPftWXFpfcFUjbZI=;
-        b=L6jy0JZPNaxsTpn2XD/1SGnsEfjg+KsIo0X0s8FWYQqkLSSxFhycsZkWPsThpziG3Q
-         zvIbuwU1IYXoM5XAZQgpev8ZlBDatfF4Er/CNEcp5l8X2GNy68fA7Pgm8qkynxtP5G0N
-         8znGBGEKiUnTOvwsuycAmGsPWm/3P2TZnzO7u/omDWsoDQYz71EYgeDkyinLe3OKg2dh
-         +xC+ErSyImiltDpu9gpX35ZEL04cT5tAcnoEMXHDPi92KXyOHraS/i6aud7LFyboE/d8
-         jxYF60oYEfYcptUDQyd8Qgk8XTjzjcNfSywOyc7NLB5+Vf+xPqGETCNI0sSZfcJvHX3P
-         CEmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCaYC5RfVug6o+yHa6et3Nidk8BOzRdAtpdszOq/nr0neO9KHnIpxthQuAcIsBgrX6eqfGn3efcO+gmJCVghqS4kce3UvvHvOxu5bz
-X-Gm-Message-State: AOJu0YxLMGLoXVIOw5Ubeb/kLjsW7yGBdXC7HiJrW4ZyqBrQrN3CRoOK
-	LIpfflcyZH8prn8HzyOvMVyqDtQEtwpCSdv/FbZKRnNlGYG33qgpdfwaU4VwcQ==
-X-Google-Smtp-Source: AGHT+IGmXg/0jbFEnM2y3wf5yaCkuP92p/JJeadGUBooCLQ9wjYQ+ewAobCZ6YU1JYKB+ljtMp+80Q==
-X-Received: by 2002:a17:903:32d2:b0:1e5:3c5:55a5 with SMTP id d9443c01a7336-1f636fd9da4mr140529395ad.8.1717516918750;
-        Tue, 04 Jun 2024 09:01:58 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:3609:ff79:4625:8a71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632358519sm86118385ad.82.2024.06.04.09.01.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:01:57 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-arm-msm@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	John Ogness <john.ogness@linutronix.de>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
-Subject: [PATCH v3 6/7] serial: qcom-geni: Fix suspend while active UART xfer
-Date: Tue,  4 Jun 2024 09:00:32 -0700
-Message-ID: <20240604090028.v3.6.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-In-Reply-To: <20240604160123.2029413-1-dianders@chromium.org>
-References: <20240604160123.2029413-1-dianders@chromium.org>
+	s=arc-20240116; t=1717516856; c=relaxed/simple;
+	bh=3hmxqGK0QfWX4zsvkouthqZUz26y15GVCoVzj1/J/GE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QkVymRWyJSmDj/ykbfXS2xJ9yAevrB1jKfHkR2ELcwTR2LtFlrLD4H/50E0SlGSVdDZnL8cPBH2HwH1o3WT5FqNe8Eul07vnNCTmLA0Qx7YmeYyUtQnpC+C0inMrwk5A0zyANPB+Htv1GkXFfoSxjkdR2Z4AqJvQ5Gdqd8U9zO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxb6Zu+n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DFB4C2BBFC;
+	Tue,  4 Jun 2024 16:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717516855;
+	bh=3hmxqGK0QfWX4zsvkouthqZUz26y15GVCoVzj1/J/GE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uxb6Zu+nh6OwsK7NJIFDFbxEbOFjSmWADSsWciXC6dZTsyol8VMECg2EgsUsuSibi
+	 H9Uq5jlwwGeeBbtgy2ysCBsC7FJaUJSrNDZuMK9JTM3sCWapo7xvBGec9F/nfzP9ym
+	 s1osGlmP30YGTZsJZ094OksMwfj+yEgGBHuBIStb/ZlLMi+Qan9NJxQA5h2zAPQCiA
+	 UN2+Ol5RJBofoNp4U5XHgBppSLgbpD6hZlHpk79J0xTjj+xWk0H5VYODSwsauI89O4
+	 RwapKqUbBZmFSpoYjz/BJoit4X/z07oIrjdVguaL5OG9uuSDKVt1EfiK2eyQd14mSG
+	 W8FwJb07GtN+A==
+Message-ID: <1a6feb0b-76e3-42a0-8ba7-03d92e2c62f6@kernel.org>
+Date: Tue, 4 Jun 2024 18:00:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] dt-bindings: mmc: Convert fsl-esdhc.txt to yaml
+To: Frank Li <Frank.Li@nxp.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
+ krzk+dt@kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ robh@kernel.org, ulf.hansson@linaro.org
+References: <20240604145308.2417017-1-Frank.Li@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240604145308.2417017-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On devices using Qualcomm's GENI UART it is possible to get the UART
-stuck such that it no longer outputs data. Specifically, logging in
-via an agetty on the debug serial port (which was _not_ used for
-kernel console) and running:
-  cat /var/log/messages
-...and then (via an SSH session) forcing a few suspend/resume cycles
-causes the UART to stop transmitting.
+On 04/06/2024 16:53, Frank Li wrote:
+> Convert layerscape fsl-esdhc binding doc from txt to yaml format.
+> 
+> Addtional change during convert:
+> - Deprecate "sdhci,wp-inverted", "sdhci,1-bit-only".
+> - Add "reg" and "interrupts" property.
+> - Change example "sdhci@2e000" to "mmc@2e000".
+> - Compatible string require fsl,<chip>-esdhc followed by fsl,esdhc to match
+> most existed dts file.
+> - Set clock-frequency t
 
-The root of the problems was with qcom_geni_serial_stop_tx_fifo()
-which is called as part of the suspend process. Specific problems with
-that function:
-- When an in-progress "tx" command is cancelled it doesn't appear to
-  fully drain the FIFO. That meant qcom_geni_serial_tx_empty()
-  continued to report that the FIFO wasn't empty. The
-  qcom_geni_serial_start_tx_fifo() function didn't re-enable
-  interrupts in this case so the driver would never start transferring
-  again.
-- When the driver cancelled the current "tx" command but it forgot to
-  zero out "tx_remaining". This confused logic elsewhere in the
-  driver.
-- From experimentation, it appears that cancelling the "tx" command
-  could drop some of the queued up bytes.
+...
 
-While qcom_geni_serial_stop_tx_fifo() could be fixed to drain the FIFO
-and shut things down properly, stop_tx() isn't supposed to be a slow
-function. It is run with local interrupts off and is documented to
-stop transmitting "as soon as possible". Change the function to just
-stop new bytes from being queued. In order to make this work, change
-qcom_geni_serial_start_tx_fifo() to remove some conditions. It's
-always safe to enable the watermark interrupt and the IRQ handler will
-disable it if it's not needed.
+> +
+> +  sdhci,auto-cmd12:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      specifies that a controller can only handle auto CMD12.
+> +
+> +  voltage-ranges:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +    items:
+> +      items:
+> +        - description: specifies minimum slot voltage (mV).
+> +        - description: specifies maximum slot voltage (mV).
 
-For system suspend the queue still needs to be drained. Failure to do
-so means that the hardware won't provide new interrupts until a
-"cancel" command is sent. Add draining logic (fixing the issues noted
-above) at suspend time.
+I missed it last time:
 
-NOTE: It would be ideal if qcom_geni_serial_stop_tx_fifo() could
-"pause" the transmitter right away. There is no obvious way to do this
-in the docs and experimentation didn't find any tricks either, so
-stopping TX "as soon as possible" isn't very soon but is the best
-possible.
+This needs min/maxItems, because you constrained only one dimension. I
+assume this can be quite flexible, so could be min=1 and maxItems=8, or
+whatever slots number is there.
 
-Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-There are still a number of problems with GENI UART after this but
-I've kept this change separate to make it easier to understand.
-Specifically on mainline just hitting "Ctrl-C" after dumping
-/var/log/messages to the serial port hangs things after the kfifo
-changes. Those issues will be addressed in future patches.
-
-It should also be noted that the "Fixes" tag here is a bit of a
-swag. I haven't gone and tested on ancient code, but at least the
-problems exist on kernel 5.15 and much of the code touched here has
-been here since the beginning, or at least since as long as the driver
-was stable.
-
-Changes in v3:
-- 0xffffffff => GENMASK(31, 0)
-- Reword commit message.
-
-Changes in v2:
-- Totally rework / rename patch to handle suspend while active xfer
-
- drivers/tty/serial/qcom_geni_serial.c | 97 +++++++++++++++++++++------
- 1 file changed, 75 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 4dbc59873b34..46b6674d90c5 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -130,6 +130,7 @@ struct qcom_geni_serial_port {
- 	bool brk;
- 
- 	unsigned int tx_remaining;
-+	unsigned int tx_total;
- 	int wakeup_irq;
- 	bool rx_tx_swap;
- 	bool cts_rts_swap;
-@@ -311,11 +312,14 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
- 
- static void qcom_geni_serial_setup_tx(struct uart_port *uport, u32 xmit_size)
- {
-+	struct qcom_geni_serial_port *port = to_dev_port(uport);
- 	u32 m_cmd;
- 
- 	writel(xmit_size, uport->membase + SE_UART_TX_TRANS_LEN);
- 	m_cmd = UART_START_TX << M_OPCODE_SHFT;
- 	writel(m_cmd, uport->membase + SE_GENI_M_CMD0);
-+
-+	port->tx_total = xmit_size;
- }
- 
- static void qcom_geni_serial_poll_tx_done(struct uart_port *uport)
-@@ -335,6 +339,64 @@ static void qcom_geni_serial_poll_tx_done(struct uart_port *uport)
- 	writel(irq_clear, uport->membase + SE_GENI_M_IRQ_CLEAR);
- }
- 
-+static void qcom_geni_serial_drain_tx_fifo(struct uart_port *uport)
-+{
-+	struct qcom_geni_serial_port *port = to_dev_port(uport);
-+
-+	/*
-+	 * If the main sequencer is inactive it means that the TX command has
-+	 * been completed and all bytes have been sent. Nothing to do in that
-+	 * case.
-+	 */
-+	if (!qcom_geni_serial_main_active(uport))
-+		return;
-+
-+	/*
-+	 * Wait until the FIFO has been drained. We've already taken bytes out
-+	 * of the higher level queue in qcom_geni_serial_send_chunk_fifo() so
-+	 * if we don't drain the FIFO but send the "cancel" below they seem to
-+	 * get lost.
-+	 */
-+	qcom_geni_serial_poll_bitfield(uport, SE_GENI_M_GP_LENGTH, GENMASK(31, 0),
-+				       port->tx_total - port->tx_remaining);
-+
-+	/*
-+	 * If clearing the FIFO made us inactive then we're done--no need for
-+	 * a cancel.
-+	 */
-+	if (!qcom_geni_serial_main_active(uport))
-+		return;
-+
-+	/*
-+	 * Cancel the current command. After this the main sequencer will
-+	 * stop reporting that it's active and we'll have to start a new
-+	 * transfer command.
-+	 *
-+	 * If we skip doing this cancel and then continue with a system
-+	 * suspend while there's an active command in the main sequencer
-+	 * then after resume time we won't get any more interrupts on the
-+	 * main sequencer until we send the cancel.
-+	 */
-+	geni_se_cancel_m_cmd(&port->se);
-+	if (!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
-+				       M_CMD_CANCEL_EN, true)) {
-+		/* The cancel failed; try an abort as a fallback. */
-+		geni_se_abort_m_cmd(&port->se);
-+		qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
-+						M_CMD_ABORT_EN, true);
-+		writel(M_CMD_ABORT_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
-+	}
-+	writel(M_CMD_CANCEL_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
-+
-+	/*
-+	 * We've cancelled the current command. "tx_remaining" stores how
-+	 * many bytes are left to finish in the current command so we know
-+	 * when to start a new command. Since the command was cancelled we
-+	 * need to zero "tx_remaining".
-+	 */
-+	port->tx_remaining = 0;
-+}
-+
- static void qcom_geni_serial_abort_rx(struct uart_port *uport)
- {
- 	u32 irq_clear = S_CMD_DONE_EN | S_CMD_ABORT_EN;
-@@ -655,37 +717,18 @@ static void qcom_geni_serial_start_tx_fifo(struct uart_port *uport)
- {
- 	u32 irq_en;
- 
--	if (qcom_geni_serial_main_active(uport) ||
--	    !qcom_geni_serial_tx_empty(uport))
--		return;
--
- 	irq_en = readl(uport->membase +	SE_GENI_M_IRQ_EN);
- 	irq_en |= M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN;
--
- 	writel(irq_en, uport->membase +	SE_GENI_M_IRQ_EN);
- }
- 
- static void qcom_geni_serial_stop_tx_fifo(struct uart_port *uport)
- {
- 	u32 irq_en;
--	struct qcom_geni_serial_port *port = to_dev_port(uport);
- 
- 	irq_en = readl(uport->membase + SE_GENI_M_IRQ_EN);
- 	irq_en &= ~(M_CMD_DONE_EN | M_TX_FIFO_WATERMARK_EN);
- 	writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
--	/* Possible stop tx is called multiple times. */
--	if (!qcom_geni_serial_main_active(uport))
--		return;
--
--	geni_se_cancel_m_cmd(&port->se);
--	if (!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
--						M_CMD_CANCEL_EN, true)) {
--		geni_se_abort_m_cmd(&port->se);
--		qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
--						M_CMD_ABORT_EN, true);
--		writel(M_CMD_ABORT_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
--	}
--	writel(M_CMD_CANCEL_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
- }
- 
- static void qcom_geni_serial_handle_rx_fifo(struct uart_port *uport, bool drop)
-@@ -1067,7 +1110,15 @@ static int setup_fifos(struct qcom_geni_serial_port *port)
- }
- 
- 
--static void qcom_geni_serial_shutdown(struct uart_port *uport)
-+static void qcom_geni_serial_shutdown_dma(struct uart_port *uport)
-+{
-+	disable_irq(uport->irq);
-+
-+	qcom_geni_serial_stop_tx(uport);
-+	qcom_geni_serial_stop_rx(uport);
-+}
-+
-+static void qcom_geni_serial_shutdown_fifo(struct uart_port *uport)
- {
- 	disable_irq(uport->irq);
- 
-@@ -1076,6 +1127,8 @@ static void qcom_geni_serial_shutdown(struct uart_port *uport)
- 
- 	qcom_geni_serial_stop_tx(uport);
- 	qcom_geni_serial_stop_rx(uport);
-+
-+	qcom_geni_serial_drain_tx_fifo(uport);
- }
- 
- static int qcom_geni_serial_port_setup(struct uart_port *uport)
-@@ -1533,7 +1586,7 @@ static const struct uart_ops qcom_geni_console_pops = {
- 	.startup = qcom_geni_serial_startup,
- 	.request_port = qcom_geni_serial_request_port,
- 	.config_port = qcom_geni_serial_config_port,
--	.shutdown = qcom_geni_serial_shutdown,
-+	.shutdown = qcom_geni_serial_shutdown_fifo,
- 	.type = qcom_geni_serial_get_type,
- 	.set_mctrl = qcom_geni_serial_set_mctrl,
- 	.get_mctrl = qcom_geni_serial_get_mctrl,
-@@ -1555,7 +1608,7 @@ static const struct uart_ops qcom_geni_uart_pops = {
- 	.startup = qcom_geni_serial_startup,
- 	.request_port = qcom_geni_serial_request_port,
- 	.config_port = qcom_geni_serial_config_port,
--	.shutdown = qcom_geni_serial_shutdown,
-+	.shutdown = qcom_geni_serial_shutdown_dma,
- 	.type = qcom_geni_serial_get_type,
- 	.set_mctrl = qcom_geni_serial_set_mctrl,
- 	.get_mctrl = qcom_geni_serial_get_mctrl,
--- 
-2.45.1.288.g0e0cd299f1-goog
+Best regards,
+Krzysztof
 
 
