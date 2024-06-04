@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-200548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5858FB187
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:56:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C0E8FB18B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED1A1C22458
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:56:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988722843B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A3D145B12;
-	Tue,  4 Jun 2024 11:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AFA145A06;
+	Tue,  4 Jun 2024 11:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ULsmnPiS"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PjeqMhKn"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EC1144D21;
-	Tue,  4 Jun 2024 11:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D68145A1D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717502181; cv=none; b=lzoKUDr+Rl3PSZjqUZKbu9GlGN0a0fibh4Mg+5Y+3JjsqaCEqRT8LFCtwvTYqRZMaGPb4z93v6efmxjSwDqWt/OwRZsBLapz2WfNEs0E2Feb2WiUgPA6ymMx3kKq7+f75HXpvTFVp7GPfE4IvJ77y/f6TQy7c6POYZosdWSGQpw=
+	t=1717502194; cv=none; b=LMM42xRWltDsYzV/tgqDw/E3FmIqFct4vlzWt5+LI2D4K4LOxjg1eF24yl6NtmXTSdByyHQoU8byJunNly2sT2HCOOTyNcqb4O+ZfDI3I4QhYJczU6P7bzyMiV5mZxNV4fuFiajOHxMK2rkahcjRnrLFtt0dG7CYxLJXnS0Gf/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717502181; c=relaxed/simple;
-	bh=wgiLKeETLd0enQWH2R7xL/1nILeAJ3O6Rgd7nuj4+BI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Faskletr8DKsT8IP3vucvrPvuiDuNsdDM2loF2lq4Z5fDpEDrITd2S9ePcASKr51s+ZzWGRaX3k8KZTn50+sBfXyyPBBci4uohn07RgN/AgsUbkEieZWIeqn1O8X6gQ+nrEmtVzxrkNvjXPt8MXBJFKg6o8ODLZ/BoHyb0QhwZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ULsmnPiS; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717502178;
-	bh=wgiLKeETLd0enQWH2R7xL/1nILeAJ3O6Rgd7nuj4+BI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ULsmnPiSoYyXJ+dreCG1S9Uh9XC6wgkriFKuneivrqZm1oO4OK/FQOV9mT9D8AlZQ
-	 Hl+LPPCtXnfR00e9arEtjkzOPWIcR6eebL2BdcRcoJxx7xlPO5aFPz95XkkGxNt1Dc
-	 bPYpUWsZpAo01MVitiME5195vCXALwi1bmO5y8x9jd/AiCPEU79ZXWB+OoSTc/GyZ8
-	 z8PQGxMXu1gu2xPko+0XUERgsGQqaezi5dDjf+5d6H3W9PY4dGr7mvCg7XX+bymO9r
-	 XgWiiTsH99lSbljAqt1VU62klL3FuUhABsilJ8kNRYKZcrtwv24T3aIlu38yCN8Gcu
-	 tDw4mg6ZgT1MQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9FE1B3782199;
-	Tue,  4 Jun 2024 11:56:16 +0000 (UTC)
-Message-ID: <3e741571-9086-4f26-a158-d86a4cdcc349@collabora.com>
-Date: Tue, 4 Jun 2024 13:56:15 +0200
+	s=arc-20240116; t=1717502194; c=relaxed/simple;
+	bh=WSiabmZiPb5SL1hbkSXdP1+e7Ad1uHfhxRB4tWveGA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=uFYk3TCyaYPa9LJMCErSYDeK90h6wzZEjYdmjc902jpb/rXUmWIBfU+5ME/LzHT+ZH4/KF3HvLhZ9y3SBXKnZwG4o/sjTbAxU4C/8Et71jNZqgQDGwWk3l38lkcgELX8G5Ly9PNFhVAYMthgNrBKnNMt748zzSLJstyu0XN4a80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PjeqMhKn; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6265d48ec3so573591466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:56:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717502191; x=1718106991; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IlxQpEl9GwYRWbsz3F/VhoHqrB46zrMMPBzYj2DcSkU=;
+        b=PjeqMhKnRIXgCPHFOwqMElhSCRZcvzZ9BJ/igAjFMCqo2YkzoMj5OQ561O8a7LThLW
+         qMpTj8XKYuLCdSeoSRGUEEt56pcmGXpCysUMKOyL4Z4IhkznipxPmJ7py/jLa3g4MmXZ
+         dkZDMvjU7ZVj0ElqOF1t9vvJ4MfSo78r8c0YQflYA+kIVSeiIsWlA+Lr1LFzjNU+8o/R
+         CzESSz7CAofae33gCT7dZ2YDQXtSzpl9DlzIh5R64xvLj69jLjOFuI+XGhmr0Q2kqeVM
+         UOAqnVjTwwMA3YVxhNYCyKH9pCoPRUMJNgjGEGCK+Tzf3B0vxZVL0en9LAseN9y5YxN3
+         oONA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717502191; x=1718106991;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IlxQpEl9GwYRWbsz3F/VhoHqrB46zrMMPBzYj2DcSkU=;
+        b=sA/0okk8oOTJrhbA9BCIRMS5487ZFSDBq6B64UbAIbKHpgTEGdktU8wxv+7emSmP8u
+         kJhfJ8xvtPci8r0II1GYkEdb5k7Wex0ik4u93zwC3a4dCOf35oW4JAKeaTuPDIKu1hII
+         +dI/xUpp9S0PJaITB6fBAyQvrwgcMAufrFS6C/iAjC5WhzwKqMnylkpk40KKsZn7B4PF
+         QWRgQM0zQib1Jp22yQp23LoKiEwVYJRmzFSmYaMYPrS2mUy9qOnqemTiYfIbL/N/80Av
+         afLQxQ5FZFuj7ZtB4WoFIeSvycjgzSlaWlMVBv/ZJH/8WPbqTVaPPYtW22li0bCU1jyl
+         mKeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUYMX5DbJeJOpv1lOLDYtI8Zsr3qTXTn5mke8Yjrf4ar70PGLO+9kBvs2W/oXRzSw/j1aiRruLt1b5WBmm/xX7U01xq4HJxzroVI/l
+X-Gm-Message-State: AOJu0YwD9l4qHoHlm2wsIrKdpUyF6A+OZfN28l+QwGIpu9dXqqsmslzq
+	w9DzNIZ6yyM6q1GesxMCPJpSzwhDRRqlyDfdUJAe+1IjPiQsdMknttud2P8GZR4=
+X-Google-Smtp-Source: AGHT+IFC4ZEOeRR+G/N2/nkWfd500F8oJTkhhtC2Oqw82+b4cCdnJ7sQhzorOM1l4IvQwgpYEEg7rQ==
+X-Received: by 2002:a17:906:cd10:b0:a59:a356:3f6d with SMTP id a640c23a62f3a-a6822049b1dmr694154166b.54.1717502191240;
+        Tue, 04 Jun 2024 04:56:31 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:909a:a11e:a035:2af2:8d85:1f72? ([2a00:f41:909a:a11e:a035:2af2:8d85:1f72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a69043af942sm310073666b.72.2024.06.04.04.56.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 04:56:30 -0700 (PDT)
+Message-ID: <c3a922e4-0b34-4b53-bdbd-a62817a68db2@linaro.org>
+Date: Tue, 4 Jun 2024 13:56:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,135 +75,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] iio: adc: Add support for MediaTek MT6357/8/9
- Auxiliary ADC
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org,
- andy@kernel.org, nuno.sa@analog.com, bigunclemax@gmail.com,
- dlechner@baylibre.com, marius.cristea@microchip.com,
- marcelo.schmitt@analog.com, fr0st61te@gmail.com, mitrutzceclan@gmail.com,
- mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
- <20240530093410.112716-3-angelogioacchino.delregno@collabora.com>
- <CAHp75Vexddt1xUGogRDZA9pM1pFp2=ZtCQnCfXePahSCb+oKpg@mail.gmail.com>
- <84f1c58c-0a5d-4131-a16b-b76bf28862ee@collabora.com>
- <CAHp75VcwnjrsAY1qF68MpBWV-NLFSxTP_PDL+ER==KNdBAFFTA@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-crd: add USB DisplayPort audio
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240604094947.98191-1-krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-In-Reply-To: <CAHp75VcwnjrsAY1qF68MpBWV-NLFSxTP_PDL+ER==KNdBAFFTA@mail.gmail.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240604094947.98191-1-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Il 04/06/24 13:05, Andy Shevchenko ha scritto:
-> On Tue, Jun 4, 2024 at 1:38 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->> Il 30/05/24 15:34, Andy Shevchenko ha scritto:
->>> On Thu, May 30, 2024 at 12:34 PM AngeloGioacchino Del Regno
->>> <angelogioacchino.delregno@collabora.com> wrote:
-> 
-> ...
-> 
->>>> +#define PMIC_RG_RESET_VAL              (BIT(0) | BIT(3))
->>>
->>> In this form it requires a comment explaining each mentioned bit.
->>
->> I don't have an explanation for this, I know it's two different bits from some
->> reveng, but the downstream driver declares that simply as 0x9.
->>
->> Should I just "mask" this as 0x9 instead?
-> 
-> In this case for all of the questionable forms, please add a oneline
-> comment suggesting that "these are different bits without known
-> purpose of each." or something like that.
-> 
-
-Perfect. Comment added.
-
-> ...
-> 
->>>> +#define MT6358_IMP0_CLEAR              (BIT(14) | BIT(7))
->>>
->>> As per above.
->>>
->>
->> Same, I don't have any explanation for that.
->>
->> If you prefer, I can define this as 0x4080, but honestly I prefer keeping
->> it as-is since I am sure it's not a magic number but really two bits to flip
->> in a register.
-> 
-> As per above.
-> 
-> ...
-> 
->>>> +       u8 r_numerator;
->>>> +       u8 r_denominator;
->>>
->>> Can you add struct u8_fract to the math.h and use it? I will Ack/R the
->>> respective patch.
->>
->> Yeah, I did that exactly because u8_fract wasn't there and I didn't want
->> to waste more bits, but since you just asked for it... well, I'm happier :-)
-> 
-> Note, it's enough to have my Rb tag and route that change via IIO
-> tree. We have done similar way for other changes in math.h (or aline)
-> in the past.
-> 
-
-Sure.
-
-> ...
-> 
->>>> +       /* Assert ADC reset */
->>>> +       regmap_set_bits(regmap, pdata->regs[PMIC_HK_TOP_RST_CON0], PMIC_RG_RESET_VAL);
->>>
->>> No required delay in between?
->>
->> No, as strange as it may look, there is no delay required in between: this is
->> because the register R/W is behind the PMIC Wrapper as much as all of the other
->> MediaTek PMIC (sub)devices, so, missing delays was intentional here, yes.
-> 
-> Maybe a comment?
-> 
-
-Done :-)
-
-/* De-assert ADC reset. No wait required, as pwrap takes care of that for us. */
-
-> ...
-> 
->>>> +       mutex_lock(&adc_dev->lock);
->>>
->>> Why not use cleanup.h?
->>
->> I want to unlock the mutex immediately right after executing read_imp() or
->> mt6359_auxadc_read_adc(), and I don't want the reset to be done while a mutex
->> is being held, as that makes no sense for this driver.
-> 
-> That's why we have scoped_guard(). Exactly for such cases.
-> 
-
-Thanks for the hint, looking at other usages that was straightforward.
-
->> Besides, I find the macros in cleanup.h to be cryptic - in my opinion, they
->> require better documentation as, for example, I don't understand when the
->> guard(mutex)(my_mutex) is supposed to acquire the lock and when it's supposed
->> to release it.
-> 
-> They are cryptic due to limitations in C language. But for the end
-> user it doesn't matter. The behaviour is well understandable and makes
-> code cleaner and less prone for errors such as missing unlocks. So,
-> please use cleanup.h.
-> 
-
-Indeed, but my point was that the documentation can (and probably should)
-be improved.
+Content-Transfer-Encoding: 7bit
 
 
-Cheers,
-Angelo
+
+On 6/4/24 11:49, Krzysztof Kozlowski wrote:
+> Add support for playing audio over USB DisplayPort (the two left USB-C
+> ports on the CRD device).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+
+Looks sane. Are any UCM changes necessary?
+
+Konrad
 
