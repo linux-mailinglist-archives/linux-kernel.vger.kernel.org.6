@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-200377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4C18FAF21
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF64C8FAF28
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E0A1C225DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:44:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09B81C20AEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDD61448E8;
-	Tue,  4 Jun 2024 09:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB8F1448C1;
+	Tue,  4 Jun 2024 09:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="YtAkYBgi"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XCoQSeVm"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20EE1442EF;
-	Tue,  4 Jun 2024 09:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1105812AAD6
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717494225; cv=none; b=Y1Ry6+ZGtRPsEfcCjPm4NjW3YoP1mHBznXSCnQlZexZ5mBEWnhZfJRxRHPiMDsyaKOb8TY16apuBnH4brbmk4qV5qdTqF/UuK+UqOoIkw+zGPH53q2wbF45Sl2nlMRwpLyfUw7/xOCFe0JDT5Jz9hk20nv7fxOpQuaOCAbb/XDA=
+	t=1717494276; cv=none; b=YwGsaPV5q6dZFK0T3QAku6fZ7FI03y4N8wMuEwZC9U8mpJ6NAbVXT4m1juwjL+srktDIHsRYgz0WMILrFkR1V645EMoCl3suwspURDQktvJTe2tAMkamarWWdl142wWEfSvnb6wM5pTf/rbioRqRMtV+VcsBCta+5Xf9lpR+7wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717494225; c=relaxed/simple;
-	bh=5RkdUsK0tny5QZcZrgeZEhT5qBBrTYbEIMgRpQp+U/c=;
+	s=arc-20240116; t=1717494276; c=relaxed/simple;
+	bh=pxFRbPGW24LmVBzQ4JhYZaaafh+WJ6V0jn0Ze+5zrWM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JREG71UZ87n/wBjSaCoEm39R50ZPY0/D7uaqAepgR7qFrV6dfIQMEseapI4Z7Gf7x5xcUYUlsnu2uex3U6sL9JHjEx1ID3CNxYdiAjq3oAYwPS6/4Er3OPjuHYVFnLUzaV5WaOQix+6ye60CBgufGn1GUYqpodnru3QKWcoX5K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=YtAkYBgi; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJ1FLJjv/snI8+4qT1gUCeuDro9Ei0mJGUyTM/J0c0Q6ccorOMxU8dCjZ8MT78CkNy3TnkgXrgU/eQFC4JfJDaCl6RVmR+iaICCkIqA3Ow8xQrjoYGkTYCMhTB6b29Bdz6S4pBmJMFkl5PrgdIowo/NufWPn6BBc8/NItupRisw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XCoQSeVm; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8F31340E0176;
+	Tue,  4 Jun 2024 09:44:32 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ddGCUwBu8TqP; Tue,  4 Jun 2024 09:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717494268; bh=pIg8xe1Ns+NA9fRhRn6k+zXFxaT3zBumGkXlIKY3LLQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XCoQSeVmBvXsN7Oj0IZ5XqLQmBMN11lhRhATE9jviznkzRP14Kd1hs2txtmf/4AyA
+	 NCoDRxW0dgZwzakME8kA22PFD11iKTHm1yH4qH9E3hDGtrHRhJqlM1PmcaZcprC4KW
+	 e5OTw9UJKJkmDY5F0H+PE/CzHSDNp8m8RYHSi9LPyrjTjD6IgtSp5tMQyobcusGgqc
+	 qUyqYePgUtnHjDvNJagEur+WkeCVwX/b89H0Xpd9KZRx8lijyEtJQkgyQ0IYgktEYS
+	 j3+lHQWXPR/gTsk3RJoXDsBnvtvvvaIMhrIIJtcQXc8gf6DrKtxY/Pr4TDeeq2QHLI
+	 1DRED/m7UZUl8Nn4fPVzUOSNXBJsEhYlgp283ONUaF/DqdgwWwltjQ3YruAc0VBT3J
+	 wcYgBbCmGHIMtzuBjgc/HdstEAS2je3fzhpv7TOym7iCDK93/OhdH7HrjBJrJ8EOb/
+	 GxuRi2I37L2ARt3sD6T3k6rTayOZbw2oiWO04QcFaM+qKTPdwnMu8RtwTbVgxviMld
+	 9HqDFPCq1OgIdfv5c/BRJkmvRH4j/lHQK1XOX4Nnz5lO78PcNDr39UtwyCAvlukc0P
+	 0bbLlpzaBsgyS3EiwLUvyyEoX1TripsM1hYTynMQyw2RbG5oFFT2tj90oSN5x8K70V
+	 MCD8Cow+w/9EbV9SbZ8oFHkU=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Vtlyt3kv8z9sqF;
-	Tue,  4 Jun 2024 11:43:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1717494214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/wyixPQKPllzlkQ6nP0MNk7Q+TX9oe0qPOvgtCB3QtA=;
-	b=YtAkYBgiDiiLTrSB1xXRBsq9S9oVQd4+fGLl114XZLZfFLqEjmSRSi3OD/ewx2b4xsFrin
-	b31N9SmU65EekOzDKNDv/0VOdTQC76P9QfvlKf2AMY5TZpbIK/XI8ojK3aSFwdx+DAE6j5
-	TUrzR5fJsAaKzjhai6vLP5SOdNCd31xk0yfdOo3EPOJGxACiklOpHTpNuPSoQSkjXee9V+
-	bfUAHw5Bx49k5i6dyWfpCfn8RpXkeCERgAjUoxIKsiaVISFqz3t1aeX8py5FO6HZnWBB+i
-	j5epziGzDMKCXz/rHreSnRbSe6R5xg7SFo73vhNBVNNuRmT53/F2MZP0GtcEEA==
-Date: Tue, 4 Jun 2024 09:43:31 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: chandan.babu@oracle.com, akpm@linux-foundation.org, brauner@kernel.org,
-	willy@infradead.org, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, hare@suse.de, john.g.garry@oracle.com,
-	gost.dev@samsung.com, yang@os.amperecomputing.com,
-	p.raghav@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, mcgrof@kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 07/11] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240604094331.gybm6la3xdunpcin@quentin>
-References: <20240529134509.120826-1-kernel@pankajraghav.com>
- <20240529134509.120826-8-kernel@pankajraghav.com>
- <Zlz+upnpESvduk7L@dread.disaster.area>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7573640E016A;
+	Tue,  4 Jun 2024 09:43:59 +0000 (UTC)
+Date: Tue, 4 Jun 2024 11:43:58 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Young <dyoung@redhat.com>
+Cc: Mike Rapoport <rppt@kernel.org>, "Kalra, Ashish" <ashish.kalra@amd.com>,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, rafael@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, adrian.hunter@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com,
+	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com,
+	michael.roth@amd.com, seanjc@google.com, kai.huang@intel.com,
+	bhe@redhat.com, kirill.shutemov@linux.intel.com, bdas@redhat.com,
+	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
+	jroedel@suse.de, ardb@kernel.org, kexec@lists.infradead.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
+Message-ID: <20240604094358.GBZl7h3otTCYJ5rkkt@fat_crate.local>
+References: <20240528095522.509667-1-kirill.shutemov@linux.intel.com>
+ <cover.1717111180.git.ashish.kalra@amd.com>
+ <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
+ <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
+ <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
+ <Zl3HfiQ6oHdTdOdA@kernel.org>
+ <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
+ <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local>
+ <Zl3hwYL2GDiyUfGo@kernel.org>
+ <CALu+AoSnA4323QbQG7wrNptosz7tfEfztsE1=o6G=FaLbQ_tKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zlz+upnpESvduk7L@dread.disaster.area>
-X-Rspamd-Queue-Id: 4Vtlyt3kv8z9sqF
+In-Reply-To: <CALu+AoSnA4323QbQG7wrNptosz7tfEfztsE1=o6G=FaLbQ_tKQ@mail.gmail.com>
 
-> >  static int __init iomap_init(void)
-> >  {
-> > +	zero_fs_block = alloc_pages(GFP_KERNEL | __GFP_ZERO, ZERO_FSB_ORDER);
-> > +	if (!zero_fs_block)
-> > +		return -ENOMEM;
-> > +
-> >  	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
-> >  			   offsetof(struct iomap_ioend, io_bio),
-> >  			   BIOSET_NEED_BVECS);
-> 
-> just create an iomap_dio_init() function in iomap/direct-io.c
-> and call that from here. Then everything can be private to
-> iomap/direct-io.c...
+On Tue, Jun 04, 2024 at 09:23:58AM +0800, Dave Young wrote:
+> kexec_in_progress is only for checking if this is in a reboot (kexec) code path.
+> But eif_mem_reserve is only called during the boot time so checking
+> kexec_in_progress is meaningless here.
+> current_kernel_is_booted_via_kexec != is_rebooting_with_kexec
 
- Sounds good :)
+That's exactly what I wanna check: whether this is a kexec-ed kernel. Or
+is there a better helper for that?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
