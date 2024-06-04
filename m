@@ -1,207 +1,123 @@
-Return-Path: <linux-kernel+bounces-201221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CDC8FBB28
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1856B8FBB2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A0ABB2A918
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:02:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A500AB2B3BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC96114A4DB;
-	Tue,  4 Jun 2024 18:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D6214A4CF;
+	Tue,  4 Jun 2024 18:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XXGi1TRT"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DLU+I6Sn"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA2A18635
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 18:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8674914A09E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 18:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717524142; cv=none; b=nL4suiM8rTFwDxwbYV7oYHQUdpLK/aMpoi9oHP0muRazQsfQQgg4pj29Sck33ykftqW6o6uI2q8GlbwWoU+nRySDhZIyyKEcerH3cPOronOTFyvAajEZVt6quNvE5qPIbXNlKTCYFOt8zu7ZOfIhGe451B1KzLtk4bzEA2fPt4Y=
+	t=1717524170; cv=none; b=XfDx6M4ZddyHPIKORNXRYnBkPhoeZfxK8Rq57WEQDj0ht7H3aX5EC3g4yaMC9HH5NPZ3JEZAc06Xrw0/LKNogN1xZOGSm0maIAhH2bdYfF1KNEWJRdaHuMNOim36WWGnYWV0XrTKdBZzhXG0XZ7JGol24+zlUKYqUSP5h4j77n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717524142; c=relaxed/simple;
-	bh=tHWLGQWisUQj7HhRAw2go4sy8LHyULISrzif4HyJkSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o8cUvVAypQclA1pRpoqbHBdMkhbE3DB3cBSRsYcnn/n02BwR/lmfkqcpSJzBrOXgMjOxilSy9Lbx4E2XbYbZQucMB9AJaqIC7z7hm/KwXJW5laF+/n4s4inELgbV7uSBTNsrfV+JghCyM4bWtvIixQ3Qcj2i5Qp2KF6c/AXnc3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XXGi1TRT; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3c9c36db8eeso3335531b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 11:02:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717524139; x=1718128939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tHWLGQWisUQj7HhRAw2go4sy8LHyULISrzif4HyJkSE=;
-        b=XXGi1TRTITQwz1xn5H/aKaCoS1R041RPFztAHSxRoiXq3+Bw7CYbeYIWqAYHmmcWLN
-         T5WTQKTHaDSFhcvizWs4M6wfWiZwSgDc0Bc8cF+jntVDel//da+vKKInTbayVL2iUssB
-         aTOozmG3g2u6UGpBQdZ0ofPZQpDWIfMHV/vlX0H/h1DCZX9N/t9yMrn7Kibr73vcvXsi
-         vw3IsQvtfbgG9KuRz6k0IwUeBbfRj5bGKTmtmt2scRJT0YIeOJgfa+fgWt9ew29T58m9
-         yZepVSVY5JclGQKnIZYKgyW9cefdtDdwuJ7Qixxij8WALOlIBUuuU8M/yKTSt4TpwcU4
-         iGXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717524139; x=1718128939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tHWLGQWisUQj7HhRAw2go4sy8LHyULISrzif4HyJkSE=;
-        b=CWEQT6RDG7677oymRtJ5Y7C2SBiT7bGfErkWqR/BasSlAz0cDuD86a+ykyG0HQKhRf
-         I8SqcyOb5iz8G/CmQJFaNNV44OCULJL9Rzci8gCwN7f9fmcjXtPM8cqymmo3GNJwE+d3
-         vFG19IWKS3bbo6frVERWSJvn5lxkApniZkP4uC7sDliC3n8xiz7T9kZizCu+IMwIbKUI
-         mcc2JJ8QyBEL1bckJb5weLE3iVilljnVmlaI17I96DMO8JEtAFzftpF1h2gUw7cmek52
-         WLqR03UNghSNVaEVPikORr+4EbjoIrmi1d1KWTnBIhkznA+U1iKiRcBqZkgEkE6beaCt
-         Iy1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXnY38QYd3SqZk77BkxcZR9vsJEhjU9YzfMy916U3jiKH7wmAZ7NCNj15KHoRnzH2izCBTeZP8x6/mYN5F9R/5mVQjIaNPRiwaVeDCX
-X-Gm-Message-State: AOJu0YzSUAvCCEkdpiyDNh4+Ky2j2fDxQxAvZa9JndF1SU6GshWP+0J5
-	52ewilT8lAJjb8YDFfDuKxAmj5f/eoDUaHQ7sPznxs0e+wXP2DyJctlwJHOUTpIrn35euC9RIIs
-	4R4gMs3acXxlR4Ir1Wahvlwc4kKA406R+Jdj9
-X-Google-Smtp-Source: AGHT+IGLP4t3hL8c6rQwnWojRitsYcXuRXha13VBXTuVelVGnvix3EEiSfqrbr4AO/JmxEnQlMJSjTPnhcgT9+b9UCM=
-X-Received: by 2002:a05:6808:911:b0:3d1:d9e6:7ee9 with SMTP id
- 5614622812f47-3d20439d504mr112188b6e.33.1717524139167; Tue, 04 Jun 2024
- 11:02:19 -0700 (PDT)
+	s=arc-20240116; t=1717524170; c=relaxed/simple;
+	bh=Gb/snQsBVNfy1o6BzXAP6qQrBBYg5gFWkOAd71sStzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOCfzdqHfjdAM2BnrIoktGL5GfsABHLjNZqgMobHxFAci0U74hENnmjvn3fYi5zn/rYWCp8F6j6u6s65PJ2X8g5tnhGNQIAS82FuO7mN6nijVmpe6KXneBQgpjXYkOd+eV+IchRCWs+NrfU4jeeD+0WoidYfmqvJ5Se+bJR9JVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DLU+I6Sn; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1992040E016E;
+	Tue,  4 Jun 2024 18:02:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id cMhfAxGU5kPl; Tue,  4 Jun 2024 18:02:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717524163; bh=GWrStZRjxuM92GFSBVDFKrufEIiFs1jygww4NQi9psE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DLU+I6SnPlxE3Vi8Wxe3ScNZB3EkLajXpOeoexSJ3FsF11DOmq/kF7mUQWCTh2ZZU
+	 9zC+xV6TAt4Ah13vFL2KhnpeImQh5VqXLrXNCRxgdqmPuwF/2lM+rMy/J4yj4Iozin
+	 ZxTnySap2CgtkGMC9pdh3ly0va5Ab2W92LnO+AaAjUsYECWulD852NoRmi59uFRFfU
+	 72PgimdmMwcBk0tvmwsfVjcFEczVP9MQnuu4DKwdb8Sc7lOB+dIw/7406ijBYvLDS3
+	 b07CVT9qArX/RZjTB+qzs9rI0AfKYtNuRqP+YF+HaJPYra36zyWQ2mAMZE0hpL/ZAc
+	 BPWBKnbypK0uhFRN23NWzm/KCqpEWOShUSmPDaIGJebyCKUafVrsVelPv36dLxzxH7
+	 uvDy4Lm1OXwjTEnCvLQVj+3ePXJ1qXVcnsEE4Ie0oO0I0A7dhS1FRyuHujx94CEY+p
+	 ZlAsAnS98zWsf5NoLQSrMoJ548mt0Hu8T6gCJN1CLkwqcX5ErL2aTWMb8iIXGlZpxQ
+	 DTTlQ7UKT4e2wsy/0C9wHlbpIynoCuu3EpPYAu9jiQvD8OWDe3+nypU5dr7ChFcwLp
+	 eg1R8UeQgPrdpM4heVAXU4L3nloB0w/+1MUkg/RNSYuKWIjoRUPTgMUrp2BvirSN17
+	 C96SzSZAINkxGsML4ERfHRHc=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B340740E016A;
+	Tue,  4 Jun 2024 18:02:13 +0000 (UTC)
+Date: Tue, 4 Jun 2024 20:02:12 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Young <dyoung@redhat.com>
+Cc: Mike Rapoport <rppt@kernel.org>, "Kalra, Ashish" <ashish.kalra@amd.com>,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, rafael@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, adrian.hunter@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com,
+	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com,
+	michael.roth@amd.com, seanjc@google.com, kai.huang@intel.com,
+	bhe@redhat.com, kirill.shutemov@linux.intel.com, bdas@redhat.com,
+	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
+	jroedel@suse.de, ardb@kernel.org, kexec@lists.infradead.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
+Message-ID: <20240604180212.GHZl9WpAfNVERTjMqw@fat_crate.local>
+References: <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
+ <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
+ <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
+ <Zl3HfiQ6oHdTdOdA@kernel.org>
+ <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
+ <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local>
+ <Zl3hwYL2GDiyUfGo@kernel.org>
+ <CALu+AoSnA4323QbQG7wrNptosz7tfEfztsE1=o6G=FaLbQ_tKQ@mail.gmail.com>
+ <20240604094358.GBZl7h3otTCYJ5rkkt@fat_crate.local>
+ <CALu+AoS=-=PbMRxC-1rpfSTPpMOmM5BGRBjLhDwgOC3=4C71ng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
- <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
- <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
- <20240602200332.3e531ff1@yea> <20240604001304.5420284f@yea>
- <CAJD7tkbCRLdy0vD2Pd17fNrxHgkzW1VucN4qMkohLFLBLaaeCQ@mail.gmail.com>
- <20240604134458.3ae4396a@yea> <CAJD7tkYjJJGthQ_8NukGw6Q9EYbLA=8sAH_7=B90KXEL6HWdSw@mail.gmail.com>
- <CAOUHufa0Fpj6SjNgB-z0n5Jg63q1ewkbOAU65forpDwQVs45qg@mail.gmail.com>
- <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com> <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
-In-Reply-To: <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 4 Jun 2024 11:01:39 -0700
-Message-ID: <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
-Subject: Re: kswapd0: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
- nodemask=(null),cpuset=/,mems_allowed=0 (Kernel v6.5.9, 32bit ppc)
-To: Yu Zhao <yuzhao@google.com>
-Cc: Erhard Furtner <erhard_f@mailbox.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Minchan Kim <minchan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALu+AoS=-=PbMRxC-1rpfSTPpMOmM5BGRBjLhDwgOC3=4C71ng@mail.gmail.com>
 
-On Tue, Jun 4, 2024 at 10:54=E2=80=AFAM Yu Zhao <yuzhao@google.com> wrote:
->
-> On Tue, Jun 4, 2024 at 11:34=E2=80=AFAM Yosry Ahmed <yosryahmed@google.co=
-m> wrote:
-> >
-> > On Tue, Jun 4, 2024 at 10:19=E2=80=AFAM Yu Zhao <yuzhao@google.com> wro=
-te:
-> > >
-> > > On Tue, Jun 4, 2024 at 10:12=E2=80=AFAM Yosry Ahmed <yosryahmed@googl=
-e.com> wrote:
-> > > >
-> > > > On Tue, Jun 4, 2024 at 4:45=E2=80=AFAM Erhard Furtner <erhard_f@mai=
-lbox.org> wrote:
-> > > > >
-> > > > > On Mon, 3 Jun 2024 16:24:02 -0700
-> > > > > Yosry Ahmed <yosryahmed@google.com> wrote:
-> > > > >
-> > > > > > Thanks for bisecting. Taking a look at the thread, it seems lik=
-e you
-> > > > > > have a very limited area of memory to allocate kernel memory fr=
-om. One
-> > > > > > possible reason why that commit can cause an issue is because w=
-e will
-> > > > > > have multiple instances of the zsmalloc slab caches 'zspage' an=
-d
-> > > > > > 'zs_handle', which may contribute to fragmentation in slab memo=
-ry.
-> > > > > >
-> > > > > > Do you have /proc/slabinfo from a good and a bad run by any cha=
-nce?
-> > > > > >
-> > > > > > Also, could you check if the attached patch helps? It makes sur=
-e that
-> > > > > > even when we use multiple zsmalloc zpools, we will use a single=
- slab
-> > > > > > cache of each type.
-> > > > >
-> > > > > Thanks for looking into this! I got you 'cat /proc/slabinfo' from=
- a good HEAD, from a bad HEAD and from the bad HEAD + your patch applied.
-> > > > >
-> > > > > Good was 6be3601517d90b728095d70c14f3a04b9adcb166, bad was b8cf32=
-dc6e8c75b712cbf638e0fd210101c22f17 which I got both from my bisect.log. I g=
-ot the slabinfo shortly after boot and a 2nd time shortly before the OOM or=
- the kswapd0: page allocation failure happens. I terminated the workload (s=
-tress-ng --vm 2 --vm-bytes 1930M --verify -v) manually shortly before the 2=
- GiB RAM exhausted and got the slabinfo then.
-> > > > >
-> > > > > The patch applied to git b8cf32dc6e8c75b712cbf638e0fd210101c22f17=
- unfortunately didn't make a difference, I got the kswapd0: page allocation=
- failure nevertheless.
-> > > >
-> > > > Thanks for trying this out. The patch reduces the amount of wasted
-> > > > memory due to the 'zs_handle' and 'zspage' caches by an order of
-> > > > magnitude, but it was a small number to begin with (~250K).
-> > > >
-> > > > I cannot think of other reasons why having multiple zsmalloc pools
-> > > > will end up using more memory in the 0.25GB zone that the kernel
-> > > > allocations can be made from.
-> > > >
-> > > > The number of zpools can be made configurable or determined at runt=
-ime
-> > > > by the size of the machine, but I don't want to do this without
-> > > > understanding the problem here first. Adding other zswap and zsmall=
-oc
-> > > > folks in case they have any ideas.
-> > >
-> > > Hi Erhard,
-> > >
-> > > If it's not too much trouble, could you "grep nr_zspages /proc/vmstat=
-"
-> > > on kernels before and after the bad commit? It'd be great if you coul=
-d
-> > > run the grep command right before the OOM kills.
-> > >
-> > > The overall internal fragmentation of multiple zsmalloc pools might b=
-e
-> > > higher than a single one. I suspect this might be the cause.
-> >
-> > I thought about the internal fragmentation of pools, but zsmalloc
-> > should have access to highmem, and if I understand correctly the
-> > problem here is that we are running out of space in the DMA zone when
-> > making kernel allocations.
-> >
-> > Do you suspect zsmalloc is allocating memory from the DMA zone
-> > initially, even though it has access to highmem?
->
-> There was a lot of user memory in the DMA zone. So at a point the
-> highmem zone was full and allocation fallback happened.
->
-> The problem with zone fallback is that recent allocations go into
-> lower zones, meaning they are further back on the LRU list. This
-> applies to both user memory and zsmalloc memory -- the latter has a
-> writeback LRU. On top of this, neither the zswap shrinker nor the
-> zsmalloc shrinker (compaction) is zone aware. So page reclaim might
-> have trouble hitting the right target zone.
+On Tue, Jun 04, 2024 at 07:09:56PM +0800, Dave Young wrote:
+> Anyway there is not such a helper for all cases.
 
-I see what you mean. In this case, yeah I think the internal
-fragmentation in the zsmalloc pools may be the reason behind the
-problem.
+But maybe there should be...
 
-How many CPUs does this machine have? I am wondering if 32 can be an
-overkill for small machines, perhaps the number of pools should be
-max(nr_cpus, 32)?
+This is not the first case where the need arises to be able to say:
 
-Alternatively, the number of pools should scale with the memory size
-in some way, such that we only increase fragmentation when it's
-tolerable.
+	if (am I a kexeced kernel)
 
->
-> We can't really tell how zspages are distributed across zones, but the
-> overall number might be helpful. It'd be great if someone could make
-> nr_zspages per zone :)
+in code.
+
+Perhaps we should have a global var kexeced or so which gets incremented
+on each kexec-ed kernel, somewhere in very early boot of the kexec-ed
+kernel we do
+
+	kexeced++;
+
+and then other code can query it and know whether this is a kexec-ed
+kernel and how many times it got kexec-ed...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
