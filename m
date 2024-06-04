@@ -1,143 +1,118 @@
-Return-Path: <linux-kernel+bounces-201243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A428C8FBBAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:28:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540228FBBB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E29C286B44
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 095B71F2694A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C9D14AD17;
-	Tue,  4 Jun 2024 18:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB5314A62E;
+	Tue,  4 Jun 2024 18:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UfKRuEKu"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QeCjGfAV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EA014A099
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 18:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1624149DE2;
+	Tue,  4 Jun 2024 18:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717525681; cv=none; b=F4l4voCmPw6cwwB3HmAtPX3iWjiYPqB3ajmz2eQPsZtVALwyhcfQwC5DG/50SurYTggWH7stfnV8IfP2IZNIGAQz/09/yAov6/BuH5RWwISz9EXkw2pdg4Tkzc4MtG3MoXHFB7bQwVWfhfJuEsWDJ6YuxnZmEaXVwzwsnWAHcWc=
+	t=1717525699; cv=none; b=JbREdxtos2LL24QoWBMXpUY0JkplzjpvB25/2RoZJ0fZ0apdMUllyrYYOTt/x3r23dozrBSapyxWrNbsWYiG7FvUHsl/133+IPnYpUZ0K2B0GzS+yCJubDT1qNdMemfZuJg6NwdrWi1luF8AE1WKJoY7HstMiH6f1K+B/UkdbBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717525681; c=relaxed/simple;
-	bh=tgO7W51+bHcDvjyP/YA64C67mrFqdBGIc+5LxIoRFGo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=meqAbzTTjOQSThVQYx1ehkL4iyXNedhFHnCXZLsW4Q63Ra0jx4f7MVtFm2dGVkFQsLJbRlNbExQCMqN+OZ4AzaatKHmRF/XAJNmIrp6r9pJptIinPb+i0fZiKTsCP9v/ElQ4m8RS8tXpKEVFKE/DuQ/dx0rfkh7yGQTMLA+2fIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UfKRuEKu; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52b98fb5c32so3844248e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 11:27:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717525678; x=1718130478; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KtWwyHQ/s1Mo+jSgQ3jPju5LLIQLxY5LIc0kGaj+Rp0=;
-        b=UfKRuEKulQPRJ1eQ1jv5CPwj5N48I2Hd/0RecNZvR1umL2CaLMmHTBGRewMLx8xPVy
-         G8ohgactJFSAKbfIQPzAjtKfd0Sxw9ZtghZ+gPnY03Zy3F/AuVdbxqpIYaBWAInoXrKp
-         gIaaWDULocIxS0mx9djiuvA+RM3Ihq3jAZBVqt9hPjKydR8f38k2Ee3Uek4sOlzndqk/
-         dD4Azb1LLUXGqSiMu5p5k1byuGyaulNDQJDToit2cIh1xnjFr2Vmb2+SP6i40KeANUvt
-         HughqwuP0jI2ouIrSLA5Pi2guWDS3j1FF1vd4CKJq38kHz60Q3jIWz1rgtycCn6OtAv+
-         yGQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717525678; x=1718130478;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KtWwyHQ/s1Mo+jSgQ3jPju5LLIQLxY5LIc0kGaj+Rp0=;
-        b=r1BGy/mBXctbCjZjNXpyOjsxS6K5fIaPgnCp0LSADQBWgZZz1XPnM6uXQIBFPj1dxp
-         zuA75F92YMgI2ubeDhdKyDcBFwfXSnx9SqvUwxm3fBxgHVT+xoGNJVbdCrVj1nQBgZtT
-         ndWaohyF4VpgOWxefyKjHNO2ORXbE3Ky85DxyJK8OrJC+LJC6CNfGdxk+sPzzX11i2ga
-         MNFdv9U0qnNUtokg/TSNk+/PYKA7srxm8U+r4hwlhTzkqGDm95fEwHLFRMs+6H6sXv9c
-         bPEpeWrtAd+L7LNLrIclJcaACHgUwxg5+dGW5mqtuhB5ufbzC+Ts4QmLMDyn1qyx4n38
-         7C6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjIpuNWMNfB9by0ZDvozPBV0k79p4jyga3cow4ZWTfD3urLHNrr6sfKaFKuc3xOEyC53EoxE1EWx9RcNoMzRhwWCIGOXRpZOFfjL9J
-X-Gm-Message-State: AOJu0YyMXDgqKrljWXBjFt/x0v9dYE6pCSBvecTILEsT7H4LIDUaavvU
-	2T1y8Bgyuca7SfEyaUs0ZItlpprGk6fPZfD68E7W3ASlRcY/tJgt+xrPGhCXt0cILayvUXQ5I0U
-	8uovjFkqn7IsAxjB+f3+Sr7KEatwPDbzyVNHaVg==
-X-Google-Smtp-Source: AGHT+IEIBmN6Pbw21C48aFo92GeQIhF5kiBTsuKNdmIGqw2sOD28tsikvtBG3m69ha2Gd5/MsgbO+7NQyJOTbJOSXRc=
-X-Received: by 2002:a05:6512:2253:b0:523:9515:4b74 with SMTP id
- 2adb3069b0e04-52bab4ca5e9mr311493e87.14.1717525678190; Tue, 04 Jun 2024
- 11:27:58 -0700 (PDT)
+	s=arc-20240116; t=1717525699; c=relaxed/simple;
+	bh=kIEYUuEX7E2+uY0Qphw9+ECQqMwNwRaCDQiB6eHl2Wk=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=X2D3Da0J/9D2vl5YEf0q1vVgRH358oBQNHlotVlmAFkmdSdqAaQoNdOZ+3SkLHUEzalD1gDdZ5H9tTC+JQyyNIi5x9fbqwmpKBsR/hoTLQ15xyZrQJN1jKJesIt9X8hS8YNgQH2spy26TLMoOajE5qISfYEJDr+WLBlPWMF/XI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QeCjGfAV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50ACDC2BBFC;
+	Tue,  4 Jun 2024 18:28:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717525698;
+	bh=kIEYUuEX7E2+uY0Qphw9+ECQqMwNwRaCDQiB6eHl2Wk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=QeCjGfAVAn1A/3hD8DsW+EqwbJolKBt/+3CWR7T2tZyxomLtQ0RlP5QzICJZaI4nE
+	 9biw15hXJ0DhWOKE4cUOE3s7iKMnXK9hMTCk/Q89XoMKgUM0jah7Dn8oawTFZ97G2X
+	 23iZdnyJmTTpD3SMblGEl7QnM+4Ex44dOsTxa1XsI9txaY/Dp7fCGnQeZL4yhngEf6
+	 3QeyThEWO2X/IPFfJ7rsMB6815hMGS6MD/pDaBs2AOhCNEZRiS4B5JTDAYGdaR8GE+
+	 BSnLyTq0xlO3E3rJFgrX78mk5Tfj7PBbx+oTJrqhvJF1BcexSofNjgMjwjpmqc3w5n
+	 lCdGovF9ENnNw==
+Message-ID: <cce5a85e48f35f5ad5464a2443ca972e.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528-pwrseq-v8-10-d354d52b763c@linaro.org> <20240604174326.GA733165@bhelgaas>
-In-Reply-To: <20240604174326.GA733165@bhelgaas>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 4 Jun 2024 20:27:47 +0200
-Message-ID: <CAMRc=Mf_n9xcFHofq5Q_X3xs=2jDeor1zfFAd=bM0FywyhFUJA@mail.gmail.com>
-Subject: Re: [PATCH v8 10/17] power: sequencing: implement the pwrseq core
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Elliot Berman <quic_eberman@quicinc.com>, Caleb Connolly <caleb.connolly@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Alex Elder <elder@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>, ath12k@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel@quicinc.com, 
-	Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240604130526.GA12945-robh@kernel.org>
+References: <20240603223811.3815762-1-sboyd@kernel.org> <20240603223811.3815762-8-sboyd@kernel.org> <20240604130526.GA12945-robh@kernel.org>
+Subject: Re: [PATCH v5 07/11] dt-bindings: test: Add single clk consumer
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Rob Herring <robh@kernel.org>
+Date: Tue, 04 Jun 2024 11:28:16 -0700
+User-Agent: alot/0.10
 
-On Tue, Jun 4, 2024 at 7:43=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> w=
-rote:
->
-> On Tue, May 28, 2024 at 09:03:18PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Implement the power sequencing subsystem allowing devices to share
-> > complex powering-up and down procedures. It's split into the consumer
-> > and provider parts but does not implement any new DT bindings so that
-> > the actual power sequencing is never revealed in the DT representation.
->
-> > +++ b/drivers/power/sequencing/core.c
->
-> > + * Unit - a unit is a discreet chunk of a power sequence. For instance=
- one unit
->
-> s/discreet/discrete/
->
-> > +static struct pwrseq_unit *pwrseq_unit_incref(struct pwrseq_unit *unit=
-)
-> > +{
-> > +     kref_get(&unit->ref);
+Quoting Rob Herring (2024-06-04 06:05:26)
+> On Mon, Jun 03, 2024 at 03:38:04PM -0700, Stephen Boyd wrote:
+> > Describe a binding for a device that consumes a single clk in DT. This
+> > will initially be used by a KUnit test to clk_get() the clk registered
+> > by of_fixed_clk_setup() and test that it is setup properly.
+> >=20
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> > Cc: Conor Dooley <conor+dt@kernel.org>
+> > Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> > Cc: David Gow <davidgow@google.com>
+> > Cc: Rae Moar <rmoar@google.com>
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
+> >  .../test/test,single-clk-consumer.yaml        | 34 +++++++++++++++++++
+> >  1 file changed, 34 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/test/test,single-=
+clk-consumer.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/test/test,single-clk-con=
+sumer.yaml b/Documentation/devicetree/bindings/test/test,single-clk-consume=
+r.yaml
+> > new file mode 100644
+> > index 000000000000..8c384c48707d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/test/test,single-clk-consumer.y=
+aml
+> > @@ -0,0 +1,34 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/test/test,single-clk-consumer.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > +
-> > +     return unit;
-> > +}
+> > +title: Test consumer of a single clock
 > > +
-> > +static void pwrseq_unit_release(struct kref *ref);
+> > +maintainers:
+> > +  - Stephen Boyd <sboyd@kernel.org>
 > > +
-> > +static void pwrseq_unit_decref(struct pwrseq_unit *unit)
-> > +{
-> > +     kref_put(&unit->ref, pwrseq_unit_release);
-> > +}
->
-> No existing callers of kref_get() and kref_put() use names that
-> include "incref" or "decref".  Many include "get" and "put", so maybe
-> there would be some value in using that pattern?
+> > +description:
+> > +  A consumer of a single clock used in tests.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: test,single-clk-consumer
+>=20
+> I don't know if there's much value in defining bindings for tests. We=20
+> could alternatively make 'test,' opt out of everything. There's already=20
+> some support in dtschema for this with 'foo,'.
+>=20
+> I need something for the DT unittest as well.=20
+>=20
 
-These symbols are not exported and I personally dislike the get/put
-pattern. Best I can do is _ref/_unref like what kref does.
-
-Bart
+Ok. So I should drop this patch and the other one that adds a binding
+for the fake clock provider? And replace it with something that makes
+the test vendor prefix opt out of all checking? How is that done?  Some
+patch to dtschema directly?
 
