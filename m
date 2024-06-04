@@ -1,103 +1,94 @@
-Return-Path: <linux-kernel+bounces-201108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44528FB99D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:54:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B608FBA58
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67DCEB2127F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:54:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8944E1F226B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB3F1494A0;
-	Tue,  4 Jun 2024 16:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC9614A600;
+	Tue,  4 Jun 2024 17:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vfjd0UrE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Aw6AXUXw"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FC81487EF;
-	Tue,  4 Jun 2024 16:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E4814A0AA;
+	Tue,  4 Jun 2024 17:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717520071; cv=none; b=aQBEmeBttp4KUvkdFybTTwA8nLtA0x8F8QfuoLH2jcsfb/uaKWTiIW+VqrQtMfUi6F1PMGJzQe+pTU2KFrIyCqEhGrN8KxoFOJzBSXCZvku+nmZux9OXbIvsb1hMoe2hP7JkQttltFOm4cKk9CkNsxZd7+9/CtEUvaxDFp1zTeA=
+	t=1717522034; cv=none; b=RRXze/jPVIMdWdLiqrupF/DQgeAtZMHlCVMwg8+jkXAHex/zPBQFL640KrW4j9gzWKufzw3m7/97ZAkT4D2dXzPBC4IJWC/j46VuZqM/McY5/mzBCyZxvcLXT8FjOHKLdRZkSDZoxeNcw9FP3oSB2tHyIihrePvL60Dm1Wb/Ogc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717520071; c=relaxed/simple;
-	bh=9QxiAFyRtObELcKE8Pdt8Q3G8VNOVmS0MGj3q8rQD1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrPOWjkwDZwW34Uywz6aEMaSHoO1WLKkjWC+AWADvl9z7lqi/D7EXKAd3H3kD7yEfz2s5jJDkUJan3k7CNkkVqNrhLMJWKz8RGC5vDOaDLo1QocFgChMIf8brR+iQbEXCEbloBIkjEK6uEhIke0xTJgAiw8UeXQPZ9SOsxtkRNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vfjd0UrE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A47C2BBFC;
-	Tue,  4 Jun 2024 16:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717520070;
-	bh=9QxiAFyRtObELcKE8Pdt8Q3G8VNOVmS0MGj3q8rQD1Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vfjd0UrE2T+Gw7EaDN2F9IKww+eROskhaELkjqCbX0lg+lVJ+MLsrQfelrViaAjRK
-	 vrTuTLxSPpypv72kmQAt8Cde37e0dM0by7sRAXP0j2/P0ICSo/VDotdM1ThDn23VKx
-	 nchFMcSkJp3H1Go+ZPvoQgK90QywEjPLEfPc5m0fmGSr4lmmVyUpdTi9T1esqkrB7z
-	 jFUz8p5LZUBgPwHI4sb84alubcVZSfqIdk1ar2MEhpeU0hXfVlNr6Mm8btlKkr6y7g
-	 8V5ZydI77l33AdOWULTvZm554rTgl5qkqVRCqnb5gvWo5bWP4Btsqp0X02t8eUcyp3
-	 H/GbHVznSCciA==
-Date: Tue, 4 Jun 2024 17:54:25 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Hal Feng <hal.feng@starfivetech.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: snps-dw-apb-uart: Add one
- more reset signal for StarFive JH7110 SoC
-Message-ID: <20240604-sagging-unbiased-17083b875576@spud>
-References: <20240604084729.57239-1-hal.feng@starfivetech.com>
- <20240604084729.57239-2-hal.feng@starfivetech.com>
+	s=arc-20240116; t=1717522034; c=relaxed/simple;
+	bh=19j/qX+gL7Lz21NjIobaq4BpyZhEZYE3pB+bAIOQ+Vw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FlrDkVKs+vKxUthDEEmg0SSbdgA8nDcxZS4SZEWnhrljVOmMB5VKjUd8LpLZpNnwwA8txs275g9BrVH0Hrlopbf8JOCQGqQd3pAOCAptXCbf9UoImKwGDwUtH2hFGYTZy11mlIbdEbK/kYg4B+8OABilslQDBGCI9XhjNnN1Grk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Aw6AXUXw; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 2A5D08850D;
+	Tue,  4 Jun 2024 19:27:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1717522031;
+	bh=ouE0lc8aXlYqAz3nRcHf2sJn1wgl70Q+6wn+UFtez/8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Aw6AXUXwxg4tf93WX2Tk0atTQIrXjd5wUS690PXNsSeHCmkTeyJpdaErauWUwJAXX
+	 cIkvi7nHeCL+fjArJnUlp6o+OZGqfgl8CapH2WBAdtBjQCbn/IKAm15FMVR1e9D6or
+	 SlonWQ/+SE9k9nuLKq3Wkf+XJ0tksjg4ZVfhRj6ZhJ3bueXb7hgCb4cGJo0/ZGfs3R
+	 XINcCN0dJMCAWzxW7QVQV4JCUQ4IH2jTd0P5RdiNjG0lUrqtt9aaoNMftsud0HwU/R
+	 9mp6ugcqSPOATYIGb/qxMx7WBtZKY5TzgkD/yIlh/pJQp+ZUgPWiNTF9Z08jpdmc23
+	 9H7Tv7y2WQoeQ==
+Message-ID: <20b33e48-4cf9-485d-815b-95ef4db8f04d@denx.de>
+Date: Tue, 4 Jun 2024 18:55:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gEvQNIf624IsR0Q/"
-Content-Disposition: inline
-In-Reply-To: <20240604084729.57239-2-hal.feng@starfivetech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/11] ARM: multi_v7_defconfig: Add MCP23S08 pinctrl
+ support
+To: Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
+ <20240604143502.154463-12-christophe.roullier@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240604143502.154463-12-christophe.roullier@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
+On 6/4/24 4:35 PM, Christophe Roullier wrote:
+> Need to enable MCP23S08 I/O expanders to manage Ethernet PHY
+> reset in STM32MP135F-DK board.
+> Put this config in built-in like STMMAC to avoid huge of Ethernet
+> messages during boot (deferred)
 
---gEvQNIf624IsR0Q/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 04, 2024 at 04:47:27PM +0800, Hal Feng wrote:
-> The UART of StarFive JH7110 has two reset signals.
-> Both of them are necessary for JH7110 to initialize UART.
->=20
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thanks,
-Conor.
-
---gEvQNIf624IsR0Q/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZl9GwQAKCRB4tDGHoIJi
-0pIEAQCPDEC7F3bwjXqRwHk8slfZh89WNAGHTG3bfBDIyQqRJAD/Rel/CIsjO73v
-ESIZqBFtkTn9zKJuSZN0Z3XX9Kv1qwc=
-=tyjt
------END PGP SIGNATURE-----
-
---gEvQNIf624IsR0Q/--
+You're not avoiding any error/defer/messages here, you simply need to 
+enable the MCP23S08 GPIO controller driver, so the kernel can use the 
+GPIO provided by that driver instance to release the ethernet PHY from 
+reset on STM32MP135F-DK, that's all.
 
