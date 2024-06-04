@@ -1,159 +1,200 @@
-Return-Path: <linux-kernel+bounces-201372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813218FBDA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:00:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C318FBDA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C0C1C23F76
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851E72827FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AD114BFA2;
-	Tue,  4 Jun 2024 21:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E320D14D280;
+	Tue,  4 Jun 2024 21:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fckzWAuQ"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZUoecq5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D8114BF91
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 21:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C14214C5A4;
+	Tue,  4 Jun 2024 21:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717534810; cv=none; b=U2K3VCDE4qWnA+xAWVNeiXj7B+QZMokzRnjHh4ZzcEe1cIuFgB3De/l8IEx0HxfTeLzdRkC0cZ17pVCQX98Vpzdm/cTsnzonrLVVBKBJiEgM+Hq/GD6GjiFARH1ukSBuMKmTm16A0/uouV2OG6rcVYcRzYdvdYVnTBiy5iM9SfQ=
+	t=1717534813; cv=none; b=FGOBrSAmD+AovojPOyhHCwQY5vIMDICSckJSwdnOCuTzBaiewEpvVlz9PJZyoCz1XE0cXRdxPZHCsyGpiFinDV0smzF9gtikHxY1RoJ8QuavBbQErp0+ThL4hHSGs4QP95Mt7l7SHUY7WxP3CcrmpFv85ceTwaSuBtIXIEu+TFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717534810; c=relaxed/simple;
-	bh=hvtn9Rpj72ax2PdS3Q2rjLwwSeA6zCTzR5nXK72FyUA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W9ik4TSS2zKCNMJAK+1zmLKTnNaeWR+j84VpN98j1h9uKCvhFp50qmdUbdENPxyTSy+T9pFg2Kbf3Exd/RmwI03tAcD1E6/aLeOxz8NA04MEvsf5UNOjvpcolPld+iRpdSQHKGwnKPLRqr6FjMPRC+fKs50soRdsZp6YBG6BNkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fckzWAuQ; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e73359b900so16417051fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 14:00:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717534807; x=1718139607; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hvtn9Rpj72ax2PdS3Q2rjLwwSeA6zCTzR5nXK72FyUA=;
-        b=fckzWAuQjbPzZrK6prfoRK4QrdBzLLr3qVo4MHCWBbUiaG+XyFZjRTB/OHXCJBSOjH
-         +XaR6KOHGMP3GFk45ZX1sllKgun2JfBz0wHB9IKrMtvP8l5vl8JGhbuAkorFO6tYYvwC
-         ANYLJHwB3/0Jh+JX9K11qkvG4maDgdAD+EbjEeTO20vB1lT+Kvigadan4bciluZGU4HY
-         P3XsDOjarxj8LZpo95Azq7NU7yAYuG4Vx6KSA7ZtmEvo7+ZGcLFtiAsUczQ54hkGOkRy
-         4in3oRZSVDTAHQm4dM19hOEhKTrYpphOzZCFW0AfSwqSMugeerbtECfuDFfmUQqu+b52
-         5rlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717534807; x=1718139607;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hvtn9Rpj72ax2PdS3Q2rjLwwSeA6zCTzR5nXK72FyUA=;
-        b=QHND2sPDHAVx5Ign/vg+4FzQBeCTRNwWqx9WUobNUBgGwWq32qV4UNUIbAcBHsZ/8c
-         0XEZKO6HnlAc+Xmj9byi/CQyManGAMx4o3aH5PMwbCynspQHI46ZyU+s7ZjWvkQPgwT5
-         LbzK10ZfCvVt+qAqlaiY/sbQ5sEQg9XfVo1U+lasZglzuKVVsRyjG8Y1V43sKgQ72qLu
-         Y2DBMhHTWgnEsjCufi73Qg4ZuF9Z+4KHjv04TP6jd56VzmyIr7xkhtnx+FDmK/F2sD3i
-         mvi17rDvqeV+8TbJJCNM1vRBOQG9Vd0stOV5BOC+v/jk1GpcLgKEV6Q1OUHTxv98XR2S
-         v32g==
-X-Forwarded-Encrypted: i=1; AJvYcCUMDci65wZTZZBgfX4jk74Vm3qVT5zYDbC5FCi76Q3IC+OhRnzstuvFlQBg8VTRp5iMuTkFIlQo3/PDhY2kkTIoVtperIkaNAvJXauz
-X-Gm-Message-State: AOJu0YwlwxqaQPynzIjGquKfmchTqqiSTVTjcwUUmWOr97S1+LZMA1jV
-	fNNdR4CetS+4+NhvMBq5RYSCuYN9EzT+qFFd4eOYF2nf+JeFUZY/pvUpaB+117U=
-X-Google-Smtp-Source: AGHT+IGNXY3i+FkcN4+0E6sb8vV5qlhvrzKI0eFOmCcYWLdRzRhWMrQ9qyPJs+PKngvyd4yPLeMdJA==
-X-Received: by 2002:a2e:9187:0:b0:2ea:853f:18e4 with SMTP id 38308e7fff4ca-2eac7a11f96mr1893901fa.13.1717534806839;
-        Tue, 04 Jun 2024 14:00:06 -0700 (PDT)
-Received: from ?IPv6:2804:5078:851:4000:58f2:fc97:371f:2? ([2804:5078:851:4000:58f2:fc97:371f:2])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c354e744a0sm7435493a12.30.2024.06.04.14.00.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 14:00:06 -0700 (PDT)
-Message-ID: <d98580bc15fd358a1bdfdbc95b94ca02f97324bc.camel@suse.com>
-Subject: Re: [PATCH v3] selftests: livepatch: Test atomic replace against
- multiple modules
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, Shuah Khan
- <shuah@kernel.org>,  live-patching@vger.kernel.org,
- linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Tue, 04 Jun 2024 17:59:48 -0300
-In-Reply-To: <Zl9YoIAy+1bEnHCB@redhat.com>
-References: <20240603-lp-atomic-replace-v3-1-9f3b8ace5c9f@suse.com>
-	 <Zl9YoIAy+1bEnHCB@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (by Flathub.org) 
+	s=arc-20240116; t=1717534813; c=relaxed/simple;
+	bh=y52S5zxbaNTrVsYNz4/Zpv7hHHKljA7FdC9ZJu7Vx30=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IDF/Bwp8EGNnQyvigwz3KsdrJGsJCzmjE4OzzDn7kK8TtMFYCRgqcpXgodyr6oNglszvF5Jw4kYs3W+2N1eHjR6PoDJTzWvsw693NBghzu/Xkr6FetD4RTjdytz0oagSq5VbCGB69pcDxj6wbVYBnbycHuwzPZN8x/ku371aGS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZUoecq5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA68C4AF09;
+	Tue,  4 Jun 2024 21:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717534812;
+	bh=y52S5zxbaNTrVsYNz4/Zpv7hHHKljA7FdC9ZJu7Vx30=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KZUoecq5aI430xa+CHC/bW84mQfUoktWIDmalft8Y7CZBnqzMGvi5Z9K6xCw7xYWE
+	 /LT9jUMOnns5TMkiMoGnaVvd7MRVn8g7aBEyFP78lYZmsnOSfOFLnc6/Rn1q5cbNM0
+	 YdlYYox+iHCo1baIxGYa83wv9wDVhobB8cUmBpjAyIyQKB3rUlQRbvN2Aa4V6hunZo
+	 kWTkyy75BVEf//pkTwMJ/wRG7TvrvnCSxMuPiHaad+vZQCtH8UtK6HhM1oSZs0ZjXS
+	 zY1HuhofyLhx7b2wdZ3YnJfGgi1OLpNbeixjvlyPXExBW4qIdtSZUSpPenpRWdDBM9
+	 yZ7/BPy1CKybg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] [v3] arm64/io: add constant-argument check
+Date: Tue,  4 Jun 2024 22:59:57 +0200
+Message-Id: <20240604210006.668912-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-06-04 at 14:10 -0400, Joe Lawrence wrote:
-> On Mon, Jun 03, 2024 at 02:26:19PM -0300, Marcos Paulo de Souza
-> wrote:
-> > Adapt the current test-livepatch.sh script to account the number of
-> > applied livepatches and ensure that an atomic replace livepatch
-> > disables
-> > all previously applied livepatches.
-> >=20
-> > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> > ---
-> > Changes since v2:
-> > * Used variables to stop the name of other livepatches applied to
-> > test
-> > =C2=A0 the atomic replace. (Joe)
-> >=20
-> > Changes since v1:
-> > * Added checks in the existing test-livepatch.sh instead of
-> > creating a
-> > =C2=A0 new test file. (Joe)
-> > * Fixed issues reported by ShellCheck (Joe)
-> > ---
-> > Changes in v3:
-> > - EDITME: describe what is new in this series revision.
-> > - EDITME: use bulletpoints and terse descriptions.
-> > - Link to v2:
-> > https://lore.kernel.org/r/20240525-lp-atomic-replace-v2-1-142199bb65a1@=
-suse.com
-> > ---
-> > =C2=A0.../testing/selftests/livepatch/test-livepatch.sh=C2=A0 | 138
-> > +++++++++++++--------
-> > =C2=A01 file changed, 89 insertions(+), 49 deletions(-)
-> >=20
-> > diff --git a/tools/testing/selftests/livepatch/test-livepatch.sh
-> > b/tools/testing/selftests/livepatch/test-livepatch.sh
-> > index e3455a6b1158..ca770b8c62fc 100755
-> > --- a/tools/testing/selftests/livepatch/test-livepatch.sh
-> > +++ b/tools/testing/selftests/livepatch/test-livepatch.sh
-> > =C2=A0
-> > [ ... snip ... ]
-> > =C2=A0
-> > =C2=A0# - load a livepatch that modifies the output from /proc/cmdline
-> > and
-> > =C2=A0#=C2=A0=C2=A0 verify correct behavior
-> > -# - load an atomic replace livepatch and verify that only the
-> > second is active
-> > -# - remove the first livepatch and verify that the atomic replace
-> > livepatch
-> > -#=C2=A0=C2=A0 is still active
-> > +# - load two addtional livepatches and check the number of
-> > livepatch modules
->=20
-> nit: s/addtional/additional as Miroslav spotted in v2
->=20
-> Otherwise LGTM,
->=20
-> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Thanks Joe! I forgot to address Miroslav's comment... Petr, would you
-fix it locally?
+In some configurations __const_iowrite32_copy() does not get inlined
+and gcc runs into the BUILD_BUG():
 
-Thanks!
+In file included from <command-line>:
+In function '__const_memcpy_toio_aligned32',
+    inlined from '__const_iowrite32_copy' at arch/arm64/include/asm/io.h:203:3,
+    inlined from '__const_iowrite32_copy' at arch/arm64/include/asm/io.h:199:20:
+include/linux/compiler_types.h:487:45: error: call to '__compiletime_assert_538' declared with attribute error: BUILD_BUG failed
+  487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                             ^
+include/linux/compiler_types.h:468:25: note: in definition of macro '__compiletime_assert'
+  468 |                         prefix ## suffix();                             \
+      |                         ^~~~~~
+include/linux/compiler_types.h:487:9: note: in expansion of macro '_compiletime_assert'
+  487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |         ^~~~~~~~~~~~~~~~~~~
+include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+      |                                     ^~~~~~~~~~~~~~~~~~
+include/linux/build_bug.h:59:21: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+   59 | #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+      |                     ^~~~~~~~~~~~~~~~
+arch/arm64/include/asm/io.h:193:17: note: in expansion of macro 'BUILD_BUG'
+  193 |                 BUILD_BUG();
+      |                 ^~~~~~~~~
 
->=20
-> --
-> Joe
->=20
+Move the check for constant arguments into the inline function to ensure
+it is still constant if the compiler decides against inlining it, and
+mark them as __always_inline to override the logic that sometimes leads
+to the compiler not producing the simplified output.
+
+Note that either the __always_inline annotation or the check for a
+constant value are sufficient here, but combining the two looks cleaner
+as it also avoids the macro. With clang-8 and older, the macro was still
+needed, but all versions of gcc and clang can reliably perform constant
+folding here.
+
+Fixes: ead79118dae6 ("arm64/io: Provide a WC friendly __iowriteXX_copy()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v3:
+ - also mark functions as __always_inline
+v2:
+ - fix both 32-bit and 64-bit copies
+ - remove now-redundant macros
+---
+ arch/arm64/include/asm/io.h | 36 ++++++++++++++++--------------------
+ 1 file changed, 16 insertions(+), 20 deletions(-)
+
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index 4ff0ae3f6d66..bc239371323a 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -153,8 +153,9 @@ extern void __memset_io(volatile void __iomem *, int, size_t);
+  * emit the large TLP from the CPU.
+  */
+ 
+-static inline void __const_memcpy_toio_aligned32(volatile u32 __iomem *to,
+-						 const u32 *from, size_t count)
++static __always_inline void
++__const_memcpy_toio_aligned32(volatile u32 __iomem *to, const u32 *from,
++			      size_t count)
+ {
+ 	switch (count) {
+ 	case 8:
+@@ -196,24 +197,22 @@ static inline void __const_memcpy_toio_aligned32(volatile u32 __iomem *to,
+ 
+ void __iowrite32_copy_full(void __iomem *to, const void *from, size_t count);
+ 
+-static inline void __const_iowrite32_copy(void __iomem *to, const void *from,
+-					  size_t count)
++static __always_inline void
++__iowrite32_copy(void __iomem *to, const void *from, size_t count)
+ {
+-	if (count == 8 || count == 4 || count == 2 || count == 1) {
++	if (__builtin_constant_p(count) &&
++	    (count == 8 || count == 4 || count == 2 || count == 1)) {
+ 		__const_memcpy_toio_aligned32(to, from, count);
+ 		dgh();
+ 	} else {
+ 		__iowrite32_copy_full(to, from, count);
+ 	}
+ }
++#define __iowrite32_copy(to, from, count) __iowrite32_copy(to, from, count)
+ 
+-#define __iowrite32_copy(to, from, count)                  \
+-	(__builtin_constant_p(count) ?                     \
+-		 __const_iowrite32_copy(to, from, count) : \
+-		 __iowrite32_copy_full(to, from, count))
+-
+-static inline void __const_memcpy_toio_aligned64(volatile u64 __iomem *to,
+-						 const u64 *from, size_t count)
++static __always_inline void
++__const_memcpy_toio_aligned64(volatile u64 __iomem *to, const u64 *from,
++			      size_t count)
+ {
+ 	switch (count) {
+ 	case 8:
+@@ -255,21 +254,18 @@ static inline void __const_memcpy_toio_aligned64(volatile u64 __iomem *to,
+ 
+ void __iowrite64_copy_full(void __iomem *to, const void *from, size_t count);
+ 
+-static inline void __const_iowrite64_copy(void __iomem *to, const void *from,
+-					  size_t count)
++static __always_inline void
++__iowrite64_copy(void __iomem *to, const void *from, size_t count)
+ {
+-	if (count == 8 || count == 4 || count == 2 || count == 1) {
++	if (__builtin_constant_p(count) &&
++	    (count == 8 || count == 4 || count == 2 || count == 1)) {
+ 		__const_memcpy_toio_aligned64(to, from, count);
+ 		dgh();
+ 	} else {
+ 		__iowrite64_copy_full(to, from, count);
+ 	}
+ }
+-
+-#define __iowrite64_copy(to, from, count)                  \
+-	(__builtin_constant_p(count) ?                     \
+-		 __const_iowrite64_copy(to, from, count) : \
+-		 __iowrite64_copy_full(to, from, count))
++#define __iowrite64_copy(to, from, count) __iowrite64_copy(to, from, count)
+ 
+ /*
+  * I/O memory mapping functions.
+-- 
+2.39.2
 
 
