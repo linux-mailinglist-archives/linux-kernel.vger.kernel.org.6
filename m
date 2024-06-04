@@ -1,166 +1,187 @@
-Return-Path: <linux-kernel+bounces-200416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4F878FAFBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:19:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC948FAFCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72E741F230BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDED41C21EB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA55145A0A;
-	Tue,  4 Jun 2024 10:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF39144D28;
+	Tue,  4 Jun 2024 10:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WAS1r96U"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iSjDdIdt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D51145344
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4708613247D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717496302; cv=none; b=XWRo8qwGamiUlKCfSLg8UBqW5rX9FYG7gtapOVBoFpzcBycpd40enPHe2vScxfkZbYam0QL+vyUu8Y6HuKDpI92jcGlFD95WKt/ursRIDvNajNNw1mWryMrD9taaNNG7rZWPGt1OIo+8l3FvHmm6rCgrIwZ8E9zYX73YvmNd2wA=
+	t=1717496636; cv=none; b=kbfzAkkDm1xisdP6sXsK9WqrNd7LU3XjWZSPDD3EteOXyBD4/pUhJ1kqNrYc0xBXDys6AlIupHoFPG7ehVn6yLIO2xlknZo4kbOfHf9hXnfEYcIhTlXfFDqsjOghYfN/6Ppq74z4XlhXJHJ0DVIS2zP0ymMy4KC6rfHzfyR0JZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717496302; c=relaxed/simple;
-	bh=bnOpRzV0MPKnJ0LrNIyRkUZWXq3NrrU+3Jw5N+ciYAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VsXYYyd/A/AdYuNj7oUZsUOju/r2SnxIg2PzdW7ay+KHJ5gTbNdlNgX9QOkYnwbEpa2vQ3Pjfh0ZtSZBaol4aRWgoNHh+VZ/ictLy9is2rZBy8WInp4tj57IYGwEoOZmVcAKBSwNRfzuMG3G76QDsWW0LPVnhWZhqALH6aQf30A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WAS1r96U; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1717496292; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=hr324HRcgNNfrgZ8GDchBNfhicaPktU9TGw54OvPLi4=;
-	b=WAS1r96UnP3OMajpmB6whj5Okr5epNxbueTWqTZ0Z2j+Ca6uOw1e8zZPCHAUNxPSHh/0utQEhaUMg3TQDos73p5sKCdwkjoqo90+UaV1OjAS1D1aP43AXVD0NXsogLwXqwRaPVdTqBrb8i1t6rNdjRm9XZIDydkfeePBctP61SY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W7qsp1y_1717496290;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7qsp1y_1717496290)
-          by smtp.aliyun-inc.com;
-          Tue, 04 Jun 2024 18:18:10 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	wangkefeng.wang@huawei.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	shy828301@gmail.com,
-	ziy@nvidia.com,
-	ioworker0@gmail.com,
-	da.gomez@samsung.com,
-	p.raghav@samsung.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/6] mm: shmem: add mTHP counters for anonymous shmem
-Date: Tue,  4 Jun 2024 18:17:50 +0800
-Message-Id: <f3c8f7a1c9fd17a48ffa22f7e7d236ac96caced6.1717495894.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1717495894.git.baolin.wang@linux.alibaba.com>
-References: <cover.1717495894.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1717496636; c=relaxed/simple;
+	bh=3fA+ijMelVGnpHEMrovsOfjpvNZBvc0ULJRMousTutk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VteEsaRyztwkKQEtmuJWhE5sDvpQxvirOrYQgnQTIzDcGvFQsH/X59ira48Zy3Hh0kraxx0QXxUxjkDuOkvnqC99HBfcvygU/vKQ1mnfmTccEhobKeSdDQuE/wXMpt4sm4EXEqIzLdUisaBTN8DCrEvp3clAbT2VNcNMEKiPH5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iSjDdIdt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717496634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=O6tikh5JBiLBm1a4LVwhDF58Q+DFMaskKtK9m6Z5K2w=;
+	b=iSjDdIdtNp7XgzAbulBGvkRkbxWyRbZ1JmMVoSwx9XaAL++oQP2r/gtRTda6ey45ndkYbm
+	4njAyg0Yng6pmKJ6uaqYZMszAxDz8AVc6dtXdfyOGRERLMFshQaY4DnaMgn5l9QmSyuOuI
+	b+IXJRwmNRlnYnC8Jikk54Lw3tB2NmU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-536-3YnuuyERPd6ToQgtuGRI5w-1; Tue, 04 Jun 2024 06:23:53 -0400
+X-MC-Unique: 3YnuuyERPd6ToQgtuGRI5w-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4212a921250so3903555e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:23:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717496632; x=1718101432;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O6tikh5JBiLBm1a4LVwhDF58Q+DFMaskKtK9m6Z5K2w=;
+        b=kwjHDxOBr4+sHBPNg0g7h54C5lAeLUtqIZ3QkILCaqKofwvf4ScxEZ5xWeaJ5VlWjn
+         PiDKQr+hhY9Sci9skrF28sPN7QZy0rWxSCRlOa7X5MN5Cy9nMm7HmNG95dwwAaiVG9Q+
+         gvIJ6PZhIs/3QP2XbVjO1xQZl4XTR+LvWx/BrrOhGb3a479QXUYi1HlR6G4QOtd1Jk6C
+         mcg7BT3MADE8g6lBMkcIgZw2aE9i1IfUxE9C5nI3d0pDx6Lc0V2rRlUVqbZ61o70C86j
+         ki4CZFhnEhuSuaVgn903rKvUmvaEHRp1qGQaMbbOFF2ffT8NkLmgC0mbL36WEa9qKgSY
+         UTag==
+X-Forwarded-Encrypted: i=1; AJvYcCWrifaGC7CLFAoULlsDrQCaRshhGjR1UHU7zo4bOkwEIi2OciVwLID8OSwKVU9FO05xLK6NgzqjBKvO+ddPP1Ruk1BHGlE35yFgC649
+X-Gm-Message-State: AOJu0YxMFmuW2U4uaaswgUj5jvQ26FbX1Jw/f+nzZVVkCKQ5WYMJgoMG
+	0nyswW9oyYRj/X2wjh2RLbP4O5Dt3ifexImfr2/u1O+MUSYnRKOCXBKuOb1t7VBbFXHn+tnP1Qe
+	f++OgdTwylEcHyHOt6Eq++P980lsm1SZ6EzjpyNZFK+hxAwRuqSrybnxKz1iXRQ==
+X-Received: by 2002:a05:6000:400a:b0:35e:51cf:6908 with SMTP id ffacd0b85a97d-35e51cf6a65mr6304480f8f.0.1717496632001;
+        Tue, 04 Jun 2024 03:23:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHrhzH032AI5YL7gUIyX1AtuXBZC4N92hUDih0vFJ9VAbnPZz6xUFLcLH2nJjeRcYQ09o42TQ==
+X-Received: by 2002:a05:6000:400a:b0:35e:51cf:6908 with SMTP id ffacd0b85a97d-35e51cf6a65mr6304415f8f.0.1717496631543;
+        Tue, 04 Jun 2024 03:23:51 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:1b74:3a10::f71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c4388sm11260215f8f.14.2024.06.04.03.23.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 03:23:51 -0700 (PDT)
+Message-ID: <31b376371d52797894809ad8a2edd4b76a76775f.camel@redhat.com>
+Subject: Re: [PATCH net-next v10 06/14] page_pool: convert to use netmem
+From: Paolo Abeni <pabeni@redhat.com>
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Donald Hunter
+ <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Richard
+ Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>,  Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,  Shuah Khan
+ <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Pavel Begunkov
+ <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe
+ <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand
+ <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+ linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
+Date: Tue, 04 Jun 2024 12:23:48 +0200
+In-Reply-To: <20240530201616.1316526-7-almasrymina@google.com>
+References: <20240530201616.1316526-1-almasrymina@google.com>
+	 <20240530201616.1316526-7-almasrymina@google.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add mTHP counters for anonymous shmem.
+On Thu, 2024-05-30 at 20:16 +0000, Mina Almasry wrote:
+> diff --git a/include/trace/events/page_pool.h b/include/trace/events/page=
+_pool.h
+> index 6834356b2d2ae..c5b6383ff2760 100644
+> --- a/include/trace/events/page_pool.h
+> +++ b/include/trace/events/page_pool.h
+> @@ -42,51 +42,52 @@ TRACE_EVENT(page_pool_release,
+>  TRACE_EVENT(page_pool_state_release,
+> =20
+>  	TP_PROTO(const struct page_pool *pool,
+> -		 const struct page *page, u32 release),
+> +		 netmem_ref netmem, u32 release),
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- include/linux/huge_mm.h |  3 +++
- mm/huge_memory.c        |  6 ++++++
- mm/shmem.c              | 18 +++++++++++++++---
- 3 files changed, 24 insertions(+), 3 deletions(-)
+This causes a sparse warning, as the caller is still passing a 'page'
+argument.
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 909cfc67521d..212cca384d7e 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -281,6 +281,9 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
- 	MTHP_STAT_SWPOUT,
- 	MTHP_STAT_SWPOUT_FALLBACK,
-+	MTHP_STAT_FILE_ALLOC,
-+	MTHP_STAT_FILE_FALLBACK,
-+	MTHP_STAT_FILE_FALLBACK_CHARGE,
- 	__MTHP_STAT_COUNT
- };
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1360a1903b66..3fbcd77f5957 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -555,6 +555,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
- DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
-+DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
-+DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
-+DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
- 
- static struct attribute *stats_attrs[] = {
- 	&anon_fault_alloc_attr.attr,
-@@ -562,6 +565,9 @@ static struct attribute *stats_attrs[] = {
- 	&anon_fault_fallback_charge_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
-+	&file_alloc_attr.attr,
-+	&file_fallback_attr.attr,
-+	&file_fallback_charge_attr.attr,
- 	NULL,
- };
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 2ecc41521dbb..d9a11950c586 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1773,6 +1773,9 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 
- 			if (pages == HPAGE_PMD_NR)
- 				count_vm_event(THP_FILE_FALLBACK);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
-+#endif
- 			order = next_order(&suitable_orders, order);
- 		}
- 	} else {
-@@ -1792,9 +1795,15 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
- 		if (xa_find(&mapping->i_pages, &index,
- 				index + pages - 1, XA_PRESENT)) {
- 			error = -EEXIST;
--		} else if (pages == HPAGE_PMD_NR) {
--			count_vm_event(THP_FILE_FALLBACK);
--			count_vm_event(THP_FILE_FALLBACK_CHARGE);
-+		} else if (pages > 1) {
-+			if (pages == HPAGE_PMD_NR) {
-+				count_vm_event(THP_FILE_FALLBACK);
-+				count_vm_event(THP_FILE_FALLBACK_CHARGE);
-+			}
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
-+#endif
- 		}
- 		goto unlock;
- 	}
-@@ -2168,6 +2177,9 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 		if (!IS_ERR(folio)) {
- 			if (folio_test_pmd_mappable(folio))
- 				count_vm_event(THP_FILE_ALLOC);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
-+#endif
- 			goto alloced;
- 		}
- 		if (PTR_ERR(folio) == -EEXIST)
--- 
-2.39.3
+> =20
+> -	TP_ARGS(pool, page, release),
+> +	TP_ARGS(pool, netmem, release),
+> =20
+>  	TP_STRUCT__entry(
+>  		__field(const struct page_pool *,	pool)
+> -		__field(const struct page *,		page)
+> +		__field(netmem_ref,			netmem)
+>  		__field(u32,				release)
+>  		__field(unsigned long,			pfn)
+>  	),
+> =20
+>  	TP_fast_assign(
+>  		__entry->pool		=3D pool;
+> -		__entry->page		=3D page;
+> +		__entry->netmem		=3D netmem;
+>  		__entry->release	=3D release;
+> -		__entry->pfn		=3D page_to_pfn(page);
+> +		__entry->pfn		=3D netmem_to_pfn(netmem);
+>  	),
+> =20
+> -	TP_printk("page_pool=3D%p page=3D%p pfn=3D0x%lx release=3D%u",
+> -		  __entry->pool, __entry->page, __entry->pfn, __entry->release)
+> +	TP_printk("page_pool=3D%p netmem=3D%lu pfn=3D0x%lx release=3D%u",
+> +		  __entry->pool, (__force unsigned long)__entry->netmem,
+> +		  __entry->pfn, __entry->release)
+>  );
+> =20
+>  TRACE_EVENT(page_pool_state_hold,
+> =20
+>  	TP_PROTO(const struct page_pool *pool,
+> -		 const struct page *page, u32 hold),
+> +		 netmem_ref netmem, u32 hold),
+
+Same here.
+
+Thanks,
+
+Paolo
 
 
