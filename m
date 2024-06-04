@@ -1,129 +1,133 @@
-Return-Path: <linux-kernel+bounces-200229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592798FAD40
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:15:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8988FAD43
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7B51C21C5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:15:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081321C21DD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AEC142648;
-	Tue,  4 Jun 2024 08:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FE31422B5;
+	Tue,  4 Jun 2024 08:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Jb0kIbDW"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhM6M1LJ"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C533C1420B0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D13822075;
+	Tue,  4 Jun 2024 08:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717488902; cv=none; b=d8qtfn9VltqVQgyMOxM8p7B5/2lONRvskwW/jm1dSqwyJK2lDnHRb0coUyEyvaK4xm3u5Q69LXRzFCrOPJg3NDcOvld78xtcVhkJLBN3ni+VDsNUuK7bKQW2cbyrDZGEeQcINmHXfPTSHvHqMwdgvAi5mq39WgCbw3sm2BUZjug=
+	t=1717488916; cv=none; b=h3Q6x+dr9HdOhzcRokmrsb2ZZnBN+K9/P5NveRYqFCq9EL76/cOCuGR4LXXkiSZojrSWO7c8ysxsB8+U3whF06n2+tKfMwzBuDMIDre9guBG1mH1b+Hc4Iq814cTDq6ObUfBgxiojbG+sOOG/jGhPQn2nA1nhQAOJ/MPzUWyq14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717488902; c=relaxed/simple;
-	bh=ELX7vFUiYE58hm1BlTFFznXSHKxuJsMEd4l4bZBWZYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q462XVxXefx5+oQ+wiYWsOrBeR1vcpjv+csE8ATXKNYEczH/BsLYbZUQ3U76cIwFNLMyMqulDRgoixeR5XCEQH7hanAocuOm/9kWsfklTwo5aAEmIzEBKy3N5nO051YQ2xiuYD2nkFyumGMTTcM0rd0Ix2erdy9zwKWLlJOluDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Jb0kIbDW; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RGEvpyljn8l4dpaAhowiJvPUFQxRVV5PVPBwQb0hnnM=; b=Jb0kIbDWrvmuCMfYEcPhvTC9Zk
-	6MkLi5HIEBm/7Hq++gEOC8dTEtve2EA+bxK24a2QwS3pZZ4oQn3GtoLI3m+8xbDQxva9n94IVR5dW
-	OlooT6r6dKvDDosJdSpujecs/IJhkQRktSUTLJtalnyuwT+3+g3F4JAEJ6Gv6VbnEXZ2HW7QpFo/4
-	DQCO1KjCNYb0wTBVxYP84uPcrlQcpjMnoIDCLKSGPWKJnaTKLlY0eLL/LdDnDLDxeHZbH3g1CVo/m
-	+9HjmQ6VbTB4+/LQY97qmE0/FPZLFgNMtueINbCXuExpvroarSZlf5aFeNUSrEyD2WnV9TZW2bXVF
-	BV36sVOw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38158)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sEPJM-0003bA-23;
-	Tue, 04 Jun 2024 09:14:28 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sEPJK-0001G6-Gf; Tue, 04 Jun 2024 09:14:26 +0100
-Date: Tue, 4 Jun 2024 09:14:26 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: oleg@redhat.com, arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
-	linus.walleij@linaro.org, eric.devolder@oracle.com, robh@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: Add HAVE_FUNCTION_ARG_ACCESS_API support
-Message-ID: <Zl7M4rjQbN2c9Bje@shell.armlinux.org.uk>
-References: <20240603073751.2282024-1-ruanjinjie@huawei.com>
- <Zl2BNCXzKRG+eTDv@shell.armlinux.org.uk>
- <3089651e-d8eb-f193-5eac-db925000dce9@huawei.com>
+	s=arc-20240116; t=1717488916; c=relaxed/simple;
+	bh=SiX9bU/SSzgD9E5S9viuz+JnacYTqPrTB5aQ2SneiwQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=UzAoKyV5CA6acfOnjPw96w8wiXLLiz1JMtnK88C99p0ynUmwo/DLrAlrXsYm00ayBssRzxwo1aefLBcEvUB0JzFjpcEPKZpaFFg1AEw13Zq0URsBQhwMcj2Fud3ZEuVMvrwsKRuTfxuXWsfuPPhwx0l4hmkMO6Jkate11LtpzVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhM6M1LJ; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-24c9f628e71so2701878fac.1;
+        Tue, 04 Jun 2024 01:15:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717488913; x=1718093713; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C9kBLC2p8nuUCMtg4XVXYIpFmhV0cX45MX1PAkKRQxk=;
+        b=AhM6M1LJ8k6r7k9vjpu29xnronuJldOHe7yIwNzFObtx/M8i+C0AhnaKd6rLEYYRL+
+         LJQH1sxH+AVLF2htrGhcUi7N8/i6vAOHfqwnEFbLwqYn2k6ND9l+4Mq7jdczkd1KfYAE
+         wJJ4Y3LizGthzntWB51xpS50JXngSJ5zZ80GBRcBC4AZLoPsBEwKVfUQROvMQgpGWjkl
+         vH89S3AU94w5+ld0RedfvKpB1FdS6iD7IBKDCez6tI2eDNNDc2YN7u1dcsf39dRzfj8d
+         boU1IX1Gv1MIeLatVgl/UrwEOtBuFQt6COJ2d9kLqgXI/Ti9v02oqxlnX565s8kNjQaC
+         V+eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717488913; x=1718093713;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C9kBLC2p8nuUCMtg4XVXYIpFmhV0cX45MX1PAkKRQxk=;
+        b=WPlqFagGc+2ZDDl8MrGVqYHbCfAhTbwF9OqN6NAjtCZ+JrEaTMdaoVtjZjFFCRPzEa
+         B5a0KPf2j+hxcbXexmLwFkXuMrKMdPbjU8hSOUBjAZFgEvuc3ouL5w/AkPJDT4cTKEbV
+         TQMumKXMLvAGdJc17v0FyQa58mQxuwRByLvTZyNQa3KRgoX9siXCWVomxynHuijQ0yge
+         m129EwdkSecwsNZT/159WZ4eIgyP9x6DvShSK1Wlqz8sUtWOaVgA+AuT6iLIC1zIX5Xa
+         FQ5pa54FPH6Lx9s15WI7+SFNEq74QGFcTgI556Vifo7Nj3ZmFVi39E4TJ24IJTfVIu94
+         0hww==
+X-Forwarded-Encrypted: i=1; AJvYcCXefhk3uCA3ScaKTaMLXkqXVbW3fds6oL62P7+eIlhJ8KUJ2MZjDPKVGV2o6gFYXRdGa3H27XXyyM8kYw3enEnOLV/QGQ9tzaoM+U4Zt804KqDqY9X9aCekJoEOHM4DIJfO0iasgfxusbXicw==
+X-Gm-Message-State: AOJu0Yy6ZE/p4CHzQYiiJ+MWSStcy6cSwhxMjkK4nVYt2isg5oB04vTb
+	iIIRPDBlPG9g35WRjWQ8/a552Cg2mEIHmnGkWbMoX4/6ou2GB/PP
+X-Google-Smtp-Source: AGHT+IGxxo/EDxnbf+imLgIkZXImnPeMXFLmcv02HJWF4yho9L0RYS1z8JiNY+0E1fVn0cFFzIlg+Q==
+X-Received: by 2002:a05:6870:d61e:b0:244:c312:4c84 with SMTP id 586e51a60fabf-250bf12ca2bmr7740638fac.7.1717488913459;
+        Tue, 04 Jun 2024 01:15:13 -0700 (PDT)
+Received: from smtpclient.apple ([47.254.32.37])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242c270c7sm6582411b3a.220.2024.06.04.01.15.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2024 01:15:13 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3089651e-d8eb-f193-5eac-db925000dce9@huawei.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <Zloh/TbRFIX6UtA+@redhat.com>
+Date: Tue, 4 Jun 2024 16:14:51 +0800
+Cc: Miroslav Benes <mbenes@suse.cz>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+ <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
+ <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
+ <Zloh/TbRFIX6UtA+@redhat.com>
+To: Joe Lawrence <joe.lawrence@redhat.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Tue, Jun 04, 2024 at 09:36:04AM +0800, Jinjie Ruan wrote:
-> On 2024/6/3 16:39, Russell King (Oracle) wrote:
-> > On Mon, Jun 03, 2024 at 03:37:51PM +0800, Jinjie Ruan wrote:
-> >> Currently, kprobe on ARM32 can not use the '$argx' syntax available on
-> >> other architecture. So implement regs_get_kernel_argument() and add
-> >> HAVE_FUNCTION_ARG_ACCESS_API support.
-> > 
-> > This may work in the simple case, but it just doesn't work in the
-> > general case, where a function accepts 64-bit arguments. For example,
-> > for EABI and a function taking a 64-bit argument followed by a 32-bit
-> > argument:
-> > 
-> > 	R0/R1 = 64-bit argument
-> > 	R2 = 32-bit argument
-> > 
-> > Now consider 32-bit argument followed by 64-bit argument:
-> > 
-> > 	R0 = 32-bit argument
-> > 	R1 = unused
-> > 	R2/R3 = 64-bit argument
-> 
-> I agree with you, the current implementation considers a very simple
-> case, where all parameters are 32-bit.
-> 
-> From "Procedure Call Standard for the Arm® Architecture", the
-> "6.1.1.1 Handling values larger than 32 bits" describes it this way:
-> 
-> A double-word sized type is passed in two consecutive registers (e.g.,
-> r0 and r1, or r2 and r3).
-> 
-> > 
-> > Note that the mapping isn't argN = RN.
-> > 
-> > Also, given that "unsigned long" is 32-bit on 32-bit Arm, one can't
-> > return a 64-bit argument through this interface. Even if one typed
-> > the function as u64, it still wouldn't work because the caller
-> > assigns the return value to an unsigned long. This seems to be an
-> > issue throughout the kernel tracing - it isn't written to support
-> 
-> How about updating this interface to solve this problem? Let
-> regs_get_kernel_argument() return u64.
 
-That doesn't solve the first problem. The issue is that once we enable
-this, it becomes userspace ABI, and any changes to it then become
-regressions.
 
-So no, I'm not going to have it enabled in mainline in a half-broken
-state.
+> On Jun 1, 2024, at 03:16, Joe Lawrence <joe.lawrence@redhat.com> =
+wrote:
+>=20
+> Adding these attributes to livepatch sysfs would be expedient and
+> probably easier for us to use, but imposes a recurring burden on us to
+> maintain and test (where is the documentation and kselftest for this =
+new
+> interface?).  Or, we could let the other tools handle all of that for
+> us.
+How this attribute imposes a recurring burden to maintain and test?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> Perhaps if someone already has an off-the-shelf script that is using
+> ftrace to monitor livepatched code, it could be donated to
+> Documentation/livepatch/?  I can ask our QE folks if they have =
+something
+> like this.
+
+My intention to introduce this attitude to sysfs is that user who what =
+to see if this function is called can just need to show this function =
+attribute in the livepatch sysfs interface.
+
+User who have no experience of using ftrace will have problems to get =
+the calling state of the patched function. After all, ftrace is a =
+professional kernel tracing tools.
+
+Adding this attribute will be more easier for us to show if this patched =
+function is called. Actually, I have never try to use ftrace to trace a =
+patched function. Is it OK of using ftrace for a livepatched function?
+
+Regards,
+Wardenjohn
+
+
+
 
