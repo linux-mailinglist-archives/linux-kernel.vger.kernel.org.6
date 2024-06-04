@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-201199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64C88FBACF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDA98FBAD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71857281D6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD0B1F22D94
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C6614F12B;
-	Tue,  4 Jun 2024 17:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E21F15099C;
+	Tue,  4 Jun 2024 17:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeLdwi8c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dZ3ClPgP"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DA514F106;
-	Tue,  4 Jun 2024 17:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021D214F125
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717522973; cv=none; b=kwruu7MlVHmC3nzGIeAuAIoHb2dY7RBwEVLAIQC9UI/YXIQ75GIG2IIaqPovnUAw/czhXcPRee00DXJkKRHDNMp2z9Im7sGMUdGair7ybF/m9YVHJnjsFm95vwnSd4rEXga0+clXQtYe73k7ugynEfWcs4sKqX3ylWYcU73lkJ0=
+	t=1717522975; cv=none; b=HNe003nLIaqJsYm6t72Wh9PzYNF94n7keab4utrNsvRmFx4UIA4UlUg9gmK6TTTbbRAHKgEhPGqWnqpucMuCAapcantcpJsxkf1VW7BoHV81uNLdZdxejSjx+ywDXXhi0gRDBl9siruJuXjUThT0gEK7c8zyhkR2D5mjbt7Pijo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717522973; c=relaxed/simple;
-	bh=9ZDdQxZgE5rT+xnz9EaVUQSZwdka7kPTuTY6LYAVhWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHq4JLKYVIXrsIabp0TrCKrGdtwMslqLMrYFb43uGI9yQyd4Hs0K1Xmx0g17CXg8CYF791BAH7TXdXyOpYG1S2G5foh53brVRMWm6D5aIWQw6Fk1CiED0WxcUneXvwfPJHg7xKJEYsFlUmQ+6YzoRa5r2LYId6DimyMUjrVfhMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeLdwi8c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F19CC2BBFC;
-	Tue,  4 Jun 2024 17:42:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717522972;
-	bh=9ZDdQxZgE5rT+xnz9EaVUQSZwdka7kPTuTY6LYAVhWQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BeLdwi8cSohO3ByZuLm4Tu2/0iY9vfBprVnraZqhGr11xhqvCXRjYBkCm3z1DyTrY
-	 oSRSpgwxYB3P8azugzt3uSf8A1qp5OaFR7YGitqxJrKD1TiM/j/C0iJ+nrajN/PT8V
-	 Qv0Foels3jbevo27oZZ+F82xxBeaYr+12JeLaUz59Ksuz3Di97XpattErpddgzfI9F
-	 ENfe1Sl78gDeE+IKf96cx4vY/QEk9usypn4spj1VEdQvfSjWGwZGGgU56xthgW/T1J
-	 pZWULplv/Kz7CCnbfHFY13x+qWTTbDKBjjiSlXgrfTA6ADrxPYieLMT6xFyPJposIn
-	 tMqo0FLuhpxpQ==
-Date: Tue, 4 Jun 2024 18:42:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Josua Mayer <josua@solid-run.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Konstantin Porotchkin <kostap@marvell.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Yazan Shhady <yazan.shhady@solid-run.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-phy@lists.infradead.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v6 3/7] dt-bindings: iio: adc: ti,ads1015: add compatible
- for tla2021
-Message-ID: <20240604-suspend-schnapps-191d2c1ad53e@spud>
-References: <20240602-cn9130-som-v6-0-89393e86d4c7@solid-run.com>
- <20240602-cn9130-som-v6-3-89393e86d4c7@solid-run.com>
+	s=arc-20240116; t=1717522975; c=relaxed/simple;
+	bh=OLqVA6Lr6AXWA6PthG7ToqVqZCJe1M5rtwRfWlo6chI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dfUuaIm/7X7p2L/jbn8MIEDMOi6tpzovlVo9jNVMtLA3QWssi4WwZ2/kpPrrfF4AHNXhCipgoGCgjGzHuawItZ5cd7C+wkgZJNUybegWbYkp5k8tQczwS4dRh2dt3dvpEYVHednBcnanRndMhMTK6JwlZ3tJkjB6QgecaNgECN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dZ3ClPgP; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35dc9cef36dso4950986f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:42:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717522972; x=1718127772; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CUDUkB0yPn3kyHBF8xhR/h1d7c4PgjXWcM1OaQiMS8E=;
+        b=dZ3ClPgPlMkvZka/mvj1zRu0KZs9YYMnNkTGTXpXUiIKUAswye6mAaWB9iKPrgoii5
+         INoKh2JwMTizK+BfPjr0hRsQpjlTDUPLNyTkgEyrzpkCaeG5AUnD0j0WsYThMJ0oN4Vn
+         FhJUCzpUejU3mLCtTcZ0tVlDerl+gmzs/gaxJv+/0+GA5yDAgQ8jGASfiiDet0xxKVdy
+         /b2DQQehKoCOukUEiQp3DgcW62OlQjKoiCdP2uQRUzUq/K0umH6YcZ6kem6YWv0Gzoga
+         DYXJqH+Ycn9e6PqyNd+77U8I7/85jjP4CQuPHgULdrJstEVlovu1GWee1N+VH1aX5Frn
+         +TDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717522972; x=1718127772;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CUDUkB0yPn3kyHBF8xhR/h1d7c4PgjXWcM1OaQiMS8E=;
+        b=OwdfXZhhcSCvA2qJspQqaLBIEG0A/7zHhtpHnMfzy93kMkJqcJVcwMGD4TJyASD+v9
+         mAPep2UvXI9LCPk5AjYtxw5T9OC/qBU+FdJjYsPkO2dDZ3zgh1aXv9nc7f3KFgc0kC3W
+         IfHkHUl6uNXXIS/5ZhK0sDM0ZoG+E0Jh4PfRZYHIIykxiSw7JdlB/mgE4SqPBMrtY4Az
+         ZbM2hUwAC8pzUxS++1y5gfp9ZQBOfkiRGu/VeSiMvQk9KiA3zCZhRrPET4wB2hTRenEc
+         sMQyj45DGNMsFkjxspDUZGl1h0uQBfAdRyRz/hC0Rqg51ZkpJiw5yLGjPd4ylKfcKJ6y
+         1hrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3opcDDJigl9r0bK0nR1eW07NataRgTBNR0EG6kRUgvToRStl8NMRK0or/dga7TuJXWoFusaahUKbQIiQzTIg7PhBGRTZH8p51y9xI
+X-Gm-Message-State: AOJu0Yz5QtyZ10P0m/nYSWjHVgB2YSm2n/23GN19E1tO8ouNYfIZYOaj
+	vm7/W1YfmEFgH/OYH3Qt8BN9D3U+ngjaZPfd2r1Ccgv190ZDK09FHHGbl+SfUmE=
+X-Google-Smtp-Source: AGHT+IGhKXEdUROFwRvvnHW7fRzNnhSf3T/ROeeU1mS/Kbg505utfgtM14I+vys8Mdd+aRFjeUo0sg==
+X-Received: by 2002:a5d:64e4:0:b0:35e:8099:67f with SMTP id ffacd0b85a97d-35e840677edmr121290f8f.16.1717522972206;
+        Tue, 04 Jun 2024 10:42:52 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:e559:5ee:5c4:82bc? ([2a05:6e02:1041:c10:e559:5ee:5c4:82bc])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35dd0633791sm12267406f8f.72.2024.06.04.10.42.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 10:42:51 -0700 (PDT)
+Message-ID: <44ec6537-7217-4fb5-af1c-900de7b2a97e@linaro.org>
+Date: Tue, 4 Jun 2024 19:42:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TVLzrn2EdXz7R3Sf"
-Content-Disposition: inline
-In-Reply-To: <20240602-cn9130-som-v6-3-89393e86d4c7@solid-run.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] thermal/drivers/mediatek/lvts_thermal: Remove filtered
+ mode for mt8188
+To: Julien Panis <jpanis@baylibre.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Nicolas Pitre <npitre@baylibre.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240516-mtk-thermal-mt8188-mode-fix-v2-1-40a317442c62@baylibre.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240516-mtk-thermal-mt8188-mode-fix-v2-1-40a317442c62@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
---TVLzrn2EdXz7R3Sf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jun 02, 2024 at 05:49:38PM +0200, Josua Mayer wrote:
-> TI tla2021 is a limited single-channel variant of tla2024 which is
-> similar enough to be easily supportable through the same driver.
->=20
-> Add compatible string for tla2021 so boards may describe it in
-> device-tree.
->=20
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thanks,
-Conor.
-
+On 16/05/2024 12:44, Julien Panis wrote:
+> Filtered mode is not supported on mt8188 SoC and is the source of bad
+> results. Move to immediate mode which provides good temperatures.
+> 
+> Fixes: f4745f546e60 ("thermal/drivers/mediatek/lvts_thermal: Add MT8188 support")
+> Reviewed-by: Nicolas Pitre <npitre@baylibre.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Julien Panis <jpanis@baylibre.com>
 > ---
->  Documentation/devicetree/bindings/iio/adc/ti,ads1015.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1015.yaml b/=
-Documentation/devicetree/bindings/iio/adc/ti,ads1015.yaml
-> index d605999ffe28..718f633c6e04 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/ti,ads1015.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1015.yaml
-> @@ -18,6 +18,7 @@ properties:
->      enum:
->        - ti,ads1015
->        - ti,ads1115
-> +      - ti,tla2021
->        - ti,tla2024
-> =20
->    reg:
->=20
-> --=20
-> 2.35.3
->=20
+> Filtered mode was set by mistake and difficulties with the test setup
+> prevented from catching this earlier. Use default mode (immediate mode)
+> instead.
+> ---
 
---TVLzrn2EdXz7R3Sf
-Content-Type: application/pgp-signature; name="signature.asc"
+Applied for v6.10-rc3
 
------BEGIN PGP SIGNATURE-----
+Thanks
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZl9SFgAKCRB4tDGHoIJi
-0qTZAP9VTInHBzPieEsZwrjfLF/njMhzTn87Oa3SIf0ORwC1fwEAmfEN49Q5o2D4
-T+05ZNpG/57fQf2cyIrNTl7y3WGByAE=
-=Vlni
------END PGP SIGNATURE-----
 
---TVLzrn2EdXz7R3Sf--
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
