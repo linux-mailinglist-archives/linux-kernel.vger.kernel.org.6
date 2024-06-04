@@ -1,139 +1,201 @@
-Return-Path: <linux-kernel+bounces-199982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659AF8FA8C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:25:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AECC8FA8C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 207F3284367
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8EFC2895A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEA213D53F;
-	Tue,  4 Jun 2024 03:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HT7Kt77O"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0226F13D609;
+	Tue,  4 Jun 2024 03:28:27 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9588913D2AC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 03:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F5A13D2AC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 03:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717471543; cv=none; b=RRR8s17qji7jLO3u+oy+zOttJLLtxVIUaAABz+WJ4Wy04mjT8W/ORTsrBKEZZXVj4rPzpmF2c27t1Te/0Fv5PW+V39S0cMIZ1p8sKUh+32gA/nFY7YyllN6Ad5mPNJE7lb7GCK3v2Kf7g2hSNMsYUusEjmylEkTaHHYdAA3o11E=
+	t=1717471706; cv=none; b=KCQIZpic5gmrLEIhR7gJJ+hX/WbxhtmV6WeKxpbCCaiJFUhbO7hquX3hWZ4BIeDyS/dDJupieLyfbAh5ASQkwpn/FTdxwg5RzvWo7+1wDiAHELxzNO7XvsyxNlrcvs9nakDbdNJEfAOx0MESt/r4Kl23+JJOEhiuK29Ef+MgQ44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717471543; c=relaxed/simple;
-	bh=NjrI4lHVFyH79QzE/OE3lhpa4QHszBqtLMquvt/lk1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=glYAlGo6ZsxrbnVzTsss1OhRZZy5em3vXMNcIqnKs7EAkNfdGWk3iTxYFlG9GOR4m9398fVPCDZ1so/RhSExTQ2X8XbzZwy70GtSoTVhI1RxuSDrsp9caJKLj5grOpaHMrgBMkc4jlEl0eVOvx9mlFfOAtimCeJ/K/ZIyX2dTsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HT7Kt77O; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717471540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zEUAhiXSNeBDF6NeU6DEm0KF3UmpeqhO8TfskOx9nww=;
-	b=HT7Kt77Ow/gG5TgOj7p/yQX+HZNoJYUIyAoOADtWU58vPKFB23BHw3Z6nNnEZJcqbjzZPj
-	sY4xB+9wpy59VKM62E734uY2JcbcevhSMgjkYJ6gj3hyGOMlyMb+E/yXL5qZnyzSR14KAJ
-	az1Tnwi3tpaYD0Ngi+bYlLIKbdE9tD4=
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
- [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-669-bIukshHwPceXDUwBMxyEtw-1; Mon, 03 Jun 2024 23:25:36 -0400
-X-MC-Unique: bIukshHwPceXDUwBMxyEtw-1
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-80ad788d321so120978241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 20:25:35 -0700 (PDT)
+	s=arc-20240116; t=1717471706; c=relaxed/simple;
+	bh=r+LMGsFDjKGrfYtjwqtQ9DI0AtDSolYht/k+NP0PAr0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Dsda/DdCNEn880VKK6Cczs2XFJzM/ziGqjiaxIhGFjLzqdhuhoX92kzbI3L2m9qyZMGCPMScD2TCT4BR2HFSZgEfdnhe6SXn5dZPrni3GhJIVPKAMGWgM3qaZzgKUScihLrkghHu8cDAiS1cKEHc0LJZphrHsVJfWplWzLIFJ/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eac412397cso553236439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 20:28:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717471535; x=1718076335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zEUAhiXSNeBDF6NeU6DEm0KF3UmpeqhO8TfskOx9nww=;
-        b=TRiO2La8KYIJsdJ2JADOwTskhGU5vZJMS06d/N7+auk2vDVDdr3ZXDRZz1r4LKanF4
-         K1xQpHuyqy+S60yt9JAJijAvzyuv4CfehQdLr4k/9f5oKnmjBT7jGKRKkLO2yv8wuL7y
-         3Y33zCiVOeJg/qdJqCznNNES+2sD1J1LejWboIRXrpFUsSQYIAPk2ElYvNWU2PNi64UK
-         o5aMYMB8cEY6tcLf7rNZcgWrD2zbs5V9AmcaymV7JN+MjTWNRzPaOOz8XQW4h2hf1Inz
-         ao7zWjoCWQVrKzi0rc1RX+uw0t0sVPbcEOxGTDPnOADp1r3EulTXfvESxzVBLNDmhUdx
-         HRkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwhwmenjWmvynAH876Auzq4x07rYQNfLjInLh5o6hoK10Dv09thbMM4vzfPXZPIpQLfrGCnkz4o+QAxRgfXiCujj7nPtQ+hj8XSevy
-X-Gm-Message-State: AOJu0YxfH8FXHM+/EnuvaOl7Wxfmw8EW1X71Geue+x3Kp+fxT1Lzy3sc
-	Jr5FsdRtHSvusdnEw54xMCoJOrENyEwdFCNQkRjfaBEmANy9UmbfDfxYEi1pCdl5TkU+gTXnvzP
-	R9TASfomUDUC3ZiUKAQ6C+6PXoX7egJK4nORLQzhUMOzNIQN8dF1ZIneXOt0IcRYcZIlYgjp/sm
-	+OedZ/vUObX1Qmoh6OR40hlQi30oHLsfmKrq5f
-X-Received: by 2002:a05:6102:2413:b0:47e:d83:3baa with SMTP id ada2fe7eead31-48bc20d61c5mr9946003137.1.1717471535495;
-        Mon, 03 Jun 2024 20:25:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7DXnSSwrPGvQPNJKTJH9Cjm0AElH/f5m6QlOX8pDSYFZHyQ4s0E3aFQSu7Exbjezn8E4sDHKpToxRMkZtOOg=
-X-Received: by 2002:a05:6102:2413:b0:47e:d83:3baa with SMTP id
- ada2fe7eead31-48bc20d61c5mr9945993137.1.1717471535155; Mon, 03 Jun 2024
- 20:25:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717471704; x=1718076504;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wMKI4AorUlxgItY/OLhGTJp+VuukHWFyKgfJr6mRZKs=;
+        b=eVXcPl+33kpvrXh08V5kpcQroxsw+/y5Yvu49jTTkdRN35ICWa0FGG7dNOaWOIeHGm
+         csD+yShtZ01ZmZCCr2CB15S+SqgxHpavUYo9WG4mRIC/yI2hdnPUCJJStei5s1bUl1mw
+         6h6pYM8QA7SML4WvfaBkPIHPYeujb/jV8/AzzDW6zm8lu4SjMCPYAJejB9sEmsWVx/pv
+         SYOIO6eA22zmeXngWpPl+/M0ecaIuvF/hkPXqBnV9uxKAuDAAaN667SiVo3VQmSBwaMd
+         W79fQLxJxD3DnJfd1Mz238voRjdaU+0PSpFfdBHkkH09s/EMaGW87aROrOfSo0/mSdu2
+         SKvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXGqbrEnpM8IvJC5ACrdK0xBZZTrIxcP3LJV0iYbD5zjNTpqjby8LIMlgHAdizPbk69o48IUwJP2NbwLH8J262BIN10l2JN9QgQo49
+X-Gm-Message-State: AOJu0YytcrangFBKgoeFoTtyztcX/FbOFLhQntSsG957F0hbb8i8Dj6m
+	4P2KYrZ5zEoX7EmWdVBPG6gC/uCwC+hcDl48wP+UIvFA1BaV5pGw61Cz3Ts9xZFUdPv/k3etxqf
+	hBP3dH+IZEn5BK0YJTTSwlpsGLpyJOR8SOfhvSDbAUOlcSdJH7j+B68Y=
+X-Google-Smtp-Source: AGHT+IEvEI+o73lBZo+wWm3Dwj9oxcVfmdpaG1VZQU4SnI9HgguqY3B0LZ0fzqN8GTFGruXqqWlUIjMhgKKjc3nGUh9hIvxWoYVw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604031124.2261-1-yang.yang@vivo.com>
-In-Reply-To: <20240604031124.2261-1-yang.yang@vivo.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Tue, 4 Jun 2024 11:25:24 +0800
-Message-ID: <CAFj5m9KV7OJ4_KjbSkpdtfrKamoLzV6EH-mJP3=y+VvoYOzC3w@mail.gmail.com>
-Subject: Re: [PATCH v2] sbitmap: fix io hung due to race on sbitmap_word::cleared
-To: Yang Yang <yang.yang@vivo.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
+X-Received: by 2002:a92:c563:0:b0:36c:c4ce:8448 with SMTP id
+ e9e14a558f8ab-3748ba658abmr5200425ab.6.1717471704037; Mon, 03 Jun 2024
+ 20:28:24 -0700 (PDT)
+Date: Mon, 03 Jun 2024 20:28:24 -0700
+In-Reply-To: <000000000000e9b6ff0618356b26@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d4c7f4061a080a7a@google.com>
+Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_fs_read_only_work
+From: syzbot <syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 11:12=E2=80=AFAM Yang Yang <yang.yang@vivo.com> wrot=
-e:
->
-> Configuration for sbq:
->   depth=3D64, wake_batch=3D6, shift=3D6, map_nr=3D1
->
-> 1. There are 64 requests in progress:
->   map->word =3D 0xFFFFFFFFFFFFFFFF
-> 2. After all the 64 requests complete, and no more requests come:
->   map->word =3D 0xFFFFFFFFFFFFFFFF, map->cleared =3D 0xFFFFFFFFFFFFFFFF
-> 3. Now two tasks try to allocate requests:
->   T1:                                       T2:
->   __blk_mq_get_tag                          .
->   __sbitmap_queue_get                       .
->   sbitmap_get                               .
->   sbitmap_find_bit                          .
->   sbitmap_find_bit_in_word                  .
->   __sbitmap_get_word  -> nr=3D-1              __blk_mq_get_tag
->   sbitmap_deferred_clear                    __sbitmap_queue_get
->   /* map->cleared=3D0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
->     if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
->       return false;                         __sbitmap_get_word -> nr=3D-1
->     mask =3D xchg(&map->cleared, 0)           sbitmap_deferred_clear
->     atomic_long_andnot()                    /* map->cleared=3D0 */
->                                               if (!(map->cleared))
->                                                 return false;
->                                      /*
->                                       * map->cleared is cleared by T1
->                                       * T2 fail to acquire the tag
->                                       */
->
-> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
-> up due to the wake_batch being set at 6. If no more requests come, T1
-> will wait here indefinitely.
->
-> To fix this issue, simply revert commit 661d4f55a794 ("sbitmap:
-> remove swap_lock"), which causes this issue.
+syzbot has found a reproducer for the following issue on:
 
-I'd suggest to add the following words in commit log:
+HEAD commit:    f06ce441457d Merge tag 'loongarch-fixes-6.10-1' of git://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17802a16980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=eb72437243175f22
+dashboard link: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164255f2980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16174432980000
 
-Check on ->cleared and update on both ->cleared and ->word need to be
-done atomically, and using spinlock could be the simplest solution.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/00ecb7bdd1a8/disk-f06ce441.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3926ab949197/vmlinux-f06ce441.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/36849eea4fc5/bzImage-f06ce441.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/bfad9a4a2dc4/mount_0.gz
 
-Otherwise, the patch looks fine for me.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
 
-Thanks,
+INFO: task kworker/1:0:25 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:0     state:D
+ stack:26248 pid:25    tgid:25    ppid:2      flags:0x00004000
+Workqueue: events_long bch2_fs_read_only_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:392
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
+Showing all locks held in the system:
+3 locks held by kworker/1:0/25:
+ #0: ffff888015081148 ((wq_completion)events_long){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888015081148 ((wq_completion)events_long){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc900001f7d00 ((work_completion)(&c->read_only_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc900001f7d00 ((work_completion)(&c->read_only_work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffff888075980278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:392
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
+5 locks held by kworker/u8:2/35:
+1 lock held by klogd/4522:
+2 locks held by getty/4833:
+ #0: ffff88802fb4a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
+3 locks held by syz-executor131/5078:
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfde/0x1020 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 4515 Comm: syslogd Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:skb_ext_put include/linux/skbuff.h:4688 [inline]
+RIP: 0010:skb_release_head_state+0x19d/0x250 net/core/skbuff.c:1165
+Code: 4e f8 eb 16 31 ff 89 ee e8 80 50 4e f8 85 ed 0f 8e 8a 00 00 00 e8 33 4c 4e f8 49 8d 5e 7f 48 89 d8 48 c1 e8 03 42 0f b6 04 20 <84> c0 0f 85 84 00 00 00 0f b6 1b 31 ff 89 de e8 0f 4f 4e f8 85 db
+RSP: 0018:ffffc90004907908 EFLAGS: 00000a07
+RAX: 0000000000000000 RBX: ffff88802e28ecff RCX: ffff88807d280000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8947c904 R09: 1ffff11003ca5853
+R10: dffffc0000000000 R11: ffffed1003ca5854 R12: dffffc0000000000
+R13: ffff88802e28ec80 R14: ffff88802e28ec80 R15: ffff88802e28ece0
+FS:  00007fa63915c380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055e2897e7600 CR3: 000000002dc2c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ skb_release_all net/core/skbuff.c:1171 [inline]
+ __kfree_skb net/core/skbuff.c:1187 [inline]
+ consume_skb+0x7b/0x160 net/core/skbuff.c:1409
+ __unix_dgram_recvmsg+0xcea/0x12f0 net/unix/af_unix.c:2474
+ sock_recvmsg_nosec net/socket.c:1046 [inline]
+ sock_recvmsg+0x22f/0x280 net/socket.c:1068
+ sock_read_iter+0x2ca/0x3e0 net/socket.c:1138
+ new_sync_read fs/read_write.c:395 [inline]
+ vfs_read+0x9c4/0xbd0 fs/read_write.c:476
+ ksys_read+0x1a0/0x2c0 fs/read_write.c:619
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa6392b0b6a
+Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffec9bf54e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fa6392b0b6a
+RDX: 00000000000000ff RSI: 000055cf5b545950 RDI: 0000000000000000
+RBP: 000055cf5b545910 R08: 0000000000000001 R09: 0000000000000000
+R10: 00007fa63944f3a3 R11: 0000000000000246 R12: 000055cf5b54598a
+R13: 000055cf5b545950 R14: 0000000000000000 R15: 00007fa639493a80
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.151 msecs
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
