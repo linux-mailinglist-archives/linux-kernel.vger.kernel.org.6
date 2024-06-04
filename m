@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-201024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8447F8FB8E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:28:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E410C8FB8FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57D4EB2F999
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:02:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 380F8B301D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3469146D69;
-	Tue,  4 Jun 2024 16:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74862148FF6;
+	Tue,  4 Jun 2024 16:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dWWmY77M"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KNDNcKUT"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AF1146A98
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4452146A98
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516906; cv=none; b=e/qw2fsvm+Y0+Cc3iJ7SG1g9cmbt1PNcdX8Z5v/6vf0j25ylYjYTCxHmgu5+lpgZ6WQkYIoaNQYFi3YLpfQia9tNVmZPdSTOIWNfvS1oxTWOR68ueQuxypmry8IX6Eh8lMxZyq13lbpecoXmSQNLaEgeuQ6flapFoUjxN0pN6zU=
+	t=1717516911; cv=none; b=pt9ISHsznKiqi/stI8sMbzLMT0Z9JKZF/VVrEvF2BCB/yzGehMkZ3oBkt5ZDSP9MFsr0HkZEFW0xLMbd93+v8HEH03XnDlqy8p0K3LMC6WLzURHRpc/zAO+0jQAA+SxuzDJZ7Cf300XPCjGwOuLA7saQel9kM4G1/mpH1xGbHmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516906; c=relaxed/simple;
-	bh=eNI9NbGlMBE/dfZEleY3KsoUvrO1tZDSmMJ0X+X0MGY=;
+	s=arc-20240116; t=1717516911; c=relaxed/simple;
+	bh=2XiXCEZWGzGuogpB7UrNVjSqiElFtO0aCEYdeEc0X1w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KrwKPyOi+2UPQ/8Ci9C7fD1dEBh2vf2RvlX4S8LqMyXPIoj6xYpbMs/wIOaob51lOs6UVrwldygLGf7mRL42hiJ9FYTLazP52AQTKK3SzMetBwnaBx5gGRR/o11ojhvwlF3+m5iXsRocaynZam9vJuM3tNwpbpLxg1FDYfHfWmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dWWmY77M; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=oGNJxV3ju7SDt5vZdrpoYhKFkVyv0vO9fV4i1bRDmgSWKAF4HNZtFI2ZyXO+8MZiKqgMTRQkCkJ3rHw1wT+E0/c8Oh8XzriiynSn749AcjT6aVcvDzCHz8H426AF0km7dnC8ZJsWYE7IBQWNgztbUAxF7bwHAz/OMgHJn555PKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KNDNcKUT; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f4a52b9413so45192715ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:01:44 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f62fae8c3cso42443905ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:01:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717516904; x=1718121704; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1717516909; x=1718121709; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Dk/4AF49oXXnNFUX5+Su2//neZ/RJyiCOhQzShR517w=;
-        b=dWWmY77MmJz1wcpYB9iFB3yKS0xNqv84Xw/fhPN9m/htFT7/fTyURD+8xkwz/rQQAl
-         jf+w68fA16Cn1lH8CI7ceB4ubbZGqDxOyrD+HU7jLkziZF8Bh6e4i+zn3QZ3HHPB/02A
-         fkoEhnjRzoA/6Jibkyl21DYxNfRgpJa2JVKOQ=
+        bh=a+b1f17eVJb80Zj1W53g2Cg6ZxrWFmpqnvW69q4l7Uo=;
+        b=KNDNcKUT0lvSNVCsy6BrWeidvN+LQJ3AGkk3v27IMzZ9UCqL4Fu8sI/OvXgGPHdK+1
+         ba5dyIL/nKVn6ARWYX34RvAHpKcWSEDIomcncWepEvZPOycejY21cXB9cyoiRtfxCgEP
+         c3dlHNObLyCz5XHEL8tW5VLqhZdmV6wfKAKR4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717516904; x=1718121704;
+        d=1e100.net; s=20230601; t=1717516909; x=1718121709;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Dk/4AF49oXXnNFUX5+Su2//neZ/RJyiCOhQzShR517w=;
-        b=UQhtSP2bHaDyR+lF8/jlBcLr54sFszqg2K99bnsaSJTvq4dgGLrQaJdxuNsXv3xsQv
-         GfoCo9cIMdHtpNSSZ8eM6XepYiF9e2suUlwwHlkPiW/i8MKarQBlt9vBTMZlHZoiDfDP
-         WMMNx7RihqX/Se295vWNRZCqrkf2+8vyib9yUexg7KcSRoksPvh2sxSO//MNqNPwb1D5
-         wGErNNJDY+v5YcfAGGqzkxRlDE0sqUXHQxfUzGHgeduOrBwC5LGwtBhFvYBpGbSQ0Bv5
-         liq5JwJSjiC0yEC2V+c/owFnQ95YzkYaAmkeJpLJs2WrhHbpkShjH+fY1NzUZn7j1xdD
-         vwyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCtLaYJlwmJt9oAACZoA7NTyBOgRreN9fYQzl/Jj6ACTMcHsr2uFJn/+U/Y0q/10/X0I/QcnmZ0Bh7GgXikzsLHqVtG+v95olOti2z
-X-Gm-Message-State: AOJu0Yzs6Ss0tvVhDkyL5QvCOd1duHNZAw0aE4rGMZZGXBrA75yRMu56
-	YK3KoSdBmgHVWzUupajV3XogEGZBGhPJpXM15qRBmL7/F7/lSrNAYmYscbwjaA==
-X-Google-Smtp-Source: AGHT+IH3gIE1OtM086DyyhTOWjAt4JmRQYlQLYPgpkVt7dUI95yVU9Qm9mU9ANKuP1Vy3e7A+IdyKg==
-X-Received: by 2002:a17:902:ce82:b0:1e4:c8b3:dbaf with SMTP id d9443c01a7336-1f6370296c6mr142181615ad.33.1717516904142;
-        Tue, 04 Jun 2024 09:01:44 -0700 (PDT)
+        bh=a+b1f17eVJb80Zj1W53g2Cg6ZxrWFmpqnvW69q4l7Uo=;
+        b=VELqyyr6hsfbwcUs9vGK2HbL2OPLtDInfkTY7lcStukiptQEghDL410kUpRQkbsRkT
+         c83yP6qrlbqzHqw5xkjpMGQSHPZJSnJxOVb0N9u/ZWJkSZgKv7esFBy5vfbMOaD+kWWj
+         Y5Stu8uPfHo8vxwxHL+JLnrHB2Xlu8Uy0bxqi98Kcm/I93a+uTLz8wCLgFr7zgOktzZX
+         sNRfLClIswyyXhgs5v539L366K7u384Uj5Z0hLe4QZlHhHWYiJbMbEGZ1OeclT+9vtam
+         Be00vXaKYhp+Dj2M+m8P/cQ65LYfIpBI6QdkiZ24Mi+7+UbR/4whsH3tzshujYB6kqD7
+         IXig==
+X-Forwarded-Encrypted: i=1; AJvYcCWVLhJH7KHepZcktIw7a6Wkt78ACrby/At3Pu6XeT/myyZmvvkGTud5ZGFBfPMXPSb+0yPHFGzeRONJBhpswkIpCTFsJ35Oi+OK+68F
+X-Gm-Message-State: AOJu0Yw8VpsGVgmEklYkzQu174Bzx5tW5yIb2dAg5rq4DPksiT4rHw6Z
+	7T1kC3QbL8cw+BvvKe5DNCp11dL3z+Y9RtIMHKnroNLM3AJ6ir6rvyAiLbB7iA==
+X-Google-Smtp-Source: AGHT+IGiBs6CoEcjZoTZjvUybhOhGJoQkUpTWYueMh4xEVk/MVLaHWzkiQ429PcJ6uh2d03TU8ZR5g==
+X-Received: by 2002:a17:902:e152:b0:1f4:9138:8178 with SMTP id d9443c01a7336-1f63709e30amr92494075ad.49.1717516908948;
+        Tue, 04 Jun 2024 09:01:48 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:3609:ff79:4625:8a71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632358519sm86118385ad.82.2024.06.04.09.01.42
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632358519sm86118385ad.82.2024.06.04.09.01.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:01:43 -0700 (PDT)
+        Tue, 04 Jun 2024 09:01:47 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>
@@ -79,10 +79,11 @@ Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
 	Stephen Boyd <swboyd@chromium.org>,
 	Johan Hovold <johan+linaro@kernel.org>,
 	Bjorn Andersson <andersson@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH v3 1/7] soc: qcom: geni-se: Add GP_LENGTH/IRQ_EN_SET/IRQ_EN_CLEAR registers
-Date: Tue,  4 Jun 2024 09:00:27 -0700
-Message-ID: <20240604090028.v3.1.Ife7ced506aef1be3158712aa3ff34a006b973559@changeid>
+	Douglas Anderson <dianders@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v3 3/7] serial: qcom-geni: Fix arg types for qcom_geni_serial_poll_bit()
+Date: Tue,  4 Jun 2024 09:00:29 -0700
+Message-ID: <20240604090028.v3.3.I24a0de52dd7336908df180fa6b698e001f3aff82@changeid>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 In-Reply-To: <20240604160123.2029413-1-dianders@chromium.org>
 References: <20240604160123.2029413-1-dianders@chromium.org>
@@ -94,58 +95,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For UART devices the M_GP_LENGTH is the TX word count. For other
-devices this is the transaction word count.
+The "offset" passed in should be unsigned since it's always a positive
+offset from our memory mapped IO.
 
-For UART devices the S_GP_LENGTH is the RX word count.
+The "field" should be u32 since we're anding it with a 32-bit value
+read from the device.
 
-The IRQ_EN set/clear registers allow you to set or clear bits in the
-IRQ_EN register without needing a read-modify-write.
-
-Acked-by: Bjorn Andersson <andersson@kernel.org>
+Suggested-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
-Since these new definitions are used in the future UART patches and
-Bjorn has Acked them, I'd expect them to go through the same tree as
-the UART patches that need them.
 
 (no changes since v2)
 
 Changes in v2:
 - New
 
- include/linux/soc/qcom/geni-se.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/tty/serial/qcom_geni_serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/soc/qcom/geni-se.h b/include/linux/soc/qcom/geni-se.h
-index 0f038a1a0330..8d07c442029b 100644
---- a/include/linux/soc/qcom/geni-se.h
-+++ b/include/linux/soc/qcom/geni-se.h
-@@ -88,11 +88,15 @@ struct geni_se {
- #define SE_GENI_M_IRQ_STATUS		0x610
- #define SE_GENI_M_IRQ_EN		0x614
- #define SE_GENI_M_IRQ_CLEAR		0x618
-+#define SE_GENI_M_IRQ_EN_SET		0x61c
-+#define SE_GENI_M_IRQ_EN_CLEAR		0x620
- #define SE_GENI_S_CMD0			0x630
- #define SE_GENI_S_CMD_CTRL_REG		0x634
- #define SE_GENI_S_IRQ_STATUS		0x640
- #define SE_GENI_S_IRQ_EN		0x644
- #define SE_GENI_S_IRQ_CLEAR		0x648
-+#define SE_GENI_S_IRQ_EN_SET		0x64c
-+#define SE_GENI_S_IRQ_EN_CLEAR		0x650
- #define SE_GENI_TX_FIFOn		0x700
- #define SE_GENI_RX_FIFOn		0x780
- #define SE_GENI_TX_FIFO_STATUS		0x800
-@@ -101,6 +105,8 @@ struct geni_se {
- #define SE_GENI_RX_WATERMARK_REG	0x810
- #define SE_GENI_RX_RFR_WATERMARK_REG	0x814
- #define SE_GENI_IOS			0x908
-+#define SE_GENI_M_GP_LENGTH		0x910
-+#define SE_GENI_S_GP_LENGTH		0x914
- #define SE_DMA_TX_IRQ_STAT		0xc40
- #define SE_DMA_TX_IRQ_CLR		0xc44
- #define SE_DMA_TX_FSM_RST		0xc58
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index a48a15c2555e..e5effc2f5878 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -265,7 +265,7 @@ static bool qcom_geni_serial_secondary_active(struct uart_port *uport)
+ }
+ 
+ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+-				int offset, int field, bool set)
++				      unsigned int offset, u32 field, bool set)
+ {
+ 	u32 reg;
+ 	unsigned long timeout_us;
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
