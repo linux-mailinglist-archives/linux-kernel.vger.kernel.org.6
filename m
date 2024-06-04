@@ -1,431 +1,210 @@
-Return-Path: <linux-kernel+bounces-200096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6A8D8FAAA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:21:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5904C8FAAB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD52286765
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:21:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FDE6B2245A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064C513DBA0;
-	Tue,  4 Jun 2024 06:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0AE13DDDB;
+	Tue,  4 Jun 2024 06:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="l2wcX0IM"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="l/3EhE7M"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD4813D891
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE7065F;
+	Tue,  4 Jun 2024 06:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717482105; cv=none; b=m8YTJaYXchZdIB5OmCMmnmj5xcWpxIMD50MVqO6DKhv8z3/2evN23inoIFMGNLpYMWzMEs4CnHAtJTLoX15gdTQLBerN/gPZ3O/AiV9MKYpShnY3Qcr4n4sFIMdjZ9ZPlXIiTifaJd2G/mT5/F8NKju1u29QczqnMIqjwWYIT38=
+	t=1717482275; cv=none; b=MK0jGWbjcT4QUuSA98hubDCelqspaeTMIW7t+mUxFTcZq04bQaXiZr9REqMTMv6AXTJOFHxsHVzwUQljCvej1BBntiIBM+N+DwqzBT25vj9IFw8b40Y4lw6xg3iPIb2+VFUoMFTpBH2MpnFAOFNpCdITheuC7CTL/Slh5e/owB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717482105; c=relaxed/simple;
-	bh=T9XVC+Nr+qU+pRsP0y5uaCUmY0Lp9qmDTNQRGTgpVXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WHW38urXmIOZzBAnxsVqAeEySEGYvVqE+BOwpmW51Ud5IGVu3lDDf41zSNEJzm2lE7ikzYTXPYoRvHKUy6jR6kd7UpSuoFVIUXtJ8KjaPf7GuJN6Roti8V5Uf3dxoopMKYJQg5p01s08L3j46yRAkF18XLryEtebKkFKK/Vc95Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=l2wcX0IM; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b2e93fddafso2312356eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 23:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1717482102; x=1718086902; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oDgzDFLR3izT0DvsZ4Elq1HkClt9WN8a7h+Jxhc+TNQ=;
-        b=l2wcX0IMNuE5bpoBT59KR06O9lAVvyd8l1F26JOmQnMR2pUFurobTzdlEeDVep+GDm
-         qWveV5fhLP4N9rGfeE93V18ndI6ChAnqfz+rPFW/mBNBE8dscdxCDizib2UCQj9X3iXj
-         k4IMOXy5TvF3wm45lEjnzdI8nrw6r1cTiw/34QYc0BHqc9RGCpBPal2o3uNU/7V0qnKl
-         Sve2LiwyTsQWwQq6H/s9vqVfpq5/S+tHb8qUbf6MiGXszUjKSVZc2q+C4DvPZsSofRsk
-         0soXirF1yFEEhDusJmYcQy1cHYMH9BurYZOUBaYZqF3Ez8far+WQ8mRorS4fERb5+vLL
-         nFbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717482102; x=1718086902;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oDgzDFLR3izT0DvsZ4Elq1HkClt9WN8a7h+Jxhc+TNQ=;
-        b=EiziDLJx134+IS+MNLQ+ZPRbxGzTcj/E5rebkENQImkCh59m2E7g6XX//Yj0hLCDSr
-         Nu91rmsDK8Er4bXVVny4v1/uc4RmAy1cJaWq0HXluYYZ/Fjn4Kx08+uhuOv67xlH76gb
-         6M7JFVjwNVlUiRtHmftoqH9g531s/ACp5UxBoE7bMW5+yUIwQQc2RB302L3hg0BsjS5A
-         NtssYct6ERuHQ/JKbOo344LB/Keu9GA4UVgPq5N1y9ehdE0+uiOwhekhFhaRf8uxZKyC
-         SUeBYPI2+t8h4j/IjA8qMQmNc1IOdsZdoYts5EeJzgtzrGCtRK3gP12Y8jLzG9c6pqme
-         5Unw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkJSiD6yTaLAG4eO9rnr4tXU4bVEjDn0yUu3z8DFrrdWxv19yRXG6XFWcn3EiIsMC7RfSLf2saWgZrh89emjJosh6NeF4gSusvbJOe
-X-Gm-Message-State: AOJu0Yx8Snf+PZZYqBUTvfLtCOZsLWBYnkxdDvPGnJbGOo61xeG7LkPK
-	62UxzR2yTtnkmqqh57oW6rAVpN9ts6bgxSnZ126u8YbgyYHkyISF0ZUxv2ewdLnQuEopupGsAJ3
-	tPpXuyAVuCdYjrXHU0t5qVPKSyXUU8WquSLYAMw==
-X-Google-Smtp-Source: AGHT+IG5zwBTBgSoiXaGOTcEZ7AilOWJrHMau/adjJRVUDpncu0lJOpEwIRnnas9iUHwxOfbC/jBM3kjkbakaZAZBkk=
-X-Received: by 2002:a54:4688:0:b0:3d1:c448:55fb with SMTP id
- 5614622812f47-3d1f9fa6211mr731559b6e.7.1717482101697; Mon, 03 Jun 2024
- 23:21:41 -0700 (PDT)
+	s=arc-20240116; t=1717482275; c=relaxed/simple;
+	bh=p4sDxzHb1i63Q3DbEaEGPZwxCj7DN2Lzc6JSzJfd700=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=MLS1kcG1fAhfMdtkkCaS/KkJ840d4TvstdABos/Sx07hag8QQTeCkGLX58pqOwwGGsRKkmDMeiy0sEnopTdvX3MQaanPeypTCQMJXKaiTPSN/0WIpBNzdf0yFViZDqukJfK/Sbz8G7dhrsz03lPMeXpRobIlAlMCVWMCOpljn+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=l/3EhE7M; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4546O2F1046223;
+	Tue, 4 Jun 2024 01:24:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717482242;
+	bh=4PfyFitsGdAkgl1MpNcDs7QMz8YZYOUgHQQGXhlK6lQ=;
+	h=Date:From:Subject:To:CC:References:In-Reply-To;
+	b=l/3EhE7MnRRGxMQro003GZ88IJMnTnEaIg60bnDn4CmwDgw5w40jmMkH+wmbbVNbI
+	 1atdzkt66or2eAPFwOq6S8vwf14XV5kDtPpH4EjJrstwh/5Z0h/uXHDKl8D2hqilFu
+	 /E9g/ZJgHAZ5b53SAlwbwvPfytX5AIcLdidAi6RI=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4546O2GI006058
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 01:24:02 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 01:24:01 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 01:24:01 -0500
+Received: from [172.24.227.57] (linux-team-01.dhcp.ti.com [172.24.227.57])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4546NtpM088843;
+	Tue, 4 Jun 2024 01:23:56 -0500
+Message-ID: <2d65aa06-cadd-4462-b8b9-50c9127e6a30@ti.com>
+Date: Tue, 4 Jun 2024 11:53:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131155929.169961-1-alexghiti@rivosinc.com>
- <20240131155929.169961-4-alexghiti@rivosinc.com> <CAEEQ3wnT-K18R1KQjJbeSdnFnRFQZt=wCuAHeDrf7EohwZ7n=w@mail.gmail.com>
- <CAHVXubiKAY_L04ZwYSp-MpPPT5sPzxm4wB6HVFPzsMcB-3zq9w@mail.gmail.com>
-In-Reply-To: <CAHVXubiKAY_L04ZwYSp-MpPPT5sPzxm4wB6HVFPzsMcB-3zq9w@mail.gmail.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Tue, 4 Jun 2024 14:21:30 +0800
-Message-ID: <CAEEQ3wkkNyrjVCDxprNP5Z=NzO=EYeKeWf3CDvVNJHY1uovmMQ@mail.gmail.com>
-Subject: Re: [External] [PATCH RFC/RFT v2 3/4] riscv: Stop emitting preventive
- sfence.vma for new vmalloc mappings
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton <akpm@linux-foundation.org>, 
-	Ved Shanbhogue <ved@rivosinc.com>, Matt Evans <mev@rivosinc.com>, Dylan Jhong <dylan@andestech.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-mm@kvack.org
+User-Agent: Mozilla Thunderbird
+From: Yojana Mallik <y-mallik@ti.com>
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
+ driver as network device
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <schnelle@linux.ibm.com>, <wsa+renesas@sang-engineering.com>,
+        <diogo.ivo@siemens.com>, <rdunlap@infradead.org>, <horms@kernel.org>,
+        <vigneshr@ti.com>, <rogerq@ti.com>, <danishanwar@ti.com>,
+        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
+        Siddharth
+ Vadapalli <s-vadapalli@ti.com>, <y-mallik@ti.com>
+References: <20240531064006.1223417-1-y-mallik@ti.com>
+ <20240531064006.1223417-3-y-mallik@ti.com>
+ <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
+Content-Language: en-US
+In-Reply-To: <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Alexandre,
+Hi Andrew,
 
-On Mon, Jun 3, 2024 at 8:02=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc.=
-com> wrote:
->
-> Hi Yunhui,
->
-> On Mon, Jun 3, 2024 at 4:26=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.co=
-m> wrote:
-> >
-> > Hi Alexandre,
-> >
-> > On Thu, Feb 1, 2024 at 12:03=E2=80=AFAM Alexandre Ghiti <alexghiti@rivo=
-sinc.com> wrote:
-> > >
-> > > In 6.5, we removed the vmalloc fault path because that can't work (se=
-e
-> > > [1] [2]). Then in order to make sure that new page table entries were
-> > > seen by the page table walker, we had to preventively emit a sfence.v=
-ma
-> > > on all harts [3] but this solution is very costly since it relies on =
-IPI.
-> > >
-> > > And even there, we could end up in a loop of vmalloc faults if a vmal=
-loc
-> > > allocation is done in the IPI path (for example if it is traced, see
-> > > [4]), which could result in a kernel stack overflow.
-> > >
-> > > Those preventive sfence.vma needed to be emitted because:
-> > >
-> > > - if the uarch caches invalid entries, the new mapping may not be
-> > >   observed by the page table walker and an invalidation may be needed=
-.
-> > > - if the uarch does not cache invalid entries, a reordered access
-> > >   could "miss" the new mapping and traps: in that case, we would actu=
-ally
-> > >   only need to retry the access, no sfence.vma is required.
-> > >
-> > > So this patch removes those preventive sfence.vma and actually handle=
-s
-> > > the possible (and unlikely) exceptions. And since the kernel stacks
-> > > mappings lie in the vmalloc area, this handling must be done very ear=
-ly
-> > > when the trap is taken, at the very beginning of handle_exception: th=
-is
-> > > also rules out the vmalloc allocations in the fault path.
-> > >
-> > > Link: https://lore.kernel.org/linux-riscv/20230531093817.665799-1-bjo=
-rn@kernel.org/ [1]
-> > > Link: https://lore.kernel.org/linux-riscv/20230801090927.2018653-1-dy=
-lan@andestech.com [2]
-> > > Link: https://lore.kernel.org/linux-riscv/20230725132246.817726-1-ale=
-xghiti@rivosinc.com/ [3]
-> > > Link: https://lore.kernel.org/lkml/20200508144043.13893-1-joro@8bytes=
-.org/ [4]
-> > > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > > ---
-> > >  arch/riscv/include/asm/cacheflush.h  | 18 +++++-
-> > >  arch/riscv/include/asm/thread_info.h |  5 ++
-> > >  arch/riscv/kernel/asm-offsets.c      |  5 ++
-> > >  arch/riscv/kernel/entry.S            | 84 ++++++++++++++++++++++++++=
-++
-> > >  arch/riscv/mm/init.c                 |  2 +
-> > >  5 files changed, 113 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include=
-/asm/cacheflush.h
-> > > index a129dac4521d..b0d631701757 100644
-> > > --- a/arch/riscv/include/asm/cacheflush.h
-> > > +++ b/arch/riscv/include/asm/cacheflush.h
-> > > @@ -37,7 +37,23 @@ static inline void flush_dcache_page(struct page *=
-page)
-> > >         flush_icache_mm(vma->vm_mm, 0)
-> > >
-> > >  #ifdef CONFIG_64BIT
-> > > -#define flush_cache_vmap(start, end)           flush_tlb_kernel_rang=
-e(start, end)
-> > > +extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
-> > > +extern char _end[];
-> > > +#define flush_cache_vmap flush_cache_vmap
-> > > +static inline void flush_cache_vmap(unsigned long start, unsigned lo=
-ng end)
-> > > +{
-> > > +       if (is_vmalloc_or_module_addr((void *)start)) {
-> > > +               int i;
-> > > +
-> > > +               /*
-> > > +                * We don't care if concurrently a cpu resets this va=
-lue since
-> > > +                * the only place this can happen is in handle_except=
-ion() where
-> > > +                * an sfence.vma is emitted.
-> > > +                */
-> > > +               for (i =3D 0; i < ARRAY_SIZE(new_vmalloc); ++i)
-> > > +                       new_vmalloc[i] =3D -1ULL;
-> > > +       }
-> > > +}
-> > >  #define flush_cache_vmap_early(start, end)     local_flush_tlb_kerne=
-l_range(start, end)
-> > >  #endif
-> > >
-> > > diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/includ=
-e/asm/thread_info.h
-> > > index 5d473343634b..32631acdcdd4 100644
-> > > --- a/arch/riscv/include/asm/thread_info.h
-> > > +++ b/arch/riscv/include/asm/thread_info.h
-> > > @@ -60,6 +60,11 @@ struct thread_info {
-> > >         void                    *scs_base;
-> > >         void                    *scs_sp;
-> > >  #endif
-> > > +       /*
-> > > +        * Used in handle_exception() to save a0, a1 and a2 before kn=
-owing if we
-> > > +        * can access the kernel stack.
-> > > +        */
-> > > +       unsigned long           a0, a1, a2;
-> > >  };
-> > >
-> > >  #ifdef CONFIG_SHADOW_CALL_STACK
-> > > diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-=
-offsets.c
-> > > index a03129f40c46..939ddc0e3c6e 100644
-> > > --- a/arch/riscv/kernel/asm-offsets.c
-> > > +++ b/arch/riscv/kernel/asm-offsets.c
-> > > @@ -35,6 +35,8 @@ void asm_offsets(void)
-> > >         OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
-> > >         OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
-> > >         OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
-> > > +
-> > > +       OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
-> > >         OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
-> > >         OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preemp=
-t_count);
-> > >         OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp)=
-;
-> > > @@ -42,6 +44,9 @@ void asm_offsets(void)
-> > >  #ifdef CONFIG_SHADOW_CALL_STACK
-> > >         OFFSET(TASK_TI_SCS_SP, task_struct, thread_info.scs_sp);
-> > >  #endif
-> > > +       OFFSET(TASK_TI_A0, task_struct, thread_info.a0);
-> > > +       OFFSET(TASK_TI_A1, task_struct, thread_info.a1);
-> > > +       OFFSET(TASK_TI_A2, task_struct, thread_info.a2);
-> > >
-> > >         OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
-> > >         OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
-> > > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> > > index 9d1a305d5508..c1ffaeaba7aa 100644
-> > > --- a/arch/riscv/kernel/entry.S
-> > > +++ b/arch/riscv/kernel/entry.S
-> > > @@ -19,6 +19,78 @@
-> > >
-> > >         .section .irqentry.text, "ax"
-> > >
-> > > +.macro new_vmalloc_check
-> > > +       REG_S   a0, TASK_TI_A0(tp)
-> > > +       REG_S   a1, TASK_TI_A1(tp)
-> > > +       REG_S   a2, TASK_TI_A2(tp)
-> > > +
-> > > +       csrr    a0, CSR_CAUSE
-> > > +       /* Exclude IRQs */
-> > > +       blt     a0, zero, _new_vmalloc_restore_context
-> > > +       /* Only check new_vmalloc if we are in page/protection fault =
-*/
-> > > +       li      a1, EXC_LOAD_PAGE_FAULT
-> > > +       beq     a0, a1, _new_vmalloc_kernel_address
-> > > +       li      a1, EXC_STORE_PAGE_FAULT
-> > > +       beq     a0, a1, _new_vmalloc_kernel_address
-> > > +       li      a1, EXC_INST_PAGE_FAULT
-> > > +       bne     a0, a1, _new_vmalloc_restore_context
-> > > +
-> > > +_new_vmalloc_kernel_address:
-> > > +       /* Is it a kernel address? */
-> > > +       csrr    a0, CSR_TVAL
-> > > +       bge     a0, zero, _new_vmalloc_restore_context
-> > > +
-> > > +       /* Check if a new vmalloc mapping appeared that could explain=
- the trap */
-> > > +
-> > > +       /*
-> > > +        * Computes:
-> > > +        * a0 =3D &new_vmalloc[BIT_WORD(cpu)]
-> > > +        * a1 =3D BIT_MASK(cpu)
-> > > +        */
-> > > +       REG_L   a2, TASK_TI_CPU(tp)
-> > > +       /*
-> > > +        * Compute the new_vmalloc element position:
-> > > +        * (cpu / 64) * 8 =3D (cpu >> 6) << 3
-> > > +        */
-> > > +       srli    a1, a2, 6
-> > > +       slli    a1, a1, 3
-> > > +       la      a0, new_vmalloc
-> > > +       add     a0, a0, a1
-> > > +       /*
-> > > +        * Compute the bit position in the new_vmalloc element:
-> > > +        * bit_pos =3D cpu % 64 =3D cpu - (cpu / 64) * 64 =3D cpu - (=
-cpu >> 6) << 6
-> > > +        *         =3D cpu - ((cpu >> 6) << 3) << 3
-> > > +        */
-> > > +       slli    a1, a1, 3
-> > > +       sub     a1, a2, a1
-> > > +       /* Compute the "get mask": 1 << bit_pos */
-> > > +       li      a2, 1
-> > > +       sll     a1, a2, a1
-> > > +
-> > > +       /* Check the value of new_vmalloc for this cpu */
-> > > +       REG_L   a2, 0(a0)
-> > > +       and     a2, a2, a1
-> > > +       beq     a2, zero, _new_vmalloc_restore_context
-> > > +
-> > > +       /* Atomically reset the current cpu bit in new_vmalloc */
-> > > +       amoxor.w        a0, a1, (a0)
-> > > +
-> > > +       /* Only emit a sfence.vma if the uarch caches invalid entries=
- */
-> > > +       ALTERNATIVE("sfence.vma", "nop", 0, RISCV_ISA_EXT_SVVPTC, 1)
-> > > +
-> > > +       REG_L   a0, TASK_TI_A0(tp)
-> > > +       REG_L   a1, TASK_TI_A1(tp)
-> > > +       REG_L   a2, TASK_TI_A2(tp)
-> > > +       csrw    CSR_SCRATCH, x0
-> > > +       sret
-> > > +
-> > > +_new_vmalloc_restore_context:
-> > > +       REG_L   a0, TASK_TI_A0(tp)
-> > > +       REG_L   a1, TASK_TI_A1(tp)
-> > > +       REG_L   a2, TASK_TI_A2(tp)
-> > > +.endm
-> > > +
-> > > +
-> > >  SYM_CODE_START(handle_exception)
-> > >         /*
-> > >          * If coming from userspace, preserve the user thread pointer=
- and load
-> > > @@ -30,6 +102,18 @@ SYM_CODE_START(handle_exception)
-> > >
-> > >  .Lrestore_kernel_tpsp:
-> > >         csrr tp, CSR_SCRATCH
-> > > +
-> > > +       /*
-> > > +        * The RISC-V kernel does not eagerly emit a sfence.vma after=
- each
-> > > +        * new vmalloc mapping, which may result in exceptions:
-> > > +        * - if the uarch caches invalid entries, the new mapping wou=
-ld not be
-> > > +        *   observed by the page table walker and an invalidation is=
- needed.
-> > > +        * - if the uarch does not cache invalid entries, a reordered=
- access
-> > > +        *   could "miss" the new mapping and traps: in that case, we=
- only need
-> > > +        *   to retry the access, no sfence.vma is required.
-> > > +        */
-> > > +       new_vmalloc_check
-> > > +
-> > >         REG_S sp, TASK_TI_KERNEL_SP(tp)
-> > >
-> > >  #ifdef CONFIG_VMAP_STACK
-> > > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> > > index eafc4c2200f2..54c9fdeda11e 100644
-> > > --- a/arch/riscv/mm/init.c
-> > > +++ b/arch/riscv/mm/init.c
-> > > @@ -36,6 +36,8 @@
-> > >
-> > >  #include "../kernel/head.h"
-> > >
-> > > +u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
-> > > +
-> > >  struct kernel_mapping kernel_map __ro_after_init;
-> > >  EXPORT_SYMBOL(kernel_map);
-> > >  #ifdef CONFIG_XIP_KERNEL
-> > > --
-> > > 2.39.2
-> > >
-> > >
-> >
-> > Can we consider using new_vmalloc as a percpu variable, so that we
-> > don't need to add a0/1/2 in thread_info?
->
-> At first, I used percpu variables. But then I realized that percpu
-> areas are allocated in the vmalloc area, so if somehow we take a trap
-> when accessing the new_vmalloc percpu variable, we could not recover
-> from this as we would trap forever in new_vmalloc_check. But
-> admittedly, not sure that can happen.
->
-> And how would that remove a0, a1 and a2 from thread_info? We'd still
-> need to save some registers somewhere to access the percpu variable
-> right?
->
-> > Also, try not to do too much
-> > calculation logic in new_vmalloc_check, after all, handle_exception is
-> > a high-frequency path. In this case, can we consider writing
-> > new_vmalloc_check in C language to increase readability?
->
-> If we write that in C, we don't have the control over the allocated
-> registers and then we can't correctly save the context.
+On 6/2/24 22:15, Andrew Lunn wrote:
+>> +enum icve_rpmsg_type {
+>> +	/* Request types */
+>> +	ICVE_REQ_SHM_INFO = 0,
+>> +	ICVE_REQ_SET_MAC_ADDR,
+>> +
+>> +	/* Response types */
+>> +	ICVE_RESP_SHM_INFO,
+>> +	ICVE_RESP_SET_MAC_ADDR,
+>> +
+>> +	/* Notification types */
+>> +	ICVE_NOTIFY_PORT_UP,
+>> +	ICVE_NOTIFY_PORT_DOWN,
+>> +	ICVE_NOTIFY_PORT_READY,
+>> +	ICVE_NOTIFY_REMOTE_READY,
+>> +};
+> 
+> +struct message_header {
+> +       u32 src_id;
+> +       u32 msg_type; /* Do not use enum type, as enum size is compiler dependent */
+> +} __packed;
+> 
+> 
+> Given how you have defined icve_rpmsg_type, what is the point of
+> message_header.msg_type?
+> 
 
-If we use C language, new_vmalloc_check is written just like do_irq(),
-then we need _save_context, but for new_vmalloc_check, it is not worth
-the loss, because exceptions from user mode do not need
-new_vmalloc_check, which also shows that it is reasonable to put
-new_vmalloc_check after _restore_kernel_tpsp.
 
-Saving is necessary. We can save a0, a1, a2 without using thread_info.
-We can choose to save on the kernel stack of the current tp, but we
-need to add the following instructions:
-REG_S sp, TASK_TI_USER_SP(tp)
-REG_L sp, TASK_TI_KERNEL_SP(tp)
-addi sp, sp, -(PT_SIZE_ON_STACK)
-It seems that saving directly on thread_info is more direct, but
-saving on the kernel stack is more logically consistent, and there is
-no need to increase the size of thread_info.
++	rpmsg_send(common->rpdev->ept, (void *)(&common->send_msg),
++		   sizeof(common->send_msg));
 
-As for the current status of the patch, there are two points that can
-be optimized:
-1. Some chip hardware implementations may not cache TLB invalid
-entries, so it doesn't matter whether svvptc is available or not. Can
-we consider adding a CONFIG_RISCV_SVVPTC to control it?
+rpmsg_send in icve_create_send_request is sending message_header.msg_type to R5
+core using (void *)(&common->send_msg).
+In icve_rpmsg_cb function switch case statements for option msg_type are used
+and cases are from enum icve_rpmsg_type.
 
-2. .macro new_vmalloc_check
-REG_S a0, TASK_TI_A0(tp)
-REG_S a1, TASK_TI_A1(tp)
-REG_S a2, TASK_TI_A2(tp)
-When executing blt a0, zero, _new_vmalloc_restore_context, you can not
-save a1, a2 first
+> It seems like this would make more sense:
+> 
+> enum icve_rpmsg_request_type {
+> 	ICVE_REQ_SHM_INFO = 0,
+> 	ICVE_REQ_SET_MAC_ADDR,
+> }
+> 
+> enum icve_rpmsg_response_type {
+> 	ICVE_RESP_SHM_INFO,
+> 	ICVE_RESP_SET_MAC_ADDR,
+> }
+> enum icve_rpmsg_notify_type {
+> 	ICVE_NOTIFY_PORT_UP,
+> 	ICVE_NOTIFY_PORT_DOWN,
+> 	ICVE_NOTIFY_PORT_READY,
+> 	ICVE_NOTIFY_REMOTE_READY,
+> };
+> 
 
->
-> Thanks for your interest in this patchset :)
->
-> Alex
->
-> >
-> > Thanks,
-> > Yunhui
+Since msg_hdr.msg_type which takes value from enum icve_msg_type is being used
+in rpmsg_send and icve_rpmsg_cb, I would prefer to continue with the 2 separate
+enums, that is enum icve_msg_type and enum icve_rpmsg_type. However I am always
+open to make improvements and would be happy to discuss this further if you
+have additional insights.
 
-Thanks,
-Yunhui
+> Also, why SET_MAC_ADDR? It would be good to document where the MAC
+> address are coming from. And what address this is setting.
+> 
+
+The interface which is controlled by Linux and interacting with the R5 core is
+assigned mac address 00:00:00:00:00:00 by default. To ensure reliable
+communication and compliance with network standards a different MAC address is
+set for this interface using icve_set_mac_address.
+
+> In fact, please put all the protocol documentation into a .rst
+> file. That will help us discuss the protocol independent of the
+> implementation. The protocol is an ABI, so needs to be reviewed well.
+> 
+
+I will do it.
+
+>> +struct icve_shm_info {
+>> +	/* Total shared memory size */
+>> +	u32 total_shm_size;
+>> +	/* Total number of buffers */
+>> +	u32 num_pkt_bufs;
+>> +	/* Per buff slot size i.e MTU Size + 4 bytes for magic number + 4 bytes
+>> +	 * for Pkt len
+>> +	 */
+> 
+> What is your definition of MTU?
+> 
+> enp2s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000
+> 
+> Typically, MTU does not include the Ethernet header or checksum. Is
+> that what you mean here?
+> 
+
+MTU is only the Payload. I have realized the macro names are misleading and I
+will change them as
+#define ICVE_PACKET_BUFFER_SIZE   1540
+#define MAX_MTU   ICVE_PACKET_BUFFER_SIZE - (ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN)
+Hence value of max mtu is 1518 bytes.
+
+>> +	u32 buff_slot_size;
+>> +	/* Base Address for Tx or Rx shared memory */
+>> +	u32 base_addr;
+>> +} __packed;
+> 
+> What do you mean by address here? Virtual address, physical address,
+> DMA address? And whos address is this, you have two CPUs here, with no
+> guaranteed the shared memory is mapped to the same address in both
+> address spaces.
+> 
+> 	Andrew
+
+The address referred above is physical address. It is the address of Tx and Rx
+buffer under the control of Linux operating over A53 core. The check if the
+shared memory is mapped to the same address in both address spaces is checked
+by the R5 core.
+
+Thanks for the feedback.
+Regards
+Yojana Mallik
 
