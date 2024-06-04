@@ -1,88 +1,115 @@
-Return-Path: <linux-kernel+bounces-201478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EDD08FBEE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:28:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2333D8FBEE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B40F7B2807A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53FFD1C2177F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D2214B97B;
-	Tue,  4 Jun 2024 22:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBB514D2A7;
+	Tue,  4 Jun 2024 22:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jiw0BstA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJYk/7+6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEEF146599;
-	Tue,  4 Jun 2024 22:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD4014B09F;
+	Tue,  4 Jun 2024 22:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717540099; cv=none; b=LtkKvmu8Cgu4VDVZO82FT7RxI2nzx6qetPGGYl11wmeC3OX8s2jbJ+65Hp4oVrtyObm5KnxhW0WJ5nXlnMfYPy9XsG7uuuGwunBXQtKeXqlCSa1lrgnMTv1f0J5CCchqnA4p0nOQVuAGqgox4pkvnTTcLeuI+21a50MRc9IUbA4=
+	t=1717540107; cv=none; b=B4I9spfXRraAUkBJIZvowqP2f6+kXlg/yU4N/5zNTcUSdFcL+AGWfRdWxP1Zpj2KbfUhFbruXBlfv8rUs+i15ZcyI0CdfPKzcq22Ld6CGJFxDcnfy26zBup1X7rqda6v0b9i7KrzzL3f1uYZ7HOhhS3sbUg0hGN8Xy2Nz6yY+g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717540099; c=relaxed/simple;
-	bh=76Gc/g9GD1ntDHfw01bT6c8btnEVs2sKXCci2YlnED4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MX3ZOEEn52atxXvWGXv3/kZceg7bvTY0vOQMsmnuxW0p9NbzmWzd9C26s/3UuRUy5npVXkXGAO0zo/3o/fgTpoCyheHNcmuSaRPo9dnHM/LT96VDs3giADwtOY8iW3OR5SonpwzxpAuMo824HQ+LoMxHSYf7eaJMo0qwxqS3UI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jiw0BstA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F807C2BBFC;
-	Tue,  4 Jun 2024 22:28:19 +0000 (UTC)
+	s=arc-20240116; t=1717540107; c=relaxed/simple;
+	bh=L+vh4i7DG4WUW2lk/fFRObt2YALvvoHN6lDNkPzL758=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YkqeMX5KC3uiGdn5EJsT2fju4lo7wmK56HH3rB2ZO2aPQEWOP8SRAQkSjc//xslB27YzMpIhI5rGMbXQlwkwgUhKIqidZjor6KJnZ/bMoWcot9k+4M7Ty/mvEcqhrW7YPRWs9BeF5Z2j6vm0fS/jvQjt75//5ayD2DlFWDMpcns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJYk/7+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F0D3C3277B;
+	Tue,  4 Jun 2024 22:28:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717540099;
-	bh=76Gc/g9GD1ntDHfw01bT6c8btnEVs2sKXCci2YlnED4=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=jiw0BstAgQzgLy4/+9itabar+lcgM2tm9VhdY9t4Nbkk7tf2zg8uW6eiRcs3gzAfL
-	 /7ip2v1FHs9R3Eids4Rd3mWNW/u3LMBFrpZJWV5MERtfHYwnULJgHF5RPv9YbMdrPU
-	 8Ve+SxL3hACKqRjKapAnUuf67xGOp4PsXUCWbLqk4XSgtnRJSaSePY8PpmUcnBaTBG
-	 ck8uPeKKzxNx4Lh0Gmet2jaSZviR2CKcCIxdDbMR7uRo/LY+LVffBdV2Oc5sVBlQVO
-	 07iZp6RxT7ZTNPuwSwf9Q6tyH9OPeDPxgLCWalmG2/1u9HbsKZ3dB2kKM9tCFvSTd7
-	 hj+/bhGuRKbdQ==
+	s=k20201202; t=1717540107;
+	bh=L+vh4i7DG4WUW2lk/fFRObt2YALvvoHN6lDNkPzL758=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pJYk/7+6d355+dU29WybwVSHg8f9bekAfAqsvjIYDVuC1jWpl4IAQbAI3psN6eoED
+	 Cp2KJ3EPKAohcZJBPkzt7PBE6n1dO6YIhJCUoqiaW7sijQzPxy80KHYYlcyjEM1Fr4
+	 ciEprKKOCYUizwz/t/pIB6ifyws64MmaWEHSdoLZRHfyn4G2scMN/NZQLn7x6Iuiqn
+	 CLPF4soKeDzvWBsyRYDoTN97ojzT48rjEs4XRC3wL0UgAKOJmNfKsQ7GxqKJixeqNt
+	 1f/EaNcS/4QAN4cvV+TEUFBuoRuOERcjSeEfqXpXVZ1muetQTw9XObGfAUer4jo4Z/
+	 1wAh4oZ/5YngA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 44A6FCE3ED6; Tue,  4 Jun 2024 15:28:19 -0700 (PDT)
-Date: Tue, 4 Jun 2024 15:28:19 -0700
+	id C01B5CE3ED6; Tue,  4 Jun 2024 15:28:26 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH rcu 0/4] Callback-offloading patches for v6.11
-Message-ID: <f750378b-1eaf-4d22-80c3-a6a086c79702@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 1/4] rcu/nocb: Fix segcblist state machine comments about bypass
+Date: Tue,  4 Jun 2024 15:28:22 -0700
+Message-Id: <20240604222825.2371133-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <f750378b-1eaf-4d22-80c3-a6a086c79702@paulmck-laptop>
+References: <f750378b-1eaf-4d22-80c3-a6a086c79702@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+From: Frederic Weisbecker <frederic@kernel.org>
 
-The following series updates RCU's callback offloading:
+The parts explaining the bypass lifecycle in (de-)offloading are out
+of date and/or wrong. Bypass is simply enabled whenever SEGCBLIST_RCU_CORE
+flag is off.
 
-1.	Fix segcblist state machine comments about bypass,
-	courtesy of Frederic Weisbecker.
+Fix the comments accordingly.
 
-2.	Fix segcblist state machine stale comments about timers,
-	courtesy of Frederic Weisbecker.
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ include/linux/rcu_segcblist.h | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-3.	Use kthread parking instead of ad-hoc implementation,
-	courtesy of Frederic Weisbecker.
+diff --git a/include/linux/rcu_segcblist.h b/include/linux/rcu_segcblist.h
+index 659d13a7ddaaa..1e5b4ef167caa 100644
+--- a/include/linux/rcu_segcblist.h
++++ b/include/linux/rcu_segcblist.h
+@@ -141,7 +141,7 @@ struct rcu_cblist {
+  *  |                           SEGCBLIST_KTHREAD_GP                           |
+  *  |                                                                          |
+  *  |   CB/GP kthreads handle callbacks holding nocb_lock, local rcu_core()    |
+- *  |   handles callbacks concurrently. Bypass enqueue is enabled.             |
++ *  |   handles callbacks concurrently. Bypass enqueue is disabled.            |
+  *  |   Invoke RCU core so we make sure not to preempt it in the middle with   |
+  *  |   leaving some urgent work unattended within a jiffy.                    |
+  *  ----------------------------------------------------------------------------
+@@ -154,8 +154,7 @@ struct rcu_cblist {
+  *  |                           SEGCBLIST_KTHREAD_GP                           |
+  *  |                                                                          |
+  *  |   CB/GP kthreads and local rcu_core() handle callbacks concurrently      |
+- *  |   holding nocb_lock. Wake up CB and GP kthreads if necessary. Disable    |
+- *  |   bypass enqueue.                                                        |
++ *  |   holding nocb_lock. Wake up CB and GP kthreads if necessary.            |
+  *  ----------------------------------------------------------------------------
+  *                                      |
+  *                                      v
+@@ -185,7 +184,7 @@ struct rcu_cblist {
+  *  |                                                                          |
+  *  | Callbacks processed by rcu_core() from softirqs or local                 |
+  *  | rcuc kthread, while holding nocb_lock. Forbid nocb_timer to be armed.    |
+- *  | Flush pending nocb_timer. Flush nocb bypass callbacks.                   |
++ *  | Flush pending nocb_timer.                                                |
+  *  ----------------------------------------------------------------------------
+  *                                      |
+  *                                      v
+-- 
+2.40.1
 
-4.	Remove buggy bypass lock contention mitigation,
-	courtesy of Frederic Weisbecker.
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/include/linux/rcu_segcblist.h |    7 +-
- b/kernel/rcu/tree.h             |    1 
- b/kernel/rcu/tree_nocb.h        |  115 +++++++++++-----------------------------
- b/kernel/rcu/tree_plugin.h      |    4 -
- include/linux/rcu_segcblist.h   |   87 +++++++++++++-----------------
- kernel/rcu/tree_nocb.h          |   32 ++---------
- 6 files changed, 83 insertions(+), 163 deletions(-)
 
