@@ -1,171 +1,173 @@
-Return-Path: <linux-kernel+bounces-200292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3E98FAE27
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:56:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB128FAE30
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D219E1C21F07
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B481F280AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64913142E95;
-	Tue,  4 Jun 2024 08:56:30 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460D6142E82;
+	Tue,  4 Jun 2024 08:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FZdgP9jW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5997E142E66
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E821420DA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717491389; cv=none; b=tMu4C7a+LiCFehbGwnCdgUYqG0t/oZRzocWBFu7f8N3+NdnX8gO8i1fc/zNd4Mz8qV9clZmoJGw+tlROpjmcnWeJcRkym7U3W033W5Z8Tt+8a4AIqga4ECzmcSZTpwcVykGxfgY4QyxDLFwp+o7N6VTftREmhLCQs3gW1N5IQJM=
+	t=1717491553; cv=none; b=tBshfYbmn1Svt4f/sunPIsSljjcmga4q0CTfI2YU30INlBaKXZjReWvVBx6ZjDdGbeoq9UqvkR59kObX94jnFqWsG2H1GEcT08zNlhv2Ga4eWWrR6EEePelj3Cpw42zd0gy7Vmw4UqSz/VmoICR1FyudQ/xfrOd6dEcZzwiuM5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717491389; c=relaxed/simple;
-	bh=RuvKglxOGuixipf1nYv69BNsHQetmYW2dZlTxap453o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AqC9D/h/H4mNY2tfr91ZnkJh7qWcbd5puPM6x+7jS/gtGby9k/K3177XIh4EqLXY6X0wR2bsGx8HNq5GJs0Tqd3UHmLQXBG4LXOXsU9z3uKoArgxaq5gbY01P5HavpbjgDuieQG5chOzhgVCPfqXXPNa3xaPHylGJNeB8n+maxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3738732f988so49860325ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 01:56:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717491387; x=1718096187;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VMftLD80Wet0hJ8KVY4oOvFRsmg3gYuLWRIgK7iHeYY=;
-        b=C7uB1RKPj1XA1U8d35JkpuG+lOIqTG7MR4x0nB0G1rdjTyxArI1dA+Lq7hvluwDrbw
-         mQKt3fS2MJaHIknv1WLFZPuwPA1By/7nR1gpt5BeXpizFCEycXPVELG6OAZEGTinzmdJ
-         eYA9wyZkT1j4fA5SdVbz4siiCW2wSJ1BBzvhqSVUsAUur1x988YW6tOrA44cLf3BFCmD
-         izaiQQRYoGPlTRDohRQ8u7CRDFJYwSNHgIhQQRp7IdQvSdB+9Hp+WJ4mTupw2aRzj1Ai
-         3wbvewMYSRM2Rdxhh68/kRUwBWW+Nk0ENa3KhWyXS6HgWwxfcWsrtoqkZi+bQNK2iuYd
-         kKow==
-X-Forwarded-Encrypted: i=1; AJvYcCW6E+wgM41SAL36JNz1wj09VepYAtgzAQnJ+00KhG2QpUdfkcJk1/q+3v5vdVfxDLUDTMT9tebm6cThHn/UVnqRSVWqIkAraiSGzr6a
-X-Gm-Message-State: AOJu0Yxp00vD4ID73gF18I1JfXyDLHjceIiBvckmkhDPDbivatJ6ldKS
-	rRzYWdcC46qiSRTiKokCy7P5mdD2K5ZjARKNzNR/tG5kUUDcK8XfeuKW0P+WP6/6+/I5yZBOOBY
-	POr26xXpxhmzEamOnKe77RHZa8PTPUOl92UDX0BWM4X8H4XoF+X6ngcY=
-X-Google-Smtp-Source: AGHT+IGPgzceWfuaQCidGlhrHJje1hYdGSKOaGsiduUhXW/RfPRiezuTonZSyYVDxMm4dxLQEBbyJ10JpON4nmFvIR4rBXxnsf+i
+	s=arc-20240116; t=1717491553; c=relaxed/simple;
+	bh=foga+ezmZu/anp+IsqwBt0kvNai79GaLxGDoNOC9VXU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Bo/OThxXnL8OCsuq6YBTDASWtTNcFeiT7Qf9+v7nOqhe2BD3Drt7xMcYQIsPQk/4OLJNHB7S08b1QV87N6vA0fAfUsErDazVSkcb2DlgtDjnbxW+ReVyV5RYJAEIhjU1hw3U2YRmLVHl7GdlEL/duuLW9IMCrk928wDnbvtdQ1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FZdgP9jW; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717491552; x=1749027552;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=foga+ezmZu/anp+IsqwBt0kvNai79GaLxGDoNOC9VXU=;
+  b=FZdgP9jWeq8nkGML4xdN4pfFkg0iHMrL0cuZ7x5+9zuKpiOp8WSehYAB
+   3nC8S0qKJAwIYJO5q8wJZLjx+kRpQNxjv3P+HmSeQ8j9kPEPYza2PsMOd
+   CjGNoYFIC7S/WUgLQAg7lqLU+lFoMEIJFJJmO+RTsbTIsMDGYU+/gTe4S
+   0dDeI62c8TTDWuC16YLQD8Uge5eYpXP8xRwuY21UJ9TVdBMcvZCbRFtY7
+   NbUPV8M5JP1KGmGwjhjyGgRjJi80zMTzIjHdH4dLn4AbQZJ9w6mVolOJH
+   QIOCC7N0phDmP+EfIZU4XxLa1OF0f7ZhAPP3wiry/+BjGHcMpXkqF33zs
+   g==;
+X-CSE-ConnectionGUID: 8GacmL56RTC8s+fUcIghMg==
+X-CSE-MsgGUID: 8HoWqaRQTRqjg9N2Kggqrw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="14179821"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="14179821"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 01:59:12 -0700
+X-CSE-ConnectionGUID: e3dbYn1XQL6/3zIGtypTxQ==
+X-CSE-MsgGUID: bqV6yt05SM2uw38h0tSiaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="74676631"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 01:59:09 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: <akpm@linux-foundation.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-mm@kvack.org>,  <kernel_team@skhynix.com>,  <hannes@cmpxchg.org>,
+  <iamjoonsoo.kim@lge.com>,  <rientjes@google.com>
+Subject: Re: [PATCH v2] mm: let kswapd work again for node that used to be
+ hopeless but may not now
+In-Reply-To: <20240604084533.GA68919@system.software.com> (Byungchul Park's
+	message of "Tue, 4 Jun 2024 17:45:33 +0900")
+References: <20240604072323.10886-1-byungchul@sk.com>
+	<87bk4hcf7h.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<20240604084533.GA68919@system.software.com>
+Date: Tue, 04 Jun 2024 16:57:17 +0800
+Message-ID: <8734ptccgi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18cd:b0:374:a2db:d6b0 with SMTP id
- e9e14a558f8ab-374a2dbd7fbmr2874505ab.2.1717491387690; Tue, 04 Jun 2024
- 01:56:27 -0700 (PDT)
-Date: Tue, 04 Jun 2024 01:56:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000118399061a0ca01c@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fs_free
-From: syzbot <syzbot+ab8e8a95fdeaf10f25fd@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-Hello,
+Byungchul Park <byungchul@sk.com> writes:
 
-syzbot found the following issue on:
+> On Tue, Jun 04, 2024 at 03:57:54PM +0800, Huang, Ying wrote:
+>> Byungchul Park <byungchul@sk.com> writes:
+>> 
+>> > Changes from v1:
+>> > 	1. Don't allow to resume kswapd if the system is under memory
+>> > 	   pressure that might affect direct reclaim by any chance, like
+>> > 	   if NR_FREE_PAGES is less than (low wmark + min wmark)/2.
+>> >
+>> > --->8---
+>> > From 6c73fc16b75907f5da9e6b33aff86bf7d7c9dd64 Mon Sep 17 00:00:00 2001
+>> > From: Byungchul Park <byungchul@sk.com>
+>> > Date: Tue, 4 Jun 2024 15:27:56 +0900
+>> > Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
+>> >
+>> > A system should run with kswapd running in background when under memory
+>> > pressure, such as when the available memory level is below the low water
+>> > mark and there are reclaimable folios.
+>> >
+>> > However, the current code let the system run with kswapd stopped if
+>> > kswapd has been stopped due to more than MAX_RECLAIM_RETRIES failures
+>> > until direct reclaim will do for that, even if there are reclaimable
+>> > folios that can be reclaimed by kswapd.  This case was observed in the
+>> > following scenario:
+>> >
+>> >    CONFIG_NUMA_BALANCING enabled
+>> >    sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
+>> >    numa node0 (500GB local DRAM, 128 CPUs)
+>> >    numa node1 (100GB CXL memory, no CPUs)
+>> >    swap off
+>> >
+>> >    1) Run a workload with big anon pages e.g. mmap(200GB).
+>> >    2) Continue adding the same workload to the system.
+>> >    3) The anon pages are placed in node0 by promotion/demotion.
+>> >    4) kswapd0 stops because of the unreclaimable anon pages in node0.
+>> >    5) Kill the memory hoggers to restore the system.
+>> >
+>> > After restoring the system at 5), the system starts to run without
+>> > kswapd.  Even worse, tiering mechanism is no longer able to work since
+>> > the mechanism relies on kswapd for demotion.
+>> 
+>> We have run into the situation that kswapd is kept in failure state for
+>> long in a multiple tiers system.  I think that your solution is too
+>
+> My solution just gives a chance for kswapd to work again even if
+> kswapd_failures >= MAX_RECLAIM_RETRIES, if there are potential
+> reclaimable folios.  That's it.
+>
+>> limited, because OOM killing may not happen, while the access pattern of
+>
+> I don't get this.  OOM will happen as is, through direct reclaim.
 
-HEAD commit:    0e1980c40b6e Add linux-next specific files for 20240531
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12260914980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9c3ca4e54577b88
-dashboard link: https://syzkaller.appspot.com/bug?extid=ab8e8a95fdeaf10f25fd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+A system that fails to reclaim via kswapd may succeed to reclaim via
+direct reclaim, because more CPUs are used to scanning the page tables.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+In a system with NUMA balancing based page promotion and page demotion
+enabled, page promotion will wake up kswapd, but kswapd may fail in some
+situations.  But page promotion will no trigger direct reclaim or OOM.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/44fb1d8b5978/disk-0e1980c4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a66ce5caf0b2/vmlinux-0e1980c4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8992fc8fe046/bzImage-0e1980c4.xz
+>> the workloads may change.  We have a preliminary and simple solution for
+>> this as follows,
+>> 
+>> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=17a24a354e12d4d4675d78481b358f668d5a6866
+>
+> Whether tiering is involved or not, the same problem can arise if
+> kswapd gets stopped due to kswapd_failures >= MAX_RECLAIM_RETRIES.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ab8e8a95fdeaf10f25fd@syzkaller.appspotmail.com
+Your description is about tiering too.  Can you describe a situation
+without tiering?
 
-bcachefs (loop3): bch2_check_allocations(): error fsck_errors_not_fixed
-bcachefs (loop3): bch2_fs_recovery(): error fsck_errors_not_fixed
-bcachefs (loop3): bch2_fs_start(): error starting filesystem fsck_errors_not_fixed
-bcachefs (loop3): shutting down
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/super.c:647!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 6386 Comm: syz-executor.3 Not tainted 6.10.0-rc1-next-20240531-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:bch2_fs_free+0x3b1/0x3c0 fs/bcachefs/super.c:647
-Code: e8 54 7b b8 fd e9 1a fe ff ff 89 d9 80 e1 07 38 c1 0f 8c 72 ff ff ff 48 89 df e8 3a 7b b8 fd e9 65 ff ff ff e8 40 8e 52 fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0000:ffffc90003ee7560 EFLAGS: 00010246
-RAX: ffffffff8443edb0 RBX: ffff88805d7f0000 RCX: 0000000000040000
-RDX: ffffc9000b05a000 RSI: 000000000003ffff RDI: 0000000000040000
-RBP: 0000000000000002 R08: ffffffff8443ec58 R09: 1ffff1100bafe008
-R10: dffffc0000000000 R11: ffffed100bafe009 R12: ffff8880574003d0
-R13: 0000000000000000 R14: ffff8880574007a6 R15: 1ffff1100ae800f4
-FS:  00007faa8d2676c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f712de00400 CR3: 00000000113ea000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_fs_stop fs/bcachefs/super.c:661 [inline]
- bch2_fs_open+0xb57/0xdf0 fs/bcachefs/super.c:2129
- bch2_mount fs/bcachefs/fs.c:1908 [inline]
- bch2_fs_get_tree+0x75e/0x14d0 fs/bcachefs/fs.c:2069
- vfs_get_tree+0x90/0x2a0 fs/super.c:1780
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faa8c47e5ea
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007faa8d266ef8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007faa8d266f80 RCX: 00007faa8c47e5ea
-RDX: 0000000020002040 RSI: 0000000020002080 RDI: 00007faa8d266f40
-RBP: 0000000020002040 R08: 00007faa8d266f80 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020002080
-R13: 00007faa8d266f40 R14: 0000000000005b5d R15: 0000000020000140
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_fs_free+0x3b1/0x3c0 fs/bcachefs/super.c:647
-Code: e8 54 7b b8 fd e9 1a fe ff ff 89 d9 80 e1 07 38 c1 0f 8c 72 ff ff ff 48 89 df e8 3a 7b b8 fd e9 65 ff ff ff e8 40 8e 52 fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0000:ffffc90003ee7560 EFLAGS: 00010246
-RAX: ffffffff8443edb0 RBX: ffff88805d7f0000 RCX: 0000000000040000
-RDX: ffffc9000b05a000 RSI: 000000000003ffff RDI: 0000000000040000
-RBP: 0000000000000002 R08: ffffffff8443ec58 R09: 1ffff1100bafe008
-R10: dffffc0000000000 R11: ffffed100bafe009 R12: ffff8880574003d0
-R13: 0000000000000000 R14: ffff8880574007a6 R15: 1ffff1100ae800f4
-FS:  00007faa8d2676c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000140 CR3: 00000000113ea000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+--
+Best Regards,
+Huang, Ying
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 	Byungchul
+>
+>> where we will try to wake up kswapd to check every 10 seconds if kswapd
+>> is in failure state.  This is another possible solution.
+>> 
+>> > However, the node0 has pages newly allocated after 5), that might or
+>> > might not be reclaimable.  Since those are potentially reclaimable, it's
+>> > worth hopefully trying reclaim by allowing kswapd to work again.
+>> >
+>> 
+>> [snip]
+>> 
+>> --
+>> Best Regards,
+>> Huang, Ying
 
