@@ -1,118 +1,110 @@
-Return-Path: <linux-kernel+bounces-200484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166BE8FB0AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 291C78FB0B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C050828247E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D136D282B2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C96C144D22;
-	Tue,  4 Jun 2024 11:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB42F145347;
+	Tue,  4 Jun 2024 11:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWVh4Tjr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTdQJEPu"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F25A13D243
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01678144D3B;
+	Tue,  4 Jun 2024 11:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717498885; cv=none; b=LR3UG5UU2lLLbURF50UibuN5te3MEBAi1OhmRwBtZGFjwo9kQCJb4LrtGGVCGOHSUcQflyLYXeJEVS3D2mvlfmnYpuWxffuahT7yPpVgubFIhLjn9N1PsoSQRdPos1U48Lwn/z3frhsa9yVpHWaFnNt9Em+gbVu78kroyx/eZXI=
+	t=1717498912; cv=none; b=oMLI1EkAz5rIQHTr+YM1jsT7e8wGgK4FtnMO6dzsEN4+atmMkmcmjvkiB1jeR/4144y59I7sX1Vkl6RRt6ZwsEde6RNB1aWzd8LnyWMHbzbjZ0cpBq3wdp8vGvGZYL5y4XeTeISeK5RGYkCg8ZhNXFf0BuMmrE7eL7Ic7PKA61A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717498885; c=relaxed/simple;
-	bh=9k79GsPGzm2AvUEzs0+bU/ldhlkSEOwUuzkUE/Ejxj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bxhrbdgfmIWLLPY6hobZbb/Uv0uvAcN7N1/v9K2dDjkgDuNnvd/s2iEm3HqjANIXjYFwUfFgzDveIFIsy977P3nhaqOBozDg/BtPDbKpE4xjqM0yqAv9gnZhZOScNZkajbQXONoJYcrM/kAyUouhcaRScRnMQbl0TRLsfL8hSFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWVh4Tjr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1830C2BBFC;
-	Tue,  4 Jun 2024 11:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717498885;
-	bh=9k79GsPGzm2AvUEzs0+bU/ldhlkSEOwUuzkUE/Ejxj8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aWVh4TjrrJEW1rAMjOkRgSCV7udDjWnb2anstavniGKlRUr9e0G/xsT+BMP0GQPgN
-	 dothII+OwwG1o2VK5CwwVbn6O1ExgNkwnE7lj/71h/Q8qgC2MCNTmL0IR8qfVC0WOr
-	 c4C5m4aejQ3IXr5dpusN9NbhPvTjT26xvfM+v2sW8wlk/FmX7AWXcqqo+J/YecItAV
-	 V9dlJLFmAKywNdUqbFJtTD1WxGeMudq78pAZcFTueXPGoDvlJrL3HHIVnxxA5C0FP3
-	 OBmnA/imD1n1r8d0ZRtYA/2TN65KUj6HzamXOnU+wZkr9eWxR3DVi4kQSdPxw8ZPZH
-	 k/yUJLbhtJvKA==
-Date: Tue, 4 Jun 2024 12:01:20 +0100
-From: Will Deacon <will@kernel.org>
-To: syzbot <syzbot+8336c747d79a4c3a0944@syzkaller.appspotmail.com>
-Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	mark.rutland@arm.com
-Subject: Re: [syzbot] [arm?] BUG: unable to handle kernel paging request in
- task_h_load
-Message-ID: <20240604110119.GA20284@willie-the-truck>
-References: <000000000000fa65d80619830888@google.com>
+	s=arc-20240116; t=1717498912; c=relaxed/simple;
+	bh=RTdELaz1SKXD3NwHcPUy4vbMMXa1MXNMWP6KCxm+jjs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=LFrR+COFMV5sLyRFReN0Xgv5DfHFwVSIRKJo6ISr3lOQTNuFH6tba43WV4eB91dV00gzadvwW/0/qzQGpdvkH2IITFXF8FP/c0sh0Y6BRYt37ND+2ypTNSSoYq+K0NxQMPr0WGPp0J7eLJxW/1s47buiFAFT+y7e6iu6tY1GDXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bTdQJEPu; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f44b4404dfso47383955ad.0;
+        Tue, 04 Jun 2024 04:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717498910; x=1718103710; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RTdELaz1SKXD3NwHcPUy4vbMMXa1MXNMWP6KCxm+jjs=;
+        b=bTdQJEPub9u+u6hw+Lkh7rrMCFWU35PiEkA5nBONKZ4OQOpxiwpcAVQFdAvKPoxsnV
+         BNXXUru5SlNRGsa9PXthBn3ZPP65qHyDAHUS6m1ntXnsPW/agOr23glCG7GnT9zmLkjl
+         wB/BOTvHV2nsyoY0N3UPEsgxjw4OJ4VQHOWjgHGGn0s76pEKGP9dwXG+tB1gkDxDu+vT
+         oHU0udiipIfqD82ygR6vQhws5whAtTWaLPtPCxKsFAAhy256qHvrX1NFF6IH1XwBh8Nl
+         FT/48YGENKRX3KWgKRnukc0dBzWuXLRFngiveeL1EE+2o22T+F/2UiY9pfozXFPCawO2
+         QKhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717498910; x=1718103710;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RTdELaz1SKXD3NwHcPUy4vbMMXa1MXNMWP6KCxm+jjs=;
+        b=LAPWq33RE4qvcmrvuEznuTYnR4xDpEU4FlZy+hx3O4OnmAUlwJzGSw9WV8FdsKz56F
+         hxBXEzQS3r3yoDo4uH0t28RrE8cKi4x9B1bSfzGekGaoDjAd/XJgTQm6n5bCPWnoESUk
+         HBi4Ic1nDttmlwZ50zjN22TAVvn6YCIVz7ALUODveBY863NwxIaCD6y2MXfQzMaFp/xS
+         POSwVWOPaSMS4Z2Wi157DMIIuOr2Lqr/k0s2uyG9YdH+sFOBYD8nL5IKvCidquuVdoQS
+         QjsfTyj5nlmNiu8LnfAxKeBNdL5y+7kghrzYyZYs3Ooc84MPL+GAdC6ZwSAZdKR4O0oL
+         jAVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYTYzelHNEiXCVZfgLN9OoPBAGb+LvMizXIWND/50G1MFmt7u55bypSUbVxkqkxqE2YzmSyFBBO2cFfBqdbvSFmPkiBepcrYZvADfTn10qJXK338R8HbRS179lRfeFqWvh0++9mX9Y3zD6Gg==
+X-Gm-Message-State: AOJu0YxEjlgoMmaRR7gfDH3OYeFLOHdpY3VRhmVJDD81Wi1BhMH3YPDF
+	vLYu+icfIN2BylVNNP1HoNe/6x+7xlGqTrZRtbtd7lX2VQ/SdUd8
+X-Google-Smtp-Source: AGHT+IFuCRvEfdmYM0sprFLA64OUtROJMAq4GyCsatZ2klDKgHUPbr6fMi8sTeJRZFwJCFwOFzK88g==
+X-Received: by 2002:a17:902:e88a:b0:1f6:8862:aa20 with SMTP id d9443c01a7336-1f68862ac56mr41928305ad.45.1717498910114;
+        Tue, 04 Jun 2024 04:01:50 -0700 (PDT)
+Received: from smtpclient.apple ([47.89.225.180])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63235b0absm81240095ad.65.2024.06.04.04.01.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2024 04:01:49 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000fa65d80619830888@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
+Date: Tue, 4 Jun 2024 19:01:35 +0800
+Cc: Miroslav Benes <mbenes@suse.cz>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <189B58F7-888A-4D5F-91F3-C1EF584FB451@gmail.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+ <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
+ <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
+ <Zloh/TbRFIX6UtA+@redhat.com>
+ <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
+To: Joe Lawrence <joe.lawrence@redhat.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-Hello Syzbot,
 
-On Tue, May 28, 2024 at 05:47:22AM -0700, syzbot wrote:
-> syzbot found the following issue on:
-> 
-> HEAD commit:    6d69b6c12fce Merge tag 'nfs-for-6.10-1' of git://git.linux..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=164ce7f0980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=21de3d423116c304
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8336c747d79a4c3a0944
-> compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119fbe58980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a8443c980000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-6d69b6c1.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/9fa4d7c3665d/vmlinux-6d69b6c1.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/131ac291917c/Image-6d69b6c1.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+8336c747d79a4c3a0944@syzkaller.appspotmail.com
-> 
-> Unable to handle kernel paging request at virtual address 007000000621a118
-> Mem abort info:
->   ESR = 0x0000000096000004
->   EC = 0x25: DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
->   FSC = 0x04: level 0 translation fault
-> Data abort info:
->   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [007000000621a118] address between user and kernel address ranges
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 1 PID: 3189 Comm: syz-executor371 Not tainted 6.9.0-syzkaller-12124-g6d69b6c12fce #0
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 204000c9 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : cfs_rq_of kernel/sched/sched.h:1468 [inline]
-> pc : update_cfs_rq_h_load kernel/sched/fair.c:9441 [inline]
-> pc : task_h_load+0x40/0xb8 kernel/sched/fair.c:9466
-> lr : detach_tasks kernel/sched/fair.c:9181 [inline]
-> lr : sched_balance_rq+0x80c/0xc94 kernel/sched/fair.c:11375
+> My intention to introduce this attitude to sysfs is that user who what =
+to see if this function is called can just need to show this function =
+attribute in the livepatch sysfs interface.
+>=20
 
-Mark and I were looking at this today and we believe it should be fixed
-by:
+Sorry bros,
+There is a typo in my word : attitude -> attribute=20
 
-https://lore.kernel.org/all/20240524005444.135417-1-21cnbao@gmail.com/T/#u
+Autocomplete make it wrong=E2=80=A6.lol..
 
-which is queued in -next via the mm tree and will hopefully land in -rc3.
-
-Will
+Wardenjohn=
 
