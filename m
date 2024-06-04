@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-200769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620628FB4AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CCE8FB4AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9399E1C217A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:01:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 585BB1C219F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6217314375D;
-	Tue,  4 Jun 2024 14:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FD0143C59;
+	Tue,  4 Jun 2024 14:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZTqIUin"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aphoHj1i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A094E1EB26;
-	Tue,  4 Jun 2024 14:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43F9143C6D;
+	Tue,  4 Jun 2024 14:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717509613; cv=none; b=AdOt+TeyIFumTogb2TlpI7NZNFj36Ijiv2/WmBH3zMlxzKtbO0wLFHaDSa6c4xFk3LblnzBqF4D2NcwdIfXOh6aBXxs64Dy2mFvwPxQPJDJPKDrMmwCHKg0nhE2QZvTsn5IfKY4MSna3/G3HaKGr/YDGcdk5aRQt1g01wjneFfE=
+	t=1717509616; cv=none; b=uYBV1ti7gJJOfbqSoaX5GfhKjv9P3CfaKqsWda/vwTUuyULW8tpdauJvTV2aao4lrwjdwLNEMNvHijddlwdWTZu7vM0JDHJg7XxatEp21rDVqBQrxLf+bJUY5LIWnJOaEMcvgzlkEFr9DajlsWI3WFjzUIdtafFOg8kbzsmlwUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717509613; c=relaxed/simple;
-	bh=bp4RUBBoDBNxBmueQhwpMXLVezAaB2zJTWzVJs7lfD8=;
+	s=arc-20240116; t=1717509616; c=relaxed/simple;
+	bh=rFDucDznyAp9KdW6DmpqQ16mThJdgkTuPLsOXBQR5oo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XYvZrDiPmy+54DpbvWi1IFa+w/jrO9VC0Smm4nM8M0VNL9t4qJtKMUE8BRJfCjljk4FsSZQpm3ruP584cjEZzgS1vRukfDYv44tP4DhyxZ7jSbqmAamKKeZk2Tjfi80wHuaHaPBxOnnveBEcPB8C9H0XyVxDncI7OPxOfk3Qpno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZTqIUin; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 278F9C2BBFC;
-	Tue,  4 Jun 2024 14:00:09 +0000 (UTC)
+	 MIME-Version; b=p9s4CZsSs3sy1b9eIY9ohOF3q7mElfFtjLlHPJtroW+z/cIJlzi0m6SA5/3Xk9uFv3yO3uWmE9eh4z5pe3RZPAfvzmVOqEVE0PPgz6uvFIp6HnHeINC9w0s/5rtGZ2+0XYKWg3UkAV/RoipbjTGHI7dx14jSrTIBwQxkJp0gQFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aphoHj1i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D78C4AF09;
+	Tue,  4 Jun 2024 14:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717509613;
-	bh=bp4RUBBoDBNxBmueQhwpMXLVezAaB2zJTWzVJs7lfD8=;
+	s=k20201202; t=1717509616;
+	bh=rFDucDznyAp9KdW6DmpqQ16mThJdgkTuPLsOXBQR5oo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eZTqIUin6QMORoeiFVbD804WbJDlgJ7D5GtxruxhrtSHTjJQyYCVzoKPGvLAa4E2j
-	 ofSSDd2suDVVfLZ1TlDX4s653lNKNPEHAtJvJQCs64r6q5f75cDDVzhKRI3elI80xC
-	 rtQ6eYScDyQItOnoG6srCQee12gBfXHNNhpA2/JkLHhHkkRq/HlwYl39n4mapXGGAJ
-	 3qaUii2Zo9ekQtEWPa2ONsDwROdiQpJm1U8QyDeebCg/vuObbHBk47p6Xn0HQlyeSb
-	 16CsS7X+YOA181TdABY75YTewaDVcNr3vun2FjarbbDFSoP8NlM21ZzEURBlvxk+OD
-	 09/WG9cZUz/pQ==
+	b=aphoHj1iBTcKQXKi3MxhatfTqitW3ZHgLOzyXkL3OgeTdWQNWhyfMdxW0Ozdhiy9C
+	 YwpUG9zWnVCBUllJExAftLctkpA7S4RfNL2B0yS38axBmxvOHl+EjIlHApG/Q/XoWF
+	 mhB4lDj22qWlJFtgjydgQvhIVZ/XDVa3ruenQPDberDElA8J+iNPJf1LXnI4S3h6ss
+	 tMqqif91QcvwQrzjeAvyTf3bOqyT5VypHgfAHvbu5V6MuxZBeuE+7aq33ehZVW9Ul1
+	 ifm0plRpKbhDlSxzQ+9Q+vqbOphN2+DnK249Je9eIRlWo0uS5EYp81r73wRAHcsTUb
+	 XRvWKXiJzRXIQ==
 From: Michael Walle <mwalle@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -56,9 +56,9 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH 07/10] ARM: dts: imx6qdl-kontron-samx6i: always enable eMMC
-Date: Tue,  4 Jun 2024 15:59:31 +0200
-Message-Id: <20240604135934.1951189-8-mwalle@kernel.org>
+Subject: [PATCH 08/10] ARM: dts: imx6qdl-kontron-samx6i: add SDIO_PWR_EN support
+Date: Tue,  4 Jun 2024 15:59:32 +0200
+Message-Id: <20240604135934.1951189-9-mwalle@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240604135934.1951189-1-mwalle@kernel.org>
 References: <20240604135934.1951189-1-mwalle@kernel.org>
@@ -70,33 +70,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are no variants of this module without an eMMC.
+The module can enable/disable the SD card power supply and has
+it's dedicated pin SDIO_PWR_EN for that reason. This is esp.
+useful to be able to reset the SD card if it was in an UHS mode.
 
 Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
- arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi   | 20 ++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi
-index 4a6ab7e7908a..4d3cd338a707 100644
+index 4d3cd338a707..d36743e47552 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi
 +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i.dtsi
-@@ -800,7 +800,6 @@ &usdhc3 {
+@@ -61,6 +61,18 @@ reg_3p3v_s5: regulator-3p3v-s5 {
+ 		vin-supply = <&reg_smarc_suppy>;
+ 	};
  
- /* SDMMC */
- &usdhc4 {
--	/* Internal eMMC, optional on some boards */
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usdhc4>;
- 	bus-width = <8>;
-@@ -809,6 +808,7 @@ &usdhc4 {
- 	non-removable;
- 	vmmc-supply = <&reg_3p3v_s0>;
- 	vqmmc-supply = <&reg_1p8v_s0>;
-+	status = "okay";
++	reg_sdio: regulator-sdio {
++		compatible = "regulator-fixed";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_reg_sdio>;
++		regulator-name = "V_3V3_SD";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio1 29 GPIO_ACTIVE_HIGH>;
++		off-on-delay-us = <20000>;
++		enable-active-high;
++	};
++
+ 	reg_smarc_lcdbklt: regulator-smarc-lcdbklt {
+ 		compatible = "regulator-fixed";
+ 		pinctrl-names = "default";
+@@ -640,6 +652,12 @@ MX6QDL_PAD_SD1_CMD__PWM4_OUT 0x1b0b1
+ 		>;
+ 	};
+ 
++	pinctrl_reg_sdio: reg-sdiogrp {
++		fsl,pins = <
++			MX6QDL_PAD_ENET_TXD1__GPIO1_IO29 0x1b0b0 /* SDIO_PWR_EN */
++		>;
++	};
++
+ 	pinctrl_uart1: uart1grp {
+ 		fsl,pins = <
+ 			MX6QDL_PAD_CSI0_DAT11__UART1_RX_DATA 0x1b0b1
+@@ -692,7 +710,6 @@ MX6QDL_PAD_SD3_DAT3__SD3_DATA3 0x17059
+ 
+ 			MX6QDL_PAD_NANDF_CS1__GPIO6_IO14 0x1b0b0 /* CD */
+ 			MX6QDL_PAD_ENET_RXD1__GPIO1_IO26 0x1b0b0 /* WP */
+-			MX6QDL_PAD_ENET_TXD1__GPIO1_IO29 0x1b0b0 /* PWR_EN */
+ 		>;
+ 	};
+ 
+@@ -795,6 +812,7 @@ &usdhc3 {
+ 	pinctrl-0 = <&pinctrl_usdhc3>;
+ 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
++	vmmc-supply = <&reg_sdio>;
+ 	no-1-8-v;
  };
  
- &wdog1 {
 -- 
 2.39.2
 
