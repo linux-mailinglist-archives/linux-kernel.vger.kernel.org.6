@@ -1,186 +1,267 @@
-Return-Path: <linux-kernel+bounces-200137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802B98FAB9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3411E8FAB9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A0F1C23F61
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:11:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F361C24357
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5339814036E;
-	Tue,  4 Jun 2024 07:11:33 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E6113FD92;
+	Tue,  4 Jun 2024 07:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HgzNMiP6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B36136E26;
-	Tue,  4 Jun 2024 07:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7907514036E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717485092; cv=none; b=AAL9o6VBQse4gITez5+VAYQ14NPGV6r+I9zOMS7PZkfvD4Ul6aMBpn9Gto9uXjIANXiNPpozOd4iXkVeDlK0U/B0t22aJHlecnQBxB4S5cRNRl0uCbH/qkaQomQ6pILacfiv42sUYpCw4oBRIzBuWzhliKxxTDD67k9FHFaX2Gs=
+	t=1717485120; cv=none; b=THHh+FK5PfSb+iVCDGcGEJqEJhYclvQJmm6HNZnvFVJEwdCBkVR2lDn510IGWkTt1TTz1uynHvsHeGatNthoYmruz2zAMm48YWuyib4hrq5cjEyQ+yB1KTBn8fdv5+L9jFHJ6q+ah+hVDKW/XBHpHO6ffQFiEPpnWZUA8GXHvto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717485092; c=relaxed/simple;
-	bh=W2c34FCQdVhwAmVoWTiAiA+rMqfuCMI5Bep5ss1y2mk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=taRrRGks027fO6Lf1wOw95whHskDBioyghe0AeuMmIpHtWGKvRRG+XNWIWGvhPEvcgSmnnpX1CF/UWoGQ+ONrXDRXiA8V4C+xArQjndRz/L/keohGduPQPOiC7is9AWYXS11YeDSN4Ky+NIAzDGBiQ2QjICYObwc1kZud9OtQxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VthVl2PX4zwRVR;
-	Tue,  4 Jun 2024 15:07:27 +0800 (CST)
-Received: from canpemm500010.china.huawei.com (unknown [7.192.105.118])
-	by mail.maildlp.com (Postfix) with ESMTPS id 757F1180AA6;
-	Tue,  4 Jun 2024 15:11:22 +0800 (CST)
-Received: from localhost.localdomain (10.175.104.67) by
- canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 4 Jun 2024 15:11:17 +0800
-From: Zizhi Wo <wozizhi@huawei.com>
-To: <chandan.babu@oracle.com>, <djwong@kernel.org>, <dchinner@redhat.com>,
-	<wozizhi@huawei.com>
-CC: <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yangerkun@huawei.com>
-Subject: [PATCH] xfs: Fix file creation failure
-Date: Tue, 4 Jun 2024 15:11:21 +0800
-Message-ID: <20240604071121.3981686-1-wozizhi@huawei.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717485120; c=relaxed/simple;
+	bh=TOhmbLZL2S1o3pvU7FImirwrCXc9X/d1735u3vOsAS4=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=BvrwdAPs6eHSrcQp/VRGmzWC1hnZ89LsVLsYetIQvUAzmpw5KZRtXxEh2EhXFEE6tq2TI2rTLvOpLtCmmmU/e2jIDOCCh6UHf9BUEzrOD1VSXsGEdv0Aesexq45a30CvXJxGIbpeWM2tnZWuzklFFzriAEMBsxBCX3TKEsWXjNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HgzNMiP6; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717485118; x=1749021118;
+  h=date:from:to:cc:subject:message-id;
+  bh=TOhmbLZL2S1o3pvU7FImirwrCXc9X/d1735u3vOsAS4=;
+  b=HgzNMiP6I3xtA5nYYgIMsXfTbvBGmCdwdAY2eOh8GlL5ERBeMGMxjxar
+   QokAFsydvsVt+y3mevcsMa84D70XpGzY1cWJYwc+5LxQ1gdkoT8Sx60jy
+   MverZ+loTC7mu2MkreUCPxzekR1M1eDtg0uDSbv3lZ5LzSh8fMKcv+2bb
+   ZEWtna8D5Hx3IktlyCjUhKPcnf1/O7ytAcKYs4W3X13FmL9QZufL1/C6M
+   SGmMuLaSwLDboxrQY4i+I9Gm0Z6BCgNnXDG6smuJ5eRDvKYG3640y6Pst
+   AiU+4Tl0tG/u2ZXNAVai033u8EKDUxjZ8t9a7ZnNLSBVMJcDmlleNKqDy
+   A==;
+X-CSE-ConnectionGUID: 5VNnb13ISru43NYnh9Y9+Q==
+X-CSE-MsgGUID: ojwq8TPWQgWk8dNKd6nBuw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17845189"
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="17845189"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 00:11:58 -0700
+X-CSE-ConnectionGUID: B8IGKdX0SRiOwtvcgItqbg==
+X-CSE-MsgGUID: YPTQCqTFSjSHLtyuBPncAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
+   d="scan'208";a="37158819"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 04 Jun 2024 00:11:56 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sEOKo-000MhJ-18;
+	Tue, 04 Jun 2024 07:11:54 +0000
+Date: Tue, 04 Jun 2024 15:11:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 309ad53b7f310dee659ea29a23e17474ec62b6dd
+Message-ID: <202406041544.7ImJlBI9-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- canpemm500010.china.huawei.com (7.192.105.118)
 
-We have an xfs image that contains only 2 AGs, the first AG is full and
-the second AG is empty, then a concurrent file creation and little writing
-could unexpectedly return -ENOSPC error since there is a race window that
-the allocator could get the wrong agf->agf_longest.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 309ad53b7f310dee659ea29a23e17474ec62b6dd  Merge branch into tip/master: 'x86/percpu'
 
-Write file process steps:
-1) Find the entry that best meets the conditions, then calculate the start
-address and length of the remaining part of the entry after allocation.
-2) Delete this entry. Because the second AG is empty, the btree in its agf
-has only one record, and agf->agf_longest will be set to 0 after deletion.
-3) Insert the remaining unused parts of this entry based on the
-calculations in 1), and update the agf->agf_longest.
+elapsed time: 1455m
 
-Create file process steps:
-1) Check whether there are free inodes in the inode chunk.
-2) If there is no free inode, check whether there has space for creating
-inode chunks, perform the no-lock judgment first.
-3) If the judgment succeeds, the judgment is performed again with agf lock
-held. Otherwire, an error is returned directly.
+configs tested: 175
+configs skipped: 3
 
-If the write process is in step 2) but not go to 3) yet, the create file
-process goes to 2) at this time, it will be mistaken for no space,
-resulting in the file system still has space but the file creation fails.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-	Direct write				Create file
-xfs_file_write_iter
- ...
- xfs_direct_write_iomap_begin
-  xfs_iomap_write_direct
-   ...
-   xfs_alloc_ag_vextent_near
-    xfs_alloc_cur_finish
-     xfs_alloc_fixup_trees
-      xfs_btree_delete
-       xfs_btree_delrec
-	xfs_allocbt_update_lastrec
-	// longest = 0 because numrec == 0.
-	 agf->agf_longest = len = 0
-					   xfs_create
-					    ...
-					     xfs_dialloc
-					      ...
-					      xfs_alloc_fix_freelist
-					       xfs_alloc_space_available
-					-> as longest=0, it will return
-					false, no space for inode alloc.
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20240603   gcc  
+arc                   randconfig-002-20240603   gcc  
+arm                               allnoconfig   clang
+arm                                 defconfig   clang
+arm                   randconfig-001-20240603   gcc  
+arm                   randconfig-002-20240603   gcc  
+arm                   randconfig-003-20240603   gcc  
+arm                   randconfig-004-20240603   gcc  
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                 randconfig-001-20240603   gcc  
+arm64                 randconfig-002-20240603   gcc  
+arm64                 randconfig-004-20240603   gcc  
+csky                              allnoconfig   gcc  
+csky                                defconfig   gcc  
+csky                  randconfig-001-20240603   gcc  
+csky                  randconfig-002-20240603   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240603   clang
+i386         buildonly-randconfig-002-20240603   clang
+i386         buildonly-randconfig-003-20240603   gcc  
+i386         buildonly-randconfig-004-20240603   gcc  
+i386         buildonly-randconfig-005-20240603   gcc  
+i386         buildonly-randconfig-006-20240603   clang
+i386                                defconfig   clang
+i386                  randconfig-001-20240603   clang
+i386                  randconfig-002-20240603   gcc  
+i386                  randconfig-003-20240603   gcc  
+i386                  randconfig-004-20240603   clang
+i386                  randconfig-005-20240603   clang
+i386                  randconfig-006-20240603   gcc  
+i386                  randconfig-011-20240603   clang
+i386                  randconfig-012-20240603   clang
+i386                  randconfig-013-20240603   clang
+i386                  randconfig-014-20240603   clang
+i386                  randconfig-015-20240603   clang
+i386                  randconfig-016-20240603   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                        allyesconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch             randconfig-001-20240603   gcc  
+loongarch             randconfig-002-20240603   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                             allmodconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+mips                      bmips_stb_defconfig   clang
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                 randconfig-001-20240603   gcc  
+nios2                 randconfig-002-20240603   gcc  
+openrisc                         allmodconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                randconfig-001-20240603   gcc  
+parisc                randconfig-002-20240603   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+powerpc                       holly_defconfig   clang
+powerpc                  mpc885_ads_defconfig   clang
+powerpc               randconfig-001-20240603   gcc  
+powerpc               randconfig-002-20240603   gcc  
+powerpc               randconfig-003-20240603   gcc  
+powerpc64             randconfig-001-20240603   gcc  
+powerpc64             randconfig-002-20240603   gcc  
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sh                    randconfig-001-20240603   gcc  
+sh                    randconfig-002-20240603   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+sparc64               randconfig-001-20240603   gcc  
+sparc64               randconfig-002-20240603   gcc  
+um                               alldefconfig   clang
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                    randconfig-002-20240603   gcc  
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-001-20240603   gcc  
+x86_64       buildonly-randconfig-001-20240604   clang
+x86_64       buildonly-randconfig-002-20240603   gcc  
+x86_64       buildonly-randconfig-002-20240604   clang
+x86_64       buildonly-randconfig-003-20240603   gcc  
+x86_64       buildonly-randconfig-004-20240603   clang
+x86_64       buildonly-randconfig-004-20240604   clang
+x86_64       buildonly-randconfig-005-20240603   clang
+x86_64       buildonly-randconfig-006-20240603   gcc  
+x86_64       buildonly-randconfig-006-20240604   clang
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20240603   gcc  
+x86_64                randconfig-001-20240604   clang
+x86_64                randconfig-002-20240603   clang
+x86_64                randconfig-003-20240603   clang
+x86_64                randconfig-004-20240603   gcc  
+x86_64                randconfig-005-20240603   gcc  
+x86_64                randconfig-006-20240603   gcc  
+x86_64                randconfig-011-20240603   gcc  
+x86_64                randconfig-011-20240604   clang
+x86_64                randconfig-012-20240603   gcc  
+x86_64                randconfig-012-20240604   clang
+x86_64                randconfig-013-20240603   clang
+x86_64                randconfig-013-20240604   clang
+x86_64                randconfig-014-20240603   gcc  
+x86_64                randconfig-014-20240604   clang
+x86_64                randconfig-015-20240603   gcc  
+x86_64                randconfig-015-20240604   clang
+x86_64                randconfig-016-20240603   clang
+x86_64                randconfig-016-20240604   clang
+x86_64                randconfig-071-20240603   clang
+x86_64                randconfig-071-20240604   clang
+x86_64                randconfig-072-20240603   clang
+x86_64                randconfig-073-20240603   clang
+x86_64                randconfig-074-20240603   clang
+x86_64                randconfig-074-20240604   clang
+x86_64                randconfig-075-20240603   gcc  
+x86_64                randconfig-075-20240604   clang
+x86_64                randconfig-076-20240603   gcc  
+x86_64                randconfig-076-20240604   clang
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+xtensa                            allnoconfig   gcc  
+xtensa                           allyesconfig   gcc  
+xtensa                randconfig-001-20240603   gcc  
+xtensa                randconfig-002-20240603   gcc  
 
-Fix this issue by adding the bc_free_longest field to the xfs_btree_cur_t
-structure to store the potential longest count that will be updated. The
-assignment is done in xfs_alloc_fixup_trees() and xfs_free_ag_extent().
-
-Reported by: Ye Bin <yebin10@huawei.com>
-Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
----
- fs/xfs/libxfs/xfs_alloc.c       | 14 ++++++++++++++
- fs/xfs/libxfs/xfs_alloc_btree.c |  9 ++++++++-
- fs/xfs/libxfs/xfs_btree.h       |  1 +
- 3 files changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-index 6c55a6e88eba..86ba873d57a8 100644
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -577,6 +577,13 @@ xfs_alloc_fixup_trees(
- 		nfbno2 = rbno + rlen;
- 		nflen2 = (fbno + flen) - nfbno2;
- 	}
-+
-+	/*
-+	 * Record the potential maximum free length in advance.
-+	 */
-+	if (nfbno1 != NULLAGBLOCK || nfbno2 != NULLAGBLOCK)
-+		cnt_cur->bc_ag.bc_free_longest = XFS_EXTLEN_MAX(nflen1, nflen2);
-+
- 	/*
- 	 * Delete the entry from the by-size btree.
- 	 */
-@@ -2044,6 +2051,13 @@ xfs_free_ag_extent(
- 	 * Now allocate and initialize a cursor for the by-size tree.
- 	 */
- 	cnt_cur = xfs_cntbt_init_cursor(mp, tp, agbp, pag);
-+	/*
-+	 * Record the potential maximum free length in advance.
-+	 */
-+	if (haveleft)
-+		cnt_cur->bc_ag.bc_free_longest = ltlen;
-+	if (haveright)
-+		cnt_cur->bc_ag.bc_free_longest = gtlen;
- 	/*
- 	 * Have both left and right contiguous neighbors.
- 	 * Merge all three into a single free block.
-diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
-index 6ef5ddd89600..8e7d1e0f1a63 100644
---- a/fs/xfs/libxfs/xfs_alloc_btree.c
-+++ b/fs/xfs/libxfs/xfs_alloc_btree.c
-@@ -161,7 +161,14 @@ xfs_allocbt_update_lastrec(
- 			rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
- 			len = rrp->ar_blockcount;
- 		} else {
--			len = 0;
-+			/*
-+			 * Update in advance to prevent file creation failure
-+			 * for concurrent processes even though there is no
-+			 * numrec currently.
-+			 * And there's no need to worry as the value that no
-+			 * less than bc_free_longest will be inserted later.
-+			 */
-+			len = cpu_to_be32(cur->bc_ag.bc_free_longest);
- 		}
- 
- 		break;
-diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
-index f93374278aa1..985b1885a643 100644
---- a/fs/xfs/libxfs/xfs_btree.h
-+++ b/fs/xfs/libxfs/xfs_btree.h
-@@ -281,6 +281,7 @@ struct xfs_btree_cur
- 			struct xfs_perag	*pag;
- 			struct xfs_buf		*agbp;
- 			struct xbtree_afakeroot	*afake;	/* for staging cursor */
-+			xfs_extlen_t		bc_free_longest; /* potential longest free space */
- 		} bc_ag;
- 		struct {
- 			struct xfbtree		*xfbtree;
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
