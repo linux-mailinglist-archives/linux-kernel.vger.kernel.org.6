@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-200926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D368FB6A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22B18FB6A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEE0E2810C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:09:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2D1282314
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E8313D635;
-	Tue,  4 Jun 2024 15:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnuKCai6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7401442E8;
+	Tue,  4 Jun 2024 15:10:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5498BF7;
-	Tue,  4 Jun 2024 15:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6961420C9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513791; cv=none; b=STVP7jUPk5LhAJ5R1iqeFjTNavTeoLSlBmScdhfrBUGiFjz3GjpEqkhpmbQ4Id52X5pSfktxjU+QYLqwI1pnAJ/ATXAZviJzZGkEwAGnE0RHHiVG1qBbTLwGc1Cghadapme362lN2FnXd27s2vjq184h839N1QlmI0v8LkxPj34=
+	t=1717513804; cv=none; b=GbTe1wQ5bNQfFoN7dhH+MnQIllpNW6yAxld5Q+YJPi/OlVcHa9XLRkWg9A7tlzTJQ4/3yHABqLeso7pR2OQIWggT1SZv87cbnLMktq05VR8DFLutW7qNqpjQ4TrhTd3NToHpGokEKIQEE8CUBo+XPrnGIFBu0hLg3Zv42MaQ330=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513791; c=relaxed/simple;
-	bh=qgvY3ZxrCm8UCZTIzcUkLkRfzacSiyAz5Xf8BE4E0MM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6fSvewgOBrR3fqdSivUwgD2C17G/A8FqX0Gpy9wZD4TWKbdjCnCOp0A7LrjfTLEMU2MMwSB0P3kIiSMVoonRYcYVek9lOx2kpKNu7upAioV7CS/pfNYC2sn8WDc0WBy3K6jZudfjKTsdwptLcIN1gmRix6REPx8GaZD9VVKWXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnuKCai6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71B6DC2BBFC;
-	Tue,  4 Jun 2024 15:09:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717513790;
-	bh=qgvY3ZxrCm8UCZTIzcUkLkRfzacSiyAz5Xf8BE4E0MM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KnuKCai6CwOptzGSIdaZYUzg9oGBe+X44x6I3lJul7UQSVWQOJYR+XKH2J6IAZdio
-	 7uh58GgCwfguO4a45msU0mNg2AWGRdvnbScDlVgehU7gKVr9XVYS61Mqur3xTYzPr0
-	 wElKLfvSSU/spDClJRAz5IRzquameRiA8cw2vG8dzTDjK64HiIfV2DxRaAJdGyevJX
-	 MlLI1HU6eYPm051i9fyMu/gcM4RZIbtZ8g9JK1trDL1/RexwWWrC/VZwePsoTuhoCp
-	 m1PVCitIu7KTpIZlHsBgkKEHR5vEkLSrIT6bW9k9S5fjW4f4Ldum3q9bnz7I3ATcIN
-	 W+hoCsy0sZeLw==
-Date: Tue, 4 Jun 2024 10:09:48 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Pengfei Li <pengfei.li_1@nxp.com>
-Cc: Markus.Niebel@ew.tq-group.com, joao.goncalves@toradex.com,
-	ping.bai@nxp.com, frank.li@nxp.com, devicetree@vger.kernel.org,
-	m.felsch@pengutronix.de, abelvesa@kernel.org, krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	ye.li@nxp.com, hiago.franco@toradex.com, peng.fan@nxp.com,
-	tharvey@gateworks.com, m.othacehe@gmail.com,
-	alexander.stein@ew.tq-group.com, imx@lists.linux.dev,
-	s.hauer@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-	festevam@gmail.com, shawnguo@kernel.org,
-	gregor.herburger@ew.tq-group.com, sboyd@kernel.org,
-	mturquette@baylibre.com, aisheng.dong@nxp.com, bhelgaas@google.com,
-	leoyang.li@nxp.com, conor+dt@kernel.org, kernel@pengutronix.de,
-	hvilleneuve@dimonoff.com
-Subject: Re: [PATCH v2 4/5] dt-bindings: arm: fsl: Add i.MX91 11x11 evk board
-Message-ID: <171751378585.661386.7201045079394724891.robh@kernel.org>
-References: <20240530022634.2062084-1-pengfei.li_1@nxp.com>
- <20240530022634.2062084-5-pengfei.li_1@nxp.com>
+	s=arc-20240116; t=1717513804; c=relaxed/simple;
+	bh=4TVIQNR/6Z1YPfoSmoDWBbA3PwRL01qZEuT1YwNgKmA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kRD/T5mXpeY34ey/330AVjt/F7eRcO11fLmwMya2RtEE+LzWFFWi9L/PqVNCynRZVaMztGHwCKklUUKd0dTi3vJFK5qJCYiubF4Z+5z5xP0cTIwACLUt7XE29+M5O1npWfrtWVamOeJSjnGWtUPjNFmeUfZysUHu/xOU7yrh27E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-374a23b72c9so17104555ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:10:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717513802; x=1718118602;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kkSWCLUC3Z5zZI+v8VL/vR1g1iAlgwx4yL/ydA03F9s=;
+        b=RoqT8Jsol5Hw7vkEjQH17tY4XqbqRRZUSt7Jf6vQ55ANlAlBDbMWh3XIEgg84KX8M4
+         4M3l5eTvjX4so1Vdq8kZ3OJvDZcnzR8QZ7lxP/zKKbFD3ZKjAX8LbRj9cLVIgSeFCmCl
+         Y6wdha9f0nuQIJ2UNhl/5pGLZo7nJ4oKHGupDdeD3QKWfGf0LhDzlSEy11NSi/W/zIaR
+         jm4VkyTWjtQjrFNf3zNCZ80kxCbSo8hcxc2AuJ45Hn/z7Nnd/8vmvLhoZ2AZaVrAmjqW
+         iQIwv9ijfuCGmvD3qovPgUGq5QL0yNVJkfQSy0nO0WDuyF6VDnWo5w40Ak+00PiCluIV
+         ofQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUio4k+Mgz2vsGq5Wk2f4aRG8nQMp1MCStWvD6H0Gy9pCXgokPzA303Jwky4oOYKQexcBWHaRK6SZ8Jlx9xOiwzVAvY7wHyv8z7UkFP
+X-Gm-Message-State: AOJu0Ywno1xWxn8rdyY3P0DUz+pSYS3kPPP4QYgeLgTmg/atmMxbrgEX
+	5hsdmvVyqoBbbu+mlsP1w0+jNo4goDGta6e2Q2xHHKFL9at50hVFTz4Q/7zkQk2Mt9EiFK2BG6d
+	nn3kgImhcXjXUZ817NRWgS1F2ywfnPmddrJX0iXyseVTWQ/esorqGD4c=
+X-Google-Smtp-Source: AGHT+IE76CJ+LLRsvygb6B1IMZFAirzuRPp9Osu7vnH6Gg/0Ka8ZM9cU532pf4uWHpLGjHKlut+XzzpYCOiZVmQk5K76Vnz92ZG5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530022634.2062084-5-pengfei.li_1@nxp.com>
+X-Received: by 2002:a05:6e02:b27:b0:36d:d06c:5c10 with SMTP id
+ e9e14a558f8ab-3748b9e5b86mr9243325ab.4.1717513802615; Tue, 04 Jun 2024
+ 08:10:02 -0700 (PDT)
+Date: Tue, 04 Jun 2024 08:10:02 -0700
+In-Reply-To: <a67e82fc-4658-4784-8d5b-e8a048e749e2@kernel.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001a2419061a11d885@google.com>
+Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_evict_inode (2)
+From: syzbot <syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
-On Wed, 29 May 2024 19:26:33 -0700, Pengfei Li wrote:
-> Add the board imx91-11x11-evk in the binding docuemnt.
-> 
-> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reported-and-tested-by: syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         4d419837 f2fs: fix to don't dirty inode for readonly f..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a597d6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=eab577c7808ea52b
+dashboard link: https://syzkaller.appspot.com/bug?extid=31e4659a3fe953aec2f4
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
