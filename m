@@ -1,117 +1,143 @@
-Return-Path: <linux-kernel+bounces-200671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5338FB334
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:11:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1B68FB337
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB4A1284431
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:11:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD0C71C228C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A639146592;
-	Tue,  4 Jun 2024 13:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C726314659C;
+	Tue,  4 Jun 2024 13:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LVBaTXJG"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d/7IIAAJ"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14721DDDB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9721DDDB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717506696; cv=none; b=Se9/rm9N9rzbUUHxW8iO3SAq0WxufJGzpJoMt4Z/rIELZdAuP/v3jwuLUckkTSC4LaZdnirpjvdlIGaerIaX+6+hS1bECypxT9Qlp8lfCYb/JSlfuNMHL3KrNhHDOQum81AgT4qeAXTn12h5CAPW/82xwqM9B8bA7tLaBTJkhsk=
+	t=1717506729; cv=none; b=txoVeKX6ypkRVFQqfG3pR3TLsTKO/WMVM73aPxRQ2Qmj3bMIMW5NiJWXDZTpfd5n2a5snxCFd2HM1QeQxzD9jdxqV2vKEPsV/pxJkmzZfKSE+efVx3FRxpuNdq3uJh4t0E5DdyjSxfAS+NF1FPHIODG56FRkpgdpAwhWQRA+Xjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717506696; c=relaxed/simple;
-	bh=D8+B4VmmUKjGstm5zExU8LIljI0ZjbY6sHA78vNJcW8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qHlpbzn9XKlAfkAQJOB9Y3jgqbMw2nxnjeht425fvmK+zceizSeuHKQ4OpXCnobDiOt5RdKUFhGiNvIS9ie5/Ve6ng8mYsKOjIs/sxOdrgZLMyNnMWhvPGsXFEgU4Y4/hV0q2V7Y9kVngGrfa0B0EISqj/aUulGfftYvrYcxjEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LVBaTXJG; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1717506729; c=relaxed/simple;
+	bh=JKkLtBEUrmYQnGf8tYh2jR3T3w9rFinBgGs6TA8+iUE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=HojyY1iGpO90X+RduFcVxV6zRGqxfBkYm0cNY+nHBh6VK6LLnVOiHbcdXdHFFaTCMD7yKR4hhfPqYBw+KCcdkUblDcSzhzaF/czq8EGjgRGrtzLRsJhk1fG56eXYp/el6hPo6X1xj+0uNcPxzr8oakkCAWHpUJZxK+6t/kqaY50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d/7IIAAJ; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42139c66027so10121195e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:11:34 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e6f2534e41so49269731fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717506693; x=1718111493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jPJonIEuGmGlQs1GGHFwUCHmwPCfTUCdx095z5ehb0s=;
-        b=LVBaTXJGjivlnzpiEUs4N1FwvWnQHgMZ8JDiJQrFFkgWGFDtgd0qAoTJyeIB3xa9Ni
-         PCH07Y0mJ1PVXgbOZ2z9x/sXgJqGzr/xLHhbPeTpfg7AHZXdk4QeCvVwGcK6+b5ltjeO
-         YhlriAJnMENVvRYfp64ohDKDSIO8VP6+BvcTr9Q1OkGngwutb7ug/qSKrZpksovOpMgl
-         mJW+Ku70+K+0QM+sKGtoP0teLH3eulX3JtoWuOpzTFtBBdVLubnTVNyOJlHxN8Fgov00
-         DjaVCq55KEBtOa2w9z/ln5tSH7V5Pek96QgUOcsfDMJsS/vi20Og8RWcZyIjRIjeTpy9
-         pXgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717506693; x=1718111493;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1717506725; x=1718111525; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jPJonIEuGmGlQs1GGHFwUCHmwPCfTUCdx095z5ehb0s=;
-        b=eXBwbNAztSGUv/8YsKecQVO04gMaHbrsHzWButXROl3EfK2HPYjp2wxw0JQXq+Zucu
-         ckGWSJOjXlRKBIyTgr8IEEknMUPAWK7MMdQgnUc54Hnlp4qf6xpOf4gSYZ+DJEDBvGN7
-         /YpH44QgKqZZiVTBa+GX1teZZD65kKSFQol51fViPpw7ANkmnkKaBYGxHQshv7v1FZdO
-         Ix9vGnmlTgFLb8eRLLVTfZpDPoQhOTsHogIlNGr2fB683nCo8tVjGWcTpaWaE11Z/vti
-         Gi6gCv6DAFV9NK6YJntS2YxsBkeDEsBCElQuuEa7sk0q1YeZ9yF4TFhhqqdwj8soVmfp
-         Xivw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQmhzTrnecwM0rwQJNzgBuars0c9GuzvN7pP3TjbMownkkS5InRV8WTHR/haBLStR8OvKlzSp7RXaCD0Ru+8b+EJfK7frwMJ8fK0UL
-X-Gm-Message-State: AOJu0YwitnxuLIsSJMKIhfj5hzUUS9wN6jtyehs+WwVuI15O99VWOsB9
-	keuPJlVKYNO5654NFlby6QHW9PZi6GX6o0jJuavZr7+iXAR+erJfDVqRnbHdsNc=
-X-Google-Smtp-Source: AGHT+IH+/usVFBeoh+wIT79xCMgURUIgCCMPyCo4UNbGGkw4O8nLArXyKvbDCf5Fohur20sHLnXY9g==
-X-Received: by 2002:a5d:6a92:0:b0:351:d9a1:503 with SMTP id ffacd0b85a97d-35e0f271624mr8835715f8f.20.1717506693247;
-        Tue, 04 Jun 2024 06:11:33 -0700 (PDT)
-Received: from krzk-bin.. ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062fe96sm11495387f8f.67.2024.06.04.06.11.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 06:11:32 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Jingoo Han <jingoohan1@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RESEND PATCH] drm/exynos: dp: drop driver owner initialization
-Date: Tue,  4 Jun 2024 15:11:29 +0200
-Message-ID: <20240604131129.193972-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        bh=scoabqS6+XucB7o3404ijfWMEletkULCboMQ7PF182w=;
+        b=d/7IIAAJrhZGoYmtd7RO29+7dl8esXI0fwm01Sj4TRaPwXniuzTaTpmNC08C7QRAY6
+         VEwAk9qDw4zXHmn4Jf76IekVsiltdM+Qi8L5VaXILoa+y5qSbsT1M53mmeGmNPyTuv2E
+         0yANUU2QdJtl0IbiZbpp1XhGw/Mk2/S80hRsx/UFTo5nZaHuib/8FtqiwCIc96ewcgH3
+         JKsWBFoJC0i+/pwwaxLDvP9ccjFtpzzn9xPU+DVj12BQo7+Clh9TgKCCqZxilMF8UA+Y
+         SZhkhOES4gWJbHE+RVPnVfBRSZwXyryJgLki4OJFzkioCq4wZvKey+PlGZTDFBFXmbDg
+         z3gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717506725; x=1718111525;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=scoabqS6+XucB7o3404ijfWMEletkULCboMQ7PF182w=;
+        b=r6hZPQKxX15NfzbjsyXjX/ucaM4WMuDlgWSOVWMwZUHWhj5k2TMnbfsnrOXNC80pD5
+         SgytwDpAEgNqW6U942lI3p5pGVMUcM5Gx1faRLpy2XULmWyC+TifsK7+sz4DE/ho6gw6
+         Gk8XcgWXcvPjz/eA0pmZ33Fbw5ubWLh1O/DP/JGRnAtDBr3c4WAZH1+FccbuSA5sDSCQ
+         paTCjLJrvh2WHqe2/DHO4kRKEWIjhSmmF3P9p/jQd/eQkplXfhbnTkl+pDtrB6LRs0c8
+         nyiZJ4FxTrepa0NkWs4GAAhENkpNjn18GlKdH4G8YOP1p9hC353dEnmrj/1BVJQZIO++
+         51cg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4jIWefgtZJAPnUrmzktDJtqefcnDKtPAFLnR/5qwEZFIGrrGweMFLBe7MkRM7dBr617uwWXb4eYvMGPF3g+FcTDHiAoEmSShlszYt
+X-Gm-Message-State: AOJu0YxgrzwgIU0O8n17eAdKPtFAXU7YfdpuOfx0xaJSHtmnh1LqLCOC
+	FuQGodJqCgtrzOHyF8EpHZQrORgOdr6HK32dUhyqwRLch2PwXn/Xz78bOPNE45o=
+X-Google-Smtp-Source: AGHT+IEvFTfvdKINEDRD11Vcd01v7jqXDgHD79oA6Jf4/oVf1B01pQg+yySRPRVnwxYWE8QOmGpS0A==
+X-Received: by 2002:a2e:b8c7:0:b0:2e9:5263:36e9 with SMTP id 38308e7fff4ca-2ea951d5c81mr82447921fa.43.1717506725401;
+        Tue, 04 Jun 2024 06:12:05 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:409c:8ebe:886e:8c03? ([2a01:e0a:982:cbb0:409c:8ebe:886e:8c03])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91bb49ebsm15646791fa.34.2024.06.04.06.12.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 06:12:04 -0700 (PDT)
+Message-ID: <4a4ca630-f71c-4012-a076-8e31b67b2517@linaro.org>
+Date: Tue, 4 Jun 2024 15:12:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] soc: amlogic: meson-gx-socinfo: Add S905L ID
+To: Christian Hewitt <christianshewitt@gmail.com>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240604050752.3312468-1-christianshewitt@gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240604050752.3312468-1-christianshewitt@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Core in platform_driver_register() already sets the .owner, so driver
-does not need to.  Whatever is set here will be anyway overwritten by
-main driver calling platform_driver_register().
+On 04/06/2024 07:07, Christian Hewitt wrote:
+> Add the S905L SoC ID observed in several P271 boards:
+> 
+> kernel: soc soc0: Amlogic Meson GXLX (S905L) Revision 26:a (c1:2) Detected
+> 
+> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+> ---
+>   drivers/soc/amlogic/meson-gx-socinfo.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/soc/amlogic/meson-gx-socinfo.c b/drivers/soc/amlogic/meson-gx-socinfo.c
+> index 6abb730344ab..7e255acf5430 100644
+> --- a/drivers/soc/amlogic/meson-gx-socinfo.c
+> +++ b/drivers/soc/amlogic/meson-gx-socinfo.c
+> @@ -64,6 +64,7 @@ static const struct meson_gx_package_id {
+>   	{ "962E", 0x24, 0x20, 0xf0 },
+>   	{ "A113X", 0x25, 0x37, 0xff },
+>   	{ "A113D", 0x25, 0x22, 0xff },
+> +	{ "S905L", 0x26, 0, 0x0 },
+>   	{ "S905D2", 0x28, 0x10, 0xf0 },
+>   	{ "S905Y2", 0x28, 0x30, 0xf0 },
+>   	{ "S905X2", 0x28, 0x40, 0xf0 },
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/gpu/drm/exynos/exynos_dp.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index f48c4343f469..3e6d4c6aa877 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -285,7 +285,6 @@ struct platform_driver dp_driver = {
- 	.remove_new	= exynos_dp_remove,
- 	.driver		= {
- 		.name	= "exynos-dp",
--		.owner	= THIS_MODULE,
- 		.pm	= pm_ptr(&exynos_dp_pm_ops),
- 		.of_match_table = exynos_dp_match,
- 	},
--- 
-2.43.0
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
