@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-201399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6928FBE0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:29:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52878FBE0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3986B1F212A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:29:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65DC28394F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF6D14D296;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898FE14C58E;
 	Tue,  4 Jun 2024 21:28:54 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C42814BFAB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFF81422AD;
 	Tue,  4 Jun 2024 21:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717536534; cv=none; b=TPIrkKq6b1Es6B41YbNGCLfRBNI3TTrwbpOxpYvZMKoQSwh/B87kr5h50+WI77PbpmopXMG6n5mV3+0Hq6c4GlKnRDsU0I3SGgAKaam8jttgqZJ7nlX5i433ntp0t6dNoDAmBlpVjouUh+nAaUAyEni/QVeU2FMRJS9s24w1v7E=
+	t=1717536534; cv=none; b=PkCRF/uBIhvugqME3zqObI2fcoLEClH7Ei+YjkVZSc5BgmxhHkbYhhRmDILt5LM7cfNLIw85uLae5GgdTayJ9ptOWScfcH0I/TId2Mi2dpaJo17QJDE8diKyHAgS8k+HkaCaLkLppsi03ygXtEdidiWs6FRBxDblw7rxZN/7K5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717536534; c=relaxed/simple;
-	bh=Ldbg+sdfEohAnkSLIhjaFK1vi72Igfk+qnGb+F/ERbE=;
+	bh=gzuMoHpSvUC71Fv0Tg5dkH6tkrJ5zCwfPg5xYrrAB6I=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ht1z+TOufFEJhy46OKbWVpS0jk/hc4JmjCis7S/1wHVYAeUlfkRmSKNFq/bWILUy468Cg2oPp4AkTLtCvvcPMRlfXI60YuuidlwkDeQF80z4M1dztB7Ah03qdRQVX+X8dfQd6m4TGOOcpRJXy2/7NPHPTykFhb9VxvSssNv8fzM=
+	 Content-Type; b=ngj+DHmo8/xEWj9YJBg/0elb+SXl+5e3z2Id0zitkUtWWV2BZnkvXXSbYUIJl77GLyrczJnFMELxdFymqZIev/Qs4IPL0DMH8qRFlq62fNhhjMAw0pvjsNWGRtqlfCCzMFkJMKpvWjOhK+JaCcP2C1G8c/Zz+l7swCOa6hDrTc8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28DDC2BBFC;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02786C4AF07;
 	Tue,  4 Jun 2024 21:28:53 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sEbiA-00000000bDL-2xE8;
+	id 1sEbiA-00000000bDo-3cdN;
 	Tue, 04 Jun 2024 17:28:54 -0400
-Message-ID: <20240604212854.564747474@goodmis.org>
+Message-ID: <20240604212854.725383717@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 04 Jun 2024 17:28:18 -0400
+Date: Tue, 04 Jun 2024 17:28:19 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -42,7 +42,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 1/5] ftrace: Rename dup_hash() and comment it
+Subject: [PATCH 2/5] ftrace: Comment __ftrace_hash_rec_update() and make filter_hash bool
 References: <20240604212817.384103202@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,42 +54,45 @@ Content-Type: text/plain; charset=UTF-8
 
 From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-The name "dup_hash()" is a misnomer as it does not duplicate the hash that
-is passed in, but instead moves its entities from that hash to a newly
-allocated one. Rename it to "__move_hash()" (using starting underscores as
-it is an internal function), and add some comments about what it does.
+The function __ftrace_hash_rec_update() parameter "filter_hash" is only
+used for true or false (boolean), but is of type int. It already has an
+"inc" parameter that is boolean. This is confusing, make "filter_hash"
+boolean as well.
+
+While at it, add some documentation to that function especially since it
+holds the guts of the filtering logic of ftrace.
 
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ kernel/trace/ftrace.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index da7e6abf48b4..9dcdefe9d1aa 100644
+index 9dcdefe9d1aa..93c7c5fd4249 100644
 --- a/kernel/trace/ftrace.c
 +++ b/kernel/trace/ftrace.c
-@@ -1391,7 +1391,11 @@ ftrace_hash_rec_enable_modify(struct ftrace_ops *ops, int filter_hash);
- static int ftrace_hash_ipmodify_update(struct ftrace_ops *ops,
- 				       struct ftrace_hash *new_hash);
- 
--static struct ftrace_hash *dup_hash(struct ftrace_hash *src, int size)
-+/*
-+ * Allocate a new hash and remove entries from @src and move them to the new hash.
-+ * On success, the @src hash will be empty and should be freed.
-+ */
-+static struct ftrace_hash *__move_hash(struct ftrace_hash *src, int size)
- {
- 	struct ftrace_func_entry *entry;
- 	struct ftrace_hash *new_hash;
-@@ -1438,7 +1442,7 @@ __ftrace_hash_move(struct ftrace_hash *src)
- 	if (ftrace_hash_empty(src))
- 		return EMPTY_HASH;
- 
--	return dup_hash(src, size);
-+	return __move_hash(src, size);
+@@ -1701,8 +1701,20 @@ static bool skip_record(struct dyn_ftrace *rec)
+ 		!(rec->flags & FTRACE_FL_ENABLED);
  }
  
- static int
++/*
++ * This is the main engine to the ftrace updates.
++ *
++ * It will iterate through all the available ftrace functions
++ * (the ones that ftrace can have callbacks to) and set the flags
++ * to the associated dyn_ftrace records.
++ *
++ * @filter_hash: True if for the filter hash is udpated, false for the
++ *               notrace hash
++ * @inc: True to add this hash, false to remove it (increment the
++ *       recorder counters or decrement them).
++ */
+ static bool __ftrace_hash_rec_update(struct ftrace_ops *ops,
+-				     int filter_hash,
++				     bool filter_hash,
+ 				     bool inc)
+ {
+ 	struct ftrace_hash *hash;
 -- 
 2.43.0
 
