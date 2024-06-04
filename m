@@ -1,112 +1,165 @@
-Return-Path: <linux-kernel+bounces-200470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55458FB07C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1373A8FB082
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801F21F22CC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A461F21D7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725B3145338;
-	Tue,  4 Jun 2024 10:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5673914532F;
+	Tue,  4 Jun 2024 10:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5Xmet7c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YDGB/fk1"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A064E13C67C;
-	Tue,  4 Jun 2024 10:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193D038B;
+	Tue,  4 Jun 2024 10:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717498380; cv=none; b=JYWyli+zd2wH6ROhLugaR5fKdUg469NgdvYz4W7cn34LeMcdCtr327hHRsP9MwKNxdTD2pcr/pNLmKLqH6MNAXm/zNr2s3L32LGBoNmd1LESQlnsQyhNMxD1zAU6LrwY/bzU7W7qm3FHixALgnqKvOBvlpMN+xNqDXdeMc8iSAc=
+	t=1717498409; cv=none; b=EA9p+qmvgB8sH2rMOMY4Oo6kQp8oqQUV/HBFB2BVEKci2Z2aq5MsrYljFTYRbDNicMaIMLK29O+jOeokmJ/sg0G0SNKK78Cb4xXOrrhfDq/kJyQ4DGF3HZwHjN1x3C5tmk7RfhfwiSFWbO+zla9aEYUco/21AgvSH4bAmoA+JlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717498380; c=relaxed/simple;
-	bh=CIT+PLRRVeQCc2z7Vg7ycTCgsifejpCEeedaNo9Y7s0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VDNgFFEbINf9Z9wuWenuGJmiqu2kI0lROaI0ftsekEHbfSv6eDaal2JY8PE4ulXZxrZ87Sb0clXM+ZQhIPAFXoKfkvNzjBobGJWEsJ156OZVme7mMzKN1Jv84AWJDEX8J6e9owzSb32nhBFCEq8SYD+0/n3ZltVdG+bxze3tGQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5Xmet7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17212C2BBFC;
-	Tue,  4 Jun 2024 10:53:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717498380;
-	bh=CIT+PLRRVeQCc2z7Vg7ycTCgsifejpCEeedaNo9Y7s0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S5Xmet7couJFpLtaS/ov6U1F0VLxO4CKzvTvoWut/0vHH5PURzAXdg8upaH/1YpAu
-	 jjkLEw5yqSiL+JmnU/n0SIjshrR2GiZjlSCazWpM4vh7qhCrqfR+RzrH2bY4vGJTRb
-	 EU3G+zlN+DnOgGSqsrJ3ChOLrSB9cEIl6CKfhVY28u/cflYdT7UoCG23l+NdgutNt9
-	 6+DI5daCEbmYIIx5FqHI4eTXj2kJaqMhHyOYXkleb4aEYBmGCFj+T/GTM3TWLq6SLV
-	 oY5iMigYIs4DlbBiQV6OsYZOA+pLfqyJIdZX6kHvQR6FWHWhrUFWTHTy4Ii2WfOfpJ
-	 m4+YNJDMSwM5w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sERml-000000002vu-0RVB;
-	Tue, 04 Jun 2024 12:52:59 +0200
-Date: Tue, 4 Jun 2024 12:52:59 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: usb: qcom,dwc3: set minItems for
- interrupt-names
-Message-ID: <Zl7yCy5G2q0SGlwr@hovoldconsulting.com>
-References: <20240527144538.155704-1-brgl@bgdev.pl>
- <CAMRc=McurmN4Hs2MVGCjF0z_FX+84v0psGuTse0K7caSVF445A@mail.gmail.com>
+	s=arc-20240116; t=1717498409; c=relaxed/simple;
+	bh=EiWf4wFiIjCYYK9oYBVIGKDKC6ckMcj4EWCpgi0/ChE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kz4G2Op4+JVB1EFzBfLBUzi2qzV3h0kVD/ym7wBYQFI4u6/RpmCaq6lGBV3LIBaqMwAlnFN+5d9Wrm74D1kz67ZeqjjUpZE68VKw5Cpv70xS9JbCgN02Nl4p9AH5vSLsvobiLzCeo7Cm6BEcYtuAWuNXV83PJuIMpaPRCk678JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YDGB/fk1; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454ArDoY085968;
+	Tue, 4 Jun 2024 05:53:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717498393;
+	bh=VH0U6ipfvCppDUeQDKUpcWDfD7uSeboDDJhYoTRy+XI=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=YDGB/fk1NJ0OqOSrWzHMLPMq+tqbJ77ElChnMjpPyfdQ7VDU3j49WIWkVAdMa5ZBh
+	 O+zNwUCKbyRG355xqBd7ATm+RfmI5lqNsVOJ4hCx4sohBDUO9u+GPhTHRIPfMQ13Gv
+	 vK7Z3IAud3EEilUX62juQvfST7ipM5MTGD1Qt0P8=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454ArD2g061520
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 05:53:13 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 05:53:13 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 05:53:12 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454ArCR2122146;
+	Tue, 4 Jun 2024 05:53:12 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <devarsht@ti.com>, <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <andriy.shevchenko@linux.intel.com>, <adobriyan@gmail.com>,
+        <jani.nikula@intel.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>,
+        <davidgow@google.com>, <dlatypov@google.com>
+Subject: [PATCH v12 11/13] lib: math_kunit: Add tests for new macros related to rounding to nearest value
+Date: Tue, 4 Jun 2024 16:23:11 +0530
+Message-ID: <20240604105311.2256898-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240604104001.2235082-1-devarsht@ti.com>
+References: <20240604104001.2235082-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McurmN4Hs2MVGCjF0z_FX+84v0psGuTse0K7caSVF445A@mail.gmail.com>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jun 04, 2024 at 08:52:52AM +0200, Bartosz Golaszewski wrote:
-> On Mon, May 27, 2024 at 4:45 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > There's a set of compatibles for which we set a strict list of 5 interrupt
-> > names even though minItems for the interrupts property is 4. One of the
-> > USB controllers on sa8775p only consumes 4 interrupts which leads to
-> > dtbs_check errors. Make the last entry optional by setting minItems to 4.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> > index cf633d488c3f..4251dc25ee9a 100644
-> > --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> > +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> > @@ -468,6 +468,7 @@ allOf:
-> >            minItems: 4
-> >            maxItems: 5
-> >          interrupt-names:
-> > +          minItems: 4
-> >            items:
-> >              - const: pwr_event
-> >              - const: hs_phy_irq
-> > --
-> > 2.43.0
-> >
-> 
-> Gentle ping.
+Add tests for round_closest_up/down and roundclosest macros which round
+to nearest multiple of specified argument. These are tested with kunit
+tool as shared here [1] :
 
-As was pointed out elsewhere in this thread, there are two more
-issues like introduced by the same patch which should be fixed at the
-same time.
+Link: https://gist.github.com/devarsht/3f9042825be3da4e133b8f4eda067876 [1]
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+V1->V12 (No change, patch introduced in V8)
+---
+ lib/math/math_kunit.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Johan
+diff --git a/lib/math/math_kunit.c b/lib/math/math_kunit.c
+index be27f2afb8e4..05022f010be6 100644
+--- a/lib/math/math_kunit.c
++++ b/lib/math/math_kunit.c
+@@ -70,6 +70,26 @@ static void round_down_test(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, round_down((1 << 30) - 1, 1 << 29), 1 << 29);
+ }
+ 
++static void round_closest_up_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, round_closest_up(17, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_up(15, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_up(14, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) - 1, 1 << 30), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) + 1, 1 << 30), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_closest_up((1 << 30) - 1, 2), 1 << 30);
++}
++
++static void round_closest_down_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, round_closest_down(17, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_down(15, 4), 16);
++	KUNIT_EXPECT_EQ(test, round_closest_down(14, 4), 12);
++	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) - 1, 1 << 30), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) + 1, 1 << 30), 1 << 30);
++	KUNIT_EXPECT_EQ(test, round_closest_down((1 << 30) - 1, 2), (1 << 30) - 2);
++}
++
+ /* These versions can round to numbers that aren't a power of two */
+ static void roundup_test(struct kunit *test)
+ {
+@@ -95,6 +115,18 @@ static void rounddown_test(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, rounddown(4, 3), 3);
+ }
+ 
++static void roundclosest_test(struct kunit *test)
++{
++	KUNIT_EXPECT_EQ(test, roundclosest(21, 5), 20);
++	KUNIT_EXPECT_EQ(test, roundclosest(19, 5), 20);
++	KUNIT_EXPECT_EQ(test, roundclosest(17, 5), 15);
++	KUNIT_EXPECT_EQ(test, roundclosest((1 << 30), 3), (1 << 30) - 1);
++	KUNIT_EXPECT_EQ(test, roundclosest((1 << 30) - 1, 1 << 29), 1 << 30);
++
++	KUNIT_EXPECT_EQ(test, roundclosest(4, 3), 3);
++	KUNIT_EXPECT_EQ(test, roundclosest(5, 3), 6);
++}
++
+ static void div_round_up_test(struct kunit *test)
+ {
+ 	KUNIT_EXPECT_EQ(test, DIV_ROUND_UP(0, 1), 0);
+@@ -272,8 +304,11 @@ static struct kunit_case math_test_cases[] = {
+ 	KUNIT_CASE(int_sqrt_test),
+ 	KUNIT_CASE(round_up_test),
+ 	KUNIT_CASE(round_down_test),
++	KUNIT_CASE(round_closest_up_test),
++	KUNIT_CASE(round_closest_down_test),
+ 	KUNIT_CASE(roundup_test),
+ 	KUNIT_CASE(rounddown_test),
++	KUNIT_CASE(roundclosest_test),
+ 	KUNIT_CASE(div_round_up_test),
+ 	KUNIT_CASE(div_round_closest_test),
+ 	KUNIT_CASE_PARAM(gcd_test, gcd_gen_params),
+-- 
+2.39.1
+
 
