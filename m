@@ -1,100 +1,100 @@
-Return-Path: <linux-kernel+bounces-200477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223D98FB09D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C9E8FB0A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9F5D1F23A69
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104C91F24326
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C65145341;
-	Tue,  4 Jun 2024 10:55:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA8B1420D7;
-	Tue,  4 Jun 2024 10:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE3D145332;
+	Tue,  4 Jun 2024 10:57:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B67D38B;
+	Tue,  4 Jun 2024 10:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717498534; cv=none; b=fT4aM0ggkRxZ5nu8ejG59VmV9LhuE3/1ntkc+XE5UlYU2KNa64/PbuIFKHGAhLF0gn96cug3xHzE7YLJ54G9VgiVyFJ6Kg/jSkdXnViOb9qZpARuLl6dY2Jyi1D5Rzx4a7WvtGPZA8M85/q3REZwkCLW/4m5/YlmLCHF6CuLT8E=
+	t=1717498653; cv=none; b=JtvbER1DByY38H9VxeHEtkHi25T7fBbKv+nmCQ2jAOFnm7TwOMP7RjEsF+/P0+/iocFE4+rqAPl3CIQJlfivCEKkggETl2o+mEwZTKbHSU8FSZwANV0c6IIVRhg/0d37M3oo9fnnfuSY/a3jvNlJkgVWsqfQf5RSNasG0l1RxdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717498534; c=relaxed/simple;
-	bh=IrjdiA7OaHvk1+r0fXbwOcNDCdU3k5R6FBB2dr831vo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=W4N2g/pRaLh6YkQw1cZLZzLH1kT3KvrdD/5ZuEeN2hC9nJyjwJm+4FMQQuxY6QJTBvXqhjPmOblaJvwY+tEARfRNbdPhgEOUBh2/Zys9r5+3S2g7yupC0QlUHhj5139IArGSZavKNfBplKqmPgOankbcM2XXwuqwRD/ymQuvxPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66FBC1042;
-	Tue,  4 Jun 2024 03:55:55 -0700 (PDT)
-Received: from [10.1.38.30] (e127648.arm.com [10.1.38.30])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FFE73F762;
-	Tue,  4 Jun 2024 03:55:30 -0700 (PDT)
-Message-ID: <7d999005-4441-4b8a-b159-3d0ebc2ed9d9@arm.com>
-Date: Tue, 4 Jun 2024 11:55:29 +0100
+	s=arc-20240116; t=1717498653; c=relaxed/simple;
+	bh=pDzZuelRd9zkUjP+3rv7hlwEiVL1Kt7S4rapZBl5Ko0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C0nBRLr8I/Ulzman+lXZoQplMz6K909UCxWGkCmhGt6yoT5YQQDrHFdtS/ynnH8DZShy1c3RZ8QsWciVEggVuu5Wlbejuw12IIklp99LsrN29k2lr0c4IGz+BYNnsnAM3S12GUFrv5SvljltHgMxTucl6R3oUDnbO0QtfmL1WjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17DD4C2BBFC;
+	Tue,  4 Jun 2024 10:57:27 +0000 (UTC)
+Date: Tue, 4 Jun 2024 06:57:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook
+ <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>, "Guilherme G.
+ Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org, Guenter
+ Roeck <linux@roeck-us.net>, Ross Zwisler <zwisler@google.com>,
+ wklin@google.com, Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Joel
+ Fernandes <joel@joelfernandes.org>, Suleiman Souhlal <suleiman@google.com>,
+ Linus Torvalds <torvalds@linuxfoundation.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Mike Rapoport
+ <rppt@kernel.org>, ardb@kernel.org
+Subject: Re: [PATCH 1/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <20240604065727.4deefc04@gandalf.local.home>
+In-Reply-To: <5DAB46F6-F415-4C2B-AA6A-E0049CF6270C@kernel.org>
+References: <20240603233330.801075898@goodmis.org>
+	<20240603233631.452433539@goodmis.org>
+	<5DAB46F6-F415-4C2B-AA6A-E0049CF6270C@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH] cpuidle: menu: Cleanup after loadavg removal
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The performance impact of loadavg was removed with commit a7fe5190c03f
-("cpuidle: menu: Remove get_loadavg() from the performance multiplier")
-With only iowait remaining the description can be simplified, remove
-also the no longer needed includes.
+On Mon, 03 Jun 2024 22:52:37 -0700
+Kees Cook <kees@kernel.org> wrote:
 
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- drivers/cpuidle/governors/menu.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+> On June 3, 2024 4:33:31 PM PDT, Steven Rostedt <rostedt@goodmis.org> wrot=
+e:
+> >From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> >
+> >In order to allow for requesting a memory region that can be used for
+> >things like pstore on multiple machines where the memory layout is not t=
+he
+> >same, add a new option to the kernel command line called "reserve_mem".
+> >
+> >The format is:  reserve_mem=3Dnn:align:name
+> >
+> >Where it will find nn amount of memory at the given alignment of align.
+> >The name field is to allow another subsystem to retrieve where the memory
+> >was found. For example:
+> >
+> >  reserve_mem=3D12M:4096:oops ramoops.mem_name=3Doops =20
+>=20
+> How does this interact with KASLR? It has chosen its physical location
+> before this parsing happens, so I'd expect this to fail once in a while,
+> unless the size/alignment is lucky enough that KASLR never uses that
+> portion of the physical memory...
+>=20
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index b96e3da0fedd..783b5d1dacdc 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -14,8 +14,6 @@
- #include <linux/ktime.h>
- #include <linux/hrtimer.h>
- #include <linux/tick.h>
--#include <linux/sched.h>
--#include <linux/sched/loadavg.h>
- #include <linux/sched/stat.h>
- #include <linux/math64.h>
- 
-@@ -95,16 +93,11 @@
-  * state, and thus the less likely a busy CPU will hit such a deep
-  * C state.
-  *
-- * Two factors are used in determing this multiplier:
-- * a value of 10 is added for each point of "per cpu load average" we have.
-- * a value of 5 points is added for each process that is waiting for
-- * IO on this CPU.
-- * (these values are experimentally determined)
-- *
-- * The load average factor gives a longer term (few seconds) input to the
-- * decision, while the iowait value gives a cpu local instantanious input.
-- * The iowait factor may look low, but realize that this is also already
-- * represented in the system load average.
-+ * Currently there is only one value determining the factor:
-+ * 10 points are added for each process that is waiting for IO on this CPU.
-+ * (This value was experimentally determined.)
-+ * Utilization is no longer a factor as it was shown that it never contributed
-+ * significantly to the performance multiplier in the first place.
-  *
-  */
- 
--- 
-2.34.1
+=46rom looking at the KASLR code, it looks to me that it picks from 100
+different locations. I could be wrong, but if you have sufficient memory,
+I'm thinking that it should not conflict. But if it does, yes, it will fail
+to pick the same location.
+
+-- Steve
 
