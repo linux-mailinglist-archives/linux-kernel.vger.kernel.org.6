@@ -1,184 +1,100 @@
-Return-Path: <linux-kernel+bounces-201348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52288FBD61
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD038FBD66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73D47B25EDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D3C1F22AB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97FC14B945;
-	Tue,  4 Jun 2024 20:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60AB14B977;
+	Tue,  4 Jun 2024 20:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="M+lO5r/E"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pn/4RFmP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A22140366;
-	Tue,  4 Jun 2024 20:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B5C140366;
+	Tue,  4 Jun 2024 20:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717533244; cv=none; b=k9Y0myVDuTPxrmZjauuAKgS8d+srmdTzc6lN7FP4ShpGkO2v0t9wDqiXnLP8YWOaifMB6vHCBhRxsm1tLb5jxim+JtLbt6+LhR9jnA+2HZJVCiy1Yu8rKBOKbMW/Ah0bS/ZX4QaRoON4AxKVdk8s88Y1NuSsFLatMui2xpqoS8A=
+	t=1717533286; cv=none; b=Fr54kxDJS457xC3gLLT9x+qdgG/e/2NpOFlh4T9gTPO1AhphYJpdPBFIe7rSMi8iVxDlCvcIPO+BFvx2/j9Z+fllUMfmWgyQBmkJIRgcMSEV8Mz9e4lhDFNvj/tViEOXIj6ZLilEI6lHYN/IRsSVgGdzwpWxO9t13chLx20FTZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717533244; c=relaxed/simple;
-	bh=DGRk2KL67t9VkY5knJeHJz8Kj6zzYl0wNDrodX+q0bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rVJ9UGjZlHY5nwjoTDCxs+eqTLIoqsu9Otn16s8Z+sQqfPWFG7Vp6b0Z0vNQ5/qCANWqucWU5+p0wmGspVr4Z4CYdFSGkOwwMgS6FySzn20bvcpgLwbEBuY6a9ZCu/VjpaYYzrZZMNOacdYlKHgfX/CqV5gcfGI1tAl0vZtQoqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=M+lO5r/E; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717533240;
-	bh=DGRk2KL67t9VkY5knJeHJz8Kj6zzYl0wNDrodX+q0bg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M+lO5r/EfrOkUovxHuy+9LLJ5CysdDrARL/KEkpsogK8HV7b4F3dW4qZBRoOR5DEq
-	 Pba31mMaRxAa/jPV9+4egk3wLjl1qRja1NK1WQNGq1UDEoFX/d3YheqpRTOaEPQyk2
-	 NlUvvG1q8TsiuX4dMPu1L9vQd+O8CT5rPQwqqmX5jmL0gorfE5LI/YE9jtC1p9wH80
-	 KxWItm9eC5FbPULoffmMIerqkjTetvrj1SjP9n0SXCoPNc7fF6BoaL3R77glpftNvs
-	 0Q9B8sMNPSfC/+dk5PemJC73abdr6X/n/Y2U4XssuKHgaSDn5/5TZg0ImFfA3BZ6vq
-	 WetVJydhHKV9g==
-Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 976803782137;
-	Tue,  4 Jun 2024 20:33:58 +0000 (UTC)
-Message-ID: <b8066150-c147-4eb6-9f7a-2bd0268c274e@collabora.com>
-Date: Tue, 4 Jun 2024 23:33:57 +0300
+	s=arc-20240116; t=1717533286; c=relaxed/simple;
+	bh=t/Iix1YlalREUNAkAGmD5+kSuxQb/H8mBr6yvJWWpR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XC73yviAF3EtQA2CdTav5eVpOGRWqm0IsDBiaDG6kTK3Dssl3Tk57Bn0we+k5i2rFioLdpV3+88+KLOdDI7IIteiSkcSmMg+h/bHnkriwHQIxglvhZnTfLsPGEyyL7ElxcfeNxXwS4qinVfZVmB4/dwm11wfo3QhGTOQg385nf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pn/4RFmP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31584C2BBFC;
+	Tue,  4 Jun 2024 20:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717533285;
+	bh=t/Iix1YlalREUNAkAGmD5+kSuxQb/H8mBr6yvJWWpR0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pn/4RFmPccqCJvRAhqGwP335K8sqkPOSbgNHIkAscVcSqapzXr/+9/C2TmTrnwF6l
+	 s5xte9A5mmM538UehYItRNWYQY2dYXae+5kS8YKttEdoODQ64LB++I40LY6zGIl/qh
+	 wilToRV0sivHlHmOBsWbuMhyrLAq+CV9OrK266Ic/4g/mwaFryGczaXT2U5XTRmzQB
+	 UdUy+t+R3859d38snmZpUquYQoK0mlPN5n1LmpUUNfx24Wi5kXaHwwCmymrijbIAF9
+	 wDGIal7QzCkh8oFoBf8fLy0l9JoixtChSTF/XLrbHexbXu6axIcaLE6EmMqw57wAdv
+	 jhPu5On0P7G5w==
+From: Bjorn Andersson <andersson@kernel.org>
+To: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Luca Weiss <luca@z3ntu.xyz>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/7] Use mboxes instead of syscon for APCS (arm32 & arm64)
+Date: Tue,  4 Jun 2024 15:34:42 -0500
+Message-ID: <171753327818.708182.102935741283235992.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
+References: <20240424-apcs-mboxes-v1-0-6556c47cb501@z3ntu.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] Add initial support for the Rockchip RK3588 HDMI TX
- Controller
-To: neil.armstrong@linaro.org, Heiko Stuebner <heiko@sntech.de>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Andy Yan <andy.yan@rock-chips.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <a4b22708-e85d-448a-8145-244b49bca053@linaro.org>
- <ab0a6372-091b-4293-8907-a4b3ff4845c0@rock-chips.com>
- <11359776.NyiUUSuA9g@phil> <ef60403f-078f-411a-867b-9b551e863f56@linaro.org>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <ef60403f-078f-411a-867b-9b551e863f56@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 6/3/24 4:08 PM, neil.armstrong@linaro.org wrote:
-> Hi,
+
+On Wed, 24 Apr 2024 18:23:53 +0200, Luca Weiss wrote:
+> The first patch is for removing a bogus error warning I've noticed while
+> developing this on msm8226 - there the patches are also coming later for
+> this SoC since apcs is getting hooked up to cpufreq there also.
 > 
-> On 03/06/2024 15:03, Heiko Stuebner wrote:
->> Am Montag, 3. Juni 2024, 14:14:17 CEST schrieb Andy Yan:
->>> Hi Neil:
->>>
->>> On 6/3/24 16:55, Neil Armstrong wrote:
->>>> Hi Christian,
->>>>
->>>> On 01/06/2024 15:12, Cristian Ciocaltea wrote:
->>>>> The RK3588 SoC family integrates a Quad-Pixel (QP) variant of the
->>>>> Synopsys DesignWare HDMI TX controller used in the previous SoCs.
->>>>>
->>>>> It is HDMI 2.1 compliant and supports the following features, among
->>>>> others:
->>>>>
->>>> .
->>>>
->>>> ..
->>>>
->>>>> * SCDC I2C DDC access
->>>>> * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
->>>>> * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
->>>>> * Multi-stream audio
->>>>> * Enhanced Audio Return Channel (EARC)
->>>> -> Those features were already supported by the HDMI 2.0a compliant
->>>> HW, just
->>>> list the _new_ features for HDMI 2.1
->>>>
->>>> I did a quick review of your patchset and I don't understand why you
->>>> need
->>>> to add a separate dw-hdmi-qp.c since you only need simple variants
->>>> of the I2C
->>>> bus, infoframe and bridge setup.
->>>>
->>>> Can you elaborate further ? isn't this Quad-Pixel (QP) TX controller
->>>> version
->>>> detectable at runtime ?
->>>>
->>>> I would prefer to keep a single dw-hdmi driver if possible.
->>>
->>>
->>>
->>> The QP HDMI controller is a completely different variant with totally
->>> different
->>> registers layout, see PATCH 13/14.
->>> I think make it a separate driver will be easier for development and
->>> maintenance.
->>
->> I'm with Andy here. Trying to navigate a driver for two IP blocks really
->> sounds taxing especially when both are so different.
-
-Thank you all for the valuable feedback!
-
-> I agree, I just wanted more details than "variant of the
-> Synopsys DesignWare HDMI TX controller", if the register mapping is 100%
-> different, and does not match at all with the old IP, then it's indeed time
-> to make a brand new driver, but instead of doing a mix up, it's time to
-> extract
-> the dw-hdmi code that could be common helpers into a dw-hdmi-common module
-> and use them.
-
-Sounds good, will handle this in v2.
-
-> As I see, no "driver" code can be shared, only DRM plumbings, so perhaps
-> those
-> plumbing code should go into the DRM core ?
+> Apart from usages from the qcom,smsm driver (patches coming!) all other
+> usages of the apcs mailbox now go via the mailbox driver - where one is
+> used, so some arm32 boards will continue using "qcom,ipc*" properties in
+> the short or long term.
 > 
-> In any case, please add more details on the cover letter, including the
-> detailed
-> HW differrence and the design you chose so support this new IP.
+> [...]
 
-Andy, could you please help with a summary of the HW changes?
-The information I could provide is rather limited, since I don't have
-access to any DW IP datasheets and I'm also not familiar enough with the
-old variant.
+Applied, thanks!
 
-> Neil
-> 
->>
->> Synopsis also created a new dsi controller for the DSI2 standard, with
->> a vastly different registers layout.
->>
->> I guess at some point there is time to say this really is a new IP ;-) .
->>
->>
->> Though while on that thought, I don't fully understand why both a
->> compiled
->> under the dw_hdmi kconfig symbol. People going for a minimal kernel might
->> want one or the other, but not both for their specific board.
+[3/7] arm64: dts: qcom: msm8916: Use mboxes properties for APCS
+      commit: 3e971470619d80dd343e3abd80cb997bcb48f200
+[4/7] arm64: dts: qcom: msm8939: Use mboxes properties for APCS
+      commit: 22e4e43484c4dd1f29a72cc62411072758e0681a
+[5/7] arm64: dts: qcom: msm8953: Use mboxes properties for APCS
+      commit: 11dff973ebe21950c7c5221919141fb0cb16354e
+[6/7] arm64: dts: qcom: msm8976: Use mboxes properties for APCS
+      commit: a3d5570d8c8c6efc3d15d015b517f4e8bd11898f
+[7/7] arm64: dts: qcom: msm8994: Use mboxes properties for APCS
+      commit: ba5d9a91f8c3caf6867b3b87dce080d056222561
 
-Indeed, it makes sense to have a dedicated Kconfig option. This is
-mostly a leftover from downstream implementation, will fix in v2.
-
-Thanks again,
-Cristian
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
