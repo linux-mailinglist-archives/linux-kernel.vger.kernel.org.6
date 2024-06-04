@@ -1,135 +1,291 @@
-Return-Path: <linux-kernel+bounces-201252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F8C8FBBD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:49:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E068FBBD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4259286AFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:49:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595391F24E1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68BC14A60E;
-	Tue,  4 Jun 2024 18:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C61F14A0BC;
+	Tue,  4 Jun 2024 18:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYDl6NND"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y4xYIfv4"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8046614A4FC;
-	Tue,  4 Jun 2024 18:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B7913D88D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 18:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717526923; cv=none; b=t4WiKuPB14HkF20Mfasdzoq2uoC122fMLvAKisq3N9BcW8ONpzMeFA5EDF45soaMntWyX+IU6YlLc5uipmEjbLR5EhxqcHq1iLIb0dxMh9fQmvxArObUrJPN/YnaH9xJyvAqbdtASnE5kNF2kt8DD+CayNSs+m5RS3JW69qJayU=
+	t=1717526903; cv=none; b=iVxBHCB1n4fiOUw/1oXXyMmskLGcK/L5NMQDGFks2ZnYLA5bSlC9uDNGZfkoLDzpjqPNgX9qE7iCFODzy/r2dVLImlxIT9cYi75lw341FbjL+7djX4Zh6EwbrRIU7QY40a4nEdoOl7fs9Doxnv26RRBF2k8+8a8E/vu0ITDgCSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717526923; c=relaxed/simple;
-	bh=rb1t3bO33sJM24NYQ16VoUzU0MNaG6KSdzSrX+GNr8E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dnWI+rllQFkh9YNqstmq4l+5fG9VnXXFc1NQcSfNbmfEhwrp67kKod9Yy7XqmXH+sWD0GEwzMan4erRxYXC9dok490Qgv8f7D1EKtanYao+w+a+bMHGIgoYExYuNAtWzZNkM7Dh1vhTVYIW7O9oOt2F2Bf1ZPWVxQImszUjaSLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYDl6NND; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52b8b638437so1609282e87.3;
-        Tue, 04 Jun 2024 11:48:41 -0700 (PDT)
+	s=arc-20240116; t=1717526903; c=relaxed/simple;
+	bh=jX8UMTejDZxOWy2xvRQrFYx9FLkD8PRvvmu286qo3B8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qAcmG5NKiKYjDDwrFyHqIAWmuXr/DX6UUOlqetkA7v+YZPUxkbHmbbGfK1QecPxbnzM1Xor0bCezk6tfDDX10wBYbsgvtcUTRPUgm/1Ices1J+MrvzFDSx0z3itNKWPTBZpfSEU6rnYIYkaVfVmNFLH24Ch2xE/ZuVSHAKolpjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y4xYIfv4; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f6a270d1b8so34535ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 11:48:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717526920; x=1718131720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YhU1SbvM7znKVct1eWXWAILOVj0SRCPHV7V811HpayA=;
-        b=lYDl6NNDQ0JGEhY5hGpra3rdHpSjFgdvs1SGgwcXvvzWv7Nym44bpSOfQqg1LNP3up
-         irunm1w+LESoQdfZGrK+eKSSc7aqE8Lae34FD6o9kYyjTiH+zKcwSQwwPCs83toA/5kO
-         PeCdiG1uLc5CoLLnyoNAAOwr7ZNUgeWSdrhRF1CKwEQroFHtDm6kYUotlr9Z2HVFLL1M
-         /vlLibC63aoPliCQD5dFKn7+JnHNjTkh1ipib1HX9k3OzG02gpw+YGa3FTd6Fd/X2oL1
-         Vpj2HiALiH9e1DZsgDSzqvlJqeHnD+aYoUDfgEZ/+vD0wnxVYxXbI+EOwrgKmbEslIcW
-         Lh8w==
+        d=google.com; s=20230601; t=1717526901; x=1718131701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GW87wwCX8r5pSoAmwipgb8TBgyr5V1aGTvd+vaaORGA=;
+        b=y4xYIfv4vyvXS0ob6OglaQSyePcU6H4yj4gWdc68Cp3w9wEdasebeKwlixtX0rx7k6
+         LXMlRKc7jLoD5UgDZKDfu6TnL66Hbw+G8YsKhjrBRSFqM0ert5U+mafG3WvA0K/ukRY9
+         P15rOIc1nHDcfPy3Re3wuuZO1m+/tzeoR+2r605wniQhC88tvHi0rW4z13YxL7MLLfZc
+         AvyTM+muDGbR771u6w0Pj1uJu1bislbI7tIaA5yOYc7KB5BhKFaIb60apMhaymZfL/I4
+         n42hBtOUHuDOM8USDn03EuoT31YiM71+eIViry1zJICdxTWqE3uB6aPQ+mVxhQ0YpVmP
+         sLOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717526920; x=1718131720;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YhU1SbvM7znKVct1eWXWAILOVj0SRCPHV7V811HpayA=;
-        b=Xzow538ohuy+ijx2wYFwh3R9KJ2g1m6wZjIlfVk7Q3cHalEo2JhmFj1de3jEWL0u2/
-         SYKHQaCyrFcWg9TqldIT6U/S0NeP384DqkpMZzr9B+//rKW88Xs1nVNqRfomNuxaRuvG
-         YvMVUT3EOnup2KL9y2ypJj4FVfclRt5NQy+J9BGTnPlbtTc+hYibHfVJAC37VTo9UgAw
-         aYePhFYvJCQKx001fNtNWr2/dS1ujShGXOCPU1BTzGg+4/CxTo+r+LYsA6qyHuyBib59
-         Lw9u9OW3g+D3v1zZwv0Rj9fFlD3e0D3jtKw7XrlJR1zrgLdFRjPNY/WHxX6G0L8jV64i
-         /E2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWn/6kqxUGQX4cH+XAs/geXQp9UlhH9DQFdhtYvE4TJMpZWPQgj7HRWHsquP78XLA4bGwkpxMQcjpfBjATCAKsrszOLUniz1AsXTSFsH49zAfJQwyTTETJ3u6Haa8pjpYpjFWwbRdse9qM=
-X-Gm-Message-State: AOJu0YzVGgHgi+03gOS6KcdYWphaIVlq56wB0pSKY/cq71fFhXEisLxl
-	E8Bha4N9qZZTAODXSyYE1lAj8iUjuu1rx9F6oGhUfqfdXUuZrJ6R
-X-Google-Smtp-Source: AGHT+IFEJ8hqG5xCrTQKvzSoryOtPIc1PkC8aaNWtW7orx0ghMl5wbgtdEJ/5xVPTPWB8vdw9HCNQw==
-X-Received: by 2002:ac2:4e89:0:b0:52a:fbcc:b358 with SMTP id 2adb3069b0e04-52bab4cbd6amr226548e87.13.1717526919443;
-        Tue, 04 Jun 2024 11:48:39 -0700 (PDT)
-Received: from U19.ag.local (static.187.76.181.135.clients.your-server.de. [135.181.76.187])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b9ea5271fsm452903e87.252.2024.06.04.11.48.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 11:48:38 -0700 (PDT)
-From: Alibek Omarov <a1ba.omarov@gmail.com>
-To: luca.ceresoli@bootlin.com,
-	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Alibek Omarov <a1ba.omarov@gmail.com>,
-	linux-rockchip@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: rockchip: i2s-tdm: Fix trcm mode by setting clock on right mclk
-Date: Tue,  4 Jun 2024 21:47:52 +0300
-Message-Id: <20240604184752.697313-1-a1ba.omarov@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1717526901; x=1718131701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GW87wwCX8r5pSoAmwipgb8TBgyr5V1aGTvd+vaaORGA=;
+        b=DN62wQeeV36+pkcpxVKTLqeg8obnWqTkucvtGtFjQvtNeZ8B1Xy9iiTAWIw92H5nwU
+         qrHRUjCjPtA4OFyh06tAYJLgm3+oWEQu89oOA34NtUFyr2hJUBJbpGT73zs9+IYYglB7
+         MlP5fSWCemknfIprDkOL3A2JvOLIyGfIJTOUVUdKJgQC4ykFuwuqGORAaB4pyliy5ogg
+         wVGVU/cUaSfkA5Y5eGMq3gRMcyegemXoIw79B2KFX8yHrB3HKx+6Mp0YT3IIJiJkArwh
+         Vl91aHHw/Yd15t59lf8yaDKoQ0cQAG2GiC8vwRgdhQ/4n+2xgKIbwaNj+PQ5ByK1ZVi1
+         tFCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHPNv6xIwVyL93dUapopEBzy9YNjvrnFwA9RUKD2V38F+Kmv8Ud0KGI2F/FVdLegl8EnW6QVVIlU/5FCfPdH3sZFr8Ax7TPjZFPJdy
+X-Gm-Message-State: AOJu0Yzo4xk2jWARQj8RVjoqVSD4+7MmPOFTmxI2lh+/E8mnppvcD6jn
+	9BbCSbvubDrwN4crtZXU/+Rtx9EJfYb1z1G03lbp3PnNtD79iYwEz0KG/as8fuDhNBJgrW5pCTo
+	sajymay65tPJpS66ZQUQ7L63XXelws+BEqqG3
+X-Google-Smtp-Source: AGHT+IHUVUunvHlUcY83hu7GlpidYQUM4eo6IlyvzCk7xmtTg7hH7ekLcv/5Om/sMvyhqe1VhxNDnvG9iTXn6sBiS40=
+X-Received: by 2002:a17:902:da89:b0:1f3:aff:8318 with SMTP id
+ d9443c01a7336-1f6a66e4cbbmr289735ad.5.1717526900793; Tue, 04 Jun 2024
+ 11:48:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <23879991.0LEYPuXRzz@milian-workstation> <Zl8bhWfHSXxs35r2@x1> <Zl8g1LxRCYgTSxhy@x1>
+In-Reply-To: <Zl8g1LxRCYgTSxhy@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 4 Jun 2024 11:48:09 -0700
+Message-ID: <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
+Subject: Re: perf 6.9-1 (archlinux) crashes during recording of cycles + raw_syscalls
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Milian Wolff <milian.wolff@kdab.com>, linux-perf-users@vger.kernel.org, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kenel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When TRCM mode is enabled, I2S RX and TX clocks are synchronized through
-selected clock source. Without this fix BCLK and LRCK might get parented
-to an uninitialized MCLK and the DAI will receive data at wrong pace.
+On Tue, Jun 4, 2024 at 7:12=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Tue, Jun 04, 2024 at 10:50:00AM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Jun 04, 2024 at 01:44:18PM +0200, Milian Wolff wrote:
+> > > the following command crashes perf for me, is this still an issue ups=
+tream and
+> > > should I report it to arch for backporting? I cannot build the offici=
+al perf/
+> > > core branch, so I am afraid I cannot test it myself there:
+>
+> > > ```
+> > > sudo /usr/bin/perf record -z --call-graph dwarf -e cycles -e
+> > > raw_syscalls:sys_enter ls
+> > > ...
+> > > [ perf record: Woken up 3 times to write data ]
+> > > malloc(): invalid next size (unsorted)
+> > > Aborted
+> > > ```
+> > > Backtrace with GDB + debuginfod:
+> > > ```
+> > > malloc(): invalid next size (unsorted)
+>
+> > I reproduced this all the way back to 6.8, trying to bisect now, thanks
+> > for the report,
+>
+> Can you please try with the attached and perhaps provide your Tested-by?
+>
+> Thanks,
+>
+> - Arnaldo
+>
+> From ab355e2c6b4cf641a9fff7af38059cf69ac712d5 Mon Sep 17 00:00:00 2001
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date: Tue, 4 Jun 2024 11:00:22 -0300
+> Subject: [PATCH 1/1] Revert "perf record: Reduce memory for recording
+>  PERF_RECORD_LOST_SAMPLES event"
+>
+> This reverts commit 7d1405c71df21f6c394b8a885aa8a133f749fa22.
 
-However, unlike in original i2s-tdm driver, there is no need to manually
-synchronize mclk_rx and mclk_tx, as only one gets used anyway.
+I think we should try to fight back reverts when possible. Reverts are
+removing something somebody poured time and attention into. When a
+regression has occurred then I think we should add the regression case
+as a test.
 
-Tested on a board with RK3568 SoC and Silergy SY24145S codec with enabled and
-disabled TRCM mode.
+> This causes segfaults in some cases, as reported by Milian:
+>
+>   ```
+>   sudo /usr/bin/perf record -z --call-graph dwarf -e cycles -e
+>   raw_syscalls:sys_enter ls
+>   ...
+>   [ perf record: Woken up 3 times to write data ]
+>   malloc(): invalid next size (unsorted)
+>   Aborted
+>   ```
+>
+>   Backtrace with GDB + debuginfod:
+>
+>   ```
+>   malloc(): invalid next size (unsorted)
+>
+>   Thread 1 "perf" received signal SIGABRT, Aborted.
+>   __pthread_kill_implementation (threadid=3D<optimized out>, signo=3Dsign=
+o@entry=3D6,
+>   no_tid=3Dno_tid@entry=3D0) at pthread_kill.c:44
+>   Downloading source file /usr/src/debug/glibc/glibc/nptl/pthread_kill.c
+>   44            return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_=
+ERRNO
+>   (ret) : 0;
+>   (gdb) bt
+>   #0  __pthread_kill_implementation (threadid=3D<optimized out>,
+>   signo=3Dsigno@entry=3D6, no_tid=3Dno_tid@entry=3D0) at pthread_kill.c:4=
+4
+>   #1  0x00007ffff6ea8eb3 in __pthread_kill_internal (threadid=3D<optimize=
+d out>,
+>   signo=3D6) at pthread_kill.c:78
+>   #2  0x00007ffff6e50a30 in __GI_raise (sig=3Dsig@entry=3D6) at ../sysdep=
+s/posix/
+>   raise.c:26
+>   #3  0x00007ffff6e384c3 in __GI_abort () at abort.c:79
+>   #4  0x00007ffff6e39354 in __libc_message_impl (fmt=3Dfmt@entry=3D0x7fff=
+f6fc22ea
+>   "%s\n") at ../sysdeps/posix/libc_fatal.c:132
+>   #5  0x00007ffff6eb3085 in malloc_printerr (str=3Dstr@entry=3D0x7ffff6fc=
+5850
+>   "malloc(): invalid next size (unsorted)") at malloc.c:5772
+>   #6  0x00007ffff6eb657c in _int_malloc (av=3Dav@entry=3D0x7ffff6ff6ac0
+>   <main_arena>, bytes=3Dbytes@entry=3D368) at malloc.c:4081
+>   #7  0x00007ffff6eb877e in __libc_calloc (n=3D<optimized out>,
+>   elem_size=3D<optimized out>) at malloc.c:3754
+>   #8  0x000055555569bdb6 in perf_session.do_write_header ()
+>   #9  0x00005555555a373a in __cmd_record.constprop.0 ()
+>   #10 0x00005555555a6846 in cmd_record ()
+>   #11 0x000055555564db7f in run_builtin ()
+>   #12 0x000055555558ed77 in main ()
+>   ```
+>
+>   Valgrind memcheck:
+>   ```
+>   =3D=3D45136=3D=3D Invalid write of size 8
+>   =3D=3D45136=3D=3D    at 0x2B38A5: perf_event__synthesize_id_sample (in =
+/usr/bin/perf)
 
-Fixes: 9e2ab4b18ebd ("ASoC: rockchip: i2s-tdm: Fix inaccurate sampling rates")
-Signed-off-by: Alibek Omarov <a1ba.omarov@gmail.com>
----
- sound/soc/rockchip/rockchip_i2s_tdm.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+The write that is happening here is because an empty sample except for
+the id value is written out:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/synthetic-events.c?h=3Dperf-tools-next#n1805
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/builtin-record.c?h=3Dperf-tools-next#n1910
+It'd been missed that the sample wasn't quite empty and needed space.
 
-diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.c b/sound/soc/rockchip/rockchip_i2s_tdm.c
-index 9fa020ef7eab..ee517d7b5b7b 100644
---- a/sound/soc/rockchip/rockchip_i2s_tdm.c
-+++ b/sound/soc/rockchip/rockchip_i2s_tdm.c
-@@ -655,8 +655,17 @@ static int rockchip_i2s_tdm_hw_params(struct snd_pcm_substream *substream,
- 	int err;
- 
- 	if (i2s_tdm->is_master_mode) {
--		struct clk *mclk = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
--			i2s_tdm->mclk_tx : i2s_tdm->mclk_rx;
-+		struct clk *mclk;
-+
-+		if (i2s_tdm->clk_trcm == TRCM_TX) {
-+			mclk = i2s_tdm->mclk_tx;
-+		} else if (i2s_tdm->clk_trcm == TRCM_RX) {
-+			mclk = i2s_tdm->mclk_rx;
-+		} else if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-+			mclk = i2s_tdm->mclk_tx;
-+		} else {
-+			mclk = i2s_tdm->mclk_rx;
-+		}
- 
- 		err = clk_set_rate(mclk, DEFAULT_MCLK_FS * params_rate(params));
- 		if (err)
--- 
-2.34.1
+Rather than making the space 64kb again, can we not use
+perf_event__sample_event_size or some max constant?
 
+Thanks,
+Ian
+
+>   =3D=3D45136=3D=3D    by 0x157069: __cmd_record.constprop.0 (in /usr/bin=
+/perf)
+>   =3D=3D45136=3D=3D    by 0x15A845: cmd_record (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x201B7E: run_builtin (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x142D76: main (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D  Address 0x6a866a8 is 0 bytes after a block of size 4=
+0 alloc'd
+>   =3D=3D45136=3D=3D    at 0x4849BF3: calloc (vg_replace_malloc.c:1675)
+>   =3D=3D45136=3D=3D    by 0x3574AB: zalloc (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x1570E0: __cmd_record.constprop.0 (in /usr/bin=
+/perf)
+>   =3D=3D45136=3D=3D    by 0x15A845: cmd_record (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x201B7E: run_builtin (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x142D76: main (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D
+>   =3D=3D45136=3D=3D Syscall param write(buf) points to unaddressable byte=
+(s)
+>   =3D=3D45136=3D=3D    at 0x575953D: __libc_write (write.c:26)
+>   =3D=3D45136=3D=3D    by 0x575953D: write (write.c:24)
+>   =3D=3D45136=3D=3D    by 0x35761F: ion (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x357778: writen (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x1548F7: record__write (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x15708A: __cmd_record.constprop.0 (in /usr/bin=
+/perf)
+>   =3D=3D45136=3D=3D    by 0x15A845: cmd_record (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x201B7E: run_builtin (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x142D76: main (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D  Address 0x6a866a8 is 0 bytes after a block of size 4=
+0 alloc'd
+>   =3D=3D45136=3D=3D    at 0x4849BF3: calloc (vg_replace_malloc.c:1675)
+>   =3D=3D45136=3D=3D    by 0x3574AB: zalloc (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x1570E0: __cmd_record.constprop.0 (in /usr/bin=
+/perf)
+>   =3D=3D45136=3D=3D    by 0x15A845: cmd_record (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x201B7E: run_builtin (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D    by 0x142D76: main (in /usr/bin/perf)
+>   =3D=3D45136=3D=3D
+>  -----
+>
+> Closes: https://lore.kernel.org/linux-perf-users/23879991.0LEYPuXRzz@mili=
+an-workstation/
+> Reported-by: Milian Wolff <milian.wolff@kdab.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: stable@kernel.org # 6.8+
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/builtin-record.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 66a3de8ac66186b0..0a8ba1323d64be6b 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -1956,8 +1956,7 @@ static void record__read_lost_samples(struct record=
+ *rec)
+>
+>                                 if (count.lost) {
+>                                         if (!lost) {
+> -                                               lost =3D zalloc(sizeof(*l=
+ost) +
+> -                                                             session->ma=
+chines.host.id_hdr_size);
+> +                                               lost =3D zalloc(PERF_SAMP=
+LE_MAX_SIZE);
+>                                                 if (!lost) {
+>                                                         pr_debug("Memory =
+allocation failed\n");
+>                                                         return;
+> @@ -1973,8 +1972,7 @@ static void record__read_lost_samples(struct record=
+ *rec)
+>                 lost_count =3D perf_bpf_filter__lost_count(evsel);
+>                 if (lost_count) {
+>                         if (!lost) {
+> -                               lost =3D zalloc(sizeof(*lost) +
+> -                                             session->machines.host.id_h=
+dr_size);
+> +                               lost =3D zalloc(PERF_SAMPLE_MAX_SIZE);
+>                                 if (!lost) {
+>                                         pr_debug("Memory allocation faile=
+d\n");
+>                                         return;
+> --
+> 2.45.1
+>
 
