@@ -1,122 +1,145 @@
-Return-Path: <linux-kernel+bounces-200996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94028FB7E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6688FB7E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A131F283D38
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:49:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463DC2848FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A0A1474AB;
-	Tue,  4 Jun 2024 15:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7224148304;
+	Tue,  4 Jun 2024 15:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jl02ARun"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="I4u3nj8o"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7676A50A6D;
-	Tue,  4 Jun 2024 15:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEFD1805E;
+	Tue,  4 Jun 2024 15:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717515927; cv=none; b=Ku8/pKhgMxDwb6y5h7wLR2AMByvPyGfLpLkGjqYAyGlt8e9gckeq3Phvp8COpBBfyfTPAU0t8m+UWyhpUf44X1oW3rhDJ2h9maiMn/cx0Jbu2KaNC33wE//MlYAHSZfW4S0nKwHFo4g7xUBgF+Ke+1yM7HRPTnDKDHM/INyt/OU=
+	t=1717516019; cv=none; b=uLa2pDSYkdA8MEuhR80CS8/ok72bru/qp8bJeDPPnm8UxucbLZsUP1fGgLVAR2KV0x7/JdWJFRvC2p3R46MDaxYMdJzkxDzfWiR084OqFUYQAo5L+ZHSCHPu5AqXEEGLWBNRbjyaj77cRU0K3a+3lpEu95WqY8E6kmtwA4STy3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717515927; c=relaxed/simple;
-	bh=fxhufSj1kMUMH8lKvvr/CVA0StD+PGE7fnR3oK/5h8s=;
+	s=arc-20240116; t=1717516019; c=relaxed/simple;
+	bh=3y21GVy1PCs2rJDaNksZMoF4iSOznqb1GnfkOIT0JAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ivth4cfC7ruO8kYTnE3A4+ZYBrQ6rJqoTo3p6G+M1J8qMQUMgZJrQWu66sPgUjdIUrbUkmIxhd2ETG3O+N2lCXJvCdu7Xc3qfSS46/Id1wuK58KylQ6t8gyIL9RCEfRIkORFH6MdvYndsnVa/1a1hVMQbDOcuDL5IiXbPt2eojc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jl02ARun; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717515926; x=1749051926;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=fxhufSj1kMUMH8lKvvr/CVA0StD+PGE7fnR3oK/5h8s=;
-  b=jl02ARunw6bSXMeehE8arEYWrNRDjacWMaq6X15RXj24BNLV/5kXGHnX
-   SGKbHHQfP6z3GBL/1CgwgKotOzefEeyWBC2lMEgG3qr/6o/fjrg/OciLl
-   CqXYr75LKBQxkcbQPOlYMd7zhJRA3AoZkQoW5YGYVFDZ1aA1KFOcgGb3a
-   lVqQs0+nG0WKFxZp9zcPPf2KfM+Yojsp0Nqhr+cuWXzE9xA0aTK+2IklG
-   SPMPJs5GwB3nUf3IkjsVBmEp5XmpM5UKLNLUdqlIZzuBLDSesrpVGjn3m
-   2tDwZ2xhFgiLJnwZrxoCWrK+MOAWR9o0BaQnKMBu9oaD+nWe2QIRpSCXw
-   A==;
-X-CSE-ConnectionGUID: 2He3MRpISvmlopd40SQTNA==
-X-CSE-MsgGUID: zujNSxsVRkaHR4FlYEXBxA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="25186329"
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="25186329"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 08:45:25 -0700
-X-CSE-ConnectionGUID: VTXMJTn+TjeA9zQFUPRCKA==
-X-CSE-MsgGUID: 0hBBlcbISreYSez/xGyHCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="42390458"
-Received: from ideak-desk.fi.intel.com ([10.237.72.78])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 08:45:21 -0700
-Date: Tue, 4 Jun 2024 18:45:28 +0300
-From: Imre Deak <imre.deak@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Gal Pressman <gal@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	RDMA mailing list <linux-rdma@vger.kernel.org>,
-	Hillf Danton <hdanton@sina.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep
- worning
-Message-ID: <Zl82mAP7EakKzVRg@ideak-desk.fi.intel.com>
-Reply-To: imre.deak@intel.com
-References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org>
- <Zl8k/8/yQLnZcGd3@ideak-desk.fi.intel.com>
- <665f30d54276e_4a4e629427@dwillia2-xfh.jf.intel.com.notmuch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mafliDWQd+KK0t4YvkaIy68wvCra8dgAT5X5KxzseId+hstuz3R48o/XFkG9wjCwgjJ2jrC3FzGTJnMRqiIDnBvHknWIB+XoUmjKQWGkD3rXKR6tJ/rZrMU3mYaEgtxjP5BF+kqoooKQ1DZb04OnZu8y1ed/Qnx8En42Eo8v0ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=I4u3nj8o; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9F04F40E0081;
+	Tue,  4 Jun 2024 15:46:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3Ip0nACutg9K; Tue,  4 Jun 2024 15:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717516009; bh=/y9pB9+Khtr5d7gHqCNS4aSeYKsHx0WD9O7wNqsC+1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I4u3nj8oK2mRzDIAPgr6dzv5+0DlZ02Ng0q1GiRllRU4ha06xEuH0i4DSjJP/wP8b
+	 veMxKynKNNnrGM7RzHSvUOI7Z+l89bFI1n9FlXoCTpf7Qmkqvwt0fvqMkUw1AqBW82
+	 yWOyCxqRKSzXUUVDzM52PEdOU3Y1JjDV73YbBulALQhf8rSpzBBYZcaXYTiRIc/1qE
+	 l5y9pRCgYqkaJv7b4RkiWh36NeRgC6lZTBTjj4ouKoezLSXWoVx+Nq5aYF3tNDdT8I
+	 6eRuD69p5efTiZ7bSchH9pogWOLK190DKbGxjGKqw5zxC3Mq6L+6t6TxdTMDjwUIXN
+	 DLtS6IP8Z+42cG61sHfMfB70xXx/0Gv55a6rzVbBjCQo8uLcIPCdTGIoUmN8ZIKqTb
+	 XzeS8VLYtwV77sGaviCAu9VWwy5fUtxdCoWOmf7Evg6LEerJAkzyPyTpK+7vl5OFxU
+	 1fuIqDpSkJEqE9hFyLbiN8unqzE3NPz56nssSXIxSQrwgpwVjHfoIzyOrbU2rhkze3
+	 I+Wp/sPLZJgjRzmDJOrjJMN10N1GY69HLDjCmATb19134DXIIZx4rw53iw5HY/0lSc
+	 qyk5eWK9dKuVTbVvD1cc+n6VAfcTCbvvLVpsF89AQ2Ir03cuaZJ2/heN7irTwkgNid
+	 QOcUMtWPZLordgiJIOIC1tGM=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 42E8440E016E;
+	Tue,  4 Jun 2024 15:46:42 +0000 (UTC)
+Date: Tue, 4 Jun 2024 17:46:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com
+Subject: Re: [PATCH 8/9] x86/mce/amd: Enable interrupt vectors once per-CPU
+ on SMCA systems
+Message-ID: <20240604154635.GTZl8222q7WAEVSJKH@fat_crate.local>
+References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
+ <20240523155641.2805411-9-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <665f30d54276e_4a4e629427@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <20240523155641.2805411-9-yazen.ghannam@amd.com>
 
-On Tue, Jun 04, 2024 at 08:20:53AM -0700, Dan Williams wrote:
-> Imre Deak wrote:
-> > Hi,
-> > 
-> > [Sorry for the previous message, resending it now
-> >  with proper In-reply-to: header added.]
-> > 
-> > I see a similar issue, a corruption in the lock_keys_hash while
-> > alloc_workqueue()->lockdep_register_key() iterates it, see [1] for the
-> > stacktrace.
-> > 
-> > Not sure if related or even will solve [1], but [2] will revert
-> > 
-> > commit 7e89efc6e9e4 ("PCI: Lock upstream bridge for pci_reset_function()")
-> > 
-> > which does
-> > 
-> > lockdep_register_key(&dev->cfg_access_key);
-> > 
-> > in pci_device_add() and doesn't unregister the key when the pci device is
-> > removed (and potentially freed); so basically 7e89efc6e9e4 was missing a
-> > 
-> > lockdep_unregister_key();
-> > 
-> > in pci_destroy_dev().
-> > 
-> > Based on the above I wonder if 7e89efc6e9e4 could also lead to the
-> > corruption of lock_keys_hash after a pci device is removed.o
-> 
-> Are you running with the revert applied and still seeing issues?
+On Thu, May 23, 2024 at 10:56:40AM -0500, Yazen Ghannam wrote:
+>  static bool thresholding_irq_en;
+>  static DEFINE_PER_CPU_READ_MOSTLY(mce_banks_t, mce_thr_intr_banks);
+>  static DEFINE_PER_CPU_READ_MOSTLY(mce_banks_t, mce_dfr_intr_banks);
+> +static DEFINE_PER_CPU_READ_MOSTLY(bool, smca_thr_intr_enabled);
+> +static DEFINE_PER_CPU_READ_MOSTLY(bool, smca_dfr_intr_enabled);
 
-The revert is not yet applied and so [1] happened with a kernel
-containing 7e89efc6e9e4.
+So before you add those, we already have:
 
-[1] https://intel-gfx-ci.01.org/tree/drm-tip/IGT_7875/bat-atsm-1/dmesg0.txt
+static DEFINE_PER_CPU_READ_MOSTLY(struct smca_bank[MAX_NR_BANKS], smca_banks);
+static DEFINE_PER_CPU_READ_MOSTLY(u8[N_SMCA_BANK_TYPES], smca_bank_counts);
+static DEFINE_PER_CPU(struct threshold_bank **, threshold_banks);
+static DEFINE_PER_CPU(u64, bank_map);
+static DEFINE_PER_CPU(u64, smca_misc_banks_map);
+
+Please think of a proper struct which collects all that info in the
+smallest possible format and unify everything.
+
+It is a mess currently.
+
+> +/*
+> + * Enable the APIC LVT interrupt vectors once per-CPU. This should be done before hardware is
+> + * ready to send interrupts.
+> + *
+> + * Individual error sources are enabled later during per-bank init.
+> + */
+> +static void smca_enable_interrupt_vectors(struct cpuinfo_x86 *c)
+> +{
+> +	u8 thr_offset, dfr_offset;
+> +	u64 mca_intr_cfg;
+> +
+> +	if (!mce_flags.smca || !mce_flags.succor)
+> +		return;
+> +
+> +	if (c == &boot_cpu_data) {
+> +		mce_threshold_vector		= amd_threshold_interrupt;
+> +		deferred_error_int_vector	= amd_deferred_error_interrupt;
+> +	}
+
+Nah, this should be done differently: you define a function
+cpu_mca_init() which you call from early_identify_cpu(). In it, you do
+the proper checks and assign those two vectors above. That in
+a pre-patch.
+
+Then, the rest becomes per-CPU code which you simply run in
+mce_amd_feature_init(), dilligently, one thing after the other.
+
+And then you don't need smca_{dfr,thr}_intr_enabled anymore because you
+know that after having run setup_APIC_eilvt().
+
+IOW, mce_amd_feature_init() does *all* per-CPU MCA init on AMD and it is
+all concentrated in one place and not spread around.
+
+I think this should be a much better cleanup.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
