@@ -1,93 +1,105 @@
-Return-Path: <linux-kernel+bounces-201511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C318FBF4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:47:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5098FBF4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9571828193A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84DB41F22BFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F8114D296;
-	Tue,  4 Jun 2024 22:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/M4pTAM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FCB14D28E;
+	Tue,  4 Jun 2024 22:47:07 +0000 (UTC)
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE9E199A2;
-	Tue,  4 Jun 2024 22:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55526199A2;
+	Tue,  4 Jun 2024 22:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717541210; cv=none; b=FCRPJD/J4aBIp5K0VCZ0sPHR5dw6td+T0kL6yK8LhAqz9uBhGbjYM5doynxUVkglRqN1+/PhmafMO2Lg/i7u60DHpZkLVc7c0BVMSbhGEvpbvzWoJO0wntwToKZDv3NAVw0qZJN5mdLPYMPyL+V5NsDEPA3EBJ/xubh2kUd5e+E=
+	t=1717541226; cv=none; b=pJcVy4BxPidpuNNSVN+mtO6jX21feCrGv7QABNp0wwf6f+WsoJcYFyBw+t1N+9ZvgTeQYH55jjdEwdf/wh1nskKORNFAnb8Wr9jyhGPpSzO/I+Ie9Ws+3JLIOYu7ietQ2sK4+uE3CIsO7UxagD+8vWF/ajpIwhShrH6sjY8RiT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717541210; c=relaxed/simple;
-	bh=ObbnLVomG7LC8630jJzSGjNJGO+w2KG9eNNPYANJnj0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=uL7Jxk+Oa7JGhxWZC9a3Fad4WtoqWXIQreU1pQiUo4/TUpBLY2QPU/CaBYP3NTuhb8KwsGGG5QLqlYbSkbvh77l+pLz5oUOKSdsNMsduEmsJIVg09nYb2rxEc4NOw/h/7vwx1s0iHZWq7Ch9N5UZFj9vMxTo7Hu6QkTVAkRAu4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/M4pTAM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F9FC2BBFC;
-	Tue,  4 Jun 2024 22:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717541210;
-	bh=ObbnLVomG7LC8630jJzSGjNJGO+w2KG9eNNPYANJnj0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=k/M4pTAMFdu5Hv+tECjoZbb2qx5QG85dWrdxlikREB1N4Yrkfra+Xt/4tBwy9jBrN
-	 6gvscFO/m0b46P3kR6b/x3NOD7+4Xw2JYwmG7UCgDzJJHNWonTsNyGxrVuP5VDgP+6
-	 rvhBAAbSyJQHdIGWFSFstEqyRv0/W4twBgMFw/YVkcOYuuRqm9eSMKr4g29pIuZLSL
-	 95ZyNhwUbmCgFG2JWqyOR7dzFKM3H3ydjE2eoZPt8JHOUNfskKNnOEFy9lPJ2L39D8
-	 j7IkkqQEz8oaHIIrfa/bwaMpP6VT1SkuDa7wrMYbZHIa1VM0Mcj2kLboXvwaw+Ddir
-	 K0tjSsn1vSETA==
+	s=arc-20240116; t=1717541226; c=relaxed/simple;
+	bh=TZ4KcGLIy6A5jyXPipp0Fsh2uTBfzi13vz2vHN00lrc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q8/x/xiPCZr2hcXNGBu5nfySwXapULcxLnkVjfqDCqlplw1ixr6trqssO9qG2DmhXIBFkjBicNBGMAwOhrLrvFO0xrQXc1yCHnlBZMM59EeI/Ro75/wGmPqJpqhp+ze2Nxg5lNec7LG9HCKXEm4E8hUsnd81I1WHf3XzyK7k0wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d1ffa160b8so138470b6e.1;
+        Tue, 04 Jun 2024 15:47:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717541224; x=1718146024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hiD4Ke2N9LU6SCkq4K5xtOszVjDU8myvBHd+iGq33v8=;
+        b=E+5+ZDKfJWfi8EixfRkAI/StZO1LAd+gHU/oMhJmfmR1QjSzb0e3fmF3fhPdcR0hay
+         olaqv2MKTfEIMfDV6lQEQJsDrfDd4wrQwWiB2w5NOsMbo2qI6cQ5tvyBxuCKnUpwsN+K
+         ukqaRQNM9SIfKUbnTtLf/CL6cLcA9/WAYU7mRXaD9b1+qdhmnPOwGMN6P54r8oYugPJi
+         lYXYgepFcexrvbqGEIS7rC9D7y9CMAUX1LLrb+/EUBW/FMMyb0iE64vqqQxf+y3WfsoN
+         EVzrNUmhTs9eRJTc4EUy441GjJDQMGfItHfWPslRwxljiqM3OABdpN4xSSubQ1levUDG
+         6mvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQUD7aR8eW5X5wIDx+NYMlcbtsNZWwwQbNEyN+eGZym3elCm9h+7+q8Xu7balGyJhuDo/M4rnlLgO/kcyL3aO6BwFsdJ00ysGLTmoz
+X-Gm-Message-State: AOJu0Yzr2NZgbWXU0xyWCHcCAzpESCXI5c14MxpFy/wd0n2UwM6oaUAe
+	UxMA98MHayTEiF9+Ej2YCdTuOWv/xvhl5b/Z/aUnoj+kcaDNyy6K
+X-Google-Smtp-Source: AGHT+IHKyQa5YdQiiojcvxDO2Va94udiYdn5BFzckK2TCI7Gu6HfRStiK6xqb7kXnZv03ljFfKylyA==
+X-Received: by 2002:a05:6830:20d4:b0:6f9:3eab:145e with SMTP id 46e09a7af769-6f94380cbfdmr902388a34.2.1717541224282;
+        Tue, 04 Jun 2024 15:47:04 -0700 (PDT)
+Received: from sean-ThinkPad-T450s.lan ([207.191.35.252])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f93b4a3e00sm478529a34.50.2024.06.04.15.47.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 15:47:03 -0700 (PDT)
+From: sean.wang@kernel.org
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH 1/2] Bluetooth: btusb: mediatek: remove the unnecessary goto tag
+Date: Tue,  4 Jun 2024 15:46:59 -0700
+Message-Id: <8f809ae0094c89ed99efb4074472edd119db8ec1.1717540338.git.sean.wang@kernel.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Jun 2024 01:46:42 +0300
-Message-Id: <D1RLJJY17T2J.I1BP34BUK2AS@kernel.org>
-Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v9 10/19] x86: Secure Launch SMP bringup support
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
- <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
- <iommu@lists.linux-foundation.org>
-X-Mailer: aerc 0.17.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-11-ross.philipson@oracle.com>
- <D1RI46IG5GSA.17H7M0DIQGRQ0@kernel.org>
- <d95d73d2-c728-4da2-b68e-d2e39a518ae6@oracle.com>
-In-Reply-To: <d95d73d2-c728-4da2-b68e-d2e39a518ae6@oracle.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Jun 5, 2024 at 12:47 AM EEST,  wrote:
-> > static inline bool slaunch_is_txt_launch(void)
-> > {
-> > 	u32 mask =3D  SL_FLAG_ACTIVE | SL_FLAG_ARCH_TXT;
-> >=20
-> > 	return slaunch_get_flags() & mask =3D=3D mask;
-> > }
->
-> Actually I think I can take your suggested change and move this function=
-=20
-> to the main header files since this check is done elsewhere. And later I=
-=20
-> can make others like slaunch_is_skinit_launch(). Thanks.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Yep, makes sense to me.
+Remove the unnecessary goto tag whether there is an error or not, we have
+to free the buffer at the end of the function.
 
-BR, Jarkko
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/bluetooth/btusb.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 79aefdb3324d..fcdd660add19 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -2953,12 +2953,9 @@ static int btusb_mtk_uhw_reg_write(struct btusb_data *data, u32 reg, u32 val)
+ 			      0x5E,
+ 			      reg >> 16, reg & 0xffff,
+ 			      buf, 4, USB_CTRL_SET_TIMEOUT);
+-	if (err < 0) {
++	if (err < 0)
+ 		bt_dev_err(hdev, "Failed to write uhw reg(%d)", err);
+-		goto err_free_buf;
+-	}
+ 
+-err_free_buf:
+ 	kfree(buf);
+ 
+ 	return err;
+-- 
+2.25.1
+
 
