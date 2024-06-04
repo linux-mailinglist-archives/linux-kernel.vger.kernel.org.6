@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-200934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84DC08FB6B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AD68FB6C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385971F256FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55E51F249FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67FD14387B;
-	Tue,  4 Jun 2024 15:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4D7143C70;
+	Tue,  4 Jun 2024 15:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a2lRL/KW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DDEPN55+"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836A251C3E;
-	Tue,  4 Jun 2024 15:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F0ABE4A;
+	Tue,  4 Jun 2024 15:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717514051; cv=none; b=V6GRsDtVNntuwvCsz9zQKRNdSF/egNF7nYduXldlh2UQTTn6b5BYFJNO7aT3N1cigvW1yB/JuNWyftKBmvfY7anvhpHBPYTnszQCzTSWthOnVzjFTfrjhOqdgWRC71OsmzVAxQOq9wi0OUDteGTL4NXAAeaZo44Nr4DboryDrkc=
+	t=1717514157; cv=none; b=dm3UcprMa+Xjr6CUsn5sF8BqYKMaqO451ELUHRym0p0152jaHy8ph9FuFViaI7A2UDj/EsjXBtTr6BxH++sGWUfXgeak/ye3TXNypTq0u7jFSEjfwYJcm9FtoDA1e/30qsm3nXlBdt69NWL0tZsXqqY2tDr0km4Lk27CtFOdp64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717514051; c=relaxed/simple;
-	bh=ubHT1yvxT+TG65TxqQCilAEI8gM/A9Rx47eLVY61hlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V2y61XfFQnlB5vEUHd8NQQ01ByObXkR2BS99BRgcUt+wt9Tc39YrkG1MeqO/fkMC1t/NLm0H4Ld8j79s8kWbzZGl/dBXhS3h/cPXJEjcOHzScUK2xgHYkjmuIXMuIRzZuzpAa1YQAg1vLD4RvC7Awzc+3vxSEtHZDK1BWbp1npc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a2lRL/KW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454Dc0Gd020269;
-	Tue, 4 Jun 2024 15:14:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NLjsq/0snfIaASAxpDpQ0/rkJk8rDsizdyP+ST9KbI4=; b=a2lRL/KW+3965RVU
-	HuDNHvG2ujieYE46pLpxsruRf8lSfmltTBpIZOEHeDpTe4Qj4xm0UjXNNEomwcKN
-	ESxFeMBatzzJG14U8Kv0Hn2l7MtGNhYl0n/mUTPcNR31Zw/QpflMm5VtebaT+usB
-	IBJax730n+2xJTQxFhKidmVrWuvMVMxFG54nAwfWhxzsVZNEkUw6q9gxJbd+QAdD
-	V5skM1CUAMRREb1T6/Gyd/i1ppTN7H7V6MTaG3fZ2xMem9cMLA3YmhIcfBbsWVdb
-	HreaUmHcVZYychnEB5x7WM5zMui1CVmoHtZbEWmi1tt4JYt2jVB1fQpg3dSRFOCQ
-	dzqIDw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw42y15u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 15:14:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454FE1O8002826
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 15:14:01 GMT
-Received: from [10.48.241.109] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 08:14:01 -0700
-Message-ID: <d425c1e9-5e75-4369-a397-990820bb5628@quicinc.com>
-Date: Tue, 4 Jun 2024 08:14:00 -0700
+	s=arc-20240116; t=1717514157; c=relaxed/simple;
+	bh=qYbGIfmyW9zgaQj0Mjiwwwvs2RxSuGP4Gkaw6xq7zok=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=M6QTxIzwvMyiJYTa0dnS+pBtku+/Il5mV3y7VmHr48wjF6/qu7E+nJP9dr9t+4TWV/v7v5ks5sc7xPDi6Ny7FaTGHDgbf9ocZ1Yh6h2nEkAS//kjycU4nHUE1BPCdICgiOnqBzBBFTfR0vmcd/C3SPUDQRJwxd9EaQzzrMuSY/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DDEPN55+; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717514139; x=1718118939; i=markus.elfring@web.de;
+	bh=IZM81H3ToOd0nFYz+ETE9GqM/ElioJLDbHOzj6vrDdc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=DDEPN55+LLeSvhW42oQd7v++QohEwbLsqRsGIjysRMgB07ROpQg095B6OSgf6Lyy
+	 h7LkgH4rc4cy13ocLb/4KmoTVO3qDJwSJDsUqYqLo1kqS4TxSM/4ev79IAJmQeoo1
+	 nfJervAltRKB9O/zNCjprB+Ex2nXuWhmI9k8tXp0ilKDrpemtkAqwDZ7WbSDMNFTB
+	 y6S1C+VT+Mvwx86B8VWIufxFQaa04MZ5jBr5VzDXaEBrdFGxzh2G+e5vyzMTryy3d
+	 EOh/fBcYu87Yq/3xfl17UVblAkVYCZCkd38V7yHMCvYYgYeT4y0UzMcWTCzAVaqe3
+	 SQliltvFtP11nKMEYg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MN6Fj-1rvbSQ2F4X-00V9Wq; Tue, 04
+ Jun 2024 17:15:39 +0200
+Message-ID: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
+Date: Tue, 4 Jun 2024 17:15:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,53 +55,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] counter: ftm-quaddec: add missing MODULE_DESCRIPTION()
- macro
-Content-Language: en-US
-To: William Breathitt Gray <wbg@kernel.org>
-CC: Patrick Havelange <patrick.havelange@essensium.com>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240602-md-ftm-quaddec-v1-1-1bbdf705ad31@quicinc.com>
- <Zl8s-uujP1lXBAQY@ishi>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <Zl8s-uujP1lXBAQY@ishi>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: s_0aC8N3mVY1z-jQoCgNsrTtP643eTtn
-X-Proofpoint-ORIG-GUID: s_0aC8N3mVY1z-jQoCgNsrTtP643eTtn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- impostorscore=0 mlxlogscore=909 clxscore=1015 bulkscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040121
+Content-Language: en-GB
+To: kernel-janitors@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
+ <kabel@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Robin van der Gracht <robin@protonic.nl>
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] auxdisplay: ht16k33: Drop device node reference after
+ registration failure in ht16k33_led_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4Lsg5L4n7WeLu0+owQVBLTAx9hJoe3FKwtwJMJko7SkcACI7w/N
+ UnnlaL5VjNtXJmfKa9xhJAR893ZZ+jLRqLUVt7w/HDbJ5nPxlfBqdt1vz0vFjt7h9GBzHiF
+ DuIvwEbwUM4TcsrxGIobgl/n+8jiKaBWHvESeKgJT7xXfVa3ivOi1mLAg3/8ThkqG7IL1iA
+ BcdytZBCCf375SA0gyWCw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TLohPM8XQAE=;YculmRcoXr5MdlBnPySciJuvA09
+ kz4AIvEvSYJ+FzGfJ0VPTlDhqByuXBAq1142MlGTaH6q5cO/Z0HXipqy1JMaelzRKua6+2i50
+ AABEJZTzrNaStTM5NROSc4lcs+wwDTWC313hKpb06WtAnZri6b0bZNGhgv6LSZ5hDYOp95jaG
+ b7lvBZKlHVX9bfjRwq+1gyxOXQjaLjeo5yoHpNDYM07QeDr8kiptwS0rZh52TXY+PuH4J1NoJ
+ 0baqwHGvMjvhnuMYKw+G3Tq9LkcgElaMtnySj/9aYXO5L3Fmtt9HxZwGRmk0WnI/mLLPYwM71
+ uo7RoPSVYJqzaFGMtJXq/LXBJibR67QoWg8g837fND2mhMp4LgGd+ZFl8Uf63Z1gh/msm7MWs
+ uH5YXR6SgTJ6nCfFWId25Nh6UuSPO7zlarbPwTB1TMLXwGJZfKSP8rzBNMJvexgQq5Gn7jTzO
+ tQWtQzltj3kMJhW73nzx9G/+vWL6y1ZJLX/QL5/ZbGdCiV1Vg37GJ2nLj272TA9Pp0/VCnlnx
+ X15dPFYaAqLfjn7U+4EoORSI8bWMcXiPOu+I2BuVUyv8I0g53/Pqlf4sjg5SavSOZkbv/wVX7
+ JBrNPxKWHbUg22ugwy8ewVQijBfTgfpUYwKdjgphZViFNZ2ge+fxThMmhlT3WIApuGz1olAsB
+ +x29jVrXYRB6iQpCnLc/UAKs6kUt7qxVn/aow2wjZlXqQnqt0XERi1PdLtKgFwkhUVgNjQUZv
+ I7e6zkf5uVPKpmUup0VXgpvp2Hedwc3FdvcSCMC1300xC8UWjCD7rH7HPxtIvCrz7x0rcQttP
+ Br+TRMnNJVfmLg8ndvi9K30tnuoJJhEKlNia8piZuBtwg=
 
-On 6/4/2024 8:04 AM, William Breathitt Gray wrote:
-> On Sun, Jun 02, 2024 at 03:05:20PM -0700, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/counter/ftm-quaddec.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> 
-> Hi Jeff,
-> 
-> Would you add a Fixes tag as well so we can merge this into the stable
-> trees that need it?
-> 
-> Thanks,
-> 
-> William Breathitt Gray
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Jun 2024 17:02:15 +0200
 
-There are a large number of these, and they only occur with W=1 builds, so I
-don't think they are taking these into stable trees.
+A failed call of the function =E2=80=9Cdevm_led_classdev_register_ext=E2=
+=80=9D
+can be reported.
+Add a call of the function =E2=80=9Cfwnode_handle_put=E2=80=9D for this er=
+ror case.
+
+Fixes: c223d9c636ed ("auxdisplay: ht16k33: Add LED support")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/auxdisplay/ht16k33.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index ce987944662c..ef86537c9d83 100644
+=2D-- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16k33.c
+@@ -483,8 +483,10 @@ static int ht16k33_led_probe(struct device *dev, stru=
+ct led_classdev *led,
+ 	led->max_brightness =3D MAX_BRIGHTNESS;
+
+ 	err =3D devm_led_classdev_register_ext(dev, led, &init_data);
+-	if (err)
++	if (err) {
+ 		dev_err(dev, "Failed to register LED\n");
++		fwnode_handle_put(init_data.fwnode);
++	}
+
+ 	return err;
+ }
+=2D-
+2.45.1
 
 
