@@ -1,80 +1,78 @@
-Return-Path: <linux-kernel+bounces-199881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97828FA729
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3578FA72F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070791C2298D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5A342861D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868B18BEC;
-	Tue,  4 Jun 2024 00:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B8A79F9;
+	Tue,  4 Jun 2024 00:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/HpZiwX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MUTZDh/s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF8C79C0;
-	Tue,  4 Jun 2024 00:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106E479CF;
+	Tue,  4 Jun 2024 00:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717462050; cv=none; b=lU3TfCQx65IXcErXFqTmpoitLqeynROmUX0J6vCU8tSv7Unyv0sxLItWMQW07v5m+VEJKYrz577qy1PoT8AGJsFjbBjoYyCphv/pHCbsb9p/Ta+BhhehVnqkPr4X2LlbJz7ewcFixc9OI9Ngd5w+1bOWLxyukQojpemdkxNoZ7g=
+	t=1717462112; cv=none; b=U53fnN/P+l/dIYktjFP4XL7sWhTn/M3UJdW4MeM/u3xibQDoKRCySLAqfsLWVbh/DwmfCm/Ym1AgowsEK8GqkCcRpYfOih++qglcKrtQKmakD6RCmJJvFAKpko3XokyaKBLlShyZHOACetho/FTsq2Gnkc3lHktPQyAhDNWOGcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717462050; c=relaxed/simple;
-	bh=FWnAe1hhrfgO1luWWJOhc9cfPlz2YWEEETdh0J87RiQ=;
+	s=arc-20240116; t=1717462112; c=relaxed/simple;
+	bh=TCno75d8Ppl09f7IQLV2u59jY/NFYpwMwbXoLjnTJHc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SCjwJhgYB8PSrVcEwTsTx2J+nd9YaU9kXBv57wGKVIkuX6Gz9PGk/qe1D2clPdCZwK9Ze4eCPL79TSV6KW02Y/TKzw5v/guMlbWo3mX+V+k6/XuFGTSSogUK8UM+AIXVhjWBLy0O+FPCojGXNGlkVZmuEqAjmk4rP17Mz1IK6l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/HpZiwX; arc=none smtp.client-ip=192.198.163.7
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhzD+T6+cdOLTvLI7h103QHccLUY3BO5k1tTYECuqyf5okuiFl3IphrXjEB4Myyi8EnZ3lA0tc4CxX7bShKcVYSHEsWIDnYrWOK9e2K8V7Ib42v8bEvBUh5pa34eVPzRbVh8DXR0pH5U+6XFiGeToBtb7I1CNUV51F6ljB8WDsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MUTZDh/s; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717462049; x=1748998049;
+  t=1717462111; x=1748998111;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=FWnAe1hhrfgO1luWWJOhc9cfPlz2YWEEETdh0J87RiQ=;
-  b=f/HpZiwXr687EFmMHBRaA+HUw94bD51QOruNlZD57HdJ/K54pKIPcidd
-   wyb8h1CXB8vz2mZUgp3fS8eRy1jMlYBDrIdfzv8oU2oU6nXECv5L/RwJU
-   yXwSFBlHikqXWcXO/bq3Aftt05rk2k0VkjI/bCVMy3mLKSnjMLbWqAaR9
-   zpF9Zz9CRn531d1xUuSgfDfl+F8DHABVSaPgonsBk53ozGTGogt1TMr63
-   4XALtszXe/+3udIdGcHNuL0FkYFmIHhSE64Lvd5pkw09PICxshcOLMEm3
-   ELigZTh4dypg/oCFQOPEsqMbFcDyDRT0AXlF4nJGKtA4uLdlWVRfAoXAj
-   Q==;
-X-CSE-ConnectionGUID: zdswjwRbQmGfsVdJdTDSxQ==
-X-CSE-MsgGUID: BFvvDnLlS8adDt0GBK9x2w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="39389046"
+  bh=TCno75d8Ppl09f7IQLV2u59jY/NFYpwMwbXoLjnTJHc=;
+  b=MUTZDh/s+tbtjX4UVS+X9q4hDNCw85z1KQx4AcPOdLyGyjPkbMZAifFo
+   bljodeHx1mjHKV6MyOpl+IUVoY+GVMO9XyyKogrJC/dHxPe7rH3XECWcN
+   Y/Q3WrLcR95ZjIKO6bLVqdUAgNNUwBsg6TyDj1BM6fdgIouybedk1K5ud
+   iqpF3ejkGdSQMy5CXMim4CAQuJ4getQwerGZR+svrG/SO18nGwT4WWHa7
+   1TMyHviRN+zRZMf8RarecH62fQQfzae1SxsXGVzmm2pgLKS7AVBcAN9Ts
+   Rzn0RRf6rUhVDOUH+HvoQbklaRTwHJj5pxYBeMfu+Que9XfpZsLv4m6xs
+   A==;
+X-CSE-ConnectionGUID: Qht2LyFFR4ehgEh6HGxI5g==
+X-CSE-MsgGUID: vUtjaaweSQeuDfX+gvhWkQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="11883817"
 X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="39389046"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 17:47:28 -0700
-X-CSE-ConnectionGUID: lN988g0sSxKPvO+weZBQFA==
-X-CSE-MsgGUID: xbYcz/MLSr+cyyYI1Bq7nw==
+   d="scan'208";a="11883817"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 17:48:26 -0700
+X-CSE-ConnectionGUID: y9aJHqkhRyi163PigIM0hA==
+X-CSE-MsgGUID: mBYnX1HGTomFi8mY7h8NZQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="36937510"
+   d="scan'208";a="37078615"
 Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 03 Jun 2024 17:47:24 -0700
+  by fmviesa006.fm.intel.com with ESMTP; 03 Jun 2024 17:48:24 -0700
 Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sEIKf-000MMl-2m;
-	Tue, 04 Jun 2024 00:47:21 +0000
-Date: Tue, 4 Jun 2024 08:46:28 +0800
+	id 1sEILd-000MMp-2t;
+	Tue, 04 Jun 2024 00:48:21 +0000
+Date: Tue, 4 Jun 2024 08:47:26 +0800
 From: kernel test robot <lkp@intel.com>
-To: Andreas Kemnade <andreas@kemnade.info>, marcel@holtmann.org,
-	luiz.dentz@gmail.com, johan@kernel.org, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, pmenzel@molgen.mpg.de,
-	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	Adam Ford <aford173@gmail.com>, Tony Lindgren <tony@atomide.com>,
-	tomi.valkeinen@ideasonboard.com,
-	=?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@gmail.com>,
-	robh@kernel.org, hns@goldelico.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v3 3/4] gnss: Add driver for AI2 protocol
-Message-ID: <202406040854.fSEvlFam-lkp@intel.com>
-References: <20240603144400.2195564-4-andreas@kemnade.info>
+To: Naresh Solanki <naresh.solanki@9elements.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] hwmon: (max6639) : Update hwmon init using info
+ structure
+Message-ID: <202406040851.agdur2M1-lkp@intel.com>
+References: <20240603103114.3263060-1-naresh.solanki@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,88 +81,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240603144400.2195564-4-andreas@kemnade.info>
+In-Reply-To: <20240603103114.3263060-1-naresh.solanki@9elements.com>
 
-Hi Andreas,
+Hi Naresh,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on bluetooth/master]
-[also build test ERROR on bluetooth-next/master char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.10-rc2 next-20240603]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test WARNING on 5fbf8734fb36cf67339f599f0e51747a6aff690c]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andreas-Kemnade/gnss-Add-AI2-protocol-used-by-some-TI-combo-chips/20240603-224753
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
-patch link:    https://lore.kernel.org/r/20240603144400.2195564-4-andreas%40kemnade.info
-patch subject: [PATCH v3 3/4] gnss: Add driver for AI2 protocol
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240604/202406040854.fSEvlFam-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406040854.fSEvlFam-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Naresh-Solanki/hwmon-max6639-Add-hwmon-attributes-for-fan-and-pwm/20240603-185014
+base:   5fbf8734fb36cf67339f599f0e51747a6aff690c
+patch link:    https://lore.kernel.org/r/20240603103114.3263060-1-naresh.solanki%409elements.com
+patch subject: [PATCH v3 1/2] hwmon: (max6639) : Update hwmon init using info structure
+config: i386-randconfig-141-20240604 (https://download.01.org/0day-ci/archive/20240604/202406040851.agdur2M1-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406040854.fSEvlFam-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406040851.agdur2M1-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+New smatch warnings:
+drivers/hwmon/max6639.c:227 max6639_read_fan() warn: unsigned 'res' is never less than zero.
+drivers/hwmon/max6639.c:235 max6639_read_fan() error: uninitialized symbol 'val'.
+drivers/hwmon/max6639.c:253 max6639_fan_is_visible() warn: signedness bug returning '(-4095)'
+drivers/hwmon/max6639.c:278 max6639_read_pwm() warn: unsigned 'res' is never less than zero.
 
-   drivers/gnss/ai2.c: In function 'process_ai2_frame':
->> drivers/gnss/ai2.c:340:13: error: implicit declaration of function 'get_unaligned_le16' [-Werror=implicit-function-declaration]
-     340 |         if (get_unaligned_le16(data + i) != sum) {
-         |             ^~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+Old smatch warnings:
+drivers/hwmon/max6639.c:233 max6639_read_fan() warn: unsigned 'res' is never less than zero.
 
+vim +/res +227 drivers/hwmon/max6639.c
 
-vim +/get_unaligned_le16 +340 drivers/gnss/ai2.c
-
-   324	
-   325	/* do some sanity checks and split frame into packets */
-   326	static void process_ai2_frame(struct ai2_device *ai2dev)
-   327	{
-   328		u16 sum;
-   329		int i;
-   330		u8 *head;
-   331		u8 *data;
-   332	
-   333		sum = 0;
-   334		data = ai2dev->recv_skb->data;
-   335		for (i = 0; i < ai2dev->recv_skb->len - 2; i++)
-   336			sum += data[i];
-   337	
-   338		print_hex_dump_bytes("ai2 frame: ", DUMP_PREFIX_OFFSET, data, ai2dev->recv_skb->len);
-   339	
- > 340		if (get_unaligned_le16(data + i) != sum) {
-   341			dev_dbg(ai2dev->dev,
-   342				"checksum error in reception, dropping frame\n");
-   343			return;
-   344		}
-   345	
-   346		/* reached if byte 1 in the command packet is set to 1 */
-   347		if (data[1] == AI2_ACK)
-   348			return;
-   349	
-   350		head = skb_pull(ai2dev->recv_skb, 2); /* drop frame start marker */
-   351		while (head && (ai2dev->recv_skb->len >= 3)) {
-   352			u8 cmd;
-   353			u16 pktlen;
-   354	
-   355			cmd = head[0];
-   356			pktlen = get_unaligned_le16(head + 1);
-   357			data = skb_pull(ai2dev->recv_skb, 3);
-   358			if (!data)
-   359				break;
-   360	
-   361			if (pktlen > ai2dev->recv_skb->len)
-   362				break;
-   363	
-   364			head = skb_pull(ai2dev->recv_skb, pktlen);
-   365	
-   366			process_ai2_packet(ai2dev, cmd, data, pktlen);
-   367		}
-   368	}
-   369	
+   214	
+   215	static int max6639_read_fan(struct device *dev, u32 attr, int channel,
+   216				    long *fan_val)
+   217	{
+   218		struct max6639_data *data = dev_get_drvdata(dev);
+   219		unsigned int val, res;
+   220	
+   221		if (IS_ERR(data))
+   222			return PTR_ERR(data);
+   223	
+   224		switch (attr) {
+   225		case hwmon_fan_input:
+   226			res = regmap_read(data->regmap, MAX6639_REG_FAN_CNT(channel), &val);
+ > 227			if (res < 0)
+   228				return res;
+   229			*fan_val = FAN_FROM_REG(val, data->rpm_range[channel]);
+   230			return 0;
+   231		case hwmon_fan_fault:
+   232			res = max6639_get_status(dev, &val);
+   233			if (res < 0)
+   234				return res;
+ > 235			*fan_val = !!(val & BIT(1 - channel));
+   236			return 0;
+   237		default:
+   238			return -EOPNOTSUPP;
+   239		}
+   240	}
+   241	
+   242	static int max6639_set_ppr(struct max6639_data *data, int channel, u8 ppr)
+   243	{
+   244		/* Decrement the PPR value and shift left by 6 to match the register format */
+   245		return regmap_write(data->regmap, MAX6639_REG_FAN_PPR(channel), ppr-- << 6);
+   246	}
+   247	
+   248	static umode_t max6639_fan_is_visible(const void *_data, u32 attr, int channel)
+   249	{
+   250		struct max6639_data *data = (struct max6639_data *)_data;
+   251	
+   252		if (IS_ERR(data))
+ > 253			return PTR_ERR(data);
+   254	
+   255		switch (attr) {
+   256		case hwmon_fan_input:
+   257		case hwmon_fan_fault:
+   258			return 0444;
+   259		case hwmon_fan_pulses:
+   260			return 0644;
+   261		default:
+   262			return 0;
+   263		}
+   264	}
+   265	
+   266	static int max6639_read_pwm(struct device *dev, u32 attr, int channel,
+   267				    long *pwm_val)
+   268	{
+   269		struct max6639_data *data = dev_get_drvdata(dev);
+   270		unsigned int val, res;
+   271	
+   272		if (IS_ERR(data))
+   273			return PTR_ERR(data);
+   274	
+   275		switch (attr) {
+   276		case hwmon_pwm_input:
+   277			res = regmap_read(data->regmap, MAX6639_REG_TARGTDUTY(channel), &val);
+ > 278			if (res < 0)
+   279				return res;
+   280			*pwm_val = val * 255 / 120;
+   281			return 0;
+   282		default:
+   283			return -EOPNOTSUPP;
+   284		}
+   285	}
+   286	
 
 -- 
 0-DAY CI Kernel Test Service
