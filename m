@@ -1,142 +1,212 @@
-Return-Path: <linux-kernel+bounces-200728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F468FB43C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:47:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC5A8FB40A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 226B6B295C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:41:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D9A11F216DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4E31474BE;
-	Tue,  4 Jun 2024 13:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5769A1482E7;
+	Tue,  4 Jun 2024 13:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QO9SgBOZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YfLim3mR"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A82266A7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717508417; cv=none; b=ZwuBbvahdzjjH8WLiowo1bugat1RfEAgMPvb8oH/0iV/YtYJl22yx2LOl4h4cB020DjzI6GFlkYgDlqtG6QUjjO1NbSMlgmJV+fJJeSGwtrlqLmMVPQZoVPrV+3kPt9sT6FJuThwll01ERCPTnHc2IRKVWGPWYe9cx/yjU/pvYA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717508417; c=relaxed/simple;
-	bh=b8AMxcqWw0P3jOh8p1hb7REjv+Kt3Ihe6OI8G/FSqrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MApXAToCCmF1Mrspg6fZ+WTdjcL8VZ3f4Y0DV8rr+6yLkhNN1eRUqOLS88R7tHOPAatIUg+HhkLGLSSb09rZdCLjd//zVwBqhjqSDSlveHiXoJg1lCr+b9RePJKTfCJzMvqStsxfxJmdjRXJirAe9AYRA0pOxz08jYqb+f1zSuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QO9SgBOZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4548lMfs000933;
-	Tue, 4 Jun 2024 13:39:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	g3xKDmGEtE5NY3eQm4y/GHC7J2gBGR92nLzdqVWo5F0=; b=QO9SgBOZQWdcRV/2
-	GmUNDR60B5JL/RFYPJmrnSZ4nPEq1iUBMaxI9Bq0yKMyflUmfUUyUFWyidBp+h2x
-	1CyUul08o9lmPAYSxgMFKaGrcVIZsivPlO5mYS+sgcdOzBtsxn4kduJqPN7pqAsg
-	PKndjQPXQx72PiUUpguB7tPOSoTVafAxQeqSKCeGpYm8BlP/+1kJXsCmT+JRt41Y
-	F+Vm+hZmgDJRRZBY6qQ3Q40vBf1tVjBl9/wd7kWFxB/vjrx3m8MejoPYPdFTdjy3
-	AbMFrt9CKXagNdbVTWMYbLc0Q/NaY8k1L3mYp5za7YUmH4uxb9alg+u3nL1pPRVr
-	r+446A==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5kq2s7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 13:39:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454DdosV012590
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 13:39:50 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 06:39:49 -0700
-Message-ID: <bb8cf06e-4f96-4545-b459-3e70acb50f97@quicinc.com>
-Date: Tue, 4 Jun 2024 06:39:48 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA47146D76;
+	Tue,  4 Jun 2024 13:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717508478; cv=fail; b=T2AXRl3bpVUDMud9SHY+jDSoeuWBd1NDPL2lzerihNj4HcHh3g1W5OHqlpYn2qT23osT/0/NLAUERVvBJNyWDBcXZrSpRgv0gSbFf7Vkl1f9RFHaniV7z7Isu/SrhYImrqlVTLxhxsu3cXi4Jf4iO6LfC+yo9t5D9POQSqAW8NI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717508478; c=relaxed/simple;
+	bh=7mq54cJXrsthM30cTFL4PNp8Bn3RxaV9XAMNgmMuJ4U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qfmfaCD6EBH2+6Qgr7ZXTVpQm4LvvLqFB9NxO8DIzJ4prFbaWD06XXLXtPEeJRj0hSwsPeIAsfzbaQAaqlQNVrc0F53Q8U2TCDN7V4S5+5IgCN+wGfInVYdWanbJrroPCacyF6lE78VNRjdYfJ70LJl3G0CbYbkYuBIeXIb4ZZ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YfLim3mR; arc=fail smtp.client-ip=40.107.243.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z7FRCghoowalXUIT3jppojq73KrtB/hnOzBpFTA5r6GKdGe1ktTpAT2/WsFIwnbwfTqDuUhOlqKUAllllf0vWj8m2GwdSE+C/wNTUthGS7oRwo3A2XRXMZyZGWqSIDp+y4CMwiKW8iy/A1rHvQ02rH8QceChCRjWeKkAp1L0yZRQ4lspmmVo9o0ZkcRETXIMbDjNYBKCQcTUiyr6ZCc5VSA0VptoizNwYXVb/tfA7J+mmJYuXiada4dATXK7uH7czzsYmoogul4ytrXAMkwHEqvBjw9aVhw/nD3bFQTmm0rxdeulKtBZaSqDhAZjMrhTsBB0hFkf/hFz3LTsAuw9jA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7mq54cJXrsthM30cTFL4PNp8Bn3RxaV9XAMNgmMuJ4U=;
+ b=PV4iqcGaqVFK9DBDZ0fKZ+VI3O3FRCol7HMx2neV0H85XDLk3owgVlpJP8AgCZeJCWmrLci2vq6BHDqKdcS5y9QTYy0USEXk6NJYD460E4w41Pi12rbm2ENnY+qAVO1ZuWus47Cp6CXknszhPmpq6zfvPMjfjgBZNBIyISxw5bw8a1je9GWgKOrwaofn3xL8RkZZIjL3vJMV/F3SDnFltPVQVaa929Uh/g9Kk7bmVBbbQjQtnb/iW96wsoTeK3y7W02BKhGe56PBZF0Fu11TeYdDF7ekN8sRVVw76P62oau0PNudUoAswCEWj8ifNB7VwhlJ/DrhtApaJCrlAS3+PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7mq54cJXrsthM30cTFL4PNp8Bn3RxaV9XAMNgmMuJ4U=;
+ b=YfLim3mRSebIJ9hEPzQ8Aw2bR9F7vyAN/eKImhSHl+44egai5E498A0563TGrZedvbs70vSkHmBpir3G0Gu3w8QQPJqbejs/YJ6sq7nwYct6RciNAsy3I8FGoxFFnmtYZSaOlszuL8Iq9K8IIzBEb6ngaAt9EIR6PYudlJNLS+s=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by MW5PR12MB5681.namprd12.prod.outlook.com (2603:10b6:303:19e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Tue, 4 Jun
+ 2024 13:41:12 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39%6]) with mapi id 15.20.7633.018; Tue, 4 Jun 2024
+ 13:41:12 +0000
+Message-ID: <17bfa7c1-43b7-4b25-a8cf-eb6d3797df5a@amd.com>
+Date: Tue, 4 Jun 2024 19:10:54 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/amd: check event before enable to avoid GPF
+To: George Kennedy <george.kennedy@oracle.com>
+Cc: harshit.m.mogalapalli@oracle.com, peterz@infradead.org, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ravi.bangoria@amd.com
+References: <1716990659-2427-1-git-send-email-george.kennedy@oracle.com>
+ <75f6aba1-8ed6-4ef8-8811-de40ae40be90@amd.com>
+ <1e14ca4b-6e3e-4d57-acec-bc3ee2bed6ed@oracle.com>
+ <0494aedf-9759-4427-a7f3-39a91bd5771d@oracle.com>
+ <3ec1cb26-c889-45ab-b8cc-92f933a2b5d1@amd.com>
+ <7b27a039-ddb9-4beb-a1b4-ba2b74a3043e@oracle.com>
+Content-Language: en-US
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+In-Reply-To: <7b27a039-ddb9-4beb-a1b4-ba2b74a3043e@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0148.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:c8::10) To DS0PR12MB6584.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/22] ath10k: Use iommu_paging_domain_alloc()
-Content-Language: en-US
-To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-        Will
- Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Jason
- Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-CC: Yi Liu <yi.l.liu@intel.com>, David Airlie <airlied@gmail.com>,
-        Daniel
- Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alex
- Williamson <alex.williamson@redhat.com>, <mst@redhat.com>,
-        Jason Wang
-	<jasowang@redhat.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan
- Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>, <iommu@lists.linux.dev>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <ath10k@lists.infradead.org>
-References: <20240604015134.164206-1-baolu.lu@linux.intel.com>
- <20240604015134.164206-12-baolu.lu@linux.intel.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240604015134.164206-12-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Md4EIe9lNXys9JP7qqj6UgaTb6nNYv_z
-X-Proofpoint-ORIG-GUID: Md4EIe9lNXys9JP7qqj6UgaTb6nNYv_z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_05,2024-06-04_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 clxscore=1015 phishscore=0
- mlxscore=0 priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040109
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|MW5PR12MB5681:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12321ab3-3a44-4360-5ffd-08dc849bfefd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|7416005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RzhtNkZ0UWVVZlhndjdQM3JhT0pWR3RHYjVvUjF3SnhDZDkxQXNmZWh0M1Bq?=
+ =?utf-8?B?UlNpQ2NsV2gyTW44NkY4eGxrd1o2MW8ybmpDeFlYcDY2QVhuKytja1N5bEli?=
+ =?utf-8?B?dzVCbkRiMTg2RmhLUVBYRUN2amErMUVXUWhZcVQ4RXRQSllOdDBhdnpCT1Fj?=
+ =?utf-8?B?TEkwWTBKSjJRQW9DcW5xbFh0RUtPTTYrM3FHeUd1ZWpDSG9iMzIyNVQyVkN6?=
+ =?utf-8?B?TTRteitTZGFoVC9JUzNLSmxYZTRwWkJPSXhjMHBSanJ0TVdZZ0FkS3VBQkp5?=
+ =?utf-8?B?R05oeU1QZkJWMldQZm5pQVBzYTA2QTREWDBydkxYc2FJaWoyZ0w2Wmo1NUlh?=
+ =?utf-8?B?K3ZVSlpjR1NzMmxzMVl3NXpNc3hlSFBacktPRjVwTFJLdEEzYmVkK2lIU25D?=
+ =?utf-8?B?a0dqT0thRDVFZ1ZjdWJ4NlZPdzhGRFRmK3hFTDQ5L1E3QURmTTgvcmJLNWdL?=
+ =?utf-8?B?RThBNVl1QndickVLQU9YVTZYeGJYSkxmbnY2UXE1MjNFdzJlekM1WjBqZFZs?=
+ =?utf-8?B?WE9YbUh3d2pjUEJ4SnNQRjNpVVVVRDRCUGVWTUY4TmtyZURScW5ydDJjbUhG?=
+ =?utf-8?B?VGhBaTlZeU80UGVpQjBhZlh3blI0OWJNZXA4OVp3ZGkybSt2cU1JQ2l3NkFz?=
+ =?utf-8?B?dW1NVFlIWGx0WTV0WTQ5SXcrenFHeDJraGZwbjZiQzZxL3V2R2VCNStnSmUy?=
+ =?utf-8?B?Wk40Ym9KdDhFN1hKVlVIMW9JNm5laSs2NjJzOGZGUmNRMlpWZGVVdVRKY0R6?=
+ =?utf-8?B?SVFOQXAxYmpveHdheU4wYndvS2Jjc0hnVFZ3eS9USE9xVy9UbWZNRFlSNklG?=
+ =?utf-8?B?MTNWQlg4OURLK1llUENXZ25zSUtEUHN4cG5TRDRqYlFOMUZrQXF1dytuNVRS?=
+ =?utf-8?B?bVh6YTNqckNjaVZ0eGFTelNJNzBFMXdleU10QktjYWR2UTF2WlljdkU3RVE3?=
+ =?utf-8?B?NndIYXhBaEhYZjRNU0FYQTZKb1poODJyelU2WDkvMnQ3SlBYb3J2Tk8vYUhu?=
+ =?utf-8?B?RkpuSDZZdnNDRFRMK01nMUJtWkFLNHhXUGFaYU9yaVdZb20yb3hGMGZ4RWdX?=
+ =?utf-8?B?bjZMK3dxUUNxaE1HZ1BIbUFELzJWY3hiUk9iV0JwdTRJb1lUd2N0d3hESTBG?=
+ =?utf-8?B?eDZlNE9zWTc5dmc5bU9iY2h2TVFzV3daY2Z3cEFzaSthSWFlbU1hQ2h0bGNx?=
+ =?utf-8?B?KzlpNnVCT3EvR2h6bEhOT1R4cHBpQ3BuUSs3aTU1SnVLdWV5Y2NhVitpUSty?=
+ =?utf-8?B?YzJEMzE2OUQrck1UUjVEYnFPd0ZYcDFFR2xOS3ErQVBBQlVVZEdFYWN5eFF6?=
+ =?utf-8?B?ZFN1Yys1anVwMWpTZmRTQ1cxOHQ0QU9kUWVEZkRydmhCcG4wOWljb0NFdWdH?=
+ =?utf-8?B?VGsyQmJIU1RDdjBJUmc5TTkydnArYTJHR0JMTmxZTHZlZ2xtUTVjUDdXd2xm?=
+ =?utf-8?B?a3M0UFhDdnJxeHVIcm9DbjlvTDZHYzhkL1IxV21LbjF5R2pLL0NsVWVtVERq?=
+ =?utf-8?B?U1hXQTM3cGtZTXFOMTIrZFIzQmFPYk1xOHdDSG01bUNoR0N2SWxWUUd3d2Rm?=
+ =?utf-8?B?WDhPVmllbG9ML2hRRkVqL08rRmR5WGtvaS8vQThCaTI5MGR3Smc3aFN3dk93?=
+ =?utf-8?Q?Kskpd42TTa6ACm2jmEUzSxlUAz3LhgEmRGNjy3S+lPrc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?azJEZXhxUGNhRnovaGZzck5FL28ydEYrVkg2VGJ6N0JKVUlXL0FLbHM5TFpr?=
+ =?utf-8?B?QVpHa1VEYXJTRktRUW9CZmdtK2N4c1YxK3dWY1FJczJaZlRmTm1ZUlNwYUpm?=
+ =?utf-8?B?QmIrWmNMejdJUEhidjd5cU94SEpHK2lTR0FWa1dkRFl3bGZKaXo3RXgxOVAz?=
+ =?utf-8?B?Nno3S0hZcU9JYytrRVVCS0U4Q3BzaU1jYjRNNzlac0ZCSUZrL0RqSUxvaldK?=
+ =?utf-8?B?RUR4V3h6Q1pYWG81c0N4QjRyYTl3bGNjR2s0cWNVRFp1bVlIb2kzaExzZ2FO?=
+ =?utf-8?B?N1RzRXd5dHFEU2pJZllpMCtkeXZoSEhUc3FSOGRxRkdiVjludzhJZjlmS3k4?=
+ =?utf-8?B?VFV1amdaM1VsYXk2T24zbGdtRHZjTDdOTGMwL0N4cDV5eldacGFzdEVLeUFV?=
+ =?utf-8?B?MXArem13WDhCd3pXcHErV1V1N1M2a3U0OVhFbmhqVE14d1Q5blh0anB2N1Rh?=
+ =?utf-8?B?TXhnL0pZanBWeXRsVVErU3docHU5eWVaOTVPeG5ib0laZHRBYjFVSVpISU5G?=
+ =?utf-8?B?OUZDeHdKQXF3c3VWWVoxK0tHdFg2RDFqWFg5Q2dzYld4UExtd0xRYkRFd1RE?=
+ =?utf-8?B?N25jSFp1UXErVnQyanV4ZWhmRmlIcVZ3d1hlOERlTER5eTc2N25jTWxJeEVh?=
+ =?utf-8?B?R2RiNkFINE1qV0NRV000VGtSaWI0a1BIbVd4TS8yVTN2Nldma1RwenBGNmdN?=
+ =?utf-8?B?NG1SYUphUFFrZlBqcXUxWlAzK3h1OHZRZXgyeEowazFFVEdERzQxVVRxVXVI?=
+ =?utf-8?B?UWxXNXlSZHBPMGtXRkRKUXVtczRadEtTTU55cVZUS3pmRjV5U1RoT0R5d1Jy?=
+ =?utf-8?B?bUZoNkIrTDZMVUJRZ3VSL2RmbVo1a3dRKyttTXpQS2tVUTBiR3JmbFZJWmxh?=
+ =?utf-8?B?ZUFWeThYdnNVeTJ1QzExa3JiOVRGYnJEVlE2VzBHNVc0aVJXZDN2amZiQVNM?=
+ =?utf-8?B?ekpqWE5wRjg3amw1OGNzWU5oRlE3YmM1MG16eUhveDhBZGR5VEdkSTR0dWUx?=
+ =?utf-8?B?VXRibWMvdzZDWVM5a1VaNVdPL05TY0VuTi9Yd1lTQkRZYkl0L0hrZDVmcERa?=
+ =?utf-8?B?MWxGdVpkMHNYZmUrRmJUVTc5Vml2RzZVbUZURzVPTGJQaW96QTQ3VDBoOTJt?=
+ =?utf-8?B?MmVXQnFoa2ZWNmZQZklWUWdkVVlEVWR4TDZPd0VQRXJyWVd6bEdaZjVpczgy?=
+ =?utf-8?B?dHEvOFl3dW11Y3MvUUdjTWxPc2Q5UUhFaDZsVDZYM1U0MHAwaW1qbnJoSnVr?=
+ =?utf-8?B?eisrK28vK2xmRy9yY0lORWFXV0lLbEZsOW5PM1lsTzl0MjJUUEV3NTByN0dW?=
+ =?utf-8?B?VjgwSG15ZFl1R29GVGxsaTViR1FNdHBPUkJDc2ZLU0tJN2NpUmxZdXJtanUz?=
+ =?utf-8?B?L2pBTEhvN1BOMU1DRHRKR2VWcHBHMDJKcG5wS3p0UlVFU2RDUXpWUUZ2TUUw?=
+ =?utf-8?B?bGY1VDZxbDdBcUlXZVhNcEpzM0NCcHp1djFHQVN4allhN2NnV1NVbXdoUHBo?=
+ =?utf-8?B?Q0ttVjVXV25lcGxTcXJXRkxJZlhUSFYxc0JockNLTnorUHFFNzMzTUtWYllU?=
+ =?utf-8?B?cEZlbzYxRE1PeVk5ckNSUWhtV25BcUNaU2tBYkdZNWlybEs2VDNWMGdRdncy?=
+ =?utf-8?B?TWVMWjlZM0ZMblB4Wi9yVzEzQVRQRUc0eTFtRXg4c0RkNXk4MnE3bit3N2hR?=
+ =?utf-8?B?ZnZHVkV4alh6WlR2eGRuMjFoaWZibFZSN0hSa1VIS1hXRTJWYWVaaGVZK0ow?=
+ =?utf-8?B?VEFvV1BRU3Q3WTUwcVpScFRWdlM4ZkN3dnE2aUJZWVlwcXVRUWxvMVJ0VjFE?=
+ =?utf-8?B?dkdoRHpZVzUvdEdXR3k1NVBzYjdZT0R4KzVZRFZOMGdiU1RyUnc3aTJhS3Jk?=
+ =?utf-8?B?TG1Vd1IxT2VYa01IZVVXQmRhQSs2ajFCYlV0SVpuRFNlZStQUlkyVG1LaW4w?=
+ =?utf-8?B?VllMSVJDSVZOdXhEOWJZUTAvN1JMTDJ2cmtacGFCbGFnOVYrZFplT1g2ZzlT?=
+ =?utf-8?B?MU5pVVcyRTgwTExadGRCT1ZWODFrU3JGYnNPUXFCRmppZFVQZTRVbXhubCtk?=
+ =?utf-8?B?V2FmR2NIallBZlZ5YWFsdkQ2RFZYUFF3ZUdKVWxRK2U3U3hGbDNXVnRJd2xq?=
+ =?utf-8?Q?wVA86J8mp6G2jRw/G9pwMpDQ6?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12321ab3-3a44-4360-5ffd-08dc849bfefd
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6584.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 13:41:12.7676
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9P+6RuVBFq6yupOWYrUsAQkRtQigTJ/7LeaeYdFdj8M8pXrP/6Ap8T3Tb4mjkC52Q/CYl1wwVZydW+RyDJhbAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5681
 
-+ath10k list for viibility
+> On 6/4/2024 9:16 AM, Ravi Bangoria wrote:
+>>>>>> Events can be deleted and the entry can be NULL.
+>>>>> Can you please also explain "how".
+>>>> It looks like x86_pmu_stop() is clearing the bit in active_mask and setting the events entry to NULL (and doing it in the correct order) for the same events index that amd_pmu_enable_all() is trying to enable.
+>>>>>> Check event for NULL in amd_pmu_enable_all() before enable to avoid a GPF.
+>>>>>> This appears to be an AMD only issue.
+>>>>>>
+>>>>>> Syzkaller reported a GPF in amd_pmu_enable_all.
+>>>>> Can you please provide a bug report link? Also, any reproducer?
+>>>> The Syzkaller reproducer can be found in this link:
+>>>> https://lore.kernel.org/netdev/CAMt6jhyec7-TSFpr3F+_ikjpu39WV3jnCBBGwpzpBrPx55w20g@mail.gmail.com/T/#u
+>>>>>> @@ -760,7 +760,8 @@ static void amd_pmu_enable_all(int added)
+>>>>>>            if (!test_bit(idx, cpuc->active_mask))
+>>>>>>                continue;
+>>>>>>    -        amd_pmu_enable_event(cpuc->events[idx]);
+>>>>>> +        if (cpuc->events[idx])
+>>>>>> +            amd_pmu_enable_event(cpuc->events[idx]);
+>>>>> What if cpuc->events[idx] becomes NULL after if (cpuc->events[idx]) but
+>>>>> before amd_pmu_enable_event(cpuc->events[idx])?
+>>>> Good question, but the crash has not reproduced with the proposed fix in hours of testing. It usually reproduces within minutes without the fix.
+>>> Also, a similar fix is done in __intel_pmu_enable_all() in arch/x86/events/intel/core.c except that a WARN_ON_ONCE is done as well.
+>>> See: https://elixir.bootlin.com/linux/v6.10-rc1/source/arch/x86/events/intel/core.c#L2256
+>> There are subtle differences between Intel and AMD pmu implementation.
+>> __intel_pmu_enable_all() enables all event with single WRMSR whereas
+>> amd_pmu_enable_all() loops over each PMC and enables it individually.
+>>
+>> The WARN_ON_ONCE() is important because it will warn about potential
+>> sw bug somewhere else.
+> We could add a similar WARN_ON_ONCE() to the proposed patch.
 
-On 6/3/24 18:51, Lu Baolu wrote:
-> An iommu domain is allocated in ath10k_fw_init() and is attached to
-> ar_snoc->fw.dev in the same function. Use iommu_paging_domain_alloc() to
-> make it explicit.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->   drivers/net/wireless/ath/ath10k/snoc.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-> index 8530550cf5df..0fe47d51013c 100644
-> --- a/drivers/net/wireless/ath/ath10k/snoc.c
-> +++ b/drivers/net/wireless/ath/ath10k/snoc.c
-> @@ -1635,10 +1635,10 @@ static int ath10k_fw_init(struct ath10k *ar)
->   
->   	ar_snoc->fw.dev = &pdev->dev;
->   
-> -	iommu_dom = iommu_domain_alloc(&platform_bus_type);
-> -	if (!iommu_dom) {
-> +	iommu_dom = iommu_paging_domain_alloc(ar_snoc->fw.dev);
-> +	if (IS_ERR(iommu_dom)) {
->   		ath10k_err(ar, "failed to allocate iommu domain\n");
-> -		ret = -ENOMEM;
-> +		ret = PTR_ERR(iommu_dom);
->   		goto err_unregister;
->   	}
->   
+Sure, that would help in future. But for current splat, can you please
+try to rootcause the underlying race condition?
 
+Thanks,
+Ravi
 
