@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-200753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A5C8FB481
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:53:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5038FB485
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70831C20B18
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56E9282C44
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446D029CF0;
-	Tue,  4 Jun 2024 13:53:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD29517C72
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A636016419;
+	Tue,  4 Jun 2024 13:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nuQjgphW"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D71F171C1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717509196; cv=none; b=gnb2j/QLGY15XQ5A7dJ8FUMh+URl/oekM9L0GcE44cOk+H0uLPlIv/AXx3HbJCG9RE1p+BUYc3Nzb4sNM/ZRopvzN//Jl9MhsTmB0KYkgniXqeCZiKi+w1zrGVzVJTOn9SrDdOB4yYsTBEcej1M+0WiT99JqVlPNuRKmWtLsskY=
+	t=1717509212; cv=none; b=E8xeC0EC+VuJGn3z4MMHBi2MChwcRK1clpyklA4d4eUkDsaQxt0P/lo1Xi4HhUxmtqf6UVdZx8GMiBi2T5lresJ9yEFTitWCnk/nEX/Q/xJQcNMvCwFFHU5OkQghMRfOtpeMZNqmXl5IRQe2BwNoh+ppEckdJvNEhlO/8aRhb24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717509196; c=relaxed/simple;
-	bh=q14KACDj4LhO/vXw/vAlOE6JduSzMo3pO2gBwd9Kqt8=;
+	s=arc-20240116; t=1717509212; c=relaxed/simple;
+	bh=gFUgebDb5VYKmgGJcA+bR03BhrJUABzxe9spIthuEmw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dl/qshv38VzGKsQgqN+qLbhqVFVtPiaNXJwHch5v3punlK8xf5WfcU5r29nsh2g8mCH7qDL13fTRmZL8Ge0unYYcGTa0eiEyqtTFfGLJ5P8nN9FE9PFXJB5KtiSw+eOHgNad5QWaJp3JFANJw7w+6GfD0BzObKnmKV9hmklLTUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 727EE1042;
-	Tue,  4 Jun 2024 06:53:37 -0700 (PDT)
-Received: from [10.1.37.61] (e132833.arm.com [10.1.37.61])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 379803F64C;
-	Tue,  4 Jun 2024 06:53:10 -0700 (PDT)
-Message-ID: <2a1cca9a-f82e-44bd-9c37-37a962934a13@arm.com>
-Date: Tue, 4 Jun 2024 14:53:08 +0100
+	 In-Reply-To:Content-Type; b=G8MLgLn3oVSHM+R/eJ8cSDCAJhxOPEURRJKxbh3VLnV4hFAoUgSu41RLCL9qIKjtmuw9GR0rJdlg+ssW5mlROylnqvso7WEjTwn1i/xErBKQxKlUyjYwD/uJk7hiVgKaIpX4hT7c/YbqqDDXYnlBOroCY5Jko67xCQg1/QzI6Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nuQjgphW; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d1fb4ccc75so538620b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717509209; x=1718114009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M9m7RGcNy10jf3LS7vaCF+a097Y5g0qFUSmM+Ax/JkE=;
+        b=nuQjgphWoExI1tLStofh3rLss0MWhP4sq+QpIKzpb43tmRelrPDiH3TGGkTwe3N7vI
+         8lZymLuZqIO/NRhiIA5dEgQl5vsI1LG9UHnxLDn6N8pzXOb2a4VjWeUfWJu2UqN/qnTz
+         zYuj3kK9GH68nIu5eupnWLkipxKRakBJbfWHOpg2gguuMIqmu3JbQDpxy8pLplSuoO5G
+         hn+vURCMGo8BjM/FF0emUySMJ8TrdvamkFqfqSV8evzEbJbOi6R+d4cdZLtP0OzILNi0
+         dJ3qx3j1AAW7ZrhOFs08vJsAqGsKd64RGbv1c4N3iA+UWXe6I1j1QWIOdu4p0sGZ6Dyu
+         G5gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717509209; x=1718114009;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M9m7RGcNy10jf3LS7vaCF+a097Y5g0qFUSmM+Ax/JkE=;
+        b=djqqxaoM7RXA3hxr/ZwtdifPqFIZ0qdPwf1yMbQI21R/xqCMZ2g1aYwHXoMgG4YFfW
+         GD2Rqv4Z3ueZW03fg5lSbvVsi6wEKdYUD/LgyV3smQQLDPeoJRBHK3ePYFHGbs8xwOLi
+         y2yOyH2qbkmki0i6KI8mtNqncz4Nty4/9MTwqJ9Jsj3tyatyuYcUqrC0JVgyFjTzN0j5
+         FkCz26Y7fRvRBNJ6SYWOiePKycR0g/vimNMFDuMeNx60KCpgTk+pxV1dZiKFL5TZ78Va
+         fom9/fKxJSU5pbf1OX2KX++3rHQrNBRL3uSVvjafzi6CvCK20alYHi3n9XJAGZRXHXlv
+         Pi7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWcnRhtCtabOT8n6ruBnUP1qIJSEAN0uYvF1MZXIvfJ/QQBLoIc+5b1FpwC/Io4cKWtHFt0n1jYneT5uHjon4FNH+yUaZe56MvBL3Hb
+X-Gm-Message-State: AOJu0YwRQhwLS8IcOSv2IjiBb+cpsZYCLVYBDwuSdXLMACOfWbA358Pu
+	bNDuvYU9X35Ufd5GeSlIwMWhX9Bpp7HREXJPXacI7xyZAhdwBkORisIzql0Sqxk=
+X-Google-Smtp-Source: AGHT+IHTAZY24CraXjVxRhUtf8jwfwk7RRTu4xeRW3mXD9sedZ80A6G/fHKzb1Qidb0io/0H9gwPpA==
+X-Received: by 2002:a05:6808:188a:b0:3d2:83:341c with SMTP id 5614622812f47-3d200833ba1mr1256915b6e.51.1717509209271;
+        Tue, 04 Jun 2024 06:53:29 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d1e1a464fdsm1811689b6e.46.2024.06.04.06.53.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 06:53:28 -0700 (PDT)
+Message-ID: <3dadacf8-1349-483d-b264-dcb41d2cc3fc@baylibre.com>
+Date: Tue, 4 Jun 2024 08:53:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,190 +75,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 5/7] sched: Consolidate pick_*_task to
- task_is_pushable helper
-To: Qais Yousef <qyousef@layalina.io>, John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Connor O'Brien <connoro@google.com>,
- Joel Fernandes <joelaf@google.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Valentin Schneider <vschneid@redhat.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Zimuzo Ezeozue <zezeozue@google.com>, Youssef Esmat
- <youssefesmat@google.com>, Mel Gorman <mgorman@suse.de>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
- kernel-team@android.com
-References: <20240507045450.895430-1-jstultz@google.com>
- <20240507045450.895430-6-jstultz@google.com>
- <20240604131856.xo6jxe2geetq6jlg@airbuntu>
+Subject: Re: [PATCH v3 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Kim Seer Paller <kimseer.paller@analog.com>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
+References: <20240603012200.16589-1-kimseer.paller@analog.com>
+ <20240603012200.16589-5-kimseer.paller@analog.com>
+ <2942a938-19b9-4642-8ed0-8e17e4825bc5@baylibre.com>
+ <c4651a18-316b-42e0-a67b-673fedb05b5a@kernel.org>
 Content-Language: en-US
-From: Metin Kaya <metin.kaya@arm.com>
-In-Reply-To: <20240604131856.xo6jxe2geetq6jlg@airbuntu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <c4651a18-316b-42e0-a67b-673fedb05b5a@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/06/2024 2:18 pm, Qais Yousef wrote:
-> On 05/06/24 21:54, John Stultz wrote:
->> From: Connor O'Brien <connoro@google.com>
+On 6/4/24 1:47 AM, Krzysztof Kozlowski wrote:
+> On 03/06/2024 21:59, David Lechner wrote:
+>> On 6/2/24 8:21 PM, Kim Seer Paller wrote:
+>>> Add documentation for ltc2672.
+>>>
+>>> Reported-by: Rob Herring (Arm) <robh@kernel.org>
+>>> Closes: https://lore.kernel.org/all/171643825573.1037396.2749703571529285460.robh@kernel.org/
+>>> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+>>> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+>>> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+>>> ---
+>>>  .../bindings/iio/dac/adi,ltc2672.yaml         | 158 ++++++++++++++++++
+>>>  MAINTAINERS                                   |   1 +
+>>>  2 files changed, 159 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+>>> new file mode 100644
+>>> index 000000000000..d143a9db7010
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+>>> @@ -0,0 +1,158 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/iio/dac/adi,ltc2672.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Analog Devices LTC2672 DAC
+>>> +
+>>> +maintainers:
+>>> +  - Michael Hennerich <michael.hennerich@analog.com>
+>>> +  - Kim Seer Paller <kimseer.paller@analog.com>
+>>> +
+>>> +description: |
+>>> +  Analog Devices LTC2672 5 channel, 16 bit, 300mA DAC
+>>> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc2672.pdf
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - adi,ltc2672
 >>
->> This patch consolidates rt and deadline pick_*_task functions to
->> a task_is_pushable() helper
->>
->> This patch was broken out from a larger chain migration
->> patch originally by Connor O'Brien.
->>
->> Cc: Joel Fernandes <joelaf@google.com>
->> Cc: Qais Yousef <qyousef@layalina.io>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Juri Lelli <juri.lelli@redhat.com>
->> Cc: Vincent Guittot <vincent.guittot@linaro.org>
->> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
->> Cc: Valentin Schneider <vschneid@redhat.com>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Ben Segall <bsegall@google.com>
->> Cc: Zimuzo Ezeozue <zezeozue@google.com>
->> Cc: Youssef Esmat <youssefesmat@google.com>
->> Cc: Mel Gorman <mgorman@suse.de>
->> Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Waiman Long <longman@redhat.com>
->> Cc: Boqun Feng <boqun.feng@gmail.com>
->> Cc: "Paul E. McKenney" <paulmck@kernel.org>
->> Cc: Metin Kaya <Metin.Kaya@arm.com>
->> Cc: Xuewen Yan <xuewen.yan94@gmail.com>
->> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: kernel-team@android.com
->> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
->> Tested-by: Metin Kaya <metin.kaya@arm.com>
->> Reviewed-by: Metin Kaya <metin.kaya@arm.com>
->> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
->> Signed-off-by: Connor O'Brien <connoro@google.com>
->> [jstultz: split out from larger chain migration patch,
->>   renamed helper function]
->> Signed-off-by: John Stultz <jstultz@google.com>
->> ---
->> v7:
->> * Split from chain migration patch
->> * Renamed function
->> ---
->>   kernel/sched/deadline.c | 10 +---------
->>   kernel/sched/rt.c       | 11 +----------
->>   kernel/sched/sched.h    | 10 ++++++++++
->>   3 files changed, 12 insertions(+), 19 deletions(-)
->>
->> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
->> index eaedc69c5e30..ae583a427539 100644
->> --- a/kernel/sched/deadline.c
->> +++ b/kernel/sched/deadline.c
->> @@ -2179,14 +2179,6 @@ static void task_fork_dl(struct task_struct *p)
->>   /* Only try algorithms three times */
->>   #define DL_MAX_TRIES 3
->>   
->> -static int pick_dl_task(struct rq *rq, struct task_struct *p, int cpu)
->> -{
->> -	if (!task_on_cpu(rq, p) &&
->> -	    cpumask_test_cpu(cpu, &p->cpus_mask))
->> -		return 1;
->> -	return 0;
->> -}
->> -
->>   /*
->>    * Return the earliest pushable rq's task, which is suitable to be executed
->>    * on the CPU, NULL otherwise:
->> @@ -2205,7 +2197,7 @@ static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu
->>   	if (next_node) {
->>   		p = __node_2_pdl(next_node);
->>   
->> -		if (pick_dl_task(rq, p, cpu))
->> +		if (task_is_pushable(rq, p, cpu) == 1)
+>> The linked datasheet describes 12-bit and 16-bit versions, so should we have
+>> two compatibles here? adi,ltc2672-12, adi,ltc2672-16
 > 
-> Any reason we're checking specifically for == 1? Could the function later
-> return something other than 0 or 1?
+> Is their programming model different?
+> 
 
-I hear you, but just letting you know that `task_is_pushable()` will 
-return different non-zero results per upcoming patches in the queue. The 
-commit "sched: Fix rt/dl load balancing via chain level balance" will 
-make the function look like below (excerpt from `kernel/sched/core.c`):
-
-/*
-  * Returns:
-  * 1 if chain is pushable and affinity does not prevent pushing to cpu
-  * 0 if chain is unpushable
-  * -1 if chain is pushable but affinity blocks running on cpu.
-  */
-int task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
-
-> 
-> It's explaining if 1 could end up meaning something else in the commit message
-> and in function docs. Otherwise let's make it a bool and not do explicit check
-> for return value.
-> 
-> With this
-> 
-> Reviewed-by: Qais Yousef <qyousef@layalina.io>
-> 
->>   			return p;
->>   
->>   		next_node = rb_next(next_node);
->> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
->> index 975cb49a64dc..8b6fb77e095b 100644
->> --- a/kernel/sched/rt.c
->> +++ b/kernel/sched/rt.c
->> @@ -1791,15 +1791,6 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
->>   /* Only try algorithms three times */
->>   #define RT_MAX_TRIES 3
->>   
->> -static int pick_rt_task(struct rq *rq, struct task_struct *p, int cpu)
->> -{
->> -	if (!task_on_cpu(rq, p) &&
->> -	    cpumask_test_cpu(cpu, &p->cpus_mask))
->> -		return 1;
->> -
->> -	return 0;
->> -}
->> -
->>   /*
->>    * Return the highest pushable rq's task, which is suitable to be executed
->>    * on the CPU, NULL otherwise
->> @@ -1813,7 +1804,7 @@ static struct task_struct *pick_highest_pushable_task(struct rq *rq, int cpu)
->>   		return NULL;
->>   
->>   	plist_for_each_entry(p, head, pushable_tasks) {
->> -		if (pick_rt_task(rq, p, cpu))
->> +		if (task_is_pushable(rq, p, cpu) == 1)
->>   			return p;
->>   	}
->>   
->> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->> index 2d41ebe200c7..e46f69ba9ba2 100644
->> --- a/kernel/sched/sched.h
->> +++ b/kernel/sched/sched.h
->> @@ -3490,6 +3490,16 @@ void move_queued_task_locked(struct rq *rq, struct rq *dst_rq, struct task_struc
->>   	set_task_cpu(task, dst_rq->cpu);
->>   	activate_task(dst_rq, task, 0);
->>   }
->> +
->> +static inline
->> +int task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
->> +{
->> +	if (!task_on_cpu(rq, p) &&
->> +	    cpumask_test_cpu(cpu, &p->cpus_mask))
->> +		return 1;
->> +
->> +	return 0;
->> +}
->>   #endif
->>   
->>   #endif /* _KERNEL_SCHED_SCHED_H */
->> -- 
->> 2.45.0.rc1.225.g2a3ae87e7f-goog
->>
+I replied to myself already with the answer. After looking at it more it
+does not appear that is the case.
 
 
