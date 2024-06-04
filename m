@@ -1,133 +1,114 @@
-Return-Path: <linux-kernel+bounces-200230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8988FAD43
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:15:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0528FAD46
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081321C21DD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95E9528423A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FE31422B5;
-	Tue,  4 Jun 2024 08:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD641422D1;
+	Tue,  4 Jun 2024 08:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhM6M1LJ"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1W0rl+I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D13822075;
-	Tue,  4 Jun 2024 08:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AAC13A876;
+	Tue,  4 Jun 2024 08:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717488916; cv=none; b=h3Q6x+dr9HdOhzcRokmrsb2ZZnBN+K9/P5NveRYqFCq9EL76/cOCuGR4LXXkiSZojrSWO7c8ysxsB8+U3whF06n2+tKfMwzBuDMIDre9guBG1mH1b+Hc4Iq814cTDq6ObUfBgxiojbG+sOOG/jGhPQn2nA1nhQAOJ/MPzUWyq14=
+	t=1717488939; cv=none; b=HKVi362+a+kfwFdXuk+INEYpDGGf1coSAWiOf7W1PIgt1mYe12ZPWaAaBn2q5ut7imXz/W4kE/Dcwx4/5ec8xFk9s/9sjtMXLPSphV0adG8dd/8BTa/O7Fnus9dNUfgRbDUA4pKyoQhCRSPkFa0IH5nvhbDozjCVRlISnDUgua4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717488916; c=relaxed/simple;
-	bh=SiX9bU/SSzgD9E5S9viuz+JnacYTqPrTB5aQ2SneiwQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=UzAoKyV5CA6acfOnjPw96w8wiXLLiz1JMtnK88C99p0ynUmwo/DLrAlrXsYm00ayBssRzxwo1aefLBcEvUB0JzFjpcEPKZpaFFg1AEw13Zq0URsBQhwMcj2Fud3ZEuVMvrwsKRuTfxuXWsfuPPhwx0l4hmkMO6Jkate11LtpzVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhM6M1LJ; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-24c9f628e71so2701878fac.1;
-        Tue, 04 Jun 2024 01:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717488913; x=1718093713; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C9kBLC2p8nuUCMtg4XVXYIpFmhV0cX45MX1PAkKRQxk=;
-        b=AhM6M1LJ8k6r7k9vjpu29xnronuJldOHe7yIwNzFObtx/M8i+C0AhnaKd6rLEYYRL+
-         LJQH1sxH+AVLF2htrGhcUi7N8/i6vAOHfqwnEFbLwqYn2k6ND9l+4Mq7jdczkd1KfYAE
-         wJJ4Y3LizGthzntWB51xpS50JXngSJ5zZ80GBRcBC4AZLoPsBEwKVfUQROvMQgpGWjkl
-         vH89S3AU94w5+ld0RedfvKpB1FdS6iD7IBKDCez6tI2eDNNDc2YN7u1dcsf39dRzfj8d
-         boU1IX1Gv1MIeLatVgl/UrwEOtBuFQt6COJ2d9kLqgXI/Ti9v02oqxlnX565s8kNjQaC
-         V+eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717488913; x=1718093713;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C9kBLC2p8nuUCMtg4XVXYIpFmhV0cX45MX1PAkKRQxk=;
-        b=WPlqFagGc+2ZDDl8MrGVqYHbCfAhTbwF9OqN6NAjtCZ+JrEaTMdaoVtjZjFFCRPzEa
-         B5a0KPf2j+hxcbXexmLwFkXuMrKMdPbjU8hSOUBjAZFgEvuc3ouL5w/AkPJDT4cTKEbV
-         TQMumKXMLvAGdJc17v0FyQa58mQxuwRByLvTZyNQa3KRgoX9siXCWVomxynHuijQ0yge
-         m129EwdkSecwsNZT/159WZ4eIgyP9x6DvShSK1Wlqz8sUtWOaVgA+AuT6iLIC1zIX5Xa
-         FQ5pa54FPH6Lx9s15WI7+SFNEq74QGFcTgI556Vifo7Nj3ZmFVi39E4TJ24IJTfVIu94
-         0hww==
-X-Forwarded-Encrypted: i=1; AJvYcCXefhk3uCA3ScaKTaMLXkqXVbW3fds6oL62P7+eIlhJ8KUJ2MZjDPKVGV2o6gFYXRdGa3H27XXyyM8kYw3enEnOLV/QGQ9tzaoM+U4Zt804KqDqY9X9aCekJoEOHM4DIJfO0iasgfxusbXicw==
-X-Gm-Message-State: AOJu0Yy6ZE/p4CHzQYiiJ+MWSStcy6cSwhxMjkK4nVYt2isg5oB04vTb
-	iIIRPDBlPG9g35WRjWQ8/a552Cg2mEIHmnGkWbMoX4/6ou2GB/PP
-X-Google-Smtp-Source: AGHT+IGxxo/EDxnbf+imLgIkZXImnPeMXFLmcv02HJWF4yho9L0RYS1z8JiNY+0E1fVn0cFFzIlg+Q==
-X-Received: by 2002:a05:6870:d61e:b0:244:c312:4c84 with SMTP id 586e51a60fabf-250bf12ca2bmr7740638fac.7.1717488913459;
-        Tue, 04 Jun 2024 01:15:13 -0700 (PDT)
-Received: from smtpclient.apple ([47.254.32.37])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242c270c7sm6582411b3a.220.2024.06.04.01.15.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2024 01:15:13 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1717488939; c=relaxed/simple;
+	bh=TzCDUb/3217QjH6pbXSRFhl3x/aLMjd5c64C2r/QBZw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=chcUixtiUoDZ9neqHbpcCb+5ukFkXzxFgFMhMKo6iPFRrTGvnleVcKNPtL14/wD7VVd3fs8J04gRp/Rz2lWN33vhfo+Dgnj/Eq35q0POSPSH4Cm19x4lxZ3ANO6MdbDRm73xzQvVuCf9wcnkvZG34EAAAQqW2x8hdmMYMHhQbVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1W0rl+I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C0FC2BBFC;
+	Tue,  4 Jun 2024 08:15:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717488938;
+	bh=TzCDUb/3217QjH6pbXSRFhl3x/aLMjd5c64C2r/QBZw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=G1W0rl+Iz2kEfVjpxX7pA3bbESGc3+m5vgaRu0maBEtWvPZ6GejCBKnC8ijZZfYNf
+	 gg+OX4IqPaRL+N5YJJ8tCC/BEr7T5iO6hBjrGkR8Ok1U/ima3rMfuVcI9/GClATE7e
+	 M4fLgtMaFOObMVfCG4GZm5qtcfP1nqNGcbC7oj9zD7skWuXRgMInEFlfnfK2iKusYB
+	 QFvshVvbH/V9yNduUjMP22MYD/65ROV+8Z4ly0kVVtK2EtB8USfavEgurKrOgjkPNa
+	 eJGFtsiPMlkUR6K9PA7PULBHjUZGvDguItLdibrFtVtZXoS/qPfjU7lC3Nt7U6CwBs
+	 QbRt6MwBxCWLg==
+Date: Tue, 4 Jun 2024 10:15:35 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+cc: Benjamin Tissoires <bentiss@kernel.org>, Kees Cook <keescook@chromium.org>, 
+    linux-usb@vger.kernel.org, linux-input@vger.kernel.org, 
+    syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org, 
+    syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com
+Subject: Re: [PATCH] HID: usbhid: fix recurrent out-of-bounds bug in
+ usbhid_parse()
+In-Reply-To: <20240524120112.28076-1-n.zhandarovich@fintech.ru>
+Message-ID: <nycvar.YFH.7.76.2406041015210.16865@cbobk.fhfr.pm>
+References: <20240524120112.28076-1-n.zhandarovich@fintech.ru>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <Zloh/TbRFIX6UtA+@redhat.com>
-Date: Tue, 4 Jun 2024 16:14:51 +0800
-Cc: Miroslav Benes <mbenes@suse.cz>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>,
- Petr Mladek <pmladek@suse.com>,
- live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4DE98E35-2D1F-4A4E-8689-35FD246606EF@gmail.com>
-References: <20240520005826.17281-1-zhangwarden@gmail.com>
- <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
- <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
- <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
- <Zloh/TbRFIX6UtA+@redhat.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
+On Fri, 24 May 2024, Nikita Zhandarovich wrote:
 
+> Syzbot reports [1] a reemerging out-of-bounds bug regarding hid
+> descriptors possibly having incorrect bNumDescriptors values in
+> usbhid_parse().
+> 
+> Build on the previous fix in "HID: usbhid: fix out-of-bounds bug"
+> and run a sanity-check ensuring that number of descriptors doesn't
+> exceed the size of desc[] in struct hid_descriptor.
+> 
+> [1] Syzbot report:
+> Link: https://syzkaller.appspot.com/bug?extid=c52569baf0c843f35495
+> 
+> UBSAN: array-index-out-of-bounds in drivers/hid/usbhid/hid-core.c:1024:7
+> index 1 is out of range for type 'struct hid_class_descriptor[1]'
+> CPU: 0 PID: 8 Comm: kworker/0:1 Not tainted 6.9.0-rc6-syzkaller-00290-gb9158815de52 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> Workqueue: usb_hub_wq hub_event
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>  ubsan_epilogue lib/ubsan.c:231 [inline]
+>  __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+>  usbhid_parse+0x5a7/0xc80 drivers/hid/usbhid/hid-core.c:1024
+>  hid_add_device+0x132/0x520 drivers/hid/hid-core.c:2790
+>  usbhid_probe+0xb38/0xea0 drivers/hid/usbhid/hid-core.c:1429
+>  usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
+>  really_probe+0x2b8/0xad0 drivers/base/dd.c:656
+>  __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
+>  driver_probe_device+0x50/0x430 drivers/base/dd.c:828
+>  __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
+>  bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:457
+>  __device_attach+0x333/0x520 drivers/base/dd.c:1028
+>  bus_probe_device+0x189/0x260 drivers/base/bus.c:532
+>  device_add+0x8ff/0xca0 drivers/base/core.c:3720
+>  usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
+>  usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
+>  usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
+> 
+> Reported-and-tested-by: syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com
+> Fixes: f043bfc98c19 ("HID: usbhid: fix out-of-bounds bug")
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
 
-> On Jun 1, 2024, at 03:16, Joe Lawrence <joe.lawrence@redhat.com> =
-wrote:
->=20
-> Adding these attributes to livepatch sysfs would be expedient and
-> probably easier for us to use, but imposes a recurring burden on us to
-> maintain and test (where is the documentation and kselftest for this =
-new
-> interface?).  Or, we could let the other tools handle all of that for
-> us.
-How this attribute imposes a recurring burden to maintain and test?
+Applied, thanks.
 
-> Perhaps if someone already has an off-the-shelf script that is using
-> ftrace to monitor livepatched code, it could be donated to
-> Documentation/livepatch/?  I can ask our QE folks if they have =
-something
-> like this.
-
-My intention to introduce this attitude to sysfs is that user who what =
-to see if this function is called can just need to show this function =
-attribute in the livepatch sysfs interface.
-
-User who have no experience of using ftrace will have problems to get =
-the calling state of the patched function. After all, ftrace is a =
-professional kernel tracing tools.
-
-Adding this attribute will be more easier for us to show if this patched =
-function is called. Actually, I have never try to use ftrace to trace a =
-patched function. Is it OK of using ftrace for a livepatched function?
-
-Regards,
-Wardenjohn
-
-
+-- 
+Jiri Kosina
+SUSE Labs
 
 
