@@ -1,70 +1,157 @@
-Return-Path: <linux-kernel+bounces-200815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4B28FB541
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5266D8FB577
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEA81C21EFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:30:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8385A1C22FD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2AF13CF9A;
-	Tue,  4 Jun 2024 14:30:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4279113C8F3;
-	Tue,  4 Jun 2024 14:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2998148FEC;
+	Tue,  4 Jun 2024 14:32:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22FF144306;
+	Tue,  4 Jun 2024 14:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511425; cv=none; b=VeMY8G5nUac3Qy6xc54Yje/v/KFSOvhOYi9n/uWHzcH1FiTuBSTK4NWlYpkxIDrBZIrvLaQ1FTu1PBcex7urBVLqiPpzeoq94vq4cwo6Lub0QK0CDPkxUtUa2XBojRj9H0Vjd6z409Y5qVCxIZDTI61WrVyvKs5HV6xpTeBut2w=
+	t=1717511575; cv=none; b=R6+PbbtGvrT4iQRTGHK0cVj3TSvcxb31xtf8K5AFI8skMoL0wkEbBZuSDesc0S09lyRTLY3jMHAwEuRU1mvnczB8vNjLqGlgdCZkhnDRx85nOSSz0I1DxWqg+hkxzb5CI/YsTyLByspnM/5iNmPdfyxmDAKST2KjebyaMiRtmHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511425; c=relaxed/simple;
-	bh=u8mZLdWoedrnzExV0JCjvhf7ZvbOFMTaDcB0r32i1SI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kHd5lM17PcaJhvb2HQUQ87+L2sV2I6JdfkNhuE+EoKnRPWwnuFWcz6HIgiPgc9GuqsAmkaUVgzR1sqNjyHsBrMwGhNLBN6b7N3kYD03OeNseGVEEKIs+jtaH5uzuyvnGHINGkTOCIpGpIl1eVe3ZrX+IXc5kZmz6b3SzKozXI30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05867C2BBFC;
-	Tue,  4 Jun 2024 14:30:22 +0000 (UTC)
-Date: Tue, 4 Jun 2024 10:30:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>, LKML
- <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] tracing: Fix some selftest issues
-Message-ID: <20240604103021.43bae1da@gandalf.local.home>
-In-Reply-To: <20240604231829.16b49c8868d310bcdcd78cab@kernel.org>
-References: <171671825710.39694.6859036369216249956.stgit@devnote2>
-	<20240527192907.49c9220f@rorschach.local.home>
-	<20240529014640.3a04f7301f12eb44738f9f2d@kernel.org>
-	<20240529083818.b7835de167191d4567405ce6@kernel.org>
-	<3a7e679712fb47b6c75af84163b5d3ea252f4da9.camel@linux.intel.com>
-	<20240531113721.c0314e0cdb3beb70c1a6ba7d@kernel.org>
-	<20240531032425.3635dc93@rorschach.local.home>
-	<20240531232047.fca5712a98e360d4a27fd92c@kernel.org>
-	<20240604095746.1bbb003c@gandalf.local.home>
-	<20240604231829.16b49c8868d310bcdcd78cab@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717511575; c=relaxed/simple;
+	bh=h3XxyN6IXydL8e0zIIIS9V4ZStSl00kff0Mk919Sp94=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GzvjMCi6sKCgIMKGAVITlsZO1541MtiefCT2pSr8oQUn8x69Va5t6F1HQnXkv6f0GrcBDnvdRfqfqSO0N7FBWk3zi0+TpniFmjTvEwtwvHpNhsRLo36weHjbP/bsGhtpDOgpllo3I6gRGuf/YEUFNi+0xgTXOv28xw5xe2XQxUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCD511042;
+	Tue,  4 Jun 2024 07:33:17 -0700 (PDT)
+Received: from e127643.broadband (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 525523F64C;
+	Tue,  4 Jun 2024 07:32:50 -0700 (PDT)
+From: James Clark <james.clark@arm.com>
+To: coresight@lists.linaro.org,
+	suzuki.poulose@arm.com,
+	gankulkarni@os.amperecomputing.com,
+	mike.leach@linaro.org,
+	leo.yan@linux.dev,
+	anshuman.khandual@arm.com
+Cc: James Clark <james.clark@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2 12/16] coresight: Make CPU id map a property of a trace ID map
+Date: Tue,  4 Jun 2024 15:30:21 +0100
+Message-Id: <20240604143030.519906-13-james.clark@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240604143030.519906-1-james.clark@arm.com>
+References: <20240604143030.519906-1-james.clark@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 4 Jun 2024 23:18:29 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+The global CPU ID mappings won't work for per-sink ID maps so move it to
+the ID map struct. coresight_trace_id_release_all_pending() is hard
+coded to operate on the default map, but once Perf sessions use their
+own maps the pending release mechanism will be deleted. So it doesn't
+need to be extended to accept a trace ID map argument at this point.
 
-> BTW, some these bootup tests can be ported on KUnit. Do you have a plan to
-> use KUnit?
+Signed-off-by: James Clark <james.clark@arm.com>
+---
+ drivers/hwtracing/coresight/coresight-trace-id.c | 16 +++++++++-------
+ include/linux/coresight.h                        |  1 +
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
-I haven't thought about that. If someone else wants to do it, I will
-happily review it ;-)
+diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+index 5561989a03fa..8a777c0af6ea 100644
+--- a/drivers/hwtracing/coresight/coresight-trace-id.c
++++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+@@ -13,10 +13,12 @@
+ #include "coresight-trace-id.h"
+ 
+ /* Default trace ID map. Used in sysfs mode and for system sources */
+-static struct coresight_trace_id_map id_map_default;
++static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
++static struct coresight_trace_id_map id_map_default = {
++	.cpu_map = &id_map_default_cpu_ids
++};
+ 
+-/* maintain a record of the mapping of IDs and pending releases per cpu */
+-static DEFINE_PER_CPU(atomic_t, cpu_id) = ATOMIC_INIT(0);
++/* maintain a record of the pending releases per cpu */
+ static cpumask_t cpu_id_release_pending;
+ 
+ /* perf session active counter */
+@@ -49,7 +51,7 @@ static void coresight_trace_id_dump_table(struct coresight_trace_id_map *id_map,
+ /* unlocked read of current trace ID value for given CPU */
+ static int _coresight_trace_id_read_cpu_id(int cpu, struct coresight_trace_id_map *id_map)
+ {
+-	return atomic_read(&per_cpu(cpu_id, cpu));
++	return atomic_read(per_cpu_ptr(id_map->cpu_map, cpu));
+ }
+ 
+ /* look for next available odd ID, return 0 if none found */
+@@ -145,7 +147,7 @@ static void coresight_trace_id_release_all_pending(void)
+ 		clear_bit(bit, id_map->pend_rel_ids);
+ 	}
+ 	for_each_cpu(cpu, &cpu_id_release_pending) {
+-		atomic_set(&per_cpu(cpu_id, cpu), 0);
++		atomic_set(per_cpu_ptr(id_map_default.cpu_map, cpu), 0);
+ 		cpumask_clear_cpu(cpu, &cpu_id_release_pending);
+ 	}
+ 	spin_unlock_irqrestore(&id_map_lock, flags);
+@@ -181,7 +183,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
+ 		goto get_cpu_id_out_unlock;
+ 
+ 	/* allocate the new id to the cpu */
+-	atomic_set(&per_cpu(cpu_id, cpu), id);
++	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), id);
+ 
+ get_cpu_id_clr_pend:
+ 	/* we are (re)using this ID - so ensure it is not marked for release */
+@@ -215,7 +217,7 @@ static void _coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_ma
+ 	} else {
+ 		/* otherwise clear id */
+ 		coresight_trace_id_free(id, id_map);
+-		atomic_set(&per_cpu(cpu_id, cpu), 0);
++		atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&id_map_lock, flags);
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index c16c61a8411d..7d62b88bfb5c 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -234,6 +234,7 @@ struct coresight_sysfs_link {
+ struct coresight_trace_id_map {
+ 	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
+ 	DECLARE_BITMAP(pend_rel_ids, CORESIGHT_TRACE_IDS_MAX);
++	atomic_t __percpu *cpu_map;
+ };
+ 
+ /**
+-- 
+2.34.1
 
--- Steve
 
