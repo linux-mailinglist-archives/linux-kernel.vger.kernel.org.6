@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-200021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE3A8FA95B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:41:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFE38FA95D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE9D11C21589
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA47285D81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A99413DBA4;
-	Tue,  4 Jun 2024 04:40:50 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8C013D88F;
+	Tue,  4 Jun 2024 04:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsafrwNP"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB93613D638;
-	Tue,  4 Jun 2024 04:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DCF13D612
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 04:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717476050; cv=none; b=MtwLwIoSHHG9bk/Yu3ixH8dXfJVgMgIIPPMsx0y5ufuNiwCTdYrIO+sNiz/Ue0CqxFaEPX85nMXZzhlhkhkDQBUkuyPwUMKpsahqaTgsDdPXq3Om08bWSurC+/X5WB2N/gqeY3c2aw+eI5b2EwvX1FyxSSKPcBcg9hnPDF1abio=
+	t=1717476158; cv=none; b=D2hjhMOnltvExi3r6K9Y1vKdjNnbt7IxtVC1wCuy9BkfvrZB1SkGcFVrqXcUxaRelmR/PsfiPZ3v1uCmdqXJ0yzb+yJLFaEjcJ7r2m6lbFnqM+NARyNW1reVUehkmw265wH77BAF1aCI3iPwt7n3CybN+jUiOlfgmwuyfGZmCco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717476050; c=relaxed/simple;
-	bh=YspLg/oZO+NECETpz3U99drDYtBVvMb6eMXzhEQZu1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjoKciJKskMO8scKIxjtcD8rSfWx52AhznzPgs68r8V9pBmAub31EbPFRz5yg857F//Dv+p8s8ML6p8gyUaKryygBIkf169Ahvqq0jVQ88fjPyr334LoE4KJuOGurTqmYjiCH+Z34s2V6RQQCZdXEiumrnvYWlTSMwlrxFqS2EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id EAF7068D12; Tue,  4 Jun 2024 06:40:42 +0200 (CEST)
-Date: Tue, 4 Jun 2024 06:40:42 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christoph Hellwig <hch@lst.de>, Nitesh Shetty <nj.shetty@samsung.com>,
-	Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
-	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <20240604044042.GA29094@lst.de>
-References: <20240520102033.9361-1-nj.shetty@samsung.com> <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com> <20240520102033.9361-3-nj.shetty@samsung.com> <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org> <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org> <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org> <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com> <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org> <20240601055931.GB5772@lst.de> <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
+	s=arc-20240116; t=1717476158; c=relaxed/simple;
+	bh=e/hzSQPioGhqZWn+FtCqDm09GQWDMpuuNzGi6YPvPqo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VbG+cc4xUksCt7wH1SP3hbrpNHF4XToZScHri089VVsgD5fyoYSZs8XRBfvULszvM2v4BITfxNMm21+piHGAS1qv/a2x8ZDhS7dZigHosauX1b8Q9Vo0fVMh9l05JYMjJduE/S/UumrPJ0C5e7kzYJWLIkjKfCPnnW7A19kBWXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsafrwNP; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-702555eb23bso2190272b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 21:42:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717476156; x=1718080956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BkvEv3qr0/x9ovLj/Wv9So8nnYSCd63OyQtFRSRnJ0Y=;
+        b=RsafrwNP1JJC6q036rQgdWS5ETWc7LbJaB5E+wntCXVJN9JjHPLzUsHvjbvBHw8/9V
+         QVGpVBxQinayBEPcWPO91CGQ8EY2W5Z6KOeTmfpzJJ3GShEdjxXrY8/5KzPP0EyHG5+C
+         iCOvx71ej+DQveFXr+u2esvjYvk3iCXXa9/5epjoAjqky1nq+MGIoIixo2UMdsNX2d59
+         aJBmwVlQll/DV+JOiBYSQaWbvZVav6GFJeqqaF3twFHrIZeQFKA7eK1j4SWD3qsev1hi
+         4f+LxHsPfen7Wj/sq9XZDkVtvVgGnUqKduOpUWf1PJCSBqFvqKeQkhs7EKs7VhDiAkge
+         OcJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717476156; x=1718080956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BkvEv3qr0/x9ovLj/Wv9So8nnYSCd63OyQtFRSRnJ0Y=;
+        b=IhcFIZRHlzJDsLZLIm1S+/IJBCoKKJnzzULiVmxqIbdvVDecCYMfv5XjXHTxaZ2HPD
+         Mb4DNUePOD340mKgei8LGi16GMrEuIcuTUYi1crm3Rx7PxT5Pa/BHukuFSviux6Uq4yO
+         Ykw/e0tHzHLyZdTMmAW2AY7yQ/6IsIrtoGkoC3uUvE7jsK6C1QEM0inpkBIxyO+Hw5GA
+         VqA9JjxuMamwbkpTUQRKSYY8urcs5d4evlY+Y1O3JFBD3bgBSkWik/GkeaKAz/B9VkSh
+         hcMLKQIHZ84ueAI5TY7F+fKK1OVkY0UntmTcQRh219H38o3VWJiTRwUnzw6EAt1DrC5f
+         BgJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG66b95y08ckBcfOSTzHY7oRD2E5QkK6Byx6XKu/ZEl7D8waNqPRfAC6rpvL3RBJ2ZEiOdomwqjpI50nPayoFFwwEG6ypAwEg/2Sj1
+X-Gm-Message-State: AOJu0YxDr3ZzPlt4hhtk25Js/xI2u866SptNCZ1GYx4nSlY7DTImqRgB
+	GoCoxZH5BCO+dO7+v8cF06pCwD7i+G7sfMd2AX+yLTqfjTegQr0A
+X-Google-Smtp-Source: AGHT+IEUwlMaCN9VQPEkSiUpGSmfy26ZgyEA8e/o12YEcl420arHgmfeFEu01GwgpxIpidvJWxSeKA==
+X-Received: by 2002:a05:6a20:6a09:b0:1af:a53b:89e with SMTP id adf61e73a8af0-1b26f0f19efmr11223962637.10.1717476155618;
+        Mon, 03 Jun 2024 21:42:35 -0700 (PDT)
+Received: from kylin-ThinkPad-pc.. ([116.128.244.171])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323562b6sm73128515ad.73.2024.06.03.21.42.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 21:42:35 -0700 (PDT)
+From: liujinlong <mingliu6104@gmail.com>
+X-Google-Original-From: liujinlong <liujinlong@kylinos.cn>
+To: kees@kernel.org
+Cc: thunder.leizhen@huawei.com,
+	yonghong.song@linux.dev,
+	ndesaulniers@google.com,
+	song@kernel.org,
+	ardb@kernel.org,
+	maninder1.s@samsung.com,
+	azeemshaikh38@gmail.com,
+	linux-kernel@vger.kernel.org,
+	liujinlong <liujinlong@kylinos.cn>,
+	k2ci <kernel-bot@kylinos.cn>
+Subject: [PATCH] sprint_symbol: Replace strcpy with memmove to handle potential overlap
+Date: Tue,  4 Jun 2024 12:42:28 +0800
+Message-Id: <20240604044228.2910712-1-liujinlong@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 03, 2024 at 10:12:48AM -0700, Bart Van Assche wrote:
-> Consider the following use case:
-> * Task A calls blk_start_plug()
-> * Task B calls blk_start_plug()
-> * Task A submits a REQ_OP_COPY_DST bio and a REQ_OP_COPY_SRC bio.
-> * Task B submits a REQ_OP_COPY_DST bio and a REQ_OP_COPY_SRC bio.
-> * The stacking driver to which all REQ_OP_COPY_* operations have been
->   submitted processes bios asynchronusly.
-> * Task A calls blk_finish_plug()
-> * Task B calls blk_finish_plug()
-> * The REQ_OP_COPY_DST bio from task A and the REQ_OP_COPY_SRC bio from
->   task B are combined into a single request.
-> * The REQ_OP_COPY_DST bio from task B and the REQ_OP_COPY_SRC bio from
->   task A are combined into a single request.
->
-> This results in silent and hard-to-debug data corruption. Do you agree
-> that we should not restrict copy offloading to stacking drivers that
-> process bios synchronously and also that this kind of data corruption
-> should be prevented?
+In the function __sprint_symbol, replace strcpy with memmove to ensure
+correct behavior even if the source and destination buffers overlap.
+This change prevents potential undefined behavior flagged by recent
+compilers as [-Werror=restrict].
 
-There is no requirement to process them synchronously, there is just
-a requirement to preserve the order.  Note that my suggestion a few
-arounds ago also included a copy id to match them up.  If we don't
-need that I'm happy to leave it away.  If need it it to make stacking
-drivers' lifes easier that suggestion still stands.
+Reported-by: k2ci <kernel-bot@kylinos.cn>
+Signed-off-by: liujinlong <liujinlong@kylinos.cn>
+---
+ kernel/kallsyms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Thanks,
->
-> Bart.
----end quoted text---
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index 22ea19a36e6e..3c3a77fcd020 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -489,7 +489,7 @@ static int __sprint_symbol(char *buffer, unsigned long address,
+ 		return sprintf(buffer, "0x%lx", address - symbol_offset);
+ 
+ 	if (name != buffer)
+-		strcpy(buffer, name);
++		memmove(buffer, name, strlen(name) + 1);
+ 	len = strlen(buffer);
+ 	offset -= symbol_offset;
+ 
+-- 
+2.17.1
+
 
