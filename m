@@ -1,221 +1,368 @@
-Return-Path: <linux-kernel+bounces-201036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE528FB876
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:06:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370398FB8C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8501E1F21E7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:06:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBE2B33204
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD93C1487DF;
-	Tue,  4 Jun 2024 16:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GXwTyxx2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AD214830B;
+	Tue,  4 Jun 2024 16:05:38 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E67E147C90;
-	Tue,  4 Jun 2024 16:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717517112; cv=fail; b=mQyXQ/ufni7FyT37h4aFkB1XZ5cs/cvo1PJT+Z3bezzfNsaBoacDzJtUaBhfI6PuPGSomxN4oJn33vPEHpFmOrrRix2+1Am6AJHIBXdkg3p/VG+cM98R5nNqEXJtn4lDcFkIEmebcHdgxXKwmEbixDQPGYp0O8kRWIkLMuaKnF8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717517112; c=relaxed/simple;
-	bh=Gxh7XxsI4nF/xnm5pBoKyStNfcmjkLGsPWVrnGE7ptc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gSR424iVgW06VTKICxfQkWFDd8BL9JKLL8EZePb3GtCjgpwon/lrKLspDP/8zedoV8mz81tofO50xaKe+RuHxtyBO7lhDmF+F4AbjTnK33fvSbczuLXaxqdbBhlHScredkab0VZ5hEW6NGbkOOvw4h5tt+YfVnMR4qs43Am/fj4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GXwTyxx2; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717517111; x=1749053111;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Gxh7XxsI4nF/xnm5pBoKyStNfcmjkLGsPWVrnGE7ptc=;
-  b=GXwTyxx2a4edUs0fov72b6x6IhxRL1BnleJzAdGghvbjPZMJpvRbul/3
-   Yjzda5f0sryvWg94Vh0cbd8v4wHh6uu/4A38fjvb7ePkgyW7TiWYh1/ew
-   FHkVVmlJzDERt5XyoUEg0CGvNqQUhi2cJN9lib6QNFPBdaG8W8sJo61xr
-   Ufwvcr6YOu8bG2sUv14RV5rFSsUNhpCKCzUBbUk6IUnieHS/R6tqk92N2
-   NAW8UGwd5X2qCKflyAWX6Ea2cnocFm8SC0+kgzEF51C/G6Y+WXrWAWyvu
-   +B/+OxTUJny+n+IXq5FxF8s6x2S5IfCwosfwnom1c7pWrIjPK5z7BuK3e
-   Q==;
-X-CSE-ConnectionGUID: 2HOD5M94QA6kbauWj3bAtQ==
-X-CSE-MsgGUID: 5ZmdWuP9QiKM3/iKni1ukA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="25189951"
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="25189951"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:05:08 -0700
-X-CSE-ConnectionGUID: zWq0NlTxRveOnYp/2MDcmw==
-X-CSE-MsgGUID: evv7mJQNS+6OuEv2Plrxcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
-   d="scan'208";a="42397203"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Jun 2024 09:05:08 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 4 Jun 2024 09:05:07 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 4 Jun 2024 09:05:07 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 4 Jun 2024 09:05:07 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 4 Jun 2024 09:05:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PG9LKGpyv1TRudnoD62LfgCtc4uDEwX6G/xdCTm3SN0iDezlNNziACF+peOMTSg/XThuUz0JI6bKs8aH0KMg+j7ssZfmV+OjtW8fNzt5Ap1R8UsxU9qK2n29jkN+/rfVlPzNntg8RAHTX0OYE07FDvEE3DZc/9ewb1bfyvW7gIbCqFFg+jS2sEzyyllKFFZtWOGom6KBgsZ/h6zrLdDGGqaxezew2uIqRAxw6JE7c4qkdJgt74Ki+862OxsdklPLeGH5GkTnWG08tZFrpwHssjXMRQ7ydpYmwUVGFuzCyCN3TYUb4J/6+trpew8PwKGkbcyyYRP0zt8dpN4YUhJRVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gxh7XxsI4nF/xnm5pBoKyStNfcmjkLGsPWVrnGE7ptc=;
- b=eGZJE0ogr3btvlXI4r1tODaAORTB4s3GXB3apRcMDN/fu5PTieuJHLsNdNfLT25XBsXLqJskxTNxsuAZw2s51931fJsdak1pgc7xSXCcoRWko2tb8ExVM7QEj1ABqBb2pKvz/4OeFFUU/bX54JgB7vsXoCdyDtJtHStySq7NdPenn7taqm4nWi9g41BBAiI6HISAiDDMvgUfA9cSba3XsZbieVgRH1Fk13dsBYOpQqebc40S/BAhwCGfbVSPzBoNQherDYrMqWs9eXoZBAZMJ7AkbKZcUZOZsvOoysi5cUlFUsayeJqxi++9UiPr9oJAfOn2YZZUaYpH95VmCMmRCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by DM4PR11MB6454.namprd11.prod.outlook.com (2603:10b6:8:b8::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.21; Tue, 4 Jun 2024 16:05:04 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%5]) with mapi id 15.20.7633.018; Tue, 4 Jun 2024
- 16:05:04 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
-	<akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
-	<peterz@infradead.org>, Kees Cook <keescook@chromium.org>, "Guilherme G.
- Piccoli" <gpiccoli@igalia.com>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, "Ross
- Zwisler" <zwisler@google.com>, "wklin@google.com" <wklin@google.com>,
-	"Vineeth Remanan Pillai" <vineeth@bitbyteword.org>, Joel Fernandes
-	<joel@joelfernandes.org>, Suleiman Souhlal <suleiman@google.com>, "Linus
- Torvalds" <torvalds@linuxfoundation.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Mike Rapoport
-	<rppt@kernel.org>
-Subject: RE: [PATCH 1/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-Thread-Topic: [PATCH 1/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-Thread-Index: AQHatg66UtKkQZOCdkSWurZarbYoMLG3HdcAgABVFgCAAFHiMA==
-Date: Tue, 4 Jun 2024 16:05:04 +0000
-Message-ID: <SJ1PR11MB60836B1DBD5C41BF22A66430FCF82@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20240603233330.801075898@goodmis.org>
-	<20240603233631.452433539@goodmis.org>
-	<CAMj1kXFoNT25+ZTFaqF8zj4VkN6FFbtX5Fntf+J-c33tW3TPUA@mail.gmail.com>
- <20240604070826.030c5202@gandalf.local.home>
-In-Reply-To: <20240604070826.030c5202@gandalf.local.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|DM4PR11MB6454:EE_
-x-ms-office365-filtering-correlation-id: e8c7cb3a-d79f-4a96-2df8-08dc84b01897
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|7416005|366007|376005|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?MZ7mKIfE9Wx3Qd4X7jA0yVPB1SCQpTx7X0weOnxF4dwDtlJJnoAXgKG8wQwp?=
- =?us-ascii?Q?I9I84+BVsa1uaYcx5axvnelDgFaRgi4BrlaruNrcUrG1oHKP/O4b1/sy5m2u?=
- =?us-ascii?Q?W/ZZmSXxi5mHGDtoS9nOYRhDz9Kpr2lYl4ZhjLMkDg9PO/c9WUap6vGNktE3?=
- =?us-ascii?Q?tI6yhlG3NGc1Ilhes08/3iz3wIx4JU7E4mhRrvy4aivlhuoEP1U7iBtGO450?=
- =?us-ascii?Q?uZpd+IU1LAoiSDVq3n4TwmBTxMBnNPPDW1csuaY3ROBeFuovFTyaJNB88/XP?=
- =?us-ascii?Q?13qCbufXCVM4fLvYljJvDaA3Xp0msmrQZcK+1SSKCEHX0sILNWDGlJSP+5Is?=
- =?us-ascii?Q?l3qVFzJq0zovKawRacBnwAMXJmPAMaajW3ecEsiW2L/++Ym6LhQPwfyPOiKf?=
- =?us-ascii?Q?0tZsdhh6Nxp7TbsDWkWW7mVtI2ujEFGSpBQjvC3xQHnHn7bTWaTgdTiMBMGO?=
- =?us-ascii?Q?G8m27AZ91eK/awQCbadb1mC+EMpLxkFTXdkSGOYryxmUvr6AvLytJ6HCqE7c?=
- =?us-ascii?Q?MTqdPw0A7FFxN+/Dq3SykC5T6MwattGxchXx+RTwa9SA4Y5vE20ylgHfPvDH?=
- =?us-ascii?Q?0DXUDS0oWFkNRog5DddfgQDURaEw76JtW9jvbBRhQCNRwrPGZ2w6nJLTffLq?=
- =?us-ascii?Q?rKtKKlYQToZD70xQ76pnCaNHKaThV86Dr9C2sL7V1dfOzb51EocZ4F91x9Bl?=
- =?us-ascii?Q?hHS40fSQE9s+RcQnbSloSqBK8CirS51ln3I05XIaGyYWVQ7vcXh+VMoJO4I/?=
- =?us-ascii?Q?hsRtpyYMwLdiWcfabPh22WngONmyO8WOR3BAsbssmo8f9cAwDyrKPv+fSeSB?=
- =?us-ascii?Q?6uMe8pHpf3ryDaWiOnOlTcf2I/Le1TSLVQoCjyU3T0gEbWN7OwdeUAaJ52bZ?=
- =?us-ascii?Q?vB8pBiDJrUV6NtlT1q5yd97gOwUB2/tvR4jAxofzKNjt6HXZHImzue0HC7+Y?=
- =?us-ascii?Q?y5DKHQkd8UChAQmZMXdLIXmkfHGLWe/G0m3o2u6YT0s2Nkqf/c/jNaZWNmyU?=
- =?us-ascii?Q?MTPT7TrWqscQRiDbm0pgwR0caOaopR92iv0pLbOtCyubO3FBw668V5JzH0zl?=
- =?us-ascii?Q?eoG2dhAjpLJRzBQiVeNfHVUccd7z9mDbWt7s6Ry0CaruHIlxLDNd6nYY1q9U?=
- =?us-ascii?Q?GMCLfg4Jl/twHxYBf6Zi9RN2rnOK6VAyQpTJBac8y3H8dJMoaPlbqfuv55Ks?=
- =?us-ascii?Q?ZsrNTw+b77Qa9OCUll/WABZ08aWh1Fwg2ASRoLNMYzThSehnak5l2XVgQ8vO?=
- =?us-ascii?Q?8CkAX8MYMFfgEcXdPmP7UACj+yq8uT0svL4IQLK3kmgXoCTc9+tALLdHQLf9?=
- =?us-ascii?Q?/e/jYeYbbewDvnoMwDe9TC+E3cFxENkT4CRF7lY+VtfCzw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?rJe0hwFMyqTQKchk4rfX2/djQpVHC8WWhSKPk3Piao6VzcKeNjGpiRWjBr5Y?=
- =?us-ascii?Q?SzfHiHs0grZa6x+0uObAalVw5XVYq/fjuhQHz1vh5jTmheR0vZyL/qS+2bQg?=
- =?us-ascii?Q?Y+L0N0mlyD32Ga3LmDjUd1s/WXMLxocGcRYnZp++m9UBXeCu+vxbxKRN/LFJ?=
- =?us-ascii?Q?vZY3F6WWARzQTEqwpidsRHKzK1ySy8zkflhzSpSKgU33q3ZyNPPIaQoMhIN1?=
- =?us-ascii?Q?MreJ5RJo/uH/N+LhxdV0aoFHG3I9fo2h9Kglc84273q/4a6PQ9FAOdFCGP+m?=
- =?us-ascii?Q?nExEMFk7BV8X88qq6ikSnZbwryA/g9HcVM8/bEN0OsWCN//vqNetBxB8lolm?=
- =?us-ascii?Q?EjZc/gbgsH9eLm4r7mi3Yude/hsHXN1iMLZR/z2RHqPvosLJcrg8qbPSBCuZ?=
- =?us-ascii?Q?aiOsAsHENEA3Rt8afBrAPbjLUvyYXAcn1yOGMCKqeT7ZgMbXZrz2ztwEg10d?=
- =?us-ascii?Q?hILZCpiifPkTc0lTUlCoH6eZ1dpH7L3i+D0gvYp5P8jXwlTaSokixcGFWLcq?=
- =?us-ascii?Q?y1UgVVgVc8Z/wtbT9OEl1ZsV7P0mCiK9TSGdpGZ5P1ol+XXaxgyfz9hvquRn?=
- =?us-ascii?Q?j2nVi+DEZQ4NwZMIUpRDN1LRIgig5/1gPwhPvb5y38GKblEoqUOhO4zfup/J?=
- =?us-ascii?Q?lcOhhte9fFosYkpejMDewt3rzBPIljzLbKzo/mKJLr8LNfAx/S+mBnZtj6Ek?=
- =?us-ascii?Q?9V37rDA9Gn1NkzNhBQGTB0N8u22y7L0DrKU1CeszAnplpqwdZPDESXLaHEB3?=
- =?us-ascii?Q?8hwBPAPz8oMe8ZJUqtj36p2eV0f62wZk3ukBuShr4zlaPs2vmjOS4cLbTP6c?=
- =?us-ascii?Q?KxolzoKIQmEjNwPpb/uurV9d3VhF7oEY9OlQntlM7REMUdCjhF+7MFMAMtmZ?=
- =?us-ascii?Q?7xUr+7YVaPP3Xe3kpZwuySZM1k46kfjm8t3sTXPVvpl9hd9srbenXId6hI0B?=
- =?us-ascii?Q?N0S8Kv/6ItRBL7Cf1LQTFMxZ2/mNTa6lb7QCP5Mn9XzMRLDWlAh8MwdybL4w?=
- =?us-ascii?Q?RC8TfplycH9wGCtF7BrskRVPA0TL8hohwdizE9pHq954hyycBDWtXgON4JOb?=
- =?us-ascii?Q?xaEwSQsAInABMvV8d9XoayQ9X2FV74HfWfSeVE5qs8Xzgmvns+GE/6QrCEVf?=
- =?us-ascii?Q?7deefjdpYLswwIhCT5Th4ByxScJTmkalGItOT55T1/96OZSdpeJCycSvXEPD?=
- =?us-ascii?Q?YyKgZmxlJCNIdSanPn+S6eu5P6IJakV5nvonuKd2sjdltnLUJsdM/vhdO2Rc?=
- =?us-ascii?Q?mLhpTfovFY9go38J++zXTDfJAif0evXeFKZMuO4QolSnMxldITQcMoC4a3gT?=
- =?us-ascii?Q?SylceOF+RWc2tlrXL8iswF/rmwGRXPVmVd/ieNoHMFuaZkzOmZEstWsPsCFt?=
- =?us-ascii?Q?Z/FgwWy/YAR2RxaaSzDWhHwvzEDk6jr79ServHSIl9dnQN8HRuxTrQsQjOrO?=
- =?us-ascii?Q?Yi9SwNID4BCwDFiwPwkvB5plzKTE7FGquUUXqh3i/GbESCkS9U/fn5NqoX4s?=
- =?us-ascii?Q?ZIopyxA3NzboCiHPUZWJgxgZFIZxY5G0PAbk3B5umvQS5BOiT7S368Kjdl6s?=
- =?us-ascii?Q?TDbace7RiAwwFGa5WsgwZRrp6QrAP2wum7QgwPUD?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA023146D6E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717517137; cv=none; b=ZSBIpi3ft4BgDw6QX6SJvmJhBsGcjLTGVgDJCuy/mOTjNkREOvm44++yRsKT/sGTMzbqjXGr9mbeKvqJUO9dPx/qCR9lADxqH37owtKlH0TdAQoknraGlqokjEdXL0c9WSjMO2SADMWEUDWKE/oD1PU8NPzTHnRkcptxuzoXuSY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717517137; c=relaxed/simple;
+	bh=FU6GNh4XzJLuiE9LuDyFg65wWv21DyTlcYGDZen0blc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=vDBjb+QoAdaB8Ewb1wUmiEL6OTvZFWDf1BYJClUUaC1rrDiPuirWEnu4+HQhnpaT5WCYVMx7es2tJp0UrmYNLxuJd0GY6UQAiOu5D5Sfy+YVr4uj9UjlMLx4QEwstiOxC1rVSr6AUFm6YZdatu667ndITRlQOu7+FqfVh7DEYxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vtvxr1wC5z9v7JW
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:43:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 66F8B140717
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 00:05:23 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.206.133.88])
+	by APP2 (Coremail) with SMTP id GxC2BwCn4CQ2O19mAfiGCQ--.12002S2;
+	Tue, 04 Jun 2024 17:05:22 +0100 (CET)
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+To: paulmck@kernel.org
+Cc: stern@rowland.harvard.edu,
+	parri.andrea@gmail.com,
+	will@kernel.org,
+	peterz@infradead.org,
+	boqun.feng@gmail.com,
+	npiggin@gmail.com,
+	dhowells@redhat.com,
+	j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr,
+	akiyks@gmail.com,
+	dlustig@nvidia.com,
+	joel@joelfernandes.org,
+	urezki@gmail.com,
+	quic_neeraju@quicinc.com,
+	frederic@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Subject: [PATCHv2 4/4] tools/memory-model: Distinguish between syntactic and semantic tags
+Date: Tue,  4 Jun 2024 18:05:06 +0200
+Message-Id: <20240604160506.498429-1-jonas.oberhauser@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8c7cb3a-d79f-4a96-2df8-08dc84b01897
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2024 16:05:04.1015
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bLvPUhzyE46WhlRgcieK9j8/ACRhCrSZbIevEhJ+tCuJ0I9Yhlq6Rc6ec+JDwxHDO5TtWm97djn+7XA6N1dyZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6454
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwCn4CQ2O19mAfiGCQ--.12002S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfGr1kJw18Aw4ftrWDAF13Jwb_yoW8GF1fCo
+	WrGr1ft3W8XFyDWan8Kw1xJrWDW3y2q3Z0gry8Gw1jvFy7Za95XrnrG3Wjq34xtFy5Cw15
+	WrZ7Z3sxXay7Jr1kn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYc7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+	x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWx
+	JVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AK
+	xVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	fUo8nYUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-> I have been using this on two different test machines, as well as a
-> chromebook, and it appears to work on all ofthem. As well as for VMs. I
-> plan on adding this to my workstation and server too (they use EFI).
+Not all tags that are always there syntactically also provide semantic
+membership in the corresponding set. For example, an 'acquire tag on a
+write does not imply that the write is finally in the Acquire set and
+provides acquire ordering.
 
-I think that BIOS on Intel servers with ECC memory will stomp on all
-memory (to ensure that ECC bits are all set to good values). There
-might be a "fast boot" BIOS option to skip this (but using it leaves you
-vulnerable after a crash due to ECC fail to hit the same error again).
+To distinguish in those cases between the syntactic tags and actual
+sets, we capitalize the former, so 'ACQUIRE tags may be present on both
+reads and writes, but only reads will appear in the Acquire set.
 
--Tony
+For tags where the two concepts are the same we do not use specific
+capitalization to make this distinction.
+
+Reported-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+---
+ tools/memory-model/linux-kernel.bell |  22 ++--
+ tools/memory-model/linux-kernel.def  | 176 +++++++++++++--------------
+ 2 files changed, 99 insertions(+), 99 deletions(-)
+
+diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+index 2f49993644ed..a27757470d29 100644
+--- a/tools/memory-model/linux-kernel.bell
++++ b/tools/memory-model/linux-kernel.bell
+@@ -13,18 +13,18 @@
+ 
+ "Linux-kernel memory consistency model"
+ 
+-enum Accesses = 'once (*READ_ONCE,WRITE_ONCE*) ||
+-		'release (*smp_store_release*) ||
+-		'acquire (*smp_load_acquire*) ||
+-		'noreturn (* R of non-return RMW *) ||
+-		'mb (*xchg(),cmpxchg(),...*)
++enum Accesses = 'ONCE (*READ_ONCE,WRITE_ONCE*) ||
++		'RELEASE (*smp_store_release*) ||
++		'ACQUIRE (*smp_load_acquire*) ||
++		'NORETURN (* R of non-return RMW *) ||
++		'MB (*xchg(),cmpxchg(),...*)
+ instructions R[Accesses]
+ instructions W[Accesses]
+ instructions RMW[Accesses]
+ 
+ enum Barriers = 'wmb (*smp_wmb*) ||
+ 		'rmb (*smp_rmb*) ||
+-		'mb (*smp_mb*) ||
++		'MB (*smp_mb*) ||
+ 		'barrier (*barrier*) ||
+ 		'rcu-lock (*rcu_read_lock*)  ||
+ 		'rcu-unlock (*rcu_read_unlock*) ||
+@@ -38,10 +38,10 @@ instructions F[Barriers]
+ 
+ (* Remove impossible tags, such as Acquire on a store or failed RMW *)
+ let FailedRMW = RMW \ (domain(rmw) | range(rmw))
+-let Acquire = Acquire \ W \ FailedRMW
+-let Release = Release \ R \ FailedRMW
+-let Mb = Mb \ FailedRMW
+-let Noreturn = Noreturn \ W
++let Acquire = ACQUIRE \ W \ FailedRMW
++let Release = RELEASE \ R \ FailedRMW
++let Mb = MB \ FailedRMW
++let Noreturn = NORETURN \ W
+ 
+ (* SRCU *)
+ enum SRCU = 'srcu-lock || 'srcu-unlock || 'sync-srcu
+@@ -81,7 +81,7 @@ flag ~empty rcu-rscs & (po ; [Sync-srcu] ; po) as invalid-sleep
+ flag ~empty different-values(srcu-rscs) as srcu-bad-value-match
+ 
+ (* Compute marked and plain memory accesses *)
+-let Marked = (~M) | IW | Once | Release | Acquire | domain(rmw) | range(rmw) |
++let Marked = (~M) | IW | ONCE | RELEASE | ACQUIRE | MB | RMW |
+ 		LKR | LKW | UL | LF | RL | RU | Srcu-lock | Srcu-unlock
+ let Plain = M \ Marked
+ 
+diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+index a12b96c547b7..001366ff3fb4 100644
+--- a/tools/memory-model/linux-kernel.def
++++ b/tools/memory-model/linux-kernel.def
+@@ -6,18 +6,18 @@
+ // which appeared in ASPLOS 2018.
+ 
+ // ONCE
+-READ_ONCE(X) __load{once}(X)
+-WRITE_ONCE(X,V) { __store{once}(X,V); }
++READ_ONCE(X) __load{ONCE}(X)
++WRITE_ONCE(X,V) { __store{ONCE}(X,V); }
+ 
+ // Release Acquire and friends
+-smp_store_release(X,V) { __store{release}(*X,V); }
+-smp_load_acquire(X) __load{acquire}(*X)
+-rcu_assign_pointer(X,V) { __store{release}(X,V); }
+-rcu_dereference(X) __load{once}(X)
+-smp_store_mb(X,V) { __store{once}(X,V); __fence{mb}; }
++smp_store_release(X,V) { __store{RELEASE}(*X,V); }
++smp_load_acquire(X) __load{ACQUIRE}(*X)
++rcu_assign_pointer(X,V) { __store{RELEASE}(X,V); }
++rcu_dereference(X) __load{ONCE}(X)
++smp_store_mb(X,V) { __store{ONCE}(X,V); __fence{MB}; }
+ 
+ // Fences
+-smp_mb() { __fence{mb}; }
++smp_mb() { __fence{MB}; }
+ smp_rmb() { __fence{rmb}; }
+ smp_wmb() { __fence{wmb}; }
+ smp_mb__before_atomic() { __fence{before-atomic}; }
+@@ -28,14 +28,14 @@ smp_mb__after_srcu_read_unlock() { __fence{after-srcu-read-unlock}; }
+ barrier() { __fence{barrier}; }
+ 
+ // Exchange
+-xchg(X,V)  __xchg{mb}(X,V)
+-xchg_relaxed(X,V) __xchg{once}(X,V)
+-xchg_release(X,V) __xchg{release}(X,V)
+-xchg_acquire(X,V) __xchg{acquire}(X,V)
+-cmpxchg(X,V,W) __cmpxchg{mb}(X,V,W)
+-cmpxchg_relaxed(X,V,W) __cmpxchg{once}(X,V,W)
+-cmpxchg_acquire(X,V,W) __cmpxchg{acquire}(X,V,W)
+-cmpxchg_release(X,V,W) __cmpxchg{release}(X,V,W)
++xchg(X,V)  __xchg{MB}(X,V)
++xchg_relaxed(X,V) __xchg{ONCE}(X,V)
++xchg_release(X,V) __xchg{RELEASE}(X,V)
++xchg_acquire(X,V) __xchg{ACQUIRE}(X,V)
++cmpxchg(X,V,W) __cmpxchg{MB}(X,V,W)
++cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE}(X,V,W)
++cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE}(X,V,W)
++cmpxchg_release(X,V,W) __cmpxchg{RELEASE}(X,V,W)
+ 
+ // Spinlocks
+ spin_lock(X) { __lock(X); }
+@@ -72,75 +72,75 @@ atomic_inc(X)   { __atomic_op(X,+,1); }
+ atomic_dec(X)   { __atomic_op(X,-,1); }
+ atomic_andnot(V,X) { __atomic_op(X,&~,V); }
+ 
+-atomic_add_return(V,X) __atomic_op_return{mb}(X,+,V)
+-atomic_add_return_relaxed(V,X) __atomic_op_return{once}(X,+,V)
+-atomic_add_return_acquire(V,X) __atomic_op_return{acquire}(X,+,V)
+-atomic_add_return_release(V,X) __atomic_op_return{release}(X,+,V)
+-atomic_fetch_add(V,X) __atomic_fetch_op{mb}(X,+,V)
+-atomic_fetch_add_relaxed(V,X) __atomic_fetch_op{once}(X,+,V)
+-atomic_fetch_add_acquire(V,X) __atomic_fetch_op{acquire}(X,+,V)
+-atomic_fetch_add_release(V,X) __atomic_fetch_op{release}(X,+,V)
+-
+-atomic_fetch_and(V,X) __atomic_fetch_op{mb}(X,&,V)
+-atomic_fetch_and_relaxed(V,X) __atomic_fetch_op{once}(X,&,V)
+-atomic_fetch_and_acquire(V,X) __atomic_fetch_op{acquire}(X,&,V)
+-atomic_fetch_and_release(V,X) __atomic_fetch_op{release}(X,&,V)
+-
+-atomic_fetch_or(V,X) __atomic_fetch_op{mb}(X,|,V)
+-atomic_fetch_or_relaxed(V,X) __atomic_fetch_op{once}(X,|,V)
+-atomic_fetch_or_acquire(V,X) __atomic_fetch_op{acquire}(X,|,V)
+-atomic_fetch_or_release(V,X) __atomic_fetch_op{release}(X,|,V)
+-
+-atomic_fetch_xor(V,X) __atomic_fetch_op{mb}(X,^,V)
+-atomic_fetch_xor_relaxed(V,X) __atomic_fetch_op{once}(X,^,V)
+-atomic_fetch_xor_acquire(V,X) __atomic_fetch_op{acquire}(X,^,V)
+-atomic_fetch_xor_release(V,X) __atomic_fetch_op{release}(X,^,V)
+-
+-atomic_inc_return(X) __atomic_op_return{mb}(X,+,1)
+-atomic_inc_return_relaxed(X) __atomic_op_return{once}(X,+,1)
+-atomic_inc_return_acquire(X) __atomic_op_return{acquire}(X,+,1)
+-atomic_inc_return_release(X) __atomic_op_return{release}(X,+,1)
+-atomic_fetch_inc(X) __atomic_fetch_op{mb}(X,+,1)
+-atomic_fetch_inc_relaxed(X) __atomic_fetch_op{once}(X,+,1)
+-atomic_fetch_inc_acquire(X) __atomic_fetch_op{acquire}(X,+,1)
+-atomic_fetch_inc_release(X) __atomic_fetch_op{release}(X,+,1)
+-
+-atomic_sub_return(V,X) __atomic_op_return{mb}(X,-,V)
+-atomic_sub_return_relaxed(V,X) __atomic_op_return{once}(X,-,V)
+-atomic_sub_return_acquire(V,X) __atomic_op_return{acquire}(X,-,V)
+-atomic_sub_return_release(V,X) __atomic_op_return{release}(X,-,V)
+-atomic_fetch_sub(V,X) __atomic_fetch_op{mb}(X,-,V)
+-atomic_fetch_sub_relaxed(V,X) __atomic_fetch_op{once}(X,-,V)
+-atomic_fetch_sub_acquire(V,X) __atomic_fetch_op{acquire}(X,-,V)
+-atomic_fetch_sub_release(V,X) __atomic_fetch_op{release}(X,-,V)
+-
+-atomic_dec_return(X) __atomic_op_return{mb}(X,-,1)
+-atomic_dec_return_relaxed(X) __atomic_op_return{once}(X,-,1)
+-atomic_dec_return_acquire(X) __atomic_op_return{acquire}(X,-,1)
+-atomic_dec_return_release(X) __atomic_op_return{release}(X,-,1)
+-atomic_fetch_dec(X) __atomic_fetch_op{mb}(X,-,1)
+-atomic_fetch_dec_relaxed(X) __atomic_fetch_op{once}(X,-,1)
+-atomic_fetch_dec_acquire(X) __atomic_fetch_op{acquire}(X,-,1)
+-atomic_fetch_dec_release(X) __atomic_fetch_op{release}(X,-,1)
+-
+-atomic_xchg(X,V) __xchg{mb}(X,V)
+-atomic_xchg_relaxed(X,V) __xchg{once}(X,V)
+-atomic_xchg_release(X,V) __xchg{release}(X,V)
+-atomic_xchg_acquire(X,V) __xchg{acquire}(X,V)
+-atomic_cmpxchg(X,V,W) __cmpxchg{mb}(X,V,W)
+-atomic_cmpxchg_relaxed(X,V,W) __cmpxchg{once}(X,V,W)
+-atomic_cmpxchg_acquire(X,V,W) __cmpxchg{acquire}(X,V,W)
+-atomic_cmpxchg_release(X,V,W) __cmpxchg{release}(X,V,W)
+-
+-atomic_sub_and_test(V,X) __atomic_op_return{mb}(X,-,V) == 0
+-atomic_dec_and_test(X)  __atomic_op_return{mb}(X,-,1) == 0
+-atomic_inc_and_test(X)  __atomic_op_return{mb}(X,+,1) == 0
+-atomic_add_negative(V,X) __atomic_op_return{mb}(X,+,V) < 0
+-atomic_add_negative_relaxed(V,X) __atomic_op_return{once}(X,+,V) < 0
+-atomic_add_negative_acquire(V,X) __atomic_op_return{acquire}(X,+,V) < 0
+-atomic_add_negative_release(V,X) __atomic_op_return{release}(X,+,V) < 0
+-
+-atomic_fetch_andnot(V,X) __atomic_fetch_op{mb}(X,&~,V)
+-atomic_fetch_andnot_acquire(V,X) __atomic_fetch_op{acquire}(X,&~,V)
+-atomic_fetch_andnot_release(V,X) __atomic_fetch_op{release}(X,&~,V)
+-atomic_fetch_andnot_relaxed(V,X) __atomic_fetch_op{once}(X,&~,V)
++atomic_add_return(V,X) __atomic_op_return{MB}(X,+,V)
++atomic_add_return_relaxed(V,X) __atomic_op_return{ONCE}(X,+,V)
++atomic_add_return_acquire(V,X) __atomic_op_return{ACQUIRE}(X,+,V)
++atomic_add_return_release(V,X) __atomic_op_return{RELEASE}(X,+,V)
++atomic_fetch_add(V,X) __atomic_fetch_op{MB}(X,+,V)
++atomic_fetch_add_relaxed(V,X) __atomic_fetch_op{ONCE}(X,+,V)
++atomic_fetch_add_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,+,V)
++atomic_fetch_add_release(V,X) __atomic_fetch_op{RELEASE}(X,+,V)
++
++atomic_fetch_and(V,X) __atomic_fetch_op{MB}(X,&,V)
++atomic_fetch_and_relaxed(V,X) __atomic_fetch_op{ONCE}(X,&,V)
++atomic_fetch_and_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,&,V)
++atomic_fetch_and_release(V,X) __atomic_fetch_op{RELEASE}(X,&,V)
++
++atomic_fetch_or(V,X) __atomic_fetch_op{MB}(X,|,V)
++atomic_fetch_or_relaxed(V,X) __atomic_fetch_op{ONCE}(X,|,V)
++atomic_fetch_or_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,|,V)
++atomic_fetch_or_release(V,X) __atomic_fetch_op{RELEASE}(X,|,V)
++
++atomic_fetch_xor(V,X) __atomic_fetch_op{MB}(X,^,V)
++atomic_fetch_xor_relaxed(V,X) __atomic_fetch_op{ONCE}(X,^,V)
++atomic_fetch_xor_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,^,V)
++atomic_fetch_xor_release(V,X) __atomic_fetch_op{RELEASE}(X,^,V)
++
++atomic_inc_return(X) __atomic_op_return{MB}(X,+,1)
++atomic_inc_return_relaxed(X) __atomic_op_return{ONCE}(X,+,1)
++atomic_inc_return_acquire(X) __atomic_op_return{ACQUIRE}(X,+,1)
++atomic_inc_return_release(X) __atomic_op_return{RELEASE}(X,+,1)
++atomic_fetch_inc(X) __atomic_fetch_op{MB}(X,+,1)
++atomic_fetch_inc_relaxed(X) __atomic_fetch_op{ONCE}(X,+,1)
++atomic_fetch_inc_acquire(X) __atomic_fetch_op{ACQUIRE}(X,+,1)
++atomic_fetch_inc_release(X) __atomic_fetch_op{RELEASE}(X,+,1)
++
++atomic_sub_return(V,X) __atomic_op_return{MB}(X,-,V)
++atomic_sub_return_relaxed(V,X) __atomic_op_return{ONCE}(X,-,V)
++atomic_sub_return_acquire(V,X) __atomic_op_return{ACQUIRE}(X,-,V)
++atomic_sub_return_release(V,X) __atomic_op_return{RELEASE}(X,-,V)
++atomic_fetch_sub(V,X) __atomic_fetch_op{MB}(X,-,V)
++atomic_fetch_sub_relaxed(V,X) __atomic_fetch_op{ONCE}(X,-,V)
++atomic_fetch_sub_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,-,V)
++atomic_fetch_sub_release(V,X) __atomic_fetch_op{RELEASE}(X,-,V)
++
++atomic_dec_return(X) __atomic_op_return{MB}(X,-,1)
++atomic_dec_return_relaxed(X) __atomic_op_return{ONCE}(X,-,1)
++atomic_dec_return_acquire(X) __atomic_op_return{ACQUIRE}(X,-,1)
++atomic_dec_return_release(X) __atomic_op_return{RELEASE}(X,-,1)
++atomic_fetch_dec(X) __atomic_fetch_op{MB}(X,-,1)
++atomic_fetch_dec_relaxed(X) __atomic_fetch_op{ONCE}(X,-,1)
++atomic_fetch_dec_acquire(X) __atomic_fetch_op{ACQUIRE}(X,-,1)
++atomic_fetch_dec_release(X) __atomic_fetch_op{RELEASE}(X,-,1)
++
++atomic_xchg(X,V) __xchg{MB}(X,V)
++atomic_xchg_relaxed(X,V) __xchg{ONCE}(X,V)
++atomic_xchg_release(X,V) __xchg{RELEASE}(X,V)
++atomic_xchg_acquire(X,V) __xchg{ACQUIRE}(X,V)
++atomic_cmpxchg(X,V,W) __cmpxchg{MB}(X,V,W)
++atomic_cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE}(X,V,W)
++atomic_cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE}(X,V,W)
++atomic_cmpxchg_release(X,V,W) __cmpxchg{RELEASE}(X,V,W)
++
++atomic_sub_and_test(V,X) __atomic_op_return{MB}(X,-,V) == 0
++atomic_dec_and_test(X)  __atomic_op_return{MB}(X,-,1) == 0
++atomic_inc_and_test(X)  __atomic_op_return{MB}(X,+,1) == 0
++atomic_add_negative(V,X) __atomic_op_return{MB}(X,+,V) < 0
++atomic_add_negative_relaxed(V,X) __atomic_op_return{ONCE}(X,+,V) < 0
++atomic_add_negative_acquire(V,X) __atomic_op_return{ACQUIRE}(X,+,V) < 0
++atomic_add_negative_release(V,X) __atomic_op_return{RELEASE}(X,+,V) < 0
++
++atomic_fetch_andnot(V,X) __atomic_fetch_op{MB}(X,&~,V)
++atomic_fetch_andnot_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,&~,V)
++atomic_fetch_andnot_release(V,X) __atomic_fetch_op{RELEASE}(X,&~,V)
++atomic_fetch_andnot_relaxed(V,X) __atomic_fetch_op{ONCE}(X,&~,V)
+-- 
+2.34.1
+
 
