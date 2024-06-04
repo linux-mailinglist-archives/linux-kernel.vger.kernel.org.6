@@ -1,63 +1,92 @@
-Return-Path: <linux-kernel+bounces-200387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF778FAF44
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:52:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36498FAF49
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC9F1C20C9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:52:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 613F5B20F6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A646A1448CB;
-	Tue,  4 Jun 2024 09:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2470A1448DD;
+	Tue,  4 Jun 2024 09:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qA/DEVzn"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LCLjCLVn"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BD684D3B;
-	Tue,  4 Jun 2024 09:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2917884D3B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717494718; cv=none; b=sdhZpgJrdbIOkoywfPdS4DQkUGS8HFdghvZlyqTKG+LUa95pRGv29MH+q1pA1MITuQJyV3v8bw9s1H8iiXbi47vtoCh2+e0GTvz6O4WyYqzIhS/I61Mmu6OUTSVTVakv7iiaQH/+tmhxQOZMzCnL8T58b5LWfdORleQygJzndYY=
+	t=1717494899; cv=none; b=dalL7ZrjeB06yr3IM1y7EjwpUMU/6jsrEKJjJ5JRcTLtElaymWySI1NUsT7dGecsFrUT9MQbRiAfXB8qoST2PGPfFlECPggbrZg85iIMOpNImmqouko3TGq9vbYq2PrD7hIpqvgUHG3jEgXHDudgLhH2ebBfJyDWIczz8MqMM5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717494718; c=relaxed/simple;
-	bh=lUkUOCHF7Cv2+ZbTj4MRALKLAq5jCkTjjmNKw5SUwDk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=m1u3cp6iLC2GQ5IZ+GURH9fkF7jpAV1e3jz5WhOfe0Y7FGPPoShDHcnweUwuDsEkBONKaFqaD00LdK0l+rOzpaz14uFA2G6ZX0PbgavAw0Xu+ZXd3mSKBOCSR2dmtgC42B9cyBGeViHNH0tl2PQiow6GvtHJVNTCF+xNuzzzrkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qA/DEVzn; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4549podN075113;
-	Tue, 4 Jun 2024 04:51:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717494710;
-	bh=UN6MRQsiFgn85Z14EkWiM1zef5zvhpmb+LBqJbxYsls=;
-	h=From:Date:Subject:To:CC;
-	b=qA/DEVzn2YITZREohsgpP9BQPBMqYY3eftA9/pScVelJSIhaXWE7o2AmHyziT8NA3
-	 /scPVZ3fpeignpAy0uXxMPcj59CozWt0bJ+JRjyH7/6cG5n009BDK1KSpTW6QP5j9X
-	 fFoQ+/KLaYb3e/5vrK83NKHK4Uq51UVgKOHRQonE=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4549poZa126159
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Jun 2024 04:51:50 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Jun 2024 04:51:49 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Jun 2024 04:51:49 -0500
-Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4549pnmF026144;
-	Tue, 4 Jun 2024 04:51:49 -0500
-From: Jai Luthra <j-luthra@ti.com>
-Date: Tue, 4 Jun 2024 15:21:38 +0530
-Subject: [PATCH] dmaengine: ti: k3-udma: Fix BCHAN count with UHC and HC
- channels
+	s=arc-20240116; t=1717494899; c=relaxed/simple;
+	bh=X2ogPccdDTs13IL08Tf8Bkwcu0VIj1IFTLfvvR7wyB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ohZh3DH9S8CyjO24TQcYo0jImETW8iajOELbGnFg81wG6wyitsxooAikyRPTE81CIGMJUv3HFHm6Ae6smgnl8U5eyywD7CONKwp7eOBrVqUHpR3oXRYsgTQyALck7qPzsBjY2gs8QCa3guewDzMBfL3mfEC5n9Wp2kTLlecdm+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LCLjCLVn; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4212e341818so37811195e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:54:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717494894; x=1718099694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eqG33BTlDFY1JTtCCY4mtc8hNwHOOmvwm9Q2v4L26W0=;
+        b=LCLjCLVne/CbZ0ImH+68XeDcA22TsbaROdqtIDs4S7haA/YRQXhm89ARnX8tJE8obx
+         LGzfjQhDMj/HXqGt/vaZsLGdycm4hc7bs1cDj5S5Jc2W6mbm4zkelVrVkIfe6mQtx533
+         tnHJ2NHpQMoiVZ7uem8cKXJUmhYkFUEX/YTOz697NC6gG0zZHbx+9CzlFgOnthRZZLHX
+         Fj3vZkFohH4yjVGZVJ2vpTNLSnyMPUhe/nsoApVkqTXkcwjgCgMWtLhsizQyolgchsVH
+         UMz9ooqCiy4eFGbmgf5ld4J8HcMtHbWvgg7b1jmUPG/T87Zx/OyGHasL3ARRlqtssriy
+         88LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717494894; x=1718099694;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eqG33BTlDFY1JTtCCY4mtc8hNwHOOmvwm9Q2v4L26W0=;
+        b=XIvGGHhcCAzbUdBAXNPsRVboLVF34fsHqyqjnLnhWjb2q8WQbG7WzHVQH1my2Mj4nm
+         chuH+BM+QAfW9IjGlLqoWxmo4y8oFLOSc031i75RvrhbMcleADkb5wG4h87XX16ORJla
+         ZwTOCDFftzyHX68n+dQDOS7BBZD8WzDoBGjpN66R6sxYCbkBolr4ytZmPDB/qHJ9Lb/1
+         Oei9uf3cqwFKhHvCOK8+EU0FnqyUtxaQv5NTYQH2GkMvid2hAkimS6B1ZFsTgiXWKCCP
+         leqL1tYKxKVNefQ6v2mgrxhC3yjUPsQXIr/WDdvhqNEYBUPK6u31XmOyfZ2iDINJHEza
+         wc2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmmtxPy33dc4UpwBZyTvjhBlMyM4QF0ouJULHMrAP+iO7mcP8RMxlLnrscjRVIoY6ry6Z2FqyqetzjxdTA+c6TuJPSbaRWU5hBWIOZ
+X-Gm-Message-State: AOJu0YzbplY+TRDn1aF61t4HYEoU8P9+X7Rf9E+QRqLnd4LL4imO5zIM
+	g4yXHSpwVhR2Ac43GUvavaEsfhdwSoGJGqZ58XBkrd7XZ7gkkZ85r/0mFcMVTqw=
+X-Google-Smtp-Source: AGHT+IFuWoB4BQKHWujuBNN/tLqUteBjiY6L1E/xsaU6QhnEcgVTXAv++hch3aOpdGEUYNU8pLbWlw==
+X-Received: by 2002:a05:600c:46cb:b0:41a:a521:9699 with SMTP id 5b1f17b1804b1-4212e045342mr108000555e9.4.1717494894440;
+        Tue, 04 Jun 2024 02:54:54 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:60ea:fe6c:6bbc:4888])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4212f9b9ef1sm136678955e9.9.2024.06.04.02.54.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 02:54:53 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH v9 0/5] Add C3 SoC PLLs and Peripheral clock
+Date: Tue,  4 Jun 2024 11:53:49 +0200
+Message-ID: <171749479841.590656.11363124184470308378.b4-ty@baylibre.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240522082727.3029656-1-xianwei.zhao@amlogic.com>
+References: <20240522082727.3029656-1-xianwei.zhao@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,68 +94,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240604-bcdma_chan_cnt-v1-1-1e8932f68dca@ti.com>
-X-B4-Tracking: v=1; b=H4sIAKnjXmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMwMT3aTklNzEeJBcfHJeiW5SUrJZskGypamRqaUSUFNBUWpaZgXYwOj
- Y2loAT0M0qmAAAAA=
-To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, Vinod Koul <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Devarsh Thakkar <devarsht@ti.com>,
-        Jayesh Choudhary <j-choudhary@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Jai Luthra <j-luthra@ti.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1159; i=j-luthra@ti.com;
- h=from:subject:message-id; bh=t22mFWigPDDkhAH+uX6y+nKLter3GXv2IBL4efY9NfM=;
- b=kA0DAAgBQ96R+SSacUUByyZiAGZe47OinCr/dhDCEo51vT9i8NTK7Ufq6EIVe+AJz0ojjicu6
- YkCMwQAAQgAHRYhBE3g2Bjl1XXo1FqvxUPekfkkmnFFBQJmXuOzAAoJEEPekfkkmnFFl84P/0sy
- uI31WIkC+V/SUQCVqijXCiHedERAc0Jwtg6gIqH1Xa88iM4nYuZuGv6oh7CeWusX17GS0S3bOIZ
- 3i5MzbL9Ir0o/PvD6g+0XKvgR9X/xsRu3+66bcyW7jOsyuzYxzFDKGMSiHoPXqypuL+CbbQ05Xf
- mJpx6uenoWJsvG9iTRC5oiyWm8jkCjl9b87BKGcXfnWkqCeJBKYlSsTrk16xHn7WxWewml9Yliy
- n14UCZnXxzlz8x+95rfHo4xe+fA/6o3PvH8Tl3LCLXX1H/obj3E7L51glZ8xo4FYJtstO5BeF8n
- 73pfVKZ8RUGNMbKGwvrVNbCC1IW1A9/xqntFejEm4XbtK7Pwn9exGKjPd6DEpEoIcQSUA+lI4eD
- VmMtpmhgsoNRvqTm+aLkqljyyGrW7g6Ojaqijxqmxh/cqLWvA9oNUX3lWVwuNDFRdFvSV7V8z7U
- EB9Kxtc2mYbj/6iDS1YYSxO8twZPsrlHwwjQ/h53tk38R+Sj3z8MTxpFGNYZ7W3VTVmo1eqHxuv
- foaHrzOapn6XW9jUBL4wFo7nLQczhL/hwdpc96bewZhqIE+GAYYNtfTA+CFnBpHvmPUIjRD50kj
- 27kTylk2MNTNfs3s2OGokHmGO0ysaOasorrESQ49lLoOs3KD9LiPLmGP9vUZ2kP1fcjHXyeNsA0
- Kyppb
-X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
-From: Vignesh Raghavendra <vigneshr@ti.com>
+Applied to clk-meson (v6.11/drivers), thanks!
 
-Unlike other channel counts in CAPx registers, BCDMA BCHAN CNT doesn't
-include UHC and HC BC channels. So include them explicitly to arrive at
-total BC channel in the instance.
-
-Fixes: 017794739702 ("dmaengine: ti: k3-udma: Initial support for K3 BCDMA")
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Signed-off-by: Jai Luthra <j-luthra@ti.com>
----
- drivers/dma/ti/k3-udma.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
-index 6400d06588a2..710296dfd0ae 100644
---- a/drivers/dma/ti/k3-udma.c
-+++ b/drivers/dma/ti/k3-udma.c
-@@ -4473,6 +4473,7 @@ static int udma_get_mmrs(struct platform_device *pdev, struct udma_dev *ud)
- 		break;
- 	case DMA_TYPE_BCDMA:
- 		ud->bchan_cnt = BCDMA_CAP2_BCHAN_CNT(cap2);
-+		ud->bchan_cnt += BCDMA_CAP3_HBCHAN_CNT(cap3) + BCDMA_CAP3_UBCHAN_CNT(cap3);
- 		ud->tchan_cnt = BCDMA_CAP2_TCHAN_CNT(cap2);
- 		ud->rchan_cnt = BCDMA_CAP2_RCHAN_CNT(cap2);
- 		ud->rflow_cnt = ud->rchan_cnt;
-
----
-base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
-change-id: 20240604-bcdma_chan_cnt-bbc6c0c95259
+[1/5] dt-bindings: clock: add Amlogic C3 PLL clock controller
+      https://github.com/BayLibre/clk-meson/commit/0e6be855a96d
+[2/5] dt-bindings: clock: add Amlogic C3 SCMI clock controller support
+      https://github.com/BayLibre/clk-meson/commit/d309989a0a0a
+[3/5] dt-bindings: clock: add Amlogic C3 peripherals clock controller
+      https://github.com/BayLibre/clk-meson/commit/fc1c7f941c71
+[4/5] clk: meson: c3: add support for the C3 SoC PLL clock
+      https://github.com/BayLibre/clk-meson/commit/8a9a129dc565
+[5/5] clk: meson: c3: add c3 clock peripherals controller driver
+      https://github.com/BayLibre/clk-meson/commit/f06ac3ed04e8
 
 Best regards,
--- 
-Jai Luthra <j-luthra@ti.com>
-
+--
+Jerome
 
