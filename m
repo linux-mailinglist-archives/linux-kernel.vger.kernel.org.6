@@ -1,145 +1,377 @@
-Return-Path: <linux-kernel+bounces-200997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6688FB7E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:50:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56DB8FB7EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463DC2848FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8AF01C23C8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7224148304;
-	Tue,  4 Jun 2024 15:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="I4u3nj8o"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B10914882B;
+	Tue,  4 Jun 2024 15:47:06 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEFD1805E;
-	Tue,  4 Jun 2024 15:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E18B1487CC;
+	Tue,  4 Jun 2024 15:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516019; cv=none; b=uLa2pDSYkdA8MEuhR80CS8/ok72bru/qp8bJeDPPnm8UxucbLZsUP1fGgLVAR2KV0x7/JdWJFRvC2p3R46MDaxYMdJzkxDzfWiR084OqFUYQAo5L+ZHSCHPu5AqXEEGLWBNRbjyaj77cRU0K3a+3lpEu95WqY8E6kmtwA4STy3o=
+	t=1717516025; cv=none; b=Rg7sJomWwscGqTx5j5LtTa/SHRJqYWonIVL51QlE/Hs0I/tT518weGkxBQflzGie+f6LEIltcxC4bFaCeiH0dT5ADv/cLWYmF61AoOYn6ZqQQUO/xsJKnK3bWJ9D0A7Xc4ZatN/lIPsHGpYP68+ScojgxrEvaMqT7GrWKv9QxRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516019; c=relaxed/simple;
-	bh=3y21GVy1PCs2rJDaNksZMoF4iSOznqb1GnfkOIT0JAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mafliDWQd+KK0t4YvkaIy68wvCra8dgAT5X5KxzseId+hstuz3R48o/XFkG9wjCwgjJ2jrC3FzGTJnMRqiIDnBvHknWIB+XoUmjKQWGkD3rXKR6tJ/rZrMU3mYaEgtxjP5BF+kqoooKQ1DZb04OnZu8y1ed/Qnx8En42Eo8v0ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=I4u3nj8o; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9F04F40E0081;
-	Tue,  4 Jun 2024 15:46:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3Ip0nACutg9K; Tue,  4 Jun 2024 15:46:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717516009; bh=/y9pB9+Khtr5d7gHqCNS4aSeYKsHx0WD9O7wNqsC+1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4u3nj8oK2mRzDIAPgr6dzv5+0DlZ02Ng0q1GiRllRU4ha06xEuH0i4DSjJP/wP8b
-	 veMxKynKNNnrGM7RzHSvUOI7Z+l89bFI1n9FlXoCTpf7Qmkqvwt0fvqMkUw1AqBW82
-	 yWOyCxqRKSzXUUVDzM52PEdOU3Y1JjDV73YbBulALQhf8rSpzBBYZcaXYTiRIc/1qE
-	 l5y9pRCgYqkaJv7b4RkiWh36NeRgC6lZTBTjj4ouKoezLSXWoVx+Nq5aYF3tNDdT8I
-	 6eRuD69p5efTiZ7bSchH9pogWOLK190DKbGxjGKqw5zxC3Mq6L+6t6TxdTMDjwUIXN
-	 DLtS6IP8Z+42cG61sHfMfB70xXx/0Gv55a6rzVbBjCQo8uLcIPCdTGIoUmN8ZIKqTb
-	 XzeS8VLYtwV77sGaviCAu9VWwy5fUtxdCoWOmf7Evg6LEerJAkzyPyTpK+7vl5OFxU
-	 1fuIqDpSkJEqE9hFyLbiN8unqzE3NPz56nssSXIxSQrwgpwVjHfoIzyOrbU2rhkze3
-	 I+Wp/sPLZJgjRzmDJOrjJMN10N1GY69HLDjCmATb19134DXIIZx4rw53iw5HY/0lSc
-	 qyk5eWK9dKuVTbVvD1cc+n6VAfcTCbvvLVpsF89AQ2Ir03cuaZJ2/heN7irTwkgNid
-	 QOcUMtWPZLordgiJIOIC1tGM=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 42E8440E016E;
-	Tue,  4 Jun 2024 15:46:42 +0000 (UTC)
-Date: Tue, 4 Jun 2024 17:46:35 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com
-Subject: Re: [PATCH 8/9] x86/mce/amd: Enable interrupt vectors once per-CPU
- on SMCA systems
-Message-ID: <20240604154635.GTZl8222q7WAEVSJKH@fat_crate.local>
-References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
- <20240523155641.2805411-9-yazen.ghannam@amd.com>
+	s=arc-20240116; t=1717516025; c=relaxed/simple;
+	bh=z2sfDyZiRCznFZZfHqgUfC2pvUChPIsKP4NCw4mRGSk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zk8y+TqfdcKgt25Ayprh+TojKUh62dyOwd/7+R/8a5Gm5mUb9xlllLW/6iiBXCP/Oea/pf3au+tC4KN6Vvvsn/iEPqINZRPV+OsixtmZgPadOXDtlnCcr3UKNfvXcFcBTC867/ePpKUU2VJB9ZA2Ufg0SBS6x13KK6JtYVbG6sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a0827316eso44861007b3.1;
+        Tue, 04 Jun 2024 08:47:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717516022; x=1718120822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XykWmvMVGXDGknRmrx6u5uZa8kB/wreyKKJg4nQZDhQ=;
+        b=k1334kURnGlo06Bme5QO2LXu8/X0MjqQwp/Yi9XT6qh6eYY/acSy9w5K1/3nmDyR+E
+         OI6wCf/TV3vQqUFlN5ZCuBBBjT8N44PTZx8678krfVrRh8zjbHO3TmC35LP/Tw6Ki35f
+         gaq5a4QEeOrzE2ZejljTAquuY7cqgwkBh22HC8FUDHK1JUkEYn2LtpPOivQcRheZcoNi
+         WObtA32hRynoi8SWZ2PXWw76SdQAWmkIUoWfHirrC6M2QEGErE/fZ0CerDvKuO/i4N81
+         IeX5v/zoNcuxysFttlmdo0n2shqjnGp712ITI+HCmtNy7huddUERkd/FdjyF2cZPru3f
+         BmJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiadLC50zjbJDOz3MhYW9cHkR16YPNY53watpUb5V36254HaIpmtlCjr/8YSgRizaj+fX2TQ0qZoS8Lf8VOW+qFU4vwKsgj0qwZ38PL9nHTnJHGJ0KFA4+doFYwuUiQgA5/l9oU4b7it56qkNdk2bxpy3NAfHADcLyCKNEAMSuQvoXOrwQ5t99I4RA1DnJLTYUkJqdm90iQzO6r0o00yAztWZTZFAs
+X-Gm-Message-State: AOJu0YwrhB/IorBOhS1BPhHGqFB77beohXlKNxCHjRlBKiSdVJ/NbzZj
+	0wxjaXJ+ntLwaSLNCU5ALk7BAnJdHkUZz4d8kQXoCGgBkludvE2EJBR5exo5
+X-Google-Smtp-Source: AGHT+IEINCehKQMZTXmcAx5qlnP+s09xyFmj4p7ENeE5bwZ3oeKWK37cB9CfMhQ+sEHOL2DLHjmP7g==
+X-Received: by 2002:a0d:cc4a:0:b0:61a:da7e:1f66 with SMTP id 00721157ae682-62c79666aefmr131080707b3.2.1717516021587;
+        Tue, 04 Jun 2024 08:47:01 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765b8bc8sm18504847b3.18.2024.06.04.08.47.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 08:47:01 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa6e0add60so4855589276.3;
+        Tue, 04 Jun 2024 08:47:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV7I74DeOulb56n7o9bTpheYMmggexvlAbeQgK8LKd8Pfpa4RnsTRcMDK5tpWHqBSn2DmyelqjPXMdUAc71jRfn5SA5SDpsr2XqG7i2Sp5+4hzBdnbQfxZwLN+vaxEck1S04gBiIC4unSo8Ckve4M0olFaFThmFllTaSgnZHvsiuspgiELXX9yNqtKhamBAY9dbjGncFU51+ib2duy0hwi6U9uoqhIQ
+X-Received: by 2002:a25:ad03:0:b0:df4:a607:2429 with SMTP id
+ 3f1490d57ef6-dfa73d90ac6mr12970872276.45.1717516021094; Tue, 04 Jun 2024
+ 08:47:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240523155641.2805411-9-yazen.ghannam@amd.com>
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Jun 2024 17:46:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU7+O-+v=2V83AjQmTWyGy_a-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com>
+Message-ID: <CAMuHMdU7+O-+v=2V83AjQmTWyGy_a-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 10:56:40AM -0500, Yazen Ghannam wrote:
->  static bool thresholding_irq_en;
->  static DEFINE_PER_CPU_READ_MOSTLY(mce_banks_t, mce_thr_intr_banks);
->  static DEFINE_PER_CPU_READ_MOSTLY(mce_banks_t, mce_dfr_intr_banks);
-> +static DEFINE_PER_CPU_READ_MOSTLY(bool, smca_thr_intr_enabled);
-> +static DEFINE_PER_CPU_READ_MOSTLY(bool, smca_dfr_intr_enabled);
+Hi Prabhakar,
 
-So before you add those, we already have:
+Thanks for your patch!
 
-static DEFINE_PER_CPU_READ_MOSTLY(struct smca_bank[MAX_NR_BANKS], smca_banks);
-static DEFINE_PER_CPU_READ_MOSTLY(u8[N_SMCA_BANK_TYPES], smca_bank_counts);
-static DEFINE_PER_CPU(struct threshold_bank **, threshold_banks);
-static DEFINE_PER_CPU(u64, bank_map);
-static DEFINE_PER_CPU(u64, smca_misc_banks_map);
+On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock outputs
+> (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registers)
+> in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the RZ/V2H(=
+P)
+> Hardware User's Manual (Rev.1.01, Feb. 2024).
 
-Please think of a proper struct which collects all that info in the
-smallest possible format and unify everything.
+Hmm, I must have a slightly different Rev. 1.01 ;-)
 
-It is a mess currently.
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> +/*
-> + * Enable the APIC LVT interrupt vectors once per-CPU. This should be done before hardware is
-> + * ready to send interrupts.
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
+
+For new binding headers, please include the vendor prefix, i.e.
+"include/dt-bindings/clock/renesas,r9a09g057-cpg.h".
+
+> @@ -0,0 +1,644 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > + *
-> + * Individual error sources are enabled later during per-bank init.
+> + * Copyright (C) 2024 Renesas Electronics Corp.
 > + */
-> +static void smca_enable_interrupt_vectors(struct cpuinfo_x86 *c)
-> +{
-> +	u8 thr_offset, dfr_offset;
-> +	u64 mca_intr_cfg;
+> +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
+> +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
 > +
-> +	if (!mce_flags.smca || !mce_flags.succor)
-> +		return;
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
 > +
-> +	if (c == &boot_cpu_data) {
-> +		mce_threshold_vector		= amd_threshold_interrupt;
-> +		deferred_error_int_vector	= amd_deferred_error_interrupt;
-> +	}
+> +/* Clock list */
 
-Nah, this should be done differently: you define a function
-cpu_mca_init() which you call from early_identify_cpu(). In it, you do
-the proper checks and assign those two vectors above. That in
-a pre-patch.
+[...]
 
-Then, the rest becomes per-CPU code which you simply run in
-mce_amd_feature_init(), dilligently, one thing after the other.
+> +#define R9A09G057_USB30_CLK_RESERVED0                  197
+> +#define R9A09G057_USB30_CLK_RESERVED1                  198
+> +#define R9A09G057_USB30_CLK_RESERVED2                  199
+> +#define R9A09G057_USB30_CLK_RESERVED3                  200
 
-And then you don't need smca_{dfr,thr}_intr_enabled anymore because you
-know that after having run setup_APIC_eilvt().
+R9A09G057_USB3_0_ACLK
+R9A09G057_USB3_0_PCLK_USBTST
+R9A09G057_USB3_0_REF_ALT_CLK_p
+R9A09G057_USB3_0_CLKCORE
 
-IOW, mce_amd_feature_init() does *all* per-CPU MCA init on AMD and it is
-all concentrated in one place and not spread around.
+> +#define R9A09G057_USB31_CLK_RESERVED0                  201
+> +#define R9A09G057_USB31_CLK_RESERVED1                  202
+> +#define R9A09G057_USB31_CLK_RESERVED2                  203
+> +#define R9A09G057_USB31_CLK_RESERVED3                  204
 
-I think this should be a much better cleanup.
+R9A09G057_USB3_0_ACLK
+R9A09G057_USB3_0_PCLK_USBTST
+R9A09G057_USB3_0_REF_ALT_CLK_p
+R9A09G057_USB3_0_CLKCORE
 
-Thx.
+> +#define R9A09G057_USB20_CLK_RESERVED0                  205
 
--- 
-Regards/Gruss,
-    Boris.
+R9A09G057_USB2_0_U2H0_HCLK
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> +#define R9A09G057_USB21_CLK_RESERVED0                  206
+
+R9A09G057_USB2_0_U2H1_HCLK
+
+> +#define R9A09G057_USB20_USB21_CLK_RESERVED0            207
+
+R9A09G057_USB2_0_U2P_EXR_CPUCLK
+
+> +#define R9A09G057_USB20_CLK_RESERVED1                  208
+
+R9A09G057_USB2_0_PCLK_USBTST0
+
+> +#define R9A09G057_USB21_CLK_RESERVED1                  209
+
+R9A09G057_USB2_0_PCLK_USBTST1
+
+> +#define R9A09G057_USB20_CLK_RESERVED2                  210
+
+R9A09G057_USB2_0_CLKCORE0
+
+> +#define R9A09G057_USB21_CLK_RESERVED2                  211
+
+R9A09G057_USB2_0_CLKCORE1
+
+> +#define R9A09G057_GBETH0_CLK_RESERVED0                 212
+> +#define R9A09G057_GBETH0_CLK_RESERVED1                 213
+> +#define R9A09G057_GBETH0_CLK_RESERVED2                 214
+> +#define R9A09G057_GBETH0_CLK_RESERVED3                 215
+> +#define R9A09G057_GBETH0_CLK_RESERVED4                 216
+> +#define R9A09G057_GBETH0_CLK_RESERVED5                 217
+> +#define R9A09G057_GBETH0_CLK_RESERVED6                 218
+
+R9A09G057_GBETH_0_CLK_TX_I
+R9A09G057_GBETH_0_CLK_RX_I
+R9A09G057_GBETH_0_CLK_TX_180_I
+R9A09G057_GBETH_0_CLK_RX_180_I
+R9A09G057_GBETH_0_CLK_PTP_REF_I
+R9A09G057_GBETH_0_ACLK_CSR_I
+R9A09G057_GBETH_0_ACLK_I
+
+> +#define R9A09G057_GBETH1_CLK_RESERVED0                 219
+> +#define R9A09G057_GBETH1_CLK_RESERVED1                 220
+> +#define R9A09G057_GBETH1_CLK_RESERVED2                 221
+> +#define R9A09G057_GBETH1_CLK_RESERVED3                 222
+> +#define R9A09G057_GBETH1_CLK_RESERVED4                 223
+> +#define R9A09G057_GBETH1_CLK_RESERVED5                 224
+> +#define R9A09G057_GBETH1_CLK_RESERVED6                 225
+
+R9A09G057_GBETH_1_CLK_TX_I
+R9A09G057_GBETH_1_CLK_RX_I
+R9A09G057_GBETH_1_CLK_TX_180_I
+R9A09G057_GBETH_1_CLK_RX_180_I
+R9A09G057_GBETH_1_CLK_PTP_REF_I
+R9A09G057_GBETH_1_ACLK_CSR_I
+R9A09G057_GBETH_1_ACLK_I
+
+> +#define R9A09G057_PCIE_0_ACLK                          226
+> +#define R9A09G057_PCIE_0_CLK_PMU                       227
+> +#define R9A09G057_DDR0_CLK_RESERVED0                   228
+> +#define R9A09G057_DDR0_CLK_RESERVED1                   229
+> +#define R9A09G057_DDR0_CLK_RESERVED2                   230
+> +#define R9A09G057_DDR0_CLK_RESERVED3                   231
+> +#define R9A09G057_DDR0_CLK_RESERVED4                   232
+> +#define R9A09G057_DDR0_CLK_RESERVED5                   233
+> +#define R9A09G057_DDR0_CLK_RESERVED6                   234
+
+R9A09G057_DDR_0_DFICLK
+R9A09G057_DDR_0_AXI0_ACLK
+R9A09G057_DDR_0_AXI1_ACLK
+R9A09G057_DDR_0_AXI2_ACLK
+R9A09G057_DDR_0_AXI3_ACLK
+R9A09G057_DDR_0_AXI4_ACLK
+R9A09G057_DDR_0_PCLK
+
+> +#define R9A09G057_DDR1_CLK_RESERVED0                   235
+> +#define R9A09G057_DDR1_CLK_RESERVED1                   236
+> +#define R9A09G057_DDR1_CLK_RESERVED2                   237
+> +#define R9A09G057_DDR1_CLK_RESERVED3                   238
+> +#define R9A09G057_DDR1_CLK_RESERVED4                   239
+> +#define R9A09G057_DDR1_CLK_RESERVED5                   240
+> +#define R9A09G057_DDR1_CLK_RESERVED6                   241
+
+R9A09G057_DDR_1_DFICLK
+R9A09G057_DDR_1_AXI0_ACLK
+R9A09G057_DDR_1_AXI1_ACLK
+R9A09G057_DDR_1_AXI2_ACLK
+R9A09G057_DDR_1_AXI3_ACLK
+R9A09G057_DDR_1_AXI4_ACLK
+R9A09G057_DDR_1_PCLK
+
+> +#define R9A09G057_CRU_0_ACLK                           242
+> +#define R9A09G057_CRU_0_VCLK                           243
+> +#define R9A09G057_CRU_0_PCLK                           244
+> +#define R9A09G057_CRU_1_ACLK                           245
+> +#define R9A09G057_CRU_1_VCLK                           246
+> +#define R9A09G057_CRU_1_PCLK                           247
+> +#define R9A09G057_CRU_2_ACLK                           248
+> +#define R9A09G057_CRU_2_VCLK                           249
+> +#define R9A09G057_CRU_2_PCLK                           250
+> +#define R9A09G057_CRU_3_ACLK                           251
+> +#define R9A09G057_CRU_3_VCLK                           252
+> +#define R9A09G057_CRU_3_PCLK                           253
+> +#define R9A09G057_ISP_CLK_RESERVED0                    254
+> +#define R9A09G057_ISP_CLK_RESERVED1                    255
+> +#define R9A09G057_ISP_CLK_RESERVED2                    256
+> +#define R9A09G057_ISP_CLK_RESERVED3                    257
+
+R9A09G057_ISP_0_REG_ACLK
+R9A09G057_ISP_0_PCLK
+R9A09G057_ISP_0_VIN_ACLK
+R9A09G057_ISP_0_ISP_SCLK
+
+[...]
+
+> +/* Resets list */
+
+[...]
+
+> +#define R9A09G057_USB30_RST_RESERVED0                  183
+
+R9A09G057_USB3_0_ARESETN
+
+> +#define R9A09G057_USB31_RST_RESERVED0                  184
+
+R9A09G057_USB3_1_ARESETN
+
+> +#define R9A09G057_USB20_RST_RESERVED0                  185
+
+R9A09G057_USB2_0_U2H0_HRESETN
+
+> +#define R9A09G057_USB21_RST_RESERVED0                  186
+
+R9A09G057_USB2_0_U2H1_HRESETN
+
+> +#define R9A09G057_USB20_USB21_RST_RESERVED0            187
+
+R9A09G057_USB2_0_U2P_EXL_SYSRST
+
+> +#define R9A09G057_USB20_USB21_RST_RESERVED1            188
+
+R9A09G057_USB2_0_PRESETN
+
+> +#define R9A09G057_GBETH0_RST_RESERVED0                 189
+
+R9A09G057_GBETH_0_ARESETN_I
+
+> +#define R9A09G057_GBETH1_RST_RESERVED0                 190
+
+R9A09G057_GBETH_1_ARESETN_I
+
+> +#define R9A09G057_PCIE_0_ARESETN                       191
+> +#define R9A09G057_DDR0_RST_RESERVED0                   192
+> +#define R9A09G057_DDR0_RST_RESERVED1                   193
+> +#define R9A09G057_DDR0_RST_RESERVED2                   194
+> +#define R9A09G057_DDR0_RST_RESERVED3                   195
+> +#define R9A09G057_DDR0_RST_RESERVED4                   196
+> +#define R9A09G057_DDR0_RST_RESERVED5                   197
+> +#define R9A09G057_DDR0_RST_RESERVED6                   198
+> +#define R9A09G057_DDR0_RST_RESERVED7                   199
+> +#define R9A09G057_DDR0_RST_RESERVED8                   200
+> +#define R9A09G057_DDR0_RST_RESERVED9                   201
+
+R9A09G057_DDR_0_RST_N
+R9A09G057_DDR_0_MC_PRESETN
+R9A09G057_DDR_0_AXI0_ARESETN
+R9A09G057_DDR_0_AXI1_ARESETN
+R9A09G057_DDR_0_AXI2_ARESETN
+R9A09G057_DDR_0_AXI3_ARESETN
+R9A09G057_DDR_0_AXI4_ARESETN
+R9A09G057_DDR_0_PHY_PRESETN
+R9A09G057_DDR_0_RESET
+R9A09G057_DDR_0_PWROKIN
+
+> +#define R9A09G057_DDR1_RST_RESERVED0                   202
+> +#define R9A09G057_DDR1_RST_RESERVED1                   203
+> +#define R9A09G057_DDR1_RST_RESERVED2                   204
+> +#define R9A09G057_DDR1_RST_RESERVED3                   205
+> +#define R9A09G057_DDR1_RST_RESERVED4                   206
+> +#define R9A09G057_DDR1_RST_RESERVED5                   207
+> +#define R9A09G057_DDR1_RST_RESERVED6                   208
+> +#define R9A09G057_DDR1_RST_RESERVED7                   209
+> +#define R9A09G057_DDR1_RST_RESERVED8                   210
+> +#define R9A09G057_DDR1_RST_RESERVED9                   211
+
+R9A09G057_DDR_1_RST_N
+R9A09G057_DDR_1_MC_PRESETN
+R9A09G057_DDR_1_AXI0_ARESETN
+R9A09G057_DDR_1_AXI1_ARESETN
+R9A09G057_DDR_1_AXI2_ARESETN
+R9A09G057_DDR_1_AXI3_ARESETN
+R9A09G057_DDR_1_AXI4_ARESETN
+R9A09G057_DDR_1_PHY_PRESETN
+R9A09G057_DDR_1_RESET
+R9A09G057_DDR_1_PWROKIN
+
+> +#define R9A09G057_CRU_0_PRESETN                                212
+> +#define R9A09G057_CRU_0_ARESETN                                213
+> +#define R9A09G057_CRU_0_S_RESETN                       214
+> +#define R9A09G057_CRU_1_PRESETN                                215
+> +#define R9A09G057_CRU_1_ARESETN                                216
+> +#define R9A09G057_CRU_1_S_RESETN                       217
+> +#define R9A09G057_CRU_2_PRESETN                                218
+> +#define R9A09G057_CRU_2_ARESETN                                219
+> +#define R9A09G057_CRU_2_S_RESETN                       220
+> +#define R9A09G057_CRU_3_PRESETN                                221
+> +#define R9A09G057_CRU_3_ARESETN                                222
+> +#define R9A09G057_CRU_3_S_RESETN                       223
+> +#define R9A09G057_ISP_RST_RESERVED0                    224
+> +#define R9A09G057_ISP_RST_RESERVED1                    225
+> +#define R9A09G057_ISP_RST_RESERVED2                    226
+> +#define R9A09G057_ISP_RST_RESERVED3                    227
+
+R9A09G057_ISP_0_VIN_ARESETN
+R9A09G057_ISP_0_REG_ARESETN
+R9A09G057_ISP_0_ISP_SRESETN
+R9A09G057_ISP_0_PRESETN
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
