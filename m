@@ -1,83 +1,73 @@
-Return-Path: <linux-kernel+bounces-201272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE09A8FBC46
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:10:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F068FBC58
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD511C24373
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D3E284957
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5F814B083;
-	Tue,  4 Jun 2024 19:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E833A14AD38;
+	Tue,  4 Jun 2024 19:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XX0Ajj3Y"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g4dyiM5h"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECE314A0B8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A59314A629
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717528242; cv=none; b=PEWPeio7Pgb0hF0akTuMwEKRvUk15B31ijlnIE93JvM+jyxSW0MnVSXGsVF2TG3yt6q7/wtNYovVUZCkGyGp0ycoCi8t9UaMShElTDl09GJi8bZXytH66ohaurojg9a9o5ww/PJY3PZj/fwGyuJbpOnP4s9iR06l1TJF7X7gawI=
+	t=1717528357; cv=none; b=CJ6JkxIDLsv6WcH22YMRR5i1knxP8KyeqqWfx7g0U5aWRXblwoJ8KIsT3bpePMZDG6MAwTUK0jpEGj8LFxuV6WtY+6KfBwmC3mnpwCEgujghm9ffjabdu8xCEko9nVtkZ0JY2ME5dF2/B46TT1BgjZmdjp+olSIZq5rezgvF75Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717528242; c=relaxed/simple;
-	bh=6WRhNvMputCmUE8KuRCNypytBhygsDlUsvmXPlqiqT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=g5BX9BU/WGnPHA4aC9jQ9hFKiEnxWrsJmkCktsN3lBkHvYTyxmu4GKA/X7qUd0Y4RKfWVVBz1M1ZAeR08UwprVfMyRvYR9B959fmhwT49pX/qhIVjAYuFKLIMzT0/iDG3MMHTe8dxf6uY4Z1NNdKqG/urJSwjqRDMqyWV8Uz9pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XX0Ajj3Y; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a4ce82f30so4245944a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 12:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717528238; x=1718133038; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzA8SRe4whRjxMfh3T9fimsp/JqPLwi91HrTpjRxV+U=;
-        b=XX0Ajj3Y+1AZObqOfPb18cGyraQBDDLO2XIlAPS8Ly83mZMEaDukTwLl+9+4GwpKd2
-         THP7pT7DLRfk9UqrlX/fGSI5cZPLFm8D0w5CUdEI3pYebM+h81FoVigV9m2nEfYj4kRC
-         TonahQMlIiCAWbop+xMV9g639FTHM0BNlMfdtUrRWitQi6eLhlCZAtRVbPilZLWl0auA
-         8h2mQJGO7Hs2apj6epMapIMzjz6YH5eOzwmLsxZKClVONJ1f6gxRaW+EvpI+QRaIfMhz
-         7XZQpiWfGApQyh6Jx4J7T+OGwblLT6XKCE2SpIvVkKV0X1DWJhFjGQN7d0Qx/HnXjWz+
-         qRYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717528238; x=1718133038;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uzA8SRe4whRjxMfh3T9fimsp/JqPLwi91HrTpjRxV+U=;
-        b=UybXQ5tTLllWwtDwiwSHgOevIgzOHIvE3lOhIgn4ki7rsnPMK/j/TV/HVo8lPkFCsW
-         0VKMv2VogTj9yWhBB7PWKZYQsymQv6LwosO+Ybdg4Ijp8/K3qeXHaKNCgPSHjcyPa5cI
-         R38a8SLnxZq09JreXElRWLrY/K1vqUHcdHKAiSi5v6jZRo03DBy57k78p0kMAzGA/zfs
-         U9fa8BcPzJP9zPSmTBKi8M8ezK3+KvHbWm2pL9SSectMPoLGhC8BlaEXeVfKerse7dVu
-         sfK82PBdbC/aG54NvQft07G2fGEmKSkGu1mrCs5oIaa1h4j8ndUYgrKlFzhHPsdufFBH
-         wUwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnA+aL5KqWr82gfwKQp1SRlPFceSCAicK9vzmkm7dLbnohHeBHpeaXN8hlS7CCokkJq38fmBSdW/OtRUIwCS7Kz+U6iap/afXZ2BsY
-X-Gm-Message-State: AOJu0Yy+k/7WDn2iZBRT8P6bKFYA5Wc6mw/gszGsVInvw1YPMPQRrK15
-	OXM7JrAQ6dFk9B6BKabsiCqEygbGVUa0JncsBHGlNXvo3mAlPSKwTt0UVLLVgyc=
-X-Google-Smtp-Source: AGHT+IGlsLGfRHK0f6DmqF44S64KIFY4M3R+3mRgGUK5rWCZG7z77L7iKZ+bC3jDwWK1rj3XV48eRQ==
-X-Received: by 2002:a50:d4db:0:b0:57a:242e:806b with SMTP id 4fb4d7f45d1cf-57a8b6acd8emr362804a12.18.1717528237801;
-        Tue, 04 Jun 2024 12:10:37 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31bb825esm7847800a12.32.2024.06.04.12.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 12:10:37 -0700 (PDT)
-Date: Tue, 4 Jun 2024 22:10:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Hyeonwoo Cha <chw1119@hanyang.ac.kr>,
-	david.sterba@suse.com
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, aivazian.tigran@gmail.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	tytso@mit.edu, adilger.kernel@dilger.ca,
-	hirofumi@mail.parknet.co.jp, sfr@canb.auug.org.au,
-	chw1119@hanyang.ac.kr, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	reiserfs-devel@vger.kernel.org
-Subject: Re: [PATCH v2] Fix issue in mark_buffer_dirty_inode
-Message-ID: <97ac9280-4c7b-4466-9cb8-2a81882f0b80@moroto.mountain>
+	s=arc-20240116; t=1717528357; c=relaxed/simple;
+	bh=uth3pBz50kuBxtutu24UCRZ5v8bN+byDA5nfgsuMcls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hh/JPsatiVsqB/MBa4DchCCL9qI1Nfy2edCBxLfb+PQL/LIxiH+Og58NALUIUDD7yQog7VXD5noX2b9IDJvpx9W+OeEWatmYOizn3EEEg/FYZkSuSTjWWR7/rZUCZh68pa9CmqwowV+/XohJajlN1jcsDSFvhKTpZnbKRmFKkaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g4dyiM5h; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DIpk3jRNpFdid58ZOeWexYwMoUALCO2h2dO4SitkQuY=; b=g4dyiM5h7sbERLaUgik2FP6h+d
+	evFYtJlV6rkhnawHiNZsnrBdo8E6zDkDc1gTQ4JQN/FAIWonQ1Ltj9xq7JErbe8TtJxM7WTUGIadw
+	+NzbYBHbZsatv4f+4fQPkjDVcCtUEB8WUtDzXFbo/+4IThMWBnJHp81Dv3dvfydlAg4+kjz2Txpe1
+	3XyI5c7yju3x7O0CGFaY/dAaFe43MUVVg4sqv5bjqh6auSksml61+jRTwkAc64V6jdaUnyvizThNN
+	rFHYYM49Ks4tlq/DR2O4iuloPEMLRZbCb52uHVe90UB2LXbYt/aESqSt3PBzxNIYZEf8UekPYI1nz
+	zwG4VOSA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sEZa1-0000000F2sH-1ggI;
+	Tue, 04 Jun 2024 19:12:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C0B9230068B; Tue,  4 Jun 2024 21:12:20 +0200 (CEST)
+Date: Tue, 4 Jun 2024 21:12:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Luis Machado <luis.machado@arm.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+	wuyun.abel@bytedance.com, tglx@linutronix.de, efault@gmx.de,
+	nd <nd@arm.com>, John Stultz <jstultz@google.com>,
+	Hongyan.Xia2@arm.com
+Subject: Re: [RFC][PATCH 08/10] sched/fair: Implement delayed dequeue
+Message-ID: <20240604191220.GP40213@noisy.programming.kicks-ass.net>
+References: <1461277e-af68-41e7-947c-9178b55810b1@arm.com>
+ <20240425104220.GE21980@noisy.programming.kicks-ass.net>
+ <20240425114949.GH12673@noisy.programming.kicks-ass.net>
+ <20240426093241.GI12673@noisy.programming.kicks-ass.net>
+ <c6152855-ef92-4c24-a3f5-64d4256b6789@arm.com>
+ <2fba04b0-e55e-41f4-8b7a-723734fe1ad2@arm.com>
+ <20240529225036.GN40213@noisy.programming.kicks-ass.net>
+ <7eac0774-0f9d-487c-97b6-ab0e85f0ae3a@arm.com>
+ <20240604101107.GO26599@noisy.programming.kicks-ass.net>
+ <24e09046-74ee-4ebb-ac1a-bdc84568e825@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,59 +76,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604060636.87652-1-chw1119@hanyang.ac.kr>
+In-Reply-To: <24e09046-74ee-4ebb-ac1a-bdc84568e825@arm.com>
 
-Hi Hyeonwoo,
+On Tue, Jun 04, 2024 at 03:23:41PM +0100, Luis Machado wrote:
+> On 6/4/24 11:11, Peter Zijlstra wrote:
 
-kernel test robot noticed the following build warnings:
+> > Note how dequeue_task() does uclamp_rq_dec() unconditionally, which is
+> > then not balanced in the case below.
+> > 
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -3664,6 +3664,7 @@ static int ttwu_runnable(struct task_str
+> >  			/* mustn't run a delayed task */
+> >  			SCHED_WARN_ON(task_on_cpu(rq, p));
+> >  			enqueue_task(rq, p, ENQUEUE_DELAYED);
+> > +			uclamp_rq_inc(rq, p);
+> >  		}
+> >  		if (!task_on_cpu(rq, p)) {
+> >  			/*
+> 
+> As Hongyan pointed out in a separate message, the above makes things
+> worse, as we end up with even more leftover tasks in the uclamp
+> buckets.
+> 
+> I'm trying a fix in kernel/sched/core.c:enqueue_task that only
+> calls uclamp_rq_inc if the task is not sched_delayed, so:
+> 
+> -       uclamp_rq_inc(rq, p);
+> +       if (!p->se.sched_delayed)
+> +         uclamp_rq_inc(rq, p);
+> 
+> I'm not entirely sure it is correct, but it seems to fix things,
+> but I'm still running some tests.
+> 
+> With the current code, given uclamp_rq_inc and uclamp_rq_dec get
+> called in enqueue_task and dequeue_task, the additional enqueue_task
+> call from ttwu_runnable for a delayed_dequeue task may do an additional
+> unconditional call to uclamp_rq_inc, no?
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Yes, I got enqueue_task() and class->enqueue_task() confused this
+morning.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hyeonwoo-Cha/Fix-issue-in-mark_buffer_dirty_inode/20240604-140958
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240604060636.87652-1-chw1119%40hanyang.ac.kr
-patch subject: [PATCH v2] Fix issue in mark_buffer_dirty_inode
-config: i386-randconfig-141-20240604 (https://download.01.org/0day-ci/archive/20240605/202406050218.U7c0DL3C-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+But with the above, you skip inc for sched_delayed, but dequeue_task()
+will have done the dec, so isn't it then still unbalanced?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406050218.U7c0DL3C-lkp@intel.com/
+Oh well, I'll go stare at this in tomorrow.
 
-smatch warnings:
-fs/buffer.c:673 mark_buffer_dirty_fsync() warn: if statement not indented
-fs/buffer.c:682 mark_buffer_dirty_fsync() warn: inconsistent indenting
-
-vim +673 fs/buffer.c
-
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  667  void mark_buffer_dirty_fsync(struct buffer_head *bh, struct address_space *mapping)
-^1da177e4c3f41 Linus Torvalds          2005-04-16  668  {
-abc8a8a2c7dc7b Matthew Wilcox (Oracle  2022-12-15  669) 	struct address_space *buffer_mapping = bh->b_folio->mapping;
-^1da177e4c3f41 Linus Torvalds          2005-04-16  670  
-^1da177e4c3f41 Linus Torvalds          2005-04-16  671  	mark_buffer_dirty(bh);
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  672  
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04 @673  	if (bh->b_assoc_map)
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  674          return;
-
-The code is okay, but the indenting is messed up.
-
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  675  
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  676) 	if (!mapping->i_private_data) {
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  677)     	mapping->i_private_data = buffer_mapping;
-^1da177e4c3f41 Linus Torvalds          2005-04-16  678      } else {
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  679)         BUG_ON(mapping->i_private_data != buffer_mapping);
-^1da177e4c3f41 Linus Torvalds          2005-04-16  680      }
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  681  
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17 @682)     spin_lock(&buffer_mapping->i_private_lock);
-73295b4ed00de6 Hyeonwoo Cha            2024-06-04  683      list_move_tail(&bh->b_assoc_buffers, &mapping->i_private_list);
-58ff407bee5a55 Jan Kara                2006-10-17  684      bh->b_assoc_map = mapping;
-600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  685)     spin_unlock(&buffer_mapping->i_private_lock);
-^1da177e4c3f41 Linus Torvalds          2005-04-16  686  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+In any case, is there a uclamp self-test somewhere?
 
