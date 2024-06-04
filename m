@@ -1,81 +1,91 @@
-Return-Path: <linux-kernel+bounces-201134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461308FB9FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:08:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C35CE8FB9FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5DB62851C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:08:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785301F27A40
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369ED149DE8;
-	Tue,  4 Jun 2024 17:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CE914A0AE;
+	Tue,  4 Jun 2024 17:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnbSj/j+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3F4MXeR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFC81494DB;
-	Tue,  4 Jun 2024 17:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03DD1448ED;
+	Tue,  4 Jun 2024 17:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717520887; cv=none; b=ow0FFW+IoPRR/K79xKfJJqrvrc9laeVIOHv9o9aHh4IV3vlHh10orWBhCCEesQCtEAXOMNFNeB6AB4sX5Ce6QnnQK4C0kYX6ZtgpDuTx/nRGe3g3kFhiu11jA0XYHU58qZFd5bWGEzgx5P81VdbToqeEdje+7QQssWhqHXfcoRQ=
+	t=1717520891; cv=none; b=T9hbAYHxBUOsYXOBitcxAz6o22bFszJn+xLxu6l45afbffNfT9qF8OHSoDCg8Tf4xxDcQ5M91sNOcoK6AIGJAHGw+SMDWH/NmpJdGcm0yY75VQ1gSyJhNTqSux/IX1P/LaR3DQhVHiSsEEFQaE9pj2JONn3P3RmpD1AvH5Hh1t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717520887; c=relaxed/simple;
-	bh=54ydihiRs3glxrB7j/VdgJfU7tdLQHeIoW/Ag/kejKk=;
+	s=arc-20240116; t=1717520891; c=relaxed/simple;
+	bh=zZwqUq8UB3lZw8ZHq67It6f1xU0qfYN/Y2P5mJdxAdc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q1eSejn7815kzmomLQ2vGEz72187+u53leJf1+fJcWs4kAVgV3RwJOpOaeZYoUFt3cADrn1xc4F59ZgIxTUp2d/gPFdU8qzvitPDVwKyzkieENnuZB9fwOU7QeBtX0W4mA7DiMTxbGgrtiguG/1ZPJe4LmCGXs+Oy14WX1TdQwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnbSj/j+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91ED0C2BBFC;
-	Tue,  4 Jun 2024 17:08:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VmsR7+HvLBO119m53u9/3o5R7ka3blz8gWcBvmDeUcipMtoDlkauq7DRJ+bJDBzuX0DxmKpywo4VzX+UqKw2SSgZYAzaw8ssnX4MeUH/FPg8L+Ps0L2jq2Ysabab6FBphA7DDed3qKkawC2/plmpbt8pBNFyemvEdg25NAkE0Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3F4MXeR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4837EC32786;
+	Tue,  4 Jun 2024 17:08:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717520886;
-	bh=54ydihiRs3glxrB7j/VdgJfU7tdLQHeIoW/Ag/kejKk=;
+	s=k20201202; t=1717520891;
+	bh=zZwqUq8UB3lZw8ZHq67It6f1xU0qfYN/Y2P5mJdxAdc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gnbSj/j+GifQ7H4Z4ICILKkdyo0+KlrBQ+gxHcdwdXJ+Q2W49CVb8vW4agM5ba3zB
-	 CmAWMTeFiz7Fz500K+4mjrN0fql9jTYK8o0YWXbjoSvtxSKlc+P0esCcSuWQk7E22D
-	 Q/hGLntRGrf9TCvgt2Ul4XSt1Zgyy9k2lAwxBFvYH6gcAiApDDMb7Eyon8UR9dxoYc
-	 b2qI0MD4VjZvPMEKW2RRHlcTAgL0O16zmp6clO90EDe5mMZ42AghgGH3gpD6NATU8H
-	 MXcxD8fIopZYm9VAE5gh5U3MQC6bVUBwxAawjizw9zjBptsNsdWuMlAzcweN/MJf2X
-	 1K1U1p6ioIdtg==
-Date: Tue, 4 Jun 2024 18:08:02 +0100
-From: Simon Horman <horms@kernel.org>
-To: linux@treblig.org
-Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/rds: remove unused struct 'rds_ib_dereg_odp_mr'
-Message-ID: <20240604170802.GC791188@kernel.org>
-References: <20240531233307.302571-1-linux@treblig.org>
+	b=L3F4MXeRwse/SRBce+SUr2Zq8RPX6shwEcJjxK2xHFQBuRmx9ddeDTT0Z0z/+vlgy
+	 4LEFj4W/GluV7dfuqbAwXpOg5ngW9vpCN8aEHg4cMH251DwyTmyypeamNl/QgMyGjL
+	 zYEdon02Z504wlLfv1Pg/yOIXJ7GO23o6usmfiHYinxqCb6lfyyz+LjYaBZJa36RVK
+	 Y/Tyt87X1dweLz8GM84dyKlVFU3woCoV4gMAicx3Zg9U+qv4vxWvrH7FfsHcQYzuHv
+	 /7/n1GiWsqZp++oxcKrALz9OeLAXe/rpfhwbKFqFLXFIEmNmMS6r8LOKw8QJKY7tab
+	 UeJB1BLE4LKgA==
+Date: Tue, 4 Jun 2024 18:08:07 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bindings: frequency: adf4350: add clk provider
+Message-ID: <20240604-chatty-evasion-40e72edcfcec@spud>
+References: <20240603112447.23308-1-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0nhjNXGCDwJyc3Zw"
+Content-Disposition: inline
+In-Reply-To: <20240603112447.23308-1-antoniu.miclaus@analog.com>
+
+
+--0nhjNXGCDwJyc3Zw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531233307.302571-1-linux@treblig.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 01, 2024 at 12:33:07AM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'rds_ib_dereg_odp_mr' has been unused since the original
-> commit 2eafa1746f17 ("net/rds: Handle ODP mr
-> registration/unregistration").
+On Mon, Jun 03, 2024 at 02:24:43PM +0300, Antoniu Miclaus wrote:
+> Update dt-bindings for clock provider support within adf4350 driver.
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
-nit: Maybe commit lines are best not line-wrapped.
-     I'm unsure.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+--0nhjNXGCDwJyc3Zw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The above not withstanding, this looks good to me.
+-----BEGIN PGP SIGNATURE-----
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZl9J9wAKCRB4tDGHoIJi
+0g60AQC/gTaqrRaPMs415GO1W7m6CIY/OIQHl6mCLEwsgm1I0wD/Q6gdDQMspBiL
+5kFL9DQhwkE3j7EpG1Hy47/njbkGGwI=
+=ucf/
+-----END PGP SIGNATURE-----
+
+--0nhjNXGCDwJyc3Zw--
 
