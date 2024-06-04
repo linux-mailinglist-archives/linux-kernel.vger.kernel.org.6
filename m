@@ -1,55 +1,63 @@
-Return-Path: <linux-kernel+bounces-201002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCC78FB8BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:21:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7A98FB898
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E32AFB2D003
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:51:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1970B2EEE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59EF149E09;
-	Tue,  4 Jun 2024 15:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943CE146D7F;
+	Tue,  4 Jun 2024 16:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVjc73eX"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UvAm38Wh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4191149DF0;
-	Tue,  4 Jun 2024 15:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D8B13D24C;
+	Tue,  4 Jun 2024 16:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516139; cv=none; b=UGTPsBs5JuuMcBa8sEbZV/tsRoHVXU3fVwODELKcb1i6ASSMwld7vM4nsaZBj34MSV9mDeKvNEzOoqaqvyxMqTPJNbU4hkercmn1LvnSzmLJuZ5+W+FyJ/Z9v5fs8lJwy71hCX1578mF72OhRzsUjbYKLFMtf920eFgJjefL37w=
+	t=1717516827; cv=none; b=AWhZRpke+sY+3HPbR+pjIJ210nmQ8wO2DftWBdwjqyqLDJ2nFcGD4Nmw9SGa10npJxEX0bDWRpcknSqA2mhovieGR1jmKQ10CFGE/2vN7zrwhFBbUCrwwIKeF7XbQFa/Td95y4Ub16srrvOjT6vB1RAJPrNvNbhggJAanpeDqes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516139; c=relaxed/simple;
-	bh=H6C5qSm/fcT/ixas+I5X8nmCjiwQueFN8EO+t4pDWPc=;
+	s=arc-20240116; t=1717516827; c=relaxed/simple;
+	bh=BxCSO+fGtXTUJMw9EKNtVRrbNiOWFPCkp6QfB+XW/ao=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZfJWDve8mQMlEooxDkRAoxJJjL2z9fJq0sNfZ5HKdEFA5J4bAktnWM19PYKF2aA24iCHQQLEQfab5LkxnRMKvfUAHs4HWU0+tXJRY2cyz39KAb7gIuhIAlpevmu4VK8PxsHSq8j/01gcbJZ4f+pkMCJZIhxSvYyKupxJrTr+maE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVjc73eX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45C47C32786;
-	Tue,  4 Jun 2024 15:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717516138;
-	bh=H6C5qSm/fcT/ixas+I5X8nmCjiwQueFN8EO+t4pDWPc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=IXIfHYh2v+QlTJcD9UR39VbhH24XXoEphcgFWf2lzt/7g/2SmnDnWs0xpWmi1vSiY/8ufHwzKdTmebdoodwubZaMVsjdu64/OjzCLanbkoRi5KKdWXy03NUR/eOMhgeoasNMTgZc19r5dyYliKXrqidL2JzhSwzoETY4xgY+0Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UvAm38Wh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48161C2BBFC;
+	Tue,  4 Jun 2024 16:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717516827;
+	bh=BxCSO+fGtXTUJMw9EKNtVRrbNiOWFPCkp6QfB+XW/ao=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SVjc73eXuEkiYBiAFb/BKiGBgzQUyWnbolzCjhhiJdJCaHxz3airD0st4YoHMNO09
-	 e6JGqLjtgJgO7KUWFA66flzI2gvZDD9t5w1mII3xd9NQlJmcQB/CfBKF+XUU3Jqia2
-	 VhUrXDGxzsUpsp3E6HnllqYMksVcL/6Bmlgk+V5sJL0jvhc7FhOE58xQ1IUnr1wOci
-	 HzjTYYMZa7WGWjYs5SNAF02nqgVF8i1/zJ3qgM3Su09a2sBW0UxQglJUaoCQlC7lpC
-	 2PoumUsIF+mtPIg3N4ChYbK8hmisuSidDi+Cd2nVFveDnTeEGjcnU3WUMK6oPUaByu
-	 PJqLfuDRih5Lw==
-Date: Tue, 4 Jun 2024 10:48:55 -0500
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: hwmon: g762: Convert to yaml schema
-Message-ID: <20240604154855.GA859849-robh@kernel.org>
-References: <20240530211654.7946-1-ansuelsmth@gmail.com>
+	b=UvAm38WhzO8Qb/h0lksWwkAkeBuBLrpV8ICbpLssLATGPP/n1PPw4szKNAcmtgzZU
+	 ZjZFnBUCx+uRZxuNFNZrv/w7Ha/wvx/OIQYqdtLx0TE0SXhDjYo+uMDFLsbH9gem8B
+	 jVvEHUm7utX33vuQF25fcCRxz1rHKXpDH1ZjnMKI=
+Date: Tue, 4 Jun 2024 18:00:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [RFC PATCH 02/11] rust: add driver abstraction
+Message-ID: <2024060404-figment-resolute-7c6c@gregkh>
+References: <20240520172554.182094-1-dakr@redhat.com>
+ <20240520172554.182094-3-dakr@redhat.com>
+ <2024052045-lived-retiree-d8b9@gregkh>
+ <ZkvPDbAQLo2/7acY@pollux.localdomain>
+ <2024052155-pulverize-feeble-49bb@gregkh>
+ <Zk0egew_AxvNpUG-@pollux>
+ <2024060432-chloride-grappling-cf95@gregkh>
+ <Zl81oUmNO5TX063x@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,159 +66,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240530211654.7946-1-ansuelsmth@gmail.com>
+In-Reply-To: <Zl81oUmNO5TX063x@cassiopeiae>
 
-On Thu, May 30, 2024 at 11:16:50PM +0200, Christian Marangi wrote:
-> Convert g762 Documentation to yaml schema and port all the custom
-> properties and info.
+On Tue, Jun 04, 2024 at 05:41:21PM +0200, Danilo Krummrich wrote:
+> On Tue, Jun 04, 2024 at 04:27:31PM +0200, Greg KH wrote:
+> > On Wed, May 22, 2024 at 12:21:53AM +0200, Danilo Krummrich wrote:
+> > > On Tue, May 21, 2024 at 11:35:43AM +0200, Greg KH wrote:
+> > > > On Tue, May 21, 2024 at 12:30:37AM +0200, Danilo Krummrich wrote:
+> > > > > On Mon, May 20, 2024 at 08:14:18PM +0200, Greg KH wrote:
+> > > > > > On Mon, May 20, 2024 at 07:25:39PM +0200, Danilo Krummrich wrote:
+> > > > > > > From: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > > > > > 
+> > > > > > > This defines general functionality related to registering drivers with
+> > > > > > > their respective subsystems, and registering modules that implement
+> > > > > > > drivers.
+> > > > > > > 
+> > > > > > > Co-developed-by: Asahi Lina <lina@asahilina.net>
+> > > > > > > Signed-off-by: Asahi Lina <lina@asahilina.net>
+> > > > > > > Co-developed-by: Andreas Hindborg <a.hindborg@samsung.com>
+> > > > > > > Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+> > > > > > > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > > > > > > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> > > > > > > ---
+> > > > > > >  rust/kernel/driver.rs        | 492 +++++++++++++++++++++++++++++++++++
+> > > > > > >  rust/kernel/lib.rs           |   4 +-
+> > > > > > >  rust/macros/module.rs        |   2 +-
+> > > > > > >  samples/rust/rust_minimal.rs |   2 +-
+> > > > > > >  samples/rust/rust_print.rs   |   2 +-
+> > > > > > >  5 files changed, 498 insertions(+), 4 deletions(-)
+> > > > > > >  create mode 100644 rust/kernel/driver.rs
+> > > > > > > 
+> > > > > > > diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..e0cfc36d47ff
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/rust/kernel/driver.rs
+> > > > > > > @@ -0,0 +1,492 @@
+> > > > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > > > +
+> > > > > > > +//! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
+> > > > > > > +//!
+> > > > > > > +//! Each bus/subsystem is expected to implement [`DriverOps`], which allows drivers to register
+> > > > > > > +//! using the [`Registration`] class.
+> > > > > > 
+> > > > > > Why are you creating new "names" here?  "DriverOps" is part of a 'struct
+> > > > > > device_driver' why are you separating it out here?  And what is
+> > > > > 
+> > > > > DriverOps is a trait which abstracts a subsystems register() and unregister()
+> > > > > functions to (un)register drivers. It exists such that a generic Registration
+> > > > > implementation calls the correct one for the subsystem.
+> > > > > 
+> > > > > For instance, PCI would implement DriverOps::register() by calling into
+> > > > > bindings::__pci_register_driver().
+> > > > > 
+> > > > > We can discuss whether DriverOps is a good name for the trait, but it's not a
+> > > > > (different) name for something that already exists and already has a name.
+> > > > 
+> > > > It's a name we don't have in the C code as the design of the driver core
+> > > > does not need or provide it.  It's just the section of 'struct
+> > > > device_driver' that provides function callbacks, why does it need to be
+> > > > separate at all?
+> > > 
+> > > I'm confused by the relationship to `struct device_driver` you seem to imply.
+> > > How is it related?
+> > > 
+> > > Again, this is just a trait for subsystems to provide their corresponding
+> > > register and unregister implementation, e.g. pci_register_driver() and
+> > > pci_unregister_driver(), such that they can be called from the generic
+> > > Registration code below.
+> > > 
+> > > See [1] for an example implementation in PCI.
+> > 
+> > registering and unregistering drivers belongs in the bus code, NOT in
+> > the driver code.
 > 
-> Add the vendor prefix to name to follow naming standard.
+> Why? We're not (re-)implementing a bus here. Again, those are just abstractions
+> to call the C functions to register a driver. The corresponding C functions are
+> e.g. driver_register() or __pci_register_driver(). Those are defined in
+> drivers/base/driver.c and drivers/pci/pci-driver.c respectively.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
-> Changes v3:
-> - Rename yaml to g762 from g76x
-> 
->  .../devicetree/bindings/hwmon/g762.txt        | 47 -----------
->  .../devicetree/bindings/hwmon/gmt,g762.yaml   | 83 +++++++++++++++++++
->  2 files changed, 83 insertions(+), 47 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/hwmon/g762.txt
->  create mode 100644 Documentation/devicetree/bindings/hwmon/gmt,g762.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/g762.txt b/Documentation/devicetree/bindings/hwmon/g762.txt
-> deleted file mode 100644
-> index 6d154c4923de..000000000000
-> --- a/Documentation/devicetree/bindings/hwmon/g762.txt
-> +++ /dev/null
-> @@ -1,47 +0,0 @@
-> -GMT G762/G763 PWM Fan controller
-> -
-> -Required node properties:
-> -
-> - - "compatible": must be either "gmt,g762" or "gmt,g763"
-> - - "reg": I2C bus address of the device
-> - - "clocks": a fixed clock providing input clock frequency
-> -	     on CLK pin of the chip.
-> -
-> -Optional properties:
-> -
-> - - "fan_startv": fan startup voltage. Accepted values are 0, 1, 2 and 3.
-> -	       The higher the more.
-> -
-> - - "pwm_polarity": pwm polarity. Accepted values are 0 (positive duty)
-> -	       and 1 (negative duty).
-> -
-> - - "fan_gear_mode": fan gear mode. Supported values are 0, 1 and 2.
-> -
-> -If an optional property is not set in .dts file, then current value is kept
-> -unmodified (e.g. u-boot installed value).
-> -
-> -Additional information on operational parameters for the device is available
-> -in Documentation/hwmon/g762.rst. A detailed datasheet for the device is available
-> -at http://natisbad.org/NAS/refs/GMT_EDS-762_763-080710-0.2.pdf.
-> -
-> -Example g762 node:
-> -
-> -   clocks {
-> -	#address-cells = <1>;
-> -	#size-cells = <0>;
-> -
-> -	g762_clk: fixedclk {
-> -		 compatible = "fixed-clock";
-> -		 #clock-cells = <0>;
-> -		 clock-frequency = <8192>;
-> -	}
-> -   }
-> -
-> -   g762: g762@3e {
-> -	compatible = "gmt,g762";
-> -	reg = <0x3e>;
-> -	clocks = <&g762_clk>
-> -	fan_gear_mode = <0>; /* chip default */
-> -	fan_startv = <1>;    /* chip default */
-> -	pwm_polarity = <0>;  /* chip default */
-> -   };
-> diff --git a/Documentation/devicetree/bindings/hwmon/gmt,g762.yaml b/Documentation/devicetree/bindings/hwmon/gmt,g762.yaml
-> new file mode 100644
-> index 000000000000..8c179cbbc65c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/gmt,g762.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/gmt,g762.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GMT G762/G763 PWM Fan controller
-> +
-> +maintainers:
-> +  - Christian Marangi <ansuelsmth@gmail.com>
-> +
-> +description: |
-> +  GMT G762/G763 PWM Fan controller.
-> +
-> +  If an optional property is not set in DT, then current value is kept
-> +  unmodified (e.g. bootloader installed value).
-> +
-> +  Additional information on operational parameters for the device is available
-> +  in Documentation/hwmon/g762.rst. A detailed datasheet for the device is available
-> +  at http://natisbad.org/NAS/refs/GMT_EDS-762_763-080710-0.2.pdf.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - gmt,g762
-> +      - gmt,g763
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description: a fixed clock providing input clock frequency on CLK
-> +      pin of the chip.
-> +    maxItems: 1
-> +
-> +  fan_startv:
-> +    description: Fan startup voltage step
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3]
-> +
-> +  pwm_polarity:
-> +    description: PWM polarity (psotivie or negative duty)
+> Why wouldn't we follow the same scheme in Rust abstractions?
 
-typo
+It's the bus that does the registering, so yeah, don't put it here at
+all as it's not going to be needed (i.e. unless you write a bus in rust
+you will never call driver_register())  So this can just be a wrapper
+for the pci bus logic, keeping it simpler.
 
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1]
-> +
-> +  fan_gear_mode:
-> +    description: FAN gear mode. Configure High speed fan setting factor
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2]
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clocks {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        g762_clk: fixedclk {
-> +            compatible = "fixed-clock";
-> +            #clock-cells = <0>;
-> +            clock-frequency = <8192>;
-> +        };
+So you might be able to delete a lot of code here, only deal with a
+"dumb" struct device wrapper to handle reference counts, and then do the
+rest for the specific bus bindings?  Or is that too much to dream?
 
-Drop. Providers are outside the scope of bindings.
+You aren't writing a "raw" driver here, no one does that, it's a bus
+that handles that logic for you, and you should not have to expose any
+"raw" driver attributes.
 
-With that,
+Yes, for some busses, they like to force a driver to set the "raw"
+driver attribute, but I don't think that's a good idea and for the pci
+driver layer, that shouldn't be necessary now, right?  If not, what
+fields are you wanting to get direct access to?
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+thanks,
+
+greg k-h
 
