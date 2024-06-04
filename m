@@ -1,130 +1,248 @@
-Return-Path: <linux-kernel+bounces-200776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EADE48FB4C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:05:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D548FB513
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D891282257
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:05:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04819B28749
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEB516419;
-	Tue,  4 Jun 2024 14:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44D812D1E9;
+	Tue,  4 Jun 2024 14:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hcBR93It"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0UCj66VX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18EF171B0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E3F12CD98
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717509911; cv=none; b=m6A37gVq87s8g0oWEijvrfsBlZyXQIKW9vCHvb+w5BQFy7DrBiznKH7Nlc1fq7xL7VJMEvHybmNUIK2Ld44BmcQpuS1nRB4ZZocUupF8zX1IP6I0bCWU2g6g2CV+pwUfY4AJkdkjpu3xxHxJWEE1kFlnEJvn8ds8v532TscShG4=
+	t=1717510368; cv=none; b=BW18BIPNEdESI8DwYdc00UHcd5r3Gt4BN3H9TLwtULSTI6HpfS0tMZClIbzLSO8c+/1q39YchPIJPWbZQGgOAQz1nhp/38F53AbEF92m8lhuKJ1ez3hDDkMWe92So6TUPw6W9oDg0eK3NfLNjxvJmVNREeSBalVTo46ILcRLWpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717509911; c=relaxed/simple;
-	bh=1S8mGHYMiZ8q0CuVhz5+KV5LmOzGz37Z9f92ilpXG48=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gGtSTZ0GEsoi9Mneb7CnJagXwUVUVol92+cQGzFEtjOMa4KdR2ypdb30eukYITf1wO23Pt/AgqPuLt51/qiL5+mMJPqQmlkEreW1HgOv1YjTkOOoZzVxc/tSHNSTrv8B0yxtN2of1UpiuXCtPn6k/6qrG92sjpQeLgNewSl3EnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hcBR93It; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717509908;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1S8mGHYMiZ8q0CuVhz5+KV5LmOzGz37Z9f92ilpXG48=;
-	b=hcBR93ItmIdTxFJZbOkqkx7a914yOh6Xvmh+TRDYduKL6/j+/4D3/YBL26zrmOo1hKyGWA
-	93sFOsFmVPmvltEYCYOQxFIOcJz1T6GrOen/fi7oU5qvis05Ly2dbv1sfBXOk1KRbUQahi
-	8BLuS3Zmy+nRRzYHRIkfIvl23xWCgdo=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-223-IemjEhEQMSawAM_dWsR0mA-1; Tue, 04 Jun 2024 10:05:04 -0400
-X-MC-Unique: IemjEhEQMSawAM_dWsR0mA-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ea91c7c801so5057661fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 07:05:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717509902; x=1718114702;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1S8mGHYMiZ8q0CuVhz5+KV5LmOzGz37Z9f92ilpXG48=;
-        b=ex9bVipRDWsucG2dSTSCeVQkR6sMb8am4Hq2AQ3YgiImAaOeQuINeJYC+eA4e9vzC4
-         cZhiSO9MBpweWS4O8ZVAqpakQi5iBFsQWyXlHnFl1aPh09KPgHmv9A9hSLQ9xA/C6RpY
-         bU1Y7Pr0XZLMz6YzzC9zFBr5rmc9uTl2n+dRIld/Meb5WSZn8bbU6m7GlN8jTKJFpWUC
-         AzDb3StiLfqimvfBpV1tg2F6USht+T1/s8el8tnRuE26noLDeTsQ7QOkDm6lC5v/Mwcj
-         NIAmRBpZATW67eFAMNzYgWeP/kzudPWAtRVCa7LhYD7AXSLtDCLLDSGwi4M4kVloAcGv
-         6bPw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4DEuFXWz9Ywf7sq+R+9EBnuSwHfaS2a+NjeEIxdt1ArY6IF+8Nd3Sax+yA8dNGRTd+ny+qE0JbLbZwnAtKuvXqPd9I7Wqiy2xqUyw
-X-Gm-Message-State: AOJu0YwyAIQUhTulZW++Fy33NpekTrR0c5UUdhh/+h59fVL+Ru+hAmK/
-	HFBa+dG/4JLX06WtHxfxG/L3NgVJhi65N2uZTQG/gnmgPc4Roz8glbkqBOavcCl/yVm9ph05SQD
-	I6plELsxx6H8reaKboPzfSbDSG/knpEgmWyXQdORUW10opuyivKudZYZWBXVGFQ==
-X-Received: by 2002:ac2:4313:0:b0:516:c241:a912 with SMTP id 2adb3069b0e04-52b895545a7mr6713766e87.1.1717509902489;
-        Tue, 04 Jun 2024 07:05:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+ZxE2oGUMMT3hZsp8qQSSlm8sUtMNkLi3Xw7nPUZENv6QGoM2qhoGXX5FmlZ9bfFMabf2cQ==
-X-Received: by 2002:ac2:4313:0:b0:516:c241:a912 with SMTP id 2adb3069b0e04-52b895545a7mr6713743e87.1.1717509902044;
-        Tue, 04 Jun 2024 07:05:02 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3344:1b74:3a10::f71])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04d9c68sm11571443f8f.56.2024.06.04.07.05.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 07:05:01 -0700 (PDT)
-Message-ID: <d5e4c3093a68f38657b8061bcbf51396e1d23bab.camel@redhat.com>
-Subject: Re: [PATCH net] net/smc: avoid overwriting when adjusting sock
- bufsizes
-From: Paolo Abeni <pabeni@redhat.com>
-To: Wen Gu <guwen@linux.alibaba.com>, gbayer@linux.ibm.com, 
- wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
- edumazet@google.com,  kuba@kernel.org
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com, 
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 04 Jun 2024 16:04:59 +0200
-In-Reply-To: <20240531085417.43104-1-guwen@linux.alibaba.com>
-References: <20240531085417.43104-1-guwen@linux.alibaba.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1717510368; c=relaxed/simple;
+	bh=MN+40fDm0UxkjExz8ipcSWnwCRu/VFjhn21L4UnYaOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ku9KXi221EnKXNvOntd4rk1W1YV5so1Jn9D2RGiqin1iqIH+/p8wXNcS95Az5W/40V/ftbbdKtcszrtoRrWA203yxj0y9TfidJormZEuffygw5yoQ/ARfWoXyAr9ie6Ht6blIZI+O9rnRsjWIvJOKXtbv083zgRPJRDOI1w6QJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0UCj66VX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB408C2BBFC;
+	Tue,  4 Jun 2024 14:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717510367;
+	bh=MN+40fDm0UxkjExz8ipcSWnwCRu/VFjhn21L4UnYaOU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0UCj66VX7cXqwbrhJQ68gBoRbxBzJlKWUXCbgU8oQE/SmXNwhaIw7RraEcF9JyAjR
+	 k5ujgtiY78kH5wQGGuzRZ7nkjLm41kGTYrHMItQoUDMwTUJA/X6B4WxE4WzfqLp6Ct
+	 JuHOTOaZwghfrdVZeT892KNveEbxbJzTZY1+CyKY=
+Date: Tue, 4 Jun 2024 16:06:16 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Tim Murray <timmurray@google.com>, John Stultz <jstultz@google.com>,
+	Steven Moreland <smoreland@google.com>,
+	Nick Chen <chenjia3@oppo.com>
+Subject: Re: [PATCH v4] binder: use bitmap for faster descriptor lookup
+Message-ID: <2024060442-fedora-maybe-e857@gregkh>
+References: <CAH5fLgjP8eozdA3wSari2LHyVUzaOMNTU12JWb2rzGgy9RRpsg@mail.gmail.com>
+ <20240517032849.58437-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517032849.58437-1-cmllamas@google.com>
 
-On Fri, 2024-05-31 at 16:54 +0800, Wen Gu wrote:
-> When copying smc settings to clcsock, avoid setting clcsock's sk_sndbuf
-> to sysctl_tcp_wmem[1], since this may overwrite the value set by
-> tcp_sndbuf_expand() in TCP connection establishment.
->=20
-> And the other setting sk_{snd|rcv}buf to sysctl value in
-> smc_adjust_sock_bufsizes() can also be omitted since the initialization
-> of smc sock and clcsock has set sk_{snd|rcv}buf to smc.sysctl_{w|r}mem
-> or ipv4_sysctl_tcp_{w|r}mem[1].
->=20
-> Fixes: 30c3c4a4497c ("net/smc: Use correct buffer sizes when switching be=
-tween TCP and SMC")
-> Link: https://lore.kernel.org/r/5eaf3858-e7fd-4db8-83e8-3d7a3e0e9ae2@linu=
-x.alibaba.com
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> ---
-> FYI,
-> The detailed motivation and testing can be found in the link above.
+On Fri, May 17, 2024 at 03:28:27AM +0000, Carlos Llamas wrote:
+> diff --git a/drivers/android/dbitmap.h b/drivers/android/dbitmap.h
+> new file mode 100644
+> index 000000000000..2cf470702bbb
+> --- /dev/null
+> +++ b/drivers/android/dbitmap.h
+> @@ -0,0 +1,139 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#ifndef _LINUX_DBITMAP_H
+> +#define _LINUX_DBITMAP_H
+> +#include <linux/bitmap.h>
 
-My understanding is that there is an open question here if this is the
-expected and desired behavior.
+No copyright line for a new file?  Somehow I doubt that's what your
+corporate policy is :(
 
-@Wenjia, @Jan: could you please have a look?
 
-Thanks!
+> +
+> +#define NBITS_MIN	BITS_PER_TYPE(unsigned long)
+> +
+> +struct dbitmap {
+> +	unsigned int nbits;
+> +	unsigned long *map;
+> +};
 
-Paolo
+Some documentation about how this all works would be nice so we can
+verify / validate it is doing what it should be doing.
 
+And maybe a test?
+
+> +
+> +static inline int dbitmap_enabled(struct dbitmap *dmap)
+> +{
+> +	return dmap->map != NULL;
+> +}
+> +
+> +static inline void dbitmap_free(struct dbitmap *dmap)
+> +{
+> +	dmap->nbits = 0;
+> +	kfree(dmap->map);
+> +	dmap->map = NULL;
+
+Why are you setting this to NULL after freeing it?  What does that
+signal?
+
+> +}
+> +
+> +static inline unsigned int dbitmap_shrink_nbits(struct dbitmap *dmap)
+> +{
+> +	unsigned int bit;
+> +
+> +	if (dmap->nbits <= NBITS_MIN)
+> +		return 0;
+> +
+> +	bit = find_last_bit(dmap->map, dmap->nbits);
+> +	if (unlikely(bit == dmap->nbits))
+> +		return NBITS_MIN;
+> +
+> +	if (unlikely(bit < (dmap->nbits >> 2)))
+> +		return dmap->nbits >> 1;
+
+And these unlikely() markings actually work better than not having them?
+Please document that if so.
+
+
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void
+> +dbitmap_replace(struct dbitmap *dmap, unsigned long *new, unsigned int nbits)
+> +{
+> +	bitmap_copy(new, dmap->map, min(dmap->nbits, nbits));
+> +	kfree(dmap->map);
+> +	dmap->map = new;
+> +	dmap->nbits = nbits;
+> +}
+> +
+> +static inline void
+> +dbitmap_shrink(struct dbitmap *dmap, unsigned long *new, unsigned int nbits)
+> +{
+> +	if (unlikely(!new))
+> +		return;
+
+All unlikely/likely needs to be "proven" to be needed, otherwise the
+compiler and cpu almost always does a better job over time.
+
+> +
+> +	/*
+> +	 * Make sure we can still shrink to the requested nbits as
+> +	 * this call might have raced with another shrink or more
+> +	 * bits have been assigned. In such case, release the @new
+> +	 * bitmap and move on.
+> +	 */
+> +	if (unlikely(!dbitmap_enabled(dmap) ||
+> +		     dbitmap_shrink_nbits(dmap) != nbits)) {
+> +		kfree(new);
+> +		return;
+> +	}
+> +
+> +	dbitmap_replace(dmap, new, nbits);
+> +}
+> +
+> +static inline unsigned int
+> +dbitmap_expand_nbits(struct dbitmap *dmap)
+> +{
+> +	return dmap->nbits << 1;
+> +}
+> +
+> +static inline void
+> +dbitmap_expand(struct dbitmap *dmap, unsigned long *new, unsigned int nbits)
+> +{
+> +	/*
+> +	 * Determine if the expand is still valid as it might have
+> +	 * raced with another expand or free. In such case, release
+> +	 * the @new bitmap and move on.
+
+Shouldn't locks protect any race?  otherwise what happens if it changes
+right after you check for this?
+
+
+> +	 */
+> +	if (unlikely(!dbitmap_enabled(dmap) || nbits <= dmap->nbits)) {
+> +		kfree(new);
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * ENOMEM is checked here as we can now discard a potential
+> +	 * race with another successful expand. In such case, disable
+> +	 * the dbitmap and fallback to slow_desc_lookup_olocked().
+> +	 */
+> +	if (unlikely(!new)) {
+
+As you control the callers, how can this happen?
+
+> +		dbitmap_free(dmap);
+> +		return;
+> +	}
+> +
+> +	dbitmap_replace(dmap, new, nbits);
+> +}
+> +
+> +static inline int
+> +dbitmap_acquire_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
+> +{
+> +	unsigned long n;
+> +
+> +	n = find_first_zero_bit(dmap->map, dmap->nbits);
+> +	if (unlikely(n == dmap->nbits))
+> +		return -ENOSPC;
+> +
+> +	*bit = n;
+> +	set_bit(n, dmap->map);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void
+> +dbitmap_clear_bit(struct dbitmap *dmap, unsigned long bit)
+> +{
+> +	clear_bit(bit, dmap->map);
+> +}
+> +
+> +static inline int dbitmap_init(struct dbitmap *dmap)
+> +{
+> +	dmap->map = bitmap_zalloc(NBITS_MIN, GFP_KERNEL);
+> +	if (!dmap->map) {
+> +		dmap->nbits = 0;
+> +		return -ENOMEM;
+> +	}
+> +
+> +	dmap->nbits = NBITS_MIN;
+> +	/* 0 is reserved for the context manager */
+> +	set_bit(0, dmap->map);
+
+Yeah, this all needs to be documented somewhere please :)
+
+thanks,
+
+greg k-h
 
