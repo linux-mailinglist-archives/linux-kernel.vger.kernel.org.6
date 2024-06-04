@@ -1,130 +1,152 @@
-Return-Path: <linux-kernel+bounces-200956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0D58FB755
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:31:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4165C8FB7FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA11B282C97
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C0E1F216CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6DE149C47;
-	Tue,  4 Jun 2024 15:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMYbQkL8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E9A145FF7;
+	Tue,  4 Jun 2024 15:49:51 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED51D149C58;
-	Tue,  4 Jun 2024 15:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E9D143C7A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717514946; cv=none; b=HxFnJJ0lOj5iDfjxNStthtC8rENY/ZCnIywGBTGiua68iviqjGWlx5J5tzE2FESvZXwEtm1MyfN4b24ZAkQHAJfSx4ZuC+5MGUzNsvnnaxmX6CpA2kstFabdzXfV0hsv7gPpNXbwMq6FHOOKLMtxG5zzndQzvyksDQnY61wOK/g=
+	t=1717516190; cv=none; b=gbttHW57SYt/3UGDAhp6Z3spiEBEQ4O72Z1ER3IVhUS4Y86eokmUe1BwjvpKLtiiSsN2zfaYg7rzLwp9Gg0OQ5jfaj0Ifq4ZL7MhhbYhVIG8Fy5fkDRuCsckcpcQdHX6a0FmmR3sJKj1qXdQyxlBRcp7IViV+MLOB059mKi/I/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717514946; c=relaxed/simple;
-	bh=mfTb8/nIO2i2gRcje+LHHzecxszLMkpseLwAZu/HtWM=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Qjd6Y0VnjcVb4svOB57nky/jxEObx/w0xMg5O4dOtn8nf54fYF9UdtmLiL8/VudhpIbJwZq8vWIWRW+itxmxdbQ9njjDM3PZXEypQ1iDn7FqqMII3uJDgldddrQf/9L7jyKXDoP3WMRSNYwido+sKvsDOF88Rd+6O7KulUO3DLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMYbQkL8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4667DC4AF08;
-	Tue,  4 Jun 2024 15:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717514945;
-	bh=mfTb8/nIO2i2gRcje+LHHzecxszLMkpseLwAZu/HtWM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ZMYbQkL8sB8prdLwR3LZ20wOCUuHUBC1pSjXFiEkqhcr8dOYg+pUW2WMGGDgVpKM8
-	 oBJ8q9525y6f+Ay8GFp6ope2Hw19AJWo19jO3wrWWBq5kylKbCJqrl3SKKG9t9HoVv
-	 4UcRnt+Cju03IvM7ewve7DnPEdcnLx1IDFuyDmWzQL0I2ly7ZHoImmEYHiYRyZYKZr
-	 NLj1lj4Bx4sLEyJCuoXovBdrsLGKfNyJE06zQWJ4PHmLE1xjIAQeiGnor29Q5/sGy1
-	 9GGMMDkKFMCkY9fp6fFIUYiYoeo5Ad8qqguX6GqAenWAc68KEJXk3F0kzOawO2/NMh
-	 drtst/bT3P/Vw==
-Date: Tue, 04 Jun 2024 10:29:03 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1717516190; c=relaxed/simple;
+	bh=s3Y+StiWH1SUXcnL87GNEQTzrLSMMZXbkk3q9EZHmQo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5Djn3KUAS2SqOVLB8UxLMGfU9ANSlSwd717ByO8TWiPdcYrGWn4B2COl4uSBhQWQXhNzJdSaMk9fkrUlNWAKJzc4IX0V7aYDukCQhxzf1hZboyAzwuJTLlVDD2D0jMZ8neyfNDSWDBs0gBQzT7mGT/WpTVBZiqSkjECTys0om4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4VtvGF4WWhz9v7J0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:12:21 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id AEEB1140154
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:29:50 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.206.133.88])
+	by APP2 (Coremail) with SMTP id GxC2BwDXwibhMl9m4o6GCQ--.5202S2;
+	Tue, 04 Jun 2024 16:29:50 +0100 (CET)
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+To: paulmck@kernel.org
+Cc: stern@rowland.harvard.edu,
+	parri.andrea@gmail.com,
+	will@kernel.org,
+	peterz@infradead.org,
+	boqun.feng@gmail.com,
+	npiggin@gmail.com,
+	dhowells@redhat.com,
+	j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr,
+	akiyks@gmail.com,
+	dlustig@nvidia.com,
+	joel@joelfernandes.org,
+	urezki@gmail.com,
+	quic_neeraju@quicinc.com,
+	frederic@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Subject: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in tools/memory-model
+Date: Tue,  4 Jun 2024 17:29:18 +0200
+Message-Id: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Alexey Klimov <alexey.klimov@linaro.org>, stable@vger.kernel.org, 
- Caleb Connolly <caleb.connolly@linaro.org>, linux-arm-msm@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-In-Reply-To: <20240604-rb12-i2c2g-pio-v1-0-f323907179d9@linaro.org>
-References: <20240604-rb12-i2c2g-pio-v1-0-f323907179d9@linaro.org>
-Message-Id: <171751455130.786440.9645536291683303071.robh@kernel.org>
-Subject: Re: [PATCH 0/2] arm64: dts: qcom: switch RB1 and RB2 platforms to
- i2c2-gpio
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwDXwibhMl9m4o6GCQ--.5202S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw45urW3Xr4xWrW3tF4xJFb_yoW5WrWkpr
+	Z5G34rKF1DKr9F9a1xWws7XFySyayrGw47KFn7twn5u3W5ury0yr1Ikw4Fvr97u397XayU
+	ZryUtr1kWw1DArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvj14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wryl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF0
+	eHDUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+
+Currently, the effect of several tag on operations is defined only in
+the herd7 tool's OCaml code as syntax transformations, while the effect
+of all other tags is defined in tools/memory-model.
+This asymmetry means that two seemingly analogous definitions in 
+tools/memory-model behave quite differently because the generated
+representation is sometimes modified by hardcoded behavior in herd7.
+
+It also makes it hard to see that the behavior of the formalization 
+matches the intuition described in explanation.txt without delving into
+the implementation of herd7.
+
+Furthermore, this hardcoded behavior is hard to maintain inside herd7 and
+other tools implementing WMM, and has caused several bugs and confusions
+with the tool maintainers, e.g.:
+
+  https://github.com/MPI-SWS/genmc/issues/22
+  https://github.com/herd/herdtools7/issues/384#issuecomment-1132859904
+  https://github.com/hernanponcedeleon/Dat3M/issues/254
+
+It also means that potential future extensions of LKMM with new tags may
+not work without changing internals of the herd7 tool.
+
+In this patch series, we first emulate the effect of herd7 transformations
+in tools/memory-model through explicit rules in .cat and .bell files that
+reference the transformed tags.
+These transformations do not have any immediate effect with the current
+herd7 implementation, because they apply after the syntax transformations
+have already modified those tags.
+
+In a second step, we then distinguish between syntactic tags (that are
+placed by the programmer on operations, e.g., an 'ACQUIRE tag on both the
+read and write of an xchg_acquire() operation) and sets of events (that
+would be defined after the (emulated) transformations, e.g., an Acquire
+set that includes only on the read of the xchg_acquire(), but "has been
+removed" from the write).
+
+This second step is incompatible with the current herd7 implementation,
+since herd7 uses hardcoded tag names to decide what to do with LKMM;
+therefore, the newly introduced syntactic tags will be ignored or
+processed incorrectly by herd7.
+
+Have fun,
+  jonas
 
 
-On Tue, 04 Jun 2024 13:14:57 +0300, Dmitry Baryshkov wrote:
-> On the Qualcomm RB1 and RB2 platforms the I2C bus connected to the
-> LT9611UXC bridge under some circumstances can go into a state when all
-> transfers timeout. This causes both issues with fetching of EDID and
-> with updating of the bridge's firmware.
-> 
-> While we are debugging the issue, switch corresponding I2C bus to use
-> i2c-gpio driver. While using i2c-gpio no communication issues are
-> observed.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> Dmitry Baryshkov (2):
->       arm64: dts: qcom: qrb2210-rb1: switch I2C2 to i2c-gpio
->       arm64: dts: qcom: qrb4210-rb2: switch I2C2 to i2c-gpio
-> 
->  arch/arm64/boot/dts/qcom/qrb2210-rb1.dts | 13 ++++++++++++-
->  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 13 ++++++++++++-
->  2 files changed, 24 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 0e1980c40b6edfa68b6acf926bab22448a6e40c9
-> change-id: 20240604-rb12-i2c2g-pio-f6035fa8e022
-> 
-> Best regards,
-> --
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-> 
-> 
+Changes since v1:
+   - addressed several spelling/style issues pointed out by Alan
+   - simplified the definition of Marked accesses based on a
+      suggestion by Alan
 
+Jonas Oberhauser (4):
+  tools/memory-model: Legitimize current use of tags in LKMM macros
+  tools/memory-model: Define applicable tags on operation in tools/...
+  tools/memory-model: Define effect of Mb tags on RMWs in tools/...
+  tools/memory-model: Distinguish between syntactic and semantic tags
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+ tools/memory-model/linux-kernel.bell |  26 ++--
+ tools/memory-model/linux-kernel.cat  |  10 ++
+ tools/memory-model/linux-kernel.def  | 176 +++++++++++++--------------
+ 3 files changed, 115 insertions(+), 97 deletions(-)
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/qrb2210-rb1.dtb qcom/qrb4210-rb2.dtb' for 20240604-rb12-i2c2g-pio-v1-0-f323907179d9@linaro.org:
-
-arch/arm64/boot/dts/qcom/qrb2210-rb1.dtb: /: i2c2-gpio: {'compatible': ['i2c-gpio'], 'sda-gpios': [[25, 6, 0]], 'scl-gpios': [[25, 7, 0]], '#address-cells': [[1]], '#size-cells': [[0]], 'status': ['okay'], 'clock-frequency': [[400000]], 'hdmi-bridge@2b': {'compatible': ['lontium,lt9611uxc'], 'reg': [[43]], 'interrupts-extended': [[25, 46, 2]], 'reset-gpios': [[25, 41, 0]], 'vdd-supply': [[107]], 'vcc-supply': [[108]], 'pinctrl-0': [[109, 110]], 'pinctrl-names': ['default'], '#sound-dai-cells': [[1]], 'ports': {'#address-cells': [[1]], '#size-cells': [[0]], 'port@0': {'reg': [[0]], 'endpoint': {'remote-endpoint': [[111]], 'phandle': [[92]]}}, 'port@2': {'reg': [[2]], 'endpoint': {'remote-endpoint': [[112]], 'phandle': [[106]]}}}}} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: /: i2c2-gpio: {'compatible': ['i2c-gpio'], 'sda-gpios': [[43, 6, 0]], 'scl-gpios': [[43, 7, 0]], '#address-cells': [[1]], '#size-cells': [[0]], 'status': ['okay'], 'clock-frequency': [[400000]], 'hdmi-bridge@2b': {'compatible': ['lontium,lt9611uxc'], 'reg': [[43]], 'interrupts-extended': [[43, 46, 2]], 'reset-gpios': [[43, 41, 0]], 'vdd-supply': [[178]], 'vcc-supply': [[179]], 'pinctrl-0': [[180, 181]], 'pinctrl-names': ['default'], '#sound-dai-cells': [[1]], 'ports': {'#address-cells': [[1]], '#size-cells': [[0]], 'port@0': {'reg': [[0]], 'endpoint': {'remote-endpoint': [[182]], 'phandle': [[127]]}}, 'port@2': {'reg': [[2]], 'endpoint': {'remote-endpoint': [[183]], 'phandle': [[177]]}}}}} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm64/boot/dts/qcom/qrb2210-rb1.dtb: i2c2-gpio: $nodename:0: 'i2c2-gpio' does not match '^i2c(@.*|-[0-9a-z]+)?$'
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-gpio.yaml#
-arch/arm64/boot/dts/qcom/qrb2210-rb1.dtb: i2c2-gpio: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'clock-frequency', 'hdmi-bridge@2b' were unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-gpio.yaml#
-arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: i2c2-gpio: $nodename:0: 'i2c2-gpio' does not match '^i2c(@.*|-[0-9a-z]+)?$'
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-gpio.yaml#
-arch/arm64/boot/dts/qcom/qrb4210-rb2.dtb: i2c2-gpio: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'clock-frequency', 'hdmi-bridge@2b' were unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-gpio.yaml#
-
-
-
-
+-- 
+2.34.1
 
 
