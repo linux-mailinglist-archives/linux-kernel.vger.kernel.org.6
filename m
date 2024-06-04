@@ -1,207 +1,322 @@
-Return-Path: <linux-kernel+bounces-201499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C228FBF1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:41:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB828FBF1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987C81F21672
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:41:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624F31C21E1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C2914C5A0;
-	Tue,  4 Jun 2024 22:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBEE14C592;
+	Tue,  4 Jun 2024 22:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K0OaYR3i"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="klTHSVF5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9048428DC7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 22:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1425528DC7;
+	Tue,  4 Jun 2024 22:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717540885; cv=none; b=Ho1l2LBdqq3Rl2Abhrke7Dtjv5tvI2MQrbxkVmS+nY9tYlUSGKzLdunDyVU6SZCZuUiPnOUiRmb+p5bJw49pD/vYZr8TZmPC3rS/YZmbhPo1+vz9jNicMIhCQlcImKv7IH4aynx9NuQA7B+gUYYSW4Ftqlw0/qvzdYZQKL+tPP8=
+	t=1717540862; cv=none; b=PaGH2NwsV8SpnRjKQnPoA2I80d1OaydzIElkJIwC4XW18bsFYnbJN0vNLPsuvo06X8Qrg3xOSDfnjpAjjz3vi8adGk8htY+VdfAIaeFOhsd4kOyrE+LgBi4Qn/ICb7fBVz8FitDqe9w2MBfUryIxOZCR+QUMgVWLxHMAq1ad4A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717540885; c=relaxed/simple;
-	bh=48X2qgdP1gIxKDJW40AJ3Odff8DBYT35+62pDzTjg8s=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=RHUc/CaSVmfk5T8UyZAug93zCMC3JGnaaThliOXD8B/vmekP7DvH2YE9qVmYQ8KDVm0bZ1yBF25U2lKaoq1jBg1EsnWPjfj8SqRZoLZdI976u2O4lgRRHDv7w533oBvrZMVvDMCUHhArKFpg+kixjBC/wjxhlSGdH1lR3O1agqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K0OaYR3i; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfa72779f04so8221515276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 15:41:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717540882; x=1718145682; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5BFhMURlOxwbCZPlt3t+cMRvFnuBznLgUYvajgNDozE=;
-        b=K0OaYR3i07zq5e5v5zpwIGXGynOZVzDIE3GP5tlL2EcCO09llUjrJvzCgrAN4/i/aM
-         IIC4mDBqZ5yKXk6+m4qNMa/CWLymETiW7D6VaDoUznE+NAReuY7MrBJzUhdN7U6n5fV8
-         qqp6MfVLt2DAOUaSuPCTdmXmx+mPzWRq9UZ7MxOrGVE7lVq7nQcWdo+1SK56r5/kP8Te
-         NyUXcrT5QtwN+fB2/lvDLMK9bvmM4FY6xeFwtANSwD3sFo2CStl9x/RkyukL0eWUDC7b
-         NyDIfNTAQa+e8vwYWgh6l5tdO2kgTTuqKSHHp3lnsP7lF/u6WDd+wdjNBHOr/4AAPQl5
-         GJ0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717540882; x=1718145682;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5BFhMURlOxwbCZPlt3t+cMRvFnuBznLgUYvajgNDozE=;
-        b=qbl/TNxCXn59qLTClNx2Vv0ul2RMuqsbYITxK9pJ2YSU7Oc5BobxZsTI9mMQyZEh88
-         SOgrnQ3wwZykM+xLc82PS3fAiAHWCJH2x8Qe7pXtNKgPhn6kFbbxsEOPEPY92dSRXZKE
-         12xAFCqDge8eoMnT3HCJOJo/fgYWfXpbA6N2hzlzuyKQ6yYQiInCiYT+gV1BIkZ/kZlb
-         tQFMqSaEaVYDDG+lANvNZ+qlKgbd0ARN5a0ALP74z7og5wVOf1e38Bin1O3HkUt6gQWS
-         0DCi2DjhCEJcJppBjVCvC0YdwPZrSpo1d6I2anagHgn2Z3zJ7uwp7DLwhgfnjx7rloX5
-         hApQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVn4w2Xev8iVyZ1tIrOCbmjWiFnSHexx4eqO7UbUwH//OLnKFxTQj9MM/kneTFe4QNX/RI5MqU24mHuWwdqqoILyVE4WHbYrurl6Z0v
-X-Gm-Message-State: AOJu0YxTuSzevB13YAXD4evpvzidTbf5f1h/SR5WuJjECQU7Pud0/eZm
-	QnvgfQW9GJH5+22ORHzNLqRLOSj1Vi2sHxc9g5LzijqYvcCsoifiP6WQP1H8EI6pz9xd3O+CNQL
-	r/xvpoC01BQ==
-X-Google-Smtp-Source: AGHT+IFe9doWPRL9bdOBiprw606KPAUV1/yCDGjKHg9/0f16jSpDeFrPKk08bm1aGwBuEsC7VjTpzn499oFw4w==
-X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
- (user=davidgow job=sendgmr) by 2002:a05:6902:120d:b0:dcb:e982:4e40 with SMTP
- id 3f1490d57ef6-dfacad28c85mr236994276.12.1717540882585; Tue, 04 Jun 2024
- 15:41:22 -0700 (PDT)
-Date: Wed,  5 Jun 2024 06:40:50 +0800
+	s=arc-20240116; t=1717540862; c=relaxed/simple;
+	bh=vw7d1yN78M9RgQ9Uv/CxeAyqib+2y0nfRQmhm1r8tqg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=oo+IE+7erCGfRIl1c8YeXCjIDHeF25FmvTI6vXlspYfgaz2Qvh9VIh5d6czIFYLrN8q/X/CYLMyD1lZgko+Cawc5qwoN/sfkWJOH+uQCK+AhMV2yAgB9deNkLMDyOQlmQPbySoVuH0zTfphVp9l4haLqAkS9jq+Vans1b1zp93M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=klTHSVF5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6950C2BBFC;
+	Tue,  4 Jun 2024 22:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717540861;
+	bh=vw7d1yN78M9RgQ9Uv/CxeAyqib+2y0nfRQmhm1r8tqg=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=klTHSVF5uRzpHx0R6uJcsWmiMp9IKQD/4SkJAJDw/ofx6Cd2DzcvyynuoVLq3zTwL
+	 nfkpqjpJPPEQ36BKsH62/kUx8PuufC4egjJ6oTuUaReS88puer4ItAu4vFWTGeJ47+
+	 8iQ73F6rxAryaoNS09/a/Y6018ZToX+8aeEDfOyZETxvvk1UTkY/BfCmfdlKgRV5Ed
+	 tKXASYMpf4brgs+87MU8cCg9h1eRIBtzJimDZdnwgs+rxuN5EBvkXIsNjsa7cz9EpD
+	 Gtlk4JVMt1bG60GPRpOkIbuA3bxpweRhRmUY9otDYQFyRe5ACGqTeSSqlqGakkI67v
+	 KyEXa4igXHQaw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240604224052.3138504-1-davidgow@google.com>
-Subject: [PATCH] arch: um: rust: Add i386 support for Rust
-From: David Gow <davidgow@google.com>
-To: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>
-Cc: David Gow <davidgow@google.com>, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, x86@kernel.org, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 05 Jun 2024 01:40:54 +0300
+Message-Id: <D1RLF3R9YVB0.3LGEH553O8HEL@kernel.org>
+To: <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
+ <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <D1RGK44SJ477.3BQ82NMUKH2Z8@kernel.org>
+ <0ed3cdf6-2e4a-41f2-b2f6-363899405298@oracle.com>
+In-Reply-To: <0ed3cdf6-2e4a-41f2-b2f6-363899405298@oracle.com>
 
-At present, Rust in the kernel only supports 64-bit x86, so UML has
-followed suit. However, it's significantly easier to support 32-bit i386
-on UML than on bare metal, as UML does not use the -mregparm option
-(which alters the ABI), which is not yet supported by rustc[1].
+On Wed Jun 5, 2024 at 12:02 AM EEST,  wrote:
+> On 6/4/24 11:52 AM, Jarkko Sakkinen wrote:
+> > On Fri May 31, 2024 at 4:03 AM EEST, Ross Philipson wrote:
+> >> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+> >>
+> >> For better or worse, Secure Launch needs SHA-1 and SHA-256. The
+> >> choice of hashes used lie with the platform firmware, not with
+> >> software, and is often outside of the users control.
+> >>
+> >> Even if we'd prefer to use SHA-256-only, if firmware elected to start =
+us
+> >> with the SHA-1 and SHA-256 backs active, we still need SHA-1 to parse
+> >> the TPM event log thus far, and deliberately cap the SHA-1 PCRs in ord=
+er
+> >> to safely use SHA-256 for everything else.
+> >>
+> >> The SHA-1 code here has its origins in the code from the main kernel:
+> >>
+> >> commit c4d5b9ffa31f ("crypto: sha1 - implement base layer for SHA-1")
+> >>
+> >> A modified version of this code was introduced to the lib/crypto/sha1.=
+c
+> >> to bring it in line with the SHA-256 code and allow it to be pulled in=
+to the
+> >> setup kernel in the same manner as SHA-256 is.
+> >>
+> >> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
+> >> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> >> ---
+> >>   arch/x86/boot/compressed/Makefile     |  2 +
+> >>   arch/x86/boot/compressed/early_sha1.c | 12 ++++
+> >>   include/crypto/sha1.h                 |  1 +
+> >>   lib/crypto/sha1.c                     | 81 +++++++++++++++++++++++++=
+++
+> >>   4 files changed, 96 insertions(+)
+> >>   create mode 100644 arch/x86/boot/compressed/early_sha1.c
+> >>
+> >> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compres=
+sed/Makefile
+> >> index e9522c6893be..3307ebef4e1b 100644
+> >> --- a/arch/x86/boot/compressed/Makefile
+> >> +++ b/arch/x86/boot/compressed/Makefile
+> >> @@ -118,6 +118,8 @@ vmlinux-objs-$(CONFIG_EFI) +=3D $(obj)/efi.o
+> >>   vmlinux-objs-$(CONFIG_EFI_MIXED) +=3D $(obj)/efi_mixed.o
+> >>   vmlinux-objs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi=
+/libstub/lib.a
+> >>  =20
+> >> +vmlinux-objs-$(CONFIG_SECURE_LAUNCH) +=3D $(obj)/early_sha1.o
+> >> +
+> >>   $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
+> >>   	$(call if_changed,ld)
+> >>  =20
+> >> diff --git a/arch/x86/boot/compressed/early_sha1.c b/arch/x86/boot/com=
+pressed/early_sha1.c
+> >> new file mode 100644
+> >> index 000000000000..8a9b904a73ab
+> >> --- /dev/null
+> >> +++ b/arch/x86/boot/compressed/early_sha1.c
+> >> @@ -0,0 +1,12 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Copyright (c) 2024 Apertus Solutions, LLC.
+> >> + */
+> >> +
+> >> +#include <linux/init.h>
+> >> +#include <linux/linkage.h>
+> >> +#include <linux/string.h>
+> >> +#include <asm/boot.h>
+> >> +#include <asm/unaligned.h>
+> >> +
+> >> +#include "../../../../lib/crypto/sha1.c"
+> > }
+> >=20
+> > Yep, make sense. Thinking only that should this be just sha1.c.
+> >=20
+> > Comparing this to mainly drivers/firmware/efi/tpm.c, which is not
+> > early_tpm.c where the early actually probably would make more sense
+> > than here. Here sha1 primitive is just needed.
+> >=20
+> > This is definitely a nitpick but why carry a prefix that is not
+> > that useful, right?
+>
+> I am not 100% sure what you mean here, sorry. Could you clarify about=20
+> the prefix? Do you mean why did we choose early_*? There was precedent=20
+> for doing that like early_serial_console.c.
 
-Add support for CONFIG_RUST on um/i386, by adding a new target config to
-generate_rust_target, and replacing various checks on CONFIG_X86_64 to
-also support CONFIG_X86_32.
+Yep, that exactly. I'd just name as sha1.c.
 
-We still use generate_rust_target, rather than a built-in rustc target,
-in order to match x86_64, provide a future place for -mregparm, and more
-easily disable floating point instructions.
+>
+> >=20
+> >> diff --git a/include/crypto/sha1.h b/include/crypto/sha1.h
+> >> index 044ecea60ac8..d715dd5332e1 100644
+> >> --- a/include/crypto/sha1.h
+> >> +++ b/include/crypto/sha1.h
+> >> @@ -42,5 +42,6 @@ extern int crypto_sha1_finup(struct shash_desc *desc=
+, const u8 *data,
+> >>   #define SHA1_WORKSPACE_WORDS	16
+> >>   void sha1_init(__u32 *buf);
+> >>   void sha1_transform(__u32 *digest, const char *data, __u32 *W);
+> >> +void sha1(const u8 *data, unsigned int len, u8 *out);
+> >>  =20
+> >>   #endif /* _CRYPTO_SHA1_H */
+> >> diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
+> >> index 1aebe7be9401..10152125b338 100644
+> >> --- a/lib/crypto/sha1.c
+> >> +++ b/lib/crypto/sha1.c
+> >> @@ -137,4 +137,85 @@ void sha1_init(__u32 *buf)
+> >>   }
+> >>   EXPORT_SYMBOL(sha1_init);
+> >>  =20
+> >> +static void __sha1_transform(u32 *digest, const char *data)
+> >> +{
+> >> +       u32 ws[SHA1_WORKSPACE_WORDS];
+> >> +
+> >> +       sha1_transform(digest, data, ws);
+> >> +
+> >> +       memzero_explicit(ws, sizeof(ws));
+> >=20
+> > For the sake of future reference I'd carry always some inline comment
+> > with any memzero_explicit() call site.
+>
+> We can do that.
+>
+> >=20
+> >> +}
+> >> +
+> >> +static void sha1_update(struct sha1_state *sctx, const u8 *data, unsi=
+gned int len)
+> >> +{
+> >> +	unsigned int partial =3D sctx->count % SHA1_BLOCK_SIZE;
+> >> +
+> >> +	sctx->count +=3D len;
+> >> +
+> >> +	if (likely((partial + len) >=3D SHA1_BLOCK_SIZE)) {
+> >=20
+> >=20
+> > 	if (unlikely((partial + len) < SHA1_BLOCK_SIZE))
+> > 		goto out;
+> >=20
+> > ?
+>
+> We could do it that way. I guess it would cut down in indenting. I defer=
+=20
+> to Daniel Smith on this...
 
-With these changes, the KUnit tests pass with:
-kunit.py run --make_options LLVM=1 --kconfig_add CONFIG_RUST=y
---kconfig_add CONFIG_64BIT=n --kconfig_add CONFIG_FORTIFY_SOURCE=n
+Yep, that's why I requested this.
 
-An earlier version of these changes was proposed on the Rust-for-Linux
-github[2].
+>
+> >=20
+> >> +		int blocks;
+> >> +
+> >> +		if (partial) {
+> >> +			int p =3D SHA1_BLOCK_SIZE - partial;
+> >> +
+> >> +			memcpy(sctx->buffer + partial, data, p);
+> >> +			data +=3D p;
+> >> +			len -=3D p;
+> >> +
+> >> +			__sha1_transform(sctx->state, sctx->buffer);
+> >> +		}
+> >> +
+> >> +		blocks =3D len / SHA1_BLOCK_SIZE;
+> >> +		len %=3D SHA1_BLOCK_SIZE;
+> >> +
+> >> +		if (blocks) {
+> >> +			while (blocks--) {
+> >> +				__sha1_transform(sctx->state, data);
+> >> +				data +=3D SHA1_BLOCK_SIZE;
+> >> +			}
+> >> +		}
+> >> +		partial =3D 0;
+> >> +	}
+> >> +
+> >=20
+> > out:
+> >=20
+> >> +	if (len)
+> >> +		memcpy(sctx->buffer + partial, data, len);
+> >=20
+> > Why not just memcpy() unconditionally?
+> >=20
+>
+> ... and this.
 
-[1]: https://github.com/rust-lang/rust/issues/116972
-[2]: https://github.com/Rust-for-Linux/linux/pull/966
+It only adds complexity with no gain.
 
-Signed-off-by: David Gow <davidgow@google.com>
----
- Documentation/rust/arch-support.rst |  2 +-
- arch/um/Kconfig                     |  2 +-
- rust/Makefile                       |  2 +-
- scripts/Makefile                    |  2 +-
- scripts/generate_rust_target.rs     | 17 +++++++++++++++++
- 5 files changed, 21 insertions(+), 4 deletions(-)
+>
+> >> +}
+> >> +
+> >> +static void sha1_final(struct sha1_state *sctx, u8 *out)
+> >> +{
+> >> +	const int bit_offset =3D SHA1_BLOCK_SIZE - sizeof(__be64);
+> >> +	unsigned int partial =3D sctx->count % SHA1_BLOCK_SIZE;
+> >> +	__be64 *bits =3D (__be64 *)(sctx->buffer + bit_offset);
+> >> +	__be32 *digest =3D (__be32 *)out;
+> >> +	int i;
+> >> +
+> >> +	sctx->buffer[partial++] =3D 0x80;
+> >> +	if (partial > bit_offset) {
+> >> +		memset(sctx->buffer + partial, 0x0, SHA1_BLOCK_SIZE - partial);
+> >> +		partial =3D 0;
+> >> +
+> >> +		__sha1_transform(sctx->state, sctx->buffer);
+> >> +	}
+> >> +
+> >> +	memset(sctx->buffer + partial, 0x0, bit_offset - partial);
+> >> +	*bits =3D cpu_to_be64(sctx->count << 3);
+> >> +	__sha1_transform(sctx->state, sctx->buffer);
+> >> +
+> >> +	for (i =3D 0; i < SHA1_DIGEST_SIZE / sizeof(__be32); i++)
+> >> +		put_unaligned_be32(sctx->state[i], digest++);
+> >> +
+> >> +	*sctx =3D (struct sha1_state){};
+> >> +}
+> >> +
+> >> +void sha1(const u8 *data, unsigned int len, u8 *out)
+> >> +{
+> >> +	struct sha1_state sctx =3D {0};
+> >> +
+> >> +	sha1_init(sctx.state);
+> >> +	sctx.count =3D 0;
+> >=20
+> > Hmm... so shouldn't C99 take care of this given the initialization
+> > above? I'm not 100% sure here. I.e. given "=3D {0}", shouldn't this
+> > already be zero?
+>
+> Yes it seems so. We will look at changing that.
 
-diff --git a/Documentation/rust/arch-support.rst b/Documentation/rust/arch-support.rst
-index b13e19d84744..750ff371570a 100644
---- a/Documentation/rust/arch-support.rst
-+++ b/Documentation/rust/arch-support.rst
-@@ -18,7 +18,7 @@ Architecture   Level of support  Constraints
- ``arm64``      Maintained        Little Endian only.
- ``loongarch``  Maintained        \-
- ``riscv``      Maintained        ``riscv64`` only.
--``um``         Maintained        ``x86_64`` only.
-+``um``         Maintained        \-
- ``x86``        Maintained        ``x86_64`` only.
- =============  ================  ==============================================
- 
-diff --git a/arch/um/Kconfig b/arch/um/Kconfig
-index 93a5a8999b07..b6ac49fec5bb 100644
---- a/arch/um/Kconfig
-+++ b/arch/um/Kconfig
-@@ -31,7 +31,7 @@ config UML
- 	select TRACE_IRQFLAGS_SUPPORT
- 	select TTY # Needed for line.c
- 	select HAVE_ARCH_VMAP_STACK
--	select HAVE_RUST			if X86_64
-+	select HAVE_RUST
- 
- config MMU
- 	bool
-diff --git a/rust/Makefile b/rust/Makefile
-index f70d5e244fee..83f675adbfab 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -426,7 +426,7 @@ $(obj)/core.o: private rustc_objcopy = $(foreach sym,$(redirect-intrinsics),--re
- $(obj)/core.o: private rustc_target_flags = $(core-cfgs)
- $(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
- 	+$(call if_changed_dep,rustc_library)
--ifdef CONFIG_X86_64
-+ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
- $(obj)/core.o: scripts/target.json
- endif
- 
-diff --git a/scripts/Makefile b/scripts/Makefile
-index fe56eeef09dd..dccef663ca82 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -12,7 +12,7 @@ hostprogs-always-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE)	+= insert-sys-cert
- hostprogs-always-$(CONFIG_RUST_KERNEL_DOCTESTS)		+= rustdoc_test_builder
- hostprogs-always-$(CONFIG_RUST_KERNEL_DOCTESTS)		+= rustdoc_test_gen
- 
--ifdef CONFIG_X86_64
-+ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
- always-$(CONFIG_RUST)					+= target.json
- filechk_rust_target = $< < include/config/auto.conf
- 
-diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
-index 641b713a033a..87f34925eb7b 100644
---- a/scripts/generate_rust_target.rs
-+++ b/scripts/generate_rust_target.rs
-@@ -169,6 +169,23 @@ fn main() {
-         ts.push("features", features);
-         ts.push("llvm-target", "x86_64-linux-gnu");
-         ts.push("target-pointer-width", "64");
-+    } else if cfg.has("X86_32") {
-+        // This only works on UML, as i386 otherwise needs regparm support in rustc
-+        if !cfg.has("UML") {
-+            panic!("32-bit x86 only works under UML");
-+        }
-+        ts.push("arch", "x86");
-+        ts.push(
-+            "data-layout",
-+            "e-m:e-p:32:32-p270:32:32-p271:32:32-p272:64:64-i128:128-f64:32:64-f80:32-n8:16:32-S128",
-+        );
-+        let mut features = "-3dnow,-3dnowa,-mmx,+soft-float".to_string();
-+        if cfg.has("MITIGATION_RETPOLINE") {
-+            features += ",+retpoline-external-thunk";
-+        }
-+        ts.push("features", features);
-+        ts.push("llvm-target", "i386-unknown-linux-gnu");
-+        ts.push("target-pointer-width", "32");
-     } else if cfg.has("LOONGARCH") {
-         panic!("loongarch uses the builtin rustc loongarch64-unknown-none-softfloat target");
-     } else {
--- 
-2.45.1.288.g0e0cd299f1-goog
+Yeah, AFAIK C99 should zero out anything remaining.
 
+>
+> >=20
+> >> +	sha1_update(&sctx, data, len);
+> >> +	sha1_final(&sctx, out);
+> >> +}
+> >> +EXPORT_SYMBOL(sha1);
+> >> +
+> >>   MODULE_LICENSE("GPL");
+> >=20
+> > BR, Jarkko
+>
+> Thanks
+> Ross
+
+BR, Jarkko
 
