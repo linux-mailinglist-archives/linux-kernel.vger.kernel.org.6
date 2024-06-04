@@ -1,199 +1,591 @@
-Return-Path: <linux-kernel+bounces-200362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18D18FAEEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A32448FAEF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A700D1F2599F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303BE1F25CEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8679B144300;
-	Tue,  4 Jun 2024 09:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2921442FF;
+	Tue,  4 Jun 2024 09:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tn7WkOYs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RE3DV9PC"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9223823BC;
-	Tue,  4 Jun 2024 09:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F85B143897
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717493636; cv=none; b=j0ZGI1AwfRjfRtSN9VZ3p3qVuzVGkrElYMbTH3rlPqQ/R0wPthh/cmwZ1bRmURuRp9y0ggT3Zg00Ba61nGc2KKOYpzcZ5Q6xf2k0WFQcjd8G0YUgwp4tvU78VTHTmopC7V6rr4lQ1yqRWQ2D4D8ELumXGKA3EuIipBVGsM3RC7A=
+	t=1717493675; cv=none; b=PMrsjUTDC+YodKEc4M0fqx8VOznS2WBCKzWsXLg9Yxf5LkFA97rmGb8b+WSb1OASUOhQHbZnE5EXwBcGlQadHVvyXd9EAOTMSCrXYAR3avz8r4qQVYHCE1VekdslCWK7AABaH7LpEfU1aQhgGkDGXe24X7XUPIGCyitoBnIhufw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717493636; c=relaxed/simple;
-	bh=JaaBIIXHCbGmOzepuoBGmKbypMRkED1xayHQDMMQjEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fH5+WqZEgPUPvtRrFeURfNYjy8BBzkfkvXLkJ1YIqyV8VQ3WpSWac8zlwOkPdSSzC4sG3oTa/FmC0J/fM17vlkX1WTarKdJRov3OBOIPJ4NC6zQve46UICJyHJD3w6jxTWQg7927PszVClhHo/ioBCP52YvMn+2KS0CILyXwIy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tn7WkOYs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88107C2BBFC;
-	Tue,  4 Jun 2024 09:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717493636;
-	bh=JaaBIIXHCbGmOzepuoBGmKbypMRkED1xayHQDMMQjEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tn7WkOYsrinLNfR1Du+opWfBFE7yf+/ugsZL2M5cccHBKPwCqejGEim1s4caAxbEn
-	 S0liFqOnftGDQmZfQQEggAZRVgKPq+hN9NQ2K20VuNln3Huid/Am6eDHY80NxSYF+Y
-	 RKwvO5HffShDqgg53uVB0aClx2p53l/w6k2exB3SLQH1aSjNRBk0xeG4R9+SAD3Rb/
-	 p3of3H88+TFLAHUS2JXWM1XLHCwGK1OTa0OtPMogh66HmhOK0fUyal4a+qSHZPq77w
-	 cYoQdQv4lTIUxBJTEL6xELT6wXRJ5mcnraBoB+xG+anxvpSQKmhLxuom2hU/Y+Jw6M
-	 AwNU8QrQN45Kw==
-Date: Tue, 4 Jun 2024 10:33:49 +0100
-From: Simon Horman <horms@kernel.org>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Kees Cook <keescook@chromium.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Long Li <longli@microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH net-next v3] net: mana: Allow variable size indirection
- table
-Message-ID: <20240604093349.GP491852@kernel.org>
-References: <1717169861-15825-1-git-send-email-shradhagupta@linux.microsoft.com>
+	s=arc-20240116; t=1717493675; c=relaxed/simple;
+	bh=gJAdKcRuNMQW2l9HW8qdO/Tj6cHdhSHHZGZ7EJMDVDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n6VNmTbNHGYworO7NF8QogLU6Vb6sMf7z51TVL/NPjk4W5T5Dg+DhwyK8n3RJz73P4TWAtyGM5cajvbzRDAa7wbCkqcRejcrxqBp++AzKv1d6udFOIXb+VQn2unKgxG4BeNu2Lp6r0shCymm7dcRQqPcPXAm9GuRZ2te+9qhozc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RE3DV9PC; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfab2474152so1538566276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717493671; x=1718098471; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sjUiMjbQYKJ3oAn33XJLeAigCffOjsG9ikaBsqFwqOk=;
+        b=RE3DV9PCuMWq+lDOmn4KF839+/5+q+9yH7mQyR/PTK7l67GcvRYSPgdJ9yIuJkIf+H
+         UcJzH7u4MXYgzwNYdQDrQDKGLuryGWyW4o5d2YpkMozNUdZVLyTeWm+6Pxq0NF/af0V+
+         +kDAmQ9PYtIg232JghNTCsv8Mb1RtNoY85u5dfkZyhlHdI0i41sngTynSF/QQOv1ZREU
+         gqemexARH93dPeKc8lxgIgFm1Vf87eR0FdgjeCmkFeZSh/WzschfHzHBuVLVlhdBUAVT
+         aGmMjNdwR2334tpUaHYvt5lbk6OVCSNThGA3rgMyG0+8DRt11P5MeHjSI+aWdi7gQGJx
+         t/Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717493671; x=1718098471;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sjUiMjbQYKJ3oAn33XJLeAigCffOjsG9ikaBsqFwqOk=;
+        b=m4Fx9PNDfcAvbEKphNLt5bAEm2I9eD2J2WIt4SgbI0PpDb7obzObb8liiQspMPIlPV
+         0rckVn/yTJqI9iXJQYDWfqoj2qnjeeQGPFjkcLhsTJaxo03zu2N9G1UV2s9LcRSmbE0N
+         Zy7JGVCSPxdK0HK2tOGKHiKjVNcTckRGdP/WVj+pmy1vNY3QuMrlxfk+uTPK+dL1euSU
+         9BDmLWdxpVSu0Ss5wX4R0umZzIHeWagks3osuR5trSbzb3PIjymaSPqEOFUhkWi3B7ZA
+         9VQbMpGzNfWAT95Fu5ElDlOYtYaG+7FPApO150xeOjSC5JLFa73S/sfHojuPrMYMcjGW
+         Fnrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVE3NuULK48fmmnLqDCyKKHiC8Z6FKyYpEGvL+YmzvdD+f3xmzEjOp8KeubisNM+IDhO0XOoBQGKkRWLZ/VGHAaFIwb5WB7B56CWiT6
+X-Gm-Message-State: AOJu0YyyhE8EexdpKy5wGH3LYwa7nY1HdB/YzLtegc7Xpii4rMPaGTd9
+	5MA6OLV8afFHq1V72KEB4M/YBSL+ylCrSmMtq8Ta1JDCPc951aWGztIOeZVKXzRJ9Tj5IOAcAf6
+	bMTd8Zhr/01AIAuMGxek6P6Q3iefyJzvgJ5o9Cw==
+X-Google-Smtp-Source: AGHT+IHrvxBMm7Xf/LeuMbr29HzpprNLKO736EJNVQsIeub3Kz4JKrX20s4kWx2XOkZcvQ0lrRWwyftI0/YuvbUz1bA=
+X-Received: by 2002:a5b:bd1:0:b0:de5:4b1f:7e00 with SMTP id
+ 3f1490d57ef6-dfa73bf3832mr11005822276.15.1717493671164; Tue, 04 Jun 2024
+ 02:34:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1717169861-15825-1-git-send-email-shradhagupta@linux.microsoft.com>
+References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
+ <20240530102032.27179-5-quic_ekangupt@quicinc.com> <f0dbb385-6aea-4721-92fa-a1f560fc7c5a@linaro.org>
+ <2f52b206-3fd9-4508-b9bd-23efc5fb637e@quicinc.com>
+In-Reply-To: <2f52b206-3fd9-4508-b9bd-23efc5fb637e@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 4 Jun 2024 12:34:19 +0300
+Message-ID: <CAA8EJprGqUzgo7BN0LgoUy7APZuGBZkRdPJhwJyEQgtRmuAtAg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] misc: fastrpc: Add static PD restart support
+To: Bharath Kumar V <quic_bkumar@quicinc.com>
+Cc: Caleb Connolly <caleb.connolly@linaro.org>, Ekansh Gupta <quic_ekangupt@quicinc.com>, 
+	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	quic_chennak@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 08:37:41AM -0700, Shradha Gupta wrote:
-> Allow variable size indirection table allocation in MANA instead
-> of using a constant value MANA_INDIRECT_TABLE_SIZE.
-> The size is now derived from the MANA_QUERY_VPORT_CONFIG and the
-> indirection table is allocated dynamically.
-> 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> Reviewed-by: Dexuan Cui <decui@microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+On Tue, 4 Jun 2024 at 12:23, Bharath Kumar V <quic_bkumar@quicinc.com> wrot=
+e:
+>
+>
+>
+> On 6/3/2024 4:23 PM, Caleb Connolly wrote:
+> > Hi Ekansh,
+> >
+> > On 30/05/2024 12:20, Ekansh Gupta wrote:
+> >> Static PDs on the audio and sensor domains are expected to support
+> >> PD restart. The kernel resource handling for the PDs are expected
+> >> to be handled by fastrpc driver. For this, there is a requirement
+> >> of PD service locator to get the event notifications for static PD
+> >> services. Also when events are received, the driver needs to handle
+> >> based on PD states. Added changes to add service locator for audio
+> >> and sensor domain static PDs and handle the PD restart sequence.
+> >
+> > Thanks for the patch, I wanted to bring up a larger issue which I've
+> > been noticing with the fastrpc driver.
+> >
+> > This file is now >2.5k LOC, and to my knowledge it features:
+> >
+> > * Two different memory mapping/unmapping interfaces to the DSP (three i=
+f
+> > you count dmabufs!)
+> > * Different branching codepaths for static vs dynamic processes (with
+> > totally different lifetimes).
+> > * Over 8 structs just for state management, with the largest being >150=
+0
+> > bytes
+> > * Zero context for which code paths are relevant for which contexts
+> >
+> > Your series is a combination of bug fixes and cleanup which span most o=
+f
+> > the file -- suggesting that the state management is also spread all ove
+> > rthe file. Even for someone with some familiarity with the driver these
+> > patches are really non-trivial to review (patch 5 being a good example
+> > of this), while in addition you introduce new features like this in
+> > patch. This doesn't make for a coherent story for reviewers.
+> >
+> > On top of that, there is very minimal, if any comments in this hugely
+> > complex code, and seemingly zero consideration for how to model state o=
+r
+> > the lifetime of objects.
+> >
+> > Finally, there is next-to-no public documentation or easily obtained
+> > (and used) userspace for this driver. Certainly nothing that I could us=
+e
+> > to offer a Tested-by on your patches.
+> >
+> > I am not the maintainer, so while it's not my place, I want to offer
+> > some suggestions here:
+> >
+> > 1. Split the fastrpc driver up into more bite-size chunks which can
+> > actually be reasoned about (I would start by splitting the
+> > implementation details out from the business logic, and then further
+> > abstracting out the static PD support, PDR, etc. Just the "invoke"
+> > mechanism should be in it's own file with it's own state...).
+> >
+> > 2. Add detailed documentation explaining fastrpc from at least a high
+> > level (ideally with lower level and driver details too), and code
+> > comments (where relevant).
+> >
+> > 3. Release (and maintain) a reference tool(s) that can be used to
+> > validate the driver and better understand proposed new features (you
+> > could take inspiration from https://gitlab.com/flamingradian/sensh/).
+> >
+> > A mechanism to test at least parts of this driver without needing a DSP
+> > on the other end would likely help a lot here, but that's obviously a
+> > much larger scope.
+> >
+> > Please let me know your thoughts.
+> >
+> > Kind Regards,
+>
+> Thank you for reviewing the driver and the patches. Your feedback is
+> greatly appreciated.
+> As you mentioned, our current driver is a large file containing various
+> APIs to support multiple features. We are actively discussing
+> modularizing the driver to enhance clarity and improve understanding.
 
-...
+Please consider dropping the FastRPC interface completely and
+switching to drm/accel instead. This is the API that should be used by
+accelerators (including, but not limited to AI accelerators).
 
-> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> Additionally, we are in the process of creating basic documentation, as
+> well as feature-specific documentation for better clarity.
+> Our latest user space code is available on GitHub at
+> github.com/quic/fastrpc. Feel free to explore it, and please let us know
+> if you have any feedback or need further assistance. We=E2=80=99re commit=
+ted to
+> continuous improvement.
 
-...
+Note, this is not what is usually expected from open source. This is
+just a code drop, dumped to a git repository. It doesn't have
+development history, it doesn't answer the most typical comment that
+we as open source developers have: "why was it developed in this
+way?". Please consider replacing this code drop with the Git tree that
+contains development history.
 
-> @@ -2344,11 +2352,33 @@ static int mana_create_vport(struct mana_port_context *apc,
->  	return mana_create_txq(apc, net);
->  }
->  
-> +static int mana_rss_table_alloc(struct mana_port_context *apc)
-> +{
-> +	if (!apc->indir_table_sz) {
-> +		netdev_err(apc->ndev,
-> +			   "Indirection table size not set for vPort %d\n",
-> +			   apc->port_idx);
-> +		return -EINVAL;
-> +	}
-> +
-> +	apc->indir_table = kcalloc(apc->indir_table_sz, sizeof(u32), GFP_KERNEL);
-> +	if (!apc->indir_table)
-> +		return -ENOMEM;
-> +
-> +	apc->rxobj_table = kcalloc(apc->indir_table_sz, sizeof(mana_handle_t), GFP_KERNEL);
-> +	if (!apc->rxobj_table) {
-> +		kfree(apc->indir_table);
+> For testing purposes, we=E2=80=99ve the Hexagon SDK by Qualcomm to the pu=
+blic.
+> You can download it from the Qualcomm developer network.
 
-Hi, Shradha
+What is the licence for the SDK? What is the licence for the binaries
+(including skel.so) generated using the SDK?
+Is there an open-source toolchain?
+The requirement for any kernel driver using dma-buf is to have
+completely functional open source userspace implementation (it doesn't
+have to be fully optimal or exercise all hardware features, but it
+should be possible to understand what is being passed around and how
+the user API interface is supposed to work.
 
-Perhaps I am on the wrong track here, but I have some concerns
-about clean-up paths.
+> The SDK
+> includes examples covering all the features of fastRPC, along with
+> comprehensive documentation. If you encounter any issues accessing the
+> Hexagon SDK or have suggestions for improving the documentation, feel
+> free to reach out.
 
-Firstly.  I think that apc->indir_table should be to NULL here for
-consistency with other clean-up paths. Or alternatively, fields of apc
-should not set to NULL elsewhere after being freed.
+A typical problem that we have is if it is possible to integrate
+userspace tools into an OE build infrastructure. We want to be able to
+build simple test programs and include them into OE images.
 
-In looking into this I noticed that mana_probe() does not call
-mana_remove() or return an error in the cases where mana_probe_port() or
-mana_attach() fail unless add_adev also fails. If so, is that intentional?
+This requires being able to download the files without any additional
+package managers or click-through licences.
 
-In any case, I would suggest as a follow-up, arranging things so that when
-an error occurs in a function, anything that was allocated is unwound
-before returning an error.
+>
+> Best Regards,
+> Bharath
+>
+> >>
+> >> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> >> ---
+> >>   drivers/misc/Kconfig   |   2 +
+> >>   drivers/misc/fastrpc.c | 205 ++++++++++++++++++++++++++++++++++++++-=
+--
+> >>   2 files changed, 195 insertions(+), 12 deletions(-)
+> >>
+> >> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> >> index faf983680040..e2d83cd085b5 100644
+> >> --- a/drivers/misc/Kconfig
+> >> +++ b/drivers/misc/Kconfig
+> >> @@ -280,8 +280,10 @@ config QCOM_FASTRPC
+> >>       tristate "Qualcomm FastRPC"
+> >>       depends on ARCH_QCOM || COMPILE_TEST
+> >>       depends on RPMSG
+> >> +    depends on NET
+> >>       select DMA_SHARED_BUFFER
+> >>       select QCOM_SCM
+> >> +    select QCOM_PDR_HELPERS
+> >>       help
+> >>         Provides a communication mechanism that allows for clients to
+> >>         make remote method invocations across processor boundary to
+> >> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> >> index 3e1ab58038ed..d115860fc356 100644
+> >> --- a/drivers/misc/fastrpc.c
+> >> +++ b/drivers/misc/fastrpc.c
+> >> @@ -22,6 +22,7 @@
+> >>   #include <linux/firmware/qcom/qcom_scm.h>
+> >>   #include <uapi/misc/fastrpc.h>
+> >>   #include <linux/of_reserved_mem.h>
+> >> +#include <linux/soc/qcom/pdr.h>
+> >>   #define ADSP_DOMAIN_ID (0)
+> >>   #define MDSP_DOMAIN_ID (1)
+> >> @@ -29,6 +30,7 @@
+> >>   #define CDSP_DOMAIN_ID (3)
+> >>   #define FASTRPC_DEV_MAX        4 /* adsp, mdsp, slpi, cdsp*/
+> >>   #define FASTRPC_MAX_SESSIONS    14
+> >> +#define FASTRPC_MAX_SPD        4
+> >>   #define FASTRPC_MAX_VMIDS    16
+> >>   #define FASTRPC_ALIGN        128
+> >>   #define FASTRPC_MAX_FDLIST    16
+> >> @@ -105,6 +107,18 @@
+> >>   #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device,
+> >> miscdev)
+> >> +#define AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME   "audio_pdr_adsp"
+> >> +#define AUDIO_PDR_ADSP_SERVICE_NAME              "avs/audio"
+> >> +#define ADSP_AUDIOPD_NAME                        "msm/adsp/audio_pd"
+> >> +
+> >> +#define SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME
+> >> "sensors_pdr_adsp"
+> >> +#define SENSORS_PDR_ADSP_SERVICE_NAME              "tms/servreg"
+> >> +#define ADSP_SENSORPD_NAME                       "msm/adsp/sensor_pd"
+> >> +
+> >> +#define SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME "sensors_pdr_sl=
+pi"
+> >> +#define SENSORS_PDR_SLPI_SERVICE_NAME
+> >> SENSORS_PDR_ADSP_SERVICE_NAME
+> >> +#define SLPI_SENSORPD_NAME                       "msm/slpi/sensor_pd"
+> >> +
+> >>   static const char *domains[FASTRPC_DEV_MAX] =3D { "adsp", "mdsp",
+> >>                           "sdsp", "cdsp"};
+> >>   struct fastrpc_phy_page {
+> >> @@ -259,6 +273,15 @@ struct fastrpc_session_ctx {
+> >>       bool valid;
+> >>   };
+> >> +struct fastrpc_static_pd {
+> >> +    char *servloc_name;
+> >> +    char *spdname;
+> >> +    void *pdrhandle;
+> >> +    struct fastrpc_channel_ctx *cctx;
+> >> +    struct fastrpc_user *fl;
+> >> +    bool ispdup;
+> >> +};
+> >> +
+> >>   struct fastrpc_channel_ctx {
+> >>       int domain_id;
+> >>       int sesscount;
+> >> @@ -266,6 +289,7 @@ struct fastrpc_channel_ctx {
+> >>       struct qcom_scm_vmperm vmperms[FASTRPC_MAX_VMIDS];
+> >>       struct rpmsg_device *rpdev;
+> >>       struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
+> >> +    struct fastrpc_static_pd spd[FASTRPC_MAX_SPD];
+> >>       spinlock_t lock;
+> >>       struct idr ctx_idr;
+> >>       struct list_head users;
+> >> @@ -297,10 +321,12 @@ struct fastrpc_user {
+> >>       struct fastrpc_channel_ctx *cctx;
+> >>       struct fastrpc_session_ctx *sctx;
+> >>       struct fastrpc_buf *init_mem;
+> >> +    struct fastrpc_static_pd *spd;
+> >>       int tgid;
+> >>       int pd;
+> >>       bool is_secure_dev;
+> >> +    char *servloc_name;
+> >>       /* Lock for lists */
+> >>       spinlock_t lock;
+> >>       /* lock for allocations */
+> >> @@ -1230,12 +1256,33 @@ static bool is_session_rejected(struct
+> >> fastrpc_user *fl, bool unsigned_pd_reques
+> >>       return false;
+> >>   }
+> >> +static struct fastrpc_static_pd *fastrpc_get_spd_session(
+> >> +                struct fastrpc_user *fl)
+> >> +{
+> >> +    int i;
+> >> +    struct fastrpc_static_pd *spd =3D NULL;
+> >> +    struct fastrpc_channel_ctx *cctx =3D fl->cctx;
+> >> +
+> >> +    for (i =3D 0; i < FASTRPC_MAX_SPD ; i++) {
+> >> +        if (!cctx->spd[i].servloc_name)
+> >> +            continue;
+> >> +        if (!strcmp(fl->servloc_name, cctx->spd[i].servloc_name)) {
+> >> +            spd =3D &cctx->spd[i];
+> >> +            spd->fl =3D fl;
+> >> +            break;
+> >> +        }
+> >> +    }
+> >> +
+> >> +    return spd;
+> >> +}
+> >> +
+> >>   static int fastrpc_init_create_static_process(struct fastrpc_user *f=
+l,
+> >>                             char __user *argp)
+> >>   {
+> >>       struct fastrpc_init_create_static init;
+> >>       struct fastrpc_invoke_args *args;
+> >>       struct fastrpc_phy_page pages[1];
+> >> +    struct fastrpc_static_pd *spd =3D NULL;
+> >>       char *name;
+> >>       int err;
+> >>       struct {
+> >> @@ -1270,6 +1317,19 @@ static int
+> >> fastrpc_init_create_static_process(struct fastrpc_user *fl,
+> >>           goto err_name;
+> >>       }
+> >> +    fl->servloc_name =3D AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME;
+> >> +
+> >> +    spd =3D fastrpc_get_spd_session(fl);
+> >> +    if (!spd) {
+> >> +        err =3D -EUSERS;
+> >> +        goto err_name;
+> >> +    }
+> >> +
+> >> +    if (!spd->ispdup) {
+> >> +        err =3D -ENOTCONN;
+> >> +        goto err_name;
+> >> +    }
+> >> +    fl->spd =3D spd;
+> >>       if (!fl->cctx->remote_heap) {
+> >>           err =3D fastrpc_remote_heap_alloc(fl, fl->sctx->dev, init.me=
+mlen,
+> >>                           &fl->cctx->remote_heap);
+> >> @@ -1645,6 +1705,7 @@ static int fastrpc_dmabuf_alloc(struct
+> >> fastrpc_user *fl, char __user *argp)
+> >>   static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
+> >>   {
+> >>       struct fastrpc_invoke_args args[1];
+> >> +    struct fastrpc_static_pd *spd =3D NULL;
+> >>       int tgid =3D fl->tgid;
+> >>       u32 sc;
+> >> @@ -1654,6 +1715,22 @@ static int fastrpc_init_attach(struct
+> >> fastrpc_user *fl, int pd)
+> >>       sc =3D FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
+> >>       fl->pd =3D pd;
+> >> +    if (pd =3D=3D SENSORS_PD) {
+> >> +        if (fl->cctx->domain_id =3D=3D ADSP_DOMAIN_ID)
+> >> +            fl->servloc_name =3D
+> >> SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME;
+> >> +        else if (fl->cctx->domain_id =3D=3D SDSP_DOMAIN_ID)
+> >> +            fl->servloc_name =3D
+> >> SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME;
+> >> +
+> >> +        spd =3D fastrpc_get_spd_session(fl);
+> >> +        if (!spd)
+> >> +            return -EUSERS;
+> >> +
+> >> +        if (!spd->ispdup)
+> >> +            return -ENOTCONN;
+> >> +
+> >> +        fl->spd =3D spd;
+> >> +    }
+> >> +
+> >>       return fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE,
+> >>                          sc, &args[0]);
+> >>   }
+> >> @@ -2129,6 +2206,64 @@ static long fastrpc_device_ioctl(struct file
+> >> *file, unsigned int cmd,
+> >>       return err;
+> >>   }
+> >> +static void fastrpc_notify_users(struct fastrpc_user *user)
+> >> +{
+> >> +    struct fastrpc_invoke_ctx *ctx;
+> >> +
+> >> +    spin_lock(&user->lock);
+> >> +    list_for_each_entry(ctx, &user->pending, node) {
+> >> +        ctx->retval =3D -EPIPE;
+> >> +        complete(&ctx->work);
+> >> +    }
+> >> +    spin_unlock(&user->lock);
+> >> +}
+> >> +
+> >> +static void fastrpc_notify_pdr_drivers(struct fastrpc_channel_ctx *cc=
+tx,
+> >> +        char *servloc_name)
+> >> +{
+> >> +    struct fastrpc_user *fl;
+> >> +    unsigned long flags;
+> >> +
+> >> +    spin_lock_irqsave(&cctx->lock, flags);
+> >> +    list_for_each_entry(fl, &cctx->users, user) {
+> >> +        if (fl->servloc_name && !strcmp(servloc_name, fl->servloc_nam=
+e))
+> >> +            fastrpc_notify_users(fl);
+> >> +    }
+> >> +    spin_unlock_irqrestore(&cctx->lock, flags);
+> >> +}
+> >> +
+> >> +static void fastrpc_pdr_cb(int state, char *service_path, void *priv)
+> >> +{
+> >> +    struct fastrpc_static_pd *spd =3D (struct fastrpc_static_pd *)pri=
+v;
+> >> +    struct fastrpc_channel_ctx *cctx;
+> >> +
+> >> +    if (!spd)
+> >> +        return;
+> >> +
+> >> +    cctx =3D spd->cctx;
+> >> +    switch (state) {
+> >> +    case SERVREG_SERVICE_STATE_DOWN:
+> >> +        dev_info(&cctx->rpdev->dev,
+> >> +            "%s: %s (%s) is down for PDR on %s\n",
+> >> +            __func__, spd->spdname,
+> >> +            spd->servloc_name,
+> >> +            domains[cctx->domain_id]);
+> >> +        spd->ispdup =3D false;
+> >> +        fastrpc_notify_pdr_drivers(cctx, spd->servloc_name);
+> >> +        break;
+> >> +    case SERVREG_SERVICE_STATE_UP:
+> >> +        dev_info(&cctx->rpdev->dev,
+> >> +            "%s: %s (%s) is up for PDR on %s\n",
+> >> +            __func__, spd->spdname,
+> >> +            spd->servloc_name,
+> >> +            domains[cctx->domain_id]);
+> >> +        spd->ispdup =3D true;
+> >> +        break;
+> >> +    default:
+> >> +        break;
+> >> +    }
+> >> +}
+> >> +
+> >>   static const struct file_operations fastrpc_fops =3D {
+> >>       .open =3D fastrpc_device_open,
+> >>       .release =3D fastrpc_device_release,
+> >> @@ -2248,6 +2383,39 @@ static int fastrpc_device_register(struct
+> >> device *dev, struct fastrpc_channel_ct
+> >>       return err;
+> >>   }
+> >> +static int fastrpc_setup_service_locator(struct fastrpc_channel_ctx
+> >> *cctx, char *client_name,
+> >> +            char *service_name, char *service_path, int domain, int
+> >> spd_session)
+> >> +{
+> >> +    int err =3D 0;
+> >> +    struct pdr_handle *handle =3D NULL;
+> >> +    struct pdr_service *service =3D NULL;
+> >> +
+> >> +    /* Register the service locator's callback function */
+> >> +    handle =3D pdr_handle_alloc(fastrpc_pdr_cb, &cctx->spd[spd_sessio=
+n]);
+> >> +    if (IS_ERR(handle)) {
+> >> +        err =3D PTR_ERR(handle);
+> >> +        goto bail;
+> >> +    }
+> >> +    cctx->spd[spd_session].pdrhandle =3D handle;
+> >> +    cctx->spd[spd_session].servloc_name =3D client_name;
+> >> +    cctx->spd[spd_session].spdname =3D service_path;
+> >> +    cctx->spd[spd_session].cctx =3D cctx;
+> >> +    service =3D pdr_add_lookup(handle, service_name, service_path);
+> >> +    if (IS_ERR(service)) {
+> >> +        err =3D PTR_ERR(service);
+> >> +        goto bail;
+> >> +    }
+> >> +    pr_info("fastrpc: %s: pdr_add_lookup enabled for %s (%s, %s)\n",
+> >> +        __func__, service_name, client_name, service_path);
+> >> +
+> >> +bail:
+> >> +    if (err) {
+> >> +        pr_warn("fastrpc: %s: failed for %s (%s, %s)with err %d\n",
+> >> +                __func__, service_name, client_name, service_path, er=
+r);
+> >> +    }
+> >> +    return err;
+> >> +}
+> >> +
+> >>   static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+> >>   {
+> >>       struct device *rdev =3D &rpdev->dev;
+> >> @@ -2326,6 +2494,25 @@ static int fastrpc_rpmsg_probe(struct
+> >> rpmsg_device *rpdev)
+> >>           goto fdev_error;
+> >>       }
+> >> +    if (domain_id =3D=3D ADSP_DOMAIN_ID) {
+> >> +        err =3D fastrpc_setup_service_locator(data,
+> >> AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME,
+> >> +            AUDIO_PDR_ADSP_SERVICE_NAME, ADSP_AUDIOPD_NAME,
+> >> domain_id, 0);
+> >> +        if (err)
+> >> +            goto populate_error;
+> >> +
+> >> +        err =3D fastrpc_setup_service_locator(data,
+> >> +            SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME,
+> >> +            SENSORS_PDR_ADSP_SERVICE_NAME, ADSP_SENSORPD_NAME,
+> >> domain_id, 1);
+> >> +        if (err)
+> >> +            goto populate_error;
+> >> +    } else if (domain_id =3D=3D SDSP_DOMAIN_ID) {
+> >> +        err =3D fastrpc_setup_service_locator(data,
+> >> +            SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME,
+> >> +            SENSORS_PDR_SLPI_SERVICE_NAME, SLPI_SENSORPD_NAME,
+> >> domain_id, 0);
+> >> +        if (err)
+> >> +            goto populate_error;
+> >> +    }
+> >> +
+> >>       kref_init(&data->refcount);
+> >>       dev_set_drvdata(&rpdev->dev, data);
+> >> @@ -2355,24 +2542,13 @@ static int fastrpc_rpmsg_probe(struct
+> >> rpmsg_device *rpdev)
+> >>       return err;
+> >>   }
+> >> -static void fastrpc_notify_users(struct fastrpc_user *user)
+> >> -{
+> >> -    struct fastrpc_invoke_ctx *ctx;
+> >> -
+> >> -    spin_lock(&user->lock);
+> >> -    list_for_each_entry(ctx, &user->pending, node) {
+> >> -        ctx->retval =3D -EPIPE;
+> >> -        complete(&ctx->work);
+> >> -    }
+> >> -    spin_unlock(&user->lock);
+> >> -}
+> >> -
+> >>   static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
+> >>   {
+> >>       struct fastrpc_channel_ctx *cctx =3D dev_get_drvdata(&rpdev->dev=
+);
+> >>       struct fastrpc_buf *buf, *b;
+> >>       struct fastrpc_user *user;
+> >>       unsigned long flags;
+> >> +    int i;
+> >>       /* No invocations past this point */
+> >>       spin_lock_irqsave(&cctx->lock, flags);
+> >> @@ -2393,6 +2569,11 @@ static void fastrpc_rpmsg_remove(struct
+> >> rpmsg_device *rpdev)
+> >>       if (cctx->remote_heap)
+> >>           fastrpc_buf_free(cctx->remote_heap);
+> >> +    for (i =3D 0; i < FASTRPC_MAX_SPD; i++) {
+> >> +        if (cctx->spd[i].pdrhandle)
+> >> +            pdr_handle_release(cctx->spd[i].pdrhandle);
+> >> +    }
+> >> +
+> >>       of_platform_depopulate(&rpdev->dev);
+> >>       fastrpc_channel_ctx_put(cctx);
+> >
 
-I think this would make allocation/deallocation easier to reason with.
-And I suspect it would avoid both the need for fields of structures to be
-zeroed after being freed, and the need to call mana_remove() from
-mana_probe().
 
-> +		return -ENOMEM;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void mana_rss_table_init(struct mana_port_context *apc)
->  {
->  	int i;
->  
-> -	for (i = 0; i < MANA_INDIRECT_TABLE_SIZE; i++)
-> +	for (i = 0; i < apc->indir_table_sz; i++)
->  		apc->indir_table[i] =
->  			ethtool_rxfh_indir_default(i, apc->num_queues);
->  }
 
-...
-
-> @@ -2739,11 +2772,17 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
->  	err = register_netdev(ndev);
->  	if (err) {
->  		netdev_err(ndev, "Unable to register netdev.\n");
-> -		goto reset_apc;
-> +		goto free_indir;
->  	}
->  
->  	return 0;
->  
-> +free_indir:
-> +	apc->indir_table_sz = 0;
-> +	kfree(apc->indir_table);
-> +	apc->indir_table = NULL;
-> +	kfree(apc->rxobj_table);
-> +	apc->rxobj_table = NULL;
->  reset_apc:
->  	kfree(apc->rxqs);
->  	apc->rxqs = NULL;
-
-nit: Not strictly related to this patch, but the reset_apc code should
-     probably be a call to mana_cleanup_port_context() as it is the dual of
-     mana_init_port_context() which is called earlier in mana_probe_port()
-
-...
-
-> @@ -2931,6 +2972,11 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
->  		}
->  
->  		unregister_netdevice(ndev);
-> +		apc->indir_table_sz = 0;
-> +		kfree(apc->indir_table);
-> +		apc->indir_table = NULL;
-> +		kfree(apc->rxobj_table);
-> +		apc->rxobj_table = NULL;
-
-The code to free and zero indir_table_sz and indir_table appears twice
-in this patch. Perhaps a helper to do this, which would be the dual
-of mana_rss_table_alloc is in order.
-
->  
->  		rtnl_unlock();
->  
-
-...
+--=20
+With best wishes
+Dmitry
 
