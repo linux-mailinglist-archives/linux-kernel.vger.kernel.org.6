@@ -1,253 +1,119 @@
-Return-Path: <linux-kernel+bounces-200074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40D38FAA41
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:52:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EF48FAA52
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55723289196
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:52:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C7781F21710
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A76013DDB2;
-	Tue,  4 Jun 2024 05:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E13213E031;
+	Tue,  4 Jun 2024 05:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRygG54C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MABw0W3O"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC77132135;
-	Tue,  4 Jun 2024 05:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D0E13FD71;
+	Tue,  4 Jun 2024 05:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717480357; cv=none; b=gu/zCbUD+oQ1ubNOzyhatdJULfjd0f3sPbP5ZZ/H0SCQ3bQDI9sA94vhDlR/tp22V1WHqTxs9SevxJGQSlBgNBzxetpbd1nGPUJ8ZUH3JPFzpbL775SBAzBhHxN5YRcpr7C1e2xsiEIq1TaS+PVWBSy3xa9DJPrPm30zXioCEAM=
+	t=1717480479; cv=none; b=VwM+7dX8qQub+a/Iccr2VnSOtdWnykKak7C1vIHvYvQj3e5sxAR99kd9jH+8znllVtUzVw2EYygSD7RJU9Rr0hJScM833AfypkW1riB9YQyiAkCwC47voIwVUvJmeMQFgieEr88Ir9xsLIHFGcJ0M1o8t1cRCiB0QmnWVcr2VcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717480357; c=relaxed/simple;
-	bh=hp/q9fl1l/6+eFOkIX8ny4QgcjTOK17pB3rxlmTZ8Iw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=tnij5pIVxgorKoIRHjMFCfu4GjPMlEgnZKP6XtHP676WbCNxEivDf8gFp4F0PFvh33zT/fRv65a9LjyOaAd5iqRH+1DM/NpOIiza72bDxTFBGAIvMb2oax5HWTibr+ytcmo1K/FNmJ+rsh2Gh8NdymhlxX5HEFULMPaYQmBQwBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRygG54C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A96C2BBFC;
-	Tue,  4 Jun 2024 05:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717480356;
-	bh=hp/q9fl1l/6+eFOkIX8ny4QgcjTOK17pB3rxlmTZ8Iw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=rRygG54CoZ8htmevLQ2Hwd3ZKINlMR4WCoy3mGZm7Er7VXEGvDHQ4Hxm8Fvhepf6G
-	 xEMuSpoBut1mphalvVhYydblbpdlzb9tM6341UEtCE+SYUIpv3WBE/bsBoCYxCutSM
-	 XYUumCwRSdEgTN/mEIo7JIgarVXj5ERxHBHWdZoRAdXpgSToo4JXHm/GyuJCd3wDBr
-	 5vYjNG6497Phbm/PJ9zukKXKSRmm0QPgH9ER9iIQiUux4Q8rquDIPIqY5szq2BVoG6
-	 fdNd2eK8IcYXXbNAe5srDrLtFRI6j9h/cMgIz3X04EHoLjc1Lo6nI9BZWWuBNFy1yz
-	 fpNdjbjPA6yYA==
-Date: Mon, 03 Jun 2024 22:52:37 -0700
-From: Kees Cook <kees@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-CC: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
- linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
- Ross Zwisler <zwisler@google.com>, wklin@google.com,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>,
- Linus Torvalds <torvalds@linuxfoundation.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mike Rapoport <rppt@kernel.org>, ardb@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_1/2=5D_mm/memblock=3A_Add_=22reserve?=
- =?US-ASCII?Q?=5Fmem=22_to_reserved_named_memory_at_boot_up?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240603233631.452433539@goodmis.org>
-References: <20240603233330.801075898@goodmis.org> <20240603233631.452433539@goodmis.org>
-Message-ID: <5DAB46F6-F415-4C2B-AA6A-E0049CF6270C@kernel.org>
+	s=arc-20240116; t=1717480479; c=relaxed/simple;
+	bh=2kKHgihjqrDxrurs3az7IkXPlCuY6xKciu50Wy6gfIE=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=iCo1SiwKYpckQvuSgo6VlCAjGosbJG8VeicseHw5YBq6/ouwSSscUIC071PUlYWNMgzBB5UJUfh/Hih4/79q/KvugHhbZtbAgG19InJv7ABv/2o63OR4h0GhZNR9AI1hd2YU81Yj4rhnljGkzlByu8IoTxthJ+qD0+GNf7XEmB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MABw0W3O; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so6163581a12.1;
+        Mon, 03 Jun 2024 22:54:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717480476; x=1718085276; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/B3D4wtGRpJZ2iApcLLvXsbZjMk476N0oS3prX5uEXY=;
+        b=MABw0W3OEdJ6BnKXykmqCnFnp4XlfZqpSD5pf6/1nY9YPlnJYNaDj5Peq0LyVyorVn
+         MC5gTqYRvpF95SSCGpShcTttO0hpNbdAWXfSB6qXhIMYypkfUct0YITJkq8XUaCvzg7v
+         aknmDkzJS+TNjotpOkEot3tFuaHJFb1wY98zv+PPoNTAZ9a+9KFjhNU0LGccXmQvOZZd
+         WtfspBbM/57M9wlcdTuJkz7dXDZXJHJ6ZqfsmvC0jmkYE73IP1iv7HwWOShGsTzMq/bn
+         e51J+pmklmrqYmmHuR7j/oUHkQuCFtSIxpnUjAvcgtOwQblA2lRDiVgbZLzd/rgmtlsb
+         tSKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717480476; x=1718085276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/B3D4wtGRpJZ2iApcLLvXsbZjMk476N0oS3prX5uEXY=;
+        b=fE7YOqN0uolqYvyhH7QRGnolewWDOt7TyeENAvW3hYknSj/WwtOXUWi7g33BoLMvTm
+         PPGDdHy/6niUp09YQ30Go1B4a2lVIoqDvxENNRDzHNey5/chx4Uz6FVyxT/QeiszThX6
+         h7Zz/4xv3szAp5SiOJvLVm/eyb9U6g0eVJsksIQA8lu6scSIX3mm5V+yYmyi21/JPirv
+         I4KlxKi2BbZ9TJ6ZveNbZsNKdEx7cX6k6fwcWNmhYbvvgxpyRK0ALydlvpxgKnXYNXoY
+         zvvAZyldKOx495dqW03n7xwPk43zUHSt1FpvGDYhMjrdXQgFRitIsGJ4K6rnMujyThGz
+         khAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Vcv+NtJRA10ba7fHhxbIEDLl/QaYnmFhGLtAID7e3sVGpmCXbbmMrCOMk/yRFCaP4OmGRvI9PR56humzY3v5yceSw+yjSpS2UlwCTQouwk0wQWfuNf1D6tNrU8pmQdxxl718Cy9EvVMoTbmm9ZIVjwrmhymUQ/G+V1MqG9v3KbSOLg==
+X-Gm-Message-State: AOJu0YwnEkRkpBNssYcGA7SM7hmIykBzPWlZbJajg4aATekkEpb8AXHK
+	H6X5XHvPhIUNqIZweIPZV6vUUiZg60raKuBC3H8kqg93b3eFcuOt
+X-Google-Smtp-Source: AGHT+IHVXdxysaq5WMsG98sCezHcJNWQkXwVmFFXDwwcoFJhWDYblpS3zlpgz69HjU4vaFXbm5lIDQ==
+X-Received: by 2002:a50:f609:0:b0:57a:2a46:701 with SMTP id 4fb4d7f45d1cf-57a3638f2f7mr8298598a12.19.1717480475987;
+        Mon, 03 Jun 2024 22:54:35 -0700 (PDT)
+Received: from toolbox.. ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a4fc842b5sm4895643a12.71.2024.06.03.22.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jun 2024 22:54:35 -0700 (PDT)
+From: Christian Hewitt <christianshewitt@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: iio: adc: amlogic,meson-saradc: add GXLX SoC compatible
+Date: Tue,  4 Jun 2024 05:54:30 +0000
+Message-Id: <20240604055431.3313961-1-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
+Add support for the GXLX SoC. GXLX is very similar to GXL but has three
+additional bits in MESON_SAR_ADC_REG12 for the three MPLL clocks.
 
-On June 3, 2024 4:33:31 PM PDT, Steven Rostedt <rostedt@goodmis=2Eorg> wro=
-te:
->From: "Steven Rostedt (Google)" <rostedt@goodmis=2Eorg>
->
->In order to allow for requesting a memory region that can be used for
->things like pstore on multiple machines where the memory layout is not th=
-e
->same, add a new option to the kernel command line called "reserve_mem"=2E
->
->The format is:  reserve_mem=3Dnn:align:name
->
->Where it will find nn amount of memory at the given alignment of align=2E
->The name field is to allow another subsystem to retrieve where the memory
->was found=2E For example:
->
->  reserve_mem=3D12M:4096:oops ramoops=2Emem_name=3Doops
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ .../devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml        | 1 +
+ 1 file changed, 1 insertion(+)
 
-How does this interact with KASLR? It has chosen its physical location bef=
-ore this parsing happens, so I'd expect this to fail once in a while, unles=
-s the size/alignment is lucky enough that KASLR never uses that portion of =
-the physical memory=2E=2E=2E
+diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+index 7e8328e9ce13..b2fef72267b4 100644
+--- a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.yaml
+@@ -23,6 +23,7 @@ properties:
+               - amlogic,meson8m2-saradc
+               - amlogic,meson-gxbb-saradc
+               - amlogic,meson-gxl-saradc
++              - amlogic,meson-gxlx-saradc
+               - amlogic,meson-gxm-saradc
+               - amlogic,meson-axg-saradc
+               - amlogic,meson-g12a-saradc
+-- 
+2.34.1
 
--Kees
-
->
->Where ramoops=2Emem_name will tell ramoops that memory was reserved for i=
-t
->via the reserve_mem option and it can find it by calling:
->
->  if (reserve_mem_find_by_name("oops", &start, &size)) {
->	// start holds the start address and size holds the size given
->
->Link: https://lore=2Ekernel=2Eorg/all/ZjJVnZUX3NZiGW6q@kernel=2Eorg/
->
->Suggested-by: Mike Rapoport <rppt@kernel=2Eorg>
->Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis=2Eorg>
->---
-> include/linux/mm=2Eh |  2 +
-> mm/memblock=2Ec      | 97 ++++++++++++++++++++++++++++++++++++++++++++++
-> 2 files changed, 99 insertions(+)
->
->diff --git a/include/linux/mm=2Eh b/include/linux/mm=2Eh
->index 9849dfda44d4=2E=2Eb4455cc02f2c 100644
->--- a/include/linux/mm=2Eh
->+++ b/include/linux/mm=2Eh
->@@ -4263,4 +4263,6 @@ static inline bool pfn_is_unaccepted_memory(unsigne=
-d long pfn)
-> void vma_pgtable_walk_begin(struct vm_area_struct *vma);
-> void vma_pgtable_walk_end(struct vm_area_struct *vma);
->=20
->+int reserve_mem_find_by_name(const char *name, unsigned long *start, uns=
-igned long *size);
->+
-> #endif /* _LINUX_MM_H */
->diff --git a/mm/memblock=2Ec b/mm/memblock=2Ec
->index d09136e040d3=2E=2Ea8bf0ee9e2b4 100644
->--- a/mm/memblock=2Ec
->+++ b/mm/memblock=2Ec
->@@ -2244,6 +2244,103 @@ void __init memblock_free_all(void)
-> 	totalram_pages_add(pages);
-> }
->=20
->+/* Keep a table to reserve named memory */
->+#define RESERVE_MEM_MAX_ENTRIES		8
->+#define RESERVE_MEM_NAME_SIZE		16
->+struct reserve_mem_table {
->+	char			name[RESERVE_MEM_NAME_SIZE];
->+	unsigned long		start;
->+	unsigned long		size;
->+};
->+static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRI=
-ES];
->+static int reserved_mem_count;
->+
->+/* Add wildcard region with a lookup name */
->+static int __init reserved_mem_add(unsigned long start, unsigned long si=
-ze,
->+				   const char *name)
->+{
->+	struct reserve_mem_table *map;
->+
->+	if (!name || !name[0] || strlen(name) >=3D RESERVE_MEM_NAME_SIZE)
->+		return -EINVAL;
->+
->+	if (reserved_mem_count >=3D RESERVE_MEM_MAX_ENTRIES)
->+		return -1;
->+
->+	map =3D &reserved_mem_table[reserved_mem_count++];
->+	map->start =3D start;
->+	map->size =3D size;
->+	strscpy(map->name, name);
->+	return 0;
->+}
->+
->+/**
->+ * reserve_mem_find_by_name - Find reserved memory region with a given n=
-ame
->+ * @name: The name that is attached to a reserved memory region
->+ * @start: If found, holds the start address
->+ * @size: If found, holds the size of the address=2E
->+ *
->+ * Returns: 1 if found or 0 if not found=2E
->+ */
->+int reserve_mem_find_by_name(const char *name, unsigned long *start, uns=
-igned long *size)
->+{
->+	struct reserve_mem_table *map;
->+	int i;
->+
->+	for (i =3D 0; i < reserved_mem_count; i++) {
->+		map =3D &reserved_mem_table[i];
->+		if (!map->size)
->+			continue;
->+		if (strcmp(name, map->name) =3D=3D 0) {
->+			*start =3D map->start;
->+			*size =3D map->size;
->+			return 1;
->+		}
->+	}
->+	return 0;
->+}
->+
->+/*
->+ * Parse early_reserve_mem=3Dnn:align:name
->+ */
->+static int __init reserve_mem(char *p)
->+{
->+	phys_addr_t start, size, align;
->+	char *oldp;
->+	int err;
->+
->+	if (!p)
->+		return -EINVAL;
->+
->+	oldp =3D p;
->+	size =3D memparse(p, &p);
->+	if (p =3D=3D oldp)
->+		return -EINVAL;
->+
->+	if (*p !=3D ':')
->+		return -EINVAL;
->+
->+	align =3D memparse(p+1, &p);
->+	if (*p !=3D ':')
->+		return -EINVAL;
->+
->+	start =3D memblock_phys_alloc(size, align);
->+	if (!start)
->+		return -ENOMEM;
->+
->+	p++;
->+	err =3D reserved_mem_add(start, size, p);
->+	if (err) {
->+		memblock_phys_free(start, size);
->+		return err;
->+	}
->+
->+	p +=3D strlen(p);
->+
->+	return *p =3D=3D '\0' ? 0: -EINVAL;
->+}
->+__setup("reserve_mem=3D", reserve_mem);
->+
-> #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
-> static const char * const flagname[] =3D {
-> 	[ilog2(MEMBLOCK_HOTPLUG)] =3D "HOTPLUG",
-
---=20
-Kees Cook
 
