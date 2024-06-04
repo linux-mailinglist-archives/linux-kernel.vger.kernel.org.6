@@ -1,196 +1,170 @@
-Return-Path: <linux-kernel+bounces-199972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765FE8FA863
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:49:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDAD8FA8A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AA011C22773
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:49:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D262898A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7257713D2AB;
-	Tue,  4 Jun 2024 02:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ok7MP8qy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB7613D602;
+	Tue,  4 Jun 2024 03:05:36 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2211513DB88;
-	Tue,  4 Jun 2024 02:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F6F22066;
+	Tue,  4 Jun 2024 03:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717469316; cv=none; b=QXIjXjMMJj3Z6VPsW+zRggh6fpfdQQt5zmxzOtxwILsae2bP4U4UzARuSfxGofpSonHFK+X+X+L2l24DtftReJHXGq1mpxI9q505t+jv3HzdQX1d81y2mGiDIh3kSR5Og2C1FPtcRmVh6JnephUlZI479h4utgg7s9s1g+hSD1c=
+	t=1717470336; cv=none; b=YxUWqErGlJ/AMQ9lcPT+Vef7wC/oN9A2V4utFEHH4Qy9EiPqSiJu5mC2TuxvW5yIQM+4cvYBjTpoLmvOlrMigZM5bS26cZkZxBdjVqnBhgRsvjYmv8LLEbszPPJ9TxRjwqCnH0gWYZGZBZuMRdONsubdlKjwt6kwgvTot7fsalA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717469316; c=relaxed/simple;
-	bh=I6HO+iN5oHa3u7G3pIQijVLAi5kvEPqG6yZE64gH+Ds=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vEzW0+JUp0u9h7Xnhz5jx8AAoogK9VsH9edmzREBIoFf9JcEuWdspAoxuHVpoD4H+Vn8KSPS0eZdYnzYpTHurzI/ETE/ExFqn2CKzUDGXCgUudD/u3+BgGGXsZAeq5LXNtUw6TEprSJTANKlHtiZcf19jxvF9Qk0q0qhIpfJklw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ok7MP8qy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453Bb2og019159;
-	Tue, 4 Jun 2024 02:48:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=XaYq1aYH4nNWWBT/7wjZT3Qx
-	Rt/V07ev+wUr09f7m3g=; b=Ok7MP8qyi3TQuEyJOTmxLryYSgX1w99kH3aUnQqu
-	w7mc9d/BxL4kJqL9rbfHSw9TQvjpgSyUp0GzPshNg21SZniuxYgTqfhn0iEP6vWV
-	Rf7LPi1BQZgf/qmg5yPLyAZOh2tYF3VEx0wjIQFS3frDMkTJKbnt6quwyAE1NRgI
-	FZZPP+dlwlNADMbe522MIG94GJFPgtRyU+hlP0R+AjY1Ud/yngRQ/TwT0JCx64W9
-	UVcdYsF8U6ZCMpXPOekGpaTdltByBcI3YeW2ef1nOiQI9WwptSPONiJVoz004Ld4
-	qzLjVHTC/OBHpBLSTmCHp1VX+NxBD2jOm/obdYklvbZHiQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5t5a87-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 02:48:27 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4542mRHd006227
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 02:48:27 GMT
-Received: from taozha2-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 3 Jun 2024 19:48:23 -0700
-From: Tao Zhang <quic_taozha@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>
-CC: Tao Zhang <quic_taozha@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang
-	<quic_yuanfang@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Song Chai
-	<quic_songchai@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, Jie Gan
-	<quic_jiegan@quicinc.com>
-Subject: [PATCH 3/3] coresight-tpdm: Add support to enable the lane for MCMB TPDM
-Date: Tue, 4 Jun 2024 10:47:41 +0800
-Message-ID: <20240604024741.3550-4-quic_taozha@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240604024741.3550-1-quic_taozha@quicinc.com>
-References: <20240604024741.3550-1-quic_taozha@quicinc.com>
+	s=arc-20240116; t=1717470336; c=relaxed/simple;
+	bh=TjaFwGrFwaGILWgco03ETMMoCWc9v2lfQI1Zp4UqB+E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n5SceV7gu6tLiai08zdx6BgbewQ6yuJVidFFTJ3CApI0pOyZwlP01AdsuHInwQrUK2Va2EAEOHTprd3RXY02uqG7Ngnn3lSin0z1QXUCW3Fqp9rzZxXqqyqzrrOepJ4apaPPfy0b/fRqbXFBji6S3dxzbNJwQ5ZAM55NzhDB3Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vtb7D2tcjz4f3mHW;
+	Tue,  4 Jun 2024 11:05:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 764471A0C1D;
+	Tue,  4 Jun 2024 11:05:23 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAX6RFxhF5mc+oMOg--.44342S4;
+	Tue, 04 Jun 2024 11:05:23 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: linux-block@vger.kernel.org
+Cc: axboe@kernel.dk,
+	hch@infradead.org,
+	linux-kernel@vger.kernel.org,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com,
+	libaokun1@huawei.com
+Subject: [PATCH -next] blk-wbt: don't throttle swap writes in direct reclaim
+Date: Tue,  4 Jun 2024 11:05:22 +0800
+Message-Id: <20240604030522.3686177-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 34oZPadvD7SC-jcY8DrvIsGbOIXahpim
-X-Proofpoint-GUID: 34oZPadvD7SC-jcY8DrvIsGbOIXahpim
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 malwarescore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040021
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX6RFxhF5mc+oMOg--.44342S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxurWxKFyrJr15AF4xCry3Arb_yoW5Zr4kpr
+	43K3WDtFyqvFs7Xrn7XayxX3yru3yUtr43Ary5Kr1SvrW3Kr1aqa1vkw13KF4UZrZ3uw42
+	qr4Fyry7Jr43ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAIw28IcxkI7VAKI48J
+	MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
+	v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UuVbkUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-Add the sysfs file to set/get the enablement of the lane. For MCMB
-configurations, the field "E_LN" in CMB_CR register is the
-individual lane enables. MCMB lane N is enabled for trace
-generation when M_CMB_CR.E=1 and M_CMB_CR.E_LN[N]=1. For lanes
-that are not implemented on a given MCMB configuration, the
-corresponding bits of this field read as 0 and ignore writes.
+From: Baokun Li <libaokun1@huawei.com>
 
-Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+Now we avoid throttling swap writes by determining whether the current
+process is kswapd (aka current_is_kswapd()), but swap writes can come
+from either kswapd or direct reclaim, so the swap writes from direct
+reclaim will still be throttled.
+
+When a process holds a lock to allocate a free page, and enters direct
+reclaim because there is no free memory, then it might trigger a hung
+due to the wbt throttling that causes other processes to fail to get
+the lock.
+
+Both kswapd and direct reclaim set the REQ_SWAP flag, so use REQ_SWAP
+instead of current_is_kswapd() to avoid throttling swap writes. Also
+renamed WBT_KSWAPD to WBT_SWAP and WBT_RWQ_KSWAPD to WBT_RWQ_SWAP.
+
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
 ---
- .../testing/sysfs-bus-coresight-devices-tpdm  |  7 +++++
- drivers/hwtracing/coresight/coresight-tpdm.c  | 29 +++++++++++++++++++
- drivers/hwtracing/coresight/coresight-tpdm.h  |  3 ++
- 3 files changed, 39 insertions(+)
+ block/blk-wbt.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-index 3bae880cddb6..e5d26a5478f2 100644
---- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-+++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-@@ -265,3 +265,10 @@ Contact:	Tao Zhang (QUIC) <quic_taozha@quicinc.com>
- Description:
- 		(RW) Set/Get which lane participates in the output pattern
- 		match cross trigger mechanism for the MCMB subunit TPDM.
-+
-+What:		/sys/bus/coresight/devices/<tpdm-name>/mcmb_lanes_select
-+Date:		June 2024
-+KernelVersion	6.9
-+Contact:	Tao Zhang (QUIC) <quic_taozha@quicinc.com>
-+Description:
-+		(RW) Set/Get the enablement of the individual lane.
-\ No newline at end of file
-diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
-index fba4f8877e96..16d0f01cf0fa 100644
---- a/drivers/hwtracing/coresight/coresight-tpdm.c
-+++ b/drivers/hwtracing/coresight/coresight-tpdm.c
-@@ -1053,6 +1053,34 @@ static ssize_t mcmb_trig_lane_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(mcmb_trig_lane);
+diff --git a/block/blk-wbt.c b/block/blk-wbt.c
+index 64472134dd26..aaacf2f5b223 100644
+--- a/block/blk-wbt.c
++++ b/block/blk-wbt.c
+@@ -37,7 +37,7 @@
+ enum wbt_flags {
+ 	WBT_TRACKED		= 1,	/* write, tracked for throttling */
+ 	WBT_READ		= 2,	/* read */
+-	WBT_KSWAPD		= 4,	/* write, from kswapd */
++	WBT_SWAP		= 4,	/* write, from swap_writepage() */
+ 	WBT_DISCARD		= 8,	/* discard */
  
-+static ssize_t mcmb_lanes_select_show(struct device *dev,
-+				      struct device_attribute *attr,
-+				      char *buf)
-+{
-+	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
-+
-+	return sysfs_emit(buf, "%u\n",
-+			  (unsigned int)drvdata->cmb->mcmb->mcmb_lane_select);
-+}
-+
-+static ssize_t mcmb_lanes_select_store(struct device *dev,
-+				       struct device_attribute *attr,
-+				       const char *buf,
-+				       size_t size)
-+{
-+	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
-+	unsigned long val;
-+
-+	if (kstrtoul(buf, 0, &val))
-+		return -EINVAL;
-+
-+	guard(spinlock)(&drvdata->spinlock);
-+	drvdata->cmb->mcmb->mcmb_lane_select = val & TPDM_MCMB_E_LN_MASK;
-+
-+	return size;
-+}
-+static DEVICE_ATTR_RW(mcmb_lanes_select);
-+
- static struct attribute *tpdm_dsb_edge_attrs[] = {
- 	&dev_attr_ctrl_idx.attr,
- 	&dev_attr_ctrl_val.attr,
-@@ -1217,6 +1245,7 @@ static struct attribute *tpdm_cmb_msr_attrs[] = {
+ 	WBT_NR_BITS		= 4,	/* number of bits */
+@@ -45,7 +45,7 @@ enum wbt_flags {
  
- static struct attribute *tpdm_mcmb_attrs[] = {
- 	&dev_attr_mcmb_trig_lane.attr,
-+	&dev_attr_mcmb_lanes_select.attr,
- 	NULL,
+ enum {
+ 	WBT_RWQ_BG		= 0,
+-	WBT_RWQ_KSWAPD,
++	WBT_RWQ_SWAP,
+ 	WBT_RWQ_DISCARD,
+ 	WBT_NUM_RWQ,
  };
+@@ -172,8 +172,8 @@ static bool wb_recent_wait(struct rq_wb *rwb)
+ static inline struct rq_wait *get_rq_wait(struct rq_wb *rwb,
+ 					  enum wbt_flags wb_acct)
+ {
+-	if (wb_acct & WBT_KSWAPD)
+-		return &rwb->rq_wait[WBT_RWQ_KSWAPD];
++	if (wb_acct & WBT_SWAP)
++		return &rwb->rq_wait[WBT_RWQ_SWAP];
+ 	else if (wb_acct & WBT_DISCARD)
+ 		return &rwb->rq_wait[WBT_RWQ_DISCARD];
  
-diff --git a/drivers/hwtracing/coresight/coresight-tpdm.h b/drivers/hwtracing/coresight/coresight-tpdm.h
-index 887d4464b076..56bd20aa98ae 100644
---- a/drivers/hwtracing/coresight/coresight-tpdm.h
-+++ b/drivers/hwtracing/coresight/coresight-tpdm.h
-@@ -48,6 +48,9 @@
- /* MAX lanes in the output pattern for MCMB configurations*/
- #define TPDM_MCMB_MAX_LANES 8
+@@ -528,7 +528,7 @@ static bool close_io(struct rq_wb *rwb)
+ 		time_before(now, rwb->last_comp + HZ / 10);
+ }
  
-+/* High performance mode */
-+#define TPDM_MCMB_E_LN_MASK		GENMASK(7, 0)
-+
- /* DSB Subunit Registers */
- #define TPDM_DSB_CR		(0x780)
- #define TPDM_DSB_TIER		(0x784)
+-#define REQ_HIPRIO	(REQ_SYNC | REQ_META | REQ_PRIO)
++#define REQ_HIPRIO	(REQ_SYNC | REQ_META | REQ_PRIO | REQ_SWAP)
+ 
+ static inline unsigned int get_limit(struct rq_wb *rwb, blk_opf_t opf)
+ {
+@@ -539,13 +539,13 @@ static inline unsigned int get_limit(struct rq_wb *rwb, blk_opf_t opf)
+ 
+ 	/*
+ 	 * At this point we know it's a buffered write. If this is
+-	 * kswapd trying to free memory, or REQ_SYNC is set, then
++	 * swap trying to free memory, or REQ_SYNC is set, then
+ 	 * it's WB_SYNC_ALL writeback, and we'll use the max limit for
+ 	 * that. If the write is marked as a background write, then use
+ 	 * the idle limit, or go to normal if we haven't had competing
+ 	 * IO for a bit.
+ 	 */
+-	if ((opf & REQ_HIPRIO) || wb_recent_wait(rwb) || current_is_kswapd())
++	if ((opf & REQ_HIPRIO) || wb_recent_wait(rwb))
+ 		limit = rwb->rq_depth.max_depth;
+ 	else if ((opf & REQ_BACKGROUND) || close_io(rwb)) {
+ 		/*
+@@ -622,8 +622,8 @@ static enum wbt_flags bio_to_wbt_flags(struct rq_wb *rwb, struct bio *bio)
+ 	if (bio_op(bio) == REQ_OP_READ) {
+ 		flags = WBT_READ;
+ 	} else if (wbt_should_throttle(bio)) {
+-		if (current_is_kswapd())
+-			flags |= WBT_KSWAPD;
++		if (bio->bi_opf & REQ_SWAP)
++			flags |= WBT_SWAP;
+ 		if (bio_op(bio) == REQ_OP_DISCARD)
+ 			flags |= WBT_DISCARD;
+ 		flags |= WBT_TRACKED;
 -- 
-2.17.1
+2.39.2
 
 
