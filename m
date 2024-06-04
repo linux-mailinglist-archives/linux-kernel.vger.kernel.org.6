@@ -1,201 +1,211 @@
-Return-Path: <linux-kernel+bounces-199983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AECC8FA8C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:28:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B1418FA8CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8EFC2895A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:28:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09C14B23DCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0226F13D609;
-	Tue,  4 Jun 2024 03:28:27 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A45A13D2BA;
+	Tue,  4 Jun 2024 03:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNZLElMb"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F5A13D2AC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 03:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EB1ECC;
+	Tue,  4 Jun 2024 03:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717471706; cv=none; b=KCQIZpic5gmrLEIhR7gJJ+hX/WbxhtmV6WeKxpbCCaiJFUhbO7hquX3hWZ4BIeDyS/dDJupieLyfbAh5ASQkwpn/FTdxwg5RzvWo7+1wDiAHELxzNO7XvsyxNlrcvs9nakDbdNJEfAOx0MESt/r4Kl23+JJOEhiuK29Ef+MgQ44=
+	t=1717471822; cv=none; b=cgCiw04IS3xHPx6ZjoohtWofFFOqm6Jpudt5fPpT90azN1/DKoIgoj/kACq95G5HWf7DDCT3ERQK0xCe/bhmO6HCrTeXqCbdartdi28pzFIW6hAVdyd841ktM8PAr+FfSKugKopzCloEl9/GffxZyBWqBKz0sPZ6XgIQjUUKvgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717471706; c=relaxed/simple;
-	bh=r+LMGsFDjKGrfYtjwqtQ9DI0AtDSolYht/k+NP0PAr0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Dsda/DdCNEn880VKK6Cczs2XFJzM/ziGqjiaxIhGFjLzqdhuhoX92kzbI3L2m9qyZMGCPMScD2TCT4BR2HFSZgEfdnhe6SXn5dZPrni3GhJIVPKAMGWgM3qaZzgKUScihLrkghHu8cDAiS1cKEHc0LJZphrHsVJfWplWzLIFJ/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eac412397cso553236439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 20:28:24 -0700 (PDT)
+	s=arc-20240116; t=1717471822; c=relaxed/simple;
+	bh=2Ztio9qL8ZpBUVSvlweFkPrMPNc98vITPhHYI2PxnXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sb56Nx9x72451LzVvOzYxAWvkY1Rwb6hlyXNWb2Z95/bTqGoiiUpASOxQ4nj3ZD93RlhCXj+1Ko1hwLeoA4aVYymONQW1qwhUPbCCzzuQoVUaMh/sxa7wS1+xrcKTUFhgOjVE57LrTeck5PTNFAZHnNSfzNIFzes7xnja7ubBVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KNZLElMb; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-6c4829d7136so496945a12.1;
+        Mon, 03 Jun 2024 20:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717471820; x=1718076620; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GYrQk95y2prpjepkR4vgWKHcx6FJS0ARSzceKfmHqSU=;
+        b=KNZLElMbbY2O6kxmpxGnWnvjQusK8bhlmrR8MqMMMSIEUXCODzP0T6qVlypxXo6ezm
+         +4EhOOA3HBGJ+9PsQzHQMzm4ZRGj0VIiY2ac5M6yaAHvvvc0yGAm7/3P6FtrDEEebD6E
+         RE1APTLUr3QgwwTp7vCRW3OKH+uTqY1NZzT1i2FLV/fDXcb+mkvlz+wpBaaYsYAuVC2Q
+         29p3T1S/1ZsTBUeWHBrgB2f+s+IRoFLVMNpCc2c4tUcEpsWckGGUn7wGiX9Sz5PY8gZF
+         KsSJxow8N9VCV3uQPKY0DJsP5WazGwODdSgPe915strvAua6Ja1Z8GtbLqp+6/9q5oaT
+         8gPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717471704; x=1718076504;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMKI4AorUlxgItY/OLhGTJp+VuukHWFyKgfJr6mRZKs=;
-        b=eVXcPl+33kpvrXh08V5kpcQroxsw+/y5Yvu49jTTkdRN35ICWa0FGG7dNOaWOIeHGm
-         csD+yShtZ01ZmZCCr2CB15S+SqgxHpavUYo9WG4mRIC/yI2hdnPUCJJStei5s1bUl1mw
-         6h6pYM8QA7SML4WvfaBkPIHPYeujb/jV8/AzzDW6zm8lu4SjMCPYAJejB9sEmsWVx/pv
-         SYOIO6eA22zmeXngWpPl+/M0ecaIuvF/hkPXqBnV9uxKAuDAAaN667SiVo3VQmSBwaMd
-         W79fQLxJxD3DnJfd1Mz238voRjdaU+0PSpFfdBHkkH09s/EMaGW87aROrOfSo0/mSdu2
-         SKvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXGqbrEnpM8IvJC5ACrdK0xBZZTrIxcP3LJV0iYbD5zjNTpqjby8LIMlgHAdizPbk69o48IUwJP2NbwLH8J262BIN10l2JN9QgQo49
-X-Gm-Message-State: AOJu0YytcrangFBKgoeFoTtyztcX/FbOFLhQntSsG957F0hbb8i8Dj6m
-	4P2KYrZ5zEoX7EmWdVBPG6gC/uCwC+hcDl48wP+UIvFA1BaV5pGw61Cz3Ts9xZFUdPv/k3etxqf
-	hBP3dH+IZEn5BK0YJTTSwlpsGLpyJOR8SOfhvSDbAUOlcSdJH7j+B68Y=
-X-Google-Smtp-Source: AGHT+IEvEI+o73lBZo+wWm3Dwj9oxcVfmdpaG1VZQU4SnI9HgguqY3B0LZ0fzqN8GTFGruXqqWlUIjMhgKKjc3nGUh9hIvxWoYVw
+        d=1e100.net; s=20230601; t=1717471820; x=1718076620;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GYrQk95y2prpjepkR4vgWKHcx6FJS0ARSzceKfmHqSU=;
+        b=T946az7rScp7O57fQyK5e7Ae6UefcZW+n+xY3l/Swzx6tD944pHY9w3WwrK4RFec+J
+         MvtfJUDReyRKkvb15/C98fte8JecKHTv1/0g73HvPZVpGRz+T6NyYdqAcNp6ITHSu0wg
+         t7m4YDX1qnXw2AFDat9VM4ZQHY1WeBN5HMn9+UoMS3XBBlYBjucHjZQbe6jwkoPV76k3
+         bw8Cs7tPNFKw8Gy4Kn1i8uVA4C50mkLIjlWWdIv0M39oYn8zmcFHjydPjMOOQbqJF6r4
+         0ld3QwJozdjQCvLJHAjevrpUg+ZSUy78B6wGZxJ8xQ1pejFUbR7yH5XI2pVEc+iUEvb4
+         8t3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVC3QMK32mt1QtDvr8kBQzQuCv8FBPc86YdgNlvU5RtBAQJKjfeYmjccjmaHaLqJw9v7R49V2EIN5z21NR2TuDg4HW5xVibzbC0a6vPf7OzSXNGaAUAU+pKfYPMzAvu6+lp
+X-Gm-Message-State: AOJu0Yzi70SCEQyFhqcxupTzc4SyiYv6l9ONLBF+uPX7CBvx/mhNMYU6
+	eW/SOPtDx5EqZ8YoFLRL2O8IYmNPm/viC/znGU7d7oRoRgcQc8DcqvuQudYNLJMb9iI4Trj7ZJQ
+	VKCbf3W5aFLonotUtiS5Lb+KJch8=
+X-Google-Smtp-Source: AGHT+IHdG9EnNjz/uQO4L2IHYIy1R9doqNoCM+9pIKcsIawyv2XEY1VZ+dbrbfNoapgMEwOsXdKNKzN1ZtPT5isGLtw=
+X-Received: by 2002:a05:6a20:2590:b0:1af:8c2f:5f5e with SMTP id
+ adf61e73a8af0-1b26f164267mr11793640637.28.1717471819902; Mon, 03 Jun 2024
+ 20:30:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c563:0:b0:36c:c4ce:8448 with SMTP id
- e9e14a558f8ab-3748ba658abmr5200425ab.6.1717471704037; Mon, 03 Jun 2024
- 20:28:24 -0700 (PDT)
-Date: Mon, 03 Jun 2024 20:28:24 -0700
-In-Reply-To: <000000000000e9b6ff0618356b26@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d4c7f4061a080a7a@google.com>
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_fs_read_only_work
-From: syzbot <syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240528030054.4525-1-qiang.zhang1211@gmail.com>
+ <1195a9a3-db87-465d-a3b0-ee92d67da954@paulmck-laptop> <CALm+0cVZ7GQC+v4Xe7nArh0DHKeax+ok_tYsKaB=JtG-BVgUag@mail.gmail.com>
+ <CALm+0cUQuZDb6nrng+CnOXNGyy6gUWNGq9VoreU98KNkyTw_CQ@mail.gmail.com>
+ <4a6d1e70-ec91-4b6d-8f69-290c4ef57b7f@paulmck-laptop> <CALm+0cVjjL98+QRO7a=18JjUB2-1R0oFyksgkH9ZEAr2NsBniQ@mail.gmail.com>
+ <aa5d29b4-3f3b-440c-a6a5-2f77691fac90@paulmck-laptop>
+In-Reply-To: <aa5d29b4-3f3b-440c-a6a5-2f77691fac90@paulmck-laptop>
+From: Z qiang <qiang.zhang1211@gmail.com>
+Date: Tue, 4 Jun 2024 11:30:08 +0800
+Message-ID: <CALm+0cXdHU4qa175SAx3GaktdLWrchS_xcJcidmvmPtm0twjng@mail.gmail.com>
+Subject: Re: [PATCH] rcutorture: Skip debug object testing for cur_ops without
+ ->debug_objects set
+To: paulmck@kernel.org
+Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org, 
+	urezki@gmail.com, rcu@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+>
+> On Tue, Jun 04, 2024 at 10:19:08AM +0800, Z qiang wrote:
+> > >
+> > > On Mon, Jun 03, 2024 at 12:55:30PM +0800, Z qiang wrote:
+> > > > >
+> > > > > >
+> > > > > > On Tue, May 28, 2024 at 11:00:54AM +0800, Zqiang wrote:
+> > > > > > > This commit make rcu_test_debug_objects() early return when the
+> > > > > > > specified cur_ops not set the ->debug_objects.
+> > > > > > >
+> > > > > > > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> > > > > > > ---
+> > > > > > >  kernel/rcu/rcutorture.c | 5 +++--
+> > > > > > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > > > > > > index 08bf7c669dd3..9b8c277ab91a 100644
+> > > > > > > --- a/kernel/rcu/rcutorture.c
+> > > > > > > +++ b/kernel/rcu/rcutorture.c
+> > > > > > > @@ -3495,8 +3495,9 @@ static void rcu_test_debug_objects(void)
+> > > > > > >               return;
+> > > > > > >       }
+> > > > > > >
+> > > > > > > -     if (WARN_ON_ONCE(cur_ops->debug_objects &&
+> > > > > > > -                     (!cur_ops->call || !cur_ops->cb_barrier)))
+> > > > > > > +     if (!cur_ops->debug_objects ||
+> > > > > > > +                     WARN_ON_ONCE(cur_ops->debug_objects &&
+> > > > > >
+> > > > > > You lost me here.  Given that we have "!cur_ops->debug_objects" before
+> > > > > > that WARN_ON_ONCE(), why do we need "cur_ops->debug_objects" inside of it?
+> > > > > >
+> > > > > > Also, we don't get here unless the rcutorture.object_debug kernel boot
+> > > > > > parameter is specified, don't we really want to WARN_ON_ONCE if the
+> > > > > > current flavor does not support that?
+> > > >
+> > > > Maybe I didn't describe it clearly enough, this
+> > > > modification is mainly to filter out test types that do not support
+> > > > double call_rcu*() checking, for example tasks, tasks-rudes,
+> > > >  task-tracing  ;) .
+> > >
+> > > Understood.
+> > >
+> > > It is just that in my experience, it is a good thing for rcutorture to
+> > > splat when asked to do something that it cannot do.  Or do you have a
+> > > use case where this is problematic?
+> > >
+> >
+> > Hi, Paul
+> >
+> >
+> > This is a scene I mentioned before:
+> >
+> > The rcutorture.object_debug is set true, but the tasks-tracing does not support
+> > duplicate cur_ops->call check, but the debug_objects test was still done.
+> >
+> > insmod rcutorture.ko torture_type=tasks-tracing fwd_progress=4
+> > n_barrier_cbs=4 object_debug=1
+> >
+> > [  106.082416] rcutorture: WARN: Duplicate call_tasks-tracing() test starting.
+> > [  106.082533] tasks-tracing-torture: rcu_torture_read_exit: Start of test
+> > [  106.082543] tasks-tracing-torture: rcu_torture_read_exit: Start of episode
+> > [  106.105552] rcutorture: duplicated callback was invoked.
+> > [  106.105567] rcutorture: duplicated callback was invoked.
+> >
+> > for call_rcu*()  that does not support double call checking, if
+> > continue to test,
+> > "rcutorture: duplicated callback was invoked". will output,
+> > I just want to avoid the output of this error message :)
+>
+> OK, but then why not just avoid setting rcutorture.object_debug for
+> the torture_type values that do not support it?
 
-HEAD commit:    f06ce441457d Merge tag 'loongarch-fixes-6.10-1' of git://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17802a16980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eb72437243175f22
-dashboard link: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164255f2980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16174432980000
+OK, understand.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/00ecb7bdd1a8/disk-f06ce441.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3926ab949197/vmlinux-f06ce441.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/36849eea4fc5/bzImage-f06ce441.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/bfad9a4a2dc4/mount_0.gz
+Thanks
+Zqiang
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
-
-INFO: task kworker/1:0:25 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:0     state:D
- stack:26248 pid:25    tgid:25    ppid:2      flags:0x00004000
-Workqueue: events_long bch2_fs_read_only_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
- __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
- bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:392
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Showing all locks held in the system:
-3 locks held by kworker/1:0/25:
- #0: ffff888015081148 ((wq_completion)events_long){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff888015081148 ((wq_completion)events_long){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc900001f7d00 ((work_completion)(&c->read_only_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc900001f7d00 ((work_completion)(&c->read_only_work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffff888075980278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:392
-1 lock held by khungtaskd/30:
- #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #0: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-5 locks held by kworker/u8:2/35:
-1 lock held by klogd/4522:
-2 locks held by getty/4833:
- #0: ffff88802fb4a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-3 locks held by syz-executor131/5078:
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xfde/0x1020 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 4515 Comm: syslogd Not tainted 6.10.0-rc2-syzkaller-00007-gf06ce441457d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:skb_ext_put include/linux/skbuff.h:4688 [inline]
-RIP: 0010:skb_release_head_state+0x19d/0x250 net/core/skbuff.c:1165
-Code: 4e f8 eb 16 31 ff 89 ee e8 80 50 4e f8 85 ed 0f 8e 8a 00 00 00 e8 33 4c 4e f8 49 8d 5e 7f 48 89 d8 48 c1 e8 03 42 0f b6 04 20 <84> c0 0f 85 84 00 00 00 0f b6 1b 31 ff 89 de e8 0f 4f 4e f8 85 db
-RSP: 0018:ffffc90004907908 EFLAGS: 00000a07
-RAX: 0000000000000000 RBX: ffff88802e28ecff RCX: ffff88807d280000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff8947c904 R09: 1ffff11003ca5853
-R10: dffffc0000000000 R11: ffffed1003ca5854 R12: dffffc0000000000
-R13: ffff88802e28ec80 R14: ffff88802e28ec80 R15: ffff88802e28ece0
-FS:  00007fa63915c380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055e2897e7600 CR3: 000000002dc2c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- skb_release_all net/core/skbuff.c:1171 [inline]
- __kfree_skb net/core/skbuff.c:1187 [inline]
- consume_skb+0x7b/0x160 net/core/skbuff.c:1409
- __unix_dgram_recvmsg+0xcea/0x12f0 net/unix/af_unix.c:2474
- sock_recvmsg_nosec net/socket.c:1046 [inline]
- sock_recvmsg+0x22f/0x280 net/socket.c:1068
- sock_read_iter+0x2ca/0x3e0 net/socket.c:1138
- new_sync_read fs/read_write.c:395 [inline]
- vfs_read+0x9c4/0xbd0 fs/read_write.c:476
- ksys_read+0x1a0/0x2c0 fs/read_write.c:619
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa6392b0b6a
-Code: 00 3d 00 00 41 00 75 0d 50 48 8d 3d 2d 08 0a 00 e8 ea 7d 01 00 31 c0 e9 07 ff ff ff 64 8b 04 25 18 00 00 00 85 c0 75 1b 0f 05 <48> 3d 00 f0 ff ff 76 6c 48 8b 15 8f a2 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffec9bf54e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fa6392b0b6a
-RDX: 00000000000000ff RSI: 000055cf5b545950 RDI: 0000000000000000
-RBP: 000055cf5b545910 R08: 0000000000000001 R09: 0000000000000000
-R10: 00007fa63944f3a3 R11: 0000000000000246 R12: 000055cf5b54598a
-R13: 000055cf5b545950 R14: 0000000000000000 R15: 00007fa639493a80
- </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.151 msecs
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>
+>                                                         Thanx, Paul
+>
+> > Thanks
+> > Zqiang
+> >
+> >
+> > > I don't count the fuzzers because they are supposed to avoid specifying
+> > > things that are supposed to fail.  ;-)
+> > >
+> > >                                                         Thanx, Paul
+> > >
+> > > > Thanks
+> > > > Zqiang
+> > > >
+> > > > >
+> > > > > Hi, Paul
+> > > > >
+> > > > > The rcutorture.object_debug is set true, but the tasks-tracing does not support
+> > > > > duplicate cur_ops->call check, but the debug_objects test was still done.
+> > > > >
+> > > > > insmod rcutorture.ko torture_type=tasks-tracing fwd_progress=4
+> > > > > n_barrier_cbs=4 object_debug=1
+> > > > >
+> > > > > [  106.082416] rcutorture: WARN: Duplicate call_tasks-tracing() test starting.
+> > > > > [  106.082533] tasks-tracing-torture: rcu_torture_read_exit: Start of test
+> > > > > [  106.082543] tasks-tracing-torture: rcu_torture_read_exit: Start of episode
+> > > > > [  106.105552] rcutorture: duplicated callback was invoked.
+> > > > > [  106.105567] rcutorture: duplicated callback was invoked.
+> > > > > [  106.111269] rcutorture: WARN: Duplicate call_tasks-tracing() test complete.
+> > > > >
+> > > > > Thanks
+> > > > > Zqiang
+> > > > >
+> > > > > >
+> > > > > > Or do you have a use case that needs to silence these warnings?
+> > > > > >
+> > > > > >                                                         Thanx, Paul
+> > > > > >
+> > > > > > > +                             (!cur_ops->call || !cur_ops->cb_barrier)))
+> > > > > > >               return;
+> > > > > > >
+> > > > > > >       struct rcu_head *rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
+> > > > > > > --
+> > > > > > > 2.17.1
+> > > > > > >
 
