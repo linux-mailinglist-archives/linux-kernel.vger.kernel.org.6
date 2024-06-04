@@ -1,54 +1,46 @@
-Return-Path: <linux-kernel+bounces-200290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521478FAE25
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186058FAE26
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CFA1F27B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:56:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7061F27D52
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35180142E8F;
-	Tue,  4 Jun 2024 08:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF49142E82;
+	Tue,  4 Jun 2024 08:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P6ElIW8W"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="W1llwgMs"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6D9BA39;
-	Tue,  4 Jun 2024 08:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7C2142900
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717491361; cv=none; b=ByDQrZ5cpswgPcQZX9BeDLYYbwE20A/GOHKHUL1fbJ4QPSHt9Bwz1+lm8byMx0zduS9gRKF6jJqqSx+qaT74i9CjGB162l+IHQ3ZUMmgVrSutA15A4wfIpyuKH6XBT1WPImIshh91BoLCtzLEq6aw4SChhnTGtYHXRZq5iUCB8I=
+	t=1717491380; cv=none; b=Pt8B0j6Iamvxr0x9u/CqS1IdhRMPWvYWwGiwZnVurgS44WJihWt3OrPkCypmFfEpivKnwv6j3scQsqig1Oq4yOyM0KDi9DJLAt8UEppnZ+oziIIBV0q1tZZGlr627rGdSKIOKvG3uvKOAMj48eNtmvMnfcLExler3RCE3o5tIZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717491361; c=relaxed/simple;
-	bh=r2ck1rsuVVphLHKbN3/pA2NZ4RAXxpCpbkmrsFDVE5g=;
+	s=arc-20240116; t=1717491380; c=relaxed/simple;
+	bh=8cknAkmefqkx+qv8NvnS0Os0vDp4UwIBi3e26OJQHVk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fVIIwYeQDQsA7Zn/C9//TNDhJv9WGwadMFKuytqT0H4CAOC/5fqmcgdnKGmkIwbyKJMLEyioJxGuxadkq/Pp8zSpHF5PLj7JxLPU3n0pV5X5kU66OlqajLlnMDc4Bauv95r1e/e23Syz2DeDFNJiELoDw+O4yNBmtdXQmzg1JLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P6ElIW8W; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717491357;
-	bh=r2ck1rsuVVphLHKbN3/pA2NZ4RAXxpCpbkmrsFDVE5g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P6ElIW8WPmTOX0jW3jw2xp/rjwSPQt4ZKDODVDJxlOKrsa4qdnBeSkQ2YUJJUJc4Q
-	 JOvi6t5r10Qk7hXsnAJ1mDPbLEmcaURAqo3UZtkbjyh+e15CMYEBwnbGBeP0aUV6on
-	 Fd1uYD0AqcgMEFnIiF+N/iJ0ImD9NUBavw7BlmwETppxrBgJV6bS4k6WgIXWwhQ8Dv
-	 EpZxNOEYZ/1ieAe5X6W+UUt6Oi5cogBZ0lzLfnhuQKjxt//IJ+UIIQWNwZfyVa6Xs5
-	 S8GuDrSqNIj3LG0bTJczaRuL+mma50nfQ/hyannt2+xuOuTdLr1BXVhN+qCrBroLv7
-	 ynLjRJ8EjbugQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6DAB737820A7;
-	Tue,  4 Jun 2024 08:55:56 +0000 (UTC)
-Message-ID: <dc46258b-caf9-46a7-84b4-2f229d48b8f7@collabora.com>
-Date: Tue, 4 Jun 2024 10:55:55 +0200
+	 In-Reply-To:Content-Type; b=A/Y0s1/ilxM2WK2Fzhsc05XD/1A19vszac0REEnGJYRBvd42Ve4bwhLWEYR3FOIBq2Z4OtL32xhFEPqk4nSAoXK286vZNkqCwhV7Pf6KASf0b89LAUzxOM3VVAXXVcTcIygCelXMdK6cL2dXl/SG5YHp2v0ImJg6oxzn6+mU+QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=W1llwgMs; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717491369; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=EgfUmXsqgmNwj+rMaReGgCA4wiQq2XPkVYnu/r4iAGA=;
+	b=W1llwgMsY1DsrMJp5C+UGXmPpWlqOhOH5AD/tmz1+p8sMAXnC8m5vXAuAzIeaTCYe2iFQVjhHcZXis+jpPiZaHrkqPXALL/sxeEw3QOdO2QB6cOFLEiLbiPtWijDnOjhwjEdf4+Ov+SVDslnTWmjRM6YeVden0LNleM5p7MtwBY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R601e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7qIn4D_1717491368;
+Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7qIn4D_1717491368)
+          by smtp.aliyun-inc.com;
+          Tue, 04 Jun 2024 16:56:09 +0800
+Message-ID: <89bd659b-a85f-48f2-98ce-f7522cdb95da@linux.alibaba.com>
+Date: Tue, 4 Jun 2024 16:56:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,138 +48,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] dt-bindings: iio: adc: Add MediaTek MT6359 PMIC
- AUXADC
-To: Krzysztof Kozlowski <krzk@kernel.org>, jic23@kernel.org
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, lee@kernel.org,
- andy@kernel.org, nuno.sa@analog.com, bigunclemax@gmail.com,
- dlechner@baylibre.com, marius.cristea@microchip.com,
- marcelo.schmitt@analog.com, fr0st61te@gmail.com, mitrutzceclan@gmail.com,
- mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20240530093410.112716-1-angelogioacchino.delregno@collabora.com>
- <20240530093410.112716-2-angelogioacchino.delregno@collabora.com>
- <c2b97c8e-177e-4169-b001-ab0e3303734f@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <c2b97c8e-177e-4169-b001-ab0e3303734f@kernel.org>
+Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
+To: yangge1116@126.com, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
+References: <1717488551-18053-1-git-send-email-yangge1116@126.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <1717488551-18053-1-git-send-email-yangge1116@126.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 01/06/24 17:32, Krzysztof Kozlowski ha scritto:
-> On 30/05/2024 11:34, AngeloGioacchino Del Regno wrote:
->> Add a new binding for the MT6350 Series (MT6357/8/9) PMIC AUXADC,
->> providing various ADC channels for both internal temperatures and
->> voltages, audio accessory detection (hp/mic/hp+mic and buttons,
->> usually on a 3.5mm jack) other than some basic battery statistics
->> on boards where the battery is managed by this PMIC.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   .../iio/adc/mediatek,mt6359-auxadc.yaml       | 43 +++++++++++++++++++
->>   .../iio/adc/mediatek,mt6357-auxadc.h          | 21 +++++++++
->>   .../iio/adc/mediatek,mt6358-auxadc.h          | 22 ++++++++++
->>   .../iio/adc/mediatek,mt6359-auxadc.h          | 22 ++++++++++
->>   4 files changed, 108 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6357-auxadc.h
->>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6358-auxadc.h
->>   create mode 100644 include/dt-bindings/iio/adc/mediatek,mt6359-auxadc.h
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->> new file mode 100644
->> index 000000000000..dd6c331905cf
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt6359-auxadc.yaml
->> @@ -0,0 +1,43 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: MediaTek MT6350 series PMIC AUXADC
->> +
->> +maintainers:
->> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> +
->> +description:
->> +  The Auxiliary Analog/Digital Converter (AUXADC) is an ADC found
->> +  in some MediaTek PMICs, performing various PMIC related measurements
->> +  such as battery and PMIC internal voltage regulators temperatures,
->> +  accessory detection resistance (usually, for a 3.5mm audio jack)
->> +  other than voltages for various PMIC internal components.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - mediatek,mt6357-auxadc
->> +      - mediatek,mt6358-auxadc
->> +      - mediatek,mt6359-auxadc
->> +
->> +  "#io-channel-cells":
->> +    const: 1
->> +
->> +additionalProperties: false
+
+
+On 2024/6/4 16:09, yangge1116@126.com wrote:
+> From: yangge <yangge1116@126.com>
 > 
-> If there is going to be a re-spin, please move this below required: block.
+> If a page is added in pagevec, its ref count increases one, remove
+> the page from pagevec decreases one. Page migration requires the
+> page is not referrened by others except page mapping. Before
+> migrating a page, we should try to drain the page from pagevec in
+> case the page is in it, however, folio_test_lru() is not sufficient
+> to tell whether the page is in pagevec or not, if the page is in
+> pagevec, the migration will fail.
 > 
+> Remove the condition and drain lru once to ensure the page is not
+> referrenced by pagevec.
 
-Yep, will do. Fixed up for v2.
+This looks sane to me and seems a simple way to fix.
 
->> +
->> +required:
->> +  - compatible
->> +  - "#io-channel-cells"
->> +
->> +examples:
->> +  - |
->> +    pmic {
->> +        pmic_adc: adc {
->> +            compatible = "mediatek,mt6359-auxadc";
->> +            #io-channel-cells = <1>;
->> +        };
+> Signed-off-by: yangge <yangge1116@126.com>
+> ---
+>   mm/gup.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This suggests that you should grow (make complete) the parent PMIC example.
+> diff --git a/mm/gup.c b/mm/gup.c
+> index ca0f5ce..890dcbc 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2411,7 +2411,7 @@ static unsigned long collect_longterm_unpinnable_pages(
+>   			continue;
+>   		}
+>   
+> -		if (!folio_test_lru(folio) && drain_allow) {
+> +		if (drain_allow) {
+>   			lru_add_drain_all();
+>   			drain_allow = false;
+>   		}
 
-Uhm, should I instead add that to bindings/mfd/mediatek,mt6357.yaml and avoid
-growing the parent example?
-
-   adc:
-     type: object
-     $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml
-     unevaluatedProperties: false
-
-> 
-> Actually having this as a separate node is not really needed. Why it
-> cannot be just part of the MFD/parent node?
-> 
-
-(glossary: PWRAP = PMIC [SPI] WRAPper)
-
-The top node is the PWRAP, an IP that is (mostly) used to dispatch commands to
-the PMIC, but the AUXADC is not integrated into the PWRAP, but into the PMIC.
-
-Declaring the AUXADC as a PWRAP child would therefore be an incorrect description
-of the hardware.
-
-P.S.: not necessary, but to "complete the circle" ... note that the PWRAP can be
-       skipped on some SoCs/firmwares/configurations, even though afaik that's only
-       mostly for debugging purposes, it's not granted that you have pwrap between
-       SoC and PMIC on all SoCs/fws/confs, even though, all of the boards that are
-       supported upstream do have it and do require it.
-
-Cheers,
-Angelo
-
-> 
-> Best regards,
-> Krzysztof
-> 
-
-
-
+You should rebase your code on the latest mm-unstable branch, as 
+collect_longterm_unpinnable_pages() in the upstream has been replaced 
+with collect_longterm_unpinnable_folios().
 
