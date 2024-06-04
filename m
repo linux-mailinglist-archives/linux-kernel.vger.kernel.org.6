@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-201312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DDC8FBCE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:02:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20728FBCE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820491F24168
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:02:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB2AB245C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF3214B948;
-	Tue,  4 Jun 2024 20:01:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2803C13E8BF;
-	Tue,  4 Jun 2024 20:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF39414B06E;
+	Tue,  4 Jun 2024 20:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2hvvJec"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2934A2F25;
+	Tue,  4 Jun 2024 20:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717531306; cv=none; b=Fr+chZ/O0YI9rkTFjxWn7IFY8tGjQwqMntMchL8srHimMuOtq1r9FxsCOy/wA+pJxiHy0Vvwgs6JcLIes3FTuIC9oBQd53BvB8w4lEiGvoexE363qcGq5LX6IYuFBgbpZ947neLIEtQ7FwIHRMuQeNOLm7wyc2aRndnjsAE6Wj0=
+	t=1717531353; cv=none; b=mQqHeyP1hB33Dbcq4JjuxviC5sBKvF79zwZPf/v4x6WAgHF+6Olr9hTo47tFoc/lTMN4UaXDjLkzDHxEHQPVSS34EMuxhIG6JNT4XFyYgSMQHhR6dgHFEYah/N8q9KYfQUO6Cc4JZOFlJQ1Sl5VIjh1uRsFZ3qhHNRb6SXx/Ajs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717531306; c=relaxed/simple;
-	bh=RAw2k4mzU8OEDpDAeN6B2j6vr4BCw4gc3iGeitqWH58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGmnAmwtcBmNE07f+U1YnsG+O59CpaYhLd3XXz3pnCLJoAWX1gBGJzcTNFTK/3RCNZcz/q4j0wDdpbKj/pitec6TEo4JC0FGCd/GD4UnV29AqzdXag8gIh0CQNFKSz8/SNZQWakdHkruR7beef6jQ5UAFKYSjPHaK6V2feZl+iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=foss.arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=foss.arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54970FEC;
-	Tue,  4 Jun 2024 13:02:08 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F6D83F64C;
-	Tue,  4 Jun 2024 13:01:42 -0700 (PDT)
-Message-ID: <fc940d6d-7ac3-4f69-8ace-459955f72281@foss.arm.com>
-Date: Tue, 4 Jun 2024 21:01:41 +0100
+	s=arc-20240116; t=1717531353; c=relaxed/simple;
+	bh=C03j361njVg4JXjPqtmUFvHRfGoTtT0HMO6MWEnBjD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nNFjkpocRdVty6MDatZwDBUnqyCGV5bOG5cfdoOFp8UZ02JQj7pEYHiNK434atXOmzxQabTa2GOryijkX0uNUdD4WHv486gDMfh7hDH2x56yyuCaHeLdtuL+bFhyoj4/tHrmxWbEVJsEskottoyJoNsVUtEyqNHREZ3APrLTF+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2hvvJec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69386C2BBFC;
+	Tue,  4 Jun 2024 20:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717531352;
+	bh=C03j361njVg4JXjPqtmUFvHRfGoTtT0HMO6MWEnBjD4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P2hvvJec59HIjb+GZyxy03zJn2BlxDfq6sbLaCZ5Atpi+j8EaeOZncwNmzFYiywbo
+	 UnY8pTupbLpVXDtgOdiTkJDW1qxltXliyK8NwWwHQ+2SGzs0RsHxK5ioCZfNBhR6EZ
+	 FiDYoNth9CCsfdZEH8y/r0YnlUyKmo6uu7cy4WKlHEuO9iI3qO4gc7GpP2rvPX88vR
+	 T9k1onrmgU2tyWhvQGFzifD1Wgn0wTunq3SxdYstSbHpIuJBq4RbwhXg5Hg5zJStnN
+	 fRg+e5GH6yl4gGyp4VsMQ5KIFdnKA3yHUgjzmdv0ouA1DzkusDpFcfHrIXEdltP0JJ
+	 Yd8U9vnJp2d6w==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [RFC bpf-next 00/10] uprobe, bpf: Add session support
+Date: Tue,  4 Jun 2024 22:02:11 +0200
+Message-ID: <20240604200221.377848-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC/PATCH 1/1] tools headers arm64: Sync arm64's cputype.h with
- the kernel sources
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Besar Wicaksono <bwicaksono@nvidia.com>, Will Deacon <will@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-perf-users@vger.kernel.org, James Clark <james.clark@arm.com>
-References: <Zl4MYzhP0NB-Z1DW@x1> <Zl7aOk2h4_73JmUu@J2N7QTR9R3>
- <a1990b2e-2c10-42b6-93e9-fef324cb91b2@arm.com> <Zl9jLtiFagBcH7oH@J2N7QTR9R3>
-Content-Language: en-US
-From: Leo Yan <niayan01@foss.arm.com>
-In-Reply-To: <Zl9jLtiFagBcH7oH@J2N7QTR9R3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/4/24 19:55, Mark Rutland wrote:
+hi,
+this patchset is adding support for session uprobe attachment
+and using it through bpf link for bpf programs.
 
-[...]
+The session means that the uprobe consumer is executed on entry
+and return of probed function with additional control:
+  - entry callback can control execution of the return callback
+  - entry and return callbacks can share data/cookie
 
->> Now more and more Arm CPUs support the data source in SPE and share the same
->> data source format. It's not scalable for us to adding every CPU variant
->> into the file util/arm-spe.c.
->>
->> I would like to expose the PMSIDR_EL1.LDS bit (Data source indicator for
->> sampled load instructions) via the 'cap' folder, and then we can save this
->> info into the perf meta data during record phase.
-> 
-> I'd be happy to expose fields from PMSIDR_EL1.
-> 
->> In the perf report, we can parse the meta data and if the
->> PMSIDR_EL1.LDS bit is set, the tool will parse the data source packet
->> based on the common format.
-> 
-> I don't believe that's right.
-> 
-> PMSIDR_EL1.LDS indicates that the loaded data source field is
-> implemented, but even when it is implemented, the format is
-> IMPLEMENTATION DEFINED.
+On more details please see patch #1.
 
-Thanks for correction. PMSIDR_EL1.LDS bit is necessary but not 
-sufficient for using the common data source format.
+thanks,
+jirka
 
-> Today, Arm Ltd implementations happen to share a format, but that isn't
-> implied by PMSIDR_EL1.LDS, and there's no guarantee that future CPUs
-> will all use the same format.
-> 
-> For the moment we'll have to keep adding to this list.
 
-I would like to use an opposite way - we can only maintain CPU variants 
-with special data source format, otherwise, all other CPUs use the 
-common format.
+---
+Jiri Olsa (10):
+      uprobe: Add session callbacks to uprobe_consumer
+      bpf: Add support for uprobe multi session attach
+      bpf: Add support for uprobe multi session context
+      libbpf: Add support for uprobe multi session attach
+      libbpf: Add uprobe session attach type names to attach_type_name
+      selftests/bpf: Move ARRAY_SIZE to bpf_misc.h
+      selftests/bpf: Add uprobe session test
+      selftests/bpf: Add uprobe session errors test
+      selftests/bpf: Add uprobe session cookie test
+      selftests/bpf: Add uprobe session recursive test
 
-Thanks,
-Leo
+ include/linux/uprobes.h                                            |  18 ++++++++++
+ include/uapi/linux/bpf.h                                           |   1 +
+ kernel/bpf/syscall.c                                               |   9 +++--
+ kernel/events/uprobes.c                                            |  69 +++++++++++++++++++++++++++++++++-----
+ kernel/trace/bpf_trace.c                                           |  72 +++++++++++++++++++++++++++++++---------
+ tools/include/uapi/linux/bpf.h                                     |   1 +
+ tools/lib/bpf/bpf.c                                                |   1 +
+ tools/lib/bpf/libbpf.c                                             |  51 ++++++++++++++++++++++++++--
+ tools/lib/bpf/libbpf.h                                             |   4 ++-
+ tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c         | 153 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/bpf_misc.h                       |   2 ++
+ tools/testing/selftests/bpf/progs/iters.c                          |   2 --
+ tools/testing/selftests/bpf/progs/kprobe_multi_session.c           |   3 +-
+ tools/testing/selftests/bpf/progs/linked_list.c                    |   5 +--
+ tools/testing/selftests/bpf/progs/netif_receive_skb.c              |   5 +--
+ tools/testing/selftests/bpf/progs/profiler.inc.h                   |   5 +--
+ tools/testing/selftests/bpf/progs/setget_sockopt.c                 |   5 +--
+ tools/testing/selftests/bpf/progs/test_bpf_ma.c                    |   4 ---
+ tools/testing/selftests/bpf/progs/test_sysctl_loop1.c              |   5 +--
+ tools/testing/selftests/bpf/progs/test_sysctl_loop2.c              |   5 +--
+ tools/testing/selftests/bpf/progs/test_sysctl_prog.c               |   5 +--
+ tools/testing/selftests/bpf/progs/test_tcp_custom_syncookie.c      |   1 +
+ tools/testing/selftests/bpf/progs/test_tcp_custom_syncookie.h      |   2 --
+ tools/testing/selftests/bpf/progs/uprobe_multi_session.c           |  52 +++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_cookie.c    |  50 ++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c |  44 ++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/verifier_subprog_precision.c     |   2 --
+ 27 files changed, 507 insertions(+), 69 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_cookie.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
 
