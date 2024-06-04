@@ -1,153 +1,255 @@
-Return-Path: <linux-kernel+bounces-201340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C048FBD37
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:19:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE288FBD39
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8531F22322
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:19:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DF841C23C0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20AA14B95B;
-	Tue,  4 Jun 2024 20:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB4014B95F;
+	Tue,  4 Jun 2024 20:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rG/dc3M1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ApGpR4iA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1232783CD6;
-	Tue,  4 Jun 2024 20:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85A583CD6;
+	Tue,  4 Jun 2024 20:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717532373; cv=none; b=M4+8Ck5syhW5JjxZo0MD/dMmyokvLD5Ez+flHECTFJWm2OB2DHPAMP1KD/NNEbb+8jhaH5OBqfuby5f8yzCiYvQuE2HryP3DwnTBi1FmvQlLg/fC5Ryn+bKm97W24R85M7e52Et1HdCDnR7o40CetaQf6anbxagPtoepTxXZd0s=
+	t=1717532528; cv=none; b=mDEALPP8mtZQkXBu/Q1xO42idklr6bjsTfG5kmARimhI8c7Dh02giQwftdtb5IqhLrog11nI+p48afj/OPYm8uuOlvdC4smVZwn3Ksm7Eo7XaVOuzGQGjvqftqTWhvUg1WxunRa8mnOsFHtH/mml8QlXT1s+ioGdmLeYVb9w9kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717532373; c=relaxed/simple;
-	bh=xfed6Cfrm4TYAkaOK6QS9lthrhaOfXoUEarZpKNCE3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O86/Wz19ukwpeu55oPnYZjjMcfwAhONTxD/b1vIvHyga+9YvbLMdhIsMW1NwnEB47wLfsxkp1qw4pU6pHk158OYhgKAyulkD/rfDQernhPWhh2JdMq4ta9skSQxtggG3QtBqMZt4FTUy7b7PwLUbtrKVUFBecfeTEOt0N8MysLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rG/dc3M1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64E7C4AF08;
-	Tue,  4 Jun 2024 20:19:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717532372;
-	bh=xfed6Cfrm4TYAkaOK6QS9lthrhaOfXoUEarZpKNCE3o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rG/dc3M1CG5owOIa1XY6ze4o7kfMnD+PsTfmDwTVwgwG9ydgIW+oS5cJAsUNTIpD0
-	 RN+NGNQnSwiE5VCW+UQLk08bqTGnghi4AeIOF8Q0b8M+7mp8FvyyfqQOo8YIPKMhOY
-	 p6dd/ECrPIqdLrjz1WedwmuDPjsIrLrOlco6IOWGzpTl0IFeJqJmGTfIigRkL/tmTJ
-	 2InR+eOV2BGWjOEHMD/Fgb+9qI0RdNYz/1a6I8hTVdrAWsb3MfbLqrn13bBBg86w/U
-	 P7z70Xzz4dLq/xsowpHr6jQ/PgIp1XqPdmDZRVUGcQb02/1sH8KIk9jXYAWAdchRy5
-	 gBMhcNXprTCXQ==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b8b638437so1700767e87.3;
-        Tue, 04 Jun 2024 13:19:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzZ1HtoTgr3HdcMVxEmfmyshqPZbVPpVOWLMD7btqsYAZKBbee3qAFSP2vDIi2EmnNN7IrZPMn5utccImE+A316zECtx0q4oGUD1/9viOs85iGN0DaeiXzxcXoEBKqAro2IziXwJMibnc3wZbUqC0Ulc0XlNDF8J9CvrDnpYnKXWFG+EImY0PUAKgOfsbMk1GEBbpPFn1xxQUpVXGiG7/e0nBLxQ==
-X-Gm-Message-State: AOJu0YxRmgDAQ1kLfzhcBfZ94XxrIuId8nZvXMLFyqOaitliYsSIuceg
-	nd+kXONeTqt1B8I+8wk7mse2YE8mhNbLb1I1Rz8anx5dRm+RAsKRV2XUB398tE3qXAf1/F3AW7W
-	5gtl8+fxaXxbAssgN7k/o5cdaCw==
-X-Google-Smtp-Source: AGHT+IGG/ugXWVgGpCxPMAP/Ccqb4aZBz8y38s1TLqki2W99KFPyOdEm7ffLjdVe1PWTT7lBgxduFT+JvaciNq7bwps=
-X-Received: by 2002:a05:6512:1597:b0:52b:2031:4b93 with SMTP id
- 2adb3069b0e04-52bab4ca9d7mr467209e87.4.1717532371055; Tue, 04 Jun 2024
- 13:19:31 -0700 (PDT)
+	s=arc-20240116; t=1717532528; c=relaxed/simple;
+	bh=rj8tuvfVT3pQXy2JtATqZMda5lX7uPjdNHpX+MjWHuI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=syhLbrSiAA6tLa7tOrut+CkCIZkmSSEJNr56F+GPELs1ych2+J8eRyx0IDnE37nPE7tmy4BCxVJS50uxSyR8N4djs7x0h0j4T//Ws86bzieSoWTH+0HI3DRJYoP4StMYnEALOi4NPxVYkR7YjQ8hWdpLoQ4xRrwghQNH7v94ZzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ApGpR4iA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454HIXuM005515;
+	Tue, 4 Jun 2024 20:21:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	14uxE1rIsU28J32tiKle2lkHmGkT0MrPRwVsVv/GKAc=; b=ApGpR4iA0V5c7T58
+	ivv/FVMC+4vAsgyUNmIa/DOCRnsouAKkx+Tp8xm5OaEXyZk1ctU0jcHOLpET7UPo
+	C6NU9a7i8uk0lrjsg+g2Ze/Z6eYcQtmRkxiFHxDITkLlNGRyYUdJXBqA/xG+5W3N
+	UwIaB45IetpFqN/nN1tABl5o08LiAVZSyJVQoLXbo89+qALmrZ4CT/gqpdWRj9fV
+	0ernVGT0kbTFtj9wN5R5irjcwNnQGdcefSREgsIgULRFYbLAmCAJq0o/cKTpisNa
+	8YYy1L1wRCBlDBJOdKGa8sxLcDxzpAgNV5yFW5/x4+/adtWcN+MP0VCig+tj/lgv
+	ZWo2NQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj76wgcgj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 20:21:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454KLsaF013298
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Jun 2024 20:21:54 GMT
+Received: from [10.48.241.109] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 13:21:53 -0700
+Message-ID: <362fccea-707f-4430-8da3-8acc6ac5fbe9@quicinc.com>
+Date: Tue, 4 Jun 2024 13:21:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603223811.3815762-1-sboyd@kernel.org> <20240603223811.3815762-8-sboyd@kernel.org>
- <20240604130526.GA12945-robh@kernel.org> <cce5a85e48f35f5ad5464a2443ca972e.sboyd@kernel.org>
-In-Reply-To: <cce5a85e48f35f5ad5464a2443ca972e.sboyd@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 4 Jun 2024 15:19:18 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+mGbW=4RbF+E1knvQco+5b1s7Tk8=2wyo9rT48Q=zkFQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+mGbW=4RbF+E1knvQco+5b1s7Tk8=2wyo9rT48Q=zkFQ@mail.gmail.com>
-Subject: Re: [PATCH v5 07/11] dt-bindings: test: Add single clk consumer
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, 
-	Christian Marangi <ansuelsmth@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Ripard <maxime@cerno.tech>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cxl: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Vishal Verma
+	<vishal.l.verma@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240603-md-drivers-cxl-v1-1-f2940f5c0836@quicinc.com>
+ <20240604170445.00005c67@Huawei.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240604170445.00005c67@Huawei.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yfAKyCKxeS-gM4in7p3Eabdjkfl6f08i
+X-Proofpoint-ORIG-GUID: yfAKyCKxeS-gM4in7p3Eabdjkfl6f08i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
+ adultscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406040164
 
-On Tue, Jun 4, 2024 at 1:28=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wrot=
-e:
->
-> Quoting Rob Herring (2024-06-04 06:05:26)
-> > On Mon, Jun 03, 2024 at 03:38:04PM -0700, Stephen Boyd wrote:
-> > > Describe a binding for a device that consumes a single clk in DT. Thi=
-s
-> > > will initially be used by a KUnit test to clk_get() the clk registere=
-d
-> > > by of_fixed_clk_setup() and test that it is setup properly.
-> > >
-> > > Cc: Rob Herring <robh@kernel.org>
-> > > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> > > Cc: Conor Dooley <conor+dt@kernel.org>
-> > > Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> > > Cc: David Gow <davidgow@google.com>
-> > > Cc: Rae Moar <rmoar@google.com>
-> > > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> > > ---
-> > >  .../test/test,single-clk-consumer.yaml        | 34 +++++++++++++++++=
-++
-> > >  1 file changed, 34 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/test/test,singl=
-e-clk-consumer.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/test/test,single-clk-c=
-onsumer.yaml b/Documentation/devicetree/bindings/test/test,single-clk-consu=
-mer.yaml
-> > > new file mode 100644
-> > > index 000000000000..8c384c48707d
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/test/test,single-clk-consumer=
-.yaml
-> > > @@ -0,0 +1,34 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/test/test,single-clk-consumer.yam=
-l#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Test consumer of a single clock
-> > > +
-> > > +maintainers:
-> > > +  - Stephen Boyd <sboyd@kernel.org>
-> > > +
-> > > +description:
-> > > +  A consumer of a single clock used in tests.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: test,single-clk-consumer
-> >
-> > I don't know if there's much value in defining bindings for tests. We
-> > could alternatively make 'test,' opt out of everything. There's already
-> > some support in dtschema for this with 'foo,'.
-> >
-> > I need something for the DT unittest as well.
-> >
->
-> Ok. So I should drop this patch and the other one that adds a binding
-> for the fake clock provider?
+On 6/4/2024 9:04 AM, Jonathan Cameron wrote:
+> On Mon, 3 Jun 2024 21:48:53 -0700
+> Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+> 
+>> make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+>>
+>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> 
+> This has been irritating me as well.  Need to do
+> drivers/perf/cxl_pmu.c at somepoint as well but given that goes through
+> a different maintainer makes sense to do separately.
+> 
+> Only comment I have is that we should probably strive for more consistency
+> than you currently have.  Always expand CXL or never do, use
+> colons consistently, use Support everywhere or nowhere.
 
-Yes.
+I'm going through a bunch of these tree-wide, and usually just copy/paste
+either from existing comments in the .c file or the description of any
+associated Kconfig item.
 
-> And replace it with something that makes
-> the test vendor prefix opt out of all checking? How is that done?  Some
-> patch to dtschema directly?
+>> ---
+>>  drivers/cxl/acpi.c      | 1 +
+>>  drivers/cxl/core/port.c | 1 +
+>>  drivers/cxl/mem.c       | 1 +
+>>  drivers/cxl/pci.c       | 1 +
+>>  drivers/cxl/pmem.c      | 1 +
+>>  drivers/cxl/port.c      | 1 +
+>>  6 files changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+>> index 571069863c62..e51315ea4a6a 100644
+>> --- a/drivers/cxl/acpi.c
+>> +++ b/drivers/cxl/acpi.c
+>> @@ -921,6 +921,7 @@ static void __exit cxl_acpi_exit(void)
+>>  /* load before dax_hmem sees 'Soft Reserved' CXL ranges */
+>>  subsys_initcall(cxl_acpi_init);
+>>  module_exit(cxl_acpi_exit);
+>> +MODULE_DESCRIPTION("CXL ACPI: Platform Support");
 
-Yes, but I just added it for you.
+From Kconfig:
+config CXL_ACPI
+        tristate "CXL ACPI: Platform Support"
 
-Rob
+>>  MODULE_LICENSE("GPL v2");
+>>  MODULE_IMPORT_NS(CXL);
+>>  MODULE_IMPORT_NS(ACPI);
+>> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+>> index 887ed6e358fb..ccaa00cd0321 100644
+>> --- a/drivers/cxl/core/port.c
+>> +++ b/drivers/cxl/core/port.c
+>> @@ -2356,5 +2356,6 @@ static void cxl_core_exit(void)
+>>  
+>>  subsys_initcall(cxl_core_init);
+>>  module_exit(cxl_core_exit);
+>> +MODULE_DESCRIPTION("CXL (Compute Express Link) Devices Support");
+> 
+> Why the expanded version for this one?
+> 
+> I'm not sure Devices really makes sense here, particularly as it
+> likely a range of other driver will make some use of this core
+> functionality over time.  Maybe "CXL core" is sufficient?
+> 
+
+From Kconfig:
+menuconfig CXL_BUS
+        tristate "CXL (Compute Express Link) Devices Support"
+
+>>  MODULE_LICENSE("GPL v2");
+>>  MODULE_IMPORT_NS(CXL);
+>> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+>> index 0c79d9ce877c..1afb0e78082b 100644
+>> --- a/drivers/cxl/mem.c
+>> +++ b/drivers/cxl/mem.c
+>> @@ -252,6 +252,7 @@ static struct cxl_driver cxl_mem_driver = {
+>>  
+>>  module_cxl_driver(cxl_mem_driver);
+>>  
+>> +MODULE_DESCRIPTION("CXL: Memory Expansion");
+> 
+> Why does this one get a colon? Also no Support at the end?
+
+From Kconfig:
+config CXL_MEM
+        tristate "CXL: Memory Expansion"
+
+> 
+>>  MODULE_LICENSE("GPL v2");
+>>  MODULE_IMPORT_NS(CXL);
+>>  MODULE_ALIAS_CXL(CXL_DEVICE_MEMORY_EXPANDER);
+>> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+>> index e53646e9f2fb..2c17fcb1b4ee 100644
+>> --- a/drivers/cxl/pci.c
+>> +++ b/drivers/cxl/pci.c
+>> @@ -1066,5 +1066,6 @@ static void __exit cxl_pci_driver_exit(void)
+>>  
+>>  module_init(cxl_pci_driver_init);
+>>  module_exit(cxl_pci_driver_exit);
+>> +MODULE_DESCRIPTION("CXL PCI manageability");
+
+Kconfig just has:
+config CXL_PCI
+        tristate "PCI manageability"
+
+I added CXL
+
+>>  MODULE_LICENSE("GPL v2");
+>>  MODULE_IMPORT_NS(CXL);
+>> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
+>> index 2ecdaee63021..4ef93da22335 100644
+>> --- a/drivers/cxl/pmem.c
+>> +++ b/drivers/cxl/pmem.c
+>> @@ -453,6 +453,7 @@ static __exit void cxl_pmem_exit(void)
+>>  	cxl_driver_unregister(&cxl_nvdimm_bridge_driver);
+>>  }
+>>  
+>> +MODULE_DESCRIPTION("CXL PMEM: Persistent Memory Support");
+
+From Kconfig:
+config CXL_PMEM
+        tristate "CXL PMEM: Persistent Memory Support"
+
+>>  MODULE_LICENSE("GPL v2");
+>>  module_init(cxl_pmem_init);
+>>  module_exit(cxl_pmem_exit);
+>> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
+>> index 97c21566677a..5ceff1df60db 100644
+>> --- a/drivers/cxl/port.c
+>> +++ b/drivers/cxl/port.c
+>> @@ -209,6 +209,7 @@ static struct cxl_driver cxl_port_driver = {
+>>  };
+>>  
+>>  module_cxl_driver(cxl_port_driver);
+>> +MODULE_DESCRIPTION("CXL Port Support");
+
+This I just made up from the others since config CXL_PORT doesn't have a menu
+description or help text and the .c file begins with:
+ * DOC: cxl port
+
+
+>>  MODULE_LICENSE("GPL v2");
+>>  MODULE_IMPORT_NS(CXL);
+>>  MODULE_ALIAS_CXL(CXL_DEVICE_PORT);
+
+If you have specific edits you'd like me to make, I'm happy to make them.
+I have no opinion on the content -- I just want to get rid of the warnings :)
+
+/jeff
+
 
