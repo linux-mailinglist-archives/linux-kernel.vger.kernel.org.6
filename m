@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-201270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE058FBC35
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:09:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE09A8FBC46
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E2C1C243CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD511C24373
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDA514B077;
-	Tue,  4 Jun 2024 19:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5F814B083;
+	Tue,  4 Jun 2024 19:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3RGWuRG"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XX0Ajj3Y"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800F614AD2B;
-	Tue,  4 Jun 2024 19:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECE314A0B8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 19:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717528152; cv=none; b=EKcaRnhwzzRlpkQuMP5JD7BcaftFcZkHyRsaPOWe4WF6epb3nOh0WK3pmdB493LOPheaPQIK+0Hdf5VoDG7UICXQMhqSNj0KTvBAZ2lPR2UmoTilWYANNKaSHxS8DAI/WKVEbd/38pBwl9okRvmc0rc+RYI4J/+N4BZDNc/7Fuw=
+	t=1717528242; cv=none; b=PEWPeio7Pgb0hF0akTuMwEKRvUk15B31ijlnIE93JvM+jyxSW0MnVSXGsVF2TG3yt6q7/wtNYovVUZCkGyGp0ycoCi8t9UaMShElTDl09GJi8bZXytH66ohaurojg9a9o5ww/PJY3PZj/fwGyuJbpOnP4s9iR06l1TJF7X7gawI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717528152; c=relaxed/simple;
-	bh=5O2hvcEPB+WifLBOM64rjrb5IN0YGFwc6fcMkZJFpNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tWgZVO123EIsR4z9tgKbwCWotDFdtn9rZ1iI5SEzBh9VuN2+y+FPB/DgV592CcEBFDjgWEuamvZ9vLCCKt7jNVoyQxxliQz4Cc2NHnmW45IxevmNgas9s/gkoUh0Jew5qvjcjONu6x/ofO2+7aqNkPX0ikN3Pza4igo6fBvERtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3RGWuRG; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f480624d04so48125305ad.2;
-        Tue, 04 Jun 2024 12:09:11 -0700 (PDT)
+	s=arc-20240116; t=1717528242; c=relaxed/simple;
+	bh=6WRhNvMputCmUE8KuRCNypytBhygsDlUsvmXPlqiqT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=g5BX9BU/WGnPHA4aC9jQ9hFKiEnxWrsJmkCktsN3lBkHvYTyxmu4GKA/X7qUd0Y4RKfWVVBz1M1ZAeR08UwprVfMyRvYR9B959fmhwT49pX/qhIVjAYuFKLIMzT0/iDG3MMHTe8dxf6uY4Z1NNdKqG/urJSwjqRDMqyWV8Uz9pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XX0Ajj3Y; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a4ce82f30so4245944a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 12:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717528151; x=1718132951; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lBlKoYwvZRYVCTZgzTwhw1nqnwRx3L1d/Hdiocgdp9c=;
-        b=Q3RGWuRGlPYpLhn1XHa2uWN8wu8Jr/RG0zgXtvGvP34q1rqBrBXgc55bHzHKrs1+rw
-         dCfa+ISH972d6GNNY+N4QU8N1gyJ8YuWi65XneX3xc06OdJ79PmIOoCIx4a7v89Ia5m+
-         Bo5XxnUq9olJU3wI3g6Sfq/8RQOOuqu4hfOtdo+Ygaxz6oyjldd0X26xmF6m9LBRBti3
-         qs9h4s+QOymIRdrazhZNk04j9PxcJwZ43vfo7I+UDKJAgc2lyCVT72MtAOXIj2Lbx/hi
-         OLjPyjiaksqrY2bUzLrTEmdsu8HHP9L+MWGwg+d5IXmspcHihPDokL9nK1N9vDYjsrXM
-         uvJQ==
+        d=linaro.org; s=google; t=1717528238; x=1718133038; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uzA8SRe4whRjxMfh3T9fimsp/JqPLwi91HrTpjRxV+U=;
+        b=XX0Ajj3Y+1AZObqOfPb18cGyraQBDDLO2XIlAPS8Ly83mZMEaDukTwLl+9+4GwpKd2
+         THP7pT7DLRfk9UqrlX/fGSI5cZPLFm8D0w5CUdEI3pYebM+h81FoVigV9m2nEfYj4kRC
+         TonahQMlIiCAWbop+xMV9g639FTHM0BNlMfdtUrRWitQi6eLhlCZAtRVbPilZLWl0auA
+         8h2mQJGO7Hs2apj6epMapIMzjz6YH5eOzwmLsxZKClVONJ1f6gxRaW+EvpI+QRaIfMhz
+         7XZQpiWfGApQyh6Jx4J7T+OGwblLT6XKCE2SpIvVkKV0X1DWJhFjGQN7d0Qx/HnXjWz+
+         qRYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717528151; x=1718132951;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lBlKoYwvZRYVCTZgzTwhw1nqnwRx3L1d/Hdiocgdp9c=;
-        b=WWZMqJUUxl/zRSOz662erHoFYpfwVzyiqnszGIUcnfl9wEa+IGo/doMAXAF3ikii9J
-         PNG+gVMLPJywTV9agOfx861pVvZ4dGPdcFsc7k9OG9BRSV+BP1Q0Jc0ZAFiNyJ+YBiNd
-         9JmsypiRWY+b6zuwBthuDIz63g1S0jo0UJ868fxbcSeIrHv1F7cmIs3GZICUmoTtpdxQ
-         MHgbC6FazEhRpesmAOSh6nzapwlHNOo5D1LSzknd0vYGQC7CnzU5xutweEK2JqxcSE/s
-         mmYGZnYwtehrgNcN/QzQfix4Tv8uHebuxxhkoSe/QSUrCNZbWK3jxxoDF22AqSc9SGMd
-         3qVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7CtPt2+H2sj9Mt/JpC5V4771bNoAifZ9ZJBv747e75dmHZQaMxtITC4AjJ+Uy31eW0pJ9Ks48mQdYKmjbaU4e6kFp2gywqC40TscOqc1gTJzShmkSWRNlUjTPrm9lwo0tKmkvzGpUKA8huSh076eU/RSIHJ/fjkk3Qxd5b+rFy9mze9Tx
-X-Gm-Message-State: AOJu0YwUUYzYje15mSHohTtPnsamLuTe6L3L134tVcQnv5cI85DMcRM0
-	auipNnXPKSZTnK48oIcA7pBWDuTC/m3WPSUZmon2gkX1CD4ctVnv
-X-Google-Smtp-Source: AGHT+IF2CgvPQeC3wsa6Wxy+YuRpwdo5sw8trQD/dcdJCI61OHiJLZHSBEaHAviXAx9+GkCKCcbzOQ==
-X-Received: by 2002:a17:902:f547:b0:1f6:700e:a2ca with SMTP id d9443c01a7336-1f6a5a28eb1mr5424485ad.39.1717528150639;
-        Tue, 04 Jun 2024 12:09:10 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:1327:f82:3fa9:728f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63232dd6bsm87130275ad.54.2024.06.04.12.09.09
+        d=1e100.net; s=20230601; t=1717528238; x=1718133038;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uzA8SRe4whRjxMfh3T9fimsp/JqPLwi91HrTpjRxV+U=;
+        b=UybXQ5tTLllWwtDwiwSHgOevIgzOHIvE3lOhIgn4ki7rsnPMK/j/TV/HVo8lPkFCsW
+         0VKMv2VogTj9yWhBB7PWKZYQsymQv6LwosO+Ybdg4Ijp8/K3qeXHaKNCgPSHjcyPa5cI
+         R38a8SLnxZq09JreXElRWLrY/K1vqUHcdHKAiSi5v6jZRo03DBy57k78p0kMAzGA/zfs
+         U9fa8BcPzJP9zPSmTBKi8M8ezK3+KvHbWm2pL9SSectMPoLGhC8BlaEXeVfKerse7dVu
+         sfK82PBdbC/aG54NvQft07G2fGEmKSkGu1mrCs5oIaa1h4j8ndUYgrKlFzhHPsdufFBH
+         wUwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnA+aL5KqWr82gfwKQp1SRlPFceSCAicK9vzmkm7dLbnohHeBHpeaXN8hlS7CCokkJq38fmBSdW/OtRUIwCS7Kz+U6iap/afXZ2BsY
+X-Gm-Message-State: AOJu0Yy+k/7WDn2iZBRT8P6bKFYA5Wc6mw/gszGsVInvw1YPMPQRrK15
+	OXM7JrAQ6dFk9B6BKabsiCqEygbGVUa0JncsBHGlNXvo3mAlPSKwTt0UVLLVgyc=
+X-Google-Smtp-Source: AGHT+IGlsLGfRHK0f6DmqF44S64KIFY4M3R+3mRgGUK5rWCZG7z77L7iKZ+bC3jDwWK1rj3XV48eRQ==
+X-Received: by 2002:a50:d4db:0:b0:57a:242e:806b with SMTP id 4fb4d7f45d1cf-57a8b6acd8emr362804a12.18.1717528237801;
+        Tue, 04 Jun 2024 12:10:37 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31bb825esm7847800a12.32.2024.06.04.12.10.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 12:09:10 -0700 (PDT)
-Date: Tue, 4 Jun 2024 12:09:07 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Daisuke Nojiri <dnojiri@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: dts: cros-ec-keyboard: Add keyboard matrix v3.0
-Message-ID: <Zl9mUxT2XXKHdb_e@google.com>
-References: <20240604005354.2294468-1-dnojiri@chromium.org>
- <20240604170935.2518856-1-dnojiri@chromium.org>
+        Tue, 04 Jun 2024 12:10:37 -0700 (PDT)
+Date: Tue, 4 Jun 2024 22:10:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Hyeonwoo Cha <chw1119@hanyang.ac.kr>,
+	david.sterba@suse.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, aivazian.tigran@gmail.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	tytso@mit.edu, adilger.kernel@dilger.ca,
+	hirofumi@mail.parknet.co.jp, sfr@canb.auug.org.au,
+	chw1119@hanyang.ac.kr, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	reiserfs-devel@vger.kernel.org
+Subject: Re: [PATCH v2] Fix issue in mark_buffer_dirty_inode
+Message-ID: <97ac9280-4c7b-4466-9cb8-2a81882f0b80@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,25 +86,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604170935.2518856-1-dnojiri@chromium.org>
+In-Reply-To: <20240604060636.87652-1-chw1119@hanyang.ac.kr>
 
-Hi Daisuke,
+Hi Hyeonwoo,
 
-On Tue, Jun 04, 2024 at 10:09:33AM -0700, Daisuke Nojiri wrote:
-> Add support for keyboard matrix version 3.0. To enable it, define
-> CONFIG_CROS_KBD_V30.
+kernel test robot noticed the following build warnings:
 
-I might be wrong but it looks to me if one enables support for v3 keymap
-then the kernel will not work for devices using other/older versions of
-keymap. It might be acceptable for Chrome OS kernels but will nto work
-for upstream.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I think you need to create arch/arm/boot/dts/cros-ec-keyboard-v3.dtsi
-that would define "keyboard_controller" node with proper keymap and
-include this new dtsi into std files for devices/boards that need it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Hyeonwoo-Cha/Fix-issue-in-mark_buffer_dirty_inode/20240604-140958
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20240604060636.87652-1-chw1119%40hanyang.ac.kr
+patch subject: [PATCH v2] Fix issue in mark_buffer_dirty_inode
+config: i386-randconfig-141-20240604 (https://download.01.org/0day-ci/archive/20240605/202406050218.U7c0DL3C-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
 
-Thanks.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202406050218.U7c0DL3C-lkp@intel.com/
+
+smatch warnings:
+fs/buffer.c:673 mark_buffer_dirty_fsync() warn: if statement not indented
+fs/buffer.c:682 mark_buffer_dirty_fsync() warn: inconsistent indenting
+
+vim +673 fs/buffer.c
+
+73295b4ed00de6 Hyeonwoo Cha            2024-06-04  667  void mark_buffer_dirty_fsync(struct buffer_head *bh, struct address_space *mapping)
+^1da177e4c3f41 Linus Torvalds          2005-04-16  668  {
+abc8a8a2c7dc7b Matthew Wilcox (Oracle  2022-12-15  669) 	struct address_space *buffer_mapping = bh->b_folio->mapping;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  670  
+^1da177e4c3f41 Linus Torvalds          2005-04-16  671  	mark_buffer_dirty(bh);
+73295b4ed00de6 Hyeonwoo Cha            2024-06-04  672  
+73295b4ed00de6 Hyeonwoo Cha            2024-06-04 @673  	if (bh->b_assoc_map)
+73295b4ed00de6 Hyeonwoo Cha            2024-06-04  674          return;
+
+The code is okay, but the indenting is messed up.
+
+73295b4ed00de6 Hyeonwoo Cha            2024-06-04  675  
+600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  676) 	if (!mapping->i_private_data) {
+600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  677)     	mapping->i_private_data = buffer_mapping;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  678      } else {
+600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  679)         BUG_ON(mapping->i_private_data != buffer_mapping);
+^1da177e4c3f41 Linus Torvalds          2005-04-16  680      }
+73295b4ed00de6 Hyeonwoo Cha            2024-06-04  681  
+600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17 @682)     spin_lock(&buffer_mapping->i_private_lock);
+73295b4ed00de6 Hyeonwoo Cha            2024-06-04  683      list_move_tail(&bh->b_assoc_buffers, &mapping->i_private_list);
+58ff407bee5a55 Jan Kara                2006-10-17  684      bh->b_assoc_map = mapping;
+600f111ef51dc2 Matthew Wilcox (Oracle  2023-11-17  685)     spin_unlock(&buffer_mapping->i_private_lock);
+^1da177e4c3f41 Linus Torvalds          2005-04-16  686  }
 
 -- 
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
