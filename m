@@ -1,440 +1,478 @@
-Return-Path: <linux-kernel+bounces-200626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07EED8FB291
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:47:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36798FB2B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACFD52855BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:47:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18B09B26FBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EC8146D45;
-	Tue,  4 Jun 2024 12:46:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073151474A3;
+	Tue,  4 Jun 2024 12:47:27 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA72E146A8C;
-	Tue,  4 Jun 2024 12:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F9E146D7F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717505186; cv=none; b=Q6l9ix7xqW18+RCozWh5xXLYS7GdfJB3ALJlFZNGnqBc5ZvIIX9Y1NoAuSICeNI2PWmqfc4eAbEP6xw5rfLQpaMOzaJAPqmP5gtr9T9qoY7CFTJ4vCrG2NmLGPQB2z+duXioimLvAkOgbuOFeQ8Cm/tpfRZxwk/13rUJI9V+8Lg=
+	t=1717505245; cv=none; b=IFpgiYpE5sYEYoWbrhIazBz4jke2Pfc/DtM9FV/Y0rCDrANEKVTt37Cym/OYghfkjh8bMiNvSpWepDWZ/Accg65hBKYPOd2bHGIpIf2hhpwDPXmmSaQa79eajSK8A7NxrcPHCg7m9VfKdIIJhMHKDEpozzMLExgmGS9m7fy1RXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717505186; c=relaxed/simple;
-	bh=N2tQ10M1thMcd/btnrlujSu/lmE9NMX155tIVRoqrfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L8JDM+uBGWU4zpsfYCAgRR/QjkhgalokrKJlMAqcpbwkI+GXkMO8NYMjZlA1u/AYi5Ceuu3bUh47E8RupmWD9j8uGxspV1vk9QDLMDTBxopMqRM+Q7qy0azZ/73vhmD9p14iqJLKLl6+AJfd66Q+3pkI6vUrejN+0qL4bn40LhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79439C4AF07;
-	Tue,  4 Jun 2024 12:46:23 +0000 (UTC)
-Message-ID: <b1effb32-5b9e-4a48-9cd7-63f20d8334b1@xs4all.nl>
-Date: Tue, 4 Jun 2024 14:46:21 +0200
+	s=arc-20240116; t=1717505245; c=relaxed/simple;
+	bh=NISObnSudCej+8hdfqE7EJLxiFZrQe1AaJ3pR8W3V/Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Gf33vHOKOA751R5ndXky5tlf+ugquwDVUUKEDYK2RlRRRoxB/fCkQoHd7F+myFGq+8bMMqwQ98DfOHlV1WWCGtTZRuMCgIIaSdhd7FuzcH21wJNtAZoxSFWE73KCKEO4jls2ZYCKixJIqcDxp2+lLco0+qNFz8wgbJjWlo5hiuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3747f1b958bso57803785ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 05:47:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717505243; x=1718110043;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dr3ARtSXytznS7LEimUUkvVEtezO/cquAO5ZWoDP4Zw=;
+        b=LKl/crEAqXUWADG2fTTwu7unaku92FIgLAjYSYhrlbe/BQgHwwTKoS20by7opkgsmy
+         pl2+gHtd/gJUetd8jz/PKJux97OEmFB0vcAEkOXmZSUsTzTt59fmrlHeUZVXNvYibw9k
+         DaNznINANBmJZI73Olgd8hAtQhC8LhciNWzB7+Z7NAp2C7RPWwi3SfO8JC9xNudIq6mG
+         FQlt29lyuEVFG8LkBoxMQvfuBZtQhXWvbPcc8Lt0/5dcqBm0AQ52mov8yy7p1lnc0P7G
+         AMCieIi1VGvuvdrXKIvyho9CIGjzlbLmhIoEwrlV/9ejI6av2U4dShLDxtQVpIqpGeY0
+         bUmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKv7IgQe43rThWI+9bCi0z55B3NULiMRIhx6j0k/tk5+uIf+RYbH2lEFz6S71OIM8KpnkePzH9Rpf+p+0rkHEg0EixTfW1HTyC4BvH
+X-Gm-Message-State: AOJu0YxCO/a1SY8/b86BtE1KA0rZjDX8JnG1Bk+eCXFtk1hbvR2dOE6F
+	VV2qd6E83yc7uqqLIb2FcVYCN/aj1hT8u4PVxDWZe80PjFyqixS0cDvG2x0OqcYetgFMlzYb3rP
+	WjWeh3Jva6D49DXwnt6RibGOWpf90BJPEi3FdMobUk4GjDMioQCVmDnw=
+X-Google-Smtp-Source: AGHT+IFXjzQhLpCVJeUsauvs6kLG6GF5/vPyRsj8aaAEQi5s5g5qWm54eC8HNFrMbICvYHGq7uOtq2Rf+RTD4eUEPZ8uZ8aGOmON
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/10] media: Add Chameleon v3 video interface driver
-To: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>
-Cc: airlied@gmail.com, akpm@linux-foundation.org, conor+dt@kernel.org,
- daniel@ffwll.ch, dinguyen@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- maarten.lankhorst@linux.intel.com, mchehab@kernel.org, mripard@kernel.org,
- robh+dt@kernel.org, tzimmermann@suse.de, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, chromeos-krk-upstreaming@google.com
-References: <20240507155413.266057-1-panikiel@google.com>
- <20240507155413.266057-2-panikiel@google.com>
- <c5f40d46-9e8d-40f9-82ee-83013dbc134e@xs4all.nl>
- <CAM5zL5reA_nyt0FfmE2+eFESq6JdHJ8Z1wCp1zEsvLECeOx3mA@mail.gmail.com>
- <fee56d57-ae17-4001-8f22-bd32ce74c8af@xs4all.nl>
- <CAM5zL5qbfMnjrBqaF7gw1XfiiFpCF4QTVTvO9ZMPmNFiHJDvDg@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <CAM5zL5qbfMnjrBqaF7gw1XfiiFpCF4QTVTvO9ZMPmNFiHJDvDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c26e:0:b0:36f:c675:fe8e with SMTP id
+ e9e14a558f8ab-3748b9e5cb8mr8435835ab.4.1717505242992; Tue, 04 Jun 2024
+ 05:47:22 -0700 (PDT)
+Date: Tue, 04 Jun 2024 05:47:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e8a796061a0fd949@google.com>
+Subject: [syzbot] [kernfs?] INFO: task hung in kernfs_dop_revalidate (4)
+From: syzbot <syzbot+da20d108162166514db6@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 04/06/2024 14:03, Paweł Anikiel wrote:
-> On Mon, Jun 3, 2024 at 4:56 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->>
->> On 03/06/2024 16:32, Paweł Anikiel wrote:
->>> On Mon, Jun 3, 2024 at 9:57 AM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->>>>
->>>> On 07/05/2024 17:54, Paweł Anikiel wrote:
->>>>> Add v4l2 driver for the video interface present on the Google
->>>>> Chameleon v3. The Chameleon v3 uses the video interface to capture
->>>>> a single video source from a given HDMI or DP connector and write
->>>>> the resulting frames to memory.
->>>>>
->>>>> Signed-off-by: Paweł Anikiel <panikiel@google.com>
->>>>> ---
->>>>>  drivers/media/platform/Kconfig             |   1 +
->>>>>  drivers/media/platform/Makefile            |   1 +
->>>>>  drivers/media/platform/google/Kconfig      |  13 +
->>>>>  drivers/media/platform/google/Makefile     |   3 +
->>>>>  drivers/media/platform/google/chv3-video.c | 891 +++++++++++++++++++++
->>>>>  5 files changed, 909 insertions(+)
->>>>>  create mode 100644 drivers/media/platform/google/Kconfig
->>>>>  create mode 100644 drivers/media/platform/google/Makefile
->>>>>  create mode 100644 drivers/media/platform/google/chv3-video.c
->>>>>
->>>>> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
->>>>> index 91e54215de3a..b82f7b142b85 100644
->>>>> --- a/drivers/media/platform/Kconfig
->>>>> +++ b/drivers/media/platform/Kconfig
->>>>> @@ -69,6 +69,7 @@ source "drivers/media/platform/aspeed/Kconfig"
->>>>>  source "drivers/media/platform/atmel/Kconfig"
->>>>>  source "drivers/media/platform/cadence/Kconfig"
->>>>>  source "drivers/media/platform/chips-media/Kconfig"
->>>>> +source "drivers/media/platform/google/Kconfig"
->>>>>  source "drivers/media/platform/intel/Kconfig"
->>>>>  source "drivers/media/platform/marvell/Kconfig"
->>>>>  source "drivers/media/platform/mediatek/Kconfig"
->>>>> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
->>>>> index 3296ec1ebe16..f7067eb05f76 100644
->>>>> --- a/drivers/media/platform/Makefile
->>>>> +++ b/drivers/media/platform/Makefile
->>>>> @@ -12,6 +12,7 @@ obj-y += aspeed/
->>>>>  obj-y += atmel/
->>>>>  obj-y += cadence/
->>>>>  obj-y += chips-media/
->>>>> +obj-y += google/
->>>>>  obj-y += intel/
->>>>>  obj-y += marvell/
->>>>>  obj-y += mediatek/
->>>>> diff --git a/drivers/media/platform/google/Kconfig b/drivers/media/platform/google/Kconfig
->>>>> new file mode 100644
->>>>> index 000000000000..9674a4c12e2d
->>>>> --- /dev/null
->>>>> +++ b/drivers/media/platform/google/Kconfig
->>>>> @@ -0,0 +1,13 @@
->>>>> +# SPDX-License-Identifier: GPL-2.0-only
->>>>> +
->>>>> +config VIDEO_CHAMELEONV3
->>>>> +     tristate "Google Chameleon v3 video driver"
->>>>> +     depends on V4L_PLATFORM_DRIVERS
->>>>> +     depends on VIDEO_DEV
->>>>> +     select VIDEOBUF2_DMA_CONTIG
->>>>> +     select V4L2_FWNODE
->>>>> +     help
->>>>> +       v4l2 driver for the video interface present on the Google
->>>>> +       Chameleon v3. The Chameleon v3 uses the video interface to
->>>>> +       capture a single video source from a given HDMI or DP connector
->>>>> +       and write the resulting frames to memory.
->>>>> diff --git a/drivers/media/platform/google/Makefile b/drivers/media/platform/google/Makefile
->>>>> new file mode 100644
->>>>> index 000000000000..cff06486244c
->>>>> --- /dev/null
->>>>> +++ b/drivers/media/platform/google/Makefile
->>>>> @@ -0,0 +1,3 @@
->>>>> +# SPDX-License-Identifier: GPL-2.0-only
->>>>> +
->>>>> +obj-$(CONFIG_VIDEO_CHAMELEONV3) += chv3-video.o
->>>>> diff --git a/drivers/media/platform/google/chv3-video.c b/drivers/media/platform/google/chv3-video.c
->>>>> new file mode 100644
->>>>> index 000000000000..6e782484abaf
->>>>> --- /dev/null
->>>>> +++ b/drivers/media/platform/google/chv3-video.c
->>>>> @@ -0,0 +1,891 @@
->>>>> +// SPDX-License-Identifier: GPL-2.0
->>>>> +/*
->>>>> + * Copyright 2023-2024 Google LLC.
->>>>> + * Author: Paweł Anikiel <panikiel@google.com>
->>>>> + */
->>>>> +
->>>>> +#include <linux/delay.h>
->>>>> +#include <linux/dma-mapping.h>
->>>>> +#include <linux/interrupt.h>
->>>>> +#include <linux/kernel.h>
->>>>> +#include <linux/module.h>
->>>>> +#include <linux/of.h>
->>>>> +#include <linux/platform_device.h>
->>>>> +#include <linux/v4l2-dv-timings.h>
->>>>> +#include <linux/videodev2.h>
->>>>> +#include <media/v4l2-ctrls.h>
->>>>> +#include <media/v4l2-device.h>
->>>>> +#include <media/v4l2-dv-timings.h>
->>>>> +#include <media/v4l2-event.h>
->>>>> +#include <media/v4l2-fwnode.h>
->>>>> +#include <media/v4l2-ioctl.h>
->>>>> +#include <media/videobuf2-dma-contig.h>
->>>>> +
->>>>> +#define DEVICE_NAME  "chv3-video"
->>>>> +
->>>>> +#define VIDEO_EN                     0x00
->>>>> +#define VIDEO_EN_BIT                 BIT(0)
->>>>> +#define VIDEO_HEIGHT                 0x04
->>>>> +#define VIDEO_WIDTH                  0x08
->>>>> +#define VIDEO_BUFFERA                        0x0c
->>>>> +#define VIDEO_BUFFERB                        0x10
->>>>> +#define VIDEO_BUFFERSIZE             0x14
->>>>> +#define VIDEO_RESET                  0x18
->>>>> +#define VIDEO_RESET_BIT                      BIT(0)
->>>>> +#define VIDEO_ERRORSTATUS            0x1c
->>>>> +#define VIDEO_IOCOLOR                        0x20
->>>>> +#define VIDEO_DATARATE                       0x24
->>>>> +#define VIDEO_DATARATE_SINGLE                0x0
->>>>> +#define VIDEO_DATARATE_DOUBLE                0x1
->>>>> +#define VIDEO_PIXELMODE                      0x28
->>>>> +#define VIDEO_PIXELMODE_SINGLE               0x0
->>>>> +#define VIDEO_PIXELMODE_DOUBLE               0x1
->>>>> +#define VIDEO_SYNCPOLARITY           0x2c
->>>>> +#define VIDEO_DMAFORMAT                      0x30
->>>>> +#define VIDEO_DMAFORMAT_8BPC         0x0
->>>>> +#define VIDEO_DMAFORMAT_10BPC_UPPER  0x1
->>>>> +#define VIDEO_DMAFORMAT_10BPC_LOWER  0x2
->>>>> +#define VIDEO_DMAFORMAT_12BPC_UPPER  0x3
->>>>> +#define VIDEO_DMAFORMAT_12BPC_LOWER  0x4
->>>>> +#define VIDEO_DMAFORMAT_16BPC                0x5
->>>>> +#define VIDEO_DMAFORMAT_RAW          0x6
->>>>> +#define VIDEO_DMAFORMAT_8BPC_PAD     0x7
->>>>> +#define VIDEO_VERSION                        0x34
->>>>> +#define VIDEO_VERSION_CURRENT                0xc0fb0001
->>>>> +
->>>>> +#define VIDEO_IRQ_MASK               0x8
->>>>> +#define VIDEO_IRQ_CLR                0xc
->>>>> +#define VIDEO_IRQ_ALL                0xf
->>>>> +#define VIDEO_IRQ_BUFF0              BIT(0)
->>>>> +#define VIDEO_IRQ_BUFF1              BIT(1)
->>>>> +#define VIDEO_IRQ_RESOLUTION BIT(2)
->>>>> +#define VIDEO_IRQ_ERROR              BIT(3)
->>>>> +
->>>>> +struct chv3_video {
->>>>> +     struct device *dev;
->>>>> +     void __iomem *iobase;
->>>>> +     void __iomem *iobase_irq;
->>>>> +
->>>>> +     struct v4l2_device v4l2_dev;
->>>>> +     struct vb2_queue queue;
->>>>> +     struct video_device vdev;
->>>>> +     struct v4l2_pix_format pix_fmt;
->>>>> +     struct v4l2_dv_timings timings;
->>>>> +     u32 bytes_per_pixel;
->>>>> +
->>>>> +     struct v4l2_ctrl_handler ctrl_handler;
->>>>> +     struct v4l2_async_notifier notifier;
->>>>> +     struct v4l2_subdev *subdev;
->>>>> +     int subdev_source_pad;
->>>>> +
->>>>> +     u32 sequence;
->>>>> +     bool writing_to_a;
->>>>> +
->>>>> +     struct list_head bufs;
->>>>> +     spinlock_t bufs_lock;
->>>>> +
->>>>> +     struct mutex video_lock;
->>>>> +};
->>>>> +
->>>>> +struct chv3_video_buffer {
->>>>> +     struct vb2_v4l2_buffer vb;
->>>>> +     struct list_head link;
->>>>> +};
->>>>> +
->>>>> +struct chv3_video_config {
->>>>> +     u32 pixelformat;
->>>>> +     u32 bytes_per_pixel;
->>>>> +     u32 dmaformat;
->>>>> +};
->>>>> +
->>>>> +static void chv3_video_set_format_resolution(struct chv3_video *video, u32 width, u32 height)
->>>>> +{
->>>>> +     video->pix_fmt.width = width;
->>>>> +     video->pix_fmt.height = height;
->>>>> +     video->pix_fmt.bytesperline = width * video->bytes_per_pixel;
->>>>> +     video->pix_fmt.sizeimage = video->pix_fmt.bytesperline * height;
->>>>> +}
->>>>> +
->>>>> +/*
->>>>> + * The video interface has hardware counters which expose the width and
->>>>> + * height of the current video stream. It can't reliably detect if the stream
->>>>> + * is present or not, so this is only used as a fallback in the case where
->>>>> + * we don't have access to the receiver hardware.
->>>>> + */
->>>>> +static int chv3_video_query_dv_timings_fallback(struct chv3_video *video,
->>>>> +                                             struct v4l2_dv_timings *timings)
->>>>> +{
->>>>> +     u32 width, height;
->>>>> +
->>>>> +     width  = readl(video->iobase + VIDEO_WIDTH);
->>>>> +     height = readl(video->iobase + VIDEO_HEIGHT);
->>>>> +     if (width == 0 || height == 0)
->>>>> +             return -ENOLINK;
->>>>> +
->>>>> +     memset(timings, 0, sizeof(*timings));
->>>>> +     timings->type = V4L2_DV_BT_656_1120;
->>>>> +     timings->bt.width  = width;
->>>>> +     timings->bt.height = height;
->>>>> +     timings->bt.pixelclock = width * height * 24;
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>> +
->>>>> +static int chv3_video_query_dv_timings(struct chv3_video *video, struct v4l2_dv_timings *timings)
->>>>> +{
->>>>> +     if (video->subdev) {
->>>>> +             return v4l2_subdev_call(video->subdev, pad, query_dv_timings,
->>>>> +                                     video->subdev_source_pad, timings);
->>>>> +     } else {
->>>>> +             return chv3_video_query_dv_timings_fallback(video, timings);
->>>>> +     }
->>>>
->>>> I would move the contents of chv3_video_query_dv_timings_fallback() to this
->>>> function and drop the old fallback function. It makes more sense if it is all
->>>> in the same function.
->>>>
->>>>> +}
->>>>> +
->>>>> +static const struct v4l2_dv_timings_cap chv3_video_fallback_dv_timings_cap = {
->>>>> +     .type = V4L2_DV_BT_656_1120,
->>>>> +     .bt = {
->>>>> +             .min_width = 640,
->>>>> +             .max_width = 7680,
->>>>> +             .min_height = 480,
->>>>> +             .max_height = 4320,
->>>>> +             .min_pixelclock = 25000000,
->>>>> +             .max_pixelclock = 1080000000,
->>>>> +             .standards = V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
->>>>> +                     V4L2_DV_BT_STD_CVT | V4L2_DV_BT_STD_GTF,
->>>>> +             .capabilities = V4L2_DV_BT_CAP_PROGRESSIVE |
->>>>> +                     V4L2_DV_BT_CAP_REDUCED_BLANKING |
->>>>> +                     V4L2_DV_BT_CAP_CUSTOM,
->>>>> +     },
->>>>> +};
->>>>> +
->>>>> +static int chv3_video_enum_dv_timings_fallback(struct chv3_video *video,
->>>>> +                                            struct v4l2_enum_dv_timings *timings)
->>>>> +{
->>>>> +     return v4l2_enum_dv_timings_cap(timings, &chv3_video_fallback_dv_timings_cap,
->>>>> +                                     NULL, NULL);
->>>>> +}
->>>>> +
->>>>> +static int chv3_video_dv_timings_cap_fallback(struct chv3_video *video,
->>>>> +                                           struct v4l2_dv_timings_cap *cap)
->>>>> +{
->>>>> +     *cap = chv3_video_fallback_dv_timings_cap;
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>
->>>> Same for these two fallback functions: move them to the functions that calls them.
->>>>
->>>>> +
->>>>> +static void chv3_video_apply_dv_timings(struct chv3_video *video)
->>>>> +{
->>>>> +     struct v4l2_dv_timings timings;
->>>>> +     int res;
->>>>> +
->>>>> +     res = chv3_video_query_dv_timings(video, &timings);
->>>>> +     if (res)
->>>>> +             return;
->>>>> +
->>>>> +     video->timings = timings;
->>>>> +     chv3_video_set_format_resolution(video, timings.bt.width, timings.bt.height);
->>>>> +}
->>>>> +
->>>>> +static int chv3_video_querycap(struct file *file, void *fh, struct v4l2_capability *cap)
->>>>> +{
->>>>> +     strscpy(cap->driver, DEVICE_NAME, sizeof(cap->driver));
->>>>> +     strscpy(cap->card, "Chameleon v3 video", sizeof(cap->card));
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>> +
->>>>> +static int chv3_video_g_fmt_vid_cap(struct file *file, void *fh, struct v4l2_format *fmt)
->>>>> +{
->>>>> +     struct chv3_video *video = video_drvdata(file);
->>>>> +
->>>>> +     fmt->fmt.pix = video->pix_fmt;
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>> +
->>>>> +static int chv3_video_enum_fmt_vid_cap(struct file *file, void *fh, struct v4l2_fmtdesc *fmt)
->>>>> +{
->>>>> +     struct chv3_video *video = video_drvdata(file);
->>>>> +
->>>>> +     if (fmt->index != 0)
->>>>> +             return -EINVAL;
->>>>> +
->>>>> +     fmt->flags = 0;
->>>>> +     fmt->pixelformat = video->pix_fmt.pixelformat;
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>> +
->>>>> +static int chv3_video_g_input(struct file *file, void *fh, unsigned int *index)
->>>>> +{
->>>>> +     *index = 0;
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>> +
->>>>> +static int chv3_video_s_input(struct file *file, void *fh, unsigned int index)
->>>>> +{
->>>>> +     if (index != 0)
->>>>> +             return -EINVAL;
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>> +
->>>>> +static int chv3_video_enum_input(struct file *file, void *fh, struct v4l2_input *input)
->>>>> +{
->>>>> +     if (input->index != 0)
->>>>> +             return -EINVAL;
->>>>> +
->>>>> +     strscpy(input->name, "input0", sizeof(input->name));
->>>>
->>>> This name is not terribly user friendly. Is it possible to determine a more human
->>>> readable name? E.g. "DP1", "DP2", etc. Something that matches labeling on the Chameleon
->>>> board.
->>>
->>> The driver would require some board-specific instance info to
->>> determine if the video interface is connected to DP1, DP2, or the
->>> auxiliary decoder (or something entirely different if this IP was used
->>> on a different board). I don't see an easy way to determine such a
->>> human readable name, unfortunately.
->>
->> It is possible, but it requires adding a connector to video pipeline in the device tree.
->> See e.g. Documentation/devicetree/bindings/display/connector/dp-connector.yaml and
->> Documentation/devicetree/bindings/media/i2c/tvp5150.txt.
-> 
-> I am using connectors in the device tree, actually. See the last
-> commit of this patchset. However, it's not connected directly - the
-> video interface is connected to the DP receiver which is then
-> connected to the connector.
-> 
->>
->> While connectors are used in drm, in the media subsytem only the tvp5150 driver ever
->> used it for analog video inputs.
->>
->> The connectors have a label, and that can be used to fill in the input name.
->>
->> It is worth checking if this would work without too much effort, but if not, then
->> at least change the "input0" string to something like "Video Input".
-> 
-> In order to read the connector label, the video interface driver would
-> have to make some assumptions about the incoming pipeline, e.g. figure
-> out which port of the decoder dt node is the input (how? just assume
-> it's port 0?). Do you see a good way to deal with that?
+Hello,
 
-It is the Displayport RX IP driver that has to parse the connector data
-and create connector entities in the media topology. The video interface
-driver would have to walk the graph to find those connector entities and
-the entity name would contains the input name.
+syzbot found the following issue on:
 
-'git grep MEDIA_ENT_FL_CONNECTOR' gives a good idea where this is used.
+HEAD commit:    4a4be1ad3a6e Revert "vfs: Delete the associated dentry whe..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17012bd2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
+dashboard link: https://syzkaller.appspot.com/bug?extid=da20d108162166514db6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150e4b0c980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c039c2980000
 
-Note: connectors are currently only used for S-Video and Composite inputs,
-so some infrastructure would need to be added for HDMI/DP inputs.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e323e970d41d/disk-4a4be1ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f0dfe36102b9/vmlinux-4a4be1ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9ca35ad0fa6a/bzImage-4a4be1ad.xz
 
-I have never done this, so you may well encounter unexpected issues.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+da20d108162166514db6@syzkaller.appspotmail.com
 
-That said, having support for this would be really nice.
+INFO: task udevd:4544 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:udevd           state:D
+ stack:24048 pid:4544  tgid:4544  ppid:1      flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_read_slowpath kernel/locking/rwsem.c:1086 [inline]
+ __down_read_common kernel/locking/rwsem.c:1250 [inline]
+ __down_read kernel/locking/rwsem.c:1263 [inline]
+ down_read+0x705/0xa40 kernel/locking/rwsem.c:1528
+ kernfs_dop_revalidate+0xd4/0x560 fs/kernfs/dir.c:1159
+ lookup_fast+0x1f4/0x4a0
+ walk_component fs/namei.c:2000 [inline]
+ link_path_walk+0x60b/0xea0 fs/namei.c:2331
+ path_openat+0x24a/0x3280 fs/namei.c:3803
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8b7f9169a4
+RSP: 002b:00007fffdadb9fc0 EFLAGS: 00000246
+ ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f8b7f9169a4
+RDX: 0000000000080000 RSI: 00007fffdadba0f8 RDI: 00000000ffffff9c
+RBP: 00007fffdadba0f8 R08: 0000000000000008 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000080000
+R13: 0000558fed691b42 R14: 0000000000000001 R15: 0000000000000000
+ </TASK>
+INFO: task syz-executor167:5156 blocked for more than 144 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor167 state:D
+ stack:21024 pid:5156  tgid:5156  ppid:5154   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_read_slowpath kernel/locking/rwsem.c:1086 [inline]
+ __down_read_common kernel/locking/rwsem.c:1250 [inline]
+ __down_read kernel/locking/rwsem.c:1263 [inline]
+ down_read+0x705/0xa40 kernel/locking/rwsem.c:1528
+ kernfs_dop_revalidate+0xd4/0x560 fs/kernfs/dir.c:1159
+ lookup_fast+0x1f4/0x4a0
+ walk_component fs/namei.c:2000 [inline]
+ link_path_walk+0x60b/0xea0 fs/namei.c:2331
+ path_openat+0x24a/0x3280 fs/namei.c:3803
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7febd45d03e1
+RSP: 002b:00007ffd172253b0 EFLAGS: 00000287 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007febd45d03e1
+RDX: 0000000000090800 RSI: 00007febd461b14f RDI: 00000000ffffff9c
+RBP: 0000000000000069 R08: 00000000095f7996 R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000287 R12: 00007ffd1722543c
+R13: 00007ffd17225450 R14: 00007ffd17225490 R15: 0000000000000067
+ </TASK>
+INFO: task syz-executor167:5158 blocked for more than 145 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor167 state:D
+ stack:19248 pid:5158  tgid:5158  ppid:5153   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_read_slowpath kernel/locking/rwsem.c:1086 [inline]
+ __down_read_common kernel/locking/rwsem.c:1250 [inline]
+ __down_read kernel/locking/rwsem.c:1263 [inline]
+ down_read+0x705/0xa40 kernel/locking/rwsem.c:1528
+ kernfs_dop_revalidate+0xd4/0x560 fs/kernfs/dir.c:1159
+ lookup_fast+0x1f4/0x4a0
+ walk_component fs/namei.c:2000 [inline]
+ link_path_walk+0x60b/0xea0 fs/namei.c:2331
+ path_openat+0x24a/0x3280 fs/namei.c:3803
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7febd45d03e1
+RSP: 002b:00007ffd172253b0 EFLAGS: 00000287
+ ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007febd45d03e1
+RDX: 0000000000090800 RSI: 00007febd461b14f RDI: 00000000ffffff9c
+RBP: 000000000000006b R08: 000000002bee115c R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000287 R12: 00007ffd1722543c
+R13: 00007ffd17225450 R14: 00007ffd17225490 R15: 0000000000000069
+ </TASK>
+INFO: task syz-executor167:5157 blocked for more than 146 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor167 state:D
+ stack:20512 pid:5157  tgid:5157  ppid:5151   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_read_slowpath kernel/locking/rwsem.c:1086 [inline]
+ __down_read_common kernel/locking/rwsem.c:1250 [inline]
+ __down_read kernel/locking/rwsem.c:1263 [inline]
+ down_read+0x705/0xa40 kernel/locking/rwsem.c:1528
+ kernfs_dop_revalidate+0xd4/0x560 fs/kernfs/dir.c:1159
+ lookup_fast+0x1f4/0x4a0
+ walk_component fs/namei.c:2000 [inline]
+ link_path_walk+0x60b/0xea0 fs/namei.c:2331
+ path_openat+0x24a/0x3280 fs/namei.c:3803
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7febd45d03e1
+RSP: 002b:00007ffd172253b0 EFLAGS: 00000287
+ ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007febd45d03e1
+RDX: 0000000000090800 RSI: 00007febd461b14f RDI: 00000000ffffff9c
+RBP: 0000000000000068 R08: 000000000bbb6644 R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000287 R12: 00007ffd1722543c
+R13: 00007ffd17225450 R14: 00007ffd17225490 R15: 0000000000000066
+ </TASK>
+INFO: task syz-executor167:5155 blocked for more than 147 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor167 state:D
+ stack:21024 pid:5155  tgid:5155  ppid:5150   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_read_slowpath kernel/locking/rwsem.c:1086 [inline]
+ __down_read_common kernel/locking/rwsem.c:1250 [inline]
+ __down_read kernel/locking/rwsem.c:1263 [inline]
+ down_read+0x705/0xa40 kernel/locking/rwsem.c:1528
+ kernfs_dop_revalidate+0xd4/0x560 fs/kernfs/dir.c:1159
+ lookup_fast+0x1f4/0x4a0
+ walk_component fs/namei.c:2000 [inline]
+ link_path_walk+0x60b/0xea0 fs/namei.c:2331
+ path_openat+0x24a/0x3280 fs/namei.c:3803
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7febd45d03e1
+RSP: 002b:00007ffd172253b0 EFLAGS: 00000287
+ ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007febd45d03e1
+RDX: 0000000000090800 RSI: 00007febd461b14f RDI: 00000000ffffff9c
+RBP: 000000000000006b R08: 0000000024e66dc2 R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000287 R12: 00007ffd1722543c
+R13: 00007ffd17225450 R14: 00007ffd17225490 R15: 0000000000000069
+ </TASK>
+INFO: task syz-executor167:5159 blocked for more than 148 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor167 state:D
+ stack:21024 pid:5159  tgid:5159  ppid:5152   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_read_slowpath kernel/locking/rwsem.c:1086 [inline]
+ __down_read_common kernel/locking/rwsem.c:1250 [inline]
+ __down_read kernel/locking/rwsem.c:1263 [inline]
+ down_read+0x705/0xa40 kernel/locking/rwsem.c:1528
+ kernfs_dop_revalidate+0xd4/0x560 fs/kernfs/dir.c:1159
+ lookup_fast+0x1f4/0x4a0
+ walk_component fs/namei.c:2000 [inline]
+ link_path_walk+0x60b/0xea0 fs/namei.c:2331
+ path_openat+0x24a/0x3280 fs/namei.c:3803
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7febd45d03e1
+RSP: 002b:00007ffd172253b0 EFLAGS: 00000287
+ ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007febd45d03e1
+RDX: 0000000000090800 RSI: 00007febd461b14f RDI: 00000000ffffff9c
+RBP: 000000000000006b R08: 00000000128cac2c R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000287 R12: 00007ffd1722543c
+R13: 00007ffd17225450 R14: 00007ffd17225490 R15: 0000000000000069
+ </TASK>
+INFO: task kworker/0:5:5179 blocked for more than 149 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:5     state:D
+ stack:21328 pid:5179  tgid:5179  ppid:2      flags:0x00004000
+Workqueue: usb_hub_wq hub_event
 
-Regards,
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ kernfs_add_one+0x9a/0x8b0 fs/kernfs/dir.c:778
+ kernfs_create_dir_ns+0xd9/0x120 fs/kernfs/dir.c:1071
+ sysfs_create_dir_ns+0x189/0x3a0 fs/sysfs/dir.c:59
+ create_dir lib/kobject.c:73 [inline]
+ kobject_add_internal+0x435/0x8d0 lib/kobject.c:240
+ kobject_add_varg lib/kobject.c:374 [inline]
+ kobject_add+0x152/0x220 lib/kobject.c:426
+ device_add+0x4e5/0xbf0 drivers/base/core.c:3659
+ usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2d6a/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task syz-executor167:5709 blocked for more than 150 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor167 state:D
+ stack:26736 pid:5709  tgid:5709  ppid:5156   flags:0x00024006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ kernfs_remove_by_name_ns+0x7a/0x160 fs/kernfs/dir.c:1689
+ module_remove_driver+0x59/0x1c0 drivers/base/module.c:100
+ bus_remove_driver+0x1fb/0x320 drivers/base/bus.c:743
+ usb_gadget_unregister_driver+0x4e/0x70 drivers/usb/gadget/udc/core.c:1733
+ raw_release+0xf9/0x1e0 drivers/usb/gadget/legacy/raw_gadget.c:462
+ __fput+0x406/0x8b0 fs/file_table.c:422
+ __do_sys_close fs/open.c:1555 [inline]
+ __se_sys_close fs/open.c:1540 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1540
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7febd45cf880
+RSP: 002b:00007ffd17225418 EFLAGS: 00000202
+ ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007febd45cf880
+RDX: 0000000000000000 RSI: 00007ffd17225380 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 000000000000000f R09: 00007ffd17225117
+R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffd1722543c
+R13: 00007ffd17225450 R14: 00007ffd17225490 R15: 0000000000000067
+ </TASK>
+INFO: task syz-executor167:5710 blocked for more than 151 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor167 state:D
+ stack:25488 pid:5710  tgid:5710  ppid:5157   flags:0x00024006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ kernfs_remove_by_name_ns+0x7a/0x160 fs/kernfs/dir.c:1689
+ remove_bind_files drivers/base/bus.c:600 [inline]
+ bus_remove_driver+0x26c/0x320 drivers/base/bus.c:738
+ usb_gadget_unregister_driver+0x4e/0x70 drivers/usb/gadget/udc/core.c:1733
+ raw_release+0xf9/0x1e0 drivers/usb/gadget/legacy/raw_gadget.c:462
+ __fput+0x406/0x8b0 fs/file_table.c:422
+ __do_sys_close fs/open.c:1555 [inline]
+ __se_sys_close fs/open.c:1540 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1540
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7febd45cf880
+RSP: 002b:00007ffd17225418 EFLAGS: 00000202
+ ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007febd45cf880
+RDX: 0000000000000000 RSI: 00007ffd17225380 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 000000000000000f R09: 00007ffd17225117
+R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffd1722543c
+R13: 00007ffd17225450 R14: 00007ffd17225490 R15: 0000000000000066
+ </TASK>
+INFO: task syz-executor167:5711 blocked for more than 152 seconds.
+      Not tainted 6.10.0-rc1-syzkaller-00027-g4a4be1ad3a6e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor167 state:D
+ stack:25440 pid:5711  tgid:5711  ppid:5159   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ kernfs_remove_by_name_ns+0x7a/0x160 fs/kernfs/dir.c:1689
+ remove_bind_files drivers/base/bus.c:600 [inline]
+ bus_remove_driver+0x26c/0x320 drivers/base/bus.c:738
+ usb_gadget_unregister_driver+0x4e/0x70 drivers/usb/gadget/udc/core.c:1733
+ raw_release+0xf9/0x1e0 drivers/usb/gadget/legacy/raw_gadget.c:462
+ __fput+0x406/0x8b0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa27/0x27e0 kernel/exit.c:874
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1023
+ get_signal+0x16a1/0x1740 kernel/signal.c:2909
 
-	Hans
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
