@@ -1,80 +1,73 @@
-Return-Path: <linux-kernel+bounces-200743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2E68FB43D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:47:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DDC8FB441
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C761C22284
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:47:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92F11F27849
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B2D9476;
-	Tue,  4 Jun 2024 13:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DD6B669;
+	Tue,  4 Jun 2024 13:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NqUFthtZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvGS5+Oo"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA85E8F45
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED8415AE0;
+	Tue,  4 Jun 2024 13:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717508836; cv=none; b=rEX+ouwEkGOVfrjo1yMQEPYwGDE9DClgDf2fGr7LLV6ocJAozWUmUw7mPSIm5vDJFiMPklUOUFfR3LrEgNceH9DRE9NJiBmfJDaYsRl/FKaQj+z3HNZRa37B4nrp4E2XvF65cW63o0b1cvtp1TrJfmDFHoK/xeTrWOJaf1eX0lo=
+	t=1717508852; cv=none; b=dF1QWysgazPxyjaRFjBCJFBJV5of7ILGCIU7mB73Uq05Bz9jKVTwe8BGboP2oekmLQZIu7Oy17qmS7oPukk66T1dogwh49uDLb1ULfYSKvS2l9Sl84QnWYpZMTH8th26TJ0Ac1ulQdfxekasD8LZNAxpWgpV1Q6enenajNAnhZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717508836; c=relaxed/simple;
-	bh=xcyNIN9iyRLtVEDvM3CKfI2Kj0V1Sni+Zer1GeAXDEU=;
+	s=arc-20240116; t=1717508852; c=relaxed/simple;
+	bh=nUWHcu9w0M56FpQUkxmy4z9v4pO1ADXybuG/gsBk3vE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r7Xx9JN86a+tNoGKwHxiNs7bd6pyD7r4Yvtp9lujfYVzx1zucO4HcjKwC6OCbeh/Go8nVirqQcx/kw6K6gHdl3kcHtYWuvfruuR6fPPq8WNCckRBQ1dQBFEc4B1Fs8LJ2misxY7f+PBkCaAqqnQs9SxY6yIpkZGyI6wsC6EKUZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NqUFthtZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717508833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yMbmCAiowVSKw7W9moNE/x2fGNsBHZfDEwu/zot2o7c=;
-	b=NqUFthtZHbz2F1A6CI5bVsg85CJO6UYvaI/GGx5S4gLBsfxKWA20ULoKc8VR/Tyx1dPxrI
-	LxOMZ2KZQSk2cGNj6hFP8GR/UPHDvFVV7JThSrj1YJwR5Y3uf3GZayDNvPDlbeXFjcQ9UZ
-	ZToqMu5FQicp1uGe1tUS1PqIwvtO7cQ=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-487-n4wpB9djNLiutzkLNu9zBA-1; Tue, 04 Jun 2024 09:47:12 -0400
-X-MC-Unique: n4wpB9djNLiutzkLNu9zBA-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42120611b0bso29613045e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:47:11 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=uW3y48ziqH4qeiGr64G1xpDdZ395/sR2dljn4/qz1eK2qceHUKOfnjiYVyOjSzqmvoywK1EdGWVwMrCIPY8FmW91juMiUg29fs8KbEmdRtQoXJWHggaewoYWG6dqgWTb/Rusdbd67iqAvoAChc2tE3kxOwj/0h2r2m/SEJNe6IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvGS5+Oo; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a68c8b90c85so360270766b.2;
+        Tue, 04 Jun 2024 06:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717508849; x=1718113649; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RuPhePm0WTllrF3I6lI44urnOc5vgeZut0thAGNsi+E=;
+        b=UvGS5+OoCDlzDZepQpi/mTfpSM96/1dt1MwYMynD3ObKzCYGL1OLGBEXETNyJEG4l3
+         q5plMuHRSuXOFxALPhB8has00CdpkYO8H8fRZvswbVkI/aDfW0IaZQv/L3UhXBgm/L9N
+         NbSXzjv90tYPZXuX9H/2IYbQ3CfxwRRbrNnaLRUWC4TUadwj28jPfxSoDFOYiQdpljib
+         25Y4xMdwON/eQ1n6cQiBHwFRacUFH9W00svm/VRQ+8LvDlWRoTKBQ4X4rFnXYVZvHtSa
+         4eA+qXOjXZtukOYLIClpv73pDgT9kQx54ck+kdnruLClNDo6ZooUSRSg6WJkcXIiIUxd
+         0lXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717508831; x=1718113631;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yMbmCAiowVSKw7W9moNE/x2fGNsBHZfDEwu/zot2o7c=;
-        b=WyWWOyW6QKGWEOf3AZkSF7kteTpYFlEilltSyKbSbx2yJ6TX91ouAWxyKQ4OQHiXLg
-         55by0jZ8FgJ0SlTPkywy2d30rjkzvmW2bFlJ7v2Ux4ShFI+H4eXpSryh/Y0ERzvPbp4Q
-         EvNXSuKb5gh0v4TgczUUZ87H0ry9ycgGu5Eo987fvkusbYEgUd9Icjz/zwOOHjWlJg9Z
-         wDlfKR6oq35ZW4OyzrNpBnsxz8elPxVzYuD+OAVwiJYWjJed9diQP4oGWMY8Sxyz0fuL
-         WJWeOzGLI/7/c1MutQOnOUR0s0p1qWmeGu33cP/MDo/fSB7Mz/GpPDWEqPNBJIxcS2d0
-         ZO+g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8y3P6N8Om/CJ7NbW3Lp6KLQrtNhBgUw3cS7bRM0AjLIJLnY3vzdRhr038hUkqX/JrcSR84fAmFInb9NflTo6cvheuwa64mFtGUTBs
-X-Gm-Message-State: AOJu0Yy9e7hPlTPxR20kGTZMDO1/bZ5fXN2zc7LeWDTzr0kpWeRlxlLw
-	m+++3IhAEniN942L4csE/gVPxD/iJnf3gc5tfrb4N9Uoe+Gn5OEL03eotGmpqdMyBgOJYsya9Q/
-	qiWJ07yf9U0fu03KjwdY3efPH2dBbjtwwxzQb7RVqb6731UBHkmAyynbamWeWow==
-X-Received: by 2002:a05:600c:3152:b0:421:794:9630 with SMTP id 5b1f17b1804b1-4212e0499d9mr88315315e9.9.1717508831024;
-        Tue, 04 Jun 2024 06:47:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGpw168oErqt3u5yrQSWRtEhAJ44WH+7QdOvwB21PWxv3a6Z1jPfpU0r+q9XLflWsAy8ooTQ==
-X-Received: by 2002:a05:600c:3152:b0:421:794:9630 with SMTP id 5b1f17b1804b1-4212e0499d9mr88315135e9.9.1717508830619;
-        Tue, 04 Jun 2024 06:47:10 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73a:3a00:a025:9b06:549e:c16b? (p200300cbc73a3a00a0259b06549ec16b.dip0.t-ipconnect.de. [2003:cb:c73a:3a00:a025:9b06:549e:c16b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42136e0d9fbsm113769835e9.28.2024.06.04.06.47.09
+        d=1e100.net; s=20230601; t=1717508849; x=1718113649;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RuPhePm0WTllrF3I6lI44urnOc5vgeZut0thAGNsi+E=;
+        b=Vbv7f40Y9pRN0hfRYNI3lvAtpgx2nO3Pu3oLPZ9sAt1RP3MZy5PiyxsTRkdVqCcx/1
+         fCQTeIBAJLxAeCV5/h/fJATrpyYUXGGQ0/CZ9nSJU7ZadUYe4tTgtl5w9zAvVCBQaUtt
+         Sao/NqPL6egkIZlLVaYufWObnK2eu0+V6mTBM0m3b/RVoygMtBKx8fsYHE2CM4uLEey+
+         0BwlXWo1jOkJZRu/3N7tpnYW1IF04iwXZ2oQ0IumEHAQRplpGdKRLTi3t4i/TL1Clrpe
+         1aCYJqdWwDASJDDUDgWXrnsZH/66VsjLQ0vknKzqK8lZ20bCoR1MCh1b/rVl81gCTPex
+         V4Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVRhxmOQ3b5TqurG1LROqUBD70eyhdn78comtlR1+0W3b2a+wH9kr9Mbhg9JwB5VJlJkC6BmMugvp6Qqr967v1hdBuhwOi8mnFUm1iHOlEzuiaIvfG7xFr87Sw59RzkgTkj4UFi+Q==
+X-Gm-Message-State: AOJu0Yw4sQD02agvk794/lgoBqZbwHfprTgXYQ2rgWlBQ+yZSEZ7UGmj
+	OdAdJc36akIDmgHHX4/T1L63dnUB5hAnXyisv3wWOK8RuqmK752jHb+0Y+Le
+X-Google-Smtp-Source: AGHT+IH8q7cGkQrbC5vNQ33lLByeITer2W51d+2mhsA+h/q38zQ8nqs6xdyhyowoBcvrh7lbxBnxZA==
+X-Received: by 2002:a17:907:7787:b0:a69:edd:332c with SMTP id a640c23a62f3a-a690edd367emr379963266b.47.1717508848871;
+        Tue, 04 Jun 2024 06:47:28 -0700 (PDT)
+Received: from [192.168.0.31] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68f8840bd9sm358715466b.20.2024.06.04.06.47.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 06:47:10 -0700 (PDT)
-Message-ID: <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
-Date: Tue, 4 Jun 2024 15:47:09 +0200
+        Tue, 04 Jun 2024 06:47:28 -0700 (PDT)
+Message-ID: <7446cf8b-cadb-4f4d-9870-51bcda46a831@gmail.com>
+Date: Tue, 4 Jun 2024 15:47:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,85 +75,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
-To: yangge1116@126.com, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
-References: <1717498121-20926-1-git-send-email-yangge1116@126.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <1717498121-20926-1-git-send-email-yangge1116@126.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 3/3] MAINTAINERS: Add maintainer for ROHM BH1745
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Mudit Sharma <muditsharma.info@gmail.com>, ivan.orlov0322@gmail.com,
+ jic23@kernel.org, lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+ robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240603162122.165943-1-muditsharma.info@gmail.com>
+ <20240603162122.165943-3-muditsharma.info@gmail.com>
+ <a628db76-a48a-4492-a3cc-f93c0f67ad04@gmail.com>
+ <961fa617-a76b-4b79-956b-795a55fec959@gmail.com>
+ <f241957f-6f4b-424c-9ea2-d7eb564daa4e@gmail.com>
+ <17b23723-d0d0-4744-9828-cef316cf3fb7@gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <17b23723-d0d0-4744-9828-cef316cf3fb7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 04.06.24 12:48, yangge1116@126.com wrote:
-> From: yangge <yangge1116@126.com>
+On 04/06/2024 15:38, Matti Vaittinen wrote:
+> On 6/4/24 15:53, Javier Carrasco wrote:
+>> On 04/06/2024 12:44, Mudit Sharma wrote:
+>>> On 03/06/2024 23:37, Javier Carrasco wrote:
+>>>> On 03/06/2024 18:21, Mudit Sharma wrote:
+>>>>> Add myself as maintainer for ROHM BH1745 colour sensor driver.
+>>>>>
+>>>>
+>>>> is there any special reason to have a separate patch for this? The
+>>>> addition to MAINTANERS for new drives is usually included in the patch
+>>>> that provides the driver itself.
+>>>
+>>> Adding this in a separate commit was just a pattern I notices with some
+>>> other drivers, for instance 3b4e0e9.
+>>>
+>>> If necessary and/or considered good practice, I can squash this in the
+>>> patch that brings in the driver.
+>>
+>> Although there might be some cases where it was added separately, it is
+>> much more common that it is added to the patch that provides the driver.
+>> Some perfectionists even include the entry in the dt-bindings patch, and
+>> then add the link to the driver code in the driver patch. I believe that
+>> a simple squash would be ok, though.
 > 
-> If a page is added in pagevec, its ref count increases one, remove
-> the page from pagevec decreases one. Page migration requires the
-> page is not referenced by others except page mapping. Before
-> migrating a page, we should try to drain the page from pagevec in
-> case the page is in it, however, folio_test_lru() is not sufficient
-> to tell whether the page is in pagevec or not, if the page is in
-> pagevec, the migration will fail.
+> I believe there is a notable case where having MAINTAINERS updates as a
+> separate patch makes sense. When one creates drivers for a device which
+> touches multiple subsystems, typically a set of MFD drivers. This is
+> usually done as a set of subsystem specific patches, each adding
+> subsystem specific file(s). In this case adding MAINTAINER info
+> separately for each sub-driver will create unnecessary churn in the
+> MAINTAINERS file - which I believe is already now a major source of
+> merge conflicts. I am not sure of this is a reason to have MAINTAINERS
+> updates in own patch though.
 > 
-> Remove the condition and drain lru once to ensure the page is not
-> referenced by pagevec.
+> Furthermore, I've been instructed by Rob (AFAIR) to omit the dt-binding
+> files from the MAINTAINERS because the maintainer information is already
+> contained in the bindings itself.
+> 
+> Yours,
+>     -- Matti
+> 
 
-What you are saying is that we might have a page on which 
-folio_test_lru() succeeds, that was added to one of the cpu_fbatches, 
-correct?
+Good point, in that case it would make more sense. But this driver only
+apllies to iio, and there won't be such conflicts. But thank you for
+that clarification.
 
-Can you describe under which circumstances that happens?
+By the way, I think you have some issue with your email configuration
+(no line wrapping).
 
--- 
-Cheers,
-
-David / dhildenb
-
+Best regards,
+Javier Carrasco
 
