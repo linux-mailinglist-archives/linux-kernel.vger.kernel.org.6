@@ -1,591 +1,117 @@
-Return-Path: <linux-kernel+bounces-200363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32448FAEF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5A08FAEF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303BE1F25CEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C521F263EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2921442FF;
-	Tue,  4 Jun 2024 09:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RE3DV9PC"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B8F143C74;
+	Tue,  4 Jun 2024 09:37:17 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F85B143897
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BBB8BFA;
+	Tue,  4 Jun 2024 09:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717493675; cv=none; b=PMrsjUTDC+YodKEc4M0fqx8VOznS2WBCKzWsXLg9Yxf5LkFA97rmGb8b+WSb1OASUOhQHbZnE5EXwBcGlQadHVvyXd9EAOTMSCrXYAR3avz8r4qQVYHCE1VekdslCWK7AABaH7LpEfU1aQhgGkDGXe24X7XUPIGCyitoBnIhufw=
+	t=1717493837; cv=none; b=qmlYNHPMgakT94u2cbPrg/UPkOpoVbGZLBoYrUNcibQqA1j1AjvrqUf/b1ihZlQKZWolyAymzrMpvIReCaSIgqRoRPdRKOqorgpYBP+WmJfR7nfh+jN6n0ZhFDB56WCUvOBc6SHrmDuSQcJF/Qy5bVQ6V0Lq1XJh4PiWl7nY/C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717493675; c=relaxed/simple;
-	bh=gJAdKcRuNMQW2l9HW8qdO/Tj6cHdhSHHZGZ7EJMDVDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n6VNmTbNHGYworO7NF8QogLU6Vb6sMf7z51TVL/NPjk4W5T5Dg+DhwyK8n3RJz73P4TWAtyGM5cajvbzRDAa7wbCkqcRejcrxqBp++AzKv1d6udFOIXb+VQn2unKgxG4BeNu2Lp6r0shCymm7dcRQqPcPXAm9GuRZ2te+9qhozc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RE3DV9PC; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfab2474152so1538566276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717493671; x=1718098471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sjUiMjbQYKJ3oAn33XJLeAigCffOjsG9ikaBsqFwqOk=;
-        b=RE3DV9PCuMWq+lDOmn4KF839+/5+q+9yH7mQyR/PTK7l67GcvRYSPgdJ9yIuJkIf+H
-         UcJzH7u4MXYgzwNYdQDrQDKGLuryGWyW4o5d2YpkMozNUdZVLyTeWm+6Pxq0NF/af0V+
-         +kDAmQ9PYtIg232JghNTCsv8Mb1RtNoY85u5dfkZyhlHdI0i41sngTynSF/QQOv1ZREU
-         gqemexARH93dPeKc8lxgIgFm1Vf87eR0FdgjeCmkFeZSh/WzschfHzHBuVLVlhdBUAVT
-         aGmMjNdwR2334tpUaHYvt5lbk6OVCSNThGA3rgMyG0+8DRt11P5MeHjSI+aWdi7gQGJx
-         t/Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717493671; x=1718098471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sjUiMjbQYKJ3oAn33XJLeAigCffOjsG9ikaBsqFwqOk=;
-        b=m4Fx9PNDfcAvbEKphNLt5bAEm2I9eD2J2WIt4SgbI0PpDb7obzObb8liiQspMPIlPV
-         0rckVn/yTJqI9iXJQYDWfqoj2qnjeeQGPFjkcLhsTJaxo03zu2N9G1UV2s9LcRSmbE0N
-         Zy7JGVCSPxdK0HK2tOGKHiKjVNcTckRGdP/WVj+pmy1vNY3QuMrlxfk+uTPK+dL1euSU
-         9BDmLWdxpVSu0Ss5wX4R0umZzIHeWagks3osuR5trSbzb3PIjymaSPqEOFUhkWi3B7ZA
-         9VQbMpGzNfWAT95Fu5ElDlOYtYaG+7FPApO150xeOjSC5JLFa73S/sfHojuPrMYMcjGW
-         Fnrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVE3NuULK48fmmnLqDCyKKHiC8Z6FKyYpEGvL+YmzvdD+f3xmzEjOp8KeubisNM+IDhO0XOoBQGKkRWLZ/VGHAaFIwb5WB7B56CWiT6
-X-Gm-Message-State: AOJu0YyyhE8EexdpKy5wGH3LYwa7nY1HdB/YzLtegc7Xpii4rMPaGTd9
-	5MA6OLV8afFHq1V72KEB4M/YBSL+ylCrSmMtq8Ta1JDCPc951aWGztIOeZVKXzRJ9Tj5IOAcAf6
-	bMTd8Zhr/01AIAuMGxek6P6Q3iefyJzvgJ5o9Cw==
-X-Google-Smtp-Source: AGHT+IHrvxBMm7Xf/LeuMbr29HzpprNLKO736EJNVQsIeub3Kz4JKrX20s4kWx2XOkZcvQ0lrRWwyftI0/YuvbUz1bA=
-X-Received: by 2002:a5b:bd1:0:b0:de5:4b1f:7e00 with SMTP id
- 3f1490d57ef6-dfa73bf3832mr11005822276.15.1717493671164; Tue, 04 Jun 2024
- 02:34:31 -0700 (PDT)
+	s=arc-20240116; t=1717493837; c=relaxed/simple;
+	bh=af2fEpd+Md2eU+XT2qqgm8Gs0Ji9V0aPy63zg4vev+o=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r81VgLweyEuOobj0/eb0sIJkEkevhYgqJuD6lFKXCZ1+IfudEuo3S/NZrGEw8Yf8fd2jXUvdS0t6Pvd73jhhXs3FI3dqHF/Ka3SlihnKWE7woJeRvtnIVErdNPXtcTg897AI6ud9cxreCFjZb4GAqpbYnonTqSuibaonwjfEbyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4549UYmV011658;
+	Tue, 4 Jun 2024 09:36:43 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yfruxat3p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 04 Jun 2024 09:36:42 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 4 Jun 2024 02:36:41 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Tue, 4 Jun 2024 02:36:36 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <dan.carpenter@linaro.org>
+CC: <adilger.kernel@dilger.ca>, <coreteam@netfilter.org>,
+        <davem@davemloft.net>, <ebiggers@kernel.org>, <fw@strlen.de>,
+        <jaegeuk@kernel.org>, <kadlec@netfilter.org>, <kuba@kernel.org>,
+        <linux-ext4@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <lkp@intel.com>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
+        <oe-kbuild@lists.linux.dev>, <pablo@netfilter.org>,
+        <syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <tytso@mit.edu>
+Subject: Re: [PATCH V3] ext4: check hash version and filesystem casefolded consistent
+Date: Tue, 4 Jun 2024 17:36:35 +0800
+Message-ID: <20240604093635.538480-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <638bf33d-7ab0-4ff0-aece-ab877cff1694@moroto.mountain>
+References: <638bf33d-7ab0-4ff0-aece-ab877cff1694@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530102032.27179-1-quic_ekangupt@quicinc.com>
- <20240530102032.27179-5-quic_ekangupt@quicinc.com> <f0dbb385-6aea-4721-92fa-a1f560fc7c5a@linaro.org>
- <2f52b206-3fd9-4508-b9bd-23efc5fb637e@quicinc.com>
-In-Reply-To: <2f52b206-3fd9-4508-b9bd-23efc5fb637e@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 4 Jun 2024 12:34:19 +0300
-Message-ID: <CAA8EJprGqUzgo7BN0LgoUy7APZuGBZkRdPJhwJyEQgtRmuAtAg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/9] misc: fastrpc: Add static PD restart support
-To: Bharath Kumar V <quic_bkumar@quicinc.com>
-Cc: Caleb Connolly <caleb.connolly@linaro.org>, Ekansh Gupta <quic_ekangupt@quicinc.com>, 
-	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: mq-ShY-sh6m8qUd6uHmR57w9omC2Phuz
+X-Proofpoint-GUID: mq-ShY-sh6m8qUd6uHmR57w9omC2Phuz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-04_03,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ lowpriorityscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 spamscore=0 mlxscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2405170001 definitions=main-2406040077
 
-On Tue, 4 Jun 2024 at 12:23, Bharath Kumar V <quic_bkumar@quicinc.com> wrot=
-e:
->
->
->
-> On 6/3/2024 4:23 PM, Caleb Connolly wrote:
-> > Hi Ekansh,
-> >
-> > On 30/05/2024 12:20, Ekansh Gupta wrote:
-> >> Static PDs on the audio and sensor domains are expected to support
-> >> PD restart. The kernel resource handling for the PDs are expected
-> >> to be handled by fastrpc driver. For this, there is a requirement
-> >> of PD service locator to get the event notifications for static PD
-> >> services. Also when events are received, the driver needs to handle
-> >> based on PD states. Added changes to add service locator for audio
-> >> and sensor domain static PDs and handle the PD restart sequence.
-> >
-> > Thanks for the patch, I wanted to bring up a larger issue which I've
-> > been noticing with the fastrpc driver.
-> >
-> > This file is now >2.5k LOC, and to my knowledge it features:
-> >
-> > * Two different memory mapping/unmapping interfaces to the DSP (three i=
-f
-> > you count dmabufs!)
-> > * Different branching codepaths for static vs dynamic processes (with
-> > totally different lifetimes).
-> > * Over 8 structs just for state management, with the largest being >150=
-0
-> > bytes
-> > * Zero context for which code paths are relevant for which contexts
-> >
-> > Your series is a combination of bug fixes and cleanup which span most o=
-f
-> > the file -- suggesting that the state management is also spread all ove
-> > rthe file. Even for someone with some familiarity with the driver these
-> > patches are really non-trivial to review (patch 5 being a good example
-> > of this), while in addition you introduce new features like this in
-> > patch. This doesn't make for a coherent story for reviewers.
-> >
-> > On top of that, there is very minimal, if any comments in this hugely
-> > complex code, and seemingly zero consideration for how to model state o=
-r
-> > the lifetime of objects.
-> >
-> > Finally, there is next-to-no public documentation or easily obtained
-> > (and used) userspace for this driver. Certainly nothing that I could us=
-e
-> > to offer a Tested-by on your patches.
-> >
-> > I am not the maintainer, so while it's not my place, I want to offer
-> > some suggestions here:
-> >
-> > 1. Split the fastrpc driver up into more bite-size chunks which can
-> > actually be reasoned about (I would start by splitting the
-> > implementation details out from the business logic, and then further
-> > abstracting out the static PD support, PDR, etc. Just the "invoke"
-> > mechanism should be in it's own file with it's own state...).
-> >
-> > 2. Add detailed documentation explaining fastrpc from at least a high
-> > level (ideally with lower level and driver details too), and code
-> > comments (where relevant).
-> >
-> > 3. Release (and maintain) a reference tool(s) that can be used to
-> > validate the driver and better understand proposed new features (you
-> > could take inspiration from https://gitlab.com/flamingradian/sensh/).
-> >
-> > A mechanism to test at least parts of this driver without needing a DSP
-> > on the other end would likely help a lot here, but that's obviously a
-> > much larger scope.
-> >
-> > Please let me know your thoughts.
-> >
-> > Kind Regards,
->
-> Thank you for reviewing the driver and the patches. Your feedback is
-> greatly appreciated.
-> As you mentioned, our current driver is a large file containing various
-> APIs to support multiple features. We are actively discussing
-> modularizing the driver to enhance clarity and improve understanding.
+On Tue, 4 Jun 2024 12:27:06 +0300, Dan Carpenter wrote: 
+> kernel test robot noticed the following build warnings:
+> 
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Lizhi-Xu/ext4-check-hash-version-and-filesystem-casefolded-consistent/20240531-170046
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+> patch link:    https://lore.kernel.org/r/20240531085647.2918240-1-lizhi.xu%40windriver.com
+> patch subject: [PATCH V3] ext4: check hash version and filesystem casefolded consistent
+> config: i386-randconfig-141-20240601 (https://download.01.org/0day-ci/archive/20240602/202406020752.Ii2MU4KP-lkp@intel.com/config)
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202406020752.Ii2MU4KP-lkp@intel.com/
+> 
+> smatch warnings:
+> fs/ext4/super.c:5287 __ext4_fill_super() warn: missing error code 'err'
+> 
+> vim +/err +5287 fs/ext4/super.c
+> 
+> d4fab7b28e2f5d7 Theodore Ts'o           2023-04-27  5280  	err = ext4_block_group_meta_init(sb, silent);
+> d4fab7b28e2f5d7 Theodore Ts'o           2023-04-27  5281  	if (err)
+> 0d1ee42f27d30ee Alexandre Ratchov       2006-10-11  5282  		goto failed_mount;
+> 0b8e58a140cae2b Andreas Dilger          2009-06-03  5283
+> db9345d9e6f075e Jason Yan               2023-03-23  5284  	ext4_hash_info_init(sb);
+> 66b3f078839bbdb Lizhi Xu                2024-05-31  5285  	if (es->s_def_hash_version == DX_HASH_SIPHASH &&
+> 66b3f078839bbdb Lizhi Xu                2024-05-31  5286  	    !ext4_has_feature_casefold(sb))
+> 66b3f078839bbdb Lizhi Xu                2024-05-31 @5287  		goto failed_mount;
+This warning has been resolved in the following patch: 
+https://lore.kernel.org/all/20240601113749.473058-1-lizhi.xu@windriver.com/
 
-Please consider dropping the FastRPC interface completely and
-switching to drm/accel instead. This is the API that should be used by
-accelerators (including, but not limited to AI accelerators).
-
-> Additionally, we are in the process of creating basic documentation, as
-> well as feature-specific documentation for better clarity.
-> Our latest user space code is available on GitHub at
-> github.com/quic/fastrpc. Feel free to explore it, and please let us know
-> if you have any feedback or need further assistance. We=E2=80=99re commit=
-ted to
-> continuous improvement.
-
-Note, this is not what is usually expected from open source. This is
-just a code drop, dumped to a git repository. It doesn't have
-development history, it doesn't answer the most typical comment that
-we as open source developers have: "why was it developed in this
-way?". Please consider replacing this code drop with the Git tree that
-contains development history.
-
-> For testing purposes, we=E2=80=99ve the Hexagon SDK by Qualcomm to the pu=
-blic.
-> You can download it from the Qualcomm developer network.
-
-What is the licence for the SDK? What is the licence for the binaries
-(including skel.so) generated using the SDK?
-Is there an open-source toolchain?
-The requirement for any kernel driver using dma-buf is to have
-completely functional open source userspace implementation (it doesn't
-have to be fully optimal or exercise all hardware features, but it
-should be possible to understand what is being passed around and how
-the user API interface is supposed to work.
-
-> The SDK
-> includes examples covering all the features of fastRPC, along with
-> comprehensive documentation. If you encounter any issues accessing the
-> Hexagon SDK or have suggestions for improving the documentation, feel
-> free to reach out.
-
-A typical problem that we have is if it is possible to integrate
-userspace tools into an OE build infrastructure. We want to be able to
-build simple test programs and include them into OE images.
-
-This requires being able to download the files without any additional
-package managers or click-through licences.
-
->
-> Best Regards,
-> Bharath
->
-> >>
-> >> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> >> ---
-> >>   drivers/misc/Kconfig   |   2 +
-> >>   drivers/misc/fastrpc.c | 205 ++++++++++++++++++++++++++++++++++++++-=
---
-> >>   2 files changed, 195 insertions(+), 12 deletions(-)
-> >>
-> >> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> >> index faf983680040..e2d83cd085b5 100644
-> >> --- a/drivers/misc/Kconfig
-> >> +++ b/drivers/misc/Kconfig
-> >> @@ -280,8 +280,10 @@ config QCOM_FASTRPC
-> >>       tristate "Qualcomm FastRPC"
-> >>       depends on ARCH_QCOM || COMPILE_TEST
-> >>       depends on RPMSG
-> >> +    depends on NET
-> >>       select DMA_SHARED_BUFFER
-> >>       select QCOM_SCM
-> >> +    select QCOM_PDR_HELPERS
-> >>       help
-> >>         Provides a communication mechanism that allows for clients to
-> >>         make remote method invocations across processor boundary to
-> >> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> >> index 3e1ab58038ed..d115860fc356 100644
-> >> --- a/drivers/misc/fastrpc.c
-> >> +++ b/drivers/misc/fastrpc.c
-> >> @@ -22,6 +22,7 @@
-> >>   #include <linux/firmware/qcom/qcom_scm.h>
-> >>   #include <uapi/misc/fastrpc.h>
-> >>   #include <linux/of_reserved_mem.h>
-> >> +#include <linux/soc/qcom/pdr.h>
-> >>   #define ADSP_DOMAIN_ID (0)
-> >>   #define MDSP_DOMAIN_ID (1)
-> >> @@ -29,6 +30,7 @@
-> >>   #define CDSP_DOMAIN_ID (3)
-> >>   #define FASTRPC_DEV_MAX        4 /* adsp, mdsp, slpi, cdsp*/
-> >>   #define FASTRPC_MAX_SESSIONS    14
-> >> +#define FASTRPC_MAX_SPD        4
-> >>   #define FASTRPC_MAX_VMIDS    16
-> >>   #define FASTRPC_ALIGN        128
-> >>   #define FASTRPC_MAX_FDLIST    16
-> >> @@ -105,6 +107,18 @@
-> >>   #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device,
-> >> miscdev)
-> >> +#define AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME   "audio_pdr_adsp"
-> >> +#define AUDIO_PDR_ADSP_SERVICE_NAME              "avs/audio"
-> >> +#define ADSP_AUDIOPD_NAME                        "msm/adsp/audio_pd"
-> >> +
-> >> +#define SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME
-> >> "sensors_pdr_adsp"
-> >> +#define SENSORS_PDR_ADSP_SERVICE_NAME              "tms/servreg"
-> >> +#define ADSP_SENSORPD_NAME                       "msm/adsp/sensor_pd"
-> >> +
-> >> +#define SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME "sensors_pdr_sl=
-pi"
-> >> +#define SENSORS_PDR_SLPI_SERVICE_NAME
-> >> SENSORS_PDR_ADSP_SERVICE_NAME
-> >> +#define SLPI_SENSORPD_NAME                       "msm/slpi/sensor_pd"
-> >> +
-> >>   static const char *domains[FASTRPC_DEV_MAX] =3D { "adsp", "mdsp",
-> >>                           "sdsp", "cdsp"};
-> >>   struct fastrpc_phy_page {
-> >> @@ -259,6 +273,15 @@ struct fastrpc_session_ctx {
-> >>       bool valid;
-> >>   };
-> >> +struct fastrpc_static_pd {
-> >> +    char *servloc_name;
-> >> +    char *spdname;
-> >> +    void *pdrhandle;
-> >> +    struct fastrpc_channel_ctx *cctx;
-> >> +    struct fastrpc_user *fl;
-> >> +    bool ispdup;
-> >> +};
-> >> +
-> >>   struct fastrpc_channel_ctx {
-> >>       int domain_id;
-> >>       int sesscount;
-> >> @@ -266,6 +289,7 @@ struct fastrpc_channel_ctx {
-> >>       struct qcom_scm_vmperm vmperms[FASTRPC_MAX_VMIDS];
-> >>       struct rpmsg_device *rpdev;
-> >>       struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
-> >> +    struct fastrpc_static_pd spd[FASTRPC_MAX_SPD];
-> >>       spinlock_t lock;
-> >>       struct idr ctx_idr;
-> >>       struct list_head users;
-> >> @@ -297,10 +321,12 @@ struct fastrpc_user {
-> >>       struct fastrpc_channel_ctx *cctx;
-> >>       struct fastrpc_session_ctx *sctx;
-> >>       struct fastrpc_buf *init_mem;
-> >> +    struct fastrpc_static_pd *spd;
-> >>       int tgid;
-> >>       int pd;
-> >>       bool is_secure_dev;
-> >> +    char *servloc_name;
-> >>       /* Lock for lists */
-> >>       spinlock_t lock;
-> >>       /* lock for allocations */
-> >> @@ -1230,12 +1256,33 @@ static bool is_session_rejected(struct
-> >> fastrpc_user *fl, bool unsigned_pd_reques
-> >>       return false;
-> >>   }
-> >> +static struct fastrpc_static_pd *fastrpc_get_spd_session(
-> >> +                struct fastrpc_user *fl)
-> >> +{
-> >> +    int i;
-> >> +    struct fastrpc_static_pd *spd =3D NULL;
-> >> +    struct fastrpc_channel_ctx *cctx =3D fl->cctx;
-> >> +
-> >> +    for (i =3D 0; i < FASTRPC_MAX_SPD ; i++) {
-> >> +        if (!cctx->spd[i].servloc_name)
-> >> +            continue;
-> >> +        if (!strcmp(fl->servloc_name, cctx->spd[i].servloc_name)) {
-> >> +            spd =3D &cctx->spd[i];
-> >> +            spd->fl =3D fl;
-> >> +            break;
-> >> +        }
-> >> +    }
-> >> +
-> >> +    return spd;
-> >> +}
-> >> +
-> >>   static int fastrpc_init_create_static_process(struct fastrpc_user *f=
-l,
-> >>                             char __user *argp)
-> >>   {
-> >>       struct fastrpc_init_create_static init;
-> >>       struct fastrpc_invoke_args *args;
-> >>       struct fastrpc_phy_page pages[1];
-> >> +    struct fastrpc_static_pd *spd =3D NULL;
-> >>       char *name;
-> >>       int err;
-> >>       struct {
-> >> @@ -1270,6 +1317,19 @@ static int
-> >> fastrpc_init_create_static_process(struct fastrpc_user *fl,
-> >>           goto err_name;
-> >>       }
-> >> +    fl->servloc_name =3D AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME;
-> >> +
-> >> +    spd =3D fastrpc_get_spd_session(fl);
-> >> +    if (!spd) {
-> >> +        err =3D -EUSERS;
-> >> +        goto err_name;
-> >> +    }
-> >> +
-> >> +    if (!spd->ispdup) {
-> >> +        err =3D -ENOTCONN;
-> >> +        goto err_name;
-> >> +    }
-> >> +    fl->spd =3D spd;
-> >>       if (!fl->cctx->remote_heap) {
-> >>           err =3D fastrpc_remote_heap_alloc(fl, fl->sctx->dev, init.me=
-mlen,
-> >>                           &fl->cctx->remote_heap);
-> >> @@ -1645,6 +1705,7 @@ static int fastrpc_dmabuf_alloc(struct
-> >> fastrpc_user *fl, char __user *argp)
-> >>   static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
-> >>   {
-> >>       struct fastrpc_invoke_args args[1];
-> >> +    struct fastrpc_static_pd *spd =3D NULL;
-> >>       int tgid =3D fl->tgid;
-> >>       u32 sc;
-> >> @@ -1654,6 +1715,22 @@ static int fastrpc_init_attach(struct
-> >> fastrpc_user *fl, int pd)
-> >>       sc =3D FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
-> >>       fl->pd =3D pd;
-> >> +    if (pd =3D=3D SENSORS_PD) {
-> >> +        if (fl->cctx->domain_id =3D=3D ADSP_DOMAIN_ID)
-> >> +            fl->servloc_name =3D
-> >> SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME;
-> >> +        else if (fl->cctx->domain_id =3D=3D SDSP_DOMAIN_ID)
-> >> +            fl->servloc_name =3D
-> >> SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME;
-> >> +
-> >> +        spd =3D fastrpc_get_spd_session(fl);
-> >> +        if (!spd)
-> >> +            return -EUSERS;
-> >> +
-> >> +        if (!spd->ispdup)
-> >> +            return -ENOTCONN;
-> >> +
-> >> +        fl->spd =3D spd;
-> >> +    }
-> >> +
-> >>       return fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE,
-> >>                          sc, &args[0]);
-> >>   }
-> >> @@ -2129,6 +2206,64 @@ static long fastrpc_device_ioctl(struct file
-> >> *file, unsigned int cmd,
-> >>       return err;
-> >>   }
-> >> +static void fastrpc_notify_users(struct fastrpc_user *user)
-> >> +{
-> >> +    struct fastrpc_invoke_ctx *ctx;
-> >> +
-> >> +    spin_lock(&user->lock);
-> >> +    list_for_each_entry(ctx, &user->pending, node) {
-> >> +        ctx->retval =3D -EPIPE;
-> >> +        complete(&ctx->work);
-> >> +    }
-> >> +    spin_unlock(&user->lock);
-> >> +}
-> >> +
-> >> +static void fastrpc_notify_pdr_drivers(struct fastrpc_channel_ctx *cc=
-tx,
-> >> +        char *servloc_name)
-> >> +{
-> >> +    struct fastrpc_user *fl;
-> >> +    unsigned long flags;
-> >> +
-> >> +    spin_lock_irqsave(&cctx->lock, flags);
-> >> +    list_for_each_entry(fl, &cctx->users, user) {
-> >> +        if (fl->servloc_name && !strcmp(servloc_name, fl->servloc_nam=
-e))
-> >> +            fastrpc_notify_users(fl);
-> >> +    }
-> >> +    spin_unlock_irqrestore(&cctx->lock, flags);
-> >> +}
-> >> +
-> >> +static void fastrpc_pdr_cb(int state, char *service_path, void *priv)
-> >> +{
-> >> +    struct fastrpc_static_pd *spd =3D (struct fastrpc_static_pd *)pri=
-v;
-> >> +    struct fastrpc_channel_ctx *cctx;
-> >> +
-> >> +    if (!spd)
-> >> +        return;
-> >> +
-> >> +    cctx =3D spd->cctx;
-> >> +    switch (state) {
-> >> +    case SERVREG_SERVICE_STATE_DOWN:
-> >> +        dev_info(&cctx->rpdev->dev,
-> >> +            "%s: %s (%s) is down for PDR on %s\n",
-> >> +            __func__, spd->spdname,
-> >> +            spd->servloc_name,
-> >> +            domains[cctx->domain_id]);
-> >> +        spd->ispdup =3D false;
-> >> +        fastrpc_notify_pdr_drivers(cctx, spd->servloc_name);
-> >> +        break;
-> >> +    case SERVREG_SERVICE_STATE_UP:
-> >> +        dev_info(&cctx->rpdev->dev,
-> >> +            "%s: %s (%s) is up for PDR on %s\n",
-> >> +            __func__, spd->spdname,
-> >> +            spd->servloc_name,
-> >> +            domains[cctx->domain_id]);
-> >> +        spd->ispdup =3D true;
-> >> +        break;
-> >> +    default:
-> >> +        break;
-> >> +    }
-> >> +}
-> >> +
-> >>   static const struct file_operations fastrpc_fops =3D {
-> >>       .open =3D fastrpc_device_open,
-> >>       .release =3D fastrpc_device_release,
-> >> @@ -2248,6 +2383,39 @@ static int fastrpc_device_register(struct
-> >> device *dev, struct fastrpc_channel_ct
-> >>       return err;
-> >>   }
-> >> +static int fastrpc_setup_service_locator(struct fastrpc_channel_ctx
-> >> *cctx, char *client_name,
-> >> +            char *service_name, char *service_path, int domain, int
-> >> spd_session)
-> >> +{
-> >> +    int err =3D 0;
-> >> +    struct pdr_handle *handle =3D NULL;
-> >> +    struct pdr_service *service =3D NULL;
-> >> +
-> >> +    /* Register the service locator's callback function */
-> >> +    handle =3D pdr_handle_alloc(fastrpc_pdr_cb, &cctx->spd[spd_sessio=
-n]);
-> >> +    if (IS_ERR(handle)) {
-> >> +        err =3D PTR_ERR(handle);
-> >> +        goto bail;
-> >> +    }
-> >> +    cctx->spd[spd_session].pdrhandle =3D handle;
-> >> +    cctx->spd[spd_session].servloc_name =3D client_name;
-> >> +    cctx->spd[spd_session].spdname =3D service_path;
-> >> +    cctx->spd[spd_session].cctx =3D cctx;
-> >> +    service =3D pdr_add_lookup(handle, service_name, service_path);
-> >> +    if (IS_ERR(service)) {
-> >> +        err =3D PTR_ERR(service);
-> >> +        goto bail;
-> >> +    }
-> >> +    pr_info("fastrpc: %s: pdr_add_lookup enabled for %s (%s, %s)\n",
-> >> +        __func__, service_name, client_name, service_path);
-> >> +
-> >> +bail:
-> >> +    if (err) {
-> >> +        pr_warn("fastrpc: %s: failed for %s (%s, %s)with err %d\n",
-> >> +                __func__, service_name, client_name, service_path, er=
-r);
-> >> +    }
-> >> +    return err;
-> >> +}
-> >> +
-> >>   static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
-> >>   {
-> >>       struct device *rdev =3D &rpdev->dev;
-> >> @@ -2326,6 +2494,25 @@ static int fastrpc_rpmsg_probe(struct
-> >> rpmsg_device *rpdev)
-> >>           goto fdev_error;
-> >>       }
-> >> +    if (domain_id =3D=3D ADSP_DOMAIN_ID) {
-> >> +        err =3D fastrpc_setup_service_locator(data,
-> >> AUDIO_PDR_SERVICE_LOCATION_CLIENT_NAME,
-> >> +            AUDIO_PDR_ADSP_SERVICE_NAME, ADSP_AUDIOPD_NAME,
-> >> domain_id, 0);
-> >> +        if (err)
-> >> +            goto populate_error;
-> >> +
-> >> +        err =3D fastrpc_setup_service_locator(data,
-> >> +            SENSORS_PDR_ADSP_SERVICE_LOCATION_CLIENT_NAME,
-> >> +            SENSORS_PDR_ADSP_SERVICE_NAME, ADSP_SENSORPD_NAME,
-> >> domain_id, 1);
-> >> +        if (err)
-> >> +            goto populate_error;
-> >> +    } else if (domain_id =3D=3D SDSP_DOMAIN_ID) {
-> >> +        err =3D fastrpc_setup_service_locator(data,
-> >> +            SENSORS_PDR_SLPI_SERVICE_LOCATION_CLIENT_NAME,
-> >> +            SENSORS_PDR_SLPI_SERVICE_NAME, SLPI_SENSORPD_NAME,
-> >> domain_id, 0);
-> >> +        if (err)
-> >> +            goto populate_error;
-> >> +    }
-> >> +
-> >>       kref_init(&data->refcount);
-> >>       dev_set_drvdata(&rpdev->dev, data);
-> >> @@ -2355,24 +2542,13 @@ static int fastrpc_rpmsg_probe(struct
-> >> rpmsg_device *rpdev)
-> >>       return err;
-> >>   }
-> >> -static void fastrpc_notify_users(struct fastrpc_user *user)
-> >> -{
-> >> -    struct fastrpc_invoke_ctx *ctx;
-> >> -
-> >> -    spin_lock(&user->lock);
-> >> -    list_for_each_entry(ctx, &user->pending, node) {
-> >> -        ctx->retval =3D -EPIPE;
-> >> -        complete(&ctx->work);
-> >> -    }
-> >> -    spin_unlock(&user->lock);
-> >> -}
-> >> -
-> >>   static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
-> >>   {
-> >>       struct fastrpc_channel_ctx *cctx =3D dev_get_drvdata(&rpdev->dev=
-);
-> >>       struct fastrpc_buf *buf, *b;
-> >>       struct fastrpc_user *user;
-> >>       unsigned long flags;
-> >> +    int i;
-> >>       /* No invocations past this point */
-> >>       spin_lock_irqsave(&cctx->lock, flags);
-> >> @@ -2393,6 +2569,11 @@ static void fastrpc_rpmsg_remove(struct
-> >> rpmsg_device *rpdev)
-> >>       if (cctx->remote_heap)
-> >>           fastrpc_buf_free(cctx->remote_heap);
-> >> +    for (i =3D 0; i < FASTRPC_MAX_SPD; i++) {
-> >> +        if (cctx->spd[i].pdrhandle)
-> >> +            pdr_handle_release(cctx->spd[i].pdrhandle);
-> >> +    }
-> >> +
-> >>       of_platform_depopulate(&rpdev->dev);
-> >>       fastrpc_channel_ctx_put(cctx);
-> >
-
-
-
---=20
-With best wishes
-Dmitry
+Lizhi
 
