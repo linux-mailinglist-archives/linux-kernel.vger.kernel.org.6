@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-200235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCDF8FAD52
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:17:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608778FAD54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D331C21EAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:17:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B6EE2843AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCA51422CC;
-	Tue,  4 Jun 2024 08:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BBF1422A7;
+	Tue,  4 Jun 2024 08:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdP9Ljqq"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XKGUi6tk"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969451422C3;
-	Tue,  4 Jun 2024 08:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E67E139CFF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717489038; cv=none; b=ZlQboPFPrjhtsZkndTVS1JHhjsK/TUW9+2ygblI6VedYXGN99E5LFbWTonMra6UGxu8SqPMvew8wVBeOCOK7dPhO7a4A6vTSZ3ptdQSuaZsAi8TJBvdfglWAGkmi22Jo9BAZjjT5gFppsUlI6y0Bbk7unDO5Xz9MPiY4qIrJcVE=
+	t=1717489071; cv=none; b=mPze4OkMg+bKTBkht6shqQNfnKaTmeOKAC1mXZgngTBNudPJVljkss6KaHI5nAejcX1U6hVvlCkZm7cOboBKTu/alSO65ZQ41KUDK1/bV/dE5jurRxgtiODdF1bxEKKIkrF3q/FCEcbWlZA58dLWvoy8QGFzBae9gp6PUFutiOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717489038; c=relaxed/simple;
-	bh=9Wf+j/r8bT2i678Is404RDPuyVL0+W6hBWBeanTJwSc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Lqn8Jkqyu3vkFMyOoG2BuXTa3sDEcfD6BeWjb4R9FQMMzXj0Gx28m267HHrtwGnLKSkR+OR0vUcEYe5Xlytmh2BSD7N3J8eKrrCH2iDAIe5VihwPnbgQ8ULTlnQ7/fmtJaITfWgWxVLy0Y96tt8tV0V9z6w5Pm2baHE4p27eFXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdP9Ljqq; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f6559668e1so19924415ad.3;
-        Tue, 04 Jun 2024 01:17:17 -0700 (PDT)
+	s=arc-20240116; t=1717489071; c=relaxed/simple;
+	bh=KJf2pXnlxe7k1MX+zyUO4LGepipFYbNI23zLJRKf5Ro=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VlOxirOOtf4Zdo4fD6PqLtwaH2wAiO/CKjgAoyt+NB5dxYfwzExalO9/7v1i05rYxwJzivY8Bd8rDKHzygXxxMgjWBaSL0zLxXSf0TUCwh0NgSDe2YHflhcBSZ5Me3/DkiLiGcXmpRnLE1gk2EbfYZEdM/2phRqHSR/ifDgqfgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XKGUi6tk; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-356c4e926a3so4322760f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 01:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717489037; x=1718093837; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717489068; x=1718093868; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9Wf+j/r8bT2i678Is404RDPuyVL0+W6hBWBeanTJwSc=;
-        b=UdP9LjqqY3UYpJUxTaB+OoM1l2P7DNgSysqOstiHK8/jt8EChNsb69vysMDo0sEhn1
-         m+9XKP2bsA1f3JGLRaOdZ7rlXeDPGxNP5oTKQi1/96ZD+lOw9Z6tkB9q+0J7H7NFGakq
-         oYWigr0r3QHiCTRXNxVxrxzU0BpfdyA2TgdhO16BqXPKZnpA8VKxGSmRGb5N0Etz5ZQN
-         y3F2b84RS1QQI6sZlcp1AuRtxCSgDSxbGsQa0XJtfl6seLiJ+nWxEn1/4YFMeLqkW4K8
-         VFexMvC8gqw2jB/A+kh7U/cJzPF5xgs/wPJbkOH0PuMX5OR4bbAWIXUwjR+JSUzU4QEB
-         orbQ==
+        bh=BMx0DAEnud4ZAXbAP7JbZUsSrVWKe0ofICbawK0LpNk=;
+        b=XKGUi6tkcNoT2I8TlMl0LXXMB2kDiCHzpCvgCkbtZ2xGGJNzeg1DAgSSufIXlBPVgy
+         24nO77Ln0McZaAg5ssZUu8ab9H4aonnM0Qo/I1dxb22p270IJn/D6VEBuJ5KUIYvWYtW
+         vPuKKZ/UYBCS8R5iRBvgrtcyW/jLSUijJ4z+7dL61G40jV1TXm8eGx184NjyMKxSU5h8
+         oYWVLstkxnuoVhyABKG/nF0uPs3bFNq3MyqNriJZcFqfoYzk+me6Qc7LKFKe0x0HtVTt
+         j9KNCVS9pGMBaUBzbrLvO67JLXN66K48amk6pqwaQitn37YAOe8kQzcZsCwKp9OdCbac
+         vkng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717489037; x=1718093837;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717489068; x=1718093868;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9Wf+j/r8bT2i678Is404RDPuyVL0+W6hBWBeanTJwSc=;
-        b=iM7oRhvpPvMFPXipvsazjW91TS3FxtfgLq5vHrKJZOOHwPT5bk/msQyS/fyptxs+r+
-         BWUPuUep5y0yyUkNQeG9mX5a025d0M7JCEyMqKNiLPnZCaJJ0rIXuIWK4jxStzJZ9u9I
-         JhoMoHTPQavslcmrM8WHOBxejxJIZLn19CyKMAIP0G/n7MbgYZZezT1XpGnq/td7JDYi
-         YzC190W+bng2akeQwp7u28/SJLF5aNLrFA6z/66/8qoDej9jD+g5I+ngANbamXNzaZtA
-         kRDmjoL3LTgGEVQKd6LQeVrmrtIg2p9CB0swE792DE8dlc/jwfvdIk7hbHrgJS4XRaqP
-         kT3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWpqm5YWoNboQsKbFmlLXRl0HnYK+1GPXwSS97UzP+BQCrW+EP5+tYkP4WDpHCZY63018TiLrPn7x6iaNSwWnG22K4mefVeAVgq6/OVs16n3v7G8Bdts8K3sZsdC0xVHSsAG9sMOFGJTwVq3Q==
-X-Gm-Message-State: AOJu0Ywedg/Aa9SPM+LK8pdBoKiJQrmlo3zumgTJxPls1TWpaqQJ+K36
-	2IAYLtjQKC/F+7Rou0mRev727djH2GcfDhbqYbRCwoMD2QkeKzkohkvXpw==
-X-Google-Smtp-Source: AGHT+IHdof6VcIZi7jyJ7d6rXgJdnuR+v8pNAs2MKOtL3+wKCAAoZXgFVg7deQ3SvxmgwbyFivmaNg==
-X-Received: by 2002:a17:902:e5c2:b0:1f6:8290:175a with SMTP id d9443c01a7336-1f682901acamr43966985ad.40.1717489036496;
-        Tue, 04 Jun 2024 01:17:16 -0700 (PDT)
-Received: from smtpclient.apple ([47.88.5.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63232f26dsm78302805ad.46.2024.06.04.01.17.13
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2024 01:17:16 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        bh=BMx0DAEnud4ZAXbAP7JbZUsSrVWKe0ofICbawK0LpNk=;
+        b=MvaKE+TBQ/RlmyoYT840lH+KSOYPYtgisHIaEPcQbI8Z/9DEzhPgu76rBB9f5bGEeQ
+         fWsSH70VWF3b82iiUWuYMnMBjBLj2sJ2NlTgX7KkXeAhyeRbIojQ9FUyFXWal0CMpZb4
+         7c7PIT9XLGZwByAkVtywc2ILSb81lGsioC9X3pwkUePcXzl70RS2fpn5SRlcrXDATElq
+         oomVt+3qfDUEJCQ69QqHcmmxniMm41m8nLCgiHDFxJA0GmFXy3+rn+GZW0601ehP96Mz
+         rYOd6qcE/dQ5tieEogYMC10Jsc4fKDyvJNp6kbe8Zboar+nF2todRDqrn3SunpH0oshN
+         s1dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxcWgVTeoHfqLa0op6zX7vo82BCrtw96WwfbiRJvOOnVNni7rOggYauaiDSGGKRwc6FSO6/Q5b0bv1Sux2eqp8xkCT5FxYhiSJ/sHE
+X-Gm-Message-State: AOJu0Yw0xx7DJOX/8nIzwdbSNQ7OJBOYDjjRWeXbCa/sN1DpUFns2Qor
+	4682ccrj4rogHYoxdHhUgUHUMBcNbO5IqTmXNHNVXeI3EIW8wK3nq30gYLqS1CU=
+X-Google-Smtp-Source: AGHT+IG8KwelaEdu91MhiQlPTN5blf3+ic8FvdeZmDwoqZIwWA1MJk4rUYqO2f/1N9MKlqTjia0eug==
+X-Received: by 2002:a5d:5485:0:b0:354:f142:65b0 with SMTP id ffacd0b85a97d-35e0f28858fmr8744196f8f.37.1717489067621;
+        Tue, 04 Jun 2024 01:17:47 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:1604:5579:bac6:654])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04ca434sm10771262f8f.30.2024.06.04.01.17.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 01:17:47 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 0/2] gpiolib: Show IRQ line in debugfs
+Date: Tue,  4 Jun 2024 10:17:46 +0200
+Message-ID: <171748906381.10591.18127648133265044353.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240530191418.1138003-1-andriy.shevchenko@linux.intel.com>
+References: <20240530191418.1138003-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <alpine.LSU.2.21.2405311603260.8344@pobox.suse.cz>
-Date: Tue, 4 Jun 2024 16:17:01 +0800
-Cc: Petr Mladek <pmladek@suse.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>,
- Joe Lawrence <joe.lawrence@redhat.com>,
- live-patching@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0C2ABDBE-FBBA-4CD6-A903-B146EBBF4AC8@gmail.com>
-References: <20240520005826.17281-1-zhangwarden@gmail.com>
- <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
- <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
- <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
- <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
- <2551BBD9-735E-4D1E-B1AE-F5A3F0C38815@gmail.com>
- <alpine.LSU.2.21.2405310918430.8344@pobox.suse.cz>
- <FF8C167F-1B6C-4E7D-81A0-CB34E082ACA5@gmail.com>
- <alpine.LSU.2.21.2405311603260.8344@pobox.suse.cz>
-To: Miroslav Benes <mbenes@suse.cz>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
+On Thu, 30 May 2024 22:12:28 +0300, Andy Shevchenko wrote:
+> Couple of patches to show IRQ only (when it's not requested as GPIO)
+> lines in the debugfs.
+> 
+> In v2:
+> - joined two separate patches
+> - rebased on top of latest GPIO for-next (Bart)
+> 
+> [...]
 
-> On May 31, 2024, at 22:06, Miroslav Benes <mbenes@suse.cz> wrote:
->=20
->> And for the unlikely branch, isn=E2=80=99t the complier will compile =
-this branch=20
->> into a cold branch that will do no harm to the function performance?
->=20
-> The test (cmp insn or something like that) still needs to be there. =
-Since=20
-> there is only a simple assignment in the branch, the compiler may just=20=
+Applied, thanks!
 
-> choose not to have a cold branch in this case. The only difference is =
-in=20
-> which case you would jump here. You can see for yourself (and prove me=20=
+[1/2] gpiolib: Return label, if set, for IRQ only line
+      commit: 5a646e03e956f45e74c0a606f51e1ebc13880309
+[2/2] gpiolib: Show more info for interrupt only lines in debugfs
+      commit: 54a687cd49e3625819f24e17655346c85f498cbc
 
-> wrong if it comes to it).
->=20
-> Miroslav
-
-Hi Miroslav,
-
-Yes, more tests should be done in this case according to your opinion.
-
-Regards,
-Wardenjohn
-
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
