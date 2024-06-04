@@ -1,105 +1,153 @@
-Return-Path: <linux-kernel+bounces-201164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A968FBA7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:33:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630288FBA83
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A91F1C24C42
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:33:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 810411C22937
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0575B14A0A2;
-	Tue,  4 Jun 2024 17:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C45C14A086;
+	Tue,  4 Jun 2024 17:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Qojg0c/I"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nj4UnR5c"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA24149E17;
-	Tue,  4 Jun 2024 17:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41D612CD98;
+	Tue,  4 Jun 2024 17:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717522382; cv=none; b=EXLXBsXn3RiQh4bUTOOQSmgvbSvBZMMQxpcETPl4J3p/K9vVWDRGPUYLTGCx1T6a6ko9S3HOywyQpIgMqXYMZidAHneSHM6KYmW8MRGM4sGwwzUl/wb7hr6LxqJAawyLmh+ZDgN6DykTqRjl4c80M/5MObcKPbKu9NiuCrTBXV0=
+	t=1717522401; cv=none; b=uX5FRfCuD6VboTDkFUJvd1G7ndc3zPdPzTUe2TlnLP1UKdjaSI7yQj0iHdHHjCq9rmiz5kRvVT5gJsiJsaN40eG4zD6GIUQzVZRE7KtRqfw2ZtK/gOaFDWAYjGu/I5dmXpd8vB4wivKqaW9FE7UzulvNGqiWnJQMfI+PPaKMWiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717522382; c=relaxed/simple;
-	bh=RzABj9/ViIb/5cWbePvdyBm+IOiixikDKivx+zn+Jcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TX6cq5UDNmBI987WDH9s2YmY+NDJg7updDl4TjDCyTnCksTXBFGEOhh2stKmlTfT/nx1O1C0MIlCbnyq9EldbVn8QQVWtMDfSHJ6IAF7aBhzhgUsgEavsZEcdH2Xj9ndW5qQropsiupgQ+f1DpXWWdi4RRyLjyAdw+RLwjLh8tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Qojg0c/I; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=OQfWHf3Pvts+1g7ugAMVKgzKYiTfpMZo3slFDwJYOlU=; b=Qojg0c/IKr7DG6Ld
-	3vj/LAbX1s4ktiSlviyC9s9xh8E36PX4nKFr4BPPvkjTfPuxbx52RPgF7aY4D6UGcNwYOA/rkvSW2
-	ZPzzZFYQiFabaK3RsBrFsx0fmgnPaeGi9Qr8G9hysJKYEW+E3JH6WFhOmmkQNybSOsI5Ko2OhcdNG
-	LiS9aH3c7KOBwnPdwr7fgStytaYTufoeNep0PhV7VPWAWLRS6jkkrx3p6mJqeLs+DqHQgCeS3CRu+
-	PGoan0Tyi8WdgZLwxIvmOtvOKVsCoLvFDeiXyjJlWmvnccF4JzJualDYC+K7rhiGeew/HApxZ8lUk
-	XLJikqyzbdmftAxAVQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sEY1Z-004FwI-1c;
-	Tue, 04 Jun 2024 17:32:41 +0000
-Date: Tue, 4 Jun 2024 17:32:41 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Simon Horman <horms@kernel.org>
-Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/rds: remove unused struct 'rds_ib_dereg_odp_mr'
-Message-ID: <Zl9PuZUMU_9bUfxQ@gallifrey>
-References: <20240531233307.302571-1-linux@treblig.org>
- <20240604170802.GC791188@kernel.org>
+	s=arc-20240116; t=1717522401; c=relaxed/simple;
+	bh=YuGOADg4czSzgm002ZqSN9+p7jih/VzRmBx506gij2Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tilOWNWwkXbjM01xXeSRVnmntc2VDOQhZOYi8qS/rkg80qOwY2ZBufvhAyqbfWjUE3iCjwwgcCKabDcNMDrmTLFjvcxxcFOjH63m6rtWajES6lBSr0N29xbpmnXLrha0qPuAlXKTQZIpZ6qXzG9UeVuMj2Zh8f2FlNP78Oe9xYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nj4UnR5c; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-6cc3e134f88so1082119a12.0;
+        Tue, 04 Jun 2024 10:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717522399; x=1718127199; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=63v6j8hzC+Le93kyoeflCRDkGNVRCCu2mfp5KUaAnVQ=;
+        b=nj4UnR5cn/o4ZbnYkfR6aeZ7RPQwU9j3FmyzY/Kkicm5MevTrtbohq+r1HIuNT4vfS
+         FfcXf276FhvhZvw6Pw7k/wobqupIqv5p5p+c2Hfziz3T1kVFJS6OlZ7v5GcR/1SoMUL5
+         qBMNfjsZ3SxHC+En2erUJnv8cO4ysdjEAJAo5CYwoo32m7AhHl5dzSurok/A9MPIdPr6
+         69QLlKRwnI0mOjqmOGJaADs+ehPBIQZIuWyTfdr7XAcNGqI25ZBqRsvHk1c1IL23Hbwv
+         hcjwNcGeNm6iaIrxtT8LUVWYvNKJfgXOTALPIudFc14xCVMGAI+J57cIejCIdULi5G3o
+         /blg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717522399; x=1718127199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=63v6j8hzC+Le93kyoeflCRDkGNVRCCu2mfp5KUaAnVQ=;
+        b=CWyuaxgKTbM6+ut8EXUiqETYK4rdcyqTdqWREUnDM30OX0BWAsFVBYXLl4XuL4mtbw
+         15GidBxsgdqf+m5KuvzijQDoIapAH2DGNFU7J84DKi2KP4QIznldqEB8bO4aJIGInmGc
+         ISX3dMsyU4qMmofr3RWd/X4cA39jV2hpNi9/Sp81CU8ZPrhXaLcuT9UILzvU4AZ94ypW
+         RCXHImN+zSWhUWC0LuJYG9DZG7rJgMi2/FN5FBNMCuw+fOBr5jyBSvdcTibLwapzQLuB
+         sJg3j05dvTUi8v03FmQDjr41AE7T2c15RcPql+xQaKNsjb0Q99RB28xP0PRtzaGVWsW9
+         KObA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZIHTu9CCmDkM5f84vRILfVPPF66mOl97s1RMElltBA/XltAaFgFjEXMavSox/1CWKcN9Ov3cc9a4ZZ8G3mCasEhjy7wZmoXXbVa86TuSG4/nTQFJKB68hPPgNvHrMvb87xKw4bj0//FLb/g==
+X-Gm-Message-State: AOJu0YzEt3VjS/5N75fESGsL2AKRLZ09GPy4u+9TWYyWp8j9Rjnjk0xu
+	N8oiW+r82ixKMBe/Ukn1f1rVTuP8ac08N8UBA+xHI3qSTT5iBsMZfaEQHJBNY9g1i6Ygzh7Or3+
+	IO/NhbdOy96DTOaAu2ZzhBFwxNgx4z4srtwg=
+X-Google-Smtp-Source: AGHT+IFL6LnqJEew7ANnyer/NGZs2s8PRUmbYPraWgW0HaR3LUPGwf4aoQwHd/mVUBYU0r0nM3dM2yMs2IsqmijKfOY=
+X-Received: by 2002:a17:90b:20d:b0:2bf:6b68:5219 with SMTP id
+ 98e67ed59e1d1-2c27db63af1mr114715a91.41.1717522399093; Tue, 04 Jun 2024
+ 10:33:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240604170802.GC791188@kernel.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 17:30:45 up 27 days,  4:44,  1 user,  load average: 0.08, 0.02, 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20240604-a505-v1-1-82ee1c04d200@gmail.com> <49fe3b01-4f00-4ffc-80cf-2a0add1ebaad@linaro.org>
+ <CAGsSOWV=i2JHsYNvi5EC6q=NoD8v7SiTjbVQhTDLNw35+irTCQ@mail.gmail.com>
+ <CAGsSOWV9SRK1VUJiQfavEM1hL0PapxUBG6CNeD+Q=0qPT5ZnSA@mail.gmail.com> <37b0404d-bba5-4a77-ad86-62c6dd308d37@linaro.org>
+In-Reply-To: <37b0404d-bba5-4a77-ad86-62c6dd308d37@linaro.org>
+From: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
+Date: Tue, 4 Jun 2024 19:33:07 +0200
+Message-ID: <CAGsSOWUNN-PRvojvJR-i7wBDz8QRNnaTt19-6G41g7Hdt6RyTQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/adreno: Add support for Adreno 505 GPU
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Daniil Titov <daniilt971@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Simon Horman (horms@kernel.org) wrote:
-> On Sat, Jun 01, 2024 at 12:33:07AM +0100, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'rds_ib_dereg_odp_mr' has been unused since the original
-> > commit 2eafa1746f17 ("net/rds: Handle ODP mr
-> > registration/unregistration").
-> 
-> nit: Maybe commit lines are best not line-wrapped.
->      I'm unsure.
-
-Yeh I wasn't too sure, checkpatch seems to have code
-to deal with it, so it is expecting it could be wrapped:
-
-  # A commit match can span multiple lines so this block attempts to find a
-  # complete typical commit on a maximum of 3 lines
-
-> > 
-> > Remove it.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> The above not withstanding, this looks good to me.
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-
-Thanks!
-
-Dave
-
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+On Tue, Jun 4, 2024 at 7:06=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro.=
+org> wrote:
+>
+>
+>
+> On 6/4/24 18:45, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrote:
+> > On Tue, Jun 4, 2024 at 2:27=E2=80=AFPM Barnab=C3=A1s Cz=C3=A9m=C3=A1n <=
+trabarni@gmail.com> wrote:
+> >>
+> >> On Tue, Jun 4, 2024 at 1:55=E2=80=AFPM Konrad Dybcio <konrad.dybcio@li=
+naro.org> wrote:
+> >>>
+> >>>
+> >>>
+> >>> On 6/4/24 02:20, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrote:
+> >>>> From: Daniil Titov <daniilt971@gmail.com>
+> >>>>
+> >>>> This GPU is found on SoCs such as MSM8937 (450 MHz), MSM8940 (475 MH=
+z),
+> >>>> SDM439 (650 MHz).
+> >>>>
+> >>>> Signed-off-by: Daniil Titov <daniilt971@gmail.com>
+> >>>> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
+> >>>> ---
+> >>>
+> >>> This all looks very good, just a nit
+> >>>
+> >>> [...]
+> >>>
+> >>>> +             /*
+> >>>> +              * Increase inactive period to 250 to avoid bouncing
+> >>>> +              * the GDSC which appears to make it grumpy
+> >>>> +              */
+> >>>> +             .inactive_period =3D 250,
+> >>>
+> >>> Are you sure this is actually necessary?
+> >> Every A5XX GPU is using the same value, but i have never tried with
+> >> DRM_MSM_INACTIVE_PERIOD.
+> > This was the original patch
+> > https://lore.kernel.org/all/20180507224750.9383-1-jcrouse@codeaurora.or=
+g/
+> > where the inactive period was increased for a530. I cannot test
+> > suspend on msm8937 yet.
+>
+> The suspend here refers to device suspend, not system suspend. Adreno
+> goes into device suspend every time you stop using it, i.e. after the
+> rendering is done and there's no more work to do.
+>
+> I suppose a good test scenario here would be to keep running and closing
+> kmscube in a rapid fashion and checking if the GPU starts crashing for
+> unknown reasons (the dmesg would denote that)
+>
+I have checked on a505 and a506 with this small script
+while true; do kmscube; kill kmscube; done
+none of them crashing, so i am going to change it.
+> > I can check on msm8953 with a506 maybe if a506 works fine with
+> > DRM_MSM_INACTIVE_PERIOD
+> > then a505 would be fine with it also.
+>
+> The more testing the merrier :)
+>
+> Konrad
 
