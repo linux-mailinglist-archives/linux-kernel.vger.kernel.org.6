@@ -1,165 +1,111 @@
-Return-Path: <linux-kernel+bounces-200164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B9F8FAC19
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:33:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB678FAC11
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74ED1C21508
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:33:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAEAA281F6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B3F14198E;
-	Tue,  4 Jun 2024 07:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ADD1411F8;
+	Tue,  4 Jun 2024 07:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="AOr+KKk6"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AItAhizs"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62F413775E;
-	Tue,  4 Jun 2024 07:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF26C140386
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717486315; cv=none; b=ahsSlLTQ707B6HfPoO0jrnGX/84ZYSNHC3ck8fkQRDgDAaKKyNiEMfDj2kyw3ZSDed4SCQOackPdVO+RYIkrjKVRN2nRdxAW973KZtPyG535Y8wK3L+C7GMxQcIzS4aWsvepkZ7Yx9rxxU0Fj6BvJlyTRNXPvCnDp+raoAYJopk=
+	t=1717486283; cv=none; b=SleZq8KwkonZFugyqPEmrEXrt7YtNTPArs9Qv6uyH5vOBZ17q+lQ1bxWuCH2YvKTYqyGAxSqrVWE2zay22sUR4sQ8HFBJffsaHZJtAgFfj5ewJmMUcWZOsX2AbMMiV3OwtjPqkuJN0RPt5hE7lImDcIsWzHc1vpe7xL31gU36gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717486315; c=relaxed/simple;
-	bh=x9Wle6YkY/YZjGOIdLF2DWUVeJftw3EcWFuTPd6t0RI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Tmcow/DmxWMoSXRAwWQR7VkKyVxmYkziR1aZu7G6mq+HUbVpnCJsNZpUefZpaUwkEux8/yKqd5USUWAE5+amu5A7iSNtFlpmJKc32sVZBbwpCRXdXGifLX2BgV9HrxtXiDJ5YAPbXPap2mq6O3teYF1Ac/ORrSxsgwd6sAfue3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=AOr+KKk6; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4543kNFU012859;
-	Tue, 4 Jun 2024 09:31:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	DeaHhKsAFkDX66fvMLeTNW/YHS6cIzY1RRkkbNP0vKw=; b=AOr+KKk6V7PkmSi/
-	CVsPKXMS4lD3HLStWvjGdyMyuU7Jmx6GOAvWTDWCwNcV5VzAtRwC/gmTpAlmrSfL
-	onndL1rOG85Ep3GEvTEbqYWhejRqis6mU4YoLKwQG0cRwpinomzdMxkxqRHourts
-	K08cVdb/jYfwgVcYj7fTT8L0+5x4niqpGJT203kRQEAkeXy/SGlDzbKaluPspj58
-	SKVCs/OMCgj2xSBN+NDvjurtohkQVwtZdLw9HPqz0hsonLzA8kW1Nhx7FN0Q59EG
-	Cgxe4pdaRZUtukhKLfN8X5zqC4gjmagxJ+mcPv2fIlI+cU8Lxdw6Gq/QOQl7WfHh
-	cIpJ7A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yfw3wjap1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 09:31:24 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4DEEA40044;
-	Tue,  4 Jun 2024 09:31:19 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CD9B1211F21;
-	Tue,  4 Jun 2024 09:30:28 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 4 Jun
- 2024 09:30:28 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 4 Jun
- 2024 09:30:27 +0200
-Message-ID: <994b6d3c-26f8-483b-8286-3780adb50b56@foss.st.com>
-Date: Tue, 4 Jun 2024 09:30:27 +0200
+	s=arc-20240116; t=1717486283; c=relaxed/simple;
+	bh=a7iEkEZkCBk0eqmsqUSW3iJ+17Unk4H18KUeIBKKp4Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OtNvAptheZrCX+iBegFkkk6fMiJLPmD+I+POtBZan/4ohK379PlgQSVUTsBpwqjzRhKwMjDPD7d5RWrRI4KFkwAaUX757JKXNVTRym+ufaDbgRJwhXmUW9Q4t/3wm6kezg3Tdp/YIMeyvTTXZG+/a+KcmFtBRCvwg0o18irjTFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AItAhizs; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6302bdb54aso662077566b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 00:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717486280; x=1718091080; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a7iEkEZkCBk0eqmsqUSW3iJ+17Unk4H18KUeIBKKp4Q=;
+        b=AItAhizsYr1A8znqEfGXYwM4+CXTej69o0VVS/FG/KuapLdVEzjC5T2vxlB0ZuTIyg
+         9ZyJA3aUjgrTsHBKKGuvEQL/O8OPFLlih35HITiLBN9Xxfl7PGcpr5zHnBGgs/vH8/ik
+         +fXLqgqZsSHBJS4+5f6bw7cJZDed4h12/+JqrQxjNfVG44rYpGyDDz5+vtkvqD+QJAhZ
+         SPe3Z0I91Z/Uxb4glQp+KZgYv3JiOc8RqPsqgvaKKtrbq4A5YmrFdDldSApMwCQDCUNI
+         dKJBEBPcg0bnnDIuitZSiBpBtu5KdP+v1GALxb6l6R0KLRoKy3udXDjaAW50YXB5r/CD
+         TtKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717486280; x=1718091080;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a7iEkEZkCBk0eqmsqUSW3iJ+17Unk4H18KUeIBKKp4Q=;
+        b=uxARIZd+mfnaoUCiO+59O1SlduLBrZQVo7+o1HtkaUr/o7/NjiALiqmETrleMtRV8a
+         qOfkbZ4nhqrmjY4T0wNwEUocIaN/mQQtZ6BkaQo/Iv/Mi1/BxMJt6nveqA91sQdEhi9c
+         NU5DlBdzje6WWbE8pPGaF2PhkEI3rps/ZasDNmYUX9atLRrDR8yNotah2klMD/2x690o
+         2xSsD95/hOSCHTGsrdVGL1yD8jHhZ9lkzkMyTuJUmn6gcKcQOvMzYriGWOqfaPIio2qP
+         j49zvzlIQ4AsF+LnkerZ2VNEAvoMS14NXyp8a/5MpLSlbO5iPIQ1rjT60HDTwvy2Vv8s
+         i1fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVllsiUsdJWEGz1LJiWjyus8EHdT7SiejSQUhXkA/DlYf4qiCV0ywiPlhteTFntC1anKv50Rz4vZ7SZci5vH5ncaBbyRko8QqfuLZuS
+X-Gm-Message-State: AOJu0YwAA0b0Dxp2DcA1N/BZkJUUn0YcoyRQXtZR1TE7EuxMjnlA70qO
+	u/CFUYPITKVRoMvHXg7EFr1Cg87QHbx1AN4JuM1TUws+NWHT6gcG/ND8/fgpgGfv1lHdlBX8URC
+	cpDsvs+lioTh7Q7mANz2aLTn4/zQ=
+X-Google-Smtp-Source: AGHT+IHV4Hnfq98k7TmmzqjRqRfeMubkYShvTkClNj0gjeREUvSgOeXUKzbIjAcUbY4/JslcU+i2hKpq3cgTRT6iaFE=
+X-Received: by 2002:a17:906:ff4b:b0:a68:2f99:a3da with SMTP id
+ a640c23a62f3a-a682f99a4a0mr669420266b.16.1717486279850; Tue, 04 Jun 2024
+ 00:31:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v5 3/7] dt-bindings: remoteproc: Add processor
- identifier property
-To: Rob Herring <robh@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
-References: <20240521122458.3517054-1-arnaud.pouliquen@foss.st.com>
- <20240521122458.3517054-4-arnaud.pouliquen@foss.st.com>
- <20240603143553.GA391578-robh@kernel.org>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20240603143553.GA391578-robh@kernel.org>
+References: <20240530232054.3559043-1-chris.packham@alliedtelesis.co.nz>
+ <ZlnuNx6gKJV6w9YS@smile.fi.intel.com> <87e2e4c2-ed9e-4ab4-8920-e7983c5a18ac@alliedtelesis.co.nz>
+ <CAHp75Ve5XCFYemAZHZM5ZTf0B2cHJrH5GdPCR+cLPE1aoMDs2Q@mail.gmail.com>
+In-Reply-To: <CAHp75Ve5XCFYemAZHZM5ZTf0B2cHJrH5GdPCR+cLPE1aoMDs2Q@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 4 Jun 2024 10:30:43 +0300
+Message-ID: <CAHp75VfHBt6YvnxjrW=sYZOsH6qpb63zGZnyMX=97HX=DYjwkg@mail.gmail.com>
+Subject: Re: [PATCH] auxdisplay: linedisp: Support configuring the boot message
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: Andy Shevchenko <andy@kernel.org>, "geert@linux-m68k.org" <geert@linux-m68k.org>, 
+	"tzimmermann@suse.de" <tzimmermann@suse.de>, "ojeda@kernel.org" <ojeda@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-04_03,2024-05-30_01,2024-05-17_01
+Content-Transfer-Encoding: quoted-printable
 
-Hello Rob
+On Tue, Jun 4, 2024 at 10:27=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Tue, Jun 4, 2024 at 12:59=E2=80=AFAM Chris Packham
+> <Chris.Packham@alliedtelesis.co.nz> wrote:
+> > On 1/06/24 03:35, Andy Shevchenko wrote:
+> > > On Fri, May 31, 2024 at 11:20:54AM +1200, Chris Packham wrote:
+> > >> Like we do for charlcd, allow the configuration of the initial messa=
+ge
+> > >> on line-display devices.
+> > > Pushed to my review and testing queue, thanks!
+> > >
+> > > I tweaked the define to be LINEDISP as Geert suggested.
+> > >
+> > Actually did you? I just checked what's in
+> > andy/linux-auxdisplay/review-andy and it still uses LINE_DISP.
+>
+> Oh, it seems I forgot to squash the change, thank you for the catch!
 
-On 6/3/24 16:35, Rob Herring wrote:
-> On Tue, May 21, 2024 at 02:24:54PM +0200, Arnaud Pouliquen wrote:
->> Add the "st,proc-id" property allowing to identify the remote processor.
->> This ID is used to define an unique ID, common between Linux, U-boot and
->> OP-TEE to identify a coprocessor.
->> This ID will be used in request to OP-TEE remoteproc Trusted Application
->> to specify the remote processor.
->>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->>  .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml     | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
->> index 36ea54016b76..409123cd4667 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
->> @@ -48,6 +48,10 @@ properties:
->>            - description: The offset of the hold boot setting register
->>            - description: The field mask of the hold boot
->>  
->> +  st,proc-id:
->> +    description: remote processor identifier
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +
->>    st,syscfg-tz:
->>      deprecated: true
->>      description:
->> @@ -182,6 +186,8 @@ allOf:
->>          st,syscfg-holdboot: false
->>          reset-names: false
->>          resets: false
->> +      required:
->> +        - st,proc-id
-> 
-> New required properties are an ABI break. If that is okay, explain why 
-> in the commit message.
+Now updated.
 
-This commit is the complement the patch 2/7. the require property is associated
-to a new compatible. I created this commit as you already reviewed the 2/7
-
-Perhaps It might be clearer if I merge the two.
-
-Thanks,
-Arnaud
-
-> 
->>  
->>  additionalProperties: false
->>  
->> @@ -220,6 +226,7 @@ examples:
->>        reg = <0x10000000 0x40000>,
->>              <0x30000000 0x40000>,
->>              <0x38000000 0x10000>;
->> +      st,proc-id = <0>;
->>        st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
->>        st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
->>      };
->> -- 
->> 2.25.1
->>
+--=20
+With Best Regards,
+Andy Shevchenko
 
