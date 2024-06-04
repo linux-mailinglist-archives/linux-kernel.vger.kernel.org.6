@@ -1,144 +1,224 @@
-Return-Path: <linux-kernel+bounces-200347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F67E8FAEBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6389D8FAEBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6F51C21BE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176CA284B03
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056DD140380;
-	Tue,  4 Jun 2024 09:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E347F143C62;
+	Tue,  4 Jun 2024 09:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DIC2be7d"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MeJXKTTl"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C6B143890
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A4683CD8;
+	Tue,  4 Jun 2024 09:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717493233; cv=none; b=CfZ/WNj69OhD2eFneHtJxDCwYFKeH+9TWxdmGf3BCMTyh8DVg9wa3N6TjHYdT8poVCqp+ypBmHdQxxj9QGG5eUX1IYUS+rT7QNDs+R75AbniY1hnVKXmYWGLk1zdVi1AebZB3ul5Kel9/szRA9eYCbOC7cRhXgSh9FybECOIl18=
+	t=1717493284; cv=none; b=e6+xawip2wAC+NZc76GddpPP1jWcCNhFKCdZY0n2Hxe/ZqskJuP28XL4CKzaYi4TuD6c1gLwbI+wTexIgM008oGrRgsOxq7xy5+yEixlGg+VJL1A1MR9quRjW6ZG3Lho2T4phPP/Ru006aqK0c1y+DVag1VzOkGPRv99F1I/1yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717493233; c=relaxed/simple;
-	bh=D2jU5oSARChmNNCZuwg8yDcYXULvhyEIQRoV+s3GJ2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tjst3CeU6uwO26U08wK5ATTdUoBc9XNVQRaax716LmctryOLBQIjhD0JRVZIDWI4Y+duwGducIizv3QNEmavnLz3aco9YmLzTfzurr65lPuwu3uNHpa4rHWVEX+gmM6j1rl+TNwQbeLvGxmdoMiAnI4PP+fMxXUCVQ+OI0Oj6Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DIC2be7d; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6302bdb54aso675891366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:27:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717493230; x=1718098030; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HFq7tpSqPveDiLxXj1+bXctSOmCsU5WM6G1TgLnMF4E=;
-        b=DIC2be7d1nXxXipAyVXD/Lkl1yyj01onmLsH0kARqDowXUAkepgjX5voKoY6znjuuj
-         qVo02AZFpNe6cLFNcgl1RmLO5AEHHmG8UeEV5IOoR8EDweXlQX5ZKeBnSB9e8SUgisz3
-         E/du194yP8uGt168wX3MDgWk51vlWoU1GngMIH4URDmetghpdE7JhZ40CNKm3+RSy1Aw
-         POCySDHHuSw+vUWtoOZ/VBBJ62Xf3wEXL5Jn+q7nJIaG8ZE4s1REGpPelF9zqirxjNwB
-         LqkKD98yiaicrBtHffV4Qpjg2dGTee9SkMqqb+TfKYaQ7C7fddGdrJPKNdymw65Z+Qgb
-         tuew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717493230; x=1718098030;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HFq7tpSqPveDiLxXj1+bXctSOmCsU5WM6G1TgLnMF4E=;
-        b=tScNhbJ61+SptOixfn8QfVctCn3JZO6ikHz02/KlKpC38cLdUPT9eEeWVbWfW7JH9f
-         DfimTjDv05j4XvOZ65XkPMslwOkToWrYsQkAa+P9a1bRylHE48TQKs5z4FwH7VtKivPN
-         iLqJnccocjLbF/+RKZsoYoq2rAm/PlPMqC9rG/lv6+3p1gv96EPcKEtwPUwq88f3K6hS
-         /Yn+VZ4OUbmB0UO7QAqWnTVesvBqGE9KbdZTvcSyP0ADQjsvF+gdVvTl/Hqzb4hCSGo5
-         /1jGkJyu56txqt+ew7xabent11LTUGk3dVfnoqujn2p4eU9IFjLw1okPFug+UF9XACy2
-         CtgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXY69M6OXQU7IHFHhJ1lnRogTW8ThMDucM++FY2WIGYUXMD5mv8pOhe+1JViYBdrwM1kJ49QOTBMsa9Dk2hH9880bNIgtTff8skCATJ
-X-Gm-Message-State: AOJu0YyvLghGhNZVOtXBUMI0EYTLBjeokYikEe/UY2QpPeNoBtiEzLdi
-	VqM269abj0W4xaSsPh7Y3AsVEzDbmMHRQ8+SPvGssk6Wphn46MmCTLrQU6Nr7xE=
-X-Google-Smtp-Source: AGHT+IH/8jHjvoRXRq9A58t2qMLFUxjDENPNcf1oh67gqs4xFNC0tXcrBM43MYq2iYNsnSI4K4Askg==
-X-Received: by 2002:a17:907:8690:b0:a69:2bce:e424 with SMTP id a640c23a62f3a-a692bcee4b3mr272176866b.1.1717493229789;
-        Tue, 04 Jun 2024 02:27:09 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e940ed6asm378573366b.22.2024.06.04.02.27.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 02:27:09 -0700 (PDT)
-Date: Tue, 4 Jun 2024 12:27:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Lizhi Xu <lizhi.xu@windriver.com>,
-	ebiggers@kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, adilger.kernel@dilger.ca,
-	coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-	jaegeuk@kernel.org, kadlec@netfilter.org, kuba@kernel.org,
-	linux-ext4@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lizhi.xu@windriver.com,
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	pablo@netfilter.org,
-	syzbot+340581ba9dceb7e06fb3@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Subject: Re: [PATCH V3] ext4: check hash version and filesystem casefolded
- consistent
-Message-ID: <638bf33d-7ab0-4ff0-aece-ab877cff1694@moroto.mountain>
+	s=arc-20240116; t=1717493284; c=relaxed/simple;
+	bh=qtV6WkWEV85Gwke+5sDv0lGuSW3BGovIvI6AmpxP6eI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z8Zbefn1SRZtlcew0HRplR9jugwzAeXvFGEx2blHMdUvFB0tvfpNXEXTCMwdyxhn1HxOXj31g+O634Ws/1OEyrL0bXpZrEHOKJNVkAsiBGTfrspTYdN/oCBk4hS/pqn984kSh+peaxEkhcgSeNrXOU4gVbmsPXJ1GgL3mpDDY8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MeJXKTTl; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4549HY7t001747;
+	Tue, 4 Jun 2024 09:28:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pp1;
+ bh=+PBvxOT9WIZi0i2wHiWHGNA6bgAo22c3cf6fHA4qwao=;
+ b=MeJXKTTlYwrL+5cKPN6czrU8CiNmuKpQy8m/s6mw1bmtN61pz9wy94xbw20QJZ6ZYOAo
+ KxUzJyqVNf+MHWRYSv2EYd44Oo8vs6EYXk/Z/O7NebAIba3OTjI5fGSWcgfzIdIwvCqK
+ IgNznFsKItWwzIE8JGElCyH3z9ch0FKGesPXLIQE7eFxYcFwZ72Or2Xp/GBHt1nrRO1U
+ qfInxjBPkc84pMsIV+SBApcJXiZuh9hhtm2QfKdvtSB4Y4P1m49nIiFX31xNqgtvQsRl
+ d2fNFZa+BDw9S/1KBjIYDS6DgfGf26GoSpDFFbuaKbuVufE/temoJz92BTyXDnr8pA5b ew== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj05ng0xg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 09:28:00 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4549OeoW015142;
+	Tue, 4 Jun 2024 09:28:00 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yj05ng0xd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 09:28:00 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4548QNPR008458;
+	Tue, 4 Jun 2024 09:27:59 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygec0negy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 09:27:59 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4549Rusc40829440
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Jun 2024 09:27:58 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1688058065;
+	Tue,  4 Jun 2024 09:27:56 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3D0575805A;
+	Tue,  4 Jun 2024 09:27:54 +0000 (GMT)
+Received: from oc-fedora.boeblingen.de.ibm.com (unknown [9.152.212.216])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Jun 2024 09:27:54 +0000 (GMT)
+Message-ID: <b816efd7dd3d5f6fead3433d8a800c7f4372a091.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 0/3] vfio/pci: s390: Fix issues preventing
+ VFIO_PCI_MMAP=y for s390 and enable it
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Gerald Schaefer
+ <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alex Williamson
+ <alex.williamson@redhat.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Matthew
+ Rosato <mjrosato@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Date: Tue, 04 Jun 2024 11:27:53 +0200
+In-Reply-To: <0a4622ce-3826-4b08-ab81-375887ab6a46@linux.ibm.com>
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+	 <0a4622ce-3826-4b08-ab81-375887ab6a46@linux.ibm.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=mQINBGHm3M8BEAC+MIQkfoPIAKdjjk84OSQ8erd2OICj98+GdhMQpIjHXn/RJdCZLa58k
+ /ay5x0xIHkWzx1JJOm4Lki7WEzRbYDexQEJP0xUia0U+4Yg7PJL4Dg/W4Ho28dRBROoJjgJSLSHwc
+ 3/1pjpNlSaX/qg3ZM8+/EiSGc7uEPklLYu3gRGxcWV/944HdUyLcnjrZwCn2+gg9ncVJjsimS0ro/
+ 2wU2RPE4ju6NMBn5Go26sAj1owdYQQv9t0d71CmZS9Bh+2+cLjC7HvyTHKFxVGOznUL+j1a45VrVS
+ XQ+nhTVjvgvXR84z10bOvLiwxJZ/00pwNi7uCdSYnZFLQ4S/JGMs4lhOiCGJhJ/9FR7JVw/1t1G9a
+ UlqVp23AXwzbcoV2fxyE/CsVpHcyOWGDahGLcH7QeitN6cjltf9ymw2spBzpRnfFn80nVxgSYVG1d
+ w75ksBAuQ/3e+oTQk4GAa2ShoNVsvR9GYn7rnsDN5pVILDhdPO3J2PGIXa5ipQnvwb3EHvPXyzakY
+ tK50fBUPKk3XnkRwRYEbbPEB7YT+ccF/HioCryqDPWUivXF8qf6Jw5T1mhwukUV1i+QyJzJxGPh19
+ /N2/GK7/yS5wrt0Lwxzevc5g+jX8RyjzywOZGHTVu9KIQiG8Pqx33UxZvykjaqTMjo7kaAdGEkrHZ
+ dVHqoPZwhCsgQARAQABtChOaWtsYXMgU2NobmVsbGUgPHNjaG5lbGxlQGxpbnV4LmlibS5jb20+iQ
+ JXBBMBCABBAhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAhkBFiEEnbAAstJ1IDCl9y3cr+Q/Fej
+ CYJAFAmWVooIFCQWP+TMACgkQr+Q/FejCYJCmLg/+OgZD6wTjooE77/ZHmW6Egb5nUH6DU+2nMHMH
+ UupkE3dKuLcuzI4aEf/6wGG2xF/LigMRrbb1iKRVk/VG/swyLh/OBOTh8cJnhdmURnj3jhaefzslA
+ 1wTHcxeH4wMGJWVRAhOfDUpMMYV2J5XoroiA1+acSuppelmKAK5voVn9/fNtrVr6mgBXT5RUnmW60
+ UUq5z6a1zTMOe8lofwHLVvyG9zMgv6Z9IQJc/oVnjR9PWYDUX4jqFL3yO6DDt5iIQCN8WKaodlNP6
+ 1lFKAYujV8JY4Ln+IbMIV2h34cGpIJ7f76OYt2XR4RANbOd41+qvlYgpYSvIBDml/fT2vWEjmncm7
+ zzpVyPtCZlijV3npsTVerGbh0Ts/xC6ERQrB+rkUqN/fx+dGnTT9I7FLUQFBhK2pIuD+U1K+A+Egw
+ UiTyiGtyRMqz12RdWzerRmWFo5Mmi8N1jhZRTs0yAUn3MSCdRHP1Nu3SMk/0oE+pVeni3ysdJ69Sl
+ kCAZoaf1TMRdSlF71oT/fNgSnd90wkCHUK9pUJGRTUxgV9NjafZy7sx1Gz11s4QzJE6JBelClBUiF
+ 6QD4a+MzFh9TkUcpG0cPNsFfEGyxtGzuoeE86sL1tk3yO6ThJSLZyqFFLrZBIJvYK2UiD+6E7VWRW
+ 9y1OmPyyFBPBosOvmrkLlDtAtyfYInO0KU5pa2xhcyBTY2huZWxsZSA8bmlrbGFzLnNjaG5lbGxlQ
+ GlibS5jb20+iQJUBBMBCAA+AhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEnbAAstJ1IDCl9y
+ 3cr+Q/FejCYJAFAmWVoosFCQWP+TMACgkQr+Q/FejCYJB7oxAAksHYU+myhSZD0YSuYZl3oLDUEFP
+ 3fm9m6N9zgtiOg/GGI0jHc+Tt8qiQaLEtVeP/waWKgQnje/emHJOEDZTb0AdeXZk+T5/ydrKRLmYC
+ 6rPge3ue1yQUCiA+T72O3WfjZILI2yOstNwd1f0epQ32YaAvM+QbKDloJSmKhGWZlvdVUDXWkS6/m
+ aUtUwZpddFY8InXBxsYCbJsqiKF3kPVD515/6keIZmZh1cTIFQ+Kc+UZaz0MxkhiCyWC4cH6HZGKR
+ fiXLhPlmmAyW9FiZK9pwDocTLemfgMR6QXOiB0uisdoFnjhXNfp6OHSy7w7LTIHzCsJoHk+vsyvSp
+ +fxkjCXgFzGRQaJkoX33QZwQj1mxeWl594QUfR4DIZ2KERRNI0OMYjJVEtB5jQjnD/04qcTrSCpJ5
+ ZPtiQ6Umsb1c9tBRIJnL7gIslo/OXBe/4q5yBCtCZOoD6d683XaMPGhi/F6+fnGvzsi6a9qDBgVvt
+ arI8ybayhXDuS6/StR8qZKCyzZ/1CUofxGVIdgkseDhts0dZ4AYwRVCUFQULeRtyoT4dKfEot7hPE
+ /4wjm9qZf2mDPRvJOqss6jObTNuw1YzGlpe9OvDYtGeEfHgcZqEmHbiMirwfGLaTG2xKDx4g2jd2z
+ Ocf83TCERFKJEhvZxB3tRiUQTd3dZ1TIaisv/o+y0K05pa2xhcyBTY2huZWxsZSA8bmlrbGFzLnNj
+ aG5lbGxlQGdtYWlsLmNvbT6JAlQEEwEIAD4CGwEFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQSds
+ ACy0nUgMKX3Ldyv5D8V6MJgkAUCZZWiiwUJBY/5MwAKCRCv5D8V6MJgkNVuEACo12niyoKhnXLQFt
+ NaqxNZ+8p/MGA7g2XcVJ1bYMPoZ2Wh8zwX0sKX/dLlXVHIAeqelL5hIv6GoTykNqQGUN2Kqf0h/z7
+ b85o3tHiqMAQV0dAB0y6qdIwdiB69SjpPNK5KKS1+AodLzosdIVKb+LiOyqUFKhLnablni1hiKlqY
+ yDeD4k5hePeQdpFixf1YZclGZLFbKlF/A/0Q13USOHuAMYoA/iSgJQDMSUWkuC0mNxdhfVt/gVJnu
+ Kq+uKUghcHflhK+yodqezlxmmRxg6HrPVqRG4pZ6YNYO7YXuEWy9JiEH7MmFYcjNdgjn+kxx4IoYU
+ O0MJ+DjLpVCV1QP1ZvMy8qQxScyEn7pMpQ0aW6zfJBsvoV3EHCR1emwKYO6rJOfvtu1rElGCTe3sn
+ sScV9Z1oXlvo8pVNH5a2SlnsuEBQe0RXNXNJ4RAls8VraGdNSHi4MxcsYEgAVHVaAdTLfJcXZNCIU
+ cZejkOE+U2talW2n5sMvx+yURAEVsT/50whYcvomt0y81ImvCgUz4xN1axZ3PCjkgyhNiqLe+vzge
+ xq7B2Kx2++hxIBDCKLUTn8JUAtQ1iGBZL9RuDrBy2rR7xbHcU2424iSbP0zmnpav5KUg4F1JVYG12
+ vDCi5tq5lORCL28rjOQqE0aLHU1M1D2v51kjkmNuc2pgLDFzpvgLQhTmlrbGFzIFNjaG5lbGxlIDx
+ uaWtzQGtlcm5lbC5vcmc+iQJUBBMBCAA+AhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEnbAA
+ stJ1IDCl9y3cr+Q/FejCYJAFAmWVoosFCQWP+TMACgkQr+Q/FejCYJAglRAAihbDxiGLOWhJed5cF
+ kOwdTZz6MyYgazbr+2sFrfAhX3hxPFoG4ogY/BzsjkN0cevWpSigb2I8Y1sQD7BFWJ2OjpEpVQd0D
+ sk5VbJBXEWIVDBQ4VMoACLUKgfrb0xiwMRg9C2h6KlwrPBlfgctfvrWWLBq7+oqx73CgxqTcGpfFy
+ tD87R4ovR9W1doZbh7pjsH5Ae9xX5PnQFHruib3y35zC8+tvSgvYWv3Eg/8H4QWlrjLHHy2AfZDVl
+ 9F5t5RfGL8NRsiTdVg9VFYg/GDdck9WPEgdO3L/qoq3Iuk0SZccGl+Nj8vtWYPKNlu2UvgYEbB8cl
+ UoWhg+SjjYQka7/p6tc+CCPZ8JUpkgkAdt7yXt6370wP1gct2VztS6SEGcmAE1qxtGhi5Kuln4ZJ/
+ UO2yxhPHgoW99OuZw3IRHe0+mNR67JbIpSuFWDFNjZ0nckQcU1taSEUi0euWs7i4MEkm0NsOsVhbs
+ 4D2vMiC6kO/FqWOPmWZeAjyJw/KRUG4PaJAr5zJUx57nhKWgeTniW712n4DwCUh77D/PHY0nqBTG/
+ B+QQCR/FYGpTFkO4DRVfapT8njDrsWyVpP9o64VNZP42S+DuRGWfUKCMAXsM/wPzRiDEVfnZMcUR9
+ vwLSHeoV7MiIFC0xIrp5ES9R00t4UFgqtGc36DV71qjR+66Im0=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531085647.2918240-1-lizhi.xu@windriver.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yE8rqb7HLFBblCStVzGjDJG42WSTd8dO
+X-Proofpoint-ORIG-GUID: A2vWTWj028cwHTWVJppbX6H87F1MjySW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-06-04_03,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0 impostorscore=0
+ phishscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2406040076
 
-Hi Lizhi,
+On Mon, 2024-06-03 at 17:50 +0200, Christian Borntraeger wrote:
+> Am 29.05.24 um 13:36 schrieb Niklas Schnelle:
+> > With the introduction of memory I/O (MIO) instructions enbaled in commi=
+t
+> > 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
+> > gained support for direct user-space access to mapped PCI resources.
+> > Even without those however user-space can access mapped PCI resources
+> > via the s390 specific MMIO syscalls. There is thus nothing fundamentall=
+y
+> > preventing s390 from supporting VFIO_PCI_MMAP allowing user-space drive=
+rs
+> > to access PCI resources without going through the pread() interface.
+> > To actually enable VFIO_PCI_MMAP a few issues need fixing however.
+> >=20
+> > Firstly the s390 MMIO syscalls do not cause a page fault when
+> > follow_pte() fails due to the page not being present. This breaks
+> > vfio-pci's mmap() handling which lazily maps on first access.
+> >=20
+> > Secondly on s390 there is a virtual PCI device called ISM which has
+> > a few oddities. For one it claims to have a 256 TiB PCI BAR (not a typo=
+)
+> > which leads to any attempt to mmap() it fail with the following message=
+:
+> >=20
+> >      vmap allocation for size 281474976714752 failed: use vmalloc=3D<si=
+ze> to increase size
+> >=20
+> > Even if one tried to map this BAR only partially the mapping would not
+> > be usable on systems with MIO support enabled. So just block mapping
+> > BARs which don't fit between IOREMAP_START and IOREMAP_END.
+> >=20
+> > Note:
+> > For your convenience the code is also available in the tagged
+> > b4/vfio_pci_mmap branch on my git.kernel.org site below:
+> > https: //git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git/
+>=20
+>=20
+> I guess its now mostly a question of who picks those patches? Alex?
 
-kernel test robot noticed the following build warnings:
+That matches my understanding as well.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>=20
+> Any patch suitable for stable?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lizhi-Xu/ext4-check-hash-version-and-filesystem-casefolded-consistent/20240531-170046
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-patch link:    https://lore.kernel.org/r/20240531085647.2918240-1-lizhi.xu%40windriver.com
-patch subject: [PATCH V3] ext4: check hash version and filesystem casefolded consistent
-config: i386-randconfig-141-20240601 (https://download.01.org/0day-ci/archive/20240602/202406020752.Ii2MU4KP-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406020752.Ii2MU4KP-lkp@intel.com/
-
-smatch warnings:
-fs/ext4/super.c:5287 __ext4_fill_super() warn: missing error code 'err'
-
-vim +/err +5287 fs/ext4/super.c
-
-d4fab7b28e2f5d7 Theodore Ts'o           2023-04-27  5280  	err = ext4_block_group_meta_init(sb, silent);
-d4fab7b28e2f5d7 Theodore Ts'o           2023-04-27  5281  	if (err)
-0d1ee42f27d30ee Alexandre Ratchov       2006-10-11  5282  		goto failed_mount;
-0b8e58a140cae2b Andreas Dilger          2009-06-03  5283  
-db9345d9e6f075e Jason Yan               2023-03-23  5284  	ext4_hash_info_init(sb);
-66b3f078839bbdb Lizhi Xu                2024-05-31  5285  	if (es->s_def_hash_version == DX_HASH_SIPHASH && 
-66b3f078839bbdb Lizhi Xu                2024-05-31  5286  	    !ext4_has_feature_casefold(sb))
-66b3f078839bbdb Lizhi Xu                2024-05-31 @5287  		goto failed_mount;
-
-
-Should this be an error path?  err = something?
-
-ac27a0ec112a089 Dave Kleikamp           2006-10-11  5288  
-d4fab7b28e2f5d7 Theodore Ts'o           2023-04-27  5289  	err = ext4_handle_clustersize(sb);
-d4fab7b28e2f5d7 Theodore Ts'o           2023-04-27  5290  	if (err)
-281b59959707dfa Theodore Ts'o           2011-09-09  5291  		goto failed_mount;
-960fd856fdc3b08 Theodore Ts'o           2013-07-05  5292  
-d4fab7b28e2f5d7 Theodore Ts'o           2023-04-27  5293  	err = ext4_check_geometry(sb, es);
-d4fab7b28e2f5d7 Theodore Ts'o           2023-04-27  5294  	if (err)
-bfe0a5f47ada40d Theodore Ts'o           2018-06-17  5295  		goto failed_mount;
-bfe0a5f47ada40d Theodore Ts'o           2018-06-17  5296  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+I'd almost say all but the last one may be candidates for stable. I
+found it hard to pinpoint a specific commit they fix though, hence the
+lack of Fixes tag. For the first one I'm actually not sure if e.g.
+rdma-core users could also run into this problem when they get swapped
+out as I'm not sure if the mapping is pinned there.
 
