@@ -1,227 +1,243 @@
-Return-Path: <linux-kernel+bounces-201058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB8C8FB925
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:35:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF78FB8C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F026FB24734
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595F1289E22
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CF514830A;
-	Tue,  4 Jun 2024 16:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7981487DC;
+	Tue,  4 Jun 2024 16:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LgcrjNEh"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OkuYICvZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E64938396;
-	Tue,  4 Jun 2024 16:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D300826AF1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518142; cv=none; b=GwItjdGIpkxDuHkKGLqWsyL6MCOqSYXr1nBL/3rQlCcRP2N6gtjP+H/NCPegmDG4ZHeNHFsSHGS3jjJ10Eip8TI7g+ukx0gOzFjg4ZpM15tdMY7VYah/ZGk6mHZMnfgJxGXgwDHfqA4FnVzKq5S1dFsJicWSWlGo/nqzLL5uUtY=
+	t=1717518198; cv=none; b=bmc5b9+YtA5d25RD5hk/KKKsp6FKc76kkpz5TAUhoziLbtAmcGW458UHgHstCvQrr0TCerjZyaOGUgB4oCIFxr9F4P/GpekCIyi8zenlutxvmWOycDPmWrdw4SpCI40YRjzsSCJx1SpJj/tdFlXdkN9vZlckXhEmyNnEQAnRE2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518142; c=relaxed/simple;
-	bh=4q2hlNa+zDXJa5COBXQIsc3F14V8x6epzxiAsFAZOoI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZSVrfTMkZLh6svOcIdlo5rB6I1Z24V+BReEJleNT0ff2GhfkdBbQ0YbToxZpzqg7sg4oJ0oxkqjweUDYD2m5FCZUu8dTsJUqAWt4689XRd4hGpHhZTjdoK7b8a+h8OETmjpn1oc+khQGsZeN8oaYWG9jdpaW/NDApXXMausgQdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LgcrjNEh; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-35dbdd76417so3237364f8f.3;
-        Tue, 04 Jun 2024 09:22:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717518139; x=1718122939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IWy2LKPjdhg95BnqbKt1+lV4wGwDYmeoHKDzPgQ6cjs=;
-        b=LgcrjNEhaqWuVtxzQ6+heBaeFbg4g411p6r+v0CVcFuwHJwEfpZ8GjP6//SHYJ3jov
-         +DQY5e5GO0yVVml4yqTc3FxYtAVrzQO2xnfjKM0tp3TwlW+S0fCqOM4NgJ80B+XL7QH9
-         4Ow5RkXy9hfsY0yGP/D0vOVJIwwlNQUQFF3+FJEI6C/BVDys3/fQiXBZzx/MEV3RK/ul
-         aTnDQ7wR/V8KOEIAlNPoZKX0GJpDafdNqxV3MPG+Mii58uP192Fs6ER5+MVVZvTDgUR5
-         2i3eGSx2AMSqKArwckso1bDSUmZrG806GgUep+msoLyBI2oe+xgm/35VIy1re6HzwKxN
-         tLTA==
+	s=arc-20240116; t=1717518198; c=relaxed/simple;
+	bh=L42C0MqxlWUis1/vQ2kmicKTlDmz8GjJwo4hZVEkM70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l+Te9VV1KvOk7vpeZHPre8cXtFE3QkEj2ZR6NONsykpaQffhh2XkfeiHxHFqNtwA2/m9kj82mVARZcp+aFD/PPo0NvET4+GSoqQHjLI2Qy4HKWdylQCIQaH/Hwji7jQfd08NA2/uIuFzd4yaN8nhJPFvY+HJzdUGcfhZGRhj1ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OkuYICvZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717518195;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t9m4FJ0/GJVz2wRY4oBw6RkZiK4RCdJiPQkTonn2MFI=;
+	b=OkuYICvZqpVMACEz0GDleuN8shS8+iJpLuhpuz79CWe8tgnLXbtnlBr7SkDt/ACzrWKBp4
+	bJUl3tYnOQyLz1EYHmf4JftBeBGDqo1OZhJE0sftRqCsGTNJqoFzrJTvMujuiRwBTHgFu1
+	dYqetdk22t9iKjkLXo0xPxmcc2LODgE=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-7SPA8Lu5MHmnDcf4fs5pqg-1; Tue, 04 Jun 2024 12:23:14 -0400
+X-MC-Unique: 7SPA8Lu5MHmnDcf4fs5pqg-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ea9429e1deso37171941fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:23:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717518139; x=1718122939;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IWy2LKPjdhg95BnqbKt1+lV4wGwDYmeoHKDzPgQ6cjs=;
-        b=k/Zjf9eULZpYW+whU/Z4aO9F4nmToWJermzX2F458eUqLLi1RlAVopqIo1A81nF175
-         X2PrBIJ/kb5U6pQjhtBzFEBz95wGOiee/es7UhY+e8lUZsHFFd3+i6GBDy26EceNftHk
-         uh5SgvKC5xF0Rx9hC9Zq2dwE8mVyDPIU1J6cUKFb/uCalBtF0Q/a1hUplQMZvfk4owuM
-         hx65+qhDi614LihtBBU61HEZZW9DrcHFgAYzAVVOQeCMxvlOnlcRgu4NDdmFFK8R6ZXk
-         nlTAzlOAq3zafzQqZVgPj4uHFZgPGrXYSkZJ7c+Ub3HKc50rTxirXmnf7frReCI3vfqg
-         6pIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQiLzOhw9IJ1695McEZun9VPxYQ4TuP0Flhi6pfoueogqNDW8wJ8NmIByJTu+A+MU16XICTXdQN5BABs6i+n0+4pYsaldIuyNZxea3MCiafXvRG96z/+qZ+uBg60o0oE003r4FdicD
-X-Gm-Message-State: AOJu0YxyrxZcV+brs72LZA+4Pupx4GpDo6gaT341HQyY4BSXfn/1sGQR
-	bi6BClGeZ9t+r+7ogaIYcPQdcxW3UkORI0/EKF+U6CxSf9dIkKIEsd1SJw==
-X-Google-Smtp-Source: AGHT+IGQcn2kH+FRLVL+o4Kd4ZgcFfbOBcIgSYJPbm8MUBhAkjLzud9V+0CWj8XCDLx/0EhwMUv/VQ==
-X-Received: by 2002:adf:e38a:0:b0:354:f286:4f0c with SMTP id ffacd0b85a97d-35e0f325d08mr11928496f8f.51.1717518138501;
-        Tue, 04 Jun 2024 09:22:18 -0700 (PDT)
-Received: from gmail.com ([2a01:e11:1403:8620:1c26:7f4d:9e87:9ebb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04ca981sm11955409f8f.33.2024.06.04.09.22.17
+        d=1e100.net; s=20230601; t=1717518192; x=1718122992;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t9m4FJ0/GJVz2wRY4oBw6RkZiK4RCdJiPQkTonn2MFI=;
+        b=JPAFETV2X2Au9D75mwslb5J+zlHQ3t/oDiZMABsrzXzcWwfUdkZtvN1+nSQO2G4qRS
+         C8VdN1toQBZ/OPAR/dsfCtmCqURqI2k6JtQnri1LtFzsHyths5Sw5jqs8W/KSbEmptIu
+         ar5dioEA+iAvmf82gFpuCJihz1h11jLerLg3/mxZp1kapjf/psNk47Kep2StkQJkRyTt
+         bjJjRGwdmlkvu+BqaDwP6UbhaS+zQJXUt+dAQcRBYp3DxVlHaySvMR15tIhPlkYZvWir
+         FSzJha5qiiwfs4pQP0+Avq6agnJw0g06LqJQLlhW7eH6UOh2bo0EJkeSG3CpQPRarn1d
+         L9yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpvmkfdeiZCZ9cLeHybpeH2AKFH3nmjaSdvZSt50aBdS24djXegw5iuBdbybpk7ZFxcue4pI9ADOcGUWYJ6Pj9H99nwbg02zvzqLic
+X-Gm-Message-State: AOJu0YzI3Rrftynk+mE5sLjbwB5nVpekZaYFNbO7aDMu7wYeRYxWjQ7N
+	oun5i9E3p1uZ7gJNjCg0IcJPLdGJsbr+wGbALv1qGzCXCFM/bJ6dNAW/nv6/BLK0jbG/Pl2UA1i
+	wRyhPwzuBnjinqonaE5xARuToDVkg/NJaZfA05niabivmCd84R8zaYbwL3FTf0A==
+X-Received: by 2002:a2e:b053:0:b0:2ea:938f:a23d with SMTP id 38308e7fff4ca-2ea951b6102mr79735721fa.42.1717518192419;
+        Tue, 04 Jun 2024 09:23:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpDgl6mVBcVb02NoTlLuJeCPaA3ijNInKKoW4CUr3sKzP9Qc3fogPqdIuifYw03YqFir9JPw==
+X-Received: by 2002:a2e:b053:0:b0:2ea:938f:a23d with SMTP id 38308e7fff4ca-2ea951b6102mr79735491fa.42.1717518191954;
+        Tue, 04 Jun 2024 09:23:11 -0700 (PDT)
+Received: from cassiopeiae ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212709d336sm190116295e9.37.2024.06.04.09.23.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:22:18 -0700 (PDT)
-From: Paolo Pisati <p.pisati@gmail.com>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Damien Le Moal <dlemoal@kernel.org>
-Cc: linux-m68k@lists.linux-m68k.org,
-	linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ata: pata_buddha: pata_gayle: consolidate .sff_data_xfer around libata::ata_sff_data_xfer()
-Date: Tue,  4 Jun 2024 18:22:17 +0200
-Message-Id: <20240604162217.484789-1-p.pisati@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 04 Jun 2024 09:23:11 -0700 (PDT)
+Date: Tue, 4 Jun 2024 18:23:09 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [RFC PATCH 01/11] rust: add abstraction for struct device
+Message-ID: <Zl8_bXqK-T24y1kp@cassiopeiae>
+References: <20240520172554.182094-1-dakr@redhat.com>
+ <20240520172554.182094-2-dakr@redhat.com>
+ <2024052038-deviancy-criteria-e4fe@gregkh>
+ <Zkuw/nOlpAe1OesV@pollux.localdomain>
+ <2024052144-alibi-mourner-d463@gregkh>
+ <Zk0HG5Ot-_e0o89p@pollux>
+ <2024060428-whoops-flattop-7f43@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024060428-whoops-flattop-7f43@gregkh>
 
-pata_buddha_data_xfer(), pata_gayle_data_xfer() and ata_sff_data_xfer() are the
-same function, consolidate around libata::ata_sff_data_xfer().
+On Tue, Jun 04, 2024 at 04:17:29PM +0200, Greg KH wrote:
+> On Tue, May 21, 2024 at 10:42:03PM +0200, Danilo Krummrich wrote:
+> > On Tue, May 21, 2024 at 11:24:38AM +0200, Greg KH wrote:
+> > > On Mon, May 20, 2024 at 10:22:22PM +0200, Danilo Krummrich wrote:
+> > > > > > +impl Device {
+> > > > > > +    /// Creates a new ref-counted instance of an existing device pointer.
+> > > > > > +    ///
+> > > > > > +    /// # Safety
+> > > > > > +    ///
+> > > > > > +    /// Callers must ensure that `ptr` is valid, non-null, and has a non-zero reference count.
+> > > > > 
+> > > > > Callers NEVER care about the reference count of a struct device, anyone
+> > > > > poking in that is asking for trouble.
+> > > > 
+> > > > That's confusing, if not the caller who's passing the device pointer somewhere,
+> > > > who else?
+> > > > 
+> > > > Who takes care that a device' reference count is non-zero when a driver's probe
+> > > > function is called?
+> > > 
+> > > A device's reference count will be non-zero, I'm saying that sometimes,
+> > > some driver core functions are called with a 'struct device' that is
+> > > NULL, and it can handle it just fine.  Hopefully no callbacks to the
+> > > rust code will happen that way, but why aren't you checking just "to be
+> > > sure!" otherwise you could have a bug here, and it costs nothing to
+> > > verify it, right?
+> > 
+> > I get your point on that one. But let me explain a bit more why I think that
+> > check is not overly helpful here.
+> > 
+> > In Rust we have the concept of marking functions as 'unsafe'. Unsafe functions
+> > need to document their safety preconsitions, i.e. the conditions the caller of
+> > the function must guarantee. The caller of an unsafe function needs an unsafe
+> > block for it to compile and every unsafe block needs an explanation why it is
+> > safe to call this function with the corresponding arguments.
+> > 
+> > (Ideally, we want to avoid having them in the first place, but for C abstractions
+> > we have to deal with raw pointers we receive from the C side and dereferencing a
+> > raw pointer is unsafe by definition.)
+> > 
+> > In this case we have a function that constructs the Rust `Device` structure from
+> > a raw (device) pointer we potentially received from the C side. Now we have to
+> > decide whether this function is going to be unsafe or safe.
+> > 
+> > In order for this function to be safe we would need to be able to guarantee that
+> > this is a valid, non-null pointer with a non-zero reference count, which
+> > unfortunately we can't. Hence, it's going to be an unsafe function.
+> 
+> But you can verify it is non-null, so why not?
 
-Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
----
- drivers/ata/pata_buddha.c | 40 ++-------------------------------------
- drivers/ata/pata_gayle.c  | 40 ++-------------------------------------
- 2 files changed, 4 insertions(+), 76 deletions(-)
+I suggest to check out the code making use of this.
 
-diff --git a/drivers/ata/pata_buddha.c b/drivers/ata/pata_buddha.c
-index c36ee991d5e5..234278eb26e1 100644
---- a/drivers/ata/pata_buddha.c
-+++ b/drivers/ata/pata_buddha.c
-@@ -60,42 +60,6 @@ static const struct scsi_host_template pata_buddha_sht = {
- 	ATA_PIO_SHT(DRV_NAME),
- };
- 
--/* FIXME: is this needed? */
--static unsigned int pata_buddha_data_xfer(struct ata_queued_cmd *qc,
--					 unsigned char *buf,
--					 unsigned int buflen, int rw)
--{
--	struct ata_device *dev = qc->dev;
--	struct ata_port *ap = dev->link->ap;
--	void __iomem *data_addr = ap->ioaddr.data_addr;
--	unsigned int words = buflen >> 1;
--
--	/* Transfer multiple of 2 bytes */
--	if (rw == READ)
--		raw_insw((u16 *)data_addr, (u16 *)buf, words);
--	else
--		raw_outsw((u16 *)data_addr, (u16 *)buf, words);
--
--	/* Transfer trailing byte, if any. */
--	if (unlikely(buflen & 0x01)) {
--		unsigned char pad[2] = { };
--
--		/* Point buf to the tail of buffer */
--		buf += buflen - 1;
--
--		if (rw == READ) {
--			raw_insw((u16 *)data_addr, (u16 *)pad, 1);
--			*buf = pad[0];
--		} else {
--			pad[0] = *buf;
--			raw_outsw((u16 *)data_addr, (u16 *)pad, 1);
--		}
--		words++;
--	}
--
--	return words << 1;
--}
--
- /*
-  * Provide our own set_mode() as we don't want to change anything that has
-  * already been configured..
-@@ -131,7 +95,7 @@ static void pata_xsurf_irq_clear(struct ata_port *ap)
- 
- static struct ata_port_operations pata_buddha_ops = {
- 	.inherits	= &ata_sff_port_ops,
--	.sff_data_xfer	= pata_buddha_data_xfer,
-+	.sff_data_xfer	= ata_sff_data_xfer,
- 	.sff_irq_check	= pata_buddha_irq_check,
- 	.cable_detect	= ata_cable_unknown,
- 	.set_mode	= pata_buddha_set_mode,
-@@ -139,7 +103,7 @@ static struct ata_port_operations pata_buddha_ops = {
- 
- static struct ata_port_operations pata_xsurf_ops = {
- 	.inherits	= &ata_sff_port_ops,
--	.sff_data_xfer	= pata_buddha_data_xfer,
-+	.sff_data_xfer	= ata_sff_data_xfer,
- 	.sff_irq_check	= pata_buddha_irq_check,
- 	.sff_irq_clear	= pata_xsurf_irq_clear,
- 	.cable_detect	= ata_cable_unknown,
-diff --git a/drivers/ata/pata_gayle.c b/drivers/ata/pata_gayle.c
-index 3bdbe2b65a2b..febffc36a18f 100644
---- a/drivers/ata/pata_gayle.c
-+++ b/drivers/ata/pata_gayle.c
-@@ -38,42 +38,6 @@ static const struct scsi_host_template pata_gayle_sht = {
- 	ATA_PIO_SHT(DRV_NAME),
- };
- 
--/* FIXME: is this needed? */
--static unsigned int pata_gayle_data_xfer(struct ata_queued_cmd *qc,
--					 unsigned char *buf,
--					 unsigned int buflen, int rw)
--{
--	struct ata_device *dev = qc->dev;
--	struct ata_port *ap = dev->link->ap;
--	void __iomem *data_addr = ap->ioaddr.data_addr;
--	unsigned int words = buflen >> 1;
--
--	/* Transfer multiple of 2 bytes */
--	if (rw == READ)
--		raw_insw((u16 *)data_addr, (u16 *)buf, words);
--	else
--		raw_outsw((u16 *)data_addr, (u16 *)buf, words);
--
--	/* Transfer trailing byte, if any. */
--	if (unlikely(buflen & 0x01)) {
--		unsigned char pad[2] = { };
--
--		/* Point buf to the tail of buffer */
--		buf += buflen - 1;
--
--		if (rw == READ) {
--			raw_insw((u16 *)data_addr, (u16 *)pad, 1);
--			*buf = pad[0];
--		} else {
--			pad[0] = *buf;
--			raw_outsw((u16 *)data_addr, (u16 *)pad, 1);
--		}
--		words++;
--	}
--
--	return words << 1;
--}
--
- /*
-  * Provide our own set_mode() as we don't want to change anything that has
-  * already been configured..
-@@ -110,7 +74,7 @@ static void pata_gayle_irq_clear(struct ata_port *ap)
- 
- static struct ata_port_operations pata_gayle_a1200_ops = {
- 	.inherits	= &ata_sff_port_ops,
--	.sff_data_xfer	= pata_gayle_data_xfer,
-+	.sff_data_xfer	= ata_sff_data_xfer,
- 	.sff_irq_check	= pata_gayle_irq_check,
- 	.sff_irq_clear	= pata_gayle_irq_clear,
- 	.cable_detect	= ata_cable_unknown,
-@@ -119,7 +83,7 @@ static struct ata_port_operations pata_gayle_a1200_ops = {
- 
- static struct ata_port_operations pata_gayle_a4000_ops = {
- 	.inherits	= &ata_sff_port_ops,
--	.sff_data_xfer	= pata_gayle_data_xfer,
-+	.sff_data_xfer	= ata_sff_data_xfer,
- 	.cable_detect	= ata_cable_unknown,
- 	.set_mode	= pata_gayle_set_mode,
- };
--- 
-2.34.1
+From the PCI abstractions:
+
+    extern "C" fn probe_callback(
+        pdev: *mut bindings::pci_dev,
+        id: *const bindings::pci_device_id,
+    ) -> core::ffi::c_int {
+        // SAFETY: Safe because the core kernel only ever calls the probe callback with a valid
+        // `pdev`.
+        let dev = unsafe { device::Device::from_raw(&mut (*pdev).dev) };
+
+        [...]
+    }
+
+Doing the NULL check would turn this into something like:
+
+    extern "C" fn probe_callback(
+        pdev: *mut bindings::pci_dev,
+        id: *const bindings::pci_device_id,
+    ) -> core::ffi::c_int {
+        // SAFETY: Safe because the core kernel only ever calls the probe callback with a valid
+        // `pdev`, but we still have to handle `Device::from_raw`'s NULL check.
+        let dev = match unsafe { device::Device::from_raw(&mut (*pdev).dev) } {
+           Ok(dev) => dev,
+           Err(err) => return Error::to_errno(err),
+        }
+    }
+
+This would be super odd. If `Device::from_raw` reports "Ok" it actually wouldn't
+mean everything is well. It would *only* mean that the pointer that was passed
+is not NULL. This is counter intuitive; IMHO unsafe functions shouldn't return
+any type of result, because it just isn't meaningful.
+
+> 
+> > A NULL pointer check would not make it a safe function either, since the pointer
+> > could still be an invalid one, or a pointer to a device it's not guaranteed that
+> > the reference count is held up for the duration of the function call.
+> 
+> True, but you just took one huge swatch of "potential crashes" off the
+> table.  To ignore that feels odd.
+> 
+> > Given that, we could add the NULL check and change the safety precondition to
+> > "valid pointer to a device with non-zero reference count OR NULL", but I don't
+> > see how this improves the situation for the caller, plus we'd need to return
+> > `Result<Device>` instead and let the caller handle that the `Device` was not
+> > created.
+> 
+> It better be able to handle if `Device` was not created, as you could
+> have been out of memory and nothing would have been allocated.  To not
+> check feels very broken.
+
+The abstraction is not allocating a new C struct device, it's just abstracting a
+pointer to an existing struct device. There is no OOM case to handle, the
+abstraction holding the pointer lives on the stack.
+
+> 
+> > > Ok, if you say so, should we bookmark this thread for when this does
+> > > happen?  :)
+> > 
+> > I'm just saying the caller has to validate that or provide a rationale why this
+> > is safe anyways, hence it'd be just a duplicate check.
+> > 
+> > > 
+> > > What will the rust code do if it is passed in a NULL pointer?  Will it
+> > > crash like C code does?  Or something else?
+> > 
+> > It mostly calls into C functions with this pointer, depends on what they do.
+> > 
+> > Checking a few random places, e.g. [1], it seems to crash in most cases.
+> > 
+> > [1] https://elixir.free-electrons.com/linux/latest/source/drivers/base/core.c#L3863
+> 
+> Great, then you should check :)
+
+Why isn't the conclusion that the C code should check (as well)? :) Would you
+want to add a NULL check at the beginning of device_del()?
+
+In Rust we have a clear separation between safe and unsafe functions with, for
+the latter, documented requirements on what's actually allowed to pass in and
+which preconditions must be guaranteed. The check happens, just not within the
+unsafe function.
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
 
