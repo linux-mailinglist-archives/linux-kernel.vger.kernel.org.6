@@ -1,55 +1,75 @@
-Return-Path: <linux-kernel+bounces-201234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81AE8FBB5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:16:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DA38FBB64
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138011C2200E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F9E1C21897
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C990A14A4DB;
-	Tue,  4 Jun 2024 18:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1513114A4EC;
+	Tue,  4 Jun 2024 18:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BiyVo111"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="sEIXPKds"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2055.outbound.protection.outlook.com [40.107.255.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B347B12E1CE;
-	Tue,  4 Jun 2024 18:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717524960; cv=none; b=dVypF/pOtDApyIdzQsfLyVnKMjf8asUb8wPRji3dIpLiH3+JCuAmXs5NxTOGBhrE2jG1gtS+aNA1EoSGZcE3ahufhjcpstmZdUZ84PZ0B5zFK4YSTKdZMkaAruPv6DcoYgIwgRvchLs+dk8rQBqvn8T19Iw9s4xd8rxSskrSWfk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717524960; c=relaxed/simple;
-	bh=jYuZKxsQpb581PjD3Ptk8cZiajoRtaV88fAecHnSwLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uaGhDEsuRJpNg8MpvyGTptWgD/IkE0hkm9x4tZdiRU2bhcIb5u4n56weP6z3MYHBdZ/PzhcW4xUTCmWVnzr0kSFn25Y/4o1b98LqZ0rYn73KjyKw2q7iW+qY1VDV/jOOxUYv95erdHkG0VBxKhtRnwaUCrgYIBTqRd94ZQgrSSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BiyVo111; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717524936; x=1718129736; i=markus.elfring@web.de;
-	bh=jYuZKxsQpb581PjD3Ptk8cZiajoRtaV88fAecHnSwLE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=BiyVo111CIpj8ApM5wiOiAPoZ4/m/cUGc86Zs38f9vL8iLn0do3Qr5afW/8LgZlL
-	 R40oPsHdZwMtyRHi6l6lsGgUJv7n/M5W177LSS6BBXhJ0c6n9X56lwvYgzAz7A2LW
-	 CPCPfBj9rjJsPzuatnMOBQ8XxvpNq0GfR2ntYeeCHAhrwpwFSN7Y+ycIIq5bSo1Rr
-	 PG+HbEu5Bw/0vLrj8oIjsr5p3wB828EnaSOmEzQx9P4TUywiMUKpX4IIzFWlbEbwr
-	 k/PAyDokRbJiR3aa/GygzhQJGxvAWhODZ9gWQk5j/fCLt2lu+zgkGd3UFmqYqdUln
-	 FQo+hNup5VxgAbDI+Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MY5fb-1rxjAz25lN-00KCAR; Tue, 04
- Jun 2024 20:15:36 +0200
-Message-ID: <503de0cb-09d2-4716-99cb-de257a33bad8@web.de>
-Date: Tue, 4 Jun 2024 20:15:35 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434925F860;
+	Tue,  4 Jun 2024 18:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717525023; cv=fail; b=YI3opvTsTICpaTUr/b0lqSt1Tq7PMqKyTACVK9qf0jdG22r++NMRRlx2F44ZIorStK53ty30/4KiJiNmVKtt+V6YAR88vlG2IZtdn+TWxfdrYGuNlVLG0wre2ZpP434EnXqCZYyIF/ew9AedMDDeERIUYBmkhTouR+o/XsRDpnI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717525023; c=relaxed/simple;
+	bh=GF2abqMaLnANd9TQIYFWmMLiiIjiCZqZcAK+COXaFB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B6xVXfrSaFimIqPcP1G1FczvM6dQoUISNPLkt0zvOyZ6Pj2UXBgiXUzXejHGp42hQIBhY1jCRWkpecDlbqKhmjIYQy3EGeD77PG6S+xy9i3IEZuqbkhesef7cguRNJ4a8PhuiILsfixUrwNCejh+cbP/mq1acmqC2G42CJsZi6A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=sEIXPKds; arc=fail smtp.client-ip=40.107.255.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NHCWFwAk1E6NoA2S0igQJOY1aep8WYsSRvS9CQ+hb8a4X5JSOip0cdHjlj9qmQ2mmmW2eCZr0XXl/iItKM07I3PsDXJpU6MMwXvVYIFemZy3+MGhsJppxiFzkZec6GNO9c0e2QCPTZTGwTnwx3ociorb7WC4vpmukF11V1rsih3mnDWBq48Jl+8SMTSz720AQ3yPzp9fno75kEY6U/3asuev3+0CeW+rvHQRUicRhjwDnZ7BPKE5893+E9MCfy7Vczc5wgOsQcO+59Yrx2QP5NyuXw60ByudT42ozJmc1zpd/CTAF0evU6KFjSVebjLcMvOUHCOErmEXDQZXEjGDVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cswQKSqfHIlb46vh8M9APYnPW07el9ykaBkEOz3+C0g=;
+ b=Dtl1w2XIcryhRo7jasVjVjZn9gGGbMN+mcWL1pUFjB+Zm9zoF5xtqKGbt0wFsZT6jvahrWBaqSwhd15A5HNAXNz3ye+J7k41qSuIatyD0m+X91HHkykP17GFxL+kGDcS752KYhN1Bg5ewsmEiXxjwQWBZZzD0ErSyAx7iWOxnZahe7DkkEyULVwLtv8a6TGmv2+aUJ7vx9/RYXLznjd07OHNFIM1v6YB2p1wRiOdtNAd9M2bh9cLqWoqoAedoLai6PNqEYJy/J28fKvjXCfZQ6pu6B331Fla2viHQ4RzrTg52E0pT3WvSidD9JvK0tj+CBsNyNGS8xwnHqbC43JpiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=google.com smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cswQKSqfHIlb46vh8M9APYnPW07el9ykaBkEOz3+C0g=;
+ b=sEIXPKdsEIzdsvjt0tx5TswDKRPbd/eB0fpNYzD2C1UjCRkdOBMaNwVwmuPVR4R1Ah1BWTW3GsknoJmgq3lH1g/e0tixsyOBODER0OEcN6ruTYBJfHJ8K7SO6AjKjcbYY6+E56RM+uG2PxHhBGpYBdKwFIQGrDy+KNvzQphFpiE=
+Received: from PSBPR02CA0018.apcprd02.prod.outlook.com (2603:1096:301::28) by
+ SI2PR02MB5860.apcprd02.prod.outlook.com (2603:1096:4:1bf::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.28; Tue, 4 Jun 2024 18:16:58 +0000
+Received: from HK3PEPF0000021E.apcprd03.prod.outlook.com
+ (2603:1096:301:0:cafe::bb) by PSBPR02CA0018.outlook.office365.com
+ (2603:1096:301::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31 via Frontend
+ Transport; Tue, 4 Jun 2024 18:16:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ HK3PEPF0000021E.mail.protection.outlook.com (10.167.8.40) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7633.15 via Frontend Transport; Tue, 4 Jun 2024 18:16:57 +0000
+Received: from [127.0.0.1] (172.16.40.118) by mailappw31.adc.com
+ (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 5 Jun
+ 2024 02:16:56 +0800
+Message-ID: <f6dcb031-9668-4387-b279-958e344bdbaf@oppo.com>
+Date: Wed, 5 Jun 2024 02:16:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,48 +77,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: auxdisplay: ht16k33: Drop device node reference after
- registration failure in ht16k33_led_probe()
-To: Andy Shevchenko <andy@kernel.org>, kernel-janitors@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
- <kabel@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Robin van der Gracht <robin@protonic.nl>, LKML <linux-kernel@vger.kernel.org>
-References: <0fc79fe9-da49-4cbe-a7ff-6443ad93f120@web.de>
- <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Zl9B2zqbJqVAf83d@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:XzxZXsyOQkXt5iZ3/RqJDZ9HblXj1cvp//kPU5U2jLBOKZaW0ER
- i4flt4ib8b6jV5OXeJKRiiACOP8+ZEFaJzA73beglMckX/gVX6njC/vjN0nmCfAgxqFNFN2
- BKpY5fg2I9OXrsyr62NcaU2+AQIjVMDClale8XkFWuxDLUvboMXPJ5mt498zHo4IAEew7Ad
- VG9MVJnVIN3mqpIcXjJMQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yXK4yK1g3E0=;kHGTcX+lLGuZzwdyL0aIM2O30LR
- eJL0nD1F2XoRBm2ahhVzqlrLS5WPEvWOdJ/a7m8rQaHJaWOHDy8mlKSqatdIeppIRPAdtGKUL
- bdydgPYivVR325ZCfC0Vx+EQafjzzVWl2dkEixb7E6yxJiQYuygz/VMhNUCTEte9NMK+O5Hbk
- TsNHbHf0XXk0y/D/td6LgYcWqA2rHsA7GhS+w7Tj05d9SCM3nPgC+jCDmB2HZlALsEixOia0e
- dp3sU7sWKxV2exxbgzGwmrhMGgxRSCM/jCdonP7OKDdo0TFAb8HaYGfsZmCe/n5S3Zo8BzmhB
- +0A2n5KfDT5B0seVW27QMkv+PDEN0e4tYZOu14SH5N48dXvV+tGCoafgQKZCbCpo6o4iRxxCc
- icH4uq92Q6MhT3qv/RsCDwFCBmxS5hin99RUOnuBW2aB6x+uI09T+BbidX8lPUhtan4cUh437
- cZ2xuZbU6W38J+XtdbtKgX9OruzV2zcR8wyPIArZUHVfSyPnDLm+5ASgZeNf9tF5TiIl/FEMc
- LdCK+3qp8h5iLFugmjcXKrINl95W1GW9U1FtuCr42lrh/06oeiw8GxWXmXgSAMORwczhf7FvA
- QXJjclrWzjB5VUNIBR1demH43ZBlfxfFGeDNw1N++FGVFLsybEMPeg2O2+y4j4t7KicKxZTSK
- d7b32t0TzmYZvF1O3/5Wb7lnGFLs3kln1hLsPRDfleULFVeYzkxy15gPNWjYuH4lSLEW8i7Ec
- XkeE1x2G/OEwGQRclwi4BL8nqg9pNywqmsu6eFAzZCuB45gkp/eX/NyuaEq/W8CoIJdTc9Qm9
- 8Xea7JfNvqarvNo0Vvxzhpb7xctcqPcT+Xopy6UxDCo0U=
+Subject: Re: [RFC PATCH v1] dma-buf: heaps: move the verification of
+ heap_flags to the corresponding heap
+To: John Stultz <jstultz@google.com>
+CC: Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+	"T.J. Mercier" <tjmercier@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>, <21cnbao@gmail.com>,
+	<linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>
+References: <20240603114008.16235-1-hailong.liu@oppo.com>
+ <CANDhNCq50zPB+TS+_Oo0HY0aUuBAdik2KrC8eJRTygbis293sw@mail.gmail.com>
+ <20240603172148.gb7txpg2ya43jyxn@oppo.com>
+ <CANDhNCrwgce7G5_-4tNfgTHcdL12zt3JKBg=o3bHrzMmfFMctg@mail.gmail.com>
+ <cff79c75-4c9c-46e0-a3ac-b9c0e8cad6f0@oppo.com>
+ <CANDhNCq1O9T6WxCpe9yNBycMu7U0SCVYBdW3R=J8jEqyqWYCiA@mail.gmail.com>
+Content-Language: en-US
+From: Hailong Liu <hailong.liu@oppo.com>
+In-Reply-To: <CANDhNCq1O9T6WxCpe9yNBycMu7U0SCVYBdW3R=J8jEqyqWYCiA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK3PEPF0000021E:EE_|SI2PR02MB5860:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1e685c1-8e15-4058-48ef-08dc84c28535
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|82310400017|1800799015|36860700004|7416005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OS9vVkdkTGNxN3NyQTdZTjEwaUgvaG15UnBDakFkQlJyNWxBY3V6MDZDLy92?=
+ =?utf-8?B?cGhPNmRXekZvaG15cVNWMHN1TEpVZ0pibnFVSk0yaTJDbHdwRERDQUhYa2hz?=
+ =?utf-8?B?MXZFM2VhZW9tdm1sZTM3NytOcnVKZzRjQ1RJd1JwbVdtZEZmTlBncHF4QTlx?=
+ =?utf-8?B?WlRxQUp6ajEyMjhiajFMZEx6K0k2dHgvUlFFUC9WbS9iWUxPRHd2dGxRNFJx?=
+ =?utf-8?B?MUdBZUFPdWp6U1V0OHhYZjZmOGw4K1FLSUUvSnVTbkxjN05vTUJJUEVYaEUy?=
+ =?utf-8?B?Q1JaUDZtemJCVHBqR1BsT3pLeWszZGUxbTJDZnNrSE9Sa0JNWWlGY21sRG5J?=
+ =?utf-8?B?emdIYmQ2aEx1NUtvSEhZdWVaYlBMdnBjSWVmUVhrUnNsdlF6STJOd0Fsc1I1?=
+ =?utf-8?B?Z3UwL2tyZWlScENSMU93alZ0TENmdWsrVW54eDhFNXljUlNjYVE2VTNzMHhz?=
+ =?utf-8?B?QVpuZ1VBM2UrUHl2U2pMWVJ6b3JVRFF1Y25uMGpiR2RreStZUU1aZWpKL0Jv?=
+ =?utf-8?B?NnFnMDdLODhYU3ZnN0xyOVB4VjJma1hhRnprNXJTUWg2ZURiUUUxOTJ4OFUy?=
+ =?utf-8?B?ZW40MmdJSStQOVRYMzdWMHYwQURJaUV4RGNhT3cwaFVZNCtNM29uS2Z6QmRN?=
+ =?utf-8?B?VGxNcDdEWEh2NkpoYnllVWFJYW1xeDlTdTNuV0dCektwbHp4RFhjMzJ6bU04?=
+ =?utf-8?B?Uzk0c2hOYkw1YUdiVlN1QVZZMnN0ZE91Q0pSVEI4czc3VE1kcTFZNWQvRzNZ?=
+ =?utf-8?B?R0E5ZmpjeXpGN21OeEVhOFA1bkFiODMxTk1pVEFteUNBN0F4a0JCSnFaWnp1?=
+ =?utf-8?B?Vkc4aCtrQm9XRVJmdURiSmRSSGg3Z3VSVkFOQ0VQSlE0N3hTdEtadUlsM0gv?=
+ =?utf-8?B?S0hUV1pzQThWSi9LM2tKN1RZVDJrTjBMQmhMQnV6d1d0UFJwcHAzUVRSMUpn?=
+ =?utf-8?B?K1NFSUlqM1hJdGpSMlNLZDJlb2NNUXUzbC9ETi9EZzlic2Q2QUNyaWxIT2dy?=
+ =?utf-8?B?WFdQc3FVK3Z5bHpEeDNtLzVuZWdubnFKRFpESVcyZ0FxVVhYR056WHhXRlg1?=
+ =?utf-8?B?TE12ZEdYYXdHa1NzZjVjM2tOY3p5aER5ZENEN3BkNm5adVlxalBQT0wxZU9M?=
+ =?utf-8?B?L2Z2TGJZTi9CN3VJMkpudm1uUzVFcElhWmhRV3ZhUzBFNWhwMEM3Ti91OGVH?=
+ =?utf-8?B?d3MvcWZqbXE0cml0Vm5SWFpoTVhGMkpocVhaUURXUHVXTi8yN1FvejVUUUZX?=
+ =?utf-8?B?a2pPam1uWElWZGRUUHJLNUVrNkNiM1Bob2JET0xONXVJVVdZN0lGQU1xZXM0?=
+ =?utf-8?B?LzBVVFNhSjIySEc5YnpEcEpHY0lEWk5PQnltV1liekgxZnFyTXdLVEh0NWdY?=
+ =?utf-8?B?cEFjNTV1SFhJb1VmSk5lRjYrS0ZMQmhVWDBwZVh1cjE2NXNYNk8xK2Q4b1BQ?=
+ =?utf-8?B?Qk0yaHl5Z0N6QW5waWRtSTNtTWsvRmNRdkhUZWswQnI3a1ZBWjRaQ2J6V2E0?=
+ =?utf-8?B?MVF3TUVEN3FISmdUWGR3YlZ5OFlZSkJsdzB2czhkbERNVjVGT1N0ajFicVBN?=
+ =?utf-8?B?RVFpRjRPOTMzUmtOTi9CdGx0eFZ5bUV1emVISG95NXI4anZSL0dOa2M0N05z?=
+ =?utf-8?B?L2dnQTVQMnVVNmN0aDNnVTdST0dNWFhlellEZ01keUtEZEZhQnJNc0NvUnVO?=
+ =?utf-8?B?bjVWV2doc05iQnk5NjZ0Mk40RWJ6T0gzQW92YjcyWjduTUhqOGpkYTJFQTZy?=
+ =?utf-8?B?Ky8xUXU4bDlxNFZLMEFWQVlKN2RxVjl0cFkzSy9jU2dIVkdQeWFxQ0ZtbWFz?=
+ =?utf-8?B?cE56SEliMGlsbjMrOVR4cEVuRnVEaFlybUNzd2xvMFlpdTdNSVEwMDNKSE5p?=
+ =?utf-8?Q?4QTemWqBkVqQ2?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(82310400017)(1800799015)(36860700004)(7416005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 18:16:57.0963
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1e685c1-8e15-4058-48ef-08dc84c28535
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK3PEPF0000021E.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR02MB5860
 
-> But, by design we don't use reference counting after we registered LED,
-> hence both error and successful paths need to have this,
+On 6/4/2024 11:33 PM, John Stultz wrote:
+> On Mon, Jun 3, 2024 at 11:30 PM Hailong Liu <hailong.liu@oppo.com> wrote:
+>> On 6/4/2024 2:06 AM, John Stultz wrote:
+>>> On Mon, Jun 3, 2024 at 10:21 AM Hailong Liu <hailong.liu@oppo.com> wrote:
+>>>> We now aim to improve priority dma-buf allocation. Consider android
+>>>> animations scene:
+>>>>
+>>>> when device is in low memory, Allocating dma-buf as animation
+>>>> buffers enter direct_reclaimation, longer allocation time result in a
+>>>> laggy UI. But if we know the usage of the dma-buf, we can use some
+>>>> mechanisms to boost, e.g. animation-memory-pool.
+>>>
+>>> Can you generalize this a bit further? When would userland know to use
+>>> this new flag?
+>>> If it is aware, would it make sense to just use a separate heap name instead?
+>>>
+>>> (Also: These other mechanisms you mention should probably also be
+>>> submitted upstream, however for upstream there's also the requirement
+>>> that we have open users and are not just enabling proprietary blob
+>>> userspace, which makes any changes to dma-buf heaps for out of tree
+>>> code quite difficult)
+>>>
+>>>> However, dma-buf usage identification becomes a challenge. A potential
+>>>> solution could be heap_flags. the use of heap_flags seems ugly and
+>>>> contrary to the intended design as you said, How aboult extending
+>>>> dma_heap_allocation_data as follows?
+>>>>
+>>>> struct dma_heap_allocation_data {
+>>>>         __u64 len;
+>>>>         __u32 fd;
+>>>>         __u32 fd_flags;
+>>>>         __u64 heap_flags;
+>>>>         __u64 buf_flags: // buf usage
+>>>> };
+>>>
+>>> This would affect the ABI (forcing a new ioctl number).  And it's
+>>> unclear what flags you envision as buffer specific (rather than heap
+>>> specific as this patch suggested).
+>>>
+>>> I think we need more details about the specific problem you're seeing
+>>> and trying to resolve.
+>> This patch mainly focuses on optimization for Android scenarios. Let’s
+>> discuss it on the issue website.
+>> Bug: 344501512
+> 
+> Ok, we can do that if you need.
+> 
+> But if this is ever going to go upstream (and it's more and more
+> important that we minimize out of tree technical debt), conversations
+> about how to generalize this will need to happen on the list.
+> We need a more complete design and test results to convince upstream to accept. 
+Thank you again for your suggestion.
 
-Do you indicate really special data processing constraints here?
+Brs, 
+Hailong.
+> thanks
+> -john
 
-
-> so add another fwnode_handle_put() after this branch.
-
-Will this suggestion trigger any further clarifications for the affected software?
-
-Regards,
-Markus
 
