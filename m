@@ -1,132 +1,100 @@
-Return-Path: <linux-kernel+bounces-201097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAD08FB97C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:49:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C833E8FB96E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC7A5B275DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C1C1F262C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24F414882A;
-	Tue,  4 Jun 2024 16:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7F4148830;
+	Tue,  4 Jun 2024 16:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWu1WPYQ"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b="hP7bzKYm"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE69168D0;
-	Tue,  4 Jun 2024 16:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91C113D607
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717519532; cv=none; b=Vqkvzq1anEvHWRRfUzZeaYapDTUGBZrKjOpRnQ1SE2lWUU6FkfwTnQWMP45UBXMamc05lTTFyc5JanzIjr04/owCC1mRLkN9AxDOxb/iO2kUb6bpYC1fqbWTRLLXCwafUW2KtWW3nZNuZUGGrkr39dAVoiDCLoiDaQLgSJ7NqHk=
+	t=1717519623; cv=none; b=Qb1XeIORkkKB7md4lAyLIgzAF/zFzPqkXh0Fy6d4XXDaoK8EsjVIuPe6urQO/4u74ujLWH4xNPAF7TiVcBv3i5kBl5XJ7cRWZ0ZlZLEqA7QhmRYEGVDb+P4iZj+laCZ3yvZZmmUnM5xnR+cj808oYn6tdd5xHaCm/x6NL1/9F5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717519532; c=relaxed/simple;
-	bh=Zhw+hnOzFnrffRZ/Lm3uKtUSBRgK6wbi9BdZLz/gxRM=;
+	s=arc-20240116; t=1717519623; c=relaxed/simple;
+	bh=oVSrnWYW3Dy+qbnzyP2YK4spEY/t8FU2eqyIxSQiOCk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E12C4ZrMnaXQ5Un7PTOxQdKpmieQu3vhoE/y3m9V6f6ThOwfJZNCPN32+HT/qnow8IE6ep4gYiczshDzgv3VmerLO1EszfXz9plS+kPBxn9pr+8nd9aPnEdHzsAF5Vo4o13HETW5sjkV4vwHTOLUGzxry1MHscaOhCDufzL0/f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWu1WPYQ; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c1a99b75d8so4344828a91.3;
-        Tue, 04 Jun 2024 09:45:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=lw/zj2eUpQElEyXC6Pyd8YsBMgPLP0yUY52J0LXIXg5uJ3AAQ3xhaDu1lTywq88rGZaFYW/hT5BgAGTkuSsL+tiuhf1arb6vU+v/dqn6IFNfWeewaCwhBMU91NW902B64H9wG1JYtqWZARkTMui4yJTVzW10lQQC/iemJrpfeso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b=hP7bzKYm; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfa7ab78ef2so4424773276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:47:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717519530; x=1718124330; darn=vger.kernel.org;
+        d=howett-net.20230601.gappssmtp.com; s=20230601; t=1717519620; x=1718124420; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QecifVAR+tvBUqTJQdxCWnDSVIat9xStXa2bm/K4Dng=;
-        b=cWu1WPYQCDx6b88gTuGqJtEOsZsqU+J1BeJiK2m9lEOyC6+uZV28VnvC/4Pm8zcBBM
-         X5wdcaIP9RIcaJ1Q1pE7mu0z+wUrPETIFevxro21Bmaqvv74DOhPm+zSplEXeQRi0pBG
-         BLGYWEXA+n78HK77wuj23JKk1IJUCmQ/PrQN3VB5MWOMuj0gl7uJL7V7x71y/U/Hh66k
-         pwtm12vC1dMQX0l0haAZRp4XY+U4v7zM3o0MAs7imbUz+09CLn7vh1XwvvhLFzVUIoCG
-         ACpQ3ygJVqgj7vi95wtRy6VA+UwW+bcZtHGWoDIR+ULTEcg59WLZDJEIQtIk4Pa1hf/c
-         GDeg==
+        bh=oVSrnWYW3Dy+qbnzyP2YK4spEY/t8FU2eqyIxSQiOCk=;
+        b=hP7bzKYmi+nZBbMB0RvCeSSXA9djGswKA39IVSq+SqKE0nnLxmE04+ydxts+vMPY+T
+         wB+hjENSqc4hvPBg2Pi7i+qbd5UGNqe1VhcYljf0Zjdqo7MCPJZDWYWlSgsMYTxxUg5z
+         kWdJdZwKup5I1oIyDEzwQvQd8fFPIbD+ppO2efG9jRd0g6AuiolPLwmMivBKEsunKBbZ
+         DKpVnH5r2cKw1ukwJ4KZNtu7fKGuGHjcT9tYNiTZe+suDg3zc8q2lUsRdoJUU4TaTxPi
+         OXVTLDxMVw1cVcxU3XD1r/tKkbHAwr2sAnHzXVfTRuzTHoIxa/CGyqL7pWTk6PPv6X6e
+         NBhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717519530; x=1718124330;
+        d=1e100.net; s=20230601; t=1717519620; x=1718124420;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QecifVAR+tvBUqTJQdxCWnDSVIat9xStXa2bm/K4Dng=;
-        b=D0dRJCezJkLat6VrkBHlbJJ72xcOauXQgETMZdTJ5MSg/h4cm8fLgyQEeYKdb2Rlgx
-         qwU1Yuu+aOFdAzdAaJvQU4dji36z+f+PGMdEZ7qgrMxCYp63GATSO+7BnZxdAeipnReS
-         X5UZmtcxTfnDeLiCn3XD5h9ncs1izfXoyxNzUxf1M1xFwJv1wUb53tiGEBBPfaNwV/0b
-         vJ7ac0LbAT3anfLo+FmI1EH7Y1C5PwoovcUd12gxqQ5MPKCs8jjkTiAThSsrsQDE+Nhp
-         q+t6H4VIXVEkNN4is9NR7izmUjiDPpTjMciGc1dt1cVxDBxUw0hybWY07Ve2+o0MH9RO
-         JTMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPqtbuGGr1N12cYiag7kHV8uGQHaFUX1wdqXKwn7thROqDjN0P1n3kquNYRg7GNVQ2mjm6b2Zg8a5b1hZRMrGjxn3MS4SermWxj8nhMvog0bqJldkoDBxXC9+9NvYWB+AppoCEGbCGPq+wuA==
-X-Gm-Message-State: AOJu0YwGwHAb+y5aN7caMaVmDlUktSOOIgKCppqlTdUYwt4Y9Q84E2ip
-	DaCiPEisED8j5ESpU+oC+7Uq/TqxIGneS6bed/HApaYEnY+nHisvtu7zExJlNiQe24ODdmfXuSY
-	8aXyBmHn6eyQ0xVjeW0DNP6yqaBI=
-X-Google-Smtp-Source: AGHT+IFCTYi81ohxmB4GHF8R5ig10gXlGw/VXeg6Zyu7SRlO2MnRd3LHAj40rLREbkSJw9Vw999N2GkMUnudzwyOxwY=
-X-Received: by 2002:a17:90b:30c2:b0:2bf:9566:7c58 with SMTP id
- 98e67ed59e1d1-2c1dc5d2962mr11454075a91.41.1717519530143; Tue, 04 Jun 2024
- 09:45:30 -0700 (PDT)
+        bh=oVSrnWYW3Dy+qbnzyP2YK4spEY/t8FU2eqyIxSQiOCk=;
+        b=i+b8V+2inY6fph1rcopouZYybkk7W/EHfXp/a6Qb4lPoCON6Ki073i4EJ8oNYIQiT1
+         pVq0vdQP7VCXw9Bf+WJh7HpI8ttIrmPahFBy2EaEwK8DdQqinxJq1OqShxgJAGwYIhp8
+         Ro0I0zL068G3hICB+xMZ3EAIVwdOeQm2n1AEZMXoQJcG/w2CmH/8ugXgZIXoanm/dc4P
+         /Uyj4D+03OXB7QNDNa1q0cJ+b/vNPeady572Jst9i8tkYAnF/mb8quVhO8gcVAWSxsja
+         H4eXjAdNBeSge4HHMsdqVWowZQOQum6qPIXqtaF+P6avu5HJzjH8vAHqpV3Bdy6mZK+H
+         H2uw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6rxBI+1pQ+ZUgGQyPrAZwhG2ddyXZ2n0fAK2hxNMeSwsgncbT4huzO19QUu5NKRGAiCaM05W7xrHf8gYO+wBxgzYcQRf9YUhFL3fS
+X-Gm-Message-State: AOJu0YyzHfwhy45DSa62sMWDMDRRni/qnez9GpdE/TTXgoZ0U9qe7yZM
+	fEPBFH0T0HdgJsFvAlB8E7tYRSGIGQE9YODsIZWK0gyKaSH6OtO4jhzqWMdcv1XGtC09BS5ywxi
+	ax17X/pEmbFbgzJ/Sz/L/fEUf6GVvFed7iBt82O6kj1pCmYOBmQ==
+X-Google-Smtp-Source: AGHT+IHMdgVbp4edXz1RYg3r+v3zS6jex/OYdamIOc4mz+GjXYTa50U8xGQcjwpv2rX/qXq+oLJeXSLJiUuBGNHgjT4=
+X-Received: by 2002:a25:aba7:0:b0:df4:dd91:4524 with SMTP id
+ 3f1490d57ef6-dfa73dbb8bfmr12794384276.44.1717519619696; Tue, 04 Jun 2024
+ 09:46:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604-a505-v1-1-82ee1c04d200@gmail.com> <49fe3b01-4f00-4ffc-80cf-2a0add1ebaad@linaro.org>
- <CAGsSOWV=i2JHsYNvi5EC6q=NoD8v7SiTjbVQhTDLNw35+irTCQ@mail.gmail.com>
-In-Reply-To: <CAGsSOWV=i2JHsYNvi5EC6q=NoD8v7SiTjbVQhTDLNw35+irTCQ@mail.gmail.com>
-From: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
-Date: Tue, 4 Jun 2024 18:45:19 +0200
-Message-ID: <CAGsSOWV9SRK1VUJiQfavEM1hL0PapxUBG6CNeD+Q=0qPT5ZnSA@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/adreno: Add support for Adreno 505 GPU
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Daniil Titov <daniilt971@gmail.com>
+References: <20240603-led-trigger-flush-v1-1-c904c6e2fb34@weissschuh.net>
+In-Reply-To: <20240603-led-trigger-flush-v1-1-c904c6e2fb34@weissschuh.net>
+From: Dustin Howett <dustin@howett.net>
+Date: Tue, 4 Jun 2024 11:46:48 -0500
+Message-ID: <CA+BfgNKowam5s==47KcrO-JRc2QfR2od1T=9z52t1AJZFkc0yw@mail.gmail.com>
+Subject: Re: [PATCH] leds: triggers: flush pending brightness before
+ activating trigger
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 2:27=E2=80=AFPM Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trab=
-arni@gmail.com> wrote:
+On Mon, Jun 3, 2024 at 4:45=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
+huh.net> wrote:
 >
-> On Tue, Jun 4, 2024 at 1:55=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linar=
-o.org> wrote:
-> >
-> >
-> >
-> > On 6/4/24 02:20, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrote:
-> > > From: Daniil Titov <daniilt971@gmail.com>
-> > >
-> > > This GPU is found on SoCs such as MSM8937 (450 MHz), MSM8940 (475 MHz=
-),
-> > > SDM439 (650 MHz).
-> > >
-> > > Signed-off-by: Daniil Titov <daniilt971@gmail.com>
-> > > Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
-> > > ---
-> >
-> > This all looks very good, just a nit
-> >
-> > [...]
-> >
-> > > +             /*
-> > > +              * Increase inactive period to 250 to avoid bouncing
-> > > +              * the GDSC which appears to make it grumpy
-> > > +              */
-> > > +             .inactive_period =3D 250,
-> >
-> > Are you sure this is actually necessary?
-> Every A5XX GPU is using the same value, but i have never tried with
-> DRM_MSM_INACTIVE_PERIOD.
-This was the original patch
-https://lore.kernel.org/all/20180507224750.9383-1-jcrouse@codeaurora.org/
-where the inactive period was increased for a530. I cannot test
-suspend on msm8937 yet.
-I can check on msm8953 with a506 maybe if a506 works fine with
-DRM_MSM_INACTIVE_PERIOD
-then a505 would be fine with it also.
->
-> >
-> > Konrad
+> Dustin, could you validate that this fixes the issue you encountered in
+> the cros_ec led driver?
+
+Thanks for the quick patch. Yes, it fixes the issue I encountered with
+leds_cros_ec!
+
+Tested-by: Dustin L. Howett <dustin@howett.net>
+
+Cheers,
+d
 
