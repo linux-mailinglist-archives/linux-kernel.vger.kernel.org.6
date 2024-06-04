@@ -1,238 +1,253 @@
-Return-Path: <linux-kernel+bounces-200073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE188FAA3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:51:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40D38FAA41
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61F3BB21FB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55723289196
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6BD13DDB2;
-	Tue,  4 Jun 2024 05:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A76013DDB2;
+	Tue,  4 Jun 2024 05:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="GFnLf3Tx"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRygG54C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6F6130A79
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 05:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC77132135;
+	Tue,  4 Jun 2024 05:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717480274; cv=none; b=ncIaCUiLRYni2tZEthwmG7Wc3YFybwk4GUCf3KWjkEMdfu0S2Xe/80mxhi9Y1WwT7AI4V9Y40oSkoY7xRiyh0VBM6w9vstupqILG9/5Plxw+PJznbkuM1q3QvzGKvpXPUw9RnQRWoj9GVrEJLfPyDbQ6CVmEaU8Y6BwWyfGn/wY=
+	t=1717480357; cv=none; b=gu/zCbUD+oQ1ubNOzyhatdJULfjd0f3sPbP5ZZ/H0SCQ3bQDI9sA94vhDlR/tp22V1WHqTxs9SevxJGQSlBgNBzxetpbd1nGPUJ8ZUH3JPFzpbL775SBAzBhHxN5YRcpr7C1e2xsiEIq1TaS+PVWBSy3xa9DJPrPm30zXioCEAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717480274; c=relaxed/simple;
-	bh=uss0X1VN88HbrrQxklnUMnnojK0g+Phe6pPxPPeCyyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TW1fgd0hiBAyWMXcI07CACrXlpjZw9OR3MLKwfsNFMmeqAMwPIAqrOsWyNJVCw75oVmmqtnkhXgmiweCKXvW3GeGFDxoaG0JNktdABQhg+hgdNU/d31WhvJtvlNhYzsz0+RpY3NclJdo9dHd6HAtFe2D/5Y3bDe2qeJXr6IVDW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=GFnLf3Tx; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 704763F2A1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 05:51:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1717480263;
-	bh=bakozUuCaN+IM6untUm+580ISMXPQFrIaEMbe9vcbuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=GFnLf3TxfuFyYvOzLXrGqDTZo4fyImCC02nFoHrEn/9TeanV6+w5FI7sQRMh+nbCR
-	 oy/9ZOe1cQp875wmfUg4ayEPypT5ZwVVCNYQBPNo/tZdxFkfKUvwvKzAb3I90SgJf+
-	 h9qrx5adaVL4bHgODSSzh7/yhBfrkg1K0SUQ3illXGiK4IVZvf9v3XtZIyU7Pw8awO
-	 WPyHkxbZJPZJCBJFb5bgBRUAN9s4YOgo0HyCuOIXsZHZA3qrPbP/10uB38sHhsHLIH
-	 bFU9ljU19svJXoSuvzdm2lrQq3MbiSreGe3UGEyhUSnGpA32T979co0m1ai0L/Lc+d
-	 Mk8L8G6wlOAuw==
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-43fa039d2dbso50282121cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 22:51:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717480260; x=1718085060;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bakozUuCaN+IM6untUm+580ISMXPQFrIaEMbe9vcbuo=;
-        b=DtmnDQPiT5N5OGuC+WdtYCf03VqemTfGtASrrux/Myyz5sArHKlz13YXzDkgncmgJs
-         KLr0g+4kTeaBoO2KX7nQM/iJJ8CcPAHn36vaPcyFBT1Ipb2NluQIuPHTm1zhLaleujzx
-         9EMCJshHh9J0c9DEaDUvSuhyKQFiKSuA0eQqpAZDztwB8WpET0qxfJpanz3kInLo3Ctn
-         yI1lrjl1OqWWBfDUBwyA3ELY0TbGNnANurT9wHPl+7GhmOBvv8+i7SxoIclK185ANwQ5
-         DpPLYHtARWiDYGl5O3W2/LsP2sF7O2g4KSJrdsLBg3T2UUGI3qqZmsOqvkxJe7wh2sRE
-         Qu9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVpuUhM/zZl7RmxET+jr6/kH8vXQ1zsgl3YK1gteMTYzXAOmbvoF7XVWhnz4v87VA7Gaqo/s42Ib98bVmsHNAHC3MDd1Hx4VLBrTUSU
-X-Gm-Message-State: AOJu0YzSoyk3CHr/6X0hSJfi0tqBjVDQwoL0u5bPzvThS+/s35yYClyy
-	XlVNi/lV5pE/hQ6ozSb9y2wU1DMv80Xa4sgfhcqsN4cBoPVzyPSovkqmnjW1rugD09iy2ZyYnOT
-	UvwA4dF45MKLVB5PCyIpEq54FbhSGqesKfNkHNO/vSAHBnhS5NGpv3Vk9sf2rjatYVjemnxqsrD
-	3jqw==
-X-Received: by 2002:ac8:7d42:0:b0:43e:3b8e:670f with SMTP id d75a77b69052e-43ff549f297mr105320041cf.43.1717480260394;
-        Mon, 03 Jun 2024 22:51:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGNNMHj3DNemo6r8ze9mxeAlNiDseNl5q4JzhvkZ5jaG0w4QaVp8XWGaG9AL3DFRkMjFlevuQ==
-X-Received: by 2002:ac8:7d42:0:b0:43e:3b8e:670f with SMTP id d75a77b69052e-43ff549f297mr105319801cf.43.1717480259672;
-        Mon, 03 Jun 2024 22:50:59 -0700 (PDT)
-Received: from localhost.localdomain ([2001:67c:1560:8007::aac:c40b])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43ff23a1aacsm46472871cf.12.2024.06.03.22.50.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 22:50:59 -0700 (PDT)
-From: Chengen Du <chengen.du@canonical.com>
-To: willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	kaber@trash.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chengen Du <chengen.du@canonical.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v5] af_packet: Handle outgoing VLAN packets without hardware offloading
-Date: Tue,  4 Jun 2024 13:48:23 +0800
-Message-ID: <20240604054823.20649-1-chengen.du@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717480357; c=relaxed/simple;
+	bh=hp/q9fl1l/6+eFOkIX8ny4QgcjTOK17pB3rxlmTZ8Iw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=tnij5pIVxgorKoIRHjMFCfu4GjPMlEgnZKP6XtHP676WbCNxEivDf8gFp4F0PFvh33zT/fRv65a9LjyOaAd5iqRH+1DM/NpOIiza72bDxTFBGAIvMb2oax5HWTibr+ytcmo1K/FNmJ+rsh2Gh8NdymhlxX5HEFULMPaYQmBQwBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRygG54C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A96C2BBFC;
+	Tue,  4 Jun 2024 05:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717480356;
+	bh=hp/q9fl1l/6+eFOkIX8ny4QgcjTOK17pB3rxlmTZ8Iw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=rRygG54CoZ8htmevLQ2Hwd3ZKINlMR4WCoy3mGZm7Er7VXEGvDHQ4Hxm8Fvhepf6G
+	 xEMuSpoBut1mphalvVhYydblbpdlzb9tM6341UEtCE+SYUIpv3WBE/bsBoCYxCutSM
+	 XYUumCwRSdEgTN/mEIo7JIgarVXj5ERxHBHWdZoRAdXpgSToo4JXHm/GyuJCd3wDBr
+	 5vYjNG6497Phbm/PJ9zukKXKSRmm0QPgH9ER9iIQiUux4Q8rquDIPIqY5szq2BVoG6
+	 fdNd2eK8IcYXXbNAe5srDrLtFRI6j9h/cMgIz3X04EHoLjc1Lo6nI9BZWWuBNFy1yz
+	 fpNdjbjPA6yYA==
+Date: Mon, 03 Jun 2024 22:52:37 -0700
+From: Kees Cook <kees@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+CC: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+ Ross Zwisler <zwisler@google.com>, wklin@google.com,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>,
+ Linus Torvalds <torvalds@linuxfoundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mike Rapoport <rppt@kernel.org>, ardb@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_1/2=5D_mm/memblock=3A_Add_=22reserve?=
+ =?US-ASCII?Q?=5Fmem=22_to_reserved_named_memory_at_boot_up?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240603233631.452433539@goodmis.org>
+References: <20240603233330.801075898@goodmis.org> <20240603233631.452433539@goodmis.org>
+Message-ID: <5DAB46F6-F415-4C2B-AA6A-E0049CF6270C@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The issue initially stems from libpcap. The ethertype will be overwritten
-as the VLAN TPID if the network interface lacks hardware VLAN offloading.
-In the outbound packet path, if hardware VLAN offloading is unavailable,
-the VLAN tag is inserted into the payload but then cleared from the sk_buff
-struct. Consequently, this can lead to a false negative when checking for
-the presence of a VLAN tag, causing the packet sniffing outcome to lack
-VLAN tag information (i.e., TCI-TPID). As a result, the packet capturing
-tool may be unable to parse packets as expected.
 
-The TCI-TPID is missing because the prb_fill_vlan_info() function does not
-modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in the
-payload and not in the sk_buff struct. The skb_vlan_tag_present() function
-only checks vlan_all in the sk_buff struct. In cooked mode, the L2 header
-is stripped, preventing the packet capturing tool from determining the
-correct TCI-TPID value. Additionally, the protocol in SLL is incorrect,
-which means the packet capturing tool cannot parse the L3 header correctly.
 
-Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
-Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen.du@canonical.com/T/#u
-Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
-Cc: stable@vger.kernel.org
-Signed-off-by: Chengen Du <chengen.du@canonical.com>
----
- net/packet/af_packet.c | 64 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 62 insertions(+), 2 deletions(-)
+On June 3, 2024 4:33:31 PM PDT, Steven Rostedt <rostedt@goodmis=2Eorg> wro=
+te:
+>From: "Steven Rostedt (Google)" <rostedt@goodmis=2Eorg>
+>
+>In order to allow for requesting a memory region that can be used for
+>things like pstore on multiple machines where the memory layout is not th=
+e
+>same, add a new option to the kernel command line called "reserve_mem"=2E
+>
+>The format is:  reserve_mem=3Dnn:align:name
+>
+>Where it will find nn amount of memory at the given alignment of align=2E
+>The name field is to allow another subsystem to retrieve where the memory
+>was found=2E For example:
+>
+>  reserve_mem=3D12M:4096:oops ramoops=2Emem_name=3Doops
 
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index ea3ebc160e25..53d51ac87ac6 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -538,6 +538,52 @@ static void *packet_current_frame(struct packet_sock *po,
- 	return packet_lookup_frame(po, rb, rb->head, status);
- }
- 
-+static u16 vlan_get_tci(struct sk_buff *skb)
-+{
-+	unsigned int vlan_depth = skb->mac_len;
-+	struct vlan_hdr vhdr, *vh;
-+	u8 *skb_head = skb->data;
-+	int skb_len = skb->len;
-+
-+	if (vlan_depth) {
-+		if (WARN_ON(vlan_depth < VLAN_HLEN))
-+			return 0;
-+		vlan_depth -= VLAN_HLEN;
-+	} else {
-+		vlan_depth = ETH_HLEN;
-+	}
-+
-+	skb_push(skb, skb->data - skb_mac_header(skb));
-+	vh = skb_header_pointer(skb, vlan_depth, sizeof(vhdr), &vhdr);
-+	if (skb_head != skb->data) {
-+		skb->data = skb_head;
-+		skb->len = skb_len;
-+	}
-+	if (unlikely(!vh))
-+		return 0;
-+
-+	return ntohs(vh->h_vlan_TCI);
-+}
-+
-+static __be16 vlan_get_protocol_dgram(struct sk_buff *skb)
-+{
-+	__be16 proto = skb->protocol;
-+
-+	if (unlikely(eth_type_vlan(proto))) {
-+		u8 *skb_head = skb->data;
-+		int skb_len = skb->len;
-+
-+		skb_push(skb, skb->data - skb_mac_header(skb));
-+		proto = __vlan_get_protocol(skb, proto, NULL);
-+		if (skb_head != skb->data) {
-+			skb->data = skb_head;
-+			skb->len = skb_len;
-+		}
-+	}
-+
-+	return proto;
-+}
-+
- static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
- {
- 	del_timer_sync(&pkc->retire_blk_timer);
-@@ -1011,6 +1057,10 @@ static void prb_fill_vlan_info(struct tpacket_kbdq_core *pkc,
- 		ppd->hv1.tp_vlan_tci = skb_vlan_tag_get(pkc->skb);
- 		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->vlan_proto);
- 		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
-+	} else if (unlikely(eth_type_vlan(pkc->skb->protocol))) {
-+		ppd->hv1.tp_vlan_tci = vlan_get_tci(pkc->skb);
-+		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->protocol);
-+		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
- 	} else {
- 		ppd->hv1.tp_vlan_tci = 0;
- 		ppd->hv1.tp_vlan_tpid = 0;
-@@ -2428,6 +2478,10 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
- 			h.h2->tp_vlan_tci = skb_vlan_tag_get(skb);
- 			h.h2->tp_vlan_tpid = ntohs(skb->vlan_proto);
- 			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
-+		} else if (unlikely(eth_type_vlan(skb->protocol))) {
-+			h.h2->tp_vlan_tci = vlan_get_tci(skb);
-+			h.h2->tp_vlan_tpid = ntohs(skb->protocol);
-+			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
- 		} else {
- 			h.h2->tp_vlan_tci = 0;
- 			h.h2->tp_vlan_tpid = 0;
-@@ -2457,7 +2511,8 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
- 	sll->sll_halen = dev_parse_header(skb, sll->sll_addr);
- 	sll->sll_family = AF_PACKET;
- 	sll->sll_hatype = dev->type;
--	sll->sll_protocol = skb->protocol;
-+	sll->sll_protocol = (sk->sk_type == SOCK_DGRAM) ?
-+		vlan_get_protocol_dgram(skb) : skb->protocol;
- 	sll->sll_pkttype = skb->pkt_type;
- 	if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV)))
- 		sll->sll_ifindex = orig_dev->ifindex;
-@@ -3482,7 +3537,8 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 		/* Original length was stored in sockaddr_ll fields */
- 		origlen = PACKET_SKB_CB(skb)->sa.origlen;
- 		sll->sll_family = AF_PACKET;
--		sll->sll_protocol = skb->protocol;
-+		sll->sll_protocol = (sock->type == SOCK_DGRAM) ?
-+			vlan_get_protocol_dgram(skb) : skb->protocol;
- 	}
- 
- 	sock_recv_cmsgs(msg, sk, skb);
-@@ -3539,6 +3595,10 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
- 			aux.tp_vlan_tci = skb_vlan_tag_get(skb);
- 			aux.tp_vlan_tpid = ntohs(skb->vlan_proto);
- 			aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
-+		} else if (unlikely(eth_type_vlan(skb->protocol))) {
-+			aux.tp_vlan_tci = vlan_get_tci(skb);
-+			aux.tp_vlan_tpid = ntohs(skb->protocol);
-+			aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
- 		} else {
- 			aux.tp_vlan_tci = 0;
- 			aux.tp_vlan_tpid = 0;
--- 
-2.43.0
+How does this interact with KASLR? It has chosen its physical location bef=
+ore this parsing happens, so I'd expect this to fail once in a while, unles=
+s the size/alignment is lucky enough that KASLR never uses that portion of =
+the physical memory=2E=2E=2E
 
+-Kees
+
+>
+>Where ramoops=2Emem_name will tell ramoops that memory was reserved for i=
+t
+>via the reserve_mem option and it can find it by calling:
+>
+>  if (reserve_mem_find_by_name("oops", &start, &size)) {
+>	// start holds the start address and size holds the size given
+>
+>Link: https://lore=2Ekernel=2Eorg/all/ZjJVnZUX3NZiGW6q@kernel=2Eorg/
+>
+>Suggested-by: Mike Rapoport <rppt@kernel=2Eorg>
+>Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis=2Eorg>
+>---
+> include/linux/mm=2Eh |  2 +
+> mm/memblock=2Ec      | 97 ++++++++++++++++++++++++++++++++++++++++++++++
+> 2 files changed, 99 insertions(+)
+>
+>diff --git a/include/linux/mm=2Eh b/include/linux/mm=2Eh
+>index 9849dfda44d4=2E=2Eb4455cc02f2c 100644
+>--- a/include/linux/mm=2Eh
+>+++ b/include/linux/mm=2Eh
+>@@ -4263,4 +4263,6 @@ static inline bool pfn_is_unaccepted_memory(unsigne=
+d long pfn)
+> void vma_pgtable_walk_begin(struct vm_area_struct *vma);
+> void vma_pgtable_walk_end(struct vm_area_struct *vma);
+>=20
+>+int reserve_mem_find_by_name(const char *name, unsigned long *start, uns=
+igned long *size);
+>+
+> #endif /* _LINUX_MM_H */
+>diff --git a/mm/memblock=2Ec b/mm/memblock=2Ec
+>index d09136e040d3=2E=2Ea8bf0ee9e2b4 100644
+>--- a/mm/memblock=2Ec
+>+++ b/mm/memblock=2Ec
+>@@ -2244,6 +2244,103 @@ void __init memblock_free_all(void)
+> 	totalram_pages_add(pages);
+> }
+>=20
+>+/* Keep a table to reserve named memory */
+>+#define RESERVE_MEM_MAX_ENTRIES		8
+>+#define RESERVE_MEM_NAME_SIZE		16
+>+struct reserve_mem_table {
+>+	char			name[RESERVE_MEM_NAME_SIZE];
+>+	unsigned long		start;
+>+	unsigned long		size;
+>+};
+>+static struct reserve_mem_table reserved_mem_table[RESERVE_MEM_MAX_ENTRI=
+ES];
+>+static int reserved_mem_count;
+>+
+>+/* Add wildcard region with a lookup name */
+>+static int __init reserved_mem_add(unsigned long start, unsigned long si=
+ze,
+>+				   const char *name)
+>+{
+>+	struct reserve_mem_table *map;
+>+
+>+	if (!name || !name[0] || strlen(name) >=3D RESERVE_MEM_NAME_SIZE)
+>+		return -EINVAL;
+>+
+>+	if (reserved_mem_count >=3D RESERVE_MEM_MAX_ENTRIES)
+>+		return -1;
+>+
+>+	map =3D &reserved_mem_table[reserved_mem_count++];
+>+	map->start =3D start;
+>+	map->size =3D size;
+>+	strscpy(map->name, name);
+>+	return 0;
+>+}
+>+
+>+/**
+>+ * reserve_mem_find_by_name - Find reserved memory region with a given n=
+ame
+>+ * @name: The name that is attached to a reserved memory region
+>+ * @start: If found, holds the start address
+>+ * @size: If found, holds the size of the address=2E
+>+ *
+>+ * Returns: 1 if found or 0 if not found=2E
+>+ */
+>+int reserve_mem_find_by_name(const char *name, unsigned long *start, uns=
+igned long *size)
+>+{
+>+	struct reserve_mem_table *map;
+>+	int i;
+>+
+>+	for (i =3D 0; i < reserved_mem_count; i++) {
+>+		map =3D &reserved_mem_table[i];
+>+		if (!map->size)
+>+			continue;
+>+		if (strcmp(name, map->name) =3D=3D 0) {
+>+			*start =3D map->start;
+>+			*size =3D map->size;
+>+			return 1;
+>+		}
+>+	}
+>+	return 0;
+>+}
+>+
+>+/*
+>+ * Parse early_reserve_mem=3Dnn:align:name
+>+ */
+>+static int __init reserve_mem(char *p)
+>+{
+>+	phys_addr_t start, size, align;
+>+	char *oldp;
+>+	int err;
+>+
+>+	if (!p)
+>+		return -EINVAL;
+>+
+>+	oldp =3D p;
+>+	size =3D memparse(p, &p);
+>+	if (p =3D=3D oldp)
+>+		return -EINVAL;
+>+
+>+	if (*p !=3D ':')
+>+		return -EINVAL;
+>+
+>+	align =3D memparse(p+1, &p);
+>+	if (*p !=3D ':')
+>+		return -EINVAL;
+>+
+>+	start =3D memblock_phys_alloc(size, align);
+>+	if (!start)
+>+		return -ENOMEM;
+>+
+>+	p++;
+>+	err =3D reserved_mem_add(start, size, p);
+>+	if (err) {
+>+		memblock_phys_free(start, size);
+>+		return err;
+>+	}
+>+
+>+	p +=3D strlen(p);
+>+
+>+	return *p =3D=3D '\0' ? 0: -EINVAL;
+>+}
+>+__setup("reserve_mem=3D", reserve_mem);
+>+
+> #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+> static const char * const flagname[] =3D {
+> 	[ilog2(MEMBLOCK_HOTPLUG)] =3D "HOTPLUG",
+
+--=20
+Kees Cook
 
