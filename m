@@ -1,261 +1,85 @@
-Return-Path: <linux-kernel+bounces-201277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B2E8FBC6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:19:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33408FBC73
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB9528692B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:19:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EF86B25C09
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C85C14B071;
-	Tue,  4 Jun 2024 19:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E71814AD36;
+	Tue,  4 Jun 2024 19:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o8sfW9bl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SPzJV6CQ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o8sfW9bl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SPzJV6CQ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Ba5ZIYTy"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F19A801;
-	Tue,  4 Jun 2024 19:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E66A801;
+	Tue,  4 Jun 2024 19:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717528737; cv=none; b=F+1/OSPdCcVD+6dSny1v6cA9kOHU4+ufB58aVVACNEdJQuSg6Uwqy0rKyWQfTcUdRcCyiNLMzKX6VgJPACasm0Nv5v0ouutbV1S+2j1owlA4qQWJ48Iw6xz3gtsN4mbAo9WjBnN6GnONeUHWzzWEjedu4FQ8HouQmEBLL4whPPY=
+	t=1717528854; cv=none; b=aszBDxTXjL3qqfrvT7LI3IKXRyQWeX63pcbmZWFcC1P6yXbCYNo75UgP9LrEIPpQ1WqBfihmH7CFj8gkhPEmuLw/U4/eSIOQ5DKLHuwCK9jz1dxtw8oWuAfuuYr3u2V/nkaj6mtjZQ98Yx3p78TQWQjvj0pI0hBgjKAPCkex4Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717528737; c=relaxed/simple;
-	bh=HY2uD1V2XNnt7Yw6Q2og4xGbhV0iSXg8vgOOgV62bR4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ExGQk1NnmEbs6CcvgJEPv5XUy0hDv/vZNymqYi1P6U2sujrBk0sYYGfRHzAk2tr0HZWpb5XK8l282wNAKY6pf45iUwdeonMAjgvfwOVdCoAR0A5aj9YTMF7zCZJ2Q7RDyhRCG6CKu+/O59FSQRrvvmy3E5OlGpe+IO7jR3tt4UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o8sfW9bl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SPzJV6CQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o8sfW9bl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SPzJV6CQ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4595E1F385;
-	Tue,  4 Jun 2024 19:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717528733; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fHpikqLS3lplK6ETI4WYKgRmbL70DTWGHED9kErL4ec=;
-	b=o8sfW9blSyqGKsN8DSf9C+mekBpd2Xbi1tNe9oAh5kMA2DHcklcTUHr7k63mY1a5VNhcYL
-	G7ZJCdnLRXeWTl57U8p+MvbCVRKNwHsOzClwAhWNRrbiIlNsu2kWsIDNPLsfXmnNEVewEQ
-	5UxzehF1OeguS6HVcPIkki0+FYZtxHs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717528733;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fHpikqLS3lplK6ETI4WYKgRmbL70DTWGHED9kErL4ec=;
-	b=SPzJV6CQWR7M8Dk+ygpjpqscjUPSfb6KMQl+0n9rlKlwduUWs/NWZkuxqEO6KAMv0LjFTL
-	s4rnOHSl5WcN+0Aw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717528733; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fHpikqLS3lplK6ETI4WYKgRmbL70DTWGHED9kErL4ec=;
-	b=o8sfW9blSyqGKsN8DSf9C+mekBpd2Xbi1tNe9oAh5kMA2DHcklcTUHr7k63mY1a5VNhcYL
-	G7ZJCdnLRXeWTl57U8p+MvbCVRKNwHsOzClwAhWNRrbiIlNsu2kWsIDNPLsfXmnNEVewEQ
-	5UxzehF1OeguS6HVcPIkki0+FYZtxHs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717528733;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fHpikqLS3lplK6ETI4WYKgRmbL70DTWGHED9kErL4ec=;
-	b=SPzJV6CQWR7M8Dk+ygpjpqscjUPSfb6KMQl+0n9rlKlwduUWs/NWZkuxqEO6KAMv0LjFTL
-	s4rnOHSl5WcN+0Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F307E13A93;
-	Tue,  4 Jun 2024 19:18:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iATjNJxoX2YjZAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 04 Jun 2024 19:18:52 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
-  jaegeuk@kernel.org,  adilger.kernel@dilger.ca,  tytso@mit.edu,
-  chao@kernel.org,  viro@zeniv.linux.org.uk,  brauner@kernel.org,
-  jack@suse.cz,  ebiggers@google.com,  kernel@collabora.com,  Gabriel
- Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v17 3/7] libfs: Introduce case-insensitive string
- comparison helper
-In-Reply-To: <20240529082634.141286-4-eugen.hristev@collabora.com> (Eugen
-	Hristev's message of "Wed, 29 May 2024 11:26:30 +0300")
-Organization: SUSE
-References: <20240529082634.141286-1-eugen.hristev@collabora.com>
-	<20240529082634.141286-4-eugen.hristev@collabora.com>
-Date: Tue, 04 Jun 2024 15:18:47 -0400
-Message-ID: <878qzkldns.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717528854; c=relaxed/simple;
+	bh=iEIJ1ODrXLu8gKKalSPXoQUGalwH+oelgUDRq8s7R8A=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=o3+3p95wia/C7gfBDwGIu6MODH1i/y1/DsasUqdCUukU/TBvUweUD7/4+D2/GfrRBeqmVnE0jIPvoODE+TWAka1JzUcZZyIVST9HGdcNjisR43MT/ci+qset4/qM3nfRo3xEZCFXhjslJMAwJNqktl9ro+InDx0StudNTsWu7fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Ba5ZIYTy; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	HAS_ORG_HEADER(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1717528850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=db/Sl9j482azBoAdhWtuIMKD0VB/oszgMwHPRWC6tXQ=;
+	b=Ba5ZIYTySI0OuLOX2S8DKaSXYQyd9j7j3JkCIjtrrWomudObV6fdgaMIVW/Ns9dK+vDT7b
+	IKCV09hJ1biUgpqpNTVRzilYMdTv5exJkRMPy3EC2SfxsQRFPSZgPhyLeYJ9psFPkg8eh8
+	46FtGa+a4vrRYq8AFVi1Q2um/uVQGKkSy9kLziYw+RMOD8zVJb85fZM1sb5KJThJoTmkV4
+	uPv5okFYbxu7f+Tozmna+NzaOZwz5xpmKzQCAXIJihfPNZrt1hyKIs6zVAFEoOFgnzV9el
+	e17uEA/bczRWhCZifAiIlo671TRGXWpJJdHLebQsxct8qrb3wBDzlQxB2p4yiA==
+Date: Tue, 04 Jun 2024 21:20:49 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, Srinivas Kandagatla
+ <srinivas.kandagatla@linaro.org>, Banajit Goswami <bgoswami@quicinc.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [PATCH] ASoC: qcom: add missing MODULE_DESCRIPTION() macro
+In-Reply-To: <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
+References: <20240603-md-snd-soc-qcom-sdw-v1-1-101ea8bcdd38@quicinc.com>
+ <0bd0a518-4d85-4251-9bf9-d056dc3d7b08@sirena.org.uk>
+Message-ID: <04bfcdd0088f521e4418a77e528652e3@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+On 2024-06-04 13:56, Mark Brown wrote:
+> On Mon, Jun 03, 2024 at 05:16:07PM -0700, Jeff Johnson wrote:
+>> make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in 
+>> sound/soc/qcom/snd-soc-qcom-sdw.o
+> 
+> Is anyone getting any value from these MODULE_DESCRIPTION()s?  This all
+> just seems like a huge amount of noise and I'm having trouble thinking
+> of a use case.
 
-> From: Gabriel Krisman Bertazi <krisman@collabora.com>
->
-> generic_ci_match can be used by case-insensitive filesystems to compare
-> strings under lookup with dirents in a case-insensitive way.  This
-> function is currently reimplemented by each filesystem supporting
-> casefolding, so this reduces code duplication in filesystem-specific
-> code.
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> [eugen.hristev@collabora.com: rework to first test the exact match, cleanup
-> and add error message]
-> Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
-
-Other than the origin of the length in memcmp mentioned by Eric, this patch
-looks good to me now.
-
-Thanks again for picking up this work!
-
-> ---
->  fs/libfs.c         | 74 ++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h |  4 +++
->  2 files changed, 78 insertions(+)
->
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index b635ee5adbcc..6a6cfa2d7d93 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1854,6 +1854,80 @@ static const struct dentry_operations generic_ci_dentry_ops = {
->  	.d_revalidate = fscrypt_d_revalidate,
->  #endif
->  };
-> +
-> +/**
-> + * generic_ci_match() - Match a name (case-insensitively) with a dirent.
-> + * This is a filesystem helper for comparison with directory entries.
-> + * generic_ci_d_compare should be used in VFS' ->d_compare instead.
-> + *
-> + * @parent: Inode of the parent of the dirent under comparison
-> + * @name: name under lookup.
-> + * @folded_name: Optional pre-folded name under lookup
-> + * @de_name: Dirent name.
-> + * @de_name_len: dirent name length.
-> + *
-> + * Test whether a case-insensitive directory entry matches the filename
-> + * being searched.  If @folded_name is provided, it is used instead of
-> + * recalculating the casefold of @name.
-> + *
-> + * Return: > 0 if the directory entry matches, 0 if it doesn't match, or
-> + * < 0 on error.
-> + */
-> +int generic_ci_match(const struct inode *parent,
-> +		     const struct qstr *name,
-> +		     const struct qstr *folded_name,
-> +		     const u8 *de_name, u32 de_name_len)
-> +{
-> +	const struct super_block *sb = parent->i_sb;
-> +	const struct unicode_map *um = sb->s_encoding;
-> +	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
-> +	struct qstr dirent = QSTR_INIT(de_name, de_name_len);
-> +	int res = 0;
-> +
-> +	if (IS_ENCRYPTED(parent)) {
-> +		const struct fscrypt_str encrypted_name =
-> +			FSTR_INIT((u8 *) de_name, de_name_len);
-> +
-> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
-> +			return -EINVAL;
-> +
-> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-> +		if (!decrypted_name.name)
-> +			return -ENOMEM;
-> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
-> +						&decrypted_name);
-> +		if (res < 0) {
-> +			kfree(decrypted_name.name);
-> +			return res;
-> +		}
-> +		dirent.name = decrypted_name.name;
-> +		dirent.len = decrypted_name.len;
-> +	}
-> +
-> +	/*
-> +	 * Attempt a case-sensitive match first. It is cheaper and
-> +	 * should cover most lookups, including all the sane
-> +	 * applications that expect a case-sensitive filesystem.
-> +	 */
-> +
-> +	if (dirent.len == (folded_name->name ? folded_name->len : name->len) &&
-> +	    !memcmp(name->name, dirent.name, dirent.len))
-> +		goto out;
-> +
-> +	if (folded_name->name)
-> +		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
-> +	else
-> +		res = utf8_strncasecmp(um, name, &dirent);
-> +
-> +out:
-> +	kfree(decrypted_name.name);
-> +	if (res < 0 && sb_has_strict_encoding(sb)) {
-> +		pr_err_ratelimited("Directory contains filename that is invalid UTF-8");
-> +		return 0;
-> +	}
-> +	return !res;
-> +}
-> +EXPORT_SYMBOL(generic_ci_match);
->  #endif
->  
->  #ifdef CONFIG_FS_ENCRYPTION
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 639885621608..f8ca264a0edc 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3367,6 +3367,10 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
->  extern int generic_check_addressable(unsigned, u64);
->  
->  extern void generic_set_sb_d_ops(struct super_block *sb);
-> +extern int generic_ci_match(const struct inode *parent,
-> +			    const struct qstr *name,
-> +			    const struct qstr *folded_name,
-> +			    const u8 *de_name, u32 de_name_len);
->  
->  static inline bool sb_has_encoding(const struct super_block *sb)
->  {
-
--- 
-Gabriel Krisman Bertazi
+FWIW, I find module descriptions useful.  Of course, there are
+some of them that don't provide much value, but the well-written
+ones are good.
 
