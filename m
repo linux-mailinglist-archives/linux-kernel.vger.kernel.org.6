@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-200185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC8A8FAC89
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:52:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD118FAC87
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371DC283176
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:52:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A437CB2157E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524F31420DB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092051420A0;
 	Tue,  4 Jun 2024 07:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjDXtJ2B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+XYvvT5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921431411EA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6981411CA
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717487555; cv=none; b=mKOKLq2FFltjywabskOGqFl9+7afpyJe4vy1MX80WhMI7YOEPKuDCuO4zIPI3XqbD+EA+EAN2NrlcUyFFi7Poev57UAz5OKYKfhGs4Gl4DgDaZunzwVeGajl174RIdMPKXr0N5iCRDNZ644Q8AYdxFmlIY9Uo6jPOJlM0snXyfA=
+	t=1717487555; cv=none; b=WpgBq3iey6TrsnOO1bYUJTCPqK0A8qIYL2loCqW3a0krxnxN7YnYdgN3ILDHfiXcQq7TjoA9/KkSJclRfc4Gjy7l++4MYg5muHZpQZvHpQgCS7XKnFhG2+5HqfgekF5qN3j4KBFkFP8J2od/XBcvOJv+ftNNK0cpohiV8GyCjMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717487555; c=relaxed/simple;
-	bh=b3E/UIPslsT8I86wbPoMlWOJhjF5vCXYbMseh+Nd3tk=;
+	bh=hi7PWtwphuTNKYoU1XS9MRhf81ClVkiQ1xJd4IkXUsg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kwb+0HfxWmjorU7ja4Q2dyQC2IpQk2AiT6yd9OhBPR5AmtIzu084uWrMcH28bwrqTP+iu2uU8A1EOyyTr4V1J9Sf9sXFC/p87p4T9sev+4+mKJJ+vbIVBQUe3/87LO2B9Y2duTtCWgTM9RLB9DDp5NsP01UUO5hlxDgTdnclqXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tjDXtJ2B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17191C2BBFC;
+	 MIME-Version; b=H2fuReHtgAD2ByQy97DoWBS8D6F5XE52pKU0GrX8q8qWI8a2e2I5s5A0HEci913MCNJMK1/3xh1d93t0FMvGYLb3WaUgyIwfcg1T29Kcu5iGpW4ncSUWJCFjlfs40PnS6/svchnESeKIJuPj/m50+biLE1jfnIDvIQ2ZqllnP1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+XYvvT5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C508C4AF08;
 	Tue,  4 Jun 2024 07:52:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1717487555;
-	bh=b3E/UIPslsT8I86wbPoMlWOJhjF5vCXYbMseh+Nd3tk=;
+	bh=hi7PWtwphuTNKYoU1XS9MRhf81ClVkiQ1xJd4IkXUsg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tjDXtJ2Bnfn07g6X0XM+j297fga5v438KKDbcNVYwW2D+xQhMkkweVBBOq3AS1gnX
-	 LAT0S0hHXiRAbW0abuhjIBsb7zRZd9Vov9GSssIzB5IvYRfy0nEstMHIRPPAskPjwZ
-	 KPCRv+C8IrQHxklAXbga205F0kcrlnBKjckpEDIv6XiTukWD1DeFIjNuDugks8XN2e
-	 +NAcE3ybEZRC3RsKxXDrnGMEICl+VqRqArskLYTKbqPdtGalr7LhEMxDRIXFolzZ/z
-	 GvzdKSHVxQ/eknLuUFdKt8ZRyfKtv+2m3GlZTu3mNahck1+jtV4OGGQI18symujISv
-	 W1td3s2pCk3Mg==
+	b=E+XYvvT5XpJaP1NvyduzcIpGyiIREifzDW8WqTsMx0GDH02HpxMjUk3CSQeKZdFKd
+	 t6M3E9lDRO2KpOhZnl5YykJXmipfY+cUhmbRUZ3ODgSdU+KlyUJWU5cEsGSUQh3x1t
+	 9f2dZyUNLuVAi51/X6yolNV9BNrJwC3filbeBTn3uZqeJQe4I/W2pEwB1inZIc6CDK
+	 bR6VclVvYeys2vfTgdnwxf+4lbhXORPWyzBQY1rUvy4G8pUeYnSG8JbjFxkpMg6Cwh
+	 fr4htXNh5ciBZybh02rmJB23kcbTzmgQkanCtTOJTyKt4pqlSvvLN9w7IInp2WNuWJ
+	 x1LPpQnfVpmYQ==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1sEOy9-000000005QR-3RBp;
+	id 1sEOy9-000000005QT-3oXW;
 	Tue, 04 Jun 2024 09:52:33 +0200
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Vinod Koul <vkoul@kernel.org>
@@ -52,9 +52,9 @@ Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
 	alsa-devel@alsa-project.org,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v2 3/4] soundwire: bus: clean up probe warnings
-Date: Tue,  4 Jun 2024 09:52:12 +0200
-Message-ID: <20240604075213.20815-4-johan+linaro@kernel.org>
+Subject: [PATCH v2 4/4] soundwire: bus: drop redundant probe debug message
+Date: Tue,  4 Jun 2024 09:52:13 +0200
+Message-ID: <20240604075213.20815-5-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.44.1
 In-Reply-To: <20240604075213.20815-1-johan+linaro@kernel.org>
 References: <20240604075213.20815-1-johan+linaro@kernel.org>
@@ -66,36 +66,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Clean up the probe warning messages by using a common succinct format
-(e.g. without __func__ and with a space after ':').
+Drop the redundant probe debug message which is already provided by
+driver core. Whether probe succeeded can also be determined through
+sysfs.
 
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/soundwire/bus_type.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/soundwire/bus_type.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
-index 3979be0f8b65..43e732ca73c0 100644
+index 43e732ca73c0..5b9b129badff 100644
 --- a/drivers/soundwire/bus_type.c
 +++ b/drivers/soundwire/bus_type.c
-@@ -123,7 +123,7 @@ static int sdw_drv_probe(struct device *dev)
- 	/* init the dynamic sysfs attributes we need */
- 	ret = sdw_slave_sysfs_dpn_init(slave);
- 	if (ret < 0)
--		dev_warn(dev, "Slave sysfs init failed:%d\n", ret);
-+		dev_warn(dev, "failed to initialise sysfs: %d\n", ret);
- 
- 	/*
- 	 * Check for valid clk_stop_timeout, use DisCo worst case value of
-@@ -147,7 +147,7 @@ static int sdw_drv_probe(struct device *dev)
- 	if (drv->ops && drv->ops->update_status) {
- 		ret = drv->ops->update_status(slave, slave->status);
- 		if (ret < 0)
--			dev_warn(dev, "%s: update_status failed with status %d\n", __func__, ret);
-+			dev_warn(dev, "failed to update status: %d\n", ret);
- 	}
+@@ -152,8 +152,6 @@ static int sdw_drv_probe(struct device *dev)
  
  	mutex_unlock(&slave->sdw_dev_lock);
+ 
+-	dev_dbg(dev, "probe complete\n");
+-
+ 	return 0;
+ }
+ 
 -- 
 2.44.1
 
