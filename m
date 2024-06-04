@@ -1,121 +1,72 @@
-Return-Path: <linux-kernel+bounces-200965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616818FB781
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:34:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7C28FB7A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C629284FD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF74E1F267C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AA4146598;
-	Tue,  4 Jun 2024 15:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2E41465BD;
+	Tue,  4 Jun 2024 15:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h8X6ElKR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FbNYR/Zb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99E1BE4A;
-	Tue,  4 Jun 2024 15:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519EC145FF8
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717515259; cv=none; b=I3WeciKRnFTHm38vAJpWXkaKSEc0Z1I46QuOef05jPBMxSI7ssPL5l/EpxxXl+O9LpVQvnc+njzimmF1KcvrSoeTcXQfu6k4y1R102uytns/jm6ZrxHHKUSqsIIuFEvR7z5oFoQQAzhlr7PHfwlGKPGbjT3AMqjOw8IVTJrQpNk=
+	t=1717515720; cv=none; b=gMwoA30RwffFYfBJ7H/Wk2vtScBx1+QvI94njLZHXLWNEufTb7V4vUXqo1QTJXH0qzi+Q3zvmbN2zsJNFcT6qiarDcd0h0KJBsU9SHAe3PeKoZcPZ02dpDy3Hi/YER4X9na2NQv2uFPqgqNlLUw2Px9Q8BO2xuqWfUGh6juIj1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717515259; c=relaxed/simple;
-	bh=+V2Pn7pZqMh8/15HP9GBw/WSyruGjuKvEPeJTGM1Qrk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BhgvGk8VJfjDF9ydbUjdiujZ1Pt+HKbItq2ugst1Nd69q6M9sb7VBgVA6gzkuLOO0j895VHDxgx+cpmBdUcCtU5vZLSW2uTSM4JDRHDNnl7q9Ya4KqlQ0ZvvuLZ+j49YetoArK/XtpYBo4BwFXzVrEQWEcVtIMcEMob8i+cGPUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h8X6ElKR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454Bn9IS028037;
-	Tue, 4 Jun 2024 15:34:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Effa3JSW/rkRtXNKhXRn8A
-	jiK3ARC0OBNKnBpuVerlU=; b=h8X6ElKRZzkNSYszdtSSn8TPvTMgPt0WyUSF5r
-	7mywUMAcbMxoLhUaOkYTZkcbwo/N3NRMlokOi7v9DD69VfmGFZh0ouIyN9Uwibuq
-	HtQXj/+E7TT3S+GAlaD+fjkdefB+DDziGqSHNReOfVDzJGodM92yOKv5yzagLNca
-	rmAl0vxkPna7NU2lglWXnmzZBjtqemzQHfkyMPAMg/guW2MJXsYzy2GQ+usuda4K
-	c0czTdWz5p690uXsEeHDDfe5Gw0dJyZn7i3LudPhlaEvsNdRRRmP+qjfHTlt4Tfj
-	GWh2l8H5OyXMb8TsJdH7yB5gEFEqk1sJSS6OXLwT3s3qn+wQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw3r7frf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 15:34:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454FY3FD029015
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 15:34:03 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 08:34:03 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 4 Jun 2024 08:34:01 -0700
-Subject: [PATCH] HID: logitech-dj: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1717515720; c=relaxed/simple;
+	bh=2der58+5+M8sJ7S06tSlSPRV9DWuJlgIZ3M0EI+0TiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gaIbTHgIVW06WqavNctLsRn8eI19sCF+exQj+6XU80jG5iR1aswbTJM7oeESz57dJayKc8gurKfB4xwDI0kkFjN3U8wTcIn4D4dxKcuaTZ3t3feDxN6DtI1RA3cOld4qJA5jqAZK779ICEGYk9oslmG8fU7t1od/w603WzflWOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FbNYR/Zb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10C49C2BBFC;
+	Tue,  4 Jun 2024 15:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717515720;
+	bh=2der58+5+M8sJ7S06tSlSPRV9DWuJlgIZ3M0EI+0TiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FbNYR/ZbJnrYREWVDk0cbY3+SZjJoW12kNfP0nVniJW587W3Fz3XvVNgb6kYvWG1o
+	 BdsGhqd+HrKceW0eYW/6aXo6wqCP3Dv7qmH364oHRUJFpqb5bAf46KNyP6iJqrLcqs
+	 5Q5pkKyS+9rORKMAVJIgs/Aorp5IognvUMOb02Fo=
+Date: Tue, 4 Jun 2024 17:34:02 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 2/4] kernel/panic: convert print_tainted() to use struct
+ seq_buf internally
+Message-ID: <2024060454-talisman-worrisome-ac95@gregkh>
+References: <cover.1717146197.git.jani.nikula@intel.com>
+ <cb6006fa7c0f82a6b6885e8eea2920fcdc4fc9d0.1717146197.git.jani.nikula@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240604-md-hid-logitech-dj-v1-1-560f6b3cb54b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOgzX2YC/x3MwQqDMAyA4VeRnBfoSnWwVxk7xDTaDK0jdUMQ3
- 91ux+/w/zsUMZUC92YHk68WXXLF9dIAJ8qjoMZq8M4H17mAc8SkEadl1FU4YXyhbx0F7miQG0M
- N3yaDbv/p41ndUxHsjTKn32rS/NlwprKKwXGcs+Su2oMAAAA=
-To: =?utf-8?q?Filipe_La=C3=ADns?= <lains@riseup.net>,
-        Jiri Kosina
-	<jikos@kernel.org>,
-        Benjamin Tissoires <bentiss@kernel.org>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vDOhkPgPTno2Pu_HqXlacfNSpbtmvmXX
-X-Proofpoint-GUID: vDOhkPgPTno2Pu_HqXlacfNSpbtmvmXX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 spamscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040124
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb6006fa7c0f82a6b6885e8eea2920fcdc4fc9d0.1717146197.git.jani.nikula@intel.com>
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-logitech-dj.o
+On Fri, May 31, 2024 at 12:04:55PM +0300, Jani Nikula wrote:
+> Convert print_tainted() to use struct seq_buf internally in order to be
+> more aware of the buffer constraints as well as make it easier to extend
+> in follow-up work.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Greg KH <gregkh@linuxfoundation.org>
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> ---
+>  kernel/panic.c | 38 ++++++++++++++++++++++++--------------
+>  1 file changed, 24 insertions(+), 14 deletions(-)
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/hid/hid-logitech-dj.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 3c3c497b6b91..dfa4e3d1a3b3 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -2045,6 +2045,7 @@ static struct hid_driver logi_djreceiver_driver = {
- 
- module_hid_driver(logi_djreceiver_driver);
- 
-+MODULE_DESCRIPTION("HID driver for Logitech receivers");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Logitech");
- MODULE_AUTHOR("Nestor Lopez Casado");
-
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240604-md-hid-logitech-dj-250a4c6afe7c
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
