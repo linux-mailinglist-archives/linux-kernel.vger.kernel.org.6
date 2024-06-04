@@ -1,244 +1,135 @@
-Return-Path: <linux-kernel+bounces-199907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254DA8FA79B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:33:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961938FA79C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7051F22D4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:33:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A712867F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D526A77105;
-	Tue,  4 Jun 2024 01:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D5B139CFA;
+	Tue,  4 Jun 2024 01:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jdhi9DfU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RWZTDlRi"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734C67462
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 01:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FE713957E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 01:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717464775; cv=none; b=X8/EMVZqXQhiCgCKrCDh/7K4bsaEwOLqZAGNiVFmzMxMJoBhPQUidiirXISj6jPAPyy6egbK91N16VvUHE2AVxYVPqSTBu8d2FeqYZZrxrV0NMKwMk9OiRWphs2QTXWyiAKwA0KILcpxB+rSP2EaflZvBiIK6NBIfuKvSBGzpew=
+	t=1717464852; cv=none; b=g4It9jFfQMcM/LcfTaoneXRpPVftj8gqa4AhYrtUEc4SbVWgFX+IT1fxKvT0ThGG+a1bHeOphxPD5NZ4kvDFeQvbJMWz5+Yz2AAJDNkAqgGnDwye83P5T9+O6Ftwy7Ip25Tbx1PKX8TxfccIUgteDl0TrQcU2VAj+fjWE1DxJDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717464775; c=relaxed/simple;
-	bh=vryDY3ytVLC+sGikOQXWAZN+Xf3KlLscyguHBWCZjQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WOTdvwODWSVrt5R9+6DN7lsNjB/v16mA+DHtDwAd4FOqi0WAZCz/EIpazV3I4FTcMuxwCrDp0nxP1IzWKk1JE9rThMWrgrvAnFvI7mmkGt/3+uwWCoWbRY28YQvH9Ydf/8aVrgJNhHZ5aU18vIstdcGouS7kG7PT1lxfopDBY1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jdhi9DfU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717464772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hS7MoMwLGfxzIIaXcshKkdRzcS5wR6g5g6pARKgvY1Q=;
-	b=Jdhi9DfU7r8p0MCLRYK/JmvCQaVHmmmgGLB09wqpcwO7I+RKcND6QnZmqbxEWhhrp1iKrD
-	AQ19EozORz4j6LxHHU5zWrvpyo4Qk/Yg26SpmJi++JrjZEFBSzH5+irKL3ehBF1/p0Y6fs
-	oiKMVAvVRt14LMnD6R4219qrAIlRRBg=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-o3ws2JAdOvm4JZkO3sob-g-1; Mon, 03 Jun 2024 21:32:51 -0400
-X-MC-Unique: o3ws2JAdOvm4JZkO3sob-g-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c1a55ffd60so4470861a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 18:32:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717464770; x=1718069570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hS7MoMwLGfxzIIaXcshKkdRzcS5wR6g5g6pARKgvY1Q=;
-        b=ZEfKrQBTaumnhRDOln2Eu9Pcq2ZF5SheXP6t6PZTg/j+Rz92qTclJWlgxqxxU2UWgq
-         3CFDkPBbGTEkLmXIc3czhFefCQkBdiZ4Ja8It31ueRscOKSKWEWErePGN8eoi0i3fRlX
-         1/bFtPWTtcSK3MOJvjN56Pb5CVXDVzqv/Ts2nDKOmYC95LInOflQmFSU0QB4EqqkthZc
-         7tMH6SrysdggKXz7By8/kfw8ZVcE2sza03xZMilm/+lxDEejd4FF6t9psqc+f1noSZNW
-         EoGdb9nby6BH4sGAm5qZ3Kx/JQuIrmERTiYcVlMbKOOQhr9Hhn/hZsLXvi5G4Hf3qYXI
-         xKpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEpmt+mtrNgjKLtGSIk3+liP/RBOXUzvuE3RT5ljF9I7hKiNXhF41/Zp4nVk0okqfIaebJG+ueIVYLzBqqljKOiQ2cjiOzZ2VlOCZ/
-X-Gm-Message-State: AOJu0YypYdIJXDoPl14ASo/QuZo6XXeCGNAAFI1F/YaECKitwZCnDnTT
-	0hEiU1Ctc8SdZsP+BLRaActzaIk/Pe68Iy6a6Gz71sni0uJNz3ZTSN0Gf+bBfPYLtWT3pqyLNe3
-	GCCBHiDHqtV347tlCZPDDe7726Mw5b8tfrXoVFWkTFRhpXOgec1WL0NwhqXwfWzEl275S3WAQVX
-	AWofW5JvXOKKJkNnk5z1xOfk2H16lxTcoZNEv4
-X-Received: by 2002:a17:90a:c78f:b0:2c0:3467:6c89 with SMTP id 98e67ed59e1d1-2c1dc590c2bmr8133622a91.27.1717464770003;
-        Mon, 03 Jun 2024 18:32:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZvVSzVX8Lmmqpq5k6i5O4qLAVbBMIr+jFe3Zq3AuBYhl69BSSoRLGbdjAhqcSyFqUV18L3B6xQ4HhV5nXrW4=
-X-Received: by 2002:a17:90a:c78f:b0:2c0:3467:6c89 with SMTP id
- 98e67ed59e1d1-2c1dc590c2bmr8133609a91.27.1717464769587; Mon, 03 Jun 2024
- 18:32:49 -0700 (PDT)
+	s=arc-20240116; t=1717464852; c=relaxed/simple;
+	bh=gU1Fx1GfKkbB7MyBjDci5PwEsJLxp6mBN0DeKWihvIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ke6KAkwpcNIthQQNMDLZsdgrdOhglP+6fRqzg314FZel6vgw33tix59VcgA1/DfAOb9anj8Uzqc2IVv8fWQB0IFAxdItD226LXCU6wSmRxchs0OmgHpi5ecTsH4UrJui0z6ZZqECCvAf1p4Lzo5eAH6pkE0xPzjWzEGhm40AxWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RWZTDlRi; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4541Y3c0101001;
+	Mon, 3 Jun 2024 20:34:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717464843;
+	bh=u4JTtTFaZn1Az1/n9VAvAUmZEnh8DwZmiDEI0s+4lkM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=RWZTDlRiS97e9L10Rh9BBfXe7vooGC6NECVIZeR9QI5WBMNlF/+Vfwxe0H56IEq6z
+	 2d9R6X5hHCqyGF+3HB2Q2Y47OWfeBDezjrrpdUUHARqtuEJHDwR9avukjw0VwKnogG
+	 7ZwYDfkW7vyNpgMrJt4soBTP951lZ1chsw8PyZI0=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4541Y3dN098142
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 3 Jun 2024 20:34:03 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 3
+ Jun 2024 20:34:02 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 3 Jun 2024 20:34:02 -0500
+Received: from [10.249.139.5] ([10.249.139.5])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4541XxvA123748;
+	Mon, 3 Jun 2024 20:34:00 -0500
+Message-ID: <85020e6a-35c8-403c-8e85-3f37902093db@ti.com>
+Date: Tue, 4 Jun 2024 07:03:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240529095313.2568595-1-linan666@huaweicloud.com>
- <Zl0QpCbYVHIkKa/H@fedora> <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
-In-Reply-To: <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
-From: Changhui Zhong <czhong@redhat.com>
-Date: Tue, 4 Jun 2024 09:32:38 +0800
-Message-ID: <CAGVVp+XD5MbYOWL4pbLMxXL0yNKO5NJ84--=KVnW6w5-GF7Drw@mail.gmail.com>
-Subject: Re: [PATCH] ublk_drv: fix NULL pointer dereference in ublk_ctrl_start_recovery()
-To: Li Nan <linan666@huaweicloud.com>
-Cc: Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk, ZiyangZhang@linux.alibaba.com, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai3@huawei.com, 
-	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH] Fix nr_types assignment for TPS6594/3 and
+ TPS65224
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <m-leonard@ti.com>, <u-kumar1@ti.com>, <bhargav.r@ltts.com>,
+        <m.nirmaladevi@ltts.com>, <vigneshr@ti.com>
+References: <20240603192500.645586-1-s-ramamoorthy@ti.com>
+Content-Language: en-US
+From: Neha Malcom Francis <n-francis@ti.com>
+In-Reply-To: <20240603192500.645586-1-s-ramamoorthy@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Mon, Jun 3, 2024 at 10:20=E2=80=AFAM Li Nan <linan666@huaweicloud.com> w=
-rote:
->
->
->
-> =E5=9C=A8 2024/6/3 8:39, Ming Lei =E5=86=99=E9=81=93:
->
-> [...]
->
-> >> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> >> index 4e159948c912..99b621b2d40f 100644
-> >> --- a/drivers/block/ublk_drv.c
-> >> +++ b/drivers/block/ublk_drv.c
-> >> @@ -2630,7 +2630,8 @@ static void ublk_queue_reinit(struct ublk_device=
- *ub, struct ublk_queue *ubq)
-> >>   {
-> >>      int i;
-> >>
-> >> -    WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq)));
-> >> +    if (WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq))))
-> >> +            return;
-> >
-> > Yeah, it is one bug. However, it could be addressed by adding the check=
- in
-> > ublk_ctrl_start_recovery() and return immediately in case of NULL ubq->=
-ubq_daemon,
-> > what do you think about this way?
-> >
->
-> Check ub->nr_queues_ready seems better. How about:
->
-> @@ -2662,6 +2662,8 @@ static int ublk_ctrl_start_recovery(struct
-> ublk_device *ub,
->          mutex_lock(&ub->mutex);
->          if (!ublk_can_use_recovery(ub))
->                  goto out_unlock;
-> +       if (!ub->nr_queues_ready)
-> +               goto out_unlock;
->          /*
->           * START_RECOVERY is only allowd after:
->           *
->
-> >
-> > Thanks,
-> > Ming
->
-> --
-> Thanks,
-> Nan
->
+Hi Shree
 
+On 04-Jun-24 12:55 AM, Shree Ramamoorthy wrote:
+> Fixes: 00c826525fba ("regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators")
+> 
 
-Hi,Nan
+Your fixes tag must go after the commit message, along with your 
+Signed-off-by; see [1]
 
-After applying your new patch, I did not trigger "NULL pointer
-dereference" and "Warning",
-but hit task hung "Call Trace" info, please check
+[1] 
+https://lore.kernel.org/linux-kernel/20240521094758.2190331-1-n-francis@ti.com/
 
-[13617.812306] running generic/004
-[13622.293674] blk_print_req_error: 91 callbacks suppressed
-[13622.293681] I/O error, dev ublkb4, sector 233256 op 0x1:(WRITE)
-flags 0x8800 phys_seg 1 prio class 0
-[13622.308145] I/O error, dev ublkb4, sector 233256 op 0x0:(READ)
-flags 0x0 phys_seg 2 prio class 0
-[13622.316923] I/O error, dev ublkb4, sector 233264 op 0x1:(WRITE)
-flags 0x8800 phys_seg 1 prio class 0
-[13622.326048] I/O error, dev ublkb4, sector 233272 op 0x0:(READ)
-flags 0x0 phys_seg 1 prio class 0
-[13622.334828] I/O error, dev ublkb4, sector 233272 op 0x1:(WRITE)
-flags 0x8800 phys_seg 1 prio class 0
-[13622.343954] I/O error, dev ublkb4, sector 233312 op 0x0:(READ)
-flags 0x0 phys_seg 1 prio class 0
-[13622.352733] I/O error, dev ublkb4, sector 233008 op 0x0:(READ)
-flags 0x0 phys_seg 1 prio class 0
-[13622.361514] I/O error, dev ublkb4, sector 233112 op 0x0:(READ)
-flags 0x0 phys_seg 1 prio class 0
-[13622.370292] I/O error, dev ublkb4, sector 233192 op 0x1:(WRITE)
-flags 0x8800 phys_seg 1 prio class 0
-[13622.379419] I/O error, dev ublkb4, sector 233120 op 0x0:(READ)
-flags 0x0 phys_seg 1 prio class 0
-[13641.069695] INFO: task fio:174413 blocked for more than 122 seconds.
-[13641.076061]       Not tainted 6.10.0-rc1+ #1
-[13641.080338] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-disables this message.
-[13641.088164] task:fio             state:D stack:0     pid:174413
-tgid:174413 ppid:174386 flags:0x00004002
-[13641.088168] Call Trace:
-[13641.088170]  <TASK>
-[13641.088171]  __schedule+0x221/0x670
-[13641.088177]  schedule+0x23/0xa0
-[13641.088179]  io_schedule+0x42/0x70
-[13641.088181]  blk_mq_get_tag+0x118/0x2b0
-[13641.088185]  ? gup_fast_pgd_range+0x280/0x370
-[13641.088188]  ? __pfx_autoremove_wake_function+0x10/0x10
-[13641.088192]  __blk_mq_alloc_requests+0x194/0x3a0
-[13641.088194]  blk_mq_submit_bio+0x241/0x6c0
-[13641.088196]  __submit_bio+0x8a/0x1f0
-[13641.088199]  submit_bio_noacct_nocheck+0x168/0x250
-[13641.088201]  ? submit_bio_noacct+0x45/0x560
-[13641.088203]  __blkdev_direct_IO_async+0x167/0x1a0
-[13641.088206]  blkdev_write_iter+0x1c8/0x270
-[13641.088208]  aio_write+0x11c/0x240
-[13641.088212]  ? __rq_qos_issue+0x21/0x40
-[13641.088214]  ? blk_mq_start_request+0x34/0x1a0
-[13641.088216]  ? io_submit_one+0x68/0x380
-[13641.088218]  ? kmem_cache_alloc_noprof+0x4e/0x320
-[13641.088221]  ? fget+0x7c/0xc0
-[13641.088224]  ? io_submit_one+0xde/0x380
-[13641.088226]  io_submit_one+0xde/0x380
-[13641.088228]  __x64_sys_io_submit+0x80/0x160
-[13641.088229]  do_syscall_64+0x79/0x150
-[13641.088233]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-[13641.088237]  ? do_io_getevents+0x8b/0xe0
-[13641.088238]  ? syscall_exit_work+0xf3/0x120
-[13641.088241]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-[13641.088243]  ? do_syscall_64+0x85/0x150
-[13641.088245]  ? do_syscall_64+0x85/0x150
-[13641.088247]  ? blk_mq_flush_plug_list.part.0+0x108/0x160
-[13641.088249]  ? rseq_get_rseq_cs+0x1d/0x220
-[13641.088252]  ? rseq_ip_fixup+0x6d/0x1d0
-[13641.088254]  ? blk_finish_plug+0x24/0x40
-[13641.088256]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-[13641.088258]  ? do_syscall_64+0x85/0x150
-[13641.088260]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-[13641.088262]  ? do_syscall_64+0x85/0x150
-[13641.088264]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-[13641.088266]  ? do_syscall_64+0x85/0x150
-[13641.088268]  ? do_syscall_64+0x85/0x150
-[13641.088270]  ? do_syscall_64+0x85/0x150
-[13641.088272]  ? clear_bhb_loop+0x45/0xa0
-[13641.088275]  ? clear_bhb_loop+0x45/0xa0
-[13641.088277]  ? clear_bhb_loop+0x45/0xa0
-[13641.088279]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[13641.088281] RIP: 0033:0x7ff92150713d
-[13641.088283] RSP: 002b:00007ffca1ef81f8 EFLAGS: 00000246 ORIG_RAX:
-00000000000000d1
-[13641.088285] RAX: ffffffffffffffda RBX: 00007ff9217e2f70 RCX: 00007ff9215=
-0713d
-[13641.088286] RDX: 000055863b694fe0 RSI: 0000000000000010 RDI: 00007ff9216=
-4d000
-[13641.088287] RBP: 00007ff92164d000 R08: 00007ff91936d000 R09: 00000000000=
-00180
-[13641.088288] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000=
-00010
-[13641.088289] R13: 0000000000000000 R14: 000055863b694fe0 R15: 000055863b6=
-970c0
-[13641.088291]  </TASK>
+> Marked as resend to include the correct Fixes: tag.
+> 
+> TPS6594/3 and TPS65224's nr_types assignment were incorrectly swamped in
+> probe(), leading to memory underallocation and a NULL pointer error.
+> Error detected in and solution tested on J7200 EVM.
+> 
+> Error logs:
+> [   13.974024] Call trace:
+> [   13.974025]  _regulator_put.part.0+0x40/0x48
+> [   13.974028]  regulator_register+0x2b0/0xa00
+> [   13.974031]  devm_regulator_register+0x58/0xa0
+> [   13.974035]  tps6594_regulator_probe+0x4e0/0x5f0 [tps6594_regulator]
+> ...
+> [   13.974178] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000004
+> ---
+>   drivers/regulator/tps6594-regulator.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
+> index 4a859f4c0f83..b66608ab2546 100644
+> --- a/drivers/regulator/tps6594-regulator.c
+> +++ b/drivers/regulator/tps6594-regulator.c
+> @@ -660,11 +660,11 @@ static int tps6594_regulator_probe(struct platform_device *pdev)
+>   	} else if (tps->chip_id == TPS65224) {
+>   		nr_buck = ARRAY_SIZE(tps65224_buck_regs);
+>   		nr_ldo = ARRAY_SIZE(tps65224_ldo_regs);
+> -		nr_types = REGS_INT_NB;
+> +		nr_types = TPS65224_REGS_INT_NB;
+>   	} else {
+>   		nr_buck = ARRAY_SIZE(buck_regs);
+>   		nr_ldo = ARRAY_SIZE(tps6594_ldo_regs);
+> -		nr_types = TPS65224_REGS_INT_NB;
+> +		nr_types = REGS_INT_NB;
+>   	}
+>   
+>   	reg_irq_nb = nr_types * (nr_buck + nr_ldo);
 
-Thanks=EF=BC=8C
-Changhui
+Thanks for spotting this fix!
 
+-- 
+Thanking You
+Neha Malcom Francis
 
