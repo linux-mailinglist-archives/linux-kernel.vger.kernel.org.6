@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-201054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2E68FB8B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:18:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3681C8FB8B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 409031C21A29
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:18:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5ECE288B45
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4484148826;
-	Tue,  4 Jun 2024 16:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AEF1487C4;
+	Tue,  4 Jun 2024 16:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhEVfBTv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FKYE8zvq"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CCE143C7B;
-	Tue,  4 Jun 2024 16:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785BE12B17A
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717517921; cv=none; b=qk2ClEpmyWRU/q1PcXH5QHy8o4S+MctX028KK7h1ZOqgBqvKRiOLMXn5ZfRxalHy79nKphAcWl7KrY7AQYGltk8p+Cw+U++EeneCE5Zb0KlaR5bHoW8bG++LeGOysuX3Mle76inxoBgOmpCzFytZK6lrCqussDJJ+LHZ+s3k2zE=
+	t=1717517979; cv=none; b=k4WnV5iV+Lccisv9RmWh85XOEYGQId/U+EIlAdz0B6BjPQ8bg5a9g5a55YZrHy9tGgOpVDXL1vSQ6ee8kltgYdGirfeXlgfxAFGLfwD2/CqeHNtXdFKOsIFrOve7ZI8F0wNM7XESHFauyNPgfBXYEFPmWAeQ1fFlRC2XcosXRGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717517921; c=relaxed/simple;
-	bh=bE1vdHtIjSqwigCaLdryxWybdC+nY5atBDg6IDsGPHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jDtSAhgh5yE+QKAXgdd+ZkD5CO4+6DWZnKnsfHjqXweQB2I5ode3QVP+OZq6gnbXRZoTIRup0G9OwNbYSq9W1zFTjshrRnC23sR85YN+RmY3Nz3j92/BfOslj9iFwzZt8L0E/+wOod7LAMesX+gaMKuCyzwBuV802WQBx5sA6BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhEVfBTv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 092E4C32786;
-	Tue,  4 Jun 2024 16:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717517920;
-	bh=bE1vdHtIjSqwigCaLdryxWybdC+nY5atBDg6IDsGPHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bhEVfBTvB89ICwH5kSGyU+pleoJh1UIenKoqhcNlXMpaRnyCpfs/VUD1SN68E+hij
-	 QgA3qyEB068crCIK8AtSPuulcKGShjxkaRKryZjzmyMEIZi0TRUCfPM1tdRGU50u1x
-	 AtQlGltWp1zvO4lFsyWqRt5t5kWxuuPFaZfZD4CnCi4j42z8v73LCvsDYLQ4y0v1eE
-	 H1p+poDml21jEVERJAtULu3WKvdxeQymsrHWu/TRAwwckSdutPYyBCDTCImjOecubP
-	 xXty3JGR2EX1zPl0RD+DrpHOyOhjLWTOeD29jO5Ze8ZEEaz2VwCXAQkxh8va+EW7zz
-	 rVxYvdNQu0u1g==
-Date: Tue, 4 Jun 2024 17:18:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jakub Kicinski <kuba@kernel.org>, Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Shengyu Li <shengyu.li.evgeny@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Ron Economos <re@w6rz.net>,
-	Ronald Warsow <rwarsow@gmx.de>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Will Drewry <wad@chromium.org>,
-	kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v7 04/10] selftests/harness: Fix interleaved scheduling
- leading to race conditions
-Message-ID: <53c0e2e5-46c9-4e49-8ec4-64ef58e6331c@sirena.org.uk>
-References: <20240511171445.904356-1-mic@digikod.net>
- <20240511171445.904356-5-mic@digikod.net>
- <9341d4db-5e21-418c-bf9e-9ae2da7877e1@sirena.org.uk>
- <187423fb-ec78-4318-9da0-5b27df62b71f@sirena.org.uk>
- <9eb1e48e-b273-475a-9740-52deedf11ee2@sirena.org.uk>
- <20240604.KaT6shae5eip@digikod.net>
+	s=arc-20240116; t=1717517979; c=relaxed/simple;
+	bh=UB5F7l+e1OXNoffNBrdmm83ZIeSjzCW3uwTD66TUo6U=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=boELyDx30CoVYFSxUh7gkefOLxCj4lFKw6egrMwwOthZ5kkBLl3WnV3b8IOH9B/w/QHca8ZuD/uYUeGOwH13uGhKsT8/dsK+QQB0uvsCOW8s8I/OKeUQ02VkCr5ZH310qhewsd8qHFX5wCVihh9OkV1HZRgoF8g01+qd7GlaLkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FKYE8zvq; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6ad8243dba8so28990306d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717517974; x=1718122774; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CL5J75RKeSsjGaFERVr4h+iONwKJd6j+jNrY6jpR54Q=;
+        b=FKYE8zvq7oc/vUcZbyKfCBsR/0nNTyocEnRSFLpHHg7iDVBTrmqtr91fBQ/kGARkYi
+         EbWmPfsLcMfNAWKB6Y6hTSi0hbo3j8ku85kkiZCUAgOLJUPkYUHrOANniEVx5BtrSy4y
+         XqmOjX5T0DK7AjQDeSBaGs4WQwusLYEofGewGWWKMQip4nMk/F+C65MB0ufBr/BtGLu9
+         q/VRSYNcttxTaEQtMLGQ300fKj8HK6QUwb+qcN5qbgygwlZ5paQPlsymwZ+IGenZDOYu
+         Fw4qdvuUjZug95qADbcgleWMkyEKdoGZE87JUmVbozSMEOb8WKG1MWgA0NL+RAwHb8Zl
+         C7PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717517974; x=1718122774;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CL5J75RKeSsjGaFERVr4h+iONwKJd6j+jNrY6jpR54Q=;
+        b=XhZwirUIR+RmuFjNkYrNmLLZ5rAS1F7htxQMBXA25eLk7bTdUPU4VuRftNArQ6AYeX
+         qi205zQk0DLNsONMMu4/MG+yeBFJx0d/6V++wqXB68bTQkRYtIGokh/lceP8Fs7JnR2P
+         fYRumkHrdj+vzjkb8m4pn650q61C8YDEwpLhKsfszi2OTiusdPKkiSJ3N6T5IcaFgXcu
+         8tDcUj5GQGpuFQhhyxnng7LggGhXzomxkZzxR1UhwA/+zIj600V0KlIS8SzGZnzAIfrP
+         bcWns/6C9WMvFNTLl9j9kJD3chp0Xh529fdIrsZudX0Po+E2dwpOk/aVwi6Fix890q4+
+         PIMg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5HPzqpybjeToNs1M9j/1lsI834vGwlPbu3OLp1R4JfmG/4Kn5yCyivE4gJlt+YNkcY4wWmK3UMbCfYh1SOsUpog98J5yM9tBFiU2C
+X-Gm-Message-State: AOJu0Yy66qUR1gv3myf9gUsXuujRIfcJUp9MXErum01CpGM/aZaH9ZQM
+	DFAzJRZP4XRVSja0bZblbDNXnArZdDrU1JWeeJq7AGTPskOQOwyglF2czHetKVk=
+X-Google-Smtp-Source: AGHT+IFSAArPIaEjpMH4jgaXVYpVXpMimK68ul2RbeeR3lZN0wdr6tbhaKym2ezsrx+vrYGQeTnziQ==
+X-Received: by 2002:a05:6214:3d05:b0:6ad:60d8:183c with SMTP id 6a1803df08f44-6aecd5a30b5mr139932906d6.20.1717517974480;
+        Tue, 04 Jun 2024 09:19:34 -0700 (PDT)
+Received: from xanadu (modemcable018.15-162-184.mc.videotron.ca. [184.162.15.18])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6afb70d56eesm23119596d6.132.2024.06.04.09.19.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 09:19:34 -0700 (PDT)
+Date: Tue, 4 Jun 2024 12:19:32 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: Julien Panis <jpanis@baylibre.com>
+cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>, 
+    Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+    Matthias Brugger <matthias.bgg@gmail.com>, 
+    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+    linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Return error in
+ case of invalid efuse data
+In-Reply-To: <20240603-mtk-thermal-calib-check-v1-1-5d6bf040414c@baylibre.com>
+Message-ID: <345r636r-487s-75qq-07o5-4n022ppro11p@onlyvoer.pbz>
+References: <20240603-mtk-thermal-calib-check-v1-1-5d6bf040414c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d/oZ8G2r6TlAFN6b"
-Content-Disposition: inline
-In-Reply-To: <20240604.KaT6shae5eip@digikod.net>
-X-Cookie: Is it clean in other dimensions?
+Content-Type: text/plain; charset=US-ASCII
 
+On Mon, 3 Jun 2024, Julien Panis wrote:
 
---d/oZ8G2r6TlAFN6b
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> This patch prevents from registering thermal entries and letting the
+> driver misbehave if efuse data is invalid. A device is not properly
+> calibrated if the golden temperature is zero.
+> 
+> Signed-off-by: Julien Panis <jpanis@baylibre.com>
 
-On Tue, Jun 04, 2024 at 06:06:48PM +0200, Micka=EBl Sala=FCn wrote:
+Reviewed-by: Nicolas Pitre <npitre@baylibre.com>
 
-> Thanks for the heads up.  I warned about not being able to test
-> everything when fixing kselftest last time, but nobody show up.  Is
-> there an easy way to run most kselftests?  We really need a (more
-> accessible) CI...
-
-You can just invoke the top level kselftests Makefile but between things
-being flaky and runtime requirements there's a bunch of noise there.
-KernelCI covers a bunch of it and would be my go to, I've got a good
-chunk of the selftests that actually build and run reliably in my
-personal CI but it has no visible UI.  Part of the issue here might be
-platform specifics, I'm seeing this on arm64. =20
-
-> > > FWIW I'm still seeing this on -rc2...
-
-> > AFAICT this is due to the switch to using clone3() with CLONE_VFORK
-
-> I guess it started with the previous vfork() that was later replaced
-> with CLONE_VFORK.
-
-Bisect did seem to point at this commit FWIW, I've not dug into any API
-differences or anything here.  The immediate thing being replaced was a
-plain fork() though I see it was vfork() at some point before that, and
-I'd not have noticed if the individual testcases weren't hanging so the
-timeout was needed.
-
-> > I'm not clear what the original race being fixed here was but it seems
-> > like we should revert this since the timeout functionality is pretty
-> > important?
-
-> It took me a while to fix all the previous issues and it would be much
-> easier to just fix this issue too.
-
-> I'm working on it.
-
-Great, thanks.
-
---d/oZ8G2r6TlAFN6b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZfPlcACgkQJNaLcl1U
-h9DBngf+IjDxDtusJc/iSMVrkM3BxNZGYxiJwiwd29R9Z1J4+xF1epkd3KXzUhGK
-s7k2vCuJcyj3tj0CDKxLbC155dUIryEvIF8o9oJ5xY4z+l/8SSspGxm0Oly8fjZE
-T3vZLiWmWFyZV6pC9FhXryFLgnCCwmHgKXpMQoRDZGSkpq/DhxYTNAH1n94F2P6e
-vjEnCzuZb9YvH8ZEG7X5yiZs0Z6lUiVSFp4Uqf3AEFLZBl33JFREgnuYpuSsBo/p
-vo6UOKR/TkP61x02iuq5QiL0OtuW/pusrq1yDmAlILHzh6z5DYHgf/iNAumjKykx
-ZxQrgJtk5Fhc8P5nERw/c7Q07LjV/A==
-=Ezzq
------END PGP SIGNATURE-----
-
---d/oZ8G2r6TlAFN6b--
+> ---
+> Guard against invalid calibration data, following this discussion:
+> https://lore.kernel.org/all/ad047631-16b8-42ce-8a8d-1429e6af4517@collabora.com/
+> ---
+>  drivers/thermal/mediatek/lvts_thermal.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+> index 0bb3a495b56e..185d5a32711f 100644
+> --- a/drivers/thermal/mediatek/lvts_thermal.c
+> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+> @@ -769,7 +769,11 @@ static int lvts_golden_temp_init(struct device *dev, u8 *calib,
+>  	 */
+>  	gt = (((u32 *)calib)[0] >> lvts_data->gt_calib_bit_offset) & 0xff;
+>  
+> -	if (gt && gt < LVTS_GOLDEN_TEMP_MAX)
+> +	/* A zero value for gt means that device has invalid efuse data */
+> +	if (!gt)
+> +		return -ENODATA;
+> +
+> +	if (gt < LVTS_GOLDEN_TEMP_MAX)
+>  		golden_temp = gt;
+>  
+>  	golden_temp_offset = golden_temp * 500 + lvts_data->temp_offset;
+> 
+> ---
+> base-commit: 632483ea8004edfadd035de36e1ab2c7c4f53158
+> change-id: 20240603-mtk-thermal-calib-check-ba2ec24a1c32
+> 
+> Best regards,
+> -- 
+> Julien Panis <jpanis@baylibre.com>
+> 
+> 
 
