@@ -1,158 +1,138 @@
-Return-Path: <linux-kernel+bounces-200075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494318FAA43
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:53:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D078FAA34
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95E0B2461F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:53:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09C7BB24256
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802A213DDA3;
-	Tue,  4 Jun 2024 05:53:28 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF9013DDAB;
+	Tue,  4 Jun 2024 05:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/l1CkJy"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C899199BC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 05:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEA9847B;
+	Tue,  4 Jun 2024 05:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717480408; cv=none; b=h76D13KE+YGWV+F7ZnKtHyMzUSjgtIpMf/zk9SV+Ch1zU4HSVCkatyv78NH8z0bTk2th2iHk1Q97sj/6Ht2axzAk0qI0KY5ReLVtqkUbud5ZIZpvYgcIVHD4DIeircou54Ds6cIWFOOBmo+/SeNsZH7LDk0yUEKg+v6m3gD31EY=
+	t=1717480106; cv=none; b=tA2zDxJjvfl8WlQZerfn+9jQw4c6aJ8PkYKokykjVRtnB9idG/YcftcTdVlTT1EhC3KoBPD7cVvytEnZFkobKpyruVm/jHtuZ79rp/HJ83+r2GEQ8auRA9btud9cj2UOA7pN1XAIuHqvf8xqZ2ye1pB9eEXJNDL+u3XGefbd0Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717480408; c=relaxed/simple;
-	bh=IoB/yV/6K+QghVV3rsD9UF32nbZm90OaPHf1zCxHcuM=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=pj0+scUvNJ2xJhe8t3BS3HeJRdPFtFOVXVh8IHSRM5MiQAOEMBFpuRrgfc+MwzBZxGKurUeA/p414b/WQimnUE8jLlzUxjlRU//elH7oLU6vhGlJW7FCfpF9TPilk36q8PsFUDf5Y+NvCBzcbK7kL0tw70LV3irOTJPbbFgi0XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Vtfl34DhpzKhm
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:47:59 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4Vtfkw4tx9z5TCG9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:47:52 +0800 (CST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Vtfkl3JFsz5R9kD;
-	Tue,  4 Jun 2024 13:47:43 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 4545laZs009782;
-	Tue, 4 Jun 2024 13:47:36 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 4 Jun 2024 13:47:38 +0800 (CST)
-Date: Tue, 4 Jun 2024 13:47:38 +0800 (CST)
-X-Zmail-TransId: 2af9665eaa7a03e-7c67f
-X-Mailer: Zmail v1.0
-Message-ID: <20240604134738264WKaKYb3q_YTE32hNAy2lz@zte.com.cn>
+	s=arc-20240116; t=1717480106; c=relaxed/simple;
+	bh=FMtX7htPgOinKnxYoDwQBwCdcQiHAtR+5gF31h9Oy8c=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=EjGx0ttMvOn73iPYILu1fedv3477LWK65axI648KH/1gq0QmW7pEyQ/sPYpNjKdsQDSFYQODA1pyDp+R0klLVP1ebPvxQbQiEctYNorPtB4QAdYRWMIdUc2lVjYAoTcJpw+ITmlqejCM9uJ+qpRLv3mxi1MA8pCAqu/tgOxBx0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/l1CkJy; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70255d5ddc7so2200488b3a.3;
+        Mon, 03 Jun 2024 22:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717480104; x=1718084904; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p61Hce8IkWwKux3VG8miwDHGw7bU+KFjOmsb4t+oZQc=;
+        b=E/l1CkJy8+/wWN2b/fd5rd2Zd45+oq/a+IQ3U43TeNl6+o+A+FQfGMDZWBhsW3U1xW
+         b+2xYAlgzjcCJKTdjNnVYz7P3iqZvPNvbs48960HwLJGXokTEH7mIAKijzVzwrmVr/WJ
+         UKR5tVUbPZugdxMObjyFsVsZIFWw7+KVvhxVOfMOsIgiiW7ChktwPSxFMkrkNfIZiLNv
+         noHqW6QcyrkUHli0opLAu5oxwmtG3hh5zKnIIpOkE+3ipl8JJGF3TI886GkEJZxYccIe
+         UdQlNOIpTiqhR7adk2yErOwJ1LJgEeo594eguZ6grnWh2U5Vg+yfLmyYpCYPSQwlzoOJ
+         d2oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717480104; x=1718084904;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=p61Hce8IkWwKux3VG8miwDHGw7bU+KFjOmsb4t+oZQc=;
+        b=OordmMwMgONFjRTzuwYxHHw7npeTUdXchKcBd3iMtLXOoMDeTH0SJhdBlqzthlyZqL
+         Obn2zsZR3e3HdmZRTeSSu0u+X4JHBNqRMN5mbTUuvnMxURLyADgc342GIk3sRXCtw7Xg
+         wATNNrSjjk97nJ6E5EZRZRGIO3QCdMldikrpmn5I5AnNBdINYPUgQw7hTBL363cX3IB2
+         0tqS2C6H0kNN/5sXKejYtOkCjgfbAVNS/GH8/Qo5klTdpBKz3vR1ni8/vbeB9sTmh0da
+         6+2/JvizJ7iuOftNQmLHUDSGCiTnGKLaMSvHJ+odItvorELgO0FBKygJfb3PUhFIqJ+b
+         aM/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUYu3X+S8RZbA0U16wGRteBLO7kx/TPDoL17oFOE85KxgJF4cL3FHOgqct+Tlt+P8um5JCHSG44BWAzHPxo57eYrrgIH1K5iFz9hEeLvwwJh/mJndiE3dpOQfhDXhYqX7EV2E6i8StZdalXTKlQ1B8pHDgpdd4fNJX0WKuW
+X-Gm-Message-State: AOJu0YxuWq16UaCrXV1yPHJgB/bg5rfcFVpdzgHWpS8Rdh7K5/kTCQl2
+	pe3V8I53XOeHI2WMVst4u8AlYn6j22/apctBtm6nbkyyFwkaLMn0
+X-Google-Smtp-Source: AGHT+IEerX2qhhDnie48IrgDghI2cbk0LGDGIPJRG6DPWms4QfaexRHMPMrgovshUNKM5LzZTnLjaA==
+X-Received: by 2002:a05:6a00:23c6:b0:6f8:d51b:1ccf with SMTP id d2e1a72fcca58-702477beb2amr11602978b3a.6.1717480104182;
+        Mon, 03 Jun 2024 22:48:24 -0700 (PDT)
+Received: from localhost ([1.146.11.115])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702425e2c23sm6395956b3a.85.2024.06.03.22.48.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 22:48:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <akpm@linux-foundation.org>, <ziy@nvidia.com>
-Cc: <v-songbaohua@oppo.com>, <mhocko@kernel.org>, <david@redhat.com>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIG1tOiBodWdlX21lbW9yeTogZml4IG1pc3VzZWQgbWFwcGluZ19sYXJnZV9mb2xpb19zdXBwb3J0KCnCoGZvciBhbm9uIGZvbGlvcw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 4545laZs009782
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 665EAA8E.000/4Vtfl34DhpzKhm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Jun 2024 15:48:16 +1000
+Message-Id: <D1QZVS0ZCVBX.2UISITKQZRZHU@gmail.com>
+Cc: <pbonzini@redhat.com>, <naveen.n.rao@linux.ibm.com>,
+ <christophe.leroy@csgroup.eu>, <corbet@lwn.net>, <mpe@ellerman.id.au>,
+ <namhyung@kernel.org>, <pbonzini@redhat.com>, <jniethe5@gmail.com>,
+ <atrajeev@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/6] KVM: PPC: Book3S HV: Nested guest migration fixes
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Shivaprasad G Bhat" <sbhat@linux.ibm.com>, <kvm@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+X-Mailer: aerc 0.17.0
+References: <171741323521.6631.11242552089199677395.stgit@linux.ibm.com>
+In-Reply-To: <171741323521.6631.11242552089199677395.stgit@linux.ibm.com>
 
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On Mon Jun 3, 2024 at 9:13 PM AEST, Shivaprasad G Bhat wrote:
+> The series fixes the issues exposed by the kvm-unit-tests[1]
+> sprs-migration test.
+>
+> The SDAR, MMCR3 were seen to have some typo/refactoring bugs.
+> The first two patches fix them.
+>
+> Though the nestedv2 APIs defined the guest state elements for
+> Power ISA 3.1B SPRs to save-restore with PHYP during entry-exit,
+> the DEXCR and HASHKEYR were ignored in code. The KVM_PPC_REG too
+> for them are missing without which the Qemu is not setting them
+> to their 'previous' value during guest migration at destination.
+> The remaining patches take care of this.
 
-When I did a large folios split test, a WARNING
-"[ 5059.122759][  T166] Cannot split file folio to non-0 order"
-was triggered. But my test cases are only for anonmous folios. 
-while mapping_large_folio_support() is only reasonable for page
-cache folios. 
+These aren't just fixes for nested v2 or even just migration,
+by the way. Good fixes.
 
-In split_huge_page_to_list_to_order(), the folio passed to
-mapping_large_folio_support() maybe anonmous folio. The
-folio_test_anon() check is missing. So the split of the anonmous THP
-is failed. This is also the same for shmem_mapping(). We'd better add
-a check for both. But the shmem_mapping() in __split_huge_page() is
-not involved, as for anonmous folios, the end parameter is set to -1, so
-(head[i].index >= end) is always false. shmem_mapping() is not called.
+Thanks,
+Nick
 
-Using /sys/kernel/debug/split_huge_pages to verify this, with this
-patch, large anon THP is successfully split and the warning is ceased.
+>
+> References:
+> [1]: https://github.com/kvm-unit-tests/kvm-unit-tests
+>
+> ---
+>
+> Shivaprasad G Bhat (6):
+>       KVM: PPC: Book3S HV: Fix the set_one_reg for MMCR3
+>       KVM: PPC: Book3S HV: Fix the get_one_reg of SDAR
+>       KVM: PPC: Book3S HV nestedv2: Keep nested guest DEXCR in sync
+>       KVM: PPC: Book3S HV: Add one-reg interface for DEXCR register
+>       KVM: PPC: Book3S HV nestedv2: Keep nested guest HASHKEYR in sync
+>       KVM: PPC: Book3S HV: Add one-reg interface for HASHKEYR register
+>
+>
+>  Documentation/virt/kvm/api.rst            |  2 ++
+>  arch/powerpc/include/asm/kvm_host.h       |  2 ++
+>  arch/powerpc/include/uapi/asm/kvm.h       |  2 ++
+>  arch/powerpc/kvm/book3s_hv.c              | 16 ++++++++++++++--
+>  arch/powerpc/kvm/book3s_hv.h              |  2 ++
+>  arch/powerpc/kvm/book3s_hv_nestedv2.c     | 12 ++++++++++++
+>  tools/arch/powerpc/include/uapi/asm/kvm.h |  2 ++
+>  7 files changed, 36 insertions(+), 2 deletions(-)
+>
+> --
+> Signature
 
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Cc: xu xin <xu.xin16@zte.com.cn>
-Cc: Yang Yang <yang.yang29@zte.com.cn>
----
- mm/huge_memory.c | 38 ++++++++++++++++++++------------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 317de2afd371..4c9c7e5ea20c 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3009,31 +3009,33 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 	if (new_order >= folio_order(folio))
- 		return -EINVAL;
-
--	/* Cannot split anonymous THP to order-1 */
--	if (new_order == 1 && folio_test_anon(folio)) {
--		VM_WARN_ONCE(1, "Cannot split to order-1 folio");
--		return -EINVAL;
--	}
--
- 	if (new_order) {
- 		/* Only swapping a whole PMD-mapped folio is supported */
- 		if (folio_test_swapcache(folio))
- 			return -EINVAL;
--		/* Split shmem folio to non-zero order not supported */
--		if (shmem_mapping(folio->mapping)) {
--			VM_WARN_ONCE(1,
--				"Cannot split shmem folio to non-0 order");
--			return -EINVAL;
--		}
--		/* No split if the file system does not support large folio */
--		if (!mapping_large_folio_support(folio->mapping)) {
--			VM_WARN_ONCE(1,
--				"Cannot split file folio to non-0 order");
--			return -EINVAL;
-+
-+		if (folio_test_anon(folio)) {
-+			/* Cannot split anonymous THP to order-1 */
-+			if (new_order == 1) {
-+				VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-+				return -EINVAL;
-+			}
-+		} else {
-+			/* Split shmem folio to non-zero order not supported */
-+			if (shmem_mapping(folio->mapping)) {
-+				VM_WARN_ONCE(1,
-+					"Cannot split shmem folio to non-0 order");
-+				return -EINVAL;
-+			}
-+			/* No split if the file system does not support large folio */
-+			if (!mapping_large_folio_support(folio->mapping)) {
-+				VM_WARN_ONCE(1,
-+					"Cannot split file folio to non-0 order");
-+				return -EINVAL;
-+			}
- 		}
- 	}
-
--
- 	is_hzp = is_huge_zero_folio(folio);
- 	if (is_hzp) {
- 		pr_warn_ratelimited("Called split_huge_page for huge zero page\n");
--- 
-2.15.2
 
