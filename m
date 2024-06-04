@@ -1,125 +1,129 @@
-Return-Path: <linux-kernel+bounces-200237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92428FAD58
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:18:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCDF8FAD52
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137BA1C222EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D331C21EAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10721422A7;
-	Tue,  4 Jun 2024 08:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCA51422CC;
+	Tue,  4 Jun 2024 08:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VZ1tj2rA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdP9Ljqq"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96A4139CFF
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969451422C3;
+	Tue,  4 Jun 2024 08:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717489128; cv=none; b=ZDET0HQo37wHWT3Y3brIg9yrrMaUYxSPkKdxvTxGXHlajIsJRJMg24+wxUqTKyHqvv0yxC/pv9lJDNitCLXJjj6pdWBf26dc6FcJCgH4vf8jA0kGJxhe0ri8mv4Ej6S6q9hdnn24GMhpcs3y+dkmx0U5YQMj4VD+WjetOdPdBmk=
+	t=1717489038; cv=none; b=ZlQboPFPrjhtsZkndTVS1JHhjsK/TUW9+2ygblI6VedYXGN99E5LFbWTonMra6UGxu8SqPMvew8wVBeOCOK7dPhO7a4A6vTSZ3ptdQSuaZsAi8TJBvdfglWAGkmi22Jo9BAZjjT5gFppsUlI6y0Bbk7unDO5Xz9MPiY4qIrJcVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717489128; c=relaxed/simple;
-	bh=t4AlPKcMOvF+J0KAl9cz4z7x0CWBkr/MlJ8H27UTrHo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K9cElx5FzLEBEI4iV/1ojFc36NjMOJMD/GoixaEzxg8Hx8wcRJT/AlqqnPjUinF7wsiCgtIQjvFV6wFV0nuFQK27TwqVKqjAlV5QR9hcXqYGQsKuPjsY5GnxuxKfiW45YwZwJkxuRs7UflUtUS6PDb7Xvbp1BBwd4X+CVRteZ6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VZ1tj2rA; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717489127; x=1749025127;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=t4AlPKcMOvF+J0KAl9cz4z7x0CWBkr/MlJ8H27UTrHo=;
-  b=VZ1tj2rAgXtHBalW/UJ8clMAe9qAeuHk2hmk1VIt/5kXaTk0Hpjd16Jc
-   BzVi6hlAec7ObOwbkCybWicAuAJyuBBmUv0DQKwCA23fZMtn7Po5sGbuK
-   Cw4rsb1Ep5+Hx2h69wtRqJXcDhjxcDh9kM+Ttt7ToJsCjKU6SEd/BRUr3
-   MB3eW//Ucf7qP/5XWUCS08FTCa+SmvfLm5jGhRn3pi/qNESyunEhRzz6g
-   Fx4J4FRpWkhXOAuoMXWBUAo+EA8TLHjTkHEWKd5bZ5CwQEwGclgKn8Nkd
-   w4lyK4LqsnNK2KQ3pJw6RFr7Gt9uEOVU4pNWUzQxbT1MsgcjSNPukYkR3
-   g==;
-X-CSE-ConnectionGUID: r0A87p79TICQ5Bsr30+6KQ==
-X-CSE-MsgGUID: 8wgmX4ukQbOzTUV1Axucmw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="25417177"
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="25417177"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 01:18:45 -0700
-X-CSE-ConnectionGUID: 1zgcUipQRbSslbX3cwqIaQ==
-X-CSE-MsgGUID: iF7ryx1fQ/KGN7P9cTR90Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="37286242"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 01:18:41 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,  Dave Hansen
- <dave.hansen@intel.com>,  Byungchul Park <byungchul@sk.com>,  Byungchul
- Park <lkml.byungchul.park@gmail.com>,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org,  kernel_team@skhynix.com,  akpm@linux-foundation.org,
-  vernhao@tencent.com,  mgorman@techsingularity.net,  hughd@google.com,
-  peterz@infradead.org,  luto@kernel.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  rjgolo@gmail.com
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-In-Reply-To: <24daabde-300e-4a28-9a1c-9e406b087195@redhat.com> (David
-	Hildenbrand's message of "Mon, 3 Jun 2024 20:00:52 +0200")
-References: <20240531092001.30428-1-byungchul@sk.com>
-	<20240531092001.30428-10-byungchul@sk.com>
-	<fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
-	<CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
-	<f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
-	<26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
-	<20240603093505.GA12549@system.software.com>
-	<d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
-	<35866f91-7d96-462a-aa0a-ac8a6b8cbcf8@redhat.com>
-	<196481bb-b86d-4959-b69b-21fda4daae77@intel.com>
-	<Zl320dWODSYw-PgV@casper.infradead.org>
-	<24daabde-300e-4a28-9a1c-9e406b087195@redhat.com>
-Date: Tue, 04 Jun 2024 16:16:49 +0800
-Message-ID: <877cf5ceby.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1717489038; c=relaxed/simple;
+	bh=9Wf+j/r8bT2i678Is404RDPuyVL0+W6hBWBeanTJwSc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Lqn8Jkqyu3vkFMyOoG2BuXTa3sDEcfD6BeWjb4R9FQMMzXj0Gx28m267HHrtwGnLKSkR+OR0vUcEYe5Xlytmh2BSD7N3J8eKrrCH2iDAIe5VihwPnbgQ8ULTlnQ7/fmtJaITfWgWxVLy0Y96tt8tV0V9z6w5Pm2baHE4p27eFXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdP9Ljqq; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f6559668e1so19924415ad.3;
+        Tue, 04 Jun 2024 01:17:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717489037; x=1718093837; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Wf+j/r8bT2i678Is404RDPuyVL0+W6hBWBeanTJwSc=;
+        b=UdP9LjqqY3UYpJUxTaB+OoM1l2P7DNgSysqOstiHK8/jt8EChNsb69vysMDo0sEhn1
+         m+9XKP2bsA1f3JGLRaOdZ7rlXeDPGxNP5oTKQi1/96ZD+lOw9Z6tkB9q+0J7H7NFGakq
+         oYWigr0r3QHiCTRXNxVxrxzU0BpfdyA2TgdhO16BqXPKZnpA8VKxGSmRGb5N0Etz5ZQN
+         y3F2b84RS1QQI6sZlcp1AuRtxCSgDSxbGsQa0XJtfl6seLiJ+nWxEn1/4YFMeLqkW4K8
+         VFexMvC8gqw2jB/A+kh7U/cJzPF5xgs/wPJbkOH0PuMX5OR4bbAWIXUwjR+JSUzU4QEB
+         orbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717489037; x=1718093837;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9Wf+j/r8bT2i678Is404RDPuyVL0+W6hBWBeanTJwSc=;
+        b=iM7oRhvpPvMFPXipvsazjW91TS3FxtfgLq5vHrKJZOOHwPT5bk/msQyS/fyptxs+r+
+         BWUPuUep5y0yyUkNQeG9mX5a025d0M7JCEyMqKNiLPnZCaJJ0rIXuIWK4jxStzJZ9u9I
+         JhoMoHTPQavslcmrM8WHOBxejxJIZLn19CyKMAIP0G/n7MbgYZZezT1XpGnq/td7JDYi
+         YzC190W+bng2akeQwp7u28/SJLF5aNLrFA6z/66/8qoDej9jD+g5I+ngANbamXNzaZtA
+         kRDmjoL3LTgGEVQKd6LQeVrmrtIg2p9CB0swE792DE8dlc/jwfvdIk7hbHrgJS4XRaqP
+         kT3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWpqm5YWoNboQsKbFmlLXRl0HnYK+1GPXwSS97UzP+BQCrW+EP5+tYkP4WDpHCZY63018TiLrPn7x6iaNSwWnG22K4mefVeAVgq6/OVs16n3v7G8Bdts8K3sZsdC0xVHSsAG9sMOFGJTwVq3Q==
+X-Gm-Message-State: AOJu0Ywedg/Aa9SPM+LK8pdBoKiJQrmlo3zumgTJxPls1TWpaqQJ+K36
+	2IAYLtjQKC/F+7Rou0mRev727djH2GcfDhbqYbRCwoMD2QkeKzkohkvXpw==
+X-Google-Smtp-Source: AGHT+IHdof6VcIZi7jyJ7d6rXgJdnuR+v8pNAs2MKOtL3+wKCAAoZXgFVg7deQ3SvxmgwbyFivmaNg==
+X-Received: by 2002:a17:902:e5c2:b0:1f6:8290:175a with SMTP id d9443c01a7336-1f682901acamr43966985ad.40.1717489036496;
+        Tue, 04 Jun 2024 01:17:16 -0700 (PDT)
+Received: from smtpclient.apple ([47.88.5.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63232f26dsm78302805ad.46.2024.06.04.01.17.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2024 01:17:16 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <alpine.LSU.2.21.2405311603260.8344@pobox.suse.cz>
+Date: Tue, 4 Jun 2024 16:17:01 +0800
+Cc: Petr Mladek <pmladek@suse.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0C2ABDBE-FBBA-4CD6-A903-B146EBBF4AC8@gmail.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+ <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
+ <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
+ <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
+ <2551BBD9-735E-4D1E-B1AE-F5A3F0C38815@gmail.com>
+ <alpine.LSU.2.21.2405310918430.8344@pobox.suse.cz>
+ <FF8C167F-1B6C-4E7D-81A0-CB34E082ACA5@gmail.com>
+ <alpine.LSU.2.21.2405311603260.8344@pobox.suse.cz>
+To: Miroslav Benes <mbenes@suse.cz>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-David Hildenbrand <david@redhat.com> writes:
 
-> On 03.06.24 19:01, Matthew Wilcox wrote:
->> On Mon, Jun 03, 2024 at 09:37:46AM -0700, Dave Hansen wrote:
->>> Yeah, we'd need some equivalent of a PTE marker, but for the page cache.
->>>   Presumably some xa_value() that means a reader has to go do a
->>> luf_flush() before going any farther.
->> I can allocate one for that.  We've got something like 1000
->> currently
->> unused values which can't be mistaken for anything else.
->
-> I'm curious when to set that, though.
->
-> While migrating/reclaiming, when unmapping the folio from the page
-> tables, the folio is still valid in the page cache. So at the point in
-> time of unmapping from one process, we cannot simply replace the folio
-> in the page cache by some other value -- I think.
->
-> Maybe it's all easier than I think.
 
-IIUC, we need to held folio lock before replacing the folio in the page
-cache.  In page_cache_delete(), folio_test_locked() is checked.  And, we
-will lock the folio before writing to it via write syscall.  So, it's
-safe to defer TLB flushing until we unlock the folio.
+> On May 31, 2024, at 22:06, Miroslav Benes <mbenes@suse.cz> wrote:
+>=20
+>> And for the unlikely branch, isn=E2=80=99t the complier will compile =
+this branch=20
+>> into a cold branch that will do no harm to the function performance?
+>=20
+> The test (cmp insn or something like that) still needs to be there. =
+Since=20
+> there is only a simple assignment in the branch, the compiler may just=20=
 
---
-Best Regards,
-Huang, Ying
+> choose not to have a cold branch in this case. The only difference is =
+in=20
+> which case you would jump here. You can see for yourself (and prove me=20=
+
+> wrong if it comes to it).
+>=20
+> Miroslav
+
+Hi Miroslav,
+
+Yes, more tests should be done in this case according to your opinion.
+
+Regards,
+Wardenjohn
+
+
 
