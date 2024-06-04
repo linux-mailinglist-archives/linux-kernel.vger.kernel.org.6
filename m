@@ -1,106 +1,161 @@
-Return-Path: <linux-kernel+bounces-201049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5B78FB89A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:16:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A4AE8FB897
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544E4289218
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:16:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06221F2323C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8771474BF;
-	Tue,  4 Jun 2024 16:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9061482FC;
+	Tue,  4 Jun 2024 16:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0o8vBLq6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WtLHZuiA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516E777A1E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0DE77A1E;
+	Tue,  4 Jun 2024 16:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717517761; cv=none; b=Hlsf2z1EO0BThM4nP93c0bU0m2oMjukTQm32k45D5QZsYBGmFmeezbwJNHT5qLHaXUHV8NgP/12m83vgswkjh4sPWgR0ZnvosPsvogKCTVNn4ggP7IIvdiRcd7fUo7UVBs6tgBfcv0dJ4zvQyERSqxiauIaga+MBP2VcGLwdvuU=
+	t=1717517742; cv=none; b=BhzuxEfBlfywyJp+pg8/4oUetD/dVlGjbcTfy2FsjvcoQ/i3g4vzySCIf66eNI7AJMkjMRch27HHwZ0MEBBeGdlCLUvh2d2hQId5viQjr2zjo3pOmgyE2I/3jyNWcT31lnrs2B17X3/1MYpRt1rwio8UBZ3++hhk5AslcIb5eoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717517761; c=relaxed/simple;
-	bh=poT0v2FdUDfb3BEOAqGetdclur+49x8g5bWIztN0LU4=;
+	s=arc-20240116; t=1717517742; c=relaxed/simple;
+	bh=FdB/ePnDZSRVgvQ6ho4nvAZLZ9MKKUp6zPgj0fsmBT0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GtI65WJ5bp3C7cgEBTUtDVOzyO0Mz8bs0VXVzMBbV1wk0Eb51elyoNpM+YhYg0gpjaXOFUcT7IADPFdLspxb1Gsw2ElfX88hZXAqJz0XUUf7b9xwroglG2v760wK4GV9eLGxhrR/LvXM8PXbo/+PGyOI5SYVQPX96MCs/BOhzY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0o8vBLq6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F231DC32786;
-	Tue,  4 Jun 2024 16:15:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1717517760;
-	bh=poT0v2FdUDfb3BEOAqGetdclur+49x8g5bWIztN0LU4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0o8vBLq6b9jT2dTw/8TRrHwtEx7cy5f4s4c3Z6KC8n+G0PeaD8YBf45gqdGGXGTCQ
-	 o0v50dyzwENby5kmKFHD46jlzp6M8cjXT16Q9cKQdX2FYG6YckDBwTEvXJdo9pGFMt
-	 YT4awQeoVcQ5aSsyG7CCAXtMWIPbxokdCw3Nosf8=
-Date: Tue, 4 Jun 2024 18:13:54 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
-	David Gow <davidgow@google.com>, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>,
-	Nishanth Menon <nm@ti.com>, Jeremy Kerr <jk@ozlabs.org>,
-	Rodolfo Giometti <giometti@enneenne.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH] platform: Make platform_driver::remove() return void
-Message-ID: <2024060432-relieving-yonder-85ae@gregkh>
-References: <20240527083416.1177106-2-u.kleine-koenig@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RCjSD9MR6E69Fx4SVDxO9+hsX+S68QNyPTXyFPJzTQ48+hPa6KnTWSFMlF7KvK3Ov2A1qPT3Xl7Ib3DaE0Z6jdEsMEGsoXehFpjK4uwwLxMiLiqQOaoHwUkgKO6NIcb1dNOBjDFfMlCjC1HNs16tLLW82h0v6H/NiLjZG4tU+ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WtLHZuiA; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717517741; x=1749053741;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FdB/ePnDZSRVgvQ6ho4nvAZLZ9MKKUp6zPgj0fsmBT0=;
+  b=WtLHZuiASEMrXgjJqjQPZXl2HU2zcLDGJTTcGKZyVjMa3OgsdAD475ia
+   CtL2L3j1PeKZBg+WHtBs8jq71GcXIzTL10ywFpbnDqbcHxZF6U9ZnSxgv
+   dq47qaXooPFEkVnQeh8XIbOepjLUruiEbKPu6y7ASWQA9cUL0M48ZGWHZ
+   Ic1veRPSHx3ozyI64xTIDHuxJ1/EAhyq5kuD61kSA64VO8qno/crNuzyt
+   mZa7mVT3RATKavf75OE4Bvf70rBciaguJwBNFeDxQQo3dReNIDIvqOfoa
+   vDGTFE5m/fk6A0kQebQGIJ+GVHDEXEsmoNxnaN8iqM+7mgANmka9B615f
+   g==;
+X-CSE-ConnectionGUID: +vwpHT7LQIiUlhy7kiJ4bQ==
+X-CSE-MsgGUID: lBm2DoanTMq8Yn+juoclMg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13919193"
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="13919193"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 09:14:09 -0700
+X-CSE-ConnectionGUID: 0CVQCKxPTSCYB4M9kCwP9g==
+X-CSE-MsgGUID: TiJr7ixrT6GQ0MRToY57eA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,214,1712646000"; 
+   d="scan'208";a="37927043"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 04 Jun 2024 09:14:01 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 427362DC; Tue, 04 Jun 2024 19:14:00 +0300 (EEST)
+Date: Tue, 4 Jun 2024 19:14:00 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>, adrian.hunter@intel.com, 
+	ardb@kernel.org, ashish.kalra@amd.com, bhe@redhat.com, 
+	dave.hansen@linux.intel.com, elena.reshetova@intel.com, haiyangz@microsoft.com, hpa@zytor.com, 
+	jun.nakajima@intel.com, kai.huang@intel.com, kexec@lists.infradead.org, 
+	kys@microsoft.com, linux-acpi@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, ltao@redhat.com, mingo@redhat.com, 
+	peterz@infradead.org, rafael@kernel.org, rick.p.edgecombe@intel.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, seanjc@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	x86@kernel.org
+Subject: Re: [PATCHv11.1 11/19] x86/tdx: Convert shared memory back to
+ private on kexec
+Message-ID: <u3hg3fqc2nxsjtfugjmmzlahwriyqlebnkxrbzgrxlkj6l3k36@yd3yudglgevi>
+References: <20240531151442.GMZlnpYkDCRlg1_YS0@fat_crate.local>
+ <20240602142303.3263551-1-kirill.shutemov@linux.intel.com>
+ <20240603083754.GAZl2A4uXvVB5w4l9u@fat_crate.local>
+ <noym2bqgxqcyhhdzoax7gvdfzhh7rtw7cv236fhzpqh3wqf76e@2jj733skv7y4>
+ <78d33a31-0ef2-417b-a240-b2880b64518e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240527083416.1177106-2-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <78d33a31-0ef2-417b-a240-b2880b64518e@intel.com>
 
-On Mon, May 27, 2024 at 10:34:15AM +0200, Uwe Kleine-König wrote:
-> struct platform_driver::remove returning an integer made driver authors
-> expect that returning an error code was proper error handling. However
-> the driver core ignores the error and continues to remove the device
-> because there is nothing the core could do anyhow and reentering the
-> remove callback again is only calling for trouble.
+On Tue, Jun 04, 2024 at 08:47:22AM -0700, Dave Hansen wrote:
+> On 6/4/24 08:32, Kirill A. Shutemov wrote:
+> > What about the comment below?
+> > 
+> > 			/*
+> > 			 * One possible reason for the failure is if kexec raced
+> > 			 * with memory conversion. In this case shared bit in
+> > 			 * page table got set (or not cleared) during
+> > 			 * shared<->private conversion, but the page is actually
+> > 			 * private. So this failure is not going to affect the
+> > 			 * kexec'ed kernel.
+> > 			 *
+> > 			 * The only thing one can do at this point on failure
+> > 			 * at this point is panic. In absence of better options,
+> > 			 * it is reasonable to proceed, hoping the failure is a
+> > 			 * benign shared bit mismatch due to the race.
+> > 			 *
+> > 			 * Also, even if the failure is real and the page cannot
+> > 			 * be touched as private, the kdump kernel will boot
+> > 			 * fine as it uses pre-reserved memory. What happens
+> > 			 * next depends on what the dumping process does and
+> > 			 * there's a reasonable chance to produce useful dump
+> > 			 * on crash.
+> > 			 *
+> > 			 * Regardless, the print leaves a trace in the log to
+> > 			 * give a clue for debug.
+> > 			 */
 > 
-> To prevent such wrong assumptions, change the return type of the remove
-> callback to void. This was prepared by introducing an alternative remove
-> callback returning void and converting all drivers to that. So .remove()
-> can be changed without further changes in drivers.
+> It's rambling too much for my taste.
 > 
-> This corresponds to step b) of the plan outlined in commit
-> 5c5a7680e67b ("platform: Provide a remove callback that returns no value").
+> Let's boil this down to what matters:
 > 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> ---
-> Hello Greg,
-> 
-> there are only very little platform drivers left in v6.10-rc1 that need
-> to be changed to .remove_new() before this patch can be applied. They
-> were all sent out to the respective maintainers, most of them suggested
-> to apply the patches together with this one.
-> 
-> You can fetch this patch together with all necessary commits from:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git platform-remove-void
-> 
-> If you have no concerns, I can also provide you a signed tag for
-> pulling. I think that's easier than indiviually applying them, but I can
-> also send out the complete series if you prefer.
+>  1. Failures to change encryption status here can lead a future kernel
+>     to touch shared memory with a private mapping
+>  2. That causes an immediate unrecoverable guest shutdown (right?)
 
-A signed tag is good, I can just pull from that, thanks!
+Right.
 
-greg k-h
+>  3. kdump kernels should not be affected since they have their own
+>     memory ranges and its encryption status is not being tweawked here
+>  4. The pr_err() may help make some sense out of #2 when it happens
+> 
+> I'm not sure the reason behind the failed conversion is important here.
+
+The important part is that failure can be benign. It explains "can" in #1.
+But okay.
+
+> I wouldn't mention panic().
+> 
+> We don't need to opine about what the next kernel might or might not do.
+
+Is this any better?
+
+			/*
+			 * If tdx_enc_status_changed() fails, it leaves memory
+			 * in an unknown state. If the memory remains shared,
+			 * it can result in an unrecoverable guest shutdown on
+			 * the first accessed through a private mapping.
+			 *
+			 * The kdump kernel boot is not impacted as it uses
+			 * a pre-reserved memory range that is always private.
+			 * However, gathering crash information could lead to
+			 * a crash if it accesses unconverted memory through
+			 * a private mapping.
+			 *
+			 * pr_err() may assist in understanding such crashes.
+			 */
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
