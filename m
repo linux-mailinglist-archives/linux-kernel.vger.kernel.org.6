@@ -1,183 +1,119 @@
-Return-Path: <linux-kernel+bounces-201301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A9A8FBCB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:43:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4928FBCB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 21:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3B8AB248C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE281F2384B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA4D14B941;
-	Tue,  4 Jun 2024 19:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FD514B09C;
+	Tue,  4 Jun 2024 19:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4+7ieW2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Fe0wWaxK"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E8AB644;
-	Tue,  4 Jun 2024 19:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23271B644;
+	Tue,  4 Jun 2024 19:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717530181; cv=none; b=g8AZF5uHFtkgRMaVtcVHh8KrVJ2H66JniaUxhkHwntFQMCa7befMX8R0z1qUFvVAUTB/vJ+dM2X1JmAFxsQWPj90eC97yIPWOSRcgcnxvJfJYl3rZMbwhlE2+yTqMFC8Pv24FuOaQ9zfZXz10vBC8Ku3plxrIhwLpcoiTBsmC7o=
+	t=1717530250; cv=none; b=t4Yatz5EYT+xncHP7++G6ZuTY6+MJLDzosHmi+XOnhCfXcLSh+MfA7qC1pUxF2iRqIwg1KAWmKgfiea8dqSFkYPYVr4AYH9D9sRiRkLkVRNkxx5aoVEptrKvcTzuzbcBohhRP1cO4zaDSkSsf3iMpbJRAjHhdoH6a9qxNxIVHNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717530181; c=relaxed/simple;
-	bh=ldmOMzI6JKAvFAm66/33xSFPao4cv5kL7TgZC2bsqb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nj/BoE+oDiRF8IxFHX2qxaNXRpQZWD390WnFRmkD+wBRJixl0LJeBKLLdSfTvaMw+DRQymLgBSIMM2ts/5ar9/fRunG6O/xJQ5W6I7ahv+VtJ4jWtKSHPhUVjA6Rsh4MMM+O5GORf/7E9wD8WibfThP1215DwdP4CDlJ14cUZTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4+7ieW2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2104CC2BBFC;
-	Tue,  4 Jun 2024 19:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717530181;
-	bh=ldmOMzI6JKAvFAm66/33xSFPao4cv5kL7TgZC2bsqb8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S4+7ieW2lrkBPI/ORGDstBDLJ0waUKV/32518A4MoIvMgYZ1saGUFqsnuNVYM+GKd
-	 RT+nVsbnCMGYM5UsUxzels6jUFEXQ1UadoCsarf1vPNGan3+4lO/D0TkHOppUl0Y/W
-	 nNkvlf1wYGrp4WG42l0x4QG/IPr0HgXyGtk/9nfeZYPjGBbRLqd/aOUYG1oIGPBfl3
-	 GO7aYTFhY6z6btrIMDeqWn93aWjURud6vd/SlTcosNuPVSOFvEJR42HelD/eYzg1P9
-	 lJJ7EUXgGdNiNf/dxPjzCnuBGOD4Bm+erVO3pcArVzpG6+9R3xNXNiF55MLj+8VHkD
-	 Bsdtd+IfQRM0w==
-Date: Tue, 4 Jun 2024 20:42:55 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-Message-ID: <20240604-awry-container-a8c12f421a81@spud>
-References: <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
- <20240519-abreast-haziness-096a57ef57d3@spud>
- <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
- <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
- <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
- <20240526-peculiar-panama-badda4f02336@spud>
- <10991373cb9603803df63d8236c475807f6dde68.camel@gmail.com>
- <6db8ba66-841b-4425-9dd4-9d6e7b0463bf@baylibre.com>
- <20240604-oink-recognize-682c553a18e5@spud>
- <97246fdc-bb33-45bc-a24a-c2595920421f@baylibre.com>
+	s=arc-20240116; t=1717530250; c=relaxed/simple;
+	bh=oGz3iRzmdqum59ggsBZtJboMbceE1QjBtHdfjHHfQLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cto8RPkN4WuzBYSRq9FIRuR8QqCMglv9pYDHRdOKQy5IrhIdBRdyHa23AvTgwjs0FO/b/pd67W9IUk7m/e0IM+6qoTFLzAa3692iyAcSDMlgfxsR95Dq0KPBy9jiJiI5hOyXXv4bXg2mhHCeOV7W2uPmIgwVzcCKbLRAc/xRWrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Fe0wWaxK; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717530247;
+	bh=oGz3iRzmdqum59ggsBZtJboMbceE1QjBtHdfjHHfQLs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Fe0wWaxK5i/OnnlAWeSBrvGQEwhZIT2S2xwBn9HEJab+3UIrADowsdecA4JA22FXh
+	 w9b7Oy0FXpEWDWqVYyje3Kvb5rl/4nvNyh+w0w8hWYPNyoBG3DP6g5vsaiMh8/gp8q
+	 /OsEgimp++IEeQuz8wrh9Ms2tw7kKECrNuP0iZpcYq49qyduwajbXfFkFk3C1k/d0B
+	 WyWtko6z9NySVS5p/dRimGdJhs0xcLSqqYFYANANHYRz9KrToiMNCGn0MyrwJow/Ac
+	 PK2ugOK2mxf/0gFtgLLxeyPcl31CDzcOajWN2uBQQNTYG4u0LGjXdvHrIzH15S9bbN
+	 206gavtDqdMHw==
+Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 33EFE3782146;
+	Tue,  4 Jun 2024 19:44:05 +0000 (UTC)
+Message-ID: <892b2070-2fd0-42b2-a8c2-811dc7382b0c@collabora.com>
+Date: Tue, 4 Jun 2024 22:44:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="N7XUnDPkHiYJyKjd"
-Content-Disposition: inline
-In-Reply-To: <97246fdc-bb33-45bc-a24a-c2595920421f@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/14] Add initial support for the Rockchip RK3588 HDMI TX
+ Controller
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
+ <a5jlj5hncv2p7lxk6pbgynkqfovlg3lzz2muzrbrkd73afiopu@n5tmd4zfyeik>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <a5jlj5hncv2p7lxk6pbgynkqfovlg3lzz2muzrbrkd73afiopu@n5tmd4zfyeik>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 6/1/24 7:32 PM, Dmitry Baryshkov wrote:
+> On Sat, Jun 01, 2024 at 04:12:22PM +0300, Cristian Ciocaltea wrote:
+>> The RK3588 SoC family integrates a Quad-Pixel (QP) variant of the
+>> Synopsys DesignWare HDMI TX controller used in the previous SoCs.
+>>
+>> It is HDMI 2.1 compliant and supports the following features, among
+>> others:
+>>
+>> * Fixed Rate Link (FRL)
+>> * 4K@120Hz and 8K@60Hz video modes
+>> * Variable Refresh Rate (VRR) including Quick Media Switching (QMS)
+>> * Fast Vactive (FVA)
+>> * SCDC I2C DDC access
+>> * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
+>> * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
+>> * Multi-stream audio
+>> * Enhanced Audio Return Channel (EARC)
+> 
+> It would be really nice if you can take a look at using the HDMI
+> connector framework (landed few days ago) with adaptations for the
+> drm_bridge / drm_bridge_connector ([1]). Your comments for the
+> drm_bridge patches would be defeinitely appreciated.
+> 
+> [1] https://lore.kernel.org/dri-devel/20240531-bridge-hdmi-connector-v4-0-5110f7943622@linaro.org/
 
---N7XUnDPkHiYJyKjd
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I will definitely check and try to use it, but I'd rather wait a bit
+until this gets stabilized and focus instead on the mandatory changes
+required to upstream this driver. That's mostly because my limited
+availability and expertise on the matter, while trying to unblock other
+work depending on this.
 
-On Tue, Jun 04, 2024 at 02:39:18PM -0500, David Lechner wrote:
-> On 6/4/24 2:33 PM, Conor Dooley wrote:
-> > On Thu, May 30, 2024 at 02:24:17PM -0500, David Lechner wrote:
-> >> On 5/29/24 3:07 AM, Nuno S=E1 wrote:
-> >>> On Sun, 2024-05-26 at 18:35 +0100, Conor Dooley wrote:
-> >>
-> >>
-> >>>> It might be easy to do it this way right now, but be problematic for=
- a
-> >>>> future device or if someone wants to chuck away the ADI provided RTL=
- and
-> >>>> do their own thing for this device. Really it just makes me wonder if
-> >>>> what's needed to describe more complex data pipelines uses an of_gra=
-ph,
-> >>>> just like how video pipelines are handled, rather than the implement=
-ation
-> >>>> of io-backends that don't really seem to model the flow of data.
-> >>>>
-> >>>
-> >>> Yeah, backends is more for devices/soft-cores that extend the functio=
-nality of the
-> >>> device they are connected too. Like having DACs/ADCs hdl cores for co=
-nnecting to high
-> >>> speed controllers. Note that in some cases they also manipulate or ev=
-en create data
-> >>> but since they fit in IIO, having things like the DMA property in the=
- hdl binding was
-> >>> fairly straight.
-> >>>
-> >>> Maybe having an offload dedicated API (through spi) to get/share a DM=
-A handle would
-> >>> be acceptable. Then we could add support to "import" it in the IIO co=
-re. Then it
-> >>> would be up to the controller to accept or not to share the handle (i=
-n some cases the
-> >>> controller could really want to have the control of the DMA transfers=
-).
-> >>
-> >> I could see this working for some SPI controllers, but for the AXI SPI=
- Engine
-> >> + DMA currently, the DMA has a fixed word size, so can't be used as a =
-generic
-> >> DMA with arbitrary SPI xfers. For example, if the HDL is compiled with=
- a 32-bit
-> >> word size, then even if we are reading 16-bit sample data, the DMA is =
-going to
-> >> put it in a 32-bit slot. So one could argue that this is still doing s=
-ome data
-> >> manipulation similar to the CRC checker example.
-> >>
-> >>>
-> >>> Not familiar enough with of_graph so can't argue about it but likely =
-is something
-> >>> worth looking at.
-> >>
-> >> I did try implementing something using graph bindings when I first sta=
-rted
-> >> working on this, but it didn't seem to really give us any extra useful
-> >> information. It was just describing connections (endpoints) that I tho=
-ught
-> >> we could just implicitly assume. After this discussion though, maybe w=
-orth
-> >> a second look. I'll have to think about it more.
-> >=20
-> > Could you elaborate on why you think you can assume the connections? Wh=
-at
-> > happens when you have multiple stages of data processing and/or multiple
-> > ADCs in your system? As I've previously said, I work on FPGA stuff, and
-> > everyone here seems to fawn over having <insert custom DSP IP here> in
-> > their data pipelines. I can't imagine it being any different for ADC da=
-ta,
-> > and an io-backend property that doesn't describe how the data flows is
-> > gonna become lacklustre I think.
->=20
-> I was more ignorant back then. :-)
->=20
-> That is is why I said "thought" instead of "think". I am more enlightened=
- now.
-
-Heh, I didn't mean it in a bad way. I just wanted to flesh out why you
-thought that way.
-
-
---N7XUnDPkHiYJyKjd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZl9uPwAKCRB4tDGHoIJi
-0gwfAP0Q76wab6QDgYXt0Men77yN9JCHnEby3Na84zUrczGQrwD/Xx9CS+IrehyC
-9K6TFblM4VF6C/kX3HPENblvp8eKvw4=
-=LGFO
------END PGP SIGNATURE-----
-
---N7XUnDPkHiYJyKjd--
+Thanks,
+Cristian
 
