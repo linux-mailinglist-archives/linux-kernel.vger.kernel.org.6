@@ -1,291 +1,261 @@
-Return-Path: <linux-kernel+bounces-201250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E068FBBD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:48:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE7758FBBD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595391F24E1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74849286AC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C61F14A0BC;
-	Tue,  4 Jun 2024 18:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B858814A4D4;
+	Tue,  4 Jun 2024 18:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y4xYIfv4"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTXX0GZD"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B7913D88D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 18:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445C218028;
+	Tue,  4 Jun 2024 18:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717526903; cv=none; b=iVxBHCB1n4fiOUw/1oXXyMmskLGcK/L5NMQDGFks2ZnYLA5bSlC9uDNGZfkoLDzpjqPNgX9qE7iCFODzy/r2dVLImlxIT9cYi75lw341FbjL+7djX4Zh6EwbrRIU7QY40a4nEdoOl7fs9Doxnv26RRBF2k8+8a8E/vu0ITDgCSo=
+	t=1717526968; cv=none; b=d9NUBy37eQGVe8wedFjhXu9/415zDsnYMoGDwDGt90/3Gf9MVEuHa2BWTh0IQ6txw444eYlgXFOeA+zBbgNazdDb0WZcV+WXBe7kUlchEQT0UAh7MCrmx9MESJOCbrNRUHEHfGCvKuMf4+7lMdY6Kj9YDmz4RaEJ6dW6R4m+Zj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717526903; c=relaxed/simple;
-	bh=jX8UMTejDZxOWy2xvRQrFYx9FLkD8PRvvmu286qo3B8=;
+	s=arc-20240116; t=1717526968; c=relaxed/simple;
+	bh=a1zun8HL6lepv1ujLISq6+xEZ0ZnO4qy/lSJiqqhavo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qAcmG5NKiKYjDDwrFyHqIAWmuXr/DX6UUOlqetkA7v+YZPUxkbHmbbGfK1QecPxbnzM1Xor0bCezk6tfDDX10wBYbsgvtcUTRPUgm/1Ices1J+MrvzFDSx0z3itNKWPTBZpfSEU6rnYIYkaVfVmNFLH24Ch2xE/ZuVSHAKolpjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y4xYIfv4; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f6a270d1b8so34535ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 11:48:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=CmCP2fONInsC6xeyjUvbYM397GES5HFBNZfZNii5ju16yeireA3yk8+3zBN59xxyKv7A5nFst+ATg0rVQ1n2/q3QvnFmMqrzW4Is4VqozVwc/qfVynTga+FovajDKwNJaSaIsVdhukKGv1qqODgMX6zDBvxnjUlFHa3Ss+tktZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTXX0GZD; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so230848a12.0;
+        Tue, 04 Jun 2024 11:49:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717526901; x=1718131701; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717526966; x=1718131766; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GW87wwCX8r5pSoAmwipgb8TBgyr5V1aGTvd+vaaORGA=;
-        b=y4xYIfv4vyvXS0ob6OglaQSyePcU6H4yj4gWdc68Cp3w9wEdasebeKwlixtX0rx7k6
-         LXMlRKc7jLoD5UgDZKDfu6TnL66Hbw+G8YsKhjrBRSFqM0ert5U+mafG3WvA0K/ukRY9
-         P15rOIc1nHDcfPy3Re3wuuZO1m+/tzeoR+2r605wniQhC88tvHi0rW4z13YxL7MLLfZc
-         AvyTM+muDGbR771u6w0Pj1uJu1bislbI7tIaA5yOYc7KB5BhKFaIb60apMhaymZfL/I4
-         n42hBtOUHuDOM8USDn03EuoT31YiM71+eIViry1zJICdxTWqE3uB6aPQ+mVxhQ0YpVmP
-         sLOA==
+        bh=Bb27sFgRlG0Tk9BuaJtsYRuhNJ3jYbY3tEhCWfnKOSg=;
+        b=MTXX0GZDZta/N8f78Syfoxt7FmPFFY9lurDnHtuvlz/LzOtd6tMN6gLVDzfljOk6f/
+         tyDoYVDP6BlWYSQ/nOYEXdSwHoZJOggEFQ4QC+HuS21K96qNma8gKBABIhWwSFO5Vn7a
+         ppM6tGmRaOPstF/qpIQn4XZQ9tIuxp0TZlQHsM9jTGJUR9hoE7+R7dVeg2yed6JLJYO9
+         Z98tE8K+f/ed7TUuJOb4URynwsTkFLtlV/G3R778RuWkkRE8o/MLWinPYn+t6jB41A55
+         YvpR4x/IO2UPEH/MeG03SqALsHofpssYp+RWLfPkhNr4RLCKNX65qbFL6Cj6jX3Q0Cyt
+         PU+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717526901; x=1718131701;
+        d=1e100.net; s=20230601; t=1717526966; x=1718131766;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GW87wwCX8r5pSoAmwipgb8TBgyr5V1aGTvd+vaaORGA=;
-        b=DN62wQeeV36+pkcpxVKTLqeg8obnWqTkucvtGtFjQvtNeZ8B1Xy9iiTAWIw92H5nwU
-         qrHRUjCjPtA4OFyh06tAYJLgm3+oWEQu89oOA34NtUFyr2hJUBJbpGT73zs9+IYYglB7
-         MlP5fSWCemknfIprDkOL3A2JvOLIyGfIJTOUVUdKJgQC4ykFuwuqGORAaB4pyliy5ogg
-         wVGVU/cUaSfkA5Y5eGMq3gRMcyegemXoIw79B2KFX8yHrB3HKx+6Mp0YT3IIJiJkArwh
-         Vl91aHHw/Yd15t59lf8yaDKoQ0cQAG2GiC8vwRgdhQ/4n+2xgKIbwaNj+PQ5ByK1ZVi1
-         tFCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHPNv6xIwVyL93dUapopEBzy9YNjvrnFwA9RUKD2V38F+Kmv8Ud0KGI2F/FVdLegl8EnW6QVVIlU/5FCfPdH3sZFr8Ax7TPjZFPJdy
-X-Gm-Message-State: AOJu0Yzo4xk2jWARQj8RVjoqVSD4+7MmPOFTmxI2lh+/E8mnppvcD6jn
-	9BbCSbvubDrwN4crtZXU/+Rtx9EJfYb1z1G03lbp3PnNtD79iYwEz0KG/as8fuDhNBJgrW5pCTo
-	sajymay65tPJpS66ZQUQ7L63XXelws+BEqqG3
-X-Google-Smtp-Source: AGHT+IHUVUunvHlUcY83hu7GlpidYQUM4eo6IlyvzCk7xmtTg7hH7ekLcv/5Om/sMvyhqe1VhxNDnvG9iTXn6sBiS40=
-X-Received: by 2002:a17:902:da89:b0:1f3:aff:8318 with SMTP id
- d9443c01a7336-1f6a66e4cbbmr289735ad.5.1717526900793; Tue, 04 Jun 2024
- 11:48:20 -0700 (PDT)
+        bh=Bb27sFgRlG0Tk9BuaJtsYRuhNJ3jYbY3tEhCWfnKOSg=;
+        b=HNGKUeRgg4tycRdoqB4dtz/VJiKkle5YLenZ1PxiCVPD+mdXng/Te4iuWxZjDnYG/S
+         kLoGiyKwBvUaSPkM1SB4OD3SkUEyg+4aUX9JGlpt4dVCDMCuMv98rgJSHA/Oq5SKYLNU
+         G1gAl8+/VMN3qaYGqPliqKtUMt1qXqqsDm4Ws+3HCxhXWkI12+L9SGOsiQLo3kJGOA3a
+         3D+fjekOCb6dyzve/ELPw08/vQrZyaVnGEgs2QihDO7b4MjoEXovSk4zydpv96IRl9wG
+         esb65ejYmIjguxhkxxHEkLgYKT7uHD3jLJJuiRDYhWD8EXt/k0oNQVjm74NK5zztTtdG
+         KxUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWO+arFEkNzPZXCESGs5SNTgxIX6M6Z0aF+hmcIRSNBWNZePWCcKN105fu4SUlTMSUiyBO95WlIbS59sYowvxna4OxDuqNkR9wL6vXEFR3HMN8TgAVP/9spp70xfzFfpGW96PsZ0nqbwyWAw==
+X-Gm-Message-State: AOJu0YxFCfedSqOMLWInXKDvrBZMjOO3ssgqKl1ou3oeSbTZCeVzM4X2
+	JCgymRaUSHrRxmOOOSxSvWtJKwahvZC5KQ/1+ZutTBnm/q0uy330BakzAlgZQ4j+tlB4NNTPUfC
+	3857f7tSIqparAO/qVcijCPm+rbs=
+X-Google-Smtp-Source: AGHT+IFWkdL+wQ72daSRO1P7tTzDvc9m9YMF90o5MlhZaIpy3wrX/gSyeDidoV+f0/qTjEPQhAglVyN6XWP5BsXJN00=
+X-Received: by 2002:a50:8a92:0:b0:574:ec3d:262a with SMTP id
+ 4fb4d7f45d1cf-57a8b6a4d4emr430003a12.5.1717526965479; Tue, 04 Jun 2024
+ 11:49:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <23879991.0LEYPuXRzz@milian-workstation> <Zl8bhWfHSXxs35r2@x1> <Zl8g1LxRCYgTSxhy@x1>
-In-Reply-To: <Zl8g1LxRCYgTSxhy@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 4 Jun 2024 11:48:09 -0700
-Message-ID: <CAP-5=fVJRr2Qgf88ugEJ2FGerzKNv_dD6XOT_dSuFyYp2ubwSw@mail.gmail.com>
-Subject: Re: perf 6.9-1 (archlinux) crashes during recording of cycles + raw_syscalls
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Milian Wolff <milian.wolff@kdab.com>, linux-perf-users@vger.kernel.org, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kenel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20240123144543.9405-1-quic_bibekkum@quicinc.com>
+ <20240123144543.9405-4-quic_bibekkum@quicinc.com> <CAF6AEGs3_wBNo58EbGicFoQuq8--fDohTGv1JSFgoViygLS5Lg@mail.gmail.com>
+ <f2222714-1e00-424e-946d-c314d55541b8@quicinc.com> <51b2bd40-888d-4ee4-956f-c5239c5be9e9@linaro.org>
+ <0a867cd1-8d99-495e-ae7e-a097fc9c00e9@quicinc.com> <7140cdb8-eda4-4dcd-b5e3-c4acdd01befb@linaro.org>
+ <omswcicgc2kqd6gp4bebd43sklfs2wqyaorhfyb2wumoeo6v74@gaay3p5m46xi>
+ <CAF6AEGub2b5SRw7kDUGfKQQ35VSsMkQ9LNExSkyHHczdFa2T4Q@mail.gmail.com> <9992067e-51c5-4a55-8d66-55a102a001b6@quicinc.com>
+In-Reply-To: <9992067e-51c5-4a55-8d66-55a102a001b6@quicinc.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 4 Jun 2024 11:49:13 -0700
+Message-ID: <CAF6AEGsxKwzX6it4vipggOdGqNVzPbwMj6a0h871a=GfwUp0Cg@mail.gmail.com>
+Subject: Re: [PATCH v9 3/5] iommu/arm-smmu: introduction of ACTLR for custom
+ prefetcher settings
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jsnitsel@redhat.com, 
+	quic_bjorande@quicinc.com, mani@kernel.org, quic_eberman@quicinc.com, 
+	robdclark@chromium.org, u.kleine-koenig@pengutronix.de, robh@kernel.org, 
+	vladimir.oltean@nxp.com, quic_pkondeti@quicinc.com, quic_molvera@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 7:12=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
+On Thu, May 30, 2024 at 2:22=E2=80=AFAM Bibek Kumar Patro
+<quic_bibekkum@quicinc.com> wrote:
 >
-> On Tue, Jun 04, 2024 at 10:50:00AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Tue, Jun 04, 2024 at 01:44:18PM +0200, Milian Wolff wrote:
-> > > the following command crashes perf for me, is this still an issue ups=
-tream and
-> > > should I report it to arch for backporting? I cannot build the offici=
-al perf/
-> > > core branch, so I am afraid I cannot test it myself there:
 >
-> > > ```
-> > > sudo /usr/bin/perf record -z --call-graph dwarf -e cycles -e
-> > > raw_syscalls:sys_enter ls
-> > > ...
-> > > [ perf record: Woken up 3 times to write data ]
-> > > malloc(): invalid next size (unsorted)
-> > > Aborted
-> > > ```
-> > > Backtrace with GDB + debuginfod:
-> > > ```
-> > > malloc(): invalid next size (unsorted)
 >
-> > I reproduced this all the way back to 6.8, trying to bisect now, thanks
-> > for the report,
+> On 5/28/2024 9:38 PM, Rob Clark wrote:
+> > On Tue, May 28, 2024 at 6:06=E2=80=AFAM Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> >>
+> >> On Tue, May 28, 2024 at 02:59:51PM +0200, Konrad Dybcio wrote:
+> >>>
+> >>>
+> >>> On 5/15/24 15:59, Bibek Kumar Patro wrote:
+> >>>>
+> >>>>
+> >>>> On 5/10/2024 6:32 PM, Konrad Dybcio wrote:
+> >>>>> On 10.05.2024 2:52 PM, Bibek Kumar Patro wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 5/1/2024 12:30 AM, Rob Clark wrote:
+> >>>>>>> On Tue, Jan 23, 2024 at 7:00=E2=80=AFAM Bibek Kumar Patro
+> >>>>>>> <quic_bibekkum@quicinc.com> wrote:
+> >>>>>>>>
+> >>>>>>>> Currently in Qualcomm  SoCs the default prefetch is set to 1 whi=
+ch allows
+> >>>>>>>> the TLB to fetch just the next page table. MMU-500 features ACTL=
+R
+> >>>>>>>> register which is implementation defined and is used for Qualcom=
+m SoCs
+> >>>>>>>> to have a custom prefetch setting enabling TLB to prefetch the n=
+ext set
+> >>>>>>>> of page tables accordingly allowing for faster translations.
+> >>>>>>>>
+> >>>>>>>> ACTLR value is unique for each SMR (Stream matching register) an=
+d stored
+> >>>>>>>> in a pre-populated table. This value is set to the register duri=
+ng
+> >>>>>>>> context bank initialisation.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> >>>>>>>> ---
+> >>>>>
+> >>>>> [...]
+> >>>>>
+> >>>>>>>> +
+> >>>>>>>> +               for_each_cfg_sme(cfg, fwspec, j, idx) {
+> >>>>>>>> +                       smr =3D &smmu->smrs[idx];
+> >>>>>>>> +                       if (smr_is_subset(smr, id, mask)) {
+> >>>>>>>> +                               arm_smmu_cb_write(smmu, cbndx, A=
+RM_SMMU_CB_ACTLR,
+> >>>>>>>> +                                               actlrcfg[i].actl=
+r);
+> >>>>>>>
+> >>>>>>> So, this makes ACTLR look like kind of a FIFO.  But I'm looking a=
+t
+> >>>>>>> downstream kgsl's PRR thing (which we'll need to implement vulkan
+> >>>>>>> sparse residency), and it appears to be wanting to set BIT(5) in =
+ACTLR
+> >>>>>>> to enable PRR.
+> >>>>>>>
+> >>>>>>>            val =3D KGSL_IOMMU_GET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACT=
+LR);
+> >>>>>>>            val |=3D FIELD_PREP(KGSL_IOMMU_ACTLR_PRR_ENABLE, 1);
+> >>>>>>>            KGSL_IOMMU_SET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR, val)=
+;
+> >>>>>>>
+> >>>>>>> Any idea how this works?  And does it need to be done before or a=
+fter
+> >>>>>>> the ACTLR programming done in this patch?
+> >>>>>>>
+> >>>>>>> BR,
+> >>>>>>> -R
+> >>>>>>>
+> >>>>>>
+> >>>>>> Hi Rob,
+> >>>>>>
+> >>>>>> Can you please help provide some more clarification on the FIFO pa=
+rt? By FIFO are you referring to the storing of ACTLR data in the table?
+> >>>>>>
+> >>>>>> Thanks for pointing to the downstream implementation of kgsl drive=
+r for
+> >>>>>> the PRR bit. Since kgsl driver is already handling this PRR bit's
+> >>>>>> setting, this makes setting the PRR BIT(5) by SMMU driver redundan=
+t.
+> >>>>>
+> >>>>> The kgsl driver is not present upstream.
+> >>>>>
+> >>>>
+> >>>> Right kgsl is not present upstream, it would be better to avoid conf=
+iguring the PRR bit and can be handled by kgsl directly in downstream.
+> >>>
+> >>> No! Upstream is not a dumping ground to reduce your technical debt.
+> >>>
+> >>> There is no kgsl driver upstream, so this ought to be handled here, i=
+n
+> >>> the iommu driver (as poking at hardware A from driver B is usually no=
+t good
+> >>> practice).
+> >>
+> >> I'd second the request here. If another driver has to control the
+> >> behaviour of another driver, please add corresponding API for that.
+> >
+> > We have adreno_smmu_priv for this purpose ;-)
+> >
 >
-> Can you please try with the attached and perhaps provide your Tested-by?
->
-> Thanks,
->
-> - Arnaldo
->
-> From ab355e2c6b4cf641a9fff7af38059cf69ac712d5 Mon Sep 17 00:00:00 2001
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date: Tue, 4 Jun 2024 11:00:22 -0300
-> Subject: [PATCH 1/1] Revert "perf record: Reduce memory for recording
->  PERF_RECORD_LOST_SAMPLES event"
->
-> This reverts commit 7d1405c71df21f6c394b8a885aa8a133f749fa22.
+> Thanks Rob for pointing to this private interface structure between smmu
+> and gpu. I think it's similar to what you're trying to implement here
+> https://lore.kernel.org/all/CAF6AEGtm-KweFdMFvahH1pWmpOq7dW_p0Xe_13aHGWt0=
+jSbg8w@mail.gmail.com/#t
+> I can add an api "set_actlr_prr()" with smmu_domain cookie, page pointer
+> as two parameters. This api then can be used by drm/msm driver to carry
+> out the prr implementation by simply calling this.
+> Would this be okay Rob,Konrad,Dmitry?
+> Let me know if any other suggestions you have in mind as well regarding
+> parameters and placement.
 
-I think we should try to fight back reverts when possible. Reverts are
-removing something somebody poured time and attention into. When a
-regression has occurred then I think we should add the regression case
-as a test.
+Hey Bibek, quick question.. is ACTLR preserved across a suspend/resume
+cycle?  Or does it need to be reprogrammed on resume?  And same
+question for these two PRR related regs:
 
-> This causes segfaults in some cases, as reported by Milian:
->
->   ```
->   sudo /usr/bin/perf record -z --call-graph dwarf -e cycles -e
->   raw_syscalls:sys_enter ls
->   ...
->   [ perf record: Woken up 3 times to write data ]
->   malloc(): invalid next size (unsorted)
->   Aborted
->   ```
->
->   Backtrace with GDB + debuginfod:
->
->   ```
->   malloc(): invalid next size (unsorted)
->
->   Thread 1 "perf" received signal SIGABRT, Aborted.
->   __pthread_kill_implementation (threadid=3D<optimized out>, signo=3Dsign=
-o@entry=3D6,
->   no_tid=3Dno_tid@entry=3D0) at pthread_kill.c:44
->   Downloading source file /usr/src/debug/glibc/glibc/nptl/pthread_kill.c
->   44            return INTERNAL_SYSCALL_ERROR_P (ret) ? INTERNAL_SYSCALL_=
-ERRNO
->   (ret) : 0;
->   (gdb) bt
->   #0  __pthread_kill_implementation (threadid=3D<optimized out>,
->   signo=3Dsigno@entry=3D6, no_tid=3Dno_tid@entry=3D0) at pthread_kill.c:4=
-4
->   #1  0x00007ffff6ea8eb3 in __pthread_kill_internal (threadid=3D<optimize=
-d out>,
->   signo=3D6) at pthread_kill.c:78
->   #2  0x00007ffff6e50a30 in __GI_raise (sig=3Dsig@entry=3D6) at ../sysdep=
-s/posix/
->   raise.c:26
->   #3  0x00007ffff6e384c3 in __GI_abort () at abort.c:79
->   #4  0x00007ffff6e39354 in __libc_message_impl (fmt=3Dfmt@entry=3D0x7fff=
-f6fc22ea
->   "%s\n") at ../sysdeps/posix/libc_fatal.c:132
->   #5  0x00007ffff6eb3085 in malloc_printerr (str=3Dstr@entry=3D0x7ffff6fc=
-5850
->   "malloc(): invalid next size (unsorted)") at malloc.c:5772
->   #6  0x00007ffff6eb657c in _int_malloc (av=3Dav@entry=3D0x7ffff6ff6ac0
->   <main_arena>, bytes=3Dbytes@entry=3D368) at malloc.c:4081
->   #7  0x00007ffff6eb877e in __libc_calloc (n=3D<optimized out>,
->   elem_size=3D<optimized out>) at malloc.c:3754
->   #8  0x000055555569bdb6 in perf_session.do_write_header ()
->   #9  0x00005555555a373a in __cmd_record.constprop.0 ()
->   #10 0x00005555555a6846 in cmd_record ()
->   #11 0x000055555564db7f in run_builtin ()
->   #12 0x000055555558ed77 in main ()
->   ```
->
->   Valgrind memcheck:
->   ```
->   =3D=3D45136=3D=3D Invalid write of size 8
->   =3D=3D45136=3D=3D    at 0x2B38A5: perf_event__synthesize_id_sample (in =
-/usr/bin/perf)
+  /* Global SMMU register offsets */
+  #define KGSL_IOMMU_PRR_CFG_LADDR        0x6008
+  #define KGSL_IOMMU_PRR_CFG_UADDR        0x600c
 
-The write that is happening here is because an empty sample except for
-the id value is written out:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/synthetic-events.c?h=3Dperf-tools-next#n1805
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/builtin-record.c?h=3Dperf-tools-next#n1910
-It'd been missed that the sample wasn't quite empty and needed space.
+(ie. high/low 32b of the PRR page)
 
-Rather than making the space 64kb again, can we not use
-perf_event__sample_event_size or some max constant?
+I was starting to type up a patch to add PRR configuration, but
+depending on whether it interacts with suspend/resume, it might be
+better form arm-smmu-qcom.c to just always enable and configure PRR
+(including allocating a page to have an address to program into
+PRR_CFG_LADDR/UADDR), and instead add an interface to return the PRR
+page?  I think there is no harm in unconditionally configuring PRR for
+gpu smmu.
 
-Thanks,
-Ian
+BR,
+-R
 
->   =3D=3D45136=3D=3D    by 0x157069: __cmd_record.constprop.0 (in /usr/bin=
-/perf)
->   =3D=3D45136=3D=3D    by 0x15A845: cmd_record (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x201B7E: run_builtin (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x142D76: main (in /usr/bin/perf)
->   =3D=3D45136=3D=3D  Address 0x6a866a8 is 0 bytes after a block of size 4=
-0 alloc'd
->   =3D=3D45136=3D=3D    at 0x4849BF3: calloc (vg_replace_malloc.c:1675)
->   =3D=3D45136=3D=3D    by 0x3574AB: zalloc (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x1570E0: __cmd_record.constprop.0 (in /usr/bin=
-/perf)
->   =3D=3D45136=3D=3D    by 0x15A845: cmd_record (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x201B7E: run_builtin (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x142D76: main (in /usr/bin/perf)
->   =3D=3D45136=3D=3D
->   =3D=3D45136=3D=3D Syscall param write(buf) points to unaddressable byte=
-(s)
->   =3D=3D45136=3D=3D    at 0x575953D: __libc_write (write.c:26)
->   =3D=3D45136=3D=3D    by 0x575953D: write (write.c:24)
->   =3D=3D45136=3D=3D    by 0x35761F: ion (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x357778: writen (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x1548F7: record__write (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x15708A: __cmd_record.constprop.0 (in /usr/bin=
-/perf)
->   =3D=3D45136=3D=3D    by 0x15A845: cmd_record (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x201B7E: run_builtin (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x142D76: main (in /usr/bin/perf)
->   =3D=3D45136=3D=3D  Address 0x6a866a8 is 0 bytes after a block of size 4=
-0 alloc'd
->   =3D=3D45136=3D=3D    at 0x4849BF3: calloc (vg_replace_malloc.c:1675)
->   =3D=3D45136=3D=3D    by 0x3574AB: zalloc (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x1570E0: __cmd_record.constprop.0 (in /usr/bin=
-/perf)
->   =3D=3D45136=3D=3D    by 0x15A845: cmd_record (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x201B7E: run_builtin (in /usr/bin/perf)
->   =3D=3D45136=3D=3D    by 0x142D76: main (in /usr/bin/perf)
->   =3D=3D45136=3D=3D
->  -----
+> Thanks & regards,
+> Bibek
 >
-> Closes: https://lore.kernel.org/linux-perf-users/23879991.0LEYPuXRzz@mili=
-an-workstation/
-> Reported-by: Milian Wolff <milian.wolff@kdab.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: stable@kernel.org # 6.8+
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/builtin-record.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index 66a3de8ac66186b0..0a8ba1323d64be6b 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -1956,8 +1956,7 @@ static void record__read_lost_samples(struct record=
- *rec)
->
->                                 if (count.lost) {
->                                         if (!lost) {
-> -                                               lost =3D zalloc(sizeof(*l=
-ost) +
-> -                                                             session->ma=
-chines.host.id_hdr_size);
-> +                                               lost =3D zalloc(PERF_SAMP=
-LE_MAX_SIZE);
->                                                 if (!lost) {
->                                                         pr_debug("Memory =
-allocation failed\n");
->                                                         return;
-> @@ -1973,8 +1972,7 @@ static void record__read_lost_samples(struct record=
- *rec)
->                 lost_count =3D perf_bpf_filter__lost_count(evsel);
->                 if (lost_count) {
->                         if (!lost) {
-> -                               lost =3D zalloc(sizeof(*lost) +
-> -                                             session->machines.host.id_h=
-dr_size);
-> +                               lost =3D zalloc(PERF_SAMPLE_MAX_SIZE);
->                                 if (!lost) {
->                                         pr_debug("Memory allocation faile=
-d\n");
->                                         return;
-> --
-> 2.45.1
->
+> > BR,
+> > -R
+> >
+> >>>
+> >>>>
+> >>>>>> Thanks for bringing up this point.
+> >>>>>> I will send v10 patch series removing this BIT(5) setting from the=
+ ACTLR
+> >>>>>> table.
+> >>>>>
+> >>>>> I think it's generally saner to configure the SMMU from the SMMU dr=
+iver..
+> >>>>
+> >>>> Yes, agree on this. But since PRR bit is not directly related to SMM=
+U
+> >>>> configuration so I think it would be better to remove this PRR bit
+> >>>> setting from SMMU driver based on my understanding.
+> >>>
+> >>> Why is it not related? We still don't know what it does.
+> >>>
+> >>> Konrad
+> >>
+> >> --
+> >> With best wishes
+> >> Dmitry
 
