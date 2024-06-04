@@ -1,94 +1,145 @@
-Return-Path: <linux-kernel+bounces-201076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A648C8FB8FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B910F8FB901
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C8FB1F22721
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C001C21C0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F9F1487DF;
-	Tue,  4 Jun 2024 16:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B259E1487DD;
+	Tue,  4 Jun 2024 16:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPcmO3Bx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C0A8F6C;
-	Tue,  4 Jun 2024 16:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E446713A25B;
+	Tue,  4 Jun 2024 16:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518687; cv=none; b=C5Nm26iSdyrt5+VgvIpZ6Qpr9miSS66C9lKihbXpwBuVBMob0lwQeXQeJhLcvvtNIdyP9jMX2DpLHfbnExOm97D1uFJeeql7GEw7XtHYtSXi/DVAkrF8wHuqRWBYbPq2VHL9qV09z1+VaeQ6jLAOgSmxAVkp5xHgHp5M4ZMlASE=
+	t=1717518697; cv=none; b=S0QZCu99U/Kjt9JfniFL5De5kM2OHnlCy4BubgNa9Hdo0Sq18LsJC5OF2p4BmYdGijfofnUQAlsDTo3d1iYSjYR5JGOF9woTyNapA8Gfyou1BfwE5t2JH8XlP3Kl7R+sd6pXU3u7xGSr0eFr/V1VF+cmLXfXfAJ0fqgG9TALYz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518687; c=relaxed/simple;
-	bh=goD58epB5eWbLQiw9SXNOQ0RYoZ4dDRcRSIUQ2Ndgu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MxaW0tHPoXAFEDFEyN2fdpFEoUjs3YsapR9A3N+ikI/MSodb0LSDH7P9aWSht1CLdlisrXNUrKxHnXgF634FLvODXiasplyrM6+D3BvW1Cvodzcc2HVRiiiofIxZ5JKgHtlOcdw1JYxBGjVpjNkpfQN6YTHqS/+1D63rpDdXU9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BE72C2BBFC;
-	Tue,  4 Jun 2024 16:31:24 +0000 (UTC)
-Date: Tue, 4 Jun 2024 12:31:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH v3 00/27] function_graph: Allow multiple users for
- function graph tracing
-Message-ID: <20240604123124.456d19cf@gandalf.local.home>
-In-Reply-To: <Zl8oWNhkEPleJ3B_@J2N7QTR9R3>
-References: <20240603190704.663840775@goodmis.org>
-	<20240604081850.59267aa9@rorschach.local.home>
-	<Zl8oWNhkEPleJ3B_@J2N7QTR9R3>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717518697; c=relaxed/simple;
+	bh=gx2z9MIvVzpD3fMjmYWHHK/bgF7kgmwdQt0O+eHtnPA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=mGJnSltQUs9EwuJDW+xoTjwVk1LYFWxMWZ8u9BvmU2U+yPgzkwweG1FmPos+Cz7ithlTd1jvJp3TDxKIaQswWJH2oVx//zdKIaaZefRR34V/s91QZ6Kf/whXKjPw1UFAJ041EbVTkgjSr4eFUQih/yQtNFqdvbQLSKQynzZttNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPcmO3Bx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F3C9C2BBFC;
+	Tue,  4 Jun 2024 16:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717518696;
+	bh=gx2z9MIvVzpD3fMjmYWHHK/bgF7kgmwdQt0O+eHtnPA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=qPcmO3Bxoyn5nW9FJUB4gxkjQpxX+6MmsVqL8SQ8jYONwGociecl8XCM1oZL7NnUQ
+	 DBsrr/5TLyue1SrorVFuOlrnnS2OIcUe5hu9mHCBgNBihvWPKweMj3B4IUq591MnMx
+	 W2CTYN+i50vr9Uc1+vHPPPt/huq1+i/r4zlImccg67nIRf5AajldRibrI7kbddohgW
+	 93LMSj80l9g7a7OctQgfzbiklUsN+338LZ8AGvPAc9a2gcOzHcnm+zosnM/8ynL/hW
+	 4tkEh80acprZXpbSuh3aEP7uAfsp+CVPXWSlMIpbiB/iUuEOj1CJEo2oWW9v9JQ29K
+	 BOQ4770sdIivg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Jun 2024 19:31:33 +0300
+Message-Id: <D1RDKBAGB7DD.CML0Z8K8Z5KI@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <lukas@wunner.de>
+Subject: Re: [PATCH 1/2] crypto: ecdsa - Use ecc_digits_from_bytes to create
+ hash digits array
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>, <keyrings@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <herbert@gondor.apana.org.au>,
+ <davem@davemloft.net>
+X-Mailer: aerc 0.17.0
+References: <20240529230827.379111-1-stefanb@linux.ibm.com>
+ <20240529230827.379111-2-stefanb@linux.ibm.com>
+ <D1MQBJSYUBRS.12KH2S8FUK0XS@kernel.org>
+ <899c3637-dc2a-4c73-9b8a-91e7b4da1638@linux.ibm.com>
+In-Reply-To: <899c3637-dc2a-4c73-9b8a-91e7b4da1638@linux.ibm.com>
 
-On Tue, 4 Jun 2024 15:44:40 +0100
-Mark Rutland <mark.rutland@arm.com> wrote:
+On Thu May 30, 2024 at 3:24 PM EEST, Stefan Berger wrote:
+>
+>
+> On 5/30/24 01:28, Jarkko Sakkinen wrote:
+> > On Thu May 30, 2024 at 2:08 AM EEST, Stefan Berger wrote:
+> >> Since ecc_digits_from_bytes will provide zeros when an insufficient nu=
+mber
+> >> of bytes are passed in the input byte array, use it to create the hash
+> >> digits directly from the input byte array. This avoids going through a=
+n
+> >> intermediate byte array (rawhash) that has the first few bytes filled =
+with
+> >> zeros.
+> >>
+> >> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> >> ---
+> >>   crypto/ecdsa.c | 17 ++++-------------
+> >>   1 file changed, 4 insertions(+), 13 deletions(-)
+> >>
+> >> diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
+> >> index 258fffbf623d..fa029f36110b 100644
+> >> --- a/crypto/ecdsa.c
+> >> +++ b/crypto/ecdsa.c
+> >> @@ -142,10 +142,8 @@ static int ecdsa_verify(struct akcipher_request *=
+req)
+> >>   	struct ecdsa_signature_ctx sig_ctx =3D {
+> >>   		.curve =3D ctx->curve,
+> >>   	};
+> >> -	u8 rawhash[ECC_MAX_BYTES];
+> >>   	u64 hash[ECC_MAX_DIGITS];
+> >>   	unsigned char *buffer;
+> >> -	ssize_t diff;
+> >>   	int ret;
+> >>  =20
+> >>   	if (unlikely(!ctx->pub_key_set))
+> >> @@ -164,18 +162,11 @@ static int ecdsa_verify(struct akcipher_request =
+*req)
+> >>   	if (ret < 0)
+> >>   		goto error;
+> >>  =20
+> >> -	/* if the hash is shorter then we will add leading zeros to fit to n=
+digits */
+> >> -	diff =3D bufsize - req->dst_len;
+> >> -	if (diff >=3D 0) {
+> >> -		if (diff)
+> >> -			memset(rawhash, 0, diff);
+> >> -		memcpy(&rawhash[diff], buffer + req->src_len, req->dst_len);
+> >> -	} else if (diff < 0) {
+> >> -		/* given hash is longer, we take the left-most bytes */
+> >> -		memcpy(&rawhash, buffer + req->src_len, bufsize);
+> >> -	}
+> >> +	if (bufsize > req->dst_len)
+> >> +		bufsize =3D req->dst_len;
+> >>  =20
+> >> -	ecc_swap_digits((u64 *)rawhash, hash, ctx->curve->g.ndigits);
+> >> +	ecc_digits_from_bytes(buffer + req->src_len, bufsize,
+> >> +			      hash, ctx->curve->g.ndigits);
+> >>  =20
+> >>   	ret =3D _ecdsa_verify(ctx, hash, sig_ctx.r, sig_ctx.s);
+> >>  =20
+> >=20
+> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> >=20
+> > I don't think it'd be even nit-picking to say that the function
+> > called would really need kdoc. I had to spend about 20 minutes
+> > to reacall ecc_digits_from_bytes().
+>
+> Here's the file with all the kdocs:=20
+> https://elixir.bootlin.com/linux/v6.10-rc1/source/include/crypto/internal=
+/ecc.h#L67
 
-> Hi Steve, Masami,
-> 
-> On Tue, Jun 04, 2024 at 08:18:50AM -0400, Steven Rostedt wrote:
-> > 
-> > Masami,
-> > 
-> > This series passed all my tests, are you comfortable with me pushing
-> > them to linux-next?  
-> 
-> As a heads-up (and not to block pushing this into next), I just gave
-> this a spin on arm64 atop v6.10-rc2, and running the selftests I see:
-> 
-> 	ftrace - function pid filters
-> 	(instance)  ftrace - function pid filters
-> 
-> ... both go from [PASS] to [FAIL].
-> 
-> Everything else looks good -- I'll go dig into why that's happening.
-> 
-> It's possible that's just something odd with the filesystem I'm using
-> (e.g. the wnership test failed because this lacks 'stat').
+LOL, sorry I forgot this. I think this was the 2nd time I complained
+about this ;-) I'm sorry, yeah that WFM.
 
-Thanks for the update. I could be something I missed in patch 13 that had
-to put back the pid code.
+Just not used to this convention but I don't mind actually if it is
+that way.
 
-There may have been something arch specific that I'm unaware about. I'll
-look at that deeper.
-
--- Steve
+BR, Jarkko
 
