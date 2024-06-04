@@ -1,262 +1,252 @@
-Return-Path: <linux-kernel+bounces-201129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE5B8FB9F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9128FBA62
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 838EEB274EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:07:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2D88B281A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D145E14AD1A;
-	Tue,  4 Jun 2024 17:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B06B149DED;
+	Tue,  4 Jun 2024 17:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bb1daZkI"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="fRYQaIBk"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E082214A4EF;
-	Tue,  4 Jun 2024 17:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5D814A4D9;
+	Tue,  4 Jun 2024 17:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717520751; cv=none; b=Jy+KwR096fstTE/GISumt84MbwXGhV5ogRXbwx8C0r3X31Czcgalxtq/lOT3hCh+hjsGeEaYj53voXKoxnPK7zsgs096rZByj903g6/viSR1onql+rKV5Lqd6aInK+/+JGUxj+NZ2no23ItzZb4/k/bjnwwoQe4UrxoG3QltKTg=
+	t=1717522036; cv=none; b=ZTYy3EoUxTLC57cHdPjVPEpJyTqa9Db0SZCOXbuRqQJaubVhUCJNRj/hlyuoqimBLvVnW64+SEPAB8aBO/tE7pwaJ9XOtMGM4TIfRI00zhS6WuyJLrFhcQwD7tIARDCCZsmtQM+SS34Em5hoFzmyS5yGq9Bx9lYSJadnhwXPIsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717520751; c=relaxed/simple;
-	bh=S4zI23jXY5UCYhcYcLEHzR39qEGwQxMYzl57igXjnSE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=daTE/BGla4XEux5xJNlng3Js234yrT/sxMCVcN3HKo+hWRaHsYbMCFb8fwD/ivH4rZHnXdREY3t4N5b/82oZo/MIIHJoMC+sa6wx8EYamiy0C7kONQiwpVrCZ85g0KvRRWyl5BfHuuC8CJLqNqZAK3cEgxCuMV+85GI06fbGJno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bb1daZkI; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35e573c0334so10792f8f.1;
-        Tue, 04 Jun 2024 10:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717520748; x=1718125548; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mGYHbF59iZQUuSem60N9wQ2sz32IfeHdhp9ulRawMZ0=;
-        b=Bb1daZkIow0M7lYSmG9OSccT08lG2QKq2HZetgP6UH8dyInZJ+vMnQcgDDxq/zbloT
-         QrlXBN//L2KUrZHeTAGCyyxUvE+vLUX+Ehdmm8/Hym5S58OcAyT6cFAN9sW2nTN3ompb
-         OQCg2678jSbsyWu3/+9yOoLhcnhrUsxy9uR/JEXLSU3z2K6RUgbSuIPbUIiAK1JpPGPj
-         2Lqy5s89JNFTi0ILMbijRN9J+oJpz8QzWZn5K92YWTggtH4431TzcIiyOg1X4zQpHDOC
-         2NVkl0CQxFT+tMD4ILKj0NRZj1GCjso62q6wrU/p08hmOjgblVADcuTZus0xcJyfRGNN
-         AyZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717520748; x=1718125548;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mGYHbF59iZQUuSem60N9wQ2sz32IfeHdhp9ulRawMZ0=;
-        b=WnShLC7kDvY2YbtTtQpduiDyWdN/mze32JlrevfI1aHL3xK5/vt/JYF0myAXCTBU9Q
-         G5GBpd31Xjjmuwtw5ftF7yyCR15NQkgj/glusQAnJlIPMEJTMCqZTz1iEQTI4bCXl+Vr
-         knAWE9GlUbDlJjJXrZYpXb3RPOJp0fcGwzfXSdi6YSYRwgkbMlnKuRl5rEncQQDcfg5N
-         SSL//ARj9wtnGdi7VLmHPp+ijrGDHqii2TrPlHDgSfGicKhe7kFydwV0R62niVjEnyvG
-         6TEul4FKEWP7LpNqPSsXSD9LparDCSqkVbvbMLSmQ6pRgndxog85VivQjjpq4xMBHLEw
-         ikCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhaMT1vi7BHk6MI7adPyc5S3Y++XqLMNuESYqy6skauCh5ZoIyRuZOcITnMc0mviqew6NLdHq16gpeknXbUA9ctHawWrUG1oGoh1Fhks+c/vrkfSkdQOEy8WE6/mOUGZCJCzD/zNXajX24Z8f2qCsX4dcNzjr/93dD7x06X+57mbzlqvW/+qBFcklxQO2pkg1CGiwma5lO9906H41bQzVHu/Sw3e1Tzara
-X-Gm-Message-State: AOJu0Yz/644BgA8JbjuJOmdXpkXicoawmhR04lkQvyop9qFJzJ0VPRMF
-	ZEMJMaD0H0G5+3NuyvXYZdh/k3jLx4KL4Yi/dzGewj3CrD3ASJv7AyTD2/4D
-X-Google-Smtp-Source: AGHT+IGogEfmHMC1iFii2yLHXYzFwHrA3TajAr+bExLnDU4vduJgzcWcl+etyGfgDSl6SLve9BKF0A==
-X-Received: by 2002:adf:e805:0:b0:35e:537c:b1ac with SMTP id ffacd0b85a97d-35e7c59148fmr3162243f8f.34.1717520748226;
-        Tue, 04 Jun 2024 10:05:48 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0f2asm12244077f8f.3.2024.06.04.10.05.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 10:05:47 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 5/5] serial: sh-sci: Add support for RZ/V2H(P) SoC
-Date: Tue,  4 Jun 2024 18:05:13 +0100
-Message-Id: <20240604170513.522631-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240604170513.522631-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240604170513.522631-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1717522036; c=relaxed/simple;
+	bh=AhkZuPpHQ3cux+x+mZLwO0uQb8cbs9T4dTiGLFrCc7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RSzuro6o8CbI6yLOVI/0doRhMsDDDxK5FACmwkgH+MLRP7Dx9yT+9YqW87JB+/BbvHHM/m8oaQPWN88PxJH3sGy63Wm9C43MQ02dG4H+QHX+fESEhr+9uWWy4NKFWaxC9/TRDaTqzRcB2+++ye8bz6naufQc7pLXbbvZJ8aoq+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=fRYQaIBk; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 9C08688481;
+	Tue,  4 Jun 2024 19:27:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1717522032;
+	bh=3NtwaV0lVIbVvfefAVmPkJRULKlNZkvRewz4sAE2MzQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fRYQaIBkivP15jB/9X0FMmdKthdY+zvzdWW92V4p6yGsqzOGdWqpb9FRfQKpDSLAd
+	 Y51mmCbzifnmHvC0MvNGQ6pmx1jLWIQNuclUNV68E+1Zq1YuNPBX8AFccRjsAwREV9
+	 MWLZIRuIJPS5m4BtikgjEzKEPzJe9lSq+N0nc74/+civjx6Tqv2Junym+QPeZuzX5+
+	 cNLw5XdO80KCpfw8zO5E13IvyO+poL6K3ptYTQmKt3WokfCYL4rCC9NwiJx0m4RoZz
+	 jB1ucAFMzuLhRdH2aJy0/hT13GDA5GwizjfWubH/taAzqnuZlYWM/jQlUZx6GIwrwd
+	 6lWUekjtvuF1g==
+Message-ID: <3c40352b-ad69-4847-b665-e7b2df86a684@denx.de>
+Date: Tue, 4 Jun 2024 19:05:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 07/11] net: ethernet: stmmac: add management of
+ stm32mp13 for stm32
+To: Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
+ <20240604143502.154463-8-christophe.roullier@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240604143502.154463-8-christophe.roullier@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 6/4/24 4:34 PM, Christophe Roullier wrote:
+> Add Ethernet support for STM32MP13.
+> STM32MP13 is STM32 SOC with 2 GMACs instances.
+> GMAC IP version is SNPS 4.20.
+> GMAC IP configure with 1 RX and 1 TX queue.
+> DMA HW capability register supported
+> RX Checksum Offload Engine supported
+> TX Checksum insertion supported
+> Wake-Up On Lan supported
+> TSO supported
+> 
+> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+> ---
+>   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 50 +++++++++++++++----
+>   1 file changed, 40 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> index bed2be129b2d2..e59f8a845e01e 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+> @@ -84,12 +84,14 @@ struct stm32_dwmac {
+>   	struct clk *clk_eth_ck;
+>   	struct clk *clk_ethstp;
+>   	struct clk *syscfg_clk;
+> +	bool is_mp13;
+>   	int ext_phyclk;
+>   	int enable_eth_ck;
+>   	int eth_clk_sel_reg;
+>   	int eth_ref_clk_sel_reg;
+>   	int irq_pwr_wakeup;
+>   	u32 mode_reg;		 /* MAC glue-logic mode register */
+> +	u32 mode_mask;
+>   	struct regmap *regmap;
+>   	u32 speed;
+>   	const struct stm32_ops *ops;
+> @@ -102,8 +104,8 @@ struct stm32_ops {
+>   	void (*resume)(struct stm32_dwmac *dwmac);
+>   	int (*parse_data)(struct stm32_dwmac *dwmac,
+>   			  struct device *dev);
+> -	u32 syscfg_eth_mask;
+>   	bool clk_rx_enable_in_suspend;
+> +	u32 syscfg_clr_off;
+>   };
+>   
+>   static int stm32_dwmac_clk_enable(struct stm32_dwmac *dwmac, bool resume)
+> @@ -227,7 +229,14 @@ static int stm32mp1_configure_pmcr(struct plat_stmmacenet_data *plat_dat)
+>   
+>   	switch (plat_dat->mac_interface) {
+>   	case PHY_INTERFACE_MODE_MII:
+> -		val = SYSCFG_PMCR_ETH_SEL_MII;
+> +		/*
+> +		 * STM32MP15xx supports both MII and GMII, STM32MP13xx MII only.
+> +		 * SYSCFG_PMCSETR ETH_SELMII is present only on STM32MP15xx and
+> +		 * acts as a selector between 0:GMII and 1:MII. As STM32MP13xx
+> +		 * supports only MII, ETH_SELMII is not present.
+> +		 */
+> +		if (!dwmac->is_mp13)	/* Select MII mode on STM32MP15xx */
+> +			val |= SYSCFG_PMCR_ETH_SEL_MII;
+>   		break;
+>   	case PHY_INTERFACE_MODE_GMII:
+>   		val = SYSCFG_PMCR_ETH_SEL_GMII;
+> @@ -256,13 +265,16 @@ static int stm32mp1_configure_pmcr(struct plat_stmmacenet_data *plat_dat)
+>   
+>   	dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
+>   
+> +	/* Shift value at correct ethernet MAC offset in SYSCFG_PMCSETR */
+> +	val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
+> +
+>   	/* Need to update PMCCLRR (clear register) */
+> -	regmap_write(dwmac->regmap, reg + SYSCFG_PMCCLRR_OFFSET,
+> -		     dwmac->ops->syscfg_eth_mask);
+> +	regmap_write(dwmac->regmap, dwmac->ops->syscfg_clr_off,
+> +		     dwmac->mode_mask);
+>   
+>   	/* Update PMCSETR (set register) */
+>   	return regmap_update_bits(dwmac->regmap, reg,
+> -				 dwmac->ops->syscfg_eth_mask, val);
+> +				 dwmac->mode_mask, val);
+>   }
+>   
+>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+> @@ -303,7 +315,7 @@ static int stm32mcu_set_mode(struct plat_stmmacenet_data *plat_dat)
+>   	dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
+>   
+>   	return regmap_update_bits(dwmac->regmap, reg,
+> -				 dwmac->ops->syscfg_eth_mask, val << 23);
+> +				 SYSCFG_MCU_ETH_MASK, val << 23);
+>   }
+>   
+>   static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac, bool suspend)
+> @@ -348,8 +360,15 @@ static int stm32_dwmac_parse_data(struct stm32_dwmac *dwmac,
+>   		return PTR_ERR(dwmac->regmap);
+>   
+>   	err = of_property_read_u32_index(np, "st,syscon", 1, &dwmac->mode_reg);
+> -	if (err)
+> +	if (err) {
+>   		dev_err(dev, "Can't get sysconfig mode offset (%d)\n", err);
+> +		return err;
+> +	}
+> +
+> +	dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+> +	err = of_property_read_u32_index(np, "st,syscon", 2, &dwmac->mode_mask);
+> +	if (err)
+> +		pr_debug("Warning sysconfig register mask not set\n");
 
-Add serial support for RZ/V2H(P) SoC with earlycon.
+I _think_ you need to left-shift the mode mask by 8 for STM32MP13xx 
+second GMAC somewhere in here, right ?
 
-The SCIF interface in the Renesas RZ/V2H(P) is similar to that available
-in the RZ/G2L (R9A07G044) SoC, with the following differences:
+>   	return err;
+>   }
+> @@ -361,6 +380,8 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
+>   	struct device_node *np = dev->of_node;
+>   	int err = 0;
+>   
+> +	dwmac->is_mp13 = of_device_is_compatible(np, "st,stm32mp13-dwmac");
 
-- RZ/V2H(P) SoC has three additional interrupts: one for Tx end/Rx ready
-  and two for Rx and Tx buffer full, all of which are edge-triggered.
-- RZ/V2H(P) supports asynchronous mode, whereas RZ/G2L supports both
-  synchronous and asynchronous modes.
-- There are differences in the configuration of certain registers such
-  as SCSMR, SCFCR, and SCSPTR between the two SoCs.
+You could make is_mp13 part of struct stm32_ops {} just like 
+syscfg_clr_off is part of struct stm32_ops {} .
 
-To handle these differences on RZ/V2H(P) SoC SCIx_RZV2H_SCIF_REGTYPE
-is added.
+>   	/* Ethernet PHY have no crystal */
+>   	dwmac->ext_phyclk = of_property_read_bool(np, "st,ext-phyclk");
+>   
+> @@ -540,8 +561,7 @@ static SIMPLE_DEV_PM_OPS(stm32_dwmac_pm_ops,
+>   	stm32_dwmac_suspend, stm32_dwmac_resume);
+>   
+>   static struct stm32_ops stm32mcu_dwmac_data = {
+> -	.set_mode = stm32mcu_set_mode,
+> -	.syscfg_eth_mask = SYSCFG_MCU_ETH_MASK
+> +	.set_mode = stm32mcu_set_mode
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Hi Geert, Ive restored your RB tag after rebase (as the changes were trival)
-hope that's OK.
+It is not necessary to remove the trailing comma ','
 
-Cheers, Prabhakar
+>   };
+>   
+>   static struct stm32_ops stm32mp1_dwmac_data = {
+> @@ -549,13 +569,23 @@ static struct stm32_ops stm32mp1_dwmac_data = {
+>   	.suspend = stm32mp1_suspend,
+>   	.resume = stm32mp1_resume,
+>   	.parse_data = stm32mp1_parse_data,
+> -	.syscfg_eth_mask = SYSCFG_MP1_ETH_MASK,
+> +	.syscfg_clr_off = 0x44,
+> +	.clk_rx_enable_in_suspend = true
+> +};
+> +
+> +static struct stm32_ops stm32mp13_dwmac_data = {
+> +	.set_mode = stm32mp1_set_mode,
+> +	.suspend = stm32mp1_suspend,
+> +	.resume = stm32mp1_resume,
+> +	.parse_data = stm32mp1_parse_data,
+> +	.syscfg_clr_off = 0x08,
+>   	.clk_rx_enable_in_suspend = true
+>   };
+>   
+>   static const struct of_device_id stm32_dwmac_match[] = {
+>   	{ .compatible = "st,stm32-dwmac", .data = &stm32mcu_dwmac_data},
+>   	{ .compatible = "st,stm32mp1-dwmac", .data = &stm32mp1_dwmac_data},
+> +	{ .compatible = "st,stm32mp13-dwmac", .data = &stm32mp13_dwmac_data},
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(of, stm32_dwmac_match);
 
-v4 -> v5
-- Rebased changes on top of v6.10-rc2
-- Included RB tag from Geert
+This patch definitely looks MUCH better than what this series started 
+with, it is much easier to grasp the MP13 specific changes.
 
-v3 -> v4
-- Added SCIx_RZV2H_SCIF_REGTYPE to handle the differences on the
-  RZ/V2H(P) SoC
-
-v2 -> v3
-- new patch
----
- drivers/tty/serial/sh-sci.c | 55 +++++++++++++++++++++++++++++++++----
- include/linux/serial_sci.h  |  1 +
- 2 files changed, 51 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index f738980a8b2c..b80e9a528e17 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -317,6 +317,37 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 		.error_clear = SCIF_ERROR_CLEAR,
- 	},
- 
-+	/*
-+	 * The "SCIF" that is in RZ/V2H(P) SoC is similar to one found on RZ/G2L SoC
-+	 * with below differences,
-+	 * - Break out of interrupts are different: ERI, BRI, RXI, TXI, TEI, DRI,
-+	 *   TEI-DRI, RXI-EDGE and TXI-EDGE.
-+	 * - SCSMR register does not have CM bit (BIT(7)) ie it does not support synchronous mode.
-+	 * - SCFCR register does not have SCFCR_MCE bit.
-+	 * - SCSPTR register has only bits SCSPTR_SPB2DT and SCSPTR_SPB2IO.
-+	 */
-+	[SCIx_RZV2H_SCIF_REGTYPE] = {
-+		.regs = {
-+			[SCSMR]		= { 0x00, 16 },
-+			[SCBRR]		= { 0x02,  8 },
-+			[SCSCR]		= { 0x04, 16 },
-+			[SCxTDR]	= { 0x06,  8 },
-+			[SCxSR]		= { 0x08, 16 },
-+			[SCxRDR]	= { 0x0a,  8 },
-+			[SCFCR]		= { 0x0c, 16 },
-+			[SCFDR]		= { 0x0e, 16 },
-+			[SCSPTR]	= { 0x10, 16 },
-+			[SCLSR]		= { 0x12, 16 },
-+			[SEMR]		= { 0x14, 8 },
-+		},
-+		.fifosize = 16,
-+		.overrun_reg = SCLSR,
-+		.overrun_mask = SCLSR_ORER,
-+		.sampling_rate_mask = SCI_SR(32),
-+		.error_mask = SCIF_DEFAULT_ERROR_MASK,
-+		.error_clear = SCIF_ERROR_CLEAR,
-+	},
-+
- 	/*
- 	 * Common SH-3 SCIF definitions.
- 	 */
-@@ -757,7 +788,7 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
- 		}
- 		sci_serial_out(port, SCPDR, data);
- 		sci_serial_out(port, SCPCR, ctrl);
--	} else if (sci_getreg(port, SCSPTR)->size) {
-+	} else if (sci_getreg(port, SCSPTR)->size && s->cfg->regtype != SCIx_RZV2H_SCIF_REGTYPE) {
- 		u16 status = sci_serial_in(port, SCSPTR);
- 
- 		/* RTS# is always output; and active low, unless autorts */
-@@ -2124,8 +2155,9 @@ static void sci_set_mctrl(struct uart_port *port, unsigned int mctrl)
- 
- 	if (!(mctrl & TIOCM_RTS)) {
- 		/* Disable Auto RTS */
--		sci_serial_out(port, SCFCR,
--			       sci_serial_in(port, SCFCR) & ~SCFCR_MCE);
-+		if (s->cfg->regtype != SCIx_RZV2H_SCIF_REGTYPE)
-+			sci_serial_out(port, SCFCR,
-+				       sci_serial_in(port, SCFCR) & ~SCFCR_MCE);
- 
- 		/* Clear RTS */
- 		sci_set_rts(port, 0);
-@@ -2137,8 +2169,9 @@ static void sci_set_mctrl(struct uart_port *port, unsigned int mctrl)
- 		}
- 
- 		/* Enable Auto RTS */
--		sci_serial_out(port, SCFCR,
--			       sci_serial_in(port, SCFCR) | SCFCR_MCE);
-+		if (s->cfg->regtype != SCIx_RZV2H_SCIF_REGTYPE)
-+			sci_serial_out(port, SCFCR,
-+				       sci_serial_in(port, SCFCR) | SCFCR_MCE);
- 	} else {
- 		/* Set RTS */
- 		sci_set_rts(port, 1);
-@@ -3225,6 +3258,10 @@ static const struct of_device_id of_sci_match[] __maybe_unused = {
- 		.compatible = "renesas,scif-r9a07g044",
- 		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZ_SCIFA_REGTYPE),
- 	},
-+	{
-+		.compatible = "renesas,scif-r9a09g057",
-+		.data = SCI_OF_DATA(PORT_SCIF, SCIx_RZV2H_SCIF_REGTYPE),
-+	},
- 	/* Family-specific types */
- 	{
- 		.compatible = "renesas,rcar-gen1-scif",
-@@ -3533,6 +3570,13 @@ static int __init rzscifa_early_console_setup(struct earlycon_device *device,
- 	return early_console_setup(device, PORT_SCIF);
- }
- 
-+static int __init rzv2hscif_early_console_setup(struct earlycon_device *device,
-+						const char *opt)
-+{
-+	port_cfg.regtype = SCIx_RZV2H_SCIF_REGTYPE;
-+	return early_console_setup(device, PORT_SCIF);
-+}
-+
- static int __init scifa_early_console_setup(struct earlycon_device *device,
- 					  const char *opt)
- {
-@@ -3553,6 +3597,7 @@ OF_EARLYCON_DECLARE(sci, "renesas,sci", sci_early_console_setup);
- OF_EARLYCON_DECLARE(scif, "renesas,scif", scif_early_console_setup);
- OF_EARLYCON_DECLARE(scif, "renesas,scif-r7s9210", rzscifa_early_console_setup);
- OF_EARLYCON_DECLARE(scif, "renesas,scif-r9a07g044", rzscifa_early_console_setup);
-+OF_EARLYCON_DECLARE(scif, "renesas,scif-r9a09g057", rzv2hscif_early_console_setup);
- OF_EARLYCON_DECLARE(scifa, "renesas,scifa", scifa_early_console_setup);
- OF_EARLYCON_DECLARE(scifb, "renesas,scifb", scifb_early_console_setup);
- OF_EARLYCON_DECLARE(hscif, "renesas,hscif", hscif_early_console_setup);
-diff --git a/include/linux/serial_sci.h b/include/linux/serial_sci.h
-index 1c89611e0e06..0f2f50b8d28e 100644
---- a/include/linux/serial_sci.h
-+++ b/include/linux/serial_sci.h
-@@ -37,6 +37,7 @@ enum {
- 	SCIx_SH7705_SCIF_REGTYPE,
- 	SCIx_HSCIF_REGTYPE,
- 	SCIx_RZ_SCIFA_REGTYPE,
-+	SCIx_RZV2H_SCIF_REGTYPE,
- 
- 	SCIx_NR_REGTYPES,
- };
--- 
-2.34.1
-
+You could possibly improve this further and split the 
+dwmac->ops->syscfg_eth_mask to dwmac->mode_mask conversion into separate 
+preparatory patch (as a 6.5/11 in context of this series), and then add 
+the few MP13 changes on top (as 7/11 patch).
 
