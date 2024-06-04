@@ -1,312 +1,205 @@
-Return-Path: <linux-kernel+bounces-200045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B5B8FA9C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6838FA9C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C9541C22B61
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:14:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F0D31C235BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E0A143884;
-	Tue,  4 Jun 2024 05:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D03713E020;
+	Tue,  4 Jun 2024 05:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NgWKX8v6"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="WTCo9tNe"
+Received: from SEVP216CU002.outbound.protection.outlook.com (mail-koreacentralazon11022018.outbound.protection.outlook.com [52.101.154.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8859513DBAA;
-	Tue,  4 Jun 2024 05:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717477854; cv=none; b=NKYiN2BvM9dYR9OxO+vrZx/p9gpXhRFMXP7tUJk10fmpiSyYJvyf1TC8pOITXj8oJDmFyb0Jxi7gCr4ETRp3a94EsjXnpXLmoMa2QkCvnnpliJujloWHR8XSEFPR92vUGI9kI3ifHnNZkypScBrMfuN9CGjFAHcg8A4zzPfraAI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717477854; c=relaxed/simple;
-	bh=yD6QlTva6OVI3xK1DDtiQ1txjxXIzA1gAMGkk74myI4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IZJWxbiEBDOEPOHZXPrrDAm/SRE2jhBrm390K7YGaNkAAa7bdqoS+au6LLmhxhHCkh2qyN223IJJdpgb7X0ttYD44nbDd2+/GmzlJG1qC+bjXu32wFBFVXUR5tUJOFTjtRJLYEAkWZemyTwFrHGOeKw7dkRFR8FndIycjB8Zobw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NgWKX8v6; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7025ca8bebcso1997746b3a.3;
-        Mon, 03 Jun 2024 22:10:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717477852; x=1718082652; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UqE8PqDSTScf2ssH6F4PbWUoO9g+WHgsI4Glih1KQPg=;
-        b=NgWKX8v61be7LwLmyuKYqzvXSqjJnLUVlS0uiVB0qYhd5KQnTRShItJOXGREtEZh4L
-         kqMMezuE9b1uyVntAnmfONuWXxpZiiAcNyIHGS9gsgOgPvYPVuAY7s8md8bTsCGpBcY2
-         gtCf+9Ey7ccFqN7XLBFHNhpbD9clOBVH4dOB2cVlAe2e5fUAVh57PkJXXANdqrySF6nh
-         gC1FLafi1NYNxMe7lBK2ggghZ6jrxi/b7Sff1cHnyNwYXZ9x37/2RmQKsFSfUmADAy6x
-         TTGSQCQJ7WnHGJpftDEIep30EhrlmtaFdwuRLPyMjN6C+eNamVV+C+MSBlyEwV5r0urj
-         kNuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717477852; x=1718082652;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UqE8PqDSTScf2ssH6F4PbWUoO9g+WHgsI4Glih1KQPg=;
-        b=wLfKc4tRGd1dbBQl7ZpncSVBeTW17sZ2GKvvbzjRX9C2DhOFBkpI8vBItmqtHTYhXS
-         BskRt4MaGauTfo9HMolZ97nZbmZj8Z8OJuCTM9g3sffv6qdbocs9v2t8C/dlQdQRhvPN
-         vaaaKK3JISkTNlytkAZH2qfbLyJxnCVucPeJEdIoR+WZcfrm/eJpgfk7M2wkp4zNyjBJ
-         qMXPLJi7FsHwgl/sXI78P1ySc9qztZ6J9IGNHvbIXkU3dhUgxYTLi1gYz0b6MewBjM3M
-         YUHhVsMHD9GznMWASY3zUxMnVDUhlQ0ToW60qIgqvi9CaaHmuawcFWQbMl0Pl4u2th8S
-         aznA==
-X-Forwarded-Encrypted: i=1; AJvYcCUndx/mfGrforncp5/nJzVvf6kW1bgxbszSrvd7vxDiye6X7s8sJbcw48G9Pv5YrGFuKbaEdfTNrn6adQKyhjl/uxTlbjlE0Dg7jBoDprv6zj3D+sNROXf8WrCB6+i103YjKMJF9LMpfZ1dD1plipiGySVWqBmvZWrcz3e7rQLDStML025fGynR3GwMcyYTpSbiB/REvgcPp2Ic/TM9TDURey2hyuwvJ00ox8d2wiNHNx45TABbNX/mBf3D2Aw=
-X-Gm-Message-State: AOJu0YzkbCR6PFflAlnxIh3oLdP/3OoNjoN8qtxokRtd/4Ji6JLHCKfL
-	Q2Vt7UkwAYvS90R3LjGPmV+2w6q19TzyHpuVxcvE8D2Z/TRLJ3xu
-X-Google-Smtp-Source: AGHT+IHQeTJUGPqk9fJQ3bYqVezOkQwad17MvaE3G/i0Wg6Qa5p2Z3v+Yzuh/jC062uvo4bGBB7jUw==
-X-Received: by 2002:a05:6a00:847:b0:6e9:38d0:5019 with SMTP id d2e1a72fcca58-70247664028mr13199794b3a.0.1717477851685;
-        Mon, 03 Jun 2024 22:10:51 -0700 (PDT)
-Received: from localhost.localdomain (c-67-161-114-176.hsd1.wa.comcast.net. [67.161.114.176])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242c270c7sm6298153b3a.220.2024.06.03.22.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jun 2024 22:10:51 -0700 (PDT)
-From: mhkelley58@gmail.com
-X-Google-Original-From: mhklinux@outlook.com
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	arnd@arndb.de,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: maz@kernel.org,
-	den@valinux.co.jp,
-	jgowans@amazon.com,
-	dawei.li@shingroup.cn
-Subject: [RFC 12/12] Drivers: hv: vmbus: Ensure IRQ affinity isn't set to a CPU going offline
-Date: Mon,  3 Jun 2024 22:09:40 -0700
-Message-Id: <20240604050940.859909-13-mhklinux@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A3213DBA4;
+	Tue,  4 Jun 2024 05:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.154.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717477904; cv=fail; b=ZinZKtdPC48dpocRZfpcE46JyTGxds0mkyWjBi/gIyqsmAnPI/qnVVgqZR/S+fhPsQkBda7BLS9Whb/kxquWT1jeJpb4KaxC17l1IZlFQICbQ5h8WJLnk6NM2BFMHQlH/mudKoc2sfNwSw9/ebbKLFIGUQjUJ7bhpCJ9+fmHJ7Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717477904; c=relaxed/simple;
+	bh=7cJfdK87ftfvhKD8heJ0+NI98EwfX/oBDqQnG+UwBWs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YJa3XM7IipZ6c0W1h1hTHafuU0gxn6B5LvBrnyplgqppoCW2/QuU8sn5AKvC7nfFpVv3jAHQ20T+tZwjiu70BOwdPFnUqxjPZXXlio0Alv0b7PEs/Mq8keCX5OWTqJ9fqOAYjXNoWjiKvg1BlrwobXhSjHEoN54zlI0Mnopvm6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=pass smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=WTCo9tNe; arc=fail smtp.client-ip=52.101.154.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chipsnmedia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WHEkVQGwhCwsdDU8o+SW+95Jvh+Abw8qoy4/uqh9/YtJbr5EbPBBFP16kH3/50x+Jdntp69PWFv/GWukVdglSuc6X00A3u30/UC6TGAPIkvjCawYsqe4nTT1KdsbsINPrvhpuNbw98EPvpLPkI86WypyQVk0i+XV9khodbwmCIIWKR1+atkQl1/RXIRxtQNMfI6VLr6TWzOvh9YXaGfda4PdrpqdwRtR1/K/+FFKwG0bO/4g7/Ecl1BY5cL/Qv1Kgk1IdjDgi8LSOKHbTCZDnmG4kmdiGE+xdbLUUeFtii8yll/eQbnm4Q+n3ITo0u0xxqRAx+c7myUJJF6AlHz6cQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZoCXtRmruLooNqkHk/hITgSWUp+4gmZn5RIctzBMGA8=;
+ b=esQzSg1xk65i5znE2ei93zijvUN8k9gZnTmOfH8OIqk85f7gLAggoxEdz6AT0TydkmZjRcT7BHA+ZrcdSkmDfCfxAjnye5+20ztfwJoE0aMjdnqtW5d9UHlfv5LVgp7Rkp5DWfTkjTgTfOVvlPW9x4Rd8VlEYjRgGyCVq0drzj1K310DC3qCg/yV6KN4Fb04m0rhpgqs9A8YZUkG6hC7FZ91KmjZ6B+yF+ETzy9t9T/CuOeHT9WYJmeORdTf+x9Thy8flW0OwSjvCE7Fr7G+mc8n6rnHLnf3BfwlJDsCfVqbYLKpCrcZ1xjqlZzMlUwm5AO2ggBoB6Fb49zO81URLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
+ header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZoCXtRmruLooNqkHk/hITgSWUp+4gmZn5RIctzBMGA8=;
+ b=WTCo9tNexSEKPxLCe08saef8Konzlo5S2S/FQ70yk4cbSlQTRPeOZ0SP3cKwUIPv7bgoCXgTTQCIGWVRwOKUB63y1gdPq9mrT7Dd0BMHBPqRi+ZSkWWg6AsXBcS8/GiBbDacnsA004tM3SxnHRXjhaX4buhwBCMoO7LGw74ov/I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM (2603:1096:101:a::9) by
+ SE2P216MB1537.KORP216.PROD.OUTLOOK.COM (2603:1096:101:2c::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.27; Tue, 4 Jun 2024 05:11:37 +0000
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9e3d:ee20:8cc7:3c07]) by SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9e3d:ee20:8cc7:3c07%4]) with mapi id 15.20.7633.021; Tue, 4 Jun 2024
+ 05:11:37 +0000
+From: Nas Chung <nas.chung@chipsnmedia.com>
+To: mchehab@kernel.org,
+	hverkuil@xs4all.nl,
+	bryan.odonoghue@linaro.org,
+	linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Nas Chung <nas.chung@chipsnmedia.com>,
+	Michael Tretter <m.tretter@pengutronix.de>
+Subject: [PATCH v3 1/3] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE condition
+Date: Tue,  4 Jun 2024 14:11:18 +0900
+Message-Id: <20240604051120.9441-1-nas.chung@chipsnmedia.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240604050940.859909-1-mhklinux@outlook.com>
-References: <20240604050940.859909-1-mhklinux@outlook.com>
-Reply-To: mhklinux@outlook.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SE2P216CA0068.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:118::11) To SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SL2P216MB1246:EE_|SE2P216MB1537:EE_
+X-MS-Office365-Filtering-Correlation-Id: 422e6d6f-6303-4fd0-a96c-08dc8454cf60
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|52116005|366007|1800799015|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HPuT2trc8kOi23WLMHZ8kPU6QMeun5f0qMcbxKGcQrH7owuFWkusrxxm9ahz?=
+ =?us-ascii?Q?DlnTA9tbQRUIHWswQujtLE8qDcXI8sZhW9l13JpaX6kHlRBzEmc1VJhnMC9g?=
+ =?us-ascii?Q?G1uw/RMjR9wRDFiqtapKKMvmEwpZbpdCPEJwwb518A9W6PHFOk9+6mmC3g05?=
+ =?us-ascii?Q?TFqTtpHQN5Bh3Ws5HFNtdlasrDqhXL+hffjwYyfVgi3lt+GS2wHKRmdGfbOR?=
+ =?us-ascii?Q?CaVwQfygCmYNvr//z0+vu3JrHt2SCRvNluVmgdmoHEckgHYa1P7oKJJB2bvb?=
+ =?us-ascii?Q?TCSrG7PbS2LrQDyDLVvObXoyZM46SAxgPhPya+DNUuzGk4OXRcrORlEoOhxN?=
+ =?us-ascii?Q?n1NpyJqZMRTHwCNQyft4nG11F5JGa+qt/YSsBZovdHOOG2htZhxK64YaZEhl?=
+ =?us-ascii?Q?pKjOWoy5bz77IQqiJ3pFIJYj3Fm2Y7TwA0h27iFTQMP6U0KeytTc+msqUbCt?=
+ =?us-ascii?Q?iW26YmeCZgkSRqFEkmYRx8oQ09Cp8qWX8XAX0ul1u6w9MgUFkygsPBeHp2pw?=
+ =?us-ascii?Q?KklUwQZYnikSSkFlqglXKSeMWfsZOf3aGImy+miMTwxwSLDANOae6QAcTxD1?=
+ =?us-ascii?Q?Y3aCPJWX5mFSlD5gCJndOuAE4kRVW9V/hFjCjtC5AL1gjfO3mhyQNnm59JnT?=
+ =?us-ascii?Q?f6e4bvznfJktDzKCFXCX9ZNJM404oiuqrO0/u2fW9x0d7J33s2WdXMyAj4+9?=
+ =?us-ascii?Q?QxnEE69AnYMxd3WzSHbCeDLZ8g6gJwM0UZ2ndXYrzHBCf1suqkO3QbkNk+BE?=
+ =?us-ascii?Q?oruqKtok/1D/6mnITn5n6livfefBMVQHgp6VsMw3T9F5xmtdFUg6QFpoUbnP?=
+ =?us-ascii?Q?gw7/GXkfBSXf+TNCzwxbIP4UK1VitcjxPkRL8MszUzrkSOmPqfUzISB3+1Wc?=
+ =?us-ascii?Q?50QhLaFKki3BGwNtj7Od6OJEmlMkHHuSjb9zC8MCRWzNK/CUps7+/dJ6NbGH?=
+ =?us-ascii?Q?Om2Azjplr7my1qrCttW8oeA5o00XMwzUxQupAU2TQTr4dRSmTPDmAgR5lOCM?=
+ =?us-ascii?Q?eR3iA6roapyZkqFgVrmBVoNIg+UVST651nOdFP8mxAXsgzEmQU9n0ZpyIhpU?=
+ =?us-ascii?Q?lsxHMnY16gjeSP/J+x1Qp9RiUPdeJvaxZ3tSIdYuY8pIB4o3UQo6aCXIA6j7?=
+ =?us-ascii?Q?l6fdOsNMGTqImsOj+k6jtFvm5EGVV3BLh2VgW4WCUzCvIzTo2Fe7hHYmrALb?=
+ =?us-ascii?Q?PJJKKxGi3we4jWpQPNxQX8pXun8+fe4wZuvZRzHUZKnfGeHvSdYazLfvPijN?=
+ =?us-ascii?Q?W303ZXT+dS8r705T4ENu6IqXpC8sd5Wi6hW+87wB6fUm5mTceMMhvimYKvJy?=
+ =?us-ascii?Q?DeJpnZyW9NF7Eof8x5hHfUoMhdQazit9brDHgiLQbWWlOA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB1246.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(366007)(1800799015)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zY7PKxnEyNIVSOfeQ5xnQYiKZDBFYLwohsu1Ni3/j303xf46XyYzmyewSpSP?=
+ =?us-ascii?Q?26vyhdnCFaxk5jO2olFQnWBCQypfbn2f9d3JfVHt9EEQ0uEtFbbSXwnCwUxg?=
+ =?us-ascii?Q?7iftd4jjSnUN9w4bgvYmrASSp0xSBD3WrfvLu3GLHhx7o/nkXf8JhgQRB9mF?=
+ =?us-ascii?Q?UebX2gj5T83xUSZGe4WIkM/6ldiLtOPIEnJfXa4GeFQVnVfNYSVkTLTYSvRs?=
+ =?us-ascii?Q?onVOkPl4D+dOGyaGnix1YO5JnEDs3vRELlsVzAuk7JUq6sedEScBdx4J9k8s?=
+ =?us-ascii?Q?U1Fg3f89iw4dRITBQdvFbmxApL9/q5t3H1c6QSqPPN+bCp7xAlyaxB3USLen?=
+ =?us-ascii?Q?s6b38aJGYngWWKDbfi7eLi7jylE8Xsp3vK85Fw5hLn8S9US7KgU6pSG+fUHj?=
+ =?us-ascii?Q?EHoQXJVHErV0uySMHaPd4WC8mug6BDq4pxIHXZFEVtiX6SX3cnPG9Exn9PrV?=
+ =?us-ascii?Q?K5XRvyH/7722FCcl9VIXvT4YJahqLQ8dtTh+1mzEfEN0Z2kJ/1U5bVoEaKbf?=
+ =?us-ascii?Q?8V62+WW5l13vBE8IxDPRyBsq1iknGugFpBMSyDaq5d8ile5Odkm0oxpXQf1w?=
+ =?us-ascii?Q?67zEmj9U8u9IynTGUvjNV+yxcnyeQ7Ib97ogxeF/NkGH/vmK2AJhAxmmQBzE?=
+ =?us-ascii?Q?oBo8ttgcnkX4Mf14ndsw8SeaWAFS4xuu0kpLHLCGyMI2wcIdPB3Pa35cQVz+?=
+ =?us-ascii?Q?ZNWbBNQCaa0B0cuz08/UZgNoEM2mqVXRUoPFJCclMoCwvIGpluAEtB2zdKcU?=
+ =?us-ascii?Q?9RXPlVvcnDDqV5mis6KEvJyCo1qWfuv/VaV12al7CttCDaUj+UgOUo28HQoP?=
+ =?us-ascii?Q?afmUDvbr8ReDEf+Eg/u0S/zqu6WsFqpGDoIcvXc6Mi0ZcPOmvT65ppI9lcmG?=
+ =?us-ascii?Q?Psapjexloe+Wo5GY0dDAQl+Y9oRYXe6PlHDE4/r1GFikNJytDx0240VwwxWm?=
+ =?us-ascii?Q?0ELX+xVTYypTUOAqb5VJf2lo6sjalkhCEttNB0A6nfvsuSOuGCskzygRJQWI?=
+ =?us-ascii?Q?4C/MBUBRwGTGrlMvXU5gK7KW9e7Y/WWU8IMPI3G779Vhn9QyTkveH5/vws6S?=
+ =?us-ascii?Q?bP8HcdYFQIBMg6a5bUDwqzAPoFqRop4BOeYXDCACNV80HXO0j/Ynf4w/VZ9H?=
+ =?us-ascii?Q?oeTtMzhTs7NtYThk8jQDJtedZPC5P7JRye51zW5NTDq7DMCajxh1cuM5w1WR?=
+ =?us-ascii?Q?NqQdyckyLtVQBWUKnP2sGsMTgX7eCqOTMQxNpA1pV8uuu3uvFw1lFNrVtGgO?=
+ =?us-ascii?Q?t8r0PrqogIBfpEU0xMJIMvUyNLwqJHc+rjEQN3D34moJvClK8+1yJgmWo8qC?=
+ =?us-ascii?Q?ez/r4oPgmuAMpLQV4adLaBAlPqo8EuNBl1qWBbIEeNYNUBdyi3WbDt4R4SNe?=
+ =?us-ascii?Q?4t0wB3k2TmPuthdyfEcajDxN4GfFUf/1jgzF5aQiBZTzPkIre04Yis7A5OY6?=
+ =?us-ascii?Q?Inh7bqpfRxlnwk/8iI72y+G1lsH/3gNT5LE76SRQ7h1Vi27r2AwR1ASvTVfs?=
+ =?us-ascii?Q?yvFxBkNp+YeU0wvoIBlslxaSxfiJAXGWuTG1Q0A3niQ4TPfdUQB2u5mGtthL?=
+ =?us-ascii?Q?3StLcC3QIPxfGCUVk9AFpN0toxJZ6FYdd869YjnqQrZvISPA74PvDI+e6Q0K?=
+ =?us-ascii?Q?Ow=3D=3D?=
+X-OriginatorOrg: chipsnmedia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 422e6d6f-6303-4fd0-a96c-08dc8454cf60
+X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 05:11:37.2333
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WnKv7SQFALFlk/4H9gzA/DtJqrzrGAoNRTPRWz6lmO2u+Ku4xz11zR6e9oj8mia8E14ubX6o7Ib4zE9FCMTUxS9o2mN5FkBLgXlgjILa0ME=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE2P216MB1537
 
-From: Michael Kelley <mhklinux@outlook.com>
+Explicitly compare a buffer type only with valid buffer types,
+to avoid matching a buffer type outside of the valid buffer type set.
 
-hv_synic_cleanup() currently prevents a CPU from going offline if any
-VMBus channel IRQs are targeted at that CPU. However, current code has a
-race in that an IRQ could be affinitized to the CPU after the check in
-hv_synic_cleanup() and before the CPU is removed from cpu_online_mask.
-Any channel interrupts could be lost and the channel would hang.
-
-Fix this by adding a flag for each CPU indicating if the synic is online.
-Filter the new affinity with these flags so that vmbus_irq_set_affinity()
-doesn't pick a CPU where the synic is already offline.
-
-Also add a spin lock so that vmbus_irq_set_affinity() changing the
-channel target_cpu and sending the MODIFYCHANNEL message to Hyper-V
-are atomic with respect to the checks made in hv_synic_cleanup().
-hv_synic_cleanup() needs these operations to be atomic so that it
-can correctly count the MODIFYCHANNEL messages that need to be
-ack'ed by Hyper-V.
-
-Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+Reviewed-by: Michael Tretter <m.tretter@pengutronix.de>
 ---
- drivers/hv/connection.c   |  1 +
- drivers/hv/hv.c           | 22 ++++++++++++++++++++--
- drivers/hv/hyperv_vmbus.h |  2 ++
- drivers/hv/vmbus_drv.c    | 34 ++++++++++++++++++++++++++++------
- 4 files changed, 51 insertions(+), 8 deletions(-)
+v3
+- Address Han's feedback
 
-diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
-index a105eecdeec2..b44ce3d39135 100644
---- a/drivers/hv/connection.c
-+++ b/drivers/hv/connection.c
-@@ -213,6 +213,7 @@ int vmbus_connect(void)
- 
- 	INIT_LIST_HEAD(&vmbus_connection.chn_list);
- 	mutex_init(&vmbus_connection.channel_mutex);
-+	spin_lock_init(&vmbus_connection.set_affinity_lock);
- 
- 	/*
- 	 * Setup the vmbus event connection for channel interrupt
-diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-index 76658dfc5008..89e491219129 100644
---- a/drivers/hv/hv.c
-+++ b/drivers/hv/hv.c
-@@ -338,6 +338,8 @@ int hv_synic_init(unsigned int cpu)
- {
- 	hv_synic_enable_regs(cpu);
- 
-+	cpumask_set_cpu(cpu, &vmbus_connection.synic_online);
-+
- 	hv_stimer_legacy_init(cpu, VMBUS_MESSAGE_SINT);
- 
- 	return 0;
-@@ -513,6 +515,17 @@ int hv_synic_cleanup(unsigned int cpu)
- 	 * TODO: Re-bind the channels to different CPUs.
- 	 */
- 	mutex_lock(&vmbus_connection.channel_mutex);
-+	spin_lock(&vmbus_connection.set_affinity_lock);
-+
-+	/*
-+	 * Once the check for channels assigned to this CPU is complete, we
-+	 * must not allow a channel to be assigned to this CPU. So mark
-+	 * the synic as no longer online. This cpumask is checked in
-+	 * vmbus_irq_set_affinity() to prevent setting the affinity of
-+	 * an IRQ to such a CPU.
+v2
+- Improve commit message
+- Add V4L2_TYPE_IS_VALID(type) macro
+
+ include/uapi/linux/videodev2.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index fe6b67e83751..51da63173a98 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -153,10 +153,17 @@ enum v4l2_buf_type {
+ 	V4L2_BUF_TYPE_SDR_OUTPUT           = 12,
+ 	V4L2_BUF_TYPE_META_CAPTURE         = 13,
+ 	V4L2_BUF_TYPE_META_OUTPUT	   = 14,
++	/*  V4L2_TYPE_IS_VALID and V4L2_TYPE_IS_OUTPUT must
++	 *  be updated if a new type is added.
 +	 */
-+	cpumask_clear_cpu(cpu, &vmbus_connection.synic_online);
+ 	/* Deprecated, do not use */
+ 	V4L2_BUF_TYPE_PRIVATE              = 0x80,
+ };
+ 
++#define V4L2_TYPE_IS_VALID(type)		\
++	((type) >= V4L2_BUF_TYPE_VIDEO_CAPTURE	\
++	 && (type) <= V4L2_BUF_TYPE_META_OUTPUT)
 +
- 	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
- 		if (channel->target_cpu == cpu) {
- 			channel_found = true;
-@@ -527,10 +540,11 @@ int hv_synic_cleanup(unsigned int cpu)
- 		if (channel_found)
- 			break;
- 	}
-+	spin_unlock(&vmbus_connection.set_affinity_lock);
- 	mutex_unlock(&vmbus_connection.channel_mutex);
+ #define V4L2_TYPE_IS_MULTIPLANAR(type)			\
+ 	((type) == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
+ 	 || (type) == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+@@ -171,7 +178,8 @@ enum v4l2_buf_type {
+ 	 || (type) == V4L2_BUF_TYPE_SDR_OUTPUT			\
+ 	 || (type) == V4L2_BUF_TYPE_META_OUTPUT)
  
- 	if (channel_found)
--		return -EBUSY;
-+		goto set_online;
+-#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
++#define V4L2_TYPE_IS_CAPTURE(type)	\
++	(V4L2_TYPE_IS_VALID(type) && !V4L2_TYPE_IS_OUTPUT(type))
  
- 	/*
- 	 * channel_found == false means that any channels that were previously
-@@ -547,7 +561,7 @@ int hv_synic_cleanup(unsigned int cpu)
- 		if (hv_synic_event_pending()) {
- 			pr_err("Events pending when trying to offline CPU %d\n",
- 					cpu);
--			return -EBUSY;
-+			goto set_online;
- 		}
- 	}
- 
-@@ -557,4 +571,8 @@ int hv_synic_cleanup(unsigned int cpu)
- 	hv_synic_disable_regs(cpu);
- 
- 	return 0;
-+
-+set_online:
-+	cpumask_set_cpu(cpu, &vmbus_connection.synic_online);
-+	return -EBUSY;
- }
-diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-index 571b2955b38e..92ae5af10778 100644
---- a/drivers/hv/hyperv_vmbus.h
-+++ b/drivers/hv/hyperv_vmbus.h
-@@ -263,6 +263,8 @@ struct vmbus_connection {
- 	struct fwnode_handle *vmbus_fwnode;
- 	struct irq_domain *vmbus_irq_domain;
- 	struct irq_chip	vmbus_irq_chip;
-+	cpumask_t synic_online;
-+	spinlock_t set_affinity_lock;
- 
- 	/*
- 	 * VM-wide counts of MODIFYCHANNEL messages sent and completed.
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 87f2f3436136..3430ad42d7ba 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -1351,6 +1351,14 @@ int vmbus_irq_set_affinity(struct irq_data *data,
- 		return -EINVAL;
- 	}
- 
-+	/*
-+	 * The spin lock must be held so that checking synic_online, sending
-+	 * the MODIFYCHANNEL message, and setting channel->target_cpu are
-+	 * atomic with respect to hv_synic_cleanup() clearing the CPU in
-+	 * synic_online and doing the search.
-+	 */
-+	spin_lock(&vmbus_connection.set_affinity_lock);
-+
- 	/* Don't consider CPUs that are isolated */
- 	if (housekeeping_enabled(HK_TYPE_MANAGED_IRQ))
- 		cpumask_and(&tempmask, dest,
-@@ -1367,30 +1375,39 @@ int vmbus_irq_set_affinity(struct irq_data *data,
- 	origin_cpu = channel->target_cpu;
- 	if (cpumask_test_cpu(origin_cpu, &tempmask)) {
- 		target_cpu = origin_cpu;
-+		spin_unlock(&vmbus_connection.set_affinity_lock);
- 		goto update_effective;
- 	}
- 
- 	/*
- 	 * Pick a CPU from the new affinity mask. As a simple heuristic to
- 	 * spread out the selection when the mask contains multiple CPUs,
--	 * start with whatever CPU was last selected.
-+	 * start with whatever CPU was last selected. Also filter out any
-+	 * CPUs where synic_online isn't set -- these CPUs are in the process
-+	 * of going offline and must not have channel interrupts assigned
-+	 * to them.
- 	 */
-+	cpumask_and(&tempmask, &tempmask, &vmbus_connection.synic_online);
- 	target_cpu = cpumask_next_wrap(next_cpu, &tempmask, nr_cpu_ids, false);
--	if (target_cpu >= nr_cpu_ids)
--		return -EINVAL;
-+	if (target_cpu >= nr_cpu_ids) {
-+		ret = -EINVAL;
-+		goto unlock;
-+	}
- 	next_cpu = target_cpu;
- 
- 	/*
- 	 * Hyper-V will ignore MODIFYCHANNEL messages for "non-open" channels;
- 	 * avoid sending the message and fail here for such channels.
- 	 */
--	if (channel->state != CHANNEL_OPENED_STATE)
--		return -EIO;
-+	if (channel->state != CHANNEL_OPENED_STATE) {
-+		ret = -EIO;
-+		goto unlock;
-+	}
- 
- 	ret = vmbus_send_modifychannel(channel,
- 				     hv_cpu_number_to_vp_number(target_cpu));
- 	if (ret)
--		return ret;
-+		goto unlock;
- 
- 	/*
- 	 * Warning.  At this point, there is *no* guarantee that the host will
-@@ -1408,6 +1425,7 @@ int vmbus_irq_set_affinity(struct irq_data *data,
- 	 */
- 
- 	channel->target_cpu = target_cpu;
-+	spin_unlock(&vmbus_connection.set_affinity_lock);
- 
- 	/* See init_vp_index(). */
- 	if (hv_is_perf_channel(channel))
-@@ -1422,6 +1440,10 @@ int vmbus_irq_set_affinity(struct irq_data *data,
- update_effective:
- 	irq_data_update_effective_affinity(data, cpumask_of(target_cpu));
- 	return IRQ_SET_MASK_OK;
-+
-+unlock:
-+	spin_unlock(&vmbus_connection.set_affinity_lock);
-+	return ret;
- }
- 
- /*
+ enum v4l2_tuner_type {
+ 	V4L2_TUNER_RADIO	     = 1,
 -- 
 2.25.1
 
