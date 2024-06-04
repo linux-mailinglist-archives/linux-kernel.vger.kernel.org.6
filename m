@@ -1,79 +1,200 @@
-Return-Path: <linux-kernel+bounces-201101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626A58FB985
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:51:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996328FBA53
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F9E7B22E1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387EE1F224C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54AD148FE6;
-	Tue,  4 Jun 2024 16:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E14149C4D;
+	Tue,  4 Jun 2024 17:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViShzCVS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="C4ugqekL"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C12E168D0;
-	Tue,  4 Jun 2024 16:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD32E1494D0;
+	Tue,  4 Jun 2024 17:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717519715; cv=none; b=GIYxc50VqfY8EFzsxmMVVi/ON3CCdNGDTS6sPb3a4J/BmtiokRm8iTFsvXNMeOMF9PqSOP64Rzkt6XU6bW7vdW/M5GSYMQJUugjOOQq5oJ3CyUZ4sCCsg1f3Dvz44XS4MdoCH2GdfEPGgumvOu0MGYc7Nde9mpQPBuRtLkEitfQ=
+	t=1717522031; cv=none; b=sRpQgDuGDXffDeQP3JbsIE2+Vr2ci7uon4a3wTr8G0BRhysB9hkDKlcmmXFWo2NktSld9eRMCjBeVaatlepuzjA24VQ3YMVxjktOYnQaY9C2LZLcXhST8RFNGDU7cjXghFbO3UkHqsbekIECfNe9ESdrNmUHdbHwTRAAY3A/umg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717519715; c=relaxed/simple;
-	bh=HejwG8X7RD+pxyK2RCN4wPlCln47uyj1jxaZitWWMEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZCjJt8f13hYImEX/h65/nouEmZErFlhwao6cQR/HyGqdWwbqCdmi8AmDHwnsFagHC9WBKtnVB0/C6dW1WzKAGOY/EOXiDcC9AugZsjSMBtxFxRw0RFa5KSmlWXY8hFw/gQ7E/L3z6YbZf+/8ORbPv6XuLbhn41L2wtrmcpnFbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViShzCVS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD94FC2BBFC;
-	Tue,  4 Jun 2024 16:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717519714;
-	bh=HejwG8X7RD+pxyK2RCN4wPlCln47uyj1jxaZitWWMEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ViShzCVShU/PsuQeBaiZm12AaeJzPuFGEDcPWv4krr/VVcaSAh0P59txuPI52wqtI
-	 1rhKg3vKnvBysVeA2K1G2PkatVQ9RfsEQPMl7HqaZIKpPhUxiQAszbrjkOiFyxdp7i
-	 /KFpwjwQ/RI0udyd+aZdsFA3h9x+O7BlXVqaiybmX7uQPob/3/BBBUwYVzpaya7S4b
-	 KV7e/uXPxmax2YZ/DeGDn9QuwTSm1bvVqITzGPpLLLxlSfZN6Y3npvaDN2TokcFWxz
-	 fOimLYrHtKimwReXxlJS/XhNNoAtMSP+dcQXoW7joYPBO7oNsAiACshaE9FqM9S5Fm
-	 K/Z+sobv5s6WA==
-Date: Tue, 4 Jun 2024 17:48:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Lin Ma <linma@zju.edu.cn>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v1] netfilter: cttimeout: remove 'l3num' attr
- check
-Message-ID: <20240604164829.GA791188@kernel.org>
-References: <20240531012847.2390529-1-linma@zju.edu.cn>
+	s=arc-20240116; t=1717522031; c=relaxed/simple;
+	bh=Fw+R07Uhx4jBtZPSjYVknFQtrMkWMAZeU8GC561sY68=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fbpx5YBrU1xBjj+ICqVuTmmlNXiz0haznoVBma3f+d0IVqNUE42JvVmKTatDt0ndWT1X977Xq9/i81XuZrR4c4l+Z+0Sq+joYVZD+FunadK+uhwT/7JWS1C/feSzOu91sSNb+c87jDxRp0h2vyU4Fh1pVY4hygICDPXXderuVfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=C4ugqekL; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 92E1D8850A;
+	Tue,  4 Jun 2024 19:27:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1717522028;
+	bh=4f1pYqXRizqyxIM/L7FfRjUNFGAWVe3AOXcygF3r6BE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C4ugqekL9DcBNfDMt7BMGmAnOJSHo8y5Sf9xjnQU5JxMTAc/w4Bg7RHuEwHQn4j7/
+	 tNNw3i8rS/9BpqfHrY8i1pt+HsfimWrhDbil1RYTwBuSAEVVj4MgWN1TlVXwX6sv0j
+	 AyW6bBuVAidz+I4xRsH7UjBuaXls9j3KoEaFq6tquqRzun9MLYOWDtfRH/7CV8QeBX
+	 GUi3vTWXAiTcpksuFnTMo0yC+Eo408n3eeTcB1BRazMJO9/TT55LLbMwIpiLuIxYcu
+	 o8C/G+xu+beETeQJHeLB9K6ld43u9V4cMENN7W7xIfw+JJ5fk0irtUsElPECL/YZ99
+	 7MzmQLpYiMHfA==
+Message-ID: <e8e69a34-b9b2-4b4c-9b2e-079c7a23b756@denx.de>
+Date: Tue, 4 Jun 2024 18:49:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531012847.2390529-1-linma@zju.edu.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/11] ARM: dts: stm32: add ethernet1 and ethernet2
+ support on stm32mp13
+To: Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
+ <20240604143502.154463-9-christophe.roullier@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240604143502.154463-9-christophe.roullier@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Fri, May 31, 2024 at 09:28:47AM +0800, Lin Ma wrote:
-> After commit dd2934a95701 ("netfilter: conntrack: remove l3->l4 mapping
-> information"), the attribute of type `CTA_TIMEOUT_L3PROTO` is not used
-> any more in function cttimeout_default_set.
+On 6/4/24 4:34 PM, Christophe Roullier wrote:
+> Both instances ethernet based on GMAC SNPS IP on stm32mp13.
+> GMAC IP version is SNPS 4.20.
 > 
-> However, the previous commit ea9cf2a55a7b ("netfilter: cttimeout: remove
-> set but not used variable 'l3num'") forgot to remove the attribute
-> present check when removing the related variable.
+> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+> ---
+>   arch/arm/boot/dts/st/stm32mp131.dtsi | 38 ++++++++++++++++++++++++++++
+>   arch/arm/boot/dts/st/stm32mp133.dtsi | 31 +++++++++++++++++++++++
+>   2 files changed, 69 insertions(+)
 > 
-> This commit removes that check to ensure consistency.
-> 
-> Signed-off-by: Lin Ma <linma@zju.edu.cn>
+> diff --git a/arch/arm/boot/dts/st/stm32mp131.dtsi b/arch/arm/boot/dts/st/stm32mp131.dtsi
+> index 6704ceef284d3..9d05853ececf7 100644
+> --- a/arch/arm/boot/dts/st/stm32mp131.dtsi
+> +++ b/arch/arm/boot/dts/st/stm32mp131.dtsi
+> @@ -979,6 +979,12 @@ ts_cal1: calib@5c {
+>   			ts_cal2: calib@5e {
+>   				reg = <0x5e 0x2>;
+>   			};
+> +			ethernet_mac1_address: mac1@e4 {
+> +				reg = <0xe4 0x6>;
+> +			};
+> +			ethernet_mac2_address: mac2@ea {
+> +				reg = <0xea 0x6>;
+> +			};
+>   		};
+>   
+>   		etzpc: bus@5c007000 {
+> @@ -1505,6 +1511,38 @@ sdmmc2: mmc@58007000 {
+>   				status = "disabled";
+>   			};
+>   
+> +			ethernet1: ethernet@5800a000 {
+> +				compatible = "st,stm32mp13-dwmac", "snps,dwmac-4.20a";
+> +				reg = <0x5800a000 0x2000>;
+> +				reg-names = "stmmaceth";
+> +				interrupts-extended = <&intc GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
+> +						      <&exti 68 1>;
+> +				interrupt-names = "macirq", "eth_wake_irq";
+> +				clock-names = "stmmaceth",
+> +					      "mac-clk-tx",
+> +					      "mac-clk-rx",
+> +					      "ethstp",
+> +					      "eth-ck";
+> +				clocks = <&rcc ETH1MAC>,
+> +					 <&rcc ETH1TX>,
+> +					 <&rcc ETH1RX>,
+> +					 <&rcc ETH1STP>,
+> +					 <&rcc ETH1CK_K>;
+> +				st,syscon = <&syscfg 0x4 0xff0000>;
+> +				snps,mixed-burst;
+> +				snps,pbl = <2>;
+> +				snps,axi-config = <&stmmac_axi_config_1>;
+> +				snps,tso;
+> +				access-controllers = <&etzpc 48>;
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Please keep the list of properties sorted.
 
+> +				status = "disabled";
+> +
+> +				stmmac_axi_config_1: stmmac-axi-config {
+> +					snps,wr_osr_lmt = <0x7>;
+> +					snps,rd_osr_lmt = <0x7>;
+> +					snps,blen = <0 0 0 0 16 8 4>;
+
+Sort here too.
+
+> +				};
+> +			};
+> +
+>   			usbphyc: usbphyc@5a006000 {
+>   				#address-cells = <1>;
+>   				#size-cells = <0>;
+> diff --git a/arch/arm/boot/dts/st/stm32mp133.dtsi b/arch/arm/boot/dts/st/stm32mp133.dtsi
+> index 3e394c8e58b92..09c7da1a2eda8 100644
+> --- a/arch/arm/boot/dts/st/stm32mp133.dtsi
+> +++ b/arch/arm/boot/dts/st/stm32mp133.dtsi
+> @@ -67,5 +67,36 @@ channel@18 {
+>   				label = "vrefint";
+>   			};
+>   		};
+> +
+> +		ethernet2: ethernet@5800e000 {
+> +			compatible = "st,stm32mp13-dwmac", "snps,dwmac-4.20a";
+> +			reg = <0x5800e000 0x2000>;
+> +			reg-names = "stmmaceth";
+> +			interrupts-extended = <&intc GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "macirq";
+> +			clock-names = "stmmaceth",
+> +				      "mac-clk-tx",
+> +				      "mac-clk-rx",
+> +				      "ethstp",
+> +				      "eth-ck";
+> +			clocks = <&rcc ETH2MAC>,
+> +				 <&rcc ETH2TX>,
+> +				 <&rcc ETH2RX>,
+> +				 <&rcc ETH2STP>,
+> +				 <&rcc ETH2CK_K>;
+> +			st,syscon = <&syscfg 0x4 0xff000000>;
+> +			snps,mixed-burst;
+> +			snps,pbl = <2>;
+> +			snps,axi-config = <&stmmac_axi_config_2>;
+> +			snps,tso;
+> +			access-controllers = <&etzpc 49>;
+
+Sort here too.
+
+> +			status = "disabled";
+> +
+> +			stmmac_axi_config_2: stmmac-axi-config {
+> +				snps,wr_osr_lmt = <0x7>;
+> +				snps,rd_osr_lmt = <0x7>;
+> +				snps,blen = <0 0 0 0 16 8 4>;
+
+Sort here too.
+
+[...]
 
