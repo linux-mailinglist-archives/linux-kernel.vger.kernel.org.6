@@ -1,155 +1,101 @@
-Return-Path: <linux-kernel+bounces-200338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3313F8FAE90
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:17:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FDE78FAE8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6298B1C2432C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:17:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C81BB238B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA43143879;
-	Tue,  4 Jun 2024 09:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8195314375B;
+	Tue,  4 Jun 2024 09:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eyBkfZ3c"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3YGOQUL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11141142E9C;
-	Tue,  4 Jun 2024 09:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C982F1386D2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717492654; cv=none; b=FUQC9Pyi1h9koGcy9NcQFoRKDxMfKsVKEDq9qwD18vzeUvd3RWeEP4OLCdJxSp1qRV6EAqD2dWI40vvv1nKfC6YnTX27QR2XmMbh2/YXL/vYjMuZ+cxkdgUcgZNHaBtZzfQcJWbcoUsLLEWb9lePXqGlwwBDihqNheO+3dz4zcA=
+	t=1717492642; cv=none; b=h/UH/4AA8m/bHdDB8M/ggC1xz8NkUBD9hYX6m9kCsztjg9DV+4+HfNwbJZgOMnuxJBFuym7HSQ5v3EJ7kjVtU+Z3Eihipvl391tFg3W5I8BW5H0G9heXob7RMooMy0Wwv7jC8roCu3mQ6r8EFtuz7ybPoPx8GtPi6esXu6VmYKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717492654; c=relaxed/simple;
-	bh=fNwB+gRlhAFTJtZg/PqoxlSZUp9TXw3Qn2y1TZ/BZvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gF9FMtTnIe4/MwPSW2ChGwW9mZZPS74BWq8H5Bt2mS3VI6zn8pdOSnF1hEM/na/t2LkpBda5Qz6Q175NTI2aPQ2XnDSLTFF3cFRGjm+SFo8hQsgwe487sFWne867oZLWaRY2FajvBnCg0mq9mlQ8DVqFLl+nEK7olJ+8aaxBnnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eyBkfZ3c; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4549DsjD012859;
-	Tue, 4 Jun 2024 11:16:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	OQe/uADEFpVniANl2HPBtkrGxr/1Jkhh9ScZYTBH7MU=; b=eyBkfZ3cqtw3pYoe
-	F9n5Ujb2ZempFMCIcweE4Yd5LD9jXfOUg+cJFoPSNxyel/TMmdWX2w25O0aGghHO
-	/NGfcb0JihUC/q9171VEtsnidPfKp7+jOEi1o4GlQ009Hsd8KyoJTSreZHK0duIL
-	atXVY54YNxe8GP/MHtIDXlOKNzgKAsSDzm7zkQrntAEyXjS8FJzRG7W5yl5O1Ogu
-	DcHuTqEYjffYhm0M5F12BvMEK85t/7K9Z75NPUZTrId+5mILu83I72oypNeLWo9G
-	OqZP1/4ScYDR7VrgxNUWX4DdWtq1sLlWv1LOdAcmHMZRPt5ggArJ4A4iEFpVOUdE
-	e8r8Kg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yfw3wjx6a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 11:16:50 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F094040044;
-	Tue,  4 Jun 2024 11:16:45 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 980B72122EA;
-	Tue,  4 Jun 2024 11:15:38 +0200 (CEST)
-Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 4 Jun
- 2024 11:15:36 +0200
-Message-ID: <0a9f494e-94ae-43b2-84fa-6d984c4106cd@foss.st.com>
-Date: Tue, 4 Jun 2024 11:15:36 +0200
+	s=arc-20240116; t=1717492642; c=relaxed/simple;
+	bh=FCrFtvGT7nfYDArMK5ytnHOL+AVDEQiP/9i3bDpr0hA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fLxyEVuVLPoiOknLnao2C1y5hMgtF7TyfIdJaoOFF10lLY7/rVWWy08O/pma+Bz9yn/evys9+ssBGNgBkGMiJiRU+wFzMuVWTVDGtDSchZjl4rKSPiP0+UZpjU2Z2+82Eq8QJNsQ4lVrrLx6jgRO/+RertQorsXoMha5Gmo7qsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3YGOQUL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52111C2BBFC;
+	Tue,  4 Jun 2024 09:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717492642;
+	bh=FCrFtvGT7nfYDArMK5ytnHOL+AVDEQiP/9i3bDpr0hA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L3YGOQULFYzsdRUHxPDwrS0zuMsIKMDkRsByuPi3yXGkmGiKwxqZme5r7pqSeB8xb
+	 D8vsUY1rbs2KS6EaMvEOYpFTFpkX1u1H4LhNh4MP/kFmsO5Bt3v1doMjiCz9OWCDTn
+	 ZRuywir2hsfdLVWK7/vQtTv+6wd8rFJDcBNxB7hYb6+JOnBSKNf0lwk+r90Dg12qSg
+	 m+gdgqCMA+opVFr+bGwSXHursv8ZjOB2JH1+fblDh9h1LMaNujBgYDgRygEFNdv0ki
+	 wjBeqI1ZIpl549F832GSb1f+hp9Vp51ZHNVcFirChjnBTWOC6ZBudBb20H73DQBfiq
+	 6IjoFe9Qd/dHA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sEQIC-000000001XF-28Nh;
+	Tue, 04 Jun 2024 11:17:21 +0200
+Date: Tue, 4 Jun 2024 11:17:20 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] soundwire: bus: clean up probe warnings
+Message-ID: <Zl7boEkMpQaELARP@hovoldconsulting.com>
+References: <20240604075213.20815-1-johan+linaro@kernel.org>
+ <20240604075213.20815-4-johan+linaro@kernel.org>
+ <8dd7cadc-138c-4ef5-b06f-7177550b1215@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/11] net: ethernet: stmmac: add management of
- stm32mp13 for stm32
-To: Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        "David S . Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark
- Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240603092757.71902-1-christophe.roullier@foss.st.com>
- <20240603092757.71902-8-christophe.roullier@foss.st.com>
- <d5ce5037-7b77-42bc-8551-2165b7ed668f@prevas.dk>
-Content-Language: en-US
-From: Christophe ROULLIER <christophe.roullier@foss.st.com>
-In-Reply-To: <d5ce5037-7b77-42bc-8551-2165b7ed668f@prevas.dk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-04_03,2024-05-30_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8dd7cadc-138c-4ef5-b06f-7177550b1215@linux.intel.com>
 
+On Tue, Jun 04, 2024 at 10:33:02AM +0200, Pierre-Louis Bossart wrote:
+> On 6/4/24 02:52, Johan Hovold wrote:
+> > Clean up the probe warning messages by using a common succinct format
+> > (e.g. without __func__ and with a space after ':').
 
-On 6/3/24 13:30, Rasmus Villemoes wrote:
-> On 03/06/2024 11.27, Christophe Roullier wrote:
->
->> @@ -259,13 +268,17 @@ static int stm32mp1_configure_pmcr(struct plat_stmmacenet_data *plat_dat)
->>   
->>   	dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
->>   
->> +	/* Shift value at correct ethernet MAC offset in SYSCFG_PMCSETR */
->> +	val <<= ffs(dwmac->mode_mask) - ffs(SYSCFG_MP1_ETH_MASK);
->> +
->>   	/* Need to update PMCCLRR (clear register) */
->> -	regmap_write(dwmac->regmap, reg + SYSCFG_PMCCLRR_OFFSET,
->> -		     dwmac->ops->syscfg_eth_mask);
->> +	regmap_write(dwmac->regmap, dwmac->ops->syscfg_clr_off,
->> +		     dwmac->mode_mask);
->>   
->>   	/* Update PMCSETR (set register) */
->>   	return regmap_update_bits(dwmac->regmap, reg,
->> -				 dwmac->ops->syscfg_eth_mask, val);
->> +				 dwmac->mode_mask, val);
->>   }
->>   
->>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
-> This hunk is broken, and makes the patch not apply:
->
-> Applying: net: ethernet: stmmac: add management of stm32mp13 for stm32
-> error: corrupt patch at line 70
->
-> The -259,13 seems correct, and the net lines added by previous hunks is
-> indeed +9, but this hunk only adds three more lines than it removes, not
-> four, so the +268,17 should have been +268,16.
->
-> Have you manually edited this patch before sending? If so, please don't
-> do that, it makes people waste a lot of time figuring out what is wrong.
+> > @@ -123,7 +123,7 @@ static int sdw_drv_probe(struct device *dev)
+> >  	/* init the dynamic sysfs attributes we need */
+> >  	ret = sdw_slave_sysfs_dpn_init(slave);
+> >  	if (ret < 0)
+> > -		dev_warn(dev, "Slave sysfs init failed:%d\n", ret);
+> > +		dev_warn(dev, "failed to initialise sysfs: %d\n", ret);
+> >  
+> >  	/*
+> >  	 * Check for valid clk_stop_timeout, use DisCo worst case value of
+> > @@ -147,7 +147,7 @@ static int sdw_drv_probe(struct device *dev)
+> >  	if (drv->ops && drv->ops->update_status) {
+> >  		ret = drv->ops->update_status(slave, slave->status);
+> >  		if (ret < 0)
+> > -			dev_warn(dev, "%s: update_status failed with status %d\n", __func__, ret);
+> > +			dev_warn(dev, "failed to update status: %d\n", ret);
+> 
+> the __func__ does help IMHO, 'failed to update status' is way too general...
 
-Hi Rasmus,
+Error messages printed with dev_warn will include the device and driver
+names so this message will be quite specific still.
 
-Yes sorry :-(
+> Replacing 'with status' by ":" is fine, but do we really care about 10
+> chars in a log?
 
->
-> Also, please include a base-id in the cover letter so one knows what it
-> applies to.
->
-> Finally, I think you also need to sign-off on the patches you send
-> authored by Marek.
-Yes, you are right
->
-> Rasmus
->
+It's not primarily about the numbers of characters but about consistency.
+
+Johan
 
