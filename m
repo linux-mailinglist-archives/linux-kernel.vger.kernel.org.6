@@ -1,83 +1,95 @@
-Return-Path: <linux-kernel+bounces-200759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC788FB502
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:16:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360B28FB4F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B44BB2CA84
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7BD61F263A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695A0EEDE;
-	Tue,  4 Jun 2024 13:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E599D13D26C;
+	Tue,  4 Jun 2024 14:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b1EHDFBL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F395818C05;
-	Tue,  4 Jun 2024 13:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C64E13D270;
+	Tue,  4 Jun 2024 14:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717509472; cv=none; b=GPePnTr99y++P+BPiE+YDJpUz0ad5Wwm3+PW3CCBPTPZlBxBgMfVjx5TzmU4hwipKwZc5gTnYiP4SoO2CzD5cVXxIZkkbBLneVYOpEftmNPiLa0Yz1rUiDJwGpEqcHGEhfw4q8aeG9n4l80Qwr+kB2Tj3aYoNDczh/CIaUNw9v4=
+	t=1717510361; cv=none; b=CNRK52w9g91EVQ1HFT+4mUdmhlY9zxzurMcpTAVAyt9jrky1uExeXeoISyW+LBv+dNLdUbhSzi674NMj03HFgPxZG3Fo51+VhF71XzLyl+ngEwguQ8ce1SXfiFmyRfHwHuaBu40JzezHhA9+SXsiyN+2nJ3K5obLE4wp6yflzgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717509472; c=relaxed/simple;
-	bh=aMBCMEacFCAd34LFVoL5DP9nMf0EsmiIUcjcm9yks/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MqtA0b6rjI+1QgJQ23T2AY8U2j7raXGALgdvXxKwLbXi3Wd6mc9nLKuNIZvIxknQ+zsZujG7Uv5p4AwVQesyws9ajAE+P4vb3giub2O1whF4jU2VByqgw0r6w+r8kzcC7pTMc8tEMp2PmSexOjvBz7MRhvDnmeRgv1dwiONRr1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C213C2BBFC;
-	Tue,  4 Jun 2024 13:57:49 +0000 (UTC)
-Date: Tue, 4 Jun 2024 09:57:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>, LKML
- <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] tracing: Fix some selftest issues
-Message-ID: <20240604095746.1bbb003c@gandalf.local.home>
-In-Reply-To: <20240531232047.fca5712a98e360d4a27fd92c@kernel.org>
-References: <171671825710.39694.6859036369216249956.stgit@devnote2>
-	<20240527192907.49c9220f@rorschach.local.home>
-	<20240529014640.3a04f7301f12eb44738f9f2d@kernel.org>
-	<20240529083818.b7835de167191d4567405ce6@kernel.org>
-	<3a7e679712fb47b6c75af84163b5d3ea252f4da9.camel@linux.intel.com>
-	<20240531113721.c0314e0cdb3beb70c1a6ba7d@kernel.org>
-	<20240531032425.3635dc93@rorschach.local.home>
-	<20240531232047.fca5712a98e360d4a27fd92c@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717510361; c=relaxed/simple;
+	bh=Y6UmJIt/ZPtSwsx3TQxx71w9xoPH2Deyu6uTfLtpzB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1qWdtrzOKglkv6opUqQ1Sa7XIdSpDKckul20EkjNXuJRDfUpjkPcDSgHcjG5ZAA1+Wz8tgUi+TPJWxIPKpwNWn/5kCtonYYfVIce0ngTK9rEgv8GuQpW2QHmCC//fYflzh8AKLOeb+GDcJamRlDHyKNE6XIUF9T/Q6ZT9ATeaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b1EHDFBL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6A52C4AF08;
+	Tue,  4 Jun 2024 14:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717510360;
+	bh=Y6UmJIt/ZPtSwsx3TQxx71w9xoPH2Deyu6uTfLtpzB0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b1EHDFBLrdPaz0KmFZKdQ/9zHE3q/XoFUu+B/+u18DoLy5YY2n9C4LLsvMW9wUvUj
+	 yLzdrZ0oujUE4Ui6mExPQe8BX52r5PmTeX/WhSqqHUwKhhGV56cwXpaBje3wzsn9dp
+	 8ZeZ4PQogxB6Fi2v+/uFXl/yOyEx1q5myd9zuZ1Y=
+Date: Tue, 4 Jun 2024 15:58:08 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Arnd Bergmann <arnd@kernel.org>, linux-alpha@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Marc Zyngier <maz@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/14] alpha: drop pre-EV56 support
+Message-ID: <2024060457-graded-editor-5bd4@gregkh>
+References: <20240503081125.67990-1-arnd@kernel.org>
+ <20240503081125.67990-15-arnd@kernel.org>
+ <e0492052-46ff-40e4-96e0-aecb88b68f0f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e0492052-46ff-40e4-96e0-aecb88b68f0f@kernel.org>
 
-On Fri, 31 May 2024 23:20:47 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> The major conflict happens when the boot-time test cleans up the kprobe
-> events by
+On Mon, Jun 03, 2024 at 08:02:03AM +0200, Jiri Slaby wrote:
+> Cc Greg for awareness too.
 > 
->   dyn_events_release_all(&trace_kprobe_ops);
+> On 03. 05. 24, 10:11, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > All EV4 machines are already gone, and the remaining EV5 based machines
+> > all support the slightly more modern EV56 generation as well.
+> > Debian only supports EV56 and later.
+> > 
+> > Drop both of these and build kernels optimized for EV56 and higher
+> > when the "generic" options is selected, tuning for an out-of-order
+> > EV6 pipeline, same as Debian userspace.
+> > 
+> > Since this was the only supported architecture without 8-bit and
+> > 16-bit stores, common kernel code no longer has to worry about
+> > aligning struct members, and existing workarounds from the block
+> > and tty layers can be removed.
 > 
-> And I removed it by [3/3] patch in this series :) because it does not
-> needed and not confirmed there is no other kprobe events when the test
-> starts. Also the warning message are redundant so I removed it by [2/3].
+> Yes!
 > 
-> So without this [1/3], if we apply [2/3] and [3/3], the problem will be
-> mitigated, but I think the root cause is that these modules are built-in.
+> For TTY pieces below:
+> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-I'm OK with making them module only, but I don't see any selftests for
-sythetic events. I think they should have a boot up test as well. If we
-remove them, let's add something to test them at boot up. Then the boot up
-code could clean it up.
+Nice!
 
-Or change the test module to be a boot up test that cleans itself up if it
-is compiled in as not a module?
-
--- Steve
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
