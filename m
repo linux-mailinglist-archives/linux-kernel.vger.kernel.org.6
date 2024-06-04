@@ -1,118 +1,218 @@
-Return-Path: <linux-kernel+bounces-200451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9798FB038
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:46:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B87438FB03C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1CB1C232D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F3FD281D3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DAF145B21;
-	Tue,  4 Jun 2024 10:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1C0145B3C;
+	Tue,  4 Jun 2024 10:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFndo4/b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bmGlkb7f"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903CB145333;
-	Tue,  4 Jun 2024 10:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5317140380;
+	Tue,  4 Jun 2024 10:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717497828; cv=none; b=R3YypN20uPiyAu+S6qtteXoRV6E0k2oCab6nxCW5HMJOQN43pXaT/75Dxbikmf40ajYxfB4NE6mHKyjYQPuADzU4WAa3u5YImn5L2DI7r82u4fa/Q88tpkUJcQi8+9ZFPk3VE4sXqQqgLcw1jb0ibsJF3z7xVEOlRRpTqZjyfwQ=
+	t=1717497844; cv=none; b=sUKBWesAOOpUPIqTpBFqs7nua88ZmjwdSbaT6U33h24WV1+w5WH0xnriwWkU/BXnDuasXryZpk9f7Jfmpf9XfnR8hxgjPZ/HOPB0FP/drdxPpmHGMjLqm85A8yt3EcQ/vlltC09O2HWWWF9+klMpRIVX88ZmCdGdoDgb9Cua4nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717497828; c=relaxed/simple;
-	bh=yGknayW3QQ0rwaJndYaKwkPne6V5zBr5l3Gf/k6pWH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsW43EvU7J5KtGA1+xakBun5M1/CD1qROQtlaDt2p1JV+l5FW6IDgdMN+6N0VEpQZhXgaYbsrEYD5U/8dGtF5IorNohZDpChdr8PvDx8WFvD+9GDUjn99b/2oPDNeqSIjYBdu3aaWf4tO5+Gwfb4bggkyBbOxgHzreCCh0al3So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFndo4/b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18541C32782;
-	Tue,  4 Jun 2024 10:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717497828;
-	bh=yGknayW3QQ0rwaJndYaKwkPne6V5zBr5l3Gf/k6pWH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cFndo4/bAX4UD1RYY7WGPu4LBwxL7SZEADNtg0GzaMhGV0lJiTDwKfdBS1E9kIinn
-	 v3LUDzudl59ZMNzECxCkaKlVdBMjmpJD2UmYY9fMBxBZ+V44GeCF/x6bxVi8lfNwNN
-	 lvzWoXSYIK2WYzb6gpf1q2KvDfhdS5fnAbYVkjTMCssTD306r9ggTC6YlVIl7t5D+G
-	 FVkCrf1+xyKMBnWyfMp1eWLXMPwnmApXIrh4A0gmpPE8/J1Dga28KgU2f4TB6IFADM
-	 lU1dua6PHtWUu2Ok4rU3wOqOB1r7LzhyzfY/ao7Z+URv2we1ke/y0TBq/qoI0OlkrJ
-	 lHAGnLmUIzAzA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sERdq-000000002mT-3A19;
-	Tue, 04 Jun 2024 12:43:46 +0200
-Date: Tue, 4 Jun 2024 12:43:46 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: qcom: x1e80100: Add USB DisplayPort plug support
-Message-ID: <Zl7v4hezEYcuCORC@hovoldconsulting.com>
-References: <20240604094638.97780-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1717497844; c=relaxed/simple;
+	bh=DPM+EDomGxB90Phwba3+RF1YK3Pp5DAZEL2fd9tMqEk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ccBHTMkpUmZhYiRgFqKokfwEGVs+WBR8Si6O8RodyKpSICcSA9EOEmnAFmNrRFa8umX02zmZOuFX5Yl1RAvMdpdbMQpfyjIZp63CJeP/1Hpm11O9QgTbgbDbMb7gbVHWnr1HE9OMnkgbff6brWJ4fbDlu7H1OTF078ksSoJlWR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bmGlkb7f; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 454AhsWk117457;
+	Tue, 4 Jun 2024 05:43:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717497834;
+	bh=JNQ1FgRAcSPat55XxBjV/Ohkfq4q46+5vn0VpBwLLsk=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=bmGlkb7f3Ya0weKIlEwZOIWTgkfDg/ZCbE8eZ2dW4BkhhU2FgKeeXk8ga+L71DX9/
+	 VbejZQC+0xxXpCYsCLjerktkUeKVI0G5290h4y3eA9cH4938btD2c7WO/rOA8sb1lj
+	 y4TmcI4aeztay0G2jmXdZGVTxQs+6M8onO4P5sSQ=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 454AhsV7002508
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 05:43:54 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 05:43:53 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 05:43:53 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 454AhriZ108105;
+	Tue, 4 Jun 2024 05:43:53 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>
+Subject: [PATCH v12 01/13] media: dt-bindings: Add Imagination E5010 JPEG Encoder
+Date: Tue, 4 Jun 2024 16:13:52 +0530
+Message-ID: <20240604104352.2241348-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240604104001.2235082-1-devarsht@ti.com>
+References: <20240604104001.2235082-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604094638.97780-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Jun 04, 2024 at 11:46:38AM +0200, Krzysztof Kozlowski wrote:
-> Add support for handling jack events of USB (DisplayPort).
+Add dt-bindings for Imagination E5010 JPEG Encoder [1] which is implemented
+as stateful V4L2 M2M driver.
 
-> Depends on:
-> https://lore.kernel.org/all/20240422134354.89291-1-srinivas.kandagatla@linaro.org/
-> ---
+The device supports baseline encoding with two different quantization
+tables and compression ratio as demanded.
 
-> @@ -20,12 +20,32 @@ struct x1e80100_snd_data {
->  	struct snd_soc_card *card;
->  	struct sdw_stream_runtime *sruntime[AFE_PORT_MAX];
->  	struct snd_soc_jack jack;
-> +	struct snd_soc_jack hdmi_jack[8];
+Minimum resolution supported is 64x64 and Maximum resolution supported is
+8192x8192.
 
-As I asked Srini, please rename this dp_jack.
+Link: https://www.ti.com/lit/pdf/spruj16 [1] (Section 7.6 JPEG Encoder)
+Co-developed-by: David Huang <d-huang@ti.com>
+Signed-off-by: David Huang <d-huang@ti.com>
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+V6->V12: No change
+V5:
+ - Add Reviewed-By tag
+V4:
+ - Use ti-specific compatible ti,am62a-jpeg-enc as secondary one
+ - Update commit message and title
+ - Remove clock-names as only single clock
+V3:
+- Add vendor specific compatible
+- Update reg names
+- Update clocks to 1
+- Fix dts example with proper naming
+V2: No change
+---
+ .../bindings/media/img,e5010-jpeg-enc.yaml    | 75 +++++++++++++++++++
+ MAINTAINERS                                   |  5 ++
+ 2 files changed, 80 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
 
->  	bool jack_setup;
->  };
->  
->  static int x1e80100_snd_init(struct snd_soc_pcm_runtime *rtd)
->  {
->  	struct x1e80100_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
-> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
+diff --git a/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+new file mode 100644
+index 000000000000..085020cb9e61
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+@@ -0,0 +1,75 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/img,e5010-jpeg-enc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Imagination E5010 JPEG Encoder
++
++maintainers:
++  - Devarsh Thakkar <devarsht@ti.com>
++
++description: |
++  The E5010 is a JPEG encoder from Imagination Technologies implemented on
++  TI's AM62A SoC. It is capable of real time encoding of YUV420 and YUV422
++  inputs to JPEG and M-JPEG. It supports baseline JPEG Encoding up to
++  8Kx8K resolution.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: ti,am62a-jpeg-enc
++          - const: img,e5010-jpeg-enc
++      - const: img,e5010-jpeg-enc
++
++  reg:
++    items:
++      - description: The E5010 core register region
++      - description: The E5010 mmu register region
++
++  reg-names:
++    items:
++      - const: core
++      - const: mmu
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/soc/ti,sci_pm_domain.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++      jpeg-encoder@fd20000 {
++          compatible = "img,e5010-jpeg-enc";
++          reg = <0x00 0xfd20000 0x00 0x100>,
++                <0x00 0xfd20200 0x00 0x200>;
++          reg-names = "core", "mmu";
++          clocks = <&k3_clks 201 0>;
++          power-domains = <&k3_pds 201 TI_SCI_PD_EXCLUSIVE>;
++          interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++      };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dbc5d9ec3d20..f68e1a5757b5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10767,6 +10767,11 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/auxdisplay/img,ascii-lcd.yaml
+ F:	drivers/auxdisplay/img-ascii-lcd.c
+ 
++IMGTEC JPEG ENCODER DRIVER
++M:	Devarsh Thakkar <devarsht@ti.com>
++S:	Supported
++F:	Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
++
+ IMGTEC IR DECODER DRIVER
+ S:	Orphan
+ F:	drivers/media/rc/img-ir/
+-- 
+2.39.1
 
-> +	struct snd_soc_jack *hdmi_jack = NULL;
-> +	int hdmi_pcm_id = 0;
-
-And use dp_ prefixes here too.
-
-> +
-> +	switch (cpu_dai->id) {
-> +	case DISPLAY_PORT_RX_0:
-> +		hdmi_pcm_id = 0;
-> +		hdmi_jack = &data->hdmi_jack[hdmi_pcm_id];
-> +		break;
-> +	case DISPLAY_PORT_RX_1 ... DISPLAY_PORT_RX_7:
-> +		hdmi_pcm_id = cpu_dai->id - DISPLAY_PORT_RX_1 + 1;
-> +		hdmi_jack = &data->hdmi_jack[hdmi_pcm_id];
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	if (hdmi_jack)
-> +		return qcom_snd_dp_jack_setup(rtd, hdmi_jack, hdmi_pcm_id);
->  
->  	return qcom_snd_wcd_jack_setup(rtd, &data->jack, &data->jack_setup);
->  }
-
-Johan
 
