@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-200949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7474C8FB725
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:29:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C713F8FB72B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296421F26B5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82081286C09
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD768BFA;
-	Tue,  4 Jun 2024 15:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7764147C98;
+	Tue,  4 Jun 2024 15:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jitkRJLt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUcn6va2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD3A145FF7;
-	Tue,  4 Jun 2024 15:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC97C1474BF;
+	Tue,  4 Jun 2024 15:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717514929; cv=none; b=rKElRgL7hqWfZy4JMlMuKZuF0muQWjgGbGdyBpqjchTkitvTY71pOJVQqyTKwXDcWHIIvJBJ1zkPvPVya2ZqWNDsjdTtDfbEinEleBYvrrckgvYOR8bqCTyFgOFexCknmZqOKQaPLRaENuvBYKcH+XcfjBkMT5VoOqhH4GT+Bhs=
+	t=1717514931; cv=none; b=PMANM2/oUTD9m3Juf/oivUWpDY/Ow9IW008VIARBrPS3mNaAVst16m2v7ZjhbutxaAcAG6/VmNRAeL+aoCNzL4OI/Kuhu8kBYlaPt2DwUzijCVbnHj3Sjb1h7hPKIkcaGp7UXv6uRL7pQsbgBrdlRfmCWvA/gId05k/0RzfhY1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717514929; c=relaxed/simple;
-	bh=o+LKMoQg+BD00GptogVOAWI/kqHjBuP+esUUM0f7upw=;
+	s=arc-20240116; t=1717514931; c=relaxed/simple;
+	bh=R1YRD2xWbJ4CKWMqqUw5zYxQzZsVAGnyTTQmzDLurbk=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=S/CitH5KWJ4AG+HHYOIcRAsV3lT3EHuoM5KDoLOp3M3cWV3atqyIdX4wZcSiZIEIF34JkehMWdqEMpdxUa/zlPsa4Wr/S6EMCo9/C3vYZD3m8IMBb62+lJH7q9HkMqGfKs8zngRITg0dU70/wg61fVO5YqVES+ox07bfOZniLJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jitkRJLt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F10C4AF08;
-	Tue,  4 Jun 2024 15:28:48 +0000 (UTC)
+	 Message-Id:Subject; b=s/ubAnHJ3yQZdxNznzQNGQMu1kpnY2vxhVHQ+SWDr7ofdPx15c3OA3kObzbE479OXROrZZ4Q0g49tuPfKBOJDSyCp+/7EfMTP5fi2tbeA/0zoUGQRmpO65Ns9m0NW7yhtwxvQHJAEmrnRh0wU/SNJzS/PITyRqFLdZEXWkYDzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUcn6va2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90147C2BBFC;
+	Tue,  4 Jun 2024 15:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717514928;
-	bh=o+LKMoQg+BD00GptogVOAWI/kqHjBuP+esUUM0f7upw=;
+	s=k20201202; t=1717514930;
+	bh=R1YRD2xWbJ4CKWMqqUw5zYxQzZsVAGnyTTQmzDLurbk=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=jitkRJLtdkudwxZ7YSUT9WHM+9EwAfqhKzivP0oJepCojL9SBtzrF3qnAnLtbU2FD
-	 RECTk4WHsxHjVg8lcsHsqppI7GzJowUfNOY8VW1b30fLBEi9nlo+l7AOKr2lpGwYka
-	 SvPthxKcmYmiYALtvXRo+P5zoxRD5311vTedcVKKQ86YTmPhV9HxQ3QtQakJ4VYAuO
-	 bzMusYzOPDvoQXGoHYuH4Wu9ykQw3IfWmqLJzD3RbyaL3SV/fwruZPudSLXNEEy5cN
-	 /TLujHm6QeNVt0Y2Uc5pj3IbnV+mr8jp1YeRoV/fAhrm98gRI7AP4PjAwQ4rQnzVMT
-	 jJmQryFDyYQ2A==
-Date: Tue, 04 Jun 2024 10:28:46 -0500
+	b=hUcn6va2iO2Svgq2BjnHS2k7iJpLoBCgeIqURzrr3foQWSsbvm3qFmPoZr5y9cMIw
+	 Q3TtZ1s23R3mRAbGvoharsyCtOKLx/WRtOC6mnCK+7cl+hPtXLDVzfOd0Hss44ty7E
+	 ExDmlClfc4BRbqd73lIxKA2Ae/NfymL0urM8EreUFyolUMQDHP2X5JhYJ91skDzFaG
+	 t4toNFuG9AlRxYCIbi61Zwcw6bkcuysdCRZdptyuRuFuLclBeUCVs2rpuic74ZYTaC
+	 M4bHe5uuVSoRgA19XfVWK4RHFdCSld1E4mqvOEwzhZ30bZQ64goqkJAI5caXLk9Bkb
+	 v6m4Otf9kYxYQ==
+Date: Tue, 04 Jun 2024 10:28:48 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,42 +50,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Sibi Sankar <quic_sibis@quicinc.com>, devicetree@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>
-In-Reply-To: <20240530-x1e80100-dts-pcie6a-v1-0-ee17a9939ba5@linaro.org>
-References: <20240530-x1e80100-dts-pcie6a-v1-0-ee17a9939ba5@linaro.org>
-Message-Id: <171751454535.785265.18156799252281879515.robh@kernel.org>
-Subject: Re: [PATCH 0/3] arm64: dts: qcom: x1e80100: Add proper support for
- NVMe (PCIe 6a)
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240602104021.387713-1-amadeus@jmu.edu.cn>
+References: <20240602104021.387713-1-amadeus@jmu.edu.cn>
+Message-Id: <171751454718.785691.9170634580021432127.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: mediatek: Add Bananapi BPI-R3
+ mini
 
 
-On Thu, 30 May 2024 18:43:38 +0300, Abel Vesa wrote:
-> With this, the NVMe is fully functional and stable on both CRD and QCP.
+On Sun, 02 Jun 2024 18:40:20 +0800, Chukun Pan wrote:
+> Add compatible for Bananapi BPI-R3 mini Router (Filogic 830).
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
 > ---
-> Abel Vesa (3):
->       arm64: dts: qcom: x1e80100-crd: Fix the PHY regulator for PCIe 6a
->       arm64: dts: qcom: x1e80100-qcp: Fix the PHY regulator for PCIe 6a
->       arm64: dts: qcom: x1e80100: Describe the PCIe 6a resources
-> 
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 54 ++++++++++++++++++++++++++++++-
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 54 ++++++++++++++++++++++++++++++-
->  2 files changed, 106 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
-> change-id: 20240521-x1e80100-dts-pcie6a-46e3d8220d6e
-> 
-> Best regards,
-> --
-> Abel Vesa <abel.vesa@linaro.org>
-> 
-> 
+>  Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 
@@ -103,12 +88,18 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/x1e80100-crd.dtb qcom/x1e80100-qcp.dtb' for 20240530-x1e80100-dts-pcie6a-v1-0-ee17a9939ba5@linaro.org:
+New warnings running 'make CHECK_DTBS=y mediatek/mt7986a-bananapi-bpi-r3-mini.dtb' for 20240602104021.387713-1-amadeus@jmu.edu.cn:
 
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bf8000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pci@1bf8000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: crypto@10320000: interrupts: [[0, 116, 4], [0, 117, 4], [0, 118, 4], [0, 119, 4]] is too short
+	from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: crypto@10320000: interrupt-names: ['ring0', 'ring1', 'ring2', 'ring3'] is too short
+	from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: ethernet@15100000: mac@0: Unevaluated properties are not allowed ('phy-supply' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/mediatek,net.yaml#
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: ethernet@15100000: mac@1: Unevaluated properties are not allowed ('phy-supply' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/mediatek,net.yaml#
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: rfkill: 'reset-gpios' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/rfkill-gpio.yaml#
 
 
 
