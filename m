@@ -1,233 +1,194 @@
-Return-Path: <linux-kernel+bounces-200564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB6B8FB1C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:05:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA0B8FB1C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1675E1F25CE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:05:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925421C21D45
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74519145B07;
-	Tue,  4 Jun 2024 12:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A259F145FEF;
+	Tue,  4 Jun 2024 12:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NmiNsJm4"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="XHYImMbj"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3459D145B24
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D78F145B37
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717502714; cv=none; b=rHJy/Ii3uPPhtMhmNi5dF81GV8kQ+QrhIOXszCNM4ZCzulBVRggrUeFx633lbVwgUMo4SOcO7Kxk3l3kEEFqtTwbHJ1713k9fboijfPo+7HbQjyb/Ut/GIL3RBt+iFjLKfRlHEyk94gX505nwFlHC9wMmw1AcSN6XvtulAA36vw=
+	t=1717502719; cv=none; b=jzJ6h0wr4b4aZxgD28X6ltsoVyfKMMGpdlXIj8ERZDnHG/tOA6keg9qAtpEFRul4X1W5a7+OIqkMsQ3JV40I0fgwtfXzNZWNw2tsk/Yt0XTR4rkhjvgpfra0qcMWD7MdvjCX4dK47Z00dvkt26TOkdemHZ9uY3oQHMp04jvKsbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717502714; c=relaxed/simple;
-	bh=gzyR+r4MVcGEy80LuGTWvExKbsENizJiN8bfQ5ueIp8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=jxJrImsp08bxIQBy0Hu9IxCnfT8gEKROnb2ZJ+qYPG3jxem71tRMFS33WJa3KRJu6DJbDSv6VfdXS3tfacpgFs7sCDs8zu7qH9FurGkAVAUAor5dlcvi6U8o+dwMwJS3j1tJQIf31LTdX66mIv7/vawqclq96kbMdbm+9rwsPJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NmiNsJm4; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240604120509euoutp015fb32338397690d257638a0791b42b3a~Vy50-gWJw0114701147euoutp013
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:05:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240604120509euoutp015fb32338397690d257638a0791b42b3a~Vy50-gWJw0114701147euoutp013
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717502709;
-	bh=ujyDAueFU0ueHoZ2LCjEyMg709fGrZxMD4K6XjPZZao=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=NmiNsJm4ePp5Czbfy7Su7lCitlodaJwxTnfJBLP6XyXDEhZ9HxPfzqi9vUc1plb/E
-	 j5Q7b0Y3ok3458aCWoKc9a8vWc78BTtETL5J4iv1nCNp72S2YVGrdn5iiO641skK2k
-	 jXq7CSgIh3Ow4PDtgX1VkAAIhutkDQl7Wwxduheg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240604120508eucas1p18d8f0008c10da141f946a64f3592a5a1~Vy50pqr6q2995429954eucas1p1K;
-	Tue,  4 Jun 2024 12:05:08 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id F2.EC.09620.4F20F566; Tue,  4
-	Jun 2024 13:05:08 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240604120508eucas1p2720dde9043fea10eecf7a657b73654dd~Vy50SPvDF0293202932eucas1p2B;
-	Tue,  4 Jun 2024 12:05:08 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240604120508eusmtrp25275453ff6e892870081832102dd2d24~Vy50L27ti2140521405eusmtrp28;
-	Tue,  4 Jun 2024 12:05:08 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-b3-665f02f488ea
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id EF.22.08810.4F20F566; Tue,  4
-	Jun 2024 13:05:08 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240604120508eusmtip264ee581e43ea58d86f738648299a37bf~Vy5z_GFHf0717107171eusmtip2w;
-	Tue,  4 Jun 2024 12:05:08 +0000 (GMT)
-Received: from CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) by
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Tue, 4 Jun 2024 13:05:07 +0100
-Received: from CAMSVWEXC01.scsc.local ([::1]) by CAMSVWEXC01.scsc.local
-	([fe80::7d73:5123:34e0:4f73%13]) with mapi id 15.00.1497.012; Tue, 4 Jun
-	2024 13:05:07 +0100
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-CC: David Hildenbrand <david@redhat.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "hughd@google.com" <hughd@google.com>,
-	"willy@infradead.org" <willy@infradead.org>, "wangkefeng.wang@huawei.com"
-	<wangkefeng.wang@huawei.com>, "ying.huang@intel.com" <ying.huang@intel.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>, "ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>, "shy828301@gmail.com" <shy828301@gmail.com>,
-	"ziy@nvidia.com" <ziy@nvidia.com>, "ioworker0@gmail.com"
-	<ioworker0@gmail.com>, Pankaj Raghav <p.raghav@samsung.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/6] add mTHP support for anonymous shmem
-Thread-Topic: [PATCH v3 0/6] add mTHP support for anonymous shmem
-Thread-Index: AQHasjX9yP1IBMh0VkC4Fzv01OfbabGxBpEAgAAKfoCAABD5AIAGGG2AgAAYLgCAACcNAA==
-Date: Tue, 4 Jun 2024 12:05:07 +0000
-Message-ID: <5mezgqzg7wmd4iq2d2q3aentziosetwcll3tgdbl3mhriseyv3@pgxsux7qvxno>
-In-Reply-To: <f11c1b52-67d1-4c2a-834b-47302b0054bc@linux.alibaba.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6F19C76AAA3B474A9E43CDC9B90258A6@scsc.local>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1717502719; c=relaxed/simple;
+	bh=MOyQAL00DQbewIwP6Y+mCobyLlekb9+Spe1Ge7zuYzk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KZ97BwbTiC+UP7p585vcTJmS3ep6mu2eCqLZazmK3bqhtWWpNjzP2EXZ5XtG4f/8dlbMBIn1+w3zX/I8N0r+Vs9W4TZv4VV7eyLOw5voY1AbkWHOOce4i7nwYDNlmsbqPFqxSHJOp+nCD/l0to/NtpuNIdV+AY0Xnbo26aGnHQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=XHYImMbj; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52b8b638437so1035219e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 05:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1717502716; x=1718107516; darn=vger.kernel.org;
+        h=mime-version:user-agent:organization:autocrypt:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MOyQAL00DQbewIwP6Y+mCobyLlekb9+Spe1Ge7zuYzk=;
+        b=XHYImMbj4ouv7V5vvec3EXVFkttWXzBlbS/atNzKu02SCJrRrm4q9+xdH7DXJ1aQc8
+         zEq11sxVRRq5bLhtBzKL6JFb6HDu4GtomlvhTWuvBN7u7At6vq+pIiikXcfB3fSqEUiC
+         niSFxTMF4lBDorBPu70UYsVAmdjdeivk7RWL9kl4byEQaqJf5pemW9dyvAK5XIKgkTu+
+         B4TWXDsaVkZ45WjpGve8UpHIq5HA3ZIO60IY952NF3YsvDhaK/JYugPQlgKvyuiLVCq+
+         9TsNg/SJ+VX6aPhZO5cNu75qaQRYyr9EAA32Udx3CIu83Mkkfe+CYeDPQ+TWfASY7qMz
+         X+Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717502716; x=1718107516;
+        h=mime-version:user-agent:organization:autocrypt:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MOyQAL00DQbewIwP6Y+mCobyLlekb9+Spe1Ge7zuYzk=;
+        b=lvg4AruJHp+QU6bdqHF9eCO2qQAVcqCAWO4JdZafUl0ke98cVOUT2iaU4P3pr/sl5o
+         JLHKJrngM3oYf1H95fOXNtOBli1EWgz0Q5nmlixIhpl0Mb95Mbamtaj1pi4AhFC8riO7
+         ZdEojrtKLTu9rEXqwlaomsw8Q8pfc0RqCn/ms1YeQbGr8Q8LPDwt1gwz38H5mc9jfHT0
+         Blkd9HoGsMsSHMd6LU+kyIn/mhrKfSaIycdaWd9nU2OeJqYieHCsFkr3nxzzjXsQlJ3R
+         GF4H3Q4DpTRMTbZxonGgq1kPrsKOA/iLkpxHKa534ZS3ddl7K+bYacXLglWoU4IKWDdt
+         5zsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvvDwmIEMhzvEsjBfsYgpaEVn0qliPoG/O1afgER0FIS9JeA+RlCm5vWm4jOoArnSrfECp1PoQnEImlQV5/RviGGe/jMOhvD1TbKjH
+X-Gm-Message-State: AOJu0YyZTgksNFqVg+0FoPJTzVuL3XjDLQMmOi28bJ1IRasb7ojAqZZq
+	YnEIQifr0MeVr1/yL/Q4maGfjPNcAGfys7jV1rltf//nyuBxosyZTLIyRaMaZ03kiTHOX/km0qu
+	zK7ypcw==
+X-Google-Smtp-Source: AGHT+IE15Da8bWxDfM9GIxKyHSgMSf5ainF3VIf4DVl0MrNW0ahXVkCer1e/PIjLzQ/hjiOMYFz4Mw==
+X-Received: by 2002:a05:6512:511:b0:52b:8f70:fdc with SMTP id 2adb3069b0e04-52b8f7010f1mr5628805e87.57.1717502715881;
+        Tue, 04 Jun 2024 05:05:15 -0700 (PDT)
+Received: from [10.145.160.231] ([185.254.75.31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c111esm11409577f8f.20.2024.06.04.05.05.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 05:05:15 -0700 (PDT)
+Message-ID: <46cbe0a914065917ea1024636e864a1e2c982145.camel@9elements.com>
+Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in schedule_timeout (6)
+From: Marcello Sylvester Bauer <marcello.bauer@9elements.com>
+To: syzbot <syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com>, 
+ bp@alien8.de, dave.hansen@linux.intel.com, gregkh@linuxfoundation.org, 
+ hpa@zytor.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ mingo@redhat.com, stern@rowland.harvard.edu,
+ syzkaller-bugs@googlegroups.com,  tglx@linutronix.de, x86@kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Marcello Sylvester
+ Bauer <marcello.bauer@9elements.com>, Matthias Stoeckl
+ <matthias.stoeckl@secunet.com>,  Uwe Kleine-Koenig
+ <u.kleine-koenig@pengutronix.de>
+Date: Tue, 04 Jun 2024 14:05:12 +0200
+In-Reply-To: <000000000000f8112e0618995e6e@google.com>
+References: <000000000000f8112e0618995e6e@google.com>
+Autocrypt: addr=marcello.bauer@9elements.com; prefer-encrypt=mutual;
+ keydata=mQINBGK7F80BEADSHaaAN0rjEV14KhMbMkvdiL2CcDhSYTnoupp0ena53nqP/kbsIUsbJ
+ fBDHGl9x6oMagomx5rFAfUmuN3ruBam1qRXA7e3Ej1raPN2lIJxnXrlniMUiurEUkKJO5PGV3g6mN
+ D4VoPsIuiv/QNUu42DA/JG4BVJ8OPB5oo6xR5NB9/h6DC3wyEUHWaMnAHBxknsrDmNKuhjcotUA9T
+ VHHoZbe4//LATLOFLYe1YCV56zQTEsxq6jYdTA6Mah02e61BSODDL3iliIRzP9QngBFyy+kcQJSx1
+ aBflX79COBJoQY7OGtzNwuSzHyiUPakQaAiHZXbKNFcPpVtZpGCcHA4JzcjDVVCzwRy+F6uwGaq/t
+ ZpZJPGFgZpiv+yL29jkCev1HhcLf+O5dCH+WP/4oibuVPxegLUrDVvvdKD8W0NzzvV7PPd+5sdL//
+ g8BvbE5WV89+brQejANQNhJCg1dH97M8xhsNF3RptObcYNKW7QRB2uNtkKKrnpUOGwd5qdej//AE4
+ sSDzM0uOlkwMaIjZX9LlUyws3JpwRZf+0K0cFb0EmxH2buozgzf1U0aTAVC2befD6keeUjPIsI2g5
+ 48FLnjjktW+qfWnA+T5Vyc55mmLUm8hTsPEVbG24c6nictPtSJAs7FXmYCEnWtBycIGuJBqTzVlEN
+ amFZhbV2LK8kwARAQABtDdNYXJjZWxsbyBTeWx2ZXN0ZXIgQmF1ZXIgPG1hcmNlbGxvLmJhdWVyQD
+ llbGVtZW50cy5jb20+iQJMBBMBCgA2FiEENLJ+A4AXWnw+hZ4h5UtmIqXtv2EFAmK7F80CGwEECwk
+ IBwQVCgkIBRYCAwEAAh4BAheAAAoJEOVLZiKl7b9hgsIQAKa0kfiJGnwusB86WSnd/sHrq1ctlcYf
+ kmPZglEFLpEjwWD5gle0vpEn6tI6UuZN8T7Z1Td0T4zsg3TUR4QQXUHMh7tn2T1/5NvlmgaEiW3WV
+ Yqruwhxao5uQsFRzVWFuqi3EUd2C1bOCP3rgj3Akds0CnWa5XZV4KYumXqPfd14rowjxZVVnL5KgL
+ 6is74TyVqYls6u0XhgdGfsNuPkJGMaV20Mr+0HjZAaZ26qnYP/u/5FkSLkO9UYEss4pxLUL1YawjN
+ ZDqLU8gtBrsXq6yboPkKUQhAV9HxcDJeULkpduA5NRUFWUDAHyjtSBnM1GWAC71ThNXytEA3yRl7D
+ grr+tvuBsvjE/8sv5cAE9lfrBUFIDBJG+5bTqdoiXd4NdgWilZFxo8jlI8MX4SBSKBlrCt8e5qMcq
+ mhwRSCvhxvYOG3n+GkebAwoer9XounfyH+D4bg3iSn3qeIJeoO6ztMOjAOERuVmMmvFyuJvRbVYkf
+ +5gs+0nrNubgnZwUgh+zUyVdAnOvHl59DV+PgKYsZGeZ7CZYeC/p2QRRiOnnNcOsI3TrZ0271xGZX
+ CMl+HOTJQntnBSGA0GB37JFEAD2I5GEbDoD8+YB9TuLkljo+lSc/akyEtBehnQlb0NI5k43EewHct
+ fCK+pxTJOzKllE/DAKY8WerzK+e+uF2jy4uK
+Organization: 9elements GmbH
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-pocnCbCCxbuvFQrhJfCH"
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLKsWRmVeSWpSXmKPExsWy7djPc7pfmOLTDGad0Lb4fFfIYs76NWwW
-	//ceY7T4uv4Xs8XTT30sFot+G1tc3jWHzeLemv+sFj27pzJaLDixmNGi8fN9RovfP4ASJ2dN
-	ZrGYffQeuwOfx5p5axg9ds66y+6xYFOpR8uRt6wem1doeSze85LJY9OnSeweJ2b8ZvHY+dDS
-	o7f5HZvH+31X2Tw+b5IL4InisklJzcksSy3St0vgyli5u5+1YLNExfqrTawNjLuFuhg5OSQE
-	TCT2zp/KCGILCaxglPi1ObaLkQvI/sIo8XrRdmYI5zOjxLsNjxhhOg4seQSVWM4osWLWD3a4
-	qsvnZkJlTjNKbG+5ygjhAA1uabrKBtLPJqApse/kJqAWDg4RAX2J3rm+IDXMAtNYJTp/3wfb
-	ISzgIDFzcS8riC0i4ChxA6pXRCBMouXkASYQm0VAReLnjh0sIHN4BXwlVs9RBglzCrhKXGxc
-	ATaGUUBW4tHKX+wgNrOAuMStJ/OZIF4QlFg0ew8zhC0m8W/XQzYIW0fi7PUnUG8aSGxduo8F
-	wlaU6Dh2kw1ijo7Egt2foGxLif0PTjBD2NoSyxa+BrN5geafnPkEqncnl8S+VVwQtovE9zkf
-	oW4Qlnh1fAv7BEadWUjOm4VkxSwkK2YhWTELyYoFjKyrGMVTS4tz01OLjfNSy/WKE3OLS/PS
-	9ZLzczcxAlPk6X/Hv+5gXPHqo94hRiYOxkOMEhzMSiK8fXXRaUK8KYmVValF+fFFpTmpxYcY
-	pTlYlMR5VVPkU4UE0hNLUrNTUwtSi2CyTBycUg1MUp8FzQ07aj+tvr4rPtbhk7B74YKdnmI1
-	utke6Z/nLFzhZ6m54Gpl5+Ri2zW/ZieqMvs8OmRd99yk4/arE9N72DMkdp942v7zjd7rHo2p
-	FvJirXN/fbn9eNXcGS1hvXXJj9eq7dn54ni6DtvLdAnHDQ5t6wWd7901cnn5inVfx60Tnzim
-	3yo45bxmbmuJe9uM7lcG4f9/cdqvETG50NWY2mnP9/n+v2tHd3p0zZOtSjlz+H6l0HT1P9fN
-	o6/6O0cobLjGOONetew1Tev7k5iiX/guKcmSn3h9ywSPFcWF4U/bUpY2yeS7M++dZ+NV9p/t
-	NXes9FGeRStO1/zhk09M1+fNWbbHyFc47M7t1y9WKrEUZyQaajEXFScCAFNZnaoABAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOKsWRmVeSWpSXmKPExsVy+t/xe7pfmOLTDFbP5Lb4fFfIYs76NWwW
-	//ceY7T4uv4Xs8XTT30sFot+G1tc3jWHzeLemv+sFj27pzJaLDixmNGi8fN9RovfP4ASJ2dN
-	ZrGYffQeuwOfx5p5axg9ds66y+6xYFOpR8uRt6wem1doeSze85LJY9OnSeweJ2b8ZvHY+dDS
-	o7f5HZvH+31X2Tw+b5IL4InSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3
-	s0lJzcksSy3St0vQy1i5u5+1YLNExfqrTawNjLuFuhg5OSQETCQOLHnE3MXIxSEksJRRYsGm
-	40wQCRmJjV+uskLYwhJ/rnWxQRR9ZJQ49OcGlHOaUWL2hNMsEM4KRolL5w6xgLSwCWhK7Du5
-	ib2LkYNDREBfoneuL0gNs8A0VonO3/cZQWqEBRwkZi7uBVshIuAocaPpKhuEHSbRcvIA2Bks
-	AioSP3fsYAGZwyvgK7F6jjLErm3MEpf/3QOr5xRwlbjYuAJsJqOArMSjlb/YQWxmAXGJW0/m
-	Q70jILFkz3lmCFtU4uXjf1Cv6Uicvf6EEcI2kNi6dB8LhK0o0XHsJhvEHB2JBbs/QdmWEvsf
-	nGCGsLUlli18DWbzCghKnJz5hGUCo8wsJKtnIWmfhaR9FpL2WUjaFzCyrmIUSS0tzk3PLTbU
-	K07MLS7NS9dLzs/dxAhMgduO/dy8g3Heq496hxiZOBgPMUpwMCuJ8PbVRacJ8aYkVlalFuXH
-	F5XmpBYfYjQFht1EZinR5HxgEs4riTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5NLUgt
-	gulj4uCUamAy4N549ef+Y52lMZvPKU2NkEs+uv+ow/uX5/3ZC904G5YYtF/e0LTc3zk/Yruj
-	unlaUNqKFRH3JWvN9K/cONiz7KpG1l5+5p+OW82/y83Keikvudx0W/YZLb6lbBOWXm9p1Dig
-	PPeXtLiCReCyntnNy/ozeZx3Zp1/yhUk7r3T+V3nC5VpnswrJgudvvYmovnKtJUX4iIXTDfc
-	ui7CcLkY4zV1lab5pmv4VvULXXsV/O5IwUOu7x9Y+hZlHZnDLD3zxOOPP28tK7q8+8esKzxZ
-	9TvOzr0f1GfywHvHwf6ip54/En4+an9wTnyFi8rOxdqM+sX3515jnb54p32+Jvuh9kf3espk
-	ywPuRdooeh19pcRSnJFoqMVcVJwIAM+FgBQKBAAA
-X-CMS-MailID: 20240604120508eucas1p2720dde9043fea10eecf7a657b73654dd
-X-Msg-Generator: CA
-X-RootMTR: 20240531111357eucas1p2338be7f326d8d9176d2ee212a10fc9db
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240531111357eucas1p2338be7f326d8d9176d2ee212a10fc9db
-References: <cover.1717033868.git.baolin.wang@linux.alibaba.com>
-	<f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com>
-	<db3517d0-54b1-4d3a-b798-1c13572d07be@linux.alibaba.com>
-	<CGME20240531111357eucas1p2338be7f326d8d9176d2ee212a10fc9db@eucas1p2.samsung.com>
-	<502fb3df-b42b-4f0c-a98d-348c3d544721@redhat.com>
-	<slkkien5nc3weyzebdlxs5jjvealqzmctbom7sfvijvkolhsjj@athcc2aqq77p>
-	<f11c1b52-67d1-4c2a-834b-47302b0054bc@linux.alibaba.com>
 
-On Tue, Jun 04, 2024 at 05:45:20PM +0800, Baolin Wang wrote:
->=20
->=20
-> On 2024/6/4 16:18, Daniel Gomez wrote:
-> > On Fri, May 31, 2024 at 01:13:48PM +0200, David Hildenbrand wrote:
-> > > > >=20
-> > > > > As a default, we should not be using large folios / mTHP for any =
-shmem,
-> > > > > just like we did with THP via shmem_enabled. This is what this se=
-ries
-> > > > > currently does, and is aprt of the whole mTHP user-space interfac=
-e design.
-> > > > >=20
-> > > > > Further, the mTHP controls should control all of shmem, not only
-> > > > > "anonymous shmem".
-> > > >=20
-> > > > Yes, that's what I thought and in my TODO list.
-> > >=20
-> > > Good, it would be helpful to coordinate with Daniel and Pankaj.
-> >=20
-> > I've integrated patches 11 and 12 from the lsf RFC thread [1] on top of=
- Baolin's
-> > v3 patches. You may find a version in my integration branch here [2]. I=
- can
-> > attach them here if it's preferred.
-> >=20
-> > [1] https://lore.kernel.org/all/20240515055719.32577-1-da.gomez@samsung=
-.com/
-> > [2] https://protect2.fireeye.com/v1/url?k=3Da23e7c06-c3b56926-a23ff749-=
-74fe485fb347-371ca2bfd5d9869f&q=3D1&e=3D6974304e-a786-4255-93a7-57498540241=
-c&u=3Dhttps%3A%2F%2Fgitlab.com%2Fdkruces%2Flinux-next%2F-%2Fcommits%2Fnext-=
-20240604-shmem-mthp
-> >=20
-> > The point here is to combine the large folios strategy I proposed with =
-mTHP
-> > user controls. Would it make sense to limit the orders to the mapping o=
-rder
-> > calculated based on the size and index?
->=20
-> IMO, for !anon shmem, this change makes sense to me. We should respect th=
-e
-> size and mTHP should act as a order filter.
 
-What about respecing the size when within_size flag is enabled? Then, 'alwa=
-ys'
-would allocate mTHP enabled folios, regardless of the size. And 'never'
-would ignore mTHP and size. So, 'never' can be used for this 'safe' boot ca=
-se
-mentioned in the discussion.
+--=-pocnCbCCxbuvFQrhJfCH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->=20
-> For anon shmem, we should ignore the length, which you always set it to
-> PAGE_SIZE in patch [1].
->=20
-> [1] https://protect2.fireeye.com/v1/url?k=3D0d75a0c6-6cfeb5e6-0d742b89-74=
-fe485fb347-904fa75c8efebdc2&q=3D1&e=3D6974304e-a786-4255-93a7-57498540241c&=
-u=3Dhttps%3A%2F%2Fgitlab.com%2Fdkruces%2Flinux-next%2F-%2Fcommit%2Fedf02311=
-fd6d86b355d3aeb74e67c8da6de3c569
+Greetings,
 
-Since we are ignoring the length, we should ignore any value being passed.
+I'm currently investigating this regression to properly fix it. My
+patch only replaces the corresponding timer API calls without actually
+changing the code. I'm trying to get it to work properly with the
+hrtimer API.
 
+Any hints on how to accomplish this are welcome.
+
+Thanks
+Marcello
+
+On Thu, 2024-05-16 at 15:01 -0700, syzbot wrote:
+> syzbot has bisected this issue to:
 >=20
-> > @@ -1765,6 +1798,10 @@ static struct folio *shmem_alloc_and_add_folio(s=
-truct vm_fault *vmf,
-> >=20
-> >                  order =3D highest_order(suitable_orders);
-> >                  while (suitable_orders) {
-> > +                       if (order > mapping_order) {
-> > +                               order =3D next_order(&suitable_orders, =
-order);
-> > +                               continue;
-> > +                       }
-> >                          pages =3D 1UL << order;
-> >                          index =3D round_down(index, pages);
-> >                          folio =3D shmem_alloc_folio(gfp, order, info, =
-index);
-> >=20
-> > Note: The branch still need to be adapted to include !anon mm.=
+> commit a7f3813e589fd8e2834720829a47b5eb914a9afe
+> Author: Marcello Sylvester Bauer <sylv@sylv.io>
+> Date:=C2=A0=C2=A0 Thu Apr 11 14:51:28 2024 +0000
+>=20
+> =C2=A0=C2=A0=C2=A0 usb: gadget: dummy_hcd: Switch to hrtimer transfer sch=
+eduler
+>=20
+> bisection log:=C2=A0
+> https://syzkaller.appspot.com/x/bisect.txt?x=3D119318d0980000
+> start commit:=C2=A0=C2=A0 75fa778d74b7 Add linux-next specific files for
+> 20240510
+> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 linux-next
+> final oops:=C2=A0=C2=A0=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/report.txt?x=3D139318d0980000
+> console output:
+> https://syzkaller.appspot.com/x/log.txt?x=3D159318d0980000
+> kernel config:=C2=A0
+> https://syzkaller.appspot.com/x/.config?x=3Dccdd3ebd6715749a
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3Dc793a7eca38803212c61
+> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.syz?x=3D16dcd598980000
+> C reproducer:=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.c?x=3D151d9c78980000
+>=20
+> Reported-by: syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com
+> Fixes: a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer
+> transfer scheduler")
+>=20
+> For information about bisection process see:
+> https://goo.gl/tpsmEJ#bisection
+
+
+--=-pocnCbCCxbuvFQrhJfCH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJRBAABCAA7FiEEB0muAN3elg6p6gWSpVqlh6ibFBIFAmZfAvgdHG1hcmNlbGxv
+LmJhdWVyQDllbGVtZW50cy5jb20ACgkQpVqlh6ibFBLg+w/+PL3EXBwABpCCHRzk
+PPxX0B6cNcomoUVG4qy7t36A+BDOGjQ/4gpxE9r1UAhQdbD0DbCle5cnsCseJASl
+3EckgDIFzc3Bw77J9Lqk2HOMTfYDGl6HSVHmJ5u2uPxv/5vJ5mm8o+m7y/EFAl6s
+BnVQrK0IsjGXpY8Ez0hoVOEJACtuNw6g6rg0KH3BlbUm3yj6dViruA7Jbmiimg2A
+st+n0KND5Z6jYhHsF+XSWXQnUjh8w7WCCwxMKWNgMFsxXNbUqWVkjqiPdBEqc5Un
+3/7Ys4MDoZZX+YTzMdh8aHqEfR/RdPHie3v/5L25rvaJGl5m9XsIjP0BUPerFblB
+qWHDPK+rfFmPDiVjr8iORhTE2cjLqXQl+V16F2piVnSwT6uwM7abJ91VUK8Yt6sM
+SIBq4XkFaJvSnmRqZSv22FRuBg0iDvTMBvlxeq5QKV7RM3GH1UleqmIJOZBmX6Pb
+F4n8VY+KgRBhnaELDpqroJYD+kZ/dmZbaNxhxMCv0J9GomL421OufH7U4w3rR8To
+2j1Az2r1Ebe53UjZcE8EZloBkFtDbAZapkrFHP9QS0QdZmft+71iMIK8C8Cyd0Bp
+exsTiuSnUSLwGq9tTPumUog+73UOmujnoqEWuMxa17m/5UFaVFhDIs0ONKSayBLI
+8s9XzpTN4Ub2UkK2WmJGXi8YMm4=
+=NxWp
+-----END PGP SIGNATURE-----
+
+--=-pocnCbCCxbuvFQrhJfCH--
 
