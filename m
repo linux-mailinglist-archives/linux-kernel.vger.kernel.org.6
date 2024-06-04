@@ -1,123 +1,136 @@
-Return-Path: <linux-kernel+bounces-201223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1856B8FBB2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C458FBB2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A500AB2B3BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:03:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11F07B2A998
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D6214A4CF;
-	Tue,  4 Jun 2024 18:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE1914A4DD;
+	Tue,  4 Jun 2024 18:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DLU+I6Sn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="H1DXBN0q"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8674914A09E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 18:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF73179BC;
+	Tue,  4 Jun 2024 18:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717524170; cv=none; b=XfDx6M4ZddyHPIKORNXRYnBkPhoeZfxK8Rq57WEQDj0ht7H3aX5EC3g4yaMC9HH5NPZ3JEZAc06Xrw0/LKNogN1xZOGSm0maIAhH2bdYfF1KNEWJRdaHuMNOim36WWGnYWV0XrTKdBZzhXG0XZ7JGol24+zlUKYqUSP5h4j77n4=
+	t=1717524142; cv=none; b=o47TtoTIWoHOW+vKOyk5/6aD4ChBhk2yENN76/uHCXmylFCeI1awxjKYAcmUQBDBLOhIFYNNZ9TqLCUTIuR6jGmam1BCYDzj++GvF5zjoADUSH/ZN2+jrsVqxgwZKDywerXr6vK3WW9TXkZiQVFER714Ee+MZs3DuGPBW6TOfD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717524170; c=relaxed/simple;
-	bh=Gb/snQsBVNfy1o6BzXAP6qQrBBYg5gFWkOAd71sStzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XOCfzdqHfjdAM2BnrIoktGL5GfsABHLjNZqgMobHxFAci0U74hENnmjvn3fYi5zn/rYWCp8F6j6u6s65PJ2X8g5tnhGNQIAS82FuO7mN6nijVmpe6KXneBQgpjXYkOd+eV+IchRCWs+NrfU4jeeD+0WoidYfmqvJ5Se+bJR9JVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DLU+I6Sn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1992040E016E;
-	Tue,  4 Jun 2024 18:02:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cMhfAxGU5kPl; Tue,  4 Jun 2024 18:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717524163; bh=GWrStZRjxuM92GFSBVDFKrufEIiFs1jygww4NQi9psE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DLU+I6SnPlxE3Vi8Wxe3ScNZB3EkLajXpOeoexSJ3FsF11DOmq/kF7mUQWCTh2ZZU
-	 9zC+xV6TAt4Ah13vFL2KhnpeImQh5VqXLrXNCRxgdqmPuwF/2lM+rMy/J4yj4Iozin
-	 ZxTnySap2CgtkGMC9pdh3ly0va5Ab2W92LnO+AaAjUsYECWulD852NoRmi59uFRFfU
-	 72PgimdmMwcBk0tvmwsfVjcFEczVP9MQnuu4DKwdb8Sc7lOB+dIw/7406ijBYvLDS3
-	 b07CVT9qArX/RZjTB+qzs9rI0AfKYtNuRqP+YF+HaJPYra36zyWQ2mAMZE0hpL/ZAc
-	 BPWBKnbypK0uhFRN23NWzm/KCqpEWOShUSmPDaIGJebyCKUafVrsVelPv36dLxzxH7
-	 uvDy4Lm1OXwjTEnCvLQVj+3ePXJ1qXVcnsEE4Ie0oO0I0A7dhS1FRyuHujx94CEY+p
-	 ZlAsAnS98zWsf5NoLQSrMoJ548mt0Hu8T6gCJN1CLkwqcX5ErL2aTWMb8iIXGlZpxQ
-	 DTTlQ7UKT4e2wsy/0C9wHlbpIynoCuu3EpPYAu9jiQvD8OWDe3+nypU5dr7ChFcwLp
-	 eg1R8UeQgPrdpM4heVAXU4L3nloB0w/+1MUkg/RNSYuKWIjoRUPTgMUrp2BvirSN17
-	 C96SzSZAINkxGsML4ERfHRHc=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B340740E016A;
-	Tue,  4 Jun 2024 18:02:13 +0000 (UTC)
-Date: Tue, 4 Jun 2024 20:02:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Young <dyoung@redhat.com>
-Cc: Mike Rapoport <rppt@kernel.org>, "Kalra, Ashish" <ashish.kalra@amd.com>,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, rafael@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, adrian.hunter@intel.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com,
-	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com,
-	michael.roth@amd.com, seanjc@google.com, kai.huang@intel.com,
-	bhe@redhat.com, kirill.shutemov@linux.intel.com, bdas@redhat.com,
-	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
-	jroedel@suse.de, ardb@kernel.org, kexec@lists.infradead.org,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
-Message-ID: <20240604180212.GHZl9WpAfNVERTjMqw@fat_crate.local>
-References: <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
- <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local>
- <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
- <Zl3HfiQ6oHdTdOdA@kernel.org>
- <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
- <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local>
- <Zl3hwYL2GDiyUfGo@kernel.org>
- <CALu+AoSnA4323QbQG7wrNptosz7tfEfztsE1=o6G=FaLbQ_tKQ@mail.gmail.com>
- <20240604094358.GBZl7h3otTCYJ5rkkt@fat_crate.local>
- <CALu+AoS=-=PbMRxC-1rpfSTPpMOmM5BGRBjLhDwgOC3=4C71ng@mail.gmail.com>
+	s=arc-20240116; t=1717524142; c=relaxed/simple;
+	bh=qcp+UzM4xs7eHbK/5zAhD0ChiUogwbeZjzyp4fNvko8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bLsrrB/hOvGORrdAHj5+WFQYab9h3z8hc0F3AGSFai8D2op155B87fW3d4EeQkF6lpp1y8vHVwyP190n4yYcrIg0iVVJUFdXonzsjf1TFzy8dpMHtNNfLcISsE9eFSmHpHdyw6+1DuzsKoE4OXSPUriOOZWZiWTNBNDyW/4fapk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=H1DXBN0q; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1717524138;
+	bh=qcp+UzM4xs7eHbK/5zAhD0ChiUogwbeZjzyp4fNvko8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H1DXBN0qrpkHb1DP3ffwmLu34qJNIxKYImS1RbipV5DwDdW97Q+To4Q618q7A26pe
+	 qjGlrE0JFS/7pLIU2HuTUHXJXdImwlw82h3SNo5WEAPegF5gSW5IN5+Dx7q/enMupW
+	 wpIPAL008Q6I6iW+mVLd/HJsvcYIegDNlj2pZrG7XHLf/a/EraCwFIuRf5op6fct+K
+	 AUXVHncX/+QwKlJDPDubt12oicVEezHoNh02ZICqqcga3fjfZ6CYlHmLsyJdp7wpDh
+	 NBLuBO40/vMKwLfhRapC9UdUbxEAGh89SOxNu+varXmf2/7bpdZi7Q3wfIo1c6kLnX
+	 Myc9baY/JqNPA==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Vtz2L0d0lz12ld;
+	Tue,  4 Jun 2024 14:02:18 -0400 (EDT)
+Message-ID: <5fc7a866-ecd9-4b57-9740-369544df1264@efficios.com>
+Date: Tue, 4 Jun 2024 14:03:05 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CALu+AoS=-=PbMRxC-1rpfSTPpMOmM5BGRBjLhDwgOC3=4C71ng@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] tracing/fprobe: Support raw tracepoint events on
+ modules
+To: Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, linux-modules@vger.kernel.org
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, don
+ <zds100@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+References: <171723014778.258703.6731294779199848686.stgit@devnote2>
+ <171723016594.258703.1629777910752596529.stgit@devnote2>
+ <fbfec8d9-d0ed-4384-bbd2-dd5c1e568ed1@efficios.com>
+ <20240604084955.29b9440687522a1347e0e7cd@kernel.org>
+ <419b80da-9cbf-4bb2-aabb-dc04f0fb0f37@efficios.com>
+ <20240604123418.22e16e97@gandalf.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240604123418.22e16e97@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 04, 2024 at 07:09:56PM +0800, Dave Young wrote:
-> Anyway there is not such a helper for all cases.
+On 2024-06-04 12:34, Steven Rostedt wrote:
+> On Tue, 4 Jun 2024 11:02:16 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>> I see.
+>>
+>> It looks like there are a few things we could improve there:
+>>
+>> 1) With your approach, modules need to be already loaded before
+>> attaching an fprobe event to them. This effectively prevents
+>> attaching to any module init code. Is there any way we could allow
+>> this by implementing a module coming notifier in fprobe as well ?
+>> This would require that fprobes are kept around in a data structure
+>> that matches the modules when they are loaded in the coming notifier.
+> 
+> The above sounds like a nice enhancement, but not something necessary for
+> this series.
 
-But maybe there should be...
+IMHO it is nevertheless relevant to discuss the impact of supporting
+this kind of use-case on the ABI presented to userspace, at least to
+validate that what is exposed today can incrementally be enhanced
+towards that goal.
 
-This is not the first case where the need arises to be able to say:
+I'm not saying that it needs to be implemented today, but we should
+at least give it some thoughts right now to make sure the ABI is a
+good fit.
 
-	if (am I a kexeced kernel)
+>>
+>> 2) Given that the fprobe module going notifier is protected by the
+>> event_mutex, can we use locking rather than reference counting
+>> in fprobe attach to guarantee the target module is not reclaimed
+>> concurrently ? This would remove the transient side-effect of
+>> holding a module reference count which temporarily prevents module
+>> unload.
+> 
+> Why do we care about unloading modules during the transition? Note, module
+> unload has always been considered a second class citizen, and there's been
+> talks in the past to even rip it out.
 
-in code.
+As a general rule I try to ensure tracing has as little impact on the
+system behavior so issues that occur without tracing can be reproduced
+with instrumentation.
 
-Perhaps we should have a global var kexeced or so which gets incremented
-on each kexec-ed kernel, somewhere in very early boot of the kexec-ed
-kernel we do
+On systems where modules are loaded/unloaded with udev, holding
+references on modules can spuriously prevent module unload, which
+as a consequence changes the system behavior.
 
-	kexeced++;
+About the relative importance of the various kernel subsystems,
+following your reasoning that module unload is considered a
+second-class citizen within the kernel, I would argue that tracing
+is a third-class citizen and should not needlessly modify the
+behavior of classes above it.
 
-and then other code can query it and know whether this is a kexec-ed
-kernel and how many times it got kexec-ed...
+Thanks,
+
+Mathieu
 
 -- 
-Regards/Gruss,
-    Boris.
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
