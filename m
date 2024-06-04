@@ -1,117 +1,79 @@
-Return-Path: <linux-kernel+bounces-199959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0CA8FA834
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:10:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DB68FA83D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21D9DB27EEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA4C01C23C5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A8D13D2BA;
-	Tue,  4 Jun 2024 02:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B3F13D897;
+	Tue,  4 Jun 2024 02:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l3cg/iD1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ZYHhTJok"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010001.outbound.protection.outlook.com [52.101.128.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2124E1E485
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 02:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E6213D886;
+	Tue,  4 Jun 2024 02:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.1
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717467046; cv=fail; b=rdzr9m/fp8OjLW+FzLKfCjgQIT6Zea+X8T74sIgCUUaXyEsAO0tRVfvg9H52mMI1RXhVc1FWhgPgONYiW1zE/NdUWApz5WJ4yrcj4BDw7DYm8Ru2xH+oJUMaQJmGnXFAtfrGNsdCUjS+XEeIDGcAGQNkHCOQACcEfUyNzaUcNGA=
+	t=1717467551; cv=fail; b=qWGGl6bNWOjkzRFzcQ2ce7uSSQ4ZlawzN0j+NdcIj7izZSh4QCZQtyah78K1htKHeulPsMncD0eoA3qE7+QamUqZz+AnIExsrSf0z2/H2h8IjuMVCpZIxBEF7qHPly8A3JMYpntCQW5NlA9N0bOhZObwOUD5WgLTlKErCNERSns=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717467046; c=relaxed/simple;
-	bh=+pbOfCVFn0bH3Eeub79E2ots+UM/rDwzTg3MPpIEp4w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mcagTpTC7PYPm15LntzOy04IEDYX6TKDTT4ezXp7bhz0RK/ffFyhgxos7hPRS/xerPN0nVbZNiexRHLGzCkAIK5z07ssY5qzTYiHQvyK1zQsKwu0t+USaodgkzy096WmiwzzqbXuQjYrswrlQNIhARpTz4lPVv/rlWK05z/7PNk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l3cg/iD1; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717467045; x=1749003045;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=+pbOfCVFn0bH3Eeub79E2ots+UM/rDwzTg3MPpIEp4w=;
-  b=l3cg/iD1cQu0/RC9WmQGup1fS5ZgVU/gI438KKfMTQqXwi5bldGx542L
-   N0wmgGWZYtDCZMeP0X6GZUovX+n9QqLUWwidbSOWkc6uUQVc2ycPHA69V
-   TYjCTYC9QXrl6RsAe/k3bv24/WWa7pILal1PE6mKdDQym9sbb4GJF/o+I
-   qenkj6AiU6uh3QvTsljJOoZcEekXWofksyEc+9NbMn3lF3gZjs+oi7aTn
-   YKzu+euq2ytOinN18cQ23MRgchR8eX5j7cdmSXUmy6+g29JM5YF7I10qO
-   iChE6YdC4EPplb9AsXriD08+pajqU6L8yvabTy+xDAjs9PAjvgW0MpAxn
-   A==;
-X-CSE-ConnectionGUID: icFWofJ/SXWzQlWAExh+AQ==
-X-CSE-MsgGUID: v8Vc41WJTsGPJVgRah+e2g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="24612667"
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="24612667"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 19:10:44 -0700
-X-CSE-ConnectionGUID: qnzIqgtNRm+SXmq4NuvseQ==
-X-CSE-MsgGUID: zU5nlhq6TZ6DdD65YZSRcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="37535799"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Jun 2024 19:10:44 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 3 Jun 2024 19:10:43 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 3 Jun 2024 19:10:43 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 3 Jun 2024 19:10:43 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 3 Jun 2024 19:10:43 -0700
+	s=arc-20240116; t=1717467551; c=relaxed/simple;
+	bh=gOcZkaJwvkmT7oEE1lzEI5iQoTY15+nnHRJV9h5aF6c=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=I3wvTzWXPEQp8Hlw9PDGFlDu8QQqnjUI85TdBZUVxJIMgLvhixzDl5mTS9GDBdxivarGGz8uL5fA/XIa0WIDARQyA+WoJ+qxU26unf5MDtGkB11b82NZgMv0cVaEWD5caIDKCtIW+P4jMJYEj2OrPmD3xaGXWtKJEaKw24M/fz8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ZYHhTJok; arc=fail smtp.client-ip=52.101.128.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jBkIGD8Rf5X2bD/5IaQXpfpuZkv+VQva9+c+OW84Xl6HqRtI+S0ZedcxNrvylHKyUqlf2E3Fvl/lIroPwlJ09RGSq8Zw82CtPu0WXMNZWX53jhlG2iaF6dyWGyXTeZd4YX3mrX/GAh7OCleYkzyWyNE3UNnf3PuK9W8/5NflUgUDGCP77Iqlz/bKF5T0EgEnSvFuVY+n91eRs67BoO2jrBf6QANdGwmWUSfYYwbWoVi4RZy78AEz/uklWZlzyCccH+++IxxH9o3R8E0REQLVr9usW0WqlPrPJBsusMX0cKzTF3joSRKmjd24aIvtk7Eb8zdYMMhvHB9+jrLph1MxBQ==
+ b=N56mr3DUr+VJmEMHi69REIngL+TxYAqsmHu+NVRr5uNh7IWpX4oIyNBGgzI4ygCkrqGTh+rn5FSvmWQ8mlcoqZbthLUtyvbukfFRGW9mlMfq8ZETXLkVARifqptcZWpAFahLzZAfAV1BXzDZg6Kfb1QVxj6BWwwfBLc9sTZjcCHu4cIiwso4+FiGc7saM24LmTwOjkhOjBiihOOMsM2cuRob/BeyP7QPbBA8n9uRyEPdDDkGXQcNDMPxUjKhr4joG0UWPQjXinalAOwA/LUJWrCuJ9Ljo32W5FRKFK2EPNY02h9DlEOR7z5n+gocHXV4ejPq++QpbAzdq4/7Sun4eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+bLOOcnVwoJrTyBbvjyOgvbsq14lI7d60rjsqNs5iUM=;
- b=a4eACW/L8a4uez+yPzKXjFsepqnlk58ffN96145SXi3dFiPh8nbxTKeCRS8Ms+bLgJkl0hydknbSfVIHBcFdMYkZ4g2Gg0f3iPFUOaXuA/rJQWT0isxaAeGEIhSKbx6Cdjr3jaBLtTkwk305uy937EnBrfIFVbF7DGlum+TKnuSAlsXs2pHUu+Wb4ch/fJM5zj+M8YmT7NFZnjOzAkwqCrnF0LJiFgRok3NnrMgSgfv8DJSjefvIqXTluB4YGlV15D/fCv8OJu4V5re4uTwBGuZK23Y2zlcJbXFePLKBNJDW4cVLSbwtht4prFdmxzETz7gnOspCcFacPHJ1x3ljgg==
+ bh=RDuI3S4oC3/uupXWLOF+caYuZ5D8gNLb1ccESyRaWws=;
+ b=XtDyShXBkdtIKsjpBjbs/XNImsI8A54wwD/+o14pzzi9qvAANqts5aMsiBtC0vnLxLfQVlR1IpDHE+5JZYgPWN64brpoaogrVewv4CZCaUfjNektiD+9twUip80gunthaWhPK/XWWcWX420c0I1ZjGsSRgLyj2q/KFG8zN1HQlOIspY+h9upvevQJMH6eW7i3V0XhsWsCiR4uUFG7JiLnzqHmnJD2WCAtB4uzYjDC4eWPGbJWjvOQEsR++huKMH6k/cYs0dbmjqhMGcSbgi3peKgZpGaiiS+k7jalRo/licLUvFEhmUnebHHcSHk9FGP/KvUNXUUztcY3PdTTWJP3A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RDuI3S4oC3/uupXWLOF+caYuZ5D8gNLb1ccESyRaWws=;
+ b=ZYHhTJokScPFeBsxYb6X1g7ukUkhXVfNH1cUr0w2EbVlLuQrs/1oSoOREwesYsoePH16Cyeq/FMNd/ebt2RTKROX7n6/iMdaWlXP9gVbbXd31T2Qu0DDNZn4FCZi5YxXV4Z6dSMvLBZ2C9A8mrFFhlwzngmtkCSSuFXwCslWu5cgCHz0fmBC3ctT3kvdoUnSl1WZvKbcY+Zm09rvPIdJ6pgn7yxFb1xAjPpU/42lHkpjHJyAud3x88kXYIoFdkOzNmaWAk21IQhkjpuFH8yTDlmf4Vxxsw0vfe4ZHPlgu+r0mJNClUBD2oAbXlqKHN/pSR67J7pOU0N2jlxre3EWxA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6005.namprd11.prod.outlook.com (2603:10b6:510:1e0::19)
- by DM6PR11MB4595.namprd11.prod.outlook.com (2603:10b6:5:2ac::16) with
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
+ by PUZPR06MB5452.apcprd06.prod.outlook.com (2603:1096:301:ea::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Tue, 4 Jun
- 2024 02:10:41 +0000
-Received: from PH7PR11MB6005.namprd11.prod.outlook.com
- ([fe80::39d2:ae29:6e3f:1b6a]) by PH7PR11MB6005.namprd11.prod.outlook.com
- ([fe80::39d2:ae29:6e3f:1b6a%5]) with mapi id 15.20.7633.018; Tue, 4 Jun 2024
- 02:10:40 +0000
-Date: Tue, 4 Jun 2024 10:10:29 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: Tim Chen <tim.c.chen@linux.intel.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>, <linux-kernel@vger.kernel.org>,
-	Vinicius Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH] sched/balance: Skip unnecessary updates to idle load
- balancer's flags
-Message-ID: <Zl53lXjEmnWhlW8p@chenyu5-mobl2>
-References: <20240531205452.65781-1-tim.c.chen@linux.intel.com>
- <Zlygeqy+SVs1KZYW@chenyu5-mobl2>
- <c3d2a49e580cea9ae86e692f72094119310adc8f.camel@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c3d2a49e580cea9ae86e692f72094119310adc8f.camel@linux.intel.com>
-X-ClientProxiedBy: SG2PR04CA0205.apcprd04.prod.outlook.com
- (2603:1096:4:187::6) To PH7PR11MB6005.namprd11.prod.outlook.com
- (2603:10b6:510:1e0::19)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.30; Tue, 4 Jun
+ 2024 02:19:06 +0000
+Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
+ ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
+ ([fe80::f4f:43c4:25e5:394e%4]) with mapi id 15.20.7633.021; Tue, 4 Jun 2024
+ 02:19:06 +0000
+Message-ID: <3f1b7f90-5de3-45c5-87c1-c09687d9e623@vivo.com>
+Date: Tue, 4 Jun 2024 10:19:01 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+Content-Language: en-US
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+ Pavel Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org
+References: <20240527042654.2404-1-yang.yang@vivo.com>
+ <Zl5sj6IC5sBqgAF2@fedora>
+From: YangYang <yang.yang@vivo.com>
+In-Reply-To: <Zl5sj6IC5sBqgAF2@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYAPR01CA0077.jpnprd01.prod.outlook.com
+ (2603:1096:404:2c::17) To KL1PR06MB7401.apcprd06.prod.outlook.com
+ (2603:1096:820:146::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,187 +81,209 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6005:EE_|DM6PR11MB4595:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a57708d-4630-4fc4-4d47-08dc843b8839
+X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|PUZPR06MB5452:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36dcea3c-c60e-4e51-3f89-08dc843cb5a8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?v7F7enPbXPzwKycgqwAh1x0j4145l+e9Jgncp/v4MYmgT71qWPazq66m5MtG?=
- =?us-ascii?Q?mDVGslmpi3lmprkIh4iWPsK/yDTJDnQYDJn8nnONeFXWS7c+hn3Z+isIs+DT?=
- =?us-ascii?Q?M3RI2xeGegGhyI/RdU3StOQRGDoEqlFaEiRN0fTdWNUCtxmJamb5W82ZVqb6?=
- =?us-ascii?Q?9eDRkgEQ88dbyzdIYPAKPI2W66zMbAuGsqQAXn5YVpfsuSUNv170gJbuRTXP?=
- =?us-ascii?Q?pu+I6AGRxQp9ITBimqzuvw540WtBpbqgZ9iOPoG0XW6iSPfPmk4ZwnFJyRD0?=
- =?us-ascii?Q?UxF0UdAmuNQbkUQcLLXcGVHLUMmefYpn5hgDsftxFY1gD0XUbMxz7IpsmA4d?=
- =?us-ascii?Q?dvpH0GC9v1oucuowMJKvH2Wo3Nn40ZTnHahvqmhwLv1buJi6PFtzJzDTuMof?=
- =?us-ascii?Q?z/2TnzSI7xahY0OFmywASjaG63fq3uVww5s0+YVPdbHJVew8OME/yaX3B9v8?=
- =?us-ascii?Q?kcEfxRBZ1MDdFZJe8L+B/lWnAi8fvmMbijz7NyGZ6wWIpTeZklLVMcLRsSnI?=
- =?us-ascii?Q?KSMsysusvPnCTQC4p5+RKJ47CvP/rXMNBnxVAA7VH/g3xSx4epJnYoxoEKq9?=
- =?us-ascii?Q?8XiK8PK6OtSnb3plNN1yFqDsw0yjZFQtalIcyHLsRyff+z9lF8yEEoVRn7sc?=
- =?us-ascii?Q?nrczc/6RvTjTcsr0ZEfd/2eZRt+qQ3qctnPUDX/jkqDpiWr37nU7PGqEzqKp?=
- =?us-ascii?Q?Jzcp1Gt4VTgvAhfPVoJaZUq/55UfuzONOSOWGT8LC1ifOcZ0Msw9e9d6mCVo?=
- =?us-ascii?Q?ZZvNT6gRqqiHAIqbsBo6pkMDTcWoOpM0NpPauCEN2YFIqsWXJaWidd96Twyz?=
- =?us-ascii?Q?4wsKMwM7RmiQaBicr0O6vIlTEgjbxdY2CBWNwZTW9alJ0ZpuZZHCD7nR9thI?=
- =?us-ascii?Q?chtscrt/FOz7SXgrm7Pcm/tU/l+aCmkjB9aL/WwPqcL/8eYY9NK+jHSMQhwe?=
- =?us-ascii?Q?sBCxQ/ZPAkeqJ356frQshtB5e1lAnKkSS5/t41Ug9wVqMSvD/OlUW7bE9N1o?=
- =?us-ascii?Q?9xWzLL5H5HGkloVrcSJYXMlbh4eMA3IzHtRts32Hcc578umHx1f+Bfz+i9Ti?=
- =?us-ascii?Q?8LckEo+jWCdPgHIhyVSKb0qoFTa/1QAYvijrfNS4kGa3v0aXSnbH1r4S5ZEy?=
- =?us-ascii?Q?AlnB7XOGlmS0cJaTKSaem7icbnj3AEScJHPuiUbGoUNF5/25PaoK/F41QEDj?=
- =?us-ascii?Q?jfXB8KMUCvikxDnpc/4di1EJkPBTdOCeEStF5eAupuiDfW2vmGqtIff9Shy8?=
- =?us-ascii?Q?reBFc3WriCxnGLHmjCd//BBCwKZwmOEGnelW+vtysg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6005.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VUh1NHlZNHZTeU5UcHFyTU1YbEVqMFkwRi9LbDJadlhnNlJUbGh6aWVLWEox?=
+ =?utf-8?B?ZEdtc0lSMm0rNllOMVdqRE1FbjNscGY1bzRkTDRMTlNCeVd4eUFrak05TE9Q?=
+ =?utf-8?B?Uk5rd1lsZ21KdWVXRVArTFRoWWRFYzk5a1N4SXpXanhsbEltOWh4UE9EQXFX?=
+ =?utf-8?B?VE8zL3ZIamFnVGxGQmJMdEtYcndWajhwWjhFUjE1UmRrZ3hVaFJJcGc3dnlt?=
+ =?utf-8?B?aXJ4L3ZQb3ZxNkJqTEJRVG8wQnRmV3cwd3UycXZ1WFVXREtuMGdtQWwvSE56?=
+ =?utf-8?B?MHV0VzBsUFhrK0dLbHc3RXlOOE5USWpHNU1XMTk1MUFqOTNGWCtUYnNyb091?=
+ =?utf-8?B?VWMwdXpRVm5KNG84TEVnQWhjdVh5S2FaY0pDblY1cElyVTZPaWhWRkpxWSs4?=
+ =?utf-8?B?V05TSE10V3NpcTl6K2tKMTZoVEFvRXdOMWY3OEVtNmMxZG1iRXNlVDBvdito?=
+ =?utf-8?B?YnlObWEvOHNJZDRIdFNmeUM2Y1JBVmhZYWdwVUtqS202RktTVVpCRW9pemV6?=
+ =?utf-8?B?YXpHSXkrNm9LS0YwVmxUZTNNNXdYSFRiUHR0bU4xUGdmbW53M1BjM2V4bmt2?=
+ =?utf-8?B?anVNdmFCUWF2d2piNW1RU2RxM2g2QjJZRFhFd0ZCcW1EUWVyNjFYNFkvb2c4?=
+ =?utf-8?B?dFpzMU5FN1BqOWtKNy9xTEN4ZlJackhzWE9IWkpnRUxEN3g3Y0UxRXNqdlpY?=
+ =?utf-8?B?VlVMZytmT281eTJyTmtVeVVRUG5zOCtDbzF6bk5LWGNaTVpqUGdDcXJTeWVo?=
+ =?utf-8?B?RGlrSURHWmxCZTZZenRzSEtYUHhLUmJHZURYbTFiTE5XNHI1ZlY5dHJPY2Yx?=
+ =?utf-8?B?MU14R2pvRk9jekRRakdGQXZKNlpKUVczOFQrV1BreTVSL21Ia1RLYkRKOW9s?=
+ =?utf-8?B?dmQwL1ZsYlJRNENsbmNhWks0ODJjWTB6QjZKdU1hOFU5QllzOTdSS0VBaWh5?=
+ =?utf-8?B?eUVGTUhOdHUwM2s4WVp5WFJXUnNFdEZVN3gvYk5UWHNMV3NONHhRNGRpTFIr?=
+ =?utf-8?B?NHBMa3NONHVOaUNaazgvdjRRaGsxbFRtekNsOEdyTGtZNUQvanE3L2g2UEhE?=
+ =?utf-8?B?RnJma0kwRUxsQkgzR0pBT3o0dWk0Nm1wSnZXVFNWQ284ZmUrVW9UTWplOGFQ?=
+ =?utf-8?B?bWVKOUd2WlNpOHlJbmpkLzczQmpzVmFTa1NjT3lJWGdST3M3ZVpBK295VjdK?=
+ =?utf-8?B?Yk1ZTW9lcy85ZUw2NXpDWTczaVJFd3RxcVEwY2RUTGIrVXdnNXNwR1NJMnBq?=
+ =?utf-8?B?MmRUOENaeEZBTERKOWlyQ0xZTmVsYTJUV3Q2TXREU2E5OTA2OHJ3YXNHdDZ2?=
+ =?utf-8?B?aU9TRzV6WHlVRUJTemFyT1NGejR0YUh6MkZmU2ZtQ01HRFFXVWlyWEJsRElK?=
+ =?utf-8?B?YmsyM1gxQU9LWG1wS0svUER1MU5wQUxvUllZZEZ5MTBvbHg5UlZKc3FIc0Mr?=
+ =?utf-8?B?NS9EWnNXT3NJU3NkVDNEdmYzaWo0emRnK1F0TlNoWXpaVTlmNnYvTTc5V1lP?=
+ =?utf-8?B?QSs3T1U1MWJCK2RnZFpBei9SSmNWV1ptcEh4c3BORUpORElPS29zTTVNdWJn?=
+ =?utf-8?B?bldoWThtY2NFMlloOEFVblU2NWxjSkpKcHBZTEZYNThYUDEydlVlOTBPai8x?=
+ =?utf-8?B?dkR3eVdLQW5SU202V21keVFzNWl3NmphZVppakxqNitFdC9TWnFCZ3JKQVJa?=
+ =?utf-8?B?Vm9Bd3NHSmlWelhvaHJVakU4blIvQVp1NlNYWmViL2pBaC9yaTBDc0t3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DyeCDPtRS4jsGe3Ch62PO/DtIc+WnF7TuCVHizl2yNLhZ40P8xzJHHHfGr1I?=
- =?us-ascii?Q?GjHAbnTOXVjZNuP4ZrGT1b+Kf4/UjOCWuObf24meQEHBqOaSSo6E6Js0T8mR?=
- =?us-ascii?Q?MJOzEMIkKqi4v9QmyPu1gBBwnNGZa1YKJAnWgcHz6wBxbXf2SDkyDBKcW3Aw?=
- =?us-ascii?Q?hy/JevW1d2JzalcUicLpO460QWwZRo2UPOPfXS/md4pUFhvtiXZ9uLzbiZP9?=
- =?us-ascii?Q?wogCCHxxVptfJPvUyJSJ+nkFlc5R3cSAPm9QM2qwc+Qzru6ZeGQ3Kle1pzO6?=
- =?us-ascii?Q?wcCG1sI0gPI1iPhYMuJ1IIlSWRcZAtk4ZCQGLrR4QUIwUcwmFNRZKUJj7m2r?=
- =?us-ascii?Q?BLmWhC+j9Dt0OVC9XdOdOJYOzKlhZMQwBTb6HYSoEWgtVHw+yNi+SiAIUcpO?=
- =?us-ascii?Q?I7ElSzTaONd7pPFscJLO56joyKW2f9yRVXSdgSrXAYuWNvURdYac+QZF0zji?=
- =?us-ascii?Q?l2cezP3xEvWUPQox9+m6D0TLmclYUtd4IDr4k7uYuIyj6AeAB8yihatsLxIL?=
- =?us-ascii?Q?QoOV9d83dJ/YsmI9VyPEKcFtaXQMRp17QxWgiLU0kSgBYOFwj2nVwDgNnmoD?=
- =?us-ascii?Q?X6cV2CH+lQ3YzW266jdQYXC7eglNBMU/Qm/qgw2b0xagQPWMl2UummLn2OVT?=
- =?us-ascii?Q?5e2uAzXGV0RzKlFWdrgHsVMgXIF6Fm1H8+5etDdIoeUvoGsuUzic0L/BTuIb?=
- =?us-ascii?Q?ZvI90R/hx1/pUAfu/M1PoX7bMrwJFdVX6rmVWp3+kTpQCEI6dIESHZje/KG9?=
- =?us-ascii?Q?b7VuYbIJeV6TDvCcyeOGnRUwMqq/ZdvngdtdulehfbQcgU1QPxZQW6JJK26D?=
- =?us-ascii?Q?PSjVon1Ru7KHpjK2HDkQqlFAiWrNj6ZqvmJZRUUEdgzMzrv1no7V2taCwguh?=
- =?us-ascii?Q?JEaWjkx6jWZFBugLf10WeNxd2RatxQEHQmX0nAPHU2CtiGGtubBg8gkK5VCU?=
- =?us-ascii?Q?wLlaEs2VvvOXMJ9d0fUMRwh/GgIpPpgYwbIcEmzYOppkpWmKRgScsdOBCibI?=
- =?us-ascii?Q?Y6oN0rVK/ZO0kaCC7nfg1ss9B5jBwp6X25UlgBR442+PtqAqdz8LPcY5qnIl?=
- =?us-ascii?Q?zgyYR4b5eTsLtzLILn8XEegR4dwwcWc0D5xmGaphksZzqBgrj4iOj5TZJucg?=
- =?us-ascii?Q?kBXQC85FEuffIY/fB3qNJjy3zdwlH+8S7q6WK+IgFeKSvcXBKEbr4iK3c3VR?=
- =?us-ascii?Q?wjRgUHRDx7rnVdcn/3xPCcT6TsdjYcxmN5uAAUe4UDGzHO27STySgS/fmiGM?=
- =?us-ascii?Q?lHsyX7ZViX36qccuAglT2zJe+ynmEmBppxZXMpGBktFduN3z4BmvddjSpJAE?=
- =?us-ascii?Q?lRsnRoWqpja0q2yWkvvu0GWobpzwf5ltSNb05H5t13kcyplc+uihIEgO+TNb?=
- =?us-ascii?Q?vKRrhd3fa0C9iY1Iqx5ymFjo9MpsvKsOX1OSeRD/mLoiuXxlLNinfRnig5yK?=
- =?us-ascii?Q?vOZ0HI3izwH/Z6yJ9aQ5f+iapr0jUziE/HLskX6wpleIadoYtjz8tvNvy0Dv?=
- =?us-ascii?Q?5y/LlplwKoFaXEkIOyL9oGqJNIQFzQW4qfWAP6D7zl7WoUYrb8Ut86KRQHjp?=
- =?us-ascii?Q?hLj5KsPdKKlHnBQadDmssTZ4RM32oaXKejf0GZXO?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a57708d-4630-4fc4-4d47-08dc843b8839
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6005.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MlB6bjZyKzhHV24zaURDU1JSTmJxT3dCZ21QdnBVdG04czdSNGlQLzIwVndl?=
+ =?utf-8?B?SjhoSEsySHJPWW9NcXZmNU5NT0QvbERlZ1B0dXJWc0ZOSjlucHVPWHhha08y?=
+ =?utf-8?B?bGJXdFNWaG9XMmk3eW9yQlNDK2xHZ051NzNZZDB1VDhSUFJza3JzdGVsUXBH?=
+ =?utf-8?B?VGNCSzRvSDdzeENWSG51SE4rZThncEJlM3doT3psNzBBZUU3ZlVJaWJkcjZB?=
+ =?utf-8?B?YlFlbk9jZ0ZOQnR4cGEwRzlYY3Q5VDhLZzZDOHhycjR4WG9jdTFNWjgzSUhF?=
+ =?utf-8?B?bll4dkxZRzFRbDZOanUvdEp0ejlxNkJFNnJjQmNmcEJ0R0wzdVNJZWpwWWVJ?=
+ =?utf-8?B?T0p4S1l4SDVjSVhsRDYyTjZaNjlMazBPUjE0QU5va0hzSWwzZ2VQdXNMOEI4?=
+ =?utf-8?B?WURhODdOQnhpS0NTNXFudkNGM3MzY1pnQlRhdnNwWHNRUHRMbnR2aEw4L3B0?=
+ =?utf-8?B?Y2VmK0o5bDZhT0YzTnVmNlcvdkhmQnFJQ3dybXc5Z1lvTmhRSXlHaExobGc3?=
+ =?utf-8?B?c3pxQWRIREVmRzgrTTFWaEZrMmFHNXpOUGZyaU05TWpzTTBhU0RIc3lqdXF3?=
+ =?utf-8?B?c1ptdWx3UUF2a3k3MW5kdWRYWXpwYnFtaVpINURoUHhXUmErbHkvL1N6cjN3?=
+ =?utf-8?B?YXFKOWlYWVhNOGllN3BBUVhjL1ptU3ZPRmxiWFUwcHBiWldjaFhyQ0lURVJu?=
+ =?utf-8?B?cCs3aGV1VGU1UzBYZHJhUEwrWG56N244VVl5VTlVNkhIVld1TzBaV2JlMWxI?=
+ =?utf-8?B?YTg2cmRiOVNpbmdKbFkvM0Rld1R3M2k5TmNYMzBXeWlNQXBHWFJJMDl6bkJN?=
+ =?utf-8?B?VmNFeTluMkRQTnV1T3BmKzlCcVh5dlByMnk3dGJ6cEN5QXJ6YkpsdTM2OWsx?=
+ =?utf-8?B?bDY4YU8zYklSaGNZbXFqejZpc1pHbXBXdkFGU3N0WDZ3YjE3ZHRFTy9neWF2?=
+ =?utf-8?B?WC8wZkM1TW1VK25Wak95S1VTbTczYUUvWGQ3MER4OFErMlRuTS9hRkhURlRE?=
+ =?utf-8?B?OGpoVHBhSzZVTU5adEYvVHh0aStxVVZGVk52SG02dWVqLzNtNStXNUhuTUZW?=
+ =?utf-8?B?WkZ2ZmR1bUpLUUR5SU10UzBPajJaWEF0b3pNenI0WUQ1bG9SVkpXQTJSTFZ0?=
+ =?utf-8?B?RkdzTkx2TllLa2pZWXBJUSs5RmFHdVM5WS9qZGlSenRRcXJqR0dsdEo4Wlpa?=
+ =?utf-8?B?dmZSSS92R0xvYXp0QU1vaTVIcDNYLy9ETW5idUJLWEZEZnhTSzZ3MExHM0x4?=
+ =?utf-8?B?ZjdMb3ZTc2pYbUptRW9EaVE5WmRUaThEL2doMUdTQnhrYkk4ME9ybEk0Z05u?=
+ =?utf-8?B?Mm1Fc1d1ZWxQZVhpOWY5R2M1bG1DMzNpRTcySmEzaFVqMlBaakorQWkzVDYx?=
+ =?utf-8?B?djFzZ3NNdWNqZ1RUWnpibm5GK1NKbE0zQ3dnQlVjK08wWVlIWlpNc3NNU0tT?=
+ =?utf-8?B?blBZTWsvQlRCa2FmaGgwVE5vV0xWQ2d5bWNNZVlUUWJPWGx2MElFZW9iUzZj?=
+ =?utf-8?B?b3c1NlpNZE9wbWd4UTd4b3hndHZ4NndVenVsN1MySW1TNEppaXJyTUJhT1U0?=
+ =?utf-8?B?TW1LS2hkajdBRVFQazVvZVBMYnBqcEE0dTIyalJwUVQzUHVGZ09QT0x3QVQ5?=
+ =?utf-8?B?dUJoYjdoQmhTazI2Qml4N3BoVkYyWkljU1lMZVJWcUl5U0U4Y3FQTUxIZU5q?=
+ =?utf-8?B?NEJ1ZlRMdWVIa2dmcitEckZDMXNqamhyWUhIWHIxY0FWZWRHL05ydERza2xa?=
+ =?utf-8?B?azVzSy9kM2hTcW15OFNsWkJTTXd0bFM0OHBDZEtsMVoyd0V2amFpUjZWek1L?=
+ =?utf-8?B?RGR5Q0Evb0lsSmFFNUptN0JsaXJaSlBaVnNmanlXTTROU3VHc0RVQ3hwL3lh?=
+ =?utf-8?B?aVl4YWwxZGNCaWNDbHRIS3BTdFQveTRKNkV3WDNSb1FJL2lxRzdYbE5vWnk1?=
+ =?utf-8?B?anQycy9UL0F3YVU0SjhmcExkSll2VGUrazlWUFhJMkUvbk8ycWlUamlQOFJC?=
+ =?utf-8?B?WmxmUVAvQTYwWWt2TnhmNTJLZVVtTGdvNmJyMzdXczUrYzB6Vm1RWWd1Y29L?=
+ =?utf-8?B?bGhZaXlJNUlzMnlmeHAweGozZHp0ZTBsRXB3Ui83SXA3bjZraVo4MG4zQWkr?=
+ =?utf-8?Q?yF1EqvdIigJZNUlH6q+t7npgv?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36dcea3c-c60e-4e51-3f89-08dc843cb5a8
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 02:10:40.4203
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 02:19:06.2183
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k/sPYAI2l3i33szhqITXv1Wtggjv84BjOM0mwNmDypJiYu/rJKS+81FaVLMr29gBODi5GJDrRUqn+qFoOMJrSA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4595
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: FV33m8B7p6X+Iy3oTkGztcjmcfE0qreXkQs71hIdFAwOJojGmiTmzan8FVYRxD4HGpLgFXbIwTqh9tJB0/d4ZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5452
 
-On 2024-06-03 at 09:13:47 -0700, Tim Chen wrote:
-> On Mon, 2024-06-03 at 00:40 +0800, Chen Yu wrote:
-> > > 
-> > > With instrumentation, we found that 81% of the updates do not result in
-> > > any change in the ilb_cpu's flags.  That is, multiple cpus are asking
-> > > the ilb_cpu to do the same things over and over again, before the ilb_cpu
-> > > has a chance to run NOHZ load balance.
-> > > 
-> > > Skip updates to ilb_cpu's flags if no new work needs to be done.
-> > > Such updates do not change ilb_cpu's NOHZ flags.  This requires an extra
-> > > atomic read but it is less expensive than frequent unnecessary atomic
-> > > updates that generate cache bounces.
-> > 
-> > A race condition is that many CPUs choose the same ilb_cpu and ask it to trigger
-> > the nohz idle balance. This is because find_new_ilb() always finds the first
-> > nohz idle CPU. I wonder if we could change the
-> > for_each_cpu_and(ilb_cpu, nohz.idle_cpus_mask, hk_mask)
-> > into
-> > for_each_cpu_wrap(ilb_cpu,  cpumask_and(nohz.idle_cpus_mask, hk_mask), this_cpu+1) 
-> > so different ilb_cpu might be found by different CPUs.
-> > Then the extra atomic read could brings less cache bounces.
-> > 
+On 2024/6/4 9:23, Ming Lei wrote:
+> On Mon, May 27, 2024 at 12:26:50PM +0800, Yang Yang wrote:
+>> Configuration for sbq:
+>>    depth=64, wake_batch=6, shift=6, map_nr=1
+>>
+>> 1. There are 64 requests in progress:
+>>    map->word = 0xFFFFFFFFFFFFFFFF
+>> 2. After all the 64 requests complete, and no more requests come:
+>>    map->word = 0xFFFFFFFFFFFFFFFF, map->cleared = 0xFFFFFFFFFFFFFFFF
+>> 3. Now two tasks try to allocate requests:
+>>    T1:                                       T2:
+>>    __blk_mq_get_tag                          .
+>>    __sbitmap_queue_get                       .
+>>    sbitmap_get                               .
+>>    sbitmap_find_bit                          .
+>>    sbitmap_find_bit_in_word                  .
+>>    __sbitmap_get_word  -> nr=-1              __blk_mq_get_tag
+>>    sbitmap_deferred_clear                    __sbitmap_queue_get
+>>    /* map->cleared=0xFFFFFFFFFFFFFFFF */     sbitmap_find_bit
+>>      if (!READ_ONCE(map->cleared))           sbitmap_find_bit_in_word
+>>        return false;                         __sbitmap_get_word -> nr=-1
+>>      mask = xchg(&map->cleared, 0)           sbitmap_deferred_clear
+>>      atomic_long_andnot()                    /* map->cleared=0 */
+>>                                                if (!(map->cleared))
+>>                                                  return false;
+>>                                       /*
+>>                                        * map->cleared is cleared by T1
+>>                                        * T2 fail to acquire the tag
+>>                                        */
+>>
+>> 4. T2 is the sole tag waiter. When T1 puts the tag, T2 cannot be woken
+>> up due to the wake_batch being set at 6. If no more requests come, T1
+>> will wait here indefinitely.
+>>
+>> Fix this issue by adding a new flag swap_inprogress to indicate whether
+>> the swap is ongoing.
+>>
+>> Fixes: 661d4f55a794 ("sbitmap: remove swap_lock")
 > 
-> Your proposal improves scaling.  However,
-> that could result in many idle CPUs getting kicked.  I assume that
-> current approach of delegating to a common idle CPU will disturb fewer CPUs
-> and let them stay in deeper idle states, and get the power benefits
-> from NOHZ scheme.
->
+> Indeed, commit 661d4f55a794 ("sbitmap: remove swap_lock") causes this
+> issue, and ->cleared and ->word should have been checked & updated
+> atomically.
+> 
+>> Signed-off-by: Yang Yang <yang.yang@vivo.com>
+>> ---
+>>   include/linux/sbitmap.h |  5 +++++
+>>   lib/sbitmap.c           | 22 ++++++++++++++++++++--
+>>   2 files changed, 25 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
+>> index d662cf136021..b88a9e4997ab 100644
+>> --- a/include/linux/sbitmap.h
+>> +++ b/include/linux/sbitmap.h
+>> @@ -36,6 +36,11 @@ struct sbitmap_word {
+>>   	 * @cleared: word holding cleared bits
+>>   	 */
+>>   	unsigned long cleared ____cacheline_aligned_in_smp;
+>> +
+>> +	/**
+>> +	 * @swap_inprogress: set to 1 when swapping word <-> cleared
+>> +	 */
+>> +	atomic_t swap_inprogress;
+>>   } ____cacheline_aligned_in_smp;
+>>   
+>>   /**
+>> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+>> index 1e453f825c05..d4bb258fe8b0 100644
+>> --- a/lib/sbitmap.c
+>> +++ b/lib/sbitmap.c
+>> @@ -62,10 +62,19 @@ static inline void update_alloc_hint_after_get(struct sbitmap *sb,
+>>    */
+>>   static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
+>>   {
+>> -	unsigned long mask;
+>> +	unsigned long mask, flags;
+>> +	int zero = 0;
+>>   
+>> -	if (!READ_ONCE(map->cleared))
+>> +	if (!READ_ONCE(map->cleared)) {
+>> +		if (atomic_read(&map->swap_inprogress))
+>> +			goto out_wait;
+>>   		return false;
+>> +	}
+>> +
+>> +	if (!atomic_try_cmpxchg(&map->swap_inprogress, &zero, 1))
+>> +		goto out_wait;
+>> +
+>> +	local_irq_save(flags);
+>>   
+>>   	/*
+>>   	 * First get a stable cleared mask, setting the old mask to 0.
+>> @@ -77,6 +86,15 @@ static inline bool sbitmap_deferred_clear(struct sbitmap_word *map)
+>>   	 */
+>>   	atomic_long_andnot(mask, (atomic_long_t *)&map->word);
+>>   	BUILD_BUG_ON(sizeof(atomic_long_t) != sizeof(map->word));
+>> +
+>> +	atomic_set(&map->swap_inprogress, 0);
+>> +	smp_mb__after_atomic();
+>> +	local_irq_restore(flags);
+>> +	return true;
+>> +
+>> +out_wait:
+>> +	while (atomic_read(&map->swap_inprogress))
+>> +		;
+>>   	return true;
+>>   }
+> 
+> IMO, the above fix looks a bit complicated, and I'd suggest to revert
+> 661d4f55a794 ("sbitmap: remove swap_lock") if no clean & simple solution
+> can be figured out.
 
-I see, from power point of view, current solution is better.
- 
-> > > 
-> > > We saw that on the OLTP workload, cpu cycles from trigger_load_balance()
-> > > (or sched_balance_trigger()) got reduced from 0.7% to 0.2%.
-> > > 
-> > > Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > > ---
-> > >  kernel/sched/fair.c | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index 8a5b1ae0aa55..9ab6dff6d8ac 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -11891,6 +11891,13 @@ static void kick_ilb(unsigned int flags)
-> > >  	if (ilb_cpu < 0)
-> > >  		return;
-> > >  
-> > > +	/*
-> > > +	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
-> > > +	 * i.e. all bits in flags are already set in ilb_cpu.
-> > > +	 */
-> > > +	if ((atomic_read(nohz_flags(ilb_cpu)) & flags) == flags)
-> > 
-> > Maybe also mention in the comment that when above statement is true, the
-> > current ilb_cpu's flags is not 0 and in NOHZ_KICK_MASK, so return directly
-> > here is safe(anyway just 2 cents)
-> 
-> Not sure I follow your comments about return being safe.  Let me explain
-> in details.
-> 
-> We will return directly if and only if the bits set in flags are also set
-> in nohz_flags(ilb_cpu).  
-> 
-> The comment's intention is to say that if the above statement is true, then
-> the later operation of 
-> 
-> 	atomic_fetch_or(flags, nohz_flags(ilb_cpu))
-> 
-> will be useless and not result in any change to nohz_flags(ilb_cpu), since all the set bits
-> in flags are already set in nohz_flags(ilb_cpu).
-
-Understand. My previous thought was that, what if the current nohz_flags(ilb_cpu) is 0 or
-NOHZ_NEWILB_KICK. If yes, return directly might miss one ipi to the ilb_cpu(because
-the current code checks flags & NOHZ_KICK_MASK to return directly). But from the current
-logic when we reach kick_ilb(), the flag is not 0, and the flag passed by nohz_balancer_kick()
-satisfy (flags & NOHZ_KICK_MASK), so returns here is ok.
+Thanks. I will send a patch to revert that change.
 
 > 
-> So will it be clearer if I say
+> Thanks,
+> Ming
 > 
-> 	/*
-> 	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
-> 	 * i.e. all bits in flags are already set in ilb_cpu.
-> 	 * Later OR of flags to nohz_flags(ilb_cpu)
-> 	 * will not change nohz_flags(ilb_cpu).
-> 	 */
->
 
-Yes, this is ok.
-
-
-thanks,
-Chenyu
- 
-> Thanks.
-> 
-> 
-> Tim
-> 
-> > Reviewed-by: Chen Yu <yu.c.chen@intel.com>
-> > 
-> > thanks,
-> > Chenyu
-> > 
-> > > +		return;
-> > > +
-> > >  	/*
-> > >  	 * Access to rq::nohz_csd is serialized by NOHZ_KICK_MASK; he who sets
-> > >  	 * the first flag owns it; cleared by nohz_csd_func().
-> > > -- 
-> > > 2.32.0
-> > > 
-> 
 
