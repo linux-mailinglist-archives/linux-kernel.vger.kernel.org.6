@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-201496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70698FBF11
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:37:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A078FBF0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A399281641
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B871F2404B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461D214D6FB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2135714D6EF;
 	Tue,  4 Jun 2024 22:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjtHMhPW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laGrPfry"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3D614D43E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654AB14D439;
 	Tue,  4 Jun 2024 22:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717540595; cv=none; b=AC4JcfLTyp11V2SXJJ2GvGC3Xjd7RmmfEgXmjRHuPP+gSwEPeUsjlIdZ1kzv/2ETzUCXPho6iya0DnQ4yoQSbWf6M030mVW108zQoWNCr8WRKeq/1wLqDUysXdJ0qpRIj9kTfFCmtf71uQ9w4mtsoSlj5QnAjL2fszXN/v7yMJg=
+	t=1717540595; cv=none; b=OxlXw03aIYlYgc4NiYQrhoosbcYMDHTvjgsOJDp5O2d2+ETPxc0AknQSB9v+LS40OmgEGG8MiZUFephdLVNKtJETXUHyFS1hK/GikIv0XNbDtWI3JySCreNBjkt/nCb5/NzBkFSjG7hKy4nSoj4L8cWIDs3UomrJarBpuEaM4/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717540595; c=relaxed/simple;
-	bh=A1B89F6f71BTaBD2c6ys6oWMLDn6LLn8Xrl2YURYyWA=;
+	bh=3W1hLX3CDpcxFpIRjKB9LG1doeFsN5iCPTpoG6MXxYo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FOGXLgkSoaZnhF5wIdx+gRlh0rgcTAVSfD+Y9FGeZwd8Bzhxc5UJbIYGzTi3rVCH4B9+pRVWC4BLVCpeZgAs8sPmm/kSRfuBxSdaKEHGUUhI8de0JgiZLUrXX8ZdAXeX6UQXgz8StSuqsiuEuxhPAOHYgivRBf31HIK0OTcRGzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjtHMhPW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B587C2BBFC;
+	 MIME-Version; b=Rrd9ivCrBQigqOr4CGxYBe4hXjQQxFKQrEuDQ3aQixq0sVe33K7ciBiUcDmfEeUp3RAwMeM6MQCw/6UK7xb1jx3dIkJeZxW/1O1uaOjU54N2VpIhgJl80++FK5SeCngIROuntxFLa6lwzEs7bvltGzOZYHzghHSqO83mY6Egg/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laGrPfry; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 429D1C4AF07;
 	Tue,  4 Jun 2024 22:36:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1717540595;
-	bh=A1B89F6f71BTaBD2c6ys6oWMLDn6LLn8Xrl2YURYyWA=;
+	bh=3W1hLX3CDpcxFpIRjKB9LG1doeFsN5iCPTpoG6MXxYo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fjtHMhPWw2cR4PKJ4a0oFaDUSfzScELdWeoI4yGMOj6zZsTY5rpLw4sHKmci/EDZ/
-	 YMAlVPmKdbylzk/bLssle5qYVVtiaQkLDmcX2mboeOxYQznzlE2GEEppbSeuB4jT1O
-	 JLyT1qg1Vv2qWQYSvcsbKAixmlFLZNvEqoWB/IMppEDrOPTKUyfPBfb1WuPW3GcGaY
-	 SBiTP6nNBzvnkZ030aBFPgn9Y7qt2EHZUtKnEpQvUGqUpi8FsJrLCD5+lQyratdNq7
-	 eIXom5hhimQr3PhG3pVl/QNUW0+yVjH4dbjqtbZ+OOv3FkJlq5c6ivT4VuQQEVzods
-	 XPbom4jpExVMg==
+	b=laGrPfry+NoKRkhCtXFlV7rexL+lJdX+qFMm6Aqd2wpb1eHc4g7LZbh3D4g4HMPfB
+	 oYB/CrbXxcK77v4TuWd/2am9tNpJotqOdPaZABoYmXxipwyK383HdDXylqXEEMDdgE
+	 VfrkKKlu/Ndle6RFR//qbeFwCZ3EVVc01jLCpNfQ4T1ZOze+uFVlF0Kzo56AlVGE3u
+	 SlOGQ+j3IHhfr6exRiy/TwvWIU2YiCB9UtjFJvfFGNk0FrZZLQTgNnzpYKnt6F5M7F
+	 dSQydJKPDw/Ue+BJ3NAO2LUciZdW1Zt1kZWo36cYLreyQgeSaAZG3UfPFZ66qSJ5gt
+	 6jy4beKCEQXOQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id DF4C3CE3F0F; Tue,  4 Jun 2024 15:36:34 -0700 (PDT)
+	id E2CCACE3F26; Tue,  4 Jun 2024 15:36:34 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	kasan-dev@googlegroups.com
-Subject: [PATCH rcu 2/4] rcutorture: Fix rcu_torture_fwd_cb_cr() data race
-Date: Tue,  4 Jun 2024 15:36:31 -0700
-Message-Id: <20240604223633.2371664-2-paulmck@kernel.org>
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 3/4] rcutorture: Add missing MODULE_DESCRIPTION() macros
+Date: Tue,  4 Jun 2024 15:36:32 -0700
+Message-Id: <20240604223633.2371664-3-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <e14ba19e-53aa-4ec1-b58d-6444ffec07c6@paulmck-laptop>
 References: <e14ba19e-53aa-4ec1-b58d-6444ffec07c6@paulmck-laptop>
@@ -65,43 +63,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On powerpc systems, spinlock acquisition does not order prior stores
-against later loads.  This means that this statement:
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-	rfcp->rfc_next = NULL;
+Fix the following 'make W=1' warnings:
 
-Can be reordered to follow this statement:
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
 
-	WRITE_ONCE(*rfcpp, rfcp);
-
-Which is then a data race with rcu_torture_fwd_prog_cr(), specifically,
-this statement:
-
-	rfcpn = READ_ONCE(rfcp->rfc_next)
-
-KCSAN located this data race, which represents a real failure on powerpc.
-
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Marco Elver <elver@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: <kasan-dev@googlegroups.com>
 ---
- kernel/rcu/rcutorture.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/rcu/rcuscale.c   | 1 +
+ kernel/rcu/rcutorture.c | 1 +
+ kernel/rcu/refscale.c   | 1 +
+ 3 files changed, 3 insertions(+)
 
+diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
+index 8db4fedaaa1eb..b53a9e8f5904f 100644
+--- a/kernel/rcu/rcuscale.c
++++ b/kernel/rcu/rcuscale.c
+@@ -42,6 +42,7 @@
+ 
+ #include "rcu.h"
+ 
++MODULE_DESCRIPTION("Read-Copy Update module-based scalability-test facility");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com>");
+ 
 diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 44cc455e1b615..cafe047d046e8 100644
+index cafe047d046e8..08bf7c669dd3d 100644
 --- a/kernel/rcu/rcutorture.c
 +++ b/kernel/rcu/rcutorture.c
-@@ -2630,7 +2630,7 @@ static void rcu_torture_fwd_cb_cr(struct rcu_head *rhp)
- 	spin_lock_irqsave(&rfp->rcu_fwd_lock, flags);
- 	rfcpp = rfp->rcu_fwd_cb_tail;
- 	rfp->rcu_fwd_cb_tail = &rfcp->rfc_next;
--	WRITE_ONCE(*rfcpp, rfcp);
-+	smp_store_release(rfcpp, rfcp);
- 	WRITE_ONCE(rfp->n_launders_cb, rfp->n_launders_cb + 1);
- 	i = ((jiffies - rfp->rcu_fwd_startat) / (HZ / FWD_CBS_HIST_DIV));
- 	if (i >= ARRAY_SIZE(rfp->n_launders_hist))
+@@ -51,6 +51,7 @@
+ 
+ #include "rcu.h"
+ 
++MODULE_DESCRIPTION("Read-Copy Update module-based torture test facility");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com> and Josh Triplett <josh@joshtriplett.org>");
+ 
+diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
+index 2c2648a3ad306..f4ea5b1ec068a 100644
+--- a/kernel/rcu/refscale.c
++++ b/kernel/rcu/refscale.c
+@@ -63,6 +63,7 @@ do {											\
+ 
+ #define SCALEOUT_ERRSTRING(s, x...) pr_alert("%s" SCALE_FLAG "!!! " s "\n", scale_type, ## x)
+ 
++MODULE_DESCRIPTION("Scalability test for object reference mechanisms");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Joel Fernandes (Google) <joel@joelfernandes.org>");
+ 
 -- 
 2.40.1
 
