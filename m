@@ -1,115 +1,142 @@
-Return-Path: <linux-kernel+bounces-200726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CDA68FB409
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:41:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F468FB43C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C2B0B227E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 226B6B295C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D16614884D;
-	Tue,  4 Jun 2024 13:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4E31474BE;
+	Tue,  4 Jun 2024 13:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZbRn8Ink"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QO9SgBOZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223381487F4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A82266A7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717508333; cv=none; b=jeRPx6UDmt6OOD03xMWxV/tSs5ma7YJLBYMZhKP8UcCP9erISZlWrDJG5pza33kmPaY/FoWom/khnWNfR+lNbhlL+zaf9ikg6TsFoWNK7ftUhJUTk1DclOdtZ2wZ0JpnbVcnrqUHih8JGOhZqPrMTlFnPFmiuQHi05Bt1/LodAg=
+	t=1717508417; cv=none; b=ZwuBbvahdzjjH8WLiowo1bugat1RfEAgMPvb8oH/0iV/YtYJl22yx2LOl4h4cB020DjzI6GFlkYgDlqtG6QUjjO1NbSMlgmJV+fJJeSGwtrlqLmMVPQZoVPrV+3kPt9sT6FJuThwll01ERCPTnHc2IRKVWGPWYe9cx/yjU/pvYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717508333; c=relaxed/simple;
-	bh=z061h5N4cOjxp0i0teiEj8YYz0gC70c5q+yIiMSWVlc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jhWw7IZ9QWRJJOmNdzwE9HvPS8YNBYzQDzZK8IiEUoPE8r2exmTdRiHMjbtlFDnqB6kXDLOGADhB7qDeB+8XPEVCKHvZ+d7qZgf+FdwwilIInxB05YrafBrWchk9iQWRtjUIpPxnfddLJVafAUyNQvswoNXehK0bNJzQNQatJi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZbRn8Ink; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c036a14583so722290a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:38:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1717508331; x=1718113131; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qm870wbxwKAXLW/hEbj68HKPTbDqTHobkkHTbGwT1pI=;
-        b=ZbRn8InkM/yAq+6lN7nUakNV56FZEUiB8qHHOADHkydqyjliWLjQAhbebFJJmbaqaa
-         6xhECJjyt9Vn1saSVSZCn0CKB5x6d0u+0kpV2VqZKFzKu8Mxk2eOFYqg0ovwCbcDlfXi
-         alXw0mVtibxY0b0UkPa/Iu+0vxg7fiWtMjrbjQNTL+u5X0+LqVWJnw4mzTMkUMmDCb1k
-         FWI/xVeg96JrjAB+UKBC1InO8M87kImYbR1ATZpF/GvBd0dLKoZQnY9+ORjOTMxMKQGU
-         FcqaYVRhECHkQ1sdOU3+smFVNx/YyXYFclNSlIdfBgl4Rl3Vk1hABwYwHbNjEfKgz+/z
-         casQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717508331; x=1718113131;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qm870wbxwKAXLW/hEbj68HKPTbDqTHobkkHTbGwT1pI=;
-        b=JdBUMlhQhVkvn5u7MK68UOAe9yQ10a6piAacFjpF7swP4yzZEMHE+O2VR68cFUJJFC
-         vm8zueu10RVGPgCLwqLp32Nz4yU0CpVTCnipK+LK6rn9QBBFGbVJz0vgjgA/aQcDp5pV
-         vsU0Nl21Cm7udsAWO5Mi3A+cqiF4I6lW5NzYzhOox3xDdGMaNLuTyEQwRp+sqztet3/T
-         rOtT0yiXDHcGCqOiSWrkbuLD56cLlBNjnWStco0Abqdt1rauzNfwSsP27S086bBSnBNS
-         NttPByCFCwciKhUL19SEw26Athd9cWC56m2bNyaiYAHcWWYhgufcIJ5NP4yo2BjCUU1i
-         A1sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXoT6LBrJskH+j34SGi/sWPzY63dGRjQUpullyFhWbGSeF4N3ynARghpXB9L8IoDBryaRUXOJxjrVrjQkJT+XbTcjrmfJP1IbET7YH
-X-Gm-Message-State: AOJu0YwDAtt4XtEKc6peHQLMT5F2Svn3RWl9C58UwaxfqJ3h6u/mUxa4
-	n9RXx1zrhiqdQMLZKjcibN8NVHxx0xTXHL04/TMBsSKoAgp4krw5868ZWBLuSpI=
-X-Google-Smtp-Source: AGHT+IFCyPdXOcAxAbUdnZV0B5jNeBKi7NZfc4ouIiei2hl2xFOncL1gQsutNL9dfpsGHk3ZKcIuLw==
-X-Received: by 2002:a17:90a:ea86:b0:2b2:4bff:67b7 with SMTP id 98e67ed59e1d1-2c253f1ecabmr2134615a91.3.1717508331353;
-        Tue, 04 Jun 2024 06:38:51 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c1a77bab23sm10440745a91.48.2024.06.04.06.38.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 06:38:49 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Hagar Hemdan <hagarhem@amazon.com>
-Cc: Maximilian Heyne <mheyne@amazon.de>, 
- Norbert Manthey <nmanthey@amazon.de>, 
- Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240604130527.3597-1-hagarhem@amazon.com>
-References: <20240604130527.3597-1-hagarhem@amazon.com>
-Subject: Re: [PATCH] io_uring: fix possible deadlock in
- io_register_iowq_max_workers()
-Message-Id: <171750832945.373240.5340875250569409350.b4-ty@kernel.dk>
-Date: Tue, 04 Jun 2024 07:38:49 -0600
+	s=arc-20240116; t=1717508417; c=relaxed/simple;
+	bh=b8AMxcqWw0P3jOh8p1hb7REjv+Kt3Ihe6OI8G/FSqrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MApXAToCCmF1Mrspg6fZ+WTdjcL8VZ3f4Y0DV8rr+6yLkhNN1eRUqOLS88R7tHOPAatIUg+HhkLGLSSb09rZdCLjd//zVwBqhjqSDSlveHiXoJg1lCr+b9RePJKTfCJzMvqStsxfxJmdjRXJirAe9AYRA0pOxz08jYqb+f1zSuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QO9SgBOZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4548lMfs000933;
+	Tue, 4 Jun 2024 13:39:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	g3xKDmGEtE5NY3eQm4y/GHC7J2gBGR92nLzdqVWo5F0=; b=QO9SgBOZQWdcRV/2
+	GmUNDR60B5JL/RFYPJmrnSZ4nPEq1iUBMaxI9Bq0yKMyflUmfUUyUFWyidBp+h2x
+	1CyUul08o9lmPAYSxgMFKaGrcVIZsivPlO5mYS+sgcdOzBtsxn4kduJqPN7pqAsg
+	PKndjQPXQx72PiUUpguB7tPOSoTVafAxQeqSKCeGpYm8BlP/+1kJXsCmT+JRt41Y
+	F+Vm+hZmgDJRRZBY6qQ3Q40vBf1tVjBl9/wd7kWFxB/vjrx3m8MejoPYPdFTdjy3
+	AbMFrt9CKXagNdbVTWMYbLc0Q/NaY8k1L3mYp5za7YUmH4uxb9alg+u3nL1pPRVr
+	r+446A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw5kq2s7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 13:39:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454DdosV012590
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Jun 2024 13:39:50 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 06:39:49 -0700
+Message-ID: <bb8cf06e-4f96-4545-b459-3e70acb50f97@quicinc.com>
+Date: Tue, 4 Jun 2024 06:39:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/22] ath10k: Use iommu_paging_domain_alloc()
+Content-Language: en-US
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+        Will
+ Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Jason
+ Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+CC: Yi Liu <yi.l.liu@intel.com>, David Airlie <airlied@gmail.com>,
+        Daniel
+ Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alex
+ Williamson <alex.williamson@redhat.com>, <mst@redhat.com>,
+        Jason Wang
+	<jasowang@redhat.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan
+ Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>, <iommu@lists.linux.dev>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <ath10k@lists.infradead.org>
+References: <20240604015134.164206-1-baolu.lu@linux.intel.com>
+ <20240604015134.164206-12-baolu.lu@linux.intel.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240604015134.164206-12-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Md4EIe9lNXys9JP7qqj6UgaTb6nNYv_z
+X-Proofpoint-ORIG-GUID: Md4EIe9lNXys9JP7qqj6UgaTb6nNYv_z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_05,2024-06-04_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 clxscore=1015 phishscore=0
+ mlxscore=0 priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406040109
 
++ath10k list for viibility
 
-On Tue, 04 Jun 2024 13:05:27 +0000, Hagar Hemdan wrote:
-> The io_register_iowq_max_workers() function calls io_put_sq_data(),
-> which acquires the sqd->lock without releasing the uring_lock.
-> Similar to the commit 009ad9f0c6ee ("io_uring: drop ctx->uring_lock
-> before acquiring sqd->lock"), this can lead to a potential deadlock
-> situation.
+On 6/3/24 18:51, Lu Baolu wrote:
+> An iommu domain is allocated in ath10k_fw_init() and is attached to
+> ar_snoc->fw.dev in the same function. Use iommu_paging_domain_alloc() to
+> make it explicit.
 > 
-> To resolve this issue, the uring_lock is released before calling
-> io_put_sq_data(), and then it is re-acquired after the function call.
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>   drivers/net/wireless/ath/ath10k/snoc.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> [...]
-
-Applied, thanks!
-
-[1/1] io_uring: fix possible deadlock in io_register_iowq_max_workers()
-      commit: a59035de589f31f195ed1fff97007d332552a72b
-
-Best regards,
--- 
-Jens Axboe
-
-
+> diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
+> index 8530550cf5df..0fe47d51013c 100644
+> --- a/drivers/net/wireless/ath/ath10k/snoc.c
+> +++ b/drivers/net/wireless/ath/ath10k/snoc.c
+> @@ -1635,10 +1635,10 @@ static int ath10k_fw_init(struct ath10k *ar)
+>   
+>   	ar_snoc->fw.dev = &pdev->dev;
+>   
+> -	iommu_dom = iommu_domain_alloc(&platform_bus_type);
+> -	if (!iommu_dom) {
+> +	iommu_dom = iommu_paging_domain_alloc(ar_snoc->fw.dev);
+> +	if (IS_ERR(iommu_dom)) {
+>   		ath10k_err(ar, "failed to allocate iommu domain\n");
+> -		ret = -ENOMEM;
+> +		ret = PTR_ERR(iommu_dom);
+>   		goto err_unregister;
+>   	}
+>   
 
 
