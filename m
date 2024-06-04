@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-201096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 185858FB957
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:45:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DAD08FB97C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8BE1F21EC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:45:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC7A5B275DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DD2148840;
-	Tue,  4 Jun 2024 16:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24F414882A;
+	Tue,  4 Jun 2024 16:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="R7c3xhdq"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWu1WPYQ"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A569814882D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE69168D0;
+	Tue,  4 Jun 2024 16:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717519505; cv=none; b=KU5uc5vQLngC7ItVHIb8C1c7ZttuuJk6sLcviFkFqcWdkvKzlKpEiqHItsyEoCCbky/z2e+mNGm5h9X7MTvB5SDYzJmTEZKRsavbwO7Mj185+iKwbvOamh7PM3BCsA7gA8YiI95DU3LguJLf3ngyvQF7kq9aRmIHutUUzyIXKRI=
+	t=1717519532; cv=none; b=Vqkvzq1anEvHWRRfUzZeaYapDTUGBZrKjOpRnQ1SE2lWUU6FkfwTnQWMP45UBXMamc05lTTFyc5JanzIjr04/owCC1mRLkN9AxDOxb/iO2kUb6bpYC1fqbWTRLLXCwafUW2KtWW3nZNuZUGGrkr39dAVoiDCLoiDaQLgSJ7NqHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717519505; c=relaxed/simple;
-	bh=Jl68LcgBN1pRhZi6PtJEE4lVnKKYIRWjPxs0FDaFCcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WS4p2Nj/wnKzDa0HzUjDSdy8copVX2nISsA6go8wW5DStniPjUTLVZqdxEwqh5qcJuCjKIrbaHu5G27xRMud2VJPL4hd/icb8nQmkXmMZHL3fxWMeQrcXHyVLM/KHosZXfjR0T4kIXR3XHJ5ZtKCmLv35VnifRLmL4ZI3QxFiwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=R7c3xhdq; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b96a781b63so2601433eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:45:02 -0700 (PDT)
+	s=arc-20240116; t=1717519532; c=relaxed/simple;
+	bh=Zhw+hnOzFnrffRZ/Lm3uKtUSBRgK6wbi9BdZLz/gxRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E12C4ZrMnaXQ5Un7PTOxQdKpmieQu3vhoE/y3m9V6f6ThOwfJZNCPN32+HT/qnow8IE6ep4gYiczshDzgv3VmerLO1EszfXz9plS+kPBxn9pr+8nd9aPnEdHzsAF5Vo4o13HETW5sjkV4vwHTOLUGzxry1MHscaOhCDufzL0/f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWu1WPYQ; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c1a99b75d8so4344828a91.3;
+        Tue, 04 Jun 2024 09:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1717519501; x=1718124301; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=13DrUW0wsjFsOLQQnsi9knf7av4PrVRrLk1t14myUlc=;
-        b=R7c3xhdqDAsJ5hZnDQYawsz6d0Afl2byGWi181amsLb6UIToEqRaNyMIIvV8V1FPO+
-         +2rxMaoZB4FWxfVk3UaHTtKGWGS0OdJ80miL3lrcyqZ4aJP+5RVM7fAHAj0jy7uTE7b8
-         zgHEPFEhiaw5ZCCSZixrm1nRA6HFcwS0Z8yfiDMIBd1MxxgjTg8lAvpLPdhCCB2nQEx6
-         WCBR0zGDEbaxXavQpzAc52H0zPkhGoN0cG2DjkjyLNeQ0ca4uOaDbL9u1/SzxqrFdqe4
-         mQ1+Mb4Pw5LqLLPEtUbtKo9w3yxH58EtucIdCcSbLGjYdEdSidDQT3c+sq6PRh1PP4wb
-         GdNQ==
+        d=gmail.com; s=20230601; t=1717519530; x=1718124330; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QecifVAR+tvBUqTJQdxCWnDSVIat9xStXa2bm/K4Dng=;
+        b=cWu1WPYQCDx6b88gTuGqJtEOsZsqU+J1BeJiK2m9lEOyC6+uZV28VnvC/4Pm8zcBBM
+         X5wdcaIP9RIcaJ1Q1pE7mu0z+wUrPETIFevxro21Bmaqvv74DOhPm+zSplEXeQRi0pBG
+         BLGYWEXA+n78HK77wuj23JKk1IJUCmQ/PrQN3VB5MWOMuj0gl7uJL7V7x71y/U/Hh66k
+         pwtm12vC1dMQX0l0haAZRp4XY+U4v7zM3o0MAs7imbUz+09CLn7vh1XwvvhLFzVUIoCG
+         ACpQ3ygJVqgj7vi95wtRy6VA+UwW+bcZtHGWoDIR+ULTEcg59WLZDJEIQtIk4Pa1hf/c
+         GDeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717519501; x=1718124301;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=13DrUW0wsjFsOLQQnsi9knf7av4PrVRrLk1t14myUlc=;
-        b=JmEsFXeqrxfsghub61bfjq3r4GOIowO0Bk4F9tIOmBovoVK2dHq5GVh/g9AaUzpb5d
-         ABIG6uHOCVBGbIPdSkRTcEdvydrsh6+jKKlsk0+Mud5PZUA8m+nd0mm1DfKw3hGgl/gt
-         FAXGUQ/BoDtaUAlnbKcdT7T72Pqc699+4l4O7fDQmOs3zHPZp+iOssBshnVz+I5XDrXT
-         ABEi7w9St5qofIs/vYl0xYBxHdiSVGpvjf06HoCE54l0GOWbN4pfR9Qn4B5MFWxBiMjD
-         dUi/DKrBh4kw6Cn0qW2Yc3vQCCrlq98pLMxO3PRIir9wLdFpMChFk5npCG9Tr7AN4n3u
-         N0cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbEequg/DENwx+v+UN68tllB4bqPfs/0h9YsRKaG/P/0u387J2EC3OErc9NHZR0P9qSXuP0PWFFBEH+hoN4FZTTVKrIQeteocZlxjL
-X-Gm-Message-State: AOJu0YyZ80naA+C8iDzHYacedYu3aoRv+Pu9QbJ/+pTQ6uBvZafU96Jj
-	37M8spIRzNBIrNQNLKN/CidwjSOePvL/zU9DlP71lU69LUNF8zfAEDlEl+iAAxw=
-X-Google-Smtp-Source: AGHT+IEfas1lnZdFNBRgqZxmKWv2oXN51AWEQ8aiqFcaC4Ca/kraXgYuVuAGXMg9aTheAhe7N7CZog==
-X-Received: by 2002:a05:6870:4708:b0:24f:f297:3ff7 with SMTP id 586e51a60fabf-25122a6d964mr33165fac.38.1717519501608;
-        Tue, 04 Jun 2024 09:45:01 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.89])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44009a2902csm30190921cf.38.2024.06.04.09.45.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:45:00 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sEXHP-002tE6-4C;
-	Tue, 04 Jun 2024 13:44:59 -0300
-Date: Tue, 4 Jun 2024 13:44:59 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Kalle Valo <kvalo@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
-	Jason Wang <jasowang@redhat.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 15/22] RDMA/usnic: Use iommu_paging_domain_alloc()
-Message-ID: <20240604164459.GC21513@ziepe.ca>
-References: <20240604015134.164206-1-baolu.lu@linux.intel.com>
- <20240604015134.164206-16-baolu.lu@linux.intel.com>
+        d=1e100.net; s=20230601; t=1717519530; x=1718124330;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QecifVAR+tvBUqTJQdxCWnDSVIat9xStXa2bm/K4Dng=;
+        b=D0dRJCezJkLat6VrkBHlbJJ72xcOauXQgETMZdTJ5MSg/h4cm8fLgyQEeYKdb2Rlgx
+         qwU1Yuu+aOFdAzdAaJvQU4dji36z+f+PGMdEZ7qgrMxCYp63GATSO+7BnZxdAeipnReS
+         X5UZmtcxTfnDeLiCn3XD5h9ncs1izfXoyxNzUxf1M1xFwJv1wUb53tiGEBBPfaNwV/0b
+         vJ7ac0LbAT3anfLo+FmI1EH7Y1C5PwoovcUd12gxqQ5MPKCs8jjkTiAThSsrsQDE+Nhp
+         q+t6H4VIXVEkNN4is9NR7izmUjiDPpTjMciGc1dt1cVxDBxUw0hybWY07Ve2+o0MH9RO
+         JTMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPqtbuGGr1N12cYiag7kHV8uGQHaFUX1wdqXKwn7thROqDjN0P1n3kquNYRg7GNVQ2mjm6b2Zg8a5b1hZRMrGjxn3MS4SermWxj8nhMvog0bqJldkoDBxXC9+9NvYWB+AppoCEGbCGPq+wuA==
+X-Gm-Message-State: AOJu0YwGwHAb+y5aN7caMaVmDlUktSOOIgKCppqlTdUYwt4Y9Q84E2ip
+	DaCiPEisED8j5ESpU+oC+7Uq/TqxIGneS6bed/HApaYEnY+nHisvtu7zExJlNiQe24ODdmfXuSY
+	8aXyBmHn6eyQ0xVjeW0DNP6yqaBI=
+X-Google-Smtp-Source: AGHT+IFCTYi81ohxmB4GHF8R5ig10gXlGw/VXeg6Zyu7SRlO2MnRd3LHAj40rLREbkSJw9Vw999N2GkMUnudzwyOxwY=
+X-Received: by 2002:a17:90b:30c2:b0:2bf:9566:7c58 with SMTP id
+ 98e67ed59e1d1-2c1dc5d2962mr11454075a91.41.1717519530143; Tue, 04 Jun 2024
+ 09:45:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240604015134.164206-16-baolu.lu@linux.intel.com>
+References: <20240604-a505-v1-1-82ee1c04d200@gmail.com> <49fe3b01-4f00-4ffc-80cf-2a0add1ebaad@linaro.org>
+ <CAGsSOWV=i2JHsYNvi5EC6q=NoD8v7SiTjbVQhTDLNw35+irTCQ@mail.gmail.com>
+In-Reply-To: <CAGsSOWV=i2JHsYNvi5EC6q=NoD8v7SiTjbVQhTDLNw35+irTCQ@mail.gmail.com>
+From: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
+Date: Tue, 4 Jun 2024 18:45:19 +0200
+Message-ID: <CAGsSOWV9SRK1VUJiQfavEM1hL0PapxUBG6CNeD+Q=0qPT5ZnSA@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/adreno: Add support for Adreno 505 GPU
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Daniil Titov <daniilt971@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 04, 2024 at 09:51:27AM +0800, Lu Baolu wrote:
-> usnic_uiom_alloc_pd() allocates a paging domain for a given device.
-> In this case, iommu_domain_alloc(dev->bus) is equivalent to 
-> iommu_paging_domain_alloc(dev). Replace it as iommu_domain_alloc()
-> has been deprecated.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/infiniband/hw/usnic/usnic_uiom.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-
-Acked-by: Jason Gunthorpe <jgg@nvidia.com>
-
-Jason
+On Tue, Jun 4, 2024 at 2:27=E2=80=AFPM Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trab=
+arni@gmail.com> wrote:
+>
+> On Tue, Jun 4, 2024 at 1:55=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linar=
+o.org> wrote:
+> >
+> >
+> >
+> > On 6/4/24 02:20, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrote:
+> > > From: Daniil Titov <daniilt971@gmail.com>
+> > >
+> > > This GPU is found on SoCs such as MSM8937 (450 MHz), MSM8940 (475 MHz=
+),
+> > > SDM439 (650 MHz).
+> > >
+> > > Signed-off-by: Daniil Titov <daniilt971@gmail.com>
+> > > Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
+> > > ---
+> >
+> > This all looks very good, just a nit
+> >
+> > [...]
+> >
+> > > +             /*
+> > > +              * Increase inactive period to 250 to avoid bouncing
+> > > +              * the GDSC which appears to make it grumpy
+> > > +              */
+> > > +             .inactive_period =3D 250,
+> >
+> > Are you sure this is actually necessary?
+> Every A5XX GPU is using the same value, but i have never tried with
+> DRM_MSM_INACTIVE_PERIOD.
+This was the original patch
+https://lore.kernel.org/all/20180507224750.9383-1-jcrouse@codeaurora.org/
+where the inactive period was increased for a530. I cannot test
+suspend on msm8937 yet.
+I can check on msm8953 with a506 maybe if a506 works fine with
+DRM_MSM_INACTIVE_PERIOD
+then a505 would be fine with it also.
+>
+> >
+> > Konrad
 
