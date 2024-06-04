@@ -1,88 +1,105 @@
-Return-Path: <linux-kernel+bounces-200684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB3D8FB352
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:17:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720008FB372
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE5C21C22A29
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:17:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3234DB26DE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50F514658A;
-	Tue,  4 Jun 2024 13:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6067B146A79;
+	Tue,  4 Jun 2024 13:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+B4Tyjw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="ntCq18NB"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5E4144D23
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CDF3236;
+	Tue,  4 Jun 2024 13:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717507042; cv=none; b=rCplv2jrKMCgnZ9RMR8UKokBHK5FdKMwpuOEX3dRUSNBEAuK9oIocqTZe6iT5muVxd+Nhn6zaboCEP6257IpnYD4XwPgvdsQ640lGjvVEiDihYwpOAbcSPJzxQKaXw9gwtDOALmPWf0P7XW9OzSVF+8F/Cj+NKuOUPzfHk3RbuA=
+	t=1717507043; cv=none; b=MhO2aP569eTkCWpVENkDhsHr4abuenxgXS7p4hmsxTFKVrG5s0LpDLnrVVWSy3j6Su1g0R7JZmS6eUKxv45A3Lpo9Mtw0EIKuEQrQo9QfOdKCMNKXSmRu3qZUnejbTC0wou2gGFeCxR7yfp+FEvxmHlSjFr6+1hyZEhU1yZd9zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717507042; c=relaxed/simple;
-	bh=9jHucXNWh3fPhzv3jEjUYgJvngK+uwydH0NF8rFlbCI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QzZRgptebDxWQGVGdjPTQ5VP1FS6xbSsuvqkD9Ev0shfTZwHg4UpBwtwVzJX38xv+yOmh30Ppa3J+X/7bHdsuUr56t4j+QFb1DVDDyCumUALzcBTqEz0htYoVFDqvXG3Optk+91KJJ5mVGpP3csAxLWbrI3b57hlJJ6SUy8WAwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+B4Tyjw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1769AC4AF07;
-	Tue,  4 Jun 2024 13:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717507041;
-	bh=9jHucXNWh3fPhzv3jEjUYgJvngK+uwydH0NF8rFlbCI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C+B4Tyjwrp7wU1SVntgOMtFwnTyBng4pAinkeJm1/O/Y+grnZVDQrv6uCdoNoHLyk
-	 vgEuiMkprH4spWvdliLzg9svCMTzER/RPlQpH3TMYLzVjPxg21VdrttWLYdh5gKzoU
-	 h9jvyjpUl8Z7ButGFfYbsIj8Kx/BCSAFcKTPQiIlKu61rsIlONpbEPQAjFhbuDyo8K
-	 80owf5u4mqEikA1o7aghRGSo5zy6bAwymI9Asv2fL3oEw8dIlA3QxDoVIqgWIRz5Gw
-	 NNaxmVrIsvFhLc1stdUZq0jA5NHRDNXdHmWr/WsNlDqBTuNBBDY/Cc/3kxbGmY/X8m
-	 Zli7QDAvc5A/Q==
-From: Mike Rapoport <rppt@kernel.org>
-To: Borislav Petkov <bp@kernel.org>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Narasimhan V <Narasimhan.V@amd.com>
-Subject: Re: [PATCH] x86/mm/numa: Use NUMA_NO_NODE when calling memblock_set_node()
-Date: Tue,  4 Jun 2024 16:16:57 +0300
-Message-ID: <171750701353.925406.16431237983148253122.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240603141005.23261-1-bp@kernel.org>
-References: <20240603141005.23261-1-bp@kernel.org>
+	s=arc-20240116; t=1717507043; c=relaxed/simple;
+	bh=0hGLjFWiIFMsbI4JKLKav0MyVHp4ycP2Ma6r3nGdAEM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H361g0aCa8WAoINIkp91YG8SP4idXih2G7aI456BkCn3MHUk62fNx8i04SBYdVNq3SHyrHuBWxUcA/MSl4mSOA5CzBJxcXYLd9vKttxlRsdzJNezOZUWKkn23e6vXJ7Mr6tUBuHTiiCzO/Bb468nBHFx/h314NhgPx0Yt6haO04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=ntCq18NB; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4547dupi018474;
+	Tue, 4 Jun 2024 08:17:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=F+8rxQO7RSXvZbQV
+	W2ms+ZsRV/idSK+u4TSZFYJeK28=; b=ntCq18NBIkTKGGyWrDZUMIswciWzGQZc
+	X6WtTV6z8I4Zh9pb8zOG92ifpGi8uRVsctst4vzS3WxAlodevfxm92PHPv/4pJhA
+	/iwWF4OJ/jI9GV1Z5yqFDPea5DNv0f0xndOgNJEFRqalLw3ITZUw2VIxrWaKGGrJ
+	rVER+eok9x9LeLwlJo8UpFbO6+WIGqYHDBS+CTGb+NaCSG7lh4x900XCZuZ4YhmD
+	orQt+XNfdBX07cZTJq/sLpQaGEBg4pXIp+k/A8mvtsiLyJEnK+to6HAGrA5er3vv
+	oDFDee29tnAJZgPBSjH/1LFmY4JTN8K6dXFxQExNXTkzm9AQZsjP6g==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3yg02hjp90-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 08:17:06 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 14:17:05 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Tue, 4 Jun 2024 14:17:05 +0100
+Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E3994820249;
+	Tue,  4 Jun 2024 13:17:04 +0000 (UTC)
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH] spi: cs42l43: Correct SPI root clock speed
+Date: Tue, 4 Jun 2024 14:17:04 +0100
+Message-ID: <20240604131704.3227500-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: vUp6eeGzQsDwNkFkiGDvoxSdY-deO_LX
+X-Proofpoint-ORIG-GUID: vUp6eeGzQsDwNkFkiGDvoxSdY-deO_LX
+X-Proofpoint-Spam-Reason: safe
 
-From: Mike Rapoport (IBM) <rppt@kernel.org>
+The root clock is actually 49.152MHz not 40MHz, as it is derived from
+the primary audio clock, update the driver to match. This error can
+cause the actual clock rate to be higher than the requested clock rate
+on the SPI bus.
 
-On Mon, 03 Jun 2024 16:10:05 +0200, Borislav Petkov wrote:
-> memblock_set_node() warns about using MAX_NUMNODES, see
-> 
->   e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
-> 
-> for details.
-> 
-> 
-> [...]
+Fixes: ef75e767167a ("spi: cs42l43: Add SPI controller support")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ drivers/spi/spi-cs42l43.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to fixes branch of memblock.git tree, thanks!
-
-[1/1] x86/mm/numa: Use NUMA_NO_NODE when calling memblock_set_node()
-      commit: c55f3cc2d9f241d6e45336fd48dafa755c012297
-
-tree: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
-branch: fixes
-
---
-Sincerely yours,
-Mike.
+diff --git a/drivers/spi/spi-cs42l43.c b/drivers/spi/spi-cs42l43.c
+index 9d747ea69926..902a0734cc36 100644
+--- a/drivers/spi/spi-cs42l43.c
++++ b/drivers/spi/spi-cs42l43.c
+@@ -26,7 +26,7 @@
+ #include <linux/units.h>
+ 
+ #define CS42L43_FIFO_SIZE		16
+-#define CS42L43_SPI_ROOT_HZ		(40 * HZ_PER_MHZ)
++#define CS42L43_SPI_ROOT_HZ		49152000
+ #define CS42L43_SPI_MAX_LENGTH		65532
+ 
+ enum cs42l43_spi_cmd {
+-- 
+2.39.2
 
 
