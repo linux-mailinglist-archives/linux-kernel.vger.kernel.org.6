@@ -1,172 +1,82 @@
-Return-Path: <linux-kernel+bounces-200491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F76C8FB0C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:13:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39668FB0CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67CC1F227B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309E61C212B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B514F1459E4;
-	Tue,  4 Jun 2024 11:12:52 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDF7142E8C;
+	Tue,  4 Jun 2024 11:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CsJtr6d4"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D20C144D3B;
-	Tue,  4 Jun 2024 11:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DD81420D7;
+	Tue,  4 Jun 2024 11:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717499572; cv=none; b=ZY31agLaSCpjEzdmpoDYty3geZ+TTzyZTHZ75jQw3FTVm4AOue/WYoTKuQDeaTRudjJMJk8dB7nZC97Eefd1WzHgXpkXRIjUN1/7b/iRwV7s6iv21yWTNK0XO/VN1la3A5QE1E/WZ6S/IEGpNpLC+VdOWiecXqjl5JylNnGqcxk=
+	t=1717499604; cv=none; b=UavOWi7urgB4eIwHHYedDMKJwcGDwmFx30HMZW07eSZJlYh+gmCDxe8lxLUj9Dt47gDVC7PuElHf4EIi5EuVGO6nMcqlsEkj3CfPgyWv7vgh0H0jRjKUDvL57oFr+mQO6UtNswv33xo4zG3upYw070QcXrCvXqmFVZi4ZepYP0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717499572; c=relaxed/simple;
-	bh=duS0E61vDWR5VMQUABw7lBbVU+dp7FmowJtxtmTheDo=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=axyJqGRnhmGpUze4N2HFqU9st1/zb/0egprhpopsHGzH4knqp1fQUWaJouHJVSGlhueWbKhTmwDmM8YBgQxFZz+2qj4TZcgs9SY6Z51QKeK0hLjOAA8S8NehNBylSwP9ifVNXq2JeFtzBvtvO5l4OTf0qKRKXA/NHPh6a4o7nI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VtnsH1GmBzwPFr;
-	Tue,  4 Jun 2024 19:08:51 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7F20A140FD3;
-	Tue,  4 Jun 2024 19:12:46 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 4 Jun 2024 19:12:45 +0800
-CC: <yangyicong@hisilicon.com>, <will@kernel.org>, <mark.rutland@arm.com>,
-	<acme@kernel.org>, <namhyung@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<james.clark@arm.com>, <dongli.zhang@oracle.com>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>
-Subject: Re: [PATCH 1/3] perf pmu: Limit PMU cpumask to online CPUs
-To: Ian Rogers <irogers@google.com>
-References: <20240603092812.46616-1-yangyicong@huawei.com>
- <20240603092812.46616-2-yangyicong@huawei.com>
- <CAP-5=fXNumMLL=_+qXdnQPqgLSwo7Z1BFmPww63NkX5EcDRDsQ@mail.gmail.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <0d45744d-c206-66b6-5861-b80ebcc9a1d6@huawei.com>
-Date: Tue, 4 Jun 2024 19:12:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1717499604; c=relaxed/simple;
+	bh=rGoLCX1QYySnp5WODctYy3wdo/rDyPEq2AVRp8GdPdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:Content-Type; b=KshcFMW6opnXmUL+C3NmMXVTAC/1FN3r/60fRkShhzFCTT5dj3CV+scNa9oZReh2nuNHNlA/5woW5K0WIDJGP0Sqyi6R9GsB9z9Ha5d46OIa0MV9lPy5+E65DsIdt7eUMqZgVlTghf0WwbkJLm30JIlfhrNDWchCOI2eHSbVWyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CsJtr6d4; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717499599; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=N5NUh30145zgOTyWygnNBSJ5byygJdHeU6hO+TwHwK0=;
+	b=CsJtr6d4n7IQfu1oAXMBVdRjjdDN9lbwDR3fAXbWb9F/G17jbFbNFQlBINERVv9p2MDhApj/htOQh+tegyUdSaUBq/F240VMmK5zChkmrtitp5FikpOJkDP9kVHvEWNIJsV82fYzl2FBJo6OQstSfSgc4CLJvBVONI0ZJVOsmrE=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W7qye4e_1717499588;
+Received: from 30.221.129.74(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W7qye4e_1717499588)
+          by smtp.aliyun-inc.com;
+          Tue, 04 Jun 2024 19:13:18 +0800
+Message-ID: <bebf60d1-866a-495b-b218-05e0aa5128a1@linux.alibaba.com>
+Date: Tue, 4 Jun 2024 19:13:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAP-5=fXNumMLL=_+qXdnQPqgLSwo7Z1BFmPww63NkX5EcDRDsQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net/smc: avoid overwriting when adjusting sock
+ bufsizes
+To: gbayer@linux.ibm.com, wenjia@linux.ibm.com, jaka@linux.ibm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Wen Gu <guwen@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024/6/4 0:52, Ian Rogers wrote:
-> On Mon, Jun 3, 2024 at 2:33 AM Yicong Yang <yangyicong@huawei.com> wrote:
->>
->> From: Yicong Yang <yangyicong@hisilicon.com>
->>
->> We'll initialize the PMU's cpumask from "cpumask" or "cpus" sysfs
->> attributes if provided by the driver without checking the CPUs
->> are online or not. In such case that CPUs provided by the driver
->> contains the offline CPUs, we'll try to open event on the offline
->> CPUs and then rejected by the kernel:
->>
->> [root@localhost yang]# echo 0 > /sys/devices/system/cpu/cpu0/online
->> [root@localhost yang]# ./perf_static stat -e armv8_pmuv3_0/cycles/ --timeout 100
->> Error:
->> The sys_perf_event_open() syscall returned with 19 (No such device) for event (cpu-clock).
->> /bin/dmesg | grep -i perf may provide additional information.
->>
->> So it's better to do a double check in the userspace and only include
->> the online CPUs from "cpumask" or "cpus" to avoid opening events on
->> offline CPUs.
-> 
-> I see where you are coming from with this but I think it is wrong. The
-> cpus for an uncore PMU are a hint of the CPU to open on rather than
-> the set of valid CPUs. For example:
-> ```
-> $ cat /sys/devices/uncore_imc_free_running_0/cpumask
-> 0
-> $ perf stat -vv -e uncore_imc_free_running_0/data_read/ -C 1 -a sleep 0.1
-> Using CPUID GenuineIntel-6-8D-1
-> Attempt to add: uncore_imc_free_running_0/data_read/
-> ..after resolving event: uncore_imc_free_running_0/event=0xff,umask=0x20/
-> Control descriptor is not initialized
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             24 (uncore_imc_free_running_0)
->   size                             136
->   config                           0x20ff (data_read)
->   sample_type                      IDENTIFIER
->   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->   disabled                         1
->   inherit                          1
->   exclude_guest                    1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8
-> sys_perf_event_open failed, error -22
-> switching off cloexec flag
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             24 (uncore_imc_free_running_0)
->   size                             136
->   config                           0x20ff (data_read)
->   sample_type                      IDENTIFIER
->   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->   disabled                         1
->   inherit                          1
->   exclude_guest                    1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0
-> sys_perf_event_open failed, error -22
-> switching off exclude_guest, exclude_host
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             24 (uncore_imc_free_running_0)
->   size                             136
->   config                           0x20ff (data_read)
->   sample_type                      IDENTIFIER
->   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->   disabled                         1
->   inherit                          1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0 = 3
-> uncore_imc_free_running_0/data_read/: 1: 4005984 102338957 102338957
-> uncore_imc_free_running_0/data_read/: 4005984 102338957 102338957
-> 
->  Performance counter stats for 'system wide':
-> 
->             244.51 MiB  uncore_imc_free_running_0/data_read/
-> 
->        0.102320376 seconds time elapsed
-> ```
-> So the CPU mask of the PMU says to open on CPU 0, but on the command
-> line when I passed "-C 1" it opened it on CPU 1. If the cpumask file
-> contained an offline CPU then this change would make it so the CPU map
-> in the tool were empty, however, a different CPU may be programmable
-> and online.
-> 
-> Fwiw, the tool will determine whether the mask is for all valid or a
-> hint by using the notion of a PMU being "core" or not. That notion
-> considers whether the mask was loading from a "cpumask" or "cpus"
-> file:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/pmu.c?h=perf-tools-next#n810
-> 
 
-I see, you're correct on this. Maybe I didn't mention it clearly in the commit,
-this patch doesn't intend to change the case that user specify the CPUs explicitly.
-It'll have difference in case user doesn't specify the CPU list while the PMU's
-'cpus' or 'cpumask' contains offline CPUs: with this patch we'll use the online
-CPUs in the PMU's 'cpus' or 'cpumask' but before this we may use the offline CPUs.
-We still honor the user's input by the handling in __perf_evlist__propagate_maps().
 
-Thanks.
+On 2024/5/31 16:54, Wen Gu wrote:
+> When copying smc settings to clcsock, avoid setting clcsock's sk_sndbuf
+> to sysctl_tcp_wmem[1], since this may overwrite the value set by
+> tcp_sndbuf_expand() in TCP connection establishment.
+> 
+> And the other setting sk_{snd|rcv}buf to sysctl value in
+> smc_adjust_sock_bufsizes() can also be omitted since the initialization
+> of smc sock and clcsock has set sk_{snd|rcv}buf to smc.sysctl_{w|r}mem
+> or ipv4_sysctl_tcp_{w|r}mem[1].
+> 
+> Fixes: 30c3c4a4497c ("net/smc: Use correct buffer sizes when switching between TCP and SMC")
+> Link: https://lore.kernel.org/r/5eaf3858-e7fd-4db8-83e8-3d7a3e0e9ae2@linux.alibaba.com
+> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+> ---
+> FYI,
+> The detailed motivation and testing can be found in the link above.
+> ---
+
+Hi, Gerd and Wenjia, do you think this makes sense? Thanks!
 
