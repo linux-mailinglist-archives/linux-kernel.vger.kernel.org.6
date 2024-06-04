@@ -1,168 +1,137 @@
-Return-Path: <linux-kernel+bounces-200913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3BA78FB679
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:02:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7018FB67A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19FC11C2194B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:02:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9061F23AC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA85A13D523;
-	Tue,  4 Jun 2024 15:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFCF8BF7;
+	Tue,  4 Jun 2024 15:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcFyYteG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bAuI3hV4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F112051C3E;
-	Tue,  4 Jun 2024 15:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC7512D765
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513356; cv=none; b=UKRTYUI76OTZXRFIB6DqQDIaSj2kLXWI6WRSHn+CCTcw45VcVP//u+4I9jlS1Olt3OmwbqWXaVByoJLSpTsZVZz6Tb8nJrk7vep3cHHn33w4hM3NN15ME/9MDmOAwVCVnvTmjsdFv18DBUqil64EQl26oTSpj1tZW11N8x//OdM=
+	t=1717513384; cv=none; b=D71ZcZUfcyS8uRcXolEJHkFCa8KF5F2DOEkGSoCRnvvNctZxKMcP8Vdo2L7/O7VHaxgb5JVeoB8vawx36zDRGuuukHiQV5F27fyf/MuUJNddGDAGG8OHpNMIzbZPjtBpdPJMNmkDRmm+GvZFEeTq2JxKK81TzwopNsX0NgLcrTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513356; c=relaxed/simple;
-	bh=xtJUyNxwB7M1j6qR9LAvxbMNOmZxHaugTMRR02cMN0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0HQKvPZoV2TroOOlgX9AvTFaaT39lKx5EbAQ4jRQtIL6FxLrzSfp6A9+cNbTwtzCi7WemwL4tms+gb4ZrokT9RSKoXnsG4j3kxtNgAgxL+VkN30g/ubAWy/66iQZf3VNTbFAVmf7cpZcIS4YzJqzb1aNUZM+Voo9p8QWQ/x9ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PcFyYteG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0BD9C2BBFC;
-	Tue,  4 Jun 2024 15:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717513355;
-	bh=xtJUyNxwB7M1j6qR9LAvxbMNOmZxHaugTMRR02cMN0g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PcFyYteGPx/DLK2FaeMM8zewZ/t0mDDBxMsBzBzhxtDLVgoapx658UcdzRfQ9xd8q
-	 Fe8q8wddXOp4eBjWidUKbiB4xyPgrvn5Ibp8p6REqg2XtX/yAmhkLI8jGVuJKXB43e
-	 aIWSCDddiK2YemWgtQ+VCuKqdcdoER9sYPiBv7ziIOKcPLdpB0fBpcfNgrcbIjK87i
-	 AR2uG6QiuS0oZOgWOcyrurtPfWoUQetrTtOtkeyVgrsi+Te46ruuoBKTGLuBT52TRK
-	 8QLogsZuUqOr1lZFpkG0nKIZ/TCwx2Enn+6TwYaR5/QM+qVYbc23ZG2QknvVuROtGN
-	 YI7pW5PhSNevQ==
-Date: Tue, 4 Jun 2024 16:02:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	jvoisin <julien.voisin@dustri.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
-	Thomas Graf <tgraf@suug.ch>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] mm/slab: Introduce kmem_buckets_create() and
- family
-Message-ID: <20240604150228.GS491852@kernel.org>
-References: <20240531191304.it.853-kees@kernel.org>
- <20240531191458.987345-4-kees@kernel.org>
+	s=arc-20240116; t=1717513384; c=relaxed/simple;
+	bh=4TQW0kfgzyxz8gaP9ctr2Nr1tEvi9I6QOkgJu5JS7zE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NLbXMwim9+lN4hd70vJ9JfYTvsvWWp0Q34SId+40RATO7ZUbMmYPBlU+1YafJrmBSCyqLfFQvsFtyjeiuo0C5R7xCzDOi0/hZoq1qT6TkLn1u9DLExYgR9pY/PuBL7/Pe5Jl8lpSlTt1nGYlbGRFnm68sxb3P/YfzoIKBeR8f/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bAuI3hV4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717513382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5HeKLp06cYpYp9T9CdViOJHM4DaddkJicTfYxHrEBRA=;
+	b=bAuI3hV4SsW4TuHTZ3pP8b5nlraR8sf6rckYC9rgPGpxbJLh4TKluSHCjf0f1L6IJdVPXJ
+	bE9r/enxjVAvthW60ukLQeZbPe5YsuZZeqzMNYL4//neA45Mm3oYTr2a2zMU2/U8UoBq5X
+	k1g1B0jEmlW6UhvBcIhVBeoMjuqhZCM=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-117-sBQ9Z7ckMCK9d-dAK7eg6g-1; Tue,
+ 04 Jun 2024 11:02:58 -0400
+X-MC-Unique: sBQ9Z7ckMCK9d-dAK7eg6g-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 663333C0008A;
+	Tue,  4 Jun 2024 15:02:58 +0000 (UTC)
+Received: from [10.22.17.111] (unknown [10.22.17.111])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id A769E492BDB;
+	Tue,  4 Jun 2024 15:02:57 +0000 (UTC)
+Message-ID: <6a2b7129-febc-4dd2-b493-7f43e061a2a6@redhat.com>
+Date: Tue, 4 Jun 2024 11:02:57 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531191458.987345-4-kees@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] cpuset: use Union-Find to optimize the merging of
+ cpumasks
+To: Xavier <ghostxavier@sina.com>
+Cc: lizefan.x@bytedance.com, tj@kernel.org, hannes@cmpxchg.org,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240531024837.255293-1-ghostxavier@sina.com>
+ <20240603123101.590760-1-ghostxavier@sina.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240603123101.590760-1-ghostxavier@sina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-On Fri, May 31, 2024 at 12:14:56PM -0700, Kees Cook wrote:
+On 6/3/24 08:31, Xavier wrote:
+> The process of constructing scheduling domains involves multiple loops
+> and repeated evaluations, leading to numerous redundant and ineffective
+> assessments that impact code efficiency.
+>
+> Here, we use Union-Find to optimize the merging of cpumasks. By employing
+> path compression and union by rank, we effectively reduce the number of
+> lookups and merge comparisons.
+>
+> Signed-off-by: Xavier <ghostxavier@sina.com>
+>
+> Hi Longman,
+>
+> Thank you for your feedback on the previous version of the patch.
+>
+> Now I will respond to the three questions you raised:
+> 1) The function comment describes the algorithm to find the set of
+> domains. If you change the algorithm, you have to update the comment as
+> well.
+>
+> Reply: Sorry for not paying attention to the comments before. The new patch (v3) has updated the comment content.
+>
+> 2) generate_sched_domains() is not in a performance critical path, so
+> its performance is not as important. Also the csn array is typically not
+> that big. Changing the algorithm may introduce new bugs which leads to
+> the next point.
+>
+> Reply: Indeed, this function is not a critical path impacting performance, but it's always good to optimize efficiency. The optimization is limited to the internals of this function and does not affect other modules, so fixing the internal bug should have manageable risks.
 
-...
+In term of efficiency, your patch does eliminate the third iteration (k) 
+in the csn iteration loop. However the new union_sets() function may go 
+up the node hierarchy which can considered a third iteration in some 
+way. So there is some saving, but not as significant as it looks. It 
+does simplify the code and make it a bit easier to read.
 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index b5c879fa66bc..f42a98d368a9 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -392,6 +392,82 @@ kmem_cache_create(const char *name, unsigned int size, unsigned int align,
->  }
->  EXPORT_SYMBOL(kmem_cache_create);
->  
-> +static struct kmem_cache *kmem_buckets_cache __ro_after_init;
-> +
-> +kmem_buckets *kmem_buckets_create(const char *name, unsigned int align,
-> +				  slab_flags_t flags,
-> +				  unsigned int useroffset,
-> +				  unsigned int usersize,
-> +				  void (*ctor)(void *))
-> +{
-> +	kmem_buckets *b;
-> +	int idx;
-> +
-> +	/*
-> +	 * When the separate buckets API is not built in, just return
-> +	 * a non-NULL value for the kmem_buckets pointer, which will be
-> +	 * unused when performing allocations.
-> +	 */
-> +	if (!IS_ENABLED(CONFIG_SLAB_BUCKETS))
-> +		return ZERO_SIZE_PTR;
-> +
-> +	if (WARN_ON(!kmem_buckets_cache))
-> +		return NULL;
-> +
-> +	b = kmem_cache_alloc(kmem_buckets_cache, GFP_KERNEL|__GFP_ZERO);
-> +	if (WARN_ON(!b))
-> +		return NULL;
-> +
-> +	flags |= SLAB_NO_MERGE;
-> +
-> +	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
-> +		char *short_size, *cache_name;
-> +		unsigned int cache_useroffset, cache_usersize;
-> +		unsigned int size;
-> +
-> +		if (!kmalloc_caches[KMALLOC_NORMAL][idx])
-> +			continue;
-> +
-> +		size = kmalloc_caches[KMALLOC_NORMAL][idx]->object_size;
-> +		if (!size)
-> +			continue;
-> +
-> +		short_size = strchr(kmalloc_caches[KMALLOC_NORMAL][idx]->name, '-');
-> +		if (WARN_ON(!short_size))
-> +			goto fail;
-> +
-> +		cache_name = kasprintf(GFP_KERNEL, "%s-%s", name, short_size + 1);
-> +		if (WARN_ON(!cache_name))
-> +			goto fail;
-> +
-> +		if (useroffset >= size) {
-> +			cache_useroffset = 0;
-> +			cache_usersize = 0;
-> +		} else {
-> +			cache_useroffset = useroffset;
-> +			cache_usersize = min(size - cache_useroffset, usersize);
-> +		}
-> +		(*b)[idx] = kmem_cache_create_usercopy(cache_name, size,
-> +					align, flags, cache_useroffset,
-> +					cache_usersize, ctor);
-> +		kfree(cache_name);
-> +		if (WARN_ON(!(*b)[idx]))
-> +			goto fail;
-> +	}
-> +
-> +	return b;
-> +
-> +fail:
-> +	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
-> +		if ((*b)[idx])
-> +			kmem_cache_destroy((*b)[idx]);
+>
+> 3) How do you test your code to ensure its correctness?
+> I applied your patch and run the ./test_cpuset_prs.sh got the following...
+>
+> Reply: I'm very sorry, this is my first time submitting a kernel patch and I don't know which test cases need to be run. I just constructed some scenarios locally to test, so the testing scope is limited. Thank you for providing the test cases. I have reproduced and resolved the issue, and have passed several other test cases in CGroup. But currently, I only have QEMU simulation environment, so my testing ability is limited. I hope you can help me with some comprehensive testing of my new version patch. Thank you very much.
+>
+> I hope you can pay further attention to the new patch.
 
-nit: I don't think it is necessary to guard this with a check for NULL.
+Also your patch eliminates all the use of the cpuset->pn variable. So 
+you cab remove it as it is no longer needed.
 
-> +	}
-> +	kfree(b);
-> +
-> +	return NULL;
-> +}
-> +EXPORT_SYMBOL(kmem_buckets_create);
+After a harder look at the generate_sched_domains() code, I have found a 
+bug in the code with respect to the support of remote partition. I will 
+send another patch to fix it. I also realize that the function was 
+originally designed to support v1 cpuset. v2 cpuset is quite different 
+and the code can be simplified for the v2 use case.
+
+You are welcome to send a v4 patch on top of the new cpuset code base.
+
+Thanks,
+Longman
+
 
