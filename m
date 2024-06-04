@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-201360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE23A8FBD80
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:47:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDBD8FBD83
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8236FB24892
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46BEB28434F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 20:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3341914BF8A;
-	Tue,  4 Jun 2024 20:47:46 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E54A14B97D;
+	Tue,  4 Jun 2024 20:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="AyEZbuQE"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E190214A627;
-	Tue,  4 Jun 2024 20:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB0813F451;
+	Tue,  4 Jun 2024 20:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717534065; cv=none; b=MQiv/CZ9Rb4orR7ei7AwaBPfgwmPnIbOclxvo+ceEaWYT2SAu6nc4vcqedpCHZGQBMXSCdjwtshsBRjkAnKUQacLRyBRRE7a9VegyFB7DYpKe73iXC5Ud3F+fRB3OSHJ0sgCniCOMEnoXiHoRizvU3Dy7FrTFeeFnSkcKJX7Akg=
+	t=1717534116; cv=none; b=qiRWmWkkA610738OHR3vsVmft/lpl0TFfun0J0LC9aWIA1xehirgzfG3n6217tosOj03mHdw57IXVQlYiibbEVZ98mfNzZQbKyUdlWsxGgiTV7afpA9oT6PrVra/pJDa3ECv1ikG7K/2z6LJpXxsWYXeCDR0qniJczNUQG43yLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717534065; c=relaxed/simple;
-	bh=T8ArkHAWEsoLdQdAfF8cZxmF56dM4QXiFunMu84Sspg=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=l2GHEJVlPDgvQ6w9gbaEp2IO4BsDPR7buYafYEjbYQrVdk/+K74ep2i/wI5jc59qkfJcEzQyI1rLnBGKfAxSrkNEKXaXow6eoEKJvmCy5UNS6WGCwqypepdiH6fT1CFwFYG2xyxZkeHKVa+CvEGijznqz2nTiCLNJMpcO7DkZ5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.78.182) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 4 Jun
- 2024 23:47:26 +0300
-Subject: Re: [net-next PATCH v5 2/7] net: ravb: Align poll function with NAPI
- docs
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Simon Horman <horms@kernel.org>
-CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240604072825.7490-1-paul.barker.ct@bp.renesas.com>
- <20240604072825.7490-3-paul.barker.ct@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <4958f946-3c95-9280-9da8-3670a3187cc5@omp.ru>
-Date: Tue, 4 Jun 2024 23:47:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1717534116; c=relaxed/simple;
+	bh=24z1rBJP/t4A6eeiNMz6cumSnbPF5JflnPk3fIfkeYM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=LCw2Yj4Fo4UMm5BCEXZymy6RoGQ2PsptCZRHb3B1alcZ2pzdLUdcR5aTSNw7QwYx4Tym4AgqlnUxuOiWhjF01+Ks2VpM7QyVqkSEctKPY86ioLd9HqUW6wMlkxEprY8dTAaY4DpHqvyp0ri08LooAuFAsWYtRXpJCoYiC42VOkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=AyEZbuQE; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240604072825.7490-3-paul.barker.ct@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1717534112;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jaTzlawGlDcYRhQAm+R1AsWpCyayK2cAnVa+Y0OsHVQ=;
+	b=AyEZbuQEG/qqS8hCg4QaBIOxBX5BDnlwIu08AMxosoc84FDiVVV5NnCCTRWyhFB4zo5xVV
+	Mqf8T7Qr9+QUghlk4yVtaLV0HE9dLTRffsJyizkktmF01hfJTm8DXRaX92E2WANTcuw9qC
+	w4A4pFK81Zc09M++1RkPeePFtqjojo5/EVcinZZBjENohmQv3PByt+ZdvBqTT4sIw3l9XQ
+	0xixHMlzRPKwYzIJHUZ5J9El7sfvISr3oEKry2exmbn/eKp2SLdv/reoa0IGUazY4NSGwV
+	ry6MW+Ao7vnlq9nEmfX+fJgg4lbEia7kzrfWlCJ4aCEfSCWSNDe2v0vQO34A5A==
+Date: Tue, 04 Jun 2024 22:48:30 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Alexey Charkov <alchark@gmail.com>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org, quentin.schulz@cherry.de, wens@kernel.org,
+ daniel.lezcano@linaro.org, didi.debian@cknow.org,
+ krzysztof.kozlowski+dt@linaro.org, viresh.kumar@linaro.org
+Subject: Re: [RFC PATCH] arm64: dts: rockchip: Make preparations for
+ per-RK3588-variant OPPs
+In-Reply-To: <82db817a908b761d8c3d73ea04714314@manjaro.org>
+References: <673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org>
+ <CABjd4YxD41DEkBCZfkznLboEY9ZVOfTCLcj4S_kkcsVswbANyQ@mail.gmail.com>
+ <8f8623e29a479c4108141302e708dc3b@manjaro.org>
+ <CABjd4Yy4RMg+6-4ygV0MSwJj5LReY-ymbctq4PPfVZ6L+c1tsw@mail.gmail.com>
+ <166cc4e46f31644a50306625b2ab18a6@manjaro.org>
+ <CABjd4YzDNQa45=KC_t0xnTDrH+g-oUrcpgP55oOj7JcAuu7uFw@mail.gmail.com>
+ <82db817a908b761d8c3d73ea04714314@manjaro.org>
+Message-ID: <75563ad3f6bf6b6c8b151ab0cc26b490@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/04/2024 20:26:27
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185716 [Jun 04 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.182 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.182 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	178.176.78.182:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.78.182
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/04/2024 20:29:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/4/2024 4:23:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 6/4/24 10:28 AM, Paul Barker wrote:
+Hello Alexey,
 
-> Align ravb_poll() with the documentation in
-> `Documentation/networking/kapi.rst` and
-> `Documentation/networking/napi.rst`.
-> 
-> The documentation says that we should prefer napi_complete_done() over
-> napi_complete(), and using the former allows us to properly support busy
-> polling. We should ensure that napi_complete_done() is only called if
-> the work budget has not been exhausted, and we should only re-arm
-> interrupts if it returns true.
-> 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+On 2024-05-30 21:31, Dragan Simic wrote:
+> I'm sorry for my delayed response, had some "IRL stuff" to take care 
+> of.
 
 [...]
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> On 2024-05-29 16:05, Alexey Charkov wrote:
+>> The problem I have with -common is that there are several layers of
+>> "common" even among just the three of these chip revisions, and a
+>> clear inheritance hierarchy between them (i.e. RK3588j and RK3588 also
+>> have a sizeable chunk of their IP blocks that is "common" between
+>> these two variants, in addition to those shared among all three
+>> variants)
+> 
+> Hmm, I see, that's a rather valid concern.  How about using "-base"
+> for what I called "-common", and "-extra" for what I called "-fullfat",
+> for the lack of a better term?  Using "-extra" takes inspiration from
+> the way Linux distribution package repositories are commonly named, so
+> it should be rather familiar to nearly everyone.
+> 
+> Also, "-base" and "-extra" are rather short, so their shortness would
+> also make them stand out in the directory listing as something that 
+> isn't
+> just another board .dts or .dtsi file, which can only help.
 
-MBR, Sergey
+[...]
+
+Since there were no complaints, I'll move forward with sending a "real"
+patch that uses "-base" and "-extra".
 
