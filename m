@@ -1,75 +1,131 @@
-Return-Path: <linux-kernel+bounces-199915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7698FA7C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:54:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58CFD8FA7F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA911F23C78
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:54:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1357628DF1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556E213D511;
-	Tue,  4 Jun 2024 01:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397A313D886;
+	Tue,  4 Jun 2024 01:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="N+2j7c4p"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KYk0RwQB"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52E44A04;
-	Tue,  4 Jun 2024 01:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248CD137924;
+	Tue,  4 Jun 2024 01:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717466037; cv=none; b=AvYfqCJHXvbXn4ARYLCG5mgI2yb3Rb8GUs344OjQIZjJ/g0I2Jq4NYp/gmvvcn42u6h2MVJHUs0UtWflnsI4NdsHRnMH6SFVvalO6qzorJLotkW1zVtS3ZV6C4/FeyzLvWnxN9b1h3Lu6YYCCR9IolIH2UYb8ovIEr9151IurP0=
+	t=1717466229; cv=none; b=Y9iQS8Wmt8Hl1lXHvDFOz1j9BIyO7C79hZgtENJPMW54swk2zNNiBVm9NLTNk/Ylz8HprMmV1Io0qaoL1ovtmaZbArououWEGYN8uCOsD2EQZK8P49+d6iosdlO0p2+VxP8TLFGBl4M7Aq1kzVaoncj/guw4W9rBW2Q7Ah44uZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717466037; c=relaxed/simple;
-	bh=8Myg52lLWrLZOLkXAsnAEtMJuwErLEP/S/CM0D8BeoI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U4WS4PN6i+AU0Z8XaptjIK8okjczejiscQmzYuC4LkJsirZxCFYXW838xgZG4sL+NHb5g38WdhWWKGIB4pTpl2qufhuaXLabTdojTUdmY3NnRGGvtSEhH5SIp1HP21QaELEv6VfzN3rt0s9doI55BkP6XKVISRXqWZ0YFky5kgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=N+2j7c4p; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from [192.168.68.112] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 56C412013B;
-	Tue,  4 Jun 2024 09:53:51 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1717466033;
-	bh=8Myg52lLWrLZOLkXAsnAEtMJuwErLEP/S/CM0D8BeoI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=N+2j7c4pxg+RU3Ui5pOQmzKgoMYWUFKHKG3B7qXpkU9UWks8sRBiil4hs5fn0W+4f
-	 sBVA5EixdQawh0U4DWtncxYLquPSpBT4a12DwB0w5vgFeiidPfcJD6jdTwvVs/hQ0Q
-	 K3bu0pvugMEJoUdc3dmieC/uRvvWanFdFd7DkbHT+JT4pYx2+Bt3rVK1aoJHZAWSax
-	 2ZLzkCYRMNxzCZxq/LkuZr8Ta2gdHfN707jRuIfVnuj7v044T9SVnaRnyyhA11+bOz
-	 9LjNi54m5R2rVeebzxiH92jeTXqH3/92lZ/SOocCc6uFoOSoMOnjangCmJZ1WnzZfu
-	 DSjkFIgGgefWg==
-Message-ID: <9375ace675ef1a6bfb00c916c940fb839ed10289.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] arm: dts: aspeed: Use standard 'i2c' bus node name
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
-	 <joel@jms.id.au>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date: Tue, 04 Jun 2024 11:23:48 +0930
-In-Reply-To: <20240531193115.3814887-1-robh@kernel.org>
-References: <20240531193115.3814887-1-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1717466229; c=relaxed/simple;
+	bh=vAHxqC5p21VJM3W0tqZX2heKAMVPYr0MbjkwYfHJtjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MH+Wh2kvKEB/GTnnza880hSjdDk3mnopl278DiLM6OsNti6k33d8BeDFwOTFoiFTFE4bPYHnL8+qUG2NW/HJTucZNYt8uhXyosBqXd0vq0Lrb+tRk7HMH/E9wOhc+wyN2fBuZKhpDGKJZqN5/lsgimo5EJwOVPp93C8a/ugmaLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KYk0RwQB; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1717466223; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Qe5hOBNaCqLZm/rRI4XccAdFKiV/c/Rsd9mYPA/Q9+4=;
+	b=KYk0RwQBbcDcuNn16o9LuVna9X2GOCX0hAmMEqkXATC1hUwWV+ErGwPBOKzmfnEdZhsuEsywBx6sXkr5kFA+sg4eyH0St+eEgNjzinQnRJPBQQnMVX3SgLFuoHT2Smq3wIKU7y/Y5aVSVmVsl8HeFjuJTo5jZ+5kDueEo3IKt/Q=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W7p7gKf_1717466222;
+Received: from 30.221.146.134(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W7p7gKf_1717466222)
+          by smtp.aliyun-inc.com;
+          Tue, 04 Jun 2024 09:57:03 +0800
+Message-ID: <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
+Date: Tue, 4 Jun 2024 09:57:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Miklos Szeredi <miklos@szeredi.hu>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ lege.wang@jaguarmicro.com
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+ <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2024-05-31 at 14:31 -0500, Rob Herring (Arm) wrote:
-> The standard node name for I2C buses is 'i2c'.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Hi Bernd and Miklos,
 
-Thanks, I've applied this a tree for Joel to pick up.
+On 6/3/24 11:19 PM, Miklos Szeredi wrote:
+> On Mon, 3 Jun 2024 at 16:43, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>>
+>>
+>>
+>> On 6/3/24 08:17, Jingbo Xu wrote:
+>>> Hi, Miklos,
+>>>
+>>> We spotted a performance bottleneck for FUSE writeback in which the
+>>> writeback kworker has consumed nearly 100% CPU, among which 40% CPU is
+>>> used for copy_page().
+>>>
+>>> fuse_writepages_fill
+>>>   alloc tmp_page
+>>>   copy_highpage
+>>>
+>>> This is because of FUSE writeback design (see commit 3be5a52b30aa
+>>> ("fuse: support writable mmap")), which newly allocates a temp page for
+>>> each dirty page to be written back, copy content of dirty page to temp
+>>> page, and then write back the temp page instead.  This special design is
+>>> intentional to avoid potential deadlocked due to buggy or even malicious
+>>> fuse user daemon.
+>>
+>> I also noticed that and I admin that I don't understand it yet. The commit says
+>>
+>> <quote>
+>>     The basic problem is that there can be no guarantee about the time in which
+>>     the userspace filesystem will complete a write.  It may be buggy or even
+>>     malicious, and fail to complete WRITE requests.  We don't want unrelated parts
+>>     of the system to grind to a halt in such cases.
+>> </quote>
+>>
+>>
+>> Timing - NFS/cifs/etc have the same issue? Even a local file system has no guarantees
+>> how fast storage is?
+> 
+> I don't have the details but it boils down to the fact that the
+> allocation context provided by GFP_NOFS (PF_MEMALLOC_NOFS) cannot be
+> used by the unprivileged userspace server (and even if it could,
+> there's no guarantee, that it would).
+> 
+> When this mechanism was introduced, the deadlock was a real
+> possibility.  I'm not sure that it can still happen, but proving that
+> it cannot might be difficult.
 
-Andrew
+IIUC, there are two sources that may cause deadlock:
+1) the fuse server needs memory allocation when processing FUSE_WRITE
+requests, which in turn triggers direct memory reclaim, and FUSE
+writeback then - deadlock here
+2) a process that trigfgers direct memory reclaim or calls sync(2) may
+hang there forever, if the fuse server is buggyly or malicious and thus
+hang there when processing FUSE_WRITE requests
+
+Thus the temp page design was introduced to avoid the above potential
+issues.
+
+I think case 1 may be fixed (if any), but I don't know how case 2 can be
+avoided as any one could run a fuse server in unprivileged mode.  Or if
+case 2 really matters?  Please correct me if I miss something.
+
+-- 
+Thanks,
+Jingbo
 
