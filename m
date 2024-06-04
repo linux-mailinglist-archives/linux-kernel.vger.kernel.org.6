@@ -1,212 +1,332 @@
-Return-Path: <linux-kernel+bounces-200288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F43C8FAE1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:55:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836D38FAE1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC415282116
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:54:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A620C1C21342
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CCE1448E0;
-	Tue,  4 Jun 2024 08:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799C8142E83;
+	Tue,  4 Jun 2024 08:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J01bgPaW"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XV4L6Fn9"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB3E1448D8;
-	Tue,  4 Jun 2024 08:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6B4142E7D;
+	Tue,  4 Jun 2024 08:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717491218; cv=none; b=QpgIlZR0Bhg78B515akhVihuqU0+bDqIEPSTaTGEJMyQ7lgDdP12aZzqfLo/sROXxc4HghP8dYxDShSuy8pWOi6zZViK+U1+Atog9izjE0HLSApdvrCU12CbJ9BRFR2vMqnNAEUZjyemEp6YWYJSRkQ1Cy9G0eGHupGUCfoHHs4=
+	t=1717491255; cv=none; b=RH3bFvEUIP/NZPB2/Bc/76+X7afkCS2M5gIzbnSCbjhaIsPv72CxtSlSxdEuLsRneJKwWHWMEq9GXhtTDjUShl4lL1yRpK0erQ2LF8tp1LSCzKGT4gOkKq02jB3wPPArb97mUaOkaU48A3KZZ9IoZ7cjWyhQNRSMMerTF0Zc9vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717491218; c=relaxed/simple;
-	bh=MMpITXPM4C0ivfbrTMWWRhwxZMMMyv+M0uOugvKNaU4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BeaxVJXmgZqlYNTINXt7qGvjwahzYN0D0uubLfpvdSd+MpoIet8mgF3inX8pRVtFlbxH1jBJ6xacnOKbuAFVZYKO28FJfd8L1NIttjobF2PDE6WKLK00F5V6L+3BwRmD8j6lisQ9kqbxNEO+qAZBIyFYl07jBY2ghg66WlwAoPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=J01bgPaW; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4548rSd2069328;
-	Tue, 4 Jun 2024 03:53:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717491209;
-	bh=XOI5HnJnHNLJ54u/KSVaU0exWK4JxEf2xnlqQDUnx8w=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=J01bgPaWdbVipsdj8jQ+Hsj7IB/kDywipsK4nuT82DfpviqLrbuVnVeuc5b3ZCApT
-	 tBPvzLyxfsImVc7MLU8GXA/g+GZrxLDHa6J8j5IrE30UWSdryRCDjFGaE8ImvGm7cQ
-	 1Qug7UHTnbQXw4+XWgTWRDjWlYDS4yrqfaz+8r2w=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4548rSg2016178
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Jun 2024 03:53:28 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Jun 2024 03:53:28 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Jun 2024 03:53:28 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4548qqQo066926;
-	Tue, 4 Jun 2024 03:53:24 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <afd@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <rogerq@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
-        <danishanwar@ti.com>, <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH v5 7/7] arm64: dts: ti: k3-j722s: Enable PCIe and USB support on J722S-EVM
-Date: Tue, 4 Jun 2024 14:22:52 +0530
-Message-ID: <20240604085252.3686037-8-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240604085252.3686037-1-s-vadapalli@ti.com>
-References: <20240604085252.3686037-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1717491255; c=relaxed/simple;
+	bh=G/an2LXz5Nf1MhaBi1lKgXnlAgIStAV6l3vo7HiJYJI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=WQzyLQnbgdBn23sH8J6Z9lUCtLLP2HLIME9INKYakaxzYM6U08UCAL1vAs+5Ukab3r1lSZ4HVYD9H6jlVH4afgs9kYzNT2Mue1MSZkEYeNAIeXHg4qNPeH0qgTkYdgixi/ViLucOyUO9eKPq9O4x1lcljxq6VWx8mpSFfpBKT4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XV4L6Fn9; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-6818e31e5baso4337122a12.1;
+        Tue, 04 Jun 2024 01:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717491253; x=1718096053; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x6Z16b/GSpmt2TrQfYg5YE4j6jWHptjVYW9mK2+l9PA=;
+        b=XV4L6Fn91KNWv9+huXdEU94iQgHG4LcmxnlDKdaT8DweyyGGzUzpc0DthEioBdkz3Y
+         TVb6bW13uz1/9R59EeNmAqgxDU9WjrgeemIgcAarOduEBYplDpfH89/4pC4PaMIvVev9
+         o4GvjgVSsi35G1sOwbtXy5kA/BezxE1iUhN2Sav/LIVuzR0W30pQquTuJl2Ux9hZ7D+N
+         1cyODBQS57Z/qmFlHRTIhcZc0uYiFHuMgs3b+uFoViajgQ5OYulJZtWIfxuqass0awff
+         r7wZ86PDs0bdqBpP3vq006HHm2LJthQ2Kvqju07Yq1Aji6T2GggJEK+mDKudbeLpw2vS
+         XrzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717491253; x=1718096053;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x6Z16b/GSpmt2TrQfYg5YE4j6jWHptjVYW9mK2+l9PA=;
+        b=bq5Kvxp69EOTEr3V6L+vULHPFjlMcmTn1mWc3lBAtYX+d8AhyNoXhri7CKUaAF2ZM4
+         X9SefBkGj1Po8Ib2ddMWxxKcOqyBA1XBX+duiRKJ4LMBmjbYQ4Mjqg1dCsrBJ7cQmrAx
+         vWXXdNvB5xS0N0Mm391GfKQUv1IcPkphx9NPYur/jg5Brya86zesYAYxnyJXlYueqXN5
+         4NqRpHxqiho1hRvvXm22PBSes0hgSDnkavn26mt+afM8vMj4Qzxoc47LOWNl/9rU98H3
+         sctBjFuIjiF1DgEY1Rdhiq1u95iS/WFxpdfMEOQ4GVtM8iNnWH/c2/wwlmHWmOKSJF+k
+         HSUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlw08VoIE3TKPuajsxtmrB4oBYajjOEFQgC3JKlXfhddNMTi0CMxoIdBk3QPe3w0teMYKxTv8ejH+WINNC58UMrJInyh6mombkjpZBXJjAOSbDikQlyYsK0j0wZxHV5hs8
+X-Gm-Message-State: AOJu0YyKyzS1rsBoxNh8Fv2EnTLOwcm5H3AD+lftpb2co7MbDJLLFXWU
+	zppmn1ohlUAMfJBT61lSYeycKQ+UijtILcUUTXQSsxDEkhvIZ4XW
+X-Google-Smtp-Source: AGHT+IFeZ1FQeCbQWaJ431hK6HS7AE2+GrsoPySQpFBj/dtIAGqB06Kif5FfEYRJ18vuMxdVqDVZFw==
+X-Received: by 2002:a05:6a20:3244:b0:1b0:119c:7583 with SMTP id adf61e73a8af0-1b26f30da7bmr9680334637.56.1717491252879;
+        Tue, 04 Jun 2024 01:54:12 -0700 (PDT)
+Received: from MSCND1355B05.fareast.nevint.com ([117.128.58.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63235d991sm78277955ad.85.2024.06.04.01.54.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 01:54:12 -0700 (PDT)
+From: Zqiang <qiang.zhang1211@gmail.com>
+To: paulmck@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org,
+	urezki@gmail.com
+Cc: qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhixu.liu@gmail.com
+Subject: [PATCH v2] rcu-tasks: Fix access non-existent percpu rtpcp variable in rcu_tasks_need_gpcb()
+Date: Tue,  4 Jun 2024 16:54:01 +0800
+Message-Id: <20240604085401.14733-1-qiang.zhang1211@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Enable PCIe0 instance of PCIe in Root Complex mode of operation with Lane 0
-of the SERDES1 instance of SERDES. Also enable USB0 instance of USB to
-interface with the Type-C port via the USB hub, by configuring the pin P05
-of the GPIO expander on the EVM. Enable USB1 instance of USB in SuperSpeed
-mode of operation with Lane 0 of the SERDES0 instance of SERDES.
+For kernels built with CONFIG_FORCE_NR_CPUS=y, the nr_cpu_ids is
+defined as NR_CPUS instead of the number of possible cpus, this
+will cause the following system panic:
 
-Co-developed-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+[    0.015349][    T0] smpboot: Allowing 4 CPUs, 0 hotplug CPUs
+...
+[    0.021342][    T0] setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:512 nr_node_ids:1
+...
+[    3.681252][   T15] BUG: unable to handle page fault for address: ffffffff9911c8c8
+[    3.689415][   T45] ehci-pci 0000:00:1a.0: debug port 2
+[    3.697008][   T15] #PF: supervisor read access in kernel mode
+[    3.697009][   T15] #PF: error_code(0x0000) - not-present page
+[    3.706233][   T45] ehci-pci 0000:00:1a.0: irq 16, io mem 0xf7e3c000
+[    3.708152][   T15] PGD 40fa24067 P4D 40fa24067 PUD 40fa25063 PMD 410bff063
+[    3.720380][   T45] ehci-pci 0000:00:1a.0: USB 2.0 started, EHCI 1.00
+[    3.720430][   T15] PTE 800ffffbefee3062
+[    3.720431][   T15] Oops: 0000 [#1] PREEMPT SMP PTI
+[    3.727873][   T45] usb usb2: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.06
+[    3.734009][   T15] CPU: 0 PID: 15 Comm: rcu_tasks_trace Tainted: G W          6.6.21 #1 5dc7acf91a5e8e9ac9dcfc35bee0245691283ea6
+[    3.734011][   T15] Hardware name: Dell Inc. OptiPlex 9020/005T15, BIOS A14 09/14/2015
+[    3.734012][   T15] RIP: 0010:rcu_tasks_need_gpcb+0x25d/0x2c0
+[    3.737962][   T45] usb usb2: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    3.742877][   T15] RSP: 0018:ffffa371c00a3e60 EFLAGS: 00010082
+[    3.751891][   T45] usb usb2: Product: EHCI Host Controller
+[    3.764495][   T15]
+[    3.764496][   T15] RAX: ffffffff98929ca0 RBX: ffffffff98b3b328 RCX: 0000000000021880
+[    3.764497][   T15] RDX: ffffffff9911c880 RSI: 0000000000000000 RDI: 0000000000000000
+[    3.772461][   T45] usb usb2: Manufacturer: Linux 6.6.21 ehci_hcd
+[    3.778248][   T15] RBP: 0000000000000202 R08: 0000000000000000 R09: 0000000000000000
+[    3.778249][   T15] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000003
+[    3.778249][   T15] R13: 0000000000000000 R14: 0000000000000001 R15: ffffffff98b3b320
+[    3.786216][   T45] usb usb2: SerialNumber: 0000:00:1a.0
+[    3.805811][   T15] FS:  0000000000000000(0000) GS:ffff8c781ea00000(0000) knlGS:0000000000000000
+[    3.805813][   T15] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    3.811993][   T45] hub 2-0:1.0: USB hub found
+[    3.817383][   T15] CR2: ffffffff9911c8c8 CR3: 000000040fa20005 CR4: 00000000001706f0
+[    3.817385][   T15] Call Trace:
+[    3.817386][   T15]  <TASK>
+[    3.817388][   T15]  ? __die+0x23/0x80
+[    3.819643][   T45] hub 2-0:1.0: 2 ports detected
+[    3.827481][   T15]  ? page_fault_oops+0xa4/0x180
+[    3.827485][   T15]  ? exc_page_fault+0x152/0x180
+[    3.922376][   T15]  ? asm_exc_page_fault+0x26/0x40
+[    3.927289][   T15]  ? rcu_tasks_need_gpcb+0x25d/0x2c0
+[    3.932459][   T15]  ? __pfx_rcu_tasks_kthread+0x40/0x40
+[    3.937806][   T15]  rcu_tasks_one_gp+0x69/0x180
+[    3.942451][   T15]  rcu_tasks_kthread+0x94/0xc0
+[    3.947096][   T15]  kthread+0xe8/0x140
+[    3.950956][   T15]  ? __pfx_kthread+0x40/0x40
+[    3.955425][   T15]  ret_from_fork+0x34/0x80
+[    3.959721][   T15]  ? __pfx_kthread+0x40/0x40
+[    3.964192][   T15]  ret_from_fork_asm+0x1b/0x80
+[    3.968841][   T15]  </TASK>
+
+Consider that there may be holes in the CPU numbers, this commit
+use the maxcpu variable to store the CPU numbers after traversing
+possible cpu, and generate the rcu_task_cpu_ids variable and assign
+it to (maxcpu +1) instead of nr_cpu_ids.
+
+Closes: https://lore.kernel.org/linux-input/CALMA0xaTSMN+p4xUXkzrtR5r6k7hgoswcaXx7baR_z9r5jjskw@mail.gmail.com/T/#u
+Reported-by: Zhixu Liu <zhixu.liu@gmail.com>
+Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
 ---
-v4:
-https://lore.kernel.org/r/20240601121554.2860403-8-s-vadapalli@ti.com/
-Changes since v4:
-- Based on Andrew's feedback at:
-  https://lore.kernel.org/r/183a9d15-939e-433b-84ba-8a64eb8ef3ec@ti.com/
-  the `status = "okay";` line has been moved to the end of the
-  `pcie0_rc` node referenced in k3-j722s-evm.dts following the updated
-  ordering rules.
-- The SERDES1 node has been enabled in the k3-j722s-evm.dts file since
-  it has been disabled in the k3-j722s-main.dtsi file in the previous
-  patch.
+ kernel/rcu/tasks.h | 78 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 49 insertions(+), 29 deletions(-)
 
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 73 +++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index bf3c246d13d1..253b02f0437d 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -9,7 +9,9 @@
- /dts-v1/;
- 
- #include <dt-bindings/net/ti-dp83867.h>
-+#include <dt-bindings/phy/phy.h>
- #include "k3-j722s.dtsi"
-+#include "k3-serdes.h"
- 
- / {
- 	compatible = "ti,j722s-evm", "ti,j722s";
-@@ -202,6 +204,12 @@ J722S_IOPAD(0x0130, PIN_OUTPUT, 0) /* (AG26) RGMII1_TXC */
- 			J722S_IOPAD(0x012c, PIN_OUTPUT, 0) /* (AF25) RGMII1_TX_CTL */
- 		>;
- 	};
-+
-+	main_usb1_pins_default: main-usb1-default-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x0258, PIN_INPUT, 0) /* (B27) USB1_DRVVBUS */
-+		>;
-+	};
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index e362f72bb65d..22310965acc7 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -49,6 +49,7 @@ struct rcu_tasks_percpu {
+ 	struct list_head rtp_blkd_tasks;
+ 	struct list_head rtp_exit_list;
+ 	int cpu;
++	int index;
+ 	struct rcu_tasks *rtpp;
  };
  
- &cpsw3g {
-@@ -301,6 +309,13 @@ exp1: gpio@23 {
- 				  "PCIe0_1L_RC_RSTz", "PCIe0_1L_PRSNT#",
- 				  "ENET1_EXP_SPARE2", "ENET1_EXP_PWRDN",
- 				  "PD_I2ENET1_I2CMUX_SELC_IRQ", "ENET1_EXP_RESETZ";
-+
-+		p05-hog {
-+			/* P05 - USB2.0_MUX_SEL */
-+			gpio-hog;
-+			gpios = <5 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+		};
- 	};
- };
+@@ -110,6 +111,7 @@ struct rcu_tasks {
+ 	call_rcu_func_t call_func;
+ 	unsigned int wait_state;
+ 	struct rcu_tasks_percpu __percpu *rtpcpu;
++	struct rcu_tasks_percpu **rtpcp_array;
+ 	int percpu_enqueue_shift;
+ 	int percpu_enqueue_lim;
+ 	int percpu_dequeue_lim;
+@@ -182,6 +184,8 @@ module_param(rcu_task_collapse_lim, int, 0444);
+ static int rcu_task_lazy_lim __read_mostly = 32;
+ module_param(rcu_task_lazy_lim, int, 0444);
  
-@@ -384,3 +399,61 @@ &sdhci1 {
- 	status = "okay";
- 	bootph-all;
- };
++static int rcu_task_cpu_ids;
 +
-+&serdes_ln_ctrl {
-+	idle-states = <J722S_SERDES0_LANE0_USB>,
-+		      <J722S_SERDES1_LANE0_PCIE0_LANE0>;
-+};
+ /* RCU tasks grace-period state for debugging. */
+ #define RTGS_INIT		 0
+ #define RTGS_WAIT_WAIT_CBS	 1
+@@ -245,6 +249,8 @@ static void cblist_init_generic(struct rcu_tasks *rtp)
+ 	int cpu;
+ 	int lim;
+ 	int shift;
++	int maxcpu;
++	int index = 0;
+ 
+ 	if (rcu_task_enqueue_lim < 0) {
+ 		rcu_task_enqueue_lim = 1;
+@@ -254,14 +260,9 @@ static void cblist_init_generic(struct rcu_tasks *rtp)
+ 	}
+ 	lim = rcu_task_enqueue_lim;
+ 
+-	if (lim > nr_cpu_ids)
+-		lim = nr_cpu_ids;
+-	shift = ilog2(nr_cpu_ids / lim);
+-	if (((nr_cpu_ids - 1) >> shift) >= lim)
+-		shift++;
+-	WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
+-	WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
+-	smp_store_release(&rtp->percpu_enqueue_lim, lim);
++	rtp->rtpcp_array = kcalloc(num_possible_cpus(), sizeof(struct rcu_tasks_percpu *), GFP_KERNEL);
++	BUG_ON(!rtp->rtpcp_array);
 +
-+&serdes0 {
-+	status = "okay";
-+	serdes0_usb_link: phy@0 {
-+		reg = <0>;
-+		cdns,num-lanes = <1>;
-+		#phy-cells = <0>;
-+		cdns,phy-type = <PHY_TYPE_USB3>;
-+		resets = <&serdes_wiz0 1>;
-+	};
-+};
+ 	for_each_possible_cpu(cpu) {
+ 		struct rcu_tasks_percpu *rtpcp = per_cpu_ptr(rtp->rtpcpu, cpu);
+ 
+@@ -273,14 +274,29 @@ static void cblist_init_generic(struct rcu_tasks *rtp)
+ 		INIT_WORK(&rtpcp->rtp_work, rcu_tasks_invoke_cbs_wq);
+ 		rtpcp->cpu = cpu;
+ 		rtpcp->rtpp = rtp;
++		rtpcp->index = index;
++		rtp->rtpcp_array[index] = rtpcp;
++		index++;
+ 		if (!rtpcp->rtp_blkd_tasks.next)
+ 			INIT_LIST_HEAD(&rtpcp->rtp_blkd_tasks);
+ 		if (!rtpcp->rtp_exit_list.next)
+ 			INIT_LIST_HEAD(&rtpcp->rtp_exit_list);
++		maxcpu = cpu;
+ 	}
+ 
+-	pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adjust=%d.\n", rtp->name,
+-			data_race(rtp->percpu_enqueue_shift), data_race(rtp->percpu_enqueue_lim), rcu_task_cb_adjust);
++	rcu_task_cpu_ids = maxcpu + 1;
++	if (lim > rcu_task_cpu_ids)
++		lim = rcu_task_cpu_ids;
++	shift = ilog2(rcu_task_cpu_ids / lim);
++	if (((rcu_task_cpu_ids - 1) >> shift) >= lim)
++		shift++;
++	WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
++	WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
++	smp_store_release(&rtp->percpu_enqueue_lim, lim);
 +
-+&serdes1 {
-+	status = "okay";
-+	serdes1_pcie_link: phy@0 {
-+		reg = <0>;
-+		cdns,num-lanes = <1>;
-+		#phy-cells = <0>;
-+		cdns,phy-type = <PHY_TYPE_PCIE>;
-+		resets = <&serdes_wiz1 1>;
-+	};
-+};
-+
-+&pcie0_rc {
-+	reset-gpios = <&exp1 18 GPIO_ACTIVE_HIGH>;
-+	phys = <&serdes1_pcie_link>;
-+	phy-names = "pcie-phy";
-+	status = "okay";
-+};
-+
-+&usbss0 {
-+	ti,vbus-divider;
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+};
-+
-+&usbss1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_usb1_pins_default>;
-+	ti,vbus-divider;
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	dr_mode = "host";
-+	maximum-speed = "super-speed";
-+	phys = <&serdes0_usb_link>;
-+	phy-names = "cdns3,usb3-phy";
-+};
++	pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adjust=%d rcu_task_cpu_ids=%d.\n",
++			rtp->name, data_race(rtp->percpu_enqueue_shift), data_race(rtp->percpu_enqueue_lim),
++			rcu_task_cb_adjust, rcu_task_cpu_ids);
+ }
+ 
+ // Compute wakeup time for lazy callback timer.
+@@ -348,7 +364,7 @@ static void call_rcu_tasks_generic(struct rcu_head *rhp, rcu_callback_t func,
+ 			rtpcp->rtp_n_lock_retries = 0;
+ 		}
+ 		if (rcu_task_cb_adjust && ++rtpcp->rtp_n_lock_retries > rcu_task_contend_lim &&
+-		    READ_ONCE(rtp->percpu_enqueue_lim) != nr_cpu_ids)
++		    READ_ONCE(rtp->percpu_enqueue_lim) != rcu_task_cpu_ids)
+ 			needadjust = true;  // Defer adjustment to avoid deadlock.
+ 	}
+ 	// Queuing callbacks before initialization not yet supported.
+@@ -368,10 +384,10 @@ static void call_rcu_tasks_generic(struct rcu_head *rhp, rcu_callback_t func,
+ 	raw_spin_unlock_irqrestore_rcu_node(rtpcp, flags);
+ 	if (unlikely(needadjust)) {
+ 		raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
+-		if (rtp->percpu_enqueue_lim != nr_cpu_ids) {
++		if (rtp->percpu_enqueue_lim != rcu_task_cpu_ids) {
+ 			WRITE_ONCE(rtp->percpu_enqueue_shift, 0);
+-			WRITE_ONCE(rtp->percpu_dequeue_lim, nr_cpu_ids);
+-			smp_store_release(&rtp->percpu_enqueue_lim, nr_cpu_ids);
++			WRITE_ONCE(rtp->percpu_dequeue_lim, rcu_task_cpu_ids);
++			smp_store_release(&rtp->percpu_enqueue_lim, rcu_task_cpu_ids);
+ 			pr_info("Switching %s to per-CPU callback queuing.\n", rtp->name);
+ 		}
+ 		raw_spin_unlock_irqrestore(&rtp->cbs_gbl_lock, flags);
+@@ -481,7 +497,7 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
+ 	if (rcu_task_cb_adjust && ncbs <= rcu_task_collapse_lim) {
+ 		raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
+ 		if (rtp->percpu_enqueue_lim > 1) {
+-			WRITE_ONCE(rtp->percpu_enqueue_shift, order_base_2(nr_cpu_ids));
++			WRITE_ONCE(rtp->percpu_enqueue_shift, order_base_2(rcu_task_cpu_ids));
+ 			smp_store_release(&rtp->percpu_enqueue_lim, 1);
+ 			rtp->percpu_dequeue_gpseq = get_state_synchronize_rcu();
+ 			gpdone = false;
+@@ -496,7 +512,9 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
+ 			pr_info("Completing switch %s to CPU-0 callback queuing.\n", rtp->name);
+ 		}
+ 		if (rtp->percpu_dequeue_lim == 1) {
+-			for (cpu = rtp->percpu_dequeue_lim; cpu < nr_cpu_ids; cpu++) {
++			for (cpu = rtp->percpu_dequeue_lim; cpu < rcu_task_cpu_ids; cpu++) {
++				if (!cpu_possible(cpu))
++					continue;
+ 				struct rcu_tasks_percpu *rtpcp = per_cpu_ptr(rtp->rtpcpu, cpu);
+ 
+ 				WARN_ON_ONCE(rcu_segcblist_n_cbs(&rtpcp->cblist));
+@@ -511,30 +529,32 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
+ // Advance callbacks and invoke any that are ready.
+ static void rcu_tasks_invoke_cbs(struct rcu_tasks *rtp, struct rcu_tasks_percpu *rtpcp)
+ {
+-	int cpu;
+-	int cpunext;
+ 	int cpuwq;
+ 	unsigned long flags;
+ 	int len;
++	int index;
+ 	struct rcu_head *rhp;
+ 	struct rcu_cblist rcl = RCU_CBLIST_INITIALIZER(rcl);
+ 	struct rcu_tasks_percpu *rtpcp_next;
+ 
+-	cpu = rtpcp->cpu;
+-	cpunext = cpu * 2 + 1;
+-	if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
+-		rtpcp_next = per_cpu_ptr(rtp->rtpcpu, cpunext);
+-		cpuwq = rcu_cpu_beenfullyonline(cpunext) ? cpunext : WORK_CPU_UNBOUND;
+-		queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
+-		cpunext++;
+-		if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
+-			rtpcp_next = per_cpu_ptr(rtp->rtpcpu, cpunext);
+-			cpuwq = rcu_cpu_beenfullyonline(cpunext) ? cpunext : WORK_CPU_UNBOUND;
++	index = rtpcp->index * 2 + 1;
++	if (index < num_possible_cpus()) {
++		rtpcp_next = rtp->rtpcp_array[index];
++		if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
++			cpuwq = rcu_cpu_beenfullyonline(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
+ 			queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
++			index++;
++			if (index < num_possible_cpus()) {
++				rtpcp_next = rtp->rtpcp_array[index];
++				if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
++					cpuwq = rcu_cpu_beenfullyonline(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
++					queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
++				}
++			}
+ 		}
+ 	}
+ 
+-	if (rcu_segcblist_empty(&rtpcp->cblist) || !cpu_possible(cpu))
++	if (rcu_segcblist_empty(&rtpcp->cblist))
+ 		return;
+ 	raw_spin_lock_irqsave_rcu_node(rtpcp, flags);
+ 	rcu_segcblist_advance(&rtpcp->cblist, rcu_seq_current(&rtp->tasks_gp_seq));
 -- 
-2.40.1
+2.17.1
 
 
