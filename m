@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-200328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6108FAE74
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:13:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A413A8FAE7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EC15B242A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:13:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26CA3B24722
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45A21442FD;
-	Tue,  4 Jun 2024 09:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82821448EB;
+	Tue,  4 Jun 2024 09:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VgXt9qy3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QONPOjyD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3E91428F5;
-	Tue,  4 Jun 2024 09:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A76C1442FB;
+	Tue,  4 Jun 2024 09:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717492306; cv=none; b=nLNkgm41kK7Vukk7ltq9/p3yfTloAOnAN7TxFQoid7HMVZCOw3g0WD5YNzDMjP90Gt+/XSOb2oumCzi6Q/XWUNy0QO3HDXJQQoZC96G45JEr3eS4Smum6HunFuSgYFy/G8HOHxbOEkwasj7nvUaX7zf+5c1JMP/hhcwRz9XCQUo=
+	t=1717492309; cv=none; b=h9+7lzEIG4011uyl6/9+4n1IsvZqtHKEo3XjROOi2EVd11slcYRmOvEVUZegHy+nSNNIMQyai3NrVKps/F9Wl6HY3Po+Lc6GNVhyxr12WrX5XcSmn5fVZ9//J6P9daXWaIxvaDqci7KrOAzqeAtdofVeBiYnD9TWOmaoaWvhZvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717492306; c=relaxed/simple;
-	bh=n0+6Zr+fVpwoIm04mx+e+RHQbAYONFbtegnmjOCnEFE=;
+	s=arc-20240116; t=1717492309; c=relaxed/simple;
+	bh=vhRGBF5u2soD1b1ZxX2Vte9C9U3uPwpV5XFLBTuyFyc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmdWdOKXOFEKMep41RfnbLEx20of95CJq12Y2Ar4M3YJ8GATAu3kwvT8rEpG7fGBOXLM8nxSSgqTEIFRxFaC0L7Xb1fWtfkq+3HA3WG9dLUYDa4EyAiz2xyFL0ZCRQDSmZ9w2LLl5A/6HpDZByU0sx1S4AdrgJJnB2NzDqColO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VgXt9qy3; arc=none smtp.client-ip=198.175.65.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNZNa9xpYab/5JAkB7NemvjM6TjBAYd8O0KvzKHkZLMrnmq1KBaisAD380Qf4UjWyo25OrlWlGOUwvzIt5Z3ySAbTWghPRebYxkbTpL8QQ2Ci78La2SoFzLDuXPiDDf2E8yaZCzx4tWKlxpIzsjOOdV1hg1Eg+ouwagEEdpfR/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QONPOjyD; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717492305; x=1749028305;
+  t=1717492308; x=1749028308;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=n0+6Zr+fVpwoIm04mx+e+RHQbAYONFbtegnmjOCnEFE=;
-  b=VgXt9qy3+TtdqoI+231qDTjfMHkUBHatgeHYKuacqPmfF7hdW+9WJxA5
-   QXTdRZyW4JbAQQNYPq/TKViEgaQYaRZdrl50ECl/t+qs6j/udUohGPafv
-   lPo3DAMSVfqwKlLw51pTkStT1p3aBUkONEQoNEv5yfi8whuLnT38Ce1Rm
-   5kX0jl4cdVXfCJ+eCMZzwDkbWBtKxtyjVjQdTuE8VPKIFmkwpYzNPtHnJ
-   ATpJZL2fpNiaOtcyJGQykMcFsPFbdDhf3fG1TwzpZmGpIhjnCkRDoDJ7+
-   5C8m1o9Tl1ZEkaO8btyBF4JaNxzmkItQYXUvpyhB2YjJa9Pn6m2/Lmwmw
+  bh=vhRGBF5u2soD1b1ZxX2Vte9C9U3uPwpV5XFLBTuyFyc=;
+  b=QONPOjyDMFGv9wuVzJgThFOvenblOJZsakUVOUEszPONS7Ha9HyqYrL7
+   a3dCkcQKz85yPOhyMoplEE5TvdOF2sUD+UcyuRDFJGjH6zJlSi1fHL/yU
+   31SzjNlm9Ag7biH5waVtGmoXXd0PxIK8wlDKZrX8IL5AeJuDHtMTRL6DM
+   oU2Swh3ib7FwF7l2MhCTJ61CATr3sYWgD1sAvzEflZBUAMLe9o3VLeo/m
+   X/YU2zF2wM7mgQ2jw4uzIwbRsLom71K/7OOBM+9xeQKtRvggFYjLpIML7
+   dBKmP8+pcBdXX02R9DNbv18soP9nzTYQ7E3k7Ro2oaDNfPLyS7ZQ+AHvE
    g==;
-X-CSE-ConnectionGUID: RhufaxHJQRKTlUe07Isbew==
-X-CSE-MsgGUID: +MPAa+qmSNaweFnS57qW1A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17854982"
+X-CSE-ConnectionGUID: AO+h+O7aSxufhIXnGYliYg==
+X-CSE-MsgGUID: aFqblQlLQ+q/rqVjTEdbgw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="24689355"
 X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="17854982"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 02:11:44 -0700
-X-CSE-ConnectionGUID: KaKEcYXXR8KSoqyaybARGA==
-X-CSE-MsgGUID: aXf4mTjmQP6psAbqM4zCxQ==
+   d="scan'208";a="24689355"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 02:11:46 -0700
+X-CSE-ConnectionGUID: pisztONWSemSgBojbjX2tA==
+X-CSE-MsgGUID: 8XMlt/GLQYy/LtwSjtP/IQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="37299304"
+   d="scan'208";a="68343439"
 Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 04 Jun 2024 02:11:41 -0700
+  by fmviesa001.fm.intel.com with ESMTP; 04 Jun 2024 02:11:41 -0700
 Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sEQCg-000MzV-1v;
+	id 1sEQCg-000MzX-20;
 	Tue, 04 Jun 2024 09:11:38 +0000
-Date: Tue, 4 Jun 2024 17:10:50 +0800
+Date: Tue, 4 Jun 2024 17:10:51 +0800
 From: kernel test robot <lkp@intel.com>
-To: Hyeonwoo Cha <chw1119@hanyang.ac.kr>, david.sterba@suse.com
-Cc: oe-kbuild-all@lists.linux.dev, aivazian.tigran@gmail.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	tytso@mit.edu, adilger.kernel@dilger.ca,
-	hirofumi@mail.parknet.co.jp, sfr@canb.auug.org.au,
-	chw1119@hanyang.ac.kr, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	reiserfs-devel@vger.kernel.org
-Subject: Re: [PATCH v2] Fix issue in mark_buffer_dirty_inode
-Message-ID: <202406041616.S1kIWWZc-lkp@intel.com>
-References: <20240604060636.87652-1-chw1119@hanyang.ac.kr>
+To: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
+	cristian.marussi@arm.com, andersson@kernel.org,
+	konrad.dybcio@linaro.org, jassisinghbrar@gmail.com,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	dmitry.baryshkov@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com,
+	quic_sibis@quicinc.com, conor+dt@kernel.org, quic_nkela@quicinc.com,
+	quic_psodagud@quicinc.com, abel.vesa@linaro.org
+Subject: Re: [PATCH V5 2/5] mailbox: Add support for QTI CPUCP mailbox
+ controller
+Message-ID: <202406041620.FyEU8GRv-lkp@intel.com>
+References: <20240603205859.2212225-3-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,125 +85,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240604060636.87652-1-chw1119@hanyang.ac.kr>
+In-Reply-To: <20240603205859.2212225-3-quic_sibis@quicinc.com>
 
-Hi Hyeonwoo,
+Hi Sibi,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on brauner-vfs/vfs.all]
+[auto build test ERROR on robh/for-next]
 [also build test ERROR on linus/master v6.10-rc2 next-20240604]
-[cannot apply to jack-fs/for_next tytso-ext4/dev vfs-idmapping/for-next]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hyeonwoo-Cha/Fix-issue-in-mark_buffer_dirty_inode/20240604-140958
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240604060636.87652-1-chw1119%40hanyang.ac.kr
-patch subject: [PATCH v2] Fix issue in mark_buffer_dirty_inode
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240604/202406041616.S1kIWWZc-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406041616.S1kIWWZc-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Sibi-Sankar/dt-bindings-mailbox-qcom-Add-CPUCP-mailbox-controller-bindings/20240604-050256
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240603205859.2212225-3-quic_sibis%40quicinc.com
+patch subject: [PATCH V5 2/5] mailbox: Add support for QTI CPUCP mailbox controller
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20240604/202406041620.FyEU8GRv-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406041620.FyEU8GRv-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406041616.S1kIWWZc-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406041620.FyEU8GRv-lkp@intel.com/
 
-All error/warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
-   fs/affs/namei.c: In function 'affs_symlink':
->> fs/affs/namei.c:377:9: error: expected ',' or ';' before 'mark_buffer_dirty_fsync'
-     377 |         mark_buffer_dirty_fsync(bh, mapping);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
->> fs/affs/namei.c:376:31: warning: unused variable 'mapping' [-Wunused-variable]
-     376 |         struct address_space *mapping = inode->i_mapping
-         |                               ^~~~~~~
+   drivers/mailbox/qcom-cpucp-mbox.c: In function 'qcom_cpucp_mbox_irq_fn':
+>> drivers/mailbox/qcom-cpucp-mbox.c:54:18: error: implicit declaration of function 'readq'; did you mean 'readb'? [-Werror=implicit-function-declaration]
+      54 |         status = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_STAT);
+         |                  ^~~~~
+         |                  readb
+>> drivers/mailbox/qcom-cpucp-mbox.c:65:17: error: implicit declaration of function 'writeq'; did you mean 'writeb'? [-Werror=implicit-function-declaration]
+      65 |                 writeq(BIT(i), cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
+         |                 ^~~~~~
+         |                 writeb
+   cc1: some warnings being treated as errors
 
 
-vim +377 fs/affs/namei.c
+vim +54 drivers/mailbox/qcom-cpucp-mbox.c
 
-   314	
-   315	int
-   316	affs_symlink(struct mnt_idmap *idmap, struct inode *dir,
-   317		     struct dentry *dentry, const char *symname)
-   318	{
-   319		struct super_block	*sb = dir->i_sb;
-   320		struct buffer_head	*bh;
-   321		struct inode		*inode;
-   322		char			*p;
-   323		int			 i, maxlen, error;
-   324		char			 c, lc;
-   325	
-   326		pr_debug("%s(%lu,\"%pd\" -> \"%s\")\n",
-   327			 __func__, dir->i_ino, dentry, symname);
-   328	
-   329		maxlen = AFFS_SB(sb)->s_hashsize * sizeof(u32) - 1;
-   330		inode  = affs_new_inode(dir);
-   331		if (!inode)
-   332			return -ENOSPC;
-   333	
-   334		inode->i_op = &affs_symlink_inode_operations;
-   335		inode_nohighmem(inode);
-   336		inode->i_data.a_ops = &affs_symlink_aops;
-   337		inode->i_mode = S_IFLNK | 0777;
-   338		affs_mode_to_prot(inode);
-   339	
-   340		error = -EIO;
-   341		bh = affs_bread(sb, inode->i_ino);
-   342		if (!bh)
-   343			goto err;
-   344		i  = 0;
-   345		p  = (char *)AFFS_HEAD(bh)->table;
-   346		lc = '/';
-   347		if (*symname == '/') {
-   348			struct affs_sb_info *sbi = AFFS_SB(sb);
-   349			while (*symname == '/')
-   350				symname++;
-   351			spin_lock(&sbi->symlink_lock);
-   352			while (sbi->s_volume[i])	/* Cannot overflow */
-   353				*p++ = sbi->s_volume[i++];
-   354			spin_unlock(&sbi->symlink_lock);
-   355		}
-   356		while (i < maxlen && (c = *symname++)) {
-   357			if (c == '.' && lc == '/' && *symname == '.' && symname[1] == '/') {
-   358				*p++ = '/';
-   359				i++;
-   360				symname += 2;
-   361				lc = '/';
-   362			} else if (c == '.' && lc == '/' && *symname == '/') {
-   363				symname++;
-   364				lc = '/';
-   365			} else {
-   366				*p++ = c;
-   367				lc   = c;
-   368				i++;
-   369			}
-   370			if (lc == '/')
-   371				while (*symname == '/')
-   372					symname++;
-   373		}
-   374		*p = 0;
-   375		inode->i_size = i + 1;
- > 376		struct address_space *mapping = inode->i_mapping
- > 377		mark_buffer_dirty_fsync(bh, mapping);
-   378		affs_brelse(bh);
-   379		mark_inode_dirty(inode);
-   380	
-   381		error = affs_add_entry(dir, inode, dentry, ST_SOFTLINK);
-   382		if (error)
-   383			goto err;
-   384	
-   385		return 0;
-   386	
-   387	err:
-   388		clear_nlink(inode);
-   389		mark_inode_dirty(inode);
-   390		iput(inode);
-   391		return error;
-   392	}
-   393	
+    47	
+    48	static irqreturn_t qcom_cpucp_mbox_irq_fn(int irq, void *data)
+    49	{
+    50		struct qcom_cpucp_mbox *cpucp = data;
+    51		u64 status;
+    52		int i;
+    53	
+  > 54		status = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_STAT);
+    55	
+    56		for_each_set_bit(i, (unsigned long *)&status, APSS_CPUCP_IPC_CHAN_SUPPORTED) {
+    57			u32 val = readl(cpucp->rx_base + APSS_CPUCP_RX_MBOX_CMD(i) + APSS_CPUCP_MBOX_CMD_OFF);
+    58			struct mbox_chan *chan = &cpucp->chans[i];
+    59			unsigned long flags;
+    60	
+    61			/* Provide mutual exclusion with changes to chan->cl */
+    62			spin_lock_irqsave(&chan->lock, flags);
+    63			if (chan->cl)
+    64				mbox_chan_received_data(chan, &val);
+  > 65			writeq(BIT(i), cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
+    66			spin_unlock_irqrestore(&chan->lock, flags);
+    67		}
+    68	
+    69		return IRQ_HANDLED;
+    70	}
+    71	
 
 -- 
 0-DAY CI Kernel Test Service
