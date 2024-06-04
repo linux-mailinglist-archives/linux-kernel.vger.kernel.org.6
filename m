@@ -1,78 +1,65 @@
-Return-Path: <linux-kernel+bounces-200966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E088FB784
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:35:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020A48FB7B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411CF1F29AF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:35:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D698B25329
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDF213C827;
-	Tue,  4 Jun 2024 15:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1628C144313;
+	Tue,  4 Jun 2024 15:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kxD5iLyG"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQxOU+l8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DEC4A11
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4543615E83;
+	Tue,  4 Jun 2024 15:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717515299; cv=none; b=DIj2UXyev2JqOa2Kvp/Ubbh6ggI72NSylOjUFrlNohIvBmzTaBYw4QYp9uePNonufipCRyiWCUXHiczqrU+X1eZiC+R/KW3gne1CDYiTtwsWbomiale5RbVeayAdUInObbnbvgyIxOuj9xKe29yw/9BbXKpi3tZHEK8WJPtYAVA=
+	t=1717515375; cv=none; b=HwRZjQRWDEaEhpqMaQrUf0ABBVBgE4QAYRBqRE/rYaXVy1FaG2D+RyWiL+wwrd7MuNeVg1JuHuxHNn+o6GYy9uwOTnAH6FIL79/FDKyUD+knNNRcntV5Rsi17Ai9EWF/lI6X9mSv9l+oxEo6qkJjG12lG5dwV3E+lZJJromiMRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717515299; c=relaxed/simple;
-	bh=s6HeRUn8hNcotHmVGrszDsEOL+nkCHLSqD5p3msLcl8=;
+	s=arc-20240116; t=1717515375; c=relaxed/simple;
+	bh=4rMfVnXDULUZCwBnw5F1W1y6pVj9F8WIuK0q0yEsV8s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWb6AF/ygL1ve/2/aY3xRAZsA5f32/K+XKN757+niVNs8nztxix+RtbktEyY5791LbaJcJC+MV1v+ZyUuKjCnBrKrgRj91FKkuoKrSNqFw0E5PlkBJHtufj97ipJ5tSURwmnz32KwSCaYRTBKkwd87oYiptjRxioNPpd5HLbu58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kxD5iLyG; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-702548b056aso2801101b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 08:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717515296; x=1718120096; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrLRq9xE0IdvvQ2UMhxPgmfsaQVQkAduH2f3xIBTdIg=;
-        b=kxD5iLyGXLLsrM/caesR2fAIzIawZD5Cj5Tz/7YZMJMSkkRhe1Xq+1gtR0V5eVe5Iq
-         +SGxwc+hnQFW/UvTLkE16BhIuDzQKeSS3YPmavzSF6YflRGbcBNntOYta4nEp5F1imWE
-         OZ+QFLDY+gsVSKHV8G6Oi9xM0QV5L6YXUztuvys0gJHsjulzw3H/KkxchK0s+0g5aTGO
-         dWrnIh3IiGlwmivqFiI3n2ldZ6X570zFDiJnzwZDmT0MXFexxOdDwnm8mIUODOE29KRX
-         G3oXArMIXzzwOV8MhUNe6hFoxbw9gOcqEdrpjXVpMtO2/2TBDxeHf1UZVhUIztjqysxO
-         +IHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717515296; x=1718120096;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qrLRq9xE0IdvvQ2UMhxPgmfsaQVQkAduH2f3xIBTdIg=;
-        b=HM9fljRt1Tk+mQa68C8hRezszLzUSDHf4KtI/hm4PRetu4KWMtrBUcJTfnz8FOhBHn
-         KX6VoAiXHOrWD1Hs07Fww7SUdfkCgCCLgNtvkO/Ykin+u8/gfpvEOfFLomM9bl43sfFo
-         rhjGK1zt2Sh66udPbg54d8+9AHF36f2NIAlkO/j+jLoScyMub4qdizHFOZaVCgWD7Tbx
-         YCvxo21Cqad5Yn9NyaJT6MMK7IGRnhsJcee6bW9Vok/7DDhRaVt7EognvY8Nzcl5+HK9
-         ylIHDLAvD/Y7JDDVRDaODv3DoVpxWW61QT/mRQMGUWvw3Eql+78wWCsNlQahrikcsv4s
-         zRhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVM6HZCLw/9wgzmsQCrFpI/3zw4jzBebqRmKva0s5Wq5UA1333LSpSVL5v07jEdtq4QxBsPVhGywgC76sxS+KXPb4QVEIZhpJp60qbd
-X-Gm-Message-State: AOJu0YzdjhESFvyRb/69TCMMEY3/+oCAdS9Y6gBmTxZzIqrg9ZnpZjoq
-	Dymh57YCx47BeyR8vvevLswmZrfFs0yOHWIE6TMxDn+t179G7yfQrdNhoIaJ1+U=
-X-Google-Smtp-Source: AGHT+IEE3cjoFQR5bNMLw6uv/KUWrW0bmqvm3EKhtm4Alb3DSlK/WSCVIyNqdxP9udZIIpm3IgGFCg==
-X-Received: by 2002:a05:6a21:3385:b0:1a7:aabc:24ae with SMTP id adf61e73a8af0-1b26f138dfdmr12637503637.18.1717515295829;
-        Tue, 04 Jun 2024 08:34:55 -0700 (PDT)
-Received: from p14s ([199.212.41.26])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70245aa1982sm6843540b3a.163.2024.06.04.08.34.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 08:34:55 -0700 (PDT)
-Date: Tue, 4 Jun 2024 09:34:53 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] drivers: remoteproc: xlnx: add attach detach support
-Message-ID: <Zl80Hanwo5siD6CG@p14s>
-References: <20240603203437.973009-1-tanmay.shah@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4O/OIj6Ug7ndKhIxo+rB4P8bX25sxYcWtRCl8o9y1LOm0bY/Usmwbg3aoEe4VvMnK06yTpZrIaoJsYe1P+VcsMjMBIMciwnB1rNEVSsSZelOmk176HVwpG1KjbFgqwwpgGCQHnZ17RYkWUSWt7BM9srQM1C7nvlhxRCi2zQyVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQxOU+l8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A13C2BBFC;
+	Tue,  4 Jun 2024 15:36:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717515374;
+	bh=4rMfVnXDULUZCwBnw5F1W1y6pVj9F8WIuK0q0yEsV8s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HQxOU+l8yAScZCmZLUyMFk7yaYYMb8CHKKLgXoYs4N3ZNX9ILogCN/Z11xyXc7JDx
+	 P0sV1E+2P4uExY6RV66r7CbU1Ypo82FJ/x8bS3Sjbgy0mK4qbqfclALzmUBc+hWwx8
+	 uhltP3d+tNOZixOn0XOe8NDobpnCXQ4GsFk8I4Bo/aEbOJLJuQVuEVdJ5aKu+iTmsm
+	 DP+sMRuQtc7SVQIL9ZKDEEg6FVTTwwMyQU15mv17LbYnjiqY23JqT3ttapieGLf2dT
+	 PYcq3KaNQ2FHYscEX9suzjSLgKSBu3w3/YK75r0H5PF2GUXcEAKIPKs42bKTrhwGRA
+	 KP8wXGs3z9qMg==
+Date: Tue, 4 Jun 2024 10:36:12 -0500
+From: Rob Herring <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v3 01/15] dt-bindings: pinctrl: renesas: Document
+ RZ/V2H(P) SoC
+Message-ID: <20240604153612.GA839371-robh@kernel.org>
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240530173857.164073-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,315 +68,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240603203437.973009-1-tanmay.shah@amd.com>
+In-Reply-To: <20240530173857.164073-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi Tanmay,
-
-On Mon, Jun 03, 2024 at 01:34:38PM -0700, Tanmay Shah wrote:
-> It is possible that remote processor is already running before
-> linux boot or remoteproc platform driver probe. Implement required
-> remoteproc framework ops to provide resource table address and
-> connect or disconnect with remote processor in such case.
+On Thu, May 30, 2024 at 06:38:43PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> Add documentation for the pin controller found on the Renesas RZ/V2H(P)
+> (R9A09G057) SoC. The RZ/V2H PFC varies slightly compared to the RZ/G2L
+> family:
+> - Additional bits need to be set during pinmuxing.
+> - The GPIO pin count is different.
 > 
+> Hence, a SoC-specific compatible string, 'renesas,r9a09g057-pinctrl', is
+> added for the RZ/V2H(P) SoC.
+> 
+> Also, add the 'renesas,output-impedance' property. The drive strength
+> setting on RZ/V2H(P) depends on the different power rails coming out from
+> the PMIC (connected via I2C). These power rails (required for drive
+> strength) can be 1.2V, 1.8V, or 3.3V.
+> 
+> Pins are grouped into 4 groups:
+> 
+> Group 1: Impedance
+> - 150/75/38/25 ohms (at 3.3V)
+> - 130/65/33/22 ohms (at 1.8V)
+> 
+> Group 2: Impedance
+> - 50/40/33/25 ohms (at 1.8V)
+> 
+> Group 3: Impedance
+> - 150/75/37.5/25 ohms (at 3.3V)
+> - 130/65/33/22 ohms (at 1.8V)
+> 
+> Group 4: Impedance
+> - 110/55/30/20 ohms (at 1.8V)
+> - 150/75/38/25 ohms (at 1.2V)
+> 
+> The 'renesas,output-impedance' property, as documented, can be
+> [0, 1, 2, 3], these correspond to register bit values that can
+> be set in the PFC_IOLH_mn register, which adjusts the drive
+> strength value and is pin-dependent.
+> 
+> As power rail information may not be available very early in the boot
+> process, the 'renesas,output-impedance' property is added instead of
+> reusing the 'output-impedance-ohms' property.
+> 
+> Also, allow bias-disable, bias-pull-down and bias-pull-up properties
+> as these can be used to configure the pins.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
-> Changes in v4:
->   - Move change log out of commit text
+> v2->v3
+> - Updated description for renesas,output-impedance property
+> - Updated commit description
 > 
-> Changes in v3:
+> RFC->v2
+> - Renamed renesas-rzv2h,output-impedance -> renesas,output-impedance
+> - Updated values for renesas,output-impedance
+> - Added bias properties
+> ---
+>  .../pinctrl/renesas,rzg2l-pinctrl.yaml        | 23 +++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
 > 
->   - Drop SRAM patch from the series
->   - Change type from "struct resource_table *" to void __iomem *
->   - Change comment format from /** to /*
->   - Remove unmap of resource table va address during detach, allowing
->     attach-detach-reattach use case.
->   - Unmap rsc_data_va after retrieving resource table data structure.
->   - Unmap resource table va during driver remove op
-> 
-> Changes in v2:
-> 
->   - Fix typecast warnings reported using sparse tool.
->   - Fix following sparse warnings:
-> 
-> drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse: warning: incorrect type in assignment (different address spaces)
-> drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse: warning: incorrect type in assignment (different address spaces)
-> drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse: warning: incorrect type in argument 1 (different address spaces)
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 173 +++++++++++++++++++++++-
->  1 file changed, 169 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 84243d1dff9f..6898d4761566 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -25,6 +25,10 @@
->  /* RX mailbox client buffer max length */
->  #define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
->  				 sizeof(struct zynqmp_ipi_message))
-> +
-> +#define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
-> +				 (uint32_t)'m' << 8 | (uint32_t)'p')
-> +
->  /*
->   * settings for RPU cluster mode which
->   * reflects possible values of xlnx,cluster-mode dt-property
-> @@ -73,6 +77,26 @@ struct mbox_info {
->  	struct mbox_chan *rx_chan;
->  };
+> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+> index 881e992adca3..957b9f7e7de5 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+> @@ -26,6 +26,7 @@ properties:
+>                - renesas,r9a07g043-pinctrl # RZ/G2UL{Type-1,Type-2} and RZ/Five
+>                - renesas,r9a07g044-pinctrl # RZ/G2{L,LC}
+>                - renesas,r9a08g045-pinctrl # RZ/G3S
+> +              - renesas,r9a09g057-pinctrl # RZ/V2H(P)
 >  
-> +/**
-> + * struct rsc_tbl_data
-> + *
-> + * Platform specific data structure used to sync resource table address.
-> + * It's important to maintain order and size of each field on remote side.
-> + *
-> + * @version: version of data structure
-> + * @magic_num: 32-bit magic number.
-> + * @comp_magic_num: complement of above magic number
-> + * @rsc_tbl_size: resource table size
-> + * @rsc_tbl: resource table address
-> + */
-> +struct rsc_tbl_data {
-> +	const int version;
-> +	const u32 magic_num;
-> +	const u32 comp_magic_num;
-
-I thought we agreed on making the magic number a u64 - did I get this wrong?
-
-> +	const u32 rsc_tbl_size;
-> +	const uintptr_t rsc_tbl;
-> +} __packed;
-> +
->  /*
->   * Hardcoded TCM bank values. This will stay in driver to maintain backward
->   * compatibility with device-tree that does not have TCM information.
-> @@ -95,20 +119,24 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
->  /**
->   * struct zynqmp_r5_core
->   *
-> + * @rsc_tbl_va: resource table virtual address
->   * @dev: device of RPU instance
->   * @np: device node of RPU instance
->   * @tcm_bank_count: number TCM banks accessible to this RPU
->   * @tcm_banks: array of each TCM bank data
->   * @rproc: rproc handle
-> + * @rsc_tbl_size: resource table size retrieved from remote
->   * @pm_domain_id: RPU CPU power domain id
->   * @ipi: pointer to mailbox information
->   */
->  struct zynqmp_r5_core {
-> +	void __iomem *rsc_tbl_va;
->  	struct device *dev;
->  	struct device_node *np;
->  	int tcm_bank_count;
->  	struct mem_bank_data **tcm_banks;
->  	struct rproc *rproc;
-> +	u32 rsc_tbl_size;
->  	u32 pm_domain_id;
->  	struct mbox_info *ipi;
->  };
-> @@ -621,10 +649,19 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
->  {
->  	int ret;
+>        - items:
+>            - enum:
+> @@ -66,10 +67,14 @@ properties:
+>      maxItems: 1
 >  
-> -	ret = add_tcm_banks(rproc);
-> -	if (ret) {
-> -		dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-> -		return ret;
-> +	/*
-> +	 * For attach/detach use case, Firmware is already loaded so
-> +	 * TCM isn't really needed at all. Also, for security TCM can be
-> +	 * locked in such case and linux may not have access at all.
-> +	 * So avoid adding TCM banks. TCM power-domains requested during attach
-> +	 * callback.
-> +	 */
-> +	if (rproc->state != RPROC_DETACHED) {
+>    resets:
+> -    items:
+> -      - description: GPIO_RSTN signal
+> -      - description: GPIO_PORT_RESETN signal
+> -      - description: GPIO_SPARE_RESETN signal
+> +    oneOf:
+> +      - items:
+> +          - description: GPIO_RSTN signal
+> +          - description: GPIO_PORT_RESETN signal
+> +          - description: GPIO_SPARE_RESETN signal
+> +      - items:
+> +          - description: PFC main reset
+> +          - description: Reset for the control register related to WDTUDFCA and WDTUDFFCM pins
 
-        if (rproc->state == RPROC_DETACHED)
-                return 0;
+You need a conditional schema for ensuring the length is 2 for RZ/V2H 
+and 3 otherwise.
 
-        ret = add_tcm_banks(rproc);
-        if (ret) {
-                dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-                return ret;
-	}
-
-> +		ret = add_tcm_banks(rproc);
-> +		if (ret) {
-> +			dev_err(&rproc->dev, "failed to get TCM banks, err %d\n", ret);
-> +			return ret;
-> +		}
->  	}
 >  
->  	ret = add_mem_regions_carveout(rproc);
-> @@ -662,6 +699,120 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
->  	return 0;
->  }
+>  additionalProperties:
+>    anyOf:
+> @@ -111,6 +116,16 @@ additionalProperties:
+>          output-high: true
+>          output-low: true
+>          line-name: true
+> +        bias-disable: true
+> +        bias-pull-down: true
+> +        bias-pull-up: true
+> +        renesas,output-impedance:
+> +          description: |
+
+Don't need '|'.
+
+> +            Output impedance for pins on the RZ/V2H(P) SoC. Values 0, 1, 2, and 3
+
+Don't repeat values in free form text.
+
+> +            correspond to register bit values that can be set in the PFC_IOLH_mn
+> +            register, which adjusts the drive strength value and is pin-dependent.
+> +          $ref: /schemas/types.yaml#/definitions/uint32
+> +          enum: [0, 1, 2, 3]
 >  
-> +static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc,
-> +							     size_t *size)
-> +{
-> +	struct zynqmp_r5_core *r5_core;
-> +
-> +	r5_core = rproc->priv;
-> +
-> +	*size = r5_core->rsc_tbl_size;
-> +
-> +	return (struct resource_table *)r5_core->rsc_tbl_va;
-> +}
-> +
-> +static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-> +{
-> +	struct resource_table *rsc_tbl_addr;
-> +	struct device *dev = r5_core->dev;
-> +	struct rsc_tbl_data *rsc_data_va;
-> +	struct resource res_mem;
-> +	struct device_node *np;
-> +	int ret;
-> +
-> +	/*
-> +	 * It is expected from remote processor firmware to provide resource
-> +	 * table address via struct rsc_tbl_data data structure.
-> +	 * Start address of first entry under "memory-region" property list
-> +	 * contains that data structure which holds resource table address, size
-> +	 * and some magic number to validate correct resource table entry.
-> +	 */
-> +	np = of_parse_phandle(r5_core->np, "memory-region", 0);
-> +	if (!np) {
-> +		dev_err(dev, "failed to get memory region dev node\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = of_address_to_resource(np, 0, &res_mem);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get memory-region resource addr\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
-> +							sizeof(struct rsc_tbl_data));
-> +	if (!rsc_data_va) {
-> +		dev_err(dev, "failed to map resource table data address\n");
-> +		return -EIO;
-> +	}
-> +
-> +	/*
-> +	 * If RSC_TBL_XLNX_MAGIC number and its complement isn't found then
-> +	 * do not consider resource table address valid and don't attach
-> +	 */
-> +	if (rsc_data_va->magic_num != RSC_TBL_XLNX_MAGIC ||
-> +	    rsc_data_va->comp_magic_num != ~RSC_TBL_XLNX_MAGIC) {
-> +		dev_dbg(dev, "invalid magic number, won't attach\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	r5_core->rsc_tbl_va = ioremap_wc(rsc_data_va->rsc_tbl,
-> +					 rsc_data_va->rsc_tbl_size);
-> +	if (!r5_core->rsc_tbl_va) {
-> +		dev_err(dev, "failed to get resource table va\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
-> +
-> +	/*
-> +	 * As of now resource table version 1 is expected. Don't fail to attach
-> +	 * but warn users about it.
-> +	 */
-> +	if (rsc_tbl_addr->ver != 1)
-> +		dev_warn(dev, "unexpected resource table version %d\n",
-> +			 rsc_tbl_addr->ver);
-> +
-> +	iounmap((void __iomem *)rsc_data_va);
-> +	r5_core->rsc_tbl_size = rsc_data_va->rsc_tbl_size;
-> +
-> +	return 0;
-> +}
-> +
-> +static int zynqmp_r5_attach(struct rproc *rproc)
-> +{
-> +	struct zynqmp_r5_core *r5_core = rproc->priv;
-> +	int i, pm_domain_id, ret;
-> +
-> +	/*
-> +	 * Firmware is loaded in TCM. Request TCM power domains to notify
-> +	 * platform management controller that TCM is in use. This will be
-> +	 * released during unprepare callback.
-> +	 */
-> +	for (i = 0; i < r5_core->tcm_bank_count; i++) {
-> +		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-> +		ret = zynqmp_pm_request_node(pm_domain_id,
-> +					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
-> +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
-> +		if (ret < 0)
-> +			pr_warn("TCM %d can't be requested\n", i);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int zynqmp_r5_detach(struct rproc *rproc)
-> +{
-> +	/*
-> +	 * Generate last notification to remote after clearing virtio flag.
-> +	 * Remote can avoid polling on virtio reset flag if kick is generated
-> +	 * during detach by host and check virtio reset flag on kick interrupt.
-> +	 */
-> +	zynqmp_r5_rproc_kick(rproc, 0);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct rproc_ops zynqmp_r5_rproc_ops = {
->  	.prepare	= zynqmp_r5_rproc_prepare,
->  	.unprepare	= zynqmp_r5_rproc_unprepare,
-> @@ -673,6 +824,9 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
->  	.kick		= zynqmp_r5_rproc_kick,
-> +	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
-> +	.attach		= zynqmp_r5_attach,
-> +	.detach		= zynqmp_r5_detach,
->  };
->  
->  /**
-> @@ -723,6 +877,16 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
->  		goto free_rproc;
->  	}
->  
-> +	/*
-> +	 * Move rproc state to DETACHED to give one time opportunity to attach
-
-
-"one time opportunity" ?
-
-Other than the above this patch is sound.  That said I reviewed your work from
-the airport, which is not optimal.  We'll what turns up with the next revision.
-
-Thanks, Mathieu
-
-> +	 * if firmware is already available in the memory. This can happen if
-> +	 * firmware is loaded via debugger or by any other agent in the system.
-> +	 * If firmware isn't available in the memory and resource table isn't found,
-> +	 * then rproc state stay OFFLINE.
-> +	 */
-> +	if (!zynqmp_r5_get_rsc_table_va(r5_core))
-> +		r5_rproc->state = RPROC_DETACHED;
-> +
->  	r5_core->rproc = r5_rproc;
->  	return r5_core;
->  
-> @@ -1134,6 +1298,7 @@ static void zynqmp_r5_cluster_exit(void *data)
->  	for (i = 0; i < cluster->core_count; i++) {
->  		r5_core = cluster->r5_cores[i];
->  		zynqmp_r5_free_mbox(r5_core->ipi);
-> +		iounmap(r5_core->rsc_tbl_va);
->  		of_reserved_mem_device_release(r5_core->dev);
->  		put_device(r5_core->dev);
->  		rproc_del(r5_core->rproc);
-> 
-> base-commit: d7faf9a16886a748c9dd4063ea897f1e68b412f2
+>      - type: object
+>        additionalProperties:
 > -- 
-> 2.37.6
+> 2.34.1
 > 
 
