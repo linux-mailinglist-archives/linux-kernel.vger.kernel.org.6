@@ -1,103 +1,167 @@
-Return-Path: <linux-kernel+bounces-200254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DF28FADB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5508FADAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B67A282758
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AF32810E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03591428E5;
-	Tue,  4 Jun 2024 08:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E461428F3;
+	Tue,  4 Jun 2024 08:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pr5jbsb6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RYvVr/AO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BE4140391
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A314513E40F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717490276; cv=none; b=A+Ic4UGTFNe/mLIoC04dQ1ooL4yiJZ/BjBSxvyEpa6z6d4eGuHW0Y5au3hc5WuV0LpCaeMi8ARUhKnf6qcmq4A7CZ9+NltWT7NpJALhe5tIMZXTp2KH7cxCzpuM3ZCJtuUv9wZx/Fqxqq6hnKZI+vCpOMlsWNBw40nxYFl8cpSc=
+	t=1717489865; cv=none; b=UUpgk62rna85VaMnGqca6SS7NtMgsMNefSwoELwmY47jK2z3k4J21GchIvErqZkzarfCOTipjp+DQfCaAVokPMtsKmUEl4RQk7xA5XTvT369b2in+GUI4tEnV9+GIp7Ias/XWQG3jzA3uRS9YuKNncfrxS8eUY80Xcwpy2QZjCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717490276; c=relaxed/simple;
-	bh=9Pomqts/Pt3XLTeQ+wcHCwmRtL3bWzsgNN6TTXHmXuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fCgFGJVxDAJJQA70T5KLqP8IfNsHO/LfPP2f5qDPgmOsofzYyEQaBl0hrqOVofM40jA5kcKZ6GtDKEfd4oKfRzykSu9nt28Uk2KSad79V2qiJigdwdIge3o5gQBsPQDOahvY2+Z1fSy/w1ObR2djJ1MEGNinGzuowUMzjmZ1EqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pr5jbsb6; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717490275; x=1749026275;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9Pomqts/Pt3XLTeQ+wcHCwmRtL3bWzsgNN6TTXHmXuI=;
-  b=Pr5jbsb66aBalzOv0wAYqVHw7jqbe34RvWNWSf9y1a9YAzbp5Lh8vlYU
-   SIoV2WrqWqnEp6IhRe/V5WjdKrxubx+k+Ec2YUsL9ttLAtbejSjUdRMbs
-   46wCkvmaQ2hOz4XrwHlBEAWX3WcnLfX6b3OBlgJbZ4ziFLbz20B8ZsSSh
-   rIb2GCPNzq6tJ9NZMQ3EiKAk2srtzhOObUIVJeI+RNiHCdGyQk5e6Yj4A
-   ucM4dWFcv4Lq6lhVg0ew5Bo1QhiD/G/bxZ/YsL7EO1u6YmOPem34kiId9
-   qJiA7Vjq5w/WuM41qKTM7cZW4dwmYUXeGoz+bHIF785KVSxjDEey595YB
-   Q==;
-X-CSE-ConnectionGUID: Pj99jobAS8O4deKCfCScUw==
-X-CSE-MsgGUID: ebalrNolSYWYYbSCqpQqxg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="17809379"
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="17809379"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 01:37:54 -0700
-X-CSE-ConnectionGUID: w2rWr0ilSTamxblJ/0p2gw==
-X-CSE-MsgGUID: jJaY21gHQ1Sncq3lV065JQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,213,1712646000"; 
-   d="scan'208";a="37638029"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO [10.245.246.105]) ([10.245.246.105])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 01:37:52 -0700
-Message-ID: <c5ecc0cd-c2ba-4f71-ac2a-9a81793a8f0c@linux.intel.com>
-Date: Tue, 4 Jun 2024 10:30:21 +0200
+	s=arc-20240116; t=1717489865; c=relaxed/simple;
+	bh=3q9206INYrAG7YdhDhY5CYic4aGyKfL6FY7ZfCVG+54=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qq3R9Gn0UssHQ9go9ab4I5JEt0vvvQhpnHPlWJaWTqrq9mPeVktEWwiVUDoFENrIrI2UnSX12xsFLH2biTHDI5Kxa7Mi3ovRRIsR4DyZcJME095Gdd2PBjaMMjjJlu3oxG5PlbzGwMgcnUNMMBW9KHqGQB8VDMs18UvS63IlXAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RYvVr/AO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717489862;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3q9206INYrAG7YdhDhY5CYic4aGyKfL6FY7ZfCVG+54=;
+	b=RYvVr/AOWoFo0dsJF0EIBWWgb5ilfb+ut88J3ogTBPONjpluldi8sz6aPCroC7Q/UpXVpU
+	nQ4cvqMDAnzgx2QRmT9g65ywsS6IeIRY/RI4nz5HG8aZX2b4pv97exb91mBidQq5nIVRs9
+	D14SlXqQblRpcHQxHl92xuIp5TNKm4k=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-120-NtyJ6A58MTW7lZXfti3WVw-1; Tue, 04 Jun 2024 04:30:59 -0400
+X-MC-Unique: NtyJ6A58MTW7lZXfti3WVw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35e0f2512ddso91607f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 01:30:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717489858; x=1718094658;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3q9206INYrAG7YdhDhY5CYic4aGyKfL6FY7ZfCVG+54=;
+        b=rixqCciq38zvc+nRWZCdmS71/w0zlbspspciTsE5DsdpF3JEi0H26GUsUeyL1c4GpB
+         WFOvs6QRyH70eppWgoLs6kMS0EwYTRAscmRo0VrjhjBFMZgRrKxbW3UEUss4g/hw8HVX
+         IboGEnU3n/3g8aJtYS2jLf7YXOGcAaRJtroC7It92JJ52wOBGutUe2qjfJ3warANnxck
+         LJN4UMYITzP1w36SYHErye9oOad7kKIsADG1dueaF9SUYfn0NM/aZyqV2pwiu8ZM+Qdb
+         MFRU4VUTGRO0DwiGrDw2JnxR5nPFQ7FEW8/qMIajy87gPJNHNfj6YnwMAOVNkGvxgzaG
+         M75w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJsMtRCytUmMAiRgmDb/Dl61dmiQ1ktPP891ZWSqkJid5aGzLb3ygFdSF+8YxBk88RT7Yp+EzhGSuEqxAW4Vw2Xq2TAr1UNfPUHwqH
+X-Gm-Message-State: AOJu0Ywq+t3hU9+IcVN2tQr+tqiIToHV1PbvDh88TdLwppOqJw+igpbV
+	1Zfh9xPM/9eMxP0qd9Xg93YvE1iDytnrNzXzaLbaIb0tbj4YW+r8inXC49HMYFsh3h7O/35hcx/
+	au7pFMYPLwRL9UaLauQWZ+tK7QLBlapNZlRnNJhMtNMAk4bQqmq4bxpEHs0TExw==
+X-Received: by 2002:a05:600c:1c1d:b0:41f:9c43:574f with SMTP id 5b1f17b1804b1-4212e0c3a8amr90645055e9.3.1717489858435;
+        Tue, 04 Jun 2024 01:30:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJdSj1hxg3Dyx8010rJwlFHLk1ZvlohHeOX9qeSBBOlhIjtaAyXHtAWV0vm3rBZybH+sA9CA==
+X-Received: by 2002:a05:600c:1c1d:b0:41f:9c43:574f with SMTP id 5b1f17b1804b1-4212e0c3a8amr90644875e9.3.1717489857980;
+        Tue, 04 Jun 2024 01:30:57 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:1b74:3a10::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42135511679sm113582315e9.36.2024.06.04.01.30.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 01:30:57 -0700 (PDT)
+Message-ID: <111ad356a137d0b69550cd73ff0cdef915c16e2e.camel@redhat.com>
+Subject: Re: [PATCH net] net/ipv6: Fix the RT cache flush via sysctl using a
+ previous delay
+From: Paolo Abeni <pabeni@redhat.com>
+To: Petr Pavlu <petr.pavlu@suse.com>, Kuifeng Lee <sinquersw@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 04 Jun 2024 10:30:55 +0200
+In-Reply-To: <cbd56289-c9e9-4cd1-87d8-623ae7e39347@suse.com>
+References: <20240529135251.4074-1-petr.pavlu@suse.com>
+	 <CAHE2DV1S4oKved063WaYzqsoiEe1hY=ZoRxjFfPX1m0-N0MsdQ@mail.gmail.com>
+	 <cbd56289-c9e9-4cd1-87d8-623ae7e39347@suse.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] soundwire: bus: suppress probe deferral errors
-To: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
- Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
- linux-kernel@vger.kernel.org
-References: <20240604075213.20815-1-johan+linaro@kernel.org>
- <20240604075213.20815-2-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240604075213.20815-2-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+On Fri, 2024-05-31 at 10:53 +0200, Petr Pavlu wrote:
+> [Added back netdev@vger.kernel.org and linux-kernel@vger.kernel.org
+> which seem to be dropped by accident.]
+>=20
+> On 5/30/24 17:59, Kuifeng Lee wrote:
+> > On Wed, May 29, 2024 at 6:53=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com=
+> wrote:
+> > >=20
+> > > The net.ipv6.route.flush system parameter takes a value which specifi=
+es
+> > > a delay used during the flush operation for aging exception routes. T=
+he
+> > > written value is however not used in the currently requested flush an=
+d
+> > > instead utilized only in the next one.
+> > >=20
+> > > A problem is that ipv6_sysctl_rtcache_flush() first reads the old val=
+ue
+> > > of net->ipv6.sysctl.flush_delay into a local delay variable and then
+> > > calls proc_dointvec() which actually updates the sysctl based on the
+> > > provided input.
+> >=20
+> > If the problem we are trying to fix is using the old value, should we m=
+ove
+> > the line reading the value to a place after updating it instead of a
+> > local copy of
+> > the whole ctl_table?
+>=20
+> Just moving the read of net->ipv6.sysctl.flush_delay after the
+> proc_dointvec() call was actually my initial implementation. I then
+> opted for the proposed version because it looked useful to me to save
+> memory used to store net->ipv6.sysctl.flush_delay.
 
+Note that due to alignment, the struct netns_sysctl_ipv6 size is not
+going to change on 64 bits build.
 
-On 6/4/24 02:52, Johan Hovold wrote:
-> Soundwire driver probe errors are currently being logged both by the bus
-> code and driver core:
-> 
-> 	wsa884x-codec sdw:4:0:0217:0204:00:0: Probe of wsa884x-codec failed: -12
-> 	wsa884x-codec sdw:4:0:0217:0204:00:0: probe with driver wsa884x-codec failed with error -12
-> 
-> Drop the redundant bus error message, which is also incorrectly being
-> logged on probe deferral:
+And if the layout would change, that could have subtle performance side
+effects (moving later fields in netns_sysctl_ipv6 in different
+cachelines) that we want to avoid for a net patch.
 
-It's only redundant in the QCOM case... This would remove all error logs
-for other codecs, e.g. see
+> Another minor aspect is that these sysctl writes are not serialized. Two
+> invocations of ipv6_sysctl_rtcache_flush() could in theory occur at the
+> same time. It can then happen that they both first execute
+> proc_dointvec(). One of them ends up slower and thus its value gets
+> stored in net->ipv6.sysctl.flush_delay. Both runs then return to
+> ipv6_sysctl_rtcache_flush(), read the stored value and execute
+> fib6_run_gc(). It means one of them calls this function with a value
+> different that it was actually given on input. By having a purely local
+> variable, each write is independent and fib6_run_gc() is executed with
+> the right input delay.
+>=20
+> The cost of making a copy of ctl_table is a few instructions and this
+> isn't on any hot path. The same pattern is used, for example, in
+> net/ipv6/addrconf.c, function addrconf_sysctl_forward().
+>=20
+> So overall, the proposed version looked marginally better to me than
+> just moving the read of net->ipv6.sysctl.flush_delay later in
+> ipv6_sysctl_rtcache_flush().
 
-rt711_sdca_sdw_probe
-cs35l56_sdw_probe
-wcd9390_probe
+All in all the increased complexity vs the simple solution does not
+look worth to me.
 
-Looks like the wsa884x-codec is the chatty driver, others are just fine
-with the existing code.
+Please revert to the initial/simpler implementation for this fix,
+thanks!
+
+Paolo
+
 
