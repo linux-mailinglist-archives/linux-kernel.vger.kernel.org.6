@@ -1,150 +1,207 @@
-Return-Path: <linux-kernel+bounces-201495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C580C8FBF10
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:37:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C228FBF1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04FE91C21A77
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987C81F21672
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A4514D6F6;
-	Tue,  4 Jun 2024 22:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C2914C5A0;
+	Tue,  4 Jun 2024 22:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6p+YHBN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K0OaYR3i"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C1214D43D;
-	Tue,  4 Jun 2024 22:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9048428DC7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 22:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717540595; cv=none; b=mu/ymQ370h4FR03I8bJdCCp++F49Oab93Hy//+l2wYBz2aNtgm7VVGLleER47jyCVAIHoPg07vB9nqLQJaWgVjBqCGGoG9xc/K8w9tXS2zWi87IRLP8xzI9zg6AGLwLVP5PzX+jQM1mCtWo9rykjCNeIy28xeCJ28NH41XRxh6Y=
+	t=1717540885; cv=none; b=Ho1l2LBdqq3Rl2Abhrke7Dtjv5tvI2MQrbxkVmS+nY9tYlUSGKzLdunDyVU6SZCZuUiPnOUiRmb+p5bJw49pD/vYZr8TZmPC3rS/YZmbhPo1+vz9jNicMIhCQlcImKv7IH4aynx9NuQA7B+gUYYSW4Ftqlw0/qvzdYZQKL+tPP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717540595; c=relaxed/simple;
-	bh=r5THsMd/X1sUAYuciSxTtdm+hIb08O9PPF9XcptyhkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y4fAeLGVp6dRiTDFn2mecRtJ0T7gbiPsdxt3qJz6Phh+pM5yXatfy/39k4+uY9F0684sLU09f6ZF0JP1E1HLiAKnc5fCZINKN9/YbhoBXNt2gaAo54ujvEfTT+vkZCSBUYHOYDQbMXe3QhBfi0uVarCW62/OErhYEvxbBmfhfJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6p+YHBN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F6FC4AF09;
-	Tue,  4 Jun 2024 22:36:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717540595;
-	bh=r5THsMd/X1sUAYuciSxTtdm+hIb08O9PPF9XcptyhkU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T6p+YHBNbARDbkcZOkS4CuSBt6shD/7vZMFuzxULbk0vpeNFJOLSv0fkLjuCft5zm
-	 W4Gg9lJL/zU9SI3PeYTjWsoqettCdtZ59fLnXnwlFKMOL1WdoNYdktV+L26RCtFH86
-	 YLY007WajTD8ywOqxtbWEMbx8DmdY7+iaUiIhKCTHP9jr44CmoagXN9cLEwgJDj/3s
-	 72Rcqb5ceify9DYimB22aQWZw+gMXCRrWqU2IATUz9Fh2E/3svWmi6vLn9yd6wAmgp
-	 p/hju1N+eibcfmTieFVqHhKzChjIV8KUd2E1O0M+R2wpqVDO3L4F2MIw9NPKJ6Oum3
-	 9ac94q1MSlVVg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E5D29CE3F27; Tue,  4 Jun 2024 15:36:34 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 4/4] tools/rcu: Add rcu-updaters.sh script
-Date: Tue,  4 Jun 2024 15:36:33 -0700
-Message-Id: <20240604223633.2371664-4-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <e14ba19e-53aa-4ec1-b58d-6444ffec07c6@paulmck-laptop>
-References: <e14ba19e-53aa-4ec1-b58d-6444ffec07c6@paulmck-laptop>
+	s=arc-20240116; t=1717540885; c=relaxed/simple;
+	bh=48X2qgdP1gIxKDJW40AJ3Odff8DBYT35+62pDzTjg8s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=RHUc/CaSVmfk5T8UyZAug93zCMC3JGnaaThliOXD8B/vmekP7DvH2YE9qVmYQ8KDVm0bZ1yBF25U2lKaoq1jBg1EsnWPjfj8SqRZoLZdI976u2O4lgRRHDv7w533oBvrZMVvDMCUHhArKFpg+kixjBC/wjxhlSGdH1lR3O1agqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K0OaYR3i; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfa72779f04so8221515276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 15:41:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717540882; x=1718145682; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5BFhMURlOxwbCZPlt3t+cMRvFnuBznLgUYvajgNDozE=;
+        b=K0OaYR3i07zq5e5v5zpwIGXGynOZVzDIE3GP5tlL2EcCO09llUjrJvzCgrAN4/i/aM
+         IIC4mDBqZ5yKXk6+m4qNMa/CWLymETiW7D6VaDoUznE+NAReuY7MrBJzUhdN7U6n5fV8
+         qqp6MfVLt2DAOUaSuPCTdmXmx+mPzWRq9UZ7MxOrGVE7lVq7nQcWdo+1SK56r5/kP8Te
+         NyUXcrT5QtwN+fB2/lvDLMK9bvmM4FY6xeFwtANSwD3sFo2CStl9x/RkyukL0eWUDC7b
+         NyDIfNTAQa+e8vwYWgh6l5tdO2kgTTuqKSHHp3lnsP7lF/u6WDd+wdjNBHOr/4AAPQl5
+         GJ0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717540882; x=1718145682;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5BFhMURlOxwbCZPlt3t+cMRvFnuBznLgUYvajgNDozE=;
+        b=qbl/TNxCXn59qLTClNx2Vv0ul2RMuqsbYITxK9pJ2YSU7Oc5BobxZsTI9mMQyZEh88
+         SOgrnQ3wwZykM+xLc82PS3fAiAHWCJH2x8Qe7pXtNKgPhn6kFbbxsEOPEPY92dSRXZKE
+         12xAFCqDge8eoMnT3HCJOJo/fgYWfXpbA6N2hzlzuyKQ6yYQiInCiYT+gV1BIkZ/kZlb
+         tQFMqSaEaVYDDG+lANvNZ+qlKgbd0ARN5a0ALP74z7og5wVOf1e38Bin1O3HkUt6gQWS
+         0DCi2DjhCEJcJppBjVCvC0YdwPZrSpo1d6I2anagHgn2Z3zJ7uwp7DLwhgfnjx7rloX5
+         hApQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVn4w2Xev8iVyZ1tIrOCbmjWiFnSHexx4eqO7UbUwH//OLnKFxTQj9MM/kneTFe4QNX/RI5MqU24mHuWwdqqoILyVE4WHbYrurl6Z0v
+X-Gm-Message-State: AOJu0YxTuSzevB13YAXD4evpvzidTbf5f1h/SR5WuJjECQU7Pud0/eZm
+	QnvgfQW9GJH5+22ORHzNLqRLOSj1Vi2sHxc9g5LzijqYvcCsoifiP6WQP1H8EI6pz9xd3O+CNQL
+	r/xvpoC01BQ==
+X-Google-Smtp-Source: AGHT+IFe9doWPRL9bdOBiprw606KPAUV1/yCDGjKHg9/0f16jSpDeFrPKk08bm1aGwBuEsC7VjTpzn499oFw4w==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
+ (user=davidgow job=sendgmr) by 2002:a05:6902:120d:b0:dcb:e982:4e40 with SMTP
+ id 3f1490d57ef6-dfacad28c85mr236994276.12.1717540882585; Tue, 04 Jun 2024
+ 15:41:22 -0700 (PDT)
+Date: Wed,  5 Jun 2024 06:40:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240604224052.3138504-1-davidgow@google.com>
+Subject: [PATCH] arch: um: rust: Add i386 support for Rust
+From: David Gow <davidgow@google.com>
+To: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>
+Cc: David Gow <davidgow@google.com>, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, x86@kernel.org, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-This commit adds a tools/rcu/rcu-updaters.sh script that uses bpftrace
-to print a histogram of the RCU update-side primitives invoked during
-the specified time interval, or until manually terminated if no interval
-is specified.
+At present, Rust in the kernel only supports 64-bit x86, so UML has
+followed suit. However, it's significantly easier to support 32-bit i386
+on UML than on bare metal, as UML does not use the -mregparm option
+(which alters the ABI), which is not yet supported by rustc[1].
 
-Sample output on an idle laptop:
+Add support for CONFIG_RUST on um/i386, by adding a new target config to
+generate_rust_target, and replacing various checks on CONFIG_X86_64 to
+also support CONFIG_X86_32.
 
-@counts[poll_state_synchronize_rcu]: 6
-@counts[synchronize_srcu]: 13
-@counts[call_rcu_tasks_trace]: 25
-@counts[synchronize_rcu]: 54
-@counts[kvfree_call_rcu]: 428
-@counts[call_rcu]: 2134
+We still use generate_rust_target, rather than a built-in rustc target,
+in order to match x86_64, provide a future place for -mregparm, and more
+easily disable floating point instructions.
 
-Note that when run on a kernel missing one or more of the symbols, this
-script will issue a diagnostic for each that is not found, but continue
-normally for the rest of the functions.
+With these changes, the KUnit tests pass with:
+kunit.py run --make_options LLVM=1 --kconfig_add CONFIG_RUST=y
+--kconfig_add CONFIG_64BIT=n --kconfig_add CONFIG_FORTIFY_SOURCE=n
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+An earlier version of these changes was proposed on the Rust-for-Linux
+github[2].
+
+[1]: https://github.com/rust-lang/rust/issues/116972
+[2]: https://github.com/Rust-for-Linux/linux/pull/966
+
+Signed-off-by: David Gow <davidgow@google.com>
 ---
- tools/rcu/rcu-updaters.sh | 52 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100755 tools/rcu/rcu-updaters.sh
+ Documentation/rust/arch-support.rst |  2 +-
+ arch/um/Kconfig                     |  2 +-
+ rust/Makefile                       |  2 +-
+ scripts/Makefile                    |  2 +-
+ scripts/generate_rust_target.rs     | 17 +++++++++++++++++
+ 5 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/tools/rcu/rcu-updaters.sh b/tools/rcu/rcu-updaters.sh
-new file mode 100755
-index 0000000000000..4ef1397927bbf
---- /dev/null
-+++ b/tools/rcu/rcu-updaters.sh
-@@ -0,0 +1,52 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0+
-+#
-+# Run bpftrace to obtain a histogram of the types of primitives used to
-+# initiate RCU grace periods.  The count associated with rcu_gp_init()
-+# is the number of normal (non-expedited) grace periods.
-+#
-+# Usage: rcu-updaters.sh [ duration-in-seconds ]
-+#
-+# Note that not all kernel builds have all of these functions.  In those
-+# that do not, this script will issue a diagnostic for each that is not
-+# found, but continue normally for the rest of the functions.
-+
-+duration=${1}
-+if test -n "${duration}"
-+then
-+	exitclause='interval:s:'"${duration}"' { exit(); }'
-+else
-+	echo 'Hit control-C to end sample and print results.'
-+fi
-+bpftrace -e 'kprobe:kvfree_call_rcu,
-+	     kprobe:call_rcu,
-+	     kprobe:call_rcu_tasks,
-+	     kprobe:call_rcu_tasks_rude,
-+	     kprobe:call_rcu_tasks_trace,
-+	     kprobe:call_srcu,
-+	     kprobe:rcu_barrier,
-+	     kprobe:rcu_barrier_tasks,
-+	     kprobe:rcu_barrier_tasks_rude,
-+	     kprobe:rcu_barrier_tasks_trace,
-+	     kprobe:srcu_barrier,
-+	     kprobe:synchronize_rcu,
-+	     kprobe:synchronize_rcu_expedited,
-+	     kprobe:synchronize_rcu_tasks,
-+	     kprobe:synchronize_rcu_tasks_rude,
-+	     kprobe:synchronize_rcu_tasks_trace,
-+	     kprobe:synchronize_srcu,
-+	     kprobe:synchronize_srcu_expedited,
-+	     kprobe:get_state_synchronize_rcu,
-+	     kprobe:get_state_synchronize_rcu_full,
-+	     kprobe:start_poll_synchronize_rcu,
-+	     kprobe:start_poll_synchronize_rcu_expedited,
-+	     kprobe:start_poll_synchronize_rcu_full,
-+	     kprobe:start_poll_synchronize_rcu_expedited_full,
-+	     kprobe:poll_state_synchronize_rcu,
-+	     kprobe:poll_state_synchronize_rcu_full,
-+	     kprobe:cond_synchronize_rcu,
-+	     kprobe:cond_synchronize_rcu_full,
-+	     kprobe:start_poll_synchronize_srcu,
-+	     kprobe:poll_state_synchronize_srcu,
-+	     kprobe:rcu_gp_init
-+	     	{ @counts[func] = count(); } '"${exitclause}"
+diff --git a/Documentation/rust/arch-support.rst b/Documentation/rust/arch-support.rst
+index b13e19d84744..750ff371570a 100644
+--- a/Documentation/rust/arch-support.rst
++++ b/Documentation/rust/arch-support.rst
+@@ -18,7 +18,7 @@ Architecture   Level of support  Constraints
+ ``arm64``      Maintained        Little Endian only.
+ ``loongarch``  Maintained        \-
+ ``riscv``      Maintained        ``riscv64`` only.
+-``um``         Maintained        ``x86_64`` only.
++``um``         Maintained        \-
+ ``x86``        Maintained        ``x86_64`` only.
+ =============  ================  ==============================================
+ 
+diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+index 93a5a8999b07..b6ac49fec5bb 100644
+--- a/arch/um/Kconfig
++++ b/arch/um/Kconfig
+@@ -31,7 +31,7 @@ config UML
+ 	select TRACE_IRQFLAGS_SUPPORT
+ 	select TTY # Needed for line.c
+ 	select HAVE_ARCH_VMAP_STACK
+-	select HAVE_RUST			if X86_64
++	select HAVE_RUST
+ 
+ config MMU
+ 	bool
+diff --git a/rust/Makefile b/rust/Makefile
+index f70d5e244fee..83f675adbfab 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -426,7 +426,7 @@ $(obj)/core.o: private rustc_objcopy = $(foreach sym,$(redirect-intrinsics),--re
+ $(obj)/core.o: private rustc_target_flags = $(core-cfgs)
+ $(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
+ 	+$(call if_changed_dep,rustc_library)
+-ifdef CONFIG_X86_64
++ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
+ $(obj)/core.o: scripts/target.json
+ endif
+ 
+diff --git a/scripts/Makefile b/scripts/Makefile
+index fe56eeef09dd..dccef663ca82 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -12,7 +12,7 @@ hostprogs-always-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE)	+= insert-sys-cert
+ hostprogs-always-$(CONFIG_RUST_KERNEL_DOCTESTS)		+= rustdoc_test_builder
+ hostprogs-always-$(CONFIG_RUST_KERNEL_DOCTESTS)		+= rustdoc_test_gen
+ 
+-ifdef CONFIG_X86_64
++ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
+ always-$(CONFIG_RUST)					+= target.json
+ filechk_rust_target = $< < include/config/auto.conf
+ 
+diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
+index 641b713a033a..87f34925eb7b 100644
+--- a/scripts/generate_rust_target.rs
++++ b/scripts/generate_rust_target.rs
+@@ -169,6 +169,23 @@ fn main() {
+         ts.push("features", features);
+         ts.push("llvm-target", "x86_64-linux-gnu");
+         ts.push("target-pointer-width", "64");
++    } else if cfg.has("X86_32") {
++        // This only works on UML, as i386 otherwise needs regparm support in rustc
++        if !cfg.has("UML") {
++            panic!("32-bit x86 only works under UML");
++        }
++        ts.push("arch", "x86");
++        ts.push(
++            "data-layout",
++            "e-m:e-p:32:32-p270:32:32-p271:32:32-p272:64:64-i128:128-f64:32:64-f80:32-n8:16:32-S128",
++        );
++        let mut features = "-3dnow,-3dnowa,-mmx,+soft-float".to_string();
++        if cfg.has("MITIGATION_RETPOLINE") {
++            features += ",+retpoline-external-thunk";
++        }
++        ts.push("features", features);
++        ts.push("llvm-target", "i386-unknown-linux-gnu");
++        ts.push("target-pointer-width", "32");
+     } else if cfg.has("LOONGARCH") {
+         panic!("loongarch uses the builtin rustc loongarch64-unknown-none-softfloat target");
+     } else {
 -- 
-2.40.1
+2.45.1.288.g0e0cd299f1-goog
 
 
