@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-199860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772B28FA6D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:11:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B045D8FA6D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8AEB22E7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C01881C210F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 00:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B70F387;
-	Tue,  4 Jun 2024 00:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6C0622;
+	Tue,  4 Jun 2024 00:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHNNGFlF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="B5wRju2R"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CA837C;
-	Tue,  4 Jun 2024 00:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BAC372;
+	Tue,  4 Jun 2024 00:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717459855; cv=none; b=YgXDxzCmnPu63S/F+YW1ctwA4lPLOwX/i0/U5rMp57BLpifeqXH3QdL+N3RRZ/sRZnBOnRAMHb/vga8sVGUhxr4AMQoFCIpSaCPxNkOXj6F5sxVUou9+2MnvQkC0Kg3SQ4/SNGl5T5zWL8yppzuoKrdwjtcEZKcINluhWdwOLpk=
+	t=1717459935; cv=none; b=RXPPR6vs7KhKhvBEqmapecNmCrwuAm7YphhsUOmnl644uWcoUIEGtPSiuQ9YMLTmtR74Fc5cdDtpn5hURwwHGuWtP7TvhIuneZNY34axPvn9GgsCeH/g/svas6UX2BaPYtxnWMA9mJuim/sECk4bpFfBVYhwFuYOJjy9tNV7f3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717459855; c=relaxed/simple;
-	bh=PY1+D0GVG5kZRRDKKyxIm4TEVwjORk0BV4O9hhADL/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUYbjTLgmJiJ4Ed3kqkqLk4pgv+tuDAqJ6G6bZNxdmMFyx9bihI22oLn6PSMqz9bkVoYQdowwqIBPZdVVAz9UBXtGxRBevpFGIV/+RdPZr43czYiKcwlQKtTnp8fnjMK5Ta4WQOUWdGOmruAvyGyBYcAly1RcJlJjkImf7W7d2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHNNGFlF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 453C2C2BD10;
-	Tue,  4 Jun 2024 00:10:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717459855;
-	bh=PY1+D0GVG5kZRRDKKyxIm4TEVwjORk0BV4O9hhADL/4=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=nHNNGFlFD1eLsDquaGgbZ0iUe9rNarXs8gOtuEMA14qN2gCThN24zsDq88tMUb4SU
-	 BvQcA/OR07vTNjH82vP0v/qAVUSTvSOophbqZFHNEQZFYOFu0+rzwVN5+W38Cn16ka
-	 iz1VysAiJFxaXKgod5mrJWKuxxfOTeqEk6XuMeRY8CEcEQCy4naGssepc71n+lc/87
-	 rZtuv8gKNN4gCbEFj8YJBR9QOmQo6whxqYEOysGoHzudNYW/3M2gHOz8PvSJ6v7O/W
-	 BFyqS658h4IGN6TKgyD0nym25bYTHCXjwcHXDqEKJon0+oaTwNz93Ypm6g8WaC7/M6
-	 pg751Wu84QdWg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E6BD3CE0886; Mon,  3 Jun 2024 17:10:54 -0700 (PDT)
-Date: Mon, 3 Jun 2024 17:10:54 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 5/6] rcu: Remove full memory barrier on RCU stall printout
-Message-ID: <5bc2d72a-ae27-43f0-893e-afb202abd61b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240515125332.9306-1-frederic@kernel.org>
- <20240515125332.9306-6-frederic@kernel.org>
+	s=arc-20240116; t=1717459935; c=relaxed/simple;
+	bh=DT6ZriKLDL2/nkp1V6B9kkq6e9Nx7cAlrQKpuP7m2z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A3d/12H+UixCFvkiAyjF52lEBI50dNSCVzqu/XMhGCzDk+wIgEeuhOcxpYFwF4toa7Ut+cFYgYye6N7YbefsspmM3Wby/LyZI8+nRDnNHEj35/jQUvQ4I+Qmt9F+I4cFlJOT3DEAbyJSrs9a8zxgEMkdLS4Jn4VWgTEDm2TrY1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=B5wRju2R; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717459931;
+	bh=Hv0tTCtGNRDz4IxQxUCsS/WiWb2yQMgR724fsyR9A5U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=B5wRju2RCadGD9C1LieOsF+KIgLpzMiS/sbS8g0GZUXyb4NrqCE0ECWN90qmt5S18
+	 CPaIJsmnfmkA0Qija6N3fXjUkHN4fYQC+88fFV3RN9JzwwrTE6+VGUsTTpJpwJkdpl
+	 xa98A9pDHsPDCkGU1dxwPfGf6Pg/Q4QLPJKz6u8QYMdMc7tZq6+Tc96lW4P5oMcMeq
+	 IP40DbEc0zhFPzVZZTRVG8ENBZfBRGTc2je9GtLCUQuxLJTAI3OsE6soo7PpAmL306
+	 e7fjGPe99T47t4D5tzkRFjVVcsxOoRpFPN2mBxcwPsKu1MdmMAVwTjsgBFX23AOBGo
+	 VQDCtECe7xkrA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VtWHZ1XLvz4wcC;
+	Tue,  4 Jun 2024 10:12:10 +1000 (AEST)
+Date: Tue, 4 Jun 2024 10:12:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Trond Myklebust
+ <trondmy@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Sagi Grimberg <sagi@grimberg.me>, Trond Myklebust
+ <trond.myklebust@hammerspace.com>
+Subject: linux-next: manual merge of the vfs-brauner tree with the nfs tree
+Message-ID: <20240604101209.5134a47c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515125332.9306-6-frederic@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/mWXFnTaouDl+lVyq184KVFe";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, May 15, 2024 at 02:53:31PM +0200, Frederic Weisbecker wrote:
-> RCU stall printout fetches the EQS state of a CPU with a preceding full
-> memory barrier. However there is nothing to order this read against at
-> this debugging stage. It is inherently racy when performed remotely.
-> 
-> Do a plain read instead.
-> 
-> This was the last user of rcu_dynticks_snap().
-> 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+--Sig_/mWXFnTaouDl+lVyq184KVFe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I went through all of these, and the look good.  Though I am a bit
-nervous about this one.  The RCU CPU stall warning code used to be
-completely unordered, but the hardware taught me better.  I did not
-add these in response to a problem (just lazily used the existing fully
-ordered primitive), but you never know.  Me, I would have kept the extra
-memory barriers in all six patches because they are not on a fastpath,
-but you are quite correct that they are redundant.
+Hi all,
 
-So I have queued these, and intend to send them into the next merge
-window.  However, you now own vanilla RCU grace-period memory ordering,
-both normal and expedited.  As in if someone else breaks it, you already
-bought it.  ;-)
+Today's linux-next merge of the vfs-brauner tree got a conflict in:
 
-							Thanx, Paul
+  fs/nfs/symlink.c
 
-> ---
->  kernel/rcu/tree.c       | 10 ----------
->  kernel/rcu/tree_stall.h |  4 ++--
->  2 files changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 02f6f3483482..04dde7473613 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -299,16 +299,6 @@ static void rcu_dynticks_eqs_online(void)
->  	ct_state_inc(RCU_DYNTICKS_IDX);
->  }
->  
-> -/*
-> - * Snapshot the ->dynticks counter with full ordering so as to allow
-> - * stable comparison of this counter with past and future snapshots.
-> - */
-> -static int rcu_dynticks_snap(int cpu)
-> -{
-> -	smp_mb();  // Fundamental RCU ordering guarantee.
-> -	return ct_dynticks_cpu_acquire(cpu);
-> -}
-> -
->  /*
->   * Return true if the snapshot returned from rcu_dynticks_snap()
->   * indicates that RCU is in an extended quiescent state.
-> diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-> index 460efecd077b..4b0e9d7c4c68 100644
-> --- a/kernel/rcu/tree_stall.h
-> +++ b/kernel/rcu/tree_stall.h
-> @@ -501,7 +501,7 @@ static void print_cpu_stall_info(int cpu)
->  	}
->  	delta = rcu_seq_ctr(rdp->mynode->gp_seq - rdp->rcu_iw_gp_seq);
->  	falsepositive = rcu_is_gp_kthread_starving(NULL) &&
-> -			rcu_dynticks_in_eqs(rcu_dynticks_snap(cpu));
-> +			rcu_dynticks_in_eqs(ct_dynticks_cpu(cpu));
->  	rcuc_starved = rcu_is_rcuc_kthread_starving(rdp, &j);
->  	if (rcuc_starved)
->  		// Print signed value, as negative values indicate a probable bug.
-> @@ -515,7 +515,7 @@ static void print_cpu_stall_info(int cpu)
->  			rdp->rcu_iw_pending ? (int)min(delta, 9UL) + '0' :
->  				"!."[!delta],
->  	       ticks_value, ticks_title,
-> -	       rcu_dynticks_snap(cpu) & 0xffff,
-> +	       ct_dynticks_cpu(cpu) & 0xffff,
->  	       ct_dynticks_nesting_cpu(cpu), ct_dynticks_nmi_nesting_cpu(cpu),
->  	       rdp->softirq_snap, kstat_softirqs_cpu(RCU_SOFTIRQ, cpu),
->  	       data_race(rcu_state.n_force_qs) - rcu_state.n_force_qs_gpstart,
-> -- 
-> 2.44.0
-> 
+between commit:
+
+  134d0b3f2440 ("nfs: propagate readlink errors in nfs_symlink_filler")
+
+from the nfs tree and commit:
+
+  8f3ab6e4bebe ("nfs: Remove calls to folio_set_error")
+
+from the vfs-brauner tree.
+
+I fixed it up (the latter included the change from thr former) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/mWXFnTaouDl+lVyq184KVFe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZeW9kACgkQAVBC80lX
+0GyseQgAifD+kLQSzJafL8CzUlOJnZ8aaDlMnYWiYWV7qFU0WoRHtuuastr75VND
+lMBUmpA4BjbIOUgDokjNHD4RNAOJZ25PsG/0ZE3ng1drpt5+ZSnUC4akstX/W4hi
+/IHlyOA4Cnk7gMCNURTexGUyh7NMWHsyojHuqn6LayiLlYZGAf8y0dQbxeFIKAVH
+AUtq8Jtj9/BQABJ6z22+VCE5xLo8ZP1LkR1QFKMqIBczdWr2NeUUK8uh4ofz75lp
+qZavCw4inWZjTYvikddg7tQH3io/6Q5IYlF0U9DUtVVFAd7+Y4tNliW1GXYRE1b4
+OH1foVBJ2fEDZe/Q+kZc9Lr92yTtkA==
+=AOPI
+-----END PGP SIGNATURE-----
+
+--Sig_/mWXFnTaouDl+lVyq184KVFe--
 
