@@ -1,227 +1,92 @@
-Return-Path: <linux-kernel+bounces-200345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005158FAEB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:24:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2B98FAEB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FABF1F2232E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5BC7288EC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFBF143C41;
-	Tue,  4 Jun 2024 09:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14FA143C72;
+	Tue,  4 Jun 2024 09:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="MVp24Rm2"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0buvv/Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7D414374B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AE2143C64
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717493094; cv=none; b=l8rab7rVxKEWwuYQzHY/wkahXWyypAhBlSWkVGYQ8VsuwEzfmufnbXNtrultSJF/e8mVCJ3inRdXMAWz5JRnVwM9CS+MOkGVsF172QRyHQg5ELesaTG3FFcAp55zspo+2pYvzD38OVgDz/sDpphYsBcIlvd4nRfcRx5AkrMyy88=
+	t=1717493098; cv=none; b=STKJG+Q8sZpy8UTGGV1KTb6oOu1oOX31Jfn/GskUVaGuvzBoE8Rw/4vDb1dYa8DHsqnz80G7CVhyImAtB71vx2ywtgM/YE8qkr5ZQv6fazOZkkjCPp6FSDVL8IKMt4N1f+XVYuMqYSmP/7zMSmGPHAU8LSP9fnnmZeuxJq6JnvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717493094; c=relaxed/simple;
-	bh=3M/8TKMtLd1tf0/P4+WGMCcoSzO6k4NIm/iHpw11Lhw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FpfRk8xOVuQ5BpLNwb9eHBpYP2+UMWJu5cGPZxfo/qHvovAVIkFyI+f6UC1cF2FwqDDue5ADAuLix3z/Uv52rlwrS0cwLQZHyjfcscyEtn/cZfEgY/FaHBYc2Qz0HxC6Qn/Wtyh1wCPPYtgXTRfetMEUUSJZwJCJr5hmXlj3GXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=MVp24Rm2; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-57a20ccafc6so4717722a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1717493091; x=1718097891; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=51xd4qBif5qLulTsk7/5OKYHjeBwqmO8tvfG1w6sQz8=;
-        b=MVp24Rm24/RMCNNCfkrS+XU2VDrxb3bkeNPfdySDU7uoVNm0e9JtcKdlUl+hybQLnA
-         fOklqlkGU5JMB2r1BTlLJ0r37y39EuyvLvYGDllGbWrrfI1dh6skbacaMea4mHJ1jnRg
-         WQydq7aQUmxiBJ4n669Fq/NdilXL+5hq/y6i9keD5hzWQQgyqE+RLuOy+xzZOfXjKM7C
-         gXkvgPK2MjwU/hlH4IKxt7oa4vAmbV0TZJUhAuOUN765P0C78mDZep1FML93qUl6NyWu
-         PqGib1f1hOvRUZdUBhkTVcymBI8t/oCI1R/iK05W9gzsAB7EeTiluKXhvpeHSiKQ3PDD
-         QpXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717493091; x=1718097891;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=51xd4qBif5qLulTsk7/5OKYHjeBwqmO8tvfG1w6sQz8=;
-        b=OGr4cYjbmYTI5LqEBgKRcfmQGGtwail2Du6bxQp+PwwOK5kEfQ075r8mW7G7gxmAVx
-         GujUbR/y+607h/riWW5mjw9aQ8twJDqOOGrx6Uz/JxnNgcLmSzdgPSq0H01l3ISm3Goy
-         mLiXb3xbhv2lMBhXVDveWE2A9p7tRer8/17Fflv2alesndIspe54zfXRxiMIsvN83kD3
-         fnLFdhkzehsQ3peGQ0MTNaD9UghzaninZBJJgTb5gtq+Xxx0OxMA1xWRxO6B4Z9zq9sD
-         vIzuIUzGkYZ2GOAuXGEaLpjGZErcDAS2g24DHvXhB4YvnFSZG2FoYiOomldXxDAhoNeT
-         0yVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8zJHCyycNCQPPvDcXK4Xj28LR8dLAOnglkT6apDKYu0fpocL4MEpxBLdTzxxj6xgYlPcIxOV1Ojkw69Ud98bsG7ccrXr1EiFq0txU
-X-Gm-Message-State: AOJu0YwmLzDiC8g7RdYik00uY2ixF1KehZlcFjt/Q0bnB09+GivJLLZu
-	m+TRB+F1Qr/T9IVDFB8tlsSV0OzlVKYSCS7PvIXlSeWC+iydik8l81bGLGvqwPQ=
-X-Google-Smtp-Source: AGHT+IFBu712jehkTGREuH0rS+RjNhRk0Wck7Jz32KlzUmxTUHlbcIESU2fsnsMpVNsUMLXvJHg3jA==
-X-Received: by 2002:a50:d503:0:b0:57a:2f68:fe7b with SMTP id 4fb4d7f45d1cf-57a36419606mr7947320a12.31.1717493090867;
-        Tue, 04 Jun 2024 02:24:50 -0700 (PDT)
-Received: from raven.blarg.de (p200300dc6f4f9200023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f4f:9200:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a7e6a8e14sm1226873a12.87.2024.06.04.02.24.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 02:24:50 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: axboe@kernel.dk,
-	brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	hch@infradead.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1717493098; c=relaxed/simple;
+	bh=WFpT7tceC4LqEAg6Pkh4MT4mrzlDn7hYSXs9KJvIZoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NfxsCknzqZFI+QqIlxG5GI2x4OmFp1s1Ud3dE2Gg6i/u0fPM7T85RB7F5AQBhBrO24hXbCNDytBRzGehKMCS4fJ6D/1oGdaRLWwc5IQygzPXPQK7ycRYUTLwAJmY6GZLM6bhkjY+40ek0Xkc+GaE5W8y1AyYUICYsu/L3vVVIIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0buvv/Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1041C4AF07;
+	Tue,  4 Jun 2024 09:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717493097;
+	bh=WFpT7tceC4LqEAg6Pkh4MT4mrzlDn7hYSXs9KJvIZoI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u0buvv/ZD4+IABHIJF1b4BtB7fxBDaInn/gV6Z1zzhSJHxTaRtaDWrri/pSqWLx4M
+	 J84Ri/AnMKxLOheT9Iic1h+hjKttdoRzPH5S6u/tjlqkmue2+zxrfq3DBS1KfXk2zz
+	 cBChwZdQZ1BURbmoF1is4SYUv5Gq6Z06ydcqxXGCdzS0RTZrgeqTTMyE7Jls2ZmUVa
+	 uZVm/mudAF4Mu/uk16uW6lgIQ3XULdrCiBkeX8eA+5KTTnlcqA8Qwzt+uNMawLLGz2
+	 8oRSQm6o4/toaHAH3/NlqPT2X/tXme2mmbZ8q4HlszKu8JG4nWAKqNjjNOLrxoXv74
+	 W9s90+G1cPbFA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sEQPX-000000001er-2o5n;
+	Tue, 04 Jun 2024 11:24:56 +0200
+Date: Tue, 4 Jun 2024 11:24:55 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
 	linux-kernel@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH v3] fs/splice: don't block splice_direct_to_actor() after data was read
-Date: Tue,  4 Jun 2024 11:24:31 +0200
-Message-Id: <20240604092431.2183929-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.39.2
+Subject: Re: [PATCH v2 4/4] soundwire: bus: drop redundant probe debug message
+Message-ID: <Zl7dZ-4ysKC-jSA6@hovoldconsulting.com>
+References: <20240604075213.20815-1-johan+linaro@kernel.org>
+ <20240604075213.20815-5-johan+linaro@kernel.org>
+ <e1c63097-b628-4c97-add6-40fa479a7806@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1c63097-b628-4c97-add6-40fa479a7806@linux.intel.com>
 
-If userspace calls sendfile() with a very large "count" parameter, the
-kernel can block for a very long time until 2 GiB (0x7ffff000 bytes)
-have been read from the hard disk and pushed into the socket buffer.
+On Tue, Jun 04, 2024 at 10:37:17AM +0200, Pierre-Louis Bossart wrote:
+> On 6/4/24 02:52, Johan Hovold wrote:
+> > Drop the redundant probe debug message which is already provided by
+> > driver core. Whether probe succeeded can also be determined through
+> > sysfs.
 
-Usually, that is not a problem, because the socket write buffer gets
-filled quickly, and if the socket is non-blocking, the last
-direct_splice_actor() call will return -EAGAIN, causing
-splice_direct_to_actor() to break from the loop, and sendfile() will
-return a partial transfer.
+> > @@ -152,8 +152,6 @@ static int sdw_drv_probe(struct device *dev)
+> >  
+> >  	mutex_unlock(&slave->sdw_dev_lock);
+> >  
+> > -	dev_dbg(dev, "probe complete\n");
+> > -
+> >  	return 0;
+> >  }
+> 
+> I don't see the point of removing this, we've used it for the last 5
+> years to figure out when the probe complete vs. when the device becomes
+> attached. It's a simple log that helped us immensely with race
+> conditions, etc.
 
-However, if the network happens to be faster than the hard disk, and
-the socket buffer keeps getting drained between two
-generic_file_read_iter() calls, the sendfile() system call can keep
-running for a long time, blocking for disk I/O over and over.
+Fair enough. Soundwire probing is indeed a bit of a mess.
 
-That is undesirable, because it can block the calling process for too
-long.  I discovered a problem where nginx would block for so long that
-it would drop the HTTP connection because the kernel had just
-transferred 2 GiB in one call, and the HTTP socket was not writable
-(EPOLLOUT) for more than 60 seconds, resulting in a timeout:
-
-  sendfile(4, 12, [5518919528] => [5884939344], 1813448856) = 366019816 <3.033067>
-  sendfile(4, 12, [5884939344], 1447429040) = -1 EAGAIN (Resource temporarily unavailable) <0.000037>
-  epoll_wait(9, [{EPOLLOUT, {u32=2181955104, u64=140572166585888}}], 512, 60000) = 1 <0.003355>
-  gettimeofday({tv_sec=1667508799, tv_usec=201201}, NULL) = 0 <0.000024>
-  sendfile(4, 12, [5884939344] => [8032418896], 2147480496) = 2147479552 <10.727970>
-  writev(4, [], 0) = 0 <0.000439>
-  epoll_wait(9, [], 512, 60000) = 0 <60.060430>
-  gettimeofday({tv_sec=1667508869, tv_usec=991046}, NULL) = 0 <0.000078>
-  write(5, "10.40.5.23 - - [03/Nov/2022:21:5"..., 124) = 124 <0.001097>
-  close(12) = 0 <0.000063>
-  close(4)  = 0 <0.000091>
-
-In newer nginx versions (since 1.21.4), this problem was worked around
-by defaulting "sendfile_max_chunk" to 2 MiB:
-
- https://github.com/nginx/nginx/commit/5636e7f7b4
-
-Instead of asking userspace to provide an artificial upper limit, I'd
-like the kernel to block for disk I/O at most once, and then pass back
-control to userspace.
-
-There is prior art for this kind of behavior in filemap_read():
-
-	/*
-	 * If we've already successfully copied some data, then we
-	 * can no longer safely return -EIOCBQUEUED. Hence mark
-	 * an async read NOWAIT at that point.
-	 */
-	if ((iocb->ki_flags & IOCB_WAITQ) && already_read)
-		iocb->ki_flags |= IOCB_NOWAIT;
-
-This modifies the caller-provided "struct kiocb", which has an effect
-on repeated filemap_read() calls.  This effect however vanishes
-because the "struct kiocb" is not persistent; splice_direct_to_actor()
-doesn't have one, and each generic_file_splice_read() call initializes
-a new one, losing the "IOCB_NOWAIT" flag that was injected by
-filemap_read().
-
-There was no way to make generic_file_splice_read() aware that
-IOCB_NOWAIT was desired because some data had already been transferred
-in a previous call:
-
-- checking whether the input file has O_NONBLOCK doesn't work because
-  this should be fixed even if the input file is not non-blocking
-
-- the SPLICE_F_NONBLOCK flag is not appropriate because it affects
-  only whether pipe operations are non-blocking, not whether
-  file/socket operations are non-blocking
-
-Since there are no other parameters, I suggest adding the
-SPLICE_F_NOWAIT flag, which is similar to SPLICE_F_NONBLOCK, but
-affects the "non-pipe" file descriptor passed to sendfile() or
-splice().  It translates to IOCB_NOWAIT for regular files, just like
-RWF_NOWAIT does.
-
----
-Changes v1 -> v2:
-- value of SPLICE_F_NOWAIT changed to 0x10
-- added SPLICE_F_NOWAIT to SPLICE_F_ALL to make it part of uapi
-
-v2 -> v3: repost and rebase on linus/master
-
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/splice.c            | 14 ++++++++++++++
- include/linux/splice.h |  4 +++-
- 2 files changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/fs/splice.c b/fs/splice.c
-index 60aed8de21f8..6257fef93ec4 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -362,6 +362,8 @@ ssize_t copy_splice_read(struct file *in, loff_t *ppos,
- 	iov_iter_bvec(&to, ITER_DEST, bv, npages, len);
- 	init_sync_kiocb(&kiocb, in);
- 	kiocb.ki_pos = *ppos;
-+	if (flags & SPLICE_F_NOWAIT)
-+		kiocb.ki_flags |= IOCB_NOWAIT;
- 	ret = in->f_op->read_iter(&kiocb, &to);
- 
- 	if (ret > 0) {
-@@ -1090,6 +1092,18 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
- 		if (unlikely(ret <= 0))
- 			goto read_failure;
- 
-+		/*
-+		 * After at least one byte was read from the input
-+		 * file, don't wait for blocking I/O in the following
-+		 * loop iterations; instead of blocking for arbitrary
-+		 * amounts of time in the kernel, let userspace decide
-+		 * how to proceed.  This avoids excessive latency if
-+		 * the output is being consumed faster than the input
-+		 * file can fill it (e.g. sendfile() from a slow hard
-+		 * disk to a fast network).
-+		 */
-+		flags |= SPLICE_F_NOWAIT;
-+
- 		read_len = ret;
- 		sd->total_len = read_len;
- 
-diff --git a/include/linux/splice.h b/include/linux/splice.h
-index 9dec4861d09f..0deb87fb8055 100644
---- a/include/linux/splice.h
-+++ b/include/linux/splice.h
-@@ -21,7 +21,9 @@
- #define SPLICE_F_MORE	(0x04)	/* expect more data */
- #define SPLICE_F_GIFT	(0x08)	/* pages passed in are a gift */
- 
--#define SPLICE_F_ALL (SPLICE_F_MOVE|SPLICE_F_NONBLOCK|SPLICE_F_MORE|SPLICE_F_GIFT)
-+#define SPLICE_F_NOWAIT	(0x10) /* do not wait for data which is not immediately available */
-+
-+#define SPLICE_F_ALL (SPLICE_F_MOVE|SPLICE_F_NONBLOCK|SPLICE_F_MORE|SPLICE_F_GIFT|SPLICE_F_NOWAIT)
- 
- /*
-  * Passed to the actors
--- 
-2.39.2
-
+Johan
 
