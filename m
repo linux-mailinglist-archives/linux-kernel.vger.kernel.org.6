@@ -1,206 +1,153 @@
-Return-Path: <linux-kernel+bounces-200299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504C98FAE38
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:00:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F402F8FAE3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E4E1C211B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:00:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BCBB1F280C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9411143753;
-	Tue,  4 Jun 2024 09:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5B914374E;
+	Tue,  4 Jun 2024 09:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hJbgljbE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0408F4E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 09:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AsidLimY"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3E4652;
+	Tue,  4 Jun 2024 09:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717491618; cv=none; b=saJHP/85lKx4AXuoWw0JngvDNbARvmyHlkod0ecIUaMwhmjoIqKj8BdFpeLjJ11logD7IG8+S07onxo/ElCId9wQQj1uLaf/4DHKpAeuPLwBWQdy0q/JNeD92blgyk7O+wQaR6zOeoOxc7n3s0XHRkBUvGRLu63qRDKt9JNGaUM=
+	t=1717491672; cv=none; b=esVvlLyh4VYb0YAkKQ6yVLusHeROAhOR/qiYSVz5JJ+xjQesNXnEO5Rls/rukUM3fcguhWdpkhFri8+7dBVmeBGZ5zM1GpxQLsHthj2LjEnTz+TAltNc/hzzV408SWtd++BM2X2okxuUKl+pnRoe4xNE131D+SCaWJnZAi2SBAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717491618; c=relaxed/simple;
-	bh=new+pNwLcD9lH3T0u5RvU2+JVeenHDibA7HvZ7u23XI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sPuFmU/RCPhyBvMKsnKLCSlVrn4TtTdN1PN82d08MRMqpEFacmHCO5u8ctvO7ufXC7VjGiJBIatob3PG4jwxxqAn4L4MFwB9gxnXCLoiapDvP9RHKobF8BYs/aM9/GtjHaAltMoAF9VcY+C1r10mTAEkyLNrq6E1R+mcfhFB5l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hJbgljbE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717491615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kFpT3QUEMx9J9L0LrxzioAQBetBLlwnPOzlf7N14yZU=;
-	b=hJbgljbEH7DNzPE9hwl23qu1uimFeVO9CCRUj+sOo3qG5nwEdAsUysNKyJZIs7fKz7d55X
-	wNMrzZAvkw8JqMfhuLdf57FH2wzAkNeVJ1DwcCmT6mppYQYaUTKCyDuAFqDyxmYUpdtZD9
-	W9I297o+lsM/536FreVjSsxI/Ip3BBY=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-674-0gqVrizhNUaHJzpyO9EYtw-1; Tue, 04 Jun 2024 05:00:12 -0400
-X-MC-Unique: 0gqVrizhNUaHJzpyO9EYtw-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5786cf51b65so378113a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 02:00:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717491611; x=1718096411;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kFpT3QUEMx9J9L0LrxzioAQBetBLlwnPOzlf7N14yZU=;
-        b=QwhROoZ9iCodafKIgyiN9oiQhaECk3ljNpU2aUxDnZv6xhVxjB/EKDFveuebfLzzU2
-         2rWxGLh0sfXvclKpnmzRvus45mJU3la5k9bG/0NtPDpdYd5p1RHEHeBU9e0q8xtay3hk
-         0pN83hdX4na4S2T416vQAhY0mr4pGaZ7lyrgv54BZ6zWSnyKgKXo7/MxNlUK0muPZLlB
-         qRAqdyfISJyVMcpNXohUYpuBf+8Ma8reTZ1LgWAC/9bLxdnn9vJZ6/Sz24UBEkaqaMxv
-         7uzBKnQV/xFyEAoZUCM7HuvUpZEVYyvi+KE6ZCDujbI2bF5UT2XrsWUnjlhLidzo7ouo
-         v8Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqNAP6/0PeKvThjqH1XYDI/7RW1Ss2Xx4V8Lb2SBEiRN4o64qtteVxj4d7ESyTWP3s3VOF5viuSDFshPNrJ5JmgJdSiYrD4gAbXA7Z
-X-Gm-Message-State: AOJu0Yz4kAvvuIAFBJtL7L+RRHKyZsbcnYOmdtrRpr7CpEUxNqNyM+Z8
-	qelKcXlJXoMYQfrP2w+eiXK6rWwAhR75U5seGywsWfT3ABrfw6w9FXI1xc4cEwvKLsHkiHHIe8Z
-	rgBCJQAoRq7ZxfTP+s6h01qDO6KmtscJma5ku/JyGEpFDaTA5+gFPUsL2ZBtnjg==
-X-Received: by 2002:a50:9fe1:0:b0:57a:2fd7:c2d1 with SMTP id 4fb4d7f45d1cf-57a365724d6mr5996657a12.40.1717491611614;
-        Tue, 04 Jun 2024 02:00:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG9HxdDDjXBkoNajgBxrl8Zq0njsbIpxZMJnVCH9evLqXT+aGsPpAtbO5jLY5O3yvm6yuy6WA==
-X-Received: by 2002:a50:9fe1:0:b0:57a:2fd7:c2d1 with SMTP id 4fb4d7f45d1cf-57a365724d6mr5996635a12.40.1717491611111;
-        Tue, 04 Jun 2024 02:00:11 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d594sm7045909a12.69.2024.06.04.02.00.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 02:00:10 -0700 (PDT)
-Message-ID: <77625f15-e183-49e8-8496-b12002cc7dbb@redhat.com>
-Date: Tue, 4 Jun 2024 11:00:10 +0200
+	s=arc-20240116; t=1717491672; c=relaxed/simple;
+	bh=77c9JqkTvByLnMHXjAWcS4jMhO6cdGjdlVGhwyYHjZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TNpNMtgSDWFV/+CxXDfHKj6ZjERHtuMIFICfO3p50rlDZiYiF3Ss80f4frAhUb9kdsj8hc0pSTTdFbh6wbDyM1bgMUuOqH6lZp7gmok3VNoLyd4Lo8EwzWSJly14b9E+2vCXdPdkruqEQTXz2Scq1ePvTKY0Z9+ihXl8aCWFlyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AsidLimY; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 45F2220B915A; Tue,  4 Jun 2024 02:01:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 45F2220B915A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1717491670;
+	bh=UQ3dE+N/0pFO6FIyT3FNM4hfEUPHqbcPEwjKMAJv84M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AsidLimY5TPpyvOLbjRWzCVqbqAUnF7dDloZafb856Z1DJsm5Z1Nq/RYsydZSy0ro
+	 DcOYptWLGpA7fc+3cMVqo+SQkxHI7EaFpLkJUr0xqAkc4WmoHwwoTQvhp+ZklDCxDH
+	 6JqNAXLTvTTWeLz5NgyF15mjLaiaH91MFA/oy7Aw=
+Date: Tue, 4 Jun 2024 02:01:10 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Kees Cook <keescook@chromium.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Long Li <longli@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH net-next v3] net: mana: Allow variable size indirection
+ table
+Message-ID: <20240604090110.GA11436@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1717169861-15825-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <20240603084122.GK3884@unreal>
+ <20240604053648.GA14220@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <20240604083205.GM3884@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mei: vsc: Fix wrong invocation of ACPI SID method
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Wentong Wu <wentong.wu@intel.com>, Tomas Winkler <tomas.winkler@intel.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org,
- Kate Hsuan <hpa@redhat.com>, linux-kernel@vger.kernel.org
-References: <20240603205050.505389-1-hdegoede@redhat.com>
- <Zl42vYs40MJiPxl7@kekkonen.localdomain>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <Zl42vYs40MJiPxl7@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604083205.GM3884@unreal>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hi,
-
-On 6/3/24 11:33 PM, Sakari Ailus wrote:
-> Hi Hans,
+On Tue, Jun 04, 2024 at 11:32:05AM +0300, Leon Romanovsky wrote:
+> On Mon, Jun 03, 2024 at 10:36:48PM -0700, Shradha Gupta wrote:
+> > On Mon, Jun 03, 2024 at 11:41:22AM +0300, Leon Romanovsky wrote:
+> > > On Fri, May 31, 2024 at 08:37:41AM -0700, Shradha Gupta wrote:
+> > > > Allow variable size indirection table allocation in MANA instead
+> > > > of using a constant value MANA_INDIRECT_TABLE_SIZE.
+> > > > The size is now derived from the MANA_QUERY_VPORT_CONFIG and the
+> > > > indirection table is allocated dynamically.
+> > > > 
+> > > > Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> > > > Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> > > > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> > > > ---
+> > > >  Changes in v3:
+> > > >  * Fixed the memory leak(save_table) in mana_set_rxfh()
+> > > > 
+> > > >  Changes in v2:
+> > > >  * Rebased to latest net-next tree
+> > > >  * Rearranged cleanup code in mana_probe_port to avoid extra operations
+> > > > ---
+> > > >  drivers/infiniband/hw/mana/qp.c               | 10 +--
+> > > >  drivers/net/ethernet/microsoft/mana/mana_en.c | 68 ++++++++++++++++---
+> > > >  .../ethernet/microsoft/mana/mana_ethtool.c    | 27 +++++---
+> > > >  include/net/mana/gdma.h                       |  4 +-
+> > > >  include/net/mana/mana.h                       |  9 +--
+> > > >  5 files changed, 89 insertions(+), 29 deletions(-)
+> > > 
+> > > <...>
+> > > 
+> > > > +free_indir:
+> > > > +	apc->indir_table_sz = 0;
+> > > > +	kfree(apc->indir_table);
+> > > > +	apc->indir_table = NULL;
+> > > > +	kfree(apc->rxobj_table);
+> > > > +	apc->rxobj_table = NULL;
+> > > >  reset_apc:
+> > > >  	kfree(apc->rxqs);
+> > > >  	apc->rxqs = NULL;
+> > > > @@ -2897,6 +2936,7 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+> > > >  {
+> > > 
+> > > <...>
+> > > 
+> > > > @@ -2931,6 +2972,11 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+> > > >  		}
+> > > >  
+> > > >  		unregister_netdevice(ndev);
+> > > > +		apc->indir_table_sz = 0;
+> > > > +		kfree(apc->indir_table);
+> > > > +		apc->indir_table = NULL;
+> > > > +		kfree(apc->rxobj_table);
+> > > > +		apc->rxobj_table = NULL;
+> > > 
+> > > Why do you need to NULLify here? Will apc is going to be accessible
+> > > after call to mana_remove? or port probe failure?
+> > Right, they won't be accessed. This is just for the sake of completeness
+> > and to prevent double free in case there are code bug in other place.
 > 
-> Thanks for the patch.
+> This coding patter is called defensive programming, which is discouraged
+> in the kernel. You are not preventing double free, but hiding bugs which
+> were possible to be found by various static analysis tools.
 > 
-> On Mon, Jun 03, 2024 at 10:50:50PM +0200, Hans de Goede wrote:
->> When using an initializer for a union only one of the union members
->> must be initialized. The initializer for the acpi_object union variable
->> passed as argument to the SID ACPI method was initializing both
->> the type and the integer members of the union.
->>
->> Unfortunately rather then complaining about this gcc simply ignores
->> the first initializer and only used the second integer.value = 1
->> initializer. Leaving type set to 0 which leads to the argument being
->> skipped by acpi acpi_ns_evaluate() resulting in:
->>
->> ACPI Warning: \_SB.PC00.SPI1.SPFD.CVFD.SID: Insufficient arguments -
->> Caller passed 0, method requires 1 (20240322/nsarguments-232)
->>
->> Fix this by initializing only the integer struct part of the union
->> and initializing both members of the integer struct.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->> Even though this is a one-liner, figuring out what was actually going
->> wrong here took quite a while.
+> Please don't do it.
 > 
-> I was wondering this with Wentong, too...!
-> 
->> ---
->>  drivers/misc/mei/vsc-fw-loader.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/misc/mei/vsc-fw-loader.c b/drivers/misc/mei/vsc-fw-loader.c
->> index ffa4ccd96a10..596a9d695dfc 100644
->> --- a/drivers/misc/mei/vsc-fw-loader.c
->> +++ b/drivers/misc/mei/vsc-fw-loader.c
->> @@ -252,7 +252,7 @@ static int vsc_get_sensor_name(struct vsc_fw_loader *fw_loader,
->>  {
->>  	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER };
->>  	union acpi_object obj = {
->> -		.type = ACPI_TYPE_INTEGER,
->> +		.integer.type = ACPI_TYPE_INTEGER,
->>  		.integer.value = 1,
-> 
-> I guess initialising integer.value implies that all integer fields are set
-> to zero (and so zeroing type set the line above)?
-
-Yes I was thinking that might be happening too.
-
-> Maybe moving setting type
-> below setting integer.value might do the trick as well? ;-)
-
-I was wondering the same thing, but that seems error-prone /
-something which may break with different compiler versions.
-
-Actually most code using union acpi_object variables simply
-does not initialize them at declaration time.
-
-So I was also considering to maybe change the code like this:
-
-        struct acpi_object_list arg_list;
-        union acpi_object *ret_obj;
-        union acpi_object param;
-
-	...
-
-        param.type = ACPI_TYPE_INTEGER;
-        param.integer.value = 1;
-
-        arg_list.count = 1;
-        arg_list.pointer = &param;
-
-        status = acpi_evaluate_object(handle, "SID", &arg_list, &buffer);
-
-Slightly more verbose, but this is basically what all other
-callers of acpi_evaluate_object() (with a non NULL arg_list) do.
-
-> It'd be useful to be warned by the compiler in such a case. There are much
-> less useful warnings out there.
-
-Ack.
-
-> Excellent finding indeed.
-> 
-> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> This could be cc'd to stable, this warning will display for a lot of
-> systems. I.e. I think:
-> 
-> Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
-> Cc: stable@vger.kernel.org # for 6.8 and later
-
-Ack.
+> Thanks
+Understood, it makes sense. Let me fix this in the next version.
 
 Regards,
-
-Hans
-
-
-
->>  	};
->>  	struct acpi_object_list arg_list = {
+Shradha
 > 
-
+> > 
+> > Regards,
+> > Shradha.
+> > > 
+> > > Thanks
 
