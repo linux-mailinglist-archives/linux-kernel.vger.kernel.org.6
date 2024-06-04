@@ -1,116 +1,117 @@
-Return-Path: <linux-kernel+bounces-200493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880718FB0CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:13:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84EB8FB0CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8FF81C212C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB2B28334C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3244145A0F;
-	Tue,  4 Jun 2024 11:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9951B1459E8;
+	Tue,  4 Jun 2024 11:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fso+L++o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pck8xz7a"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021331420D7;
-	Tue,  4 Jun 2024 11:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D4714532B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717499609; cv=none; b=mQN+RfukTrSIj4yG184Z8tkUWXZaLK0USwAcmPgtV2axFhR8SMrj8enBmIoD3GxqlgBo6nhmVzaxs+L7J4FNF47U7e23tCFdFCwBJBEUAwLbwv9YOoO9Bf0ByX6uAAQy/C5RXsVNa76GAAUDHVNbMF4dtSNC26gt39o6DORp1fA=
+	t=1717499653; cv=none; b=FFgrVvDMSrNGM8B3ZqLocwrSRBFUG6vcIlAsrpUN3SD7yFwxvk+kH2x/Wav9FRs4BtaVKQvoGv3MRwpvy5uY4DMoJK0m0gz3DDhIsZqLqd/rcTuW2tPxWVDc6X2TFodyWpf6HK8G2BAQ7wfaaEQaKeL7f34ZTdiqC6xJDxrez24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717499609; c=relaxed/simple;
-	bh=G4bcdfSkhr9b1oEzgL3rS01ajLXZ3Z5wtjM+zkVc240=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iORFApmKL8KN5lbvTiRqx6dcZYIpnbDiSPELvmvWJYkoN677lpLJCjiv547iJ3StBcZgEvA7I0o5/290xMl7xK3fRyzQBnZQAQV/TRThqVeJ7cz0FjBb4TLlggYhvJmqfLM3AZ8p9pnYq6y8AP6a/12YihWfjCz6TKcI11fL0l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fso+L++o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C17EC2BBFC;
-	Tue,  4 Jun 2024 11:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717499608;
-	bh=G4bcdfSkhr9b1oEzgL3rS01ajLXZ3Z5wtjM+zkVc240=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fso+L++ob6iiEnRG2ve+9AvufqnkHrJQ4v2N/L9WAYC6CeCfOYLb6QIlyE+/4F/2I
-	 jAnKkEsBgwy43qLzJJe+lPBw+5vxsRxPfdrdvIiUHxDsi73HkWxyZNx8nB/nXoIY9Q
-	 hKl2Ifq3lN/h/aLEc1RfcZ+UMo8rXnwA3lX+i4BxKLnHVUtKeE6prhp7ibO/Hx+Q9T
-	 yTzVRcHScq7Uezq4xZWIRgkZ4fPrQyZkK+cuUCf1Ogoi5purO2x1ZY86suQZmj8fhv
-	 CvxJVbPQoCNCn/A8QWVv/4Xx05rBltVQdWzBmwMj1yLgLr1oqXKPb3ZuinzHO+mu4s
-	 lOVwwoTzXwcsw==
-Date: Tue, 4 Jun 2024 13:13:25 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 5/6] rcu: Remove full memory barrier on RCU stall printout
-Message-ID: <Zl721Qcu34ppCTuu@localhost.localdomain>
-References: <20240515125332.9306-1-frederic@kernel.org>
- <20240515125332.9306-6-frederic@kernel.org>
- <5bc2d72a-ae27-43f0-893e-afb202abd61b@paulmck-laptop>
+	s=arc-20240116; t=1717499653; c=relaxed/simple;
+	bh=gkoEaXTyzcTGwsF2z95ESHnjbvRX6cwJPCJEJHD0kz8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F5TnaIZebONdgw6ZifhxHTx+W7IxmU5cHlEtvXHPdf1/teRpVtKQj52/LFmO0ZF52JwtE7xMp6eBZbBwl6ixRDn+menrWJ4FWpKgpvOu80EwqIWZRBVtNVG5V1kNcjqq2KOAg0djEOmWl5jHlwRQMFv+017RewHkOY0FTGN7elE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pck8xz7a; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa48f505dfso5447941276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717499650; x=1718104450; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q4BJtPQ73qcfI2sO7ETwV4VEq/ZHWblB62uvfMkAtXA=;
+        b=pck8xz7aEQCZrXxZBnTqIUQJ/hy5CAtsO/YnI4+QTIMDaLZ/iomeFmDWIMuiuEOv2H
+         cmI95gO6IS3BM1C3jdbsOzHg2NAmdNpWtKvP4DboE4PEWT2gHw3cRN2xAQ0zW3UId6HG
+         qIO3XkzCY38Tqn1nzNDZ0bdyChnOHNXZCqPZqZ1pJkKBbxCtoL4LS2Z5ifWOEboVVBMG
+         onQtMeGJXMeS7JF30GvwDra7+5K4S0xx3pnfd+liP8/0mZdgZTdNnX0dCNewHoi5UP0w
+         SKY8xL5FCSOcmf734LZfR0qop/RzoYIA4TFibRAQm02HqW5U6hJQBFkMNobVG1rMjL31
+         s91Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717499650; x=1718104450;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q4BJtPQ73qcfI2sO7ETwV4VEq/ZHWblB62uvfMkAtXA=;
+        b=sPaB4SBQHrwqXSE4hqZVhy9RKxFzIYDMQqYbauKP4k4yB4m8cczFoSGDasOO0OFH+E
+         oxKRFyVwx3DzPb3UT7XNyNRPYKOCdyOV+mD+1DQQMUiGA9c9fx7bsblaMIAFltren+JI
+         7LnwLIoASSaQXMutRyjmDxj1doUgoGo61apACQbr8ClPVP2bplxaCY3yzkvPIWH4Qtsc
+         70Dup1e0/13VCoxkB/dGJjtA5opNROrBwadOcucd0sZD/IyaWgcQMsH1o82CfxVgKud8
+         AYmU1N70j5Xm2yPi+ISFSip2G64Q+nhlST4KLZCtL4aYlGw/ROGBXYSSuvxPnC0hsiQN
+         wR6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKCW20EWzHvWFgWdwI1QKLBpDviRIZmefsYJZNT+aoCV0U5CoI5e7mULUmQy0je7pjJYvxWdqErKGfhKIe6H+061w2fl22Qe4h0z12
+X-Gm-Message-State: AOJu0Yw9ZDsStskgpzuC6Jounc6SMs5TqFSL2XU7f9eH78Ll2K/hGu/a
+	/gpeFa+n8HkuLZjVxYhpdNsOJ637wk2uZuTQZqmdRdh55AalIIveJpeC4FPHg6QoIVdXm8k2sWU
+	cas/yAJ28T2B3ams7PFT94NitQkPBlt+kvch7yg==
+X-Google-Smtp-Source: AGHT+IGbblsFi//5mNdWKH76B/L88CqYx2joBG7nqbVMyDK7axGNMhKFIZaU+2AbW4M8ccMJuHxy87Azife0n7bvlpg=
+X-Received: by 2002:a25:acdc:0:b0:dee:998b:1459 with SMTP id
+ 3f1490d57ef6-dfa73c3dbc1mr11889385276.39.1717499650330; Tue, 04 Jun 2024
+ 04:14:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5bc2d72a-ae27-43f0-893e-afb202abd61b@paulmck-laptop>
+References: <20240523120337.9530-1-quic_nainmeht@quicinc.com> <20240523120337.9530-2-quic_nainmeht@quicinc.com>
+In-Reply-To: <20240523120337.9530-2-quic_nainmeht@quicinc.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 4 Jun 2024 13:13:34 +0200
+Message-ID: <CAPDyKFpAtvQyfKJ6-xWEZhv259eAzuS+nmA9tcFDf_h728s1Qg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: mmc: sdhci-msm: Document the SDX75 compatible
+To: Naina Mehta <quic_nainmeht@quicinc.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	andersson@kernel.org, konrad.dybcio@linaro.org, bhupesh.sharma@linaro.org, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Le Mon, Jun 03, 2024 at 05:10:54PM -0700, Paul E. McKenney a écrit :
-> On Wed, May 15, 2024 at 02:53:31PM +0200, Frederic Weisbecker wrote:
-> > RCU stall printout fetches the EQS state of a CPU with a preceding full
-> > memory barrier. However there is nothing to order this read against at
-> > this debugging stage. It is inherently racy when performed remotely.
-> > 
-> > Do a plain read instead.
-> > 
-> > This was the last user of rcu_dynticks_snap().
-> > 
-> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> 
-> I went through all of these, and the look good.  Though I am a bit
-> nervous about this one.  The RCU CPU stall warning code used to be
-> completely unordered, but the hardware taught me better.  I did not
-> add these in response to a problem (just lazily used the existing fully
-> ordered primitive), but you never know.
+On Thu, 23 May 2024 at 14:04, Naina Mehta <quic_nainmeht@quicinc.com> wrote:
+>
+> Document the compatible for SDHCI on SDX75 SoC.
+>
+> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-At least I haven't found against what it is ordering the dynticks counter here.
+Applied for next, thanks!
 
-> Me, I would have kept the extra
-> memory barriers in all six patches because they are not on a fastpath,
+Kind regards
+Uffe
 
-It is still time to discard the patches :-)
 
-> but you are quite correct that they are redundant.
-
-Yes and it's not so much for optimization purpose, like you said it's
-not a fast-path, although in the case of fqs round scan it _might_ be
-debatable in the presence of hurry callbacks, but I use those changes
-more for documentation purpose. My opinion on that being that having
-memory barriers when they are not necessary doesn't help reviewers and
-doesn't bring the incentive to actually verify that the ordering is
-correct when it is really required, since there is so much of it
-everywhere anyway. I'd rather have a clear, well visible and precise
-picture. But that's just personal belief.
-
-> 
-> So I have queued these, and intend to send them into the next merge
-> window.  However, you now own vanilla RCU grace-period memory ordering,
-> both normal and expedited.  As in if someone else breaks it, you already
-> bought it.  ;-)
-
-Sure, but it's a bet. That one day a younger person will buy it from me
-double the price ;-)
-
-Thanks.
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> index c24c537f62b1..11979b026d21 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> @@ -51,6 +51,7 @@ properties:
+>                - qcom,sdm845-sdhci
+>                - qcom,sdx55-sdhci
+>                - qcom,sdx65-sdhci
+> +              - qcom,sdx75-sdhci
+>                - qcom,sm6115-sdhci
+>                - qcom,sm6125-sdhci
+>                - qcom,sm6350-sdhci
+> --
+> 2.17.1
+>
 
