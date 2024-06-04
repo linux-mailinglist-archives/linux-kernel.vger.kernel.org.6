@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-200572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2378FB1DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:13:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9A98FB1EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF6B11F238DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:13:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330632815DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7226145FEC;
-	Tue,  4 Jun 2024 12:13:02 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id D492D145A1D;
-	Tue,  4 Jun 2024 12:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970C9146001;
+	Tue,  4 Jun 2024 12:15:07 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6489B145FF6;
+	Tue,  4 Jun 2024 12:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717503182; cv=none; b=VjxglFNHhdR+Q5pgMRjeQe+f9EvDRbUMn4BhtzKl3ZIShjhVhIbWhOuVPR+qSzDiKB16IS56swXjG1U6rTl2aWnl9usec3ourV6PJbTmwDJi88Df+oLShW3WktlzkdoijZOwe8eJIqG4A0a3RYjWW8XueZxaGUW2aI9URb0IFZE=
+	t=1717503307; cv=none; b=K5aqyTpAFLcMjhGRNshWsZ6FrbTdUHDphcg/E6fXacHcbAM0x/92aAeyK3Fthu8j2YNd+8+ZwDh1FDPK071Eoe71z2BrfpZw5gWtEmEYzY8I3bzw5lERXe4GJhtCvmojGJaEoCMRcxySlF8iG9wiFpwVKToHeVqwvxgUrZlzEuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717503182; c=relaxed/simple;
-	bh=es9LQ1eTsN135StDyRCpFPHsqX6uG/7ZNvhFSZOePNM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ixk6axXgjayKOflIFVh7R9XSm5qOu4oybWDpZ+QPVEB5Kr3cPQTbF3QwaFYZGo034NYHl2EFRXBT653/xOzncLBsEntEF1TPBHl/Sj8D3xnm0V1kwI+JP2nhHetJox8sq6r6UFd+3javS7khMHopw5ndMBhgf63RseEOL7DIxUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 93B93606EDF49;
-	Tue,  4 Jun 2024 20:12:53 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: axboe@kernel.dk,
-	asml.silence@gmail.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	haoxu@linux.alibaba.com,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] io_uring/io-wq: avoid garbge value of 'match' in io_wq_enqueue()
-Date: Tue,  4 Jun 2024 20:12:43 +0800
-Message-Id: <20240604121242.2661244-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1717503307; c=relaxed/simple;
+	bh=WFVQjWH0ZoiMDGK+S3K+zIY7KmR/jPZqZ71uWqigK70=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fW2+FXujkGYgRXKEEJQAlVYsShIBfA1d4QpvYe2vTVzU9SGdsRz9DQiG+kK01v9IbcjekghhKc0Hb4HLo/qLc9wknuYxrkFAW1SFxIji/dlKMN5/eAjSmuYpEk8zNBqrfVEu1pKswmbI0ou53jbSau/CdQFzmKGkQYFNybFdN3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8DxSupGBV9mXmEDAA--.14543S3;
+	Tue, 04 Jun 2024 20:15:02 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxDMdGBV9mFzkUAA--.50896S2;
+	Tue, 04 Jun 2024 20:15:02 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: KVM: Discard dirty page tracking on readonly memslot
+Date: Tue,  4 Jun 2024 20:15:02 +0800
+Message-Id: <20240604121502.1985410-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,51 +49,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8AxDMdGBV9mFzkUAA--.50896S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Clang static checker (scan-build) warning:
-o_uring/io-wq.c:line 1051, column 3
-The expression is an uninitialized value. The computed value will
-also be garbage.
+For readonly memslot such as UEFI bios or UEFI var space, guest can
+not write this memory space directly. So it is not necessary to track
+dirty pages for readonly memslot. Here there is such optimization
+in function kvm_arch_commit_memory_region().
 
-'match.nr_pending' is used in io_acct_cancel_pending_work(), but it is
-not initialized. Change the order of assignment for 'match' to fix
-this problem.
-
-Fixes: 42abc95f05bf ("io-wq: decouple work_list protection from the big wqe->lock")
-Signed-off-by: Su Hui <suhui@nfschina.com>
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
 ---
- io_uring/io-wq.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/loongarch/kvm/mmu.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index d1c47a9d9215..7d3316fe9bfc 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -927,7 +927,11 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
+diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+index 98883aa23ab8..ec8c43aad724 100644
+--- a/arch/loongarch/kvm/mmu.c
++++ b/arch/loongarch/kvm/mmu.c
+@@ -444,6 +444,17 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+ 				   enum kvm_mr_change change)
  {
- 	struct io_wq_acct *acct = io_work_get_acct(wq, work);
- 	unsigned long work_flags = work->flags;
--	struct io_cb_cancel_data match;
-+	struct io_cb_cancel_data match = {
-+		.fn		= io_wq_work_match_item,
-+		.data		= work,
-+		.cancel_all	= false,
-+	};
- 	bool do_create;
+ 	int needs_flush;
++	u32 old_flags = old ? old->flags : 0;
++	u32 new_flags = new ? new->flags : 0;
++	bool log_dirty_pages = new_flags & KVM_MEM_LOG_DIRTY_PAGES;
++
++	/* only track memslot flags changed */
++	if (change != KVM_MR_FLAGS_ONLY)
++		return;
++
++	/* Discard dirty page tracking on readonly memslot */
++	if ((old_flags & new_flags) & KVM_MEM_READONLY)
++		return;
  
  	/*
-@@ -965,10 +969,6 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
- 		raw_spin_unlock(&wq->lock);
- 
- 		/* fatal condition, failed to create the first worker */
--		match.fn		= io_wq_work_match_item,
--		match.data		= work,
--		match.cancel_all	= false,
--
- 		io_acct_cancel_pending_work(wq, acct, &match);
- 	}
- }
+ 	 * If dirty page logging is enabled, write protect all pages in the slot
+@@ -454,9 +465,7 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+ 	 * MOVE/DELETE:	The old mappings will already have been cleaned up by
+ 	 *		kvm_arch_flush_shadow_memslot()
+ 	 */
+-	if (change == KVM_MR_FLAGS_ONLY &&
+-	    (!(old->flags & KVM_MEM_LOG_DIRTY_PAGES) &&
+-	     new->flags & KVM_MEM_LOG_DIRTY_PAGES)) {
++	if (!(old_flags & KVM_MEM_LOG_DIRTY_PAGES) && log_dirty_pages) {
+ 		spin_lock(&kvm->mmu_lock);
+ 		/* Write protect GPA page table entries */
+ 		needs_flush = kvm_mkclean_gpa_pt(kvm, new->base_gfn,
+
+base-commit: 2ab79514109578fc4b6df90633d500cf281eb689
 -- 
-2.30.2
+2.39.3
 
 
