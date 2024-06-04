@@ -1,223 +1,118 @@
-Return-Path: <linux-kernel+bounces-200450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD2F8FB037
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:45:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9798FB038
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D5081C20F23
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:45:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1CB1C232D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E78144D3A;
-	Tue,  4 Jun 2024 10:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DAF145B21;
+	Tue,  4 Jun 2024 10:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gK0BlZrU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFndo4/b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97D51A286
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 10:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903CB145333;
+	Tue,  4 Jun 2024 10:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717497814; cv=none; b=MuVedZ5Xo8q9TkpkulWJBcu2WUj3lfTdt778C8EBJTXNCQIdzSpApVhum3Q11cgRQpznFObLO6Xn0IqDioi1ZOtS4+9YpiGbezBND4EP/82Bc2e5foNihNJXRBBa1i1qN+dZe1idsYTXxtEKYZ9QNkEq7SdfmewwfJJ8wu0Kvac=
+	t=1717497828; cv=none; b=R3YypN20uPiyAu+S6qtteXoRV6E0k2oCab6nxCW5HMJOQN43pXaT/75Dxbikmf40ajYxfB4NE6mHKyjYQPuADzU4WAa3u5YImn5L2DI7r82u4fa/Q88tpkUJcQi8+9ZFPk3VE4sXqQqgLcw1jb0ibsJF3z7xVEOlRRpTqZjyfwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717497814; c=relaxed/simple;
-	bh=G0PC1VWFHONCr+ZR7tdJV+B68sO5R+uwJMuFfODQc1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=StUuH2oGk4Io4NMlc0ycQVUbW+CuPr7zAx+UEK5OuR+ZRZPnbSqW4f9UdkIdpzHuJkfcrkESJGuShtmZ3NpDR7OhVSEZCRknqwBlqAkjk8tPE8vtxxU0hJae9trrE1ixRX1qYAgGXGE5LXA3eWtHmiZQH2dmCYmBtgWXWDU0I1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gK0BlZrU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717497811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ajdsOZR0w0yo30qaDX6u90Ek5kU2b88kP4PAC8KC4fo=;
-	b=gK0BlZrU+id6hJAc3h0Goe2Tn8iQ8je0y40sauyu118nRhu9hbJyJ2PKD7nFll9UdhPAvc
-	Ib/czdd3fgeog2dTqdVgAm8k0sbR+h5NXokC85Qc9UG8g24nrasIR7xtiwL6KcLl0dd/zH
-	Q15n7swuEXXi7Q+kSC6X8oCcefkKMJo=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-507-snCUzMj3Praw3d9ok9gT1g-1; Tue, 04 Jun 2024 06:43:30 -0400
-X-MC-Unique: snCUzMj3Praw3d9ok9gT1g-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35e0f8bcc3cso2215792f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 03:43:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717497809; x=1718102609;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ajdsOZR0w0yo30qaDX6u90Ek5kU2b88kP4PAC8KC4fo=;
-        b=vd0NtKOLZP3z1/N9WaQPZAK9Rmh7stzhYti/bJSMDdJp0gEAS6dtN2of9rZRQ71w/R
-         sL7P4q91dUOASDf+1TWfcsPjYjaEGmqokzX7r/gW+S8SML/4HabPakzgYsT6VzMLvUcH
-         AgtQk3PnIh4O18lynxfH1Ab9faimIHfyuQBqZPlcUbWwv76xGUwP+BvABR0NiyhnplKp
-         mwoUVCPNy/RM+ll+6R19uQm8cg4R70hn6kSTxH6VlGjNdR39vBTqlWy4QFTTnkxh6WSu
-         Udsq/sokjjQVuv6xtRrHgFWIrzZKKMviDGBfcg7O3S/jQoi1pKPjnT2HQhgZshIVtuKI
-         fcOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaJV2844sAF7ite0PJJMs8FWLjf9paLwpEd2Pl5ejBL1sHLfJCEuBeeEdvE13VM7tlMhq1nlDr2hQj2FVW5nOwCp/9mPFzsq73UUm4
-X-Gm-Message-State: AOJu0YxEc8X2QmwxKzXkoI1qZwIgtruklGk/OWYaIe5uXs+ZKSgpCjFL
-	I1p0qseYaWcUir9y4h8zYCbYe1ypxK8BceqYHBzCxgY03GEc/8LIu6SmKMOFavt7B8qUeHlIy4n
-	h/Mm4WMegbj0qruo5K4raqZHVT1BGutYyZnuH8qIDk6z8V8bL3gbT1prMFoANgg==
-X-Received: by 2002:adf:e386:0:b0:354:db90:6df1 with SMTP id ffacd0b85a97d-35e0f28590emr9252332f8f.38.1717497809369;
-        Tue, 04 Jun 2024 03:43:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjwxmPwn62C6Nq0puMDiUKK2NN+CXbdv7oUo4JOG7HJoIdbxXPJPESEIlDlqHsZo1Ec6blRA==
-X-Received: by 2002:adf:e386:0:b0:354:db90:6df1 with SMTP id ffacd0b85a97d-35e0f28590emr9252309f8f.38.1717497808903;
-        Tue, 04 Jun 2024 03:43:28 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73a:3a00:a025:9b06:549e:c16b? (p200300cbc73a3a00a0259b06549ec16b.dip0.t-ipconnect.de. [2003:cb:c73a:3a00:a025:9b06:549e:c16b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062fe96sm11133331f8f.67.2024.06.04.03.43.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 03:43:28 -0700 (PDT)
-Message-ID: <00dcd224-6333-4f1e-9087-bdb5024ac236@redhat.com>
-Date: Tue, 4 Jun 2024 12:43:27 +0200
+	s=arc-20240116; t=1717497828; c=relaxed/simple;
+	bh=yGknayW3QQ0rwaJndYaKwkPne6V5zBr5l3Gf/k6pWH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PsW43EvU7J5KtGA1+xakBun5M1/CD1qROQtlaDt2p1JV+l5FW6IDgdMN+6N0VEpQZhXgaYbsrEYD5U/8dGtF5IorNohZDpChdr8PvDx8WFvD+9GDUjn99b/2oPDNeqSIjYBdu3aaWf4tO5+Gwfb4bggkyBbOxgHzreCCh0al3So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFndo4/b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18541C32782;
+	Tue,  4 Jun 2024 10:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717497828;
+	bh=yGknayW3QQ0rwaJndYaKwkPne6V5zBr5l3Gf/k6pWH0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cFndo4/bAX4UD1RYY7WGPu4LBwxL7SZEADNtg0GzaMhGV0lJiTDwKfdBS1E9kIinn
+	 v3LUDzudl59ZMNzECxCkaKlVdBMjmpJD2UmYY9fMBxBZ+V44GeCF/x6bxVi8lfNwNN
+	 lvzWoXSYIK2WYzb6gpf1q2KvDfhdS5fnAbYVkjTMCssTD306r9ggTC6YlVIl7t5D+G
+	 FVkCrf1+xyKMBnWyfMp1eWLXMPwnmApXIrh4A0gmpPE8/J1Dga28KgU2f4TB6IFADM
+	 lU1dua6PHtWUu2Ok4rU3wOqOB1r7LzhyzfY/ao7Z+URv2we1ke/y0TBq/qoI0OlkrJ
+	 lHAGnLmUIzAzA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sERdq-000000002mT-3A19;
+	Tue, 04 Jun 2024 12:43:46 +0200
+Date: Tue, 4 Jun 2024 12:43:46 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: qcom: x1e80100: Add USB DisplayPort plug support
+Message-ID: <Zl7v4hezEYcuCORC@hovoldconsulting.com>
+References: <20240604094638.97780-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] mm/ksm: skip subpages of compound pages
-To: Alex Shi <seakeel@gmail.com>, alexs@kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
- willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
- hughd@google.com
-References: <20240604042454.2012091-1-alexs@kernel.org>
- <20240604042454.2012091-3-alexs@kernel.org>
- <8d3a60d5-06c5-4df4-aeda-2fbec45a8ae0@redhat.com>
- <b3e242b5-c589-47fd-9a02-1e488bed9d15@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b3e242b5-c589-47fd-9a02-1e488bed9d15@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604094638.97780-1-krzysztof.kozlowski@linaro.org>
 
-On 04.06.24 12:31, Alex Shi wrote:
-> 
-> 
-> On 6/4/24 4:12 PM, David Hildenbrand wrote:
->> On 04.06.24 06:24, alexs@kernel.org wrote:
->>> From: "Alex Shi (tencent)" <alexs@kernel.org>
->>>
->>> When a folio isn't fit for KSM, the subpages are unlikely to be good,
->>> So let's skip the rest page checking to save some actions.
->>>
->>> Signed-off-by: Alex Shi (tencent) <alexs@kernel.org>
->>> ---
->>>    mm/ksm.c | 9 +++++++--
->>>    1 file changed, 7 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/mm/ksm.c b/mm/ksm.c
->>> index 97e5b41f8c4b..e2fdb9dd98e2 100644
->>> --- a/mm/ksm.c
->>> +++ b/mm/ksm.c
->>> @@ -2644,6 +2644,8 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
->>>            goto no_vmas;
->>>          for_each_vma(vmi, vma) {
->>> +        int nr = 1;
->>> +
->>>            if (!(vma->vm_flags & VM_MERGEABLE))
->>>                continue;
->>>            if (ksm_scan.address < vma->vm_start)
->>> @@ -2660,6 +2662,9 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
->>>                    cond_resched();
->>>                    continue;
->>>                }
->>> +
->>> +            VM_WARN_ON(PageTail(*page));
->>> +            nr = compound_nr(*page);
->>>                if (is_zone_device_page(*page))
->>>                    goto next_page;
->>>                if (PageAnon(*page)) {
->>> @@ -2672,7 +2677,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
->>>                        if (should_skip_rmap_item(*page, rmap_item))
->>>                            goto next_page;
->>>    -                    ksm_scan.address += PAGE_SIZE;
->>> +                    ksm_scan.address += nr * PAGE_SIZE;
->>>                    } else
->>>                        put_page(*page);
->>>                    mmap_read_unlock(mm);
->>> @@ -2680,7 +2685,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
->>>                }
->>>    next_page:
->>>                put_page(*page);
->>> -            ksm_scan.address += PAGE_SIZE;
->>> +            ksm_scan.address += nr * PAGE_SIZE;
->>>                cond_resched();
->>>            }
->>>        }
->>
->> You might be jumping over pages that don't belong to that folio. What you would actually want to do is somehow use folio_pte_batch() to really know the PTEs point at the same folio, so you can skip them. But that's not that easy when using follow_page() ...
->>
->> So I suggest dropping this change for now.
->>
-> 
-> Hi David,
-> 
-> Forgive my stupidity, where I jump over normal page that not to belong to the folio?
+On Tue, Jun 04, 2024 at 11:46:38AM +0200, Krzysztof Kozlowski wrote:
+> Add support for handling jack events of USB (DisplayPort).
 
-IIUC, you assume that the folio is fully mapped by all PTEs that could 
-span it, and that follow_page() would give you the head page, correct?
+> Depends on:
+> https://lore.kernel.org/all/20240422134354.89291-1-srinivas.kandagatla@linaro.org/
+> ---
 
-As a simple example, assume only a single page of a large folio is still 
-mapped, which could be any tail page. You couldn't jump over any PTEs.
+> @@ -20,12 +20,32 @@ struct x1e80100_snd_data {
+>  	struct snd_soc_card *card;
+>  	struct sdw_stream_runtime *sruntime[AFE_PORT_MAX];
+>  	struct snd_soc_jack jack;
+> +	struct snd_soc_jack hdmi_jack[8];
 
-Or am I missing something?
+As I asked Srini, please rename this dp_jack.
 
--- 
-Cheers,
+>  	bool jack_setup;
+>  };
+>  
+>  static int x1e80100_snd_init(struct snd_soc_pcm_runtime *rtd)
+>  {
+>  	struct x1e80100_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
+> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
 
-David / dhildenb
+> +	struct snd_soc_jack *hdmi_jack = NULL;
+> +	int hdmi_pcm_id = 0;
 
+And use dp_ prefixes here too.
+
+> +
+> +	switch (cpu_dai->id) {
+> +	case DISPLAY_PORT_RX_0:
+> +		hdmi_pcm_id = 0;
+> +		hdmi_jack = &data->hdmi_jack[hdmi_pcm_id];
+> +		break;
+> +	case DISPLAY_PORT_RX_1 ... DISPLAY_PORT_RX_7:
+> +		hdmi_pcm_id = cpu_dai->id - DISPLAY_PORT_RX_1 + 1;
+> +		hdmi_jack = &data->hdmi_jack[hdmi_pcm_id];
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	if (hdmi_jack)
+> +		return qcom_snd_dp_jack_setup(rtd, hdmi_jack, hdmi_pcm_id);
+>  
+>  	return qcom_snd_wcd_jack_setup(rtd, &data->jack, &data->jack_setup);
+>  }
+
+Johan
 
