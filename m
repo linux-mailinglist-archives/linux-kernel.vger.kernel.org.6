@@ -1,212 +1,136 @@
-Return-Path: <linux-kernel+bounces-200841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE95B8FB582
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7788FB547
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06D11C225B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:37:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3B991F21E07
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2103514A08D;
-	Tue,  4 Jun 2024 14:33:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1AA13D276;
-	Tue,  4 Jun 2024 14:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0978413A3F7;
+	Tue,  4 Jun 2024 14:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FnGAeiu2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A06C8C7
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511606; cv=none; b=PbPpVLXd1OBAcyEbG/xl9wZ46YSrZZO43djo0fD9vcGMOkwIzYEQXQhAjLrhDMiGwR5I8C3FK8ROjsCYLpgrMwbq0VopH/lfBoGoy3m+xzmHlPXV14DzdxHOA7V7kFoBLgJq2644sKX18inlBh5DsQt9bwLlVXBqBMAb46Xjg5w=
+	t=1717511475; cv=none; b=dCIuFBXWKeQ91YjsjauxZTZNv8Hz98O4FPznLtUtUZ5BAEiXxAbbm8RdcVfqZ3hPGnaQcULxuwrMzp7QtEhuLMVjRTY1hgGz6h1nY8jJVe03sCelKfT43Ncm2mefEv46dqwxtE08/wo9Ms6cG772hmQiwQeYw0f7vWmxoX6JTco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511606; c=relaxed/simple;
-	bh=MoWb5IDkVJxigSO6G5+nbXoC9pg/6yDnaht5XYWhvsk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xz2bQQqRZnYWFnrvftiGk9S/4jHS1/JWOSlFrcNM/acMvMwof1qdCBECpyDcZCEHv87QJx/dND6DUCkLGQwTZmRdiwc+5bwhv2dScQMF4XbSjYY0LP3dvRXmjWJAnFFaSav85AMM5NBKExYgiyz1UE3AaFJx2bPy6HE2FvPgJdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBD161042;
-	Tue,  4 Jun 2024 07:33:48 -0700 (PDT)
-Received: from e127643.broadband (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 82FDB3F64C;
-	Tue,  4 Jun 2024 07:33:21 -0700 (PDT)
-From: James Clark <james.clark@arm.com>
-To: coresight@lists.linaro.org,
-	suzuki.poulose@arm.com,
-	gankulkarni@os.amperecomputing.com,
-	mike.leach@linaro.org,
-	leo.yan@linux.dev,
-	anshuman.khandual@arm.com
-Cc: James Clark <james.clark@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH v2 16/16] coresight: Emit sink ID in the HW_ID packets
-Date: Tue,  4 Jun 2024 15:30:25 +0100
-Message-Id: <20240604143030.519906-17-james.clark@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240604143030.519906-1-james.clark@arm.com>
-References: <20240604143030.519906-1-james.clark@arm.com>
+	s=arc-20240116; t=1717511475; c=relaxed/simple;
+	bh=wyePXwAxkMqCXIcx+41jHRC/gZYDXyThMt5kNSMQuZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NNkSrTkzDhnLi2MrpNChgfAQrVb+59eL0nwCyxWEPcQyzVwryW2pUCr3wfDdiPNwYwGdWKfHn83PTYV1dJkf4DCLO39k+rp9xybEAKBhF/wsUvkD4vvoSzDb3J4E6q13CPQu+1V+FvZR5tGK9kA6Vgahugb7kOXv9cPBsYPCpcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FnGAeiu2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717511472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gzSWB1uu8SnFXUqQQbZ1ZdBme8dM2DhgxeTgLVp11LI=;
+	b=FnGAeiu2b0kd7cpv+1+dL+GKz/zdv8QG3YYL1wV9+V5cw2YbV7zGgD7UdwYz7QcSubIOtL
+	OanDNIMKqOxZRPOpM6zcG93oDdIcaBFGQ7u+q27EtMjCbLP8OxL77bsNzu7iOO9NjK3ZQY
+	yDdqE/ddDOUhu8B1dh7VXjfz+areulA=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-450-cQT_CUcOPXG0o_JYYOPp0g-1; Tue, 04 Jun 2024 10:31:11 -0400
+X-MC-Unique: cQT_CUcOPXG0o_JYYOPp0g-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-57851ae6090so2328648a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 07:31:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717511469; x=1718116269;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gzSWB1uu8SnFXUqQQbZ1ZdBme8dM2DhgxeTgLVp11LI=;
+        b=dpIuuxJMPYE0jmaiMsEcMfwo4djtKpMHHS7Ce7OB5jhX/Z7ON8tasW3UgE+y20FBxl
+         LT9ROGkzHdrFlqtrxIk1lvWl+9rFE+hmrsqeduLXWrvONidzCv3jRVoLQjJQkP85D9m/
+         ohRDr8mog36PRT82qsUHqtzGgbGr6e5TB9j3atcu4LXdhQrMDtv6/W/qgSKhEBD9yv1F
+         R1I/FAGYhq+Po/Amqg27xpAdydnKsUEJcL9CNMMteGnXx2NIGoCmQ7b1iGgn/Xq05Yhi
+         yz234wpJBk1/ZQ46ZZSlBv1j/oxyW0MvqOjcZkMf2iu4Odtv5de2iYhjT3+nYdYR0a3f
+         Z9Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDwxfExLXlBWEKVvS2XEqb4dXxifLV97+wFaoz8fFH38D1U9GlsSwgMJt6720zdWmUpmDiHaFmciiVe7UbSEpZ1Z0HTa2XKlsnT7eA
+X-Gm-Message-State: AOJu0Yx3LFJykOFJHKgsHDkDiO0q0ScP26Rh7AsRnWe1w83nZ2V1bkRU
+	E/HarCLFXhzUAFPHwz0nJ0wVKOreIeGgGYXU3sr9O8frugL5TY05ErIDtZyVkr2orgjfuP4dW6u
+	5m5AXY+dByD6pDO42RebZbfUa7c0mOX0DZKRzh5meyx0P3lIe41nKPNVdAHkasA==
+X-Received: by 2002:a50:f616:0:b0:572:4041:5637 with SMTP id 4fb4d7f45d1cf-57a3638f302mr7897275a12.19.1717511468897;
+        Tue, 04 Jun 2024 07:31:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFKz9ykShYqx98nKzJWNWXfA6S3FKbkIGe+3J3S5MNrtNmnUpiyilWNsHcrQEEB+GSK2sKi9g==
+X-Received: by 2002:a50:f616:0:b0:572:4041:5637 with SMTP id 4fb4d7f45d1cf-57a3638f302mr7897258a12.19.1717511468461;
+        Tue, 04 Jun 2024 07:31:08 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:2a07:3a01:e7a9:b143:57e6:261b? (2001-1c00-2a07-3a01-e7a9-b143-57e6-261b.cable.dynamic.v6.ziggo.nl. [2001:1c00:2a07:3a01:e7a9:b143:57e6:261b])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a66ed0d68sm3377025a12.63.2024.06.04.07.31.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 07:31:08 -0700 (PDT)
+Message-ID: <85109720-0d0e-4c35-8cf5-02d8c883f13a@redhat.com>
+Date: Tue, 4 Jun 2024 16:31:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] HID: letsketch: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240604-md-hid-letsketch-v1-1-ff38ae7b4cb0@quicinc.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240604-md-hid-letsketch-v1-1-ff38ae7b4cb0@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For Perf to be able to decode when per-sink trace IDs are used, emit the
-sink that's being written to for each ETM.
+Hi,
 
-Perf currently errors out if it sees a newer packet version so instead
-of bumping it, add a new minor version field. This can be used to
-signify new versions that have backwards compatible fields. Considering
-this change is only for high core count machines, it doesn't make sense
-to make a breaking change for everyone.
+On 6/4/24 4:20 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-letsketch.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Signed-off-by: James Clark <james.clark@arm.com>
----
- drivers/hwtracing/coresight/coresight-core.c  | 26 ++++++++++---------
- .../hwtracing/coresight/coresight-etm-perf.c  | 16 ++++++++----
- drivers/hwtracing/coresight/coresight-priv.h  |  1 +
- include/linux/coresight-pmu.h                 | 17 +++++++++---
- 4 files changed, 39 insertions(+), 21 deletions(-)
+Thanks, patch looks good to me:
 
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index d5aaeafe5c7d..b6a88df582e0 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -487,23 +487,25 @@ struct coresight_device *coresight_get_sink(struct list_head *path)
- 	return csdev;
- }
- 
-+u32 coresight_get_sink_id(struct coresight_device *csdev)
-+{
-+	if (!csdev->ea)
-+		return 0;
-+
-+	/*
-+	 * See function etm_perf_add_symlink_sink() to know where
-+	 * this comes from.
-+	 */
-+	return (u32) (unsigned long) csdev->ea->var;
-+}
-+
- static int coresight_sink_by_id(struct device *dev, const void *data)
- {
- 	struct coresight_device *csdev = to_coresight_device(dev);
--	unsigned long hash;
- 
- 	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
--	     csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
--
--		if (!csdev->ea)
--			return 0;
--		/*
--		 * See function etm_perf_add_symlink_sink() to know where
--		 * this comes from.
--		 */
--		hash = (unsigned long)csdev->ea->var;
--
--		if ((u32)hash == *(u32 *)data)
-+	    csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
-+		if (coresight_get_sink_id(csdev) == *(u32 *)data)
- 			return 1;
- 	}
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index b6f505b50e67..a3a4d07a763f 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -453,6 +453,7 @@ static void etm_event_start(struct perf_event *event, int flags)
- 	struct coresight_device *sink, *csdev = per_cpu(csdev_src, cpu);
- 	struct list_head *path;
- 	u64 hw_id;
-+	u8 trace_id;
- 
- 	if (!csdev)
- 		goto fail;
-@@ -519,11 +520,16 @@ static void etm_event_start(struct perf_event *event, int flags)
- 	 */
- 	if (!cpumask_test_cpu(cpu, &event_data->aux_hwid_done)) {
- 		cpumask_set_cpu(cpu, &event_data->aux_hwid_done);
--		hw_id = FIELD_PREP(CS_AUX_HW_ID_VERSION_MASK,
--				   CS_AUX_HW_ID_CURR_VERSION);
--		hw_id |= FIELD_PREP(CS_AUX_HW_ID_TRACE_ID_MASK,
--				    coresight_trace_id_read_cpu_id_map(cpu,
--								       &sink->perf_sink_id_map));
-+
-+		trace_id = coresight_trace_id_read_cpu_id_map(cpu, &sink->perf_sink_id_map);
-+
-+		hw_id = FIELD_PREP(CS_AUX_HW_ID_MAJOR_VERSION_MASK,
-+				CS_AUX_HW_ID_MAJOR_VERSION);
-+		hw_id |= FIELD_PREP(CS_AUX_HW_ID_MINOR_VERSION_MASK,
-+				CS_AUX_HW_ID_MINOR_VERSION);
-+		hw_id |= FIELD_PREP(CS_AUX_HW_ID_TRACE_ID_MASK, trace_id);
-+		hw_id |= FIELD_PREP(CS_AUX_HW_ID_SINK_ID_MASK, coresight_get_sink_id(sink));
-+
- 		perf_report_aux_output_id(event, hw_id);
- 	}
- 
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 61a46d3bdcc8..05f891ca6b5c 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -148,6 +148,7 @@ int coresight_make_links(struct coresight_device *orig,
- 			 struct coresight_device *target);
- void coresight_remove_links(struct coresight_device *orig,
- 			    struct coresight_connection *conn);
-+u32 coresight_get_sink_id(struct coresight_device *csdev);
- 
- #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
- extern int etm_readl_cp14(u32 off, unsigned int *val);
-diff --git a/include/linux/coresight-pmu.h b/include/linux/coresight-pmu.h
-index 51ac441a37c3..89b0ac0014b0 100644
---- a/include/linux/coresight-pmu.h
-+++ b/include/linux/coresight-pmu.h
-@@ -49,12 +49,21 @@
-  * Interpretation of the PERF_RECORD_AUX_OUTPUT_HW_ID payload.
-  * Used to associate a CPU with the CoreSight Trace ID.
-  * [07:00] - Trace ID - uses 8 bits to make value easy to read in file.
-- * [59:08] - Unused (SBZ)
-- * [63:60] - Version
-+ * [39:08] - Sink ID - as reported in /sys/bus/event_source/devices/cs_etm/sinks/
-+ *	      Added in minor version 1.
-+ * [55:40] - Unused (SBZ)
-+ * [59:56] - Minor Version - previously existing fields are compatible with
-+ *	      all minor versions.
-+ * [63:60] - Major Version - previously existing fields mean different things
-+ *	      in new major versions.
-  */
- #define CS_AUX_HW_ID_TRACE_ID_MASK	GENMASK_ULL(7, 0)
--#define CS_AUX_HW_ID_VERSION_MASK	GENMASK_ULL(63, 60)
-+#define CS_AUX_HW_ID_SINK_ID_MASK	GENMASK_ULL(39, 8)
- 
--#define CS_AUX_HW_ID_CURR_VERSION 0
-+#define CS_AUX_HW_ID_MINOR_VERSION_MASK	GENMASK_ULL(59, 56)
-+#define CS_AUX_HW_ID_MAJOR_VERSION_MASK	GENMASK_ULL(63, 60)
-+
-+#define CS_AUX_HW_ID_MAJOR_VERSION 0
-+#define CS_AUX_HW_ID_MINOR_VERSION 1
- 
- #endif
--- 
-2.34.1
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/hid/hid-letsketch.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/hid/hid-letsketch.c b/drivers/hid/hid-letsketch.c
+> index 97f047f18136..229820fda960 100644
+> --- a/drivers/hid/hid-letsketch.c
+> +++ b/drivers/hid/hid-letsketch.c
+> @@ -319,4 +319,5 @@ static struct hid_driver letsketch_driver = {
+>  module_hid_driver(letsketch_driver);
+>  
+>  MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
+> +MODULE_DESCRIPTION("Driver for the LetSketch / VSON WP9620N drawing tablet");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+> change-id: 20240604-md-hid-letsketch-53206a0faa79
+> 
 
 
