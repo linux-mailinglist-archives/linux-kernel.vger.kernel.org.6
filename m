@@ -1,183 +1,166 @@
-Return-Path: <linux-kernel+bounces-200654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9628FB2FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:56:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754688FB30F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 277951C21542
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDF41F2201A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AFA1482E6;
-	Tue,  4 Jun 2024 12:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D81146D4D;
+	Tue,  4 Jun 2024 12:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="so8G+/r2"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SHnxR0f3"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62A61465A0;
-	Tue,  4 Jun 2024 12:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65B5146A98
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 12:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717505696; cv=none; b=usSVvh91W36gTgLu20wYtQIMAJt/H7XBHNbalUnmFTV4qoqVvP9QRe5w+uLCe/zK/lRijJV+sSXMU2oqcssoNnJlnXUw2Ah7YK+LL0fKmnlq/iFXNQrb4SwVffdx+mSzT4Yo4bfmrbwbGNR3dt1FifMtpqbFfrJczt4JxOKO7DY=
+	t=1717505738; cv=none; b=r4/FPIUqh7t7nhOo6oy/arUWRks2+d9WoEflSEmbNiUbia/WH/J9y3MXx8EsGZ+TNbpTVcUIEF4gwc1KXUnw0QHBET4rAdSob+7wRno4gtTjLUvNrc8lLvr72gqqPgoJZS67PBYQtOFatonhjW7Tx76ccT1iLZRzCnszYBJh4Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717505696; c=relaxed/simple;
-	bh=6r0nPGrlvbLTowPbiR+YL8Z4O8Ed6VNmvaDIlB0sKBM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p48wiz1+lY50R5cavvpWjDWkjh0rcfqUfCDCnsUB8T3fSSXEO6vKA0bdalvxREdpZSr9UltHWSYnJ//wRGEDRlZSLHMrm1lRWHmJHRdvxOhlPNOmIhEUwLBdPEcOw6D30HtdBv7X9AlQAhlVkrMdHE1EdiDIrTo0QJbMVj4EaBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=so8G+/r2; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717505692;
-	bh=6r0nPGrlvbLTowPbiR+YL8Z4O8Ed6VNmvaDIlB0sKBM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=so8G+/r2yS3Zspfmcg9MYYNewDV9qpcRNV9MvT2PnyEP9RM347CUdAJxF+RjZ6G83
-	 mWbzWit58s0SPgRI6uV6hh6Rlh0qNF9FgzSs8qXVk12ssqudyZBnh7EJZAzpeDRojv
-	 uDfmRVOXTWBUUqGdS/P5xhxy7JzF2Ts0te8ml0fMKCrhYJHD/c/X6r+MEmhKmXS4v2
-	 Zu2daHxwdsdm5YDEt/ZuachZiaRmOz6aes9HhCWJVGzoj/R3onNCapuEgoBx6KUBjo
-	 fqdmcT30WAU3AccMEVQ5C37xqXjdXgAOq2hffSPyK4GS5tzpl7KF8uye3BrTBO5rMI
-	 0WtSYrcdtL6Cg==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B82893782173;
-	Tue,  4 Jun 2024 12:54:51 +0000 (UTC)
-From: Laura Nao <laura.nao@collabora.com>
-To: rafael@kernel.org
-Cc: kernel@collabora.com,
-	laura.nao@collabora.com,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [REGRESSION] probe with driver acpi-fan failed with error -22
-Date: Tue,  4 Jun 2024 14:55:09 +0200
-Message-Id: <20240604125509.553786-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <CAJZ5v0jP4TKojEMcMutptYFC=o0zJLyHfCBVOdcwp4tzSNK_4A@mail.gmail.com>
-References: <CAJZ5v0jP4TKojEMcMutptYFC=o0zJLyHfCBVOdcwp4tzSNK_4A@mail.gmail.com>
+	s=arc-20240116; t=1717505738; c=relaxed/simple;
+	bh=V0vCL6gVkhzAyZZo+oJsCeJeNNIlPl7HtsS1Su1kgQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CuA/uwuky6Bxs12uMiLU/gK20AjMT5rCm6U6trHTtL1ykb8/Hkn7JcFxwwqWMgL0pF95j/opG1T0Bng8zHzA1Oz6hkXO7mVNMPt+40kludHZeiu7f1plHUMDErDiTrRlCccfASfJl5kLkbeDsh1h/PkdHfTDz9oAKzLNhe1h8cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SHnxR0f3; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a20ccafc6so5030637a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 05:55:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717505735; x=1718110535; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CuBOud40nBOggoAWfa0+Eb9qxrfGYqM4K+kdHXRtdok=;
+        b=SHnxR0f3f/eU2/9IpCfHNwpBuiGCWzuq4zshgc5MNDPEmAyV7g1B7HhuguAmHhuaIz
+         ZiHBrzhD4ysLNPMyWR6mjYcDkGuj+qdIs9RBdBO8xB/qHETk/+8whqn5kWAitl41VQhr
+         tKmXN4SoOw6sji9FRuuLr6hD0ntJHruRuVnceFlU/a7eBUCtTVvpFbFp1kBlLc0++kGC
+         V55LkloIlxmWEUoC47k5vGngmBDV8hFOznZ/nwZAJiFUIRw9lAWdB6wWNbrm7OYyK9tQ
+         OWOEgG/hvmMp/kbatitGCDgf4af/d99T3n1NoZEeUp9a7IjT1PJTR+JZUDPmBFxX+fAi
+         9vGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717505735; x=1718110535;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CuBOud40nBOggoAWfa0+Eb9qxrfGYqM4K+kdHXRtdok=;
+        b=mjWcXEvJJRSNLD1UjZD/HTgU1gwC13QZXKjcceP16/MuB3/wbkOmISF9MRVgNcZEKT
+         CoZPJIx92IMUa0XcoK3KXn2/Y2ZNMKmC+z8ueGqwGHOLu8I+JXPg4s1lfWBiEiUbUqd+
+         gBFmjb4NpENSm46JsHqPVUFHoCiEeP2VKOjVqCyFYRy6x0XZRKRfMte0iVRdSI8jdO+r
+         WO0tp/3By4rRwoBfgbEht7mLjVLOHzLTfzgslaPQPZ5NvzvazybUFkBTpxelUTPGZtYW
+         8Ros2n1ppr6pPzbqDx8ZUi9xuUtfob/1ZpdB0gEAg4djtowowSGZehr3n36kj8Ohedne
+         0M1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWGgMUmvKAv8iuGur6/P3kdsrnRj/qcDSSs6Xh48ycUxtlqTjTucC+/ntmQiIgKfOMA8wtjGls3T0VmVf8afi4LEex1oMHZ9bba7jDq
+X-Gm-Message-State: AOJu0Yz82d03YFcW0cqO4yAQ698iSUVm9L5nwZ8gDXWtWd8ZecyWe8Gi
+	hon0WNVbYE0dTYpK+79oMH9rTAb39iVeAyrhFUAw6nBb3yygTWjcwTLTJZSYkoo=
+X-Google-Smtp-Source: AGHT+IG1rAoHsAHyRqKPmOSjqv99/sZwppXItf/q+FZevk0x6ZqV4EBji8R7gKbvE/UOP0Zpec+vYg==
+X-Received: by 2002:a50:d541:0:b0:57a:231e:2cf5 with SMTP id 4fb4d7f45d1cf-57a364384afmr8146953a12.32.1717505735060;
+        Tue, 04 Jun 2024 05:55:35 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:909a:a11e:a035:2af2:8d85:1f72? ([2a00:f41:909a:a11e:a035:2af2:8d85:1f72])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31bb83f0sm7291474a12.35.2024.06.04.05.55.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 05:55:34 -0700 (PDT)
+Message-ID: <dd1be285-d94b-448e-85d3-d5dce27f9ac0@linaro.org>
+Date: Tue, 4 Jun 2024 14:55:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100: Make the PCIe 6a PHY
+ support 4 lanes mode
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Rajendra Nayak
+ <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240531-x1e80100-dts-fixes-pcie6a-v1-0-1573ebcae1e8@linaro.org>
+ <20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org>
+ <Zl28nvnpGFRsYpGh@hovoldconsulting.com>
+ <d93fe55e-7c65-48cb-bdaf-5e15bc22be30@linaro.org>
+ <Zl8GoRoY9lXRtg2R@hovoldconsulting.com>
+ <402aa998-8b3c-4c3c-8dcb-f128b6ddac46@linaro.org>
+ <Zl8MUpfy/2Khw+wD@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <Zl8MUpfy/2Khw+wD@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Rafael,
 
-On 6/4/24 14:07, Rafael J. Wysocki wrote:
-> On Mon, Jun 3, 2024 at 8:20 PM Rafael J. Wysocki <rafael@kernel.org>
-> wrote:
->>
->> Hi,
->>
->> On Fri, May 31, 2024 at 1:35 PM Laura Nao <laura.nao@collabora.com>
->> wrote:
->>>
->>> Hello,
->>>
->>> On 5/30/24 17:37, Laura Nao wrote:
->>>> Hello,
->>>>
->>>> We have identified a regression in the acpi-fan driver probe
->>>> between
->>>> v6.9-rc7 and v6.10-rc1 on some Intel Chromebooks in the Collabora
->>>> LAVA
->>>> lab.
->>>>
->>>> For the Acer Chromebook Spin 514 (CP514-2H), the following error is
->>>> reported in the logs:
->>>>
->>>> [    0.651202] acpi-fan INTC1044:00: probe with driver acpi-fan
->>>> failed with error -22
->>>>
->>>> Similar errors are reported on other devices with fans compatible
->>>> with
->>>> the same driver.
->>>>
->>>> On Acer Chromebox CXI4, ASUS Chromebook Flip C436FA and
->>>> HP Chromebook x360 14 G1:
->>>>
->>>> [    0.488001] acpi-fan INT3404:00: probe with driver acpi-fan
->>>> failed with error -22
->>>>
->>>> On ASUS Chromebook Vero 514 CBV514-1H:
->>>>
->>>> [    1.168905] acpi-fan INTC1048:00: probe with driver acpi-fan
->>>> failed with error -22
->>>>
->>>> The issue is still present on next-20240529.
->>>>
->>>> I'm sending this report to track the regression while a fix is
->>>> identified. I'll investigate the issue/run a bisection and report
->>>> back
->>>> with the results.
->>>>
->>>> This regression was discovered during some preliminary tests with
->>>> the
->>>> ACPI probe kselftest [1] in KernelCI. The config used was the
->>>> upstream
->>>> x86_64 defconfig with a fragment applied on top [2].
->>>>
->>>> Best,
->>>>
->>>> Laura
->>>>
->>>> [1]
->>>> https://lore.kernel.org/all/20240308144933.337107-1-laura.nao@collabora.com/
->>>> [2] https://pastebin.com/raw/0tFM0Zyg
->>>>
->>>> #regzbot introduced: v6.9-rc7..v6.10-rc1
->>>
->>> The issue started happening after:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/thermal/thermal_core.c?h=v6.10-rc1&id=31a0fa0019b022024cc082ae292951a596b06f8c
->>>
->>> Before this commit, get_cur_state() was not called by
->>> __thermal_cooling_device_register, so the error was not triggered.
->>>
->>> After enabling debugging for the acpi-fan driver, I noticed these
->>> errors
->>> in the logs:
->>>
->>> [    0.682224] acpi INTC1044:00: Invalid control value returned
->>> [    0.682635] acpi INTC1044:00: Invalid control value returned
->>>
->>> The value stored in fst.control is 255, which is indeed not a valid
->>> value.
->>>
->>> I suspect this might be a firmware issue that is now manifesting due
->>> to
->>> the addition of the extra get_cur_state() call.
->>>
->>> I'll dig a bit more and report back.
->>
->> It looks like _FST returns all ones if it is evaluated before _FSL on
->> the affected platforms.
->>
 
-Right, I'll look into that.
-
->> It shouldn't do that, but then it is not particularly useful to fail
->> cdev registration for this reason.
+On 6/4/24 14:45, Abel Vesa wrote:
+> On 24-06-04 14:38:40, Konrad Dybcio wrote:
 >>
->> The attached patch should work around this issue, please try it and
->> report back.
+>>
+>> On 6/4/24 14:20, Johan Hovold wrote:
+>>> On Tue, Jun 04, 2024 at 02:00:10PM +0200, Konrad Dybcio wrote:
+>>>> On 6/3/24 14:52, Johan Hovold wrote:
+>>>
+>>>>> As I just mentioned in my reply on the PHY patch, this does not seem to
+>>>>> work on the CRD were the link still come up as 2-lane (also with the
+>>>>> clocks fixed):
+>>>>>
+>>>>> 	qcom-pcie 1bf8000.pci: PCIe Gen.4 x2 link up
+>>>>>
+>>>>> So something appears to be wrong here or in the PHY changes.
+>>>>
+>>>> Is the device on the other end x4-capable? Or does it not matter in
+>>>> this log line?
+>>>
+>>> Yes, of course. It's the CRD as I wrote above, and you can tell from
+>>> other log entries:
+>>>
+>>> 	pci 0007:01:00.0: 31.506 Gb/s available PCIe bandwidth, limited by 16.0 GT/s PCIe x2 link at 0007:00:00.0 (capable of 63.012 Gb/s with 16.0 GT/s PCIe x4 link)
+>>>
+>>> lspci and what Windows reports.
+>> Ok, good. I was scared of double-sourcing of parts that are not identical
+>> in spec..
+>>
 > 
-> A !ret check is missing in that patch, so please try the attached new
-> version of it instead.
->
-> Thanks!
+> On my CRD, there is a KBG50ZNS256G.
+> 
+>> [1] suggests this wasn't ever achieved.. which makes the cover letter of
+>> this series a bit misleading..
+> 
+> True ...
+> 
+>>
+>> What does the TCSR check return? If 0, can you hardcode it to 1 and see if
+>> the link comes up at x4?
+> 
+> TCSR check returns 1. But that is not enough. The PCIe controller needs to
+> handles some stuff about margining. See the following patchset.
+> 
+> https://lore.kernel.org/linux-pci/20240501163610.8900-3-quic_schintav@quicinc.com/
+> 
+> But even with this, I'm not able to get 4-lanes mode to work (yet).
+> So it must be something else in the controller driver that is needed.
 
-I confirm the patch works as expected and fixes the probe issue.
+The margining settings AFAIU shouldn't be necessary for just getting the
+link, but to ensure there aren't many errors while transacting..
 
-Thank you!
+> 
+> IIRC, this is the first Qualcomm platform that would support Gen4 with
+> 4-lanes upstream. Maybe I'm wrong.
 
-Laura
+Seems so
+
+Another idea I had, maybe the PCIE_PORT_LINK_CONTROL &
+PCIE_LINK_WIDTH_SPEED_CONTROL registers differ on qcom gen4 controllers..
+
+Can you check the documentation and see if the defines in
+drivers/pci/controller/dwc/pcie-designware.h still hold true?
+
+Konrad
 
