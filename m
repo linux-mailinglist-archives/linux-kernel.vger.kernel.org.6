@@ -1,243 +1,230 @@
-Return-Path: <linux-kernel+bounces-201059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF78FB8C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:23:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB468FB8E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 18:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595F1289E22
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C91D1F25E61
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7981487DC;
-	Tue,  4 Jun 2024 16:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4948114884D;
+	Tue,  4 Jun 2024 16:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OkuYICvZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="XucFB5UK"
+Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01on2090.outbound.protection.outlook.com [40.107.15.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D300826AF1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 16:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717518198; cv=none; b=bmc5b9+YtA5d25RD5hk/KKKsp6FKc76kkpz5TAUhoziLbtAmcGW458UHgHstCvQrr0TCerjZyaOGUgB4oCIFxr9F4P/GpekCIyi8zenlutxvmWOycDPmWrdw4SpCI40YRjzsSCJx1SpJj/tdFlXdkN9vZlckXhEmyNnEQAnRE2E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717518198; c=relaxed/simple;
-	bh=L42C0MqxlWUis1/vQ2kmicKTlDmz8GjJwo4hZVEkM70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l+Te9VV1KvOk7vpeZHPre8cXtFE3QkEj2ZR6NONsykpaQffhh2XkfeiHxHFqNtwA2/m9kj82mVARZcp+aFD/PPo0NvET4+GSoqQHjLI2Qy4HKWdylQCIQaH/Hwji7jQfd08NA2/uIuFzd4yaN8nhJPFvY+HJzdUGcfhZGRhj1ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OkuYICvZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717518195;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t9m4FJ0/GJVz2wRY4oBw6RkZiK4RCdJiPQkTonn2MFI=;
-	b=OkuYICvZqpVMACEz0GDleuN8shS8+iJpLuhpuz79CWe8tgnLXbtnlBr7SkDt/ACzrWKBp4
-	bJUl3tYnOQyLz1EYHmf4JftBeBGDqo1OZhJE0sftRqCsGTNJqoFzrJTvMujuiRwBTHgFu1
-	dYqetdk22t9iKjkLXo0xPxmcc2LODgE=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-7SPA8Lu5MHmnDcf4fs5pqg-1; Tue, 04 Jun 2024 12:23:14 -0400
-X-MC-Unique: 7SPA8Lu5MHmnDcf4fs5pqg-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ea9429e1deso37171941fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 09:23:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717518192; x=1718122992;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t9m4FJ0/GJVz2wRY4oBw6RkZiK4RCdJiPQkTonn2MFI=;
-        b=JPAFETV2X2Au9D75mwslb5J+zlHQ3t/oDiZMABsrzXzcWwfUdkZtvN1+nSQO2G4qRS
-         C8VdN1toQBZ/OPAR/dsfCtmCqURqI2k6JtQnri1LtFzsHyths5Sw5jqs8W/KSbEmptIu
-         ar5dioEA+iAvmf82gFpuCJihz1h11jLerLg3/mxZp1kapjf/psNk47Kep2StkQJkRyTt
-         bjJjRGwdmlkvu+BqaDwP6UbhaS+zQJXUt+dAQcRBYp3DxVlHaySvMR15tIhPlkYZvWir
-         FSzJha5qiiwfs4pQP0+Avq6agnJw0g06LqJQLlhW7eH6UOh2bo0EJkeSG3CpQPRarn1d
-         L9yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpvmkfdeiZCZ9cLeHybpeH2AKFH3nmjaSdvZSt50aBdS24djXegw5iuBdbybpk7ZFxcue4pI9ADOcGUWYJ6Pj9H99nwbg02zvzqLic
-X-Gm-Message-State: AOJu0YzI3Rrftynk+mE5sLjbwB5nVpekZaYFNbO7aDMu7wYeRYxWjQ7N
-	oun5i9E3p1uZ7gJNjCg0IcJPLdGJsbr+wGbALv1qGzCXCFM/bJ6dNAW/nv6/BLK0jbG/Pl2UA1i
-	wRyhPwzuBnjinqonaE5xARuToDVkg/NJaZfA05niabivmCd84R8zaYbwL3FTf0A==
-X-Received: by 2002:a2e:b053:0:b0:2ea:938f:a23d with SMTP id 38308e7fff4ca-2ea951b6102mr79735721fa.42.1717518192419;
-        Tue, 04 Jun 2024 09:23:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpDgl6mVBcVb02NoTlLuJeCPaA3ijNInKKoW4CUr3sKzP9Qc3fogPqdIuifYw03YqFir9JPw==
-X-Received: by 2002:a2e:b053:0:b0:2ea:938f:a23d with SMTP id 38308e7fff4ca-2ea951b6102mr79735491fa.42.1717518191954;
-        Tue, 04 Jun 2024 09:23:11 -0700 (PDT)
-Received: from cassiopeiae ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212709d336sm190116295e9.37.2024.06.04.09.23.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 09:23:11 -0700 (PDT)
-Date: Tue, 4 Jun 2024 18:23:09 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH 01/11] rust: add abstraction for struct device
-Message-ID: <Zl8_bXqK-T24y1kp@cassiopeiae>
-References: <20240520172554.182094-1-dakr@redhat.com>
- <20240520172554.182094-2-dakr@redhat.com>
- <2024052038-deviancy-criteria-e4fe@gregkh>
- <Zkuw/nOlpAe1OesV@pollux.localdomain>
- <2024052144-alibi-mourner-d463@gregkh>
- <Zk0HG5Ot-_e0o89p@pollux>
- <2024060428-whoops-flattop-7f43@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B411487DC;
+	Tue,  4 Jun 2024 16:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.15.90
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717518516; cv=fail; b=mqybDre83WO+IXgHcvfHQyI5Jfuv6wWOaGyrrY/E+moDSSTwcT8mlGojQUnQQQznjXq8Ywz1oXSx4evwXXnsoC2XGSNPfNCpk2N5ACoKGFeHJkp3fBNW6fx5mYIATKUIxmsA32VrCmxKVii5ZgV40U5tAYlTIakmyOyIhHqBdwQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717518516; c=relaxed/simple;
+	bh=9DhIrz74syCKJzFGEhWyMISDRKB6o8znZvtpECQd16g=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=eOxAciUllDXEgMHH3Qfc70oX2diVFKt4UeLIfXmaDbQtqYQkcumDZJ0+XM4o5kBeV1PQJkInZDO063eZ9Q9XHuBrYOcA6j6/yPWT5YT1lGB+/WsgypufYxLG9XYMIr3zno0dB8464kn0Zgvj8aqs6PivLdpNKCiqqrM9d61Bc+c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=XucFB5UK; arc=fail smtp.client-ip=40.107.15.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LsI3AQu44fS/WazBS8oZGdP1YRmOJzBK6kjOYB01xKj/f5A9kNC8yUpQzgHPJLivrjaVGELpnQgfjzvocSyCiw3MlBKUntU2zJfk4VeSnya6QSw1WMFyea7+UF3Ib5QvPFysimy5x+X7TmbYlY56fjTaNV9XxmQSarMw8/r3kwF1NNGixVR0+aQEQVNqNlE1RJHhkxmLk+HdWnrxqZVrSytwi9OIIIRy5uIE7Rq50cVFqjZYHWwWLJLS9+MR3Dm0dfPbWhFjcB7y+2iR1vspcam3IIG3sl0p3slgZEY0ZPLgdkGO9EdxSEVcgRbcPnnkFsDVi7SW6chynKM/9Xx7hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X7oYMz6WD6g6S/qqFRn7epX/ImqkPpsOxm/dj5MNM+o=;
+ b=KP4GOXBlhIaXyV9lN/3tTpkZ1Q7NUIoLsE9IMFPMy3HBnWYmoigbl5MavUG/5rOONe/XzjRKpAd0O7xuXl949rrQuaKCq1gIuNqCh8KVz0ZsfZSngjgIk0V87iC/5bvDoUTP0fGHYSZzWgfP1fs4xuWWwai0RCGqWyTjOu/f8wPpHDvbjNuyKEql39Q310M6gkWYmD/uH9l5gA3S3PBCKz8nTooHeXH/sd6P7B+cTFBO1uBbYd27xj2aQQKskemDDUT8dtFsBWghxUMy/XHzaB84K9iu9fh3iXNkikzpJWh40qw1C3V6huferH46SS7yceGdpPmWulFdTZOguFCroQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X7oYMz6WD6g6S/qqFRn7epX/ImqkPpsOxm/dj5MNM+o=;
+ b=XucFB5UKpHw7gWNF7lyvJp+8N3ukOZ9rZkf5ii1mSXepO2bbNie4OzqlKVY4DdKiyFM057YwUXyzqnUOyZZnJQrl3dpg/sm5as7nPl336RTzjvud2AFeHzhAS9VbPljToDy8htn8wR8pylUMKv3MMSNzMgVIFzyi8UKUm026N8Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from VE1PR04MB6382.eurprd04.prod.outlook.com (2603:10a6:803:122::31)
+ by PAXPR04MB8893.eurprd04.prod.outlook.com (2603:10a6:102:20c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Tue, 4 Jun
+ 2024 16:28:26 +0000
+Received: from VE1PR04MB6382.eurprd04.prod.outlook.com
+ ([fe80::2a24:328:711:5cd6]) by VE1PR04MB6382.eurprd04.prod.outlook.com
+ ([fe80::2a24:328:711:5cd6%5]) with mapi id 15.20.7633.021; Tue, 4 Jun 2024
+ 16:28:26 +0000
+From: Farouk Bouabid <farouk.bouabid@cherry.de>
+Subject: [PATCH 0/4] Add Mule NVRAM/ROM support
+Date: Tue, 04 Jun 2024 18:23:50 +0200
+Message-Id: <20240604-nvmem-v1-0-b784260a36a6@cherry.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJY/X2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDU2ND3byy3NRc3bQUI0ugiLFBSqqpElBtQVFqWmYF2Jzo2NpaAKkKcC5
+ XAAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Farouk Bouabid <farouk.bouabid@cherry.de>, quentin.schulz@cherry.de
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: VE1PR08CA0003.eurprd08.prod.outlook.com
+ (2603:10a6:803:104::16) To VE1PR04MB6382.eurprd04.prod.outlook.com
+ (2603:10a6:803:122::31)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024060428-whoops-flattop-7f43@gregkh>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VE1PR04MB6382:EE_|PAXPR04MB8893:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63eacf43-59d3-45c1-843d-08dc84b35c5f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|366007|1800799015|52116005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dEVDSE5pZmJZemVzaEFEQzloYXR4YUR0NE5uNVNGOFRvYXVUb1Ewc0liNllz?=
+ =?utf-8?B?ZTA5Y3M5SEt0Ukp3OUtReU9kRkNRczl1TUZOZ1FmbjlsR2xzcmtSRFVwYzFy?=
+ =?utf-8?B?ZU1vQTQ4a3UzVHlEcXRtSlpibkxMZnZNL0ZQUXpseldaWHh2T3ZaL28xQnVM?=
+ =?utf-8?B?eEhlSXNDcWlDZEVBYXJRNkU2aG4zTm5PV1VIR1FtWFpHd0c0NFNMaThEOHhv?=
+ =?utf-8?B?NDkxaHFSVCtTMElkVGp4RGVaSGlramVRdHR3S1RPUTBnbjZFckxOY1dwYUFY?=
+ =?utf-8?B?ai9ZY0VnRUdXOGZ2ZURvTVhic09pZlpydjBieU5MWDk0T0ExTE1FNm41Skt6?=
+ =?utf-8?B?c1k3VFk2YWNxZ2V5VE9pcEtRMzNxb0toVlZqb2x4SnlKNnByNXJKMndWNURD?=
+ =?utf-8?B?ZnVQTEt0aDVKcDdtckQ0a0JUT0svRGJmK0dTckFEeXB2VERISHpaNjhuMUdI?=
+ =?utf-8?B?dFNSV3NUMkZxRERXQVdyYjIyVnF0YnJUQTZKNENzb2hCSW52aDdTSm1Nbk1y?=
+ =?utf-8?B?dDNsd1U3OUNnZmtRejU5ams4NSt4blQrVGt0dEN1Nk9kWmRzWEtqbkVwWnov?=
+ =?utf-8?B?Ni8zcDNNVGlsdUd3cHdLVHRpemJYeFBJeVh2cmhkeU5QOTlQdlVjTG9oUEN0?=
+ =?utf-8?B?bDhSWU51ck12Ky8yQUlBQTF0QkJUbTEyOWptaUdlUDRTdkFhS2N5anpRMnJs?=
+ =?utf-8?B?L3FyMHhQSm1PYTJEV0ZIelozVzBOUWFUSTRGOG1SQUdjc3VnZ1VQRXpNSHR0?=
+ =?utf-8?B?Q1RjWHZVdFdkc1lHVkJWNS9zU1FvMWNuQUM1eGdjbEpaWE5ZenpPbGN5dzFx?=
+ =?utf-8?B?Y21wUGxocDBCb0RmbzNFN2xDZXgyNmlzeVlHNUhvTWRSL09ORDBlYSsvQWhz?=
+ =?utf-8?B?S2N1ODBtb3NaWWkzY1pLUU1DOGtwK3R5MFJNYy8zbjhxVzFCWS85MFNLNFdX?=
+ =?utf-8?B?RlJSWEozRHc4aElPT1hNR3U2amRPS1Flc3h2YXB1OCswNGR4ekc3cHJld1RS?=
+ =?utf-8?B?aHh1ZWVHdmhjc1h4MHErWG83dDBOaHBZSmVsUFhLc21aSXRMa2NYcDJmQ0Zh?=
+ =?utf-8?B?dUwwbzJoVWVFVW1QOWFXR0NzRU1qZVUzSCtGUEVrb1RGKzBTZzF2bXR4UDE2?=
+ =?utf-8?B?U0RySHpoUkpzNVE3MWVOdER1TXNucjBrSU84SWp2Tys3RlZIeVlzTE1xNFUz?=
+ =?utf-8?B?aTYxUmhIRFVjUjI4VXNDRlNpc1VxMGQzK053dWRCWGhHU1lBZlh1SzRRd2dj?=
+ =?utf-8?B?SmJ5eUlGVGFqQTF0cjdnWTFWWXdCaFhZOW1VMVVMU0ZwK09hQUw2UDZ6M21p?=
+ =?utf-8?B?a3doMTgxSXE2MVhmVXc3Wmdla040dzRQUjZqU2FpZkpnZVNiQ0xidEpGSkRG?=
+ =?utf-8?B?YjZpWE1ZcWlKRElhMHNQUi9UWWlqUlNqa1AveSs4RUowNTdkeXBLNjc0UFNh?=
+ =?utf-8?B?OGFwVTA3Vm05aURwVFliVXVYaGg1Nm14aUhJUnRVY044TjRBK1VaelMxamNw?=
+ =?utf-8?B?ZDRNT0t0aGUreEV0ODNqRW5YOEhJSWFwQmt2NXBsdVFOQkcwV056bDBRMVNE?=
+ =?utf-8?B?cHN0R2cybEhYY3FWc1ZvTlJpZVN6RGVMYkhLeEs5MytpanU3Rm83Zk13QUY3?=
+ =?utf-8?B?L1RTUGkyVWYycGQrRTBEU0RQRDdkLzdLaVJGNTdUUlN2ajZ5ajZHRGk3R3Y3?=
+ =?utf-8?B?c2dJSGM1NytJMW03TVVCWTVXb3ltWkJEWVdvVE13ZGFiTjRyZ2xSSkJUMHJC?=
+ =?utf-8?B?TmhYMVo1UElib0RlalRCYmRGeHhWK0JUTDd0V2ltOW9qYXhXMHA3M3FDY2xv?=
+ =?utf-8?Q?shdaaSi2RGWb2JZyIA4sm0/953dm3idf5qvD0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VE1PR04MB6382.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(52116005)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bEcrQnR5c2FxaG5HUnd0enA0U1J2ZkE4eFFvNGQ4ckNYSGp0anVPNDJCRm9X?=
+ =?utf-8?B?MzY0Z1JSalZlb2xJbDd0M0s0K0h1SnhYVFF1NE12Y0VBbTdDSTgrZzdHS2tV?=
+ =?utf-8?B?dWZQRHRJeXRiQUNVNVQzbzc5K1UrRXdsalY4WSt6bzAwcmtUMldDNmNNM2Fz?=
+ =?utf-8?B?RUIxUUtHSUlVOEJNZy8vdkRnUkt0UkpnWUZqZjBXZVVoVVp3THRvRm9ITm9q?=
+ =?utf-8?B?b0hkQnVTSjlWR2wwcmxvOVNnSGk1SVpxU09xKzBlQmNmMUVCSm1Ld2RLWUoz?=
+ =?utf-8?B?WktHSmZNN2xXSG54UTlDSGRnTzcrNnM4aHRXVGNrQmNTbnRDWTd1ZUZxN3J2?=
+ =?utf-8?B?OVBDcitCWVRHdzVFRVI0YmpHOW40SW8xamtmaG5LaEJTaHpFS0xHNEY0clZE?=
+ =?utf-8?B?T3JGakVYVkhaTE5EWWpxa3pveDdVbHRRNG01T3g2b1ZyOEZwb2J5RHp2Rlg3?=
+ =?utf-8?B?QllVSUhHSEZwVDc0VncwVWQ1ZFlHeDNuQzcxeGw3a202Z0kzaXpYMHZEZEVK?=
+ =?utf-8?B?QmQ2NFZNNWphQXFQVk41UW5oOHZKZ2dqT1l2N1pOalZaUG5GYjdtSTd2QnBq?=
+ =?utf-8?B?QWUxRXUwdDlqTXNLMTdxTmtQS1ZXK3ZFVEtYTXFVdjBLVHFWNXpobWx0U0o4?=
+ =?utf-8?B?M1VxcnZsNzJlVTA0dzBBQVMxQS9BMWZXTzQ0dklQVjNlRnJ1cUF6SlI0RSsr?=
+ =?utf-8?B?djZBcWp5VVpmRjJJUE0vWURTa012cFRieFNvRFBkYXBJQWtzWVdmb1NWYnJr?=
+ =?utf-8?B?ZHIyaTVINkVsSHZiSXY1R2hQREFCc0Y3N0JrYlN1L0pEZGZPL3pCRzdyb2V4?=
+ =?utf-8?B?MXVXVlJqM3J6YmVDQkllM3pxUVdKZG9lTVFVcTN0d0RsWkhKTWppZUtpZEE2?=
+ =?utf-8?B?dnk1ZlFJN09odmpUWWxDY3l2V25VaHlRK2MzcFpzMnpCRVFmZmRWK1VQcjhr?=
+ =?utf-8?B?bFBRNEh6cnNzNmJ5VFB3dEd2aVdPTER6Lzk3clJBdUlONW5uT1YveFEydWRt?=
+ =?utf-8?B?K1JuTStMeWEvYit1VDIrRDBPRUV2dzhXays2azZvaWxrNE1nRjA4TElzcHZT?=
+ =?utf-8?B?ZEJuY2h4ZEZCTVcrVDdCOFAwbGxtTmZaVFNFZG5PMkRkR2sxTG9BN3dyY0wx?=
+ =?utf-8?B?VXJnaHFwYUVEWjRkdkl6NUJUdGhOQUxyTVNGSldBV0ZCczY0bmhQOXNhOTFt?=
+ =?utf-8?B?clh0d2ltN2FjSFkzTThVTXhTTm9ybWVLUUhoSVYwUzNqZXpyUnJsRHA3eVk2?=
+ =?utf-8?B?b2xRV091ZFV2cjdjK1Z2b3ZPMXJucGdrS05FM3ZXWlNyeCtCNXMyaUZac3Bu?=
+ =?utf-8?B?YmI0R096Mjk4TDFLTmRDazI5NURqNld1UXVJOGZ2K0syQW9mOS81V1BMTTlp?=
+ =?utf-8?B?QWkxOUVreDRUUDVjenRiUDFOUnJsaWxSUUFpdkVhOVZFYmtBeGtsY096K1V5?=
+ =?utf-8?B?ZkNVc1BwRmdQTjh2aGxvancyYTkraXBWYTFzdUp6SlY2Q2lJejBGaW9qQkJX?=
+ =?utf-8?B?VVdUbWpZanY4V1h0M2VGc3BzTk5pSGZjUTNKaGZXZ0IxY3o2MVBwb05lWHdk?=
+ =?utf-8?B?aTVld3c5ZW0wbmovZzZLT1dCaU1pY3pReVByd2taUTRJNEh2aEpjYzA5RkNS?=
+ =?utf-8?B?c29zbXVzd3kxMUt3L0lRb3p0TFhKV1U3S0wzY0RYNmxtYjlkNng4YkhqV3J1?=
+ =?utf-8?B?YmwreDBxN3dOT3pDd0ljdmFxcUk2NG41aU9YN1gvczFtLy9Dd0JQZDl2dnps?=
+ =?utf-8?B?bVRtbWNsbFlyRWF6UUJ2VVpDZDMrY3ZFcFNjd3pIZm5UZUpSK2pGbkFmc3lG?=
+ =?utf-8?B?Vm5zUXhqaWFIRUZCd1oxdEp5d2xvdDdWOTZTaUIwTUFXM0RpNmtVM25kOFdY?=
+ =?utf-8?B?U1NCcGRaU0RzMXpOd21TdkI0WUExN1l1VEEvUUJaTldWcnhOTWdwQnE2aWpy?=
+ =?utf-8?B?dkxLLzFPTGNCT3BmK1B0VWRLOTJYQXFaVzNKckxET0JBdG96MkhQZWtqSGt4?=
+ =?utf-8?B?TGY2U3oweTZTMUFhZjNKd1c1UmhsQkRKVERjUldrZ255NS91Z0VjMnc4VjdG?=
+ =?utf-8?B?bEJCekVySjVwOTZjeENyVGRoT2d3U24vUzBGSTdySExOekZzMEo5Zm8waXQv?=
+ =?utf-8?B?NUV2Y2xrSDZ2OEtZNjlhcHY3NFBpZGNjOWM5cW9GdFRMN0xwQTk5T2ZEWSto?=
+ =?utf-8?B?N0E9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63eacf43-59d3-45c1-843d-08dc84b35c5f
+X-MS-Exchange-CrossTenant-AuthSource: VE1PR04MB6382.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 16:28:26.4597
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zpD1OVVDxV+N4AjKO0YsaI7SlK1YD4jyO5kdTALmhvExrCof4nu7nXSK1JDlwNkAaPc1Ya2yFmaqVtx9Z0ge/lZToDW7WYvh4ajVekoliXk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8893
 
-On Tue, Jun 04, 2024 at 04:17:29PM +0200, Greg KH wrote:
-> On Tue, May 21, 2024 at 10:42:03PM +0200, Danilo Krummrich wrote:
-> > On Tue, May 21, 2024 at 11:24:38AM +0200, Greg KH wrote:
-> > > On Mon, May 20, 2024 at 10:22:22PM +0200, Danilo Krummrich wrote:
-> > > > > > +impl Device {
-> > > > > > +    /// Creates a new ref-counted instance of an existing device pointer.
-> > > > > > +    ///
-> > > > > > +    /// # Safety
-> > > > > > +    ///
-> > > > > > +    /// Callers must ensure that `ptr` is valid, non-null, and has a non-zero reference count.
-> > > > > 
-> > > > > Callers NEVER care about the reference count of a struct device, anyone
-> > > > > poking in that is asking for trouble.
-> > > > 
-> > > > That's confusing, if not the caller who's passing the device pointer somewhere,
-> > > > who else?
-> > > > 
-> > > > Who takes care that a device' reference count is non-zero when a driver's probe
-> > > > function is called?
-> > > 
-> > > A device's reference count will be non-zero, I'm saying that sometimes,
-> > > some driver core functions are called with a 'struct device' that is
-> > > NULL, and it can handle it just fine.  Hopefully no callbacks to the
-> > > rust code will happen that way, but why aren't you checking just "to be
-> > > sure!" otherwise you could have a bug here, and it costs nothing to
-> > > verify it, right?
-> > 
-> > I get your point on that one. But let me explain a bit more why I think that
-> > check is not overly helpful here.
-> > 
-> > In Rust we have the concept of marking functions as 'unsafe'. Unsafe functions
-> > need to document their safety preconsitions, i.e. the conditions the caller of
-> > the function must guarantee. The caller of an unsafe function needs an unsafe
-> > block for it to compile and every unsafe block needs an explanation why it is
-> > safe to call this function with the corresponding arguments.
-> > 
-> > (Ideally, we want to avoid having them in the first place, but for C abstractions
-> > we have to deal with raw pointers we receive from the C side and dereferencing a
-> > raw pointer is unsafe by definition.)
-> > 
-> > In this case we have a function that constructs the Rust `Device` structure from
-> > a raw (device) pointer we potentially received from the C side. Now we have to
-> > decide whether this function is going to be unsafe or safe.
-> > 
-> > In order for this function to be safe we would need to be able to guarantee that
-> > this is a valid, non-null pointer with a non-zero reference count, which
-> > unfortunately we can't. Hence, it's going to be an unsafe function.
-> 
-> But you can verify it is non-null, so why not?
+Mule is an MCU that emulates a set of I2C devices which are reachable
+through an I2C-mux that is implemented in a different patch-series[1].
 
-I suggest to check out the code making use of this.
+Device #2 on the mux is an emulation of NVRAM (PCF8570 I2C interface)
+with a size of 8 bytes.
 
-From the PCI abstractions:
+Device #3 on the mux is an emulation of a read-only NVRAM (PCF8570 I2C
+interface) with a size of 32 bytes. This memory contains information
+relevant to the Mule firmware.
 
-    extern "C" fn probe_callback(
-        pdev: *mut bindings::pci_dev,
-        id: *const bindings::pci_device_id,
-    ) -> core::ffi::c_int {
-        // SAFETY: Safe because the core kernel only ever calls the probe callback with a valid
-        // `pdev`.
-        let dev = unsafe { device::Device::from_raw(&mut (*pdev).dev) };
+      +-----------------------------------------------+
+      |  Mule                                         |
+      |        +---------------+                      |
+    ----+----->|Config register|                      |
+      | |      +--------|------+                      |
+      | |               |                             |
+      | |               V                             |
+      | |               __           +--------------+ |
+      | |              |   \-------->| amc6821      | |
+      | |              |   |         +--------------+ |
+      | |              | M |-------->| PWM over I2C | |
+      | +------------->| U |         +--------------+ |
+      |                | X |-------->| NVRAM        | |
+      |                |   |         +--------------+ |
+      |                |   /-------->| ROM          | |
+      |                |__/          +--------------+ |
+      +-----------------------------------------------+
 
-        [...]
-    }
+This patch-series adds support for the NVRAM and ROM on rk3399-puma-haikou,
+px30-ringneck-haikou, rk3588-tiger-haikou and rk3588-jaguar boards.
 
-Doing the NULL check would turn this into something like:
+This patch-series can only be merged after [1].
 
-    extern "C" fn probe_callback(
-        pdev: *mut bindings::pci_dev,
-        id: *const bindings::pci_device_id,
-    ) -> core::ffi::c_int {
-        // SAFETY: Safe because the core kernel only ever calls the probe callback with a valid
-        // `pdev`, but we still have to handle `Device::from_raw`'s NULL check.
-        let dev = match unsafe { device::Device::from_raw(&mut (*pdev).dev) } {
-           Ok(dev) => dev,
-           Err(err) => return Error::to_errno(err),
-        }
-    }
+[1] https://lore.kernel.org/lkml/20240506-dev-mule-i2c-mux-v2-0-a91c954f65d7@cherry.de/
 
-This would be super odd. If `Device::from_raw` reports "Ok" it actually wouldn't
-mean everything is well. It would *only* mean that the pointer that was passed
-is not NULL. This is counter intuitive; IMHO unsafe functions shouldn't return
-any type of result, because it just isn't meaningful.
+Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
+---
+Farouk Bouabid (4):
+      arm64: dts: rockchip: add mule nvram/rom to rk3399-puma
+      arm64: dts: rockchip: add mule nvram/rom to px30-ringneck
+      arm64: dts: rockchip: add mule nvram/rom to rk3588-tiger
+      arm64: dts: rockchip: add mule nvram/rom to rk3588-jaguar
 
-> 
-> > A NULL pointer check would not make it a safe function either, since the pointer
-> > could still be an invalid one, or a pointer to a device it's not guaranteed that
-> > the reference count is held up for the duration of the function call.
-> 
-> True, but you just took one huge swatch of "potential crashes" off the
-> table.  To ignore that feels odd.
-> 
-> > Given that, we could add the NULL check and change the safety precondition to
-> > "valid pointer to a device with non-zero reference count OR NULL", but I don't
-> > see how this improves the situation for the caller, plus we'd need to return
-> > `Result<Device>` instead and let the caller handle that the `Device` was not
-> > created.
-> 
-> It better be able to handle if `Device` was not created, as you could
-> have been out of memory and nothing would have been allocated.  To not
-> check feels very broken.
+ arch/arm64/boot/dts/rockchip/px30-ringneck.dtsi | 45 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi   | 45 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts  | 45 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi  | 45 +++++++++++++++++++++++++
+ 4 files changed, 180 insertions(+)
+---
+base-commit: 2917aef27decdfc367f37f599a613255c98c2c26
+change-id: 20240531-nvmem-fd2902430de5
 
-The abstraction is not allocating a new C struct device, it's just abstracting a
-pointer to an existing struct device. There is no OOM case to handle, the
-abstraction holding the pointer lives on the stack.
-
-> 
-> > > Ok, if you say so, should we bookmark this thread for when this does
-> > > happen?  :)
-> > 
-> > I'm just saying the caller has to validate that or provide a rationale why this
-> > is safe anyways, hence it'd be just a duplicate check.
-> > 
-> > > 
-> > > What will the rust code do if it is passed in a NULL pointer?  Will it
-> > > crash like C code does?  Or something else?
-> > 
-> > It mostly calls into C functions with this pointer, depends on what they do.
-> > 
-> > Checking a few random places, e.g. [1], it seems to crash in most cases.
-> > 
-> > [1] https://elixir.free-electrons.com/linux/latest/source/drivers/base/core.c#L3863
-> 
-> Great, then you should check :)
-
-Why isn't the conclusion that the C code should check (as well)? :) Would you
-want to add a NULL check at the beginning of device_del()?
-
-In Rust we have a clear separation between safe and unsafe functions with, for
-the latter, documented requirements on what's actually allowed to pass in and
-which preconditions must be guaranteed. The check happens, just not within the
-unsafe function.
-
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Best regards,
+-- 
+Farouk Bouabid <farouk.bouabid@cherry.de>
 
 
