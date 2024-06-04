@@ -1,119 +1,186 @@
-Return-Path: <linux-kernel+bounces-200150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152998FABE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:28:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D097B8FABEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C225D2824FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:28:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31B7BB22DAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A19142634;
-	Tue,  4 Jun 2024 07:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Ki9jQCFl"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E481422D4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C8514198E;
+	Tue,  4 Jun 2024 07:28:44 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1EA1386AB;
+	Tue,  4 Jun 2024 07:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717486081; cv=none; b=kLgdD6i9OncwYL+9tkPdroSZtZxWvUMqNRDa/uYYwNRvEwGbs6t/pel5hXtvaELdsrA2sTEMQdbzOvCm4QUk5Ey2qbZTjihxy2wdd93hkv00ovY7gKu1DhAzK8bmjShJaHxuC6nJpf4O78HyRubnEa75Er3vbhGkYD2eRMHaEbQ=
+	t=1717486124; cv=none; b=L+END8LtpQnw2AMrucHOnigqrzEG8XsnbnZJ5adr05ReczyGNHI7rzd3n9RuzJ7RH3H56EscoAdMVwHFAQXxzoGvEMcdpE7WVNa62+4uNqAg5f0RwjPOIzt2kF3Jln96AzG5orkhtPuTfUJgG5mEEaB9s85fFohqsQxZB8zp1uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717486081; c=relaxed/simple;
-	bh=DR4V6fxUL7BVZQi4V6RSFvrnLKBnKUkoN26ol3rLYPc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K+BwHQQ1K1moUZK6AYYrbPMiE7Ocj5A7C4snPJo6UMIkMbBpFacUZ/MyS6Nnp/c9G8uOXgpixxrIjDcCwS5MunzrkJhIcWXLCGT9VOFP693xVwAmponuFxEXIY1YfRn6GRohR37vzYoOKnwRBQ8xCg9yCHaFva/wTIohprPdt00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Ki9jQCFl; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a63359aaaa6so668265266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 00:27:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1717486078; x=1718090878; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GI2pqJxOQAyikMyXqbCZEDrAPCthTI9n8bYtOs9OMzQ=;
-        b=Ki9jQCFlPJvE5s46Pl6z7pxQbFVKBe33hkV0yqYyCfTX9nVrgYUJ7YfDT5rO1g845H
-         06iCCgxl/ljeUYzUinSNETHaf7ONLppj3X/UGDihtKELXMi3ovlAb7oQg8NGZZ5i1LXa
-         M320Sd3PsSETXKK5cXANCFxvlpsNbTZ2+gFBc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717486078; x=1718090878;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GI2pqJxOQAyikMyXqbCZEDrAPCthTI9n8bYtOs9OMzQ=;
-        b=As4LB+q/8rRxgeSTtKZYdSk9zS/23lLNhq65Y0ApBqbMgXBk0A3ZjwSQD+P679fG3v
-         IJxBIBa3ovD10GW/BSQOetBZMbDgZQDujYZNcJ/E0r4sectdzaYDbiWeRM8ViKenjWcg
-         6rxMcnLJZ4bUXkV6H51G029VMzs9WxgnSKSC4/SLfOpGpXrA8YZibq9cpq1hN0S52mWr
-         N/Rs9HFRrCdIw3ePr+N7HiGn7Zvujv6lyF1xEErEwv26wMrghFV6M6cHKWGztH8yeu58
-         6GBaNmrnfahIOw6weOoOOP3+IkFh3gC6/afwwwTNZnrXwD6DitvcvWdqcp/HYtThTD1L
-         8qkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtQ7uNC7+5L30TmRTrfsqi0DJAU022zjXQmqeko9pW5r6hFHlgilMDYQ1e9kxoCgPaYEm/9AT+61zY9Mxo16HKpJGoKsLcdwSq13+a
-X-Gm-Message-State: AOJu0Yyad45raZ1x61lxKIrvM4bFOoJyqjkh8hj8z7mss4O+rJqLaVYN
-	inK0OhzTvcfpx9ClLBAkWDPRAd6HeQdQrsXRX9Nu98vFNntcxfLeVXnXdIdv15t72MGSdMJmQm9
-	8IU5S1EvgPAYlRqZlSPUOIuZH2H7beskcbnQP9w==
-X-Google-Smtp-Source: AGHT+IHkHwQVQQ+JU0j4tmJ47OzP4TaYIBrz4JULPX6z4ohALU0M28Idc/S5Dk8Go8j4tRXyJg5zj04Gyzdyt17lHUY=
-X-Received: by 2002:a17:906:1b5b:b0:a68:c672:9ea9 with SMTP id
- a640c23a62f3a-a68c672a238mr483957766b.28.1717486077990; Tue, 04 Jun 2024
- 00:27:57 -0700 (PDT)
+	s=arc-20240116; t=1717486124; c=relaxed/simple;
+	bh=EzXG3Wk/+YnJH1XCoD1FE88jqfD7gfRvekuE4Vyo4ZQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UZypvnDb8HjU8U0MAb7QkEBaTxx4yaxd+CHjoHAWCRDEJrgxbl7jiB24vUWRMc8nAQgmya/ZK4rznfQgAxFhEA27J6QKBpEetvAOr/uyTUkTCzToIXHGnFLMDbHV3s/E1ktSpJN07AQNXVQ2pLciu5A0jJ7zcuCxjDlwn2kd8cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.08,213,1712588400"; 
+   d="scan'208";a="210610413"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 04 Jun 2024 16:28:39 +0900
+Received: from renesas-deb12.mshome.net (unknown [10.226.92.239])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B0A0D41FBB3D;
+	Tue,  4 Jun 2024 16:28:34 +0900 (JST)
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Simon Horman <horms@kernel.org>
+Cc: Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [net-next PATCH v5 0/7] Improve GbEth performance on Renesas RZ/G2L and related SoCs
+Date: Tue,  4 Jun 2024 08:28:18 +0100
+Message-Id: <20240604072825.7490-1-paul.barker.ct@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
- <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm> <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
- <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
-In-Reply-To: <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 4 Jun 2024 09:27:46 +0200
-Message-ID: <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
-Subject: Re: [HELP] FUSE writeback performance bottleneck
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, lege.wang@jaguarmicro.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 4 Jun 2024 at 03:57, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+This series aims to improve performance of the GbEth IP in the Renesas
+RZ/G2L SoC family and the RZ/G3S SoC, which use the ravb driver. Along
+the way, we do some refactoring and ensure that napi_complete_done() is
+used in accordance with the NAPI documentation for both GbEth and R-Car
+code paths.
 
-> IIUC, there are two sources that may cause deadlock:
-> 1) the fuse server needs memory allocation when processing FUSE_WRITE
-> requests, which in turn triggers direct memory reclaim, and FUSE
-> writeback then - deadlock here
+Much of the performance improvement comes from enabling SW IRQ
+Coalescing for all SoCs using the GbEth IP, and NAPI Threaded mode for
+single core SoCs using the GbEth IP. These can be enabled/disabled at
+runtime via sysfs, but our goal is to set sensible defaults which get
+good performance on the affected SoCs.
 
-Yep, see the folio_wait_writeback() call deep in the guts of direct
-reclaim, which sleeps until the PG_writeback flag is cleared.  If that
-happens to be triggered by the writeback in question, then that's a
-deadlock.
+The rest of the performance improvement comes from using a page pool to
+allocate RX buffers, and reducing the allocation size from >8kB to 2kB.
 
-> 2) a process that trigfgers direct memory reclaim or calls sync(2) may
-> hang there forever, if the fuse server is buggyly or malicious and thus
-> hang there when processing FUSE_WRITE requests
+The overall performance impact of this patch series seen in testing with
+iperf3 is as follows (see patches 5-7 for more detailed results):
+  * RZ/G2L:
+    * TCP TX: +1.8% bandwidth
+    * TCP RX: +1% bandwidth at 47% less CPU load
+    * UDP RX: +1% bandwidth at 26% less CPU load
 
-Ah, yes, sync(2) is also an interesting case.   We don't want unpriv
-fuse servers to be able to block sync(2), which means that sync(2)
-won't actually guarantee a synchronization of fuse's dirty pages.  I
-don't think there's even a theoretical solution to that, but
-apparently nobody cares...
+  * RZ/G2UL:
+    * TCP TX: +37% bandwidth
+    * TCP RX: +43% bandwidth
+    * UDP TX: -8% bandwidth
+    * UDP RX: +32500% bandwidth (!)
 
-Thanks,
-Mikos
+  * RZ/G3S:
+    * TCP TX: +25% bandwidth
+    * TCP RX: +76% bandwidth
+    * UDP TX: -9% bandwidth
+    * UDP RX: +37900% bandwidth (!)
 
->
-> Thus the temp page design was introduced to avoid the above potential
-> issues.
->
-> I think case 1 may be fixed (if any), but I don't know how case 2 can be
-> avoided as any one could run a fuse server in unprivileged mode.  Or if
-> case 2 really matters?  Please correct me if I miss something.
->
-> --
-> Thanks,
-> Jingbo
+  * RZ/Five:
+    * TCP TX: +18% bandwidth
+    * TCP RX: +212% bandwidth
+    * UDP TX: +2% bandwidth
+    * UDP RX: +inf bandwidth (test no longer crashes)
+
+There is no significant impact on bandwidth or CPU load in testing on
+RZ/G2H or R-Car M3N.
+
+Fixing the crash in UDP RX testing for RZ/Five is a cumulative effect of
+patches 1, 2, 5 & 6 so this is very difficult to break out as a bugfix
+for backporting.
+
+Changes v4->v5:
+  * Added Sergey's Reviewed-by tags.
+  * Improved the commit message for patch 2/7.
+  * Re-wrapped to 80 cols, except where this would significantly impact
+    readability.
+  * Use lower case `skb` consistently in comments.
+  * Included <net/page_pool/types.h> in ravb.h.
+  * Moved rx_buffer_size so it is in the same place in ravb_hw_info as
+    rx_max_desc_use was previously.
+  * Used reverse xmas tree ordering in variable declarations.
+  * Split lines after binary operators, instead of before.
+  * Factor subtraction of sizeof(__sum16) out of the if condition in
+    ravb_rx_csum_gbeth().
+  * Add blank lines after variable declarations where needed.
+  * Used goto instead of break to handle napi_build_skb() failure in
+    ravb_rx_gbeth(). Break was incorrectly scoped to the surrounding
+    switch statement, when it's the outer loop we really want to break
+    out of.
+  * Used continue instead of break to handle NULL priv->rx_1st_skb in
+    ravb_rx_gbeth() as we may still be able to process further
+    descriptors.
+  * Unconditionally set priv->rx_1st_skb = NULL after processing a
+    packet in ravb_rx_gbeth(). We don't need to check die_dt as this
+    will be a no-op for single descriptor packets.
+  * Moved napi_build_skb() call after dma_sync_single_for_cpu() in
+    ravb_rx_rcar() to align the order of operations with ravb_rx_gbeth()
+    and ensure the data is sync'd before it is accessed.
+  * Moved zeroing of rx_buff->page to the end of packet processing in
+    ravb_rx_rcar() to align the order of operations with
+    ravb_rx_gbeth().
+
+Changes v3->v4:
+  * Dependency patches have merged so this is no longer an RFC.
+  * Fixed update of stats->rx_packets.
+  * Simplified refactoring following feedback from Niklas and Sergey.
+  * Renamed needs_irq_coalesce -> coalesce_irqs.
+  * Used a separate page pool for each RX queue.
+  * Passed struct ravb_rx_desc to ravb_alloc_rx_buffer() so that we can
+    simplify the calling function.
+  * Explained the calculation of rx_desc->ds_cc.
+  * Added handling of nonlinear SKBs in ravb_rx_csum_gbeth().
+  * Used Niklas' suggested commit message for patch 2/7.
+  * Added Sergey's Reviewed-by tags to patches 5/7 and 6/7.
+
+Changes v2->v3:
+  * Incorporated feedback on RFC v2 from Sergey.
+  * Split out bugfixes and rebased. This changed the order of what was
+    the first 5 patches of v2 and things look a little different so I've
+    not picked up Reviewed-by tags from v2.
+  * Further refactoring and tidy up of RX ring refill and
+    ravb_rx_gbeth().
+  * Switched to using a page pool to allocate RX buffers.
+  * Re-tested and provided updated performance figures.
+
+Changes v1->v2:
+  * Marked as RFC as the series depends on unmerged patches.
+  * Refactored R-Car code paths as well as GbEth code paths.
+  * Updated references to the patches this series depends on.
+
+Paul Barker (7):
+  net: ravb: Simplify poll & receive functions
+  net: ravb: Align poll function with NAPI docs
+  net: ravb: Refactor RX ring refill
+  net: ravb: Refactor GbEth RX code path
+  net: ravb: Enable SW IRQ Coalescing for GbEth
+  net: ravb: Use NAPI threaded mode on 1-core CPUs with GbEth IP
+  net: ravb: Allocate RX buffers via page pool
+
+ drivers/net/ethernet/renesas/ravb.h      |  14 +-
+ drivers/net/ethernet/renesas/ravb_main.c | 479 ++++++++++++-----------
+ 2 files changed, 271 insertions(+), 222 deletions(-)
+
+
+base-commit: b5c089880723b2c18531c40e445235bd646a51d1
+-- 
+2.39.2
+
 
