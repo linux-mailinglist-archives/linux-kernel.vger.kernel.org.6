@@ -1,121 +1,88 @@
-Return-Path: <linux-kernel+bounces-200708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1391E8FB3CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:29:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E338FB3CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0501F21875
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:29:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F241F215F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD74146D5F;
-	Tue,  4 Jun 2024 13:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nagjyk6R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAA3146D7F;
+	Tue,  4 Jun 2024 13:30:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9AD146A7B;
-	Tue,  4 Jun 2024 13:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAF9146D77
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717507792; cv=none; b=I6BQHs3/f7bekMoZCCbcy5GN0/VqNf0zXK0jJdD0TijMDjVpfq4mQgi7xX5NqBMf+FcKG/F3V7oAjh0zKKex3FrWzeDv+9KgwJEmYshBcR/m0OxuSv9zx1VfZa17NDEUgptNHgTTEmphyfX3QuZguhs4zXsa4i957XKZTvYa8zE=
+	t=1717507805; cv=none; b=uzNRuJzFH3ukr4c3rM01ebJuKrRP02fFtBnZD/B3GMgsDl6KJXXWI8YSZsoxAZRDQ97gX0IgPinWMc7aaifEdD3zRVrqnbNsZJFxPRbTZh+qmUNO5QyM3ewC9J3+t/KhJ1w9zPZlhatKQJbqpvismPQwCjr8Rnxn6D1R7JbYMrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717507792; c=relaxed/simple;
-	bh=kWuUiBdpKjrsYecHnVEphiWORJ/qDun3q6DFFXNPjd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TRPIQKQGjy/f8vCimU2VZ7RejCuowRZRKp+iF/5guxp8mE6zceectjwBvDSPNw5yiwPnV1uDLYF52iMMJEQO8i1kRw3kuarITfZnGL52zzzvLwx6CoYjIBUjp4TNQoLY+2d238v4vqrTv0tPQEYz+INK/FgZQ/HUmBH41gCXJOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nagjyk6R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE0D6C2BBFC;
-	Tue,  4 Jun 2024 13:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717507792;
-	bh=kWuUiBdpKjrsYecHnVEphiWORJ/qDun3q6DFFXNPjd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nagjyk6Rht8Nm8CXtzbcn9K3Bg8znS5b2z5cHpwGFaOPtrmHPT98FDQxVhbDyLaCi
-	 uhUQXoEoJ6qGRWcWikbSr/bMCUtzhvuLW1JOYnIJv9TubetjRujzFfoa30XT9VsyIt
-	 fHA2R6YYiWvOLAQviiapfSkhY2MBEBPpUU3J1JfQiWKdckYoEQQoqNcc71j1a+Embz
-	 xHf8jmpJbqg9VWkX/WoY/wrg05/7T+T9gj9/jmdUkRgyCSHKWAOFAQEkZXrzLUTZDw
-	 IWi0PeH9KDF5Y6egJsYcKU4+yGnjzobrOn9MVbv4Iv7xTJ5RAvTtab/X9VGUvXiQQy
-	 8aUUjqqWRYcZw==
-Date: Tue, 4 Jun 2024 14:29:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
-	will@kernel.org, maz@kernel.org, oliver.upton@linux.dev,
-	james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	tglx@linutronix.de, ardb@kernel.org, anshuman.khandual@arm.com,
-	miguel.luis@oracle.com, joey.gouly@arm.com, ryan.roberts@arm.com,
-	jeremy.linton@arm.com, ericchancf@google.com,
-	kristina.martsenko@arm.com, robh@kernel.org,
-	scott@os.amperecomputing.com, songshuaishuai@tinylab.org,
-	shijie@os.amperecomputing.com, akpm@linux-foundation.org,
-	bhe@redhat.com, horms@kernel.org, mhiramat@kernel.org,
-	rmk+kernel@armlinux.org.uk, shahuang@redhat.com,
-	takakura@valinux.co.jp, dianders@chromium.org, swboyd@chromium.org,
-	sumit.garg@linaro.org, frederic@kernel.org, reijiw@google.com,
-	akihiko.odaki@daynix.com, ruanjinjie@huawei.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v3 1/8] arm64/sysreg: Add definitions for immediate
- versions of MSR ALLINT
-Message-ID: <9868a5ac-ae23-4481-afe6-ba3cd8dbfa47@sirena.org.uk>
-References: <20240415064758.3250209-1-liaochang1@huawei.com>
- <20240415064758.3250209-2-liaochang1@huawei.com>
- <ZjUKMWPknEhLYoK8@FVFF77S0Q05N>
- <Zjjz-tzLRC2nH51A@finisterre.sirena.org.uk>
- <cde4d448-dc9d-eaad-4a2d-a6d34bda4449@huawei.com>
- <ZjpALOdSgu-qhshR@finisterre.sirena.org.uk>
- <e632a9ed-7659-9336-6e7f-a43c4759a7a3@huawei.com>
+	s=arc-20240116; t=1717507805; c=relaxed/simple;
+	bh=mHhdF94b4ZnZG/rt8qqIGYhlHwv/Pdc+Y+AHFKVOwak=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mWONA7xlfEjSZ1EgJA7i1x0u2nz7bbxHaQN2Vy/Wa8+v8YCgXakNWtswDWQTTQw0BAMK5iz5I1XIIwhoVdxHtTrNoZ0ujXLCI0wHvYoAu02aRtOXHNU3G3LW9eqQUqqbtuJKeFZIkEurM87QB0+WqmGCI28g5Jhp60eZR4DGh44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3748be0ae92so9955365ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:30:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717507803; x=1718112603;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oFTiTfe3hNJgwZs9HmKmaU3IvhsjzP38K8yAfv+j3T0=;
+        b=UcHcpUsZ+cDRqjRIc+G1JZDQsr5kdK8YEOEPHjZLMo9z8UouOWGYvSfi043fTzMEEX
+         /qlidahi0ZBafx3sOwQ894FqYawaTDMoy2oKwcLHCNNgfA0pZtT60ZI8JMcG8zC2eF+P
+         3V8Rxglwx/mvA61A29t2XY8eRiLQjmyacmnPSmFzqdiq8yATGkDGFGKzIDbqAyhMMdDp
+         hbVgY6C6yb8mGRLldaRlWLOxHIB/u6Bbe6F+nasLEzPxcYJBg53lngmTnK/qx4mm7dBz
+         FMre1MXhKWeQ9+YZZf405W3e9V04l+0e9NwQsqPRnRsXt5t8Ht6akqaXI6ImVIkbs8eJ
+         Ctvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRr0Qb5oL7oJRPoQNEHsvpLAZX/IdbiXZtBvEijtq0wyozMXU9FNTM0Mw+bw/BAVbD435clmytv/UbmTo71qB1SMelBlvI8tiT2/xq
+X-Gm-Message-State: AOJu0YwJU2ap/0bxdjfN30inCAirPOrw9gL+8NSFIpZ4Vb9Z705eZIIP
+	8zOO/sMnZH6B6lp3fyI+9riyGQpdRM6xAep6f7ARs6Tb9N5q9Bzqe/hK71Z/lM1u0lRT0kFdUw4
+	BeoSe5glUYuex3bNPa6I6T/z8sV+rES13jHTDiVao2X2kaEgLUkUrFSA=
+X-Google-Smtp-Source: AGHT+IGntpKJZup7JPeTXE09pYMF+lxZyOC1ixCnn1Iq0fhSvSRdo2HKefFg85nyw+q7P4fm4ndcafJBWyk7jnWw+YpLLoIbBS/T
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kZyx21bZX9W6NfCv"
-Content-Disposition: inline
-In-Reply-To: <e632a9ed-7659-9336-6e7f-a43c4759a7a3@huawei.com>
-X-Cookie: Is it clean in other dimensions?
+X-Received: by 2002:a05:6e02:1d1e:b0:374:a422:ba7 with SMTP id
+ e9e14a558f8ab-374a4220e6emr3190315ab.2.1717507803530; Tue, 04 Jun 2024
+ 06:30:03 -0700 (PDT)
+Date: Tue, 04 Jun 2024 06:30:03 -0700
+In-Reply-To: <20240604124522.1781-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000087580e061a1072ae@google.com>
+Subject: Re: [syzbot] [kernel?] BUG: unable to handle kernel NULL pointer
+ dereference in __hrtimer_run_queues
+From: syzbot <syzbot+558f67d44ad7f098a3de@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---kZyx21bZX9W6NfCv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Mon, Jun 03, 2024 at 11:26:39AM +0800, Liao, Chang wrote:
+Reported-and-tested-by: syzbot+558f67d44ad7f098a3de@syzkaller.appspotmail.com
 
-> Mark, Is your concern is that the series of pstate related macro name in
-> sysregs.h are lack of self-explanatory nature, which make it diffuclt to
-> understand their functionality and purpose? If so, I daft some alternative
-> macro names in the code below, looking forward to your feedback, or if you
-> have any proposal for making these helpers discoverable.
+Tested on:
 
-...
+commit:         2ab79514 Merge tag 'cxl-fixes-6.10-rc3' of git://git.k..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=121dd4ac980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=48aeb395bedeb71f
+dashboard link: https://syzkaller.appspot.com/bug?extid=558f67d44ad7f098a3de
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1346c226980000
 
-> -#define SET_PSTATE(x, r)               __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
-> +#define MSR_PSTATE_ENCODE(x, r)                __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
-
-Possibly, yes?  TBH I was thinking of a comment but that does have "MSR"
-in it so might come up in greps.  Not sure what others would prefer.
-
---kZyx21bZX9W6NfCv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZfFsUACgkQJNaLcl1U
-h9DBTAf/QbAdz0gZPoB6cZv3uCTSDvYO1cYiTX9u5Ejd4CgUJCcfU6JhTZi9lL01
-Vrn3Nd5SlPmKVrPWMb6HMbvC/GNW6Nc0gE196nDRdaMz6o29RD0B5j+BPWiQ99Ia
-MEXAs+lQD/nbf9JhLqto1ANTrc0Mf8gfWmFTt/MzoKJ7Ourujm6X//Tc8VxH3sdU
-nNEPqG9/rA0b+pjIrmAFmdglZyrsr6z79A7gYvBsaf525R95FiFOv8xh3uAHNpKj
-37MUhZ7YmJXCe/Ljy+MEUcrO/8+uljx7PWtBuROurQLnitvVF5eTLzunON9mkhmx
-IEOifj6i0UEzDv2QKT948bHcgn+kNA==
-=aRgu
------END PGP SIGNATURE-----
-
---kZyx21bZX9W6NfCv--
+Note: testing is done by a robot and is best-effort only.
 
