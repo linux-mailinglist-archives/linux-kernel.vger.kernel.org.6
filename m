@@ -1,139 +1,175 @@
-Return-Path: <linux-kernel+bounces-200173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E598FAC53
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:42:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FAA8FAC57
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BB3FB22AB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552E7282A67
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD3A1411CF;
-	Tue,  4 Jun 2024 07:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkpsAyIm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1211411E5;
+	Tue,  4 Jun 2024 07:43:44 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD18E140399;
-	Tue,  4 Jun 2024 07:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB841411CA;
+	Tue,  4 Jun 2024 07:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717486963; cv=none; b=KHLvziMs2EnEU8yD1reYSuA/CCCFhLK2TVe7TveVqs13f9pjth5uCd5Eak9nuO6KiCnleIGXcy1HVYOzS1GhfXA3/1PciYcso05E7K7LEYPBE1n7n/O4HO7mIf9YxqnRhFR1kmJPwFaB0F1H/svGXwCxQt9Tyxj5v3pUqP5PSm4=
+	t=1717487023; cv=none; b=fEoU36hyzL5rkQgyw925UfhlJgeAVIFqcMEgkNHmIofMV3wub1Fl/x71DZ+CJQxqMzu80CjTU51A4xHtYn4jURRo7LlC+bnyr4Xls3P5BK6SwAWmbQ+5QNNsksy9L539PD+cGsKBdJ4Y5Tws4KmJ0sOl0ujHphMHhAFxzN7UpZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717486963; c=relaxed/simple;
-	bh=SN5J7RI6JSHiLzdRYcIH1OJvtJI+2IfG/BlH4wBvC/A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gVyPXHFxIyQ+ytTvichNRDXue1smPUKfaUfcNxoJug4xM7V7PeDMQ9VMNyYhuN5JAvcX6URJwevyqHeL0j4E95Lo0w5DJCRtzt1cyqwT4OUW9zkviN5mASNVsi4YP22h8T1HUirk6NaKZacYzHZWpQht1KWxBp2UccxcIRIcrHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkpsAyIm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 990D2C32782;
-	Tue,  4 Jun 2024 07:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717486963;
-	bh=SN5J7RI6JSHiLzdRYcIH1OJvtJI+2IfG/BlH4wBvC/A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YkpsAyIm/8xj6wyJAerwgfsp6uB58wAiiiT8NaZhiv9RDKz8VXNXynIvY5lFjy1bB
-	 WY8W/C+CpCvv9gEuOIlo+d8t6UvotWwk3sfnkZI5v0RX/lsiPkEwRW8JXstdyXmi2k
-	 QZPpEZDqnmFivbuC7VV+Vu7nvIbNUQNBzF0Gvsw9822a4IRvAbOL9S0SVX5akr+QLl
-	 QD5yi/IxD7HlFsPHez6oRuDHiARY+cafvsOfX+M9aIe0JEBQdhMxXYNKF8OeocjywJ
-	 8Btpe6CzHj8cRwv6hmvPF9mmO6X73+RfLDfy4qff3S+MQKs36IClQNyCvsDqo85pvY
-	 feoJcmFQfawCw==
-From: Michael Walle <mwalle@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Thorsten Scherer <t.scherer@eckelmann.de>,
-	Marek Vasut <marex@denx.de>,
-	Imre Kaloz <kaloz@openwrt.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Flavio Suligoi <f.suligoi@asem.it>
-Subject: [PATCH] dt-bindings: mtd: spi-nor: deprecate Everspin MRAM devices
-Date: Tue,  4 Jun 2024 09:42:31 +0200
-Message-Id: <20240604074231.1874972-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717487023; c=relaxed/simple;
+	bh=rmrq0CC543j83YlXev509NtGiSbQwtYK4+nRu8TmMLk=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=KM19n/rNY8TIlz1TxfYs8TE1HjNYPpoCxZtJ35w8Lxw274s+YJhYyg98Pj7ZRRoaolCJrUv+soU8tG8nCMibfS5F8Rj895jRZiQwU3GlUPwuLWr6YuRtWP0t0jlHGpi2nULKQvgMHoz9weW5ZFcPtj370ZbhtTyqzpAGro+Rkog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4VtjDD30zXz1S66v;
+	Tue,  4 Jun 2024 15:39:56 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 24B071A0188;
+	Tue,  4 Jun 2024 15:43:37 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 4 Jun 2024 15:43:36 +0800
+CC: <yangyicong@hisilicon.com>, <will@kernel.org>, <mark.rutland@arm.com>,
+	<acme@kernel.org>, <namhyung@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<james.clark@arm.com>, <dongli.zhang@oracle.com>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>
+Subject: Re: [PATCH 2/3] perf: arm_pmu: Only show online CPUs in device's
+ "cpus" attribute
+To: Ian Rogers <irogers@google.com>
+References: <20240603092812.46616-1-yangyicong@huawei.com>
+ <20240603092812.46616-3-yangyicong@huawei.com>
+ <CAP-5=fXDPor-WsO-TGB3z6QpSWZOFJC31GJpuwZUA3qz_3WsYQ@mail.gmail.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <b348d9dd-75cb-6b83-a4be-cfd29e15eb99@huawei.com>
+Date: Tue, 4 Jun 2024 15:43:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAP-5=fXDPor-WsO-TGB3z6QpSWZOFJC31GJpuwZUA3qz_3WsYQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-These devices are more like an AT25 compatible EEPROM instead of
-flashes. Like an EEPROM the user doesn't need to explicitly erase the
-memory, nor are there sectors or pages. Thus, instead of the SPI-NOR
-(flash) driver, one should instead use the at25 EEPROM driver.
+Hi Ian,
 
-Signed-off-by: Michael Walle <mwalle@kernel.org>
-Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Cc: Thorsten Scherer <t.scherer@eckelmann.de>
-Cc: Marek Vasut <marex@denx.de>
-Cc: Imre Kaloz <kaloz@openwrt.org>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Flavio Suligoi <f.suligoi@asem.it>
----
-The referenced binding only supports the true AT25 compatible EEPROMs
-where you have to specify additional properties like size and page size
-or cypress FRAM devices where all the properties are discovered by the
-driver. I don't have the actual hardware, therefore I can't work on a
-proper driver and binding. But I really want to deprecate the use of
-these EEPROM like devices in SPI-NOR. So as a first step, mark the
-devices in the DT bindings as deprecated.
+On 2024/6/4 0:20, Ian Rogers wrote:
+> On Mon, Jun 3, 2024 at 2:33 AM Yicong Yang <yangyicong@huawei.com> wrote:
+>>
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> When there're CPUs offline after system booting, perf will failed:
+>> [root@localhost ~]# /home/yang/perf stat -a -e armv8_pmuv3_0/cycles/
+>> Error:
+>> The sys_perf_event_open() syscall returned with 19 (No such device) for event (cpu-clock).
+>> /bin/dmesg | grep -i perf may provide additional information.
+> 
+> Thanks for debugging this Yicong! The fact cycles is falling back on
+> cpu-clock I'm confused by, on ARM the PMU type generally isn't
+> PERF_TYPE_HARDWARE and so this fallback shouldn't happen:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/evsel.c?h=perf-tools-next#n2900
+> I note your command line is for system wide event opening rather than
+> for a process. It is more strange the fallback is giving "No such
+> device".
+> 
+>> This is due to PMU's "cpus" is not updated and still contains offline
+>> CPUs and perf will try to open perf event on the offlined CPUs.
+> 
+> The perf tool will try to only open online CPUs. Unfortunately the
+> naming around this is confusing:
+> 
+> - any - an event may follow a task and schedule on "any" CPU. We
+> encode this with -1.
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n24
+> - online - the set of online CPU.
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n33
+> - all - I try to avoid this but it may still be in the code, "all"
+> usually is another name for online. Hopefully when we use this name it
+> is clearly defined:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/internal/evlist.h?h=perf-tools-next#n23
+> 
+>> Make "cpus" attribute only shows online CPUs and introduced a new
+>> "supported_cpus" where users can get the range of the CPUs this
+>> PMU supported monitoring.
+> 
+> I don't think this should be necessary as by default the CPUs the perf
+> tool will use will be the "online" CPUs:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=perf-tools-next#n40
+> 
+> Could you create a reproduction of the problem you are encountering?
+> My expectation is for a core PMU to advertise the online and offline
+> CPUs it is valid for, and for perf to intersect:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/include/perf/cpumap.h?h=perf-tools-next#n44
+> those CPUs with the online CPUs so the perf_event_open doesn't fail.
+> 
 
-There are three in-tree users of this. I hope I've CCed all the relevant
-people. With the switch to the at25 driver also comes a user-space
-facing change: there is no more MTD device. Instead there is an "eeprom"
-file in /sys now, just like for every other EEPROM.
+Thanks for the comments and detailed illustration!
 
-Marek already expressed, that the sps1 dts can likely be removed
-altogether. I'd like to hear from the other board DTS maintainers if
-they seem some problems moving to the EEPROM interface - or maybe that
-device isn't used at all anyway. So in the end, we can hopefully move
-all the users over to the at25 driver.
----
- Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Actually it can be reproduced easily using the armv8_pmuv3's events. Tested on 6.10-rc1 with
+perf version 6.10.rc1.g1613e604df0c:
+# offline any CPU
+[root@localhost tmp]# echo 0 > /sys//devices/system/cpu/cpu1/online
+# try any event of armv8_pmuv3, with -a or without
+[root@localhost tmp]# ./perf stat -e armv8_pmuv3_0/ll_cache/ -vvv
+Control descriptor is not initialized
+Opening: armv8_pmuv3_0/ll_cache/
+------------------------------------------------------------
+perf_event_attr:
+  type                             10 (armv8_pmuv3_0)
+  size                             136
+  config                           0x32 (ll_cache)
+  sample_type                      IDENTIFIER
+  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+  disabled                         1
+  inherit                          1
+  exclude_guest                    1
+------------------------------------------------------------
+sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 3
+Opening: armv8_pmuv3_0/ll_cache/
+------------------------------------------------------------
+perf_event_attr:
+  type                             10 (armv8_pmuv3_0)
+  size                             136
+  config                           0x32 (ll_cache)
+  sample_type                      IDENTIFIER
+  read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
+  disabled                         1
+  inherit                          1
+  exclude_guest                    1
+------------------------------------------------------------
+sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8
+sys_perf_event_open failed, error -19
+Error:
+The sys_perf_event_open() syscall returned with 19 (No such device) for event (armv8_pmuv3_0/ll_cache/).
+/bin/dmesg | grep -i perf may provide additional information.
 
-diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-index 6e3afb42926e..2dccb6b049ea 100644
---- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-+++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-@@ -21,7 +21,6 @@ properties:
-               (m25p(40|80|16|32|64|128)|\
-               n25q(32b|064|128a11|128a13|256a|512a|164k)))|\
-               atmel,at25df(321a|641|081a)|\
--              everspin,mr25h(10|40|128|256)|\
-               (mxicy|macronix),mx25l(4005a|1606e|6405d|8005|12805d|25635e)|\
-               (mxicy|macronix),mx25u(4033|4035)|\
-               (spansion,)?s25fl(128s|256s1|512s|008k|064k|164k)|\
-@@ -42,6 +41,14 @@ properties:
-               - spansion,s25fs512s
-           - const: jedec,spi-nor
-       - const: jedec,spi-nor
-+
-+      # Deprecated bindings
-+      - items:
-+          - pattern: "^everspin,mr25h(10|40|128|256)$"
-+          - const: jedec,spi-nor
-+        description:
-+          Deprecated binding, use Documentation/devicetree/bindings/eeprom/at25.yaml.
-+        deprecated: true
-     description:
-       SPI NOR flashes compatible with the JEDEC SFDP standard or which may be
-       identified with the READ ID opcode (0x9F) do not deserve a specific
--- 
-2.39.2
+As you can see, we're trying to open event on CPU 0 first (succeed) and then CPU 1 but
+failed on CPU1. Actually we don't enter any branch which handle the evsel->cpus in
+__perf_evlist__propagate_maps() so the evsel->cpus keeps as is which should be initialized
+from the pmu->cpumask. You referenced to [1] but in this case perf_evsel->system_wide == false
+as I checked. perf_evsel->system_wide will set to true in perf_evlist__go_system_wide() and it
+maybe only set for dummy events. Please correct me if I misread here.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/lib/perf/evlist.c?h=perf-tools-next#n40
+
+Thanks.
 
 
