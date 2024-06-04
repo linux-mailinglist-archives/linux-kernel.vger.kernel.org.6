@@ -1,107 +1,48 @@
-Return-Path: <linux-kernel+bounces-200929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4408FB6AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:11:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F098FB6B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F6431C21D25
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:11:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7388B2744C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEB413D635;
-	Tue,  4 Jun 2024 15:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1UKubv5G";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zicZU98k";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1UKubv5G";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zicZU98k"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EDD1420A3;
+	Tue,  4 Jun 2024 15:12:53 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9445F4C91;
-	Tue,  4 Jun 2024 15:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DF013A863;
+	Tue,  4 Jun 2024 15:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717513887; cv=none; b=upJMUWp2FM4xi3vsp969L4gXhuvlc+cE42loq1xXrVgdTnyfqpkjYkp/pqIzWAxlU26zxgOuP49B/m7v3jcJUvOmYDb8AOQqVMqdAesMcDNQDSWTnVXpR9FVN9mWqqMjMVvzL/Q8Wg2RYNjIbue0AzLmXzMDk08kDNNtoGSzUnU=
+	t=1717513972; cv=none; b=oUVs8AOjAul1PeENOf+v5Ji7PVIIcxQ9Ire0Fjpk4KvJU70F5KE36XV1czqYnqVjE2cWvsCj3299h+G9Q0XTLCnuvgmCa6WlfxPpUPwpev1j2qeME7mjEeT0JQAcY9z/BQJCkxX5dRJjP0iHbnCQ4J8ReuDhmaNbIFxLCymis3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717513887; c=relaxed/simple;
-	bh=QEz05DuTsIvHAwj2T7TyXVgPHATwBc4k25U6wzxI1fM=;
+	s=arc-20240116; t=1717513972; c=relaxed/simple;
+	bh=snGZE3s9qsesS9xe2bi91BaKQseWkzGOPHp3Bh1sXPo=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HKKLjOeoDSus3BevKeH1JES+pHa9mSsgsm04vFxcz509TSAdZcP/t49maLr8LGNr8fi2dGYR29VPFR6fuRbHGwlcuTYG7ue6hfkpun0pf9x+mWOUe/9opwyK4tFRmyr7Tr/gOe4Ag5PP1wizAklaRoKnfTTQICQ0Q65vDRKmA7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1UKubv5G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zicZU98k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1UKubv5G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zicZU98k; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 94E541F803;
-	Tue,  4 Jun 2024 15:11:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717513882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suG/UwcmICtQXRCel+rkvU09OoVD7nEthrbtfU0L2LU=;
-	b=1UKubv5G1QmsZNeH6WNzmwGBJahPo70aYyMUqME4cgTkgvCyQed03TyvzaQzfjGOb4Ti0O
-	Mq8XnTUSkv2H+S7scAQjFJb4h1yrTNJFZuJsjLtXDQp/xaa0V8w7gdstOpQxE1HOW8EqRY
-	Jo0KbjxEYi+IxlPUyzZncF5DZdF7cZA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717513882;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suG/UwcmICtQXRCel+rkvU09OoVD7nEthrbtfU0L2LU=;
-	b=zicZU98kiHvP2nllYoLgmyLu5LG4Gwm5U+32RLTv2B2BhdFuzRNZZWZLEQUpBSu58b3/hm
-	DYYqSDFgU2SOKdAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1UKubv5G;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zicZU98k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717513882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suG/UwcmICtQXRCel+rkvU09OoVD7nEthrbtfU0L2LU=;
-	b=1UKubv5G1QmsZNeH6WNzmwGBJahPo70aYyMUqME4cgTkgvCyQed03TyvzaQzfjGOb4Ti0O
-	Mq8XnTUSkv2H+S7scAQjFJb4h1yrTNJFZuJsjLtXDQp/xaa0V8w7gdstOpQxE1HOW8EqRY
-	Jo0KbjxEYi+IxlPUyzZncF5DZdF7cZA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717513882;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suG/UwcmICtQXRCel+rkvU09OoVD7nEthrbtfU0L2LU=;
-	b=zicZU98kiHvP2nllYoLgmyLu5LG4Gwm5U+32RLTv2B2BhdFuzRNZZWZLEQUpBSu58b3/hm
-	DYYqSDFgU2SOKdAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7499413ABC;
-	Tue,  4 Jun 2024 15:11:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GQ6uFZQuX2YIIAAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Tue, 04 Jun 2024 15:11:16 +0000
-Date: Tue, 4 Jun 2024 17:11:13 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin
- <peda@axentia.se>
-Subject: Re: [PATCH] i2c: smbus: fix NULL function pointer dereference
-Message-ID: <20240604171113.232628f9@endymion.delvare>
-In-Reply-To: <b2tnimag62ty6wndyjsy7u5fay6y52zn47vvifw6rh5abeqzpu@pqyyczutxcwu>
-References: <20240426064408.7372-1-wsa+renesas@sang-engineering.com>
-	<1e626d93f4220cc348300bbc61089de32300122d.camel@suse.de>
-	<b2tnimag62ty6wndyjsy7u5fay6y52zn47vvifw6rh5abeqzpu@pqyyczutxcwu>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
+	 MIME-Version:Content-Type; b=oBZ73mTQE2LDYIaGm+nj5W+DbMwyNp9TaFon69VuNuAPy2u1I0dEmt0Xg7x+MnEFZ7TtLdBk89gSprP0EU+1LP0dG8P2FDmVyY8X9ltUfUdngkG5vpESWubHNbDBOTo10rXhr4xcnbltxQxWNxJkTCDQTFVuwXq0Uxx8w+pTUuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE5AC2BBFC;
+	Tue,  4 Jun 2024 15:12:50 +0000 (UTC)
+Date: Tue, 4 Jun 2024 11:12:49 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, don
+ <zds100@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] tracing/fprobe: Support raw tracepoint events on
+ modules
+Message-ID: <20240604111249.78c48ac7@gandalf.local.home>
+In-Reply-To: <20240604084955.29b9440687522a1347e0e7cd@kernel.org>
+References: <171723014778.258703.6731294779199848686.stgit@devnote2>
+	<171723016594.258703.1629777910752596529.stgit@devnote2>
+	<fbfec8d9-d0ed-4384-bbd2-dd5c1e568ed1@efficios.com>
+	<20240604084955.29b9440687522a1347e0e7cd@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,125 +51,148 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 94E541F803
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[renesas];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
 
-Hi Wolfram,
+On Tue, 4 Jun 2024 08:49:55 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-Thanks for your answer.
-
-On Tue, 4 Jun 2024 10:50:30 +0200, Wolfram Sang wrote:
-> Hi Jean,
+> On Mon, 3 Jun 2024 15:50:55 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 > 
-> > I have a hard time establishing a formal link between the reported bug
-> > and the commit listed above. I do understand that it wouldn't make
-> > sense to register an i2c_adapter with neither .master_xfer nor
-> > .smbus_xfer set before .reg_slave was added to struct i2c_algorithm,
-> > but there were no checks in i2c-core preventing it from happening.  
+> > On 2024-06-01 04:22, Masami Hiramatsu (Google) wrote:  
+> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > 
+> > > Support raw tracepoint event on module by fprobe events.
+> > > Since it only uses for_each_kernel_tracepoint() to find a tracepoint,
+> > > the tracepoints on modules are not handled. Thus if user specified a
+> > > tracepoint on a module, it shows an error.
+> > > This adds new for_each_module_tracepoint() API to tracepoint subsystem,
+> > > and uses it to find tracepoints on modules.  
+> > 
+> > Hi Masami,
+> > 
+> > Why prevent module unload when a fprobe tracepoint is attached to a
+> > module ? This changes the kernel's behavior significantly just for the
+> > sake of instrumentation.  
 > 
-> Well, yes, correct.
+> I don't prevent module unloading all the time, just before registering
+> tracepoint handler (something like booking a ticket :-) ).
+> See the last hunk of this patch, it puts the module before exiting
+> __trace_fprobe_create().
 > 
-> > It was also possible for any (broken) device driver to call
-> > __i2c_transfer() without first checking if plain I2C transfers were
-> > actually supported by the i2c_adapter. I would argue that such an issue
-> > should have been fixed at the device driver level by checking for the
-> > I2C_FUNC_I2C functionality flag before calling __i2c_transfer(). That's
-> > a theoretical issue though as I'm not aware of any device driver having
-> > this issue.  
+> > 
+> > As an alternative, LTTng-modules attach/detach to/from modules with the
+> > coming/going notifiers, so the instrumentation gets removed when a
+> > module is unloaded rather than preventing its unload by holding a module
+> > reference count. I would recommend a similar approach for fprobe.  
 > 
-> In theory, checking against I2C_FUNC_I2C should happen. In practice,
-> most I2C drivers do not do this. Being picky here could results in bad
-> user experience because of OOPS. If we really want to enforce checking
-> I2C_FUNC_I2C, then we should have this safety net while we convert all
-> users. No, actually, I think we always should have some safety nets.
-
-Point taken, makes sense.
-
-Note that we still want I2C_FUNC_I2C to be set properly, because it
-allows device drivers to optimize transfers (the at24 driver is a prime
-example of that) or even just to bind to the I2C bus (for device
-drivers which properly check for it).
-
-> > The call stack in Baruch's report shows that the real issue is with
-> > i2c_smbus_xfer_emulated() being called with the i2c bus lock already
-> > held, and thus having to call __i2c_transfer() instead of
-> > i2c_transfer(). This code path did not exist before commit 63453b59e411
-> > ("i2c: smbus: add unlocked __i2c_smbus_xfer variant"), which was added
-> > in kernel v4.19. Therefore I claim that CVE-2024-35984 only affects
-> > kernel v4.19 and newer. Do we agree on that?  
+> Yes, since tracepoint subsystem provides a notifier API to notify the
+> tracepoint is gone, fprobe already uses it to find unloading and
+> unregister the target function. (see __tracepoint_probe_module_cb)
 > 
-> (There is a CVE for it??) For Baruch's case, this is true. But there are
-> __i2c_transfer users all over the tree, they are all potentially
-> vulnerable, or?
 
-Yes there are many, but I think we shall differentiate between 2 cases:
-* Missing check in a specific kernel device driver. These are unlikely
-  to be a problem in practice because (1) these devices are typically
-  instantiated explicitly, and such explicit code or device tree
-  description would not exist in the first place if said device was not
-  compatible with said I2C bus, and (2) if such an incompatibility was
-  really present then it would have been spotted and fixed very
-  quickly. Arbitrary binding through sysfs attributes is still possible
-  but would definitely require root access and evil intentions (at
-  which point we are screwed no matter what). I'm honestly not worried
-  about this scenario.
-* The issue being triggered from user-space through i2c-dev, which is
-  what Baruch reported. The user doing that can target any arbitrary
-  I2C bus and thus cause the oops by accident or even on purpose. For
-  me this is what CVE-2024-35984 is about. What limits the attack
-  surface here is that slave-only I2C buses are rare and you typically
-  need to be root to use i2c-dev. But this is still a serious issue.
+Ah, it only prevents module unloading in __trace_fprobe_create()
 
-Also note that the first case could happen ever since __i2c_transfer()
-was introduced (kernel v3.6, commit b37d2a3a75cb) and is not limited to
-slave-only adapters, as any SMBus-only i2c_adapter would also be
-vulnerable.
+> +static void __find_tracepoint_module_cb(struct tracepoint *tp, void *priv)
+> +{
+> +	struct __find_tracepoint_cb_data *data = priv;
+> +
+> +	if (!data->tpoint && !strcmp(data->tp_name, tp->name)) {
+> +		data->tpoint = tp;
+> +		data->mod = __module_text_address((unsigned long)tp->probestub);
+> +		if (!try_module_get(data->mod)) {
 
-So the "Fixes:" tag in commit 91811a31b68d is incorrect for both
-scenarios.
+Here it gets the module. Should only happen once, as it sets data->tpoint.
 
-> (...)
-> I see the performance penalty, yet I prefer handling the buggy driver
-> gracefully because kicking off I2C transfers is not a hot path. Maybe we
-> could turn the dev_dbg into something louder to make people aware that
-> there is a bug?
+> +			data->tpoint = NULL;
+> +			data->mod = NULL;
+> +		}
+> +	}
+> +}
+> +
+>  static void __find_tracepoint_cb(struct tracepoint *tp, void *priv)
+>  {
+>  	struct __find_tracepoint_cb_data *data = priv;
+> @@ -905,14 +922,28 @@ static void __find_tracepoint_cb(struct tracepoint *tp, void *priv)
+>  		data->tpoint = tp;
+>  }
+>  
+> -static struct tracepoint *find_tracepoint(const char *tp_name)
+> +/*
+> + * Find a tracepoint from kernel and module. If the tracepoint is in a module,
+> + * this increments the module refcount to prevent unloading until the
+> + * trace_fprobe is registered to the list. After registering the trace_fprobe
+> + * on the trace_fprobe list, the module refcount is decremented because
+> + * tracepoint_probe_module_cb will handle it.
+> + */
+> +static struct tracepoint *find_tracepoint(const char *tp_name,
+> +					  struct module **tp_mod)
+>  {
+>  	struct __find_tracepoint_cb_data data = {
+>  		.tp_name = tp_name,
+> +		.mod = NULL,
+>  	};
+>  
+>  	for_each_kernel_tracepoint(__find_tracepoint_cb, &data);
+>  
+> +	if (!data.tpoint && IS_ENABLED(CONFIG_MODULES)) {
+> +		for_each_module_tracepoint(__find_tracepoint_module_cb, &data);
+> +		*tp_mod = data.mod;
+> +	}
+> +
+>  	return data.tpoint;
+>  }
+>  
+> @@ -996,6 +1027,7 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+>  	char abuf[MAX_BTF_ARGS_LEN];
+>  	char *dbuf = NULL;
+>  	bool is_tracepoint = false;
+> +	struct module *tp_mod = NULL;
+>  	struct tracepoint *tpoint = NULL;
+>  	struct traceprobe_parse_context ctx = {
+>  		.flags = TPARG_FL_KERNEL | TPARG_FL_FPROBE,
+> @@ -1080,7 +1112,7 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+>  
+>  	if (is_tracepoint) {
+>  		ctx.flags |= TPARG_FL_TPOINT;
+> -		tpoint = find_tracepoint(symbol);
+> +		tpoint = find_tracepoint(symbol, &tp_mod);
+>  		if (!tpoint) {
+>  			trace_probe_log_set_index(1);
+>  			trace_probe_log_err(0, NO_TRACEPOINT);
+> @@ -1110,8 +1142,8 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+>  		goto out;
+>  
+>  	/* setup a probe */
+> -	tf = alloc_trace_fprobe(group, event, symbol, tpoint, maxactive,
+> -				argc, is_return);
+> +	tf = alloc_trace_fprobe(group, event, symbol, tpoint, tp_mod,
+> +				maxactive, argc, is_return);
+>  	if (IS_ERR(tf)) {
+>  		ret = PTR_ERR(tf);
+>  		/* This must return -ENOMEM, else there is a bug */
+> @@ -1119,10 +1151,6 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+>  		goto out;	/* We know tf is not allocated */
+>  	}
+>  
+> -	if (is_tracepoint)
+> -		tf->mod = __module_text_address(
+> -				(unsigned long)tf->tpoint->probestub);
+> -
+>  	/* parse arguments */
+>  	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
+>  		trace_probe_log_set_index(i + 2);
+> @@ -1155,6 +1183,8 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+>  	}
+>  
+>  out:
+> +	if (tp_mod)
+> +		module_put(tp_mod);
 
-My previous message initially had a suggestion in that direction ;-)
-but I first wanted your opinion on the check itself. dev_dbg() is
-definitely not appropriate for a condition which should never happen
-and implies there's a bug somewhere else. A WARN_ON_ONCE would probably
-be better, so that the bug gets spotted and fixed quickly.
+And on the way out, it puts it.
 
--- 
-Jean Delvare
-SUSE L3 Support
+-- Steve
+
+>  	traceprobe_finish_parse(&ctx);
+>  	trace_probe_log_clear();
+>  	kfree(new_argv);
 
