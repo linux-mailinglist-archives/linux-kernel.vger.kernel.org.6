@@ -1,242 +1,244 @@
-Return-Path: <linux-kernel+bounces-199906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4178FA799
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:30:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254DA8FA79B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49722876C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7051F22D4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D7913D2AB;
-	Tue,  4 Jun 2024 01:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D526A77105;
+	Tue,  4 Jun 2024 01:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnlgXxEM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jdhi9DfU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA381384B6;
-	Tue,  4 Jun 2024 01:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734C67462
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 01:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717464602; cv=none; b=ioU3orHxl54TlAI9kFxUNQljuC8pTEO3dQoHWesxgGp7xJk3HnQ2hIhxsozO8xSzFa8wFCqEbsYjzF4IrOUjNfeg3GM++lg7MX/CKiPenNRzqq+ISOCFlctYEnjzm+gFeHQIHnZnYYK/RRz2eHCWa3NtJ5UNzlojKCdBCNXRD18=
+	t=1717464775; cv=none; b=X8/EMVZqXQhiCgCKrCDh/7K4bsaEwOLqZAGNiVFmzMxMJoBhPQUidiirXISj6jPAPyy6egbK91N16VvUHE2AVxYVPqSTBu8d2FeqYZZrxrV0NMKwMk9OiRWphs2QTXWyiAKwA0KILcpxB+rSP2EaflZvBiIK6NBIfuKvSBGzpew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717464602; c=relaxed/simple;
-	bh=+0MwbPrNLjHstEP7nUmI9nU5cr+C1uEqCmU+IfVJhBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TfPn+NeO5ot6+FpPm6BRPnuTYTwlY+6t9FKjWY3wFjhVGENpmihrIeu0tTdVUYsLq7/ncYt4tHsFXOuDlFieQvGd17hEJ4oqJ7Igy0tFPIU8VuQ+F2cAVJjMyyAaPcidHjy8k/j9nnn+cz2sm3kUkuJrTEZc07FsokBFwEta6Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnlgXxEM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79DCCC2BD10;
-	Tue,  4 Jun 2024 01:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717464601;
-	bh=+0MwbPrNLjHstEP7nUmI9nU5cr+C1uEqCmU+IfVJhBs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bnlgXxEMpTvmKahSPWzVW2eioXzJ7InXnLcF2Rs1JSkMfQA93wXQBY9/XKuZVVXJi
-	 oeHmsD31IY3HyHMYtTD7PSrvj9S1H3KP04TKlWZzgFGXGWPDdoy6u+l15hTWpd+gzW
-	 rrkqErwJ5iAh1ROObeeg8gEUmGPLn4HkWiomXClAUEV1Ygn9FUP+Qbw+IPeT8+Ws56
-	 I8+zq8Wdj1Ege6tKvptsdljRUJrjovlC8dK+XkPQEaDh/6yi5A2iz8Lc911AkK3iVQ
-	 9J/Qo4EvtrUegklsv+qidHqtelitfCS46Jvgeoe5elf4+5tozjA1SGSUxdf7rn2IsA
-	 VjsM2fsbxxo3g==
-Message-ID: <3f98a7da-19c8-4e91-94d7-e8256cc0cb1e@kernel.org>
-Date: Tue, 4 Jun 2024 10:29:35 +0900
+	s=arc-20240116; t=1717464775; c=relaxed/simple;
+	bh=vryDY3ytVLC+sGikOQXWAZN+Xf3KlLscyguHBWCZjQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WOTdvwODWSVrt5R9+6DN7lsNjB/v16mA+DHtDwAd4FOqi0WAZCz/EIpazV3I4FTcMuxwCrDp0nxP1IzWKk1JE9rThMWrgrvAnFvI7mmkGt/3+uwWCoWbRY28YQvH9Ydf/8aVrgJNhHZ5aU18vIstdcGouS7kG7PT1lxfopDBY1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jdhi9DfU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717464772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hS7MoMwLGfxzIIaXcshKkdRzcS5wR6g5g6pARKgvY1Q=;
+	b=Jdhi9DfU7r8p0MCLRYK/JmvCQaVHmmmgGLB09wqpcwO7I+RKcND6QnZmqbxEWhhrp1iKrD
+	AQ19EozORz4j6LxHHU5zWrvpyo4Qk/Yg26SpmJi++JrjZEFBSzH5+irKL3ehBF1/p0Y6fs
+	oiKMVAvVRt14LMnD6R4219qrAIlRRBg=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-636-o3ws2JAdOvm4JZkO3sob-g-1; Mon, 03 Jun 2024 21:32:51 -0400
+X-MC-Unique: o3ws2JAdOvm4JZkO3sob-g-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c1a55ffd60so4470861a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 18:32:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717464770; x=1718069570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hS7MoMwLGfxzIIaXcshKkdRzcS5wR6g5g6pARKgvY1Q=;
+        b=ZEfKrQBTaumnhRDOln2Eu9Pcq2ZF5SheXP6t6PZTg/j+Rz92qTclJWlgxqxxU2UWgq
+         3CFDkPBbGTEkLmXIc3czhFefCQkBdiZ4Ja8It31ueRscOKSKWEWErePGN8eoi0i3fRlX
+         1/bFtPWTtcSK3MOJvjN56Pb5CVXDVzqv/Ts2nDKOmYC95LInOflQmFSU0QB4EqqkthZc
+         7tMH6SrysdggKXz7By8/kfw8ZVcE2sza03xZMilm/+lxDEejd4FF6t9psqc+f1noSZNW
+         EoGdb9nby6BH4sGAm5qZ3Kx/JQuIrmERTiYcVlMbKOOQhr9Hhn/hZsLXvi5G4Hf3qYXI
+         xKpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEpmt+mtrNgjKLtGSIk3+liP/RBOXUzvuE3RT5ljF9I7hKiNXhF41/Zp4nVk0okqfIaebJG+ueIVYLzBqqljKOiQ2cjiOzZ2VlOCZ/
+X-Gm-Message-State: AOJu0YypYdIJXDoPl14ASo/QuZo6XXeCGNAAFI1F/YaECKitwZCnDnTT
+	0hEiU1Ctc8SdZsP+BLRaActzaIk/Pe68Iy6a6Gz71sni0uJNz3ZTSN0Gf+bBfPYLtWT3pqyLNe3
+	GCCBHiDHqtV347tlCZPDDe7726Mw5b8tfrXoVFWkTFRhpXOgec1WL0NwhqXwfWzEl275S3WAQVX
+	AWofW5JvXOKKJkNnk5z1xOfk2H16lxTcoZNEv4
+X-Received: by 2002:a17:90a:c78f:b0:2c0:3467:6c89 with SMTP id 98e67ed59e1d1-2c1dc590c2bmr8133622a91.27.1717464770003;
+        Mon, 03 Jun 2024 18:32:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZvVSzVX8Lmmqpq5k6i5O4qLAVbBMIr+jFe3Zq3AuBYhl69BSSoRLGbdjAhqcSyFqUV18L3B6xQ4HhV5nXrW4=
+X-Received: by 2002:a17:90a:c78f:b0:2c0:3467:6c89 with SMTP id
+ 98e67ed59e1d1-2c1dc590c2bmr8133609a91.27.1717464769587; Mon, 03 Jun 2024
+ 18:32:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] treewide: Align match_string() with
- sysfs_match_string()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Corey Minyard <minyard@acm.org>, Allen Pais <apais@linux.microsoft.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Perry Yuan <perry.yuan@amd.com>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Nuno Sa <nuno.sa@analog.com>,
- Guenter Roeck <linux@roeck-us.net>, Randy Dunlap <rdunlap@infradead.org>,
- Andi Shyti <andi.shyti@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
- Lee Jones <lee@kernel.org>, Samuel Holland <samuel@sholland.org>,
- Elad Nachman <enachman@marvell.com>,
- Arseniy Krasnov <AVKrasnov@sberdevices.ru>,
- Johannes Berg <johannes.berg@intel.com>,
- Gregory Greenman <gregory.greenman@intel.com>,
- Benjamin Berg <benjamin.berg@intel.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Robert Richter <rrichter@amd.com>,
- Vinod Koul <vkoul@kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>,
- Linus Walleij <linus.walleij@linaro.org>, Hans de Goede
- <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Nikita Kravets <teackot@gmail.com>,
- Jiri Slaby <jirislaby@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Stanley Chang <stanley_chang@realtek.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Abdel Alkuor <abdelalkuor@geotab.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Eric Biggers <ebiggers@google.com>, Kees Cook <keescook@chromium.org>,
- Ingo Molnar <mingo@kernel.org>, "Steven Rostedt (Google)"
- <rostedt@goodmis.org>, Daniel Bristot de Oliveira <bristot@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Abel Wu <wuyun.abel@bytedance.com>,
- John Johansen <john.johansen@canonical.com>, Mimi Zohar
- <zohar@linux.ibm.com>, Stefan Berger <stefanb@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, Takashi Iwai <tiwai@suse.de>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
- Mark Brown <broonie@kernel.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-ide@vger.kernel.org,
- openipmi-developer@lists.sourceforge.net, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-pm@vger.kernel.org, qat-linux@intel.com,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-usb@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-bcachefs@vger.kernel.org,
- linux-hardening@vger.kernel.org, cgroups@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- David Howells <dhowells@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
- Niklas Cassel <cassel@kernel.org>, Daniel Scally <djrscally@gmail.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Heiko Stuebner <heiko@sntech.de>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Huang Rui <ray.huang@amd.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>,
- Jean Delvare <jdelvare@suse.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Pavel Machek <pavel@ucw.cz>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Hu Ziji <huziji@marvell.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Potnuri Bharat Teja <bharat@chelsio.com>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Kalle Valo <kvalo@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- JC Kuo <jckuo@nvidia.com>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Sebastian Reichel <sre@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Helge Deller <deller@gmx.de>, Brian Foster <bfoster@redhat.com>,
- Zhihao Cheng <chengzhihao1@huawei.com>, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20240603211538.289765-1-andriy.shevchenko@linux.intel.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240603211538.289765-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240529095313.2568595-1-linan666@huaweicloud.com>
+ <Zl0QpCbYVHIkKa/H@fedora> <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
+In-Reply-To: <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
+From: Changhui Zhong <czhong@redhat.com>
+Date: Tue, 4 Jun 2024 09:32:38 +0800
+Message-ID: <CAGVVp+XD5MbYOWL4pbLMxXL0yNKO5NJ84--=KVnW6w5-GF7Drw@mail.gmail.com>
+Subject: Re: [PATCH] ublk_drv: fix NULL pointer dereference in ublk_ctrl_start_recovery()
+To: Li Nan <linan666@huaweicloud.com>
+Cc: Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk, ZiyangZhang@linux.alibaba.com, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai3@huawei.com, 
+	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/3/24 00:57, Andy Shevchenko wrote:
-> Make two APIs look similar. Hence convert match_string() to be
-> a 2-argument macro. In order to avoid unneeded churn, convert
-> all users as well. There is no functional change intended.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+On Mon, Jun 3, 2024 at 10:20=E2=80=AFAM Li Nan <linan666@huaweicloud.com> w=
+rote:
+>
+>
+>
+> =E5=9C=A8 2024/6/3 8:39, Ming Lei =E5=86=99=E9=81=93:
+>
+> [...]
+>
+> >> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> >> index 4e159948c912..99b621b2d40f 100644
+> >> --- a/drivers/block/ublk_drv.c
+> >> +++ b/drivers/block/ublk_drv.c
+> >> @@ -2630,7 +2630,8 @@ static void ublk_queue_reinit(struct ublk_device=
+ *ub, struct ublk_queue *ubq)
+> >>   {
+> >>      int i;
+> >>
+> >> -    WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq)));
+> >> +    if (WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq))))
+> >> +            return;
+> >
+> > Yeah, it is one bug. However, it could be addressed by adding the check=
+ in
+> > ublk_ctrl_start_recovery() and return immediately in case of NULL ubq->=
+ubq_daemon,
+> > what do you think about this way?
+> >
+>
+> Check ub->nr_queues_ready seems better. How about:
+>
+> @@ -2662,6 +2662,8 @@ static int ublk_ctrl_start_recovery(struct
+> ublk_device *ub,
+>          mutex_lock(&ub->mutex);
+>          if (!ublk_can_use_recovery(ub))
+>                  goto out_unlock;
+> +       if (!ub->nr_queues_ready)
+> +               goto out_unlock;
+>          /*
+>           * START_RECOVERY is only allowd after:
+>           *
+>
+> >
+> > Thanks,
+> > Ming
+>
+> --
+> Thanks,
+> Nan
+>
 
-[...]
 
-> diff --git a/drivers/ata/pata_hpt366.c b/drivers/ata/pata_hpt366.c
-> index bdccd1ba1524..8134f9290791 100644
-> --- a/drivers/ata/pata_hpt366.c
-> +++ b/drivers/ata/pata_hpt366.c
-> @@ -178,7 +178,7 @@ static int hpt_dma_blacklisted(const struct ata_device *dev, char *modestr,
->  
->  	ata_id_c_string(dev->id, model_num, ATA_ID_PROD, sizeof(model_num));
->  
-> -	i = match_string(list, -1, model_num);
-> +	i = __match_string(list, -1, model_num);
->  	if (i >= 0) {
->  		ata_dev_warn(dev, "%s is not supported for %s\n", modestr, list[i]);
->  		return 1;
-> diff --git a/drivers/ata/pata_hpt37x.c b/drivers/ata/pata_hpt37x.c
-> index c0329cf01135..2d0b659bbd65 100644
-> --- a/drivers/ata/pata_hpt37x.c
-> +++ b/drivers/ata/pata_hpt37x.c
-> @@ -226,7 +226,7 @@ static int hpt_dma_blacklisted(const struct ata_device *dev, char *modestr,
->  
->  	ata_id_c_string(dev->id, model_num, ATA_ID_PROD, sizeof(model_num));
->  
-> -	i = match_string(list, -1, model_num);
-> +	i = __match_string(list, -1, model_num);
->  	if (i >= 0) {
->  		ata_dev_warn(dev, "%s is not supported for %s\n",
->  			     modestr, list[i]);
+Hi,Nan
 
-Looks good to me.
+After applying your new patch, I did not trigger "NULL pointer
+dereference" and "Warning",
+but hit task hung "Call Trace" info, please check
 
-Acked-by: Damien Le Moal <dlemoal@kernel.org>	# drivers/ata/
+[13617.812306] running generic/004
+[13622.293674] blk_print_req_error: 91 callbacks suppressed
+[13622.293681] I/O error, dev ublkb4, sector 233256 op 0x1:(WRITE)
+flags 0x8800 phys_seg 1 prio class 0
+[13622.308145] I/O error, dev ublkb4, sector 233256 op 0x0:(READ)
+flags 0x0 phys_seg 2 prio class 0
+[13622.316923] I/O error, dev ublkb4, sector 233264 op 0x1:(WRITE)
+flags 0x8800 phys_seg 1 prio class 0
+[13622.326048] I/O error, dev ublkb4, sector 233272 op 0x0:(READ)
+flags 0x0 phys_seg 1 prio class 0
+[13622.334828] I/O error, dev ublkb4, sector 233272 op 0x1:(WRITE)
+flags 0x8800 phys_seg 1 prio class 0
+[13622.343954] I/O error, dev ublkb4, sector 233312 op 0x0:(READ)
+flags 0x0 phys_seg 1 prio class 0
+[13622.352733] I/O error, dev ublkb4, sector 233008 op 0x0:(READ)
+flags 0x0 phys_seg 1 prio class 0
+[13622.361514] I/O error, dev ublkb4, sector 233112 op 0x0:(READ)
+flags 0x0 phys_seg 1 prio class 0
+[13622.370292] I/O error, dev ublkb4, sector 233192 op 0x1:(WRITE)
+flags 0x8800 phys_seg 1 prio class 0
+[13622.379419] I/O error, dev ublkb4, sector 233120 op 0x0:(READ)
+flags 0x0 phys_seg 1 prio class 0
+[13641.069695] INFO: task fio:174413 blocked for more than 122 seconds.
+[13641.076061]       Not tainted 6.10.0-rc1+ #1
+[13641.080338] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[13641.088164] task:fio             state:D stack:0     pid:174413
+tgid:174413 ppid:174386 flags:0x00004002
+[13641.088168] Call Trace:
+[13641.088170]  <TASK>
+[13641.088171]  __schedule+0x221/0x670
+[13641.088177]  schedule+0x23/0xa0
+[13641.088179]  io_schedule+0x42/0x70
+[13641.088181]  blk_mq_get_tag+0x118/0x2b0
+[13641.088185]  ? gup_fast_pgd_range+0x280/0x370
+[13641.088188]  ? __pfx_autoremove_wake_function+0x10/0x10
+[13641.088192]  __blk_mq_alloc_requests+0x194/0x3a0
+[13641.088194]  blk_mq_submit_bio+0x241/0x6c0
+[13641.088196]  __submit_bio+0x8a/0x1f0
+[13641.088199]  submit_bio_noacct_nocheck+0x168/0x250
+[13641.088201]  ? submit_bio_noacct+0x45/0x560
+[13641.088203]  __blkdev_direct_IO_async+0x167/0x1a0
+[13641.088206]  blkdev_write_iter+0x1c8/0x270
+[13641.088208]  aio_write+0x11c/0x240
+[13641.088212]  ? __rq_qos_issue+0x21/0x40
+[13641.088214]  ? blk_mq_start_request+0x34/0x1a0
+[13641.088216]  ? io_submit_one+0x68/0x380
+[13641.088218]  ? kmem_cache_alloc_noprof+0x4e/0x320
+[13641.088221]  ? fget+0x7c/0xc0
+[13641.088224]  ? io_submit_one+0xde/0x380
+[13641.088226]  io_submit_one+0xde/0x380
+[13641.088228]  __x64_sys_io_submit+0x80/0x160
+[13641.088229]  do_syscall_64+0x79/0x150
+[13641.088233]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+[13641.088237]  ? do_io_getevents+0x8b/0xe0
+[13641.088238]  ? syscall_exit_work+0xf3/0x120
+[13641.088241]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+[13641.088243]  ? do_syscall_64+0x85/0x150
+[13641.088245]  ? do_syscall_64+0x85/0x150
+[13641.088247]  ? blk_mq_flush_plug_list.part.0+0x108/0x160
+[13641.088249]  ? rseq_get_rseq_cs+0x1d/0x220
+[13641.088252]  ? rseq_ip_fixup+0x6d/0x1d0
+[13641.088254]  ? blk_finish_plug+0x24/0x40
+[13641.088256]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+[13641.088258]  ? do_syscall_64+0x85/0x150
+[13641.088260]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+[13641.088262]  ? do_syscall_64+0x85/0x150
+[13641.088264]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+[13641.088266]  ? do_syscall_64+0x85/0x150
+[13641.088268]  ? do_syscall_64+0x85/0x150
+[13641.088270]  ? do_syscall_64+0x85/0x150
+[13641.088272]  ? clear_bhb_loop+0x45/0xa0
+[13641.088275]  ? clear_bhb_loop+0x45/0xa0
+[13641.088277]  ? clear_bhb_loop+0x45/0xa0
+[13641.088279]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[13641.088281] RIP: 0033:0x7ff92150713d
+[13641.088283] RSP: 002b:00007ffca1ef81f8 EFLAGS: 00000246 ORIG_RAX:
+00000000000000d1
+[13641.088285] RAX: ffffffffffffffda RBX: 00007ff9217e2f70 RCX: 00007ff9215=
+0713d
+[13641.088286] RDX: 000055863b694fe0 RSI: 0000000000000010 RDI: 00007ff9216=
+4d000
+[13641.088287] RBP: 00007ff92164d000 R08: 00007ff91936d000 R09: 00000000000=
+00180
+[13641.088288] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000=
+00010
+[13641.088289] R13: 0000000000000000 R14: 000055863b694fe0 R15: 000055863b6=
+970c0
+[13641.088291]  </TASK>
 
--- 
-Damien Le Moal
-Western Digital Research
+Thanks=EF=BC=8C
+Changhui
 
 
