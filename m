@@ -1,284 +1,160 @@
-Return-Path: <linux-kernel+bounces-200093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC178FAA93
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:15:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B3B8FAA9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5E91286800
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:15:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7540B239A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567A513D2B7;
-	Tue,  4 Jun 2024 06:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEECB13DDC2;
+	Tue,  4 Jun 2024 06:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="EHRjcEO0"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OiRWoCFS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99EA14294
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0117565F;
+	Tue,  4 Jun 2024 06:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717481698; cv=none; b=vE0IkNrcYvxdj2wMYRz+uIvwI+p6tdWm1pDbuAtdfyk8NiJzq5L5pi/pUJOHJlt0rocwBPCHEGVPROHRrLp2ctWCyjzZoleQ9+yI1HvsoK4nk0YLrjnkgLH2jVopt0HPLN3PLBkKLP3fKiO7mo8EVWOglNdLbPieV1Hkh6QpDqo=
+	t=1717481979; cv=none; b=AlWLQv0ljuADiLayl8dYF/unZYtqu9RU4U35IEtnFkbrrdbPKjoIJqlA9ESFeuIcnIB9AVtdZyY7XfMS7p7qKJU+Kc/CaFW5kovP6YxDjDEoM5NiR4EErkpVlo6niqv2Lpx9SqRck0lzIYpzp38EVgNPYbowrJ4GOJNo3UAQGjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717481698; c=relaxed/simple;
-	bh=4hIQQi3dXMlNsoeK8RqHMsi4O+6Mj+5pg/TWlF0xkts=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TeCTm3RHPEAG4nXpEtWnwil7R+TJnsJNBsw0rRExDftwx5UlHNypqzqSqEr77XmNTxfe1We45WNlcSEj/khN36gATlqwf4Jev7dvbfqJzQkGzGjfgtgZ1Kp5BrEt/n6nmiRMAqdZu9OFcjXmdfSguYSJM+49HkAdD3DVH9rEUW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=EHRjcEO0; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 45E723F2A4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 06:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1717481690;
-	bh=1WeR8EGjanFo/UpdB5WDNqel6tIBsDJjn/aZGqNsPZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=EHRjcEO0NVwpDZhwqTbuRj48Do9UiFqwvZndQ7PWRA0KoP/BtlFVFBURiNIdyn/eG
-	 0Pys8boY3CzAmQs6z+BIOS/8Dh0TBrKc94JxxN+vvd/vXiwHzhIaRV4wNg+Z2Tuy+i
-	 aLFzXH1XQznEzURu29JiOyK3D5HIt7GwCG2ZmTna0b6rKKd0xEvDj8f3x/1cGAeNkx
-	 9Vdp417o8cBiQ2jRocMLhb7PZiZnhlLzjRnIVQiD5JqESM4F1PETCk8Nfowrhe07MA
-	 PgK3JrtXcnPY5GdvEK0wpztFXIR4zI9CdTOLVtn6madMeDH5DpsfTcCuC5GgJO212L
-	 zYseik80brLMA==
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a68f2d64342so13344766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 23:14:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717481689; x=1718086489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1WeR8EGjanFo/UpdB5WDNqel6tIBsDJjn/aZGqNsPZw=;
-        b=H2U95rACPBy+IE+7LWx8PbPe6mMtlqKct9sJEV69IltoIbOjDO9yvSjReUqgmSlRzf
-         dP1gCg2Ha49LJX2ls5wHLngua32E0Qm8p1v/C5QJj/xWfuA9jyYY/Ms771DXqfb14RCX
-         G6W6trjzjWwhCYPFb+UH5vjrKCBlxefYOF7ETLl0plVjOxOo7Cvlxpm8b2ClgPUSF4nH
-         oEd3YX+fSZKcHcLvFsS5k4KIWox50bThOXMsOeDLfahWijG1oQnEBdslOy06tzpU8XNn
-         IMdcO96gFaFiA6QV1oCUO5yT5DUGIe9K3PDxjSbzfYBepNtLewpc8RQu6JKHGDcsUx2c
-         KQAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPR2+nAuFGLV0AWMI/TmJu019PsWcXN8XA2cv367kwmv8cFFT09yvyM27BnpkkKTJHtatypeyzL9yE9Iq4pHiY/pba3ANqPnmpJulY
-X-Gm-Message-State: AOJu0YySXDVdSgGHa9c6ldEoWWwYqOul7xM3Jq1oDQIcoI5GXuagjGci
-	PJBLCfmjzp1eCNR/NqzB2+JFKvBvh8QnOi7rewOS/9ihsN5dMGbI+9H3aCyaHiF88fK4O8GQ1Oc
-	mtyp3mgeqAXcf0TI0mY7aWmCYPhbKkEX8dmxxYQ60IPTsXpSESSvcHkfx+vL5NZr0devf76gy0h
-	u/tvzQ4aPp2c5xWXvq6ZzKSm/mRMZIUMvzbj6VSCHKPkgYomfKvBDn
-X-Received: by 2002:a17:907:97c6:b0:a69:2553:5806 with SMTP id a640c23a62f3a-a6925535850mr262892666b.52.1717481689414;
-        Mon, 03 Jun 2024 23:14:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGvx/vKndWMOo5cyA00mATkJWNLrPzXj/JWEyhCiBwE05EjvuiGQN6kfnvCuj3/g62wh9eWFw8QRCyL5AR+jTM=
-X-Received: by 2002:a17:907:97c6:b0:a69:2553:5806 with SMTP id
- a640c23a62f3a-a6925535850mr262890266b.52.1717481688973; Mon, 03 Jun 2024
- 23:14:48 -0700 (PDT)
+	s=arc-20240116; t=1717481979; c=relaxed/simple;
+	bh=jcUhSm+IFc5ARpltnuHkZQXo0zlpHAcNMJd72okD0uE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b208jq6fLthPjTicr711UB50XMhk0hBbLEsNwXsQBSKZow1T0Tkqn7lQmNCMpFQjJj0g2AUQzDwEJe7lRfnAryh+lmja9bbntuGtfooRr4zA9v0QFwmN029KvPJOB5yXFkWBXLlU2JM7U4E2906Rc4Rtm22PK8ZEDuDKjdHO8N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OiRWoCFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0595EC32786;
+	Tue,  4 Jun 2024 06:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717481978;
+	bh=jcUhSm+IFc5ARpltnuHkZQXo0zlpHAcNMJd72okD0uE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OiRWoCFSvrCAhVhMBftLMawr+HikFitL+h6ljQAnWe8KsZ3S0F5Rp6tVKNMU8ygG7
+	 dWqoUQFMCdnQV0X8diy5iB3uprWTHMJt/cA/g2dAgs4eNGyKQGmoVP9uFhuH8NiYTp
+	 6TLyPu0BbHytfy1pIMh1TwGnmc56EyUIJjVJOjkSEsuSE6ZpEE3TmT2CEnRmzXQm4q
+	 eZuOw+SEFUGy421II3H5EkbascivCMdhAPbJWxdZns9MV1g1zaDtr6A3xQjwvF8E70
+	 TbNN7K7lY+hVZl3iI003swxTqEDTiVz7vVdUvl3knEOGTbvjusQY+Cshkopa7e9TVd
+	 /sZMq7RwIqpCg==
+Message-ID: <6a9253b4-d28d-400e-a37b-d98431a4aecc@kernel.org>
+Date: Tue, 4 Jun 2024 08:19:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604054823.20649-1-chengen.du@canonical.com>
-In-Reply-To: <20240604054823.20649-1-chengen.du@canonical.com>
-From: Chengen Du <chengen.du@canonical.com>
-Date: Tue, 4 Jun 2024 14:14:37 +0800
-Message-ID: <CAPza5qeVMqpvjwMeBdAfvp=MFxxJv9xS4JfJ9rig9-rNVdKTjA@mail.gmail.com>
-Subject: Re: [PATCH v5] af_packet: Handle outgoing VLAN packets without
- hardware offloading
-To: willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, kaber@trash.net, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: usb: snps,dwc3: Add
+ 'snps,xhci-write-64-hi-lo-quirk' quirk
+To: Jung Daehwan <dh10.jung@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thinh Nguyen
+ <Thinh.Nguyen@synopsys.com>, Mathias Nyman <mathias.nyman@intel.com>,
+ Felipe Balbi <balbi@kernel.org>,
+ "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <1717135657-120818-1-git-send-email-dh10.jung@samsung.com>
+ <CGME20240531060728epcas2p358edd115ee217a50712f1ca3b3b22bd7@epcas2p3.samsung.com>
+ <1717135657-120818-2-git-send-email-dh10.jung@samsung.com>
+ <57966949-8080-4aa5-8d38-63ded1c2b467@kernel.org>
+ <20240603030316.GA23593@ubuntu>
+ <eb13e81c-2669-4e82-86eb-d61203475962@kernel.org>
+ <20240603083657.GE23593@ubuntu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240603083657.GE23593@ubuntu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Willem,
+On 03/06/2024 10:36, Jung Daehwan wrote:
+> On Mon, Jun 03, 2024 at 08:57:16AM +0200, Krzysztof Kozlowski wrote:
+>> On 03/06/2024 05:03, Jung Daehwan wrote:
+>>> On Fri, May 31, 2024 at 10:10:30AM +0200, Krzysztof Kozlowski wrote:
+>>>> On 31/05/2024 08:07, Daehwan Jung wrote:
+>>>>> Add a new quirk for dwc3 core to support writing high-low order.
+>>>>
+>>>> This does not tell me more. Could be OS property as well... please
+>>>> describe hardware and provide rationale why this is suitable for
+>>>> bindings (also cannot be deduced from compatible).
+>>>>
+>>>>
+>>>
+>>> Hi,
+>>>
+>>> I'm sorry I didn't describe it in dt-bindings patches.
+>>> It's described in cover-letter and other patches except in dt-bindings.
+>>> I will add it in next submission.
+>>>
+>>> I've found out the limitation of Synopsys dwc3 controller. This can work
+>>> on Host mode using xHCI. A Register related to ERST should be written
+>>> high-low order not low-high order. Registers are always written low-high order
+>>> following xHCI spec.(64-bit written is done in each 2 of 32-bit)
+>>> That's why new quirk is needed for workaround. This quirk is used not in
+>>> dwc3 controller itself, but passed to xhci quirk eventually. That's because
+>>> this issue occurs in Host mode using xHCI.
+>>>
+>>
+>> If there is only one register then you should just program it
+>> differently and it does not warrant quirk property.
+>>
+> 
+> Could you tell me why you think it does not warrant? I think this is
+> good to use quirk.
 
-Thank you for your comments on patch v4.
-I have made some modifications and would like to discuss some of your
-suggestions in detail.
+Because it is a fixed case, deduced from compatible. No need for a
+property for this.
 
+Best regards,
+Krzysztof
 
-
-On Tue, Jun 4, 2024 at 1:50=E2=80=AFPM Chengen Du <chengen.du@canonical.com=
-> wrote:
->
-> The issue initially stems from libpcap. The ethertype will be overwritten
-> as the VLAN TPID if the network interface lacks hardware VLAN offloading.
-> In the outbound packet path, if hardware VLAN offloading is unavailable,
-> the VLAN tag is inserted into the payload but then cleared from the sk_bu=
-ff
-> struct. Consequently, this can lead to a false negative when checking for
-> the presence of a VLAN tag, causing the packet sniffing outcome to lack
-> VLAN tag information (i.e., TCI-TPID). As a result, the packet capturing
-> tool may be unable to parse packets as expected.
->
-> The TCI-TPID is missing because the prb_fill_vlan_info() function does no=
-t
-> modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in the
-> payload and not in the sk_buff struct. The skb_vlan_tag_present() functio=
-n
-> only checks vlan_all in the sk_buff struct. In cooked mode, the L2 header
-> is stripped, preventing the packet capturing tool from determining the
-> correct TCI-TPID value. Additionally, the protocol in SLL is incorrect,
-> which means the packet capturing tool cannot parse the L3 header correctl=
-y.
->
-> Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
-> Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen.du@ca=
-nonical.com/T/#u
-> Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Chengen Du <chengen.du@canonical.com>
-> ---
->  net/packet/af_packet.c | 64 ++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 62 insertions(+), 2 deletions(-)
->
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index ea3ebc160e25..53d51ac87ac6 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -538,6 +538,52 @@ static void *packet_current_frame(struct packet_sock=
- *po,
->         return packet_lookup_frame(po, rb, rb->head, status);
->  }
->
-> +static u16 vlan_get_tci(struct sk_buff *skb)
-> +{
-> +       unsigned int vlan_depth =3D skb->mac_len;
-> +       struct vlan_hdr vhdr, *vh;
-> +       u8 *skb_head =3D skb->data;
-> +       int skb_len =3D skb->len;
-> +
-> +       if (vlan_depth) {
-> +               if (WARN_ON(vlan_depth < VLAN_HLEN))
-> +                       return 0;
-> +               vlan_depth -=3D VLAN_HLEN;
-> +       } else {
-> +               vlan_depth =3D ETH_HLEN;
-> +       }
-> +
-> +       skb_push(skb, skb->data - skb_mac_header(skb));
-> +       vh =3D skb_header_pointer(skb, vlan_depth, sizeof(vhdr), &vhdr);
-> +       if (skb_head !=3D skb->data) {
-> +               skb->data =3D skb_head;
-> +               skb->len =3D skb_len;
-> +       }
-> +       if (unlikely(!vh))
-> +               return 0;
-> +
-> +       return ntohs(vh->h_vlan_TCI);
-> +}
-
-As you mentioned, we need the outermost VLAN tag to fit the protocol
-we referenced in tp_vlan_tpid.
-In if_vlan.h, __vlan_get_protocol() only provides the protocol and may
-affect other usage scenarios if we modify it to also provide TCI.
-
-There is a similar function called __vlan_get_tag(), which also aims
-to extract TCI from the L2 header, but it doesn't check the header
-size as __vlan_get_protocol() does.
-To prevent affecting other usage scenarios, I introduced a new
-function to achieve our purpose.
-
-Additionally, the starting point of skb->data differs in SOCK_RAW and
-SOCK_DGRAM cases.
-I accounted for this by using skb_push to ensure that skb->data starts
-from the L2 header.
-
-Would you recommend modifying __vlan_get_tag() to add the size check
-logic instead?
-If so, we would also need to consider how to integrate the size check
-logic into both __vlan_get_protocol() and __vlan_get_tag().
-
-> +
-> +static __be16 vlan_get_protocol_dgram(struct sk_buff *skb)
-> +{
-> +       __be16 proto =3D skb->protocol;
-> +
-> +       if (unlikely(eth_type_vlan(proto))) {
-> +               u8 *skb_head =3D skb->data;
-> +               int skb_len =3D skb->len;
-> +
-> +               skb_push(skb, skb->data - skb_mac_header(skb));
-> +               proto =3D __vlan_get_protocol(skb, proto, NULL);
-> +               if (skb_head !=3D skb->data) {
-> +                       skb->data =3D skb_head;
-> +                       skb->len =3D skb_len;
-> +               }
-> +       }
-> +
-> +       return proto;
-> +}
-> +
->  static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
->  {
->         del_timer_sync(&pkc->retire_blk_timer);
-> @@ -1011,6 +1057,10 @@ static void prb_fill_vlan_info(struct tpacket_kbdq=
-_core *pkc,
->                 ppd->hv1.tp_vlan_tci =3D skb_vlan_tag_get(pkc->skb);
->                 ppd->hv1.tp_vlan_tpid =3D ntohs(pkc->skb->vlan_proto);
->                 ppd->tp_status =3D TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_=
-TPID_VALID;
-> +       } else if (unlikely(eth_type_vlan(pkc->skb->protocol))) {
-> +               ppd->hv1.tp_vlan_tci =3D vlan_get_tci(pkc->skb);
-> +               ppd->hv1.tp_vlan_tpid =3D ntohs(pkc->skb->protocol);
-> +               ppd->tp_status =3D TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_=
-TPID_VALID;
->         } else {
->                 ppd->hv1.tp_vlan_tci =3D 0;
->                 ppd->hv1.tp_vlan_tpid =3D 0;
-> @@ -2428,6 +2478,10 @@ static int tpacket_rcv(struct sk_buff *skb, struct=
- net_device *dev,
->                         h.h2->tp_vlan_tci =3D skb_vlan_tag_get(skb);
->                         h.h2->tp_vlan_tpid =3D ntohs(skb->vlan_proto);
->                         status |=3D TP_STATUS_VLAN_VALID | TP_STATUS_VLAN=
-_TPID_VALID;
-> +               } else if (unlikely(eth_type_vlan(skb->protocol))) {
-> +                       h.h2->tp_vlan_tci =3D vlan_get_tci(skb);
-> +                       h.h2->tp_vlan_tpid =3D ntohs(skb->protocol);
-> +                       status |=3D TP_STATUS_VLAN_VALID | TP_STATUS_VLAN=
-_TPID_VALID;
->                 } else {
->                         h.h2->tp_vlan_tci =3D 0;
->                         h.h2->tp_vlan_tpid =3D 0;
-> @@ -2457,7 +2511,8 @@ static int tpacket_rcv(struct sk_buff *skb, struct =
-net_device *dev,
->         sll->sll_halen =3D dev_parse_header(skb, sll->sll_addr);
->         sll->sll_family =3D AF_PACKET;
->         sll->sll_hatype =3D dev->type;
-> -       sll->sll_protocol =3D skb->protocol;
-> +       sll->sll_protocol =3D (sk->sk_type =3D=3D SOCK_DGRAM) ?
-> +               vlan_get_protocol_dgram(skb) : skb->protocol;
->         sll->sll_pkttype =3D skb->pkt_type;
->         if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV)))
->                 sll->sll_ifindex =3D orig_dev->ifindex;
-> @@ -3482,7 +3537,8 @@ static int packet_recvmsg(struct socket *sock, stru=
-ct msghdr *msg, size_t len,
->                 /* Original length was stored in sockaddr_ll fields */
->                 origlen =3D PACKET_SKB_CB(skb)->sa.origlen;
->                 sll->sll_family =3D AF_PACKET;
-> -               sll->sll_protocol =3D skb->protocol;
-> +               sll->sll_protocol =3D (sock->type =3D=3D SOCK_DGRAM) ?
-> +                       vlan_get_protocol_dgram(skb) : skb->protocol;
->         }
->
->         sock_recv_cmsgs(msg, sk, skb);
-> @@ -3539,6 +3595,10 @@ static int packet_recvmsg(struct socket *sock, str=
-uct msghdr *msg, size_t len,
->                         aux.tp_vlan_tci =3D skb_vlan_tag_get(skb);
->                         aux.tp_vlan_tpid =3D ntohs(skb->vlan_proto);
->                         aux.tp_status |=3D TP_STATUS_VLAN_VALID | TP_STAT=
-US_VLAN_TPID_VALID;
-> +               } else if (unlikely(eth_type_vlan(skb->protocol))) {
-> +                       aux.tp_vlan_tci =3D vlan_get_tci(skb);
-> +                       aux.tp_vlan_tpid =3D ntohs(skb->protocol);
-> +                       aux.tp_status |=3D TP_STATUS_VLAN_VALID | TP_STAT=
-US_VLAN_TPID_VALID;
->                 } else {
->                         aux.tp_vlan_tci =3D 0;
->                         aux.tp_vlan_tpid =3D 0;
-> --
-> 2.43.0
->
 
