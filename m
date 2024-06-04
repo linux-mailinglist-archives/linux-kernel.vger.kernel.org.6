@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-199933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8141D8FA7EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:57:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2B58FA7EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E420FB25D45
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 448A328CEC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 01:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749571422BD;
-	Tue,  4 Jun 2024 01:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D021422DA;
+	Tue,  4 Jun 2024 01:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ImMPwOS2"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ur9kay7r"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4536613D602
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 01:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8B313E3F2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 01:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717466116; cv=none; b=Y7pvPZIgxrjfKapvnXAZdJOX7Pj3KSR5pZQGZb9gs847MB9ZMGZ3S7ZOWS0mrMTj19hGkwDS9fELF58TB6S8fNLurr0pzidfh8zr0W8b3r9CCtFgi6u4SFsZgm5cU+86Xzx1jhhljDb0m8gk/7+zGe6s67wwvtZPcbOgUkmas2c=
+	t=1717466122; cv=none; b=mbPJadKzTQLDTaUwn0fXqOakFV+mHOxhlggJ3eovoJ6mRpyVh2t9jibq0YZZY9RtLNgb2Qs8fTdPwpnKk7wFrdA19bHQU+gTKJkkAv4BUe7+QryK0jW9vvEtnnmrFxwm/Wxm/aoKmGUFF0vVIpjdVazgSnbNhsaMRZPlmlKeczE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717466116; c=relaxed/simple;
-	bh=kAf7SPBLso5zp49wUYubqs0YKzd/lC+tt+i0+MOxu64=;
+	s=arc-20240116; t=1717466122; c=relaxed/simple;
+	bh=KoW/D18MopXUFdHXQ6Q/PnnQkxmmhncr645BE4UuUac=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DiQ06789pj5xnrEsOMhEJj6L1WDcPnfLPAYGDopkik9bm4Yl1fm3CRq4E4SzX5xARVUgxGbryBNBkorTctVqnv/S3C31meR5KvNbTJuYhBT3THOD8RHL18xLo0JpwsyOpzG/M/ZA+yxBVdTDZ3CWoU0SFspec+/DHIG5l06QOHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ImMPwOS2; arc=none smtp.client-ip=192.198.163.10
+	 MIME-Version; b=rqAqX5qHgaK4IrGCi0KBpQg4ielZjaLQ9woFE8CQRt8d6DGOY1kemkN5R2e4gq9DfMSj9DxkDuJux+uAkSowQTRcQFc1PaJmHIwuhW9DTHRaL9mnhFA298gDRiW55M2o3yNvg4tIE4FxzTMgrwKR9+napTPR6UqIj+KSRsS1u28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ur9kay7r; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717466115; x=1749002115;
+  t=1717466121; x=1749002121;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=kAf7SPBLso5zp49wUYubqs0YKzd/lC+tt+i0+MOxu64=;
-  b=ImMPwOS2JXbxXm7beN8Z18qt5UlBLtMurMcdggCZURLEbu1jyJloiyQ7
-   EXmnThg8g+nPmKd42WzMD5XzasLCuFUdSubJYKaiXmoszx2qLb8+LRFiH
-   uJtZavjtHQRvfYc1LcJAgV2wv0KO57VMWdOnvkQ5NaMOE1YWSXl4ICXj+
-   izBx78JY14YwX6E/lHV01gdQKSAKqmIP2te6mcNQWdLF+navbVk/uL9lq
-   BQqCu7H38gUKfCPaJT5qLn/uSLAg2w7MhpmDdbbnraxdgbyle5VVkOQnS
-   OJ0lseQyrRvoDiIfaGDL9Gu5I29AgbMj+PbyE0Iek/PP/oKH3aoP5VJV+
-   w==;
-X-CSE-ConnectionGUID: DTZBXE3mS9iaMVmim/WE+g==
-X-CSE-MsgGUID: qDrh4lNSRAGsLXXnw5cnaw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="25385112"
+  bh=KoW/D18MopXUFdHXQ6Q/PnnQkxmmhncr645BE4UuUac=;
+  b=Ur9kay7rfaWJjRI9ghAIRtAsyFI8Kqli0Ry4WZma/SfRsT3FDFOLYyWv
+   wCvdOcGjE7FHL+MqH/UTDLMTodxNERkLoRH8mkrsmExVMiieZkIhqD8MD
+   4LLW+8FB5Nm3JCNAzHy/j8uJf+9RkbKH2C+m2qxkVm5Xru0TmTssZTHxk
+   FlR54A/rFW4RRXqdyj0tdGqxlqOpErAaelRYCLpMt4j/lMCxZAD1CbCsK
+   JVQQSmNUSOk29AJ1Kw7v8rgauh/nP+2o20DNH9H++eC7L9/Oa4EbQeuJQ
+   vaLWpgDjqJi3CT/WU/8O4v14l4wqwcnE+JRU9v4nMg2Cc8DegovblY7gQ
+   g==;
+X-CSE-ConnectionGUID: sZryKuVjRbmzjlgnVwla/w==
+X-CSE-MsgGUID: fMNI1QwQSOKZE82RgFOd1g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11092"; a="25385138"
 X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="25385112"
+   d="scan'208";a="25385138"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 18:55:15 -0700
-X-CSE-ConnectionGUID: jA42G9WrSPGHTpJhOfsc+w==
-X-CSE-MsgGUID: pDOu6a06Qr+ncAZQM+PzJA==
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2024 18:55:20 -0700
+X-CSE-ConnectionGUID: 8KCAZo9aTm+WGTPkIQjPMQ==
+X-CSE-MsgGUID: Clo85EuxT/qX1MmOM+MbzQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,212,1712646000"; 
-   d="scan'208";a="37662017"
+   d="scan'208";a="37662033"
 Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by orviesa008.jf.intel.com with ESMTP; 03 Jun 2024 18:55:10 -0700
+  by orviesa008.jf.intel.com with ESMTP; 03 Jun 2024 18:55:15 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -79,9 +79,9 @@ Cc: Yi Liu <yi.l.liu@intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v2 16/22] iommu/vt-d: Add helper to allocate paging domain
-Date: Tue,  4 Jun 2024 09:51:28 +0800
-Message-Id: <20240604015134.164206-17-baolu.lu@linux.intel.com>
+Subject: [PATCH v2 17/22] ARM: dma-mapping: Pass device to arm_iommu_create_mapping()
+Date: Tue,  4 Jun 2024 09:51:29 +0800
+Message-Id: <20240604015134.164206-18-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240604015134.164206-1-baolu.lu@linux.intel.com>
 References: <20240604015134.164206-1-baolu.lu@linux.intel.com>
@@ -93,121 +93,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The domain_alloc_user operation is currently implemented by allocating a
-paging domain using iommu_domain_alloc(). This is because it needs to fully
-initialize the domain before return. Add a helper to do this to avoid using
-iommu_domain_alloc().
+From: Robin Murphy <robin.murphy@arm.com>
 
+All users of ARM IOMMU mappings create them for a particular device, so
+change the interface to accept the device rather than forcing a vague
+indirection through a bus type. This prepares for making a similar
+change to iommu_domain_alloc() itself.
+
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/iommu/intel/iommu.c | 87 +++++++++++++++++++++++++++++++++----
- 1 file changed, 78 insertions(+), 9 deletions(-)
+ arch/arm/include/asm/dma-iommu.h         | 2 +-
+ arch/arm/mm/dma-mapping.c                | 8 ++++----
+ drivers/gpu/drm/exynos/exynos_drm_dma.c  | 2 +-
+ drivers/iommu/ipmmu-vmsa.c               | 3 +--
+ drivers/iommu/mtk_iommu_v1.c             | 3 +--
+ drivers/media/platform/ti/omap3isp/isp.c | 2 +-
+ 6 files changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 2e9811bf2a4e..ccde5f5972e4 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3633,6 +3633,79 @@ static struct iommu_domain blocking_domain = {
- 	}
+diff --git a/arch/arm/include/asm/dma-iommu.h b/arch/arm/include/asm/dma-iommu.h
+index 82ec1ccf1fee..2ce4c5683e6d 100644
+--- a/arch/arm/include/asm/dma-iommu.h
++++ b/arch/arm/include/asm/dma-iommu.h
+@@ -24,7 +24,7 @@ struct dma_iommu_mapping {
  };
  
-+static int iommu_superpage_capability(struct intel_iommu *iommu, bool first_stage)
-+{
-+	if (!intel_iommu_superpage)
-+		return 0;
-+
-+	if (first_stage)
-+		return cap_fl1gp_support(iommu->cap) ? 2 : 1;
-+
-+	return fls(cap_super_page_val(iommu->cap));
-+}
-+
-+static struct dmar_domain *paging_domain_alloc(struct device *dev, bool first_stage)
-+{
-+	struct device_domain_info *info = dev_iommu_priv_get(dev);
-+	struct intel_iommu *iommu = info->iommu;
-+	struct dmar_domain *domain;
-+	int addr_width;
-+
-+	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
-+	if (!domain)
-+		return ERR_PTR(-ENOMEM);
-+
-+	INIT_LIST_HEAD(&domain->devices);
-+	INIT_LIST_HEAD(&domain->dev_pasids);
-+	INIT_LIST_HEAD(&domain->cache_tags);
-+	spin_lock_init(&domain->lock);
-+	spin_lock_init(&domain->cache_lock);
-+	xa_init(&domain->iommu_array);
-+
-+	domain->nid = dev_to_node(dev);
-+	domain->has_iotlb_device = info->ats_enabled;
-+	domain->use_first_level = first_stage;
-+
-+	/* calculate the address width */
-+	addr_width = agaw_to_width(iommu->agaw);
-+	if (addr_width > cap_mgaw(iommu->cap))
-+		addr_width = cap_mgaw(iommu->cap);
-+	domain->gaw = addr_width;
-+	domain->agaw = iommu->agaw;
-+	domain->max_addr = __DOMAIN_MAX_ADDR(addr_width);
-+
-+	/* iommu memory access coherency */
-+	domain->iommu_coherency = iommu_paging_structure_coherency(iommu);
-+
-+	/* pagesize bitmap */
-+	domain->domain.pgsize_bitmap = SZ_4K;
-+	domain->iommu_superpage = iommu_superpage_capability(iommu, first_stage);
-+	domain->domain.pgsize_bitmap |= domain_super_pgsize_bitmap(domain);
-+
-+	/*
-+	 * IOVA aperture: First-level translation restricts the input-address
-+	 * to a canonical address (i.e., address bits 63:N have the same value
-+	 * as address bit [N-1], where N is 48-bits with 4-level paging and
-+	 * 57-bits with 5-level paging). Hence, skip bit [N-1].
-+	 */
-+	domain->domain.geometry.force_aperture = true;
-+	domain->domain.geometry.aperture_start = 0;
-+	if (first_stage)
-+		domain->domain.geometry.aperture_end = __DOMAIN_MAX_ADDR(domain->gaw - 1);
-+	else
-+		domain->domain.geometry.aperture_end = __DOMAIN_MAX_ADDR(domain->gaw);
-+
-+	/* always allocate the top pgd */
-+	domain->pgd = iommu_alloc_page_node(domain->nid, GFP_KERNEL);
-+	if (!domain->pgd) {
-+		kfree(domain);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+	domain_flush_cache(domain, domain->pgd, PAGE_SIZE);
-+
-+	return domain;
-+}
-+
- static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
+ struct dma_iommu_mapping *
+-arm_iommu_create_mapping(const struct bus_type *bus, dma_addr_t base, u64 size);
++arm_iommu_create_mapping(struct device *dev, dma_addr_t base, u64 size);
+ 
+ void arm_iommu_release_mapping(struct dma_iommu_mapping *mapping);
+ 
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index 5adf1769eee4..52f9c56cc3cb 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1532,7 +1532,7 @@ static const struct dma_map_ops iommu_ops = {
+ 
+ /**
+  * arm_iommu_create_mapping
+- * @bus: pointer to the bus holding the client device (for IOMMU calls)
++ * @dev: pointer to the client device (for IOMMU calls)
+  * @base: start address of the valid IO address space
+  * @size: maximum size of the valid IO address space
+  *
+@@ -1544,7 +1544,7 @@ static const struct dma_map_ops iommu_ops = {
+  * arm_iommu_attach_device function.
+  */
+ struct dma_iommu_mapping *
+-arm_iommu_create_mapping(const struct bus_type *bus, dma_addr_t base, u64 size)
++arm_iommu_create_mapping(struct device *dev, dma_addr_t base, u64 size)
  {
- 	struct dmar_domain *dmar_domain;
-@@ -3695,15 +3768,11 @@ intel_iommu_domain_alloc_user(struct device *dev, u32 flags,
- 	if (user_data || (dirty_tracking && !ssads_supported(iommu)))
- 		return ERR_PTR(-EOPNOTSUPP);
+ 	unsigned int bits = size >> PAGE_SHIFT;
+ 	unsigned int bitmap_size = BITS_TO_LONGS(bits) * sizeof(long);
+@@ -1585,7 +1585,7 @@ arm_iommu_create_mapping(const struct bus_type *bus, dma_addr_t base, u64 size)
  
--	/*
--	 * domain_alloc_user op needs to fully initialize a domain before
--	 * return, so uses iommu_domain_alloc() here for simple.
--	 */
--	domain = iommu_domain_alloc(dev->bus);
--	if (!domain)
--		return ERR_PTR(-ENOMEM);
--
--	dmar_domain = to_dmar_domain(domain);
-+	/* Do not use first stage for user domain translation. */
-+	dmar_domain = paging_domain_alloc(dev, false);
-+	if (IS_ERR(dmar_domain))
-+		return ERR_CAST(dmar_domain);
-+	domain = &dmar_domain->domain;
+ 	spin_lock_init(&mapping->lock);
  
- 	if (nested_parent) {
- 		dmar_domain->nested_parent = true;
+-	mapping->domain = iommu_domain_alloc(bus);
++	mapping->domain = iommu_domain_alloc(dev->bus);
+ 	if (!mapping->domain)
+ 		goto err4;
+ 
+@@ -1718,7 +1718,7 @@ static void arm_setup_iommu_dma_ops(struct device *dev)
+ 		dma_base = dma_range_map_min(dev->dma_range_map);
+ 		size = dma_range_map_max(dev->dma_range_map) - dma_base;
+ 	}
+-	mapping = arm_iommu_create_mapping(dev->bus, dma_base, size);
++	mapping = arm_iommu_create_mapping(dev, dma_base, size);
+ 	if (IS_ERR(mapping)) {
+ 		pr_warn("Failed to create %llu-byte IOMMU mapping for device %s\n",
+ 				size, dev_name(dev));
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+index e2c7373f20c6..6a6761935224 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
+@@ -110,7 +110,7 @@ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
+ 		void *mapping = NULL;
+ 
+ 		if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU))
+-			mapping = arm_iommu_create_mapping(&platform_bus_type,
++			mapping = arm_iommu_create_mapping(dev,
+ 				EXYNOS_DEV_ADDR_START, EXYNOS_DEV_ADDR_SIZE);
+ 		else if (IS_ENABLED(CONFIG_IOMMU_DMA))
+ 			mapping = iommu_get_domain_for_dev(priv->dma_dev);
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index b657cc09605f..ff55b8c30712 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -804,8 +804,7 @@ static int ipmmu_init_arm_mapping(struct device *dev)
+ 	if (!mmu->mapping) {
+ 		struct dma_iommu_mapping *mapping;
+ 
+-		mapping = arm_iommu_create_mapping(&platform_bus_type,
+-						   SZ_1G, SZ_2G);
++		mapping = arm_iommu_create_mapping(dev, SZ_1G, SZ_2G);
+ 		if (IS_ERR(mapping)) {
+ 			dev_err(mmu->dev, "failed to create ARM IOMMU mapping\n");
+ 			ret = PTR_ERR(mapping);
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index d6e4002200bd..da61df27582d 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -439,8 +439,7 @@ static int mtk_iommu_v1_create_mapping(struct device *dev,
+ 	mtk_mapping = data->mapping;
+ 	if (!mtk_mapping) {
+ 		/* MTK iommu support 4GB iova address space. */
+-		mtk_mapping = arm_iommu_create_mapping(&platform_bus_type,
+-						0, 1ULL << 32);
++		mtk_mapping = arm_iommu_create_mapping(dev, 0, 1ULL << 32);
+ 		if (IS_ERR(mtk_mapping))
+ 			return PTR_ERR(mtk_mapping);
+ 
+diff --git a/drivers/media/platform/ti/omap3isp/isp.c b/drivers/media/platform/ti/omap3isp/isp.c
+index 1cda23244c7b..91101ba88ef0 100644
+--- a/drivers/media/platform/ti/omap3isp/isp.c
++++ b/drivers/media/platform/ti/omap3isp/isp.c
+@@ -1965,7 +1965,7 @@ static int isp_attach_iommu(struct isp_device *isp)
+ 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
+ 	 * VAs. This will allocate a corresponding IOMMU domain.
+ 	 */
+-	mapping = arm_iommu_create_mapping(&platform_bus_type, SZ_1G, SZ_2G);
++	mapping = arm_iommu_create_mapping(isp->dev, SZ_1G, SZ_2G);
+ 	if (IS_ERR(mapping)) {
+ 		dev_err(isp->dev, "failed to create ARM IOMMU mapping\n");
+ 		return PTR_ERR(mapping);
 -- 
 2.34.1
 
