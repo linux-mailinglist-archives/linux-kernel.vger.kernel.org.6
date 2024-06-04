@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-200666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FD68FB325
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:05:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D61D8FB327
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3CD281A94
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E2491C24D12
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79B41465A3;
-	Tue,  4 Jun 2024 13:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E15B1465A3;
+	Tue,  4 Jun 2024 13:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qif0UDwL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="s8RLdmUb"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB08144D2E;
-	Tue,  4 Jun 2024 13:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212A9144D2E;
+	Tue,  4 Jun 2024 13:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717506330; cv=none; b=jtILjBWvKa9cSRVXXLQiqtImDatPeh8k0FwK2MGveWca2GyxC8dWN6nMeCtEPTG0RUm+jzdBiDik/FpGR/n8X1XsXwctlvNCF8iPPJNJJDmpQieNXZBTiwPHXtGmgwTGH0nMLoxDw+AGqDWDvTtx7ofMlmxqpug6cWtEvu2zCAY=
+	t=1717506337; cv=none; b=WXQsVMYZN47uAiYNcMTS+J1rgddn3hxcVDmayuNZQscvM//8NPP6jzLWfhfmkypIwLjHFCBfcgC1I9iy+bfMIVkeBC38guHCkbHgvaUpYoQbMqeojXAURgGnvHRvbSmpHRqT55qdxvsfS1JnmI9xO7s9u0BHXdpqHi8i9RkjxF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717506330; c=relaxed/simple;
-	bh=9EKMSE4WwZwbHhI87SmvVkxv+6q5bsofM8XJUDQ9ajY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/c8McqzPtAElAqRW8vXnx2RzUc9KD1U1LGeUC+IflVj5dnzeOEVc5gfASEvc9vSBonK+hc/oDjccslmKIQ2Ak17HWf4L0CCQ8jbfoNieJR3IExrJe2ZoT3GLODjDl7uRQG0xqCZJm0YY27NSsCv++c3Z+vk8l0td4BQ54yytg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qif0UDwL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 594BAC2BBFC;
-	Tue,  4 Jun 2024 13:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717506329;
-	bh=9EKMSE4WwZwbHhI87SmvVkxv+6q5bsofM8XJUDQ9ajY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qif0UDwLifv6BkCrZFJHf9Cga0EV9h0UEzXW4e7t/NLrlVc2YyZA4aDCZbF0JkZ2N
-	 ekOvCmlyXm+3Efwig/zKswIc+QfBfwOAsX1DflYCuPijz6wcol6BEmO5LDOF18CjMh
-	 PAmKXffV7aWgrx9UkHxJ3E4DldyYCCLMXlp/V5QFQCJpKc9FrWBegt9HpUZ3AXPleV
-	 xvbxT06FF2WAp6DAb3VVCQCOm1X3uDgQMTaWpK/QD+9QpNCOHteqgSTD892vn9sCkd
-	 +mcb9I/Ad2Jp7XJ6eGe4HsdHW2XaX3nhUDSXLZ6mlxYSawDKpHS04eEIZOgzNOA6F+
-	 6QFQx+xkg4QyQ==
-Date: Tue, 4 Jun 2024 08:05:26 -0500
-From: Rob Herring <robh@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	patches@lists.linux.dev, kunit-dev@googlegroups.com,
-	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Daniel Latypov <dlatypov@google.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Ripard <maxime@cerno.tech>
-Subject: Re: [PATCH v5 07/11] dt-bindings: test: Add single clk consumer
-Message-ID: <20240604130526.GA12945-robh@kernel.org>
-References: <20240603223811.3815762-1-sboyd@kernel.org>
- <20240603223811.3815762-8-sboyd@kernel.org>
+	s=arc-20240116; t=1717506337; c=relaxed/simple;
+	bh=w4G3vk3yGRoYokSs4XfRHyLnA6vOC8gki8MNmf6avxg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E6oMJMAY7dwsMcc4/kKyEOp4UGyE1DWKq63I9IUs5fPgkj82dcm3VtyVvYd20cnw+pKCqwl6Ehdqqu+Esr8KdHvSOZLwP+5SDlgLWEk66YKeQBgSnCjwDHRvKseDiT3hmF9iVS2BrATJvj594XgWbreyeIGhTpHvoLgiQ4mziNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=s8RLdmUb; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1717506336; x=1749042336;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tNtONfHPFlDZf3t3YUJODvwLfbp2sSOE5aYh5N9nCfk=;
+  b=s8RLdmUbHYxHgJ/TFPUIWY8Bsb5CwucPerKPzslBipBJoNT3ryw0GpeJ
+   2XR7jCd4qL+odWU/Ng8xWPniC36HwoKc5ogBGScn6OTkfJfJ35cDRxMh7
+   RXnMFPT2Rq/JQJUS6Ik6ycTRA+u0yC2JPhgWyhb4yfjOBxuIB38cszFiI
+   A=;
+X-IronPort-AV: E=Sophos;i="6.08,213,1712620800"; 
+   d="scan'208";a="405516568"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 13:05:33 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:9945]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.23:2525] with esmtp (Farcaster)
+ id 5fb5735b-b0c2-43e5-8e58-813e3c2a75b8; Tue, 4 Jun 2024 13:05:31 +0000 (UTC)
+X-Farcaster-Flow-ID: 5fb5735b-b0c2-43e5-8e58-813e3c2a75b8
+Received: from EX19D002EUA004.ant.amazon.com (10.252.50.181) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Tue, 4 Jun 2024 13:05:31 +0000
+Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
+ EX19D002EUA004.ant.amazon.com (10.252.50.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 4 Jun 2024 13:05:31 +0000
+Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com
+ (10.253.65.58) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Tue, 4 Jun 2024 13:05:30 +0000
+Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
+	id 569ED20C69; Tue,  4 Jun 2024 13:05:30 +0000 (UTC)
+From: Hagar Hemdan <hagarhem@amazon.com>
+To:
+CC: Maximilian Heyne <mheyne@amazon.de>, Norbert Manthey <nmanthey@amazon.de>,
+	Hagar Hemdan <hagarhem@amazon.com>, Jens Axboe <axboe@kernel.dk>, "Pavel
+ Begunkov" <asml.silence@gmail.com>, <io-uring@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] io_uring: fix possible deadlock in io_register_iowq_max_workers()
+Date: Tue, 4 Jun 2024 13:05:27 +0000
+Message-ID: <20240604130527.3597-1-hagarhem@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603223811.3815762-8-sboyd@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Jun 03, 2024 at 03:38:04PM -0700, Stephen Boyd wrote:
-> Describe a binding for a device that consumes a single clk in DT. This
-> will initially be used by a KUnit test to clk_get() the clk registered
-> by of_fixed_clk_setup() and test that it is setup properly.
-> 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> Cc: David Gow <davidgow@google.com>
-> Cc: Rae Moar <rmoar@google.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  .../test/test,single-clk-consumer.yaml        | 34 +++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml b/Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml
-> new file mode 100644
-> index 000000000000..8c384c48707d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml
-> @@ -0,0 +1,34 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/test/test,single-clk-consumer.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Test consumer of a single clock
-> +
-> +maintainers:
-> +  - Stephen Boyd <sboyd@kernel.org>
-> +
-> +description:
-> +  A consumer of a single clock used in tests.
-> +
-> +properties:
-> +  compatible:
-> +    const: test,single-clk-consumer
+The io_register_iowq_max_workers() function calls io_put_sq_data(),
+which acquires the sqd->lock without releasing the uring_lock.
+Similar to the commit 009ad9f0c6ee ("io_uring: drop ctx->uring_lock
+before acquiring sqd->lock"), this can lead to a potential deadlock
+situation.
 
-I don't know if there's much value in defining bindings for tests. We 
-could alternatively make 'test,' opt out of everything. There's already 
-some support in dtschema for this with 'foo,'.
+To resolve this issue, the uring_lock is released before calling
+io_put_sq_data(), and then it is re-acquired after the function call.
 
-I need something for the DT unittest as well. 
+This change ensures that the locks are acquired in the correct
+order, preventing the possibility of a deadlock.
 
-Rob
+Suggested-by: Maximilian Heyne <mheyne@amazon.de>
+Signed-off-by: Hagar Hemdan <hagarhem@amazon.com>
+---
+only compile tested.
+---
+ io_uring/register.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/io_uring/register.c b/io_uring/register.c
+index ef8c908346a4..c0010a66a6f2 100644
+--- a/io_uring/register.c
++++ b/io_uring/register.c
+@@ -355,8 +355,10 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
+ 	}
+ 
+ 	if (sqd) {
++		mutex_unlock(&ctx->uring_lock);
+ 		mutex_unlock(&sqd->lock);
+ 		io_put_sq_data(sqd);
++		mutex_lock(&ctx->uring_lock);
+ 	}
+ 
+ 	if (copy_to_user(arg, new_count, sizeof(new_count)))
+@@ -380,8 +382,10 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
+ 	return 0;
+ err:
+ 	if (sqd) {
++		mutex_unlock(&ctx->uring_lock);
+ 		mutex_unlock(&sqd->lock);
+ 		io_put_sq_data(sqd);
++		mutex_lock(&ctx->uring_lock);
+ 	}
+ 	return ret;
+ }
+-- 
+2.40.1
+
 
