@@ -1,202 +1,153 @@
-Return-Path: <linux-kernel+bounces-200280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 969B18FAE06
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:52:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465978FAE08
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EEC11C2127A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0020B282465
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF10142E82;
-	Tue,  4 Jun 2024 08:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592D0142654;
+	Tue,  4 Jun 2024 08:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R2z097cp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QcfbN6qa"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D53BA39;
-	Tue,  4 Jun 2024 08:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD61BA39;
+	Tue,  4 Jun 2024 08:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717491160; cv=none; b=X1DuebNkD5kIY4imKQCmu3kPb7OzmPIcNeYbjlc9tywMwMH/AuGC2ckR2NqYS7d4HpOusyliLvKBGVTKxFlMKs4Mx1NFrJBSoueaSyosTd6LdYWAOegcK2SLCWP7sJVAYo53xjWSF50+5lFAtr8z6l34lxN39qz4PSFNgQshe1I=
+	t=1717491192; cv=none; b=OGx5usOIhMI0S5GxN3mWDZV2lmYy+3vHQmwEEk/4Q59KEKi/n+wBVQQS8UXMAHbIna6X5VRQ4LPlx8jUOyn9jBTLdQZds6AzqO8y/7JhJXwMjPBagVfbQXFc9JQdfcrf4fY5gRV4dgJUw0vmFDpakFHp7lY0suH/JsuvPuiD2BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717491160; c=relaxed/simple;
-	bh=LN3LntYkPqGd4pd8dEOnMvv+52Ftx6R4N7xNNNSsefY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uituqKazPElhwIRO8eOysTQIzNJ3+xeLihi6iJRNt2UY7QfQx3gmJrRFWSbWQd111pHH956bs0U2v72/2gGJVXH0frPgbNqpk0CRRipykQWaaJW/E80vCPyRNKEqWwE7vb36WYLdPufg/oju6gaIHE5jrDx1+QMu5vph6+IDZWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R2z097cp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4542OMDJ031648;
-	Tue, 4 Jun 2024 08:52:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/IgZ+kibNZwPCBCkJecCGYakXqFcRgLlu5olQRmGYOs=; b=R2z097cpYlG5asA0
-	SQUW/N+9sHFpIc1Uos0P+IvDuBHFvCOLiesSw6SOuZ99of47gt3JF7wuI8X1nPPI
-	iUbJq8k91AQ3ng3eBzAecx2ZLaIvwgLdjPtRR3/FO04FiewJbz7Jrsn1xNVJlltK
-	fehOYIR8XFrSSrrx4r6lY3X7V0wb1jKiOU1SV2eDIErrpXWTzH7B24u2AQIRg2eR
-	2tfJf2Bc3epUHXUo38Jr9191NrpkXLkt/2QQjSKnsufBPv8+WtOK2GlmyutO81mD
-	8ETZUdOKbar/YRuLttrCwBSTGtMa8WGxnwncnKxPwmDHUhBcSXv94cknAw+2a2Rn
-	NLPhow==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw7dp6y3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 08:52:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4548qUw3009763
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 08:52:30 GMT
-Received: from [10.216.52.99] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 01:52:28 -0700
-Message-ID: <79f52dae-7c16-4545-b36a-fcf481e66da5@quicinc.com>
-Date: Tue, 4 Jun 2024 14:22:19 +0530
+	s=arc-20240116; t=1717491192; c=relaxed/simple;
+	bh=EF6kcuyEKnCpEhcDAN3Y90hUIGJNMUAFdpjqJ/fxZPI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=icoJBZ5c7TWiwD3c3goN41G5N7sYL4g4kkCO3ZcMW/VJIOhOkNJqiqEllbwRa5LmPS7AlZMaPBmi9Xp0A2N7IE5h70HgCKPffm5SvGaL0YB4T0pO/KkWnm0y79WNkGY/t+2zQVbn2dDiz6UB8lp75BabO5vjucrNLwlKijiEAT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QcfbN6qa; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4548qvv1104969;
+	Tue, 4 Jun 2024 03:52:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717491177;
+	bh=6iyLsfE5NFGLIDenSZ7LevfQ5SYEgR7vWcrXflvbod0=;
+	h=From:To:CC:Subject:Date;
+	b=QcfbN6qaz7Gbahay7n3vesS7D/GPGHdB11dY6QcJXvb7IT2cjvdbRUMAJKOAHB29N
+	 e1NskZl4SEC5dR9b2ZSbJxsMZKPj5tnCKjMsv9uOMEMAZAseYXwCyIwbpuKi8Gmtcl
+	 oa5wkOOBtFXsaN5BaEW9cYYcUKxn2GcFWGYo30ow=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4548qvaL083479
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Jun 2024 03:52:57 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
+ Jun 2024 03:52:57 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 4 Jun 2024 03:52:57 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4548qqQh066926;
+	Tue, 4 Jun 2024 03:52:53 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <afd@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <rogerq@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH v5 0/7] Add PCIe, SERDES and USB DT support for J722S
+Date: Tue, 4 Jun 2024 14:22:45 +0530
+Message-ID: <20240604085252.3686037-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: dwc3: gadget: Inform system of suspended state
-To: Mike Looijmans <mike.looijmans@topic.nl>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>
-CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.c5f44c79-75b2-43c1-a791-806fe8b693cd@emailsignatures365.codetwo.com>
- <20240603131304.233403-1-mike.looijmans@topic.nl>
- <20240604010256.4dxamwvcjxug6xfb@synopsys.com>
- <0fceefc4-2b3c-41a4-a6ac-d0b6dbacc1f7@topic.nl>
- <91b3af13-e723-4a49-b7f6-06f927c286c9@quicinc.com>
- <9473c090-a21b-4d11-a98d-6083547d9648@topic.nl>
-Content-Language: en-US
-From: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
-In-Reply-To: <9473c090-a21b-4d11-a98d-6083547d9648@topic.nl>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1CXeTzTxksmncalCqDJlpqaw0TFK-Qmn
-X-Proofpoint-GUID: 1CXeTzTxksmncalCqDJlpqaw0TFK-Qmn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-04_03,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=984 impostorscore=0 malwarescore=0 phishscore=0 adultscore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040071
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hello,
 
+This series adds the device-tree support for enabling PCIe and USB
+functionality on J722S-EVM.
 
-On 6/4/2024 1:55 PM, Mike Looijmans wrote:
-> On 04-06-2024 08:45, Krishna Kurapati PSSNV wrote:
->>
->>
->> On 6/4/2024 10:56 AM, Mike Looijmans wrote:
->>> On 04-06-2024 03:03, Thinh Nguyen wrote:
->>>> Hi,
->>>>
->>>> On Mon, Jun 03, 2024, Mike Looijmans wrote:
->>>>> When disconnecting the USB cable on an LS1028 device, nothing happens
->>>>> in userspace, which keeps thinking everything is still up and running.
->>>>> Turns out that the DWC3 controller only sends 
->>>>> DWC3_DEVICE_EVENT_SUSPEND
->>>>> in that case, and not a DWC3_DEVICE_EVENT_DISCONNECT as one would
->>>>> expect. As a result, sysfs attribute "state" remains "configured"
->>>>> until something resets it.
->>>>>
->>>>> Forward the "suspended" state to sysfs, so that the "state" at least
->>>>> changes into "suspended" when one removes the cable, and hence also
->>>>> matches the gadget's state when really suspended.
->>>> On disconnection, did you see disconnect interrupt? If so, it should
->>>> transition to USB_STATE_NOATTACHED. This change doesn't seem to 
->>>> directly
->>>> address your issue. Can you provide the driver tracepoints?
->>>
->>> The device doesn't issue a disconnect event, I didn't have tracing 
->>> enabled in the kernel but added some dev_info() calls to determine 
->>> what was going on. Added this to dwc3_process_event_entry():
->>>
->>> dev_info(dwc->dev, "event: 0x%x type=0x%x", event->raw, 
->>> event->type.type);
->>>
->>> When disconnecting the cable from the host, I see this:
->>>
->>> [   50.841411] dwc3 3110000.usb: event: 0x6084 type=0x42
->>> [   50.841457] dwc3 3110000.usb: event: 0x4086 type=0x43
->>> [   50.841494] dwc3 3110000.usb: event: 0x6084 type=0x42
->>> [   50.841534] dwc3 3110000.usb: event: 0x4086 type=0x43
->>> [   50.841571] dwc3 3110000.usb: event: 0x4086 type=0x43
->>> [   52.650990] dwc3 3110000.usb: event: 0x30601 type=0x0
->>>
->>> The "0x4086" and "0x6084" messages are endpoint events that occur all 
->>> the time while connected. The last event is the "suspend" one. After 
->>> that, total silence.
->>>
->>> If you need traces, please point me to a description on how to obtain 
->>> them.
->>>
->>>
->>
->> Hi Mike,
->>
->>  I may be wrong, but can you help understand the mechanism as to how 
->> disconnect interrupt is generated in your targets. For example, on QC 
->> SoC's, this happens when HS_PHY_CTRL reg VBUS_VALID bit is cleared and 
->> cable is disconnected. This is because the vbus line is not routed to 
->> controller. But from my calls with Synopsys previously, I remember 
->> that the vbus line is routed to the controller as well for other OEMs. 
->> In your SoC, what is the indication to controller that vbus is absent ?
->>
-> The board I'm testing this on is an LS1028ARDB. Looking at the 
-> schematic, VBUS is routed to the chip. There's also an LED attached to 
-> it, which turns off when I unplug the cable.
-> 
-> In the devicetree, I can't see any hint of NXP-specific "glue" in the 
-> DWC3 entries, so it uses the controller "as is":
-> 
->                          compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
->                          reg = <0x0 0x3100000 0x0 0x10000>;
->                          snps,dis_rxdet_inp3_quirk;
->                          snps,quirk-frame-length-adjustment = <0x20>;
->                          snps,incr-burst-type-adjustment = <1>, <4>, 
-> <8>, <16>;
-> 
-> The "fsl,ls1028a-dwc3" keyword doesn't actually occur anywhere in the 
-> kernel, so it uses plain "snps,dwc3".
-> 
-> 
->> Also, after this happens, do you see the next plug in working ?
-> 
-> Next plugin works, because of a "reset" event at that point that makes 
-> everything happy again.
+Since AM62P and J722S SoCs share most of the peripherals, the files have
+been renamed to indicate the same. The main domain peripherals on both
+SoCs that aren't shared are present in the "soc-main.dtsi" files.
+This change has been made based on Roger's feedback at:
+https://lore.kernel.org/r/f52d9569-a399-422f-9cf0-b0bf69b64d18@kernel.org/
 
-Ahh, got it. Thanks for the info.
-I ran into a similar issue before where disconnect isn't generated [1] 
-and was suspecting it could be the case here but it isn't.
+This series has been tested on J722S-EVM for PCIe and USB functionality:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/02c037efd3666ea8232d7bb8b0fa42f3
 
-[1]: 
-https://patchwork.kernel.org/project/linux-usb/patch/20231011100214.25720-1-quic_kriskura@quicinc.com/
+Sanity testing on AM62P5-SK with this series:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/1fb178f31b7cbc8eefd424e1e540ef3b
+
+v4:
+https://lore.kernel.org/r/20240601121554.2860403-1-s-vadapalli@ti.com/
+Changes since v4:
+- Rebased series on linux-next tagged next-20240604.
+- Based on Andrew's feedback at:
+  https://lore.kernel.org/r/086fa11e-10f8-463d-8966-1a33a52a3146@ti.com/
+  MCU was retained as-is while main and wakeup were changed to MAIN and
+  WAKEUP in the respective shared files. Also, newline was added between
+  the file description and the Copyright in all the files.
+  Collected Acked-by tag for the 1st patch since these changes have been
+  made.
+- Based on Andrew's feedback at:
+  https://lore.kernel.org/r/147d58a6-0cad-47b6-a069-755f835a77e9@ti.com/
+  SERDES1 has also been disabled in k3-j722s-main.dtsi similar to SERDES0.
+- Based on Andrew's feedback at:
+  https://lore.kernel.org/r/183a9d15-939e-433b-84ba-8a64eb8ef3ec@ti.com/
+  the `status = "okay";` line has been moved to the end of the
+  `pcie0_rc` node referenced in k3-j722s-evm.dts following the updated
+  ordering rules. Also, the SERDES1 node has been enabled in the
+  k3-j722s-evm.dts file since it has been disabled in the
+  k3-j722s-main.dtsi file.
 
 Regards,
-Krishna,
+Siddharth.
 
-> 
-> The state remains in "configured" while the cable is out. Plugging the 
-> cable back in makes it revert to "default" first, then it goes back into 
-> "configured".
-> 
+Siddharth Vadapalli (7):
+  arm64: dts: ti: am62p: Rename am62p-{}.dtsi to
+    am62p-j722s-common-{}.dtsi
+  arm64: dts: ti: k3-am62p-j722s: Move AM62P specific USB1 to
+    am62p-main.dtsi
+  arm64: dts: ti: k3-j722s: Add main domain peripherals specific to
+    J722S
+  arm64: dts: ti: k3-j722s: Switch to k3-am62p-j722s-common.dtsi
+  arm64: dts: ti: k3-serdes: Add SERDES0/SERDES1 lane-muxing macros for
+    J722S
+  arm64: dts: ti: k3-j722s-main: Add SERDES and PCIe support
+  arm64: dts: ti: k3-j722s: Enable PCIe and USB support on J722S-EVM
+
+ .../dts/ti/k3-am62p-j722s-common-main.dtsi    | 1068 +++++++++++++++++
+ ...cu.dtsi => k3-am62p-j722s-common-mcu.dtsi} |    3 +-
+ ...dtsi => k3-am62p-j722s-common-wakeup.dtsi} |    3 +-
+ ...-am62p.dtsi => k3-am62p-j722s-common.dtsi} |    6 +-
+ arch/arm64/boot/dts/ti/k3-am62p-main.dtsi     | 1063 +---------------
+ arch/arm64/boot/dts/ti/k3-am62p5.dtsi         |    3 +-
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts       |   73 ++
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi     |  173 +++
+ arch/arm64/boot/dts/ti/k3-j722s.dtsi          |   97 +-
+ arch/arm64/boot/dts/ti/k3-serdes.h            |    8 +
+ 10 files changed, 1429 insertions(+), 1068 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+ rename arch/arm64/boot/dts/ti/{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi} (98%)
+ rename arch/arm64/boot/dts/ti/{k3-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} (97%)
+ rename arch/arm64/boot/dts/ti/{k3-am62p.dtsi => k3-am62p-j722s-common.dtsi} (97%)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+
+-- 
+2.40.1
+
 
