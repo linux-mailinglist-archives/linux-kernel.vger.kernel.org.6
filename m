@@ -1,228 +1,111 @@
-Return-Path: <linux-kernel+bounces-200014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0A38FA92B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:23:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F8D8FA92D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 06:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205B21F20F7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:23:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9AE28A074
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BDC1420B8;
-	Tue,  4 Jun 2024 04:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D93713D882;
+	Tue,  4 Jun 2024 04:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e+uXFulk"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b9LSPfnC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE4C13DDB2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 04:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD3458ABC;
+	Tue,  4 Jun 2024 04:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717474921; cv=none; b=kkrlpDpBWPuX4xFaIhQpjgxHZvXeuZYUVT3Y6CtDgzzK8Dn0CpAyUBmGYIHI3y/MOK9JvOaWV4vl02mzmtmlTUW0Gu5O+RG+ZHtDxLOSOGzknwZHzCLviazm/GofOBZe12W7KH4/6xckPUVnGFX/qOGaYOdvhJth6ShQCZymDZg=
+	t=1717475027; cv=none; b=EkwT7Iu1Aa9OMzOC7bj98739FRpLfZqM32WOnUXJTNIWIVbtxio58ibtCsKlPFEeQxnBsevqh4eNud9swGcW6fvl4d4OLkVV4ORjLhnx6ZDcaLGhg+WztJGlqwukkwsngSj4trqbZIehKj4zXkTBKFI33ijAgG4DgQz103A0sII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717474921; c=relaxed/simple;
-	bh=vdT1WnfavoXbakHdoyabknlLpRd1rltXkfOabReQFKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U8149BJkKfsg2LkucR72cXWfB4xohCV6HrsPYKPrLOVqukQEE6UGv7T0knNdLiP5yWlsdeSzbpCTN2879QsqDc3Cp2otKII5cV8nuPlcBDyfES7zLrBqg4A2p9f0JHGf1aaf7AsfG1b4kWS+T4VsLPhIK26wdbw5g4TWKM8GISk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e+uXFulk; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b82d57963so5203767e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 21:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717474918; x=1718079718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sZTkPdaoUs8jQNyMlsxEd3PQVY77PvdNJflZvZlG4XM=;
-        b=e+uXFulkAUmDRkcSNAcbr5C0R6/BqxNB6IQnwYnfyjBOJSLnCGJOFaDpCXrCEql/et
-         bxpLzyXZD2zProRAF1WjVJ6JcTZyvlk06TgvcjUuAsbYBOMPAZGHXfkyXCFnlleyUZ4z
-         zbxLeXpfWvZtPttVGhytF1SGLrIAVs9wILV2A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717474918; x=1718079718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sZTkPdaoUs8jQNyMlsxEd3PQVY77PvdNJflZvZlG4XM=;
-        b=Dbs1Asxec4MuXykoFOchPuT/Kg1lFrUFR2ABsDAhhy13IKaVvlj4tbAsTuNy5NjNR8
-         xtw7OoXfs0zpEDZfH93MFnc1FTx/BVRBJYTXIXZolMMCwgAfu+Yq2V+9T6N2UTlgzKMM
-         Asegd2hzPBjzxql/vtbPzwyKvHl4v2w3WxpYor77m9pTjS4PUDIp5tEiHSI3IMKsavMq
-         LVuFIQhOAQ3VqQPrNbLalak35jb38SAWvR3N0Vin70+Knlfh7ICwgg0gIUI0mka+LTrx
-         aYML2ymBPCZ5nspIXxdE1TZUAw1NMMhEG+mkB9PQAAV/OBk3jZ1LDn/yMvk66t7nz5n7
-         VVxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA65C3CFLf9e71yK2E3c1ay46/LZ/JjU+Whb5DmsejS5wpNggyQ4ANOOJstFG47g3uM4spX7DxyZ+BNvnCZctOjSQDxzhlQKxJgW1Y
-X-Gm-Message-State: AOJu0YwgXmu14JCqHTdR0Y8gMyUTuc2oAwQIPKr6WEKM9QCS4lkMLmA2
-	zJuaIc18pgQUjXqKdMmbeAk6L6C0bzAb/d1vBRWvEhuy6WBVPxOaWlV3NLGXxR9Z9o1Mad70lhI
-	09yzbuavL0QDWJyUF5u0E9dlvK9sK4TjJLPVc
-X-Google-Smtp-Source: AGHT+IGDgg2+V5eJ8x467mxNrV7nhwIMgXm1gR49RnrnhPkROZN8HdeL71iXvR/Wj+N6cLD7tGCc7y6sYjgN44bSwNQ=
-X-Received: by 2002:a19:5f53:0:b0:51d:5f0b:816f with SMTP id
- 2adb3069b0e04-52b89590e7cmr5639078e87.15.1717474917527; Mon, 03 Jun 2024
- 21:21:57 -0700 (PDT)
+	s=arc-20240116; t=1717475027; c=relaxed/simple;
+	bh=iLd7cgx6ibP4YKhoLDBW15p2SVG5OuLq+YKnI07DV78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gAfYoV9ImxjWntYGP5pqzlmxDwRyqUiJjMN1lFx4/APB5zUuUZ9wtmU1y0RsIaIQWOELsOs+ZA1qLC+M6oZRhpkYrh5HpanxdBLOUJdX/5mDo6CuJ/JELihX9ZthfFFunmCaMUF0NTNWlimX7nEssG7hbQya7Jj9alNkU0lBvj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b9LSPfnC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F7DC2BBFC;
+	Tue,  4 Jun 2024 04:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1717475027;
+	bh=iLd7cgx6ibP4YKhoLDBW15p2SVG5OuLq+YKnI07DV78=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b9LSPfnCMdsSYt7uoLThiDEV81/e/D02UG8zzLIDlesFcCyq0kiwd3cyKoue9VUoP
+	 BEoXtBixtULz5017/tOoRocc+/2HJeohPgg0lcGDYqsm9CG0AGzhLQfnCmSPfT9tCR
+	 n4/Wv95gxkim5YHAoi5L9SUyqKIJX6W6lnzrjhAo=
+Date: Tue, 4 Jun 2024 06:23:53 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Cheng Ming Lin <linchengming884@gmail.com>
+Cc: miquel.raynal@bootlin.com, dwmw2@infradead.org,
+	computersforpeace@gmail.com, marek.vasut@gmail.com, vigneshr@ti.com,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: Re: [PATCH] Documentation: mtd: spinand: macronix: Add support for
+ serial NAND flash
+Message-ID: <2024060430-expire-geography-64dc@gregkh>
+References: <20240603073953.16399-1-linchengming884@gmail.com>
+ <2024060337-relatable-ozone-510e@gregkh>
+ <CAAyq3SYg3Qr08DguhPbC8Bb89_KS_AAG-Z8SNG_A7H_v4YNrDA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-4-wenst@chromium.org>
- <cc5847a486a760921375f069a4f65cd29453a624.camel@imgtec.com> <CAHCN7xJ7X9_yNJa7-HyU=FzN2G1cV8i9R+PoTHm-DKyiOPenUQ@mail.gmail.com>
-In-Reply-To: <CAHCN7xJ7X9_yNJa7-HyU=FzN2G1cV8i9R+PoTHm-DKyiOPenUQ@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 4 Jun 2024 12:21:46 +0800
-Message-ID: <CAGXv+5GeWpBaFw89KsKyQi4t+Wjh=+58UQ7hyPaLM6pwGELiVA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173 GPU
-To: Adam Ford <aford173@gmail.com>
-Cc: Frank Binns <Frank.Binns@imgtec.com>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"mripard@kernel.org" <mripard@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAyq3SYg3Qr08DguhPbC8Bb89_KS_AAG-Z8SNG_A7H_v4YNrDA@mail.gmail.com>
 
-On Fri, May 31, 2024 at 10:25=E2=80=AFPM Adam Ford <aford173@gmail.com> wro=
-te:
->
-> On Fri, May 31, 2024 at 8:37=E2=80=AFAM Frank Binns <Frank.Binns@imgtec.c=
-om> wrote:
+On Tue, Jun 04, 2024 at 09:44:01AM +0800, Cheng Ming Lin wrote:
+> Hello,
+> 
+> Greg KH <gregkh@linuxfoundation.org> 於 2024年6月3日 週一 下午3:58寫道：
 > >
-> > Hi ChenYu,
-> >
-> > On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
-> > > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
-> > > of the Series6XT GPUs, another sub-family of the Rogue family.
-> >
-> > I've added Adam Ford who sent out some DT related patches [1] for the R=
-enesas
-> > variant of GX6250 and the GX6650 (another Series6XT GPU).
-> >
->
-> Thanks for including me.
->
+> > On Mon, Jun 03, 2024 at 03:39:53PM +0800, Cheng Ming Lin wrote:
+> > > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 > > >
-> > > This was part of the very first few versions of the PowerVR submissio=
-n,
-> > > but was later dropped. The compatible string has been updated to foll=
-ow
-> > > the new naming scheme adopted for the AXE series.
-> > >
-> > > In a previous iteration of the PowerVR binding submission [1], the
-> > > number of clocks required for the 6XT family was mentioned to be
-> > > always 3. This is also reflected here.
-> > >
-> > > [1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793=
-a43c79c2a.camel@imgtec.com/
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > >  .../bindings/gpu/img,powervr-rogue.yaml       | 24 +++++++++++++++--=
---
-> > >  1 file changed, 20 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.=
-yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > index 256e252f8087..48aa205b66b4 100644
-> > > --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > @@ -12,10 +12,17 @@ maintainers:
-> > >
-> > >  properties:
-> > >    compatible:
-> > > -    items:
-> > > -      - enum:
-> > > -          - ti,am62-gpu
-> > > -      - const: img,img-axe # IMG AXE GPU model/revision is fully dis=
-coverable
-> > > +    oneOf:
-> > > +      - items:
-> > > +          - enum:
-> > > +              - mediatek,mt8173-gpu
-> > > +          # PowerVR 6XT GPU model/revision is fully discoverable
-> > > +          - const: img,powervr-6xt
-> > > +      - items:
-> > > +          - enum:
-> > > +              - ti,am62-gpu
-> > > +          # IMG AXE GPU model/revision is fully discoverable
-> > > +          - const: img,img-axe
+> > > MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC have been merge into
+> > > Linux kernel mainline.
 > >
-> > The Series6XT GPU models have differing numbers of power domains (eithe=
-r 2, 4 or
-> > 5). Whereas, the AXE GPUs have a single power domain, so I assume there=
- should
-> > be a related change here.
+> > Trailing whitespace :(
+> 
+> Sorry, we will fix it in the next version.
+> 
 > >
-> > The GX6250 has two power domains (lets call them A and B). There's a co=
-nstraint
-> > that if domain B is powered then domain A must also be powered.
+> > > Commit ID: "c374839f9b4475173e536d1eaddff45cb481dbdf".
 > >
-> > In patch 6 [2] it's setting the power domain to MT8173_POWER_DOMAIN_MFG=
-, which I
-> > believe corresponds to power domain B. I assume this works because the =
-MTK power
-> > controller driver is encoding the constraint above, meaning that when w=
-e disable
-> > or enable MT8173_POWER_DOMAIN_MFG it's also disabling/enabling MT8173_P=
-OWER_DOMA
-> > IN_MFG_2D (domain A).
+> > See the kernel documentation for how to properly reference commits in
+> > changelog messages.
+> 
+> Sure, this will also be fixed in the next version.
+> 
 > >
->
-> In the cover letter of this series, it was noted that the GPU
-> enumerates, but it doesn' fully function yet.  This is also the case
-> for both of the Renesas variants I have been testing, and I was nicely
-> asked to postpone my series until the driver was closer to being
-> ready.
+> > > For SPI-NAND flash support on Linux kernel LTS v5.4.y,
+> > > add SPI-NAND flash MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC in id tables.
+> > >
+> > > Those five flashes have been validate on Xilinx zynq-picozed board and
+> > > Linux kernel LTS v5.4.y.
+> >
+> > What does 5.4.y have to do with the latest mainline tree?  Is this
+> > tested on our latest tree?
+> 
+> We have requirements specific to the 5.4.y, and these five flashes
+> have been adapted for the latest mainline tree.
+> Additionally, they have been patched on LTS 5.14.y, and we have
+> tested them on LTS 5.4.y.
+> Given these circumstances, we are hopeful for approval to backport
+> these five flash IDs on 5.4.y.
 
-Yeah. Frank laid out the current state of GX6250 support and future plans
-in his reply to the clk driver patch.
+If this is a backport, please just follow the documentation for the
+stable kernel for how to properly get a patch backported.
 
-> Even if the driver isn't ready yet, it would be nice to move the
-> bindings forward.
+thanks,
 
-Agreed. It would be nice to have an agreed upon set of bindings. We
-can then move our downstream stuff comply with it.
-
-
-Thanks
-ChenYu
-
-> adam
->
-> > Thanks
-> > Frank
-> >
-> > [1] https://lists.freedesktop.org/archives/dri-devel/2024-February/4435=
-48.html
-> > [2] https://lists.freedesktop.org/archives/dri-devel/2024-May/455833.ht=
-ml
-> >
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > > @@ -56,6 +63,15 @@ allOf:
-> > >        properties:
-> > >          clocks:
-> > >            maxItems: 1
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: img,powervr-6xt
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          minItems: 3
-> > >
-> > >  examples:
-> > >    - |
+greg k-h
 
