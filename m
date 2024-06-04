@@ -1,248 +1,145 @@
-Return-Path: <linux-kernel+bounces-200789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D548FB513
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:20:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6C98FB4E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04819B28749
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D44511C214C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44D812D1E9;
-	Tue,  4 Jun 2024 14:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E383CF74;
+	Tue,  4 Jun 2024 14:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0UCj66VX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/Qea5iD"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E3F12CD98
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556CDD535;
+	Tue,  4 Jun 2024 14:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717510368; cv=none; b=BW18BIPNEdESI8DwYdc00UHcd5r3Gt4BN3H9TLwtULSTI6HpfS0tMZClIbzLSO8c+/1q39YchPIJPWbZQGgOAQz1nhp/38F53AbEF92m8lhuKJ1ez3hDDkMWe92So6TUPw6W9oDg0eK3NfLNjxvJmVNREeSBalVTo46ILcRLWpw=
+	t=1717510334; cv=none; b=hnW0TMEWzUXB151Wy8c2iQqqjE8MU+J3VuxHRiD4/4PtI8JKD6mU3gwAzcIVJQIJDUd/wj1PZU89ahRdp8fc8gFynLXKUpDei/uI8A8VbmV4PaOJO/0TsihC/S+cnZrBiKivcH+PoeSN6DhS8wl8StiEKMBIAgPCAFgMKCDPQAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717510368; c=relaxed/simple;
-	bh=MN+40fDm0UxkjExz8ipcSWnwCRu/VFjhn21L4UnYaOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ku9KXi221EnKXNvOntd4rk1W1YV5so1Jn9D2RGiqin1iqIH+/p8wXNcS95Az5W/40V/ftbbdKtcszrtoRrWA203yxj0y9TfidJormZEuffygw5yoQ/ARfWoXyAr9ie6Ht6blIZI+O9rnRsjWIvJOKXtbv083zgRPJRDOI1w6QJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0UCj66VX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB408C2BBFC;
-	Tue,  4 Jun 2024 14:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1717510367;
-	bh=MN+40fDm0UxkjExz8ipcSWnwCRu/VFjhn21L4UnYaOU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0UCj66VX7cXqwbrhJQ68gBoRbxBzJlKWUXCbgU8oQE/SmXNwhaIw7RraEcF9JyAjR
-	 k5ujgtiY78kH5wQGGuzRZ7nkjLm41kGTYrHMItQoUDMwTUJA/X6B4WxE4WzfqLp6Ct
-	 JuHOTOaZwghfrdVZeT892KNveEbxbJzTZY1+CyKY=
-Date: Tue, 4 Jun 2024 16:06:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Tim Murray <timmurray@google.com>, John Stultz <jstultz@google.com>,
-	Steven Moreland <smoreland@google.com>,
-	Nick Chen <chenjia3@oppo.com>
-Subject: Re: [PATCH v4] binder: use bitmap for faster descriptor lookup
-Message-ID: <2024060442-fedora-maybe-e857@gregkh>
-References: <CAH5fLgjP8eozdA3wSari2LHyVUzaOMNTU12JWb2rzGgy9RRpsg@mail.gmail.com>
- <20240517032849.58437-1-cmllamas@google.com>
+	s=arc-20240116; t=1717510334; c=relaxed/simple;
+	bh=C7M3Ung7NZyyQ/5AeZaQ98hsGFGD8qp5A9MnbnjMmQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j8Vs9rtyxKhLRV3QjDDHmyCEpT5tDfrpQJUrG8pBy6FlYQdg3qPiGswMCSLKsF96o/PMMxXopABgUDofULtjjisioGtZMrmleEHhrbMEFsi4/9ZWXyivKvdled6b/0/J6fGCPpilCT2bSe+CzIALqRh+Y5UrSwvJ30+Xnxm5FqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/Qea5iD; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b936c958dso3695794e87.0;
+        Tue, 04 Jun 2024 07:12:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717510331; x=1718115131; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sTI0bo9QlSR3jF5fzKL/lNTXRRTehVU4sAkZtkhRBzM=;
+        b=K/Qea5iDsFDuq07bS2wNusd6BIT6RB+yUrWJVZXlhc3/i88WjGGvKxAj1U14xITIwK
+         N/+MVJKFvH55Ky4ecpCX5t1fVZ8eaDPFh+q57ROkTWbDJnQqYpzAFrxyTmxahfSHItFr
+         +T5jS6GYoEdh1yS4c/5gFLjvujKcy4CZ/ECXOVlvET63Or2z/e3Dum2jbYqOf4wCnOSk
+         DiB2F0UfXh1tbID9EfLTORuJbitBIQ5nKWy4ITEIXaa/dax7buFns900sOVB47wpHqwH
+         dluFnRVxAdbBfxtFQpByUaOjZXa3krBLlFOxJUVQlF7FwGHvEG37CZtcnanKuacAvbok
+         FvIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717510331; x=1718115131;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sTI0bo9QlSR3jF5fzKL/lNTXRRTehVU4sAkZtkhRBzM=;
+        b=XDQfojY+lt8IMqYOoQWZ9bcl+fnixoueCVVgD7ar7BrXb01Ja4Wmxv/o1bb7riFTlA
+         VLYh+D6nFnjkn0cIyVD3jxij3II548cdF2h4v1lBH98d2VeJ4yZU52rf3f8jdlJIiyIn
+         d0z0zJGUmQf5PBnL+S8BH1uj/iATOFfPdvN6F8LOy1ScWiPWP830MwVTWtlVkO4sEDfn
+         72IM4HerBUayRXy1s8fK9CfheKzzT251V+o3YsTsAoE1H5ATYZQ/hE6yifYmkUkZ400O
+         7WeEIG0RXuY1OZ2aAoup8+6w2PD9fpxdKF3BzwX8UW97bD9S2PIw6aEI59fghnWJtbQz
+         7x4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXbXfPDivas3KgzaIGQvgpD/pOX1oBo+GPx2mgD9F/4Pj3poef6bI0jhW9YW3peXqyrXR/cFqIgF9QDTgWGa1Cuq5zlDxQb9dne102ceYe5qnnnB3k/9S3kaytjLXqxcyk4yR3egGTVQfWLGQHKHb8TFETMtQlNxbG2CzsL8KRhC7OzdgI=
+X-Gm-Message-State: AOJu0YxCr1ztHgbsnlVuVnFU5HSYYn9XUK2t9drF8QorggS+qeUE+Zuh
+	gJbl7xFrNy3KQ6AfVVOd/qVPdovmFnQM5RAva6iq+rR99oUkdHmA
+X-Google-Smtp-Source: AGHT+IEX+hO1fjOTWqgdmiNAEFg0qrDQFDw6cG1U1FlLDxT3z8cZCdVuh8JspRxuIl3ApF0IENghfA==
+X-Received: by 2002:a05:6512:3e24:b0:52b:874a:7df with SMTP id 2adb3069b0e04-52b8955c5bfmr9728475e87.12.1717510331074;
+        Tue, 04 Jun 2024 07:12:11 -0700 (PDT)
+Received: from yoga-710.tas.nnz-ipc.net ([178.218.200.115])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b982d3de7sm742743e87.2.2024.06.04.07.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 07:12:10 -0700 (PDT)
+From: Dmitry Yashin <dmt.yashin@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Yashin <dmt.yashin@gmail.com>
+Subject: [PATCH v3 0/2] pinctrl: rockchip: add rk3308b SoC support
+Date: Tue,  4 Jun 2024 19:10:18 +0500
+Message-ID: <20240604141020.21725-1-dmt.yashin@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240517032849.58437-1-cmllamas@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 17, 2024 at 03:28:27AM +0000, Carlos Llamas wrote:
-> diff --git a/drivers/android/dbitmap.h b/drivers/android/dbitmap.h
-> new file mode 100644
-> index 000000000000..2cf470702bbb
-> --- /dev/null
-> +++ b/drivers/android/dbitmap.h
-> @@ -0,0 +1,139 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +#ifndef _LINUX_DBITMAP_H
-> +#define _LINUX_DBITMAP_H
-> +#include <linux/bitmap.h>
+This patch series and adds support for pin controller found on rk3308b.
+According to rk3308b TRM, this pinctrl much the same as rk3308's,
+but with additional iomux routes and 3bit iomuxes selected via
+gpio##_sel_src_ctrl registers.
 
-No copyright line for a new file?  Somehow I doubt that's what your
-corporate policy is :(
+Downstream kernel [1] managed this SoC's with rk3308b_soc_data_init,
+wich picked configuration based on cpuid. Upstream pinctrl patches
+droped soc init function.
 
+The function rk3308b_soc_sel_src_init sets up gpio##_sel_src_ctrl
+registers, making SoC to use 3bit iomuxes over some 2bit old ones.
 
-> +
-> +#define NBITS_MIN	BITS_PER_TYPE(unsigned long)
-> +
-> +struct dbitmap {
-> +	unsigned int nbits;
-> +	unsigned long *map;
-> +};
+These patches have been tested on Radxa's ROCK Pi S, one based on rk3308
+and the other on rk3308b (from the latest batches). For the new boards it
+fixes broken spi1 clk.
 
-Some documentation about how this all works would be nice so we can
-verify / validate it is doing what it should be doing.
+Similar effort [2] was made several years ago, but without keeping base
+rk3308 SoC pinctrl support.
 
-And maybe a test?
+Based on feedback from Luca, Heiko and Jonas, the v2 series droped dt
+binding in the favor of runtime SoC detection, so iomux_recalced and
+iomux_routes updated for the new SoC's and patch 1 delays recalced_mask
+and route_mask init.
 
-> +
-> +static inline int dbitmap_enabled(struct dbitmap *dmap)
-> +{
-> +	return dmap->map != NULL;
-> +}
-> +
-> +static inline void dbitmap_free(struct dbitmap *dmap)
-> +{
-> +	dmap->nbits = 0;
-> +	kfree(dmap->map);
-> +	dmap->map = NULL;
+[1] https://github.com/radxa/kernel/blob/stable-4.4-rockpis/drivers/pinctrl/pinctrl-rockchip.c#L4388
+[2] https://lore.kernel.org/linux-rockchip/20220930102620.1568864-1-jay.xu@rock-chips.com/
 
-Why are you setting this to NULL after freeing it?  What does that
-signal?
+v1 Link: https://lore.kernel.org/all/20240515121634.23945-1-dmt.yashin@gmail.com/
+v2 Link: https://lore.kernel.org/all/20240529143534.32402-1-dmt.yashin@gmail.com/
 
-> +}
-> +
-> +static inline unsigned int dbitmap_shrink_nbits(struct dbitmap *dmap)
-> +{
-> +	unsigned int bit;
-> +
-> +	if (dmap->nbits <= NBITS_MIN)
-> +		return 0;
-> +
-> +	bit = find_last_bit(dmap->map, dmap->nbits);
-> +	if (unlikely(bit == dmap->nbits))
-> +		return NBITS_MIN;
-> +
-> +	if (unlikely(bit < (dmap->nbits >> 2)))
-> +		return dmap->nbits >> 1;
+Changes in v3:
+- Witespace cleanup
+- Add Luca's r-b tag
+- Rebase onto linux-pinctrl for-next branch
 
-And these unlikely() markings actually work better than not having them?
-Please document that if so.
+Changes in v2:
+- Drop routes fixup patch, already applied
+- Drop dt binding patch
+- Add new patch to delay recalced_mask and route_mask init
+- Rework last patch from dt to runtime setup with rk3308_soc_data_update
+
+Dmitry Yashin (2):
+  pinctrl: rockchip: delay recalced_mask and route_mask init
+  pinctrl: rockchip: add rk3308b SoC support
+
+ drivers/pinctrl/pinctrl-rockchip.c | 286 +++++++++++++++++++++++++++--
+ drivers/pinctrl/pinctrl-rockchip.h |   1 +
+ 2 files changed, 267 insertions(+), 20 deletions(-)
 
 
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void
-> +dbitmap_replace(struct dbitmap *dmap, unsigned long *new, unsigned int nbits)
-> +{
-> +	bitmap_copy(new, dmap->map, min(dmap->nbits, nbits));
-> +	kfree(dmap->map);
-> +	dmap->map = new;
-> +	dmap->nbits = nbits;
-> +}
-> +
-> +static inline void
-> +dbitmap_shrink(struct dbitmap *dmap, unsigned long *new, unsigned int nbits)
-> +{
-> +	if (unlikely(!new))
-> +		return;
+base-commit: 32335efff386d04961b178d4c6b7d1ccbafb729f
+-- 
+2.39.2
 
-All unlikely/likely needs to be "proven" to be needed, otherwise the
-compiler and cpu almost always does a better job over time.
-
-> +
-> +	/*
-> +	 * Make sure we can still shrink to the requested nbits as
-> +	 * this call might have raced with another shrink or more
-> +	 * bits have been assigned. In such case, release the @new
-> +	 * bitmap and move on.
-> +	 */
-> +	if (unlikely(!dbitmap_enabled(dmap) ||
-> +		     dbitmap_shrink_nbits(dmap) != nbits)) {
-> +		kfree(new);
-> +		return;
-> +	}
-> +
-> +	dbitmap_replace(dmap, new, nbits);
-> +}
-> +
-> +static inline unsigned int
-> +dbitmap_expand_nbits(struct dbitmap *dmap)
-> +{
-> +	return dmap->nbits << 1;
-> +}
-> +
-> +static inline void
-> +dbitmap_expand(struct dbitmap *dmap, unsigned long *new, unsigned int nbits)
-> +{
-> +	/*
-> +	 * Determine if the expand is still valid as it might have
-> +	 * raced with another expand or free. In such case, release
-> +	 * the @new bitmap and move on.
-
-Shouldn't locks protect any race?  otherwise what happens if it changes
-right after you check for this?
-
-
-> +	 */
-> +	if (unlikely(!dbitmap_enabled(dmap) || nbits <= dmap->nbits)) {
-> +		kfree(new);
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * ENOMEM is checked here as we can now discard a potential
-> +	 * race with another successful expand. In such case, disable
-> +	 * the dbitmap and fallback to slow_desc_lookup_olocked().
-> +	 */
-> +	if (unlikely(!new)) {
-
-As you control the callers, how can this happen?
-
-> +		dbitmap_free(dmap);
-> +		return;
-> +	}
-> +
-> +	dbitmap_replace(dmap, new, nbits);
-> +}
-> +
-> +static inline int
-> +dbitmap_acquire_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
-> +{
-> +	unsigned long n;
-> +
-> +	n = find_first_zero_bit(dmap->map, dmap->nbits);
-> +	if (unlikely(n == dmap->nbits))
-> +		return -ENOSPC;
-> +
-> +	*bit = n;
-> +	set_bit(n, dmap->map);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void
-> +dbitmap_clear_bit(struct dbitmap *dmap, unsigned long bit)
-> +{
-> +	clear_bit(bit, dmap->map);
-> +}
-> +
-> +static inline int dbitmap_init(struct dbitmap *dmap)
-> +{
-> +	dmap->map = bitmap_zalloc(NBITS_MIN, GFP_KERNEL);
-> +	if (!dmap->map) {
-> +		dmap->nbits = 0;
-> +		return -ENOMEM;
-> +	}
-> +
-> +	dmap->nbits = NBITS_MIN;
-> +	/* 0 is reserved for the context manager */
-> +	set_bit(0, dmap->map);
-
-Yeah, this all needs to be documented somewhere please :)
-
-thanks,
-
-greg k-h
 
