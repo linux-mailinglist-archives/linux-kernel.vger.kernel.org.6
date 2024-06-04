@@ -1,138 +1,122 @@
-Return-Path: <linux-kernel+bounces-200603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7517B8FB24D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E62C8FB251
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14AB91F21B58
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E18A61F21ABC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FE11465B3;
-	Tue,  4 Jun 2024 12:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A9A146D55;
+	Tue,  4 Jun 2024 12:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="NvJA4rZa"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GzOJGGcA"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AEE145B1C;
-	Tue,  4 Jun 2024 12:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430F114600B;
+	Tue,  4 Jun 2024 12:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717504345; cv=none; b=LiaBvNMzc+KWV/7I7i75DXYHrU7UHl0GQf6gGDrSh8HAz8AawD6KPqoMP9iZItZxkRVlJaVbJvFSzcQNKkMJNM/JodWZQj1msOVio25SeHSQjLivE6YOPw/IAOrGV4Ajpthb5xx2L5eVw+a3oZzIowr+IXY80i8GNPs9o+rnDK4=
+	t=1717504369; cv=none; b=IGEMsb1hrakPcHheal4iSuz6lxgiWm5hP4Ap98oeDtuGaSHuEabb1pc5PDWwZKV5JUqxAkGKhpq8paaIJqlEayPTjaANNRQRd2xxZ4fAy7/77nl18Culrvq1vuamfTX9IolyZxF6kafDZUuksxNNnCO8EqALDGyvGj4XkY0elJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717504345; c=relaxed/simple;
-	bh=iA3g8bwEgMixe5xQYp76A3mHSq/qJillg/hgf4HjgeE=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=VSFYT91XwYgrQLKNc9EH2lfPf0fdTg3v3YTbIiuJt4T70HHsO6mJPgZYlq0f6VMsVrNrdky4wmetMkjuZrL9K4FkBjYMVx200MVEBCnTxt7m0JNIG3/IpwHifeYi3ZpJtEDYSu4S2PIoDliJeYKscgaaor5wfmzgpkVvpQtpmE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=NvJA4rZa; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=RaxHgWk6jYpH+0zhyTKnZK+FxoUWw7STphYHCwBMzIw=; b=NvJA4rZa1Dtn9N2BZHc4m5KPe0
-	DcMS1KrBmAbBTMPwgNAiuLnwfglS7hKAOFXT2p9AbYZLuXXIVdCk5Ow1mfZrRJyXrgD372Md8TdWr
-	PYztiyEY/pi+lPXVEvzjJE1+HmQEa4FnBljOkxmn4U2+T9bMohnuSdBek68icYRjpbDQ=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:57106 helo=debian-lenovo)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1sETKo-0003cs-Dp; Tue, 04 Jun 2024 08:32:15 -0400
-Date: Tue, 4 Jun 2024 08:31:59 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
- hvilleneuve@dimonoff.com, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Message-Id: <20240604083159.d984dd08741396ea4ca46418@hugovil.com>
-In-Reply-To: <CAMuHMdUo7yPdkPKHXYiWqsqM9Zs4rr2G1tQbH9mZ=bjNLgKamw@mail.gmail.com>
-References: <20240603152601.3689319-1-hugo@hugovil.com>
-	<20240603152601.3689319-3-hugo@hugovil.com>
-	<CAMuHMdUo7yPdkPKHXYiWqsqM9Zs4rr2G1tQbH9mZ=bjNLgKamw@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717504369; c=relaxed/simple;
+	bh=jQXLM/OZsp6NPzJIuBkmEeVMHOkt2MPWrpv1c8YmrYo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=enXMO80G6OCuCwa+H/jUu7WrgtCQaTHM8AdPa3BlaXAtzNgQfhYcozq4kf8DDkrcCW+Jbgj9Z+Gc4ePsijwGFh+n+BKS1ztotpkdBq8Z5cVU7xOtADMTVAz+/geexWzpBOHCSUJeYVCCyvdQYlnU2aEVNVsemQZW8FrJuNm/z8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GzOJGGcA; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35dcab59861so446998f8f.0;
+        Tue, 04 Jun 2024 05:32:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717504366; x=1718109166; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZQpw5Hn3XFDc4MrZP52/zmwrZKk0HYvt557YaBSEnE4=;
+        b=GzOJGGcA6z+QfkfhJ1pRUDcN0VJp9VNkll5lb605Wi/gd3M/d8y681NG8zUJ4wBDHa
+         YwWyeOqo2pq1OagJ+Rwa0ITDR22tba/koxz+cN3HrV1motxPgBqofPHc88rNriGVr/HV
+         qq7ykfXck24Fedik0/KstlHeDgLhYla1LHCZ4zVQdxmdy83xdycIkCl0JrZ/duXQbXT3
+         Eccwro7WZlOT59Yzf8dARONa19/W6R8/dVHWX9o6Rkg0BLrM1F2mVOMr7U616594bHLP
+         fwgMon6qEbL3GHbuXQiCDAqK3C9iyMRTWTZlR2y/vLTLQ6g9nNNOUSMPVkmKXKRohYBF
+         73EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717504366; x=1718109166;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZQpw5Hn3XFDc4MrZP52/zmwrZKk0HYvt557YaBSEnE4=;
+        b=RbcEDdayNcIOF3KdS+elAcp20F32xSFQmSmnNLWCDdV8IHlzEKybAqur3BJEcXfarD
+         X20wPoNninNoB1OsPFhXTYXM5L9V7yPK7ha1p1jkPvWLFZKkQgdFg25WeSF0urX9NB9t
+         cuPy5UT6FU08bznVd2KYH6B2wtrzQVRNuOA0q25n6oPH1eRuVoh/yQGO8yYIR1S2j1Ln
+         PLbZ8Voc62/XPOzGvsj7nDCTFLqdhsOriCjRVxopGQh6WThBCAZpROjU9ryO3cUk35bh
+         Ls3W3VeyReuACSiGTzTWLN+534bqn2sX9UuH872HBbekQHmE25TM6QoRFhx1tLbYke2P
+         o90Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVd0SYx1m+pg8M0ETc79YiaolpuxnaMca3edbzfQeeARoiHE+9Exusw/vrv7rc+9BH7CYSn4+48qdobdvU5KLPv/EhgJH539h2SKPm1m1JqhggRFtAqss/fGt/PTQSVAN99hKx1sGS09EVQWMO4
+X-Gm-Message-State: AOJu0Yyj7ZlZFFfMlsN9H6wHHAt4rdNpcLOwPrI9xtchFwQWxev25dc5
+	8y8aJBAfKhr0quPQRWhdQxAXO9bkxaBYgBh6Ywxf81AVzgHv0HX4
+X-Google-Smtp-Source: AGHT+IH6kCQ/afrSv2P1zdqwSAqmKioeInirBef7NABKAQCUXGexCMX14ujoXkpOyE8WFuPrZVPy5Q==
+X-Received: by 2002:a05:6000:400a:b0:35e:51cf:6908 with SMTP id ffacd0b85a97d-35e51cf6a65mr6569549f8f.0.1717504366396;
+        Tue, 04 Jun 2024 05:32:46 -0700 (PDT)
+Received: from ivan-HLYL-WXX9.guest.codethink.co.uk ([167.98.27.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35e535567e9sm7209179f8f.21.2024.06.04.05.32.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 05:32:46 -0700 (PDT)
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+To: brendan.higgins@linux.dev,
+	davidgow@google.com,
+	rmoar@google.com
+Cc: Ivan Orlov <ivan.orlov0322@gmail.com>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] Reorganize string-stream and assert tests
+Date: Tue,  4 Jun 2024 13:31:59 +0100
+Message-Id: <20240604123204.10412-1-ivan.orlov0322@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	* -2.5 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH 2/2] serial: sc16is7xx: re-add Kconfig SPI or I2C
- dependency
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Tue, 4 Jun 2024 09:09:12 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Currently, we can run string-stream and assertion tests only when they
+are built into the kernel (with config options = y), since some of the
+symbols (string-stream functions and functions from assert.c) are not
+exported into any of the namespaces, therefore they are not accessible
+for the modules.
 
-> Hi Hugo,
-> 
-> On Mon, Jun 3, 2024 at 5:26 PM Hugo Villeneuve <hugo@hugovil.com> wrote:
-> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> >
-> > Commit d49216438139
-> > ("serial: sc16is7xx: split into core and I2C/SPI parts (core)")
-> > removed Kconfig SPI_MASTER or I2C dependency for SERIAL_SC16IS7XX (core).
-> > This removal was done because I inadvertently misinterpreted some review
-> > comments.
-> >
-> > Because of that, the driver question now pops up if both I2C and
-> > SPI_MASTER are disabled.
-> >
-> > Re-add Kconfig SPI_MASTER or I2C dependency to fix the problem.
-> >
-> > Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Fixes: d49216438139 ("serial: sc16is7xx: split into core and I2C/SPI parts (core)")
-> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> 
-> Thanks for your patch!
-> 
-> > --- a/drivers/tty/serial/Kconfig
-> > +++ b/drivers/tty/serial/Kconfig
-> > @@ -1025,6 +1025,7 @@ config SERIAL_SCCNXP_CONSOLE
-> >
-> >  config SERIAL_SC16IS7XX
-> >         tristate "NXP SC16IS7xx UART support"
-> > +       depends on SPI_MASTER || I2C
-> 
-> You may want to add "|| COMPILE_TEST".
+This patch series exports the required symbols into the KUnit namespace.
+Also, it makes the string-stream test a separate module and removes the
+log test stub from kunit-test since now we can access the string-stream
+symbols even if the test which uses it is built as a module.
 
-Hi Geert,
-I will add this to my TODO list, since this patch series is already in Greg's tty tree.
+Additionally, this patch series merges the assertion test suite into the
+kunit-test, since assert.c (and all of the assertion formatting
+functions in it) is a part of the KUnit core.
 
-Hugo
+Ivan Orlov (5):
+  kunit: string-stream: export non-static functions
+  kunit: kunit-test: Remove stub for log tests
+  kunit: string-stream-test: Make it a separate module
+  kunit: assert: export non-static functions
+  kunit: Merge assertion test into kunit-test.c
 
-> 
-> >         select SERIAL_CORE
-> >         select SERIAL_SC16IS7XX_SPI if SPI_MASTER
-> >         select SERIAL_SC16IS7XX_I2C if I2C
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
-
+ lib/kunit/Kconfig              |   8 +
+ lib/kunit/Makefile             |   7 +-
+ lib/kunit/assert.c             |   4 +
+ lib/kunit/assert_test.c        | 388 --------------------------------
+ lib/kunit/kunit-test.c         | 397 +++++++++++++++++++++++++++++++--
+ lib/kunit/string-stream-test.c |   2 +
+ lib/kunit/string-stream.c      |  12 +-
+ 7 files changed, 405 insertions(+), 413 deletions(-)
+ delete mode 100644 lib/kunit/assert_test.c
 
 -- 
-Hugo Villeneuve <hugo@hugovil.com>
+2.34.1
+
 
