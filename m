@@ -1,118 +1,117 @@
-Return-Path: <linux-kernel+bounces-200828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2148FB570
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:34:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDB38FB581
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 16:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54EC1F24450
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276782865F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B10148304;
-	Tue,  4 Jun 2024 14:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A34149E13;
+	Tue,  4 Jun 2024 14:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q78JyIsh"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c3eJ8Wc2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C93913CA9A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 14:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAEF146A8C;
+	Tue,  4 Jun 2024 14:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717511530; cv=none; b=Vaqhwm9N4r3hmir5FVM/04sZHBq9nZrHEOQCIUbt/Zt8SeY5JeucLsMCQrcU7nWbvoMnP4xf0o57If+ICpgfnjgKdKttKjWjEGEYuFckPy9YnunUOgQVle1LJYwkNwDeLpsiGD+M/stkkVFTvRIhO8pBQWFnJPMTG1ZIU8pcvqo=
+	t=1717511605; cv=none; b=ceJyTQkJKVfUgPiPS+WSq+UTN1opSNXVdx4Zu20pnENiKO/P6NG60i6UkRlvbv2Vq9v3K+Fr7muEqrGE5u+2TS4j9gBR4N6oxmXOnIkqPZ5JD7KGn00p7H7X/BFo7GXaWMuW9kCFJaHk7u4AggkicAYmxj9H0OnZh5adqY5Rs3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717511530; c=relaxed/simple;
-	bh=vGp3ovyzZdpRyR1W94NZG7tQypJhWhNwsTCZl5Q5Tek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uHoLW8ynyU7h88NhecJo1EuWxHAl9yFvKCqBmwHsAouxqOMasvXSVro9pHcnd98OY9yhOGyTpkc8hs1MJuVFUI+3KY/OoH68kLQxFC2hlSZ4EO9DvTdT3X0DW66ZXiEJ9tOnPCcVhA2YtrWG+Qm2mX9qQ5MrCBkWK+g7ikCwuY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q78JyIsh; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44024f5271dso154911cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 07:32:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717511526; x=1718116326; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MQpV5dfzXhIlBBaFJofdAT+Rq9XDrHNaF91R1+IyrHc=;
-        b=q78JyIsh300QLsOzWB0cIrO5QteKg38itV0Zky9xhQNsMKqT/bJqXtn93le7vXbA2a
-         kcBFFRhPsHYoYSlkDwdDNtG9wycigglwu18jp3iUPoQ5uEjYZMV85Jzx1ZhEpRYYWiR9
-         7CpT3aDElHqpDOnmIEGdIo7GpuAVHvHqS/CgYVY5Cz4CWU2NfunGG7W+lESaduWARcED
-         vqmsIyt+it93mQ9j5/5bj6zaEYha7ZA/EA5oyAvsnJJ9N8A9nAvYXS095DU/IDgfYHcv
-         y/U/B7gzeO0fme01F1gn7R+/QwGIl2uHzFkUlbVsJJTDcJyhiyiUPcJBuVulULClM+6E
-         h4rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717511526; x=1718116326;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MQpV5dfzXhIlBBaFJofdAT+Rq9XDrHNaF91R1+IyrHc=;
-        b=Yws2+h311EJfGrdnaewIJOoCcyUIFgZK2bl/lUy4UnzHHblRp8+y67wUO3yY65doDC
-         hGttp3UpJ5Zz74eD8q1wRHGQItRG1tavtk3Es36J+HwUsJTZXzBB9gM8zmLRY+UI/9J1
-         RuUsCL/jy8nSsYRSWljDLOJT7Ajtba4uSxxInfbNoHiTeeMPzsHISAltggAL1/2a3b50
-         4IrexaRewzVXLzOnoK3zwXItB+cjdl0bwLlhCENOcA2oDLHDgaNwUBk5UMes1835XroC
-         FkBAw3DVaZujuUmje7MpV5gWK4Mp5JwkDIKQmMIpqFsqRyD1MGXQXYuY/WAdtRIGVB2/
-         7aTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYZaXK6UvEu+0CgHlKEyC7l24TeAwYisoHGCQ0ML/1ksY/O6QGffUk7VSP8EkR23RmlyayZF1g2ab6dXmYEpG2ucqV8yqdbgFf29j/
-X-Gm-Message-State: AOJu0YwntpSN/ibUQ1iC5RIax7Lufc2U0F9/FZg5ARlz2l+A4NH6HLZD
-	L1Wsno1coEDnf1YMqNKp8HN5plzQD57jhaE37WQfn7SPkba20gnCbRAlhwtyZ4C1beiipWWOJ8j
-	/iD9jXhH8sRtUO6B+oEodNdaLHHROYa1hP/hm
-X-Google-Smtp-Source: AGHT+IGEpedUSaa44exiq+so0jKgv5XcNH+0+P8IoQJ2kUlE8+YPjvD8hE8Ie7JCngfSpIvxHm8sJNewp7aY8fLH1PQ=
-X-Received: by 2002:a05:622a:7392:b0:440:1fb0:1726 with SMTP id
- d75a77b69052e-4401fb017d1mr1630971cf.19.1717511526273; Tue, 04 Jun 2024
- 07:32:06 -0700 (PDT)
+	s=arc-20240116; t=1717511605; c=relaxed/simple;
+	bh=IejdTZ7QImNHuKyVqpJOqRpSxAfyBm1xYYnFYBAeHN4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nXA2yB2YgGH3U5i2JiM6ysQeGctwzmfctF8T1kpeO8/Qdn6CqEVfITknCrhHIn1wXLDI2MeJ+LCLMnXVbPXQHHUjAOsDTsoD89cgZYfO4LMM/+7T25JyB6cRXfHg6ejmRaPQu2T/SzIiRobk2wrGhgI739z4kOXGsnhub9535Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c3eJ8Wc2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454C8Alr007410;
+	Tue, 4 Jun 2024 14:33:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Sv0S6rLXcOFChy33McuSZ0
+	G1mzudvJAnkcoO6e8gceg=; b=c3eJ8Wc2hd6XdrSKvkOoEOjGnFW8T1LP/tHvc7
+	D/Pd06QNXqopnyICE7ogyKricmczbjx8hvTcpg943H+NwkI9NtCt1x4zYYypWnLv
+	1+RnQtD6wwwDcoVZhTzBa+JA9PP+qkyvU0DrjaFhXR1FvnNzX/bUQ9tGD+AJGboS
+	wpNE6zet29frVJOKPZJbDuREdQtJdFMFNVKcSrXAGE/wj0xa0o1Czme6qbv0/wk0
+	s/jRFjGdjcrAFP32kmHPQBngWJwcjS2e3a4pmSeFBFTatJbvTi5mryiNjASBTMA0
+	3K04o0G/cTE+S5LTV70uadjS+RA8ry9x7SWejoRMbFWNH3bQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw4d7711-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Jun 2024 14:33:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 454EX7iK016477
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Jun 2024 14:33:07 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 07:33:07 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 4 Jun 2024 07:33:01 -0700
+Subject: [PATCH] HID: lg-g15: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604060659.1449278-1-quic_kriskura@quicinc.com> <20240604060659.1449278-3-quic_kriskura@quicinc.com>
-In-Reply-To: <20240604060659.1449278-3-quic_kriskura@quicinc.com>
-From: Doug Anderson <dianders@google.com>
-Date: Tue, 4 Jun 2024 07:31:54 -0700
-Message-ID: <CAD=FV=VpYVE6hksZiyVTG+9qOZnpdyt45Av5JizeUiOHaVzvjg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sc7280: Disable SuperSpeed
- instances in park mode
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <swboyd@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Kaehlcke <mka@chromium.org>, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240604-md-hid-lg-g15-v1-1-265b094db089@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJwlX2YC/x3MwQrCMAyA4VcZORtoS+3BVxEP6RrbwFYlURmMv
+ bvV43f4/x2MVdjgMu2g/BGTRx/wpwnmRr0yShmG4EJ0yUVcCzYpuFSs/owcybuUyYeUYTRP5bt
+ s/9/1NpzJGLNSn9vvskh/b7iSvVjhOL7uA4CJfgAAAA==
+To: Hans de Goede <hdegoede@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <bentiss@kernel.org>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fn14VJzAvwWrwWmvuktsTjQDzmPkRoiG
+X-Proofpoint-GUID: fn14VJzAvwWrwWmvuktsTjQDzmPkRoiG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_09,2024-06-04_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ spamscore=0 phishscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406040116
 
-Hi,
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lg-g15.o
 
-On Mon, Jun 3, 2024 at 11:07=E2=80=AFPM Krishna Kurapati
-<quic_kriskura@quicinc.com> wrote:
->
-> On SC7280, in host mode, it is observed that stressing out controller
-> results in HC died error:
->
->  xhci-hcd.12.auto: xHCI host not responding to stop endpoint command
->  xhci-hcd.12.auto: xHCI host controller not responding, assume dead
->  xhci-hcd.12.auto: HC died; cleaning up
->
-> And at this instant only restarting the host mode fixes it. Disable
-> SuperSpeed instances in park mode for SC7280 to mitigate this issue.
->
-> Reported-by: Doug Anderson <dianders@google.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: bb9efa59c665 ("arm64: dts: qcom: sc7280: Add USB related nodes")
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> ---
-> Removed RB/TB tag from Doug as commit text was updated.
->
->  arch/arm64/boot/dts/qcom/sc7280.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/hid/hid-lg-g15.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/hid/hid-lg-g15.c b/drivers/hid/hid-lg-g15.c
+index acbec1dcf196..53e7b90f9cc3 100644
+--- a/drivers/hid/hid-lg-g15.c
++++ b/drivers/hid/hid-lg-g15.c
+@@ -954,4 +954,5 @@ static struct hid_driver lg_g15_driver = {
+ module_hid_driver(lg_g15_driver);
+ 
+ MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
++MODULE_DESCRIPTION("HID driver for gaming keys on Logitech gaming keyboards");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240604-md-hid-lg-g15-e4a106ba126b
+
 
