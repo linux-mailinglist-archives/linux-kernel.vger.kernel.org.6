@@ -1,91 +1,129 @@
-Return-Path: <linux-kernel+bounces-200226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8428F8FAD39
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:14:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592798FAD40
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60251C21D9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A7B51C21C5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AC81422AD;
-	Tue,  4 Jun 2024 08:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AEC142648;
+	Tue,  4 Jun 2024 08:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQ17OP03"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Jb0kIbDW"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC23446CF;
-	Tue,  4 Jun 2024 08:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C533C1420B0
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 08:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717488832; cv=none; b=ljO5h7Ls9PUmovLkK1s1gpRtsgv6AyWUEAHACTm6sBWLQ/VSg+Dh10fH/1aPdG9ok6PCY9sKRfHFoQWeTr0o0c8D5AOSKqbmsn206biVUsE3Ra/rQRnEHbqKzU4rT1T0W/av9GUp2DiMPSdGk8K5eYQ5dFmQao9NCDLMEJ+jQPI=
+	t=1717488902; cv=none; b=d8qtfn9VltqVQgyMOxM8p7B5/2lONRvskwW/jm1dSqwyJK2lDnHRb0coUyEyvaK4xm3u5Q69LXRzFCrOPJg3NDcOvld78xtcVhkJLBN3ni+VDsNUuK7bKQW2cbyrDZGEeQcINmHXfPTSHvHqMwdgvAi5mq39WgCbw3sm2BUZjug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717488832; c=relaxed/simple;
-	bh=56WLi8CXo1AcrdLwJh+EBDJTq1lXFHmxgYbS9a/UTg0=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=U/6vlby5FAxSnH8Y4dwjDmxMy5NvSouF55xdvBaJaeRtNU0O8Vf97wsWK9ZJRzFUPDFkISuNs7W1lngJe3vBUXPYFELgkSIqMzfMZOPIjpVb9LNp1x4KcURz4pIWq4/vYYvIN1sSJxJsni79qsivFLDL3bcTZHMBhqodguH2PWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQ17OP03; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13D7C2BBFC;
-	Tue,  4 Jun 2024 08:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717488832;
-	bh=56WLi8CXo1AcrdLwJh+EBDJTq1lXFHmxgYbS9a/UTg0=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=cQ17OP03lb6oYLzf2d773K2wukeyoY8gV8t5ZG4CXOzi/Og1nGwYzOz5cW1VdIPKs
-	 GfXmUvphwJe73lWW40vZMMzVv+ka+zLsxNZLf/cGEF47Isd0SWmnzEFdLUnL88GvaC
-	 hMI1cHETWj0/LjNdd4kxEJo+/HrDHMj/1ErtCyyntP5LexIo/7KV9+2aolkrHbmSVz
-	 eT83yXofsMIjTwXaZpc5xXabFs6vzRVxgptsJjuYUC5qN4QOnA7YaXTCvrNx5/59bs
-	 iXyBWof5FUAKJK08lvLJdrlRljtvDbYrEiwRMwg24uwcrCUFXSrdLSt6Dob+w6kaoS
-	 VZjwjwf2K8+TQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: [PATCH 5/6] wifi: rtw89: use 'time_left' variable with
- wait_for_completion_timeout()
-References: <20240603091541.8367-1-wsa+renesas@sang-engineering.com>
-	<20240603091541.8367-6-wsa+renesas@sang-engineering.com>
-	<1fca9d83960442b0b637d4e9586766bf@realtek.com>
-Date: Tue, 04 Jun 2024 11:13:49 +0300
-In-Reply-To: <1fca9d83960442b0b637d4e9586766bf@realtek.com> (Ping-Ke Shih's
-	message of "Tue, 4 Jun 2024 00:35:27 +0000")
-Message-ID: <878qzlt9aa.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1717488902; c=relaxed/simple;
+	bh=ELX7vFUiYE58hm1BlTFFznXSHKxuJsMEd4l4bZBWZYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q462XVxXefx5+oQ+wiYWsOrBeR1vcpjv+csE8ATXKNYEczH/BsLYbZUQ3U76cIwFNLMyMqulDRgoixeR5XCEQH7hanAocuOm/9kWsfklTwo5aAEmIzEBKy3N5nO051YQ2xiuYD2nkFyumGMTTcM0rd0Ix2erdy9zwKWLlJOluDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Jb0kIbDW; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RGEvpyljn8l4dpaAhowiJvPUFQxRVV5PVPBwQb0hnnM=; b=Jb0kIbDWrvmuCMfYEcPhvTC9Zk
+	6MkLi5HIEBm/7Hq++gEOC8dTEtve2EA+bxK24a2QwS3pZZ4oQn3GtoLI3m+8xbDQxva9n94IVR5dW
+	OlooT6r6dKvDDosJdSpujecs/IJhkQRktSUTLJtalnyuwT+3+g3F4JAEJ6Gv6VbnEXZ2HW7QpFo/4
+	DQCO1KjCNYb0wTBVxYP84uPcrlQcpjMnoIDCLKSGPWKJnaTKLlY0eLL/LdDnDLDxeHZbH3g1CVo/m
+	+9HjmQ6VbTB4+/LQY97qmE0/FPZLFgNMtueINbCXuExpvroarSZlf5aFeNUSrEyD2WnV9TZW2bXVF
+	BV36sVOw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38158)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sEPJM-0003bA-23;
+	Tue, 04 Jun 2024 09:14:28 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sEPJK-0001G6-Gf; Tue, 04 Jun 2024 09:14:26 +0100
+Date: Tue, 4 Jun 2024 09:14:26 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: oleg@redhat.com, arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
+	linus.walleij@linaro.org, eric.devolder@oracle.com, robh@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: Add HAVE_FUNCTION_ARG_ACCESS_API support
+Message-ID: <Zl7M4rjQbN2c9Bje@shell.armlinux.org.uk>
+References: <20240603073751.2282024-1-ruanjinjie@huawei.com>
+ <Zl2BNCXzKRG+eTDv@shell.armlinux.org.uk>
+ <3089651e-d8eb-f193-5eac-db925000dce9@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3089651e-d8eb-f193-5eac-db925000dce9@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Ping-Ke Shih <pkshih@realtek.com> writes:
+On Tue, Jun 04, 2024 at 09:36:04AM +0800, Jinjie Ruan wrote:
+> On 2024/6/3 16:39, Russell King (Oracle) wrote:
+> > On Mon, Jun 03, 2024 at 03:37:51PM +0800, Jinjie Ruan wrote:
+> >> Currently, kprobe on ARM32 can not use the '$argx' syntax available on
+> >> other architecture. So implement regs_get_kernel_argument() and add
+> >> HAVE_FUNCTION_ARG_ACCESS_API support.
+> > 
+> > This may work in the simple case, but it just doesn't work in the
+> > general case, where a function accepts 64-bit arguments. For example,
+> > for EABI and a function taking a 64-bit argument followed by a 32-bit
+> > argument:
+> > 
+> > 	R0/R1 = 64-bit argument
+> > 	R2 = 32-bit argument
+> > 
+> > Now consider 32-bit argument followed by 64-bit argument:
+> > 
+> > 	R0 = 32-bit argument
+> > 	R1 = unused
+> > 	R2/R3 = 64-bit argument
+> 
+> I agree with you, the current implementation considers a very simple
+> case, where all parameters are 32-bit.
+> 
+> From "Procedure Call Standard for the Arm® Architecture", the
+> "6.1.1.1 Handling values larger than 32 bits" describes it this way:
+> 
+> A double-word sized type is passed in two consecutive registers (e.g.,
+> r0 and r1, or r2 and r3).
+> 
+> > 
+> > Note that the mapping isn't argN = RN.
+> > 
+> > Also, given that "unsigned long" is 32-bit on 32-bit Arm, one can't
+> > return a 64-bit argument through this interface. Even if one typed
+> > the function as u64, it still wouldn't work because the caller
+> > assigns the return value to an unsigned long. This seems to be an
+> > issue throughout the kernel tracing - it isn't written to support
+> 
+> How about updating this interface to solve this problem? Let
+> regs_get_kernel_argument() return u64.
 
-> Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
->> There is a confusing pattern in the kernel to use a variable named 'timeout' to
->> store the result of wait_for_completion_timeout() causing patterns like:
->> 
->>         timeout = wait_for_completion_timeout(...)
->>         if (!timeout) return -ETIMEDOUT;
->> 
->> with all kinds of permutations. Use 'time_left' as a variable to make the code
->> self explaining.
->> 
->> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+That doesn't solve the first problem. The issue is that once we enable
+this, it becomes userspace ABI, and any changes to it then become
+regressions.
 
-BTW Ping, you can also take it directly to your tree if you want. But if you
-want me to take the patch, then please assign it to me on patchwork (ie.
-change 'Delegate to' to 'kvalo'). My preference is to take it to your
-tree, smaller risk of concflicts that way, but up to you.
+So no, I'm not going to have it enabled in mainline in a half-broken
+state.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
