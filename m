@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-201549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3958FBFDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:34:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BD18FBFF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C38283F0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A083F1F246AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 23:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF9314D6F6;
-	Tue,  4 Jun 2024 23:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2FE14D6FC;
+	Tue,  4 Jun 2024 23:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RrbSCWrl"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mtciDoVm"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEFAA5F
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EE714D6EE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 23:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717544081; cv=none; b=cGYB4Hf4AvK+hnf4MW2UJpQL1Vanc+swyVHu7Wd80u8AsV1yJEItQr2z9lq3iM7tVLp1fWpXpK1199oNBrVqaDZGRr/7ARSHKizuoO+SRtTEIsfZx+QZgP4eqrS7oE5dvTNP++a1H72mLUNc9FZJledjcQzvaLIxSxqOJHuqy0w=
+	t=1717544254; cv=none; b=B1ncEbDZKfRYrPtRsm53LpN+6trNUUt1SCfpwy/1EBjHSdYXHksinkm/OshLYI3g5gT+UDRGugyTrTY9y2vYmweQ/tb7a0ZdRblT07Cf4MfO0OIKgdMx0cCN8RhjzLrWk4eOFcKqopR92lF8EUzxUs/qHnwtptO4sS//rtm2hdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717544081; c=relaxed/simple;
-	bh=/RyllKS71H+IC820enjmIT75ZvOYvn2A1K/k4ayEGS4=;
+	s=arc-20240116; t=1717544254; c=relaxed/simple;
+	bh=U1yAyx7cuyVFpl60o3sFcCfbv96IoZW7jXHBYJj0J2w=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JM78XPaPgE4Auh7pf278Tj7IvqntFU1sXs2mGjbRhr81c+SEWzRC4P0K5FWYT7UknTuGjZptMZ7aIQ6XUoc+MAjCCb+Yju/VsaqPGjezDbnjtWvKO1nvC8VxEMpdaEZANw+ZjhE7YlqJibg13QJxlsn9eMGdDzTPxedwDzTbnX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RrbSCWrl; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=VwlCCEGS5Vknn//zRnZwYadE9XT8h89R+hYPNl0J9Q/CFTrmhSeck9EYy1aM8ICRfgxO2lIjTey6B0pwA1Vyhm5tl+u2mwLWqTqJqw13+GnJ2N5rJUgrAQoZs/A+disPC6Rt9Rd4DSQzpMKqdqsTn9GKK9+CIL0D+22tEg5DU1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mtciDoVm; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6cc288a7ee6so254603a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 16:34:40 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1f653adaed8so44893855ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 16:37:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717544079; x=1718148879; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717544252; x=1718149052; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WiOlI2KgvibXBloj2qE38W2kmcg/QICR4XC0NHpgGeA=;
-        b=RrbSCWrl7cPBQ679DsI2cMdWhp/tUoKClRowOdGsW2SGFl+twxDxIUPa65t0xPbKcJ
-         87QALdPajRHrFubf3hqe7A8p/Rjgk6K8B60gnvbWcacLK+mlRaxMmDWQekmUGjLOxQwX
-         p+lx5SEQt1dmdjYtHElpY6FDUPBt7mdJvnRUncVAWIp8E04dm3oIj5iA8gRWkORD6wrh
-         eXPLFWWVA3y0wo79qRZodypujBwiWyv7ms60c+8LRofvyF4313MOpBeUYrIZQqgg4DFl
-         CbqN80KkVaV5SRUjbi74Q8PSySRtx6OXdnn4bZTeRNEF+y1lDHJIR71k7PRFNe00o5HW
-         0s5w==
+        bh=1aziGuG3oqscD80bCqynmifrWZFDgLg8pJgvYx3eIww=;
+        b=mtciDoVmdJu7ss8MPLBDecxRLmZjXnRYIOYkVcF+kqF7g6EWvAP6kK2BOCfbi2uoc4
+         zAiThLDEv4iF34Ai75Z4QJNlxIBxgFrsRl4ZKBIp7j8aFFhmSRGrzCwcjgTfzX1fZhUK
+         JtkV7EQ87Ni4qYM0doiVQk1h8JWOqwREBLT7TZGP3ClxQKppytwBWEskxP4E0XY1riUt
+         BBZIAA54pH1oprUMhwNwHnPmnXSiVp+7t00AsTnznxsKinfdfxuHGX/6Pkz9qmqhBx/r
+         BVxjKjDDTsVxgkvR42mMmhuTrawR64RNf9Mh5C93BX8pIquwsqZZ7on13OEIHWBFlfTK
+         fJmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717544079; x=1718148879;
+        d=1e100.net; s=20230601; t=1717544252; x=1718149052;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WiOlI2KgvibXBloj2qE38W2kmcg/QICR4XC0NHpgGeA=;
-        b=TAjo8Povl2khDZssQIWdVsJqzaUPaEoE82phXjoE7zW86ZRGiiE68FKM8VDfdfmA3P
-         UmhzmYRKi2jg/LWU6cot6gipLbJSK0i59lQsPfSDNSGvSpfaDU9hp1JVoZHSdkgSYc/X
-         zw16ZTItY327HyNpTejL1MjM7myyaHZg0jAXaoUUZoQvAWnS18PvxAz7WWQCXPG1FDde
-         XebiGwdnCOlcSt58CvLU9ZFpSXFDv7NLBjnwmQVjKBdrUVt8T4SiY8YEqYT3S+ZOzpwd
-         +UpT2l0PLlW8IYKs2DsmGzAu0TPOY8v9Z933VxKodPTVKOcpcUVG8oqu6awMWZEUstrj
-         /jkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaWRGV5z4oAz6Ypdp1XoBWneybXXa+ZHQ9QQepdJznNJH/RwskQj7GWRSDYIjAonelSOD+4EXX9WxuW/Tqk+3Cv/gxKhk2q81tEqnN
-X-Gm-Message-State: AOJu0YywEZlW1OMhqx39RKcgWRmokFHwkzL3ZIG9+YIz8L9Qic/eBf1j
-	pbKVqH7o+h4m1caoeP5Dpq4XA+qS43kp2lyvJO551v9bjXiYWnwfsQTBXWmkLS0XB7NSgVHEB4C
-	qAQ==
-X-Google-Smtp-Source: AGHT+IG9/QfGlk3w+QqLKKOftRIh42oh6bp6yqD4YsiF/v3U3LPU8jLyNQQmMLcvrkoGApD1kHD0qQ+VMT4=
+        bh=1aziGuG3oqscD80bCqynmifrWZFDgLg8pJgvYx3eIww=;
+        b=BDQgi8kEHe8QQD4M+uDoKIyat/wMcHK3qOZOWht2LNst8NIYGZGaWyFKahhrzDhxmU
+         48msKIrOZCBVEzKWP/vXmW70O7vktkmavpqcfvJP9QN/WxejVF0WxIRsNB8JGMhxqH/o
+         HRH++3dbXkxmX5CXjvcc9oFF7gaho2o8bwlaw6dq6rapySNnzfDfnyR9S9AReF34mzch
+         0uIpICcKCCVG886TMtXk5/3zhA3E9ab1Z+E5wct/8YpzDaotHXu3QxwyaQZg03tbtE4Z
+         sX9krr+3ivMVgJ+fpO3gDFBomqi1FE0U0UzrQM5EHgc73UwnpP+VNffAVuPhZIJgSQqo
+         n+5Q==
+X-Gm-Message-State: AOJu0YzyXMSIn21Wwq8dCtse4V6uDSITcSe3AwkjCFKEXAoAC37xzEgu
+	ClV5VJ+1W+UnIz/DR14YBegshnW8sa1iuvL9CqcNW+H8kH9JxuefQj/goaUQCGoWI/xJzGqsqcn
+	iUg==
+X-Google-Smtp-Source: AGHT+IG8j9YdiZulKToJcOB+QeemX29Tr8HUrp2T7HOKShIoiBkbqEtI5DvXFe9kqpB9ZsQDTTdUbExlxXo=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:2309:b0:2b4:32df:9b7b with SMTP id
- 98e67ed59e1d1-2c25300652fmr48802a91.1.1717544079451; Tue, 04 Jun 2024
- 16:34:39 -0700 (PDT)
-Date: Tue,  4 Jun 2024 16:29:27 -0700
-In-Reply-To: <20240520143220.340737-1-julian.stecklina@cyberus-technology.de>
+ (user=seanjc job=sendgmr) by 2002:a17:903:2311:b0:1f6:5631:4ec5 with SMTP id
+ d9443c01a7336-1f6a5a0e853mr948095ad.5.1717544251880; Tue, 04 Jun 2024
+ 16:37:31 -0700 (PDT)
+Date: Tue,  4 Jun 2024 16:29:29 -0700
+In-Reply-To: <20231102154628.2120-1-parshuram.sangle@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240520143220.340737-1-julian.stecklina@cyberus-technology.de>
+References: <20231102154628.2120-1-parshuram.sangle@intel.com>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <171754323407.2778815.4127978352090083510.b4-ty@google.com>
-Subject: Re: [PATCH 1/2] KVM: fix documentation rendering for KVM_CAP_VM_MOVE_ENC_CONTEXT_FROM
+Message-ID: <171754275211.2777812.9934084019005836188.b4-ty@google.com>
+Subject: Re: [PATCH 0/2] KVM: enable halt poll shrink parameter
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Julian Stecklina <julian.stecklina@cyberus-technology.de>
-Cc: kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, pbonzini@redhat.com, 
+	Parshuram Sangle <parshuram.sangle@intel.com>
+Cc: linux-kernel@vger.kernel.org, jaishankar.rajendran@intel.com
 Content-Type: text/plain; charset="utf-8"
 
-On Mon, 20 May 2024 16:32:18 +0200, Julian Stecklina wrote:
-> The documentation for KVM_CAP_VM_MOVE_ENC_CONTEXT_FROM doesn't use the
-> correct keyword formatting, which breaks rendering on
-> https://www.kernel.org/doc/html/latest/virt/kvm/api.html.
+On Thu, 02 Nov 2023 21:16:26 +0530, Parshuram Sangle wrote:
+> KVM halt polling interval growth and shrink behavior has evolved since its
+> inception. The current mechanism adjusts the polling interval based on whether
+> vcpu wakeup was received or not during polling interval using grow and shrink
+> parameter values. Though grow parameter is logically set to 2 by default,
+> shrink parameter is kept disabled (set to 0).
 > 
+> Disabled shrink has two issues:
+> 1) Resets polling interval to 0 on every un-successful poll assuming it is
+> less likely to receive a vcpu wakeup in further shrunk intervals.
+> 2) Even on successful poll, if total block time is greater or equal to current
+> poll_ns value, polling interval is reset to 0 instead shrinking gradually.
 > 
+> [...]
 
-Applied patch 1 to kvm-x86 generic, thanks!
+Applied to kvm-x86 generic, with a reduced version of the doc update as
+described in response to patch 2.  Thanks!
 
-[1/2] KVM: fix documentation rendering for KVM_CAP_VM_MOVE_ENC_CONTEXT_FROM
-      https://github.com/kvm-x86/linux/commit/f2362c04752c
-[2/2] KVM: fix spelling of KVM_RUN_X86_BUS_LOCK in docs
-      (not applied)
+[1/2] KVM: enable halt polling shrink parameter by default
+      https://github.com/kvm-x86/linux/commit/aeb1b22a3ac8
+[2/2] KVM: documentation update to halt polling
+      https://github.com/kvm-x86/linux/commit/f8aadead1971
+
 --
 https://github.com/kvm-x86/linux/tree/next
 
