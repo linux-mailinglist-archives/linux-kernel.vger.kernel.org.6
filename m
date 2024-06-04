@@ -1,154 +1,239 @@
-Return-Path: <linux-kernel+bounces-200651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1648FB2F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:55:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763998FB306
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 14:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0731F2184B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00EE91F21624
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 12:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10AF146D48;
-	Tue,  4 Jun 2024 12:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D311487D4;
+	Tue,  4 Jun 2024 12:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UoqMPFHY"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="MsE2qJGV"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2083.outbound.protection.outlook.com [40.92.107.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D571465A8;
-	Tue,  4 Jun 2024 12:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717505594; cv=none; b=InhZkCnvmnnUIW/6qM/mreYhac/GZI0wC1HWsWKrltuc/35g3DBaNDOczJmqJlAFTjODmX/7er/KmKwlxHDfKYAIiElxc8v2HNxV+p+TVNm7HSqiKuJs/e7XBcraO4iEm537aFRw94+ruTeb5B5zGKI5ZAFfCL6Yb6xlXRxSINU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717505594; c=relaxed/simple;
-	bh=/0Z5do5U7FHNT8l5qEE+RkwK0432uhaqsm9lIUnKlCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=feEMYve3UGqX06pH8P57u1bEcnlUDpausC7/wW1Q6ZgVq+HfeCQlFYZXgLEAKLu+/XPZlLvylZB2yU8U3k3hwpDdZ10aP940Of4CIAi1Gt5/DazxVQap62VhGbGoUP0mqwgPNeuexWCFWy07re8wENFpJNgNH7llh1FaO3jetek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UoqMPFHY; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57a4ce82f30so3693426a12.0;
-        Tue, 04 Jun 2024 05:53:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717505591; x=1718110391; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jA/3XDMRYNfFF/x22X/HxutHqnTJnzF8YXOQgaSCQAY=;
-        b=UoqMPFHYxFrr6ksVLln0ZmE+PTgu7l8c04YcHBKe6sVjapKQvfIuwt0p1R1D+F5EyU
-         Ocn0TlL2KUiUgX0ADnkfyYLm5qY1JG4+RQUXt/hpiJmVQiapzEzGVlABJEyVpW6xFpQP
-         mbBIOYkIoICsdhrQdVCBbuQIARr0ovfSb8CS0pWAXxinUooGE6qL7boWYELTzYLn9y9C
-         txmQWcNMSyR8SLwHfFwZEswROFkKNngKAj2EEdCuU39ICGh9wOzX6EJhb4xWJid0VwUQ
-         vZakZLOZAoD4BTfIaYQ0pYSwlp9NVbYeaA4LBnFh1yjFTscp32dECa/U0UhBofmG+51B
-         hccw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717505591; x=1718110391;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jA/3XDMRYNfFF/x22X/HxutHqnTJnzF8YXOQgaSCQAY=;
-        b=da19xVB1xO2KIretSDtoH0rPkttswWACYLC3aGe7L8KhUlhEDy/HyPsuJ5qT6J2fRN
-         T2D7irjGfwNhQZXiEXceEZUjl9svl+LNm2V0pk48rXdOgpCZ/wY4+dmZwiwUjQhOpMnK
-         5T7gQGBYMJLhmAfJP33Ic2kbdU/6zGHP7us7E1oGwGAy6ONEVq//dR0ZrHywP1V1ZR1E
-         28IB0+tHtOBsgYcyJgULZ2Qk8icewiEig/1JdnYj79SOt4zTdFF1luBjOHOXGS4czbbG
-         fViTZLVFwtmMXC14xZzt2lPxOO748vTRcZzeQSz6go8hG4Deh/ofvKF3liK2iAWemX6Y
-         wQvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/0q9GgrJSPYEQ4k+rQuhqPwKx9snn9QMCPe5fl7yhbz4rScHs4nfFz+qGqa+GPt8M15NcYYCwadybBXOccSvFHuWmGQfW92+I2Hl8lJBShtxFAY5BXAiruOeE+PPruiaJuXsnmg==
-X-Gm-Message-State: AOJu0Yzg6uRpShwaXi1DDFycZC98wFLyWHs8PVn26eTudABuNamGk8ED
-	OelZ+COGgzDvTWlBjgXAZo8AL4mg0yN1J6lqhzPzI2Q4LH20+GqO
-X-Google-Smtp-Source: AGHT+IFYik7pF49ujBeIaufnGjl1TZQfJJcRHhW17ogA+Z7WUs+FmnspEYfwsKjiHnM+N/tpJSf2rQ==
-X-Received: by 2002:a17:906:bd1:b0:a65:135d:2ef0 with SMTP id a640c23a62f3a-a6820901cbcmr841265466b.34.1717505590514;
-        Tue, 04 Jun 2024 05:53:10 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e9eed9b1sm393402766b.131.2024.06.04.05.53.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 05:53:10 -0700 (PDT)
-Message-ID: <f241957f-6f4b-424c-9ea2-d7eb564daa4e@gmail.com>
-Date: Tue, 4 Jun 2024 14:53:08 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FDD146597;
+	Tue,  4 Jun 2024 12:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.107.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717505704; cv=fail; b=JbXqZJLP8+4bK2ExWZiGhCAXmgttabZxfMsVo3XH6TemayxyvlSu+8DZhPa3kVdoUPdU+4U8eCFDCVUQsncezw6PYaKj4slKMHj4CbINudUzDaA4PLjkn5U0eljjDY/yLOsGmX/8ufJNMaAZhDzzjwvcmgkzu39V0Ye28nAO8uQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717505704; c=relaxed/simple;
+	bh=UOeXGCCaH/H/puJ3oJKMTzGfmRos4eMJHCaIKp4yElY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EBu+jfsNZzYpL0RvLtbnzU7hgSxTPJ/3q5oHrEyrG6fz2fUYM1b4Mx4RXYMQk18uIJ69OSIsqwQWm7TRJSAeVKWM3P3IIXbJv+slyZ1XsscRw5evWnM6VVVHYe7wHY8J7agECMwaZ9xrO3qkVDj+7n2wVhVsqDMfCSCPZn0rYco=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=MsE2qJGV; arc=fail smtp.client-ip=40.92.107.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LZ2VTIdlN+J2HbMm0/Abb1SAhdccH32GLCUaZ9Oj0Imhb42jzJh5JGbvPdW6ZgTorGFMQojazcCl2EykvBZrFSt6n2JvrIA3WXuZg+gmodItvFwpxfkyhAcyxO/+jvWJgw+goFQlnQLxcbPAFeK3z9QIFJO4w4jajFZhKbiepPMsVYejEgAhhrK3phFnbBBtkj/m/ivOI1gze3F2fF9qqDpoC1U01ned/LMCHdYoR3v1aZCFUHxGgDJEazwHNnHWil4ed1geEWrCrdHHwEjA0jtAygFiiYZ3MekKJH85gp2YvEUr1WJa6OSI+apfNvKImbAYUEjlIFlE8gC1YDBFfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kM+ejfvNrJV006xmLa5xzTLCa1n1TQwI9hu5JOjd4Cs=;
+ b=l9fm+QG/Zhh20ncA0/tXZ80XYVQYS/np8eKtecazC9arDusUh9dvzGcWfD9gFxChHG0c0+j6LBXNsn8fe1BLDWJ1lNnX795/I3/mDq3EY8LBubvhltx6fOrovav6Kln7FIK8eKzTUR2gN9gbZsL81fzTp3t0RxZzE/ztYSF4ExmWTyQ5ZS1dwWJPYLXoyuQTU0H1PbR4rTiMc3PVX+WHToHLPAEbBKU7DHFREb5Ruwv7rQwglccYNSuES0WgMMrPwE+mMp0WniKHx7kb+BcCB8V1NfQyfAD85jY8SPMi2eI2LoaHHuPN++hPdfUZKQdzHNln/ADK79J/KPRZx4Rfig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kM+ejfvNrJV006xmLa5xzTLCa1n1TQwI9hu5JOjd4Cs=;
+ b=MsE2qJGVn8+vgLe0uai7aFaGPVb34uhAN/77nSjTbk4gZ14eEp/C2iZAaqy9F5TnCrX8dJ5ADRcVoykNzWHYqdeA2qvUS80Oz617Q6zLZtpgkC8DPKdqko0487LOva1h/R1i8llEdZiiivJtmqZ88yUoBGzQaPChsXeHoN6o6zVCVt6cir4dkoM2bDqMEoA9lhXMSnWeGbzoqiaHtt3Vclxv0Cj8gfX4+FFTBxsWTYBQd+OvQh8zNjFcfIV4X4MTn6xPdG/VSl85O8awvBGbyhJhVxhoUelDVZfxAFwn0DIcLqYRhzG2EE18ZttpbX5GuCTe8ybaUnty1K74/008sA==
+Received: from SG2PR01MB4218.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:1ca::8) by SG2PR01MB4386.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:1b5::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Tue, 4 Jun
+ 2024 12:54:56 +0000
+Received: from SG2PR01MB4218.apcprd01.prod.exchangelabs.com
+ ([fe80::7155:e92c:291b:fc1c]) by SG2PR01MB4218.apcprd01.prod.exchangelabs.com
+ ([fe80::7155:e92c:291b:fc1c%4]) with mapi id 15.20.7633.021; Tue, 4 Jun 2024
+ 12:54:56 +0000
+From: Haylen Chu <heylenay@outlook.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Haylen Chu <heylenay@outlook.com>
+Subject: [PATCH v2 1/3] dt-bindings: thermal: sophgo,cv180x-thermal: Add Sophgo CV180x thermal
+Date: Tue,  4 Jun 2024 12:54:19 +0000
+Message-ID:
+ <SG2PR01MB42189977B4172405F5704CC4D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <SG2PR01MB4218013241B3EED779D3BAE8D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
+References: <SG2PR01MB4218013241B3EED779D3BAE8D7F82@SG2PR01MB4218.apcprd01.prod.exchangelabs.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [+ImABJjERh4UXXPYTHM1l2EeXgXjRUA4]
+X-ClientProxiedBy: SI2PR06CA0011.apcprd06.prod.outlook.com
+ (2603:1096:4:186::16) To SG2PR01MB4218.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:1ca::8)
+X-Microsoft-Original-Message-ID: <20240604125420.22638-2-heylenay@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] MAINTAINERS: Add maintainer for ROHM BH1745
-To: Mudit Sharma <muditsharma.info@gmail.com>, ivan.orlov0322@gmail.com,
- jic23@kernel.org, lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
- robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240603162122.165943-1-muditsharma.info@gmail.com>
- <20240603162122.165943-3-muditsharma.info@gmail.com>
- <a628db76-a48a-4492-a3cc-f93c0f67ad04@gmail.com>
- <961fa617-a76b-4b79-956b-795a55fec959@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <961fa617-a76b-4b79-956b-795a55fec959@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PR01MB4218:EE_|SG2PR01MB4386:EE_
+X-MS-Office365-Filtering-Correlation-Id: a8be5eb6-0ab5-4ab7-7607-08dc8495888c
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|440099019|3412199016|1602099003|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	EqxwBX7dckghar72CBlMS69z7Tjg8ivANyYBmAbog+mq8s/c/oRLqpHl2442XR0gUxiwFTnTcLo3qLrfBo2QyO0SZb7igbSFY3VpI7GzYhaTEOQJz1Npmtfsl/gAAbq0hcXNaGJoQPM99rHAGhTVlWflzGIekO6vQPE74xtLSy+w7yxAnf/OdGqKPutUpOjjVonOb16m7pN834nDucUvEW+DpvmX8y1ZRZVFrkUPOW5qdiT2sj5jqIR33u+Mk86Oj9KpA7FOmqk93aOtyfWQbniWjLgYOLwhR2tD0kaRZmHQj7gsLCgK61WmJasrz8ZermFk95ew4ZeHj/mMc8SeWen+ht8XXFFWu5DdP0A5PomuieB6IaovsrsTiDkcB01nGLT5sCAYhhJsLlzTLH/xiwoxriaM/6ewBxzoCdl0e4xihObb5mp6leMNG40kYqr8+Ai//8U6ZRUPKQJigKLNlWxqZm3LSNjQSnXo4CxslnJ7OZtpWddiAf9c5wBbcDq1Tmbb52pn7B3RmDRkofHwHNYiofeEdYQKzR0NEHAudlPcXWJvo6n4OTy9fSW55qQnmP4fAFy2EFV70TyRcK+/0CofmHLlgBHjzllZFyIZNAImimwBCV4iNjhCiGB10cE0i3Q4Sosv9aXGebM6wXjrRxAGY7xYUvTUBT0H3hv4GIhGG548yK4OgV+dEynB5QRX08I/dR3gaSeVsXKbe9fqQw==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2e8mta+YiHVwgiwrNNP5GHVUkx9J4c/3yL7ybAC/Sgt5rHKPKd2m5qyRMtR2?=
+ =?us-ascii?Q?luhtHFIr8p7xSFXG1MhKIkeJo80ev+Fh6vC3kaba3utubPU54iRnWKMzEte3?=
+ =?us-ascii?Q?zM8mcp6mkmBesyuhZ3HoR+VtDI1tF7GV6FQmc+JyhCmJeTparG4dsBBZDOH7?=
+ =?us-ascii?Q?dJYJrC/9hi9oER4chNkCS03gOafUHc7U3cR3+DKOSJh8DsJDXAfClD9t2IMr?=
+ =?us-ascii?Q?LJhBlijvUgiPSVxGH+tbNaHrrRqdXlaDRcO30LZP/wDx8EgXK179rAmsz5jf?=
+ =?us-ascii?Q?X+tF+FSQAjS+CQPQbolfGUcLNo2YdLQ1ICsolYZKX5kqU4Vl1pX5A8RasEC6?=
+ =?us-ascii?Q?uK6Smfy10de8EuBXfyyN+ZJXAA8PwFjC8AbxGhUd3TsIIZm0eNZXPtJNCsfw?=
+ =?us-ascii?Q?fS8K+Rnv2jrdzm3bpLj1fzmqmsxe+29X1K53LR8QuWBTSOB7ukOSbDNKm/dh?=
+ =?us-ascii?Q?PeV9Qm8oZFXA5XzykOpvah+Oj8CIH66K8oSF/HJ1PuwQn1i/SeXcgFkCdBWB?=
+ =?us-ascii?Q?abwslKxXK/fSog12trXbBPJWP6/T2qOJLjeSgtgikzAiRHbYSFXK034hn7il?=
+ =?us-ascii?Q?aqtP+JpGEQmqfR2oEa7aqGEltfaRcOP76P3TtGrrfJswv2S5cPZQeWsz8OOl?=
+ =?us-ascii?Q?MmRcU8XPFjFynRSl9E6zObkd9wkb1Bb0j7isy9RgYHAK9Zmzy1U4d06f/ybz?=
+ =?us-ascii?Q?SLBO8StwehhTq++QPgYyaAIjqmFPeffa9+z5WOLG/0rDQ1SbQJvLdSaEk0QV?=
+ =?us-ascii?Q?Xq9p7H8Fy2IeMmjDvPEOfNnMJ1LjnbVOBROLyCT9ORNMRSf8jF7yvaXXaJ7+?=
+ =?us-ascii?Q?b9zDwNz1EzoY2vRGyhu2Lc0rMqPhU8tAIC7Qo0K/c1+6IxItIN8PN6SLR102?=
+ =?us-ascii?Q?YqivWIpQ+m4Ein/iPsECFqriyROtdiD4SwXSq+5DX/+q0BFveq0+wb4Hz3aV?=
+ =?us-ascii?Q?yGG5z3+BLps7IngE5ltZCJPYNoV/iKPJchTCmlm0r/KHDUvDwykHbViSC/Oo?=
+ =?us-ascii?Q?HaeaZEcFW1ILgUD6Ex6Z9T2c9DasMXAbtQjpodJTVwyWSnsboHRcNecVUDHK?=
+ =?us-ascii?Q?ywcSoMeuFEplhQkrj3u7RUpH8kv9W4Xk8DpmEoguaPUbAsxAlPdFD8hSzphS?=
+ =?us-ascii?Q?C8H2gMKJuLQnDgJwSjgMuHWobAdukQswyCYU3M4Ai3m1G7163KuQsNVFlc8/?=
+ =?us-ascii?Q?exZsIEsWVllFljuVsTwMu1XuHZfLin722HODKAqX9uHYpdZXtQ+UJPKrHRI?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8be5eb6-0ab5-4ab7-7607-08dc8495888c
+X-MS-Exchange-CrossTenant-AuthSource: SG2PR01MB4218.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 12:54:56.2905
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR01MB4386
 
-On 04/06/2024 12:44, Mudit Sharma wrote:
-> On 03/06/2024 23:37, Javier Carrasco wrote:
->> On 03/06/2024 18:21, Mudit Sharma wrote:
->>> Add myself as maintainer for ROHM BH1745 colour sensor driver.
->>>
->>> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
->>> ---
->>> v1->v2:
->>> - No changes
->>>
->>>   MAINTAINERS | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index d6c90161c7bf..945873321fef 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -19407,6 +19407,13 @@ S:    Supported
->>>   F:    drivers/power/supply/bd99954-charger.c
->>>   F:    drivers/power/supply/bd99954-charger.h
->>>   +ROHM BH1745 COLOUR SENSOR
->>> +M:    Mudit Sharma <muditsharma.info@gmail.com>
->>> +L:    linux-iio@vger.kernel.org
->>> +S:    Maintained
->>> +F:    Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
->>> +F:    drivers/iio/light/bh1745.c
->>> +
->>>   ROHM BH1750 AMBIENT LIGHT SENSOR DRIVER
->>>   M:    Tomasz Duszynski <tduszyns@gmail.com>
->>>   S:    Maintained
->>
->> Hi Mudit,
->>
->> is there any special reason to have a separate patch for this? The
->> addition to MAINTANERS for new drives is usually included in the patch
->> that provides the driver itself.
->>
->> Best regards,
->> Javier Carrasco
-> 
-> Hi Javier,
-> 
-> Adding this in a separate commit was just a pattern I notices with some
-> other drivers, for instance 3b4e0e9.
-> 
-> If necessary and/or considered good practice, I can squash this in the
-> patch that brings in the driver.
-> 
-> Best regards,
-> Mudit Sharma
+Add devicetree binding documentation for thermal sensors integrated in
+Sophgo CV180X SoCs.
 
-Although there might be some cases where it was added separately, it is
-much more common that it is added to the patch that provides the driver.
-Some perfectionists even include the entry in the dt-bindings patch, and
-then add the link to the driver code in the driver patch. I believe that
-a simple squash would be ok, though.
+Signed-off-by: Haylen Chu <heylenay@outlook.com>
+---
+ .../thermal/sophgo,cv180x-thermal.yaml        | 82 +++++++++++++++++++
+ 1 file changed, 82 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/sophgo,cv180x-thermal.yaml
 
-Best regards,
-Javier Carrasco
+diff --git a/Documentation/devicetree/bindings/thermal/sophgo,cv180x-thermal.yaml b/Documentation/devicetree/bindings/thermal/sophgo,cv180x-thermal.yaml
+new file mode 100644
+index 000000000000..1c3a6f74ff1d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/sophgo,cv180x-thermal.yaml
+@@ -0,0 +1,82 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/thermal/sophgo,cv180x-thermal.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sophgo CV180x on-SoC Thermal Sensor
++
++maintainers:
++  - Haylen Chu <heylenay@outlook.com>
++
++description: Binding for Sophgo CV180x on-SoC thermal sensor
++
++properties:
++  compatible:
++    enum:
++      - sophgo,cv1800-thermal
++      - sophgo,cv180x-thermal
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    description: The thermal sensor clock
++
++  clock-names:
++    const: clk_tempsen
++
++  accumulation-period:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Accumulation period for a sample
++    oneOf:
++      - const: 0
++        description: 512 ticks
++      - const: 1
++        description: 1024 ticks
++      - const: 2
++        description: 2048 ticks
++      - const: 3
++        description: 4096 ticks
++    default: 2
++
++  chop-period:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: ADC chop period
++    oneOf:
++      - const: 0
++        description: 128 ticks
++      - const: 1
++        description: 256 ticks
++      - const: 2
++        description: 512 ticks
++      - const: 3
++        description: 1024 ticks
++    default: 3
++
++  sample-cycle-us:
++    description: Period between samples
++    default: 1000000
++
++  '#thermal-sensor-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++        #include <dt-bindings/clock/sophgo,cv1800.h>
++        thermal-sensor@30e0000 {
++            compatible = "sophgo,cv180x-thermal";
++            reg = <0x30e0000 0x100>;
++            clocks = <&clk CLK_TEMPSEN>;
++            clock-names = "clk_tempsen";
++            #thermal-sensor-cells = <0>;
++        };
++...
+-- 
+2.45.2
 
 
