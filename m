@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-200985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC0A8FB836
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:58:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 184E58FB7D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A17AB2AD78
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA5A2833EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC3614883B;
-	Tue,  4 Jun 2024 15:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB3B14A60E;
+	Tue,  4 Jun 2024 15:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dAnI/ccw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fn8U+lPB"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZpWmVHEr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7LV7zmsm"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386DB1448CB;
-	Tue,  4 Jun 2024 15:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236471487DD;
+	Tue,  4 Jun 2024 15:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717515891; cv=none; b=HjEsoe/SraypHGTSdtv9NMDfWind24D8wh97+/FZOfCIn08YjLf1T1HbV/eP8NcIL0rbXFM4IQk2Dw+VrD1aaDDTfGQBZMTaqga6CH271tpSLQiSKn5gy32OCRKoY+78nkjW56TTGNNPljfFZpTkiuh3OF83ou67YLuYzgBDx6I=
+	t=1717515894; cv=none; b=XYSof/ZcWX4h4WEY1m1x3Kmgic5M26Y9BgSSG887j9NG/nrlnOkP+MYzVf85IdOO7ypnHZxPS535N+sfcrGKcemE+QN5Q8orpRl5wz6hBEi1gTiKB0DrlRLshpONdUCEdhxoxoENWQwZYijiJb04iGZDAwYnSiWcfTlnubPY7yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717515891; c=relaxed/simple;
-	bh=+x9DQd7KqwkYQ1bgShD+qKWpEAz5ME5eTGkkafsEoWo=;
+	s=arc-20240116; t=1717515894; c=relaxed/simple;
+	bh=3tHIwdbnjoTNL6ML5KnhjhEyimnnTQ36tmq4mQnwqVw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HUQJoKSiqRlAejm3RcQVaTbblKZuKapCeNEhrdSPb4b+/0ODQviVhBJyZtYseQIKz6NCUr2t2Ouahuu0G97QsyBB5rKSz/sL79jpcm2ownhINUpDaKM5XQL/gPD2JKAJwcdfsji0Lv2+ROkyPEAEkQ9Ojbn5sWxg5EeoMeW25SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dAnI/ccw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fn8U+lPB; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=nujNKUWrSZ5M3B0baDZZqw93uEEbYQUEsWgW+5q9R2aLf2b0bmwjV8tHqQSWiHPByWEZBZmafazMOMEaJuk3LA2oz/Iee2YaQLFs8x7Lnf3DIieHeI5oXqEDvagLrkV2pnr3Y82e1WWZ3Qd/Nx2EdnIWerSeq7q3YnmQQOtC718=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZpWmVHEr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7LV7zmsm; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717515888;
+	s=2020; t=1717515889;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CJeYTIv57cozwpPfPkR5Rxm28jZwxXFq0rv+rRq51Co=;
-	b=dAnI/ccwdG4/BdnPrwDrKy9n0vA7o2UTzfgvrA/anVwHQx3fIeyotnx6Klwj+JyhsiQkZJ
-	nBWUyxttoRmvZGcgV1btKexspmk6mrnbL13jMBVBxJ2lLGf6QXekmb+QyJ2zFPp5PPTWgs
-	NW8TOe/OkRuAh//SY/bhbGOskT5/6xN4Qtaml/xa+C0Jl/55Ym+FWZ1I0cHuyJ/fynknWu
-	MauhLEI0358Y/spg2EUcxw4AAwGxCG+01CF3VSoQE4dnTMRdFmeA35/poh25dEt26fbFg4
-	v6/kYTgvjbFRFikE1yvCZJtxvk0BMQpLa5i+qrJ7OMTyJFTWBfBV991rDzx3CA==
+	bh=1zGFUh5BIokNXo1khBHVCTilWjLuFPEXOImnZTfvdCg=;
+	b=ZpWmVHErbJYFgaXZ51awhGMxW8APDMPsVj677mOUaCG53w6WpXDDtD782NFgN/9poB5o/9
+	v8wyjjXhdoUVLXFpxZRCpGumG0gUmiJXArOSk0WR4dZPJ8FSPZpnPn+etwGCxEbBR0M2hZ
+	jHdycZZdQIcwsDEpihBvWw+0YGieWALV0mpMi75xtJg04BclQhlq1lJeCr/MrForbC0ysz
+	BUfaF2EvwiGSXmSFVmKuGtZ3W3TK5Tp3CdwdL4XPFYV+Ixa/v235KMB+bPjxBkBx8f9LBF
+	KLso4ewxszNNc2GVpObSgXHryCla2dPlAiUtTYHnXje1C4tl/zTzKY4aAQpNyA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717515888;
+	s=2020e; t=1717515889;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CJeYTIv57cozwpPfPkR5Rxm28jZwxXFq0rv+rRq51Co=;
-	b=Fn8U+lPBxTLM1Hieo8iT9d80vGw/P01MH2LxDxO/zI4YroqdPqPUgLheIFl4nNV7MZGmti
-	COdWtCmGkKSeXXCA==
+	bh=1zGFUh5BIokNXo1khBHVCTilWjLuFPEXOImnZTfvdCg=;
+	b=7LV7zmsmr6KTon9MNuUio70Erb1OBJPxeXiLPV4HpBhHg+kUbmieawZ6/D437xV4pBbr4t
+	maPCCVw7KfTbEnBQ==
 To: linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org
 Cc: "David S. Miller" <davem@davemloft.net>,
@@ -69,10 +69,17 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Waiman Long <longman@redhat.com>,
 	Will Deacon <will@kernel.org>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	David Ahern <dsahern@kernel.org>
-Subject: [PATCH v4 net-next 04/14] net/tcp_sigpool: Use nested-BH locking for sigpool_scratch.
-Date: Tue,  4 Jun 2024 17:24:11 +0200
-Message-ID: <20240604154425.878636-5-bigeasy@linutronix.de>
+	Florian Westphal <fw@strlen.de>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	bridge@lists.linux.dev,
+	coreteam@netfilter.org,
+	netfilter-devel@vger.kernel.org
+Subject: [PATCH v4 net-next 06/14] netfilter: br_netfilter: Use nested-BH locking for brnf_frag_data_storage.
+Date: Tue,  4 Jun 2024 17:24:13 +0200
+Message-ID: <20240604154425.878636-7-bigeasy@linutronix.de>
 In-Reply-To: <20240604154425.878636-1-bigeasy@linutronix.de>
 References: <20240604154425.878636-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -83,79 +90,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-sigpool_scratch is a per-CPU variable and relies on disabled BH for its
-locking. Without per-CPU locking in local_bh_disable() on PREEMPT_RT
-this data structure requires explicit locking.
+brnf_frag_data_storage is a per-CPU variable and relies on disabled BH
+for its locking. Without per-CPU locking in local_bh_disable() on
+PREEMPT_RT this data structure requires explicit locking.
 
-Make a struct with a pad member (original sigpool_scratch) and a
-local_lock_t and use local_lock_nested_bh() for locking. This change
-adds only lockdep coverage and does not alter the functional behaviour
-for !PREEMPT_RT.
+Add a local_lock_t to the data structure and use local_lock_nested_bh()
+for locking. This change adds only lockdep coverage and does not alter
+the functional behaviour for !PREEMPT_RT.
 
-Cc: David Ahern <dsahern@kernel.org>
+Cc: Florian Westphal <fw@strlen.de>
+Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
+Cc: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Roopa Prabhu <roopa@nvidia.com>
+Cc: bridge@lists.linux.dev
+Cc: coreteam@netfilter.org
+Cc: netfilter-devel@vger.kernel.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- net/ipv4/tcp_sigpool.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ net/bridge/br_netfilter_hooks.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/net/ipv4/tcp_sigpool.c b/net/ipv4/tcp_sigpool.c
-index 8512cb09ebc09..d8a4f192873a2 100644
---- a/net/ipv4/tcp_sigpool.c
-+++ b/net/ipv4/tcp_sigpool.c
-@@ -10,7 +10,14 @@
- #include <net/tcp.h>
+diff --git a/net/bridge/br_netfilter_hooks.c b/net/bridge/br_netfilter_hook=
+s.c
+index bf30c50b56895..9596ad19224ad 100644
+--- a/net/bridge/br_netfilter_hooks.c
++++ b/net/bridge/br_netfilter_hooks.c
+@@ -137,6 +137,7 @@ static inline bool is_pppoe_ipv6(const struct sk_buff *=
+skb,
+ #define NF_BRIDGE_MAX_MAC_HEADER_LENGTH (PPPOE_SES_HLEN + ETH_HLEN)
 =20
- static size_t __scratch_size;
--static DEFINE_PER_CPU(void __rcu *, sigpool_scratch);
-+struct sigpool_scratch {
+ struct brnf_frag_data {
 +	local_lock_t bh_lock;
-+	void __rcu *pad;
-+};
-+
-+static DEFINE_PER_CPU(struct sigpool_scratch, sigpool_scratch) =3D {
+ 	char mac[NF_BRIDGE_MAX_MAC_HEADER_LENGTH];
+ 	u8 encap_size;
+ 	u8 size;
+@@ -144,7 +145,9 @@ struct brnf_frag_data {
+ 	__be16 vlan_proto;
+ };
+=20
+-static DEFINE_PER_CPU(struct brnf_frag_data, brnf_frag_data_storage);
++static DEFINE_PER_CPU(struct brnf_frag_data, brnf_frag_data_storage) =3D {
 +	.bh_lock =3D INIT_LOCAL_LOCK(bh_lock),
 +};
 =20
- struct sigpool_entry {
- 	struct crypto_ahash	*hash;
-@@ -72,7 +79,7 @@ static int sigpool_reserve_scratch(size_t size)
- 			break;
- 		}
-=20
--		old_scratch =3D rcu_replace_pointer(per_cpu(sigpool_scratch, cpu),
-+		old_scratch =3D rcu_replace_pointer(per_cpu(sigpool_scratch.pad, cpu),
- 					scratch, lockdep_is_held(&cpool_mutex));
- 		if (!cpu_online(cpu) || !old_scratch) {
- 			kfree(old_scratch);
-@@ -93,7 +100,7 @@ static void sigpool_scratch_free(void)
- 	int cpu;
-=20
- 	for_each_possible_cpu(cpu)
--		kfree(rcu_replace_pointer(per_cpu(sigpool_scratch, cpu),
-+		kfree(rcu_replace_pointer(per_cpu(sigpool_scratch.pad, cpu),
- 					  NULL, lockdep_is_held(&cpool_mutex)));
- 	__scratch_size =3D 0;
- }
-@@ -277,7 +284,8 @@ int tcp_sigpool_start(unsigned int id, struct tcp_sigpo=
-ol *c) __cond_acquires(RC
- 	/* Pairs with tcp_sigpool_reserve_scratch(), scratch area is
- 	 * valid (allocated) until tcp_sigpool_end().
- 	 */
--	c->scratch =3D rcu_dereference_bh(*this_cpu_ptr(&sigpool_scratch));
-+	local_lock_nested_bh(&sigpool_scratch.bh_lock);
-+	c->scratch =3D rcu_dereference_bh(*this_cpu_ptr(&sigpool_scratch.pad));
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tcp_sigpool_start);
-@@ -286,6 +294,7 @@ void tcp_sigpool_end(struct tcp_sigpool *c) __releases(=
-RCU_BH)
+ static void nf_bridge_info_free(struct sk_buff *skb)
  {
- 	struct crypto_ahash *hash =3D crypto_ahash_reqtfm(c->req);
+@@ -882,6 +885,7 @@ static int br_nf_dev_queue_xmit(struct net *net, struct=
+ sock *sk, struct sk_buff
 =20
-+	local_unlock_nested_bh(&sigpool_scratch.bh_lock);
- 	rcu_read_unlock_bh();
- 	ahash_request_free(c->req);
- 	crypto_free_ahash(hash);
+ 		IPCB(skb)->frag_max_size =3D nf_bridge->frag_max_size;
+=20
++		guard(local_lock_nested_bh)(&brnf_frag_data_storage.bh_lock);
+ 		data =3D this_cpu_ptr(&brnf_frag_data_storage);
+=20
+ 		if (skb_vlan_tag_present(skb)) {
+@@ -909,6 +913,7 @@ static int br_nf_dev_queue_xmit(struct net *net, struct=
+ sock *sk, struct sk_buff
+=20
+ 		IP6CB(skb)->frag_max_size =3D nf_bridge->frag_max_size;
+=20
++		guard(local_lock_nested_bh)(&brnf_frag_data_storage.bh_lock);
+ 		data =3D this_cpu_ptr(&brnf_frag_data_storage);
+ 		data->encap_size =3D nf_bridge_encap_header_len(skb);
+ 		data->size =3D ETH_HLEN + data->encap_size;
 --=20
 2.45.1
 
