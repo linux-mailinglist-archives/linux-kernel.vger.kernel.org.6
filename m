@@ -1,186 +1,310 @@
-Return-Path: <linux-kernel+bounces-201213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87E28FBB06
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:55:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2738FBB02
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 19:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83DB2B276C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAA281F22378
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5161614A09E;
-	Tue,  4 Jun 2024 17:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEA114A09E;
+	Tue,  4 Jun 2024 17:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y6j19kLm"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zA8A680t"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA591474D8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4B414A088
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 17:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717523661; cv=none; b=eBGdlgAWJmlIxBIpUFMjrXKyPiM7hicWbp4dkMbX6mw65b8ygXe85tulccHm12CQ0m+A2V/Z3/UiLcVmGzuXC7R7BMZR5FaF/YvlwGuw+b/0OKY7V5YLW6ewrl/V0ZAK07LJcW/4nHxpGxhdy0CYRTbzjaYChSDFTEtOm6skL30=
+	t=1717523625; cv=none; b=MknFqxRsIXU5O79SBqn5BXSEzgYQSgnww4G68SxF5jMMsyDUFlBC618PyNm21L9r8KK9JTnTPkulZvM/7J3pBf//dxKOgJkWRcit9fcLzysiDibUoY9DIznSfcmyhnBmdXmxJSaMS424p4V+HjrYDP4WY2yQu6LrUxVTlC6ZPks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717523661; c=relaxed/simple;
-	bh=pvjvNFsuZm1XCxQL706IG6zhzQH06/KtKZ39FICaL2E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hrDsFiYj9T2aoqg9zFxADXlkocLLRcDlKsXIDpMdTP9MD569m16Ha6cGX6uJ3QZ4P1b1qWA3LJxtfMDCSFc3OwJhFM4yYMyM+JAHWFO7gQ8WBLSKuPN/Tc2vNVKVylNpXYv88+WAphUc7ZImN8N8/rlTACbqHKuGHZsRPUS27Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y6j19kLm; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1717523625; c=relaxed/simple;
+	bh=w7ZEyukyRV+/9n1UGLtHOWCQnBJmpgY6htuPha8k+Jk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IOw61n9Mvw7r80JQlJ7ivPL0s9pW++oqgVv8rtGpkJY02+CpcNm16BTXMF3FJgNn53AxB8qryd19HbcZE8+VFJVT1uxjiROyhvnyZfp+hUmTQshnzToDz4I9WtQtFL+svovaqskr37q97GAggHpjdDCEEkxWkKZKsD9irAySOdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zA8A680t; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso2243a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:54:19 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627eb3fb46cso96842597b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 10:53:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717523658; x=1718128458; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pvjvNFsuZm1XCxQL706IG6zhzQH06/KtKZ39FICaL2E=;
-        b=y6j19kLmIMOx53kal1Y8yxk/vt40VB8qfv3FuWvxMfYXEE9qCG7GmBXF5BXc/zObRP
-         zLpU16KnUEtSKvmuy6VUYJ66EmgFGbHTRodn6Tv0CmGgPJj3xP6ydqCquR9wAtRANUxh
-         few8m0BrqHOq4UtZm+2KcbB/hUc8ogep4HOI7OHswKovt6Zg70wm9e80ekSzPSNHvNgZ
-         deSS8JNJ9eF4GclHeKifshbRmZhKl9RrSWXd9wY+sWQX3vl5DHwp09TNJkt4QL6YiHNm
-         7s6rsi99Qg7leASubDCBRkg1aE0LPfCPc/b5AHj8D5OjMz3TVsXobNLpWlHbRqy/XH4T
-         9QiQ==
+        d=google.com; s=20230601; t=1717523623; x=1718128423; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RkO01EBi4ZpDllQIyTsXkNSPQB7Na6mjECCeDND9h9A=;
+        b=zA8A680t/8Pwos7Hu9yYQ7Bd7hvKWjObApRyiIV9VaKk7IORvwKqJtIRPBCnkQuSts
+         CEDR59gjxXxFTjxnITtWtsgZF8IWvcZfIvo8CLHpQCGtgvuluh20+hvbu5oWMxjOv0Da
+         rwxZSC/iChPfm1eh9WcaTo3r6Gn5pI2/5dRRo68RLqmdD/HYKRlPAyWpbUBzFPRkzAo4
+         hEhPLW4M1QM/GKJ8GL5LkXBU25kJUyeBSt0ivIJ51IfiTrLappqVwNZtK5WFxwYeB6lO
+         s0t53/M1Gd4H5vnWtV8Fa9jL7rx0dLBwDOIYh3XRQlVRZF+IQfDNN1nqfTh8xJpaToHH
+         O5uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717523658; x=1718128458;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pvjvNFsuZm1XCxQL706IG6zhzQH06/KtKZ39FICaL2E=;
-        b=hRR6djdIxpSdPTwNMIMMfH5V4Fnm1hPnZa/+5sZi+yMAwOJpBpdeQPq0mGaitBxqhA
-         gFkF3mpsGnqIk1EcttVS6UqLq4WYbHh8dEH9ZBqM9WAVP78BZGbLpiQ66tunt5TIS9sW
-         8pJ2RmPiQPihPkvhfz+XJrCppp4Q41KPtUpPisIb00DuqWT8J1FFeDEM+Zb3Ixk9logw
-         A51tgl6uVwTC0Gtp7U+gSJvIEp0kLtrBOCQFIbEm741ebAweL78x2m4VQr93fvS5o4uz
-         HfEv0X2W9FIetw+9koLKDzVjwX854ESckw//XcDw/j62WKo8sPrrM1tdjEPQbi1aeGQ0
-         BuEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURJFq/tTTRCLPyifg10oVoRMFP+xAZOuTZnwha9KliEkZmxBhBdvE97UeWi+p11Ncb44OMmLLgxQSnrrY+U0bFUMbzqZN6xHTQVC2T
-X-Gm-Message-State: AOJu0YyR60HdSamgpDEF+oWE0iXuh0UglZK1ACp/m5xt1ueI6ZfDG26x
-	p5xNV8OtPEtGty75VC6JKtJYVoFptqnVa4Z8rni14SbavC1acjNHoupsoPQ8feUHW6cpRJnInmk
-	1InCG7lk2Zug2oZcf0f5JTzqNpHngpO+VPrgw
-X-Google-Smtp-Source: AGHT+IEqQH4VcW+bet6kw3ahjQXxsK9cW/QD3nBI7Uk5BIGc4R3Umj4HZMjvuIihX6oNv84m9DLjuGyDpzWWY0nDRIs=
-X-Received: by 2002:aa7:c245:0:b0:57a:2276:2a86 with SMTP id
- 4fb4d7f45d1cf-57a8d6e48c9mr2045a12.4.1717523657843; Tue, 04 Jun 2024 10:54:17
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717523623; x=1718128423;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RkO01EBi4ZpDllQIyTsXkNSPQB7Na6mjECCeDND9h9A=;
+        b=ZHgNZ0DCNeBolo1H02J0xCjaS7loXJVPXOU/emXz97vPg2zJe0KR/x8u2YzJKqSfpa
+         jsVszmcffyjqTGCsG9LSGjOrSfGznhAgh+TkDhCSq14gfTaYXy+fOkXO9rcI1wMvt0L7
+         nCj+BFKGkt1cX36VS6X9LtzTsWAO9Lb/Sp+DmK/kVKDT4JOa6qU0h2Kojpj+kz4B1xRd
+         LMJ4HBo9sPZiI+p5PBILcgZv0SL+grR1ryII2tAzZ+DaPnA81C/5O6bMcIp0fciCeX0q
+         dKllIpOoiC4JePastsbhUKKqmU6zCBbQMqYR2gnP4NxxmmZB/E6LWyVBn5wQMZN4tw3+
+         SF+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBZ7ENg4hVbjC/1WWfuqpRL1tzSeylsdwkYXNlPu8W4KU9tqUHoRKJjTo6EnsxCRqJZt1WZew7nIYDNhmz+aZ9u+GwiwLoTRqr3xZn
+X-Gm-Message-State: AOJu0YxEGCRU3xiEpj3faOPKuhSeVdjAXT1K8of3u1gVHeaSiy+lVIR1
+	AuNPMtnEv3z1IYaC+j2Q9fQFZme4FIIc+IKfbckwymkwv3A39J+U/CwIcqqAelCNWj1ToCZ+MOQ
+	WHw7grtDKMIluMoIoaw==
+X-Google-Smtp-Source: AGHT+IG98szI73ZNCoIhOV8kejNTVDpGJJ4whJQBxKBrMgBWivuKR4Zny2rU1jLSFhAlPBEnPs3zVZyVQs41JDjj
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
+ (user=yosryahmed job=sendgmr) by 2002:a25:add0:0:b0:dfa:88df:b389 with SMTP
+ id 3f1490d57ef6-dfacac4e620mr529276.7.1717523623046; Tue, 04 Jun 2024
+ 10:53:43 -0700 (PDT)
+Date: Tue,  4 Jun 2024 17:53:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
- <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
- <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
- <20240602200332.3e531ff1@yea> <20240604001304.5420284f@yea>
- <CAJD7tkbCRLdy0vD2Pd17fNrxHgkzW1VucN4qMkohLFLBLaaeCQ@mail.gmail.com>
- <20240604134458.3ae4396a@yea> <CAJD7tkYjJJGthQ_8NukGw6Q9EYbLA=8sAH_7=B90KXEL6HWdSw@mail.gmail.com>
- <CAOUHufa0Fpj6SjNgB-z0n5Jg63q1ewkbOAU65forpDwQVs45qg@mail.gmail.com> <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
-In-Reply-To: <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Tue, 4 Jun 2024 11:53:39 -0600
-Message-ID: <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
-Subject: Re: kswapd0: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
- nodemask=(null),cpuset=/,mems_allowed=0 (Kernel v6.5.9, 32bit ppc)
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Erhard Furtner <erhard_f@mailbox.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Minchan Kim <minchan@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240604175340.218175-1-yosryahmed@google.com>
+Subject: [PATCH] mm: zsmalloc: share slab caches for all zsmalloc zpools
+From: Yosry Ahmed <yosryahmed@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>, 
+	Erhard Furtner <erhard_f@mailbox.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Yosry Ahmed <yosryahmed@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 11:34=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> On Tue, Jun 4, 2024 at 10:19=E2=80=AFAM Yu Zhao <yuzhao@google.com> wrote=
-:
-> >
-> > On Tue, Jun 4, 2024 at 10:12=E2=80=AFAM Yosry Ahmed <yosryahmed@google.=
-com> wrote:
-> > >
-> > > On Tue, Jun 4, 2024 at 4:45=E2=80=AFAM Erhard Furtner <erhard_f@mailb=
-ox.org> wrote:
-> > > >
-> > > > On Mon, 3 Jun 2024 16:24:02 -0700
-> > > > Yosry Ahmed <yosryahmed@google.com> wrote:
-> > > >
-> > > > > Thanks for bisecting. Taking a look at the thread, it seems like =
-you
-> > > > > have a very limited area of memory to allocate kernel memory from=
-. One
-> > > > > possible reason why that commit can cause an issue is because we =
-will
-> > > > > have multiple instances of the zsmalloc slab caches 'zspage' and
-> > > > > 'zs_handle', which may contribute to fragmentation in slab memory=
-.
-> > > > >
-> > > > > Do you have /proc/slabinfo from a good and a bad run by any chanc=
-e?
-> > > > >
-> > > > > Also, could you check if the attached patch helps? It makes sure =
-that
-> > > > > even when we use multiple zsmalloc zpools, we will use a single s=
-lab
-> > > > > cache of each type.
-> > > >
-> > > > Thanks for looking into this! I got you 'cat /proc/slabinfo' from a=
- good HEAD, from a bad HEAD and from the bad HEAD + your patch applied.
-> > > >
-> > > > Good was 6be3601517d90b728095d70c14f3a04b9adcb166, bad was b8cf32dc=
-6e8c75b712cbf638e0fd210101c22f17 which I got both from my bisect.log. I got=
- the slabinfo shortly after boot and a 2nd time shortly before the OOM or t=
-he kswapd0: page allocation failure happens. I terminated the workload (str=
-ess-ng --vm 2 --vm-bytes 1930M --verify -v) manually shortly before the 2 G=
-iB RAM exhausted and got the slabinfo then.
-> > > >
-> > > > The patch applied to git b8cf32dc6e8c75b712cbf638e0fd210101c22f17 u=
-nfortunately didn't make a difference, I got the kswapd0: page allocation f=
-ailure nevertheless.
-> > >
-> > > Thanks for trying this out. The patch reduces the amount of wasted
-> > > memory due to the 'zs_handle' and 'zspage' caches by an order of
-> > > magnitude, but it was a small number to begin with (~250K).
-> > >
-> > > I cannot think of other reasons why having multiple zsmalloc pools
-> > > will end up using more memory in the 0.25GB zone that the kernel
-> > > allocations can be made from.
-> > >
-> > > The number of zpools can be made configurable or determined at runtim=
-e
-> > > by the size of the machine, but I don't want to do this without
-> > > understanding the problem here first. Adding other zswap and zsmalloc
-> > > folks in case they have any ideas.
-> >
-> > Hi Erhard,
-> >
-> > If it's not too much trouble, could you "grep nr_zspages /proc/vmstat"
-> > on kernels before and after the bad commit? It'd be great if you could
-> > run the grep command right before the OOM kills.
-> >
-> > The overall internal fragmentation of multiple zsmalloc pools might be
-> > higher than a single one. I suspect this might be the cause.
->
-> I thought about the internal fragmentation of pools, but zsmalloc
-> should have access to highmem, and if I understand correctly the
-> problem here is that we are running out of space in the DMA zone when
-> making kernel allocations.
->
-> Do you suspect zsmalloc is allocating memory from the DMA zone
-> initially, even though it has access to highmem?
+Zswap creates multiple zpools to improve concurrency. Each zsmalloc
+zpool creates its own 'zs_handle' and 'zspage' slab caches. Currently we
+end up with 32 slab caches of each type.
 
-There was a lot of user memory in the DMA zone. So at a point the
-highmem zone was full and allocation fallback happened.
+Since each slab cache holds some free objects, we end up with a lot of
+free objects distributed among the separate zpool caches. Slab caches
+are designed to handle concurrent allocations by using percpu
+structures, so having a single instance of each cache should be enough,
+and avoids wasting more memory than needed due to fragmentation.
 
-The problem with zone fallback is that recent allocations go into
-lower zones, meaning they are further back on the LRU list. This
-applies to both user memory and zsmalloc memory -- the latter has a
-writeback LRU. On top of this, neither the zswap shrinker nor the
-zsmalloc shrinker (compaction) is zone aware. So page reclaim might
-have trouble hitting the right target zone.
+Additionally, having more slab caches than needed unnecessarily slows
+down code paths that iterate slab_caches.
 
-We can't really tell how zspages are distributed across zones, but the
-overall number might be helpful. It'd be great if someone could make
-nr_zspages per zone :)
+In the results reported by Eric in [1], the amount of unused slab memory
+in these caches goes down from 242808 bytes to 29216 bytes (-88%). This
+is calculated by (num_objs - active_objs) * objsize for each 'zs_handle'
+and 'zspage' cache. Although this patch did not help with the allocation
+failure reported by Eric with zswap + zsmalloc, I think it is still
+worth merging on its own.
+
+[1]https://lore.kernel.org/lkml/20240604134458.3ae4396a@yea/
+
+Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+---
+ mm/zsmalloc.c | 87 ++++++++++++++++++++++++++-------------------------
+ 1 file changed, 44 insertions(+), 43 deletions(-)
+
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index b42d3545ca856..76d9976442a4a 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -220,8 +220,6 @@ struct zs_pool {
+ 	const char *name;
+ 
+ 	struct size_class *size_class[ZS_SIZE_CLASSES];
+-	struct kmem_cache *handle_cachep;
+-	struct kmem_cache *zspage_cachep;
+ 
+ 	atomic_long_t pages_allocated;
+ 
+@@ -289,50 +287,29 @@ static void init_deferred_free(struct zs_pool *pool) {}
+ static void SetZsPageMovable(struct zs_pool *pool, struct zspage *zspage) {}
+ #endif
+ 
+-static int create_cache(struct zs_pool *pool)
+-{
+-	pool->handle_cachep = kmem_cache_create("zs_handle", ZS_HANDLE_SIZE,
+-					0, 0, NULL);
+-	if (!pool->handle_cachep)
+-		return 1;
+-
+-	pool->zspage_cachep = kmem_cache_create("zspage", sizeof(struct zspage),
+-					0, 0, NULL);
+-	if (!pool->zspage_cachep) {
+-		kmem_cache_destroy(pool->handle_cachep);
+-		pool->handle_cachep = NULL;
+-		return 1;
+-	}
+-
+-	return 0;
+-}
++static struct kmem_cache *zs_handle_cache;
++static struct kmem_cache *zspage_cache;
+ 
+-static void destroy_cache(struct zs_pool *pool)
++static unsigned long cache_alloc_handle(gfp_t gfp)
+ {
+-	kmem_cache_destroy(pool->handle_cachep);
+-	kmem_cache_destroy(pool->zspage_cachep);
+-}
+-
+-static unsigned long cache_alloc_handle(struct zs_pool *pool, gfp_t gfp)
+-{
+-	return (unsigned long)kmem_cache_alloc(pool->handle_cachep,
++	return (unsigned long)kmem_cache_alloc(zs_handle_cache,
+ 			gfp & ~(__GFP_HIGHMEM|__GFP_MOVABLE));
+ }
+ 
+-static void cache_free_handle(struct zs_pool *pool, unsigned long handle)
++static void cache_free_handle(unsigned long handle)
+ {
+-	kmem_cache_free(pool->handle_cachep, (void *)handle);
++	kmem_cache_free(zs_handle_cache, (void *)handle);
+ }
+ 
+-static struct zspage *cache_alloc_zspage(struct zs_pool *pool, gfp_t flags)
++static struct zspage *cache_alloc_zspage(gfp_t flags)
+ {
+-	return kmem_cache_zalloc(pool->zspage_cachep,
++	return kmem_cache_zalloc(zspage_cache,
+ 			flags & ~(__GFP_HIGHMEM|__GFP_MOVABLE));
+ }
+ 
+-static void cache_free_zspage(struct zs_pool *pool, struct zspage *zspage)
++static void cache_free_zspage(struct zspage *zspage)
+ {
+-	kmem_cache_free(pool->zspage_cachep, zspage);
++	kmem_cache_free(zspage_cache, zspage);
+ }
+ 
+ /* pool->lock(which owns the handle) synchronizes races */
+@@ -837,7 +814,7 @@ static void __free_zspage(struct zs_pool *pool, struct size_class *class,
+ 		page = next;
+ 	} while (page != NULL);
+ 
+-	cache_free_zspage(pool, zspage);
++	cache_free_zspage(zspage);
+ 
+ 	class_stat_dec(class, ZS_OBJS_ALLOCATED, class->objs_per_zspage);
+ 	atomic_long_sub(class->pages_per_zspage, &pool->pages_allocated);
+@@ -950,7 +927,7 @@ static struct zspage *alloc_zspage(struct zs_pool *pool,
+ {
+ 	int i;
+ 	struct page *pages[ZS_MAX_PAGES_PER_ZSPAGE];
+-	struct zspage *zspage = cache_alloc_zspage(pool, gfp);
++	struct zspage *zspage = cache_alloc_zspage(gfp);
+ 
+ 	if (!zspage)
+ 		return NULL;
+@@ -967,7 +944,7 @@ static struct zspage *alloc_zspage(struct zs_pool *pool,
+ 				dec_zone_page_state(pages[i], NR_ZSPAGES);
+ 				__free_page(pages[i]);
+ 			}
+-			cache_free_zspage(pool, zspage);
++			cache_free_zspage(zspage);
+ 			return NULL;
+ 		}
+ 
+@@ -1338,7 +1315,7 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
+ 	if (unlikely(size > ZS_MAX_ALLOC_SIZE))
+ 		return (unsigned long)ERR_PTR(-ENOSPC);
+ 
+-	handle = cache_alloc_handle(pool, gfp);
++	handle = cache_alloc_handle(gfp);
+ 	if (!handle)
+ 		return (unsigned long)ERR_PTR(-ENOMEM);
+ 
+@@ -1363,7 +1340,7 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
+ 
+ 	zspage = alloc_zspage(pool, class, gfp);
+ 	if (!zspage) {
+-		cache_free_handle(pool, handle);
++		cache_free_handle(handle);
+ 		return (unsigned long)ERR_PTR(-ENOMEM);
+ 	}
+ 
+@@ -1441,7 +1418,7 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
+ 		free_zspage(pool, class, zspage);
+ 
+ 	spin_unlock(&pool->lock);
+-	cache_free_handle(pool, handle);
++	cache_free_handle(handle);
+ }
+ EXPORT_SYMBOL_GPL(zs_free);
+ 
+@@ -2111,9 +2088,6 @@ struct zs_pool *zs_create_pool(const char *name)
+ 	if (!pool->name)
+ 		goto err;
+ 
+-	if (create_cache(pool))
+-		goto err;
+-
+ 	/*
+ 	 * Iterate reversely, because, size of size_class that we want to use
+ 	 * for merging should be larger or equal to current size.
+@@ -2234,16 +2208,41 @@ void zs_destroy_pool(struct zs_pool *pool)
+ 		kfree(class);
+ 	}
+ 
+-	destroy_cache(pool);
+ 	kfree(pool->name);
+ 	kfree(pool);
+ }
+ EXPORT_SYMBOL_GPL(zs_destroy_pool);
+ 
++static void zs_destroy_caches(void)
++{
++	kmem_cache_destroy(zs_handle_cache);
++	kmem_cache_destroy(zspage_cache);
++	zs_handle_cache = NULL;
++	zspage_cache = NULL;
++}
++
++static int zs_create_caches(void)
++{
++	zs_handle_cache = kmem_cache_create("zs_handle", ZS_HANDLE_SIZE,
++					    0, 0, NULL);
++	zspage_cache = kmem_cache_create("zspage", sizeof(struct zspage),
++					 0, 0, NULL);
++
++	if (!zs_handle_cache || !zspage_cache) {
++		zs_destroy_caches();
++		return -1;
++	}
++	return 0;
++}
++
+ static int __init zs_init(void)
+ {
+ 	int ret;
+ 
++	ret = zs_create_caches();
++	if (ret)
++		goto out;
++
+ 	ret = cpuhp_setup_state(CPUHP_MM_ZS_PREPARE, "mm/zsmalloc:prepare",
+ 				zs_cpu_prepare, zs_cpu_dead);
+ 	if (ret)
+@@ -2258,6 +2257,7 @@ static int __init zs_init(void)
+ 	return 0;
+ 
+ out:
++	zs_destroy_caches();
+ 	return ret;
+ }
+ 
+@@ -2269,6 +2269,7 @@ static void __exit zs_exit(void)
+ 	cpuhp_remove_state(CPUHP_MM_ZS_PREPARE);
+ 
+ 	zs_stat_exit();
++	zs_destroy_caches();
+ }
+ 
+ module_init(zs_init);
+-- 
+2.45.1.288.g0e0cd299f1-goog
+
 
