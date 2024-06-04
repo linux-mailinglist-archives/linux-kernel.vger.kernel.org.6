@@ -1,142 +1,116 @@
-Return-Path: <linux-kernel+bounces-200529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4659F8FB14C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:44:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860AE8FB152
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED32228241C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:44:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B949D1C222AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 11:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22027145B03;
-	Tue,  4 Jun 2024 11:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C81145A1D;
+	Tue,  4 Jun 2024 11:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="PUNm465m"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="PH0bzoil"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EC01459E5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 11:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3867114535B;
+	Tue,  4 Jun 2024 11:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717501469; cv=none; b=DBxTIVjzE4vEAfHqELdvcGaI4UjVvLAAct2Zg8X7zTAnMI1ZkwFclWhFLDT3S9MFa9+ayjT7Hc55xEcGRg1s1M+1LwF447JhOksmFFarnWVREENNykUXqigtG+hIoPDAOadiGgX8xYmqWk27YXVu2Frd924yBZfZRvDaiulQhl0=
+	t=1717501490; cv=none; b=Vg0TsuFQZuVdEsXaElUHq6F2dReGBMgNZGhR2ejoPwpmkJdWYK79vELAlMD9uDftp0ey6oZisY+M4ck/eORHW8tgGXyDHct6SiyvtRfPcUnEkkL+e9j8pVLwwM5ZXwQKIb5sP5qvqWFOHA1eON1bgstgFiT9g32HUS+wMHZAxTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717501469; c=relaxed/simple;
-	bh=3BXu54JL29te3bk0JIakNdnue3MoNyfA1fQ0KpkafnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R6qo8qgZPKAiuu261rneoOMuP3XuMgfCm/BcLfaF4Fnv4r0RkKArQAjGiIg1vXsLfxClM0lP06G5pzuxSlI3jCHvni3+Hqq/rdyBPQ7qfn1NGwcPRhutgTMd5E0Na/iEoSNxfjA295xeTPzN71xF22RDg2IJAgsdK0ak3LMEM2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=PUNm465m; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a4d7ba501so967844a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 04:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717501466; x=1718106266; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3BXu54JL29te3bk0JIakNdnue3MoNyfA1fQ0KpkafnY=;
-        b=PUNm465mt0L+oMsosDaaJ7pHYyJCaIEQFFn6bbrPcdwVwl0DvmsVU0FjLUKb2SCUK3
-         OpV+aZDTG1E7CUmKBDpFk6rW42+hWu/k9bZtOPElGsoyHDd3+EOlNqCDxc4Oxcoqab1C
-         EsuE7Sw4lJyTu6SmglSltu4RvZnByV4qp91pt9eM6w3YMsHisr4gaErBQ8FIe+L/MJGK
-         0L9Txovpgdh4UwXc6ULR+L4TTEjTcr2Rr5QgO4FNI0yCXXcHIvWHgJr4NQnAQIDkcCjl
-         ydBgOuIpXaMuTksEyS+I7hYz7CYJ6S2NwQm2vAtWNScKJ+FqhBNrheBnCaAG2QSncbSj
-         Eu1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717501466; x=1718106266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3BXu54JL29te3bk0JIakNdnue3MoNyfA1fQ0KpkafnY=;
-        b=EDkPWnzGLRt1WjxvkQyz81tS9dvErW60sdz9w7iiGnuLpFQbyISwRRTcnzHrwbg9Ai
-         lqEr9COwiCGYLgBoQwgw+bXweWRO9xws9b2PBiu7kYUBJg1bYfpGYL8iU8H2ljNXARSu
-         JS6VxNX4celb/lUG6OLSa2UcHm+ofGkOMjm8yStHKzLuw/C8SGJlTxHSMeIqhhLAC83r
-         x+HziKeM76scqZRypdTvxee4OGrLSHMy8KfXd6Zp4MHu0q5nJ4m1f8flug3kz72l4MsW
-         aPnjz3Sm3K+9dMmw68r/ejb9fX10BQ0M70FKa4V2AKDYAYbiNPf7Smw626+rM7qu6qcR
-         f92A==
-X-Forwarded-Encrypted: i=1; AJvYcCVkZI31oMi7YuYrdi/z9tqWIHKKKHKn7G1De+rmLMEel/t9FSthFm3i568RougvY5Co9GPk3YkCNsmEFZzKKMIqtLn0/srMy/+1uJly
-X-Gm-Message-State: AOJu0Yxsi4W3bn09BYxk1IYoOP4xxrrJ5jyubwiXnEkM3/+WFQO/HSuY
-	vMeUVPKiKMI056VpGcAfXZXFPHolFGXdNI+AETKzDGNcXjFMIPLOS6sB4qMMGqQ0XutJAirX68D
-	wyiui2mxuge2mlQlQxptYEU/6zilHB4fTwZv5/w==
-X-Google-Smtp-Source: AGHT+IF5j0HlHcUwqZev1qhJa4XLMrGdrhzyscNN/jd+ZNq5k0ymbm8yvqEpsVyAB4LEq75CK9UuVo8NGyvZXeKaCp4=
-X-Received: by 2002:a17:907:7ea1:b0:a68:e9dc:b07 with SMTP id
- a640c23a62f3a-a68e9dc0feemr501609066b.60.1717501465846; Tue, 04 Jun 2024
- 04:44:25 -0700 (PDT)
+	s=arc-20240116; t=1717501490; c=relaxed/simple;
+	bh=Zq3tmv7wVyTPDUnP6zcuF5O5k4OJprRbePrkTV4mQxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ecf6kZihT9zvo5YVMk1ipovHSk4KjolV/bzzev4QM1D3km2VtT7npd4i+cQSyyWlWQeZVbBO5Tz/A2iGkCL3DAr6TS/832IaaGr3031xeSaLePqA+AG70rqD8IakaKo7/YOrnYzRWncwpHnFa9yBr2BMlSWAfSQ4iCAjoYlarGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=PH0bzoil; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vtpfm2nCnz6CmM6L;
+	Tue,  4 Jun 2024 11:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1717501479; x=1720093480; bh=7qUm0UAjYUpYgELaUp3vQTyR
+	sNCZFqUKF3YsXC9VPcI=; b=PH0bzoilwBKbtI0CATbVi7YcINf9EkEcm2c2N0CV
+	1/oVwONzbegPfpgoEMQNU3394kaNh4ZWcqz6bVyW5zyutvi2Xq9VBgu24G8pIM65
+	vc4hx0zpbsrSh7Y9GrAgZKutiC2V9wqzzVN99yfwWnHRIuyclYn7hDFRE96oz8Wq
+	JaAttVggwSu/Djpga3VWgX3kj7CUtYmZqBGYkPXR6AuvhT78LjHBQDX7UYpSsnHC
+	Tgn6ypj7ceaWO8DuUcqBb/5GdadTFhcBUfAwr6Uo6TykNn+CPNk5jEy07Wisb1Gq
+	5Mj52lkVrD41PtszHYQi/5R/4HaVA1eHn9rVUidXnlwTOw==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id JJ_f4sfDEmwz; Tue,  4 Jun 2024 11:44:39 +0000 (UTC)
+Received: from [192.168.132.235] (unknown [65.117.37.195])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VtpfX0Smkz6CmQvG;
+	Tue,  4 Jun 2024 11:44:35 +0000 (UTC)
+Message-ID: <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
+Date: Tue, 4 Jun 2024 04:44:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131155929.169961-1-alexghiti@rivosinc.com>
- <20240131155929.169961-4-alexghiti@rivosinc.com> <CAEEQ3wnT-K18R1KQjJbeSdnFnRFQZt=wCuAHeDrf7EohwZ7n=w@mail.gmail.com>
- <CAHVXubiKAY_L04ZwYSp-MpPPT5sPzxm4wB6HVFPzsMcB-3zq9w@mail.gmail.com>
- <CAEEQ3wkkNyrjVCDxprNP5Z=NzO=EYeKeWf3CDvVNJHY1uovmMQ@mail.gmail.com>
- <CAHVXubi+s2Q0y_xLbHpQJpz+yXvKWJ8e96wwAHP6A9C7U-He7g@mail.gmail.com>
- <CAHVXubg4vtfjSJ-w8-7suzZ9L5ZmTo8udUMaYjJ5veKBmikNjA@mail.gmail.com> <20240604-dazzling-envy-1dcf111eb2c5@spud>
-In-Reply-To: <20240604-dazzling-envy-1dcf111eb2c5@spud>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Tue, 4 Jun 2024 13:44:15 +0200
-Message-ID: <CAHVXubhy1yEKOx91gc9S++yKOoQa+sJ5EDSiMFwR6qepwzRMew@mail.gmail.com>
-Subject: Re: [External] [PATCH RFC/RFT v2 3/4] riscv: Stop emitting preventive
- sfence.vma for new vmalloc mappings
-To: Conor Dooley <conor@kernel.org>
-Cc: yunhui cui <cuiyunhui@bytedance.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Andrew Morton <akpm@linux-foundation.org>, Ved Shanbhogue <ved@rivosinc.com>, 
-	Matt Evans <mev@rivosinc.com>, Dylan Jhong <dylan@andestech.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Christoph Hellwig <hch@lst.de>
+Cc: Nitesh Shetty <nj.shetty@samsung.com>, Damien Le Moal
+ <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+ hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+ <20240520102033.9361-3-nj.shetty@samsung.com>
+ <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
+ <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
+ <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
+ <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
+ <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org> <20240601055931.GB5772@lst.de>
+ <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
+ <20240604044042.GA29094@lst.de>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240604044042.GA29094@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 4, 2024 at 10:52=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, Jun 04, 2024 at 09:17:26AM +0200, Alexandre Ghiti wrote:
-> > On Tue, Jun 4, 2024 at 9:15=E2=80=AFAM Alexandre Ghiti <alexghiti@rivos=
-inc.com> wrote:
-> > > On Tue, Jun 4, 2024 at 8:21=E2=80=AFAM yunhui cui <cuiyunhui@bytedanc=
-e.com> wrote:
-> > > >
-> > > > As for the current status of the patch, there are two points that c=
-an
-> > > > be optimized:
-> > > > 1. Some chip hardware implementations may not cache TLB invalid
-> > > > entries, so it doesn't matter whether svvptc is available or not. C=
-an
-> > > > we consider adding a CONFIG_RISCV_SVVPTC to control it?
-> >
-> > That would produce a non-portable kernel. But I'm not opposed to that
-> > at all, let me check how we handle other extensions. Maybe @Conor
-> > Dooley has some feedback here?
->
-> To be honest, not really sure what to give feedback on. Could you
-> elaborate on exactly what the option is going to do? Given the
-> portability concern, I guess you were proposing that the option would
-> remove the preventative fences, rather than your current patch that
-> removes them via an alternative?
+On 6/3/24 21:40, Christoph Hellwig wrote:
+> There is no requirement to process them synchronously, there is just
+> a requirement to preserve the order.  Note that my suggestion a few
+> arounds ago also included a copy id to match them up.  If we don't
+> need that I'm happy to leave it away.  If need it it to make stacking
+> drivers' lifes easier that suggestion still stands.
 
-No no, I won't do that, we need a generic kernel for distros so that's
-not even a question. What Yunhui was asking about (to me) is: can we
-introduce a Kconfig option to always remove the preventive fences,
-bypassing the use of alternatives altogether?
+Including an ID in REQ_OP_COPY_DST and REQ_OP_COPY_SRC operations sounds
+much better to me than abusing the merge infrastructure for combining
+these two operations into a single request. With the ID-based approach
+stacking drivers are allowed to process copy bios asynchronously and it
+is no longer necessary to activate merging for copy operations if
+merging is disabled (QUEUE_FLAG_NOMERGES).
 
-To me, it won't make a difference in terms of performance. But if we
-already offer such a possibility for other extensions, well I'll do
-it. Otherwise, the question is: should we start doing that?
+Thanks,
 
-> I don't think we have any extension
-> related options that work like that at the moment, and making that an
-> option will just mean that distros that look to cater for multiple
-> platforms won't be able to turn it on.
->
-> Thanks,
-> Conor.
+Bart.
 
