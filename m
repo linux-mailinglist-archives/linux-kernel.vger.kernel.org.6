@@ -1,127 +1,212 @@
-Return-Path: <linux-kernel+bounces-200211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583EC8FAD08
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 10:02:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50848FACA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705081F21CB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 08:02:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5060AB2256D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E213142630;
-	Tue,  4 Jun 2024 08:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3542C142627;
+	Tue,  4 Jun 2024 07:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnM54gIr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="WLONGakP"
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2061.outbound.protection.outlook.com [40.107.8.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CDE137C2D;
-	Tue,  4 Jun 2024 08:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717488156; cv=none; b=XhHwFKNUi98rGIN8J38jwTlIZm/eKQdd3U27+BRdUCDVwsv7XTMmTkT/eqKhjnTN/Jj4dZxToDNsA0C/bdHs1xlcgP8psK6XZDR6YEZP8qttF2CyBt0eTOAdOPlPxidY3bzQqjR7m+3RRx9zp5Mc6OTYLjy/AVhnUaYglLDk/sE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717488156; c=relaxed/simple;
-	bh=yc2Veju7chaWEi/l1gmL+RUvP0s9O/V1PE7dSAHTZhE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nFxS1vuIRgqVSfBc53ocANkhb5KAAFhHGVEAR8VOCGAC1s6xWBtoAmriM+S9j6p+5lUrEHz7vkeEXdcFlhEjJqK7gRk4sh8NUu4QCCAfiY0siLauQB0JnkUGa4nRk8bJ0rNISplREfxOvp2kabjHcdf+8fmb9aruE2AcynnYlSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnM54gIr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7E7B1C4AF08;
-	Tue,  4 Jun 2024 08:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717488156;
-	bh=yc2Veju7chaWEi/l1gmL+RUvP0s9O/V1PE7dSAHTZhE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=mnM54gIrdQ7WDoPg5oNdi7zWpZOO4rqBf41ggI9UBFawohhZoGrGqdqZFPDpbJmvi
-	 aXIf86WSiF0oCWzm/5h5k8urlh4dcBOofmU71J7jFASKaUbLB50j+25fnIsfEuFiIE
-	 2Qz0GNr30wtTbpWze/EV0mOjd5GizD2dTWp+E2L0QETsWJEiAi8uXz0NvAoAvofaiV
-	 HagfwdumrXji0pNe4RtZ0IlisE5qZGjpDoK1quVYSohCTZvhB34q6gvKcy6G3Vxsx5
-	 6bgLT+e+I5RbbXJ4SqxiYkistKmr6/grIgZa1EaPwxTyqNBJF4k1BIzRmziTG8z8Qf
-	 rqGft0JBSpZ7A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1B0C25B7E;
-	Tue,  4 Jun 2024 08:02:36 +0000 (UTC)
-From: Arthur Becker via B4 Relay <devnull+arthur.becker.sentec.com@kernel.org>
-Date: Tue, 04 Jun 2024 10:01:49 +0200
-Subject: [PATCH v4 2/2] dt-bindings: iio: light: add VEML6040 RGBW-LS
- bindings
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DD11422AF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 07:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.8.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717487674; cv=fail; b=XEmIWy7rSUkqmdB8lR3cLpcL1aheH7qJ5Pm+aONIZW1OHqsMOhjPpLf/3qPj5V+VdPwztUvda9sarbjn60Ci9iVNjbsCDzqhT5PkxHq8fAtCSjG8XWJs9KsFChyMnJu8I85cXIPzGWIEEzstQ+RYFu9LKQEs+kAMMflhknY1VqY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717487674; c=relaxed/simple;
+	bh=qcq9lu7LExDAHb+/Jf7Mn02xmr7/LJ0Vbn4lUy0T3As=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=His+WB+NUje6buBLFzpVfbTzsg7q0F1IQRoB7CZgIFO90gbaf6rDeemQF3RyByCcw15woOd13cfW3QyRwsa6EYj+3pJr36TKclDoLAnpqidjYDZFuMw1gE5bCXymp1efqJarhDPXf6U2/63BQu1is+emxaejwTFfIaRSxYQ35L0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=WLONGakP; arc=fail smtp.client-ip=40.107.8.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Rcbloe1hCIpQnXjLlY7KAtzz1ThpgVBrVLwgbEukOTzfCPb+5GpLsH8Tuc1A1Riwyqk8q9WIRBtdqkl8unuhv222rqICy8327fNAMOImYPhuQl7bxXgFmYA/o4VAA1IJUlLWSsYyVuPU2XDD1o2Di5tCbrp0ZTa52FZa/VbrjTZccQNorWUTtrHk/e+v96/KeTZMdgP3UFh5uiNriCjErAscXE+dNYfRZ7/DF/OwSKdR22F7b68nW+cJs5g2ETiE3tHYAhxgveVVMm3DaVq6dMfeTSNAFgesCTpvscXh6erRUEoJxhGfWs4UWOAHvA3O+G9UYjjYVotJ1BhbWH0V3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hteWmja6vb3IQ8GfcY3lSL1CRwcOLpAMk0QyTnGJc2M=;
+ b=CGqjG/43FgZPZaWWd4Q+ImoCR4bLVNuKYwEaL/KHXvjvyvaogKmQ35Icp0JImf4NlVY4IQt5i+uPANplSphJf6OxY2RDkwjIRfKTyVi6WVW7Mop1AW3xW+mFpN9XYy9Fd+T5M3tO9xwDhYbGubmcAf2zTrGuFLJmZMlwbTFCqvt0P7O9jiZayyj+2K7r0kEzs1TSoSLZ9xWCciQ9C6xLpU1n8Xshc2MsgzfWEIF/t29fiju+bYWmvUP9yJpYjDC8se4QD35PffFLJZnHp8COrXcnV9OL1talO2jktUuu701A5lC9N6ZKPt0vR3iL4dHHwB/f9igW1cKPBT+Ugkj5eA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hteWmja6vb3IQ8GfcY3lSL1CRwcOLpAMk0QyTnGJc2M=;
+ b=WLONGakPgoWhUMlh5VriErVGhIJwPuILp+qugVwZVM+jn+O5msH6akhtgDp8AGcfgZ1vUKrWjLKfjnV/UgzQYfaI7kEC8oIyh4q5HojdGHxL15uPa5Ur1IR5ros5lYRdgTJ8R0jMzN7inz2KiTCysOKSOKdVMgoCRIIUdFHwSEU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DU2PR04MB9019.eurprd04.prod.outlook.com (2603:10a6:10:2d4::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Tue, 4 Jun
+ 2024 07:54:27 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::557f:6fcf:a5a7:981c]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::557f:6fcf:a5a7:981c%7]) with mapi id 15.20.7633.021; Tue, 4 Jun 2024
+ 07:54:27 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Javier Martinez Canillas <javierm@redhat.com>
+Cc: Peng Fan <peng.fan@nxp.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/fbdev-dma: fix getting smem_start
+Date: Tue,  4 Jun 2024 16:03:28 +0800
+Message-Id: <20240604080328.4024838-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0028.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::9)
+ To DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240604-veml6040-v4-2-5a4d59597874@sentec.com>
-References: <20240604-veml6040-v4-0-5a4d59597874@sentec.com>
-In-Reply-To: <20240604-veml6040-v4-0-5a4d59597874@sentec.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, Arthur Becker <arthur.becker@sentec.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717488152; l=1386;
- i=arthur.becker@sentec.com; s=20240521; h=from:subject:message-id;
- bh=9rThcOFRJ7S93FIcWQdT1WZcQC1aM2qApoy4vlBF7hQ=;
- b=PKV/u4sIgobPlvHwj85thig13uPd1GBIwDqppFBW6emJDJc/6HgwmfVpHTjRCSIN70jmssdFs
- 7kIUXj6e76ZC6AoGcZwQnzr7TZKHt99qjBf/7cr0h3VFSVrPiuGxdPA
-X-Developer-Key: i=arthur.becker@sentec.com; a=ed25519;
- pk=1GLsDBF6GZKt9oNFsvdnAB6sHyKKrSISlwM3AyWbx/k=
-X-Endpoint-Received: by B4 Relay for arthur.becker@sentec.com/20240521 with
- auth_id=163
-X-Original-From: Arthur Becker <arthur.becker@sentec.com>
-Reply-To: arthur.becker@sentec.com
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DU2PR04MB9019:EE_
+X-MS-Office365-Filtering-Correlation-Id: beb9456b-15e1-4151-7d85-08dc846b8eb9
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|52116005|1800799015|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zs47fTBrfDyH0TTfaGI6SHSZUtNJrIhEKkaN6+zilTfnKeSnTAqIkLt68TB7?=
+ =?us-ascii?Q?ioMPY8k0vsbYFUCg3IR9MmlwMaccz8gTK+g8b5joToI90Mqs8MsyETdwbxUA?=
+ =?us-ascii?Q?Xewf4qGVpLXtG4fwE/OJIhCrptwNKFZSvd4qfu6pu/FxWTrxzxC89Ddr7UCb?=
+ =?us-ascii?Q?7VcrzaSMLlSpborRQ68/PQTj5Ymxf+FVq4A2qMW09ugg83Qmp1IdMrExGAs3?=
+ =?us-ascii?Q?ROMtAhKQnYJmjnlMKTH7bjiWSDjVVZ+QLuLimp/xmi9qZRthoyuEHiTjvfSJ?=
+ =?us-ascii?Q?t4QURXNv6JbRbZtec1Rk39MFihY9n0wAiu+f8uDF8R19HoGZ27UXj0a1JY3Q?=
+ =?us-ascii?Q?dsswxRUPi66SHRgTHU/DjxeaSfdYz5G9v/KTtKuhbS33GwabrhDaFislaXx4?=
+ =?us-ascii?Q?lyO+GyrgERYA/DxgEzHbGfzqL3TbXIHWk3dLgK0LO7uVHbV0I2YaDvn9UW3+?=
+ =?us-ascii?Q?WS6BIy6a+YqSYteIls3v7qX/D+CjBc0+XKaI8KOAP/56usvJ3yxE320/NUyD?=
+ =?us-ascii?Q?RZ3rhqWilddI6yQZE1O3d5Uihd++Mf4iQSA/3OxqtBuUngKOp5pA5HD0mVYG?=
+ =?us-ascii?Q?9mqEJg1iBrkJ1mzRUyzymmKuRLzis5s7TuZqQYa9MdYpMFDVtuLct3X+Xzt/?=
+ =?us-ascii?Q?GYHe+/5cOhQcMY8TTYk7TxoMXzTeX3x7bsMeM44Q6yMMlGxKZgHANQAbNa9q?=
+ =?us-ascii?Q?YOkj5MMOtw85gj9AJpWw2AYBuzIFb+TeIf6KETJwdMwxSXUY/82ND8BR1P1e?=
+ =?us-ascii?Q?LzCyejEQk8jEV2Av4hGkgYTq75lEKtb0zPTwRHEUb2TEoYkZQVNo4xC88uuL?=
+ =?us-ascii?Q?m14Z4elCnjRpjk871MOQMcj1OUQEwBp4uYF/7OPREEsa7idaa8g9aviNpxvy?=
+ =?us-ascii?Q?WpUmJfOTrEF6lFkW0kajQpmGkTePqy3REQyvtBOqmEFAxoJ73D5v9BlvA+OD?=
+ =?us-ascii?Q?lVVnvjTxxowpyVKaqVAVviIc1T4qIX4PqxLGL+wM5A+39jV1QV6AenVbMryZ?=
+ =?us-ascii?Q?Mv3Zy4UDMQGYyUnLXqpU6gFKpV8x7Uoq34pFnezCSqze/KlZmpLYEpCwW13I?=
+ =?us-ascii?Q?ijGEPqp55OuwdxXgUUYFg7YEmghmhI8rv+g36drW46DE/kTvmCG80ontDpc9?=
+ =?us-ascii?Q?DLoXkZuDN072/iYZN7Ca32cwicrKehPHjUxrjK6GqGcWw0jlKTYBUv/Khw8O?=
+ =?us-ascii?Q?f1jDZNG5ptvJZyUR8AqMspcL92bdIgi2qX1eNgnO1ZWrXamaKs9r7964OT74?=
+ =?us-ascii?Q?tlaQ3jyy5cZcAeqW1F1PNI8AFTski/EYBpNkZ+fxZpP2s1N0FDhmtg+BROhl?=
+ =?us-ascii?Q?pdyE4OmZI2y9M7imNUhfOSmVBKYmqHziKEfNpQuCSmzCVQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(1800799015)(366007)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ry7zHsSLf7Sh91FWMRNu1CssHy7bsqN5tPDkUf3zyf+GULC/5pri1QNybZht?=
+ =?us-ascii?Q?Ftie0048x/OVy8FVv5ZvgLnJ9tlsuqetQqZUzhzTvfiHJv+4DpJHcwbsukbe?=
+ =?us-ascii?Q?lPwHZVgDSmuz0MM4YNkwk1PFK87wo91ZzpoYGxvQmkJ5p5DilOogr6RgAbgb?=
+ =?us-ascii?Q?/5JovFtISCDrN0cFvsnfgAwahwxTQAleUOHuOU/5owtBFctlgJ5Ewb8lHosA?=
+ =?us-ascii?Q?sDGEh2v5OvD8u2XwUnxLRRvPtSwPs+z8QyPWVZSgG+wzCEwWrQTQxm6D3rLr?=
+ =?us-ascii?Q?urVC2RfNBx/eooRpSnbpjlwNJwfbtCU1YEbgqKr/j7mhFgY1B0uL0MOouRmJ?=
+ =?us-ascii?Q?mUac5VZQgenwN1vZihNfgzBygqHUcAE459RyN4BA6+yOvyo57k+GY9NwMafo?=
+ =?us-ascii?Q?Ra6cdwEX2xVG0NK/Qn/ExEn76+1nEjzHVcPiLbBugYcC+y564p2T/Uu0Fa8d?=
+ =?us-ascii?Q?tTY9PXNXJal7evabgoRLiNc4MrSV80q8j+cgvbIQ0Z74sWlc/I07rBif2s5U?=
+ =?us-ascii?Q?Is5I3ejH6ERTbChj3cEBGCFwzJDqNJIw9SchLmAfrT6NfPObxbhDbEUMe0T4?=
+ =?us-ascii?Q?5zgSMMmDWdVj/j1HsKmPi3crNhk4Efrdrs+fyFODM6PS2hA9ad7wXbnPI0n5?=
+ =?us-ascii?Q?1YZsPHZ32BYbmqygY9Rq2+ok7o1VJT25Rv6JpGqJF+mjgHzoobEfMCVOaa48?=
+ =?us-ascii?Q?JJDss2bd/o/HOFKGBT60tuL1Wlwfh86JaNOG+Ef3qCcvyitDD3BgZc+irICN?=
+ =?us-ascii?Q?jkPPIAj75Dp+EmBGsvEuRdkopUwCe8CSSvJDPR0XK+xj+sLM2Z3Euy4o8FMw?=
+ =?us-ascii?Q?5pzgsBq6HlW4IL2MaSgbB4/Gam4pQYeNNvAjVjIoJb/P8YN9iIpdjbOmlU0x?=
+ =?us-ascii?Q?kR8kfNk/NZoUQDphMSPAO6TalLavp3duZ+HXyNlXS8lJymxtJ0Oo6cYGDOIK?=
+ =?us-ascii?Q?uSBt9yW/Xn+7Hbya83NoXrGHgAR59KV11yKVD8O/D0Y/q4LWcqoeKUEl1QbB?=
+ =?us-ascii?Q?/rYcxV4UrGxCA8uIsT5m6xIvKU+KhrUfyd23ju+7UFeQe6chk11Tsra3ot0/?=
+ =?us-ascii?Q?byel8HKpJ3O00TpyiTRjY3oBp5n+1j+8L38xGcG08D93FdPtXQ74lFU0+KBB?=
+ =?us-ascii?Q?y5NxhAKgsmPGMHZV94JtW2/mgoO48Piuh58JEnvJrEyRCIy7uRaipqbM1Qcb?=
+ =?us-ascii?Q?J/i+02B3KenNiaQTWWU/w9fwpjBFpNUILa8iKbuQv5uLoS8z49VUFjBXVbxq?=
+ =?us-ascii?Q?SlrDGLiDwveMFKNR4ZmsSVok2xNBwARJ7dtoCgtYBpNF49ZgkWfdTeBforTg?=
+ =?us-ascii?Q?ZCGraxQs+faMLqfZpEWTnY4L/StrmpjwA/LUguHGkjWwEyffzlZ0ytVruEE/?=
+ =?us-ascii?Q?dp35Z3mPDq8IDLNaKfWY8fD99zAL2lw3XyANgIxCY2w9NtpK4+9m1evI/euP?=
+ =?us-ascii?Q?XnPiRtxl6WDqKe9oXZMRlsZGziTCbLAJBnZHME5RRESi89YVXYTEDz414PFy?=
+ =?us-ascii?Q?4PXESd8U+fcGaPd0UlxE8qon+sPRsf0dQpTxFXEoaHQT7A2ysaGYbfnx+UtS?=
+ =?us-ascii?Q?/M459fMKWrZ833+3SxhlUtmcpOR7Sh6RpO9fuIye?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: beb9456b-15e1-4151-7d85-08dc846b8eb9
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2024 07:54:27.5422
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jy0mmp7YSVkRGMMt9cqmELLAD3hM8CRJoLMYAiDBfIwVft9VwtKD6xyTjQlvCfN/7n9+ntu54i+KDW4w4BQKCA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9019
 
-From: Arthur Becker <arthur.becker@sentec.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-Device tree bindings for the vishay VEML6040 RGBW light sensor iio
-driver
+If 'info->screen_buffer' locates in vmalloc address space, virt_to_page
+will not be able to get correct results. With CONFIG_DEBUG_VM and
+CONFIG_DEBUG_VIRTUAL enabled on ARM64, there is dump below:
+[    3.536043] ------------[ cut here ]------------
+[    3.540716] virt_to_phys used for non-linear address: 000000007fc4f540 (0xffff800086001000)
+[    3.552628] WARNING: CPU: 4 PID: 61 at arch/arm64/mm/physaddr.c:12 __virt_to_phys+0x68/0x98
+[    3.565455] Modules linked in:
+[    3.568525] CPU: 4 PID: 61 Comm: kworker/u12:5 Not tainted 6.6.23-06226-g4986cc3e1b75-dirty #250
+[    3.577310] Hardware name: NXP i.MX95 19X19 board (DT)
+[    3.582452] Workqueue: events_unbound deferred_probe_work_func
+[    3.588291] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    3.595233] pc : __virt_to_phys+0x68/0x98
+[    3.599246] lr : __virt_to_phys+0x68/0x98
+[    3.603276] sp : ffff800083603990
+[    3.677939] Call trace:
+[    3.680393]  __virt_to_phys+0x68/0x98
+[    3.684067]  drm_fbdev_dma_helper_fb_probe+0x138/0x238
+[    3.689214]  __drm_fb_helper_initial_config_and_unlock+0x2b0/0x4c0
+[    3.695385]  drm_fb_helper_initial_config+0x4c/0x68
+[    3.700264]  drm_fbdev_dma_client_hotplug+0x8c/0xe0
+[    3.705161]  drm_client_register+0x60/0xb0
+[    3.709269]  drm_fbdev_dma_setup+0x94/0x148
 
-Signed-off-by: Arthur Becker <arthur.becker@sentec.com>
+So add a check 'is_vmalloc_addr'.
+
+Fixes: b79fe9abd58b ("drm/fbdev-dma: Implement fbdev emulation for GEM DMA helpers")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
-V1 -> V3: Addressed review comments (v1 of the dt-bindings was sent
-along with v2 of the driver but not in a set)
-V3 -> V4: Combined dt-binding with veml6075 as they are basically the
-same
----
- Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_fbdev_dma.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-index 91c318746bf3..ecf2339e02f6 100644
---- a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-+++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-@@ -4,14 +4,19 @@
- $id: http://devicetree.org/schemas/iio/light/vishay,veml6075.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Vishay VEML6075 UVA and UVB sensor
-+title: Vishay VEML6075 UVA/B and VEML6040 RGBW sensors
- 
- maintainers:
-   - Javier Carrasco <javier.carrasco.cruz@gmail.com>
- 
-+description:
-+  VEML6040 datasheet at https://www.vishay.com/docs/84276/veml6040.pdf
+diff --git a/drivers/gpu/drm/drm_fbdev_dma.c b/drivers/gpu/drm/drm_fbdev_dma.c
+index 6c9427bb4053..9e2eddb6eb5c 100644
+--- a/drivers/gpu/drm/drm_fbdev_dma.c
++++ b/drivers/gpu/drm/drm_fbdev_dma.c
+@@ -130,7 +130,12 @@ static int drm_fbdev_dma_helper_fb_probe(struct drm_fb_helper *fb_helper,
+ 		info->flags |= FBINFO_READS_FAST; /* signal caching */
+ 	info->screen_size = sizes->surface_height * fb->pitches[0];
+ 	info->screen_buffer = map.vaddr;
+-	info->fix.smem_start = page_to_phys(virt_to_page(info->screen_buffer));
 +
- properties:
-   compatible:
--    const: vishay,veml6075
-+    enum:
-+      - vishay,veml6040
-+      - vishay,veml6075
++	if (is_vmalloc_addr(info->screen_buffer))
++		info->fix.smem_start = page_to_phys(vmalloc_to_page(info->screen_buffer));
++	else
++		info->fix.smem_start = page_to_phys(virt_to_page(info->screen_buffer));
++
+ 	info->fix.smem_len = info->screen_size;
  
-   reg:
-     maxItems: 1
-
+ 	return 0;
 -- 
-2.34.1
-
+2.37.1
 
 
