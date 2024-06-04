@@ -1,195 +1,328 @@
-Return-Path: <linux-kernel+bounces-201007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB6E8FB803
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:52:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9518FB80A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 17:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B9861F213A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:52:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E29F281CE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BA7148317;
-	Tue,  4 Jun 2024 15:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C9813A25B;
+	Tue,  4 Jun 2024 15:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="vVi27sCh"
-Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [208.125.0.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K6eT2fbb"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FD414830C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C38A148FE1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 15:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717516220; cv=none; b=dbTnnNPe9elsp8n5NhDct1klVK9uamyaLFwfcN6h5TtFwIylLhibPDK1Vuu0MVNhaVksU9vBh6FsSd+h7b2QailBaCLCSAwcG76rnJNxFvxnFCIsMPiJmndZ7Ebn24/utwtzoXPOfIufANy1Glb1rhiZPOCIZfRfqdmULbjOSQs=
+	t=1717516332; cv=none; b=sVlW/o5B8O2yR5jMdsIvt3oSCJQVyc2z5GE5xFww79RckCVMm7dPu4ZgCdLAg9SmWX4JKcZjx6MB4JmZS21ISob+rtoZYJFgRzhYTlAnVmxgwm2oFya2GRvfF8WXzuXsGXWc0B59BEmfrT8V1Wlak0eqo3mPEzRzn8r/jBoxSNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717516220; c=relaxed/simple;
-	bh=eTS3qggKfNXIcZS3HhPFTZ3CZLn2MtRFMbTLGi23A9o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=I5rpwyfTRtG+dVqwBKIkVyRJf+ddtdI+SSeu30qJzy8N2NhytqHsbOhLv7QqILRXrJw165C5Y7JP259uCt6enBSB2KizbVnwXn8V+GTAM55mVTzhec4Ug4j0nhBKW8bqw97wjsuEEKTHJCrHxdaLSRNLv8WVROXrlhFzK6fp8Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=vVi27sCh; arc=none smtp.client-ip=208.125.0.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
-	d=auristor.com; s=MDaemon; r=y; t=1717516211; x=1718121011;
-	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
-	MIME-Version:User-Agent:From:Subject:To:Content-Language:Cc:
-	Organization:Content-Type; bh=eTS3qggKfNXIcZS3HhPFTZ3CZLn2MtRFMb
-	TLGi23A9o=; b=vVi27sCh55c4GugIpFpOM1+yDU4D4S8/bMtZte3hysYLJaU/+9
-	sweIRb5yG0XQV7X8TeKn31QTB65hhPf5ZdU+HziPkSv0foNxQ/A5li8yiQI2jRKE
-	4/ox3Qgi1OlFdtH9ejWurJCl1LReMBkx4ODzfJqxR1sXpw6Qb5pf26dRw=
-X-MDAV-Result: clean
-X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Tue, 04 Jun 2024 11:50:11 -0400
-Received: from [IPV6:2603:7000:73c:bb00:c087:9c97:5161:1e05] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v24.0.0) 
-	with ESMTPSA id md5001003966242.msg; Tue, 04 Jun 2024 11:50:10 -0400
-X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Tue, 04 Jun 2024 11:50:10 -0400
-	(not processed: message from trusted or authenticated source)
-X-MDRemoteIP: 2603:7000:73c:bb00:c087:9c97:5161:1e05
-X-MDHelo: [IPV6:2603:7000:73c:bb00:c087:9c97:5161:1e05]
-X-MDArrival-Date: Tue, 04 Jun 2024 11:50:10 -0400
-X-MDOrigin-Country: US, NA
-X-Authenticated-Sender: jaltman@auristor.com
-X-Return-Path: prvs=18857024df=jaltman@auristor.com
-X-Envelope-From: jaltman@auristor.com
-X-MDaemon-Deliver-To: linux-kernel@vger.kernel.org
-Message-ID: <2f3691b1-4f19-4a21-b235-a46ae54b8424@auristor.com>
-Date: Tue, 4 Jun 2024 11:50:06 -0400
+	s=arc-20240116; t=1717516332; c=relaxed/simple;
+	bh=aU39Zju7G/ZcjOCuvNg6T7bf9rw418NWUZA0995XVcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=T57ckb/L9BoXJ6rwASnp5qCztfQiYJs2OATsKnX5hn8ES8HAq9v8C8Zue6L6d/8Y5pI0ps6SoyCbPQfBoWFcpWtJKQ1gzkuzqiywQYcDDnodzg369hZCnoRo3E0bhgKATkH2Fvu9PFXQmlovbIUgx1cNU/rwlNmMXF91ibib4AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K6eT2fbb; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717516322;
+	bh=aU39Zju7G/ZcjOCuvNg6T7bf9rw418NWUZA0995XVcE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=K6eT2fbbobWaa+xr2vZ6eT0DcOXgNXHgliFL7RjgZzxyr4FN9mQv4GXM2UnnVRi92
+	 ZYoS22KtO4ee/+56Q6wtpd4FCD8h9HaBmCskIZs7UIEXUEKswUnKYGlacx91G1s+yM
+	 o92NcaGkhDjo5IYD9r01wDI2ezorrJ0yh2Vh+dgGCD+uI27QgYINZIWc/P/UHVtgnM
+	 6bP+qFvweKSAkAUMETp3m/eBV2GguEfRjbbmHv8dSUsDYj7py59KENTAUbdzpzyDDy
+	 Y+hmfzYcNC1+ju7emtFv1x2vnXKlMr1SuMR9LHs6X8b8IZRkClLWoFXGz7pCqsTMJ7
+	 /zNK6mHMk4cGA==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AEA243782196;
+	Tue,  4 Jun 2024 15:52:00 +0000 (UTC)
+Date: Tue, 4 Jun 2024 11:51:58 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: linux-mediatek@lists.infradead.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Subject: Probe failures on mt8183-kukui-jacuzzi-juniper-sku16
+Message-ID: <e5912054-0fc9-47ff-8f38-9b9a3e9d2156@notapiano>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jeffrey E Altman <jaltman@auristor.com>
-Subject: Backport request: commit 29be9100aca2915fab54b5693309bc42956542e5
- ("afs: Don't cross .backup mountpoint from backup volume")
-To: linux-stable <stable@vger.kernel.org>
-Content-Language: en-US
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Organization: AuriStor, Inc.
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms000009010305020908030208"
-X-MDCFSigsAdded: auristor.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-This is a cryptographically signed message in MIME format.
+Hi,
 
---------------ms000009010305020908030208
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+We're monitoring the status of device probe on the
+mt8183-kukui-jacuzzi-juniper-sku16 platform in KernelCI, and I thought it'd be
+helpful to share the results.
 
-UGxlYXNlIGJhY2twb3J0IHRvIHRoZSBmb2xsb3dpbmcgcGF0Y2ggd2hpY2ggd2FzIG1lcmdl
-ZCB1cHN0cmVhbS4NCg0KSXQgc2hvdWxkIGFwcGx5IHRvIGxpbnV4LTUuNC55IGFuZCBsYXRl
-ci4NCg0KY29tbWl0IDI5YmU5MTAwYWNhMjkxNWZhYjU0YjU2OTMzMDliYzQyOTU2NTQyZTUN
-CkF1dGhvcjogTWFyYyBEaW9ubmUgPG1hcmMuZGlvbm5lQGF1cmlzdG9yLmNvbT4xDQpEYXRl
-OsKgwqAgRnJpIE1heSAyNCAxNzoxNzo1NSAyMDI0ICswMTAwDQoNCiDCoMKgwqAgYWZzOiBE
-b24ndCBjcm9zcyAuYmFja3VwIG1vdW50cG9pbnQgZnJvbSBiYWNrdXAgdm9sdW1lDQoNCiDC
-oMKgwqAgRG9uJ3QgY3Jvc3MgYSBtb3VudHBvaW50IHRoYXQgZXhwbGljaXRseSBzcGVjaWZp
-ZXMgYSBiYWNrdXAgdm9sdW1lDQogwqDCoMKgICh0YXJnZXQgaXMgPHZvbD4uYmFja3VwKSB3
-aGVuIHN0YXJ0aW5nIGZyb20gYSBiYWNrdXAgdm9sdW1lLg0KDQogwqDCoMKgIEl0IGl0IG5v
-dCB1bmNvbW1vbiB0byBtb3VudCBhIHZvbHVtZSdzIGJhY2t1cCBkaXJlY3RseSBpbiB0aGUg
-dm9sdW1lDQogwqDCoMKgIGl0c2VsZi7CoCBUaGlzIGNhbiBjYXVzZSB0b29scyB0aGF0IGFy
-ZSBub3QgcGF5aW5nIGF0dGVudGlvbiB0byBnZXQNCiDCoMKgwqAgaW50byBhIGxvb3AgbW91
-bnRpbmcgdGhlIHZvbHVtZSBvbnRvIGl0c2VsZiBhcyB0aGV5IGF0dGVtcHQgdG8NCiDCoMKg
-wqAgdHJhdmVyc2UgdGhlIHRyZWUsIGxlYWRpbmcgdG8gYSB2YXJpZXR5IG9mIHByb2JsZW1z
-Lg0KDQogwqDCoMKgIFRoaXMgZG9lc24ndCBwcmV2ZW50IHRoZSBnZW5lcmFsIGNhc2Ugb2Yg
-bG9vcHMgaW4gYSBzZXF1ZW5jZSBvZg0KIMKgwqDCoCBtb3VudHBvaW50cywgYnV0IGFkZHJl
-c3NlcyBhIGNvbW1vbiBzcGVjaWFsIGNhc2UgaW4gdGhlIHNhbWUgd2F5DQogwqDCoMKgIGFz
-IG90aGVyIGFmcyBjbGllbnRzLg0KDQogwqDCoMKgIFJlcG9ydGVkLWJ5OiBKYW4gSGVucmlr
-IFN5bHZlc3RlciA8amFuLmhlbnJpay5zeWx2ZXN0ZXJAdW5pLWhhbWJ1cmcuZGU+DQogwqDC
-oMKgIExpbms6IA0KaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvcGlwZXJtYWlsL2xpbnV4
-LWFmcy8yMDI0LU1heS8wMDg0NTQuaHRtbA0KIMKgwqDCoCBSZXBvcnRlZC1ieTogTWFya3Vz
-IFN1dmFudG8gPG1hcmt1cy5zdXZhbnRvQGdtYWlsLmNvbT4NCiDCoMKgwqAgTGluazogDQpo
-dHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9waXBlcm1haWwvbGludXgtYWZzLzIwMjQtRmVi
-cnVhcnkvMDA4MDc0Lmh0bWwNCiDCoMKgwqAgU2lnbmVkLW9mZi1ieTogTWFyYyBEaW9ubmUg
-PG1hcmMuZGlvbm5lQGF1cmlzdG9yLmNvbT4NCiDCoMKgwqAgU2lnbmVkLW9mZi1ieTogRGF2
-aWQgSG93ZWxscyA8ZGhvd2VsbHNAcmVkaGF0LmNvbT4NCiDCoMKgwqAgTGluazogDQpodHRw
-czovL2xvcmUua2VybmVsLm9yZy9yLzc2ODc2MC4xNzE2NTY3NDc1QHdhcnRob2cucHJvY3lv
-bi5vcmcudWsNCiDCoMKgwqAgUmV2aWV3ZWQtYnk6IEplZmZyZXkgQWx0bWFuIDxqYWx0bWFu
-QGF1cmlzdG9yLmNvbT4NCiDCoMKgwqAgY2M6IGxpbnV4LWFmc0BsaXN0cy5pbmZyYWRlYWQu
-b3JnDQogwqDCoMKgIFNpZ25lZC1vZmYtYnk6IENocmlzdGlhbiBCcmF1bmVyIDxicmF1bmVy
-QGtlcm5lbC5vcmc+DQoNClRoYW5rIHlvdS4NCg0KSmVmZnJleSBBbHRtYW4NCg0KDQoNCg==
+These are the current failures:
+
+* /soc/i2c@11009000/trackpad@15
+* /soc/svs@1100bc00
+* /thermal-sensor1
+* /thermal-sensor2
+
+In more details:
+
+* /soc/i2c@11009000/trackpad@15: I believe this is a second source trackpad and
+  is thus waiting for the "platform/chrome: Introduce DT hardware prober" series
+  [1] to be merged before it can be handled. Although looks like there haven't
+  been updates to the series in a while.
+
+* /soc/svs@1100bc00: On the logs the following is reported:
+
+    SVSB_GPU: cannot get "gpu-thermal" thermal zone
+
+  MT8183 uses the auxadc_thermal driver, which apparently only registers one
+  thermal zone (tz 0, for the CPU):
+
+    devm_thermal_of_zone_register(&pdev->dev, 0, mt,
+                              &mtk_thermal_ops);
+
+  As a quick hack I changed the 0 to 2, so the GPU thermal zone got registered,
+  and that did allow SVS to go further in its probe, but still resulted in an
+  error:
+  
+    [    9.330993] mtk-svs 1100bc00.svs: M_HW_RES0: 0x00320090
+    [    9.336700] mtk-svs 1100bc00.svs: M_HW_RES1: 0xa3ffff5f
+    [    9.342628] mtk-svs 1100bc00.svs: M_HW_RES2: 0x47cf47cf
+    [    9.347898] mtk-svs 1100bc00.svs: M_HW_RES3: 0xa3ffff5f
+    [    9.353164] mtk-svs 1100bc00.svs: M_HW_RES4: 0xa3fff1aa
+    [    9.358400] mtk-svs 1100bc00.svs: M_HW_RES5: 0x47ec4b82
+    [    9.358411] mtk-svs 1100bc00.svs: M_HW_RES6: 0xa3ff9aac
+    [    9.358416] mtk-svs 1100bc00.svs: M_HW_RES7: 0xa3ff1c13
+    [    9.358420] mtk-svs 1100bc00.svs: M_HW_RES8: 0x4bec4beb
+    [    9.358424] mtk-svs 1100bc00.svs: M_HW_RES9: 0xa3ff7b02
+    [    9.358429] mtk-svs 1100bc00.svs: M_HW_RES14: 0x06ce7583
+    [    9.370719] mtk-svs 1100bc00.svs: M_HW_RES15: 0x00220010
+    [    9.381134] mtk-svs 1100bc00.svs: M_HW_RES16: 0xa3ffdf46
+    [    9.381141] mtk-svs 1100bc00.svs: M_HW_RES17: 0x47ec47eb
+    [    9.391612] mtk-svs 1100bc00.svs: M_HW_RES18: 0xa3ffd443
+    [    9.477419]  SVSB_CPU_LITTLE: svs_init01_isr_handler: VDN74~30:0x16202931~0x363b4147, DC:0x02bb0013
+    [    9.495313] cpu cpu4: cpu4: failed to find OPP for 1781000000
+    [    9.495549]  SVSB_CPU_BIG: svs_init01_isr_handler: VDN74~30:0x16212a33~0x393e444b, DC:0x02d000d0
+    [    9.495847]  SVSB_CCI: svs_init01_isr_handler: VDN74~30:0x141b252e~0x33394147, DC:0x02c10049
+    [    9.495897]  SVSB_GPU: buck voltage: 700000uV, expected vboot: 800000uV
+    [    9.496184] mtk-svs 1100bc00.svs: error -EPERM: svs start fail
+    [    9.496204] mtk-svs 1100bc00.svs: probe with driver mtk-svs failed with error -1
+  
+  so it seems that more changes will be required in addition to updating
+  auxadc_thermal to register multiple thermal zones.
+
+* /thermal-sensor1, /thermal-sensor2: The following is reported:
+
+    [    2.813605] thermal_sys: Failed to find 'trips' node
+    [    2.813611] thermal_sys: Failed to find trip points for thermal-sensor1 id=0
+    [    2.813619] generic-adc-thermal thermal-sensor1: Thermal zone sensor register failed: -22
+    [    2.813624] generic-adc-thermal thermal-sensor1: probe with driver generic-adc-thermal failed with error -22
+
+  And the same for thermal-sensor2. So both are missing the required 'trips'
+  subnode.
+
+If you have any additional information on these issues please let me know.
+
+Full test results are included below if you're curious.
+
+Note: these results are from today's next: next-20240604
+
+Thanks,
+Nícolas
 
 
---------------ms000009010305020908030208
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+[1] [RFC PATCH v3 0/5] platform/chrome: Introduce DT hardware prober
+https://lore.kernel.org/all/20231128084236.157152-1-wenst@chromium.org/
+  
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
-BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
-MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
-MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
-YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
-xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
-fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
-EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
-9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
-IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
-BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
-BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
-My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
-A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
-L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
-bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
-aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
-YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
-ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
-dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
-MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
-gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
-eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
-WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
-utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
-Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
-a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
-AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
-Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
-AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
-wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
-15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
-o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
-3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
-VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
-CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
-dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
-L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
-5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
-dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
-eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
-YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
-dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
-Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
-dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
-bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
-CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
-bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
-0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
-6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
-QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
-Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
-db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
-rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
-UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
-p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
-MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
-A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
-ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDYwNDE1
-NTAwNlowLwYJKoZIhvcNAQkEMSIEICL/KHOSzn3Nh14QOeDxWuiKUc4gi/+PwqKnYwlwsDLr
-MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
-MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
-AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
-dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
-AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
-hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAWXA+
-bR0YfQnMoqQea0LpLNf5zd3Toe5COoPJmWJFR7ISpD/RRncwu1PnHA4BiEoGuzyV5GkAAEip
-4W36UX1qAyi7mT2L3+0ENqHKOaKuLA3EMf2xI4rQi7V4yYbTjFnoS2IMYIfJSfrKQlLbu8or
-i/P+hpSw3Qjcg5/rDvGaDXiifQeX9PMfCSMn5iT75kk17/HU/ZXWtSOdZtIA3E4P/7Wt+Crb
-fSQVKQapfGY3apHPDV7uyxvDyyOgzGT+UGyoNDDOTf0oel+tXYPUvQDgHOOgwe0tJb6nm7CU
-rMEs0mCe/YX16zj8xS/Di0zH/bapWc5bA/Buo9bruhYO47+5gAAAAAAAAA==
---------------ms000009010305020908030208--
-
+TAP version 13
+1..1
+# timeout set to 45
+# selftests: dt: test_unprobed_devices.sh
+# TAP version 13
+# 1..166
+# ok 1 / # SKIP
+# ok 2 /backlight_lcd0
+# ok 3 /bt-sco
+# ok 4 /cci
+# ok 5 /cpus/cpu@0 # SKIP
+# ok 6 /cpus/cpu@1 # SKIP
+# ok 7 /cpus/cpu@100 # SKIP
+# ok 8 /cpus/cpu@101 # SKIP
+# ok 9 /cpus/cpu@102 # SKIP
+# ok 10 /cpus/cpu@103 # SKIP
+# ok 11 /cpus/cpu@2 # SKIP
+# ok 12 /cpus/cpu@3 # SKIP
+# ok 13 /cpus/idle-states/cluster-sleep-0 # SKIP
+# ok 14 /cpus/idle-states/cluster-sleep-1 # SKIP
+# ok 15 /cpus/idle-states/cpu-sleep # SKIP
+# ok 16 /cpus/l2-cache0 # SKIP
+# ok 17 /cpus/l2-cache1 # SKIP
+# ok 18 /firmware/chromeos # SKIP
+# ok 19 /firmware/coreboot
+# ok 20 /fixed-factor-clock-13m # SKIP
+# ok 21 /max98357a
+# ok 22 /mt8183-sound
+# ok 23 /opp-table-0 # SKIP
+# ok 24 /opp-table-cci # SKIP
+# ok 25 /opp-table-cluster0 # SKIP
+# ok 26 /opp-table-cluster1 # SKIP
+# ok 27 /oscillator # SKIP
+# ok 28 /oscillator1 # SKIP
+# ok 29 /pmu-a53
+# ok 30 /pmu-a73
+# ok 31 /pp1200-mipibrdg
+# ok 32 /pp1800-mipibrdg
+# ok 33 /pp3300-panel
+# ok 34 /psci
+# ok 35 /regulator-vsys
+# ok 36 /regulator0
+# ok 37 /regulator1
+# ok 38 /regulator2
+# ok 39 /regulator3
+# ok 40 /regulator4
+# ok 41 /regulator5
+# ok 42 /regulator6
+# ok 43 /reserved-memory/memory@50000000 # SKIP
+# ok 44 /reserved-memory/ramoops
+# ok 45 /soc
+# ok 46 /soc/aal@14010000
+# ok 47 /soc/audio-controller@11220000
+# ok 48 /soc/audio-controller@11220000/mt8183-afe-pcm
+# ok 49 /soc/auxadc@11001000
+# ok 50 /soc/ccorr@1400f000
+# ok 51 /soc/color@1400e000
+# ok 52 /soc/cpu-debug@d410000
+# ok 53 /soc/cpu-debug@d510000
+# ok 54 /soc/cpu-debug@d610000
+# ok 55 /soc/cpu-debug@d710000
+# ok 56 /soc/cpu-debug@d810000
+# ok 57 /soc/cpu-debug@d910000
+# ok 58 /soc/cpu-debug@da10000
+# ok 59 /soc/cpu-debug@db10000
+# ok 60 /soc/dither@14012000 # SKIP
+# ok 61 /soc/dma-controller0@14001000
+# ok 62 /soc/dma-controller@14005000 # SKIP
+# ok 63 /soc/dsi-phy@11e50000
+# ok 64 /soc/dsi@14014000
+# ok 65 /soc/efuse@11f10000
+# ok 66 /soc/efuse@8000000
+# ok 67 /soc/gamma@14011000
+# ok 68 /soc/gpu@13040000
+# ok 69 /soc/i2c@11005000
+# ok 70 /soc/i2c@11007000
+# ok 71 /soc/i2c@11007000/touchscreen@10
+# ok 72 /soc/i2c@11008000
+# ok 73 /soc/i2c@11008000/anx7625@58
+# ok 74 /soc/i2c@11008000/anx7625@58/aux-bus/panel
+# ok 75 /soc/i2c@11009000
+# not ok 76 /soc/i2c@11009000/trackpad@15
+# ok 77 /soc/i2c@11009000/trackpad@2c
+# ok 78 /soc/i2c@1100f000
+# ok 79 /soc/i2c@11011000
+# ok 80 /soc/i2c@11016000
+# ok 81 /soc/i2c@11016000/ts3a227e@3b
+# ok 82 /soc/interrupt-controller@c000000 # SKIP
+# ok 83 /soc/interrupt-controller@c530a80 # SKIP
+# ok 84 /soc/iommu@10205000
+# ok 85 /soc/jpeg-encoder@17030000
+# ok 86 /soc/larb@14017000
+# ok 87 /soc/larb@15021000
+# ok 88 /soc/larb@1502f000
+# ok 89 /soc/larb@16010000
+# ok 90 /soc/larb@17010000
+# ok 91 /soc/larb@1a001000
+# ok 92 /soc/larb@1a002000
+# ok 93 /soc/mailbox@10238000
+# ok 94 /soc/mdp3-ccorr@1401c000 # SKIP
+# ok 95 /soc/mdp3-rsz0@14003000 # SKIP
+# ok 96 /soc/mdp3-rsz1@14004000 # SKIP
+# ok 97 /soc/mdp3-wdma@14006000 # SKIP
+# ok 98 /soc/mmc@11230000
+# ok 99 /soc/mmc@11240000
+# ok 100 /soc/mmc@11240000/qca-wifi@1
+# ok 101 /soc/mutex@14016000
+# ok 102 /soc/ovl@14008000
+# ok 103 /soc/ovl@14009000
+# ok 104 /soc/ovl@1400a000
+# ok 105 /soc/pinctrl@10005000
+# ok 106 /soc/pwm@11006000
+# ok 107 /soc/pwm@1100e000
+# ok 108 /soc/pwrap@1000d000
+# ok 109 /soc/pwrap@1000d000/pmic
+# ok 110 /soc/pwrap@1000d000/pmic/keys
+# ok 111 /soc/pwrap@1000d000/pmic/mt6358codec
+# ok 112 /soc/pwrap@1000d000/pmic/mt6358regulator
+# ok 113 /soc/pwrap@1000d000/pmic/rtc
+# ok 114 /soc/rdma@1400b000
+# ok 115 /soc/rdma@1400c000
+# ok 116 /soc/scp@10500000
+# ok 117 /soc/scp@10500000/cros-ec-rpmsg
+# ok 118 /soc/serial@11002000
+# ok 119 /soc/serial@11003000
+# ok 120 /soc/serial@11003000/bluetooth
+# ok 121 /soc/smi@14019000
+# ok 122 /soc/spi@1100a000
+# ok 123 /soc/spi@1100a000/tpm@0
+# ok 124 /soc/spi@11010000
+# ok 125 /soc/spi@11010000/flash@0
+# ok 126 /soc/spi@11012000
+# ok 127 /soc/spi@11012000/cros-ec@0
+# ok 128 /soc/spi@11012000/cros-ec@0/extcon0
+# ok 129 /soc/spi@11012000/cros-ec@0/i2c-tunnel
+# ok 130 /soc/spi@11012000/cros-ec@0/i2c-tunnel/sbs-battery@b
+# ok 131 /soc/spi@11012000/cros-ec@0/keyboard-controller
+# ok 132 /soc/spi@11012000/cros-ec@0/typec
+# ok 133 /soc/spi@11012000/cros-ec@0/typec/connector@0 # SKIP
+# not ok 134 /soc/svs@1100bc00
+# ok 135 /soc/syscon@10000000
+# ok 136 /soc/syscon@10001000
+# ok 137 /soc/syscon@10003000
+# ok 138 /soc/syscon@10006000 # SKIP
+# ok 139 /soc/syscon@10006000/power-controller
+# ok 140 /soc/syscon@1000c000
+# ok 141 /soc/syscon@13000000
+# ok 142 /soc/syscon@14000000
+# ok 143 /soc/syscon@15020000
+# ok 144 /soc/syscon@16000000
+# ok 145 /soc/syscon@17000000
+# ok 146 /soc/syscon@19000000
+# ok 147 /soc/syscon@19010000
+# ok 148 /soc/syscon@19180000
+# ok 149 /soc/syscon@19280000
+# ok 150 /soc/syscon@1a000000
+# ok 151 /soc/syscon@c530000
+# ok 152 /soc/t-phy@11f40000
+# ok 153 /soc/thermal-sensor@1100b000
+# ok 154 /soc/timer@10017000 # SKIP
+# ok 155 /soc/usb@11201000
+# ok 156 /soc/usb@11201000/usb@11200000
+# ok 157 /soc/usb@11201000/usb@11200000/hub@1
+# ok 158 /soc/video-codec@16020000
+# ok 159 /soc/watchdog@10007000
+# not ok 160 /thermal-sensor1
+# not ok 161 /thermal-sensor2
+# ok 162 /timer # SKIP
+# ok 163 /vddio-mipibrdg
+# ok 164 /volume-buttons
+# ok 165 /wifi-pwrseq
+# ok 166 /wifi-wakeup
+# # Totals: pass:127 fail:4 xfail:0 xpass:0 skip:35 error:0
 
