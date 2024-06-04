@@ -1,226 +1,265 @@
-Return-Path: <linux-kernel+bounces-199984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-199948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41C18FA8C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 05:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C638FA815
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 04:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDECF1C23401
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 03:29:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06C51F225E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 02:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7212C13D88B;
-	Tue,  4 Jun 2024 03:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9C013D290;
+	Tue,  4 Jun 2024 02:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tNcvNOlR"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BqFTX3Is"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF27C13D619
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 03:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EFB12D758
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 02:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717471736; cv=none; b=f82XMKBP+OVKNzvmP0KvryWvsKPKhlRyRD0m5rzdzRBe/kNijyDugM/VPcicCo1qlBVI3vx6DAYuM78Yh1TWBo4fYtUHuiAYRuWZgbv2OiGTNppt/KlJTelCCZSwvvbB6+Kco0ydii/NQtp3bNqOj+JL/+JtZtC0TVSjxwHdh/c=
+	t=1717466769; cv=none; b=dasJBosXmfOry+F2q+r18JyBigPgDol8rcuzHdwfUm/xxJHe9SgUMBcA9tI+eM7E/bBQlmN5EEZI1Bw+JTlacKcWgkR0fHVkw4wYOF0utYycbCYkODhP0MdyNld66005hUGL4IQQUrjbvHolkgn+bUxW6AgKM4Co5eDjMIIg53U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717471736; c=relaxed/simple;
-	bh=BmnSM780gtlucE+xybG8Q/hhbxyboU3CWExMeE8IYw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=L4bo7Pl+/dEKgJnYao2ZuF1fu5QFrbsWm1XTh4KpvZ+d1utQzSYmEd3wYbVYhwxlfcQe/FlRCg552tScRyfnRDaGwWO02rZ2Nb8xUn4Je8XdhCCHE1DOGeFHN6jtmRq+raWAmhkI0AGBg4hk19ChhF9ctqRWA9Q9s0ECm2e61yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tNcvNOlR; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240604032847epoutp01f6d46da0a2254c7623ab389f16e1ba40~Vr2-EfeDA2617426174epoutp01H
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 03:28:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240604032847epoutp01f6d46da0a2254c7623ab389f16e1ba40~Vr2-EfeDA2617426174epoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717471727;
-	bh=7VN6ZUoN/sVx9OFQYPCvCDso3Uou5inchmMvd4vuq5E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tNcvNOlRXnI5bedxJ26y9w6TRzG50YcynA+2cGwniUTGpbgpPHphBAsVudbrcN6WS
-	 Fpv7ucxsfE765eTLhxyisAVREhNHMPqO/FB5cH81xO6io/wNvfYuyBtGTssgD1G/vj
-	 9fPq3lfnRj7akJXFtacojDMp/JpXoMaqAMTH/PV8=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240604032846epcas5p1f1c03e377b238d49df5eb58251bf4543~Vr29wVx_50292302923epcas5p1T;
-	Tue,  4 Jun 2024 03:28:46 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VtbfN3yFfz4x9Pv; Tue,  4 Jun
-	2024 03:28:44 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	46.70.08853.CE98E566; Tue,  4 Jun 2024 12:28:44 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240603065101epcas5p2acde37ff1854ff6f455f51ec940caf65~Va_R6KOZ01423114231epcas5p2p;
-	Mon,  3 Jun 2024 06:51:01 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240603065101epsmtrp18e7b805f6f3c250176196fb7d0105d49~Va_R3vysa1582915829epsmtrp1i;
-	Mon,  3 Jun 2024 06:51:01 +0000 (GMT)
-X-AuditID: b6c32a44-fc3fa70000002295-08-665e89ec9f67
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B8.4E.07412.5D76D566; Mon,  3 Jun 2024 15:51:01 +0900 (KST)
-Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240603065058epsmtip19af2886049d9888391a19a98b3e4be4f~Va_OP59sS2735927359epsmtip1k;
-	Mon,  3 Jun 2024 06:50:57 +0000 (GMT)
-Date: Mon, 3 Jun 2024 06:43:56 +0000
-From: Nitesh Shetty <nj.shetty@samsung.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
-	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
-	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Sagi Grimberg
-	<sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, martin.petersen@oracle.com, bvanassche@acm.org,
-	david@fromorbit.com, hare@suse.de, damien.lemoal@opensource.wdc.com,
-	anuj20.g@samsung.com, joshi.k@samsung.com, nitheshshetty@gmail.com,
-	gost.dev@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 01/12] block: Introduce queue limits and sysfs for
- copy-offload support
-Message-ID: <20240603064356.nujnjbtje3vjnti2@nj.shetty@samsung.com>
+	s=arc-20240116; t=1717466769; c=relaxed/simple;
+	bh=wy5P01o+0T9XjRR76ApAbVVT5yJ5oILZKBGqQSK/dd8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=M9Xmt3YCn5pPjB+a/oaqwXsTcItIl9ySG7z3X8FAqqIZHuBWQ92yShzPGy206qc75FY3ZtULanrqect0B2hWs4E/JBLVlvto7L5PXqBQrpwPt2Fycaik6I3h5jzZY0TELG65zjrWCYraVhxA1FX64/rCY94edBkrGUstbETN++s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BqFTX3Is; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a0827391aso90992047b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2024 19:06:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717466767; x=1718071567; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rjsptS2Yts9gQuV5Q8ZXK1TfjP+hvA4bC7qdXn/aM28=;
+        b=BqFTX3Isw4SWroCcvDGc2XhbzVCcYcHNuD/iK1C8UzQe4y+Lsr+IhmXVP/PI5dQJ6k
+         A4m0zFqLA0FXV0DLWS+2ZU9XAg7vczaL9ODCfMFbq4iyN3sXdVnhyHcJ1XhcklsQEhZp
+         Qj1zpgYkADUS3DgK6aRJ+Fi8egKaSxNpyGJfz0HsY/5lbCGZ52zEk8wCR2rbhAsXBhYl
+         +n/h8YNiYeqte0yAJYW0KXpmCjEE5LtrsX6AKXTipwqcsmow/3MHO+L+nTgb9nU0LDkI
+         mszYqbJPbjqZmVWx9OhDNp5RSQ+nZV+1wIO/RbrGHyrDzZVT9ICJbiKf7l+sOImJnm1K
+         6AKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717466767; x=1718071567;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rjsptS2Yts9gQuV5Q8ZXK1TfjP+hvA4bC7qdXn/aM28=;
+        b=cvJkCDn628/+WunFjEi5+tWd3fKLodPxF4FAKy/tpmTJWdQpcDq7JDIDJESNIYeLKH
+         PmBI38QQ0LIEiMTq9t3mHwQQAurt6V8hx/t5lay0GIq5UtkXcJ+G5buPHj6Zay1pLwqu
+         2CtVZIx0o9LJS8u4/JKqd6ROvC4bSzZgb53qz/M+xrYwTkYKwv5dUBYMKt44VUdHFRVb
+         UZRw3PNN6WsgUryCw4+sM59fv1OKPraPGavBty7FRBeOCP/TEaShayaAcVTOvbNos6h6
+         qXKVnG3niWspWmCMcClOw+l+mSAUglPVr770lwOw1tM919+x6wC9nYqktTV6JIoB63nU
+         b7vg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5JWR73sYeE1uDyFV3zZ/V7BMOWxWTPFmhQw1yXnQhT5ptNNjadqrNNtaYlMXn86F5tKMxUlMSI2qrBfE6sHACV0eOy9K9sbm9Z8hV
+X-Gm-Message-State: AOJu0YyvEzvOZkB3xVTpuZbyVZJG3x8ddrcKFgNmS45/mxhvb+Y8TfLA
+	Kzle7koDOlE6y+PemecWrg0oD32ihSlgQgCEeoijahMmkE/iB2cuErKjxMX/yNsZjV1EOUt2nBG
+	fGkKVZg==
+X-Google-Smtp-Source: AGHT+IG3g3AgqCOlx3jBB4ji1cGSVnGwhhLfCxnWASyuX4xJagCnN4kQSgFzxz93g37nWopgo31fHw42PQJS
+X-Received: from yuanchu-desktop.svl.corp.google.com ([2620:15c:2a3:200:367f:7387:3dd2:73f1])
+ (user=yuanchu job=sendgmr) by 2002:a05:690c:85:b0:61b:1dbf:e3f with SMTP id
+ 00721157ae682-62c796486d0mr32737577b3.4.1717466766718; Mon, 03 Jun 2024
+ 19:06:06 -0700 (PDT)
+Date: Mon,  3 Jun 2024 19:05:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20240601055323.GB5613@lst.de>
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUVRzHO3fv3r1YS5eHcVgmh7nSFO9dWeDgiDVBdiebEXPGHHvACpdH
-	7Kt9aOAMgYiKBCvyilXj2RJgkkLyTmMFAsOdIEAQqCG2SCKIxqBBoIULjf99ft/ze//mkDxH
-	k0BEJih1rEYpk9PENvym2dPT94/M92PFE2MuqK63i4dOXVjhodpxA4FmzAsAFc7/y0NTt88C
-	tNxn4aGGrgmASsuv4GjkdjOG2sovYqi6thNDl4rSMdS5Nkugix1DAFkHjRhqH/VGZWcqcdTW
-	3oOjgZbLBCoxWQWoqnsVQ7nnBjHUNJUG0LWZORx9N+qGLCvd/FfcmIEf9zO95ZBpNo4LGMvE
-	dZwZ6NMzN2oyCaa+8mNmur4YMK0jqQRTkZPHZ7LT/ySY5oyf+Mxf1lGcmftmkGByGmoA833p
-	HUGE09HEPfGsLIbVuLPKaFVMgjIulN5/KDIsMjBILPGVhKBg2l0pU7ChdPibEb77EuS25dDu
-	x2VyvU2KkGm1tP/ePRqVXse6x6u0ulCaVcfI1VK1n1am0OqVcX5KVrdbIhbvCrQ5RiXGD+Xm
-	EOoml4+WUx+AVHDZ6TywIyElhYbGbOI82EY6Uq0Amq63YpyxYDNquvmc8Q+A5ol6sBUyXFDF
-	4x7aAVypz8U5428A+/v6BeteOOUBR0x9NiZJgvKGd9fIddmZoqH1Yd9GIh5VQMA1o9s6O1Ey
-	WDXSvqELqTA435DK59gB9hRP4etsZ0tjqf4NrNeClNkOdt0twdfzQyocDjTSXHNO8GF3g4Bj
-	EfzdcGaTT8Dq/C8ILvY0gMZh4+Y0L8OMXgOPaygeThuaN/XnYUHvNYzT7WH28hTG6ULY9NkW
-	74RX60oJjl3h0GLaJjPwktW8uccxANubR4gLYIfxiYGMT9TjeDfMnD/FN9rm4VFusGqV5NAT
-	1rX4lwJ+DXBl1VpFHBsdqJYo2RP/XzlapbgBNj6MV3gTuF+y6tcBMBJ0AEjyaGdhTso7sY7C
-	GFlSMqtRRWr0clbbAQJt98nlibZHq2w/TqmLlEhDxNKgoCBpSECQhHYRzmRciXGk4mQ6NpFl
-	1axmKw4j7USpmNbhhaIM/x37rMdGH096e/RGer8OF6ZKBhZe1VdbzvmW2S+99O4PC4uxB1qy
-	8O3DFSaHR1SQ988+gcVzTsSXT0fLVvL1hx8veS2W+3j0BVTy3eSubrOFSQejzaFRDj4ftpc3
-	HFz61kQeD//1tChX+uCWpL86eWz6yNfBj5JffHb4lmtN8lMnG1Wiyp7X8kZO7m1+65muubiZ
-	A8E6C23+tKzLPiSrRGLubCtO/4ScrZisXYHiqGBBRlpjvn/YB8OfKwwBR2OdQrRnj1Ue0jt/
-	9UvKnY6hhTcUeT5Fh7N2Ls1O7up2vPreTUHpkdnkzKSU+jihIF5xr+i+6G2DOOBhoTx/vPbe
-	czSujZdJvHgarew/c/aterkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa1BMYRzGveeczp5KzbGFN2vEYQyhbLm8bg3pwyG5fHC/rjptxm7lHJGI
-	Te4Ry5A2tdmy22VEl2mkwoRSrGUS2lJkl6ZGchmTtGGL4dtvnmd+z//Ln8LF74gR1LaInRwf
-	IVMwpBNRcpcZNaVevjFsaqraG12rrcLRwTM2HOW9Ok2ijrufAbrQ9R1HljtHAfphNOGouKoZ
-	oAxdGoEa7pRiqFx3FkM5efcxlJqcgKH7Pz+Q6Gzlc4Cs9RoMVZgnoctHsghUXlFDoLqbl0ik
-	1VtFyFDdhyH1sXoM3bDEA5Tf8ZFAD8wSZLJVO8yXsHXPgthaHWRLNa9ErKm5gGDrjNFsYe5x
-	ki3KOsC2FaUAtqxBRbKZSecc2FMJnSRberjFgf1kNRPsx1v1JJtUnAvYRxn3RMvd1jnNDeUU
-	23ZxvI//Fqfwruuv8ah295ib3V8IFWijTwBHCtLT4IvzBvwEcKLEdBmAVxKywUDhAfW2e/gA
-	u8GcvvciO4vpTwDGl0XbmaDHwQa98XdOUSQ9CT78Sdljd5qB1nZj/wxOp5DwkVZpZzdaBg0N
-	Ff25C70QdhWrHAbuNgNY01vypxgCa1IsxIA8A6YXvcHt+zgtgYa+/n3H36dMOe/BGUBr/jM0
-	/xmaf0YGwHOBBxclKOXKEGmUNILb7S3IlEJ0hNw7JFJZCPpfwWvCDdCs7fOuBBgFKgGkcMbd
-	JWn/+jCxS6hsTyzHR27moxWcUAkkFMEMd5FeTA0V03LZTm47x0Vx/N8WoxxHqLAnr0s8Dab8
-	HYOFdml25ju3mF3hwTHg3OygC641TSPfjI50DnRfuSy4VzK0HDsd19p5e6Rv+u1GV7WlZ30h
-	o57o17bEjxcWrs5sKpuXtT/3pbOGyWiM6clp8dN5JQtjtQFKcUpHYkCLdebe+Yf4VYpbBZvG
-	zYzfNyNZsXzNrMTW2N6tcdN1vk+bwiaO7VmRPV5fsEXDLYBV5rql7f6iOSHINoyIm+ATaYv1
-	T0+bM+Zq59vjlpA8n1W+rtb8tEBPc+rswK/axsXTHq+t/abu3mw+/FxuuxLsMciTmTylep+q
-	V7ge1prw42T2kw0feH2tsWqrYdHVtaODlN+htYlx7vYJiGMIIVwm9cJ5QfYLXINCcHkDAAA=
-X-CMS-MailID: 20240603065101epcas5p2acde37ff1854ff6f455f51ec940caf65
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_50408_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240520102830epcas5p27274901f3d0c2738c515709890b1dec4
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
-	<CGME20240520102830epcas5p27274901f3d0c2738c515709890b1dec4@epcas5p2.samsung.com>
-	<20240520102033.9361-2-nj.shetty@samsung.com> <20240601055323.GB5613@lst.de>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
+Message-ID: <20240604020549.1017540-1-yuanchu@google.com>
+Subject: [PATCH v2 0/8] mm: workingset reporting
+From: Yuanchu Xie <yuanchu@google.com>
+To: David Hildenbrand <david@redhat.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, 
+	Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>, 
+	Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Gregory Price <gregory.price@memverge.com>, Huang Ying <ying.huang@intel.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>, 
+	David Rientjes <rientjes@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Shuah Khan <shuah@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>, 
+	Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Abel Wu <wuyun.abel@bytedance.com>, "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Yuanchu Xie <yuanchu@google.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_50408_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+Changes from PATCH v1 -> v2:
+- Updated selftest to use ksft_test_result_code instead of switch-case
+  (Muhammad Usama Anjum)
+- Included more use cases in the cover letter
+  (Huang, Ying)
+- Added documentation for sysfs and memcg interfaces
+- Added an aging-specific struct lru_gen_mm_walk in struct pglist_data
+  to avoid allocating for each lruvec.
 
-On 01/06/24 07:53AM, Christoph Hellwig wrote:
->On Mon, May 20, 2024 at 03:50:14PM +0530, Nitesh Shetty wrote:
->> Add device limits as sysfs entries,
->> 	- copy_max_bytes (RW)
->> 	- copy_max_hw_bytes (RO)
->>
->> Above limits help to split the copy payload in block layer.
->> copy_max_bytes: maximum total length of copy in single payload.
->> copy_max_hw_bytes: Reflects the device supported maximum limit.
->
->That's a bit of a weird way to phrase the commit log as the queue_limits
->are the main thing (and there are three of them as required for the
->scheme to work).  The sysfs attributes really are just an artifact.
->
-Acked, we will update commit log.
+Changes from RFC v3 -> PATCH v1:
+- Updated selftest to use ksft_print_msg instead of fprintf(stderr, ...)
+  (Muhammad Usama Anjum)
+- Included more detail in patch skipping pmd_young with force_scan
+  (Huang, Ying)
+- Deferred reaccess histogram as a followup
+- Removed per-memcg page age interval configs for simplicity
 
->> @@ -231,10 +237,11 @@ int blk_set_default_limits(struct queue_limits *lim)
->>  {
->>  	/*
->>  	 * Most defaults are set by capping the bounds in blk_validate_limits,
->> -	 * but max_user_discard_sectors is special and needs an explicit
->> -	 * initialization to the max value here.
->> +	 * but max_user_discard_sectors and max_user_copy_sectors are special
->> +	 * and needs an explicit initialization to the max value here.
->
->s/needs/need/
->
-Acked.
+Changes from RFC v2 -> RFC v3:
+- Update to v6.8
+- Added an aging kernel thread (gated behind config)
+- Added basic selftests for sysfs interface files
+- Track swapped out pages for reaccesses
+- Refactoring and cleanup
+- Dropped the virtio-balloon extension to make things manageable
 
->> +/*
->> + * blk_queue_max_copy_hw_sectors - set max sectors for a single copy payload
->> + * @q:	the request queue for the device
->> + * @max_copy_sectors: maximum number of sectors to copy
->> + */
->> +void blk_queue_max_copy_hw_sectors(struct request_queue *q,
->> +				   unsigned int max_copy_sectors)
->> +{
->> +	struct queue_limits *lim = &q->limits;
->> +
->> +	if (max_copy_sectors > (BLK_COPY_MAX_BYTES >> SECTOR_SHIFT))
->> +		max_copy_sectors = BLK_COPY_MAX_BYTES >> SECTOR_SHIFT;
->> +
->> +	lim->max_copy_hw_sectors = max_copy_sectors;
->> +	lim->max_copy_sectors =
->> +		min(max_copy_sectors, lim->max_user_copy_sectors);
->> +}
->> +EXPORT_SYMBOL_GPL(blk_queue_max_copy_hw_sectors);
->
->Please don't add new blk_queue_* helpers, everything should go through
->the atomic queue limits API now.  Also capping the hardware limit
->here looks odd.
->
-This was a mistake, we are not using this function. We will remove this
-function in next version.
+Changes from RFC v1 -> RFC v2:
+- Refactored the patchs into smaller pieces
+- Renamed interfaces and functions from wss to wsr (Working Set Reporting)
+- Fixed build errors when CONFIG_WSR is not set
+- Changed working_set_num_bins to u8 for virtio-balloon
+- Added support for per-NUMA node reporting for virtio-balloon
 
->> +	if (max_copy_bytes & (queue_logical_block_size(q) - 1))
->> +		return -EINVAL;
->
->This should probably go into blk_validate_limits and just round down.
->
-Bart also pointed out similar thing. We do same check before issuing
-copy offload, so we will remove this check.
+[rfc v1]
+https://lore.kernel.org/linux-mm/20230509185419.1088297-1-yuanchu@google.com/
+[rfc v2]
+https://lore.kernel.org/linux-mm/20230621180454.973862-1-yuanchu@google.com/
+[rfc v3]
+https://lore.kernel.org/linux-mm/20240327213108.2384666-1-yuanchu@google.com/
 
->Also most block limits are in kb.  Not that I really know why we are
->doing that, but is there a good reason to deviate from that scheme?
->
-We followed discard as a reference, but we can move to kb, if that helps
-with overall readability.
+This patch series provides workingset reporting of user pages in
+lruvecs, of which coldness can be tracked by accessed bits and fd
+references. However, the concept of workingset applies generically to
+all types of memory, which could be kernel slab caches, discardable
+userspace caches (databases), or CXL.mem. Therefore, data sources might
+come from slab shrinkers, device drivers, or the userspace. IMO, the
+kernel should provide a set of workingset interfaces that should be
+generic enough to accommodate the various use cases, and be extensible
+to potential future use cases. The current proposed interfaces are not
+sufficient in that regard, but I would like to start somewhere, solicit
+feedback, and iterate.
 
-Thank you,
-Nitesh Shetty
+Use cases
+==========
+Job scheduling
+On overcommitted hosts, workingset information allows the job scheduler
+to right-size each job and land more jobs on the same host or NUMA node,
+and in the case of a job with increasing workingset, policy decisions
+can be made to migrate other jobs off the host/NUMA node, or oom-kill
+the misbehaving job. If the job shape is very different from the machine
+shape, knowing the workingset per-node can also help inform page
+allocation policies.
 
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_50408_
-Content-Type: text/plain; charset="utf-8"
+Proactive reclaim
+Workingset information allows the a container manager to proactively
+reclaim memory while not impacting a job's performance. While PSI may
+provide a reactive measure of when a proactive reclaim has reclaimed too
+much, workingset reporting allows the policy to be more accurate and
+flexible.
 
+Ballooning (similar to proactive reclaim)
+While this patch series does not extend the virtio-balloon device,
+balloon policies benefit from workingset to more precisely determine
+the size of the memory balloon. On desktops/laptops/mobile devices where
+memory is scarce and overcommitted, the balloon sizing in multiple VMs
+running on the same device can be orchestrated with workingset reports
+from each one.
 
-------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_50408_--
+Promotion/Demotion
+If different mechanisms are used for promition and demotion, workingset
+information can help connect the two and avoid pages being migrated back
+and forth.
+For example, given a promotion hot page threshold defined in reaccess
+distance of N seconds (promote pages accessed more often than every N
+seconds). The threshold N should be set so that ~80% (e.g.) of pages on
+the fast memory node passes the threshold. This calculation can be done
+with workingset reports.
+To be directly useful for promotion policies, the workingset report
+interfaces need to be extended to report hotness and gather hotness
+information from the devices[1].
+
+[1]
+https://www.opencompute.org/documents/ocp-cms-hotness-tracking-requirements-white-paper-pdf-1
+
+Sysfs and Cgroup Interfaces
+==========
+The interfaces are detailed in the patches that introduce them. The main
+idea here is we break down the workingset per-node per-memcg into time
+intervals (ms), e.g.
+
+1000 anon=137368 file=24530
+20000 anon=34342 file=0
+30000 anon=353232 file=333608
+40000 anon=407198 file=206052
+9223372036854775807 anon=4925624 file=892892
+
+I realize this does not generalize well to hotness information, but I
+lack the intuition for an abstraction that presents hotness in a useful
+way. Based on a recent proposal for move_phys_pages[2], it seems like
+userspace tiering software would like to move specific physical pages,
+instead of informing the kernel "move x number of hot pages to y
+device". Please advise.
+
+[2]
+https://lore.kernel.org/lkml/20240319172609.332900-1-gregory.price@memverge.com/
+
+Implementation
+==========
+Currently, the reporting of user pages is based off of MGLRU, and
+therefore requires CONFIG_LRU_GEN=y. We would benefit from more MGLRU
+generations for a more fine-grained workingset report. I will make the
+generation count configurable in the next version. The workingset
+reporting mechanism is gated behind CONFIG_WORKINGSET_REPORT, and the
+aging thread is behind CONFIG_WORKINGSET_REPORT_AGING.
+
+Yuanchu Xie (8):
+  mm: multi-gen LRU: ignore non-leaf pmd_young for force_scan=true
+  mm: aggregate working set information into histograms
+  mm: use refresh interval to rate-limit workingset report aggregation
+  mm: report workingset during memory pressure driven scanning
+  mm: extend working set reporting to memcgs
+  mm: add kernel aging thread for workingset reporting
+  selftest: test system-wide workingset reporting
+  Docs/admin-guide/mm/workingset_report: document sysfs and memcg
+    interfaces
+
+ Documentation/admin-guide/mm/index.rst        |   1 +
+ .../admin-guide/mm/workingset_report.rst      | 105 ++++
+ drivers/base/node.c                           |   6 +
+ include/linux/memcontrol.h                    |   5 +
+ include/linux/mmzone.h                        |   9 +
+ include/linux/workingset_report.h             |  97 +++
+ mm/Kconfig                                    |  15 +
+ mm/Makefile                                   |   2 +
+ mm/internal.h                                 |  18 +
+ mm/memcontrol.c                               | 184 +++++-
+ mm/mm_init.c                                  |   2 +
+ mm/mmzone.c                                   |   2 +
+ mm/vmscan.c                                   |  58 +-
+ mm/workingset_report.c                        | 561 ++++++++++++++++++
+ mm/workingset_report_aging.c                  | 127 ++++
+ tools/testing/selftests/mm/.gitignore         |   1 +
+ tools/testing/selftests/mm/Makefile           |   3 +
+ tools/testing/selftests/mm/run_vmtests.sh     |   5 +
+ .../testing/selftests/mm/workingset_report.c  | 306 ++++++++++
+ .../testing/selftests/mm/workingset_report.h  |  39 ++
+ .../selftests/mm/workingset_report_test.c     | 329 ++++++++++
+ 21 files changed, 1869 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/admin-guide/mm/workingset_report.rst
+ create mode 100644 include/linux/workingset_report.h
+ create mode 100644 mm/workingset_report.c
+ create mode 100644 mm/workingset_report_aging.c
+ create mode 100644 tools/testing/selftests/mm/workingset_report.c
+ create mode 100644 tools/testing/selftests/mm/workingset_report.h
+ create mode 100644 tools/testing/selftests/mm/workingset_report_test.c
+
+-- 
+2.45.1.467.gbab1589fc0-goog
+
 
