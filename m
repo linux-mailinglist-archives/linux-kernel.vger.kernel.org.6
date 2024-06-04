@@ -1,117 +1,178 @@
-Return-Path: <linux-kernel+bounces-200706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99E68FB3C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:29:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD88FB3C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0F872893CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:29:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF511C213F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24011474BF;
-	Tue,  4 Jun 2024 13:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD2A146D7D;
+	Tue,  4 Jun 2024 13:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="l6mpYBvh"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eb6t7siY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1EB146A9F;
-	Tue,  4 Jun 2024 13:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DA0146D77
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717507742; cv=none; b=LL0im7fUPOjXM5JrXVgZGqH3tLSCCPzyDBKkqXnfWRPa3GqEJ9tHjU6nBOFC3xk+I1YYOG64eKdmJxH+70++r8D7Mpb+FelhDzVJSQm9rm7uZOj714O1u2IucaztrKDkmPQe2ZFKF8mLvg/bT4uR+hv0mZRY5DIJhTx2sEhcv9w=
+	t=1717507736; cv=none; b=rMPNYxSUvNwtjwhODVe+jZnkAcij1YV8OH4d4mHtFu0CoChE6MLYh9vNNHLFWijXe0o4B5bLZUt7SFnYiLFNJD3F0t2jbOcGxavBnq039N68czC2N/lP37U/TbHT3WrVeN6hClIL/thQ7PWoMB0sZQfre2HXBUGKl3j8+0twb7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717507742; c=relaxed/simple;
-	bh=0KwW1lP/Fqd8gjgjRDUsphqXkDbnWeiSvjLBafUfRGI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M1Qzg2IuYi6HJp02rNClLQTw0bFq4A/slj49n536oCbd1jJCbuK+5NX46OKLiQLGTgweUKoe8KG56QMGtnHnbHFtPURuytg5h0Rxn8SpHubJH7bDKKoo5dpQoImx3vo39ODAgVQSWH5CV+yPqN57okbYwvDAU72xuOYMTChg31k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=l6mpYBvh; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45460IGT000510;
-	Tue, 4 Jun 2024 08:28:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=rKo8sesOPIoJBk+m
-	TspMtgIGKL1blFi2gZP4ywVyU1Y=; b=l6mpYBvhEd4IgDu3okT36y5zKwqs4LFM
-	QX3ExZLC35wbjlwIfSf4Rhu91Pj53GNgAXLej7SVVuW/f1u0JpIwiqUMVr7YNEgu
-	IYOL/JSc0NTRIi0q1Zp/QLW59S5NDqoRQIEghi1DcQxyaF9kbwO0ZhBYG3acl3+p
-	ndCR3qKmsRdKxrzd/M/q9pCmKciMn8REwZbNmEbMx//irOPfYYYsqs87DKK1x/5T
-	Ny1mKB6XSYQ5VG+NpgerWoP/ifjCpuwgnirythrqYniIaoUHy16WtSk//czUm/u6
-	wPfAv1tdnmG+zhGHSTJIYWJmAaV4SnZP8x6HHijSoGGzH3ROJZtVIA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3yg11xtn63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 08:28:46 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 14:28:44 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Tue, 4 Jun 2024 14:28:44 +0100
-Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E886A820249;
-	Tue,  4 Jun 2024 13:28:43 +0000 (UTC)
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <lgirdwood@gmail.com>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH] ASoC: cs42l43: Increase default type detect time and button delay
-Date: Tue, 4 Jun 2024 14:28:43 +0100
-Message-ID: <20240604132843.3309114-1-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717507736; c=relaxed/simple;
+	bh=tEP4FxvSBnrhpDRl6WQ4IKX33lUXJ8VWdEL2T2jp8dg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=q5OBQf6v/k+L6YQ2C825cxHovOJn+EaYXaCoVlZfzOt7tHcoskDAJNyoh/3z9yjhSVmZLIgegbrx0AmS00+vRufd5WduNECgvSf0ynR0glkhJX7u8KPJpszEUhe6qGBI1mXoD4kBUMUzsuCIErmTbPG65ELff+X7+DGFP+eDMMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eb6t7siY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717507733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=42V/ockWwxrYy/bRQBVw5gjEZCwTD2Wh2lZUM6jdqB0=;
+	b=eb6t7siY1wxL50RGSA/cmKJXLZ3LfaFBGouXl0oKZ3olr+KvHS72G6nP0szGosAHW5miw4
+	TsIPHIAA0fYNeXjB8MporL7suSCPigaqHpqEL7KXaVd66wG08XEa3TGkXaNAetU4q0WqTX
+	cnmzlvcVDdgDqTwjUGwhD5vRyIxvY4Q=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-255-ZtPJYv4sPmiRPJUFVNSvRA-1; Tue, 04 Jun 2024 09:28:52 -0400
+X-MC-Unique: ZtPJYv4sPmiRPJUFVNSvRA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35e0e59dcf7so2508216f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:28:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717507731; x=1718112531;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=42V/ockWwxrYy/bRQBVw5gjEZCwTD2Wh2lZUM6jdqB0=;
+        b=FYemzM64BurVtnvr2/V4Aum/q90Vz2yYZIaLLYED+m4GRHo8SVqSsXfNco7mrKA4U8
+         pNpT2OOSPMg1DlFxAko2ZfnhT6Xge/JnLGcAQTnSJA6FE67QxjUna/TussUxsCKgQcph
+         +Kuuv9Hb7GhknpqUY7txnq8Oaj5491ygRuHoi1t59L4arRxvWhTcoU7U91hCsI4zOeG0
+         x75zT0170wGHurNrLRLxGa1agquFq9fjhynVROFPbLT+9xQOer9POshyfeH25GgoQW8Q
+         NIl9nezZrcPYCH5UW4M7bYxB3uGdvK3QMAZVOybev9RcQHe3uvWoZP/la/9Rb9V4zajC
+         pIQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlMj+4OjkH692eEkEP0d9BF+m0Jf5IBk1MxBjoufTUaX68jMNwhhnsCfVAdncadhhEkltTuSCVZ0Ctbqlo4OcwimqdUpEiDQ0f6Y4x
+X-Gm-Message-State: AOJu0YwYivStoWksZE+Fq4zrqKEflkKhGnrT2HoiEjCQtLsGz+mQBvNi
+	zxC4kzAA3yC2VIAQPI89+lBQcMtcaiH6SV7MkXl5u2WHAbhYLFqdAHuYTtZmz9PZjQ9UwN2tQ6y
+	iY54kei/9CQJ11+9dBJth56V7K8LAEDyiBiEzHy8lxo2rqJvCZWK2M6FP2MjKJA==
+X-Received: by 2002:a05:6000:1207:b0:354:c8d7:e0af with SMTP id ffacd0b85a97d-35e0f2947e1mr7516454f8f.35.1717507731234;
+        Tue, 04 Jun 2024 06:28:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFktQuvCXtauGgJWzfxv770xS8RoIJMbHbbiuUoVp/Wok6oTrNjlNqZ9HXfUP6Mz6SK/umj6Q==
+X-Received: by 2002:a05:6000:1207:b0:354:c8d7:e0af with SMTP id ffacd0b85a97d-35e0f2947e1mr7516431f8f.35.1717507730838;
+        Tue, 04 Jun 2024 06:28:50 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73a:3a00:a025:9b06:549e:c16b? (p200300cbc73a3a00a0259b06549ec16b.dip0.t-ipconnect.de. [2003:cb:c73a:3a00:a025:9b06:549e:c16b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd064b5e9sm11590372f8f.96.2024.06.04.06.28.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 06:28:50 -0700 (PDT)
+Message-ID: <9bc7eb69-47a7-4565-8672-636273967dc3@redhat.com>
+Date: Tue, 4 Jun 2024 15:28:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: AN8n7csA4cJcXIBdG4ezxSesYiOW-B9u
-X-Proofpoint-ORIG-GUID: AN8n7csA4cJcXIBdG4ezxSesYiOW-B9u
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] use folio in ksm
+To: alexs@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ izik.eidus@ravellosystems.com, willy@infradead.org, aarcange@redhat.com,
+ chrisw@sous-sol.org, hughd@google.com
+References: <20240604042454.2012091-1-alexs@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240604042454.2012091-1-alexs@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Maciej Strozek <mstrozek@opensource.cirrus.com>
+On 04.06.24 06:24, alexs@kernel.org wrote:
+> From: "Alex Shi (tencent)" <alexs@kernel.org>
+> 
+> This is the 2nd part to use folio in ksm, it saves 82kbytes in ksm.o and
+> passed all ksm testcases in kselftest.
+> 
+> KSM still split same folios to single page if they are good to be KSM,
+> but will skip the rest subpage checking if a folio couldn't suit for
+> ksm.
+> 
+> Alex Shi (tencent) (10):
+>    mm/ksm: reduce the flush action for ksm merging page
+>    mm/ksm: skip subpages of compound pages
+>    mm/ksm: use folio in try_to_merge_one_page
+>    mm/ksm: add identical_folio func
+>    mm/ksm: use folio in stable_tree_search
+>    mm/ksm: remove page_stable_node
+>    mm/ksm: use folio in unstable_tree_search_insert
+>    mm/ksm: use folio in try_to_merge_xx serie funcs
+>    mm/ksm: calc_checksum for folio
+>    m/ksm: use folio in ksm scan path
 
-Some problematic headsets have been discovered, to help with correctly
-identifying these, the detect time must be increased. Also improve the
-reliability of the impedance value from the button detect by slightly
-increasing the button detect delay.
+I skimmed over most patches, but I'm afraid you introduce quite some 
+subtle problems.
 
-Fixes: 686b8f711b99 ("ASoC: cs42l43: Lower default type detect time")
-Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- sound/soc/codecs/cs42l43-jack.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Part of the rework should not be do convert things to folios that really 
+operate on pages (of possibly large folios).
 
-diff --git a/sound/soc/codecs/cs42l43-jack.c b/sound/soc/codecs/cs42l43-jack.c
-index 901b9dbcf585..d9ab003e166b 100644
---- a/sound/soc/codecs/cs42l43-jack.c
-+++ b/sound/soc/codecs/cs42l43-jack.c
-@@ -121,7 +121,7 @@ int cs42l43_set_jack(struct snd_soc_component *component,
- 		priv->buttons[3] = 735;
- 	}
- 
--	ret = cs42l43_find_index(priv, "cirrus,detect-us", 1000, &priv->detect_us,
-+	ret = cs42l43_find_index(priv, "cirrus,detect-us", 50000, &priv->detect_us,
- 				 cs42l43_accdet_us, ARRAY_SIZE(cs42l43_accdet_us));
- 	if (ret < 0)
- 		goto error;
-@@ -433,7 +433,7 @@ irqreturn_t cs42l43_button_press(int irq, void *data)
- 
- 	// Wait for 2 full cycles of comb filter to ensure good reading
- 	queue_delayed_work(system_wq, &priv->button_press_work,
--			   msecs_to_jiffies(10));
-+			   msecs_to_jiffies(20));
- 
- 	return IRQ_HANDLED;
- }
+We really have to be careful about pages vs. folios before we have KSM 
+folios. Only then, we know that we have small folios only.
+
 -- 
-2.39.2
+Cheers,
+
+David / dhildenb
 
 
