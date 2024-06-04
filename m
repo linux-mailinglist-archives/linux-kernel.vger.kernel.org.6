@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-200741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E780D8FB439
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:46:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D878FB43A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 15:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7EF1F27222
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D4A28279E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 13:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08951755B;
-	Tue,  4 Jun 2024 13:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B897127B7A;
+	Tue,  4 Jun 2024 13:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zJYwRNor"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QxLIYsfN"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB55E1EB26
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DEF64CEC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2024 13:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717508727; cv=none; b=aCEpbQSFsvqGQychLeWhazTuFJ2e/ERWqiFoIeyAyNeRYlSK7kCn4hwSWK8DEiY5+MORegDIu5rtOSYjghhn50eBi73WFOZkGzu1I1twbESGiIMg5X0gZMn7360Ajzo8tUakrCJNkywARnPhPBMPfSKCi6tSkYMPtvcAcPDaWIM=
+	t=1717508730; cv=none; b=D80khEP54hnKRg176QPIzf0SP58Z08jsd8HEEw/175fEWtsYv51MtavgZzxSEdLpX8xy/AUcqXzU869R7QKFQXpHkvj0DqhlW4QOZ/uOCLui+qtn1J6cSac3y9aChNCyiUKKHN4CI/T0xoDWN8pc3iOSTocJSM/o6kxaN1HAmQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717508727; c=relaxed/simple;
-	bh=EOR86DyJUFyt6vi5LLhI5CPugklUIR3Z+4WkALn51GM=;
+	s=arc-20240116; t=1717508730; c=relaxed/simple;
+	bh=Q/3S4IM0+lkbuvaoBSCVnF9EWsdDHxTYH7q0BMIlaVA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kgKgVFypW6kQYqcoxWtKykMg20NkL5yCutP6aK8+0iJf94XXazlGHWloquamcrE5ElO7c9uSDW71hDPOZcBBxBllE0zVHCGKmWlumVezCDUEdPS+xWPqGb7K7RjaF28KwM6vf78fec0OIYeykZAIV6YYGwHfyc3OSDu+P6cEIcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zJYwRNor; arc=none smtp.client-ip=209.85.208.73
+	 To:Cc:Content-Type; b=Z4BCwMk8YcbMJnWScBJP8LIpofsF1WvafRSWT8rGhhxFCzYiSDcqF10UzuyoLI+SZYaQtwaNPGaMxCDebHDbe2uu16mvXbAbAJLNJqXciWKAZlGJtGK+maBFZpAnKI3JaZz/9OJLAtKjobDamtadkzWAG7a7bZJnH6JRDc8n3y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QxLIYsfN; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-57a48571907so2853992a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:45:25 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a50486746so17166397b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 06:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717508724; x=1718113524; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717508727; x=1718113527; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7crr8ViwVUYkJc9K3SnlRI57V9rnb04QET7mfafjGs=;
-        b=zJYwRNorktkzoBJ5uMA4tsoxbMlVTvcAcMfh/pymynmDQarGEv88eCEjPmAYTAW+Mx
-         4/LBoi+aml8PIU5rbOQGpNOEBXq2ufw4lf3KrNKBqGa0zM9/rYgmQrf0nVGgItXSLmkj
-         qSY1XxlPV062Wh1XgRbXFre59UmlzV+5NWYOzkZQOElnKPgUZ+05FCsN/l1mThRRhpGT
-         6LmWEy4RAdgBuQ1WtkWd2oZXhtEf/lNGQJMmQWdlyyh9uw0c/KREhlfyBtmqDuBM9lh2
-         TEy7p+Epv5lr/UoJ/QqN3wCUben1GGLMRN6DpVCH7nJfu1YoWxibZBHX3CBSb8vmnxaS
-         7t4Q==
+        bh=npTzBRGDQZLEXKsoPxnrziHXCVeKHkYnd87neXVciCg=;
+        b=QxLIYsfNqLZ3VZGP7+E3gudTZQdY2l1dsvCdyhDufd7534IWeShiPxFF4jJzbNksww
+         JRCRuBR/CzXbu/bmhAzyXeIOH+InDAwxbZGenSgml3Kj92Gxbm21dheol4At+km3vyOs
+         bghX1RlgFJW1SR6/UA5KVRc1YGBOLpaSOgpL/JpNEFwQLQtPJOaBqp4Ie6Dj78g9R50h
+         pPJmuhq2tN4bysEsaAnZUsaqxbRV581p1N2Hf32axEefHHcAk4kGkZmNyv1WFb9xTYz4
+         AGgLPvN+j6qh4d+f3zo2aZw8tOiW+CGE6mVlz6719U46EZXd2IlR5thtHu7kFwjGf9Vx
+         FUqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717508724; x=1718113524;
+        d=1e100.net; s=20230601; t=1717508727; x=1718113527;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7crr8ViwVUYkJc9K3SnlRI57V9rnb04QET7mfafjGs=;
-        b=CVqYFqFczJPwzG1s9JpGBj6NYUG9KMPHgZHsqK+KLfyisYU7xf2OVbge3UjCfvRRiC
-         ZirQMJEhpaDxzSp1l2qUEcxHasP6nUhFzE8xoDPm4yJ1ibbaqFNHnb6XAYemv0LiA4lD
-         M7Zhl8CUcFzg+mnnw76CqI7hWjVwAO5lsbzB/vtzciRrgkVo27GD2jdld14145qZj7Ji
-         /2kXso9MOVJnh08+IGNZnkXCIL7+/lZTmSrrVsxYvodvzpftPb+GPEPhVGVuflX5BLpB
-         BXvEcyjObxwA79WGXzLibjqVVNyIKIAgvDGEWz4/DF3Lh4R8UGo64C6ihkMfzRKyRVXA
-         U3yg==
-X-Gm-Message-State: AOJu0YxCrsThbZ2rCBkehLpXfzEdiMk+vAs4jtJY6yy8uFboQsnFiYXO
-	ILuU2JnxpXw3NlyhNDLdpR1SYdvIU0eK6Igloi10kRr6IhJlSF0xkR8qeXrbrXlIFJfGEOFHhn3
-	cMWI7cg==
-X-Google-Smtp-Source: AGHT+IGfbXUFOX62jpZi4xsRqvTMlWno8B1zrAd1Vvyf2U/ZTLDJ0EvYZzI7cfb5JDOKPv27f05KuVhm+Fq3
+        bh=npTzBRGDQZLEXKsoPxnrziHXCVeKHkYnd87neXVciCg=;
+        b=fDlr0cQTBNlPrv06vPbT9wL7/H66uDI3oDlVR8FrnjLYipP9iNGX36dh2eYyHDSD8K
+         z8YOoEii7coDQKvxetyM3zy/ewXPprOpRBNZOLVbvvNWl++nkR/owPv5XN9EQyftcMez
+         VLK5Xa/PZ2rYinsg9gPjy8CcJx8daXFKZCflJqqUoT3nLWm/J52/Q7YdKywFUqLA+RCO
+         8tnd36gTz1x0xcU4QxVd/tu8qqwUZNfZw2sfeOjanO1JBElskvzqwRhhSsXVFyVmhzpA
+         Bs5g3cfqqmnOg9wdmCIKgkNeE7UkJVcOpkDtkrIDyVxAVXzFrpUqPhu+oizCpeP0rr7H
+         q5cg==
+X-Gm-Message-State: AOJu0YykQIchKc9h6/v1hwdx75yl6VydmvvSbsXgkcDWvQbo+PwG9ueN
+	Bz/GMn9onYxtoJT+iH2KaBJBns23wn4t9231nyuxMTW+zBGZG20p9tDOIaA/x4KT3FcEgE+sb7M
+	KmFCOTA==
+X-Google-Smtp-Source: AGHT+IHFfzMSi1l9c8kj8OY+kUAMbW+CfVkib0L7CP7s5UUsfmgL1CTSsORRjdoK21leqxlX+REyI/Y00G6s
 X-Received: from dvyukov-desk.muc.corp.google.com ([2a00:79e0:9c:201:789f:7f5b:3f40:46c8])
- (user=dvyukov job=sendgmr) by 2002:aa7:d955:0:b0:57a:885e:1a44 with SMTP id
- 4fb4d7f45d1cf-57a885e1bd9mr545a12.1.1717508724013; Tue, 04 Jun 2024 06:45:24
- -0700 (PDT)
-Date: Tue,  4 Jun 2024 15:45:04 +0200
+ (user=dvyukov job=sendgmr) by 2002:a25:ac99:0:b0:df4:a393:8769 with SMTP id
+ 3f1490d57ef6-dfa73da3e11mr556704276.9.1717508727172; Tue, 04 Jun 2024
+ 06:45:27 -0700 (PDT)
+Date: Tue,  4 Jun 2024 15:45:05 +0200
 In-Reply-To: <cover.1717507310.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,43 +72,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1717507310.git.dvyukov@google.com>
 X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
-Message-ID: <8e7115affb70513cdd9d5ce83547b98c4c5e419f.1717507310.git.dvyukov@google.com>
-Subject: [PATCH 3/4] module: Fix KCOV-ignored file name
+Message-ID: <4c05efefe278bc5b140dba40eb1d195cceb2e6ce.1717507310.git.dvyukov@google.com>
+Subject: [PATCH 4/4] x86: Ignore stack unwinding in KCOV
 From: Dmitry Vyukov <dvyukov@google.com>
 To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
 	dave.hansen@linux.intel.com, x86@kernel.org
 Cc: linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, elver@google.com, 
 	glider@google.com, nogikh@google.com, tarasmadan@google.com, 
-	Dmitry Vyukov <dvyukov@google.com>, Aaron Tomlin <atomlin@redhat.com>
+	Dmitry Vyukov <dvyukov@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Module.c was renamed to main.c, but the Makefile directive
-was copy-pasted verbatim with the old file name.
-Fix up the file name.
+Stack unwinding produces large amounts of uninteresting coverage.
+It's called from KASAN kmalloc/kfree hooks, fault injection, etc.
+It's not particularly useful and is not a function of system call args.
+Ignore that code.
 
 Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Fixes: cfc1d277891e ("module: Move all into module/")
-Cc: Aaron Tomlin <atomlin@redhat.com>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: syzkaller@googlegroups.com
 ---
- kernel/module/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/Makefile | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/kernel/module/Makefile b/kernel/module/Makefile
-index a10b2b9a6fdf..50ffcc413b54 100644
---- a/kernel/module/Makefile
-+++ b/kernel/module/Makefile
-@@ -5,7 +5,7 @@
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 20a0dd51700a..cd49ebfae984 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -39,6 +39,14 @@ KMSAN_SANITIZE_sev.o					:= n
+ # first second.
+ KCOV_INSTRUMENT_head$(BITS).o				:= n
+ KCOV_INSTRUMENT_sev.o					:= n
++# These are called from save_stack_trace() on debug paths,
++# and produce large amounts of uninteresting coverage.
++KCOV_INSTRUMENT_stacktrace.o				:= n
++KCOV_INSTRUMENT_dumpstack.o				:= n
++KCOV_INSTRUMENT_dumpstack_$(BITS).o			:= n
++KCOV_INSTRUMENT_unwind_orc.o				:= n
++KCOV_INSTRUMENT_unwind_frame.o				:= n
++KCOV_INSTRUMENT_unwind_guess.o				:= n
  
- # These are called from save_stack_trace() on slub debug path,
- # and produce insane amounts of uninteresting coverage.
--KCOV_INSTRUMENT_module.o := n
-+KCOV_INSTRUMENT_main.o := n
+ CFLAGS_irq.o := -I $(src)/../include/asm/trace
  
- obj-y += main.o
- obj-y += strict_rwx.o
 -- 
 2.45.1.467.gbab1589fc0-goog
 
