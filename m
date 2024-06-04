@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-201467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920CA8FBED8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:25:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21948FBEDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50CE72871ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:25:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BB1CB26F78
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 22:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80FE14EC64;
-	Tue,  4 Jun 2024 22:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A3B14EC66;
+	Tue,  4 Jun 2024 22:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPKa69by"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZ1l9DSb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC5114D280;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBC214D28E;
 	Tue,  4 Jun 2024 22:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717539837; cv=none; b=MhYZh79uB3Aq+I3VJpjNlXFCuCblwveLPk634VH8FypZi5zk9GmWhCJIeQtdsYk2dg1iQVyd8vk68pX0IZsKuVVeQl+pLrERETt1s53O5Ybd2D7UnT5Q8VxLCzLvVQ7FegzH/M+vHROySZnOIjUddfEv89qiXgYbsCqVcDO4wt0=
+	t=1717539837; cv=none; b=q5EFIMNJucwSD+VVEBmPloCLIsCLtJbbway3ysqw9SD62rL2iQZy5QdCibv1b52wObXs4cpL4DcaOT6dmts5WvAFgqAdxBViX38agZ+pKtnCZky0ixsuSiC65/7csFHYCesWJOIVEQmQrQ5irLvg7Apv0Jnhog7akfOOi5eDHKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717539837; c=relaxed/simple;
-	bh=98bpyMc4kjv6NZYaNOfRLHxirnUo9+sqZwi21lujIj4=;
+	bh=3cxpJfoy8T/KbD5i0taeL255jR0v95FOadtBWaxfrUc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cyICS69W/2B/O4hcPIte7Mkax0QQrIrLpSuzt9YzMRauALqKICQmMpxBpEN4oG972FTkFkTkg2QbkUoHgHoi9GgTXQLFFndVmociZVU3OUzAyM6n9MYp+zzE+iCfeEUbeOKQFsQ3Jet24ZGadSKJBYKlbTwLy6cajeDK0T2d7Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPKa69by; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16CB4C4AF11;
+	 MIME-Version; b=UY605izIvreICRcG8oharWEfuUzZ1fr6Ibetrynuy8XFbnaojK6WQELQ7PSoCfSj1Z52uAxggcNLaHrhpSl+id0x9V3oE6dGowHXUmJ7D8V9Q4+QFz/bzDc1TWnPrMPJ9QO7DHF1hxQ95NeYfNBRTTEmMTjQwIyzl++LsmhTgas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZ1l9DSb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E48C4AF12;
 	Tue,  4 Jun 2024 22:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1717539837;
-	bh=98bpyMc4kjv6NZYaNOfRLHxirnUo9+sqZwi21lujIj4=;
+	bh=3cxpJfoy8T/KbD5i0taeL255jR0v95FOadtBWaxfrUc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LPKa69bymMxvmWPand6Ih37w5YpXlIXfzKLK4yX5nhY7ZolasnPQkBO43EibtqMV2
-	 npkcNgtpaSoOsnX2obVG3/bdM25lPWiz5hwt5pqsAZOrKBxEk8QGwbAMSg7KVqrpxn
-	 iEilfCvS4lxZB1TEx8luUUNX+oY5u7qBAI9g+GI0gBsoz0B1c1n9kkyDMf5ELlngPb
-	 cNyE7gLjuCf9kPGG59+rHBQfjZmiJLWlC0z1fX099opPwaBpyGD2FEA46U/cpyl/ce
-	 ouGQ1OvTyT3ZBph2tTd6h0qkeDCU6a7Yf13IjgET6qDyPzAKaaQECkZW255ThOb7rR
-	 mph7GHqzTGE5w==
+	b=CZ1l9DSbH/RQScpO9KFYfapGQp/GOEMXcSGIh/NWdipN1ejmD3EzK8bvwfQ9aX6pE
+	 GCTh1c6SILCZWHSWQQDTEDIkNTFP36HuGJeAApSYDUiRiuL31N90sZT7atwP0E3o5E
+	 i/FbeHtk27KBcBLm4rWlOeqUgPLxlVs0DjCQntGLeZG7p5QDuNOJnhf01bZZ9QwlA7
+	 3oXNRFkF7dcQoiI92REbWdCYtv3ccFXQszoRmYqC8RG27rbuzsPUzRBL9gDPo7L8RP
+	 kADVu5B0IYyeYHlD0UWphkYOUaNklI7MxuTMe/Ik3UZX4BsLV57TVnY6vDa5XPlWbp
+	 3Fzu4swDy011g==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 698DECE3F32; Tue,  4 Jun 2024 15:23:56 -0700 (PDT)
+	id 6C4EFCE3F34; Tue,  4 Jun 2024 15:23:56 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: [PATCH rcu 7/9] MAINTAINERS: Add Uladzislau Rezki as RCU maintainer
-Date: Tue,  4 Jun 2024 15:23:53 -0700
-Message-Id: <20240604222355.2370768-7-paulmck@kernel.org>
+	Oleg Nesterov <oleg@redhat.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 8/9] rcu: Eliminate lockless accesses to rcu_sync->gp_count
+Date: Tue,  4 Jun 2024 15:23:54 -0700
+Message-Id: <20240604222355.2370768-8-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
 References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
@@ -63,24 +63,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+From: Oleg Nesterov <oleg@redhat.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bfe..3f2047082073f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18868,6 +18868,7 @@ M:	Neeraj Upadhyay <neeraj.upadhyay@kernel.org> (kernel/rcu/tasks.h)
- M:	Joel Fernandes <joel@joelfernandes.org>
- M:	Josh Triplett <josh@joshtriplett.org>
- M:	Boqun Feng <boqun.feng@gmail.com>
-+M:	Uladzislau Rezki <urezki@gmail.com>
- R:	Steven Rostedt <rostedt@goodmis.org>
- R:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
- R:	Lai Jiangshan <jiangshanlai@gmail.com>
+The rcu_sync structure's ->gp_count field is always accessed under the
+protection of that same structure's ->rss_lock field, with the exception
+of a pair of WARN_ON_ONCE() calls just prior to acquiring that lock in
+functions rcu_sync_exit() and rcu_sync_dtor().  These lockless accesses
+are unnecessary and impair KCSAN's ability to catch bugs that might be
+inserted via other lockless accesses.
+
+This commit therefore moves those WARN_ON_ONCE() calls under the lock.
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/sync.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
+index 6c2bd9001adcd..da60a9947c005 100644
+--- a/kernel/rcu/sync.c
++++ b/kernel/rcu/sync.c
+@@ -122,7 +122,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+ 		 * we are called at early boot time but this shouldn't happen.
+ 		 */
+ 	}
+-	WRITE_ONCE(rsp->gp_count, rsp->gp_count + 1);
++	rsp->gp_count++;
+ 	spin_unlock_irq(&rsp->rss_lock);
+ 
+ 	if (gp_state == GP_IDLE) {
+@@ -151,15 +151,11 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+  */
+ void rcu_sync_exit(struct rcu_sync *rsp)
+ {
+-	int gpc;
+-
+ 	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_IDLE);
+-	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0);
+ 
+ 	spin_lock_irq(&rsp->rss_lock);
+-	gpc = rsp->gp_count - 1;
+-	WRITE_ONCE(rsp->gp_count, gpc);
+-	if (!gpc) {
++	WARN_ON_ONCE(rsp->gp_count == 0);
++	if (!--rsp->gp_count) {
+ 		if (rsp->gp_state == GP_PASSED) {
+ 			WRITE_ONCE(rsp->gp_state, GP_EXIT);
+ 			rcu_sync_call(rsp);
+@@ -178,10 +174,10 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
+ {
+ 	int gp_state;
+ 
+-	WARN_ON_ONCE(READ_ONCE(rsp->gp_count));
+ 	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_PASSED);
+ 
+ 	spin_lock_irq(&rsp->rss_lock);
++	WARN_ON_ONCE(rsp->gp_count);
+ 	if (rsp->gp_state == GP_REPLAY)
+ 		WRITE_ONCE(rsp->gp_state, GP_EXIT);
+ 	gp_state = rsp->gp_state;
 -- 
 2.40.1
 
