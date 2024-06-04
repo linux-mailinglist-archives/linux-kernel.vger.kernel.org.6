@@ -1,115 +1,137 @@
-Return-Path: <linux-kernel+bounces-200132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-200133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84DCA8FAB8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:08:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B41C8FAB92
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 09:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A78B1F25481
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8561C23EFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2024 07:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A17140375;
-	Tue,  4 Jun 2024 07:08:34 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EAF14037E;
+	Tue,  4 Jun 2024 07:09:16 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D87013E05B;
-	Tue,  4 Jun 2024 07:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4959C2209B;
+	Tue,  4 Jun 2024 07:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717484914; cv=none; b=icNiAB0n5IunuM9U6qpilsfaKhpeLucxGoOFsP1pE0n1Z70TGR68jz6Wr3kXCnR3HmuSWSPAFy12H1x1RBiqa6BGbRPGYsEVRN6KTpb3i3ROjetdwhVCk8g108oMy6DqP9tSUKiKsJrVOT4TH1eq3bdkmdp+3wKRkXzu+6c5KZ4=
+	t=1717484956; cv=none; b=f5eCi6NDobIXXV4u2W5RH4DFIuX3UVGQpbcOiatmceKt0zflf0w0bkoPlQrC8zP0qGU7GEhzKJNe9PIJrQudMZTL8xK0Ft70+ZJXHHgOEquVTHudOdBerzzSnpvzKksrTKYiBHW/9GguMTk5dTvuyhC/hCDOP+6ZTdD+qQ8iZk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717484914; c=relaxed/simple;
-	bh=8ylGpk81HGWaR4ucvdzGGtqUFC0eznPY76KdxBBdV1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WfiKXMZUj7qkVu22Rb9yQFCSj/EfUOMpzEptVe5wNOBZcpyNIqkpyJneAAaaWGofp3zgjjbQ0UQKQdIcARFS+I/em2tA+ZvZ3QlTiceZhAlJBfUAdcuyuDPVYD3dZ6Yc4vX48YyrDahpUEfVxWKyDOMvf/XZqa7zw26qgX1fbQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a0849f5a8so51985217b3.2;
-        Tue, 04 Jun 2024 00:08:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717484910; x=1718089710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5X6u+stsd+tfYvF8pXNh8WFecifUW8/FZJLC/QeGp5E=;
-        b=sikoKhoWPQprunm/bwUCV7AWrg4NbWoOkuFdLUDgwwFNxCtHKeqMRUzQqAfvj7JWtM
-         y/Mr+hS+C0qK3NWGxc5BwU0S0LpqULNVEy8kWFOpJFBdMBH81sPmErSMUbUaVot2Qg6U
-         G+o4S8W+7gWRqUUXHT9QhCmVPBX40qBbohB0n06SarngJS/5biy0Wwj93XjTC5bgClYk
-         oBy6668KogwwgMpD6o3MZo0trKfFKa+DY59DtdCVa3elpQLJEXFy+9eE1HPiGv4c57B0
-         ulPaKZ5z0AEjwC8AmDvyflm1BhjS/sqllLttVD6hlDW+jquYqPEk6H7dEOms90ycAMUs
-         2W0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU+LePO3bJQ4cdnF7aH6AIFNdN1LcbyQ2Ei9RB+HmFo8pk+E3KXyadIF/mO7G0V1coMutEnQbsGEqUNBWDhLxylWHE1DFvCPme+d+HBrPPVNqgyw5w8HWNM9lK2awCURDrt1q+C4uG0IwWU
-X-Gm-Message-State: AOJu0Yx7L2IwMuxWmgaWeLpCRDky9pNaGHc9/osBs7Zi1CWf1vp9RjBs
-	9jFQsdEr2JMEwqZOs2Q5KUx5i9tjUi9bYSymUuEEbXa/3RP+/A3BjOyr0K88
-X-Google-Smtp-Source: AGHT+IHG6sLq69djTYwVLvY55htVHu3eNTGjpRYkhVYuy4pYsqLwyYgGjZBFq/YBsPChN/UzB9QW0w==
-X-Received: by 2002:a81:eb0d:0:b0:622:d6af:2555 with SMTP id 00721157ae682-62c796bf74dmr109287557b3.2.1717484909854;
-        Tue, 04 Jun 2024 00:08:29 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766b3286sm17570767b3.113.2024.06.04.00.08.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 00:08:29 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa4876a5bbso4742434276.2;
-        Tue, 04 Jun 2024 00:08:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfeK7Z7AucFMuzsgkA5xT/QayGXyJ9P7WBV+f1+2vD9lRVwUizqv7bD+fkcUr/EiP9OjkAXfJLOTjn/a39yXnQcbTyGVnkxLNelJR2/ox3UfYMFvYXJnD9vtfF1R39onNqpPZL/+fAY2jW
-X-Received: by 2002:a25:242:0:b0:dfa:85e4:c8bc with SMTP id
- 3f1490d57ef6-dfa85e4ccddmr7649646276.6.1717484909249; Tue, 04 Jun 2024
- 00:08:29 -0700 (PDT)
+	s=arc-20240116; t=1717484956; c=relaxed/simple;
+	bh=4iq3XeNrs7ltIrmz0ZFJGziDx9dE933s9OG2qHDTALw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VggV+qJ3AerzTMhbuKMzulihhSaFJCL5QLh8Q4yc7AvxgM6f1/8REyOiu3htxKTUuVn6Di+BnpRFrUsIVykGMy//ctrkG6F6sPQOQQsLwblDjFVYXUf0LvUojF9p9HJsdU3WAw8RwVqF6weGdBZPBYO8QMpwT2Kx1i2Ve0ljLHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VthXQ1B46z4f3jJ3;
+	Tue,  4 Jun 2024 15:08:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id BF0101A0185;
+	Tue,  4 Jun 2024 15:09:03 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgC32w6NvV5mPr6ROw--.1471S3;
+	Tue, 04 Jun 2024 15:09:03 +0800 (CST)
+Subject: Re: [RFC PATCH v4 8/8] xfs: improve truncate on a realtime inode with
+ huge extsize
+To: "Darrick J. Wong" <djwong@kernel.org>,
+ Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, brauner@kernel.org, david@fromorbit.com,
+ chandanbabu@kernel.org, jack@suse.cz, willy@infradead.org,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240529095206.2568162-1-yi.zhang@huaweicloud.com>
+ <20240529095206.2568162-9-yi.zhang@huaweicloud.com>
+ <ZlnUorFO2Ptz5gcq@infradead.org> <20240531141210.GI52987@frogsfrogsfrogs>
+ <Zlnbht9rCiv-d2un@infradead.org> <20240531150016.GL52987@frogsfrogsfrogs>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <7b7d8062-65c3-9659-230a-bc8dea4785f6@huaweicloud.com>
+Date: Tue, 4 Jun 2024 15:09:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603152601.3689319-1-hugo@hugovil.com> <20240603152601.3689319-2-hugo@hugovil.com>
-In-Reply-To: <20240603152601.3689319-2-hugo@hugovil.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Jun 2024 09:08:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWqTiAUp4Pxdo9bSP4Au7yKHq0v2BrCMXU1k7KbRnigBQ@mail.gmail.com>
-Message-ID: <CAMuHMdWqTiAUp4Pxdo9bSP4Au7yKHq0v2BrCMXU1k7KbRnigBQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] serial: sc16is7xx: rename Kconfig CONFIG_SERIAL_SC16IS7XX_CORE
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, hvilleneuve@dimonoff.com, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240531150016.GL52987@frogsfrogsfrogs>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgC32w6NvV5mPr6ROw--.1471S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF4Utw1rGrWxurWftryxXwb_yoW8CFyrpF
+	WUtF9rKr4vy34DX392qr47X3WYqrn3JaySv34FqrW0kFnxu3yayrn3trW5Jws0qFs3J340
+	v395t34fJr9YqrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon, Jun 3, 2024 at 5:26=E2=80=AFPM Hugo Villeneuve <hugo@hugovil.com> w=
-rote:
-> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
->
-> Commit d49216438139
-> ("serial: sc16is7xx: split into core and I2C/SPI parts (core)")
-> renamed SERIAL_SC16IS7XX_CORE by SERIAL_SC16IS7XX. This means that some
-> configs should have been updated when I submitted the original patch, but
-> unfortunately they were not. Geert mentioned for example:
->     arch/mips/configs/cu1??0-neo_defconfig
->
-> Rename SERIAL_SC16IS7XX to SERIAL_SC16IS7XX_CORE so that existing configs
-> will still work correctly.
->
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: d49216438139 ("serial: sc16is7xx: split into core and I2C/SPI part=
-s (core)")
-> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+On 2024/5/31 23:00, Darrick J. Wong wrote:
+> On Fri, May 31, 2024 at 07:15:34AM -0700, Christoph Hellwig wrote:
+>> On Fri, May 31, 2024 at 07:12:10AM -0700, Darrick J. Wong wrote:
+>>> There are <cough> some users that want 1G extents.
+>>>
+>>> For the rest of us who don't live in the stratosphere, it's convenient
+>>> for fsdax to have rt extents that match the PMD size, which could be
+>>> large on arm64 (e.g. 512M, or two smr sectors).
+>>
+>> That's fine.  Maybe to rephrase my question.  With this series we
+>> have 3 different truncate path:
+>>
+>>  1) unmap all blocks (!rt || rtextsizse == 1)
+>>  2) zero leftover blocks in an rtextent (small rtextsize, but > 1)
+>>  3) converted leftover block in an rtextent to unwritten (large
+>>    rtextsize)
+>>
+>> What is the right threshold to switch between 2 and 3?  And do we
+>> really need 2) at all?
+> 
+> I don't think we need (2) at all.
+> 
+> There's likely some threshold below where it's a wash -- compare with
+> ext4 strategy of trying to write 64k chunks even if that requires
+> zeroing pagecache to cut down on fragmentation on hdds -- but I don't
+> know if we care anymore. ;)
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I supplemented some tests for small > 1 rtextsizes on my ramdisk,
 
-Gr{oetje,eeting}s,
+  mkfs.xfs -f -m reflink=0,rmapbt=0, -d rtinherit=1 \
+           -r rtdev=/dev/pmem1s,extsize=$rtextsize /dev/pmem2s
+  mount -ortdev=/dev/pmem1s /dev/pmem2s /mnt/scratch
+  for i in {1..1000}; \
+  do dd if=/dev/zero of=/mnt/scratch/$i bs=$rtextsize count=1; done
+  sync
+  time for i in {1..1000}; \
+  do xfs_io -c "truncate 4k" /mnt/scratch/$i; done
 
-                        Geert
+rtextsize            8k      16k      32k      64k     256k     1024k
+zero out:          9.601s  10.229s  11.153s  12.086s  12.259s  20.141s
+convert unwritten: 9.710s   9.642s   9.958s   9.441s  10.021s  10.526s
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+The test showed that there is no much difference between (2) and (3)
+with small rtextsize, but if the size gets progressively larger, (3)
+will be better, so I agree with you that we could just drop (2) for
+rt device.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Yi.
+
 
