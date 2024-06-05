@@ -1,186 +1,215 @@
-Return-Path: <linux-kernel+bounces-201889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585448FC4BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:39:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E1D8FC4BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BBC41C20F20
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:39:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9429E2835C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2651D18F2C2;
-	Wed,  5 Jun 2024 07:39:07 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECC218C342;
+	Wed,  5 Jun 2024 07:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U/KE6LOR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0564918C351
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956461922D6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717573146; cv=none; b=tIE+osk8ZU95wWH8Rk2HJwHVpq2lXLmJaEmYkSk24+ZUvt4ZoMlR76DfcHgaaEB87IVLZQ7Yi0tvt0SZvWurR4jn24G5DQvJOp6IrRlbicNWeUDfoTJUsH6v+Yc54J4ZcFgUHDzSqhRPVV9W1Rz7XCtUbBQr7/Kdm2zfU5Z0b04=
+	t=1717573232; cv=none; b=RrbT9nBnk9Ncm4h9D3WI4G6XGNBn296bLGoEdyUWtLoL+QPMw8BTQGHAC4Rv/0nkNT3EEsLJEY0SgnZ8KRHea7QZ7hZ2if+sScQY2DutfsYI9gDb1oKvWGrm7d7oM1kr20lIxCgcoIeG/10rU+YQu6W4g0s8T2UlT9MAVkh5Sxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717573146; c=relaxed/simple;
-	bh=XtsjbUm4apPzSablpogz7OxUa48UxNDvHjH0zCd5vkI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RO90ifewPwb5aZlhJjNa69DsO24W8pLd3Tsa+W7wSfBkUc9MWI6/VqNfcXkwghOosptXklNcTwEEIiuK5C1NynAGPKqHXCJRy4IqchqpFJoWOS+6NIeYqF4kphTMUGYwn18Rp6FEtiUyYNk6lf6q1mgnOxVA4ZD/6SPcsry/SG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb3d17daebso85517239f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:39:04 -0700 (PDT)
+	s=arc-20240116; t=1717573232; c=relaxed/simple;
+	bh=qADIR6ORQw/fm1uTzhK/je8tF5siq7OcH2X3hxvRTOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Znd21wC5kqx18i4vb5iVYFyDiD3ajHn2M2fs5whXM5eJUOxcMiBEHBS7XCI052S9IjCITWHTj4o8qJXmpBAWCoGksQ2KH7y0xLTvmogk7m+U+AV3YImIV4QKGPGu0YxR8Nx8eAOiFGiY9HlORoUT1vOzRA7kW7e17xB6vlgp450=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U/KE6LOR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717573229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1Mk6pxK/P+/uflenmaP8kxKi0Pdp/e6NzQ2LqaFWMk8=;
+	b=U/KE6LORZ/98d2Ftg1teLDEPFlps8wmHP70NMbEV9L1jJYw8PcAThgs0AhBXkvUXt/6qWt
+	N9DtVXUdAcSevJPtTSKaT2zTGeoWUY1LNKGS9hThVFeunnlbwbNwjGjjLRgnAcMKNgcfc/
+	H5SbYKlcGopXb3wPdCVGEtUgtz1RGLg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-468-SDblyTfeOS2TP8AGoKs_Vw-1; Wed, 05 Jun 2024 03:40:27 -0400
+X-MC-Unique: SDblyTfeOS2TP8AGoKs_Vw-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35dcd39c6ebso351015f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:40:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717573144; x=1718177944;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MGgNSTGGpqeGrC6lZCXVqKNCG4AlR2z6EZDHs3ebEVs=;
-        b=wZTml8Dew/KOA6mUwU2aXYY8FWPfJbVJyy0DI3KC4k+e1TMFnMSPXHBZdP4u+w01LR
-         EsK5Y93z8izajCQ1+pGlkSX4WQz490tlvFpMxsk78JudFBDoTRDyepwb99yU9mc0i1be
-         zLobBTlLp9DetfeSb97A2AGpoO527As+NulcauaNX9X0FQOMV0ZTHVMG3EeEvY879wgE
-         p1xmRbBEb3Tkby29NtsHeGn/mug1l1PoY0IJT3CGTGwumX/KP0cr+udoGcp9uWOmg1ii
-         OaLX1cgmGeUnR3SK7w3kgUY20z/3UQ3GONvdhBPE/6XU4COqdTOShcVEu7wncHfeVxQj
-         5KMA==
-X-Gm-Message-State: AOJu0Yym0CAEfY7qgIVdkZLhCYhxfBaMyUxr+FwUT/ELFjX0a6fqjza6
-	2LythcjsKGRoB/9/8QNr/jKH7iZRYDa5GNkonM2s/ZZ1YC1UcEPKW/kWI4LLqRMtqJHiqZM4Qkl
-	sceOqh30ChM8dcktMSqjDMWyF/V6UhGx0CYEIza66D68FP8iQfWk4K0E=
-X-Google-Smtp-Source: AGHT+IHMR7mKFbeWX9Asu0Q+OJg8XD6dS5z/CoBz/Y4PlDoaFumO1CnvVXo0gDxytrIKKGGa67kuup/+DBQbSdQ1e5wwn/2j2zRI
+        d=1e100.net; s=20230601; t=1717573226; x=1718178026;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Mk6pxK/P+/uflenmaP8kxKi0Pdp/e6NzQ2LqaFWMk8=;
+        b=csv4lT+Pn0ozlHetHFegyzssCoHjQjhJDFDXxbcZpRMZnWBrN3q/rad6sNoOW4OgU8
+         KsM7YYwXeeUAtCSH98C62HtrRJ2sD9AR9GGPgUMmmIurwR67Tsd/DzS5VYg01gRfuaxQ
+         uvOCDETtzX1obqvGpT0F8Zt4YTvomzS6sl9BfhQjFA8IGaO1T1f9IAsVPqvaJOabYlLE
+         ZUU2zeA8jUvT36AR2v7Bam5MAp+knM2Rfs1LL0QQk7XyFlyXYzFVEmBvkBVQhKB9FqHm
+         To4radh9vP/GiN8dv0WAGdc72ZbR0PmQa8K9I70/3y5fgSIHmov/n2/9d7IAT1hX98Ab
+         lpRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXck78hBuzyqaYgI27kKYdvELA/K2ckIDCsCvCLV7YTz1XgygINXZWmdv7wxpCuSIdjupG1DRe125zfnUR76q/NEYAFUxig+zFvVMB5
+X-Gm-Message-State: AOJu0Yy5ddi1p1fgS35Vdp1+rVSCp6od5HHZWdHtqdpauuh3dLJFrdhA
+	QDKaPRxmK5jm3/UVQuYBI2kI+WLhG4EF5bVtDczqfY6lBf7oC2YEUnx/g635lGOlAKap88GSxuf
+	XFt/zYVO/8xhWZYXxB72AAMBqxe9op+4BRSq3sXzEi06tQeMsckp87b+66ZGP1A==
+X-Received: by 2002:a05:600c:5122:b0:421:4b0a:5006 with SMTP id 5b1f17b1804b1-4214b0a5ffemr37008155e9.7.1717573226647;
+        Wed, 05 Jun 2024 00:40:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE95xI+qkWNi3MAbQeX07vqqOoB+/KqwXLrl8ByA50EGxitf+n3yI74FnHdiLQjcw9O5x70yg==
+X-Received: by 2002:a05:600c:5122:b0:421:4b0a:5006 with SMTP id 5b1f17b1804b1-4214b0a5ffemr37007885e9.7.1717573226133;
+        Wed, 05 Jun 2024 00:40:26 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:3100:19a8:d898:8e69:6aff? (p200300cbc706310019a8d8988e696aff.dip0.t-ipconnect.de. [2003:cb:c706:3100:19a8:d898:8e69:6aff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158135ea8sm10253185e9.37.2024.06.05.00.40.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 00:40:25 -0700 (PDT)
+Message-ID: <4a354a51-96d8-4243-a977-3ebdc58fd8bc@redhat.com>
+Date: Wed, 5 Jun 2024 09:40:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8412:b0:487:100b:9212 with SMTP id
- 8926c6da1cb9f-4b63a95ca73mr49230173.3.1717573144243; Wed, 05 Jun 2024
- 00:39:04 -0700 (PDT)
-Date: Wed, 05 Jun 2024 00:39:04 -0700
-In-Reply-To: <PN2PR01MB489119119088A1E7091BB6B9FCF92@PN2PR01MB4891.INDPRD01.PROD.OUTLOOK.COM>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000023808a061a1fa99a@google.com>
-Subject: Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	wojciech.gladysz@infogain.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] mm/ksm: skip subpages of compound pages
+To: Alex Shi <seakeel@gmail.com>, alexs@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
+ willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
+ hughd@google.com
+References: <20240604042454.2012091-1-alexs@kernel.org>
+ <20240604042454.2012091-3-alexs@kernel.org>
+ <8d3a60d5-06c5-4df4-aeda-2fbec45a8ae0@redhat.com>
+ <b3e242b5-c589-47fd-9a02-1e488bed9d15@gmail.com>
+ <00dcd224-6333-4f1e-9087-bdb5024ac236@redhat.com>
+ <9f4f6f0e-81e8-4bd0-9f20-412a543a452d@gmail.com>
+ <3d2ad8a3-30c6-41d6-841b-e8c376d01da3@redhat.com>
+ <cf5a0d4a-5291-4d4c-92e5-9340dfa4e8ac@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <cf5a0d4a-5291-4d4c-92e5-9340dfa4e8ac@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 05.06.24 05:58, Alex Shi wrote:
+> 
+> 
+> On 6/4/24 9:14 PM, David Hildenbrand wrote:
+>> On 04.06.24 15:10, Alex Shi wrote:
+>>>
+>>>
+>>> On 6/4/24 6:43 PM, David Hildenbrand wrote:
+>>>>>>>
+>>>>>>> @@ -2680,7 +2685,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+>>>>>>>                  }
+>>>>>>>      next_page:
+>>>>>>>                  put_page(*page);
+>>>>>>> -            ksm_scan.address += PAGE_SIZE;
+>>>>>>> +            ksm_scan.address += nr * PAGE_SIZE;
+>>>>>>>                  cond_resched();
+>>>>>>>              }
+>>>>>>>          }
+>>>>>>
+>>>>>> You might be jumping over pages that don't belong to that folio. What you would actually want to do is somehow use folio_pte_batch() to really know the PTEs point at the same folio, so you can skip them. But that's not that easy when using follow_page() ...
+>>>>>>
+>>>>>> So I suggest dropping this change for now.
+>>>>>>
+>>>>>
+>>>>> Hi David,
+>>>>>
+>>>>> Forgive my stupidity, where I jump over normal page that not to belong to the folio?
+>>>>
+>>>> IIUC, you assume that the folio is fully mapped by all PTEs that could span it, and that follow_page() would give you the head page, correct?
+>>>>
+>>>> As a simple example, assume only a single page of a large folio is still mapped, which could be any tail page. You couldn't jump over any PTEs.
+>>>>
+>>>> Or am I missing something?
+>>>
+>>> Uh, thanks for explanations. for what's we concerned, the following code could take care of the FULL or ERR pages. And it still keep the step of single page.
+>>>                           page = follow_page(vma, ksm_scan.address, FOLL_GET);
+>>>                           if (IS_ERR_OR_NULL(page)) {
+>>>                                   ksm_scan.address += PAGE_SIZE;
+>>>                                   cond_resched();
+>>>                                   continue;
+>>>                           }
+>>> And after the above code, step folio_nr_pages on address should be safe, isn't it?
+>>
+>> Not sure if I follow. Let me try explaining once again:
+>>
+>> Assume a PTE maps some tail page of the large anonymous folio. The other PTEs around it map some other anonymous folios, not pages of that large anonymous folio.
+> 
+> 
+> Sorry, David,
+> 
+> Do you meaning there are 2 folio pages, in a same vma, in their address, 'ksm_scan.address', would be overlapped in a folio size space?
+> If so, that do out of my expect. I do have no idea of this thing. Could you give me more hints of this problem or how things work on it in current kernel?
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in trie_delete_elem
+We do fully support partially mapping of THPs/large folios. That means, 
+you could map a single page of a large pagecache folio and the other 
+PTEs could map anonymous folios (due to COW).
 
-============================================
-WARNING: possible recursive locking detected
-6.10.0-rc2-syzkaller-00001-ge377d803b65e #0 Not tainted
---------------------------------------------
-udevd/5414 is trying to acquire lock:
-ffff88807eff51f8 (&trie->lock){-.-.}-{2:2}, at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+Simply because follow_page() returned a page of a large folio doesn't 
+generally say that the PTEs around it map the same large folio.
 
-but task is already holding lock:
-ffff88807eff59f8 (&trie->lock){-.-.}-{2:2}, at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+-- 
+Cheers,
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+David / dhildenb
 
-       CPU0
-       ----
-  lock(&trie->lock);
-  lock(&trie->lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-5 locks held by udevd/5414:
- #0: ffff88801f3e8f08 (kn->active#5){.+.+}-{0:0}, at: kernfs_fop_open+0x93/0xd10 fs/kernfs/file.c:601
- #1: ffff8880162ecc38 (&kernfs_locks->open_file_mutex[count]){+.+.}-{3:3}, at: kernfs_open_file_mutex_lock fs/kernfs/file.c:56 [inline]
- #1: ffff8880162ecc38 (&kernfs_locks->open_file_mutex[count]){+.+.}-{3:3}, at: kernfs_get_open_node fs/kernfs/file.c:520 [inline]
- #1: ffff8880162ecc38 (&kernfs_locks->open_file_mutex[count]){+.+.}-{3:3}, at: kernfs_fop_open+0x74d/0xd10 fs/kernfs/file.c:700
- #2: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #2: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #2: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2409 [inline]
- #2: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0x21f/0x570 kernel/trace/bpf_trace.c:2451
- #3: ffff88807eff59f8 (&trie->lock){-.-.}-{2:2}, at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
- #4: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #4: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #4: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2409 [inline]
- #4: ffffffff8e333f60 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0x21f/0x570 kernel/trace/bpf_trace.c:2451
-
-stack backtrace:
-CPU: 1 PID: 5414 Comm: udevd Not tainted 6.10.0-rc2-syzkaller-00001-ge377d803b65e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_deadlock kernel/locking/lockdep.c:3062 [inline]
- validate_chain+0x15d3/0x5900 kernel/locking/lockdep.c:3856
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
- bpf_prog_1db1603a7cfa36fb+0x45/0x49
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2410 [inline]
- bpf_trace_run2+0x30d/0x570 kernel/trace/bpf_trace.c:2451
- __traceiter_contention_end+0x7b/0xb0 include/trace/events/lock.h:122
- trace_contention_end+0x114/0x140 include/trace/events/lock.h:122
- __pv_queued_spin_lock_slowpath+0xb81/0xdc0 kernel/locking/qspinlock.c:557
- pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:584 [inline]
- queued_spin_lock_slowpath+0x42/0x50 arch/x86/include/asm/qspinlock.h:51
- queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
- do_raw_spin_lock+0x272/0x370 kernel/locking/spinlock_debug.c:116
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:111 [inline]
- _raw_spin_lock_irqsave+0xe1/0x120 kernel/locking/spinlock.c:162
- trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
- bpf_prog_1db1603a7cfa36fb+0x45/0x49
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2410 [inline]
- bpf_trace_run2+0x30d/0x570 kernel/trace/bpf_trace.c:2451
- __traceiter_contention_end+0x7b/0xb0 include/trace/events/lock.h:122
- trace_contention_end+0xf5/0x120 include/trace/events/lock.h:122
- __mutex_lock_common kernel/locking/mutex.c:617 [inline]
- __mutex_lock+0x2e5/0xd70 kernel/locking/mutex.c:752
- kernfs_open_file_mutex_lock fs/kernfs/file.c:56 [inline]
- kernfs_get_open_node fs/kernfs/file.c:520 [inline]
- kernfs_fop_open+0x74d/0xd10 fs/kernfs/file.c:700
- do_dentry_open+0x95a/0x1720 fs/open.c:955
- do_open fs/namei.c:3650 [inline]
- path_openat+0x289f/0x3280 fs/namei.c:3807
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_sys_openat fs/open.c:1436 [inline]
- __se_sys_openat fs/open.c:1431 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7f17b169a4
-Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffdf6fcc1a0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f7f17b169a4
-RDX: 0000000000080000 RSI: 00007ffdf6fcc2d8 RDI: 00000000ffffff9c
-RBP: 00007ffdf6fcc2d8 R08: 0000000000000008 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000080000
-R13: 000056111e750b42 R14: 0000000000000001 R15: 000056111e76c160
- </TASK>
-
-
-Tested on:
-
-commit:         e377d803 kernel/trace: fix possible deadlock in trie_d..
-git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
-console output: https://syzkaller.appspot.com/x/log.txt?x=111a49bc980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eb72437243175f22
-dashboard link: https://syzkaller.appspot.com/bug?extid=9d95beb2a3c260622518
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
 
