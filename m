@@ -1,87 +1,164 @@
-Return-Path: <linux-kernel+bounces-201738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91138FC286
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:03:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDCB8FC28B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03EA91C224F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:03:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD13282A43
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E723E61FEC;
-	Wed,  5 Jun 2024 04:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C457CF33;
+	Wed,  5 Jun 2024 04:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Prs4TxYi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLHBjXbj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318CA53364;
-	Wed,  5 Jun 2024 04:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEB1171B0;
+	Wed,  5 Jun 2024 04:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717560174; cv=none; b=J/Q2M60mHlI2KHl9wCloMLMO3EFh3bO7lE5seR2bejyM66q8E5o/oz1iiMGBaPQ7Jn2iYgsOo8HqQPDJ9mjXl4DwfSZUIsnwgqxtVcz5xR6FHyYf22Kq5eZhlGtInnFZeMOaeqW3hOxEC6MF6WGYcpP9rW+4MBZ0v/kN9C01WpI=
+	t=1717560292; cv=none; b=hSIyzVK9Me2plBEwy3X8TT+zKMEbUd3v0u8Jvvyut2Ngq7FmLmKxiH5D0uy83/Bgf8elPjR5MXfbY2KXIzL3fWS/gZCLZRCc34BAMVgVtTI08qprIWZzF3AubUftK462XFQsQQ9/L/PZ0OVEBZh2su96rxqtxMtvF1N4BBsV4oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717560174; c=relaxed/simple;
-	bh=lOzDDoGjGG+7jUmjJIP8OKT37uawXOdeutEfKT0paB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WK4z5b82nieJrOYq8B0ctDfIWrHPpUtiCkQJ4m0d8k9cHdjRZ75jCCL8C5liE+ze9YqNT80Prwz5yUQsWeDJTXh0qb6tS2fazlh1ECiAA8eYs9xORuVYk3K8fNGur4ptMqwRGO8UDuVdnonk1lrI4hopZr9XMEdgWIu280387Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Prs4TxYi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B236BC32781;
-	Wed,  5 Jun 2024 04:02:53 +0000 (UTC)
+	s=arc-20240116; t=1717560292; c=relaxed/simple;
+	bh=D7YS8tUT6zoxR7+gztQhZtUYQS3g8Jha1gq4gWlWSOY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=RiLKJm3keyvEIHE4ZRxZsUb9llrQN14DZli6q8iWpkULTsZJ8Am87z2ImqEHEmqEt42yZFUZ5NZFIV+h9e2yeXkn0RiucS72eWLimve1exK3xgSc6zfMbb1fOk9rB/dwisFifctXuAka1Z/pnOaqMUsF/bcqUyUUTOK4y03+IZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLHBjXbj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8DB9C32781;
+	Wed,  5 Jun 2024 04:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717560173;
-	bh=lOzDDoGjGG+7jUmjJIP8OKT37uawXOdeutEfKT0paB8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Prs4TxYiZK3UiCc6AJk29zneAAUGLYZgJSoYPimYT+R7mEKhzuSFwK317aSlegSVs
-	 LUHNuMFuwVOl9EkHs6n7EP8p1lBm1jW8ZUvRN+8kdovDOi4IgSkAgkE7rNhdYsW3bZ
-	 JW/TJqMrjO4LsE6gQoog6F0wIydsFT0MTmJeoCA7iuVVLG4BwhiHXIkViqyUXhMvWj
-	 FVyuZg/Zh0kBGhnOy/9FHY8deUU2npTK4j0BPSIQO7aTMIB6MuEI9qm/4lNFppscZr
-	 RVrSJ7UMLzjZXl/jFWEU+Pk0B48gCfCsJKhPVKucx/+NifAh5yFkg9OHmzfx3IGDxL
-	 WT9+G9Ab0a01A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6707FCE3ED6; Tue,  4 Jun 2024 21:02:53 -0700 (PDT)
-Date: Tue, 4 Jun 2024 21:02:53 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	kernel-team@meta.com, mingo@kernel.org, stern@rowland.harvard.edu,
-	will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, akiyks@gmail.com,
-	Marco Elver <elver@google.com>, Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH memory-model 3/3] tools/memory-model: Add KCSAN LF
- mentorship session citation
-Message-ID: <7fa1ba8a-9913-408f-a5c0-79686805fb61@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <b290acd5-074f-4e17-a8bf-b444e553d986@paulmck-laptop>
- <20240604221419.2370127-3-paulmck@kernel.org>
- <Zl+fMRgK7q47PrVy@andrea>
+	s=k20201202; t=1717560291;
+	bh=D7YS8tUT6zoxR7+gztQhZtUYQS3g8Jha1gq4gWlWSOY=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=OLHBjXbjh6nagm8wzjsU74vNbjvZwzzPO+E00JnpPO6Tulhx7zlyZpBPqdWd6WPF1
+	 0o02okbEIMvrN84g7B34RhAKA3TzXOzc9L4I4qoFW3GE5yp8iV3D161WZL+TKfivxp
+	 KDrad0HF7ReV0kat6LU5tGwJfNFBlYhDTbQ1hupt6j2nlLT061/WeQYPx4hHMJfD+e
+	 s3UlT8wgXGfl56Pk4WEwnn1M8Rxi7E20n92tqvzbrxiVE4UuJYp5DJeSWCzmnuQCx3
+	 5EXyZTzK7B8tDsB+2fAwatEU+JWnzlEaTmd4BmcudlGhxXZFypidLPXm54h7rlf+l/
+	 lF6g9OOk30l+w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zl+fMRgK7q47PrVy@andrea>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 05 Jun 2024 07:04:44 +0300
+Message-Id: <D1RSB1PB5XGS.2X032M0E1VMJW@kernel.org>
+Subject: Re: [PATCH v9 04/19] x86: Secure Launch Resource Table header file
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
+ <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+X-Mailer: aerc 0.17.0
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-5-ross.philipson@oracle.com>
+ <D1RFWFIJEYWL.2FC7V79321264@kernel.org>
+ <1eca8cb1-4b3b-402b-993b-53de7c810016@oracle.com>
+ <D1RLBMTUKRFN.34KQXEFZTBA08@kernel.org>
+ <249a9b27-c18d-4377-8b51-9bc610b53a8b@oracle.com>
+ <D1RNKV4JIE5L.1LNG82UAC916M@kernel.org>
+ <f66de08f-4905-48d6-8bcf-5b1ab847492f@oracle.com>
+In-Reply-To: <f66de08f-4905-48d6-8bcf-5b1ab847492f@oracle.com>
 
-On Wed, Jun 05, 2024 at 01:11:45AM +0200, Andrea Parri wrote:
-> On Tue, Jun 04, 2024 at 03:14:19PM -0700, Paul E. McKenney wrote:
-> > Add a citation to Marco's LF mentorship session presentation entitled
-> > "The Kernel Concurrency Sanitizer"
-> > 
-> > [ paulmck: Apply Marco Elver feedback. ]
-> > 
-> > Reported-by: Marco Elver <elver@google.com>
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> Acked-by: Andrea Parri <parri.andrea@gmail.com>
+On Wed Jun 5, 2024 at 5:33 AM EEST,  wrote:
+> On 6/4/24 5:22 PM, Jarkko Sakkinen wrote:
+> > On Wed Jun 5, 2024 at 2:00 AM EEST,  wrote:
+> >> On 6/4/24 3:36 PM, Jarkko Sakkinen wrote:
+> >>> On Tue Jun 4, 2024 at 11:31 PM EEST,  wrote:
+> >>>> On 6/4/24 11:21 AM, Jarkko Sakkinen wrote:
+> >>>>> On Fri May 31, 2024 at 4:03 AM EEST, Ross Philipson wrote:
+> >>>>>> Introduce the Secure Launch Resource Table which forms the formal
+> >>>>>> interface between the pre and post launch code.
+> >>>>>>
+> >>>>>> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> >>>>>
+> >>>>> If a uarch specific, I'd appreciate Intel SDM reference here so tha=
+t I
+> >>>>> can look it up and compare. Like in section granularity.
+> >>>>
+> >>>> This table is meant to not be architecture specific though it can
+> >>>> contain architecture specific sub-entities. E.g. there is a TXT spec=
+ific
+> >>>> table and in the future there will be an AMD and ARM one (and hopefu=
+lly
+> >>>> some others). I hope that addresses what you are pointing out or may=
+be I
+> >>>> don't fully understand what you mean here...
+> >>>
+> >>> At least Intel SDM has a definition of any possible architecture
+> >>> specific data structure. It is handy to also have this available
+> >>> in inline comment for any possible such structure pointing out the
+> >>> section where it is defined.
+> >>
+> >> The TXT specific structure is not defined in the SDM or the TXT dev
+> >> guide. Part of it is driven by requirements in the TXT dev guide but
+> >> that guide does not contain implementation details.
+> >>
+> >> That said, if you would like links to relevant documents in the commen=
+ts
+> >> before arch specific structures, I can add them.
+> >=20
+> > Vol. 2D 7-40, in the description of GETSEC[WAKEUP] there is in fact a
+> > description of MLE JOINT structure at least:
+> >=20
+> > 1. GDT limit (offset 0)
+> > 2. GDT base (offset 4)
+> > 3. Segment selector initializer (offset 8)
+> > 4. EIP (offset 12)
+> >=20
+> > So is this only exercised in protect mode, and not in long mode? Just
+> > wondering whether I should make a bug report on this for SDM or not.
+>
+> I believe you can issue the SENTER instruction in long mode, compat mode=
+=20
+> or protected mode. On the other side thought, you will pop out of the=20
+> TXT initialization in protected mode. The SDM outlines what registers=20
+> will hold what values and what is valid and not valid. The APs will also=
+=20
+> vector through the join structure mentioned above to the location=20
+> specified in protected mode using the GDT information you provide.
+>
+> >=20
+> > Especially this puzzles me, given that x86s won't have protected
+> > mode in the first place...
+>
+> My guess is the simplified x86 architecture will not support TXT. It is=
+=20
+> not supported on a number of CPUs/chipsets as it stands today. Just a=20
+> guess but we know only vPro systems support TXT today.
 
-Thank you!  I will apply this along with Akira's on my next rebase.
+I'm wondering could this bootstrap itself inside TDX or SNP, and that
+way provide path forward? AFAIK, TDX can be nested straight of the bat
+and SNP from 2nd generation EPYC's, which contain the feature.
 
-							Thanx, Paul
+I do buy the idea of attesting the host, not just the guests, even in
+the "confidential world". That said, I'm not sure does it make sense
+to add all this infrastructure for a technology with such a short
+expiration date?
+
+I would not want to say this at v9, and it is not really your fault
+either, but for me this would make a lot more sense if the core of
+Trenchboot was redesigned around these newer technologies with a
+long-term future.
+
+The idea itself is great!
+
+BR, Jarkko
 
