@@ -1,103 +1,101 @@
-Return-Path: <linux-kernel+bounces-203231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0B08FD819
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:05:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B03C8FD81B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61CD32820D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:05:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BC20B20F27
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEDA4965B;
-	Wed,  5 Jun 2024 21:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B136B15F3ED;
+	Wed,  5 Jun 2024 21:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IotqZlJh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JEODIqI+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4CF15F418;
-	Wed,  5 Jun 2024 21:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9CB4965B;
+	Wed,  5 Jun 2024 21:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621535; cv=none; b=Zlzmb4WrUlSR0W+9mcqAG9CnlDOGypVR+oGzsvIAyyYgiHvNqwBgny0qgknFCRSisx6bdluswsXmZauxOLGlkiqUCHDCuIYmwJ67Y82pU8dw3JYKriDGx7lYrRVZ6n9X+knndy8HIZF1LvtGaJ2yRbqxrdC/2nszqBi8KsI4hrs=
+	t=1717621640; cv=none; b=MUz9v84Tt43ahtehS6c7LEz2ef4oyLlcktYlC++GvTNc2uKgCKas9rVmcxniLCD6e2u/wLdEAaxb2zhDmr5rmpRcKR4aaAEEuO0orTTUzQhDGeBaHhvXfSFAgd+iF1lBXdxp8FDj6Q+8o+3N30kBoqvVayG/MFvru1Vxw7LRTlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621535; c=relaxed/simple;
-	bh=HX2FOEXY8UflXmGqEAtTtfooLXB6TYloRO4ddELc9EI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WEZ8+6ELgb5PPlCu2kZ5iEXT45MVcrTgM3lns4Xv71XMtKi7rQ7jIgCWG4znBHs837rs3UKHqYxJlueMEY4xzO7bOevY9KCrFLLhdrGCWPYM/PtVz6WsnRVhyXsBG4zltXdqFsMFCPJtAX61O9VK7DKC1jGaYAM9r6Pl9hg6Bt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IotqZlJh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBFFC32782;
-	Wed,  5 Jun 2024 21:05:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717621535;
-	bh=HX2FOEXY8UflXmGqEAtTtfooLXB6TYloRO4ddELc9EI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IotqZlJhbhOy1/VcjrFfU9iEv72PAg2bPladFlnP4BoBgvaeqES5SgqaWt9HzHWOt
-	 YUhdH8CWnoLBKRmYu3e7DuPDqeV2dDE90kKVFFx1mOr+170mvT9FqXR8xEVCApXYZD
-	 ZEalX9aDgV+/oqNlQbCO0YxeLbDF/hTQp/elWc5Wiyx35JgTuVjedn6Z2pq+V7h2oq
-	 KqiKecpswSFCXCeJ5Kc6Mmrp6vNoBzlR2IE3VPQGAM8EQjML3Fe4OffEaRzemgqD+L
-	 ttguZbJ0oGhJWZuwiGEDCdbWjzfMQwVM8FPoEFIYddoMH1WQK6YVyNVuwGJqKyknw7
-	 5NMtjUWVCWxrQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Alper Nebi Yasak <alpernebiyasak@gmail.com>, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20240531-da7219-v1-1-ac3343f3ae6a@chromium.org>
-References: <20240531-da7219-v1-1-ac3343f3ae6a@chromium.org>
-Subject: Re: [PATCH RFT] ASoC: mediatek: mt8183-da7219-max98357: Fix
- kcontrol name collision
-Message-Id: <171762153256.557520.12011428649748199502.b4-ty@kernel.org>
-Date: Wed, 05 Jun 2024 22:05:32 +0100
+	s=arc-20240116; t=1717621640; c=relaxed/simple;
+	bh=NXt8cdPNKHaGsYk1Z6keF8MQbnEnJZNY+H2tZhyrkGc=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtltHQRvNQ+td8qkB8P5Uf9I8dTInPUhiTEmQs1kMkuppTcmrR22ql6NXffpCM5CM6iGQb2slukXMiKdWbBTaOlOUpNsFq7vD2LrG7VF5BXCduUMV4Vojj8yBD+yK6/5BCRbPm25MYE5T7mhlWYGyipdOdQo0FtYw2URTxg7/tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JEODIqI+; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717621638; x=1749157638;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=NXt8cdPNKHaGsYk1Z6keF8MQbnEnJZNY+H2tZhyrkGc=;
+  b=JEODIqI+68pqcUNoaG1PX8G5ZHcGFofTYxU95jlvVyok3y5KrfjpYkoX
+   q1lMuP6N4MIPDneaQyv8Bo38Ksy36UwDpOKhSCgI/Nh1G9JsopJDFndoN
+   dbtI4LwdqLdrrE6Xb5YF1+1Lnmr4QX5tVxE6hfhlQ4P3IfLX8Vu0W2dRM
+   3fAIDkfaRjOIYBzRZfbzUn8HyPAkTi54XzP9fogYLpXNBUg8wm/IwL3XE
+   R7TqG9ROCTS52quEYQlDp1EL2ZSrgFD7FwuanXZ07Vc8JG9KTNAfqNWOD
+   m01UcOsKbSY0tprxl33toULXsCPsu7zi+xeq0A7BcVBC/S/rdv8YxSylq
+   w==;
+X-CSE-ConnectionGUID: zaTVRI0GTc+jQ1JQVGhXYA==
+X-CSE-MsgGUID: IIXRagmeQE6MTa4iZ8RfZA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="25662207"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="25662207"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:07:18 -0700
+X-CSE-ConnectionGUID: /AYv3XedRwaR5IHAHsYSnw==
+X-CSE-MsgGUID: ruk6PRkwS1+m/jsquvNzcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="37735016"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:07:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sExqk-0000000Dy3n-2Cqk;
+	Thu, 06 Jun 2024 00:07:14 +0300
+Date: Thu, 6 Jun 2024 00:07:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] spi: bitbang: Clean up the driver
+Message-ID: <ZmDTgtONF49f8cBr@smile.fi.intel.com>
+References: <20240517194104.747328-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517194104.747328-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 31 May 2024 08:37:54 +0000, Hsin-Te Yuan wrote:
-> Since "Headphone Switch" kcontrol name has already been used by da7219,
-> rename the control name from "Headphone" to "Headphones" to prevent the
-> colision. Also, this change makes kcontrol name align with the one in
-> mt8186-mt6366-da7219-max98357.c.
+On Fri, May 17, 2024 at 10:40:19PM +0300, Andy Shevchenko wrote:
+> A few cleanups to the driver. No functional change intended.
 > 
-> 
+> Andy Shevchenko (3):
+>   spi: bitbang: Use typedef for txrx_*() callbacks
+>   spi: bitbang: Convert unsigned to unsigned int
+>   spi: bitbang: Replace hard coded number of SPI modes
 
-Applied to
+Hmm... It's not the first time I noticed that the series
+(despite even appearing in the CI, but then disappearing)
+left abandoned without clear feedback,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Should I do something here?
 
-Thanks!
+-- 
+With Best Regards,
+Andy Shevchenko
 
-[1/1] ASoC: mediatek: mt8183-da7219-max98357: Fix kcontrol name collision
-      commit: 97d8613679eb53bd0c07d0fbd3d8471e46ba46c1
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
 
