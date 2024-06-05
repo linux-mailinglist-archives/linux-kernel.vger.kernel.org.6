@@ -1,134 +1,178 @@
-Return-Path: <linux-kernel+bounces-201774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FEA8FC301
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:25:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 795798FC304
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84A81F2294A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:25:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ED9F1C20B1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B8613AD14;
-	Wed,  5 Jun 2024 05:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F1113AD29;
+	Wed,  5 Jun 2024 05:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="C1kOPM9Z"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VKK18Grm"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B298830
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D33F8C07
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717565126; cv=none; b=QsI2vyPlDZYN4uIbIk20G+Am5IvWreiohj7esIEelmIGAhfdWPI0WIDzUZsT/CkyKWvuVHkK9gPgKYAfuLZugLF3tb6k+fxOBuMHZjnnmr2dBsjM3ti2aCZheWSwR+zZ2NF4WHv4CDUni1yvYYAWI/bUqLM0Kk0L6B+tKEukaMM=
+	t=1717565216; cv=none; b=gd9Jp+unOh8w730g03CsmS5Z6BYVHmC6HYYm88vOABPD52V5GmbMX5kdqlcYnv6PnP4cFv82a03wSGml7bf/ADLrJbMgHuTicydjHLDHuluricENQl9RNHovFh3SsnmZuUJQhMxq7ucRJvWpZgnphavXrqBE5OVASGUCNVEm8pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717565126; c=relaxed/simple;
-	bh=VRuDfJneumWnl369xh8UUhc6D/Qt40FIaMU22iAgxc0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DYPpUp8ev4u3bIrg13X6YfwBjiZ72Ij1wo6cHy5xepWN4qSyZ1HTFcxveoCi2TyjXqfemMw7IDyH7Jbpl3HFna6PdGwNceoGgIQ4WfADb/Vh0ETcXKoOGT/VxjaFdtIVA8nsatVU4pUTzu4O59j1ACRn6HF4IX1ITOO3lIQtoGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=C1kOPM9Z; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1717565124;
-	bh=VRuDfJneumWnl369xh8UUhc6D/Qt40FIaMU22iAgxc0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=C1kOPM9Z5lr9YuVFxHURS2J57RGfScgiMrME9zt+1RJ3Xqg1jQfOV+6gSWGKPWxEk
-	 6BlroFjj4595fz0U8oOvwozQlXpUuqnb6pttzKHhFaU+xF2DPl2bYzBmQvRKqMNTIb
-	 JlmzQq8nHX+ZC2+JHWosDYzVnw2SgenSRHFER68I=
-Received: from [IPv6:240e:358:111d:4300:dc73:854d:832e:6] (unknown [IPv6:240e:358:111d:4300:dc73:854d:832e:6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id A600866FAC;
-	Wed,  5 Jun 2024 01:25:14 -0400 (EDT)
-Message-ID: <f72abf3b624107361ec4de0fe72be3bf4a3da539.camel@xry111.site>
-Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
- unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
- Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
- <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>, Jinyang He
- <hejinyang@loongson.cn>,  loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- mengqinggang@loongson.cn, cailulu@loongson.cn, wanglei@loongson.cn, 
- luweining@loongson.cn, Yujie Liu <yujie.liu@intel.com>, Heng Qi
- <hengqi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>
-Date: Wed, 05 Jun 2024 13:25:10 +0800
-In-Reply-To: <CAAhV-H74=aQqMe3Bh5xn1VQCrcK7eHk1baKj1L+74=o=-8V_6g@mail.gmail.com>
-References: <20240604150741.30252-1-xry111@xry111.site>
-	 <CAAhV-H7CF5wUSj5qfSs-+YTUrB2R9STO7LLu7LG2RpsYE719Og@mail.gmail.com>
-	 <80c92f7d283444e493ba1236cf228a5deca6c32d.camel@xry111.site>
-	 <CAAhV-H74=aQqMe3Bh5xn1VQCrcK7eHk1baKj1L+74=o=-8V_6g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717565216; c=relaxed/simple;
+	bh=JWl0dvcLsDyhJpa9XHTWrzG8gS4xKr5gWdK/xlwOF90=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=AF3PJEbyhM3+V40jvl6f3PAmibE7J+AVCav/EmzAZergkLkN9o9VQISbrEIgG83KWFdMvodhuMjjgIN3RDke3nIsNSafK2n0+N9r55eg+0FZwLIfzW4VF+S/QnBsM/hbM+6uQ/4zIxs79gwU0BO7MwjFZEW+Wipthnk74miRqdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VKK18Grm; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a68a288b8a4so225154466b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 22:26:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717565213; x=1718170013; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gLp5UQaiZ9Nbta/3ev83gXvw8Hf+0qRq7Af1uLYkp6M=;
+        b=VKK18GrmP4u7LAE9/CGvOEPSNV4LxqtuY4bNpPN6nVaWFG1+gLg2nnN4qKjOQJVHd3
+         yRe3moeo/3DcVfeR8TpYYaeDeAexVA8i25RQBbsHbAjMb5Rx1Xu2N1PQKde6nN7Kx9SM
+         mhLtkKOE7gF6RfEvE6Xs+jJoO4Yy/b+cWDO7QImJffzAFQ9/9TGKdYfH7NSxJUxgqlW4
+         avGZPeuDrnRybG6OvCc37DZzSQs2DZRA2GQVAtCDaAQMwRXCJbf8e894140UM8pEnwKW
+         3OGPmk4q9xGPWFCUJldc3StsOLPpbq5iuCPqINcFiLxSQkBNMaZGv1Ol21hf8Rwdisuv
+         5Ayg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717565213; x=1718170013;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gLp5UQaiZ9Nbta/3ev83gXvw8Hf+0qRq7Af1uLYkp6M=;
+        b=joPZmWgA5B37Do+KaPT0+LBln4PoKS8bhD2jxmCPvrvaNliAQpAi5/h4OBcaBX9egP
+         Mv9x6ibfEKL6nNRKElp8okxEC1txhO+8vt3QyH5jgAiLT3vB+Ki56bEiSAGX3NYlmwsL
+         wYEA8t0eJxqbRRVa+DPx8SyUvx20ST+ABw08+0ksm+8hDOF9UPAnUcXMGpj8rg0dFdsQ
+         3b7Nn7wfaeECQEo+yzieKzhXgLjQh+0vN7v2V7TUuayFcfmTTTeqtTKfyX6OkmBroOL5
+         RPAAYt307NvQB4SW2miX5Mv2CjODlH98j9sQFLRy+J4UAYja59c1yi6EuiCC9OQOJV/X
+         V5WA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAJDe6qx47qBhZKMvqHLvXf6pQY23zkXacHEnkADMBvRQB3XoOObmop2KPXmzkFzyaoh0A3b6UDw7j2QzhDl8iihBlH41X9DGMPIIr
+X-Gm-Message-State: AOJu0YxJgfQsEmiB/hjxkilfcBPyGXuYo9Ni4Hcm0ZD0VvahSpvDFzg5
+	EcICTJAM3ENWDhChCqFeYYJaSkmN+JjGMMRIcX0TVUP2kAIwEWdaGdj8kU4MrHU=
+X-Google-Smtp-Source: AGHT+IGOMSJFPKFFMw3Bx8/QTz2P9IGqnf2wnl+C+L+ox1QNHbFZ72ssL2lgPvxarUhqjNlSVlRHSg==
+X-Received: by 2002:a50:9b18:0:b0:579:d673:4e67 with SMTP id 4fb4d7f45d1cf-57a8bc9ba6emr1091753a12.26.1717565212609;
+        Tue, 04 Jun 2024 22:26:52 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b98de7sm8515234a12.10.2024.06.04.22.26.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 22:26:52 -0700 (PDT)
+Date: Wed, 5 Jun 2024 08:26:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Xiaolei Wang <xiaolei.wang@windriver.com>,
+	linux@armlinux.org.uk, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [net v2 PATCH] net: stmmac: Update CBS parameters when speed
+ changes after linking up
+Message-ID: <6c78b634-0e83-42dd-81ce-b36999a1b0ef@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530061453.561708-1-xiaolei.wang@windriver.com>
 
-On Wed, 2024-06-05 at 13:21 +0800, Huacai Chen wrote:
-> On Wed, Jun 5, 2024 at 12:38=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wr=
-ote:
-> >=20
-> > On Wed, 2024-06-05 at 09:52 +0800, Huacai Chen wrote:
-> > > Hi, Ruoyao,
-> > >=20
-> > > On Tue, Jun 4, 2024 at 11:08=E2=80=AFPM Xi Ruoyao <xry111@xry111.site=
-> wrote:
-> > > >=20
-> > > > GAS <=3D 2.41 does not support generating R_LARCH_{32,64}_PCREL for
-> > > > "label - ." and it generates R_LARCH_{ADD,SUB}{32,64} pairs instead=
-.
-> > > > objtool cannot handle R_LARCH_{ADD,SUB}{32,64} pair in __jump_table
-> > > > (static key implementation) and etc. so it will produce some warnin=
-gs.
-> > > > This is causing the kernel CI systems to complain everywhere.
-> > > >=20
-> > > > For GAS we can check if -mthin-add-sub option is available to know =
-if
-> > > > R_LARCH_{32,64}_PCREL are supported.
-> > > I think we should give a chance to toolchains without the
-> > > -mthin-add-sub option, so I hope Tiezhu can resubmit this patch to
-> > > solve this problem.
-> > > https://lore.kernel.org/loongarch/1690272910-11869-6-git-send-email-y=
-angtiezhu@loongson.cn/
-> >=20
-> > It only handles .discard.{un,}reachable but not __jump_table.
-> > __jump_table is our main issue here.=C2=A0 And I don't see a quick way =
-to
-> > make -mno-thin-add-sub work for __jump_table because we really need to
-> > resolve the relocation for __jump_table instead of simply skipping it.
-> =C2=A0__jump_table is disabled now, so we can only solve=C2=A0 -mno-thin-=
-add-sub
-> at present, and the next step is __jump_table.
+Hi Xiaolei,
 
-No, -fno-jump-table does not disable __jump_table.  __jump_table is from
-static key implementation in arch/loongarch/include/asm/jump_label.h,
-not generated by the compiler.
+kernel test robot noticed the following build warnings:
 
-And the problem of __jump_table is exact with -mno-thin-add-sub.  It
-reads:
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiaolei-Wang/net-stmmac-Update-CBS-parameters-when-speed-changes-after-linking-up/20240530-141843
+base:   net/main
+patch link:    https://lore.kernel.org/r/20240530061453.561708-1-xiaolei.wang%40windriver.com
+patch subject: [net v2 PATCH] net: stmmac: Update CBS parameters when speed changes after linking up
+config: i386-randconfig-141-20240604 (https://download.01.org/0day-ci/archive/20240605/202406050318.jsyBFsxx-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
 
-#define JUMP_TABLE_ENTRY                \
-     ".pushsection  __jump_table, \"aw\"    \n\t"   \
-     ".align    3           \n\t"   \
-     ".long     1b - ., %l[l_yes] - .   \n\t"   \
-     ".quad     %0 - .          \n\t"   \
-     ".popsection               \n\t"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202406050318.jsyBFsxx-lkp@intel.com/
 
-The "1b - ." and "%0 - ." things produce different relocs with -mno-
-thin-add-sub and -mthin-add-sub.  The objtool can only handle the relocs
-from -mthin-add-sub here.
+New smatch warnings:
+drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:3234 stmmac_configure_cbs() error: uninitialized symbol 'ptr'.
+drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:3234 stmmac_configure_cbs() error: uninitialized symbol 'speed_div'.
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+vim +/ptr +3234 drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+
+19d9187317979c Joao Pinto   2017-03-10  3194  static void stmmac_configure_cbs(struct stmmac_priv *priv)
+19d9187317979c Joao Pinto   2017-03-10  3195  {
+19d9187317979c Joao Pinto   2017-03-10  3196  	u32 tx_queues_count = priv->plat->tx_queues_to_use;
+19d9187317979c Joao Pinto   2017-03-10  3197  	u32 mode_to_use;
+19d9187317979c Joao Pinto   2017-03-10  3198  	u32 queue;
+882212f550d669 Xiaolei Wang 2024-05-30  3199  	u32 ptr, speed_div;
+882212f550d669 Xiaolei Wang 2024-05-30  3200  	u64 value;
+882212f550d669 Xiaolei Wang 2024-05-30  3201  
+882212f550d669 Xiaolei Wang 2024-05-30  3202  	/* Port Transmit Rate and Speed Divider */
+882212f550d669 Xiaolei Wang 2024-05-30  3203  	switch (priv->speed) {
+882212f550d669 Xiaolei Wang 2024-05-30  3204  	case SPEED_10000:
+882212f550d669 Xiaolei Wang 2024-05-30  3205  		ptr = 32;
+882212f550d669 Xiaolei Wang 2024-05-30  3206  		speed_div = 10000000;
+882212f550d669 Xiaolei Wang 2024-05-30  3207  		break;
+882212f550d669 Xiaolei Wang 2024-05-30  3208  	case SPEED_5000:
+882212f550d669 Xiaolei Wang 2024-05-30  3209  		ptr = 32;
+882212f550d669 Xiaolei Wang 2024-05-30  3210  		speed_div = 5000000;
+882212f550d669 Xiaolei Wang 2024-05-30  3211  		break;
+882212f550d669 Xiaolei Wang 2024-05-30  3212  	case SPEED_2500:
+882212f550d669 Xiaolei Wang 2024-05-30  3213  		ptr = 8;
+882212f550d669 Xiaolei Wang 2024-05-30  3214  		speed_div = 2500000;
+882212f550d669 Xiaolei Wang 2024-05-30  3215  		break;
+882212f550d669 Xiaolei Wang 2024-05-30  3216  	case SPEED_1000:
+882212f550d669 Xiaolei Wang 2024-05-30  3217  		ptr = 8;
+882212f550d669 Xiaolei Wang 2024-05-30  3218  		speed_div = 1000000;
+882212f550d669 Xiaolei Wang 2024-05-30  3219  		break;
+882212f550d669 Xiaolei Wang 2024-05-30  3220  	case SPEED_100:
+882212f550d669 Xiaolei Wang 2024-05-30  3221  		ptr = 4;
+882212f550d669 Xiaolei Wang 2024-05-30  3222  		speed_div = 100000;
+882212f550d669 Xiaolei Wang 2024-05-30  3223  		break;
+882212f550d669 Xiaolei Wang 2024-05-30  3224  	default:
+882212f550d669 Xiaolei Wang 2024-05-30  3225  		netdev_dbg(priv->dev, "link speed is not known\n");
+
+return;?
+
+882212f550d669 Xiaolei Wang 2024-05-30  3226  	}
+19d9187317979c Joao Pinto   2017-03-10  3227  
+44781fef137896 Joao Pinto   2017-03-31  3228  	/* queue 0 is reserved for legacy traffic */
+44781fef137896 Joao Pinto   2017-03-31  3229  	for (queue = 1; queue < tx_queues_count; queue++) {
+19d9187317979c Joao Pinto   2017-03-10  3230  		mode_to_use = priv->plat->tx_queues_cfg[queue].mode_to_use;
+19d9187317979c Joao Pinto   2017-03-10  3231  		if (mode_to_use == MTL_QUEUE_DCB)
+19d9187317979c Joao Pinto   2017-03-10  3232  			continue;
+19d9187317979c Joao Pinto   2017-03-10  3233  
+882212f550d669 Xiaolei Wang 2024-05-30 @3234  		value = div_s64(priv->old_idleslope[queue] * 1024ll * ptr, speed_div);
+                                                                                                              ^^^  ^^^^^^^^^^
+Uninitialized.
+
+882212f550d669 Xiaolei Wang 2024-05-30  3235  		priv->plat->tx_queues_cfg[queue].idle_slope = value & GENMASK(31, 0);
+882212f550d669 Xiaolei Wang 2024-05-30  3236  
+882212f550d669 Xiaolei Wang 2024-05-30  3237  		value = div_s64(-priv->old_sendslope[queue] * 1024ll * ptr, speed_div);
+882212f550d669 Xiaolei Wang 2024-05-30  3238  		priv->plat->tx_queues_cfg[queue].send_slope = value & GENMASK(31, 0);
+882212f550d669 Xiaolei Wang 2024-05-30  3239  
+c10d4c82a5c84c Jose Abreu   2018-04-16  3240  		stmmac_config_cbs(priv, priv->hw,
+19d9187317979c Joao Pinto   2017-03-10  3241  				priv->plat->tx_queues_cfg[queue].send_slope,
+19d9187317979c Joao Pinto   2017-03-10  3242  				priv->plat->tx_queues_cfg[queue].idle_slope,
+19d9187317979c Joao Pinto   2017-03-10  3243  				priv->plat->tx_queues_cfg[queue].high_credit,
+19d9187317979c Joao Pinto   2017-03-10  3244  				priv->plat->tx_queues_cfg[queue].low_credit,
+19d9187317979c Joao Pinto   2017-03-10  3245  				queue);
+19d9187317979c Joao Pinto   2017-03-10  3246  	}
+19d9187317979c Joao Pinto   2017-03-10  3247  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
