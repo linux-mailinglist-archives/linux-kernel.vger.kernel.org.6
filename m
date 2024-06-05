@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-202412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470FC8FCC5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B308FCC5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438931C21520
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF88295E9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4151991AC;
-	Wed,  5 Jun 2024 11:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0905F1991D7;
+	Wed,  5 Jun 2024 11:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IX9n36Ut"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihLNEHWW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0631990A5;
-	Wed,  5 Jun 2024 11:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4828E1991BF;
+	Wed,  5 Jun 2024 11:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717588512; cv=none; b=jvxtXOmclKkHrAGEOOK29+SQQqSaVoOvGQYfKqemIUug3GJuvnwU2majOY587pC5uo4E3dE+FGMpt3JF8XIfc242yaUd7A9uHfUJ67933JU7ckI9Of9QA8sEVrGdOB4g2W6dlRGc29cfgsuIVc+ULL4VUoSxzidSwaxwi8WgTgI=
+	t=1717588514; cv=none; b=U1Oz7Ycq87rLASIujOi+OcpAPjyrEsGZYx5bjJj1dSMkCsSoV60t3YSGY+RCg6RyBumWBa3UHEqziK4DfEjsITYyzhtBBZfd61aFX66grOrJMHXskDlrA1PNCpzIyLmSzCofK3CcqJq3y8G+CWAPxJORn4KLNnP/iwh4jJ7YQjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717588512; c=relaxed/simple;
-	bh=GiBI9huflYab0YbVxrB6G6qk+Ybte+LFytlgYBm241o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kfF1NjtMu48wW8N/fdiXemV8+Xhkmkwduxr1LQAQf0/yqHt+koRdevoE7FX9wzuBEC7mxfk2yhfJ1k90Jp0NBV+JnocQdX7Dm52jzNh3i+jYdZT8uLCi1ZmwiyHsblQ9aNkUUmmN7Xg5Ip0vMZ38c9I/xAanTBfeezypK55xEUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IX9n36Ut; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80E84C4AF07;
-	Wed,  5 Jun 2024 11:55:11 +0000 (UTC)
+	s=arc-20240116; t=1717588514; c=relaxed/simple;
+	bh=vxNta2dXvygcPDnAOyNlvvdZasfoIV/rkHu+VVyVUxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FDM9VM8WUjB+KnCF+j5zdAmMyeRL7m6uzg2PaAvDuDWyKoGYNxE8TV3XIMODk0p+hdl6+rVcc9DSYD2c2xtY6fdapDSc+sxHs6c1SAobB8cxjJSSbqIzsp3m7jVCBWqQ38Z7FycNX+00JOu1xmITwoqCiBl2a16/sve+K+NgR2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihLNEHWW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04B2C32781;
+	Wed,  5 Jun 2024 11:55:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717588512;
-	bh=GiBI9huflYab0YbVxrB6G6qk+Ybte+LFytlgYBm241o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IX9n36Utmi3UwSfu8o/m3nDis8A24FkCxL3zpucan6yLQGtOmp1vbFu30BvO6Rd8w
-	 OqsPWKds3jTe0gWBLB2oX2YFMY0keG8lzwE6wMBGIgMDnPcRZZtc/4BmIqbDsyc2YK
-	 /7rSvW9OYHYfb4wEk1DiQq2eZ7xyhdyOXj1V/TQr7f6/gOoqDNyNd2UHb2DVwzytJC
-	 WstjBnMtVyUnmumkJAgzc+8UAmawtCLvDBhlx/m3hL+irkes81UHdBoqHY7YXGu+aP
-	 4LM0h0xufX1/px1xjAZSvaOoInJ6IHF7KlO77V8pdKv2cg6RwGtDLQqNlL+xHih9G3
-	 UNGHAsbIZ58wA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Sicong Huang <congei42@163.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	johan@kernel.org,
-	greybus-dev@lists.linaro.org
-Subject: [PATCH AUTOSEL 5.4 5/5] greybus: Fix use-after-free bug in gb_interface_release due to race condition.
-Date: Wed,  5 Jun 2024 07:54:58 -0400
-Message-ID: <20240605115504.2964549-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605115504.2964549-1-sashal@kernel.org>
-References: <20240605115504.2964549-1-sashal@kernel.org>
+	s=k20201202; t=1717588513;
+	bh=vxNta2dXvygcPDnAOyNlvvdZasfoIV/rkHu+VVyVUxQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ihLNEHWWeyMq3gPlOBgaF5Yr8+BSQTQupEqqMvROYRzEKQYZrf7equbZ5cgHjtHf3
+	 /bH29+vNWl3dLW4GrR3Au3z/zqxMQ1A/tjbEhu//vqflP3X+z7tpadFTQ8mQiIte3S
+	 wwmXgTo/zGr2YixlSlgp7uQxTi6Z6DcKm9ywvQg6PUlUCob/YGOaJhyABcE5kEqR51
+	 +jkebJYJU436NDgXyM+8dwJrHtOQ4fsHq3IVo3kwIl7NR/nign0GHFU4XjiLAXHgWk
+	 ogIs6rqg2A9MMkMglaRI/1A3vub6C53MZJ+1T7CrrKNoFTWB25/9z/nYLakhK4ZYQ0
+	 bpDJ9iE7wqFfw==
+Message-ID: <c71e0891-a187-4ad9-b554-8f28c15984fd@kernel.org>
+Date: Wed, 5 Jun 2024 13:55:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.277
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 net-next 14/15] net: Reference bpf_redirect_info via
+ task_struct on PREEMPT_RT.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Boqun Feng <boqun.feng@gmail.com>,
+ Daniel Borkmann <daniel@iogearbox.net>, Eric Dumazet <edumazet@google.com>,
+ Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
+References: <20240529162927.403425-1-bigeasy@linutronix.de>
+ <20240529162927.403425-15-bigeasy@linutronix.de> <87y17sfey6.fsf@toke.dk>
+ <20240531103807.QjzIOAOh@linutronix.de>
+ <9afab1bb-43d6-4f17-b45d-7f4569d9db70@kernel.org>
+ <20240605104128.Nn9Cp0CB@linutronix.de>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20240605104128.Nn9Cp0CB@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Sicong Huang <congei42@163.com>
 
-[ Upstream commit 5c9c5d7f26acc2c669c1dcf57d1bb43ee99220ce ]
 
-In gb_interface_create, &intf->mode_switch_completion is bound with
-gb_interface_mode_switch_work. Then it will be started by
-gb_interface_request_mode_switch. Here is the relevant code.
-if (!queue_work(system_long_wq, &intf->mode_switch_work)) {
-	...
-}
+On 05/06/2024 12.41, Sebastian Andrzej Siewior wrote:
+> On 2024-06-05 12:28:08 [+0200], Jesper Dangaard Brouer wrote:
+>>
+>> Hmm, but how will this affect performance?
+> 
+> As I wrote in the changelog for v4, I haven't notice a difference. I
+> tried to move bpf_net_ctx_set() from cpu_map_bpf_prog_run() to
+> cpu_map_kthread_run() to have this assignment only once and I didn't see
+> a difference/ I couldn't tell the two kernels apart.
+> 
 
-If we call gb_interface_release to make cleanup, there may be an
-unfinished work. This function will call kfree to free the object
-"intf". However, if gb_interface_mode_switch_work is scheduled to
-run after kfree, it may cause use-after-free error as
-gb_interface_mode_switch_work will use the object "intf".
-The possible execution flow that may lead to the issue is as follows:
+This would be my preferred solution.
+See below, your benchmark wasn't testing/measuring this changed code on
+remote CPU running kthread.
 
-CPU0                            CPU1
+> This is what I have been using for testing
+> 
+> | xdp-bench redirect-cpu --cpu 3 --remote-action drop eth1 -e
+> 
+> in case I was changing the wrong part…
 
-                            |   gb_interface_create
-                            |   gb_interface_request_mode_switch
-gb_interface_release        |
-kfree(intf) (free)          |
-                            |   gb_interface_mode_switch_work
-                            |   mutex_lock(&intf->mutex) (use)
+As we saw earlier (with your hardware setup) this test is benchmarking
+the RX-NAPI XDP-redirect code.  As the cpumap "remote" CPUs kthread had
+idle cycles.
 
-Fix it by canceling the work before kfree.
+The extra clearing bpf_net_ctx_set() for each packet in the kthread on
+the remote CPU will not change the benchmark numbers (as it have idle
+cycles).
 
-Signed-off-by: Sicong Huang <congei42@163.com>
-Link: https://lore.kernel.org/r/20240416080313.92306-1-congei42@163.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/greybus/interface.c | 1 +
- 1 file changed, 1 insertion(+)
+Looking closer at kernel code + your patch, I see that this clearing
+isn't done for each packet, but per bulk (up-to CPUMAP_BATCH 8).  Given
+that, I'm more okay with this change.
 
-diff --git a/drivers/greybus/interface.c b/drivers/greybus/interface.c
-index 67dbe6fda9a13..5412031fb67c5 100644
---- a/drivers/greybus/interface.c
-+++ b/drivers/greybus/interface.c
-@@ -694,6 +694,7 @@ static void gb_interface_release(struct device *dev)
- 
- 	trace_gb_interface_release(intf);
- 
-+	cancel_work_sync(&intf->mode_switch_work);
- 	kfree(intf);
- }
- 
--- 
-2.43.0
+--Jesper
+
 
 
