@@ -1,221 +1,192 @@
-Return-Path: <linux-kernel+bounces-201581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9298FC053
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:14:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9548FC062
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE850B2478A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:14:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68170B20ED7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFE664D;
-	Wed,  5 Jun 2024 00:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JERdFIUl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B735136C;
-	Wed,  5 Jun 2024 00:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F385B184E;
+	Wed,  5 Jun 2024 00:21:29 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7A565C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 00:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717546433; cv=none; b=qVZ7PeuSmW126DuZXw1ShUu+C6Q2M69PFLMKkGeS946jeKi23hpxpc9NeTcPYqe10dKwCg1V9igHotI2THESOXdS2FKizjoAXFivh1RAz1ZodIYVgT+4f7XRdL+TC05iodX/MZtq+Py/JRc0i3/vBYS/ITS5nMDWzav9ukxK5s8=
+	t=1717546889; cv=none; b=patg1bjJYHwz/PQESfK224eDKOAQ3gt7hvR0mB8XeQs1/reBDMCveRGA7JxNYPZG8nuP/t9Lpb/ZACNxN18UdXSW2qM3Zs290EIW7JyQn0BJRwq96qNBpV0TGzFyFNHlzNpcKNqrzU9LeGOi3ayqtHCLOUOmlRD7xnzNeimNwTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717546433; c=relaxed/simple;
-	bh=7lGqpJ0q1PDeFxXtpIKvXYZKpx/YVVGquXk5PjooP08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kvzf28Iu2wbRpKQsnR8QV+qZLmuq/f3zWuM9jWhu84u5FvGgmct6mfXUJaKPLHkSTf1j80wwpKFQWGbgu0j2IJSTEfl0dE869bL/CSeGIqJjiQNDQB9ZL6FpRqHwof2oS3uhxnVE8QWoNRlL+wz/5jxG6nyLvQTDh9GJvF/XTCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JERdFIUl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454IRpLs008712;
-	Wed, 5 Jun 2024 00:13:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yzQ0N1wxV3RPCvvF5PjfHJe7twnzcZr7JCVW4jChbDE=; b=JERdFIUlUhLAsCDw
-	M5+EFrJjV52O6oW/UGxVc6SLR5njSIEFx3ORSWTg6J3R7iKwm01Dacy6M56qlYSC
-	9JKqMxwkQiGtkXnRVmSn/r3vaUcX5tfqTpmwqhRmIf+wr4cQ8MQC53IFLx92zNIR
-	jxsz7ZDVb8RSE4Hukx7AZxzBThY4xfpUxQHAxWaBSRsMk6rQBH8UktVQ2stPpfPk
-	6xyg8/J8PKLArQCfx4icDaMd8ctlDIn3nOm+m7Kg3bRxRiPcGyxPFeaDoX9S7PJe
-	POdftW8ptkF9kUoMyQx9csFdqp+acQVD7xU/wrh77kzzO4aoApo8FAbYUfKrMG5H
-	UisSsA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj87rgk15-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 00:13:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4550DY83001612
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Jun 2024 00:13:34 GMT
-Received: from [10.110.31.89] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
- 17:13:29 -0700
-Message-ID: <efe9a303-47de-36a9-3a13-b6f89d1d8784@quicinc.com>
-Date: Tue, 4 Jun 2024 17:13:27 -0700
+	s=arc-20240116; t=1717546889; c=relaxed/simple;
+	bh=xdfWrF1qujjwhxwbb6igPTngTXPnCU+wUDMmn5J4rlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdgBhMbaHSjVro9A05kedQt8+VjE37GKBGGjr3xODRmGpUeZyA6YKsl/dT7svRF9T7ap2YJUTZhKEitHi9MIWygXyKGmqnb4MjEqLjNqNLYOFz5yPVWprHgIkaUe3laYiGuwxnKZ3uIScy6WqPo5zRTYTyIbnvhbxezPAk7TLGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d85ff70000001748-85-665faf7fe9ab
+Date: Wed, 5 Jun 2024 09:21:14 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, iamjoonsoo.kim@lge.com,
+	rientjes@google.com
+Subject: Re: [PATCH v2] mm: let kswapd work again for node that used to be
+ hopeless but may not now
+Message-ID: <20240605002114.GA23651@system.software.com>
+References: <20240604072323.10886-1-byungchul@sk.com>
+ <87bk4hcf7h.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <20240604084533.GA68919@system.software.com>
+ <8734ptccgi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <20240604091221.GA28034@system.software.com>
+ <20240604102516.GB28034@system.software.com>
+ <20240604122927.GA1992@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] drm/msm/a6xx: use __always_unused to fix compiler
- warnings for gen7_* includes
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Connor Abbott <cwabbott0@gmail.com>, <dri-devel@lists.freedesktop.org>,
-        <seanpaul@chromium.org>, <quic_jesszhan@quicinc.com>,
-        Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240604215105.4057278-1-quic_abhinavk@quicinc.com>
- <x42z2ykkpx7qkn2lr3y5sl3lm2m3fl2asy7qvswgemz5bpu62w@drh7b7wihrwg>
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <x42z2ykkpx7qkn2lr3y5sl3lm2m3fl2asy7qvswgemz5bpu62w@drh7b7wihrwg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: u5cmut2unrStAVqhKdDBze9iOQ4gMwVl
-X-Proofpoint-ORIG-GUID: u5cmut2unrStAVqhKdDBze9iOQ4gMwVl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 spamscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406050000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604122927.GA1992@cmpxchg.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsXC9ZZnoW79+vg0g8dNlhZz1q9hs1i9yddi
+	ZXczm8XlXXPYLO6t+c9q0bZkI5PFyVmTWRzYPQ6/ec/ssWBTqcfiPS+ZPDZ9msTu0fX2CpPH
+	iRm/WTw+b5ILYI/isklJzcksSy3St0vgyjh85BVLwXbtilMbNjA1MPYodjFyckgImEic/feJ
+	BcZ+d/ghE4jNIqAi8fruYTCbTUBd4saNn8wgtoiAhsSlRR1sXYxcHMwCBxkl3hy8y97FyMEh
+	LJAqcXx7AEgNr4CFxOW3T1hBaoQELjBJzPl7kBUiIShxcuYTsGXMAloSN/69ZALpZRaQllj+
+	jwMkzClgIHFq9y+wvaICyhIHth1nApkjIXCATeLb3XnsEIdKShxccYNlAqPALCRjZyEZOwth
+	7AJG5lWMQpl5ZbmJmTkmehmVeZkVesn5uZsYgcG+rPZP9A7GTxeCDzEKcDAq8fDu+BWXJsSa
+	WFZcmXuIUYKDWUmE1684Pk2INyWxsiq1KD++qDQntfgQozQHi5I4r9G38hQhgfTEktTs1NSC
+	1CKYLBMHp1QDY6PNjVDTgu/y6e1XTz5t2LjP/r5fw579R167LJP4LvFfmrt1flOUmZeg7M3S
+	Ag6tk7fZ3DdsWW8WvHDDvDlH17ZyXTmoWxjHXBEfcWxfw8/90lNWz/33KHbninWeT///6Nef
+	e5nv7K/GGM6Ga4zXv3V8SxK9/Wb5H46+4psPW3JUNaw+v+N3WKTEUpyRaKjFXFScCADDet72
+	cgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXC5WfdrFu/Pj7N4OV2Q4s569ewWaze5Gux
+	sruZzeLw3JOsFpd3zWGzuLfmP6tF25KNTBYnZ01mceDwOPzmPbPHgk2lHov3vGTy2PRpErtH
+	19srTB4nZvxm8Vj84gOTx+dNcgEcUVw2Kak5mWWpRfp2CVwZh4+8YinYrl1xasMGpgbGHsUu
+	Rk4OCQETiXeHHzKB2CwCKhKv7x4Gs9kE1CVu3PjJDGKLCGhIXFrUwdbFyMXBLHCQUeLNwbvs
+	XYwcHMICqRLHtweA1PAKWEhcfvuEFaRGSOACk8ScvwdZIRKCEidnPmEBsZkFtCRu/HvJBNLL
+	LCAtsfwfB0iYU8BA4tTuX2B7RQWUJQ5sO840gZF3FpLuWUi6ZyF0L2BkXsUokplXlpuYmWOq
+	V5ydUZmXWaGXnJ+7iREYustq/0zcwfjlsvshRgEORiUe3h2/4tKEWBPLiitzDzFKcDArifD6
+	FcenCfGmJFZWpRblxxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgskycXBKNTC6sbG/
+	PHtPWjky/ZJIuPn9nW8tzu99p3l0fVX0TxPtLcI/Fuww4zXR3Pvif1DIsT/rl+894bWsSfje
+	tZ911hrfNQonNH/4cay+82FUkcKcqwssGNd8mlduqHfrN/ueBclpz+0nKJwyT9yQtO1n3lKn
+	XRvf3+ePPc2Zkn39xK+Lf79O6/y9jF/ujxJLcUaioRZzUXEiACWHbTNZAgAA
+X-CFilter-Loop: Reflected
 
-
-
-On 6/4/2024 4:58 PM, Dmitry Baryshkov wrote:
-> On Tue, Jun 04, 2024 at 02:51:04PM -0700, Abhinav Kumar wrote:
->> GCC diagnostic pragma method throws below warnings in some of the versions
->>
->> drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:16:9: warning: unknown option after '#pragma GCC diagnostic' kind [-Wpragmas]
->>   #pragma GCC diagnostic ignored "-Wunused-const-variable"
->>           ^
->> In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:18:0:
->> drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h:924:19: warning: 'gen7_0_0_external_core_regs__always_unused' defined but not used [-Wunused-variable]
->>   static const u32 *gen7_0_0_external_core_regs__always_unused[] = {
->>                     ^
+On Tue, Jun 04, 2024 at 08:29:27AM -0400, Johannes Weiner wrote:
+> On Tue, Jun 04, 2024 at 07:25:16PM +0900, Byungchul Park wrote:
+> > On Tue, Jun 04, 2024 at 06:12:22PM +0900, Byungchul Park wrote:
+> > > On Tue, Jun 04, 2024 at 04:57:17PM +0800, Huang, Ying wrote:
+> > > > Byungchul Park <byungchul@sk.com> writes:
+> > > > 
+> > > > > On Tue, Jun 04, 2024 at 03:57:54PM +0800, Huang, Ying wrote:
+> > > > >> Byungchul Park <byungchul@sk.com> writes:
+> > > > >> 
+> > > > >> > Changes from v1:
+> > > > >> > 	1. Don't allow to resume kswapd if the system is under memory
+> > > > >> > 	   pressure that might affect direct reclaim by any chance, like
+> > > > >> > 	   if NR_FREE_PAGES is less than (low wmark + min wmark)/2.
+> > > > >> >
+> > > > >> > --->8---
+> > > > >> > From 6c73fc16b75907f5da9e6b33aff86bf7d7c9dd64 Mon Sep 17 00:00:00 2001
+> > > > >> > From: Byungchul Park <byungchul@sk.com>
+> > > > >> > Date: Tue, 4 Jun 2024 15:27:56 +0900
+> > > > >> > Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
+> > > > >> >
+> > > > >> > A system should run with kswapd running in background when under memory
+> > > > >> > pressure, such as when the available memory level is below the low water
+> > > > >> > mark and there are reclaimable folios.
+> > > > >> >
+> > > > >> > However, the current code let the system run with kswapd stopped if
+> > > > >> > kswapd has been stopped due to more than MAX_RECLAIM_RETRIES failures
+> > > > >> > until direct reclaim will do for that, even if there are reclaimable
+> > > > >> > folios that can be reclaimed by kswapd.  This case was observed in the
+> > > > >> > following scenario:
+> > > > >> >
+> > > > >> >    CONFIG_NUMA_BALANCING enabled
+> > > > >> >    sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
+> > > > >> >    numa node0 (500GB local DRAM, 128 CPUs)
+> > > > >> >    numa node1 (100GB CXL memory, no CPUs)
+> > > > >> >    swap off
+> > > > >> >
+> > > > >> >    1) Run a workload with big anon pages e.g. mmap(200GB).
+> > > > >> >    2) Continue adding the same workload to the system.
+> > > > >> >    3) The anon pages are placed in node0 by promotion/demotion.
+> > > > >> >    4) kswapd0 stops because of the unreclaimable anon pages in node0.
+> > > > >> >    5) Kill the memory hoggers to restore the system.
+> > > > >> >
+> > > > >> > After restoring the system at 5), the system starts to run without
+> > > > >> > kswapd.  Even worse, tiering mechanism is no longer able to work since
+> > > > >> > the mechanism relies on kswapd for demotion.
+> > > > >> 
+> > > > >> We have run into the situation that kswapd is kept in failure state for
+> > > > >> long in a multiple tiers system.  I think that your solution is too
+> > > > >
+> > > > > My solution just gives a chance for kswapd to work again even if
+> > > > > kswapd_failures >= MAX_RECLAIM_RETRIES, if there are potential
+> > > > > reclaimable folios.  That's it.
+> > > > >
+> > > > >> limited, because OOM killing may not happen, while the access pattern of
+> > > > >
+> > > > > I don't get this.  OOM will happen as is, through direct reclaim.
+> > > > 
+> > > > A system that fails to reclaim via kswapd may succeed to reclaim via
+> > > > direct reclaim, because more CPUs are used to scanning the page tables.
+> > > > 
+> > > > In a system with NUMA balancing based page promotion and page demotion
+> > > > enabled, page promotion will wake up kswapd, but kswapd may fail in some
+> > > > situations.  But page promotion will no trigger direct reclaim or OOM.
+> > > > 
+> > > > >> the workloads may change.  We have a preliminary and simple solution for
+> > > > >> this as follows,
+> > > > >> 
+> > > > >> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=17a24a354e12d4d4675d78481b358f668d5a6866
+> > > > >
+> > > > > Whether tiering is involved or not, the same problem can arise if
+> > > > > kswapd gets stopped due to kswapd_failures >= MAX_RECLAIM_RETRIES.
+> > > > 
+> > > > Your description is about tiering too.  Can you describe a situation
+> > > 
+> > > I mentioned "tiering" while I described how to reproduce because I ran
+> > > into the situation while testing with tiering system but I don't think
+> > > it's the necessary condition.
+> > > 
+> > > Let me ask you back, why the logic to stop kswapd was considered in the
+> > > first place?  That's because the problem was already observed anyway
+> > 
+> > To be clear..
+> > 
+> > The problem, kswapd_failures >= MAX_RECLAIM_RETRIES, can happen whether
+> > tiering is involved not not.  Once kswapd stops, the system should run
+> > without kswapd even after recovered e.g. by killing the hoggers.  *Even
+> > worse*, tiering mechanism doesn't work in this situation.
 > 
-> I don't see this symbol in upstream.
-> 
+> But like Ying said, in other situations it's direct reclaim that kicks
+> in and clears the flag.
 
-This was a C&P mistake. Instead of pasting the warning message from the 
-default msm-next, I pasted the warning message from one of my trial runs 
-(a bad one). I will fix the commit message when I post a v2.
+I already described it in the commit message.
 
-The correct warnings are:
+> The failure-sleep and direct reclaim triggered recovery have been in
 
-drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:16:9: warning: unknown 
-option after '#pragma GCC diagnostic' kind [-Wpragmas]
-  #pragma GCC diagnostic ignored "-Wunused-const-variable"
-          ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:18:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h:924:19: warning: 
-'gen7_0_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_0_0_external_core_regs[] = {
-                    ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:19:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h:748:19: warning: 
-'gen7_2_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_2_0_external_core_regs[] = {
-                    ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:20:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:1188:43: warning: 
-'gen7_9_0_sptp_clusters' defined but not used [-Wunused-variable]
-  static struct gen7_sptp_cluster_registers gen7_9_0_sptp_clusters[] = {
-                                            ^
-drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:1438:19: warning: 
-'gen7_9_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_9_0_external_core_regs[] = {
+Sure.  It's better than nothing.
 
+> place since 2017. Both parties who observed an issue with it recently
+> did so in tiering scenarios. IMO a tiering-specific solution makes the
+> most sense.
 
->> In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:19:0:
->> drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h:748:19: warning: 'gen7_2_0_external_core_regs' defined but not used [-Wunused-variable]
->>   static const u32 *gen7_2_0_external_core_regs[] = {
->>                     ^
->> In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:20:0:
->> drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:1188:43: warning: 'gen7_9_0_sptp_clusters' defined but not used [-Wunused-variable]
->>   static struct gen7_sptp_cluster_registers gen7_9_0_sptp_clusters[] = {
->>                                             ^
->> drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:1438:19: warning: 'gen7_9_0_external_core_regs' defined but not used [-Wunused-variable]
->>   static const u32 *gen7_9_0_external_core_regs[] = {
->>
->> Remove GCC dependency by using __always_unused for the unused gen7_* includes.
->>
->> Fixes: 64d6255650d4 ("drm/msm: More fully implement devcoredump for a7xx")
->> Suggested-by: Rob Clark <robdclark@chromium.org>
->> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->> ---
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 13 ++++---------
->>   1 file changed, 4 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
->> index 0a7717a4fc2f..62ca0cf24005 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
->> @@ -8,19 +8,10 @@
->>   #include "a6xx_gpu_state.h"
->>   #include "a6xx_gmu.xml.h"
->>   
->> -/* Ignore diagnostics about register tables that we aren't using yet. We don't
->> - * want to modify these headers too much from their original source.
->> - */
->> -#pragma GCC diagnostic push
->> -#pragma GCC diagnostic ignored "-Wunused-variable"
->> -#pragma GCC diagnostic ignored "-Wunused-const-variable"
->> -
->>   #include "adreno_gen7_0_0_snapshot.h"
->>   #include "adreno_gen7_2_0_snapshot.h"
->>   #include "adreno_gen7_9_0_snapshot.h"
->>   
->> -#pragma GCC diagnostic pop
->> -
->>   struct a6xx_gpu_state_obj {
->>   	const void *handle;
->>   	u32 *data;
->> @@ -1350,6 +1341,10 @@ static void a7xx_get_registers(struct msm_gpu *gpu,
->>   	int index = 0;
->>   	const u32 *pre_crashdumper_regs;
->>   	const struct gen7_reg_list *reglist;
->> +	__always_unused const u32 **external_core_regs7_0_0 = gen7_0_0_external_core_regs;
->> +	__always_unused const u32 **external_core_regs_7_2_0 = gen7_2_0_external_core_regs;
->> +	__always_unused const u32 **external_core_regs_7_9_0 = gen7_9_0_external_core_regs;
->> +	__always_unused struct gen7_sptp_cluster_registers *sptp_gen7 = gen7_9_0_sptp_clusters;
-> 
-> Wouldn't it be easier to add something like the following to the
-> a6xx_gpu_state.c before including the headers:
-> 
-> static const unsigned int *gen7_0_0_external_core_regs[] __attribute((__unused__));
-> static const unsigned int *gen7_2_0_external_core_regs[] __attribute((__unused__));
-> static const unsigned int *gen7_9_0_external_core_regs[] __attribute((__unused__));
-> 
+So..  Is the follow situation in a non-tiering system okay?  Really?
 
-Ack, this works too and its cleaner. let me push it this way. Thanks.
+   A system runs with kswapd disabled unless hitting min water mark,
+   even if there might be something that kswapd can work on.
 
->>   
->>   	if (adreno_is_a730(adreno_gpu)) {
->>   		reglist = gen7_0_0_reg_list;
->> -- 
->> 2.44.0
->>
-> 
+I don't undertand why it's okay.  Could you explain more?  Then why do
+we use kswapd in background?
+
+	Byungchul
 
