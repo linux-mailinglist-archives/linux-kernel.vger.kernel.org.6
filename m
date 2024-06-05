@@ -1,136 +1,132 @@
-Return-Path: <linux-kernel+bounces-201662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF618FC177
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:57:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113758FC178
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA84D1F21AE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:57:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6602845EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99BA5FEED;
-	Wed,  5 Jun 2024 01:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0E95B1E4;
+	Wed,  5 Jun 2024 01:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtVd8Tce"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XeGlqOrQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B955E5812F;
-	Wed,  5 Jun 2024 01:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CD455769
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 01:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717552654; cv=none; b=HRGoQyyx7VSFHGLcalMlX6qqNVoGjhl3dGSPSIvdbzXnfAwWEuWi/Poal6XhUQyLxeh1jXcrw3fPBdipvaBBAJ80IiVm5VXNe7QLzoUBp9yb+yurav8R4AIj6+KbEDnAQcJGjQGDyYaXyjfxuXBAN3lq5VNU6Kafc1DXQUL5Rkc=
+	t=1717552725; cv=none; b=f6X+Ri3xnkA7bWtJjWIxYPnvcK1T6CM82HAK5sQ+hGeL4ybemmj7hP2A2VNGfj571O/GnfEKg8vAI6ZvpzFr7ZiArn6cDLGwXxhAReo/LSV5OHFt98JEj/Ge7X/whgwcn7JZ8y7+OrcZtmiz6eDwqv7X2YS++ch6BHpIUwB3AJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717552654; c=relaxed/simple;
-	bh=QzovVf4qci3kvW1vMQctM+uKUriJAOx+Xy4xQsQUqnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qvB1/Gwd8GPBV+peQzfQ3mrGXNWGs3VRigH914KHoBIU+UGfZtRcI0nN/xhy4h4g6PyI2RgH3pCuo9Govyo4GzQz5qLWhc8Yl9e1TA9vFbM3BnoNx0o+2bRWblkmmb4/U9LuvKt13BgeIundVgcJbWKyCmYp5pZVIyvJVs486V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtVd8Tce; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f68834bfdfso14161895ad.3;
-        Tue, 04 Jun 2024 18:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717552652; x=1718157452; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LRQ2L84kKv0/0p53jg/iCgVwJYBRNYpHVrPukVuThKs=;
-        b=UtVd8TceTxHx9nzKQGOvgPN6P3uRQZMN8vd1s9oxfP/k465XBSPLKfzHTeb2BoAJOu
-         VoE8oTxiTVEV2vESZXRiv1d/iGWPrHDIqVktBSwfDA7Ee0RpB5SwhXFoshHV57PK0ChE
-         2usdg/ZNrHDUDVTpIXhCnzwJDpereYd3IyLY9weijXoac5iGWkutGSxNGLmiqjaGMCjK
-         uOxFzwYUA2ZBcsziuOFyCJopVgwReRkcCAoM5S+tpIxTcDgVhuAeiGsVXtv6KEPKK74I
-         iJROAfwLO9/jiNU3fApWjID5OkfW7lXfGaACeTymjNc74W6tAhxGeoMiZfOpq7WWwvGk
-         Ya9w==
+	s=arc-20240116; t=1717552725; c=relaxed/simple;
+	bh=yQNuo88HfPAS+i2AOQrcrk7UYC8jD7vecHcMZya2xIU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SzJy8dMw+46KLmp9/QqcRmpxed3O5z8R3EsR1JQhebOwGm67Ropzk8P1JqzZa4HkbqnyA2xHBYM5EX8YvE+vpYIHvxq2UPjvPPvFywedIW88bOyLLH8unU+ephG7jAWwKKQGmugS2Tn84Ed7gsJ2yzg5st/lTmR81ZRDp8WA4uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XeGlqOrQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717552723;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bDq7LAUeG1zx3wFqxyw1+1sNdwa7aIwSKaoX8NuYSHg=;
+	b=XeGlqOrQhT0xoBx3VybHSAnA5MVeJmKlKQe91TyQlcvPpLE9tfaCXJYPyIDap3vuTddH1C
+	87W+4EdKBr5MP1fay/T0GN1bMdWfN/as4itQi4jVfjqBNWg1NPSk848OhBLuMrivLaP2FE
+	blbzGN+2p0myhBhf574D0/tKgQQq+7Q=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-lCYCj6QtNGm63WiV2eGNkw-1; Tue, 04 Jun 2024 21:58:40 -0400
+X-MC-Unique: lCYCj6QtNGm63WiV2eGNkw-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2c22ba3e3b0so714692a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 18:58:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717552652; x=1718157452;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRQ2L84kKv0/0p53jg/iCgVwJYBRNYpHVrPukVuThKs=;
-        b=dyFeqFGbsj7XLMlKLyGyRXsOikPCoXr1o2pIBq8uTRW8D+AoteKTcUxNDgGG3ABUmA
-         AWWt31Ac5hZvjI4UUUP/WoKxtZdorYAqO3uFVgWxbV51N+Xxau751/HRpSGDeVhIfTFm
-         2r31SF+JWrTcOUcvrl9dcyPRDokR/dQq6o+wt1xQAghSLDSipjsPOeVZlJcHTGC5f73y
-         k10p7NfSwwD16F73QVlZLSLjTS0Go8mj6cLijsldSjobwrRyqJW9RUbueb0G900CgaRA
-         qr0RQMYN9laenQnvHXQOYaUz1oq2m6be+ye33tSmfOOyxAqJBIVqfnQGsU986TP56UjT
-         iYFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUw4uwc8Z4V+EyWZ6kXRuNAwwecGixLBClZ4w9VEj02ylfVPzKkojn7sdEA3Gjucxplj2uLB5r2w5LlHWol7Nsw66v39rwzl0z+WQdBhDulmqy3eKO2npEdDSNhxRVZ8c7Y2ny1wYhUAw==
-X-Gm-Message-State: AOJu0YxCFzQan+kBOxZXqKcqknH2U9dV6NUbxqsoXgNYp1TQkYQQHvm0
-	/rpyeYoOhOl75XnRSPqyf+mHLds12HxX6WsTvLnvPKMAJLGIfFZ+
-X-Google-Smtp-Source: AGHT+IGhY8NWxmXyY5cm9IbPZfn9UpfnpG1B1H5+o1ZxPw3zhwQGAkJsS7G9NEocR/bhIoUpYKzKjA==
-X-Received: by 2002:a17:902:d508:b0:1f4:8a64:707e with SMTP id d9443c01a7336-1f6a5a041f6mr15710965ad.14.1717552651897;
-        Tue, 04 Jun 2024 18:57:31 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f63241c39dsm89848075ad.297.2024.06.04.18.57.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 18:57:31 -0700 (PDT)
-Message-ID: <42fa4660-b3bf-4d09-bbad-064f9d4cc727@gmail.com>
-Date: Wed, 5 Jun 2024 10:57:27 +0900
+        d=1e100.net; s=20230601; t=1717552719; x=1718157519;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bDq7LAUeG1zx3wFqxyw1+1sNdwa7aIwSKaoX8NuYSHg=;
+        b=s8hnLZPjGEYQrNEoNIcfVtK1p4o99XyxryWCs/4SQREsmD6jOQCTYT9ofmWkd+1Zxe
+         p0qMM4AARIim6hbEcAzR3Dr0x/UYwocHTFdR381QDDbQTVJm7mVq4wbkYAB4elQe+gIM
+         pn61WIztDRokkpyCkfN88AM/TtcreVlH+pAv6fZN3iZAT6wbMPThWgif/sp9ZY3fQCQg
+         h5OeP35glGX8DMITjGms5xuDK5CJ0njwWhD0lS63zKf5I028es4+KW1rHa4PqguwbzWy
+         dkQvDouu8ncKXqnwjUPVYnhG7J3iQfiF3Zip7BEjvbNQLE0dM6m+zkyKD/OTMSXuMblu
+         kw9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVol7Lzon4CNH1zh+OC/NY7tpKmIA6uqll4Zs7Zs7Gko030iGi+9ropcUgMo4cr4tmOLdqA5oGdLMAOcBzXObhOU1isOiD8ZD0pXkm+
+X-Gm-Message-State: AOJu0YymmlIl48jKLQYmNl7KLDYvPJV1Em/j0xK029cKRplJVlPnnwOe
+	qsV3cr2RXmcvlCmSLfB/rXRkjNs4hXtMS3dyzEhD1XpoYj0Z5+8d7mVr5ykDnNnFyBxEQ8gdoU4
+	aMTp4Ajc8XpOcUo3P8nZ5jCdeG+A/bqP3fRwb6RviRMEeLMD+c4OFmdlrvj4rybfV3c82rxY5yt
+	D317QWR+eYgPEWAnJekr9AD4poxzaEaqeLBUyx
+X-Received: by 2002:a17:90b:484e:b0:2bd:76ee:48c2 with SMTP id 98e67ed59e1d1-2c27da2df29mr1268673a91.0.1717552719001;
+        Tue, 04 Jun 2024 18:58:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxFVHjC8YnYbmOndJJgwEmwIfgEgBgMUDA8Tq6Gici14Z5tLZpocEb/9zJxsxUZ9G0QoldR1eiR4+UpxuGzgo=
+X-Received: by 2002:a17:90b:484e:b0:2bd:76ee:48c2 with SMTP id
+ 98e67ed59e1d1-2c27da2df29mr1268665a91.0.1717552718628; Tue, 04 Jun 2024
+ 18:58:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH memory-model 3/3] tools/memory-model: Add KCSAN LF
- mentorship session citation
-To: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, kernel-team@meta.com, mingo@kernel.org
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- Marco Elver <elver@google.com>, Daniel Lustig <dlustig@nvidia.com>,
- Joel Fernandes <joel@joelfernandes.org>, Akira Yokosawa <akiyks@gmail.com>
-References: <b290acd5-074f-4e17-a8bf-b444e553d986@paulmck-laptop>
- <20240604221419.2370127-3-paulmck@kernel.org>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20240604221419.2370127-3-paulmck@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
+ <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local> <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
+ <Zl3HfiQ6oHdTdOdA@kernel.org> <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
+ <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local> <Zl3hwYL2GDiyUfGo@kernel.org>
+ <7eb4ca99-679c-4f23-9562-a39b966c28a0@amd.com> <20240603165747.GGZl32C9yrmXJ4nhPT@fat_crate.local>
+ <2343889c-887a-49ce-86df-343737d70d37@amd.com> <20240603171231.GJZl35f-BHvU2Pk3lb@fat_crate.local>
+ <ff28e3ea-c492-4db6-8781-abaec6320756@amd.com> <CALu+AoQBXv-y43sx6E28UBVeVHUzRkWEzFxK6jsS5NpN2ho3YQ@mail.gmail.com>
+ <CALu+AoTY2Xxs_vUzCyfsxtk-ov2mzJhzyTbbA9MYeeVkmKTMsw@mail.gmail.com>
+In-Reply-To: <CALu+AoTY2Xxs_vUzCyfsxtk-ov2mzJhzyTbbA9MYeeVkmKTMsw@mail.gmail.com>
+From: Dave Young <dyoung@redhat.com>
+Date: Wed, 5 Jun 2024 09:58:56 +0800
+Message-ID: <CALu+AoSESmasAHqWdCGgQNbsTXfwbfhERBkaqSeaX881zqKtFg@mail.gmail.com>
+Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Mike Rapoport <rppt@kernel.org>, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, rafael@kernel.org, hpa@zytor.com, 
+	peterz@infradead.org, adrian.hunter@intel.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com, 
+	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	seanjc@google.com, kai.huang@intel.com, bhe@redhat.com, 
+	kirill.shutemov@linux.intel.com, bdas@redhat.com, vkuznets@redhat.com, 
+	dionnaglaze@google.com, anisinha@redhat.com, jroedel@suse.de, ardb@kernel.org, 
+	kexec@lists.infradead.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, dan.j.williams@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue,  4 Jun 2024 15:14:19 -0700, Paul E. McKenney wrote:
-> Add a citation to Marco's LF mentorship session presentation entitled
-> "The Kernel Concurrency Sanitizer"
-> 
-> [ paulmck: Apply Marco Elver feedback. ]
-> 
-> Reported-by: Marco Elver <elver@google.com>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Andrea Parri <parri.andrea@gmail.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Cc: Akira Yokosawa <akiyks@gmail.com>
+On Wed, 5 Jun 2024 at 09:52, Dave Young <dyoung@redhat.com> wrote:
+>
+> > >         ...
+> > >         if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB)) {
+> > >                 __efi_memmap_free(efi.memmap.phys_map,
+> > >                                 efi.memmap.desc_size * efi.memmap.nr_map, efi.memmap.flags);
+> > >         }
+> >
+> > From your debugging the memmap should not be freed.  This piece of
+> > code was added in below commit,  added Dan Williams in cc list:
+> > commit f0ef6523475f18ccd213e22ee593dfd131a2c5ea
+> > Author: Dan Williams <dan.j.williams@intel.com>
+> > Date:   Mon Jan 13 18:22:44 2020 +0100
+> >
+> >     efi: Fix efi_memmap_alloc() leaks
+> >
+> >     With efi_fake_memmap() and efi_arch_mem_reserve() the efi table may be
+> >     updated and replaced multiple times. When that happens a previous
+> >     dynamically allocated efi memory map can be garbage collected. Use the
+> >     new EFI_MEMMAP_{SLAB,MEMBLOCK} flags to detect when a dynamically
+> >     allocated memory map is being replaced.
+> >
+>
+> Dan, probably those regions should be freed only for "fake" memmap?
 
-Paul,
-
-While reviewing this, I noticed that
-tools/memory-model/Documentation/README has no mention of
-access-marking.txt.
-
-It has no mention of glossary.txt or locking.txt, either.
-
-I'm not sure where are the right places in README for them.
-Can you update it in a follow-up change?
-
-Anyway, for this change,
-
-Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
-
-        Thanks, Akira
-
-> Cc: Daniel Lustig <dlustig@nvidia.com>
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: <linux-arch@vger.kernel.org>
-> ---
+Ashish, can you comment out the __efi_memmap_free see if it works for
+you just confirm about the behavior.
 
 
