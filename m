@@ -1,121 +1,163 @@
-Return-Path: <linux-kernel+bounces-202513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32C58FCD79
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:44:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265A48FCDAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0218D1C23CBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:44:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C72A8B2870F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77911CAB81;
-	Wed,  5 Jun 2024 12:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6906919923F;
+	Wed,  5 Jun 2024 12:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfpqkaR4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Do3VtqHT"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318351CAB73;
-	Wed,  5 Jun 2024 12:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECDE1C95F3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717589086; cv=none; b=PNhiOitAzpX0SZB/T/MT0Je2GUdWgxpil5TlpGbCF09TY9+dzSnh8PCn9mdlkDnWjqzUs76YoBgVCzeD1MqqcYGQBbT6RDS00XBuf0/iFKdioLMoZomsf8PevSo4DnSHZFbpEWmtsfz0oXaCOR1LD++h3sqmSIwtVjXAtF8b0N4=
+	t=1717589077; cv=none; b=Nq7IYAuEdKitONIyv+VUOE1EmGWiI7Ym502G7jThcqcxWv8Pn9DuNeh4aoLuxuQ8/V0K49L2zl6IXwV6f6LmT6uJdHeVvUJV4i/Jf0TMMw4nziduro8Xu46TPu8VIqSMk0IMy1PASgSjQgHEc2E8yIOFhLKrtkm/acQJt4vt/TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717589086; c=relaxed/simple;
-	bh=ULzyHXS0sGWALaeJqeoih3j0CMPUwjesskRuWaz8y2k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ht0Ru5aA4MEJg/l9ZTCEUB1EK/AZE3Dd29GhYoMtyuerrx4UlbsEcQT5JoZO9vrJeMMDETw84D4h9NhYuGc6mslG0SHZ3GXYULW2UwWQA7DYH2N/GfWaA+jxPXj4XL+l0iWC1KGAm+eVpzS6xmjMaPQyBgSKPwdFxtGYKPgFkjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfpqkaR4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 026B7C4AF08;
-	Wed,  5 Jun 2024 12:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717589086;
-	bh=ULzyHXS0sGWALaeJqeoih3j0CMPUwjesskRuWaz8y2k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FfpqkaR47E3Uh+m3G/eetpQzFye4uruJ0jDgUEvjtqJkVkDV0LQHFkzhPbGV7aDKm
-	 olIn+PJw2TVuSQ+HwJk4/X17nwYIxp3JjK0xdwuPfvWzS/1GKpEKZiKVCLw20xUlWm
-	 UsCdLMFDpViWC1gWin9FwvIkpYkeVZsNhZZOjd6cfcEYgusRXBh2x97ghwwCYkyBlF
-	 Pip9dAdFm1sWAgK2HdSmMTzI9ZBWD5xQb2HDx2ZLlVkEKyHgWUwdcWrF6xX6LYn2MX
-	 PqnNn18BeG1v/xM4SLKuSGeYi2Fz+wfYvI7KnDBnzrwdd/TvukxQAEcIpHXu/Ipyxa
-	 p9xq3RFlqfNig==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Sasha Levin <sashal@kernel.org>,
-	martin.petersen@oracle.com,
-	hare@suse.de,
-	linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 18/18] null_blk: Do not allow runt zone with zone capacity smaller then zone size
-Date: Wed,  5 Jun 2024 08:03:57 -0400
-Message-ID: <20240605120409.2967044-18-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605120409.2967044-1-sashal@kernel.org>
-References: <20240605120409.2967044-1-sashal@kernel.org>
+	s=arc-20240116; t=1717589077; c=relaxed/simple;
+	bh=m84OVoVm5ii/jkR8JBTs1AiS6uReMQ5aalhNMwK9OII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=pnwMfBCo7sG7DiMl9NHYG1oL9mQWZswJPV6RwvURq72jlLKo2XLgzIifvY7b8YnTiB1Ft53JY9YwWaJiCt2R8xH0bLs1TxIsE7aApp1lEXbXl1veM27udHKVle8ePbXNsq5pKTT1sduTCHVKCjPXn6nC/REgKpIJrgvLm/G7eO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Do3VtqHT; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-440199acec5so1370521cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 05:04:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717589075; x=1718193875; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tPuTc08wjjwpO86SOuNZKeHCnjPvY6giUw1ze6bOSPo=;
+        b=Do3VtqHTtD+Pe8GtLPa+DbK1U+gKwvA/Wq0PsQLO8kT5bG4G2PVxNgOQtjDoae8+qG
+         upB22BxNdFrj5MdhU4xNhHsLi+fF1OsR6pa0PGt3sVrQ/AWRnKA9bMmyinzFLGjUOdqP
+         HbZJ7Xy1ZTJiXAR50IK2LytoUkydzDy+ihXXg3jvg66ZZG22auQuw2SCgo99CZi01KMO
+         uGYUldNwTIN6CK/5VV7cPElFQP6SAR2lC34O4LjR7FioiDbXEoCusLWyhQHXK4ITmxjU
+         aUAbhn2pcvxSfpv94yroaN86kP+S2bp0lap0mQqbinKFPvwzCGbB1jE/DwHVAriwi/Ji
+         Px+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717589075; x=1718193875;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tPuTc08wjjwpO86SOuNZKeHCnjPvY6giUw1ze6bOSPo=;
+        b=bBCBSAfl6NlRmuk5D6+jXYbDgrVgcDJaCrNcRaf3geiXRdT5EIk9YnwiAwi/D65kw7
+         cZRcl3swpB40gIbxH5yTIz9w0es4aXUCNQUy27YiCFsC9wwVNU3DFl4mi3rTJrtlRtYI
+         nUDhxYNwP+EUbDEGxzIem9Ur8SiG617LiO/EzH1J6TNddjvr9fF+Lh1aN/L/JxyPoZZj
+         UKObnj8IZw1lDdGZp04TJQ+zpxrueZt0Z4LfoF/ltb/OuZG3Fg0l1jdG4NDKRonefIH3
+         kXql3n4QPDb4oBac/6fnuu1+DlsOp1UYnYhbyC4x6cWXVjLqMIDlc8ckmHZdqzF7vneY
+         9jaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVnP5k7blljxoj6tqSXgKnch9jLjwNxXSbUL6xnYZ6w8mkldYV83TVogJ6YyA7DcfShvgkJzKm2ScAqKczFzPrB9ht0UbVLRJY1+Q2
+X-Gm-Message-State: AOJu0YwP/Yc8+qVYVUAuyYMnTShISzALFEtGj6P/NSVc89PWmLsjy8ic
+	7yoF0AxUTv6EczLqQOVKUj6KL2usloTY6Ixy5XTREyT2iCtJCXF0cwwjG2jB5pdy9o5p8GTfYV4
+	A2XtZ5qJD8sQdY81YCNe0bmB3AGc=
+X-Google-Smtp-Source: AGHT+IH08DASZwWkloRJgaFzndX3ohxbVhpChXg8kKGgMmIS7uWE00LXdMQ3IF+ghEagWVLqDXyH4FitBoiNT2IQTPQ=
+X-Received: by 2002:a05:6214:765:b0:6ad:7a58:4e01 with SMTP id
+ 6a1803df08f44-6b030a489d7mr23866326d6.3.1717589074779; Wed, 05 Jun 2024
+ 05:04:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.32
-Content-Transfer-Encoding: 8bit
+References: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
+In-Reply-To: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
+From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date: Wed, 5 Jun 2024 17:04:23 +0500
+Message-ID: <CABXGCsN=9UFvGgKztzkkAM1c8cVN-h=TKLLxWhKgTm11h+H-eg@mail.gmail.com>
+Subject: Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac
+ cause appearing green flashing bar on top of screen on Radeon 6900XT and 120Hz
+To: Hamza Mahfooz <hamza.mahfooz@amd.com>, Rodrigo.Siqueira@amd.com, 
+	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Damien Le Moal <dlemoal@kernel.org>
-
-[ Upstream commit b164316808ec5de391c3e7b0148ec937d32d280d ]
-
-A zoned device with a smaller last zone together with a zone capacity
-smaller than the zone size does make any sense as that does not
-correspond to any possible setup for a real device:
-1) For ZNS and zoned UFS devices, all zones are always the same size.
-2) For SMR HDDs, all zones always have the same capacity.
-In other words, if we have a smaller last runt zone, then this zone
-capacity should always be equal to the zone size.
-
-Add a check in null_init_zoned_dev() to prevent a configuration to have
-both a smaller zone size and a zone capacity smaller than the zone size.
-
-Signed-off-by: Damien Le Moal <dlemoal@kernel.org>
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Link: https://lore.kernel.org/r/20240530054035.491497-2-dlemoal@kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+On Sun, May 26, 2024 at 7:06=E2=80=AFPM Mikhail Gavrilov
+<mikhail.v.gavrilov@gmail.com> wrote:
+>
+> Hi,
+> Day before yesterday I replaced 7900XTX to 6900XT for got clear in
+> which kernel first time appeared warning message "DMA-API: amdgpu
+> 0000:0f:00.0: cacheline tracking EEXIST, overlapping mappings aren't
+> supported".
+> The kernel 6.3 and older won't boot on a computer with Radeon 7900XTX.
+> When I booted the system with 6900XT I saw a green flashing bar on top
+> of the screen when I typed commands in the gnome terminal which was
+> maximized on full screen.
+> Demonstration: https://youtu.be/tTvwQ_5pRkk
+> For reproduction you need Radeon 6900XT GPU connected to 120Hz OLED TV by=
+ HDMI.
+>
+> I bisected the issue and the first commit which I found was 6d4279cb99ac.
+> commit 6d4279cb99ac4f51d10409501d29969f687ac8dc (HEAD)
+> Author: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+> Date:   Tue Mar 26 10:42:05 2024 -0600
+>
+>     drm/amd/display: Drop legacy code
+>
+>     This commit removes code that are not used by display anymore.
+>
+>     Acked-by: Hamza Mahfooz <hamza.mahfooz@amd.com>
+>     Signed-off-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+>     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+>
+>  drivers/gpu/drm/amd/display/dc/inc/hw/stream_encoder.h         |  4 ----
+>  drivers/gpu/drm/amd/display/dc/inc/resource.h                  |  7 ----=
 ---
- drivers/block/null_blk/zoned.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+>  drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c         | 10 ----=
+------
+>  drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c | 33
+> +--------------------------------
+>  4 files changed, 1 insertion(+), 53 deletions(-)
+>
+> Every time after bisecting I usually make sure that I found the right
+> commit and build the kernel with revert of the bad commit.
+> But this time I again observed an issue after running a kernel builded
+> without commit 6d4279cb99ac.
+> And I decided to find a second bad commit.
+> The second bad commit has been bc87d666c05.
+> commit bc87d666c05a13e6d4ae1ddce41fc43d2567b9a2 (HEAD)
+> Author: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+> Date:   Tue Mar 26 11:55:19 2024 -0600
+>
+>     drm/amd/display: Add fallback configuration for set DRR in DCN10
+>
+>     Set OTG/OPTC parameters to 0 if something goes wrong on DCN10.
+>
+>     Acked-by: Hamza Mahfooz <hamza.mahfooz@amd.com>
+>     Signed-off-by: Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>
+>     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+>
+>  drivers/gpu/drm/amd/display/dc/optc/dcn10/dcn10_optc.c | 15 ++++++++++++=
+---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+>
+> After reverting both these commits on top of 54f71b0369c9 the issue is go=
+ne.
+>
+> I also attach the build config.
+>
+> My hardware specs: https://linux-hardware.org/?probe=3Df25a873c5e
+>
+> Rodrigo or anyone else from the AMD team can you look please.
+>
 
-diff --git a/drivers/block/null_blk/zoned.c b/drivers/block/null_blk/zoned.c
-index 55c5b48bc276f..9f6d7316b99aa 100644
---- a/drivers/block/null_blk/zoned.c
-+++ b/drivers/block/null_blk/zoned.c
-@@ -83,6 +83,17 @@ int null_init_zoned_dev(struct nullb_device *dev, struct request_queue *q)
- 		return -EINVAL;
- 	}
- 
-+	/*
-+	 * If a smaller zone capacity was requested, do not allow a smaller last
-+	 * zone at the same time as such zone configuration does not correspond
-+	 * to any real zoned device.
-+	 */
-+	if (dev->zone_capacity != dev->zone_size &&
-+	    dev->size & (dev->zone_size - 1)) {
-+		pr_err("A smaller last zone is not allowed with zone capacity smaller than zone size.\n");
-+		return -EINVAL;
-+	}
-+
- 	zone_capacity_sects = mb_to_sects(dev->zone_capacity);
- 	dev_capacity_sects = mb_to_sects(dev->size);
- 	dev->zone_size_sects = mb_to_sects(dev->zone_size);
--- 
-2.43.0
+Did anyone watch?
 
+--=20
+Best Regards,
+Mike Gavrilov.
 
