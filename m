@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-201810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47D18FC3BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:34:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063E18FC3C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D530DB27A1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2831C252F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFBA190493;
-	Wed,  5 Jun 2024 06:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F705763F8;
+	Wed,  5 Jun 2024 06:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="IwTP1eaY"
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="x3XEhvDE"
 Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E5119046C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 06:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71AA19046F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 06:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717569253; cv=none; b=KIFRZhXdJKrPJ/wVfL71GybkqzBeDo9U5g98YPH3Ebv5KXJHqCO8JXwhuEdRWUAJOhJAJUz9teCTDcNjho6dWPvXOqzpFE8Qr7V0nJlH5vDE+RTYpKHZM+u5mP9gtMIliAqyhmaTfy3FoKsuva7HRYsEB+shHZazEk0W7kSmZDc=
+	t=1717569254; cv=none; b=vDeL0rBDoLmwMRdEyCsKxrvUWGcrBKBrM8JIepcHrKXYJ8ldPdwe8WRMQkJ/YIftuTxmVHqYpzk+KDjKnmNtOwzhjZPZMNe4g/eQ5OZ3YBrNXxcZhQqRXvSkJffZl/CpYkQOzIyVFB35H5p6b+MBI6ymaSmaC2as1qf30aVfj2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717569253; c=relaxed/simple;
-	bh=BFYXFSaJf+5I7Oshefz5hefmDkIxJaEdUbAYQkpD9fc=;
+	s=arc-20240116; t=1717569254; c=relaxed/simple;
+	bh=PQEeKXfOM51bNYl7DoVRfJl+cIvwgdZuLjkHjzjiMPQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rv3Fkvq4c01izEr8szoZ6P0nI4lr5b9pRkP3tsgqsWI3bxisLRPkZkeNbt5TcKOTrWd3EDiUbXb4bumM2Hd9X3PdyEuK3nZJh/1zM6eEC38doNS72MsnEWN4cLpHIEdsag4BZ4UlE/S+V2nhAPhIyJTUvN/pYYuo/xFCrciIdEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=IwTP1eaY; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=diFFdwp7MZ3H9pmlMGssfZEikrMndMo5RL7MUQoMgtFQydQUalAn4Pout91QqLLSuboh1jzuWj7xGgUgZGtfKDR7WI1Xj+QYT4vplK9yoKKozF/fd9q3OmlZb1c8WV5y5HoIE/DdZx0hl2KV8AtWWv8fZjvVzt6NbA7RZ313Tdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=x3XEhvDE; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VvHjq2cSSz9stT;
-	Wed,  5 Jun 2024 08:34:07 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4VvHjs3sWDz9sv0;
+	Wed,  5 Jun 2024 08:34:09 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
-	t=1717569247;
+	t=1717569249;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kpyzWk+z7BoUogPMEwclr/gL3oFn+Jdg/0hnUJBFVPI=;
-	b=IwTP1eaYDdnnm+Thhsaaf8SPPJwc53yvHXScxlXVFmOI+Apk5GOaXv5CobZrVB/L6DnfkB
-	Zx1x2GvqxwigHL1QpVPuubkK5idgSdGb5gjYmOQt9xYuyOcMRYLYAWG31wzJoqe8XAD/o3
-	ijzwSISm7/My9GG1z5hACI3CM2IONT8wG2n2baoHgocsLxO7F9NsJQjZZNlIXmAVv9SXG8
-	hf7rG6L16KbAY0CKGvz9bDtyRB0n+oiuVU0+oWmzr2g3HpKLyytFnuonroBWR9h0Ht0BOa
-	0NfrnWU1lVl98I7B1czzh1aYJr+5OWytOFiYxukxi2LqzvAVy4Uj43wjtp1xbA==
+	bh=T3J2wtEYzEfGFdjBljjkZ5VjfAdF2JeuvVcugebR2hw=;
+	b=x3XEhvDE3Z9VBTvEa82RCRhGxqgqB5GabcJ8Cf/rCXmI0MBJHq7+oCyUURqojwSRTMTmVi
+	zHO3xsSdHO9arDxzRBao76ax6KU+xMhYSK0y6tC79qtinFPV4UNMyKWg5JmGUmgu3vCWYi
+	rJPrYRgQZ9iAA7IbM8g53QAbCfaA5GZe5It2MCKrYnuftoBEWvvgnOa67iyxhJ+QhZts8L
+	uYsNZ8quJ05z9YYH+e0b9NPLes6dC6JwEVez85bLo2Nw1K/B6LMFEXrqsrdn+G0ka3YCGE
+	7Xp402+E39nxkZVWaMXGqExf6WecsBQivmRtV7vhvc2Wj/MHxul6jOwpw62YiA==
 From: Ben Walsh <ben@jubnut.com>
 To: Benson Leung <bleung@chromium.org>,
 	Tzung-Bi Shih <tzungbi@kernel.org>,
@@ -59,9 +59,9 @@ To: Benson Leung <bleung@chromium.org>,
 	chrome-platform@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Ben Walsh <ben@jubnut.com>
-Subject: [PATCH v3 2/5] platform/chrome: cros_ec_lpc: MEC access can use an AML mutex
-Date: Wed,  5 Jun 2024 07:33:48 +0100
-Message-ID: <20240605063351.14836-3-ben@jubnut.com>
+Subject: [PATCH v3 3/5] platform/chrome: cros_ec_lpc: Add a new quirk for ACPI id
+Date: Wed,  5 Jun 2024 07:33:49 +0100
+Message-ID: <20240605063351.14836-4-ben@jubnut.com>
 In-Reply-To: <20240605063351.14836-1-ben@jubnut.com>
 References: <20240605063351.14836-1-ben@jubnut.com>
 Precedence: bulk
@@ -71,170 +71,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4VvHjq2cSSz9stT
+X-Rspamd-Queue-Id: 4VvHjs3sWDz9sv0
 
-Framework Laptops have ACPI code which accesses the MEC memory. It
-uses an AML mutex to prevent concurrent access. But the cros_ec_lpc
-driver was not aware of this mutex. The ACPI code and LPC driver both
-attempted to talk to the EC at the same time, messing up communication
-with the EC.
+Framework Laptops' ACPI exposes the EC with id "PNP0C09". But
+"PNP0C09" is part of the ACPI standard; there are lots of computers
+with EC chips with this id, and most of them don't support the cros_ec
+protocol.
 
-Allow the LPC driver MEC code to find and use the AML mutex.
+The driver could find the ACPI device by having "PNP0C09" in the
+acpi_match_table, but this would match devices which don't support the
+cros_ec protocol. Instead, add a new quirk "CROS_EC_LPC_QUIRK_ACPI_ID"
+which allows the id to be specified. This quirk is applied after the
+DMI check shows that the device is supported.
 
 Signed-off-by: Ben Walsh <ben@jubnut.com>
 ---
- drivers/platform/chrome/cros_ec_lpc_mec.c | 76 ++++++++++++++++++++++-
- drivers/platform/chrome/cros_ec_lpc_mec.h | 11 ++++
- 2 files changed, 85 insertions(+), 2 deletions(-)
+ drivers/platform/chrome/cros_ec_lpc.c | 50 ++++++++++++++++++++-------
+ 1 file changed, 38 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.c b/drivers/platform/chrome/cros_ec_lpc_mec.c
-index 395dc3a6fb5e..93ebfeb44dc6 100644
---- a/drivers/platform/chrome/cros_ec_lpc_mec.c
-+++ b/drivers/platform/chrome/cros_ec_lpc_mec.c
-@@ -10,13 +10,65 @@
- 
- #include "cros_ec_lpc_mec.h"
- 
-+#define ACPI_LOCK_DELAY_MS 500
-+
- /*
-  * This mutex must be held while accessing the EMI unit. We can't rely on the
-  * EC mutex because memmap data may be accessed without it being held.
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 7bf13c1d2c67..fa6606da802a 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -39,6 +39,11 @@ static bool cros_ec_lpc_acpi_device_found;
+  * be used as the base port for EC mapped memory.
   */
- static DEFINE_MUTEX(io_mutex);
+ #define CROS_EC_LPC_QUIRK_REMAP_MEMORY              BIT(0)
 +/*
-+ * An alternative mutex to be used when the ACPI AML code may also
-+ * access memmap data.  When set, this mutex is used in preference to
-+ * io_mutex.
++ * Indicates that lpc_driver_data.quirk_acpi_id should be used to find
++ * the ACPI device.
 + */
-+static acpi_handle aml_mutex;
-+
- static u16 mec_emi_base, mec_emi_end;
++#define CROS_EC_LPC_QUIRK_ACPI_ID                   BIT(1)
  
-+/**
-+ * cros_ec_lpc_mec_lock() - Acquire mutex for EMI
-+ *
-+ * @return: Negative error code, or zero for success
-+ */
-+static int cros_ec_lpc_mec_lock(void)
-+{
-+	bool success;
-+
-+	if (!aml_mutex) {
-+		mutex_lock(&io_mutex);
-+		return 0;
-+	}
-+
-+	success = ACPI_SUCCESS(acpi_acquire_mutex(aml_mutex,
-+						  NULL, ACPI_LOCK_DELAY_MS));
-+	if (!success)
-+		return -EBUSY;
-+
-+	return 0;
-+}
-+
-+/**
-+ * cros_ec_lpc_mec_unlock() - Release mutex for EMI
-+ *
-+ * @return: Negative error code, or zero for success
-+ */
-+static int cros_ec_lpc_mec_unlock(void)
-+{
-+	bool success;
-+
-+	if (!aml_mutex) {
-+		mutex_unlock(&io_mutex);
-+		return 0;
-+	}
-+
-+	success = ACPI_SUCCESS(acpi_release_mutex(aml_mutex, NULL));
-+	if (!success)
-+		return -EBUSY;
-+
-+	return 0;
-+}
-+
  /**
-  * cros_ec_lpc_mec_emi_write_address() - Initialize EMI at a given address.
-  *
-@@ -78,6 +130,7 @@ int cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
- 	int io_addr;
- 	u8 sum = 0;
- 	enum cros_ec_lpc_mec_emi_access_mode access, new_access;
-+	int ret;
+  * struct lpc_driver_data - driver data attached to a DMI device ID to indicate
+@@ -46,10 +51,12 @@ static bool cros_ec_lpc_acpi_device_found;
+  * @quirks: a bitfield composed of quirks from CROS_EC_LPC_QUIRK_*
+  * @quirk_mmio_memory_base: The first I/O port addressing EC mapped memory (used
+  *                          when quirk ...REMAP_MEMORY is set.)
++ * @quirk_acpi_id: An ACPI HID to be used to find the ACPI device.
+  */
+ struct lpc_driver_data {
+ 	u32 quirks;
+ 	u16 quirk_mmio_memory_base;
++	const char *quirk_acpi_id;
+ };
  
- 	/* Return checksum of 0 if window is not initialized */
- 	WARN_ON(mec_emi_base == 0 || mec_emi_end == 0);
-@@ -93,7 +146,9 @@ int cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
- 	else
- 		access = ACCESS_TYPE_LONG_AUTO_INCREMENT;
+ /**
+@@ -418,6 +425,26 @@ static void cros_ec_lpc_acpi_notify(acpi_handle device, u32 value, void *data)
+ 		pm_system_wakeup();
+ }
  
--	mutex_lock(&io_mutex);
-+	ret = cros_ec_lpc_mec_lock();
-+	if (ret)
-+		return ret;
++static acpi_status cros_ec_lpc_parse_device(acpi_handle handle, u32 level,
++					    void *context, void **retval)
++{
++	*(struct acpi_device **)context = acpi_fetch_acpi_dev(handle);
++	return AE_CTRL_TERMINATE;
++}
++
++static struct acpi_device *cros_ec_lpc_get_device(const char *id)
++{
++	struct acpi_device *adev = NULL;
++	acpi_status status = acpi_get_devices(id, cros_ec_lpc_parse_device,
++					      &adev, NULL);
++	if (ACPI_FAILURE(status)) {
++		pr_warn(DRV_NAME ": Looking for %s failed\n", id);
++		return NULL;
++	}
++
++	return adev;
++}
++
+ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -445,6 +472,16 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
  
- 	/* Initialize I/O at desired address */
- 	cros_ec_lpc_mec_emi_write_address(offset, access);
-@@ -135,7 +190,9 @@ int cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+ 		if (quirks & CROS_EC_LPC_QUIRK_REMAP_MEMORY)
+ 			ec_lpc->mmio_memory_base = driver_data->quirk_mmio_memory_base;
++
++		if (quirks & CROS_EC_LPC_QUIRK_ACPI_ID) {
++			adev = cros_ec_lpc_get_device(driver_data->quirk_acpi_id);
++			if (!adev) {
++				dev_err(dev, "failed to get ACPI device '%s'",
++					driver_data->quirk_acpi_id);
++				return -ENODEV;
++			}
++			ACPI_COMPANION_SET(dev, adev);
++		}
  	}
  
- done:
--	mutex_unlock(&io_mutex);
-+	ret = cros_ec_lpc_mec_unlock();
-+	if (ret < 0)
-+		return ret;
+ 	/*
+@@ -709,23 +746,12 @@ static struct platform_device cros_ec_lpc_device = {
+ 	.name = DRV_NAME
+ };
  
- 	return sum;
- }
-@@ -147,3 +204,18 @@ void cros_ec_lpc_mec_init(unsigned int base, unsigned int end)
- 	mec_emi_end = end;
- }
- EXPORT_SYMBOL(cros_ec_lpc_mec_init);
-+
-+int cros_ec_lpc_mec_acpi_mutex(struct acpi_device *adev, const char *pathname)
-+{
-+	int status;
-+
-+	if (!adev)
-+		return -ENOENT;
-+
-+	status = acpi_get_handle(adev->handle, pathname, &aml_mutex);
-+	if (ACPI_FAILURE(status))
-+		return -ENOENT;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(cros_ec_lpc_mec_acpi_mutex);
-diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.h b/drivers/platform/chrome/cros_ec_lpc_mec.h
-index 69670832f187..69f9d8786f61 100644
---- a/drivers/platform/chrome/cros_ec_lpc_mec.h
-+++ b/drivers/platform/chrome/cros_ec_lpc_mec.h
-@@ -8,6 +8,8 @@
- #ifndef __CROS_EC_LPC_MEC_H
- #define __CROS_EC_LPC_MEC_H
+-static acpi_status cros_ec_lpc_parse_device(acpi_handle handle, u32 level,
+-					    void *context, void **retval)
+-{
+-	*(bool *)context = true;
+-	return AE_CTRL_TERMINATE;
+-}
+-
+ static int __init cros_ec_lpc_init(void)
+ {
+ 	int ret;
+-	acpi_status status;
+ 	const struct dmi_system_id *dmi_match;
  
-+#include <linux/acpi.h>
-+
- enum cros_ec_lpc_mec_emi_access_mode {
- 	/* 8-bit access */
- 	ACCESS_TYPE_BYTE = 0x0,
-@@ -45,6 +47,15 @@ enum cros_ec_lpc_mec_io_type {
-  */
- void cros_ec_lpc_mec_init(unsigned int base, unsigned int end);
+-	status = acpi_get_devices(ACPI_DRV_NAME, cros_ec_lpc_parse_device,
+-				  &cros_ec_lpc_acpi_device_found, NULL);
+-	if (ACPI_FAILURE(status))
+-		pr_warn(DRV_NAME ": Looking for %s failed\n", ACPI_DRV_NAME);
++	cros_ec_lpc_acpi_device_found = !!cros_ec_lpc_get_device(ACPI_DRV_NAME);
  
-+/**
-+ * cros_ec_lpc_mec_acpi_mutex() - Find and set ACPI mutex for MEC
-+ *
-+ * @adev:     Parent ACPI device
-+ * @pathname: Name of AML mutex
-+ * @return:   Negative error code, or zero for success
-+ */
-+int cros_ec_lpc_mec_acpi_mutex(struct acpi_device *adev, const char *pathname);
-+
- /**
-  * cros_ec_lpc_mec_in_range() - Determine if addresses are in MEC EMI range.
-  *
+ 	dmi_match = dmi_first_match(cros_ec_lpc_dmi_table);
+ 
 -- 
 2.45.1
 
