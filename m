@@ -1,126 +1,164 @@
-Return-Path: <linux-kernel+bounces-203016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B7E8FD500
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:04:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED088FD508
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3FE21F217B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DBE4286B8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FBF13B28A;
-	Wed,  5 Jun 2024 18:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957E5146A88;
+	Wed,  5 Jun 2024 18:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2FCUM3j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bosRmD0V"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B86B2E3FE;
-	Wed,  5 Jun 2024 18:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC5B14431B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610545; cv=none; b=nayqmzWzithe4rSuVLph3QKYfgzJQ/gQC4w7eGB1WuXDzb2H11AwobVrrbAQeCKCshDbTLv+Kcmbb1Hr/JOIzqkW5asstzgsaYwlTwUiMPxZGTn1eT9sBs7dc4xeTjc8wAZc85ufcknnsQFLLPB59wDbBYwVdisRVf3TEc9nmwA=
+	t=1717610566; cv=none; b=lWiHoFZHYI0bz7A9f0IWMbEIsSGR8KoIOYwFytLbx0dMTZ/j0coIh8P0qN6TDvXlzhW16cmOdFTtDfnr1PHn1uLIlc1jB8Tlk0ltOJPs2uzSqfxObDdcWNLn9qLc8YJhrCn4ccgUVgxV9AtRHo3xzqSu15hN+0iTOWdoQKfIQfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610545; c=relaxed/simple;
-	bh=Zk9QKYEwZkkHtEEFpKV+IP3hrfb4VZMRuIpGpAa5ek0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWkMtdaNG0sveQtlWPHllKeshcqOylteanTn0hsGQaIfwCDRqXTow05MWhJJ1gJFlSuu+Kl0ORFiBopEll7fG+loOt41E/bC+ZshKSqHP9Fi/objT2Ee+XgcF0S43DKQW5//nzAr5YokNyoXkPW8u3ejPMf4AmRG/6esDXZ6f5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2FCUM3j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F80C2BD11;
-	Wed,  5 Jun 2024 18:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717610544;
-	bh=Zk9QKYEwZkkHtEEFpKV+IP3hrfb4VZMRuIpGpAa5ek0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=k2FCUM3jalLFrx4q1Dz4Y71KSsrp27/0f/AUvryeI7Y2fZ7VXpaxfprSz6/Nm1wzZ
-	 Fgpg7W7DShjGOBtmuKFUWYE38fL218nUc9wmHx3JXIWLOBEjNRpOECz1LtJopr+vFp
-	 3fN29SczD+nJ+ucuneXxYdQKJGRAy+h16Lf2Z2UdQz5riS3q3eooxlMSQ0f6/ySgUR
-	 S/+vLkWftdUptaZWO2Mfy6K/1sMeLLSDJsV/jbX6EMJ1fg2rOtvcEiWZozDvgg57zu
-	 YM7bvVsIzL0XcONWffVdY02teFfz78ZIO64fNY2sAyjSRwlQ3N6BKbm+qSdx/BH0q+
-	 JJqA/DcPw4DBA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 56D38CE0A72; Wed,  5 Jun 2024 11:02:24 -0700 (PDT)
-Date: Wed, 5 Jun 2024 11:02:24 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Andrey Konovalov <andreyknvl@gmail.com>,
-	kasan-dev@googlegroups.com
-Subject: Re: [PATCH rcu 2/4] rcutorture: Fix rcu_torture_fwd_cb_cr() data race
-Message-ID: <35f27cc8-85b5-4b30-8f7e-cbd29d3adb48@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <e14ba19e-53aa-4ec1-b58d-6444ffec07c6@paulmck-laptop>
- <20240604223633.2371664-2-paulmck@kernel.org>
- <CANpmjNOLuAZfjiNZqZ8zUrziOUiXw-7zOxRpOrwqYP_rgrEgJw@mail.gmail.com>
+	s=arc-20240116; t=1717610566; c=relaxed/simple;
+	bh=eF30gjQEDuHJ/IYGm6d82rKPYlogi0y1Le1+CTBv8es=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qhCs5vzand8k//vsUV316OCCgLE3lgHN3tC0d3PRIJFqjE0rYgrwY7tzUbtRSqm9mo3tBbfR5yC4Q9GLsIRDrbSqwjttdgmA64VYrvAPUy6P2Ajnthe0QgQfW8G0M9EMCYXpgHdOejoHs5ztxbAfKy8UQQaJMzvtlBda959Jcro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bosRmD0V; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627f43bec13so708277b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717610564; x=1718215364; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=y5YxZkBMx7xM0lBc97o2/iv7RwAsHr+ZFIuj4hushzk=;
+        b=bosRmD0VAZb+uNeHi7HIWEvwXg4aQpu6UokJkBAlLIP/mwUBkraTcuWQxK3I7oKf92
+         IUqNEgKeAor+QlQfrxVSX46Wr8qSmnre7Lod1wkkTeP1WiYmtzlXHsm6O3NcweNaf3ya
+         Qandj21eqkSssUvIpP1j/ByVvuTqh/97jqaJeYq3PTsSsF6edkETmP9wm72ftlMYpBuP
+         miYX+L6h9T7WRJYqPenCfll5CtFtSZIBP1XQjvu5Eg6N2CYzUGIsxekAXrrCObtum9/3
+         0mZb0apPgAHlNJwLvOjE2WR6cA9sNf2aU7/wo0Eq6mAi9yMTDLfZS5nu4m+yBkRZ20EB
+         ZVAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717610564; x=1718215364;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y5YxZkBMx7xM0lBc97o2/iv7RwAsHr+ZFIuj4hushzk=;
+        b=GL35/ZeA32uSHpSoDdrlGq85pw+x9FIE5gyIKSW7n4RYTK63sJzPRRBsR3xqMBVuX1
+         hBXi10isRebO+30XPxW0ok7unped4EXckozUCvpl9UoEqCKC2mE2scBEPNnICbChm9Gf
+         hRJuGfYno3NJbEOIhhAh/N5dnDpbDrGHjK/YD2pW6sVZ1AGW+mcEtg1ygyOa1iz/0AIB
+         EIQRZ/nLGu5KM3euL5KBP7sVczPsUrL6gGJTUoTdvpeEaqXxP/rz9BL4Avj8Cx8lqfz0
+         GtzQqB1/gkhTkEKVmoo7FP9DM5WNBcnBMxdtdc0MggNLEdjuUR2QzPZNmG9ua5QMufBO
+         FHbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhzQyimB0YVN7mrAHeDt1pn7qt8CNKiSyQGgkAUyayr3oqU/RNi4GjEIeTHycOYYdWpwkBjkmbV4ey9gjSO2oMS86R01j+S1mZCDvS
+X-Gm-Message-State: AOJu0Yyh0vzY0LPeY5Hwzn7FsG9jHbhzyIHyhFuSvIpjGn6RVktYTWST
+	CTOi6D03c2mAW5e7pmETergNcCT/qgHYf2EnquUxTCxxGZfuX6L59CtknTuWq1VVvQc7jMeisUh
+	YgJiaIVda2A==
+X-Google-Smtp-Source: AGHT+IGCU+GmK3Rf3XT5eiVn8GBJTqffr6kRhdYR5C7W1ubGEWJe6ysf+n1fV0SHLE+oXrcbvgWtj6KwbrbfFQ==
+X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
+ (user=joychakr job=sendgmr) by 2002:a05:690c:884:b0:61d:3304:c25e with SMTP
+ id 00721157ae682-62cbb5b3bc3mr8573737b3.7.1717610564108; Wed, 05 Jun 2024
+ 11:02:44 -0700 (PDT)
+Date: Wed,  5 Jun 2024 18:02:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNOLuAZfjiNZqZ8zUrziOUiXw-7zOxRpOrwqYP_rgrEgJw@mail.gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
+Message-ID: <20240605180238.2617808-1-joychakr@google.com>
+Subject: [PATCH v1 10/17] mtd: core: Change nvmem reg_read/write return type
+From: Joy Chakraborty <joychakr@google.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-usb@vger.kernel.org, manugautam@google.com, 
+	Joy Chakraborty <joychakr@google.com>, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 05, 2024 at 09:56:41AM +0200, Marco Elver wrote:
-> On Wed, 5 Jun 2024 at 00:36, Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > On powerpc systems, spinlock acquisition does not order prior stores
-> > against later loads.  This means that this statement:
-> >
-> >         rfcp->rfc_next = NULL;
-> >
-> > Can be reordered to follow this statement:
-> >
-> >         WRITE_ONCE(*rfcpp, rfcp);
-> >
-> > Which is then a data race with rcu_torture_fwd_prog_cr(), specifically,
-> > this statement:
-> >
-> >         rfcpn = READ_ONCE(rfcp->rfc_next)
-> >
-> > KCSAN located this data race, which represents a real failure on powerpc.
-> >
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Marco Elver <elver@google.com>
-> > Cc: Andrey Konovalov <andreyknvl@gmail.com>
-> > Cc: <kasan-dev@googlegroups.com>
-> 
-> Nice find - was this found by KCSAN's weak memory modeling, i.e. the
-> report showed you that a reordered access resulted in a data race?
+Change nvmem read/write function definition return type to ssize_t.
 
-If I remember correctly, yes.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406050200.8BOdZUla-lkp@intel.com/
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
+---
+ drivers/mtd/mtdcore.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Even on x86, the compiler is free to reorder that WRITE_ONCE() with
-unmarked accesses, so one can argue that this bug is not specific
-to powerpc.
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 724f917f91ba..b13752ec2f1c 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -530,8 +530,8 @@ int mtd_pairing_groups(struct mtd_info *mtd)
+ }
+ EXPORT_SYMBOL_GPL(mtd_pairing_groups);
+ 
+-static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
+-			      void *val, size_t bytes)
++static ssize_t mtd_nvmem_reg_read(void *priv, unsigned int offset,
++				  void *val, size_t bytes)
+ {
+ 	struct mtd_info *mtd = priv;
+ 	size_t retlen;
+@@ -541,7 +541,7 @@ static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
+ 	if (err && err != -EUCLEAN)
+ 		return err;
+ 
+-	return retlen == bytes ? 0 : -EIO;
++	return retlen;
+ }
+ 
+ static int mtd_nvmem_add(struct mtd_info *mtd)
+@@ -919,8 +919,8 @@ static struct nvmem_device *mtd_otp_nvmem_register(struct mtd_info *mtd,
+ 	return nvmem;
+ }
+ 
+-static int mtd_nvmem_user_otp_reg_read(void *priv, unsigned int offset,
+-				       void *val, size_t bytes)
++static ssize_t mtd_nvmem_user_otp_reg_read(void *priv, unsigned int offset,
++					   void *val, size_t bytes)
+ {
+ 	struct mtd_info *mtd = priv;
+ 	size_t retlen;
+@@ -930,11 +930,11 @@ static int mtd_nvmem_user_otp_reg_read(void *priv, unsigned int offset,
+ 	if (ret)
+ 		return ret;
+ 
+-	return retlen == bytes ? 0 : -EIO;
++	return retlen;
+ }
+ 
+-static int mtd_nvmem_fact_otp_reg_read(void *priv, unsigned int offset,
+-				       void *val, size_t bytes)
++static ssize_t mtd_nvmem_fact_otp_reg_read(void *priv, unsigned int offset,
++					   void *val, size_t bytes)
+ {
+ 	struct mtd_info *mtd = priv;
+ 	size_t retlen;
+@@ -944,7 +944,7 @@ static int mtd_nvmem_fact_otp_reg_read(void *priv, unsigned int offset,
+ 	if (ret)
+ 		return ret;
+ 
+-	return retlen == bytes ? 0 : -EIO;
++	return retlen;
+ }
+ 
+ static int mtd_otp_nvmem_add(struct mtd_info *mtd)
+-- 
+2.45.1.467.gbab1589fc0-goog
 
-> Acked-by: Marco Elver <elver@google.com>
-
-I will apply on my next rebase, thank you!
-
-							Thanx, Paul
-
-> > ---
-> >  kernel/rcu/rcutorture.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> > index 44cc455e1b615..cafe047d046e8 100644
-> > --- a/kernel/rcu/rcutorture.c
-> > +++ b/kernel/rcu/rcutorture.c
-> > @@ -2630,7 +2630,7 @@ static void rcu_torture_fwd_cb_cr(struct rcu_head *rhp)
-> >         spin_lock_irqsave(&rfp->rcu_fwd_lock, flags);
-> >         rfcpp = rfp->rcu_fwd_cb_tail;
-> >         rfp->rcu_fwd_cb_tail = &rfcp->rfc_next;
-> > -       WRITE_ONCE(*rfcpp, rfcp);
-> > +       smp_store_release(rfcpp, rfcp);
-> >         WRITE_ONCE(rfp->n_launders_cb, rfp->n_launders_cb + 1);
-> >         i = ((jiffies - rfp->rcu_fwd_startat) / (HZ / FWD_CBS_HIST_DIV));
-> >         if (i >= ARRAY_SIZE(rfp->n_launders_hist))
-> > --
-> > 2.40.1
-> >
 
