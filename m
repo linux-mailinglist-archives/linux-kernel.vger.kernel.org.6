@@ -1,144 +1,132 @@
-Return-Path: <linux-kernel+bounces-203116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD91D8FD6A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:40:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CBD58FD6AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C228A3C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6180C1C251EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F901527BB;
-	Wed,  5 Jun 2024 19:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B701527BF;
+	Wed,  5 Jun 2024 19:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0WWl8arl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8ZAmcb96"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="wbHxux/A"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2A314D449;
-	Wed,  5 Jun 2024 19:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4CCFBFD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717616446; cv=none; b=aIuquaLa/Hi7AXlPPxcQKUZQ/Pr9od3H1cEMDSBHi2MzYkgaHrQh8j6gPgHqa0eJH1t5bcIvo0I7kAY27Z+ZG6ytX9y4nG4F9QYukEFOhN8PE/PhXV0JjfE5xuUjkytGe2Gs4Zj3ma0ROm6uBuoxvaL3MwB8ChgUELvB2/BYtd8=
+	t=1717616527; cv=none; b=F477LYRqQ+2zGkd53hZREXCJG+/QkNqtPqOxfAXZanRTrb6xBklaRHClSxFzjUH8WgGLOnRs29wQjyARzz7A9vEvYyr+eiwYBmKzlNNCuj6x1RwGj8eJDqTil5nIitmEPowzrEEQFhuf1yO8LiH2yOWyhRv7JSDItzqkOKSZ+UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717616446; c=relaxed/simple;
-	bh=w/lL412irMpN5xx3ZjFRnT9eqdOLWHQqe/utFRXVQfw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=GOExe3Jkq44YKm0RWs2NU9zswn5eZmgb48cSAUjf6qxnA2v0UlfHfnb5j5hG2G3pl8olNTiCNuz3A1D18B0sTKwtJ6+jsEoWWsB2o5L+AsFS1KGR7PBeDVLyhv8K+wqmsFEHD/Jb0IHgraVERfJB9HqsSmq29Inm+XlVHfIjbsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0WWl8arl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8ZAmcb96; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 05 Jun 2024 19:40:42 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717616442;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+vtGG6eouA5Y8cQaAebhdwmXmJyo0bOZBi8OpA+j2HA=;
-	b=0WWl8arlnS2xT7K5r19LYljhj8j3fBPNhFb/+vVMXZQI6Ij1p54hKOxlkcNGyOOeuFOTwB
-	Ij+7pKxWup+Lc/5pJGtn6ymKe8DyhpF8yJb2MyyIlpmFF0SPVbtb6rNGulQLj2u9EVjYxZ
-	t7CtIjk2dI1+qtPfngfbiHlWHIWTeETc1ERsHaE9ua3VlnNFhdYyLlFQ7Alc5BPBWTdS97
-	BITOSKzjOceOPgo/WXxe3PsiabV/eBc31s3A4R/7AMHYvpxT9/xMoV0CCveHbVsEekX8Ci
-	I9juz3ZDXm4ETXjQ2U2cRU7tvQ8eRaDwGxbaoteKlHEU8Hu2C9a/IWaBVIYsyA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717616442;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+vtGG6eouA5Y8cQaAebhdwmXmJyo0bOZBi8OpA+j2HA=;
-	b=8ZAmcb968NbHn5PMlNZZLwjZ9oM2mXfRfWhzS922AvotF/Cpm/SFQ6VIO141YB4E7I7q3B
-	e3F5/WQZLK3gE6DA==
-From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/amd_nb: Check for invalid SMN reads
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20230403164244.471141-1-yazen.ghannam@amd.com>
-References: <20230403164244.471141-1-yazen.ghannam@amd.com>
+	s=arc-20240116; t=1717616527; c=relaxed/simple;
+	bh=BkLjiawwOQEAVWftagmoBVsL5Q/uu5hCoju8LwKBppo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qw6BfD8SZLF3OwqUdgZ2c8KYafwNAKVRTHg458C4ovWm8b0gMFVZfR8TieSyYKiIbMLgkW/dg/3A1l/0Xu8zKhYgDCSalulwJ8Mm+y7D8h5HeO3Jxv7Ftl+ap87O2oS2scS5dPfxf5NKdRwXwEcm36eYIsWM3hltdmetICK4QTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=wbHxux/A; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c1a5913777so164944a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 12:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717616525; x=1718221325; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Iqln3pU608Iw9vzO5mExR0F6HHdjBJu68DaW17wMtg=;
+        b=wbHxux/A2Fo1mxdnGotFBzhtQVF0ahw58e5TyXIrFmtmdsuRD46ZPr6PU6iWvru6Et
+         Z8kRCPzMnt9HfjoZR1a83mlACEEqdZ5dpHmJPUcKC2+wJe061+sVrioBItQ59uRdfw18
+         bGC/UaDlc5JlMN7IbgkK1f41FJMuA+S7jmekPLSrmELvinD4khMsTqkQe7a6TOaSflq7
+         9nhfxJojNQXOVzw7sFKKN0AQ+GbUw93b8xrHazJydFjbYexlpGbmDiMtm1+74NfBMXUW
+         14i9OL46kuZ0sGH9n3Wqb9s39fNUjDpGWdc4fI2ps/dHIY98vCjLaIPnC76OFvTQEZ4p
+         82Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717616525; x=1718221325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Iqln3pU608Iw9vzO5mExR0F6HHdjBJu68DaW17wMtg=;
+        b=O0Z95xOOKo1qA9AJUOWllVHgqh2krYZDJ2MO2krbppOyBxf18aUjSbDP9Y2UKJkjKh
+         UcoPAq1GV15BhiZfpsrgG4m6vtaqm1pE6+D7+j455ospweZhvpdw281IWqzIYP1W0sJ7
+         CxHykNPoK61d702ZYJbUQeByI26FxnHp9pVcKaJ8ZnDFkQKgSvbjVa4Zay5s4JcjGcKX
+         0QWOTu6v5vWmi3/gQC70/Yu6jGhFnC3Wobadd0EvrYi7MnQOT4WV2QF/nzXOvQKk4L69
+         XIkF8pLcRPJQpM8Zc7cZtoPPBfu8S///lZkCVZPzbbNNjdXMXkmcabAWkTU/rbqMPa3q
+         iLDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhHUGD1I0nd3gB4afBIeWTSfGaF8hGvuv3BRZj0TFqYJhrcbWsE/hOY6x1a5UwX9MlhWX+OYWgHNiQu3HOSuzHcvUMiNBHbHXM7nm+
+X-Gm-Message-State: AOJu0Yz5xoEMlR1Signh1Q6cyeb3WLaESEylzpRR452Lq65PJw9iNUgQ
+	fkHyNMb+Fg/6nvhlJO+yHHa2QkavB+tz4Wtf2Z/Mb7BJjyLzcohDWH6Jy3I+rZwCWeQ0udRRLfZ
+	N5HTCmiDSvnoF7WC04ecjq4+UwxeVmbucT5DIIg==
+X-Google-Smtp-Source: AGHT+IFxkkjp3fqK9lU0wtMgPlDRTY2Cd2wIkY8GxicXToEgBWVNk+WJY3GzgNmNfvvI5PceIdD3ucHY/8b9z28EL74=
+X-Received: by 2002:a17:90a:b297:b0:2c1:948b:6f2c with SMTP id
+ 98e67ed59e1d1-2c27db5ce10mr3938026a91.39.1717616525310; Wed, 05 Jun 2024
+ 12:42:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171761644225.10875.15854801411132236549.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <cover.1716578450.git.tjeznach@rivosinc.com> <7dcd9a154625704cbf9adc4b4ac07ca0b9753b31.1716578450.git.tjeznach@rivosinc.com>
+ <20240603-d622cdac0016f1f854bf2b4c@orel>
+In-Reply-To: <20240603-d622cdac0016f1f854bf2b4c@orel>
+From: Tomasz Jeznach <tjeznach@rivosinc.com>
+Date: Wed, 5 Jun 2024 12:41:53 -0700
+Message-ID: <CAH2o1u4mU2fs7p+J7pqeBSRRPb1SFZh=8UXzXCsJneTHMxVVgw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/7] iommu/riscv: Add RISC-V IOMMU platform device driver
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Anup Patel <apatel@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Nick Kossifidis <mick@ics.forth.gr>, Sebastien Boeuf <seb@rivosinc.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux@rivosinc.com, 
+	Lu Baolu <baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, Jun 3, 2024 at 5:59=E2=80=AFAM Andrew Jones <ajones@ventanamicro.co=
+m> wrote:
+>
+> On Fri, May 24, 2024 at 12:34:42PM GMT, Tomasz Jeznach wrote:
+> ...
+> > +static struct platform_driver riscv_iommu_platform_driver =3D {
+> > +     .probe =3D riscv_iommu_platform_probe,
+> > +     .remove_new =3D riscv_iommu_platform_remove,
+>
+> Hi Tomasz,
+>
+> I think we should also support .shutdown (just turn the IOMMU off?),
+> otherwise the IOMMU driver reports EBUSY and fails to initialize when
+> rebooting.
+>
+> Same comment for the PCI driver.
+>
 
-Commit-ID:     c625dabbf1c4a8e77e4734014f2fde7aa9071a1f
-Gitweb:        https://git.kernel.org/tip/c625dabbf1c4a8e77e4734014f2fde7aa9071a1f
-Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Mon, 03 Apr 2023 16:42:44 
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 05 Jun 2024 21:23:34 +02:00
+I've been testing patches with added shutdown handlers, also looking
+at reboot notifier hooks. In both cases, devices actively running DMA
+traffic at system shutdown (eg. storage) might be affected by
+too-early IOMMU disable call. This topic was already brought up in the
+discussion [1] about kexec reboot flow.
 
-x86/amd_nb: Check for invalid SMN reads
+In this series I'd prefer to keep the IOMMU active during shutdown,
+and prepare the RISC-V IOMMU shutdown sequence implementation as a
+separate series, as it will involve more risc-v reboot rework to
+guarantee ordering of the shutdown callbacks. In a normal reboot
+cycle, firmware/hardware reset should bring IOMMU to known
+out-of-reset state anyway.
 
-AMD Zen-based systems use a System Management Network (SMN) that
-provides access to implementation-specific registers.
+[1] https://lore.kernel.org/linux-iommu/059ae516-aed4-4836-a2ca-aff150ff428=
+d@arm.com/
 
-SMN accesses are done indirectly through an index/data pair in PCI
-config space. The PCI config access may fail and return an error code.
-This would prevent the "read" value from being updated.
+Best,
+- Tomasz
 
-However, the PCI config access may succeed, but the return value may be
-invalid. This is in similar fashion to PCI bad reads, i.e. return all
-bits set.
-
-Most systems will return 0 for SMN addresses that are not accessible.
-This is in line with AMD convention that unavailable registers are
-Read-as-Zero/Writes-Ignored.
-
-However, some systems will return a "PCI Error Response" instead. This
-value, along with an error code of 0 from the PCI config access, will
-confuse callers of the amd_smn_read() function.
-
-Check for this condition, clear the return value, and set a proper error
-code.
-
-Fixes: ddfe43cdc0da ("x86/amd_nb: Add SMN and Indirect Data Fabric access for AMD Fam17h")
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20230403164244.471141-1-yazen.ghannam@amd.com
----
- arch/x86/kernel/amd_nb.c |  9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index 3cf156f..027a8c7 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -215,7 +215,14 @@ out:
- 
- int amd_smn_read(u16 node, u32 address, u32 *value)
- {
--	return __amd_smn_rw(node, address, value, false);
-+	int err = __amd_smn_rw(node, address, value, false);
-+
-+	if (PCI_POSSIBLE_ERROR(*value)) {
-+		err = -ENODEV;
-+		*value = 0;
-+	}
-+
-+	return err;
- }
- EXPORT_SYMBOL_GPL(amd_smn_read);
- 
+> Thanks,
+> drew
 
