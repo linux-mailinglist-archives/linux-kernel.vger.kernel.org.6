@@ -1,152 +1,195 @@
-Return-Path: <linux-kernel+bounces-202289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036598FCAC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A908FCAC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02E2E1C230A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:44:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E3011C23127
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE744193070;
-	Wed,  5 Jun 2024 11:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AF6193092;
+	Wed,  5 Jun 2024 11:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eYV0gazN"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="5jRk+jKc"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718D984E1C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E2D7346E;
+	Wed,  5 Jun 2024 11:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717587817; cv=none; b=WtFKnk6YTRBI6KyV/2QMhhIgnCyXtWXeRzj9BPmLn9pkGaapN7CbvizNIC/uuq4P6O6BSEh1gHQCyvyZY1ePCRq0ay6QexDKPMWyTMklCCVHoRvQ0gGhc0wsuqfIx0LxYh3Kv93SfsfgT9zayPpgt8TCxA2eT1vft2EDduhfEZw=
+	t=1717587818; cv=none; b=Qc4vUwBJ+OgOSt8lGIk9RkU9diRARQfin6xYWIk8dCOKYa4R4SHLfHoYtKMuQGWKxP+X6Y3FBaiq1FH224fYErbJ31CMvnpxGq15wNc5Nab5yJ2ijhCgu8CQcSbKWmKdos3pANWBl5ALPfWaYqMSjL3tAwB4/bDSueYjb3msDSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717587817; c=relaxed/simple;
-	bh=0GIPaRevDNRx/wPrHhuPUBfNf5OKm7cQz515RQ5q9iQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y7pu9QUmwER4r7lq2FdeckNqiWyq0xDtgseOLQo+AbrC36TplAIQgY3UQg0ZQgfjDqdzHwuZ6HHmqhzkH/wf6LgI+WuopT5OBrruKnRcubqseySY1Rq00SbbDc+95yji/VwK9aGS4AmF1xaI0j4Qs2y+Yj0C04ekiW5zYhGYCFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eYV0gazN; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35dc04717a1so4984613f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 04:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717587814; x=1718192614; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3j6XQTmAPHANze14GjdABlxabfBKYaZBM898HcyxrWw=;
-        b=eYV0gazNfe3MrgHj3eRSkcrH5/HMFcKXRwfLvHhl4zvUJGml7iIWDPNmU0F5OMlmdi
-         vElgggpgyj9GzuPniq04BUQ5F+pab+zcJizvVLHI79XR+DCtO0Puq3T6NKO+91+j9E9G
-         8J8DKa34KOYFvkQszYtTOuQoBYiK6CbKXCpzS8/gH9fafgXHATI4W8T9OEDi/Mcm6LNs
-         XpjKpGoL5L1A7QjiY2j4SDkS376/jfldHGRxEcYZuoPKpJ1zmb2IHXiqfmaR4PYUdY+I
-         PHqd/9B7SX+zANE9zpPbgRyCXIceHrpIYTfpCMiRbvPOhcuYWlmHKgf5nWdVpRo0vXBk
-         ED6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717587814; x=1718192614;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3j6XQTmAPHANze14GjdABlxabfBKYaZBM898HcyxrWw=;
-        b=HPxMeg+enXGszrgCVLgcNygrlQI9VGubBUCj1ABIBqeA3yvuO1aU/Lh1mel5pvH6U8
-         n+kL37cdInLLmRq/7+zeFIXTEcmNv91tIQOOzFxQvtZfcm39JCPUPEA6yEUqzs6HNty7
-         VROmfUNHoM6SHfDLa2GzPgvWiR6G7wvebAxDz5evpDpw8Vs1T2FsoHom6VYTfD9iZf3s
-         9pmuNhWhwFOzgE5zhbPy7nnXKkaaBJqB12bHFStw5YKHmzzQ79vEoEw7R6b/cj32qm+o
-         0o9wQkzTMtCe+MY7VIPf5F3/W26Cv5/j+z7POFz4l+1h6IoSULIypl5ivKE7QaqmKanI
-         NjHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6vn3rbPfdFySwxCmEZ8uS8BfNY1Rx49i7Gw2or7+YnXAK2Atau9rBQsNGaAyLKX/buh++1k6cU2FUxd90fa22jy5ZrJ5nGTdWHDt4
-X-Gm-Message-State: AOJu0YwNoEYPQnOMvSKk4njlXi32jzSvvIGO+fbV4GirC+NEdPW2h5v1
-	thZW4ef3RE6CaFL8VtRROFIkxQ9Vir2vCiM8q/MFVSAb4jd5FUtAHkmLPVOAmUg=
-X-Google-Smtp-Source: AGHT+IH865p66lw4x2LZmxMYuezJKKDWUoV3nyY8R7CoXx5Z6tfcfp/lXHlTMUzuQCTJ7LOEh+GS5Q==
-X-Received: by 2002:adf:a1d5:0:b0:34c:f507:84b6 with SMTP id ffacd0b85a97d-35e8ef1b8dcmr1744590f8f.41.1717587813594;
-        Wed, 05 Jun 2024 04:43:33 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35e7dea1c3esm4851633f8f.66.2024.06.05.04.43.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 04:43:33 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Wed, 05 Jun 2024 13:43:30 +0200
-Subject: [PATCH] arm64: dts: qcom: sm8650-hdk: allow more IOMMU SID for the
- first QUP instance
+	s=arc-20240116; t=1717587818; c=relaxed/simple;
+	bh=CWJ8m9k7WusE+fmG21wSlZT3rCg6sq0zH32IpWyuQ0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UwQyws+jQ7M/ITpM5c9arIYhGsXckKGwonXFN3HWgTIvu1mc7h9QSCALVLjtUxO+UtKoK51LUQ0J78AN80nBU3ICPd2/35OUd98EzKR7N0jf30ofMieuJ1eaAuWJ0Ioa3N+idUe+KLAmo5bIi7J5ROew4OMtt0u3Vb+vqciQWBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=5jRk+jKc; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717587814;
+	bh=CWJ8m9k7WusE+fmG21wSlZT3rCg6sq0zH32IpWyuQ0U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=5jRk+jKcJEPA+o+9Boiu2p7P90UpgwbELQXXpYvVnKNho6f+uiWYAjsCkOlcaMXJr
+	 bzsIskYtljB6UeTDiqaLr2TzWjF7uxGT7GX7fzKww31DJel4RvMxO0N8pqNBQnuctv
+	 DpDRq6DdgIInmQ3KOZWkVrCZYdlIWlWQrq4YFtt60M/BTcBUNWQYAJrkqly/H7zkS4
+	 UK9Eu5ofLxO/+l9e0jymAePv9bhmn7B4QcjjmYKMZxXK9GN1akLS0ATYP4JCYl3Aaf
+	 yPPFdOWAMyyR6ixGQTA0hwVQE13YVqIXEn3lJsazBdFa5FxhhndEMhdYDq9EeiSckd
+	 WNbmKtgBLLQVA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AF1FC3781139;
+	Wed,  5 Jun 2024 11:43:33 +0000 (UTC)
+Message-ID: <6dee4870-3ca2-46d7-a30b-014a7d34135a@collabora.com>
+Date: Wed, 5 Jun 2024 13:43:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] drm/panfrost: Add support for Mali on the MT8188
+ SoC
+To: Steven Price <steven.price@arm.com>, boris.brezillon@collabora.com
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240604123922.331469-1-angelogioacchino.delregno@collabora.com>
+ <20240604123922.331469-3-angelogioacchino.delregno@collabora.com>
+ <f44611fd-523a-4b4d-accd-20fdfbac178a@arm.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <f44611fd-523a-4b4d-accd-20fdfbac178a@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240605-topic-sm8650-upstream-hdk-iommu-fix-v1-1-9fd7233725fa@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAGFPYGYC/x2NQQqDMBAAvyJ77sIasqHtV0oPEte6lJiQVSmIf
- 2/wOHOYOcCkqhg8uwOq7Gqalwb9rYM4D8tHUMfG4Mh5CsS45qIRLd0DE27F1ipDwnn8ouaUNpz
- 0h+xd6B8UOHqGVipVmr4ur/d5/gFeWorgdQAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1614;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=0GIPaRevDNRx/wPrHhuPUBfNf5OKm7cQz515RQ5q9iQ=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmYE9kMjrsnWiE7WNIsOTxBIT23x8cQNKw63fdqRV0
- N8aPqS+JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZmBPZAAKCRB33NvayMhJ0U0rEA
- CIAr0gdIreDfpQx/XyHMz7lbQl8x/UanWbfUkmzalRCEaEZAlBWxi/4UOCyur2voJhc/SPMaDh4495
- nr0cZPngFtJcWIH+eTEFydDO9TU07k0FpJv80SJXPxtsevNbCQRCLFbaXHEZ3Mif+K2KxXQgWCWp1I
- OWAkX3GQmin4S//a2E47UFCAD3HKQ7ZAyoG92Lzc66WNmBj37qjY+kyqlyymSEcWKQejqc+OMrNG5t
- 0D38zv/WoAtiO5kHQJQUmVa7sSBmHgS5/nHaRA51VmuDbRufaUQ4O/R5RYtX1AfX9wvpVB1GtFa7io
- 19ngbVh+Ihj7ZIwUYZA1eB2HprmtxkNC9t4Elg+Cdlhr5Z8TWCgItSEmFD/omzS5y8GRoQNBIVX0R7
- eFqxRRYI6eYnASqO9hHpwRvgLFHkvI5W9IjKQdhg5g2ovTM6YEnLQumH1/4v7wgx3R/K4OVm/YwRJ5
- Z+nMnMlIGKipmAYBbImQj8qN27SIeIi3t1PNiRu3pf7JkLIEWImoXwWa3vCG/+EVgHkNbT+dla3BeL
- 06bPKaf2Kw2zyyuE4u2PNImyFdb6ZDajjQ8g3P78ZJX7uXk2xamuAC3ZKRFV1tCxyONxSqSBL8dtia
- nB8StI1o1/YhLd02p2Bs2aN4LBjOOr+bxH6qw9uE9IN3yVav/8ZEoXj9z9LA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-When triggering I2S SE DMA transfers on the 6th Serial Element, we get
-some timeouts and finally a fatal SMMU crash because the I2C6 lines
-are shared with the secure firmware in order to handle the SMB1396
-charger from the secure side.
+Il 05/06/24 11:18, Steven Price ha scritto:
+> On 04/06/2024 13:39, AngeloGioacchino Del Regno wrote:
+>> MediaTek MT8188 has a Mali-G57 MC3 (Valhall-JM): add a new
+>> compatible and platform data using the same supplies and the
+>> same power domain lists as MT8183 (one regulator, three power
+>> domains).
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/gpu/drm/panfrost/panfrost_drv.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> index ef9f6c0716d5..4e2d9f671a0d 100644
+>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> @@ -777,6 +777,14 @@ static const struct panfrost_compatible mediatek_mt8186_data = {
+>>   	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+>>   };
+>>   
+>> +static const struct panfrost_compatible mediatek_mt8188_data = {
+>> +	.num_supplies = ARRAY_SIZE(mediatek_mt8183_b_supplies) - 1,
+>> +	.supply_names = mediatek_mt8183_b_supplies,
+> 
+> I think this is a little confusing. Ideally we'd drop the existing
+> mediatek_xxx_supplies which are the same as default_supplies and just
+> use that instead.
+> 
+>> +	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
+>> +	.pm_domain_names = mediatek_mt8183_pm_domains,
+> 
+> We'd want at least a comment explaining that this isn't a typo (i.e. /*
+> mt8188 uses the same pm domains as mt8183 */). But I'm also wondering if
+> it would be sensible to simply have one domain list, something like:
+> 
+> --->8---
+> static const char * const mediatek_pm_domains[] = { "core0", "core1",
+> 						    "core2", "core3",
+> 						    "core4" };
+> 
+> static const struct panfrost_compatible mediatek_mt8183_data = {
+> 	...
+> 	.num_pm_domains = 3,
+> 	.pm_domain_names = mediatek_pm_domains,
+> };
+> ...
+> static const struct panfrost_compatible mediatek_mt8186_data = {
+> 	...
+> 	.num_pm_domains = 2,
+> 	.pm_domain_names = mediatek_pm_domains,
+> };
+> ...
+> static const struct panfrost_compatible mediatek_mt8188_data = {
+> 	...
+> 	.num_pm_domains = 3,
+> 	.pm_domain_names = mediatek_pm_domains,
+> };
+> ...
+> static const struct panfrost_compatible mediatek_mt8192_data = {
+> 	...
+> 	.num_pm_domains = 5,
+> 	.pm_domain_names = mediatek_pm_domains,
+> };
+> --->8---
+> 
+> OTOH what you've got it no worse than what we already had, so it's up to
+> you whether you want to tidy this up or just add a comment so it doesn't
+> look like there's a typo.
+> 
 
-In order to make thing work flawlessly we need to allow more SIDs
-while running our SE DMA transfers, thus add the 0x3 mark to allow
-the 0xa0 SID to trigger while we trigger an 0xa3 SID from Linux.
+I didn't disclose my plan, but you've already shown part of it, so seeing that
+you preventively agree with at least part of that is fun :-)
 
-This crash doesn't happen on the QRD platform since the SE6 is
-configured differently, with FIFO mode disabled, thus GPI DMA
-is used and we cannot exercise SE DMA on this interface.
+I surely won't be able to do what I want to do for *this* cycle as I'm mostly
+sure that I won't have time for this in the next 3 weeks - but anyway....
 
-The crash only happens when large tranfers occurs (>32 bytes) since
-the driver is designed to use the SE DMA in this case, and there's
-no way to mark the SE DMA as disabled or mark the GPI DMA as
-preferred since the FIFO/SE DMA will be used is FIFO is not disabled.
+What I was thinking is that we should either look for a number of power domains
+limited by a max power domains definition (that should already be present somewhere
+in panfrost if I recall correctly) without even caring about the actual power
+domain names, or we should look for a number of PDs having any name matching,
+in a for loop, snprintf(*something, sizeof(something), "core%d", i).
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650-hdk.dts | 2 ++
- 1 file changed, 2 insertions(+)
+This means that, with the snprintf idea, we don't even have to set any
+pm_domain_names list anymore, at all, and we can either reuse num_pm_domains
+or just get the number of PDs limited by the binding - but that's a problem for
+the future me/us I guess...
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
-index 182864a3b6bd..5887d265a077 100644
---- a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
-@@ -991,6 +991,8 @@ &qup_i2c3_data_clk {
- };
- 
- &qupv3_id_0 {
-+	iommus = <&apps_smmu 0xa3 0x3>;
-+
- 	status = "okay";
- };
- 
+But since we're there...
 
----
-base-commit: 234cb065ad82915ff8d06ce01e01c3e640b674d2
-change-id: 20240605-topic-sm8650-upstream-hdk-iommu-fix-542619065c45
+Please, I'd like to hear your opinion about the core%d idea :-)
 
-Best regards,
--- 
-Neil Armstrong <neil.armstrong@linaro.org>
+Anyway, I think that for now I'm choosing the "comment shortcut" for this patch.
+
+P.S.: Thanks for the feedback!
+
+Cheers,
+Angelo
+
+> Steve
+> 
+>> +	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+>> +};
+>> +
+>>   static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
+>>   static const char * const mediatek_mt8192_pm_domains[] = { "core0", "core1", "core2",
+>>   							   "core3", "core4" };
+>> @@ -808,6 +816,7 @@ static const struct of_device_id dt_match[] = {
+>>   	{ .compatible = "mediatek,mt8183-mali", .data = &mediatek_mt8183_data },
+>>   	{ .compatible = "mediatek,mt8183b-mali", .data = &mediatek_mt8183_b_data },
+>>   	{ .compatible = "mediatek,mt8186-mali", .data = &mediatek_mt8186_data },
+>> +	{ .compatible = "mediatek,mt8188-mali", .data = &mediatek_mt8188_data },
+>>   	{ .compatible = "mediatek,mt8192-mali", .data = &mediatek_mt8192_data },
+>>   	{}
+>>   };
+> 
+
+
 
 
