@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-202278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD738FCAA8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5479D8FCAAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBBF6B22904
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:42:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2DFAB23853
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D9F19414F;
-	Wed,  5 Jun 2024 11:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBAE19307B;
+	Wed,  5 Jun 2024 11:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p39Mrvw8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yo0tPcOU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A6F19148B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D6319307C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717587694; cv=none; b=HNyIpVHs1XNRZTq9jotkDgHPxZhIx8jUkMBHjbwb4KmTXC5nbKJMTYoj+rnY+Uv4FplEim3uG0LMMGgeRFPUvx6ft6cWOrWxevn21fLVtfiwqiK7Slj0NpqrbkXr9YQ4ARCjQIk3zm3g3E6g6HkKsLgZcPVbT7YbQs0XwrVlyrY=
+	t=1717587699; cv=none; b=TUFASt/vQFb/ClwqwWGlZK3ywV07NjeaWVqnMJtG5WR3/eH49nhsQ0xVrURMDsKVLF8YEx/NgxTeDTfTlqrgvNePdCfeEnvTA8kFDLAGtlPAgGKat1i4nMdOvp0yM8KFZs/2V4NDcxd6eVi5WJpVCPhQsqY7F3+OrLz9zBjiLK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717587694; c=relaxed/simple;
-	bh=MENbBPiOyzG6FBgO0rCD/3ta5d0qLTF/n4fv5DxVET4=;
+	s=arc-20240116; t=1717587699; c=relaxed/simple;
+	bh=JhdeFloFX/xxhqkxVxMkwy3o8a+I7NU1Jr3K3J+2XHI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sln6LGJ+/C4XdCcwbwI8JCHgEVVK5ELNVZvRF3yrBhdTERlIZHsPHDTPzYiPbVIUgaSCyfLbKzOQOOrGXXF+kiaxpTBgC8XoHlHSAyhGspokQGCmz5rtDwtUwuO75kZIolIBvzRdd+PqgHehRm8OA3t/OdY5APGPR8avPWGz0iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p39Mrvw8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53260C32781;
-	Wed,  5 Jun 2024 11:41:29 +0000 (UTC)
+	 MIME-Version:Content-Type; b=m3ZcO//gtwZ3OF5zyK46ilN36j7mzj6Cde6KRCeKUCl58GS6F4U9VupeyLR3lbD6eXMlBDB8YsHsNDlCsYEj1+K6BKHV3SzZc6421TsXKl/0HKpBkf+SAHMSjdXPpbbEYMzF+F5jQnjokymLYztTfX8AAevc86ihIhUI0fRCGdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yo0tPcOU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56EA3C3277B;
+	Wed,  5 Jun 2024 11:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717587693;
-	bh=MENbBPiOyzG6FBgO0rCD/3ta5d0qLTF/n4fv5DxVET4=;
+	s=k20201202; t=1717587698;
+	bh=JhdeFloFX/xxhqkxVxMkwy3o8a+I7NU1Jr3K3J+2XHI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p39Mrvw8AJVDKum0Jwg2kb6k87OxJJJ6NrzWSjUUAw1HBTx0uMsmH4QIVLXMIQSjh
-	 gGHpGG50o4vxjchkAer0QNCnDkBV9o8kftuixBD9zQDfl1A74EwF3vGFGAOgdDUt3J
-	 jhltzpH8+ixqmF4cy66BaweUitmK0U5TaHrrG7i0qbCCCYYDxf1H7GcZfuSiv3PEH5
-	 ODfv8fk9v6erj4Ljcbke3zr58EffgPQNPBd1xbKrR/e1Bfw5dXLk5FkLcBVflIxCHI
-	 Bc0UHKuPkQS00F3mFuO5iPHr7YzBmcdN+Gt/nFL77/pTRGZDMKBxiaC+EFfD06kZCo
-	 9XJgH9lq5cqLw==
+	b=Yo0tPcOUDWbZKgAZCcnplN/Tpng+rYhahCirtGosu22vfbqUpPcHwDQA6k6SFhOAV
+	 ZJqZbW2Hub+7wW8blIcchz+3RvICwE2f/9Ybv7CyKA+D07H53Ebb5i0DPEtvRVmP7+
+	 +UJZgr4Sp39itexUAPNROpGAAJDUgk4oCvOQX909f0SpiDFFPHsojDG2bl1yDM6WIT
+	 1SeA46LAIXR14O9bfozUPdydSqNyrw8nINXW38klf+p8XKmw4BCQ/CsmeOD9GOvQFi
+	 hvRgm5Ntqz+0/jK4n1J/g/BIAKDgmEOtQ2+tEApA0MTtkbTxYZ4HxLyqMrMU4Yz12A
+	 PHsFFb2fJFJpQ==
 From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
 To: Alexandre Ghiti <alexghiti@rivosinc.com>,
 	Albert Ou <aou@eecs.berkeley.edu>,
@@ -58,9 +58,9 @@ Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	virtualization@lists.linux-foundation.org
-Subject: [PATCH v4 04/11] riscv: mm: Refactor create_linear_mapping_range() for memory hot add
-Date: Wed,  5 Jun 2024 13:40:47 +0200
-Message-ID: <20240605114100.315918-5-bjorn@kernel.org>
+Subject: [PATCH v4 05/11] riscv: mm: Add pfn_to_kaddr() implementation
+Date: Wed,  5 Jun 2024 13:40:48 +0200
+Message-ID: <20240605114100.315918-6-bjorn@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240605114100.315918-1-bjorn@kernel.org>
 References: <20240605114100.315918-1-bjorn@kernel.org>
@@ -75,66 +75,31 @@ Content-Transfer-Encoding: 8bit
 
 From: Björn Töpel <bjorn@rivosinc.com>
 
-Add a parameter to the direct map setup function, so it can be used in
-arch_add_memory() later.
+The pfn_to_kaddr() function is used by KASAN's memory hotplugging
+path. Add the missing function to the RISC-V port, so that it can be
+built with MHP and CONFIG_KASAN.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
 Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
 ---
- arch/riscv/mm/init.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ arch/riscv/include/asm/page.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 0dd04cedc0d2..1f7e7c223bec 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -1232,7 +1232,7 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- }
+diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
+index 115ac98b8d72..235fd45d998d 100644
+--- a/arch/riscv/include/asm/page.h
++++ b/arch/riscv/include/asm/page.h
+@@ -188,6 +188,11 @@ extern phys_addr_t __phys_addr_symbol(unsigned long x);
  
- static void __meminit create_linear_mapping_range(phys_addr_t start, phys_addr_t end,
--						  uintptr_t fixed_map_size)
-+						  uintptr_t fixed_map_size, const pgprot_t *pgprot)
- {
- 	phys_addr_t pa;
- 	uintptr_t va, map_size;
-@@ -1243,7 +1243,7 @@ static void __meminit create_linear_mapping_range(phys_addr_t start, phys_addr_t
- 					    best_map_size(pa, va, end - pa);
+ unsigned long kaslr_offset(void);
  
- 		create_pgd_mapping(swapper_pg_dir, va, pa, map_size,
--				   pgprot_from_va(va));
-+				   pgprot ? *pgprot : pgprot_from_va(va));
- 	}
- }
++static __always_inline void *pfn_to_kaddr(unsigned long pfn)
++{
++	return __va(pfn << PAGE_SHIFT);
++}
++
+ #endif /* __ASSEMBLY__ */
  
-@@ -1287,22 +1287,19 @@ static void __init create_linear_mapping_page_table(void)
- 		if (end >= __pa(PAGE_OFFSET) + memory_limit)
- 			end = __pa(PAGE_OFFSET) + memory_limit;
- 
--		create_linear_mapping_range(start, end, 0);
-+		create_linear_mapping_range(start, end, 0, NULL);
- 	}
- 
- #ifdef CONFIG_STRICT_KERNEL_RWX
--	create_linear_mapping_range(ktext_start, ktext_start + ktext_size, 0);
--	create_linear_mapping_range(krodata_start,
--				    krodata_start + krodata_size, 0);
-+	create_linear_mapping_range(ktext_start, ktext_start + ktext_size, 0, NULL);
-+	create_linear_mapping_range(krodata_start, krodata_start + krodata_size, 0, NULL);
- 
- 	memblock_clear_nomap(ktext_start,  ktext_size);
- 	memblock_clear_nomap(krodata_start, krodata_size);
- #endif
- 
- #ifdef CONFIG_KFENCE
--	create_linear_mapping_range(kfence_pool,
--				    kfence_pool + KFENCE_POOL_SIZE,
--				    PAGE_SIZE);
-+	create_linear_mapping_range(kfence_pool, kfence_pool + KFENCE_POOL_SIZE, PAGE_SIZE, NULL);
- 
- 	memblock_clear_nomap(kfence_pool, KFENCE_POOL_SIZE);
- #endif
+ #define virt_addr_valid(vaddr)	({						\
 -- 
 2.43.0
 
