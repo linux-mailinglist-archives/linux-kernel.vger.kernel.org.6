@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-202282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41DF8FCAB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:43:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC1668FCAB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60E8B2873DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:43:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606281F2197E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274E0195FC5;
-	Wed,  5 Jun 2024 11:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D175B19307A;
+	Wed,  5 Jun 2024 11:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="actIwcGK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nB+tpFCK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59904194A74
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249E1193078
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717587708; cv=none; b=cI2GaU8JqPjcd++XNq6hUYGYIKROQuDYRgCkFuSxclwL7J1zkE57iI54IKaeDkk1HZmiZ2xU7bWazBljrn5WYJteqfZ6fJE2117+JrMmdT+JeorPzRViQceyExKdfz4RrmyXPqr4qNvMEdNftVIBzZ0QwV6v7+L7pwsfJ9zo5wo=
+	t=1717587713; cv=none; b=u7sq86NVxFjRB4G/2vwIDl28zK1xO+sIE4UksPSu5JEwj4fk8pBkkrUmiD1oz1e+OIEw2mfW/i3ibMJPTGaNLxVsNEhpZejt52leYHeerQRE3hWeEp9hpnsuFmn1YAC9CwaVNOqA6WNJpiXd5FDGZArlBDvqR6cNT5R1wlA4GdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717587708; c=relaxed/simple;
-	bh=tu3HoOPPrk12D/HHChqAMB+6RlcJ+H95I8FoF9tFiiY=;
+	s=arc-20240116; t=1717587713; c=relaxed/simple;
+	bh=L6J14KqpfXLFzLpqo0wTWwklGSKZlK82ek5ghR0epQs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kGwO1gmz6TyswVEKG1xfHnG/fO34dTnWfkSh2n4GvD3y3jXBraCKPqjQZPI+J5QqKIYTZ9tRPaPFTOE6WZBr2k5P1mnaJHlUI+D4mAnw6Ed3daR8Lwv7ZUfK+J/Sxj+5vIz02u+mKarC25kVmwiiqR1WDt1TPjEcW6FGMwp0WyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=actIwcGK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA0FC32786;
-	Wed,  5 Jun 2024 11:41:43 +0000 (UTC)
+	 MIME-Version:Content-Type; b=TJwKQwst7/dqYSLWSnxMU+iFUstIC5vkYCrTHbnD0hAfu+P79HZv6o5pnGhe4ghyW9j/D0XBW51FzX6FUbS6WjdoGSvVwmMtaWfJ8nuwdVQk7Ey6D3cTEOiSrxqJfhfPS0whXaWGw28QqKgbbkO1aTFGBCNVU5XvMu80VSA66wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nB+tpFCK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB9B2C4AF09;
+	Wed,  5 Jun 2024 11:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717587708;
-	bh=tu3HoOPPrk12D/HHChqAMB+6RlcJ+H95I8FoF9tFiiY=;
+	s=k20201202; t=1717587713;
+	bh=L6J14KqpfXLFzLpqo0wTWwklGSKZlK82ek5ghR0epQs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=actIwcGKL7lMw7iHm/kYeLU0Im0MKA4ATYjc0eCD0iqFPQA3+RyZqVf1nydSeSUj0
-	 gF9ZhAi8Cz89TfrWUuVf9dhYSzuUycsqYPT4dufEA7HfktKoCVWT5gVywjFH44bLxq
-	 FNTCqSW9+FkXOpJ/wxpC8P41lR4dMjOqX+wX6c6+uyD4sHqI51jkPKWdIKeosTC0K2
-	 WSBy6vQk9sC3vPE9M08ir3qL9i3FzdGxn8iAQdWQ8EjWNitOO9u8IfVkxzec9k0tt9
-	 kNzLKT3wBJLZ8wQiEitzX09XtnmJ30P5wj/gY3ges2Va9UAhUDJXEgw+464CKsyQPH
-	 ZFrpv32CPOuLg==
+	b=nB+tpFCKWoin2Io1tYNh/CpS+b2KOE96Igf2M+PajeAiqjcAwFpQdkIQ1roxi2gFS
+	 ybrJ6R3VNsPGfwYETuovRb8MmTUuzJYXMZkdk5PkklSmzl/mvUssCtdc8sq6Nn+608
+	 Msnb1PAycmOOBfXZz9FDQCndMLunP+YGOi1F1+qIlP3WKOUwv5u+jFCiovPNw7bR/f
+	 mDZYBsTyIzCYUGva5g5QSNHBpM7IOMr7msMbj2JmcxdV3QiHfU6VxtsKG0bPV/tDWi
+	 hYQBxxJxkhebALDI+e5GZRgBFT6W8RxUwONIgOVjjb2cDwx5omNGuOKTPYICI4q2OY
+	 63QpUaPxQzQfw==
 From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
 To: Alexandre Ghiti <alexghiti@rivosinc.com>,
 	Albert Ou <aou@eecs.berkeley.edu>,
@@ -58,9 +58,9 @@ Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	virtualization@lists.linux-foundation.org
-Subject: [PATCH v4 07/11] riscv: mm: Take memory hotplug read-lock during kernel page table dump
-Date: Wed,  5 Jun 2024 13:40:50 +0200
-Message-ID: <20240605114100.315918-8-bjorn@kernel.org>
+Subject: [PATCH v4 08/11] riscv: Enable memory hotplugging for RISC-V
+Date: Wed,  5 Jun 2024 13:40:51 +0200
+Message-ID: <20240605114100.315918-9-bjorn@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240605114100.315918-1-bjorn@kernel.org>
 References: <20240605114100.315918-1-bjorn@kernel.org>
@@ -75,42 +75,36 @@ Content-Transfer-Encoding: 8bit
 
 From: Björn Töpel <bjorn@rivosinc.com>
 
-During memory hot remove, the ptdump functionality can end up touching
-stale data. Avoid any potential crashes (or worse), by holding the
-memory hotplug read-lock while traversing the page table.
+Enable ARCH_ENABLE_MEMORY_HOTPLUG and ARCH_ENABLE_MEMORY_HOTREMOVE for
+RISC-V.
 
-This change is analogous to arm64's commit bf2b59f60ee1 ("arm64/mm:
-Hold memory hotplug lock while walking for kernel page table dump").
-
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
 ---
- arch/riscv/mm/ptdump.c | 3 +++
+ arch/riscv/Kconfig | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/arch/riscv/mm/ptdump.c b/arch/riscv/mm/ptdump.c
-index 1289cc6d3700..9d5f657a251b 100644
---- a/arch/riscv/mm/ptdump.c
-+++ b/arch/riscv/mm/ptdump.c
-@@ -6,6 +6,7 @@
- #include <linux/efi.h>
- #include <linux/init.h>
- #include <linux/debugfs.h>
-+#include <linux/memory_hotplug.h>
- #include <linux/seq_file.h>
- #include <linux/ptdump.h>
- 
-@@ -370,7 +371,9 @@ bool ptdump_check_wx(void)
- 
- static int ptdump_show(struct seq_file *m, void *v)
- {
-+	get_online_mems();
- 	ptdump_walk(m, m->private);
-+	put_online_mems();
- 
- 	return 0;
- }
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0525ee2d63c7..8d860ad3b171 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -16,6 +16,8 @@ config RISCV
+ 	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+ 	select ARCH_DMA_DEFAULT_COHERENT
+ 	select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
++	select ARCH_ENABLE_MEMORY_HOTPLUG if SPARSEMEM_VMEMMAP
++	select ARCH_ENABLE_MEMORY_HOTREMOVE if MEMORY_HOTPLUG
+ 	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+ 	select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
+ 	select ARCH_HAS_BINFMT_FLAT
+@@ -46,6 +48,7 @@ config RISCV
+ 	select ARCH_HAS_UBSAN
+ 	select ARCH_HAS_VDSO_DATA
+ 	select ARCH_KEEP_MEMBLOCK if ACPI
++	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE	if 64BIT && MMU
+ 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+ 	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT
+ 	select ARCH_STACKWALK
 -- 
 2.43.0
 
