@@ -1,128 +1,176 @@
-Return-Path: <linux-kernel+bounces-203002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F758FD499
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509298FD4A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A01181C23530
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:59:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEE6C1C2257A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B37195395;
-	Wed,  5 Jun 2024 17:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964FA13C8F5;
+	Wed,  5 Jun 2024 18:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0dwlGsg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OyMmHgy1"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DAA1A291;
-	Wed,  5 Jun 2024 17:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59D9194AF2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610390; cv=none; b=C/TPo5kxFN7lBow6b0vjJcrSP6A407oQJoFLTg3b5wjU/zXHr9OK9+wu2LvVHklPkKu3hjtXvmoKmCTiEVPgyi+kM0pd6VOYiRZaHRdLJmF1nVdsV+y3eKQwJGlGjh1Ke5vQ90Kb7SL4Ms1IF7O/Md9SUaEF2yMFPdCUOK9cqEg=
+	t=1717610404; cv=none; b=rLMt6ePhLZTUT0eBTEeoQmw9G6FzBl8upewnigvMCoHg+6WgMtMHQKtP0uLgUyqqKo1ZZbpXNebjN5ASHyQzpCVXJPwVviiOGnrN4t+MpnGoWhd9iioY/4No4RUciLdtXORv2581F8pN/fUl8LZHXUB5wzfT7aFzB8uAcZ9O2OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610390; c=relaxed/simple;
-	bh=yw1xSaxn6SgH1smEJJVuV2PYZu8dfMQrURfJ9oM9Uw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XMcLg/Gn3sqN3s3CjTH+Xt7ayTifJ0CPz73cVx7FdPS/oRTVqjyP68Tfr/p7m1ZioQUbbkdx51UxUcUywlTlGo0OrNpx4qXsyf4RoPKwDIW+8RtkFTtbl7B/qOT3H96CZs7nGaV6FbQAKJrxwFcwBYssvRQd4yDq1jRPxbhQvlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0dwlGsg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384DEC4AF14;
-	Wed,  5 Jun 2024 17:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717610390;
-	bh=yw1xSaxn6SgH1smEJJVuV2PYZu8dfMQrURfJ9oM9Uw4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=g0dwlGsgP0RR33Xs1FRfDlQdXQ80HHsGV9fi89xOToyKjifhEB2XNqE2zJ0PKnq1o
-	 TTfrY8IGrAinvQzVHqYIh9OC4XrlHB394ar51+IydvSV6VcAUtRfaL1KYkMgWQA+Zi
-	 77AlIof90PBZqrHU1JO4UYdiBhC4+AhjhhqWWGWBJysWp++wXIjMiHwvQw/DQSxIc6
-	 iotfxeKJBJniLVdy8Mri15mfZ5k9+O+ADb7eHqzy5AgdSsXB5pI2+0CAX2lbhpEiEs
-	 RyBCS4EgD24lGQUBNMBpttirmeQw14rrRReRedjyfj7YxhsbPQX/3+ycxEb65sB5y3
-	 3VFaGxRpylD6g==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eaa80cb550so1463651fa.0;
-        Wed, 05 Jun 2024 10:59:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVHlKNuQOh9be2duawM1mj5wgnOEYNY300o7DpTfTCi+IQDzjkK8Sv5jMfWA+/hBVb5OedqK+exHA2U5oh5d+lhckPXJ38pJAzbNnJc12Fk0BhuOwgFzThH4gL308ewtzVYaGSBU/jojrJRD2zfOfeY56HA6dOzMSxvxYMlSLtxwjSlMPw7rRjRlqv7S5xGIg4UCjg7mrgfGDZVXU7NuG+emWeAN1Q=
-X-Gm-Message-State: AOJu0Yz8vXPQSYYBdcEIgvuM+QNvGknztpeXxtNm+4xx3gciYR8K1mky
-	rb1FrS35Fm1NDX0C3z4ZcDpE13l5xIrF7Fwd3wDuUZrPdBm9AKfb/lxyAjhaIbo2DozWSthS+48
-	6s0TjMCyktb7RGIzPrjn3QAuKQUE=
-X-Google-Smtp-Source: AGHT+IFwBnLbnAG8I3smJgMOrt7te2f6atLyRhMLLdUqm6LmCqUyYx2JWPcNd6bDR47zihsBK0o3CdEIxKpfBWUbCug=
-X-Received: by 2002:a2e:3509:0:b0:2ea:8d54:4530 with SMTP id
- 38308e7fff4ca-2eac7a22291mr18413131fa.28.1717610388337; Wed, 05 Jun 2024
- 10:59:48 -0700 (PDT)
+	s=arc-20240116; t=1717610404; c=relaxed/simple;
+	bh=BxoABlKvJef+pUpKvjxVkdFoF53gAB3xVu8cHZaGBrk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GFc3GD9t6ylR6eFVFON0P6W+zu6bV8uoaqUTN16NSISNnLu6DoStT69P9uv7eHTQ6maoPuLqZ3WOpNeB+f58ngvXAeXGOjuGiQrAJCbS1lXSbP63EmxNKG50j2WZXLC0Iwu4OQymNvOJYcf0+KSnTqBUB5qKFaXpDQ1C5945TPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OyMmHgy1; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a089511f9so15297937b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717610401; x=1718215201; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=w5RPl7PD7LMs1k1njsQ/RXiUssQb7CTl+XBmOvI3R5A=;
+        b=OyMmHgy1OprhTZCk1PpY0KDM++WlQ1Edw2Mps1X0EgJF2iRBA3+tnZUd98ocPSXWN7
+         I5HJFrKZWoDLgPm7SDxl1bkWvzGz18zxNjGoXmNXX1/JRy6wFqUXPM4fg6njQ4saM2A8
+         yLMbKusUCgwnE0ITdDiMX3hsSX1dBE5GBbZOTqY8dwoA8iLHbnfmjPCwDmWjbzvPqRvX
+         jE0jfYNVECTVlFMrLnVd2AQ5Xmr6HOM3bKPb3xt0oUX/V9PhfG/3FV6uK6EMbBp8IkTk
+         9k2llsKW20VKa+QhtGVJt5Ip8/G/LiZr0xSkvjVn57gLonJE8lQKc2VUpPo0iQIWkuHq
+         QWrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717610401; x=1718215201;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w5RPl7PD7LMs1k1njsQ/RXiUssQb7CTl+XBmOvI3R5A=;
+        b=WAhzV4el03rgNAz/gd5FQGQxBeU8C8KoyMlCljiOPhJjEyRG51ksuob/I5RkEaXpUy
+         i7Ag+Jd5MfWS6r++PtQZrxZZZBql8BP8K3Zm//ypTsbWdWH+2OHHg1/AtUZ9LWHrnOrr
+         Z4+GhO+g6QCvDxd88QKrlBQdTPHaVnBhmArEhonE+7aQR6Lrubh2yJKQ1f61zwcFzVy3
+         azM+I44xqu5ZDKKVSeIdzhJkBAH+W/4uZn7n3hWZouBuSkfAJHpN3aKnKsov1Liqa+RW
+         Xe5EdYxkDX+eB2Gr/cKYi5bDPeQHUW6N2G4pv+reOKJMlsV88EoMD4hZV9Livfezz/XX
+         Jw4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVWRd3ye+94YgZtzwsKnK01IoAaafgh5lf5NoIJ+3IMg88MlbVfj8Jv2hhbdatUtlLNFbvGw9pvXdi8urwukUFt7bHxJZ4v12yHl6Dl
+X-Gm-Message-State: AOJu0YwFXawrsDbhUeGJuqnyPDCaWhxumKbFdJQgr+qXu2Y7sILTuchA
+	qxRoRIYYtr5HkcOudBkCHWhAoRIm0zl/fLeL0XRPHTu3jFQc2+SEyIKEI//k1paqiUSLwn7pnYP
+	bQ/3ZLXLS3A==
+X-Google-Smtp-Source: AGHT+IE3beT3+LJiyuyeey70O4vTmt9cNoEU8h7bwGC3fodiNqs+98CXh8Kyq/MReppn/4vWIwzPR7Cf0wAFHw==
+X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
+ (user=joychakr job=sendgmr) by 2002:a05:6902:987:b0:dfa:7552:e09e with SMTP
+ id 3f1490d57ef6-dfade7e34cbmr71646276.0.1717610400689; Wed, 05 Jun 2024
+ 11:00:00 -0700 (PDT)
+Date: Wed,  5 Jun 2024 17:59:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240604224052.3138504-1-davidgow@google.com> <20240605062234.GE279426@thelio-3990X>
-In-Reply-To: <20240605062234.GE279426@thelio-3990X>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 5 Jun 2024 19:59:37 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHa58Zcq3extXw4VXGnpVHbd5urzCGnh_oCo-BLMxMrJQ@mail.gmail.com>
-Message-ID: <CAMj1kXHa58Zcq3extXw4VXGnpVHbd5urzCGnh_oCo-BLMxMrJQ@mail.gmail.com>
-Subject: Re: [PATCH] arch: um: rust: Add i386 support for Rust
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: David Gow <davidgow@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Rae Moar <rmoar@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, x86@kernel.org, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
+Message-ID: <20240605175953.2613260-1-joychakr@google.com>
+Subject: [PATCH v1 00/17] nvmem: Handle change of return type in
+ reg_read/write() definition
+From: Joy Chakraborty <joychakr@google.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-usb@vger.kernel.org, manugautam@google.com, 
+	Joy Chakraborty <joychakr@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 5 Jun 2024 at 08:22, Nathan Chancellor <nathan@kernel.org> wrote:
->
-> Hi David,
->
-> Just a fly by comment on style, I don't have much to say content :)
->
-> On Wed, Jun 05, 2024 at 06:40:50AM +0800, David Gow wrote:
-> > At present, Rust in the kernel only supports 64-bit x86, so UML has
-> > followed suit. However, it's significantly easier to support 32-bit i386
-> > on UML than on bare metal, as UML does not use the -mregparm option
-> > (which alters the ABI), which is not yet supported by rustc[1].
-> >
-> > Add support for CONFIG_RUST on um/i386, by adding a new target config to
-> > generate_rust_target, and replacing various checks on CONFIG_X86_64 to
-> > also probably like  support CONFIG_X86_32.
-> >
-> > We still use generate_rust_target, rather than a built-in rustc target,
-> > in oPrder to match x86_64, provide a future place for -mregparm, and more
-> > easily disable floating point instructions.
-> >
-> > With these changes, the KUnit tests pass with:
-> > kunit.py run --make_options LLVM=1 --kconfig_add CONFIG_RUST=y
-> > --kconfig_add CONFIG_64BIT=n --kconfig_add CONFIG_FORTIFY_SOURCE=n
-> >
-> > An earlier version of these changes was proposed on the Rust-for-Linux
-> > github[2].
-> >
-> > [1]: https://github.com/rust-lang/rust/issues/116972
-> > [2]: https://github.com/Rust-for-Linux/linux/pull/966
-> >
-> > Signed-off-by: David Gow <davidgow@google.com>
-> ...
-> > -ifdef CONFIG_X86_64
-> > +ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
->
-> These configurations are mutually exclusive, so would it look more
-> readable to have it be:
->
->
-> ifeq ($(CONFIG_X86_32)$(CONFIG_X86_64),y)
->
+This patch series facilitates compilation post the change in definition
+of nvmem_reg_read_t and nvmem_reg_write_t callback in
+https://lore.kernel.org/all/171751721565.70889.16944298203785853489.b4-ty@linaro.org/
 
-Or simply
+Currently the nvmem core change is picked on
+https://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git/log/?h=for-next
 
-ifdef CONFIG_X86
+---
+V1 Changes : Change read/write return type to ssize_t and handle
+relevant logic changes
+---
+
+Joy Chakraborty (17):
+  hwmon: pmbus: adm1266: Change nvmem reg_read/write return type
+  media: i2c: ov2740: Change nvmem reg_read/write return type
+  media: i2c: video-i2c: Change nvmem reg_read/write return type
+  iio: pressure: bmp280: Change nvmem reg_read/write return type
+  misc: ds1682: Change nvmem reg_read/write return type
+  misc: eeprom: at24: Change nvmem reg_read/write return type
+  misc: eeprom: at25: Change nvmem reg_read/write return type
+  misc: eeprom: 93xx46: Change nvmem reg_read/write return type
+  misc: mchp_pci1xxxx: Change nvmem reg_read/write return type
+  mtd: core: Change nvmem reg_read/write return type
+  mtd: ubi: nvmem: Change nvmem reg_read/write return type
+  soc: atmel: sfr: Change nvmem reg_read/write return type
+  w1: slaves: w1_ds250x: Change nvmem reg_read/write return type
+  thunderbolt: switch: Change nvmem reg_read/write return type
+  thunderbolt: retimer: Change nvmem reg_read/write return type
+  soc: tegra: fuse: Change nvmem reg_read/write return type
+  rtc: Change nvmem reg_read/write return type
+
+ drivers/hwmon/pmbus/adm1266.c                 |  4 +-
+ drivers/iio/pressure/bmp280-core.c            | 14 ++++---
+ drivers/media/i2c/ov2740.c                    |  6 +--
+ drivers/media/i2c/video-i2c.c                 |  9 +++--
+ drivers/misc/ds1682.c                         | 16 +++-----
+ drivers/misc/eeprom/at24.c                    | 10 +++--
+ drivers/misc/eeprom/at25.c                    | 11 +++---
+ drivers/misc/eeprom/eeprom_93xx46.c           | 12 +++---
+ .../misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 16 ++++----
+ drivers/mtd/mtdcore.c                         | 18 ++++-----
+ drivers/mtd/ubi/nvmem.c                       |  6 +--
+ drivers/rtc/rtc-abx80x.c                      | 15 +++----
+ drivers/rtc/rtc-cmos.c                        |  8 ++--
+ drivers/rtc/rtc-ds1305.c                      | 18 ++++++---
+ drivers/rtc/rtc-ds1307.c                      | 22 +++++++----
+ drivers/rtc/rtc-ds1343.c                      | 18 ++++++---
+ drivers/rtc/rtc-ds1511.c                      | 12 +++---
+ drivers/rtc/rtc-ds1553.c                      | 14 ++++---
+ drivers/rtc/rtc-ds1685.c                      | 14 ++++---
+ drivers/rtc/rtc-ds1742.c                      | 14 ++++---
+ drivers/rtc/rtc-ds3232.c                      | 22 +++++++----
+ drivers/rtc/rtc-isl12026.c                    | 12 +++---
+ drivers/rtc/rtc-isl1208.c                     |  8 ++--
+ drivers/rtc/rtc-m48t59.c                      | 12 +++---
+ drivers/rtc/rtc-m48t86.c                      | 12 +++---
+ drivers/rtc/rtc-max31335.c                    | 18 ++++++---
+ drivers/rtc/rtc-meson.c                       | 18 ++++++---
+ drivers/rtc/rtc-omap.c                        | 12 +++---
+ drivers/rtc/rtc-pcf2127.c                     | 20 ++++++----
+ drivers/rtc/rtc-pcf85063.c                    | 20 +++++++---
+ drivers/rtc/rtc-pcf85363.c                    | 39 ++++++++++++-------
+ drivers/rtc/rtc-rp5c01.c                      | 14 ++++---
+ drivers/rtc/rtc-rv3028.c                      | 32 +++++++++------
+ drivers/rtc/rtc-rv3029c2.c                    | 20 +++++++---
+ drivers/rtc/rtc-rv3032.c                      | 24 ++++++++----
+ drivers/rtc/rtc-rv8803.c                      | 16 +++++---
+ drivers/rtc/rtc-rx8581.c                      | 39 ++++++++++++-------
+ drivers/rtc/rtc-stk17ta8.c                    | 14 ++++---
+ drivers/rtc/rtc-sun6i.c                       |  8 ++--
+ drivers/rtc/rtc-ti-k3.c                       | 16 +++++---
+ drivers/rtc/rtc-twl.c                         | 20 +++++++---
+ drivers/soc/atmel/sfr.c                       | 11 ++++--
+ drivers/soc/tegra/fuse/fuse-tegra.c           |  6 +--
+ drivers/thunderbolt/retimer.c                 |  8 ++--
+ drivers/thunderbolt/switch.c                  |  8 ++--
+ drivers/w1/slaves/w1_ds250x.c                 |  4 +-
+ 46 files changed, 408 insertions(+), 282 deletions(-)
+
+-- 
+2.45.1.467.gbab1589fc0-goog
+
 
