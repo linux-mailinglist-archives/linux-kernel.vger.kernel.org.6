@@ -1,201 +1,178 @@
-Return-Path: <linux-kernel+bounces-201674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B9088FC1A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:19:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FF88FC1A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D971F22036
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:19:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F256C284FBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A19A5338D;
-	Wed,  5 Jun 2024 02:19:18 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043941EB36
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 02:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CCA61FEC;
+	Wed,  5 Jun 2024 02:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z+q5WxJl"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0516F2744E;
+	Wed,  5 Jun 2024 02:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717553957; cv=none; b=ug2te8t3OMb+LFahsQk5o4fRFznPzbIaPRY/rdO2fBuhTY/Be4xLRMQLQIE8r5NKTd+BngIcFKbke0SI3CpB8l8LUvSt8J8rMbUGE5M8autAJd8mXnZlWhHXAoR13e0V0xnCY8jiJW6kT7pPi3RMrEFgGQ4qr9JeVi3P4u1Hh9k=
+	t=1717553958; cv=none; b=kiPiB1c7oci+dwS3ysePw1FbjY/gxcIjOTzgx5tqLa+VnQFKo9XR0/s8wzaP6xJdKoxBGHkh4MFjg4CZ5efK0mhHqVZD0VSbUCWxGh3JyX2osl5GFvaCmUlhJpJCiOHs2izoMoRe8PIfW1/JAaNX/Iaqbt5WxObuQ+tOEkqAjjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717553957; c=relaxed/simple;
-	bh=Zxkhm0YeSTgwvm9hgTADfpfC5tsKNvUgfM1BTuRDc9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KWlKRBNKM+5Bu6ZJpAXmTACmGjqKpkMaiHnl1GhZtH8FOQK6nA7LKfIbN+pkM6H9Zq37wfRGw+ReNm8AmUrCrZFkc6+B2rKYSTF1HZVTBI8nv43u+0RuGIUlX7J4VNceTaZggxB1QDOF2WDUA/gVy5YLxuMzxyB+wUf+4dbNGhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-b9-665fcb1bc2af
-Date: Wed, 5 Jun 2024 11:19:02 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kernel_team@skhynix.com, hannes@cmpxchg.org,
-	iamjoonsoo.kim@lge.com, rientjes@google.com
-Subject: Re: [PATCH v2] mm: let kswapd work again for node that used to be
- hopeless but may not now
-Message-ID: <20240605021902.GC75311@system.software.com>
-References: <20240604072323.10886-1-byungchul@sk.com>
- <87bk4hcf7h.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <20240604084533.GA68919@system.software.com>
- <8734ptccgi.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <20240605015021.GB75311@system.software.com>
- <87tti8b10g.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	s=arc-20240116; t=1717553958; c=relaxed/simple;
+	bh=MN5QUhpveLtR3vzOpslL0uzm+4RYwh54UdoJyZVPeus=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mWJ+FcNupQGf43VOd8Q1sQ9F/gHL/ShgJRhvMD3WX6Fk17FbD0GGwkR+2Lkut9kUrqgkhNMBy2K24m/rv2+tmDbJJnRQHKiSG05vbxzw4mAWE1UeEjMxK8Ist+idyBxQyLgdW93P3k3u7USgnF0tKgGoHpz+uMhSDBnbwfOINCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z+q5WxJl; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-24c0dbd2866so2816730fac.0;
+        Tue, 04 Jun 2024 19:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717553955; x=1718158755; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yH7bfOUTp5Qehb6cDSUFa9U/OcV22YcwBdkqqYDC6kU=;
+        b=Z+q5WxJlbUwJmZJQu0guOdTkurXNX0fish8ULU+AlQQFsCzj5Flt6vYgzFqTfsrTQ7
+         pAGscVP8KNnTKZOARs/fhzdZlYhbqzXzlH3ABvNbc73qV84iki93CQEZy8knWGBBzut/
+         R0BAjEhPG1yWlRF7M9H8HNtIM20Kp3eapwRZ/4+10fVhJ9GOXHRO9LdlBOm8fdR7+r6Y
+         Ez+eNvBWZb7fCcmwQxHv3VKFrG/2o67evPqU7bgI27OqKZgqm7bUNQS/49sbNMbYIF5y
+         2Ks0ytEgcoony9i4Y3+WAtT6r+goukgGdaq5IYnpNPawa483dBpal/+fdE12zji0awuF
+         RuWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717553955; x=1718158755;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=yH7bfOUTp5Qehb6cDSUFa9U/OcV22YcwBdkqqYDC6kU=;
+        b=MfrrFzhc8cr6t0KAA46OLJEeqpw/Xajt2UPh+eyJ9sScOqLmLF7ojb+V360wZ6VCIm
+         DgmqjVbtcpqK1w4/V+SApOg0fG/G7rQtCrNC0Nx8SUbbrjdfMagZJjYxAQ89RzMd/IG2
+         W+jKIVmzqbklhXfkg2d9TFTJZterZ6RqQwx/NLrkIXooEV7bCkrf2sOFKM2rGEjpWeMG
+         ML+YulCDZncu1vsuH+bH0wE1WBstwy8ApnuH/uyS0zYlQCMx4rO7g8MnaK/Q4DX1lYJs
+         1NuQKeONfxkEuBxRpb3pA7iqn2E8F/uR/VbzxnpMtL5Svv/0jMvCval5urfYeOzcP9p6
+         emyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuNfWM8V68dE0R4rJnOEAQXuFC8TmsnwpN73v1HDb6kI/XYBBraQhnDdxVRqs5qhIFxdOzEnR++08HDSHMg7zGj3dsrsdRtxGSNNosDTGWdeetOJGTm+I/cnWrtFMEuZfxmDXAgZJz3A==
+X-Gm-Message-State: AOJu0YyhLcmnaQR7T3vcXfhJekAuQxf4SbfCva+ANfABwMzTXuuOTrzk
+	VmuqbfQk6IG60V5nszmxY24DUz51YrsjHXwzsH08nubKbgkYQhvSJq96JQ==
+X-Google-Smtp-Source: AGHT+IFQd51VLz90gjLy96kC0m145tkni8e7Yv5/EHoJYHDwUGJmrO9SydWBlbsdmzi73PVDj9GySQ==
+X-Received: by 2002:a05:6870:96a4:b0:24c:63b2:8a18 with SMTP id 586e51a60fabf-25121c7e095mr1577477fac.7.1717553955365;
+        Tue, 04 Jun 2024 19:19:15 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702544e2e52sm5900559b3a.74.2024.06.04.19.19.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 19:19:14 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: linux-hwmon@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	=?UTF-8?q?Ren=C3=A9=20Rebe?= <rene@exactcode.de>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Armin Wolf <W_Armin@gmx.de>,
+	Stephen Horvath <s.horvath@outlook.com.au>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v4a 6/6] hwmon: (spd5118) Add configuration option for auto-detection
+Date: Tue,  4 Jun 2024 19:19:07 -0700
+Message-Id: <20240605021907.4125716-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240604040237.1064024-7-linux@roeck-us.net>
+References: <20240604040237.1064024-7-linux@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87tti8b10g.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsXC9ZZnka7M6fg0g0+7WC3mrF/DZrF6k6/F
-	yu5mNovLu+awWdxb85/Vom3JRiaLk7Mmsziwexx+857ZY8GmUo/Fe14yeWz6NIndo+vtFSaP
-	EzN+s3h83iQXwB7FZZOSmpNZllqkb5fAlbGiaQtLQYd2xb6Pp1gaGDcpdjFycEgImEhcns3d
-	xcgJZl66u5sdxGYRUJGY+/I8C4jNJqAucePGT2YQW0RAQ+LTwuVANVwczAJrGSWOXG1hBZkj
-	LJAqcXx7AEgNr4CFxOlbkxlBaoQE1jNJ/Oh5yQ6REJQ4OfMJ2FBmAS2JG/9eMoH0MgtISyz/
-	xwES5hSwk3g96RcTiC0qoCxxYNtxJpA5EgIH2CSuXLzAAnGopMTBFTdYJjAKzEIydhaSsbMQ
-	xi5gZF7FKJSZV5abmJljopdRmZdZoZecn7uJERjqy2r/RO9g/HQh+BCjAAejEg/vjl9xaUKs
-	iWXFlbmHGCU4mJVEeP2K49OEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xp9K08REkhPLEnNTk0t
-	SC2CyTJxcEo1MLZ8W/RmRsXcRV/+eX9Y/P6rYFvfP4V3p0TuWcVc11Pb96jqm8UFt0LvY4Gp
-	YZflbx86J6/3/scv5WUPGe7d/JidcXHN68e1nQKze88pV7xwZVeT57T0rdinFMTwvLlMqE1D
-	a+3aB5duXFwjb/9cMuNmr6nNerMfvdt0jn5cuOcX5wzf+rhpOU+UWIozEg21mIuKEwFUkbkV
-	cQIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXC5WfdrCt9Oj7N4NltU4s569ewWaze5Gux
-	sruZzeLw3JOsFpd3zWGzuLfmP6tF25KNTBYnZ01mceDwOPzmPbPHgk2lHov3vGTy2PRpErtH
-	19srTB4nZvxm8Vj84gOTx+dNcgEcUVw2Kak5mWWpRfp2CVwZK5q2sBR0aFfs+3iKpYFxk2IX
-	IyeHhICJxKW7u9lBbBYBFYm5L8+zgNhsAuoSN278ZAaxRQQ0JD4tXA5Uw8XBLLCWUeLI1RbW
-	LkYODmGBVInj2wNAangFLCRO35rMCFIjJLCeSeJHz0t2iISgxMmZT8CGMgtoSdz495IJpJdZ
-	QFpi+T8OkDCngJ3E60m/mEBsUQFliQPbjjNNYOSdhaR7FpLuWQjdCxiZVzGKZOaV5SZm5pjq
-	FWdnVOZlVugl5+duYgSG7rLaPxN3MH657H6IUYCDUYmHd8evuDQh1sSy4srcQ4wSHMxKIrx+
-	xfFpQrwpiZVVqUX58UWlOanFhxilOViUxHm9wlMThATSE0tSs1NTC1KLYLJMHJxSDYz7ll+4
-	Z8p9K/L73U+pjK2aNadbNq3y8o/YO4Vrth3j2jIm9vqXIslZLrZlXsXm1xrjd8p8ervk7LxF
-	PVPPstpIL0s8+G6d500WvgPWIRFVvWdX57V7nJ9k3fuObaMvo2HvEc1JCWp2pyoen9d56bZE
-	bjvLsWcqjX5feTwWbjP7qLO2YlPmbDslluKMREMt5qLiRADujAtHWQIAAA==
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024 at 10:02:07AM +0800, Huang, Ying wrote:
-> Byungchul Park <byungchul@sk.com> writes:
-> 
-> > On Tue, Jun 04, 2024 at 04:57:17PM +0800, Huang, Ying wrote:
-> >> Byungchul Park <byungchul@sk.com> writes:
-> >> 
-> >> > On Tue, Jun 04, 2024 at 03:57:54PM +0800, Huang, Ying wrote:
-> >> >> Byungchul Park <byungchul@sk.com> writes:
-> >> >> 
-> >> >> > Changes from v1:
-> >> >> > 	1. Don't allow to resume kswapd if the system is under memory
-> >> >> > 	   pressure that might affect direct reclaim by any chance, like
-> >> >> > 	   if NR_FREE_PAGES is less than (low wmark + min wmark)/2.
-> >> >> >
-> >> >> > --->8---
-> >> >> > From 6c73fc16b75907f5da9e6b33aff86bf7d7c9dd64 Mon Sep 17 00:00:00 2001
-> >> >> > From: Byungchul Park <byungchul@sk.com>
-> >> >> > Date: Tue, 4 Jun 2024 15:27:56 +0900
-> >> >> > Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
-> >> >> >
-> >> >> > A system should run with kswapd running in background when under memory
-> >> >> > pressure, such as when the available memory level is below the low water
-> >> >> > mark and there are reclaimable folios.
-> >> >> >
-> >> >> > However, the current code let the system run with kswapd stopped if
-> >> >> > kswapd has been stopped due to more than MAX_RECLAIM_RETRIES failures
-> >> >> > until direct reclaim will do for that, even if there are reclaimable
-> >> >> > folios that can be reclaimed by kswapd.  This case was observed in the
-> >> >> > following scenario:
-> >> >> >
-> >> >> >    CONFIG_NUMA_BALANCING enabled
-> >> >> >    sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
-> >> >> >    numa node0 (500GB local DRAM, 128 CPUs)
-> >> >> >    numa node1 (100GB CXL memory, no CPUs)
-> >> >> >    swap off
-> >> >> >
-> >> >> >    1) Run a workload with big anon pages e.g. mmap(200GB).
-> >> >> >    2) Continue adding the same workload to the system.
-> >> >> >    3) The anon pages are placed in node0 by promotion/demotion.
-> >> >> >    4) kswapd0 stops because of the unreclaimable anon pages in node0.
-> >> >> >    5) Kill the memory hoggers to restore the system.
-> >> >> >
-> >> >> > After restoring the system at 5), the system starts to run without
-> >> >> > kswapd.  Even worse, tiering mechanism is no longer able to work since
-> >> >> > the mechanism relies on kswapd for demotion.
-> >> >> 
-> >> >> We have run into the situation that kswapd is kept in failure state for
-> >> >> long in a multiple tiers system.  I think that your solution is too
-> >> >
-> >> > My solution just gives a chance for kswapd to work again even if
-> >> > kswapd_failures >= MAX_RECLAIM_RETRIES, if there are potential
-> >> > reclaimable folios.  That's it.
-> >> >
-> >> >> limited, because OOM killing may not happen, while the access pattern of
-> >> >
-> >> > I don't get this.  OOM will happen as is, through direct reclaim.
-> >> 
-> >> A system that fails to reclaim via kswapd may succeed to reclaim via
-> >> direct reclaim, because more CPUs are used to scanning the page tables.
-> >
-> > Honestly, I don't think so with this description.
-> >
-> > The fact that the system hit MAX_RECLAIM_RETRIES means the system is
-> > currently hopeless unless reclaiming folios in a stronger way by *direct
-> > reclaim*.  The solution for this situation should not be about letting
-> > more CPUs particiated in reclaiming, again, *at least in this situation*.
-> >
-> > What you described here is true only in a normal state where the more
-> > CPUs work on reclaiming, the more reclaimable folios can be reclaimed.
-> > kswapd can be a helper *only* when there are kswapd-reclaimable folios.
-> 
-> Sometimes, we cannot reclaim just because we doesn't scan fast enough so
-> the Accessed-bit is set again during scanning.  With more CPUs, we can
-> scan faster, so make some progress.  But, yes, this only cover one
-> situation, there are other situations too.
+With SPD5118 chip detection for the most part handled by the i2c-smbus
+core using DMI information, the spd5118 driver no longer needs to
+auto-detect spd5118 compliant chips.
 
-What I mean is *the issue we try to solve* is not the situation that
-can be solved by letting more CPUs participate in reclaiming.
+Auto-detection by the driver is still needed on systems with no DMI support
+or on systems with more than eight DIMMs and can not be removed entirely.
+However, it affects boot time and introduces the risk of mis-identifying
+chips. Add configuration option to be able to disable it on systems where
+chip detection is handled outside the driver.
 
-	Byungchul
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+Sent as v4a to avoid resending the entire series.
 
-> --
-> Best Regards,
-> Huang, Ying
-> 
-> > 	Byungchul
-> >
-> >> In a system with NUMA balancing based page promotion and page demotion
-> >> enabled, page promotion will wake up kswapd, but kswapd may fail in some
-> >> situations.  But page promotion will no trigger direct reclaim or OOM.
-> >> 
-> >> >> the workloads may change.  We have a preliminary and simple solution for
-> >> >> this as follows,
-> >> >> 
-> >> >> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=17a24a354e12d4d4675d78481b358f668d5a6866
-> >> >
-> >> > Whether tiering is involved or not, the same problem can arise if
-> >> > kswapd gets stopped due to kswapd_failures >= MAX_RECLAIM_RETRIES.
-> >> 
-> >> Your description is about tiering too.  Can you describe a situation
-> >> without tiering?
-> >> 
-> >> --
-> >> Best Regards,
-> >> Huang, Ying
-> >> 
-> >> > 	Byungchul
-> >> >
-> >> >> where we will try to wake up kswapd to check every 10 seconds if kswapd
-> >> >> is in failure state.  This is another possible solution.
-> >> >> 
-> >> >> > However, the node0 has pages newly allocated after 5), that might or
-> >> >> > might not be reclaimable.  Since those are potentially reclaimable, it's
-> >> >> > worth hopefully trying reclaim by allowing kswapd to work again.
-> >> >> >
-> >> >> 
-> >> >> [snip]
-> >> >> 
-> >> >> --
-> >> >> Best Regards,
-> >> >> Huang, Ying
+v4a:
+    Do not auto-select SENSORS_SPD5118_DETECT if DMI is disabled
+    Modify help text of SENSORS_SPD5118_DETECT
+    Default SENSORS_SPD5118_DETECT to y if (!DMI || !X86)
+     
+v4: New patch
+
+ drivers/hwmon/Kconfig   | 19 +++++++++++++++++++
+ drivers/hwmon/spd5118.c |  4 +++-
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 7a84e7637b51..d5eced417fc3 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -2193,6 +2193,25 @@ config SENSORS_SPD5118
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called spd5118.
+ 
++config SENSORS_SPD5118_DETECT
++	bool "Enable detect function"
++	depends on SENSORS_SPD5118
++	default (!DMI || !X86)
++	help
++	  If enabled, the driver auto-detects if a chip in the SPD address
++	  range is compliant to the SPD51888 standard and auto-instantiates
++	  if that is the case. If disabled, SPD5118 compliant devices have
++	  to be instantiated by other means. On X86 systems with DMI support
++	  this will typically be done from DMI DDR detection code in the
++	  I2C SMBus subsystem. Devicetree based systems will instantiate
++	  attached devices if the DIMMs are listed in the devicetree file.
++
++	  Disabling the detect function will speed up boot time and reduce
++	  the risk of mis-detecting SPD5118 compliant devices. However, it
++	  may result in missed DIMMs under some circumstances.
++
++	  If unsure, say Y.
++
+ config SENSORS_TC74
+ 	tristate "Microchip TC74"
+ 	depends on I2C
+diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
+index 5cb5e52c0a38..19d203283a21 100644
+--- a/drivers/hwmon/spd5118.c
++++ b/drivers/hwmon/spd5118.c
+@@ -313,7 +313,7 @@ static bool spd5118_vendor_valid(u8 bank, u8 id)
+ }
+ 
+ /* Return 0 if detection is successful, -ENODEV otherwise */
+-static int spd5118_detect(struct i2c_client *client, struct i2c_board_info *info)
++static int __maybe_unused spd5118_detect(struct i2c_client *client, struct i2c_board_info *info)
+ {
+ 	struct i2c_adapter *adapter = client->adapter;
+ 	int regval;
+@@ -647,7 +647,9 @@ static struct i2c_driver spd5118_driver = {
+ 	},
+ 	.probe		= spd5118_probe,
+ 	.id_table	= spd5118_id,
++#ifdef CONFIG_SENSORS_SPD5118_DETECT
+ 	.detect		= spd5118_detect,
++#endif
+ 	.address_list	= normal_i2c,
+ };
+ 
+-- 
+2.39.2
+
 
