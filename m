@@ -1,157 +1,139 @@
-Return-Path: <linux-kernel+bounces-202443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37EFF8FCCAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 415278FCCAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85654B216C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:26:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B75DDB25DE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1293A1BF91A;
-	Wed,  5 Jun 2024 11:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC6E19B59B;
+	Wed,  5 Jun 2024 11:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="O3lts7qZ"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qu7DhHYG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9311BF90D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577EC1BF90D;
+	Wed,  5 Jun 2024 11:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717588620; cv=none; b=DAaOqCnhzlnLz3Am+STt+f9cx1H57BgRIzd4IFYxqArNxoENXprpl48tJdzxh6++W6/aSmVfCN+st/yEGRBI91C0oQAt/rKcQdvkWrSKjYWdwNIclWur2KjEHY4I36kGiKV/uesBCx+uLkoThqJZWkS1g6SAvvhcK+U09L2WZjc=
+	t=1717588624; cv=none; b=V5z0HprLtFEe4wuO/OfhImf/OJY4hYv/X02URB7K5XocY1DWzhd/heZc3pINzqgjxCxnsRmXNw+sLy6nyYIKHYlgQnJ+CtmXJR0JIge7HgF6bwf6BLF8ErYj1nGSjzu/VAJNbWdCMmydvFQib5W2ad4SMRNMwGI5TlGbUqLM8g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717588620; c=relaxed/simple;
-	bh=UbH1/7grnRdpXvuxHfEUVkrSJnWawHkx/2SBGGKAPgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5RC/RwXNLorwHCY6svOtf5I76s+tT7A0F9dawJhiLetI9YxSeJ9mi+61NRg/Yra4fRD6CTU2LrN8UO59Xcf39pHDVdgtvm3ti/dlgYmRZ9xOkoMdpCnV2hreqEQC5aUGz1m/0cQTxuSHH+UFfbJh4BHW+SUl1SCois+o2SxiRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=O3lts7qZ; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-79523244ccfso64600585a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 04:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1717588617; x=1718193417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=17rQdjGRIN2CSga/YFCaGswU6lwvjB6GqByaiI2V+ko=;
-        b=O3lts7qZpx3A1CVGBB5Fx8C3vLToLcJWJxJfxzYvpZO3S8CFQGExq2QEFn01+5qd/w
-         l/+j9XlRduaikM/uWlNxR+tdvTZP1ZqLyT/+IWrZiGk1gUXAnP1KWcd0nSpPtxozFhj9
-         ruvo9+DC39no/82lSzhiHV4AGGQYWrje4FQHzJyG0Jpoq/BFvD5Rtn6BksZEtGE6yS34
-         CLFoELN+uHBkym7mVAnxYjCbfucy4THRwYN7yCoGeY9cvBOJL5jm+tSSkZ85ofDnK1Ep
-         yBMh05907+3btuKX60kiTRZfMnzjLleKeJ00LvDI9E5GHrnY3h/Z6VpIIaOhb3rApa+1
-         EG5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717588617; x=1718193417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=17rQdjGRIN2CSga/YFCaGswU6lwvjB6GqByaiI2V+ko=;
-        b=HYLpxrsHQRsjzwqi3KgTap4+9usynw1MErbJaETcCKDegW22+2U28i4JW6G3f9dHCL
-         Sby4V7vMESHoC8Qb8ljyrMaDOWxOvOoQCDp/u8oob9IaswoU/xDtF3XBFoBU9X8KimZ0
-         DHmZuFz7aldCqJboKaxTey8fOCkeQcLRVpRvjErKzH/CVDOygq99YKfmZBhHfc8pwJGa
-         ISthGK4nf0Dya4AD0wpb7kceUZZdyOJRm2TdelO8j/WoE+f68Q8bU68zChNnqs0OsI/w
-         nk4ns5GZbdOF/hOi00DobR3Ez6OPiNsPA3b+lJ76P3pEvPROltueIt3P43JbELye+AOG
-         YBbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWhMNTimwNwBwL0dCwEz/p0eL9hHyVZScIYT8ILzCTsVe5Yvrb0i2Y6zHGVRMrJa2/+GfVDBCoOQULTl+u+dJDHjSDVIhNN0bWWnyR
-X-Gm-Message-State: AOJu0Yw7wbCxT3TgkdzRT5xe4Nn5DtMI+2Y925i1H9dqEkjZ++MKwwuo
-	+8qITv/0yM0DPvh2/IJWhCn0+zHdOjiDuP7CCRCdaQf1a+RodEL2w16dVmgsjxU=
-X-Google-Smtp-Source: AGHT+IH87Vgxi0u/6B6nOPz3Js4whNZ+PxPB9EPNZ3t7mrmfAT1RKqbTJL+X2xFL1FK3wwFqMewlsQ==
-X-Received: by 2002:a05:620a:1362:b0:790:efef:af55 with SMTP id af79cd13be357-79522fa4bbbmr417688985a.3.1717588617261;
-        Wed, 05 Jun 2024 04:56:57 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7952b8e99d4sm12315185a.72.2024.06.05.04.56.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 04:56:56 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sEpGC-006ZOM-6l;
-	Wed, 05 Jun 2024 08:56:56 -0300
-Date: Wed, 5 Jun 2024 08:56:56 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Baoquan He <bhe@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] [v3] arm64/io: add constant-argument check
-Message-ID: <20240605115656.GC791043@ziepe.ca>
-References: <20240604210006.668912-1-arnd@kernel.org>
- <ZmAsutGzL5_Kx8Pn@J2N7QTR9R3>
+	s=arc-20240116; t=1717588624; c=relaxed/simple;
+	bh=vMDKIc6lLj1EO9UYlCbUb/5oXBZKBAl4dXREvt/KAd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SGSt2GoB/M4YwWeKyioRPX198BrCUd26dAnf1CBj8JXSk6ROdOEySH8qrckBaJN/2rZ2fGsceZ4BmQxHijhFYbVtuRXU51AwISK2Tjo1lY9tLN2YYkJU+HeBPjtPwOKvTufvhrAnTG3Fg1lIyRCqXbUrS0jGqTidwhr/FCMDEH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qu7DhHYG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0665C3277B;
+	Wed,  5 Jun 2024 11:57:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717588624;
+	bh=vMDKIc6lLj1EO9UYlCbUb/5oXBZKBAl4dXREvt/KAd4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qu7DhHYG628qEo6baKNOhR9F3PGPT9kyb2QoDYSDUqe62+Hz2QoXZeLodkVGrQqc6
+	 HK2x3izib4BqXmf3bb2Ed+AB8RQWgNE8JHeTUp8NGaAElffLfuHeAblRDQvqXDEoOp
+	 oEABpWpp9QRopiJM+Qo5nn47D/5fmLw10daD7lD7jJDnirOdbksg5Py2A7ildSSRoY
+	 /xs2EYqilIXZ1sWBkhdqwQnDFSJziKDu/L9cSXpl16kw/uUYLuBp4d+dvRmZLTu96a
+	 Kr9628FrOQmaDtlE7yB8pEWIMXJsuI9KYonOAqcRyRZOt81MsgXLf0xbozXPSLLJxG
+	 6HF4bpE85C3lw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Jian-Hong Pan <jhp@endlessos.org>,
+	Takashi Iwai <tiwai@suse.de>,
+	Sasha Levin <sashal@kernel.org>,
+	perex@perex.cz,
+	tiwai@suse.com,
+	sbinding@opensource.cirrus.com,
+	kailang@realtek.com,
+	luke@ljones.dev,
+	shenghao-ding@ti.com,
+	simont@opensource.cirrus.com,
+	foss@athaariq.my.id,
+	rf@opensource.cirrus.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4] ALSA: hda/realtek: Enable headset mic of JP-IK LEAP W502 with ALC897
+Date: Wed,  5 Jun 2024 07:56:56 -0400
+Message-ID: <20240605115701.2965523-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmAsutGzL5_Kx8Pn@J2N7QTR9R3>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.277
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024 at 10:15:38AM +0100, Mark Rutland wrote:
-> On Tue, Jun 04, 2024 at 10:59:57PM +0200, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > In some configurations __const_iowrite32_copy() does not get inlined
-> > and gcc runs into the BUILD_BUG():
-> > 
-> > In file included from <command-line>:
-> > In function '__const_memcpy_toio_aligned32',
-> >     inlined from '__const_iowrite32_copy' at arch/arm64/include/asm/io.h:203:3,
-> >     inlined from '__const_iowrite32_copy' at arch/arm64/include/asm/io.h:199:20:
-> > include/linux/compiler_types.h:487:45: error: call to '__compiletime_assert_538' declared with attribute error: BUILD_BUG failed
-> >   487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> >       |                                             ^
-> > include/linux/compiler_types.h:468:25: note: in definition of macro '__compiletime_assert'
-> >   468 |                         prefix ## suffix();                             \
-> >       |                         ^~~~~~
-> > include/linux/compiler_types.h:487:9: note: in expansion of macro '_compiletime_assert'
-> >   487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> >       |         ^~~~~~~~~~~~~~~~~~~
-> > include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-> >    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-> >       |                                     ^~~~~~~~~~~~~~~~~~
-> > include/linux/build_bug.h:59:21: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-> >    59 | #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-> >       |                     ^~~~~~~~~~~~~~~~
-> > arch/arm64/include/asm/io.h:193:17: note: in expansion of macro 'BUILD_BUG'
-> >   193 |                 BUILD_BUG();
-> >       |                 ^~~~~~~~~
-> > 
-> > Move the check for constant arguments into the inline function to ensure
-> > it is still constant if the compiler decides against inlining it, and
-> > mark them as __always_inline to override the logic that sometimes leads
-> > to the compiler not producing the simplified output.
-> > 
-> > Note that either the __always_inline annotation or the check for a
-> > constant value are sufficient here, but combining the two looks cleaner
-> > as it also avoids the macro. With clang-8 and older, the macro was still
-> > needed, but all versions of gcc and clang can reliably perform constant
-> > folding here.
-> > 
-> > Fixes: ead79118dae6 ("arm64/io: Provide a WC friendly __iowriteXX_copy()")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> I have a trivial nit below, but either way this looks good to me, so
-> regardless of that:
-> 
-> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+From: Jian-Hong Pan <jhp@endlessos.org>
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+[ Upstream commit 45e37f9ce28d248470bab4376df2687a215d1b22 ]
 
-Still codegens what I expect on clang-17 at least, agree with Mark's
-note
+JP-IK LEAP W502 laptop's headset mic is not enabled until
+ALC897_FIXUP_HEADSET_MIC_PIN3 quirk is applied.
 
-Thanks,
-Jason
+Here is the original pin node values:
+
+0x11 0x40000000
+0x12 0xb7a60130
+0x14 0x90170110
+0x15 0x411111f0
+0x16 0x411111f0
+0x17 0x411111f0
+0x18 0x411111f0
+0x19 0x411111f0
+0x1a 0x411111f0
+0x1b 0x03211020
+0x1c 0x411111f0
+0x1d 0x4026892d
+0x1e 0x411111f0
+0x1f 0x411111f0
+
+Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+Link: https://lore.kernel.org/r/20240520055008.7083-2-jhp@endlessos.org
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/pci/hda/patch_realtek.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index bf9a4d5f8555d..2c0bfdfcf6410 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -9909,6 +9909,7 @@ enum {
+ 	ALC897_FIXUP_LENOVO_HEADSET_MODE,
+ 	ALC897_FIXUP_HEADSET_MIC_PIN2,
+ 	ALC897_FIXUP_UNIS_H3C_X500S,
++	ALC897_FIXUP_HEADSET_MIC_PIN3,
+ };
+ 
+ static const struct hda_fixup alc662_fixups[] = {
+@@ -10355,10 +10356,18 @@ static const struct hda_fixup alc662_fixups[] = {
+ 			{}
+ 		},
+ 	},
++	[ALC897_FIXUP_HEADSET_MIC_PIN3] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x19, 0x03a11050 }, /* use as headset mic */
++			{ }
++		},
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc662_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1019, 0x9087, "ECS", ALC662_FIXUP_ASUS_MODE2),
++	SND_PCI_QUIRK(0x1019, 0x9859, "JP-IK LEAP W502", ALC897_FIXUP_HEADSET_MIC_PIN3),
+ 	SND_PCI_QUIRK(0x1025, 0x022f, "Acer Aspire One", ALC662_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1025, 0x0241, "Packard Bell DOTS", ALC662_FIXUP_INV_DMIC),
+ 	SND_PCI_QUIRK(0x1025, 0x0308, "Acer Aspire 8942G", ALC662_FIXUP_ASPIRE),
+-- 
+2.43.0
+
 
