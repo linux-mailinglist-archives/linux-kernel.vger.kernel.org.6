@@ -1,155 +1,115 @@
-Return-Path: <linux-kernel+bounces-202058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9B88FC751
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:11:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD60B8FC757
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A61451C228EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58D08283EB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE3018FC8A;
-	Wed,  5 Jun 2024 09:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCiHKnN6"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A426B18FC95;
+	Wed,  5 Jun 2024 09:12:09 +0000 (UTC)
+Received: from out28-5.mail.aliyun.com (out28-5.mail.aliyun.com [115.124.28.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3689518FC89
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF13018C34B;
+	Wed,  5 Jun 2024 09:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717578658; cv=none; b=eDzjZEwl0NVADwditoAwtZ0x3pBY0Q+xAoTTpe5sSdxUZw4AE3Aw+Dk+qHBZeUezouwbxeWE6SdmDymSEJuuVPjlo7gz8qjSH9p+Sew5gWSGAHnkM9QPBlGUDVfiPt7NO1uJMbmTZ8qbjxXTd/rblhjEeM0m1o2OQVk3meeldwU=
+	t=1717578729; cv=none; b=W4OXtvQj2p8w91OBQDlbMDnQu7/5EWsbwZJ/p7LH/iUMEvxbh+Ei5VYSTF5mckIVosmvltk4GCOs2TTWqKF7DLPD1cb+XJWBlxWbDv4JEIMu7tcBebjvgPqUTzHldTL4U3tnsyf9IQrWNcUGQTNKv/FJvAYHOGjTrcsV08DO3eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717578658; c=relaxed/simple;
-	bh=Ohf6oZ+oO2donfb/cODscDFAkvMhq+OmdtbGC2dDQx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ypx2vzqzfB1M+6KBREc+XN62t30UKw3hlFejARifoCcMRva90nQgJYVxgSnKU1Dzx9YsrKgfGhl74QPcQ9D9JsDaJh3GoTKy4lnNqpGvUIkniqoigg2imojcJFfS18LI30biSr/6lqyAGUT6NMIYxw7M1VWEsKBviIONOzLEd8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCiHKnN6; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-24c9f892aeaso3637352fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717578656; x=1718183456; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lTG6BM2D9pwAMXwuJmppHUX0zuuxDgXItlRkB2F6Whw=;
-        b=jCiHKnN63Af5aOgE6SLbJEzjFFmMY56psVg5tXC0H5aeCNKz203x6kboXnkE/pH2UW
-         6kmwdG7lpR2ln4vrgiVp18lx8fjf4YmeOxT0FWFzmmNCgqdsQzKTNojW5d1KuhsnA2YU
-         vndDE6ThwQxlOd6iQ0iPxTKgF/bJsDPqwWBciBLm+ipfWwObfBiCshmLwe03ftRq6FNj
-         G2PAHGXBxnRrQrqDhXnGAu+XRk2d/euJImGJ0zKaE5xcPjlbB2InYIetH97FfRDbObiP
-         7Dxhfhpap5YtebdFDsW4HqDWdEAnmb5RawbCwvxGQ9q3oOxIy3A85xjzGnEIV3Ouv6iq
-         h5Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717578656; x=1718183456;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lTG6BM2D9pwAMXwuJmppHUX0zuuxDgXItlRkB2F6Whw=;
-        b=Jh0by8787pjvdvTl1QgNQ2sviHxpV1IuXHcs/z22waPRXJClnphe9rsXVhEX7pEqHt
-         KCQmB9abzDH1D+9d4+yG5zOs2jz1zeG9HSwfNzPZsNz0xARExwtXOzTB8/4UC5YtScyb
-         UHNe0oEvowgsQ98U9P7UmAiSi10gjbE3Zz+caw5GA6iuNVFlpPrYC64tOvQyKtnJj1nQ
-         KdBG69DEYGwXYBoIf1G+JiYEuMEhfZyAHm0FqiezI1leIibkRqN5KDTKQ34eF3ICUoNa
-         d2HjOOeIuzyVDx2sLl2i/rbfhFyWVaO2dpbFh+XBHAhE4XsOiPhpPfm5wY/SRCRoKGEL
-         9e2A==
-X-Forwarded-Encrypted: i=1; AJvYcCV3sJ9SXub4eDytLYmU6zdoc0hEhfQsYo4ciHfoBrO+RHOietZPEQSKR75RU29RZSf1QMzWaHZAHZJAO/rMQyMtvfzbpSoAZD07Hliv
-X-Gm-Message-State: AOJu0Yx2Sb2Mmo32kVy1afCWJSULTK/b1NkypVR8RMQidQ37Wlqkr2sH
-	FPHNLgKfXknIoVBMNocYiHhv1vNsLWuSvSZp3f298+4e4O4wUFpc
-X-Google-Smtp-Source: AGHT+IGFVtRgof2Vr7XnnRzUy5kTO/s4QSnWyIEEWJVSWOqsNKgzwT8cHzfUyKrMnHJALyfjycu/iQ==
-X-Received: by 2002:a05:6870:7006:b0:24f:e:b110 with SMTP id 586e51a60fabf-25121e3aed8mr2366720fac.35.1717578655520;
-        Wed, 05 Jun 2024 02:10:55 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242b2e143sm8247886b3a.198.2024.06.05.02.10.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 02:10:55 -0700 (PDT)
-Message-ID: <a3942479-764f-4e19-8b90-682fa56c8e20@gmail.com>
-Date: Wed, 5 Jun 2024 17:10:51 +0800
+	s=arc-20240116; t=1717578729; c=relaxed/simple;
+	bh=JrKBIvMcsszkIlGiuHQMlVO4ONlUiZlTc0/i6RNrmS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uaV+ulbaBRtTHCzIYHUwA/An9sAflRzwnLDmxizSvm/mEvKC6US7iPEg6t2QVsO5ZYmT4IIwZlrFmSru44StIYNmm4U1gv4RPQuHL4BitYhjwoHlsuZXGpnGm5riWzR9hZZNyTvWL1hg4lmB0/oa+kf/6nndiNZj5rHdh1dM7fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=115.124.28.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07484445|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0110128-0.000106329-0.988881;FP=0|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037088118;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.XwdqTSw_1717578708;
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.XwdqTSw_1717578708)
+          by smtp.aliyun-inc.com;
+          Wed, 05 Jun 2024 17:11:58 +0800
+From: wangshuaijie@awinic.com
+To: dmitry.torokhov@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jeff@labundy.com,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: wangshuaijie@awinic.com,
+	liweilei@awinic.com,
+	kangjiajun@awinic.com
+Subject: [PATCH V2 0/5] Add support for Awinic SAR sensor.
+Date: Wed,  5 Jun 2024 09:11:38 +0000
+Message-ID: <20240605091143.163789-1-wangshuaijie@awinic.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] mm/ksm: reduce the flush action for ksm merging
- page
-To: David Hildenbrand <david@redhat.com>, alexs@kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
- willy@infradead.org, aarcange@redhat.com, chrisw@sous-sol.org,
- hughd@google.com
-References: <20240604042454.2012091-1-alexs@kernel.org>
- <20240604042454.2012091-2-alexs@kernel.org>
- <9ca730ce-2b2f-42d2-8c7a-78735a995c64@redhat.com>
- <4d299245-3166-4810-b22b-2a5b4f54a049@gmail.com>
- <7c6ae2a3-8ec3-4c9b-81c3-125f6973f0f3@redhat.com>
- <d059e397-beea-43dc-8c58-d7833b1d8bd4@gmail.com>
- <59921e08-d0f1-4bc8-acee-368a978286a4@redhat.com>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <59921e08-d0f1-4bc8-acee-368a978286a4@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+From: shuaijie wang <wangshuaijie@awinic.com>
+
+Add drivers that support Awinic SAR (Specific Absorption Rate)
+sensors to the Linux kernel.
+
+The AW9610X series and AW963XX series are high-sensitivity
+capacitive proximity detection sensors.
+
+This device detects human proximity and assists electronic devices
+in reducing SAR to pass SAR related certifications.
+
+The device reduces RF power and reduces harm when detecting human proximity.
+Increase power and improve signal quality when the human body is far away.
+
+This patch implements device initialization, registration,
+I/O operation handling and interrupt handling, and passed basic testing.
+
+shuaijie wang (5):
+  dt-bindings: input: Add YAML to Awinic sar sensor.
+  Add universal interface for the aw_sar driver.
+  Add aw9610x series related interfaces to the aw_sar driver.
+  Add aw963xx series related interfaces to the aw_sar driver.
+  Add support for Awinic sar sensor.
+
+ .../bindings/input/awinic,aw_sar.yaml         |  125 +
+ drivers/input/misc/Kconfig                    |    9 +
+ drivers/input/misc/Makefile                   |    1 +
+ drivers/input/misc/aw_sar/Makefile            |    2 +
+ drivers/input/misc/aw_sar/aw9610x/aw9610x.c   |  884 +++++++
+ drivers/input/misc/aw_sar/aw9610x/aw9610x.h   |  327 +++
+ drivers/input/misc/aw_sar/aw963xx/aw963xx.c   |  974 ++++++++
+ drivers/input/misc/aw_sar/aw963xx/aw963xx.h   |  753 ++++++
+ drivers/input/misc/aw_sar/aw_sar.c            | 2036 +++++++++++++++++
+ drivers/input/misc/aw_sar/aw_sar.h            |   15 +
+ .../misc/aw_sar/comm/aw_sar_chip_interface.h  |   27 +
+ .../misc/aw_sar/comm/aw_sar_comm_interface.c  |  639 ++++++
+ .../misc/aw_sar/comm/aw_sar_comm_interface.h  |  172 ++
+ drivers/input/misc/aw_sar/comm/aw_sar_type.h  |  396 ++++
+ 14 files changed, 6360 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/awinic,aw_sar.yaml
+ create mode 100644 drivers/input/misc/aw_sar/Makefile
+ create mode 100644 drivers/input/misc/aw_sar/aw9610x/aw9610x.c
+ create mode 100644 drivers/input/misc/aw_sar/aw9610x/aw9610x.h
+ create mode 100644 drivers/input/misc/aw_sar/aw963xx/aw963xx.c
+ create mode 100644 drivers/input/misc/aw_sar/aw963xx/aw963xx.h
+ create mode 100644 drivers/input/misc/aw_sar/aw_sar.c
+ create mode 100644 drivers/input/misc/aw_sar/aw_sar.h
+ create mode 100644 drivers/input/misc/aw_sar/comm/aw_sar_chip_interface.h
+ create mode 100644 drivers/input/misc/aw_sar/comm/aw_sar_comm_interface.c
+ create mode 100644 drivers/input/misc/aw_sar/comm/aw_sar_comm_interface.h
+ create mode 100644 drivers/input/misc/aw_sar/comm/aw_sar_type.h
 
 
+base-commit: 32f88d65f01bf6f45476d7edbe675e44fb9e1d58
+-- 
+2.45.1
 
-On 6/5/24 3:26 PM, David Hildenbrand wrote:
-> On 04.06.24 15:02, Alex Shi wrote:
->>
->>
->> On 6/4/24 6:45 PM, David Hildenbrand wrote:
->>> On 04.06.24 12:26, Alex Shi wrote:
->>>>
->>>>
->>>> On 6/4/24 4:07 PM, David Hildenbrand wrote:
->>>>> On 04.06.24 06:24, alexs@kernel.org wrote:
->>>>>> From: "Alex Shi (tencent)" <alexs@kernel.org>
->>>>>>
->>>>>> We can put off the flush action util a merging is realy coming. That
->>>>>> could reduce some unmerge page flushing.
->>>>>> BTW, flushing only do at arm, mips and few other archs.
->>>>>>
->>>>>
->>>>> I'm no expert on that flushing, but I thought we would have to do the flushing before accessing page content -- before calculating the checksum etc.
->>>>>
->>>>> Now you would only do it before the pages_identical() check, but not when calculating the checksum.
->>>>>
->>>>
->>>> Hi David,
->>>>
->>>> Thanks a lot for comments!
->>>>
->>>> If calc_checksum() is wrong before pages_idential(), (that's just after page was write_protected, that's a real guarantee for page context secured) pages_identical could recheck and make thing right.
->>>>
->>>
->>> Yes, but you would get more wrong checksums, resulting in more unnecessary pages_identical() checks.
->>>
->>> That is missing from the description, and why we want to change that behavior.
->>>
->>> What's the net win?
->>>
->>>> And as to 2 flush functions here, I didn't see the guarantee for other writer from any other place. So maybe we should remove these flush action?
->>>
->>> "I didn't see the guarantee for other writer from any other place" can you rephrase your comment?
->>>
->>> If you mean "the process could modify that page concurrently", then you are right. But that's different than "the process modified the page in the past and we are reading stale content because we missed a flush".
->>
->>
->> Maybe moving the flush before checksum could relief some worries. :)
->> But still no one knows what flush really help, since if page content only syncs to memory by the flush, the kernel or process can't be work with current code.
-> 
-> Please explain to me why we care about moving the flushs at all :)
-> 
-> If they are NOP on most architectures either way, why not simply leave them there and call it a day?
-Uh, 2 reasons:
-1, it uses page and can't convert to folio now.
-2, as you pointed, flush action w/o page reading seems just waste time.
-
-Thanks
-Alex
-> 
 
