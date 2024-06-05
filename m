@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-201595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EC88FC08D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:26:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F918FC08E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67AD32863BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA1C21C225F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CBB26AFC;
-	Wed,  5 Jun 2024 00:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045DA22079;
+	Wed,  5 Jun 2024 00:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Am2BigQ5"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F6o4GX34"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DC222079
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 00:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42F82837A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 00:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717547078; cv=none; b=AHkJBh85U27ZeRu748sUwQX9b4HU3neJ8AzB8BUdVPfyhv8uRjOfj6Yl4EKZr/Jhprk+kunNplY17A0NYjiUBUDovww13RrDCVHhg00txRSsX0eIKI9zToz67DRg3GGkQN7rIszypZAQeOuzpYnFf4X6YVm/RnH1AxQlvvYXIvQ=
+	t=1717547081; cv=none; b=fFpLMVBjKRbvGSi6beiV++df3cwdw5Fn0lLzt/Pmg9obHDhF4YSIfp3R0351nzclc4Kj6Egc/wrfkkYWvCxmII7fvp4T6wbrzWlofvrpSFLhQ/IJcRufgh+MDIE4RwBEenBLJJQyx0ys1Umr7yfOHxng7+v/nbeK24r5aJerwSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717547078; c=relaxed/simple;
-	bh=pbiMSRqECHUwKQnUOsdOAxThHwTVUE+CpCvDig4VJv8=;
+	s=arc-20240116; t=1717547081; c=relaxed/simple;
+	bh=y5P6GSVJaqX9fygi7NCZQL6iQCjLJjz3fWYqF7675rY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J35cGUiFvFro7CtltTKY9EOiRoybmBHUbmVP3CFZKcOwn9aUH5Ohngw7nqCpg5cXN5HptrNm8ufMXoWUqWG6Epm1YkN02zpMrqe5lUFU/MP6HEtNrBKmPf9xsO5EMCB5Av8cOK2I1JpIaXRQJE+F78rl/SLvmdqcMVfMeMxCO4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Am2BigQ5; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=KwDDpJj8ecpOlsT4YF/vQQzhMCVhIdyG0ZwmCWGnJdTkDdfa2NFEYpkuZP6bCplVt1pPWHtzMJ37xC5pcxNBmgPJEwL8nzdNHNk2LHY8t7eU4zSbyT/pMn5O0JDhgRE2Vi8jX35IqCQDnzBq15IM5lxHnFKVGrb806zMIkD6L3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F6o4GX34; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6c5a6151ff8so1343551a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 17:24:36 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f44b5d0c50so46523255ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 17:24:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717547076; x=1718151876; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1717547079; x=1718151879; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nt+Uz61a2MDORYQbLM7hqg1KrTLX44Z8XHA6HpQkDA0=;
-        b=Am2BigQ5ai0uusi3V1fVnWi6TYpy05qU5jb/yOp41kL1nyWPJx67JFlVP4KDjWMhqo
-         o5AyOppuCBG/mS4e9cUfdod4nbOwz2ftAQRH8bDpsgdQa2EbLybb/vVpN9A0UibqO50u
-         65d3hDvGcL1/ARGLS5gl3UimCoIFaZgUri7LA=
+        bh=IfrcD8JBjZkCaL7eZQ01Qcv1YJLZOCOi3SqrruG0MFA=;
+        b=F6o4GX34sbSECfeX7qcanzjWX+hKofI0P+WFAOnHx0IltLkTYcxR/dcy9XSULJ5K6H
+         YOoQgyZ7f+5gE1+LtU7l0WwCDLXFFZrxZI7i1UhLh2AScKbeb4nCTwTthPuqZbSngNRY
+         m/Xcuh5tXEWCocA1F0n7sqCgu5Z4FF7E8DuOU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717547076; x=1718151876;
+        d=1e100.net; s=20230601; t=1717547079; x=1718151879;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nt+Uz61a2MDORYQbLM7hqg1KrTLX44Z8XHA6HpQkDA0=;
-        b=YIlGI8ykEu0+gZy661EpNuEbs8ds5EaC54Z3c79h54VEfJnbNEo3k/eNKLWzT4dTOo
-         ve2R9q5U266/94bPbM7eGwWf4VhR3S8Mp6DrxLfu6IkwsNSqJsGfin/m9dC6MUulsRtD
-         tREmUERF1bt1UW7noqxilCEEJONHwLhEN2ajo5/i5eJi35aakTl81FGoQXg5bc3BCqzv
-         FdEy4f3nx586E9D2ILxMjbGLMP0eD17znyDfugvXfmIoXDyFOZfORU4/OhQXywiZ1g6W
-         FBFnmw4lukY6uy2Xk7CRRxpc+1CaWWadrC8B3NBtDrdMcPbi3nKG/lRHU1lhBOj34Zv0
-         P6Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7nz4K7gHEB303HX+a+/FIl36rjLMan8h/DbdVkXp6fh5dFPITyHT+Gn10/NYzLDlSzlVCPfVfHaQtxENaZEn0nvbE44q6CNvdbsq1
-X-Gm-Message-State: AOJu0YyWUtwLUR2jGa4brjVZn8uJeMCOOp6Pms31j6aUXNQunDQYGQ2M
-	Zs0eAEqwDn/Gc3CI0w8X687QBa+3ClQBv5fpOMS4b/irqvv2UlBaqFpEb3wi+Q==
-X-Google-Smtp-Source: AGHT+IG8GVjkkeUZPe82uyMtW/A8Z+0TZ1mgkbT3D57ki2eM/keBp6CyQM3mvG3P3K8NdynAMqX0zA==
-X-Received: by 2002:a05:6a21:18f:b0:1b2:a780:2d08 with SMTP id adf61e73a8af0-1b2b6e4ab78mr1534566637.10.1717547076080;
-        Tue, 04 Jun 2024 17:24:36 -0700 (PDT)
+        bh=IfrcD8JBjZkCaL7eZQ01Qcv1YJLZOCOi3SqrruG0MFA=;
+        b=YA82t052EkAc2XvFB4ezEI6RXObz0WprdrpsNeHwGQF9qHhlEOyuSN5c6qYV/UmmjV
+         EDlOMmo1V6K8KFI9tBtlLBTcIimHBbzVdwt+EYTqCmaZdCV86s80p4Ng9FxhpB4eeCiW
+         DKQ2VK0gpKDKJd4UsI2iI80u2o4lb/q54wfjT4yunr5MJFvru7PpLV57pm6u7FgjPgdI
+         khrkYNjZTicxV/Yq0PukUkDGzRAxhmFSpA2COb1j9CZIzgJ0FA5YjyRo3i2znWe1dF6i
+         9l+UnjSI087b/att4vzKed5v+suYB08YqT+Vy8elBpg2/ZmyLu/6y6UwZDf2XRbzgnrV
+         IvcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWo+SWfhtzaq7h9Hj7CjWlMYHXPjZ3zV84JljH3tJ5KHvolG8pIucRh0+e607ajzodlRPsniLqbs4tWJU7+GLTXqvkg15Y+UHpPvhjW
+X-Gm-Message-State: AOJu0YwAQsJS9+fTSPB/eFwf7e3WcFOc8s3RHD/tBb8KG7OltvVTEWKY
+	p4d9BHXfP/joHPsmTCKgnRT8ZcSn39FTall8G+sfa+7M4yvPwrWI00w38/tyfA==
+X-Google-Smtp-Source: AGHT+IEEXeKEFU3e6/tB86kEEDxmpRztg5jwJKvGuNYwl+8Zuu/KCQ9s/CpPfv0EO0JOLP/Q6+umFg==
+X-Received: by 2002:a17:903:2289:b0:1f6:6c64:a7b6 with SMTP id d9443c01a7336-1f6a5a24e16mr13838715ad.37.1717547078652;
+        Tue, 04 Jun 2024 17:24:38 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:3609:ff79:4625:8a71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dd862sm89032025ad.147.2024.06.04.17.24.34
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dd862sm89032025ad.147.2024.06.04.17.24.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 17:24:35 -0700 (PDT)
+        Tue, 04 Jun 2024 17:24:37 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: dri-devel@lists.freedesktop.org,
 	Maxime Ripard <mripard@kernel.org>
@@ -79,9 +79,9 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 11/24] drm/panel: jdi-lt070me05000: Stop tracking prepared/enabled
-Date: Tue,  4 Jun 2024 17:22:57 -0700
-Message-ID: <20240604172305.v3.11.I2e991044def6644c18ad8d7d686f4f3006f278de@changeid>
+Subject: [PATCH v3 12/24] drm/panel: jdi-lt070me05000: Don't call disable at shutdown/remove
+Date: Tue,  4 Jun 2024 17:22:58 -0700
+Message-ID: <20240604172305.v3.12.I5f3426e511e77b93c247e0aac114bd12b2b2a933@changeid>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 In-Reply-To: <20240605002401.2848541-1-dianders@chromium.org>
 References: <20240605002401.2848541-1-dianders@chromium.org>
@@ -93,15 +93,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As talked about in commit d2aacaf07395 ("drm/panel: Check for already
-prepared/enabled in drm_panel"), we want to remove needless code from
-panel drivers that was storing and double-checking the
-prepared/enabled state. Even if someone was relying on the
-double-check before, that double-check is now in the core and not
-needed in individual drivers.
+It's the responsibility of a correctly written DRM modeset driver to
+call drm_atomic_helper_shutdown() at shutdown time and that should be
+disabling / unpreparing the panel if needed. Panel drivers shouldn't
+be calling these functions themselves.
 
-NOTE: as part of this, transition the panel's direct calls to its
-disable function in shutdown/remove to call through DRM panel.
+A recent effort was made to fix as many DRM modeset drivers as
+possible [1] [2] [3] and most drivers are fixed now.
+
+A grep through mainline for compatible strings used by this driver
+indicates that it is used by Qualcomm boards. The Qualcomm driver
+appears to be correctly calling drm_atomic_helper_shutdown() so we can
+remove the calls.
+
+[1] https://lore.kernel.org/r/20230901234015.566018-1-dianders@chromium.org
+[2] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium.org
+[3] https://lore.kernel.org/r/20230921192749.1542462-1-dianders@chromium.org
 
 Cc: Vinay Simha BN <simhavcs@gmail.com>
 Cc: Sumit Semwal <sumit.semwal@linaro.org>
@@ -109,11 +116,6 @@ Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Acked-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
-Note: since we are able to identify that this panel only appears to be
-used on Qualcomm boards and we have to touch the shutdown/remove path
-in this patch anyway, we could possibly squash this with the next
-patch that removes the disable call in shutdown/remove. For now I'm
-keeping them separate just to keep the concepts separate.
 
 (no changes since v2)
 
@@ -121,107 +123,46 @@ Changes in v2:
 - Only handle 1 panel per patch.
 - Split removal of prepared/enabled from handling of remove/shutdown.
 
- .../gpu/drm/panel/panel-jdi-lt070me05000.c    | 27 ++-----------------
- 1 file changed, 2 insertions(+), 25 deletions(-)
+ drivers/gpu/drm/panel/panel-jdi-lt070me05000.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-jdi-lt070me05000.c b/drivers/gpu/drm/panel/panel-jdi-lt070me05000.c
-index f9a69f347068..4ddddee6fa1e 100644
+index 4ddddee6fa1e..b1ce186de261 100644
 --- a/drivers/gpu/drm/panel/panel-jdi-lt070me05000.c
 +++ b/drivers/gpu/drm/panel/panel-jdi-lt070me05000.c
-@@ -37,9 +37,6 @@ struct jdi_panel {
- 	struct gpio_desc *dcdc_en_gpio;
- 	struct backlight_device *backlight;
- 
--	bool prepared;
--	bool enabled;
--
- 	const struct drm_display_mode *mode;
- };
- 
-@@ -176,13 +173,8 @@ static int jdi_panel_disable(struct drm_panel *panel)
- {
- 	struct jdi_panel *jdi = to_jdi_panel(panel);
- 
--	if (!jdi->enabled)
--		return 0;
--
- 	backlight_disable(jdi->backlight);
- 
--	jdi->enabled = false;
--
- 	return 0;
- }
- 
-@@ -192,9 +184,6 @@ static int jdi_panel_unprepare(struct drm_panel *panel)
- 	struct device *dev = &jdi->dsi->dev;
- 	int ret;
- 
--	if (!jdi->prepared)
--		return 0;
--
- 	jdi_panel_off(jdi);
- 
- 	ret = regulator_bulk_disable(ARRAY_SIZE(jdi->supplies), jdi->supplies);
-@@ -207,8 +196,6 @@ static int jdi_panel_unprepare(struct drm_panel *panel)
- 
- 	gpiod_set_value(jdi->dcdc_en_gpio, 0);
- 
--	jdi->prepared = false;
--
- 	return 0;
- }
- 
-@@ -218,9 +205,6 @@ static int jdi_panel_prepare(struct drm_panel *panel)
- 	struct device *dev = &jdi->dsi->dev;
- 	int ret;
- 
--	if (jdi->prepared)
--		return 0;
--
- 	ret = regulator_bulk_enable(ARRAY_SIZE(jdi->supplies), jdi->supplies);
- 	if (ret < 0) {
- 		dev_err(dev, "regulator enable failed, %d\n", ret);
-@@ -250,8 +234,6 @@ static int jdi_panel_prepare(struct drm_panel *panel)
- 		goto poweroff;
- 	}
- 
--	jdi->prepared = true;
--
- 	return 0;
- 
- poweroff:
-@@ -272,13 +254,8 @@ static int jdi_panel_enable(struct drm_panel *panel)
- {
- 	struct jdi_panel *jdi = to_jdi_panel(panel);
- 
--	if (jdi->enabled)
--		return 0;
--
- 	backlight_enable(jdi->backlight);
- 
--	jdi->enabled = true;
--
- 	return 0;
- }
- 
-@@ -475,7 +452,7 @@ static void jdi_panel_remove(struct mipi_dsi_device *dsi)
+@@ -452,10 +452,6 @@ static void jdi_panel_remove(struct mipi_dsi_device *dsi)
  	struct jdi_panel *jdi = mipi_dsi_get_drvdata(dsi);
  	int ret;
  
--	ret = jdi_panel_disable(&jdi->base);
-+	ret = drm_panel_disable(&jdi->base);
+-	ret = drm_panel_disable(&jdi->base);
+-	if (ret < 0)
+-		dev_err(&dsi->dev, "failed to disable panel: %d\n", ret);
+-
+ 	ret = mipi_dsi_detach(dsi);
  	if (ret < 0)
- 		dev_err(&dsi->dev, "failed to disable panel: %d\n", ret);
- 
-@@ -491,7 +468,7 @@ static void jdi_panel_shutdown(struct mipi_dsi_device *dsi)
- {
- 	struct jdi_panel *jdi = mipi_dsi_get_drvdata(dsi);
- 
--	jdi_panel_disable(&jdi->base);
-+	drm_panel_disable(&jdi->base);
+ 		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n",
+@@ -464,13 +460,6 @@ static void jdi_panel_remove(struct mipi_dsi_device *dsi)
+ 	jdi_panel_del(jdi);
  }
  
+-static void jdi_panel_shutdown(struct mipi_dsi_device *dsi)
+-{
+-	struct jdi_panel *jdi = mipi_dsi_get_drvdata(dsi);
+-
+-	drm_panel_disable(&jdi->base);
+-}
+-
  static struct mipi_dsi_driver jdi_panel_driver = {
+ 	.driver = {
+ 		.name = "panel-jdi-lt070me05000",
+@@ -478,7 +467,6 @@ static struct mipi_dsi_driver jdi_panel_driver = {
+ 	},
+ 	.probe = jdi_panel_probe,
+ 	.remove = jdi_panel_remove,
+-	.shutdown = jdi_panel_shutdown,
+ };
+ module_mipi_dsi_driver(jdi_panel_driver);
+ 
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
