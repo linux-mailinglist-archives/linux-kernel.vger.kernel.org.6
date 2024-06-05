@@ -1,152 +1,128 @@
-Return-Path: <linux-kernel+bounces-202272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F61E8FCA94
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:40:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCB278FCA8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDFD3B2254B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8F11F23697
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51B4194126;
-	Wed,  5 Jun 2024 11:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SjuG2/8/"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA4A191476;
+	Wed,  5 Jun 2024 11:39:48 +0000 (UTC)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A541667C1;
-	Wed,  5 Jun 2024 11:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C687346E;
+	Wed,  5 Jun 2024 11:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717587598; cv=none; b=QWaAWuUuK4T6ODTCpsFkezQuIVZ6Hmx1xXuwST/WOD1Ew0uFoUFdx4644D61RPQ9k1wRB/pZMiQZFgaGRLMZTDrEISoaIPXNa8Sb95KHdOakmKFXrQh4r5u5FeVLAPJxitxmL+Oatx3RVOezsvmMoD6/TUoi8mUhmAXiJ5D/9bQ=
+	t=1717587587; cv=none; b=ZNN/j6Zse48Z/b3X0JKpPjUBKY+y60LT2B5KbmQ6hWHNUB+61a8QzQcVwLK0ofmi4Eed7GbhWi1m1NlU5XBLWomMzyX+rsJGlTSX611DYdJhRIaseqpPQcGnUYFEI6eAFfddCEb7UsBnh0LVkLKnnanzgdAKc+TyJ92qPYv6CeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717587598; c=relaxed/simple;
-	bh=0admlyV/7AyY9L+dogEDQsTR90TLY3i0Uoet05qWKpE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AIerR2K77Q4dHHp6S+dqlqe2cseoSHmNUQpijBBBn4+EKg+Dh4YHTvhQoVBZToVoPzf7tGe8TxP6mQkSuFOM0Thh1Ff93fO57Uy8CPuTOfD6gmGhNoE6MVO0xXwNbug0aB3t2wgUk1OVcogdKggHsAUKdbE1u1FePS+umrRGjFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SjuG2/8/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 455An3aw011309;
-	Wed, 5 Jun 2024 11:39:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc :
- content-transfer-encoding : date : from : in-reply-to : message-id :
- mime-version : references : subject : to; s=pp1;
- bh=Z2DO6bnYJ2I8hoJAQ7iXvWE50WGcBCvyA6wQPoQ3uxY=;
- b=SjuG2/8/Ucte9JTXXktLEHUQ6q6xWT/zTCIxi4ssP/XXZcxB27YX0yQ9YlCn0yN2UyuR
- /pyWT+IcWiRogYXRKbUoG6DkJqKtRWnNEEwWuJ0EKkvCJWpKWkF9D3bvZLOHk/A7UtbC
- 0fDBM2GSMhUwlWTcNd8GWqBLb0JJTE5rCx+/Fc6Vu06ry/p7AZ4nU0hVR4mN2y1y1bL5
- pWN6k164/mQtVrYLleVEysHqGxGYPPCh3N3JrwjtzyBxAIzBHTR/pHAMpsaedM1mbRNi
- 6bnh/vGsm6kJCl8CqM/JeOtY6FVnZAcvB7F9h3eNo9QH3Dvb6uVu9fnCFhyVgsYNjrSR zQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yjpkbg3k3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 11:39:44 +0000
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 455BdhlK021212;
-	Wed, 5 Jun 2024 11:39:43 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yjpkbg3jx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 11:39:43 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 455AAC6Q026600;
-	Wed, 5 Jun 2024 11:39:43 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ygffn3q9r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 11:39:43 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 455BdbuM51708408
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Jun 2024 11:39:39 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D71220049;
-	Wed,  5 Jun 2024 11:39:37 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3978520040;
-	Wed,  5 Jun 2024 11:39:35 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.in.ibm.com (unknown [9.204.206.66])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Jun 2024 11:39:35 +0000 (GMT)
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, corbet@lwn.net
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] arch/powerpc/kvm: Fix doorbell emulation for v2 API
-Date: Wed,  5 Jun 2024 17:09:10 +0530
-Message-ID: <20240605113913.83715-3-gautam@linux.ibm.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240605113913.83715-1-gautam@linux.ibm.com>
-References: <20240605113913.83715-1-gautam@linux.ibm.com>
+	s=arc-20240116; t=1717587587; c=relaxed/simple;
+	bh=QIdMPvRUV/iW8tgmVykAUwTW86GBixqbzUfSTWX5mw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uPEbvMRi1suxI5o4SG5a+JEvBl1j+KV9htrcg/t+ldJFydHswN/GMclL/7RQNFSzami3wWjjbrP9b2gtRvhhqC9Gcv+PF7CljtOvGxNs/zMV5Kfhd/EZsbA9mGP0m7fhTzpGXH0qqyY59oYAOPl9fwd1aYfRK3J2miFRvUqCoIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfab4375f94so2784729276.1;
+        Wed, 05 Jun 2024 04:39:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717587584; x=1718192384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9ocNukeStRfqnDvkiMwT8a2HHUpIF8MI3vRxZB4NsmU=;
+        b=P0Z1vz1QTBT04rzwPx0fdH4RBj9TTOm6P1hwQnCJkEMOG3tNduCCGt39YxZn8NymYV
+         2npZJwy0P7gYd8jXmSoyYlcItU5Yu5mk2Kj3zJXQxKP6Vq+BD9yvHKPkjshct3OY7jVm
+         dH5S/37GaZF2FUoTz7yXQ4SVYO9kdIav1Wg5NbpLI1KEqn6sU7RQEkxf1hvhhPWpGt9U
+         q/7i/cqVPWeG4Hxj4Jjo5CO3nujPUDmOUXM9Uz4GS+2ckyMfyo0xylEsg0lkU9BaN1+2
+         ayhOt3ulJi3F3DGanx18JhWjKYORtLrmCdRZV4JtEU6bFkeFnRQ1bP/p9rQykr9uyRkq
+         /6DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUz6HxUsNGtJfw1Op4SQX1GfrPhxj5HGwslGEqktzpsM+xYSjwLj1baNq9OxoS7ODyf9feO+HSLKkSNsUB20abhchRcY2gzQik1l/jsh+dGRqXAh9i5bkvguzOqUDx/NCkwVGAj6S5TTrDOYLpWWkiuucyRGguJF2/4h5nSctCOlZQLqE6sOAMU0nT8r3MzC6d/BfAhAvaHhwmsYtc9ab5/l+Htod4DQ==
+X-Gm-Message-State: AOJu0Yz95J2FqT/IOC7xZNVW+r7hFugXx9xT1yxHhJtjujFRLAhDGWup
+	9sOH12okiI/2uo+6SJgEHABZ49nox/zESMZ1m5VCqm6aNqTWEmCOmroG5P1X
+X-Google-Smtp-Source: AGHT+IGFrLKORaAAq1V7LItSndmuiFm6cniIOCIrdjJl8cUIV1cGKe0DV2O2/ZZ8CzL0POaUbDfGSQ==
+X-Received: by 2002:a25:68cf:0:b0:dcc:bea8:8335 with SMTP id 3f1490d57ef6-dfacad2a782mr2041171276.62.1717587583715;
+        Wed, 05 Jun 2024 04:39:43 -0700 (PDT)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfa884bb84bsm2104059276.10.2024.06.05.04.39.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 04:39:43 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-df7722171bcso6676817276.3;
+        Wed, 05 Jun 2024 04:39:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuYQq55tapaIlIjMcHrnV180b2RNh1e0CDaoJowwQuwPCn2RlpiPuasNNJRsfSrP+Qcp2MHiJf7Ynzep3ehap89brJRLWvrCLp4IGyquevjtvcPIWr/VzZJsf5AKBanVCgGqB0iR0vulfDgwLN6laA6X3JcJ78I1QVXsJ0dow/tWWC79+pHvUBhBdCQBY5ubBGDEgd1DMaoSqZGw8CjL6ucbzHLyHWRQ==
+X-Received: by 2002:a25:c7c1:0:b0:dfa:5a2a:b75f with SMTP id
+ 3f1490d57ef6-dfacab32061mr2387013276.10.1717587582865; Wed, 05 Jun 2024
+ 04:39:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: yd8Q5CslfA_U3bYHDTUsxqoeoc3Jzg1F
-X-Proofpoint-GUID: w_X9wiRDwOIhz3Delcf--5LOWzqbb123
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0 phishscore=0
- adultscore=0 priorityscore=1501 clxscore=1015 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406050088
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240530173857.164073-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240530173857.164073-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jun 2024 13:39:31 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX2F=PzmPhPyGFs_kZZBuTYjBQ-n88pEqo3aQh4=-oHiA@mail.gmail.com>
+Message-ID: <CAMuHMdX2F=PzmPhPyGFs_kZZBuTYjBQ-n88pEqo3aQh4=-oHiA@mail.gmail.com>
+Subject: Re: [PATCH v3 02/15] pinctrl: renesas: pinctrl-rzg2l: Rename B0WI to BOWI
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Doorbell emulation is broken for KVM on PAPR guests as support for
-DPDES was not added in the initial patch series. Due to this, a KVM on
-PAPR guest with SMT > 1 cannot be booted with the XICS interrupt
-controller as doorbells are setup in the initial probe path when using XICS
-(pSeries_smp_probe()).
+Hi Prabhakar,
 
-Command to replicate the above bug:
+On Thu, May 30, 2024 at 7:41=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Fix the typo B0WI -> BOWI to match with the RZ/G2L HW manual.
+>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - New patch
 
-qemu-system-ppc64 \
-	-drive file=rhel.qcow2,format=qcow2 \
-	-m 20G \
-	-smp 8,cores=1,threads=8 \
-	-cpu  host \
-	-nographic \
-	-machine pseries,ic-mode=xics -accel kvm
+Thanks for your patch!
 
-Add doorbell state handling support in the host
-KVM code to fix doorbell emulation.
+I had a deeper look, as the name "B0WI" (with zero) is also present
+in drivers/pinctrl/renesas/pinctrl-rza2.c, and because Section 41.4.2
+("Operation for Peripheral Function") in the RZ/G2L Group Hardware
+User's Manual does talk about the "B0WI" (with zero) bit.
 
-Fixes: 19d31c5f1157 ("KVM: PPC: Add support for nestedv2 guests")
-Cc: stable@vger.kernel.org # v6.7
-Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
----
- arch/powerpc/kvm/book3s_hv.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Apparently Rev. 0.51 of the RZ/A2M Group Hardware User's Manual used
+both variants. Later (Rev. 1.00) revisions replaced the O-based
+variant by the zero-based variant. So it looks like "B0WI" (with
+zero) is correct, and the RZ/G2L, RZ/V2L, RZ/G2UL, and RZ/Five HW
+manuals should be fixed instead. The RZ/G3S manual already uses
+the correct naming.
 
-diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-index 35cb014a0c51..21c69647d27c 100644
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -4116,6 +4116,11 @@ static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_limit,
- 	int trap;
- 	long rc;
- 
-+	if (vcpu->arch.doorbell_request) {
-+		vcpu->arch.doorbell_request = 0;
-+		kvmppc_set_dpdes(vcpu, 1);
-+	}
-+
- 	io = &vcpu->arch.nestedv2_io;
- 
- 	msr = mfmsr();
--- 
-2.45.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
