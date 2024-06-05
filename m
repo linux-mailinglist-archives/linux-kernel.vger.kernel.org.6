@@ -1,106 +1,129 @@
-Return-Path: <linux-kernel+bounces-202267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304E68FCA85
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 771638FC98F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A812C28345C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A14283595
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F9C14D70C;
-	Wed,  5 Jun 2024 11:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78353192B6C;
+	Wed,  5 Jun 2024 10:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="aXouZoru"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Pt+EczlE"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA64145341;
-	Wed,  5 Jun 2024 11:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4A11922F2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717587301; cv=none; b=tONRfkQdJIg3gp8/wdnkpytcBovsxG4aoXtSVdAx2K6/X3omNX9H/CliqsHvQYHj8cejBaIEf/02HiNPKusBZI1WHhLLDlpA9myvXnLUHg1N/inJeq/CfUa40YjT9mVrHBCgJ7cJWXDnM3cV7GN/ypVIH9el7IOfMqJINk7T8GQ=
+	t=1717585080; cv=none; b=nWTwXRsMYwqtd1ZKhiESGvpnHAgCQRfrH0vnnIBJWyzbp+ECo7qYvnh9FV7a4w/z3KXSSGnxaw/ZNvwhrkFK4AHSmFF2yR5BGUYQrxRQWO+pTuGLglEEm6rf7SyEtcV4XLFiMZU1qpeSUdF0y3Wb3WsBzN0wtC1mdxaflQVmBRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717587301; c=relaxed/simple;
-	bh=9dqFoVtdsIlZ5J0eqCwOmVV/MKTtyxOkDKlI17dPrCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dQj7pHwc+EWOHU2CFW/n0rrzKC7v3TtgkSjNJ7rZEkdHWNUfXBzmJ8P5BQSLpqO1A0XaljhiuJTnC6TU6mhxgQRpG84ShuyteHaJvPP3ncAGGjEuCNwJRneh75v3Yj25iXf6xkGdd3/FJNQCj5lKSexS0Yx+Zj3lu6VB40Jii8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=aXouZoru; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id AD8E2881A2;
-	Wed,  5 Jun 2024 13:34:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1717587292;
-	bh=iqglW2Mm+Bj8XtbT2EuhNDhxfDBq1NKS+bPZOCk1k/M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aXouZorunfwKW3IpK7uZ6XI0TIPRnMaB9HbgvMmZi84dx2a77+9IXllJHblzvKQNR
-	 9befSOqfsGLjfuCSEe5I4zmW3bl5y0uvj4NBCQf0enrv5GVAs+Hgy5BQ+d7KgiUOnY
-	 Z61YPhvRUWU+3XAlzYfE3bJWBE/dX8byyiygIaj7+SWe1Zx0O/2j11AXVUv3KVrnYs
-	 43vEx4F5ud9Fu2LZoaCY4EcuQM+Nzrb1zlvghvXfG7tvedW19ZByxD9mGRDu6qojFD
-	 e2Q79XD+CdoXEZoegNBshFE3cZtSQRJWyvDqjuoS5V9Vtp/Fi9Rdi8Tp0ufytD6Zte
-	 yGkwah2Ni3WPQ==
-Message-ID: <e9dc0291-f765-4796-b0ff-7c60b35adb4b@denx.de>
-Date: Wed, 5 Jun 2024 12:57:06 +0200
+	s=arc-20240116; t=1717585080; c=relaxed/simple;
+	bh=hPb5APVEuShjZ0fECZcArGF+7UZ+UhYfRq1FN7lXc7Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tIchFeBnMdRcM0Kp3epR0SM6tA2IFjvGiw5o/DbfwqritobzEcslIF2q8eAnkOevbPhDfXgDCYd7ZKo2y6vq/Je5+nM8dWWvo1xDuLHEj1fv/G8XHIvZcFr0gCIOrtNGgauvhb4moVTaAYBhb1WfNpLb2jW5FsV2ZCkUgT/kiBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Pt+EczlE; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1717585075;
+	bh=hPb5APVEuShjZ0fECZcArGF+7UZ+UhYfRq1FN7lXc7Q=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Pt+EczlE1/j2ufTJEPBVRoyXoeQYFwpeOmvCd4T+/sNXIgZjaSE+nzxWDUMBry4Zh
+	 A0emczzNASoAe9HQ/KsJajS8DVxNbduZFLelbwHzUdKsItbdtaEqPlG34OPGtrHX7D
+	 sYiLux6WzJiTp+Rx0aWJAf6FN5mgwdQnArghGQh8=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id EAC5766AF3;
+	Wed,  5 Jun 2024 06:57:51 -0400 (EDT)
+Message-ID: <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
+Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
+ unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
+From: Xi Ruoyao <xry111@xry111.site>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Tiezhu Yang <yangtiezhu@loongson.cn>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>, Jinyang He
+ <hejinyang@loongson.cn>,  loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ mengqinggang@loongson.cn, cailulu@loongson.cn, wanglei@loongson.cn, 
+ luweining@loongson.cn, Yujie Liu <yujie.liu@intel.com>, Heng Qi
+ <hengqi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>
+Date: Wed, 05 Jun 2024 18:57:50 +0800
+In-Reply-To: <20240605062548.GF279426@thelio-3990X>
+References: <20240604150741.30252-1-xry111@xry111.site>
+	 <20240605054328.GA279426@thelio-3990X>
+	 <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
+	 <20240605062548.GF279426@thelio-3990X>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 10/11] ARM: dts: stm32: add ethernet1 for
- STM32MP135F-DK board
-To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
- <20240604143502.154463-11-christophe.roullier@foss.st.com>
- <c2242ba3-3692-4c5f-a979-0d0e80f23629@denx.de>
- <3a59b4cc-0c7b-47d6-8322-4ae12ddb3a4c@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <3a59b4cc-0c7b-47d6-8322-4ae12ddb3a4c@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-On 6/5/24 8:00 AM, Christophe ROULLIER wrote:
-> 
-> On 6/4/24 18:52, Marek Vasut wrote:
->> On 6/4/24 4:35 PM, Christophe Roullier wrote:
->>> Ethernet1: RMII with crystal
->>> PHY used is SMSC (LAN8742A)
->>
->> Doesn't the STM32MP135F-DK come with two ethernet ports ?
->> Why not enable both ?
-> 
-> Hi Marek,
-> 
-> As already discussed in V2, second ethernet have no cristal and need 
-> "phy-supply" property to work, today this property is managed by 
-> Ethernet glue, but
-> 
-> should be present and managed in PHY node (as explained by Rob). So I 
-> will push second Ethernet in next step ;-)
+On Tue, 2024-06-04 at 23:25 -0700, Nathan Chancellor wrote:
+> On Wed, Jun 05, 2024 at 01:54:24PM +0800, Xi Ruoyao wrote:
+> > On Tue, 2024-06-04 at 22:43 -0700, Nathan Chancellor wrote:
+> > > For what it's worth, I have noticed some warnings with clang that I
+> > > don't see with GCC but I only filed an issue on our GitHub and never
+> > > followed up on the mailing list, so sorry about that.
+> > >=20
+> > > https://github.com/ClangBuiltLinux/linux/issues/2024
+> > >=20
+> > > Might be tangential to this patch though but I felt it was worth
+> > > mentioning.
+> >=20
+> > The warnings in GCC build is definitely the issue handled by this patch=
+.
+> > But the warnings in Clang build should be a different issue.=C2=A0 Can =
+you
+> > attach the kernel/events/core.o file from the Clang build for analysis?
+> > I guess we need to disable more optimization...
+>=20
+> Sure thing. Let me know if there are any issues with the attachment.
 
-Please add that ^ information into the commit message.
+Thanks!  I've simplified it and now even...
+
+.global test
+.type test,@function
+test:
+
+addi.d	$sp,$sp,-448
+st.d	$ra,$sp,440
+st.d	$fp,$sp,432
+addi.d	$fp,$sp,448
+
+# do something
+
+addi.d	$sp,$fp,-448
+ld.d	$fp,$sp,432
+ld.d	$ra,$sp,440
+addi.d	$sp,$sp,448
+ret
+
+.size test,.-test
+
+is enough to trigger a objtool warning:
+
+/home/xry111/t1.o: warning: objtool: test+0x20: return with modified stack =
+frame
+
+And to me this warning is bogus?
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
