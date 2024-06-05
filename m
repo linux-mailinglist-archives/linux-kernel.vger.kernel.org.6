@@ -1,142 +1,114 @@
-Return-Path: <linux-kernel+bounces-202611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6878FCEA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:13:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB328FCF10
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C34B1C24EB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:13:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9A0B2B7B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632B719306F;
-	Wed,  5 Jun 2024 12:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E761953AC;
+	Wed,  5 Jun 2024 12:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="G/5FfIjC"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIl2tBBZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198C419D8BF;
-	Wed,  5 Jun 2024 12:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4813D1953A3;
+	Wed,  5 Jun 2024 12:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590694; cv=none; b=JtXPueJTivFrbexGB6ho6n/BlzminXhECwfP0+I6yhLNS+44EF/F5wEnzLVKeLDnAa5GWwUIdvywd2bEegEIhzBiBzVW3x0iZWSAsOXcp2MDAfKBcIqe1tu4cQ5RnZZvFuIo5FLIHUsOJ4vibFUyI3zE6k4vRPecOvPy2kEnKKA=
+	t=1717590704; cv=none; b=OLMBUNgYZpLUjZs/XxMhS2Gd9FPf/cFSjHnYblOkPVAK3wfpUwVxdWdyl06LiEREaLcdtUh0yHsQGq7HtpXX0a38f8QW2Ru+w6FN0K7iRvfrOrnxrM/8nP9wcNRQVxZ0DDb3dLvu8C6YtPf2ggWMS2Q+XMoYBncCyuMSLHJ83Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590694; c=relaxed/simple;
-	bh=8wCbswTUyjgATJQMZFOcOQSj2SvgCR9t7N9JPOs+xYY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pz4uWMMElc1dB1HKnZE3FGzzGU6KHnI8WxJ//GueSqUD24495tjarNv6316RSxUF+uR9lJYj8UNyWHMEro9N/SLnjelpYlYsQyV63wDI7TDK6haVoF4ilzOw2zWN2VDZmV14iWnpZKx4O8dK77BZHfW4mYrh4ToN1GYCyDwtQyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=G/5FfIjC; arc=none smtp.client-ip=192.19.144.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id E2BC6C0000FC;
-	Wed,  5 Jun 2024 05:31:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com E2BC6C0000FC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1717590692;
-	bh=8wCbswTUyjgATJQMZFOcOQSj2SvgCR9t7N9JPOs+xYY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G/5FfIjCvzy5t0lK/3DHgtuIAOoreDNAzXzTaZpEhe0IQfBxdLgye2c3qow3o1oPt
-	 /tPGCytNO/h3tTzRZS4GNo86uDMKGfLqp0etZ061o1ssHV7gE7xLkvURwNCUsLCtz1
-	 93bhgEi6qGHnmdwWkY3RQAQuPxg/n+Hg5HYRI/f4=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id B8F2B18041CAC6;
-	Wed,  5 Jun 2024 05:31:29 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: stable@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Hao Ge <gehao@kylinos.cn>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Kieran Bingham <kbingham@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kuan-Ying Lee <Kuan-Ying.Lee@mediatek.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Helge Deller <deller@gmx.de>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org (open list),
-	kapil.hali@broadcom.com,
-	justin.chen@broadcom.com
-Subject: [PATCH stable 6.1] scripts/gdb: fix SB_* constants parsing
-Date: Wed,  5 Jun 2024 05:31:28 -0700
-Message-Id: <20240605123128.3524629-2-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240605123128.3524629-1-florian.fainelli@broadcom.com>
-References: <20240605123128.3524629-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1717590704; c=relaxed/simple;
+	bh=WqX/iaOAQS6MZ5oQl3ZCdSns0vW4s+x/vrm13fm7laY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZcBNz7EZ0UGm+fK18E4fgM4bw1MvikmP4R8RGCEyNN/hIRX0hPWl4SIpFWF75ss1tnVDZ6BT+G4A9NAyyyYjfjgckzlrpQw4DoaYMU1kHHBse/V+/v11wUhQL3IQ319LI6CgYoJyKKgWq9nO5gxDqPR9dR4FMS9b5VdYn8Gtlx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIl2tBBZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE75BC3277B;
+	Wed,  5 Jun 2024 12:31:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717590703;
+	bh=WqX/iaOAQS6MZ5oQl3ZCdSns0vW4s+x/vrm13fm7laY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DIl2tBBZ6oihhI/f5/7BbeecgSbZ7aK+ZKiHZGsMPZkLUiGDSiY71IFcHbLIN+LHl
+	 /5SklmW8EF3ndFp5BSgUVb7d8wUzYF0kHDfD6BsiU9NVCl3J+Tigjr9gKz5pd0Njhp
+	 3OmzuekhB/C051H6yFE/fEYxeMXHSqSeaKD93UXoZdv8f1LOlZWXacU4kOHUt9FPdv
+	 2DWPxkGGjJLkIiiVeOoDMEiOJb8QLbnsaNQEf2swWOkU03v2EqLJOs/2A54L3S2Yp8
+	 EJVyvCl9xGJ1X49jit06Aepfj7KS0+Gpp4j1nEBvprW8V66jPGicwITi9cpqjoQG0a
+	 VKUQJs+Ta454A==
+Date: Wed, 5 Jun 2024 13:31:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH 2/4] arm64/fpsimd: Discover maximum vector length
+ implemented by any CPU
+Message-ID: <1875ba4e-02c7-4331-b9c6-7ab68d2157b3@sirena.org.uk>
+References: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org>
+ <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-2-680d6b43b4c1@kernel.org>
+ <86bk4flh9b.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ysVZwPn+MwR2sALq"
+Content-Disposition: inline
+In-Reply-To: <86bk4flh9b.wl-maz@kernel.org>
+X-Cookie: Simulated picture.
 
-commit 6a59cb5158bff13b80f116305155fbe4967a5010 upstrean
 
---0000000000009a0c9905fd9173ad
-Content-Transfer-Encoding: 8bit
+--ysVZwPn+MwR2sALq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-After f15afbd34d8f ("fs: fix undefined behavior in bit shift for
-SB_NOUSER") the constants were changed from plain integers which
-LX_VALUE() can parse to constants using the BIT() macro which causes the
-following:
+On Wed, Jun 05, 2024 at 01:13:20PM +0100, Marc Zyngier wrote:
+> Mark Brown <broonie@kernel.org> wrote:
 
-Reading symbols from build/linux-custom/vmlinux...done.
-Traceback (most recent call last):
-  File "/home/fainelli/work/buildroot/output/arm64/build/linux-custom/vmlinux-gdb.py", line 25, in <module>
-    import linux.constants
-  File "/home/fainelli/work/buildroot/output/arm64/build/linux-custom/scripts/gdb/linux/constants.py", line 5
-    LX_SB_RDONLY = ((((1UL))) << (0))
+> > +	/*
+> > +	 * pKVM allocates and uses storage for host state based on the
+> > +	 * largest per-PE VL, reject new PEs with a larger maximum.
+> > +	 */
+> > +	if (is_protected_kvm_enabled()) {
+> > +		if (max_vl > info->max_cpu_vl) {
+> > +			pr_warn("%s: cpu%d: would increase maximum VL\n",
+> > +				info->name, smp_processor_id());
+> > +			return -EINVAL;
+> > +		}
+> > +	}
 
-Use LX_GDBPARSED() which does not suffer from that issue.
+> Once protected mode is enabled, no new CPU can be booted (see
+> psci_relay.c::psci_cpu_on()).
 
-Fixes: f15afbd34d8f ("fs: fix undefined behavior in bit shift for SB_NOUSER")
-Link: https://lkml.kernel.org/r/20230607221337.2781730-1-florian.fainelli@broadcom.com
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Acked-by: Christian Brauner <brauner@kernel.org>
-Cc: Hao Ge <gehao@kylinos.cn>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Kieran Bingham <kbingham@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Pankaj Raghav <p.raghav@samsung.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- scripts/gdb/linux/constants.py.in | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Ah, that's a bit easier.  Might still be worth keeping the check just in
+case that changes or we acquire some further use of this value but it's
+not currently needed and the comment could be updated.
 
-diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/constants.py.in
-index 08f0587d15ea..0ff707bc1896 100644
---- a/scripts/gdb/linux/constants.py.in
-+++ b/scripts/gdb/linux/constants.py.in
-@@ -46,12 +46,12 @@ if IS_BUILTIN(CONFIG_COMMON_CLK):
-     LX_GDBPARSED(CLK_GET_RATE_NOCACHE)
- 
- /* linux/fs.h */
--LX_VALUE(SB_RDONLY)
--LX_VALUE(SB_SYNCHRONOUS)
--LX_VALUE(SB_MANDLOCK)
--LX_VALUE(SB_DIRSYNC)
--LX_VALUE(SB_NOATIME)
--LX_VALUE(SB_NODIRATIME)
-+LX_GDBPARSED(SB_RDONLY)
-+LX_GDBPARSED(SB_SYNCHRONOUS)
-+LX_GDBPARSED(SB_MANDLOCK)
-+LX_GDBPARSED(SB_DIRSYNC)
-+LX_GDBPARSED(SB_NOATIME)
-+LX_GDBPARSED(SB_NODIRATIME)
- 
- /* linux/htimer.h */
- LX_GDBPARSED(hrtimer_resolution)
--- 
-2.34.1
+--ysVZwPn+MwR2sALq
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZgWqkACgkQJNaLcl1U
+h9AyJQf+MY+KJBHvUdEZTyWsyWafn1JsdBv59+XpSqS/no1XW//XIGvcCvJvQ9/I
+/d+4iNDJO5KfECkTL2Zsp4w0k5ogpe14dxnNoSAk6coLY1C9O/QlVZveuR96VMEQ
+kFIqT86CC8zZ53FMJkiSPSvh4xCot2/jVaDEIZ7Hc6XTy4iAWZCcmt0NS4TYtIpf
+QtvfMeVCkKft6/Na8pjSWKlKkiNRxPbNxaXFBsKXdeltidzOuXdX/JS4J0QtANjo
+byDIxgwAy453h+6JGn5/9lqtVP/33/ZGAqqakPPhxVZRfg09C8+RuT/GVcs8r6Xz
+SAo4rWVbNS9hGnQxwuEOvSpQnnx/EQ==
+=kQnc
+-----END PGP SIGNATURE-----
+
+--ysVZwPn+MwR2sALq--
 
