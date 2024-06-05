@@ -1,185 +1,132 @@
-Return-Path: <linux-kernel+bounces-203158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1658FD749
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5298FD74C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E441C22DB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:12:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 934B81C23534
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2625515EFA6;
-	Wed,  5 Jun 2024 20:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB04D158D89;
+	Wed,  5 Jun 2024 20:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dJzKGhlu"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IesPMI9q"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D5F15E5DF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7F21586C7;
+	Wed,  5 Jun 2024 20:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717618238; cv=none; b=sgmtVaFlpINXW9RltdjF+bIrvOoUGSdRk0FiUoy9Hkvq7Gk8de0f8sg8Pj2AvT8toBMkwE3mG2d73SfJLNCjWAtfC3ZE8eRI6gI6qUlTih0vmDnWe5+JVO3M2vaarWTW7BhYoeIJYAiZZfr0HVkk1BpMaTXPIpy9J2Pu8skKI2U=
+	t=1717618274; cv=none; b=dpqBKnAncgihZtVVqm9HNtVF4seYOR3geE0AdvJQWPFziZnYeWtYaw/Ne6htClEbynH6A58qfd3nGn5mdGB38brzuge5wMDmSE7pwrNNvgEnWynQWp7wS5FVcfaY9xLwws+iDu0i0SP/v6l9HHAmFcmjmDApeB5Lc3MjfmdFRt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717618238; c=relaxed/simple;
-	bh=0JBK/nMl5cHZdGnJCndW0tz6llOA7aiaSZQ/G+fHoQ8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NdpQ1nC2ieyPIdYSj49aRnTu9bLT6GWr0Zm9lEhyOWZ75Z+dgFGs3jaun4UNwjHi+wZoBbpTkt+I7k34AroXC7dsEbTYZlgF7b14Lb/knUte6QOWsPkTHuxG4qnYsy9tOpsCfBRtepy17wlPRtcv1zmp0oVFMlPYHscHdVq+eJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dJzKGhlu; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a68a288b8a4so11732766b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 13:10:35 -0700 (PDT)
+	s=arc-20240116; t=1717618274; c=relaxed/simple;
+	bh=FAe5RBSeVUQvSoNMovSUxUr4BZQMUMsViBXF99Eg278=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sBlfTutLsg2O8MnYRhiRevgddy5YPEcNTH5RqxlUzpXdvZCGemFnAzDYcpaAKVq88FyPGSybuA/z/B7aJYE+RE6+UT6n19/CCZJpFb1adMbYCYbFhiecHMBhkkZ8v11wt4NIo+/5Tpc9J1G4qNhd4tFyQVBA4BWBpUek6MPWOps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IesPMI9q; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f6b0a40721so2144015ad.2;
+        Wed, 05 Jun 2024 13:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717618234; x=1718223034; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2zhSqnuAi2a4A8OlqdMxl1Xx25B3ZvBd8bPE6idYqUw=;
-        b=dJzKGhluCCCr4ysVAwh5sufGIvlXoyGVdkE6aRZfBu6NIEk/hrcdXB4P00ShQpVKRN
-         +egmqWd+GVCoSxXX0Lxw8T9RZQNGQPJlgwEDLb/QqhQUBgG9j4ApcIGpfsvbc2uf2Qnw
-         ov0ujBbJODWjC16dZKGHyNA8xwjvf1D/h9dYkw+xnvZPVpDdSAQrVHtXIxe+xMdktid6
-         kKTxfrkTzaU36kNF7WXVeJvXM+70nzDCT/P6ZYZStSheO+JW82IjSSHwJo/9s+Re4TV0
-         EbfCcdLkWWRE9zWxVHWpfkJwIQ06JxSbCRtfv4SY1Om+srKp992k6L2mXWMR1FR2n6ta
-         fO6g==
+        d=gmail.com; s=20230601; t=1717618272; x=1718223072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
+        b=IesPMI9qop3z5oa+1hM9U9pWVhZR8+EuRU3qJeeAt3QvwGkLtL4XzB6YFx7xUwUJQf
+         qlHSa5CQLB1H5SjlmaBuysdxjDEoa3gz1wQShbo7za2dyXVLQqNqAPeYKd1Xg2/pdqDe
+         XWGjx0BhccnSCohXTOc/5yJgV8rE/NHZfWPGPTRSFaSXhOl5Efbok0F3LfFfiPz0hCgT
+         8Moidpdk6URZCgYzquETJsJXG4jo0q3aA3XlrF56rs55rzddSSBSFnTWrrCzCkiXVRN9
+         mVeGIgs7QOJoyqQlXUASUQIf0+dmvqkdsRUCs0lNldTKOL4ZvVf4Ifdh1bz8wwHhxlwj
+         Ijfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717618234; x=1718223034;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2zhSqnuAi2a4A8OlqdMxl1Xx25B3ZvBd8bPE6idYqUw=;
-        b=wgh8xrM62hVlzYVHUtkd14/EDEdun8t9W2VJx8oLwlyeCYzv9kvcTyUwDpPTgnADPS
-         jtZfupa07i6z58m8dRG8h1Gvjf+yBDyoglWAnwu7fIIbODakyu3QibE9O837gExKNtHe
-         CMAiZQWfLs4hQigOYaSmLePG8sqKKTl8kpLUNBvnA+Lu1E4kyHbNXNoKxbH0j/IgXLaY
-         uyr0BkH1plGamz2+B3B23OpUcsfpvZDcHryeVhb8qPFnm+DosZugQPbqEX7/Ro6NUjD3
-         o7v5LiTasA3KgIzNQoX1kt/lDzjmoe5+4t4BRF+WzVsFA9tEF1EaEU2Y0pnrX06zuCoe
-         tfRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiS55vE4gvF/GZq5ihqngapeWYptqF/mmpGoG5QOCSBEwhM0Jo5QD06SzHY9/MXkFdkf0x9nwDSR+WdXBvrVccuRNg7V8T73zrde03
-X-Gm-Message-State: AOJu0YwkNgjdFqO4fh8UU0tllJY648Ar/mjlG1OyfBd2mfix9/HElN9t
-	dI233llQ8y845/iD9Cvd5d8SBrGjb3bSBSNbuHgiidxW30Nfk1yMBCWW1Hl7SLw=
-X-Google-Smtp-Source: AGHT+IFDsc8B06V+5iEYvzet3jVlB0i+L5L9Nrt/H40mqNDBPty8TYTHLtrCt5rS5peLfSWm/ftVxA==
-X-Received: by 2002:a50:9f2b:0:b0:578:881e:7b77 with SMTP id 4fb4d7f45d1cf-57a8bc9c0aamr3181953a12.34.1717618233978;
-        Wed, 05 Jun 2024 13:10:33 -0700 (PDT)
-Received: from [127.0.1.1] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31be4e36sm9717473a12.53.2024.06.05.13.10.32
+        d=1e100.net; s=20230601; t=1717618272; x=1718223072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
+        b=Qu9L2GVsu1ikYDDuQhVR9yShIXmWvqCIE7QifHFl/AGRiU8nu+ohPwYHgpS6TxYPrb
+         88DaffymPqSjhciGxhY9jW3wAO/xen0/v76SoipNaTy+GTnj+l76h/97PKYIPCSnvzjy
+         S3KWGAU7v81ktl4ZQCDQmqY93gMmc0Ou4LZ5SqrmSBZ2LoHHHm0xobLeImTqnHg6puNp
+         MzSFB7oSNRn49oOZghaBBEcT5CHqVdbNMwS5FdgYh0K4ajQNminlLJi28189TNjYG8ey
+         8kGZHW2favKUI8vP73IPUb4GfUSHw0Qpdi+9Nkow1szs4erJ6ZCAUBMsvi6jl4MwV4m3
+         I0Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0biwhAl6+eILDAZNyCm9MP3YXoqUwhaT/NkdUPvQMAOJ0KuEfjnWhhFmV3WBb2brAeXYPjPLEA3joo67GlHru5djEleaw7PtKzqTvRikDBwy2HJ3XZKJgd3UvLip41tO7awjtgTujoZO6jZA=
+X-Gm-Message-State: AOJu0YxHBv1h20fI8QE2gP5oq9RZZZovAa8kZoC4S6JTXs4VWQ0cjGZU
+	D0lRpCJMKUO4h6DtXb6ic20BN7+uUmj7OV+CfXoUm18IX3rGhE1L
+X-Google-Smtp-Source: AGHT+IEGu5ShaAHzYkwyBq4xYwcioUEVZUexCPqMcpakJMWRGFjg+Bo4DSNwD23lkoPdDBjRtp+M6g==
+X-Received: by 2002:a17:902:c40a:b0:1f6:73a9:ec9a with SMTP id d9443c01a7336-1f6a5a023f2mr49103245ad.12.1717618271758;
+        Wed, 05 Jun 2024 13:11:11 -0700 (PDT)
+Received: from localhost.localdomain ([177.21.143.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dfe3bsm109428335ad.135.2024.06.05.13.11.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 13:10:33 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 05 Jun 2024 22:10:20 +0200
-Subject: [PATCH v2 7/7] arm64: dts: qcom: sm8550: Wire up GPU speed bin &
- more OPPs
+        Wed, 05 Jun 2024 13:11:11 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: miriam.rachel.korenblit@intel.com,
+	kvalo@kernel.org,
+	rafael.j.wysocki@intel.com,
+	daniel.lezcano@linaro.org,
+	johannes.berg@intel.com,
+	dmantipov@yandex.ru
+Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] iwlwifi: mvm: adding check if the thermal firmware is running
+Date: Wed,  5 Jun 2024 17:10:48 -0300
+Message-ID: <20240605201049.94826-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240605-topic-smem_speedbin-v2-7-8989d7e3d176@linaro.org>
-References: <20240605-topic-smem_speedbin-v2-0-8989d7e3d176@linaro.org>
-In-Reply-To: <20240605-topic-smem_speedbin-v2-0-8989d7e3d176@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- devicetree@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14-dev
+Content-Transfer-Encoding: 8bit
 
-Add the speedbin masks to ensure only the desired OPPs are available on
-chips of a given bin.
+In the dmesg is showing the message "failed to read out thermal zone"
+as if the temperature read is failed by don't find the thermal zone.
 
-Using this, add the binned 719 MHz OPP and the non-binned 124.8 MHz.
+After researching and debugging, I see that this specific error is
+occurrenced because the thermal try read the temperature when is started,
+but the firmware is not running yet.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
+After this change, in my computer I compile and install kernel in /boot
+and in my dmesg the message "failed to read out thermal zone" is not show
+any more.
+
+I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> ,
+Kalle Valo <kvalo@kernel.org> and Johannes Berg <johannes@sipsolutions.net>
+for your suggestions in my previous patch.
+
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index c55a818af935..5f5ddfe205b0 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -2119,48 +2119,67 @@ zap-shader {
- 				memory-region = <&gpu_micro_code_mem>;
- 			};
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+index 8083c4b2ab6b..d1dd334b5049 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+@@ -620,8 +620,12 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
  
--			/* Speedbin needs more work on A740+, keep only lower freqs */
- 			gpu_opp_table: opp-table {
- 				compatible = "operating-points-v2";
+ 	mutex_lock(&mvm->mutex);
  
-+				opp-719000000 {
-+					opp-hz = /bits/ 64 <719000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L2>;
-+					opp-supported-hw = <0x1>;
-+				};
+-	if (!iwl_mvm_firmware_running(mvm) ||
+-	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
++	if (!iwl_mvm_firmware_running(mvm)) {
++		ret = -EAGAIN;
++		goto out;
++	}
 +
- 				opp-680000000 {
- 					opp-hz = /bits/ 64 <680000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+					opp-supported-hw = <0x3>;
- 				};
- 
- 				opp-615000000 {
- 					opp-hz = /bits/ 64 <615000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L0>;
-+					opp-supported-hw = <0x3>;
- 				};
- 
- 				opp-550000000 {
- 					opp-hz = /bits/ 64 <550000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+					opp-supported-hw = <0x3>;
- 				};
- 
- 				opp-475000000 {
- 					opp-hz = /bits/ 64 <475000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_L1>;
-+					opp-supported-hw = <0x3>;
- 				};
- 
- 				opp-401000000 {
- 					opp-hz = /bits/ 64 <401000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+					opp-supported-hw = <0x3>;
- 				};
- 
- 				opp-348000000 {
- 					opp-hz = /bits/ 64 <348000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D0>;
-+					opp-supported-hw = <0x3>;
- 				};
- 
- 				opp-295000000 {
- 					opp-hz = /bits/ 64 <295000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
-+					opp-supported-hw = <0x3>;
- 				};
- 
- 				opp-220000000 {
- 					opp-hz = /bits/ 64 <220000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D2>;
-+					opp-supported-hw = <0x3>;
-+				};
-+
-+				opp-124800000 {
-+					opp-hz = /bits/ 64 <124800000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D2>;
-+					opp-supported-hw = <0x3>;
- 				};
- 			};
- 		};
-
++	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+ 		ret = -ENODATA;
+ 		goto out;
+ 	}
 -- 
-2.43.0
+2.45.2
 
 
