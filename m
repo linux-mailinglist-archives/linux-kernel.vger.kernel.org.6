@@ -1,238 +1,255 @@
-Return-Path: <linux-kernel+bounces-202774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1306A8FD0F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DEBA8FD0EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73782B26B84
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:27:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7F83B23629
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8B81C686;
-	Wed,  5 Jun 2024 14:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47ED81A291;
+	Wed,  5 Jun 2024 14:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pU+/3saq"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="appRF2fc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7D610A36
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9033F23D7
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717597646; cv=none; b=qWwBDr3pUkJ17lTI0wNIwhA4M4Z0wa4kbuCkhZRplcp1c6hgIZqRLtjdpUqVcTGPzZbtuV9+Y4xxRNLvaYGjzBNuSZ3zRWQ97ZS7DuQ3aLwUzTJZx+oCJpdtBZDxEDkg6WHpR0MvZPTk8BfV5wRzK8yZE2fduY55g8CXA4iLFe4=
+	t=1717597715; cv=none; b=T4OFZVKxA3lVdbLnTZ2uac5JwYSmYOdbpg4ePkF4zkEGPAJhh8n1BwvA3oZJDqL5vYzq/WZ329V/A1aTM8FncNuZEIqixAXFDJstOmSxKo+gMTfy7A5aOuMH3NTqU96g8rdNsyWKBrRwQnGQsq/ypmvoBDYXVJDQcTnQmybiY9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717597646; c=relaxed/simple;
-	bh=90D3auDK3WcXsX7TKCAyKV0KwfqmFAGuEW7dW1JYvLw=;
+	s=arc-20240116; t=1717597715; c=relaxed/simple;
+	bh=EaZvYQvVZkBz1AWXg8gJrDVB+l8duL3OTHuUpo+PzCY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q18Sfn5eBcVF9fjvWaQIOxe696rZm/X5Of0xUxSfyJfSsk1uUzgjL7mVUWtd6/GPyXZQBrlZwtDvCMvep4bJMthJw5Xma3njsgsB2aKZoxXIoKAdj92R66QPw0k2/LbNia4Ecae4+q6bGMKNje++jarO9qkcVKojYBs3FIT0zps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pU+/3saq; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: f.weber@proxmox.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717597641;
+	 In-Reply-To:Content-Type; b=Q/ZmTdyeuC0MlXhwkBUaXW/j7u3nl1aFNW4FlmUSzf/lvZDJV32z0u7xGGyDaBEtbkYVplfWxFMdoDc6rnuM9KiJrV7bp0h0fKI+V9xDTR7a7ZoskVhfsvVD13kXocnNakUvxisZRvgq0WKwaIAU2y7qQ2BTfDSdYC2VTa0yWic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=appRF2fc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717597712;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ko9Xb067+XeTJSQmpXx37lrgx0pHjdOn4v8/Lptp5VY=;
-	b=pU+/3saq4RCm9zXTUWkf4REijLOh+B5BxW/WNYA3tFRUdAZeILcrVm9MLVdPbmaaQpOaJM
-	wvBvkqHTy2uJu8DwSBimt2R2F5zorTmR8bN3gcg4snTK/dHvtiaJi8vUx5ZBy5RhMH4ESf
-	9WCTcSF9Sbry94Y/2WJIrAw8EORDK+g=
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: ming.lei@redhat.com
-X-Envelope-To: hch@lst.de
-X-Envelope-To: bvanassche@acm.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: zhouchengming@bytedance.com
-X-Envelope-To: t.lamprecht@proxmox.com
-Message-ID: <448721f2-8e0b-4c5a-9764-bde65a5ee981@linux.dev>
-Date: Wed, 5 Jun 2024 22:27:11 +0800
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VxIffXnjUYvHBO052LXyySGWsjqpIrP39OP6YN4p2SI=;
+	b=appRF2fcFPVojfJMShWEVFeyMggRZ+sChYuG+1OR06zz+Aq99rgHRuMP+sP9WUOoaZ4Jaz
+	fXAtcq525SAJ+rn5tTOaMBaBkTcawddz5fciM1AXfUuLq5Xbr6BeqOQ8ZihuAfPxEwJ89y
+	HHY/MuTMnrO9lw9zCaPAQsgyIBFqprE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-370-NnfuarQwMHePbU2ESzLIJw-1; Wed, 05 Jun 2024 10:28:30 -0400
+X-MC-Unique: NnfuarQwMHePbU2ESzLIJw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35dcf7d4014so3611733f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:28:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717597709; x=1718202509;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VxIffXnjUYvHBO052LXyySGWsjqpIrP39OP6YN4p2SI=;
+        b=SZXMeVJxNTA//sD6HIj0zleVqDYN+ezoxjMWhup/nj2DO/pfdDTE1LmfClK2qmZYzo
+         DsBogJytof6h3VJ8j/N1c9F0eKrbSKxjeqPRhngqyQgAO5TX9PLJyWQrEzixGvJ2pQwf
+         o+ImajjISn7GUJKHVaGePznHkRKKYNsr7UZoB7B6umvc02pnkgFGQEqiPg6eO9cBnXFT
+         lZPa5g+8iYEbCmtG7zLbP+i8kXvs1Uo042YdG4H5JVI4uqXkwnZwoKGfheFiVsV/T+T+
+         N36LUZS/mhos/N3cg+qj6HBkUwXZkZIXcOO8YEt9Z7gxFWuy43MPgl/Ln/x4Csxkpktr
+         OYzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTZ+N/LR76kCNBpF4t85iMlTNE5UzIXa25mY96jdxxN3Sc1qF3TIFYQsfkc7lTXhi7nJVishrI+8hoVXrQuD1NqkCJqnY1PK3pE4SN
+X-Gm-Message-State: AOJu0YxLbMBvvoZkKRgdnS8EqQ3/BDl23+hGtO3rSjjELvR5AdWg6D07
+	B+L4gUz2khuVylOlKLtqiqbOb64vjn9vrR2k8rK9XXS+zK8V6ZmKao/QrgaiO9+Wobf+JX5yx5P
+	myEezaQ7eA+ZjuMLfdhGuvEJjLPiqmm7b1SzeqzELissu+NzCKhn9ojG2h9hr8w==
+X-Received: by 2002:a5d:56cf:0:b0:357:e715:f52b with SMTP id ffacd0b85a97d-35e84070f49mr1879672f8f.20.1717597709035;
+        Wed, 05 Jun 2024 07:28:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhbqtvPOCCdKJSv46h65rz+enYr0CQoR+/VdaCKU4/I53blN8X0B/qGtkis1jQrRM44WPP5A==
+X-Received: by 2002:a5d:56cf:0:b0:357:e715:f52b with SMTP id ffacd0b85a97d-35e84070f49mr1879644f8f.20.1717597708568;
+        Wed, 05 Jun 2024 07:28:28 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:3100:19a8:d898:8e69:6aff? (p200300cbc706310019a8d8988e696aff.dip0.t-ipconnect.de. [2003:cb:c706:3100:19a8:d898:8e69:6aff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04cafb8sm14635656f8f.37.2024.06.05.07.28.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 07:28:28 -0700 (PDT)
+Message-ID: <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com>
+Date: Wed, 5 Jun 2024 16:28:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] block: fix request.queuelist usage in flush
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] mm/rmap: integrate PMD-mapped folio splitting into
+ pagewalk loop
+To: Lance Yang <ioworker0@gmail.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org,
+ baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com,
+ ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com,
+ fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com,
+ xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com,
+ songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240521040244.48760-1-ioworker0@gmail.com>
+ <20240521040244.48760-3-ioworker0@gmail.com>
+ <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com>
+ <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-To: Friedrich Weber <f.weber@proxmox.com>, axboe@kernel.dk,
- ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com, Thomas Lamprecht <t.lamprecht@proxmox.com>
-References: <20240604064745.808610-1-chengming.zhou@linux.dev>
- <c9d03ff7-27c5-4ebd-b3f6-5a90d96f35ba@proxmox.com>
- <1344640f-b22d-4791-aed4-68fc62fb6e36@linux.dev>
- <ec27da86-b84a-430b-98aa-9971f90c8c87@proxmox.com>
- <7193e02e-7347-48db-b1a0-67b44730480b@proxmox.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <7193e02e-7347-48db-b1a0-67b44730480b@proxmox.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024/6/5 21:34, Friedrich Weber wrote:
-> On 05/06/2024 12:54, Friedrich Weber wrote:
->> On 05/06/2024 12:30, Chengming Zhou wrote:
->>> On 2024/6/5 16:45, Friedrich Weber wrote:
->>>> [...]
->>>> Unfortunately, with this patch applied to kernel 6.9 I get a different
->>>> crash [2] on a Debian 12 (virtual) machine with root on LVM on boot (no
->>>> software RAID involved). See [1] for lsblk and findmnt output. addr2line
->>>> says:
+On 05.06.24 16:20, Lance Yang wrote:
+> Hi David,
+> 
+> On Wed, Jun 5, 2024 at 8:46 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 21.05.24 06:02, Lance Yang wrote:
+>>> In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
+>>> folios, start the pagewalk first, then call split_huge_pmd_address() to
+>>> split the folio.
 >>>
->>> Sorry, which commit is your kernel? Is mainline tag v6.9 or at some commit?
+>>> Since TTU_SPLIT_HUGE_PMD will no longer perform immediately, we might
+>>> encounter a PMD-mapped THP missing the mlock in the VM_LOCKED range during
+>>> the page walk. It’s probably necessary to mlock this THP to prevent it from
+>>> being picked up during page reclaim.
+>>>
+>>> Suggested-by: David Hildenbrand <david@redhat.com>
+>>> Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+>>> ---
 >>
->> Yes, by "kernel 6.9" I meant mainline tag v6.9, so commit a38297e3fb01.
+>> [...] again, sorry for the late review.
+> 
+> No worries at all, thanks for taking time to review!
+> 
 >>
->> If I boot this mainline kernel v6.9 in a Debian (virtual) machine with
->> root on LVM, I do not get a crash. If I apply the patch "block: fix
->> request.queuelist usage in flush" on top of this mainline kernel v6.9,
->> and boot the Debian machine into that patched kernel, I get a crash on boot.
+>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>> index ddffa30c79fb..08a93347f283 100644
+>>> --- a/mm/rmap.c
+>>> +++ b/mm/rmap.c
+>>> @@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+>>>        if (flags & TTU_SYNC)
+>>>                pvmw.flags = PVMW_SYNC;
+>>>
+>>> -     if (flags & TTU_SPLIT_HUGE_PMD)
+>>> -             split_huge_pmd_address(vma, address, false, folio);
+>>> -
+>>>        /*
+>>>         * For THP, we have to assume the worse case ie pmd for invalidation.
+>>>         * For hugetlb, it could be much worse if we need to do pud
+>>> @@ -1668,20 +1665,35 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+>>>        mmu_notifier_invalidate_range_start(&range);
+>>>
+>>>        while (page_vma_mapped_walk(&pvmw)) {
+>>> -             /* Unexpected PMD-mapped THP? */
+>>> -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+>>> -
+>>>                /*
+>>>                 * If the folio is in an mlock()d vma, we must not swap it out.
+>>>                 */
+>>>                if (!(flags & TTU_IGNORE_MLOCK) &&
+>>>                    (vma->vm_flags & VM_LOCKED)) {
+>>>                        /* Restore the mlock which got missed */
+>>> -                     if (!folio_test_large(folio))
+>>> +                     if (!folio_test_large(folio) ||
+>>> +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
+>>>                                mlock_vma_folio(folio, vma);
 >>
->>> And is it reproducible using the mainline kernel v6.10-rc2?
->>
->> I'll test mainline kernel v6.10-rc2, and "block: fix request.queuelist
->> usage in flush" applied on top of v6.10-rc2, and get back to you.
+>> Can you elaborate why you think this would be required? If we would have
+>> performed the  split_huge_pmd_address() beforehand, we would still be
+>> left with a large folio, no?
 > 
-> My results:
+> Yep, there would still be a large folio, but it wouldn't be PMD-mapped.
 > 
-> Booting the Debian (virtual) machine with mainline kernel v6.10-rc2
-> (c3f38fa61af77b49866b006939479069cd451173):
-> works fine, no crash
+> After Weifeng's series[1], the kernel supports mlock for PTE-mapped large
+> folio, but there are a few scenarios where we don't mlock a large folio, such
+> as when it crosses a VM_LOCKed VMA boundary.
 > 
-> Booting the Debian (virtual) machine with patch "block: fix
-> request.queuelist usage in flush" applied on top of v6.10-rc2: The
-> Debian (virtual) machine crashes during boot with [1].
+>   -                     if (!folio_test_large(folio))
+>   +                     if (!folio_test_large(folio) ||
+>   +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
 > 
-> Hope this helps! If I can provide anything else, just let me know.
+> And this check is just future-proofing and likely unnecessary. If encountering a
+> PMD-mapped THP missing the mlock for some reason, we can mlock this
+> THP to prevent it from being picked up during page reclaim, since it is fully
+> mapped and doesn't cross the VMA boundary, IIUC.
+> 
+> What do you think?
+> I would appreciate any suggestions regarding this check ;)
 
-Thanks for your help, I still can't reproduce it myself, don't know why.
+Reading this patch only, I wonder if this change makes sense in the 
+context here.
 
-Could you help to test with this diff?
+Before this patch, we would have PTE-mapped the PMD-mapped THP before 
+reaching this call and skipped it due to "!folio_test_large(folio)".
 
-diff --git a/block/blk-flush.c b/block/blk-flush.c
-index e7aebcf00714..cca4f9131f79 100644
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -263,6 +263,7 @@ static enum rq_end_io_ret flush_end_io(struct request *flush_rq,
-                unsigned int seq = blk_flush_cur_seq(rq);
+After this patch, we either
 
-                BUG_ON(seq != REQ_FSEQ_PREFLUSH && seq != REQ_FSEQ_POSTFLUSH);
-+               list_del_init(&rq->queuelist);
-                blk_flush_complete_seq(rq, fq, seq, error);
-        }
+a) PTE-remap the THP after this check, but retry and end-up here again, 
+whereby we would skip it due to "!folio_test_large(folio)".
+
+b) Discard the PMD-mapped THP due to lazyfree directly. Can that 
+co-exist with mlock and what would be the problem here with mlock?
 
 
-I don't know if the request can have PREFLUSH and POSTFLUSH set but no DATA,
-maybe in some special cases? Hope someone can give me some hints BTW.
+So if the check is required in this patch, we really have to understand 
+why. If not, we should better drop it from this patch.
 
-The panic below seems something very bad happened, hctx(maybe ctx)->lock got
-from the request is NULL.
+At least my opinion, still struggling to understand why it would be 
+required (I have 0 knowledge about mlock interaction with large folios :) ).
 
-Thanks!
+-- 
+Cheers,
 
-> 
-> Best wishes,
-> 
-> Friedrich
-> 
-> [1]
-> 
-> [    1.091562] BUG: kernel NULL pointer dereference, address:
-> 0000000000000000
-> [    1.092097] #PF: supervisor write access in kernel mode
-> [    1.092469] #PF: error_code(0x0002) - not-present page
-> [    1.092880] PGD 0 P4D 0
-> [    1.093064] Oops: Oops: 0002 [#1] PREEMPT SMP NOPTI
-> [    1.093193] systemd[1]: Finished systemd-sysusers.service - Create
-> System Users.
-> [    1.093422] CPU: 1 PID: 130 Comm: kworker/1:1H Tainted: G
-> E      6.10.0-rc2-patch0604-6-10rc2+ #37
-> [    1.095178] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> [    1.096005] Workqueue: kblockd blk_mq_requeue_work
-> [    1.096342] RIP: 0010:_raw_spin_lock+0x13/0x60
-> [    1.096707] Code: 31 db c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90
-> 90 90 90 90 90 90 0f 1f 44 00 00 65 ff 05 3c 42 4a 6f 31 c0 ba 01 00 00
-> 00 <f0> 0f b1 17 75 1b 31 c0 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9
-> [    1.098021] RSP: 0000:ffffb5ebc0343d78 EFLAGS: 00010246
-> [    1.098381] RAX: 0000000000000000 RBX: ffff9326c8c8c800 RCX:
-> 00000000ffffffe0
-> [    1.098917] RDX: 0000000000000001 RSI: 0000000000000001 RDI:
-> 0000000000000000
-> [    1.099409] RBP: ffffb5ebc0343d98 R08: 0000000000000000 R09:
-> 0000000000000000
-> [    1.099944] R10: 0000000000000000 R11: 0000000000000000 R12:
-> 0000000000000000
-> [    1.100440] R13: 0000000000000001 R14: ffff9327f7cc2180 R15:
-> ffff9326c8c91894
-> [    1.100969] FS:  0000000000000000(0000) GS:ffff9327f7c80000(0000)
-> knlGS:0000000000000000
-> [    1.101526] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    1.101950] CR2: 0000000000000000 CR3: 0000000100eaa005 CR4:
-> 0000000000370ef0
-> [    1.102443] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000
-> [    1.102951] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> 0000000000000400
-> [    1.103447] Call Trace:
-> [    1.103626]  <TASK>
-> [    1.103805]  ? show_regs+0x6c/0x80
-> [    1.104053]  ? __die+0x24/0x80
-> [    1.104055]  ? page_fault_oops+0x175/0x5e0
-> [    1.104059]  ? do_user_addr_fault+0x325/0x690
-> [    1.104062]  ? exc_page_fault+0x82/0x1b0
-> [    1.105390]  ? asm_exc_page_fault+0x27/0x30
-> [    1.105716]  ? _raw_spin_lock+0x13/0x60
-> [    1.106033]  ? blk_mq_request_bypass_insert+0x20/0xe0
-> [    1.106385]  blk_mq_insert_request+0x120/0x1e0
-> [    1.106704]  blk_mq_requeue_work+0x18f/0x230
-> [    1.107033]  process_one_work+0x196/0x3e0
-> [    1.107316]  worker_thread+0x32a/0x500
-> [    1.107587]  ? __pfx_worker_thread+0x10/0x10
-> [    1.107915]  kthread+0xe1/0x110
-> [    1.108140]  ? __pfx_kthread+0x10/0x10
-> [    1.108409]  ret_from_fork+0x44/0x70
-> [    1.108662]  ? __pfx_kthread+0x10/0x10
-> [    1.108952]  ret_from_fork_asm+0x1a/0x30
-> [    1.109228]  </TASK>
-> [    1.109386] Modules linked in: efi_pstore(E) dmi_sysfs(E)
-> qemu_fw_cfg(E) ip_tables(E) x_tables(E) autofs4(E) crc32_pclmul(E)
-> bochs(E) drm_vram_helper(E) drm_ttm_helper(E) psmouse(E) uhci_hcd(E)
-> ttm(E) ehci_hcd(E) i2c_piix4(E) pata_acpi(E) floppy(E)
-> [    1.110910] CR2: 0000000000000000
-> [    1.111161] ---[ end trace 0000000000000000 ]---
-> [    1.111489] RIP: 0010:_raw_spin_lock+0x13/0x60
-> [    1.111802] Code: 31 db c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90
-> 90 90 90 90 90 90 0f 1f 44 00 00 65 ff 05 3c 42 4a 6f 31 c0 ba 01 00 00
-> 00 <f0> 0f b1 17 75 1b 31 c0 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9
-> [    1.113119] RSP: 0000:ffffb5ebc0343d78 EFLAGS: 00010246
-> [    1.113489] RAX: 0000000000000000 RBX: ffff9326c8c8c800 RCX:
-> 00000000ffffffe0
-> [    1.114001] RDX: 0000000000000001 RSI: 0000000000000001 RDI:
-> 0000000000000000
-> [    1.114497] RBP: ffffb5ebc0343d98 R08: 0000000000000000 R09:
-> 0000000000000000
-> [    1.114998] R10: 0000000000000000 R11: 0000000000000000 R12:
-> 0000000000000000
-> [    1.115508] R13: 0000000000000001 R14: ffff9327f7cc2180 R15:
-> ffff9326c8c91894
-> [    1.115997] FS:  0000000000000000(0000) GS:ffff9327f7c80000(0000)
-> knlGS:0000000000000000
-> [    1.116578] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    1.116975] CR2: 0000000000000000 CR3: 0000000100eaa005 CR4:
-> 0000000000370ef0
-> [    1.117494] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000
-> [    1.117982] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> 0000000000000400
-> [    1.118526] note: kworker/1:1H[130] exited with irqs disabled
-> [    1.118947] note: kworker/1:1H[130] exited with preempt_count 1
-> 
-> 
+David / dhildenb
+
 
