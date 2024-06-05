@@ -1,102 +1,109 @@
-Return-Path: <linux-kernel+bounces-202829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EA28FD194
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:26:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39D48FD167
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDA5283775
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:26:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CFD1F23DF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5DA482C3;
-	Wed,  5 Jun 2024 15:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA4D3C488;
+	Wed,  5 Jun 2024 15:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxSIBGH6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uft7vvsE"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FE619D8A2;
-	Wed,  5 Jun 2024 15:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2261127701
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717601169; cv=none; b=jIbL/8eEphguyO0orUznfK/1fk+1/0PRDFfKsnx9CV1pk1Mc/QR8zaQ1nF21eAOKi7FHyDZvh6FhAw8DhqrUBtHiRLUedUzgc2aVweJvaAW4EfVpILcFfkDdjDPgl9sRGr2l7SIWPq8g39RP3ZP6IjJr2Q0EnGrPNwpobfuL/B0=
+	t=1717600208; cv=none; b=nanydyg0MT3NP8NpyI1oIfLsXJdTH3jpY84cvGgJ6xG5bwJmCpw7Ho5QHg8b/gm3g2Crxab2jrRM5+EvWd2v2bPxiI84t8zl27SHS7GFynAVRRns87xndayZHJ9G6FSbCuep/iZFa90llPscoSkH6G+rcgZHz1+oxrsqBKM7ibE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717601169; c=relaxed/simple;
-	bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=envxarqUcZfqVGrB9+dGgaMABhWCNCwDfbv+5D0T3vCYTnIBjTUtBLLtgK1uMTWvEZioRgbW3Uc9jqY/YFYzcx6oeRn99TdvhYLTdVc1jO8p5tqGD9s3I4t/zX9529UZjgJmQZ7pwBQ0IdeQvuQ+ZXzyaG/4vgzsQQ1zhEa0XcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxSIBGH6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ADEEC2BD11;
-	Wed,  5 Jun 2024 15:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717601169;
-	bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XxSIBGH6rRgGrOvWHVda0jAQp3yhRM782xGt9XMZcSl7d0ZA1lIizB1m02OTh41lU
-	 OrgAkmc26Q+hlkecOcTIdgf4h0DD7g3Qf8a9CiHFwye67f6dMi24jzxoSljrTYTDqg
-	 FF3vy/uyk7Hbv2d1UWIxVQyN/cSjKma5vY9TasiN9eLBbGHOdp3g0+C17YonBncNeQ
-	 4z5CdS2uEe3o+SrmoXZ1adaCx8EVoK7FzIYJiEcRFdT6IupN2Lyutk+jkCaTew7aMI
-	 6G0NQWBVJzAuF/rcttJUUz1NJttM7PHuB332ybK/OXHgqyc27x208p9iQL2n8igUVL
-	 rGoril+oaHeIA==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] whack user_path_at_empty, cleanup getname_flags
-Date: Wed,  5 Jun 2024 17:10:03 +0200
-Message-ID: <20240605-notation-rausnehmen-c4bd0c38f994@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240604155257.109500-1-mjguzik@gmail.com>
-References: <20240604155257.109500-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1717600208; c=relaxed/simple;
+	bh=XIVQPDWD64eYeYQKjEF3OnoyWC3wyS3XLFk9t2rDyRY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nzeFiB9i33XuiOI66/DcNZDwYC5ekioiMwD/dbIwWBqpNp76w3Fh/apDM8h7ewRUi8w1qCjovgXKphzohc8NVZn4czj64PrsPMdbyWsL2+83Jf5EgN1J8d6Fmqwzm19V23NXoBrTDRkuyafVstThuew+3QhdPVPHcrxfZoaU9qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uft7vvsE; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6c9001a14ffso4093122a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 08:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717600206; x=1718205006; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zMdlMnpu2rLutfBaZ7FjrKi42VwaFOFSjyMRzM4+P80=;
+        b=uft7vvsE60Ji0QtCJYyp2hANsXP07hhyJXAK37ldiXxOJgeS1E+KOLLmTrhrmng1NE
+         W6yojNGKBrGSCJ8N0K4Yd2r2hXtWBhsQmvd9aIrZA+htz4eQSawi8/zh0UcWdiO6Zf0o
+         1p7HmopTW1Su/F579Et4qdc5ZkVNYOuuC4jlriX8nu5PWX0zMaAPFcelsuzreILdVM8T
+         YIEYSWl2Kfslmry8AQM9oGIshXnOF8FdKalVZEnZX91eS9/PcdZcQs7YcycG+00epmb2
+         z89/MmCtTxLtDTS9CiDruYnY+f+ghXGBlb8L5PONJ2U259lhn0AUimdPJR4bjIvFlsiL
+         ofog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717600206; x=1718205006;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zMdlMnpu2rLutfBaZ7FjrKi42VwaFOFSjyMRzM4+P80=;
+        b=WW+Sg9XLXCkrkkVhNawITiqG49hQtZJDYeI5XgZA2IeV2FQpSn0QJnKdHWS1fXYn+R
+         X/rdYyfiM4atiaU3j4jnBvu5rN7z+fywMVznmjHKWIPksZSjiMFoMaHEDZdmx3qYBazO
+         UlDun3NNmIimOryPN+UbGBHUuFzeOWYwP9TyRUwASfXX9Cfk7OgHkxM5QmAxdI812VPr
+         3ikv3HMzh6ZcB0goDjG0wGJZfBeuAkv/oncws1gTT8S8eObMZn1Hciu5VMrs2RgM8xAX
+         Z2IRQV0anDVcBLY2xJK7oAZOMnQdYn1QEIC7+0VtVBq7hJdLNKNyXywRlNG3fv+fdN4I
+         j8OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQh7HuD/tcWnP9MQ5jv/SVyY2gxuzac2ZvamAsv+/vtPyUIQKbN3vGTfqACEAHNB+B8nTVzV3nSvIfkC/L3X8V0nc2dX9agxZAkeFW
+X-Gm-Message-State: AOJu0YxABG59BRgNfp1JjJ3355KSmO5zptl45TErdkSomJG758OAR0wb
+	ApbZyvY2MDhE9MQOF5bSnqLssBXHfDe6AURM3qMQJZ8gXaVtal5r4EdBi8Fl3tl294X3F8GRJK3
+	PmA==
+X-Google-Smtp-Source: AGHT+IEey3wmkUpf69Avkqmye51ogQqEPgRMRLIp2jlDpff17NiOASAUjHxDUtnJ8BIMPggZX5XlnZeHMo8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:452:b0:659:fa27:f2a7 with SMTP id
+ 41be03b00d2f7-6d952ec43ebmr7263a12.11.1717600206172; Wed, 05 Jun 2024
+ 08:10:06 -0700 (PDT)
+Date: Wed, 5 Jun 2024 08:10:04 -0700
+In-Reply-To: <171754374489.2780783.15684128983475310982.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1442; i=brauner@kernel.org; h=from:subject:message-id; bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQlNLf5fI6WunTQXPrVzJ7D7z+qPG30nKiW3nC/y2zSA qMP50JedJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkfiEjw0OHuokvp7l8dRCw /t3r4uaVlpa6+IR8EpdDzkcBoZIlqxgZru84+TJkoc6z+dZ1jSvlHk1ew6h89t321bVpQuqptql bGQE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240506225321.3440701-1-alejandro.j.jimenez@oracle.com> <171754374489.2780783.15684128983475310982.b4-ty@google.com>
+Message-ID: <ZmB_zGGqhwMh2jOH@google.com>
+Subject: Re: [PATCH v2 0/2] Print names of apicv inhibit reasons in traces
+From: Sean Christopherson <seanjc@google.com>
+To: kvm@vger.kernel.org, vasant.hegde@amd.com, 
+	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+Cc: pbonzini@redhat.com, linux-kernel@vger.kernel.org, 
+	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, 
+	suravee.suthikulpanit@amd.com, mlevitsk@redhat.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 04 Jun 2024 17:52:54 +0200, Mateusz Guzik wrote:
-> I tried to take a stab at the atomic filename refcount thing [1], found
-> some easy cleanup to do as a soft prerequisite.
+On Tue, Jun 04, 2024, Sean Christopherson wrote:
+> On Mon, 06 May 2024 22:53:19 +0000, Alejandro Jimenez wrote:
+> > v2:
+> > - Use Sean's implementation/patch from v1: https://lore.kernel.org/all/ZjVQOFLXWrZvoa-Y@google.com/
+> > - Fix typo in commit message (s/inhbit/inhibit).
+> > - Add patch renaming APICV_INHIBIT_REASON_DISABLE to APICV_INHIBIT_REASON_DISABLED.
+> > - Drop Vasant's R-b from v1 since implementation was refined, even though the
+> > general approach and behavior remains the same.
+> > 
+> > [...]
 > 
-> user_path_at_empty saddles getname_flags with an int * argument nobody
-> else uses, so it only results in everyone else having to pass NULL
-> there. This is trivially avoidable.
+> Applied to kvm-x86 misc, thanks!
 > 
-> [...]
+> [1/2] KVM: x86: Print names of apicv inhibit reasons in traces
+>       https://github.com/kvm-x86/linux/commit/8b5bf6b80eb3
+> [2/2] KVM: x86: Keep consistent naming for APICv/AVIC inhibit reasons
+>       https://github.com/kvm-x86/linux/commit/f9979c52eb02
 
-Snatched with some minor changes unless I hear complaints.
+FYI, hashes changed due to dropping an unrelated commit.
 
----
-
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/3] vfs: stop using user_path_at_empty in do_readlinkat
-      https://git.kernel.org/vfs/vfs/c/d63b3a67520b
-[2/3] vfs: retire user_path_at_empty and drop empty arg from getname_flags
-      https://git.kernel.org/vfs/vfs/c/a01c264715dc
-[3/3] vfs: shave a branch in getname_flags
-      https://git.kernel.org/vfs/vfs/c/12a8c8f491b4
+[1/2] KVM: x86: Print names of apicv inhibit reasons in traces
+      https://github.com/kvm-x86/linux/commit/69148ccec679
+[2/2] KVM: x86: Keep consistent naming for APICv/AVIC inhibit reasons
+      https://github.com/kvm-x86/linux/commit/f992572120fb
 
