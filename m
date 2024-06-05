@@ -1,159 +1,143 @@
-Return-Path: <linux-kernel+bounces-203041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7064D8FD57C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:13:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A3C8FD57D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2527B27808
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:13:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC241C22D2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD52014D713;
-	Wed,  5 Jun 2024 18:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBE414EC4F;
+	Wed,  5 Jun 2024 18:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLjJiy2R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5Akmg90"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6AA14B944;
-	Wed,  5 Jun 2024 18:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E9514E2EF;
+	Wed,  5 Jun 2024 18:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610807; cv=none; b=ZRa6CbahhFWM4vT9o8QgnM9QMMu679fLKg2F/KXEHWdi/Ye3R0bUyX9mz6pnfdtXYLpaJg0g4JASGJOyq3pFGDwWhsmIi3C7dL+IxYR+oZ9Q+rsZ+OjvNzdh6CNo5S6xU2OEkewOZIa4dJ1vWBy3ilOyGvdc4jlBaPt1O2uOHf0=
+	t=1717610817; cv=none; b=r/hSecgmOUH/BieLsFh2+tzrkmcx1W5mVa4alOOyXGNmXuUhwFtvfFYudPvfDzSqiGVVepMq3amSJ1ZN6h4CLPYOkZqsUAaDuoKY4GnIUm3OnmHOVTKdkwAydcpnPYUrU85FvzSesoLPXlqA2k2pOtAi0W6z3BKZerLUxszn7JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610807; c=relaxed/simple;
-	bh=5WLgWmi7391vEDkONzbYlVsXiq5rBsI0l3Wft0d2pmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CrJ6Z1wtMFaq3N7cFq4hx+EJf//JcLZaDXHcx0ncu3xN4thHz5X93VyGDzH1z5/DoI/zfKuSLlKCjmXQ+4GNG+sP5FtTEecwElFZnDcIaK4YotAKcz5bUJ5+cOrHot0smtLqzXFF/xspYdKIXFdWfWHIODQ+xcD0VZImo2oMKag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLjJiy2R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B8F6C2BD11;
-	Wed,  5 Jun 2024 18:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717610806;
-	bh=5WLgWmi7391vEDkONzbYlVsXiq5rBsI0l3Wft0d2pmY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RLjJiy2Ri4l+KMnvg98/r6lSB63VeIuqIbk66sBo6whE1DzQNBHsIsYsJWDgxFLGs
-	 JT7LntNOIe98YiQPQrXDmdIMI/BSdjYlu+csdYXmRLjRjjzFCIcPsAGEnm1rgEFFPI
-	 goVMzhoB3T6U2YlyZgkevetfl0IzC4SyYK1ma0//MGkpZkt25Ptk/9K8du9BZHH29E
-	 RPHRjlgT3WeZo2+VO+f2p0y/yl+3/ExMeImgsPXUXb8w1/5CE3sx7oKIOXJ0bQCAj0
-	 yAN4rRhLd2JWa19Rw87TTXl8wJcnn0wqWnrUTlMNM4xxNR/r5E1u4IFakHd2mEIOkK
-	 x0dwlIamvULsQ==
-Date: Wed, 5 Jun 2024 19:06:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rajnesh Kanwal <rkanwal@rivosinc.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org, adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com, ajones@ventanamicro.com,
-	anup@brainfault.org, acme@kernel.org, atishp@rivosinc.com,
-	beeman@rivosinc.com, brauner@kernel.org, heiko@sntech.de,
-	irogers@google.com, mingo@redhat.com, james.clark@arm.com,
-	renyu.zj@linux.alibaba.com, jolsa@kernel.org,
-	jisheng.teoh@starfivetech.com, palmer@dabbelt.com,
-	tech-control-transfer-records@lists.riscv.org, will@kernel.org,
-	kaiwenxue1@gmail.com
-Subject: Re: [PATCH RFC 3/6] riscv: perf: Add Control Transfer Records
- extension parsing
-Message-ID: <20240605-thaw-giant-87eb299c43d0@spud>
-References: <20240529185337.182722-1-rkanwal@rivosinc.com>
- <20240529185337.182722-4-rkanwal@rivosinc.com>
+	s=arc-20240116; t=1717610817; c=relaxed/simple;
+	bh=FZkniz16S/wXYq4h8od8IQiQQSFnwCyc2d/V7Rd8qsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ETModIFReEAMu/xY9hQdYE8eKVkc1K/wiOfaXa3qMAv9Lme75F9Sq3320RYBoubgK6C7iM3kQyMnCPOwxmhV6/G28xxfXbu+qXhiny7ohuyK0nMcDPpo4OhSk20o0jFHHvSU9b+JHMBot1GSs5BFylCF0VJihuXF2XmyPndGQ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O5Akmg90; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eabd22d441so1490851fa.2;
+        Wed, 05 Jun 2024 11:06:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717610814; x=1718215614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oQPi1Wj70Oupw3S1Uh8a0kVTS9NCfvHSV4FIWEU0DCI=;
+        b=O5Akmg90ohfhUPF27mZEEGDqoSnyNnmfN8vcRRcTqVRZzt9XQX4ybqTYtMInFXqKXu
+         EhskqbQP/onLTpHzghNtNKu/2nZZUDl1uugs6BMzVmcXZbethOFiwP9D/BfRerA7X7/V
+         DpRxINecqIn7xHQ1RLrBkia3OaW5dd4UZwTAAxyFIdTuYEID5SXfnJWhPAFrohnJk9Ex
+         U46uzr1BUO9zTqjWZ5GzIYysvfY5ZLPWzuz9rWJ2AnNs2Jt3mpSUFdZefcxZXf3AtqWv
+         3rKJl8jPRAdzg2KVXc0nYWPYWaUmemtFNXrZVTKTDAkKFGdG0wSGYTdamlDsGGnA3GPW
+         RYew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717610814; x=1718215614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oQPi1Wj70Oupw3S1Uh8a0kVTS9NCfvHSV4FIWEU0DCI=;
+        b=GNOujoMlUDUOg7HOrvxGOsXIDfyqEhWgCNT3JrtDRc8ckG5MSeCL4toNl8HnM2oaFf
+         uuYmHm50Zm+6x5Ox0kUvG1EaEENxu/vCXpGAI1viPSmY4SuBb47dzZACt/wsiJruq5xp
+         s4X2m93vzkIPZg9snxDVGK5MS5i4Es0nIm1oSvB7mbvqza0CduxD1+B8Klgss/YEhkvC
+         ZrG2En23D+hgUKecW6OaY8ZPyh5h+ZZMBsObabK+fAdXIsSCKzW/F/hcC6pfZoe3I/tq
+         g05BIVe1D7l7YggEUS3UpgGFfsOiUAP6LbWzueM1JI25kXSVzQjEhjD67dX4EIengo1g
+         YBhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmd5QSj3eHcgIrm1My1nCrqzCKn1v3NoeM7U/orhDC5TRsGG5FEHdTwnxa3xgFKFbCoTbbUmNX0Z71dB15LkHlVAeN+bRZvq+mbR7SA7BFJuqlpPzedFsF4GOZS3XsrrqLjTaclVNnOUQA65Lz
+X-Gm-Message-State: AOJu0YzLtEMoXCFA3g99MyBpmXWZFHSZI27Ftf7jeRkoEtq+QKsrU5Tf
+	VAYpuduRCBDA2sH8voaZ1PdSi33KDxNoOG5rWf49472tM941eaZV4m8dpX+lKzXkcmSsCuv4h3V
+	MGNaSqFQAZvaddQB6tdODnaNWaBc=
+X-Google-Smtp-Source: AGHT+IFWST8ze+N1VpaqPM/3uL4sma2IzWxZluNfA2aUcgK/aGhvbZkVOWJpbYGfeGvQzByQV8DY+V2TKm/l0+o9t+M=
+X-Received: by 2002:a2e:a78f:0:b0:2de:8697:e08b with SMTP id
+ 38308e7fff4ca-2eac79c888dmr29788511fa.26.1717610814048; Wed, 05 Jun 2024
+ 11:06:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="RRX4c9uXLV2+FCJl"
-Content-Disposition: inline
-In-Reply-To: <20240529185337.182722-4-rkanwal@rivosinc.com>
-
-
---RRX4c9uXLV2+FCJl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240529062946.5655-4-chris.lu@mediatek.com> <202405300602.AUh9Yu96-lkp@intel.com>
+In-Reply-To: <202405300602.AUh9Yu96-lkp@intel.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Wed, 5 Jun 2024 14:06:41 -0400
+Message-ID: <CABBYNZK53Fx8rmanh6fsLsNjppEtThtis8naKa11nLk3gCHbLQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] Bluetooth: btusb: mediatek: add MediaTek ISO data
+ transmission function
+To: kernel test robot <lkp@intel.com>
+Cc: Chris Lu <chris.lu@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, Sean Wang <sean.wang@mediatek.com>, 
+	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, 
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-mediatek <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 29, 2024 at 07:53:34PM +0100, Rajnesh Kanwal wrote:
-> Adding CTR extension in ISA extension map to lookup for extension
-> availability.
->=20
-> Signed-off-by: Rajnesh Kanwal <rkanwal@rivosinc.com>
+Hi Chris,
 
-Same comment here about $subject.
+On Wed, May 29, 2024 at 7:10=E2=80=AFPM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> Hi Chris,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on bluetooth-next/master]
+> [also build test ERROR on next-20240529]
+> [cannot apply to bluetooth/master linus/master v6.10-rc1]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Lu/Bluetooth=
+-net-add-hci_iso_hdr-function-for-iso-data/20240529-143216
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetoo=
+th-next.git master
+> patch link:    https://lore.kernel.org/r/20240529062946.5655-4-chris.lu%4=
+0mediatek.com
+> patch subject: [PATCH v2 3/3] Bluetooth: btusb: mediatek: add MediaTek IS=
+O data transmission function
+> config: i386-randconfig-014-20240530 (https://download.01.org/0day-ci/arc=
+hive/20240530/202405300602.AUh9Yu96-lkp@intel.com/config)
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a=
+15a9eac96088ae5e9134248d8236e34b91b1)
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20240530/202405300602.AUh9Yu96-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202405300602.AUh9Yu96-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+> >> ld.lld: error: undefined symbol: btmtk_isopkt_pad
+>    >>> referenced by btusb.c:2267 (drivers/bluetooth/btusb.c:2267)
+>    >>>               drivers/bluetooth/btusb.o:(btusb_send_frame) in arch=
+ive vmlinux.a
 
-You're also missing dt-bindings for the extension.
+Please have the above fixed and while at move the vendor specific
+handling of the new endpoint to btmtk.c since that is not standard it
+shall not be part of btusb.c
 
-Thanks,
-Conor.
 
-> ---
->  arch/riscv/include/asm/hwcap.h | 4 ++++
->  arch/riscv/kernel/cpufeature.c | 2 ++
->  2 files changed, 6 insertions(+)
->=20
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwca=
-p.h
-> index b8cc459ee8a4..aff5ef398671 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -86,6 +86,8 @@
->  #define RISCV_ISA_EXT_SSCCFG            77
->  #define RISCV_ISA_EXT_SMCDELEG          78
->  #define RISCV_ISA_EXT_SMCNTRPMF         79
-> +#define RISCV_ISA_EXT_SMCTR             80
-> +#define RISCV_ISA_EXT_SSCTR             81
-> =20
->  #define RISCV_ISA_EXT_XLINUXENVCFG	127
-> =20
-> @@ -95,9 +97,11 @@
->  #ifdef CONFIG_RISCV_M_MODE
->  #define RISCV_ISA_EXT_SxAIA		RISCV_ISA_EXT_SMAIA
->  #define RISCV_ISA_EXT_SxCSRIND		RISCV_ISA_EXT_SMCSRIND
-> +#define RISCV_ISA_EXT_SxCTR		RISCV_ISA_EXT_SMCTR
->  #else
->  #define RISCV_ISA_EXT_SxAIA		RISCV_ISA_EXT_SSAIA
->  #define RISCV_ISA_EXT_SxCSRIND		RISCV_ISA_EXT_SSCSRIND
-> +#define RISCV_ISA_EXT_SxCTR		RISCV_ISA_EXT_SSCTR
->  #endif
-> =20
->  #endif /* _ASM_RISCV_HWCAP_H */
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index d1fb6a8c5492..4334d822b2f2 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -298,6 +298,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =3D {
->  	__RISCV_ISA_EXT_DATA(zvkt, RISCV_ISA_EXT_ZVKT),
->  	__RISCV_ISA_EXT_DATA(smaia, RISCV_ISA_EXT_SMAIA),
->  	__RISCV_ISA_EXT_DATA(smcdeleg, RISCV_ISA_EXT_SMCDELEG),
-> +	__RISCV_ISA_EXT_DATA(smctr, RISCV_ISA_EXT_SMCTR),
->  	__RISCV_ISA_EXT_DATA(smstateen, RISCV_ISA_EXT_SMSTATEEN),
->  	__RISCV_ISA_EXT_DATA(smcntrpmf, RISCV_ISA_EXT_SMCNTRPMF),
->  	__RISCV_ISA_EXT_DATA(smcsrind, RISCV_ISA_EXT_SMCSRIND),
-> @@ -305,6 +306,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =3D {
->  	__RISCV_ISA_EXT_DATA(sscsrind, RISCV_ISA_EXT_SSCSRIND),
->  	__RISCV_ISA_EXT_DATA(ssccfg, RISCV_ISA_EXT_SSCCFG),
->  	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
-> +	__RISCV_ISA_EXT_DATA(ssctr, RISCV_ISA_EXT_SSCTR),
->  	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
->  	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
->  	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
-> --=20
-> 2.34.1
->=20
-
---RRX4c9uXLV2+FCJl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmCpMAAKCRB4tDGHoIJi
-0kEpAQCsOUjZl8R2wNCVzJXQJV4UjjC09oI/oJy7iOQTgrCXpgD/bslLlxazlWXA
-89hLVyp5e76pm/wa8mAGOes1wwKLNgo=
-=memG
------END PGP SIGNATURE-----
-
---RRX4c9uXLV2+FCJl--
+--=20
+Luiz Augusto von Dentz
 
