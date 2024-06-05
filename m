@@ -1,190 +1,215 @@
-Return-Path: <linux-kernel+bounces-201711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A67D8FC20E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:58:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09F88FC20D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3921C228C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB7A1F21067
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EB761FEA;
-	Wed,  5 Jun 2024 02:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3530B7344F;
+	Wed,  5 Jun 2024 02:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nq0cdJiG"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36619433A9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 02:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qxe5hnBP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1885433A9;
+	Wed,  5 Jun 2024 02:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717556263; cv=none; b=TuDU3DaUp6d78gaNbYbRQLS2kE6DbJJzEnWJ6DLa6pXJPw7zeBEdMhvFVV1OntuljAbTXOSr/96gqoPZLyhuXxE/jKPvuIOWpgRLMFZD0VNE6Yv5IOATi9+PHU9jgq2EpC8PchwjP0bW7ZgVUTPvMyN6/cEcttpMFs1K0TnXeUQ=
+	t=1717556253; cv=none; b=uLxBTEkR3Y7bi5Nz74vG+4pRV2tUX3wDVlP6iWwHRCOUob80AVIswH15jysGRF7cq0psfRauD5QA65BVwG0wCLW5gtHVFEXPExv9AULK13+U/crjeCcl5WDGrI8siEYM/CO9/p0wZsQKqItxkyY9rhXtZMteRfVQVSiGTTs53MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717556263; c=relaxed/simple;
-	bh=l6By8LpyD3miiFUsybtcj4X3LoL8UJCC6OQkTbDqPss=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AI1ra3sE/mwu1W1uMwQ0C1sfWX7b6zlxTxY/uEVLJR8lpOEmMKyhu12RqORyr3xKJculfGZm+dx+8wvzRHvjxCJc7+qhLtuOmf7dFryEXWi8FpJjtpB1fgZDdZNQ+SaC1N18dTTSmhIhBGB2splJrckJ4QRGMjCPL2SZ7Q7xcaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nq0cdJiG; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Rleg+
-	P2oOGADZV9ADR3po7+nIwArg90kr4FeqXQZGrU=; b=nq0cdJiGJ84burWXE93Cl
-	emmoQhno1X/SWzUaEumYKMOcYlwlRdW5Fa5VCDJRyINU/2yC05y3cqzJ+DSvE2ud
-	Fr95QBNYuxz+VmMFGBSz07gjjftq3ZyE9sOT9S9S4DoPj36prJzeqfxH4h6tlhNp
-	n64BuJn2VEd4HduRwSUtb8=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wC3LwT5019my8syAg--.63924S4;
-	Wed, 05 Jun 2024 10:56:58 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: ziy@nvidia.com
-Cc: akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mhocko@kernel.org,
-	ran.xiaokai@zte.com.cn,
-	v-songbaohua@oppo.com,
-	xu.xin16@zte.com.cn,
-	yang.yang29@zte.com.cn
-Subject: Re: [PATCH linux-next] mm: huge_memory: fix misused mapping_large_folio_support() for anon folios
-Date: Wed,  5 Jun 2024 02:56:56 +0000
-Message-Id: <20240605025656.889177-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <E30FDAA1-B4D4-41C9-993C-0AD5044F30C0@nvidia.com>
-References: <E30FDAA1-B4D4-41C9-993C-0AD5044F30C0@nvidia.com>
+	s=arc-20240116; t=1717556253; c=relaxed/simple;
+	bh=Tf3EId6rxeexzyTsHKLQ6hT9dw4h2JfE1+v1zFOFQ4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzZ8dtxAEcLt7ewt5VeTdEIWc9U+OCaHaqwDPmzozYGUcTChP9g3EoVKkXty01FTYF/OvZV8y1CgO5BEnBa+GYoF9H/6bVnxlmbZ10WetRf+egMjKqV34SFKSFQeCQkp2n87Vjg9oQUYX7TutFKV1IRG/1oYHJbmPVQgpnc28vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qxe5hnBP; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717556252; x=1749092252;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Tf3EId6rxeexzyTsHKLQ6hT9dw4h2JfE1+v1zFOFQ4g=;
+  b=Qxe5hnBPym7jCPiVUMBXmD/M385aaDshYNYkJFAEnZhSOdpERyjohcNd
+   VTyCYok+qxeiP3WLrj0DLFS0s0pn71P+jv4Z/PFsMqfwko/jmbY3YAXag
+   lSX5TxNCmilrlTh+0UeZLzPAUmR4sCMWV4G2YhrM8Ywl2EeAe1AUJbeR9
+   5N1w9qupUsJ2OOknxZPa40DRBrMbSVuajYPB22VC3htx0g4DXYInOQPdM
+   0o8WcEriB2xhufVur3qkm13FYH1dh72Lm2icjIKzHdO+t23oSNsGi6gvX
+   rq2x59JuBAEIHQ13PvAN5Ztt/vzCWs6T2LIgoiAVYsANtWufG/N9fhkLh
+   Q==;
+X-CSE-ConnectionGUID: pYNwPXMWQSmAjuOQm3l5gA==
+X-CSE-MsgGUID: XuhrYnSySNKWhXfA/5s70g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13889968"
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="13889968"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 19:57:31 -0700
+X-CSE-ConnectionGUID: iK6PlWzmT6a05HZ7diAK5Q==
+X-CSE-MsgGUID: KHRIZ7fMR2C2Zb6tAzgy/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="42550156"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 04 Jun 2024 19:57:28 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sEgq5-0000q3-0N;
+	Wed, 05 Jun 2024 02:57:25 +0000
+Date: Wed, 5 Jun 2024 10:57:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yang Shi <yang@os.amperecomputing.com>, peterx@redhat.com,
+	oliver.sang@intel.com, paulmck@kernel.org, david@redhat.com,
+	willy@infradead.org, riel@surriel.com, vivek.kasireddy@intel.com,
+	cl@linux.com, akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm: gup: do not call try_grab_folio() in slow path
+Message-ID: <202406051039.9m00gwIx-lkp@intel.com>
+References: <20240604234858.948986-2-yang@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC3LwT5019my8syAg--.63924S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZry5Jr4xJF4xKw1fZr17Awb_yoWrXw43pF
-	y2gFnayFWkXrZIkr12qF4kKr1YvrW8Xa4kZay3XwnxAasIgF12kFWUJ3W8uay8uryxJr4I
-	va1UXFyagF98taDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoKZZUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMx70TGXAloslvQAAs1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604234858.948986-2-yang@os.amperecomputing.com>
 
-> On 4 Jun 2024, at 0:57, David Hildenbrand wrote:
-> 
-> > On 04.06.24 07:47, xu.xin16@zte.com.cn wrote:
-> >> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> >>
-> >> When I did a large folios split test, a WARNING
-> >> "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
-> >> was triggered. But my test cases are only for anonmous folios.
-> >> while mapping_large_folio_support() is only reasonable for page
-> >> cache folios.
-> >
-> > Agreed.
-> >
-> > I wonder if mapping_large_folio_support() should either
-> >
-> > a) Complain if used for anon folios, so we can detect the wrong use more easily. (VM_WARN_ON_ONCE())
-> 
-> This is much better.
-> 
-> >
-> > b) Return "true" for anonymous mappings, although that's more debatable.
-> 
-> This might fix the warning here, but the function might get wrong uses easily.
+Hi Yang,
 
-yes, maybe we should rename mapping_large_folio_support() if we choose b).
- 
-> >
-> >>
-> >> In split_huge_page_to_list_to_order(), the folio passed to
-> >> mapping_large_folio_support() maybe anonmous folio. The
-> >> folio_test_anon() check is missing. So the split of the anonmous THP
-> >> is failed. This is also the same for shmem_mapping(). We'd better add
-> >> a check for both. But the shmem_mapping() in __split_huge_page() is
-> >> not involved, as for anonmous folios, the end parameter is set to -1, so
-> >> (head[i].index >= end) is always false. shmem_mapping() is not called.
-> >>
-> >> Using /sys/kernel/debug/split_huge_pages to verify this, with this
-> >> patch, large anon THP is successfully split and the warning is ceased.
-> >>
-> >> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> >> Cc: xu xin <xu.xin16@zte.com.cn>
-> >> Cc: Yang Yang <yang.yang29@zte.com.cn>
-> >> ---
-> >>   mm/huge_memory.c | 38 ++++++++++++++++++++------------------
-> >>   1 file changed, 20 insertions(+), 18 deletions(-)
-> >>
-> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >> index 317de2afd371..4c9c7e5ea20c 100644
-> >> --- a/mm/huge_memory.c
-> >> +++ b/mm/huge_memory.c
-> >> @@ -3009,31 +3009,33 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-> >>   	if (new_order >= folio_order(folio))
-> >>   		return -EINVAL;
-> >>
-> >> -	/* Cannot split anonymous THP to order-1 */
-> >> -	if (new_order == 1 && folio_test_anon(folio)) {
-> >> -		VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-> >> -		return -EINVAL;
-> >> -	}
-> >> -
-> >>   	if (new_order) {
-> >>   		/* Only swapping a whole PMD-mapped folio is supported */
-> >>   		if (folio_test_swapcache(folio))
-> >>   			return -EINVAL;
-> >> -		/* Split shmem folio to non-zero order not supported */
-> >> -		if (shmem_mapping(folio->mapping)) {
-> >> -			VM_WARN_ONCE(1,
-> >> -				"Cannot split shmem folio to non-0 order");
-> >> -			return -EINVAL;
-> >> -		}
-> >> -		/* No split if the file system does not support large folio */
-> >> -		if (!mapping_large_folio_support(folio->mapping)) {
-> >> -			VM_WARN_ONCE(1,
-> >> -				"Cannot split file folio to non-0 order");
-> >> -			return -EINVAL;
-> >> +
-> >> +		if (folio_test_anon(folio)) {
-> >> +			/* Cannot split anonymous THP to order-1 */
-> >> +			if (new_order == 1) {
-> >> +				VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-> >> +				return -EINVAL;
-> >> +			}
-> >> +		} else {
-> >> +			/* Split shmem folio to non-zero order not supported */
-> >> +			if (shmem_mapping(folio->mapping)) {
-> >> +				VM_WARN_ONCE(1,
-> >> +					"Cannot split shmem folio to non-0 order");
-> >> +				return -EINVAL;
-> >> +			}
-> >> +			/* No split if the file system does not support large folio */
-> >> +			if (!mapping_large_folio_support(folio->mapping)) {
-> >> +				VM_WARN_ONCE(1,
-> >> +					"Cannot split file folio to non-0 order");
-> >> +				return -EINVAL;
-> >> +			}
-> >>   		}
-> >>   	}
-> >
-> > What about the following sequence:
-> >
-> > if (folio_test_anon(folio)) {
-> > 	if (new_order == 1)
-> > 		...
-> > } else if (new_order) {
-> > 	if (shmem_mapping(...))
-> > 		...
-> > 	...
-> > }
-> >
-> > if (folio_test_swapcache(folio) && new_order)
-> > 	return -EINVAL;
-> >
-> > Should result in less churn and reduce indentation level.
-> 
-> Yeah, this looks better to me.
-> 
-> Best Regards,
-> Yan, Zi
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yang-Shi/mm-gup-do-not-call-try_grab_folio-in-slow-path/20240605-075027
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240604234858.948986-2-yang%40os.amperecomputing.com
+patch subject: [PATCH 2/2] mm: gup: do not call try_grab_folio() in slow path
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240605/202406051039.9m00gwIx-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406051039.9m00gwIx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406051039.9m00gwIx-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> mm/gup.c:131:22: warning: 'try_grab_folio_fast' defined but not used [-Wunused-function]
+     131 | static struct folio *try_grab_folio_fast(struct page *page, int refs,
+         |                      ^~~~~~~~~~~~~~~~~~~
+
+
+vim +/try_grab_folio_fast +131 mm/gup.c
+
+   101	
+   102	/**
+   103	 * try_grab_folio_fast() - Attempt to get or pin a folio in fast path.
+   104	 * @page:  pointer to page to be grabbed
+   105	 * @refs:  the value to (effectively) add to the folio's refcount
+   106	 * @flags: gup flags: these are the FOLL_* flag values.
+   107	 *
+   108	 * "grab" names in this file mean, "look at flags to decide whether to use
+   109	 * FOLL_PIN or FOLL_GET behavior, when incrementing the folio's refcount.
+   110	 *
+   111	 * Either FOLL_PIN or FOLL_GET (or neither) must be set, but not both at the
+   112	 * same time. (That's true throughout the get_user_pages*() and
+   113	 * pin_user_pages*() APIs.) Cases:
+   114	 *
+   115	 *    FOLL_GET: folio's refcount will be incremented by @refs.
+   116	 *
+   117	 *    FOLL_PIN on large folios: folio's refcount will be incremented by
+   118	 *    @refs, and its pincount will be incremented by @refs.
+   119	 *
+   120	 *    FOLL_PIN on single-page folios: folio's refcount will be incremented by
+   121	 *    @refs * GUP_PIN_COUNTING_BIAS.
+   122	 *
+   123	 * Return: The folio containing @page (with refcount appropriately
+   124	 * incremented) for success, or NULL upon failure. If neither FOLL_GET
+   125	 * nor FOLL_PIN was set, that's considered failure, and furthermore,
+   126	 * a likely bug in the caller, so a warning is also emitted.
+   127	 *
+   128	 * It uses add ref unless zero to elevate the folio refcount and must be called
+   129	 * in fast path only.
+   130	 */
+ > 131	static struct folio *try_grab_folio_fast(struct page *page, int refs,
+   132						 unsigned int flags)
+   133	{
+   134		struct folio *folio;
+   135	
+   136		/* Raise warn if it is not called in fast GUP */
+   137		VM_WARN_ON_ONCE(!irqs_disabled());
+   138	
+   139		if (WARN_ON_ONCE((flags & (FOLL_GET | FOLL_PIN)) == 0))
+   140			return NULL;
+   141	
+   142		if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
+   143			return NULL;
+   144	
+   145		if (flags & FOLL_GET)
+   146			return try_get_folio(page, refs);
+   147	
+   148		/* FOLL_PIN is set */
+   149	
+   150		/*
+   151		 * Don't take a pin on the zero page - it's not going anywhere
+   152		 * and it is used in a *lot* of places.
+   153		 */
+   154		if (is_zero_page(page))
+   155			return page_folio(page);
+   156	
+   157		folio = try_get_folio(page, refs);
+   158		if (!folio)
+   159			return NULL;
+   160	
+   161		/*
+   162		 * Can't do FOLL_LONGTERM + FOLL_PIN gup fast path if not in a
+   163		 * right zone, so fail and let the caller fall back to the slow
+   164		 * path.
+   165		 */
+   166		if (unlikely((flags & FOLL_LONGTERM) &&
+   167			     !folio_is_longterm_pinnable(folio))) {
+   168			if (!put_devmap_managed_folio_refs(folio, refs))
+   169				folio_put_refs(folio, refs);
+   170			return NULL;
+   171		}
+   172	
+   173		/*
+   174		 * When pinning a large folio, use an exact count to track it.
+   175		 *
+   176		 * However, be sure to *also* increment the normal folio
+   177		 * refcount field at least once, so that the folio really
+   178		 * is pinned.  That's why the refcount from the earlier
+   179		 * try_get_folio() is left intact.
+   180		 */
+   181		if (folio_test_large(folio))
+   182			atomic_add(refs, &folio->_pincount);
+   183		else
+   184			folio_ref_add(folio,
+   185					refs * (GUP_PIN_COUNTING_BIAS - 1));
+   186		/*
+   187		 * Adjust the pincount before re-checking the PTE for changes.
+   188		 * This is essentially a smp_mb() and is paired with a memory
+   189		 * barrier in folio_try_share_anon_rmap_*().
+   190		 */
+   191		smp_mb__after_atomic();
+   192	
+   193		node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, refs);
+   194	
+   195		return folio;
+   196	}
+   197	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
