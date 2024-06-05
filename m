@@ -1,187 +1,115 @@
-Return-Path: <linux-kernel+bounces-202912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4BA8FD2E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D98A8FD2E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900401C21466
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:24:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 361841C22815
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424A1188CBB;
-	Wed,  5 Jun 2024 16:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D0D15EFDC;
+	Wed,  5 Jun 2024 16:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bVHsNPwH"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="ZT0Wj6/3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lVOjhAum"
+Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDC961FD6;
-	Wed,  5 Jun 2024 16:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D036861FD6;
+	Wed,  5 Jun 2024 16:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717604661; cv=none; b=J3bFiFOsrqx9/UXvCDWhvZOAiOF8igEtEk6nsp79jwPsRuSAK4YOqe0I6SdJK/Ga+YLZ0OWaEeYc7YYxZ06OkUd1vZiuxiq1MEiP0b9DnOcAMRGZBV4Yz5rwco/XPHXzWdGhfwO76nG5+j64Epy1BPBJ4leWy7srMvTHOLqE1W8=
+	t=1717604682; cv=none; b=hwMlOscbNbvEeU/1IUVNX2RJiiwQZVAWAEui7pV7hBIDKsbusk1AgwKC8ftvR4F3Uc2Vq9Xmi4em3hZ0rwQgWypzr4TJNQS07cm1ABo2ifL0TvlzDJB0KsG1VDktX3gjA+Pm/RW/Dy9UWH8iFccpOA9z5ocd9mKNSYXlEN2hyT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717604661; c=relaxed/simple;
-	bh=fy2dC7kJ5yIyYLkY6YYNVLaA9wC2Bbg3j4tuIPc/4tc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=fPEBSXK98kGY6oKIjA5gD+UuVlowG/+foRy2IpdpH/lSnMC8pi8kY31C9wa6KBxjogWXjUbVqMaUWAV4FjkuV8q4fRIjKrmHuUyks+G5pkE82IHQHUwPxLoIsyFqmK0mm1fN4H3qxBzE6+IJrv27UOoZGCwOk/LCt/vAR6mCXdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bVHsNPwH; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7024791a950so785835b3a.0;
-        Wed, 05 Jun 2024 09:24:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717604659; x=1718209459; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=flQITc7xQJ7hzuC/l9q3Vyu4uqvXTdu5y2cqIKMXoP8=;
-        b=bVHsNPwHaG6DWjrcPfRAcl2Kc14h4ZyvhCYqVlsxzrlpPiE6KdwTp1at0BIfLrDcen
-         ZZ/eyFv9H/0Gk9kbeAbW5GMNrvJwGksf4bYjlILyFygq5o7tadnirdvSHJUUp0UauPZM
-         urn8KJ6i0uizcpwpojuH+tcQWwIaZw+tcD+S9u17bCe/+HqBJmq9dp+d6jDhe768AiTj
-         8Ad1B5sYMI/GuSpEsJioug4PB3JgUMhSb0gLoFmrn6Q2CzFb4/WrPDBazrO2B+yzb9GC
-         emuK5FGMhsyhHqoqG44FKc4ijbs6/TWTFtVcmC9Fu5J162PqLUk+8ukgUx6YftoLivsr
-         jeAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717604659; x=1718209459;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=flQITc7xQJ7hzuC/l9q3Vyu4uqvXTdu5y2cqIKMXoP8=;
-        b=S3ZqrZa5/VMnU9pN1YRMJ4n29vJTjHH7ZND/TsNp/y2sHKEw4ZX1EHhGfEeolSDsWw
-         G64pNqdB3kOafyMQiboAvB1WoVVIq97BcEFB5i7c171JPNWZvbtBLrEPNBkLU4xA7pG4
-         2fLjwYCF/YR144gfoBpJsMtcgC86YVLIQ3707ByfFL4DmWzWjKHklSPr3hSwFc8SaKGY
-         Rqf8cWnr7K2+J4Tnb34YBvZYF6bA24r9Gw0iDENmqdqfSkYkIYGuZ+EAlJeduM2izoRG
-         iapD774DJvIMp6oRCrLlWvtw8GVn8c5kg7+m0q4RxW78pyiT2Iki5SWMDJQ1wuDi/v1c
-         ke2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVOm6BSl2Mvl/JRvHCUio1bVFtSxnWLryscE8tiQJOD6JR6ppq/5gMnFoWC3i2qMfg2VOVcgH2oGqZDnIru8IwPP/xEWyI/eKKRa6e+ByAflCsYwsMHdZuW2qwPgDbF3E8L2uN2LGhcoNH8agbt1JY6I9Fz3enZG+Q6NwgL0y4o0w==
-X-Gm-Message-State: AOJu0Yy3iYq0n/2n75NVqYRQ0qhJmnVZY5gPTiA3vJbAhgsdQTF/i2JW
-	GgEvvuqA6IAk+aCvl4MlSbFoifYJsi8q149sWuOjhhWsHjfcw7hW3uNkUlFs82v1sOGm9AAFTS8
-	Prc1KuB3oHsx+3DIzfTOfchMUSBM=
-X-Google-Smtp-Source: AGHT+IFl4BDR1W/qUUzA2PO/5TqjnOMuZDrbSdWXqHm0/vvIQclz1kYhZyeF3J6773NUVsVX4sJpCnsoN9a3gAPR1gc=
-X-Received: by 2002:a17:90a:6b43:b0:2c1:dc60:d933 with SMTP id
- 98e67ed59e1d1-2c299a23347mr185983a91.19.1717604659345; Wed, 05 Jun 2024
- 09:24:19 -0700 (PDT)
+	s=arc-20240116; t=1717604682; c=relaxed/simple;
+	bh=rL1AnJVgXZFiKvo0ZxjEe1wHlVFnfj38mHTb2OSBu1E=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=s8th6ZS/qyn4+SuxR98IcZLLH43ViKfd2ZN1/68F7NFRbWc8bRctfS+jwavhG8HW5K6r39fV01RsDJTdSOQtd04jNDhWcyD0Baj3HJPoXHlrW0MqIA9OJVYyaw+psk6T0N9yHa0pz2K1wllEQ2EIgSqlEiuIxeLD2bmPp3RWEto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=ZT0Wj6/3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lVOjhAum; arc=none smtp.client-ip=64.147.123.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 87E1D1800110;
+	Wed,  5 Jun 2024 12:24:38 -0400 (EDT)
+Received: from imap52 ([10.202.2.102])
+  by compute3.internal (MEProxy); Wed, 05 Jun 2024 12:24:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1717604678; x=1717691078; bh=rL1AnJVgXZ
+	FiKvo0ZxjEe1wHlVFnfj38mHTb2OSBu1E=; b=ZT0Wj6/3mSAf33wnAjTFHKYWJS
+	nMb6AkMZ9iQTSGIRGNNtjEa/5sjlJGvtgIJlk1KVLYCM+azvPK9S+KIUyPxWelfM
+	hPmSUdyVc5+G/dDCF5UpC3BqW33b4A54L1qr23VXwjcoSpCVlWf/TekRN1t3dU13
+	VhNSnMa8Qf+TPe2Yevz46MtdxQY++lQ5/1AnuD1zPsm6D0FRh0y8IhGFgkQ8mhLU
+	Iv6M+bm0cWgxjMAsokuZcqEr/lbNPZSPcXU8g5DP4+UinnOcUt6EWZL7ATjEh2/v
+	C5rFoGB0XxegzOgnGbVyUY1o+im3wOLOo6f9HrjWz5RNJsadmtyPi5Z6QpYA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717604678; x=1717691078; bh=rL1AnJVgXZFiKvo0ZxjEe1wHlVFn
+	fj38mHTb2OSBu1E=; b=lVOjhAumCPKHeqXbJpImAuCmr4jTutmFpavTEFPnwVrU
+	c+3m+qLnOmutWBFhvDgNxBeJYcBfp+eVH6bVJjZcjizpl1G0h12lqUm98/CGGrps
+	irHgWx8q3nR/m5rWQP+YPh8UwcNNyE2zYGuBaZGW5XRHKIX5HMDW77+FhsWZpC5z
+	tIb4Yjm071s6kfzoq6BsCHTirsbA2CGpOdAkBWe3HUnajxB8g8f61wB1eC3v1a31
+	IpG54HrSw3mGqBEvUqmr9HksmmHZFQqCenzCYYDNfEIu7cGPoGvlip83MnAF9xsH
+	WUwFbCJSNpChLsNxawdJ3NXPP6aWCnJ6F6IjAb2SPg==
+X-ME-Sender: <xms:RZFgZvDiTn93za5R_Mc-VV5FYXeSMPzNBUw6LZzrc9Ziw2OjSE9IvQ>
+    <xme:RZFgZlhcsLGLoioehVd5Cg1AQ3r9QZVhZVAWF-ixQNTdDK5qZUz_pnqSiTQwQc1oG
+    BgrQ06xMrg8rBZ66ls>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeliedguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdfo
+    rghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsg
+    gsrdgtrgeqnecuggftrfgrthhtvghrnhepieeufeejieevteduvdekteefledtveffvedu
+    hefffeejudefvdeijeegudegkefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgt
+    rg
+X-ME-Proxy: <xmx:RZFgZqm5joN5qOPai4gkHcnynIcvuT66FlcqEwkC33ywLDjVLYXFOw>
+    <xmx:RZFgZhxPQjm7MH7IcJY9GGt792ce2iNbXowvP4-fkY5-dSGjWqkLow>
+    <xmx:RZFgZkSbYma4eP8PgaZisPNTf4_bXN2EXTXK--VuVux748bm-53jDw>
+    <xmx:RZFgZkbQEcvQzZDt4Ujw6ON6O-GtZ7YZ6F7gQqCjca0TRkwTviQg7w>
+    <xmx:RpFgZqNIJZJ6IHOZUfubIasVS4pIETZoZNc8izaVAmd5vagjTDLPXQhB>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BE9F7C60097; Wed,  5 Jun 2024 12:24:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-2-andrii@kernel.org>
- <Zl-38XrUw9entlFR@casper.infradead.org> <uevtozlryyqw5vj2duuzowupknfynmreruiw6m7bcxryjppqpm@7g766emooxfh>
- <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com>
-In-Reply-To: <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 5 Jun 2024 09:24:07 -0700
-Message-ID: <CAEf4BzYDhtkYt=qn2YgrnRkZ0tpa3EPAiCUcBkdUa-9DKN22dQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] mm: add find_vma()-like API but RCU protected and
- taking VMA lock
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
-	linux-mm@kvack.org, surenb@google.com, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <8a1439ae-ff5d-4a8a-85cd-cabfa06d74d2@app.fastmail.com>
+In-Reply-To: <20240605152911.167179-1-diogo.ivo@siemens.com>
+References: <20240604194056.16625-1-mpearson-lenovo@squebb.ca>
+ <20240605152911.167179-1-diogo.ivo@siemens.com>
+Date: Wed, 05 Jun 2024 12:24:17 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Diogo Ivo" <diogo.ivo@siemens.com>
+Cc: "Greg KH" <gregkh@linuxfoundation.org>,
+ "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: treat get_pdos not supported condition as info
+ instead of error
+Content-Type: text/plain
 
-On Wed, Jun 5, 2024 at 9:13=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Wed, Jun 5, 2024 at 6:33=E2=80=AFAM Liam R. Howlett <Liam.Howlett@orac=
-le.com> wrote:
-> >
-> > * Matthew Wilcox <willy@infradead.org> [240604 20:57]:
-> > > On Tue, Jun 04, 2024 at 05:24:46PM -0700, Andrii Nakryiko wrote:
-> > > > +/*
-> > > > + * find_and_lock_vma_rcu() - Find and lock the VMA for a given add=
-ress, or the
-> > > > + * next VMA. Search is done under RCU protection, without taking o=
-r assuming
-> > > > + * mmap_lock. Returned VMA is guaranteed to be stable and not isol=
-ated.
-> > >
-> > > You know this is supposed to be the _short_ description, right?
-> > > Three lines is way too long.  The full description goes between the
-> > > arguments and the Return: line.
->
-> Sure, I'll adjust.
->
-> > >
-> > > > + * @mm: The mm_struct to check
-> > > > + * @addr: The address
-> > > > + *
-> > > > + * Returns: The VMA associated with addr, or the next VMA.
-> > > > + * May return %NULL in the case of no VMA at addr or above.
-> > > > + * If the VMA is being modified and can't be locked, -EBUSY is ret=
-urned.
-> > > > + */
-> > > > +struct vm_area_struct *find_and_lock_vma_rcu(struct mm_struct *mm,
-> > > > +                                        unsigned long address)
-> > > > +{
-> > > > +   MA_STATE(mas, &mm->mm_mt, address, address);
-> > > > +   struct vm_area_struct *vma;
-> > > > +   int err;
-> > > > +
-> > > > +   rcu_read_lock();
-> > > > +retry:
-> > > > +   vma =3D mas_find(&mas, ULONG_MAX);
-> > > > +   if (!vma) {
-> > > > +           err =3D 0; /* no VMA, return NULL */
-> > > > +           goto inval;
-> > > > +   }
-> > > > +
-> > > > +   if (!vma_start_read(vma)) {
-> > > > +           err =3D -EBUSY;
-> > > > +           goto inval;
-> > > > +   }
-> > > > +
-> > > > +   /*
-> > > > +    * Check since vm_start/vm_end might change before we lock the =
-VMA.
-> > > > +    * Note, unlike lock_vma_under_rcu() we are searching for VMA c=
-overing
-> > > > +    * address or the next one, so we only make sure VMA wasn't upd=
-ated to
-> > > > +    * end before the address.
-> > > > +    */
-> > > > +   if (unlikely(vma->vm_end <=3D address)) {
-> > > > +           err =3D -EBUSY;
-> > > > +           goto inval_end_read;
-> > > > +   }
-> > > > +
-> > > > +   /* Check if the VMA got isolated after we found it */
-> > > > +   if (vma->detached) {
-> > > > +           vma_end_read(vma);
-> > > > +           count_vm_vma_lock_event(VMA_LOCK_MISS);
-> > > > +           /* The area was replaced with another one */
-> > >
-> > > Surely you need to mas_reset() before you goto retry?
-> >
-> > Probably more than that.  We've found and may have adjusted the
-> > index/last; we should reconfigure the maple state.  You should probably
-> > use mas_set(), which will reset the maple state and set the index and
-> > long to address.
->
-> Yep, makes sense, thanks. As for the `unlikely(vma->vm_end <=3D
-> address)` case, I presume we want to do the same, right? Basically, on
-> each retry start from the `address` unconditionally, no matter what's
-> the reason for retry.
+Hi Diogo,
 
-ah, never mind, we don't retry in that situation, I'll just put
-`mas_set(&mas, address);` right before `goto retry;`. Unless we should
-actually retry in the case when VMA got moved before the requested
-address, not sure, let me know what you think. Presumably retrying
-will allow us to get the correct VMA without the need to fall back to
-mmap_lock?
-
+On Wed, Jun 5, 2024, at 11:29 AM, Diogo Ivo wrote:
+> Just realized Dmitry said literally the same thing as me. Sorry for the
+> extra noise, please ignore my comment.
 >
-> >
-> >
-> > >
-> > > > +           goto retry;
-> > > > +   }
-> > >
+All good - it's a good suggestion and I appreciate the reviews from both you and Dmitry.
+
+I'm looking into it, to see if it works out. Will update to the thread in a bit.
+
+Thanks
+Mark
 
