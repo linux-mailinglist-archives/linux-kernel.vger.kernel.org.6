@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-201691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465A98FC1DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:32:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460268FC1DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB7A1F25EBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:32:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2F91B22AAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347F261FEB;
-	Wed,  5 Jun 2024 02:32:39 +0000 (UTC)
-Received: from mail114-241.sinamail.sina.com.cn (mail114-241.sinamail.sina.com.cn [218.30.114.241])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F386861FFA;
+	Wed,  5 Jun 2024 02:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Iots8wdS"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D3D2BD0D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 02:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.241
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD90184E;
+	Wed,  5 Jun 2024 02:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717554758; cv=none; b=mQt9f76CuP+fN05dU6FPhVvDGoZPiiWN9r6h0ZISBv1XrbEQ33Zt1uWKyUX37zSCSDtaP4ENsxyVAu6d6rLjR4MBjBi6+XcBynPhvkWjXkOI9G51HnEXQesTFE91uYO5BQjoMMCRfjQfRlIIIGpcbYSQY/hQLmGBo9lMj4jouvw=
+	t=1717554806; cv=none; b=s62Hex+ihXd6uxSfxFav7gCweA0U7zI9M/n+ImMxnQ/12i38p+/iTW21otETAMjDhcE9R8yObWu4MeQwZskJZYOWFrKyo3jbLP8HmHzcTA2SMavo69yfMaoQo4yxwH5lj+wlKMVdPDko3aRFlIRml4eO4DF8XPLJr09yxaK0Or0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717554758; c=relaxed/simple;
-	bh=c+2oWUwgKmMxy9vJPIMcaAT5KjS3qKAGALV1ECdGJ6E=;
-	h=Date:From:To:Cc:Subject:Mime-Version:Message-ID:Content-Type:
-	 Content-Disposition; b=DqBH06OCnrGxCubCPzye8Za9roTdAN1q6SNm+HKIvu3itcmkJVdMZHyRz8SmD0czSwmT1w74VsvcOpMljf7/jQgbgSctrUEzZTqfVbAchXkQCGRBgYpVUyisdKJFXZRuozFVmdmnn6yhJECllPADTl6YVc1m5aTmw7T6rAXmWrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.241
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: webmail.sinamail.sina.com.cn
-Received: from webmail-23-146.pop3.fmail.yf.sinanode.com (HELO webmail.sinamail.sina.com.cn)([10.2.23.146])
-	by sina.com (172.16.235.24) with SMTP
-	id 665FCE3500006D9B; Wed, 5 Jun 2024 10:32:21 +0800 (CST)
-X-Sender: ghostxavier@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=ghostxavier@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=ghostxavier@sina.com
-X-SMAIL-MID: 58651245089622
-Received: by webmail.sinamail.sina.com.cn (Postfix, from userid 993)
-	id 82C222AEA; Wed,  5 Jun 2024 10:32:21 +0800 (CST)
-Date: Wed, 05 Jun 2024 10:32:21 +0800
-Received: from ghostxavier@sina.com ([59.82.45.118]) by m1.mail.sina.com.cn via HTTP;
- Wed, 05 Jun 2024 10:32:21 +0800
-From: ghostxavier@sina.com
-Reply-To: ghostxavier@sina.com
-To: "Waiman Long" <longman@redhat.com>
-Cc: "lizefan.x" <lizefan.x@bytedance.com>, "tj" <tj@kernel.org>,
- "hannes" <hannes@cmpxchg.org>, "cgroups" <cgroups@vger.kernel.org>,
- "linux-kernel" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] cpuset: use Union-Find to optimize the merging of cpumasks
-X-Priority: 3
+	s=arc-20240116; t=1717554806; c=relaxed/simple;
+	bh=dxJjjcht5HLUS6ZRJqfRkpTQibrrKD4SwhpETJ6qPKQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U3KKqA6YKXeEniDkrsCpkb2soFbwGvFG34Q0JvCApI4KLxCDQ97ExurWcZztdN2kH02DAUYXDoZQBu5ifXFwldxrwNm4o4VC3Hd5X3csY+xTW14OB1gog/kJeSDbJbMrK0L2VYHA40Abp+M0S8R0dv6/X1Tsze1MUsG71roEMig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Iots8wdS; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4551DvBU005217;
+	Wed, 5 Jun 2024 02:33:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=corp-2023-11-20;
+ bh=YF1pZmbtrrh0JQYfM/Nk+W3XPvlIGS4AclEO2b/dAQE=;
+ b=Iots8wdSWoiz57TB2gtpxKdUv3BBFUKX2egezCAlB/zCanJJ7akQitZRbvXE5WfKHuHw
+ EIiwCmJDsYovbdP9qkBYXobskN4g7FsIw0E3ZPQHpQpVodEl2OhGuFytvGxzX/5MoHw1
+ badrYRstaQ2AUKqaYnPKlx2S0d1SjyMbzeUpS38GDcDQDZA5ff9BqezEhkFsNIxGM30C
+ CKwvcaCXI+iXZnRJbWJg/JNT2Xb38BRnIV22+ZIYtfOkJ9tRAjkqtPWGr8//qlL0gqrK
+ M/MDGHkKyeu1SJPyOxMf5EeINWoTEY4Uxnq7/VklsBgeBI8gDW180B3nLkZFB4Ig3uGG tQ== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbrs865f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 05 Jun 2024 02:33:17 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4550ZM70015573;
+	Wed, 5 Jun 2024 02:33:16 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrjd4bm9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 05 Jun 2024 02:33:16 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4552XFLs011499;
+	Wed, 5 Jun 2024 02:33:15 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ygrjd4bky-1;
+	Wed, 05 Jun 2024 02:33:15 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Avri Altman <avri.altman@wdc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>, Bean Huo <beanhuo@micron.com>,
+        Peter Wang <peter.wang@mediatek.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/3] scsi: ufs: Allow RTT negotiation
+Date: Tue,  4 Jun 2024 22:32:37 -0400
+Message-ID: <171755313984.3904072.6642162030397966521.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240530142510.734-1-avri.altman@wdc.com>
+References: <20240530142510.734-1-avri.altman@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <665fce357d3050.07594014.09810475@m1.mail.sina.com.cn>
-X-MessageID: 08dd085708a2d07ac4a03e8c869c7964_202406
-X-SMAIL-UIID: 38698129900DD987383F1AD1E832DD4F-20240605-103221-2
-X-Mailer: Sina WebMail 4.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=722 phishscore=0
+ adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406050018
+X-Proofpoint-ORIG-GUID: EV8AbOhiJ7-fEUVMSSzMlYuC0efHq3bp
+X-Proofpoint-GUID: EV8AbOhiJ7-fEUVMSSzMlYuC0efHq3bp
 
-SGkgTG9uZ21hbiwNCg0KSSBhbSByZWFkeSB0byBwcmVwYXJlIGFuZCBzZW5kIGEgdjQgcGF0Y2gg
-YmFzZWQgb24gdGhlIG5ldyBjcHVzZXQgY29kZWJhc2UuIFRoYW5rcyBmb3IgeW91ciBndWlkYW5j
-ZSBhbmQgc3VwcG9ydC4NCg0KQmVzdCByZWdhcmRzLA0KWGF2aWVyDQoNCi0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQpPbiA2LzMvMjQgMDg6MzEsIFhhdmllciB3cm90ZToNCj4g
-VGhlIHByb2Nlc3Mgb2YgY29uc3RydWN0aW5nIHNjaGVkdWxpbmcgZG9tYWlucyBpbnZvbHZlcyBt
-dWx0aXBsZSBsb29wcw0KPiBhbmQgcmVwZWF0ZWQgZXZhbHVhdGlvbnMsIGxlYWRpbmcgdG8gbnVt
-ZXJvdXMgcmVkdW5kYW50IGFuZCBpbmVmZmVjdGl2ZQ0KPiBhc3Nlc3NtZW50cyB0aGF0IGltcGFj
-dCBjb2RlIGVmZmljaWVuY3kuDQo+DQo+IEhlcmUsIHdlIHVzZSBVbmlvbi1GaW5kIHRvIG9wdGlt
-aXplIHRoZSBtZXJnaW5nIG9mIGNwdW1hc2tzLiBCeSBlbXBsb3lpbmcNCj4gcGF0aCBjb21wcmVz
-c2lvbiBhbmQgdW5pb24gYnkgcmFuaywgd2UgZWZmZWN0aXZlbHkgcmVkdWNlIHRoZSBudW1iZXIg
-b2YNCj4gbG9va3VwcyBhbmQgbWVyZ2UgY29tcGFyaXNvbnMuDQo+DQo+IFNpZ25lZC1vZmYtYnk6
-IFhhdmllciA8Z2hvc3R4YXZpZXJAc2luYS5jb20+DQo+DQo+IEhpIExvbmdtYW4sDQo+DQo+IFRo
-YW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayBvbiB0aGUgcHJldmlvdXMgdmVyc2lvbiBvZiB0aGUg
-cGF0Y2guDQo+DQo+IE5vdyBJIHdpbGwgcmVzcG9uZCB0byB0aGUgdGhyZWUgcXVlc3Rpb25zIHlv
-dSByYWlzZWQ6DQo+IDEpIFRoZSBmdW5jdGlvbiBjb21tZW50IGRlc2NyaWJlcyB0aGUgYWxnb3Jp
-dGhtIHRvIGZpbmQgdGhlIHNldCBvZg0KPiBkb21haW5zLiBJZiB5b3UgY2hhbmdlIHRoZSBhbGdv
-cml0aG0sIHlvdSBoYXZlIHRvIHVwZGF0ZSB0aGUgY29tbWVudCBhcw0KPiB3ZWxsLg0KPg0KPiBS
-ZXBseTogU29ycnkgZm9yIG5vdCBwYXlpbmcgYXR0ZW50aW9uIHRvIHRoZSBjb21tZW50cyBiZWZv
-cmUuIFRoZSBuZXcgcGF0Y2ggKHYzKSBoYXMgdXBkYXRlZCB0aGUgY29tbWVudCBjb250ZW50Lg0K
-Pg0KPiAyKSBnZW5lcmF0ZV9zY2hlZF9kb21haW5zKCkgaXMgbm90IGluIGEgcGVyZm9ybWFuY2Ug
-Y3JpdGljYWwgcGF0aCwgc28NCj4gaXRzIHBlcmZvcm1hbmNlIGlzIG5vdCBhcyBpbXBvcnRhbnQu
-IEFsc28gdGhlIGNzbiBhcnJheSBpcyB0eXBpY2FsbHkgbm90DQo+IHRoYXQgYmlnLiBDaGFuZ2lu
-ZyB0aGUgYWxnb3JpdGhtIG1heSBpbnRyb2R1Y2UgbmV3IGJ1Z3Mgd2hpY2ggbGVhZHMgdG8NCj4g
-dGhlIG5leHQgcG9pbnQuDQo+DQo+IFJlcGx5OiBJbmRlZWQsIHRoaXMgZnVuY3Rpb24gaXMgbm90
-IGEgY3JpdGljYWwgcGF0aCBpbXBhY3RpbmcgcGVyZm9ybWFuY2UsIGJ1dCBpdCdzIGFsd2F5cyBn
-b29kIHRvIG9wdGltaXplIGVmZmljaWVuY3kuIFRoZSBvcHRpbWl6YXRpb24gaXMgbGltaXRlZCB0
-byB0aGUgaW50ZXJuYWxzIG9mIHRoaXMgZnVuY3Rpb24gYW5kIGRvZXMgbm90IGFmZmVjdCBvdGhl
-ciBtb2R1bGVzLCBzbyBmaXhpbmcgdGhlIGludGVybmFsIGJ1ZyBzaG91bGQgaGF2ZSBtYW5hZ2Vh
-YmxlIHJpc2tzLg0KSW4gdGVybSBvZiBlZmZpY2llbmN5LCB5b3VyIHBhdGNoIGRvZXMgZWxpbWlu
-YXRlIHRoZSB0aGlyZCBpdGVyYXRpb24gKGspIA0KaW4gdGhlIGNzbiBpdGVyYXRpb24gbG9vcC4g
-SG93ZXZlciB0aGUgbmV3IHVuaW9uX3NldHMoKSBmdW5jdGlvbiBtYXkgZ28gDQp1cCB0aGUgbm9k
-ZSBoaWVyYXJjaHkgd2hpY2ggY2FuIGNvbnNpZGVyZWQgYSB0aGlyZCBpdGVyYXRpb24gaW4gc29t
-ZSANCndheS4gU28gdGhlcmUgaXMgc29tZSBzYXZpbmcsIGJ1dCBub3QgYXMgc2lnbmlmaWNhbnQg
-YXMgaXQgbG9va3MuIEl0IA0KZG9lcyBzaW1wbGlmeSB0aGUgY29kZSBhbmQgbWFrZSBpdCBhIGJp
-dCBlYXNpZXIgdG8gcmVhZC4NCj4NCj4gMykgSG93IGRvIHlvdSB0ZXN0IHlvdXIgY29kZSB0byBl
-bnN1cmUgaXRzIGNvcnJlY3RuZXNzPw0KPiBJIGFwcGxpZWQgeW91ciBwYXRjaCBhbmQgcnVuIHRo
-ZSAuL3Rlc3RfY3B1c2V0X3Bycy5zaCBnb3QgdGhlIGZvbGxvd2luZy4uLg0KPg0KPiBSZXBseTog
-SSdtIHZlcnkgc29ycnksIHRoaXMgaXMgbXkgZmlyc3QgdGltZSBzdWJtaXR0aW5nIGEga2VybmVs
-IHBhdGNoIGFuZCBJIGRvbid0IGtub3cgd2hpY2ggdGVzdCBjYXNlcyBuZWVkIHRvIGJlIHJ1bi4g
-SSBqdXN0IGNvbnN0cnVjdGVkIHNvbWUgc2NlbmFyaW9zIGxvY2FsbHkgdG8gdGVzdCwgc28gdGhl
-IHRlc3Rpbmcgc2NvcGUgaXMgbGltaXRlZC4gVGhhbmsgeW91IGZvciBwcm92aWRpbmcgdGhlIHRl
-c3QgY2FzZXMuIEkgaGF2ZSByZXByb2R1Y2VkIGFuZCByZXNvbHZlZCB0aGUgaXNzdWUsIGFuZCBo
-YXZlIHBhc3NlZCBzZXZlcmFsIG90aGVyIHRlc3QgY2FzZXMgaW4gQ0dyb3VwLiBCdXQgY3VycmVu
-dGx5LCBJIG9ubHkgaGF2ZSBRRU1VIHNpbXVsYXRpb24gZW52aXJvbm1lbnQsIHNvIG15IHRlc3Rp
-bmcgYWJpbGl0eSBpcyBsaW1pdGVkLiBJIGhvcGUgeW91IGNhbiBoZWxwIG1lIHdpdGggc29tZSBj
-b21wcmVoZW5zaXZlIHRlc3Rpbmcgb2YgbXkgbmV3IHZlcnNpb24gcGF0Y2guIFRoYW5rIHlvdSB2
-ZXJ5IG11Y2guDQo+DQo+IEkgaG9wZSB5b3UgY2FuIHBheSBmdXJ0aGVyIGF0dGVudGlvbiB0byB0
-aGUgbmV3IHBhdGNoLg0KQWxzbyB5b3VyIHBhdGNoIGVsaW1pbmF0ZXMgYWxsIHRoZSB1c2Ugb2Yg
-dGhlIGNwdXNldC0+cG4gdmFyaWFibGUuIFNvIA0KeW91IGNhYiByZW1vdmUgaXQgYXMgaXQgaXMg
-bm8gbG9uZ2VyIG5lZWRlZC4NCkFmdGVyIGEgaGFyZGVyIGxvb2sgYXQgdGhlIGdlbmVyYXRlX3Nj
-aGVkX2RvbWFpbnMoKSBjb2RlLCBJIGhhdmUgZm91bmQgYSANCmJ1ZyBpbiB0aGUgY29kZSB3aXRo
-IHJlc3BlY3QgdG8gdGhlIHN1cHBvcnQgb2YgcmVtb3RlIHBhcnRpdGlvbi4gSSB3aWxsIA0Kc2Vu
-ZCBhbm90aGVyIHBhdGNoIHRvIGZpeCBpdC4gSSBhbHNvIHJlYWxpemUgdGhhdCB0aGUgZnVuY3Rp
-b24gd2FzIA0Kb3JpZ2luYWxseSBkZXNpZ25lZCB0byBzdXBwb3J0IHYxIGNwdXNldC4gdjIgY3B1
-c2V0IGlzIHF1aXRlIGRpZmZlcmVudCANCmFuZCB0aGUgY29kZSBjYW4gYmUgc2ltcGxpZmllZCBm
-b3IgdGhlIHYyIHVzZSBjYXNlLg0KWW91IGFyZSB3ZWxjb21lIHRvIHNlbmQgYSB2NCBwYXRjaCBv
-biB0b3Agb2YgdGhlIG5ldyBjcHVzZXQgY29kZSBiYXNlLg0KVGhhbmtzLA0KTG9uZ21hbg==
+On Thu, 30 May 2024 17:25:06 +0300, Avri Altman wrote:
 
+> The rtt-upiu packets precede any data-out upiu packets, thus
+> synchronizing the data input to the device: this mostly applies to write
+> operations, but there are other operations that requires rtt as well.
+> 
+> There are several rules binding this rtt - data-out dialog, specifically
+> There can be at most outstanding bMaxNumOfRTT such packets.  This might
+> have an effect on write performance (sequential write in particular), as
+> each data-out upiu must wait for its rtt sibling.
+> 
+> [...]
+
+Applied to 6.11/scsi-queue, thanks!
+
+[1/3] scsi: ufs: Allow RTT negotiation
+      https://git.kernel.org/mkp/scsi/c/9ec54934ce85
+[2/3] scsi: ufs: Maximum RTT supported by the host driver
+      https://git.kernel.org/mkp/scsi/c/e75ff63300c5
+[3/3] scsi: ufs: sysfs: Make max_number_of_rtt read-write
+      https://git.kernel.org/mkp/scsi/c/600edc6620a4
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
