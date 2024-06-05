@@ -1,68 +1,100 @@
-Return-Path: <linux-kernel+bounces-202800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E24D8FD157
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:03:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E11F8FD15E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40DA28950E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04AC51C21B70
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D260482DB;
-	Wed,  5 Jun 2024 15:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6CC45005;
+	Wed,  5 Jun 2024 15:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CD7ZrY+x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BnzG8Wg0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0444776A;
-	Wed,  5 Jun 2024 15:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A678D27701;
+	Wed,  5 Jun 2024 15:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717599795; cv=none; b=OSOVOFRFTpiqLeRNW7m1TW8vfqGsYyDlCu4r1itx9p1u3zkBu9ZX+l8bG5DQ7zbPejfZ5l0+2YCpz46FI2c+te2dlBXz5PMs0Sfs2bjqfuea5XGzSYkfgfmyIz5h/uCdPdP8SJzzGc4/pbLNZt27Tzncazr/MNm/JR72Y+Rxt0I=
+	t=1717600066; cv=none; b=CnvaKU91C1ppSjUQoaO+/0FxZFUc+enBsf5Yhgh04PYUxCDz48SZ/QwXw0Q1YkSTih6mOadIadaZD8PFXP/RiJrHFar/9KiIliX9WcgTr8THXAz54VCzay39wDJ81AR64wKWd6a4ap6x0H/fKQw5D+hFvbHCh64v0T83ZtphfbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717599795; c=relaxed/simple;
-	bh=iqV2acmMzOLGBC90yH0i7PZOjKc+YcoOzvs2GcSNu0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iiIcRWpdZ54O09DnsqqNesTdQU9rDyRC+Q5dcC/oA0yOLjbnAFnZzLmw+zCdYzINI82OSYw4yd6rAJ1cU8dlVqc68nkDtRxJ1AMkyry16g5Ab8fP0yDSwwooapvoJzp1TSHVEVZmVQJ3XDzFj/Q3KgJ2JyZwNZsNuGytx3hnZH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CD7ZrY+x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0ED8C2BD11;
-	Wed,  5 Jun 2024 15:03:12 +0000 (UTC)
+	s=arc-20240116; t=1717600066; c=relaxed/simple;
+	bh=IMUt0ekXJ4apSSniweRTbVmhFC29pe8F2jnTL2AM9T4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=CI7COX84hA9J/KMo9dpsiAtog7Z0wC1+iVRtKxuDMfhLrPLJdkkYL2BC2TWZ6fTJj8T/oNZkaU0w8IRgprUgFb4lQqiLtT5xGvrWy73LrGAJPb3yR3nqr3wIL5qx3b76TmahEQdlBynbWFINXx+xysYZ3V4PJgNugYVHJBrwlY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BnzG8Wg0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF3EC2BD11;
+	Wed,  5 Jun 2024 15:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717599794;
-	bh=iqV2acmMzOLGBC90yH0i7PZOjKc+YcoOzvs2GcSNu0I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CD7ZrY+xO4CHKNb+DEk8cqYB/csWTMoUhn0/v8yXjBWT77Yq7kUBYB3B3jgoAJZPm
-	 Gwh3p9Nh6Tnn4xQjZzCjO4AFzUuyrjj4xy+NJmpELrIVwF5s0TqLP6kCSe/hyhj2U5
-	 I9swmUvsDLbgNMYRkfQ8CMsH/a7G6MScLZ2KXc0dy/nMspx15DoLMsjCslS/FTDXo/
-	 gavP5OCIt2rBM/jG7g6eMRioA+zVrDoPqypDg2O9jUC9esfeZFlMYzdZt9Xy26U9eP
-	 aFa+md3b3hH1/TZein3rlu0W3K7gG0zPEP8gm7ezQm9UKjpiqEOBhFEBat0PvZTZ/E
-	 YafsTzQO2DA/Q==
-Date: Wed, 5 Jun 2024 17:03:09 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] vfs: shave a branch in getname_flags
-Message-ID: <20240605-sonnabend-busbahnhof-3f93ffcac846@brauner>
-References: <20240604155257.109500-1-mjguzik@gmail.com>
- <20240604155257.109500-4-mjguzik@gmail.com>
+	s=k20201202; t=1717600066;
+	bh=IMUt0ekXJ4apSSniweRTbVmhFC29pe8F2jnTL2AM9T4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BnzG8Wg0Zt5DJDi9pZK6rmsVYCYqZeN8yycVYoIfh4GMW3nKz5m1TsG/vrY8D53vG
+	 KwVX/3gLjCVi5iaHVnBLj/pqVJ21XgBsNMc97zMheXt2gbPRkMAgq1GQEpp46HtyOO
+	 spapjVvndZ72f2Onvod+g1r5iCyRKJwb+i+vPxopMLPWzOnqrXzGxFWf5gVrQdn2Mx
+	 l28Bex5INZ5G5qbe0aztee2n6tJNpw+OJ9Lsg2buALcbKrl2sGuw1wQmRXdEALs6mp
+	 ZwWTq5pqSPPO2hWCmeFPn5OrUhrvHvLjcDqOu6jidi8cZlw56t8WYDtjo3NTFK+xTw
+	 Mim/xFnVLYEjw==
+Message-ID: <e989c960d72a3838178edbf43eedd02b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240604155257.109500-4-mjguzik@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240605-dt-bindings-qcom-gcc-v2-1-f947b24f1283@linaro.org>
+References: <20240605-dt-bindings-qcom-gcc-v2-0-f947b24f1283@linaro.org> <20240605-dt-bindings-qcom-gcc-v2-1-f947b24f1283@linaro.org>
+Subject: Re: [PATCH v2 01/16] dt-bindings: clock: qcom,sm8450-videocc: reference qcom,gcc.yaml
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Del Regno <angelogioacchino.delregno@somainline.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Jonathan Marek <jonathan@marek.ca>, Konrad Dybcio <konrad.dybcio@linaro.org>, Konrad Dybcio <konrad.dybcio@somainline.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Loic Poulain <loic.poulain@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Date: Wed, 05 Jun 2024 08:07:44 -0700
+User-Agent: alot/0.10
 
-On Tue, Jun 04, 2024 at 05:52:57PM +0200, Mateusz Guzik wrote:
-> Check for an error while copying and no path in one branch.
+Quoting Krzysztof Kozlowski (2024-06-05 01:09:28)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.=
+yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> index bad8f019a8d3..74034e3f79b7 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> @@ -39,26 +36,17 @@ properties:
+>      description:
+>        A phandle to an OPP node describing required MMCX performance poin=
+t.
+> =20
+> -  '#clock-cells':
+> -    const: 1
+> -
+> -  '#reset-cells':
+> -    const: 1
+> -
+> -  '#power-domain-cells':
+> -    const: 1
+> -
+>  required:
+>    - compatible
+> -  - reg
+>    - clocks
+>    - power-domains
+>    - required-opps
+> -  - '#clock-cells'
+> -  - '#reset-cells'
+>    - '#power-domain-cells'
 
-Fine to move that check up but we need to redo it after we recopied.
-It's extremely unlikely but the contents could've changed iirc. I can
-fix that up though.
+Missed removing this one?
+
+> =20
+> -additionalProperties: false
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+
+Why not have a one-cell-clock-reset-power-domain.yaml binding that
+combines all these things? It's quite common even outside of qcom.
 
