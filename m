@@ -1,134 +1,188 @@
-Return-Path: <linux-kernel+bounces-202200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CD78FC920
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:31:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C1D8FC925
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8214B284B70
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0E21F24BC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3895E19148D;
-	Wed,  5 Jun 2024 10:30:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBEB372;
-	Wed,  5 Jun 2024 10:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EEC18FDD8;
+	Wed,  5 Jun 2024 10:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Arlaf8Mh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95AC1946CA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717583445; cv=none; b=iFcDdK0KsEYOIFGvGo8sPZodRCNouSeKXhc+0lwPlHTSAUYdtbJKNQKgiTnwzs7A7B6yGJ0LAgbP8U3ecfQZxuMQCsLStedi3KhFJEoTaT6AIuF09bkKR8C3i0OLQ8ueF/bw65Cd1xgiGARYSsV8MtX2Nf72MALNkmr9ok6ktyA=
+	t=1717583594; cv=none; b=jL3OIhc1OOtQf4Gw1AkhlVjRxmoD++q7Jwys8lxrEzT5CyQgjWCw921XfAh6xwTNSodt2bNo+WF+MrhnpGhj0nPZQeeAFfjCdpprGolbYay23C4GpYBwp817Jx9ZrQTsdiV/OozFtwN7MQq80RwiQ1roptBKdezgWg/aZTb/Rfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717583445; c=relaxed/simple;
-	bh=u/HyFOjYb6/88R7uBNi+KKM05Pxe2XJ8tNcf8CYRkDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fATIQWWm6awNu5TiGf/R1MLrZPQQ3pcPVipfnOFP8sWCHnQJOya8XjP/D3b0KxTvkULZou5zDzS8BrGB56EztEjglyvqJ+GOfzjVvz0VIWgN2eRo5ImeZGBHTN5rvmfQo92p8i2jLH8WNNJfIlNxmBpPks8W4G9HObAdtTPE6xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60985339;
-	Wed,  5 Jun 2024 03:31:07 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50EBA3F792;
-	Wed,  5 Jun 2024 03:30:41 -0700 (PDT)
-Message-ID: <1b0c8c7e-2cf2-49a9-9120-3ced46f2df08@arm.com>
-Date: Wed, 5 Jun 2024 11:30:39 +0100
+	s=arc-20240116; t=1717583594; c=relaxed/simple;
+	bh=UhlqKw31cR63cDLMm166EF4MS9lRx0CSQT24lYtMin8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GdZlMZHDLjQ93jptXZr5p5AR0Zg/RU6tqTvY78a7GNoHF3Efk4e+VcC7p0RwIqAV3he9fl/gGE65GdsbBX0GQafBiYLXvewBJLdEpwQo/6hvjWclhkwEIiUzQpP5VqoBnmKhhlDrh1BzGAe5IUYw3KvV4EkmUk+W40C1tv5IrWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Arlaf8Mh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D644FC32781;
+	Wed,  5 Jun 2024 10:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717583594;
+	bh=UhlqKw31cR63cDLMm166EF4MS9lRx0CSQT24lYtMin8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Arlaf8Mh6Cb1dijCZ/OmgTWkTYUvkMo9Vwtal/air+jE+IQASimjkoObGnlqzXGVo
+	 atKztKtgwROxefXZTU2IMqBzR+81XnJ5FBzOVqA5DMDp81gkbxotgP3UbhlReIPx5x
+	 yaJxXUkrfetjoSqIlgLP10JTMbowf0ywUui7p8aMivWXQ8ypYtf3jfc53OHkNzX991
+	 7kuc2ed5jsKZiLxrdEJcGWaiz2mYdbuDf6GUHYSffjozEYIyQq/1I+x051orrjlg0F
+	 WzRcmuN3JHj/ZJC2p+svj97bAL0zOzZrI7dYrfAYm52TwL7i4s+5x5Fxvapsai0P1K
+	 fo4g5VLHeIaiw==
+Date: Wed, 5 Jun 2024 12:33:11 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, David Gow <davidgow@google.com>, 
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Nishanth Menon <nm@ti.com>, Jeremy Kerr <jk@ozlabs.org>, 
+	Rodolfo Giometti <giometti@enneenne.com>, Thierry Reding <treding@nvidia.com>, 
+	Matt Coster <matt.coster@imgtec.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Dave Jiang <dave.jiang@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Bjorn Andersson <andersson@kernel.org>
+Subject: [GIT PULL] platform: Make platform_driver::remove() return void
+Message-ID: <acwqbvhf3h5z4shzwdwwwfkvxvmchlpbh5k6kwcubhpe3ncvdf@v5gai33oolhn>
+References: <20240527083416.1177106-2-u.kleine-koenig@pengutronix.de>
+ <2024060432-relieving-yonder-85ae@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 5/7] coresight: tmc: Add support for reading crash data
-To: Linu Cherian <lcherian@marvell.com>
-Cc: linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
- linux-kernel@vger.kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, sgoutham@marvell.com, gcherian@marvell.com,
- Anil Kumar Reddy <areddy3@marvell.com>, Tanmay Jagdale <tanmay@marvell.com>,
- suzuki.poulose@arm.com, mike.leach@linaro.org
-References: <20240605081725.622953-1-lcherian@marvell.com>
- <20240605081725.622953-6-lcherian@marvell.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <20240605081725.622953-6-lcherian@marvell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k4kblf7m2zlxrzw2"
+Content-Disposition: inline
+In-Reply-To: <2024060432-relieving-yonder-85ae@gregkh>
 
 
+--k4kblf7m2zlxrzw2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 05/06/2024 09:17, Linu Cherian wrote:
-> * Introduce a new mode CS_MODE_READ_CRASHDATA for reading trace
->   captured in previous crash/watchdog reset.
-> 
-> * Add special device files for reading ETR/ETF crash data.
-> 
-> * User can read the crash data as below
-> 
->   For example, for reading crash data from tmc_etf sink
-> 
->   #dd if=/dev/crash_tmc_etfXX of=~/cstrace.bin
-> 
+Hello Greg
 
-Hi Linu,
+On Tue, Jun 04, 2024 at 06:13:54PM +0200, Greg Kroah-Hartman wrote:
+> On Mon, May 27, 2024 at 10:34:15AM +0200, Uwe Kleine-K=F6nig wrote:
+> > there are only very little platform drivers left in v6.10-rc1 that need
+> > to be changed to .remove_new() before this patch can be applied. They
+> > were all sent out to the respective maintainers, most of them suggested
+> > to apply the patches together with this one.
+> >=20
+> > You can fetch this patch together with all necessary commits from:
+> >=20
+> > 	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pla=
+tform-remove-void
+> >=20
+> > If you have no concerns, I can also provide you a signed tag for
+> > pulling. I think that's easier than indiviually applying them, but I can
+> > also send out the complete series if you prefer.
+>=20
+> A signed tag is good, I can just pull from that, thanks!
 
-I think you are missing the removal of the new crash file when the
-device is unloaded.
+here it comes:
 
-If you reload the module you get some errors:
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-  # rmmod coresight_tmc
-  # modprobe coresight_tmc dyndbg=+p
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-  kobject: kobject_add_internal failed for crash_tmc_etf0 with -EEXIST,
-    don't try to register things with the same name in the same
-    directory.
-  coresight tmc_etf0: Failed to setup user interface for crashdata
-  sysfs: cannot create duplicate filename '/devices/virtual
-   /misc/crash_tmc_etr0'
+are available in the Git repository at:
 
-I'm not sure if it's related, but there are also some kasan errors at
-the same time which I haven't seen before:
+  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/p=
+latform-remove-void-step-b
 
-  BUG: KASAN: slab-use-after-free in strcmp+0x94/0xd0
-  Read of size 1 at addr ffff00080b271be0 by task modprobe/570
-  CPU: 2 PID: 570 Comm: modprobe Not tainted 6.9.0-rc4+ #71
-  Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno
-    Development Platform, BIOS EDK II Oct 19 2019
-  Call trace:
-   dump_backtrace+0x100/0x158
-   show_stack+0x24/0x38
-   dump_stack_lvl+0x3c/0x98
-   print_report+0x178/0x508
-   kasan_report+0xc0/0x120
-   __asan_report_load1_noabort+0x20/0x30
-   strcmp+0x94/0xd0
-   cti_add_assoc_to_csdev+0x174/0x430 [coresight_cti]
-   coresight_register+0x414/0x500 [coresight]
-   __tmc_probe+0xd40/0x1340 [coresight_tmc]
-   tmc_probe+0x60/0x98 [coresight_tmc]
-   amba_probe+0x604/0x838
-   really_probe+0x318/0x780
-   __driver_probe_device+0x168/0x318
-   driver_probe_device+0x78/0x2a0
-   __driver_attach+0x22c/0x538
-   bus_for_each_dev+0x1bc/0x1f0
-   driver_attach+0x54/0x70
-   bus_add_driver+0x2a8/0x4c0
-   driver_register+0x168/0x2b8
-   amba_driver_register+0x74/0x98
-   coresight_init_driver+0x34/0xa8 [coresight]
-   init_module+0x34/0xfb8 [coresight_tmc]
-   do_one_initcall+0x1a0/0x8d0
-   do_init_module+0x1f8/0x588
-   load_module+0x3c20/0x44c0
-   __arm64_sys_finit_module+0x3c8/0x638
-   invoke_syscall+0x78/0x218
-   el0_svc_common+0x160/0x1d8
-   do_el0_svc+0x50/0x68
-   el0_svc+0x4c/0xc0
-   el0t_64_sync_handler+0x84/0x100
-   el0t_64_sync+0x190/0x198
+for you to fetch changes up to 0edb555a65d1ef047a9805051c36922b52a38a9d:
+
+  platform: Make platform_driver::remove() return void (2024-05-27 10:34:35=
+ +0200)
+
+----------------------------------------------------------------
+Change struct platform_driver::remove() to return void
+
+This is step b) of the plan outlined in commit 5c5a7680e67b ("platform:
+Provide a remove callback that returns no value"), which completes the
+first major step of making the remove callback return no value. Up to
+now it returned an int which however was mostly ignored by the driver
+core and lured driver authors to believe there is some error handling.
+
+Note that the Linux driver model assumes that removing a device cannot
+fail, so this isn't about being lazy and not implementing error handling
+in the core and so making .remove return void is the right thing to do.
+
+----------------------------------------------------------------
+Uwe Kleine-K=F6nig (18):
+      reset: meson-audio-arb: Convert to platform remove callback returning=
+ void
+      reset: rzg2l-usbphy-ctrl: Convert to platform remove callback returni=
+ng void
+      reset: ti-sci: Convert to platform remove callback returning void
+      Merge branch 'reset/next' of git://git.pengutronix.de/pza/linux
+      fsi: master-aspeed: Convert to platform remove callback returning void
+      fsi: master-ast-cf: Convert to platform remove callback returning void
+      fsi: master-gpio: Convert to platform remove callback returning void
+      fsi: occ: Convert to platform remove callback returning void
+      pps: clients: gpio: Convert to platform remove callback returning void
+      gpu: host1x: mipi: Benefit from devm_clk_get_prepared()
+      drm/imagination: Convert to platform remove callback returning void
+      drm/mediatek: Convert to platform remove callback returning void
+      gpu: host1x: Convert to platform remove callback returning void
+      gpu: ipu-v3: Convert to platform remove callback returning void
+      nvdimm/e820: Convert to platform remove callback returning void
+      nvdimm/of_pmem: Convert to platform remove callback returning void
+      samples: qmi: Convert to platform remove callback returning void
+      platform: Make platform_driver::remove() return void
+
+ drivers/base/platform.c                 | 10 ++--------
+ drivers/fsi/fsi-master-aspeed.c         |  6 ++----
+ drivers/fsi/fsi-master-ast-cf.c         |  6 ++----
+ drivers/fsi/fsi-master-gpio.c           |  6 ++----
+ drivers/fsi/fsi-occ.c                   |  6 ++----
+ drivers/gpu/drm/imagination/pvr_drv.c   |  7 ++-----
+ drivers/gpu/drm/mediatek/mtk_padding.c  |  5 ++---
+ drivers/gpu/host1x/dev.c                |  6 ++----
+ drivers/gpu/host1x/mipi.c               | 17 +----------------
+ drivers/gpu/ipu-v3/ipu-common.c         |  6 ++----
+ drivers/gpu/ipu-v3/ipu-pre.c            |  5 ++---
+ drivers/gpu/ipu-v3/ipu-prg.c            |  6 ++----
+ drivers/nvdimm/e820.c                   |  5 ++---
+ drivers/nvdimm/of_pmem.c                |  6 ++----
+ drivers/pps/clients/pps-gpio.c          |  5 ++---
+ drivers/reset/reset-meson-audio-arb.c   |  6 ++----
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c |  6 ++----
+ drivers/reset/reset-ti-sci.c            |  6 ++----
+ include/linux/platform_device.h         | 15 +++++++--------
+ samples/qmi/qmi_sample_client.c         |  6 ++----
+ 20 files changed, 44 insertions(+), 97 deletions(-)
+
+Thanks for considering this,
+Uwe
+
+--k4kblf7m2zlxrzw2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZgPuYACgkQj4D7WH0S
+/k6BOQf+IQTl+EBUsW7y5sIUElNQb299hOQfaxdDWvFu6im/T12dNTzp5k9dM0C2
+EdH5038yJQtmlFLoYLZlIUKEm2hYN/qL5ofgPBfp5VjPzxQ7tfbSqg316aL9aLh1
+1SoKlEW6XSUyC4m9xWPTTBudfO8OcitK5IZidvIwAJFQFlFCF4YfETRVeUYORK6i
+LlSgnwp2SGHURnsyW837BkadpzoV3FgThMH9BS4qtkli1QQWxExATSEIO3FGSU8l
+s4kYA6W9S5fSLB8JYlOcDC6hIHJ397DL3Py7m/oi6VaauLojCiJmZI4WeesKBCrG
+qC/6iDPo4X92MDkHjKDi7Dv5A3M/Bw==
+=EYSE
+-----END PGP SIGNATURE-----
+
+--k4kblf7m2zlxrzw2--
 
