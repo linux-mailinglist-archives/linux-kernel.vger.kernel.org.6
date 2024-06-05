@@ -1,250 +1,251 @@
-Return-Path: <linux-kernel+bounces-202925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AD88FD30E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:41:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942828FD314
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 275BFB24384
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:41:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F231AB218BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070FF15666F;
-	Wed,  5 Jun 2024 16:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B1E188CC8;
+	Wed,  5 Jun 2024 16:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N3lWvqRP";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="L8CqZ/SL"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eK/QLyg6"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4248C2837A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717605678; cv=fail; b=hdPWohF53Nr8+gKY6qFZ5GKwbrYLx55XuHhWWJBjGXtCxTB81lv30RHEo/gmwSg2FVAXROtOMx3VFiewVfcPFfTAG03GKnlkEMbydFdHW56hSzKEHB5Gy3zZ4iRcM9LUZ2Sg8HHSvKwJiD15hI/xT/fGiNeEWxPf4KqmeuzmVp0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717605678; c=relaxed/simple;
-	bh=t3K0zhauDKazEN3aCZF5DRp+BpQUqYQTv6d1egVj9LY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GUnWerdoR03s9Ab9cx+cixYPs7evCE4rEllaBO1M80Jyxwq5/1+Fkm7REQpVXEd91LrR2f/cT4XA9sBz454PWM7FvYsaNepJlzajRl1ZrsScVOo3vKxrKzS9BDgLuA8qauB1A9DDXGATRfU9Wm8SOYZf9DEn/gayV3jMkg4MY3c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=N3lWvqRP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=L8CqZ/SL; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 455Bne1C029133;
-	Wed, 5 Jun 2024 16:41:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc : content-type :
- date : from : in-reply-to : message-id : mime-version : references :
- subject : to; s=corp-2023-11-20;
- bh=K1c2YCu9eMNbxgkskwi8l3u9ikG+LH8CcdTL4KLH5P0=;
- b=N3lWvqRPMLP92x5wS8Uh8+wwypSHjCQ/DkxbwZotZo4ZYXgWU/9E/Gykqo5Klu3Ezh3g
- RksUu3uET9XfrCl10nVZXJfbZvIdh0Z+yBsbufnf5Bcupe3IQtpwcKf3pRbSoLNt+iOD
- kDu7p9SOiSqUHIUwMuvknzBnkCLgkmkZwf5JQ1SX3mDchU5+qc0k0Z9LR3Fcfuj6KTU+
- 84HD6Gjhk/I/+vvXXJedhHLyHlgSFrOr7fYK+ccxo72WR4Eom3yTgFqns64JH5bTKvw6
- hDKz7ea3I6Bi2iNF3lC4/5XBcPjBgTewz96Nwfew6MqOffUhSAMIvSdzy9olgdXbGkrl xQ== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbusssjh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Jun 2024 16:41:00 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 455GPw5E025130;
-	Wed, 5 Jun 2024 16:41:00 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2176.outbound.protection.outlook.com [104.47.55.176])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrtaa2mv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Jun 2024 16:40:59 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=agwQve3OnockIXCZbtZz/NNH5VqevOf3BK6vBqadYA1Fbvci/4eMwagXZmtzVO4wOTi0DZWJ4T68MYQ2qxo2pfPjLnswztJ65LUthvLDdn6qjySakX4M9HkfzaiD4cKVamhD9k3FUsT794D/GiPA2uwfLH7w6/WFVeia1pTyWrR1raW+jLso7Ce0iGQjITJXSpw6sgos0zm593wXx6QRqXI/Nw/LFHhnLVKp6RbXT3jHa3cgAXZN6zkUyRikx0br74zi4/PIw41eyhc/o2uo2GyPzglSHK18ltPz75PYjPOwhg9e6kjQHV57/XCxO8xBn0mpmInRTbklFo1IgxGQNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K1c2YCu9eMNbxgkskwi8l3u9ikG+LH8CcdTL4KLH5P0=;
- b=BWe/G+NTVZCd3izPNVm5/cw+uQn3U88u4RboPTe0bQsEtb2hwurWPymJUa4tRGJPluOoTlQ4aJgIorXF5i2pG7zwBJekMEH2JTL+3DBjUTvN9ebtbNNTiENHYZwHjAPdSg2eRVD55v/bc9PL2/oDDuG2kfEVsJpwSQEOzZGJqa6rkbyrRS0nXXB1n3s+gsr5f1OCgGlZItoILUfkME2hbOYPCBgEThHTHAui9SuipegZ0wa7Km0a8zXVPBBXOykF6RK5eiooZ9sw7LZFLZNz85Mxjxv2m2HeH4z1y3kmoYbK5YrN15RNDGkW2i7LG/NdNUzrhYLYo0a77ryvm5o7ng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DC42837A;
+	Wed,  5 Jun 2024 16:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717605781; cv=none; b=TnuCBLdxCuKGLJwiPFp5h29wEPJ9TtTR8TxHD/KF2yWxRncfzb1SFbFE3yENFgMFMm3NdNUMTuv58Z/EoOfaadr3koSiB6MZlwyWA5295ftN3RRdyXMpeO0Ha/pY3LoZE57DEjR8/1zWW1PA7/yd1gvjio8zooGrib5iuRw5ybg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717605781; c=relaxed/simple;
+	bh=n3WvltwLnclYvUXilHbYaDwJDs8ZnJvI1qdN4d0TDTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oFwWFzovHQ9XNCyMmmzjTUPCcLSmKW+SIz/4dlHZpSTUdC/geeDUQ6WhnzsDrg2p4D35vWIPrZfomPyo3J2QZBjMGPVczBmPwuDESJ3ZrgJjt5ZdAR6RLVjbQHJNp6f34QNkgJ1EnYOWMbMjrdFae8Ya+4wCsjbO05vgixaC5Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eK/QLyg6; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-703ed15b273so156444b3a.1;
+        Wed, 05 Jun 2024 09:42:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K1c2YCu9eMNbxgkskwi8l3u9ikG+LH8CcdTL4KLH5P0=;
- b=L8CqZ/SL+wvZT+0zaRVz0zD556dd7MbVI0EY/LwNxvcDvTfiFFaxcFSC6/4pKIP4e8SV0DZiF/jr/7uH7aF+I4Vy1AtsipdoYXNQozqFzufQeN5F3ERtNrh7WaZKhkoeLVb864gkVsK9gGZoDAcQJeuelWSmAuZe9g82r+hnccI=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by IA1PR10MB6148.namprd10.prod.outlook.com (2603:10b6:208:3a8::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.27; Wed, 5 Jun
- 2024 16:40:57 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
- 16:40:57 +0000
-Date: Wed, 5 Jun 2024 12:40:54 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Jung-JaeJoon <rgbi3307@gmail.com>
-Cc: maple-tree@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] maple_tree: modified return type of
- mas_wr_store_entry()
-Message-ID: <52hpolyqyyytkn4pjpuphfqdl7atb4woqaagdx365irpe2xhor@otb5znes4w65>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Jung-JaeJoon <rgbi3307@gmail.com>, maple-tree@lists.infradead.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-References: <20240604150629.30536-1-rgbi3307@naver.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604150629.30536-1-rgbi3307@naver.com>
-User-Agent: NeoMutt/20231103
-X-ClientProxiedBy: YT1PR01CA0110.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2c::19) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+        d=gmail.com; s=20230601; t=1717605779; x=1718210579; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uf1Le7+qoXUovnxU+G8c1hBksMjj4DWz0B1IPDGyA0c=;
+        b=eK/QLyg6JunRNuj8dRiXMIp5kc1N/0gNWDSF4dudoQFl+gCCIFALZ+uRybrUFmL0Jz
+         9B5Z8EKHwogRYMI6ZljJXD7y/Ts/alArUZLL5BKjxEVBqsCHwgXP5gEJMDgfgkFbwBkV
+         LTG/fftX6ZhgVA95OJ5HmmsgIy6vTMxbIBUpP9PlkcuH8DSJW48okgv8T2YdpcxU3NOJ
+         um06wUfcGLsg+gQqQGzbEq/1Nn3RZH5LqxDYoNkzFMms8VOqJhV4p4aL1x8OgDPEVtBb
+         5aC8Bqnmj7nZrVuk79hqbD+nSlg3XZxDwBnnNTJdYeAqlhvSragTvdjRRRroGdeNcIP5
+         rC5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717605779; x=1718210579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uf1Le7+qoXUovnxU+G8c1hBksMjj4DWz0B1IPDGyA0c=;
+        b=qBCLnqqJqJVwN2mRP2ixeKE+JFDPfVqbEuocuJ9OXCa53k+ybWnNqg5g36CLlRg1ik
+         97JE8aRPVyJTPEPh08L7FJ3IpuPNmU6kuen9PoseEnclpjvHH4M+ayScJAO5KFWrPW/R
+         yVU5RlTsoTIQExMWarbvwx9gkQpKGa8vZeYsfXq0irloUGjsP5V7tH9/3Cim13ON+nvj
+         G208wptZARlx4mE/OOlgGHdFUAQYtC1YWBgLLLm2VuZfgip0B87KCE25w/cOqeeS6HoM
+         GGRAqZP6VR3Up3pQ1+j9Lwv0c8AB9Xd/TzOfJkK0lLleSeMEMy6bdRA8Mji6FltBuNeX
+         FSsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLmGy5Kj4n013beXvMAV+oE2gO8UByr0zCXka3xyIURVWEi9j0jGt8euTOhzj32M3+QOYlRNQREpOwPepkuCG1l448+1nirMnag0sBlTWwEW3PDbBXQmE4ilhmSmX2CwBPOR/V5jbv+jo9/NHjT3IMHnI/EiojZ2M8PVa224v5x51Ajt0A94wHjvRlQ8Ln6cpyGQkfK166fPnmAYB7gq5nRiO8WS6CQ3J4pva82+G3kpIGCRyy0aHAgU+P
+X-Gm-Message-State: AOJu0Yx25Fepi1r6BR/m7YC0WVcynzFmaO+EVPOPi3sZdSd/8hrtnwj9
+	4IWECmNR0b+uHl+9KrdBDSXcpZ2V/UV36PGWrou7kZhhwbIT4Jfbo8dmNxm27oHe1IjrjYOotkS
+	jdtlmV1FyUxpXfgzt7A23al2qjho=
+X-Google-Smtp-Source: AGHT+IG5n0s2oEhfAO6XUF/dV0EPCSSfbE2zPMWSDNTH3B1k6Tte7LW9IdlSFU8scsFdk2MB4v56+E07umaPuXl1qWE=
+X-Received: by 2002:a17:90b:33ca:b0:2bf:ea42:d0c3 with SMTP id
+ 98e67ed59e1d1-2c27db1652bmr2817571a91.16.1717605778997; Wed, 05 Jun 2024
+ 09:42:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|IA1PR10MB6148:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e698941-381b-420a-e82c-08dc857e4661
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?ZrIw+17oVFADlqbccgkXncIt9vh/YurM5EFJFMP63Cfsv65Fejg85oBgZYBH?=
- =?us-ascii?Q?qDUnI8tALv8coOqPsCdc45pNxTuTSUme9OFuI9/gL16lzfI1DJpbD0qiB/ty?=
- =?us-ascii?Q?isz6OtdU07SqdQWEqbk1p+2Zfru+d4lTBfMal6ivWZbYMKI6Dny5bktbEr4c?=
- =?us-ascii?Q?pF5oOfiaLT68QYIi2YRFYtkof9IRSXmyZP6G+Dqs2xNbB5pdGMY4HhPk14uv?=
- =?us-ascii?Q?mC03+W9tDog8l16bDXvOHCog6UNwMBW3XB3WjF5yhCmIexDaIEdi48kiYxUu?=
- =?us-ascii?Q?cNMnT4IAMKr2pt+bqS0vZ26VjHy2TzAPdknVwNcMMSYJ6gh03C7vP+XYz835?=
- =?us-ascii?Q?liV0bd3XOYgYLN52+GQSt/1VQqXK0ESin489O0wQ5ayG3/ikDy+SU0GI61Hr?=
- =?us-ascii?Q?q9Jfy3CMimFpiZZ3GTK21+XadyfZIrWqAhLVYVhO3OGqfRXXknxUkbp12qjH?=
- =?us-ascii?Q?bH2aso8/ko39PSL+7Q9yxIQrfJIcD/xYwU/zr+5sywSFPKk+6r41uABHO+iu?=
- =?us-ascii?Q?uAFUHcCoWm9L8XigloSOyQD7Rqs66eNt9pBa/d1agZnvcEnqK+8rksLijwPV?=
- =?us-ascii?Q?tbYTPHhlmXdsZUviELi+1r3nnavBAg47I1c8hFZRKZnvqh1OreWic/brPR5M?=
- =?us-ascii?Q?GaAANxbgQDyYpH0HSz5Qx0ePj3C8hJR7F3F7+rOHY49VDKugW6Q1oYPxQKTD?=
- =?us-ascii?Q?uKPSqJmp06bXFboiiXrV77ObTeSapLWNiltepaOtxHGfPso0em7IikWT/qLe?=
- =?us-ascii?Q?zW7dK433SnxlayQpuO7kSqlB1lJ4tr9JQHpGQRjoUfFpb2MgcyLlqU6zY6WN?=
- =?us-ascii?Q?IqIvV0dEpKHX7vuAVG7lvSb6rdewvXXwiqFQabHWq3GlM8MMAnpEzltY8ZNB?=
- =?us-ascii?Q?2Kzq/dN4mPgE/Uozjd8jzRLx320jJXYLAJTcVRcHHdVwzrR3mveK1zhZRsx6?=
- =?us-ascii?Q?2+ss1EQzTPcxBnqpsE5oZX0B+9beme3tt97CQK4sGLONAJdU+wV6AIrxH+Kf?=
- =?us-ascii?Q?NEma2eEuWbjdlMTPFyV5S3RgGQNC4+xm4aJpLB89hHC0Fus+4EhFv2aRAIOw?=
- =?us-ascii?Q?ZCuSPwdoD+xNkY+830YVY5BAPQ6Esaq6bhJe86FRx8tlvuwGapp5iuJ62UAM?=
- =?us-ascii?Q?x0WiMLw4PP9xpX2HKlApa+2NzvzrpiZyOQxYnh71tbC43qZ0sDRBFvIumRBF?=
- =?us-ascii?Q?oIoXGhndGqOHepjLA8ju5EMUt7xR8uLPPetjdGvRbVmdeLsZLJC+56ay0CzF?=
- =?us-ascii?Q?Twds7X+sNSKB/klk5EFwMOZ9XwoU/zyFjc/0YHJwdQ=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?Kqr2hsHmQbegovY13GZJ6eNsCpjyxFsVpIG5vorbaMuZ/yXs/gP791mbYkoD?=
- =?us-ascii?Q?aKhyDMyV2EAPudr2jTrH/mu/+j6j4oDUotFVkn1LgV/YH3WXVe7zQr/jakEN?=
- =?us-ascii?Q?Ar6uBnrUygQtGWHu4o7WxsoEkhBmNgEsP2IpCaitSe8pNkIR3gzgE2WmDw56?=
- =?us-ascii?Q?Azq+Na69wNRVSWGTgNJjNjOdXQy43/92uPW+xa391gmEq4XAIF5OnfXY8+Ec?=
- =?us-ascii?Q?64kI7hdqwD+DDHO0iRBOH6sHH1blvPIorh9o7P06/sHa7vfCrNJYT6k5c25Q?=
- =?us-ascii?Q?OS7tyn3VDDTlaz0fswXv3vEkhwRRuRcuCgiiAdYCOAVsmFPT8x4rHucrHV6o?=
- =?us-ascii?Q?LPG9XMhUWxPDWX9Y02hqkICtDI07Cz8pvb4LmeUSSAdJBB3acuaCha/4PyYG?=
- =?us-ascii?Q?xdiCI6H+ykmYMnjvexi4J2PRVEII7pG/MdR+B3275MfPXhiekseaX+KpWsGL?=
- =?us-ascii?Q?TKcD6mg0jfMJW17b204vjWc0bJMN+vwN8kzVM2NzFGyeOiMDbcnXrujc4a02?=
- =?us-ascii?Q?QN0uMSyj9MY95eVaPJx2N2q947cauVeH144OgjehSTv2qi4POUhMBe0f0YDl?=
- =?us-ascii?Q?xXt1cGCBFltUtr/4cbJ3bEA6NPLYwRR1cDgaIcHCyaJA7mqD2XmwozvcKehl?=
- =?us-ascii?Q?wYbKBpreymRKIsiKwP1X4Arr2XwNqiM04XRrDwmuPcEKb3ZyQoOK6ZH/nfG9?=
- =?us-ascii?Q?WYtHOfXa63GENpho4PqDR8ZONjcBF65a0EtUCSVcwkb5E3vAaHZYcENbsxuX?=
- =?us-ascii?Q?p2HdCoewo+AzVvloKnkDpeWlAWCPAX7+688K7IlQybvdBkj19HvTNedlBokq?=
- =?us-ascii?Q?EFVzNNxUEofXtBxFtIE+xoclx3Y8TX4Yj6qIjdpRntPHd15xwS/9niZBmCCt?=
- =?us-ascii?Q?L828GQnQK5Kd8MaFZ3iPQbkg+mTCa6MJie6X29GwbCBdHXhuudCia+fLTK/w?=
- =?us-ascii?Q?X7xe3raXWXQNuWgZHFFqElgGSfasHW6RjuW/t1rBS/CX/qJhsw376g6Foz1p?=
- =?us-ascii?Q?r1Oh+X6himoheJYJLxoQ1c8FFsSPP0PQhHMg6a4XON+cag/Wh+mGHZFYbGRU?=
- =?us-ascii?Q?LoF590hzy570dB+i4rUZmIX8C8rWG/cpkHDtqiM+9vGWSiJmIbd/MDlCGzQP?=
- =?us-ascii?Q?Ja0lB/SZ0MljN+AZhoPlkxegGhc+qr7vBqbTbvmAYtLAaIM51L5K0gPZpt/V?=
- =?us-ascii?Q?lZwKIq/hB/WcI3ZN1jxfry6TCG7v7CqSaECsUtVqfIqWKy4cStkqe02xyzMp?=
- =?us-ascii?Q?BLuINwhymgNt58apiYca26I7HPi33/R9isvu7yQ/Q2iIVWdCPAJdOORDPW9T?=
- =?us-ascii?Q?ljscrN6r2aibdzljmX+JeTLB99wlnDQpifjgu8V2GkE6yZm5kOs7n9KKWBH3?=
- =?us-ascii?Q?RclaWU6/VQe5zKS93qjhd0LEQ9xB0/CszINyvT60GSOvzlM6/RmNIGGn30Ap?=
- =?us-ascii?Q?QOSejkhf3apOWSaDr3Td3/DjlEu9xPIMdrBnPPrELgu4nhiDKFdadaaGyw2L?=
- =?us-ascii?Q?seRKywO07/ZQPQWrGZMsdXNsvFMcc8FwhfAnaZEVpHxsMhxIDS2V+evuUUzJ?=
- =?us-ascii?Q?7zIwIONhoSSVyXBs5wnguVH6+IfNb6yeGALj08kI?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	7ZWkD5GjSBdXCqHCsMcxpvZSQuHkXGq3dNfMDqBNHLWpiwQ/eHF5IZqJPw8FLDHtG60D66HrJ1uiUNJ2R4VxSmpMq2bIROG+Z8UG7OHq+rLLp9Z/z9VOsJothDNB30+UwKHVYmZPd0aQs5Gs1HiZDmo70x2CQYCDig1bIEYAJ2e5K8I+M6Ubg9wyHvCQLUi03jgO5GcyTn19zBmrZWwnQp0UvU1J1baC4GDZqs4xYi/LMj5RRzPQxye/UYWSiPt5BgAKmB1o57vQl5/SFgkzkobcuywIWjTRsQAjQfOl2rFdqs9D8gpJfRZRrZWHuFF+E4isV4S0mPRWFmFZtn13zb1rAvCdoH2suB8eHI3Pss0YNJAPN/KS8JaUPNw5D2UhQTsYIGHHB4tOmmn3G67gDfXnSELM/bT9Scq1pORCxO/P0+JvW/KGBJyZEG5UrGNDPwc9JVYvVZh9ltiGAn5gORBocZg1dEm8FytYjIADGxu0tmmkQ3Z7DD29FQKQUleeQJXC+4h/NclCbtdEZmSnPYuH1+JmsgUbAGmS4Yr9zOif8PXXmXFc0TTnJ9EhocUto7wRXPlO4ZQCAgCp+tDPk7V3SNuRUKmXpH2aRP3eRwQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e698941-381b-420a-e82c-08dc857e4661
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 16:40:57.4121
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JHY3t9EV6pUO5DwS+kR2yZK010VJ7oaKw8X/uyXNcygKoyeLorQsUV/U6o2frIYXymQUy5Qwl1iSG8N6Co/PRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6148
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 spamscore=0
- adultscore=0 suspectscore=0 malwarescore=0 mlxscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2406050125
-X-Proofpoint-ORIG-GUID: trAq4_wUas8Ca9d8rRNciMQUnVAvRKEE
-X-Proofpoint-GUID: trAq4_wUas8Ca9d8rRNciMQUnVAvRKEE
+References: <20240523121149.575616-1-jolsa@kernel.org> <CAEf4Bza-+=04GG7Tg4U4pCQ28Oy_2F_5872EPDsX6X3Y=jhEuw@mail.gmail.com>
+In-Reply-To: <CAEf4Bza-+=04GG7Tg4U4pCQ28Oy_2F_5872EPDsX6X3Y=jhEuw@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 5 Jun 2024 09:42:45 -0700
+Message-ID: <CAEf4Bzbc99bwGcmtCa3iekXSvSrxMQzfnTViT5Y-dn8qbvJy7A@mail.gmail.com>
+Subject: Re: [PATCHv7 bpf-next 0/9] uprobe: uretprobe speed up
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	Andy Lutomirski <luto@kernel.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	Deepak Gupta <debug@rivosinc.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Jung-JaeJoon <rgbi3307@gmail.com> [240604 11:07]:
-> From: Jung-JaeJoon <rgbi3307@gmail.com>
-> 
-> Since the return value of mas_wr_store_entry() is not used,
-> the return type can be changed to void
-> 
-> Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
-> ---
->  lib/maple_tree.c | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 2d7d27e6ae3c..da30977aab0f 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -4203,31 +4203,28 @@ static inline void mas_wr_modify(struct ma_wr_state *wr_mas)
->   *
->   * Return: The contents that was stored at the index.
->   */
-> -static inline void *mas_wr_store_entry(struct ma_wr_state *wr_mas)
-> +static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
->  {
->  	struct ma_state *mas = wr_mas->mas;
->  
->  	wr_mas->content = mas_start(mas);
->  	if (mas_is_none(mas) || mas_is_ptr(mas)) {
->  		mas_store_root(mas, wr_mas->entry);
-> -		return wr_mas->content;
-> +		return;
->  	}
->  
->  	if (unlikely(!mas_wr_walk(wr_mas))) {
->  		mas_wr_spanning_store(wr_mas);
-> -		return wr_mas->content;
-> +		return;
->  	}
->  
->  	/* At this point, we are at the leaf node that needs to be altered. */
->  	mas_wr_end_piv(wr_mas);
->  	/* New root for a single pointer */
-> -	if (unlikely(!mas->index && mas->last == ULONG_MAX)) {
-> +	if (unlikely(!mas->index && mas->last == ULONG_MAX))
->  		mas_new_root(mas, wr_mas->entry);
-> -		return wr_mas->content;
-> -	}
-> -
-> -	mas_wr_modify(wr_mas);
-> -	return wr_mas->content;
-> +        else
-> +	        mas_wr_modify(wr_mas);
+On Fri, May 31, 2024 at 10:52=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Thu, May 23, 2024 at 5:11=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrot=
+e:
+> >
+> > hi,
+> > as part of the effort on speeding up the uprobes [0] coming with
+> > return uprobe optimization by using syscall instead of the trap
+> > on the uretprobe trampoline.
+> >
+> > The speed up depends on instruction type that uprobe is installed
+> > and depends on specific HW type, please check patch 1 for details.
+> >
+> > Patches 1-8 are based on bpf-next/master, but patch 2 and 3 are
+> > apply-able on linux-trace.git tree probes/for-next branch.
+> > Patch 9 is based on man-pages master.
+> >
+> > v7 changes:
+> > - fixes in man page [Alejandro Colomar]
+> > - fixed patch #1 fixes tag [Oleg]
+> >
+> > Also available at:
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+> >   uretprobe_syscall
+> >
+> > thanks,
+> > jirka
+> >
+> >
+> > Notes to check list items in Documentation/process/adding-syscalls.rst:
+> >
+> > - System Call Alternatives
+> >   New syscall seems like the best way in here, because we need
+> >   just to quickly enter kernel with no extra arguments processing,
+> >   which we'd need to do if we decided to use another syscall.
+> >
+> > - Designing the API: Planning for Extension
+> >   The uretprobe syscall is very specific and most likely won't be
+> >   extended in the future.
+> >
+> >   At the moment it does not take any arguments and even if it does
+> >   in future, it's allowed to be called only from trampoline prepared
+> >   by kernel, so there'll be no broken user.
+> >
+> > - Designing the API: Other Considerations
+> >   N/A because uretprobe syscall does not return reference to kernel
+> >   object.
+> >
+> > - Proposing the API
+> >   Wiring up of the uretprobe system call is in separate change,
+> >   selftests and man page changes are part of the patchset.
+> >
+> > - Generic System Call Implementation
+> >   There's no CONFIG option for the new functionality because it
+> >   keeps the same behaviour from the user POV.
+> >
+> > - x86 System Call Implementation
+> >   It's 64-bit syscall only.
+> >
+> > - Compatibility System Calls (Generic)
+> >   N/A uretprobe syscall has no arguments and is not supported
+> >   for compat processes.
+> >
+> > - Compatibility System Calls (x86)
+> >   N/A uretprobe syscall is not supported for compat processes.
+> >
+> > - System Calls Returning Elsewhere
+> >   N/A.
+> >
+> > - Other Details
+> >   N/A.
+> >
+> > - Testing
+> >   Adding new bpf selftests and ran ltp on top of this change.
+> >
+> > - Man Page
+> >   Attached.
+> >
+> > - Do not call System Calls in the Kernel
+> >   N/A.
+> >
+> >
+> > [0] https://lore.kernel.org/bpf/ZeCXHKJ--iYYbmLj@krava/
+> > ---
+> > Jiri Olsa (8):
+> >       x86/shstk: Make return uprobe work with shadow stack
+> >       uprobe: Wire up uretprobe system call
+> >       uprobe: Add uretprobe syscall to speed up return probe
+> >       selftests/x86: Add return uprobe shadow stack test
+> >       selftests/bpf: Add uretprobe syscall test for regs integrity
+> >       selftests/bpf: Add uretprobe syscall test for regs changes
+> >       selftests/bpf: Add uretprobe syscall call from user space test
+> >       selftests/bpf: Add uretprobe shadow stack test
+> >
+>
+> Masami, Steven,
+>
+> It seems like the series is ready to go in. Are you planning to take
+> the first 4 patches through your linux-trace tree?
 
-These two lines have whitespace errors, you should be using tabs.
-Please use scripts/checkpatch.pl to detect formatting issues like this.
+Another ping. It's been two weeks since Jiri posted the last revision
+that got no more feedback to be addressed and everyone seems to be
+happy with it.
 
->  }
->  
->  /**
-> -- 
-> 2.17.1
-> 
+This is an important speed up improvement for uprobe infrastructure in
+general and for BPF ecosystem in particular. "Uprobes are slow" is one
+of the top complaints from production BPF users, and sys_uretprobe
+approach is significantly improving the situation for return uprobes
+(aka uretprobes), potentially enabling new use cases that previously
+could have been too expensive to trace in practice and reducing the
+overhead of the existing ones.
+
+I'd appreciate the engagement from linux-trace maintainers on this
+patch set. Given it's important for BPF and that a big part of the
+patch set is BPF-based selftests, we'd also be happy to route all this
+through the bpf-next tree (which would actually make logistics for us
+much easier, but that's not the main concern). But regardless of the
+tree, it would be nice to make a decision and go forward with it.
+
+Thank you!
+
+>
+> >  arch/x86/entry/syscalls/syscall_64.tbl                      |   1 +
+> >  arch/x86/include/asm/shstk.h                                |   4 +
+> >  arch/x86/kernel/shstk.c                                     |  16 ++++
+> >  arch/x86/kernel/uprobes.c                                   | 124 ++++=
+++++++++++++++++++++++++-
+> >  include/linux/syscalls.h                                    |   2 +
+> >  include/linux/uprobes.h                                     |   3 +
+> >  include/uapi/asm-generic/unistd.h                           |   5 +-
+> >  kernel/events/uprobes.c                                     |  24 ++++=
+--
+> >  kernel/sys_ni.c                                             |   2 +
+> >  tools/include/linux/compiler.h                              |   4 +
+> >  tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c       | 123 ++++=
+++++++++++++++++++++++++-
+> >  tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c     | 385 ++++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++++++
+> >  tools/testing/selftests/bpf/progs/uprobe_syscall.c          |  15 ++++
+> >  tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c |  17 ++++
+> >  tools/testing/selftests/x86/test_shadow_stack.c             | 145 ++++=
+++++++++++++++++++++++++++++++
+> >  15 files changed, 860 insertions(+), 10 deletions(-)
+> >  create mode 100644 tools/testing/selftests/bpf/prog_tests/uprobe_sysca=
+ll.c
+> >  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_syscall.c
+> >  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_syscall_ex=
+ecuted.c
+> >
+> > Jiri Olsa (1):
+> >       man2: Add uretprobe syscall page
+> >
+> >  man/man2/uretprobe.2 | 56 ++++++++++++++++++++++++++++++++++++++++++++=
+++++++++++++
+> >  1 file changed, 56 insertions(+)
+> >  create mode 100644 man/man2/uretprobe.2
 
