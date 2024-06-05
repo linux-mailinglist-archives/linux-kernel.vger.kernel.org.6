@@ -1,72 +1,144 @@
-Return-Path: <linux-kernel+bounces-203115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D088FD6A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:40:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD91D8FD6A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F35B2742C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:40:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C228A3C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71751527BB;
-	Wed,  5 Jun 2024 19:40:11 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 5415115279F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F901527BB;
+	Wed,  5 Jun 2024 19:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0WWl8arl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8ZAmcb96"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2A314D449;
+	Wed,  5 Jun 2024 19:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717616411; cv=none; b=LYVLVJtH1x17Zsx4ODaWAoirt+1lU0N/1BO9MHYMr2kFROvSCPdRJuft2paC2jDoedzeghpOaXrp+M++sT/MPByFRiX5Q1sw0r1l/0HpCC13W3eY8zeZoxExqZG8ulx47rWxRLgrvxxhQVgEYqxrY5AOff2lhM3DELNHVTXyZYs=
+	t=1717616446; cv=none; b=aIuquaLa/Hi7AXlPPxcQKUZQ/Pr9od3H1cEMDSBHi2MzYkgaHrQh8j6gPgHqa0eJH1t5bcIvo0I7kAY27Z+ZG6ytX9y4nG4F9QYukEFOhN8PE/PhXV0JjfE5xuUjkytGe2Gs4Zj3ma0ROm6uBuoxvaL3MwB8ChgUELvB2/BYtd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717616411; c=relaxed/simple;
-	bh=WpoWV7Z9ZwENUXOLSPhoajoLQlkmRBnATTnJO5Vt3P0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iiH1uXzYID2wY8m6OVvnSCTkAUbpsZtyeWPrbQ2jzdY7wcMullK0Vo/E9fCTtQUJ9O2N42CN+klxT5SLS1jhV6hdvU4VkYDyNfs3IUn1B/K597OsQrAIIjjS7KgPs6aTDnnOyTli3E1QIKN9VRyBYC3E1f36fedxbv00Il3M1IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 206781 invoked by uid 1000); 5 Jun 2024 15:40:08 -0400
-Date: Wed, 5 Jun 2024 15:40:08 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-  npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-  luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
-  dlustig@nvidia.com, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-  linux-arch@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
-  jonas.oberhauser@huaweicloud.com
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-Message-ID: <844b1c86-d3ca-4325-9c2a-ac54d4bef829@rowland.harvard.edu>
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <ZlC0IkzpQdeGj+a3@andrea>
- <cf81a3c2-9754-4130-a67e-67d475678829@rowland.harvard.edu>
- <ZlQ/Ks3I2BYybykD@andrea>
- <28bdcf4c-6903-4555-8cbc-a93704ec05f9@rowland.harvard.edu>
- <ZmCa6UXON7bBDLwA@andrea>
- <ZmC7z26DmZ5xP8k4@andrea>
+	s=arc-20240116; t=1717616446; c=relaxed/simple;
+	bh=w/lL412irMpN5xx3ZjFRnT9eqdOLWHQqe/utFRXVQfw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=GOExe3Jkq44YKm0RWs2NU9zswn5eZmgb48cSAUjf6qxnA2v0UlfHfnb5j5hG2G3pl8olNTiCNuz3A1D18B0sTKwtJ6+jsEoWWsB2o5L+AsFS1KGR7PBeDVLyhv8K+wqmsFEHD/Jb0IHgraVERfJB9HqsSmq29Inm+XlVHfIjbsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0WWl8arl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8ZAmcb96; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Jun 2024 19:40:42 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717616442;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+vtGG6eouA5Y8cQaAebhdwmXmJyo0bOZBi8OpA+j2HA=;
+	b=0WWl8arlnS2xT7K5r19LYljhj8j3fBPNhFb/+vVMXZQI6Ij1p54hKOxlkcNGyOOeuFOTwB
+	Ij+7pKxWup+Lc/5pJGtn6ymKe8DyhpF8yJb2MyyIlpmFF0SPVbtb6rNGulQLj2u9EVjYxZ
+	t7CtIjk2dI1+qtPfngfbiHlWHIWTeETc1ERsHaE9ua3VlnNFhdYyLlFQ7Alc5BPBWTdS97
+	BITOSKzjOceOPgo/WXxe3PsiabV/eBc31s3A4R/7AMHYvpxT9/xMoV0CCveHbVsEekX8Ci
+	I9juz3ZDXm4ETXjQ2U2cRU7tvQ8eRaDwGxbaoteKlHEU8Hu2C9a/IWaBVIYsyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717616442;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+vtGG6eouA5Y8cQaAebhdwmXmJyo0bOZBi8OpA+j2HA=;
+	b=8ZAmcb968NbHn5PMlNZZLwjZ9oM2mXfRfWhzS922AvotF/Cpm/SFQ6VIO141YB4E7I7q3B
+	e3F5/WQZLK3gE6DA==
+From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/amd_nb: Check for invalid SMN reads
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20230403164244.471141-1-yazen.ghannam@amd.com>
+References: <20230403164244.471141-1-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmC7z26DmZ5xP8k4@andrea>
+Message-ID: <171761644225.10875.15854801411132236549.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 09:26:27PM +0200, Andrea Parri wrote:
-> > > Here's a much smaller patch, suitable for the -stable kernels.  It fixes 
-> > > the bug without doing the larger code reorganization (which will go into 
-> > > a separate patch).  Can you test this one?
-> > 
-> > Testing in progress..., first results are good.
-> 
-> Completed and good on the various locking litmus tests in the github
-> archive and in-tree.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Okay, thanks.  I'll submit the patches soon.
+Commit-ID:     c625dabbf1c4a8e77e4734014f2fde7aa9071a1f
+Gitweb:        https://git.kernel.org/tip/c625dabbf1c4a8e77e4734014f2fde7aa9071a1f
+Author:        Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate:    Mon, 03 Apr 2023 16:42:44 
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 05 Jun 2024 21:23:34 +02:00
 
-Alan
+x86/amd_nb: Check for invalid SMN reads
+
+AMD Zen-based systems use a System Management Network (SMN) that
+provides access to implementation-specific registers.
+
+SMN accesses are done indirectly through an index/data pair in PCI
+config space. The PCI config access may fail and return an error code.
+This would prevent the "read" value from being updated.
+
+However, the PCI config access may succeed, but the return value may be
+invalid. This is in similar fashion to PCI bad reads, i.e. return all
+bits set.
+
+Most systems will return 0 for SMN addresses that are not accessible.
+This is in line with AMD convention that unavailable registers are
+Read-as-Zero/Writes-Ignored.
+
+However, some systems will return a "PCI Error Response" instead. This
+value, along with an error code of 0 from the PCI config access, will
+confuse callers of the amd_smn_read() function.
+
+Check for this condition, clear the return value, and set a proper error
+code.
+
+Fixes: ddfe43cdc0da ("x86/amd_nb: Add SMN and Indirect Data Fabric access for AMD Fam17h")
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20230403164244.471141-1-yazen.ghannam@amd.com
+---
+ arch/x86/kernel/amd_nb.c |  9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index 3cf156f..027a8c7 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -215,7 +215,14 @@ out:
+ 
+ int amd_smn_read(u16 node, u32 address, u32 *value)
+ {
+-	return __amd_smn_rw(node, address, value, false);
++	int err = __amd_smn_rw(node, address, value, false);
++
++	if (PCI_POSSIBLE_ERROR(*value)) {
++		err = -ENODEV;
++		*value = 0;
++	}
++
++	return err;
+ }
+ EXPORT_SYMBOL_GPL(amd_smn_read);
+ 
 
