@@ -1,494 +1,237 @@
-Return-Path: <linux-kernel+bounces-202930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F408FD324
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:50:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CFF8FD325
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229B81C2290C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1450B286870
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919A4192B71;
-	Wed,  5 Jun 2024 16:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E820A188CDE;
+	Wed,  5 Jun 2024 16:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TX/mcEVP"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UQRXnT0y"
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4640F18F2F4;
-	Wed,  5 Jun 2024 16:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752AD188CD1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717606228; cv=none; b=PlUQ1lw1FksAOBIcuqqlHIt1Evajv9Mbc9US3dQ4267Grp9zUqGYvj7FstL5hDSGFJHxNbeZJjKJ/nLoP/LrpkiRH5piS8nut879XCjJIVckrz46MF5w+uzJ4ALHE/FOlCmQX498LObWRKSOR1tbNlx7TvYFfjPioxzSqwSdwxQ=
+	t=1717606248; cv=none; b=uOQyKQBqR5sFkTOBMJXrqzUaOfLDE0y8S503YsT0pctvy/3ZJjXlcjZamAsmIxaJSZQpl0rquGklyF72ZvpFV9AzFSchPB1D6iQRsnOewWDYHJElgB+qlMhigXy0lkZMn2zdu5kP64xHOZN5ZDEVUOi/H9n+xjf4uloMBCGksoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717606228; c=relaxed/simple;
-	bh=kzuN9oxg8OP/9rJGGivC7fdmn8uFhtEGTxAstmuYmJI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bvVOz/3aYNtw7PCb5LLcBVsEEJzzX674DPZK8YPGQuFCZ56POiubekbyMgAcDwlAuagbTZOkGuMW8KrnqMHF5s0KnaTuSOhme3Q/ydTBrdvPhEbjesWc+zJ4OwCFekRo+q/82OlYT7Tpahml7FVKjKGsp4DOLi7kAB0Rm3PsEEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TX/mcEVP; arc=none smtp.client-ip=46.235.227.194
+	s=arc-20240116; t=1717606248; c=relaxed/simple;
+	bh=rn22rgV/+4N/k6+hZ8EN8fGz0X09E6tz/BF8d70bBkI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jSh/cdAp5rs7UBu5HNWFc7Oa1AMzvCORlJ512TZZvtFlfXlq+wGTayUXAkvwnEu91XyXt7oUJQV/N4fD6veMTpM2tgJm4f3x6Ev6VWx7Nw4pKztLpMlD9rJo8McW31CjdfalNwNf1Z9j5nPFl9XD662Akffn/fPUJdqzp/Zrh6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UQRXnT0y; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717606217;
-	bh=kzuN9oxg8OP/9rJGGivC7fdmn8uFhtEGTxAstmuYmJI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TX/mcEVPsB3RBATJT6jy5psw0s2w+Eq1bx5ouZ6HJgSzomiGuxz06d5kgmHA7RY5e
-	 frDy/k1WGqDHiqceENPYK+mN1ZXQ5x4JziXf/C8zJb8U7vZaY6ke4MEwVcTkoIUE5E
-	 HQ06fl2wRr52ewIRkk8uBk87jrJhZElubRJb/kyST6YgLVBdi7TQlTM+JAJAyryf99
-	 WSsIHKdo7dZ1442G4AVBCFEvElje6VvI+xjBmNXijtZ9Mj579pXx02QdcVyEkN9ZGa
-	 zLc/wf+SDidHAN46xYID4P62WopRQfxNGVr3e4FA1RL2sMh+ThlxCie2Yb6W4WKodG
-	 uR2iRVef5WerA==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	s=mail; t=1717606245;
+	bh=rn22rgV/+4N/k6+hZ8EN8fGz0X09E6tz/BF8d70bBkI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=UQRXnT0y8rT7OOFPfI77fSfMEOgn+D0WBLZRM9L3723QaUghV8BZH690prWHfrG5O
+	 8fhiTaV82s+4J4eHM/o0nrYI1UEgaB0BlSu+m2mzQH5siGVSjxdUHGtUq/lQMwDBz3
+	 IhoufMtuktQns06jD4yAzyTHaPZ3BfjFn2DNrTxXlgAkTzhT8K0F/YRsm4AgrOPoHn
+	 S2dUtJp/TQEDiplx1TOQXwH0KNgY8HrDTDk1UBFq326TrpahA3gCeWf39K+AM+9mX7
+	 7gAkEqMpilaRBluurczL1IO77EG+v0EdGzaqwKImCbmGATOdeyF3gScOcvGKrQ4Yxd
+	 Z/GwoG7d1uJMQ==
+Received: from [192.168.1.250] (zone.collabora.co.uk [167.235.23.81])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: aratiu)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 87F7037821A8;
-	Wed,  5 Jun 2024 16:50:16 +0000 (UTC)
-From: Adrian Ratiu <adrian.ratiu@collabora.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	kernel@collabora.com,
-	gbiv@google.com,
-	ryanbeltran@google.com,
-	inglorion@google.com,
-	ajordanr@google.com,
-	jorgelo@chromium.org,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>,
-	Kees Cook <keescook@chromium.org>,
-	Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Xu <jeffxu@google.com>,
-	Mike Frysinger <vapier@chromium.org>
-Subject: [PATCH v5 2/2] proc: restrict /proc/pid/mem
-Date: Wed,  5 Jun 2024 19:49:31 +0300
-Message-ID: <20240605164931.3753-2-adrian.ratiu@collabora.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240605164931.3753-1-adrian.ratiu@collabora.com>
-References: <20240605164931.3753-1-adrian.ratiu@collabora.com>
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6C8E1378219B;
+	Wed,  5 Jun 2024 16:50:42 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Wed, 05 Jun 2024 12:50:25 -0400
+Subject: [PATCH] drm/mediatek: Don't print error if EDEFER_PROBE returned
+ on component_add
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20240605-mtk-disp-rdma-dev-err-probe-v1-1-91259e1d3a93@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAFCXYGYC/x3MwQpAQBAG4FfRnE3tCsWryGHZH5OwzUpK3t3m+
+ F2+hyJUEKnNHlJcEuXYE2ye0bi4fQaLT6bCFKWpTcXbubKXGFj95tjjYqhy0GMAY2pGa5x1jQW
+ lISgmuf+969/3A7NVTa5tAAAA
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.13.0
 
-Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
-after which it got allowed in commit 198214a7ee50 ("proc: enable
-writing to /proc/pid/mem"). Famous last words from that patch:
-"no longer a security hazard". :)
+Use dev_err_probe() in the component_add() error path to prevent
+printing an error when the probe is deferred. This was observed on
+mt8195 with the disp-rdma driver:
 
-Afterwards exploits started causing drama like [1]. The exploits
-using /proc/*/mem can be rather sophisticated like [2] which
-installed an arbitrary payload from noexec storage into a running
-process then exec'd it, which itself could include an ELF loader
-to run arbitrary code off noexec storage.
+  mediatek-disp-rdma 1c002000.rdma: Failed to add component: -517
 
-One of the well-known problems with /proc/*/mem writes is they
-ignore page permissions via FOLL_FORCE, as opposed to writes via
-process_vm_writev which respect page permissions. These writes can
-also be used to bypass mode bits.
+But the same pattern is used across many other drivers, so update them
+all.
 
-To harden against these types of attacks, distrbutions might want
-to restrict /proc/pid/mem accesses, either entirely or partially,
-for eg. to restrict FOLL_FORCE usage.
-
-Known valid use-cases which still need these accesses are:
-
-* Debuggers which also have ptrace permissions, so they can access
-memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
-are designed to write /proc/pid/mem for basic functionality.
-
-* Container supervisors using the seccomp notifier to intercept
-syscalls and rewrite memory of calling processes by passing
-around /proc/pid/mem file descriptors.
-
-There might be more, that's why these params default to disabled.
-
-Regarding other mechanisms which can block these accesses:
-
-* seccomp filters can be used to block mmap/mprotect calls with W|X
-perms, but they often can't block open calls as daemons want to
-read/write their runtime state and seccomp filters cannot check
-file paths, so plain write calls can't be easily blocked.
-
-* Since the mem file is part of the dynamic /proc/<pid>/ space, we
-can't run chmod once at boot to restrict it (and trying to react
-to every process and run chmod doesn't scale, and the kernel no
-longer allows chmod on any of these paths).
-
-* SELinux could be used with a rule to cover all /proc/*/mem files,
-but even then having multiple ways to deny an attack is useful in
-case one layer fails.
-
-Thus we introduce four kernel parameters to restrict /proc/*/mem
-access: open-read, open-write, write and foll_force. All these can
-be independently set to the following values:
-
-all     => restrict all access unconditionally.
-ptracer => restrict all access except for ptracer processes.
-
-If left unset, the existing behaviour is preserved, i.e. access
-is governed by basic file permissions.
-
-Examples which can be passed by bootloaders:
-
-proc_mem.restrict_foll_force=all
-proc_mem.restrict_open_write=ptracer
-proc_mem.restrict_open_read=ptracer
-proc_mem.restrict_write=all
-
-These knobs can also be enabled via Kconfig like for eg:
-
-CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT=y
-CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT=y
-
-Each distribution needs to decide what restrictions to apply,
-depending on its use-cases. Embedded systems might want to do
-more, while general-purpouse distros might want a more relaxed
-policy, because for e.g. foll_force=all and write=all both break
-break GDB, so it might be a bit excessive.
-
-Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
-
-Link: https://lwn.net/Articles/476947/ [1]
-Link: https://issues.chromium.org/issues/40089045 [2]
-Cc: Guenter Roeck <groeck@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Xu <jeffxu@google.com>
-Co-developed-by: Mike Frysinger <vapier@chromium.org>
-Signed-off-by: Mike Frysinger <vapier@chromium.org>
-Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 ---
-Changes in v5:
-* Fixed 2 typos by Randy D. (thanks!)
-* Fixed mm_access() resource leak
-* Rebased on next-20240605
----
- .../admin-guide/kernel-parameters.txt         |  38 +++++
- fs/proc/base.c                                | 130 +++++++++++++++++-
- security/Kconfig                              |  68 +++++++++
- 3 files changed, 235 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_disp_aal.c         | 2 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ccorr.c       | 2 +-
+ drivers/gpu/drm/mediatek/mtk_disp_color.c       | 2 +-
+ drivers/gpu/drm/mediatek/mtk_disp_gamma.c       | 2 +-
+ drivers/gpu/drm/mediatek/mtk_disp_merge.c       | 2 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c         | 2 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c | 2 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c        | 2 +-
+ drivers/gpu/drm/mediatek/mtk_ethdr.c            | 2 +-
+ drivers/gpu/drm/mediatek/mtk_mdp_rdma.c         | 2 +-
+ 10 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f4f2b0ab61fae..035ed61a3e4e3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4814,6 +4814,44 @@
- 	printk.time=	Show timing data prefixed to each printk message line
- 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_aal.c b/drivers/gpu/drm/mediatek/mtk_disp_aal.c
+index 3ce8f32b06d5..892dc40458fb 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_aal.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_aal.c
+@@ -197,7 +197,7 @@ static int mtk_disp_aal_probe(struct platform_device *pdev)
  
-+	proc_mem.restrict_foll_force= [KNL]
-+			Format: {all | ptracer}
-+			Restricts the use of the FOLL_FORCE flag for /proc/*/mem access.
-+			If restricted, the FOLL_FORCE flag will not be added to vm accesses.
-+			Can be one of:
-+			- 'all' restricts all access unconditionally.
-+			- 'ptracer' allows access only for ptracer processes.
-+			If not specified, FOLL_FORCE is always used.
-+
-+	proc_mem.restrict_open_read= [KNL]
-+			Format: {all | ptracer}
-+			Allows restricting read access to /proc/*/mem files during open().
-+			Depending on restriction level, open for reads return -EACCES.
-+			Can be one of:
-+			- 'all' restricts all access unconditionally.
-+			- 'ptracer' allows access only for ptracer processes.
-+			If not specified, then basic file permissions continue to apply.
-+
-+	proc_mem.restrict_open_write= [KNL]
-+			Format: {all | ptracer}
-+			Allows restricting write access to /proc/*/mem files during open().
-+			Depending on restriction level, open for writes return -EACCES.
-+			Can be one of:
-+			- 'all' restricts all access unconditionally.
-+			- 'ptracer' allows access only for ptracer processes.
-+			If not specified, then basic file permissions continue to apply.
-+
-+	proc_mem.restrict_write= [KNL]
-+			Format: {all | ptracer}
-+			Allows restricting write access to /proc/*/mem after the files
-+			have been opened, during the actual write calls. This is useful for
-+			systems which can't block writes earlier during open().
-+			Depending on restriction level, writes will return -EACCES.
-+			Can be one of:
-+			- 'all' restricts all access unconditionally.
-+			- 'ptracer' allows access only for ptracer processes.
-+			If not specified, then basic file permissions continue to apply.
-+
- 	processor.max_cstate=	[HW,ACPI]
- 			Limit processor to maximum C-state
- 			max_cstate=9 overrides any DMI blacklist limit.
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 4c607089f66ed..3f33c579cb65c 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -152,6 +152,30 @@ struct pid_entry {
- 		NULL, &proc_pid_attr_operations,	\
- 		{ .lsmid = LSMID })
+ 	ret = component_add(dev, &mtk_disp_aal_component_ops);
+ 	if (ret)
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
  
-+#define DEFINE_EARLY_PROC_MEM_RESTRICT(CFG, name)				\
-+DEFINE_STATIC_KEY_MAYBE_RO(CONFIG_PROC_MEM_RESTRICT_##CFG##_DEFAULT,		\
-+			   proc_mem_restrict_##name##_all);			\
-+DEFINE_STATIC_KEY_MAYBE_RO(CONFIG_PROC_MEM_RESTRICT_##CFG##_PTRACE_DEFAULT,	\
-+			   proc_mem_restrict_##name##_ptracer);			\
-+										\
-+static int __init early_proc_mem_restrict_##name(char *buf)			\
-+{										\
-+	if (!buf)								\
-+		return -EINVAL;							\
-+										\
-+	if (strcmp(buf, "all") == 0)						\
-+		static_key_slow_inc(&proc_mem_restrict_##name##_all.key);	\
-+	else if (strcmp(buf, "ptracer") == 0)					\
-+		static_key_slow_inc(&proc_mem_restrict_##name##_ptracer.key);	\
-+	return 0;								\
-+}										\
-+early_param("proc_mem.restrict_" #name, early_proc_mem_restrict_##name)
-+
-+DEFINE_EARLY_PROC_MEM_RESTRICT(OPEN_READ, open_read);
-+DEFINE_EARLY_PROC_MEM_RESTRICT(OPEN_WRITE, open_write);
-+DEFINE_EARLY_PROC_MEM_RESTRICT(WRITE, write);
-+DEFINE_EARLY_PROC_MEM_RESTRICT(FOLL_FORCE, foll_force);
-+
- /*
-  * Count the number of hardlinks for the pid_entry table, excluding the .
-  * and .. links.
-@@ -794,12 +818,56 @@ static const struct file_operations proc_single_file_operations = {
- };
- 
- 
-+static int __mem_open_access_permitted(struct file *file, struct task_struct *task)
-+{
-+	bool is_ptracer;
-+
-+	rcu_read_lock();
-+	is_ptracer = current == ptrace_parent(task);
-+	rcu_read_unlock();
-+
-+	if (file->f_mode & FMODE_WRITE) {
-+		/* Deny if writes are unconditionally disabled via param */
-+		if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_DEFAULT,
-+					&proc_mem_restrict_open_write_all))
-+			return -EACCES;
-+
-+		/* Deny if writes are allowed only for ptracers via param */
-+		if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_PTRACE_DEFAULT,
-+					&proc_mem_restrict_open_write_ptracer) &&
-+		    !is_ptracer)
-+			return -EACCES;
-+	}
-+
-+	if (file->f_mode & FMODE_READ) {
-+		/* Deny if reads are unconditionally disabled via param */
-+		if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_OPEN_READ_DEFAULT,
-+					&proc_mem_restrict_open_read_all))
-+			return -EACCES;
-+
-+		/* Deny if reads are allowed only for ptracers via param */
-+		if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_OPEN_READ_PTRACE_DEFAULT,
-+					&proc_mem_restrict_open_read_ptracer) &&
-+		    !is_ptracer)
-+			return -EACCES;
-+	}
-+
-+	return 0; /* R/W are not restricted */
-+}
-+
- struct mm_struct *proc_mem_open(struct file  *file, unsigned int mode)
- {
- 	struct task_struct *task = get_proc_task(file->f_inode);
- 	struct mm_struct *mm = ERR_PTR(-ESRCH);
-+	int ret;
- 
- 	if (task) {
-+		ret = __mem_open_access_permitted(file, task);
-+		if (ret) {
-+			put_task_struct(task);
-+			return ERR_PTR(ret);
-+		}
-+
- 		mm = mm_access(task, mode | PTRACE_MODE_FSCREDS);
- 		put_task_struct(task);
- 
-@@ -835,6 +903,62 @@ static int mem_open(struct inode *inode, struct file *file)
  	return ret;
  }
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c b/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
+index df35e90dd25f..fc273ebdbcd2 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ccorr.c
+@@ -182,7 +182,7 @@ static int mtk_disp_ccorr_probe(struct platform_device *pdev)
  
-+static bool __mem_rw_current_is_ptracer(struct file *file)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct task_struct *task = get_proc_task(inode);
-+	struct mm_struct *mm = NULL;
-+	int is_ptracer = false, has_mm_access = false;
-+
-+	if (task) {
-+		rcu_read_lock();
-+		is_ptracer = current == ptrace_parent(task);
-+		rcu_read_unlock();
-+
-+		mm = mm_access(task, PTRACE_MODE_READ_FSCREDS);
-+		if (mm && file->private_data == mm) {
-+			has_mm_access = true;
-+			mmput(mm);
-+		}
-+
-+		put_task_struct(task);
-+	}
-+
-+	return is_ptracer && has_mm_access;
-+}
-+
-+static unsigned int __mem_rw_get_foll_force_flag(struct file *file)
-+{
-+	/* Deny if FOLL_FORCE is disabled via param */
-+	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_DEFAULT,
-+				&proc_mem_restrict_foll_force_all))
-+		return 0;
-+
-+	/* Deny if FOLL_FORCE is allowed only for ptracers via param */
-+	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT,
-+				&proc_mem_restrict_foll_force_ptracer) &&
-+	    !__mem_rw_current_is_ptracer(file))
-+		return 0;
-+
-+	return FOLL_FORCE;
-+}
-+
-+static bool __mem_rw_block_writes(struct file *file)
-+{
-+	/* Block if writes are disabled via param proc_mem.restrict_write=all */
-+	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_WRITE_DEFAULT,
-+				&proc_mem_restrict_write_all))
-+		return true;
-+
-+	/* Block with an exception only for ptracers */
-+	if (static_branch_maybe(CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT,
-+				&proc_mem_restrict_write_ptracer) &&
-+	    !__mem_rw_current_is_ptracer(file))
-+		return true;
-+
-+	return false;
-+}
-+
- static ssize_t mem_rw(struct file *file, char __user *buf,
- 			size_t count, loff_t *ppos, int write)
- {
-@@ -847,6 +971,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
- 	if (!mm)
- 		return 0;
+ 	ret = component_add(dev, &mtk_disp_ccorr_component_ops);
+ 	if (ret)
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
  
-+	if (write && __mem_rw_block_writes(file))
-+		return -EACCES;
-+
- 	page = (char *)__get_free_page(GFP_KERNEL);
- 	if (!page)
- 		return -ENOMEM;
-@@ -855,7 +982,8 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
- 	if (!mmget_not_zero(mm))
- 		goto free;
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_color.c b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+index 7f0085be5671..c2c374e9a8e3 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_color.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+@@ -126,7 +126,7 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
  
--	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
-+	flags = (write ? FOLL_WRITE : 0);
-+	flags |= __mem_rw_get_foll_force_flag(file);
+ 	ret = component_add(dev, &mtk_disp_color_component_ops);
+ 	if (ret)
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
  
- 	while (count > 0) {
- 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
-diff --git a/security/Kconfig b/security/Kconfig
-index 412e76f1575d0..873f7c048a0b3 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -183,6 +183,74 @@ config STATIC_USERMODEHELPER_PATH
- 	  If you wish for all usermode helper programs to be disabled,
- 	  specify an empty string here (i.e. "").
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
+index ca8d1f3aca03..ec926b32c34d 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
+@@ -287,7 +287,7 @@ static int mtk_disp_gamma_probe(struct platform_device *pdev)
  
-+menu "Procfs mem restriction options"
-+
-+config PROC_MEM_RESTRICT_FOLL_FORCE_DEFAULT
-+	bool "Restrict all FOLL_FORCE flag usage"
-+	default n
-+	help
-+	  Restrict all FOLL_FORCE usage during /proc/*/mem RW.
-+	  Debuggers like GDB require using FOLL_FORCE for basic
-+	  functionality.
-+
-+config PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT
-+	bool "Restrict FOLL_FORCE usage except for ptracers"
-+	default n
-+	help
-+	  Restrict FOLL_FORCE usage during /proc/*/mem RW, except
-+	  for ptracer processes. Debuggers like GDB require using
-+	  FOLL_FORCE for basic functionality.
-+
-+config PROC_MEM_RESTRICT_OPEN_READ_DEFAULT
-+	bool "Restrict all open() read access"
-+	default n
-+	help
-+	  Restrict all open() read access to /proc/*/mem files.
-+	  Use with caution: this can break init systems, debuggers,
-+	  container supervisors and other tasks using /proc/*/mem.
-+
-+config PROC_MEM_RESTRICT_OPEN_READ_PTRACE_DEFAULT
-+	bool "Restrict open() for reads except for ptracers"
-+	default n
-+	help
-+	  Restrict open() read access except for ptracer processes.
-+	  Use with caution: this can break init systems, debuggers,
-+	  container supervisors and other non-ptrace capable tasks
-+	  using /proc/*/mem.
-+
-+config PROC_MEM_RESTRICT_OPEN_WRITE_DEFAULT
-+	bool "Restrict all open() write access"
-+	default n
-+	help
-+	  Restrict all open() write access to /proc/*/mem files.
-+	  Debuggers like GDB and some container supervisors tasks
-+	  require opening as RW and may break.
-+
-+config PROC_MEM_RESTRICT_OPEN_WRITE_PTRACE_DEFAULT
-+	bool "Restrict open() for writes except for ptracers"
-+	default n
-+	help
-+	  Restrict open() write access except for ptracer processes,
-+	  usually debuggers.
-+
-+config PROC_MEM_RESTRICT_WRITE_DEFAULT
-+	bool "Restrict all write() calls"
-+	default n
-+	help
-+	  Restrict all /proc/*/mem direct write calls.
-+	  Open calls with RW modes are still allowed, this blocks
-+	  just the write() calls.
-+
-+config PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT
-+	bool "Restrict write() calls except for ptracers"
-+	default n
-+	help
-+	  Restrict /proc/*/mem direct write calls except for ptracer processes.
-+	  Open calls with RW modes are still allowed, this blocks just
-+	  the write() calls.
-+
-+endmenu
-+
- source "security/selinux/Kconfig"
- source "security/smack/Kconfig"
- source "security/tomoyo/Kconfig"
+ 	ret = component_add(dev, &mtk_disp_gamma_component_ops);
+ 	if (ret)
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
+ 
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_merge.c b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
+index 77c057e0e671..2f6a605542d5 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_merge.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
+@@ -354,7 +354,7 @@ static int mtk_disp_merge_probe(struct platform_device *pdev)
+ 
+ 	ret = component_add(dev, &mtk_disp_merge_component_ops);
+ 	if (ret != 0)
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
+ 
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+index b552a02d7eae..ffdc9ca5b6f5 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+@@ -555,7 +555,7 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
+ 	ret = component_add(dev, &mtk_disp_ovl_component_ops);
+ 	if (ret) {
+ 		pm_runtime_disable(dev);
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
+index 02dd7dcdfedb..c9d6f2b39e92 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
+@@ -612,7 +612,7 @@ static int mtk_disp_ovl_adaptor_probe(struct platform_device *pdev)
+ 	ret = component_add(dev, &mtk_disp_ovl_adaptor_comp_ops);
+ 	if (ret != 0) {
+ 		pm_runtime_disable(dev);
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+index 7b1a6e631200..ac83e89e39d2 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+@@ -373,7 +373,7 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
+ 	ret = component_add(dev, &mtk_disp_rdma_component_ops);
+ 	if (ret) {
+ 		pm_runtime_disable(dev);
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.c b/drivers/gpu/drm/mediatek/mtk_ethdr.c
+index 156c6ff547e8..25b305bff97e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_ethdr.c
++++ b/drivers/gpu/drm/mediatek/mtk_ethdr.c
+@@ -341,7 +341,7 @@ static int mtk_ethdr_probe(struct platform_device *pdev)
+ 
+ 	ret = component_add(dev, &mtk_ethdr_component_ops);
+ 	if (ret)
+-		dev_notice(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
+ 
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
+index 925cbb7471ec..3a0944bee134 100644
+--- a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
++++ b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
+@@ -324,7 +324,7 @@ static int mtk_mdp_rdma_probe(struct platform_device *pdev)
+ 	ret = component_add(dev, &mtk_mdp_rdma_component_ops);
+ 	if (ret != 0) {
+ 		pm_runtime_disable(dev);
+-		dev_err(dev, "Failed to add component: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to add component\n");
+ 	}
+ 	return ret;
+ }
+
+---
+base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
+change-id: 20240605-mtk-disp-rdma-dev-err-probe-ef9c10a1a91e
+
+Best regards,
 -- 
-2.30.2
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 
