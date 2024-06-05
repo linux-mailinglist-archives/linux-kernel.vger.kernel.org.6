@@ -1,103 +1,165 @@
-Return-Path: <linux-kernel+bounces-202038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DADD18FC6F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:52:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C508FC6FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F9C1C233DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E92831F2140F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAA914B969;
-	Wed,  5 Jun 2024 08:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0093818C34B;
+	Wed,  5 Jun 2024 08:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PyIjdpIi"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jvwhm5t6"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6DB1946A9;
-	Wed,  5 Jun 2024 08:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CD2171CD;
+	Wed,  5 Jun 2024 08:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717577524; cv=none; b=gj1oSoqtk7DlzUx+oDiE1BVWPXq579+xzm1qp0EdDMoVKQIPNaYaZ/rwx+vADW//ycP2pvMYLh40sbShUc6jZcqABQh1p5npb1FtolHvKnfdGFak5xPdQ97JkwYQXdhc1V1bUwx+C5K/v00aK+0nN6cbiX8f2BlNzm+2GMWR46g=
+	t=1717577640; cv=none; b=uzqJJ0Vs0Q6xgIHj0hMWY8NDsn+eD9Uz7Oiv96Qy3m7k87vsr8VNo3Siz4q8XL3kYVRP8eN+yjLIqpHnHpxvcj5FMCwvmDffpwn/J+zAo/7BNOFZByJRE4VJ8VMHsJTSeUIVfsLiUVVBAPV+5cSmh7R/AlHTWDyyIUIKwoS7RoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717577524; c=relaxed/simple;
-	bh=KVo0CDA7CinqPGCJH+/lMOn6Db3ejCQh3A/WJGsD9hU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxiWfH7dsX9fSxfJsuIM9wdluAslQi1AW7r318377TYoBna/Lh1k/7LW8N5DuuX69z9WAPOkOjJtQ206LWEIUSN33s5bBQ6LU3hfE6o/Fuvy1Yey2dydtMysOGJB25kdTCpRtNNP0XWYDwYjZQDTzMFUYP8zphkleO6DRkO5bSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PyIjdpIi; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 442BB40E016E;
-	Wed,  5 Jun 2024 08:52:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mQSl4PYr5Z_z; Wed,  5 Jun 2024 08:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717577515; bh=pc9sf9qZhy+fcRBG5stiu+nUi7lrBalV1BjEV7RY3dA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PyIjdpIiz6n5xuGF6CqjtbullZqVyf1/akA89RidHLs/mr9cKNVEeqklBDxhQaOxk
-	 f9a7n8EHGPrONbY8EosT3V2iM4TVPm9GFwr3lngPfvtTzbt6udbKgqtSdZv4e46d/M
-	 K6yi+q3RYhy6D1FQLXZCJK88ln6zTFSJqukyu7EyBGR4K8mAwKCoJWNL0O/8nbEu0n
-	 LQMTHtBtxiPlbi/4iBI5RbGW6QEuvRxGFfOrwvdbY8Ekunh/BkLbmJK+DzL4lp3sYw
-	 dT/c51m6ZnFMtkqdtenkdJwAmIXG4Gb2+Q11xn1sTmS1NFKnDjyDKoLvVxM31FYdMW
-	 5dB2muZys7d8QS4Yn3eb3MwXYnwrdZ0bFEPd2ENYt0s50SR5VTK54xViVti5wpKNu7
-	 yYbgD6ZYkfZJOlnB35cOTCSkKv4Q22hg2kpe6US0bWfvpUlntIijfVI8E4WZBD8P09
-	 KlFA4JuxreDI3nqwBmFzBTjpLdh0O5CK0tdXblFe7E2o5HGPAs1+tzQIh8GATZHayA
-	 3S1NHn3bi3ZBrrfVxfLZzKVA5+FkVb9XHfg+uRWNZXUymGRYRK9+Z5NUHmlYuDR5ga
-	 WIxjx7vQNRUqm0niRE3j/oubo/vIeR3fdcnbEbAI4Dj+HOMiMXjWGBIPbv2L+4w8Pn
-	 PAJotargnDxkHQtfwDgApDoY=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7566640E016C;
-	Wed,  5 Jun 2024 08:51:48 +0000 (UTC)
-Date: Wed, 5 Jun 2024 10:51:42 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, x86@kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] EDAC/amd64: Remove unused register accesses
-Message-ID: <20240605085142.GUZmAnHiPyhceOBvWc@fat_crate.local>
-References: <20240523-fix-smn-bad-read-v3-0-aa44c622de39@amd.com>
- <20240523-fix-smn-bad-read-v3-1-aa44c622de39@amd.com>
+	s=arc-20240116; t=1717577640; c=relaxed/simple;
+	bh=2OCBRkiPl9IsxIFe8x5DqkabKmv5PskzRQOzL0bHJYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cPmxvUSirZBvlvNttoYTO1d2tqlIXmuqVTqK0BwDNdFN1Xc6c/uXo3NaUO6EyY5dQXW1nC4jb/09E2i2OieTM1bHOxkRAmBYzZT5MCiYgbU4fN8u7qTwPl5q5nziimxlVf2qwG8kPkuJfkXjEQB5HjN2BLhuLXd2MphTikGCa88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jvwhm5t6; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4e4efbc3218so3168138e0c.0;
+        Wed, 05 Jun 2024 01:53:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717577637; x=1718182437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r75izD5e305+5jm9FDw/8GWyo64PxCM/hkzm8mpzmgI=;
+        b=Jvwhm5t6zRXggG5UQSthkwp+L3GHlArMA2NMg9YM35483UmAgUQ3WaQt0m4G9rz/y1
+         CGUywoFw2bsPBiAm93yQLnIGXZ+l1mdFSdvEpBKCJ9pHbi7kKvLfR7MzOoD5D2n/tt2W
+         S04wPic4mXYP+swseAEhvgrN/tNYYRwTjBe701PAfjMI/kkin+IAnZJpdwXSivZlDlLU
+         37VhM+CfTyRb2Vsn51QIaqHpNk1Ovr5opi/ONMEryP4Xmu6GMuC6IPSbsYIgqCWmIIBZ
+         Y787PhUopOtCd7LAZ1nunne1buBRvRVyr9j6eVU2P0soGIm3izoEq3nTWRmNv/rEA/2c
+         hQWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717577637; x=1718182437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r75izD5e305+5jm9FDw/8GWyo64PxCM/hkzm8mpzmgI=;
+        b=b8hhuTR9nyRauuTopOM2AzATyeeVWtZAb3hbWb5CY9+mpv8rwrWPLdmM145mWV9kNt
+         OZFKkHlv4Cj3dUIbg5D7ywYKye2s4grbpJOGg94gkceyuPQm0ICGXxdc9GO2VXJf7nTQ
+         AmU5jKqOYrm94NpDbEoH0umtv1aQ7sb1ZmN1W1hp9Y5Mj0qKne7HYoLwh1ZTKIkZkCfR
+         MAj33pG1aNPn+dhhZpq7q4VoBqEPk9VwZwSDDTEbZ4gtaoxllr+QlAkwPwb2iyzKIcXO
+         qNlV2dVf4NiWU1uOa4p8P7F4KvK0EzoRAB5Yl4zwlUJU/cwEDER+5Tu8mqxLJ/zkOU0A
+         /mKg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6KsokBYcyUz5CH5YD5dzoS/ENB1zdlKJIyUpRv+gg+nrt0U8AsJaXAcc/aRk/UMY/BpPq2rQBrZloVH8Mvc2sQEs/QmOAs08JFrsDkmMqGAoc/TpZDNtcIwd7jc5/9hmCEAZ+shSWF37CpzX/OpEe5jE6xZjTHf9XGf0YRyhBsETo9kgcSoBwt5eCA1YBvMucthcWATE/jpkuTKWHwVfbxss2aFB7
+X-Gm-Message-State: AOJu0YyRuUdvmtwnEAb098XzvvxdtRjOi32HFD6rAE0GA1uqekyYvCJq
+	sxcIlha+LrV+96TUxExZN4ADoZi8Oe+fycPRcrTkW61c7+NgZrUTGbI6pH4nlzDxYKEQ41UFUWv
+	W1B8NoMnh8VOsUFSGsevsis6eYzY=
+X-Google-Smtp-Source: AGHT+IGsViEbnSwEE/wvKkUx//2BFBpdXj30JIkclbqXuOAfXLH2e+rOWSiqcQD1tRYdVcJiNlFPXrzX1F5GJgx3AUY=
+X-Received: by 2002:a05:6122:991:b0:4e4:ef4a:252d with SMTP id
+ 71dfb90a1353d-4eb3a40cfc4mr2483049e0c.8.1717577637637; Wed, 05 Jun 2024
+ 01:53:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240523-fix-smn-bad-read-v3-1-aa44c622de39@amd.com>
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdU7+O-+v=2V83AjQmTWyGy_a-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com> <CAMuHMdVs1SuVeWGWEbkO68pR-ZGjqAhwjLT7UoR85j7udVbb1A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVs1SuVeWGWEbkO68pR-ZGjqAhwjLT7UoR85j7udVbb1A@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 5 Jun 2024 09:53:31 +0100
+Message-ID: <CA+V-a8tOV_4p0HZdb1xXgwv0m+op3OZxijLG-ydR0RxigKCRCg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 01:26:52PM -0500, Yazen Ghannam wrote:
-> A number of UMC registers are read only for the purpose of debug
-> printing. They are not used in any calculations. Nor do they have any
-> specific debug value.
-> 
-> Remove these register accesses.
-> 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Cc: stable@vger.kernel.org
+Hi Geert,
 
-Definitely not stable material.
+On Wed, Jun 5, 2024 at 9:29=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> CC Greg
+>
+> On Tue, Jun 4, 2024 at 5:46=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gm=
+ail.com> wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock outpu=
+ts
+> > > (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registers)
+> > > in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the RZ/=
+V2H(P)
+> > > Hardware User's Manual (Rev.1.01, Feb. 2024).
+> >
+> > Hmm, I must have a slightly different Rev. 1.01 ;-)
+> >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > > --- /dev/null
+> > > +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
+>
+> > > +/* Clock list */
+> >
+> > [...]
+> >
+> > > +#define R9A09G057_USB30_CLK_RESERVED0                  197
+> > > +#define R9A09G057_USB30_CLK_RESERVED1                  198
+> > > +#define R9A09G057_USB30_CLK_RESERVED2                  199
+> > > +#define R9A09G057_USB30_CLK_RESERVED3                  200
+>
+> [...]
+>
+> It has been brought to my attention these had been named *RESERVED*
+> deliberately, to avoid disclosing their meaning.
+> As these definitions are part of the DT ABI, and the DTS writer has to
+> relate the names to the actual clocks in the datasheet, and to the names
+> used in the DT bindings for the consumer devices (if ever upstreamed),
+> I find it hard to accept these for upstream inclusion as-is.
+>
+The other point I want to add is that the macros, which are designated
+as reserved, have been included to prevent any breakage of ABI. In the
+future, if we plan to add support for these IP blocks, these macros
+will be renamed accordingly and utilized in the CPG driver.
 
-With that tag dropped, applied, thx.
+Cheers,
+Prabhakar
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> What do other people think?
+> Thanks!
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
