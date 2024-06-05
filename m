@@ -1,184 +1,211 @@
-Return-Path: <linux-kernel+bounces-202637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D514F8FD02F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:55:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC448FCF12
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95FBFB2CDD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA6D1C2427B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861631A1886;
-	Wed,  5 Jun 2024 12:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299041A2FD0;
+	Wed,  5 Jun 2024 12:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Iy62n24a"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pwgLwFXk"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A352195998;
-	Wed,  5 Jun 2024 12:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3621A2FC3;
+	Wed,  5 Jun 2024 12:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717591749; cv=none; b=RKFt1BlbDmiz4Wzy3kwqoQ1uZ6Lw9WiC2mOQlwTAoftxFBQLKBoHxcoS9UKq8IUE1QIkjhT7nyuACj2XrjG9Uj6grZ38DK/xD9Zz9zz3gxU7HINs3oNT2roOrgSFtSXkwl7/3aRnXp2S3y4K1Z/9tT5jYfYa3y2XmsYu34hask8=
+	t=1717591769; cv=none; b=O7oKm/W48k73nM2InO/RyuWW8OowUmnHDxPC836/OO2u7t6U12eE9C4Eshgto9QrmgRXPa3t7+YciuQenQJwAalOc1EQH5NbMtDF8i+lzmVtuuJ2G8isPgU6ubd1/QEKcsINYj/FO9PvKG0nkenxj5WfjzO9++hA6xHlRfKUn3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717591749; c=relaxed/simple;
-	bh=L9+hZAByHr0QqaSzPq7eWIW5fqJHnRTGRSdpO8HN9kQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bzzGz8cgtCNBehYrtrLGveLtXXIqMv45aK9MFJtNpE9Zr96Qa1TzXFB2gja9y6FZWB9E6QPcNDKvg5BunOHfoSUaIzpQT/h4dpUG1wZaNF1SBfq08TI+gmi9qQmcE/MGSc/hSsmJ0LdRr7oiXlqA9hrjj7N9F+YmwQM4V6ELcSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Iy62n24a; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 455Cn1ea004999;
-	Wed, 5 Jun 2024 07:49:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717591741;
-	bh=86yfY+eJrB34WAYTx6KvqoZheG9Z7Dr5pqmOO/cToUY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Iy62n24atMtI0Bu3ztqkQCGPpRu1z++WJhNzOlqRksjTAfy+iCdjL4q10tPkcVaz0
-	 rSz3cZ08mn9QAb4glKpPD2RczHoIl78PFTpitc9D7rOTorApk2PXW1i2WPpEFqTHyx
-	 Pe/e2mgEr7ix86/QNZdzG6ukQskRoHQK+8H3aFCk=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 455Cn0E7004238
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 5 Jun 2024 07:49:01 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
- Jun 2024 07:49:00 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 5 Jun 2024 07:49:00 -0500
-Received: from localhost ([10.249.48.175])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 455Cn0Zh058475;
-	Wed, 5 Jun 2024 07:49:00 -0500
-From: Hari Nagalla <hnagalla@ti.com>
-To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <nm@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH v3 4/4] arm64: dts: ti: k3-am62a7-sk: Enable ipc with remote proc nodes
-Date: Wed, 5 Jun 2024 07:48:59 -0500
-Message-ID: <20240605124859.3034-5-hnagalla@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240605124859.3034-1-hnagalla@ti.com>
-References: <20240605124859.3034-1-hnagalla@ti.com>
+	s=arc-20240116; t=1717591769; c=relaxed/simple;
+	bh=2P9IxU/Gw3VjMvVgMsOpTNkZuXjJtFEu07879BO8ysw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RDzgQQ0HDVrDwfxVA+YOEunIqA8Z5znh7dGECeLP0QKU2AE8lm8aJY9VIDA8jp34ij0hJkD5gk6WK3GAWm5Xy//nNY/B/F+uFH9OAz4aNC54KmGRMCPVkjsO96Ri5CkTwNKAZ7mqofIw+htlN37EAGhIlW0o0Mat/J9xRvmEGRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pwgLwFXk; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DDF592000C;
+	Wed,  5 Jun 2024 12:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717591765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3h1XvjI0XZYt3LesNdW6+GYYYHkZnvi8kRcMDn2oGi0=;
+	b=pwgLwFXkfkonB/FhcANcUMY/VkhXByqbbe9bFSgyj8qnzJsIqO3CxSniU6omao6KcWiah/
+	ZKIKc9MKXZ97R+XevG1Jg5hP/YijKu1TbafAr1zJqVeVgqDGol78m4L2ADvntL04mKImhl
+	JTmFHCHGLcW6f9XtC7n+44MHDcpyZTomXFaJF30H4hGW5uYDZoeFjIcG7QcANS71eF7v7C
+	X8SDoPIZj7vPzO5XDRKp1xINMKxbcVKubuqEMd5Z91F/sH869PWFyLq9aFmpHLih8Q7g70
+	Iv+F6d6tLYe5XhKKVBXzDg+rftpg/gjBbDa0yJHPKqg7WJOFl3Ryd5kKO5Qo+g==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>
+Subject: [PATCH net-next v12 00/13] Introduce PHY listing and link_topology tracking
+Date: Wed,  5 Jun 2024 14:49:05 +0200
+Message-ID: <20240605124920.720690-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-From: Devarsh Thakkar <devarsht@ti.com>
+Hello everyone,
 
-Reserve memory for remote rpoc IPC and bind the mailbox assignments
-for each remote proc. Two memory regions are reserved for each
-remote processor. The first region of 1Mb of memory is used for Vring
-shared buffers and the second region is used as external memory to the
-remote processor, resource table and as tracebuffer.
+This is V12 for the link topology addition, allowing to track all PHYs
+that are linked to netdevices.
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 68 +++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+This version is based on the V11 that was partially applied during last
+cycle, then reverted as some issues were found by Nathan and Heiner, which lead
+som some discussions to address them. Therefore, all issues that were reported
+and the proposed fixes (thanks Heiner !) are taken into account, all of which
+ended-up in patch 01/13.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index fa43cd0b631e..09bb8af53b1e 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -52,11 +52,40 @@ secure_ddr: optee@9e800000 {
- 			no-map;
- 		};
- 
-+		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9c800000 0x00 0x100000>;
-+			no-map;
-+		};
-+
- 		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
- 			compatible = "shared-dma-pool";
- 			reg = <0x00 0x9c900000 0x00 0x01e00000>;
- 			no-map;
- 		};
-+		mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9b800000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9b900000 0x00 0x0f00000>;
-+			no-map;
-+		};
-+
-+		c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x99800000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c7x_0_memory_region: c7x-memory@99900000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x99900000 0x00 0x01efffff>;
-+			no-map;
-+		};
- 	};
- 
- 	vmain_pd: regulator-0 {
-@@ -721,3 +750,42 @@ dpi1_out: endpoint {
- 		};
- 	};
- };
-+
-+&mailbox0_cluster0 {
-+	mbox_r5_0: mbox-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster1 {
-+	mbox_c7x_0: mbox-c7x-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster2 {
-+	mbox_mcu_r5_0: mbox-mcu-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&c7x_0 {
-+	mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
-+	memory-region = <&c7x_0_dma_memory_region>,
-+			<&c7x_0_memory_region>;
-+};
-+
-+&wkup_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
-+	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-+		<&wkup_r5fss0_core0_memory_region>;
-+};
-+
-+&mcu_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
-+	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-+			<&mcu_r5fss0_core0_memory_region>;
-+};
+The rest of the series is mostly untouched, the main points being an
+update of the PSE-PD part following the PoE support added by Köry and
+some fixes regarding the documentation (a broken ref found by Jakub).
+
+I've gathered all of Andrew's reviews on V11, however as I had to rework
+the pse-pd part a bit, I haven't added the tag on this patch (patch
+10/13).
+
+Discussions on the patch 01/13 updates can be found here :
+
+https://lore.kernel.org/netdev/20240412104615.3779632-1-maxime.chevallier@bootlin.com/
+https://lore.kernel.org/netdev/20240429131008.439231-1-maxime.chevallier@bootlin.com/
+https://lore.kernel.org/netdev/20240507102822.2023826-1-maxime.chevallier@bootlin.com/
+
+As a remainder, here's what the PHY listings would look like :
+ - eth0 has a 88x3310 acting as media converter, and an SFP module with
+   an embedded 88e1111 PHY
+ - eth2 has a 88e1510 PHY
+
+# ethtool --show-phys *
+
+PHY for eth0:
+PHY index: 1
+Driver name: mv88x3310
+PHY device name: f212a600.mdio-mii:00
+Downstream SFP bus name: sfp-eth0
+PHY id: 0
+Upstream type: MAC
+
+PHY for eth0:
+PHY index: 2
+Driver name: Marvell 88E1111
+PHY device name: i2c:sfp-eth0:16
+PHY id: 21040322
+Upstream type: PHY
+Upstream PHY index: 1
+Upstream SFP name: sfp-eth0
+
+PHY for eth2:
+PHY index: 1
+Driver name: Marvell 88E1510
+PHY device name: f212a200.mdio-mii:00
+PHY id: 21040593
+Upstream type: MAC
+
+Ethtool patches : https://github.com/minimaxwell/ethtool/tree/mc/main
+
+Link to v11: https://lore.kernel.org/netdev/20240404093004.2552221-1-maxime.chevallier@bootlin.com/
+Link to V10: https://lore.kernel.org/netdev/20240304151011.1610175-1-maxime.chevallier@bootlin.com/
+Link to V9: https://lore.kernel.org/netdev/20240228114728.51861-1-maxime.chevallier@bootlin.com/
+Link to V8: https://lore.kernel.org/netdev/20240220184217.3689988-1-maxime.chevallier@bootlin.com/
+Link to V7: https://lore.kernel.org/netdev/20240213150431.1796171-1-maxime.chevallier@bootlin.com/
+Link to V6: https://lore.kernel.org/netdev/20240126183851.2081418-1-maxime.chevallier@bootlin.com/
+Link to V5: https://lore.kernel.org/netdev/20231221180047.1924733-1-maxime.chevallier@bootlin.com/
+Link to V4: https://lore.kernel.org/netdev/20231215171237.1152563-1-maxime.chevallier@bootlin.com/
+Link to V3: https://lore.kernel.org/netdev/20231201163704.1306431-1-maxime.chevallier@bootlin.com/
+Link to V2: https://lore.kernel.org/netdev/20231117162323.626979-1-maxime.chevallier@bootlin.com/
+Link to V1: https://lore.kernel.org/netdev/20230907092407.647139-1-maxime.chevallier@bootlin.com/
+
+
+Maxime Chevallier (13):
+  net: phy: Introduce ethernet link topology representation
+  net: sfp: pass the phy_device when disconnecting an sfp module's PHY
+  net: phy: add helpers to handle sfp phy connect/disconnect
+  net: sfp: Add helper to return the SFP bus name
+  net: ethtool: Allow passing a phy index for some commands
+  netlink: specs: add phy-index as a header parameter
+  net: ethtool: Introduce a command to list PHYs on an interface
+  netlink: specs: add ethnl PHY_GET command set
+  net: ethtool: plca: Target the command to the requested PHY
+  net: ethtool: pse-pd: Target the command to the requested PHY
+  net: ethtool: cable-test: Target the command to the requested PHY
+  net: ethtool: strset: Allow querying phy stats by index
+  Documentation: networking: document phy_link_topology
+
+ Documentation/netlink/specs/ethtool.yaml      |  62 ++++
+ Documentation/networking/ethtool-netlink.rst  |  52 +++
+ Documentation/networking/index.rst            |   1 +
+ .../networking/phy-link-topology.rst          | 121 +++++++
+ MAINTAINERS                                   |   1 +
+ drivers/net/phy/Makefile                      |   2 +-
+ drivers/net/phy/marvell-88x2222.c             |   2 +
+ drivers/net/phy/marvell.c                     |   2 +
+ drivers/net/phy/marvell10g.c                  |   2 +
+ drivers/net/phy/phy_device.c                  |  46 +++
+ drivers/net/phy/phy_link_topology.c           | 105 ++++++
+ drivers/net/phy/phylink.c                     |   3 +-
+ drivers/net/phy/qcom/at803x.c                 |   2 +
+ drivers/net/phy/qcom/qca807x.c                |   2 +
+ drivers/net/phy/sfp-bus.c                     |  15 +-
+ include/linux/netdevice.h                     |   4 +-
+ include/linux/phy.h                           |   6 +
+ include/linux/phy_link_topology.h             |  82 +++++
+ include/linux/sfp.h                           |   8 +-
+ include/uapi/linux/ethtool.h                  |  16 +
+ include/uapi/linux/ethtool_netlink.h          |  21 ++
+ net/core/dev.c                                |  15 +
+ net/ethtool/Makefile                          |   2 +-
+ net/ethtool/cabletest.c                       |  16 +-
+ net/ethtool/netlink.c                         |  57 +++-
+ net/ethtool/netlink.h                         |  10 +
+ net/ethtool/phy.c                             | 306 ++++++++++++++++++
+ net/ethtool/plca.c                            |  19 +-
+ net/ethtool/pse-pd.c                          |  16 +-
+ net/ethtool/strset.c                          |  17 +-
+ 30 files changed, 968 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/networking/phy-link-topology.rst
+ create mode 100644 drivers/net/phy/phy_link_topology.c
+ create mode 100644 include/linux/phy_link_topology.h
+ create mode 100644 net/ethtool/phy.c
+
 -- 
-2.34.1
+2.45.1
 
 
