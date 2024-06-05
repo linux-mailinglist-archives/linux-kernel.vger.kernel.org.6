@@ -1,105 +1,173 @@
-Return-Path: <linux-kernel+bounces-202806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6518FD16A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:10:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 887C58FD16E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 879FE1F22EE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377A52841C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1495644C9E;
-	Wed,  5 Jun 2024 15:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D6C3F8E2;
+	Wed,  5 Jun 2024 15:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwPGMecg"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="VXEsz3rT"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05C419D891;
-	Wed,  5 Jun 2024 15:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA12827701
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717600239; cv=none; b=NbbUaAU22kMjHA2hOiTUP33viqSWK4UauTj1t8AFbWk436JWsaR5nddG+ub2NOBvZq160Lz7uxBDKeKNwlyZI3glsN6g6A+FH3KLxSWWdu9KXpkfwGxUHeNtrGo9q5BasfkEG/+LY8q89HyprTtVyfd7AjnfmtEvI56hUmbmmPw=
+	t=1717600447; cv=none; b=NFZ1nCG7J904rKIxyvuf9OWMCeP2tVDgu3MKMkSgO60D96BoX0uch6sJ9g0WdXDeMOwpN56cFwPts243ilpu0JtiaupIfe20Lb5QC618PFzcAxNcjiz/cCKA722kVL64upF9fYcYM27R9GN2+urqDnqvSSh8GsfDrmZutKqX+xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717600239; c=relaxed/simple;
-	bh=SiSRiLqVQvkgjbroyhbLKTPsZvrrL6hgIXaNmPPH5Hc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6FqSUQh8iBknU/3oIuRieY6UoNPVkGL7Wpwi6bstwcuUU0z2Vu7d8+ir1fZd9p0GnzhK/DzcDTEeeb8LFAcj74TLNcgi11I2M/DRXvzWXqJEHKBrh+aqEh/dROwtpMU9uK4WtxlmGt+Vj2+KijdIDzsPbrRfmXRGXwKZDik+PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwPGMecg; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a31d63b6bso3280881a12.0;
-        Wed, 05 Jun 2024 08:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717600236; x=1718205036; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SiSRiLqVQvkgjbroyhbLKTPsZvrrL6hgIXaNmPPH5Hc=;
-        b=bwPGMecgqov+HbunlNCZf5WZWYiDwfsYJtC9UyUDeXTf/GbSY+epnZ/zP1ZvebpM/j
-         T0h65xiRNSqczRHE6lNsrj3gFTu4XAD8zF/pXTbB7/G7UGAHPmW11izTIIMxrPJVF/Oe
-         ZMTKPaubNICp9gQrjI59Pff0+Tm6b1U+AMjYVORTtiMvokyejX3ClwyrpcG/myzEDhi6
-         C0laUD8resYIuHtx375GfjAchndfsiFlV/4O4pXl2d57oLPQWm3L/Re3t27ERLkYroQU
-         7Tqrgjf5XMstMGqRO7hCmKGNclRMQdJxASmcgMKBORJT67K5gKn8waeNfMmYakx+tORZ
-         +6uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717600236; x=1718205036;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SiSRiLqVQvkgjbroyhbLKTPsZvrrL6hgIXaNmPPH5Hc=;
-        b=nuTNnoiq4gGQs5QknXUopueR28d0yHtFU8u1PKi4Ixg+AP0FX8sER00ETo9jh9rjgE
-         iPwNyg5OUazWI/FaV9FtqW8LMWojFr2WATb0BqqJFcVsyj0VbNszo3Qojt8t8Yg59Xm1
-         V1BgGZLvtm5SIX3KiIjsZLteKAir+knENqdOIodmGE8uvdMFxRdbp1eGxTDFj8KF4fy4
-         mUjaRjom0Rwde+5bzUhZLavfnUSJMtMHUqcZi/m1izSyy8zteKp/DDRl5WwLqcWNA+0L
-         7znTdDh+Fg/s8ZevJotl1Wl6tkyNy8zzBdWb5hNL15WyNoZRRDaZNEcwn4VT+Z1fAHH+
-         ibHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlGAM2w3hKf6syL0wgELFnCxB7ONNnRlwozoXSSs/5r9kJKuTwatvBPaqCakqWNPIqk8LPPgkuBfm3ZakzUl01WlQNfTe85hld44qrykF7ayWNOyecAGjkxQZcxkN+j5oo8rlcnuMKRnKiVw==
-X-Gm-Message-State: AOJu0Yx9HWvxKKd8zy/MjkfLtlTWjMGiPiHVVXE7phJPaPgjnryQaLYJ
-	N/n5PDLsiGxzEqOo0P13csaLZQ+qm464ZWJb5EvbN3lXVSK/b/aiOKeuGCzVaiWJRB82B9jIJNc
-	nSqkH17okulkzgvcLZdcLqD1tnGU=
-X-Google-Smtp-Source: AGHT+IGRImTrlF9tKlBBgLVkRuBVevowWXm72ttizbamHPcLJEzMxuXdmC7xfDoNWP+ZeKqDN+efam3m0IuhieyYeuo=
-X-Received: by 2002:a50:9548:0:b0:57a:31eb:83da with SMTP id
- 4fb4d7f45d1cf-57a8b7c6240mr1913836a12.30.1717600235863; Wed, 05 Jun 2024
- 08:10:35 -0700 (PDT)
+	s=arc-20240116; t=1717600447; c=relaxed/simple;
+	bh=mQFUqIv9zc3pnfC96HatcYG8i6nsVQ6fWx4sEtvBbwo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UgG/8pQ4R7HO80yVg7eQLIHSG6NS2XkZq3BfihmAmw8qZu5gQBrKMT6Wkvf/I4GllriklvWKh2vaQNiRSmizoKLc6BfxFKsciaKd8eO34dv3SOcGdEuaCbKjEFQUNOPPrXcNUOohmG+mQ1vHHZYOFMNd4XUfjgpbj+og2hDhvV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=VXEsz3rT; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1717600430;
+	bh=mQFUqIv9zc3pnfC96HatcYG8i6nsVQ6fWx4sEtvBbwo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=VXEsz3rTPcEMnFy+dmEeswrgzdhYx/qh/+b0s0gOwyImKlb5eVFUoM3lZLqBOjL/O
+	 KqW2gzGhuAfYMlZE8xHs4fW7JtI10rBEvYe77gVY3xUveWOcsJffTMCvMQy72tQ2wQ
+	 iZn6U4DnN3u3XG4NnyMQNwcHN0/GLulnXgNeSNIc=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 000E267238;
+	Wed,  5 Jun 2024 11:13:45 -0400 (EDT)
+Message-ID: <ada035690e446909c3cdbf9a43a92def96020615.camel@xry111.site>
+Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
+ unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
+From: Xi Ruoyao <xry111@xry111.site>
+To: Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Tiezhu Yang <yangtiezhu@loongson.cn>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>, Jinyang He
+ <hejinyang@loongson.cn>,  loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ mengqinggang@loongson.cn, cailulu@loongson.cn, wanglei@loongson.cn, 
+ luweining@loongson.cn, Yujie Liu <yujie.liu@intel.com>, Heng Qi
+ <hengqi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>
+Date: Wed, 05 Jun 2024 23:13:43 +0800
+In-Reply-To: <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
+References: <20240604150741.30252-1-xry111@xry111.site>
+	 <20240605054328.GA279426@thelio-3990X>
+	 <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
+	 <20240605062548.GF279426@thelio-3990X>
+	 <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
+	 <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604155257.109500-1-mjguzik@gmail.com> <20240604155257.109500-4-mjguzik@gmail.com>
- <20240605-sonnabend-busbahnhof-3f93ffcac846@brauner>
-In-Reply-To: <20240605-sonnabend-busbahnhof-3f93ffcac846@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 5 Jun 2024 17:10:23 +0200
-Message-ID: <CAGudoHG-YVNui5NW7hx8dXJiYaM_L5_uMQB2bmwRVkOg03NKFw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] vfs: shave a branch in getname_flags
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 5, 2024 at 5:03=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Tue, Jun 04, 2024 at 05:52:57PM +0200, Mateusz Guzik wrote:
-> > Check for an error while copying and no path in one branch.
->
-> Fine to move that check up but we need to redo it after we recopied.
-> It's extremely unlikely but the contents could've changed iirc. I can
-> fix that up though.
+On Wed, 2024-06-05 at 21:18 +0800, Xi Ruoyao wrote:
+> On Wed, 2024-06-05 at 18:57 +0800, Xi Ruoyao wrote:
+> > On Tue, 2024-06-04 at 23:25 -0700, Nathan Chancellor wrote:
+> > > On Wed, Jun 05, 2024 at 01:54:24PM +0800, Xi Ruoyao wrote:
+> > > > On Tue, 2024-06-04 at 22:43 -0700, Nathan Chancellor wrote:
+> > > > > For what it's worth, I have noticed some warnings with clang that=
+ I
+> > > > > don't see with GCC but I only filed an issue on our GitHub and ne=
+ver
+> > > > > followed up on the mailing list, so sorry about that.
+> > > > >=20
+> > > > > https://github.com/ClangBuiltLinux/linux/issues/2024
+> > > > >=20
+> > > > > Might be tangential to this patch though but I felt it was worth
+> > > > > mentioning.
+> > > >=20
+> > > > The warnings in GCC build is definitely the issue handled by this p=
+atch.
+> > > > But the warnings in Clang build should be a different issue.=C2=A0 =
+Can you
+> > > > attach the kernel/events/core.o file from the Clang build for analy=
+sis?
+> > > > I guess we need to disable more optimization...
+> > >=20
+> > > Sure thing. Let me know if there are any issues with the attachment.
+> >=20
+> > Thanks!=C2=A0 I've simplified it and now even...
+> >=20
+> > .global test
+> > .type test,@function
+> > test:
+> >=20
+> > addi.d	$sp,$sp,-448
+> > st.d	$ra,$sp,440
+> > st.d	$fp,$sp,432
+> > addi.d	$fp,$sp,448
+> >=20
+> > # do something
+> >=20
+> > addi.d	$sp,$fp,-448
+> > ld.d	$fp,$sp,432
+> > ld.d	$ra,$sp,440
+> > addi.d	$sp,$sp,448
+> > ret
+> >=20
+> > .size test,.-test
+> >=20
+> > is enough to trigger a objtool warning:
+> >=20
+> > /home/xry111/t1.o: warning: objtool: test+0x20: return with modified st=
+ack frame
+> >=20
+> > And to me this warning is bogus?
+>=20
+> Minimal C reproducer:
+>=20
+> struct x { _Alignas(64) char buf[128]; };
+>=20
+> void f(struct x *p);
+> void g()
+> {
+> 	struct x x =3D { .buf =3D "1145141919810" };
+> 	f(&x);
+> }
+>=20
+> Then objtool is unhappy to the object file produced with "clang -c -O2"
+> from this translation unit:
+>=20
+> /home/xry111/t2.o: warning: objtool: g+0x50: return with modified stack f=
+rame
+>=20
+> It seems CFI_BP has a very specific semantic in objtool and Clang does
+> not operates $fp in the expected way.=C2=A0 I'm not sure about my conclus=
+ion
+> though.=C2=A0 Maybe Peter can explain it better.
 
-Oh I see, you mean the buffer might have initially been too big so it
-landed in the zmalloc fallback, but by that time userspace might have
-played games and slapped a NUL char in there.
+Another example: some simple rust code:
 
-Fair, but also trivial to fix up, so I would appreciate if you sorted
-it out, especially since you offered :)
+extern { fn f(x: &i64) -> i64; }
+
+#[no_mangle]
+fn g() -> i64 {
+    let x =3D 114514;
+    unsafe {f(&x)}
+}
+
+It's just lucky GCC doesn't use $fp as the frame pointer unless there's
+some stupid code (VLA etc) thus the issue was not detected.
+
 
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
