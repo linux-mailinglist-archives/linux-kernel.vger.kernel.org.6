@@ -1,157 +1,106 @@
-Return-Path: <linux-kernel+bounces-202226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FD28FC986
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:57:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304E68FCA85
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC7451C23A4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A812C28345C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2D119306B;
-	Wed,  5 Jun 2024 10:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F9C14D70C;
+	Wed,  5 Jun 2024 11:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IysyEhz7"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="aXouZoru"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67557192B67
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA64145341;
+	Wed,  5 Jun 2024 11:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717585027; cv=none; b=u4OzjDdeF+ZS87+M9e9c+H3TPMCRpOlvZwYXn4Gi2EZAXkFguuQnlz6vyfGYXH3HwgVFE5FLerbHKtXV8w7tg4Y0DtoN1ib4IIn1Ez8ZFkoCzht7gydEdbcrM+ZcXX9kM7PQ9mdjMiuslyeyE4qk+MuRoAStx7zYs9iuoiHk5Fo=
+	t=1717587301; cv=none; b=tONRfkQdJIg3gp8/wdnkpytcBovsxG4aoXtSVdAx2K6/X3omNX9H/CliqsHvQYHj8cejBaIEf/02HiNPKusBZI1WHhLLDlpA9myvXnLUHg1N/inJeq/CfUa40YjT9mVrHBCgJ7cJWXDnM3cV7GN/ypVIH9el7IOfMqJINk7T8GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717585027; c=relaxed/simple;
-	bh=9tQ/hGgrkJZB1S9WoG+UsA5FM2H+BHL7GGjXI+1Ppxw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jEskhSC+/pRNxZYglxtpZax+vk1nl9fJFYW4R7bs9ouboKQeu3xGEL4lHaqsaVxob+JMXGZMYXSl7Q5Z7AT79W4sRFF9lb5EkBuqozaftZ9FnHqngmAhUV9MKGaeKzJTKmZtL+2CfQXiwINwUrpgi+ss8AhqdZWJjrQ63DhOD3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IysyEhz7; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so20460915e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 03:57:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717585024; x=1718189824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h23rJhkzcdNUIkugpoAcaZsXI84pnHqCrii/WaDJ/bw=;
-        b=IysyEhz7Ehc7cC1S6B7awofqaWZdlsmC7HJ6jogRmhgHdpFJUcR6/SS/JN/hx3dSu4
-         wy/LfveccdXstM1HSYbY39F03YtbHjAl7qLtBuTYja7wMCSWtOzjMg5awfOBPDZDLHO0
-         iuyoWfgF+YtgivjZbCD763eO3Wd3AzE4JlM23vnEl1WUXVmQZisPKQer1aS2Q9nUJYLj
-         Bxm8rVnQtFVYkAq9ovXvAXNmgoFAYt7RCr8RVMw/Yme+S/+poquFJYUpVh3VhAJ8U3hj
-         HexqbIhEVRuZ2bumrQjSzUmuKRrpyEkMSBwfqg3OqxhG8DC0AuyNn5NChoZL3pVMbrXV
-         XTxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717585024; x=1718189824;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h23rJhkzcdNUIkugpoAcaZsXI84pnHqCrii/WaDJ/bw=;
-        b=thIxZNLsB9Iv4md2t3O/U88+ujLRcTKdDQ5uUUVSP+Vy/ICYQE3c0jK5czw3FCD1dH
-         gqZkmG8qYVDn2ymYRdTpDCMxrIyfuJXcK9lRclwU5z5BVUl9Q9iQV7vHlkGdfKEXbYMX
-         Q4JlnpbL8OY3+TZBC0l+nFpFfa+MbEzjtqZhqUq5hJrjzdz8QKT1RETo0jxLgR1+Ze1y
-         tCgYZfCuRQhGVW5+w2aKbVcEs7vLg/5sAkCyrBzqbZA/SvaOgSLUpbUY+frIh9A45uFC
-         SjQh6/TKedKg7FqZIePl9hE+pWopooHLp6P1X1/d+UF7kha/obBRtj42+w2t/OUQIPLy
-         B1fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUPwaZVadxE2T2O3lsnjzazeurGPwet3BFde5yFIYuYlh0p6gKnx6LPWTkwlHbRu2FOX8ujltG/myLbXIfGhmu6BjUb6GJ9qVI0L2p
-X-Gm-Message-State: AOJu0Ywvh37lSJQk7j5LmaG+sHNWYUC9VbZIeuE612VMypBVu7vv0eYx
-	Rsvk98hv+k0v/LSk5WA1m2d8EE+x4GdD5I0DFPIAlQ//Z5ntaACo7OI3vBn7oN8=
-X-Google-Smtp-Source: AGHT+IFGPo/96hccbojOu1aKs4N1JEV7FxLvULnYmJBPJcHF19qcyQLnJ1sfkfuMEPY2OxD9IK1ZTg==
-X-Received: by 2002:a05:600c:4fd3:b0:41b:855b:5d26 with SMTP id 5b1f17b1804b1-421562c2773mr17454165e9.2.1717585023717;
-        Wed, 05 Jun 2024 03:57:03 -0700 (PDT)
-Received: from krzk-bin.. ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421581016e0sm17653855e9.9.2024.06.05.03.57.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 03:57:03 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sumit Semwal <sumit.semwal@linaro.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Wronek <david@mainlining.org>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: display: panel: constrain 'reg' in DSI panels (part two)
-Date: Wed,  5 Jun 2024 12:56:59 +0200
-Message-ID: <20240605105659.27433-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1717587301; c=relaxed/simple;
+	bh=9dqFoVtdsIlZ5J0eqCwOmVV/MKTtyxOkDKlI17dPrCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dQj7pHwc+EWOHU2CFW/n0rrzKC7v3TtgkSjNJ7rZEkdHWNUfXBzmJ8P5BQSLpqO1A0XaljhiuJTnC6TU6mhxgQRpG84ShuyteHaJvPP3ncAGGjEuCNwJRneh75v3Yj25iXf6xkGdd3/FJNQCj5lKSexS0Yx+Zj3lu6VB40Jii8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=aXouZoru; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id AD8E2881A2;
+	Wed,  5 Jun 2024 13:34:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1717587292;
+	bh=iqglW2Mm+Bj8XtbT2EuhNDhxfDBq1NKS+bPZOCk1k/M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aXouZorunfwKW3IpK7uZ6XI0TIPRnMaB9HbgvMmZi84dx2a77+9IXllJHblzvKQNR
+	 9befSOqfsGLjfuCSEe5I4zmW3bl5y0uvj4NBCQf0enrv5GVAs+Hgy5BQ+d7KgiUOnY
+	 Z61YPhvRUWU+3XAlzYfE3bJWBE/dX8byyiygIaj7+SWe1Zx0O/2j11AXVUv3KVrnYs
+	 43vEx4F5ud9Fu2LZoaCY4EcuQM+Nzrb1zlvghvXfG7tvedW19ZByxD9mGRDu6qojFD
+	 e2Q79XD+CdoXEZoegNBshFE3cZtSQRJWyvDqjuoS5V9Vtp/Fi9Rdi8Tp0ufytD6Zte
+	 yGkwah2Ni3WPQ==
+Message-ID: <e9dc0291-f765-4796-b0ff-7c60b35adb4b@denx.de>
+Date: Wed, 5 Jun 2024 12:57:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/11] ARM: dts: stm32: add ethernet1 for
+ STM32MP135F-DK board
+To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
+ <20240604143502.154463-11-christophe.roullier@foss.st.com>
+ <c2242ba3-3692-4c5f-a979-0d0e80f23629@denx.de>
+ <3a59b4cc-0c7b-47d6-8322-4ae12ddb3a4c@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <3a59b4cc-0c7b-47d6-8322-4ae12ddb3a4c@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-DSI-attached devices could respond to more than one virtual channel
-number, thus their bindings are supposed to constrain the 'reg' property
-to match hardware.  Add missing 'reg' constrain for DSI-attached display
-panels, based on DTS sources in Linux kernel (assume all devices take
-only one channel number).
+On 6/5/24 8:00 AM, Christophe ROULLIER wrote:
+> 
+> On 6/4/24 18:52, Marek Vasut wrote:
+>> On 6/4/24 4:35 PM, Christophe Roullier wrote:
+>>> Ethernet1: RMII with crystal
+>>> PHY used is SMSC (LAN8742A)
+>>
+>> Doesn't the STM32MP135F-DK come with two ethernet ports ?
+>> Why not enable both ?
+> 
+> Hi Marek,
+> 
+> As already discussed in V2, second ethernet have no cristal and need 
+> "phy-supply" property to work, today this property is managed by 
+> Ethernet glue, but
+> 
+> should be present and managed in PHY node (as explained by Rob). So I 
+> will push second Ethernet in next step ;-)
 
-Few bindings missed previous fixup: LG SW43408 and Raydium RM69380.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-This should apply on any tree.
----
- .../devicetree/bindings/display/panel/lg,sw43408.yaml        | 4 +++-
- .../devicetree/bindings/display/panel/raydium,rm69380.yaml   | 5 +++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml b/Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml
-index 1e08648f5bc7..bbaaa783d184 100644
---- a/Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml
-@@ -21,7 +21,9 @@ properties:
-     items:
-       - const: lg,sw43408
- 
--  reg: true
-+  reg:
-+    maxItems: 1
-+
-   port: true
-   vddi-supply: true
-   vpnl-supply: true
-diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm69380.yaml b/Documentation/devicetree/bindings/display/panel/raydium,rm69380.yaml
-index b17765b2b351..ec445ff5631c 100644
---- a/Documentation/devicetree/bindings/display/panel/raydium,rm69380.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/raydium,rm69380.yaml
-@@ -28,6 +28,9 @@ properties:
-       to work with the indicated panel. The raydium,rm69380 compatible shall
-       always be provided as a fallback.
- 
-+  reg:
-+    maxItems: 1
-+
-   avdd-supply:
-     description: Analog voltage rail
- 
-@@ -38,8 +41,6 @@ properties:
-     maxItems: 1
-     description: phandle of gpio for reset line - This should be active low
- 
--  reg: true
--
- required:
-   - compatible
-   - reg
--- 
-2.43.0
-
+Please add that ^ information into the commit message.
 
