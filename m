@@ -1,152 +1,115 @@
-Return-Path: <linux-kernel+bounces-203248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365C28FD855
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:22:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3568B8FD854
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9421F22E13
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:22:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45A2B1C21E9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1692C15FA8F;
-	Wed,  5 Jun 2024 21:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C10415FA69;
+	Wed,  5 Jun 2024 21:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A50sO0eC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOUGjncM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB86E139D00
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576A415F3FF;
+	Wed,  5 Jun 2024 21:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717622520; cv=none; b=he8ANfWd51yaDkkriCeNHtfahppD/o4idf3w7Wb7KHc/2FNePTadRf7FkAi/EOpIrzYi46aVdhOoFqZ7El5kibumt7w+khvJ6e7uPn3PZZqmWfJpGu2kc++7JTXgZoGjfzJiraY+1dxEvXgy+zl5MwULT4Ta0ivc4IUS13rKXKA=
+	t=1717622519; cv=none; b=poRYCmuiurHvucfMKEN0Iy5YvBnny3sFcXmX5NSZR8i6PXZuCkY81BAYKDsfv8IiHCI6DED1kuvwl2jpIWtUrJcrcBtuQ1B/3mZUveKysM/dZNtmLJyKGvgix0No1aaMVcRRkDDUBB0YqMlXd+VZWc3ZMQM/uaM65Og9QFfvLAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717622520; c=relaxed/simple;
-	bh=Qc3m+In7q6R+uy35WlCxQJ9rhymGQbbIYBejG40+EAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F9BVW8yFkAZ0kPMjkV67edPuKfCjMikuIAIgHzNq3F4wQAezc//udDTz8OSOLhU5lL/sMZ3xKowrb2zoO394jLtSjXyh/+uxq5rE0z/v599SHvAWn3zBhQPG8FCYjK5y1Ku8cIZMuKr66ntQgsYKiwnmunlXUZfHAdlKonfLE/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A50sO0eC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717622517;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=q6guOYJrLrFlpYszneZcHobnkFGNTsHvKaDHPs9XpUQ=;
-	b=A50sO0eCZdcakUuXJxvn3T3e80DJ296BiKSzpk7STipAwTdnIkW8KzI4+qSfdVDE7zN4TN
-	4c4I8orpO7D7NEgp/Y9BOy0wf8+zFAcTczeCTZOA7+7n54SBvBb1knXm3sR4f68ZY4oBD3
-	kN9dLCGY+rjJBETQlsKLJpyJA+vF7bo=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-524-xnxhcw4JOP-8bxeUNGvRhA-1; Wed, 05 Jun 2024 17:21:51 -0400
-X-MC-Unique: xnxhcw4JOP-8bxeUNGvRhA-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6ae4a58fa7cso503026d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 14:21:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717622510; x=1718227310;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q6guOYJrLrFlpYszneZcHobnkFGNTsHvKaDHPs9XpUQ=;
-        b=SjlXM3UfuLa2sAT7rLs4NgZWtR4ueqSXcXHa9jJ8nIZaib/FQ4moga4aGQoqlOVOD6
-         WUR8YGAPtBw4mwj32aSi3nZwguMVhMPAnLGIDwGgxelGOxAr9CneN8hNy1omCxJrfE8d
-         gVP1Gpqr8xWy58V7GjFJasjs85/ZnLGZlU9Ji96VPFdYgEtF90s0ip03omJdkOThUpd1
-         Fy0XlelNALpPE4gkE5E46TlC9fxEuuewQsSFHOAQvKtPp6bX9jZGJtpKAxQYJrKx0ZlB
-         uS980s3YW4b55AANeF4n9PeZaeeBSU81RjAY+U0hcltRUo4/MHrAR+CCEGeyNPrtHur1
-         GQ0w==
-X-Gm-Message-State: AOJu0Yw+wIGjMwy2ByoXoYV/nsBBu/jojT3Gzumd+u7iCNJlBaoFeShL
-	vLlSw8gjtyuBNI5evMFjEcNQIsJWzMbGHSJOv4EUUg51qVFGm7O2b7NVceiNNACJFNCqlaUE0Gl
-	DE1Bgy81BGjnLJPHku09RABLSf5URetJDFysxYwP7juXL162mWkO66mnSqGAGxmNmTR7z2wKUzm
-	hY1WjLMPEu/L9+j2Nwt/tod8yICgirJL578dhbQ/oeSvI=
-X-Received: by 2002:a05:620a:2886:b0:794:edc7:1566 with SMTP id af79cd13be357-795240df187mr386800485a.4.1717622510094;
-        Wed, 05 Jun 2024 14:21:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/geT55RHJOuBFW7WU7jX5S3mLJfm9lo9rhjmiuT/dUaQZocvdbrgkL6NqCoC3YnHeG8ne9Q==
-X-Received: by 2002:a05:620a:2886:b0:794:edc7:1566 with SMTP id af79cd13be357-795240df187mr386796285a.4.1717622509326;
-        Wed, 05 Jun 2024 14:21:49 -0700 (PDT)
-Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-794f3290417sm471861785a.135.2024.06.05.14.21.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 14:21:48 -0700 (PDT)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	peterx@redhat.com,
-	Dan Williams <dan.j.williams@intel.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>
-Subject: [PATCH] mm/page_table_check: Fix crash on ZONE_DEVICE
-Date: Wed,  5 Jun 2024 17:21:46 -0400
-Message-ID: <20240605212146.994486-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1717622519; c=relaxed/simple;
+	bh=SAxDOUUo9A/5W1+X4zneET1Rg60Ehfzp8xnstsBp7NI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WGzPwJWSoFE8u3DT5kfXSrX1Uvs3EjdduaDPUb1Yu0ntYWrE0tsqxgewd3MZueRYF1SHNN2koQygg9Wn14DKo4CvU2g4nUuofP/rpDW9bGST2Hfo2ZhaqYmQZFRvqT1LiWq9SqQ9h1pPCL4HFv/AXBxchVd0doXOO6+t86ztp0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOUGjncM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AD12C32782;
+	Wed,  5 Jun 2024 21:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717622518;
+	bh=SAxDOUUo9A/5W1+X4zneET1Rg60Ehfzp8xnstsBp7NI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZOUGjncMuz68FPp44Nv54A+nHg1HlqduA0CxbIUCR+3Ir4f82dQbC7H3u3G4a+nTk
+	 HfmyFyuEwXTTHvw30OrHtow45q+5KFuB7rpZ+spSHdCBJW0grGjNPdZW/LSIyX/EVx
+	 f/v25K/I+6tXflLcFJanLsFkIA+fKB0ikjOEIDp/6ruyvsq0sqLSbUkaWDQmA52n7J
+	 fsFLhNon99Ydt4fSNYZWSjZpjCA51yG5NKMwri0p+4TvUSMkqivpyXhcthE5H83wjC
+	 Dm0mHGqh1YKLwKbZhYxU7XHiQB/K9OCnmdS+ly8TVARD4RMa5O4xKGf3AdTSNbA7ZO
+	 rsVVhsMuDutLA==
+Date: Wed, 5 Jun 2024 22:21:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] spi: Refactor spi_stop_queue()
+Message-ID: <58c2f209-1553-46ec-a471-2f33afb20139@sirena.org.uk>
+References: <20240510204945.2581944-1-andriy.shevchenko@linux.intel.com>
+ <ZmDTuqMTR-KiUyVO@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="80nll8J08/D7fgTw"
+Content-Disposition: inline
+In-Reply-To: <ZmDTuqMTR-KiUyVO@smile.fi.intel.com>
+X-Cookie: Simulated picture.
 
-Not all pages may apply to pgtable check.  One example is ZONE_DEVICE
-pages: they map PFNs directly, and they don't allocate page_ext at all even
-if there's struct page around.  One may reference devm_memremap_pages().
 
-When both ZONE_DEVICE and page-table-check enabled, then try to map some
-dax memories, one can trigger kernel bug constantly now when the kernel was
-trying to inject some pfn maps on the dax device:
+--80nll8J08/D7fgTw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- kernel BUG at mm/page_table_check.c:55!
+On Thu, Jun 06, 2024 at 12:08:10AM +0300, Andy Shevchenko wrote:
+> On Fri, May 10, 2024 at 11:49:45PM +0300, Andy Shevchenko wrote:
+> > The refactoring makes code less verbose and easier to read.
+> > Besides that the binary size is also reduced, which sounds
+> > like a win-win case:
+> >=20
+> >   add/remove: 0/1 grow/shrink: 2/2 up/down: 210/-226 (-16)
+> >   Function                            old     new   delta
+> >   spi_destroy_queue                    42     156    +114
+> >   spi_controller_suspend              101     197     +96
+> >   spi_unregister_controller           346     319     -27
+> >   spi_register_controller            1834    1794     -40
+> >   spi_stop_queue                      159       -    -159
+> >   Total: Before=3D49230, After=3D49214, chg -0.03%
+>=20
+> Hmm... Other more recent patches went through, is this lost in cracks?
 
-While it's pretty legal to use set_pxx_at() for ZONE_DEVICE pages for page
-fault resolutions, skip all the checks if page_ext doesn't even exist in
-pgtable checker, which applies to ZONE_DEVICE but maybe more.
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- mm/page_table_check.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Sending content free pings adds to the mail volume (if they are seen at
+all) which is often the problem and since they can't be reviewed
+directly if something has gone wrong you'll have to resend the patches
+anyway, so sending again is generally a better approach though there are
+some other maintainers who like them - if in doubt look at how patches
+for the subsystem are normally handled.
 
-diff --git a/mm/page_table_check.c b/mm/page_table_check.c
-index 4169576bed72..509c6ef8de40 100644
---- a/mm/page_table_check.c
-+++ b/mm/page_table_check.c
-@@ -73,6 +73,9 @@ static void page_table_check_clear(unsigned long pfn, unsigned long pgcnt)
- 	page = pfn_to_page(pfn);
- 	page_ext = page_ext_get(page);
- 
-+	if (!page_ext)
-+		return;
-+
- 	BUG_ON(PageSlab(page));
- 	anon = PageAnon(page);
- 
-@@ -110,6 +113,9 @@ static void page_table_check_set(unsigned long pfn, unsigned long pgcnt,
- 	page = pfn_to_page(pfn);
- 	page_ext = page_ext_get(page);
- 
-+	if (!page_ext)
-+		return;
-+
- 	BUG_ON(PageSlab(page));
- 	anon = PageAnon(page);
- 
-@@ -140,7 +146,10 @@ void __page_table_check_zero(struct page *page, unsigned int order)
- 	BUG_ON(PageSlab(page));
- 
- 	page_ext = page_ext_get(page);
--	BUG_ON(!page_ext);
-+
-+	if (!page_ext)
-+		return;
-+
- 	for (i = 0; i < (1ul << order); i++) {
- 		struct page_table_check *ptc = get_page_table_check(page_ext);
- 
--- 
-2.45.0
+--80nll8J08/D7fgTw
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZg1vIACgkQJNaLcl1U
+h9BmhQf/SpUO0aQmrEek0HgbtGMVEMYa6zSeboXhms8aRu6z9Nbvk/FSgnEjU7t5
+TLpko8Z6+wT3GhXvCB7QKZRV/MjvZm1UvXid5yi4tkYDkfcJfg1qirW3WVqffQSB
+4+epVyqsCGQxn8X3pJ9FVnd3JhX/ZY+biACE01rMIkK/LRyfqT3RSSyyj3So/W8n
+K9WodcjkouJeOQEdJmYXdV/u4jA0kHC9CcB8mUPRgU5Z2wEWkLkNRH6146q1h6d1
+2GwUeZJogLeXBqCV3shwGOp6cDMTXORPL9fJUge8lOYE9xv9mhavg3QqsNJrl82t
+1IxRSGh5Hou+MnBNJYmObhwfVAma/w==
+=VHhh
+-----END PGP SIGNATURE-----
+
+--80nll8J08/D7fgTw--
 
