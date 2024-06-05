@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-203195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F898FD7C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:47:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A438FD7C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5FE91C21C94
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:47:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34141F25049
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C4E13A890;
-	Wed,  5 Jun 2024 20:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D2514A082;
+	Wed,  5 Jun 2024 20:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ldgo0sg2"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djRW8dej"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1098E15F3E6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4998B7462
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717620437; cv=none; b=NupkT5G4r/R1QAi7HKS8fCMfoVn17jOX+KBqA3a17zps7WSb0I8oQGBosYPasT1DZcsPArJRYXi3ifjHSAMXbsbp2QbPUNbOuep2o597DFM+hXfFXEEaMO4nWIIZXUG4ZGbsjhkZPXAVlo2n3Dr+MglUr0q/mEbgjRD7R24lmkA=
+	t=1717620527; cv=none; b=pnK5hxvq0Z9tAP7GkecqY+ODxOvma3tfEnce4UL74PML7t8joEaf/UxSsJzotaWuLseyspnifDI0nO/HyhvD/ofzE6bB5j73VngrCZtscpCl6sKtI4lnPEhYuD8Loj0+qe6fjO96yF8J2769wHxx97OEPK+/0S8NRQQR4M4qnEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717620437; c=relaxed/simple;
-	bh=8BI41uCdKVcKWitTctRndkwa07Fn4Wlt8jerH54lAjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oUxbYzjxztTiXkJJGpGkk8gjw2b5z1qnyvwG4lGehegxy2tOalYdwRa+2kyZx3JODqYyxbWQge6QEP3rcrcHnrdeVSxnRJL4CCnhdbcUcVEbEVAJx0v1yOtFIG8AYbda9znIeCzp7NRUBdusWXGe4Xc24CU/zsQuVGpmzxIfZtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ldgo0sg2; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a68c2915d99so23347066b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 13:47:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717620434; x=1718225234; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q8NQDMCzzDNCiNLexSmAdVkOBdGVVqmgplRKL+n9YEw=;
-        b=ldgo0sg2MhG3W2mS/0YanwyE9XsF9Quo/L5uHQInKlMt+7Irbql+JECQO4gDwHbNRG
-         WvLdCL+gOzPvPy3QitM1fz3PbCZI4tWbo33XzvDtVPO2dtLAzQfzosTCThzSTp95/i4N
-         O2ov9UHWGwrjymN3cqcRJND9dy3EswIdftE2RuXPlJ3nCOQppD30Pn2zHvX3Cwv8n1Kl
-         g4yvxjHhFMvucH+f51y1YS+mXw9hXlJnYHlVC60EftzsBHa7trSSrl4wSmUTXYChnasj
-         ymTB28ACzXEo0NBgFp1PdDezMXog0d1o6w+c2kVfMo+MGNo+MlwDYyeL4ssp4QrIBjrC
-         UbWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717620434; x=1718225234;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q8NQDMCzzDNCiNLexSmAdVkOBdGVVqmgplRKL+n9YEw=;
-        b=r/CrrVudC9EA4VZ6aZJtbGX9TZpqH9IS/AaouJO3jR4VqaJm70aL1nks+vsnHu7IA5
-         q70TqO5Izi61u4lwIVukVMLrAPgnea8l1x99pfkt+Bp/OiZ53im0WYmHIuHSAKY3w5N8
-         VMEEJMwHGITmkJ6MYecBnBHY0ZGhSFAJh2UtRRyut9LRbx6y7DMGYBnmKkZYZ6jJQL4m
-         rVjMOmnM+KAvTvoSjUKNJEtqyuGHmVWHYz9lPkRAorcNaKvpSY5/XFXk/1YWxLMkV2kh
-         uxxe84pcVGD1+fyVie7Txoj9dVFeElC9xgPBEAQgj900CKUoisIur86S6+B65W5FXiXZ
-         xl1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXwWNallcDm43u8PC6lEto5Pb68pM7EQyL17xFEsKzKXXtSqH/eEsCLLU0gGmuv7eWUQHJORBGuo8wZKiFxjQf2Q7+Q8dSpXLzgygzO
-X-Gm-Message-State: AOJu0YysmOHN9OCV0/uewQm6yNd7wBcfH/o2WWLDPBPljiwRxFQsoiEY
-	qeBhFI19vbW1xNAlMxPR+6j3pfSjLdONAa7Oe+hpZVp+nCywtoHyoAzu4YemSlU=
-X-Google-Smtp-Source: AGHT+IGlySH+nFrMigDOjqKimRasyOeK/KWw9CMIiLvpKZ7Z5M5gTzhQ1fRxxVCMJHA8/C+CaCDIHA==
-X-Received: by 2002:a17:907:3112:b0:a68:795c:8cf6 with SMTP id a640c23a62f3a-a699f87f0b1mr197933766b.38.1717620434343;
-        Wed, 05 Jun 2024 13:47:14 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68ae9bf7e2sm705653466b.213.2024.06.05.13.47.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 13:47:13 -0700 (PDT)
-Message-ID: <3470decf-de1e-45d2-a871-4b77317f9018@linaro.org>
-Date: Wed, 5 Jun 2024 22:47:11 +0200
+	s=arc-20240116; t=1717620527; c=relaxed/simple;
+	bh=T5vr5sPvG0JFOXXVreMHeuAt0slBjtXGtC/wJP+h424=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MnbpL66JU/TCmUTj90ZPAUMpJMPHCU/D4nMVGVbEox/KA2kWoG1RmPE9hhRD3hIBadlfLiUBAeKWp5SEcJkVHWz3PzL1QLstvoSVhxL4C3gBUZyPcGvDIzKLRz7+nmPOnQIKIxxUZKWebUteO5JJh/i+xTjBuYGydR1c2zMa0hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djRW8dej; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FCCC2BD11;
+	Wed,  5 Jun 2024 20:48:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717620526;
+	bh=T5vr5sPvG0JFOXXVreMHeuAt0slBjtXGtC/wJP+h424=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=djRW8dejK447Uba2SB73pKSW2tX5d1fwBlUICNRuXwHtUGONv/nLgcLoamj1LO53F
+	 1oR6q6IjjbXmLgxcxYaRzF5sXVqQnhzL8O17xmL1hkh9vVMt6XI/PJCEfln1H6xWKr
+	 GvUmsUPJS5YbaeUi86r5hrSAo57RjJqffa9+dp6kmKEkHHhM6b503YHxmuPFbwJ/U9
+	 Ojo3EidLxLlwktsKpYgINSAj/FSrB4uZhq1TE7RtMpMzU4Ktnudm9uWfuU8PDcdMWy
+	 qCVIgBdd76wr6Iu7hfhoaPHrU+cZP5meL/Y6ie8/jvSGuF4FRqo8FRo3FGnK19gH9Q
+	 L0JEXLbmGQ35Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7138CCE0A72; Wed,  5 Jun 2024 13:48:46 -0700 (PDT)
+Date: Wed, 5 Jun 2024 13:48:46 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	linux-mm <linux-mm@kvack.org>, lkft-triage@lists.linaro.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: x86: WARNING: at mm/memblock.c:1339 memblock_set_node - Usage of
+ MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+Message-ID: <e220910c-da6e-40ab-895f-87fd43c1de3f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
+ <315d6873-d618-4126-b67a-de62502d7ee2@paulmck-laptop>
+ <7d55b65e-331a-4ce2-8f72-d3c5c9e6eae0@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sm8650-hdk: allow more IOMMU SID for
- the first QUP instance
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240605-topic-sm8650-upstream-hdk-iommu-fix-v1-1-9fd7233725fa@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240605-topic-sm8650-upstream-hdk-iommu-fix-v1-1-9fd7233725fa@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d55b65e-331a-4ce2-8f72-d3c5c9e6eae0@suse.com>
 
-On 5.06.2024 1:43 PM, Neil Armstrong wrote:
-> When triggering I2S SE DMA transfers on the 6th Serial Element, we get
-> some timeouts and finally a fatal SMMU crash because the I2C6 lines
-> are shared with the secure firmware in order to handle the SMB1396
-> charger from the secure side.
+On Wed, Jun 05, 2024 at 09:46:37PM +0200, Jan Beulich wrote:
+> On 05.06.2024 21:07, Paul E. McKenney wrote:
+> > On Mon, Jun 03, 2024 at 07:19:21PM +0530, Naresh Kamboju wrote:
+> >> The following kernel warnings are noticed on x86 devices while booting
+> >> the Linux next-20240603 tag and looks like it is expected to warn users to
+> >> use NUMA_NO_NODE instead.
+> >>
+> >> Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+> >>
+> >> The following config is enabled
+> >> CONFIG_NUMA=y
+> > 
+> > I am seeing this as well.  Is the following commit premature?
+> > 
+> > e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
+> > 
+> > Maybe old ACPI tables and device trees need to catch up?
+> > 
+> > Left to myself, I would simply remove the WARN_ON_ONCE() from the above
+> > commit, but I would guess that there is a better way.
 > 
-> In order to make thing work flawlessly we need to allow more SIDs
-> while running our SE DMA transfers, thus add the 0x3 mark to allow
-> the 0xa0 SID to trigger while we trigger an 0xa3 SID from Linux.
-> 
-> This crash doesn't happen on the QRD platform since the SE6 is
-> configured differently, with FIFO mode disabled, thus GPI DMA
-> is used and we cannot exercise SE DMA on this interface.
-> 
-> The crash only happens when large tranfers occurs (>32 bytes) since
-> the driver is designed to use the SE DMA in this case, and there's
-> no way to mark the SE DMA as disabled or mark the GPI DMA as
-> preferred since the FIFO/SE DMA will be used is FIFO is not disabled.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+> Well, the warning is issued precisely to make clear that call
+> sites need to change. A patch to do so for the two instances
+> on x86 that I'm aware of is already pending maintainer approval.
 
-there's only 24 I2C masters on this soc, surely the board designer couldn't
-have chosen another one for the charger..
+Could you please point me at that patch so that I can stop repeatedly
+reproducing those two particular issues?
 
-Fixes: 01061441029e ("arm64: dts: qcom: sm8650: add support for the SM8650-HDK board")
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
+							Thanx, Paul
 
