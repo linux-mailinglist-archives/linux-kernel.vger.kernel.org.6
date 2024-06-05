@@ -1,134 +1,127 @@
-Return-Path: <linux-kernel+bounces-202834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39D48FD1AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:30:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 531EC8FD1AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CB52829C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:30:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C68C1C228A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A426E14A638;
-	Wed,  5 Jun 2024 15:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F091B481D3;
+	Wed,  5 Jun 2024 15:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kh0C6t9I"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hb2PPK7m"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B94F450EE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8033D2E6;
+	Wed,  5 Jun 2024 15:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717601429; cv=none; b=EBcW6Espqq5lmvYccESqT1JrcJZGlvqLKZLRikc8AV/wV8YATA88ZCXPZM3YmbVMevsSyLsY7hJYLiGHqaZS3Y+ChWExW9Njud5cv4JfSmcCWw061hIIKKV/OrPvdo8Dqa9GF6szUeyUFjU3KDs5yIS8YEmn4PJaUM9YjzI6mwk=
+	t=1717601500; cv=none; b=hCb+kTXLFO4jikbIy/xcE8M9UJjitX4jSuFRwyO2htp6rmorW3tBptV0JKswUbZXOoUGFyBOUQUhh69aNZzPqTxyovDek7SsHoo1pPBpka4sszfvvbRZSOBTtmDrPcHO9FC8QsRxBTgUsMUIETMlOBm0JgnowBzUeaVI6QJautM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717601429; c=relaxed/simple;
-	bh=NMv3VKh5odLNj+GDe8Ww1tODWUNO54F1FJCzMaqqk7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uX79YmkaIRd8OqTlMn+VrktZ01XGz7v7r+EAJXndylHmLRQskkmXorvuxeYpnoXokxGh1uykH8oTL4bciZQNZNcVGstbd1Eyb7Gz6zj/URpHrjsh3D2D+rEQ2xA6jMiNbNeXzkdH7OnnMISgyEXUNQ+UPwWqEThoQmf9r7HWmB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kh0C6t9I; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35e4be5bd7fso147968f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 08:30:28 -0700 (PDT)
+	s=arc-20240116; t=1717601500; c=relaxed/simple;
+	bh=By8UN7bEgE6tHMTsl5RtwzENBGGtoe2bMTEaO/znMUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ee6W0guWLQThQ5rFmkPILgNp4pS5rTM0Jr0bm4pKPylcNgYxe+oV/9ovODQkE11XpevarA9E5f7aFqt9RSzHynYSqu2F5SaSD6HIkFr5owVxZKW9r47cU31lQ1AOWPjSxSQ1vwfsftJ9pApn3nQUCz1zF7LPCNBJvMwhf2KPNd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hb2PPK7m; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b962c4bb6so5962930e87.3;
+        Wed, 05 Jun 2024 08:31:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717601427; x=1718206227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/K0vfcsphggQE03HaQTq6oV7X6egbMSNGPCTOf5noQs=;
-        b=Kh0C6t9In5LKWuz5RI6juc5nTOUFGOb7eS8UtLCfHBSypkHYYylouHXMXY/xk/uYgN
-         VCCNfbMSO+c44muzhgcr56tU90gT584z8i7VQiOMkcKqlNMa+XCuJ6gdQi4XK9QhmY0R
-         tfDyJ8y001py8dAeqSh0+Lvwc5yCoMCcrh1mlHx01cU67eKUbr9lgd3kYLFTPK+y0lbO
-         7mFSt82PcwvfnKzw1XHe7wEVR/Jn8zt3vddEdy5sKClrpGn8y3O2IXew9PJk2vJSnPKL
-         Pu6m+OXx4DwNyJZharKQvT5VI620kRW/LbSBtL73mZzhxJX5yvQK38KWvjlBr1E4QYk5
-         IBrg==
+        d=gmail.com; s=20230601; t=1717601497; x=1718206297; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8UVI+FJG+cytwZoj1NugeGBUyl9BCIHH6pWrnkmyvyA=;
+        b=hb2PPK7mBSNrQ/oXGhHUHSNYG5r/FZI+Yc/kcnMpBBD3PhZRMJlIM0bNcXUVF5ktLt
+         etITPYRV45lN4acva8vR3rm5kDZfgVh2vSdr79py0AvRadZH2u8txPloRzgi9m5m5+5l
+         B/kZdqpZ0brYo0SNGK722mOjj+jgcnYWpONJL/U6RQ4C+G8qtPk5tBAfcoiPbxti1O1T
+         0Bgspnr9JrJIItA1ZhnahZqkfAokNLHakorOU4JsLU7iNv3IQQEPFjJlNekYL41RPj9k
+         Km/ET5PkOMOg94g/T3RFTX4ZM61jZowICCqbjMMqPWdKfhjtrQBDDhxWx4yDoS8sUhTd
+         OCjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717601427; x=1718206227;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/K0vfcsphggQE03HaQTq6oV7X6egbMSNGPCTOf5noQs=;
-        b=gSs2lRGLRzaJOhBf6JzW2BOuW5x8hpwHI9KGnbnDE3gO5AS+JP/xy3LhifY4SFUejR
-         IuLWVAlDGHHQpnHddg7DjicL2q1cZy5m04a3qmBAbKzGBJWpHboNOqszxEeIvIl1L7Qu
-         s1vugxByh3plq6gVYaZqwnjiuzDNaXFHRR9L8sMdkRtUs9bt3DETWP6NGPOL3KcGZqgz
-         RkZkahqoXiiQiYepESTiAsxICn61vCn2HTtie8PF9YVJY8rvAWLf/rVzwgWfbRn6/bFN
-         koBRQuZcpJ1qVa3CuMnYzLO8e1al1wz//MNNnKjo8uwc9ralZxBUhUlZUzWs88qG2VvW
-         3sGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwZBLgamFo2V2fZWCn/yNQ0yBbcaDSWL8ogSig4oYUcB8b1MlySTi4YVlrvnLJvpiGkctUXLlDfDVx04OysiqNR5kll2gPNauf9rlL
-X-Gm-Message-State: AOJu0YyfKD6r+t0kB1eYESMiIOp55/WfEnuAgoM1S9nk61MFlLAv1uAD
-	YOftnucdK3xcZiv2wYIy3KZKhDLFWZFWQs+zZpauFv6mcVgfmi+VgOV8xIcwHTE=
-X-Google-Smtp-Source: AGHT+IHE9nDBQ5Sz04khTcIYOGPj0VwRgEjUuiwPv5JSHmid95xhtkpvCP2exEYp6NXmZOXTxCKtiQ==
-X-Received: by 2002:a5d:59a5:0:b0:359:b737:68c9 with SMTP id ffacd0b85a97d-35e8ef7ea9fmr2637446f8f.45.1717601426591;
-        Wed, 05 Jun 2024 08:30:26 -0700 (PDT)
-Received: from krzk-bin.. ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215814e7cbsm26222295e9.39.2024.06.05.08.30.25
+        d=1e100.net; s=20230601; t=1717601497; x=1718206297;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8UVI+FJG+cytwZoj1NugeGBUyl9BCIHH6pWrnkmyvyA=;
+        b=m/32NRFUNHB17iREBkQspIQhf37TNFQUqJlvR6bmVOKsuUSyslLQjRi5UhReCet4lD
+         wV4llt6h1zHp2LczJP3iC3sw5W8Z1zzwmCMedlbpjFoxYqzkpfHw8d8adLC9ewwGYBYC
+         jS8Mmt6iKgYdTz937BXE7EJ8MmhcIpZFirfacYORTCuSni3fIVWEguo8fLOVH3glyPi6
+         WZlyCcANBiqj0hoEUkfFwSyp9iLMLe3PGJj75RpPMbtxFOfZY62JBDi2VWju8YWqRNle
+         vy7k1DP2/4awsrQZB3OL/Uw4c6VjahgYOlU5TFNFgv1SvACJR4Q+plKZzlgFTU6TIaZs
+         GH0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/dS+0jwGFY3Hz0Gs4IiPLzyoIfWF7i+paZLV0D8vzJu5ChzRkU747XUYcJ5gjzC3p+YXxfQUg/U5jJM8bvJ8gvC32UJIvsMsdeGIV
+X-Gm-Message-State: AOJu0YzNZlWEsPbXt6grhBkBfz8NU4n3vjRAT3+Kg/0HT2mPxwgWpbGo
+	HdqJOboUy9bJOR9EdZmMmyRyUiFZDTQnPAPCBWdb2MacwVjJAsMh
+X-Google-Smtp-Source: AGHT+IFkGzUgT0m4yyFlD+rq2PxwrsZAnFic8ufJk/ij2VBoo48gtb5OdaSoLnDec68LWufwqDP34w==
+X-Received: by 2002:a05:6512:2253:b0:523:9515:4b74 with SMTP id 2adb3069b0e04-52bab4ca5e9mr2807710e87.14.1717601496450;
+        Wed, 05 Jun 2024 08:31:36 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a690f03320csm449345866b.184.2024.06.05.08.31.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 08:30:26 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/3] arm64: dts: imx8: use defines for interrupts
-Date: Wed,  5 Jun 2024 17:30:20 +0200
-Message-ID: <20240605153020.104717-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605153020.104717-1-krzysztof.kozlowski@linaro.org>
-References: <20240605153020.104717-1-krzysztof.kozlowski@linaro.org>
+        Wed, 05 Jun 2024 08:31:35 -0700 (PDT)
+Date: Wed, 5 Jun 2024 18:31:33 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: =?utf-8?B?Q3PDs2vDoXM=?= Bence <csokas.bence@prolan.hu>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	trivial@kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [RFC PATCH 2/2] net: include: mii: Refactor: Use BIT() for
+ ADVERTISE_* bits
+Message-ID: <20240605153133.ronpeb2tcn3loqu5@skbuf>
+References: <20240605121648.69779-1-csokas.bence@prolan.hu>
+ <20240605121648.69779-1-csokas.bence@prolan.hu>
+ <20240605121648.69779-2-csokas.bence@prolan.hu>
+ <20240605121648.69779-2-csokas.bence@prolan.hu>
+ <20240605141342.262wgddrf4xjbbeu@skbuf>
+ <52b9e3f4-8dd4-4696-9a47-0dc4eb59c013@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <52b9e3f4-8dd4-4696-9a47-0dc4eb59c013@prolan.hu>
 
-Replace hard-coded interrupt flags with standard defines for
-readability.  No changes in resulting DTBs.
+On Wed, Jun 05, 2024 at 04:47:27PM +0200, Csókás Bence wrote:
+> Hi!
+> 
+> On 6/5/24 16:13, Vladimir Oltean wrote:
+> > On Wed, Jun 05, 2024 at 02:16:49PM +0200, Csókás, Bence wrote:
+> > > Replace hex values with BIT() and GENMASK() for readability
+> > > 
+> > > Cc: trivial@kernel.org
+> > > 
+> > > Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
+> > > ---
+> > 
+> > You can't use BIT() and GENMASK() in headers exported to user space.
+> > 
+> > I mean you can, but the BIT() and GENMASK() macros themselves aren't
+> > exported to user space, and you would break any application which used
+> > values dependent on them.
+> > 
+> 
+> I thought the vDSO headers (which currently hold the definition for `BIT()`)
+> *are* exported. Though `GENMASK()`, and the headers which would normally
+> include vdso/bits.h, might not be... But then again, is uapi/linux/mii.h
+> itself even exported?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi | 2 +-
- arch/arm64/boot/dts/freescale/imx8qm-mek.dts  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+grep through the output of "make -j 8 headers_install O=headers" is
+a good place to start.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi
-index 90d1901df2b1..930e14fec423 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi
-@@ -400,7 +400,7 @@ ptn5110: tcpc@50 {
- 		pinctrl-0 = <&pinctrl_typec1>;
- 		reg = <0x50>;
- 		interrupt-parent = <&gpio2>;
--		interrupts = <11 8>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
- 		status = "okay";
- 
- 		typec1_con: connector {
-diff --git a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
-index c024be33fbcc..6d002fc1b2be 100644
---- a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
-@@ -193,7 +193,7 @@ light-sensor@44 {
- 		compatible = "isil,isl29023";
- 		reg = <0x44>;
- 		interrupt-parent = <&lsio_gpio4>;
--		interrupts = <11 2>;
-+		interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
- 	};
- 
- 	pressure-sensor@60 {
--- 
-2.43.0
+> And if so, why aren't these macros? Is there any reason _not_ to
+> export the entire linux/bits.h?
 
+Sorry, I'm not the person who can answer these questions.
 
