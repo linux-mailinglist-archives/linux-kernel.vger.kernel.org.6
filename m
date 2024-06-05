@@ -1,180 +1,133 @@
-Return-Path: <linux-kernel+bounces-202753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AF38FD068
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CEBD8FD065
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B74F1F25042
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D3A1C22728
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB42315E8C;
-	Wed,  5 Jun 2024 14:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A1010A12;
+	Wed,  5 Jun 2024 14:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="FKCYUlxA"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GYgF/4W3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42C863D;
-	Wed,  5 Jun 2024 14:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1F710A1E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717596406; cv=none; b=ff/KOvYa5dvRPtBXt1cmJS1yqQfCKbfEi39o2OXsrJ+suu/vlytfgZrp8om6vIIaRgYyPMULRGTY/Q9t7uLDJrtN9xlh2Id5n6JwSCct7HJ65dpG/awtLO5ksJPJLv4Kc1qixw0P8vk1/+Z5fiz+BVkIyWBryson6gkbpJhmK7c=
+	t=1717596331; cv=none; b=Op1bQMTvcCX14T7WRuFe9l78JrV5PBQ1S4oTjuWjZl5BLtFAauakyncBxLehJKJaTAK+THD3mPZXydGcScE/PjZhwO306Nd2H+OFXwnfEqYwDD3clyAASxGT0IOCTEYA1d+xSOBDkm0NQ78RRYYmLryZRBwedklHY0O/3NaGc8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717596406; c=relaxed/simple;
-	bh=5L3ycicBDAFMTgbU2z0VnBgN5rrFT5CqYmGZGAK1Yfc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hBqMV3WknZNkcIFtwcPYaXLT54qzVQu8jNQ4JTUkp3MDQHw8VqLFjFbMUAsk+BrkeMZeoRqLcQDlZmC5xRE8Bp/hvi3ZgDpPr+SARm+CYjdjZxA7QWU3a3c5zJTz+8N5wuQcUMnE9YtaAkUMi8ctGMh5PQfomdJ7LKN+Wzk70Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=FKCYUlxA; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455Bop5o018601;
-	Wed, 5 Jun 2024 16:06:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=RywoIJl3pKPsvFCUc8QGsg
-	MMilGIvPLCqmf45EgL15g=; b=FKCYUlxAmd3u6c3p/LCT9rjUoCMJnWdLzHpT2T
-	JceHQQz9WxwEw24VKeO35gErNtf2bOLpf2jcaBAJmMM5Ho+nr7jkuSpMiGC8hhXO
-	bWpK4SdG58ZWjaFHEHAPSRZ5mg6tkAJ62MnuYFIGN9WLn7yaSJLB0/3l4fXIB61m
-	L3nsAyaoZpF7BoBJspa2yMF8WGb793yGxaBjNqeNVuJ3BZnELLrOqh+IRvVDYxaW
-	ZNEzpJtaBNiBwaYo2m3Qd5BP1hRlWA7Tp6YQx/nce1Bc4shz8u1In7irXaMZgrDZ
-	WkBx6anbiVppfcoSplXW0JfrcNqKC3r2EBWr3/COUNmQ9kEg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ygekhyn5m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 16:06:07 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2D15640044;
-	Wed,  5 Jun 2024 16:05:59 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 05D7C21A90C;
-	Wed,  5 Jun 2024 16:05:01 +0200 (CEST)
-Received: from localhost (10.48.86.107) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 5 Jun
- 2024 16:04:58 +0200
-From: =?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clement.legoffic@foss.st.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim
-	<namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander
- Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        John Garry
-	<john.g.garry@oracle.com>,
-        James Clark <james.clark@arm.com>
-CC: =?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clement.legoffic@foss.st.com>,
-        <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] perf: parse-events: Fix compilation error while defining DEBUG_PARSER
-Date: Wed, 5 Jun 2024 16:04:53 +0200
-Message-ID: <20240605140453.614862-1-clement.legoffic@foss.st.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717596331; c=relaxed/simple;
+	bh=J2kQ4wQoNvDj4NE3mHtx5/BMuZd20qs1tyhxegM305Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E4fVrfG3hWtcazvyem/Sc0ZxBJYZ0FR5yGh8K59KKgZlPS6rOBaLKdn2qyonxRXO3tzrOLmaMwtC2RsHuzwXrVOtQUYiBwbu4e26WzvODYdjzuv6eYq0h6c/3GJ6tHZJ7knr6ISWyV/DRujkHx7SqRDKBoJBLPTSGRxnk7RIyn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GYgF/4W3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717596328;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SnAjRPdPslLKR6RQzu2pBmXnTD4p4gc93G0q5GXgtK8=;
+	b=GYgF/4W3t6HhZMA7j0hbcgv6t0Q23+3SlQu9Z4TPWVl1WblnU1GdcuW7OuHPz2EzdlfbV5
+	gqna9P55slFr3XvJwIxdu0qr/revjtmRuTH1eqyKSvsH3WTbUDbrKTVV5hBW7a2WFed0u0
+	OwmIkggVpSbIsZiZrz95k7t9Ni1VJPw=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-74-hRzSkVHZN-apQgT_v0R6AQ-1; Wed, 05 Jun 2024 10:05:27 -0400
+X-MC-Unique: hRzSkVHZN-apQgT_v0R6AQ-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52baa2e4ab1so1376961e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:05:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717596325; x=1718201125;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SnAjRPdPslLKR6RQzu2pBmXnTD4p4gc93G0q5GXgtK8=;
+        b=ZgJt86LVOt0UPF9IKZhs9Lk9CsBo3/DC4pqJIcMnTdc+26EwnSgEA75tDATuHHHTbu
+         VH23zwdvhvuSSTnua52OYhQedGPkyee3uKUpdiZ5ny5C7dfCSFBnulJmJhaqBDvoWFv6
+         NG9Qw5yLLgnYH3Ue1I5vHLfP/YPsGNgq9K7ZUbb7GR2Kbnh04mF5FUdhMcfxDp6ONniv
+         xB73pmlRVvGCr0Z7Ilg+i9OrbGUmBdJ2k5zEj6pxzAS1KBfOxKlHFjBQJ7+ExIAe8l+e
+         +N5cExM+cfWrWiF2xzF4KCs7ZKb+9Psa2t0+Pyv5d6UU0DPjSyQ5IgO98kPJ2qmu3Lpr
+         gXRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6kz5NQaXhW5cVVRCioXLACnBiOR/2Na4kRr6CY6FPeuRZvzg4mc01G6yuDv498wrgdKbvpSejKnYylvYL+2Qk6n6bRxBW98GUihOd
+X-Gm-Message-State: AOJu0Yys9UHxvBt1JBe6izv0ZOiD4xcynkGaskeeQqo8uYGiuPfq5535
+	NbwPKVc3HDsuiqv4dGd6WatzUouF0XSXpKJyKLUEC+0RfgKdTE/xad3k6YMdSD9CgnJ4Lv3XZca
+	qazrKJkzSfjcUaOo0IC1l5UpsY3lbu/0GvGRUBQf6kgSPRqWxPYHE4q7Rqr4hqQ==
+X-Received: by 2002:a05:6512:3e5:b0:52b:4ae8:46d9 with SMTP id 2adb3069b0e04-52bab4ca6d4mr1891860e87.5.1717596325743;
+        Wed, 05 Jun 2024 07:05:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGC7EdqZjYrmyMx/USwVrnIBDKTdRMVW5oYpkXPFLx7eROHA0u1LtZeLxEwCYBnW4Z+lNhiRA==
+X-Received: by 2002:a05:6512:3e5:b0:52b:4ae8:46d9 with SMTP id 2adb3069b0e04-52bab4ca6d4mr1891750e87.5.1717596321944;
+        Wed, 05 Jun 2024 07:05:21 -0700 (PDT)
+Received: from [192.168.0.161] (host-79-23-6-148.retail.telecomitalia.it. [79.23.6.148])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a681c4f2b6fsm777163266b.144.2024.06.05.07.05.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 07:05:21 -0700 (PDT)
+Message-ID: <9f21c8e5-1103-44fa-82bd-cf608f8a96f6@redhat.com>
+Date: Wed, 5 Jun 2024 16:05:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] sched/rt: Clean up usage of rt_task()
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+ Metin Kaya <metin.kaya@arm.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Phil Auld <pauld@redhat.com>
+References: <20240604144228.1356121-1-qyousef@layalina.io>
+ <20240604144228.1356121-2-qyousef@layalina.io>
+ <b298bca1-190f-48a2-8d2c-58d54b879c72@redhat.com>
+ <20240605093246.4h0kCR67@linutronix.de>
+Content-Language: en-US, pt-BR, it-IT
+From: Daniel Bristot de Oliveira <bristot@redhat.com>
+In-Reply-To: <20240605093246.4h0kCR67@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Compiling perf tool with 'DEBUG_PARSER=1' leads to errors:
+On 6/5/24 11:32, Sebastian Andrzej Siewior wrote:
+> On 2024-06-04 17:57:46 [+0200], Daniel Bristot de Oliveira wrote:
+>> On 6/4/24 16:42, Qais Yousef wrote:
+>>> -	    (wakeup_rt && !dl_task(p) && !rt_task(p)) ||
+>>> +	    (wakeup_rt && !realtime_task(p)) ||
+>>
+>> I do not like bikeshedding, and no hard feelings...
+>>
+>> But rt is a shortened version of realtime, and so it is making *it less*
+>> clear that we also have DL here.
+> 
+> Can SCHED_DL be considered a real-time scheduling class as in opposite
+> to SCHED_BATCH for instance? Due to its requirements it fits for a real
+> time scheduling class, right?
+> And RT (as in real time) already includes SCHED_RR and SCHED_FIFO.
 
-$> make -C tools/perf PARSER_DEBUG=1 NO_LIBTRACEEVENT=1
-...
-  CC      util/expr-flex.o
-  CC      util/expr.o
-util/parse-events.c:33:12: error: redundant redeclaration of ‘parse_events_debug’ [-Werror=redundant-decls]
-   33 | extern int parse_events_debug;
-      |            ^~~~~~~~~~~~~~~~~~
-In file included from util/parse-events.c:18:
-util/parse-events-bison.h:43:12: note: previous declaration of ‘parse_events_debug’ with type ‘int’
-   43 | extern int parse_events_debug;
-      |            ^~~~~~~~~~~~~~~~~~
-util/expr.c:27:12: error: redundant redeclaration of ‘expr_debug’ [-Werror=redundant-decls]
-   27 | extern int expr_debug;
-      |            ^~~~~~~~~~
-In file included from util/expr.c:11:
-util/expr-bison.h:43:12: note: previous declaration of ‘expr_debug’ with type ‘int’
-   43 | extern int expr_debug;
-      |            ^~~~~~~~~~
-cc-1: all warnings being treated as errors
+It is a real-time scheduler, but the problem is that FIFO and RR are in rt.c and
+they are called the "realtime" ones, so they are the first to come in mind.
 
-Remove extern declaration from the parse-envents.c file as there is a
-conflict with the ones generated using bison and yacc tools from the file
-parse-events.[ly].
+-- Daniel
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
-I don't know how bison and yacc work together.
-To me if those symbols are already generated (I don't know how), we
-should get rid of them in the source file `parse-events.c`.
-For my knowledge, if someone has the explanation of how they are
-generated, I am interested as I didn't find any link to some part of
-parse-events.[yl] files.
-
-To: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@redhat.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Jiri Olsa <jolsa@kernel.org>
-To: Ian Rogers <irogers@google.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-To: John Garry <john.g.garry@oracle.com>
-To: James Clark <james.clark@arm.com>
-Cc: linux-perf-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- tools/perf/util/expr.c         | 4 ----
- tools/perf/util/parse-events.c | 3 ---
- 2 files changed, 7 deletions(-)
-
-diff --git a/tools/perf/util/expr.c b/tools/perf/util/expr.c
-index b8875aac8f87..b2536a59c44e 100644
---- a/tools/perf/util/expr.c
-+++ b/tools/perf/util/expr.c
-@@ -25,10 +25,6 @@
- #include <math.h>
- #include "pmu.h"
-
--#ifdef PARSER_DEBUG
--extern int expr_debug;
--#endif
--
- struct expr_id_data {
- 	union {
- 		struct {
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 6ed0f9c5581d..8d5fb05f20c2 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -31,9 +31,6 @@
-
- #define MAX_NAME_LEN 100
-
--#ifdef PARSER_DEBUG
--extern int parse_events_debug;
--#endif
- static int get_config_terms(const struct parse_events_terms *head_config,
- 			    struct list_head *head_terms);
- static int parse_events_terms__copy(const struct parse_events_terms *src,
-
-base-commit: c3f38fa61af77b49866b006939479069cd451173
---
-2.34.1
+>> -- Daniel
+> 
+> Sebastian
+> 
 
 
