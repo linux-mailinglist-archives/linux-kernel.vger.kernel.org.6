@@ -1,107 +1,159 @@
-Return-Path: <linux-kernel+bounces-203098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800588FD66E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:26:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 149848FD673
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30CF61F250D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:26:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71A11F2452A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED5714EC4A;
-	Wed,  5 Jun 2024 19:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D47D14EC68;
+	Wed,  5 Jun 2024 19:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPcoGoHE"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T5dCY/Y+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBDE14D713;
-	Wed,  5 Jun 2024 19:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4425EFBFD;
+	Wed,  5 Jun 2024 19:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717615596; cv=none; b=jlkB7xSoERHcG08iN3T+YkuQO11imK26tGPpMfiv9UaSZcSfs5kcxB09hpzEwxpbbYl0mmDUSKMpwSSD2asJ08mdwgIyaX4pj4osxldIKQmXYSzROu6SZbPel4OtoXGl3MNj72h77Q/1njaLWf/Psg7mqlwW4ER0oyTuSLhdTY4=
+	t=1717615721; cv=none; b=iWnyAI7PU6jjSDc9Svyc6O6J3hR7XQcNzFJdFPOQjnq0VN85ZEvKsKp+TEMK58dCXaaytjiKUXyM2odnEdG00ME/AkdqC+siuOEtx4ViZl7B48l+ZUulbUHK+gSna/rmb9LHp+B3DqkbtnV558r9BhVIvWaw1t1Bdq031YqrD3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717615596; c=relaxed/simple;
-	bh=TGeMPpyCZO5b/q1Rebq1IqjfCpKuEFM8wD8tUBsBoKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBOO1lksZ9tvMeosSUbN+f0P3NhQXfL4WESJFWqVzt1ERWVQgT6DJNMhuWLVdSBkyc4ORVBGkKzYyiT2Zb+3pnzxIxNiuydkqUYZP7uZUA/mwVAGppe6YWvR+1I1kMQO2uEY4oCvr0YzQzVlSQClKilOJ78PuatJThZ4U6kIDNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPcoGoHE; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35e0f4e1821so89926f8f.0;
-        Wed, 05 Jun 2024 12:26:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717615593; x=1718220393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W05x3+sVU6bILbLlHv781110WtHbNpnp+gY6dsPenOg=;
-        b=ZPcoGoHEXu/Lymd4PxA95BAMjcv3UW7VBcnDx5iTnmIkJV6pq1VuBHRMPh8+IObhn5
-         vSEflwcP5oWvufwr4r10PtYbB5feZT143rbgD4OoNl7dK2ylWrx4jMBHdF5S+OZ4GJSK
-         C0ttPzm4TU5bBoDBXYGjRytNA/46k2ckFsaoJdxtKoS6Rpp8pcf6yMoJFhW+FVKCIu+y
-         W1dp/7id9rSHslCmqv98RfcEfFqDavb4ytz453tKtwMJylXDpo+ah7xJoH5BbT+fa4ry
-         m71h3DTPUIFa12HCNPIedM9E5o9lAe7Gc6YXIahY+2YTcjB+f/ZYqltNBqewkSa2XrVj
-         Zndw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717615593; x=1718220393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W05x3+sVU6bILbLlHv781110WtHbNpnp+gY6dsPenOg=;
-        b=FdK4lPGLrO+QikO1tHcTcHpQqUJOxZj6U2KtWeagA4giUjs6xlItrXrWATp9s4eock
-         GCA90V/TUINxaNabCFNzZljorfsgGib/wxqCa4oBK1FLm/noEtKQiJyLuFJSL6vUzWlq
-         E1FhrwKBIZ8pBhDD/w3I9brp0CQlsZ6ky+SVD3adVi4T/5l6lMc3hdN9Qo5P9zuZPdW0
-         QWrCF+EbXWFwQFnIdtOCPxenoPapAqogHxnFOzkWap93vERrsrALVkFvPmNhr8w7+mN7
-         WOKWcnydvw5vcrEdRf5iSloOAMmw5kpfc/19Wmpl6QVzgiASYwPgpbDC00jDH0JqQpcP
-         4E5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJQjiP9zbcw4uQ5OuWuKY0seR5k0rb/mvQD6Dn0r9lv323LMCNocfwhYUmiOPU5hg12ONHxkV6VPFH1ug81Xovo9t1A1uEQURj2PqrLadsQAu8sJK+wRd3j19+RmW8bmglTIeE2kKjYg==
-X-Gm-Message-State: AOJu0YzkqrnNDc2atHE952onXofPQmqOb+FXmo2UgxSm7ghbSJpcY+eU
-	gKwfiGtYi4ceK9hvGLiY1XWgHrpds5/78XVLMOeIs4lkLghXlU80
-X-Google-Smtp-Source: AGHT+IFO+3N6m7Ih2WOHZ+qasLJwJz7+352/CE7D8ks0I/d1TPQFnypvsJZV+AjEPEiEXjlZWAPN0A==
-X-Received: by 2002:a05:6000:114a:b0:357:393d:5006 with SMTP id ffacd0b85a97d-35e8406866emr2729154f8f.7.1717615593349;
-        Wed, 05 Jun 2024 12:26:33 -0700 (PDT)
-Received: from andrea ([151.76.32.59])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd064bbb1sm15440454f8f.101.2024.06.05.12.26.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 12:26:33 -0700 (PDT)
-Date: Wed, 5 Jun 2024 21:26:27 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-Message-ID: <ZmC7z26DmZ5xP8k4@andrea>
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <ZlC0IkzpQdeGj+a3@andrea>
- <cf81a3c2-9754-4130-a67e-67d475678829@rowland.harvard.edu>
- <ZlQ/Ks3I2BYybykD@andrea>
- <28bdcf4c-6903-4555-8cbc-a93704ec05f9@rowland.harvard.edu>
- <ZmCa6UXON7bBDLwA@andrea>
+	s=arc-20240116; t=1717615721; c=relaxed/simple;
+	bh=GD3iYdT5XOGRVE0Nem0zYe1P7mRbAjWzmTkIUhIrUvo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=fkcu6TmYunV5BvPCRN4AENxSCznLjRa+g129T1BIVUQ4PC7l3fyWYFPavFsInCkV7j+qwD8gAvALulGVPEhgToh7Q8PPLOhIojFFBY4LmPFuQdyBVS9S5BipHJu67TEfcUdXTCp4eYXFuQazvIzi5IfGl1j6GLpSKt7NDLnXFbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T5dCY/Y+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1xFr007540;
+	Wed, 5 Jun 2024 19:28:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=jB4zfOV96DE2gLWkDr4+0m
+	sPz53+wnI51vMQ1wHOUds=; b=T5dCY/Y+Ol1Kx03LJRghiCPp6XMs0/cbn4FJ4C
+	yp3aUmxRQNen0SAptsY5/bKmwlyTbkW/vO9UMEvqmY8oIix7zPanITr5cQ7Z15yQ
+	stBJdfqRdFGfVu/k0WNZOA/eIlVlWSiSgB0EYaMhVqYdj1gmVgCCOe0kK5wPT/+n
+	wxuud1OjscUNP/Dm25RqIn6VlAJbjghROzNL4MIkZX/IH0RkrPpSG5xr6c2tqjtb
+	eSp01GWbfpWf87dCRlVCMpBBnPCh9BQneuUWhxHz2fNTkxynBvKQM4kIVsN4OzCD
+	06l+ElRjBlib4mzg5rtB0qlMqrmuL2/TqAhNaoO/8hMPp6Kg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj7urb3c9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 19:28:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455JSXLT027353
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 19:28:33 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
+ 12:28:33 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 5 Jun 2024 12:28:31 -0700
+Subject: [PATCH] dmaengine: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmCa6UXON7bBDLwA@andrea>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240605-md-drivers-dma-v1-1-bcbcfd9ce706@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAF68YGYC/x3MTQqDQAxA4atI1g2M40+hV5EuMk6sgc5UEhVBv
+ HunXX6L904wVmGDR3WC8i4mn1xQ3yoYZ8ovRonF4J1vXe86TBGjys5qGBOhr10X7qGffNtAiRb
+ lSY7/cHgWBzLGoJTH+bd5S94OTGQrK1zXFwL6yPl/AAAA
+To: Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
+        "Dave
+ Jiang" <dave.jiang@intel.com>,
+        Peter Ujfalusi <peter.ujfalusi@gmail.com>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UG0TkUCYGWMH8kPhLlpoQy3M5oFk0U-h
+X-Proofpoint-GUID: UG0TkUCYGWMH8kPhLlpoQy3M5oFk0U-h
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 mlxscore=0 bulkscore=0 clxscore=1011 priorityscore=1501
+ suspectscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406050147
 
-> > Here's a much smaller patch, suitable for the -stable kernels.  It fixes 
-> > the bug without doing the larger code reorganization (which will go into 
-> > a separate patch).  Can you test this one?
-> 
-> Testing in progress..., first results are good.
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/idxd/idxd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/omap-dma.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ioat/ioatdma.o
 
-Completed and good on the various locking litmus tests in the github
-archive and in-tree.
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-  Andrea
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/dma/dmatest.c     | 1 +
+ drivers/dma/idxd/init.c   | 1 +
+ drivers/dma/ioat/init.c   | 1 +
+ drivers/dma/ti/omap-dma.c | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+index a4f608837849..1f201a542b37 100644
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -1372,4 +1372,5 @@ static void __exit dmatest_exit(void)
+ module_exit(dmatest_exit);
+ 
+ MODULE_AUTHOR("Haavard Skinnemoen (Atmel)");
++MODULE_DESCRIPTION("DMA Engine test module");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+index a7295943fa22..cb5f9748f54a 100644
+--- a/drivers/dma/idxd/init.c
++++ b/drivers/dma/idxd/init.c
+@@ -22,6 +22,7 @@
+ #include "perfmon.h"
+ 
+ MODULE_VERSION(IDXD_DRIVER_VERSION);
++MODULE_DESCRIPTION("Intel Data Accelerators support");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Intel Corporation");
+ MODULE_IMPORT_NS(IDXD);
+diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+index 9c364e92cb82..d84d95321f43 100644
+--- a/drivers/dma/ioat/init.c
++++ b/drivers/dma/ioat/init.c
+@@ -23,6 +23,7 @@
+ #include "../dmaengine.h"
+ 
+ MODULE_VERSION(IOAT_DMA_VERSION);
++MODULE_DESCRIPTION("Intel I/OAT DMA Linux driver");
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_AUTHOR("Intel Corporation");
+ 
+diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
+index b9e0e22383b7..5b994c325b41 100644
+--- a/drivers/dma/ti/omap-dma.c
++++ b/drivers/dma/ti/omap-dma.c
+@@ -1950,4 +1950,5 @@ static void __exit omap_dma_exit(void)
+ module_exit(omap_dma_exit);
+ 
+ MODULE_AUTHOR("Russell King");
++MODULE_DESCRIPTION("OMAP DMAengine support");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240605-md-drivers-dma-2105b7b6f243
+
 
