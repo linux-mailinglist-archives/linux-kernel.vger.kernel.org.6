@@ -1,100 +1,132 @@
-Return-Path: <linux-kernel+bounces-202890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0968FD28D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:12:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE3208FD291
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392561F22CF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:12:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B981C24110
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FF0154457;
-	Wed,  5 Jun 2024 16:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A35156F3D;
+	Wed,  5 Jun 2024 16:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dXOfWivM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2IRzr77"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834FE2575A;
-	Wed,  5 Jun 2024 16:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C5D2575A;
+	Wed,  5 Jun 2024 16:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717603972; cv=none; b=TgOVefNKcUfjjJrMW9h/1c0P/nJdyfDPnrkqMxqOoLIjBKNRuJ3Jx5i3RWils2PdVFJXOyPWDICea6vXZxP5Vp5ahgDXrWk5BqcVDwlFGxOgiCzpFAp/saKz9JDz61Lgrz5L9pwTtgVX9ZuiFmtrdq77DQjLF+xqY8Brwgm3aUY=
+	t=1717604021; cv=none; b=a9lBkgaIX9OfIYM+JokSzS0mUEjIpWYkW+We4TbwkN/gObqYpcNXEvGJjacwp3Dbmbl+QX+n293Y8L28/k0IUyoRkGrv4mIBs+efARrdJ/ly1xyObksVtxKKSb0ngX5WM5o4XEeUEAVj3I/tMD8jjVEAKlWltF7RB2zI1vZCK6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717603972; c=relaxed/simple;
-	bh=bb6R/wccxuh3haaibej5fK5MnrC4BlHZGVvR9Fjaymg=;
+	s=arc-20240116; t=1717604021; c=relaxed/simple;
+	bh=xOMMuTmFafOBZoFgW+ylCUc2IiwmGERlE/npYTHqpj4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A3zaJ3pOYIDKnFKOlLLAXah9Pep69CDyxBo1Bm/vW9ApUnSHrKrqODozWGlP4pMlVnheQSLDIShMa594/RFF2WIOIXYs0NbHz15YYjva3iotv1iHPClAbxVujDQATdY3pbTfkWM86QGv7lvlautLxlKBG0PRoReepnAu50ays3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dXOfWivM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 380F740E0176;
-	Wed,  5 Jun 2024 16:12:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 0-nu29L-4QBm; Wed,  5 Jun 2024 16:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717603964; bh=XZqop4oMhiyVdjTRe+jU0w8Ay/gg4CSzZsEjcgKQyDQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=GnWNOuXNxb55SKwpovgFcfnMIxmpD4jQ0zjMge05wiR4v7UTzTlyJ/U86CNk4RjGuB+kx4UI9JXa0gI2JK6VwA+Ob7ATJ39Ihk+wZUWW4H/c6MJMr1p5re27n6z8oyui9Wie770nkGfqh/5QjC4W7aQUO5A1ceiFVGw5Q/RA5BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2IRzr77; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 457C5C2BD11;
+	Wed,  5 Jun 2024 16:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717604020;
+	bh=xOMMuTmFafOBZoFgW+ylCUc2IiwmGERlE/npYTHqpj4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dXOfWivMHgTCg1qBrOBgTs6JX5f0uNJG+RCaE5LY1isDuQWivYpQu7tdQdXGuWMHu
-	 Zv7PYO9DYUPD2swPx5Eq2UvT9VYZFATFn9QBxSaWRrqeQ4aQrRAllp1iL1szVOCPc0
-	 ueUHTSQ3dGAl6q/vfkyUl9OjtrWvVTgHTGXc8iNgOGcS3lmUdgO34tUsydS820ar1x
-	 4oo14IGphA9XaP58BsqojGUBqXQKu5uXyVeJttFJO9pfdlXjW1eKDA8MznP5guzcly
-	 +KdeI6X8GttcE6J9vQ/WmMnCCUST4vw8JPFrdato+u51keAe+tzRxuIgfNZCjonMLK
-	 TxoHqY/3RzxKr+iV/AfMA/3CrTSJwJU26e/8ctOK6fdLOUt/yXNS30V03YQvjNtocm
-	 CX6/R/HSUXHoztMgVl3qTvuTj7nxQ5DKPKhcuCNR4Pj/TSNDNBKaMX6vo0VkBCrk+L
-	 K/Eh0fS1S3aOVvBFnxBWplD3sB5a18k8Pj8KMf0muqiVVIADMTiwo6MbgM4BWRqqDV
-	 a179ZB9bMELiOlSjwdn0OC8meNyS01qHQ+WQj2zDJY2crEk9lFzKsadyd6xhoLx/Pm
-	 ETB+s4ZN6sTe7gOxbqGtfSXL0lf0csnQlGANRzwbDHDe62UzHqCBR54afqWiDNUB5J
-	 iOOtJdEmDW2pa70QICwXKvsA=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5A03640E016A;
-	Wed,  5 Jun 2024 16:12:37 +0000 (UTC)
-Date: Wed, 5 Jun 2024 18:12:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, x86@kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v3 3/8] hwmon: (k10temp) Check return value of
- amd_smn_read()
-Message-ID: <20240605161236.GIZmCOdP-CRPJ8-3sY@fat_crate.local>
-References: <20240523-fix-smn-bad-read-v3-0-aa44c622de39@amd.com>
- <20240523-fix-smn-bad-read-v3-3-aa44c622de39@amd.com>
- <20240605122012.GXZmBX_KFQArXB9Lar@fat_crate.local>
- <7a7c2f41-1608-4348-9183-d99aaa51398e@amd.com>
+	b=r2IRzr775nQzqud0EzuWd8pj1F3rd7fC2g0l9tQaXPIQYgezvxSvBJnBs5jCfeAWz
+	 3PRXDWr14tTmU6D9hhQLz0GUTb6+PisQsOO8fIH3wIwkkSfh05S6l8M9OSBnq1G8rN
+	 DoCsL1M1k419l4ep+liEHMSogMEyhhZmEMwV0KgD+hOmKFIXkAyGATWpyoBcR1huDZ
+	 G5hppLh1nINaHnPL9dAsptnLF18CiGVK4houAzQpWAnZ6vn2D1TgYA+cVCwUFT1sGy
+	 yEPXiWZzA2n99txWgecgAjgmJ52if8+prSkzpoc/wK+aKPpNyXrNDIKl7QMlAE4QPa
+	 7RQ3YBn61mtaQ==
+Date: Wed, 5 Jun 2024 10:13:37 -0600
+From: Rob Herring <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Konstantin Porotchkin <kostap@marvell.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Yazan Shhady <yazan.shhady@solid-run.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-phy@lists.infradead.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v6 4/7] dt-bindings: phy: armada-cp110-utmi: add optional
+ swap-dx-lanes property
+Message-ID: <20240605161337.GA3256958-robh@kernel.org>
+References: <20240602-cn9130-som-v6-0-89393e86d4c7@solid-run.com>
+ <20240602-cn9130-som-v6-4-89393e86d4c7@solid-run.com>
+ <20240604-tucking-aggregate-0496e393f21c@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7a7c2f41-1608-4348-9183-d99aaa51398e@amd.com>
+In-Reply-To: <20240604-tucking-aggregate-0496e393f21c@spud>
 
-On Wed, Jun 05, 2024 at 09:41:51AM -0400, Yazen Ghannam wrote:
-> I agree that patches 1-3 are not stable-worthy on their own. But I think
-> patch 4 is, and it requires 1-3 to avoid build errors.
+On Tue, Jun 04, 2024 at 06:41:03PM +0100, Conor Dooley wrote:
+> On Sun, Jun 02, 2024 at 05:49:39PM +0200, Josua Mayer wrote:
+> > Armada CP110 UTMI supports swapping D+ and D- signals.
+> > usb251xb.yaml already describes a suitable device-tree property for the
+> > same purpose but as child usb controller node.
+> > 
+> > Add optional swap-dx-lanes device-tree property to armada cp110 utmi phy
+> > with same semantics as usb251xb:
+> > The property lists all ports that swap D+ and D-, unlisted ports are
+> > considered correct.
+> > 
+> > Signed-off-by: Josua Mayer <josua@solid-run.com>
+> > ---
+> >  .../devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml      | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml b/Documentation/devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml
+> > index 9ce7b4c6d208..2ef02aac042a 100644
+> > --- a/Documentation/devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/marvell,armada-cp110-utmi-phy.yaml
+> > @@ -41,6 +41,12 @@ properties:
+> >        Phandle to the system controller node
+> >      $ref: /schemas/types.yaml#/definitions/phandle
+> >  
+> > +  swap-dx-lanes:
+> 
+> Missing a vendor prefix.
+> Otherwise, to me naive eye, seems okay.
 
-Which of the rules in the first section of
-Documentation/process/stable-kernel-rules.rst apply for patch 4?
+Already have the same property elsewhere, so it's fine.
 
-Because I don't see it.
+> 
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +    description: |
+> 
+> This | probably isn't needed though, there's not any format here that
+> seems worth preserving.
+> 
+> Thanks,
+> Conor.
+> 
+> > +      Specifies the ports which will swap the differential-pair (D+/D-),
+> > +      default is not-swapped.
+> > +
+> >  # Required child nodes:
+> >  
+> >  patternProperties:
+> > 
+> > -- 
+> > 2.35.3
+> > 
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
