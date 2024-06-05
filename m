@@ -1,256 +1,230 @@
-Return-Path: <linux-kernel+bounces-203168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBE38FD772
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:24:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52B28FD777
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FF52845AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:24:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2D51F2452B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4528015ECCA;
-	Wed,  5 Jun 2024 20:24:49 +0000 (UTC)
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A426415ECC8;
+	Wed,  5 Jun 2024 20:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="m+Vs52IW";
+	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="gUvbY56i";
+	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="W7b8z39V"
+Received: from e2i411.smtp2go.com (e2i411.smtp2go.com [103.2.141.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADB514D444
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF7115099F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717619088; cv=none; b=nrjTPTafs8ZdQZ1h4sBLxdJ3YKyrghwjcHIaGXmxOSZICXmS2yLiDhnFyVkImFbP9mfNvClIAmNQtd0SRlPEyOQJE8JqunETTUK3yfg3Q17jTC4/Z/n4VUhyUOvQDOwV40ITROe9iwQMqG1yClYIDJv58N4GEMA3m9tH/LO5NDM=
+	t=1717619179; cv=none; b=JfdOkok6jEcIl7mn4E584c6hU4VkGhMCGTUTyQt7LvyA9+apaWFv2LSEPCwVAjhuv13nzYNje8qBjBRXrfVHVnUkAkC1S+4umCqSbEYTC96hFSzxeGIqmKdr90EuvDkFp3JqrlfpWBJNc/T6Zfm2LdpWYLGPys8DIMXKz4hdJ3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717619088; c=relaxed/simple;
-	bh=dJT0IXIjAoLuqegKrl7wJhhJCx7h7wib/TJUPpQllBA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jOfTO+5nj4eoY2hdLCLKvYm2A1fPGHnpBpqcoH6jF+EBuAgASvvURTQ9/rw/s5mzbN/hn2Rv8ECbUQ/No9dpTw6+LKxjFh+rkfUYEcHjwO7hvUCGkwL6HATW4dXAVEUjQjpdZaNATlUlYeo8CSDWWacIR73jfGnrB3k7XzWydKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id a4ad9dfa-2379-11ef-8e41-005056bdf889;
-	Wed, 05 Jun 2024 23:24:45 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 5 Jun 2024 23:24:43 +0300
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Simon Horman <horms@kernel.org>,
-	Sai Krishna Gajula <saikrishnag@marvell.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 18/19] mfd: Add support for LAN966x PCI device
-Message-ID: <ZmDJi__Ilp7zd-yJ@surfacebook.localdomain>
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
- <20240527161450.326615-19-herve.codina@bootlin.com>
+	s=arc-20240116; t=1717619179; c=relaxed/simple;
+	bh=+Vz9TeN9BeN8ZjnlkW6G+oEKYEN2ezcWaR0jJUFXCI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b28VG+wFePTb3JJNsvqdEuPRh2eDpPJIOoQT1+XuTMflxtv1bZYy9vwEI3G3hDuhXHx35DyFAAFA2Up1Ds4+zIJFXr4ZsBefFNvEq1rnoHMtOa3Ck55kkUPhA+uhn4hTDtvzXnNi7KQFWqpeK/kGdLt5TIPL0MLvmtiyWyrq4jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=m+Vs52IW reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=gUvbY56i; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=W7b8z39V; arc=none smtp.client-ip=103.2.141.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1717620071; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=O06RkS7enRps0vHi5srkPVELhghQko9mdCYiK9u37wA=; b=m+Vs52IWJtcE0SIBS+rgXppnOw
+	hsVcqI59vMyRAf75jkS5ZjgfoTgTvlKiIA/0XMkBvxge1K/VNxDRaPmm0vr4mV/6OjWV9StnwZ+G1
+	dIPR3LPGzYPpvKwlI4KlqePKwhKVgvisAcoRa8BJkqmKc911qEqs0miPGQnhp9yT/B11eP7GyQK/K
+	No0qaKMlA8KIzgjk6vLkgR27ZeUOQCtV8IuQKvEpO8Oj88lGK1Ar1x7PIStCXjpIQOp9dLGLHc1wL
+	MXw78LUlZ7Od7d4KluADJJfhbFesvpexCiJOvo2u0a5CKGHQY/3H0uTJLnLaptBKbSUICZC9lZ5bc
+	dU3UcJsw==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
+ i=@fjasle.eu; q=dns/txt; s=s1174286; t=1717619171; h=from : subject :
+ to : message-id : date;
+ bh=O06RkS7enRps0vHi5srkPVELhghQko9mdCYiK9u37wA=;
+ b=gUvbY56iWxlAFPIAnocnaInYTYN/279UJq0AP8GZqcLOA8ZQvVRA7VgauVC02rSF51qQe
+ EH9YzWOY8KzW+uWZRgzx8+UQgzvna5DczFjrCDFxMTU4mc20Anb8/r99VfTwv9OLBIZ7jRp
+ afgS3UlYJ/Y1qWop/Llc0OqJH2DYXGNtN3CedNXleM+oA4eerZLimUKhAgTgNbrUc7DoDoH
+ rloiBBafp3VmOgUB9p6DJuCYmhnMqXDzIyZQDL4S+bygk0n2cUDZzMbp3fESVpV2gO52RJm
+ JXXrQdj4cXWNT9WYsmiwWOmgGJtk7pnZwjT3D3pIp62MMz/iEztbjbrIwCyw==
+Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
+ id 1sExCd-TRk0J4-57; Wed, 05 Jun 2024 20:25:47 +0000
+Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
+ by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
+ id 1sExCc-4o5NDgriTI7-mSQR; Wed, 05 Jun 2024 20:25:46 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
+ t=1717619145; bh=+Vz9TeN9BeN8ZjnlkW6G+oEKYEN2ezcWaR0jJUFXCI8=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=W7b8z39VARQ29g3bGhWmwvAxsg5hTVRth9KT+EjdBpJDdch0FyEosoSEszo7VjHpc
+ BsENU3KQuLuQC5mHho7BUEklxOa83OP88QYkoIUDlOA/qBJEMO+W7cfNfEyveCmb1M
+ zZlYsy4leHn9P3wv0mFx4Z/JpnwWPhTWt7GjOEdg=
+Received: by leknes.fjasle.eu (Postfix, from userid 1000)
+ id 25301449F3; Wed,  5 Jun 2024 22:25:45 +0200 (CEST)
+Date: Wed, 5 Jun 2024 22:25:45 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] kconfig: refactor conf_set_all_new_symbols() to
+ reduce indentation level
+Message-ID: <ZmDJya3X1rwtHteD@fjasle.eu>
+References: <20240602125416.976336-1-masahiroy@kernel.org>
+ <20240602125416.976336-2-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature"; boundary="mlfnEBJWXlybmKlf"
 Content-Disposition: inline
-In-Reply-To: <20240527161450.326615-19-herve.codina@bootlin.com>
+In-Reply-To: <20240602125416.976336-2-masahiroy@kernel.org>
+X-Smtpcorp-Track: B_Y4RLlVEl02.evHmvoMlkvnM.hfvcJgDU4Wm
+Feedback-ID: 1174286m:1174286a9YXZ7r:1174286sP1Qs_fKIH
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-Mon, May 27, 2024 at 06:14:45PM +0200, Herve Codina kirjoitti:
-> Add a PCI driver that handles the LAN966x PCI device using a device-tree
-> overlay. This overlay is applied to the PCI device DT node and allows to
-> describe components that are present in the device.
-> 
-> The memory from the device-tree is remapped to the BAR memory thanks to
-> "ranges" properties computed at runtime by the PCI core during the PCI
-> enumeration.
-> The PCI device itself acts as an interrupt controller and is used as the
-> parent of the internal LAN966x interrupt controller to route the
-> interrupts to the assigned PCI INTx interrupt.
 
-...
+--mlfnEBJWXlybmKlf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +#include <linux/irq.h>
-> +#include <linux/irqdomain.h>
-
-> +#include <linux/kernel.h>
-
-Why do you need this?
-
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/pci.h>
-> +#include <linux/slab.h>
-
-General comment to the headers (in all your patches), try to follow IWYU
-principle, i.e. include what you use explicitly and don't use "proxy" headers
-such as kernel.h which basically shouldn't be used at all in the drivers.
-
-...
-
-> +static irqreturn_t pci_dev_irq_handler(int irq, void *data)
-> +{
-> +	struct pci_dev_intr_ctrl *intr_ctrl = data;
-> +	int ret;
+On Sun, Jun 02, 2024 at 09:54:15PM +0900 Masahiro Yamada wrote:
+> The outer switch statement can be avoided by continue'ing earlier the
+> loop when the symbol type is neither S_BOOLEAN nor S_TRISTATE.
+>=20
+> Remove it to reduce the indentation level by one. In addition, avoid
+> the repetition of sym->def[S_DEF_USER].tri.
+>=20
+> No functional change intended.
+>=20
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>=20
+>  scripts/kconfig/conf.c | 61 +++++++++++++++++++++---------------------
+>  1 file changed, 30 insertions(+), 31 deletions(-)
+>=20
+> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+> index 9a20e9e9bdad..cf8193fc00fc 100644
+> --- a/scripts/kconfig/conf.c
+> +++ b/scripts/kconfig/conf.c
+> @@ -218,43 +218,42 @@ static bool conf_set_all_new_symbols(enum conf_def_=
+mode mode)
+>  	}
+> =20
+>  	for_all_symbols(sym) {
+> -		if (sym_has_value(sym) || sym->flags & SYMBOL_VALID)
+> +		tristate val;
 > +
-> +	ret = generic_handle_domain_irq(intr_ctrl->irq_domain, 0);
-> +	return ret ? IRQ_NONE : IRQ_HANDLED;
-
-There is a macro for that IRQ_RETVAL() IIRC.
-
-> +}
-
-...
-
-> +static int devm_pci_dev_create_intr_ctrl(struct pci_dev *pdev)
-> +{
-> +	struct pci_dev_intr_ctrl *intr_ctrl;
+> +		if (sym_has_value(sym) || sym->flags & SYMBOL_VALID ||
+> +		    (sym->type !=3D S_BOOLEAN && sym->type !=3D S_TRISTATE))
+>  			continue;
+> -		switch (sym_get_type(sym)) {
+> -		case S_BOOLEAN:
+> -		case S_TRISTATE:
+> -			has_changed =3D true;
+> -			switch (mode) {
+> -			case def_yes:
+> -				sym->def[S_DEF_USER].tri =3D yes;
+> -				break;
+> -			case def_mod:
+> -				sym->def[S_DEF_USER].tri =3D mod;
+> -				break;
+> -			case def_no:
+> -				sym->def[S_DEF_USER].tri =3D no;
+> -				break;
+> -			case def_random:
+> -				sym->def[S_DEF_USER].tri =3D no;
+> -				cnt =3D rand() % 100;
+> -				if (sym->type =3D=3D S_TRISTATE) {
+> -					if (cnt < pty)
+> -						sym->def[S_DEF_USER].tri =3D yes;
+> -					else if (cnt < pty + ptm)
+> -						sym->def[S_DEF_USER].tri =3D mod;
+> -				} else if (cnt < pby)
+> -					sym->def[S_DEF_USER].tri =3D yes;
+> -				break;
+> -			default:
+> -				continue;
 > +
-> +	intr_ctrl = pci_dev_create_intr_ctrl(pdev);
+> +		has_changed =3D true;
+> +		switch (mode) {
+> +		case def_yes:
+> +			val =3D yes;
+> +			break;
+> +		case def_mod:
+> +			val =3D mod;
+> +			break;
+> +		case def_no:
+> +			val =3D no;
+> +			break;
+> +		case def_random:
+> +			val =3D no;
+> +			cnt =3D rand() % 100;
+> +			if (sym->type =3D=3D S_TRISTATE) {
+> +				if (cnt < pty)
+> +					val =3D yes;
+> +				else if (cnt < pty + ptm)
+> +					val =3D mod;
+> +			} else if (cnt < pby) {
+> +				val =3D yes;
+>  			}
+> -			if (!(sym_is_choice(sym) && mode =3D=3D def_random))
+> -				sym->flags |=3D SYMBOL_DEF_USER;
+>  			break;
+>  		default:
+> -			break;
+> +			continue;
+>  		}
+> +		sym->def[S_DEF_USER].tri =3D val;
+> =20
+> +		if (!(sym_is_choice(sym) && mode =3D=3D def_random))
+> +			sym->flags |=3D SYMBOL_DEF_USER;
+>  	}
+> =20
+>  	sym_clear_all_valid();
+> --=20
+> 2.40.1
+>=20
+>=20
 
-> +
-
-Redundant blank line.
-
-> +	if (IS_ERR(intr_ctrl))
-> +		return PTR_ERR(intr_ctrl);
-> +
-> +	return devm_add_action_or_reset(&pdev->dev, devm_pci_dev_remove_intr_ctrl, intr_ctrl);
-> +}
-
-...
-
-> +static int lan966x_pci_load_overlay(struct lan966x_pci *data)
-> +{
-> +	u32 dtbo_size = __dtbo_lan966x_pci_end - __dtbo_lan966x_pci_begin;
-> +	void *dtbo_start = __dtbo_lan966x_pci_begin;
-> +	int ret;
-> +
-> +	ret = of_overlay_fdt_apply(dtbo_start, dtbo_size, &data->ovcs_id, data->dev->of_node);
-
-dev_of_node() ?
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static int lan966x_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct lan966x_pci *data;
-> +	int ret;
-
-> +	if (!dev->of_node) {
-> +		dev_err(dev, "Missing of_node for device\n");
-> +		return -EINVAL;
-> +	}
-
-Why do you need this? The code you have in _create_intr_ctrl() will take care
-already for this case.
-
-> +	/* Need to be done before devm_pci_dev_create_intr_ctrl.
-> +	 * It allocates an IRQ and so pdev->irq is updated
-
-Missing period at the end.
-
-> +	 */
-> +	ret = pcim_enable_device(pdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_pci_dev_create_intr_ctrl(pdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(dev, data);
-> +	data->dev = dev;
-> +	data->pci_dev = pdev;
-> +
-> +	ret = lan966x_pci_load_overlay(data);
-> +	if (ret)
-> +		return ret;
-
-> +	pci_set_master(pdev);
-
-You don't use MSI, what is this for?
-
-> +	ret = of_platform_default_populate(dev->of_node, NULL, dev);
-
-dev_of_node()
-
-> +	if (ret)
-> +		goto err_unload_overlay;
-> +
-> +	return 0;
-> +
-> +err_unload_overlay:
-> +	lan966x_pci_unload_overlay(data);
-> +	return ret;
-> +}
-
-...
-
-> +static void lan966x_pci_remove(struct pci_dev *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct lan966x_pci *data = dev_get_drvdata(dev);
-
-platform_get_drvdata()
-
-> +	of_platform_depopulate(dev);
-> +
-> +	lan966x_pci_unload_overlay(data);
-
-> +	pci_clear_master(pdev);
-
-No need to call this excplicitly when pcim_enable_device() was called.
-
-> +}
-
-...
-
-> +static struct pci_device_id lan966x_pci_ids[] = {
-> +	{ PCI_DEVICE(0x1055, 0x9660) },
-
-Don't you have VENDOR_ID defined somewhere?
-
-> +	{ 0, }
-
-Unneeded ' 0, ' part
-
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
 
+
+--=20
+epost|xmpp: nicolas@fjasle.eu          irc://oftc.net/nsc
+=E2=86=B3 gpg: 18ed 52db e34f 860e e9fb  c82b 7d97 0932 55a0 ce7f
+     -- frykten for herren er opphav til kunnskap --
+
+--mlfnEBJWXlybmKlf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmZgycQACgkQB1IKcBYm
+EmmNpw//UNaTItKxl1xfxquC6HZL/5u/yWCjDc7lS5gD6KLhf0Jma2mncjEY3j5G
+QwYpACT+9SYsIBv9ZIoEjWhrQ+uZSx8ZEzPaWU8BrgZ6bMpATrgFIShAG7mNaQPy
+GAJR84elQbQ7C0DUJ+kQTObhNzhnZ9zd5mqdGq7htsVE63u4pdtU8stJntOuX3dV
+6jcth+0yf/jnssH+JOvmg7j5uOeZUytOFWMgutVSg2g4yQw+BSBLzbSnfSt5/2Ik
+Eyorsn4RutCkTzTZR6aXCkYzAaouJAZmmVoyKTwDyVsy8TcMSgDacPoJ9G2LalIs
+tNUaLN2e/+g8mItcu5bzeT0WgoqydSAAgtDWldskx3QsbGUsNQSn8XW+a/tFiXvg
+de5jJeC8Zh18tJGVJfFTxDzl09RZrXS2cCNaIxkeFUwXYJs2FJh1IWL9vuGPOhDb
+o0wqLX1LdMBwGncV4Lq167N7P7Dz6XFVwF4lXTRhGgdBjfKKlSNrQGMhx9QmpURH
+mBIy+Ej8AGvIfoRgjT8gY3MbHGNSQpTt1XAZig0/kJmD6RIwMhco92kp3THJBAm9
+Ls9DGB2ez+oItAK+poBkqBw/j/wBtKGoJewVUOZ7j71AmoZNhS0vs7DU/c2h87Y6
+RXfS+e/wqObDGq3egiSz/Z2yxvzfmo1vichnE8zQ2ciGtC1xoKY=
+=qZNG
+-----END PGP SIGNATURE-----
+
+--mlfnEBJWXlybmKlf--
 
