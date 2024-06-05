@@ -1,141 +1,270 @@
-Return-Path: <linux-kernel+bounces-202048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291F18FC723
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0658FC727
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B871E1F231ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:01:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1D741C221B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1285518F2E4;
-	Wed,  5 Jun 2024 09:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BZt5xSeY"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164EF18F2E2;
+	Wed,  5 Jun 2024 09:02:37 +0000 (UTC)
+Received: from out198-2.us.a.mail.aliyun.com (out198-2.us.a.mail.aliyun.com [47.90.198.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37C784FDA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E8D1946AC;
+	Wed,  5 Jun 2024 09:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717578055; cv=none; b=X5x9Ewl1IaoJ8Z0T9sHpEAAK7wEWzKArF3q4fiIw9R1XQ5chP5SDCt80wWVvbtJsp2cMOuTWYoQ1PCcwLt2+TLvND9X5TWfApdXbwqujBu52HjoZzmikVYklOzfbQWRBMOaLob2oFYsxXBXoX3TeVv8nBzZV2WPb1FEcFZjjCaY=
+	t=1717578156; cv=none; b=EyMUMHyDZ9YVtN+00i0HjDdQ2O1KtkSyWVNEeSIIFBID5pdZ5J9c6TXgWdmt9Jr39lXujCy3TCxkPJr5robDOMu1deMRCfTEIimHS9q6F5221AfcQT+iZ/YcnC/W8BmfyWuEJ4R1ihxUWP+GdQfKi7MwJ4YZ25Qx3Tjism1otdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717578055; c=relaxed/simple;
-	bh=9yh9Jj7C37WppCl5hvMNk/vvdbjaMhMMdTQpdn4iFTA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RH9/yY66qxd46cl5wyQ76qFexjNJrZllYuF0QifNTi4ZeY7VHo7Cgb8MVUxpJzgg1gJVwsthmuXCpMQaI5WztGfhEc6BmquBhF8ULaj4/ggV0cigGKaawoh+HiC5//ECPigv3AClOj5elz5ytC2tE1SZVtJvt8LsfZsK6lcpfJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BZt5xSeY; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b938587a4so4321163e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717578052; x=1718182852; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B3Tk2U7HTqKIj/hqVlEfk2OBhTexRr5WPJf6l5fzSJs=;
-        b=BZt5xSeYluISP0JmL44vCun2m2qmO5Y+HdcC0xo6VKBkGJtECS6Y+2sjVbpOfpVxCv
-         fI0PwWYK3sD075AdaKGzkHmDhDWQvb/D9fos8LdapxgG1cSGnjRFYIIP5HRQHNRhxfhi
-         6e8josy2w9gx+IfCvoRzLzt3knrkgj6tndcJe3ygN1d/85fJeUNIGouApPTRNQTb8hGv
-         h+sKceZmpKtNOZVs7f+DKnFgUQawV7tGm/VAryU8DWjO+xbRfvxiMudJ5+/DYL1C3sE5
-         A6I/8f/6F0WaY8vLZVmlHoE4i7mm/ohFO6roLUbFi9ZWu9yI/XQS1AepHcqwf/iFaRtz
-         0B8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717578052; x=1718182852;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B3Tk2U7HTqKIj/hqVlEfk2OBhTexRr5WPJf6l5fzSJs=;
-        b=jwo8Hd5SphKyMEgm36VvBllBexccrlcRhIXilOrzqt2AHlLClQ7LsRqHJ3kFfhIeyt
-         fp77jMEciQaxbyHJBCUaoOwnpGjv9dae38cLF8W8JUsBTs68ah2BQKW3UoVgD7DHmhk8
-         Wwlvp2iBoOZt+8ZmKGf5+uiB7P6vwpN1xSQOoZeu6CW96MqQdRTP9I6kwW61pquxVP+q
-         Y6WUHmxu+JTxyI22iWSx56vtVz6gCZftO0bQMo5Do++yj+qhun4mCX6tCWr5bFtRbLsc
-         n4NVL9LxAsR8kgc1MAXCukXkD7+nDAdtNk5fs3PP82xhFk/cQrSQtuf/sZhcGcK73ObJ
-         Z8Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfsGIW0TV7+FLscjnnvcJbq9RsIXhy5IftA717r3etg51DRnGk9HPjB9y9Bz0ORay/8QAt6zYLOdS7qUIZeFM/5RR6zpCPQLFRObzJ
-X-Gm-Message-State: AOJu0YybSVY4im5Jlqq14QPeUVP3IpGf+kggetJTeQ1G9SNajeXgAByD
-	Ahzs3/bUwagBrzMf+5mwXNjkOYRncP9DrHrMlzmVsKInCUOvMBF82xnBsx9si5SW7+NMl81uC9J
-	y
-X-Google-Smtp-Source: AGHT+IGgMsQYDZf+T+2JFeGFXZxkfjquCVgkpQ0V8wX0qzieWBZ13+vh/5Xn/Om49PGOHagAJGmarg==
-X-Received: by 2002:ac2:5486:0:b0:52b:401e:1b5e with SMTP id 2adb3069b0e04-52bab4d30c4mr1113833e87.17.1717578051715;
-        Wed, 05 Jun 2024 02:00:51 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d764c6sm1732196e87.123.2024.06.05.02.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 02:00:51 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 05 Jun 2024 12:00:49 +0300
-Subject: [PATCH v2] arm64: dts: qcom: qrb4210-rb2: make L9A always-on
+	s=arc-20240116; t=1717578156; c=relaxed/simple;
+	bh=0S2W+9p08kP76IrQ50FsiyB2AXjRLgRQGc+PvbA1Yd0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DibP+Tjy4WI9dLIxd1dGbSG04XVt2cn58V9/PoUT8KqZVC0Szrzh4cj0LQyexfRmJRGSOF5RQIJDgBw4JnjUCH8suGuY99TqDBDgLr/UVkD3vaj/7JnXeGR8Ma312AR8v21r8zn3ndbzkeK2h7utyPqn/vc3Hub0N+RujtlJoOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07436261|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.271975-0.00154261-0.726483;FP=0|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033070021158;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.Xwd4rMH_1717578126;
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.Xwd4rMH_1717578126)
+          by smtp.aliyun-inc.com;
+          Wed, 05 Jun 2024 17:02:17 +0800
+From: wangshuaijie@awinic.com
+To: robh@kernel.org
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	jeff@labundy.com,
+	kangjiajun@awinic.com,
+	krzk+dt@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liweilei@awinic.com,
+	wangshuaijie@awinic.com
+Subject: Re: [PATCH V1 1/5] dt-bindings: input: Add YAML to Awinic sar sensor.
+Date: Wed,  5 Jun 2024 09:02:06 +0000
+Message-ID: <20240605090206.156859-1-wangshuaijie@awinic.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20240531013607.GA3665090-robh@kernel.org>
+References: <20240531013607.GA3665090-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240605-rb2-l9a-aon-v2-1-0d493d0d107c@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAEApYGYC/23MywrCMBCF4Vcps3Ykl1asq76HdDFtYjtQEplIU
- Ere3di1y//A+XZIXtgnuDU7iM+cOIYa5tTAvFJYPLKrDUaZVl2URZkMbj0hxYBOm95M5Doigvp
- 4in/w+9DuY+2V0yvK58Cz/q3/naxR41XPtiPlfGvdsHEgiecoC4yllC8PlSoFpwAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1350;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=9yh9Jj7C37WppCl5hvMNk/vvdbjaMhMMdTQpdn4iFTA=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmYClDuJrZrHHKcqGiWrq6c/hDyfHUGBT+ol2VK
- 8DIgK0RA1eJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmApQwAKCRCLPIo+Aiko
- 1cptCACW56FLcmDkRPcZP2QrAxuI+y8yO4vKMRIiZBPZ6UiqLktkLJlMUalhygs7uKNrTEqOt7h
- YDQn1p5NaCd9Ldw9IRmuo3iqlVRLjwKLCgrsMZt+vnaOX02UDSzuMCDrLepbq5FJrPx/IcXEF/j
- KdSm1GjpMje+foCUwdnLvxliUfpTgkQ8RtHjxWILp9S11B83+gkN0S3i2rdv3L4a6vI82FcbF1i
- dn/D64kf+KK3SYBYSZvDwDnSAMpoywlF1xt68q2kr1uNHJVNKW951SRRCtdp7nch295uH14pRdA
- V8CoLP1s2ePuB83zt1LvXDy/eremMJRAtzuEsKEJAL7LBcDa
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Transfer-Encoding: 8bit
 
-The L9A regulator is used to further control voltage regulators on the
-board. It can be used to disable VBAT_mains, 1.8V, 3.3V, 5V rails). Make
-sure that is stays always on to prevent undervolting of these volage
-rails.
+On Thu, 30 May 2024 20:36:07 -0500, robh@kernel.org wrote:
+>On Wed, May 29, 2024 at 01:06:04PM +0000, wangshuaijie@awinic.com wrote:
+>> From: shuaijie wang <wangshuaijie@awinic.com>
+>> 
+>> Add the awinic,aw_sar.yaml file to adapt to the awinic sar sensor driver.
+>> 
+>> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
+>> ---
+>>  .../bindings/input/awinic,aw_sar.yaml         | 110 ++++++++++++++++++
+>>  1 file changed, 110 insertions(+)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/input/awinic,aw_sar.yaml
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/input/awinic,aw_sar.yaml 
+>> b/Documentation/devicetree/bindings/input/awinic,aw_sar.yaml
+>> new file mode 100644
+>> index 000000000000..ed4ec29c9b4d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/input/awinic,aw_sar.yaml
+>> @@ -0,0 +1,110 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/input/awinic,aw_sar.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Awinic sar sensor driver family
+>> +
+>> +maintainers:
+>> +  - Shuaijie Wang <wangshuaijie@awinic.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - awinic,aw_aw96103
+>> +      - awinic,aw_aw96105
+>> +      - awinic,aw_aw96303
+>> +      - awinic,aw_aw96305
+>> +      - awinic,aw_aw96308
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  sar-num:
+>
+>Custom properties need vendor prefix.
 
-Fixes: 8d58a8c0d930 ("arm64: dts: qcom: Add base qrb4210-rb2 board dts")
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-Changes in v2:
-- Expand commit message to mention the affected voltage rails (Bryan)
-- Link to v1: https://lore.kernel.org/r/20240603-rb2-l9a-aon-v1-1-81c35a0de43d@linaro.org
----
- arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 2 ++
- 1 file changed, 2 insertions(+)
+The patch for version v2 will fix this issue.
 
-diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-index 2c39bb1b97db..e0c14d23b909 100644
---- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-+++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-@@ -403,6 +403,8 @@ vreg_l9a_1p8: l9 {
- 			regulator-min-microvolt = <1800000>;
- 			regulator-max-microvolt = <1800000>;
- 			regulator-allow-set-load;
-+			regulator-always-on;
-+			regulator-boot-on;
- 		};
- 
- 		vreg_l10a_1p8: l10 {
+>
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description:
+>> +      set the index of the sar sensor.
+>
+>What is 'sar'? It's never defined.
 
----
-base-commit: 0e1980c40b6edfa68b6acf926bab22448a6e40c9
-change-id: 20240603-rb2-l9a-aon-d1292bad5aaa
+SAR(Specific Absorption Rate), The patch for version v2 will include this explanation.
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>
+>How is the index determined? We generally don't do indexes in DT unless there is some correlation to the h/w.
 
+Perhaps using "label" is more appropriate, as it represents the order of the SAR sensor.
+The patch for version v2 will fix this issue.
+
+>
+>> +
+>> +  vcc0-supply:
+>> +    description:
+>> +      Optional regulator for chip, 1.7V-3.6V.
+>> +
+>> +  channel_use_flag:
+>
+>vendor prefix needed plus use '-' rather than '_'. Here and elsewhere.
+
+The patch for version v2 will fix this issue.
+
+>
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description:
+>> +      The flag of channels used.
+>> +      Configure according to the specific chip channel used.
+>> +      Bit[31:0] Each bit represents a channel.
+>
+>So a mask rather than a flag.
+
+The patch for version v2 will fix this issue.
+
+>
+>Up to 32 channels possible? If not, add constraints.
+>
+>> +      If the customer uses ch0 and ch2, then channel_use_flag=<0x05>
+>> +
+>> +  aw_sar,update_fw:
+>> +    type: boolean
+>> +    description:
+>> +      Choose if you want to update the firmware.
+>
+>DT is mostly fixed. So someone would want to update the firmware every time?
+
+In certain situations, if the program in the chip's ROM does not meet the needs,
+it is necessary to reload new firmware into the SRAM after each power-on,
+and then use the new firmware.
+
+>
+>> +
+>> +  aw_sar,monitor_esd:
+>> +    type: boolean
+>> +    description:
+>> +      Choose if you want to monitor ESD.
+>> +
+>> +  aw_sar,pin_set_inter_pull-up:
+>> +    type: boolean
+>> +    description:
+>> +      Choose if you want to set the interrupt pin to internal pull-up.
+>> +
+>> +  aw_sar,using_pm_ops:
+>> +    type: boolean
+>> +    description:
+>> +      Choose if you want to use suspend and resume related function.
+>
+>OS configuration. Doesn't belong in DT.
+
+Perhaps this name is not quite appropriate. It mainly determines whether to
+put the chip into sleep mode in the PM, and there are other operations in
+the PM that are not controlled by this option.
+
+>
+>> +
+>> +  aw_sar,use_plug_cail:
+>> +    type: boolean
+>> +    description:
+>> +      Choose If you want to perform calibration when plugging and unplugging the charger.
+>> +
+>> +  start-mode:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description:
+>> +      When connecting to aw963xx, select the location where the firmware starts.
+>> +      set 0 if start in rom.
+>> +      set 1 if start in ram
+>
+>Looks like constraints.
+
+Only the AW963XX series chips need to configure this option.
+I will redescribe it in the V2 version of the patch.
+
+>
+>> +
+>> +  irq-mux:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description:
+>> +      set csx as irq pin. config this field when connect to 
+>> + aw96308/aw96305BFOR
+>
+>Constraints? Can you imply this based on the compatible?
+
+Yes, only AW96308 and AW96305BFOR need to configure this option.
+I will redescribe it in the V2 version of the patch.
+
+>
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - sar-num
+>> +  - interrupts
+>> +  - channel_use_flag
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/gpio/gpio.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +        awinic_sar@12 {
+>> +            compatible = "awinic,aw_sar";
+>> +            reg = <0x12>;
+>> +            sar-num = < 0 >;
+>> +            interrupt-parent = < &tlmm >;
+>> +            interrupts = <72 0>;
+>> +            //vcc0-supply = <&pm660l_l4>;
+>
+>Why commented?
+
+This is a non-essential configuration,
+and I will remove it in the v2 version of the patch.
+
+>
+>> +            channel_use_flag = <0xff>;
+>> +            aw_sar,update_fw;
+>> +            //aw_sar,monitor_esd;
+>> +            start-mode = < 1 >;
+>> +            irq-mux = < 2 >;
+>> +        };
+>> +    };
+>> --
+>> 2.45.1
+>> 
+>
+
+--
+Thanks,
+
+Wang Shuaijie
 
