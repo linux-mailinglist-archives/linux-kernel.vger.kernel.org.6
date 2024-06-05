@@ -1,211 +1,176 @@
-Return-Path: <linux-kernel+bounces-202624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE688FCEDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:18:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785C18FCEE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573F21C250A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:18:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D63B81F21C52
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9C219EEA1;
-	Wed,  5 Jun 2024 12:39:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAA719E7F8;
-	Wed,  5 Jun 2024 12:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2352195817;
+	Wed,  5 Jun 2024 12:40:47 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7A01957FC;
+	Wed,  5 Jun 2024 12:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717591195; cv=none; b=afJpjQMSU+Wo4urlig1soTmlwTtafRuBXwGqIvbut/wI74MqmWVTsa/STfcI1wLBc4esdVO1x3VQ4+RacvAZ5e/k9zpCtBq2WFLz7CcJRm70w3GKNXd9XZS/erH4e3NUH6Bk77uPlH6fgAKras8fCENQmYciVB6cdPmn0JTv3XY=
+	t=1717591247; cv=none; b=mkv/oPb9D6DngXhTCDxISGZ10kywUiBeaVjgmHzU5OC6knmK1C7qPohPVkKddLWXGF44kObADX3zQJEecYNEDoE9k4yr9oFDdQoS1j3RhjhYyyTsBuVXg27+fosbUZ8QnPXRlLjNRBxZ1jb/lgWkmFTPPeU1HUcxO1Gt/TAhQSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717591195; c=relaxed/simple;
-	bh=otSmJ0pkdmSbTtHg9x3aGkUGNLGMhSXxt63d9ZAtoAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uTvpCNt/AzPdRnRKx/0eHwrDg33JqiH+msMRcpLuDXQuGAWhFwaydxx1DF35xsoy4+B8GtjnSKI8i2bNepono7SHQ55/v+JDwzS9EhdUd6lOPChgircSoyoRW5GBVen9VBh9rj5ZO0eIOyvPxyLcLXuVJ/93Gr4Mvbjz6Exu2+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3BB9339;
-	Wed,  5 Jun 2024 05:40:16 -0700 (PDT)
-Received: from [10.57.39.129] (unknown [10.57.39.129])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 39FE93F762;
-	Wed,  5 Jun 2024 05:39:48 -0700 (PDT)
-Message-ID: <b7f7403b-142a-4914-a787-f92292069d6d@arm.com>
-Date: Wed, 5 Jun 2024 13:39:51 +0100
+	s=arc-20240116; t=1717591247; c=relaxed/simple;
+	bh=L9f0nPu86ClISH3h8JDLKArTlRwI6HQQN1TeZVB8Ql4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aX2t168ba5rLNjPAVGq+05yudDUYD/ESVDHc/A21ivmNlw4Qbr+ko58rOtY9tjuptHC355dozt6YUd6z3ejT36MLuepM6/K1xJAYTJ4EySpkvE6ja9NcRngTYLTbBazLySrGpU3kRkOHsFGXs5JAlR7/jOUB8GYWk8y+IhzZDIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-62a2424ec50so71433237b3.3;
+        Wed, 05 Jun 2024 05:40:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717591243; x=1718196043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QA2P5Xr8Q0KSzKZJIkj8jUkBjIWrqYG6SJ0zJfpivIQ=;
+        b=M8+ci1mQX+JyvI7/9DGyS2SKkRGVNO8n6MnqDCetO94TRsX6hiPd+os6PnG+MLssoG
+         NhHozFQ7XbOjO0X/zvOTpOmmAYMm7DlZOrj9AOWTzDyrgqb+dTZEwickWFC+5eZscFFD
+         lbkO5kRWJtcZQF0zw+BQI1ZC6xH583ygRlnZoV0eBLqSy5+5t8pgpWg+yEEpHR9U2cZy
+         Nq3zVfVePhvC9EM2t8lKTCpESffBJgGkBYQWFQK4o7nafd7zPsAHjuBIyOUB3n1s7P/0
+         gm6FQrGbMq+sYIcJ6mk71B0v5h/oDg89ls8Kvb6Osk1o6iSccF92feYfVpunN+wKw4UE
+         mq0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUAb7a+UAYeR8JxK5Q8b6p5bgpvitOlySJ9+uFyyWr+6PsowZabRzHlzAQtlLTULnHiHjqBEPVwjrjXvCvVKwnpG13PeNP7XUX9R24IqGXQPN7/ZnYt1WpD8Hc7yHxm2u2knyMa1BZBiO4rLYX/C0bLCHMUys5LRNjetHpEJeTPjb+VlBKKycoZHBVIDzH3aLGHHimRUpN5h3fiUyyJfU8AHHEE+TNC
+X-Gm-Message-State: AOJu0YyWoW6448jYaLzHmMABcbLkkzjeIHLk3VIaEkGSLFTnIjo2jobu
+	/N/5YqBYLtY9j7/z12JsqIH3sFewwCJB7k/iNIwbX4Zff9FjFFE1rwfx3pJ6
+X-Google-Smtp-Source: AGHT+IEeyo/5wHU6sVa9oOhmt9I8O5qBu+xsNVmh3RLnsPOaTESN6RyU2uwVNomGzFmS4jhrfirk0g==
+X-Received: by 2002:a81:b717:0:b0:62a:530:1e53 with SMTP id 00721157ae682-62cbb504e14mr21958887b3.30.1717591241387;
+        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766850aesm21918417b3.102.2024.06.05.05.40.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa727d47c1so5171939276.0;
+        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9LbJI1sms3UgoOn0dxdCnEpuOw/+h3VmdjpLIgd4hm8a3C4mo6uUsinzrigqiJdscFjMht8KrvSfrjBVjmYAc4DElNfWHCow/GajuMjm52N6o6x87LFfQ4Dk294NDbPw5MwC7ZCEroGjJ1L2SecxPAZxn30fqwNP+VTRlonHP0K2RsrJ2932b1nTxqs2Bz+0h66cPfJCzal8U6Wv/IDwjOsOzj7zm
+X-Received: by 2002:a25:b20f:0:b0:dfa:b28b:a0c with SMTP id
+ 3f1490d57ef6-dfacac53bf8mr2604814276.26.1717591239815; Wed, 05 Jun 2024
+ 05:40:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/panfrost: Add support for Mali on the MT8188
- SoC
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- boris.brezillon@collabora.com
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240604123922.331469-1-angelogioacchino.delregno@collabora.com>
- <20240604123922.331469-3-angelogioacchino.delregno@collabora.com>
- <f44611fd-523a-4b4d-accd-20fdfbac178a@arm.com>
- <6dee4870-3ca2-46d7-a30b-014a7d34135a@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <6dee4870-3ca2-46d7-a30b-014a7d34135a@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
+ <CA+V-a8uxwiof-hLPRpYCnDkVs8tj+-+v8GQLSSkMFUP13cuoXQ@mail.gmail.com>
+ <CAMuHMdWEKCB3XdwQeK_MOUm3wyrhLtVXE+96vAVLv2iurmGbJQ@mail.gmail.com> <CA+V-a8s3J8PzmA9DqoazdAoC2WRdBASvWTr35FFzfKnJ7yWayA@mail.gmail.com>
+In-Reply-To: <CA+V-a8s3J8PzmA9DqoazdAoC2WRdBASvWTr35FFzfKnJ7yWayA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jun 2024 14:40:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVNHSf6fN756GgNqNsYDDm2v6p+KCTZYDBx08M3213kkg@mail.gmail.com>
+Message-ID: <CAMuHMdVNHSf6fN756GgNqNsYDDm2v6p+KCTZYDBx08M3213kkg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/06/2024 12:43, AngeloGioacchino Del Regno wrote:
-> Il 05/06/24 11:18, Steven Price ha scritto:
->> On 04/06/2024 13:39, AngeloGioacchino Del Regno wrote:
->>> MediaTek MT8188 has a Mali-G57 MC3 (Valhall-JM): add a new
->>> compatible and platform data using the same supplies and the
->>> same power domain lists as MT8183 (one regulator, three power
->>> domains).
->>>
->>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>> ---
->>>   drivers/gpu/drm/panfrost/panfrost_drv.c | 9 +++++++++
->>>   1 file changed, 9 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
->>> index ef9f6c0716d5..4e2d9f671a0d 100644
->>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
->>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
->>> @@ -777,6 +777,14 @@ static const struct panfrost_compatible mediatek_mt8186_data = {
->>>   	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
->>>   };
->>>   
->>> +static const struct panfrost_compatible mediatek_mt8188_data = {
->>> +	.num_supplies = ARRAY_SIZE(mediatek_mt8183_b_supplies) - 1,
->>> +	.supply_names = mediatek_mt8183_b_supplies,
->>
->> I think this is a little confusing. Ideally we'd drop the existing
->> mediatek_xxx_supplies which are the same as default_supplies and just
->> use that instead.
->>
->>> +	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
->>> +	.pm_domain_names = mediatek_mt8183_pm_domains,
->>
->> We'd want at least a comment explaining that this isn't a typo (i.e. /*
->> mt8188 uses the same pm domains as mt8183 */). But I'm also wondering if
->> it would be sensible to simply have one domain list, something like:
->>
->> --->8---
->> static const char * const mediatek_pm_domains[] = { "core0", "core1",
->> 						    "core2", "core3",
->> 						    "core4" };
->>
->> static const struct panfrost_compatible mediatek_mt8183_data = {
->> 	...
->> 	.num_pm_domains = 3,
->> 	.pm_domain_names = mediatek_pm_domains,
->> };
->> ...
->> static const struct panfrost_compatible mediatek_mt8186_data = {
->> 	...
->> 	.num_pm_domains = 2,
->> 	.pm_domain_names = mediatek_pm_domains,
->> };
->> ...
->> static const struct panfrost_compatible mediatek_mt8188_data = {
->> 	...
->> 	.num_pm_domains = 3,
->> 	.pm_domain_names = mediatek_pm_domains,
->> };
->> ...
->> static const struct panfrost_compatible mediatek_mt8192_data = {
->> 	...
->> 	.num_pm_domains = 5,
->> 	.pm_domain_names = mediatek_pm_domains,
->> };
->> --->8---
->>
->> OTOH what you've got it no worse than what we already had, so it's up to
->> you whether you want to tidy this up or just add a comment so it doesn't
->> look like there's a typo.
->>
-> 
-> I didn't disclose my plan, but you've already shown part of it, so seeing that
-> you preventively agree with at least part of that is fun :-)
-> 
-> I surely won't be able to do what I want to do for *this* cycle as I'm mostly
-> sure that I won't have time for this in the next 3 weeks - but anyway....
-> 
-> What I was thinking is that we should either look for a number of power domains
-> limited by a max power domains definition (that should already be present somewhere
-> in panfrost if I recall correctly) without even caring about the actual power
-> domain names, or we should look for a number of PDs having any name matching,
-> in a for loop, snprintf(*something, sizeof(something), "core%d", i).
-> 
-> This means that, with the snprintf idea, we don't even have to set any
-> pm_domain_names list anymore, at all, and we can either reuse num_pm_domains
-> or just get the number of PDs limited by the binding - but that's a problem for
-> the future me/us I guess...
-> 
-> But since we're there...
-> 
-> Please, I'd like to hear your opinion about the core%d idea :-)
+Hi Prabhakar,
 
-I was tempted to suggest something like it... ;) But two things made me
-wary:
+On Thu, May 30, 2024 at 12:00=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Thu, May 30, 2024 at 8:12=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Wed, May 29, 2024 at 11:10=E2=80=AFPM Lad, Prabhakar
+> > <prabhakar.csengg@gmail.com> wrote:
+> > > On Mon, May 27, 2024 at 10:18=E2=80=AFAM Geert Uytterhoeven
+> > > <geert@linux-m68k.org> wrote:
+> > > > On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.cseng=
+g@gmail.com> wrote:
+> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > >
+> > > > > Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock o=
+utputs
+> > > > > (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registe=
+rs)
+> > > > > in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the=
+ RZ/V2H(P)
+> > > > > Hardware User's Manual (Rev.1.01, Feb. 2024).
+> > > > >
+> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas=
+.com>
+> > > >
+> > > > > --- /dev/null
+> > > > > +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
+> > > > > @@ -0,0 +1,644 @@
+> > > > > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > + *
+> > > > > + * Copyright (C) 2024 Renesas Electronics Corp.
+> > > > > + */
+> > > > > +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
+> > > > > +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
+> > > > > +
+> > > > > +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> > > > > +
+> > > > > +/* Clock list */
+> > > >
+> > > > No distinction between Core and Module clocks?
+> > > >
+> > > I was in two minds here. Would you prefer clocks with no CGC support
+> > > to be listed as core clocks?
+> >
+> > What's CGC support? (Obviously I need some more reading before
+> > I can tackle the rest of this series :-)
+> >
+> I meant the clocks which cannot be controlled by the CPG_CLKON_m
+> register. Shall I add them as CORE clocks?
 
- * It's a bigger change, and I didn't want to suggest such a large
-refactor - let's get this patch in first.
+If you don't need to refer to these clocks from DT, there is no need to add
+them to the bindings header file.
 
- * There is no technical reason why designs will have a power domain per
-core. In particular there is the concept of 'stacks' added in later GPUs
-(so for these GPUs it should be "stack%d"). We also don't want the
-bindings being decided based on the driver, so if there's an integration
-which has e.g. "core01", "core23", etc we should support that rather
-than encouraging people to invent different names just to make the
-bindings easier.
+> > My comments are due to the bindings saying:
+> >
+> >   '#clock-cells':
+> >     description: |
+> >       - For CPG core clocks, the two clock specifier cells must be "CPG=
+_CORE"
+> >         and a core clock reference, as defined in
+> >         <dt-bindings/clock/r9a09g057-cpg.h>,
+> >       - For module clocks, the two clock specifier cells must be "CPG_M=
+OD" and
+> >         a module number, as defined in <dt-bindings/clock/r9a09g057-cpg=
+.h>.
+> >     const: 2
+> >
+> > while the header file does not make it obvious whether a clock needs
+> > CPG_CORE or CPG_MOD.
+> >
+> I was intending to drop the CPG_CORE description in the next version.
 
-Having said that, we could have special handling for
-pm_domain_names==NULL where "core%d" is assumed, leaving the current
-approach for any 'weird' GPU integrations that might crop up in the future.
+OK.
 
-> Anyway, I think that for now I'm choosing the "comment shortcut" for this patch.
+Gr{oetje,eeting}s,
 
-Agreed - there's no point holding up adding support for a new GPU for
-this clean up.
+                        Geert
 
-> P.S.: Thanks for the feedback!
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-No problem.
-
-Thanks,
-
-Steve
-
-> Cheers,
-> Angelo
-> 
->> Steve
->>
->>> +	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
->>> +};
->>> +
->>>   static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
->>>   static const char * const mediatek_mt8192_pm_domains[] = { "core0", "core1", "core2",
->>>   							   "core3", "core4" };
->>> @@ -808,6 +816,7 @@ static const struct of_device_id dt_match[] = {
->>>   	{ .compatible = "mediatek,mt8183-mali", .data = &mediatek_mt8183_data },
->>>   	{ .compatible = "mediatek,mt8183b-mali", .data = &mediatek_mt8183_b_data },
->>>   	{ .compatible = "mediatek,mt8186-mali", .data = &mediatek_mt8186_data },
->>> +	{ .compatible = "mediatek,mt8188-mali", .data = &mediatek_mt8188_data },
->>>   	{ .compatible = "mediatek,mt8192-mali", .data = &mediatek_mt8192_data },
->>>   	{}
->>>   };
->>
-> 
-> 
-> 
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
