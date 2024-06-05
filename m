@@ -1,205 +1,195 @@
-Return-Path: <linux-kernel+bounces-203242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4FF8FD83A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:17:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA388FD83D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20AFC1F277C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B40289813
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF70813A404;
-	Wed,  5 Jun 2024 21:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2715F15FA73;
+	Wed,  5 Jun 2024 21:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2fpTzhc1"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2082.outbound.protection.outlook.com [40.107.243.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UUlEZslh"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D37A27701
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717622237; cv=fail; b=qr25RoD3bQriD4BfifzjLxNUyytWFUNbWiU1vqFR23FDyYooSyxHkIyBrgUfOgKYj1CdT72mQgQQCGNqWGs27Fg9mQ3/ZLYR2c9lCqaL7A3dm5yrThubn1FqGNSRtNiIR3RU+LrJ9pvyHC1aX/dk2p/2PHB4s3FkZvmT7hJGdmI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717622237; c=relaxed/simple;
-	bh=Uf1xCwrS5gkhva3iI4wiP9QCm+zJBRtRfO/v8g8NFKY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=I7Ua69E4oLlcj6E19L1ZduJafG6QQju+nV/ZknOEG6W52biwrWg7MwGMxondjOEDoJJ13v6tFZrxrdhWzoTHzVKVXAPqUYJGbVQ5AlT6S7JwPEAK6Z2L1EtkhDoYTRAV8UYGegk+Gs+hae11nxhfW1r/bT4mtTpXUUQAZUiLI1A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2fpTzhc1; arc=fail smtp.client-ip=40.107.243.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DH/W4VrAZlpKv+AbEziiBaLEqhDMDjX4mfX63jIGsuAjuCzt3KhVmo1kOx0ggWUt18WP4ushEtgF0epuz4GVYsym1YlQWPEW7R1iZzoNCHrB/AqG5orbe4mMTXJJO+3n3dBVxZHqsBAOBABIQyj3TfUAmsSrQHAKG8dYib536iDkd7kQYuf0HgjeZ1AJjMhenoqRiYrfxvH9AbAYft0HerIKYtpAgeuTLz5b/BobESGRhbTGWWFTbFsmNagrRxFDcYwq1JRJRO0pFMN5MOjajcUKnPmTO6s97LcfaeRIP/O3m30spbByBKhYxQYqBVMGCrWMmjRgPuIcmH1ej3jNAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L6VNi9Ko125ovRm4ejx2yjyy4wOt9h4J9H1yBqmxlU8=;
- b=KnJTki4coF7CmDZ6JFTWjjx+0lBALslilg8/vmNfZpwbYBloPP/qCLHvRHhIlTuuJ7CMCU+LATVoJchZpvGxYw7yyAnDLETjFcP63kW8egjNUGRIKAaOWciRG6RcC8gI0yeXn98nyqnx2/fE/PAKwVDK+whGq+x+T4MvMgaU3lfLzyEDoLAe7WILmT1MtFocaDky5mUQFyG2xMb3wwxa1d8YSrgcDMFkhE7b+edvshCkOhfgY8gYLkbfA31fgr4gmi2QZmPsFJo2NhVurhnoMNZMb1lb014ghioh4L8FLfhIGk1L36sG/OtZqVwoMLUiUtIwAlIe1HWYqbDvxL7mYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L6VNi9Ko125ovRm4ejx2yjyy4wOt9h4J9H1yBqmxlU8=;
- b=2fpTzhc1oPooe9e2sl7xksQnlJ/AobZm8jWlxcbYBkYxc4buyCHt/pCj4Xpi6ctmwwt0jJHbihkzTbpJd/ajUTdUJGCOxiN+QVtWJTTTg77fPZ5dZp3Hhyf9me13KwF/yRc+VpWNnRAnNdNXYzs0ksiw9lp0Q0XwHu/3yyls5C4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
- by SA1PR12MB7221.namprd12.prod.outlook.com (2603:10b6:806:2bd::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Wed, 5 Jun
- 2024 21:17:09 +0000
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
- 21:17:09 +0000
-Message-ID: <952085da-d209-5144-19ef-26c5e7b03cfb@amd.com>
-Date: Wed, 5 Jun 2024 16:17:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v5 02/13] x86/sev: Check for the presence of an SVSM in
- the SNP Secrets page
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev,
- svsm-devel@coconut-svsm.dev, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Dan Williams <dan.j.williams@intel.com>, Michael Roth
- <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
-References: <cover.1717600736.git.thomas.lendacky@amd.com>
- <9d3fe161be93d4ea60f43c2a3f2c311fe708b63b.1717600736.git.thomas.lendacky@amd.com>
- <20240605193831.GYZmC-twcfjlArW3Hq@fat_crate.local>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20240605193831.GYZmC-twcfjlArW3Hq@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7P220CA0022.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:806:123::27) To BL1PR12MB5732.namprd12.prod.outlook.com
- (2603:10b6:208:387::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26C15F416;
+	Wed,  5 Jun 2024 21:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717622253; cv=none; b=fKswC/dOVcugGAhV96trFYLWqhYG1fmm2fmi3g5BLOd3kE+FY7AgoibzG07o8kCy7wfADlPhh5Gx2OIQakaembNM5Mg9PNBZUKjM/mE2JqSZv/s4/U6oOvatyY4KSaMeCxP2LmPrW/VDn+vzwTphufTUOqvU4RUkWH+i/XtOndg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717622253; c=relaxed/simple;
+	bh=rcNT+VkwiI4GjlerZjKyIVuJ8X+qsikybUwdV8yPp6U=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=opczzx3slC0i20AdONdZ5BCArxDSkzC61J4uYMWufGjbFiyBYjSyUwVqf8c0f2SwPwhaPfiwr6aMNhg+TQPJSs9evnUub2g/KS1HzwoE+VE1ZkYrEKc4mpE7UlalR5jhb0ryuhFIL+fl646gKLjuO2XXdXj1L+zK84M0Gj6owoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UUlEZslh; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a68a9a4e9a6so29860766b.3;
+        Wed, 05 Jun 2024 14:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717622249; x=1718227049; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=COrz65pOh/yQ2I4pAQH6V+4/UFcJFquCRwFewpYu7HI=;
+        b=UUlEZslhekOFnZFyuoIZFoMaTBxUz70B1X312OEfXd+yQWNVuTXIR72EJeeMOoL7ZQ
+         +mLWKgFWolPCUludk+6a09Rta0/0Ae3yrcP6R30JJ7OGdo/rU5HPviearNkCsrmkylFb
+         2UoDH9IjqebvhsPb5gLYCNj+8A2eb7vbGSpM7OYUD7kEYa8sWFLBrnNZN8ehxAhbhX/X
+         cqpvUCUY17j7qJuSEBlkQIyrfs/gz9VtNLIGXf4taVh6g0hPO/2kpvaH5tH1yrtL1V8H
+         Kv7kIkCgNR7NZXKskquCnBIRXs/O9f/Zj04oAMbBl0BtZPRARiClDU9Cv5TLmmpLlU7m
+         X7qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717622249; x=1718227049;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=COrz65pOh/yQ2I4pAQH6V+4/UFcJFquCRwFewpYu7HI=;
+        b=JmvS4IezryROLIsUZrE3xJyJyCde/xcWd3FK79sQM1GAhozRTlOIyFTifbTmfdj4ck
+         E7xDWM1FimP/9zKpCmZfLLdVg6V8EOrkvXfqvwgGbgf5GVdLjfbausQVtuFet6HTbnSR
+         Rfrga21Y/nwBY2Iv1n2YOkqD0IpSliWZKIAx/Uz+JZMFR8nF6VR2BufDGooPwS3dsjPb
+         SD8H+7iVRkmEwcWXClc0TTxEVz9JCCcArYW4kirOGMLs+zdXoJ7k1gPFru3s+c5ds8cm
+         5CFyRC3VcUf06svWZAkljeDzqM3fzKrX6yvgSkG/raJXT70U0Bn/xLvWcvhiHDf49Ibp
+         KJEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Vp6SgsX4Y2jksXFTlYlVJYMdP2OW8Tyx2XhnB+uVx+QR4TTktpJRVUf0kW84U2EiBlHNYZ5BLiBCD+rXeXs6YsTAFTztdjmTYt9/SKhU9dDX79xM6ca0KsajBdnXubTpGuH9K3JDWjs4n4aj/rQFgoPS120kkMHZ1WrmUE5+fJvpgftl
+X-Gm-Message-State: AOJu0YzweswMsLebvc3Kr24wMKFkr91NOq+sd5JM76/Iv/bxfItyyxws
+	4Va4//aRdNLs6AJ2itFZP9gtCh8qUqgc+WPbznJiXUKYGIr5tngs
+X-Google-Smtp-Source: AGHT+IF0ZMCknLrmT7qh1gyO8kpo7oCxWKy5Dp7jYz7jRf/ZV+TWhUe6iYr01ytCngHImp9Vd6EgBg==
+X-Received: by 2002:a17:907:609:b0:a68:b5f0:3b4a with SMTP id a640c23a62f3a-a699f88b0a9mr293725066b.39.1717622249280;
+        Wed, 05 Jun 2024 14:17:29 -0700 (PDT)
+Received: from krava ([83.240.63.158])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68fe33c561sm542617866b.70.2024.06.05.14.17.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 14:17:29 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 5 Jun 2024 23:17:27 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to
+ uprobe_consumer
+Message-ID: <ZmDV52JUrASljxTh@krava>
+References: <20240604200221.377848-1-jolsa@kernel.org>
+ <20240604200221.377848-2-jolsa@kernel.org>
+ <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
+ <20240605175619.GH25006@redhat.com>
+ <CAEf4Bzbz3vi6ahkUu7yABV-QhkzNCF-ROcRjUpGjt0FRjfDuKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|SA1PR12MB7221:EE_
-X-MS-Office365-Filtering-Correlation-Id: f9e83b63-c617-49c9-148b-08dc85a4dc30
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005|7416005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cnVLQmF4cno5aXRYUStsbTIyaE5QdzJtWnhsbTV0R2crdk44RmJYdmtKQ3Ju?=
- =?utf-8?B?SWpRQnloMnNLSis3YVdRaExmQlVrdllLdTNjMUJ6aUZ0WnhaNlRRZkhBRUJM?=
- =?utf-8?B?SlNOVGExb0dKbHgraE5BSDVDV3NFR2xmQWp5Rm5tRWx3R2tZN2VGKzJpUU5T?=
- =?utf-8?B?SndyZ0gvMDBJeFoxWVBuMkN5QlZWVGZXMU1pTTROeHlYU0NCMUdGNEdlSDhB?=
- =?utf-8?B?T3I5YTFGSGtGa1MvcThZaWtFL3BEejJZRzFqcUliRGVJbkx3QWMvcDhiN0VO?=
- =?utf-8?B?SFF3dUxjVU5UdzVPRW1OUkI4MlVvZUM0UXloY3c0allwRnVUUkM4U01wOWx5?=
- =?utf-8?B?c2lWaXlhQThMLzhic2FRR29TYU1rRFZqZzJXVlp1U1FONTNTMVZodU4xZVo2?=
- =?utf-8?B?TGUxNmNZNTJyZk5hSHUzSGNQSXVGWVA1SEthSndsZWZJTmRtL1hPUlNTQjZt?=
- =?utf-8?B?T0ZVY2VtLzIySGFzdlMrbkJCdG1rRjRSUjB3ZTc4alByQnNNVlZYUGZtMndp?=
- =?utf-8?B?UDYxbkNJSHRCVGFBUmdJUzIvL3dETlY0aW0xUEdCSUdQS0t5cHdkV0VrUU5l?=
- =?utf-8?B?eFhra0poY2U4TVRTNUFzN3Y5TlhZeUMzcmREV0JJcGowb2o4NlVrRW94Z2Rl?=
- =?utf-8?B?KzZKMDRMNHF6VnVaVklwRUpEQ2UvRGNiMTYxUzNsaUovcjFYdjJLbC9BOWs3?=
- =?utf-8?B?cGw4TUplWEJDMEtnUmZaTlBYTzZINDRFNkFlVFpZa2k0bzBwOUFMQWFmVDhy?=
- =?utf-8?B?NldTVTRkUzlZd0xMQVUvZllhbFhZK1JPSFN5NUlHdFJIemRDYk1tTG9OUVpT?=
- =?utf-8?B?ZzZ6T3VFOE9jOTRjMFI1YkVISUxkMldyV0ZSVkVHckFyT1ppdTVyQ0l5U1du?=
- =?utf-8?B?M3NGcS85bDQ1eHdrK0dQTVdNb0p2cXpNYnhSaTFIQzZxQllobm11aElNands?=
- =?utf-8?B?UlRhREx0UmNjN0d3eDZaUEtWUkVaUjRYYXlTOHpSWjY4dGdqdGJqME1XU3M1?=
- =?utf-8?B?VzdsQVNvQ0M4Y05jWXlRVlFEdDRRRjFaWUpJNXM2VWpmUHNjcTRsVDhTUTNC?=
- =?utf-8?B?MkxCbXNXTUZVd2tuYVBMNjVOdW1QWHVZMHRCL2VGYWNzOUV4d2psTGNLaVZs?=
- =?utf-8?B?Rnk5MnlaRmpkNU5qYUFCbVcraGp6OWJPcmcwUk5YeG8xV09JV2I4ZWJqaXEz?=
- =?utf-8?B?bkFvMjhHKzRjaTVVR1ExeENhZTRsK3hka0tuRE91ZnFQZFFBeUVhUkpHMmJS?=
- =?utf-8?B?ZGg0UmlXZDVBT1EyMldlYmxPcHhaOW9QL3F3MkszWFJlcG8rT01vM1ljZmhX?=
- =?utf-8?B?VmFmeG1ia0NUOE02SW9ZVnJsZ21venRwSzc3UDRxbHdyT3g2TVBCek1JQW13?=
- =?utf-8?B?U1lJYUhON3RyQ2kwNXVyVUk4R3ZnUzRWZU44amhxbVQyZ0FTQlQxRVpJVVN3?=
- =?utf-8?B?TVlwVThhbzJxTDNCenNuWjdKL1d4bmMxZ3N6V2V0SVcvUzBuTWlYVFo1OXE3?=
- =?utf-8?B?WWE1MWFKMndiYXV2WVdZQVFRb1hBektRWll2K1hVL2d1eWQrTmkzYUttK1NW?=
- =?utf-8?B?Ym9BK2hYOWZJNk1IWDNNYU1XOXRrZWNQaFgzWVJnVWpNYkRoOWhldGJsODF1?=
- =?utf-8?B?UndWOWQ0cFZFUmZkNURTNmZ3ZmxkcXdsY3ZNOGhINFBOaGhuYUdpVUlQK3RY?=
- =?utf-8?B?ODAvdVhDUU1yOUdHeEFReVZ0Lyt2UmpNdjh6K1NzWFpXbVdlOEtWbXZRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(7416005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y2R6NlhFSWw1Smp5M2Q3cURPajdpcTlJNWxhcEdjeGJKVDQ2RnhaZlVjaW1w?=
- =?utf-8?B?V2hYWjR3Y0YwNXE4dm5aRWppRmhSalMyb2JTLzVRa3owS1dISWl6ZDcyRUJP?=
- =?utf-8?B?cjIwY2JNNnlDMTBKS0xvb1kyWVdpVzk4Y2RQcU8yT3VaTFZVb2RVTm5nU2VU?=
- =?utf-8?B?dFhhc2QzY0hmNXZRN3NsWndXTzB2Zmo1WVRlZjV4eUs5YnRkelcwek5mQmlk?=
- =?utf-8?B?NW95Z3o2aGI2cUVQVHJaNVkxU2x5b3RWMmtJWW91YTJBb012SzFXNDd2Q2d5?=
- =?utf-8?B?amF1azdNYXdCYkpRY04rRTlod0g3WEtVK04yZVRDOXoxU3ZxZEZweHMvOHpM?=
- =?utf-8?B?WTlSQnNIK1E5YTVjcTdxU2QwSndXSitOOVhKMktTSmJJVFAxSWhTL1dWbUdL?=
- =?utf-8?B?YXNVRmJWVG1XMXRaSlFPTG01bEMyNExkRGRtRjNmZHZOYTQyNmEyZjVtcXdk?=
- =?utf-8?B?TVVIRnhaclpVbSs2Nm0yWGNKZXh0Ri9Ja1FUNXpLTXUrL29KMTQyTGJkc01V?=
- =?utf-8?B?RlF1cVhkWU50TVBOQ1pjdlVoUVVaWTEyUDNSc09FL1pqaVdvRUNFQ0NMdlNN?=
- =?utf-8?B?dDJMK3dKN2tqVFc2Y0hEaFpEd3BicjNaT0xTNHY1UFM2aUFzZWRkQ0M2U1pS?=
- =?utf-8?B?U3c4VXRIVWxUNDZ3UWdIZm5pSGxoZm5hZGU1eUUwOWlMbTNoWjJsK2pZd1BX?=
- =?utf-8?B?VjhSdE5kbkZ1R3ZmV2dFbGFRZ0RkQkN5eUcvQVFqUmtQcnd4eDRCTnE1MnNl?=
- =?utf-8?B?MnlEYk9PcUdlNFRPcVEvM054eXRWMlh2ek0xbUFNTUlNNnZuWjZadTErNlgy?=
- =?utf-8?B?K2VOYmtNUjRXQmF2elJZbk45dTNNbXVVSWRXeklXS1Z6NU00SnVSRUVCYURJ?=
- =?utf-8?B?WUI0bGh4YTAvUHJueDFjWHF1T2llMWM0bE5Ic25sTUFMVENjeWxDUWNQeFpE?=
- =?utf-8?B?M25ucTlnTVdZblJ6WUZEYzFpNDhRVUlUR1hoRVZWMTBpOTl3NDlDUzBNNHpz?=
- =?utf-8?B?d09aSXo2M3BEVy9mU09FeGxtU3lFckt3NmFjZ292aU9kSmVFcHhXdEtRd2Qv?=
- =?utf-8?B?SVEyTlFzN09mNDVnYVJQYmZ4ZEZzYUNHU3p3TkcrcUMya0FFNjVnby9FRjZN?=
- =?utf-8?B?NHBEVkR4R0poZVpYSGwzck5TeFpTWlZYWTZWN2IyK2kzUzdHVHUxdkRjdDhs?=
- =?utf-8?B?aGpVWFhOWUlqMFV6MWZVcUtiRjlpN2VaNmZGSnlmWFBsNjN5RWpxTFhzTkhW?=
- =?utf-8?B?amNPYWJoTHRrQktkQ3NmN2l2aW9FS0JUMXJsa3VQVlgzc3ltcFhQaFFQbnMw?=
- =?utf-8?B?bWhOcnZNK2M0R2NIUXg2SC9pSlQzRlFCR1dMdXdIMEpYZVM5dVdDdmYvQ0Rw?=
- =?utf-8?B?RmRXZ0ZxRDN2OHB2eEJOMFlHVzNQS0k3K294bDF4NEQyb0dJYWtCL0twcitY?=
- =?utf-8?B?YXRrTzJxa0RhMHdyempMOWxDVW1FU0p2TjBLVmtJWXloc1p5bFNpUmFHeENh?=
- =?utf-8?B?VTRpRUdDb2FvNEVVQU43QzVvVWd1aTlBNG0rMFVsNkppUXlZUE9vYlc5aHc4?=
- =?utf-8?B?ZTdQb1FuMlBFcE9hVVMwS3FrNGdTNWlra3J5a2ttcXJhQU41aVZhcFlTUlVC?=
- =?utf-8?B?TTRLalUyZkIxZ0ozT0xZbHhqNHAzYTVJNUhYUjM1N0ZyZHVCbCs5RFM4RWRt?=
- =?utf-8?B?VnMzOHN3bzFydDRza3JBNmMvd2Mxa05kNXNHT2lBVjNHOXlUMXF1NTN5V2sw?=
- =?utf-8?B?RDMrOHM5Z29UQVY3QUtkMWdCSjVmT29YOVk0V0RKNEsrQzlEWmFpUHBGd0Nr?=
- =?utf-8?B?Y2ZnRk1FcHFBZkJkTkJFWGhyMStIdkROQ2xXRDFJR2dETUdEbmFIWjl3MkdO?=
- =?utf-8?B?SzNqV0pMczQyc2ZYaG5ENE5hQnE2MFZFSUhMeDVzQVN5dzNKaWI0d3k2Q1NR?=
- =?utf-8?B?cTRrZUx1MFYyb3RQZUFXQjJGdGo3SnZ3ZzRrNHFPL3lBdVdWdjIxc3BqY3hq?=
- =?utf-8?B?V1RqOUlSc0pubWNDUGJZUExJUFIxallVZWtRYmY1c0taQXNaZ0NBeFZaQ3pN?=
- =?utf-8?B?TzhRQ2NnQ3QrS3plMk1FM0tCeUhGaVlROHZxTmJGd1gvR2tyanZHbk1oR08w?=
- =?utf-8?Q?cR/2c7NOPtReh/BmPDBf7qAMC?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9e83b63-c617-49c9-148b-08dc85a4dc30
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 21:17:09.6632
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ngXR0EKkne2uH6ySwokxD/59aM54j3UWyV6TY68gYrlQve6h7PZEL6XZ44ZvYig/MZG0Nqn0nkm60G0mOtzIzA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7221
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4Bzbz3vi6ahkUu7yABV-QhkzNCF-ROcRjUpGjt0FRjfDuKQ@mail.gmail.com>
 
-On 6/5/24 14:38, Borislav Petkov wrote:
-> On Wed, Jun 05, 2024 at 10:18:45AM -0500, Tom Lendacky wrote:
->> During early boot phases, check for the presence of an SVSM when running
->> as an SEV-SNP guest.
->>
->> An SVSM is present if not running at VMPL0 and the 64-bit value at offset
->> 0x148 into the secrets page is non-zero. If an SVSM is present, save the
->> SVSM Calling Area address (CAA), located at offset 0x150 into the secrets
->> page, and set the VMPL level of the guest, which should be non-zero, to
->> indicate the presence of an SVSM.
->>
->> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
->> ---
->>   .../arch/x86/amd-memory-encryption.rst        | 23 ++++++
->>   arch/x86/boot/compressed/sev.c                | 21 +++---
->>   arch/x86/include/asm/sev-common.h             |  4 ++
->>   arch/x86/include/asm/sev.h                    | 34 ++++++++-
->>   arch/x86/kernel/sev-shared.c                  | 71 +++++++++++++++++++
->>   arch/x86/kernel/sev.c                         |  7 ++
->>   6 files changed, 151 insertions(+), 9 deletions(-)
+On Wed, Jun 05, 2024 at 01:47:00PM -0700, Andrii Nakryiko wrote:
+> On Wed, Jun 5, 2024 at 10:57 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > On 06/05, Andrii Nakryiko wrote:
+> > >
+> > > so any such
+> > > limitations will cause problems, issue reports, investigation, etc.
+> >
+> > Agreed...
+> >
+> > > As one possible solution, what if we do
+> > >
+> > > struct return_instance {
+> > >     ...
+> > >     u64 session_cookies[];
+> > > };
+> > >
+> > > and allocate sizeof(struct return_instance) + 8 *
+> > > <num-of-session-consumers> and then at runtime pass
+> > > &session_cookies[i] as data pointer to session-aware callbacks?
+> >
+> > I too thought about this, but I guess it is not that simple.
+> >
+> > Just for example. Suppose we have 2 session-consumers C1 and C2.
+> > What if uprobe_unregister(C1) comes before the probed function
+> > returns?
+> >
+> > We need something like map_cookie_to_consumer().
 > 
-> I did some touch-ups ontop:
+> Fair enough. The easy way to solve this is to have
+> 
+> 
+> struct uprobe_session_cookie {
+>     int consumer_id;
+>     u64 cookie;
+> };
+> 
+> And add id to each new consumer when it is added to struct uprobe.
+> Unfortunately, it's impossible to tell when a new consumer was added
+> to the list (as a front item, but maybe we just change it to be
+> appended instead of prepending) vs when the old consumer was removed,
+> so in some cases we'd need to do a linear search.
 
-Works for me, thanks!
+also we probably need to add the flag if we want to execute the return
+handler..  we can have multiple session handlers and if just one of them
+returns 0 we need to install the return probe
 
-Tom
+and then when return probe hits, we need to execute only that consumer's
+return handler
+
+jirka
 
 > 
+> But the good news is that in the common case we wouldn't need to
+> search and the next item in session_cookies[] array would be the one
+> we need.
+> 
+> WDYT? It's still fast, and it's simpler than the shadow stack idea, IMO.
+> 
+> P.S. Regardless, maybe we should change the order in which we insert
+> consumers to uprobe? Right now uprobe consumer added later will be
+> executed first, which, while not wrong, is counter-intuitive. And also
+> it breaks a nice natural order when we need to match it up with stuff
+> like session_cookies[] as described above.
+> 
+> >
+> > > > +       /* The handler_session callback return value controls execution of
+> > > > +        * the return uprobe and ret_handler_session callback.
+> > > > +        *  0 on success
+> > > > +        *  1 on failure, DO NOT install/execute the return uprobe
+> > > > +        *    console warning for anything else
+> > > > +        */
+> > > > +       int (*handler_session)(struct uprobe_consumer *self, struct pt_regs *regs,
+> > > > +                              unsigned long *data);
+> > > > +       int (*ret_handler_session)(struct uprobe_consumer *self, unsigned long func,
+> > > > +                                  struct pt_regs *regs, unsigned long *data);
+> > > > +
+> > >
+> > > We should try to avoid an alternative set of callbacks, IMO. Let's
+> > > extend existing ones with `unsigned long *data`,
+> >
+> > Oh yes, agreed.
+> >
+> > And the comment about the return value looks confusing too. I mean, the
+> > logic doesn't differ from the ret-code from ->handler().
+> >
+> > "DO NOT install/execute the return uprobe" is not true if another
+> > non-session-consumer returns 0.
+> >
+> > Oleg.
+> >
 
