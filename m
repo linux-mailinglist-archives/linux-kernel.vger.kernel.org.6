@@ -1,173 +1,157 @@
-Return-Path: <linux-kernel+bounces-201784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72698FC31F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:50:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B678FC31B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7168C2837FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE8C1F24267
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A33821C19C;
-	Wed,  5 Jun 2024 05:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCEA21C183;
+	Wed,  5 Jun 2024 05:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVs8/kU2"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F7BXUwSV"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC8F21C192;
-	Wed,  5 Jun 2024 05:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974A621C164
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717566608; cv=none; b=jY6iJ0JW2C5yBXyMtbO+3G0RGWrgZgoILPGV6DPMNcwjdL1oWWSELGccvXBIs491hC3b+UNfB9QsBdIfVZmUIQOAfAz7U8RRffIXi76biPMWlWxtRtjeyqkudgLz2dOdib3Auw81/YVt4N/VdVpM7J8f02q2IJESlXIcenAmrts=
+	t=1717566584; cv=none; b=K+//QhnZNr7bBMbbuhVNnBVJsPExKp10AIStyF0NreteQA0wJk8FL4KyoeZ6yMDVAZq6U8Jwo8ye5qYeVYRlwn65YAEcrvwt8ruYjzprFLSflxDTDMm6tE6TLYIA9zGzgcCMo8ON5WFG8x+yApdOY7FszfJwB6tqgDfHgXnCBeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717566608; c=relaxed/simple;
-	bh=yJx99h/vrjH/otsUg9XNdPVe5/820krM6rs9eRejcgM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yeg9d8C18Klh7Eg/MCSsv7JACMkEKDKTkWT7YyOlk5ZYAnLREsg8J0kXPfoB4hI4EooBDnsMBngxRRpYY2pDtN9xxjnxa1XX0mTQK4c9Y7+srf0Xcj3XxwpTquMO6hh5LZpbXI/wEL2+7Wp516OhFTgjkYX8ga1OEcct81A68IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVs8/kU2; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3747e9f7cceso21879195ab.1;
-        Tue, 04 Jun 2024 22:50:06 -0700 (PDT)
+	s=arc-20240116; t=1717566584; c=relaxed/simple;
+	bh=Beh2wlkRe7Eug/7DYljw55OLT0VJDjN+N9ltnUnhZMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TwvJGFZ5mqaMevfCHdaUPGQ9SIDHvarM+Toy2PKJcQQPXV2Ro5ZaJBM3HtiL1qBjV/D2Yi+qI6IhN3CUYKyB8cEh4wmL0HPsoHeR+npOJesyDWljPwQrMUW6DxU16REMWkyqL9EPs3542jUuNQpFPz6Uuw63lp7zygnP+ne1bTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F7BXUwSV; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f47f07acd3so16264525ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 22:49:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717566605; x=1718171405; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OXXx+G8S3LAOXSoSSC7Exyjxb+cKriQft0ZkCAiNSTo=;
-        b=EVs8/kU2QK11zUmd3iXKLlgjD3NC1s71p4VF9HfE5WiF+RcYiSVb5/l/YdNwHhVbnP
-         IvrszawkzBv3qbwxCiDzMuF73S03yXuGL1Q3wkTBO4Hy/VHQndYupyboyTZO8ErQON8X
-         9DyaGC4+FofpmFvLp35M2YZdRpRIpDZCwQYvML/JXs9wcfnS7uGdp5+ZZkd3Ut5NLPTZ
-         sXYV2fF/rKgrQI+EbhraytC5HmHWk7ZeHcUi6U4X1Fjqn9gZDAxgBbjlJaAQO99XqV1/
-         0GCuhqzKxonx4nsr/RSSTGZRhVUCh/jeqDkLpxBo6564ifGVqYcAZ9EGSU3UM3IVw39G
-         aaAQ==
+        d=linaro.org; s=google; t=1717566581; x=1718171381; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+dM5+k2xQ90bwK2u/6F8dSzOK+d/yGXOElnGPg/eOmg=;
+        b=F7BXUwSVaWxsDPfg/N4kEFbQep/g/8n3NSjTTNKnhqQDepcUgdFONF7bAA98X465ve
+         DuIwZsmpm9/aneSxDATZxIy3dlkZ0lS6xJQtWVCcADBEHfg4JfCusyYq1Yx6aYaHSb/J
+         g1EohOWBBGqlRJgmqUpn2yfqaQtllX49SO2yMzN1sofMHpcvDOw/+0E+ZAA18zIpSy2x
+         BZZj0dDqNs+efBeBbOno+6yMJxKYc1seXwqZLMSMhFb7mm/Sg8C7JPiam/q5mfrO8rqC
+         QLZt0oAh8DpUmnxUuiLJN7sD6WKZIplTIqklnOlo94Rt2RBEHVuM/5ruogYdo3uqLLMz
+         GOCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717566605; x=1718171405;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OXXx+G8S3LAOXSoSSC7Exyjxb+cKriQft0ZkCAiNSTo=;
-        b=ZpvmYai4rgoC2uaLMip2ZQHeXHojy+f5YVefDnT1t61ldIbmboJCjkC9q09iOM1pbs
-         Q6NwUzN7UmzEslZU4KRIIZyPmL7RCaYCiQd9qW9iObp56VOz3B5fKXaYtB0OjF4R6VNp
-         l9l+xkdNWcQocHKFac2v11KLq3Y7D7TP54sfUbxMIs1rJpZCdhL/oIXXGMl719YLjoqi
-         0+LiNbKEkap+2otYsz9re6dziG6/7WPgfG2RAhKJUFck6IIsvpvTq99tIyVDBGOB3HAN
-         hC1N1ZMTcjTm05xcqHZpBYtqlrKfnF8FXx5AcWO08dDDmxcKSnjdbvGfPQWmcXmIIX9V
-         iGgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIg8/CO1bEIsTsdoFTNKmI+uIXSTKfjrAJiAajxYVqXU/8l48cXHa5rNIgvvE3wAs/0qTgdi7A01le1kWM6jN2uH7ny71q0wGg1DAlw0mRADl70DIGNuYVj1djXjMEHrYvYLmf
-X-Gm-Message-State: AOJu0Yzme4kZ7aau/9lsyESuCrCq76z8P7vElLrUOH3NnmVyqBtESwz4
-	rfLZww3QLRHoSw/41DJL8jqc6aT/uHBFfciQ9w/o1a/Xg5DORMzg
-X-Google-Smtp-Source: AGHT+IG38HU/vMh5r37/64xeKQTWdknfeAX9UDHPB1tG+qQoA83kVSKVnVC84EjBIYaGa+AdYwOc5w==
-X-Received: by 2002:a05:6e02:1d05:b0:374:9af0:5f38 with SMTP id e9e14a558f8ab-374b1f55db6mr14629265ab.32.1717566605527;
-        Tue, 04 Jun 2024 22:50:05 -0700 (PDT)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6c3598487d9sm7845318a12.70.2024.06.04.22.50.05
+        d=1e100.net; s=20230601; t=1717566581; x=1718171381;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+dM5+k2xQ90bwK2u/6F8dSzOK+d/yGXOElnGPg/eOmg=;
+        b=m9ehsKkBB2xJrMtgcvsMrmJ/oRe3fWYETKpKu4Y2qObqESdyian7FNSMRUa5fjALAW
+         r75lckfN9Drq18JArDeaZe8clyWRaRUo+qA667PeHEo6r92VMBAZvK8WyLVn2+NBDgor
+         KZX6SfPjJFN1eR0fjWyQvQzawJsQi8lA/EJk3qrpos6bxi5EEfOhusQrGFYR/LsJWWeZ
+         oNuxnXvs9r1miMRU5ovOb4NUdxLmhCkKAP6qRaKfhSRrv1TkS30YaoOGznPKAIjQqBxP
+         auG7T11KbF9TJsgeJWT6bAqThIUSN4S2E3oA7OyPSWst9/9pbA/4buO7g5TtlpQtj3/L
+         21qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ1YF7Q44bsFuqvLeuzc0KlP3l12YIrwKuFZEbtsFBlUn/eV19F5O1FFHbuitdDZdEvZ0a5n6bTaBFxtMFojU7CXDSO+bc1BGHHeC9
+X-Gm-Message-State: AOJu0YwFhQ9S4zl+9Jz4bqgiAZCDIm9ocrTidFW269u+qizzQwHaQY+0
+	MZPmBvP8+WkHDgLYQiR4EE3hK2jTC5aVcTdoS2hc2aYy+hOSA62JksX/Nc5rFQ==
+X-Google-Smtp-Source: AGHT+IEZszKMxzYyviv9Fxic6NPR/A6OoNXaAaG1oAK0KQm8hWctUvTFoKzkoioIm4/mshFm531FvQ==
+X-Received: by 2002:a17:902:db0a:b0:1f6:7ee8:8942 with SMTP id d9443c01a7336-1f6a5a290ffmr21801795ad.40.1717566580772;
+        Tue, 04 Jun 2024 22:49:40 -0700 (PDT)
+Received: from thinkpad ([120.60.137.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ddac9sm95544525ad.173.2024.06.04.22.49.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 22:50:05 -0700 (PDT)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 3FBDD80587;
-	Wed,  5 Jun 2024 13:52:59 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: miquel.raynal@bootlin.com,
-	dwmw2@infradead.org,
-	computersforpeace@gmail.com,
-	marek.vasut@gmail.com,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: richard@nod.at,
-	alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] mtd: spinand: macronix: Add support for serial NAND flash
-Date: Wed,  5 Jun 2024 13:48:58 +0800
-Message-Id: <20240605054858.37560-1-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 04 Jun 2024 22:49:40 -0700 (PDT)
+Date: Wed, 5 Jun 2024 11:19:28 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: PCI: qcom: Fix register maps items and add
+ 3.3V supply
+Message-ID: <20240605054928.GB2417@thinkpad>
+References: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
+ <20240604235806.GA1903493-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240604235806.GA1903493-robh@kernel.org>
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+On Tue, Jun 04, 2024 at 05:58:06PM -0600, Rob Herring wrote:
+> On Tue, Jun 04, 2024 at 07:05:12PM +0300, Abel Vesa wrote:
+> > All PCIe controllers found on X1E80100 have MHI register region and
+> > VDDPE supplies. Add them to the schema as well.
+> > 
+> > Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> > This patchset fixes the following warning:
+> > https://lore.kernel.org/all/171751454535.785265.18156799252281879515.robh@kernel.org/
+> > 
+> > Also fixes a MHI reg region warning that will be triggered by the following patch:
+> > https://lore.kernel.org/all/20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org/
+> > ---
+> >  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > index 1074310a8e7a..7ceba32c4cf9 100644
+> > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> > @@ -19,11 +19,10 @@ properties:
+> >      const: qcom,pcie-x1e80100
+> >  
+> >    reg:
+> > -    minItems: 5
+> > +    minItems: 6
+> >      maxItems: 6
+> >  
+> >    reg-names:
+> > -    minItems: 5
+> >      items:
+> >        - const: parf # Qualcomm specific registers
+> >        - const: dbi # DesignWare PCIe registers
+> > @@ -71,6 +70,9 @@ properties:
+> >        - const: pci # PCIe core reset
+> >        - const: link_down # PCIe link down reset
+> >  
+> > +  vddpe-3v3-supply:
+> > +    description: A phandle to the PCIe endpoint power supply
+> 
+> TBC, this is a rail on the host side provided to a card? If so, we have 
+> standard properties for standard PCI voltage rails.
 
-commit c374839f9b4475173e536d1eaddff45cb481dbdf upstream.
+There is a 'vpcie3v3-supply' property and it should satisfy the requirement. But
+'vddpe-3v3-supply' is already used on multiple Qcom SoCs. So changing the name
+in dts warrants the driver to support both supplies for backwards compatibility,
+but that should be fine.
 
-MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC have been
-merged into Linux kernel mainline through upstream commit.
+> It is also preferred that you put them in a root port node rather than the
+> host bridge.
 
-For SPI-NAND flash support on Linux kernel LTS v5.4.y,
-add SPI-NAND flash MX35UF{1,2,4}GE4AD and MX35UF{1,2}GE4AC in id tables.
+Even though the resource split between root port and host bridge is not clear in
+Qcom SoCs, I think from logical stand point it makes sense.
 
-Those five flashes have been validated on Xilinx zynq-picozed board and
-Linux kernel LTS v5.4.y.
+- Mani
 
-Cc: stable@vger.kernel.org # 5.4.y
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/nand/spi/macronix.c | 45 +++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
-index f18c6cfe8ff5..e1446798bfb3 100644
---- a/drivers/mtd/nand/spi/macronix.c
-+++ b/drivers/mtd/nand/spi/macronix.c
-@@ -132,6 +132,51 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+	SPINAND_INFO("MX35UF4GE4AD", 0xb7,
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF2GE4AD", 0xa6,
-+		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF2GE4AC", 0xa2,
-+		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(4, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF1GE4AD", 0x96,
-+		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF1GE4AC", 0x92,
-+		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(4, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
- };
- 
- static int macronix_spinand_detect(struct spinand_device *spinand)
 -- 
-2.25.1
-
+மணிவண்ணன் சதாசிவம்
 
