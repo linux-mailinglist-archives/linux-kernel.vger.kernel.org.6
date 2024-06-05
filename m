@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-203388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B06B8FDA31
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1E78FDA32
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29B711C21849
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:12:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1F31C22571
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116DF161930;
-	Wed,  5 Jun 2024 23:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461F61649D8;
+	Wed,  5 Jun 2024 23:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrPfNOta"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QQiOb1SD"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D597136E1F;
-	Wed,  5 Jun 2024 23:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13C016192C;
+	Wed,  5 Jun 2024 23:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717629126; cv=none; b=WmUeS32QqIvPJLSPsgXNTPtEEb0xpf/bRd+0g4ab1+XEzTIbOLLCBJnYi1s6Yb7E4MvL3UIuFtcTNFcn/k1nnp0bCa7qgPYDoVBIyu+9PDpjAvt5S83dm4qUd5U6+Sdz+zbakYgYVFBjXDCY2s/nwsVUgwvv/vj/LLCI+sbOn0I=
+	t=1717629144; cv=none; b=UN0Lc6aNYMw4gIFe/BL7znRc1Mb0xaovxLP0fpcBUBigryJd9XGEqc86CPYGPANy8yuGmJeJsxN0jeRStzhDA8QE+EML6YKkz2am5YqaMdRwGZ9/yCGmpKpXH7NMa21sjC6uVxJpZYHIPWKuqk+IZ+21SeJVsDmE+NzawWZj2eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717629126; c=relaxed/simple;
-	bh=5EjGg/juo1GvXCCHmg1qyVmZN2+jZIww5rTD/8bLWiE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A8CeHaQ+ubgnwm1IunIlMsDFGo2RkGu1QL0pCVJfBG5StOMlSL07P2bTq+lKBGQ4u1pyvZE30HBIqo7tKhtzjt+qr/CsTH82iJUi2iCz1DAVtcucq2H3ojNWkCrTobXixOv1IntbaDiYOPpV4ejtlIdFwoI8WTcM8fBclimGNK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrPfNOta; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70249faa853so261357b3a.3;
-        Wed, 05 Jun 2024 16:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717629124; x=1718233924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TjDX2hX7Uso3teou4bJNTRXKSoRMvYQRMdknmfn7m5M=;
-        b=nrPfNOtaByZcmZJeuQFLAXjrd6Pj4aROUGC0Wg5U5Ask0dRaboIsqBKBjyyz6oPaDB
-         cUQMQy+u7sE7FIXbJjVnHuiDIk+20AotJjoPRrRdDNBcSmNBhvQhhQrL1R2wFD5B4YkO
-         EgML+8dqNcyV2coNDCh89sf2K48MZBvVl3ph9/G0Ay+vJ1oUuB5kfpyO4rpMtpny9VFi
-         WjhXNvmdPnpMaq/n+AeM/GmzbfsK4yRmnuLSTtBbf7v9vqmNlhGFcH0bXdY+0razpHwO
-         TjratD18gGOucDC5sNQZj5jOBQm5tD//4skWVD/Y/qpaiETmUTtkEDiv2yaeukYR+TPt
-         Nv3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717629124; x=1718233924;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TjDX2hX7Uso3teou4bJNTRXKSoRMvYQRMdknmfn7m5M=;
-        b=b+v0d1n3o9KVKJqYk754AHfK5ec6oOMYynpc+TA2Pxmv0KpnqResDVNvertFj2fVKo
-         d1r0VjHxjUUKXWn58o2n4MSbFL77GztS4geOfnFE45V97QAMQDANOh39VyMTOg4x38hq
-         f9fbMX78t6cTcQVjBmy0d5nxiKaSqGoWoN7O0c6Qi8g8VIrEu8rS5S248hfYxVpVw4tO
-         KfCMoPPFm125CSDacNma7eNoYXcV2YrfmKlhewLnIauwrRj/eMRsS6Knl0mc/KSbcMLX
-         aszLOAp0kNdMLj5F4nCMRo7YiHs5mHhMrl7cgLupeLhhDv8XU+JgHDsCQzj0lBKEeDyH
-         U6CA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgIDuSfmQncNwRpG19NHFWTdaQTfWyckzWawomyNLWBTbz5/eMRmHEX/qo6d4Z17Lb2ZWqVaJivSKpITa162WxJhD3ysMFcAeV4x09jcserguTyaT2tt+THYuHSwxiU3zn8iaYtyMB
-X-Gm-Message-State: AOJu0YxjUXjgw0SSCBhdh+5Y0LF/LXjIhfqyJbq3GKQD391YeTcv0F44
-	Dy4AYs5y/UzUdiAGkwlAY3LifGm9LINh5sD1lwZ0Ztw4dTSdpXvZ
-X-Google-Smtp-Source: AGHT+IEvSJWjZvCAuOdJ7JHjs5or9ojfn+5TZtxB1V0IgRL3ajQOdVAeDO4abrTWzlbHzx6Ymhj/IQ==
-X-Received: by 2002:a05:6a00:1caa:b0:6e6:946b:a983 with SMTP id d2e1a72fcca58-703e594a710mr4048104b3a.10.1717629124206;
-        Wed, 05 Jun 2024 16:12:04 -0700 (PDT)
-Received: from dev0.. ([49.43.162.143])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd50fd7fsm31068b3a.197.2024.06.05.16.12.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 16:12:03 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: helgaas@kernel.org
-Cc: bhelgaas@google.com,
-	jain.abhinav177@gmail.com,
-	javier.carrasco.cruz@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	mahesh@linux.ibm.com,
-	oohall@gmail.com,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH v2] PCI/AER: Print error message as per the TODO
-Date: Wed,  5 Jun 2024 23:11:56 +0000
-Message-Id: <20240605231156.22934-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240605215848.GA782210@bhelgaas>
-References: <20240605215848.GA782210@bhelgaas>
+	s=arc-20240116; t=1717629144; c=relaxed/simple;
+	bh=ZKMPQ4ftvDi44OWXSZ2rFzOllC0ZbTh3KgX+LRltxLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=H7b+spbRaW3qzuW2NUFubOjmnrtw5HGTZoIV26xX+dsdWifVyVTMwljm+lZoxKe+9woaNNShwJNYthxLVpKO6dqppL/Jwx39aKF71PLDMVpqWoDHSHaYfOnJTrzusH5iNeM5WiLxcfsWp4l32toC8J+mIsW2+CmRaCB0rYjOCdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QQiOb1SD; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1717629138;
+	bh=dl5OjQZMpEKGRKkxAsMtaCPVS5mZeM4wapndBze53FM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QQiOb1SDQ5WT5E67IhdxAtrXpA06mlpZPZVhILFK38ZtkGAuujf+Pfn9FWdSXK2IH
+	 l9JA5fSI9NWjDQ41QCgYeFqjZQBlNHlWP338Za3U8fYPX5V85S6mkKFF/4MF8xAwxW
+	 IjgbcheYoY+nl2PC7CRcN++ffnR8iZOPcrDp1hJqCghWpggljh/pmMYVbtm1SUTyRS
+	 AYlZn0Ay2zdgZE4bg/DV45o0sF/8N2PrOWpdnL/CcrPTbSx1Lh2GVACs/wo/DEDClg
+	 H6gqGOJu0Q//kxFxYEvIly0Ov/O5MgnKqrqrSozv5Zf0/EbFr83crroQf+d6o5Nbc2
+	 jsDfP6zZqV4ig==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VvjsZ21bGz4wcq;
+	Thu,  6 Jun 2024 09:12:18 +1000 (AEST)
+Date: Thu, 6 Jun 2024 09:12:17 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Marek Vasut
+ <marex@denx.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the stm32 tree
+Message-ID: <20240606091217.19a08b65@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/+7eoUFzv0ibuc6reI7_WGuP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, 5 Jun 2024 16:58:48 -0500, Bjorn Helgaas wrote:
-> - It doesn't apply to -rc1 (the TODO message is missing).  In PCI,
->   we normally apply patches on topic branches based on -rc1.
+--Sig_/+7eoUFzv0ibuc6reI7_WGuP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the detailed feedback. I was looking at mainline only.
+Hi all,
 
-> - The subject should be more specific so it makes sense all by
->   itself, e.g., "Log note if we find too many devices with errors"
+After merging the stm32 tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-> - Add period at end of sentence in commit log.
-> - Move historical notes (v1 URL, changes since v1) below the "---"
->  line so they don't get included in the commit log.
+make[4]: *** No rule to make target 'arch/arm/boot/dts/st/stm32mp135f-dhsom=
+-dhsbc.dtb', needed by 'arch/arm/boot/dts/st/dtbs-list'.  Stop.
 
-I have included these changes to the v3. Please find it here: 
-https://lore.kernel.org/all/20240605230954.22911-1-jain.abhinav177@gmail.com/
+Caused by commit
 
-> - __func__ is not relevant here -- that's generally a debugging
->   thing.  We can find the function by searching for the message
->   text.  In cases like this, I'd rather have something that helps
->   identify a *device* that's related to the message, e.g., the
->   pci_dev in this case.  So I'd suggest pci_err(dev, "...") here.
+  12ff8e167641 ("ARM: dts: stm32: Add support for STM32MP13xx DHCOR SoM and=
+ DHSBC board")
 
-> - I'd keep pci_err() instead of switching to pr_notice().  If we get
->   this message, we should re-think the way we collect this
->   information, so I want to hear about it.
+I have used the stm32 tree from next-20240605 for today.
 
-I understand, this helped me get a clear picture of what needs to be 
-done. I have accordingly added two pci_err for the same. Please review.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+7eoUFzv0ibuc6reI7_WGuP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZg8NEACgkQAVBC80lX
+0GyNjgf+PHHYlVqdIgwU9xWKEh5M+3IlTOzA5PAXDxaO3iHw/+R9GPD4MRoguXq/
+mSnZfRSnmXjbq0icuF8xkahMPicgAXP4qyJ1qIJGJqk1z42alvELM5NgRM681xDw
+vh4WrgDc8xKkjng3bEhaPt0nGbYRhUIKgRiXH91OuSZm6CgXHXqkwPuRz9gIPjXP
+5Y92P09/DNZeITVPXC/41Io7LR3iQUw+CtoontlZL9CsU2dWgLSi7N/PCIqcX5Rh
+znzIym1dFaDQyWThapBXfDnDaFFrLIrMn8ioWzktv6t4FE7B2F9nmYNV6oGtCGxc
+EkReq5Xwn9yBwPkUPWX63tLeAQQlJg==
+=xXxA
+-----END PGP SIGNATURE-----
+
+--Sig_/+7eoUFzv0ibuc6reI7_WGuP--
 
