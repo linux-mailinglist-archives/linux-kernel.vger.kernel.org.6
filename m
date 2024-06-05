@@ -1,198 +1,142 @@
-Return-Path: <linux-kernel+bounces-202245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F798FC9F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:15:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3BC8FCA05
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE4D1F22E12
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB21281E25
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB7D14B974;
-	Wed,  5 Jun 2024 11:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3431192B61;
+	Wed,  5 Jun 2024 11:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3G6hXb3P"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="asNtDGm0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D6D7345C;
-	Wed,  5 Jun 2024 11:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A050319148B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717586109; cv=none; b=P7jFbr5gUWdS26Zz0WVfjRLy+aLDjN0b27M8N6gIvrtt0gyiac/njJClPbH4gnqRVkwBSgsX3Dkx4M8gBvv9FsBWWeA+nw6oRO4TaRSaay+a8JPvm+C6RJCbaUAAzBxS+35c1JTQESpHx20H7u8HXGtrjvQXh/5hF37SHwWUo7c=
+	t=1717586166; cv=none; b=lcAo+HXzLYorUIZOW5RyZvDfdjpck4gjNVDIGxQzwPnwYF1EGv0+2LrQCaXP+0x550AlszC7ZGR+qEcqEvvJLTQy2WGWAHJCtI5KB33XEXEqySltq7QG8eZSs08hEhJ3We2gO4S2/MixesxXi+kXjSQVQA17GW6uXQjgQELRDgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717586109; c=relaxed/simple;
-	bh=EFu+zxcHRzssvsR1UGoPpPvJ2s8V2Pa5OGfZzBovS74=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qbvAGzt9VWGKIj3nleOHBktEbaaJVDnvTITG5ZLy6sJcQ1ebfReBYmW04/WtWcFX09KOuSQk3rl61VkfUZmuaOrEilMhUfayLpISw07oRyf/RicXYXuNicRQHghJJcdf64n4BH55tOnSQBUz3xTXGFXtqscHJ+Kcxgb8fb53KKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3G6hXb3P; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717586105;
-	bh=EFu+zxcHRzssvsR1UGoPpPvJ2s8V2Pa5OGfZzBovS74=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=3G6hXb3PxIeAdZdzrZC3xDadf1Yv//GVtWhFRW/IJ8qYp422FWwx0zNYVaW90qSkB
-	 5dHxeTxNukk2XJPfjgrpQdDYt/5muhaDWY7SbTUeKJ2ZE2DFavQ03IUO67f1fF1gJK
-	 XxgbksqWfWALZjKhdNCCalCk6S7cU5SBU25wJO4Zf13r9LsUazgC1RaPMd3t8jD4Mp
-	 t/C656XB1eqvJ+/dkJ1hX9LOU4OjTszG0uqCsZPcgDpm49hJ15MDTiEGY/Gf0DqSpT
-	 SqRBYmkTRXnmipS3/kQ38qfmjv3v1yXK1F6GuJqky6vbQ6MkabqtdnxzYtWZ72OClS
-	 Nqm6mqlTQZXHA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1717586166; c=relaxed/simple;
+	bh=OB4bbDHOpovQgbK+NjxUZFEWt16fgvGMy+LZiN5kFCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SxkLYdNolBfNivhXELwm4fM7w65NAS5Y9UcOhfMZVc6xEfcbrcw1SzmuA2/xEtedxDSC612vtyqV6m07aWivQpIlToPEyQ//M2W2pIGcSLM0LiOR9RYAp2qPl5bksH951mgnDCWyQy/s1PzfNzcd6xLN1Xxpuxp6H4N3YEPbvLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=asNtDGm0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5CC1E40E0191;
+	Wed,  5 Jun 2024 11:16:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2MM_uH0b_vZ5; Wed,  5 Jun 2024 11:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717586158; bh=MyNP/8A3mneC0TU0vkHmFz9QbD6ZPJz2lnq7g0nJwME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=asNtDGm0aWrqbbyqfz8gB/pIkAwBrS0jW1fszHDBAAE73YTZ1RXmITordyLpNuAhX
+	 tUz7P7b7vWLs+JLMUA35+eo4pHvEJXdcODIEuYvYcNEAP7586+vjckHFwuDboH1ljM
+	 OE5XYQzs1qvsg5G4qWvi5TqHshLp5wFVV/fBxmdsChG0uOrJSWAxt17BAD+0TRbTWy
+	 ye+MDYoA+c3o8gUTX9RQqa19pNy62l6UKhx+TT1AWuKyorUWYwmnhHQ5sCDFTyxMpV
+	 UQwfYaQTey+ui3KYvP+gHOXsKX/n2Nc62GvrjxlA2Y+DEqRE9zk+iPtEZTBnI6SSIt
+	 ZGQFLFMOp6qDBWAadS70VF9O8UUJIlmRQ1lFlZybAyEYnhkd5CBWvrtSI3nAHZ/gzm
+	 4Sr/r0cb7UGb/VMo/3bBRtYjavnG1zO6gfSR02K9obmsBgFXoUSziNzeTJJNRER5aX
+	 Py1DQa6A1lYwmXiw6mFSSky198TDK0p7NWndsTKW9JDo9+RkmCerytU3W94k7rDZQg
+	 IxoiUgrhUHgJDTBSiMzkXxnNyGUSU0v723hRw990dEOJUGPu4JYGi8mta1rgJ6FzXn
+	 4FkfWdMKfAdj5xWNC3fq9Nyno77B4x1ZMMiPutVhTMC5YVy+u5Pk78y9vfPKQ+jSUK
+	 xiThwe6cbzf+amDt7WH8S3Ys=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 7B84F3780BDB;
-	Wed,  5 Jun 2024 11:15:04 +0000 (UTC)
-Message-ID: <0e0fe86c-92da-43f5-89d7-8084274a908a@collabora.com>
-Date: Wed, 5 Jun 2024 13:15:03 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2559440E016E;
+	Wed,  5 Jun 2024 11:15:29 +0000 (UTC)
+Date: Wed, 5 Jun 2024 13:15:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Dave Young <dyoung@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+	"Kalra, Ashish" <ashish.kalra@amd.com>, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+	rafael@kernel.org, hpa@zytor.com, peterz@infradead.org,
+	adrian.hunter@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+	jun.nakajima@intel.com, rick.p.edgecombe@intel.com,
+	thomas.lendacky@amd.com, michael.roth@amd.com, seanjc@google.com,
+	kai.huang@intel.com, bhe@redhat.com,
+	kirill.shutemov@linux.intel.com, bdas@redhat.com,
+	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
+	jroedel@suse.de, kexec@lists.infradead.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
+Message-ID: <20240605111527.GEZmBIzwpsrai31qWT@fat_crate.local>
+References: <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
+ <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local>
+ <Zl3hwYL2GDiyUfGo@kernel.org>
+ <CALu+AoSnA4323QbQG7wrNptosz7tfEfztsE1=o6G=FaLbQ_tKQ@mail.gmail.com>
+ <20240604094358.GBZl7h3otTCYJ5rkkt@fat_crate.local>
+ <CALu+AoS=-=PbMRxC-1rpfSTPpMOmM5BGRBjLhDwgOC3=4C71ng@mail.gmail.com>
+ <20240604180212.GHZl9WpAfNVERTjMqw@fat_crate.local>
+ <CALu+AoRqNmsWXi+HXYNYTY=pXJ3sLTLKyXNeJz9EoxEsHzFdQA@mail.gmail.com>
+ <20240605074257.GAZmAXAbkc5TGVds5u@fat_crate.local>
+ <CAMj1kXFweoskB_qnUFA1b+QXWhjovwMfpM00cGb9KMcm4Zr7EA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
- support for board path
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "amergnat@baylibre.com" <amergnat@baylibre.com>
-References: <20240521075717.50330-1-angelogioacchino.delregno@collabora.com>
- <20240521075717.50330-3-angelogioacchino.delregno@collabora.com>
- <e7845300fa822413f6308cb6297222cde89c39e0.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <e7845300fa822413f6308cb6297222cde89c39e0.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXFweoskB_qnUFA1b+QXWhjovwMfpM00cGb9KMcm4Zr7EA@mail.gmail.com>
 
-Il 05/06/24 03:38, CK Hu (胡俊光) ha scritto:
-> Hi, Angelo:
-> 
-> On Tue, 2024-05-21 at 09:57 +0200, AngeloGioacchino Del Regno wrote:
->> Document OF graph on MMSYS/VDOSYS: this supports up to three DDP paths
->> per HW instance (so potentially up to six displays for multi-vdo SoCs).
->>
->> The MMSYS or VDOSYS is always the first component in the DDP pipeline,
->> so it only supports an output port with multiple endpoints - where each
->> endpoint defines the starting point for one of the (currently three)
->> possible hardware paths.
->>
->> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
->> Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   .../bindings/arm/mediatek/mediatek,mmsys.yaml | 28 +++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->> index b3c6888c1457..0ef67ca4122b 100644
->> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
->> @@ -93,6 +93,34 @@ properties:
->>     '#reset-cells':
->>       const: 1
->>   
->> +  port:
->> +    $ref: /schemas/graph.yaml#/properties/port
->> +    description:
->> +      Output port node. This port connects the MMSYS/VDOSYS output to
->> +      the first component of one display pipeline, for example one of
->> +      the available OVL or RDMA blocks.
->> +      Some MediaTek SoCs support multiple display outputs per MMSYS.
-> 
-> This patch looks good to me. Just want to share another information for you.
-> Here is an example that mmsys/vdosys could point to the display interface node.
-> 
-> vdosys0: syscon@1c01a000 {
->            mmsys-display-interface = <&dsi0>, <&dsi1>, <&dp_intf0>;
-> };
->   
-> vdosys1: syscon@1c100000 {
->            mmsys-display-interface = <&dp_intf1>;
-> };
-> 
-> There is no conflict that mmsys/vdosys point to first component of one display pipeline or point to display interface.
-> Both could co-exist.
-> 
+On Wed, Jun 05, 2024 at 10:17:22AM +0200, Ard Biesheuvel wrote:
+> I'd argue for the opposite: ideally, the difference between the first
+> boot and not-the-first-boot should be abstracted away by the
+> 'bootloader' side of kexec as much as possible, so that the tricky
+> early startup code doesn't have to be riddled with different code
+> paths depending on !kexec vs kexec.
 
-Hey CK,
+Well, off and on we end up needing to be able to ask whether the current
+kernel is kexec-ed. So you need to be able to access that aspect in
+kernel code - not in the bootloader. Perhaps read it from the
+bootloader, sure.
 
-yes, this could be an alternative to the OF graphs, and I'm sure that it'd work,
-even though this kind of solution would still require partial hardcoding of the
-display paths up until mmsys-display-interface (so, up until DSI0, or DSI1, etc).
+But see my other mail from just now - it might end up not needing it
+after all and I'd prefer if we never ever have to ask that question but
+just from staring at EFI code it reminded me that we do need to ask that
+question already:
 
-The problem with a solution like this is that, well, even though it would work,
-even if we ignore the suboptimal partial hardcoding, OF graphs are something
-generic, while the mmsys-display-interface would be a MediaTek specific/custom
-property.
+        if (efi_setup)
+                kexec_enter_virtual_mode();
+        else
+                __efi_enter_virtual_mode();
 
-In the end, reusing generic kernel apis/interfaces/etc is always preferred
-compared to custom solutions, especially in this case, in which the generic
-stuff is on-par (or actually, depending purely on personal opinions, superior).
+*exactly* because of EFI and that virtual_map call nonsense of allowing
+it only once.
 
-As for the two to co-exist, I'm not sure that this is actually needed, as the
-OF graphs are already (at the end of the graph) pointing to the display interface.
+And we check efi_setup here because that works. But you can't use that
+globally. And so on...
 
-In any case, just as a reminder: if there will be any need to add any custom
-MediaTek specific properties later, it's ok and we can do that at any time.
+> TDX is a good case in point here: rather than add more conditionals,
+> I'd urge to remove them so the TDX startup code doesn't have to care
+> about the difference at all. If there is anything special that needs
+> to be done, it belongs in the kexec implementation of the previous
+> kernel.
 
-Cheers!
-Angelo
+Sure, but reality is not as easy sometimes.
 
-> Regards,
-> CK
-> 
->> +    properties:
->> +      endpoint@0:
->> +        $ref: /schemas/graph.yaml#/properties/endpoint
->> +        description: Output to the primary display pipeline
->> +
->> +      endpoint@1:
->> +        $ref: /schemas/graph.yaml#/properties/endpoint
->> +        description: Output to the secondary display pipeline
->> +
->> +      endpoint@2:
->> +        $ref: /schemas/graph.yaml#/properties/endpoint
->> +        description: Output to the tertiary display pipeline
->> +
->> +    anyOf:
->> +      - required:
->> +          - endpoint@0
->> +      - required:
->> +          - endpoint@1
->> +      - required:
->> +          - endpoint@2
->> +
->>   required:
->>     - compatible
->>     - reg
+Thx.
 
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
