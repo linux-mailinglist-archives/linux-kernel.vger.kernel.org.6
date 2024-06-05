@@ -1,91 +1,139 @@
-Return-Path: <linux-kernel+bounces-202609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295648FCEBD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CCC8FCEA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA1AB28510
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B611F27D0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67501BF8F3;
-	Wed,  5 Jun 2024 12:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE6D192B95;
+	Wed,  5 Jun 2024 12:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Pek2bJcX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="StXSC1ox"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B4319CD0F;
-	Wed,  5 Jun 2024 12:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A5A19D8B2;
+	Wed,  5 Jun 2024 12:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590470; cv=none; b=giqijUleLTkYrpbXckljNbnpQp/AM7utuZP8xeigBkjff71A0Qz/NSCBYhxetIlXYn2BGNk6ekPrT2rACK2ghJz4FfYTJODL3fZjg75xgIIv8N/B298mKTgXnLwkiGSvhjKSz59snMuXmpml0AkGFI2/9bRfpdo6/Q3pIPMVlQo=
+	t=1717590694; cv=none; b=p4Insx+qVGLFKy8QiJ2E6tlzkp9jqrSBxsE7ZjRD8EyCqHxgFhy/KlRUbOdg11BAt+goViBt6pbx2mwJqVzhtpCcmx12s4yacTqF66zMh1ewSIYQtgXmz4dn+hhGLcBVkD6UYvxYWMWC1bJBf4aActdSFF7J1f3CGuoGMo2KPY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590470; c=relaxed/simple;
-	bh=vAfBbs/RE3A6rRHJDVOYFTEdlEOETIb1vUNfnhuTtSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e12kXUglU0wvjmRXDmA9/Q7N50AnXdOMKDxCmr7Qd+TsxlwopPPbneoaBg6pJ79+loMDPUj6hLNgZxKZmqA6AAvsHBeGIbIBXFEjLHNy2y4pAkAB6sSyD5yvv6scVe/DPsH+92jC0oWTv8AtjN6BU71p3zjX4SlJPrGu/XscYMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Pek2bJcX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=f+3E3BzuIwy3nzt7rPCLz2ZJt8+Iri1AkQe8yvM0D7Y=; b=Pek2bJcXAetLeba80NpZqCB3WZ
-	SwAmst1EdTciAd7vJLkCoF5TRBk+/RvfDUnxuI7PxjNmThA/UiaGnff6wEkeJiWfERCvhAWBXG7gh
-	EMnm03V7gsaHnwLGlv+Zc5CT+7XmKgQ2O+pHhe6E026CjZXIvuHEF5Zpyi2x91BLxwz8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sEpjp-00GuN0-Ln; Wed, 05 Jun 2024 14:27:33 +0200
-Date: Wed, 5 Jun 2024 14:27:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Diogo Ivo <diogo.ivo@siemens.com>,
-	Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, srk@ti.com,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	kernel test robot <lkp@intel.com>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH net-next] net: ethernet: ti: Makefile: Add icssg_queues.o
- in TI_ICSSG_PRUETH_SR1
-Message-ID: <28803aee-e3fe-4e9d-8410-4ac957d77dd6@lunn.ch>
-References: <20240605035617.2189393-1-danishanwar@ti.com>
+	s=arc-20240116; t=1717590694; c=relaxed/simple;
+	bh=DcFLBoXlwMgc0xOPsvGuOBJsBu2Y2oETEheNuoTDRiM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sNz5UR7McsKN5ITdfrj0gJeo2lNczEZ6kSO7PVdvH3dLXK6Z3m3oR/Uiv1fUQCNwBCC2EMuGbFbFBdt1fzdPxeJlnSCwuoXnhhLgMU09ViQefsRhOi+PrBDvYJ9cQjB8PY3NmRXYGVSWj6kqqnJXaFsFR94EwI44aRvdI00DKAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=StXSC1ox; arc=none smtp.client-ip=192.19.144.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id B256AC0000F3;
+	Wed,  5 Jun 2024 05:31:31 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com B256AC0000F3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1717590691;
+	bh=DcFLBoXlwMgc0xOPsvGuOBJsBu2Y2oETEheNuoTDRiM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=StXSC1oxBbznOvZnqWTngN1r+hE8rXvDIGPlRn4k1phnFFGu1xlQcecBQvy6Roulf
+	 1FKJREiYIWgsonEPd61TGQNGlWJHCVjEp0Nz73XQr27hS8IGlUTnny95bd14qLOuu7
+	 tJMzYpfhk8rO9VlKio6/ppJaJIifumOzh7h3iPfk=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 8524A18041CAC4;
+	Wed,  5 Jun 2024 05:31:29 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: stable@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Hao Ge <gehao@kylinos.cn>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kuan-Ying Lee <Kuan-Ying.Lee@mediatek.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Helge Deller <deller@gmx.de>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org (open list),
+	kapil.hali@broadcom.com,
+	justin.chen@broadcom.com
+Subject: [PATCH stable 5.15] scripts/gdb: fix SB_* constants parsing
+Date: Wed,  5 Jun 2024 05:31:27 -0700
+Message-Id: <20240605123128.3524629-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605035617.2189393-1-danishanwar@ti.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024 at 09:26:17AM +0530, MD Danish Anwar wrote:
-> icssg_config.c uses some APIs that are defined in icssg_queue.c.
-> TI_ICSSG_PRUETH_SR1 uses icssg_config.o but not icssg_queues.o as a
-> result the below build error is seen
-> 
-> ERROR: modpost: "icssg_queue_pop"
-> [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
-> ERROR: modpost: "icssg_queue_push"
-> [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
-> 
-> Fix this by adding icssg_queues.o in TI_ICSSG_PRUETH_SR1
+commit 6a59cb5158bff13b80f116305155fbe4967a5010 upstream
 
-Please take a look at
-https://patchwork.kernel.org/project/netdevbpf/patch/20240528161603.2443125-1-arnd@kernel.org/
+--0000000000009a0c9905fd9173ad
+Content-Transfer-Encoding: 8bit
 
+After f15afbd34d8f ("fs: fix undefined behavior in bit shift for
+SB_NOUSER") the constants were changed from plain integers which
+LX_VALUE() can parse to constants using the BIT() macro which causes the
+following:
 
-    Andrew
+Reading symbols from build/linux-custom/vmlinux...done.
+Traceback (most recent call last):
+  File "/home/fainelli/work/buildroot/output/arm64/build/linux-custom/vmlinux-gdb.py", line 25, in <module>
+    import linux.constants
+  File "/home/fainelli/work/buildroot/output/arm64/build/linux-custom/scripts/gdb/linux/constants.py", line 5
+    LX_SB_RDONLY = ((((1UL))) << (0))
 
+Use LX_GDBPARSED() which does not suffer from that issue.
+
+Fixes: f15afbd34d8f ("fs: fix undefined behavior in bit shift for SB_NOUSER")
+Link: https://lkml.kernel.org/r/20230607221337.2781730-1-florian.fainelli@broadcom.com
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Acked-by: Christian Brauner <brauner@kernel.org>
+Cc: Hao Ge <gehao@kylinos.cn>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Kieran Bingham <kbingham@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
 ---
-pw-bot: cr
+ scripts/gdb/linux/constants.py.in | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/constants.py.in
+index 08f0587d15ea..0ff707bc1896 100644
+--- a/scripts/gdb/linux/constants.py.in
++++ b/scripts/gdb/linux/constants.py.in
+@@ -46,12 +46,12 @@ if IS_BUILTIN(CONFIG_COMMON_CLK):
+     LX_GDBPARSED(CLK_GET_RATE_NOCACHE)
+ 
+ /* linux/fs.h */
+-LX_VALUE(SB_RDONLY)
+-LX_VALUE(SB_SYNCHRONOUS)
+-LX_VALUE(SB_MANDLOCK)
+-LX_VALUE(SB_DIRSYNC)
+-LX_VALUE(SB_NOATIME)
+-LX_VALUE(SB_NODIRATIME)
++LX_GDBPARSED(SB_RDONLY)
++LX_GDBPARSED(SB_SYNCHRONOUS)
++LX_GDBPARSED(SB_MANDLOCK)
++LX_GDBPARSED(SB_DIRSYNC)
++LX_GDBPARSED(SB_NOATIME)
++LX_GDBPARSED(SB_NODIRATIME)
+ 
+ /* linux/htimer.h */
+ LX_GDBPARSED(hrtimer_resolution)
+-- 
+2.34.1
+
 
