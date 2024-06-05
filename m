@@ -1,118 +1,171 @@
-Return-Path: <linux-kernel+bounces-202643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590B28FCF15
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:23:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603838FCF5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09022295E79
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:23:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC4B2B27FF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141701A3BAF;
-	Wed,  5 Jun 2024 12:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4ED11C53AB;
+	Wed,  5 Jun 2024 12:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afrv/Y9u"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="onoSsidm"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1091A2FC9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC6E1C370A;
+	Wed,  5 Jun 2024 12:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717591771; cv=none; b=BufHRDgrK+R6bQIDc+NjkZWwvPAl+mGpSy2Lgs432N2KHrIbphnQN61kl1oZN5TGpZD729FURLPDIwpFTFRGHrW7B5n4+E6GIMnlvYAv+m64u/BIyU5Brz7z0LCEiSVDD+Yt7EASlYwBSViz9yxZZpEZZiT41a8N++GUU882xHc=
+	t=1717591786; cv=none; b=hD/RvmxmOJdqeeryE1VpfsaKD4yxYOv2V0jytdoebNou3kpN8DTpNs09QY59Uom2tugnfha+A1ai2hdOgKvdOn+Vlvwy8s9z/wmFbRALLfpkARXWbAGLO+1FAr7C8FUcT+3MkwQfqrpfILJhG0G1q/bPeow8drDEKACDkEHUnJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717591771; c=relaxed/simple;
-	bh=cmwmKhhE8+ws9LNQyLxf3bJmxZowr0qjjXCXA66CcnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vFW8NL5FZFGSDk2vJAGS8/XrMIonLd1MuqPu52E07evq4fqGqnY4fL5F4nvvg+3F8dQmWeIOk6mvqQiObv6BtCA4oxZ43qSty9dmsz00+EccmASnAxfKqAHkr554rAP2JE6793sOSxCEMphEdmcQ0M7hXJpXwo3jaoii9/FNq5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afrv/Y9u; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-579fa270e53so7794542a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 05:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717591768; x=1718196568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cmwmKhhE8+ws9LNQyLxf3bJmxZowr0qjjXCXA66CcnU=;
-        b=afrv/Y9uW19V+IJNaQmUuODikHxt7M8fhzbtuDA6241qnMGGmBF1e7VBisuJAyxfR3
-         rxxLKxkIQCPAjHMyCqHD+gWfiGAoYYD2SHUuknOYOPkO+60Zrtjd+G6tbiTykDTW1RPN
-         fUPNuqMV1ABdiipG8iFW6CnKy4yLyFa+XZqE7ts9WOxxATIH/D6bS4x7LCiutXRdYgu9
-         xNqjq+aht8IhE3klftEY7RKpOWpD1EiYDYmtO7nEExU1guKRP5g9jtTnwQN/+ekQpiUR
-         +4qafx1ADlpivbZ2zhTmQmI12XTgu4T0cSuiPOkfYBZmN3LtZ1wX68f/aJbXZydnGYiR
-         YrYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717591768; x=1718196568;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cmwmKhhE8+ws9LNQyLxf3bJmxZowr0qjjXCXA66CcnU=;
-        b=TFA/R6lKHa9Qn0G2gKX0sPVrUA8wEEuOsmv3woy9beQdIPRyNmqhysCri1TPYT7xc6
-         cGP383eczSTD+lWAuT9ehirgW263ZbJNb/+ITRQeXgRRTEcHTX+90DN7f8p6mWOh+XxY
-         ePhirlO9EGBOjqK/rgux/KucDoNBdCK2OvES69osGW5aN32qEuEWnBMYShPG/dArIMfy
-         A91HcBGXzDVmeHDR3uCT+Q/OpHOodpcCViuwObaLbGpa0X4z7P8SXF2aSNjMVRfBIVIy
-         Dpw6a2upjNbX+Rq/h7aWIrLHoCN0GZCZgkyKFS3ld712+BgfSeme0eKfANzf3SDo6+31
-         ISWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWX/z3UERUPyfyGmEh2n1WEqe8/DvSnvcNxXQsrg25UgbPx5b7S3Ic5f8eTgujt71kOawLt453/SKIHhvivsbB6YxnPa3ADKD4yuEhr
-X-Gm-Message-State: AOJu0YzkIGC5Zzh/0t0P65QKy87kbOLEURt5RGeEqxB9vHYA2/n5kMK1
-	Dr4DLM3U5OV1lmua5Z2F+fk3+9zWG8LVGPNt4kiH4/IfFvEDtMt/Kxx3o1THWur1eycMB3eTpVr
-	iVMAJCHzNOPIL5kPP3Hq6fkHPZmM=
-X-Google-Smtp-Source: AGHT+IGkvhstI8ks3KYdHg4CttNp7gjOV1sWa4vXy3hHa/yAyvhmM/E5FM3inaS2CUSucLbDnI3J0gB6SqG1lD5KTe4=
-X-Received: by 2002:a50:cd52:0:b0:57a:234d:abc0 with SMTP id
- 4fb4d7f45d1cf-57a8b68750fmr1984017a12.1.1717591767873; Wed, 05 Jun 2024
- 05:49:27 -0700 (PDT)
+	s=arc-20240116; t=1717591786; c=relaxed/simple;
+	bh=e6fTToYWq45w/807OmOw6rMDMu3d5j5d5Sgp+iyhRSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HaORevvxCzGTsiZGsgdvJJPjEe5Mv7VrmPrc4we7QjUpI8Rwf3be03eVKEs4Q9q6k7HE6Pg5DWUkvvKHgI1dFRuiazIMgkINcbyzQLVMRRGITF46bX3L89lrOOuSMyLmMz4RdZCbdnzNBtjv9zkxC7cbdHYn7fspg1kaTjniYgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=onoSsidm; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C8CC20011;
+	Wed,  5 Jun 2024 12:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717591782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aTeslFgz8vSg7S4dfVYAbCiXpnFjv0CJKUEzc0dnIH0=;
+	b=onoSsidm9K+0s5Q3/i+ipqD202bwbXnlOCpTQT7V4xdrpphK3/fX2gWUER3FreaNus04SX
+	CsVDqSsQwFhFbEX7yklfY4S58X3LtgiGyCHSbf7+ZvvW7gFYe7SYGYPfrz3sSJpcclt8LR
+	pbKjjAvswvFxwVwRMYcQT84sjYhcrvuRSewEF3lSoqknQUsF7f3f74HNfkx2JfoCTk4OmV
+	HG4FJixJ44N9zaTt4T+1h3ATMyIYV7AT86W79rHQ48zRJqrEHNpD3wFw6Pu+SScd5nSX+B
+	dMl/xOUFsiq++zsawRId4MMbNmQPmz4oQfory+TVmccEnFthp7IIimOufUGEkA==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>
+Subject: [PATCH net-next v12 11/13] net: ethtool: cable-test: Target the command to the requested PHY
+Date: Wed,  5 Jun 2024 14:49:16 +0200
+Message-ID: <20240605124920.720690-12-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240605124920.720690-1-maxime.chevallier@bootlin.com>
+References: <20240605124920.720690-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521040244.48760-1-ioworker0@gmail.com> <20240521040244.48760-2-ioworker0@gmail.com>
- <d1b9b076-76ad-42c7-a173-85fd4534c56c@redhat.com>
-In-Reply-To: <d1b9b076-76ad-42c7-a173-85fd4534c56c@redhat.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Wed, 5 Jun 2024 20:49:15 +0800
-Message-ID: <CAK1f24n-9C5TBqz1oeeUONROGYcKD=T+FprmK9K5SQL0mVog5Q@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] mm/rmap: remove duplicated exit code in pagewalk loop
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
-	ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com, 
-	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
-	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
-	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Wed, Jun 5, 2024 at 8:34=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 21.05.24 06:02, Lance Yang wrote:
-> > Introduce the labels walk_done and walk_done_err as exit points to
-> > eliminate duplicated exit code in the pagewalk loop.
-> >
-> > Reviewed-by: Zi Yan <ziy@nvidia.com>
-> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> > ---
->
-> Sorry for the late review
->
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+Cable testing is a PHY-specific command. Instead of targeting the command
+towards dev->phydev, use the request to pick the targeted PHY.
 
-No worries at all, I appreciate you taking time to review!
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+ net/ethtool/cabletest.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Thanks,
-Lance
+diff --git a/net/ethtool/cabletest.c b/net/ethtool/cabletest.c
+index f6f136ec7ddf..73dd4c439a3d 100644
+--- a/net/ethtool/cabletest.c
++++ b/net/ethtool/cabletest.c
+@@ -13,7 +13,7 @@
+ 
+ const struct nla_policy ethnl_cable_test_act_policy[] = {
+ 	[ETHTOOL_A_CABLE_TEST_HEADER]		=
+-		NLA_POLICY_NESTED(ethnl_header_policy),
++		NLA_POLICY_NESTED(ethnl_header_policy_phy),
+ };
+ 
+ static int ethnl_cable_test_started(struct phy_device *phydev, u8 cmd)
+@@ -69,7 +69,7 @@ int ethnl_act_cable_test(struct sk_buff *skb, struct genl_info *info)
+ 		return ret;
+ 
+ 	dev = req_info.dev;
+-	if (!dev->phydev) {
++	if (!req_info.phydev) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out_dev_put;
+ 	}
+@@ -85,12 +85,12 @@ int ethnl_act_cable_test(struct sk_buff *skb, struct genl_info *info)
+ 	if (ret < 0)
+ 		goto out_rtnl;
+ 
+-	ret = ops->start_cable_test(dev->phydev, info->extack);
++	ret = ops->start_cable_test(req_info.phydev, info->extack);
+ 
+ 	ethnl_ops_complete(dev);
+ 
+ 	if (!ret)
+-		ethnl_cable_test_started(dev->phydev,
++		ethnl_cable_test_started(req_info.phydev,
+ 					 ETHTOOL_MSG_CABLE_TEST_NTF);
+ 
+ out_rtnl:
+@@ -216,7 +216,7 @@ static const struct nla_policy cable_test_tdr_act_cfg_policy[] = {
+ 
+ const struct nla_policy ethnl_cable_test_tdr_act_policy[] = {
+ 	[ETHTOOL_A_CABLE_TEST_TDR_HEADER]	=
+-		NLA_POLICY_NESTED(ethnl_header_policy),
++		NLA_POLICY_NESTED(ethnl_header_policy_phy),
+ 	[ETHTOOL_A_CABLE_TEST_TDR_CFG]		= { .type = NLA_NESTED },
+ };
+ 
+@@ -317,7 +317,7 @@ int ethnl_act_cable_test_tdr(struct sk_buff *skb, struct genl_info *info)
+ 		return ret;
+ 
+ 	dev = req_info.dev;
+-	if (!dev->phydev) {
++	if (!req_info.phydev) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out_dev_put;
+ 	}
+@@ -338,12 +338,12 @@ int ethnl_act_cable_test_tdr(struct sk_buff *skb, struct genl_info *info)
+ 	if (ret < 0)
+ 		goto out_rtnl;
+ 
+-	ret = ops->start_cable_test_tdr(dev->phydev, info->extack, &cfg);
++	ret = ops->start_cable_test_tdr(req_info.phydev, info->extack, &cfg);
+ 
+ 	ethnl_ops_complete(dev);
+ 
+ 	if (!ret)
+-		ethnl_cable_test_started(dev->phydev,
++		ethnl_cable_test_started(req_info.phydev,
+ 					 ETHTOOL_MSG_CABLE_TEST_TDR_NTF);
+ 
+ out_rtnl:
+-- 
+2.45.1
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
 
