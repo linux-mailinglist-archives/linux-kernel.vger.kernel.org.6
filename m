@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-202597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8725C8FCF00
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:21:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FBB8FCE7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFBCCB2AEA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0419F28B332
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC1319AD5D;
-	Wed,  5 Jun 2024 12:24:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C4B19AD47;
-	Wed,  5 Jun 2024 12:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B061BA89F;
+	Wed,  5 Jun 2024 12:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RejSWuMT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AE719AD92;
+	Wed,  5 Jun 2024 12:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590251; cv=none; b=Bqf+zroYqFVuDbzEIW0laaJIXen2N5RYLucQ4ollRAEX0Hm+UbW58nKRuU21il7xKMzxrbmH1ns067rl8wLz2RtUMgzTsUtGAruUBYXVV8EoIvlFl+jrDRAzhWzumMHDBbWfwACnHywJ/NJ1zfca3UL5XqViXGZJmShheKf/oCw=
+	t=1717590281; cv=none; b=ZyOW6BORxqRCbJircAjMMMD+ZM/fv7MU3Xh2Qr8L9POsa34kDSMCpS7G58pBzHOFe7/uHeljpkbUDtNqdEl/D46hUjI26IxSiz+fYYdnOdzwMBslgWT2kgq4CbzreBQ1CPJZZEqXZx6ZG0aukLLmR/EiP+QaOpbwtNIsEqAY/VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590251; c=relaxed/simple;
-	bh=n3ty1xTwxBm5dX7g7QjOm3hVgjJlDQb1B6sZe0BtFLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a6NriYWE8M1wfrHqM4vmZ+II5UZuHd3EM4j+U/egbkvSdRm3UkHOjXeX4+DRrlU6asvXlAL/JOS+8Q4TbJBcuVpTqqSBlLwkHFQwV3S3VmfUqBn2awlTkrEWJ7JfDBp0Yt8/1Gq1pCgVVMeejt0ut2muXBuWePRAgY3oVMt2m2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A340C339;
-	Wed,  5 Jun 2024 05:24:32 -0700 (PDT)
-Received: from [10.1.32.39] (e127648.arm.com [10.1.32.39])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D83583F762;
-	Wed,  5 Jun 2024 05:24:04 -0700 (PDT)
-Message-ID: <1b44938c-9535-47e7-8cbc-2b844e5dfdff@arm.com>
-Date: Wed, 5 Jun 2024 13:24:02 +0100
+	s=arc-20240116; t=1717590281; c=relaxed/simple;
+	bh=nGTFRil33Cf7booPAwWDBm5uj0Ablwum3J22FiGthRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cykCUg1FSQ0Aan+XsZEVNnWCf5v+3hD6lj6clslxSGKpdKScfo1J6tkM+d4Rm7vbGrnTmlBXh7npXU2+60JtiNQw/2MHFNo3Bi4kvEXm4P0WjmbxGbZvYusxxZVTWdf05LkEEpk0JLNkFVng4Xjddzz09khsmlvrJUcjx7VxOmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RejSWuMT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED176C3277B;
+	Wed,  5 Jun 2024 12:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717590281;
+	bh=nGTFRil33Cf7booPAwWDBm5uj0Ablwum3J22FiGthRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RejSWuMT9WnUO7WLChIm6whFz9uS1iD1LLLju+n/vwAuvlzEmMtHcYhIgSCFRV0Ra
+	 ccBNdi0Yg7hoI9t+55l/W2CUe5DEEDPhYP0MABEfcSxHFnT4wG0ecAU1QG+zNWYlrL
+	 qznLhW3Azkp4ri2VAwkPxhyY0ArvF2ZJv//o+ls+BxupRN4ki06hXpQhr1m6om5tUH
+	 sd24EE2ZcNONIy3DeOteDQwm/Mz0pgVAbNXeGNMAyJBos7ESNMBILxTSlcK7kZCJgY
+	 D8oE/ZMDrmmbd7PNZysY3vKcGgb7dL7iJgU4UJiyYixp0Fpp9mcn/r8g4gfKxXlATA
+	 SU2WenzpdeMSA==
+Date: Wed, 5 Jun 2024 13:24:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+	marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] spi: Add SPI mode bit for MOSI idle state
+ configuration
+Message-ID: <0a716b10-0ae0-425f-919a-ea5d8b7975b6@sirena.org.uk>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+ <e1d5d57f7a7481c84f64a764f9898122e278739b.1717539384.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] sched: Consolidate cpufreq updates
-To: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Juri Lelli <juri.lelli@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Valentin Schneider <vschneid@redhat.com>, Hongyan Xia
- <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240530104653.1234004-1-qyousef@layalina.io>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240530104653.1234004-1-qyousef@layalina.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/ai5QVhWnEmXwiWy"
+Content-Disposition: inline
+In-Reply-To: <e1d5d57f7a7481c84f64a764f9898122e278739b.1717539384.git.marcelo.schmitt@analog.com>
+X-Cookie: Simulated picture.
 
-On 5/30/24 11:46, Qais Yousef wrote:
-> Improve the interaction with cpufreq governors by making the
-> cpufreq_update_util() calls more intentional.
-> 
-> At the moment we send them when load is updated for CFS, bandwidth for
-> DL and at enqueue/dequeue for RT. But this can lead to too many updates
-> sent in a short period of time and potentially be ignored at a critical
-> moment due to the rate_limit_us in schedutil.
-> 
-> For example, simultaneous task enqueue on the CPU where 2nd task is
-> bigger and requires higher freq. The trigger to cpufreq_update_util() by
-> the first task will lead to dropping the 2nd request until tick. Or
-> another CPU in the same policy triggers a freq update shortly after.
-> 
-> Updates at enqueue for RT are not strictly required. Though they do help
-> to reduce the delay for switching the frequency and the potential
-> observation of lower frequency during this delay. But current logic
-> doesn't intentionally (at least to my understanding) try to speed up the
-> request.
-> 
-> To help reduce the amount of cpufreq updates and make them more
-> purposeful, consolidate them into these locations:
-> 
-> 1. context_switch()
-> 2. task_tick_fair()
-> 3. update_blocked_averages()
-> 4. on syscall that changes policy or uclamp values
-> 
-> The update at context switch should help guarantee that DL and RT get
-> the right frequency straightaway when they're RUNNING. As mentioned
-> though the update will happen slightly after enqueue_task(); though in
-> an ideal world these tasks should be RUNNING ASAP and this additional
-> delay should be negligible.
 
-Do we care at all about PREEMPT_NONE (and voluntary) here? I assume no.
-Anyway one scenario that should regress when we don't update at RT enqueue:
-(Essentially means that util of higher prio dominates over lower, if
-higher is enqueued first.)
-System:
-OPP 0, cap: 102, 100MHz; OPP 1, cap: 1024, 1000MHz
-RT task A prio=0 runtime@OPP1=1ms, uclamp_min=0; RT task B prio=1 runtime@OPP1=1ms, uclamp_min=1024
-rate_limit_us = freq transition delay = 1 (assume basically instant switch)
-Let's say CONFIG_HZ=100 for the tick to not get in the way, doesn't really matter.
+--/ai5QVhWnEmXwiWy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Before:
-t+0:		Enqueue task A switch to OPP0
-Running A at OPP 0
-t+2us:		Enqueue task B switch to OPP1
-t+1000us:	Task A done, switch to task B.
-t+2000us:	Task B done
+On Tue, Jun 04, 2024 at 07:41:47PM -0300, Marcelo Schmitt wrote:
 
-Now:
-t+0:		Enqueue task A switch to OPP0
-Running A at OPP 0
-t+2us:		Enqueue task B
-t+10000us:	Task A done, switch to task B and OPP1
-t+11000us:	Task B done
+> The behavior of an SPI controller data output line (SDO or MOSI or COPI
+> (Controller Output Peripheral Input) for disambiguation) is not specified
+> when the controller is not clocking out data on SCLK edges. However, there
+> exist SPI peripherals that require specific COPI line state when data is
+> not being clocked out of the controller.
 
-Or am I missing something?
+This is an optimisation for accelerating devices that need a specific
+value, really if these devices need a value they should send it.
 
-Kind Regards,
-Christian
+>  #define SPI_MOSI_IDLE_LOW	_BITUL(17)	/* leave mosi line low when idle */
+> +#define SPI_MOSI_IDLE_HIGH	_BITUL(18)	/* leave mosi line high when idle */
 
-> [snip]
+Realistically we'll have a large set of drivers that are expecting the
+line to be held low so I'm not sure we need that option.  I would also
+expect to have an implementation of these options in the core which
+supplies buffers with the relevant data for use with controllers that
+don't have the feature (similar to how _MUST_TX and _MUST_RX are done).
+Even without that we'd need feature detection so that drivers that try
+to use this aren't just buggy when used with a controller that doesn't
+implement it, but once you're detecting you may as well just make things
+work.
+
+--/ai5QVhWnEmXwiWy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZgWQEACgkQJNaLcl1U
+h9BzVwf/XOcTR4d09YYBn0fjTHLD5RTAADKdYqwP/EXFklqqszGee4v3Q6MrGCke
+1sfN9zIt5WxA7ETFjlpAF+jOjOxk/uaRgytTArEdFGh92N7fsIvcXpR+bKG6L5h5
+DoHrUaEMPoWSC0ZPtCtE/Mtp/CIfa8zwjHMfkmYRgh+YIL1XnA+0BZ8H7N5bEQ5e
+T4SLBCfgfqck2SlIDFU/+X3Z3nM4TF9g4/D2E1dLH5W/KHhX6ErFbhZVUcRvWh8R
+mT3qNkxo+0hx+t5gwZR6TUSIUulew59oyKfDSr6yRvUj0RhdI1BvJsm74GlubUpw
+fQerDO3rspJBANa5nCTDRkubmDR0Ag==
+=7FcH
+-----END PGP SIGNATURE-----
+
+--/ai5QVhWnEmXwiWy--
 
