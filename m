@@ -1,131 +1,149 @@
-Return-Path: <linux-kernel+bounces-202170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F248FC8AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:10:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EC08FC8BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21FDD1C20883
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:10:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6463D1F23984
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D3A19004E;
-	Wed,  5 Jun 2024 10:10:07 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32F919006E;
+	Wed,  5 Jun 2024 10:14:14 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CB31946CA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1997918FC6F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717582206; cv=none; b=N9DzyY7scB6JHmPuoyU6fejBYgjuchom8NZcOr8+zvlDBUBvLFQx4UvvxaMnTVb+t7+EshWJBVolGxOGmy+Zu5QHjS74NTUhWhWk9moA5Lzmch1I03nL0IEmDqAQr9On9ZNBIJgJYH65XMV90q9KkpghdSA/l7aW+sUI1ZEm30U=
+	t=1717582454; cv=none; b=r3Lr0esCbkKl23hcp+gH+lnlgnxOvFbXL4QFR0XYC7SemsBZ5k9WyiBtSkAOrPds+mSRr9t8srk7/mbCQx9PPcqwof804yYMS0tzaDNAxgaMxtQ+NUpG/RJSX9C2zbOrvg/bfaVIbeB8mLFQNZkPfssLdKZzyN42AFGFY5Gcv+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717582206; c=relaxed/simple;
-	bh=3ExLlaLSQ0sVOpTNVr+H4S8gegN+K4KWDZWR+pIud18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EImDNxo6J3tbjNuJxF5ONc7fC+PjBTu4OyRde33zgXPYwPcDVZqr1LtgFgtdRS+NqQsb1IHOvT+nDK8iKUVlLIFCh9fqx+4EqosaCmaRo5zoXd3Gb+QHcuN9SuQgJqsYt5JxaFYtincryV4pWQhw9XOv5VtJsyTT7eEWLvna4Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4VvN4x6jpPz1xsK9;
-	Wed,  5 Jun 2024 17:50:57 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 167121A0188;
-	Wed,  5 Jun 2024 17:52:18 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 5 Jun 2024 17:52:16 +0800
-Message-ID: <3f9f0ef1-7290-21df-ef01-dc56b34a0195@huawei.com>
-Date: Wed, 5 Jun 2024 17:52:16 +0800
+	s=arc-20240116; t=1717582454; c=relaxed/simple;
+	bh=NND9Bq19l6tIThaJCmjP0foh63weKcb1C19vc9ckFao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K5afU8sKuWA7mCU1QkqMlXIwpS/kXOxx/nR0MYefYjeyZp/ApH44bqgwDk5T9QV6HacvC7w6GdhVpeKxSkX0eZuD8xyBZ12JO0qGyFITmVsRhWezgMYaD/J5/hkDnxD+DneN8GeHtH/pXK7nutCdsM9/mmqQUvVAvUEjcqBo3JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VvMgT6qG2z9v7JM
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 17:32:21 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 286811404F5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 17:54:33 +0800 (CST)
+Received: from [10.81.200.103] (unknown [10.81.200.103])
+	by APP2 (Coremail) with SMTP id GxC2BwC3oyfKNWBmNTWTCQ--.2480S2;
+	Wed, 05 Jun 2024 10:54:32 +0100 (CET)
+Message-ID: <879ee1b3-46eb-40c8-9b2a-3f215e527f53@huaweicloud.com>
+Date: Wed, 5 Jun 2024 11:54:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v3 1/8] arm64/sysreg: Add definitions for immediate
- versions of MSR ALLINT
-To: Mark Brown <broonie@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <maz@kernel.org>, <oliver.upton@linux.dev>,
-	<james.morse@arm.com>, <suzuki.poulose@arm.com>, <yuzenghui@huawei.com>,
-	<tglx@linutronix.de>, <ardb@kernel.org>, <anshuman.khandual@arm.com>,
-	<miguel.luis@oracle.com>, <joey.gouly@arm.com>, <ryan.roberts@arm.com>,
-	<jeremy.linton@arm.com>, <ericchancf@google.com>,
-	<kristina.martsenko@arm.com>, <robh@kernel.org>,
-	<scott@os.amperecomputing.com>, <songshuaishuai@tinylab.org>,
-	<shijie@os.amperecomputing.com>, <akpm@linux-foundation.org>,
-	<bhe@redhat.com>, <horms@kernel.org>, <mhiramat@kernel.org>,
-	<rmk+kernel@armlinux.org.uk>, <shahuang@redhat.com>,
-	<takakura@valinux.co.jp>, <dianders@chromium.org>, <swboyd@chromium.org>,
-	<sumit.garg@linaro.org>, <frederic@kernel.org>, <reijiw@google.com>,
-	<akihiko.odaki@daynix.com>, <ruanjinjie@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>
-References: <20240415064758.3250209-1-liaochang1@huawei.com>
- <20240415064758.3250209-2-liaochang1@huawei.com>
- <ZjUKMWPknEhLYoK8@FVFF77S0Q05N> <Zjjz-tzLRC2nH51A@finisterre.sirena.org.uk>
- <cde4d448-dc9d-eaad-4a2d-a6d34bda4449@huawei.com>
- <ZjpALOdSgu-qhshR@finisterre.sirena.org.uk>
- <e632a9ed-7659-9336-6e7f-a43c4759a7a3@huawei.com>
- <9868a5ac-ae23-4481-afe6-ba3cd8dbfa47@sirena.org.uk>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <9868a5ac-ae23-4481-afe6-ba3cd8dbfa47@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 2/4] tools/memory-model: Define applicable tags on
+ operation in tools/...
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: paulmck@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+ will@kernel.org, peterz@infradead.org, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+ urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+ <20240604160409.498190-1-jonas.oberhauser@huaweicloud.com>
+ <Zl_oxj9-ypX0U2HZ@Boquns-Mac-mini.home>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <Zl_oxj9-ypX0U2HZ@Boquns-Mac-mini.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwC3oyfKNWBmNTWTCQ--.2480S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr17urWxtFyxArWrtryftFb_yoW8tF1Dpr
+	ykXayrKr9rtr1Sk397Xw1ruFW5Wa1rGFy5Jr9ag3s5Zryqgr1Iya1DWanxWF93JrWfJa1j
+	vw4jqFyDGa1UArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Hi, Mark
 
-在 2024/6/4 21:29, Mark Brown 写道:
-> On Mon, Jun 03, 2024 at 11:26:39AM +0800, Liao, Chang wrote:
+
+Am 6/5/2024 um 6:25 AM schrieb Boqun Feng:
+> On Tue, Jun 04, 2024 at 06:04:09PM +0200, Jonas Oberhauser wrote:
+>> Herd7 transforms reads, writes, and read-modify-writes by eliminating
+>> 'acquire tags from writes, 'release tags from reads, and 'acquire,
+>> 'release, and 'mb tags from failed read-modify-writes. We emulate this
+>> behavior by redefining Acquire, Release, and Mb sets in linux-kernel.bell
+>> to explicitly exclude those combinations.
+>>
+>> Herd7 furthermore adds 'noreturn tag to certain reads. Currently herd7
+>> does not allow specifying the 'noreturn tag manually, but such manual
+>> declaration (e.g., through a syntax __atomic_op{noreturn}) would add
+>> invalid 'noreturn tags to writes; in preparation, we already also exclude
+>> this combination.
+>>
+>> Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+>> ---
+>>   tools/memory-model/linux-kernel.bell | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+>> index dba6b5b6dee0..2f49993644ed 100644
+>> --- a/tools/memory-model/linux-kernel.bell
+>> +++ b/tools/memory-model/linux-kernel.bell
+>> @@ -36,6 +36,13 @@ enum Barriers = 'wmb (*smp_wmb*) ||
+>>   		'after-srcu-read-unlock (*smp_mb__after_srcu_read_unlock*)
+>>   instructions F[Barriers]
+>>   
+>> +(* Remove impossible tags, such as Acquire on a store or failed RMW *)
 > 
->> Mark, Is your concern is that the series of pstate related macro name in
->> sysregs.h are lack of self-explanatory nature, which make it diffuclt to
->> understand their functionality and purpose? If so, I daft some alternative
->> macro names in the code below, looking forward to your feedback, or if you
->> have any proposal for making these helpers discoverable.
+> This comment needs a bit help, "failed RMW"s still exist, they just
+> don't provide ordering. How about:
+
+
+Oh, I see how the comment can be misread. A smaller fix would be
+
+"Acquire on a store or on a failed RMW"
+
+but I actually like your longer explanation better, so I think I'll go 
+with that.
+
 > 
-> ...
+> (*
+>   * Filter out syntactic annotations that don't provide the corresponding
+>   * semantic ordering, such as Acquire on a store or Mb on a failed RMW.
+>   *)
 > 
->> -#define SET_PSTATE(x, r)               __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
->> +#define MSR_PSTATE_ENCODE(x, r)                __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
+> ?
 > 
-> Possibly, yes?  TBH I was thinking of a comment but that does have "MSR"
-> in it so might come up in greps.  Not sure what others would prefer.
+> Regards,
+> Boqun
+> 
+>> +let FailedRMW = RMW \ (domain(rmw) | range(rmw))
+>> +let Acquire = Acquire \ W \ FailedRMW
+>> +let Release = Release \ R \ FailedRMW
+>> +let Mb = Mb \ FailedRMW
+>> +let Noreturn = Noreturn \ W
+>> +
+>>   (* SRCU *)
+>>   enum SRCU = 'srcu-lock || 'srcu-unlock || 'sync-srcu
+>>   instructions SRCU[SRCU]
+>> -- 
+>> 2.34.1
+>>
 
-I am going to push revision v4 of the interrupt masking patchset, this revision
-involves several improvements based on feedback and further testing:
-
-- Addressed feedback comes form Mark Brown.
-
-- Enrich the commit messages of patch includes major changes to provide more
-  detailed explanations of the implemenations, purpose and potential result.
-  This aims to improve developer understanding and reviewing efficiency.
-
-- Revising the function names of logical interrupt masking to better reflect
-  their purpose.
-
-- Fixed bugs during local testing on platform with FEAT_NMI support.
-
-Additionally, i note you left a feedback as below.
-
->...I've started looking at this in the series. There are some subtleties here, and
->I don't think the helpers in this series are quite right as-is. I will try to
-get back to you next week with a description of those; it'll take a short while
-to write that up correctly and clearly...
-
-I appreciate your time and look forward your further feedback at your convenience.
-
-Thanks.
-
--- 
-BR
-Liao, Chang
 
