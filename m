@@ -1,107 +1,199 @@
-Return-Path: <linux-kernel+bounces-202916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B49A8FD2EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:27:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466B48FD2EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13F31F24503
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:27:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEC51C23025
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29086154BEF;
-	Wed,  5 Jun 2024 16:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B1A188CBE;
+	Wed,  5 Jun 2024 16:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/W7OJSq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7Nk+Agu"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF6015351A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84877801;
+	Wed,  5 Jun 2024 16:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717604872; cv=none; b=ahTaqAKQlcrGiCY13AnM7GuZfBkueCo+TwKTTbzQAqb/eCxyuXDAy/HIZgETSNFxzSILL497FHCl7+BzDANkm6ZQfiQd31iktZSK09bQiCMB2tdwPpcQJaRJpcnJXp71dHWjzvLd2VhXB4LOGaI6TPbnPmNvNRTXxdDLof/t/xM=
+	t=1717604848; cv=none; b=aORBT/ymjzwYYJngfcyYMTDWFkkMOzRw0jqnw87Ugqdkr9DKEHvkE0iaOcXIIVZB0tq9/ZrtbmQ3ktJgESt/o5CQDSOeziybI9wt3QdlKYufF7bTvyXHvFiMi0TILqKXMlXAoV18u95xKV1KsAIGXiywH7aEuoEE6ePxwvhanGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717604872; c=relaxed/simple;
-	bh=WDicw8rzDSRTNRCMmdH3Lin6iM8oFn63Wzr/O2sLyt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OrSDbJ4wDSpMGgaqgzyXH4mZVBGWnyzx51wnptLp3d51U3390UQA7BlOGteKSBPOn/D20lznCD71hk8bNgYDwdr8dRJoUFztpyl43B6fQfzl0xWKdfUpO/y8HvaHOn/qcRoH/Z5E8WUzmpcUNJGMw0bw9VJ4ZnMzD0K7fHGHcgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z/W7OJSq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717604870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WDicw8rzDSRTNRCMmdH3Lin6iM8oFn63Wzr/O2sLyt0=;
-	b=Z/W7OJSqXnuoiMxjKt/3wo39YoFulM9UoqAdwrpssXjiIy5LFo0gSxQa6GivYtXWEvh2c3
-	ah1bbmCivbEK1qi5w4zWA0sEoVMNMuO+r7nTE678Ofe3CadTpSGcSQ2L+70tA/zls0OTNH
-	RUch8tjTBzMs2h6C5bW2PN04DXg2NoQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-1-k_m2iCmHN9OQCeUFZNm0ew-1; Wed,
- 05 Jun 2024 12:27:48 -0400
-X-MC-Unique: k_m2iCmHN9OQCeUFZNm0ew-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D71931954236;
-	Wed,  5 Jun 2024 16:27:45 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.50])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6DF2119560A2;
-	Wed,  5 Jun 2024 16:27:41 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  5 Jun 2024 18:26:16 +0200 (CEST)
-Date: Wed, 5 Jun 2024 18:26:11 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-	Andy Lutomirski <luto@amacapital.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH 3/3] x86/fpu: Remove init_task FPU state dependencies,
- add debugging warning
-Message-ID: <20240605162610.GF25006@redhat.com>
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <20240605083557.2051480-4-mingo@kernel.org>
- <20240605141733.GC25006@redhat.com>
- <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
+	s=arc-20240116; t=1717604848; c=relaxed/simple;
+	bh=kEJJT7vPcgrPtfSwhgERL/7FGdm5mHT2kO+xtNLBeHM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=XRRotvWjVujOV4zStTJFT3MJGruPM6l8+hYPlga1yh5xf7L2abak4HKNupJ/9MpfJFXuPKGP3MgqaKxayvXhHZ65hgu6w4Y0Lc5ZD2RBw4c27xPv+EdxoynmPG4CimTPLq5DUEJWNRGk6taToSSNm2UY8ycM3Xob7fd1dCa2bqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7Nk+Agu; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f658800344so479985ad.0;
+        Wed, 05 Jun 2024 09:27:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717604847; x=1718209647; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dlqYX7CZRXcik8grmUTE6vS1byeP3eeXqYE/oo9qiFo=;
+        b=D7Nk+Aguz6qIIPjud+opJpLo0Nt1kqfr1O28wEVnwCsJ57b26fVk61Mkkwg1FpWCx8
+         IGqJK0P60uKw043dH/C8I03wQ0SkZIXGGZKLd2svjNQ6WVLlGwia/nlGwfFopJd8HDDP
+         Woz0YpO7Oz5FI9B/s/mEf+K6wVPYxdCuByUr19nOnWEepFje8I9uTbf10UgFHeZcDP29
+         AyvU4HBkZgskeeaAO1uvM+6ighHUA+HXWgOP8U9FUMwJ/JlV/BNTmpmy8nhaFrLVeZbo
+         ZxPY3n+g41T/ZnYfGLwzz/N5S51bi+3Z/Bi4c8OXsSc7389XXdG8LfD5hF8K0nNpu2FF
+         op+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717604847; x=1718209647;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dlqYX7CZRXcik8grmUTE6vS1byeP3eeXqYE/oo9qiFo=;
+        b=i7OFT66B7PEFVB7MeW52qAFdIfjiCq/PFO5gOtWyGfsh49fDR6hioYCE9u8yumdFRM
+         K6In+dL9+8JmybzcHAyFwH55q4HR1t7zUuZPmCL7V4Jo/gRgYfi/UwIR69fiSW8frxR3
+         xaNf5kuE4wsKqBvPbvgS/joRFe0pOj+N0woQtQmFszlFEInmGdqTRm5w+fGq2MqCNb6x
+         w08C28BGepcAz3JT7CJOe0Y3tQayzaP3LzXLRuJq8sQpCTeipW6Nrx5BjIAy8E9SEklf
+         6REb/TI3G9Qg/pS8h+o/dofQXNGBApPMhrjFoJydCPGGVU8Iyk0YADB///hmrRxxdy1F
+         tHGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+/gcFlWABvd7n+x4n7x71wSUP7CD1nbxlbRV9QDU2+VeBWeoz7FfoHuYiNjmcipKDwpfY9HrrqycZ5GOffLgbztfcBARtxUm0AXBMbQ5xAdxhJye1N4J7OPIewd29Z6SDg6gEhVc40VW8L0dIWIOTPP6VD/TcbhWu1IS5tXESjg==
+X-Gm-Message-State: AOJu0YxDRDeFbpdAj2nV3NOH4wxY+WZiMOEnZLovajbHFOS4aK9Xiiu7
+	sCoUFiC/CgEdtbF4MNJBR9/x60iLlEcWPN2OsainY+9P/e39Oki05uP3rKgwJdW/vJZDbMkRaRr
+	iMgyuUJmL08R2ER3Lt+vTLNQCvVc4Ku8/
+X-Google-Smtp-Source: AGHT+IFm0S5xOg68BNRVacZTRtX3OMveoYFGLEWlIQvH25K+sH/ZnawuSmmeabnbH099N3GydWsGDSWHpu0ibWhLLZA=
+X-Received: by 2002:a17:90a:f6c8:b0:2c1:a9a2:256e with SMTP id
+ 98e67ed59e1d1-2c27db4faddmr3612067a91.31.1717604846834; Wed, 05 Jun 2024
+ 09:27:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-2-andrii@kernel.org>
+ <Zl-38XrUw9entlFR@casper.infradead.org> <uevtozlryyqw5vj2duuzowupknfynmreruiw6m7bcxryjppqpm@7g766emooxfh>
+ <CAEf4BzZFpidjJzRMWboZYY03U8M22Yo1sqXconi36V11XA-ZfA@mail.gmail.com> <CAEf4BzYDhtkYt=qn2YgrnRkZ0tpa3EPAiCUcBkdUa-9DKN22dQ@mail.gmail.com>
+In-Reply-To: <CAEf4BzYDhtkYt=qn2YgrnRkZ0tpa3EPAiCUcBkdUa-9DKN22dQ@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 5 Jun 2024 09:27:14 -0700
+Message-ID: <CAEf4Bzbzj55LfgTom9KiM1Xe8pfXvpWBd6ETjXQCh7M===G5aw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/9] mm: add find_vma()-like API but RCU protected and
+ taking VMA lock
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, surenb@google.com, rppt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/05, Linus Torvalds wrote:
+On Wed, Jun 5, 2024 at 9:24=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> On Wed, 5 Jun 2024 at 07:19, Oleg Nesterov <oleg@redhat.com> wrote:
+> On Wed, Jun 5, 2024 at 9:13=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
 > >
-> > On 06/05, Ingo Molnar wrote:
+> > On Wed, Jun 5, 2024 at 6:33=E2=80=AFAM Liam R. Howlett <Liam.Howlett@or=
+acle.com> wrote:
 > > >
-> > > But the init task isn't supposed to be using the FPU in any case,
+> > > * Matthew Wilcox <willy@infradead.org> [240604 20:57]:
+> > > > On Tue, Jun 04, 2024 at 05:24:46PM -0700, Andrii Nakryiko wrote:
+> > > > > +/*
+> > > > > + * find_and_lock_vma_rcu() - Find and lock the VMA for a given a=
+ddress, or the
+> > > > > + * next VMA. Search is done under RCU protection, without taking=
+ or assuming
+> > > > > + * mmap_lock. Returned VMA is guaranteed to be stable and not is=
+olated.
+> > > >
+> > > > You know this is supposed to be the _short_ description, right?
+> > > > Three lines is way too long.  The full description goes between the
+> > > > arguments and the Return: line.
 > >
-> > Afaics, the same is true for any PF_KTHREAD/USER_WORKER thread?
+> > Sure, I'll adjust.
+> >
+> > > >
+> > > > > + * @mm: The mm_struct to check
+> > > > > + * @addr: The address
+> > > > > + *
+> > > > > + * Returns: The VMA associated with addr, or the next VMA.
+> > > > > + * May return %NULL in the case of no VMA at addr or above.
+> > > > > + * If the VMA is being modified and can't be locked, -EBUSY is r=
+eturned.
+> > > > > + */
+> > > > > +struct vm_area_struct *find_and_lock_vma_rcu(struct mm_struct *m=
+m,
+> > > > > +                                        unsigned long address)
+> > > > > +{
+> > > > > +   MA_STATE(mas, &mm->mm_mt, address, address);
+> > > > > +   struct vm_area_struct *vma;
+> > > > > +   int err;
+> > > > > +
+> > > > > +   rcu_read_lock();
+> > > > > +retry:
+> > > > > +   vma =3D mas_find(&mas, ULONG_MAX);
+> > > > > +   if (!vma) {
+> > > > > +           err =3D 0; /* no VMA, return NULL */
+> > > > > +           goto inval;
+> > > > > +   }
+> > > > > +
+> > > > > +   if (!vma_start_read(vma)) {
+> > > > > +           err =3D -EBUSY;
+> > > > > +           goto inval;
+> > > > > +   }
+> > > > > +
+> > > > > +   /*
+> > > > > +    * Check since vm_start/vm_end might change before we lock th=
+e VMA.
+> > > > > +    * Note, unlike lock_vma_under_rcu() we are searching for VMA=
+ covering
+> > > > > +    * address or the next one, so we only make sure VMA wasn't u=
+pdated to
+> > > > > +    * end before the address.
+> > > > > +    */
+> > > > > +   if (unlikely(vma->vm_end <=3D address)) {
+> > > > > +           err =3D -EBUSY;
+> > > > > +           goto inval_end_read;
+> > > > > +   }
+> > > > > +
+> > > > > +   /* Check if the VMA got isolated after we found it */
+> > > > > +   if (vma->detached) {
+> > > > > +           vma_end_read(vma);
+> > > > > +           count_vm_vma_lock_event(VMA_LOCK_MISS);
+> > > > > +           /* The area was replaced with another one */
+> > > >
+> > > > Surely you need to mas_reset() before you goto retry?
+> > >
+> > > Probably more than that.  We've found and may have adjusted the
+> > > index/last; we should reconfigure the maple state.  You should probab=
+ly
+> > > use mas_set(), which will reset the maple state and set the index and
+> > > long to address.
+> >
+> > Yep, makes sense, thanks. As for the `unlikely(vma->vm_end <=3D
+> > address)` case, I presume we want to do the same, right? Basically, on
+> > each retry start from the `address` unconditionally, no matter what's
+> > the reason for retry.
 >
-> I don't think so. We have various users of kernel_fpu_begin()/end()
-> that are very much about things like crypto and RAID xor memory copies
-> etc that will be used by kernel worker threads.
+> ah, never mind, we don't retry in that situation, I'll just put
+> `mas_set(&mas, address);` right before `goto retry;`. Unless we should
+> actually retry in the case when VMA got moved before the requested
+> address, not sure, let me know what you think. Presumably retrying
+> will allow us to get the correct VMA without the need to fall back to
+> mmap_lock?
 
-Yes, but kernel_fpu_begin() never does save_fpregs_to_fpstate() if
-current->flags & PF_KTHREAD ?
+sorry, one more question as I look some more around this (unfamiliar
+to me) piece of code. I see that lock_vma_under_rcu counts
+VMA_LOCK_MISS on retry, but I see that there is actually a
+VMA_LOCK_RETRY stat as well. Any reason it's a MISS instead of RETRY?
+Should I use MISS as well, or actually count a RETRY?
 
-Oleg.
-
+>
+> >
+> > >
+> > >
+> > > >
+> > > > > +           goto retry;
+> > > > > +   }
+> > > >
 
