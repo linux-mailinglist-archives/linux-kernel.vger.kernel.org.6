@@ -1,154 +1,190 @@
-Return-Path: <linux-kernel+bounces-202989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25ACA8FD455
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:49:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7B58FD458
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FF92872DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:49:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C24D3B23E6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791DA155A4E;
-	Wed,  5 Jun 2024 17:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92F818FDB5;
+	Wed,  5 Jun 2024 17:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rm4Xt4VM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cjgV9GMg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EDF19D8BE;
-	Wed,  5 Jun 2024 17:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3C0188CAA;
+	Wed,  5 Jun 2024 17:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717609768; cv=none; b=AT6ecMRWBKK4hDXKg921IOmjR76gZV6ljGLd4Atuk818+AGYfQ0wC01jsCDTekmdSF85XaiHjPHH1sutggKTMP8WTBfPlMQbwivFI4Zz90SQCCsfsJ3zdrmTEaIb92bSUv+ZHbVmB4oDT4FJtd0fbmDP/Fd2hCKEDuRx4L1GR7E=
+	t=1717609772; cv=none; b=gaPllh5kZbJ70w9fMqVadp5T1X9zp8zozhTXNNxrcP8ftBaShH89lu1kq1rygydepBjqwbMt2VXNExoXn7rlYOeYzc3ZhmDGl/GmB7nCtQ3jgSbq68Wv8ewl4NYiS6KgjavUc+MUul0F/qFBmDtsjGwzfgp/SOroidTR177VRao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717609768; c=relaxed/simple;
-	bh=FwUaowYM9CbMgAtVVYcQAHzZ74XJ4DqCZ2hH6TrRPps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMpYVeNn6eZD1h0OZXK9a4c+Dx+4ZyV8jwpQYvD20EOcYHEcgRcmqj1ogPWfbeYcxYY05+kz0aZ7Dzt6evo7ZfUAZ9pKlqYvL+vM7XgmZT2MqewBHyUgG+8vG+uS+KG8nUaZgrQqT7BS7rBnA+41FyRC/hX6wIdOT9IUhwtEjD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rm4Xt4VM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B24C2BD11;
-	Wed,  5 Jun 2024 17:49:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717609768;
-	bh=FwUaowYM9CbMgAtVVYcQAHzZ74XJ4DqCZ2hH6TrRPps=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rm4Xt4VMCa0Bdg1NIpHXW5I3D+Rfzouxtpn5mhNpaNTLNw1F6TEZNlQtyvqkPDLgV
-	 wkUFUnCjuma2YxYaid2dXDDbKEQsOdjZeZRThBRD64FI0onL0YFQd386VJyU7OffVu
-	 7MJdEbqLH62CUuHtYol2hXwmf/+5YMMmlH6Rl4UKF4xI0lTpMSAc4pDAEc+jVCjZMq
-	 G+LKc2JRIEsgvCcc6I4g3tLCGtuiEXWBePHFfUh8K+PNN1mzKWc/0qQWKbEMaTZN/D
-	 F8PNNrD6WolqKuGuq83d4ZqDbajVYLZq7AK5VM1HwEPTROT0EjbiPmPyLMFI0uWL+a
-	 ekNTSVMJc04fQ==
-Date: Wed, 5 Jun 2024 18:49:20 +0100
-From: Simon Horman <horms@kernel.org>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
-	Abhishek Chauhan <quic_abchauha@quicinc.com>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 08/10] net: pcs: xpcs: Add fwnode-based
- descriptor creation method
-Message-ID: <20240605174920.GR791188@kernel.org>
-References: <20240602143636.5839-1-fancer.lancer@gmail.com>
- <20240602143636.5839-9-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1717609772; c=relaxed/simple;
+	bh=6+pLjpWz258QiGPov/ARDn7yccoD9CoZe6XpvSTOwX8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=QVQZQXqq7d5r4kikVNPdseEcUyYB2Iev89hY2iSaDJ7S6qaRGNZZvrEXu+JSP5972Bt5W/gEmygiz4Jlf1HhVB7OSKIWH5obKzhR1PBMBAK93I3VJYA6cxyFxixAEzxyIR8ZkuCeu6cbb7qWCUfvQagtWPx0s61JbR6r5HQ6B1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cjgV9GMg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1MEV031665;
+	Wed, 5 Jun 2024 17:49:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=AXhQBKojD6PKBV7uF/cgH/
+	f6O4FOFdKrLiFVfvtSdWk=; b=cjgV9GMgaquBHhkOl2Aq4x+AOkF8HhzmkujxwE
+	1hJ5sIX/4J5c5OKUS9DQHpjH8pytnRuYYZS+K2fH2lpvRcNgxd0m5tF38oQgiPwM
+	TmQJ/1IQEZ4D+4rJphZfOHuN/Pr34enTrlWdv5ZwoJ/Xb8hN9tX7hlJ5ejjFxCTi
+	Hl95dimhSo+/UsOUHKjM/XALWI9P3BZItDKqrqWxYNe1456W7zVSu6uJvOtgQ5HC
+	xGAnqPOcfX50iv9JpWHSjqwuZXxgdCuGffavJA01b4FH2jYxeXtqKapt59vmpZ2T
+	jR6d/571tBjWDRRqQjmZ6mx6k7eAF+g7JYVVUkCWyrYl1pNg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjk899jdx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 17:49:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455HnO03001113
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 17:49:24 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
+ 10:49:24 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 5 Jun 2024 10:49:24 -0700
+Subject: [PATCH] dax: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240602143636.5839-9-fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240605-md-drivers-dax-v1-1-3d448f3368b4@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIACOlYGYC/x3MQQ6CQAxA0auQrm0ygwLRqxgXhVZoAqNpkUxCu
+ Lujy7f4fwcXU3G4VTuYbOr6SgXxVMEwURoFlYuhDvUltKHBhZFNNzFHpowcqYuRr3xuBEr0Nnl
+ q/g/vj+KeXLA3SsP028yaPhkX8lUMjuMLfgbFuX8AAAA=
+To: Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma
+	<vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>
+CC: <nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fJoPla1dG5T-u7kKaXEMNt9N01JInV7j
+X-Proofpoint-ORIG-GUID: fJoPla1dG5T-u7kKaXEMNt9N01JInV7j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
+ adultscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
+ suspectscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406050134
 
-On Sun, Jun 02, 2024 at 05:36:22PM +0300, Serge Semin wrote:
-> It's now possible to have the DW XPCS device defined as a standard
-> platform device for instance in the platform DT-file. Although that
-> functionality is useless unless there is a way to have the device found by
-> the client drivers (STMMAC/DW *MAC, NXP SJA1105 Eth Switch, etc). Provide
-> such ability by means of the xpcs_create_fwnode() method. It needs to be
-> called with the device DW XPCS fwnode instance passed. That node will be
-> then used to find the MDIO-device instance in order to create the DW XPCS
-> descriptor.
-> 
-> Note the method semantics and name is similar to what has been recently
-> introduced in the Lynx PCS driver.
-> 
-> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/hmem/dax_hmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/device_dax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/kmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/dax_pmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/dax_cxl.o
 
-Hi Serge,
+Add all missing invocations of the MODULE_DESCRIPTION() macro.
 
-Some minor nits from my side flagged by kernel-doc -none -Wall
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/dax/cxl.c       | 1 +
+ drivers/dax/device.c    | 1 +
+ drivers/dax/hmem/hmem.c | 1 +
+ drivers/dax/kmem.c      | 1 +
+ drivers/dax/pmem.c      | 1 +
+ drivers/dax/super.c     | 1 +
+ 6 files changed, 6 insertions(+)
 
-...
+diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
+index c696837ab23c..89abcfe902fc 100644
+--- a/drivers/dax/cxl.c
++++ b/drivers/dax/cxl.c
+@@ -43,6 +43,7 @@ static struct cxl_driver cxl_dax_region_driver = {
+ 
+ module_cxl_driver(cxl_dax_region_driver);
+ MODULE_ALIAS_CXL(CXL_DEVICE_DAX_REGION);
++MODULE_DESCRIPTION("CXL DAX: direct access to CXL RAM regions");
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Intel Corporation");
+ MODULE_IMPORT_NS(CXL);
+diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+index eb61598247a9..0ad27bce0d26 100644
+--- a/drivers/dax/device.c
++++ b/drivers/dax/device.c
+@@ -482,6 +482,7 @@ static void __exit dax_exit(void)
+ }
+ 
+ MODULE_AUTHOR("Intel Corporation");
++MODULE_DESCRIPTION("Device DAX: direct access mapping device");
+ MODULE_LICENSE("GPL v2");
+ module_init(dax_init);
+ module_exit(dax_exit);
+diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
+index b9da69f92697..5e7c53f18491 100644
+--- a/drivers/dax/hmem/hmem.c
++++ b/drivers/dax/hmem/hmem.c
+@@ -168,5 +168,6 @@ MODULE_SOFTDEP("pre: cxl_acpi");
+ 
+ MODULE_ALIAS("platform:hmem*");
+ MODULE_ALIAS("platform:hmem_platform*");
++MODULE_DESCRIPTION("HMEM DAX: direct access to 'specific purpose' memory");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Intel Corporation");
+diff --git a/drivers/dax/kmem.c b/drivers/dax/kmem.c
+index 4fe9d040e375..e97d47f42ee2 100644
+--- a/drivers/dax/kmem.c
++++ b/drivers/dax/kmem.c
+@@ -299,6 +299,7 @@ static void __exit dax_kmem_exit(void)
+ }
+ 
+ MODULE_AUTHOR("Intel Corporation");
++MODULE_DESCRIPTION("KMEM DAX: map dax-devices as System-RAM");
+ MODULE_LICENSE("GPL v2");
+ module_init(dax_kmem_init);
+ module_exit(dax_kmem_exit);
+diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
+index f3c6c67b8412..c8ebf4e281f2 100644
+--- a/drivers/dax/pmem.c
++++ b/drivers/dax/pmem.c
+@@ -94,6 +94,7 @@ static void __exit dax_pmem_exit(void)
+ }
+ module_exit(dax_pmem_exit);
+ 
++MODULE_DESCRIPTION("PMEM DAX: direct access to persistent memory");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Intel Corporation");
+ MODULE_ALIAS_ND_DEVICE(ND_DEVICE_DAX_PMEM);
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index aca71d7fccc1..e16d1d40d773 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -606,6 +606,7 @@ static void __exit dax_core_exit(void)
+ }
+ 
+ MODULE_AUTHOR("Intel Corporation");
++MODULE_DESCRIPTION("DAX: direct access to differentiated memory");
+ MODULE_LICENSE("GPL v2");
+ subsys_initcall(dax_core_init);
+ module_exit(dax_core_exit);
 
-> diff --git a/drivers/net/pcs/pcs-xpcs.c b/drivers/net/pcs/pcs-xpcs.c
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240605-md-drivers-dax-d1a711d9d35e
 
-...
-
-> @@ -1505,6 +1507,16 @@ static struct dw_xpcs *xpcs_create(struct mdio_device *mdiodev,
->  	return ERR_PTR(ret);
->  }
->  
-> +/**
-> + * xpcs_create_mdiodev() - create a DW xPCS instance with the MDIO @addr
-> + * @bus: pointer to the MDIO-bus descriptor for the device to be looked at
-> + * @addr: device MDIO-bus ID
-> + * @requested PHY interface
-
-An entry for @interface should go here.
-
-> + *
-> + * If successful, returns a pointer to the DW XPCS handle. Otherwise returns
-> + * -ENODEV if device couldn't be found on the bus, other negative errno related
-> + * to the data allocation and MDIO-bus communications.
-
-Please consider including this information as a Return: section of the
-Kernel doc. Likewise for xpcs_create_fwnode().
-
-> + */
->  struct dw_xpcs *xpcs_create_mdiodev(struct mii_bus *bus, int addr,
->  				    phy_interface_t interface)
->  {
-> @@ -1529,6 +1541,44 @@ struct dw_xpcs *xpcs_create_mdiodev(struct mii_bus *bus, int addr,
->  }
->  EXPORT_SYMBOL_GPL(xpcs_create_mdiodev);
->  
-> +/**
-> + * xpcs_create_fwnode() - Create a DW xPCS instance from @fwnode
-> + * @node: fwnode handle poining to the DW XPCS device
-
-s/@node/@fwnode/
-
-> + * @interface: requested PHY interface
-> + *
-> + * If successful, returns a pointer to the DW XPCS handle. Otherwise returns
-> + * -ENODEV if the fwnode is marked unavailable or device couldn't be found on
-> + * the bus, -EPROBE_DEFER if the respective MDIO-device instance couldn't be
-> + * found, other negative errno related to the data allocations and MDIO-bus
-> + * communications.
-> + */
-> +struct dw_xpcs *xpcs_create_fwnode(struct fwnode_handle *fwnode,
-> +				   phy_interface_t interface)
-
-...
 
