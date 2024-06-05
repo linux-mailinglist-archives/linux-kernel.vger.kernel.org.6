@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-202599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53FBB8FCE7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918CB8FCE81
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0419F28B332
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4645F1F29BCB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B061BA89F;
-	Wed,  5 Jun 2024 12:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RejSWuMT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8171BE250;
+	Wed,  5 Jun 2024 12:24:50 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AE719AD92;
-	Wed,  5 Jun 2024 12:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338E119ADA1;
+	Wed,  5 Jun 2024 12:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590281; cv=none; b=ZyOW6BORxqRCbJircAjMMMD+ZM/fv7MU3Xh2Qr8L9POsa34kDSMCpS7G58pBzHOFe7/uHeljpkbUDtNqdEl/D46hUjI26IxSiz+fYYdnOdzwMBslgWT2kgq4CbzreBQ1CPJZZEqXZx6ZG0aukLLmR/EiP+QaOpbwtNIsEqAY/VU=
+	t=1717590290; cv=none; b=LgBY3L4xkkHXHXGDvZjkWdTP9IiRoBrJ1jq89wXPIyP6WwxglwBsJGI9MqgPICE2d5kz5HRh6ZPte6A+d/snSCZ+0Af89YHKIZYOcblF4a7Rp/jkEarqRnViki6P6KpgxTC9OTLXChmiWraxz02QqDW/Lb9KWNMV8g2nD0FLDRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590281; c=relaxed/simple;
-	bh=nGTFRil33Cf7booPAwWDBm5uj0Ablwum3J22FiGthRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cykCUg1FSQ0Aan+XsZEVNnWCf5v+3hD6lj6clslxSGKpdKScfo1J6tkM+d4Rm7vbGrnTmlBXh7npXU2+60JtiNQw/2MHFNo3Bi4kvEXm4P0WjmbxGbZvYusxxZVTWdf05LkEEpk0JLNkFVng4Xjddzz09khsmlvrJUcjx7VxOmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RejSWuMT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED176C3277B;
-	Wed,  5 Jun 2024 12:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717590281;
-	bh=nGTFRil33Cf7booPAwWDBm5uj0Ablwum3J22FiGthRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RejSWuMT9WnUO7WLChIm6whFz9uS1iD1LLLju+n/vwAuvlzEmMtHcYhIgSCFRV0Ra
-	 ccBNdi0Yg7hoI9t+55l/W2CUe5DEEDPhYP0MABEfcSxHFnT4wG0ecAU1QG+zNWYlrL
-	 qznLhW3Azkp4ri2VAwkPxhyY0ArvF2ZJv//o+ls+BxupRN4ki06hXpQhr1m6om5tUH
-	 sd24EE2ZcNONIy3DeOteDQwm/Mz0pgVAbNXeGNMAyJBos7ESNMBILxTSlcK7kZCJgY
-	 D8oE/ZMDrmmbd7PNZysY3vKcGgb7dL7iJgU4UJiyYixp0Fpp9mcn/r8g4gfKxXlATA
-	 SU2WenzpdeMSA==
-Date: Wed, 5 Jun 2024 13:24:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] spi: Add SPI mode bit for MOSI idle state
- configuration
-Message-ID: <0a716b10-0ae0-425f-919a-ea5d8b7975b6@sirena.org.uk>
-References: <cover.1717539384.git.marcelo.schmitt@analog.com>
- <e1d5d57f7a7481c84f64a764f9898122e278739b.1717539384.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1717590290; c=relaxed/simple;
+	bh=ZUBf0Qso++Uml2eEZlT+D+ZtGtQbCL6+ru7MeKUTeog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaExCOlKq7tMP+jTdHBAoTY61N/JLwdEfbadJP0ak0L57QcjfOiiZLWz03I0b2i5mb+LSb3JHpThuQ161664OZpbXRhbwpV5m/GnrumftgKNdVAd+JmM1jIownrjDCWRlPI5kYlNFaK9PZmjjy+l3kRGd5p+CnRRog2kw5eqg3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-627ebbefd85so72875977b3.3;
+        Wed, 05 Jun 2024 05:24:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717590287; x=1718195087;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WTblLgC54KX1wQAlWGzOf+gGcZX6SGgOiFwTbhFSnj8=;
+        b=X5VHONC1EONvIHKcWhto5bEECdVkZsXRH80teH+9I9kwD+4V/cAS1xJKh6K4AeND8u
+         +09HvSj18GKKhavnU8MX2oAm1B6jk/hRliFRAyp1l6AvGck9FzDYf+Iyw9tvATSJyrlS
+         RuhVBaIn6dbMqO1UCLcSRu8PHRgIhkzliFEYZ9h8gGvIz40y7V/un4gKiLORislygXw/
+         M/C+z83GhYanCPJdP/KK6mDt5ldtgQfwN4mGcoTZBnNxu9T6dEMIOvKsY9yitr62erv+
+         t0S6bHECIrBc/7oAN7ipYs7Llzbv7wNESYjSRROplAa78T41UFTY4zOqOaZZVMadHU+C
+         ccQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPNRU4R4XLR8dfLf1tniWDhgbw1O6ywYfrk/gItlRxIWEvMy4Wt9+0f3R2pZRlMU2dlz/aBg0xlVhldUw+oeD2ftIpUdJpFhdlM6gwwQS2m96dmM9o0LBeAZSacXZtpqxCxeK59ye2xPJhgXtz5WTiPM18d0C+/2FhICb//HNV3fkp8rbDtRZ8mFNkmpssCezFQFqtBaqBtuq1U+8rR1EFx4GGDNKw3Q==
+X-Gm-Message-State: AOJu0YyWZNXsZiPiLEsuRLQdeH8n+4TS4ZMXl2TzIYERQQoeSQK4rO8H
+	aem4prSmZXUfczEbIgsfn21vwF/0tTFfGUlIo+ArQjk/UalSJqruitmRWnQF
+X-Google-Smtp-Source: AGHT+IHAV8MUdCA1ftWZNgpIenV8v4ZQPVQmg50cockJSx7Jz3FjawLcz5yKUBLxdCV93bPACzb2FA==
+X-Received: by 2002:a81:ad5f:0:b0:61b:349c:811 with SMTP id 00721157ae682-62cbb4b1e64mr22294767b3.10.1717590286850;
+        Wed, 05 Jun 2024 05:24:46 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765e6405sm22019167b3.44.2024.06.05.05.24.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 05:24:46 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfa5b9274feso7331745276.2;
+        Wed, 05 Jun 2024 05:24:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXOqeB9TO6rY1K2/Im48nrTIglBiOEC/vdvO7RS46tTGUtiS92ELVb5cwjRLXjhCSghOj+dAsbqKxP16fj3i5a80hWdSmiGVyjHC/5kfuaKl9murelbKaSFldQYOxVw140MCPe+NSp+O5OaacDVzreNS8BMmEH3UsCCL2EqktwX+hE8G5H0a8c7M01vB2xA2PSm66YXbSQjhq7jGota1hEqKd6bClU+OA==
+X-Received: by 2002:a25:dfc5:0:b0:dfa:c607:1b6a with SMTP id
+ 3f1490d57ef6-dfacac75c1amr2175013276.31.1717590286071; Wed, 05 Jun 2024
+ 05:24:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/ai5QVhWnEmXwiWy"
-Content-Disposition: inline
-In-Reply-To: <e1d5d57f7a7481c84f64a764f9898122e278739b.1717539384.git.marcelo.schmitt@analog.com>
-X-Cookie: Simulated picture.
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240530173857.164073-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240530173857.164073-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jun 2024 14:24:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWrD63j_6Wig+jUM3rxJNrxicWWKWvnyYQXQ-5QZCXCUg@mail.gmail.com>
+Message-ID: <CAMuHMdWrD63j_6Wig+jUM3rxJNrxicWWKWvnyYQXQ-5QZCXCUg@mail.gmail.com>
+Subject: Re: [PATCH v3 13/15] pinctrl: renesas: pinctrl-rzg2l: Add support for
+ custom parameters
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, May 30, 2024 at 7:42=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> In preparation for passing custom params for RZ/V2H(P) SoC assign the
+> custom params that is being passed via struct rzg2l_pinctrl_data.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Added gaurd for custom_conf_items in struct rzg2l_pinctrl_data
 
---/ai5QVhWnEmXwiWy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Jun 04, 2024 at 07:41:47PM -0300, Marcelo Schmitt wrote:
+Gr{oetje,eeting}s,
 
-> The behavior of an SPI controller data output line (SDO or MOSI or COPI
-> (Controller Output Peripheral Input) for disambiguation) is not specified
-> when the controller is not clocking out data on SCLK edges. However, there
-> exist SPI peripherals that require specific COPI line state when data is
-> not being clocked out of the controller.
+                        Geert
 
-This is an optimisation for accelerating devices that need a specific
-value, really if these devices need a value they should send it.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
->  #define SPI_MOSI_IDLE_LOW	_BITUL(17)	/* leave mosi line low when idle */
-> +#define SPI_MOSI_IDLE_HIGH	_BITUL(18)	/* leave mosi line high when idle */
-
-Realistically we'll have a large set of drivers that are expecting the
-line to be held low so I'm not sure we need that option.  I would also
-expect to have an implementation of these options in the core which
-supplies buffers with the relevant data for use with controllers that
-don't have the feature (similar to how _MUST_TX and _MUST_RX are done).
-Even without that we'd need feature detection so that drivers that try
-to use this aren't just buggy when used with a controller that doesn't
-implement it, but once you're detecting you may as well just make things
-work.
-
---/ai5QVhWnEmXwiWy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZgWQEACgkQJNaLcl1U
-h9BzVwf/XOcTR4d09YYBn0fjTHLD5RTAADKdYqwP/EXFklqqszGee4v3Q6MrGCke
-1sfN9zIt5WxA7ETFjlpAF+jOjOxk/uaRgytTArEdFGh92N7fsIvcXpR+bKG6L5h5
-DoHrUaEMPoWSC0ZPtCtE/Mtp/CIfa8zwjHMfkmYRgh+YIL1XnA+0BZ8H7N5bEQ5e
-T4SLBCfgfqck2SlIDFU/+X3Z3nM4TF9g4/D2E1dLH5W/KHhX6ErFbhZVUcRvWh8R
-mT3qNkxo+0hx+t5gwZR6TUSIUulew59oyKfDSr6yRvUj0RhdI1BvJsm74GlubUpw
-fQerDO3rspJBANa5nCTDRkubmDR0Ag==
-=7FcH
------END PGP SIGNATURE-----
-
---/ai5QVhWnEmXwiWy--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
