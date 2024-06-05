@@ -1,114 +1,238 @@
-Return-Path: <linux-kernel+bounces-201623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8DC8FC0D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:34:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2878FC0D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECC4EB26BD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135801F23754
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F730BA50;
-	Wed,  5 Jun 2024 00:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F192F43;
+	Wed,  5 Jun 2024 00:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgXHt5SF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtO0gLp+"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349D3944D;
-	Wed,  5 Jun 2024 00:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89DB2F44;
+	Wed,  5 Jun 2024 00:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717547375; cv=none; b=O/E7Sf66mT1kzTF8Sx4rWpbGZVzos2wazU+gzNw7HJWS0tlX4BAFklFhoCC/VN0p4FhY5SLq4xnTl9nKIRcN5RKKAccE8seGOMrGyEloKEzX4L6HIVjU8j9wFhvpKhfXk54i1Tq9dIYO0W+dhfwrazxVZrv+pYTUC5KVw67+2VA=
+	t=1717547705; cv=none; b=NSAMKmoWgwYBTb9tEnf+kG0DKF/jSPanpgwqLhdDrTWFZdzCkPPhXiICiw6wu/+x12tF6LS6uIwhluKJPT+txSaQ0ODCb43tMXE/grwYM+85Del1q2RmqntmNzYVWADhH8sPqogN8n/DVBOA6EKKYqfqSmanT0SvDzjd1JmuFI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717547375; c=relaxed/simple;
-	bh=TY+ZzDSLxMX2DBv+6OsKEQ4VA6EI1NW1sVZ8duIxLtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pR0953QmxXQ1qqGImHVAigNm8TQq3LCPWebIzo6MJoy/YBQGYIriu2jSrenPkgZgBzBS9xbRc6EBTI7stIDRBdwdr3Vwi7djBBrMLVz0XtdGXq4MkUgJK4OWxzzdas5cgXj7AMholSeqYCc+N1NMKkyKDckDmmKH16lJ1C57nAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgXHt5SF; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717547373; x=1749083373;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TY+ZzDSLxMX2DBv+6OsKEQ4VA6EI1NW1sVZ8duIxLtU=;
-  b=QgXHt5SFu8NgDx9ro6RVl627Lx0E+UoWQv2LXZmoDgM0zeaxS3LiWLye
-   2rC+wagk/psUFDg0JFYZtRg7lLGBlvt/coCTZBNtQLtlIBD3v+odTMINk
-   cCjAfkuWqeIc5vUTj1AQX0YL/ZZEhOmXAKgfbXr2Tfs4LqxRS0abRDNb6
-   upfgVb0pSRzCrF5n/BJmHlGDiFV1PlSUmSQ3afhaTEg3Dom+Gf8AeSu6g
-   WcL3ODFPbnw+kBtdZWjreiGi6ROZI0SD11hgLs/csPgmg1jnppTmjwDwP
-   LGyU9PN83KUTkBxdcSS7uG+UqxgeEeTSCxAiu/nuUVzb7yIY48lYnXGfy
-   g==;
-X-CSE-ConnectionGUID: XnFhLHNrRtG+crDYZMaI3g==
-X-CSE-MsgGUID: J/HZ2jAzSmijeQ4bHcJhgw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="25534139"
-X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
-   d="scan'208";a="25534139"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 17:29:32 -0700
-X-CSE-ConnectionGUID: K5YfX7b3Qc+yFqaiCZCwPQ==
-X-CSE-MsgGUID: 9rNNaSDJSJ+98vPxqvq9lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
-   d="scan'208";a="60598970"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 04 Jun 2024 17:29:28 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sEeWs-0000iL-05;
-	Wed, 05 Jun 2024 00:29:26 +0000
-Date: Wed, 5 Jun 2024 08:29:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, aconole@redhat.com,
-	echaudro@redhat.com, horms@kernel.org, i.maximets@ovn.org,
-	dev@openvswitch.org, Adrian Moreno <amorenoz@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
-Message-ID: <202406050852.hDtfskO0-lkp@intel.com>
-References: <20240603185647.2310748-6-amorenoz@redhat.com>
+	s=arc-20240116; t=1717547705; c=relaxed/simple;
+	bh=nJ/nEYVjM0S0TNeLxm7CEnmYiaqvjtnz4Lb/QIwyR1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=asvI6tSa8crDQBt4ochD5VhTE+CQNfLwk0iQ/G6gigJi90wxq2DfuXKB7jRlNFg3y8DBzRmHWhZDqJyB61fkDHS1bIjQYZmz+jIfHav+j81RporIEh6DQSteFjIDnuUUC0HncOoqbZOV7nAux3hLIkHCzOxX8ESK++eFebiGB40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtO0gLp+; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70264bcb631so2558853b3a.2;
+        Tue, 04 Jun 2024 17:35:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717547702; x=1718152502; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aA1Z+/uHiESL1C6u0AjoSDSysxD/CrSzTPkHsaRkf14=;
+        b=FtO0gLp+7OFQGV3T1UkxXxNzGbca9I3DpKpCi+WcnXePhYj3/XogGcWCGM4IhRkfmx
+         1kNof7/s+CbtnFDWefODkOh/ZEKIeVtUe0/Qlj2g78uux9hMmhu2tfCnVopwGZ2Fpdcv
+         dRMlFNzrhASV0tq507nhSzr9yFouKmT9xE5nEFdGbGqa2RhNMjxdowZvD/Ma6YPvqmAJ
+         O54ZZVnHcip2WxUMmbG6DUrzyg4A4ZlSvIfcSZfbfmHsxpsvcP4OJ8L+4f4LUbT3b4in
+         fNHcQZ5c2dtBijMpvVM/L1gSSJyQWIcwOaHRTv2BH7hd5ql8+QKom9harCpsLxoZr7iY
+         hdBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717547702; x=1718152502;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aA1Z+/uHiESL1C6u0AjoSDSysxD/CrSzTPkHsaRkf14=;
+        b=muqtgOCyGXcpYmMT9gxU45OjZzfk00yyjyf0Ikro6TYuAVuPKmAiEO9JawKBowvOlA
+         Q6tQEcQQAPGBHUn8RYieCAGoYKDEm77F5Iw4nQm9RxwohMVGsXne3DQEceWHuY7lgdAz
+         LvzYmG/I3ObQWH6iXLNKFfjh/Z1lvimsxire3r7fRtmigCmHmeq1sGNmt3T0ANO1bh/9
+         1cc0Xkgy9SPmVtbhmXFS16uxGLWG10zdCP7BrvLKWUp64EI19g6G7SUSKknIgFLUCsNx
+         pcz8S3n3b2TctODUkj32V0Hbo3da5oMUeUbD4CZak3AeM714zqLb+2o3IqauU87cJVDL
+         EWIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCrIxMF+k6eaZHmHdZr6QXdFmI1EPp515niXQ4ivtMGfNJ6XB3yCfVkTgN6GnAtPcnfRbr6cvQirFxfBp+3505tXsVwugO2TPIfTfq1ajblpcN38dy0PGdDtXWu6IXvX3bzgwstFtoqbfiuATuyBbfFMBwkhfuWLKKiqAxVAM/xMiglA==
+X-Gm-Message-State: AOJu0YwAK164ZMqiNpnzO057I5iyoZPd5KhLeElIBRTc+pqX9YixZXdW
+	jBhxhwJBOWS/jA8ZgUJH4Fo8oW/KikaM/MsJhlWhzhAzGadUdws+
+X-Google-Smtp-Source: AGHT+IECMtofxgy9m+D2qICFDygqTx1znDOV3RpwpoCHC+OgquuNMQwqWRxprF0EbPSuxaU3FXhRcw==
+X-Received: by 2002:a05:6a20:3c90:b0:1b1:d2a5:c7b1 with SMTP id adf61e73a8af0-1b2b713c6d7mr1471794637.49.1717547701948;
+        Tue, 04 Jun 2024 17:35:01 -0700 (PDT)
+Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70262c7d382sm4557087b3a.106.2024.06.04.17.34.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 17:35:01 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: animeshagarwal28@gmail.com,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: dma: fsl,imx-dma: Convert to dtschema
+Date: Wed,  5 Jun 2024 06:03:49 +0530
+Message-ID: <20240605003356.46458-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603185647.2310748-6-amorenoz@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Adrian,
+Convert the fsl i.MX DMA controller bindings to DT schema. Remove old
+and deprecated properties #dma-channels and #dma-requests.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 
-[auto build test ERROR on net-next/main]
+---
+Changes in v3:
+- Changed maximum: 16 back to const: 16 as the device use exactly 16
+channels.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Adrian-Moreno/net-psample-add-user-cookie/20240604-030055
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240603185647.2310748-6-amorenoz%40redhat.com
-patch subject: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
-config: s390-randconfig-002-20240605 (https://download.01.org/0day-ci/archive/20240605/202406050852.hDtfskO0-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406050852.hDtfskO0-lkp@intel.com/reproduce)
+Changes in v2:
+- Added description for each interrupt item.
+- Changed dma-channels: const: 16 to maximum: 16.
+- Removed unnecessary '|' character.
+- Dropped unused label.
+---
+ .../devicetree/bindings/dma/fsl,imx-dma.yaml  | 56 +++++++++++++++++++
+ .../devicetree/bindings/dma/fsl-imx-dma.txt   | 50 -----------------
+ 2 files changed, 56 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+ delete mode 100644 Documentation/devicetree/bindings/dma/fsl-imx-dma.txt
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406050852.hDtfskO0-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   s390x-linux-ld: net/openvswitch/actions.o: in function `do_execute_actions':
->> actions.c:(.text+0x1d5c): undefined reference to `psample_sample_packet'
-
+diff --git a/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml b/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+new file mode 100644
+index 000000000000..902a11f65be2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/fsl,imx-dma.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale Direct Memory Access (DMA) Controller for i.MX
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++allOf:
++  - $ref: dma-controller.yaml#
++
++properties:
++  compatible:
++    enum:
++      - fsl,imx1-dma
++      - fsl,imx21-dma
++      - fsl,imx27-dma
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: DMA complete interrupt
++      - description: DMA Error interrupt
++    minItems: 1
++
++  "#dma-cells":
++    const: 1
++
++  dma-channels:
++    const: 16
++
++  dma-requests:
++    description: Number of DMA requests supported.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - "#dma-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    dma-controller@10001000 {
++      compatible = "fsl,imx27-dma";
++      reg = <0x10001000 0x1000>;
++      interrupts = <32 33>;
++      #dma-cells = <1>;
++      dma-channels = <16>;
++    };
+diff --git a/Documentation/devicetree/bindings/dma/fsl-imx-dma.txt b/Documentation/devicetree/bindings/dma/fsl-imx-dma.txt
+deleted file mode 100644
+index 1c9929d53727..000000000000
+--- a/Documentation/devicetree/bindings/dma/fsl-imx-dma.txt
++++ /dev/null
+@@ -1,50 +0,0 @@
+-* Freescale Direct Memory Access (DMA) Controller for i.MX
+-
+-This document will only describe differences to the generic DMA Controller and
+-DMA request bindings as described in dma/dma.txt .
+-
+-* DMA controller
+-
+-Required properties:
+-- compatible : Should be "fsl,<chip>-dma". chip can be imx1, imx21 or imx27
+-- reg : Should contain DMA registers location and length
+-- interrupts : First item should be DMA interrupt, second one is optional and
+-    should contain DMA Error interrupt
+-- #dma-cells : Has to be 1. imx-dma does not support anything else.
+-
+-Optional properties:
+-- dma-channels : Number of DMA channels supported. Should be 16.
+-- #dma-channels : deprecated
+-- dma-requests : Number of DMA requests supported.
+-- #dma-requests : deprecated
+-
+-Example:
+-
+-	dma: dma@10001000 {
+-		compatible = "fsl,imx27-dma";
+-		reg = <0x10001000 0x1000>;
+-		interrupts = <32 33>;
+-		#dma-cells = <1>;
+-		dma-channels = <16>;
+-	};
+-
+-
+-* DMA client
+-
+-Clients have to specify the DMA requests with phandles in a list.
+-
+-Required properties:
+-- dmas: List of one or more DMA request specifiers. One DMA request specifier
+-    consists of a phandle to the DMA controller followed by the integer
+-    specifying the request line.
+-- dma-names: List of string identifiers for the DMA requests. For the correct
+-    names, have a look at the specific client driver.
+-
+-Example:
+-
+-	sdhci1: sdhci@10013000 {
+-		...
+-		dmas = <&dma 7>;
+-		dma-names = "rx-tx";
+-		...
+-	};
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.1
+
 
