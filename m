@@ -1,164 +1,148 @@
-Return-Path: <linux-kernel+bounces-202091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307218FC7BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:25:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926598FC7B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A41B52808DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:25:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B4E2B2544E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC90A18FC6F;
-	Wed,  5 Jun 2024 09:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF383192B72;
+	Wed,  5 Jun 2024 09:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F/P1LCHk"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGVgWQRw"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E070200CD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A784190042;
+	Wed,  5 Jun 2024 09:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717579527; cv=none; b=EHvXPY3SHGneeHmmtoxbmZRaHRmRrbwf7eiE2rWXmBXhQICooV7M6/7kIhhtoMxIJq3oXd0n2OyJrm1rLYG3ONMicRTPVlDUeBnZRc9tqjhiWTqyC7i7XE9Dxrht95l6KmAqTijRk+MxLUg6w6UztjzjBezUgPYKWEK7Fk0dJwA=
+	t=1717579347; cv=none; b=PXOfXimfQNqQxmGYg1gYF4hVE8WSRuWgAzlE+T9ORMUECOi1CiR16zJ4X3b9Zq1+LCg8PU7W7vyZn++toz/pyvEEFyr3hZlT0+Pj5s6fo67/3acfwf+KC+2gJXbdomit8XRbZJ62S0yxu+MuARCMiHN+YejK4FbqrbAJI6lMICQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717579527; c=relaxed/simple;
-	bh=jDIMASg0bbSoa59nEMmcvY5ZQPMiGKrt21tWciEt5bQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GDHaROiNvGaBYNvy7x53BNc3nOBl0l71zWV0eYvRJ/ROFpnHnT3lNVvqv99b7JU1OJNLFz5yMwtsUzmtN/TGXDPQoHOBg0a030dYkAImtHfmjDjhACEqUIwqlS/2Q9KW0ywpvbm5s5PaDhvWUU4/vG+3Wo7YFCKFWro09iycYNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F/P1LCHk; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a6985ab58so1710291a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:25:24 -0700 (PDT)
+	s=arc-20240116; t=1717579347; c=relaxed/simple;
+	bh=7s6t1Mnf8SbzZuVJD1mxOTK+vEECHY45ZPjTcNlLR8o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ASsX+7zbAiYxm9rZc7tflTk7odvria6ElkwL7hEyNC3QYHVnm2xfoQmZw4ZBCSeGmgdTjsY5/Ep9KI4COp2iqMDhnWg8FJVx9iZVeZpbZXMam9Pk2hlanY2C2zv2N067p8MK/NtcJNRpLXtdd4/SyT9DB/HdimqRzKJ86++sySg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGVgWQRw; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52b94ad88cbso5593343e87.0;
+        Wed, 05 Jun 2024 02:22:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717579523; x=1718184323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EoJWhO/kN/nIDMel5oucInBCEkvezehjU4YBYZFp3Zg=;
-        b=F/P1LCHk0wJMEW2LFzaxw6AYQPJWyEM4G27vsBD/rcfdTLk90iSH7KjdPqZSAU0fRp
-         Ib0BQgQmywaOI9OzqmXD7W7gEW0d4Ypr5G7GAYFmpGim250B93t6QHCN4IzYyioxI41k
-         W0jKttazCsbX28q6S4Q6t2Fka1v5IZ61zAHWVLDQ4lYx1fj00OnEu/adafn2jCXY6B/N
-         4FuxGB7koP/iSyyXbKHrqCTUIh71flTAwXGLdL6Vue2mE65zaKhkjBrfPYYlxLS/ugqu
-         WAh9zkLjGP5zqofN8iWiKUt3s1psGgqfyRiTSsskucxOWtYoObfwGWc7uUr9DKjCI1Db
-         vJxg==
+        d=gmail.com; s=20230601; t=1717579344; x=1718184144; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=twGgOCLKhNQgk0EX+r3D2ZUgLeCpTZK046ZKeffQQRs=;
+        b=BGVgWQRw3EoUxdzEC80/jZeuLQnIi+FwwTbW3Rk6G0Zngb3/KhkYjJuTI4BDNvONP5
+         SA/5o9QmQRgGffcbJykkXS5TW2CTLrcEVYsIQc02YpWUm+rcuucZXH5J68xZZnWuuMCn
+         zNPCxe77RmvBTChypbbJB0HKN8bVs58lRHV7S7e7inE0UmYebL7q1uruJFxXtxfdQEc9
+         pDcP6lcG/6UNo0xjCSR26fdA2euMX5lmpPxnJVoUaqeOTCA65HHkIEav6+UHQ2z+26ox
+         +6MWdCvfHUiQRQG/kx57Z4J/KtoKiNpx1p34gvbR8TqEfGHjR3jTrVISGi28OzWMPexD
+         tRdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717579523; x=1718184323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EoJWhO/kN/nIDMel5oucInBCEkvezehjU4YBYZFp3Zg=;
-        b=UAGIfocEsXLB2ybjTwojNG9yNc6rOaEmyVJxH6jdyW97YQnKGInHoZtHW5Zc3Hg2m8
-         eigSTwt9RS7ZUWSEibrL+7uaEr4/heMCL1qIFZIfZPMdkTXZrnf+/hEl6uKWHx14tmq7
-         GYBqV/iOqkFBAqJM8cnGBVogHxL8/Bevg6m4RMRbG9o0oaaDT+cL5XYtYJUEMNI4UdtJ
-         FWdo3mhaJkAW375GxgPcrnbrtBRlZNHXjf+dXgXLlfKaP1+Zz6JZ++HFllMHDepnkoUe
-         iVRhcmhwvtqEaqsQgTxnoaCEWgbWb85ydPhguxlXEfCLBcoyXmclogj+UBGc0xkqkbqV
-         nHxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTen5WCyyCsv90yRI7cPV52gS2w+0p8Z6MF+ZVAS5VhfdjibVAGx81lwXJNPagMs/0egF902p7RmOC9hNZZY856zFjor9T4kdS8sE9
-X-Gm-Message-State: AOJu0Yw7dYalK1FfXREjh5XRNme7FlK66xYTt8Qzr1g/Gg1WnDXpFP4D
-	pK8p5BxXgaBV177zaaEfRmUry2xQSstvJg/hGJ+cek0LrpUBgsc6LGRx3X397xinnOBpZ3TVrZW
-	J0iTXC+sGzp56TQUZPTuCJvnO3s8cVwPC9YVIuw==
-X-Google-Smtp-Source: AGHT+IFiP2ByR690BX/p3xTWlgJRgSVR/t1BSJlG5eKWmT1URJ9DvEySnKdhmO6+OqTKFLDZLb8znMZmfpCG8k6SisY=
-X-Received: by 2002:a50:ab56:0:b0:57a:9159:df05 with SMTP id
- 4fb4d7f45d1cf-57a9159df5fmr1279266a12.36.1717579522861; Wed, 05 Jun 2024
- 02:25:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717579344; x=1718184144;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=twGgOCLKhNQgk0EX+r3D2ZUgLeCpTZK046ZKeffQQRs=;
+        b=L3qZxxQb6ZTAMCJIqY8kAB3Gpuz+m4v2xsCrDb0zbhDs+koJVmYMZWkwoToIXCHiSE
+         poJ8YM9fD9lW6mUeqnYJ0XtiLvpPljYJtMFxCDWe57xBZRjT0O7oFsk5O4trjNgDGcSX
+         CcEyDvCh1QylOg22K3V02Cq6aLYJtqFoeFvRYaRPwzmhdtbt+RkJeshRyflGX/yGWSMq
+         8FSX/eSH4FMgv73N/G2rDR0DXKGlq9+z4fb5lUZZ+BBqBdJj55Soq7lmlwqhbr4MsSGY
+         ISOVg6kvIxV2lG1YjcG//cXKYFm43v8IKypLzyGswWdG6aAYIrkc/ZACXS41kMBuxLzA
+         46XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVg/6pGRP3yQyNABnN9CVvyLGg1zOi38KcdhzEa/GYo9WEbsgk2iRSXggfejN//ow3KpUNAQT9KkGFzI6vnzXcp2WLZVvYo9qhrBPa7wV4jkzelqQEtGmxe8+q/BbRBbNA23OTMqhlTPUZ8fX7p6szXraf3Q7Su0ntPJr/Aw2kCBj+0ZA==
+X-Gm-Message-State: AOJu0YxfsaJzhfcZOc4XtVaxE4rnpAEgNReUv3qEwDsFpHSAFAphAH6d
+	nW7Gd3zn1/Nvv6mPPL/cn4S45kHh3aKwUu1YcEX08NVXDGq9kZbJ
+X-Google-Smtp-Source: AGHT+IEOSN3eOE6QTScDMEugLdJr/Qsk0h/HBGjFFfNTZIUO5vTuVaWsW0uqFg0hkRGfKw62h3H/WQ==
+X-Received: by 2002:a05:6512:3194:b0:52b:9964:9dae with SMTP id 2adb3069b0e04-52bab50b1abmr1657988e87.57.1717579343365;
+        Wed, 05 Jun 2024 02:22:23 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a685b935b5csm709003866b.206.2024.06.05.02.22.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 02:22:23 -0700 (PDT)
+Message-ID: <996a88c057dd2b6b4d960fbe9f8e35bd69270e86.camel@gmail.com>
+Subject: Re: [PATCH v3 3/6] spi: spi-gpio: Add support for MOSI idle state
+ configuration
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org, 
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+  nuno.sa@analog.com, dlechner@baylibre.com, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 05 Jun 2024 11:26:09 +0200
+In-Reply-To: <8dcce41a69a89cb8ace2587ca7ddb1c665f2d1cb.1717539384.git.marcelo.schmitt@analog.com>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+	 <8dcce41a69a89cb8ace2587ca7ddb1c665f2d1cb.1717539384.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605012605.5341-1-21cnbao@gmail.com>
-In-Reply-To: <20240605012605.5341-1-21cnbao@gmail.com>
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Date: Wed, 5 Jun 2024 14:55:11 +0530
-Message-ID: <CAO_48GFq0Cd6rkWidN-=irT4kW9pEOqu_YxY9vd2nRRKcEy-tw@mail.gmail.com>
-Subject: Re: [PATCH v2] dma-buf: align fd_flags and heap_flags with dma_heap_allocation_data
-To: Barry Song <21cnbao@gmail.com>
-Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org, 
-	Brian.Starkey@arm.com, benjamin.gaignard@collabora.com, 
-	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, jstultz@google.com, 
-	linux-kernel@vger.kernel.org, tjmercier@google.com, v-songbaohua@oppo.com, 
-	hailong.liu@oppo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello Barry,
-
-
-On Wed, 5 Jun 2024 at 06:56, Barry Song <21cnbao@gmail.com> wrote:
->
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> dma_heap_allocation_data defines the UAPI as follows:
->
->  struct dma_heap_allocation_data {
->         __u64 len;
->         __u32 fd;
->         __u32 fd_flags;
->         __u64 heap_flags;
->  };
->
-> However, dma_heap_buffer_alloc() casts both fd_flags and heap_flags
-> into unsigned int. We're inconsistent with types in the non UAPI
-> arguments. This patch fixes it.
-
-Thank you for your patch; I've pushed it to drm-misc-next.
-
-Best,
-Sumit.
->
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> Acked-by: John Stultz <jstultz@google.com>
+On Tue, 2024-06-04 at 19:42 -0300, Marcelo Schmitt wrote:
+> Implement MOSI idle low and MOSI idle high to better support peripherals
+> that request specific MOSI behavior.
+>=20
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 > ---
->  -v2:
->  collect ack of John, thanks!
->  refine commit message;
->
->  drivers/dma-buf/dma-heap.c    | 4 ++--
->  include/uapi/linux/dma-heap.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-> index 84ae708fafe7..2298ca5e112e 100644
-> --- a/drivers/dma-buf/dma-heap.c
-> +++ b/drivers/dma-buf/dma-heap.c
-> @@ -50,8 +50,8 @@ static struct class *dma_heap_class;
->  static DEFINE_XARRAY_ALLOC(dma_heap_minors);
->
->  static int dma_heap_buffer_alloc(struct dma_heap *heap, size_t len,
-> -                                unsigned int fd_flags,
-> -                                unsigned int heap_flags)
-> +                                u32 fd_flags,
-> +                                u64 heap_flags)
->  {
->         struct dma_buf *dmabuf;
->         int fd;
-> diff --git a/include/uapi/linux/dma-heap.h b/include/uapi/linux/dma-heap.=
-h
-> index 6f84fa08e074..a4cf716a49fa 100644
-> --- a/include/uapi/linux/dma-heap.h
-> +++ b/include/uapi/linux/dma-heap.h
-> @@ -19,7 +19,7 @@
->  #define DMA_HEAP_VALID_FD_FLAGS (O_CLOEXEC | O_ACCMODE)
->
->  /* Currently no heap flags */
-> -#define DMA_HEAP_VALID_HEAP_FLAGS (0)
-> +#define DMA_HEAP_VALID_HEAP_FLAGS (0ULL)
->
->  /**
->   * struct dma_heap_allocation_data - metadata passed from userspace for
-> --
-> 2.34.1
->
 
+Acked-by: Nuno Sa <nuno.sa@analog.com>
 
---=20
-Thanks and regards,
+> =C2=A0drivers/spi/spi-gpio.c | 12 +++++++++++-
+> =C2=A01 file changed, 11 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
+> index 909cce109bba..d3b8c99f0cb4 100644
+> --- a/drivers/spi/spi-gpio.c
+> +++ b/drivers/spi/spi-gpio.c
+> @@ -236,6 +236,14 @@ static void spi_gpio_chipselect(struct spi_device *s=
+pi,
+> int is_active)
+> =C2=A0	}
+> =C2=A0}
+> =C2=A0
+> +static void spi_gpio_set_mosi_idle(struct spi_device *spi)
+> +{
+> +	struct spi_gpio *spi_gpio =3D spi_to_spi_gpio(spi);
+> +
+> +	gpiod_set_value_cansleep(spi_gpio->mosi,
+> +				 !!(spi->mode & SPI_MOSI_IDLE_HIGH));
+> +}
+> +
+> =C2=A0static int spi_gpio_setup(struct spi_device *spi)
+> =C2=A0{
+> =C2=A0	struct gpio_desc	*cs;
+> @@ -411,7 +419,8 @@ static int spi_gpio_probe(struct platform_device *pde=
+v)
+> =C2=A0
+> =C2=A0	host->bits_per_word_mask =3D SPI_BPW_RANGE_MASK(1, 32);
+> =C2=A0	host->mode_bits =3D SPI_3WIRE | SPI_3WIRE_HIZ | SPI_CPHA | SPI_CPO=
+L |
+> -			=C2=A0=C2=A0=C2=A0 SPI_CS_HIGH | SPI_LSB_FIRST;
+> +			=C2=A0 SPI_CS_HIGH | SPI_LSB_FIRST | SPI_MOSI_IDLE_LOW |
+> +			=C2=A0 SPI_MOSI_IDLE_HIGH;
+> =C2=A0	if (!spi_gpio->mosi) {
+> =C2=A0		/* HW configuration without MOSI pin
+> =C2=A0		 *
+> @@ -436,6 +445,7 @@ static int spi_gpio_probe(struct platform_device *pde=
+v)
+> =C2=A0	host->flags |=3D SPI_CONTROLLER_GPIO_SS;
+> =C2=A0	bb->chipselect =3D spi_gpio_chipselect;
+> =C2=A0	bb->set_line_direction =3D spi_gpio_set_direction;
+> +	bb->set_mosi_idle =3D spi_gpio_set_mosi_idle;
+> =C2=A0
+> =C2=A0	if (host->flags & SPI_CONTROLLER_NO_TX) {
+> =C2=A0		bb->txrx_word[SPI_MODE_0] =3D spi_gpio_spec_txrx_word_mode0;
 
-Sumit Semwal (he / him)
-Tech Lead - LCG, Vertical Technologies
-Linaro.org =E2=94=82 Open source software for ARM SoCs
 
