@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-203010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC588FD4D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:02:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBE78FD4E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38FAF288B41
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:02:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04AFBB28927
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15FF19596B;
-	Wed,  5 Jun 2024 18:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C88195B1E;
+	Wed,  5 Jun 2024 18:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FJuZggmh"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yW9iJgkc"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABE173479
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C0F19598F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610425; cv=none; b=kBRe8NaIxaC7WDqjI1hrInHN3R3Cbz3r2IhZa+j0f9qGdFvfFdhJdWpzs7whRYQhBn9CYohZ19KKxWNsdDrusojsNmu9ZJzeWnYPmPd73N7qa1ek7KD1d5mZEJnemd1aY493qy10ZuB+d23r9AQErR9t6ANu/wiQsiwwEXWMWHo=
+	t=1717610429; cv=none; b=OjdpVaV3XWDlN0fhLHNz3ISUkLEKH8KJQmnUijz/bqH9+U0ZS13cnrEGxTgz8QqOw9jf7PA7k97tSKuQzs0gk0hB8RSPp0lOSJMGM8rI4PyY5i77grYGdYw6e3jUBuGtabdDsV2X/XSSGDQdoO1OcnxGuDy22dMTziReWBb8rlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610425; c=relaxed/simple;
-	bh=M/eENeT34qITqyMJGoLfrkcDLPx6c2gqtgSpfyqShjk=;
+	s=arc-20240116; t=1717610429; c=relaxed/simple;
+	bh=7s5ualCvDc0GEz4419Gj42eDU6iSkCy4DM1JO8Cp5kE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aDDKGm5My0fYuyu5hAJ6EEIgqc4ueyZpe2JhZCLYHImWJMI3dCln5CdIOgVWdoESJ5ppO3B+9ULTEmfZjEBW8r/nkK95rNYYXCgfPeXgPo6+5S+A5aoyaBSMdGLONTbIjQ8pHBiBtT8lTTh2c3sqIrcSDGf1IPppqHLHVCM4tsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FJuZggmh; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=jWCmCwUDkhczltxNvHBb2DeKZ/YdtWamGJitVPZyhWw0WTvOuQTsn1yuUKNzQmEJr1by9i6Op9sdXbu2pmkYe33D9gKUvlTqzkcK7GY53qMkummcp7qdIo5/YOkwl12wPFucPM5Pm9POI9O+8/X0HjShYoIzDXYNYiL8MXL8mhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yW9iJgkc; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df7a6530373so128562276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:00:23 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62a088faef7so15617497b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717610423; x=1718215223; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717610426; x=1718215226; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWEvs7lXuHPW/wbGZW3HASpAVL3QgOZ/ef+Ervw8nvw=;
-        b=FJuZggmhFGhWp10YbseBbhbNSwZbD3YkwUxXiS6vcF3km6ch/KL4ccGCubjjUswrvs
-         stPWi6m+aTLRC39j/3ob86S2Z6NSr8O8AxWYWzc/hE+2uMm67w4Lmz1S94v/l/H2c1hJ
-         O+dO/BeG+dPImMkDS26dKkcAxhVypHz9QHnNm3SysGqu+1oZzO8mtV+2ZAtcfMJ6UYcp
-         ai+ktg2KHiTPkI3n1qzSaKTw4JfArzruUWmO+bX2v6Wv+JKurz/SBGIfcsiP8wS4dc4B
-         B6pVh21yuxtzozIJA2Lvp6iwb6u37kIgRlnXtqQ/gmB7Q0nOc3TCGGSkWeK8EtBzAwJO
-         uA/Q==
+        bh=Kq8gN9PC4V0/WUeYJD+ngNL2/82oznUqnDRsVCEUyhc=;
+        b=yW9iJgkcljzKSnVxoazsYECi5fP6QNHHLJ9IlEuTsYQL+RlaWWDmJD2d4e+DNhDTlm
+         KIfryHEvd7FtNm8eHNyqjTI1XXd9/8uhvtg7pv/6kGvV3N26EfwVy000lhOWFWeeOYca
+         tJ5tYDQzM0o210kyrr+IgjNfC2CA3bJ/iL77N6LlXzTEq98PU3R3wL/25tRG7uPbotgU
+         cpbVNwzhr6IKc2fqP3RBBaMQHVM8jgX0F5gRXjSonWVCOuoyDtvr1Rlg6q+Zn0PJq947
+         LFpzYOwiH3TGEwZZHterdbmrVBOoTZV4ppyVHdrpANxTOrfCSPzqLu+DJ+cBDsXOimAK
+         gLiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717610423; x=1718215223;
+        d=1e100.net; s=20230601; t=1717610426; x=1718215226;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWEvs7lXuHPW/wbGZW3HASpAVL3QgOZ/ef+Ervw8nvw=;
-        b=KTo/i6gaSb3jWLUeln5Ey+3w2HXXeS4uYMD5RuYsUMVDNgqESamM0//4oJz7WcUKhd
-         kT8dLbkLbd2qtIdDR+QNwOkIgT95ROz7HKp5M0HPn3bW8n3+Um9CmaWmMLymZnpxKpVD
-         +l/7wa5TGZz8VPeUMBHm1xc/4f9lkkL8RKgodwsqH1Ixi80UWozVZN0gJ75mZn5uR9XU
-         e6aK6sT44XydZj3rsc1BOI73svnGWkm7x/8WTprwA1JKskS3nMZSkBFqDDCUOTLrKqg5
-         NSY4F4JurZAq2FdOEDsx94N9wneEUS2GIJGlS5OxF0sRNA4TbE9oWOUhaaQOS03NIZaz
-         tPRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVq8oqR6wNDQktj9eegchiIDGuksXjw+bZOaunHwRboLEYf7aTnE/LviyJMI2QU65CvfEWfW1ZMeRELWP5JoBMqPNOJ0pPu/l/GYIb2
-X-Gm-Message-State: AOJu0Yy3b4L4XyvEj8xDchFJ80BdZwEA+NSGMtxpzDx57wMusU162noc
-	aAOsfWjf6/eRi3/ZfvdnNQMS0EaBFNOqLqYLvwhCvmRMJboez6KbFO/4n1+6cumcXCD/LHsxfeO
-	Md0YyVvehLw==
-X-Google-Smtp-Source: AGHT+IHzBpKnrggHmMHMkvKX90wRDGnyxC/rya4wNnolxBy/S7eZxADMs2JOhL4gs65LRvS4Cl380vcS0L4//g==
+        bh=Kq8gN9PC4V0/WUeYJD+ngNL2/82oznUqnDRsVCEUyhc=;
+        b=qKoa/waiDQ2r9TV82osKkUxxjeH/L14bjsaiLxtcz00P0f0zbZEmpYxSExfHldkPPw
+         SE0kZCyc6nVzckJ98n2XUh5yT+oc/6G3SnTxUNJAJipU168ScgWJl3KC7lwLdLOyk2Ur
+         3DhMX20jK2LniWoanYsUjDcXr2Y1uHztDtexD1Gop2SezhFOeSZnnKw/xttN6k/DUXBT
+         ovbuglMeTRR8BbKz4KoTWm5mSNtuqKwMraqy8pKtLThCMaQU8iF1SWvOW3iykt3CUyUT
+         AlF4bky/D2evg9yd/Zst1chHcox6fObzn6W7uJTe793y0G2Ro1dTpstFfUW0+N5m8BWr
+         qACg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ZQ0IA+E7rzSoz3Qk5FLiIGN2AieHRlqwFeSg6W4O3bmCjtCyuKpMt8UW15UiF8cStVc2gtYMmot6LdyphG10tpqc2Q6rlMuLxg76
+X-Gm-Message-State: AOJu0YyFCAmS4aXTz+Kb6KRGmaEqzsg2O7WotxTHRAK+UYHjt+5yOEjI
+	2B8iRPiEOrC68Dty22PtTMc/bGbPrafJwprmI/gaoVqk6KPCaVW4He/wJG3Afd1OtOpmnOm3Klq
+	Yk4FDmkUyxg==
+X-Google-Smtp-Source: AGHT+IGpQQ4ibO82CB++j7EQg4rT4P/RHw0r35tzLXXxO3B/dL6yEQW14Z2L0s1fkq9sPWcVhlzFxs8YqockaA==
 X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
- (user=joychakr job=sendgmr) by 2002:a25:9004:0:b0:de5:a44c:25af with SMTP id
- 3f1490d57ef6-dfadec0b255mr68771276.5.1717610422643; Wed, 05 Jun 2024 11:00:22
- -0700 (PDT)
-Date: Wed,  5 Jun 2024 17:59:49 +0000
+ (user=joychakr job=sendgmr) by 2002:a0d:d4ca:0:b0:623:be6:d5e4 with SMTP id
+ 00721157ae682-62cc71784bdmr605497b3.4.1717610426639; Wed, 05 Jun 2024
+ 11:00:26 -0700 (PDT)
+Date: Wed,  5 Jun 2024 17:59:50 +0000
 In-Reply-To: <20240605175953.2613260-1-joychakr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240605175953.2613260-1-joychakr@google.com>
 X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
-Message-ID: <20240605175953.2613260-6-joychakr@google.com>
-Subject: [PATCH v1 05/17] misc: ds1682: Change nvmem reg_read/write return type
+Message-ID: <20240605175953.2613260-7-joychakr@google.com>
+Subject: [PATCH v1 06/17] misc: eeprom: at24: Change nvmem reg_read/write
+ return type
 From: Joy Chakraborty <joychakr@google.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -97,46 +98,48 @@ Change nvmem read/write function definition return type to ssize_t.
 
 Signed-off-by: Joy Chakraborty <joychakr@google.com>
 ---
- drivers/misc/ds1682.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/misc/eeprom/at24.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/ds1682.c b/drivers/misc/ds1682.c
-index 5f8dcd0e3848..953341666ddb 100644
---- a/drivers/misc/ds1682.c
-+++ b/drivers/misc/ds1682.c
-@@ -198,26 +198,22 @@ static const struct bin_attribute ds1682_eeprom_attr = {
- 	.write = ds1682_eeprom_write,
- };
- 
--static int ds1682_nvmem_read(void *priv, unsigned int offset, void *val,
--			     size_t bytes)
-+static ssize_t ds1682_nvmem_read(void *priv, unsigned int offset, void *val,
-+				 size_t bytes)
- {
- 	struct i2c_client *client = priv;
--	int ret;
- 
--	ret = i2c_smbus_read_i2c_block_data(client, DS1682_REG_EEPROM + offset,
-+	return i2c_smbus_read_i2c_block_data(client, DS1682_REG_EEPROM + offset,
- 					    bytes, val);
--	return ret < 0 ? ret : 0;
+diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+index 4bd4f32bcdab..0e8d92d6ab1e 100644
+--- a/drivers/misc/eeprom/at24.c
++++ b/drivers/misc/eeprom/at24.c
+@@ -424,8 +424,9 @@ static ssize_t at24_regmap_write(struct at24_data *at24, const char *buf,
+ 	return -ETIMEDOUT;
  }
  
--static int ds1682_nvmem_write(void *priv, unsigned int offset, void *val,
--			      size_t bytes)
-+static ssize_t ds1682_nvmem_write(void *priv, unsigned int offset, void *val,
-+				  size_t bytes)
+-static int at24_read(void *priv, unsigned int off, void *val, size_t count)
++static ssize_t at24_read(void *priv, unsigned int off, void *val, size_t count)
  {
- 	struct i2c_client *client = priv;
--	int ret;
++	size_t bytes_read = count;
+ 	struct at24_data *at24;
+ 	struct device *dev;
+ 	char *buf = val;
+@@ -465,11 +466,12 @@ static int at24_read(void *priv, unsigned int off, void *val, size_t count)
+ 	if (unlikely(at24->read_post))
+ 		at24->read_post(off, buf, i);
  
--	ret = i2c_smbus_write_i2c_block_data(client, DS1682_REG_EEPROM + offset,
-+	return i2c_smbus_write_i2c_block_data(client, DS1682_REG_EEPROM + offset,
- 					     bytes, val);
--	return ret < 0 ? ret : 0;
+-	return 0;
++	return bytes_read;
  }
  
- /*
+-static int at24_write(void *priv, unsigned int off, void *val, size_t count)
++static ssize_t at24_write(void *priv, unsigned int off, void *val, size_t count)
+ {
++	size_t bytes_written = count;
+ 	struct at24_data *at24;
+ 	struct device *dev;
+ 	char *buf = val;
+@@ -509,7 +511,7 @@ static int at24_write(void *priv, unsigned int off, void *val, size_t count)
+ 
+ 	pm_runtime_put(dev);
+ 
+-	return 0;
++	return bytes_written;
+ }
+ 
+ static int at24_make_dummy_client(struct at24_data *at24, unsigned int index,
 -- 
 2.45.1.467.gbab1589fc0-goog
 
