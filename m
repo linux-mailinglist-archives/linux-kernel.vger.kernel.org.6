@@ -1,107 +1,148 @@
-Return-Path: <linux-kernel+bounces-201648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83FEB8FC147
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:28:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008F88FC15B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37CFD2841DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:28:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44E8EB2508F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151631642B;
-	Wed,  5 Jun 2024 01:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A4E50A93;
+	Wed,  5 Jun 2024 01:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b="tt+FT3lL"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VWRgZIk0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1964FDDDF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 01:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B3D347C2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 01:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717550891; cv=none; b=rYCd2jLmVei2HXS3wmhlRk2yqAawXLLpEtGOe1NwEP885irBjPt3VslqRdbHZi4m6G+TvWLJW0jHaEimyY68nJsN9stgsbx52lazNACA8zM7QXONsQoCeQbTk4s00CMOxC2B7jfXoAyUn/LBtuRIN9zXh0T1LAbO7fYf8MJY264=
+	t=1717551280; cv=none; b=rgtb3xHrXJLGptX+PQRfUglksDwoLosO+/sdZlwDZ0SfgHeaQDSrzqgMAzBY5OVLJY/ud1qW+4aOeoPz245CeFZG7FC8q6CZwhzcWFwlDRVZY4GLK5aStHsAtILT/nYkeaiTzrC9Q8HXPxk2EIfx4Ks3xX46j7ufvm6gVDXBibo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717550891; c=relaxed/simple;
-	bh=1aAtN/3z/CC+KoX4/Uc468gsc1Odb+4pk0TbWNTH5rk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mLvtDaZCabK4LK7sFYXejZghHTWuSKCHTh/rBA/ez7K//Zn+G2rGAdsgUyv3ITiIi92JY15JaHksBwzMZ2qyiUCdom3W8JAErDy9V9otLnV67lSS3pB270tKnUQSBx+9E2ElFsqVdPDoujNh/mYikuKTln8z9Bl4lq5oH+dxAMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b=tt+FT3lL; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfa71ded97bso362349276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 18:28:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=howett-net.20230601.gappssmtp.com; s=20230601; t=1717550889; x=1718155689; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1aAtN/3z/CC+KoX4/Uc468gsc1Odb+4pk0TbWNTH5rk=;
-        b=tt+FT3lLTJnj8aN+o0+xOkQN/JTcTWZWIjXbRRUlHf8Kr8jVb8sdC5FgSH2wPr9qU6
-         381P/7uuhx3VU8IpbzRyy+x+sC7vIGyaq4YI89Oo+XqNuY1b1QbjlkvqcLtlO52+KjTu
-         X8zeWgbUqqy1fg3h41yXtLHC/AH1E71YWG3FbgRTltc7wZtE0atG3CeDFruc1tJTQTfG
-         PZSGhc51KhJgF1VGI17A/3IBhilLEjbnXg1QYmEPnJFM35BuK0sQ+N5n1sOfw+CxINZo
-         MjGNYklVk5Ega603pbts7+IF1WQxVkdsdp/9uEsXZnIDgjaKSfFZspGy8EVe3UeysmLS
-         NIDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717550889; x=1718155689;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1aAtN/3z/CC+KoX4/Uc468gsc1Odb+4pk0TbWNTH5rk=;
-        b=LQR+VSN8Yw/Z7BS4dBwITkT47fHYH1IL6tUEkTXBlZ36Wz9VZokhg/I8XGdqkCPicr
-         JntLS7Bm4Ei5MVWi+PEtpsMcU5dua4x2ggefia7WRgG71Yt6iwROTtJMixXJr6epOPeh
-         w4j95SSZ2AI3nOODSvZn/IXwlA2U5prRUDqTvXYNc16QJI1uihMrFJGCVwvJElyE70q8
-         Rv/09L/GldnPGic6pWy3m/XEpaasLIMN1NhPVJl4MWKf+DpFX84M3gI6y3CSZMR7zDtx
-         BrlZyP/koHg5k7U1vslgrKLy8UolCwMC7czV1iuQNJAL1/LC5B2hFu7lBtFtziIbT58S
-         wMuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXE0FF6Mw+k48ZASC5nwnf4XBCCt600732YMPh843Aai62CM51Xx9ecmWBOqvbGnIGb9h0SA+sXbE8XrhbcLQEiLyWEpgtQSIcyy8s6
-X-Gm-Message-State: AOJu0YzGZnsJ3CuT38PFkXpIf8H3TBog2msGaGXHonL8eWCCnljbxbbk
-	WNo34qSW52geQjJyq27XCtxB6Ij2TNG7V/SU0Yt3FQpPny9lLyFdlLoVwnMRyzbjyuEVGsOR349
-	p6gNvyLDPnRRIt4PRZf4J6dVclRRbPsChQ1aj
-X-Google-Smtp-Source: AGHT+IH5b1wkP6S8DAEsGopYfUuPnn0CZWaw+8yynTwvbj2MBk6B92RfrPC2tnzyTU88t/RNBKA5stTuHDy5P/ggUWk=
-X-Received: by 2002:a25:bcc6:0:b0:df7:92ed:365e with SMTP id
- 3f1490d57ef6-dfac97ce463mr1085810276.26.1717550888977; Tue, 04 Jun 2024
- 18:28:08 -0700 (PDT)
+	s=arc-20240116; t=1717551280; c=relaxed/simple;
+	bh=9+rM/5HKztZ3XHOcKnoDMJ97EOLdst/cWA1TwQP/mJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Q+UpXz6LjTv62Ets1qgnAsF5+2K5tZJcQd1Gf9RKqz/M1d2zC9Y9JNs8VycOYPO2nME30lgtqWrCGKINgpZI0JnGYaBPqVSQ/1wPf68bBCDXR5d1gN8IzfFwQsXkuTLYAY6lIsDzt8G5za5yCsD5I/9Z2RSw+R5n7vls/nFxmIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VWRgZIk0; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717551278; x=1749087278;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=9+rM/5HKztZ3XHOcKnoDMJ97EOLdst/cWA1TwQP/mJs=;
+  b=VWRgZIk0vfPo4aNBf6MCLD0ZO9W4Du94RXOkAA2VU5ZYG9jGpU2RyxTh
+   /y00knaP9im/73e3Tfa+SdYCKXcSqcwt1ZXjlKpuPY0isc1/P00Ru/23A
+   iZOAB6bcY9m+KvVK0AEp6/a1KQ6eYBCRYZ3IPb7eeV+fZ+ogU8QC4e9lf
+   SGXsy1JPWyASXiU8PZGHLLqkrPKB+enz0796d9q6SQuPcjwoEdVaP8KVC
+   pcZXBfSZzYqZ21qQTSvIFwB3QuGk3uWnx7KAPctcr+V6f8q5F5TsEjJ7c
+   KicyR0oN3EMo9qVMSQ50rLWLjP41agof1R63fty07QOcgxaetTzSyO78P
+   w==;
+X-CSE-ConnectionGUID: 2aHu1SOVROyqtLGBiaMN5w==
+X-CSE-MsgGUID: QCsSfn/OQZORZfvyWKlIGQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="24790960"
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="24790960"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 18:34:27 -0700
+X-CSE-ConnectionGUID: uhmQxwGWT461MmOV2g0F/A==
+X-CSE-MsgGUID: MZSoxDrFR1qQd26y/gyBhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="74906284"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 04 Jun 2024 18:34:25 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sEfXi-0000mF-2F;
+	Wed, 05 Jun 2024 01:34:22 +0000
+Date: Wed, 5 Jun 2024 09:33:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+Subject: drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h:19:62:
+ warning: omitting the parameter name in a function definition is a C23
+ extension
+Message-ID: <202406050908.1kL1C69p-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
- <CA+BfgNJByawxkZukaCXYcmOo_K9aQ0W1x8B6Y+Hyg_fZaJ4axw@mail.gmail.com> <5baf3caf-dc09-4829-96db-2666fc902710@t-8ch.de>
-In-Reply-To: <5baf3caf-dc09-4829-96db-2666fc902710@t-8ch.de>
-From: Dustin Howett <dustin@howett.net>
-Date: Tue, 4 Jun 2024 20:27:57 -0500
-Message-ID: <CA+BfgN+LE3YyF3te4m8sWbtH85tU+ERUDW7YR_BFecusVTAWWw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] ChromeOS Embedded Controller charge control driver
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, chrome-platform@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Mario Limonciello <mario.limonciello@amd.com>, Stephen Horvath <s.horvath@outlook.com.au>, 
-	Rajas Paranjpe <paranjperajas@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Jun 3, 2024 at 3:59=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> Can you try disabling all of the Framework-specific charge control
-> settings and test again?
-> Probably the different, disparate logics in the Framework ECs are
-> conflicting with each other.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   32f88d65f01bf6f45476d7edbe675e44fb9e1d58
+commit: e22b4973ee201486a7147efaa80b6562d3a749d1 media: c8sectpfe: Do not depend on DEBUG_FS
+date:   7 weeks ago
+config: arm64-randconfig-004-20240605 (https://download.01.org/0day-ci/archive/20240605/202406050908.1kL1C69p-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406050908.1kL1C69p-lkp@intel.com/reproduce)
 
-Fascinating! This board does indeed support charge limiting through
-both interfaces. It looks like the most recently set one wins for a
-time.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406050908.1kL1C69p-lkp@intel.com/
 
-The UEFI setup utility only sets the framework-specific charge limit value.
+All warnings (new ones prefixed by >>):
 
-We should probably find some way to converge them, for all of the
-supported Framework Laptop programs.
+   In file included from drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c:16:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2208:
+   include/linux/vmstat.h:508:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     509 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:515:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     516 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:527:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     528 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:536:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     537 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c:38:
+>> drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h:19:62: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+      19 | static inline void c8sectpfe_debugfs_init(struct c8sectpfei *) {};
+         |                                                              ^
+   drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h:20:62: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+      20 | static inline void c8sectpfe_debugfs_exit(struct c8sectpfei *) {};
+         |                                                              ^
+   7 warnings generated.
 
-> Thomas
+
+vim +19 drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-debugfs.h
+
+    14	
+    15	#if defined(CONFIG_DEBUG_FS)
+    16	void c8sectpfe_debugfs_init(struct c8sectpfei *);
+    17	void c8sectpfe_debugfs_exit(struct c8sectpfei *);
+    18	#else
+  > 19	static inline void c8sectpfe_debugfs_init(struct c8sectpfei *) {};
+    20	static inline void c8sectpfe_debugfs_exit(struct c8sectpfei *) {};
+    21	#endif
+    22	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
