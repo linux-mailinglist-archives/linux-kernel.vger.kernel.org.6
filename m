@@ -1,154 +1,129 @@
-Return-Path: <linux-kernel+bounces-202377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CB5F8FCBFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:11:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6F78FCBDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6EA92889A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:09:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228051F25153
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F1327459;
-	Wed,  5 Jun 2024 11:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsseMGOC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1F51AD9F9;
+	Wed,  5 Jun 2024 11:53:07 +0000 (UTC)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963A71AF6C9;
-	Wed,  5 Jun 2024 11:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323021AD9D9;
+	Wed,  5 Jun 2024 11:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717588396; cv=none; b=ZeuyufSHykiVErYLG4O2MhfKVl3et2HUZASY9rCmKRF7FwLs2vjEgqLV+f+kKKuwQ+ZUpOR5hD0cLfDJSJZwL/aPamndMZTC/pMEBjKcGovWxeTD0ysaWU6/Werle1hvHfx7UhgkATjWDeCb0oggzQAuNU8+5+T/h1eoUNARrtA=
+	t=1717588386; cv=none; b=tm0D9mBtd/buAfhy0utojSJ6RWAXfCm417fMSGVWVkwJgdtgrvVFiP4ZQEjTMfCZ9t+LIu17DcT/BLzRCVzB+wAPgY7vivMSa7Q2hkC60ERliLC2i51yVNidLgNIJuCuJqxxjqXaS5sHcvrz+030C1xH6n2ca1IcsZLoUu5oHX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717588396; c=relaxed/simple;
-	bh=KnKHWBqMNsixSFYLmeVcY+L/MoRxXzbFNwqyHThKhU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AK6zQ52cZAnEPJZ2FAZT/EsXAg0I7RJeNPrmAN4/9bp5gOyaEB857zGU6UVNk7Iq0HxgkxQoHDwaCvKkM+OXA0bS9Evn2LZ5NL0sDvc1kMrLGZIEEt6M2vvAfnwIbkVlKuuHYlHYelAmi3iXW5xOCpGw3kLbx/mTn4SsX+IvJQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nsseMGOC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54225C3277B;
-	Wed,  5 Jun 2024 11:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717588396;
-	bh=KnKHWBqMNsixSFYLmeVcY+L/MoRxXzbFNwqyHThKhU0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nsseMGOCRMWDxmVQ6WkTdNHS+TuzYM/9bgjj6BaAY0mEC6aUiXv9G91/p5Oc1GsYT
-	 VbpdQacsWdMoi2i0UrY3M2rs4NI68POn+pzKEJ1p4JTofmCBvERNWBOU5yNcBCDYwY
-	 PygW/SpCMX2tm6b66tO2WtidlKJExsQwz7jsdCSvbiA2RqfesGO4QC+UXZ8GRo23lb
-	 z1t/B5cS6CP2qKSFnXGafycYl+K1MOYgom4z2a8WQF5EUUiT6bn/w+VixfFAiBVIlg
-	 WFHln9nWOP42JGFSi1Ste90mVIZTibC5gfYuY1rS1b6ep3Z7IctRYCGC6zI2sO0iN3
-	 YfAe8VCFJLcZA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 20/20] PCI: Do not wait for disconnected devices when resuming
-Date: Wed,  5 Jun 2024 07:52:03 -0400
-Message-ID: <20240605115225.2963242-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605115225.2963242-1-sashal@kernel.org>
-References: <20240605115225.2963242-1-sashal@kernel.org>
+	s=arc-20240116; t=1717588386; c=relaxed/simple;
+	bh=mOTddhvoIT8wiG4yUHyU53/TGeJ/YCSolJbafPJ+9hc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q0pFnAe0DieRGpOeC1skadAKt/W5yaTCscnSiQJcpJr+XieIhFhnTl2ffd/9WQjOZ56fZ11CdTAEkPG4qmxTeZmZAx/tyCTlUNwzDf2duTKhn765fUsYtcbzq/+44TCTxoOgIO4Ueph7/oCz13XvHL7dsjc4d+Uoba1i0snVIFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62a0c011d53so66615147b3.0;
+        Wed, 05 Jun 2024 04:53:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717588383; x=1718193183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JvsArExPEXHFssWhjY92c/ZACw/tmf496Y0sek86XvQ=;
+        b=J6X6O9PLgcVmou5i43j+oU0TpCd0JsH9kciW5EicuLmeFnV7IMieCZW5yiA5lurhbg
+         1zwkOp0OZST1n8WRHTuojyzd2HLrMh01+LwgeC35TgDna/r8uj5h6QAl37hlHK5FnacC
+         m0N/BxWgIENHg/77mTpBjE/aLeq4U37mZVWsjFx0mvhwYUrRs+j+gz3uA3WmzhQ0qdwi
+         BCnCqkaiXeLroaMKx5cbd/+o1FYGmdpRknwq+zZhn0ipf/CM7m7gKmssC+r0h+8MtRF7
+         Njb8y0+PSGRZIks36Z/H9dvhNydPvgCheSKI9GcuaiMQNYKOd3IK2JMhGdvLhroazY9A
+         T/Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXmZGEzVtJ0pVooAfxV1yLk0H0eW4Ypx2bHOzuYVH3hzIYjzloDLPFuKTU7GRGn8Lg66h8RY7zYbbzfe1Af1gtaX2sCqC/fHg/OOumW+wgsKVg05AWDmY5Xc7v5IW3EtIt3MLq5hPq2Ipom4o7RFFrXmj1PSnjroJ21o0UlHEeLG7wJvuj00E+cJTl2npvp4MaqVN22Mkvxqpxi8q8eNeGTFQnTbgRuw==
+X-Gm-Message-State: AOJu0Yzm3TlN9X07slgeJRX52DkzgcF6z2U4jbCaztxkgi5DeAyyq63h
+	BKxcTXndTg2/JNFk7MhhNpJhE0wkyB4zFgQAn+BKdZtRndGgb59Um0wOTTwA
+X-Google-Smtp-Source: AGHT+IHNI9uwSohrVqRAJve/+ajVyEz/IrZGm+1MpwFZu7/JDpaYwUeEJEdALHh0+09W0W8e8W0uyw==
+X-Received: by 2002:a25:3c42:0:b0:df7:8dca:1ef4 with SMTP id 3f1490d57ef6-dfacac3a472mr2231445276.21.1717588383408;
+        Wed, 05 Jun 2024 04:53:03 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfa72956a8asm2546650276.18.2024.06.05.04.53.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 04:53:03 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfab4779d95so2569777276.0;
+        Wed, 05 Jun 2024 04:53:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXHlkvl7NAOXssnhWBdrXd0sizsZVey4PLAFJHL/w9ETXuzkHZgUj3cOqfYL+sUapKn/1gB+M/pSzMjesD2tEYHq7aDQZZMWE8KCU22s9uAaoOwB1lBwXqjjJVhL0jU/C2A9RbgZq7jRwOqEO2fD2LVi6ZTkg90WTLAN37DSx3GA9l79ziy5/K445gZEMgZ2STrCVGmOjjaTF8+2dyWf2xdjIxkMbampw==
+X-Received: by 2002:a25:aa31:0:b0:df7:8b9f:8188 with SMTP id
+ 3f1490d57ef6-dfacac5f750mr2508080276.37.1717588382994; Wed, 05 Jun 2024
+ 04:53:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.32
-Content-Transfer-Encoding: 8bit
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240530173857.164073-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240530173857.164073-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jun 2024 13:52:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX-rrGNQgTnPjG+NSiGD_NmAxeNqgzKCB8p4W6s12VMKA@mail.gmail.com>
+Message-ID: <CAMuHMdX-rrGNQgTnPjG+NSiGD_NmAxeNqgzKCB8p4W6s12VMKA@mail.gmail.com>
+Subject: Re: [PATCH v3 07/15] pinctrl: renesas: pinctrl-rzg2l: Add function
+ pointer for locking/unlocking the PFC register
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Hi Prabhakar,
 
-[ Upstream commit 6613443ffc49d03e27f0404978f685c4eac43fba ]
+On Thu, May 30, 2024 at 7:42=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> On the RZ/G2L SoC, the PFCWE bit controls writing to PFC registers.
+> However, on the RZ/V2H(P) SoC, the PFCWE (REGWE_A on RZ/V2H) bit controls
+> writing to both PFC and PMC registers. Additionally, BIT(7) B0WI is
+> undocumented for the PWPR register on RZ/V2H(P) SoC. To accommodate these
+> differences across SoC variants, introduce the pwpr_pfc_lock_unlock()
+> function pointer.
+>
+> Note, in rzg2l_pinctrl_set_pfc_mode() the pwpr_pfc_lock_unlock(.., false)
+> is now called before PMC read/write and pwpr_pfc_lock_unlock(.., true) is
+> now called after PMC read/write this is to keep changes minimal for
+> RZ/V2H(P) SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Introduced single function pointer to (un)lock
+> - Updated commit message
 
-On runtime resume, pci_dev_wait() is called:
+Thanks for the update!
 
-  pci_pm_runtime_resume()
-    pci_pm_bridge_power_up_actions()
-      pci_bridge_wait_for_secondary_bus()
-        pci_dev_wait()
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-While a device is runtime suspended along with its PCI hierarchy, the
-device could get disconnected. In such case, the link will not come up no
-matter how long pci_dev_wait() waits for it.
+Gr{oetje,eeting}s,
 
-Besides the above mentioned case, there could be other ways to get the
-device disconnected while pci_dev_wait() is waiting for the link to come
-up.
+                        Geert
 
-Make pci_dev_wait() exit if the device is already disconnected to avoid
-unnecessary delay.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-The use cases of pci_dev_wait() boil down to two:
-
-  1. Waiting for the device after reset
-  2. pci_bridge_wait_for_secondary_bus()
-
-The callers in both cases seem to benefit from propagating the
-disconnection as error even if device disconnection would be more
-analoguous to the case where there is no device in the first place which
-return 0 from pci_dev_wait(). In the case 2, it results in unnecessary
-marking of the devices disconnected again but that is just harmless extra
-work.
-
-Also make sure compiler does not become too clever with dev->error_state
-and use READ_ONCE() to force a fetch for the up-to-date value.
-
-Link: https://lore.kernel.org/r/20240208132322.4811-1-ilpo.jarvinen@linux.intel.com
-Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/pci.c   | 5 +++++
- include/linux/pci.h | 7 ++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 26c9d16cb60c3..bb5a1d8bdfbd8 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -1190,6 +1190,11 @@ static int pci_dev_wait(struct pci_dev *dev, char *reset_type, int timeout)
- 	for (;;) {
- 		u32 id;
- 
-+		if (pci_dev_is_disconnected(dev)) {
-+			pci_dbg(dev, "disconnected; not waiting\n");
-+			return -ENOTTY;
-+		}
-+
- 		pci_read_config_dword(dev, PCI_COMMAND, &id);
- 		if (!PCI_POSSIBLE_ERROR(id))
- 			break;
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index ee89a69817aaf..512cb40150dfe 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2484,7 +2484,12 @@ static inline struct pci_dev *pcie_find_root_port(struct pci_dev *dev)
- 
- static inline bool pci_dev_is_disconnected(const struct pci_dev *dev)
- {
--	return dev->error_state == pci_channel_io_perm_failure;
-+	/*
-+	 * error_state is set in pci_dev_set_io_state() using xchg/cmpxchg()
-+	 * and read w/o common lock. READ_ONCE() ensures compiler cannot cache
-+	 * the value (e.g. inside the loop in pci_dev_wait()).
-+	 */
-+	return READ_ONCE(dev->error_state) == pci_channel_io_perm_failure;
- }
- 
- void pci_request_acs(void);
--- 
-2.43.0
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
