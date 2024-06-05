@@ -1,123 +1,125 @@
-Return-Path: <linux-kernel+bounces-203146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAF78FD70C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:06:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62858FD712
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD331C21EDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:06:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35417B21690
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C87157A4F;
-	Wed,  5 Jun 2024 20:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C2915884E;
+	Wed,  5 Jun 2024 20:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjlnSwCZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e5rse5p5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6A5155356;
-	Wed,  5 Jun 2024 20:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53123C6BA;
+	Wed,  5 Jun 2024 20:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717617968; cv=none; b=VNhZFshvSU1yDi/yrH7Z7tNemStU0LO/Hc1aiPKBJmlLdVvRTGE7suutIFsD3X6+2kX/c8LSYeqSAqaFbi4fPHI98kt6Dq+6C6EygagDtvnqWaggfvaK1TVkay1Ikycm0TaVKKtD4h+adLI6Or8AE2VQ/LWc5RKWGck7JZhSG3Y=
+	t=1717618153; cv=none; b=qOGXJyhGnjMCGaSo9KCrSEdbTm/LOPmg1CRFvDKu1G5GTkjnbNxRpw/3JkY9j5YOnCSDM4padVbXlB3gYUQhvJ/wLc6tGArJoVHch99txcfYDUNWbXuAcyoJFLjhzNOgo0BuJukrOgzkmFvlTMyOHLmqkgHXFWmzcl0bn0P7KEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717617968; c=relaxed/simple;
-	bh=tcIV154yjEx+jZi6w1gwf86t72QgsTXPe1vDfXnptNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sbhRV1m3+S0srhXvnOei6wjfjWekFNbLlfa0wCUHd3D2yd1oRR2+Oo8thOIikRrYQr24Ag5mNlhKfToUWv6uzitw0TpJqDN7gb+DbuX7avs9gK0Z9gm80H5ZLQC+9BGv13EmoMdGLEZyRP0vO+BwpEJ3mxXm607XYIdWkpDdw4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjlnSwCZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC328C2BD11;
-	Wed,  5 Jun 2024 20:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717617968;
-	bh=tcIV154yjEx+jZi6w1gwf86t72QgsTXPe1vDfXnptNM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LjlnSwCZ3QBn+iv6bMHUH81hwuZF4ddVoebpRp3oNUHaWIyj5D7tXJ5us/UaGcwQu
-	 3dWqyQbno52GB0lf1+Y+PQvumgnJ2zb+Mj0nK3is/r37UiFc6PFD++cG7isW0GdaBM
-	 M1Mo51dyfbb2qxEXDRlCAxvG+EJW9e5L3Dqvl+S/S3tCUdhcy5oM9R0+yq58dOXa8t
-	 SCVWiByboBeyJkjHWQtBMtt/izj/vt+PSgEDX/8rUW+h9v5gxYXdfFIVbcbMdXfnzF
-	 Xl4NuCMELC8BzSMsxsh9gbF7TlZ9JWFbahEVfq9MitPIV78rcDIHurx7ebWSeVKFiD
-	 BzB/piWdTbFlg==
-Date: Wed, 5 Jun 2024 21:06:02 +0100
-From: Simon Horman <horms@kernel.org>
-To: =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
-Cc: kernel test robot <lkp@intel.com>, netdev@vger.kernel.org,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	aconole@redhat.com, echaudro@redhat.com, i.maximets@ovn.org,
-	dev@openvswitch.org, Donald Hunter <donald.hunter@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
-Message-ID: <20240605200602.GB791188@kernel.org>
-References: <20240603185647.2310748-6-amorenoz@redhat.com>
- <202406050852.hDtfskO0-lkp@intel.com>
- <CAG=2xmOQBaUki43jpUnP7F-RvkxXroQ46_CuXvbQyps=MvvYAg@mail.gmail.com>
+	s=arc-20240116; t=1717618153; c=relaxed/simple;
+	bh=psg7vsPUBq2OZY+E+9KiVePLDkVSSarfYSqphs/lkMg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uUdykz3b/cNKne6oEWdaeFWBoKXvaceMwCx4rrtNaMjjY8F+faOfmmANZ+MpYgORlyP3nSVlN9Adm/e8rTxopOxv8JgEzDYkpQt0uOZ7J1vSiqfgvDd2+ptjKmD1Mr2vd8c/TccYKXmbXcV1kcujsehNpCJMbg+WPFk++WqDy7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e5rse5p5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B28U5032432;
+	Wed, 5 Jun 2024 20:09:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Slwr5x8koORwrUoKMkWJqgI9ypAGN6EHO1EZUIHQLH8=; b=e5rse5p5d2x+A3nk
+	VPTff935NWQJ/QS3JpmOux4NkwO1BnBpXmpdV8QiyEohRIDoi0X6UjpBA8uQCz0f
+	0mW+b3GW7Qd/o1nTbpgvQjXs07n4CgRS1gZ7meOVqxvOUKMmp/ZR+Vd667WtFf7t
+	zmR12Pkk/ixefHSuR17gXQnqIKQ/JYIvKo5sc6eQafbRqZhk5aRUwo0murr5xK07
+	TDIkBOvSbep8K+i4X5AccAhNESwImORCdZU/PLXfJpE5IMD2tzF6W57mtiDirsLA
+	IbQWLEcoUVOchQPSxbL23DB1ow4JO3PVLoDZB+FBo9kxI/oS5bsCdT5wtuLIro3E
+	jKu9og==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjh3tt11b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 20:09:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455K90Ip011920
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 20:09:00 GMT
+Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 5 Jun 2024 13:08:59 -0700
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Ryan
+ McCann" <quic_rmccann@quicinc.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>, Junhao Xie
+	<bigfoot@classfun.cn>
+CC: Abhinav Kumar <quic_abhinavk@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm/dpu: drop duplicate drm formats from wb2_formats arrays
+Date: Wed, 5 Jun 2024 13:08:43 -0700
+Message-ID: <171761747141.369436.16281750566495584556.b4-ty@quicinc.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240524150128.1878297-2-bigfoot@classfun.cn>
+References: <20240524150128.1878297-2-bigfoot@classfun.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG=2xmOQBaUki43jpUnP7F-RvkxXroQ46_CuXvbQyps=MvvYAg@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QLQsAV5NXQ3AvGoANCZLu60lEd1RjTs6
+X-Proofpoint-ORIG-GUID: QLQsAV5NXQ3AvGoANCZLu60lEd1RjTs6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 clxscore=1015 mlxlogscore=297
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406050152
 
-On Wed, Jun 05, 2024 at 07:31:55PM +0000, Adrián Moreno wrote:
-> On Wed, Jun 05, 2024 at 08:29:22AM GMT, kernel test robot wrote:
-> > Hi Adrian,
-> >
-> > kernel test robot noticed the following build errors:
-> >
-> > [auto build test ERROR on net-next/main]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Adrian-Moreno/net-psample-add-user-cookie/20240604-030055
-> > base:   net-next/main
-> > patch link:    https://lore.kernel.org/r/20240603185647.2310748-6-amorenoz%40redhat.com
-> > patch subject: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
-> > config: s390-randconfig-002-20240605 (https://download.01.org/0day-ci/archive/20240605/202406050852.hDtfskO0-lkp@intel.com/config)
-> > compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406050852.hDtfskO0-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202406050852.hDtfskO0-lkp@intel.com/
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    s390x-linux-ld: net/openvswitch/actions.o: in function `do_execute_actions':
-> > >> actions.c:(.text+0x1d5c): undefined reference to `psample_sample_packet'
-> >
-> 
-> Thanks robot!
-> 
-> OK, I think I know what's wrong. There is an optional dependency with
-> PSAMPLE. Openvswitch module does compile without PSAMPLE but there is a
-> link error if OPENVSWITCH=y and PSAMPLE=m.
-> 
-> Looking into how to express this in the Kconfig, I'm planning to add the
-> following to the next version of the series.
-> 
-> diff --git a/net/openvswitch/Kconfig b/net/openvswitch/Kconfig
-> index 29a7081858cd..2535f3f9f462 100644
-> --- a/net/openvswitch/Kconfig
-> +++ b/net/openvswitch/Kconfig
-> @@ -10,6 +10,7 @@ config OPENVSWITCH
->  		   (NF_CONNTRACK && ((!NF_DEFRAG_IPV6 || NF_DEFRAG_IPV6) && \
->  				     (!NF_NAT || NF_NAT) && \
->  				     (!NETFILTER_CONNCOUNT || NETFILTER_CONNCOUNT)))
-> +	depends on PSAMPLE || !PSAMPLE
->  	select LIBCRC32C
->  	select MPLS
->  	select NET_MPLS_GSO
-> 
 
-Thanks Adrián,
+On Fri, 24 May 2024 23:01:12 +0800, Junhao Xie wrote:
+> There are duplicate items in wb2_formats_rgb and wb2_formats_rgb_yuv,
+> which cause weston assertions failed.
+> 
+> weston: libweston/drm-formats.c:131: weston_drm_format_array_add_format:
+> Assertion `!weston_drm_format_array_find_format(formats, format)' failed.
+> 
+> 
+> [...]
 
-I both agree that should work, and tested with the config at the link above
-and found that it does work.
+Applied, thanks!
+
+[1/1] drm/msm/dpu: drop duplicate drm formats from wb2_formats arrays
+      https://gitlab.freedesktop.org/abhinavk/msm-next/-/commit/3788ddf084b7
+
+Best regards,
+-- 
+Abhinav Kumar <quic_abhinavk@quicinc.com>
 
