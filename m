@@ -1,74 +1,83 @@
-Return-Path: <linux-kernel+bounces-202728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEE88FD012
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E51F8FD00F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD8A298D0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0029C1F2139A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A6B195392;
-	Wed,  5 Jun 2024 13:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33212192B6D;
+	Wed,  5 Jun 2024 13:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FlfAMr8Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AUH34lJS"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8B118F2CD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 13:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7718018FDBF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 13:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717594788; cv=none; b=jIsBhyLLMAtKvaj3/Y9pmlvhfB7cV0TbDrzr2Z2Koiao3GsvcN8hS0q1yTgoX73lwA6Uv7WP/vEXRwTnpeZ+aF6BvdEPgCvRR5Sxv4n9Ke8Ye/VsX6BT979dwA0NM20jbamzuDaM5i4Rr2zdm6/pvz755QPp2uRXvOgULmSKSnA=
+	t=1717594717; cv=none; b=cEkwJoxuINdsePk0r4L7Q/iRI7qSYmzpXgOsZkDXg+ya+qJIgSLsSZZ9EK03COuh6CztY7BXXzaRwePz5qROry2tqugLcxbdFZDCuxp+wi0epaXvODTUkM52NlgR6deLQ6k3B4rkw9brsZVQbc5FKO0QeNlet9fu2tZfQbYWYBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717594788; c=relaxed/simple;
-	bh=KXUlGvJxH76Dw1mprNtT8VriPC1GoqJaANXsGiwAP1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ll5kb9SFdeoaQbrpxXTEzNsBJv9iyjb4PbsEZRHzilYM4z9cLHP+WivYgWlhi4ZIYMPun/LoXVJzw2SbvrDnmMO6GC0gtr/7f1fdsOUk3lJ1aduCdO5eoex5eXVXrnPe6xdUjf5nBQAdUlluqWVWFdt+flIDmjv77NDOJOmvDJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlfAMr8Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717594786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8Hq5dFgzzvJ7XxAlZCAf3SVqsfwdgE9gzlqrR94U8+M=;
-	b=FlfAMr8Qr9Pvjh9xqvrGra1fID1ZgM1ezrNuLdx/CuEJx3+oJJwWWdhCRS6bsbF2tPWZN7
-	LbUVfZkyBUqbH0qbByM+qCmKF38/tJhcZLuLWnMcj3GAkLamhvhgemsffqe7SP0/SUF5/X
-	vLP5w4kMyGGt1RNRc/nu2BQBp0SIOXA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-TesUs7_COgSJTGxJHerPAQ-1; Wed, 05 Jun 2024 09:39:39 -0400
-X-MC-Unique: TesUs7_COgSJTGxJHerPAQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3E8AC800076;
-	Wed,  5 Jun 2024 13:39:38 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.50])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 5D8C31C0005E;
-	Wed,  5 Jun 2024 13:39:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  5 Jun 2024 15:38:09 +0200 (CEST)
-Date: Wed, 5 Jun 2024 15:38:05 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: Re: [PATCH 2/3] x86/fpu: Remove the thread::fpu pointer
-Message-ID: <20240605133805.GB25006@redhat.com>
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <20240605083557.2051480-3-mingo@kernel.org>
+	s=arc-20240116; t=1717594717; c=relaxed/simple;
+	bh=mlhApMpG5WU395YtWwS9QPBflIL0rJC4v8OyN6FnRbc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJsm/qWECToxuJYZo5zxFoCiLjzuPShIkZcCJxsSNikLFhK7143qvuGvg9SAk/mz5b2HErVTU/5fgwYpLhqrDlHnwqfR3B3XKEPtuUfTbKs/VSTuubNy4Jj1HHx5Fmyya/fVywIspkemGwgI5M3Oy7gpg1ESiGeDb6Jgs6NS6Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AUH34lJS; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-421396e3918so48144455e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 06:38:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717594714; x=1718199514; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mlhApMpG5WU395YtWwS9QPBflIL0rJC4v8OyN6FnRbc=;
+        b=AUH34lJSHF1jmKLrzgVUddSsKCND91OwylcvYopEsudkJI9VrjsLp7Mket5FQ6NCAK
+         +bhBPjP5gj+u9a3pX2pHCpy/xTsyECtunF/ogJEwWnfF1XFIhIkvF7kK/m3GJsztd1CG
+         tm+Qixqbjhif2OlUGdQCNJAinA6QtoXclkKE9POoJD+yP8bQ0WC2mbAlZRX64QHoaFiU
+         MMHJyuAc5FQpS4ucRbhd/qz880dAmHVx68nWaekLhs6YibBZnbjGEF/un28MehTJFwkY
+         /6kjzZtrS1Kri/wdZfcFzOM7LIJnQ++bH87xmBa9XQTSG2kWdtS84CNsHgg8gWdocUUG
+         E62g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717594714; x=1718199514;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mlhApMpG5WU395YtWwS9QPBflIL0rJC4v8OyN6FnRbc=;
+        b=YqNyIzZmx6qSdbP75at3q0K92IaEYf4EtaHJ3bLV8msNlDXsWWKrE23AhPmcFlj7oT
+         LAT31GDmyMmnCCD3yN0eotgy4wsL2E/7945HexAt0be5HZsoGsdqD8AH3TuFNPb03Nww
+         98JtUd8cOIhbrF19G/RPIbXWq4ZMPUsQJ1BD8a7K7fka5VgbAjbhtVmqnwcQsA5lOmGa
+         alSNm77NX6lrKrVw9DKb9c0w5PQmzTPyRDU6fIyNll1YkaLHpfw+VI55YfE2uIDVB/LB
+         Su0SHHckwM26DdgS0jQQdc13wMRUEeQkAPT0MhUqgSNsCS8RIciPk/e/tm101UwWb67A
+         569Q==
+X-Gm-Message-State: AOJu0Yy9IuCtE5JBxeQ4lG4zE4InDGUzdbPWn9P3oxASn9WseDeJAjOZ
+	C+WWatbYETg7wHwdNTEx4p15gZmiv5pwc7Sy0cS0zrKRLz6eDqzk77ZXnLPL1dg=
+X-Google-Smtp-Source: AGHT+IHjkretuS1fTFtZei6hChIG2kgCEQtxhJThqCOKkNHqb6TBqHMder8dhApLzt0DEjaMW0SbBQ==
+X-Received: by 2002:a05:600c:46cd:b0:421:1fb1:fe00 with SMTP id 5b1f17b1804b1-421562d4a37mr26359565e9.17.1717594713675;
+        Wed, 05 Jun 2024 06:38:33 -0700 (PDT)
+Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215814fc11sm22296825e9.48.2024.06.05.06.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 06:38:33 -0700 (PDT)
+From: "Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@baylibre.com>
+X-Google-Original-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Date: Wed, 5 Jun 2024 15:38:31 +0200
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Aleksandr Shubin <privatesub2@gmail.com>, Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 0/5] Add support for Allwinner H616 PWM
+Message-ID: <d5mr73yc7l6w6uvgqb4ymyc5267do4zirnnorkpi5s6qa5vckk@owayit4mexk2>
+References: <20240531141152.327592-1-kikuchan98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,25 +86,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605083557.2051480-3-mingo@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+In-Reply-To: <20240531141152.327592-1-kikuchan98@gmail.com>
 
-On 06/05, Ingo Molnar wrote:
->
-> @@ -591,13 +591,11 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
->  	 * This is safe because task_struct size is a multiple of cacheline size.
->  	 */
->  	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
-> -	struct fpu *src_fpu = current->thread.fpu;
-> +	struct fpu *src_fpu = x86_task_fpu(current);
+On Fri, May 31, 2024 at 11:11:32PM +0900, Hironori KIKUCHI wrote:
+> Add support for the Allwinner H616 PWM, building on top of Aleksandr's
+> Allwinner D1 PWM driver v9.
 
-I think this patch can also change
+It would be great if you could arrange with Aleksandr to maybe put your
+efforts into a single series. I think this would simplify reviewing and
+overall handling of your series to me.
 
-	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
+Your first patch should for sure be squashed into Aleksandr's patch #2.
 
-above to use x86_task_fpu(dst).
-
-Oleg.
-
+Best regards
+Uwe
 
