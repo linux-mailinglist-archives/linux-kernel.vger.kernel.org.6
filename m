@@ -1,386 +1,366 @@
-Return-Path: <linux-kernel+bounces-203300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CFAC8FD91E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:36:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBFB8FD91A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB7FB259CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D1B728B9C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91DF15FA6B;
-	Wed,  5 Jun 2024 21:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0BB1527B7;
+	Wed,  5 Jun 2024 21:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hKUlfAAA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="l87mZ7g2"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2090.outbound.protection.outlook.com [40.107.223.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E9816D9A3;
-	Wed,  5 Jun 2024 21:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717623204; cv=none; b=FrR9CPxbIJtmMmGCObCcSs0e83zSqwEZYKH/LPQU7wTTO3u9aHKP04lHVKfeAQ9e4GqDtq+9ffVCCw/8KMLh2U325VyEsn0ZcRCNAE+pQq6mkm7CbClv66dQ6Ok93nTiockKwQoUSh+LJFzDXi+J23pN3YPujgwPstWe9Ohya1I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717623204; c=relaxed/simple;
-	bh=GFWdiBrrALapFfZ9mZyw4LqzPHc2E/G8ZMpfRlbTgeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=msB5GAfy7HJrDo7W9y69JFwwslekkzt64k20yGHgGGC/eeYrlOn39F+/VGdrdivrAVFrQle5IA702+E8JICmtQ2BWlyOOY7LY0lEd5DoeYjMUumT+DTKAP+tnUYEzPVIpkh6mUYKD5swFSZb9kiYfpaetwCXl8qBgO7EJWzVpeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hKUlfAAA; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717623203; x=1749159203;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GFWdiBrrALapFfZ9mZyw4LqzPHc2E/G8ZMpfRlbTgeI=;
-  b=hKUlfAAAYs131IqoLjHakOXK3Trww3H5KvoIVCv1GfbLBYHN0pGTQ42z
-   fo3x4YRjxHUzZ5cI91wP84r+dUl3xCjEyLyfdewe4gf4oIFDQHfQc7Jb4
-   OAUAyZN7cZqWOtm2d3SK7tEbttGaL0UlU6XWv4pR1l+DzAKfqQA+J5Mqp
-   Ft2+IoHkUJsWCWda1f5j9RqxixE3ngEgdx1HBjpY3tKglshrkv8jfntpa
-   UZcAQ3dS91Q8d3VeNyZ488q/vcN+/4SXktk682yCLwZ6DHnFf+hdmKWs7
-   qR5QtJFbQDeKQPy2LwF2LdTFg2olEa9ETdGxRlPfrL1Z2aOkVsuh24NUU
-   Q==;
-X-CSE-ConnectionGUID: a70VrjqbS7q980f7F0NeVg==
-X-CSE-MsgGUID: /iLCsArbRPqROD31EVtsFw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="18082602"
-X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
-   d="scan'208";a="18082602"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:33:22 -0700
-X-CSE-ConnectionGUID: hSukBW8YS7Cmbn8i22c/LA==
-X-CSE-MsgGUID: BQua7tGaQOWACxECq10aZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
-   d="scan'208";a="75204966"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 05 Jun 2024 14:33:18 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sEyFv-0002HK-2q;
-	Wed, 05 Jun 2024 21:33:15 +0000
-Date: Thu, 6 Jun 2024 05:32:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	marcelo.schmitt1@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] iio: adc: Add support for AD4000
-Message-ID: <202406060558.kJtbRid3-lkp@intel.com>
-References: <e340f48324b0ea3afb1c715cb2fba184c27112a1.1717539384.git.marcelo.schmitt@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1301667D8;
+	Wed,  5 Jun 2024 21:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.90
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717623188; cv=fail; b=RWkbskB9xIaT/ANKpRo1hGGF9pN7wSseD/TxpwjQroROcZx9lc6YyjMgjsOezil/hbp9+wTXExzOA4CAUZpRHMZIu+yasBYSEUXIfGvcHUhdM+wHTtJ+XgCKdYtGG8CQha+TwAEtgicfAy14l6kpjphAlBXOAziYbyhac6li3HI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717623188; c=relaxed/simple;
+	bh=T8V7PvlCh8SPErcaHSHLJ/Y/wRXqgLHr/l+syAqhlEg=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZXCfV1oXH+mFvIuT/16OnDvI0No9aRGw7t77Nl0XwF+H78OenEGBiAAf5zLLAdZ7SVcQhdfvTh1DShKE9DRiBON4CyJnc1uMW5ExjWC4uLBa8IE0UCXtUB/3j3tGIM7L3oZPGT+Hu8fNYD7lII9aMyoffIbU4oAN3XOXcmC9mBs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=l87mZ7g2; arc=fail smtp.client-ip=40.107.223.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HNwFt8RVEKUX4XIfhuvuOye1fIzoHMKdlpFd1WESehbqz2fJ/hISi5fwOV4dxTcWA7q3InI5vm39G1mrodMANvKR/ugTETnz+O4MGsmuRGgodpTqMf2SAYEfEcgZCXozAHM5VvRM7V9dYtY4ExuNU/OQi7PetmGAWWlnXYyctMlI9HGXeDKVcgsmdbuXLd1glab494Hd6iaVoX+FpQqYIc6+7DYCBItwA3f0+4WCawkH0YX7hu0Y7yJ0cOoF9HmbQmmJIV1c+O2vAv2qR7rWiDVO5Zxmfw0hPkx0A1TBDBrAtiBHNfX1FXb+d94+Q+weZuZKLCFHAmyCpXsKNu5mhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JdVpxNo5LWawmLbsSeAfZhRkYDyrntsgTTS/HwrbKvU=;
+ b=VYqzi3d1UFfCCXLeU+mqQd+5Hi/MUCDkAeDcoBcb9LTa26IjeLl+uhBMA+Qwc+R3aQ7lV1EqpLRBrWlJwVHk8TTDWwC3hGu3OuYUCW4khC64I9v5sXsLec1gOOZi512vMzjjGPOpysND//Pphc25J4kvN9+YwCVqN3XwjHhVIz7FWySSnYhi7arOtzeWkJFgJeq97DEDIrorohnEJ0lrrOvrOdk5ycnIGW4xsszDAq8aD7xfvhXYR2zov3ty3d1QjYXPm2WHmlZ/DkTpn7sOwL+/eXJSdX0ssXn9qUHKftrY07DUp/wjXnUfg3omUyqsuMPMRRa5R12h6uBBtFrouQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JdVpxNo5LWawmLbsSeAfZhRkYDyrntsgTTS/HwrbKvU=;
+ b=l87mZ7g2tSiGr6P29t3W1m9rmV/slHuBKPP6EPEb6Y6tEus2YEDJ5PJCpwLfdAEns+KLRKYiy8CsUq+4AE63hrdPG/t0WfZ1uYx4un0x03rkc2e/3IpgiBivbugUuAGqdReg40eDS6s6UN/LgHwaw5GEkm4YvofAZdwLXlkstqc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CO1PR01MB7370.prod.exchangelabs.com (2603:10b6:303:159::16) by
+ LV3PR01MB8462.prod.exchangelabs.com (2603:10b6:408:1a7::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.27; Wed, 5 Jun 2024 21:33:01 +0000
+Received: from CO1PR01MB7370.prod.exchangelabs.com
+ ([fe80::6e98:87d1:5562:ad73]) by CO1PR01MB7370.prod.exchangelabs.com
+ ([fe80::6e98:87d1:5562:ad73%4]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
+ 21:33:01 +0000
+Message-ID: <fec6ba82-aef8-4ffe-a18b-20ac8e0a1a03@os.amperecomputing.com>
+Date: Wed, 5 Jun 2024 14:32:55 -0700
+User-Agent: Mozilla Thunderbird
+From: Daniel Ferguson <danielf@os.amperecomputing.com>
+Subject: Re: [RFC PATCH v8 08/10] ACPI:RAS2: Add ACPI RAS2 driver
+To: shiju.jose@huawei.com
+Cc: ira.weiny@intel.com, vishal.l.verma@intel.com,
+ alison.schofield@intel.com, dave.jiang@intel.com,
+ jonathan.cameron@huawei.com, dave@stgolabs.net, dan.j.williams@intel.com,
+ linux-mm@kvack.org, linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, david@redhat.com,
+ Vilas.Sridharan@amd.com, leo.duran@amd.com, Yazen.Ghannam@amd.com,
+ rientjes@google.com, jiaqiyan@google.com, tony.luck@intel.com,
+ Jon.Grimm@amd.com, dave.hansen@linux.intel.com, rafael@kernel.org,
+ lenb@kernel.org, naoya.horiguchi@nec.com, james.morse@arm.com,
+ jthoughton@google.com, somasundaram.a@hpe.com, erdemaktas@google.com,
+ pgonda@google.com, duenwen@google.com, mike.malvestuto@intel.com,
+ gthelen@google.com, wschwartz@amperecomputing.com,
+ dferguson@amperecomputing.com, wbs@os.amperecomputing.com,
+ nifan.cxl@gmail.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+ kangkang.shen@futurewei.com, wanghuiqiang@huawei.com, linuxarm@huawei.com
+References: <20240419164720.1765-1-shiju.jose@huawei.com>
+ <20240419164720.1765-9-shiju.jose@huawei.com>
+Content-Language: en-US
+In-Reply-To: <20240419164720.1765-9-shiju.jose@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0013.namprd03.prod.outlook.com
+ (2603:10b6:303:8f::18) To CO1PR01MB7370.prod.exchangelabs.com
+ (2603:10b6:303:159::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e340f48324b0ea3afb1c715cb2fba184c27112a1.1717539384.git.marcelo.schmitt@analog.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR01MB7370:EE_|LV3PR01MB8462:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60a3abb0-2605-4905-1787-08dc85a71390
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|52116005|1800799015|7416005|366007|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SVdvQ1pjbHVCMEdnaUNzVW4yTnFKaDYzSG5oQzZpbmRuWmJhL2ZQLytWampE?=
+ =?utf-8?B?Z3REZWMydHFnMHlvMVpuYzVVeG5kSlc5WitEUHdaMUZKV3NjTjFSeEpGUXc4?=
+ =?utf-8?B?eDZqYzlnQzA1aXF1VXFmUXFEVWlRVjQ0dG1jMXdCK3BWMFIxVEJrV0NxVW45?=
+ =?utf-8?B?YWZYV1BwcXpIbkljOUNmbVhoTnpuOGNXRWNrZ3dpQlhXM2dyeDU2bUVqWDdl?=
+ =?utf-8?B?ak90em5BV2VtM2hJQ3J1b0VuaUFVdzQ2ZTBUMkZzUGh0a054STd5VmtIWkxS?=
+ =?utf-8?B?LzU4OUJRUDJ1ZStlV0k2aWNtcUhyaEx0ZERHb29Nd0NEcnY5cjZKMTJGMUpV?=
+ =?utf-8?B?emJyRXowYmRCYzBQdEw5N29Fa25RandvSXFzajNoVVZoN1ppT0wxcy8rRUtT?=
+ =?utf-8?B?ZTI5L2dVTGFLS1dPMTJpdy9qdURaVVNUaXhxTHJDbE85eG83MHNyQTNDaWNr?=
+ =?utf-8?B?TkVWNU8rRkhRczR4TTkySllMRXNtcXdIczN5T04wNzRqQW15Nm53cVh6RG5P?=
+ =?utf-8?B?N2w0WlJ4aCtTYXoxMVJIREdzdmt3blg3Vy9ScGxpOEF4MWtoMlo5UHV3cWxL?=
+ =?utf-8?B?L0d4KzlnN0dlRlRqSDNjYWg5WjRxOW5HWXp4dGxTMXg0STJTV0hwTmRGQytu?=
+ =?utf-8?B?L0NBQTZvQmFiaXU3TmNJMTVOcVV4Sm4xN2ltRWpjbkduaEtiMWZockRlVmY0?=
+ =?utf-8?B?YnRvcDhmeUFqQUhpYTBzZEcvcmdTTzk3anQrVmNaOXdtWmFGUzNRZEkwQldN?=
+ =?utf-8?B?Ti92WFVBMk1CTitPRkFvQnhaZ28yR0Z2YU1SeE9YaVR2U3Q0Ync2VFU4dHpX?=
+ =?utf-8?B?bTN4RkQ5MVVmTkdMUmp0d2xhMTNWRmN0OGhjM1I0b3ZVdGpCOW1hN1NVeGdh?=
+ =?utf-8?B?MXh2RXVXWW1XMFZqL1owblFEQTF5OFpRSWtNUlBWRTgvNjd2N2U5K1l1SFBT?=
+ =?utf-8?B?Q2pEbytRUHhwRkZyaFVEMEF0V2Z2enFVRWdrRWNpcHBSSDZseFJ6MjRsWHdL?=
+ =?utf-8?B?MTdkeU9sa2lmRjdZMFJ0V25NNFk2Y2Qza2dWd0NaMTViVi9WeTgvUHRxVi9E?=
+ =?utf-8?B?aDNYRnlLV3E3UDRuR0E0R3VRNHZjT3hhWnY5QUM5UExxM1d3eWQ5Rml4Zkxh?=
+ =?utf-8?B?cWVCak1tUmdvNUIwcTRRcm9Ea3JxM3QxdXVRY3FPeTRwSjZUR0krM1dSeEFZ?=
+ =?utf-8?B?UzFiTTIzOFlBNHZJeHc3ZEtYeHE2T1JsaUNmUlJwZ3BvU0F5SGN4Z0dHOTFQ?=
+ =?utf-8?B?bldDejBiZi8vL3hFMTB5dGdJOGo0MjRaTVI4N2hhNFEzL1RMa1hubUNOVEZC?=
+ =?utf-8?B?d1UwZmJyQkpwdVB5eTlrd0M0WWMwblhFcmZPclI3UTBSSW9oZEV6d2x3cStM?=
+ =?utf-8?B?YkFkN3E4Mk9sRjZ0M2M5WHVoVEFMR2U1M2Q3ZFNtYVlESTBkQm41b0FKWHow?=
+ =?utf-8?B?b29YU0dFOC9leVd1QjlhZFdlOE1uWStxSWhpWXdMNGFvR2VsR2xmUVJiejZL?=
+ =?utf-8?B?Rms1b2grbURXRVpuSVl2eWc2TSt2bkpPVUdkalNQaHp2VlpoUkEwTzZiN3BG?=
+ =?utf-8?B?TEd5MkhaTVB3R1lRdGwyZEpCQ2Y1OW90ek9Id1FHbFVWY013VnB1c2o3WFdD?=
+ =?utf-8?B?c0dDUXRxOVV3R0FjbzVSRnp1em00RktMeFZLTVN0cGdlZDRTR1FLenVQb0J3?=
+ =?utf-8?B?ejNoSFBMSmRlZnEzNmFxNWtVK2Y5VjloOThBLys2U2FyeEsrYTBuRHlaRzM0?=
+ =?utf-8?B?KzhEU0FzSFhNNG1KbUQ1REFDNWVUT0ttKzVPbjgyOC9GNkIrT09WVTkwL1pG?=
+ =?utf-8?B?T2VnSmJsQ3FxdFBpSDY4Zz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR01MB7370.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(1800799015)(7416005)(366007)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WEpMRXFBOSt6bnlHa0o5eTBhVnZkeU90a0VrUk4xRjhRTFdMR2NrTmJjeW1q?=
+ =?utf-8?B?cm40N0VWZ3htWnRGUFNMOUt1anZXWjAwY3B2QmRzRmFJSER1QkJlRUpTMFdr?=
+ =?utf-8?B?SmdBOEhHenJxQUxzSjNhVmlWRHJaeUR1Z1JPYTQzRmJWWlRBRWtWakFtM2ZJ?=
+ =?utf-8?B?d0F0UmZ2MFZYVEdDZjFWTUppb0R0VURRTUZiU2lvMlRiTTltMEtrY3hqeXdu?=
+ =?utf-8?B?Y2E4VUY4MXhtdjBXTE10WGxva1Zub0xvelBZcDZaOVV6ckZjZVZXU2lpVk1R?=
+ =?utf-8?B?T3BuZmpYUFN6bE1nalVrcSs2WDhobGErakw3NnVBbXFVNThCRU1DODgzYnFO?=
+ =?utf-8?B?Y2FFaUJvMm1IbkN1MTY3bGc3YUwxajVYRHdsSGF5YUJIbnlidGcxb1ZTOEY4?=
+ =?utf-8?B?dHcrb3ZHK0wxTGtXWjVKbnFzVzIwZm43Tm93bHV6UHpXUDd1c1BtODZWbnp3?=
+ =?utf-8?B?bVVkY0RDRW1QMG96TlFHNUtTeFJpTnBHTE84bVQyQjRDZUdVZndzcXRMaHpk?=
+ =?utf-8?B?WW9BZ0N2UlY5anExT0FXZnluRHlzYmxFWW9vNXpXUEZOQS8xajZ3enp1dFht?=
+ =?utf-8?B?K1YzMVN6WFYwM2pwckxIRnRlM2p6THBPK3NTZ0twNnU0UXFId3ovc1pVbmNm?=
+ =?utf-8?B?S01lS0VOdW9XTG92UjRSb3QxKzJPL1BPdlRDN1NXRmVhdTFKTWRqWFhwWFBp?=
+ =?utf-8?B?UjlBT3p2Y2ZNNm1SUENkL0RMNlRDaGdGQ3EzaGFxVTJlTkJ1WGtNRTQzOEV0?=
+ =?utf-8?B?ckNrbFN5MHVadktZT2NrZFkzZlVGZ1h1Mk9KRTZQLzVBdjRpbFprVGJHQTdX?=
+ =?utf-8?B?amd5Q0NFTHhsK3ZhTk9qYWZDekVoRkV1Mjk2YXRZUWE2cjFXZGpsRUhDbG5o?=
+ =?utf-8?B?SXRaWkUrUXZYMnduVGtqejRlK0N4SzcvMlEyT0NSN3NPcmp1a2NqS2VrRnB2?=
+ =?utf-8?B?OExTQWhJRkUrN2tUc0tlUmQ0SStUYmtDbHdqbUE5V01KUU05ODRqeEZ5Zk5i?=
+ =?utf-8?B?YnAzYmZLQWlJc2xDVUFTVFk4ZHFYb2g5cGVpaWIxdGpYZ0xSN1N4OVZWOVFn?=
+ =?utf-8?B?R05KVENrOWZZN3hQTUlyTVJvazBSVGcyRlQyTHhGTEF2UlN3U2M2V3Jtem00?=
+ =?utf-8?B?ODdSUGVxK0M5VzgrRXlrR3d0ajJsVVJCZW94bWx2UElsalBmY3RmRllPTCt3?=
+ =?utf-8?B?ZW4vUFZTVEQwcm9RRnNMSUF2S2x2Q0dxbEtZWlFNU0RDZERSQVdHdU5IdXd4?=
+ =?utf-8?B?azhmVDlSaVZSdmNXVkFpNDI1ZFRGbDNZcUNUZGxhYlBlQ2pUaS9QdVE4U1pW?=
+ =?utf-8?B?Y01iYUh0dnFodTE3TW8yMFpTTk10Y1RiOEY4RkM4RnBWdFBTekdCRzNuZi9z?=
+ =?utf-8?B?L3VTTTBqQU9jdTFaMlVVdEo4azlLY1BvWjNCSEpJU2ZLS0R5dWlwd0xGY3Jx?=
+ =?utf-8?B?YXMzdWV4M2laMUd5dFRTQ3c1aC90ZW9TZkVVQTNLT2dxeVZYNWlBQnpyVTFm?=
+ =?utf-8?B?VW92bit2VWk5NUFoL0xhKzkva0JiYVBRQkhTaUp5MnJaUUQ2d3VGMzVybExh?=
+ =?utf-8?B?U00xSXpoaEppWWd1bmM4bldEaDJXeTNzaFFHRzdQbW40eDJsejkvRTFUMzJ5?=
+ =?utf-8?B?UmVpb2JFSTNzRVpWdkc2N1paSHdWbFJyNmkzUlFJeXVSWkwydVRuem42TDNm?=
+ =?utf-8?B?WFBxb0o2YW8rbnEzMmY1YmxOWm1DUjVheCtHd3lRYVNxZUowTGhRajhHaWlk?=
+ =?utf-8?B?TGRVeUhiUVoyNGtnU2NRRnplazd5bHVidE5WNFMvRVFvNXk5OGRDOEtkUXVi?=
+ =?utf-8?B?R0xDZTBCazN4bitSa1VIeHdMczVHNllCV0p4dDVVcDJDSTBqbmtOa2xDZFJv?=
+ =?utf-8?B?SXNGUk1VZXd2NUNXQkJQaUNNcDJHaHhXa3RmWXF6R0FYWVQxSTVVQVExdUl0?=
+ =?utf-8?B?bGtNTkxORmdaQlpMU2xzM2xONTI0ajlJRlJaL2ttQWV6ZTdvNnozN282QVpt?=
+ =?utf-8?B?T0cvdzFDZEd3RUVjMHFoc0V2NVVhTHZKTnZvakhJdjRYaW0zUnFjZzVwTVFE?=
+ =?utf-8?B?OUJhMFhTZGpFb1VKZ1o5MjZSL05GZ2JoNFRoZzBydUdBbmU2OU84dHZ1L2U0?=
+ =?utf-8?B?ak02aE0zdVJqdjBlV3V1UHdjNzhPT005U3pDVU9pNGV5ancxREw5OEJlbFds?=
+ =?utf-8?Q?PeP2crEHQmXFDlDy2402tIg=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60a3abb0-2605-4905-1787-08dc85a71390
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR01MB7370.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 21:33:01.6331
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KuAsfeDpHsllQ/s4ueeeor3nWxoMwljsZ4Svx7co1fF3AEDhvh4SxVuRsxIuwiuYLPaxtVtoFg+QlcSEk1OrNmfbxg3mNTlCrfCq5t+zA/MzGY2qSpKaOIjfjs+NbiN6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR01MB8462
 
-Hi Marcelo,
+> +static int ras2_check_pcc_chan(struct ras2_pcc_subspace *pcc_subspace)
+> +{
+> +	struct acpi_ras2_shared_memory __iomem *generic_comm_base =pcc_subspace->pcc_comm_addr;
+> +	ktime_t next_deadline = ktime_add(ktime_get(), pcc_subspace->deadline);
+> +	u16 status;
+> +
+> +	while (!ktime_after(ktime_get(), next_deadline)) {
+> +		/*
+> +		 * As per ACPI spec, the PCC space will be initialized by
+> +		 * platform and should have set the command completion bit when
+> +		 * PCC can be used by OSPM
+> +		 */
+> +		status = readw_relaxed(&generic_comm_base->status);
+> +		if (status & RAS2_PCC_CMD_ERROR)
+> +			return -EIO;
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on broonie-spi/for-next]
-[also build test WARNING on jic23-iio/togreg linus/master v6.10-rc2 next-20240605]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Marcelo-Schmitt/spi-Add-SPI-mode-bit-for-MOSI-idle-state-configuration/20240605-231912
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-patch link:    https://lore.kernel.org/r/e340f48324b0ea3afb1c715cb2fba184c27112a1.1717539384.git.marcelo.schmitt%40analog.com
-patch subject: [PATCH v3 6/6] iio: adc: Add support for AD4000
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240606/202406060558.kJtbRid3-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240606/202406060558.kJtbRid3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406060558.kJtbRid3-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/iio/adc/ad4000.c:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/iio/adc/ad4000.c:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/iio/adc/ad4000.c:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:9:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   In file included from drivers/iio/adc/ad4000.c:17:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   drivers/iio/adc/ad4000.c:375:6: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
-     375 |         int ret;
-         |             ^
->> drivers/iio/adc/ad4000.c:538:3: warning: variable 'reg_val' is uninitialized when used here [-Wuninitialized]
-     538 |                 reg_val |= FIELD_PREP(AD4000_CFG_HIGHZ, 1);
-         |                 ^~~~~~~
-   drivers/iio/adc/ad4000.c:535:22: note: initialize the variable 'reg_val' to silence this warning
-     535 |         unsigned int reg_val;
-         |                             ^
-         |                              = 0
-   9 warnings generated.
+We need to clear the error bit before reporting an error.
+Maybe the error was transient, or specific to the last transaction.
+So clearing it here, lets us try again later. Like This:
+		if (status & RAS2_PCC_CMD_ERROR) {
+			status &= ~RAS2_PCC_CMD_ERROR;
+			writew_relaxed(status, &generic_comm_base->status);
+			return -EIO;
+		}
 
 
-vim +/reg_val +538 drivers/iio/adc/ad4000.c
+Also, we are thinking that using the "Set RAS Capability Status" as a
+way to communicate RAS2 Scrub specific error conditions is appropriate.
+If we agree on that idea, then we can additionally check the
+set_capabilities_status and return an appropriate error..
+for example, we can add a new error mapping function:
+static int report_cap_error(u32 cap_status)
+{
+	switch (cap_status) {
+		case 1:  /* Not Valid */
+		case 2:  /* Not Supported */
+			return -EPERM;
+		case 3:  /* Busy */
+			return -EBUSY;
+		case 4:  /* FailedF */
+		case 5:  /* Aborted */
+		case 6:  /* Invalid Data */
+			return -EINVAL;
+		default: /* 0 or other, Success */
+			return 0;
+	}
+}
 
-   369	
-   370	static int ad4000_single_conversion(struct iio_dev *indio_dev,
-   371					    const struct iio_chan_spec *chan, int *val)
-   372	{
-   373		struct ad4000_state *st = iio_priv(indio_dev);
-   374		u32 sample;
- > 375		int ret;
-   376	
-   377		ret = ad4000_convert_and_acquire(st);
-   378	
-   379		if (chan->scan_type.storagebits > 16)
-   380			sample = be32_to_cpu(st->scan.data.sample_buf32);
-   381		else
-   382			sample = be16_to_cpu(st->scan.data.sample_buf16);
-   383	
-   384		switch (chan->scan_type.realbits) {
-   385		case 16:
-   386			break;
-   387		case 18:
-   388			sample = FIELD_GET(AD4000_18BIT_MSK, sample);
-   389			break;
-   390		case 20:
-   391			sample = FIELD_GET(AD4000_20BIT_MSK, sample);
-   392			break;
-   393		default:
-   394			return -EINVAL;
-   395		}
-   396	
-   397		if (chan->scan_type.sign == 's')
-   398			*val = sign_extend32(sample, chan->scan_type.realbits - 1);
-   399	
-   400		return IIO_VAL_INT;
-   401	}
-   402	
-   403	static int ad4000_read_raw(struct iio_dev *indio_dev,
-   404				   struct iio_chan_spec const *chan, int *val,
-   405				   int *val2, long info)
-   406	{
-   407		struct ad4000_state *st = iio_priv(indio_dev);
-   408	
-   409		switch (info) {
-   410		case IIO_CHAN_INFO_RAW:
-   411			iio_device_claim_direct_scoped(return -EBUSY, indio_dev)
-   412				return ad4000_single_conversion(indio_dev, chan, val);
-   413			unreachable();
-   414		case IIO_CHAN_INFO_SCALE:
-   415			*val = st->scale_tbl[st->span_comp][0];
-   416			*val2 = st->scale_tbl[st->span_comp][1];
-   417			return IIO_VAL_INT_PLUS_NANO;
-   418		case IIO_CHAN_INFO_OFFSET:
-   419			*val = 0;
-   420			if (st->span_comp)
-   421				*val = mult_frac(st->vref / 1000, 1, 10);
-   422	
-   423			return IIO_VAL_INT;
-   424		default:
-   425			return -EINVAL;
-   426		}
-   427	}
-   428	
-   429	static int ad4000_read_avail(struct iio_dev *indio_dev,
-   430				     struct iio_chan_spec const *chan,
-   431				     const int **vals, int *type, int *length,
-   432				     long info)
-   433	{
-   434		struct ad4000_state *st = iio_priv(indio_dev);
-   435	
-   436		switch (info) {
-   437		case IIO_CHAN_INFO_SCALE:
-   438			*vals = (int *)st->scale_tbl;
-   439			*length = 2 * 2;
-   440			*type = IIO_VAL_INT_PLUS_NANO;
-   441			return IIO_AVAIL_LIST;
-   442		default:
-   443			return -EINVAL;
-   444		}
-   445	}
-   446	
-   447	static int ad4000_write_raw_get_fmt(struct iio_dev *indio_dev,
-   448					    struct iio_chan_spec const *chan, long mask)
-   449	{
-   450		switch (mask) {
-   451		case IIO_CHAN_INFO_SCALE:
-   452			return IIO_VAL_INT_PLUS_NANO;
-   453		default:
-   454			return IIO_VAL_INT_PLUS_MICRO;
-   455		}
-   456	}
-   457	
-   458	static int ad4000_write_raw(struct iio_dev *indio_dev,
-   459				    struct iio_chan_spec const *chan, int val, int val2,
-   460				    long mask)
-   461	{
-   462		struct ad4000_state *st = iio_priv(indio_dev);
-   463		unsigned int reg_val;
-   464		bool span_comp_en;
-   465		int ret;
-   466	
-   467		switch (mask) {
-   468		case IIO_CHAN_INFO_SCALE:
-   469			iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-   470				ret = ad4000_read_reg(st, &reg_val);
-   471				if (ret < 0)
-   472					return ret;
-   473	
-   474				span_comp_en = (val2 == st->scale_tbl[1][1]);
-   475				reg_val &= ~AD4000_CFG_SPAN_COMP;
-   476				reg_val |= FIELD_PREP(AD4000_CFG_SPAN_COMP, span_comp_en);
-   477	
-   478				ret = ad4000_write_reg(st, reg_val);
-   479				if (ret < 0)
-   480					return ret;
-   481	
-   482				st->span_comp = span_comp_en;
-   483				return 0;
-   484			}
-   485			unreachable();
-   486		default:
-   487			return -EINVAL;
-   488		}
-   489	}
-   490	
-   491	static irqreturn_t ad4000_trigger_handler(int irq, void *p)
-   492	{
-   493		struct iio_poll_func *pf = p;
-   494		struct iio_dev *indio_dev = pf->indio_dev;
-   495		struct ad4000_state *st = iio_priv(indio_dev);
-   496		int ret;
-   497	
-   498		ret = ad4000_convert_and_acquire(st);
-   499		if (ret < 0)
-   500			goto err_out;
-   501	
-   502		iio_push_to_buffers_with_timestamp(indio_dev, &st->scan,
-   503						   iio_get_time_ns(indio_dev));
-   504	
-   505	err_out:
-   506		iio_trigger_notify_done(indio_dev->trig);
-   507		return IRQ_HANDLED;
-   508	}
-   509	
-   510	static int ad4000_reg_access(struct iio_dev *indio_dev, unsigned int reg,
-   511				     unsigned int writeval, unsigned int *readval)
-   512	{
-   513		struct ad4000_state *st = iio_priv(indio_dev);
-   514		int ret;
-   515	
-   516		if (readval)
-   517			ret = ad4000_read_reg(st, readval);
-   518		else
-   519			ret = ad4000_write_reg(st, writeval);
-   520	
-   521		return ret;
-   522	}
-   523	
-   524	static const struct iio_info ad4000_info = {
-   525		.read_raw = &ad4000_read_raw,
-   526		.read_avail = &ad4000_read_avail,
-   527		.write_raw = &ad4000_write_raw,
-   528		.write_raw_get_fmt = &ad4000_write_raw_get_fmt,
-   529		.debugfs_reg_access = &ad4000_reg_access,
-   530	
-   531	};
-   532	
-   533	static int ad4000_config(struct ad4000_state *st)
-   534	{
-   535		unsigned int reg_val;
-   536	
-   537		if (device_property_present(&st->spi->dev, "adi,high-z-input"))
- > 538			reg_val |= FIELD_PREP(AD4000_CFG_HIGHZ, 1);
-   539	
-   540		/*
-   541		 * The ADC SDI pin might be connected to controller CS line in which
-   542		 * case the write might fail. This, however, does not prevent the device
-   543		 * from functioning even though in a configuration other than the
-   544		 * requested one.
-   545		 */
-   546		return ad4000_write_reg(st, reg_val);
-   547	}
-   548	
+and then instead, modify ras2_check_pcc_chan in this way:
+		if (status & RAS2_PCC_CMD_ERROR) {
+			cap_status = readw_relaxed(&generic_comm_base->set_capabilities_status);
+			ret = report_cap_error(cap_status);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+			status &= ~RAS2_PCC_CMD_ERROR;
+			writew_relaxed(status, &generic_comm_base->status);
+			return ret;
+		}
+
+> +		if (status & RAS2_PCC_CMD_COMPLETE)
+> +			return 0;
+> +		/*
+> +		 * Reducing the bus traffic in case this loop takes longer than
+> +		 * a few retries.
+> +		 */
+> +		msleep(10);
+> +	}
+> +
+> +	return -EIO;
+> +}
+> +
+> +/**
+> + * ras2_send_pcc_cmd() - Send RAS2 command via PCC channel
+> + * @ras2_ctx:	pointer to the ras2 context structure
+> + * @cmd:	command to send
+> + *
+> + * Returns: 0 on success, an error otherwise
+> + */
+> +int ras2_send_pcc_cmd(struct ras2_scrub_ctx *ras2_ctx, u16 cmd)
+> +{
+> +	struct ras2_pcc_subspace *pcc_subspace = ras2_ctx->pcc_subspace;
+> +	struct acpi_ras2_shared_memory *generic_comm_base = pcc_subspace->pcc_comm_addr;
+> +	static ktime_t last_cmd_cmpl_time, last_mpar_reset;
+> +	struct mbox_chan *pcc_channel;
+> +	unsigned int time_delta;
+> +	static int mpar_count;
+> +	int ret;
+> +
+> +	guard(mutex)(&ras2_pcc_subspace_lock);
+> +	ret = ras2_check_pcc_chan(pcc_subspace);
+> +	if (ret)
+> +		return ret;
+> +	pcc_channel = pcc_subspace->pcc_chan->mchan;
+> +
+> +	/*
+> +	 * Handle the Minimum Request Turnaround Time(MRTT)
+> +	 * "The minimum amount of time that OSPM must wait after the completion
+> +	 * of a command before issuing the next command, in microseconds"
+> +	 */
+> +	if (pcc_subspace->pcc_mrtt) {
+> +		time_delta = ktime_us_delta(ktime_get(), last_cmd_cmpl_time);
+> +		if (pcc_subspace->pcc_mrtt > time_delta)
+> +			udelay(pcc_subspace->pcc_mrtt - time_delta);
+> +	}
+> +
+> +	/*
+> +	 * Handle the non-zero Maximum Periodic Access Rate(MPAR)
+> +	 * "The maximum number of periodic requests that the subspace channel can
+> +	 * support, reported in commands per minute. 0 indicates no limitation."
+> +	 *
+> +	 * This parameter should be ideally zero or large enough so that it can
+> +	 * handle maximum number of requests that all the cores in the system can
+> +	 * collectively generate. If it is not, we will follow the spec and just
+> +	 * not send the request to the platform after hitting the MPAR limit in
+> +	 * any 60s window
+> +	 */
+> +	if (pcc_subspace->pcc_mpar) {
+> +		if (mpar_count == 0) {
+> +			time_delta = ktime_ms_delta(ktime_get(), last_mpar_reset);
+> +			if (time_delta < 60 * MSEC_PER_SEC) {
+> +				dev_dbg(ras2_ctx->dev,
+> +					"PCC cmd not sent due to MPAR limit");
+> +				return -EIO;
+> +			}
+> +			last_mpar_reset = ktime_get();
+> +			mpar_count = pcc_subspace->pcc_mpar;
+> +		}
+> +		mpar_count--;
+> +	}
+> +
+> +	/* Write to the shared comm region. */
+> +	writew_relaxed(cmd, &generic_comm_base->command);
+> +
+> +	/* Flip CMD COMPLETE bit */
+> +	writew_relaxed(0, &generic_comm_base->status);
+> +
+> +	/* Ring doorbell */
+> +	ret = mbox_send_message(pcc_channel, &cmd);
+> +	if (ret < 0) {
+> +		dev_err(ras2_ctx->dev,
+> +			"Err sending PCC mbox message. cmd:%d, ret:%d\n",
+> +			cmd, ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * If Minimum Request Turnaround Time is non-zero, we need
+> +	 * to record the completion time of both READ and WRITE
+> +	 * command for proper handling of MRTT, so we need to check
+> +	 * for pcc_mrtt in addition to CMD_READ
+> +	 */
+> +	if (cmd == RAS2_PCC_CMD_EXEC || pcc_subspace->pcc_mrtt) {
+> +		ret = ras2_check_pcc_chan(pcc_subspace);
+> +		if (pcc_subspace->pcc_mrtt)
+> +			last_cmd_cmpl_time = ktime_get();
+> +	}
+> +
+> +	if (pcc_channel->mbox->txdone_irq)
+> +		mbox_chan_txdone(pcc_channel, ret);
+> +	else
+> +		mbox_client_txdone(pcc_channel, ret);
+> +
+> +	return 0;
+
+
+As of now, this code doesn't consider errors occurring after the
+mbox_send_message.
+Checking errors is, probably, necessary to take appropriate action - such as
+reporting an error to the user.  Also, error or no, it is important to
+call the txdone bits.
+
+One simple solution that works is to modify the previous "return 0" to
+look like:
+	return ret >= 0 ? 0 : ret;
+
+> +}
+> +EXPORT_SYMBOL_GPL(ras2_send_pcc_cmd);
+
+
+
 
