@@ -1,130 +1,107 @@
-Return-Path: <linux-kernel+bounces-202914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3788FD2E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B49A8FD2EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A48C1F2251E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13F31F24503
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36D515F30A;
-	Wed,  5 Jun 2024 16:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29086154BEF;
+	Wed,  5 Jun 2024 16:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eRN1VmHn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/W7OJSq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B292152DEB;
-	Wed,  5 Jun 2024 16:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF6015351A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717604701; cv=none; b=WEwPMXzumsX0WN3+qfMKv71UG1tw2cArbRCeKmfSog2sPEObZi1lhTpW4m9LRPomoJmnzPBHuk2m6HYmE0+XhwZeUk5UwAXLIF5iydPKltgIwcCuwqCf+ttrLm+WLbWYOoNkGgEmGUhcf9CMCkWfaZGFtcrS7InduOOc5D6pZdk=
+	t=1717604872; cv=none; b=ahTaqAKQlcrGiCY13AnM7GuZfBkueCo+TwKTTbzQAqb/eCxyuXDAy/HIZgETSNFxzSILL497FHCl7+BzDANkm6ZQfiQd31iktZSK09bQiCMB2tdwPpcQJaRJpcnJXp71dHWjzvLd2VhXB4LOGaI6TPbnPmNvNRTXxdDLof/t/xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717604701; c=relaxed/simple;
-	bh=8QP0rrFoFQ1UPGucB0nlQFL9aHNUIOsoOxuy8YlZVao=;
+	s=arc-20240116; t=1717604872; c=relaxed/simple;
+	bh=WDicw8rzDSRTNRCMmdH3Lin6iM8oFn63Wzr/O2sLyt0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZLWfprd0pb76kN9/krIC9hwspJOSdqx57pMtWa/5vW4pl/4Ge0yaNJmKYfiAOICxe8uldD4p2AmKET0dqV8QSA+8/62/zGf3ctASWEn2iQJ27j6+R7+X1JtJ/4Ph3wn59o0siLEPOoSWMf05VazCzCxp4Znq7AimjkiHVnqBR/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eRN1VmHn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1085140E016A;
-	Wed,  5 Jun 2024 16:24:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NKcdbJr_y2wU; Wed,  5 Jun 2024 16:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717604693; bh=es2T3xUJ//5xyaKB1XndAP8uqqdLOgfFIhPCGmC/CDU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eRN1VmHnofXkhGbMAgrYH2Qk/XhZLkNNY5mvJhNCQVUDK2oKst2OKufJHPZHki19j
-	 HXRRnxH9jrI9cGFwAQZL+0DzxPkofD/fHw8ZnDFrL2ll7iM/yL9LHcp0mA0i5sJpbD
-	 3ylwHa3HpncMb2v+ZW2n+cRyZNAzlsVOvEkly3X0yb4jkjUlFEUFmtAtkT7fE5MU+T
-	 wN3aWpxstOWhJgOunWnyxYduYZWWBBCyjxmf1rQM/r3OVAk1TTqvA92IHop0+DNb71
-	 mwI1Y0xIBnG89A4gQSaTpXZ5QRFWF49WdtuQ69vt8sjE6xolMG562jnsWa1pj0H3lf
-	 fhtmx3RwEatiztWu1GrxrpXph6arL2U9EVO8TJN9I0JL7e1A+filxFr/8PS99z0ibH
-	 0T4mtQ70vtFGiXwxEzcQFQCWGUUSkbqeMt2+rfQzijo6sHd+b6MDwqXn+mlf9CiLL+
-	 G2Lmg++PwW/y+Isb8OcvW2TiuXkyXUKzX72RgL0wRIpHm27BPgN9c0tYQVZK3jAOOJ
-	 zBMeewlGislpLpoSwEFvCoz4oS1To6U+1vl4uq6b4dX50aL0OLeoGc9uCZeyQXHAzc
-	 5PVp3Wv+OslihQmk0W4zzv2gLhf4FBzqEFS7byBrvi6537gyCuWzQojV2fn98LE3cn
-	 1B3BeEv74sKj4rarohbtsP4M=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrSDbJ4wDSpMGgaqgzyXH4mZVBGWnyzx51wnptLp3d51U3390UQA7BlOGteKSBPOn/D20lznCD71hk8bNgYDwdr8dRJoUFztpyl43B6fQfzl0xWKdfUpO/y8HvaHOn/qcRoH/Z5E8WUzmpcUNJGMw0bw9VJ4ZnMzD0K7fHGHcgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z/W7OJSq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717604870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WDicw8rzDSRTNRCMmdH3Lin6iM8oFn63Wzr/O2sLyt0=;
+	b=Z/W7OJSqXnuoiMxjKt/3wo39YoFulM9UoqAdwrpssXjiIy5LFo0gSxQa6GivYtXWEvh2c3
+	ah1bbmCivbEK1qi5w4zWA0sEoVMNMuO+r7nTE678Ofe3CadTpSGcSQ2L+70tA/zls0OTNH
+	RUch8tjTBzMs2h6C5bW2PN04DXg2NoQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-1-k_m2iCmHN9OQCeUFZNm0ew-1; Wed,
+ 05 Jun 2024 12:27:48 -0400
+X-MC-Unique: k_m2iCmHN9OQCeUFZNm0ew-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2F7C140E0177;
-	Wed,  5 Jun 2024 16:24:25 +0000 (UTC)
-Date: Wed, 5 Jun 2024 18:24:19 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, adrian.hunter@intel.com,
-	ardb@kernel.org, ashish.kalra@amd.com, bhe@redhat.com,
-	dave.hansen@linux.intel.com, elena.reshetova@intel.com,
-	haiyangz@microsoft.com, hpa@zytor.com, jun.nakajima@intel.com,
-	kai.huang@intel.com, kexec@lists.infradead.org, kys@microsoft.com,
-	linux-acpi@vger.kernel.org, linux-coco@lists.linux.dev,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ltao@redhat.com, mingo@redhat.com, peterz@infradead.org,
-	rafael@kernel.org, rick.p.edgecombe@intel.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com, seanjc@google.com,
-	tglx@linutronix.de, thomas.lendacky@amd.com, x86@kernel.org
-Subject: Re: [PATCHv11.1 11/19] x86/tdx: Convert shared memory back to
- private on kexec
-Message-ID: <20240605162419.GJZmCRM8V6xooyvm9H@fat_crate.local>
-References: <20240531151442.GMZlnpYkDCRlg1_YS0@fat_crate.local>
- <20240602142303.3263551-1-kirill.shutemov@linux.intel.com>
- <20240603083754.GAZl2A4uXvVB5w4l9u@fat_crate.local>
- <noym2bqgxqcyhhdzoax7gvdfzhh7rtw7cv236fhzpqh3wqf76e@2jj733skv7y4>
- <78d33a31-0ef2-417b-a240-b2880b64518e@intel.com>
- <u3hg3fqc2nxsjtfugjmmzlahwriyqlebnkxrbzgrxlkj6l3k36@yd3yudglgevi>
- <20240604180554.GIZl9XgscEI3PUvR-W@fat_crate.local>
- <alkew673cceojzmhsp3wj43yv76cek5ydh2iosfcphuv6ro26q@pj6whxcoetht>
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D71931954236;
+	Wed,  5 Jun 2024 16:27:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.50])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6DF2119560A2;
+	Wed,  5 Jun 2024 16:27:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  5 Jun 2024 18:26:16 +0200 (CEST)
+Date: Wed, 5 Jun 2024 18:26:11 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+	Andy Lutomirski <luto@amacapital.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Hansen <dave@sr71.net>, Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uros Bizjak <ubizjak@gmail.com>
+Subject: Re: [PATCH 3/3] x86/fpu: Remove init_task FPU state dependencies,
+ add debugging warning
+Message-ID: <20240605162610.GF25006@redhat.com>
+References: <20240605083557.2051480-1-mingo@kernel.org>
+ <20240605083557.2051480-4-mingo@kernel.org>
+ <20240605141733.GC25006@redhat.com>
+ <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alkew673cceojzmhsp3wj43yv76cek5ydh2iosfcphuv6ro26q@pj6whxcoetht>
+In-Reply-To: <CAHk-=wi4773Ls82kqVbPmM1deghS2NXkHNCCzWPc270kcByXPA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Jun 05, 2024 at 03:21:42PM +0300, Kirill A. Shutemov wrote:
-> If a page can be accessed via private mapping is determined by the
-> presence in Secure EPT. This state persist across kexec.
+On 06/05, Linus Torvalds wrote:
+>
+> On Wed, 5 Jun 2024 at 07:19, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > On 06/05, Ingo Molnar wrote:
+> > >
+> > > But the init task isn't supposed to be using the FPU in any case,
+> >
+> > Afaics, the same is true for any PF_KTHREAD/USER_WORKER thread?
+>
+> I don't think so. We have various users of kernel_fpu_begin()/end()
+> that are very much about things like crypto and RAID xor memory copies
+> etc that will be used by kernel worker threads.
 
-I just love it how I tickle out details each time I touch this comment
-because we three can't write a single concise and self-contained
-explanation. :-(
+Yes, but kernel_fpu_begin() never does save_fpregs_to_fpstate() if
+current->flags & PF_KTHREAD ?
 
-Ok, next version:
+Oleg.
 
-"Private mappings persist across kexec. If tdx_enc_status_changed() fails
-in the first kernel, it leaves memory in an unknown state.
-
-If that memory remains shared, accessing it in the *next* kernel through
-a private mapping will result in an unrecoverable guest shutdown.
-
-The kdump kernel boot is not impacted as it uses a pre-reserved memory
-range that is always private.  However, gathering crash information
-could lead to a crash if it accesses unconverted memory through
-a private mapping which is possible when accessing that memory through
-/proc/vmcore, for example.
-
-In all cases, print error info in order to leave enough bread crumbs for
-debugging."
-
-I think this is getting in the right direction as it actually makes
-sense now.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
