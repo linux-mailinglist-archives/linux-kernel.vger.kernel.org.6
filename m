@@ -1,152 +1,210 @@
-Return-Path: <linux-kernel+bounces-201857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6098FC446
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:16:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6741B8FC43A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9DB288214
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:16:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2087E2864C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A230191474;
-	Wed,  5 Jun 2024 07:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C6D18C33F;
+	Wed,  5 Jun 2024 07:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qxcFtNtf"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUB1c9gX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FBC191468
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD6D18C32F;
+	Wed,  5 Jun 2024 07:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571726; cv=none; b=hx0ClWn2KU9BaPYmSrEVdVv2IGQTa7crWZT8vs3n6vupTa6Q3P63elCOTTvU98zdBrGE1PDfqg0egvDR1l4iKf7EdeDIdSwwpfbkt75A+ZrxvWmWzWABmJ9qP2/TmAgy2dYAbeRWOGOA8YDhSz21nnM/JzZu/HIoD69Ex8McSsQ=
+	t=1717571656; cv=none; b=qRtLUg1e3kme2HF1VCna6b6EsWrSah6kJc2i5zr9jkfEbJkWYaVIjmFubroWAWYfM1gcFlsKa/xfRLMMpdb6dSBLAXRWGNxSohhqZRv0tCCCbnVVIfCwLBHeJyaL3iXWEwYpaOXbZdnD0pVkiK3D1TT4ock49WUe4HFBqmVvuts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571726; c=relaxed/simple;
-	bh=SCxsTfzjMuX8t1U69VOCpqhjoMDtoIBWEPozyzP8bk8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=axVkz1POcl7VlO7SDKPjMOEjvMOSAuW+3UeUpCqpRmBWwS97tz4/xocWxH1JRbgIsHocIvOYfgWez2FoeaAhF8Tned0rmpdIuvJAkoq5OxOOFXB1Xnx2/vpvhsvfi4YjbttPUyhP0nFQRDLpSx5ebLQv3TqatStu2zcRXpdia14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qxcFtNtf; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: linux-mm@kvack.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1717571722;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3wNm3c6yJSA1CzslM5yifCdzkMkcRenHHavbaO4mwKI=;
-	b=qxcFtNtfh4XOLj5fbDe7x94gskzCrv0IXECAZOYe8WkE/kUdaphkQyLX9x1/bqPGakkm66
-	qG1VyQRnpT+1yOvZwfIhsDcbUEWqmRY6lsTkfvhHku8VVhUmFlm5BsntZc0p1brvBYdsi/
-	mZa9huwlffIJu06AxUx8R5lzWOHx8gY=
-X-Envelope-To: penberg@kernel.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: feng.tang@intel.com
-X-Envelope-To: zhouchengming@bytedance.com
-X-Envelope-To: rientjes@google.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: iamjoonsoo.kim@lge.com
-X-Envelope-To: vbabka@suse.cz
-X-Envelope-To: chengming.zhou@linux.dev
-X-Envelope-To: cl@linux.com
-X-Envelope-To: 42.hyeyoo@gmail.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-Date: Wed, 05 Jun 2024 15:13:56 +0800
-Subject: [PATCH v2 3/3] slab: delete useless RED_INACTIVE and RED_ACTIVE
+	s=arc-20240116; t=1717571656; c=relaxed/simple;
+	bh=wUDOuDfSC1HxmhvTFKKgu/XL42Af+d6HJyAA09eVNxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lhjLAYYKuPM9UnqMaan2n89WDH8a66VKfEfyyOk+qbA/HG3ySmJp0zDdtzcgTjpUYTB2MMupQii5tDKciqsKXJHJPfYhIpEBE5Iw5oHXskugOarjDz9y9nKg4GHKN6iCSvYB4ws1HK51coDEPSRihAIYtg9R70t5f41w2yPAN/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUB1c9gX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA483C3277B;
+	Wed,  5 Jun 2024 07:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717571655;
+	bh=wUDOuDfSC1HxmhvTFKKgu/XL42Af+d6HJyAA09eVNxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oUB1c9gXUTYywqYfJKSzAx5YO4wNPdp2dpNaN0sSw68gZgqh+v86hfGOOvN5mUhql
+	 o709wqr0xyx+M5a10ybVVEVX8eQpjsi3ebNfzRZ2OrI3o+5GvCELWuWwPCSJBmqXYL
+	 Xq0x5Iq+sGhd0gZqcV8JyVndXe7o6Ozlb9dnS3tVsotIomXGiM9idAR7fq7ptHSQPR
+	 4w1iKicGjcTDxRqE7ztjgZ6L5HzfYdYjI4p4XVIJwck4+YkSA3WYCxCxdeRuqQ/IYj
+	 jHtm1hwhmvT+9cFcGBaCgIVVms8wzKLCyC/XHqMn1UgbnI7kxe6uUueN5tvSxIY0ON
+	 wwMIKx5AFPXKQ==
+Date: Wed, 5 Jun 2024 09:14:09 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev, Fang Xiang <fangxiang3@xiaomi.com>,
+	Robert Moore <robert.moore@intel.com>
+Subject: Re: [PATCH v5 1/1] irqchip/gic-v3: Enable non-coherent
+ redistributors/ITSes ACPI probing
+Message-ID: <ZmAQQVR+inUJpJ7z@lpieralisi>
+References: <20240123110332.112797-1-lpieralisi@kernel.org>
+ <20240123110332.112797-2-lpieralisi@kernel.org>
+ <ZiYi64/VBWkfM2E2@lpieralisi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240605-b4-slab-debug-v2-3-c535b9cd361c@linux.dev>
-References: <20240605-b4-slab-debug-v2-0-c535b9cd361c@linux.dev>
-In-Reply-To: <20240605-b4-slab-debug-v2-0-c535b9cd361c@linux.dev>
-To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
- Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
- Roman Gushchin <roman.gushchin@linux.dev>, 
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- zhouchengming@bytedance.com, Chengming Zhou <chengming.zhou@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717571706; l=2445;
- i=chengming.zhou@linux.dev; s=20240508; h=from:subject:message-id;
- bh=SCxsTfzjMuX8t1U69VOCpqhjoMDtoIBWEPozyzP8bk8=;
- b=xtPX9vMkwqmgUtdfVNek9BrOPkMLYsFLuZn30jqV0CJbb33baarp75iix+PtgEHMEQeAQoOPI
- CStzNIZCp8bBqhAhH4N5hrLMahSHW2KmmCWFcqj/P1yTkpDMDZxFsYn
-X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
- pk=kx40VUetZeR6MuiqrM7kPCcGakk1md0Az5qHwb6gBdU=
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZiYi64/VBWkfM2E2@lpieralisi>
 
-These seem useless since we use the SLUB_RED_INACTIVE and SLUB_RED_ACTIVE,
-so just delete them, no functional change.
+On Mon, Apr 22, 2024 at 10:42:19AM +0200, Lorenzo Pieralisi wrote:
+> On Tue, Jan 23, 2024 at 12:03:32PM +0100, Lorenzo Pieralisi wrote:
+> > The GIC architecture specification defines a set of registers for
+> > redistributors and ITSes that control the sharebility and cacheability
+> > attributes of redistributors/ITSes initiator ports on the interconnect
+> > (GICR_[V]PROPBASER, GICR_[V]PENDBASER, GITS_BASER<n>).
+> > 
+> > Architecturally the GIC provides a means to drive shareability and
+> > cacheability attributes signals but it is not mandatory for designs to
+> > wire up the corresponding interconnect signals that control the
+> > cacheability/shareability of transactions.
+> > 
+> > Redistributors and ITSes interconnect ports can be connected to
+> > non-coherent interconnects that are not able to manage the
+> > shareability/cacheability attributes; this implicitly makes the
+> > redistributors and ITSes non-coherent observers.
+> > 
+> > To enable non-coherent GIC designs on ACPI based systems, parse the MADT
+> > GICC/GICR/ITS subtables non-coherent flags to determine whether the
+> > respective components are non-coherent observers and force the
+> > shareability attributes to be programmed into the redistributors and
+> > ITSes registers.
+> > 
+> > An ACPI global function (acpi_get_madt_revision()) is added to retrieve
+> > the MADT revision, in that it is essential to check the MADT revision
+> > before checking for flags that were added with MADT revision 7 so that
+> > if the kernel is booted with an ACPI MADT table with revision < 7 it
+> > skips parsing the newly added flags (that should be zeroed reserved
+> > values for MADT versions < 7 but they could turn out to be buggy and
+> > should be ignored).
+> > 
+> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > Cc: Robin Murphy <robin.murphy@arm.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > ---
+> >  drivers/acpi/processor_core.c    | 15 +++++++++++++++
+> >  drivers/irqchip/irq-gic-v3-its.c |  4 ++++
+> >  drivers/irqchip/irq-gic-v3.c     |  9 +++++++++
+> >  include/linux/acpi.h             |  3 +++
+> >  4 files changed, 31 insertions(+)
+> 
+> Hi Marc, Rafael,
+> 
+> I would kindly ask you please what to do with this patch, it still
+> applies to v6.9-rc5 - I can resend it if needed, ACPICA changes
+> are already merged as-per the cover letter.
 
-Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
----
- include/linux/poison.h       | 7 ++-----
- mm/slub.c                    | 4 ++--
- tools/include/linux/poison.h | 7 ++-----
- 3 files changed, 6 insertions(+), 12 deletions(-)
+Hi Marc, Rafael,
 
-diff --git a/include/linux/poison.h b/include/linux/poison.h
-index 1f0ee2459f2a..9c1a035af97c 100644
---- a/include/linux/poison.h
-+++ b/include/linux/poison.h
-@@ -38,11 +38,8 @@
-  * Magic nums for obj red zoning.
-  * Placed in the first word before and the first word after an obj.
-  */
--#define	RED_INACTIVE	0x09F911029D74E35BULL	/* when obj is inactive */
--#define	RED_ACTIVE	0xD84156C5635688C0ULL	/* when obj is active */
--
--#define SLUB_RED_INACTIVE	0xbb
--#define SLUB_RED_ACTIVE		0xcc
-+#define SLUB_RED_INACTIVE	0xbb	/* when obj is inactive */
-+#define SLUB_RED_ACTIVE		0xcc	/* when obj is active */
- 
- /* ...and for poisoning */
- #define	POISON_INUSE	0x5a	/* for use-uninitialised poisoning */
-diff --git a/mm/slub.c b/mm/slub.c
-index 704c662227e6..0bab0f041ab2 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1214,8 +1214,8 @@ static int check_bytes_and_report(struct kmem_cache *s, struct slab *slab,
-  * 	Padding is extended by another word if Redzoning is enabled and
-  * 	object_size == inuse.
-  *
-- * 	We fill with 0xbb (RED_INACTIVE) for inactive objects and with
-- * 	0xcc (RED_ACTIVE) for objects in use.
-+ * 	We fill with 0xbb (SLUB_RED_INACTIVE) for inactive objects and with
-+ * 	0xcc (SLUB_RED_ACTIVE) for objects in use.
-  *
-  * object + s->inuse
-  * 	Meta data starts here.
-diff --git a/tools/include/linux/poison.h b/tools/include/linux/poison.h
-index 2e6338ac5eed..e530e54046c9 100644
---- a/tools/include/linux/poison.h
-+++ b/tools/include/linux/poison.h
-@@ -47,11 +47,8 @@
-  * Magic nums for obj red zoning.
-  * Placed in the first word before and the first word after an obj.
-  */
--#define	RED_INACTIVE	0x09F911029D74E35BULL	/* when obj is inactive */
--#define	RED_ACTIVE	0xD84156C5635688C0ULL	/* when obj is active */
--
--#define SLUB_RED_INACTIVE	0xbb
--#define SLUB_RED_ACTIVE		0xcc
-+#define SLUB_RED_INACTIVE	0xbb	/* when obj is inactive */
-+#define SLUB_RED_ACTIVE		0xcc	/* when obj is active */
- 
- /* ...and for poisoning */
- #define	POISON_INUSE	0x5a	/* for use-uninitialised poisoning */
+I would kindly ask please what to do with this patch, rebased to v6.10-rc1,
+I can resend it if that's preferred, please let me know.
 
--- 
-2.45.1
+Thanks,
+Lorenzo
 
+> > diff --git a/drivers/acpi/processor_core.c b/drivers/acpi/processor_core.c
+> > index b203cfe28550..915713c0e9b7 100644
+> > --- a/drivers/acpi/processor_core.c
+> > +++ b/drivers/acpi/processor_core.c
+> > @@ -215,6 +215,21 @@ phys_cpuid_t __init acpi_map_madt_entry(u32 acpi_id)
+> >  	return rv;
+> >  }
+> >  
+> > +int __init acpi_get_madt_revision(void)
+> > +{
+> > +	struct acpi_table_header *madt = NULL;
+> > +	int revision;
+> > +
+> > +	if (ACPI_FAILURE(acpi_get_table(ACPI_SIG_MADT, 0, &madt)))
+> > +		return -EINVAL;
+> > +
+> > +	revision = madt->revision;
+> > +
+> > +	acpi_put_table(madt);
+> > +
+> > +	return revision;
+> > +}
+> > +
+> >  static phys_cpuid_t map_mat_entry(acpi_handle handle, int type, u32 acpi_id)
+> >  {
+> >  	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> > index fec1b58470df..a60c560ce891 100644
+> > --- a/drivers/irqchip/irq-gic-v3-its.c
+> > +++ b/drivers/irqchip/irq-gic-v3-its.c
+> > @@ -5591,6 +5591,10 @@ static int __init gic_acpi_parse_madt_its(union acpi_subtable_headers *header,
+> >  		goto node_err;
+> >  	}
+> >  
+> > +	if (acpi_get_madt_revision() >= 7 &&
+> > +	    (its_entry->flags & ACPI_MADT_ITS_NON_COHERENT))
+> > +		its->flags |= ITS_FLAGS_FORCE_NON_SHAREABLE;
+> > +
+> >  	err = its_probe_one(its);
+> >  	if (!err)
+> >  		return 0;
+> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> > index 98b0329b7154..8cb8dff86c12 100644
+> > --- a/drivers/irqchip/irq-gic-v3.c
+> > +++ b/drivers/irqchip/irq-gic-v3.c
+> > @@ -2356,6 +2356,11 @@ gic_acpi_parse_madt_redist(union acpi_subtable_headers *header,
+> >  		pr_err("Couldn't map GICR region @%llx\n", redist->base_address);
+> >  		return -ENOMEM;
+> >  	}
+> > +
+> > +	if (acpi_get_madt_revision() >= 7 &&
+> > +	    (redist->flags & ACPI_MADT_GICR_NON_COHERENT))
+> > +		gic_data.rdists.flags |= RDIST_FLAGS_FORCE_NON_SHAREABLE;
+> > +
+> >  	gic_request_region(redist->base_address, redist->length, "GICR");
+> >  
+> >  	gic_acpi_register_redist(redist->base_address, redist_base);
+> > @@ -2380,6 +2385,10 @@ gic_acpi_parse_madt_gicc(union acpi_subtable_headers *header,
+> >  		return -ENOMEM;
+> >  	gic_request_region(gicc->gicr_base_address, size, "GICR");
+> >  
+> > +	if (acpi_get_madt_revision() >= 7 &&
+> > +	    (gicc->flags & ACPI_MADT_GICC_NON_COHERENT))
+> > +		gic_data.rdists.flags |= RDIST_FLAGS_FORCE_NON_SHAREABLE;
+> > +
+> >  	gic_acpi_register_redist(gicc->gicr_base_address, redist_base);
+> >  	return 0;
+> >  }
+> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> > index b7165e52b3c6..4eedab0e51c3 100644
+> > --- a/include/linux/acpi.h
+> > +++ b/include/linux/acpi.h
+> > @@ -284,6 +284,9 @@ static inline bool invalid_phys_cpuid(phys_cpuid_t phys_id)
+> >  	return phys_id == PHYS_CPUID_INVALID;
+> >  }
+> >  
+> > +
+> > +int __init acpi_get_madt_revision(void);
+> > +
+> >  /* Validate the processor object's proc_id */
+> >  bool acpi_duplicate_processor_id(int proc_id);
+> >  /* Processor _CTS control */
+> > -- 
+> > 2.34.1
+> > 
 
