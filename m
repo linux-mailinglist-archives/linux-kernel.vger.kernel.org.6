@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-201619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90F88FC0C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:33:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090FE8FC0C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A2E280845
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5D31F21BD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4297FDDCB;
-	Wed,  5 Jun 2024 00:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F13817BBF;
+	Wed,  5 Jun 2024 00:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFnRrFoL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5/r5YYn"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B604A1E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13587322E;
 	Wed,  5 Jun 2024 00:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717547236; cv=none; b=X5FNSe8/xK+9CMNQg3ycy68UI+LlvXnwhVwKtx0aX1OA5SRvZ4iNRuk2v8LWt6zbQ6XlHs7NfGbLI7vLxrTRbKHk6E6c/obCxiLkaDLoNJCuchCmkQpL73/V7Xnr1qc4D9BZ9i6myzqvt3GLIH+J9hfDxW01BucDeql2icSIOyM=
+	t=1717547238; cv=none; b=md1vNfncCIwB5WPWu8cvbVQ01+bT2m6xuzrb0Rz7ki9gNG8KdrlB6OrJNuicqyb9rruCcFJ78kE0fiD3JJTb0tgR5KTxc6yqXTGgpeA/H6OKNJAS9V2AxILO8k2Eks1tKoGp+666uuKv91VJSNQzdHwEd+7bElHePSlkMikGsxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717547236; c=relaxed/simple;
-	bh=4912uwV8cdajJtlRg+qCEDg0Nk4Wff5MmTkSwg78oUw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Tp15LW1kGGUQo0HTdE9n1LS9YmTjGgG0hifcVh9voPHbCEbiY5AkxdxHdI5IXQ/SzyqLgYUfCK6vf4OURfivfWAYeSZb9Tq19/f+9fLFQ0eTw5D20y1q6jpRQE4ulWjfpnsKD2UCe1cxK2HlT5bbTtu4kNWqqAf9vipICU7pRyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFnRrFoL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB0BC2BBFC;
-	Wed,  5 Jun 2024 00:27:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717547235;
-	bh=4912uwV8cdajJtlRg+qCEDg0Nk4Wff5MmTkSwg78oUw=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=dFnRrFoLF3/EIZvvf7Lx45KFej7+drLQF6oOxWYkrAlSsPxFFHAPMi2qKBekBbJzR
-	 ujcf8NZi/mktwGwZV6IUqmV+HhO3k4khQozt0qk4+4v9SFXBQpBR4aUnAmo2EvgFP8
-	 5K42DdgGzhxORdDiCOrBYzJ8WSZRdSEGFu9AZeMAO5vRpyhg6OBGdzkbHSHPmW3qMG
-	 ysZ0T/vnOktIEVNz2OurvuUJ/Mm9/830zbL1dkW6W3Yit+qdi1Hso9WCAg4K6WGwGu
-	 9XwJprn8YNGhdx7BTbmPN2IRi0ho93rhoSmM3gFECyEdMApflMGwTNIlWVOhNjMsHh
-	 z/fUw2/8zx8IA==
+	s=arc-20240116; t=1717547238; c=relaxed/simple;
+	bh=HENd5fiJMx/MtTkFeqvrO/93dIE7gf62GjvWxTdsVJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S7t3qjgPAF70XosZSk98ApGD+rTgU+vhIt+aE7rm9yu7fwtVVOWrUup3pErZ/Yz5q29zLWXd27SnQEGlOZ1qOkFWwLmDriF0ABt0nbjWSP6nWnb7KNRvoNx9ex5RBwcl9muaSEHuxUhkMxn7Rp1RFN/ouyhbfPCQW9vxSKBnA9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5/r5YYn; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f47f07acd3so14749475ad.0;
+        Tue, 04 Jun 2024 17:27:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717547236; x=1718152036; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NBtLwt7lgRUR7ONP1Rg5DOx1RKZzwOytsyB0wwugp00=;
+        b=L5/r5YYn7B10+ipxhrn5qPZr7DrCGY8hUMhfKhB0FsfTM5CqEhejlhk0S2NBhIan1P
+         U8r8MbKW/SUUp8G7xM6jSaesXP6xZ4Ko0XChiuBVzRdv+wFZGSI4ojzYV7UQsSZhaJmC
+         Mr6YFA/itamlmSPQCfQ/5C8BABQsi7Be0xxyPwzeAa2/jRIs7Z0lLQAkvGOuBHEnuRFI
+         JsRECLrPnpFaYJGdDSzv+ha7sKX6ht+zKcjDEPRLxBCPH4j5tdUVk3MEOFYwXVNzrm1B
+         2oVP4OolKKNtpzGE8qZhBlQLExmihdWgwXNAdL07f6nIYyydsef6d0CY3yruNwkfKEzd
+         ujAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717547236; x=1718152036;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NBtLwt7lgRUR7ONP1Rg5DOx1RKZzwOytsyB0wwugp00=;
+        b=FI6opS7yxQ8ZxdTxjki/L/nQcwY0ra3wBwLkKsby6+eFRXcR6WsTlgTNkVJcoMsnvB
+         GYtPpXXWlOKvlxHU0eJ1AwftCGJE/gKsV3jU+IfWiBFrz9+rOw6dTYB74RNlwIB6dwwQ
+         V0c3K0Je8v7M9fNtGCwB8IJt+jgzzI4zQPRWuiDsXw6yC92ZI0SsVY6JHBlo+ryIxyLl
+         Crm88M2ksUBB8LWcNi/A9cqRMSxuO4yqjYoZoKLOS6Ic9k4FXL9DjjyNWEGszaI+H+lS
+         SzecQWZOF9UfTeJBj2c5l4bv2vjEOZYc3LxX8mAdKtXnx3uCqox4uhcTR26uN1RPf5CL
+         m8SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+xOMJHwfa3E/lKPAjTIOKXjvzBjXdv/uuuj9eCyq587NJceSDRi62O4SA9dUApn64UI5/7Hj0aY2xf5QQF64iU8IwjR9Dt7J0oE2UvmX00cQgMUT7XD/a66OKq579NjE0hTKvrdBVcQ==
+X-Gm-Message-State: AOJu0YxOmQ0rFoJvuvmCdcWOJIhU3vIK3atH7ZKVlqOH+UOzjrcfc+tg
+	pd+Ov/mmXy8D8FzSB1uP8T0saW0hHx6pU475FytNjZimqMsV6ae3
+X-Google-Smtp-Source: AGHT+IG3yTkEitTTZ/PYudLCodSY9uzbOKHKEgaLZr2DEhrrtH8kk4WwnVaYGKe7HWzg89nA+jpR/Q==
+X-Received: by 2002:a17:903:41ce:b0:1f6:7c7a:a7a0 with SMTP id d9443c01a7336-1f6a5a9b0edmr11262675ad.59.1717547236099;
+        Tue, 04 Jun 2024 17:27:16 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323e9ae4sm89421725ad.191.2024.06.04.17.27.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jun 2024 17:27:15 -0700 (PDT)
+Message-ID: <99545c09-4a14-4f8d-9d3b-c687fc318714@gmail.com>
+Date: Wed, 5 Jun 2024 09:27:12 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH memory-model 1/3] tools/memory-model: Add
+ atomic_and()/or()/xor() and add_negative
+To: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kernel-team@meta.com, mingo@kernel.org
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+ peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ Puranjay Mohan <puranjay@kernel.org>, Daniel Lustig <dlustig@nvidia.com>,
+ Joel Fernandes <joel@joelfernandes.org>, Akira Yokosawa <akiyks@gmail.com>
+References: <b290acd5-074f-4e17-a8bf-b444e553d986@paulmck-laptop>
+ <20240604221419.2370127-1-paulmck@kernel.org>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20240604221419.2370127-1-paulmck@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 05 Jun 2024 03:27:08 +0300
-Message-Id: <D1RNOFV1R1IK.2MSSUT0CAPVMB@kernel.org>
-Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v9 04/19] x86: Secure Launch Resource Table header file
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, <ross.philipson@oracle.com>,
- <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
- <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
-X-Mailer: aerc 0.17.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-5-ross.philipson@oracle.com>
- <D1RFWFIJEYWL.2FC7V79321264@kernel.org>
- <1eca8cb1-4b3b-402b-993b-53de7c810016@oracle.com>
- <D1RLBMTUKRFN.34KQXEFZTBA08@kernel.org>
- <249a9b27-c18d-4377-8b51-9bc610b53a8b@oracle.com>
- <D1RNKV4JIE5L.1LNG82UAC916M@kernel.org>
-In-Reply-To: <D1RNKV4JIE5L.1LNG82UAC916M@kernel.org>
+Content-Transfer-Encoding: 7bit
 
-On Wed Jun 5, 2024 at 3:22 AM EEST, Jarkko Sakkinen wrote:
-> On Wed Jun 5, 2024 at 2:00 AM EEST,  wrote:
-> > On 6/4/24 3:36 PM, Jarkko Sakkinen wrote:
-> > > On Tue Jun 4, 2024 at 11:31 PM EEST,  wrote:
-> > >> On 6/4/24 11:21 AM, Jarkko Sakkinen wrote:
-> > >>> On Fri May 31, 2024 at 4:03 AM EEST, Ross Philipson wrote:
-> > >>>> Introduce the Secure Launch Resource Table which forms the formal
-> > >>>> interface between the pre and post launch code.
-> > >>>>
-> > >>>> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-> > >>>
-> > >>> If a uarch specific, I'd appreciate Intel SDM reference here so tha=
-t I
-> > >>> can look it up and compare. Like in section granularity.
-> > >>
-> > >> This table is meant to not be architecture specific though it can
-> > >> contain architecture specific sub-entities. E.g. there is a TXT spec=
-ific
-> > >> table and in the future there will be an AMD and ARM one (and hopefu=
-lly
-> > >> some others). I hope that addresses what you are pointing out or may=
-be I
-> > >> don't fully understand what you mean here...
-> > >=20
-> > > At least Intel SDM has a definition of any possible architecture
-> > > specific data structure. It is handy to also have this available
-> > > in inline comment for any possible such structure pointing out the
-> > > section where it is defined.
-> >
-> > The TXT specific structure is not defined in the SDM or the TXT dev=20
-> > guide. Part of it is driven by requirements in the TXT dev guide but=20
-> > that guide does not contain implementation details.
-> >
-> > That said, if you would like links to relevant documents in the comment=
-s=20
-> > before arch specific structures, I can add them.
->
-> Vol. 2D 7-40, in the description of GETSEC[WAKEUP] there is in fact a
-> description of MLE JOINT structure at least:
->
-> 1. GDT limit (offset 0)
-> 2. GDT base (offset 4)
-> 3. Segment selector initializer (offset 8)
-> 4. EIP (offset 12)
->
-> So is this only exercised in protect mode, and not in long mode? Just
-> wondering whether I should make a bug report on this for SDM or not.
->
-> Especially this puzzles me, given that x86s won't have protected
-> mode in the first place...
+Hi,
 
-That raises a relevant question: will this ever work in x86s? SDM does
-not really support that it would but it could be also just outdated
-information.
+On Tue,  4 Jun 2024 15:14:17 -0700, Paul E. McKenney wrote:
+> From: Puranjay Mohan <puranjay@kernel.org>
+> 
+> Pull-849[1] added the support of '&', '|', and '^' to the herd7 tool's
+> atomics operations.
+> 
+> Use these in linux-kernel.def to implement atomic_and()/or()/xor() with
+> all their ordering variants.
+> 
+> atomic_add_negative() is already available so add its acquire, release,
+> and relaxed ordering variants.
+> 
+> [1] https://github.com/herd/herdtools7/pull/849
+> 
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> Acked-by: Andrea Parri <parri.andrea@gmail.com>
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
 
-I'm neither sure how or will AMD align with x86s.
+Pull-849 and Pull-855 at herdtools7 happened after the release of 7.57.
+So I thought patches 1/3 and 2/3 needed to wait a next release of
+herdtools7.
 
-Just point out a glitch...
+But these changes don't affect existing litmus tests.
+So I don't oppose them to be merged into 6.11.
 
-BR, Jarkko
+It's up to Paul!
+
+        Thanks, Akira
+
+> Cc: Daniel Lustig <dlustig@nvidia.com>
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: <linux-arch@vger.kernel.org>
+
 
