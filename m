@@ -1,180 +1,115 @@
-Return-Path: <linux-kernel+bounces-201839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0178FC422
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA788FC428
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35172288945
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4D52897B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52AC18C32A;
-	Wed,  5 Jun 2024 07:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E4F18C329;
+	Wed,  5 Jun 2024 07:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHzXOXpR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U7b7OZCK"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F6A190490
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712DBDDA5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571306; cv=none; b=fCBGHv/XhOGs9ODGEDERh5I9TaiXm1oCUL+9GE/IClDyGxm7feHaj7kcE5bY2GA0/j3CVHRiemR+Ip7m09TWWSCegeJdnbwjJXYZnaMWtSXqIrS7B/QT8dzdxc/OfjahhqudKYD8D2YyUJmHXvX0B1H6sP12Mw1kzGgi9sxBp2k=
+	t=1717571363; cv=none; b=YVjL6omoUPjNGFkCmngTPbvucfFv9XjP2zFgDZWPXb/TDk5VLLLV0kTnFnNR1lENM21xl7MUf5fToF0lwFPVCC6JQRatsGQMzQ9CkUQUncSqXn3tXrvxegMk6yPrj1YJsEG7EPIPG/7y78gL31k1Eyrd3FA/WSsTmaNV6fBn9GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571306; c=relaxed/simple;
-	bh=zjM++pe63O6XKtNRcatJaeIibgHtGuI8Go40VKO/Xa4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L4I23boGn7uCzD6g6msTRaAKzm/J8TcF9SszUXOXsODwRnWwWUA3ZPslryiegzEjotitdA7NLzP0vL2LOrS8HMdpi8v5PPBfBRCtGDgFribvLeqQEEej9ymGdhdMX/4Jlgqmj8BXO/c+fftXR2LAPMBrNHH+VNRUFOEiPUxAEv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHzXOXpR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F17C4AF08
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717571305;
-	bh=zjM++pe63O6XKtNRcatJaeIibgHtGuI8Go40VKO/Xa4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dHzXOXpRvCf/XxBUz4jNV0jJFNe0IXGlYUPEfIoyFPl8zb7yT7dJQnFRmi0qjLrEm
-	 txx1QcCSjUyjogWpbFpmJm8r7Yfa10it/+YgKdVoaCTpNq3QIR3ZRknLTskg0ENfZl
-	 OleR/xIbuI6Jtqg6Ta2BFdte2HdGIao/f1Qjdc3JDaSFWBVUH3TI3ipz3nYhw/+51Z
-	 mqqXYVh5M3/CGfYJ2VD9vcxxy7bnZpF4PBOwxnQBMSKkuQl55n5LS0huj2J/mvIzQu
-	 /EX9Us5X9AUaiuomZ44NaGZ/tKRzfJqLUWaBdYAdxXXRXcUzwhEjDc/dz8ZR06XzMA
-	 rQVhQvrWURVyQ==
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-374a817a184so8666645ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:08:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgWlgbKS6UsIx3jZUjeDzydcAquxOGXMl2NUi5z18v/d8c03I7LOe9vmMu30lpy+SFLc84WypGsnxgz9JUeRFAHm5Ti97GIKdmlrMP
-X-Gm-Message-State: AOJu0YxF9U0osBGhoUcoyKzGOKVcsyeY6cwURMbXz/Nag9iInhf/0Xo2
-	i3s4EA8AitbYI81BaEvv5iXR8MzSwfjWbohE0/999Y0S2r7MrYh7i6mz2OACOyKIKasRVb0Ceec
-	Drh50+hTI8Eq2Oo2UgvACvZzZ2U3GYvUIqUUh
-X-Google-Smtp-Source: AGHT+IEnS98wNsaLy6nngBjTzn7eeLgDDA4TXWawq105LwHHH4IZMeX8vB8ppQSpQT8iDwKH7n9Ay27zmewlXKNnS1c=
-X-Received: by 2002:a92:ca0b:0:b0:374:ad0f:1b00 with SMTP id
- e9e14a558f8ab-374b1eff031mr16421305ab.15.1717571304752; Wed, 05 Jun 2024
- 00:08:24 -0700 (PDT)
+	s=arc-20240116; t=1717571363; c=relaxed/simple;
+	bh=gtowOOZmB6VPvTmh98OBdJ/GTkP1Yo/Ot5b/hFyw0YM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGdCqx3ZKVV90Sk2FIQ6JaUiMZfSKAANu/masBlXA0Nh4BEIeqh8d4kZGflles+bo1NwZO3/CXn/XEKHoJLGLkMWOFq7IDwgl0I+DrYpiMNJtRbjsvBHT7S5pbOSnQyAwAzwL5cabJ98DMnFhATsMGSDbBaoZUn6fa94Yew8DDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U7b7OZCK; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a32b0211aso2234115a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717571360; x=1718176160; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sQSephwmytgo/YLLaqWzVbfXRJtJuGRKYodF45aiwbI=;
+        b=U7b7OZCKTFzT1gCjgU606ZD33vKTBiTIQgMsppNqTdnFnPXoIGUkvd527yYF7wwU56
+         BLm6MyNr9D92TUms3Nh842MfaPrt/vPpzchD3aju2W2mCLJHQVt9RAMQ877xDRXB/F90
+         OAcuLzPW8zBBtZYqPmFcsmPDs0w3bBy0Ly+E8tcEHJiGlDHZnIDk5gTRN/jzjx2fOS+O
+         XGPrjy2F34Q8HS3rsWhqJwm6p21R/fStDKzTgaEwba3+jC3lsGIgrfzI4a4nlvIOalv4
+         VK3tXFESi8AdM6zNjgSmQuZc/w0zT+jN7lx+G4c298ADpX3s1Y+BmKZBjlIy/vEOqisO
+         vLjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717571360; x=1718176160;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sQSephwmytgo/YLLaqWzVbfXRJtJuGRKYodF45aiwbI=;
+        b=g215smPJi+vxnjahMVZ440CC677tC1KBvPOzHM+PBrBGVFyAOIFQR73t0RvTflgzO7
+         mVOwWipWizRp1qWjoPpO76JAJ2rYTGOGv16Ra8UZMdXCXuFeWoMOX6iUTG0CiyK0T4cU
+         hmec9VIGK4wQSCQdDXEebYMQN3co6JS8g57ykSnNY8Yt4elXhpKEzzS8j208ggt2jJ2D
+         oHEvUEunttk/wj3fbq4BpE9wkj4paHjOWBmVvET4oOQU4NYfwHLdrS6GnXQAZa5dEogT
+         2v3xjCCF6KG3E4nFFlXjsBMGUFwBo+Gzl8YdQd1M5/Gn8C4zSokqegYt4B8cFSA6oJxZ
+         8POQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU63TqMLrjVK9tWvq6D6PlFS3bs4dIVzdv53LOY8JzQ47CDwGz9L9pjMbZKEFUxLuB0kSkLyc7GezOPHqGK+xTJag+in+uykkh/iTy1
+X-Gm-Message-State: AOJu0YxcaT8njsCTw1dg8vIXjFFYF5KaPdPh/WQIhjk+DTqpBKc+hkfo
+	p0HQU4M8cFQiNmMhWCJZUUmSLSVpgPe4hfgvFYDmDYa2Fz+WNQIGMCaDom3o7LU=
+X-Google-Smtp-Source: AGHT+IE7k9799F3Xk82hR/6XkZaITtGSnHgKLu6xSA11pSPaaMg0gh4dvJQRX0RwV80Q9FtYUJBK3Q==
+X-Received: by 2002:a50:9e62:0:b0:579:cf9d:d6a with SMTP id 4fb4d7f45d1cf-57a8b6b88c5mr1085082a12.20.1717571359412;
+        Wed, 05 Jun 2024 00:09:19 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a35e86c36sm8560156a12.54.2024.06.05.00.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 00:09:18 -0700 (PDT)
+Date: Wed, 5 Jun 2024 10:09:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dmitry Yashin <dmt.yashin@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Jianqun Xu <jay.xu@rock-chips.com>, Jonas Karlman <jonas@kwiboo.se>,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] pinctrl: rockchip: delay recalced_mask and
+ route_mask init
+Message-ID: <094fbb0c-099c-4839-b2c5-162775e35710@moroto.mountain>
+References: <20240604141020.21725-1-dmt.yashin@gmail.com>
+ <20240604141020.21725-2-dmt.yashin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524-swap-allocator-v1-0-47861b423b26@kernel.org>
- <CANeU7QkmQ+bJoFnr-ca-xp_dP1XgEKNSwb489MYVqynP_Q8Ddw@mail.gmail.com>
- <87cyp5575y.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAF8kJuN8HWLpv7=abVM2=M247KGZ92HLDxfgxWZD6JS47iZwZA@mail.gmail.com>
- <875xuw1062.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAF8kJuMc3sXKarq3hMPYGFfeqyo81Q63HrE0XtztK9uQkcZacA@mail.gmail.com>
- <87o78mzp24.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87o78mzp24.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 5 Jun 2024 00:08:12 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuPLhmJqMi-unDOm820c8_kRnQVA_dnSfgRzMXaHKnDHAQ@mail.gmail.com>
-Message-ID: <CAF8kJuPLhmJqMi-unDOm820c8_kRnQVA_dnSfgRzMXaHKnDHAQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mm: swap: mTHP swap allocator base on swap cluster order
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604141020.21725-2-dmt.yashin@gmail.com>
 
-On Thu, May 30, 2024 at 7:37=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Chris Li <chrisl@kernel.org> writes:
->
-> > On Wed, May 29, 2024 at 7:54=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
-om> wrote:
-> > because android does not have too many cpu. We are talking about a
-> > handful of clusters, which might not justify the code complexity. It
-> > does not change the behavior that order 0 can pollut higher order.
->
-> I have a feeling that you don't really know why swap_map[] is scanned.
-> I suggest you to do more test and tracing to find out the reason.  I
-> suspect that there are some non-full cluster collection issues.
+On Tue, Jun 04, 2024 at 07:10:19PM +0500, Dmitry Yashin wrote:
+> For some SoC's like rk3308 additional runtime setup needed, so delay
+> recalced_mask and route_mask init.
+> 
+> Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
 
-Swap_map[] is scanned because of running out of non full clusters.
-This can happen because Android tries to make full use of the swapfile.
-However, once the swap_map[] scan happens, the non full cluster is polluted=
-.
+This sounds like it needs a Fixes tag.  Should it be backported to
+stable?
 
-I currently don't have a local reproduction of the issue Barry reported.
-However here is some data point:
-Two swap files, one for high order allocation only with this patch. No
-fall back.
-If there is a non-full cluster collection issue, we should see the
-fall back in this case as well.
+I understand that you only know that rk3308 is affected, and probably
+you worry that other devices are as well?  Just do your best on trying
+to figure out which is the first commit where this bug started to
+matter.  Any information is better than no information.
 
-BTW, same setup without this patch series it will fall back on the
-high order allocation as well.
+The commit message should say what the bug looks like to the user.  Why
+would a user want this patch?  I can probably figure it out from reading
+the code, but I shouldn't have to.
 
->
-> >> Another issue is nonfull_cluster[order1] cannot be used for
-> >> nonfull_cluster[order2].  In definition, we should not fail order 0
-> >> allocation, we need to steal nonfull_cluster[order>0] for order 0
-> >> allocation.  This can avoid to scan swap_map[] too.  This may be not
-> >> perfect, but it is the simplest first step implementation.  You can
-> >> optimize based on it further.
-> >
-> > Yes, that is listed as the limitation of this cluster order approach.
-> > Initially we need to support one order well first. We might choose
-> > what order that is, 16K or 64K folio. 4K pages are too small, 2M pages
-> > are too big. The sweet spot might be some there in between.  If we can
-> > support one order well, we can demonstrate the value of the mTHP. We
-> > can worry about other mix orders later.
-> >
-> > Do you have any suggestions for how to prevent the order 0 polluting
-> > the higher order cluster? If we allow that to happen, then it defeats
-> > the goal of being able to allocate higher order swap entries. The
-> > tricky question is we don't know how much swap space we should reserve
-> > for each order. We can always break higher order clusters to lower
-> > order, but can't do the reserves. The current patch series lets the
-> > actual usage determine the percentage of the cluster for each order.
-> > However that seems not enough for the test case Barry has. When the
-> > app gets OOM kill that is where a large swing of order 0 swap will
-> > show up and not enough higher order usage for the brief moment. The
-> > order 0 swap entry will pollute the high order cluster. We are
-> > currently debating a "knob" to be able to reserve a certain % of swap
-> > space for a certain order. Those reservations will be guaranteed and
-> > order 0 swap entry can't pollute them even when it runs out of swap
-> > space. That can make the mTHP at least usable for the Android case.
->
-> IMO, the bottom line is that order-0 allocation is the first class
-> citizen, we must keep it optimized.  And, OOM with free swap space isn't
-> acceptable.  Please consider the policy we used for page allocation.
+regards,
+dan carpenter
 
-We need to make order-0 and high order allocation both can work after
-the initial pass of allocating from empty clusters.
-Only order-0 allocation work is not good enough.
 
-In the page allocation side, we have the hugetlbfs which reserve some
-memory for high order pages.
-We should have similar things to allow reserve some high order swap
-entries without getting polluted by low order one.
-
->
-> > Do you see another way to protect the high order cluster polluted by
-> > lower order one?
->
-> If we use high-order page allocation as reference, we need something
-> like compaction to guarantee high-order allocation finally.  But we are
-> too far from that.
-
-We should consider reservation for high-order swap entry allocation
-similar to hugetlbfs for memory.
-Swap compaction will be very complicated because it needs to scan the
-PTE to migrate the swap entry. It might be easier to support folio
-write out compound discontiguous swap entries. That is another way to
-address the fragmentation issue. We are also too far from that as
-right now.
-
->
-> For specific configuration, I believe that we can get reasonable
-> high-order swap entry allocation success rate for specific use cases.
-> For example, if we only do limited maximum number order-0 swap entries
-> allocation, can we keep high-order clusters?
-
-Yes we can. Having a knob to reserve some high order swap space.
-Limiting order 0 is the same as having some high order swap entries
-reserved.
-
-That is a short term solution.
-
-Chris
 
