@@ -1,73 +1,44 @@
-Return-Path: <linux-kernel+bounces-203139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB618FD6ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A29808FD6EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5E81C216E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:00:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7AB41C22750
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FDC1553BA;
-	Wed,  5 Jun 2024 19:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLtYgEav"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D4E155359;
+	Wed,  5 Jun 2024 19:59:09 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7DD154452;
-	Wed,  5 Jun 2024 19:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463A4154452
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717617513; cv=none; b=AFvky4WTsEU+1aVCnhln35tsQw0Ak+URZPv0Lpn6rBh56RLQanowHqOMRKlwr0drNNC6fi6FEgtCyQKb3T26qMhbv0zNYwXVNq5uUV1LZ1NuFB3xeNqiH1mmKubsJ3FAD1Onhmz5o1TyfcdN1MrM5qCSKZw6Lv7xZF8RedWmF7E=
+	t=1717617549; cv=none; b=jnL2fMQWSjl3tGCXpFo75djptJygQJYwytYsAZ2eWcxczIlXSxgYejzCbhUNR2ANMprUjY9GFrRBJgVewUD0p+FnJgcnE9hPMhcIaX9JnhGTbLuZ8ZSNaZrNPO7iyHdGJbE1xiLn6Ml1U2oyxXERpXzIHS9WOWeodLKUqvb9Fqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717617513; c=relaxed/simple;
-	bh=tveU/ZHqabXpBPrR0CzCHYcwmKVkBfaTW8MgVo0tXYw=;
+	s=arc-20240116; t=1717617549; c=relaxed/simple;
+	bh=y6xww9ta5Ut+yT5rnLQgc5PnpjLGuO3gstDiJD4or2k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KlXHbCm8ax5Uoi2iXUEFG1oCL3Ul6wa/PoD8TfWjtCRoAkvpRd9k0uxRIq6yHqDoN63/0mkg6J438Mwn25kI8Ksq+DWslhMFSBdfvgm7NjonriYt8XvHqj/AT1x0ccKaLMpH6hda3XqJqtplfP1kO0xPJhvSJRxmGNl5Jq3o+rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLtYgEav; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35e4aaa0f33so199291f8f.0;
-        Wed, 05 Jun 2024 12:58:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717617510; x=1718222310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pf8r5yLzRWnbsxS/Ko313LwbjIGVpyyp6EBPhDw6O18=;
-        b=lLtYgEavFE6yUfKG38jqCpohb2VvDMu/vZ8CMdPVkjDMpjXJdGUprdN6ZmXKeG1SPE
-         oVrYJ6sKiFFLahYLW1pOeT8djVt+NHP2kFDuJ4q3iYpfW/JSkKSAqpYNlTdMZxsq08Yx
-         CrrjoGxL2gqYaOKH/xLTvLl1IBcrt71+wuE9oPolSw0ACL1N+TaEPyGUcjWmaolC7B6+
-         q19EHzXuTQn7rRgjkkUVJTgE+XVLEzpH7VF9khqVQYMpoJskpFl1aCRETTnXPgdzIpA+
-         9tSqC0xtV/Ae+DdQ28BzkzLAQj6Ardkb7QxTdwF3VlmNoW6alS3l2qyXnwtFO0nqLmv5
-         yeIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717617510; x=1718222310;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pf8r5yLzRWnbsxS/Ko313LwbjIGVpyyp6EBPhDw6O18=;
-        b=QfurNfIQWHRPS8kuot8Y3fk5P8TuCO9ys5qIgTuPE2zMurDCUKeL1U5TuaLJVvmNf0
-         rLyNGvGWbYMoCRBckqT87sWu5d+cUkYY6pnPvl7e99UDX6y1aiY11ZXPUlfL1XhHV8dB
-         EuZuP1YWB/z+gYhKqU+jomKjDMoYqBl83MlbhB6EhGn7+2Og7go+n1RT08wnio0CnbXY
-         RiRrCvvG6aJc2s+abFy+RG10TfzLAs5xGLytZo76PAnSgCBBd3Ihdc09QjIStVQPxzYr
-         Y4lGFzsOF/envMV2qyZ4ZGUDRvR6ccf2xIRF0aDXHGUDmp/1WPQnLZUsisAGFLDFTrlV
-         pf5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXetx8HDJHq6qRO6ay/hj0nWR3l/yR1UDnr1AduJAbWSOIcJ/V3YwAt9yjn/5uhjK5N3eFT/Vusv1kloW26oDWcADyHPctOsYAIRNGxRfXM2QXGJctNCsembPX0D1x6yihdy6UZ0GREIw==
-X-Gm-Message-State: AOJu0YytPj6XPwkZBPXrYmmEIsOsjM/7VHR4FvxDy8UQVbhQPYZvobD/
-	sniyKNmjuHfpt/4bpHM8Um19fP2d5fySAaSt+aFHap18tXFrRdjH
-X-Google-Smtp-Source: AGHT+IFIRSDuYx9C8w8Mwft2Esuzx2rYHBnh1PEvECrLGF7NHqqpntJiuiOWp3KIW3ubAgGvnJx6DA==
-X-Received: by 2002:a05:6000:dcf:b0:354:fcbf:f3c0 with SMTP id ffacd0b85a97d-35e8406decfmr2999235f8f.4.1717617509710;
-        Wed, 05 Jun 2024 12:58:29 -0700 (PDT)
-Received: from [192.168.0.9] (cm-83-97-153-254.telecable.es. [83.97.153.254])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35e0f97ba3csm15323756f8f.73.2024.06.05.12.58.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 12:58:29 -0700 (PDT)
-Message-ID: <02e22411-e22e-41f7-8bca-95c8ef5a4346@gmail.com>
-Date: Wed, 5 Jun 2024 21:58:23 +0200
+	 In-Reply-To:Content-Type; b=Bb8SNV5cEOG7+5W9sMWRRczdxJdl+nrWvd0lhF+HDUCWQeiZgj86c5H5uKGD5HCDLFvDUqKKV1R7In+NWgaoJNTQKo7ElFGR/cRFbQtDV0OkZ8ONgI2FS6QEh9ezNFClheQ9WIJQwRqHhmPPj7ke7xtsGIqUi7RMRab3EfvBBS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vvd4h0TBtz9v7Jg
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:36:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id E8724140445
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2024 03:58:57 +0800 (CST)
+Received: from [10.81.202.105] (unknown [10.81.202.105])
+	by APP1 (Coremail) with SMTP id LxC2BwBnXxh0w2BmBkmdCQ--.62044S2;
+	Wed, 05 Jun 2024 20:58:57 +0100 (CET)
+Message-ID: <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
+Date: Wed, 5 Jun 2024 21:58:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,47 +46,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller
- driver
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Algea Cao <algea.cao@rock-chips.com>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
- <2554679.TLnPLrj5Ze@diego>
-Content-Language: en-US
-From: Luis de Arquer <ldearquer@gmail.com>
-In-Reply-To: <2554679.TLnPLrj5Ze@diego>
+Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
+ tools/memory-model
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+ peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+ urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+ <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwBnXxh0w2BmBkmdCQ--.62044S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXryxCryktr1DKr1DGry7GFg_yoW5GryrpF
+	WrtayrKFs8Jr4293yxW397JFyYkayrGw13Grnaqwn5u3Z8WFy8tr4akF45ZF97urZ3W342
+	vryUtrykX3WqyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkvb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6xAYrwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JV
+	WxJwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07bY-B_UUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On 6/5/24 16:48, Heiko Stübner wrote:
-> Without this change, connecting to a DVI display does not work, and
-> reading the EDID ends in the "i2c read error" below.
-
-I had a lot of problems initially with the vendor driver on my DVI 
-display, and am aware that several changes were required.
-
-However, I tested Cristian patch and worked fine. All modes were 
-apparently detected from the display and they all worked. But maybe I 
-was just lucky and it was using a somehow cached table, I can't say.
-
-This is an AOC DVI display from 2011 with a passive adapter.
 
 
+Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
+> On Tue, Jun 04, 2024 at 05:29:18PM +0200, Jonas Oberhauser wrote:
+>> Currently, the effect of several tag on operations is defined only in
+>> the herd7 tool's OCaml code as syntax transformations, while the effect
+>> of all other tags is defined in tools/memory-model.
+>> This asymmetry means that two seemingly analogous definitions in
+>> tools/memory-model behave quite differently because the generated
+>> representation is sometimes modified by hardcoded behavior in herd7.
+>>
+>> It also makes it hard to see that the behavior of the formalization
+>> matches the intuition described in explanation.txt without delving into
+>> the implementation of herd7.
+>>
+>> Furthermore, this hardcoded behavior is hard to maintain inside herd7 and
+>> other tools implementing WMM, and has caused several bugs and confusions
+>> with the tool maintainers, e.g.:
+>>
+>>    https://github.com/MPI-SWS/genmc/issues/22
+>>    https://github.com/herd/herdtools7/issues/384#issuecomment-1132859904
+>>    https://github.com/hernanponcedeleon/Dat3M/issues/254
+>>
+>> It also means that potential future extensions of LKMM with new tags may
+>> not work without changing internals of the herd7 tool.
+>>
+>> In this patch series, we first emulate the effect of herd7 transformations
+>> in tools/memory-model through explicit rules in .cat and .bell files that
+>> reference the transformed tags.
+>> These transformations do not have any immediate effect with the current
+>> herd7 implementation, because they apply after the syntax transformations
+>> have already modified those tags.
+>>
+>> In a second step, we then distinguish between syntactic tags (that are
+>> placed by the programmer on operations, e.g., an 'ACQUIRE tag on both the
+>> read and write of an xchg_acquire() operation) and sets of events (that
+>> would be defined after the (emulated) transformations, e.g., an Acquire
+>> set that includes only on the read of the xchg_acquire(), but "has been
+>> removed" from the write).
+>>
+>> This second step is incompatible with the current herd7 implementation,
+>> since herd7 uses hardcoded tag names to decide what to do with LKMM;
+>> therefore, the newly introduced syntactic tags will be ignored or
+>> processed incorrectly by herd7.
+> 
+> The patches look good to me.
+> 
+> Just to clarify: Your first step encompasses patches 1 - 3, and the
+> second step is patch 4.  The first three patches can be applied now, but
+> the last one needs to wait until herd7 has been updated.  Is this all
+> correct?
 
-Luis
+Exactly.
+
 
