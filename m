@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-203208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB048FD7E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:53:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521558FD7E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E1B1C244D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065E11F21E38
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B42161304;
-	Wed,  5 Jun 2024 20:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA73161B52;
+	Wed,  5 Jun 2024 20:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr9hY5BD"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OM0YCSmW"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C483E15FA74;
-	Wed,  5 Jun 2024 20:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC4615FCF0;
+	Wed,  5 Jun 2024 20:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717620739; cv=none; b=GLE4dKJPc2giqOfmHeMGgfro2XcCz5l8qKkVM05dqXhNtPlHlRh+m4XxC7ssiLH4M4He6g9BdzeaiOrqpjICbkKgZEviZKNKEaDqDX/urjvhJFXWTdXHt7bQiHakQW2fIk6F/Nu2tRM6L7YFpITPVEptqKFKTyR4hOZWtVqwV1A=
+	t=1717620740; cv=none; b=J3AxMD9dOaV3VmMI5Obf/qMTVdfE16rJ490NIHpEG5BTuosw76Lu06NjfF9aEaG4aJOH/IYe1Q1RVDi0KZasquKGdk0IHC/uBJadIHm2yA9M3vipJza2Xj9IkHTcG3hcz/A/JpOJsmZmF1b9r3+fCG85HjmaBU6yb7JeHxD3rYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717620739; c=relaxed/simple;
-	bh=V9iuBXE3RCPxqipBIYq+2imZhquQ1wdIjv+HQgtM/dk=;
+	s=arc-20240116; t=1717620740; c=relaxed/simple;
+	bh=oUhHL9Gh1eiLkn61h89qakuHxe3kwFPwvQ1qeKNnvTc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DfRzdWOkmLc/YVByFYK7yMkcra7++BLP2Mrvo4d5Etza7GhLwX+AcjHGOYm2S1IZWHy2XtPEzH8hexJzX2HXpuc+Dy8rOECvBR6eI07GwriCA39eoghXJGflu2pTQ+ki91lde84fJwwmVZTABPb/OvL2u+qsSq/gTqtC+eIpqf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dr9hY5BD; arc=none smtp.client-ip=209.85.218.44
+	 MIME-Version; b=EpIDWDU0GBZjb/hCNnjewid4qa+v/0WmSxIUT+SYvneGZAgem2HPdJxkpwAp9CKA4Ft9RmNOFZPO6CcqtPOsFPYxPusCt5/tXAUmeIUdsTeKfjpJXv0MQlWgnPQr2QzDOiMibf843bzF8G/nkS0sF3Z9rLbqdaIxSF0RZKodWr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OM0YCSmW; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6267778b3aso22779066b.3;
-        Wed, 05 Jun 2024 13:52:17 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5295eb47b48so356945e87.1;
+        Wed, 05 Jun 2024 13:52:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717620736; x=1718225536; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717620737; x=1718225537; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SwbtZSg+KieEl718DTPhm+GILj3m52AXbprU8PF/yug=;
-        b=Dr9hY5BDyRI3agLAkF9IqjfFrP55AYnoQxIRiZnSSppEb2xZEPx/aKLhue2ERebEYo
-         X/Igv5fupO39WAzB9VUGeGUnZddc51U2Jp1u1KacQRUe128epl5uQNm4e29DripeqydU
-         uK2ARFSUW+PJinXBdWqBLh2+YcJuBc9YVAJyNOWzftcNeyDTfopBNXoPdW+yB+RhPtar
-         DE93kF6wm0LadriKJ7dLcIlp+Qu3Vb7aoWncWoo+HFk2EmKYBwtSmlW8HaDi7KfzifUK
-         1jfimZYgDikjhEaf+XLaMx0rbwGZCwx3F5/2krOaNHWl2coyECLXZHBDULgbNFkBx5Qw
-         j3RQ==
+        bh=XuZhauiIXe/dPit2+IYYIDdw8J65X44pe+rX+iqZzH0=;
+        b=OM0YCSmWH/K1riMSb4ocKo0OzNtP3ZInXSOusgvX7XopmCMzmElJGzkmqT76UExHxm
+         IACTSqfKldjsuyItCAIUd3u/HAO+6+r/Bs2x0NJNEBSf9sqtZKmozmD8IfnzHmdsm9fZ
+         LYUmXcXavKkmYVUiEGfYcT5j0FCGah23sC99xs4wSSfgmt8iJgv6N7HvaaKIK4KpIDG5
+         gEOyt03QTZQ89dUgZ0xgr8AjzVAVtUvF9AiYJz+ptE6QYVHiywaQ000eeaKqB8XL01Hf
+         gfIcLqTuDGzkNeBP7ZPUzXoD5EuqObcb5oP37uZGTmuZikaI/CzhMXLIATRUXHWLOUJr
+         8WSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717620736; x=1718225536;
+        d=1e100.net; s=20230601; t=1717620737; x=1718225537;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SwbtZSg+KieEl718DTPhm+GILj3m52AXbprU8PF/yug=;
-        b=GkvIqyHjtg01fQeUgxqJY+vNDa5fLyZejzmpyGbzf3UjQfXNUmtWSkEjOn6QYGVHjq
-         y+cEhjBvHHv3HlR8qzwXQBRqKcoviR+DfS1ok0VTtJK4e60u1ystmj1anpc8lLiVTHJ7
-         HgaG+WbmIW/SpXgSNgQFT2fuflBHZaZHxPx+bXjwMoc89FIKPktmECzFsxwlCHmIk/GD
-         DBn+or9H4MzrhqWePi7M5Xzo+u/NlUqOFfEAjpdf9FxFD6hgpleV30yUQS4Dd6BeQykR
-         cu+tUJDILlUqDdUVokaHXiefzcIWYL76bJSJebFc99prg/tqsVznp7T4+GpRI4F/Jxv1
-         AN/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXJhSGuiHQsI/M2dZV8sTKMZcM00+gN2gnOTqYz7kK53XKLUNZXBeyeUxoCjTk0Ru6T8kiyCZXKSkPNpiQMNaMqN1F8ryRJIwwHW0LUZrQLMkyHmANXnYMQ0cq7kBeGYivv9rZNjNclOPPwt7kPuT/0sjKZ64R2zQ8thx+Q6Zh1XyBCOg==
-X-Gm-Message-State: AOJu0Yx6beB8dppihzVDGLvBxW81FZ/jRFV8dbVG2aejrcnypz4QWGj5
-	SADrGHS1KuwTWoJCzl9sbcnpo0MMZxNpYI9XWJtc702IcERFmEM=
-X-Google-Smtp-Source: AGHT+IGUnMdIVufGuJqx2NAVZkDmWMS51VfiKdCE/FwjeZA4u1Q5WF1rgZ2eBaMEhn+7c3tMJ6YzAQ==
-X-Received: by 2002:a17:906:384c:b0:a61:c462:c612 with SMTP id a640c23a62f3a-a69a002e316mr235653566b.53.1717620736131;
+        bh=XuZhauiIXe/dPit2+IYYIDdw8J65X44pe+rX+iqZzH0=;
+        b=nSdQA0tBQQaxyxXq0M9aUbzkbeUnysqqQFxjMCZEcNym/JfyvOsddWdC70pe+zKxsH
+         LleR58C2tWY9ATMd2E0QdivAmQcPuJxG6ciIWH3vGhD8CQNi+xw/p5oGHICFTUw0CBYi
+         ak8ID+xB4NgFe5XWnxjwprwzLBO9i7Lpaa7FPjDvRBnJXDABRqqp3LHK2FBdtyQXoqs0
+         YK45ptPQz9S/MHAqHje+2nhSqvMrL8kehRdAaF/AsRT4G3SV357tgx8j3417nu0yma8G
+         o9wYimS35SR3IpKanIQQnKs+XTaN5kMQQ369RcvzQzPRAOFtRfC5Vizomahdu4f5K3nN
+         dn1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXoetU7MgsWp/FlONgERAKR3/JknddcTgKw0zgIbLp1e6Ys81M512Ga922SMXDJaDb3Q3y82EhkKj5KSz/kpADTp0PAgCtfYEsff4psY9WIY04U7Z4WKQ9OR454HQOdVMuQl+0SyJj/bnADTez237ihsUO4XtnyDBDOQDSaHWIleUShAw==
+X-Gm-Message-State: AOJu0YyDtvqnM8CeYct/Osy4YYUGTMQcScbJysDjaISG3zj6VrvQ+8NE
+	e/K5sEIkTwkTvZusQHnu6uHVL5Gx/fXZ+QlxSCRoHeS5CVUH2AE=
+X-Google-Smtp-Source: AGHT+IEUmVGccmn5n59tbMFqyxwa6cCbIoRWoOhCNW7qogkjWg4uC/uKSkpRIvsdSeMzyFB7O3CvBA==
+X-Received: by 2002:a05:6512:1052:b0:529:b6ea:d545 with SMTP id 2adb3069b0e04-52bab4e4507mr2810632e87.29.1717620736727;
         Wed, 05 Jun 2024 13:52:16 -0700 (PDT)
 Received: from U4.lan ([2a02:810b:f40:4600:5211:58fe:dfef:c48c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c71bb5affsm72265866b.147.2024.06.05.13.52.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c71bb5affsm72265866b.147.2024.06.05.13.52.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 13:52:15 -0700 (PDT)
+        Wed, 05 Jun 2024 13:52:16 -0700 (PDT)
 From: Alex Bee <knaerzche@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -79,9 +79,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH v2 1/5] clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
-Date: Wed,  5 Jun 2024 22:52:05 +0200
-Message-ID: <20240605205209.232005-7-knaerzche@gmail.com>
+Subject: [PATCH v2 2/5] dt-bindings: clock: rk3128: Drop CLK_NR_CLKS
+Date: Wed,  5 Jun 2024 22:52:06 +0200
+Message-ID: <20240605205209.232005-8-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240605205209.232005-1-knaerzche@gmail.com>
 References: <20240605205209.232005-1-knaerzche@gmail.com>
@@ -93,75 +93,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In order to get rid of CLK_NR_CLKS and be able to drop it from the
-bindings, use rockchip_clk_find_max_clk_id helper to find the highest
-clock id.
+CLK_NR_CLKS should not be part of the binding. Let's drop it, since
+the kernel code no longer uses it either.
 
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 ---
 changes since v1:
  - new patch
 
- drivers/clk/rockchip/clk-rk3128.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ include/dt-bindings/clock/rk3128-cru.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-index d076b7971f33..40e0e4556d59 100644
---- a/drivers/clk/rockchip/clk-rk3128.c
-+++ b/drivers/clk/rockchip/clk-rk3128.c
-@@ -569,18 +569,22 @@ static const char *const rk3128_critical_clocks[] __initconst = {
- 	"sclk_timer5",
- };
+diff --git a/include/dt-bindings/clock/rk3128-cru.h b/include/dt-bindings/clock/rk3128-cru.h
+index 1be455ba4985..420984fc2285 100644
+--- a/include/dt-bindings/clock/rk3128-cru.h
++++ b/include/dt-bindings/clock/rk3128-cru.h
+@@ -145,7 +145,6 @@
+ #define HCLK_CRYPTO		476
+ #define HCLK_PERI		478
  
--static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
-+static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np,
-+								   unsigned long soc_nr_clks)
- {
- 	struct rockchip_clk_provider *ctx;
-+	unsigned long common_nr_clks;
- 	void __iomem *reg_base;
+-#define CLK_NR_CLKS		(HCLK_PERI + 1)
  
-+	common_nr_clks = rockchip_clk_find_max_clk_id(common_clk_branches,
-+						      ARRAY_SIZE(common_clk_branches)) + 1;
- 	reg_base = of_iomap(np, 0);
- 	if (!reg_base) {
- 		pr_err("%s: could not map cru region\n", __func__);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-+	ctx = rockchip_clk_init(np, reg_base, max(common_nr_clks, soc_nr_clks));
- 	if (IS_ERR(ctx)) {
- 		pr_err("%s: rockchip clk init failed\n", __func__);
- 		iounmap(reg_base);
-@@ -609,8 +613,12 @@ static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device
- static void __init rk3126_clk_init(struct device_node *np)
- {
- 	struct rockchip_clk_provider *ctx;
-+	unsigned long soc_nr_clks;
- 
--	ctx = rk3128_common_clk_init(np);
-+	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3126_clk_branches,
-+						   ARRAY_SIZE(rk3126_clk_branches)) + 1;
-+
-+	ctx = rk3128_common_clk_init(np, soc_nr_clks);
- 	if (IS_ERR(ctx))
- 		return;
- 
-@@ -627,8 +635,12 @@ CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
- static void __init rk3128_clk_init(struct device_node *np)
- {
- 	struct rockchip_clk_provider *ctx;
-+	unsigned long soc_nr_clks;
-+
-+	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3128_clk_branches,
-+						   ARRAY_SIZE(rk3128_clk_branches)) + 1;
- 
--	ctx = rk3128_common_clk_init(np);
-+	ctx = rk3128_common_clk_init(np, soc_nr_clks);
- 	if (IS_ERR(ctx))
- 		return;
- 
+ /* soft-reset indices */
+ #define SRST_CORE0_PO		0
 -- 
 2.45.2
 
