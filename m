@@ -1,195 +1,224 @@
-Return-Path: <linux-kernel+bounces-202618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BF38FCF01
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:21:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9E48FCEC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05AFCB2426E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:15:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD4C1F2542C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7DB194AD9;
-	Wed,  5 Jun 2024 12:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CBB19AD7D;
+	Wed,  5 Jun 2024 12:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OA9DBeUF"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="APmbBRop"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174A9194AD2;
-	Wed,  5 Jun 2024 12:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EF819938F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717591113; cv=none; b=KENiydhrZkxIUz6Yexc7Wwplwt50y+Qiggt5RDEH7kCLRuPLniNUz7gOBfZPC4kbyCqhrZwmm70Gf0UJd0qgYNqaDE+ls9DYy9itchztna+9ZxUFeh/JGYNr0B2czdIsumXcFQzKJYW7xABX2utcHfYE7RbDuTYNZ/RUvEM0eNc=
+	t=1717591174; cv=none; b=dm6jDeKqu0E1tlREA6A1RxJcppTjwMdXW5kHUjfJiEAL78NHzXvjpIqRmJQBdLDoVP8XUQkr4bWierNPuEkzZfjtobao2yvVF029vqv0oh/TJ5roZiZC/jpK8cJfOtvnV9pTf5uWv+nGl4i2+cffrgPCqh05/do3H8UwEtM2zo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717591113; c=relaxed/simple;
-	bh=OZqt79NIznVK5rDUjkXmFWcs7qa57I4kBdPkWA3QT98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jyb/MqSKpUgYXFCx7/h9bW0L1M0YMOnCsxfBTRS00iemcFc8m9WzH2GL4fEoOZgM7wH+4T29MakHOA2sWekvBHx1m0ayR/2J/H21mcXQ6tF6LYenEiYB/DwUu0vTo63Ylu0FR1Q4bg2o5RvH4zTYxNoJ3LGHqL0HtKsf+zZ5Ays=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OA9DBeUF; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 522D040005;
-	Wed,  5 Jun 2024 12:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717591108;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HC2LJJX8rGplsD63NKz4WoTxZkBCqV9UIbb2yiQeS1A=;
-	b=OA9DBeUFNvchW82o8Mm8XZx60vtOdpgRftwE5EnTEr4jw8aVzW1Rq+eMXDJ1E1UINRAeRF
-	2yODc0kF+I4ZqmNu9IP5E1mZx1YVI1oCxBMZGaDk/qxF7s5m7AIMFnLAKA0DPmLQ6tXiaK
-	qeQ1zM0s0VwAV8tUKdlbDtVYqTISafzLTT4be2xTzq5WidwlYMEFz+RhNqVRj3Ge68ReAc
-	DNWFyHQ9nmKvDcY1+d4rXEB2SMWq96d1MdEytN10KMNpKXm5MvD9jMGbTc08BD2l4BXZM2
-	dBnyI5m9py8xMQkhTpPi7OqaXKjvqAPeaFyMS5kb59zOpf9w0U1+9XNBUJjhOg==
-Message-ID: <ca4dfe4f-a375-4905-b0bd-c4dddb507c23@bootlin.com>
-Date: Wed, 5 Jun 2024 14:38:27 +0200
+	s=arc-20240116; t=1717591174; c=relaxed/simple;
+	bh=PN3w34drIVFY3EPIMuK3d7MloOEqH6vrNoCXQcodqfw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fYtA3rpHIkatogAI09p6U45aU/zAMkJz/loKlwugeP6fb9rHz+E/rhbyx0XfvTPae3ttdFMZLxe2wTbBR3QATwlo1nHAEyHBrNYhWiBMHkYy4koF4+ksm9dQgQCbrUoK5fzuWeP2/APyIzpIfxZlh4ObtZkqOteHOP2Kr7TFKQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=APmbBRop; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42153115c65so14952585e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 05:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717591170; x=1718195970; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AsYvB5nRpR6ZIwbX5ZKQq6PXeotZMnLfWgyw/MJXre0=;
+        b=APmbBRop3ZoA/xyNiNARNuvmlyDAKlSv17U3fbW5Iluy3U1DQVmAuKlnBustljvjsS
+         1JRbEa1eqVEW0zK6dvt01Vt17jKXiYZrMcsJvtOWFKRzOH20i7cHvJie/v2oiyrDEjRz
+         GTBNJ2gGiupuD0AGFOnuCYzK/q8kLKoEVTq6SgK5jQV4SgkhkAyXAQ2qfNh2WzdzGoP0
+         QzKmhti2hOwlGcVMbHtY00RtDuX+Bp9HDZtDPmtyCPHWar/Q1slMm8y7SwEPpjw+gPBg
+         xBpnCl0dwwlV3r8ihyI2PMWWVT9UfmaktiSCgCCRaXu/o4KIB67/t7hTmoo9HJcZ54f7
+         +XKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717591170; x=1718195970;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AsYvB5nRpR6ZIwbX5ZKQq6PXeotZMnLfWgyw/MJXre0=;
+        b=pupHAD/R4UGXWw+GNUQ3fp/S5BUkWJouifHynmLbZtrWgD4kB0/1V1bl8YgrU0YN6y
+         Lw/No/E5cMRguC3EoU933W8FlB/xY5Bo+MbINJyjYf/G0bbFQNT+tdeIUBrSJRzE5dC+
+         6t0MZawUO9SShxOQlrxMCxq9nHtDDk3SH3ujlKQn1ycO83FrpvmlXwoXGc0j24Gyh8Ms
+         BHhYh4QHvNsiOHLUDKOQE4x/7YyJQwG83oVrU239dVhtSLUy8orC14lA7ZtnHTdF0ALx
+         OV3sTXlR8LyXUU56go1FH2D09zjLJSM/VHdYkX9fSTasW+0dDhG0lrHRdmZulmCXF3QI
+         riTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDTsL920CgLebOUGvvZ1gWatavpXvmduYFIgotTti5FovkveysQTY2iOFweg/Ceie0aWsvC3TzW4N44TyQcSBDHDbOzfipTdxvYYTY
+X-Gm-Message-State: AOJu0Yyroh09DdLg29MQhhUl2QpMsKFB+BLtpgR2NzljKFilXQTNcmGU
+	81yNO/d2H+CikeY0JNZim+pT7oj8z1yt8aQMHKBKmH3AHx8u9zKtnCdwdPkZ38o=
+X-Google-Smtp-Source: AGHT+IGD/jtVA3Rdnq+bTWW2i+WoMmfuwV5XxVW4+NDqwpMdifM8PtmushixxRUAGEgebmaoZjpfYw==
+X-Received: by 2002:a05:600c:44d4:b0:41f:ed4b:93f9 with SMTP id 5b1f17b1804b1-421562dc3abmr17532165e9.19.1717591170461;
+        Wed, 05 Jun 2024 05:39:30 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:d3dd:423:e1eb:d88b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148f66sm21992535e9.32.2024.06.05.05.39.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 05:39:30 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kalle Valo <kvalo@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Saravana Kannan <saravanak@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Alex Elder <elder@linaro.org>,
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Amit Pundir <amit.pundir@linaro.org>,
+	Xilin Wu <wuxilin123@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v9 0/2] pwrseq: introduce the subsystem and first driver
+Date: Wed,  5 Jun 2024 14:38:48 +0200
+Message-ID: <20240605123850.24857-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] leds: pca9532: Use PWM1 for hardware blinking
-To: Lee Jones <lee@kernel.org>
-Cc: Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>,
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, herve.codina@bootlin.com,
- christophercordahi@nanometrics.ca
-References: <20240527125940.155260-1-bastien.curutchet@bootlin.com>
- <20240527125940.155260-2-bastien.curutchet@bootlin.com>
- <20240531145523.GN1005600@google.com>
-Content-Language: en-US
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-In-Reply-To: <20240531145523.GN1005600@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Lee,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Thank you for the feedback, I'll send a V2 iteration that corrects all 
-the points you mentioned.
+Hi!
 
-Best regards,
-Bastien
+These are the power sequencing patches sent separately after some
+improvements suggested by Bjorn Helgaas. I intend to pick them up into a
+new branch and maintain the subsystem from now on. I then plan to
+provide an immutable tag to the Bluetooth and PCI subsystems so that the
+rest of the C changes can be applied. This new branch will then be
+directly sent to Linus Torvalds for the next merge window.
 
-On 5/31/24 16:55, Lee Jones wrote:
-> On Mon, 27 May 2024, Bastien Curutchet wrote:
-> 
->> PSC0/PWM0 are used by all leds for brightness and blinking. This causes
-> 
-> LEDs everywhere please.
-> 
->> conflicts when you set a brightness of a new led while an other one is
->> already using PWM0 for blinking.
->>
->> Use PSC1/PWM1 for blinking.
->> Check that no other led is already blinking with a different PSC1/PWM1
->> configuration to avoid conflict.
->>
->> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
->> ---
->>   drivers/leds/leds-pca9532.c | 49 ++++++++++++++++++++++++++++++-------
->>   1 file changed, 40 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
->> index bf8bb8fc007c..c210608ad336 100644
->> --- a/drivers/leds/leds-pca9532.c
->> +++ b/drivers/leds/leds-pca9532.c
->> @@ -191,29 +191,60 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
->>   	return err;
->>   }
->>   
->> +static int pca9532_update_hw_blink(struct pca9532_led *led,
->> +				   unsigned long delay_on, unsigned long delay_off)
->> +{
->> +	struct pca9532_data *data = i2c_get_clientdata(led->client);
->> +	unsigned int psc;
->> +	int i;
->> +
->> +	/* Look for others leds that already use PWM1 */
->> +	for (i = 0; i < data->chip_info->num_leds; i++) {
->> +		struct pca9532_led *other = &data->leds[i];
->> +
->> +		if (other == led)
->> +			continue;
-> 
-> Don't bunch things up please - new line here.
-> 
->> +		if (other->state == PCA9532_PWM1) {
->> +			if (other->ldev.blink_delay_on != delay_on ||
->> +			    other->ldev.blink_delay_off != delay_off) {
->> +				dev_dbg(&led->client->dev,
->> +					"HW can handle only one blink configuration at a time\n");
->> +				return -EINVAL;
->> +			}
->> +		}
->> +	}
->> +
->> +	psc = ((delay_on + delay_off) * 152 - 1) / 1000;
-> 
-> What are these funny magic numbers?  Define them please.
-> 
->> +	if (psc > 255) {
-> 
-> And this.
-> 
->> +		dev_dbg(&led->client->dev, "Blink period too long to be handled by hardware\n");
-> 
-> If you're returning an error, this should be dev_err().
-> 
->> +		return -EINVAL;
->> +	}
->> +
->> +	data->psc[1] = psc;
-> 
-> Can we define these indexes please?
-> 
->> +	data->pwm[1] = (delay_on * 255) / (delay_on + delay_off);
->> +
->> +	return pca9532_setpwm(data->client, 1);
->> +}
->> +
->>   static int pca9532_set_blink(struct led_classdev *led_cdev,
->>   	unsigned long *delay_on, unsigned long *delay_off)
->>   {
->>   	struct pca9532_led *led = ldev_to_led(led_cdev);
->>   	struct i2c_client *client = led->client;
->> -	int psc;
->> -	int err = 0;
->> +	struct pca9532_data *data = i2c_get_clientdata(client);
-> 
-> Did you build this with W=1?  This looks unused.
-> 
->> +	int err;
->>   
->>   	if (*delay_on == 0 && *delay_off == 0) {
->>   		/* led subsystem ask us for a blink rate */
->>   		*delay_on = 1000;
->>   		*delay_off = 1000;
->>   	}
->> -	if (*delay_on != *delay_off || *delay_on > 1690 || *delay_on < 6)
->> -		return -EINVAL;
->>   
->> -	/* Thecus specific: only use PSC/PWM 0 */
->> -	psc = (*delay_on * 152-1)/1000;
->> -	err = pca9532_calcpwm(client, 0, psc, led_cdev->brightness);
->> +	led->state = PCA9532_PWM1;
->> +	err = pca9532_update_hw_blink(led, *delay_on, *delay_off);
->>   	if (err)
->>   		return err;
->> -	if (led->state == PCA9532_PWM0)
->> -		pca9532_setpwm(led->client, 0);
->> +
->>   	pca9532_setled(led);
->>   
->>   	return 0;
->> -- 
->> 2.44.0
->>
-> 
+Changelog:
+
+Since v8:
+- split the pwrseq patches out into their own series
+- rename incref/decref functions to get/put for consistency
+- fix typos
+- make it very explicit in docs that arrays of targets and units must be
+  NULL-terminated
+- Link to v8: https://lore.kernel.org/r/20240528-pwrseq-v8-0-d354d52b763c@linaro.org
+
+Since v7:
+- added DTS changes for sm8650-hdk
+- added circular dependency detection for pwrseq units
+- fixed a KASAN reported use-after-free error in remove path
+- improve Kconfig descriptions
+- fix typos in bindings and Kconfig
+- fixed issues reported by smatch
+- fix the unbind path in PCI pwrctl
+- lots of minor improvements to the pwrseq core
+
+Since v6:
+- kernel doc fixes
+- drop myself from the DT bindings maintainers list for ath12k
+- wait until the PCI bridge device is fully added before creating the
+  PCI pwrctl platform devices for its sub-nodes, otherwise we may see
+  sysfs and procfs attribute failures (due to duplication, we're
+  basically trying to probe the same device twice at the same time)
+- I kept the regulators for QCA6390's ath11k as required as they only
+  apply to this specific Qualcomm package
+
+Since v5:
+- unify the approach to modelling the WCN WLAN/BT chips by always exposing
+  the PMU node on the device tree and making the WLAN and BT nodes become
+  consumers of its power outputs; this includes a major rework of the DT
+  sources, bindings and driver code; there's no more a separate PCI
+  pwrctl driver for WCN7850, instead its power-up sequence was moved
+  into the pwrseq driver common for all WCN chips
+- don't set load_uA from new regulator consumers
+- fix reported kerneldoc issues
+- drop voltage ranges for PMU outputs from DT
+- many minor tweaks and reworks
+
+v1: Original RFC:
+
+https://lore.kernel.org/lkml/20240104130123.37115-1-brgl@bgdev.pl/T/
+
+v2: First real patch series (should have been PATCH v2) adding what I
+    referred to back then as PCI power sequencing:
+
+https://lore.kernel.org/linux-arm-kernel/2024021413-grumbling-unlivable-c145@gregkh/T/
+
+v3: RFC for the DT representation of the PMU supplying the WLAN and BT
+    modules inside the QCA6391 package (was largely separate from the
+    series but probably should have been called PATCH or RFC v3):
+
+https://lore.kernel.org/all/CAMRc=Mc+GNoi57eTQg71DXkQKjdaoAmCpB=h2ndEpGnmdhVV-Q@mail.gmail.com/T/
+
+v4: Second attempt at the full series with changed scope (introduction of
+    the pwrseq subsystem, should have been RFC v4)
+
+https://lore.kernel.org/lkml/20240201155532.49707-1-brgl@bgdev.pl/T/
+
+v5: Two different ways of handling QCA6390 and WCN7850:
+
+https://lore.kernel.org/lkml/20240216203215.40870-1-brgl@bgdev.pl/
+
+Bartosz Golaszewski (2):
+  power: sequencing: implement the pwrseq core
+  power: pwrseq: add a driver for the PMU module on the QCom WCN
+    chipsets
+
+ MAINTAINERS                                |    8 +
+ drivers/power/Kconfig                      |    1 +
+ drivers/power/Makefile                     |    1 +
+ drivers/power/sequencing/Kconfig           |   29 +
+ drivers/power/sequencing/Makefile          |    6 +
+ drivers/power/sequencing/core.c            | 1105 ++++++++++++++++++++
+ drivers/power/sequencing/pwrseq-qcom-wcn.c |  336 ++++++
+ include/linux/pwrseq/consumer.h            |   56 +
+ include/linux/pwrseq/provider.h            |   75 ++
+ 9 files changed, 1617 insertions(+)
+ create mode 100644 drivers/power/sequencing/Kconfig
+ create mode 100644 drivers/power/sequencing/Makefile
+ create mode 100644 drivers/power/sequencing/core.c
+ create mode 100644 drivers/power/sequencing/pwrseq-qcom-wcn.c
+ create mode 100644 include/linux/pwrseq/consumer.h
+ create mode 100644 include/linux/pwrseq/provider.h
+
+-- 
+2.40.1
+
 
