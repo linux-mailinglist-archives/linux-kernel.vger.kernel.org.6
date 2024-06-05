@@ -1,155 +1,158 @@
-Return-Path: <linux-kernel+bounces-203084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316058FD633
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:06:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3070A8FD639
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B788EB222B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:06:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E894284BCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BA913AD22;
-	Wed,  5 Jun 2024 19:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E12B13B598;
+	Wed,  5 Jun 2024 19:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="NUG7dJI0"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F90hb6rs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCDB1EB27
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A79313AD38
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717614360; cv=none; b=p8htz40xRQ9HndfpbSGl/gWan/V2kg+EPBoGDUK9F/+km6E+mokmhmGFMfND9lhJZROXMyMa0U1qonbGd2sKoP1B5xjJ+/cp58/Hw5laW+gz8e5UzrzmfgP0MmeJ4/WmeDv14FYPura8n/eJbshdkit7PmGPSpcx8Wur3n5lHuA=
+	t=1717614456; cv=none; b=kWuu3wLAeej8IpPHDjBmFYan1h0BSCXhwT+hP/8av3ZuERKK1RPZi4/4stac1o0g1C6oDZdVT3+VQuSIyaDZlKxuqQDZiJKXJLkPYaCYa+1Jn86CPjkVcTGZcS906Vfk349ngABruiYo36umyy5w3WxLUWMlW8Z4XkuiklI3/nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717614360; c=relaxed/simple;
-	bh=Ce36X2cTUtKRp4XTVyTLX9lqpwhRE2M6qyo6ifMz/3E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JTsciG1Z19QHbWj82FGY/2PINd7L+XnwDpsb/Hmfi51klcYpeC4CyN2G4pVCecgnFolCP6eEJwbre4MKa1UwyqGV9CgALa9U9AKsUqyGY2WQKQkP3H9ZrXVqqrZx78oUzqFLuLCsm0kd17POB8lccPxE3CL+lkvgvtnHw4KZ370=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=NUG7dJI0; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1717614355;
-	bh=Ce36X2cTUtKRp4XTVyTLX9lqpwhRE2M6qyo6ifMz/3E=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=NUG7dJI0TZhq3N24yuUjWEb/1BemaYA0qTnft/6rhAwhurP9cWQm30U6C6FUij9oT
-	 i/9O+75Zon9/mP70/IY+zpr5G0esJ6PK6asMLdiLm7rXnh24EDI97pA/ik8sdCG4cO
-	 l37Eqj8uct9cvswqrRg5EghtyT124LeGjVvySKG4=
-Received: from [IPv6:240e:358:111d:4300:dc73:854d:832e:6] (unknown [IPv6:240e:358:111d:4300:dc73:854d:832e:6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 6D50766DF6;
-	Wed,  5 Jun 2024 15:05:47 -0400 (EDT)
-Message-ID: <1c132209a612e2e8953f0b458fc01853120db9a9.camel@xry111.site>
-Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
- unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
-From: Xi Ruoyao <xry111@xry111.site>
-To: Jinyang He <hejinyang@loongson.cn>, Nathan Chancellor
- <nathan@kernel.org>,  Peter Zijlstra <peterz@infradead.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Tiezhu Yang <yangtiezhu@loongson.cn>, Nick Desaulniers
- <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>,
- loongarch@lists.linux.dev,  linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, mengqinggang@loongson.cn,  cailulu@loongson.cn,
- wanglei@loongson.cn, luweining@loongson.cn, Yujie Liu
- <yujie.liu@intel.com>, Heng Qi <hengqi@linux.alibaba.com>, Tejun Heo
- <tj@kernel.org>
-Date: Thu, 06 Jun 2024 03:05:41 +0800
-In-Reply-To: <82b7e6ea-c2cb-6364-ebe9-bff928028408@loongson.cn>
-References: <20240604150741.30252-1-xry111@xry111.site>
-	 <20240605054328.GA279426@thelio-3990X>
-	 <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
-	 <20240605062548.GF279426@thelio-3990X>
-	 <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
-	 <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
-	 <ada035690e446909c3cdbf9a43a92def96020615.camel@xry111.site>
-	 <82b7e6ea-c2cb-6364-ebe9-bff928028408@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717614456; c=relaxed/simple;
+	bh=gCo6Eol2ctS05tCdqJWNTMs2vsC5Ydi8gXHw/eab5mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2psTn2pg2AQDnxijoiKH4bvRd0HDtIzq5//NxtNuJ4XuWL3pJzIEoEr1m0Yp+pwuVbtja7cZwl+QstL8wVfj8iAuN5Q9hxhzQ5/r23VmjNIusUQsG6vvw2ipjqJ56PdmNGNxd83BOZXXJBfJUWAiKpE4E9iuD3BWar7sZe56V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F90hb6rs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D1AEC2BD11;
+	Wed,  5 Jun 2024 19:07:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717614456;
+	bh=gCo6Eol2ctS05tCdqJWNTMs2vsC5Ydi8gXHw/eab5mA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=F90hb6rsLvHfMl50YI96RcTTLZ80o5uiqOYZadcf4fxJZBJqmKTAPRMHIDn9s8I77
+	 P0eg+ovQGCChXpNa7Jqp+Q5P+pIXv2rpOshQIJf8EaM/8Yqth2DUaAk6Zd0RkLLd9J
+	 oD2Dg1liJvxHodYYCGmhra//Tu8KxhTAsvgIcAekLlB7F+/1qlgFLB6YYVetqA2/Ql
+	 jYVmrZwRAlO//NLmClf5+SyUl6F/sD+7tUORrNzkaYZz06eW9nXn6jGO3eYAzmR8Q7
+	 ppHE4FMy/rbB2kyRwZ0CWB4F9xWg7ev70NsHcVCSwa/g6daUzGH56FA5GXWUzx76VO
+	 0x0twe2Asyq1Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E5BC2CE0A73; Wed,  5 Jun 2024 12:07:35 -0700 (PDT)
+Date: Wed, 5 Jun 2024 12:07:35 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+	lkft-triage@lists.linaro.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>, jbeulich@suse.com,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: x86: WARNING: at mm/memblock.c:1339 memblock_set_node - Usage of
+ MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+Message-ID: <315d6873-d618-4126-b67a-de62502d7ee2@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYsGFerOtoxwpKLOYcRtyJkmgjdP=qg4Y5iP5q-4Lt17Lg@mail.gmail.com>
 
-On Wed, 2024-06-05 at 23:47 +0800, Jinyang He wrote:
-> In our 419 repo this func has been renamed arch_update_insn_state (, now =
-it
-> should be arch_update_cfi_state) and give some actions to deal with the
-> frame pointer case. If we support it we may deal with some case but for=
-=20
-> clang...
->=20
-> .global test
-> .type test,@function
-> test:
->=20
-> addi.d=C2=A0 $sp,$sp,-448
-> st.d=C2=A0=C2=A0=C2=A0 $ra,$sp,440
-> st.d=C2=A0=C2=A0=C2=A0 $fp,$sp,432
-> addi.d=C2=A0 $fp,$sp,448
->=20
-> # do something=C2=A0 <- not change $sp
+On Mon, Jun 03, 2024 at 07:19:21PM +0530, Naresh Kamboju wrote:
+> The following kernel warnings are noticed on x86 devices while booting
+> the Linux next-20240603 tag and looks like it is expected to warn users to
+> use NUMA_NO_NODE instead.
+> 
+> Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+> 
+> The following config is enabled
+> CONFIG_NUMA=y
 
-This is simplified.  In the real code $sp is changed, something like:
+I am seeing this as well.  Is the following commit premature?
 
-bstrins.d $sp, $zero, 5, 0
+e0eec24e2e19 ("memblock: make memblock_set_node() also warn about use of MAX_NUMNODES")
 
-$fp is needed to allow restoring $sp after realigning $sp for some local
-over-aligned variables, as demonstrated by this example:
+Maybe old ACPI tables and device trees need to catch up?
 
-struct x { _Alignas(64) char buf[128]; };
+Left to myself, I would simply remove the WARN_ON_ONCE() from the above
+commit, but I would guess that there is a better way.
 
-void f(struct x *p);
-void g()
-{
-	struct x x =3D { .buf =3D "1145141919810" };
-	f(&x);
-}
+							Thanx, Paul
 
-GCC does not align $sp, it produces the aligned address for x from an
-unaligned $sp instead:
-
-addi.d $a0, $sp, 63
-srli.d $a0, $a0, 6
-slli.d $a0, $a0, 6
-
-thus there's no need to use $fp.
-
-/* snip */
-
-> <- restore regs from non-cfa ?
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ld.d=C2=A0=C2=A0=C2=A0 $=
-ra, $sp, 8=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # 8-byte Folded R=
-eload=C2=A0=20
-
-/* snip */
-
-> Maybe Clang have anything wrong?
-
-I don't think we must restore regs based on $fp just because CFA is
-based on $fp.  The .cfi directives only provides *one* possible way to
-restore the regs.  This way is convenient to the unwinder, but not
-necessarily convenient to the CPU thus the real instruction sequence can
-use a different way.  They only need to be "equivalent", not necessarily
-"exactly same."
-
-Also note that .cfi_* directives are completely irrelevant for objtool.
-THe objtool synthesizes the ORC unwind info from the machine
-instructions, not the DWARF unwind info coded with .cfi_*.
-
-The entire point of ORC is avoiding DWARF.  It's even named ORC because
-ORC and DWARF are sworn enemies in some tales.
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+> Boot log:
+> --------
+> [    0.008547] ------------[ cut here ]------------
+> [    0.008547] Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead
+> [    0.008553] WARNING: CPU: 0 PID: 0 at mm/memblock.c:1339
+> memblock_set_node+0xed/0x100
+> [    0.008559] Modules linked in:
+> [    0.008561] CPU: 0 PID: 0 Comm: swapper Not tainted
+> 6.10.0-rc1-next-20240603 #1
+> [    0.008563] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> 2.7 12/07/2021
+> [    0.008564] RIP: 0010:memblock_set_node+0xed/0x100
+> [    0.008567] Code: ea ea ff 00 74 0b 41 bc ff ff ff ff e9 6c ff ff
+> ff 48 89 75 d0 c6 05 5e ea ea ff 01 90 48 c7 c7 c8 e1 c7 a0 e8 d4 36
+> df fd 90 <0f> 0b 90 90 48 8b 75 d0 eb d2 e8 74 bb f3 fe 0f 1f 40 00 90
+> 90 90
+> [    0.008568] RSP: 0000:ffffffffa1003de0 EFLAGS: 00010086 ORIG_RAX:
+> 0000000000000000
+> [    0.008570] RAX: 0000000000000000 RBX: ffffffffa149b510 RCX: 0000000000000000
+> [    0.008572] RDX: 0000000000000000 RSI: 00000000ffffdfff RDI: 00000000ffffdfff
+> [    0.008572] RBP: ffffffffa1003e10 R08: 00000000ffffdfff R09: ffffffffa1003b90
+> [    0.008573] R10: 0000000000000001 R11: ffffffffa1079440 R12: 0000000000000040
+> [    0.008574] R13: 0000000000000000 R14: 000000008ad25c18 R15: 0000000000014770
+> [    0.008575] FS:  0000000000000000(0000) GS:ffffffffa135e000(0000)
+> knlGS:0000000000000000
+> [    0.008577] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    0.008578] CR2: ffff9ac23fe01000 CR3: 00000003ff246000 CR4: 00000000000200f0
+> [    0.008579] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [    0.008579] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [    0.008580] Call Trace:
+> [    0.008581]  <TASK>
+> [    0.008582]  ? show_regs+0x68/0x80
+> [    0.008586]  ? __warn+0x91/0x140
+> [    0.008589]  ? memblock_set_node+0xed/0x100
+> [    0.008591]  ? report_bug+0x175/0x1a0
+> [    0.008594]  ? fixup_exception+0x2b/0x2f0
+> [    0.008597]  ? early_fixup_exception+0xb3/0xd0
+> [    0.008600]  ? do_early_exception+0x1f/0x60
+> [    0.008603]  ? early_idt_handler_common+0x2f/0x40
+> [    0.008606]  ? memblock_set_node+0xed/0x100
+> [    0.008609]  ? __pfx_x86_acpi_numa_init+0x10/0x10
+> [    0.008612]  numa_init+0x8b/0x610
+> [    0.008615]  ? topo_register_apic+0x3a/0x130
+> [    0.008617]  x86_numa_init+0x23/0x70
+> [    0.008620]  initmem_init+0x12/0x20
+> [    0.008622]  setup_arch+0x8a3/0xd60
+> [    0.008624]  ? _printk+0x64/0x80
+> [    0.008628]  start_kernel+0x76/0x810
+> [    0.008630]  x86_64_start_reservations+0x1c/0x30
+> [    0.008632]  x86_64_start_kernel+0xca/0xe0
+> [    0.008634]  common_startup_64+0x12c/0x138
+> [    0.008637]  </TASK>
+> [    0.008638] ---[ end trace 0000000000000000 ]---
+> 
+> metadata:
+>  git_ref: master
+>  git_describe: next-20240603
+>  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+> 
+> Links:
+>  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240603/testrun/24170391/suite/log-parser-boot/tests/
+>  - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2hM1TaqYoxFAhzHCIRxz84OeUaj
+>  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2hM1QI6QEe9bjg1sQrFs41ZSYmk
+>  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2hM1QI6QEe9bjg1sQrFs41ZSYmk/config
+> 
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
