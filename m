@@ -1,169 +1,103 @@
-Return-Path: <linux-kernel+bounces-202093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9BC8FC7C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4673A8FC797
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C5B284967
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:27:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A643F1F2550F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21F018FC77;
-	Wed,  5 Jun 2024 09:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA88418FDDD;
+	Wed,  5 Jun 2024 09:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CaiTNTk1"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD5418F2DE;
-	Wed,  5 Jun 2024 09:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wq+W9KoI"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D4618FC6B;
+	Wed,  5 Jun 2024 09:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717579639; cv=none; b=HbvN35xQ37aMmdPlxq1d+UOXW8nkdMJ+SWYBSblo3qAsILho2Q2u58lXcQXwZDi3b7peDbZrZ1ceItgUvIbTD96tyLo6hHTDYKyU3m/skUi5ymD4Q35aUW7StZSv15aemiYO1gdpXO0/64XpD4PFwPIGFMDCMlGigO8Uv5eAL1Q=
+	t=1717579285; cv=none; b=FPGHCIgX3ZjV3Arv3+eR1YxZ3OlS7voqIj3fhQUPylGWjb3s3nRTqA9uGha9rBDZKX5ZoFDOsCuGceq4EB+ofr9OOsTrqzb/Ru4igeV7+mHHA7Ruv1thInLGFVr47w7KFcrGW3aMZq7w+97cz6C+WzOUpnCz/vJE65ekD+PQrPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717579639; c=relaxed/simple;
-	bh=XbNrSIUGtH5s4Antd6eJbp0XqcbQ0iBo059NvamtQLc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=eqUeu7VpXP/wTZLHw1YxkWxq1CRnjJLmErgC8m370wPrBu/On24XkJOlzF+iB5sSjjjxzDb91Spra2rbeXSbrCuDQ/Qf/GwIbMypyG9huWSXJATAkg+xSPeT9rZgAHL/jKxWwNwzQrlESvlEdVDhdJ3hMye3ukbP/ZbTDbs3zf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CaiTNTk1; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=XbNrSIUGtH5s4Antd6eJbp0XqcbQ0iBo059NvamtQLc=; b=C
-	aiTNTk1pEYkLZ6W2h0cuQLj6bMTuqVWhxgA0c1oLRFSD/F4GisFq/o7SoaUcdNui
-	Q6m3N1rmxU9IEcv6GH87S4Tc4XGIriH/1Npt++RVBvRbiP5kUNbHbpSSzNPk56Da
-	zvlxRde3CMRWGYJsBXY0z0EZtkXE9xB2DeqzJsYsTI=
-Received: from andyshrk$163.com ( [103.29.142.67] ) by
- ajax-webmail-wmsvr-40-133 (Coremail) ; Wed, 5 Jun 2024 17:25:07 +0800 (CST)
-Date: Wed, 5 Jun 2024 17:25:07 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
-Cc: neil.armstrong@linaro.org, "Heiko Stuebner" <heiko@sntech.de>, 
-	"Andrzej Hajda" <andrzej.hajda@intel.com>, 
-	"Robert Foss" <rfoss@kernel.org>, 
-	"Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, 
-	"Jonas Karlman" <jonas@kwiboo.se>, 
-	"Jernej Skrabec" <jernej.skrabec@gmail.com>, 
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, 
-	"Maxime Ripard" <mripard@kernel.org>, 
-	"Thomas Zimmermann" <tzimmermann@suse.de>, 
-	"David Airlie" <airlied@gmail.com>, 
-	"Daniel Vetter" <daniel@ffwll.ch>, 
-	"Sandy Huang" <hjc@rock-chips.com>, "Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Mark Yao" <markyao0591@gmail.com>, 
-	"Andy Yan" <andy.yan@rock-chips.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com, "Alexandre ARNOUD" <aarnoud@me.com>, 
-	"Luis de Arquer" <ldearquer@gmail.com>, 
-	"Algea Cao" <algea.cao@rock-chips.com>
-Subject: Re:Re: [PATCH 00/14] Add initial support for the Rockchip RK3588
- HDMI TX Controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <b8066150-c147-4eb6-9f7a-2bd0268c274e@collabora.com>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <a4b22708-e85d-448a-8145-244b49bca053@linaro.org>
- <ab0a6372-091b-4293-8907-a4b3ff4845c0@rock-chips.com>
- <11359776.NyiUUSuA9g@phil>
- <ef60403f-078f-411a-867b-9b551e863f56@linaro.org>
- <b8066150-c147-4eb6-9f7a-2bd0268c274e@collabora.com>
-X-NTES-SC: AL_Qu2aBfmctk0r4SWRZukXn0kXhec2W8Czvvgg34JRP5k0mSXX6CUwY09NEkf79cGgCSqTgCibcCB/zshrZotXco4pb8NUyXmQo3HgbM7/6SEH
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1717579285; c=relaxed/simple;
+	bh=YC1B3wPrxH44Qv3/FzjZDKdMsMYzzw947ljVqmDXmGE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l6eqFCI2IU2xzXC22f0Snwv0kRY2nbqFwh7INU9R4PatxRvfIpcd9pUmo9B6pK5JOPBFheDidxceh82XS0CmvGDrz03bqWkoNISHf6rBlSdkqPMWjuL2s7Oeq5H8REFhIMadduSf8LCWsMVQGikvTJee/d4mpt9Bi1qYVGDtiPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wq+W9KoI; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a68f1017170so215777066b.0;
+        Wed, 05 Jun 2024 02:21:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717579282; x=1718184082; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YC1B3wPrxH44Qv3/FzjZDKdMsMYzzw947ljVqmDXmGE=;
+        b=Wq+W9KoIG+xRVQePuiNr4nKN5ubZKwv52J3zAXZKRhQTg6SCipaW9c/IwnTxf/ckdL
+         33LgGNCnhbyEoUZE8taIvKydhICbDwbQNtZi1CUUcNGqu47W96eZVj5KLZs54z9UkQuN
+         i15GjIBUyXDDb8SL84LJuv9dwYQ7mwAju5+pm/SyvNFo1txPvY86kNF9zkL6J2vqWUmL
+         3IjprKe8gxC+lAC4mNKcV9/ZaqMkvKXqXD6NhgUTnt5AefAJU3UMzqX5ZPsAILqKvXjS
+         Asg0PBk4HPkD1BqbGxYGEPMQOtjMWEvn3q58wx+FadioFYj6A2zceqtKGy67xyPySdev
+         jTFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717579282; x=1718184082;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YC1B3wPrxH44Qv3/FzjZDKdMsMYzzw947ljVqmDXmGE=;
+        b=liS+MhQU78nnS1dt4ksFovoaZHdn1146t92m1J5z2xH/mODUMQ6oWMNCYMMMngN8CU
+         rMyUwaZvRog3aWAYiwbUbe658H9fdJq1Ape8YoE2OEuNneYERX4g9KeBQvwdHfIBoBVo
+         eAoZJmHwrK073S+CDmyIy4b9AtCDoEzC+WTfYTCg/PVijW2CIxLU17f7Medu5nFzzmfY
+         vLF04mzLROCyD11M0nqKF1rA7UcxdevXCzsF1Cszw3HvjTCfIs5iNBNNvtf1rexVO7I9
+         1sOV++7FufGsTKhPkWdA62qsDsW69NHlAhbOPgynbUnqYHnrL0K6MRiYntSNvJJ1+4ZI
+         gIEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJZ3SKoTmlx33tzpe3zMqsrNHv1pZFHb4ZpwHxzToPemSQgjY63fYpf1qg8nCP61TNiEaTZbfZSRDPlO7wj4tpAC5y6g4WA3jvlo7A0lsyUP+Sh6h/gqRZ1k/N0pTTVRrDtY3aRMIHLk5u0/bVm+ajpLaxHZU+lEk6ekOrp96K3p82dw==
+X-Gm-Message-State: AOJu0Yw4WJzMAtzbFvQH9azPwhvp/vPM+lp3F8CBdqoFfUQGC4LIs/0g
+	vmj4Ju74ikp9mQrboBEb19kLf7PSVeK0IIaLbOKSzhsTaaxsK+2o
+X-Google-Smtp-Source: AGHT+IGjSTBxzg1IcxrQz/2E6TezH4x7x+rmpivUcXztnDUfyYi574dAFjqDOnzL6fgC/zJ37bqzxA==
+X-Received: by 2002:a17:906:5f81:b0:a59:a532:ed58 with SMTP id a640c23a62f3a-a699f562146mr116220066b.28.1717579281523;
+        Wed, 05 Jun 2024 02:21:21 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68fa49e66fsm473502066b.129.2024.06.05.02.21.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 02:21:21 -0700 (PDT)
+Message-ID: <c4a2344a6530f96ba17a634001d4aee244070978.camel@gmail.com>
+Subject: Re: [PATCH v3 4/6] spi: spi-axi-spi-engine: Add support for MOSI
+ idle configuration
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org, 
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+  nuno.sa@analog.com, dlechner@baylibre.com, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 05 Jun 2024 11:25:08 +0200
+In-Reply-To: <a6b00e84325bbe44919cc49509e837f2555367d0.1717539384.git.marcelo.schmitt@analog.com>
+References: <cover.1717539384.git.marcelo.schmitt@analog.com>
+	 <a6b00e84325bbe44919cc49509e837f2555367d0.1717539384.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4456bc5a.9b2d.18fe7b76790.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3P0HzLmBmcJo4AA--.25537W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQj0XmVOAqkGGQABsV
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-CkhpLAoKQXQgMjAyNC0wNi0wNSAwNDozMzo1NywgIkNyaXN0aWFuIENpb2NhbHRlYSIgPGNyaXN0
-aWFuLmNpb2NhbHRlYUBjb2xsYWJvcmEuY29tPiB3cm90ZToKPk9uIDYvMy8yNCA0OjA4IFBNLCBu
-ZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnIHdyb3RlOgo+PiBIaSwKPj4gCj4+IE9uIDAzLzA2LzIw
-MjQgMTU6MDMsIEhlaWtvIFN0dWVibmVyIHdyb3RlOgo+Pj4gQW0gTW9udGFnLCAzLiBKdW5pIDIw
-MjQsIDE0OjE0OjE3IENFU1Qgc2NocmllYiBBbmR5IFlhbjoKPj4+PiBIaSBOZWlsOgo+Pj4+Cj4+
-Pj4gT24gNi8zLzI0IDE2OjU1LCBOZWlsIEFybXN0cm9uZyB3cm90ZToKPj4+Pj4gSGkgQ2hyaXN0
-aWFuLAo+Pj4+Pgo+Pj4+PiBPbiAwMS8wNi8yMDI0IDE1OjEyLCBDcmlzdGlhbiBDaW9jYWx0ZWEg
-d3JvdGU6Cj4+Pj4+PiBUaGUgUkszNTg4IFNvQyBmYW1pbHkgaW50ZWdyYXRlcyBhIFF1YWQtUGl4
-ZWwgKFFQKSB2YXJpYW50IG9mIHRoZQo+Pj4+Pj4gU3lub3BzeXMgRGVzaWduV2FyZSBIRE1JIFRY
-IGNvbnRyb2xsZXIgdXNlZCBpbiB0aGUgcHJldmlvdXMgU29Dcy4KPj4+Pj4+Cj4+Pj4+PiBJdCBp
-cyBIRE1JIDIuMSBjb21wbGlhbnQgYW5kIHN1cHBvcnRzIHRoZSBmb2xsb3dpbmcgZmVhdHVyZXMs
-IGFtb25nCj4+Pj4+PiBvdGhlcnM6Cj4+Pj4+Pgo+Pj4+PiAuCj4+Pj4+Cj4+Pj4+IC4uCj4+Pj4+
-Cj4+Pj4+PiAqIFNDREMgSTJDIEREQyBhY2Nlc3MKPj4+Pj4+ICogVE1EUyBTY3JhbWJsZXIgZW5h
-YmxpbmcgMjE2MHBANjBIeiB3aXRoIFJHQi9ZQ2JDcjQ6NDo0Cj4+Pj4+PiAqIFlDYkNyNDoyOjAg
-ZW5hYmxpbmcgMjE2MHBANjBIeiBhdCBsb3dlciBIRE1JIGxpbmsgc3BlZWRzCj4+Pj4+PiAqIE11
-bHRpLXN0cmVhbSBhdWRpbwo+Pj4+Pj4gKiBFbmhhbmNlZCBBdWRpbyBSZXR1cm4gQ2hhbm5lbCAo
-RUFSQykKPj4+Pj4gLT4gVGhvc2UgZmVhdHVyZXMgd2VyZSBhbHJlYWR5IHN1cHBvcnRlZCBieSB0
-aGUgSERNSSAyLjBhIGNvbXBsaWFudAo+Pj4+PiBIVywganVzdAo+Pj4+PiBsaXN0IHRoZSBfbmV3
-XyBmZWF0dXJlcyBmb3IgSERNSSAyLjEKPj4+Pj4KPj4+Pj4gSSBkaWQgYSBxdWljayByZXZpZXcg
-b2YgeW91ciBwYXRjaHNldCBhbmQgSSBkb24ndCB1bmRlcnN0YW5kIHdoeSB5b3UKPj4+Pj4gbmVl
-ZAo+Pj4+PiB0byBhZGQgYSBzZXBhcmF0ZSBkdy1oZG1pLXFwLmMgc2luY2UgeW91IG9ubHkgbmVl
-ZCBzaW1wbGUgdmFyaWFudHMKPj4+Pj4gb2YgdGhlIEkyQwo+Pj4+PiBidXMsIGluZm9mcmFtZSBh
-bmQgYnJpZGdlIHNldHVwLgo+Pj4+Pgo+Pj4+PiBDYW4geW91IGVsYWJvcmF0ZSBmdXJ0aGVyID8g
-aXNuJ3QgdGhpcyBRdWFkLVBpeGVsIChRUCkgVFggY29udHJvbGxlcgo+Pj4+PiB2ZXJzaW9uCj4+
-Pj4+IGRldGVjdGFibGUgYXQgcnVudGltZSA/Cj4+Pj4+Cj4+Pj4+IEkgd291bGQgcHJlZmVyIHRv
-IGtlZXAgYSBzaW5nbGUgZHctaGRtaSBkcml2ZXIgaWYgcG9zc2libGUuCj4+Pj4KPj4+Pgo+Pj4+
-Cj4+Pj4gVGhlIFFQIEhETUkgY29udHJvbGxlciBpcyBhIGNvbXBsZXRlbHkgZGlmZmVyZW50IHZh
-cmlhbnQgd2l0aCB0b3RhbGx5Cj4+Pj4gZGlmZmVyZW50Cj4+Pj4gcmVnaXN0ZXJzIGxheW91dCwg
-c2VlIFBBVENIIDEzLzE0Lgo+Pj4+IEkgdGhpbmsgbWFrZSBpdCBhIHNlcGFyYXRlIGRyaXZlciB3
-aWxsIGJlIGVhc2llciBmb3IgZGV2ZWxvcG1lbnQgYW5kCj4+Pj4gbWFpbnRlbmFuY2UuCj4+Pgo+
-Pj4gSSdtIHdpdGggQW5keSBoZXJlLiBUcnlpbmcgdG8gbmF2aWdhdGUgYSBkcml2ZXIgZm9yIHR3
-byBJUCBibG9ja3MgcmVhbGx5Cj4+PiBzb3VuZHMgdGF4aW5nIGVzcGVjaWFsbHkgd2hlbiBib3Ro
-IGFyZSBzbyBkaWZmZXJlbnQuCj4KPlRoYW5rIHlvdSBhbGwgZm9yIHRoZSB2YWx1YWJsZSBmZWVk
-YmFjayEKPgo+PiBJIGFncmVlLCBJIGp1c3Qgd2FudGVkIG1vcmUgZGV0YWlscyB0aGFuICJ2YXJp
-YW50IG9mIHRoZQo+PiBTeW5vcHN5cyBEZXNpZ25XYXJlIEhETUkgVFggY29udHJvbGxlciIsIGlm
-IHRoZSByZWdpc3RlciBtYXBwaW5nIGlzIDEwMCUKPj4gZGlmZmVyZW50LCBhbmQgZG9lcyBub3Qg
-bWF0Y2ggYXQgYWxsIHdpdGggdGhlIG9sZCBJUCwgdGhlbiBpdCdzIGluZGVlZCB0aW1lCj4+IHRv
-IG1ha2UgYSBicmFuZCBuZXcgZHJpdmVyLCBidXQgaW5zdGVhZCBvZiBkb2luZyBhIG1peCB1cCwg
-aXQncyB0aW1lIHRvCj4+IGV4dHJhY3QKPj4gdGhlIGR3LWhkbWkgY29kZSB0aGF0IGNvdWxkIGJl
-IGNvbW1vbiBoZWxwZXJzIGludG8gYSBkdy1oZG1pLWNvbW1vbiBtb2R1bGUKPj4gYW5kIHVzZSB0
-aGVtLgo+Cj5Tb3VuZHMgZ29vZCwgd2lsbCBoYW5kbGUgdGhpcyBpbiB2Mi4KPgo+PiBBcyBJIHNl
-ZSwgbm8gImRyaXZlciIgY29kZSBjYW4gYmUgc2hhcmVkLCBvbmx5IERSTSBwbHVtYmluZ3MsIHNv
-IHBlcmhhcHMKPj4gdGhvc2UKPj4gcGx1bWJpbmcgY29kZSBzaG91bGQgZ28gaW50byB0aGUgRFJN
-IGNvcmUgPwo+PiAKPj4gSW4gYW55IGNhc2UsIHBsZWFzZSBhZGQgbW9yZSBkZXRhaWxzIG9uIHRo
-ZSBjb3ZlciBsZXR0ZXIsIGluY2x1ZGluZyB0aGUKPj4gZGV0YWlsZWQKPj4gSFcgZGlmZmVycmVu
-Y2UgYW5kIHRoZSBkZXNpZ24geW91IGNob3NlIHNvIHN1cHBvcnQgdGhpcyBuZXcgSVAuCj4KPkFu
-ZHksIGNvdWxkIHlvdSBwbGVhc2UgaGVscCB3aXRoIGEgc3VtbWFyeSBvZiB0aGUgSFcgY2hhbmdl
-cz8KPlRoZSBpbmZvcm1hdGlvbiBJIGNvdWxkIHByb3ZpZGUgaXMgcmF0aGVyIGxpbWl0ZWQsIHNp
-bmNlIEkgZG9uJ3QgaGF2ZQo+YWNjZXNzIHRvIGFueSBEVyBJUCBkYXRhc2hlZXRzIGFuZCBJJ20g
-YWxzbyBub3QgZmFtaWxpYXIgZW5vdWdoIHdpdGggdGhlCj5vbGQgdmFyaWFudC4KPgogQWNjdXJh
-dGVseSwgd2Ugc2hvdWxkIHJlZmVyIHRvIGl0IGFzIGFuIGVudGlyZWx5IG5ldyBJUO+8jGl0IGhh
-cyBub3RoaW5nIGluIGNvbW1vbiB3aXRoCnRoZSBjdXJyZW50IG1haW5saW5lIGR3LWhkbWnjgIIg
-VGhlIG9ubHkgIGNvbW1vbmFsaXR5IGlzIHRoYXQgdGhleSBib3RoIGNvbWUgZnJvbQpTeW5vcHN5
-cyBEZXNpZ25XYXJl77yaCu+8iDHvvIlJdCBoYXMgYSAxMDAlIGRpZmZlcmVudCByZWdpc3RlciBt
-YXBwaW5nCu+8iDLvvIlJdCBzdXBwb3J0cyBGUkwgYW5kIERTQyAK77yIM++8iWRpZmZlcmVudCBj
-b25maWd1cmF0aW9uIGZsb3cgaW4gbWFueSBwbGFjZXPjgIIKClNvIEkgaGF2ZSB0aGUgc2FtZSBm
-ZWVsaW5nIHdpdGggSGVpa28gYW5kIE1heGltZe+8mgpUaGUgRFdfSERNSV9RUCBzaG91bGQgaGF2
-ZSBhICBzZXBhcmF0ZSBkcml2ZXIgYW5kIHdpdGggaXQncyAgb3duIENPTkZJRyAgc3VjaCBhcyBE
-Uk1fRFdfSERNSV9RUCAgaW4gS2NvbmZpZy4KYW5kIHRoZSByb2NrY2hpcCBwYXJ0IHNob3VsZCBh
-bHNvIGJlIHNwbGl0IGZyb20gZHdfaGRtaS1yb2NrY2hpcC5jLiAgCkkgYW0gc29ycnkgd2UgbWl4
-ZWQgdGhlbSBpbiBkd19oZG1pLXJvY2tjaGlwLmMgd2hlbiB3ZSBkZXZlbG9wIHRoZSBic3AgZHJp
-dmVy77yMYnV0IHdlIHJlYWxseSByZWdyZXR0ZWQgdGhpcyBkZWNpc2lvbgp3aGVuICB3ZSByZXBl
-YXRlZGx5IGJyb2tlIGNvbXBhdGliaWxpdHkgd2l0aCBkdy1oZG1pIG9uIG90aGVyIHNvY3PjgIIg
-CgoKCj4+IE5laWwKPj4gCj4+Pgo+Pj4gU3lub3BzaXMgYWxzbyBjcmVhdGVkIGEgbmV3IGRzaSBj
-b250cm9sbGVyIGZvciB0aGUgRFNJMiBzdGFuZGFyZCwgd2l0aAo+Pj4gYSB2YXN0bHkgZGlmZmVy
-ZW50IHJlZ2lzdGVycyBsYXlvdXQuCj4+Pgo+Pj4gSSBndWVzcyBhdCBzb21lIHBvaW50IHRoZXJl
-IGlzIHRpbWUgdG8gc2F5IHRoaXMgcmVhbGx5IGlzIGEgbmV3IElQIDstKSAuCj4+Pgo+Pj4KPj4+
-IFRob3VnaCB3aGlsZSBvbiB0aGF0IHRob3VnaHQsIEkgZG9uJ3QgZnVsbHkgdW5kZXJzdGFuZCB3
-aHkgYm90aCBhCj4+PiBjb21waWxlZAo+Pj4gdW5kZXIgdGhlIGR3X2hkbWkga2NvbmZpZyBzeW1i
-b2wuIFBlb3BsZSBnb2luZyBmb3IgYSBtaW5pbWFsIGtlcm5lbCBtaWdodAo+Pj4gd2FudCBvbmUg
-b3IgdGhlIG90aGVyLCBidXQgbm90IGJvdGggZm9yIHRoZWlyIHNwZWNpZmljIGJvYXJkLgo+Cj5J
-bmRlZWQsIGl0IG1ha2VzIHNlbnNlIHRvIGhhdmUgYSBkZWRpY2F0ZWQgS2NvbmZpZyBvcHRpb24u
-IFRoaXMgaXMKPm1vc3RseSBhIGxlZnRvdmVyIGZyb20gZG93bnN0cmVhbSBpbXBsZW1lbnRhdGlv
-biwgd2lsbCBmaXggaW4gdjIuCj4KPlRoYW5rcyBhZ2FpbiwKPkNyaXN0aWFuCj4KPl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj5saW51eC1hcm0ta2VybmVs
-IG1haWxpbmcgbGlzdAo+bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCj5odHRw
-Oi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Tue, 2024-06-04 at 19:43 -0300, Marcelo Schmitt wrote:
+> Implement MOSI idle low and MOSI idle high to better support peripherals
+> that request specific MOSI behavior.
+>=20
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+
 
 
