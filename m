@@ -1,132 +1,227 @@
-Return-Path: <linux-kernel+bounces-201663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113758FC178
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 293568FC17C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6602845EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:58:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AECB2844BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0E95B1E4;
-	Wed,  5 Jun 2024 01:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEF714293;
+	Wed,  5 Jun 2024 02:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XeGlqOrQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BqR2CXy1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CD455769
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 01:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477134AEE7
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 02:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717552725; cv=none; b=f6X+Ri3xnkA7bWtJjWIxYPnvcK1T6CM82HAK5sQ+hGeL4ybemmj7hP2A2VNGfj571O/GnfEKg8vAI6ZvpzFr7ZiArn6cDLGwXxhAReo/LSV5OHFt98JEj/Ge7X/whgwcn7JZ8y7+OrcZtmiz6eDwqv7X2YS++ch6BHpIUwB3AJU=
+	t=1717552944; cv=none; b=nAIwSUj5hLQLUpr7X7fPOKAumuBpuiCXDANfTFHe3uA/mCCYFvIDxHvfkkqfMjsZS1NZhrJRWaDG0KthfajJjdzKrhQ6I3YpNAq7B4GHKcBRNu+rTB6DbhVOwDG9aB+JyfXhViljAax4Y9y5Zfglr/VbYjQxyuXjehud9Eq1h1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717552725; c=relaxed/simple;
-	bh=yQNuo88HfPAS+i2AOQrcrk7UYC8jD7vecHcMZya2xIU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SzJy8dMw+46KLmp9/QqcRmpxed3O5z8R3EsR1JQhebOwGm67Ropzk8P1JqzZa4HkbqnyA2xHBYM5EX8YvE+vpYIHvxq2UPjvPPvFywedIW88bOyLLH8unU+ephG7jAWwKKQGmugS2Tn84Ed7gsJ2yzg5st/lTmR81ZRDp8WA4uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XeGlqOrQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717552723;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bDq7LAUeG1zx3wFqxyw1+1sNdwa7aIwSKaoX8NuYSHg=;
-	b=XeGlqOrQhT0xoBx3VybHSAnA5MVeJmKlKQe91TyQlcvPpLE9tfaCXJYPyIDap3vuTddH1C
-	87W+4EdKBr5MP1fay/T0GN1bMdWfN/as4itQi4jVfjqBNWg1NPSk848OhBLuMrivLaP2FE
-	blbzGN+2p0myhBhf574D0/tKgQQq+7Q=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-391-lCYCj6QtNGm63WiV2eGNkw-1; Tue, 04 Jun 2024 21:58:40 -0400
-X-MC-Unique: lCYCj6QtNGm63WiV2eGNkw-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2c22ba3e3b0so714692a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 18:58:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717552719; x=1718157519;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bDq7LAUeG1zx3wFqxyw1+1sNdwa7aIwSKaoX8NuYSHg=;
-        b=s8hnLZPjGEYQrNEoNIcfVtK1p4o99XyxryWCs/4SQREsmD6jOQCTYT9ofmWkd+1Zxe
-         p0qMM4AARIim6hbEcAzR3Dr0x/UYwocHTFdR381QDDbQTVJm7mVq4wbkYAB4elQe+gIM
-         pn61WIztDRokkpyCkfN88AM/TtcreVlH+pAv6fZN3iZAT6wbMPThWgif/sp9ZY3fQCQg
-         h5OeP35glGX8DMITjGms5xuDK5CJ0njwWhD0lS63zKf5I028es4+KW1rHa4PqguwbzWy
-         dkQvDouu8ncKXqnwjUPVYnhG7J3iQfiF3Zip7BEjvbNQLE0dM6m+zkyKD/OTMSXuMblu
-         kw9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVol7Lzon4CNH1zh+OC/NY7tpKmIA6uqll4Zs7Zs7Gko030iGi+9ropcUgMo4cr4tmOLdqA5oGdLMAOcBzXObhOU1isOiD8ZD0pXkm+
-X-Gm-Message-State: AOJu0YymmlIl48jKLQYmNl7KLDYvPJV1Em/j0xK029cKRplJVlPnnwOe
-	qsV3cr2RXmcvlCmSLfB/rXRkjNs4hXtMS3dyzEhD1XpoYj0Z5+8d7mVr5ykDnNnFyBxEQ8gdoU4
-	aMTp4Ajc8XpOcUo3P8nZ5jCdeG+A/bqP3fRwb6RviRMEeLMD+c4OFmdlrvj4rybfV3c82rxY5yt
-	D317QWR+eYgPEWAnJekr9AD4poxzaEaqeLBUyx
-X-Received: by 2002:a17:90b:484e:b0:2bd:76ee:48c2 with SMTP id 98e67ed59e1d1-2c27da2df29mr1268673a91.0.1717552719001;
-        Tue, 04 Jun 2024 18:58:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxFVHjC8YnYbmOndJJgwEmwIfgEgBgMUDA8Tq6Gici14Z5tLZpocEb/9zJxsxUZ9G0QoldR1eiR4+UpxuGzgo=
-X-Received: by 2002:a17:90b:484e:b0:2bd:76ee:48c2 with SMTP id
- 98e67ed59e1d1-2c27da2df29mr1268665a91.0.1717552718628; Tue, 04 Jun 2024
- 18:58:38 -0700 (PDT)
+	s=arc-20240116; t=1717552944; c=relaxed/simple;
+	bh=DVudwJDdRkFCO/7DezhJu4C8/HNl1KHfIYtmD/xTOpU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=McW/Sgrm+iGycWh9wmtaDkhCQTpa12tPkFMXGJk2BvEMFBmH3UuDD2txVQjJtZdcMZX4yHY9rOsisWPtFM7Tc2yn4VZpaFyvnRu8oMHPUIWdumEwqDpj5ECmM1Jcsevf0xJUw+sAeJaR8QvKhMdVqG84S8b75ezt0X5ATbH6E+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BqR2CXy1; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717552943; x=1749088943;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DVudwJDdRkFCO/7DezhJu4C8/HNl1KHfIYtmD/xTOpU=;
+  b=BqR2CXy1+3Jj04Lpa1KPl87ywlpCBAs79nr4RVvkm5njy/0wXhH0hhNl
+   gH14gFdCsCGsIzYyCU5IDoxsTq2hJQH0x6jyw+VWVZ7hJ+f/0M0kDFDXQ
+   fp1ZDdX56owIHQYqFw9qw4zS/Juv+A0x6RmxO6uOz7uzEzmD7sHgH/85o
+   ljhiI/25Le8JXx+Jwa1exWIWkGBZe4vD5qpQEMiQtm1yzXygDUjbAklUI
+   7CBS35Mey2dOzNaIo03mpLv2h42JuBjrk+ajpGlCgOAiawGxmcJW9RMoB
+   +TX+0RRwqcY50evKDTMAllxA63SDIgCzcQDotYWDznYiqdq4m5cMW/DQU
+   w==;
+X-CSE-ConnectionGUID: gPwMVJZHTFWHGl29UBXAew==
+X-CSE-MsgGUID: llb4Z1KMSF2xk/i1ShVz8w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13942511"
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="13942511"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 19:02:23 -0700
+X-CSE-ConnectionGUID: RItW8yqwTuq9l9wOE2V1jA==
+X-CSE-MsgGUID: e3RctwFJShOkhwUisZR8pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="37870969"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa006.jf.intel.com with ESMTP; 04 Jun 2024 19:02:17 -0700
+Message-ID: <91a42f46-060a-4430-a10a-7bfded67c4a9@linux.intel.com>
+Date: Wed, 5 Jun 2024 10:00:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f4be03b8488665f56a1e5c6e6459f447352dfcf5.1717111180.git.ashish.kalra@amd.com>
- <20240603085654.GBZl2FVjPd-gagt-UA@fat_crate.local> <8e3dfc15-f609-4839-85c7-1cc8cefd7acc@amd.com>
- <Zl3HfiQ6oHdTdOdA@kernel.org> <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
- <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local> <Zl3hwYL2GDiyUfGo@kernel.org>
- <7eb4ca99-679c-4f23-9562-a39b966c28a0@amd.com> <20240603165747.GGZl32C9yrmXJ4nhPT@fat_crate.local>
- <2343889c-887a-49ce-86df-343737d70d37@amd.com> <20240603171231.GJZl35f-BHvU2Pk3lb@fat_crate.local>
- <ff28e3ea-c492-4db6-8781-abaec6320756@amd.com> <CALu+AoQBXv-y43sx6E28UBVeVHUzRkWEzFxK6jsS5NpN2ho3YQ@mail.gmail.com>
- <CALu+AoTY2Xxs_vUzCyfsxtk-ov2mzJhzyTbbA9MYeeVkmKTMsw@mail.gmail.com>
-In-Reply-To: <CALu+AoTY2Xxs_vUzCyfsxtk-ov2mzJhzyTbbA9MYeeVkmKTMsw@mail.gmail.com>
-From: Dave Young <dyoung@redhat.com>
-Date: Wed, 5 Jun 2024 09:58:56 +0800
-Message-ID: <CALu+AoSESmasAHqWdCGgQNbsTXfwbfhERBkaqSeaX881zqKtFg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
-To: "Kalra, Ashish" <ashish.kalra@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Mike Rapoport <rppt@kernel.org>, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, rafael@kernel.org, hpa@zytor.com, 
-	peterz@infradead.org, adrian.hunter@intel.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com, 
-	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	seanjc@google.com, kai.huang@intel.com, bhe@redhat.com, 
-	kirill.shutemov@linux.intel.com, bdas@redhat.com, vkuznets@redhat.com, 
-	dionnaglaze@google.com, anisinha@redhat.com, jroedel@suse.de, ardb@kernel.org, 
-	kexec@lists.infradead.org, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, dan.j.williams@intel.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
+ Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/22] iommu: Add iommu_user_domain_alloc() interface
+To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+References: <20240604015134.164206-1-baolu.lu@linux.intel.com>
+ <20240604015134.164206-2-baolu.lu@linux.intel.com>
+ <445fae9f-ea1e-4864-9f0e-f348c51146a1@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <445fae9f-ea1e-4864-9f0e-f348c51146a1@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 5 Jun 2024 at 09:52, Dave Young <dyoung@redhat.com> wrote:
->
-> > >         ...
-> > >         if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB)) {
-> > >                 __efi_memmap_free(efi.memmap.phys_map,
-> > >                                 efi.memmap.desc_size * efi.memmap.nr_map, efi.memmap.flags);
-> > >         }
-> >
-> > From your debugging the memmap should not be freed.  This piece of
-> > code was added in below commit,  added Dan Williams in cc list:
-> > commit f0ef6523475f18ccd213e22ee593dfd131a2c5ea
-> > Author: Dan Williams <dan.j.williams@intel.com>
-> > Date:   Mon Jan 13 18:22:44 2020 +0100
-> >
-> >     efi: Fix efi_memmap_alloc() leaks
-> >
-> >     With efi_fake_memmap() and efi_arch_mem_reserve() the efi table may be
-> >     updated and replaced multiple times. When that happens a previous
-> >     dynamically allocated efi memory map can be garbage collected. Use the
-> >     new EFI_MEMMAP_{SLAB,MEMBLOCK} flags to detect when a dynamically
-> >     allocated memory map is being replaced.
-> >
->
-> Dan, probably those regions should be freed only for "fake" memmap?
+On 6/4/24 4:03 PM, Yi Liu wrote:
+> On 2024/6/4 09:51, Lu Baolu wrote:
+>> Commit <909f4abd1097> ("iommu: Add new iommu op to create domains owned
+>> by userspace") added a dedicated iommu op to allocate a user domain.
+>> While IOMMUFD has already made use of this callback, other frameworks
+>> like vfio/type1 and vDPA still use the paging domain allocation 
+>> interface.
+>>
+>> Add a new interface named iommu_user_domain_alloc(), which indicates the
+>> allocation of a domain for device DMA managed by user space driver. All
+>> device passthrough frameworks could use this interface for their domain
+>> allocation.
+>>
+>> Although it is expected that all iommu drivers could implement their own
+>> domain_alloc_user ops, most drivers haven't implemented it yet. Rollback
+>> to the paging domain allocation interface if the iommu driver hasn't
+>> implemented this op yet.
+>>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>   include/linux/iommu.h |  6 ++++++
+>>   drivers/iommu/iommu.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 48 insertions(+)
+>>
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 7bc8dff7cf6d..6648b2415474 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -780,6 +780,7 @@ extern bool iommu_present(const struct bus_type 
+>> *bus);
+>>   extern bool device_iommu_capable(struct device *dev, enum iommu_cap 
+>> cap);
+>>   extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
+>>   extern struct iommu_domain *iommu_domain_alloc(const struct bus_type 
+>> *bus);
+>> +struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 
+>> flags);
+>>   extern void iommu_domain_free(struct iommu_domain *domain);
+>>   extern int iommu_attach_device(struct iommu_domain *domain,
+>>                      struct device *dev);
+>> @@ -1086,6 +1087,11 @@ static inline struct iommu_domain 
+>> *iommu_domain_alloc(const struct bus_type *bus
+>>       return NULL;
+>>   }
+>> +static inline struct iommu_domain *iommu_user_domain_alloc(struct 
+>> device *dev, u32 flags)
+>> +{
+>> +    return ERR_PTR(-ENODEV);
+>> +}
+>> +
+>>   static inline void iommu_domain_free(struct iommu_domain *domain)
+>>   {
+>>   }
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index 9df7cc75c1bc..f1416892ef8e 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -2032,6 +2032,48 @@ struct iommu_domain *iommu_domain_alloc(const 
+>> struct bus_type *bus)
+>>   }
+>>   EXPORT_SYMBOL_GPL(iommu_domain_alloc);
+>> +/**
+>> + * iommu_user_domain_alloc() - Allocate a user domain
+>> + * @dev: device for which the domain is allocated
+>> + * @flags: iommufd_hwpt_alloc_flags defined in uapi/linux/iommufd.h
+>> + *
+>> + * Allocate a user domain which will be managed by a userspace 
+>> driver. Return
+>> + * allocated domain if successful, or a ERR pointer for failure.
+> 
+> do you want to mention that this is for paging domain allocation?
 
-Ashish, can you comment out the __efi_memmap_free see if it works for
-you just confirm about the behavior.
+You are worrying about its confusion with nesting domain allocation,
+right? My understanding is that if we want a common interface for
+nesting domain allocation, we should make it in another interface. Here,
+the user domain is a paging domain for GVA->HPA mapping, which is common
+across iommufd, vfio, and vdpa.
 
+> 
+>> + */
+>> +struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 
+>> flags)
+>> +{
+>> +    struct iommu_domain *domain;
+>> +    const struct iommu_ops *ops;
+>> +
+>> +    if (!dev_has_iommu(dev))
+>> +        return ERR_PTR(-ENODEV);
+>> +
+>> +    ops = dev_iommu_ops(dev);
+>> +    if (ops->domain_alloc_user) {
+>> +        domain = ops->domain_alloc_user(dev, flags, NULL, NULL);
+>> +        if (IS_ERR(domain))
+>> +            return domain;
+>> +
+>> +        domain->type = IOMMU_DOMAIN_UNMANAGED;
+>> +        domain->owner = ops;
+>> +        domain->pgsize_bitmap = ops->pgsize_bitmap;
+> 
+> this seems to break the iommufd selftest as the mock driver sets extra
+> bits in the domain->pgsize_bitmap in allocation. Override it may fail
+> something in the testing. you may need to check if domain->pgsize_bitmap
+> is set or use &=.
+> 
+> static struct iommu_domain *mock_domain_alloc_paging(struct device *dev)
+> {
+>      struct mock_dev *mdev = container_of(dev, struct mock_dev, dev);
+>      struct mock_iommu_domain *mock;
+> 
+>      mock = kzalloc(sizeof(*mock), GFP_KERNEL);
+>      if (!mock)
+>          return NULL;
+>      mock->domain.geometry.aperture_start = MOCK_APERTURE_START;
+>      mock->domain.geometry.aperture_end = MOCK_APERTURE_LAST;
+>      mock->domain.pgsize_bitmap = MOCK_IO_PAGE_SIZE;
+>      if (dev && mdev->flags & MOCK_FLAGS_DEVICE_HUGE_IOVA)
+>          mock->domain.pgsize_bitmap |= MOCK_HUGE_PAGE_SIZE;
+>      mock->domain.ops = mock_ops.default_domain_ops;
+>      mock->domain.type = IOMMU_DOMAIN_UNMANAGED;
+>      xa_init(&mock->pfns);
+>      return &mock->domain;
+> }
+
+You are right. I should follow the code in __iommu_domain_alloc()
+
+         /*
+          * If not already set, assume all sizes by default; the driver
+          * may override this later
+          */
+         if (!domain->pgsize_bitmap)
+                 domain->pgsize_bitmap = ops->pgsize_bitmap;
+
+Does it work?
+
+Best regards,
+baolu
 
