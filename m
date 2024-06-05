@@ -1,156 +1,160 @@
-Return-Path: <linux-kernel+bounces-203051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36ACE8FD5A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:18:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C5A8FD5A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C420A1F24861
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236E01C231E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3BC25777;
-	Wed,  5 Jun 2024 18:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CE9381B1;
+	Wed,  5 Jun 2024 18:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cl6cyqJR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pqzxFpPI"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D59879F0;
-	Wed,  5 Jun 2024 18:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A27A624
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717611507; cv=none; b=IkXkP7svfrhesnW6puCNVlvlfBA7bLPLbD1n0YaRlKrflks8wh3KhayNTkcSLVUpR7IX4QSIiB2kLOrvy/s/+/LiWFq0VG8VUX8MpE6GTWt8PYRjZGMHRSK4n01n/gOaieOTwpkpeSzXVsy4vz8NFjiihCA0evxQWpzr1whQRvY=
+	t=1717611763; cv=none; b=MCuC7ks+M2gt3dLzogIiA5Rtt5AEFmkkwP3biB03kQumnMLHDS1YOPSxs9bQd/4Eapl7HyHACog9qQt3hAZBlEr9kS3Fekvr16v8dR/fE/XAkkFK/aM6UhZh4XjaeypvLizZPznG/z74yv25ovn8lrVTwaZ98guQ9RH0hY3RLDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717611507; c=relaxed/simple;
-	bh=8sTJIVQ52+X8F++jmSiEhrEDb4f6AaeHfQHDVk5yDVo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=MTO9e2YquS380Bhg+j3aOZp5rsEedu+8EBPNmfp6X96hVeooWzz6OIM7XA8VlXTm+5Xb+XGVDduS07iHSJ+aQ6ApDz1XUBCARYHyn9NWAsCPFBkg+Ymp52gwdzeqFFyQKly7oJ8ZE1eHDNP/rqXDP191/jrNxq9JKef1JZe/Bh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cl6cyqJR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1Pqf024220;
-	Wed, 5 Jun 2024 18:18:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=EeAIyYy7hus9zRleyPaibC
-	zwpRLBWIZ4rIY8qiJkg18=; b=Cl6cyqJRetsMZb2UWYwXUFIdiLOG7dVF9ZTlNY
-	Tsrp1y6daBJ6KeVttPW8PoHojVojBLzIjvihDaYzNkc+ikrYb7vdhwlk0gWZnmm6
-	IkXQKiMuOcXoJpJKDt1vkkUIj+EOZ3dF2L0MAh2r9Z8nk0RVOPTku/VtXRAJgI1m
-	g86kR972KjKXRfrwV/X8gX6vgRJznwYI+nqyVazn/rluQHCiW/4vWkFxo6wN88E/
-	zN0gqGZC3LVtRxgePR/oLgyUc2sAxCmkjil8u1RcaIpHU52FtIhw8XliKrK3POpK
-	akkRwc2qNoc1LWs2hKGUFabX2pVNwCbQfBfjxrsEqCc9GuZg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjabgtkyr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 18:18:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455IIJFL006684
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Jun 2024 18:18:19 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
- 11:18:19 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 5 Jun 2024 11:18:18 -0700
-Subject: [PATCH] PM/devfreq: governor: add missing MODULE_DESCRIPTION()
- macros
+	s=arc-20240116; t=1717611763; c=relaxed/simple;
+	bh=8Yl2+w81FXnntMILRI1QYhAqwCRXphAGHKrQXeUqBIA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oCh7luCvxRYhVjl5QkDmaLr39kF9RdIiYPoSCU8SETurdEFODt8TazeRnijpMtepamsh4cOC9STN6U7GR+MkQFRj1siwWZfPHAOE/F85o8iVyril7EEUX/49F7DsIlB5nGePmzpwO03OACUoFtHcEkVGzLhKP223sh8hH8TbjSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pqzxFpPI; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d1fea41751so24797b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:22:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717611761; x=1718216561; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BOqedOYWtOVtPbtjeswNPTnq3pBDEi8nQj3J33r0HFU=;
+        b=pqzxFpPI/wmfaTGjEpi+xJmPYRqO3qsJlr64ZezgIoQJc6rP85BiOWYfNJsEuHLWrt
+         cQdwfA7XiXWwy9kC01ni3hMl7om/naNCLnkmI7cXm9V+29F5S0ZDmY+aikfjluPNuFXD
+         OsAj7OH4HFYqVCNFFUsWvOEFG/nHIyZv1flz85a0R1uSSsdZoTFra86nP4mf4y4EASAg
+         eBYVqJrWvwts3nAmQTZXDkyqgrfQuT8+3T9r2VYYHJmk0FZJbtW6nzKx3uNMEUJlK7hd
+         hy8IP6Bs/jhu/YsWpOsVzVkvMU0y+8HNcBw2LO2Yx3BbPH8zGF9srEMRfQU4kq7gnbxw
+         DYCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717611761; x=1718216561;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BOqedOYWtOVtPbtjeswNPTnq3pBDEi8nQj3J33r0HFU=;
+        b=hE1FQ6qt2Dv5zApw3qjb9CwEoccbZsopDx//6nLbWPLOmF/4nlDUX2+RUiq7WTe5CH
+         nBv+wVBR5QD79M2QH8Qhz1q30vAvXAaA27QoXYk7yVs13dnVdSOfgoR4jlcJG7lxK8Z9
+         b8g8oCdWHc4S72MRG2WqtP49v2DuomG6aqJu4bmb36AIebwckNUjY4/pj96J9F57XWNT
+         /qO8ACH6Yyjpdeo2UtVzVViWq4W0Z8qRf7pqhelc6mloUtJEGAzKL1Y9qvGKyRlLL+Jm
+         2ew/IDS0RWksF1Z2W+OzpZY1252MQNr3yLqyZcJmg91qS4b9HT8D8d2djldRtrriOe8j
+         UoDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGsjHOCf4Dqvt37IYusrdcbLQCUxMehwPWrN5tCpzy+AjglgurYyBgcAY5ldttwDPJQU6DxbbLuykCDhTw7KZtOmXBEPtamnaCDOcJ
+X-Gm-Message-State: AOJu0YwpZZ539NIsIHPApwVWyaVQD8gZ5L4dfvxgifl+9Wrw5e6MhqVd
+	NL7orBHDXulWGWZHGVpnQog0OnzesJH/UDHgPY0ogVPVnyF39KFZYYT/1hZj+9pHgjXg5PFTmJu
+	yw8RinYPg3HKqhkcDh8wPvm/ns2hJKeHat8eH
+X-Google-Smtp-Source: AGHT+IHsCbdc5SIxEdO83ZSuXLPQqM2CirxmFQGrXAysPbgK5BZQogLBsFsI95s/n1VGjNN6WgnF/fjK22vCs//hZXc=
+X-Received: by 2002:a05:6808:8ca:b0:3d1:e7db:83a5 with SMTP id
+ 5614622812f47-3d20439d490mr3086311b6e.32.1717611760997; Wed, 05 Jun 2024
+ 11:22:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240605-md-drivers-devfreq-v1-1-d01ae91b907e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOmrYGYC/x3MwQrCMAyA4VcZORtoSyfMVxEP6Zq5gKuazDIYe
- 3erx+/w/zsYq7DBpdtBuYrJszT4UwfjTOXOKLkZggvRnV2PS8asUlkNM9dJ+Y0xJD+k0A+RPLT
- wpTzJ9p9eb82JjDEplXH+rR5SPhsuZCsrHMcXe1dECIMAAAA=
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park
-	<kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KcYaJ_w0HbtbxK4_OpQHrGGMyWwV-842
-X-Proofpoint-ORIG-GUID: KcYaJ_w0HbtbxK4_OpQHrGGMyWwV-842
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- bulkscore=0 malwarescore=0 phishscore=0 clxscore=1011 adultscore=0
- priorityscore=1501 mlxlogscore=924 impostorscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406050138
+References: <20240605-kvm-arm64-sme-assert-v2-1-54391b0032f4@kernel.org>
+In-Reply-To: <20240605-kvm-arm64-sme-assert-v2-1-54391b0032f4@kernel.org>
+From: Fuad Tabba <tabba@google.com>
+Date: Wed, 5 Jun 2024 19:22:04 +0100
+Message-ID: <CA+EHjTywH4BQNMpJokWgEiaD2zyc4rNisxSRDszogaxRBDnCdg@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: arm64: Fix confusion in documentation for pKVM
+ SME assert
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_simpleondemand.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
+Hi Mark,
 
-Add all missing invocations of the MODULE_DESCRIPTION() macro.
+On Wed, Jun 5, 2024 at 7:11=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> As raised in the review comments for the original patch the assert and
+> comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+> disabled in protected mode") are bogus. The comments says that we check
+> that we do not have SME enabled for a pKVM guest but the assert actually
+> checks to see if the host has anything set in SVCR which is unrelated to
+> the guest features or state, regardless of if those guests are protected
+> or not. This check is also made in the hypervisor, it will refuse to run
+> a guest if the check fails, so it appears that the assert here is
+> intended to improve diagnostics.
+>
+> Update the comment to reflect the check in the code, and to clarify that
+> we do actually enforce this in the hypervisor. While we're here also
+> update to use a WARN_ON_ONCE() to avoid log spam if this triggers.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/devfreq/governor_performance.c    | 1 +
- drivers/devfreq/governor_powersave.c      | 1 +
- drivers/devfreq/governor_simpleondemand.c | 1 +
- drivers/devfreq/governor_userspace.c      | 1 +
- 4 files changed, 4 insertions(+)
+Reviewed-by: Fuad Tabba <tabba@google.com
 
-diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
-index 5dbc1e56ec08..2e4e981446fa 100644
---- a/drivers/devfreq/governor_performance.c
-+++ b/drivers/devfreq/governor_performance.c
-@@ -58,4 +58,5 @@ static void __exit devfreq_performance_exit(void)
- 	return;
- }
- module_exit(devfreq_performance_exit);
-+MODULE_DESCRIPTION("DEVFREQ Performance governor");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
-index 4746af2435b0..f059e8814804 100644
---- a/drivers/devfreq/governor_powersave.c
-+++ b/drivers/devfreq/governor_powersave.c
-@@ -58,4 +58,5 @@ static void __exit devfreq_powersave_exit(void)
- 	return;
- }
- module_exit(devfreq_powersave_exit);
-+MODULE_DESCRIPTION("DEVFREQ Powersave governor");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index d57b82a2b570..c23435736367 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -140,4 +140,5 @@ static void __exit devfreq_simple_ondemand_exit(void)
- 	return;
- }
- module_exit(devfreq_simple_ondemand_exit);
-+MODULE_DESCRIPTION("DEVFREQ Simple On-demand governor");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-index d69672ccacc4..d1aa6806b683 100644
---- a/drivers/devfreq/governor_userspace.c
-+++ b/drivers/devfreq/governor_userspace.c
-@@ -153,4 +153,5 @@ static void __exit devfreq_userspace_exit(void)
- 	return;
- }
- module_exit(devfreq_userspace_exit);
-+MODULE_DESCRIPTION("DEVFREQ Userspace governor");
- MODULE_LICENSE("GPL");
-
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240605-md-drivers-devfreq-42b19b2594a1
-
+Cheers,
+/fuad
+>
+> Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled i=
+n protected mode")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+> Changes in v2:
+> - Commit message tweaks.
+> - Change the assert to WARN_ON_ONCE().
+> - Link to v1: https://lore.kernel.org/r/20240604-kvm-arm64-sme-assert-v1-=
+1-5d98348d00f8@kernel.org
+> ---
+>  arch/arm64/kvm/fpsimd.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+> index 521b32868d0d..820769567080 100644
+> --- a/arch/arm64/kvm/fpsimd.c
+> +++ b/arch/arm64/kvm/fpsimd.c
+> @@ -92,11 +92,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+>         }
+>
+>         /*
+> -        * If normal guests gain SME support, maintain this behavior for =
+pKVM
+> -        * guests, which don't support SME.
+> +        * The pKVM hypervisor does not yet understand how to save or
+> +        * restore SME state for the host so double check that if we
+> +        * are running with pKVM we have disabled SME.  The hypervisor
+> +        * enforces this when the guest is run, this check is for
+> +        * clearer diagnostics.
+>          */
+> -       WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+> -               read_sysreg_s(SYS_SVCR));
+> +       WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() =
+&&
+> +                    read_sysreg_s(SYS_SVCR));
+>  }
+>
+>  /*
+>
+> ---
+> base-commit: afb91f5f8ad7af172d993a34fde1947892408f53
+> change-id: 20240604-kvm-arm64-sme-assert-5ad755d4e8a6
+>
+> Best regards,
+> --
+> Mark Brown <broonie@kernel.org>
+>
 
