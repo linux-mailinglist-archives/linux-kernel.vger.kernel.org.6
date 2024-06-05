@@ -1,103 +1,126 @@
-Return-Path: <linux-kernel+bounces-203018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41FA78FD50D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:05:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B7E8FD500
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCD7DB296A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:05:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3FE21F217B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC2F14A60A;
-	Wed,  5 Jun 2024 18:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FBF13B28A;
+	Wed,  5 Jun 2024 18:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="BH3LY5Bs"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2FCUM3j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F388F145322;
-	Wed,  5 Jun 2024 18:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B86B2E3FE;
+	Wed,  5 Jun 2024 18:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610570; cv=none; b=hrIbskc4yfL7OuuyfrQAtXZTBEeRa0Vn23EShfglt46x18vgkE/LinLiwF4zJfgiL5YL1ks5OD1fM6k86eQpa3eLNxifhW9OHWGoHJLfNND75NuB2+f7YWleMbMMUvHlZ4JzDKS+8ANk7lanyFCTvaXguGN0hWaaRQQGqNwRAaM=
+	t=1717610545; cv=none; b=nayqmzWzithe4rSuVLph3QKYfgzJQ/gQC4w7eGB1WuXDzb2H11AwobVrrbAQeCKCshDbTLv+Kcmbb1Hr/JOIzqkW5asstzgsaYwlTwUiMPxZGTn1eT9sBs7dc4xeTjc8wAZc85ufcknnsQFLLPB59wDbBYwVdisRVf3TEc9nmwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610570; c=relaxed/simple;
-	bh=uwUrfu/yzS/YNseKipCZSPaE2sZQzojPJmfSYmfQ2II=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=McuLFB9mc4G5a+VyT6iLFMyTo+Eoqrh/WmluKPjeeBvr+aSV9xs0GSCqZQ4YqejDW/H6ANwnznJ/JVxZFAA8CA8NWQi8yNMIRqAf9k1++Vxra0BCozVMxyFrC3Gcn7I1OneDFVPIabJLfrXKgAPPUxorEXTzLPZSr+xcyDHDK1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=BH3LY5Bs; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=uwUrfu/yzS/YNseKipCZSPaE2sZQzojPJmfSYmfQ2II=;
-	t=1717610568; x=1718820168; b=BH3LY5Bsae9vIWyOsa/qXHUk7LcIgC3yavKg8JyM+FPTk2E
-	JguRCm6uYy3EvBeXqtsmuVgDehf5zk5cHYlV84elBBcRuaF2NwCz5KEOGtpjZj3//kHccqA2vbKlc
-	qKrUC+/GNb+NiTFvs2gEdOLMmYJoRg54EKctmsEmxKNsXexWvVJhmjsijnrALB+OS4HM6uBePOL3u
-	7J19mdPD146PGqGlM+EkbbmOdrlZy/GSpfCnynK7yTWfN1iHBe636xh3QfyN4djFTbzyhw1bTZulR
-	lVfUEifRRRKQ2mukbi8mP9aE70jaJetG16zmlNGgiezxT0oQfBzkwahewv/jJ9aw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sEuxm-0000000ErED-3wIf;
-	Wed, 05 Jun 2024 20:02:19 +0200
-Message-ID: <b46fd359f62fc7c50790fb19a8814c89a10a7c1c.camel@sipsolutions.net>
-Subject: Re: [PATCH] arch: um: rust: Add i386 support for Rust
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Ard Biesheuvel <ardb@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Cc: David Gow <davidgow@google.com>, Brendan Higgins
- <brendan.higgins@linux.dev>,  Rae Moar <rmoar@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,  Miguel Ojeda
- <ojeda@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Masahiro Yamada
- <masahiroy@kernel.org>,  Richard Weinberger <richard@nod.at>, Anton Ivanov
- <anton.ivanov@cambridgegreys.com>,  kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org,  linux-um@lists.infradead.org,
- rust-for-linux@vger.kernel.org, x86@kernel.org,  Wedson Almeida Filho
- <wedsonaf@gmail.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun
- Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, Alice
- Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org, 
- linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
-Date: Wed, 05 Jun 2024 20:02:17 +0200
-In-Reply-To: <CAMj1kXHa58Zcq3extXw4VXGnpVHbd5urzCGnh_oCo-BLMxMrJQ@mail.gmail.com>
-References: <20240604224052.3138504-1-davidgow@google.com>
-	 <20240605062234.GE279426@thelio-3990X>
-	 <CAMj1kXHa58Zcq3extXw4VXGnpVHbd5urzCGnh_oCo-BLMxMrJQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1717610545; c=relaxed/simple;
+	bh=Zk9QKYEwZkkHtEEFpKV+IP3hrfb4VZMRuIpGpAa5ek0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JWkMtdaNG0sveQtlWPHllKeshcqOylteanTn0hsGQaIfwCDRqXTow05MWhJJ1gJFlSuu+Kl0ORFiBopEll7fG+loOt41E/bC+ZshKSqHP9Fi/objT2Ee+XgcF0S43DKQW5//nzAr5YokNyoXkPW8u3ejPMf4AmRG/6esDXZ6f5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2FCUM3j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F80C2BD11;
+	Wed,  5 Jun 2024 18:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717610544;
+	bh=Zk9QKYEwZkkHtEEFpKV+IP3hrfb4VZMRuIpGpAa5ek0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=k2FCUM3jalLFrx4q1Dz4Y71KSsrp27/0f/AUvryeI7Y2fZ7VXpaxfprSz6/Nm1wzZ
+	 Fgpg7W7DShjGOBtmuKFUWYE38fL218nUc9wmHx3JXIWLOBEjNRpOECz1LtJopr+vFp
+	 3fN29SczD+nJ+ucuneXxYdQKJGRAy+h16Lf2Z2UdQz5riS3q3eooxlMSQ0f6/ySgUR
+	 S/+vLkWftdUptaZWO2Mfy6K/1sMeLLSDJsV/jbX6EMJ1fg2rOtvcEiWZozDvgg57zu
+	 YM7bvVsIzL0XcONWffVdY02teFfz78ZIO64fNY2sAyjSRwlQ3N6BKbm+qSdx/BH0q+
+	 JJqA/DcPw4DBA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 56D38CE0A72; Wed,  5 Jun 2024 11:02:24 -0700 (PDT)
+Date: Wed, 5 Jun 2024 11:02:24 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Andrey Konovalov <andreyknvl@gmail.com>,
+	kasan-dev@googlegroups.com
+Subject: Re: [PATCH rcu 2/4] rcutorture: Fix rcu_torture_fwd_cb_cr() data race
+Message-ID: <35f27cc8-85b5-4b30-8f7e-cbd29d3adb48@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <e14ba19e-53aa-4ec1-b58d-6444ffec07c6@paulmck-laptop>
+ <20240604223633.2371664-2-paulmck@kernel.org>
+ <CANpmjNOLuAZfjiNZqZ8zUrziOUiXw-7zOxRpOrwqYP_rgrEgJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNOLuAZfjiNZqZ8zUrziOUiXw-7zOxRpOrwqYP_rgrEgJw@mail.gmail.com>
 
-On Wed, 2024-06-05 at 19:59 +0200, Ard Biesheuvel wrote:
->=20
-> > > -ifdef CONFIG_X86_64
-> > > +ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
-> >=20
-> > These configurations are mutually exclusive, so would it look more
-> > readable to have it be:
-> >=20
-> >=20
-> > ifeq ($(CONFIG_X86_32)$(CONFIG_X86_64),y)
-> >=20
->=20
-> Or simply
->=20
-> ifdef CONFIG_X86
+On Wed, Jun 05, 2024 at 09:56:41AM +0200, Marco Elver wrote:
+> On Wed, 5 Jun 2024 at 00:36, Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On powerpc systems, spinlock acquisition does not order prior stores
+> > against later loads.  This means that this statement:
+> >
+> >         rfcp->rfc_next = NULL;
+> >
+> > Can be reordered to follow this statement:
+> >
+> >         WRITE_ONCE(*rfcpp, rfcp);
+> >
+> > Which is then a data race with rcu_torture_fwd_prog_cr(), specifically,
+> > this statement:
+> >
+> >         rfcpn = READ_ONCE(rfcp->rfc_next)
+> >
+> > KCSAN located this data race, which represents a real failure on powerpc.
+> >
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Marco Elver <elver@google.com>
+> > Cc: Andrey Konovalov <andreyknvl@gmail.com>
+> > Cc: <kasan-dev@googlegroups.com>
+> 
+> Nice find - was this found by KCSAN's weak memory modeling, i.e. the
+> report showed you that a reordered access resulted in a data race?
 
-No, we're talking about ARCH=3Dum, so CONFIG_X86 isn't set, but
-CONFIG_X86_{32,64} are set as the "sub" or "host" arch. :)
+If I remember correctly, yes.
 
-johannes
+Even on x86, the compiler is free to reorder that WRITE_ONCE() with
+unmarked accesses, so one can argue that this bug is not specific
+to powerpc.
+
+> Acked-by: Marco Elver <elver@google.com>
+
+I will apply on my next rebase, thank you!
+
+							Thanx, Paul
+
+> > ---
+> >  kernel/rcu/rcutorture.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > index 44cc455e1b615..cafe047d046e8 100644
+> > --- a/kernel/rcu/rcutorture.c
+> > +++ b/kernel/rcu/rcutorture.c
+> > @@ -2630,7 +2630,7 @@ static void rcu_torture_fwd_cb_cr(struct rcu_head *rhp)
+> >         spin_lock_irqsave(&rfp->rcu_fwd_lock, flags);
+> >         rfcpp = rfp->rcu_fwd_cb_tail;
+> >         rfp->rcu_fwd_cb_tail = &rfcp->rfc_next;
+> > -       WRITE_ONCE(*rfcpp, rfcp);
+> > +       smp_store_release(rfcpp, rfcp);
+> >         WRITE_ONCE(rfp->n_launders_cb, rfp->n_launders_cb + 1);
+> >         i = ((jiffies - rfp->rcu_fwd_startat) / (HZ / FWD_CBS_HIST_DIV));
+> >         if (i >= ARRAY_SIZE(rfp->n_launders_hist))
+> > --
+> > 2.40.1
+> >
 
