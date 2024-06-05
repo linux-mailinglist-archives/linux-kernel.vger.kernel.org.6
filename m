@@ -1,237 +1,187 @@
-Return-Path: <linux-kernel+bounces-202594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2314B8FCE6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:08:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5858FCE65
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850FE1F27B39
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:08:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4A01C252E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662911D3634;
-	Wed,  5 Jun 2024 12:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB11F1B582C;
+	Wed,  5 Jun 2024 12:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HVooC5W2"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jQY4ivix"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B261E1BD021
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAA11BC09B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590185; cv=none; b=VTxgvWmc4rJPmJ4Ii9j3r6xbrmcJcdAH6a2XPaSh8gni04WiFaezPT45qQP9WdTXwz780OfiapPFlD8POTHefjgmnU1jkKf/Tw03yKoRXntp6PR5PLB9Ow9RM/m+i3YjVjeifKvJK7oSUDDpRCFneH3fpOw47AUpLjCk10Xfdgs=
+	t=1717590172; cv=none; b=bfMpC9MD/LPNzaVOWmZz3RXcCQwdR6OgjUV/ySBY8zXePX+SI6tJB6LIwisSLAd1ZqxAQcczXmiZd5Ky3Dt7Cj110OW8a6N5I+OBcvSRl0UPCsA51UjriAEGxjJH79hxaom4PZQPvSOWv1ZlUYnjckF9pXwsUWJXETllYxpEfqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590185; c=relaxed/simple;
-	bh=eQYDapZ3v7xikbCtx8UgTFQ8Y1olTsI3NHaowBWWv7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AR4Fp+815IhTsRpuedUreNurhoTTcA5o7ASWLzh9dLScX8KZy0w3m+h/vwxhrRT8hxPSprhtlTgfAT+n0AUYeDxUsALL0NBCQOOxCv675bJUOgE26DzsGEKAYWy+lX7HuqjAZHlbjAkecKiPMTlrxbKwfxQBPK8I2PFM7VP4Y8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HVooC5W2; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-795186ae3efso95381985a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 05:23:03 -0700 (PDT)
+	s=arc-20240116; t=1717590172; c=relaxed/simple;
+	bh=rN6D+drnQ7oIKFqqWdEs/XbcUPdcu5n1hFir82M3sUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P2rkwG4K1SOoqONyqQQLGNAzNuj+Q+IziO2OQ6osoHANOvCtjFBXAeHF1R+1lyI+awaPHvLYGmBCWkS47xWAm343ZG2idTMZW9XaGmWyf+DMgk7jEHnuX2JFc/C56rDqvPZbP1fMuigAmIXTWLp025YkRfKKqBavxIXjMMZRwmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jQY4ivix; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7025b253f64so3103825b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 05:22:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1717590183; x=1718194983; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LqAG4e7mYc4PXlScibPsBRuyi/mm45GODwPC/3o+0R8=;
-        b=HVooC5W2Z+4D0QHb2ZUjQ/6k6eXeLu7BTBBg9UQoMcxrxmX34EVlMz4f0uLW2nlb7b
-         8jW8xMXmPxywtR4p5Lvum7ygZw1OGCTvXChodI6lhq/7a8eSkpp7mVZBj/3v+0Du4MZf
-         TA3iuysii5pcxkWi6NmyLnKasUga7lmpJiQUU=
+        d=linaro.org; s=google; t=1717590170; x=1718194970; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UN3odDsXiwuGQcA+cVOrXxYKDZzyHlwRnZKVdXaRoNc=;
+        b=jQY4ivixelA+dkDYVxEkJX8/sgAJnR7vvnXlQNWm7F+30DAVEl/DMZc083kINGgsq0
+         aVWjG8sOF0FIaHjQZW4GKCTr38+FxjN5rEbTY6upb7XQY0im5ou3wTi3wsPwzGz+OgkN
+         hxjNI6XPFsX/kR9dAeeFF7POAPuID8ChN01H9uO6IAJqTWbB2ww9YrJN2kmHZu07+/Qd
+         hxGL8/oV9c7zBAAB2QJ+gqJ1hn1biAxtEoMBt6mvMVLeoq1AODAIgD5CDcng2EjZmfZ3
+         0ExBktGIKsI4r2fdenaD7uJUKD2VXvFGwcZZ1xk7JN2T4P94Aju2D5/qJVZPjd5WFoM3
+         UAZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717590183; x=1718194983;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LqAG4e7mYc4PXlScibPsBRuyi/mm45GODwPC/3o+0R8=;
-        b=ezOr/XuGHBW5JmqtHWN9CY4ODJViEod9xKjQOj7aQx4j9PWkV7BnZZ2X/Ij9lvFLA4
-         loxam9MyItlXRZ60jQhmeWO30Y33Uu2OrN2mJsKSS2h/3fg1KerloPnkUp0R0k3h22kw
-         er3A6wC8yKXu93X3hoEfmx+ZyBzLbVi44uj3ET3U4QDaB+WX2rpvUfUsKCWlMzXW79/1
-         Eq4VQh9eg1gzyf6bNA8iRkdbSWAN+Pb8RaA+A8uNy7l/dL+n6InrGH0AzIWFDkCgDIum
-         C4rpwROkIRjrDeHblWF2SrL8islWTyHhOJjMrHIfZSXu3lr5yDm3rf1mb12sRfPU+oWz
-         8NSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwGvyxrD4bANqkhCo1cZ/P6OAYeOpRG8o8/XnGpnw4rhf6YtNd7eGWIPbcvwM7g0mgI/orqwBzNKkwZ4Zn7A7tdEaAZxSEu6V5Ieoh
-X-Gm-Message-State: AOJu0YxefRcicMgCe9Xu1toyWCf4gnJjV3syH2oU045BHJEn0R5zXuFq
-	sKMGAI3qqIbON6hHHnmHkzcaC6Xebw/L3VfL8S189hwLXqGn/ezEnZHpbfrJKw==
-X-Google-Smtp-Source: AGHT+IGToDZb9WoifpnuNWwlhT20TqU6iik1R1tkuUbqWYGd9SYIE9jvN+iE/J9OOkOvcSuZdr+SGQ==
-X-Received: by 2002:a05:620a:198e:b0:795:79c:76df with SMTP id af79cd13be357-79523fd1f47mr300730185a.77.1717590182530;
-        Wed, 05 Jun 2024 05:23:02 -0700 (PDT)
-Received: from [10.230.30.114] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7952d41343esm5099285a.57.2024.06.05.05.22.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 05:23:01 -0700 (PDT)
-Message-ID: <7339328f-d8da-4057-b669-cc14823913d9@broadcom.com>
-Date: Wed, 5 Jun 2024 14:22:31 +0200
+        d=1e100.net; s=20230601; t=1717590170; x=1718194970;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UN3odDsXiwuGQcA+cVOrXxYKDZzyHlwRnZKVdXaRoNc=;
+        b=lg86kJlmGk1/cpuoGqDMnuIRbydHWiFUUJCDWSKab1nsjOJUn4N21aQHEHVMYS+aeS
+         f9g/PDMRHlERcpnlq2ZEx1uUt1dsgx6bhIiES19LIkQfoOzVlVg09EFdvDGRuMwPvHMc
+         sJOTh3RLzLTg/HlHWIA5pZyriO6MoMQbnkE4kUlWkXGO3f0i0wyFsANDusD8nnXCTzoH
+         MqLUqWdEEsGyvE/3qBtLhtADObq0j6/PymXHc4OLQCk8L+PPX2+DHGW4w4yn+unnBjor
+         ZLRHMKnEt/E2/Ovfr//JOnm/ugKyZlNklJ0dOmKFGy218i1nr11pHjkZNoFhw84S2T7Z
+         jcjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIheDA1WKn5YfecuOD8G3Pribs2Zksqg4C4y1ED/nWgoNm9/OAIHgDLhwOlYjvvHfyfq0IELUbI1YdcVu+rpBcRu2rB6jzZ2495fzq
+X-Gm-Message-State: AOJu0Yxh0VO/mD+oDd4HHdLt9o3GwwgY2nI4ebT3ARdRgyipMM/sE/nV
+	/wIGVcPaLv3HH3dWwPuPKreagnvPIy2iUyS+9ytGoR0m+swygCMz5GWASzdVC8HvSybv/rgVrF3
+	IZ7WFdzzRAjCAIeah/Oi8Yr35U20o6bhwLvmbBg==
+X-Google-Smtp-Source: AGHT+IEFuUkk7iV72uQp4EundUO1FNdJF6F+FGJKyAiU13YGj/6ybXK1CzgZlE6WDBW9tzU/j1RoXJwims62rqAHYpM=
+X-Received: by 2002:a05:6a21:99a7:b0:1b2:3fc:9ab2 with SMTP id
+ adf61e73a8af0-1b2b6e5999emr2911157637.1.1717590169870; Wed, 05 Jun 2024
+ 05:22:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/18] ARM: dts: bcm283x: Update to use dma-channel-mask
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Vinod Koul <vkoul@kernel.org>,
- Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Vladimir Murzin <vladimir.murzin@arm.com>, Phil Elwell
- <phil@raspberrypi.com>, Stefan Wahren <wahrenst@gmx.net>,
- Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Cc: devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org, iommu@lists.linux.dev,
- linux-sound@vger.kernel.org
-References: <20240524182702.1317935-1-dave.stevenson@raspberrypi.com>
- <20240524182702.1317935-4-dave.stevenson@raspberrypi.com>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240524182702.1317935-4-dave.stevenson@raspberrypi.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000b9dad6061a23a0df"
+References: <20240530104653.1234004-1-qyousef@layalina.io> <20240601224017.qku2mhbaz4vsh3a3@airbuntu>
+In-Reply-To: <20240601224017.qku2mhbaz4vsh3a3@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 5 Jun 2024 14:22:38 +0200
+Message-ID: <CAKfTPtCHfnDAD-p_ScqHh7cZ=7AXDTw3fE0+ynMHNvCjuG8ogw@mail.gmail.com>
+Subject: Re: [PATCH v5] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Christian Loehle <christian.loehle@arm.com>, 
+	Hongyan Xia <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---000000000000b9dad6061a23a0df
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Qais,
 
+On Sun, 2 Jun 2024 at 00:40, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 05/30/24 11:46, Qais Yousef wrote:
+>
+> > +static __always_inline void
+> > +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
+> > +{
+>
+> I found a problem here. We should check if prev was sugov task. I hit a
+> corner case where we were constantly switching between RT task and sugov.
+>
+>         if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
+>                 /* Sugov just did an update, don't be too aggressive */
+>                 return;
+>         }
+>
 
+I reran my test with this v5 and the fix above but the problem is
+still there, it waits for the next tick to update the frequency
+whereas the cpu was idle.
 
-On 5/24/2024 8:26 PM, Dave Stevenson wrote:
-> Now the driver looks for the common dma-channel-mask property
-> rather than the vendor-specific brcm,dma-channel-mask, update
-> the dt files to follow suit.
-> 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Also continuing here the discussion started on v2:
 
-Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+I agree that in the current implementation we are probably calling way
+too much cpufreq_update, we can optimize some sequences and using the
+context switch is a good way to get a better sampling but this is not
+enough and we still need to call cpufreq_update in some other case
+involving enqueue. The delay of waiting for the next tick is not
+acceptable nor sustainable especially with 250 and lower HZ but I'm
+pretty sure it would be the same for some system using 1000HZ. IIUC
+new HW is becoming much more efficient at updating the frequency so it
+would not be a problem for this new system to update performance more
+frequently especially when it ends up being as simple as writing a
+value in a memory region without waiting for it to be applied (like
+cpufreq fast_switch methods). All this to say that always/only waiting
+for context switch or tick might be suitable for your case but it
+doesn't look like the right solution for all devices and systems
 
---000000000000b9dad6061a23a0df
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEID853FVqGAbufoag
-qyHU74mytOPEz0UFyReJtlhkv7qyMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDYwNTEyMjMwMlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCiKOWqeh3FHgxfxeAPOt/R/Wmfi0fu5n8i
-/a2djyXjY7zHVHmviwRmcBwXFfsDLJktR2xOJ8IFMgYebz6OuC+ZThsZuHVepvJP5oouC1ja+N38
-e7kwl6RWGBa5YUACz4UCxm3toadU7VT7QIy/K4tLjowKek9isi0ZHAgoh1yWMKNZMs7iy4+GviOd
-muoTNqJSgPRjsV/vmnixkKBmJ0e1N9RDll49EmIj1G/Rnp45ATbPwOvHQw5xD9uPzkmc8iROJ5i2
-sNbmX+iRzhjYYPn55rqkfB9fzNe1k1/ubCFitI0tlbotcExsSXEMyPsSyotjw008pkd0wlI/nP1D
-oUuo
---000000000000b9dad6061a23a0df--
+> > +#ifdef CONFIG_CPU_FREQ
+> > +     /*
+> > +      * RT and DL should always send a freq update. But we can do some
+> > +      * simple checks to avoid it when we know it's not necessary.
+> > +      *
+> > +      * iowait_boost will always trigger a freq update too.
+> > +      *
+> > +      * Fair tasks will only trigger an update if the root cfs_rq has
+> > +      * decayed.
+> > +      *
+> > +      * Everything else should do nothing.
+> > +      */
+> > +     switch (current->policy) {
+> > +     case SCHED_NORMAL:
+> > +     case SCHED_BATCH:
+> > +             if (unlikely(current->in_iowait)) {
+> > +                     cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
+> > +                     return;
+> > +             }
+> > +
+> > +#ifdef CONFIG_SMP
+> > +             if (unlikely(rq->cfs.decayed)) {
+> > +                     rq->cfs.decayed = false;
+> > +                     cpufreq_update_util(rq, 0);
+> > +                     return;
+> > +             }
+> > +#endif
+> > +             return;
+> > +     case SCHED_FIFO:
+> > +     case SCHED_RR:
+> > +             if (prev && rt_policy(prev->policy)) {
+> > +#ifdef CONFIG_UCLAMP_TASK
+> > +                     unsigned long curr_uclamp_min = uclamp_eff_value(current, UCLAMP_MIN);
+> > +                     unsigned long prev_uclamp_min = uclamp_eff_value(prev, UCLAMP_MIN);
+> > +
+> > +                     if (curr_uclamp_min == prev_uclamp_min)
+> > +#endif
+> > +                             return;
+> > +             }
+> > +#ifdef CONFIG_SMP
+> > +             /* Stopper task masquerades as RT */
+> > +             if (unlikely(current->sched_class == &stop_sched_class))
+> > +                     return;
+> > +#endif
+> > +             cpufreq_update_util(rq, SCHED_CPUFREQ_FORCE_UPDATE);
+> > +             return;
+> > +     case SCHED_DEADLINE:
+> > +             if (current->dl.flags & SCHED_FLAG_SUGOV) {
+> > +                     /* Ignore sugov kthreads, they're responding to our requests */
+> > +                     return;
+> > +             }
+> > +             cpufreq_update_util(rq, SCHED_CPUFREQ_FORCE_UPDATE);
+> > +             return;
+> > +     default:
+> > +             return;
+> > +     }
+> > +#endif
+> > +}
 
