@@ -1,156 +1,94 @@
-Return-Path: <linux-kernel+bounces-202963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D448FD3BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:19:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC0D8FD3C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48201F2679B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE61628765D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B73C1384B3;
-	Wed,  5 Jun 2024 17:18:52 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC8712F5A6;
+	Wed,  5 Jun 2024 17:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f3GkS5Qt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01D479DE;
-	Wed,  5 Jun 2024 17:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D0026AFC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 17:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717607932; cv=none; b=E72XI37a8O+5tRSh63rTS32pbTxk0aYqCwBjyCdCkKIo8lRwHEVF1pkibRBTl0Kds2I5jo8bMYwWF4FVoMO6C/HM2UOZwi8ezFiPaFu1GycrDqAetbCespXW3HSjir35yV7CvrB+zDOJKA4Wjc+rO5mD+ngUzIKS+7HDlV0crZ0=
+	t=1717607957; cv=none; b=e50wCY5kz9jZ8hk0fXnJSpMUkg+h6T+jFb6gRTHG00DoLl0XAn7zfGRLPkizYfNVIbRPMloMJQHgBGCw0AigPhO8Y3e+bFQjRvbPcQYAMKwi8uFHGJhwlAukgumltq5HHtgBpybRxbx4EQjxbM9k8dc8lBhtahDgMU1yQFyhGm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717607932; c=relaxed/simple;
-	bh=CfOaJg5zpEDxXsvOH7x53ahefWZN6KU6Mu/FJ8+Hmjw=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=tsgnMawKfX5dskO9YPQeLRJmJyslkK8zLJw1A8u3bXoCftUY9ra2hg7NyZe1XdBOKU/cpWPw33efSIYJDjfR/yWhpTOIPZYBXWunJ6AoBkm35vNWfSuIe1QjCU3TqDmyQv1gm5PLSqyplXY/Ov7SSz+/GmdgLJna4aMxQynd324=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (31.173.84.195) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 5 Jun
- 2024 20:18:38 +0300
-Subject: Re: [net-next PATCH v4 7/7] net: ravb: Allocate RX buffers via page
- pool
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, Simon Horman
-	<horms@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240528150339.6791-1-paul.barker.ct@bp.renesas.com>
- <20240528150339.6791-8-paul.barker.ct@bp.renesas.com>
- <20240601101300.GA491852@kernel.org>
- <6165a9a3-15ec-4a40-901a-17c2be64daf1@bp.renesas.com>
- <20240603120757.GX491852@kernel.org>
- <3eeff8ed-231c-4810-ba99-371524db2f90@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <444f035e-cd07-842d-aacd-b8f720c172da@omp.ru>
-Date: Wed, 5 Jun 2024 20:18:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1717607957; c=relaxed/simple;
+	bh=W+wxBm3RxC5Ki14djoLkxw0QjNOmecFvYqeOqobZ7Do=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sebgPpvKAmCF71ZpywZcd1HhELkgF/PuwvEj8fqZgudbulzVHc7Mj3WIsfksRg0LsFQHvu29furmR7uPvcuVUBPFitrAQ9saffvxKaLPe9f+hTwtoD5OsQkoEabCskhjH/JVDoO01/hRe5fux5lY7v81xnEj0FJyBe9FGzZexYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f3GkS5Qt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717607954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TS9fGEndQOk3FBiJhTOyAAupDT0mnziDl7E1bdw4eT0=;
+	b=f3GkS5Qtv48X0WrLMmVwNjy5Blp00QRdmXeqb43OfOdJArVBg/F5nJe7/4YMqJJhUQL3rJ
+	s5G1H8hwSed36ikW/OPEuqaBqM1hxPdzsIdaUhwq3rDd5bP3K9YFoL5o+Jp337+I+xzZwp
+	pjOvxvkzgdIp6U+2Xxzb0DyGcW+6AXc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-30-mfeQ7FoJPJmzF9TnQ3MmNw-1; Wed,
+ 05 Jun 2024 13:19:12 -0400
+X-MC-Unique: mfeQ7FoJPJmzF9TnQ3MmNw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74446195C26F;
+	Wed,  5 Jun 2024 17:19:10 +0000 (UTC)
+Received: from llong.com (unknown [10.22.33.216])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2CDE31956055;
+	Wed,  5 Jun 2024 17:19:08 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xavier <ghostxavier@sina.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH-cgroup 0/2] cgroup/cpuset: Fix remote root partition creation problem
+Date: Wed,  5 Jun 2024 13:18:56 -0400
+Message-Id: <20240605171858.1323464-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3eeff8ed-231c-4810-ba99-371524db2f90@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/05/2024 16:56:56
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185750 [Jun 05 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.84.195 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	31.173.84.195:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;www.kernel.org:7.1.1;127.0.0.199:7.1.2;patchwork.kernel.org:7.1.1;omp.ru:7.1.1;lore.kernel.org:7.1.1
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.84.195
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/05/2024 17:00:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/5/2024 11:45:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 6/3/24 3:15 PM, Paul Barker wrote:
-[...]
+While reviewing the generate_sched_domains() function, I found a bug
+in generating sched domains for remote non-isolating partitions. After
+extending test_cpuset_prs.sh to cover those cases, the bug is confirmed.
 
->>>>> @@ -298,13 +269,14 @@ static void ravb_ring_free(struct net_device *ndev, int q)
->>>>>  		priv->tx_ring[q] = NULL;
->>>>>  	}
->>>>>  
->>>>> -	/* Free RX skb ringbuffer */
->>>>> -	if (priv->rx_skb[q]) {
->>>>> -		for (i = 0; i < priv->num_rx_ring[q]; i++)
->>>>> -			dev_kfree_skb(priv->rx_skb[q][i]);
->>>>> +	/* Free RX buffers */
->>>>> +	for (i = 0; i < priv->num_rx_ring[q]; i++) {
->>>>> +		if (priv->rx_buffers[q][i].page)
->>>>> +			page_pool_put_page(priv->rx_pool[q], priv->rx_buffers[q][i].page, 0, true);
->>>>
->>>> nit: Networking still prefers code to be 80 columns wide or less.
->>>>      It looks like that can be trivially achieved here.
->>>>
->>>>      Flagged by checkpatch.pl --max-line-length=80
->>>
->>> Sergey has asked me to wrap to 100 cols [1]. I can only find a reference
->>> to 80 in the docs though [2], so I guess you may be right.
->>>
->>> [1]: https://lore.kernel.org/all/611a49b8-ecdb-6b91-9d3e-262bf3851f5b@omp.ru/
->>> [2]: https://www.kernel.org/doc/html/latest/process/coding-style.html
->>
->> Hi Paul,
->>
->> If Sergey prefers 100 then I won't argue :)
->>
->> FWIIW, think what has happened here relates to the Kernel, at some point,
->> going from 80 to 100 columns as the preferred maximum width, while Networking
->> stuck with 80.
-> 
-> I saw that netdevbpf patchwork is configured for 80 cols and it has
-> warnings for v4 of this patch [1], so I've already re-wrapped the
-> changes in this series to 80 cols (excluding a couple of lines where
-> using slightly more than 80 cols significantly improves readability).
-> I'm planning to send that in the next hour or so, assuming my tests
-> pass.
-> 
-> [1]: https://patchwork.kernel.org/project/netdevbpf/patch/20240528150339.6791-8-paul.barker.ct@bp.renesas.com/
+The first patch fixes the remote partitions sched domain generation
+problem and the second patch updates the test.
 
-   Sorry for misinforming you about 100 coulmns -- I had no idea netdev stuck
-to 80! :-)
+Waiman Long (2):
+  cgroup/cpuset: Fix remote root partition creation problem
+  selftest/cgroup: Dump expected sched-domain data to console
 
-MBR, Sergey
+ kernel/cgroup/cpuset.c                        | 55 ++++++++++++++-----
+ .../selftests/cgroup/test_cpuset_prs.sh       | 29 +++++++++-
+ 2 files changed, 68 insertions(+), 16 deletions(-)
+
+-- 
+2.39.3
+
 
