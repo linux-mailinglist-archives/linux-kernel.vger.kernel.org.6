@@ -1,108 +1,126 @@
-Return-Path: <linux-kernel+bounces-202561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8138FCE07
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:58:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761CD8FCE80
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5BE829562F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:58:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8E1AB254CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3628D192B6A;
-	Wed,  5 Jun 2024 12:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDw0KfdN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CE21974FE;
+	Wed,  5 Jun 2024 12:14:12 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C48C196C9A;
-	Wed,  5 Jun 2024 12:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66601197503;
+	Wed,  5 Jun 2024 12:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717589604; cv=none; b=Aljp7/RruN75/MjjHoOJV5vVDr+A7J2NrKtTbd7PxNoLBWeHXtpbYgbiDDikuNK3bkYIkGkWb9MelGxlDDy1L30Ijmn8u2vOO/wJ+0S1B/WEQQkAVbNU636wFnaPyAt3+NTgc2buGRxhSRk2eA9JZ8B8Q+QWKxND5pLIqvG4QYw=
+	t=1717589652; cv=none; b=IzijG0A1FGrB5hBFe/OOr2TK/MSdI9v0E6IcTkm3Y0P0kcJP3yY+6JfgirP1uk1qGoMQ22FJHZLWVZ4UkfB80gckVOjdsZhzIO1HNZ224NfjBHszeNb08yPF5UhI9Ycxg7URP/zOS8XkqJjx+X32Q31om8Y3zrp9/DsP4mzHo5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717589604; c=relaxed/simple;
-	bh=8Qvk4GMBLPewcLA36ipcX0h+jn9RBJObf0Xl8i+W7II=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HVTT6g8Op5XVxWQ4MVMSeud1oWBf04knpIl819P9CgWxWuqGiids45eaX4a3SQwL9niPpTU6zAyWeQO2Z5lQnQIMPU8QmBqvnej9K7H5s4GC4VhQljT7OydT7zoD4BSmo5BW/KdhIhI0v3oC7nsl0osFTmXJ+x+HZmNGMm40vDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDw0KfdN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12996C32786;
-	Wed,  5 Jun 2024 12:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717589604;
-	bh=8Qvk4GMBLPewcLA36ipcX0h+jn9RBJObf0Xl8i+W7II=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iDw0KfdNHkEJXKO88Lo2ognlhfMkF49pM/dIaJ7iKL8jZIbaF/fhxljH90xqLIRzs
-	 yRXNOudnzpNWaqMitLs7IsQCk1I0ndJ0VGJsNjfXvSSklh1gnHqw0qoeAkl3Btivg/
-	 u3gTlJ3OiY/h6QTJoAn5pKuq2478DB1IAnqGwdcAVmZiFKHDDJCeagVamBMxN8MNf5
-	 jTCmf0ixio6BWUWZwMdXPnQJNwu18AV8vhUV8f4cJJIRGLn56RP5Udhd6fdJua6eyD
-	 AGDV+lrzGU7xeJuBYZeISbCDX7zVLRu6rMAN3mfkCNkFFdZF6IqlRPeHRtWT1bj8rW
-	 /6+lUXkWot8UA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sEpW5-000vTV-4f;
-	Wed, 05 Jun 2024 13:13:21 +0100
-Date: Wed, 05 Jun 2024 13:13:20 +0100
-Message-ID: <86bk4flh9b.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH 2/4] arm64/fpsimd: Discover maximum vector length implemented by any CPU
-In-Reply-To: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-2-680d6b43b4c1@kernel.org>
-References: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org>
-	<20240605-kvm-arm64-fix-pkvm-sve-vl-v1-2-680d6b43b4c1@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1717589652; c=relaxed/simple;
+	bh=3kmYkRE5l0pAlN5CkTx2XXiDFZd1noPq2fbHblWvzec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FnLLaQI4Uz268Wx7FSvn8R22l6kdnC2fVaDlGwsdI4FZ1eI5ENWsSEA9MX4Vsj4Hzg4ZLSj0p7GLV/5tT+YGu13UUY/E56JURgwlvhZ20GXhw652sImOv2fur1S6FcpGk10pm7THZgtn+spjSAcAtXAJQyur06nMjDgSJnaIChY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-62a08b250a2so23350457b3.3;
+        Wed, 05 Jun 2024 05:14:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717589648; x=1718194448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PxXy8Ps21+71uwtN2Z1w314kqnFNif1xevexGRCZTfY=;
+        b=I5B0/hqogvgys4/N9HlvC/cEGihqTAc3kRH1S3q5WnsGbds2cuATtUI30laUG/3WO0
+         9yR7Bwug3LxPxEjcjYDh6nC+kT9WvTONbAcT7EjCuKoga59nGmUsIcHvWWSDylZXRQ0S
+         z8impV5rpZJdZw3QOYCYoVea/Iw3PwxkjowRRLL+LVGysGubx6X8IsbhS9gL407hsPas
+         D6OP0ofcTDNsA9dqfUjwBGD9paxjdroPdHuqHifDuHFPPL82xDDfkiSMN0rne4EAMWzC
+         Blux8F5AePiPPg9Hy8lZekLvfx7EzSeRrWVUYI3mEG2xtBwrvNHl9k+XFLoOt8/T7WwY
+         M8qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqfq5wt/Ayb47v14vDibwmm4ys/eMFEq7BmyCO37ogCWF3Eo2oVWt60JZVq/LgIA9+V8r4LMN7x+tSbfdXlI34IwagLmmkIB0sudGII41Fk0u+KyLfoVVOuv1TeeCxNZlkB5GUBWVqbh7ZKaUF7uDTmqxTOjad4asko7KHbf3PMgdsdm+PHUvfTMNjwuqLxO8HfthYjmtF9uPfUb+44dt1g+NcvD8nxg==
+X-Gm-Message-State: AOJu0Yx+yHwZMrll8h0fMo+ZQVI+7eM9ZzGLwgJkaXAgNdESod6lUP0L
+	/TBen4FUfnLqKkq7LrJKPNFcEdfjAQ0r+x9of7XrKQKfDrWQwbFMIlXvO+VJ
+X-Google-Smtp-Source: AGHT+IHFxWIyxmloptP1IhWyTmlCve6QAT+6pLq8lWa/FV23v+cEXagUtI/rE1tK3IfSbXEw47MtfQ==
+X-Received: by 2002:a0d:df49:0:b0:61a:c19f:fc4c with SMTP id 00721157ae682-62cbb4ad9f5mr23164957b3.3.1717589647545;
+        Wed, 05 Jun 2024 05:14:07 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766b3259sm21760417b3.109.2024.06.05.05.14.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 05:14:07 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df78b040314so2317626276.0;
+        Wed, 05 Jun 2024 05:14:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9jIcTnxvaCGnOo6L6xHMIGrNVILP1daKmZAzqRL47XvUnklMYZmNtQ6M4+wZjuR6XXMAp4qb56tanpAQAKl6156cJtJ3+DxHK67yFqd3wt/1/y2s/yXj3Ra9ZtHaQwYB/PSXq+ziokwYBway+Us4xw3QjNBPGtj1/jRZ0Nkg1Tv0eKlksMLpL2Z0qk8LZ898BGW78SxQUF7eyQ07lVndfmhx83UulsQ==
+X-Received: by 2002:a25:aace:0:b0:dfa:b42d:f818 with SMTP id
+ 3f1490d57ef6-dfacac33deamr2055002276.19.1717589645708; Wed, 05 Jun 2024
+ 05:14:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, tabba@google.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240530173857.164073-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240530173857.164073-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jun 2024 14:13:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWfuoZ41LMgNKzMOx4BJj0eRSE0K0Tw8JKSz7tkQ5fCJw@mail.gmail.com>
+Message-ID: <CAMuHMdWfuoZ41LMgNKzMOx4BJj0eRSE0K0Tw8JKSz7tkQ5fCJw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/15] pinctrl: renesas: pinctrl-rzg2l: Add function
+ pointer for writing to PMC register
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 05 Jun 2024 12:41:28 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> @@ -1083,6 +1095,18 @@ int vec_verify_vq_map(enum vec_type type)
->  	if (!IS_ENABLED(CONFIG_KVM) || !is_hyp_mode_available())
->  		return 0;
->  
-> +	/*
-> +	 * pKVM allocates and uses storage for host state based on the
-> +	 * largest per-PE VL, reject new PEs with a larger maximum.
-> +	 */
-> +	if (is_protected_kvm_enabled()) {
-> +		if (max_vl > info->max_cpu_vl) {
-> +			pr_warn("%s: cpu%d: would increase maximum VL\n",
-> +				info->name, smp_processor_id());
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
+On Thu, May 30, 2024 at 7:42=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Introduces pmc_writeb() function pointer, in the struct rzg2l_pinctrl_dat=
+a
+> to facilitate writing to the PMC register. On the RZ/V2H(P) SoC, unlockin=
+g
+> the PWPR.REGWE_A bit before writing to PMC registers is required, whereas
+> this is not the case for the existing RZ/G2L family. This addition enable=
+s
+> the reuse of existing code for RZ/V2H(P). Additionally, this patch
+> populates this function pointer with appropriate data for existing SoCs.
+>
+> Note that this functionality is only handled in rzg2l_gpio_request(), as
+> PMC unlock/lock during PFC setup will be taken care of in the
+> pwpr_pfc_lock_unlock() function pointer.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Now passing offset to pmc_writeb() instead of virtual address
 
-Once protected mode is enabled, no new CPU can be booted (see
-psci_relay.c::psci_cpu_on()).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-	M.
+Gr{oetje,eeting}s,
 
--- 
-Without deviation from the norm, progress is not possible.
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
