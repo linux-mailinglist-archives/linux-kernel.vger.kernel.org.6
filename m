@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-202287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8BF8FCABE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11BC88FCB12
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2333BB21D03
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:44:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0FAE28F05B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B66621C183;
-	Wed,  5 Jun 2024 11:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B872195F13;
+	Wed,  5 Jun 2024 11:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P49tYTr8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Keh9xRST"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842E814D435
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CB3195F0C;
+	Wed,  5 Jun 2024 11:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717587727; cv=none; b=QmoQd7aap5e+9XyBGD1sDQdLlafIF4mpzQL1SXQsygzVNzC4AXDcb6uUbFwVApW3PbbUONXzENWLfKehZeQiyJNrqr9o8VvWY+kK2EcCiqiVWnwrPAYGsQSWzG6kMwOfC1tXrvyKzs/jwvl9bPRDuESZw3I/KqZITqJCSFEofgY=
+	t=1717588205; cv=none; b=pq6+7ezT4tlVZQsRJa3IgLMD/YH6K7tLbf7kPhua2NYGeVztUOvGwUhaZhGAWoByJkA2+xiXsW6dIx2yW8y74RxdCVJP1TFKu5+GUUi5FkwDLcuLeMf2Emck7wFJxqZy0YFQ/llnihuX5jvZdvcOEKx1/rQP+iEy0tyXsc/6Ma0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717587727; c=relaxed/simple;
-	bh=cXaL8X5xkqjru4qZvhtnJBNQd1jrCsGud/RraJezK+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p+wDtC8nUsOoW1BdIMTtOEvPDHYwQpdNyVt+i7lvvzRs1Z14EYlj7Leq8waK+N/2kUE2P/u2lw7430ScuWAhEpTFi+vqf64vPgtspdwJaARgbZdrBWT5bzY8OkvZsjumhPryo9DYMlkNo1fIv21RoL8xr4nJJ3R7povJW0o3+iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P49tYTr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C49EC3277B;
-	Wed,  5 Jun 2024 11:42:02 +0000 (UTC)
+	s=arc-20240116; t=1717588205; c=relaxed/simple;
+	bh=SBQCKZifEPOxIOTgbUM/XODaGoNdobSf2QES1yw7iAA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EO++8lOSC004RVn7e8vXDeOzgFBKzBBfC0A4cmnODY4218cTrmPzmFziymKpVp3srH3v0pIQ4Uy7THgbVfU9hL2UDvBdwO7UJlH0qa92eZp5HjN8t5VlGAHhucxfU9pm2FPjb6rJ7Sqo81jnPmYbQ/VY0r0HeoYYYAu5IaY3B44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Keh9xRST; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A1A4C32786;
+	Wed,  5 Jun 2024 11:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717587727;
-	bh=cXaL8X5xkqjru4qZvhtnJBNQd1jrCsGud/RraJezK+0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P49tYTr8ENggo5fZvyKqZ4PxM1peSbHLq3cEfJefvxO26qq3VgrbD44w7SPHT1HkT
-	 yLZk4KJTmkXb4xi7nmVa9vtoQcspd+KSp86VRVE/N0ToZjrv8UmR3sqged4GllPn5h
-	 5GvPvVSfGAeMGH24F5yZwuJ5PcsphzNqUIcASKCOtwEetL+b7w0teYBp/8DvVDy4KI
-	 evrzh5rO0PqNeq9Kf+oHWL+Lp3xUwlwdEzkfvR/QO6nuFAWCLeW2D2MUCFok7kI/s0
-	 /y+gLAedifYQI5N+imnHHGNoDFCQrHDR/jrIIAKKecSFW6RBDuu4j+4/Tyl4w1ABwV
-	 fsHibJ697J1KA==
-From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	David Hildenbrand <david@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-riscv@lists.infradead.org,
-	Oscar Salvador <osalvador@suse.de>
-Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Andrew Bresticker <abrestic@rivosinc.com>,
-	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Santosh Mamila <santosh.mamila@catalinasystems.io>,
-	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	virtualization@lists.linux-foundation.org
-Subject: [PATCH v4 11/11] riscv: Enable DAX VMEMMAP optimization
-Date: Wed,  5 Jun 2024 13:40:54 +0200
-Message-ID: <20240605114100.315918-12-bjorn@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605114100.315918-1-bjorn@kernel.org>
-References: <20240605114100.315918-1-bjorn@kernel.org>
+	s=k20201202; t=1717588204;
+	bh=SBQCKZifEPOxIOTgbUM/XODaGoNdobSf2QES1yw7iAA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Keh9xRST+Rj9UveGAcphGxlIbytEGvAKf2tTEbsoLlQaSP+AAoKYPqRrgCmMPe4fh
+	 CfWxq8d6wIzS/I8AhgK2lJnaMBtoP9+O9JUzkAeEq1DurTwsXwplNLZCcW6nJxJtNl
+	 PJ2fCjhd2FD5CDrjIZvXqMC+naEPhGr/TT2JzAsafNVdu1hpSe5p/o0uHusoNcWeYU
+	 cHs+t7SLNj6wTzERdP5pm5jlunM/RyaYM8x4nfHYCBbQQz3TyXEeOzozOjuORdyWSt
+	 2v/b/aICBkJJP8Yc+5KFaaPoDnbjwi1U+VmAJAHFwMBNvLHltubSoLFUGdNzCuoUeG
+	 CtJI9PDr/Hf7A==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/4] KVM: arm64: Fix underallocation of storage for SVE
+ state
+Date: Wed, 05 Jun 2024 12:41:26 +0100
+Message-Id: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOdOYGYC/x3MQQqAIBCF4avIrBvQkoSuEi0qpxrKEgUJpLtnL
+ T/438sQKTBF6ESGQIkjX2eBqgTM23iuhGyLoZa1lq3UuCeHY3CtxoVv9B9jIkwHqma2Ri3W2El
+ C2ftAJfm/++F5Xi6OVr1rAAAA
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kvmarm@lists.linux.dev, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-d4707
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1401; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=SBQCKZifEPOxIOTgbUM/XODaGoNdobSf2QES1yw7iAA=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmYFDm6hO8bPCS7tdj//OV90xJulySV0nlZRmUoVx7
+ atNp/EeJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZmBQ5gAKCRAk1otyXVSH0NmEB/
+ 9kIzl7JVowupzSHv5DNrF6MZgboFE8vKIcWYpcWQXTx0AJb/cC+D0KcIPrxQM0CnuFeUaxA3Lh8ni4
+ wxwSqyA302Vwl35F3cIRN6dXsWtbVz4U9ztR3Kz6N0EufvQL5ipNOkWhvnDcwX7aCIfJl0cfDqB1qW
+ asqTC8yHBCNu627cZ9MzeWhPJlDuw4PrfdyhT7jdpWXJA2X9JpylQ33MOvlkge9YxYpIyoN/8i7Cw0
+ vOMkjv5ONz3Rb9KWQJUFfLhLXy5Brmvr7Uq5kBvifKOMwgRgQjlUtXpucOoyJx6V8ocDBkn+LXQvjw
+ q/Wk6CiY3L0mvlRycBEvI0Y0T7a0nI
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-From: Björn Töpel <bjorn@rivosinc.com>
+As observed during review the pKVM support for saving host SVE state is
+broken if an asymmetric system has VLs larger than the maximum shared
+VL, fix this by discovering then using the maximum VL for allocations
+and using RDVL during the save/restore process.
 
-Now that DAX is usable, enable the DAX VMEMMAP optimization as well.
-
-Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/riscv/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Mark Brown (4):
+      arm64/fpsimd: Introduce __bit_to_vl() helper
+      arm64/fpsimd: Discover maximum vector length implemented by any CPU
+      KVM: arm64: Fix FFR offset calculation for pKVM host state save and restore
+      KVM: arm64: Avoid underallocating storage for host SVE state
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 8a49b5f4c017..1631bf568158 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -73,6 +73,7 @@ config RISCV
- 	select ARCH_WANT_GENERAL_HUGETLB if !RISCV_ISA_SVNAPOT
- 	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
- 	select ARCH_WANT_LD_ORPHAN_WARN if !XIP_KERNEL
-+	select ARCH_WANT_OPTIMIZE_DAX_VMEMMAP
- 	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
- 	select ARCH_WANTS_NO_INSTR
- 	select ARCH_WANTS_THP_SWAP if HAVE_ARCH_TRANSPARENT_HUGEPAGE
+ arch/arm64/include/asm/fpsimd.h         | 17 +++++++++++++++
+ arch/arm64/include/asm/kvm_host.h       |  2 +-
+ arch/arm64/include/asm/kvm_hyp.h        |  3 ++-
+ arch/arm64/include/asm/kvm_pkvm.h       |  2 +-
+ arch/arm64/kernel/fpsimd.c              | 38 +++++++++++++++++++++++++++------
+ arch/arm64/kvm/hyp/fpsimd.S             |  5 +++++
+ arch/arm64/kvm/hyp/include/hyp/switch.h |  2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      |  6 +++---
+ arch/arm64/kvm/hyp/nvhe/pkvm.c          |  2 +-
+ arch/arm64/kvm/reset.c                  |  6 +++---
+ 10 files changed, 65 insertions(+), 18 deletions(-)
+---
+base-commit: afb91f5f8ad7af172d993a34fde1947892408f53
+change-id: 20240604-kvm-arm64-fix-pkvm-sve-vl-13cd71fd7db0
+
+Best regards,
 -- 
-2.43.0
+Mark Brown <broonie@kernel.org>
 
 
