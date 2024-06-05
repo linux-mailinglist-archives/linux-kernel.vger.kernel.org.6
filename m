@@ -1,380 +1,306 @@
-Return-Path: <linux-kernel+bounces-202870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8547D8FD223
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:55:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE0098FD225
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0DB1C22A75
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:55:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D291B255CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24031149C77;
-	Wed,  5 Jun 2024 15:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D7214C592;
+	Wed,  5 Jun 2024 15:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="2tNI1PyM"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="og/DBGc9"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE42D450EE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640352BCF4;
+	Wed,  5 Jun 2024 15:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717602902; cv=none; b=Y9a0diz4rtG/IagMTk1NjL8IRnwpYps2cEvNohpot++erN0NlXRPUSw6e5jzq1Ozo7vErFdrk71nM5EicDpfGFBF+0e0nAzByuwqsGQS8eBRtxNGF142LDMcBUNTUW2TnFvhyufYJ2bGadYQVCut9rFl6JIduIgPW+2lMdxT5tM=
+	t=1717602947; cv=none; b=i4Hmd0rBGXUojgdPuX9cqa7Mhsi3y8pexgJiPcLKo7Gj6n+p67DcbOr8sdnWbQCgkPwKkiSBjIlP45zSgtJem6Mv3hrGigwiN/Zjp85f56jbTiXdUeUH1KMFXaopY1v6J6bsoBwHcrUhFPtNwv3Yuc3xEBSbtv3rTXrVxq9BL3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717602902; c=relaxed/simple;
-	bh=WhMWvqFaEEz7WliezG9z0BYy16y8dAgCv+WClb5vvKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ti61cnaRuB4zPtX2JkAn/zkdS3127a0u4WF5G8EuDzOvcuqNLV8AbR7VILvE3NendmrE8zUPRn9tusqr1kVr/voRi/HdAvIpo0sEkcKLw8ZBKmB2yzu4LuLzIM6elonoZ4TDIBT+PmeINIufNhpYRRUo5TsRG2ePmP8F4hqGHos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=2tNI1PyM; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6267778b3aso13452966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 08:54:59 -0700 (PDT)
+	s=arc-20240116; t=1717602947; c=relaxed/simple;
+	bh=Prf92QImWi6WiL0ZPJd6QMM4kHl3PnOMvYlGOOVuP68=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wj8c0zfJ5u0/Tg4C7EwITUv5mVf3menttsQ9hslIciLSl9w1ap3BP7PZQpn92kO1rXVG2hjuMA+w5ar6tlhgO1mQ8/Kr2lA7sBj3yje6GGFDhoNdUHgAuWWvlnR7jEq9dYmk7nvP/sQmwidEtB0joTJhfrB9tZD/XLtmwwrlfbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=og/DBGc9; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1717602898; x=1718207698; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YDF8euc9uUsFbp3ZteE4Lq248jbCQUypYJOerWaQiuw=;
-        b=2tNI1PyM6kI27iNuid9D3syKuKcQPU++BE0G66KbH7JOYKT/a6OQsZ0ksEdZTWLy75
-         r6i9NoOCFqtkWXGOlwxtyBa4xhIQVNoAX+gKuH2tzUU7c+b6JApQGXSRPqNqJYDDH1D/
-         xuVtSwYb90zwBZ228RL/qbJrLrv+N13HTW59hoKOs59/F3TDzj8p5iGyLhzDwUFMlxGZ
-         rg1eEKDH3aDxA9BgVqpPFwn7jZFPRBiH7YQEVIaQwdvGkd9LB5TqBpppu906Hbb3pQvY
-         Tnj8ceos+v5ksWV9JpRQjsX7ViNX21h0JRuTysG52NjDYoWxL2SEZLFSfL1jxhJkilyy
-         ZvbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717602898; x=1718207698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YDF8euc9uUsFbp3ZteE4Lq248jbCQUypYJOerWaQiuw=;
-        b=KXH9Nhrghu+R1w+MJ9W6TNIwbtj9Iy8r5yA4FozVpEHCEdMMllzMuz5jQAqKGON47Y
-         AKkqPdN923qjftA1ENpXxHsR6yLytOqNunUyID2k34c9o0695JkRH8g3MsYevT4BY+wU
-         ivJDeSXEaF8DQNKuaZ00PWUwNv4GsHK+K5miMAlBVQc+3r+ShFc8ek9CgqUTm1mu5S+3
-         7N5ARGPFMUZwN7zkWORJh/G7CPSePMOjpV+vjzm2phIl2pwp/17l/tKa6iMwkzlStETH
-         yF2+8wXsrBbMYcx+2lko5g01AQp6OHJNfDQRGyOgyWbbpObxnwCJDnHVawkHhPgPUzsB
-         MKlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXF9W2nHeQqrLudSPYD6sfMNIYsjzYzwl8kVn20MvtScMl/5348qAIAVhwvoPp9ZeiDlsDBqyvNPIelAPf7QLtqzE2QHuXWwEgdn0Mp
-X-Gm-Message-State: AOJu0YyefB9Lj74RhJdjB0vaig59UusYaW4Qh3UsPt9+xSgq8nfvOufp
-	YxIYmwTtuCGXu5X4gZkA8N7jQ08lpEW83Y8RqbNxSHeU8UexhpIgDz9glfgQrfmYoZrig/iS3ri
-	uOkbsk1XlRdVNeqh+vn2Tv1XcVEXaUnMow9Cvgg==
-X-Google-Smtp-Source: AGHT+IHjKGWvVLSZr5Jp6N5uZety4NP33CYCaZ8/cPHbGuqVSnFYytje0tGqdTZ1pw83kclAjUd4JY/OhersyoeqfSY=
-X-Received: by 2002:a17:906:ee89:b0:a68:379d:d623 with SMTP id
- a640c23a62f3a-a699fac0c4amr220812066b.36.1717602897899; Wed, 05 Jun 2024
- 08:54:57 -0700 (PDT)
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1717602945; x=1749138945;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7TuQrKr1AVldqNyQPBdFqdFfeQkh+6nIpImVNRNCRW4=;
+  b=og/DBGc9EgoSuE5L8pDVOCwjvTVr0CoNaezsV0TOdjFPyUrgiHR74jXO
+   esNYdw6ZOnSq+njjIRQQTzGugzrcmpmHfdiN4v7hNvmIKlxTDWC99U2Im
+   6blSQqVzaSIfFxlftqZHd50VD8dZZ8wj8H/NJb1HPA0BehHAyxXm6zRvF
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.08,217,1712620800"; 
+   d="scan'208";a="209862056"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 15:55:42 +0000
+Received: from EX19MTAEUA002.ant.amazon.com [10.0.43.254:5513]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.11.23:2525] with esmtp (Farcaster)
+ id 7dbfc11e-7231-4dec-8ab5-18c544c991ef; Wed, 5 Jun 2024 15:55:42 +0000 (UTC)
+X-Farcaster-Flow-ID: 7dbfc11e-7231-4dec-8ab5-18c544c991ef
+Received: from EX19D007EUA001.ant.amazon.com (10.252.50.133) by
+ EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 5 Jun 2024 15:55:41 +0000
+Received: from EX19MTAUEB001.ant.amazon.com (10.252.135.35) by
+ EX19D007EUA001.ant.amazon.com (10.252.50.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 5 Jun 2024 15:55:40 +0000
+Received: from dev-dsk-fgriffo-1c-69b51a13.eu-west-1.amazon.com
+ (10.13.244.152) by mail-relay.amazon.com (10.252.135.35) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34 via Frontend Transport; Wed, 5 Jun 2024 15:55:39 +0000
+From: Fred Griffoul <fgriffo@amazon.co.uk>
+To: <fgriffo@amazon.co.uk>
+CC: <griffoul@gmail.com>, Alex Williamson <alex.williamson@redhat.com>, "Jason
+ Gunthorpe" <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kevin Tian
+	<kevin.tian@intel.com>, Eric Auger <eric.auger@redhat.com>, Stefan Hajnoczi
+	<stefanha@redhat.com>, Christian Brauner <brauner@kernel.org>, Ankit Agrawal
+	<ankita@nvidia.com>, Reinette Chatre <reinette.chatre@intel.com>, Ye Bin
+	<yebin10@huawei.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] vfio/pci: add msi interrupt affinity support
+Date: Wed, 5 Jun 2024 15:55:05 +0000
+Message-ID: <20240605155509.53536-1-fgriffo@amazon.co.uk>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604162457.3757417-1-jesse@rivosinc.com>
-In-Reply-To: <20240604162457.3757417-1-jesse@rivosinc.com>
-From: Evan Green <evan@rivosinc.com>
-Date: Wed, 5 Jun 2024 08:54:21 -0700
-Message-ID: <CALs-Hsu5LakOVKvGRP0-sbq5ptH8FLPGhBAkupv3tRLKVAdnUA@mail.gmail.com>
-Subject: Re: [RFC PATCH v0] RISCV: Report vector unaligned accesses hwprobe
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor.dooley@microchip.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Ben Dooks <ben.dooks@codethink.co.uk>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Erick Archer <erick.archer@gmx.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, Jun 4, 2024 at 9:25=E2=80=AFAM Jesse Taube <jesse@rivosinc.com> wro=
-te:
->
-> Detected if a system traps into the kernel on an vector unaligned access.
-> Add the result to a new key in hwprobe.
->
-> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+The usual way to configure a device interrupt from userland is to write
+the /proc/irq/<irq>/smp_affinity or smp_affinity_list files. When using
+vfio to implement a device driver or a virtual machine monitor, this may
+not be ideal: the process managing the vfio device interrupts may not be
+granted root privilege, for security reasons. Thus it cannot directly
+control the interrupt affinity and has to rely on an external command.
 
-For the scalar world, we wanted to know whether misaligned accesses
-were faster or slower than equivalent byte accesses, so usermode could
-know for something like memcpy which option had better bandwidth. Is
-the motivation here the same, where we're going to use vector
-registers for memcpy and we want to know which size load to use? Or
-will usermode be consuming this info for a different purpose as well?
-I know this is a basic question, but having the motivation helps me
-get the right lens for reviewing it. Perhaps that should be added to
-the commit message as well.
+This patch extends the VFIO_DEVICE_SET_IRQS ioctl() with a new data flag
+to specify the affinity of interrupts of a vfio pci device.
 
-> ---
->  arch/riscv/include/asm/cpufeature.h        |  3 ++
->  arch/riscv/include/asm/hwprobe.h           |  2 +-
->  arch/riscv/include/uapi/asm/hwprobe.h      |  6 +++
->  arch/riscv/kernel/sys_hwprobe.c            | 34 ++++++++++++
->  arch/riscv/kernel/traps_misaligned.c       | 60 ++++++++++++++++++++++
->  arch/riscv/kernel/unaligned_access_speed.c |  4 ++
->  6 files changed, 108 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm=
-/cpufeature.h
-> index 347805446151..5ad69cf25b25 100644
-> --- a/arch/riscv/include/asm/cpufeature.h
-> +++ b/arch/riscv/include/asm/cpufeature.h
-> @@ -35,9 +35,12 @@ void riscv_user_isa_enable(void);
->
->  #if defined(CONFIG_RISCV_MISALIGNED)
->  bool check_unaligned_access_emulated_all_cpus(void);
-> +bool check_vector_unaligned_access_all_cpus(void);
-> +
->  void unaligned_emulation_finish(void);
->  bool unaligned_ctl_available(void);
->  DECLARE_PER_CPU(long, misaligned_access_speed);
-> +DECLARE_PER_CPU(long, vector_misaligned_access);
->  #else
->  static inline bool unaligned_ctl_available(void)
->  {
-> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hw=
-probe.h
-> index 630507dff5ea..150a9877b0af 100644
-> --- a/arch/riscv/include/asm/hwprobe.h
-> +++ b/arch/riscv/include/asm/hwprobe.h
-> @@ -8,7 +8,7 @@
->
->  #include <uapi/asm/hwprobe.h>
->
-> -#define RISCV_HWPROBE_MAX_KEY 6
-> +#define RISCV_HWPROBE_MAX_KEY 7
->
->  static inline bool riscv_hwprobe_key_is_valid(__s64 key)
->  {
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/u=
-api/asm/hwprobe.h
-> index 060212331a03..4474e98d17bd 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -68,6 +68,12 @@ struct riscv_hwprobe {
->  #define                RISCV_HWPROBE_MISALIGNED_UNSUPPORTED    (4 << 0)
->  #define                RISCV_HWPROBE_MISALIGNED_MASK           (7 << 0)
->  #define RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE    6
-> +#define RISCV_HWPROBE_VEC_KEY_MISALIGNED_PERF  7
-> +#define                RISCV_HWPROBE_VEC_MISALIGNED_UNKNOWN            0
-> +#define                RISCV_HWPROBE_VEC_MISALIGNED_EMULATED           1
-> +#define                RISCV_HWPROBE_VEC_MISALIGNED_SLOW               2
-> +#define                RISCV_HWPROBE_VEC_MISALIGNED_FAST               3
-> +#define                RISCV_HWPROBE_VEC_MISALIGNED_UNSUPPORTED        4
+The CPU affinity mask argument must be a subset of the process cpuset,
+otherwise an error -EPERM is returned.
 
-This needs to be added to the documentation as well.
+The vfio_irq_set argument shall be set-up in the following way:
 
-What value should be returned when V is not enabled in the kernel, or
-V is not supported in the hardware? Currently in the code it would be
-UNKNOWN, right? Is that what we want, or is it worth differentiating
-"no support for V" from "I don't know the speed of misaligned loads"?
-Maybe UNKNOWN is the right value, as there are other values to tell
-you V is not enabled.
+- the 'flags' field have the new flag VFIO_IRQ_SET_DATA_AFFINITY set
+as well as VFIO_IRQ_SET_ACTION_TRIGGER.
 
+- the variable-length 'data' field is a cpu_set_t structure, as
+for the sched_setaffinity() syscall, the size of which is derived
+from 'argsz'.
 
->  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
->
->  /* Flags */
-> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwpr=
-obe.c
-> index b286b73e763e..ce641cc6e47a 100644
-> --- a/arch/riscv/kernel/sys_hwprobe.c
-> +++ b/arch/riscv/kernel/sys_hwprobe.c
-> @@ -184,6 +184,36 @@ static u64 hwprobe_misaligned(const struct cpumask *=
-cpus)
->  }
->  #endif
->
-> +#if defined(CONFIG_RISCV_PROBE_UNALIGNED_ACCESS)
-> +static u64 hwprobe_vec_misaligned(const struct cpumask *cpus)
-> +{
-> +       int cpu;
-> +       u64 perf =3D -1ULL;
-> +
-> +       for_each_cpu(cpu, cpus) {
-> +               int this_perf =3D per_cpu(vector_misaligned_access, cpu);
-> +
-> +               if (perf =3D=3D -1ULL)
-> +                       perf =3D this_perf;
-> +
-> +               if (perf !=3D this_perf) {
-> +                       perf =3D RISCV_HWPROBE_VEC_MISALIGNED_UNKNOWN;
-> +                       break;
-> +               }
-> +       }
-> +
-> +       if (perf =3D=3D -1ULL)
-> +               return RISCV_HWPROBE_VEC_MISALIGNED_UNKNOWN;
-> +
-> +       return perf;
-> +}
-> +#else
-> +static u64 hwprobe_vec_misaligned(const struct cpumask *cpus)
-> +{
-> +       return RISCV_HWPROBE_VEC_MISALIGNED_UNKNOWN;
-> +}
-> +#endif
-> +
->  static void hwprobe_one_pair(struct riscv_hwprobe *pair,
->                              const struct cpumask *cpus)
->  {
-> @@ -211,6 +241,10 @@ static void hwprobe_one_pair(struct riscv_hwprobe *p=
-air,
->                 pair->value =3D hwprobe_misaligned(cpus);
->                 break;
->
-> +       case RISCV_HWPROBE_VEC_KEY_MISALIGNED_PERF:
-> +               pair->value =3D hwprobe_vec_misaligned(cpus);
-> +               break;
-> +
->         case RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE:
->                 pair->value =3D 0;
->                 if (hwprobe_ext0_has(cpus, RISCV_HWPROBE_EXT_ZICBOZ))
-> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/tra=
-ps_misaligned.c
-> index 2adb7c3e4dd5..0c07e990e9c5 100644
-> --- a/arch/riscv/kernel/traps_misaligned.c
-> +++ b/arch/riscv/kernel/traps_misaligned.c
-> @@ -16,6 +16,7 @@
->  #include <asm/entry-common.h>
->  #include <asm/hwprobe.h>
->  #include <asm/cpufeature.h>
-> +#include <asm/vector.h>
->
->  #define INSN_MATCH_LB                  0x3
->  #define INSN_MASK_LB                   0x707f
-> @@ -426,6 +427,14 @@ int handle_misaligned_load(struct pt_regs *regs)
->         if (get_insn(regs, epc, &insn))
->                 return -1;
->
-> +#ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
-> +       if (*this_cpu_ptr(&vector_misaligned_access) =3D=3D RISCV_HWPROBE=
-_VEC_MISALIGNED_UNKNOWN) {
-> +               *this_cpu_ptr(&vector_misaligned_access) =3D RISCV_HWPROB=
-E_VEC_MISALIGNED_UNSUPPORTED;
+Signed-off-by: Fred Griffoul <fgriffo@amazon.co.uk>
+---
+ drivers/vfio/pci/vfio_pci_core.c  | 26 ++++++++++++++++---
+ drivers/vfio/pci/vfio_pci_intrs.c | 42 +++++++++++++++++++++++++++++++
+ drivers/vfio/vfio_main.c          | 13 +++++++---
+ include/uapi/linux/vfio.h         | 10 +++++++-
+ 4 files changed, 82 insertions(+), 9 deletions(-)
 
-Shouldn't this be EMULATED, given we were just delegated this trap? I
-guess it depends on whether you're going to add support for actually
-handling the misaligned vector trap, as Cl=C3=A9ment mentioned.
+diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+index 80cae87fff36..b89df562fb5c 100644
+--- a/drivers/vfio/pci/vfio_pci_core.c
++++ b/drivers/vfio/pci/vfio_pci_core.c
+@@ -1192,6 +1192,7 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_pci_core_device *vdev,
+ {
+ 	unsigned long minsz = offsetofend(struct vfio_irq_set, count);
+ 	struct vfio_irq_set hdr;
++	cpumask_var_t mask;
+ 	u8 *data = NULL;
+ 	int max, ret = 0;
+ 	size_t data_size = 0;
+@@ -1207,9 +1208,21 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_pci_core_device *vdev,
+ 		return ret;
 
-Scalar misaligned loads had a history to lean on since the specs were
-always explicit that misaligned loads/store had to be supported one
-way or another. So UNSUPPORTED was a future theoretical value. I
-haven't dug through the specs yet, do you know what the story is for V
-and misaligned loads? My sub-question is what the rules are for
-detecting the difference between EMULATED and UNSUPPORTED.
+ 	if (data_size) {
+-		data = memdup_user(&arg->data, data_size);
+-		if (IS_ERR(data))
+-			return PTR_ERR(data);
++		if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY) {
++			if (!zalloc_cpumask_var(&mask, GFP_KERNEL))
++				return -ENOMEM;
++
++			ret = copy_from_user(mask, &arg->data, data_size);
++			if (ret)
++				goto out;
++
++			data = (u8 *)mask;
++
++		} else {
++			data = memdup_user(&arg->data, data_size);
++			if (IS_ERR(data))
++				return PTR_ERR(data);
++		}
+ 	}
 
-> +               regs->epc =3D epc + INSN_LEN(insn);
-> +               return 0;
-> +       }
-> +#endif
-> +
->         regs->epc =3D 0;
->
->         if ((insn & INSN_MASK_LW) =3D=3D INSN_MATCH_LW) {
-> @@ -625,6 +634,57 @@ static bool check_unaligned_access_emulated(int cpu)
->         return misaligned_emu_detected;
->  }
->
-> +#ifdef CONFIG_RISCV_ISA_V
-> +static bool check_vector_unaligned_access(int cpu)
-> +{
-> +       long *mas_ptr =3D per_cpu_ptr(&vector_misaligned_access, cpu);
-> +       struct riscv_isainfo *isainfo =3D &hart_isa[cpu];
-> +       unsigned long tmp_var;
-> +       bool misaligned_vec_suported;
-> +
-> +       if (!riscv_isa_extension_available(isainfo->isa, v))
-> +               return false;
-> +
-> +       /* This case will only happen if a unaligned vector load
-> +        * was called by the kernel before this check
-> +        */
-> +       if (*mas_ptr !=3D RISCV_HWPROBE_VEC_MISALIGNED_UNKNOWN)
-> +               return false;
-> +
-> +       kernel_vector_begin();
-> +       __asm__ __volatile__ (
-> +               ".option push\n\t"
-> +               ".option arch, +v\n\t"
-> +               "       li t1, 0x1\n"                           //size
-> +               "       vsetvli t0, t1, e16, m2, ta, ma\n\t"    // Vector=
-s of 16b
-> +               "       addi t0, %[ptr], 1\n\t"                 // Misali=
-gn address
-> +               "       vle16.v v0, (t0)\n\t"                   // Load b=
-ytes
-> +               ".option pop\n\t"
-> +               : : [ptr] "r" (&tmp_var) : "v0", "t0", "t1", "memory");
-> +       kernel_vector_end();
-> +
-> +       misaligned_vec_suported =3D (*mas_ptr =3D=3D RISCV_HWPROBE_VEC_MI=
-SALIGNED_UNKNOWN);
-> +
-> +       return misaligned_vec_suported;
-> +}
-> +#else
-> +static bool check_vector_unaligned_access(int cpu)
-> +{
-> +       return false;
-> +}
-> +#endif
-> +
-> +bool check_vector_unaligned_access_all_cpus(void)
-> +{
-> +       int cpu;
-> +
-> +       for_each_online_cpu(cpu)
-> +               if (!check_vector_unaligned_access(cpu))
-> +                       return false;
-> +
-> +       return true;
-> +}
+ 	mutex_lock(&vdev->igate);
+@@ -1218,7 +1231,12 @@ static int vfio_pci_ioctl_set_irqs(struct vfio_pci_core_device *vdev,
+ 				      hdr.count, data);
 
-These functions return a bool, but the bool is never checked. I'm
-guessing that's because you're going to check it in a future patch
-where you decide whether or not to probe for fast/slow?
+ 	mutex_unlock(&vdev->igate);
+-	kfree(data);
++
++out:
++	if (hdr.flags & VFIO_IRQ_SET_DATA_AFFINITY)
++		free_cpumask_var(mask);
++	else
++		kfree(data);
 
+ 	return ret;
+ }
+diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+index 8382c5834335..f42ad116134c 100644
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -19,6 +19,7 @@
+ #include <linux/vfio.h>
+ #include <linux/wait.h>
+ #include <linux/slab.h>
++#include <linux/cpuset.h>
 
-> +
->  bool check_unaligned_access_emulated_all_cpus(void)
->  {
->         int cpu;
-> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kern=
-el/unaligned_access_speed.c
-> index a9a6bcb02acf..92a84239beaa 100644
-> --- a/arch/riscv/kernel/unaligned_access_speed.c
-> +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> @@ -20,6 +20,7 @@
->  #define MISALIGNED_COPY_SIZE ((MISALIGNED_BUFFER_SIZE / 2) - 0x80)
->
->  DEFINE_PER_CPU(long, misaligned_access_speed);
-> +DEFINE_PER_CPU(long, vector_misaligned_access) =3D RISCV_HWPROBE_VEC_MIS=
-ALIGNED_UNKNOWN;
->
->  #ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
->  static cpumask_t fast_misaligned_access;
-> @@ -264,6 +265,8 @@ static int check_unaligned_access_all_cpus(void)
->  {
->         bool all_cpus_emulated =3D check_unaligned_access_emulated_all_cp=
-us();
->
-> +       check_vector_unaligned_access_all_cpus();
-> +
->         if (!all_cpus_emulated)
->                 return check_unaligned_access_speed_all_cpus();
->
-> @@ -273,6 +276,7 @@ static int check_unaligned_access_all_cpus(void)
->  static int check_unaligned_access_all_cpus(void)
->  {
->         check_unaligned_access_emulated_all_cpus();
-> +       check_vector_unaligned_access_all_cpus();
->
->         return 0;
->  }
-> --
-> 2.43.0
->
+ #include "vfio_pci_priv.h"
+
+@@ -675,6 +676,44 @@ static int vfio_pci_set_intx_trigger(struct vfio_pci_core_device *vdev,
+ 	return 0;
+ }
+
++static int vfio_pci_set_msi_affinity(struct vfio_pci_core_device *vdev,
++				     unsigned int start, unsigned int count,
++				     struct cpumask *irq_mask)
++{
++	struct vfio_pci_irq_ctx *ctx;
++	cpumask_var_t allowed_mask;
++	unsigned int i;
++	int err = 0;
++
++	if (!alloc_cpumask_var(&allowed_mask, GFP_KERNEL))
++		return -ENOMEM;
++
++	cpuset_cpus_allowed(current, allowed_mask);
++
++	/* need at least 1 online cpu in the mask */
++	if (!cpumask_subset(irq_mask, allowed_mask) ||
++	    !cpumask_intersects(irq_mask, cpu_online_mask)) {
++		err = -EPERM;
++		goto finish;
++	}
++
++	for (i = start; i < start + count; i++) {
++		ctx = vfio_irq_ctx_get(vdev, i);
++		if (!ctx) {
++			err = -EINVAL;
++			break;
++		}
++
++		err = irq_set_affinity(ctx->producer.irq, irq_mask);
++		if (err)
++			break;
++	}
++
++finish:
++	free_cpumask_var(allowed_mask);
++	return err;
++}
++
+ static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
+ 				    unsigned index, unsigned start,
+ 				    unsigned count, uint32_t flags, void *data)
+@@ -691,6 +730,9 @@ static int vfio_pci_set_msi_trigger(struct vfio_pci_core_device *vdev,
+ 	if (!(irq_is(vdev, index) || is_irq_none(vdev)))
+ 		return -EINVAL;
+
++	if (flags & VFIO_IRQ_SET_DATA_AFFINITY)
++		return vfio_pci_set_msi_affinity(vdev, start, count, data);
++
+ 	if (flags & VFIO_IRQ_SET_DATA_EVENTFD) {
+ 		int32_t *fds = data;
+ 		int ret;
+diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+index e97d796a54fb..e87131d45059 100644
+--- a/drivers/vfio/vfio_main.c
++++ b/drivers/vfio/vfio_main.c
+@@ -1505,23 +1505,28 @@ int vfio_set_irqs_validate_and_prepare(struct vfio_irq_set *hdr, int num_irqs,
+ 		size = 0;
+ 		break;
+ 	case VFIO_IRQ_SET_DATA_BOOL:
+-		size = sizeof(uint8_t);
++		size = hdr->count * sizeof(uint8_t);
+ 		break;
+ 	case VFIO_IRQ_SET_DATA_EVENTFD:
+-		size = sizeof(int32_t);
++		size = hdr->count * sizeof(int32_t);
++		break;
++	case VFIO_IRQ_SET_DATA_AFFINITY:
++		size = hdr->argsz - minsz;
++		if (size > cpumask_size())
++			size = cpumask_size();
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+
+ 	if (size) {
+-		if (hdr->argsz - minsz < hdr->count * size)
++		if (hdr->argsz - minsz < size)
+ 			return -EINVAL;
+
+ 		if (!data_size)
+ 			return -EINVAL;
+
+-		*data_size = hdr->count * size;
++		*data_size = size;
+ 	}
+
+ 	return 0;
+diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+index 2b68e6cdf190..5ba2ca223550 100644
+--- a/include/uapi/linux/vfio.h
++++ b/include/uapi/linux/vfio.h
+@@ -580,6 +580,12 @@ struct vfio_irq_info {
+  *
+  * Note that ACTION_[UN]MASK specify user->kernel signaling (irqfds) while
+  * ACTION_TRIGGER specifies kernel->user signaling.
++ *
++ * DATA_AFFINITY specifies the affinity for the range of interrupt vectors.
++ * It must be set with ACTION_TRIGGER in 'flags'. The variable-length 'data'
++ * array is a CPU affinity mask 'cpu_set_t' structure, as for the
++ * sched_setaffinity() syscall argument: the 'argsz' field is used to check
++ * the actual cpu_set_t size.
+  */
+ struct vfio_irq_set {
+ 	__u32	argsz;
+@@ -587,6 +593,7 @@ struct vfio_irq_set {
+ #define VFIO_IRQ_SET_DATA_NONE		(1 << 0) /* Data not present */
+ #define VFIO_IRQ_SET_DATA_BOOL		(1 << 1) /* Data is bool (u8) */
+ #define VFIO_IRQ_SET_DATA_EVENTFD	(1 << 2) /* Data is eventfd (s32) */
++#define VFIO_IRQ_SET_DATA_AFFINITY	(1 << 6) /* Data is cpu_set_t */
+ #define VFIO_IRQ_SET_ACTION_MASK	(1 << 3) /* Mask interrupt */
+ #define VFIO_IRQ_SET_ACTION_UNMASK	(1 << 4) /* Unmask interrupt */
+ #define VFIO_IRQ_SET_ACTION_TRIGGER	(1 << 5) /* Trigger interrupt */
+@@ -599,7 +606,8 @@ struct vfio_irq_set {
+
+ #define VFIO_IRQ_SET_DATA_TYPE_MASK	(VFIO_IRQ_SET_DATA_NONE | \
+ 					 VFIO_IRQ_SET_DATA_BOOL | \
+-					 VFIO_IRQ_SET_DATA_EVENTFD)
++					 VFIO_IRQ_SET_DATA_EVENTFD | \
++					 VFIO_IRQ_SET_DATA_AFFINITY)
+ #define VFIO_IRQ_SET_ACTION_TYPE_MASK	(VFIO_IRQ_SET_ACTION_MASK | \
+ 					 VFIO_IRQ_SET_ACTION_UNMASK | \
+ 					 VFIO_IRQ_SET_ACTION_TRIGGER)
+--
+2.40.1
+
 
