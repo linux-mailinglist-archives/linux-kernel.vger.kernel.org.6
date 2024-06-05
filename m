@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-201948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F3D8FC5BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392088FC5BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098B82823E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7931C20E67
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A0A49630;
-	Wed,  5 Jun 2024 08:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E407F4964A;
+	Wed,  5 Jun 2024 08:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBSAVBjB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nmiZY0Iq"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA8549621;
-	Wed,  5 Jun 2024 08:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8885B49627;
+	Wed,  5 Jun 2024 08:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717575131; cv=none; b=NBghpLYUP4v614mUMU/grpoOo7TMcrWYFvMcJqlef+/VNwZnClBy50zE419H+Bok5xhTaOLom4/5Roi2RMtwppFqnmd2UtCy310045ec5ceLahr2O4IUhguaPFcHY6UJ+3cZl338xO807kLbaqjyrcVWQs0o9spZ606aZFc2X0s=
+	t=1717575222; cv=none; b=YSD6/+f83Ns5UjdBzeF67cZwy6dtVFEtwtCU/ehpjiMHZyWjV4f7LqcN1Vnblpvf3aGDqoeF4EkjWAE1Pouq7LpDwkwOUD13LmrY/B/otVjEeEbBtzY/96677bM/ZCVKQ0dTsip4VQWZ+6NjCrRqi5phoa2AR75C3MtPdNP3aQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717575131; c=relaxed/simple;
-	bh=3Cu0rGtiUDZ4fe7lgTvZx3NuR8q2z0tMfYhv6hfQR1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sJyUT4VN9jrtuTwXr0nZfrwfg9Q9Tu7w4vkFCCPxJ6KfDmCWhf0UWA4G2+oVlb+tGbK58bM7TE728inze2iRrQezZDMrw2N2wJFhtS49/RRe/Bycv7UlguEmb/lNouVRviQwdIptSNUKy01/3b5vKGUYXstdPDLrqYe+H4XWQKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBSAVBjB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB93BC3277B;
-	Wed,  5 Jun 2024 08:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717575130;
-	bh=3Cu0rGtiUDZ4fe7lgTvZx3NuR8q2z0tMfYhv6hfQR1A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aBSAVBjBUYdLHnP+vCQwiEZhgY4g/CEfaZniAi4hhhR4+NFSoB02G4s4iKtajQ60E
-	 RFNe2gvjezxf1c9KzEzBS9EI0arIbJezZBqDwXDZcI1ntAFcm1Zybc48OGOS4IJpje
-	 SfpSa0kUUIpSL2Vi3bxvcEvp4NtcEPJfOr6ID0EXADsj5jNnXBIvhxYEAcF//BkTHG
-	 /5yZaQqtO+lWh5XxZk5nH3B9jRtIX90c8834SuL3VtboV0djtrJefvXURKAmWdY7UG
-	 xnrUMTAzLsYqEnbaGEI00FtXIG4mfxiHmKiZpwdviKYmm0kryUzYYrRlpnowiAE3xp
-	 xlCBaTQlVRZuQ==
-Message-ID: <75c27bf0-4cc1-41ec-86ed-5c7f3d38f5d8@kernel.org>
-Date: Wed, 5 Jun 2024 10:12:01 +0200
+	s=arc-20240116; t=1717575222; c=relaxed/simple;
+	bh=b8B4Rrop9tzX9BsWtef8R0dWMFOYKVgtgHR1l03f4Ho=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sode8RVmMhFfnTcr9WD21FTwUXbgdL6cp7jMzKypcDfg2iB7xgc6mVw2EJFXQg7wrq3Nqea4dBeQKQg9kE7W9rN1lERdV8TZJbOeYuUtL1xbOKzhFu+DOlBgOuyePlNG1oG1iJLNYMVS/CFF3JWRKyfsDt+5nYDrMWRxJNIojBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nmiZY0Iq; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2689FC0016;
+	Wed,  5 Jun 2024 08:13:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1717575211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uFaCgtWjGrzAsn767vWcD/AZ37FCocgz3r5B8D9v36Y=;
+	b=nmiZY0IqJVyla3CZ2JgyuRmDZxbMw05xiNi+wYbGHMXaSAxpvSS2hy11HSxLlsCebnWt9Q
+	wQ1E7ft/nhylODVFhRqZb7R0ejyZyD6hqTzxkMaBI1+2jqvhDgIhEUlLrYwcm/iqSQUzmC
+	vrOsXHJqG6wyrRViVInLwpLbOYWEmIUYXPwajZemi2uxxC0QLySLTGSO81+f0i5M4Cm+Ig
+	Y96vPo5Ie5Z5cNV6aJn1B2Qe0DBh+XrGHBjjJHnrXUx71m8MgtZEp02pl5xciah1LVA+DM
+	1m1QkQfdAgtKjHXPpBBZ5TXj7Ierz60mXKokPUxFlU26rfmP7n7UNo7x7AKukQ==
+Date: Wed, 5 Jun 2024 10:13:23 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Alibek Omarov <a1ba.omarov@gmail.com>
+Cc: Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Heiko Stuebner
+ <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: rockchip: i2s-tdm: Fix trcm mode by setting clock
+ on right mclk
+Message-ID: <20240605101323.60d7abbc@booty>
+In-Reply-To: <20240604184752.697313-1-a1ba.omarov@gmail.com>
+References: <20240604184752.697313-1-a1ba.omarov@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: clock: Add i.MX91 clock support
-To: Pengfei Li <pengfei.li_1@nxp.com>, Rob Herring <robh@kernel.org>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, abelvesa@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- ping.bai@nxp.com, ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
- frank.li@nxp.com, tharvey@gateworks.com, alexander.stein@ew.tq-group.com,
- gregor.herburger@ew.tq-group.com, hiago.franco@toradex.com,
- joao.goncalves@toradex.com, hvilleneuve@dimonoff.com,
- Markus.Niebel@ew.tq-group.com, m.felsch@pengutronix.de,
- m.othacehe@gmail.com, bhelgaas@google.com, leoyang.li@nxp.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20240530022634.2062084-1-pengfei.li_1@nxp.com>
- <20240530022634.2062084-2-pengfei.li_1@nxp.com>
- <20240604150306.GA596314-robh@kernel.org>
- <ZmD76mp2dPVv6HeA@pengfei-OptiPlex-Tower-Plus-7010>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZmD76mp2dPVv6HeA@pengfei-OptiPlex-Tower-Plus-7010>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 06/06/2024 01:59, Pengfei Li wrote:
-> On Tue, Jun 04, 2024 at 10:03:06AM -0500, Rob Herring wrote:
->> On Wed, May 29, 2024 at 07:26:30PM -0700, Pengfei Li wrote:
->>> i.MX91 has similar Clock Control Module(CCM) design as i.MX93.
->>> Add a new compatible string for i.MX91.
->>>
->>> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
->>> Reviewed-by: Frank Li <Frank.Li@nxp.com>
->>> ---
->>>  Documentation/devicetree/bindings/clock/imx93-clock.yaml | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/imx93-clock.yaml b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
->>> index ccb53c6b96c1..98c0800732ef 100644
->>> --- a/Documentation/devicetree/bindings/clock/imx93-clock.yaml
->>> +++ b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
->>> @@ -16,6 +16,7 @@ description: |
->>>  properties:
->>>    compatible:
->>>      enum:
->>> +      - fsl,imx91-ccm
->>>        - fsl,imx93-ccm
->>
->> Should fallback to fsl,imx93-ccm? Being a superset should be ok because 
->> your DT should never use the non-existent clocks. If not, where is the 
->> driver change?
->>
->> Rob
->>
+Hello Alibek,
+
+On Tue,  4 Jun 2024 21:47:52 +0300
+Alibek Omarov <a1ba.omarov@gmail.com> wrote:
+
+> When TRCM mode is enabled, I2S RX and TX clocks are synchronized through
+> selected clock source. Without this fix BCLK and LRCK might get parented
+> to an uninitialized MCLK and the DAI will receive data at wrong pace.
 > 
-> Hi Rob Herring,
-> ﻿
-> Due to the different maintainers of the CCM framework and DTS, I have separated 
-> the CCM driver patch and plan to send the DTS patch first before sending the 
-> CCM driver patch. If that's possible, could you help merge this patch first? If 
-> this is not allowed, I can also send out the CCM driver patch at the same time.
+> However, unlike in original i2s-tdm driver, there is no need to manually
+> synchronize mclk_rx and mclk_tx, as only one gets used anyway.
+> 
+> Tested on a board with RK3568 SoC and Silergy SY24145S codec with enabled and
+> disabled TRCM mode.
+> 
+> Fixes: 9e2ab4b18ebd ("ASoC: rockchip: i2s-tdm: Fix inaccurate sampling rates")
+> Signed-off-by: Alibek Omarov <a1ba.omarov@gmail.com>
+> ---
+>  sound/soc/rockchip/rockchip_i2s_tdm.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.c b/sound/soc/rockchip/rockchip_i2s_tdm.c
+> index 9fa020ef7eab..ee517d7b5b7b 100644
+> --- a/sound/soc/rockchip/rockchip_i2s_tdm.c
+> +++ b/sound/soc/rockchip/rockchip_i2s_tdm.c
+> @@ -655,8 +655,17 @@ static int rockchip_i2s_tdm_hw_params(struct snd_pcm_substream *substream,
+>  	int err;
+>  
+>  	if (i2s_tdm->is_master_mode) {
+> -		struct clk *mclk = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
+> -			i2s_tdm->mclk_tx : i2s_tdm->mclk_rx;
+> +		struct clk *mclk;
+> +
+> +		if (i2s_tdm->clk_trcm == TRCM_TX) {
+> +			mclk = i2s_tdm->mclk_tx;
+> +		} else if (i2s_tdm->clk_trcm == TRCM_RX) {
+> +			mclk = i2s_tdm->mclk_rx;
+> +		} else if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+> +			mclk = i2s_tdm->mclk_tx;
+> +		} else {
+> +			mclk = i2s_tdm->mclk_rx;
+> +		}
 
-Binding goes with the driver, not DTS.
+I cannot test right now, but it definitely looks correct.
 
-Best regards,
-Krzysztof
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
