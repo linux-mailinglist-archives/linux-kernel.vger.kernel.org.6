@@ -1,180 +1,85 @@
-Return-Path: <linux-kernel+bounces-202230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588498FC99F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:03:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A31A28FC9A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B541C2346A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:03:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D2E8B22DC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D181373;
-	Wed,  5 Jun 2024 11:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37031922ED;
+	Wed,  5 Jun 2024 11:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="RC9U54tb"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K6C2/xpd"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3452014BFB1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8985618C34B;
+	Wed,  5 Jun 2024 11:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717585370; cv=none; b=Y32QWh961Zc/XnBUFMC7TMdIKQjyBEvLC6A8Y4N6O/Kgi4ZvBqqNTZUS6yWoCdtGWYQeNJrSTNz7OHZOJcFNxzB/aihIIwSWPKkWDBSt8fypB5bDCOOLzGtMeZ3er5S5ProxQq6VTo6KxqiNGRa6qwrtFeoD8w28J2wSd5mppXQ=
+	t=1717585492; cv=none; b=iqKAUIO6QuuWzpoGeTTEw2aLPlPoFPgaZTZ6VUpkVLKDZkk0RwFdgpwkTOQe9yvPsqtldzwO0+nnEib6aSCXyLK5ynkvbUVtUguPfM1joIECLk0xVQIFo5Bto6YisC3kEkIxCcOIhQJr8cochS53jTZLUrcEqjg2GN5f1FXcPyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717585370; c=relaxed/simple;
-	bh=7FgkUmzW4vq4WuhnkXWvITbhdqSRYHVlZ8igKZumwzk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iwsmJEC5CcEG+5LdYD8Dz87kzoYAWSEoaLh75JhmipigNze6m+1y4dc+Z98osgxgJAx5cD4fok3CJ+uEwsIhq7VM3o7FStJxmB2LDA+U7HtHOrBAvwpqoyzIvPlKf3ii9FFFTBdhlfUnXbub4OXZSW/zO9DIsbUcOkWn8NRuP5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=RC9U54tb; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52961b77655so2286329e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 04:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1717585366; x=1718190166; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cEYhMckwB2/P4xzPW88npOsZyYkpk9RU9J5XlEXZ8BE=;
-        b=RC9U54tb5Nd5PPrdWHPA6yNhk8ZJC0rAdL8c2Am/MjcAy73MwJOqNK4gajlwI7YG4H
-         H9ZbQa63Mxs0OofE5sK94hG9uTEngRsZo75fT1EDjGX6Pl84KmcvM1+WrlXLNM7Ydxic
-         CmA1OlQnFfiPkSrcL/nwXZqwh405yNj4G2DtZVLPvp53UIEfNxhXj8i+Jmta6xou5NVj
-         /qUXCyFNJ9yhwIwJP9oSy0Py4MTLUMrBhEFCp9f9DoAnJW5959YdVZSwTohU3B04ydeM
-         /V3aQ9RSWYjnyK86uUmD8gorVwD8eVKpaWWpytjKFAgpG97ihxfIYrD+DoZrY8SorHoX
-         RaXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717585366; x=1718190166;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cEYhMckwB2/P4xzPW88npOsZyYkpk9RU9J5XlEXZ8BE=;
-        b=K3S0AypTp6Ml8Ffl/Wg8Ye9clmvvWoTXBOFQumWP4kEFaiJ9gUNjogvEy8o2+1lmkn
-         jQBEyJ54xtSq8rNgTKo8Axzgy+A2kjNotIelfJy+EhL2U7N4kJusxT5jWjNBQWBZeBTE
-         IHg0T50Z4hjV66bdaG2SapgVbkbhJMJkHIiT9iKH1Lfg6Qt5zNvojbsmMjXQKYxyDTot
-         HaRGuWL7a0pfqC7woCAZ5rjaGpc9gFRPgnBgfVmi4oJSyi9nx8RIHULuRSlYkmvd3RVW
-         3LwVqjiIjGplBOTP+8GFfiUjjSK/7Gx9q3PwKjmWlpGGky3PHrk7nVgDMA9JWFzCKhzT
-         kR2w==
-X-Gm-Message-State: AOJu0YzrtpICkc9FJb86tQSzRX+sVmOXBojZHPhugFsDqyTgLZdY5waT
-	AKwhF6RAcO39Q1WoVEq8JtuhWZSTDV0WQsHT0A8BtcQtg4r5u4LgrSi2f/aajqAG5wsPNL83sfd
-	XABEBPw==
-X-Google-Smtp-Source: AGHT+IFTiG3JX/p/DawD0Ae2OAwaEN0LLyKy41m3I3xduQ2hQnmGquYk6KqGSPjPVeNVFNBYMBPhsA==
-X-Received: by 2002:a05:6512:10d2:b0:51e:11d5:bca5 with SMTP id 2adb3069b0e04-52bab502b5cmr1623187e87.54.1717585365502;
-        Wed, 05 Jun 2024 04:02:45 -0700 (PDT)
-Received: from ssdfs-test-0070.sigma.sbrf.ru ([84.252.147.254])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d7ff10sm1762868e87.210.2024.06.05.04.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 04:02:44 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: slava@dubeiko.com,
-	Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC] ML infrastructure in Linux kernel
-Date: Wed,  5 Jun 2024 14:02:19 +0300
-Message-Id: <20240605110219.7356-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717585492; c=relaxed/simple;
+	bh=2hjwVFmRoFTS6oZrCvJYjFdWpPR5DTpzZ9n/nHhVnwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RWgIOwC+ElMp1fDLG9icLTGCwUan+ueNaGx/QB/hIHgEr+qP9Kz95G+vE9h8FvN3ZyWN4BNPUkKrphbg1XRrxioB5xF7IRwswJxUwlAQkvEfj8YLchpvVQkRTQfhwj1xL+vw6KRHXTZTTz4Z2rjFo5dzbKt8YSX9VdLRptanaPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K6C2/xpd; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717585488;
+	bh=2hjwVFmRoFTS6oZrCvJYjFdWpPR5DTpzZ9n/nHhVnwY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K6C2/xpdswwfBcJ8pX0D/sIOIMtdjmRjwYmn35v/F8f0QIDfOZcoqicTE54jQQWgZ
+	 AY/FakYDMcM+W+0L00enXMR5z/k9QQcZ0f9wRUqU5v2OjDnXzBGsOuybbAzYxTT5PU
+	 z9pxSfHjs61kj98JKzuE/b9Fgap9ekEkRdhK5ja9jSN5dIOnRrMiNNvYGcbNLoMUgl
+	 QUhKYTrAkR3RFY5+90iNHLJ1I5Vn6o4ijxdlvti8wGzcwQbolMp+d2gcoK4KXxGbAR
+	 /Mta48PsVYCfMWCdQ/t2AiikgaDoMqRr8oy0S1BFdr/IB1oN5wWy1P//6Dv1bAXX4H
+	 a3WALSnj1I7hQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DA8DE37808FA;
+	Wed,  5 Jun 2024 11:04:47 +0000 (UTC)
+Message-ID: <c7162cb8-6a80-44c7-9dcd-830e5c8331e6@collabora.com>
+Date: Wed, 5 Jun 2024 13:04:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] thermal/drivers/mediatek/lvts_thermal: Return error in
+ case of invalid efuse data
+To: Julien Panis <jpanis@baylibre.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Nicolas Pitre <npitre@baylibre.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240604-mtk-thermal-calib-check-v2-1-8f258254051d@baylibre.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240604-mtk-thermal-calib-check-v2-1-8f258254051d@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Il 04/06/24 18:46, Julien Panis ha scritto:
+> This patch prevents from registering thermal entries and letting the
+> driver misbehave if efuse data is invalid. A device is not properly
+> calibrated if the golden temperature is zero.
+> 
+> Fixes: f5f633b18234 ("thermal/drivers/mediatek: Add the Low Voltage Thermal Sensor driver")
+> Signed-off-by: Julien Panis <jpanis@baylibre.com>
 
-I would like to initiate a discussion related to an unified
-infrastructure for ML workloads and user-space drivers.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-[PROBLEM STATEMENT]
-
-Last several years have revealed two important trends:
-(1) moving kernel-space functionality into user-space drivers
-(for example, SPDK, DPDK, ublk); (2) significant number of efforts
-of using ML models for various real life applications (for example,
-tuning kernel parameters, storage device failure prediction, fail
-slow drive detection, and so on). Both trends represent significant
-importance for the evolution of the Linux kernel. From one point of view,
-user-space drivers represent the way of decreasing the latency and
-improving the performance of operations. However, from another point of
-view, the approach of bypassing the Linux kernel introduces security and
-efficiency risks, potential synchronization issues of user-space threads,
-and breaking the Linux kernel architecture’s paradigm. Generally speaking,
-direct implementation of ML approaches in Linux kernel-space is very hard,
-inefficient, and problematic because of practical unavailability of
-floating point operations in the Linux kernel, and the computational power
-hungry nature of ML algorithms (especially, during training phase).
-It is possible to state that Linux kernel needs to introduce and to unify
-an infrastructure as for ML approaches as for user-space drivers.
-
-[WHY DO WE NEED ML in LINUX KERNEL?]
-
-Do we really need a ML infrastructure in the Linux kernel? First of all,
-it is really easy to imagine a lot of down to earth applications of ML
-algorithms for automation of routine operations during working with
-Linux kernel. Moreover, potentially, the ML subsystem could be used for
-automated research and statistics gathering on the whole fleet of running
-Linux kernels. Also, the ML subsystem is capable of writing documentation,
-tuning kernel parameters on the fly, kernel recompilation, and even automated
-reporting about bugs and crashes. Generally speaking, the ML subsystem
-potentially can extend the Linux kernel capabilities. The main question is how?
-
-[POTENTIAL INFRASTRUCTURE VISION]
-
-Technically speaking , both cases (user-space driver and ML subsystem)
-require a user-space functionality that can be considered as user-space
-extension of Linux kernel functionality. Such approach is similar to microkernel
-architecture by the minimal functionality on kernel side and the main
-functionality on user-space side with the mandatory minimization
-the number of context switches between kernel-space and user-space.
-The key responsibility of kernel-side agent (or subsystem) is the accounting
-of user-space extensions, synchronization of their access to shared resources
-or metadata on kernel side, statistics gathering and sharing it through
-the sysfs or specialized log file (likewise to syslog).
-
-For example, such specialized log file(s) can be used by ML user-space
-extensions for executing the ML algorithms with the goal of analyzing data
-and available statistics. Generally speaking, the main ML logic can be executed
-by extension(s) on the user-space side. This ML logic can elaborate
-some “recommendations”, for example, that can  be shared with an ML agent
-on the kernel side. As a result, the kernel-space ML agent can check
-the shared “recommendations” and to apply the valid “recommendations”
-by means of Linux kernel tuning, recompilation, “hot” restart and so on.
-Technically speaking, the user-space driver requires pretty much the same
-architecture as the simple kernel-space agent/subsystem and user-space
-extension(s). The main functionality is on the user-space side and
-kernel-space side delivers only accounting the user-space extensions,
-allocating necessary resources, synchronizing access to shared resources,
-and gathering statistics.
-
-Generally speaking, such an approach implies the necessity of
-registering a specialized driver class that could represent
-an ML agent or user-space driver on kernel side. Then, it will be possible
-to use a modprobe-like model to create an instance of ML agent or
-user-space driver. Finally, we will have the kernel-space agent
-that is connected to the user-space extension. The key point here is that
-the user-space extension can directly communicate with a hardware device,
-but the kernel-space side can account for the activity of the user-space
-extension and allocates resources. It is possible to suggest an unified
-architecture of the kernel-side agent that will be specialized by
-the logic of user-space extension. But the logic of the kernel-space
-agent should be minimal, simple, and unified as much as possible.
-Technically speaking, the logic of kernel-space agent can be defined by
-the eBPF program and eBPF arena (or shared memory between kernel-space
-and user-space) can be used for interaction between the kernel-space
-agent and the user-space extension. And such interaction could be implemented
-through submission and completion queues, for example.
-
-As a summary, described architecture is capable of implementing
-ML infrastructure in Linux kernel and unification of user-space drivers
-architecture.
-
-Any opinion on this? How feasible could be such vision?
-
-Thanks,
-Slava.
 
