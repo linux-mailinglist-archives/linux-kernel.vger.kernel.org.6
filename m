@@ -1,166 +1,148 @@
-Return-Path: <linux-kernel+bounces-202959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C323C8FD39D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:09:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6C28FD3A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D86B287FA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:09:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA69285150
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BEE18FC87;
-	Wed,  5 Jun 2024 17:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8530190050;
+	Wed,  5 Jun 2024 17:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="yNnDzR1g";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ft8oOzDh"
-Received: from wfout6-smtp.messagingengine.com (wfout6-smtp.messagingengine.com [64.147.123.149])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uS7stvm2"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A7B3BBD7;
-	Wed,  5 Jun 2024 17:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C20B2575A;
+	Wed,  5 Jun 2024 17:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717607366; cv=none; b=fitfpzvzehMxqFw1J2eB+RrbzcLHp42X5qY2ZdMCjHUnUeW2FvieP9PoxzeBIetwbahVtGyzBB13ouIK/rdtsgXquBywbULctYHynuQ0A+/PwiZzNUKytzOLZInxHDiXFchQgZpOuFSzLKP2SFKQob1rX86R/DsoUyvoNAMIx8w=
+	t=1717607483; cv=none; b=P/PEcjj4DG2NNAyx7CjbhNcCUQ2Svv5xpuBVedxUWp9OLVDAmLkp/2P7nzEqNf0dFFOScnkTUMq22xM8QU1P32qMp/t/5zD8vyqE7wFyCsCva2UJe4lnt3xt2dMb48Ndo7xHWyuCdGOo6CT0O6OU2abYR9KNF02GQyI/Z9Sm1o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717607366; c=relaxed/simple;
-	bh=F7Eh5kg8b6tfkcpTjbETzCmLSlgUgrmBSekOVyhs6+4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=ZAvIhqhnMt6YaSHysPJvMWuUKzsg+zbj4HCcDW/GsfSRqeiriIoLZg99D8nO9P7u59D3pg4pGPywY4BT5KqcF45ii4qzkLih9sbHAa06uf56HAWJ0Pz80XEU4m5GvhvuThx/qhGzCvBvms9gslOQixoYVchb9np7taUin71o++U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=yNnDzR1g; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ft8oOzDh; arc=none smtp.client-ip=64.147.123.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.west.internal (Postfix) with ESMTP id D5E361C00133;
-	Wed,  5 Jun 2024 13:09:22 -0400 (EDT)
-Received: from imap52 ([10.202.2.102])
-  by compute3.internal (MEProxy); Wed, 05 Jun 2024 13:09:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1717607362; x=1717693762; bh=ZHXgv05Ed0
-	PNjKxsr4XqCWtGawsCHif6ccMqAyWwMRI=; b=yNnDzR1gQvhsPIbQw+80gvRg2C
-	4JbdDp12xAj7J9fYlGVpC/jJu0ibS85YpUttxqanIHl4lWWWSGMaIQcC5uEPsVDn
-	qSGj0S3+yfZh09HH8XfC3wvk1e+I/8IbBybpdVqWjJ9Pw/vC2mpBzSR904v3X8n4
-	E1eqKbZh7hBru1Wqf4PUZ1q68B6GOTxAWrRYPxDDvxGSe1Zpp5GsnCXCw9P/A4Es
-	LN93suNkj7VRuPNOPtQk+J2RcjlldWuNaQP4PKDZb0KAYWx4WkBYcsnjSFSYBSjn
-	POQs5CE+T0GkTFcfFWJJCxqSkagBARKP8wOneqASiSNtws+Tk5DA/i5sk+3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717607362; x=1717693762; bh=ZHXgv05Ed0PNjKxsr4XqCWtGawsC
-	Hif6ccMqAyWwMRI=; b=ft8oOzDhh5a1Ns1kkZD1ugH+T5UN4KXwxe3orwtLIDMf
-	ye7VyVTs4ipt/XCVdro5BCFfsAASMfUqX2mS6ygtje2nM9QU+nIkZrxtFCr4c5yK
-	MQ3rgfDwKh/XhprC1Uw9IPtk88tZjn9jwLsYY11qsCM8bVGurlbljDAeUTAklou3
-	2J1EPDLPzMFjzf11uCfv3gVtrrxj0s1q1pPf0CHkvWgzwoLOzg1p0nu9Yjc5B6zk
-	fi7hIakBhYwF+Mgw/hHL/j+QEDN9V7vieHLmBBHGDumEnKTHOo5fakPQR0tj7RJC
-	69Qz7YhzTMbjB0G2WcLHtQx/eEBR3TCuQO6Xdr3WDA==
-X-ME-Sender: <xms:wptgZpS4NhllHqMyFQkIWpyk2Hu5IBm0f4Me9RrAYAI7_PmJACqfQQ>
-    <xme:wptgZiyrh64mJqnKmyAPWgSGZrcPsc4pFTjryV4gSnll3pAXS9xN29eAYnw6oqRHH
-    Vl3iWnd41xLNVtr0hE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeliedgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdfo
-    rghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsg
-    gsrdgtrgeqnecuggftrfgrthhtvghrnhepieeufeejieevteduvdekteefledtveffvedu
-    hefffeejudefvdeijeegudegkefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgt
-    rg
-X-ME-Proxy: <xmx:wptgZu3BfR8455hJIcEgAe7dn-TNFhf6gA80i_ZvBkqXoqmiIhaTkA>
-    <xmx:wptgZhDsJfaudmgGb2rc_gFL33Gn5gbo_qhhIKTMMs-oVvx8CSNdbw>
-    <xmx:wptgZiinP5t9LfBrXb3Ebeqcc3q8LpPTQQDj2eKSQKmGS995Qmftcw>
-    <xmx:wptgZlq4DpTt_tuBckOjyCbuZelUXTOU12R-KgFBk_ix31-4Y1OQLg>
-    <xmx:wptgZkagJgrgVWR8Hp5UVHjYLl5G6-zGtL01FoI2p7BQqJrpL4WCiklx>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1A572C60097; Wed,  5 Jun 2024 13:09:21 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
+	s=arc-20240116; t=1717607483; c=relaxed/simple;
+	bh=fmb5TpMfeMLyPeR/4CXjm6GWO6a9KEDsuXW2IhRHv/s=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Dqw1MEHDBKmZS/V7TonOi4fZoPSbLEpvepeKtxrF322CaarC3qyk+/AxHe0iFxTVgWtN9bRvSCY57moDBb1/Ls2m5V2260yl5FUuv6N6ZyhFqoVXUc0n73w7ik5YOnj9wCb3ncKyEe97DIySZUwIJ4u3TSLOBxFtNTy+wlrAuoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uS7stvm2; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1717607469; x=1718212269; i=markus.elfring@web.de;
+	bh=ygcT8PMT3gQgm193jaLXcPwMadyNYL0mF6kGlGdUQMU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=uS7stvm2zenctSskNf/nSuo80BiljGcr0jknaymv/2Ln6SxNZSOei4hlYreGGCSe
+	 5BHbGKk+BmRt/DmTA5SSVQPBcdylOKCvbZojBXuXN/lEwqoqrSRwWbatoxq+SgtSk
+	 0bFDnOBqK8jqp5qRhObp8lxRFbsAJb+kJdnaGBh+gpaFcESr9LOSii43s/A4CphGF
+	 JjusQqskUifhdgxQG9J7aDx3xYFQQtQLtca0A7rdUfJHTueeFYbmEg4BX8hSY2w7Y
+	 JVS5mhZLvHa0UQZANVH5QO7Gqpzru/7Bxaf2Z7rtUh7bm+6hcnBeJZ5hgqcgnb168
+	 9ylqB/kzooKgVUV24A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MOlwp-1s5sAN3mBD-00VtoQ; Wed, 05
+ Jun 2024 19:11:08 +0200
+Message-ID: <889729ac-3fc5-4666-b9f5-ce6e588a341a@web.de>
+Date: Wed, 5 Jun 2024 19:11:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <a517bb13-9772-49f9-b75c-8fa4d98b2ae9@app.fastmail.com>
-In-Reply-To: 
- <2midmmssv2i3plvtc2hajar6alfvggpnbvgpmldspelxsnjvcl@qiblhwat6n3p>
-References: <mpearson-lenovo@squebb.ca>
- <20240604194056.16625-1-mpearson-lenovo@squebb.ca>
- <2midmmssv2i3plvtc2hajar6alfvggpnbvgpmldspelxsnjvcl@qiblhwat6n3p>
-Date: Wed, 05 Jun 2024 13:09:01 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Cc: "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
- "Greg KH" <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Diogo Ivo" <diogo.ivo@siemens.com>
-Subject: Re: [PATCH] usb: typec: ucsi: treat get_pdos not supported condition as info
- instead of error
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+To: linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Xin Ji <xji@analogixsemi.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] usb: typec: anx7411: Use scope-based resource management in
+ anx7411_typec_port_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:T5g7jB/ZHufzy80Ddm6DM8BWwJfKECH30n7VQH9LEIbgO1a+9Tr
+ 2jkjdU8SzUVXwO6xroramWor7k3LXHc+gog999peacSlldUOaF2xHkl1nY8VHVGVFx2tJNd
+ e0E+Ij/zEI+gITRNmYExT6MJuifTNQKtELlB5EWOjNdcdxC8OIgd2pPAcfyjFsx5wuij//6
+ ySqmeiSSW+zPQx08h1tbg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iMcl/J7hc1E=;KWaKLrWhYWU96yjLsw2JIoSnNfO
+ lUO85AdEGvxW6nL1/mVZZh6McWue/ZbmTiwZNpUmD8NOD/4QcfsGmTvAWvfbKDkUKXmPMNXDe
+ 0n5gsA8V3uEu8ch+IJ4aaL2eRyn9EksK51B+MShKBsixs4FcTQEhqXTc9K/um+ac7oZaIDF1+
+ rJ70yFqU/r74WRG7ju15W3fMC6TISvt0dFpeGGbr2liL/Vyj7AE5FD/tyoA8SaYAX2osgS3lW
+ vBQQ2SyyN4DHlNHLvQ9ZLb/JHn8g8pncJJGCmuu34lr4n/rVXdpaR0kR6w8+zRNv5zkfalWMj
+ h/iGjYTh9yE4G/x22lTpsqIZolyX/F2DeWppoSisn+L0TXichTMxKqrf4ZO80xGllvqxusSmY
+ NtNXNo+jR/XpUK9V8nrWB6gJOQcmEiPe7Ytkbno7wx3XMmk0nkdcrjXtT/CtrOYJImrJ2hPIF
+ 9EtKPhUcfohStxUgBvA0vdUdPD6+3qlGIlqWgKdbuBGiJOKsWX4QRSiX3xe9G2YlDPFhKO+iq
+ pyDUbEB4JPYuo4ZlKsf0oAR6dOS1nllICKOy0SSi+EfbfT4D8BuoDy74chTdc43eUEiYwLhmP
+ +EPII9woYDIve+IF35ud0tyLcjGu2IC8ZON7eZdu+Di4FVNyY31xONcwAiDonqs+44GtYGao2
+ bcCAVw8UhUa27hW6fcw6m2kTqvRyrmI9wXOp3NnOwW/HYLoYYqMvEv5r+nLtMGJUWPh5FdAUq
+ dKMUQxXkZGHLongA15N7CSl98720PyXCrNkUoqV8AKo4QA99TN3yWpwjzRbBjMgc6tPB4nNvD
+ 3+GmnrXgunTrKTLU/P8Yc8GYt57rMAlTwyx2XQpO0B9ng=
 
-Thanks Dmitry (& Diogo from the other thread)
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Jun 2024 18:56:19 +0200
 
-On Tue, Jun 4, 2024, at 7:45 PM, Dmitry Baryshkov wrote:
-> On Tue, Jun 04, 2024 at 03:40:44PM -0400, Mark Pearson wrote:
->> On systems where the UCSI PDOs are not supported, the UCSI driver is
->> giving an error message. This can cause users to believe there is a HW
->> issue with their system when in fact it is working as designed.
->> 
->> Downgrade message to dev_info for EOPNOTSUPP condition.
->> 
->> Tested on Lenovo L14 G5 AMD and confirmed with Lenovo FW team that PDOs
->> are not supported on this platform.
->> 
->> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->> ---
->>  drivers/usb/typec/ucsi/ucsi.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
->> index cb52e7b0a2c5..090be87d5485 100644
->> --- a/drivers/usb/typec/ucsi/ucsi.c
->> +++ b/drivers/usb/typec/ucsi/ucsi.c
->> @@ -632,8 +632,12 @@ static int ucsi_read_pdos(struct ucsi_connector *con,
->>  	command |= is_source(role) ? UCSI_GET_PDOS_SRC_PDOS : 0;
->>  	ret = ucsi_send_command(ucsi, command, pdos + offset,
->>  				num_pdos * sizeof(u32));
->> -	if (ret < 0 && ret != -ETIMEDOUT)
->> -		dev_err(ucsi->dev, "UCSI_GET_PDOS failed (%d)\n", ret);
->> +	if (ret < 0 && ret != -ETIMEDOUT) {
->> +		if (ret == -EOPNOTSUPP)
->> +			dev_info(ucsi->dev, "UCSI_GET_PDOS not supported on this hardware\n");
->
-> Maybe it would be enough to guard GET_PDOS commands with the
-> UCSI_CAP_PDO_DETAILS check? Is it cleared on affected platforms?
->
+Scope-based resource management became supported also for another
+programming interface by contributions of Jonathan Cameron on 2024-02-17.
+See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
+property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
 
-I checked on the system I have and the features are 0x84, so the CAP_PDO_DETAILS aren't set.
-I can do a formal patch if the approach is better, I ended up doing:
+* Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
 
-@@ -645,9 +645,13 @@ static int ucsi_read_pdos(struct ucsi_connector *con,
- static int ucsi_get_pdos(struct ucsi_connector *con, enum typec_role role,
-                         int is_partner, u32 *pdos)
+* Reduce the scope for the local variable =E2=80=9Cfwnode=E2=80=9D.
+
+Fixes: fe6d8a9c8e64 ("usb: typec: anx7411: Add Analogix PD ANX7411 support=
+")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/usb/typec/anx7411.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/typec/anx7411.c b/drivers/usb/typec/anx7411.c
+index b12a07edc71b..9fb52f233a30 100644
+=2D-- a/drivers/usb/typec/anx7411.c
++++ b/drivers/usb/typec/anx7411.c
+@@ -16,6 +16,7 @@
+ #include <linux/of_graph.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/property.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+@@ -1142,11 +1143,11 @@ static int anx7411_typec_port_probe(struct anx7411=
+_data *ctx,
  {
-+       struct ucsi *ucsi = con->ucsi;
-        u8 num_pdos;
-        int ret;
- 
-+       if (!(ucsi->cap.features & UCSI_CAP_PDO_DETAILS))
-+               return 0;
-+
-        /* UCSI max payload means only getting at most 4 PDOs at a time */
-        ret = ucsi_read_pdos(con, role, is_partner, pdos, 0, UCSI_MAX_PDOS);
+ 	struct typec_capability *cap =3D &ctx->typec.caps;
+ 	struct typec_params *typecp =3D &ctx->typec;
+-	struct fwnode_handle *fwnode;
+ 	const char *buf;
+ 	int ret, i;
 
-And this did indeed squelch the 'error' message.
+-	fwnode =3D device_get_named_child_node(dev, "connector");
++	struct fwnode_handle *fwnode __free(fwnode_handle)
++				     =3D device_get_named_child_node(dev, "connector");
+ 	if (!fwnode)
+ 		return -EINVAL;
 
-Couple of notes:
- - I don't know this area very well, so don't know if there are risks of any regressions in other circumstances. I think it's pretty safe, but if any experts have an opinion that would be appreciated.
- - It means that there isn't a log message saying that PDO capabilities are not available. Are there going to be power related tooling that won't work and it would be useful to have that message available?
+@@ -1237,7 +1238,7 @@ static int anx7411_typec_port_probe(struct anx7411_d=
+ata *ctx,
+ 		typecp->caps_flags |=3D HAS_SINK_WATT;
+ 	}
 
-Thanks
-Mark
+-	cap->fwnode =3D fwnode;
++	cap->fwnode =3D no_free_ptr(fwnode);
+
+ 	ctx->typec.role_sw =3D usb_role_switch_get(dev);
+ 	if (IS_ERR(ctx->typec.role_sw)) {
+=2D-
+2.45.1
+
 
