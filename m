@@ -1,208 +1,236 @@
-Return-Path: <linux-kernel+bounces-201892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F15F8FC4D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:43:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA6C8FC4DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086681F23C12
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8E49285610
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D43918C33D;
-	Wed,  5 Jun 2024 07:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C853918FDAA;
+	Wed,  5 Jun 2024 07:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HTV5YG13"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="ioZ+xpME";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l4X5pr2j"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAF818C34D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80D518C34D;
+	Wed,  5 Jun 2024 07:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717573398; cv=none; b=hkzGfTq/xg2ra3NPHy7iRoARqYkEuudoibsiUGWhJ9fI92TQV8M3h3uZVBLBetUfiuzH8oPoZkgoJWSn1BfKuZ7cA+rMvggEkGrrda5xaWN3lZ1/jb8cwlfOymQ80L1BcDF2ak0cojjsWYgl9HwFkg8w8dKJiY11ePGWe09YDD8=
+	t=1717573413; cv=none; b=tQH9ivxpysk6KIeKe5f9zscB+JWvGlFKKG0OJSMkzEGXWsZ6N7GaX30SUFY7ToZ32eAa+jc5Y8DmyOcdb+45urbDLGJVIIlB8y4Z+KelJHHrtBTMA1zOCC20DofF//TytqxSqNhte6+9gA8B1laX6hH0/X9EQLfxm2L9VDdmJzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717573398; c=relaxed/simple;
-	bh=l9sh3+D2x2FynAmR7WZMbPzPELRCyU/6nGYVYGh1LAE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N6kR0e1t5fkEtPC1qcfx3RYCPuh2hF4ah4R3cmKURtDhL9e1uDpAPxaKowagW6tD2fwznROOGD0b2lLXEoD6YJvaS0U6PZ43zGRNpX+33aN4Xx5H+tfJx2ojza8+20b1cGGPo3jlJGT+bERk3XgLIumAlawMxLKmbpclhS4pSoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HTV5YG13; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ea9386cde0so65802591fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717573393; x=1718178193; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iyjciw8omyqWPArx3sDq7VVjOnmIsURoasHM7cx8Qy0=;
-        b=HTV5YG13McBHbauqZYCInJNrmgXetedB/PCKdKjY1kwXtdxdhowEOQgO0OOL9hlmjr
-         4+pGWrjna1UZBZNtSeq7WeEXK7B7yTitBmw6kECgsoTbz+cQQW6ZCBYF68d1qLG6CZZs
-         jO75kBaem+6XdTzgXNDI1X6BXzrELrACMU9qrgvheHimU2tTxX8sT90uoRoXxlteL+4i
-         n8hcmdH7ucs8Ynob6uMB3S+C4fxMie6q4C6OUDUfUM/tlaMd+JzSVJw4tg3NYmK+Lea8
-         +/UqJAX/37Gf9VTavnoRp+j3OI2b8/zQ0h7IGLmR11cHRskxd6FyuJOjRxabrsKL74eq
-         3daQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717573393; x=1718178193;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iyjciw8omyqWPArx3sDq7VVjOnmIsURoasHM7cx8Qy0=;
-        b=e9dMR7ttBTL+H3x4/hV7tbm0cNb/9xM+Q/bczTvDFd3xmo6A0VPF1q0u7pmIkhOrFN
-         p1uiJVpM8/x0D5DZ6VDQ7KaQm7CuyXpxCQQAaG5BRl/PZwvbRQENfZIbTmWJrtkZIlar
-         4gFlI89vKxdoXQh7srKirVqnlmK8sgNgUFrJWTs9mOtihE8EcHDLOSvwfSt7IcHbL2o3
-         5pQTHcOkw6qL/rBh5BL5pn7LRmM3eWZm6bnhnD8t8raC8oM7WI1mHKDtEPUV6mf8DTLW
-         Ne3A3O7bv6YtQl75Y8BxbSs18Cy/vsaNo1gGh8VlS7a9lkpANe8cKmA5eI8IIIaDIxCp
-         tNDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVt6GdqlT3xZqfqB+npsb4+Ykwt1pZmxiD8YmWgrrFN0LGummdOHYpyna0DJVdfNNfsgNWWBEaewj+VEX7Gnf3QtMxyj0kzUrvBaB0Z
-X-Gm-Message-State: AOJu0YxlaPYYpPd54/J6P3e/TDOtPXSZPAdBKdPaluLSmCDzOuAjk6ee
-	Leoy0p3RyyuO7eD1mvBVdumoU7yLE4Q71HDhXDGZ1/twjWH1yEgQlsWgFBEri06CZnKLpwV/flG
-	euvGzyTwZWvWFn4EuCwjd1caMTArM1fDIlNGIKg==
-X-Google-Smtp-Source: AGHT+IFiHKKNVWneGGr50WzFkObsQ9oUM8GSCkWSrf/BaWFo5gFPEh8dKnIHSJrU2YjGwU9b3MU7THwqkd1DB3CAvSE=
-X-Received: by 2002:a2e:2416:0:b0:2e2:72a7:843c with SMTP id
- 38308e7fff4ca-2eac7a54169mr9164901fa.36.1717573393470; Wed, 05 Jun 2024
- 00:43:13 -0700 (PDT)
+	s=arc-20240116; t=1717573413; c=relaxed/simple;
+	bh=tUU99Qo+LcQZiTUCE3P4DUm0whUVST6beixKmzD7IDI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=HrWrW3j0h9IOTbPu8DImk7J/OxHcGXVqXj0FkbugfV0NgfFPe0vHf2987jiCrZ/v56S7VzaSeA4wH4b1PGvh1s38wM1JHUw/c2mTXaj1pJq7ogmWWYyHVAU+Tz9rLplYIUBlbpYlwJbyNWgwo+ldb3QbL6TzARHF+TFQbvd7/cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=ioZ+xpME; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l4X5pr2j; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id BCF9D13800BA;
+	Wed,  5 Jun 2024 03:43:29 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute2.internal (MEProxy); Wed, 05 Jun 2024 03:43:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1717573409;
+	 x=1717659809; bh=SMBKMXdKR5AV8mqVmMCVhzgXj9mxs6ky4diUGGrkC60=; b=
+	ioZ+xpME8XXXb4TB0fDP6XVC6IhGZIPW5Dw0m1nA3Po0zv5NG6j29/GdRhtP6Nv6
+	vn/lW3S2Zq6cWNNmICDym65dKCVJk2+bdAEs7RPTFIX/C8qs8XCil+/6/ZLCLHl6
+	XSN8v35x5wBPc5y+xN7mnpw0lDBi+eth9F6A6wYGREBQqqNalEmh3FoNYB+iRx6X
+	khItyL/bLJEn182CkRHu/aV+56Jv6OXZeachjh+6jvVAXZxQmQAspG6XvytaHwmi
+	qfxvI5otENveGCcnDmaS22Ka4AHSzjReUInGR/gt/H3Gcy10WTd/WS/tVdnI+0Bi
+	USW5sk0yk5mbbwhsxZytTQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717573409; x=
+	1717659809; bh=SMBKMXdKR5AV8mqVmMCVhzgXj9mxs6ky4diUGGrkC60=; b=l
+	4X5pr2jsQ8qr0USyNoG15lEi10cl4mjlugVL9EvxdT8iMkdCyxKPx6ktP44Cqq2r
+	uI8cZtKZGdjrd56UOmWUG68OP3CYF/jEFfYftggxASYasK5QJV44YcTAJqHnAroG
+	jS5HxVPVdB0DknVcrDxHAyQTBNf/vwb/MY56y6b48OZrGXOg3FZPRjP6lrgN7U49
+	Bu/08526H1c4PS07mvlcDXpnMXJ7+A4OLfzakrGqOquBFIiYLSEe+K+hDZvnewNO
+	j2u/+bhNsRKsKRyUW9WjMHFl5y3bxUeNakpsNfnn7ZPxdAlc+/Q717y4XPV7EBPd
+	raPUqSY/G1aHn5GuYsQBA==
+X-ME-Sender: <xms:IBdgZrLFySDRu-Zdc35cv0_qNXxekwkXOaLNl2O_8wQwDs5_gpiH2w>
+    <xme:IBdgZvI0lSFnL1qPwTPNaVW6oEJkVz0E_1HrXClGgzjCvtQ4UaWjs78CWWZn4wjLZ
+    20KTM2lqBBvkdHJRCc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelhedguddvvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    nfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrg
+    htthgvrhhnpeefuefghfdvueefheeiledvgeefffevgeelhedtvdehgeekteeugedtgeeu
+    hedvleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hluhhkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:IBdgZjtPkfyMM-7qW5e7mEz01k4W_odjU_JGvSrPhBEirZeaML6ZeA>
+    <xmx:IRdgZkYqVZB5SoVir5zfSDyMOhy4HS3iVWWBq_2--ftdFtmgTr0crA>
+    <xmx:IRdgZiaoCeE8WZGYjKOJf5a12QSqLR5h4cJXJzKQDvGPRR6IcSFgGQ>
+    <xmx:IRdgZoBYHfay46cMfCieapI8Im4wYwlgabCRbmplMJWQARXaInDcuw>
+    <xmx:IRdgZpWJGn1yBuWMUC89ZRh7rqW8taKNoDJeKQ40k8IeETvlQy1tDTqW>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id C399A2340080; Wed,  5 Jun 2024 03:43:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528-pwrseq-v8-0-d354d52b763c@linaro.org> <20240528-pwrseq-v8-10-d354d52b763c@linaro.org>
- <20240605065245.GB3452034@maili.marvell.com>
-In-Reply-To: <20240605065245.GB3452034@maili.marvell.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 5 Jun 2024 09:43:02 +0200
-Message-ID: <CAMRc=MfyCJgOCBSh7AY4jEujWXGqZBB7Tnkq0VRrAKKCcJ9hAQ@mail.gmail.com>
-Subject: Re: [PATCH v8 10/17] power: sequencing: implement the pwrseq core
-To: Ratheesh Kannoth <rkannoth@marvell.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Elliot Berman <quic_eberman@quicinc.com>, Caleb Connolly <caleb.connolly@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Alex Elder <elder@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>, ath12k@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel@quicinc.com, 
-	Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <4de768c5-aae5-4fda-a139-a8b73c8495a1@app.fastmail.com>
+In-Reply-To: <f126562f-54c8-de58-3f98-7375c129f66a@linux.intel.com>
+References: <20240421194320.48258-1-mohamed.ghanmi@supcom.tn>
+ <20240421194320.48258-2-mohamed.ghanmi@supcom.tn>
+ <de8fcb82-3e08-41e6-b099-75df27c6df23@redhat.com>
+ <aee09e9f-6269-43ef-b509-a9a7b5e1752f@app.fastmail.com>
+ <f126562f-54c8-de58-3f98-7375c129f66a@linux.intel.com>
+Date: Wed, 05 Jun 2024 19:43:08 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ "Mohamed Ghanmi" <mohamed.ghanmi@supcom.tn>, corentin.chary@gmail.com,
+ platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/1] platform/x86: asus-wmi: add support for vivobook fan
+ profiles
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 5, 2024 at 8:52=E2=80=AFAM Ratheesh Kannoth <rkannoth@marvell.c=
-om> wrote:
->
-> On 2024-05-29 at 00:33:18, Bartosz Golaszewski (brgl@bgdev.pl) wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Implement the power sequencing subsystem allowing devices to share
-> > complex powering-up and down procedures. It's split into the consumer
-> > and provider parts but does not implement any new DT bindings so that
-> > the actual power sequencing is never revealed in the DT representation.
-> >
-> > Tested-by: Amit Pundir <amit.pundir@linaro.org>
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> > +
-> > +static struct pwrseq_unit_dep *pwrseq_unit_dep_new(struct pwrseq_unit =
-*unit)
-> nit. pwrseq_unit_dep_alloc/create rhymes well with pwrseq_unit_dep_free()=
-,
 
-So what?
 
-> > +static void pwrseq_unit_free_deps(struct list_head *list)
-> > +{
-> > +     struct pwrseq_unit_dep *dep, *next;
-> > +
-> > +     list_for_each_entry_safe(dep, next, list, list) {
-> no need of 'locks' to protect against simutaneous 'add' ?
+On Mon, 3 Jun 2024, at 10:29 PM, Ilpo J=C3=A4rvinen wrote:
+> On Mon, 3 Jun 2024, Luke Jones wrote:
+> > On Mon, 29 Apr 2024, at 10:20 PM, Hans de Goede wrote:
+> > > On 4/21/24 9:43 PM, Mohamed Ghanmi wrote:
+> > > > Add support for vivobook fan profiles wmi call on the ASUS VIVOB=
+OOK
+> > > > to adjust power limits.
+> > > >=20
+> > > > These fan profiles have a different device id than the ROG series
+> > > > and different order. This reorders the existing modes and adds a=
+ new
+> > > > full speed mode available on these laptops.
+> > > >=20
+> > > > As part of keeping the patch clean the throttle_thermal_policy_a=
+vailable
+> > > > boolean stored in the driver struct is removed and
+> > > > throttle_thermal_policy_dev is used in place (as on init it is z=
+eroed).
+> > > >=20
+> > > > Signed-off-by: Mohamed Ghanmi <mohamed.ghanmi@supcom.tn>
+> > > > Co-developed-by: Luke D. Jones <luke@ljones.dev>
+> > > > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> > > > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > > > ---
+> > > >  drivers/platform/x86/asus-wmi.c            | 93 ++++++++++++---=
+-------
+> > > >  include/linux/platform_data/x86/asus-wmi.h |  1 +
+> > > >  2 files changed, 51 insertions(+), 43 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/=
+x86/asus-wmi.c
+> > > > index 3c61d75a3..1f54596ca 100644
+> > > > --- a/drivers/platform/x86/asus-wmi.c
+> > > > +++ b/drivers/platform/x86/asus-wmi.c
+>=20
+> > > > @@ -3747,7 +3753,10 @@ static ssize_t throttle_thermal_policy_st=
+ore(struct device *dev,
+> > > >  return count;
+> > > >  }
+> > > > =20
+> > > > -// Throttle thermal policy: 0 - default, 1 - overboost, 2 - sil=
+ent
+> > > > +/*
+> > > > + * Throttle thermal policy: 0 - default, 1 - overboost, 2 - sil=
+ent
+> > > > + * Throttle thermal policy vivobook : 0 - default, 1 - silent, =
+2 - overboost, 3 - fullspeed
+> > > > + */
+> > >=20
+> > > throttle_thermal_policy_write() always expects normal (non vivoboo=
+k) values and
+> > > then translates those to vivo values, so this comment is not corre=
+ct.
+> > >=20
+> > > The only difference is that vivobook also has fullspeed, but the w=
+ay userspace
+> > > sees it 1/2 or silent/overspeed are not swapped, since the swappin=
+g is taking
+> > > care of in throttle_thermal_policy_write().
+> > >=20
+> > > Also the new fullspeed is not exported through the platform_profil=
+e interface,
+> > > for setting values this is somewhat ok, but fullspeed can be set t=
+hrough
+> > > sysfs, and this will then cause asus_wmi_platform_profile_get() to=
+ fail
+> > > with -EINVAL, so this need to be fixed. Either map fullspeed to
+> > > PLATFORM_PROFILE_PERFORMANCE in asus_wmi_platform_profile_get(), o=
+r add
+> > > a new platform_profile value for this.
+> > >
+> >=20
+> > I would much prefer if "fullspeed" was not included at all unless it=
+ was=20
+> > an individual setting. It very rarely contributes anything good to t=
+he=20
+> > driver, and most certainly won't be of value in the platform_profile.
+> >=20
+> > Otherwise, what is the status on this?=20
+>=20
+> Hi,
+>=20
+> I was expecting an update that addresses Hans' review comment.
+>=20
+> Luke, are you arguing that his comment is not valid and v3 is fine?
+>=20
+> (In any case, I've summoned v3 back from archive into active patches i=
+n=20
+> patchwork so this doesn't get forgotten if v4 is not needed).
+>=20
+> --=20
+> i.
 
-No, this only happens once during release.
+Hi.
 
-> > +
-> > +static int pwrseq_unit_setup_deps(const struct pwrseq_unit_data **data=
-,
-> > +                               struct list_head *dep_list,
-> > +                               struct list_head *unit_list,
-> > +                               struct radix_tree_root *processed_units=
-)
-> > +{
-> > +     const struct pwrseq_unit_data *pos;
-> > +     struct pwrseq_unit_dep *dep;
-> > +     struct pwrseq_unit *unit;
-> > +     int i;
-> > +
-> > +     for (i =3D 0; data[i]; i++) {
-> Can we add range for i ? just depending on data[i] to be zero looks to be=
- risky.
->
+I am saying I would like to see ASUS_THROTTLE_THERMAL_POLICY_FULLSPEED r=
+emoved, or placed somewhere else such as in <sysfs>/asus-nb-wmi/hwmon/hw=
+mon3/pwm1_enable.
 
-Why? It's perfectly normal to expect users to end the array with a
-NULL pointer. The docs say these arrays must be NULL-terminated.
+It certainly shouldn't be included in platform_profile and I'm not keen =
+on seeing it in thorttle_thermal_policy either.
 
-> > +             pos =3D data[i];
-> > +
-> > +             unit =3D pwrseq_unit_setup(pos, unit_list, processed_unit=
-s);
-> > +             if (IS_ERR(unit))
-> > +                     return PTR_ERR(unit);
-> > +
-> > +             dep =3D pwrseq_unit_dep_new(unit);
-> > +             if (!dep) {
-> > +                     pwrseq_unit_decref(unit);
-> This frees only one 'unit'. is there any chance for multiple 'unit', then=
- better clean
-> up here ?
+A lot of this reasoning is now coming from the refactor I've just done o=
+f asus-wmi and the "features" such as this one to place them under firmw=
+are_attributes class and begin deprecation of them in asus_wmi. From wha=
+t I've achieved so far with it it is much *much* more suitable than this=
+ ad-hoc style of adding features I've been doing here (I'll submit this =
+work soon, it repalces the last patch series I did).
 
-The references to those will be dropped in pwrseq_release().
+In light of the above I'm considering the possibility of removing thrott=
+le_thermal_policy completely to wholly favour the use of platform_profil=
+e. It doesn't make all that much sense to have two different things mani=
+pulating the same thing - and as such I don't think the "full speed fan"=
+ setting fits at all with platform_profile as it is not a performance tw=
+eak.
 
-> > +
-> > +     /*
-> > +      * From this point onwards the device's release() callback is
-> > +      * responsible for freeing resources.
-> > +      */
-> > +     device_initialize(&pwrseq->dev);
-> > +
-> > +     ret =3D dev_set_name(&pwrseq->dev, "pwrseq.%d", pwrseq->id);
-> > +     if (ret)
-> > +             goto err_put_pwrseq;
-> > +
-> > +     pwrseq->owner =3D config->owner ?: THIS_MODULE;
-> > +     pwrseq->match =3D config->match;
-> > +
-> > +     init_rwsem(&pwrseq->rw_lock);
-> > +     mutex_init(&pwrseq->state_lock);
-> > +     INIT_LIST_HEAD(&pwrseq->targets);
-> > +     INIT_LIST_HEAD(&pwrseq->units);
-> > +
-> > +     ret =3D pwrseq_setup_targets(config->targets, pwrseq);
-> > +     if (ret)
-> > +             goto err_put_pwrseq;
-> > +
-> > +     scoped_guard(rwsem_write, &pwrseq_sem) {
-> > +             ret =3D device_add(&pwrseq->dev);
-> > +             if (ret)
-> > +                     goto err_put_pwrseq;
-> > +     }
-> > +
-> > +     return pwrseq;
-> > +
-> > +err_put_pwrseq:
-> no need to kfree(pwrseq) ?
+Mohamed, I would be happy to include the Vivo support so long as:
+1. the fullspeed setting is removed
+2. the modes map correctly to platform_profile
 
-It's literally put on the next line?
+I hope this makes sense. Very sorry about the previous brief response (I=
+ was recovering from surgery trauma).
 
-Bart
+Cheers,
+Luke.
+
 
