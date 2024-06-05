@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-202140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF358FC844
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:47:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97FF48FC848
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298BE282792
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8201C22D9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A3D18FDAA;
-	Wed,  5 Jun 2024 09:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D548818FDB0;
+	Wed,  5 Jun 2024 09:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TCh2FTyP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aQCoWDdN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65100D268;
-	Wed,  5 Jun 2024 09:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526DF18FC90
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580837; cv=none; b=e7xY4fz+73c+crzY0Urjhu4Tq25ama2H+d906TUgWHsH5Ssr9eTy0/uytD0m2IEGg1P1nJ7Erx+vyPEY+qdBXqO0IeGGbmt2IFhNtwep3LzwkJvZzJRLUehbzyz5Fun3cH4jtKciFx2VeLCugWcj3CMkEBsfGy58/ScAszN6eXY=
+	t=1717580892; cv=none; b=saGaKEfgxQOTiQcz7XXNZBmWTIiDLPilWN4SRX4T9sOlPpjQU5Z5NKEzFEa6dgzlGU/TmyrEaK0mlRB8xm+KVI+qp7pqU9lT20bboSb+uDJ9O+1HdJW6MXpHF9Y2T9Oa64TP59qu8o2q3Bl0U1sXUF1hx+yu2nYvNBR5ur7qWqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580837; c=relaxed/simple;
-	bh=ulBE34BR3uS7bDhHAEt6eLLOzMIT1k2sez+8leC7G5A=;
+	s=arc-20240116; t=1717580892; c=relaxed/simple;
+	bh=C4iwgHy0Vtpi0Ntz+kAPqXOSt3BXAywIVancJW3S7TA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R262tTyZSXLGZ3aLMBPJ55oHkY8jxSpyfS6RmUqxaKZZ1RETM56T3Aq7gbRXrmTgaeCEUWv5uMjrId7yTn99oQwBLUTM66OJMj4qEHrcIU5mhO2xxlVsHLEVGjqTfAm14tlewnVwHrp8OQmbMCIQTYWBMEAg2tQNqBvqXFhT8Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TCh2FTyP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5628440E016E;
-	Wed,  5 Jun 2024 09:47:13 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id l7M77ZkLGiLI; Wed,  5 Jun 2024 09:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717580828; bh=HG9ZhMggVLi4IgYZk4UTu1n5WmntVlynhD5JWtBGG+g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TCh2FTyP/+RQ0++qDHwgkr92rqF1d5kJocKrpKomlNPzS3XZkAEIX+ahtsfac0XPP
-	 BsHJvY4r8X8MMaY58a3SmACgbNEjgmDgZK0Q9JBtxwzi9yNqymMpoOipZ9k4+vJ+Hu
-	 Z1XjGdrOO9YgNLDpz1fckOmHK9ZnS+qBo6xYVAy+0ADgNc2xL154zyu654jkOrPvpA
-	 cjD+Ehl8lazJuA2aM/4MD2Y5XzI5pr3aDzVzJjqarYHPi1vLaLZ1ePwbLx0vBpEARB
-	 yTNW6qO/vdKOhfY+wUXd++VqMYv7G+dZJBxpQJ7fc0Id4xRaxyJWU7N4C14PSDR+VQ
-	 gl8TaDQnGm/Syj2IjxmVOViJSQjHzPOMCnSzI3fJjwmtXMmuXl/9G9JSFcK4ofToom
-	 gRfV1ObrQVG/Hz+SkkYXmNdRrEHAiWemqpFXxfQjUAOvHCQGifIJ4Nzlez0QzO/HyB
-	 WbewDeVBoCOGyADQYBCmuLzelZ99WqBcnT50CB6KzXqVX911vX5nbnmvPPqHuvegaF
-	 k07DsPxg1CxH+4Aw62rLuas/+1BXKqXW6nOeAH+fG066hJe9HOPUX1eklhX0hjrsXS
-	 WIOHpg4Mh6h1rll2Ln1aHWsZSqBgvbyYwIF2p+I3tul/KX4puvEPD95hlGuqZ25hhV
-	 Ng81XFYZclIGWzpIXNIHfVQk=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	 Content-Type:Content-Disposition:In-Reply-To; b=h33oItTvtHbqXZjRw42FGJAzebu48EoGV4BAXNP9aBPiBjWtO59YSKWomG4S+AE/0Ury+44ZZsev14n4ZP2zKoczRP4ob1uqmMlWb+1b9fUlxcTn4TBb8MgLVBlvYX9CSdm9npiglmNEP3xGALu7g1VTenOPug5uaX2GjJGX4B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aQCoWDdN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717580889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=opY4p+BpYUBWLdwIooIw98BXTUX1WcY1hsxBx/R5iBM=;
+	b=aQCoWDdNl1VR8+RkaBf1SDI8KesjZyjMRydry/QoMsBiXBCTp1aB9/qZeA9HIrUj6uvpAa
+	cbSRUQ8nhI4ZaQp8zj1HCJ4OZkaRSxcCW58V1haq9PVFqkPdJwCODIdCdhUgLanFE6elj3
+	a4YhLQtlBisfuKOh/hSGauK515AbBKQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-333-4X7cLI-bOh-8HDmhpp1D3Q-1; Wed, 05 Jun 2024 05:48:03 -0400
+X-MC-Unique: 4X7cLI-bOh-8HDmhpp1D3Q-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CAA7A40E0176;
-	Wed,  5 Jun 2024 09:47:01 +0000 (UTC)
-Date: Wed, 5 Jun 2024 11:47:00 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, x86@kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v3 2/8] EDAC/amd64: Check return value of amd_smn_read()
-Message-ID: <20240605094700.GVZmA0FK-8GcYsVdpm@fat_crate.local>
-References: <20240523-fix-smn-bad-read-v3-0-aa44c622de39@amd.com>
- <20240523-fix-smn-bad-read-v3-2-aa44c622de39@amd.com>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1F6BF101A520;
+	Wed,  5 Jun 2024 09:48:03 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.43])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id DFE9E492BF6;
+	Wed,  5 Jun 2024 09:47:57 +0000 (UTC)
+Date: Wed, 5 Jun 2024 17:47:53 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Changhui Zhong <czhong@redhat.com>
+Cc: Li Nan <linan666@huaweicloud.com>, axboe@kernel.dk,
+	ZiyangZhang@linux.alibaba.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
+	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] ublk_drv: fix NULL pointer dereference in
+ ublk_ctrl_start_recovery()
+Message-ID: <ZmA0Se+t/LZihBKp@fedora>
+References: <20240529095313.2568595-1-linan666@huaweicloud.com>
+ <Zl0QpCbYVHIkKa/H@fedora>
+ <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
+ <CAGVVp+XD5MbYOWL4pbLMxXL0yNKO5NJ84--=KVnW6w5-GF7Drw@mail.gmail.com>
+ <918f128b-f752-2d66-ca60-7d9c711ed928@huaweicloud.com>
+ <CAGVVp+V6XGmE_LyOYM3z8cEOzkvQZy=2Fnr5V3G4+DchxAz3Qw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,28 +78,187 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240523-fix-smn-bad-read-v3-2-aa44c622de39@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGVVp+V6XGmE_LyOYM3z8cEOzkvQZy=2Fnr5V3G4+DchxAz3Qw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-On Thu, May 23, 2024 at 01:26:53PM -0500, Yazen Ghannam wrote:
-> Check the return value of amd_smn_read() before saving a value. This
-> ensures invalid values aren't saved. The struct umc instance is
-> initialized to 0 during memory allocation. Therefore, a bad read will
-> keep the value as 0 providing the expected Read-as-Zero behavior.
+On Wed, Jun 05, 2024 at 03:20:34PM +0800, Changhui Zhong wrote:
+> On Wed, Jun 5, 2024 at 9:41 AM Li Nan <linan666@huaweicloud.com> wrote:
+> >
+> >
+> >
+> > 在 2024/6/4 9:32, Changhui Zhong 写道:
+> > > On Mon, Jun 3, 2024 at 10:20 AM Li Nan <linan666@huaweicloud.com> wrote:
+> > >>
+> > >>
+> > >>
+> > >> 在 2024/6/3 8:39, Ming Lei 写道:
+> > >>
+> > >> [...]
+> > >>
+> > >>>> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> > >>>> index 4e159948c912..99b621b2d40f 100644
+> > >>>> --- a/drivers/block/ublk_drv.c
+> > >>>> +++ b/drivers/block/ublk_drv.c
+> > >>>> @@ -2630,7 +2630,8 @@ static void ublk_queue_reinit(struct ublk_device *ub, struct ublk_queue *ubq)
+> > >>>>    {
+> > >>>>       int i;
+> > >>>>
+> > >>>> -    WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq)));
+> > >>>> +    if (WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq))))
+> > >>>> +            return;
+> > >>>
+> > >>> Yeah, it is one bug. However, it could be addressed by adding the check in
+> > >>> ublk_ctrl_start_recovery() and return immediately in case of NULL ubq->ubq_daemon,
+> > >>> what do you think about this way?
+> > >>>
+> > >>
+> > >> Check ub->nr_queues_ready seems better. How about:
+> > >>
+> > >> @@ -2662,6 +2662,8 @@ static int ublk_ctrl_start_recovery(struct
+> > >> ublk_device *ub,
+> > >>           mutex_lock(&ub->mutex);
+> > >>           if (!ublk_can_use_recovery(ub))
+> > >>                   goto out_unlock;
+> > >> +       if (!ub->nr_queues_ready)
+> > >> +               goto out_unlock;
+> > >>           /*
+> > >>            * START_RECOVERY is only allowd after:
+> > >>            *
+> > >>
+> > >>>
+> > >>> Thanks,
+> > >>> Ming
+> > >>
+> > >> --
+> > >> Thanks,
+> > >> Nan
+> > >>
+> > >
+> > >
+> > > Hi,Nan
+> > >
+> > > After applying your new patch, I did not trigger "NULL pointer
+> > > dereference" and "Warning",
+> > > but hit task hung "Call Trace" info, please check
+> > >
+> > > [13617.812306] running generic/004
+> > > [13622.293674] blk_print_req_error: 91 callbacks suppressed
+> > > [13622.293681] I/O error, dev ublkb4, sector 233256 op 0x1:(WRITE)
+> > > flags 0x8800 phys_seg 1 prio class 0
+> > > [13622.308145] I/O error, dev ublkb4, sector 233256 op 0x0:(READ)
+> > > flags 0x0 phys_seg 2 prio class 0
+> > > [13622.316923] I/O error, dev ublkb4, sector 233264 op 0x1:(WRITE)
+> > > flags 0x8800 phys_seg 1 prio class 0
+> > > [13622.326048] I/O error, dev ublkb4, sector 233272 op 0x0:(READ)
+> > > flags 0x0 phys_seg 1 prio class 0
+> > > [13622.334828] I/O error, dev ublkb4, sector 233272 op 0x1:(WRITE)
+> > > flags 0x8800 phys_seg 1 prio class 0
+> > > [13622.343954] I/O error, dev ublkb4, sector 233312 op 0x0:(READ)
+> > > flags 0x0 phys_seg 1 prio class 0
+> > > [13622.352733] I/O error, dev ublkb4, sector 233008 op 0x0:(READ)
+> > > flags 0x0 phys_seg 1 prio class 0
+> > > [13622.361514] I/O error, dev ublkb4, sector 233112 op 0x0:(READ)
+> > > flags 0x0 phys_seg 1 prio class 0
+> > > [13622.370292] I/O error, dev ublkb4, sector 233192 op 0x1:(WRITE)
+> > > flags 0x8800 phys_seg 1 prio class 0
+> > > [13622.379419] I/O error, dev ublkb4, sector 233120 op 0x0:(READ)
+> > > flags 0x0 phys_seg 1 prio class 0
+> > > [13641.069695] INFO: task fio:174413 blocked for more than 122 seconds.
+> > > [13641.076061]       Not tainted 6.10.0-rc1+ #1
+> > > [13641.080338] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> > > disables this message.
+> > > [13641.088164] task:fio             state:D stack:0     pid:174413
+> > > tgid:174413 ppid:174386 flags:0x00004002
+> > > [13641.088168] Call Trace:
+> > > [13641.088170]  <TASK>
+> > > [13641.088171]  __schedule+0x221/0x670
+> > > [13641.088177]  schedule+0x23/0xa0
+> > > [13641.088179]  io_schedule+0x42/0x70
+> > > [13641.088181]  blk_mq_get_tag+0x118/0x2b0
+> > > [13641.088185]  ? gup_fast_pgd_range+0x280/0x370
+> > > [13641.088188]  ? __pfx_autoremove_wake_function+0x10/0x10
+> > > [13641.088192]  __blk_mq_alloc_requests+0x194/0x3a0
+> > > [13641.088194]  blk_mq_submit_bio+0x241/0x6c0
+> > > [13641.088196]  __submit_bio+0x8a/0x1f0
+> > > [13641.088199]  submit_bio_noacct_nocheck+0x168/0x250
+> > > [13641.088201]  ? submit_bio_noacct+0x45/0x560
+> > > [13641.088203]  __blkdev_direct_IO_async+0x167/0x1a0
+> > > [13641.088206]  blkdev_write_iter+0x1c8/0x270
+> > > [13641.088208]  aio_write+0x11c/0x240
+> > > [13641.088212]  ? __rq_qos_issue+0x21/0x40
+> > > [13641.088214]  ? blk_mq_start_request+0x34/0x1a0
+> > > [13641.088216]  ? io_submit_one+0x68/0x380
+> > > [13641.088218]  ? kmem_cache_alloc_noprof+0x4e/0x320
+> > > [13641.088221]  ? fget+0x7c/0xc0
+> > > [13641.088224]  ? io_submit_one+0xde/0x380
+> > > [13641.088226]  io_submit_one+0xde/0x380
+> > > [13641.088228]  __x64_sys_io_submit+0x80/0x160
+> > > [13641.088229]  do_syscall_64+0x79/0x150
+> > > [13641.088233]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+> > > [13641.088237]  ? do_io_getevents+0x8b/0xe0
+> > > [13641.088238]  ? syscall_exit_work+0xf3/0x120
+> > > [13641.088241]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+> > > [13641.088243]  ? do_syscall_64+0x85/0x150
+> > > [13641.088245]  ? do_syscall_64+0x85/0x150
+> > > [13641.088247]  ? blk_mq_flush_plug_list.part.0+0x108/0x160
+> > > [13641.088249]  ? rseq_get_rseq_cs+0x1d/0x220
+> > > [13641.088252]  ? rseq_ip_fixup+0x6d/0x1d0
+> > > [13641.088254]  ? blk_finish_plug+0x24/0x40
+> > > [13641.088256]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+> > > [13641.088258]  ? do_syscall_64+0x85/0x150
+> > > [13641.088260]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+> > > [13641.088262]  ? do_syscall_64+0x85/0x150
+> > > [13641.088264]  ? syscall_exit_to_user_mode+0x6c/0x1f0
+> > > [13641.088266]  ? do_syscall_64+0x85/0x150
+> > > [13641.088268]  ? do_syscall_64+0x85/0x150
+> > > [13641.088270]  ? do_syscall_64+0x85/0x150
+> > > [13641.088272]  ? clear_bhb_loop+0x45/0xa0
+> > > [13641.088275]  ? clear_bhb_loop+0x45/0xa0
+> > > [13641.088277]  ? clear_bhb_loop+0x45/0xa0
+> > > [13641.088279]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > > [13641.088281] RIP: 0033:0x7ff92150713d
+> > > [13641.088283] RSP: 002b:00007ffca1ef81f8 EFLAGS: 00000246 ORIG_RAX:
+> > > 00000000000000d1
+> > > [13641.088285] RAX: ffffffffffffffda RBX: 00007ff9217e2f70 RCX: 00007ff92150713d
+> > > [13641.088286] RDX: 000055863b694fe0 RSI: 0000000000000010 RDI: 00007ff92164d000
+> > > [13641.088287] RBP: 00007ff92164d000 R08: 00007ff91936d000 R09: 0000000000000180
+> > > [13641.088288] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000010
+> > > [13641.088289] R13: 0000000000000000 R14: 000055863b694fe0 R15: 000055863b6970c0
+> > > [13641.088291]  </TASK>
+> > >
+> > > Thanks，
+> > > Changhui
+> > >
+> >
+> > After applying the previous patch, will the test environment continue to
+> > execute test cases after WARN?
 > 
-> Furthermore, the __must_check attribute will be added to amd_smn_read().
-> Therefore, this change is required to avoid compile-time warnings.
+> a few days ago，test with the previous patch, the test environment
+> continued to execute test cases after WARN,
+> and I terminated the test when I observed a WARN，so I did not observe
+> the subsequent situation.
 > 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Cc: stable@vger.kernel.org
+> > I am not sure whether this issue has always
+> > existed but was not tested becasue of WARN, or whether the new patch
+> > introduced it.
+> 
+> today， I re-test previous patch， and let it run for a long time，I
+> observed WARN and task hung，
+> looks this issue already existed and not introduced by new patch.
 
-Not really stable material. Zapped and applied.
+Hi Changhui,
 
-Thx.
+The hang is actually expected because recovery fails.
 
--- 
-Regards/Gruss,
-    Boris.
+Please pull the latest ublksrv and check if the issue can still be
+reproduced:
 
-https://people.kernel.org/tglx/notes-about-netiquette
+https://github.com/ublk-org/ublksrv
+
+BTW, one ublksrv segfault and two test cleanup issues are fixed.
+
+Thanks,
+Ming
+
 
