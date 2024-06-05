@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-202135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7818FC828
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 331788FC558
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3221F2536F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56AF1F21163
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBFE191477;
-	Wed,  5 Jun 2024 09:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ED618F2D5;
+	Wed,  5 Jun 2024 08:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="HKztHKAy"
-Received: from mail-m32109.qiye.163.com (mail-m32109.qiye.163.com [220.197.32.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EECE190045;
-	Wed,  5 Jun 2024 09:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.109
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EsVF6wF+"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367D21922FC;
+	Wed,  5 Jun 2024 08:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580514; cv=none; b=s7KzfjteOZnFIrGjGWGJ/4cJaStNS7ci+ih2E8q3/QQeHfMixYC1ECpuks5oh611VsV7/zeO0bknwzifQLjITZbOlmb/TNeH+jjW3gDa/ebnIjEsz3asf+EXkSj/kCodBSW4oXT9EeTHd2HcLKtg8CYHbnpKp6u2Wcxxchnpfr4=
+	t=1717574764; cv=none; b=hDFc8RRYiYCYpgDKoLPllbbZtuz7tqto0DWaa2fAwdv7rPgwgtm/g9ZFh1Ap17wUGklYQLPJPYOik0qqzyw5DA5IgvmRvM8iHW+2ZxDmC7fnlX+9fgD1rwewsGZ4EIid8EVgbkkBmiawOKUBz9RRvUus8GnpkxmopMV2Suae4+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580514; c=relaxed/simple;
-	bh=aBy7vIst2FBAPwGPshMP9IQOR/ZWBTluJmQmKcqLFng=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=B1Wuc9HdBAEh1qrWOZTOhpUIVL3yX6YpnYFtiVbsn0lFEH+xavNs83nOIynYdacxyu/7Lw5salveSfAxH85Af9V71ZyPqAsa1Ekptc/glfJAr3yXjkop41hI8vzJGo5trqs8b0nJlVe9TMdPlCRt+VNXi+TxsH3oWCiG+JJCDh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=HKztHKAy; arc=none smtp.client-ip=220.197.32.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=HKztHKAyn248J+U2sZbJUYIvNPzdyC8CP+mQ2KjqyTNYmiJhDfssPyipAMYZ5xPA/cLDR1afFNhE7W70ylj2c66NwNIfS49E1VD7eFCIEdzXNhd637fXZ8HBO+Qj2sjnt6VlG3sN7uImQPVEaJE6vZZ1JrqPCtudIeKdzg6gBO0=;
-	s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=DQv58ir20XJLj4kjCZ4hNT8DMmOKn/UVGcDrVAwYVW0=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [192.168.60.56] (unknown [103.29.142.67])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 2C7771A0423;
-	Wed,  5 Jun 2024 11:06:01 +0800 (CST)
-Message-ID: <10f48a9b-d66a-439e-80d3-54f8e01f015e@rock-chips.com>
-Date: Wed, 5 Jun 2024 11:05:59 +0800
+	s=arc-20240116; t=1717574764; c=relaxed/simple;
+	bh=MEkf72hbkHlFJhXcMR6uH2GgppBTzzZuYu9Bj9tZ+aw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SNzUIPk/ZfACMY9o5V75530YjATtiiOBvSSmKvqiSIOq7Prh8xJP62fTBxppiY7RrVXtfRKA4EBk7wbOcqqQfGFVDljAzDwDdRKOCsuqdxVL0aljjCdyxwTpVTJeGPygiFsF4yJtx39cn52uaQqEMA5zYr0omXKSZUwQq8od6Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EsVF6wF+; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=PVpxHacadX3v1Jpi8ge1wxLL0LsNrEZCAoTEQu6/AwY=;
+	b=EsVF6wF+sJPffZeWM1rhAChqEu4bITXYoFmrAnqS0mK4VKkvs9LSkCLg8f5DEH
+	8eNfxwJKTS/K/4ilGTCFTHukBib8y1BS23Pqlv1f77nLI0IeWH7X9261vp3HbVPZ
+	uwK43GaO4pVRvrK/XVhrjIhFKzEPMkILQvX/jZ3pT/85Q=
+Received: from [10.0.2.15] (unknown [111.205.43.230])
+	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wD3f6gCHGBmGz6GBw--.28481S2;
+	Wed, 05 Jun 2024 16:04:19 +0800 (CST)
+Message-ID: <ddfb1619-22bc-40f7-a595-f7600608da8a@163.com>
+Date: Wed, 5 Jun 2024 16:04:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,84 +46,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: bjorn.andersson@linaro.org
-Cc: andriy.shevchenko@linux.intel.com, devicetree@vger.kernel.org,
- djrscally@gmail.com, gregkh@linuxfoundation.org, hdegoede@redhat.com,
- heikki.krogerus@linux.intel.com, krzysztof.kozlowski+dt@linaro.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, rafael@kernel.org, robh+dt@kernel.org,
- sakari.ailus@linux.intel.com, =?UTF-8?B?5ZC06Imv5bOw?=
- <william.wu@rock-chips.com>, yubing.zhang@rock-chips.com, wmc@rock-chips.com
-References: <20220422222351.1297276-6-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v5 5/7] usb: typec: mux: Allow multiple mux_devs per mux
+Subject: Re: [PATCH v2] PCI: vmd: Create domain symlink before
+ pci_bus_add_devices()
 Content-Language: en-US
-Reply-To: 20220422222351.1297276-1-bjorn.andersson@linaro.org
-From: Frank Wang <frank.wang@rock-chips.com>
-In-Reply-To: <20220422222351.1297276-6-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGUtIVksaSkpLTUIZShgfGFUTARMWGhIXJBQOD1
-	lXWRgSC1lBWUpLSFVJQlVKT0lVTUxZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
-X-HM-Tid: 0a8fe65c587c03abkunm2c7771a0423
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NiI6Djo*EjNMQzJDEQ8SNxAx
-	PywaCRNVSlVKTEpMTk5NTE1ISEtDVTMWGhIXVR0JGhUQVQwaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQU9KTUI3Bg++
+To: Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>,
+ nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+ bhelgaas@google.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sunjw10@lenovo.com, ahuang12@lenovo.com
+References: <20240604135153.9182-1-sjiwei@163.com>
+ <c1885394-9edf-47a7-a4f8-1e456ba52316@intel.com>
+From: Jiwei Sun <sjiwei@163.com>
+In-Reply-To: <c1885394-9edf-47a7-a4f8-1e456ba52316@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3f6gCHGBmGz6GBw--.28481S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWftr1DKF17Gw47Wr47XFb_yoWrJFWrpF
+	WrWa1jvFW7Gr47XayDZ3W8WryYvw4vv34UJ3sxK347Z34DAFy09FW0gFs8ArWqvF1q93W2
+	vwsrXF1S9wn5KaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UYD7-UUUUU=
+X-CM-SenderInfo: 5vml4vrl6rljoofrz/1tbiWwb0mWV4JSWaTQAAs6
 
-Hi Bjorn,
 
-> In the Qualcomm platforms the USB/DP PHY handles muxing and orientation
-> switching of the SuperSpeed lines, but the SBU lines needs to be
-> connected and switched by external (to the SoC) hardware.
->
-> It's therefor necessary to be able to have the TypeC controller operate
-> multiple TypeC muxes and switches. Use the newly introduced indirection
-> object to handle this, to avoid having to taint the TypeC controllers
-> with knowledge about the downstream hardware configuration.
->
-> The max number of devs per indirection is set to 3, which account for
-> being able to mux/switch the USB HS, SS and SBU lines, as per defined
-> defined in the usb-c-connector binding. This number could be grown if
-> need arrises at a later point in time.
->
-> Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->
-> Changes since v4:
-> - None
->
->   drivers/usb/typec/mux.c  <https://lore.kernel.org/all/20220422222351.1297276-6-bjorn.andersson@linaro.org/#Z31drivers:usb:typec:mux.c>  | 128 ++++++++++++++++++++++++++++++++--------
->   1 filechanged  <https://lore.kernel.org/all/20220422222351.1297276-6-bjorn.andersson@linaro.org/#related>, 102 insertions(+), 26 deletions(-)
 
-With this commit, TCPC device shall match *two* endpoint port both for switch device and mux device
-if they have the same parent node like the following DT. It causes the callback funtion is invoked
-twice both for switch and mux in tcpm_mux_set() process.
+On 6/5/24 02:00, Paul M Stillwell Jr wrote:
+> On 6/4/2024 6:51 AM, Jiwei Sun wrote:
+>> From: Jiwei Sun <sunjw10@lenovo.com>
+>>
+>> During booting into the kernel, the following error message appears:
+>>
+>>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device''
+>>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: /dev/nvme1n1 is not attached to Intel(R) RAID controller.'
+>>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: No OROM/EFI properties for /dev/nvme1n1'
+>>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: no RAID superblock on /dev/nvme1n1.'
+>>    (udev-worker)[2149]: nvme1n1: Process '/sbin/mdadm -I /dev/nvme1n1' failed with exit code 1.
+>>
+>> This symptom prevents the OS from booting successfully.
+>>
+>> After a NVMe disk is probed/added by the nvme driver, the udevd executes
+>> some rule scripts by invoking mdadm command to detect if there is a
+>> mdraid associated with this NVMe disk. The mdadm determines if one
+>> NVMe devce is connected to a particular VMD domain by checking the
+>> domain symlink. Here is the root cause:
+>>
+>> Thread A                   Thread B             Thread mdadm
+>> vmd_enable_domain
+>>    pci_bus_add_devices
+>>      __driver_probe_device
+>>       ...
+>>       work_on_cpu
+>>         schedule_work_on
+>>         : wakeup Thread B
+>>                             nvme_probe
+>>                             : wakeup scan_work
+>>                               to scan nvme disk
+>>                               and add nvme disk
+>>                               then wakeup udevd
+>>                                                  : udevd executes
+>>                                                    mdadm command
+>>         flush_work                               main
+>>         : wait for nvme_probe done                ...
+>>      __driver_probe_device                        find_driver_devices
+>>      : probe next nvme device                     : 1) Detect the domain
+>>      ...                                            symlink; 2) Find the
+>>      ...                                            domain symlink from
+>>      ...                                            vmd sysfs; 3) The
+>>      ...                                            domain symlink is not
+>>      ...                                            created yet, failed
+>>    sysfs_create_link
+>>    : create domain symlink
+>>
+>> sysfs_create_link() is invoked at the end of vmd_enable_domain().
+>> However, this implementation introduces a timing issue, where mdadm
+>> might fail to retrieve the vmd symlink path because the symlink has not
+>> been created yet.
+>>
+>> Fix the issue by creating VMD domain symlinks before invoking
+>> pci_bus_add_devices().
+>>
+>> Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
+>> Suggested-by: Adrian Huang <ahuang12@lenovo.com>
+>> ---
+>> v2 changes:
+>>   - Add "()" after function names in subject and commit log
+>>   - Move sysfs_create_link() after vmd_attach_resources()
+>>
+>> ---
+>>   drivers/pci/controller/vmd.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+>> index 87b7856f375a..d0e33e798bb9 100644
+>> --- a/drivers/pci/controller/vmd.c
+>> +++ b/drivers/pci/controller/vmd.c
+>> @@ -925,6 +925,9 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+>>           dev_set_msi_domain(&vmd->bus->dev,
+>>                      dev_get_msi_domain(&vmd->dev->dev));
+>>   +    WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
+>> +                   "domain"), "Can't create symlink to domain\n");
+>> +
+> 
+> I think you should move the sysfs_remove_link() line in vmd_remove() down as well.
 
-arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
+Indeed, thanks for your suggestion. I will modify it in v3 patch.
 
-&usbdp_phy0 {
-         mode-switch;
-         orientation-switch;
-         [...]
-         port {
-                 #address-cells = <1>;
-                 #size-cells = <0>;
+Thanks,
+Regards,
+Jiwei
 
-                 usbdp_phy0_orientation_switch: endpoint@0 {
-                         reg = <0>;
-                         remote-endpoint = <&usbc0_orien_sw>;
-                 };
-
-                 usbdp_phy0_dp_altmode_mux: endpoint@1 {
-                         reg = <1>;
-                         remote-endpoint = <&dp_altmode_mux>;
-                 };
-         };
-};
-
-BR.
-Frank
+> 
+> Paul
+> 
+>>       vmd_acpi_begin();
+>>         pci_scan_child_bus(vmd->bus);
+>> @@ -964,9 +967,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+>>       pci_bus_add_devices(vmd->bus);
+>>         vmd_acpi_end();
+>> -
+>> -    WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
+>> -                   "domain"), "Can't create symlink to domain\n");
+>>       return 0;
+>>   }
+>>   
 
 
