@@ -1,202 +1,103 @@
-Return-Path: <linux-kernel+bounces-201716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62838FC221
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:16:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7B88FC22C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62F8D1F24589
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:16:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E419BB22DDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7064773454;
-	Wed,  5 Jun 2024 03:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmNEdt4k"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6EC12DDA2;
+	Wed,  5 Jun 2024 03:25:37 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECDB61FD6;
-	Wed,  5 Jun 2024 03:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A8F79DE;
+	Wed,  5 Jun 2024 03:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717557396; cv=none; b=CwyCkLKnibylpZNoxJUgYU83t/4I+z14QqmUTrykh44txiD45EDtjUkWclf3FHS1CL1DyDE+ljgoa1SZmRsT6Vv01GLT+73jbbjcbthj/Yrb0jsYKn4reIlNoZ/A60ZPfVnJq7abKxDqkykItd2v4JiyRlKeEWaMI/go5HpmS20=
+	t=1717557937; cv=none; b=jERCPHxKChtxbjd6Ydfm/NF5z8mNcwTvGp7RL53VKtSxnjUKO/0EA2Vw3CPPMIEpG2YA97eamWhO84U8Zi8lgK4lZ7KXYulHYcutjyBAe5hmTb3ajk7KYZg7AV9BAIuDUHrOPWtRFB8fsFQzU/ytS2EBTeBNRif4rsGh1LAlKUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717557396; c=relaxed/simple;
-	bh=v7bqHyIO4iVfIbMVo+iH1Ip0qC3Cf0C2y0KTaHyA00s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pCYRjHMEnwUuCHgwGfb1xbY2wpSsImSSfahivPsNEMhpiaA/yEy3gxSasOm1DS64qx3MlQGN4uCE9DnFmuN/fZyYJ67uEnWB5Ibs14ayva2ZY4yptdLYhxy6hn4A1VUFh9U7Lw6KoUIgtti4fSqRxXY1XtEW4kCOFWohtPfQuKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmNEdt4k; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-250671a1bc7so2390200fac.3;
-        Tue, 04 Jun 2024 20:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717557394; x=1718162194; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JqWWhco0dPRwv8s9y+uizWbrW3o5dwpgbW/xuzuerC0=;
-        b=cmNEdt4kEsuUA6mErsmB4tHHI5otb7eDFPhHKzozNByspCo4MTz+5/qJJmvLVwjO1Q
-         LLs9o+8aJ1JWdENSH0AM4z5U7WWCdNf/m5EooMsuM61SOvtdHABoPSOgVxHmMh+RuY/3
-         E20TTN2Z3BJV5AzPugibiCANerJUxZP/IYrqqY4sDK679mrnzE2amf46u2d97PotV0yp
-         q5DkyBEX2CDAj80xR4cxm4g0Ow/N58ovt83JUaz/d+uq6wY/T9MAmd1J0r7xdW9D31LN
-         kAo5PETiENk4apA2c+z2wv5zbUjLqIgII7/3SRSFtqUi0J5vOYVSvupTS//N3YVVjhuo
-         KPag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717557394; x=1718162194;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JqWWhco0dPRwv8s9y+uizWbrW3o5dwpgbW/xuzuerC0=;
-        b=RxMbpZjFHC7mwf2zgWxyupVzYcFym3T8a+fAGIldECWWS4SJII0lyfmb6f2Kf3kUZf
-         evr52VYtpkBlaBLstZXH1iMgiDO7/MM/xbVEKfoKxMVS/4bxvYhGRC885KlWTlTiNkjN
-         s/1bX/YqGboA1rdA+ujiI5gHBSyij6ONzu8ReAeXN7jVgNMKCOYnvbKX7SPQrfYQ4AJJ
-         v7AyQnIqcTC2WVVH9JAdWy8ZT7/KIPy1GVeEAMQLaRD01YdZ6XxPFx6bDDrF+UFYn0UM
-         vetKaVzXvF+LRKRHUFMG9sMji2y6VxJ5sfOjTw4zMZLQfgdtrEztbUiTku/s7jGVr9Rz
-         M8WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcP51Vrp19QzMqi+GvdniCj8/tM80/YCMKsO5BnOJrtLQ8a8b667YsIoEjvqMSLA8LRHmE61yUAkpSoWc9UtVSJrwBEXP2lLvOjr8NqArCcA9wy34J4x93yhnDGuL+yKLzD6Kgc27PAGXCYdN6
-X-Gm-Message-State: AOJu0YxIAOJ8+SfoH5iLJfVYlbAwZtDlBvEWRVm0r0AVC9Q7DjqCqL5Q
-	I7bvJxaNWFf2XKEYFBIGgxWgcuSViBhHncLbIMHTLv2xOpA6U3wodb5ji3rW3gOW2CECEeyRZrz
-	eo+7HyEhvV94JmV1WI2OmQSkM1OMVLlRUC8W+yEqpfM0=
-X-Google-Smtp-Source: AGHT+IEHL9qjg96yTYs5We9NBxT8bnCI7iGbvahqXdWMGzraqAlM+xrRYh96re2aL4desQqMc+FeHrpWBEGRYXtaJ78=
-X-Received: by 2002:a05:6870:a446:b0:24f:c715:a4d4 with SMTP id
- 586e51a60fabf-25121fec152mr1756596fac.40.1717557394043; Tue, 04 Jun 2024
- 20:16:34 -0700 (PDT)
+	s=arc-20240116; t=1717557937; c=relaxed/simple;
+	bh=iar+ScYHyGbSpwqZk7GsbhYJzP4tfyU039xANgAKi8E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NMOJ9LsrOQDMrN/BZVdd4ui+d8ssYXgzeQhFeSqso1kjHZCts38lzJPbWI8ZC9RuT7qF3tfhrtOqPi978YYW1I2Aem3LrIWbTU44f3o/aQoH36/+Lm23QtRt8fo484EhPjN0s3dyOTv+xhBD6AErctwrq/nvZXM6T991l+uQ9yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowADHzJA52V9mURJCDw--.61166S2;
+	Wed, 05 Jun 2024 11:19:21 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: giovanni.cabiddu@intel.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	markas.rapoportas@intel.com,
+	ahsan.atta@intel.com,
+	mun.chun.yep@intel.com,
+	xin.zeng@intel.com
+Cc: qat-linux@intel.com,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] crypto: qat - add check for adf_cfg_add_key_value_param
+Date: Wed,  5 Jun 2024 11:18:35 +0800
+Message-Id: <20240605031835.2916052-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYSPR04MB708410A11D944F4553DB55A08AEB2@TYSPR04MB7084.apcprd04.prod.outlook.com>
-In-Reply-To: <TYSPR04MB708410A11D944F4553DB55A08AEB2@TYSPR04MB7084.apcprd04.prod.outlook.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Wed, 5 Jun 2024 11:15:59 +0800
-Message-ID: <CAAfSe-tDX-2VTJJFpZ8fF+BLbbiOCdHX1+6A9c224KwVaGC_CA@mail.gmail.com>
-Subject: Re: [PATCH] clocksource/drivers/sprd: Enable register for timer
- counter from 32 bit to 64 bit
-To: Enlin Mu <enlin.mu@outlook.com>
-Cc: orsonzhai@gmail.com, baolin.wang@linux.alibaba.com, tglx@linutronix.de, 
-	enlin.mu@unisoc.com, enlinmu@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowADHzJA52V9mURJCDw--.61166S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZrW3Jr15CFy7WrW5tw17Awb_yoWDWwb_Cr
+	Z09ayaqryDCFn5Wrn8trWavrWj93s09ryruF1vvF4akasrGrsrKFykZr1DZF1Sqr1kWrn8
+	u3Zayr1kAw47XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkIecxEwVAFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUk3ktUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Hi Enlin,
+Add check for the return value of adf_cfg_add_key_value_param() and
+return the error if it fails in order to catch the error.
 
-On Wed, 22 May 2024 at 16:15, Enlin Mu <enlin.mu@outlook.com> wrote:
->
-> From: Enlin Mu <enlin.mu@unisoc.com>
->
-> Using 32 bit for suspend compensation, the max compensation time is 36
-> hours(working clock is 32k).In some IOT devices, the suspend time may
-> be long, even exceeding 36 hours. Therefore, a 64 bit timer counter
-> is needed for counting.
->
-> Signed-off-by: Enlin Mu <enlin.mu@unisoc.com>
-> ---
->  drivers/clocksource/timer-sprd.c | 29 ++++++++++++++++++++---------
->  1 file changed, 20 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/clocksource/timer-sprd.c b/drivers/clocksource/timer-sprd.c
-> index 430cb99d8d79..936691e27f8b 100644
-> --- a/drivers/clocksource/timer-sprd.c
-> +++ b/drivers/clocksource/timer-sprd.c
-> @@ -30,6 +30,7 @@
->  #define TIMER_VALUE_SHDW_HI    0x1c
->
->  #define TIMER_VALUE_LO_MASK    GENMASK(31, 0)
-> +#define TIMER_VALUE_HI_MASK    GENMASK(31, 0)
->
->  static void sprd_timer_enable(void __iomem *base, u32 flag)
->  {
-> @@ -57,10 +58,11 @@ static void sprd_timer_disable(void __iomem *base)
->         writel_relaxed(val, base + TIMER_CTL);
->  }
->
-> -static void sprd_timer_update_counter(void __iomem *base, unsigned long cycles)
-> +static void sprd_timer_update_counter(void __iomem *base, unsigned long cycles_lo,
-> +                                       unsigned long cycles_hi)
+Fixes: 4469f9b23468 ("crypto: qat - re-enable sriov after pf reset")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/crypto/intel/qat/qat_common/adf_sriov.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I would suggest using u64 rather than adding a new parameter. In this
-way we can avoid some of the changes below.
->  {
-> -       writel_relaxed(cycles & TIMER_VALUE_LO_MASK, base + TIMER_LOAD_LO);
-> -       writel_relaxed(0, base + TIMER_LOAD_HI);
-> +       writel_relaxed(cycles_lo & TIMER_VALUE_LO_MASK, base + TIMER_LOAD_LO);
-> +       writel_relaxed(cycles_hi, base + TIMER_LOAD_HI);
->  }
->
->  static void sprd_timer_enable_interrupt(void __iomem *base)
-> @@ -82,7 +84,8 @@ static int sprd_timer_set_next_event(unsigned long cycles,
->         struct timer_of *to = to_timer_of(ce);
->
->         sprd_timer_disable(timer_of_base(to));
-> -       sprd_timer_update_counter(timer_of_base(to), cycles);
-> +       sprd_timer_update_counter(timer_of_base(to), cycles,
-> +                               (u64)cycles >> 32);
+diff --git a/drivers/crypto/intel/qat/qat_common/adf_sriov.c b/drivers/crypto/intel/qat/qat_common/adf_sriov.c
+index 8d645e7e04aa..30ff9097f527 100644
+--- a/drivers/crypto/intel/qat/qat_common/adf_sriov.c
++++ b/drivers/crypto/intel/qat/qat_common/adf_sriov.c
+@@ -228,8 +228,10 @@ int adf_sriov_configure(struct pci_dev *pdev, int numvfs)
+ 		return ret;
+ 
+ 	val = 1;
+-	adf_cfg_add_key_value_param(accel_dev, ADF_GENERAL_SEC, ADF_SRIOV_ENABLED,
++	ret = adf_cfg_add_key_value_param(accel_dev, ADF_GENERAL_SEC, ADF_SRIOV_ENABLED,
+ 				    &val, ADF_DEC);
++	if (ret)
++		return ret;
+ 
+ 	return numvfs;
+ }
+-- 
+2.25.1
 
-On 32-bit systems, TIMER_LOAD_HI is still 0.
-
->         sprd_timer_enable(timer_of_base(to), 0);
->
->         return 0;
-> @@ -93,7 +96,8 @@ static int sprd_timer_set_periodic(struct clock_event_device *ce)
->         struct timer_of *to = to_timer_of(ce);
->
->         sprd_timer_disable(timer_of_base(to));
-> -       sprd_timer_update_counter(timer_of_base(to), timer_of_period(to));
-> +       sprd_timer_update_counter(timer_of_base(to), timer_of_period(to),
-> +                               (u64)timer_of_period(to) >> 32);
-
-Same here, so do you need to consider 32-bit systems?
-
->         sprd_timer_enable(timer_of_base(to), TIMER_CTL_PERIOD_MODE);
->
->         return 0;
-> @@ -162,14 +166,21 @@ static struct timer_of suspend_to = {
->
->  static u64 sprd_suspend_timer_read(struct clocksource *cs)
->  {
-> -       return ~(u64)readl_relaxed(timer_of_base(&suspend_to) +
-> -                                  TIMER_VALUE_SHDW_LO) & cs->mask;
-> +       u32 hi, lo;
-> +
-> +       lo = readl_relaxed(timer_of_base(&suspend_to) +
-> +                                  TIMER_VALUE_SHDW_LO);
-> +       hi = readl_relaxed(timer_of_base(&suspend_to) +
-> +                                  TIMER_VALUE_SHDW_HI);
-> +
-> +       return ~((u64)hi << 32 | lo);
->  }
->
->  static int sprd_suspend_timer_enable(struct clocksource *cs)
->  {
->         sprd_timer_update_counter(timer_of_base(&suspend_to),
-> -                                 TIMER_VALUE_LO_MASK);
-> +                                 TIMER_VALUE_LO_MASK,
-> +                                 TIMER_VALUE_HI_MASK);
-
-Like I suggested above, not add a new parameter, then pass
-CLOCKSOURCE_MASK(64) as the cycles, that would avoid wrongly setting
-TIMER_LOAD_HI for 32-bit systems based on the current implementations.
-
-Thanks,
-Chunyan
-
->         sprd_timer_enable(timer_of_base(&suspend_to), TIMER_CTL_PERIOD_MODE);
->
->         return 0;
-> @@ -186,7 +197,7 @@ static struct clocksource suspend_clocksource = {
->         .read   = sprd_suspend_timer_read,
->         .enable = sprd_suspend_timer_enable,
->         .disable = sprd_suspend_timer_disable,
-> -       .mask   = CLOCKSOURCE_MASK(32),
-> +       .mask   = CLOCKSOURCE_MASK(64),
->         .flags  = CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
->  };
->
-> --
-> 2.39.2
->
 
