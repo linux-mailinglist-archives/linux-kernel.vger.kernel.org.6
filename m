@@ -1,125 +1,181 @@
-Return-Path: <linux-kernel+bounces-201862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CDC8FC458
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:19:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991A68FC45A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6117B2AC1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:18:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5633128838C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5281922EF;
-	Wed,  5 Jun 2024 07:16:34 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24CA18FDD2;
+	Wed,  5 Jun 2024 07:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T4+oO2Us"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB041922E1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C88E13B286
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571793; cv=none; b=JPE89DQB+/LWJ95qMB8HsFXhVmZ51IfmCjVuuIszWInxEw8y+h8om36aT7rY/n1uOvjrmteQTpKv4ip/At7TP7xM3fk0eWCnYS5JiKD1VQLhkWdC2guytdIx/CfTuy2I4E0rWkzvYJk6jxdoqIXsbAB7VWK6RWFglzT6COdFjpU=
+	t=1717571816; cv=none; b=mxXXc5qGPJIioPrbtQG4qVl48qoDPlLfUqPnsAXpeZV+m+jpEgxKng5Ir6fjg7SDUew0jqyjnTEYVNYqXvybudLldvGO0ruxwWR0Y4PJZ+NVqu5NztcvYiMONSnEEwnKD4JeoQhEIRxheyF08G3ZHb64MN1Mp6Zztcf4QBGfccA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571793; c=relaxed/simple;
-	bh=spoIagucG+g6y9Jzfkyx8tJd0E6gU2PK/OyZNdp3Ev0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GBcIQ4giEt1znW+VWkoz26cOu2wQtbX4mCEtPcr5evpNlNybtnyGAM4Oc4iK+BLSy9qB9o+HeWGi82d27RPCskzGN9DWm4h8L2C0WmRi6/Yojd4cpY+AnetT7F4+K2uDYe3GpqOEPAc2LwKDqw7uxPWqAr5PgccSfE8P8sjYTa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb01189491so229824939f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:16:32 -0700 (PDT)
+	s=arc-20240116; t=1717571816; c=relaxed/simple;
+	bh=LA7fFwtJTUSwn2dkZM8K68mfKZKK2dTySLuN6I/FshY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tKQuO//O2tmThfWJ3NfUDRZdacGH7z+S/YtbYrZ/IqKc2KWZIeGHZzZQbq+uDxGpsQEoc475Ejwxg8MqWiol4E/zbvtEPE+z0yiKwA9iooLRLghKdE/nNM6e8xVZjjH8OIIkTSaoCJagfyL6wy3CngBagj5XI/bv78jaz+IoSis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T4+oO2Us; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70264bcb631so2747659b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:16:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717571813; x=1718176613; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4vfzJjKeGHGpUgDcno/RVJLd5UySDu362eov994HPLk=;
+        b=T4+oO2UsUftB22d5j3IQn51wJNCsFO69plIPDn5z0HHJJakX3PVPR8inbnzkJBL+Dw
+         86bZWIIWxet2Br8stEDW7w69EYdAudke4F2Jl+pVBLQ2NMTrJ+pRuiB6yy4Xlu2xIbfb
+         TLNRkkad+zkh/ANwFl1m21WPb1/C0p/Z5WJllfCHh63P/mLrRrv+j52FDBwxT2C2sPEn
+         gHuMvK1+r+fU8NM8H4LeWIGE58yhNPHVo4ska24HzPWGpuQ52AwwEuXz1UtGi2Deoj0S
+         FkFkwrWA62Vna4dOfwAIQ55Lk8zTHJ9tT+gyI+RD0CYGGNUywTLq3qm0FcH5x8jG2Jg3
+         qW6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717571791; x=1718176591;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=spoIagucG+g6y9Jzfkyx8tJd0E6gU2PK/OyZNdp3Ev0=;
-        b=lNUMnDLPGCBnEORMB1wBulfu/zA47WsfhPpMBdFsWNyCZAi8LWVgwrHcJD8XFD/UJc
-         uTPF/xvvdS5jGxx14uGe/y/trdLNylPV8t11cc1tgs3ePsqplbF2K+zmR4q4d1M0qBhD
-         iuH90DsN7+1XdodjpvjyZWd1/Ha+ivLSazg/sZonslqoNZZzV5koE5TUG0L6Camuh0aW
-         O1MkFrjyeZK0FdfA9runsFDU3wKczbTAyFNLKfHDxpUbDBMY0hU8+dHieo/PPhrvoOuX
-         dSsPHHjEnMZ+Ko+6t3YWjcshYRdHOmed6dRpJtkzZKDzrnGlgU+a0iFZSFAJVZZIZpL2
-         oDNw==
-X-Gm-Message-State: AOJu0Yye8ZbEPdOmF0jGZI3Ce31LrEOmH70q9ijfmMPaumjdR/7lagke
-	FJc1mRe8dbwsMfgQquz2rAykTw5qe0RXDszbnA7PMiD/qH0vtrdq3iSMRxwVSM6omNhlVtDhZn+
-	LgFKlU86ii1ku6uCImPyncUDKK7puAl9+Xv+Crn5PUMF/VDcLfQuqIpI=
-X-Google-Smtp-Source: AGHT+IHoSb40IqlCTvnN15HxUkXaNPb2EzU4ioMBgZr9+nT6JwrBpKNtl2BPQe8UCn08D7nshY93JvpTsvWUy3CXA/7Jev4f6miI
+        d=1e100.net; s=20230601; t=1717571813; x=1718176613;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4vfzJjKeGHGpUgDcno/RVJLd5UySDu362eov994HPLk=;
+        b=MDLVTL3nVBhvZu8IsGl+p3VH+POgNqRNzDHsFw7vUksQ4dQC9qsFgrNOUcJ1ifExto
+         rHiJnqG+o1k3sEvgWJRTlgD7fKynPbEqgTk7D9WTH/dl5ttr17NIjVe7IZb0pzTBzo1v
+         k0ndKHfwrYDpZowO+4B0oIX12hBfXUfphVCGSzDjFYsz80qWOhgkLtYRRAUwTh8yvaw7
+         uKJLLVWSR1jQB0uPgaxfa6fxPSNrhsls6jUjF5GNE0m/rj+mCZQGRVQR0c9GBbK6GkwX
+         s9x5lr1d4iIxvlWgKuwoQz94iPmfAYwrk8XE8nLK42dMwxhCLlzal2fsJbYaAwgvybFv
+         9wLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoa1A7cfSxXQQQKM/Y9tn9p+6BnMX5e2c6eSJ9tdE6cvi73fweA8RbRqRnOgOucWxQLyj6FyhPc400BfmtXY4q+hmoljAMape5sxVQ
+X-Gm-Message-State: AOJu0YyPwUfNb/pJz9FJBhz1fiFa7tqT+ny7BEK1kszmXx5rlyK03VTv
+	12VF15loutwV2aIFTGj/fwnwh4aSgZ79FEowtFTw5d5ERcdMW486cotRYIL+pA==
+X-Google-Smtp-Source: AGHT+IHgMOU9oCWpJwVlXnUxs6AfoCJ5z42b5im/p4607Z9+iJGsyRo1YafudQB8bl9exf3bkKTmeg==
+X-Received: by 2002:a05:6a20:12cf:b0:1b2:b4d6:2729 with SMTP id adf61e73a8af0-1b2b70026famr1926898637.30.1717571813204;
+        Wed, 05 Jun 2024 00:16:53 -0700 (PDT)
+Received: from thinkpad ([120.60.137.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ff9f3sm97438795ad.247.2024.06.05.00.16.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 00:16:52 -0700 (PDT)
+Date: Wed, 5 Jun 2024 12:46:48 +0530
+From: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
+To: mank <mank@netprisma.us>
+Cc: "duke_xinanwen@163.com" <duke_xinanwen@163.com>,
+	"loic.poulain@linaro.org" <loic.poulain@linaro.org>,
+	"quic_qianyu@quicinc.com" <quic_qianyu@quicinc.com>,
+	"mhi@lists.linux.dev" <mhi@lists.linux.dev>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] bus: mhi: host: pci_generic: Add support for
+ Netprisma LCUR57 and FCUN69
+Message-ID: <20240605071648.GA5085@thinkpad>
+References: <LV3PR22MB5104E2E4AD0A22D1B8FD2AAAB0F92@LV3PR22MB5104.namprd22.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fe3:b0:36d:b5df:f478 with SMTP id
- e9e14a558f8ab-374b1f6586amr911535ab.4.1717571791585; Wed, 05 Jun 2024
- 00:16:31 -0700 (PDT)
-Date: Wed, 05 Jun 2024 00:16:31 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000839533061a1f586a@google.com>
-Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <LV3PR22MB5104E2E4AD0A22D1B8FD2AAAB0F92@LV3PR22MB5104.namprd22.prod.outlook.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Jun 05, 2024 at 07:01:17AM +0000, mank wrote:
+> Add Netprisma LCUR57 and FCUN69 hardware revision:
+> 
+> LCUR57:
+> 02:00.0 Unassigned class [ff00]: Device 203e:1000
+> 	Subsystem: Device 203e:1000
+> 
+> FCUN69:
+> 02:00.0 Unassigned class [ff00]: Device 203e:1001
+> 	Subsystem: Device 203e:1001
+> 
+> ---
+> V1 -> V2:
+> 1.Change 0x203E to 0x203e
+> 2.Remove redundant code and use existing config:modem_quectel_em1xx_config
+> 
+> Signed-off-by: Mank Wang <mank@netprisma.us>
+> ---
+>  drivers/bus/mhi/host/pci_generic.c | 29 +++++++++++++++++++++++++++++
 
-***
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Subject: Re: 000000000000fcfa6406141cc8ac@google.com
-Author: wojciech.gladysz@infogain.com
+- Mani
 
-#syz test https://github.com/torvalds/linux.git e377d803b65ee4130213b3c041f=
-c25fdfec1bd90
-________________________________
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-Sent: Wednesday, June 5, 2024 09:15
-To: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>
-Cc: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>; linux-kernel@vger.ker=
-nel.org <linux-kernel@vger.kernel.org>; syzkaller-bugs@googlegroups.com <sy=
-zkaller-bugs@googlegroups.com>
-Subject: Re: 000000000000fcfa6406141cc8ac@google.com
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index 08844ee79654..21c1d750274c 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -26,6 +26,7 @@
+>  /* PCI VID definitions */
+>  #define PCI_VENDOR_ID_THALES	0x1269
+>  #define PCI_VENDOR_ID_QUECTEL	0x1eac
+> +#define PCI_VENDOR_ID_NETPRISMA	0x203e
+>  
+>  #define MHI_EDL_DB			91
+>  #define MHI_EDL_COOKIE			0xEDEDEDED
+> @@ -606,6 +607,28 @@ static const struct mhi_pci_dev_info mhi_telit_fn990_info = {
+>  	.mru_default = 32768,
+>  };
+>  
+> +static const struct mhi_pci_dev_info mhi_netprisma_lcur57_info = {
+> +	.name = "netprisma-lcur57",
+> +	.edl = "qcom/prog_firehose_sdx24.mbn",
+> +	/* LCUR57 uses the same controller configuration as quectel_em1xx */
+> +	.config = &modem_quectel_em1xx_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.mru_default = 32768,
+> +	.sideband_wake = true,
+> +};
+> +
+> +static const struct mhi_pci_dev_info mhi_netprisma_fcun69_info = {
+> +	.name = "netprisma-fcun69",
+> +	.edl = "qcom/prog_firehose_sdx6x.elf",
+> +	/* FCUN69 uses the same controller configuration as quectel_em1xx */
+> +	.config = &modem_quectel_em1xx_config,
+> +	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+> +	.dma_data_width = 32,
+> +	.mru_default = 32768,
+> +	.sideband_wake = true,
+> +};
+> +
+>  /* Keep the list sorted based on the PID. New VID should be added as the last entry */
+>  static const struct pci_device_id mhi_pci_id_table[] = {
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0304),
+> @@ -695,6 +718,12 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+>  	/* T99W175 (sdx55), HP variant */
+>  	{ PCI_DEVICE(0x03f0, 0x0a6c),
+>  		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx55_info },
+> +	/* NETPRISMA LCUR57 (SDX24) */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1000),
+> +		.driver_data = (kernel_ulong_t) &mhi_netprisma_lcur57_info },
+> +	/* NETPRISMA FCUN69 (SDX6X) */
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
+> +		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
+>  	{  }
+>  };
+>  MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
+> -- 
+> 2.34.1
+> 
 
-EXTERNAL: This message was sent from outside of Infogain. Please do not cli=
-ck links or open attachments unless you know the content is safe.
 
-> #syz testhttps://github.com/torvalds/linux.gite377d803b65ee4130213b3c041f=
-c25fdfec1bd90
 
-unknown command "testhttps://github.com/torvalds/linux.gite377d803b65ee4130=
-213b3c041fc25fdfec1bd90"
-
-> ________________________________
-> From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-> Sent: Wednesday, June 5, 2024 09:06
-> To: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>
-> Cc: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>; linux-kernel@vger.k=
-ernel.org <linux-kernel@vger.kernel.org>; syzkaller-bugs@googlegroups.com <=
-syzkaller-bugs@googlegroups.com>
-> Subject: Re: 000000000000fcfa6406141cc8ac@google.com
->
-> EXTERNAL: This message was sent from outside of Infogain. Please do not c=
-lick links or open attachments unless you know the content is safe.
->
->> #syz test https://linux.googlesource.com/linux/kernel/git/torvalds/linux=
-<https://linux.googlesource.com/linux/kernel/git/torvalds/linux<https://lin=
-ux.googlesource.com/linux/kernel/git/torvalds/linux>> e377d803b65ee4130213b=
-3c041fc25fdfec1bd90
->
-> "https://linux.googlesource.com/linux/kernel/git/torvalds/linux<https://l=
-inux.googlesource.com/linux/kernel/git/torvalds/linux<https://linux.googles=
-ource.com/linux/kernel/git/torvalds/linux>>" does not look like a valid git=
- repo address.
->
->>
->> The information in this email is confidential and may be legally privile=
-ged. It is intended solely for the addressee and access to it by anyone els=
-e is unauthorized. If you are not the intended recipient, any disclosure, c=
-opying, distribution or any action taken or omitted to be taken based on it=
-, is strictly prohibited and may be unlawful.
+-- 
+மணிவண்ணன் சதாசிவம்
 
