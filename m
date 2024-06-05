@@ -1,180 +1,201 @@
-Return-Path: <linux-kernel+bounces-203183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8768FD78E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B26EA8FD795
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B09281CEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B88F285DA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A692715EFA3;
-	Wed,  5 Jun 2024 20:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E0915F306;
+	Wed,  5 Jun 2024 20:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PCPj/JbC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B2+wIEQ7"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E61119D89D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6354C15ECCE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717619619; cv=none; b=pNLkOBAy9nMoYmZiwo890VlKYyafcPX0wYVXj+hEWAwTiUa6OdaVP5gvRGS79XPX1U26/qq6j6ystnTtaMOtbP+jm20BQXEsZwi3DsvC/HkzIvgjeTGdA/J+1FGgfnd4hfC7lW/hw3EnHtWiMeYno/jm0Pr/wcfIRiHqicCbNvY=
+	t=1717619721; cv=none; b=dHMTy94YZlgImAV+afQTXO0olhNVEDwlKKcVbWTNOjkstxJTRFJDW/IyAdx9XJus7KXiIsxg2UpLqCpr9ptLm429Q556gnTLTpQZkhe0ycQT4Os+WPg+0aRMMF9xdiMhmz3D3n9H8X5WKHlT247qBXsSguX354OQT9CQ0kn8J1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717619619; c=relaxed/simple;
-	bh=0PsK40ZqXsyaPlDEAwJM8R2V+6h0/qS4beYU5xutNP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uaEtoM+z8VWwFxPyf4GlVd/KAJDiSqr9R6xcEx4Z/VwePT6Gfeye062pg8Ra7gQqMhl13Jo+s1Sce5F7KhX0ZkZSp/LZ29XXsCauH8ippIkTksT8r7ffZ9s8JO50nMgIWIW/MiOjxSnx2IhjQkqup7YB4wxqWoPSUA/VVErWAx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PCPj/JbC; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717619617; x=1749155617;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0PsK40ZqXsyaPlDEAwJM8R2V+6h0/qS4beYU5xutNP0=;
-  b=PCPj/JbC2jDkf2ng6GiYfePV41wizo46Iy66HbF+751iGe3Htt74Ycwd
-   uajiMMHQWpfoXYRb8z/Ihxu4WdQz3YZdAzL7CZK5gn7wDuvUBC5fOXcNZ
-   gmxkoMXGkVLvhs9UmBd2d7SyshAthuRs9xzMMvgLeBfRR81fj0vwdQYbX
-   Svle1ttkZ/FJ63j5mXT/JnkN42tXo3SbeL++mtC0zhf7dZQomiCh0HxfY
-   Mc465mDtflmr2mtasZb9aTccNKLHqvgDfDYzgdcOnlQ2vAe3cj59C/PMp
-   q+UWhjMDFxKoyfEmsY1rQarTHmt/iARbRHvDXDJqtX5cdMudcrMXuw9jF
-   w==;
-X-CSE-ConnectionGUID: RiUQOqWSS7eihogKI1Kslg==
-X-CSE-MsgGUID: Pq7zJFtASlG4t2J5SOZogA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="17190952"
-X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
-   d="scan'208";a="17190952"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 13:33:36 -0700
-X-CSE-ConnectionGUID: +I7plNA1QeqMzTyeqRWALQ==
-X-CSE-MsgGUID: xy4A72KnSDOnkZFGZ6tOYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
-   d="scan'208";a="42677407"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 13:33:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sExK7-0000000Dxap-30Op;
-	Wed, 05 Jun 2024 23:33:31 +0300
-Date: Wed, 5 Jun 2024 23:33:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chia-I Wu <olvaffe@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	AKASHI Takahiro <takahiro.akashi@linaro.org>,
-	Baoquan He <bhe@redhat.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] resource: add a simple test for walk_iomem_res_desc()
-Message-ID: <ZmDLm1xN68f_6Odg@smile.fi.intel.com>
-References: <20240605195324.3213954-1-olvaffe@gmail.com>
+	s=arc-20240116; t=1717619721; c=relaxed/simple;
+	bh=A8Z51WtEhjIdfd88NhvVep8DkTcf2oWydKIzJrAqSCw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzVOVXWE0hFVyfIZBGuEZ+e/VGmiIFDfl/+FdrA+Fi1QmA34urtPTBUf9/b6Tz1oJ/oKB3DZyQG99Ri+NcnzQCxTmzKeDDM5YFI4LUPtH9z9IerFKgVbxWNw9TxTkdbqK1oH1s8U0bRqKd8lgmTAdb2h7C7NTDz7KglRHws+Lb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B2+wIEQ7; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d1bc6e5f01so107711b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 13:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717619718; x=1718224518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1vJjuSTFz/Nsj8mn2a+s4dFUk/0rqc2v8wfC3wlpVhk=;
+        b=B2+wIEQ7TlFGM5ZSRr5bkpq2V7KHSbEh3K28Sk8RdyTGkHMf/5mVwMYLLtTwjbi4ld
+         EDX1HacPMLvlyEIUz6Y1vaEiHr0cOCdBWNVveyNG1D0iLhdQ/+iEfbc8kfNcYa2g554x
+         iTVGVtYVeLu+xENyE8iRCfNByZ8Z7HAu7h9OOuyRL8u2QtFH/lCia9ApoYTINtfpghtP
+         Ays9yBgvXwbuRi/LQD9Al9UexrQZlzaKzEUsxtHleZyjaYYzOZQvPHv52a5LpBE5u4BY
+         ZJoN6iHZP/zwhqalyDFbCFSeAyFmHFp1eJvMI57UsdACh3eoaxik3sYOuKiePp6PiRTs
+         OC5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717619718; x=1718224518;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1vJjuSTFz/Nsj8mn2a+s4dFUk/0rqc2v8wfC3wlpVhk=;
+        b=GRnqW2M8GKAkbA5+W1qynV+cP518J3uVV4T+U0JMNgo2a5P3n2QPn1SPXKqCHR1f1b
+         2HsFOnlwdt0dWkAhg/M55W5ZshSUfd4vLsEyQ2oK1IGzlj++l5jtXXliYdgfAdX72LDQ
+         KVZcSwBm0DQ6/weAnzPds7es/kpTKvoE1w4LtHgFHYXvjsIEcuz2BXGmNLKAFh/B04h+
+         vzxaudliu6xbocR0EmRY/FCOtm/q1vbCTYm+FqnWGTkh8q19uKmizYj1VhU/Hmd+wjyE
+         3ps4U3YbvHuJ7hYhNDmOBrAzNLN7TFUtM2tkN61k/shsYe4bQNJRrm/9wPxAi9FPQzB4
+         0ooQ==
+X-Gm-Message-State: AOJu0YwfZNNS9tjJ/VJA9dO3soiPo3gREI0fYW91jgr6SF5pK5JBc+Tq
+	1RGZW0/r+cRVE65pm8gZ+UUfzXzuNColwHx08EtWKe+MLBF2t6D0Hy/RamrJOMQ=
+X-Google-Smtp-Source: AGHT+IG/Q5dm0XunXk8ISugNOrCX4l8Ka3GNq1v/BqR0c3/G2Yi18em/EdrAh0PsFwlWy9/2BwQrlw==
+X-Received: by 2002:aca:2104:0:b0:3c9:c2bc:6939 with SMTP id 5614622812f47-3d2044e7d00mr3533666b6e.57.1717619716846;
+        Wed, 05 Jun 2024 13:35:16 -0700 (PDT)
+Received: from localhost.localdomain (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6afc72485f8sm25359866d6.5.2024.06.05.13.35.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 13:35:16 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+To: linux-pwm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	ukleinek@baylibre.com,
+	ukleinek@kernel.org,
+	michael.hennerich@analog.com,
+	nuno.sa@analog.com,
+	tgamblin@baylibre.com,
+	dlechner@baylibre.com,
+	devicetree@vger.kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Subject: [RESEND][PATCH 0/2 v6] pwm: add axi-pwm-gen driver
+Date: Wed,  5 Jun 2024 16:35:04 -0400
+Message-ID: <20240605203507.1934434-1-tgamblin@baylibre.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605195324.3213954-1-olvaffe@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024 at 12:53:10PM -0700, Chia-I Wu wrote:
-> This mainly tests that find_next_iomem_res() does not miss resources.
+Resending due to missing real name in "From:" line.
 
-...
+This series adds support for the AXI PWM GEN subsystem found on FPGA IP
+cores. It can be used to generate configurable PWM outputs, and includes
+options for external synchronization and clock signals.  The work is
+being done on behalf of, and therefore lists maintainers from Analog
+Devices, Inc.
 
-> v2: update subject, use DEFINE_RES_NAMED and hardcoded offsets
-> v3: really hardcode offsets
+The series has been tested on actual hardware using an EVAL-AD7985FMCZ
+evaluation board. An oscilloscope was used to validate that the
+generated PWM signal matched the requested one.
 
-This doesn't explain why you multiplied previous values.
+There was previously a follow-up series
+(https://lore.kernel.org/linux-pwm/20240314204722.1291993-1-tgamblin@baylibre.com/)
+that enabled support for two different versions of the AXI PWM GEN IP.
+Since issues were identified with the v1 IP functionality and v2's
+regmap is the one listed on the device wiki
+(https://analogdevicesinc.github.io/hdl/library/axi_pwm_gen/index.html),
+the driver was changed to support only the v2 IP after squashing those
+additions. As a result, the overall driver is simpler as it no longer
+uses an axi_pwm_variant struct. Support for v1 IP can be added back
+later in the event that it is required.
 
-...
+---
+v6 changes:
+* Address feedback for driver in v5:
+  * Add link to public device documentation in pwm-axi-pwmgen.c
+  * Remove unnecessary line split in axi_pwmgen_setup
+  * Remove unnecessary call to devm_add_action_or_reset() in
+    axi_pwmgen_probe
+* Update documentation link in driver and binding commit messages
 
-> +static int resource_walk_count(struct resource *res, void *data)
-> +{
-> +	int *count = data;
+Link to v5: https://lore.kernel.org/linux-pwm/20240424125850.4189116-1-tgamblin@baylibre.com/
 
-+ Blank line.
+v5 changes:
+* Address feedback for driver in v4:
+  * Clarify device behavior in frontmatter
+  * Include register name in bitfield definitions
+  * Use devm_clk_rate_exclusive_get() and handle error
+* Squash v2 IP patches into series from: https://lore.kernel.org/linux-pwm/20240314204722.1291993-1-tgamblin@baylibre.com/
+* Refactor driver code to support only v2 IP
+  * Issues were identified with v1 IP implementation, so only v2 will be
+    supported
+  * Remove axi_pwm_variant struct and usage
+  * Version check in axi_pwmgen_setup() left as-is to limit usage to
+  * only v2 IP
+* Adjust dt bindings to use adi,axi-pwmgen-2.00.a
 
-> +	(*count)++;
-> +	return 0;
-> +}
+Link to v4: https://lore.kernel.org/linux-pwm/20240301173343.1086332-1-tgamblin@baylibre.com/
 
-...
+v4 changes:
+* Address feedback for driver in v3:
+  * Update to use devm_pwmchip_alloc() function
+  * Simplify use of dev symbol in axi_pwmgen_probe
+  * Remove unnecessary axi_pwmgen_from_chip function and use
+    pwmchip_get_drvdata directly
 
-> +static void resource_test_walk_iomem_res_desc(struct kunit *test)
-> +{
-> +	struct resource root = {
-> +		.name = "Resource Walk Test",
-> +	};
-> +	struct resource res[8];
-> +	int count;
-> +
-> +	KUNIT_ASSERT_EQ(test, 0,
-> +			allocate_resource(&iomem_resource, &root, 0x100000,
-> +				0, ~0, 0x100000, NULL, NULL));
+Link to v3: https://lore.kernel.org/linux-pwm/20240131214042.1335251-1-tgamblin@baylibre.com/
 
-Shouldn't this use RESOURCE_SIZE_MAX?
+v3 changes:
+* Address feedback for driver in v2:
+  * Remove unnecessary blank line in axi_pwmgen_apply
+  * Use macros already defined in <linux/fpga/adi-axi-common.h> for
+    version checking
 
-Please, split the assertion and allocate_resource() call, so it becomes
-readable what exactly you checked against.
+Link to v2: https://lore.kernel.org/linux-pwm/20240123220515.279439-1-tgamblin@baylibre.com/
 
-> +	/* build the resource tree */
-> +	res[0] = DEFINE_RES_NAMED(root.start + 0x0000, 0x1000, "SYSRAM 1",
-> +			IORESOURCE_SYSTEM_RAM);
-> +	res[1] = DEFINE_RES_NAMED(root.start + 0x1000, 0x1000, "OTHER", 0);
-> +
-> +	res[2] = DEFINE_RES_NAMED(root.start + 0x3000, 0x1000, "NESTED", 0);
-> +	res[3] = DEFINE_RES_NAMED(root.start + 0x3800, 0x0400, "SYSRAM 2",
-> +			IORESOURCE_SYSTEM_RAM);
-> +
-> +	res[4] = DEFINE_RES_NAMED(root.start + 0x4000, 0x1000, "SYSRAM 3",
-> +			IORESOURCE_SYSTEM_RAM);
-> +
-> +	KUNIT_EXPECT_EQ(test, 0, request_resource(&root, &res[0]));
-> +	KUNIT_EXPECT_EQ(test, 0, request_resource(&root, &res[1]));
-> +	KUNIT_EXPECT_EQ(test, 0, request_resource(&root, &res[2]));
-> +	KUNIT_EXPECT_EQ(test, 0, request_resource(&res[2], &res[3]));
-> +	KUNIT_EXPECT_EQ(test, 0, request_resource(&root, &res[4]));
-> +
-> +	/* walk the entire region */
-> +	count = 0;
-> +	walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
-> +			root.start, root.end, &count, resource_walk_count);
-> +	KUNIT_EXPECT_EQ(test, count, 3);
-> +
-> +	/* walk the region requested by res[1] */
-> +	count = 0;
-> +	walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
-> +			res[1].start, res[1].end, &count, resource_walk_count);
-> +	KUNIT_EXPECT_EQ(test, count, 0);
-> +
-> +	/* walk the region requested by res[2] */
-> +	count = 0;
-> +	walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
-> +			res[2].start, res[2].end, &count, resource_walk_count);
-> +	KUNIT_EXPECT_EQ(test, count, 1);
-> +
-> +	/* walk the region requested by res[4] */
-> +	count = 0;
-> +	walk_iomem_res_desc(IORES_DESC_NONE, IORESOURCE_SYSTEM_RAM,
-> +			res[4].start, res[4].end, &count, resource_walk_count);
-> +	KUNIT_EXPECT_EQ(test, count, 1);
-> +
-> +	release_resource(&root);
-> +}
+v2 changes:
+* Address feedback for driver and device tree in v1:
+  * Use more reasonable Kconfig approach
+  * Use common prefixes for all functions
+  * Rename axi_pwmgen struct to axi_pwmgen_ddata
+  * Change use of "pwm" to "ddata"
+  * Set and check state->polarity
+  * Multiply safely with mul_u64_u64_div_u64()
+  * Improve handling of max and zero periods
+  * Error if clk_rate_hz > NSEC_PER_SEC
+  * Add "Limitations" section at top of pwm-axi-pwmgen.c
+  * Don't disable outputs by default
+  * Remove unnecessary macros for period, duty, offset
+  * Fix axi_pwmgen_ddata alignment
+  * Don't artificially limit npwm to four
+  * Use clk_rate_exclusive_get(), balance with clk_rate_exclusive_put()
+  * Cache clk rate in axi_pwmgen_ddata
+  * Don't assign pwm->chip.base, do assign pwm->chip.atomic
+  * Relocate "unevaluatedProperties" in device tree binding
+* Remove redundant calls to clk_get_rate
+* Test contents of AXI_PWMGEN_REG_CORE_MAGIC instead of
+  arbitrary AXI_PWMGEN_TEST_DATA in AXI_PWMGEN_REG_SCRATCHPAD
+* Remove redundant clk struct from axi_pwmgen_ddata
+* Add self as module author
+* Add major version check for IP core
 
-Other than the above, LGTM. Hopefully next version will be ready to apply.
+Link to v1: https://lore.kernel.org/linux-pwm/20240115201222.1423626-1-tgamblin@baylibre.com/
+
+Drew Fustini (2):
+  dt-bindings: pwm: Add AXI PWM generator
+  pwm: Add driver for AXI PWM generator
+
+ .../bindings/pwm/adi,axi-pwmgen.yaml          |  48 ++++
+ MAINTAINERS                                   |   9 +
+ drivers/pwm/Kconfig                           |  13 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-axi-pwmgen.c                  | 241 ++++++++++++++++++
+ 5 files changed, 312 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml
+ create mode 100644 drivers/pwm/pwm-axi-pwmgen.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.1
 
 
