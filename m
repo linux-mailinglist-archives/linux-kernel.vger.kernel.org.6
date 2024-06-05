@@ -1,88 +1,188 @@
-Return-Path: <linux-kernel+bounces-201837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 951188FC41E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:06:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB5C8FC421
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FDF4B2938E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:06:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9CE42885C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CEB18C349;
-	Wed,  5 Jun 2024 07:06:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E8918C334;
+	Wed,  5 Jun 2024 07:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDJD8UYj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D12660263
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DAE190490;
+	Wed,  5 Jun 2024 07:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571166; cv=none; b=OE64OOyvcdD/fSplAhQmob7bCZTZMgZOsuGHNWqR9wpN3P+mc1jmL/LVSyl0eNeQw56oMTnR3LkFf+33Ac2tVqEC4Vulki1AjHzJf7sGsDSRzz3Jzss4NhE1d7grf2CAawde97UpkQgG70QHJJV/nQjkaW+/QAbfvq/HNPunEbQ=
+	t=1717571269; cv=none; b=qSyI1YcDjff8PgDQfNhB6EX3n+GMm3NL3FfQdD0JKFlfXaDlG8jfi3tKe1cqQvgrc3FcF+Xkqchh9QO82nnV0BLhowq0EIq0Z/6DZsZzlNPuCa4kPlczmJNtBzr0QVcZ8s4m0391sHaJfv/I9GeOzyI3wZcN8bqa1soONKHBQjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571166; c=relaxed/simple;
-	bh=oObkjTjJVqS8GoV9TsWzHO6czuFQkspGvLCNZJuUH+s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=C2FH1m8aMxCbbPwL7kpE3NnoVJPWi3NBmsrfg7CSap1Kvap2bq6IFHlROAP3NPqFQdQN9pNWCb4EigL86UAD3zelhsqLo2TA+q+3+VeU8j9wlvXMe1FxYIjXI4P8NdexJRWqPmP3VpmrJxmsI0VEOlARGwLiyLHvVP5/ZkynDvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb3978abc6so121455339f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:06:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717571165; x=1718175965;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oObkjTjJVqS8GoV9TsWzHO6czuFQkspGvLCNZJuUH+s=;
-        b=Qaav7MNoWOW5E7ACRs906MAnB2gpcCi1a8YOPAnkJYraeHXFs4p3oAKF8PlZZ6RNMX
-         87yEW04LCg/AmTC2stBHc09itCrAls4vKaCyOAqwXefeE+27nBPvaF3aJpRDnjMaXeg3
-         h2XSgKIxjTD8F6h9j52jwGBYBpurJcnHnGtcr+UtXJcC/K1cChbkIucmzYdP+Rt9ewqH
-         nxgAs3+L+wj2ss2IH9SxT/PBZxENzj8RXjELhAkvh1RzM5Z39AC3rGkfQPpTGUM1p62z
-         4EKIa9AuwN0T0dHCV1RSnfL6ZghF15E6JwXi8nxCrhweqUW8YkGa+S0BPJOljQwRi3/7
-         5TDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcfzPJtA0A9t4eTWno3KUeukZZvMVOsItB0TYN7k4vDAshLVgGWkBf/EhUMtLCGqG40KHbHnq4SY+X3SUAaT/kIyJXzqIPXjtKA0C8
-X-Gm-Message-State: AOJu0Yx/+0BHvM2ZKxkp3JB+7aAP6f4f209ehxIZzJCNn883UYwGKLQ+
-	FZjtEGJpkvajjkjX2I+RmQsEFsd9ry44f86wWQjGyDV5hHV2GIU29zA5jpPs0yKYsVdZbRxW0hd
-	dU/HAR0isUCYJvtUBe7YJxSK0/rsln7Zup+0281nyLz0mPH8+cXnn3lM=
-X-Google-Smtp-Source: AGHT+IEeRk3IEHzDNO+8xrLUYZ65TYbrzcDxhPx3x9c8dC/93giCXvBjG2PSL4BWmVC0b/DdPZnPEzJPFI9BSAhcnf3wmHUd0NL+
+	s=arc-20240116; t=1717571269; c=relaxed/simple;
+	bh=/eYXg8+LQov6RfRlCF9bEvc+fOFnmaVCYpZi0YUqpq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jpAJ+0DItRDC7m/f4nqTZ5J4VIFi8oFxO9i52hmsPSeFXqN0TAyAO9u4Gh09mYKThFF0SjQz3czvyQwX2ZPFDAvcQMxg22vqnckjdbgilGwF9/fkBgg6vm3G8dUh9nq0p4YD1Wgai0w/igTtQtPj195QYO6YnEqChzTJ/NhO7/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDJD8UYj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC3ACC3277B;
+	Wed,  5 Jun 2024 07:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717571268;
+	bh=/eYXg8+LQov6RfRlCF9bEvc+fOFnmaVCYpZi0YUqpq8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oDJD8UYjtuf8VMxHuSzR6uhSDaF9dxvmsoGenVAcE3DR1vsB4GURa3DOHSSsvLaRp
+	 FeKI3i5WJXyKiCWXlTCcW6wCKJtZNpuq8h+Ol9OwB1JeGu4lO7OA6i5OJ0II//8Gd3
+	 8pEngXWqHhLyBhTojx594CXZiqIK86ly27dR/ey9hWvx6dlJxqAP9f3i121eEhuFHk
+	 YqUUDAizWd60XwtDGDJzGGpwCBXU2rRUbq9DS0FsYKcbhAabqvNOhncQ+OQDnFDqTv
+	 Y0VPHoT/3VBCQA+Vt3Bv559AMkVFmgtEDecuCoVcvMO7AvjhchpJgoGHaiSUWu76ih
+	 hex0O87UE94Mg==
+Message-ID: <1b98bb9a-8373-4858-b31b-37e6f9da453b@kernel.org>
+Date: Wed, 5 Jun 2024 09:07:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:379e:b0:488:e34a:5f72 with SMTP id
- 8926c6da1cb9f-4b63a82ce44mr58914173.2.1717571164797; Wed, 05 Jun 2024
- 00:06:04 -0700 (PDT)
-Date: Wed, 05 Jun 2024 00:06:04 -0700
-In-Reply-To: <PN2PR01MB4891D7E2957A087F04E16731FCF92@PN2PR01MB4891.INDPRD01.PROD.OUTLOOK.COM>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002789b7061a1f3352@google.com>
-Subject: Re: 000000000000fcfa6406141cc8ac@google.com
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: wojciech.gladysz@infogain.com
-Cc: wojciech.gladysz@infogain.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: dma: fsl,imx-dma: Convert to dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240605003356.46458-1-animeshagarwal28@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240605003356.46458-1-animeshagarwal28@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> #syz test https://linux.googlesource.com/linux/kernel/git/torvalds/linux<=
-https://linux.googlesource.com/linux/kernel/git/torvalds/linux<https://linu=
-x.googlesource.com/linux/kernel/git/torvalds/linux>> e377d803b65ee4130213b3=
-c041fc25fdfec1bd90
+On 05/06/2024 02:33, Animesh Agarwal wrote:
+> Convert the fsl i.MX DMA controller bindings to DT schema. Remove old
+> and deprecated properties #dma-channels and #dma-requests.
 
-"https://linux.googlesource.com/linux/kernel/git/torvalds/linux<https://lin=
-ux.googlesource.com/linux/kernel/git/torvalds/linux<https://linux.googlesou=
-rce.com/linux/kernel/git/torvalds/linux>>" does not look like a valid git r=
-epo address.
+Where? I see them.
 
->
-> The information in this email is confidential and may be legally privileg=
-ed. It is intended solely for the addressee and access to it by anyone else=
- is unauthorized. If you are not the intended recipient, any disclosure, co=
-pying, distribution or any action taken or omitted to be taken based on it,=
- is strictly prohibited and may be unlawful.
+> 
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> 
+> ---
+> Changes in v3:
+> - Changed maximum: 16 back to const: 16 as the device use exactly 16
+> channels.
+> 
+> Changes in v2:
+> - Added description for each interrupt item.
+> - Changed dma-channels: const: 16 to maximum: 16.
+> - Removed unnecessary '|' character.
+> - Dropped unused label.
+> ---
+>  .../devicetree/bindings/dma/fsl,imx-dma.yaml  | 56 +++++++++++++++++++
+>  .../devicetree/bindings/dma/fsl-imx-dma.txt   | 50 -----------------
+>  2 files changed, 56 insertions(+), 50 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/dma/fsl-imx-dma.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml b/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+> new file mode 100644
+> index 000000000000..902a11f65be2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/fsl,imx-dma.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/dma/fsl,imx-dma.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale Direct Memory Access (DMA) Controller for i.MX
+> +
+> +maintainers:
+> +  - Animesh Agarwal <animeshagarwal28@gmail.com>
+> +
+> +allOf:
+> +  - $ref: dma-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,imx1-dma
+> +      - fsl,imx21-dma
+> +      - fsl,imx27-dma
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: DMA complete interrupt
+> +      - description: DMA Error interrupt
+> +    minItems: 1
+> +
+> +  "#dma-cells":
+> +    const: 1
+> +
+> +  dma-channels:
+> +    const: 16
+> +
+> +  dma-requests:
+> +    description: Number of DMA requests supported.
+
+That's confusing. It is supposed to be deprecated.
+
+Best regards,
+Krzysztof
+
 
