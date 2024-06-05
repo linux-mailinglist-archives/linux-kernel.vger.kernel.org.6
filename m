@@ -1,107 +1,141 @@
-Return-Path: <linux-kernel+bounces-202613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2988FCEA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:14:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766418FCEAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 496E8287065
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26A6E1F28E40
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA8C195FD0;
-	Wed,  5 Jun 2024 12:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JNBTOBE9"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4C5195FEF;
+	Wed,  5 Jun 2024 12:33:12 +0000 (UTC)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FA719D882;
-	Wed,  5 Jun 2024 12:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC6019D88B;
+	Wed,  5 Jun 2024 12:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590766; cv=none; b=nkjpk1ZyYl+Rc2lRXxthh7ttXg92UBUnB2HkmLi7accXkbbaEcmXMcQ1IhCJSBeLKDNHBZPP3xvXoOmckslYuVvdYrSEH7dXPg2vk6/f8/uoys9KiGKslAt9dpX41JpkiBx7u6nDpHxwGPCamNUf2vP5nHzXqNLfLlI+dihgC/0=
+	t=1717590791; cv=none; b=WNLN5BBWh8zyta+IXLiEh1uV1Hohb00Me5X9zfkjgcv74J62ZwzqEgYfcLaWn6pRvvSV/tRo3deoLBJXVbh8hj9PFpWzM4n4W3S0i52jUWZojpVzq2jRyBytLB3eley8IqowgIKGLF18NPw4nw/z+kufF6S4j2pmY6XVT1fY0Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590766; c=relaxed/simple;
-	bh=PfhQeGJITJTvs+p/Hge5SmZR5Iv7XJjDoRihZXn1CME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uTi8NAvxQO432rURWQif52jmqJGjxRI67xjW3OIl7a2jcNTgmF25t4wPIaVYVzeaBRWpOU83YNZ0EsjuF+ffXCVO4fEccaBoXmUwK/G/8eQI2xNmbmoKzD5fxFap1S+YKIMYFhZwXsFPYnEQUZBuyPMNtL72iEGZG7qTLKcRZxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JNBTOBE9; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6BC19E0005;
-	Wed,  5 Jun 2024 12:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1717590756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PbnUs0MSq2j9sy1LgeEvLYnILq+qylhWfc/HqlZBIlQ=;
-	b=JNBTOBE9C1+Jb/djiD05CcRKaJnyba3X338QbcyFU2V8rwpuVElD+sX3YHbWrh1Lgrrs8v
-	ClTridWJQLNPj4OmVMbF9oa+F2RhZdSDVxPOC8W2IGkb8RAKPdR3R6FGo1PzngjQBWURlv
-	8BzA+9asD/76DVv/aKBdszkLWnN8f2G2zin/rNNOl2a/diBZ9yguqhlLrmeKEtaidmrJCo
-	tLyrXjHT9qjF858YGk5EQR61zoYda/bjhT+/bVBAbii+H4jcsXszoiKjcMm48z8dR1Kfoj
-	J7N0fcbLwtyOUPy0NmOI0xeSAbjzTb86ErgD1laih6Ilc10aKUjEckvjh7edOQ==
-Message-ID: <26e9970c-7dbf-48ac-9832-58bf2952d350@bootlin.com>
-Date: Wed, 5 Jun 2024 14:32:35 +0200
+	s=arc-20240116; t=1717590791; c=relaxed/simple;
+	bh=hqgiPbTxuUPwd6oAxJ/pEfDW5K2k/hwU5oOJo/VQyCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F7qEN0n+sfwgoiQzKOovrjIxFMj977sjyug854JSqO7llTEqKyUTV34AHX2hAOR1jQCNXbSO5WtCSrtWcqENeZ1V8k9XFNwrtUNccuc/sTYZx5FTISF9Hi5VhuNRxFahfhx8Fg50YuqlE/3y+o/8snMibWkzT2VIIoQWWg1ij2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-62a08b250a2so23555977b3.3;
+        Wed, 05 Jun 2024 05:33:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717590788; x=1718195588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SnslpsTkxq1BUdjKUxyNngzADoWBlrSm/gd/INeh4LA=;
+        b=uCy5J5oJJMq6n7QqdFKFza4QNtvC+skXFrfySuWVkS6aHredJGQY+6CK9lpcW8jelF
+         fXETK/yl2iMgtDYH1tlLrDNa34oUZ7vuFKFB4TOdAXssHpxGqmt9w+l3wFQAQrqJC3vA
+         TA+IZ5fJe7pvqyhNjaK2J+g6e5vtMHAFoRMIUvY18lFLGq50Z18BoJROp77k5HrjYvgz
+         iViaJmXbjDajbbDy9mlFmmgaxvXRwAPucDc+SYsSOl3lkHC35UUf+mhc5DcdtPABjDUK
+         OM0Hea/1MsMLozasYnusofHgKXjGKKsKbZ0V+TrkMTc8XS+lbDZM/Ynb1YcydxmPxGsk
+         xmYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUavLoHyGcCfqbg9zNPIOLw8sslBgBy8iDvpeXIZcNdf5hHpTwjQuxHnkrhqkxu56+Z0w/gVFs74lSNjxVkNZ5Lb0Lp/Vz8s8rvi4E2WPNnt8S0ByKHUE8PKP8sOFFQfd2OMDoTlhazBrNkL7TQaFrwxYd2GbtwFfpSp+Gxfj2e2pd1Rr0wtFmTI2eUlA8S5QPYqrP4LfoSRymzMoUHmm1C0qVMLvp9dw==
+X-Gm-Message-State: AOJu0YwWvJJTOA2AZWxlG2wRL2fmfTj45vs2ONtH+lfGZhXzYOlsVb2L
+	zN3+UO4Ev1ccnxKeDURWtDk7v5WvZkNy04mS+Pkj0xFltEozUv7/ayHKP/KQ
+X-Google-Smtp-Source: AGHT+IFkImrkK7qPRPe6sDGEmdkLVhdG2TDFZ2BctWFrFgh23fK3+mC01TrtKZK66DI710XUBVtGtA==
+X-Received: by 2002:a0d:d8d1:0:b0:61a:ae79:816a with SMTP id 00721157ae682-62cbb515ce7mr22331867b3.31.1717590787656;
+        Wed, 05 Jun 2024 05:33:07 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765b7ec1sm22113827b3.10.2024.06.05.05.33.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 05:33:06 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfa584ea2ffso1811966276.1;
+        Wed, 05 Jun 2024 05:33:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX6Bg31JF+Cpt432tgMSchRWDHwhD6xhCUYFm44MU3+U4wCXPti5SOhfPfbT5Um4wvwLYKSQQARbomyFSmK0WBYxwLrraTRd74cW0juEgt/RX0zIoc4HZM0gow0BtMQFa/FGW6jhCjx3jasIjE2lSWj+X74vEcn4oc5xSvSyd2+5iMs4sbCURaNSkIdXlkbuPAYFxdQK4ql27LDJ75hvcqwp/crGqwF9A==
+X-Received: by 2002:a25:aa72:0:b0:dfa:5748:124c with SMTP id
+ 3f1490d57ef6-dfacab1ab0cmr2235065276.10.1717590786252; Wed, 05 Jun 2024
+ 05:33:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: gpio: Add 'transition-delay-us'
- property
-To: Rob Herring <robh@kernel.org>, Peter Rosin <peda@axentia.se>
-Cc: Andi Shyti <andi.shyti@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Korsgaard <peter.korsgaard@barco.com>,
- Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Herve Codina <herve.codina@bootlin.com>,
- Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20240529091739.10808-1-bastien.curutchet@bootlin.com>
- <20240529091739.10808-2-bastien.curutchet@bootlin.com>
- <718d86a7-d70a-c38a-089d-5276bcc6e88b@axentia.se>
- <20240603155810.GA509311-robh@kernel.org>
-Content-Language: en-US
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-In-Reply-To: <20240603155810.GA509311-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240530173857.164073-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240530173857.164073-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jun 2024 14:32:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU5tYSF7m435F=sBS0FjoZ=q7D4RsufRYLbNVzKArUYPQ@mail.gmail.com>
+Message-ID: <CAMuHMdU5tYSF7m435F=sBS0FjoZ=q7D4RsufRYLbNVzKArUYPQ@mail.gmail.com>
+Subject: Re: [PATCH v3 14/15] pinctrl: renesas: pinctrl-rzg2l: Acquire lock in rzg2l_pinctrl_pm_setup_pfc()
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob, Hi Peter,
+On Thu, May 30, 2024 at 7:42=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> To keep consistency with rzg2l_pinctrl_set_pfc_mode(), acquire the lock
+> in rzg2l_pinctrl_pm_setup_pfc() during PFC setup.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - New patch
 
-On 6/3/24 17:58, Rob Herring wrote:
-> On Wed, May 29, 2024 at 02:13:37PM +0200, Peter Rosin wrote:
->> Hi!
->>
->> 2024-05-29 at 11:17, Bastien Curutchet wrote:
->>> I2C MUXes described by the i2c-gpio-mux sometimes need a significant
->>> amount of time to switch from a bus to another. When a new bus is
->>> selected, the first I2C transfer can fail if it occurs too early. There
->>> is no way to describe this transition delay that has to be waited before
->>> starting the first I2C transfer.
->>>
->>> Add a 'transition-delay-us' property that indicates the delay to be
->>> respected before doing the first i2c transfer.
->>
->> The io-channel-mux has a property with very similar intent named
->> settle-time-us [1]. I think we should use the same name here.
->>
->> [1] Documentation/devicetree/bindings/iio/multiplexer/io-channel-mux.yaml
-> 
-> Agreed. I knew we had something and went looking... I only checked the
-> base mux and i2c mux bindings.
-> 
+Thanks for your patch!
 
-Ok I'll do this in V3, thank you.
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -2541,7 +2541,9 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(s=
+truct rzg2l_pinctrl *pctrl, b
+>  static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l_pinctrl *pctrl)
+>  {
+>         u32 nports =3D pctrl->data->n_port_pins / RZG2L_PINS_PER_PORT;
+> +       unsigned long flags;
+>
+> +       spin_lock_irqsave(&pctrl->lock, flags);
+>         pctrl->data->pwpr_pfc_lock_unlock(pctrl, false);
+>
+>         /* Restore port registers. */
+> @@ -2586,6 +2588,7 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l=
+_pinctrl *pctrl)
+>         }
+>
+>         pctrl->data->pwpr_pfc_lock_unlock(pctrl, true);
+> +       spin_unlock_irqrestore(&pctrl->lock, flags);
+>  }
+>
+>  static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
 
-Best regards
-Bastien
+It's definitely safer to unlock only while holding the lock.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
