@@ -1,148 +1,154 @@
-Return-Path: <linux-kernel+bounces-203179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431618FD786
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:29:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FD18FD785
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0FE2873F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 693CA1C2194E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B025D15ECFD;
-	Wed,  5 Jun 2024 20:29:16 +0000 (UTC)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7756115ECE4;
+	Wed,  5 Jun 2024 20:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QtYMxgle"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB44154445;
-	Wed,  5 Jun 2024 20:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A369C13C3F2;
+	Wed,  5 Jun 2024 20:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717619356; cv=none; b=s7IgMZ/QFM7wrISWMuB6vTOXr9t66IW+b6kNIKmBINfXN3iuz5UonZtNI5Nqthnh0TV1UXJsMGc9XTdjAHa/fmmo+zt5lrHEF/BWA1VMVGjdzvEqTJ1Bdo/ERwK6m582K7mA5tTPKsxCu+BqXik98zlrq3q+/mlt6ptLEsZf7ZA=
+	t=1717619354; cv=none; b=N9YgGEkQfWcR+QwFyGLttoUPZYUFo8DK8+SV3aEx1BxbvjJPC2Am76PTXFSz3Gc4E9I+1rD7uBNoI+BTH3G0vvWen8br6nrlZNCBYb7/Dmy12uC0n2RiluD50rLk0K+u6+L1e38CGR6Qfq7K6r2/1v1349G7oUoE5bn7YKrObnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717619356; c=relaxed/simple;
-	bh=DSPArV6Z2a+KiBRCJYvaAfEOU6EEf7btH5Yz6Tj4aFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SU8Kmtx5/+k/m/7dSjVRADAQq1kCr5SmFLHYNR9yyhNwq0CJsGcz57szzkjxzQExI2hT6KeL/6UqmYc3xrzdqjG/8ifwNXHAfVIyX/PAQwo6nNkEX49jqrNAkDUnjThpigBGT3iMXNHXu/JwtXvHrbVPYZQI/l8Y7pWcnUNzfGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6ce533b6409so146370a12.1;
-        Wed, 05 Jun 2024 13:29:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717619354; x=1718224154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nhdufPka7d0xOyoq7UULW75JegC/mKKmmURDvjgZle0=;
-        b=Ed40CuwPZbkqzGqWq0qg/FkNwzRt6F/yJQQvvsfgjkWgCN2GvqtsDStWcQUpIraUh/
-         HrPMnEPkXDTQfrs8kFMolVTZ4fdMnf7OyuMlq5EaPNxtB8Y3zmjdoZkctTwOEkRxhaXA
-         6Z+JngW/fpVE1zGehI8AToO3WEpiskF3v2MLyddBD9zdOgPVJ0kz9oLWoAp0KBcy9y4Q
-         W6Dld3RRFQY84V+MKBCe5TNl3Nq6yFI6/mvCYRjHp3gQllpb0CKMiFi/dXc6AuY66rdN
-         xx5IxZao1Y3JAFzW9CsOE6r704Cs2J+btrKv0DYVkk5GMEPr0dKSJijDYTK6xh/6JY1c
-         Q/QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTYA8lhX0W2IinltRvOnlSrnlqVEeZKwa7gfEV63KZ0YXKjeokG7SPswswlEpI+ZK4qq+AGDtwY9mpKk/bOLFPXXRIxcJ3UrurpMYOj/Biim3Tn3uW4JR+qvTsfcbLYI5kG+W7vR8aFtZQhJ9D5A==
-X-Gm-Message-State: AOJu0YxtBhhF4wpzQZg0LQimgjhq3ZlGBsDcIdNb8oHz3Mi28KHMa18l
-	gfwtrnvV5HBGPsXNtnaiQCi1mUmM7zpWRQx52E+t6vlzmAhrUEB097pTqU1vFd5vfSznCzj5E/J
-	kW7SsJv3ARks9uEWsfCUfMxiBxa8=
-X-Google-Smtp-Source: AGHT+IH5uNmAxDcdzsCFM4a/9AobJg9GTU5KIYQ+XRPCpQ5Xi3Rpiz98QpzyR58SjaHzzjs7RXCTqegJDsGySG127kM=
-X-Received: by 2002:a17:90a:3489:b0:2b5:6e92:1096 with SMTP id
- 98e67ed59e1d1-2c27db19e2amr3616189a91.28.1717619353917; Wed, 05 Jun 2024
- 13:29:13 -0700 (PDT)
+	s=arc-20240116; t=1717619354; c=relaxed/simple;
+	bh=XV6VLCEWWdCpqWVQr//KanNGW4Bc9TlQGkeYEMBAxrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ax/o5mn18otGzYqfi2NXqRqY4VB+NknEkDn7jTYtsW/sMroGExwSx/CHl5D2l0TZos8NyiPU7hQBnh3qte4Ba6ARVZVEgfCdEw6EwNl+2lwdTtZj7TnRwoWiQRPsq6HKmBfm8IZGj7vJ9RpRq2quUepWCMnExfCOSrX+B8xxH3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QtYMxgle; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717619353; x=1749155353;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=XV6VLCEWWdCpqWVQr//KanNGW4Bc9TlQGkeYEMBAxrQ=;
+  b=QtYMxglefNEXiOUrUsaah2S7mydC3YyIVy0LVcwYJ+Y9M0Id/lk0E89Y
+   gUWkg0Em5v4q76BR4T0te+lc6f+O5tBussfJkgHYGKTnau05Z1pzLGI8i
+   v2yAU9YLazYAaf4Moz3q24a4Td4JuUWMZEkY8oKnIScMZW7jIykZrXjkl
+   Re/U1CaAfxr72w0H7PQXd1UHq4ZKf6srBH3H6DpvNgPk3t3JHSF4wuSPK
+   uhgdRILcz9Bit4U02s1yRlE5MnRU5Ab23Mifne/6ST24wrQ1jQP3MrriO
+   uFRNdN1ZcdLeiihNxbWBzeI9VXdb0oFPq2f+NtAhU53v+6WHfd2dNtZyb
+   w==;
+X-CSE-ConnectionGUID: OGOfrq5HT4iRk7iCS/86OQ==
+X-CSE-MsgGUID: +fOagOYwRDaa+MQrwDYcNw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="18101752"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="18101752"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 13:29:12 -0700
+X-CSE-ConnectionGUID: EKwvxkJFTuagKlLTciEOQg==
+X-CSE-MsgGUID: tA8ITf9QQoSX1b28HGJUww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="37821310"
+Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.83]) ([10.125.109.83])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 13:29:11 -0700
+Message-ID: <d0b56247-9b6c-4b62-aad0-1ff5925d9f9e@intel.com>
+Date: Wed, 5 Jun 2024 13:29:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527105842.GB33806@debian-dev> <CAP-5=fXfidyF_e=yMNi26ScgY-VbJPfxN8M7OiK9ELa3qTfXPQ@mail.gmail.com>
- <ZlY0F_lmB37g10OK@x1> <CAP-5=fWM8LxrcR4Nf+e2jRtJ-jC0Sa-HYPf56pU5GW8ySdX1CQ@mail.gmail.com>
- <d79b18d7-6930-41fd-8157-eaa55b52df86@arm.com> <Zld3dlJHjFMFG02v@x1>
- <CAP-5=fXKnQzfwDSr3zVeo6ChJe3+xwpBfyAi0ExmPEdhcde4ww@mail.gmail.com>
- <CAM9d7chV8YOCj8=SGs0f60UGtf+N2+X=U+Brg246bFoPXBXS+g@mail.gmail.com>
- <aee9254e-81c1-464a-8a28-f971615baffc@arm.com> <CAP-5=fVynt-8cH6Jc5VyfBLBOqkF+v_7kknHdUPZBM1r3WwhTQ@mail.gmail.com>
- <ZlkC_Tm6kKIL3Phc@google.com>
-In-Reply-To: <ZlkC_Tm6kKIL3Phc@google.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 5 Jun 2024 13:29:02 -0700
-Message-ID: <CAM9d7ciTbHngfimDNsXS_adR7xg4ZHvSHzVhAzuQ6o-nQ2nsMQ@mail.gmail.com>
-Subject: Re: [PATCH v1] perf evlist: Force adding default events only to core PMUs
-To: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dmaengine: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+ Fenghua Yu <fenghua.yu@intel.com>, Peter Ujfalusi <peter.ujfalusi@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240605-md-drivers-dma-v1-1-bcbcfd9ce706@quicinc.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240605-md-drivers-dma-v1-1-bcbcfd9ce706@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 30, 2024 at 3:52=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Thu, May 30, 2024 at 06:46:08AM -0700, Ian Rogers wrote:
-> > On Thu, May 30, 2024 at 5:48=E2=80=AFAM James Clark <james.clark@arm.co=
-m> wrote:
-> > >
-> > > On 30/05/2024 06:35, Namhyung Kim wrote:
-> > > > It might not be a perfect solution but it could be a simple one.
-> > > > Ideally I think it'd be nice if the kernel exports more information
-> > > > about the PMUs like sampling and exclude capabilities.
-> > > > > Thanks,
-> > > > Namhyung
-> > >
-> > > That seems like a much better suggestion. Especially with the ever
-> > > expanding retry/fallback mechanism that can never really take into
-> > > account every combination of event attributes that can fail.
-> >
-> > I think this approach can work but we may break PMUs.
-> >
-> > Rather than use `is_core` on `struct pmu` we could have say a
-> > `supports_sampling` and we pass to parse_events an option to exclude
-> > any PMU that doesn't have that flag. Now obviously more than just core
-> > PMUs support sampling. All software PMUs, tracepoints, probes. We have
-> > an imprecise list of these in perf_pmu__is_software. So we can set
-> > supports_sampling for perf_pmu__is_software and is_core.
->
-> Yep, we can do that if the kernel provides the info.  But before that
-> I think it's practical to skip uncore PMUs and hope other PMUs don't
-> have event aliases clashing with the legacy names. :)
->
-> >
-> > I think the problem comes for things like the AMD IBS PMUs, intel_bts
-> > and intel_pt. Often these only support sampling but aren't core. There
-> > may be IBM S390 PMUs or other vendor PMUs that are similar. If we can
-> > make a list of all these PMU names then we can use that to set
-> > supports_sampling and not break event parsing for these PMUs.
-> >
-> > The name list sounds somewhat impractical, let's say we lazily compute
-> > the supports_sampling on a PMU. We need the sampling equivalent of
-> > is_event_supported:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/util/print-events.c?h=3Dperf-tools-next#n242
-> > is_event_supported has had bugs, look at the exclude_guest workaround
-> > for Apple PMUs. It also isn't clear to me how we choose the event
-> > config that we're going to probe to determine whether sampling works.
-> > The perf_event_open may reject the test because of a bad config and
-> > not because sampling isn't supported.
-> >
-> > So I think we can make the approach work if we had either:
-> > 1) a list of PMUs that support sampling,
-> > 2) a reliable "is_sampling_supported" test.
-> >
-> > I'm not sure of the advantages of doing (2) rather than just creating
-> > the set of evsels and ignoring those that fail to open. Ignoring
-> > evsels that fail to open seems more unlikely to break anything as the
-> > user is giving the events/config values for the PMUs they care about.
->
-> Yep, that's also possible.  I'm ok if you want to go that direction.
 
-Hmm.. I thought about this again.  But it can be a problem if we ignore
-any failures as it can be a real error due to other reason - e.g. not
-supported configuration or other user mistakes.
 
-Thanks,
-Namhyung
+On 6/5/24 12:28 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/idxd/idxd.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/omap-dma.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ioat/ioatdma.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/dma/dmatest.c     | 1 +
+>  drivers/dma/idxd/init.c   | 1 +
+>  drivers/dma/ioat/init.c   | 1 +
+>  drivers/dma/ti/omap-dma.c | 1 +
+>  4 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+> index a4f608837849..1f201a542b37 100644
+> --- a/drivers/dma/dmatest.c
+> +++ b/drivers/dma/dmatest.c
+> @@ -1372,4 +1372,5 @@ static void __exit dmatest_exit(void)
+>  module_exit(dmatest_exit);
+>  
+>  MODULE_AUTHOR("Haavard Skinnemoen (Atmel)");
+> +MODULE_DESCRIPTION("DMA Engine test module");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index a7295943fa22..cb5f9748f54a 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -22,6 +22,7 @@
+>  #include "perfmon.h"
+>  
+>  MODULE_VERSION(IDXD_DRIVER_VERSION);
+> +MODULE_DESCRIPTION("Intel Data Accelerators support");
+
+"Intel Data Streaming Accelerator and In-Memory Analytics Accelerator common driver"
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_AUTHOR("Intel Corporation");
+>  MODULE_IMPORT_NS(IDXD);
+> diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
+> index 9c364e92cb82..d84d95321f43 100644
+> --- a/drivers/dma/ioat/init.c
+> +++ b/drivers/dma/ioat/init.c
+> @@ -23,6 +23,7 @@
+>  #include "../dmaengine.h"
+>  
+>  MODULE_VERSION(IOAT_DMA_VERSION);
+> +MODULE_DESCRIPTION("Intel I/OAT DMA Linux driver");
+
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+
+>  MODULE_LICENSE("Dual BSD/GPL");
+>  MODULE_AUTHOR("Intel Corporation");
+>  
+> diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
+> index b9e0e22383b7..5b994c325b41 100644
+> --- a/drivers/dma/ti/omap-dma.c
+> +++ b/drivers/dma/ti/omap-dma.c
+> @@ -1950,4 +1950,5 @@ static void __exit omap_dma_exit(void)
+>  module_exit(omap_dma_exit);
+>  
+>  MODULE_AUTHOR("Russell King");
+> +MODULE_DESCRIPTION("OMAP DMAengine support");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+> change-id: 20240605-md-drivers-dma-2105b7b6f243
+> 
 
