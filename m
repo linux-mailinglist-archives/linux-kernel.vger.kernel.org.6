@@ -1,135 +1,161 @@
-Return-Path: <linux-kernel+bounces-203068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84ADB8FD5E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:40:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6168FD5E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6916D1C23D7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:40:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF630B22069
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01EA13A87E;
-	Wed,  5 Jun 2024 18:40:08 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 543B95C96
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A911013AA3C;
+	Wed,  5 Jun 2024 18:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nUnhafkL"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939E9DF78
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717612808; cv=none; b=lcWVfQj8vBcAY6pTR8+jfciT1H6NsU4BSz+jX58r5khMTTRQ8ArHAXSkt6q7D3/mgJk+d7CqGpkh+u542Vv/4rX3ooI2NsOTpD31aty/wjyVQNISc0HvvbymveslG8NOdQFVj5brMx9YJaSGJCXOKa7qmpk/b74OD0Ia5ZtotT4=
+	t=1717612825; cv=none; b=VCiiuzMmdR3xkll7oUkLhKCdYYyMPJvuBH9NTgMO2gW/P8nJRQuDfFKiJzUOns/6DAeD4zICVEPWT7sjo5c9IxTo9gPQkviErXHaX3zvqdq6pVftgzIkz0PNZFctph58hQS0J5Z9hcBODQTYuDVDtV685BySdngI23EKQjyKZvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717612808; c=relaxed/simple;
-	bh=0jI3CUuP5puOjAYBI9zzxgoVgLBurSEEXQshgD7sXEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UBZpb+VrXzlOlRliQ2uVZ96H6gMjp11lb0qSXgrbjWKcCuA0dNSPWb9pugg/ZlYXDORa4BmjLpLl/SNT+UsuVFkjjbISZiSsw+4cRH+m47zdV4B+uAnCPhIT1kb8QZFb+9DVFc3Awx2rmHY4kqr2h8efdeDWeLykcb5MYorxu5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 205382 invoked by uid 1000); 5 Jun 2024 14:40:05 -0400
-Date: Wed, 5 Jun 2024 14:40:05 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Andrea Parri <parri.andrea@gmail.com>, will@kernel.org,
-  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-  linux-kernel@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
-  jonas.oberhauser@huaweicloud.com
-Subject: Re: New locking test for the paulmckrcu/litmus github archive
-Message-ID: <1d175b42-84b4-4a48-b1fb-ab6fd3566f75@rowland.harvard.edu>
-References: <a8c06694-098d-4b95-845c-96b40cd3ff2d@rowland.harvard.edu>
- <df851df5-0e3a-45b1-ae85-9625309766b0@paulmck-laptop>
+	s=arc-20240116; t=1717612825; c=relaxed/simple;
+	bh=HDAlcS57GK25baYDQl/y1dFbksUihFMOcZW+n2UCDzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F01tfFwpyHSiwYBRKl5aeihWSECuCVePTwRAVmJ6Zzpf/ur2L/Z4AKEyNEUQdzYO++VeiwAQgyQMlDpTzOY4GUWCo3xyN4M4XO4KTNGm2tUZRwAhs7bDLPUOlDTWlEf/+TiuwDx1a3qJMZYtv6oNQI3bkmJaTnjWDDWPITfKjHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nUnhafkL; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f93d757f29so42902a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:40:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717612822; x=1718217622; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=01CW9viXfpn/hTRJYVVBrZV+RhXTgdyAXCGw5dC1AEw=;
+        b=nUnhafkLUu4MaEJOeFsLoY9MNwGlFOepbpfURA61lv7lb5bHu1EwN5qHjNIZgstS3E
+         pUMo1cgjXcHzeL9axSnhSb/sGV7SBUW0PsArjywhLqS2oM0uUmWVL4dXwhYRIr6YyHHH
+         9RjY4rqCk18RfPHcykf3WVfYh38AHOcrWc1HPLwLxfofw9tzZpfv4h8gbTXHrDf8tdKa
+         LGhlS8PcQCdvwoz5v+KRMmi1GNh0+fOCiMRHlJ1DrLn3jS5IO8JugbSMj3GvKuqCWeRU
+         J3wED2KqsIhJ2wVPeI/yEKt6zCdt/z/5w2bOmj1b1Wg/pmeOwInxtu96e57Wy6RnDSNy
+         +YnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717612822; x=1718217622;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=01CW9viXfpn/hTRJYVVBrZV+RhXTgdyAXCGw5dC1AEw=;
+        b=hDhylHyNR0DUh1GdcXrfveOizc4S2Nt0y3PWJZnMidOs/2t/jTwTHdTUWawHoH5Ut1
+         m3raQxdOzllTcGFgXw9Q0k7KyW0YDOHdsGIyBuecHJUGdArs4UHfqLeS+b4bMr45nXca
+         5JqxjK8N5ZNdTQUK7RxYHUIkSYxPfOMum84ktX9ax+ghfVNPepL6qq/oEZDC2ICe5rGN
+         NWCbRJmAtszDpPTv7s+2BqEGSW9lPeDEYwHl/PKWv1pUw+joBDu1nL0zUy4bBeZeMwkM
+         ArflAI1idny9KNjtysl+OAL54oMHamFdMo00OwooSfog/X2IFa6YEMv/4bGaapruD2JJ
+         2YGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhmEQlDPp6Y9wyoANZsD6lT4mRYo6D8xaWIfvkyh7fBMuPG4vzZi3wwEyDutqkcJtaDa4evqblp68eiL+ts8aXbNwwwYW363GqBd6S
+X-Gm-Message-State: AOJu0YzNHedtTVTcxPpbApEHUWg+WW2gr9HZWsfVf+RnQXMgccqFSqjP
+	TtwIkcKpmflgPCQQbW8B/F0klkb8/8RTeE/uEgLyzOw20O6xo3RKplBiK9ux4Zw=
+X-Google-Smtp-Source: AGHT+IE4D+jAv58+0GgCMXisqeGuZCKz+lY2iWITk+8FkqB8ggzQmLPTu1JtIQBnacx4nGSjj3PhJw==
+X-Received: by 2002:a9d:5c07:0:b0:6f0:616f:f186 with SMTP id 46e09a7af769-6f9436b051emr3526455a34.29.1717612821607;
+        Wed, 05 Jun 2024 11:40:21 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f937b7acc0sm982915a34.80.2024.06.05.11.40.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 11:40:21 -0700 (PDT)
+Message-ID: <8450bd9a-c39d-4d24-8a42-f86041d16081@baylibre.com>
+Date: Wed, 5 Jun 2024 13:40:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df851df5-0e3a-45b1-ae85-9625309766b0@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 7/9] iio: adc: ad7173: refactor device info structs
+To: dumitru.ceclan@analog.com
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>
+References: <20240603-ad4111-v5-0-9a9c54d9ac78@analog.com>
+ <20240603-ad4111-v5-7-9a9c54d9ac78@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240603-ad4111-v5-7-9a9c54d9ac78@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 11:25:11AM -0700, Paul E. McKenney wrote:
-> Thank you both!
+On 6/3/24 11:23 AM, Dumitru Ceclan via B4 Relay wrote:
+> From: Dumitru Ceclan <dumitru.ceclan@analog.com>
 > 
-> I queued and pushed the following commit, please let me know if it
-> needs adjustment.
+> Drop array of device info structs and use individual structs for all;
+> drop models enum as no longer needed. This improves readability as the
+> structs are pointed directly.
 > 
-> 							Thanx, Paul
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> ---
+
+...
+
+>  static const char *const ad7173_ref_sel_str[] = {
+> @@ -1191,32 +1185,25 @@ static int ad7173_probe(struct spi_device *spi)
+>  }
+>  
+>  static const struct of_device_id ad7173_of_match[] = {
+> -	{ .compatible = "adi,ad7172-2",
+> -	  .data = &ad7173_device_info[ID_AD7172_2]},
+> -	{ .compatible = "adi,ad7172-4",
+> -	  .data = &ad7173_device_info[ID_AD7172_4]},
+> -	{ .compatible = "adi,ad7173-8",
+> -	  .data = &ad7173_device_info[ID_AD7173_8]},
+> -	{ .compatible = "adi,ad7175-2",
+> -	  .data = &ad7173_device_info[ID_AD7175_2]},
+> -	{ .compatible = "adi,ad7175-8",
+> -	  .data = &ad7173_device_info[ID_AD7175_8]},
+> -	{ .compatible = "adi,ad7176-2",
+> -	  .data = &ad7173_device_info[ID_AD7176_2]},
+> -	{ .compatible = "adi,ad7177-2",
+> -	  .data = &ad7173_device_info[ID_AD7177_2]},
+> +	{ .compatible = "adi,ad7172-2", .data = &ad7172_2_device_info},
+> +	{ .compatible = "adi,ad7172-4", .data = &ad7172_4_device_info},
+> +	{ .compatible = "adi,ad7173-8", .data = &ad7173_8_device_info},
+> +	{ .compatible = "adi,ad7175-2", .data = &ad7175_2_device_info},
+> +	{ .compatible = "adi,ad7175-8", .data = &ad7175_8_device_info},
+> +	{ .compatible = "adi,ad7176-2", .data = &ad7176_2_device_info},
+> +	{ .compatible = "adi,ad7177-2", .data = &ad7177_2_device_info},
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, ad7173_of_match);
+>  
+>  static const struct spi_device_id ad7173_id_table[] = {
+> -	{ "ad7172-2", (kernel_ulong_t)&ad7173_device_info[ID_AD7172_2]},
+> -	{ "ad7172-4", (kernel_ulong_t)&ad7173_device_info[ID_AD7172_4]},
+> -	{ "ad7173-8", (kernel_ulong_t)&ad7173_device_info[ID_AD7173_8]},
+> -	{ "ad7175-2", (kernel_ulong_t)&ad7173_device_info[ID_AD7175_2]},
+> -	{ "ad7175-8", (kernel_ulong_t)&ad7173_device_info[ID_AD7175_8]},
+> -	{ "ad7176-2", (kernel_ulong_t)&ad7173_device_info[ID_AD7176_2]},
+> -	{ "ad7177-2", (kernel_ulong_t)&ad7173_device_info[ID_AD7177_2]},
+> +	{ "ad7172-2", (kernel_ulong_t)&ad7172_2_device_info},
+> +	{ "ad7172-4", (kernel_ulong_t)&ad7172_4_device_info},
+> +	{ "ad7173-8", (kernel_ulong_t)&ad7173_8_device_info},
+> +	{ "ad7175-2", (kernel_ulong_t)&ad7175_2_device_info},
+> +	{ "ad7175-8", (kernel_ulong_t)&ad7175_8_device_info},
+> +	{ "ad7176-2", (kernel_ulong_t)&ad7176_2_device_info},
+> +	{ "ad7177-2", (kernel_ulong_t)&ad7177_2_device_info},
+
+nit: I would leave a space before the trailing } to match the space
+after the leading { here and in the _of_ table.
+
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(spi, ad7173_id_table);
 > 
-> ------------------------------------------------------------------------
-> 
-> commit fb65813a7a181cd86c50bb03f9df1f6a398fa22b
-> Author: Alan Stern <stern@rowland.harvard.edu>
-> Date:   Wed Jun 5 11:20:47 2024 -0700
-> 
->     manual/locked: Add single-threaded spin_is_locked() test
->     
->     This new litmus test demonstrates a bug in the current LKMM lock.cat file.
->     This bug results in the following output:
->     
->             Test CoWWW+sil-lock-sil-unlock-sil Allowed
->             States 0
->             No
->             Witnesses
->             Positive: 0 Negative: 0
->             Condition exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
->             Observation CoWWW+sil-lock-sil-unlock-sil Never 0 0
->             Time CoWWW+sil-lock-sil-unlock-sil 0.01
->             Hash=cf12d53b4d1afec2e46bf9886af219c8
->     
->     This is consistent with a deadlock.  After the fix, there should be one
->     execution that matches the "exists" clause, hence an "Always" result.
 
-The part about being consistent with a deadlock is not very important; 
-I'd omit it.  Also, the second sentence is ambiguous; change it to:
-
-	After the fix, there should be one execution that matches the 
-	"exists" clause and no executions that don't match, hence an 
-	"Always" result.
-
-> diff --git a/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus b/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus
-> new file mode 100644
-> index 00000000..cee5abf4
-> --- /dev/null
-> +++ b/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus
-> @@ -0,0 +1,24 @@
-> +C CoWWW+sil-lock-sil-unlock-sil.litmus
-
-Where does the "CoWWW" part of the name come from?  If it refers to 
-coherence order and three writes, I'll point out that the litmus test 
-contains only two writes -- which would better be described as a lock 
-and an unlock.  (Or are you counting the "write" that sets the lock's 
-initial value?)
-
-> +
-> +(*
-> + * Result: Always
-> + *
-> + * This tests the memory model's implementation of spin_is_locked().
-> + *)
-> +
-> +{}
-> +
-> +P0(spinlock_t *x)
-> +{
-> +        int r0;
-
-Oops!  Apparently I managed not to convert the spaces on that line to a 
-tab.  Can you take care of that?
-
-Alan
-
-> +	int r1;
-> +	int r2;
-> +
-> +	r0 = spin_is_locked(x);
-> +	spin_lock(x);
-> +	r1 = spin_is_locked(x);
-> +	spin_unlock(x);
-> +	r2 = spin_is_locked(x);
-> +}
-> +
-> +exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
 
