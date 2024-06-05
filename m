@@ -1,208 +1,256 @@
-Return-Path: <linux-kernel+bounces-203184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0F98FD791
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:34:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBE38FD772
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A10B1C22735
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FF52845AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F7215EFDB;
-	Wed,  5 Jun 2024 20:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XBWdSVki"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4528015ECCA;
+	Wed,  5 Jun 2024 20:24:49 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA93313D262;
-	Wed,  5 Jun 2024 20:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADB514D444
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717619679; cv=none; b=bMjHrFuiNQwXxyxukTAha0fTEIWtesg58BofBDrHJBXsh/S6gXpq/WyPJELX/Zg0DXDcPwTG3k1417aNd0J4D/9BoOnAtot88sSxBm9SNi6bWHXVj8yYBmzqqUgTC2f0wrxtbx7vA/jRlX+f17+U26ybjRi9esUHBma8q2qt/V8=
+	t=1717619088; cv=none; b=nrjTPTafs8ZdQZ1h4sBLxdJ3YKyrghwjcHIaGXmxOSZICXmS2yLiDhnFyVkImFbP9mfNvClIAmNQtd0SRlPEyOQJE8JqunETTUK3yfg3Q17jTC4/Z/n4VUhyUOvQDOwV40ITROe9iwQMqG1yClYIDJv58N4GEMA3m9tH/LO5NDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717619679; c=relaxed/simple;
-	bh=uKobMdssiBNVRXYbdWAN28ycziehwxzkQTvSknhr/oQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Fllq04NI5YQlxYO8H4QwbNc+3FZwLCt3UZZFI2NfGwChwf0/DBW5gP5R1oW2Upxk31Plds1L3LUCsswNgeKnlqwEZEVT//hMWA5EffjX0oXzv+dWHLnj23zMmgra1BmhCrONy/XQNYrRI7xbcfoMY9GdzVLsHggRm0xm/MIcxlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XBWdSVki; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717619674; x=1718224474; i=markus.elfring@web.de;
-	bh=K4LgTxaCEsSwrK2DaS4xTbm0mo17tA8sa1rtdFZaZSA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XBWdSVkiAoYN9XG88XnQ0//cxLVvH4hNEIOSI7Y2jlOhIXWYLxA0U52cFzsm4R5U
-	 wqlymDVQIyFbxMbXMrrye3/kgkR+/hqCJOY5TGn2jwpX1p9bOXf9ZQeTfSRSF8maI
-	 9QEITUqVaN8LZvYr/oVeKtdmqMRkWMPdzuWZ4o7c1qakpHL3kEdFrRkRKcm9wEwrh
-	 vL++17BU5PFf9hMvYta16wctaY0OhZn4XiI0atfPWiS70hZ5qt5mm0gZdZS1hKKO3
-	 gaVnan8DrRAYcECB9JP06jpMV2TDrfooWMcO5/h/u643gMLznHlgxPRoB7yTmA0tR
-	 /9I6fzDNyppxCc+w/A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mv3US-1sWLTa1tWi-011U9e; Wed, 05
- Jun 2024 22:20:14 +0200
-Message-ID: <f2912116-93f2-437d-bb15-9b7d41ccda19@web.de>
-Date: Wed, 5 Jun 2024 22:20:10 +0200
+	s=arc-20240116; t=1717619088; c=relaxed/simple;
+	bh=dJT0IXIjAoLuqegKrl7wJhhJCx7h7wib/TJUPpQllBA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOfTO+5nj4eoY2hdLCLKvYm2A1fPGHnpBpqcoH6jF+EBuAgASvvURTQ9/rw/s5mzbN/hn2Rv8ECbUQ/No9dpTw6+LKxjFh+rkfUYEcHjwO7hvUCGkwL6HATW4dXAVEUjQjpdZaNATlUlYeo8CSDWWacIR73jfGnrB3k7XzWydKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id a4ad9dfa-2379-11ef-8e41-005056bdf889;
+	Wed, 05 Jun 2024 23:24:45 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 5 Jun 2024 23:24:43 +0300
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Simon Horman <horms@kernel.org>,
+	Sai Krishna Gajula <saikrishnag@marvell.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 18/19] mfd: Add support for LAN966x PCI device
+Message-ID: <ZmDJi__Ilp7zd-yJ@surfacebook.localdomain>
+References: <20240527161450.326615-1-herve.codina@bootlin.com>
+ <20240527161450.326615-19-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
- linux-sound@vger.kernel.org, kernel-janitors@vger.kernel.org,
- David Rhodes <david.rhodes@cirrus.com>, Jaroslav Kysela <perex@perex.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>, Takashi Iwai <tiwai@suse.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ASoC: cs35l56: Use scope-based resource management in
- cs35l56_try_get_broken_sdca_spkid_gpio()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iiMvF75SG/hLXKOCRnOGm3xQbDMpR7dtnFbnQ9Xj6PHqB2eQQvy
- /VTBEhRwXj4Ql8Bkp1zH6MhJTVhN8IKwREbf2wYTCoxGKpxCn5tHQWeJC0UxJW0APqbyUWh
- 74QaReiEVNE0OBgn8QtlmCnnsmk9+/9OLLMayfGcwdUNLjI9YCVriOzULAXL8NwQAIKWmh/
- 3WoJ8iSyJ4ormopJEgkrA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Ur7g/hgP2Do=;E1jXlsG/dQA7JfHKHDxENaK1I+p
- MTbsn7g8AHoArGwlMIqI/VI2sMCq+T3V4NxwfFrXQZkx3SQJlkHnKlFqpmv69QmDFDWTiZ1f2
- WO3uQn0D5yVbZrZH7AD+ynEeCT43IKRAuD/J/fF8gywrQqMldSSdw1YaAwIYXA11F5SPG+RNN
- qPcQM2odmviSzjazAfUvGkW48jUdQ+CEHHE+m4Y3gl/a9egVoHvdOpbHWX9tuMeNj1K/8Mh98
- cOcr4u2HUGiyuYkHYv/fBY4hMesyUkilvuA41iK5DhDQBYSi+TYrUR5/Ha5fGLkUUjOV52yal
- woBOOZPAK+eg9503Z7DWMdD5r7xqz7xpr4gAWSSsfnuH3SsqaJxmr3ZpAshQCyJhQweKA6eOo
- GwpUCYroSbMaRE7+jbUcRQwRKwb2R0K3wLczRIyZmZgr0wHb54dvi2xMeadufNj1pfu7IApA+
- jQ/mTrVJegf7/QUGXFcnMliZDgybTdtKPyVTuL0IQQCfMwZDnvASDVXqwtcRqM79DPVRX0wbe
- 8KYxaK45CPQ0DLQV5ByqVlPImNX7sJ7L5HAOCQydzVXJmUC7ddrfV52Z3YfX+HXdC2Ti7mnP8
- Yo/gPrZCZChHteC7zHm2KOmU4RVmqMk0WJcj8tuYYYd76lLQi68rbGeDcs6/WV89O49oKMELu
- TxkejgfXld9wLshMMJAaNqWTyQlPbyFnpfPnFB8AwGlAk9IgmuZ+kqQ0HRopxpaQ2uhkMq7lC
- OOh7iG6jk7oxDhjhxJs1byjemMc8QkLHG/2ER+iCjVwkwJNWgiDMHpzNhYaAXojG0U0e/QmXM
- /+s+HWpIZW5rwIXb3r4qTmoHZzS+8omK56lh8Xd/bS7MY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240527161450.326615-19-herve.codina@bootlin.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Jun 2024 22:02:09 +0200
+Mon, May 27, 2024 at 06:14:45PM +0200, Herve Codina kirjoitti:
+> Add a PCI driver that handles the LAN966x PCI device using a device-tree
+> overlay. This overlay is applied to the PCI device DT node and allows to
+> describe components that are present in the device.
+> 
+> The memory from the device-tree is remapped to the BAR memory thanks to
+> "ranges" properties computed at runtime by the PCI core during the PCI
+> enumeration.
+> The PCI device itself acts as an interrupt controller and is used as the
+> parent of the internal LAN966x interrupt controller to route the
+> interrupts to the assigned PCI INTx interrupt.
 
-Scope-based resource management became supported also for another
-programming interface by contributions of Jonathan Cameron on 2024-02-17.
-See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
-property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
+...
 
-* Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
 
-* Reduce the scope for the local variable =E2=80=9Caf01_fwnode=E2=80=9D.
+> +#include <linux/kernel.h>
 
-* Omit explicit fwnode_handle_put() calls accordingly.
+Why do you need this?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/pci.h>
+> +#include <linux/slab.h>
 
-See also the commit fbd741f0993203d07b2b6562d68d1e5e4745b59b ("ASoC: cs35l=
-56:
-fix usages of device_get_named_child_node()").
+General comment to the headers (in all your patches), try to follow IWYU
+principle, i.e. include what you use explicitly and don't use "proxy" headers
+such as kernel.h which basically shouldn't be used at all in the drivers.
 
+...
 
- sound/soc/codecs/cs35l56.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+> +static irqreturn_t pci_dev_irq_handler(int irq, void *data)
+> +{
+> +	struct pci_dev_intr_ctrl *intr_ctrl = data;
+> +	int ret;
+> +
+> +	ret = generic_handle_domain_irq(intr_ctrl->irq_domain, 0);
+> +	return ret ? IRQ_NONE : IRQ_HANDLED;
 
-diff --git a/sound/soc/codecs/cs35l56.c b/sound/soc/codecs/cs35l56.c
-index 758dfdf9d3ea..db41fc42dcac 100644
-=2D-- a/sound/soc/codecs/cs35l56.c
-+++ b/sound/soc/codecs/cs35l56.c
-@@ -1345,13 +1345,13 @@ static void cs35l56_acpi_dev_release_driver_gpios(=
-void *adev)
+There is a macro for that IRQ_RETVAL() IIRC.
 
- static int cs35l56_try_get_broken_sdca_spkid_gpio(struct cs35l56_private =
-*cs35l56)
- {
--	struct fwnode_handle *af01_fwnode;
- 	const union acpi_object *obj;
- 	struct gpio_desc *desc;
- 	int ret;
+> +}
 
- 	/* Find the SDCA node containing the GpioIo */
--	af01_fwnode =3D device_get_named_child_node(cs35l56->base.dev, "AF01");
-+	struct fwnode_handle *af01_fwnode __free(fwnode_handle)
-+					  =3D device_get_named_child_node(cs35l56->base.dev, "AF01");
- 	if (!af01_fwnode) {
- 		dev_dbg(cs35l56->base.dev, "No AF01 node\n");
- 		return -ENOENT;
-@@ -1361,7 +1361,6 @@ static int cs35l56_try_get_broken_sdca_spkid_gpio(st=
-ruct cs35l56_private *cs35l5
- 				    "spk-id-gpios", ACPI_TYPE_PACKAGE, &obj);
- 	if (ret) {
- 		dev_dbg(cs35l56->base.dev, "Could not get spk-id-gpios package: %d\n", =
-ret);
--		fwnode_handle_put(af01_fwnode);
- 		return -ENOENT;
- 	}
+...
 
-@@ -1369,7 +1368,6 @@ static int cs35l56_try_get_broken_sdca_spkid_gpio(st=
-ruct cs35l56_private *cs35l5
- 	if (obj->package.count !=3D 4) {
- 		dev_warn(cs35l56->base.dev, "Unexpected spk-id element count %d\n",
- 			 obj->package.count);
--		fwnode_handle_put(af01_fwnode);
- 		return -ENOENT;
- 	}
+> +static int devm_pci_dev_create_intr_ctrl(struct pci_dev *pdev)
+> +{
+> +	struct pci_dev_intr_ctrl *intr_ctrl;
+> +
+> +	intr_ctrl = pci_dev_create_intr_ctrl(pdev);
 
-@@ -1383,26 +1381,21 @@ static int cs35l56_try_get_broken_sdca_spkid_gpio(=
-struct cs35l56_private *cs35l5
- 		 * ACPI_COMPANION().
- 		 */
- 		ret =3D acpi_dev_add_driver_gpios(adev, cs35l56_af01_spkid_gpios_mappin=
-g);
--		if (ret) {
--			fwnode_handle_put(af01_fwnode);
-+		if (ret)
- 			return dev_err_probe(cs35l56->base.dev, ret,
- 					     "Failed to add gpio mapping to AF01\n");
--		}
+> +
 
- 		ret =3D devm_add_action_or_reset(cs35l56->base.dev,
- 					       cs35l56_acpi_dev_release_driver_gpios,
- 					       adev);
--		if (ret) {
--			fwnode_handle_put(af01_fwnode);
-+		if (ret)
- 			return ret;
--		}
+Redundant blank line.
 
- 		dev_dbg(cs35l56->base.dev, "Added spk-id-gpios mapping to AF01\n");
- 	}
+> +	if (IS_ERR(intr_ctrl))
+> +		return PTR_ERR(intr_ctrl);
+> +
+> +	return devm_add_action_or_reset(&pdev->dev, devm_pci_dev_remove_intr_ctrl, intr_ctrl);
+> +}
 
- 	desc =3D fwnode_gpiod_get_index(af01_fwnode, "spk-id", 0, GPIOD_IN, NULL=
-);
- 	if (IS_ERR(desc)) {
--		fwnode_handle_put(af01_fwnode);
- 		ret =3D PTR_ERR(desc);
- 		return dev_err_probe(cs35l56->base.dev, ret, "Get GPIO from AF01 failed=
-\n");
- 	}
-@@ -1411,13 +1404,10 @@ static int cs35l56_try_get_broken_sdca_spkid_gpio(=
-struct cs35l56_private *cs35l5
- 	gpiod_put(desc);
+...
 
- 	if (ret < 0) {
--		fwnode_handle_put(af01_fwnode);
- 		dev_err_probe(cs35l56->base.dev, ret, "Error reading spk-id GPIO\n");
- 		return ret;
- 	}
+> +static int lan966x_pci_load_overlay(struct lan966x_pci *data)
+> +{
+> +	u32 dtbo_size = __dtbo_lan966x_pci_end - __dtbo_lan966x_pci_begin;
+> +	void *dtbo_start = __dtbo_lan966x_pci_begin;
+> +	int ret;
+> +
+> +	ret = of_overlay_fdt_apply(dtbo_start, dtbo_size, &data->ovcs_id, data->dev->of_node);
 
--	fwnode_handle_put(af01_fwnode);
--
- 	dev_info(cs35l56->base.dev, "Got spk-id from AF01\n");
+dev_of_node() ?
 
- 	return ret;
-=2D-
-2.45.1
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int lan966x_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct lan966x_pci *data;
+> +	int ret;
+
+> +	if (!dev->of_node) {
+> +		dev_err(dev, "Missing of_node for device\n");
+> +		return -EINVAL;
+> +	}
+
+Why do you need this? The code you have in _create_intr_ctrl() will take care
+already for this case.
+
+> +	/* Need to be done before devm_pci_dev_create_intr_ctrl.
+> +	 * It allocates an IRQ and so pdev->irq is updated
+
+Missing period at the end.
+
+> +	 */
+> +	ret = pcim_enable_device(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_pci_dev_create_intr_ctrl(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	dev_set_drvdata(dev, data);
+> +	data->dev = dev;
+> +	data->pci_dev = pdev;
+> +
+> +	ret = lan966x_pci_load_overlay(data);
+> +	if (ret)
+> +		return ret;
+
+> +	pci_set_master(pdev);
+
+You don't use MSI, what is this for?
+
+> +	ret = of_platform_default_populate(dev->of_node, NULL, dev);
+
+dev_of_node()
+
+> +	if (ret)
+> +		goto err_unload_overlay;
+> +
+> +	return 0;
+> +
+> +err_unload_overlay:
+> +	lan966x_pci_unload_overlay(data);
+> +	return ret;
+> +}
+
+...
+
+> +static void lan966x_pci_remove(struct pci_dev *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct lan966x_pci *data = dev_get_drvdata(dev);
+
+platform_get_drvdata()
+
+> +	of_platform_depopulate(dev);
+> +
+> +	lan966x_pci_unload_overlay(data);
+
+> +	pci_clear_master(pdev);
+
+No need to call this excplicitly when pcim_enable_device() was called.
+
+> +}
+
+...
+
+> +static struct pci_device_id lan966x_pci_ids[] = {
+> +	{ PCI_DEVICE(0x1055, 0x9660) },
+
+Don't you have VENDOR_ID defined somewhere?
+
+> +	{ 0, }
+
+Unneeded ' 0, ' part
+
+> +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
