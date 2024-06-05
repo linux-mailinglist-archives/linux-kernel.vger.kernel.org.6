@@ -1,120 +1,92 @@
-Return-Path: <linux-kernel+bounces-202407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67D38FCC4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:16:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6FA8FCC8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52A3CB22EAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:16:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51A028812D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF35198A26;
-	Wed,  5 Jun 2024 11:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFMJuUL1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C045F19412B;
-	Wed,  5 Jun 2024 11:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83141BD508;
+	Wed,  5 Jun 2024 11:56:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABE91BD4EC;
+	Wed,  5 Jun 2024 11:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717588497; cv=none; b=gjfe1mk7w3Qz/bCoh+CEpulZAypgahRRyS03PlbIpzC+nnXerxBRTtefNMEVxIOkOGNFrM6+lWAqtnDMp/bMYyuNCoO0sJhi6KikHGPlUgC+O2g7cksv5aXAjvGbYKK0JFaG8Id6kEnZ4xJkxezAOjdGEnkgSoPQTknR2AGio18=
+	t=1717588581; cv=none; b=cDp4VjD23JVgKffN+jdrjhV3tcMRMU9Geu7A1mI7IgQNxjVu/o4EGcNwUyR6veX87zTYgIdfPAEJPGrs7LPlq9HXFLzp2jFqTkEMHh04ES7i/IYw1bTIqO777dVv0CyImz32KaFEab7EevFwzm5TgbVH12hWXKwsIIfxoJGsi+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717588497; c=relaxed/simple;
-	bh=kiI/Lw2TK9Xytq4SD7omgBRD9aRnbSVuuUnrkQXDmf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pddTx/ABjHK2M8WID85Wla235+wki5mP0oatDMNeRJFkQi+EjznynERnMLPDxgTqOEwB4O5zWuV+zklTEJVpTSffWHQ8ptudW228qjb+T7p1FkXZCb23MJbGAVIlziDnKEUOIjkMfrgWJg51oehtjJ20Nj4nktOOCMfKZR91Jgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFMJuUL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D233EC3277B;
-	Wed,  5 Jun 2024 11:54:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717588497;
-	bh=kiI/Lw2TK9Xytq4SD7omgBRD9aRnbSVuuUnrkQXDmf0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hFMJuUL1JA2elYKgKSmpgR4eSJL/1r5sE0B7oVz2+wUeToirXEQfugfi4bcnltIlQ
-	 2mhgryxBrnVK95L6lJa14ptDl42h4mzGPQ0Ktc+GSEKjK6+ZYA3nmUnmcBcTg98XNi
-	 tmEDz+wkCGU3D1VTD7z/Iw2LP6Ymrvq9dX3SYpuxNJ8S+XlKAn7myVmgkIdHRVTIpF
-	 lRijNoLG6xZ4IdLMqdVUcq6IHm6YOrxTIO0HGinuwHroF6gXq/ryI+oFR0J1G5NkT9
-	 9pbNbVYHz6ZXYrc0pN+W2SXZiQV9di8/bIx5s5RxH6AJ0sh15A8TUPqKanSBuTrdMp
-	 bkLVwW6PLOCWA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Sicong Huang <congei42@163.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	johan@kernel.org,
-	greybus-dev@lists.linaro.org
-Subject: [PATCH AUTOSEL 5.10 7/7] greybus: Fix use-after-free bug in gb_interface_release due to race condition.
-Date: Wed,  5 Jun 2024 07:54:36 -0400
-Message-ID: <20240605115442.2964376-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605115442.2964376-1-sashal@kernel.org>
-References: <20240605115442.2964376-1-sashal@kernel.org>
+	s=arc-20240116; t=1717588581; c=relaxed/simple;
+	bh=Zy9IzQB3ejrKR2POqOn3wcMgHH1MCGBVI1V+s+78v5U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PcN3o1WtBX1hrvpfeUvrXizyfoig3yzhTRkpMw1g3ociTeEP2cbqT4lctnmNVP2SlGvGr4/bTpbd1cxdIp46FBrZwLXc2JBuq2oO/lU5BV3OEI35ueB3848inTNetYbXiWgXDpIpeC/nncMRH0h2AwU0y9tHKojBvoFqPNkp6Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37701339;
+	Wed,  5 Jun 2024 04:56:42 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 625493F762;
+	Wed,  5 Jun 2024 04:56:14 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: linux-arm-kernel@lists.infradead.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	shuah@kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH] selftests: arm64: Fix redundancy of a testcase
+Date: Wed,  5 Jun 2024 17:24:48 +0530
+Message-Id: <20240605115448.640717-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.218
 Content-Transfer-Encoding: 8bit
 
-From: Sicong Huang <congei42@163.com>
+Currently, we are writing the same value as we read, into the TLS
+register; hence, we cannot confirm updation of the register, making the
+testcase "verify_tpidr_one" redundant. Fix this; while at it, do a style
+change.
 
-[ Upstream commit 5c9c5d7f26acc2c669c1dcf57d1bb43ee99220ce ]
-
-In gb_interface_create, &intf->mode_switch_completion is bound with
-gb_interface_mode_switch_work. Then it will be started by
-gb_interface_request_mode_switch. Here is the relevant code.
-if (!queue_work(system_long_wq, &intf->mode_switch_work)) {
-	...
-}
-
-If we call gb_interface_release to make cleanup, there may be an
-unfinished work. This function will call kfree to free the object
-"intf". However, if gb_interface_mode_switch_work is scheduled to
-run after kfree, it may cause use-after-free error as
-gb_interface_mode_switch_work will use the object "intf".
-The possible execution flow that may lead to the issue is as follows:
-
-CPU0                            CPU1
-
-                            |   gb_interface_create
-                            |   gb_interface_request_mode_switch
-gb_interface_release        |
-kfree(intf) (free)          |
-                            |   gb_interface_mode_switch_work
-                            |   mutex_lock(&intf->mutex) (use)
-
-Fix it by canceling the work before kfree.
-
-Signed-off-by: Sicong Huang <congei42@163.com>
-Link: https://lore.kernel.org/r/20240416080313.92306-1-congei42@163.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
 ---
- drivers/greybus/interface.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/arm64/abi/ptrace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/greybus/interface.c b/drivers/greybus/interface.c
-index 9ec949a438ef6..52ef6be9d4499 100644
---- a/drivers/greybus/interface.c
-+++ b/drivers/greybus/interface.c
-@@ -694,6 +694,7 @@ static void gb_interface_release(struct device *dev)
+diff --git a/tools/testing/selftests/arm64/abi/ptrace.c b/tools/testing/selftests/arm64/abi/ptrace.c
+index abe4d58d731d..c105703442f9 100644
+--- a/tools/testing/selftests/arm64/abi/ptrace.c
++++ b/tools/testing/selftests/arm64/abi/ptrace.c
+@@ -47,7 +47,7 @@ static void test_tpidr(pid_t child)
  
- 	trace_gb_interface_release(intf);
+ 	/* ...write a new value.. */
+ 	write_iov.iov_len = sizeof(uint64_t);
+-	write_val[0] = read_val[0]++;
++	write_val[0] = read_val[0] + 1;
+ 	ret = ptrace(PTRACE_SETREGSET, child, NT_ARM_TLS, &write_iov);
+ 	ksft_test_result(ret == 0, "write_tpidr_one\n");
  
-+	cancel_work_sync(&intf->mode_switch_work);
- 	kfree(intf);
- }
+@@ -108,7 +108,7 @@ static void test_tpidr(pid_t child)
+ 		/* Writing only TPIDR... */
+ 		write_iov.iov_len = sizeof(uint64_t);
+ 		memcpy(write_val, read_val, sizeof(read_val));
+-		write_val[0] += 1;
++		++write_val[0];
+ 		ret = ptrace(PTRACE_SETREGSET, child, NT_ARM_TLS, &write_iov);
  
+ 		if (ret == 0) {
 -- 
-2.43.0
+2.39.2
 
 
