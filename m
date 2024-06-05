@@ -1,167 +1,322 @@
-Return-Path: <linux-kernel+bounces-203228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C98C8FD815
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:03:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB32E8FD817
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCD16B231FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:03:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03F74B23968
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB0415F3F9;
-	Wed,  5 Jun 2024 21:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+w0OdEU"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA5E15F3FB;
+	Wed,  5 Jun 2024 21:04:34 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1620B4965B;
-	Wed,  5 Jun 2024 21:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3473613A40B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621419; cv=none; b=dkr1ZicjD56KcmxBt/nZ2/ueZjkOD3ixpiK3EXE1cDnzuGwW2CIEMzQRrMXsoEsQ3+st9Z44j/dzlS60E5ZExyBo7x+XfGUA+ftp8vTpmmvryAfLMoO4lc8bTkLnWrhPaznz8krlwu3tU4LTHCUBqDR8/gXhzHhqNXfucdDn1PY=
+	t=1717621473; cv=none; b=Hjeo7qjZU51sRxddtQe29Io5eDOmmzs9hAA9MkeAzvdIBC6vL5zzLMFB86qLac4pzArxRvSEt4Hi54Sruz0jbDlE/TVY/+nElX+flZRCr9Wl6oafBsTLUbmkNYpTjYq3W44oVLdJaErAIat0SdFhBBbVoJdjEGrSSRZefTTXJX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621419; c=relaxed/simple;
-	bh=eh9IzC/sXudftroa0oNPCl+CeaVwJW9OIwLv2VcI54Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tfxTygizntlryoDzjAWK8vX1d8cY8KmIoguirSBm/DKWw3V+d6qk8NjeS6bEB3ymJ6b6sN7PYPqRiQRF0u6UymImzWARqp0WTef3k/bNujlFlU8m+wiJS+eUo2rKk8+Ij5vJeV0gsuj6BwUWMfquCAax0Y1NcJoPO5R+ovTozBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+w0OdEU; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42158db02c3so3589385e9.2;
-        Wed, 05 Jun 2024 14:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717621416; x=1718226216; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wxkQybmLe5sPp9htKJDI8bCr/w4I0AK0t4E3wZxsO9s=;
-        b=T+w0OdEUmtYDHIOI9sZ6DFb8xYQp6NA/zgQidfkWMsyYvDmyUQtK/9oHyMNWnS7Dcz
-         S7PYlZP73N3AgIg15FW1VheaoqiZlQDBLT8MxwfcbRNDl1yZFfK0z/fHM7bcNXLP5zwx
-         f33sReIWd20rdDAfwTCJJ/bZ674VtaKbPF+JVaGaGgIw6/BeQa8C2L2RhMLJVRRbuMgZ
-         ysNp5jrt7uXtPOg7Uxl2kMK5fHdbzKY65af7AiQZ9VxX9HoNfepXK12P/CI492GFudk7
-         v1U72/0vzyt2ubA2PKZWJBX9qdaeNAatDoxjA9kFepkY47GJd1Dy6Lg1UQfTvc6Nt2Go
-         DuKw==
+	s=arc-20240116; t=1717621473; c=relaxed/simple;
+	bh=HlrvAaHQ6lu2hnvUEZeR/KNG2UjbmOFPMYGNEPQP9s0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=artrnUQvBhePNR9SRxIH7O1xtiL+KOJCUCNp4WhQkyYfx4xlSB2YJg6QAM7w9D8HbRKw6EjL/J/JhoCxRq+0p69l5W7QN/RJlNAeuCd6UywHoVsTLtJClj031JzRDMD/m0GHSc2khzWjcQEucwe4PVFIqUHhkUUpzWJh2TvweXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eb3db8593cso29560839f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 14:04:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717621416; x=1718226216;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxkQybmLe5sPp9htKJDI8bCr/w4I0AK0t4E3wZxsO9s=;
-        b=sA61ZDYzCFSvXAXirY+0t0V+N6bW3e4ubfy8UVLzORnnAZxbsMa7Zr39xQcZaiH0Ju
-         aCmPHWHS5c2gy2NsAjg9P5cuhoCOTctDu5AxLunu7Hi5hd/vdMxTEcfVIJ7IkGOtz7G3
-         b7C0sLZ5Zo27wyvK3SqvstKAcSe+lpq+y2q5JX4Mn4xVznLkhvwyTBbdiavdA2fVBVNn
-         /8ZrPZUTz67zgvs0yACSn9KUbvPwR25yZ/L4BewtJeoTfpmDnYA/I6Z/sryAoEfjTeEV
-         9s6/GcuaS365IfSGMIvRQzIu7luJhwhTCFv4siQanwdCUrLkow2wU+UlUnPloG/exVIa
-         c6lA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6sh5BsO30nsOO+6+h2Epys1/yfSh0HQpbtObfq/UCIRrRqkDQMbtaWxDr7qOumd1L7ZIcc+9TBPRBEVfwwWj0tN8IGfMp8at6njd+2Uxgg36BEtaPJm+3WM0dF+2kuFugwpYQjywBnda5UPhc3L0M3R08pvyG3dmWaXkfWfSOHbvh7Q==
-X-Gm-Message-State: AOJu0Ywh/fTQ4oPS/5gXDQgKgtqrtE0xKBkgtHGIU1XWXbvvS6KI0xSL
-	j1ea5pi7lmuZCMJIa6PPcO750DM3p1Oxaepwd8sN7lwVFV53zlD/6wHL
-X-Google-Smtp-Source: AGHT+IEQ5Bvq496WQdI6NCNSKRLJfGNuhXeduOQUjAa/vxuh86+qvv8BXGs75zaVxP88iejgFvqqSw==
-X-Received: by 2002:a05:600c:3550:b0:41b:fc3a:f1ef with SMTP id 5b1f17b1804b1-42156339013mr28592605e9.33.1717621416317;
-        Wed, 05 Jun 2024 14:03:36 -0700 (PDT)
-Received: from ?IPV6:2a02:810b:f40:4600:5211:58fe:dfef:c48c? ([2a02:810b:f40:4600:5211:58fe:dfef:c48c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215810242fsm33579345e9.12.2024.06.05.14.03.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 14:03:35 -0700 (PDT)
-Message-ID: <9da22443-b5c3-4fbc-8cb0-d6bebab55da4@gmail.com>
-Date: Wed, 5 Jun 2024 23:03:34 +0200
+        d=1e100.net; s=20230601; t=1717621470; x=1718226270;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JcPMQ6bOBhQLwd/XBtZYFAqbBcJIEqz8er2JvGD62zA=;
+        b=QDkbrEmivqJKhnNh6rq0oXeO5UVdLtPPiV8ImsCWNzJ4KDa/jr7viZDDn1JNj3wl76
+         sR8ib5GuXwgqWE1KJK5yt54lZnPh7CCMPt9ZsiAAxTT7Xwxxu6VW4vSNN3pwKS92OxDG
+         wJAMo/eiWHzHQ52mq+2qCn0X0d3eEDxVRcRuAKttmy4uO5hhvjBxbyV1m7iD1d27BtAO
+         Qf0mt2VoTX53rP5awLGiwYNgYxbiO7YFLBPHbjAW76S/IIZO+nxffuLldxSBSk0Nobqj
+         6i139lkyuYtg2TGL3nykVSSKJ/p2Lz3Oy7n/o7106QQcKkAutfUrjApLivRdWljVDQkl
+         w2uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsvak4wE9gUuzYnl5t/PbuPl1NL3p3opOrcMCHRb15JvNotWMNotZcYyNkzHeiebQkvc7pDiwWpdDeeXvJEZfK5CMugAEyySlwTtAZ
+X-Gm-Message-State: AOJu0YxciT2DbWZUaRadxY5fD0pk4VxG0FwpUJuCoot+KD3maY8wBwfC
+	xHT2rIef2OS/wTH4FcVEt3m1exP3xNRhqHRe7RjP5K/vlG6ibgaALTtRl3DWo/axeyX4BCow0P4
+	AGlCS4BIpyDCZAxfjPXJh5ugl3o04fTMwJkrMqd0eP4eSgJk5us/Gs3I=
+X-Google-Smtp-Source: AGHT+IFru7FzL2H6dcMX1Wpt7fRn19NIPM5g/TD28s/7jyOVX5AlT3BSdJooRG2HZ7t1lL2baKACXd1c/KQLSr1rZTqc2DILVn74
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240605205209.232005-1-knaerzche@gmail.com>
-Content-Language: en-US
-From: Alex Bee <knaerzche@gmail.com>
-In-Reply-To: <20240605205209.232005-1-knaerzche@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:341a:b0:7e2:b00:2264 with SMTP id
+ ca18e2360f4ac-7eb3c90cecfmr9636839f.2.1717621470358; Wed, 05 Jun 2024
+ 14:04:30 -0700 (PDT)
+Date: Wed, 05 Jun 2024 14:04:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000998dd5061a2ae947@google.com>
+Subject: [syzbot] [ext4?] possible deadlock in ext4_setattr (2)
+From: syzbot <syzbot+95c8e4be52020572ac05@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
-sorry for the noise - not sure what went wrong here.
-Just resend v2:
-https://lore.kernel.org/all/20240605210049.232284-1-knaerzche@gmail.com/
+Hello,
 
-Alex
-Am 05.06.24 um 22:51 schrieb Alex Bee:
-> Similar to
-> commit 2dc66a5ab2c6 ("clk: rockchip: rk3588: fix CLK_NR_CLKS usage")
-> this drops CLK_NR_CLKS usage from the clock driver and instead uses the
-> rockchip_clk_find_max_clk_id helper which was introduced for that purpose.
-> 
-> Signed-off-by: Alex Bee <knaerzche@gmail.com>
-> ---
->   drivers/clk/rockchip/clk-rk3128.c | 20 ++++++++++++++++----
->   1 file changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-> index d076b7971f33..40e0e4556d59 100644
-> --- a/drivers/clk/rockchip/clk-rk3128.c
-> +++ b/drivers/clk/rockchip/clk-rk3128.c
-> @@ -569,18 +569,22 @@ static const char *const rk3128_critical_clocks[] __initconst = {
->   	"sclk_timer5",
->   };
->   
-> -static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
-> +static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np,
-> +								   unsigned long soc_nr_clks)
->   {
->   	struct rockchip_clk_provider *ctx;
-> +	unsigned long common_nr_clks;
->   	void __iomem *reg_base;
->   
-> +	common_nr_clks = rockchip_clk_find_max_clk_id(common_clk_branches,
-> +						      ARRAY_SIZE(common_clk_branches)) + 1;
->   	reg_base = of_iomap(np, 0);
->   	if (!reg_base) {
->   		pr_err("%s: could not map cru region\n", __func__);
->   		return ERR_PTR(-ENOMEM);
->   	}
->   
-> -	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +	ctx = rockchip_clk_init(np, reg_base, max(common_nr_clks, soc_nr_clks));
->   	if (IS_ERR(ctx)) {
->   		pr_err("%s: rockchip clk init failed\n", __func__);
->   		iounmap(reg_base);
-> @@ -609,8 +613,12 @@ static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device
->   static void __init rk3126_clk_init(struct device_node *np)
->   {
->   	struct rockchip_clk_provider *ctx;
-> +	unsigned long soc_nr_clks;
->   
-> -	ctx = rk3128_common_clk_init(np);
-> +	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3126_clk_branches,
-> +						   ARRAY_SIZE(rk3126_clk_branches)) + 1;
-> +
-> +	ctx = rk3128_common_clk_init(np, soc_nr_clks);
->   	if (IS_ERR(ctx))
->   		return;
->   
-> @@ -627,8 +635,12 @@ CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
->   static void __init rk3128_clk_init(struct device_node *np)
->   {
->   	struct rockchip_clk_provider *ctx;
-> +	unsigned long soc_nr_clks;
-> +
-> +	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3128_clk_branches,
-> +						   ARRAY_SIZE(rk3128_clk_branches)) + 1;
->   
-> -	ctx = rk3128_common_clk_init(np);
-> +	ctx = rk3128_common_clk_init(np, soc_nr_clks);
->   	if (IS_ERR(ctx))
->   		return;
->   
+syzbot found the following issue on:
 
+HEAD commit:    cc8ed4d0a848 Merge tag 'drm-fixes-2024-06-01' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13986f2c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=733cc7a95171d8e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=95c8e4be52020572ac05
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-cc8ed4d0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/36abdd995432/vmlinux-cc8ed4d0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5e4e0a6f67db/bzImage-cc8ed4d0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+95c8e4be52020572ac05@syzkaller.appspotmail.com
+
+overlay: ./bus is not a directory
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc1-syzkaller-00267-gcc8ed4d0a848 #0 Not tainted
+------------------------------------------------------
+syz-executor.3/8218 is trying to acquire lock:
+ffff888028d580c8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_setattr+0x7fb/0x2700 fs/ext4/inode.c:5318
+
+but task is already holding lock:
+ffff88801db3c950 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0x10db/0x15e0 fs/jbd2/transaction.c:463
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (jbd2_handle){++++}-{0:0}:
+       start_this_handle+0x1101/0x15e0 fs/jbd2/transaction.c:463
+       jbd2__journal_start+0x394/0x6a0 fs/jbd2/transaction.c:520
+       __ext4_journal_start_sb+0x358/0x660 fs/ext4/ext4_jbd2.c:112
+       ext4_sample_last_mounted fs/ext4/file.c:837 [inline]
+       ext4_file_open+0x636/0xc90 fs/ext4/file.c:865
+       do_dentry_open+0x910/0x1930 fs/open.c:955
+       do_open fs/namei.c:3650 [inline]
+       path_openat+0x1e3a/0x29f0 fs/namei.c:3807
+       do_filp_open+0x1dc/0x430 fs/namei.c:3834
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1405
+       do_sys_open fs/open.c:1420 [inline]
+       __do_sys_openat fs/open.c:1436 [inline]
+       __se_sys_openat fs/open.c:1431 [inline]
+       __x64_sys_openat+0x175/0x210 fs/open.c:1431
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (sb_internal){.+.+}-{0:0}:
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1655 [inline]
+       sb_start_intwrite include/linux/fs.h:1838 [inline]
+       ext4_evict_inode+0xd7b/0x17d0 fs/ext4/inode.c:212
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       dput.part.0+0x4b1/0x9b0 fs/dcache.c:845
+       dput+0x1f/0x30 fs/dcache.c:835
+       ovl_stack_put+0x60/0x90 fs/overlayfs/util.c:132
+       ovl_destroy_inode+0xc6/0x190 fs/overlayfs/super.c:182
+       destroy_inode+0xc4/0x1b0 fs/inode.c:311
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
+       shrink_many mm/vmscan.c:4851 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
+       shrink_node mm/vmscan.c:5910 [inline]
+       kswapd_shrink_node mm/vmscan.c:6720 [inline]
+       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3783 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3797
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3890 [inline]
+       slab_alloc_node mm/slub.c:3980 [inline]
+       __do_kmalloc_node mm/slub.c:4120 [inline]
+       __kmalloc_node_noprof+0xbb/0x450 mm/slub.c:4128
+       kmalloc_node_noprof include/linux/slab.h:681 [inline]
+       kvmalloc_node_noprof+0x6f/0x1a0 mm/util.c:634
+       ext4_xattr_inode_cache_find fs/ext4/xattr.c:1535 [inline]
+       ext4_xattr_inode_lookup_create fs/ext4/xattr.c:1581 [inline]
+       ext4_xattr_inode_lookup_create+0x4e8/0x1910 fs/ext4/xattr.c:1568
+       ext4_xattr_block_set+0x77a/0x3090 fs/ext4/xattr.c:1910
+       ext4_xattr_move_to_block fs/ext4/xattr.c:2663 [inline]
+       ext4_xattr_make_inode_space fs/ext4/xattr.c:2738 [inline]
+       ext4_expand_extra_isize_ea+0xf57/0x1990 fs/ext4/xattr.c:2830
+       __ext4_expand_extra_isize+0x322/0x450 fs/ext4/inode.c:5782
+       ext4_try_to_expand_extra_isize fs/ext4/inode.c:5825 [inline]
+       __ext4_mark_inode_dirty+0x55a/0x890 fs/ext4/inode.c:5903
+       ext4_set_acl+0x453/0x5a0 fs/ext4/acl.c:263
+       set_posix_acl+0x25c/0x320 fs/posix_acl.c:955
+       vfs_set_acl+0x53d/0x940 fs/posix_acl.c:1134
+       do_set_acl+0xd9/0x1b0 fs/posix_acl.c:1279
+       do_setxattr+0xeb/0x170 fs/xattr.c:626
+       setxattr+0x15d/0x180 fs/xattr.c:652
+       path_setxattr+0x179/0x1e0 fs/xattr.c:671
+       __do_sys_lsetxattr fs/xattr.c:694 [inline]
+       __se_sys_lsetxattr fs/xattr.c:690 [inline]
+       __ia32_sys_lsetxattr+0xbd/0x160 fs/xattr.c:690
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #0 (&ei->xattr_sem){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
+       ext4_setattr+0x7fb/0x2700 fs/ext4/inode.c:5318
+       notify_change+0x742/0x11f0 fs/attr.c:497
+       chown_common+0x598/0x660 fs/open.c:790
+       do_fchownat+0x1af/0x210 fs/open.c:821
+       ksys_lchown include/linux/syscalls.h:1244 [inline]
+       __do_sys_lchown16 kernel/uid16.c:30 [inline]
+       __se_sys_lchown16 kernel/uid16.c:28 [inline]
+       __ia32_sys_lchown16+0xe6/0x120 kernel/uid16.c:28
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+other info that might help us debug this:
+
+Chain exists of:
+  &ei->xattr_sem --> sb_internal --> jbd2_handle
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(jbd2_handle);
+                               lock(sb_internal);
+                               lock(jbd2_handle);
+  rlock(&ei->xattr_sem);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor.3/8218:
+ #0: ffff88801db38420 (sb_writers#4){.+.+}-{0:0}, at: do_fchownat+0x11b/0x210 fs/open.c:818
+ #1: ffff888028d58400 (&sb->s_type->i_mutex_key#8){++++}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #1: ffff888028d58400 (&sb->s_type->i_mutex_key#8){++++}-{3:3}, at: chown_common+0x331/0x660 fs/open.c:780
+ #2: ffff88801db3c950 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0x10db/0x15e0 fs/jbd2/transaction.c:463
+
+stack backtrace:
+CPU: 1 PID: 8218 Comm: syz-executor.3 Not tainted 6.10.0-rc1-syzkaller-00267-gcc8ed4d0a848 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
+ ext4_setattr+0x7fb/0x2700 fs/ext4/inode.c:5318
+ notify_change+0x742/0x11f0 fs/attr.c:497
+ chown_common+0x598/0x660 fs/open.c:790
+ do_fchownat+0x1af/0x210 fs/open.c:821
+ ksys_lchown include/linux/syscalls.h:1244 [inline]
+ __do_sys_lchown16 kernel/uid16.c:30 [inline]
+ __se_sys_lchown16 kernel/uid16.c:28 [inline]
+ __ia32_sys_lchown16+0xe6/0x120 kernel/uid16.c:28
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf729f579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5e915ac EFLAGS: 00000292 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 000000000000ee00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
