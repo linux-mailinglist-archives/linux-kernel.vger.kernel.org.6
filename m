@@ -1,172 +1,264 @@
-Return-Path: <linux-kernel+bounces-203413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5168FDAC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFCC8FDAC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C801F25781
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833611F22087
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD2F167268;
-	Wed,  5 Jun 2024 23:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD8A167DAE;
+	Wed,  5 Jun 2024 23:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C+1BGUSF"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0A415FA60
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="buqO5gCV"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDBF15FA60;
+	Wed,  5 Jun 2024 23:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717630933; cv=none; b=WNNq9pyT6oAiobI1cL/ILPQiK4UfGTlDkZFWdORntjZ+X5xMzpk9g1JOkcN7GVp4x4a75APyfekUAX3QrGcNJPuIkqMfqDV0BU5nDiG0eb64OcynHqcTdr3U551KrghybB0N1x5JilzMuh5p9cLSbKPRSQiVvDf4CiIwZTbdR9M=
+	t=1717630964; cv=none; b=J8OiZfSFwBqbOB2IJTGReLs1FCVSWG4JG9hNSek7hmUcTNrHUzmjQKMgqcq0u4+bguXTviyPxB+AKLSYOwDeiDYXB76u9UUYp88lpuwNStZOfBKYxXGkU/m0sr9TQA1ZK0wQoOTLycI38QwkwlPo5Dip0077glN2Vr0mgdsmB30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717630933; c=relaxed/simple;
-	bh=fURZ+GlEwn1DW8Z6q3RkvHuwBmyZjfx8HFK5EMb98t4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=We3xZ7ch0PNUy8oYLjJpMXbVt2D1dpGTTJFewyYh3YfrqdKA8bz86zIbszRrQCMGy05MXWw+5N8Qu7x0UP1qBdT7ZUpAhyDKtNrf0YCeSUUYT86SfosyE4qj3eAEE+F0TKq24zRoBQW4VmB+AC76WFcFjXCrVyG9QHpW/ncHASg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C+1BGUSF; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-80a8770ff33so139940241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 16:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717630931; x=1718235731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fURZ+GlEwn1DW8Z6q3RkvHuwBmyZjfx8HFK5EMb98t4=;
-        b=C+1BGUSFeF7N7zfda926Y/Ks2+gvKd3OlQzjKFfhZ3JgyIL3CG+/MkOfM+FOq6QdEr
-         FfopwMGsHcSjPb1Ur4aL0kzrApCpKDdTdE7KBxNac3LJRqdC8bvd/FM6Y7WPLVX8RPoF
-         CFTceAY/OS2wMYoYxnMvz2me+yQOdqX/M2FDm7zV5N65z9/VUk9Pjrm4H6Ag9t1Raswl
-         rngSLVMQaNNf/e8ImL3R6KX6ACVOcb6EA71YBW6/00TfFXO8HvWyId+EbExfWHif9EWy
-         pH0eXG//IsplXcXmnI/j337/rLiKdi6whgNnoSZhLbeh+CZzcuUnWoBgBhgkcmafn64E
-         atog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717630931; x=1718235731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fURZ+GlEwn1DW8Z6q3RkvHuwBmyZjfx8HFK5EMb98t4=;
-        b=MDSC3dNSUFIp6HFKO1VBkVq0nZUg0an8cdyWReRFGCuu36PXtod4CH1F0IxdCm4rGf
-         FORxvmp4yriHqL1aXWNB9Sxc+aRNhgO1CAL4oVAnh5BHnvgpfItbwY03oLVHEdcXoG6o
-         aP1o4GEV2ZdfLLji1nRKJkwqTjhRPcLNU1RuU1GUTtgcle6Nsh4AM+4SMzH7p9qJbowT
-         IzuBLBQLUdC5wFcDdgxyOR3jSd9t1+ShEWuKvei4TRpXR/xbiJ39L8dCm1caHiBiDfWD
-         dz7gkRtFLODAGRpNSiEJPsh7VKmOB3sma5guk+YhjaiC62Cs6BUKy2oXTcK9B2nzyCkA
-         uTHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+M4G7qP1oRRu6wyDqV4AEPVEfb+1/SYPXAXBaznvI55P3ZPliVPsCvOiaeloYxGSIZGaO2xD4n1GtNlmqI8+cNwO9jJzikA/qr/cH
-X-Gm-Message-State: AOJu0YxfSZsUS8/ORCB4/EnUpVmTg2Gr7b0i7bMryadwq+q6dgEyF6du
-	Z1eD+gTzbe9sNgBuTyAkGu5KpZq/ZvbFMy06jw7l4ed4rgVzwInznoyRxEIPCNpfj92ATbttEsa
-	/Tr4Rw9DiftjHbwauB6wcvWYQnxXb0DzFzQkq
-X-Google-Smtp-Source: AGHT+IHB5vbuYgoHzyE4VqkkyenDd0XtXJRfmN4AlQZzBmVBqpqyc1bRUTgyVv8nXskKAUiYew/UvTVdsYWeXMBGKpQ=
-X-Received: by 2002:a05:6102:5089:b0:47f:40f7:2b5f with SMTP id
- ada2fe7eead31-48c047f4db6mr5870916137.5.1717630930642; Wed, 05 Jun 2024
- 16:42:10 -0700 (PDT)
+	s=arc-20240116; t=1717630964; c=relaxed/simple;
+	bh=WXQt7Uz1x9EKnoB6ZUegkyyVkyiPMN/xWa/2uN6wzYw=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=ShWfrQkvg1CGCYjSlEiNrFpTfgYKjdCVB6cOi+pYjy5utWnHB7KOM/vuftJYOAp0Hpab1rpag2HaNBkQBmK5liWBfJ+sQfVY01gKUhZrYqkywijqjhzgSnDt8F79K2iiYf3MTOANlf4FUyIjkW4n5qhs8R5tGY4d11J2BOxSn7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=buqO5gCV; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.196.39] (unknown [131.107.174.167])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A666D20682B1;
+	Wed,  5 Jun 2024 16:42:39 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A666D20682B1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1717630959;
+	bh=vve1ErkSwKOMRBM3voRK1wKMFHNom7+f5fqKsm8C88k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=buqO5gCVL1/1ZHwGWA/0XzDyNvFXb6m8w1pWHGOIwYkU6a53UZ0b6d1CgNw7bWFZq
+	 9P8TMtF2upo6ETCMEpj+jYIkEDft6tIJOw2zKrbqon4Qj7xN38yrc6C0C3Y6lvwgrC
+	 U3mjQ5ZordDZ+A490YNAuSUrb9XjCqbU4Inm+9Jw=
+Message-ID: <1386cd49-36d0-4a5c-85e9-bc42056a5a38@linux.microsoft.com>
+Date: Wed, 5 Jun 2024 16:42:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508202111.768b7a4d@yea> <20240515224524.1c8befbe@yea>
- <CAOUHufZ-9NmzOKjLedvZFp0=N0LvRZn77qC6k1WXK+NHtKr=0w@mail.gmail.com>
- <CAOUHufZ36rQc8AfLtRv2QrEareysdvbprAEO5XkcG-FeDOxFLA@mail.gmail.com>
- <20240602200332.3e531ff1@yea> <20240604001304.5420284f@yea>
- <CAJD7tkbCRLdy0vD2Pd17fNrxHgkzW1VucN4qMkohLFLBLaaeCQ@mail.gmail.com>
- <20240604134458.3ae4396a@yea> <CAJD7tkYjJJGthQ_8NukGw6Q9EYbLA=8sAH_7=B90KXEL6HWdSw@mail.gmail.com>
- <CAOUHufa0Fpj6SjNgB-z0n5Jg63q1ewkbOAU65forpDwQVs45qg@mail.gmail.com>
- <CAJD7tkb=5GJ9SNUwDsu1Zy3Tus4rjsNo60Hg9N7=gGth409Diw@mail.gmail.com>
- <CAOUHufb6zXr14Wm3T-4-OJh7iAq+vzDKwVYfHLhMMt96SpiZXg@mail.gmail.com>
- <CAJD7tkZ+QY55GTzW9A7ZCm=rxAEfrW76cWXf8o5nwiKSXp8z=w@mail.gmail.com>
- <20240604231019.18e2f373@yea> <CAJD7tkYq5u7B+0UH2XKpeWJnUxoO2kJ1_XZ2JOgYpyNEVR7u0g@mail.gmail.com>
- <20240606010431.2b33318c@yea>
-In-Reply-To: <20240606010431.2b33318c@yea>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 5 Jun 2024 16:41:31 -0700
-Message-ID: <CAJD7tkbhWYzx=6YmzAh0F+cK-_Bn8mPOH7gMbQS7YVXmaFSgFg@mail.gmail.com>
-Subject: Re: kswapd0: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
- nodemask=(null),cpuset=/,mems_allowed=0 (Kernel v6.5.9, 32bit ppc)
-To: Erhard Furtner <erhard_f@mailbox.org>
-Cc: Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Minchan Kim <minchan@kernel.org>, 
-	"Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Rachel Menge <rachelmenge@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Content-Language: en-US
+Cc: Wei Fu <fuweid89@gmail.com>, apais@linux.microsoft.com,
+ Sudhanva Huruli <Sudhanva.Huruli@microsoft.com>, fuweid89@gmail.com,
+ Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Mike Christie <michael.christie@oracle.com>,
+ Joel Granados <j.granados@samsung.com>, Mateusz Guzik <mjguzik@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>
+Subject: [RCU] zombie task hung in synchronize_rcu_expedited
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 5, 2024 at 4:04=E2=80=AFPM Erhard Furtner <erhard_f@mailbox.org=
-> wrote:
->
-> On Tue, 4 Jun 2024 20:03:27 -0700
-> Yosry Ahmed <yosryahmed@google.com> wrote:
->
-> > Could you check if the attached patch helps? It basically changes the
-> > number of zpools from 32 to min(32, nr_cpus).
->
-> Thanks! The patch does not fix the issue but it helps.
->
-> Means I still get to see the 'kswapd0: page allocation failure' in the dm=
-esg, a 'stress-ng-vm: page allocation failure' later on, another kswapd0 er=
-ror later on, etc. _but_ the machine keeps running the workload, stays usab=
-le via VNC and I get no hard crash any longer.
->
-> Without patch kswapd0 error and hard crash (need to power-cycle) <3min. W=
-ith patch several kswapd0 errors but running for 2 hrs now. I double checke=
-d this to be sure.
+Hello,
 
-Thanks for trying this out. This is interesting, so even two zpools is
-too much fragmentation for your use case.
+We are facing a soft lockup on our systems which appears to be related 
+to rcu scheduling.
 
-I think there are multiple ways to go forward here:
-(a) Make the number of zpools a config option, leave the default as
-32, but allow special use cases to set it to 1 or similar. This is
-probably not preferable because it is not clear to users how to set
-it, but the idea is that no one will have to set it except special use
-cases such as Erhard's (who will want to set it to 1 in this case).
+The bug appears as high CPU usage. Dmesg shows a soft lock which is 
+associated with "zap_pid_ns_processes". I have confirmed the behavior on 
+5.15 and 6.8 kernels.
 
-(b) Make the number of zpools scale linearly with the number of CPUs.
-Maybe something like nr_cpus/4 or nr_cpus/8. The problem with this
-approach is that with a large number of CPUs, too many zpools will
-start having diminishing returns. Fragmentation will keep increasing,
-while the scalability/concurrency gains will diminish.
+This example was taken from an Ubuntu 22.04 VM running in a hyper-v 
+environment.
+rachel@ubuntu:~$ uname -a
+Linux ubuntu 5.15.0-107-generic #117-Ubuntu SMP Fri Apr 26 12:26:49 UTC 
+2024 x86_64 x86_64 x86_64 GNU/Linux
 
-(c) Make the number of zpools scale logarithmically with the number of
-CPUs. Maybe something like 4log2(nr_cpus). This will keep the number
-of zpools from increasing too much and close to the status quo. The
-problem is that at a small number of CPUs (e.g. 2), 4log2(nr_cpus)
-will actually give a nr_zpools > nr_cpus. So we will need to come up
-with a more fancy magic equation (e.g. 4log2(nr_cpus/4)).
+dmesg snippet:
+watchdog: BUG: soft lockup - CPU#0 stuck for 212s! [npm start:306207]
+Modules linked in: veth nf_conntrack_netlink xt_conntrack nft_chain_nat 
+xt_MASQUERADE nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 
+xfrm_user xfrm_algo nft_counter xt_addrtype nft_compat nf_tables 
+nfnetlink binfmt_misc nls_iso8859_1 intel_rapl_msr serio_raw 
+intel_rapl_common hyperv_fb hv_balloon joydev mac_hid sch_fq_codel 
+dm_multipath scsi_dh_rdac scsi_dh_emc scsi_dh_alua overlay 
+iptable_filter ip6table_filter ip6_tables br_netfilter bridge stp llc 
+arp_tables msr efi_pstore ip_tables x_tables autofs4 btrfs 
+blake2b_generic zstd_compress raid10 raid456 async_raid6_recov 
+async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c raid1 
+raid0 multipath linear hyperv_drm drm_kms_helper syscopyarea sysfillrect 
+sysimgblt fb_sys_fops crct10dif_pclmul cec hv_storvsc crc32_pclmul 
+hid_generic hv_netvsc ghash_clmulni_intel scsi_transport_fc rc_core 
+sha256_ssse3 hid_hyperv drm sha1_ssse3 hv_utils hid hyperv_keyboard 
+aesni_intel crypto_simd cryptd hv_vmbus
+CPU: 0 PID: 306207 Comm: npm start Tainted: G             L 
+5.15.0-107-generic #117-Ubuntu
+Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, 
+BIOS Hyper-V UEFI Release v4.1 04/06/2022
+RIP: 0010:_raw_spin_unlock_irqrestore+0x25/0x30
+Code: eb 8d cc cc cc 0f 1f 44 00 00 55 48 89 e5 e8 3a b8 36 ff 66 90 f7 
+c6 00 02 00 00 75 06 5d e9 e2 cb 22 00 fb 66 0f 1f 44 00 00 <5d> e9 d5 
+cb 22 00 0f 1f 44 00 00 0f 1f 44 00 00 55 48 89 e5 8b 07
+RSP: 0018:ffffb15fc915bc60 EFLAGS: 00000206
+RAX: 0000000000000001 RBX: ffffb15fc915bcf8 RCX: 0000000000000000
+RDX: ffff9d4713f9c828 RSI: 0000000000000246 RDI: ffff9d4713f9c820
+RBP: ffffb15fc915bc60 R08: ffff9d4713f9c828 R09: ffff9d4713f9c828
+R10: 0000000000000228 R11: ffffb15fc915bcf0 R12: ffff9d4713f9c820
+R13: 0000000000000004 R14: ffff9d47305a9980 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff9d4643c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd63a1b6008 CR3: 0000000288bd6003 CR4: 0000000000370ef0
+Call Trace:
+  <IRQ>
+  ? show_trace_log_lvl+0x1d6/0x2ea
+  ? show_trace_log_lvl+0x1d6/0x2ea
+  ? add_wait_queue+0x6b/0x80
+  ? show_regs.part.0+0x23/0x29
+  ? show_regs.cold+0x8/0xd
+  ? watchdog_timer_fn+0x1be/0x220
+  ? lockup_detector_update_enable+0x60/0x60
+  ? __hrtimer_run_queues+0x107/0x230
+  ? read_hv_clock_tsc_cs+0x9/0x30
+  ? hrtimer_interrupt+0x101/0x220
+  ? hv_stimer0_isr+0x20/0x30
+  ? __sysvec_hyperv_stimer0+0x32/0x70
+  ? sysvec_hyperv_stimer0+0x7b/0x90
+  </IRQ>
+  <TASK>
+  ? asm_sysvec_hyperv_stimer0+0x1b/0x20
+  ? _raw_spin_unlock_irqrestore+0x25/0x30
+  add_wait_queue+0x6b/0x80
+  do_wait+0x52/0x310
+  kernel_wait4+0xaf/0x150
+  ? thread_group_exited+0x50/0x50
+  zap_pid_ns_processes+0x111/0x1a0
+  forget_original_parent+0x348/0x360
+  exit_notify+0x4a/0x210
+  do_exit+0x24f/0x3c0
+  do_group_exit+0x3b/0xb0
+  __x64_sys_exit_group+0x18/0x20
+  x64_sys_call+0x1937/0x1fa0
+  do_syscall_64+0x56/0xb0
+  ? do_user_addr_fault+0x1e7/0x670
+  ? exit_to_user_mode_prepare+0x37/0xb0
+  ? irqentry_exit_to_user_mode+0x17/0x20
+  ? irqentry_exit+0x1d/0x30
+  ? exc_page_fault+0x89/0x170
+  entry_SYSCALL_64_after_hwframe+0x67/0xd1
+RIP: 0033:0x7f60019daf8e
+Code: Unable to access opcode bytes at RIP 0x7f60019daf64.
+RSP: 002b:00007fff2812a468 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f5ffeda01b0 RCX: 00007f60019daf8e
+RDX: 00007f6001a560c0 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 00007fff2812a4b0 R08: 0000000000000024 R09: 0000000800000000
+R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007f60016f4a90 R14: 0000000000000000 R15: 00007f5ffede4d50
+  </TASK>
 
-(d) Make the number of zpools scale linearly with memory. This makes
-more sense than scaling with CPUs because increasing the number of
-zpools increases fragmentation, so it makes sense to limit it by the
-available memory. This is also more consistent with other magic
-numbers we have (e.g. SWAP_ADDRESS_SPACE_SHIFT).
+Looking at the running processes, there are zombie threads
+root@ubuntu:/home/rachel# ps aux | grep Z
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+rachel    305832  0.5  0.0      0     0 ?        Zsl  01:55   0:00 [npm 
+start] <defunct>
+rachel    308234  0.3  0.0      0     0 ?        Zl   01:55   0:00 [npm 
+run zombie] <defunct>
+rachel    308987  0.0  0.0      0     0 ?        Z    01:55   0:00 [sh] 
+<defunct>
+root      345328  0.0  0.0   6480  2220 pts/5    S+   01:56   0:00 grep 
+--color=auto Z
 
-The problem is that unlike zswap trees, the zswap pool is not
-connected to the swapfile size, so we don't have an indication for how
-much memory will be in the zswap pool. We can scale the number of
-zpools with the entire memory on the machine during boot, but this
-seems like it would be difficult to figure out, and will not take into
-consideration memory hotplugging and the zswap global limit changing.
+"308234" zombie thread group shows a thread is stuck on 
+synchronize_rcu_expedited
+root@ubuntu:/home/rachel# ls /proc/308234/task
+308234  308312
+root@ubuntu:/home/rachel# cat /proc/308312/stack
+[<0>] exp_funnel_lock+0x1eb/0x230
+[<0>] synchronize_rcu_expedited+0x6d/0x1b0
+[<0>] namespace_unlock+0xd6/0x1b0
+[<0>] put_mnt_ns+0x74/0xa0
+[<0>] free_nsproxy+0x1c/0x1b0
+[<0>] switch_task_namespaces+0x5e/0x70
+[<0>] exit_task_namespaces+0x10/0x20
+[<0>] do_exit+0x212/0x3c0
+[<0>] io_sq_thread+0x457/0x5b0
+[<0>] ret_from_fork+0x22/0x30
 
-(e) A creative mix of the above.
+To consistently reproduce the issue, disable "CONFIG_PREEMPT_RCU". It is 
+unclear if this completely prevents the issue, but it is much easier to 
+reproduce with preemption off. I was able to reproduce on the Ubuntu 
+22.04 5.15.0-107-generic and 24.04 6.8.0-30-generic. There are 2 methods 
+of reproducing. Both methods are hosted at 
+https://github.com/rlmenge/rcu-soft-lock-issue-repro .
 
-(f) Something else (probably simpler).
+Repro using npm and docker:
+Get the script here: 
+https://github.com/rlmenge/rcu-soft-lock-issue-repro/blob/main/rcu-npm-repro.sh
+# get image so that script doesn't keep pulling for images
+$ sudo docker run telescope.azurecr.io/issue-repro/zombie:v1.1.11
+$ sudo ./rcu-npm-repro.sh
 
-I am personally leaning toward (c), but I want to hear the opinions of
-other people here. Yu, Vlastimil, Johannes, Nhat? Anyone else?
+This script creates several containers. Each container runs in new pid 
+and mount namespaces. The container's entrypoint is `npm run task && npm 
+start`.
+npm run task: This command is to run `npm run zombie & npm run done` 
+command.
+npm run zombie: It's to run `while true; do echo zombie; sleep 1; done`. 
+Infinite loop to print zombies.
+npm run done: It's to run `echo done`. Short live process.
+npm start: It's also a short live process. It will exit in a few seconds.
 
-In the long-term, I think we may want to address the lock contention
-in zsmalloc itself instead of zswap spawning multiple zpools.
+When `npm start` exits, the process tree in that pid namespace will be like
+npm start (pid 1)
+    |__npm run zombie
+            |__ sh -c "whle true; do echo zombie; sleep 1; done"
 
->
-> The patch did not apply cleanly on v6.9.3 so I applied it on v6.10-rc2. d=
-mesg of the current v6.10-rc2 run attached.
->
-> Regards,
-> Erhard
+Repro using golang:
+Use the go module found here: 
+https://github.com/rlmenge/rcu-soft-lock-issue-repro/blob/main/rcudeadlock.go
+
+Run
+$ go mod init rcudeadlock.go
+$ go mod tidy
+$ CGO_ENABLED=0 go build -o ./rcudeadlock ./
+$ sudo ./rcudeadlock
+
+This golang program is to simulate the npm reproducer without involving 
+docker as dependency. This binary is using re-exec self to support 
+multiple subcommands. It  also sets up processes in new pid and mount 
+namespaces by unshare, since the `put_mnt_ns` is a critical code path in 
+the kernel to reproduce this issue. Both mount and pid namespaces are 
+required in this issue.
+
+The entrypoint of new pid and mount namespaces is `rcudeadlock task && 
+rcudeadlock start`.
+rcudeadlock task: This command is to run `rcudeadlock zombie & 
+rcudeadlock done`
+rcudeadlock zombie: It's to run `bash -c "while true; do echo zombie; 
+sleep 1; done"`. Infinite loop to print zombies.
+rcudeadlock done: Prints done and exits.
+rcudeadlock start: Prints `AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA` 10 times 
+and exits.
+
+When `rcudeadlock start` exits, the process tree in that pid namespace 
+will be like
+rcudeadlock start (pid 1)
+    |__rcudeadlock zombie
+            |__bash -c "while true; do echo zombie; sleep 1; done".
+
+Each rcudeadlock process will set up 4 idle io_uring threads before 
+handling commands, like `task`, `zombie`, `done` and `start`. That is 
+similar to npm reproducer. Not sure that it's related to io_uring. But 
+with io_uring idle threads, it's easy to reproduce this issue.
+
+Thank you,
+Rachel
 
