@@ -1,103 +1,323 @@
-Return-Path: <linux-kernel+bounces-202030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA57A8FC6D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:46:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD468FC6CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 665D2B2588F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EB3E1F21B14
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951AF1946DC;
-	Wed,  5 Jun 2024 08:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B4C846D;
+	Wed,  5 Jun 2024 08:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="FVPItTTd"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ovmGnftg"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509544962C;
-	Wed,  5 Jun 2024 08:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA1949629
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 08:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717577034; cv=none; b=IfF+1/Hb+V2g29tpwltsm8fV6YdK5t6sHdsi2BfXP6ulfCODQTa20WZLBKOtKZ2k0peARbGh6km2SFHwK2m8i0F5l0drtB6nSLHDYdNsYXG70fbZ3+ByZdy6FkCHO/c5fbjpA+0Sx+QBOoA7lULyQeaVZfv9y8RSWHuoZ/O4hFU=
+	t=1717577002; cv=none; b=TKuo1RBysIrmenhivtY42BNu+OWZ+l5LVtIa+8jOHdIJIBhbWOxWAL+zzT/mBZwmB3VzigxKFh1eESBpaJHwbT4zolCaaH2LomtkDtqLUp46spQ6Mk0UHpNUZAzy3q365aNriGNLwjTIQS2MclMZpM5zNynTBJCDl3GEkJdD2uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717577034; c=relaxed/simple;
-	bh=jZ//xqLY5MABrAu+hTMq7OGpEIr0joF93MaJu/Iw+4c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SaJP3e+UktlSXyYj41ssQur7qlxHK99P5ewse4ZmG8jB2TWjQtqtdCSyMVUwWtvcHl6PqqRJ/8THgrY1Cg4bKeBi5gwvfwKbNk6fhdNSfXty8farH5Gesatq/XKqtZRusIauZcbS6cCwrbU4rKvv4XX4USRRwiUvvSLXcG886gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=FVPItTTd; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 7762EA0673;
-	Wed,  5 Jun 2024 10:43:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=g8zm70D3lRPSYVdgRgWMFlw4wLi2O0HtRTHjaSgr9q0=; b=
-	FVPItTTdNVcj+vJpv+0m6rnG7tOwf+ewvz9Ydm3KI+RuF/MB+vOBkDaSBCij3j6X
-	9swGmLQxULBjyxwQ/aLNk8MLocORTNLqVceL3Wpa7jpQv04rnzsG196xViATpVcf
-	86el0c+BNaOmymKHRT76h8v7GLuydDO2s4CzcL3Hr4Y2L2JVQzsWHPOsKvx4EKkI
-	JowHDcqLNtZwQy9hVwV3IglIwKh1iuq1JLG557oNFjp0OTBWYViVgTvXor1F5zBZ
-	NKjd71BoP1B7q6CGO+uByc1LUjx82eGXA6GxpJg1tSbZeBJwPE1mOEKOP2AxI5SH
-	tiGsnfua/6qmm3krNnk8gjs+lR2qOsfArTC6RuTuITJ319Btnx+o/k3pPSa+Mdga
-	j5DsQ0VxsxGPcEp+a+CEXkH2vgrRPDG1rrr5n0s6zC/PvRfy8dTuwtezLUpFTVZ8
-	/CNEtpXzsPs9Fk/buGlmh87bSyFo9aICCTfDL14+FbDQ5kMfXKdJwuWoKoVwqthd
-	uCsLKbu/mMS2+eVN/1I88L5zlEe+6pK66ZXOTSa44EJxr+GNA9Dep2E0psR1nuaj
-	tROM+EjQI07PHOxOKiqEzHv2J3onU/qgh40okvO9RtrlKNOu8EyFEjNLeE1b3i0m
-	4cQ4QxK0yhd9eWYDpc6u/A43ksdG4et/B32Wek5alQE=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Russell
- King" <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
-	<hkallweit1@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>
-Subject: [PATCH] net: sfp: Always call `sfp_sm_mod_remove()` on remove
-Date: Wed, 5 Jun 2024 10:42:51 +0200
-Message-ID: <20240605084251.63502-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1717577002; c=relaxed/simple;
+	bh=UyNhSgVl8UD/iWTRN74OFvCp1rWgYw8X5jmz8P0juAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tj8lpsv1KtxYIM414uu933Qmqi+qBxme3ouFyIAmCpSEORv3pjwYDUamN1OUDn2cg/Ct71KvbtHMz7Yb4emug0iIahlwzShORleQdsHUG0D5eFBVbD5F9HrLNWtDZmD8aBR3O99ubji50tyD2NnT42H51TELMG9QiZ6CwdK/2wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ovmGnftg; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52b840cfecdso2400772e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 01:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717576999; x=1718181799; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UaBUOGJ1Ak3zXlLeWfU/jqutLHK14Cta/y09o8r+2HE=;
+        b=ovmGnftgMtI70Cqj8xtBQA+AXh52/LGaeI6VJDBN/VBtZfwrLLTRCuOrRyYY2fmYDv
+         k9+hv6vJml6h6bIMw77nkiWkXy2yvK4iL6UqbvyV66uKhEV/wFq7CTv5/1SvflVzM94M
+         PiPKnBtin27zbDCTVdJamuB0LhzpdOp3O14g2v4EpeQlC3CsGokT8xgIYJsodvtz4UQ0
+         qan7VQl8ZOsABDOuPfArg9Zud2g9jtxv08S/A80ES4VSM9KZ4SYf8hNH5Jnc9a/LFUHQ
+         4RkcX0v4P9TI5Uon3iDSIeUFfA4bCMGavg9hviAHq48gIFmgv1j9fM//cC6b0cTsSZBf
+         81BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717576999; x=1718181799;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UaBUOGJ1Ak3zXlLeWfU/jqutLHK14Cta/y09o8r+2HE=;
+        b=pOGFBHxHgFdv8l4EiIh39CcvgSZYAqOBbTv8mr4H5Mc8VPL8F1Hz/Fj3twvKK/4TNR
+         cBDuPcMghshtqToJNY3zvRwaVy/RmTblsW6G2JmURxt9NB0fXHt59muTWX9PRl3PorBN
+         /gR62cwagk28C9lQ6v7z/hXtqOvefUUP4NzXTuyAkBfJ8CygM/OMSmdC3MGmu6prdnVr
+         Kn7P2ZYg6H36cXR0vyfEeVZbbU6jTkYy94YvVx5bMY3MCJZUe6p3CYSG6Y/p8hkPRX9n
+         L4ReOpX45ox0aAicamI1Ws9leSVYpdnESNEe9PldctU0/hUUkrZeBo3gol0wEzPCVWuJ
+         wHbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXle2Og1o2a7iBv+mvhnBTM3SZSQgmUBc7LVyF225FcY4MdXhg0zROoiGnrpkA9rE1B7vvzPIKVOw3J/4iXld7Uh2vXmlRaSxQ2ZVu4
+X-Gm-Message-State: AOJu0YwCGS7mAS1AnzsJNA8iZKYg40nAfTSoImiUvSKDJN4x1zdV/Off
+	PUHsK+lxrIMGVAooQStVdEF+jjX5i+ZwfErzIPyD3qOLEggRbINLi2Dob7/27Sk=
+X-Google-Smtp-Source: AGHT+IHSUT5SCWDrqLRDCxVgfYjYbJDRkmqElMEcHxiyJVbLLK6Y6zKPWnCYgcMcdL7lIkZ8f3s3vw==
+X-Received: by 2002:ac2:5059:0:b0:521:54b5:86a3 with SMTP id 2adb3069b0e04-52bab509c32mr875541e87.64.1717576998609;
+        Wed, 05 Jun 2024 01:43:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d828a1sm1708733e87.221.2024.06.05.01.43.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 01:43:18 -0700 (PDT)
+Date: Wed, 5 Jun 2024 11:43:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Stephen Boyd <swboyd@chromium.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 11/14] dt-bindings: mfd: pm8008: rework binding
+Message-ID: <d5omeycp4l3mrzgswga2jkgxydpiayqfdjavwnfswcojawiqkt@zuol3vvkao5r>
+References: <20240529162958.18081-1-johan+linaro@kernel.org>
+ <20240529162958.18081-12-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1717577020;VERSION=7972;MC=1104090605;ID=105813;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A1295762776B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529162958.18081-12-johan+linaro@kernel.org>
 
-If the module is in SFP_MOD_ERROR, `sfp_sm_mod_remove()` will
-not be run. As a consequence, `sfp_hwmon_remove()` is not getting
-run either, leaving a stale `hwmon` device behind. `sfp_sm_mod_remove()`
-itself checks `sfp->sm_mod_state` anyways, so this check was not
-really needed in the first place.
+On Wed, May 29, 2024 at 06:29:55PM +0200, Johan Hovold wrote:
+> Rework the pm8008 binding by dropping internal details like register
+> offsets and interrupts and by adding the missing regulator and
+> temperature alarm properties.
+> 
+> Note that child nodes are still used for pinctrl and regulator
+> configuration.
+> 
+> Also note that the pinctrl state definition will be extended later and
+> could eventually also be shared with other PMICs (e.g. by breaking out
+> bits of qcom,pmic-gpio.yaml).
 
-Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
----
- drivers/net/phy/sfp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Obviously we want to adapt this style of bindings for the other PMICs
+too. My main concern here are PMICs which have two kinds of controlled
+pins: GPIOs and MPPs. With the existing bindings style those are
+declared as two subdevices. What would be your suggested way to support
+MPPs with the proposed kind of bindings?
 
-diff --git a/drivers/net/phy/sfp.c b/drivers/net/phy/sfp.c
-index f75c9eb3958e..d999d9baadb2 100644
---- a/drivers/net/phy/sfp.c
-+++ b/drivers/net/phy/sfp.c
-@@ -2418,8 +2418,7 @@ static void sfp_sm_module(struct sfp *sfp, unsigned int event)
- 
- 	/* Handle remove event globally, it resets this state machine */
- 	if (event == SFP_E_REMOVE) {
--		if (sfp->sm_mod_state > SFP_MOD_PROBE)
--			sfp_sm_mod_remove(sfp);
-+		sfp_sm_mod_remove(sfp);
- 		sfp_sm_mod_next(sfp, SFP_MOD_EMPTY, 0);
- 		return;
- 	}
+> 
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  .../devicetree/bindings/mfd/qcom,pm8008.yaml  | 149 +++++++++++-------
+>  1 file changed, 90 insertions(+), 59 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml b/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
+> index d71657f488db..ccf472e7f552 100644
+> --- a/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/qcom,pm8008.yaml
+> @@ -27,103 +27,134 @@ properties:
+>    reset-gpios:
+>      maxItems: 1
+>  
+> -  "#interrupt-cells":
+> +  vdd-l1-l2-supply: true
+> +  vdd-l3-l4-supply: true
+> +  vdd-l5-supply: true
+> +  vdd-l6-supply: true
+> +  vdd-l7-supply: true
+> +
+> +  gpio-controller: true
+> +
+> +  "#gpio-cells":
+>      const: 2
+>  
+> -    description: |
+> -      The first cell is the IRQ number, the second cell is the IRQ trigger
+> -      flag. All interrupts are listed in include/dt-bindings/mfd/qcom-pm8008.h.
+> +  gpio-ranges:
+> +    maxItems: 1
+>  
+>    interrupt-controller: true
+>  
+> -  "#address-cells":
+> -    const: 1
+> +  "#interrupt-cells":
+> +    const: 2
+>  
+> -  "#size-cells":
+> +  "#thermal-sensor-cells":
+>      const: 0
+>  
+> -patternProperties:
+> -  "^gpio@[0-9a-f]+$":
+> +  pinctrl:
+>      type: object
+> +    additionalProperties: false
+> +    patternProperties:
+> +      "-state$":
+> +        type: object
+> +        $ref: "#/$defs/qcom-pm8008-pinctrl-state"
+> +        unevaluatedProperties: false
+>  
+> -    description: |
+> -      The GPIO peripheral. This node may be specified twice, one for each GPIO.
+> -
+> -    properties:
+> -      compatible:
+> -        items:
+> -          - const: qcom,pm8008-gpio
+> -          - const: qcom,spmi-gpio
+> +  regulators:
+> +    type: object
+> +    additionalProperties: false
+> +    patternProperties:
+> +      "^ldo[1-7]$":
+> +        type: object
+> +        $ref: /schemas/regulator/regulator.yaml#
+> +        unevaluatedProperties: false
+>  
+> -      reg:
+> -        description: Peripheral address of one of the two GPIO peripherals.
+> -        maxItems: 1
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - vdd-l1-l2-supply
+> +  - vdd-l3-l4-supply
+> +  - vdd-l5-supply
+> +  - vdd-l6-supply
+> +  - vdd-l7-supply
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +  - gpio-ranges
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +  - "#thermal-sensor-cells"
+>  
+> -      gpio-controller: true
+> +additionalProperties: false
+>  
+> -      gpio-ranges:
+> -        maxItems: 1
+> +$defs:
+> +  qcom-pm8008-pinctrl-state:
+> +    type: object
+>  
+> -      interrupt-controller: true
+> +    allOf:
+> +      - $ref: /schemas/pinctrl/pinmux-node.yaml
+> +      - $ref: /schemas/pinctrl/pincfg-node.yaml
+>  
+> -      "#interrupt-cells":
+> -        const: 2
+> +    properties:
+> +      pins:
+> +        items:
+> +          pattern: "^gpio[12]$"
+>  
+> -      "#gpio-cells":
+> -        const: 2
+> +      function:
+> +        items:
+> +          - enum:
+> +              - normal
+>  
+>      required:
+> -      - compatible
+> -      - reg
+> -      - gpio-controller
+> -      - interrupt-controller
+> -      - "#gpio-cells"
+> -      - gpio-ranges
+> -      - "#interrupt-cells"
+> +      - pins
+> +      - function
+>  
+>      additionalProperties: false
+>  
+> -required:
+> -  - compatible
+> -  - reg
+> -  - interrupts
+> -  - "#address-cells"
+> -  - "#size-cells"
+> -  - "#interrupt-cells"
+> -
+> -additionalProperties: false
+> -
+>  examples:
+>    - |
+>      #include <dt-bindings/gpio/gpio.h>
+> -    #include <dt-bindings/mfd/qcom-pm8008.h>
+>      #include <dt-bindings/interrupt-controller/irq.h>
+>  
+>      i2c {
+>        #address-cells = <1>;
+>        #size-cells = <0>;
+>  
+> -      pmic@8 {
+> +      pm8008: pmic@8 {
+>          compatible = "qcom,pm8008";
+>          reg = <0x8>;
+> -        #address-cells = <1>;
+> -        #size-cells = <0>;
+> -        interrupt-controller;
+> -        #interrupt-cells = <2>;
+>  
+>          interrupt-parent = <&tlmm>;
+>          interrupts = <32 IRQ_TYPE_EDGE_RISING>;
+>  
+>          reset-gpios = <&tlmm 42 GPIO_ACTIVE_LOW>;
+>  
+> -        pm8008_gpios: gpio@c000 {
+> -          compatible = "qcom,pm8008-gpio", "qcom,spmi-gpio";
+> -          reg = <0xc000>;
+> -          gpio-controller;
+> -          gpio-ranges = <&pm8008_gpios 0 0 2>;
+> -          #gpio-cells = <2>;
+> -          interrupt-controller;
+> -          #interrupt-cells = <2>;
+> +        vdd-l1-l2-supply = <&vreg_s8b_1p2>;
+> +        vdd-l3-l4-supply = <&vreg_s1b_1p8>;
+> +        vdd-l5-supply = <&vreg_bob>;
+> +        vdd-l6-supply = <&vreg_bob>;
+> +        vdd-l7-supply = <&vreg_bob>;
+> +
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio-ranges = <&pm8008 0 0 2>;
+> +
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+> +
+> +        #thermal-sensor-cells = <0>;
+> +
+> +        pinctrl {
+> +          gpio-keys-state {
+> +            pins = "gpio1";
+> +            function = "normal";
+> +          };
+> +        };
+> +
+> +        regulators {
+> +          ldo1 {
+> +            regulator-name = "vreg_l1";
+> +            regulator-min-microvolt = <950000>;
+> +            regulator-max-microvolt = <1300000>;
+> +          };
+>          };
+>        };
+>      };
+> -- 
+> 2.44.1
+> 
+
 -- 
-2.34.1
-
-
+With best wishes
+Dmitry
 
