@@ -1,125 +1,293 @@
-Return-Path: <linux-kernel+bounces-203155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E618FD741
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:11:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7E38FD743
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A78C1C22916
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D1FB245D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6A415885C;
-	Wed,  5 Jun 2024 20:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AC0158861;
+	Wed,  5 Jun 2024 20:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fek29ZGz"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n1I1yfDU"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B0015D5DB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9B015DBA3
 	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 20:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717618234; cv=none; b=cFnjsxH5VYE8tNkr5pzk6sdkpc2IJC00/3VZgqQSk/SjWlLyAzSVaq8lL8Wx4hw8WeOUi6NMdT2QfP/3wjZvZ0nvXq2lLDP2FnQ85xmGmQqNk4oalFu6abxNK8XB2lEzh2BR0HRf7Gy6zglgtn9SbGEyfsckPOit+KdScICjYxQ=
+	t=1717618234; cv=none; b=R2gi0wEXIIS1pA7/CR3CRGsXCJhzL1ECuxhywH0CrQEwLPYqk6aD9NgW6sfGLbPXYd/54kpy7KpDqGlUV2FAYbFnjVXMNYZvat4/IpSmKtIIiTL2LZAOhv2BCEUuofoacdpYOhLn0DdWIVXdwqbn4hb2uBVdWSy/VGTK+JIAKOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717618234; c=relaxed/simple;
-	bh=yp94P6EXcUfh6tf1gijxaCCHni62kacsqABiqdfOJMw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BsqcYrAWLHIfm2mOuQpHXHHM+/0W71tevOo7xQQkjkMNA3g8njLmRjv5W8dxCw7kK1qxEM/GdCWfQNX/0e7KyRXKPSwOZA2ctk4Jp7UMwN/iXwfhheAWM0dUIwjS/5xwtzYDW3ka/2i4eeS9aMwxNN3LxSA2GWqu6+F1kplo6EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fek29ZGz; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52b90038cf7so475026e87.0
+	bh=P/ULyAJHmdP8+weQdNuK68L1c0m3M09m6gLP50TY3jI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=trE0Br810JTHzztODRmTNv+QznHwNMlYTnbkVQ6bD8msegiCih6283SyuvbOXsTW/eeiLsw18metaToICOMn/K4Z7iJSBiGDqeDsidh7qpHsrEalGB60Y4NKKqvnjh8eRTezOaaYdVuAe0OUAOarZtKZ9itRhjckImUEPBHUM44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n1I1yfDU; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ea8fff1486so1504771fa.1
         for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 13:10:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717618230; x=1718223030; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vAbdSxwRmKncrPynMCBXXpukCSmqzvxbpgxPB115kMQ=;
-        b=fek29ZGzRxqhin3CvqlxME5VcgNP4YY4PvjYszlQLmH8wgf46EzdbSEh0HVt8nuqLt
-         p7VXG2G/hNslirl0x00NtDQgCuyzrF2g21cj831aDjVTy3MrKDZemLORjrIzwegatRYK
-         8VyIv4sHhPc0u0w2VkTw9hmBuiv7hXnknyK9ufUXQwrLyT6UigTyG6T8TxDEiNIZ1Nyp
-         Udu4isNCvZJsCoTZRoLOrkhyvxpPE+ViRsgnpisRLRPgSRZsdJ1wmDQWbhAn0O2UdqoK
-         xWHxBEjAEdYcLZBJP6Pzfbop+0ZajdLi/kawTJ5vQjeQZ5Ppu0SvUoLbeRRctq8ILOsM
-         aDPw==
+        d=google.com; s=20230601; t=1717618231; x=1718223031; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oBwUpUZb8gh3eQHfueITt2ZJwiwMmdwZoHaq8+wmWqI=;
+        b=n1I1yfDUH4Q83CT9Mz5mEaOayMk3+wiUBUyUVgBCcp0CTVUT9LLjJ8Pi8NlKbmCkwA
+         /M2hQCt90b6D1an0J7TzzZLKkrw4FmdDqXsSDF0nHHu4t3pE8ZP4n/wI3bKsN+LrvJJn
+         /HuxkNSoR1TRZuxXMTlSEu3+nz6NDrkEVYwbmBWOKNvEmxzzyILoP+RRuN36f8AqN9ie
+         iox56ERRVaY+S1PQCmEdeoi7f020oQoQWTOSUyISaxNATuGXjF0IsWikZR6vTf6ATiz/
+         WJ+pax09TLhaSoimvkwpc+UtclXcy9/XS577cLSsxm/WQ3pNGTtUd2JvEw9PQnQYybOO
+         dWdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717618230; x=1718223030;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717618231; x=1718223031;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vAbdSxwRmKncrPynMCBXXpukCSmqzvxbpgxPB115kMQ=;
-        b=RZ/Gj8nnV9NMCZ5uhGfNKas3AnTWMf0P1papp5KIBzkJZ0k2mLERt+2oKQHb0I+qcz
-         a8uc6p0Ac+CP5T0RtceOn7MHHdA5t/h7x8Kar3JVHLeyvy2TZ8avfoySgydif6ytZpxd
-         MMNT5n+GDOuPxxDz7qwRX3bnDEVQKfXkn4UMn9JqCrIehaYdSdkc7q5GFNwolNvd73Q5
-         FAwaNnIPohKST57l1zfMJBvhBzSgAG9dlM6/MAEShTnAgTJVyyPgz7MXzBOYFBZwCTMc
-         GK+zM6+hPBRXtB7UfCx2LKzBy9JTFkYkesWWbYLI/4EOMbZPqmPh2qIhdAc2BPLoD/MR
-         p+sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCv36OeTV5rOP90e9LBQeEvPYsfGrGAnKw2SmmHXvvB52u3byTA+3MTdBeuFT6hO7Ff/3r/ayqkuBpdEITAcjV94GBi6GTshh3uiXa
-X-Gm-Message-State: AOJu0YzFI1QGGm6GLqN51q7XO4WUk0T38D+mLnDQ0Tf2xLUKWJThJHLS
-	ehNCFAT3PhexeXkq/cehKEtuxzHRWKkJdNQB/Rfvm33pf5BEI/EofjxwF/YxI0A=
-X-Google-Smtp-Source: AGHT+IGmE9OokaTql4LLWxH8WUk7Bm6os+aJLAvG1X8lHm2C2s5wY34QXKPicExRZInMxGNV/wgPkA==
-X-Received: by 2002:ac2:5322:0:b0:522:80d:5dc5 with SMTP id 2adb3069b0e04-52bab4bd036mr2102755e87.27.1717618230691;
-        Wed, 05 Jun 2024 13:10:30 -0700 (PDT)
-Received: from [127.0.1.1] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31be4e36sm9717473a12.53.2024.06.05.13.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 13:10:30 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 05 Jun 2024 22:10:18 +0200
-Subject: [PATCH v2 5/7] drm/msm/adreno: Define A530 speed bins explicitly
+        bh=oBwUpUZb8gh3eQHfueITt2ZJwiwMmdwZoHaq8+wmWqI=;
+        b=nM/Ik2riOC7N8NPWXRt4mVcldcMjUmr3+GP6wGBoB5tyQAXPE353khlJt75iyLD8Fy
+         r2PZnWN4NKonq0kgfGefTUItiaxNy0CFf+eJImOw2x5PJb0jlkyTWJ5wxYnjWSVPkIth
+         ccLEvYGIS8YQfHm0n3RqxUehoPpmhp62wrg+csU99Bu1NDcHOwM2nLhiRl+o74majWuE
+         g1ccKnUBYnyjd0OlLuQzbq6+oTcXDjchiDiOVhO3zzxfnRdr+VLcCICvNHPMk0bUEgwU
+         Bd6iY8taX5ExKUOjsbQArEZiZ2dgwt1t+B/pT0uG4vwzR6H+S29hx5yHCYMoXw6qhkXR
+         xWNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxDp/gfV4wNs94wsdWdqJ3Qdjm8xv+XvobnsrOEhJJEad02h1iX5o+IsbO3jxz7gbVxzNd+8HpgUnjrDhcUZc0ZoRSROUZeg/0Cx2L
+X-Gm-Message-State: AOJu0YyaqALvDccPKpW0Y5a8cJWND3Ihv1D5dI+FVXMfgwdIvP7FkBNY
+	XtHXAVqX5mi6cUOFzxqm5kq7ZQNs4LRvoZmyATHD7NYwp5LvZMAZeCL72JxTFzHzdrveqjoItbp
+	v24hpNFg1pXuIDE7TFyHjmXimlyGdPFksO6Ac
+X-Google-Smtp-Source: AGHT+IGksIwyimMNtUjcaJJe0ywzHDsW40IeRamyOlbcwZdT+OnlzNT/xV8FemA/U28w4/kuuedLzSZsJnzH6N1zXBo=
+X-Received: by 2002:a2e:908e:0:b0:2e2:59c7:a922 with SMTP id
+ 38308e7fff4ca-2ead00b9e81mr1751531fa.15.1717618230256; Wed, 05 Jun 2024
+ 13:10:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240605-topic-smem_speedbin-v2-5-8989d7e3d176@linaro.org>
-References: <20240605-topic-smem_speedbin-v2-0-8989d7e3d176@linaro.org>
-In-Reply-To: <20240605-topic-smem_speedbin-v2-0-8989d7e3d176@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- devicetree@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14-dev
+References: <20231212204647.2170650-1-sagis@google.com> <ce967287157e830303fdd3d4a37e7d62a1698747.camel@intel.com>
+In-Reply-To: <ce967287157e830303fdd3d4a37e7d62a1698747.camel@intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Wed, 5 Jun 2024 15:10:18 -0500
+Message-ID: <CAAhR5DFmT0n9KWRMtO=FkWbm9_tXy1gP-mpbyF05mmLUph2dPA@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 00/29] TDX KVM selftests
+To: "Verma, Vishal L" <vishal.l.verma@intel.com>
+Cc: "ackerleytng@google.com" <ackerleytng@google.com>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Aktas, Erdem" <erdemaktas@google.com>, 
+	"Afranji, Ryan" <afranji@google.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"jmattson@google.com" <jmattson@google.com>, "pgonda@google.com" <pgonda@google.com>, 
+	"seanjc@google.com" <seanjc@google.com>, "runanwang@google.com" <runanwang@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Annapurve, Vishal" <vannapurve@google.com>, 
+	"chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"vipinsh@google.com" <vipinsh@google.com>, "Xu, Haibo1" <haibo1.xu@intel.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In preparation for commonizing the speedbin handling code.
+On Wed, Jun 5, 2024 at 1:38=E2=80=AFPM Verma, Vishal L <vishal.l.verma@inte=
+l.com> wrote:
+>
+> On Tue, 2023-12-12 at 12:46 -0800, Sagi Shahar wrote:
+> > Hello,
+> >
+> > This is v4 of the patch series for TDX selftests.
+> >
+> > It has been updated for Intel=E2=80=99s v17 of the TDX host patches whi=
+ch was
+> > proposed here:
+> > https://lore.kernel.org/all/cover.1699368322.git.isaku.yamahata@intel.c=
+om/
+> >
+> > The tree can be found at:
+> > https://github.com/googleprodkernel/linux-cc/tree/tdx-selftests-rfc-v5
+>
+> Hello,
+>
+> I wanted to check if there were any plans from Google to refresh this
+> series for the current TDX patches and the kvm-coco-queue baseline?
+>
+I'm going to work on it soon and was planning on using Isaku's V19 of
+the TDX host patches
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/gpu/drm/msm/adreno/adreno_device.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> I'm setting up a CI system that the team is using to test updates to
+> the different TDX patch series, and it currently runs the KVM Unit
+> tests, and kvm selftests, and we'd like to be able to add these three
+> new TDX tests to that as well.
+>
+> I tried to take a quick shot at rebasing it, but ran into several
+> conflicts since kvm-coco-queue has in the meantime made changes e.g. in
+> tools/testing/selftests/kvm/lib/x86_64/processor.c vcpu_setup().
+>
+> If you can help rebase this, Rick's MMU prep series might be a good
+> baseline to use:
+> https://lore.kernel.org/all/20240530210714.364118-1-rick.p.edgecombe@inte=
+l.com/
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-index e00eef8099ae..66f7868ff476 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-@@ -258,6 +258,12 @@ static const struct adreno_info gpulist[] = {
- 			ADRENO_QUIRK_FAULT_DETECT_MASK,
- 		.init = a5xx_gpu_init,
- 		.zapfw = "a530_zap.mdt",
-+		.speedbins = ADRENO_SPEEDBINS(
-+			{ 0, 0 },
-+			{ 1, 1 },
-+			{ 2, 2 },
-+			{ 3, 3 },
-+		),
- 	}, {
- 		.chip_ids = ADRENO_CHIP_IDS(0x05040001),
- 		.family = ADRENO_5XX,
-
--- 
-2.43.0
-
+This patch series only includes the basic TDX MMU changes and is
+missing a lot of the TDX support. Not sure how this can be used as a
+baseline without the rest of the TDX patches. Are there other patch
+series that were posted based on this series which provides the rest
+of the TDX support?
+>
+> This is also available in a tree at:
+> https://github.com/intel/tdx/tree/tdx_kvm_dev-2024-05-30
+>
+> Thank you,
+> Vishal
+>
+> >
+> > Changes from RFC v4:
+> >
+> > Added patch to propagate KVM_EXIT_MEMORY_FAULT to userspace.
+> >
+> > Minor tweaks to align the tests to the new TDX 1.5 spec such as changes
+> > in the expected values in TDG.VP.INFO.
+> >
+> > In RFCv5, TDX selftest code is organized into:
+> >
+> > + headers in tools/testing/selftests/kvm/include/x86_64/tdx/
+> > + common code in tools/testing/selftests/kvm/lib/x86_64/tdx/
+> > + selftests in tools/testing/selftests/kvm/x86_64/tdx_*
+> >
+> > Dependencies
+> >
+> > + Peter=E2=80=99s patches, which provide functions for the host to allo=
+cate
+> >   and track protected memory in the guest.
+> >   https://lore.kernel.org/all/20230110175057.715453-1-pgonda@google.com=
+/
+> >
+> > Further work for this patch series/TODOs
+> >
+> > + Sean=E2=80=99s comments for the non-confidential UPM selftests patch =
+series
+> >   at https://lore.kernel.org/lkml/Y8dC8WDwEmYixJqt@google.com/T/#u appl=
+y
+> >   here as well
+> > + Add ucall support for TDX selftests
+> >
+> > I would also like to acknowledge the following people, who helped
+> > review or test patches in previous versions:
+> >
+> > + Sean Christopherson <seanjc@google.com>
+> > + Zhenzhong Duan <zhenzhong.duan@intel.com>
+> > + Peter Gonda <pgonda@google.com>
+> > + Andrew Jones <drjones@redhat.com>
+> > + Maxim Levitsky <mlevitsk@redhat.com>
+> > + Xiaoyao Li <xiaoyao.li@intel.com>
+> > + David Matlack <dmatlack@google.com>
+> > + Marc Orr <marcorr@google.com>
+> > + Isaku Yamahata <isaku.yamahata@gmail.com>
+> > + Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+> >
+> > Links to earlier patch series
+> >
+> > + RFC v1: https://lore.kernel.org/lkml/20210726183816.1343022-1-erdemak=
+tas@google.com/T/#u
+> > + RFC v2: https://lore.kernel.org/lkml/20220830222000.709028-1-sagis@go=
+ogle.com/T/#u
+> > + RFC v3: https://lore.kernel.org/lkml/20230121001542.2472357-1-ackerle=
+ytng@google.com/T/#u
+> > + RFC v4: https://lore.kernel.org/lkml/20230725220132.2310657-1-afranji=
+@google.com/
+> >
+> > *** BLURB HERE ***
+> >
+> > Ackerley Tng (12):
+> >   KVM: selftests: Add function to allow one-to-one GVA to GPA mappings
+> >   KVM: selftests: Expose function that sets up sregs based on VM's mode
+> >   KVM: selftests: Store initial stack address in struct kvm_vcpu
+> >   KVM: selftests: Refactor steps in vCPU descriptor table initializatio=
+n
+> >   KVM: selftests: TDX: Use KVM_TDX_CAPABILITIES to validate TDs'
+> >     attribute configuration
+> >   KVM: selftests: TDX: Update load_td_memory_region for VM memory backe=
+d
+> >     by guest memfd
+> >   KVM: selftests: Add functions to allow mapping as shared
+> >   KVM: selftests: Expose _vm_vaddr_alloc
+> >   KVM: selftests: TDX: Add support for TDG.MEM.PAGE.ACCEPT
+> >   KVM: selftests: TDX: Add support for TDG.VP.VEINFO.GET
+> >   KVM: selftests: TDX: Add TDX UPM selftest
+> >   KVM: selftests: TDX: Add TDX UPM selftests for implicit conversion
+> >
+> > Erdem Aktas (3):
+> >   KVM: selftests: Add helper functions to create TDX VMs
+> >   KVM: selftests: TDX: Add TDX lifecycle test
+> >   KVM: selftests: TDX: Adding test case for TDX port IO
+> >
+> > Roger Wang (1):
+> >   KVM: selftests: TDX: Add TDG.VP.INFO test
+> >
+> > Ryan Afranji (2):
+> >   KVM: selftests: TDX: Verify the behavior when host consumes a TD
+> >     private memory
+> >   KVM: selftests: TDX: Add shared memory test
+> >
+> > Sagi Shahar (11):
+> >   KVM: selftests: TDX: Add report_fatal_error test
+> >   KVM: selftests: TDX: Add basic TDX CPUID test
+> >   KVM: selftests: TDX: Add basic get_td_vmcall_info test
+> >   KVM: selftests: TDX: Add TDX IO writes test
+> >   KVM: selftests: TDX: Add TDX IO reads test
+> >   KVM: selftests: TDX: Add TDX MSR read/write tests
+> >   KVM: selftests: TDX: Add TDX HLT exit test
+> >   KVM: selftests: TDX: Add TDX MMIO reads test
+> >   KVM: selftests: TDX: Add TDX MMIO writes test
+> >   KVM: selftests: TDX: Add TDX CPUID TDVMCALL test
+> >   KVM: selftests: Propagate KVM_EXIT_MEMORY_FAULT to userspace
+> >
+> >  tools/testing/selftests/kvm/Makefile          |    8 +
+> >  .../selftests/kvm/include/kvm_util_base.h     |   30 +
+> >  .../selftests/kvm/include/x86_64/processor.h  |    4 +
+> >  .../kvm/include/x86_64/tdx/td_boot.h          |   82 +
+> >  .../kvm/include/x86_64/tdx/td_boot_asm.h      |   16 +
+> >  .../selftests/kvm/include/x86_64/tdx/tdcall.h |   59 +
+> >  .../selftests/kvm/include/x86_64/tdx/tdx.h    |   65 +
+> >  .../kvm/include/x86_64/tdx/tdx_util.h         |   19 +
+> >  .../kvm/include/x86_64/tdx/test_util.h        |  164 ++
+> >  tools/testing/selftests/kvm/lib/kvm_util.c    |  101 +-
+> >  .../selftests/kvm/lib/x86_64/processor.c      |   77 +-
+> >  .../selftests/kvm/lib/x86_64/tdx/td_boot.S    |  101 ++
+> >  .../selftests/kvm/lib/x86_64/tdx/tdcall.S     |  158 ++
+> >  .../selftests/kvm/lib/x86_64/tdx/tdx.c        |  262 ++++
+> >  .../selftests/kvm/lib/x86_64/tdx/tdx_util.c   |  558 +++++++
+> >  .../selftests/kvm/lib/x86_64/tdx/test_util.c  |  101 ++
+> >  .../kvm/x86_64/tdx_shared_mem_test.c          |  135 ++
+> >  .../selftests/kvm/x86_64/tdx_upm_test.c       |  469 ++++++
+> >  .../selftests/kvm/x86_64/tdx_vm_tests.c       | 1319 +++++++++++++++++
+> >  19 files changed, 3693 insertions(+), 35 deletions(-)
+> >  create mode 100644 tools/testing/selftests/kvm/include/x86_64/tdx/td_b=
+oot.h
+> >  create mode 100644 tools/testing/selftests/kvm/include/x86_64/tdx/td_b=
+oot_asm.h
+> >  create mode 100644 tools/testing/selftests/kvm/include/x86_64/tdx/tdca=
+ll.h
+> >  create mode 100644 tools/testing/selftests/kvm/include/x86_64/tdx/tdx.=
+h
+> >  create mode 100644 tools/testing/selftests/kvm/include/x86_64/tdx/tdx_=
+util.h
+> >  create mode 100644 tools/testing/selftests/kvm/include/x86_64/tdx/test=
+_util.h
+> >  create mode 100644 tools/testing/selftests/kvm/lib/x86_64/tdx/td_boot.=
+S
+> >  create mode 100644 tools/testing/selftests/kvm/lib/x86_64/tdx/tdcall.S
+> >  create mode 100644 tools/testing/selftests/kvm/lib/x86_64/tdx/tdx.c
+> >  create mode 100644 tools/testing/selftests/kvm/lib/x86_64/tdx/tdx_util=
+.c
+> >  create mode 100644 tools/testing/selftests/kvm/lib/x86_64/tdx/test_uti=
+l.c
+> >  create mode 100644 tools/testing/selftests/kvm/x86_64/tdx_shared_mem_t=
+est.c
+> >  create mode 100644 tools/testing/selftests/kvm/x86_64/tdx_upm_test.c
+> >  create mode 100644 tools/testing/selftests/kvm/x86_64/tdx_vm_tests.c
+> >
+>
 
