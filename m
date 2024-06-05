@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-202143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510888FC84C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:48:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B998FC84E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6171F27024
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FFAB283F30
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D95B18FDBD;
-	Wed,  5 Jun 2024 09:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD4C190490;
+	Wed,  5 Jun 2024 09:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6yWcPbZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BERZumqA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FCA190062
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736B5190481
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580901; cv=none; b=BC8ibJ9kHLx2tgEPkXAAnwtZ0ZSOmcQC0abLjnjO0gFEp5GpzGd3NToEkz3fxTQOkRueFVcu5pbMJr8Mgblf0R7750Gb669hrY/hBsFp6AlBv0b/uiwmZ9ShHKSV+BilynO8NM1l8giaOOFRFvCKpP8l+jSV8Qql46FxtqRgUf0=
+	t=1717580904; cv=none; b=IlIFennBYHEKUvaUx9twvPjt+z9MvHPMZUlyiwbG/r5/9wzPdiV5001/kUkeDp66P+n4aMUw59XDavjYrHXjKZIjpQmQ31OleTEFzTn4rKw/1qFCpJgOZCdKeJVFpt1ROZS0P1l2YMcY92PzxaCRAT/b+HXjUQB23JZtBpWXfKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580901; c=relaxed/simple;
-	bh=TkZmn0j6P9PP99V7b1wYr7sy8xz+wQfdtM61tMGn0RI=;
+	s=arc-20240116; t=1717580904; c=relaxed/simple;
+	bh=l4kI/Eqa/s3yp9ntZCNg8OdmGCzV7tDDQHa1fg1fi84=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oj/s1uvFEbeWT6y0wANz6zdS/dapbgbNcHVo+F/+xiHB18ZFZAJ9saa6000vwMJ8anR1e9u52RSLlZ3c7dckitIXQN7CPnJzUoKU1hQYs4foD3P0Z32qqvxLS7cNFoD8JDx8f4DOMswVMjbRQSbNSNts3e21k/MhRvn2Tt/ZawU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6yWcPbZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAD8CC3277B;
-	Wed,  5 Jun 2024 09:48:18 +0000 (UTC)
+	 MIME-Version; b=IKMBkcDMTKBQ/x27h2H21ALlh1R4C/XkfzqIX77v9fG7AwXghF1O8av+17R8IKQkTbFswOZpTdB9L6d813j1dNExwzEsYhXSv/p7zktzv6jTHzJBkmMKpVSpZsOvnfBKy5QLNV1hNW8SQcONp5ytnjk+vlSKW0xmMvMjByCZ2n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BERZumqA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA735C32781;
+	Wed,  5 Jun 2024 09:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717580901;
-	bh=TkZmn0j6P9PP99V7b1wYr7sy8xz+wQfdtM61tMGn0RI=;
+	s=k20201202; t=1717580904;
+	bh=l4kI/Eqa/s3yp9ntZCNg8OdmGCzV7tDDQHa1fg1fi84=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l6yWcPbZMQQ1acDAPHB8r8Cmps0DD+OQjsvrBnG0oE8R0y8IEJlBI1jMS1sENnl1P
-	 +0iJCsd9CJ7/BP2JJ5URZQJi315OeYQiKE6Jz83wZBfr/WSnpfeWxXa8ggtkyUw9Ht
-	 UeWwLYTufxMArxQ1sK5zNMJO9gkbXUOpSsYmLLTLVQ/TdcUlBwx70gHsrgd7c42eH1
-	 7sjpuM6MkabNXGuN/4SIBSd+ghANbJ58oZK2LOyOAS8cuQX25OWrn8JYGaT4l44dnT
-	 qVN8bHcR8PVx8oRkhF1KxqSYcCJDtvFtOYHMH63XyodCb/DoKGMwKvZmV+4KZYqS3s
-	 KiouR0RMK7GZA==
+	b=BERZumqA2vlBVurZbqf3ltU4dd++VsLve3ArCLFM5cVVJE9xR7Wf/usLMZOgMaoPH
+	 MkjMktd7aVDlimP8qcGYJzOZo4QPKr58biZZF3aZF3i4PBQ7smQ+uy7baIJZE5EIio
+	 +BpT2b5kvjzZFcE5C2U6WAUeYLVoOeXuVeOoguYB3YAOOU6HTdtq5Vi2HJ1LHUAsUD
+	 6gJv+IbIiHtdqJhOhmck8hkjIi8BWxHkgB2MOHtLL/07/Ked6czniRUmR4EyI64gfr
+	 /NlMkMKCgEedzMMvz6IrPV+FTqewyJ1lwDcgcrXvUUqf/5pUuXFZ4nMnPs+WvRaPYb
+	 zLg/T9ccxC/AA==
 From: alexs@kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>,
 	linux-mm@kvack.org,
@@ -51,9 +51,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	hughd@google.com,
 	david@redhat.com
 Cc: "Alex Shi (tencent)" <alexs@kernel.org>
-Subject: [RFC 2/3] mm/ksm: jump out early if vma out of date in cmp_and_merge_page
-Date: Wed,  5 Jun 2024 17:53:02 +0800
-Message-ID: <20240605095304.66389-2-alexs@kernel.org>
+Subject: [RFC 3/3] mm/ksm: move flush_anon_page before checksum calculation
+Date: Wed,  5 Jun 2024 17:53:03 +0800
+Message-ID: <20240605095304.66389-3-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240605095304.66389-1-alexs@kernel.org>
 References: <20240605095304.66389-1-alexs@kernel.org>
@@ -67,84 +67,59 @@ Content-Transfer-Encoding: 8bit
 
 From: "Alex Shi (tencent)" <alexs@kernel.org>
 
-If we get a page which in a disappearing vma, the page should be useless
-soon, so don't bother to add it into ksm.
+commit 6020dff09252 ("[ARM] Resolve fuse and direct-IO failures due to missing cache flushes")
+explain that the aim of flush_anon_page() is to keep the cache and memory
+content synced. Also as David Hildenbrand pointed, flush page without
+the page contents reading here is meaningless, so let's move the flush action
+just before page contents reading, like calc_checksum(), not
+just find a page, flush it, w/o clear purpose. This should save some flush
+actions why keep page content safely synced.
+
+BTW, write_protect_page() do another type flush actions before pages_identical().
 
 Signed-off-by: Alex Shi (tencent) <alexs@kernel.org>
 ---
- mm/ksm.c | 36 +++++++++++++++++-------------------
- 1 file changed, 17 insertions(+), 19 deletions(-)
+ mm/ksm.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/mm/ksm.c b/mm/ksm.c
-index 088bce39cd33..ef335ee508d3 100644
+index ef335ee508d3..77e8c1ded9bb 100644
 --- a/mm/ksm.c
 +++ b/mm/ksm.c
-@@ -2315,6 +2315,7 @@ static void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_ite
- 	unsigned int checksum;
- 	int err;
- 	bool max_page_sharing_bypass = false;
-+	struct vm_area_struct *vma;
- 
- 	stable_node = page_stable_node(page);
- 	if (stable_node) {
-@@ -2370,9 +2371,17 @@ static void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_ite
- 	 * don't want to insert it in the unstable tree, and we don't want
- 	 * to waste our time searching for something identical to it there.
- 	 */
-+	mmap_read_lock(mm);
-+	vma = find_mergeable_vma(mm, rmap_item->address);
-+	if (!vma) {
-+		/* If the vma is out of date, we do not need to  continue.*/
-+		mmap_read_unlock(mm);
-+		return;
-+	}
- 	checksum = calc_checksum(page);
- 	if (rmap_item->oldchecksum != checksum) {
- 		rmap_item->oldchecksum = checksum;
-+		mmap_read_unlock(mm);
+@@ -784,10 +784,7 @@ static struct page *get_mergeable_page(struct ksm_rmap_item *rmap_item)
+ 		goto out;
+ 	if (is_zone_device_page(page))
+ 		goto out_putpage;
+-	if (PageAnon(page)) {
+-		flush_anon_page(vma, page, addr);
+-		flush_dcache_page(page);
+-	} else {
++	if (!PageAnon(page)) {
+ out_putpage:
+ 		put_page(page);
+ out:
+@@ -2378,7 +2375,12 @@ static void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_ite
+ 		mmap_read_unlock(mm);
  		return;
  	}
- 
-@@ -2381,31 +2390,20 @@ static void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_ite
- 	 * appropriate zero page if the user enabled this via sysfs.
- 	 */
- 	if (ksm_use_zero_pages && (checksum == zero_checksum)) {
--		struct vm_area_struct *vma;
--
--		mmap_read_lock(mm);
--		vma = find_mergeable_vma(mm, rmap_item->address);
--		if (vma) {
--			err = try_to_merge_one_page(vma, page,
--					ZERO_PAGE(rmap_item->address));
--			trace_ksm_merge_one_page(
--				page_to_pfn(ZERO_PAGE(rmap_item->address)),
--				rmap_item, mm, err);
--		} else {
--			/*
--			 * If the vma is out of date, we do not need to
--			 * continue.
--			 */
--			err = 0;
--		}
--		mmap_read_unlock(mm);
-+		err = try_to_merge_one_page(vma, page, ZERO_PAGE(rmap_item->address));
-+		trace_ksm_merge_one_page(page_to_pfn(ZERO_PAGE(rmap_item->address)),
-+					 rmap_item, mm, err);
- 		/*
- 		 * In case of failure, the page was not really empty, so we
- 		 * need to continue. Otherwise we're done.
- 		 */
--		if (!err)
-+		if (!err) {
-+			mmap_read_unlock(mm);
- 			return;
-+		}
- 	}
-+	mmap_read_unlock(mm);
 +
- 	tree_rmap_item =
- 		unstable_tree_search_insert(rmap_item, page, &tree_page);
- 	if (tree_rmap_item) {
++	/* flush page contents before calculate checksum */
++	flush_anon_page(vma, page, rmap_item->address);
++	flush_dcache_page(page);
+ 	checksum = calc_checksum(page);
++
+ 	if (rmap_item->oldchecksum != checksum) {
+ 		rmap_item->oldchecksum = checksum;
+ 		mmap_read_unlock(mm);
+@@ -2662,8 +2664,6 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
+ 			if (is_zone_device_page(*page))
+ 				goto next_page;
+ 			if (PageAnon(*page)) {
+-				flush_anon_page(vma, *page, ksm_scan.address);
+-				flush_dcache_page(*page);
+ 				rmap_item = get_next_rmap_item(mm_slot,
+ 					ksm_scan.rmap_list, ksm_scan.address);
+ 				if (rmap_item) {
 -- 
 2.43.0
 
