@@ -1,129 +1,126 @@
-Return-Path: <linux-kernel+bounces-202927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC4B8FD318
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:45:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2427D8FD31B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19F9286C8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:45:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6C3B1F23264
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CF410A0D;
-	Wed,  5 Jun 2024 16:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1590188CC8;
+	Wed,  5 Jun 2024 16:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="D4+0UYha"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="12NS9nwY"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF21C15666F;
-	Wed,  5 Jun 2024 16:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A679F3211;
+	Wed,  5 Jun 2024 16:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717605926; cv=none; b=e5kjboji5YqRiW0GWqGIWtqcTg8Ha8yQD4RicjOzEnL3XRAUmn71fH5YxTEM5aQ4vejDEyHL35TJhs3CGZKxDiRSqhZt0XTQ5obJ2J2O1EzUYTXVBwH2hfSlgx83h+YQepMO2NHQe+JnLFxxUcppXI6ywwjzlc5/1X+il0neEQM=
+	t=1717606095; cv=none; b=cjT896z7gSUPfzUjCNeO2srRbRsNAX68wJjAtuRC0seVef3ds6+lSNl0prZLo9qIofr8dlF4eY8DC53pma1VSh/sPxlEdNeP4kJaYBFXO5eihr82/eqcqiZEKqa+b8MLPA+rn+HZMD3WJwbiAze8TC2OpguPcSjcIfRooS0cyY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717605926; c=relaxed/simple;
-	bh=2AvSoawsFzTXh1CTPggnx/EJHpxRpbOoUivtACXyLtg=;
+	s=arc-20240116; t=1717606095; c=relaxed/simple;
+	bh=wHtGfezfsNTTRs+YiPxLytTLRj3+4i1IKUQga7xWP+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VWJ7hbuPIji6fW6eckfl2+Lr+blhSx/n7iNB7vDl6A6QoIFWKiHpvAVvcidweq33COMT7G1oKNa193PwQDkg5YH/YV1d3Q6r+zkXL+cFyaQ1FmWjmqITnKveA/e2Xig6UtQ2q7NGMc61epVKdlR2MGJKmANvT6JyLzVRf1fIDLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=D4+0UYha; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E0BBF40E016C;
-	Wed,  5 Jun 2024 16:45:22 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id HKwGLeMcO4GR; Wed,  5 Jun 2024 16:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717605919; bh=55FFsN3ftlp8CQPCKWhszPtPcA6LJBd4hfv2N4LBpfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D4+0UYhaGFeq4Zc6tpJEsxCPSQaFqjMqnbtB8E7Hbx37v03uU46ocRwLF+zeDKnOw
-	 846/UnTeB8Stu8aG8S6IegN3HxicT3falfAzU8UwR50gj2iKhblvJzLRcZaVD+kh4X
-	 +IqWvFYCme5J2EOcHuuWKPM/DcUZPm7zUX5hsyRYX1vcl1U2cpyna4c2Q4+IWaiw+c
-	 hMIDzk0L2p/JQ7pNnGZBuM9PnCCN5QGppvW44xfZff147rX1NmxUfyFAkHEYovWXyl
-	 45m6t0SoxGsa6qYqQdI5+7CMFjfNyoUfVXCXDsTmWpMOZ5ubgaRxAq/fgMyEo5WEwK
-	 V+fHenVe1KTsyhK3x1ykyydB7qkAkpcZ7s3U0uX5m2V2Xqb8Gd+e7lhV9uQL+aMiFt
-	 kucwaBs4pYUXIr14ORiNUWj7fouVA+9DJsJeFSXtxZLpE4RGGU+3nwI7igqqFBwTIa
-	 3jq/wc8TbFVl5X91FLPVDIbPoXaSVBGqah/ONUH0PEOQfpJ39lAQE2oPT4JVs/zg4R
-	 B/liHLkOdYou2BogStRfeOzukxPhss/v7WRCxmbLsHTzBh0orx//5xYdF2JH0lu7wC
-	 LUwwpLQW9znPTKnFlWqbwia6f/ZesHffovbLQ4o4H1sOZsCaJjBP4xFiKR2E6E6Oae
-	 DUWvQ8fJY8eJW7KWgXn0C4hk=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 412E240E016A;
-	Wed,  5 Jun 2024 16:45:12 +0000 (UTC)
-Date: Wed, 5 Jun 2024 18:45:05 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, x86@kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v3 3/8] hwmon: (k10temp) Check return value of
- amd_smn_read()
-Message-ID: <20240605164505.GKZmCWEROq9QByGDRn@fat_crate.local>
-References: <20240523-fix-smn-bad-read-v3-0-aa44c622de39@amd.com>
- <20240523-fix-smn-bad-read-v3-3-aa44c622de39@amd.com>
- <20240605122012.GXZmBX_KFQArXB9Lar@fat_crate.local>
- <7a7c2f41-1608-4348-9183-d99aaa51398e@amd.com>
- <20240605161236.GIZmCOdP-CRPJ8-3sY@fat_crate.local>
- <e17b38fe-97cb-4559-be97-36af0ab14789@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dx/o01UaypsQ+U+/E6z8UObaq2OEl/e41X1VgZUkrK0ni6MjnfGg/0zyeCbQl3pmgv71bqwGI/JZ9x9XebHddJ+NJtGOzw3jGvj70dAT67KWcr7YDhnJX0F44PAeL+gulgUY6vRaOXpc78V4IZAns5RYes1aThj9CcUXdXWvIeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=12NS9nwY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=Sy8IyTf9mqvpYa5qUP0eJiWGfhaQAqvgS6Uul5RkQbw=; b=12
+	NS9nwYp9aHzjlrNI33SUIFY2Inj0vvOE/J9QploqMIpPOZjjfzeySLtZryZGwYGbtDV/x633u7K/x
+	hBwivNh3bSUIcPXBUPM43vgIFfrK475NuCwugJaFd/NmpRiNETQYE0ynbUsYuFb/U3y0miBHdId+G
+	JpQWriJeUL+YjsI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sEto2-00Gvnd-A4; Wed, 05 Jun 2024 18:48:10 +0200
+Date: Wed, 5 Jun 2024 18:48:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: Vladimir Oltean <olteanv@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, trivial@kernel.org,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [RFC PATCH 2/2] net: include: mii: Refactor: Use BIT() for
+ ADVERTISE_* bits
+Message-ID: <1c4d8c46-3124-4a90-bc50-788cc3883d93@lunn.ch>
+References: <20240605121648.69779-1-csokas.bence@prolan.hu>
+ <20240605121648.69779-1-csokas.bence@prolan.hu>
+ <20240605121648.69779-2-csokas.bence@prolan.hu>
+ <20240605121648.69779-2-csokas.bence@prolan.hu>
+ <20240605141342.262wgddrf4xjbbeu@skbuf>
+ <52b9e3f4-8dd4-4696-9a47-0dc4eb59c013@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <e17b38fe-97cb-4559-be97-36af0ab14789@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <52b9e3f4-8dd4-4696-9a47-0dc4eb59c013@prolan.hu>
 
-On Wed, Jun 05, 2024 at 12:30:35PM -0400, Yazen Ghannam wrote:
-> "It fixes a problem like ... a hardware quirk ..."
-
-I'm pretty sure that means a patch which sets a magic bit in some MSR or
-does something else to make the hardware work again. Errata fix and some
-other hackery we get to do from time to time. Or my favourite - fix
-a BIOS f*ckup.
-
-> Most systems will return 0 for SMN addresses that are not accessible.
-> This is in line with AMD convention that unavailable registers are
-> Read-as-Zero/Writes-Ignored.
+On Wed, Jun 05, 2024 at 04:47:27PM +0200, Csókás Bence wrote:
+> Hi!
 > 
-> However, some systems will return a "PCI Error Response" instead. This
-> value, along with an error code of 0 from the PCI config access, will
-> confuse callers of the amd_smn_read() function.
+> On 6/5/24 16:13, Vladimir Oltean wrote:
+> > On Wed, Jun 05, 2024 at 02:16:49PM +0200, Csókás, Bence wrote:
+> > > Replace hex values with BIT() and GENMASK() for readability
+> > > 
+> > > Cc: trivial@kernel.org
+> > > 
+> > > Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
+> > > ---
+> > 
+> > You can't use BIT() and GENMASK() in headers exported to user space.
+> > 
+> > I mean you can, but the BIT() and GENMASK() macros themselves aren't
+> > exported to user space, and you would break any application which used
+> > values dependent on them.
+> > 
+> 
+> I thought the vDSO headers (which currently hold the definition for `BIT()`)
+> *are* exported. Though `GENMASK()`, and the headers which would normally
+> include vdso/bits.h, might not be... But then again, is uapi/linux/mii.h
+> itself even exported?
 
-Yes, but it hasn't so far. It is all pretty-much, a hypothetical, "what
-if" thing.
+uapi .... I would expect everything below that is considered exported.
 
-Sure, if that error would cause a serious issue on some system, by any
-means. But just because it might potentially happen... Meh.
+Take a look at the sources for mii-tool.c:
 
-> But I think it's fine to drop the stable tag after reading through the
-> rules again. I'll do option 2 or 3 if there's interest for specific
-> branches. And the cherry-pick thing should be easy to do if all the
-> prerequisites are already upstream.
+    if (bmcr & BMCR_ANENABLE) {
+        if (bmsr & BMSR_ANEGCOMPLETE) {
+            if (advert & lkpar) {
+                strcat(buf, (lkpar & LPA_LPACK) ?
+                       "negotiated" : "no autonegotiation,");
+                strcat(buf, media_list(advert & lkpar, bmcr2 & lpa2>>2, 1));
+                strcat(buf, ", ");
+            } else {
+                strcat(buf, "autonegotiation failed, ");
+            }
+        } else if (bmcr & BMCR_ANRESTART) {
+            strcat(buf, "autonegotiation restarted, ");
+        }
+    } else {
+        sprintf(buf+strlen(buf), "%s Mbit, %s duplex, ",
+                ((bmcr2 & (ADVERTISE_1000HALF | ADVERTISE_1000FULL)) & lpa2 >> 2)
+                ? "1000"
+                : (bmcr & BMCR_SPEED100) ? "100" : "10",
+                (bmcr & BMCR_FULLDPLX) ? "full" : "half");
+    }
+    strcat(buf, (bmsr & BMSR_LSTATUS) ? "link ok" : "no link");
 
-Just wait until some real issue happens. Otherwise, you'll be pretty
-much wasting time and energy.
+So they are actually used as well. Try compiling this with your
+changes made.
 
-And, btw, people should upgrade their kernels on a regular basis - not
-run old, Frankenstein backported crap and think they've got the best of
-both worlds.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+	Andrew
 
