@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-203004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509298FD4A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:00:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176178FD4AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEE6C1C2257A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:00:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 857FEB274E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964FA13C8F5;
-	Wed,  5 Jun 2024 18:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964E714B07B;
+	Wed,  5 Jun 2024 18:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OyMmHgy1"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J4iEbje9"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59D9194AF2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C586B13D8BB
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610404; cv=none; b=rLMt6ePhLZTUT0eBTEeoQmw9G6FzBl8upewnigvMCoHg+6WgMtMHQKtP0uLgUyqqKo1ZZbpXNebjN5ASHyQzpCVXJPwVviiOGnrN4t+MpnGoWhd9iioY/4No4RUciLdtXORv2581F8pN/fUl8LZHXUB5wzfT7aFzB8uAcZ9O2OU=
+	t=1717610407; cv=none; b=dj8KwkIOif1Ew7pSvlSaeao9ORR0joe7YzG2lLdfcHW4nkpmZPcysKPEV7ECW99mGCTPWIJHdCPPbObH8tGa49nov7emJ9VEJWJkhnHbxPrzUIxLtjJ1pTxr4eLrABLQyPGVP2/o8PEJTN8nWcZ5Jk+bdF+U+8EXvNPMw/oFAKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610404; c=relaxed/simple;
-	bh=BxoABlKvJef+pUpKvjxVkdFoF53gAB3xVu8cHZaGBrk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GFc3GD9t6ylR6eFVFON0P6W+zu6bV8uoaqUTN16NSISNnLu6DoStT69P9uv7eHTQ6maoPuLqZ3WOpNeB+f58ngvXAeXGOjuGiQrAJCbS1lXSbP63EmxNKG50j2WZXLC0Iwu4OQymNvOJYcf0+KSnTqBUB5qKFaXpDQ1C5945TPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OyMmHgy1; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1717610407; c=relaxed/simple;
+	bh=ipr39Oe7qflzshs+uqKeD5dsLOI2DywzVbGtmwc3XF4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JUQPpxuQry8lRgbAkyZixMS8fgvYyLblUROg8WF7W1ezKR05sw12CQEKslUgthtKTQ2GW/qRIl/kF6ndpBPPAVdyH9txNcsZ0T5Tr4xTb2DDDEo8VfJx+cSxW/PdC7FuN7UQhMb6zApQnTEkZclcq8ovIY6+7lMfQBA3WHpvPFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J4iEbje9; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a089511f9so15297937b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:00:01 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df78ea30f83so1550305276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 11:00:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717610401; x=1718215201; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=w5RPl7PD7LMs1k1njsQ/RXiUssQb7CTl+XBmOvI3R5A=;
-        b=OyMmHgy1OprhTZCk1PpY0KDM++WlQ1Edw2Mps1X0EgJF2iRBA3+tnZUd98ocPSXWN7
-         I5HJFrKZWoDLgPm7SDxl1bkWvzGz18zxNjGoXmNXX1/JRy6wFqUXPM4fg6njQ4saM2A8
-         yLMbKusUCgwnE0ITdDiMX3hsSX1dBE5GBbZOTqY8dwoA8iLHbnfmjPCwDmWjbzvPqRvX
-         jE0jfYNVECTVlFMrLnVd2AQ5Xmr6HOM3bKPb3xt0oUX/V9PhfG/3FV6uK6EMbBp8IkTk
-         9k2llsKW20VKa+QhtGVJt5Ip8/G/LiZr0xSkvjVn57gLonJE8lQKc2VUpPo0iQIWkuHq
-         QWrA==
+        d=google.com; s=20230601; t=1717610405; x=1718215205; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nEr10taYCu3WGRiwn+CGqfggqJNbp7A+We0V3ygommI=;
+        b=J4iEbje95ninWiXtqqt5T/9d9/rhCySu+uRgj5M+PAahakXxAmJMwbOM3Vl+q9ipwO
+         cR2XMTaT3Cl6rtmhHcCzhm9ADVnFZb1p7yDmg+5o5KLMVVkrKunBBEwcfC6DifTaKXZY
+         +22DMkjtteZbmFu3YZvAFV37gq3FnCxnNGemPsZXaxgCOZFtLwTgb/ySUoNoxgKThXqI
+         /j358DaGUSozaVs/XrXx5gTTjXCJvJ2f3lRsZKCCy3KtAdh0gF3OvCEX+ecoMyu8HbjC
+         QoZmOUWx+hkMmSCw6alLz9KvgAyuX7At1Lbtv2yzZUUbf2fKO7pPiVpatVP+Lflv7Hil
+         VtlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717610401; x=1718215201;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w5RPl7PD7LMs1k1njsQ/RXiUssQb7CTl+XBmOvI3R5A=;
-        b=WAhzV4el03rgNAz/gd5FQGQxBeU8C8KoyMlCljiOPhJjEyRG51ksuob/I5RkEaXpUy
-         i7Ag+Jd5MfWS6r++PtQZrxZZZBql8BP8K3Zm//ypTsbWdWH+2OHHg1/AtUZ9LWHrnOrr
-         Z4+GhO+g6QCvDxd88QKrlBQdTPHaVnBhmArEhonE+7aQR6Lrubh2yJKQ1f61zwcFzVy3
-         azM+I44xqu5ZDKKVSeIdzhJkBAH+W/4uZn7n3hWZouBuSkfAJHpN3aKnKsov1Liqa+RW
-         Xe5EdYxkDX+eB2Gr/cKYi5bDPeQHUW6N2G4pv+reOKJMlsV88EoMD4hZV9Livfezz/XX
-         Jw4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVWRd3ye+94YgZtzwsKnK01IoAaafgh5lf5NoIJ+3IMg88MlbVfj8Jv2hhbdatUtlLNFbvGw9pvXdi8urwukUFt7bHxJZ4v12yHl6Dl
-X-Gm-Message-State: AOJu0YwFXawrsDbhUeGJuqnyPDCaWhxumKbFdJQgr+qXu2Y7sILTuchA
-	qxRoRIYYtr5HkcOudBkCHWhAoRIm0zl/fLeL0XRPHTu3jFQc2+SEyIKEI//k1paqiUSLwn7pnYP
-	bQ/3ZLXLS3A==
-X-Google-Smtp-Source: AGHT+IE3beT3+LJiyuyeey70O4vTmt9cNoEU8h7bwGC3fodiNqs+98CXh8Kyq/MReppn/4vWIwzPR7Cf0wAFHw==
+        d=1e100.net; s=20230601; t=1717610405; x=1718215205;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nEr10taYCu3WGRiwn+CGqfggqJNbp7A+We0V3ygommI=;
+        b=ZQNBVzo8je1ZGI+Cq0Hmjtgdn12Adx3qtLMuuRYt7t64ZfMo7caQGxcYGce6PBzMOO
+         cCq8lloPowHcS/9kAptECCzrD6Gp2RPxClQXEAYhAL0kfGUltlSHBO7+sSq3SYu7OYMo
+         9POIztJSk3HHKcgsd0c7Al6PoqcFwiWeIjTvJU0/xln/+zXSiGhVmkE1XUYSwyAzIgxi
+         8/PzfgRCH8JamQposKHH4HNcjU5GFmWpEVFbK2FroQl64/g4e7JEm0ka8e8WtD4DXaMj
+         h3nGJdD7Qa3ztMv/uqvLQFKxmmRq9m8wAaIhKSu5gERbVAAMn/AIh4y09go6sluEOCS6
+         crUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgXRz1gEg6GcIsPw2oQeulyhN72Owf2nOfBFemfB1in1aE0tJqMSghoYPn/4SvgV9yADElTSJSbClOFkOHZg7Xp4Wq9iG2ig7sbdEF
+X-Gm-Message-State: AOJu0YzEmZA4vnK/jPMEA+fCF4sMKwoVNDOhRbCzAzMGgyPyAe/MaLxb
+	qgvvVhQlHuB+lp3mQ8fVPdDqAqD6AKVTb6RjaaAKhEYuz9YsppGuWixb01FMQ3x1loIPpFuKPGn
+	OOc7WdxVG9Q==
+X-Google-Smtp-Source: AGHT+IEFfd1XOUpmBlCQ8OC96XaGHvsQJFoGDWo7KSg31aa/FmwG5qSwwUZMqSajPkXkOc1t6VuaS9UByNrZ0g==
 X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
- (user=joychakr job=sendgmr) by 2002:a05:6902:987:b0:dfa:7552:e09e with SMTP
- id 3f1490d57ef6-dfade7e34cbmr71646276.0.1717610400689; Wed, 05 Jun 2024
- 11:00:00 -0700 (PDT)
-Date: Wed,  5 Jun 2024 17:59:44 +0000
+ (user=joychakr job=sendgmr) by 2002:a25:dfd5:0:b0:df4:eb0b:8fd with SMTP id
+ 3f1490d57ef6-dfade9e0f4dmr76066276.2.1717610404805; Wed, 05 Jun 2024 11:00:04
+ -0700 (PDT)
+Date: Wed,  5 Jun 2024 17:59:45 +0000
+In-Reply-To: <20240605175953.2613260-1-joychakr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240605175953.2613260-1-joychakr@google.com>
 X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
-Message-ID: <20240605175953.2613260-1-joychakr@google.com>
-Subject: [PATCH v1 00/17] nvmem: Handle change of return type in
- reg_read/write() definition
+Message-ID: <20240605175953.2613260-2-joychakr@google.com>
+Subject: [PATCH v1 01/17] hwmon: pmbus: adm1266: Change nvmem reg_read/write
+ return type
 From: Joy Chakraborty <joychakr@google.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -91,85 +94,35 @@ Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Joy Chakraborty <joychakr@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-This patch series facilitates compilation post the change in definition
-of nvmem_reg_read_t and nvmem_reg_write_t callback in
-https://lore.kernel.org/all/171751721565.70889.16944298203785853489.b4-ty@linaro.org/
+Change nvmem read/write function definition return type to ssize_t.
 
-Currently the nvmem core change is picked on
-https://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git/log/?h=for-next
-
+Signed-off-by: Joy Chakraborty <joychakr@google.com>
 ---
-V1 Changes : Change read/write return type to ssize_t and handle
-relevant logic changes
----
+ drivers/hwmon/pmbus/adm1266.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Joy Chakraborty (17):
-  hwmon: pmbus: adm1266: Change nvmem reg_read/write return type
-  media: i2c: ov2740: Change nvmem reg_read/write return type
-  media: i2c: video-i2c: Change nvmem reg_read/write return type
-  iio: pressure: bmp280: Change nvmem reg_read/write return type
-  misc: ds1682: Change nvmem reg_read/write return type
-  misc: eeprom: at24: Change nvmem reg_read/write return type
-  misc: eeprom: at25: Change nvmem reg_read/write return type
-  misc: eeprom: 93xx46: Change nvmem reg_read/write return type
-  misc: mchp_pci1xxxx: Change nvmem reg_read/write return type
-  mtd: core: Change nvmem reg_read/write return type
-  mtd: ubi: nvmem: Change nvmem reg_read/write return type
-  soc: atmel: sfr: Change nvmem reg_read/write return type
-  w1: slaves: w1_ds250x: Change nvmem reg_read/write return type
-  thunderbolt: switch: Change nvmem reg_read/write return type
-  thunderbolt: retimer: Change nvmem reg_read/write return type
-  soc: tegra: fuse: Change nvmem reg_read/write return type
-  rtc: Change nvmem reg_read/write return type
-
- drivers/hwmon/pmbus/adm1266.c                 |  4 +-
- drivers/iio/pressure/bmp280-core.c            | 14 ++++---
- drivers/media/i2c/ov2740.c                    |  6 +--
- drivers/media/i2c/video-i2c.c                 |  9 +++--
- drivers/misc/ds1682.c                         | 16 +++-----
- drivers/misc/eeprom/at24.c                    | 10 +++--
- drivers/misc/eeprom/at25.c                    | 11 +++---
- drivers/misc/eeprom/eeprom_93xx46.c           | 12 +++---
- .../misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 16 ++++----
- drivers/mtd/mtdcore.c                         | 18 ++++-----
- drivers/mtd/ubi/nvmem.c                       |  6 +--
- drivers/rtc/rtc-abx80x.c                      | 15 +++----
- drivers/rtc/rtc-cmos.c                        |  8 ++--
- drivers/rtc/rtc-ds1305.c                      | 18 ++++++---
- drivers/rtc/rtc-ds1307.c                      | 22 +++++++----
- drivers/rtc/rtc-ds1343.c                      | 18 ++++++---
- drivers/rtc/rtc-ds1511.c                      | 12 +++---
- drivers/rtc/rtc-ds1553.c                      | 14 ++++---
- drivers/rtc/rtc-ds1685.c                      | 14 ++++---
- drivers/rtc/rtc-ds1742.c                      | 14 ++++---
- drivers/rtc/rtc-ds3232.c                      | 22 +++++++----
- drivers/rtc/rtc-isl12026.c                    | 12 +++---
- drivers/rtc/rtc-isl1208.c                     |  8 ++--
- drivers/rtc/rtc-m48t59.c                      | 12 +++---
- drivers/rtc/rtc-m48t86.c                      | 12 +++---
- drivers/rtc/rtc-max31335.c                    | 18 ++++++---
- drivers/rtc/rtc-meson.c                       | 18 ++++++---
- drivers/rtc/rtc-omap.c                        | 12 +++---
- drivers/rtc/rtc-pcf2127.c                     | 20 ++++++----
- drivers/rtc/rtc-pcf85063.c                    | 20 +++++++---
- drivers/rtc/rtc-pcf85363.c                    | 39 ++++++++++++-------
- drivers/rtc/rtc-rp5c01.c                      | 14 ++++---
- drivers/rtc/rtc-rv3028.c                      | 32 +++++++++------
- drivers/rtc/rtc-rv3029c2.c                    | 20 +++++++---
- drivers/rtc/rtc-rv3032.c                      | 24 ++++++++----
- drivers/rtc/rtc-rv8803.c                      | 16 +++++---
- drivers/rtc/rtc-rx8581.c                      | 39 ++++++++++++-------
- drivers/rtc/rtc-stk17ta8.c                    | 14 ++++---
- drivers/rtc/rtc-sun6i.c                       |  8 ++--
- drivers/rtc/rtc-ti-k3.c                       | 16 +++++---
- drivers/rtc/rtc-twl.c                         | 20 +++++++---
- drivers/soc/atmel/sfr.c                       | 11 ++++--
- drivers/soc/tegra/fuse/fuse-tegra.c           |  6 +--
- drivers/thunderbolt/retimer.c                 |  8 ++--
- drivers/thunderbolt/switch.c                  |  8 ++--
- drivers/w1/slaves/w1_ds250x.c                 |  4 +-
- 46 files changed, 408 insertions(+), 282 deletions(-)
-
+diff --git a/drivers/hwmon/pmbus/adm1266.c b/drivers/hwmon/pmbus/adm1266.c
+index 2c4d94cc8729..7eaab5a7b04c 100644
+--- a/drivers/hwmon/pmbus/adm1266.c
++++ b/drivers/hwmon/pmbus/adm1266.c
+@@ -375,7 +375,7 @@ static int adm1266_nvmem_read_blackbox(struct adm1266_data *data, u8 *read_buff)
+ 	return 0;
+ }
+ 
+-static int adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t bytes)
++static ssize_t adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t bytes)
+ {
+ 	struct adm1266_data *data = priv;
+ 	int ret;
+@@ -395,7 +395,7 @@ static int adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t
+ 
+ 	memcpy(val, data->dev_mem + offset, bytes);
+ 
+-	return 0;
++	return bytes;
+ }
+ 
+ static int adm1266_config_nvmem(struct adm1266_data *data)
 -- 
 2.45.1.467.gbab1589fc0-goog
 
