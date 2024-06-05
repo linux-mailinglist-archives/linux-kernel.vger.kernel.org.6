@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-201773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA018FC300
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FEA8FC301
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1080B265FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84A81F2294A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B406613AD28;
-	Wed,  5 Jun 2024 05:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B8613AD14;
+	Wed,  5 Jun 2024 05:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GwZS77FN"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="C1kOPM9Z"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52FF8830
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B298830
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717565076; cv=none; b=UbxJpPm96egZWxEQqez+XeDGEMhf2OhM0oLpYJwp6gS9q1aXKc2QF9Q79gCFRazahGBuD+d1xORZFfS3qR6yiL7MR375lPlowG0C7kqQcQgF2NhHsxglyql0SaTcofMKN5vYsxaPVFvNG2wQFvjgRxZHgtDRJ1R/qZhT+tk2UsY=
+	t=1717565126; cv=none; b=QsI2vyPlDZYN4uIbIk20G+Am5IvWreiohj7esIEelmIGAhfdWPI0WIDzUZsT/CkyKWvuVHkK9gPgKYAfuLZugLF3tb6k+fxOBuMHZjnnmr2dBsjM3ti2aCZheWSwR+zZ2NF4WHv4CDUni1yvYYAWI/bUqLM0Kk0L6B+tKEukaMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717565076; c=relaxed/simple;
-	bh=poqzOnjxKvuZhOVVP2vCDTAj8Ttrx5WnbLuYUT/fyCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Vezu3vwhcsiKHJCsHGcJiudr5sE4ezURpfMz0i5Bf0WLaQ+a/nWNXTQEaIDXN3CGysszDzqS1Ch/kbvS0UXh5Nu0LdXdBtJyRF62X0qFnkDF82W29rgUDGhV0JKuZIkoFTWfYdPaGxeSGUO6cJm6trZJO6Mb9b/qzUz8RiTVGdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GwZS77FN; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a30b3a6cbso2237713a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 22:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717565073; x=1718169873; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ieXpxhBBWSSEFA3ad/RzGLUGCP/3ui0qmyCSm+SXO/M=;
-        b=GwZS77FNZKlEmv4lwaGnoOL2vt6tO+Yx72ZL7a2dG9Xvb6qJ3jCiRtCpe7A5eAdbyS
-         f8PEMyw1RdLIyjdsholI0BFGd9arQSD+HrcrJKFR6+EUuEtRAyyhNmonLrB/WIkREIj9
-         PwPx6Yjxk5uR1GuxjO0rFOW/t4wZVeUd2vqBOf8ZPbuz3iA73rtyW+u+b1rGToGgjoL7
-         FTKgPLnmPPL9I3Y/WjtSo8j4OOx2+ZXKbzAMOtxNQWlT1YM9cmdDTh/nSejpfJxjoU6C
-         Yc5nWgrqATGyWKxE0yJ1EGzAdZumlaE3zMOCtxx0A6ciA61TquxF0bo0WqUEKgbu/jwK
-         +PMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717565073; x=1718169873;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ieXpxhBBWSSEFA3ad/RzGLUGCP/3ui0qmyCSm+SXO/M=;
-        b=wJ3sP5qYw7FRiiwuf8hmCxQDvapRNOTj6djBs/2CZ/NaQWulXQOGSDQfgMEakQahtW
-         74IcrcrkSja+sUubsbh5m34zEXW6YXGjNZHdwK6EcSLpPmB40SZgcYFu9MaaByckeUAg
-         434etpj49hEEE8A5ZDJ16olC1vm2ZejHEUxiKlAtqHBZvJFjszrUQ5IsLqNJdSkIA7AG
-         Hi/yMqSDVdLFDJ/bmPmGyoLANX3t7Gw4FkcslZjazu39bdsNWM8Vt0Kxx2CrkjkQAukC
-         ZenzOEfSlzIW6j6QInITB/PNYHTBATcgvtiEUpndlBCJnqQDrrebz3Z57YKxwsZBUary
-         hhIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwFhjzzEg6mrFXLg3od3ou7Ej3SDkjKciHwkLtOnxD4cE0NCcHPV7/RiFcpU/CbtSVQM8ukevHgW4ckGg+wpvD4zzQEwRyIXvR1R1Y
-X-Gm-Message-State: AOJu0YzmjbY2qC/gRWPJn1aIlKJmDJQwtSqHgcDu73m3ndaSonEuWRhe
-	/BmcekvUq3BGYwPjA8R/MRATVfRy+GSd8n3j8MgaCp/W1+lOQSPeDFB6a+mSTWffMiHZDzH5iwh
-	w
-X-Google-Smtp-Source: AGHT+IGblo21HwWBJITrF2Lq0wtl7QLdAO0pjSkQJ1yY4jTCAGyNBZoCeBT+Grw2RfWlVYwmCDGV8A==
-X-Received: by 2002:a50:d6dd:0:b0:572:6846:b899 with SMTP id 4fb4d7f45d1cf-57a8bccb341mr692996a12.41.1717565072709;
-        Tue, 04 Jun 2024 22:24:32 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d301sm8526348a12.76.2024.06.04.22.24.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 22:24:32 -0700 (PDT)
-Date: Wed, 5 Jun 2024 08:24:28 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Xiu Jianfeng <xiujianfeng@huawei.com>,
-	akpm@linux-foundation.org, muchun.song@linux.dev
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next 2/3] mm/hugetlb_cgroup: prepare cftypes based on
- template
-Message-ID: <87bca9ca-0c3e-449a-b121-eee7b84dc2ed@moroto.mountain>
+	s=arc-20240116; t=1717565126; c=relaxed/simple;
+	bh=VRuDfJneumWnl369xh8UUhc6D/Qt40FIaMU22iAgxc0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DYPpUp8ev4u3bIrg13X6YfwBjiZ72Ij1wo6cHy5xepWN4qSyZ1HTFcxveoCi2TyjXqfemMw7IDyH7Jbpl3HFna6PdGwNceoGgIQ4WfADb/Vh0ETcXKoOGT/VxjaFdtIVA8nsatVU4pUTzu4O59j1ACRn6HF4IX1ITOO3lIQtoGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=C1kOPM9Z; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1717565124;
+	bh=VRuDfJneumWnl369xh8UUhc6D/Qt40FIaMU22iAgxc0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=C1kOPM9Z5lr9YuVFxHURS2J57RGfScgiMrME9zt+1RJ3Xqg1jQfOV+6gSWGKPWxEk
+	 6BlroFjj4595fz0U8oOvwozQlXpUuqnb6pttzKHhFaU+xF2DPl2bYzBmQvRKqMNTIb
+	 JlmzQq8nHX+ZC2+JHWosDYzVnw2SgenSRHFER68I=
+Received: from [IPv6:240e:358:111d:4300:dc73:854d:832e:6] (unknown [IPv6:240e:358:111d:4300:dc73:854d:832e:6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id A600866FAC;
+	Wed,  5 Jun 2024 01:25:14 -0400 (EDT)
+Message-ID: <f72abf3b624107361ec4de0fe72be3bf4a3da539.camel@xry111.site>
+Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
+ unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
+From: Xi Ruoyao <xry111@xry111.site>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+ Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>, Jinyang He
+ <hejinyang@loongson.cn>,  loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ mengqinggang@loongson.cn, cailulu@loongson.cn, wanglei@loongson.cn, 
+ luweining@loongson.cn, Yujie Liu <yujie.liu@intel.com>, Heng Qi
+ <hengqi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>
+Date: Wed, 05 Jun 2024 13:25:10 +0800
+In-Reply-To: <CAAhV-H74=aQqMe3Bh5xn1VQCrcK7eHk1baKj1L+74=o=-8V_6g@mail.gmail.com>
+References: <20240604150741.30252-1-xry111@xry111.site>
+	 <CAAhV-H7CF5wUSj5qfSs-+YTUrB2R9STO7LLu7LG2RpsYE719Og@mail.gmail.com>
+	 <80c92f7d283444e493ba1236cf228a5deca6c32d.camel@xry111.site>
+	 <CAAhV-H74=aQqMe3Bh5xn1VQCrcK7eHk1baKj1L+74=o=-8V_6g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603120506.1837322-3-xiujianfeng@huawei.com>
 
-Hi Xiu,
+On Wed, 2024-06-05 at 13:21 +0800, Huacai Chen wrote:
+> On Wed, Jun 5, 2024 at 12:38=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wr=
+ote:
+> >=20
+> > On Wed, 2024-06-05 at 09:52 +0800, Huacai Chen wrote:
+> > > Hi, Ruoyao,
+> > >=20
+> > > On Tue, Jun 4, 2024 at 11:08=E2=80=AFPM Xi Ruoyao <xry111@xry111.site=
+> wrote:
+> > > >=20
+> > > > GAS <=3D 2.41 does not support generating R_LARCH_{32,64}_PCREL for
+> > > > "label - ." and it generates R_LARCH_{ADD,SUB}{32,64} pairs instead=
+.
+> > > > objtool cannot handle R_LARCH_{ADD,SUB}{32,64} pair in __jump_table
+> > > > (static key implementation) and etc. so it will produce some warnin=
+gs.
+> > > > This is causing the kernel CI systems to complain everywhere.
+> > > >=20
+> > > > For GAS we can check if -mthin-add-sub option is available to know =
+if
+> > > > R_LARCH_{32,64}_PCREL are supported.
+> > > I think we should give a chance to toolchains without the
+> > > -mthin-add-sub option, so I hope Tiezhu can resubmit this patch to
+> > > solve this problem.
+> > > https://lore.kernel.org/loongarch/1690272910-11869-6-git-send-email-y=
+angtiezhu@loongson.cn/
+> >=20
+> > It only handles .discard.{un,}reachable but not __jump_table.
+> > __jump_table is our main issue here.=C2=A0 And I don't see a quick way =
+to
+> > make -mno-thin-add-sub work for __jump_table because we really need to
+> > resolve the relocation for __jump_table instead of simply skipping it.
+> =C2=A0__jump_table is disabled now, so we can only solve=C2=A0 -mno-thin-=
+add-sub
+> at present, and the next step is __jump_table.
 
-kernel test robot noticed the following build warnings:
+No, -fno-jump-table does not disable __jump_table.  __jump_table is from
+static key implementation in arch/loongarch/include/asm/jump_label.h,
+not generated by the compiler.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiu-Jianfeng/mm-hugetlb_cgroup-identify-the-legacy-using-cgroup_subsys_on_dfl/20240603-201513
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240603120506.1837322-3-xiujianfeng%40huawei.com
-patch subject: [PATCH -next 2/3] mm/hugetlb_cgroup: prepare cftypes based on template
-config: i386-randconfig-r071-20240604 (https://download.01.org/0day-ci/archive/20240605/202406050210.OWthxCFt-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+And the problem of __jump_table is exact with -mno-thin-add-sub.  It
+reads:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406050210.OWthxCFt-lkp@intel.com/
+#define JUMP_TABLE_ENTRY                \
+     ".pushsection  __jump_table, \"aw\"    \n\t"   \
+     ".align    3           \n\t"   \
+     ".long     1b - ., %l[l_yes] - .   \n\t"   \
+     ".quad     %0 - .          \n\t"   \
+     ".popsection               \n\t"
 
-smatch warnings:
-mm/hugetlb_cgroup.c:828 hugetlb_cgroup_cfttypes_init() warn: this array is probably non-NULL. 'tmpl->name'
+The "1b - ." and "%0 - ." things produce different relocs with -mno-
+thin-add-sub and -mthin-add-sub.  The objtool can only handle the relocs
+from -mthin-add-sub here.
 
-vim +828 mm/hugetlb_cgroup.c
-
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  815  static void __init
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  816  hugetlb_cgroup_cfttypes_init(struct hstate *h, struct cftype *cft,
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  817  			     struct cftype *tmpl, int tmpl_size)
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  818  {
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  819  	char buf[32];
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  820  	int i, idx = hstate_index(h);
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  821  
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  822  	/* format the size */
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  823  	mem_fmt(buf, sizeof(buf), huge_page_size(h));
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  824  
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  825  	for (i = 0; i < tmpl_size; cft++, tmpl++, i++) {
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  826  		*cft = *tmpl;
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  827  		/* rebuild the name */
-66bcc9ace99241 Xiu Jianfeng 2024-06-03 @828  		if (tmpl->name)
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  829  			snprintf(cft->name, MAX_CFTYPE_NAME, "%s.%s", buf, tmpl->name);
-
-tmpl->name is an array so it's non-NULL.  Just do the snprintf().  No
-need for the if statement.
-
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  830  		/* rebuild the private */
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  831  		if (tmpl->private)
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  832  			cft->private = MEMFILE_PRIVATE(idx, tmpl->private);
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  833  		/* rebuild the file_offset */
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  834  		if (tmpl->file_offset) {
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  835  			unsigned int offset = tmpl->file_offset;
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  836  
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  837  			cft->file_offset = MEMFILE_OFFSET0(offset) +
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  838  					   MEMFILE_FIELD_SIZE(offset) * idx;
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  839  		}
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  840  	}
-66bcc9ace99241 Xiu Jianfeng 2024-06-03  841  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
