@@ -1,284 +1,248 @@
-Return-Path: <linux-kernel+bounces-201778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E0F8FC30E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:31:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CA38FC310
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92615286753
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:31:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9713B22023
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2535013AD13;
-	Wed,  5 Jun 2024 05:31:45 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89003169AE1;
+	Wed,  5 Jun 2024 05:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hS3BF3Q9"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A657347A;
-	Wed,  5 Jun 2024 05:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717565504; cv=fail; b=Ie0EIkBWdfmWf2SSj+mjCc867pPY9xgmuZbt7b7jds65g+DLFUkKCKOMUJwb98kUKaT1TSNA/r/a2dnvAu3W0u6mARcps9eWxWYVlbbsGFyHudNKu47sNCNFJyb6ya3qzvWtDqUe/pfPwTuVg4V529TZZRxSb5Qgu0PZ+V4aF6s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717565504; c=relaxed/simple;
-	bh=TM8/bFYw1D3q4uOXz29OSfd79yHdTxFqanbPaOlaWuA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NxTJNv0nyuvGTuUryKGqYTLMj/BXtxfqyhDx2Yh6amRyz3ZtCMOUMahgBvDzkxAh2uo5rYEtfnAyjHqn9pneepYyWZGgfw0Yr4mElIHyqKZi1FUXcI9j9CC7l+nmzn0Fu/7K8KqSzQyVAXUjHsh7hA3mMCP5oA7qI867iCfe1Mc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4554e2Vu012003;
-	Wed, 5 Jun 2024 05:30:59 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2045.outbound.protection.outlook.com [104.47.55.45])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yftm7upa2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 05:30:59 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iguG/aNTAnU+mABGqg05ub1FRj8rdVtIb7ERNfGXuENDkrshtHPJe95nvuFRuVlZZ0WWQlbgeDD6NRnujmcaXTD005sj84C7Ul5SNXpwg0cwEiL+esHQYLAxqoeJd3+ALqb8StbCuS0vtaAW93XsuuXGb2azkJp77LiXvtuhulu7wr1cZeUQDZH6OFYTyEgep6VxZ3nsqNqqmNWU2RS8XF7kzJXRNQI93NR46/OcEey2f/FQtapW9H0SKYwsrUm66eQ1pszZ32ucZIE5ASJWARH7QBb0zVyG+fBpKd1UXrmhJCw1kd8QfpSIC8l5VxZkP46NgrfBGjVXwl/o5lndjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eD62/LWjIJD10eorWXF2AZLCGUKtbRT1G73Q3h2DbOA=;
- b=jPLGV17VjLtqb/0lFjnAmiGE7Br8N2TLCzfQ2UnJszMrChhC4ul8wppCSlluFRaJB8Sgdh5A+3I/J4auc1EyXXz5TwvUM8ygU6s74kl4cXZ+z2zVCTFl1r0/030NmP6w/cbVMqg4KVHLwD0ZdGNBdU5ObTEDnqQRvhhsgli0cW6f6Ed/yRzTJXeo/Bx9JPjP7FsYMI0SmMXaq7pX6H5MdnVYxyJ16Ne1Lk4zrWhLgQjo7VDP2BbgqNOC8SHXWdvYDYXvWk064Bi2f6HW7nlNJCoW8GmunAhiKufzClz+unlu8WlOh7ROFHlycrXNXuWEncBdARL+5Zcycqqf+Mr/+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
- by CY8PR11MB7012.namprd11.prod.outlook.com (2603:10b6:930:54::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Wed, 5 Jun
- 2024 05:30:56 +0000
-Received: from MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
- ([fe80::3c2c:a17f:2516:4dc8%4]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
- 05:30:56 +0000
-Message-ID: <b2243507-764f-4ab6-9ad7-c94076a18316@windriver.com>
-Date: Wed, 5 Jun 2024 13:30:49 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net v2 PATCH] net: stmmac: Update CBS parameters when speed
- changes after linking up
-To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
-        linux@armlinux.org.uk, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, andrew@lunn.ch, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        mcoquelin.stm32@gmail.com
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <6c78b634-0e83-42dd-81ce-b36999a1b0ef@moroto.mountain>
-Content-Language: en-US
-From: xiaolei wang <xiaolei.wang@windriver.com>
-In-Reply-To: <6c78b634-0e83-42dd-81ce-b36999a1b0ef@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0199.namprd05.prod.outlook.com
- (2603:10b6:a03:330::24) To MW5PR11MB5764.namprd11.prod.outlook.com
- (2603:10b6:303:197::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1AB169365;
+	Wed,  5 Jun 2024 05:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717565873; cv=none; b=nEBlkC+zAMOCq6nkB3bi3AV+Zr1US7KH4HNGbAc5CExUb9G4NMd0us0BlA/o7RGDrkRyQq0Mg/iiOY2OV+vSDT67+rPwYpurJEJW2IrD8xBHoc5ywMiMMAqD2qe3B5MzwIZR9esaXhnrqqhvJKmwENSzuSmP3ZeIAcgtgE5g7Bo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717565873; c=relaxed/simple;
+	bh=l852dA5VN+Px8tiG3tto5KW7f7rbKSIorgVQDfsWO5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EdfOBdaMG0zSQj/ASm6POjXTZDA+rIn6+eZs+mx58E+eV5/kXFW2kBgD7MP7Mcs5+nBGmMaWA3EP7+FgX6K6XuZp3I4KoIKdVWwrApxan3CfXseZBO4yalMGFTm9rvuBrvJ0v/AUVgLVZZIJRYLX06jl8AkRdpWpMYPSODbtCMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hS3BF3Q9; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a30b3a6cbso2246553a12.1;
+        Tue, 04 Jun 2024 22:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717565870; x=1718170670; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ivP6gp59oSgNT/63LBG6JxCWkINInb5yAeO9GehaLuY=;
+        b=hS3BF3Q9CkTX5j+lDjgIO8q3YLiiHFaduxFPkOj1jvzoEHaWtMIyJdaFL6JlRgM5Qt
+         rdn11QFQpnlwCCnnh0Gu94l1W0Qpxk5MBypefQMqExdG/KcclOrvXRQfJUnI2CCvo+w5
+         0pUWDFAvCC18o622PzdGkrm3pMlssXikPaeancFVV7MLDtjKSJK1d+99QhmdFlgzgyPG
+         GAh216UjPxS5vnJ3m6V1oRU9+Sm11KQMnTjk24L13hNe3b9cAErNhksqyZCiItR/YIRc
+         Q7lQ7DLgv2wWvZpNS1HZxaP2ijaRkI9k6q6OOAOnNLGNAf+au85X8gtCa08o6Ndt/DEC
+         hjYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717565870; x=1718170670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ivP6gp59oSgNT/63LBG6JxCWkINInb5yAeO9GehaLuY=;
+        b=wdbhKkupx9ldqM6Po8/VCch+/QEt/jpYkBBlD8EGKOvwpTB74FL0OHW8iZjmAANy6b
+         KaNCx+cnjefIUu3iB9OS1TIYvh2aZzNB7g2Xrrpq2lTe/eWcKALux0XYixX+pvHa815Z
+         tJ3tv2vHvKKTEPBH+ezACpCZNph+UvSNiahXCsJZosIt2kR+6bnvmWe9ymHlZKytm+8c
+         WvRuSHXae588CD1pgV0jQG4uRhsR5Lvpjza8G/3d8PmHGDm3umWnMmFBIrIaWyGDP3Wp
+         bDOpj3XmqC00QMfMLClR7hmpasSSFVuOMk8aq3yWbkPR1xGUSReoGGIvFBUnV8QvPxsN
+         g9wA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZL4N/wE0Kbr+uhvmSR6r/4peJkF5MtQNmpYY5QWyiGsELp8kWkxqXMMB1clTVat8IPdw+j1xCD3c2w6zjWvf6O1uGGEX5yn8GmLavSADVvMrta1wQw84CWjYpgFyu7P/uPbAeFKeo
+X-Gm-Message-State: AOJu0YzNSQheGGbsMQfaooHp8pM3G1AkMoG+Sm4QLdgu/ynLjNaEJ8sr
+	dyEySQyqF0G492GqJgW69I8wuwtfvq5zK/1QegbIR4a7Ln8RTQeKxyZIjp+jNMJeR4cc5JmKdpF
+	XJcba2WjmRM86Ur9DNAGNrxalX4qzvFamgv+YJAfq
+X-Google-Smtp-Source: AGHT+IEsxK+r1Wx6TldqiWnh624UIExMEkJxS6bwboqAI5FAekmb5Lcfxp66ZKNXV8f+tAmU49vdz4wFMsw4xgTzGJw=
+X-Received: by 2002:a17:907:ca2a:b0:a59:aa9d:3142 with SMTP id
+ a640c23a62f3a-a699f87f0c8mr73594766b.37.1717565869768; Tue, 04 Jun 2024
+ 22:37:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|CY8PR11MB7012:EE_
-X-MS-Office365-Filtering-Correlation-Id: f11739e3-bab6-400d-9ca7-08dc8520ac8a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230031|366007|376005|1800799015|7416005|921011;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?dVN3ck1RSnhKaU55aWRTVVk0bXgvZE96Smd4VnNLZUZuaEszVXh1clJVN1E5?=
- =?utf-8?B?WEZId2RCY1Y5cUd0ajJialcvZVhGU1JNeUZRb1Zyb2ZZeHdqRmlqaHBiQWdC?=
- =?utf-8?B?Q0wzSFRKbHcyYlJURWxrcFpyWXVud3V5RmRrYjlPMkJ0S09mK3BrU3U2K2s2?=
- =?utf-8?B?a3pCT3o0MUFobE80aGoyVy9MVWMzNEpSVkYzZVZSVVc3c3hHT3dDUjgxemRX?=
- =?utf-8?B?M21VSUJsL2xHL3FmTnp4K0xxVFJIY2VhWHhiQmJTTVhlWTVlanV0VXB1T1Ji?=
- =?utf-8?B?WXhrRUdtZ2lrcGk4RDIxUHlCOU9yK2xoaFBjUXp4MTd5Rk5ITkJBQklWZHlJ?=
- =?utf-8?B?YjJEaUNVaWxES0NHRnB0ZFJLak9LT0trUTNraEF6MjdocnVLL0xiT1ovSkJL?=
- =?utf-8?B?Z1ROa2pDclMwQVoxZWkzbENUUmRidlVCWDNmOWg4cUhud3RXT29MaVVwK1NO?=
- =?utf-8?B?SFF2ckVnTHRXMmtUTDR2Z1Urc0IvYTdSM2JtaC8rakRYczNiaXI4Q2xRNW51?=
- =?utf-8?B?MTdDdnQxSEU1RVZNUjV5bjBJV09UV2J3MmV1ZDlZRzYyNFp0bE9oOEZOdWxL?=
- =?utf-8?B?RkR4TGJyaVQxS2FTL0o5TEV5bys4QTIwcnFrNXBlWlI3QnFHZXpMNmhTRTha?=
- =?utf-8?B?dUZHUmVKSDUwN0c1QmJxM1AxWXY3cUpSY0JtNEdZbTU5eWplS3Y2V0RWYTBs?=
- =?utf-8?B?UllzQlQ5aStGQmhhU1JDazdZUk5TRWV5T0w5TnZlZFNnanBmRC82dmkvajQ3?=
- =?utf-8?B?MzVJNDdPYU40TlA4VmIzakFTNGY3NEJKNDJrNWF5d1E5ZzUwQTRwVEJPWFM3?=
- =?utf-8?B?TWQ2VFRYTUJkWGNCL1BrNXFtUXA5YnJaTmd1a3hVc09kNjFXSVJpbFhaNy80?=
- =?utf-8?B?SkZTZTVJWTArMUFJVmlSOWZKTWd0QnFXWUM1Lyt3SXFHQnE2WFNMUW5iUjNu?=
- =?utf-8?B?Q2ZSMHppL3pYV1M4dGNlOFZVS2YwMXpoWGF0WHgyamNkbVE4bElKclFzN0pW?=
- =?utf-8?B?UENUU09JdWgvNlc0NzB3ZDZqZmtRdTZmby9UcWlQck9lQjBySDBXZmRXWFlV?=
- =?utf-8?B?ZHhUUjJiWENOc1pBbmpFL0FLRXZueE03YUJWbjZ6WEJHRjRoSVFhc29FUDBJ?=
- =?utf-8?B?NU5WaFErRWpwWUtRWVdUSXNZYUlOdEdEWStQa2V4SDlhZUpIUHV0UldmVUZ4?=
- =?utf-8?B?SzA1dXJucjdBQmVMTGJPMGI0aGg4U2JJdGlsV1Ria1YxdFd0RW5XZnhmNXN0?=
- =?utf-8?B?akJrQXlvVGdrMnU1N2ZCd2FtZkhKK2t4WVlpUjVRc09KU3pIVVg5RXorMDE3?=
- =?utf-8?B?T1NxblpheThMcFZFcjUwYTM3NDFDZnArNjcxMjRjRnNybXpYL2FrVHZCbHJB?=
- =?utf-8?B?OThiWEhSdTNJZEhycCs2a0wvQUh1TTBjWGdZY2pNOWlLaWNOVWRJK3I0Uyt3?=
- =?utf-8?B?ejFJZlJ5RWpWRnBWQm0xdkxuVlFlL0RXc0JFRDUxR2xDSncvSWUwbEpvbTdJ?=
- =?utf-8?B?NFJoRDl2YVhrVDhIdTNBYkJ1Y00rQnVVRXlPYkV6VFV1dDBiOXZteXhkUElw?=
- =?utf-8?B?cEtaZ04valF2R1JGS2xSMVplQWk5dVhqRjgzRVc5bWRETGZHRUIrVmhaSkRh?=
- =?utf-8?B?RDZIcXhIVTFZcUxRVWpZcDBMUWdZa25HUXl5YTgvQUMvb1p4Vlh6OGV0WFI5?=
- =?utf-8?B?RGRSM005b0tHaGd1YnJXNmtENHZEajZENlpMU0FXaEZSeHNMWjFuZXFnPT0=?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(7416005)(921011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ZUtKbVluRS9QVEpBT2dpZlY1Z0ZnTDJpdjJpdVQ3ZVh2K20vQmRsSkJRTWtG?=
- =?utf-8?B?YTRXcDR5Y2JxNTN6enorNGxEYVF1RW85TndQTXV2V0l3cnNKSVl0ODF2TEZJ?=
- =?utf-8?B?QTd2a0h1VWRkRkRuaGJaWXJrQzI5VzNPUi9kSWhCbjl3aG1aVGdDUlN2Umxt?=
- =?utf-8?B?VHVpdGgyUjU2ZHpJWEJCSDkwcG1JVDYvdllOcVM4amRFNWhoNzdhejNtTkEz?=
- =?utf-8?B?aGZLYTk3VlFtRG5ESHZxVWdxTk1DQjBYS0VwUEtPSzdHNm8rN3pqSzZuQk9E?=
- =?utf-8?B?ODN2VHhzQVcxeHpLRHFkSElucEFYRUpEQXFTdlMweHh0QnY3M2dablZTcmVO?=
- =?utf-8?B?dmVNalBmZEc0YVEyamNNRWx0NmVrTmthZUpaUnM4QVcxNGVVUVJqbDF5SkJx?=
- =?utf-8?B?UkkzWEI2ZlNWWmp5VUs4cStIMUxUQnFXZEcxc2ZYVXFHWWc0RW4yYWM2amdl?=
- =?utf-8?B?QWwrTzNwMEJwbldQVGlkRVFzZmZUMlZYODFXY2toMjVJRVA1WS9TeEF2Q2tL?=
- =?utf-8?B?QmVqTVRXNmRHZE9oL2kvTW1YeXlScXc5cG91TzBrNWYyUTlZbzErdnQ2Z2RF?=
- =?utf-8?B?VUc4Z3lzTXNTUlBvMTkyWG91VmZ6VE9TczVyWXhpNUd4VFpqMHVHOGQxTHZi?=
- =?utf-8?B?S0dSbnVjekVLa3Z5RDg5dUxWTUc5NVJNanQ1QzZEUE9Zd3VMQnFGRW1MZGkx?=
- =?utf-8?B?Q1BzSWRrQk1jRDl0UTBmSWVFdTlIbkNQV0hVb0xmbzFqTWY0Yi80QzNGcWQz?=
- =?utf-8?B?WGFuWk9PUEZYZ2d6eGRLeGh1K3h3MS9QeExwS1BJbEFva05SaDI5TGdPZ3FS?=
- =?utf-8?B?b1N3OHcwNmVRTDBhTzNuUU1mWmxLSkovQjhaK1dDa1VEUFVTSGFuL3MvbS9U?=
- =?utf-8?B?UGNqbnZTOFkwRVdZbVI0RXRXQnVqUHZKd1JSbnBhSVIxNWNXRityeks2MkVu?=
- =?utf-8?B?TVdFVkNUL1VhZW95bVZidlZwNGRneDk0RGl6M0lQOFFLaG9reklCY2g1UlR5?=
- =?utf-8?B?NVBhN2RMd0ZQNUhJZmZIU1BxRlh5Ym8rWW5RQUR4TVZ1Rk81UmpMTVZLa3RX?=
- =?utf-8?B?S0V6QXZHM2FWUng5S0RhK1oyUlZEN0pRUTN3YW55RVE4TU14Q3R2cG5BenN6?=
- =?utf-8?B?SEllaFBBUTdzdjVNam1xMU9pUS9QLzRPZVIyTTBRVTc0dysrSGNvZlVrelpI?=
- =?utf-8?B?aEhBNWh2S3Y4cFN2bnpoQ3p0bGEyUHN4YXpQK1prSzZGTTJEaUc1dXVrTkdq?=
- =?utf-8?B?b3NCL091K0xtWEMwMjd2aytqSmZBRGhvdlRQTDVVRFZFZk5rMlN2T3d0cTUr?=
- =?utf-8?B?Q3FJVXN0cUMxZUlybGNQWFJaTjMzUEtuL21TVmJPU2kyQUxZZ2VMd21jUDls?=
- =?utf-8?B?UVREQnBPa3JxUUdPdnZYTHhGaTlTUWg1YXZKZDZXUmxjaUppYzlBKzZtWkdV?=
- =?utf-8?B?aFY5dTF6ZGR5Y1NhTVZPaHl1bEZhSG9CYjdlaEszRXVWa0FTemh0bHRTVFZ2?=
- =?utf-8?B?blFZaUdWaytuc2NoYVN3L3d1Sy9QUjR2cGhnbS9ZN3VtODZQeUNWaGRzRHVn?=
- =?utf-8?B?VjMwa04rNHBuVTJNSDAwUjNYRjQreDNKamtJQ041UzFMaG1rRU1ENVU0TDBu?=
- =?utf-8?B?cnNkWGhDV1QzRTFTZm10dzBSZE1CR0Y5MFVkWE83cm43TnZ4YWg3YUN0eExP?=
- =?utf-8?B?YVNKVHpXSEdVZE56QmhmVmxjb1loTm4ySU91QUo0cUNlVEJuVi8vZm4wVnE5?=
- =?utf-8?B?QmZhRGNNSE0vMGIydEFnM0pTNHh3a1V6UDRuejVNam9neUQxN05jK3I4KzUw?=
- =?utf-8?B?YTd5RWs4TVhlLzI3WVRudTdTRHZaaGV5YlljSXBucFI1dWk0NFNLTXJDTTJt?=
- =?utf-8?B?Wkw3WjVDN1BUQmwxaFIveHlwQWNPaTBaVnRaaGJ2dm1ucnkwa1YzWFprTy9v?=
- =?utf-8?B?RXZvQzBXaG1IK2U1UHhFbWlzWmthK08xZGRyRkRqYUs1OURvTmlWejVGRjFq?=
- =?utf-8?B?U0d2WndhaXVhOStWRGpGM0NGSzE3VCszSnh4NzZCMWdzWDd2a3RCb1h0R25t?=
- =?utf-8?B?RjRsOGY4NDFOdlNnL0xyR0ZCaEQ4aUtOc1QySFZoQVdOM25KdmE0UlBGRk5l?=
- =?utf-8?B?QmdMOFc0ZHg1Zk9nME1ZdlpOeS9GOFd4U3dENENVY1BhNnZxMHQyNCs3MzVI?=
- =?utf-8?B?a0E9PQ==?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f11739e3-bab6-400d-9ca7-08dc8520ac8a
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 05:30:56.0981
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +AfGN/dhILIOLsV2r2v3DHN5QqIyozMv13Q2uWzBMvcC0S5LBlwyeTSh4iSYipi/iS61eMId5wcEUkGX4rLMKCvQCt/dl+mWBzx8+7pNwfs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7012
-X-Proofpoint-GUID: aPxCNzWQhwhEWO0qqTkLh4VTOdUJj8hE
-X-Proofpoint-ORIG-GUID: aPxCNzWQhwhEWO0qqTkLh4VTOdUJj8hE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- phishscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 clxscore=1011 impostorscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2405170001 definitions=main-2406050040
+References: <20240601120640.73556-1-joswang1221@gmail.com> <1662c9c9-7330-4794-843a-940f05802021@linux.intel.com>
+In-Reply-To: <1662c9c9-7330-4794-843a-940f05802021@linux.intel.com>
+From: joswang <joswang1221@gmail.com>
+Date: Wed, 5 Jun 2024 13:37:39 +0800
+Message-ID: <CAMtoTm1u+8ynBRaWgCMVgaR+dBoZfNGhzGqmvooBSDxZm5Qx+g@mail.gmail.com>
+Subject: Re: [RFC 1/1] usb: host: xhci-plat: add enable XHCI-AVOID-BEI quirk
+ by dts
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: mathias.nyman@intel.com, gregkh@linuxfoundation.org, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	joswang <joswang@lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 3, 2024 at 8:21=E2=80=AFPM Mathias Nyman
+<mathias.nyman@linux.intel.com> wrote:
+>
+> On 1.6.2024 15.06, joswang wrote:
+> > From: joswang <joswang@lenovo.com>
+> >
+> > For Synopsys DWC31 2.00a and earlier versions, every isochronous
+> > interval the BEI(Block Event Interrupt) flag is set for all except
+> > the last Isoch TRB in a URB, host controller consumes the event
+> > TRBs in the event ring, once the event ring is full, it will not
+> > generate an interrupt and will stop all data transmission and command
+> > execution.
+> >
+> > To avoid the problem of event ring full, the XHCI-AVOID-BEI quirk is
+> > introduced. Currently, the XHCI-AVOID-BEI quirk has been applied to all
+> > Intel xHCI controllers, see commit '227a4fd801c8 ("USB: xhci: apply
+> > XHCI-AVOID-BEI quirk to all Intel xHCI controllers")'.
+> >
+> > For Linux system, each event ring consists of one or more event ring
+> > segments and each segment is 4 KB that contains 256 TRBs. It seems that
+> > the TRBs on the event ring are sufficient and the event ring will not b=
+e
+> > full. In real application, if it does happen, event ring is full, host
+> > controller no interrupt causes the driver to timeout.
+> >
+> > However, applying XHCI-AVOID-BEI quirk will also bring power consumptio=
+n
+> > issues. We can consider the application scenarios of the product to dec=
+ide
+> > whether to enable it. Therefore, we add the enable XHCI-AVOID-BEI quirk
+> > through dts configuration to make it more flexible.
+>
+> Took a look at XHCI_AVOID_BEI quirk and it seems that it evolved from
+> solving a hardware issue into a interrupt trigger optimization.
+Thanks for reviewing the code.
+Yes, you optimized the interrupt triggering frequency.
+>
+> How about making current XHCI_AVOID_BEI the default behavior, i.e. force
+> an interrupt every 32nd isoc trb, and reduce it in case event ring
+> has more than half a segments of events per interrupt.
+Yes=EF=BC=8Cenabling XHCI_AVOID_BEI quirk is to solve the problem of event =
+ring fullness
+>
+> The actual XHCI_AVOID_BEI quirk would only be used for hardware that that
+> can't handle BEI flag properly
+>
+> something like:
+>
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index 266fcbc4bb93..dd161ebf15a3 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -3991,16 +3991,17 @@ static int xhci_get_isoc_frame_id(struct xhci_hcd=
+ *xhci,
+>   static bool trb_block_event_intr(struct xhci_hcd *xhci, int num_tds, in=
+t i,
+>                                   struct xhci_interrupter *ir)
+>   {
+> -       if (xhci->hci_version < 0x100)
+> +       if (xhci->hci_version < 0x100 || xhci->quirks & XHCI_AVOID_BEI)
+>                  return false;
+> +
+>          /* always generate an event interrupt for the last TD */
+>          if (i =3D=3D num_tds - 1)
+>                  return false;
+>          /*
+> -        * If AVOID_BEI is set the host handles full event rings poorly,
+> -        * generate an event at least every 8th TD to clear the event rin=
+g
+> +        * host handles full event rings poorly, force an interrupt at le=
+ast
+> +        * every 32 isoc TRB to clear the event ring.
+>           */
+> -       if (i && ir->isoc_bei_interval && xhci->quirks & XHCI_AVOID_BEI)
+> +       if (i && ir->isoc_bei_interval)
+>
+For Synopsys DWC31 2.00a IP and earlier versions, the corresponding
+driver is in drivers/usb/dwc3/core.c.
+If XHCI_AVOID_BEI quirk is not enabled, in other words, an interrupt
+is triggered every 32nd isoc trb, then
+the event ring may be full. After the event ring is full, the
+controller cannot trigger an interrupt, causing the driver
+to timeout.
+My initial solution:
+diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
+index a171b27a7845..1e33e58c7281 100644
+--- a/drivers/usb/dwc3/host.c
++++ b/drivers/usb/dwc3/host.c
+@@ -126,7 +126,7 @@ static int dwc3_host_get_irq(struct dwc3 *dwc)
 
-On 6/5/24 13:26, Dan Carpenter wrote:
-> CAUTION: This email comes from a non Wind River email account!
-> Do not click links or open attachments unless you recognize the sender and know the content is safe.
->
-> Hi Xiaolei,
->
-> kernel test robot noticed the following build warnings:
+ int dwc3_host_init(struct dwc3 *dwc)
+ {
+-       struct property_entry   props[5];
++       struct property_entry   props[6];
+        struct platform_device  *xhci;
+        int                     ret, irq;
+        int                     prop_idx =3D 0;
+@@ -180,6 +180,9 @@ int dwc3_host_init(struct dwc3 *dwc)
+        if (DWC3_VER_IS_WITHIN(DWC3, ANY, 300A))
+                props[prop_idx++] =3D
+PROPERTY_ENTRY_BOOL("quirk-broken-port-ped");
 
-Please drop this patch as there are still some questions on this issue
++       if (DWC3_VER_IS_WITHIN(DWC31, ANY, 200A))
++               props[prop_idx++] =3D PROPERTY_ENTRY_BOOL("quirk-avoid-bei"=
+);
++
+        if (prop_idx) {
+                ret =3D device_create_managed_software_node(&xhci->dev,
+props, NULL);
+                if (ret) {
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 3d071b875308..e1071827d4b3 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -253,6 +253,9 @@ int xhci_plat_probe(struct platform_device *pdev,
+struct device *sysdev, const s
+                if (device_property_read_bool(tmpdev, "quirk-broken-port-pe=
+d"))
+                        xhci->quirks |=3D XHCI_BROKEN_PORT_PED;
 
-thanks
++               if (device_property_read_bool(tmpdev, "quirk-avoid-bei"))
++                       xhci->quirks |=3D XHCI_AVOID_BEI;
++
+                if (device_property_read_bool(tmpdev,
+"xhci-sg-trb-cache-size-quirk"))
+                        xhci->quirks |=3D XHCI_SG_TRB_CACHE_SIZE_QUIRK;
 
-xiaolei
+I consider that enabling XHCI_AVOID_BEI quirk will increase the number
+of isoc transmission
+interrupts, and some specific applications of products may not have
+full event rings.
+For Synopsys DWC31 2.00a IP and earlier versions, XHCI_AVOID_BEI quirk
+is forced to be enabled,
+which is not the best solution. Therefore, the second solution is
+generated, which is to remove the
+modification of drivers/usb/dwc3/host.c file, only keep
+drivers/usb/host/xhci-plat.c, enable XHCI_AVOID_BEI
+quirk by adding dts configuration. Let users decide whether to enable
+XHCI_AVOID_BEI quirk based on
+the specific application of the product.
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 3d071b875308..e1071827d4b3 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -253,6 +253,9 @@ int xhci_plat_probe(struct platform_device *pdev,
+struct device *sysdev, const s
+                if (device_property_read_bool(tmpdev, "quirk-broken-port-pe=
+d"))
+                        xhci->quirks |=3D XHCI_BROKEN_PORT_PED;
 
++               if (device_property_read_bool(tmpdev, "quirk-avoid-bei"))
++                       xhci->quirks |=3D XHCI_AVOID_BEI;
++
+                if (device_property_read_bool(tmpdev,
+"xhci-sg-trb-cache-size-quirk"))
+                        xhci->quirks |=3D XHCI_SG_TRB_CACHE_SIZE_QUIRK;
+Please help evaluate, thank you.
 >
-> url:    https://github.com/intel-lab-lkp/linux/commits/Xiaolei-Wang/net-stmmac-Update-CBS-parameters-when-speed-changes-after-linking-up/20240530-141843
-> base:   net/main
-> patch link:    https://lore.kernel.org/r/20240530061453.561708-1-xiaolei.wang%40windriver.com
-> patch subject: [net v2 PATCH] net: stmmac: Update CBS parameters when speed changes after linking up
-> config: i386-randconfig-141-20240604 (https://download.01.org/0day-ci/archive/20240605/202406050318.jsyBFsxx-lkp@intel.com/config)
-> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202406050318.jsyBFsxx-lkp@intel.com/
->
-> New smatch warnings:
-> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:3234 stmmac_configure_cbs() error: uninitialized symbol 'ptr'.
-> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:3234 stmmac_configure_cbs() error: uninitialized symbol 'speed_div'.
->
-> vim +/ptr +3234 drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->
-> 19d9187317979c Joao Pinto   2017-03-10  3194  static void stmmac_configure_cbs(struct stmmac_priv *priv)
-> 19d9187317979c Joao Pinto   2017-03-10  3195  {
-> 19d9187317979c Joao Pinto   2017-03-10  3196    u32 tx_queues_count = priv->plat->tx_queues_to_use;
-> 19d9187317979c Joao Pinto   2017-03-10  3197    u32 mode_to_use;
-> 19d9187317979c Joao Pinto   2017-03-10  3198    u32 queue;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3199    u32 ptr, speed_div;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3200    u64 value;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3201
-> 882212f550d669 Xiaolei Wang 2024-05-30  3202    /* Port Transmit Rate and Speed Divider */
-> 882212f550d669 Xiaolei Wang 2024-05-30  3203    switch (priv->speed) {
-> 882212f550d669 Xiaolei Wang 2024-05-30  3204    case SPEED_10000:
-> 882212f550d669 Xiaolei Wang 2024-05-30  3205            ptr = 32;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3206            speed_div = 10000000;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3207            break;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3208    case SPEED_5000:
-> 882212f550d669 Xiaolei Wang 2024-05-30  3209            ptr = 32;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3210            speed_div = 5000000;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3211            break;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3212    case SPEED_2500:
-> 882212f550d669 Xiaolei Wang 2024-05-30  3213            ptr = 8;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3214            speed_div = 2500000;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3215            break;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3216    case SPEED_1000:
-> 882212f550d669 Xiaolei Wang 2024-05-30  3217            ptr = 8;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3218            speed_div = 1000000;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3219            break;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3220    case SPEED_100:
-> 882212f550d669 Xiaolei Wang 2024-05-30  3221            ptr = 4;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3222            speed_div = 100000;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3223            break;
-> 882212f550d669 Xiaolei Wang 2024-05-30  3224    default:
-> 882212f550d669 Xiaolei Wang 2024-05-30  3225            netdev_dbg(priv->dev, "link speed is not known\n");
->
-> return;?
->
-> 882212f550d669 Xiaolei Wang 2024-05-30  3226    }
-> 19d9187317979c Joao Pinto   2017-03-10  3227
-> 44781fef137896 Joao Pinto   2017-03-31  3228    /* queue 0 is reserved for legacy traffic */
-> 44781fef137896 Joao Pinto   2017-03-31  3229    for (queue = 1; queue < tx_queues_count; queue++) {
-> 19d9187317979c Joao Pinto   2017-03-10  3230            mode_to_use = priv->plat->tx_queues_cfg[queue].mode_to_use;
-> 19d9187317979c Joao Pinto   2017-03-10  3231            if (mode_to_use == MTL_QUEUE_DCB)
-> 19d9187317979c Joao Pinto   2017-03-10  3232                    continue;
-> 19d9187317979c Joao Pinto   2017-03-10  3233
-> 882212f550d669 Xiaolei Wang 2024-05-30 @3234            value = div_s64(priv->old_idleslope[queue] * 1024ll * ptr, speed_div);
->                                                                                                                ^^^  ^^^^^^^^^^
-> Uninitialized.
->
-> 882212f550d669 Xiaolei Wang 2024-05-30  3235            priv->plat->tx_queues_cfg[queue].idle_slope = value & GENMASK(31, 0);
-> 882212f550d669 Xiaolei Wang 2024-05-30  3236
-> 882212f550d669 Xiaolei Wang 2024-05-30  3237            value = div_s64(-priv->old_sendslope[queue] * 1024ll * ptr, speed_div);
-> 882212f550d669 Xiaolei Wang 2024-05-30  3238            priv->plat->tx_queues_cfg[queue].send_slope = value & GENMASK(31, 0);
-> 882212f550d669 Xiaolei Wang 2024-05-30  3239
-> c10d4c82a5c84c Jose Abreu   2018-04-16  3240            stmmac_config_cbs(priv, priv->hw,
-> 19d9187317979c Joao Pinto   2017-03-10  3241                            priv->plat->tx_queues_cfg[queue].send_slope,
-> 19d9187317979c Joao Pinto   2017-03-10  3242                            priv->plat->tx_queues_cfg[queue].idle_slope,
-> 19d9187317979c Joao Pinto   2017-03-10  3243                            priv->plat->tx_queues_cfg[queue].high_credit,
-> 19d9187317979c Joao Pinto   2017-03-10  3244                            priv->plat->tx_queues_cfg[queue].low_credit,
-> 19d9187317979c Joao Pinto   2017-03-10  3245                            queue);
-> 19d9187317979c Joao Pinto   2017-03-10  3246    }
-> 19d9187317979c Joao Pinto   2017-03-10  3247  }
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> Thanks
+> Mathias
 >
 
