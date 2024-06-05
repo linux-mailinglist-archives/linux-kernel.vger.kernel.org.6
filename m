@@ -1,201 +1,117 @@
-Return-Path: <linux-kernel+bounces-201684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D9E8FC1BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:22:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 790B08FC1C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DA481F25E54
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1969E1F2469B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8081B61FEF;
-	Wed,  5 Jun 2024 02:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D73D73450;
+	Wed,  5 Jun 2024 02:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JOz8422U"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14C124B34
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 02:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Go95W800"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6C06CDAB;
+	Wed,  5 Jun 2024 02:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717554110; cv=none; b=Nca8F3J2dy/iVtpp41QonUweMoN+8i0SfyLI/O/IT4j5MoN3FZyN8hCG7/vIWy0g9o3nuCXpE403xheCM4EG8+7ilbCLOGG/Z3bmArw7iOaYcZ1sQoUU6oJAJlapdA2dU4IfeA2wplB6G3dOJr3cOs+BSJBgA0fOStwgAQ3x72w=
+	t=1717554137; cv=none; b=fnkUkZMsugeUtPmmWiE7ncuqYEWOiBXTdbMQVJWolBeNkGGJoAoHDml1VXg1mJmQL+KMwbglsBcvYdQnlQWyoqmCYKELCfCcEbZCibsw4jECQ9Bgkwx+pcZ2s/eMmrWBLffIwVJ0NQMllefGmvwz2+dWfjC08RfzBDGJcKhJSVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717554110; c=relaxed/simple;
-	bh=JTnSNyXJb9/n4zWhEsZEgrjDjA6qKcjZ618TEtxWRng=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hrjIZOjJPBqMn0LUmL/UWDip765JwMD8a6p+Pc7sTY0KKf63vn1yGwQrHAIlknGa/wOl0hbzJbpH21J4xl3rylQM4b1msctypLA3ES9Wh2QwShIGiEXGBkF1X+TAPOSaCO0AlVdATTyUKVU95SIYp6hAYCRzL2ZZ5hMv6QsRydo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JOz8422U; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=99UK3
-	SS0coifAlgek0C0Ovd66JCCH+0Fhwar14jUuug=; b=JOz8422UqF4y12MhdI7Et
-	lvvWapEK9ZQJU2hQfpblOuw+sH+e3/67SrafWczT5optIR+7BvaVIb26Asy9u0Xa
-	PXq4z4nF3zy7gb+Ir5osyFz0KQQGRHuzisRvq75yrO/uwCmXPSuINVvKr5FZFokE
-	e+bqCVP03/fHLMG+GZva+k=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g1-1 (Coremail) with SMTP id _____wDXr06Dy19m1Y57HA--.24429S4;
-	Wed, 05 Jun 2024 10:20:53 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mhocko@kernel.org,
-	v-songbaohua@oppo.com,
-	ran.xiaokai@zte.com.cn,
-	xu.xin16@zte.com.cn,
-	yang.yang29@zte.com.cn,
-	ziy@nvidia.com
-Subject: Re: [PATCH linux-next] mm: huge_memory: fix misused mapping_large_folio_support() for anon folios
-Date: Wed,  5 Jun 2024 02:20:51 +0000
-Message-Id: <20240605022051.888955-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <fe35d494-b54e-4302-8c75-24abc9094ea1@redhat.com>
-References: <fe35d494-b54e-4302-8c75-24abc9094ea1@redhat.com>
+	s=arc-20240116; t=1717554137; c=relaxed/simple;
+	bh=AYVfxlnclM0AhGQLKjqmuvx8r+sAkmmnySMrEMRJgxo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=YFTNIGTVVOdMd88l13+aKqbg+hJwQpk5NAAdcBkPkb81lHkUEswt1hQ29wcgZI2E2qxqzkiRapquhaiUZpsudirz4wqmoGj+220+NmOVhFP6FswjXp4AZX3VglFCQlii0FAfSzn7y7Acq8EaWoIYU6M/km42JG42aWz34myLlF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Go95W800; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454NWhNe004644;
+	Wed, 5 Jun 2024 02:22:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iy8Qqx5Vp7rbVCRCTUMkKC
+	vdgR7EeoiTJOrpBTvx5Ns=; b=Go95W8008pSFUab5Ye2njvcMuaChcVbg90eMRW
+	IltsCPK3Q+GbUFxkKPK75DQhGjJ2p+SrOQRK5VVkCBwLQFDdVz2uskEsKv7KBAJn
+	Zw3WIvKN4knYWBBACZ2aTRnTEwWUFSaHScUqqz+ZD2t0Mo2/m25Xp6w0+RYM1jQG
+	fEMDfUqWNC/C9hSuhNQv0/hepDjAFj9lfyN1GcJPXWlGntVcFnPtmshRPdDAIju4
+	dvRitIkr8mexVTVhV8ZGKlPHxOKZ4h6IrRnJZahhNE51qmQcfVv1/edFPOZeI3SM
+	eTb3i/tjZF36MpkiOrKXlbFg+1eJTw1RDS94dJhmjR5abNPg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjauvgdvs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 02:22:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4552M1pn021017
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 02:22:01 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Jun 2024
+ 19:22:00 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 4 Jun 2024 19:21:59 -0700
+Subject: [PATCH] RAS/AMD/ATL: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXr06Dy19m1Y57HA--.24429S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGr45tryUCr1UZr4rWr4kZwb_yoWrWw47pF
-	W2grn3tFWkXrZI9r12qF4jkrn5ZrW8Xa4kAay3XwnxA3ZxGF429FW7J3Wruay7uryfJr4x
-	Xa1UXFy3W3Z8tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRrb15UUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/xtbB0gn0TGWXyKdRAQAAsu
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240604-md-ras-amd-atl-v1-1-d4eb3cf3abe4@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMbLX2YC/x3MQQqDQAyF4atI1g1MB5lKr1K6iDOxBnRaElsE8
+ e7Grh7f4v0bGKuwwb3ZQPknJu/quF4ayCPVF6MUN8QQ25BCi3NBJUPypWXCkIYSy60LuUvgp4/
+ yIOs/+Hi6ezLGXqnm8cxMUr8rzmQLK+z7AcssPY5/AAAA
+To: Yazen Ghannam <Yazen.Ghannam@amd.com>, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@alien8.de>
+CC: <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 33yaVS7EcBRhW2Fec2oFj_vVyBB6R-fw
+X-Proofpoint-GUID: 33yaVS7EcBRhW2Fec2oFj_vVyBB6R-fw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ spamscore=0 clxscore=1011 suspectscore=0 mlxlogscore=999 phishscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406050017
 
-> On 04.06.24 07:47, xu.xin16@zte.com.cn wrote:
-> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > 
-> > When I did a large folios split test, a WARNING
-> > "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
-> > was triggered. But my test cases are only for anonmous folios.
-> > while mapping_large_folio_support() is only reasonable for page
-> > cache folios.
-> 
-> Agreed.
-> 
-> I wonder if mapping_large_folio_support() should either
-> 
-> a) Complain if used for anon folios, so we can detect the wrong use more 
-> easily. (VM_WARN_ON_ONCE())
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/ras/amd/atl/amd_atl.o
 
-> b) Return "true" for anonymous mappings, although that's more debatable.
-> 
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Hi, David,
-Thanks for the review.
-I think a) is better. 
-But we have to add a new parameter "folio" to mapping_large_folio_support(), right ?
-something like mapping_large_folio_support(struct address_space *mapping, struct folio *folio) ?
-But in the __filemap_get_folio() path, 
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/ras/amd/atl/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-__filemap_get_folio()
-  no_page:
-    ....
-    if (!mapping_large_folio_support(mapping))
-
-the folio is not allocated yet, yes ?
-Or do you mean there is some other way to do this ? 
-
-> > 
-> > In split_huge_page_to_list_to_order(), the folio passed to
-> > mapping_large_folio_support() maybe anonmous folio. The
-> > folio_test_anon() check is missing. So the split of the anonmous THP
-> > is failed. This is also the same for shmem_mapping(). We'd better add
-> > a check for both. But the shmem_mapping() in __split_huge_page() is
-> > not involved, as for anonmous folios, the end parameter is set to -1, so
-> > (head[i].index >= end) is always false. shmem_mapping() is not called.
-> > 
-> > Using /sys/kernel/debug/split_huge_pages to verify this, with this
-> > patch, large anon THP is successfully split and the warning is ceased.
-> > 
-> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > Cc: xu xin <xu.xin16@zte.com.cn>
-> > Cc: Yang Yang <yang.yang29@zte.com.cn>
-> > ---
-> >   mm/huge_memory.c | 38 ++++++++++++++++++++------------------
-> >   1 file changed, 20 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 317de2afd371..4c9c7e5ea20c 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -3009,31 +3009,33 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-> >   	if (new_order >= folio_order(folio))
-> >   		return -EINVAL;
-> > 
-> > -	/* Cannot split anonymous THP to order-1 */
-> > -	if (new_order == 1 && folio_test_anon(folio)) {
-> > -		VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> >   	if (new_order) {
-> >   		/* Only swapping a whole PMD-mapped folio is supported */
-> >   		if (folio_test_swapcache(folio))
-> >   			return -EINVAL;
-> > -		/* Split shmem folio to non-zero order not supported */
-> > -		if (shmem_mapping(folio->mapping)) {
-> > -			VM_WARN_ONCE(1,
-> > -				"Cannot split shmem folio to non-0 order");
-> > -			return -EINVAL;
-> > -		}
-> > -		/* No split if the file system does not support large folio */
-> > -		if (!mapping_large_folio_support(folio->mapping)) {
-> > -			VM_WARN_ONCE(1,
-> > -				"Cannot split file folio to non-0 order");
-> > -			return -EINVAL;
-> > +
-> > +		if (folio_test_anon(folio)) {
-> > +			/* Cannot split anonymous THP to order-1 */
-> > +			if (new_order == 1) {
-> > +				VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-> > +				return -EINVAL;
-> > +			}
-> > +		} else {
-> > +			/* Split shmem folio to non-zero order not supported */
-> > +			if (shmem_mapping(folio->mapping)) {
-> > +				VM_WARN_ONCE(1,
-> > +					"Cannot split shmem folio to non-0 order");
-> > +				return -EINVAL;
-> > +			}
-> > +			/* No split if the file system does not support large folio */
-> > +			if (!mapping_large_folio_support(folio->mapping)) {
-> > +				VM_WARN_ONCE(1,
-> > +					"Cannot split file folio to non-0 order");
-> > +				return -EINVAL;
-> > +			}
-> >   		}
-> >   	}
-> 
-> What about the following sequence:
-> 
-> if (folio_test_anon(folio)) {
-> 	if (new_order == 1)
-> 		...
-> } else if (new_order) {
-> 	if (shmem_mapping(...))
-> 		...
-> 	...
-> }
-> 
-> if (folio_test_swapcache(folio) && new_order)
-> 	return -EINVAL;
-> 
-> Should result in less churn and reduce indentation level.
->
-
-Thanks.
-The code is cleaner in this way.
+diff --git a/drivers/ras/amd/atl/core.c b/drivers/ras/amd/atl/core.c
+index 6dc4e06305f7..7be4982fdf19 100644
+--- a/drivers/ras/amd/atl/core.c
++++ b/drivers/ras/amd/atl/core.c
+@@ -222,4 +222,5 @@ static void __exit amd_atl_exit(void)
+ module_init(amd_atl_init);
+ module_exit(amd_atl_exit);
  
-> -- 
-> Cheers,
-> 
-> David / dhildenb
++MODULE_DESCRIPTION("AMD Address Translation Library");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+change-id: 20240604-md-ras-amd-atl-06fd2d780c86
 
 
