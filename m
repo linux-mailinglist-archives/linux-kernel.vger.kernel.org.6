@@ -1,488 +1,167 @@
-Return-Path: <linux-kernel+bounces-203227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A938FD812
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:03:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C98C8FD815
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBC351F22424
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:03:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCD16B231FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C0115F3EF;
-	Wed,  5 Jun 2024 21:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB0415F3F9;
+	Wed,  5 Jun 2024 21:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fNorgy+J";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LPepGnJX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+w0OdEU"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB384965B;
-	Wed,  5 Jun 2024 21:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1620B4965B;
+	Wed,  5 Jun 2024 21:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621386; cv=none; b=Zy+F+SpPxeJgoPkh+l53XS7tVjcUxU1NiPy2ppWncASFvN+rmf9Civo3/qm6H2Fbl83gkyetMClVfSa3y70RIOD+REDCP5NXfIMq9cIH9Sx9shz/Lu/bK10fIYJt9rTgHlRWyg040EPDGq6fdMs1vLuJvPDZqiCpLfR4rppgFys=
+	t=1717621419; cv=none; b=dkr1ZicjD56KcmxBt/nZ2/ueZjkOD3ixpiK3EXE1cDnzuGwW2CIEMzQRrMXsoEsQ3+st9Z44j/dzlS60E5ZExyBo7x+XfGUA+ftp8vTpmmvryAfLMoO4lc8bTkLnWrhPaznz8krlwu3tU4LTHCUBqDR8/gXhzHhqNXfucdDn1PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621386; c=relaxed/simple;
-	bh=vfI+XyntMxmAI6O3/rFI5Y7+85AiQSh7448Su6HkL0I=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=mY1wf+00ZIbOU+I6EBxaMS4clzG4ZAxh0HcbsXL/rFcJxONVH9S0NJVRz4NTm8c6L9qXApT+ph9s52bhkV/9rUMkHKtNe3Dk7wSCLtOO3Djtnt+l9ECFagDPPqz87AoyZ6lwRtcZnuLkKkvRNjhaEai9HcUvVwko6TdgDQTZsv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fNorgy+J; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LPepGnJX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717621381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
-	bh=8DOUd1z26K2knCIWSgj8FMgcXpFTrWvUtY/7BVdEfEw=;
-	b=fNorgy+JGm9AENDN8YUp+RbIqtXI8EnmdN5qHvaLEyTlRGW1KBrkhUNJ2HWqoA8jsl9xNk
-	3zQmTQ3FuNHwZMhK6R7JVXtchsxmZ1arGW+3eS8v5X+2wmqkoDNVjXJi7ldoUXAnUpf+Ds
-	gqmuJZwkE1ZEoXQJDofwze5nbFaKvPocTpGXj/k673g1TTNYl1Nzz+oUY9zRrKPnnS9/H8
-	VnjohfoLJI1qFLHevai8WwaAIJj6CGiPZvBaCgHLSRrPHBmeSgF8JYIK88vqo9alzcssF0
-	rcRPyjwsAIbCE/rrkdp+64Ltbr1+BOdwyilfefZJcQf8Oe/aC8IUeQU8yfeUWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717621381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
-	bh=8DOUd1z26K2knCIWSgj8FMgcXpFTrWvUtY/7BVdEfEw=;
-	b=LPepGnJXLg7QRH7lIFbHZYS9VUJlzcUZ36zts/3nj/l+4PtPABkc5yZE5owExP9aZvQyZV
-	Y8ozeupyt1/ybkAA==
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-crypto@vger.kernel.org,
- linux-api@vger.kernel.org, x86@kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Adhemerval Zanella Netto
- <adhemerval.zanella@linaro.org>, Carlos O'Donell <carlos@redhat.com>,
- Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann
- Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, David
- Hildenbrand <dhildenb@redhat.com>
-Subject: Re: [PATCH v16 4/5] random: introduce generic vDSO getrandom()
- implementation
-In-Reply-To: <20240528122352.2485958-5-Jason@zx2c4.com>
-Date: Wed, 05 Jun 2024 23:03:00 +0200
-Message-ID: <874ja73xx7.ffs@tglx>
+	s=arc-20240116; t=1717621419; c=relaxed/simple;
+	bh=eh9IzC/sXudftroa0oNPCl+CeaVwJW9OIwLv2VcI54Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tfxTygizntlryoDzjAWK8vX1d8cY8KmIoguirSBm/DKWw3V+d6qk8NjeS6bEB3ymJ6b6sN7PYPqRiQRF0u6UymImzWARqp0WTef3k/bNujlFlU8m+wiJS+eUo2rKk8+Ij5vJeV0gsuj6BwUWMfquCAax0Y1NcJoPO5R+ovTozBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+w0OdEU; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42158db02c3so3589385e9.2;
+        Wed, 05 Jun 2024 14:03:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717621416; x=1718226216; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wxkQybmLe5sPp9htKJDI8bCr/w4I0AK0t4E3wZxsO9s=;
+        b=T+w0OdEUmtYDHIOI9sZ6DFb8xYQp6NA/zgQidfkWMsyYvDmyUQtK/9oHyMNWnS7Dcz
+         S7PYlZP73N3AgIg15FW1VheaoqiZlQDBLT8MxwfcbRNDl1yZFfK0z/fHM7bcNXLP5zwx
+         f33sReIWd20rdDAfwTCJJ/bZ674VtaKbPF+JVaGaGgIw6/BeQa8C2L2RhMLJVRRbuMgZ
+         ysNp5jrt7uXtPOg7Uxl2kMK5fHdbzKY65af7AiQZ9VxX9HoNfepXK12P/CI492GFudk7
+         v1U72/0vzyt2ubA2PKZWJBX9qdaeNAatDoxjA9kFepkY47GJd1Dy6Lg1UQfTvc6Nt2Go
+         DuKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717621416; x=1718226216;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxkQybmLe5sPp9htKJDI8bCr/w4I0AK0t4E3wZxsO9s=;
+        b=sA61ZDYzCFSvXAXirY+0t0V+N6bW3e4ubfy8UVLzORnnAZxbsMa7Zr39xQcZaiH0Ju
+         aCmPHWHS5c2gy2NsAjg9P5cuhoCOTctDu5AxLunu7Hi5hd/vdMxTEcfVIJ7IkGOtz7G3
+         b7C0sLZ5Zo27wyvK3SqvstKAcSe+lpq+y2q5JX4Mn4xVznLkhvwyTBbdiavdA2fVBVNn
+         /8ZrPZUTz67zgvs0yACSn9KUbvPwR25yZ/L4BewtJeoTfpmDnYA/I6Z/sryAoEfjTeEV
+         9s6/GcuaS365IfSGMIvRQzIu7luJhwhTCFv4siQanwdCUrLkow2wU+UlUnPloG/exVIa
+         c6lA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6sh5BsO30nsOO+6+h2Epys1/yfSh0HQpbtObfq/UCIRrRqkDQMbtaWxDr7qOumd1L7ZIcc+9TBPRBEVfwwWj0tN8IGfMp8at6njd+2Uxgg36BEtaPJm+3WM0dF+2kuFugwpYQjywBnda5UPhc3L0M3R08pvyG3dmWaXkfWfSOHbvh7Q==
+X-Gm-Message-State: AOJu0Ywh/fTQ4oPS/5gXDQgKgtqrtE0xKBkgtHGIU1XWXbvvS6KI0xSL
+	j1ea5pi7lmuZCMJIa6PPcO750DM3p1Oxaepwd8sN7lwVFV53zlD/6wHL
+X-Google-Smtp-Source: AGHT+IEQ5Bvq496WQdI6NCNSKRLJfGNuhXeduOQUjAa/vxuh86+qvv8BXGs75zaVxP88iejgFvqqSw==
+X-Received: by 2002:a05:600c:3550:b0:41b:fc3a:f1ef with SMTP id 5b1f17b1804b1-42156339013mr28592605e9.33.1717621416317;
+        Wed, 05 Jun 2024 14:03:36 -0700 (PDT)
+Received: from ?IPV6:2a02:810b:f40:4600:5211:58fe:dfef:c48c? ([2a02:810b:f40:4600:5211:58fe:dfef:c48c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215810242fsm33579345e9.12.2024.06.05.14.03.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 14:03:35 -0700 (PDT)
+Message-ID: <9da22443-b5c3-4fbc-8cb0-d6bebab55da4@gmail.com>
+Date: Wed, 5 Jun 2024 23:03:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240605205209.232005-1-knaerzche@gmail.com>
+Content-Language: en-US
+From: Alex Bee <knaerzche@gmail.com>
+In-Reply-To: <20240605205209.232005-1-knaerzche@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Jason!
+Hi,
+sorry for the noise - not sure what went wrong here.
+Just resend v2:
+https://lore.kernel.org/all/20240605210049.232284-1-knaerzche@gmail.com/
 
-On Tue, May 28 2024 at 14:19, Jason A. Donenfeld wrote:
-> diff --git a/include/vdso/getrandom.h b/include/vdso/getrandom.h
-> index e3ceb1976386..7dc93d5f72dc 100644
-> --- a/include/vdso/getrandom.h
-> +++ b/include/vdso/getrandom.h
-> @@ -6,11 +6,39 @@
->  #ifndef _VDSO_GETRANDOM_H
->  #define _VDSO_GETRANDOM_H
->=20=20
-> +#include <crypto/chacha.h>
-
-Can you please split the required defines into a seperate header
-preferrably in include/vdso/ and include that from crypto/chacha.h
-
-The point is that VDSO is very intentionally not using anything outside
-include/uapi/ and include/vdso/ except for include/linux/compiler.h and
-include/linux/types.h.
-
-We've had too much trouble of random include chains which magically
-break the build dependent on architectures and configurations. VDSO is a us=
-erspace
-library after all.
-
-> +#include <vdso/types.h>
+Alex
+Am 05.06.24 um 22:51 schrieb Alex Bee:
+> Similar to
+> commit 2dc66a5ab2c6 ("clk: rockchip: rk3588: fix CLK_NR_CLKS usage")
+> this drops CLK_NR_CLKS usage from the clock driver and instead uses the
+> rockchip_clk_find_max_clk_id helper which was introduced for that purpose.
+> 
+> Signed-off-by: Alex Bee <knaerzche@gmail.com>
+> ---
+>   drivers/clk/rockchip/clk-rk3128.c | 20 ++++++++++++++++----
+>   1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
+> index d076b7971f33..40e0e4556d59 100644
+> --- a/drivers/clk/rockchip/clk-rk3128.c
+> +++ b/drivers/clk/rockchip/clk-rk3128.c
+> @@ -569,18 +569,22 @@ static const char *const rk3128_critical_clocks[] __initconst = {
+>   	"sclk_timer5",
+>   };
+>   
+> -static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
+> +static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np,
+> +								   unsigned long soc_nr_clks)
+>   {
+>   	struct rockchip_clk_provider *ctx;
+> +	unsigned long common_nr_clks;
+>   	void __iomem *reg_base;
+>   
+> +	common_nr_clks = rockchip_clk_find_max_clk_id(common_clk_branches,
+> +						      ARRAY_SIZE(common_clk_branches)) + 1;
+>   	reg_base = of_iomap(np, 0);
+>   	if (!reg_base) {
+>   		pr_err("%s: could not map cru region\n", __func__);
+>   		return ERR_PTR(-ENOMEM);
+>   	}
+>   
+> -	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
+> +	ctx = rockchip_clk_init(np, reg_base, max(common_nr_clks, soc_nr_clks));
+>   	if (IS_ERR(ctx)) {
+>   		pr_err("%s: rockchip clk init failed\n", __func__);
+>   		iounmap(reg_base);
+> @@ -609,8 +613,12 @@ static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device
+>   static void __init rk3126_clk_init(struct device_node *np)
+>   {
+>   	struct rockchip_clk_provider *ctx;
+> +	unsigned long soc_nr_clks;
+>   
+> -	ctx = rk3128_common_clk_init(np);
+> +	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3126_clk_branches,
+> +						   ARRAY_SIZE(rk3126_clk_branches)) + 1;
 > +
->  /**
->   * struct vgetrandom_state - State used by vDSO getrandom() and allocate=
-d by vgetrandom_alloc().
->   *
-> - * Currently empty, as the vDSO getrandom() function has not yet been im=
-plemented.
-> + * @batch:	One and a half ChaCha20 blocks of buffered RNG output.
-> + *
-> + * @key:	Key to be used for generating next batch.
-> + *
-> + * @batch_key:	Union of the prior two members, which is exactly two full
-> + * 		ChaCha20 blocks in size, so that @batch and @key can be filled
-> + * 		together.
-> + *
-> + * @generation:	Snapshot of @rng_info->generation in the vDSO data page =
-at
-> + *		the time @key was generated.
-> + *
-> + * @pos:	Offset into @batch of the next available random byte.
-> + *
-> + * @in_use:	Reentrancy guard for reusing a state within the same thread
-> + *		due to signal handlers.
->   */
-> -struct vgetrandom_state { int placeholder; };
-> +struct vgetrandom_state {
-> +	union {
-> +		struct {
-> +			u8	batch[CHACHA_BLOCK_SIZE * 3 / 2];
-> +			u32	key[CHACHA_KEY_SIZE / sizeof(u32)];
-
-CHACHA_STATE_WORDS ?
-
-> +		};
-> +		u8		batch_key[CHACHA_BLOCK_SIZE * 2];
-
-Lot's of magic constants here *3/2 *2 ....
-
-> +	};
-> +	vdso_kernel_ulong	generation;
-> +	u8			pos;
-
-What does the u8 buy here over a simple unsigned int?
-
-> +	bool 			in_use;
-> +};
->=20=20
->  #endif /* _VDSO_GETRANDOM_H */
-> diff --git a/include/vdso/types.h b/include/vdso/types.h
-> new file mode 100644
-> index 000000000000..ce131463aeff
-> --- /dev/null
-> +++ b/include/vdso/types.h
-> @@ -0,0 +1,35 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-
-Why does this need an extra header when it's clearly getrandom specific?
-Please put this into getrandom.h
-
-> +/*
-> + * Copyright (C) 2022 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights R=
-eserved.
-> + */
-> +#ifndef __VDSO_TYPES_H
-> +#define __VDSO_TYPES_H
+> +	ctx = rk3128_common_clk_init(np, soc_nr_clks);
+>   	if (IS_ERR(ctx))
+>   		return;
+>   
+> @@ -627,8 +635,12 @@ CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
+>   static void __init rk3128_clk_init(struct device_node *np)
+>   {
+>   	struct rockchip_clk_provider *ctx;
+> +	unsigned long soc_nr_clks;
 > +
-> +#include <linux/types.h>
-> +
-> +/**
-> + * type vdso_kernel_ulong - unsigned long type that matches kernel's uns=
-igned long
-> + *
-> + * Data shared between userspace and the kernel must operate the same wa=
-y in both 64-bit code and in
-> + * 32-bit compat code, over the same potentially 64-bit kernel. This typ=
-e represents the size of an
-> + * unsigned long as used by kernel code. This isn't necessarily the same=
- as an unsigned long as used
-> + * by userspace, however.
+> +	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3128_clk_branches,
+> +						   ARRAY_SIZE(rk3128_clk_branches)) + 1;
+>   
+> -	ctx = rk3128_common_clk_init(np);
+> +	ctx = rk3128_common_clk_init(np, soc_nr_clks);
+>   	if (IS_ERR(ctx))
+>   		return;
+>   
 
-This is confusing at best.
-
-First of all 64-bit code can run only on a 64-bit kernel, so what does
-'the same potentially 64-bit kernel' even mean in that sentence?
-
-What means: 'This type represents the size of an unsigned long as used by k=
-ernel
-code'?=20
-
-> + *                 +-------------------+-------------------+------------=
-------+-------------------+
-> + *                 | 32-bit userspace  | 32-bit userspace  | 64-bit user=
-space | 64-bit userspace  |
-> + *                 | unsigned long     | vdso_kernel_ulong | unsigned lo=
-ng    | vdso_kernel_ulong |
-> + * +---------------+-------------------+-------------------+------------=
-------+-------------------+
-> + * | 32-bit kernel | =E2=9C=93 same size       | =E2=9C=93 same size    =
-   |
-> + * | unsigned long |                   |                   |
-> + * +---------------+-------------------+-------------------+------------=
-------+-------------------+
-> + * | 64-bit kernel | =E2=9C=98 different size! | =E2=9C=93 same size    =
-   | =E2=9C=93 same size      | =E2=9C=93 same size       |
-> + * | unsigned long |                   |                   |            =
-      |                   |
-> + * +---------------+-------------------+-------------------+------------=
-------+-------------------+
-
-I have no idea what this table tries to tell me, but I clearly can see
-what you are trying to achieve here:
-
-> + */
-> +#ifdef CONFIG_64BIT
-> +typedef u64 vdso_kernel_ulong;
-> +#else
-> +typedef u32 vdso_kernel_ulong;
-> +#endif
-
-All of this is pointless because if a 32-bit application runs on a
-64-bit kernel it has to use the 64-bit 'generation'. So why on earth do
-we need magic here for a 32-bit kernel?
-
-Just use u64 for both and spare all this voodoo. We're seriously not
-"optimizing" for 32-bit kernels.
-
-> +/**
-> + * __cvdso_getrandom_data - Generic vDSO implementation of getrandom() s=
-yscall.
-> + * @rng_info:		Describes state of kernel RNG, memory shared with kernel.
-> + * @buffer:		Destination buffer to fill with random bytes.
-> + * @len:		Size of @buffer in bytes.
-> + * @flags:		Zero or more GRND_* flags.
-> + * @opaque_state:	Pointer to an opaque state area.
-> + *
-> + * This implements a "fast key erasure" RNG using ChaCha20, in the same =
-way that the kernel's
-> + * getrandom() syscall does. It periodically reseeds its key from the ke=
-rnel's RNG, at the same
-> + * schedule that the kernel's RNG is reseeded. If the kernel's RNG is no=
-t ready, then this always
-> + * calls into the syscall.
-> + *
-> + * @opaque_state *must* be allocated using the vgetrandom_alloc() syscal=
-l.  Unless external locking
-> + * is used, one state must be allocated per thread, as it is not safe to=
- call this function
-> + * concurrently with the same @opaque_state. However, it is safe to call=
- this using the same
-> + * @opaque_state that is shared between main code and signal handling co=
-de, within the same thread.
-> + *
-> + * Returns the number of random bytes written to @buffer, or a negative =
-value indicating an error.
-> + */
-> +static __always_inline ssize_t
-> +__cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffe=
-r, size_t len,
-> +		       unsigned int flags, void *opaque_state)
-> +{
-> +	ssize_t ret =3D min_t(size_t, INT_MAX & PAGE_MASK /* =3D MAX_RW_COUNT *=
-/, len);
-
-We really need to allow reading almost 2GB of random data in one go?
-
-> +	struct vgetrandom_state *state =3D opaque_state;
-> +	size_t batch_len, nblocks, orig_len =3D len;
-> +	unsigned long current_generation;
-> +	void *orig_buffer =3D buffer;
-> +	u32 counter[2] =3D { 0 };
-> +	bool in_use, have_retried =3D false;
-
-Please keep the reverse fir tree order.
-
-> +	/* The state must not straddle a page, since pages can be zeroed at any=
- time. */
-> +	if (unlikely(((unsigned long)opaque_state & ~PAGE_MASK) + sizeof(*state=
-) > PAGE_SIZE))
-> +		goto fallback_syscall;
-> +
-> +	/*
-> +	 * If the kernel's RNG is not yet ready, then it's not possible to prov=
-ide random bytes from
-> +	 * userspace, because A) the various @flags require this to block, or n=
-ot, depending on
-> +	 * various factors unavailable to userspace, and B) the kernel's behavi=
-or before the RNG is
-> +	 * ready is to reseed from the entropy pool at every invocation.
-> +	 */
-> +	if (unlikely(!READ_ONCE(rng_info->is_ready)))
-> +		goto fallback_syscall;
-> +
-> +	/*
-> +	 * This condition is checked after @rng_info->is_ready, because before =
-the kernel's RNG is
-> +	 * initialized, the @flags parameter may require this to block or retur=
-n an error, even when
-> +	 * len is zero.
-> +	 */
-> +	if (unlikely(!len))
-> +		return 0;
-> +
-> +	/*
-> +	 * @state->in_use is basic reentrancy protection against this running i=
-n a signal handler
-> +	 * with the same @opaque_state, but obviously not atomic wrt multiple C=
-PUs or more than one
-> +	 * level of reentrancy. If a signal interrupts this after reading @stat=
-e->in_use, but before
-> +	 * writing @state->in_use, there is still no race, because the signal h=
-andler will run to
-> +	 * its completion before returning execution.
-
-Can you please add an explanation that the syscall does not touch the
-state and just fills the buffer?
-
-> +	 */
-> +	in_use =3D READ_ONCE(state->in_use);
-> +	if (unlikely(in_use))
-> +		goto fallback_syscall;
-> +	WRITE_ONCE(state->in_use, true);
-> +
-> +retry_generation:
-> +	/*
-> +	 * @rng_info->generation must always be read here, as it serializes @st=
-ate->key with the
-> +	 * kernel's RNG reseeding schedule.
-> +	 */
-> +	current_generation =3D READ_ONCE(rng_info->generation);
-> +
-> +	/*
-> +	 * If @state->generation doesn't match the kernel RNG's generation, the=
-n it means the
-> +	 * kernel's RNG has reseeded, and so @state->key is reseeded as well.
-> +	 */
-> +	if (unlikely(state->generation !=3D current_generation)) {
-> +		/*
-> +		 * Write the generation before filling the key, in case of fork. If th=
-ere is a fork
-> +		 * just after this line, the two forks will get different random bytes=
- from the
-
-the two forks? You mean the parent and the child, no?
-
-> +		 * syscall, which is good. However, were this line to occur after the =
-getrandom
-> +		 * syscall, then both child and parent could have the same bytes and t=
-he same
-> +		 * generation counter, so the fork would not be detected. Therefore, w=
-rite
-> +		 * @state->generation before the call to the getrandom syscall.
-> +		 */
-> +		WRITE_ONCE(state->generation, current_generation);
-> +
-> +		/* Prevent the syscall from being reordered wrt current_generation. */
-> +		barrier();
-> +
-> +		/* Reseed @state->key using fresh bytes from the kernel. */
-> +		if (getrandom_syscall(state->key, sizeof(state->key), 0) !=3D sizeof(s=
-tate->key)) {
-> +			/*
-> +			 * If the syscall failed to refresh the key, then @state->key is now
-> +			 * invalid, so invalidate the generation so that it is not used again=
-, and
-> +			 * fallback to using the syscall entirely.
-> +			 */
-> +			WRITE_ONCE(state->generation, 0);
-> +
-> +			/*
-> +			 * Set @state->in_use to false only after the last write to @state in=
- the
-> +			 * line above.
-> +			 */
-> +			WRITE_ONCE(state->in_use, false);
-
-So here you rely on the compiler not reordering vs. WRITE_ONCE(),
-i.e. volatile, but above you have a barrier() to prevent the write being
-reordered vs. the syscall, confused.
-
-But even when the compiler does not reorder, what prevents a weakly
-ordered CPU from doing so?
-
-> +			goto fallback_syscall;
-> +		}
-> +
-> +		/*
-> +		 * Set @state->pos to beyond the end of the batch, so that the batch i=
-s refilled
-> +		 * using the new key.
-> +		 */
-> +		state->pos =3D sizeof(state->batch);
-> +	}
-> +
-> +	/* Set len to the total amount of bytes that this function is allowed t=
-o read, ret. */
-> +	len =3D ret;
-> +more_batch:
-> +	/*
-> +	 * First use bytes out of @state->batch, which may have been filled by =
-the last call to this
-> +	 * function.
-> +	 */
-> +	batch_len =3D min_t(size_t, sizeof(state->batch) - state->pos, len);
-> +	if (batch_len) {
-> +		/* Zeroing at the same time as memcpying helps preserve forward secrec=
-y. */
-> +		memcpy_and_zero_src(buffer, state->batch + state->pos, batch_len);
-> +		state->pos +=3D batch_len;
-> +		buffer +=3D batch_len;
-> +		len -=3D batch_len;
-> +	}
-> +
-> +	if (!len) {
-> +		/* Prevent the loop from being reordered wrt ->generation. */
-> +		barrier();
-
-Same question as above.
-
-> +		/*
-> +		 * Since @rng_info->generation will never be 0, re-read @state->genera=
-tion, rather
-> +		 * than using the local current_generation variable, to learn whether =
-a fork
-> +		 * occurred or if @state was zeroed due to memory pressure. Primarily,=
- though, this
-> +		 * indicates whether the kernel's RNG has reseeded, in which case gene=
-rate a new key
-> +		 * and start over.
-> +		 */
-> +		if (unlikely(READ_ONCE(state->generation) !=3D READ_ONCE(rng_info->gen=
-eration))) {
-> +			/*
-> +			 * Prevent this from looping forever in case of low memory or racing =
-with a
-> +			 * user force-reseeding the kernel's RNG using the ioctl.
-> +			 */
-> +			if (have_retried) {
-> +				WRITE_ONCE(state->in_use, false);
-> +				goto fallback_syscall;
-> +			}
-> +
-> +			have_retried =3D true;
-> +			buffer =3D orig_buffer;
-> +			goto retry_generation;
-> +		}
-> +
-> +		/*
-> +		 * Set @state->in_use to false only when there will be no more reads o=
-r writes of
-> +		 * @state.
-> +		 */
-> +		WRITE_ONCE(state->in_use, false);
-> +		return ret;
-> +	}
-> +
-> +	/* Generate blocks of RNG output directly into @buffer while there's en=
-ough room left. */
-> +	nblocks =3D len / CHACHA_BLOCK_SIZE;
-> +	if (nblocks) {
-> +		__arch_chacha20_blocks_nostack(buffer, state->key, counter, nblocks);
-> +		buffer +=3D nblocks * CHACHA_BLOCK_SIZE;
-> +		len -=3D nblocks * CHACHA_BLOCK_SIZE;
-> +	}
-> +
-> +	BUILD_BUG_ON(sizeof(state->batch_key) % CHACHA_BLOCK_SIZE !=3D 0);
-> +
-> +	/* Refill the batch and then overwrite the key, in order to preserve fo=
-rward secrecy. */
-
-'and then overwrite'?
-
-Isn't this overwriting it implicitely because batch_key and key are at
-the same place in the union?
-
-> +	__arch_chacha20_blocks_nostack(state->batch_key, state->key, counter,
-> +				       sizeof(state->batch_key) / CHACHA_BLOCK_SIZE);
-> +
-> +	/* Since the batch was just refilled, set the position back to 0 to ind=
-icate a full batch. */
-> +	state->pos =3D 0;
-> +	goto more_batch;
-
-Thanks,
-
-        tglx
 
