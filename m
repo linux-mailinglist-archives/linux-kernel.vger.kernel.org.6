@@ -1,60 +1,85 @@
-Return-Path: <linux-kernel+bounces-203237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF898FD825
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:11:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD4A8FD829
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50C61C25397
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:11:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4EA1C2536F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC7815F3FC;
-	Wed,  5 Jun 2024 21:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B784D15F3FB;
+	Wed,  5 Jun 2024 21:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4EuZVOl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NKWTMt4v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0374965B;
-	Wed,  5 Jun 2024 21:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7DA4965B;
+	Wed,  5 Jun 2024 21:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621876; cv=none; b=fMYYZpOsRPX5u4iggoDmcBGui8eMFAbCpJOO8cPo/LOCd+z3O4EYYsk0mXy4E7mYeU98ulrSakddBDM6Jbp9C7bf+1doWDJeb9EUFrRzvw+wIpJmqt29zX8e22+qa2xDVGcyIQXaaiFSwI5NJY6fHtm1qHXnch0z3rgY7LEbKlk=
+	t=1717621934; cv=none; b=s6xcuVDrhTnG6c+dSrGY6ree8k9HWXiNqqzqCGQC2eeoDkcptThqiEe2EWkfkkVutp2GzFDmJe0wMJucNoPdhM8El2CpLeMecirPPLoTXppdkmhbyyRyEX6kFjpOSCMHi7lH1k6vts9Uu3E+H8k+Y8SivrFb0cSY37LTAon935E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621876; c=relaxed/simple;
-	bh=wZzPNrqVuLZwQrAHvo0+wEV3M1B5Giym8LAI8+pNTNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=URMWhKdaNL3XrAd6gDpiQaxWgamJBsxuCwbMNutCEsm3+7HdMYymgoNrSuzc1FbF+P86oIKLSwGj7Cz7yWSWeCEBMVK32IivBssgIP9x17S1tQJ8GpIKpcM7EoOl+LUAIM3LJ3F/VdY5XC75qLJX4u+qPF/0ryCK6/v8dN1Q+ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4EuZVOl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FF0C32782;
-	Wed,  5 Jun 2024 21:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717621875;
-	bh=wZzPNrqVuLZwQrAHvo0+wEV3M1B5Giym8LAI8+pNTNQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=P4EuZVOlBj5OzFkbL9tg8GhIEyFUWBZ4laZp0oWFeyS3gR5zJMJhieUEMfl2JKci5
-	 OUDNB2B76jObgGDMm1TQfcoRSPz8voYRFBtdksaRVek009KvsclDOSYXnJ8zbo1vEz
-	 wrnUfaUhtb1Xuyf15ZJPXKwQPgpSS1Hg03FH1P5Il/1WClDDLcC6w55KgdYbuBSj9G
-	 tOU7G2ErlkxnCIHcn1cBlJXTVVJ+8BJnFOH1TQqlLlt9yBprnRJx+KYVS+MzBWpkrj
-	 T554imcxRI694A1jdkM1IF6P7LCNr27bNFwsEFqGfb0nqbt3hi5R3z66ABAi2oKLZw
-	 ONZ9KrapjbK2g==
-Date: Wed, 5 Jun 2024 16:11:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v7 07/13] PCI: Move dev-enabled status bit to struct
- pci_dev
-Message-ID: <20240605211111.GA779780@bhelgaas>
+	s=arc-20240116; t=1717621934; c=relaxed/simple;
+	bh=LyHLgJkRrurdDRgnBOzirT7zP/ucxLdsMEoWbv6XOwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFkREGy8WLgG6GfqJLj/sHmBm4WddFQK327KJUUryvbpjPWp09IwsvkH/+EJNlhB8F4vpZvkXSCbl9FL2FKa1Ar7e02nygdqh1vyVzd4WzJWO/oEZcXa9oty5N+Rzen1nin+DTWV4tLwC+8pcd2ILX5ZVoS1WeYPWiD9JszDeXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NKWTMt4v; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717621933; x=1749157933;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LyHLgJkRrurdDRgnBOzirT7zP/ucxLdsMEoWbv6XOwA=;
+  b=NKWTMt4vj3JNdzmZPi0A6TPh8sxLZHVDlStMxuWoDFp63nwqHcV4Dg1r
+   3xAD+eH1xfAoZWe/AJPBts5O+/kRAUeHirv6+V0Um/JyRW7BghvjPClmg
+   M6Rky2+uzv2XkOmhQqik3W1oumIoK6wgxPpGHXpQ7ccHBsKBKZWSNSOlr
+   ZgEtkGuhzQecm/LMA0sWQbFpEcuAk6ZAv1d0piVa5oCWDvZff3b6J0m72
+   Wnug9ZDVY84mElRtLjVK7Nna6dj8a16GJ73zoTGG32hs3bNY5+xB6s2xn
+   hLOp6AhT44RFM4Vo2SBYJ2JBDa/lQC6dBb7+SRdmjOA10dHqPxqGbiH/B
+   A==;
+X-CSE-ConnectionGUID: TKMCTLWqQhSG1eVwVIMXvQ==
+X-CSE-MsgGUID: w+sE6wrARZefbPxDhBEL/w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="25662944"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="25662944"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:12:12 -0700
+X-CSE-ConnectionGUID: M+t6oNJWSXC5g247pdi2mg==
+X-CSE-MsgGUID: TcMyoLmrRROziMe/wvpPGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="37735874"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:12:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sExvR-0000000Dy86-3xjO;
+	Thu, 06 Jun 2024 00:12:05 +0300
+Date: Thu, 6 Jun 2024 00:12:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>,
+	Yang Yingliang <yangyingliang@huawei.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Thangaraj Samynathan <thangaraj.s@microchip.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Cc: Serge Semin <fancer.lancer@gmail.com>, Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v1 5/8] spi: pxa2xx: Use new spi_xfer_is_dma_mapped()
+ helper
+Message-ID: <ZmDUpfCfcFUWz9py@smile.fi.intel.com>
+References: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
+ <20240531194723.1761567-6-andriy.shevchenko@linux.intel.com>
+ <Zl4XphMgxEwzPCKA@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,163 +88,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605081605.18769-9-pstanner@redhat.com>
+In-Reply-To: <Zl4XphMgxEwzPCKA@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Jun 05, 2024 at 10:15:59AM +0200, Philipp Stanner wrote:
-> The bit describing whether the PCI device is currently enabled is stored
-> in struct pci_devres. Besides this struct being subject of a cleanup
-> process, struct pci_device is in general the right place to store this
-> information, since it is not devres-specific.
+On Mon, Jun 03, 2024 at 10:21:11PM +0300, Andy Shevchenko wrote:
+> On Fri, May 31, 2024 at 10:42:37PM +0300, Andy Shevchenko wrote:
+> > Replace a few lines of code by calling a spi_xfer_is_dma_mapped() helper.
 > 
-> Move the 'enabled' boolean bit to struct pci_dev.
-
-I think this (and the similar 'pinned' patch) appeared in v6.
-
-It sounds plausible to have this in struct pci_dev, but it's confusing
-to have both:
-
-  pci_dev.enabled
-  pci_dev.enable_cnt, used by pci_is_enabled()
-
-I haven't looked hard enough to see whether both are required.  If
-they are, I think we should rename "enabled" to something descriptive
-enough to make it obviously different from "enable_cnt".
-
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->  drivers/pci/devres.c | 11 ++++-------
->  drivers/pci/pci.c    | 17 ++++++++++-------
->  drivers/pci/pci.h    |  1 -
->  include/linux/pci.h  |  1 +
->  4 files changed, 15 insertions(+), 15 deletions(-)
+> It appears that this patch is based on the cleanup series against the driver
+> that had been sent earlier. Namely this:
+> [v2] spi: pxa2xx: Get rid of an additional layer in PCI driver
 > 
-> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> index 572a4e193879..ea590caf8995 100644
-> --- a/drivers/pci/devres.c
-> +++ b/drivers/pci/devres.c
-> @@ -398,7 +398,7 @@ static void pcim_release(struct device *gendev, void *res)
->  	if (this->restore_intx)
->  		pci_intx(dev, this->orig_intx);
->  
-> -	if (this->enabled && !this->pinned)
-> +	if (!this->pinned)
->  		pci_disable_device(dev);
->  }
->  
-> @@ -441,14 +441,11 @@ int pcim_enable_device(struct pci_dev *pdev)
->  	dr = get_pci_dr(pdev);
->  	if (unlikely(!dr))
->  		return -ENOMEM;
-> -	if (dr->enabled)
-> -		return 0;
->  
->  	rc = pci_enable_device(pdev);
-> -	if (!rc) {
-> +	if (!rc)
->  		pdev->is_managed = 1;
-> -		dr->enabled = 1;
-> -	}
-> +
->  	return rc;
->  }
->  EXPORT_SYMBOL(pcim_enable_device);
-> @@ -466,7 +463,7 @@ void pcim_pin_device(struct pci_dev *pdev)
->  	struct pci_devres *dr;
->  
->  	dr = find_pci_dr(pdev);
-> -	WARN_ON(!dr || !dr->enabled);
-> +	WARN_ON(!dr || !pdev->enabled);
->  	if (dr)
->  		dr->pinned = 1;
->  }
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 8dd711b9a291..04accdfab7ce 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -2011,6 +2011,9 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
->  	u16 cmd;
->  	u8 pin;
->  
-> +	if (dev->enabled)
-> +		return 0;
-> +
->  	err = pci_set_power_state(dev, PCI_D0);
->  	if (err < 0 && err != -EIO)
->  		return err;
-> @@ -2025,7 +2028,7 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
->  	pci_fixup_device(pci_fixup_enable, dev);
->  
->  	if (dev->msi_enabled || dev->msix_enabled)
-> -		return 0;
-> +		goto success_out;
->  
->  	pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &pin);
->  	if (pin) {
-> @@ -2035,6 +2038,8 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
->  					      cmd & ~PCI_COMMAND_INTX_DISABLE);
->  	}
->  
-> +success_out:
-> +	dev->enabled = true;
->  	return 0;
->  }
->  
-> @@ -2193,6 +2198,9 @@ static void do_pci_disable_device(struct pci_dev *dev)
->  {
->  	u16 pci_command;
->  
-> +	if (!dev->enabled)
-> +		return;
-> +
->  	pci_read_config_word(dev, PCI_COMMAND, &pci_command);
->  	if (pci_command & PCI_COMMAND_MASTER) {
->  		pci_command &= ~PCI_COMMAND_MASTER;
-> @@ -2200,6 +2208,7 @@ static void do_pci_disable_device(struct pci_dev *dev)
->  	}
->  
->  	pcibios_disable_device(dev);
-> +	dev->enabled = false;
->  }
->  
->  /**
-> @@ -2227,12 +2236,6 @@ void pci_disable_enabled_device(struct pci_dev *dev)
->   */
->  void pci_disable_device(struct pci_dev *dev)
->  {
-> -	struct pci_devres *dr;
-> -
-> -	dr = find_pci_dr(dev);
-> -	if (dr)
-> -		dr->enabled = 0;
-> -
->  	dev_WARN_ONCE(&dev->dev, atomic_read(&dev->enable_cnt) <= 0,
->  		      "disabling already-disabled device");
->  
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 9fd50bc99e6b..e223e0f7dada 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -823,7 +823,6 @@ static inline pci_power_t mid_pci_get_power_state(struct pci_dev *pdev)
->   * then remove them from here.
->   */
->  struct pci_devres {
-> -	unsigned int enabled:1;
->  	unsigned int pinned:1;
->  	unsigned int orig_intx:1;
->  	unsigned int restore_intx:1;
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 16493426a04f..110548f00b3b 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -367,6 +367,7 @@ struct pci_dev {
->  					   this is D0-D3, D0 being fully
->  					   functional, and D3 being off. */
->  	u8		pm_cap;		/* PM capability offset */
-> +	unsigned int	enabled:1;	/* Whether this dev is enabled */
->  	unsigned int	imm_ready:1;	/* Supports Immediate Readiness */
->  	unsigned int	pme_support:5;	/* Bitmask of states from which PME#
->  					   can be generated */
-> -- 
-> 2.45.0
-> 
+> https://lore.kernel.org/linux-spi/20240530151117.1130792-1-andriy.shevchenko@linux.intel.com/T/#t
+
+Okay, now it should cleanly apply to spi/for-next (and indeed, it does, I just
+checked locally).
+
+> And as others already said, this series is pure cleanup, no need to be backported.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
