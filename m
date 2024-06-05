@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-202995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5198FD475
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:56:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985CC8FD47D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D3C1C21F76
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE1828A9B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DB6194AFD;
-	Wed,  5 Jun 2024 17:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5D4195384;
+	Wed,  5 Jun 2024 17:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEz/nDoH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2L9VbUp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0296E13A26E;
-	Wed,  5 Jun 2024 17:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F945194AE7;
+	Wed,  5 Jun 2024 17:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610190; cv=none; b=FL8PNYCogHbKUIJhggqo9H4V7c+FAqONCU4NeXu8oWjczNwQTX05XCQcB8mStFis8QV4SDmaEP2e6VZQF4qP2bnygPj3BQrxuLIlk9wAldImCcqejxSUbV9gaQpVsF277DPNLkMQXhhyC+kJtfdE0UVAEQGNlnZig0nVuVnhZjs=
+	t=1717610258; cv=none; b=AASIqix5AKmVfRjNaZARJJREq6mKe7IqLGlQXnqa3wP7z8o/9v3z/Ad1uhwDbvxk8X8QDEqbLNsnM5qkdLhs+sGdTXFy3/O/5TJtKv9tT6xRIOY4/5aFUHVwVtFCBz4yqR3Ck3LNJchxeYiBSUqv8UiReeb70TtulJf4Yamtec8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610190; c=relaxed/simple;
-	bh=SNzE0F9enywAXpbx37sfhGTyuSO2Iy8uiW1YPcMF1Dc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIFiQf19y4dKCxv7LV+PYdJUn1F4BAuDkGRUzJ/2I2eGjuBJBp47LttuzeByPSjDT3jMtRs/6RQY6oi5GoYMVawDN3OY3FFP7DplO/gxrNjV7dcZOYLiSNKFhgTqFO5hnoC6VSWJQhvI6GuXUVHbhRN0Ns86dwHrkIiqESNehms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEz/nDoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1473BC2BD11;
-	Wed,  5 Jun 2024 17:56:26 +0000 (UTC)
+	s=arc-20240116; t=1717610258; c=relaxed/simple;
+	bh=5xiole/Tr3AD+9b0Q/wOoCRfWiyuQJRvDEkgUsd3gyg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jl34vOlFsOuMjtXuH+FWpUwf/mHNG3w67TntDfFqmrRz6XFSNDlDXHqdREi4CcfJq9KhekUOsWcsfSxH4zk9Od4aO3QHkKGOfKU7kmz5X06D49QNQccfJxeppZdPNzw6KrpoI+th0rJNWGUfcNWnZCDEXK8cGWWMTG4QUA74FkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2L9VbUp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112AAC32781;
+	Wed,  5 Jun 2024 17:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717610189;
-	bh=SNzE0F9enywAXpbx37sfhGTyuSO2Iy8uiW1YPcMF1Dc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UEz/nDoH7s82EQnTwVzzeG15BOpK5GJlr9WAW3VNhJXcoL19pKBtCAea+URGa6Avw
-	 F/MDrcZe8922kwzTJ2yUQhCSZv2DoyQgJn/PdA/wWzSAjivbG164pcspqFPMpkmB8/
-	 8pLXCvAOt5cHKS/LnU/L4vmTx9ut0i6FuyGJP8HHZ7/nhlKAn4088tYwvgIPFUKfqq
-	 dIJTtteJKT/kX8//XAqJ4VxSvxeTk44TyhUWIHPGE6ldpCawXhzhKc6W5KIyw5OwMa
-	 3H7qUe9GdOrMaD9svpkhwlH+lBksHM+tnS3ISRftFKgF2YZDV8or0PPgkRMD4UeDlG
-	 MlzQbiAEuHl7w==
-Date: Wed, 5 Jun 2024 18:56:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alex Bee <knaerzche@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: rk3128: Add HCLK_SFC
-Message-ID: <20240605-proponent-ion-d78e863ca7b5@spud>
-References: <20240605172154.193047-1-knaerzche@gmail.com>
- <20240605172154.193047-2-knaerzche@gmail.com>
+	s=k20201202; t=1717610258;
+	bh=5xiole/Tr3AD+9b0Q/wOoCRfWiyuQJRvDEkgUsd3gyg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=S2L9VbUpLkXkuWlvuw1svpdrFnnMRmPY7V5Lum1aOxruIyiBsWztC1GlZsSa3dwAj
+	 qo5aKN4zHZrBVXd3R+1e/a0m8+0PNQgkKb0OthrcBwvBZKX1nrO+nL6XGxE6mWBuef
+	 iGY9kUeKLlp7Ts0zZQLNmMT0fGUB/31psNycdKv3tHP1qNYjwc0b8W8/pbJdcbBIHr
+	 aIhZQEBrfpdE5eRYql4LYLIcAbQYPTQHm6zcMWbb+7a7IhJvY5WQGd4Vj5vYqigzkZ
+	 rzSTJIM2Zv5/LD2XmRkWI8tiToe+EJ9HJJKJpP/Wrlzg3ygaOTkAbOaWxCYQjc48ps
+	 BSRQ6CJ7YumXA==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6f9391798eeso4631a34.0;
+        Wed, 05 Jun 2024 10:57:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWIGJ1MN+rOjPVg/QZbWCGRONzN4sn7rSXgXUUouBjn7Y4/81caWJ6G+ggBvMLWxjIaI3jBLCMFpeRiarET+rEoKw/qhMemYyQtIFE1
+X-Gm-Message-State: AOJu0YxR1c35o7DpQhqtynFKXznIztE3MEo54J5V+5oWXck6bA56ilRu
+	mqJbk5VSk4uPD1jgvsj7zAKIXVLVRUjRgOzkM0mNDypbw4IuxIVU3l9WP5Ec4ce/zUaDMUXbBGW
+	x5ZmLCMJSumYFbQtTAzWhGvohT8A=
+X-Google-Smtp-Source: AGHT+IHdcc9QK+373wV85FKkZ3g8ff5pvF1JaFH9USZN2Kbj0yVAXLKtMjxReXDt7gT7jiivWctxeXO4YduU9zV9Y9g=
+X-Received: by 2002:a05:6870:c6a2:b0:24f:cabc:4fa3 with SMTP id
+ 586e51a60fabf-25121872124mr3693741fac.0.1717610257244; Wed, 05 Jun 2024
+ 10:57:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IkMWFnV2LSveQRFT"
-Content-Disposition: inline
-In-Reply-To: <20240605172154.193047-2-knaerzche@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 5 Jun 2024 19:57:26 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j5oMnhKttGUxwxAXWC8Q+_0e6HUjTFCumk8WLk9zNRRA@mail.gmail.com>
+Message-ID: <CAJZ5v0j5oMnhKttGUxwxAXWC8Q+_0e6HUjTFCumk8WLk9zNRRA@mail.gmail.com>
+Subject: [GIT PULL] Power management fixes for v6.10-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Linus,
+
+Please pull from the tag
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.10-rc3
+
+with top-most commit 9b7e7ff0fe44bc6e571ecddbd76fcea7498033c1
+
+ Merge branch 'pm-cpufreq'
+
+on top of commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+
+ Linux 6.10-rc1
+
+to receive power management fixes for 6.10-rc3.
+
+These fix the intel_pstate and amd-pstate cpufreq drivers and the
+cpupower utility.
+
+Specifics:
+
+ - Fix a recently introduced unchecked HWP MSR access in the
+   intel_pstate driver (Srinivas Pandruvada).
+
+ - Add missing conversion from MHz to KHz to amd_pstate_set_boost()
+   to address sysfs inteface inconsistency and fix P-state frequency
+   reporting on AMD Family 1Ah CPUs in the cpupower utility (Dhananjay
+   Ugwekar).
+
+ - Get rid of an excess global header file used by the amd-pstate
+   cpufreq driver (Arnd Bergmann).
+
+Thanks!
 
 
---IkMWFnV2LSveQRFT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---------------
 
-On Wed, Jun 05, 2024 at 07:21:52PM +0200, Alex Bee wrote:
-> Add a clock id for SFC's AHB clock.
+Arnd Bergmann (1):
+      cpufreq: amd-pstate: remove global header file
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Dhananjay Ugwekar (2):
+      tools/power/cpupower: Fix Pstate frequency reporting on AMD
+Family 1Ah CPUs
+      cpufreq: amd-pstate: Fix the inconsistency in max frequency units
 
-Thanks,
-Conor.
+Srinivas Pandruvada (1):
+      cpufreq: intel_pstate: Fix unchecked HWP MSR access
 
---IkMWFnV2LSveQRFT
-Content-Type: application/pgp-signature; name="signature.asc"
+---------------
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmCmyAAKCRB4tDGHoIJi
-0kr2AP9CcJSE0xRZszok5aIlAw4wAVI+sOpC9KTCCLbELcfxoAEAjH2YTfqU+eA7
-7Cbv3vSQO00bE61flXDiiId5PhMPBgs=
-=3UhK
------END PGP SIGNATURE-----
-
---IkMWFnV2LSveQRFT--
+ MAINTAINERS                                     |  1 -
+ drivers/cpufreq/amd-pstate-ut.c                 |  3 ++-
+ drivers/cpufreq/amd-pstate.c                    | 36 +++++++++++++++++++++++--
+ {include/linux => drivers/cpufreq}/amd-pstate.h | 33 -----------------------
+ drivers/cpufreq/intel_pstate.c                  |  3 ++-
+ tools/power/cpupower/utils/helpers/amd.c        | 26 +++++++++++++++---
+ 6 files changed, 61 insertions(+), 41 deletions(-)
 
