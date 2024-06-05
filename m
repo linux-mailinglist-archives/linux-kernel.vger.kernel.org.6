@@ -1,227 +1,200 @@
-Return-Path: <linux-kernel+bounces-201664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293568FC17C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:02:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019A28FC17D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AECB2844BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:02:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 453F4B250F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEF714293;
-	Wed,  5 Jun 2024 02:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A954AEE7;
+	Wed,  5 Jun 2024 02:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BqR2CXy1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GgGhPdTg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477134AEE7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 02:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C940F503
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 02:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717552944; cv=none; b=nAIwSUj5hLQLUpr7X7fPOKAumuBpuiCXDANfTFHe3uA/mCCYFvIDxHvfkkqfMjsZS1NZhrJRWaDG0KthfajJjdzKrhQ6I3YpNAq7B4GHKcBRNu+rTB6DbhVOwDG9aB+JyfXhViljAax4Y9y5Zfglr/VbYjQxyuXjehud9Eq1h1k=
+	t=1717553043; cv=none; b=ZTttftI59N8VVRXJgpP7hwUbE23Yow/crEwDDrihCD2zX8qhvH+HTXyasMbU1LEIXxsvTbXOwoMdzc8C7ICrkqZdNbzOEBYvQyphIslpJO81DU2K3lGXfvNFfevUIXMvonIG5JHdM6jdE+r3L3BFwJFzeAj/b2mrK41+ihywGGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717552944; c=relaxed/simple;
-	bh=DVudwJDdRkFCO/7DezhJu4C8/HNl1KHfIYtmD/xTOpU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=McW/Sgrm+iGycWh9wmtaDkhCQTpa12tPkFMXGJk2BvEMFBmH3UuDD2txVQjJtZdcMZX4yHY9rOsisWPtFM7Tc2yn4VZpaFyvnRu8oMHPUIWdumEwqDpj5ECmM1Jcsevf0xJUw+sAeJaR8QvKhMdVqG84S8b75ezt0X5ATbH6E+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BqR2CXy1; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1717553043; c=relaxed/simple;
+	bh=6mehi3CoPBEEy+f+M0kPGZBBjoi2oPFm16L/sOvB6ZI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sAzflmoZCMOFen4CJEyeNhHiQ5BDlg1U9j1Di2dpFbv9O+xiElIdr8/+PhoqeWLww3Bkwsan2hR2yIgkFo41obtw4FRhhf2fcBF3/v3TtJ0yqfNnBp5T6+2Kzyx8L+/mFqiayrk1b4dX0SmnXhw70yBPK6pa9uKLnffFS1VzpKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GgGhPdTg; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717552943; x=1749088943;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=DVudwJDdRkFCO/7DezhJu4C8/HNl1KHfIYtmD/xTOpU=;
-  b=BqR2CXy1+3Jj04Lpa1KPl87ywlpCBAs79nr4RVvkm5njy/0wXhH0hhNl
-   gH14gFdCsCGsIzYyCU5IDoxsTq2hJQH0x6jyw+VWVZ7hJ+f/0M0kDFDXQ
-   fp1ZDdX56owIHQYqFw9qw4zS/Juv+A0x6RmxO6uOz7uzEzmD7sHgH/85o
-   ljhiI/25Le8JXx+Jwa1exWIWkGBZe4vD5qpQEMiQtm1yzXygDUjbAklUI
-   7CBS35Mey2dOzNaIo03mpLv2h42JuBjrk+ajpGlCgOAiawGxmcJW9RMoB
-   +TX+0RRwqcY50evKDTMAllxA63SDIgCzcQDotYWDznYiqdq4m5cMW/DQU
-   w==;
-X-CSE-ConnectionGUID: gPwMVJZHTFWHGl29UBXAew==
-X-CSE-MsgGUID: llb4Z1KMSF2xk/i1ShVz8w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13942511"
+  t=1717553041; x=1749089041;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=6mehi3CoPBEEy+f+M0kPGZBBjoi2oPFm16L/sOvB6ZI=;
+  b=GgGhPdTgoBW6KbCknGXAhVLvFM6gE1vqSaj+199Su5vYryvOcua7uMEU
+   k6T3V8bdtc9q5fFxXnD52znhU/GtgHNmWHGPuPhRz5bOgg+pwzhETSu6l
+   iwS1YmPDkp+AS4H2UHd7ZBVXf1RPXAP1/zg3ILUYuBoYjlhFegU/jsP4e
+   MKLzqFgNIZpDyAJekeEVHN4BRDxSj8AoofZkC7Ir/39dk33AoWdP4K4Io
+   KpZirPc4xQJE2wa7S338EfexQWh4pdolxPeiXOaJQwngIIH9KMJSDqMT6
+   bhO1Xe/IU2GTsZuXIYr9IpJ2mxC7H7MgViOGQ40TsCes9TGAX9i+WlJ/C
+   Q==;
+X-CSE-ConnectionGUID: TrhITBZuTAaVqHAk3XuKlw==
+X-CSE-MsgGUID: /Kwr8X9BRoK+YVdY68qayQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14269847"
 X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
-   d="scan'208";a="13942511"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 19:02:23 -0700
-X-CSE-ConnectionGUID: RItW8yqwTuq9l9wOE2V1jA==
-X-CSE-MsgGUID: e3RctwFJShOkhwUisZR8pg==
+   d="scan'208";a="14269847"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 19:04:01 -0700
+X-CSE-ConnectionGUID: KXtnQgulR5WKLLd9IyILJw==
+X-CSE-MsgGUID: 2TVHDZuTTQ2VE9BfPFjcLQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
-   d="scan'208";a="37870969"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa006.jf.intel.com with ESMTP; 04 Jun 2024 19:02:17 -0700
-Message-ID: <91a42f46-060a-4430-a10a-7bfded67c4a9@linux.intel.com>
-Date: Wed, 5 Jun 2024 10:00:09 +0800
+   d="scan'208";a="37440309"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 19:03:59 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: <akpm@linux-foundation.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-mm@kvack.org>,  <kernel_team@skhynix.com>,  <hannes@cmpxchg.org>,
+  <iamjoonsoo.kim@lge.com>,  <rientjes@google.com>
+Subject: Re: [PATCH v2] mm: let kswapd work again for node that used to be
+ hopeless but may not now
+In-Reply-To: <20240605015021.GB75311@system.software.com> (Byungchul Park's
+	message of "Wed, 5 Jun 2024 10:50:21 +0900")
+References: <20240604072323.10886-1-byungchul@sk.com>
+	<87bk4hcf7h.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<20240604084533.GA68919@system.software.com>
+	<8734ptccgi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<20240605015021.GB75311@system.software.com>
+Date: Wed, 05 Jun 2024 10:02:07 +0800
+Message-ID: <87tti8b10g.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
- Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, iommu@lists.linux.dev,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/22] iommu: Add iommu_user_domain_alloc() interface
-To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-References: <20240604015134.164206-1-baolu.lu@linux.intel.com>
- <20240604015134.164206-2-baolu.lu@linux.intel.com>
- <445fae9f-ea1e-4864-9f0e-f348c51146a1@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <445fae9f-ea1e-4864-9f0e-f348c51146a1@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
-On 6/4/24 4:03 PM, Yi Liu wrote:
-> On 2024/6/4 09:51, Lu Baolu wrote:
->> Commit <909f4abd1097> ("iommu: Add new iommu op to create domains owned
->> by userspace") added a dedicated iommu op to allocate a user domain.
->> While IOMMUFD has already made use of this callback, other frameworks
->> like vfio/type1 and vDPA still use the paging domain allocation 
->> interface.
->>
->> Add a new interface named iommu_user_domain_alloc(), which indicates the
->> allocation of a domain for device DMA managed by user space driver. All
->> device passthrough frameworks could use this interface for their domain
->> allocation.
->>
->> Although it is expected that all iommu drivers could implement their own
->> domain_alloc_user ops, most drivers haven't implemented it yet. Rollback
->> to the paging domain allocation interface if the iommu driver hasn't
->> implemented this op yet.
->>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   include/linux/iommu.h |  6 ++++++
->>   drivers/iommu/iommu.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->>   2 files changed, 48 insertions(+)
->>
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index 7bc8dff7cf6d..6648b2415474 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -780,6 +780,7 @@ extern bool iommu_present(const struct bus_type 
->> *bus);
->>   extern bool device_iommu_capable(struct device *dev, enum iommu_cap 
->> cap);
->>   extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
->>   extern struct iommu_domain *iommu_domain_alloc(const struct bus_type 
->> *bus);
->> +struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 
->> flags);
->>   extern void iommu_domain_free(struct iommu_domain *domain);
->>   extern int iommu_attach_device(struct iommu_domain *domain,
->>                      struct device *dev);
->> @@ -1086,6 +1087,11 @@ static inline struct iommu_domain 
->> *iommu_domain_alloc(const struct bus_type *bus
->>       return NULL;
->>   }
->> +static inline struct iommu_domain *iommu_user_domain_alloc(struct 
->> device *dev, u32 flags)
->> +{
->> +    return ERR_PTR(-ENODEV);
->> +}
->> +
->>   static inline void iommu_domain_free(struct iommu_domain *domain)
->>   {
->>   }
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 9df7cc75c1bc..f1416892ef8e 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -2032,6 +2032,48 @@ struct iommu_domain *iommu_domain_alloc(const 
->> struct bus_type *bus)
->>   }
->>   EXPORT_SYMBOL_GPL(iommu_domain_alloc);
->> +/**
->> + * iommu_user_domain_alloc() - Allocate a user domain
->> + * @dev: device for which the domain is allocated
->> + * @flags: iommufd_hwpt_alloc_flags defined in uapi/linux/iommufd.h
->> + *
->> + * Allocate a user domain which will be managed by a userspace 
->> driver. Return
->> + * allocated domain if successful, or a ERR pointer for failure.
-> 
-> do you want to mention that this is for paging domain allocation?
+Byungchul Park <byungchul@sk.com> writes:
 
-You are worrying about its confusion with nesting domain allocation,
-right? My understanding is that if we want a common interface for
-nesting domain allocation, we should make it in another interface. Here,
-the user domain is a paging domain for GVA->HPA mapping, which is common
-across iommufd, vfio, and vdpa.
+> On Tue, Jun 04, 2024 at 04:57:17PM +0800, Huang, Ying wrote:
+>> Byungchul Park <byungchul@sk.com> writes:
+>> 
+>> > On Tue, Jun 04, 2024 at 03:57:54PM +0800, Huang, Ying wrote:
+>> >> Byungchul Park <byungchul@sk.com> writes:
+>> >> 
+>> >> > Changes from v1:
+>> >> > 	1. Don't allow to resume kswapd if the system is under memory
+>> >> > 	   pressure that might affect direct reclaim by any chance, like
+>> >> > 	   if NR_FREE_PAGES is less than (low wmark + min wmark)/2.
+>> >> >
+>> >> > --->8---
+>> >> > From 6c73fc16b75907f5da9e6b33aff86bf7d7c9dd64 Mon Sep 17 00:00:00 2001
+>> >> > From: Byungchul Park <byungchul@sk.com>
+>> >> > Date: Tue, 4 Jun 2024 15:27:56 +0900
+>> >> > Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
+>> >> >
+>> >> > A system should run with kswapd running in background when under memory
+>> >> > pressure, such as when the available memory level is below the low water
+>> >> > mark and there are reclaimable folios.
+>> >> >
+>> >> > However, the current code let the system run with kswapd stopped if
+>> >> > kswapd has been stopped due to more than MAX_RECLAIM_RETRIES failures
+>> >> > until direct reclaim will do for that, even if there are reclaimable
+>> >> > folios that can be reclaimed by kswapd.  This case was observed in the
+>> >> > following scenario:
+>> >> >
+>> >> >    CONFIG_NUMA_BALANCING enabled
+>> >> >    sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
+>> >> >    numa node0 (500GB local DRAM, 128 CPUs)
+>> >> >    numa node1 (100GB CXL memory, no CPUs)
+>> >> >    swap off
+>> >> >
+>> >> >    1) Run a workload with big anon pages e.g. mmap(200GB).
+>> >> >    2) Continue adding the same workload to the system.
+>> >> >    3) The anon pages are placed in node0 by promotion/demotion.
+>> >> >    4) kswapd0 stops because of the unreclaimable anon pages in node0.
+>> >> >    5) Kill the memory hoggers to restore the system.
+>> >> >
+>> >> > After restoring the system at 5), the system starts to run without
+>> >> > kswapd.  Even worse, tiering mechanism is no longer able to work since
+>> >> > the mechanism relies on kswapd for demotion.
+>> >> 
+>> >> We have run into the situation that kswapd is kept in failure state for
+>> >> long in a multiple tiers system.  I think that your solution is too
+>> >
+>> > My solution just gives a chance for kswapd to work again even if
+>> > kswapd_failures >= MAX_RECLAIM_RETRIES, if there are potential
+>> > reclaimable folios.  That's it.
+>> >
+>> >> limited, because OOM killing may not happen, while the access pattern of
+>> >
+>> > I don't get this.  OOM will happen as is, through direct reclaim.
+>> 
+>> A system that fails to reclaim via kswapd may succeed to reclaim via
+>> direct reclaim, because more CPUs are used to scanning the page tables.
+>
+> Honestly, I don't think so with this description.
+>
+> The fact that the system hit MAX_RECLAIM_RETRIES means the system is
+> currently hopeless unless reclaiming folios in a stronger way by *direct
+> reclaim*.  The solution for this situation should not be about letting
+> more CPUs particiated in reclaiming, again, *at least in this situation*.
+>
+> What you described here is true only in a normal state where the more
+> CPUs work on reclaiming, the more reclaimable folios can be reclaimed.
+> kswapd can be a helper *only* when there are kswapd-reclaimable folios.
 
-> 
->> + */
->> +struct iommu_domain *iommu_user_domain_alloc(struct device *dev, u32 
->> flags)
->> +{
->> +    struct iommu_domain *domain;
->> +    const struct iommu_ops *ops;
->> +
->> +    if (!dev_has_iommu(dev))
->> +        return ERR_PTR(-ENODEV);
->> +
->> +    ops = dev_iommu_ops(dev);
->> +    if (ops->domain_alloc_user) {
->> +        domain = ops->domain_alloc_user(dev, flags, NULL, NULL);
->> +        if (IS_ERR(domain))
->> +            return domain;
->> +
->> +        domain->type = IOMMU_DOMAIN_UNMANAGED;
->> +        domain->owner = ops;
->> +        domain->pgsize_bitmap = ops->pgsize_bitmap;
-> 
-> this seems to break the iommufd selftest as the mock driver sets extra
-> bits in the domain->pgsize_bitmap in allocation. Override it may fail
-> something in the testing. you may need to check if domain->pgsize_bitmap
-> is set or use &=.
-> 
-> static struct iommu_domain *mock_domain_alloc_paging(struct device *dev)
-> {
->      struct mock_dev *mdev = container_of(dev, struct mock_dev, dev);
->      struct mock_iommu_domain *mock;
-> 
->      mock = kzalloc(sizeof(*mock), GFP_KERNEL);
->      if (!mock)
->          return NULL;
->      mock->domain.geometry.aperture_start = MOCK_APERTURE_START;
->      mock->domain.geometry.aperture_end = MOCK_APERTURE_LAST;
->      mock->domain.pgsize_bitmap = MOCK_IO_PAGE_SIZE;
->      if (dev && mdev->flags & MOCK_FLAGS_DEVICE_HUGE_IOVA)
->          mock->domain.pgsize_bitmap |= MOCK_HUGE_PAGE_SIZE;
->      mock->domain.ops = mock_ops.default_domain_ops;
->      mock->domain.type = IOMMU_DOMAIN_UNMANAGED;
->      xa_init(&mock->pfns);
->      return &mock->domain;
-> }
+Sometimes, we cannot reclaim just because we doesn't scan fast enough so
+the Accessed-bit is set again during scanning.  With more CPUs, we can
+scan faster, so make some progress.  But, yes, this only cover one
+situation, there are other situations too.
 
-You are right. I should follow the code in __iommu_domain_alloc()
+--
+Best Regards,
+Huang, Ying
 
-         /*
-          * If not already set, assume all sizes by default; the driver
-          * may override this later
-          */
-         if (!domain->pgsize_bitmap)
-                 domain->pgsize_bitmap = ops->pgsize_bitmap;
-
-Does it work?
-
-Best regards,
-baolu
+> 	Byungchul
+>
+>> In a system with NUMA balancing based page promotion and page demotion
+>> enabled, page promotion will wake up kswapd, but kswapd may fail in some
+>> situations.  But page promotion will no trigger direct reclaim or OOM.
+>> 
+>> >> the workloads may change.  We have a preliminary and simple solution for
+>> >> this as follows,
+>> >> 
+>> >> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=17a24a354e12d4d4675d78481b358f668d5a6866
+>> >
+>> > Whether tiering is involved or not, the same problem can arise if
+>> > kswapd gets stopped due to kswapd_failures >= MAX_RECLAIM_RETRIES.
+>> 
+>> Your description is about tiering too.  Can you describe a situation
+>> without tiering?
+>> 
+>> --
+>> Best Regards,
+>> Huang, Ying
+>> 
+>> > 	Byungchul
+>> >
+>> >> where we will try to wake up kswapd to check every 10 seconds if kswapd
+>> >> is in failure state.  This is another possible solution.
+>> >> 
+>> >> > However, the node0 has pages newly allocated after 5), that might or
+>> >> > might not be reclaimable.  Since those are potentially reclaimable, it's
+>> >> > worth hopefully trying reclaim by allowing kswapd to work again.
+>> >> >
+>> >> 
+>> >> [snip]
+>> >> 
+>> >> --
+>> >> Best Regards,
+>> >> Huang, Ying
 
