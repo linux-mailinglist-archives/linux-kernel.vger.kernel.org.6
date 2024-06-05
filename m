@@ -1,275 +1,362 @@
-Return-Path: <linux-kernel+bounces-202780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7696B8FD0F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C878FD0FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F451F265B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A7971F26B7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC14D25601;
-	Wed,  5 Jun 2024 14:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14874208D1;
+	Wed,  5 Jun 2024 14:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WaqA7Eq+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fr1Q5aPk"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDB11B5AA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FFC19D8BE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717598367; cv=none; b=C8OTcvsXR8RxNxACq582cqBcLUSY47qkDvVsrg9WpWKCbS45xtb2kb8yTiLvAAnWxZCktyTYOr2xbZ00wdwLTuVwaai2+YoB4W4X4OnqvuDssANgMCOxhtNvUqvsWh0HACgkdxavsICp4zmwMle6iftUgQ4bhGMi1BYvYYsvXUc=
+	t=1717598440; cv=none; b=OLXaWJAecFzRkVofKOWB/P06txh3i3BaY5SvF0nY/ywCMcfuLL4yRJh5Z2lOdO3miSdQEMAM644IS2kqRanSyjmRnxmKjOz1WtP++qv26FOsXjQGob2uEnfTvf08Ka3cWxHcB/lG9tuyCk67QC4/Ex91BYMsFfzVGcIqk47UYaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717598367; c=relaxed/simple;
-	bh=Wlqt5CGsPx2/fPJl3GbzpCwx7K0CV0Ro7rqrsWeiSWA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PX4x11XKYpB1qVvXOooam7CYPSmmwW5K4WDgdjCzflKurMYEp6c/QOvU+eVH9zkftNGtguBPYBFtU43rTR5jHAACvnkpf9z/tuHxJVrBRtmLEVmbyBbmvo6YUUQKh8FJ08cziNcyvz5/dTv0AoeCTG5JwTXlOfBI6Vek3xbVt9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WaqA7Eq+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717598365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CA/B9zN9yBH+VZdI5j5Tw4Q/m+51LN5pfqTQLeU79bU=;
-	b=WaqA7Eq+DFDGj5J5lALk8QAqiVxiJYpRGoaHOKCxDLXyUWdGXf7rIfXa/PsMuSbgLgwx1K
-	GlRdBSDSpiijN7G7nrAsj8wO1r2LpQeDiQAW1uS6eBgs8uyIEApuoMO4YKkDF5NfMj5dP2
-	IKm04i7L91xWBUG4RVuaubKCn60DRpg=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-461-mbO81JCPM26bLTtmc9e4yw-1; Wed, 05 Jun 2024 10:39:23 -0400
-X-MC-Unique: mbO81JCPM26bLTtmc9e4yw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42158087ac3so4073395e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:39:22 -0700 (PDT)
+	s=arc-20240116; t=1717598440; c=relaxed/simple;
+	bh=4ckaaGEKU0bnqyjAnB76jWB9HaZqPAp0tPWrSiZqfUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iGxUGICDLUirabAykjOePcIu0LNUJE3ZAa2yy0M3B36ci8s1+/5geDcIOIk8HR+RP4RxcCH7eSWDWb0STRY++e1nYpX3XEqnPTdkU6ffNXovFozcYOMAZUPGBsBQaEzHf9/1Z3X0x61p1iIRP4igFcnEEj/Ap4JzBeYiu+iZ9PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fr1Q5aPk; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a690c8e64bdso1845566b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717598436; x=1718203236; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/dXP8W3T7Khl5483XJNQT88inD0u+g8r/CZGBhw3b8s=;
+        b=fr1Q5aPk1w2vdYyWcZiur4newnBrlPEdrLIKQW43wYoIWeiUQ5IlZR1a65KiICxBF1
+         mZfm1dTMsYbRye8IIIKIjvIDSIF4rhAcNNPVZCMNlWQ9AKbzfGqBhhP0zX3jY0FrKKXj
+         hj8k/305p/LKlcCglDBaCCDXOsU9HjKnP5NgjVM+/ASbZrqCEjKfOPSv+q7RC4Ab0/QF
+         XaUHUkKyYCyf+pLVGUvbyqWBgDDoCcaJq2jmTLXRGGLQgpT6aFCcRqqFBIRjBb5sebG7
+         kytB4gnQ/mw6uDupeljEnH01KshpHf3S82Ztxt5gRXMSRZiMtKL+RrV3ChpNOy+XGaOd
+         7H+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717598360; x=1718203160;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CA/B9zN9yBH+VZdI5j5Tw4Q/m+51LN5pfqTQLeU79bU=;
-        b=vyILYqKVx0pf6MYve3VAPcEDL+V9CR8uBT4ecRlzT3z8f9T321A1Ko9ifXBuMF6fvF
-         VMQjfdKEEkp0YXWcwlWKo67ZLyOF8k7tlfEb+w0bUffhoFjsTKdVN9vmp9uiUiUCH4Cr
-         oYB6a5iquE7Qg9IdAf/KJxPoAuf4ptckv4nQBTjcnb4GZXe6ViYQAMbFH6wHpJ7ZXZFV
-         P6I6Ai+BPclsdBE9MikNifJj3aL/kzE7r2fAD3ANvyvwOkHQw92h/V4QJeq1KrR3ipBu
-         Nft2nyTk+YKCBXL60TrlQVGacMITZXCcfOFD30zETsK+32Jda6NrReuby66QlV2/x8Xu
-         Guzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSf3Iw+GlhKvrnz6SG/xmwOApJ5E4xoPisjVFJtLo7/OQY9+U52N0Z9u0nJWr9uYbA6WuCqWXCfYUPgmnMxdJDkSWFyagNQRzKKJwH
-X-Gm-Message-State: AOJu0YwoNkmu96cNDAkKi8NzFWRO/Y65o6ZQI064E1KB0wgz1+Xn/jDJ
-	Yq+Oz9PPYOk+LKx+Upe066LSL1cMrC3Jbqy9BVly1buP6bUadrm3HKYjZIjbUDYBkRSIpC4ehW2
-	A9jjupEkrY5E3v9CcjoR2PFPg08o3A6N49QDsuHDpu+EXHMFMYkn5x3QgUw1CYg==
-X-Received: by 2002:a05:6000:d86:b0:355:1759:db18 with SMTP id ffacd0b85a97d-35e8ef17b36mr1764709f8f.29.1717598359775;
-        Wed, 05 Jun 2024 07:39:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGnhh+zq8OOs0lO4LDZRr22xIUOu01qZq4BIHyJxbsxHpehZK37CZodePmt4TszO7CV1DsRiA==
-X-Received: by 2002:a05:6000:d86:b0:355:1759:db18 with SMTP id ffacd0b85a97d-35e8ef17b36mr1764677f8f.29.1717598359317;
-        Wed, 05 Jun 2024 07:39:19 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:3100:19a8:d898:8e69:6aff? (p200300cbc706310019a8d8988e696aff.dip0.t-ipconnect.de. [2003:cb:c706:3100:19a8:d898:8e69:6aff])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd064b030sm14781164f8f.105.2024.06.05.07.39.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 07:39:18 -0700 (PDT)
-Message-ID: <8580a462-eadc-4fa5-b01a-c0b8c3ae644d@redhat.com>
-Date: Wed, 5 Jun 2024 16:39:17 +0200
+        d=1e100.net; s=20230601; t=1717598436; x=1718203236;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/dXP8W3T7Khl5483XJNQT88inD0u+g8r/CZGBhw3b8s=;
+        b=gYUJnEyTDLVeSRM+Rv18mm+29axRyafd8MMtcSG1yln5CRUxIB4d44IGzcDdwFXaHw
+         Cw+kFdjUdq0xdD+qcONE4sAjT6A7aeKXCf2t0J6wFeTjZwNVJdUiWCV5xW7DfD7EPou4
+         HwwMI5Szh3AxTs55veIi4VpOjoDrCJQ2e3VyazEc3vWbIbLMls+Jq6LjYPquLH6LWgzc
+         jRMgaMxyHBbfzORv5sOcnry33yLEM6mKjOJ1NhLmjiOOEnLdg4mhYgvD/QlprvjGziTS
+         gtsc8vqzZknKaSD+dnsd7FraEcS5vshDUOBnz3FwB4Dua1XK6sDqvOy9J5aUnFhoguYM
+         iBHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWzfh6dU9zx83TXVtAZBq0o95Mea8KN9Cjo168AwA7s4cbRom0KP2tz+iEMyzN4bnzbd3xUAFUWererHdO92USkQ1s9E50RUd4gTZm
+X-Gm-Message-State: AOJu0Yze59zrWGlYWzPSg3+nNTYQ5CmAReSeB0JCjrKIepdvu3MJChcq
+	xULwaUURkZPc9wH8mV4kQYIGqX63EbsaAuZoTVIVM9JiFBvTaATsqGIORGc/YSU3+ly2E/g7XLG
+	GncWj9NqFCB10lTHQFM9z/GrFMhM=
+X-Google-Smtp-Source: AGHT+IFwftgmzPekvVa7FJHoK6b0fzuiY+Cg308D6F7IsLWcswNUE9qQYgOuUutwb9XcdJO3S2TOTvX2OQeXZJElVhQ=
+X-Received: by 2002:a50:8e1c:0:b0:57a:1c24:8b9 with SMTP id
+ 4fb4d7f45d1cf-57a8bc9bd05mr2346508a12.29.1717598436213; Wed, 05 Jun 2024
+ 07:40:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] mm/rmap: integrate PMD-mapped folio splitting into
- pagewalk loop
-From: David Hildenbrand <david@redhat.com>
-To: Lance Yang <ioworker0@gmail.com>, Yin Fengwei <fengwei.yin@intel.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org,
- baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com,
- ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com,
- fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com,
- xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com,
- songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240521040244.48760-1-ioworker0@gmail.com>
- <20240521040244.48760-3-ioworker0@gmail.com>
- <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com>
- <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
- <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240521040244.48760-1-ioworker0@gmail.com> <20240521040244.48760-4-ioworker0@gmail.com>
+ <ede2a2ad-1046-4967-a930-692cfa829c7b@redhat.com>
+In-Reply-To: <ede2a2ad-1046-4967-a930-692cfa829c7b@redhat.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Wed, 5 Jun 2024 22:40:24 +0800
+Message-ID: <CAK1f24=n308-uTumWHP=kRVqdbwVoBsX3eB00LDFk05x0JXm7g@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
+	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
+	ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com, 
+	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
+	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
+	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05.06.24 16:28, David Hildenbrand wrote:
-> On 05.06.24 16:20, Lance Yang wrote:
->> Hi David,
->>
->> On Wed, Jun 5, 2024 at 8:46 PM David Hildenbrand <david@redhat.com> wrote:
->>>
->>> On 21.05.24 06:02, Lance Yang wrote:
->>>> In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
->>>> folios, start the pagewalk first, then call split_huge_pmd_address() to
->>>> split the folio.
->>>>
->>>> Since TTU_SPLIT_HUGE_PMD will no longer perform immediately, we might
->>>> encounter a PMD-mapped THP missing the mlock in the VM_LOCKED range during
->>>> the page walk. It’s probably necessary to mlock this THP to prevent it from
->>>> being picked up during page reclaim.
->>>>
->>>> Suggested-by: David Hildenbrand <david@redhat.com>
->>>> Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
->>>> ---
->>>
->>> [...] again, sorry for the late review.
->>
->> No worries at all, thanks for taking time to review!
->>
->>>
->>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>> index ddffa30c79fb..08a93347f283 100644
->>>> --- a/mm/rmap.c
->>>> +++ b/mm/rmap.c
->>>> @@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->>>>         if (flags & TTU_SYNC)
->>>>                 pvmw.flags = PVMW_SYNC;
->>>>
->>>> -     if (flags & TTU_SPLIT_HUGE_PMD)
->>>> -             split_huge_pmd_address(vma, address, false, folio);
->>>> -
->>>>         /*
->>>>          * For THP, we have to assume the worse case ie pmd for invalidation.
->>>>          * For hugetlb, it could be much worse if we need to do pud
->>>> @@ -1668,20 +1665,35 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->>>>         mmu_notifier_invalidate_range_start(&range);
->>>>
->>>>         while (page_vma_mapped_walk(&pvmw)) {
->>>> -             /* Unexpected PMD-mapped THP? */
->>>> -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
->>>> -
->>>>                 /*
->>>>                  * If the folio is in an mlock()d vma, we must not swap it out.
->>>>                  */
->>>>                 if (!(flags & TTU_IGNORE_MLOCK) &&
->>>>                     (vma->vm_flags & VM_LOCKED)) {
->>>>                         /* Restore the mlock which got missed */
->>>> -                     if (!folio_test_large(folio))
->>>> +                     if (!folio_test_large(folio) ||
->>>> +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
->>>>                                 mlock_vma_folio(folio, vma);
->>>
->>> Can you elaborate why you think this would be required? If we would have
->>> performed the  split_huge_pmd_address() beforehand, we would still be
->>> left with a large folio, no?
->>
->> Yep, there would still be a large folio, but it wouldn't be PMD-mapped.
->>
->> After Weifeng's series[1], the kernel supports mlock for PTE-mapped large
->> folio, but there are a few scenarios where we don't mlock a large folio, such
->> as when it crosses a VM_LOCKed VMA boundary.
->>
->>    -                     if (!folio_test_large(folio))
->>    +                     if (!folio_test_large(folio) ||
->>    +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
->>
->> And this check is just future-proofing and likely unnecessary. If encountering a
->> PMD-mapped THP missing the mlock for some reason, we can mlock this
->> THP to prevent it from being picked up during page reclaim, since it is fully
->> mapped and doesn't cross the VMA boundary, IIUC.
->>
->> What do you think?
->> I would appreciate any suggestions regarding this check ;)
-> 
-> Reading this patch only, I wonder if this change makes sense in the
-> context here.
-> 
-> Before this patch, we would have PTE-mapped the PMD-mapped THP before
-> reaching this call and skipped it due to "!folio_test_large(folio)".
-> 
-> After this patch, we either
-> 
-> a) PTE-remap the THP after this check, but retry and end-up here again,
-> whereby we would skip it due to "!folio_test_large(folio)".
-> 
-> b) Discard the PMD-mapped THP due to lazyfree directly. Can that
-> co-exist with mlock and what would be the problem here with mlock?
-> 
-> 
-> So if the check is required in this patch, we really have to understand
-> why. If not, we should better drop it from this patch.
-> 
-> At least my opinion, still struggling to understand why it would be
-> required (I have 0 knowledge about mlock interaction with large folios :) ).
-> 
+Hi David,
 
-Looking at that series, in folio_references_one(), we do
+Thanks for taking time to review!
 
-			if (!folio_test_large(folio) || !pvmw.pte) {
-				/* Restore the mlock which got missed */
-				mlock_vma_folio(folio, vma);
-				page_vma_mapped_walk_done(&pvmw);
-				pra->vm_flags |= VM_LOCKED;
-				return false; /* To break the loop */
-			}
+On Wed, Jun 5, 2024 at 8:50=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 21.05.24 06:02, Lance Yang wrote:
+> > When the user no longer requires the pages, they would use
+> > madvise(MADV_FREE) to mark the pages as lazy free. Subsequently, they
+> > typically would not re-write to that memory again.
+> >
+> > During memory reclaim, if we detect that the large folio and its PMD ar=
+e
+> > both still marked as clean and there are no unexpected references
+> > (such as GUP), so we can just discard the memory lazily, improving the
+> > efficiency of memory reclamation in this case.
+> >
+> > On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
+> > mem_cgroup_force_empty() results in the following runtimes in seconds
+> > (shorter is better):
+> >
+> > --------------------------------------------
+> > |     Old       |      New       |  Change  |
+> > --------------------------------------------
+> > |   0.683426    |    0.049197    |  -92.80% |
+> > --------------------------------------------
+> >
+> > Suggested-by: Zi Yan <ziy@nvidia.com>
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+> >   include/linux/huge_mm.h |  9 +++++
+> >   mm/huge_memory.c        | 80 ++++++++++++++++++++++++++++++++++++++++=
++
+> >   mm/rmap.c               | 41 ++++++++++++++-------
+> >   3 files changed, 117 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index 9fcb0b0b6ed1..cfd7ec2b6d0a 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> > @@ -411,6 +411,8 @@ static inline bool thp_migration_supported(void)
+> >
+> >   void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long =
+address,
+> >                          pmd_t *pmd, bool freeze, struct folio *folio);
+> > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
+ddr,
+> > +                        pmd_t *pmdp, struct folio *folio);
+> >
+> >   #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+> >
+> > @@ -478,6 +480,13 @@ static inline void split_huge_pmd_locked(struct vm=
+_area_struct *vma,
+> >                                        unsigned long address, pmd_t *pm=
+d,
+> >                                        bool freeze, struct folio *folio=
+) {}
+> >
+> > +static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
+> > +                                      unsigned long addr, pmd_t *pmdp,
+> > +                                      struct folio *folio)
+> > +{
+> > +     return false;
+> > +}
+> > +
+> >   #define split_huge_pud(__vma, __pmd, __address)     \
+> >       do { } while (0)
+> >
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 425272c6c50b..4793ffa912ca 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -2687,6 +2687,86 @@ static void unmap_folio(struct folio *folio)
+> >       try_to_unmap_flush();
+> >   }
+> >
+> > +static bool __discard_trans_pmd_locked(struct vm_area_struct *vma,
+>
+> Can we move towards folio terminology?
+>
+> __discard_anon_folio_pmd_locked() or sth like that?
 
-I wonder if we want that here as well now: in case of lazyfree we
-would not back off, right?
+Nice, it's much clearer!
 
-But I'm not sure if lazyfree in mlocked areas are even possible.
+>
+> > +                                    unsigned long addr, pmd_t *pmdp,
+> > +                                    struct folio *folio)
+> > +{
+> > +     VM_WARN_ON_FOLIO(folio_test_swapbacked(folio), folio);
+> > +     VM_WARN_ON_FOLIO(!folio_test_anon(folio), folio);
+> > +
+> > +     struct mm_struct *mm =3D vma->vm_mm;
+> > +     int ref_count, map_count;
+> > +     pmd_t orig_pmd =3D *pmdp;
+> > +     struct page *page;
+> > +
+> > +     if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd))=
+)
+> > +             return false;
+> > +
+> > +     page =3D pmd_page(orig_pmd);
+> > +     if (unlikely(page_folio(page) !=3D folio))
+> > +             return false;
+> > +
+> > +     if (folio_test_dirty(folio) || pmd_dirty(orig_pmd)) {
+> > +             folio_set_swapbacked(folio);
+> > +             return false;
+> > +     }
+> > +
+> > +     orig_pmd =3D pmdp_huge_clear_flush(vma, addr, pmdp);
+> > +
+> > +     /*
+> > +      * Syncing against concurrent GUP-fast:
+> > +      * - clear PMD; barrier; read refcount
+> > +      * - inc refcount; barrier; read PMD
+> > +      */
+> > +     smp_mb();
+> > +
+> > +     ref_count =3D folio_ref_count(folio);
+> > +     map_count =3D folio_mapcount(folio);
+> > +
+> > +     /*
+> > +      * Order reads for folio refcount and dirty flag
+> > +      * (see comments in __remove_mapping()).
+> > +      */
+> > +     smp_rmb();
+> > +
+> > +     /*
+> > +      * If the folio or its PMD is redirtied at this point, or if ther=
+e
+> > +      * are unexpected references, we will give up to discard this fol=
+io
+> > +      * and remap it.
+> > +      *
+> > +      * The only folio refs must be one from isolation plus the rmap(s=
+).
+> > +      */
+> > +     if (folio_test_dirty(folio) || pmd_dirty(orig_pmd))
+> > +             folio_set_swapbacked(folio);
+> > +
+> > +     if (folio_test_swapbacked(folio) || ref_count !=3D map_count + 1)=
+ {
+> > +             set_pmd_at(mm, addr, pmdp, orig_pmd);
+> > +             return false;
+> > +     }
+> > +
+> > +     folio_remove_rmap_pmd(folio, page, vma);
+> > +     zap_deposited_table(mm, pmdp);
+> > +     add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
+> > +     if (vma->vm_flags & VM_LOCKED)
+> > +             mlock_drain_local();
+> > +     folio_put(folio);
+> > +
+> > +     return true;
+> > +}
+> > +
+> > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
+ddr,
+> > +                        pmd_t *pmdp, struct folio *folio)
+> > +{
+> > +     VM_WARN_ON_FOLIO(!folio_test_pmd_mappable(folio), folio);
+> > +     VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+> > +     VM_WARN_ON_ONCE(!IS_ALIGNED(addr, HPAGE_PMD_SIZE));
+> > +
+> > +     if (folio_test_anon(folio) && !folio_test_swapbacked(folio))
+> > +             return __discard_trans_pmd_locked(vma, addr, pmdp, folio)=
+;
+> > +
+> > +     return false;
+> > +}
+> > +
+> >   static void remap_page(struct folio *folio, unsigned long nr)
+> >   {
+> >       int i =3D 0;
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index 08a93347f283..249d6e305bec 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1630,6 +1630,7 @@ static bool try_to_unmap_one(struct folio *folio,=
+ struct vm_area_struct *vma,
+> >       enum ttu_flags flags =3D (enum ttu_flags)(long)arg;
+> >       unsigned long pfn;
+> >       unsigned long hsz =3D 0;
+> > +     bool pmd_mapped =3D false;
+> >
+> >       /*
+> >        * When racing against e.g. zap_pte_range() on another cpu,
+> > @@ -1677,18 +1678,26 @@ static bool try_to_unmap_one(struct folio *foli=
+o, struct vm_area_struct *vma,
+> >                       goto walk_done_err;
+> >               }
+> >
+> > -             if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
+> > -                     /*
+> > -                      * We temporarily have to drop the PTL and start =
+once
+> > -                      * again from that now-PTE-mapped page table.
+> > -                      */
+> > -                     split_huge_pmd_locked(vma, range.start, pvmw.pmd,=
+ false,
+> > -                                           folio);
+> > -                     pvmw.pmd =3D NULL;
+> > -                     spin_unlock(pvmw.ptl);
+> > -                     pvmw.ptl =3D NULL;
+> > -                     flags &=3D ~TTU_SPLIT_HUGE_PMD;
+> > -                     continue;
+> > +             if (!pvmw.pte) {
+> > +                     pmd_mapped =3D true;
+> > +                     if (unmap_huge_pmd_locked(vma, range.start, pvmw.=
+pmd,
+> > +                                               folio))
+> > +                             goto walk_done;
+> > +
+> > +                     if (flags & TTU_SPLIT_HUGE_PMD) {
+> > +                             /*
+> > +                              * We temporarily have to drop the PTL an=
+d start
+> > +                              * once again from that now-PTE-mapped pa=
+ge
+> > +                              * table.
+> > +                              */
+> > +                             split_huge_pmd_locked(vma, range.start,
+> > +                                                   pvmw.pmd, false, fo=
+lio);
+> > +                             pvmw.pmd =3D NULL;
+> > +                             spin_unlock(pvmw.ptl);
+> > +                             pvmw.ptl =3D NULL;
+> > +                             flags &=3D ~TTU_SPLIT_HUGE_PMD;
+> > +                             continue;
+> > +                     }
+> >               }
+> >
+> >               /* Unexpected PMD-mapped THP? */
+> > @@ -1816,7 +1825,13 @@ static bool try_to_unmap_one(struct folio *folio=
+, struct vm_area_struct *vma,
+> >                        */
+> >                       if (unlikely(folio_test_swapbacked(folio) !=3D
+> >                                       folio_test_swapcache(folio))) {
+> > -                             WARN_ON_ONCE(1);
+> > +                             /*
+> > +                              * unmap_huge_pmd_locked() will unmark a
+> > +                              * PMD-mapped folio as lazyfree if the fo=
+lio or
+> > +                              * its PMD was redirtied.
+> > +                              */
+> > +                             if (!pmd_mapped)
+>
+> Isn't that simply "pvmw.pte" ?
+>
+> Also,
+>
+> WARN_ON_ONCE(!pmd_mapped);
 
-Adding the "!pvmw.pte" would be much clearer to me than the flag check.
+Good catch! I'll adjust as you suggested.
 
--- 
-Cheers,
+Thanks again for the review!
+Lance
 
-David / dhildenb
-
+>
+> > +                                     WARN_ON_ONCE(1);
+> >                               goto walk_done_err;
+> >                       }
+> >
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
