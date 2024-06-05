@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-202294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517C28FCAD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADD38FCADB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4106F1C231D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:46:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC9F1B22D06
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C256619148B;
-	Wed,  5 Jun 2024 11:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A2D190050;
+	Wed,  5 Jun 2024 11:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lzWoH8t4"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FmSZspYq"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AF7148317
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2973014D447
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717587998; cv=none; b=OP+o1aKel3rECaAsJb4sO2Kr+2YyE1TctA1k19PTU67YSnmXgyvEeeWZpLi9OfjqFlSdjoJ/6yOPEZIoBQWQbYJPNWYR+d4CnByMKZ1zEL9IKGTHamjuIeWuB6I98I9e0V/Rgyd+G1muNSvRalFvcDrs0gqgBQ8O4z6RgKLeKBU=
+	t=1717588095; cv=none; b=DfNYOJuOpczcnKIMSBzyNWhDyUchIHjum94ToI3vciz5tN7N5MunuL7V/jHakOQ19Es8ji4MmveJ6wOwEZ8EM0tCsmt9XE3SRQTQ4zEFe4rThdh+njEXJNS0PRrQwGp2Ru7U9yNxochk3MbGjphbBgjwAYtYXh1sDv50npOUB2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717587998; c=relaxed/simple;
-	bh=8q8H08zhQ3wU3LBZhUOQGWRIEa/7PVTzUZ9hdcm7i5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a1F0qHmzuKWcMFV6wjWEkno4WF7yakGKu7EJ3/yk1004dHmMcskYUMy5a0poLab3rceWNCiQ1PrTGFhpRVOK+0NTq7wgv8DQyegeeUeK4uw9W862xbu83BxjY11CpH93yaUwd6/sjAaw3UjJlctwo3tNACwd1lU/bn4meuhvQIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lzWoH8t4; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1717588095; c=relaxed/simple;
+	bh=DwmE/HJViHW0vSvn1az5xz1JgTTxQ9iyyQrMHPsDVOs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c9llATwMMUg4nZ30PKDS80DU5NpVGniRfWYEpIdqAPxQJiO6DXLu7UX9am+kyp1ZqsE7Z2xOMzIkl+7zb25qNBdPPDjQ1fUdgzcVMZa7sT1Es4IefgvhidmTkVe8sSYblSG2QdzBMx6PPIVqT/52P7VESnre4PBlJWYu7hyBGsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FmSZspYq; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4214aa43a66so18093595e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 04:46:36 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35dc04717a1so4988050f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 04:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717587995; x=1718192795; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=yD9yrm53fim4eezsyjHDuMWNB/M0t0qE7IVIEDatuVI=;
-        b=lzWoH8t4omeXZsD2h2a68CxHaOWSdbAmKNKaiw4Npq06IWCUROUBFUIsr12FGmWIUU
-         5oLwhX8fgGU7ZKKHv0FaDBTGHyzfuvqLaNa0yRyqERuC45V4TpBuUPE0fRcIUI/DGPlO
-         G4bjDBPQkR9artpaWcOESIVMqNSUA1acVXYKBpjHTBp0o6vLYSNKKm3i5Sw9xRzJpujn
-         4xnJ0levepNjFTsEmanMdbmIjIsEgFuNWbyKuho3tN3rW0g8tXo4Aqr4T73IrS8MXOPf
-         rWBVWsQFgQhTYegvUlEhWwimAoHmTEijmy/gBlA60j3ANhBnNBgVtIzuFHa1+8hfu9fn
-         mOtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717587995; x=1718192795;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1717588092; x=1718192892; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yD9yrm53fim4eezsyjHDuMWNB/M0t0qE7IVIEDatuVI=;
-        b=RAAkRNj+5+bTXvDzJVUJUmq3TldNQndAV/NbcKeW68Fvu+ku0xQ4/qqxSjrWWYxZnD
-         bFBvcC2aVQPqyS4FzAdhNfqZ7Zd/pegNtfJWgy1P+CCANTMGnIBBDwdNKM92xCcnFEsL
-         Ax5ndNncF3V4kIKYq70heamuIMszPtKnbPnRPTfKeNWBdMGkUc42CK2ROEhMD/zvHGTh
-         GeUgeI2u7pL1j7f8qB1FtdtKvy6OPKbius24wwO++3ntcVDSSeni3WYD+Pu0pKh3BRTU
-         UC+rQdWcbQxSxOTvA4TW7ubW8gPsM+LjY5aWOasBF0B9f49W2736Pfxd039JtezIHyZt
-         lFFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWPZLxMOFUstEip1M+QlWrqkM5blUavdZDFqqgI/5fxrB0uxvgWZpvyKjM9MLsE879XjcJ3Pk5TL2KqCKSIXMaF/N3qU5dUlTD3iy0
-X-Gm-Message-State: AOJu0YykHUbpusgnueC30jSIfVFwloKIaQNm4odMEO0ZB8cO4yOUmTb6
-	ZrOmVcKpGUaUNm5t8KKyogtXYBntTwYQhR4JcKawy+MlJjOBWmtQO5zzK9cV4cE=
-X-Google-Smtp-Source: AGHT+IGX5xScYc70aafJ2AbcljcUtzjjJepnCrCOwShQP1/+ACX6bHMi177JsSxwiRNbDThhaAEmng==
-X-Received: by 2002:a05:600c:19c9:b0:421:52ce:6878 with SMTP id 5b1f17b1804b1-4215632d091mr18053745e9.29.1717587995377;
-        Wed, 05 Jun 2024 04:46:35 -0700 (PDT)
-Received: from [192.168.2.24] ([110.93.11.116])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580fe37csm19505265e9.3.2024.06.05.04.46.33
+        bh=Sq/Mg5xdkn7VG051aeSlr0cnodPM8eEq6trD79vAGKI=;
+        b=FmSZspYq6Q2dPVgdsPVC4IYUnRE6lpfP/TdYe3E4nupADPDVaBIZJr6NEoXoi5ObTS
+         DZqeb+45JeGzYgyEwq6iZYe69nV0/aIZsx3MvCc/Wvq/QRmQ4uhnBg+eAyj5t3OUC16o
+         cPtJNqwm6iQ6soyQndu0GJ+OLmw+Q3Ux4RlZ4HH0BVDwGgi4Sxp7Vjveu+N7H68uAKZu
+         OXpsyk6jEIfRCdcScb95PMTs1RUzSQACSdzOc7GGlnvtHmmHGM5+01K//JXKXXUfNhVN
+         aDLi0nFFU/vLg0QuwM2lWPO7ZFHuHHmKQVzID4PV4GQRJhs5K06HyzFsw82dmqJHxp7P
+         3NGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717588092; x=1718192892;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Sq/Mg5xdkn7VG051aeSlr0cnodPM8eEq6trD79vAGKI=;
+        b=WEuau3ybkepaDl+usqivRtTDZ3QcVBgaiLGsNvXmJjpwDdblZV63z49zxWulSMulBF
+         LxlIJzFackvllaiGiKi31BNxs2iI0atWKdoMBzGKlFMVddBOIvkZ/s1Yj0mEqA6QR0K3
+         0vdUqub3HF7Mi51rHFQldiHxm5WS/99LBeB7ETNiPKZyAQYcq86k+m88JE7j6u3cTNN9
+         2kyzEJCEptO4RW5xurqQKWYKEPktIeIURIImeD77UY4S6NqROl/h3+rlJjGEpBEtiQRE
+         tqggmZlw4AYZrWx8eQhbQpjcL0phqyb5KPDnqXx37DdKis1ANkGuXcKWzXHtUD2yCE4r
+         VzLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfif1AlM7MzY8J6s4CiwA0YT1DjEPs8fsGEyZtwnWa8+JkJVTxPGCOnrqrhs/pa04HPeAr4cTuxHrmo1bvL8+BKvINo1eG6gbcM977
+X-Gm-Message-State: AOJu0YzvNRvf+YHhxFmegZk6c8LnvK8Lya8vNiI7FjDh7oJsN3xZ+fj4
+	YeJYCpCi3W0u6mLuM1z2jY61WitdNhLLBWAmyAg1JtEwVG9aGcA6dZFqKU4DJhg=
+X-Google-Smtp-Source: AGHT+IHlR2SK96JLCdyyN00srFLb5WsC8iq/TUAeaI5Vi/UOfNYzNfpAYVSwhJmvRN6a17FGY+m4Ng==
+X-Received: by 2002:a05:6000:b84:b0:35a:dff9:73bd with SMTP id ffacd0b85a97d-35e8ef8fc97mr1926848f8f.56.1717588092369;
+        Wed, 05 Jun 2024 04:48:12 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:c7ce:7756:462d:a8bd? ([2a01:e0a:982:cbb0:c7ce:7756:462d:a8bd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04cac9asm14374570f8f.34.2024.06.05.04.48.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 04:46:34 -0700 (PDT)
-Message-ID: <c6ff5778-f928-4a65-8a32-a3582d9d8f94@linaro.org>
-Date: Wed, 5 Jun 2024 13:46:33 +0200
+        Wed, 05 Jun 2024 04:48:11 -0700 (PDT)
+Message-ID: <5dc16b34-d638-4fab-84e1-cb7db08ad80e@linaro.org>
+Date: Wed, 5 Jun 2024 13:48:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,202 +77,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/11] dt-bindings: net: add STM32MP13 compatible in
- documentation for stm32
-To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240604143502.154463-1-christophe.roullier@foss.st.com>
- <20240604143502.154463-2-christophe.roullier@foss.st.com>
- <067d41e5-89cf-45eb-8cfa-b6c3cd434f76@linaro.org>
- <70b66190-2c55-4228-8c31-f58a05829d8b@foss.st.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <70b66190-2c55-4228-8c31-f58a05829d8b@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller
+ driver
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Sam Ravnborg <sam@ravnborg.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
+ <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
+ <20240601143226.GA2003970@ravnborg.org>
+ <59519381-2729-4839-9882-65a981a0c551@collabora.com>
+ <20240604204110.GA84949@ravnborg.org>
+ <f656c72e-fac8-4345-9b65-1031ebe81c25@collabora.com>
+ <304b4602-8722-4ed0-a555-8dada573ee79@collabora.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <304b4602-8722-4ed0-a555-8dada573ee79@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 05/06/2024 11:55, Christophe ROULLIER wrote:
-> 
-> On 6/5/24 10:14, Krzysztof Kozlowski wrote:
->> On 04/06/2024 16:34, Christophe Roullier wrote:
->>> New STM32 SOC have 2 GMACs instances.
->>> GMAC IP version is SNPS 4.20.
+On 05/06/2024 12:11, Cristian Ciocaltea wrote:
+> On 6/5/24 12:34 AM, Cristian Ciocaltea wrote:
+>> On 6/4/24 11:41 PM, Sam Ravnborg wrote:
+>>> Hi Cristian.
 >>>
->>> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
->>> ---
->>>   .../devicetree/bindings/net/stm32-dwmac.yaml  | 41 +++++++++++++++----
->>>   1 file changed, 34 insertions(+), 7 deletions(-)
+>>> On Tue, Jun 04, 2024 at 10:32:04PM +0300, Cristian Ciocaltea wrote:
+>>>> Hi Sam,
+>>>>
+>>>> On 6/1/24 5:32 PM, Sam Ravnborg wrote:
+>>>>> Hi Cristian,
+>>>>>
+>>>>> a few drive-by comments below.
+>>>>>
+>>>>> 	Sam
+>>>>>
+>>>>>
+>>>>>> +
+>>>>>> +static const struct drm_connector_funcs dw_hdmi_qp_connector_funcs = {
+>>>>>> +	.fill_modes = drm_helper_probe_single_connector_modes,
+>>>>>> +	.detect = dw_hdmi_connector_detect,
+>>>>>> +	.destroy = drm_connector_cleanup,
+>>>>>> +	.force = dw_hdmi_qp_connector_force,
+>>>>>> +	.reset = drm_atomic_helper_connector_reset,
+>>>>>> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>>>>>> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>>>>>> +};
+>>>>>> +
+>>>>>> +static int dw_hdmi_qp_bridge_attach(struct drm_bridge *bridge,
+>>>>>> +				    enum drm_bridge_attach_flags flags)
+>>>>>> +{
+>>>>>> +	struct dw_hdmi *hdmi = bridge->driver_private;
+>>>>>> +
+>>>>>> +	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
+>>>>>> +		return drm_bridge_attach(bridge->encoder, hdmi->next_bridge,
+>>>>>> +					 bridge, flags);
+>>>>>> +
+>>>>>> +	return dw_hdmi_connector_create(hdmi, &dw_hdmi_qp_connector_funcs);
+>>>>>> +}
+>>>>>
+>>>>> Are there any users left that requires the display driver to create the
+>>>>> connector?
+>>>>> In other words - could this driver fail if DRM_BRIDGE_ATTACH_NO_CONNECTOR
+>>>>> is not passed and drop dw_hdmi_connector_create()?
+>>>>>
+>>>>> I did not try to verify this - just a naive question.
+>>>>
+>>>> I've just tested this and it doesn't work - dw_hdmi_connector_create()
+>>>> is still needed.
 >>>
->>> diff --git a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
->>> index 7ccf75676b6d5..ecbed9a7aaf6d 100644
->>> --- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
->>> +++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
->>> @@ -22,18 +22,17 @@ select:
->>>           enum:
->>>             - st,stm32-dwmac
->>>             - st,stm32mp1-dwmac
->>> +          - st,stm32mp13-dwmac
->>>     required:
->>>       - compatible
->>>   
->>> -allOf:
->>> -  - $ref: snps,dwmac.yaml#
->>> -
->>>   properties:
->>>     compatible:
->>>       oneOf:
->>>         - items:
->>>             - enum:
->>>                 - st,stm32mp1-dwmac
->>> +              - st,stm32mp13-dwmac
->>>             - const: snps,dwmac-4.20a
->>>         - items:
->>>             - enum:
->>> @@ -75,12 +74,15 @@ properties:
->>>     st,syscon:
->>>       $ref: /schemas/types.yaml#/definitions/phandle-array
->>>       items:
->>> -      - items:
->>> +      - minItems: 2
->>> +        items:
->>>             - description: phandle to the syscon node which encompases the glue register
->>>             - description: offset of the control register
->>> +          - description: field to set mask in register
->>>       description:
->>>         Should be phandle/offset pair. The phandle to the syscon node which
->>> -      encompases the glue register, and the offset of the control register
->>> +      encompases the glue register, the offset of the control register and
->>> +      the mask to set bitfield in control register
->>>   
->>>     st,ext-phyclk:
->>>       description:
->>> @@ -112,12 +114,37 @@ required:
->>>   
->>>   unevaluatedProperties: false
->>>   
->>> +allOf:
->>> +  - $ref: snps,dwmac.yaml#
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - st,stm32mp1-dwmac
->>> +              - st,stm32-dwmac
->>> +    then:
->>> +      properties:
->>> +        st,syscon:
->>> +          items:
->>> +            maxItems: 2
->>> +
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - st,stm32mp13-dwmac
->>> +    then:
->>> +      properties:
->>> +        st,syscon:
->>> +          items:
->>> +            minItems: 3
->> I don't think this works. You now constrain the first dimension which
->> had only one item before.
+>>> Hmm, seems the display driver or some other bridge driver fails to
+>>> support "DRM_BRIDGE_ATTACH_NO_CONNECTOR".
+>>> what other drivers are involved?
 >>
->> Make your example complete and test it.
+>> Could it be related to the glue driver (updated in the next patch) which
+>> is also responsible for setting up the encoder?
 >>
->> Best regards,
->> Krzysztof
+>>> Note that my comments here should be seen as potential future
+>>> improvements, and do not block the patch from being used.
+>>
+>> Thanks for the heads up! Will try to get back to this soon and investigate.
+>   
+> IIUC, modern bridges should not create the connector but rely on display
+> drivers to take care of, which in this case is the VOP2 driver. However,
+> it also handles some of the older SoCs relying on the non-QP variant of
+> DW HDMI IP. Hence the existing dw-hdmi driver would be also impacted in
+> order to come up with a proper solution.
 > 
-> Hi Krzysztof,
+> A quick check shows there are several users of this IP:
 > 
-> "Official" bindings for MP15: st,syscon = <&syscfg 0x4>;
-> "Official" bindings for MP13: st,syscon = <&syscfg 0x4 0xff0000>; or 
-> st,syscon = <&syscfg 0x4 0xff000000>;
+> $ git grep -E '= dw_hdmi_(bind|probe)\('
+> drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c:    hdmi->dw_hdmi = dw_hdmi_probe(pdev, plat_data);
+> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:      hdmi = dw_hdmi_probe(pdev, plat_data);
+> drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c:        hdmi->hdmi = dw_hdmi_probe(pdev, match->data);
+> drivers/gpu/drm/ingenic/ingenic-dw-hdmi.c:      hdmi = dw_hdmi_probe(pdev, &ingenic_dw_hdmi_plat_data);
+> drivers/gpu/drm/meson/meson_dw_hdmi.c:  meson_dw_hdmi->hdmi = dw_hdmi_probe(pdev, &meson_dw_hdmi->dw_plat_data);
+> drivers/gpu/drm/renesas/rcar-du/rcar_dw_hdmi.c: hdmi = dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
+> drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:            hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
+> drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c:  hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
 > 
-> If I execute make dt_binding_check 
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/net/stm32-dwmac.yaml with:
-> 
->     For MP15: st,syscon = <&syscfg>; 
-> =>bindings/net/stm32-dwmac.example.dtb: ethernet@40027000: st,syscon:0: 
-> [4294967295] is too short
-> 
->     For MP15: st,syscon = <&syscfg 0x4 0xff0000>; 
-> =>devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@40027000: 
-> st,syscon:0: [4294967295, 4, 16711680] is too long
-> 
->     For MP13: st,syscon = <&syscfg 0x4>; => 
-> devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000: 
-> st,syscon:0: [4294967295, 4] is too short
-> 
->     For MP13: st,syscon = <&syscfg 0x4 0xff0000 0xff>; => 
-> devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000: 
-> st,syscon:0: [4294967295, 4, 16711680, 255] is too long
-> 
-> So it is seems good :-)
+> I didn't check which display drivers would be involved, I'd guess there
+> are quite a few of them as well. So it seems this ends up being a pretty
+> complex task.
 
-Code is still incorrect, although will work because of how schema parses
-matrix. But even by looking it is not symmetrical between allOf:if:then
-and properties:. Make it symmetric - apply the number of items on the
-second dimension.
+If this would be a brand new driver, then it should only support DRM_BRIDGE_ATTACH_NO_CONNECTOR,
+so you should not create a connector from the driver.
 
-Best regards,
-Krzysztof
+The fact dw-hdmi accepts an attach without the flag is for legacy purpose
+since some DRM drivers haven't switched to DRM_BRIDGE_ATTACH_NO_CONNECTOR yes,
+but it's a requirement for new bridges so at some point you'll need to make
+sure the rockchip glue and drm driver supports DRM_BRIDGE_ATTACH_NO_CONNECTOR.
+
+This will greatly simplify the driver!
+
+Neil
+
+> 
+> Cristian
 
 
