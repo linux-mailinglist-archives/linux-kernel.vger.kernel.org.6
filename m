@@ -1,115 +1,106 @@
-Return-Path: <linux-kernel+bounces-202600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918CB8FCE81
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBA38FCE86
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4645F1F29BCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7ED281C39
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8171BE250;
-	Wed,  5 Jun 2024 12:24:50 +0000 (UTC)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B67F19B3D3;
+	Wed,  5 Jun 2024 12:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLcABzRG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338E119ADA1;
-	Wed,  5 Jun 2024 12:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4428949648;
+	Wed,  5 Jun 2024 12:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590290; cv=none; b=LgBY3L4xkkHXHXGDvZjkWdTP9IiRoBrJ1jq89wXPIyP6WwxglwBsJGI9MqgPICE2d5kz5HRh6ZPte6A+d/snSCZ+0Af89YHKIZYOcblF4a7Rp/jkEarqRnViki6P6KpgxTC9OTLXChmiWraxz02QqDW/Lb9KWNMV8g2nD0FLDRY=
+	t=1717590331; cv=none; b=ezLasBLCuewGmSGdchvOZxdeqmK2vsMBmNXEbRKxVi/POctiRnccNa7LlZN9kRDH4Xem6aU/fn4o3jmvN30pjL8I2aZJBR1pv7Qcfo6VSV/1mOfYY4r5LXL0ubBCgYqJnhhfEFMKirODjXWZ8LKak7/XGfG33zVg1f/SL/nErtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590290; c=relaxed/simple;
-	bh=ZUBf0Qso++Uml2eEZlT+D+ZtGtQbCL6+ru7MeKUTeog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KaExCOlKq7tMP+jTdHBAoTY61N/JLwdEfbadJP0ak0L57QcjfOiiZLWz03I0b2i5mb+LSb3JHpThuQ161664OZpbXRhbwpV5m/GnrumftgKNdVAd+JmM1jIownrjDCWRlPI5kYlNFaK9PZmjjy+l3kRGd5p+CnRRog2kw5eqg3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-627ebbefd85so72875977b3.3;
-        Wed, 05 Jun 2024 05:24:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717590287; x=1718195087;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WTblLgC54KX1wQAlWGzOf+gGcZX6SGgOiFwTbhFSnj8=;
-        b=X5VHONC1EONvIHKcWhto5bEECdVkZsXRH80teH+9I9kwD+4V/cAS1xJKh6K4AeND8u
-         +09HvSj18GKKhavnU8MX2oAm1B6jk/hRliFRAyp1l6AvGck9FzDYf+Iyw9tvATSJyrlS
-         RuhVBaIn6dbMqO1UCLcSRu8PHRgIhkzliFEYZ9h8gGvIz40y7V/un4gKiLORislygXw/
-         M/C+z83GhYanCPJdP/KK6mDt5ldtgQfwN4mGcoTZBnNxu9T6dEMIOvKsY9yitr62erv+
-         t0S6bHECIrBc/7oAN7ipYs7Llzbv7wNESYjSRROplAa78T41UFTY4zOqOaZZVMadHU+C
-         ccQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPNRU4R4XLR8dfLf1tniWDhgbw1O6ywYfrk/gItlRxIWEvMy4Wt9+0f3R2pZRlMU2dlz/aBg0xlVhldUw+oeD2ftIpUdJpFhdlM6gwwQS2m96dmM9o0LBeAZSacXZtpqxCxeK59ye2xPJhgXtz5WTiPM18d0C+/2FhICb//HNV3fkp8rbDtRZ8mFNkmpssCezFQFqtBaqBtuq1U+8rR1EFx4GGDNKw3Q==
-X-Gm-Message-State: AOJu0YyWZNXsZiPiLEsuRLQdeH8n+4TS4ZMXl2TzIYERQQoeSQK4rO8H
-	aem4prSmZXUfczEbIgsfn21vwF/0tTFfGUlIo+ArQjk/UalSJqruitmRWnQF
-X-Google-Smtp-Source: AGHT+IHAV8MUdCA1ftWZNgpIenV8v4ZQPVQmg50cockJSx7Jz3FjawLcz5yKUBLxdCV93bPACzb2FA==
-X-Received: by 2002:a81:ad5f:0:b0:61b:349c:811 with SMTP id 00721157ae682-62cbb4b1e64mr22294767b3.10.1717590286850;
-        Wed, 05 Jun 2024 05:24:46 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765e6405sm22019167b3.44.2024.06.05.05.24.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 05:24:46 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfa5b9274feso7331745276.2;
-        Wed, 05 Jun 2024 05:24:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXOqeB9TO6rY1K2/Im48nrTIglBiOEC/vdvO7RS46tTGUtiS92ELVb5cwjRLXjhCSghOj+dAsbqKxP16fj3i5a80hWdSmiGVyjHC/5kfuaKl9murelbKaSFldQYOxVw140MCPe+NSp+O5OaacDVzreNS8BMmEH3UsCCL2EqktwX+hE8G5H0a8c7M01vB2xA2PSm66YXbSQjhq7jGota1hEqKd6bClU+OA==
-X-Received: by 2002:a25:dfc5:0:b0:dfa:c607:1b6a with SMTP id
- 3f1490d57ef6-dfacac75c1amr2175013276.31.1717590286071; Wed, 05 Jun 2024
- 05:24:46 -0700 (PDT)
+	s=arc-20240116; t=1717590331; c=relaxed/simple;
+	bh=rR/Q4P46U3pOq/PmUwPDvoqv+BmPUlNdpUfj/CxYLOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvBnjXHRafv9VZWWiKjbic0XTAoW8QQLX7DXbdsWoVt5u5K1pxiqqDyDZeBV1wLmTSqoNO7QoT470pk4IFvUBKWNSV5MLE8gPRZHDFkpEdAILn9J09F1DU2a+9NchoCvmB1lZT2x9bHDF9N5z6cdOWoSVSruW6nJhizDwtrcyNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLcABzRG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2454AC32781;
+	Wed,  5 Jun 2024 12:25:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717590331;
+	bh=rR/Q4P46U3pOq/PmUwPDvoqv+BmPUlNdpUfj/CxYLOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YLcABzRG//qfBJ9Ucp78uHilNfnMpfa9Vgb9ZWBrgZFawvXPYGTk7p2LnS6ejYcG1
+	 0mVnepQMsMDUF8uC9QfENDmEnPVm2aV93urCZmH3aF0JS1R1RIGVOspW1WXtVmFg4a
+	 gad0LsLL5LFLkOVBqnnDR24OfRtid8L5THn7gnm+c6FwwrDg0e7xFPG0O3UQYB6ma2
+	 9EUp038Hegamu2sAooKl708eqDrqnLMpTWovbrZCUcQpg9dNF6UPv8W8BSORSRzWgY
+	 2gznQ5UrN53UApnVNbL0bnaEc8g5Hz9yY2VjExlJ38eQT3XP+ZWWua9IbsHO4ZPO8K
+	 uSjwhWCvXSyQA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sEphs-000000007OW-0H4Z;
+	Wed, 05 Jun 2024 14:25:32 +0200
+Date: Wed, 5 Jun 2024 14:25:32 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] HID/arm64: dts: qcom: sc8280xp-x13s: fix
+ touchscreen power on
+Message-ID: <ZmBZPHbDv7ma_JaJ@hovoldconsulting.com>
+References: <20240507144821.12275-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240530173857.164073-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240530173857.164073-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jun 2024 14:24:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWrD63j_6Wig+jUM3rxJNrxicWWKWvnyYQXQ-5QZCXCUg@mail.gmail.com>
-Message-ID: <CAMuHMdWrD63j_6Wig+jUM3rxJNrxicWWKWvnyYQXQ-5QZCXCUg@mail.gmail.com>
-Subject: Re: [PATCH v3 13/15] pinctrl: renesas: pinctrl-rzg2l: Add support for
- custom parameters
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507144821.12275-1-johan+linaro@kernel.org>
 
-On Thu, May 30, 2024 at 7:42=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> In preparation for passing custom params for RZ/V2H(P) SoC assign the
-> custom params that is being passed via struct rzg2l_pinctrl_data.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3
-> - Added gaurd for custom_conf_items in struct rzg2l_pinctrl_data
+Hi Jiri and Benjamin,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, May 07, 2024 at 04:48:14PM +0200, Johan Hovold wrote:
+> The Elan eKTH5015M touch controller on the X13s requires a 300 ms delay
+> before sending commands after having deasserted reset during power on.
+> 
+> This series switches the X13s devicetree to use the Elan specific
+> binding so that the OS can determine the required power-on sequence and
+> make sure that the controller is always detected during boot. [1]
 
-Gr{oetje,eeting}s,
+> The devicetree changes are expected to go in through the Qualcomm tree
+> once the binding and driver updates have been merged.
 
-                        Geert
+> [1] The reset signal is currently deasserted using the pin configuration
+>     and the controller would be detected if probe is deferred or if user
+>     space triggers a reprobe through sysfs.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> Johan Hovold (7):
+>   dt-bindings: HID: i2c-hid: add dedicated Ilitek ILI2901 schema
+>   dt-bindings: HID: i2c-hid: elan: add Elan eKTH5015M
+>   dt-bindings: HID: i2c-hid: elan: add 'no-reset-on-power-off' property
+>   HID: i2c-hid: elan: fix reset suspend current leakage
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Could you consider picking the first four patches up for 6.10-rc3 so
+that Bjorn can take the devicetree changes?
+
+>   arm64: dts: qcom: sc8280xp-x13s: fix touchscreen power on
+>   arm64: dts: qcom: sc8280xp-crd: use external pull up for touch reset
+>   arm64: defconfig: enable Elan i2c-hid driver
+
+Johan
 
