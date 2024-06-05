@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-203315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEDD8FD943
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:40:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AA18FD946
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25B841C2562A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B421F23CD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F400816A370;
-	Wed,  5 Jun 2024 21:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA5416C44A;
+	Wed,  5 Jun 2024 21:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ba1Uv6C6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+KDNEWj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4366215FA93;
-	Wed,  5 Jun 2024 21:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E658D15FCEC;
+	Wed,  5 Jun 2024 21:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717623515; cv=none; b=O1B6ZN1B0uO5ay1CN+AFJEBrJgtl4pE1WxEppljy97oullmNthhr9qsvnwc8jxhpH33r6MC/djtRcu/fTJHrSZfkH8y7SXT+PjyCd4y7lZUdqXNYUbgBByGNTmgiimLSUvInKyt9gJsMJ7pCpuPnka0eT3DhNQAsXyL7SCWAJmA=
+	t=1717623522; cv=none; b=Kow5mrCBf2JbrzD61wseFqw5XtqtEMMubpWuIzg/z0H1JaWD7QMfy1l05dM7h61/KY1fWizfEQlAya/nenyBH4SZwHIajWYozKAzx1jPkJb8bz1S7++lr5/B64BELVwlcUyEAV0yDoG6QnGBPN6mtExKyZXCc9YuvouxZPOFIRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717623515; c=relaxed/simple;
-	bh=p9ysuhtDc6Za4hy53vN+yiYwrcFOUP7O0U967fpC+i4=;
+	s=arc-20240116; t=1717623522; c=relaxed/simple;
+	bh=d7L5Jn4DXHIV9ypImFfx4lwVS/PZmpvP8HBZAJVoFxQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FBsf5Izm5SQS5wrJK7OU7e6gitEe+mozpst7yx74bs2fxtMMsZLyM6kDHTWGlr8VO5121lr22z1Q2eG77HrXm+vvmKoe49h+VaFovxZwriI4WvPcWDYcWrjKcHb+HrW0ysaXcMn9XSqylP5s77EPUt/IRJl4y79eWMjeB8ztu18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ba1Uv6C6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1837AC2BD11;
-	Wed,  5 Jun 2024 21:38:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=dCWsDWKB31akpGQPWQYPGrSXFcP/Th0JVDssqVJ/rfuEkZTtGjOOGoR0R/OvUKIl9TIzbJgS2kJIlWonJWK6l3qYVaEu+FLkQn6ut3mSraxfcscksY2I7scwN4/GuQgp3a6sXwrwpB0rmExe9kjs8YRqj6Ix4cE1ywZ1hOOBexM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+KDNEWj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85E90C2BD11;
+	Wed,  5 Jun 2024 21:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717623515;
-	bh=p9ysuhtDc6Za4hy53vN+yiYwrcFOUP7O0U967fpC+i4=;
+	s=k20201202; t=1717623521;
+	bh=d7L5Jn4DXHIV9ypImFfx4lwVS/PZmpvP8HBZAJVoFxQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ba1Uv6C6furrcBWT3OJ4FRi8CkB/W1X/286xovks3GQWXk3esB9vJXTvRHW0+dkRN
-	 SWFbSkU36zBYF8jjwa9qBTXzPWreFHY8BmryCL9Bs2VzpfazSCAiPORZU6Yvo+oFnC
-	 aif58EhvaPx2MZRFc7BKpEiXpsv5TIdaOdQobYz/+PEtEh5wCoHv6qT0Hc7abDB9VL
-	 lsucIGib1kF4RU9xcjYPWlE+7fSkcw+g/bNgjotMh2jRwFKDP27H0gYnuhcglZkL9K
-	 AamOANkRB5Lm+Wqh6Q6p/RghaPRYq3yql5HdSK+bI4TgxNXRH7TKCX+s3SC8uhKgbB
-	 MIHruYLGFtWCg==
+	b=b+KDNEWj8aAj2HseQpeKc4uy1vABmppf8DaSjnKfRvUmEIeZN/mR6inr/xlZEXCaR
+	 np+GN8DSOYZW7bVnb3RFp0MdPCE7ls8DdNjxAn8rmi/yvrO+N1//mJ+suZPIsVI2Ii
+	 j2BZwiHVsnl53M+/Iyk76tfO5HaJ6S+uBZX9TuW++L40QPdc04QZvRMxAThSKmV1V3
+	 oM2aSRSaL7TSTsCkc1h7v40mbYo7ca2WQodkGkvd6WwWh7Yubg7v3Kmh1cC6IWLrYb
+	 iDLLlvcCN0IVWGUJ2wLwU3GN4NscDBklDEViXTj4EinKBSkHrsDcz9+ufbJzWFvZ3n
+	 W3ruhd77UG0YQ==
 From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240530-md-regmap-kunit-v1-1-976c0f616751@quicinc.com>
-References: <20240530-md-regmap-kunit-v1-1-976c0f616751@quicinc.com>
-Subject: Re: [PATCH] regmap: kunit: add missing MODULE_DESCRIPTION()
-Message-Id: <171762351381.565895.17813266773525763530.b4-ty@kernel.org>
-Date: Wed, 05 Jun 2024 22:38:33 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+In-Reply-To: <20240605121450.23697-1-brgl@bgdev.pl>
+References: <20240605121450.23697-1-brgl@bgdev.pl>
+Subject: Re: [PATCH v9 0/2] dt-bindings: describe the PMU modules of QCom
+ BT/WLAN packages
+Message-Id: <171762351925.565947.8740836669893756947.b4-ty@kernel.org>
+Date: Wed, 05 Jun 2024 22:38:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,22 +63,27 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Thu, 30 May 2024 22:42:09 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-kunit.o
+On Wed, 05 Jun 2024 14:14:47 +0200, Bartosz Golaszewski wrote:
+> Here are the two dt-binding patches from the power-sequencing series
+> targeting the regulator subsystem. To keep the cover-letter short, I
+> won't repeat all the details, they can be found in the cover-letter for
+> v8. Please consider picking them up into your tree, they were reviewed
+> by Krzysztof and already acked by you earlier.
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> Changelog:
 > 
-> 
+> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] regmap: kunit: add missing MODULE_DESCRIPTION()
-      commit: a8bd778958eface44a4931b30f1db5c98c9e6f40
+[1/2] regulator: dt-bindings: describe the PMU module of the QCA6390 package
+      commit: b5cb34c93bd4e5559e64f57de9e67e926237535b
+[2/2] regulator: dt-bindings: describe the PMU module of the WCN7850 package
+      commit: 168ed1e8d0893cc4ad5963d5920dcfd24e0d7591
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
