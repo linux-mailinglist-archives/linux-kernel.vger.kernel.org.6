@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-202601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBA38FCE86
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688FE8FCE88
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7ED281C39
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FB131F28FE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B67F19B3D3;
-	Wed,  5 Jun 2024 12:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLcABzRG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4428949648;
-	Wed,  5 Jun 2024 12:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2FD19B584;
+	Wed,  5 Jun 2024 12:26:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5377219B3DF;
+	Wed,  5 Jun 2024 12:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590331; cv=none; b=ezLasBLCuewGmSGdchvOZxdeqmK2vsMBmNXEbRKxVi/POctiRnccNa7LlZN9kRDH4Xem6aU/fn4o3jmvN30pjL8I2aZJBR1pv7Qcfo6VSV/1mOfYY4r5LXL0ubBCgYqJnhhfEFMKirODjXWZ8LKak7/XGfG33zVg1f/SL/nErtU=
+	t=1717590393; cv=none; b=JeUjOphUhKFUlAQ8LEvtCyCw7ITOptOtOp2xPUo1Xjta3tTNxPFHmA/6tSOWS+trLIo7GEMAQ9eXugzHD8TCuxe6Ldi3omgxT9S2LJhnL0bLusVgbn7qemdnCds451eb9zC6OCNLEHsKInADKAEgj0Fp5vbXfIfVpSn3q4xZC60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590331; c=relaxed/simple;
-	bh=rR/Q4P46U3pOq/PmUwPDvoqv+BmPUlNdpUfj/CxYLOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvBnjXHRafv9VZWWiKjbic0XTAoW8QQLX7DXbdsWoVt5u5K1pxiqqDyDZeBV1wLmTSqoNO7QoT470pk4IFvUBKWNSV5MLE8gPRZHDFkpEdAILn9J09F1DU2a+9NchoCvmB1lZT2x9bHDF9N5z6cdOWoSVSruW6nJhizDwtrcyNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLcABzRG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2454AC32781;
-	Wed,  5 Jun 2024 12:25:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717590331;
-	bh=rR/Q4P46U3pOq/PmUwPDvoqv+BmPUlNdpUfj/CxYLOA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YLcABzRG//qfBJ9Ucp78uHilNfnMpfa9Vgb9ZWBrgZFawvXPYGTk7p2LnS6ejYcG1
-	 0mVnepQMsMDUF8uC9QfENDmEnPVm2aV93urCZmH3aF0JS1R1RIGVOspW1WXtVmFg4a
-	 gad0LsLL5LFLkOVBqnnDR24OfRtid8L5THn7gnm+c6FwwrDg0e7xFPG0O3UQYB6ma2
-	 9EUp038Hegamu2sAooKl708eqDrqnLMpTWovbrZCUcQpg9dNF6UPv8W8BSORSRzWgY
-	 2gznQ5UrN53UApnVNbL0bnaEc8g5Hz9yY2VjExlJ38eQT3XP+ZWWua9IbsHO4ZPO8K
-	 uSjwhWCvXSyQA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sEphs-000000007OW-0H4Z;
-	Wed, 05 Jun 2024 14:25:32 +0200
-Date: Wed, 5 Jun 2024 14:25:32 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] HID/arm64: dts: qcom: sc8280xp-x13s: fix
- touchscreen power on
-Message-ID: <ZmBZPHbDv7ma_JaJ@hovoldconsulting.com>
-References: <20240507144821.12275-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1717590393; c=relaxed/simple;
+	bh=OpM7hf33K9cNQBheqRJr3tktJceZPUA/A8LQOs1Ns34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CCr+NkR2raabwZ0pju/H9LMHwDZeaIdL9A/Y7ZMAkZDeFyrl+fFU2yElkWJf5ce//MysB2CgSwuS93eInfn6jCqYtsffdK5+3k7/Jp6/o8KroktOo1XYXRz1K6ZiTfx5CRDaKpGZ26D9mRh1N7GRqT3zNxJIoPHHjCAF2tBN8OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29038DA7;
+	Wed,  5 Jun 2024 05:26:56 -0700 (PDT)
+Received: from [10.162.40.27] (e116581.arm.com [10.162.40.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B878B3F762;
+	Wed,  5 Jun 2024 05:26:28 -0700 (PDT)
+Message-ID: <9710a691-1c94-4f0b-b320-9fc78ee15ae8@arm.com>
+Date: Wed, 5 Jun 2024 17:56:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507144821.12275-1-johan+linaro@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: arm64: Fix redundancy of a testcase
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+ will@kernel.org, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+ Anshuman.Khandual@arm.com
+References: <20240605115448.640717-1-dev.jain@arm.com>
+ <a518770a-371e-4333-b85d-6a5808a7ac09@sirena.org.uk>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <a518770a-371e-4333-b85d-6a5808a7ac09@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jiri and Benjamin,
 
-On Tue, May 07, 2024 at 04:48:14PM +0200, Johan Hovold wrote:
-> The Elan eKTH5015M touch controller on the X13s requires a 300 ms delay
-> before sending commands after having deasserted reset during power on.
-> 
-> This series switches the X13s devicetree to use the Elan specific
-> binding so that the OS can determine the required power-on sequence and
-> make sure that the controller is always detected during boot. [1]
+On 6/5/24 17:30, Mark Brown wrote:
+> On Wed, Jun 05, 2024 at 05:24:48PM +0530, Dev Jain wrote:
+>> Currently, we are writing the same value as we read, into the TLS
+>> register; hence, we cannot confirm updation of the register, making the
+>> testcase "verify_tpidr_one" redundant. Fix this; while at it, do a style
+>> change.
+> Please don't combine unrelated changes into a single patch.
 
-> The devicetree changes are expected to go in through the Qualcomm tree
-> once the binding and driver updates have been merged.
 
-> [1] The reset signal is currently deasserted using the pin configuration
->     and the controller would be detected if probe is deferred or if user
->     space triggers a reprobe through sysfs.
+I shall take care of that in the future.
 
-> Johan Hovold (7):
->   dt-bindings: HID: i2c-hid: add dedicated Ilitek ILI2901 schema
->   dt-bindings: HID: i2c-hid: elan: add Elan eKTH5015M
->   dt-bindings: HID: i2c-hid: elan: add 'no-reset-on-power-off' property
->   HID: i2c-hid: elan: fix reset suspend current leakage
+>
+>>   	/* ...write a new value.. */
+>>   	write_iov.iov_len = sizeof(uint64_t);
+>> -	write_val[0] = read_val[0]++;
+>> +	write_val[0] = read_val[0] + 1;
+>>   	ret = ptrace(PTRACE_SETREGSET, child, NT_ARM_TLS, &write_iov);
+>>   	ksft_test_result(ret == 0, "write_tpidr_one\n");
+> This is a good fix:
+>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
 
-Could you consider picking the first four patches up for 6.10-rc3 so
-that Bjorn can take the devicetree changes?
 
->   arm64: dts: qcom: sc8280xp-x13s: fix touchscreen power on
->   arm64: dts: qcom: sc8280xp-crd: use external pull up for touch reset
->   arm64: defconfig: enable Elan i2c-hid driver
+Thanks!
 
-Johan
+>
+>> @@ -108,7 +108,7 @@ static void test_tpidr(pid_t child)
+>>   		/* Writing only TPIDR... */
+>>   		write_iov.iov_len = sizeof(uint64_t);
+>>   		memcpy(write_val, read_val, sizeof(read_val));
+>> -		write_val[0] += 1;
+>> +		++write_val[0];
+> I'm less convinced that this is a good style change.
+
+
+Well, what I have seen usually is, when we add 1, we
+
+use prefix/postfix increment, and do a "+=" when it
+
+is not 1. But, I get your point: such style may confuse
+
+people into thinking that we are doing an index/pointer
+
+increment, since that is the usual usecase for this.
+
 
