@@ -1,105 +1,185 @@
-Return-Path: <linux-kernel+bounces-202793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C788FD133
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:53:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D9B8FD13B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A531C2272E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4D2F283AEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130763A1B6;
-	Wed,  5 Jun 2024 14:53:00 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8AD3C488;
+	Wed,  5 Jun 2024 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jjdi6VfW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9FkO87nl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C3F25774;
-	Wed,  5 Jun 2024 14:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ED827702;
+	Wed,  5 Jun 2024 14:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717599179; cv=none; b=YuGkl7T5JZQqtgW9ZJXIcZy+yVVbplCK1rEoPSWnEUeimWL5rOD6cWHwoL/Wcb+EchK4/d4lMsy9WHd3W/bYehf1U64B+5U4fS7Yf1Y8ourBIZSDkQePiZT86xsojkUMlxr5k/3935tjmo7tLBSSSvhugGCjgDun+E10U/UtAcM=
+	t=1717599279; cv=none; b=AP38hH9qdPvN5Lxord5dCUksvDKMD4exglex0BBvQloi5THv+4rkoCH+bLurEz11TfY99v4pppYFkqhvr9o4HDUYj05oh6GXctchCHsvmqN3hqoQSpkIiODkC4ut+d75/KIzGqybeFQOWX3mBVjxOiwuHeeLN4rtWloanaJJYQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717599179; c=relaxed/simple;
-	bh=yRIHKxkExUCcCNbOOTqd0FldNUHY9LI103BRj3sfAFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JypRuyRDDq5iw/rBC9dBvCOKffB+LBnvKwSB9N4+glqPswQLO2YL1PNcyRmNnHVxZP2+LcQLQIjqy1Jn5vJ9vdU/7c51sRERAilDdA5bSI8oay2O2vBMQrSEHy6d1Iqw9VC5cyXex8Wx5LtuGp7kEJuP1vIkRDcAvQRX2T/Uw2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Wed, 5 Jun 2024 10:52:53 -0400
-From: Kenton Groombridge <concord@gentoo.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2] wifi: mac80211: Avoid address calculations via out of
- bounds array indexing
-Message-ID: <dbqrrkkitwhvmcpgcpapdw7a7zjgdkidr4cyyjxyr7mwiihygo@pqzstp2nl7zg>
-Mail-Followup-To: Johannes Berg <johannes@sipsolutions.net>, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20240517145420.8891-1-concord@gentoo.org>
- <d1fea590e53cb1b00dc64f4f8a4c8aec84610401.camel@sipsolutions.net>
- <cx2oet5b5lavjywcbf7u4c32krtoglvt3xbe2sxac55e36iibw@lrd5iuhtxz2g>
- <ab59089feac4cfbc1d681fcaa4a828ca13088ce1.camel@sipsolutions.net>
+	s=arc-20240116; t=1717599279; c=relaxed/simple;
+	bh=NHDlMq4zVASGYwP3wqLssSIjtLD9lNecBMZVvGRfQlU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=EGtRZEg9NsqLXZMWtyArYhNrDFOWxIL9mGDV9Y3GPyBImnAcFlHHPQg7rtLs7Pcu4bEMr+BspdYCdbgvbukGDr39FEWTgrVTC2POq9VSwjEuXKQ1vKxpElHwVoSBKC2FsgtaXPcmFIUVZ/eGqxf8PRax/DQiX/AdcsoFf9D5FCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jjdi6VfW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9FkO87nl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Jun 2024 14:54:33 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717599273;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mrh43luRsp07N3QOm2XsMjER4wk/H8Bu+bitFmDc+Sg=;
+	b=jjdi6VfWEs7kOJAOA1ruNjIOkGbdGos1W2lK5rMwobEmaIyVnqc6rzBdYicz8b6KEMUeUh
+	3003g6eq3BCzkm59pqj7KpAHiXB03rt+Q84KnQ8Rrtp1IotgcfkF1ZaqhkKn5XAdn7ZGrd
+	YpD4el09dYOj6QWJ8vYSynvvomwap1GGPuHIrjMuIy3naTGDjmDVaGPx84jyHvqrVUHRh1
+	qjHshKIO3KVBIsUmWBIAKURnKDRLbEU9N7WGTXa9X6I02DG4bSY3hzD9KCHa7o3wgQeENi
+	IC4BWpu4rC4L62JBANso5b7rGrYQR8JRLzmJcEfo5sCJ/dL6r43uUWymuVIr4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717599273;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mrh43luRsp07N3QOm2XsMjER4wk/H8Bu+bitFmDc+Sg=;
+	b=9FkO87nlMFhungtmOEpHEplD3AXK9cVKS1w59FmlBKTrMAGhOgUWPJRUGmYBoJJl7smDhh
+	kD7sMFCz4nsfzZCA==
+From: "tip-bot2 for Tim Chen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/balance: Skip unnecessary updates to idle
+ load balancer's flags
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Chen Yu <yu.c.chen@intel.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240531205452.65781-1-tim.c.chen@linux.intel.com>
+References: <20240531205452.65781-1-tim.c.chen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6uvcipftoi6mlx2a"
-Content-Disposition: inline
-In-Reply-To: <ab59089feac4cfbc1d681fcaa4a828ca13088ce1.camel@sipsolutions.net>
-
-
---6uvcipftoi6mlx2a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Message-ID: <171759927306.10875.2450909647126184930.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 24/06/04 09:29PM, Johannes Berg wrote:
-> Looking at your patch again, this seems wrong?
->=20
-> > +				local->hw_scan_req->req.channels[*n_chans++] =3D
-> >  							req->channels[i];
-> >=20
->=20
-> This will increment n_chans rather than *n_chans, no?
->=20
+The following commit has been merged into the sched/core branch of tip:
 
-Ah ha! A silly mistake that I missed. V3 to follow soon.
+Commit-ID:     f90cc919f9e5cbfcd0b952290c57ef1317f4e91e
+Gitweb:        https://git.kernel.org/tip/f90cc919f9e5cbfcd0b952290c57ef1317f=
+4e91e
+Author:        Tim Chen <tim.c.chen@linux.intel.com>
+AuthorDate:    Fri, 31 May 2024 13:54:52 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 05 Jun 2024 15:52:36 +02:00
 
---=20
-Kenton Groombridge
-Gentoo Linux Developer, SELinux Project
+sched/balance: Skip unnecessary updates to idle load balancer's flags
 
---6uvcipftoi6mlx2a
-Content-Type: application/pgp-signature; name="signature.asc"
+We observed that the overhead on trigger_load_balance(), now renamed
+sched_balance_trigger(), has risen with a system's core counts.
 
------BEGIN PGP SIGNATURE-----
+For an OLTP workload running 6.8 kernel on a 2 socket x86 systems
+having 96 cores/socket, we saw that 0.7% cpu cycles are spent in
+trigger_load_balance(). On older systems with fewer cores/socket, this
+function's overhead was less than 0.1%.
 
-iQKTBAABCgB9FiEEP+u3AkfbrORB/inCFt7v5V9Ft54FAmZge8BfFIAAAAAALgAo
-aXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5maWZ0aGhvcnNlbWFuLm5ldDNG
-RUJCNzAyNDdEQkFDRTQ0MUZFMjlDMjE2REVFRkU1NUY0NUI3OUUACgkQFt7v5V9F
-t57bKhAAynN8R9v+lYN7ApnatMLAGRD244uYlzCDJPmBILAbfKcrg2vgm+qPJusl
-4Cwkwho370rRdRtaDqsgC9eWwRGQpJ1UZ/aq55KAI0PPtphAdXx5MqEmX7Od1aUb
-m9Nj9LLEZhL+zdIkNIP3bDRomHDCBaywzJ/mZZg+r2Edr2PUEPYsNhBM2zemvQ08
-s17K9eQooclY+fMxDGj08Em462cZ6vv5zHO4nEtTvThv+S1dPpCG9vFXreAnEckM
-sVzLDGLII97RlXIHgNKyIIN660fuIfc7O6si1W++KaDxd6j+x0NBovGwOkTPA5hM
-IDYLIt+1OG2MY4QlG32NQl3UvfsNtCjjraQcwyU5ZhT45r3W/eL6tD7JcBvLRb/4
-OKmO+sSzTAiXZ5sXOdTkIWbiqZno6vkLOsLNnxAwofHUcj0JKv8lvIHGdaxxvqhN
-yMDmKye1XdDviSggWn2cAyiovXHrcvZYYQP5LPc72DYmtXtbrIRZEKp+HmOksWBN
-ncr5VCfbcBjqeTYCUwoWU8dLE5bHR4pMZCDHUtLYAordXEB2YHavhLNKyB+QZ1m+
-s1ZyYZoz7mS6jKxphRaVrwLrQZaCn9hm9zbYx2LN6tfz3NCsV1AHoacoOUfLz/ah
-j1Av1LZFwOTw+pMmryTt/NI+kJvdGIp4yfEUSB8JCos3+m3zsJk=
-=6g5W
------END PGP SIGNATURE-----
+The cause of this overhead was that there are multiple cpus calling
+kick_ilb(flags), updating the balancing work needed to a common idle
+load balancer cpu. The ilb_cpu's flags field got updated unconditionally
+with atomic_fetch_or().  The atomic read and writes to ilb_cpu's flags
+causes much cache bouncing and cpu cycles overhead. This is seen in the
+annotated profile below.
 
---6uvcipftoi6mlx2a--
+             kick_ilb():
+             if (ilb_cpu < 0)
+               test   %r14d,%r14d
+             =E2=86=91 js     6c
+             flags =3D atomic_fetch_or(flags, nohz_flags(ilb_cpu));
+               mov    $0x2d600,%rdi
+               movslq %r14d,%r8
+               mov    %rdi,%rdx
+               add    -0x7dd0c3e0(,%r8,8),%rdx
+             arch_atomic_read():
+  0.01         mov    0x64(%rdx),%esi
+ 35.58         add    $0x64,%rdx
+             arch_atomic_fetch_or():
+
+             static __always_inline int arch_atomic_fetch_or(int i, atomic_t =
+*v)
+             {
+             int val =3D arch_atomic_read(v);
+
+             do { } while (!arch_atomic_try_cmpxchg(v, &val, val | i));
+  0.03  157:   mov    %r12d,%ecx
+             arch_atomic_try_cmpxchg():
+             return arch_try_cmpxchg(&v->counter, old, new);
+  0.00         mov    %esi,%eax
+             arch_atomic_fetch_or():
+             do { } while (!arch_atomic_try_cmpxchg(v, &val, val | i));
+               or     %esi,%ecx
+             arch_atomic_try_cmpxchg():
+             return arch_try_cmpxchg(&v->counter, old, new);
+  0.01         lock   cmpxchg %ecx,(%rdx)
+ 42.96       =E2=86=93 jne    2d2
+             kick_ilb():
+
+With instrumentation, we found that 81% of the updates do not result in
+any change in the ilb_cpu's flags.  That is, multiple cpus are asking
+the ilb_cpu to do the same things over and over again, before the ilb_cpu
+has a chance to run NOHZ load balance.
+
+Skip updates to ilb_cpu's flags if no new work needs to be done.
+Such updates do not change ilb_cpu's NOHZ flags.  This requires an extra
+atomic read but it is less expensive than frequent unnecessary atomic
+updates that generate cache bounces.
+
+We saw that on the OLTP workload, cpu cycles from trigger_load_balance()
+(or sched_balance_trigger()) got reduced from 0.7% to 0.2%.
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Chen Yu <yu.c.chen@intel.com>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Link: https://lore.kernel.org/r/20240531205452.65781-1-tim.c.chen@linux.intel=
+.com
+---
+ kernel/sched/fair.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 63113dc..41b5838 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11892,6 +11892,13 @@ static void kick_ilb(unsigned int flags)
+ 		return;
+=20
+ 	/*
++	 * Don't bother if no new NOHZ balance work items for ilb_cpu,
++	 * i.e. all bits in flags are already set in ilb_cpu.
++	 */
++	if ((atomic_read(nohz_flags(ilb_cpu)) & flags) =3D=3D flags)
++		return;
++
++	/*
+ 	 * Access to rq::nohz_csd is serialized by NOHZ_KICK_MASK; he who sets
+ 	 * the first flag owns it; cleared by nohz_csd_func().
+ 	 */
 
