@@ -1,210 +1,201 @@
-Return-Path: <linux-kernel+bounces-201673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD988FC1A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:17:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9088FC1A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 04:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F5C1F241A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D971F22036
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0D260DEA;
-	Wed,  5 Jun 2024 02:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kYfvXA8N";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LHksjYqv"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A49638DD6;
-	Wed,  5 Jun 2024 02:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717553854; cv=fail; b=H7OTlzBopW5QSi3I7qTOho7WPBmtr+grSGkYBQWnfuu+mSCSZN4XfgyydamQwjfM32d2+a/C9d1IMTssg/wc9FKP545XQ9yNnJV2OXPgNyCLWzEe/g2TN6vgOdU8p92jg92hNqSnifZSU/NvrQiuf4+6ezt/XWwjCStJf261mHU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717553854; c=relaxed/simple;
-	bh=gmZngtz+pP+1uwI/GXSDMQingpt9v5ix5x8Jj0E0Gj0=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=K9LwkC5VknJKuJDE8D3DPE1Iw/bM9jGtklla0HZhwlzsxSUgEXGH4RNnaMi5UfHnlKtCn4wwkWlJBY3bQa+r8R/PYYMCQvvmi6dZIanaXmkXy3jCYTYksukabzFP2qQH/srJtD7wK+5pBcVXwHJVe4WCNJaRpWt3Vj+/of5kalc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kYfvXA8N; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LHksjYqv; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4551EBCj015595;
-	Wed, 5 Jun 2024 02:17:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc : content-type :
- date : from : in-reply-to : message-id : mime-version : references :
- subject : to; s=corp-2023-11-20;
- bh=gmZngtz+pP+1uwI/GXSDMQingpt9v5ix5x8Jj0E0Gj0=;
- b=kYfvXA8NE4CN3HOQw3aX2Y8Y52BAAytK2w5ZdiDMcOdXg1G42Tf+dljQxYhqjT7kk8Tb
- LtlX6mjgbfvzkZi4vBk7lWAHLRwgWC2ceLboVbr5sy98a66tFpuidSk2Ww8ke/Py2dxN
- PkjmPWatuZakQKUFg4tfWHRvPkz5zl7ayJTY2pEKjitJULkt0lwFG2hh6Ghr0j3jjSYt
- uymvKae6d0d5/g7Dt4Isa88A86ANm5HscDYurVzxTcumNey972qnQyFhXZJLpFPABtjk
- Vnu71UeHObfx67wiS+yL5hwd47mYpKA5BHaqx1dOk/6a755R5J6qiIqtwPC3iVrei4OI Yg== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yjbsy85jm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Jun 2024 02:17:13 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45520lZA025170;
-	Wed, 5 Jun 2024 02:17:12 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3ygrt9dne6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Jun 2024 02:17:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aV+HnoHvywE0bKvZBNuy/yJsxmdxBv6JYweTp7pWj4ZG4H4yGcgpDbDUsuSBo/nrYwlguyfbP1H8MieiEX2DEMjoc7xs/1gaXWfFM5nngNlmVoLrWL4Phx912lQRHhonQpXhVXM+jKUIdD3we6nU8KQ3K4ENNkzIldVQqKQR9n0bpg4xS89Z5QdAivCQEqaBHQoodg7roEy2Y7Dkhokz7hMppRqxae0JvqgV3dHxYcn1g1YpoDNtkzPRX0P164Uzi3BmJ93U8qrsRdprRyaT1jCvQJcgInHt0CF4Z5KVcU8f5j7BL3v3Mi7VomrLw6bYvbooCJCUH6O4hOpgQUOCWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gmZngtz+pP+1uwI/GXSDMQingpt9v5ix5x8Jj0E0Gj0=;
- b=leYe5+MlCxUMJicnK3Qo5d/GR/U5IsSM2cQDx7fqwfJOwEA1JMygnIGrUo0qjKQjIMq5M/f1lndqgchN3SJQQ95fUaz6dwSrVPkTN7C6F09HHyK+GPlphibWqBPxJJfLP6U1DR7+RF7GU0ejMTv3YsWeF1zjjyvmzFW8LkR6RWvjeG8bE9RxQLN5/pcNXREzezRQxO2N9UBsiaIvoJvCR7aw8rmrvDQbknkRXPcHWJQMdNjPnoMNRmugvpXn+zqGozZa/udFg54PCbxIibHwGWfrJsKSMeVuO91+gRiH0HHoMbi9w47XSoJHdAK1A091BBP0MvMkL7IXBLQ6M8plSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gmZngtz+pP+1uwI/GXSDMQingpt9v5ix5x8Jj0E0Gj0=;
- b=LHksjYqvkH8Qj6eXVn8a3MvAW6Qd9eoRQ6bJNFQIiXWHV5QE9l26hnXEbh32mHwX7dkIHk78A5t4lR7vhKQMHE717YNTwvS01C6r+WEE7STriYxfCdwsqcBhlg9lv2g/Ub2LpAtK1+t8V+O0DGXDqiokch3M0WyncoILw4YL+iA=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by BN0PR10MB4886.namprd10.prod.outlook.com (2603:10b6:408:114::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31; Wed, 5 Jun
- 2024 02:17:10 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
- 02:17:10 +0000
-To: Minwoo Im <minwoo.im@samsung.com>
-Cc: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Bart Van Assche
- <bvanassche@acm.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman
- <avri.altman@wdc.com>, gost.dev@samsung.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeuk Kim <jeuk20.kim@samsung.com>
-Subject: Re: [PATCH v2 0/2] ufs: pci: Add support UFSHCI 4.0 MCQ
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20240531212244.1593535-1-minwoo.im@samsung.com> (Minwoo Im's
-	message of "Sat, 1 Jun 2024 06:22:42 +0900")
-Organization: Oracle Corporation
-Message-ID: <yq1cyow9lrc.fsf@ca-mkp.ca.oracle.com>
-References: <CGME20240531213424epcas2p16d7360e12d310c9f299d449e66af07b3@epcas2p1.samsung.com>
-	<20240531212244.1593535-1-minwoo.im@samsung.com>
-Date: Tue, 04 Jun 2024 22:17:09 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR07CA0017.namprd07.prod.outlook.com
- (2603:10b6:208:1a0::27) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A19A5338D;
+	Wed,  5 Jun 2024 02:19:18 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043941EB36
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 02:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717553957; cv=none; b=ug2te8t3OMb+LFahsQk5o4fRFznPzbIaPRY/rdO2fBuhTY/Be4xLRMQLQIE8r5NKTd+BngIcFKbke0SI3CpB8l8LUvSt8J8rMbUGE5M8autAJd8mXnZlWhHXAoR13e0V0xnCY8jiJW6kT7pPi3RMrEFgGQ4qr9JeVi3P4u1Hh9k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717553957; c=relaxed/simple;
+	bh=Zxkhm0YeSTgwvm9hgTADfpfC5tsKNvUgfM1BTuRDc9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWlKRBNKM+5Bu6ZJpAXmTACmGjqKpkMaiHnl1GhZtH8FOQK6nA7LKfIbN+pkM6H9Zq37wfRGw+ReNm8AmUrCrZFkc6+B2rKYSTF1HZVTBI8nv43u+0RuGIUlX7J4VNceTaZggxB1QDOF2WDUA/gVy5YLxuMzxyB+wUf+4dbNGhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d6dff70000001748-b9-665fcb1bc2af
+Date: Wed, 5 Jun 2024 11:19:02 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com, hannes@cmpxchg.org,
+	iamjoonsoo.kim@lge.com, rientjes@google.com
+Subject: Re: [PATCH v2] mm: let kswapd work again for node that used to be
+ hopeless but may not now
+Message-ID: <20240605021902.GC75311@system.software.com>
+References: <20240604072323.10886-1-byungchul@sk.com>
+ <87bk4hcf7h.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <20240604084533.GA68919@system.software.com>
+ <8734ptccgi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <20240605015021.GB75311@system.software.com>
+ <87tti8b10g.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|BN0PR10MB4886:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7517b225-6231-4bae-d43a-08dc85059b3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?L5wiPNbt6mva0TLL9K0ldC21TTQV2jV7Id6A83kSuWezbwa6CIlvxxxhKS5c?=
- =?us-ascii?Q?BPvhRRHe53Xm5IAVW4SemyvoLw6Zi0hVjoWU8adKyQwG482s6C+BvP3+R4+J?=
- =?us-ascii?Q?cA8r1aCr86igHO+fE8VE/s6gUGk/zKxb6n/E6bHNiYJxnN2r5bZGyJwytTay?=
- =?us-ascii?Q?AMfL45jblhIMOYYdk8RM+mDyOnvVdQgcNLCMUN3S79auekG+JIqXlawsf5iY?=
- =?us-ascii?Q?pwhGv/zykUByc1xLe4Pidjzc4IYNcYfSvo4H/BnlsVsWRdKUh8xdxmOhlGkw?=
- =?us-ascii?Q?/OrmAIDcoJy7s5Dwnk1m31pfqk92/KUYzLImad4vl9H5LHk77hZog6JXBlPH?=
- =?us-ascii?Q?OcaStz/BGYHvk3o1XxLwW03cWq7cqPMA3mC7jnOgC0ymXsMHqo2Z/Qji8/HU?=
- =?us-ascii?Q?OLQkDMNZygRZGJEPNW6u5Fbpc9WVRB37XjWs6xX1fa8+6BplQs085ibuc/4T?=
- =?us-ascii?Q?MWcljPrDCIX1eZ28YlUISwna1SRiXW9B3ZrQxY3yWzOIvNMv0VDMMp5URZn5?=
- =?us-ascii?Q?W9sWxv8K2uwneUz7H1f9j/XUcnTA+OZBlzKIu2bh+gmwa9A6jn+6fXbK5pYj?=
- =?us-ascii?Q?6PMuEzQUnlPBnkIsRqkmi3IDPvGU+v0ondzg1KJc7xWqtvKu+6umGDCR8+X9?=
- =?us-ascii?Q?tXdSU14psOOsmusp81FfKtcV7/MGsm98qtqJ+TTnid8ARbH7zOHBb55UgFJV?=
- =?us-ascii?Q?6uIOuXdKpsRzL0IqJVaLbPyvQWh0yEpnUpm1cwkaDpYt11yHLx6ZyT/Fl/kS?=
- =?us-ascii?Q?bsZfXN8Ulz1LqE3UVbQop/wMatTkca3gFPPCTrU+2Anmx6B5oh3InHdhQoxY?=
- =?us-ascii?Q?OylJgrp4/Xuo7o5OPS4dQ6NI43E6sNSscYF/LIA4lomaQ+dAdcZkuWruLYvm?=
- =?us-ascii?Q?E6RSZi41cefO7qlK+A8rlndsDRL8PqyXEYclAaSL2Va1ANqTYEFOu9tidx2r?=
- =?us-ascii?Q?+c1IeZBSKyOJ1aiSPnfDOtuYwT0JXxhXmT0QDjLaErlendqV0dQzCejvXxfZ?=
- =?us-ascii?Q?sB6t29bVuDO8qSkqycp0VOHqqydrZ2fbAC/uYeD1x1qFEwO7AnpNbmrA/d2S?=
- =?us-ascii?Q?zgdf/AovdfpiTIO3h+vQl2/8MusqweSCPZICuv2CfVnE4Bo5HQtMD2y6PIAd?=
- =?us-ascii?Q?OIhDm305c+T3aUrTQbd0JwhGeIhAN5N/yW8K1dqPtKkP5lotTkdDK8QF5n64?=
- =?us-ascii?Q?RD0rU8VgWoiBTSd7i6BWAOiuqfCdwef0uMAh3l6DjOniXaTy+CkDoaTTzJq6?=
- =?us-ascii?Q?Qsdn9OkzVxSPUKBb2K3TvdLL/mKLpMiz9Vwv3avezw=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?yifCTrrGTJMW1XZk/RWs3TRsUwZmM1qPPLykY0c7qRZyMQEhvyWFj/8PO61V?=
- =?us-ascii?Q?Jcd2B5F7pTfr3/aVN9WgFH0RhG/1doRL1NnNp/q7RiSv27miUxVeWZC/hRz2?=
- =?us-ascii?Q?VjY/rcLGdwWWs7GiE7EilmZqoDWoFVWmsxybJMFV/8Z4NARjO9sicc5HULN8?=
- =?us-ascii?Q?KnMgDtbvSkql+dka0xx/RAwJkDAUejiLactzpXOknEnHhURlkaCBZmgUkChm?=
- =?us-ascii?Q?IItAxrf/0kqnarRb4txn8OKBx5INgRtpgVONZfPIdkz74zyP4SPIDsY8/Qka?=
- =?us-ascii?Q?xsoSE3vyPylAfeNuVTVhUfNrI2i1HeKKBYnaGXzfitLgENanNe5iUrC++W9O?=
- =?us-ascii?Q?/Frvd617UHB2+r2Adq7b2CAuQ2Tr2SMsqxS7BDpi6HP3A+1xecNE4oxlk/Hb?=
- =?us-ascii?Q?YsQ18+zKxCqvblhfdNK7c6aJaQoj4kzbQMvFfxUzYoYNuX46X8lsxoO/1mKX?=
- =?us-ascii?Q?cZ0TM4VNfWgvBQ064XV5lYJxoiphXUsYqKtTr0+bqwVL93MSL0o2NyqAX6Ec?=
- =?us-ascii?Q?3kAzzK7poWtRESqRJO/YdTH+6/5CLGqP8oXIkFDsmUoXc1mBq5P7OiSD8JSH?=
- =?us-ascii?Q?YRAuTe160txVQ9mkYYrZa/JWDcFEFf0fulv977rbpk2gw8RgAJOCu2r6s6B/?=
- =?us-ascii?Q?rSVCOpl1zxPVhEo08HPapA4P2wuYRsFcam1rUGN9FHhN4DdurnmJtFPdUH38?=
- =?us-ascii?Q?kR/wW8VXEOiQQzKchcylRVv1aYEgQxSvms9/TYUL4Tsur7AX8Vu5gRlrdlwb?=
- =?us-ascii?Q?0RO4v6AFfnsvt9PudoBtT2ZRq9v4vCty+q4JBBBT/8u2WI2uQK331Ez0Ty/3?=
- =?us-ascii?Q?ko7v0fdxPiB7qb0iKH8PUqc0+IJnJiWpG9W85PFOh1lTU761dR0S/3dIVbbk?=
- =?us-ascii?Q?rvZf387lBW4wzWt8nztpqOJKnuqUaOu56d/QqiwFBr6dJytwuqFRRm3Eg45A?=
- =?us-ascii?Q?LQXvsNX+3QrnlmQ5SA4pKgQFSUOYk4CzoxfvGHXjpXzD62wU8+O6D9psM72i?=
- =?us-ascii?Q?IpWoq/vbB6ouWZHU9uleCRq9j/ARCjAKzoiDQrG9lVBEuwC1G3SQYy0oR+iS?=
- =?us-ascii?Q?EbIbzE+BGrD2abnmwf6ODtOLUbj8avMpLJ0mPN+uEBWYtNRp+gfQ3s8ZzUzm?=
- =?us-ascii?Q?mDofBJVXHmet0kLs3xDw7LN7DdckFOWe/8umstSZKhJQIjBFed+2dFrB0623?=
- =?us-ascii?Q?rj85ouM/XLQSFAPyVHlJ2eBLsc5qv4UxlWGynjZX6hEUSR0sQmlliL4fkutK?=
- =?us-ascii?Q?ciR98Slja6S5CCcx9qQtkA2x91FTVl/AeJ5pQUgjIhoRQAakRU0X7v9FRnrN?=
- =?us-ascii?Q?AMbuE62C7ZRLDZQco0dL0QDixxCDyuyZfbh82lOgNf1ZX9U7z0trwhnYL+Zg?=
- =?us-ascii?Q?dTZffXovAMTcefhK3wM/1bgdqOLjbpTsH6Omi6wOmkrPLsbrInN/giV4beDC?=
- =?us-ascii?Q?4SX4v2kSpamXi9yflF4aMSs+8pL05OLMJ8nRMC9dHqUZ2lCRbWOZJmhxl00n?=
- =?us-ascii?Q?pioDZ1f70oZTbv+zAV+uG8kHT/2FeqqVRgxynwcT2hQrWOr8JNpYZ5jZINw8?=
- =?us-ascii?Q?DEkNVdyP1dq1SzueukPu1/NWrrE/41FdmAOI7ChYcnCrzXjYlRsXPb28Ll0P?=
- =?us-ascii?Q?ug=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	mhZnQa41JFIo8m6wCvinjrTxAADAVz3QgJmPGrN3F7ZwCGFgsAW+U3clpWl+aOhYkLyFEqlxypmQg3dZXbL22gHp+J6Y45cNSxte0VjVyV4bugQMUPDCUz4HS6N2W6CO/c02auNu9wssem/1RTE4UgG7N/rzEDNtwNtP1A1gLXLuvBZA/x682vof4FfNZ48wiL8OuTJutSqCsCQzfPSlUhTfJxrGEYNlwuJwcaQYEDRgDNzqszzXmbe8NHbH75DX+2C+aAVApzMXO6tZLHCN1yFdtTWDdP/ebrXwU6mrRFWYtQ/sW9Lhb/RdnMcJTFbpwCCHoXnUr/y3JOHLTmDaJOIylOPWHjl0leOX8HlLUpjLJhftSudOmjh9cVTDfh2EnyMoW3pFW8NQ4eNnqaB4ctzAzVM4if2XEuS7Yurws0A0Iuq2B9eAAw9HT5TmZuA9CW1lyN05tjAHwXyjG4Y+KnDmHNWoADar0NBT4KNy8rQq53+ayyxql0955IjXD6aREdF+lQBbxXHtIshhkJNFZBSQSw3ZoQtW/qJhmkk8nRuoZzlEjjOyCTgPyFdVNiL564yqHmC1WERCW0WGT/uVIx3a/92s+XHr+y+/rmNsoog=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7517b225-6231-4bae-d43a-08dc85059b3a
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 02:17:10.6413
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M3zp91Ad+RpZLDnHka+PJivJPOH2+fJEeT/b+GDiUo7+EGxIjVckBr0va4tmGALH0GORsimsD0YZ+V1JuSwlGpmqdsqpEDO0ZAPr9FfQzEw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4886
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=649 bulkscore=0 spamscore=0
- adultscore=0 suspectscore=0 malwarescore=0 mlxscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2406050016
-X-Proofpoint-GUID: v3ijzEOVqwfLaelcF2nuWr7xkLVd_UJU
-X-Proofpoint-ORIG-GUID: v3ijzEOVqwfLaelcF2nuWr7xkLVd_UJU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tti8b10g.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsXC9ZZnka7M6fg0g0+7WC3mrF/DZrF6k6/F
+	yu5mNovLu+awWdxb85/Vom3JRiaLk7Mmsziwexx+857ZY8GmUo/Fe14yeWz6NIndo+vtFSaP
+	EzN+s3h83iQXwB7FZZOSmpNZllqkb5fAlbGiaQtLQYd2xb6Pp1gaGDcpdjFycEgImEhcns3d
+	xcgJZl66u5sdxGYRUJGY+/I8C4jNJqAucePGT2YQW0RAQ+LTwuVANVwczAJrGSWOXG1hBZkj
+	LJAqcXx7AEgNr4CFxOlbkxlBaoQE1jNJ/Oh5yQ6REJQ4OfMJ2FBmAS2JG/9eMoH0MgtISyz/
+	xwES5hSwk3g96RcTiC0qoCxxYNtxJpA5EgIH2CSuXLzAAnGopMTBFTdYJjAKzEIydhaSsbMQ
+	xi5gZF7FKJSZV5abmJljopdRmZdZoZecn7uJERjqy2r/RO9g/HQh+BCjAAejEg/vjl9xaUKs
+	iWXFlbmHGCU4mJVEeP2K49OEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xp9K08REkhPLEnNTk0t
+	SC2CyTJxcEo1MLZ8W/RmRsXcRV/+eX9Y/P6rYFvfP4V3p0TuWcVc11Pb96jqm8UFt0LvY4Gp
+	YZflbx86J6/3/scv5WUPGe7d/JidcXHN68e1nQKze88pV7xwZVeT57T0rdinFMTwvLlMqE1D
+	a+3aB5duXFwjb/9cMuNmr6nNerMfvdt0jn5cuOcX5wzf+rhpOU+UWIozEg21mIuKEwFUkbkV
+	cQIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsXC5WfdrCt9Oj7N4NltU4s569ewWaze5Gux
+	sruZzeLw3JOsFpd3zWGzuLfmP6tF25KNTBYnZ01mceDwOPzmPbPHgk2lHov3vGTy2PRpErtH
+	19srTB4nZvxm8Vj84gOTx+dNcgEcUVw2Kak5mWWpRfp2CVwZK5q2sBR0aFfs+3iKpYFxk2IX
+	IyeHhICJxKW7u9lBbBYBFYm5L8+zgNhsAuoSN278ZAaxRQQ0JD4tXA5Uw8XBLLCWUeLI1RbW
+	LkYODmGBVInj2wNAangFLCRO35rMCFIjJLCeSeJHz0t2iISgxMmZT8CGMgtoSdz495IJpJdZ
+	QFpi+T8OkDCngJ3E60m/mEBsUQFliQPbjjNNYOSdhaR7FpLuWQjdCxiZVzGKZOaV5SZm5pjq
+	FWdnVOZlVugl5+duYgSG7rLaPxN3MH657H6IUYCDUYmHd8evuDQh1sSy4srcQ4wSHMxKIrx+
+	xfFpQrwpiZVVqUX58UWlOanFhxilOViUxHm9wlMThATSE0tSs1NTC1KLYLJMHJxSDYz7ll+4
+	Z8p9K/L73U+pjK2aNadbNq3y8o/YO4Vrth3j2jIm9vqXIslZLrZlXsXm1xrjd8p8ervk7LxF
+	PVPPstpIL0s8+G6d500WvgPWIRFVvWdX57V7nJ9k3fuObaMvo2HvEc1JCWp2pyoen9d56bZE
+	bjvLsWcqjX5feTwWbjP7qLO2YlPmbDslluKMREMt5qLiRADujAtHWQIAAA==
+X-CFilter-Loop: Reflected
 
+On Wed, Jun 05, 2024 at 10:02:07AM +0800, Huang, Ying wrote:
+> Byungchul Park <byungchul@sk.com> writes:
+> 
+> > On Tue, Jun 04, 2024 at 04:57:17PM +0800, Huang, Ying wrote:
+> >> Byungchul Park <byungchul@sk.com> writes:
+> >> 
+> >> > On Tue, Jun 04, 2024 at 03:57:54PM +0800, Huang, Ying wrote:
+> >> >> Byungchul Park <byungchul@sk.com> writes:
+> >> >> 
+> >> >> > Changes from v1:
+> >> >> > 	1. Don't allow to resume kswapd if the system is under memory
+> >> >> > 	   pressure that might affect direct reclaim by any chance, like
+> >> >> > 	   if NR_FREE_PAGES is less than (low wmark + min wmark)/2.
+> >> >> >
+> >> >> > --->8---
+> >> >> > From 6c73fc16b75907f5da9e6b33aff86bf7d7c9dd64 Mon Sep 17 00:00:00 2001
+> >> >> > From: Byungchul Park <byungchul@sk.com>
+> >> >> > Date: Tue, 4 Jun 2024 15:27:56 +0900
+> >> >> > Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
+> >> >> >
+> >> >> > A system should run with kswapd running in background when under memory
+> >> >> > pressure, such as when the available memory level is below the low water
+> >> >> > mark and there are reclaimable folios.
+> >> >> >
+> >> >> > However, the current code let the system run with kswapd stopped if
+> >> >> > kswapd has been stopped due to more than MAX_RECLAIM_RETRIES failures
+> >> >> > until direct reclaim will do for that, even if there are reclaimable
+> >> >> > folios that can be reclaimed by kswapd.  This case was observed in the
+> >> >> > following scenario:
+> >> >> >
+> >> >> >    CONFIG_NUMA_BALANCING enabled
+> >> >> >    sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
+> >> >> >    numa node0 (500GB local DRAM, 128 CPUs)
+> >> >> >    numa node1 (100GB CXL memory, no CPUs)
+> >> >> >    swap off
+> >> >> >
+> >> >> >    1) Run a workload with big anon pages e.g. mmap(200GB).
+> >> >> >    2) Continue adding the same workload to the system.
+> >> >> >    3) The anon pages are placed in node0 by promotion/demotion.
+> >> >> >    4) kswapd0 stops because of the unreclaimable anon pages in node0.
+> >> >> >    5) Kill the memory hoggers to restore the system.
+> >> >> >
+> >> >> > After restoring the system at 5), the system starts to run without
+> >> >> > kswapd.  Even worse, tiering mechanism is no longer able to work since
+> >> >> > the mechanism relies on kswapd for demotion.
+> >> >> 
+> >> >> We have run into the situation that kswapd is kept in failure state for
+> >> >> long in a multiple tiers system.  I think that your solution is too
+> >> >
+> >> > My solution just gives a chance for kswapd to work again even if
+> >> > kswapd_failures >= MAX_RECLAIM_RETRIES, if there are potential
+> >> > reclaimable folios.  That's it.
+> >> >
+> >> >> limited, because OOM killing may not happen, while the access pattern of
+> >> >
+> >> > I don't get this.  OOM will happen as is, through direct reclaim.
+> >> 
+> >> A system that fails to reclaim via kswapd may succeed to reclaim via
+> >> direct reclaim, because more CPUs are used to scanning the page tables.
+> >
+> > Honestly, I don't think so with this description.
+> >
+> > The fact that the system hit MAX_RECLAIM_RETRIES means the system is
+> > currently hopeless unless reclaiming folios in a stronger way by *direct
+> > reclaim*.  The solution for this situation should not be about letting
+> > more CPUs particiated in reclaiming, again, *at least in this situation*.
+> >
+> > What you described here is true only in a normal state where the more
+> > CPUs work on reclaiming, the more reclaimable folios can be reclaimed.
+> > kswapd can be a helper *only* when there are kswapd-reclaimable folios.
+> 
+> Sometimes, we cannot reclaim just because we doesn't scan fast enough so
+> the Accessed-bit is set again during scanning.  With more CPUs, we can
+> scan faster, so make some progress.  But, yes, this only cover one
+> situation, there are other situations too.
 
-Minwoo,
+What I mean is *the issue we try to solve* is not the situation that
+can be solved by letting more CPUs participate in reclaiming.
 
-> This patchset introduces add support for MCQ introduced in UFSHCI 4.0.
-> The first patch adds a simple helper to get the address of MCQ queue
-> config registers. The second one enables MCQ feature by adding
-> mandatory vops callback functions required at MCQ initialization
-> phase. The last one is to prevent a case where number of MCQ is given
-> 1 since driver allocates poll_queues first rather than I/O queues to
-> handle device commands. Instead of causing exception handlers due to
-> no I/O queue, failfast during the initialization time.
+	Byungchul
 
-Applied to 6.11/scsi-staging, thanks!
-
-Martin
+> --
+> Best Regards,
+> Huang, Ying
+> 
+> > 	Byungchul
+> >
+> >> In a system with NUMA balancing based page promotion and page demotion
+> >> enabled, page promotion will wake up kswapd, but kswapd may fail in some
+> >> situations.  But page promotion will no trigger direct reclaim or OOM.
+> >> 
+> >> >> the workloads may change.  We have a preliminary and simple solution for
+> >> >> this as follows,
+> >> >> 
+> >> >> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=17a24a354e12d4d4675d78481b358f668d5a6866
+> >> >
+> >> > Whether tiering is involved or not, the same problem can arise if
+> >> > kswapd gets stopped due to kswapd_failures >= MAX_RECLAIM_RETRIES.
+> >> 
+> >> Your description is about tiering too.  Can you describe a situation
+> >> without tiering?
+> >> 
+> >> --
+> >> Best Regards,
+> >> Huang, Ying
+> >> 
+> >> > 	Byungchul
+> >> >
+> >> >> where we will try to wake up kswapd to check every 10 seconds if kswapd
+> >> >> is in failure state.  This is another possible solution.
+> >> >> 
+> >> >> > However, the node0 has pages newly allocated after 5), that might or
+> >> >> > might not be reclaimable.  Since those are potentially reclaimable, it's
+> >> >> > worth hopefully trying reclaim by allowing kswapd to work again.
+> >> >> >
+> >> >> 
+> >> >> [snip]
+> >> >> 
+> >> >> --
+> >> >> Best Regards,
+> >> >> Huang, Ying
 
