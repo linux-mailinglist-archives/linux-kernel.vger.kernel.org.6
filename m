@@ -1,137 +1,191 @@
-Return-Path: <linux-kernel+bounces-202819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CF18FD181
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:22:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DC08FD189
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C321F248A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:22:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA056B2713E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C4018F2DD;
-	Wed,  5 Jun 2024 15:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUEEVJxl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0491F4AEC3;
+	Wed,  5 Jun 2024 15:23:14 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158CE61FF3;
-	Wed,  5 Jun 2024 15:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A4F1863F;
+	Wed,  5 Jun 2024 15:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717600827; cv=none; b=YmzgjC1fE5mqvwDJnFx3GLQgIunBuhzJ/6pM+R4xNyPiTXnTzjqA7yi2W5ZaiqWPmNeGI0kBgMCm2vj2KnsOkaNXUOuQDMtw0mscvRhpcsfFazG/5YAsdzek5zNrpvy1PjM8mmTWsRGTeVSacdogxkrNBg0StEDW4qHdyzHaPPw=
+	t=1717600993; cv=none; b=YaKaPIbcHihlAUcVdmq3HpfTROo708LUd3lm5VZmLVhFkdlSjl9gMUhV9SKy7nUmK6nFp3f7gbNIttxHf044CtqhK5Pv75K+C5ZffCpLffzG4Q1wbgjJcFcowA05/8mXa16RUn88iH4Xm7crgNHTVZcgxTvNMjEViGwG93lv1pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717600827; c=relaxed/simple;
-	bh=kLFvvFXxCp6uMBhhZVSLA1pq3N21yC6KX4ZzJiuU3Zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bfo2+GAWy1JHBTYUP/ubeBks6rHagmDImJg4jpQJPdSUNZt8mhJtx6vOZlQvh0OtIVxKBMfHqf3/yDiymgih06IrRZm+J2o4owN01emBprjt8yC54leD/VtXk3FLuVqOc75y6EtwWMj+0nTgeu9hgEykM1GhXTWFxhD1HCwtDLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUEEVJxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C664DC32781;
-	Wed,  5 Jun 2024 15:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717600824;
-	bh=kLFvvFXxCp6uMBhhZVSLA1pq3N21yC6KX4ZzJiuU3Zg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZUEEVJxlx1qQCYLnpV6duFKUiYFKI4Q3Vn6QnpvrcD0+Y9hkti1TPx/QMaLtYcHsa
-	 DeevvGQ3Hi6leIRR4Pz6iq6+kewaiOeMdWl+hxmD8LcV6QG89X/a3KgU0ut/sidyWa
-	 x5JwQXlOfDj7WKONzqFz4UqvnPcMW60f+DM04R2Ow1AZGN8B5GanMYJJc0n/Fm3Hb0
-	 tfuBeKfZThmQKOITBnSzuw+0jOz6/7Adl+8h0sVprly6mnJfNvdTbL3ZzMRL4RygeT
-	 uspFJWD1yF1LUbtg6rvIc/vNLQYICRBgBeVK5VrdApVdJJpPLyCeB5iVaGGfhelIUr
-	 9Fg4LYRmnr/+Q==
-Date: Wed, 5 Jun 2024 17:20:19 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, axboe@kernel.dk, daclash@linux.microsoft.com
-Subject: Re: [HACK PATCH] fs: dodge atomic in putname if ref == 1
-Message-ID: <20240605-zeitraffer-fachzeitschrift-e74730507b59@brauner>
-References: <20240604132448.101183-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1717600993; c=relaxed/simple;
+	bh=VPZkswdUi9IbeyGy87RvCLEp3+GYq472ghuyHCjHZVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q3QMEk0rHJgthnAhXDFEd9ByQtU0S9zgniUeQ5xCA4xGjdywaGYWOmKFYvpk9O5cCObEMU1rDgK8RLT8h9B7uZQaqeGK45ne3/IB2VWYj+I8Ah64eDNfvCC1yjG8TT8DBpkpCG+cQTHzL0Vd+5Qrff/zycnpuNhINz4T6FzpCJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Kenton Groombridge <concord@gentoo.org>
+To: johannes@sipsolutions.net
+Cc: concord@gentoo.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH v3] wifi: mac80211: Avoid address calculations via out of bounds array indexing
+Date: Wed,  5 Jun 2024 11:22:18 -0400
+Message-ID: <20240605152218.236061-1-concord@gentoo.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240604132448.101183-1-mjguzik@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 04, 2024 at 03:24:48PM +0200, Mateusz Guzik wrote:
-> The struct used to be refcounted with regular inc/dec ops, atomic usage
-> showed up in commit 03adc61edad4 ("audit,io_uring: io_uring openat
-> triggers audit reference count underflow").
-> 
-> If putname spots a count of 1 there is no legitimate way of anyone to
-> bump it and these modifications are low traffic (names are not heavily)
-> shared, thus one can do a load first and if the value of 1 is found the
-> atomic can be elided -- this is the last reference..
-> 
-> When performing a failed open this reduces putname on the profile from
-> ~1.60% to ~0.2% and bumps the syscall rate by just shy of 1% (the
-> discrepancy is due to now bigger stalls elsewhere).
+req->n_channels must be set before req->channels[] can be used.
 
-I suspect you haven't turned audit on in general because that would give
-you performance impact in a bunch of places. Can't we just do something
-where we e.g., use plain refcounts if audit isn't turned on?
-(audit_dummy_context() or whatever it's called).
+This patch fixes one of the issues encountered in [1].
 
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
-> 
-> This is a lazy hack.
-> 
-> The race is only possible with io_uring which has a dedicated entry
-> point, thus a getname variant which takes it into account could store
-> the need to use atomics as a flag in struct filename. To that end
-> getname could take a boolean indicating this, fronted with some inlines
-> and the current entry point renamed to __getname_flags to hide it.
-> 
-> Option B is to add a routine which "upgrades" to atomics after getname
-> returns, but that's a littly fishy vs audit_reusename.
-> 
-> At the end of the day all spots which modify the ref could branch on the
-> atomics flag.
-> 
-> I opted to not do it since the hack below undoes the problem for me.
-> 
-> I'm not going to fight for this hack though, it is merely a placeholder
-> until someone(tm) fixes things.
-> 
-> If the hack is considered a no-go and the appraoch described above is
-> considered fine, I can submit a patch some time this month to sort it
-> out, provided someone tells me how to name a routine which grabs a ref
-> -- the op is currently opencoded and "getname" allocates instead of
-> merely refing. would "refname" do it?
-> 
->  fs/namei.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 37fb0a8aa09a..f9440bdb21d0 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -260,11 +260,13 @@ void putname(struct filename *name)
->  	if (IS_ERR(name))
->  		return;
->  
-> -	if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
-> -		return;
-> +	if (unlikely(atomic_read(&name->refcnt) != 1)) {
-> +		if (WARN_ON_ONCE(!atomic_read(&name->refcnt)))
-> +			return;
->  
-> -	if (!atomic_dec_and_test(&name->refcnt))
-> -		return;
-> +		if (!atomic_dec_and_test(&name->refcnt))
-> +			return;
-> +	}
->  
->  	if (name->name != name->iname) {
->  		__putname(name->name);
-> -- 
-> 2.39.2
-> 
+[   83.964252] ------------[ cut here ]------------
+[   83.964255] UBSAN: array-index-out-of-bounds in net/mac80211/scan.c:364:4
+[   83.964258] index 0 is out of range for type 'struct ieee80211_channel *[]'
+[   83.964260] CPU: 0 PID: 1695 Comm: iwd Tainted: G           O    T 6.8.9-gentoo-hardened1 #1
+[   83.964262] Hardware name: System76 Pangolin/Pangolin, BIOS ARB928_V00.01_T0025ASY1_ms 04/20/2023
+[   83.964264] Call Trace:
+[   83.964267]  <TASK>
+[   83.964269]  dump_stack_lvl+0x3f/0xc0
+[   83.964274]  __ubsan_handle_out_of_bounds+0xec/0x110
+[   83.964278]  ieee80211_prep_hw_scan+0x2db/0x4b0
+[   83.964281]  __ieee80211_start_scan+0x601/0x990
+[   83.964284]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964287]  ? cfg80211_scan+0x149/0x250
+[   83.964291]  nl80211_trigger_scan+0x874/0x980
+[   83.964295]  genl_family_rcv_msg_doit+0xe8/0x160
+[   83.964298]  genl_rcv_msg+0x240/0x270
+[   83.964301]  ? __cfi_nl80211_trigger_scan+0x10/0x10
+[   83.964302]  ? __cfi_nl80211_post_doit+0x10/0x10
+[   83.964304]  ? __cfi_nl80211_pre_doit+0x10/0x10
+[   83.964307]  ? __cfi_genl_rcv_msg+0x10/0x10
+[   83.964309]  netlink_rcv_skb+0x102/0x130
+[   83.964312]  genl_rcv+0x23/0x40
+[   83.964314]  netlink_unicast+0x23b/0x340
+[   83.964316]  netlink_sendmsg+0x3a9/0x450
+[   83.964319]  __sys_sendto+0x3ae/0x3c0
+[   83.964324]  __x64_sys_sendto+0x21/0x40
+[   83.964326]  do_syscall_64+0x90/0x150
+[   83.964329]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964331]  ? syscall_exit_work+0xc2/0xf0
+[   83.964333]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964335]  ? syscall_exit_to_user_mode+0x74/0xa0
+[   83.964337]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964339]  ? do_syscall_64+0x9c/0x150
+[   83.964340]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964342]  ? syscall_exit_to_user_mode+0x74/0xa0
+[   83.964344]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964346]  ? do_syscall_64+0x9c/0x150
+[   83.964347]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964349]  ? do_syscall_64+0x9c/0x150
+[   83.964351]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964353]  ? syscall_exit_work+0xc2/0xf0
+[   83.964354]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964356]  ? syscall_exit_to_user_mode+0x74/0xa0
+[   83.964358]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964359]  ? do_syscall_64+0x9c/0x150
+[   83.964361]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964362]  ? do_user_addr_fault+0x488/0x620
+[   83.964366]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964367]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   83.964369]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
+[   83.964372] RIP: 0033:0x6200808578d7
+[   83.964374] Code: 00 00 90 f3 0f 1e fa 41 56 55 41 89 ce 48 83 ec 28 80 3d 7b f7 0d 00 00 74 29 45 31 c9 45 31 c0 41 89 ca b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 71 48 83 c4 28 5d 41 5e c3 66 0f 1f 84 00 00
+[   83.964375] RSP: 002b:0000730c4e821530 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+[   83.964378] RAX: ffffffffffffffda RBX: 000006dbc456c570 RCX: 00006200808578d7
+[   83.964379] RDX: 000000000000005c RSI: 000006dbc45884f0 RDI: 0000000000000004
+[   83.964381] RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+[   83.964382] R10: 0000000000000000 R11: 0000000000000246 R12: 000006dbc456c480
+[   83.964383] R13: 000006dbc456c450 R14: 0000000000000000 R15: 000006dbc456c610
+[   83.964386]  </TASK>
+[   83.964386] ---[ end trace ]---
+
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=218810
+
+v3:
+- Fix incorrect channel copying
+v2:
+- Drop changes in cfg80211 as requested by Johannes
+
+Co-authored-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kenton Groombridge <concord@gentoo.org>
+---
+ net/mac80211/scan.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
+index 73850312580f..56beed61d2b7 100644
+--- a/net/mac80211/scan.c
++++ b/net/mac80211/scan.c
+@@ -358,7 +358,8 @@ static bool ieee80211_prep_hw_scan(struct ieee80211_sub_if_data *sdata)
+ 	struct cfg80211_scan_request *req;
+ 	struct cfg80211_chan_def chandef;
+ 	u8 bands_used = 0;
+-	int i, ielen, n_chans;
++	int i, ielen;
++	u32 *n_chans;
+ 	u32 flags = 0;
+ 
+ 	req = rcu_dereference_protected(local->scan_req,
+@@ -368,34 +369,34 @@ static bool ieee80211_prep_hw_scan(struct ieee80211_sub_if_data *sdata)
+ 		return false;
+ 
+ 	if (ieee80211_hw_check(&local->hw, SINGLE_SCAN_ON_ALL_BANDS)) {
++		local->hw_scan_req->req.n_channels = req->n_channels;
++
+ 		for (i = 0; i < req->n_channels; i++) {
+ 			local->hw_scan_req->req.channels[i] = req->channels[i];
+ 			bands_used |= BIT(req->channels[i]->band);
+ 		}
+-
+-		n_chans = req->n_channels;
+ 	} else {
+ 		do {
+ 			if (local->hw_scan_band == NUM_NL80211_BANDS)
+ 				return false;
+ 
+-			n_chans = 0;
++			n_chans = &local->hw_scan_req->req.n_channels;
++			*n_chans = 0;
+ 
+ 			for (i = 0; i < req->n_channels; i++) {
+ 				if (req->channels[i]->band !=
+ 				    local->hw_scan_band)
+ 					continue;
+-				local->hw_scan_req->req.channels[n_chans] =
++				local->hw_scan_req->req.channels[(*n_chans)++] =
+ 							req->channels[i];
+-				n_chans++;
++
+ 				bands_used |= BIT(req->channels[i]->band);
+ 			}
+ 
+ 			local->hw_scan_band++;
+-		} while (!n_chans);
++		} while (!*n_chans);
+ 	}
+ 
+-	local->hw_scan_req->req.n_channels = n_chans;
+ 	ieee80211_prepare_scan_chandef(&chandef);
+ 
+ 	if (req->flags & NL80211_SCAN_FLAG_MIN_PREQ_CONTENT)
+-- 
+2.45.2
+
 
