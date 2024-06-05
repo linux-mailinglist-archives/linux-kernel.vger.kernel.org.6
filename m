@@ -1,158 +1,350 @@
-Return-Path: <linux-kernel+bounces-201786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886518FC324
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 158C98FC328
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A42283192
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:51:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A52282DDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E24D21C183;
-	Wed,  5 Jun 2024 05:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CC721C189;
+	Wed,  5 Jun 2024 05:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U1FltmsK"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0iaIVvi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96F4D529
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56754946C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717566678; cv=none; b=mbnT+wj9L9vijtRnDoAfziq5XEUdqSx6YJ8JvOLoafQRgx+AVbjvRgBi6AEfbzdInDWBrln2oQyY/okkPMtRZMgVFyokPK343eHj1FC7UQfPNX/Xt49No1sSjiytAarVaWTr9k6gPKp8r9JXBRz8tLns7L5EUuqCPZN3pS41m8A=
+	t=1717566760; cv=none; b=HNr8kpQe820ltFlZ78UWB7Q+BimN4pQPR4Ytc9shpkXSmc4Dt0GNBVZjvZ2ptd5vbivIP1XEbWpEtIth7eJwDFmj9xvMfs3ZOtoJOx+YQdSFYaqAxSeYu72ZRM8hSw+j+aZ+P84lzmhV4X49QyEbnoNtI/yQ9C0KOYYUXTw0Gn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717566678; c=relaxed/simple;
-	bh=ITeDx0OqlgB7NiL0mf7tKEd1JYGKzgJ1DJzTY6KYISc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eyUeapdVZ2a0y329aR6FVgC5tWNpVMUNcvEcRLfTkCw+qoho+FWMwZDxWpmw08kwNWXDoero+NCddO8X0NFQqWs+bRoj7nGK1IUGhRUGv6UhYHZ9UPMEBUzS4gm+P/VDevRSQbLIoqAyL6PFTsda+FZSSZafcGM/NAISIR4cpe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U1FltmsK; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f658800344so27679135ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 22:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717566675; x=1718171475; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rCWSUQImHGilToURCyAOpdWvaa8ql6HejyzXJyuEZoo=;
-        b=U1FltmsKqAmHOcgos8Ff6I6BwrczuMCgFtZVJYkqFM9ibIk2N7/kQFu4pYcKfk2+3i
-         H7FCeH274i4PM1PKonsO6gPw3HxA9LgTNo0RSWoph5OVrdTcE1O5ciY6igTcBGU7/oGK
-         q3L7bBA5tbiTFHA7gsdikMCfRGRlkqGRPzAeHu126y0D0QB8NZVaSt/X0JKMMwvpr+yq
-         JnNaokH5JFnbWKJ46XV519AxD1drzrg4pQldYkXBnNS0kOLJNe9DmAagqfllXAuC51JD
-         zRz7Pd59I1EG9EM5x4g/zFns079mo+0OC2t0jep79kfzPIP8GetknuR/eDNH4YT5xF6R
-         enZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717566675; x=1718171475;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rCWSUQImHGilToURCyAOpdWvaa8ql6HejyzXJyuEZoo=;
-        b=NdmIF+2+K/BuEcj53UboeWnndL3uvl20wUni5nfDROsoFl8k/83zOgvEoLzgW0H/u1
-         v8532DL6zVhm9cm5vxTprwnXRc1PYszFUBiBwEeetdFI7A/Nnwwf2Daqlr3zRow1kI35
-         6ZspDq7yQqshZ39k3bcE+FsrpA1qYqpRJfVKnMUt13lRI8o6I5MJqTyENSGUQok5+5np
-         abYhVnDndBAXpAkLqaovuxUVqlXyUMzQ34jM7iS235UdowxtUoR3wonI6Agt0FVV+jTL
-         deBrj39PYT1jnGz1O/rVIHgXp6XbhGDItbVjtQIsaUHiFro88jr2x1lWsdBV/djOA+Mi
-         nD4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3QQRPk1WrSzIT0Pw9/J7FTjIKCzXPelHGZi2QVhQUV6JYRSAPAY5nqz7WzaAUAhPHb22UKxj5uZI3iyxEzZb7xecXnwa32E09JdeA
-X-Gm-Message-State: AOJu0YxURWY/JQYw/OZRGsKjhnTap7mZg10pNXwzS3YNERlu93POsGiZ
-	NFNS6cToaprkAYxdcdaIDbgySJHJx8bi315jVLPojlnPJKEMs02O2hZv8j6vxAtaj6RJX8JVk7A
-	=
-X-Google-Smtp-Source: AGHT+IGV/MUBr4KlZCCtOhFeci3Ojt9DYoBNyrDOC3FmQoMHqR7+aHEIhtbKxi29Rzfm8hP/wXa/IQ==
-X-Received: by 2002:a17:902:9896:b0:1f6:3750:527f with SMTP id d9443c01a7336-1f6a5a20654mr17233275ad.31.1717566674957;
-        Tue, 04 Jun 2024 22:51:14 -0700 (PDT)
-Received: from thinkpad ([120.60.137.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6a5060788sm9513775ad.130.2024.06.04.22.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 22:51:14 -0700 (PDT)
-Date: Wed, 5 Jun 2024 11:21:09 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Fix PCIe 6a reg offsets
- and add MHI
-Message-ID: <20240605055109.GC2417@thinkpad>
-References: <20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org>
+	s=arc-20240116; t=1717566760; c=relaxed/simple;
+	bh=oSk+pH9veA9pWxWo+NEX87cLSbrl1nCs2BfhZ30S5yw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g/6E4kbnCwx5wMqL6aMkO7WINvgJaUdJLYeAK0zIxfOMhoT48vvS0O7ZsvuuedoZXOsqN9KoHAQ/G7rvs/iEae7lnd6gpbnQHy+O7rJKIAQoUKUnteZ5kiWX7NgGwgWmRdlr3sstE7JPEXF9b6cNo9/4W5jy86gvV3mmXsisj1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0iaIVvi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF624C4AF09
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717566759;
+	bh=oSk+pH9veA9pWxWo+NEX87cLSbrl1nCs2BfhZ30S5yw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=s0iaIVvie0EYs8faXUJeotlVL9CPRnSyarRJdPUsZW+V7Yh7thdO5vQ+hlIEsZQvs
+	 hzt7NWzo/3iRKGzZlC/RSO1Hvhflf9kmMUi4eZNsSlZkZJG/qd7A/yMyxxvqvkKc9E
+	 /LGcsu+g8TrIxAwWtEXhb2KBeCoSm8eurgI1SUsp8zWtu1KTdtt2LIuItbnp+TEfa3
+	 07jeTBqK8ywpWxJcgny6sX3t89WyxVr9g8Ye40rm+EoBPHu7j3FmAdtfHNh2g886mc
+	 NpKV7hHuz5LFL3TNtz4hUSLBxjZSaqFoTS6O0geI4eaa1NOj3nM3yOWLhyd6N8zP3p
+	 C4KR/nNpi/5EA==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57a20c600a7so7145361a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 22:52:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXuFFx7shgmI6a67CFJfIFViKfMtUwSNQ5ePBm4DRZq8kSdpPjFO1BcrXHxTySXlgetIy95C2raUMfiMP5WK4ll/XjgFk6lUgb2Wscu
+X-Gm-Message-State: AOJu0YwGRTl5r7L2nEhbnpW83CqmxtdxCwMWh2qVPF0+0tEH/HgvinPT
+	AzuytHrFvgm7wTdEEYQ3qAOzbnn/j7Gm1fksOHKUbIyvYc0e9i7olUNFDYCq12JspOwAKSpIUbS
+	hNbCYbufWQu2E1INunOMdxhXHUAU=
+X-Google-Smtp-Source: AGHT+IHjE4i4c5Pi1UjgEXVeguX8oX2OzA//EMothtC6PG7SHFU5eiE+4sjhGZN/tDmugYTXmI6RF5CoHlIaEFxTOEM=
+X-Received: by 2002:a50:f61d:0:b0:57a:9405:786a with SMTP id
+ 4fb4d7f45d1cf-57a950ab70fmr489801a12.5.1717566758279; Tue, 04 Jun 2024
+ 22:52:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org>
+References: <20231225040018.1660554-1-antonb@tenstorrent.com>
+ <ZYpO/pfbea7hWu3r@gmail.com> <CANtDSirRq0W7AhA8xi0c-3a7_e27RKHWbkK27AR9JhZfW+pTwg@mail.gmail.com>
+ <CAJF2gTSbFyr+cTQF7TNpN77Z9Fc8bB0X8=z0mfM027wFcRCvCg@mail.gmail.com> <CANtDSiq=ObDBA+NfPcmUAmpokZ-fGjX-2VW2KsUTaEO+yoq1Tw@mail.gmail.com>
+In-Reply-To: <CANtDSiq=ObDBA+NfPcmUAmpokZ-fGjX-2VW2KsUTaEO+yoq1Tw@mail.gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Wed, 5 Jun 2024 13:52:25 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRCGLyAr9SDPjxoC=dXaPtnRURahrQi2F_ZKy2NqaCPKA@mail.gmail.com>
+Message-ID: <CAJF2gTRCGLyAr9SDPjxoC=dXaPtnRURahrQi2F_ZKy2NqaCPKA@mail.gmail.com>
+Subject: Re: [CAUTION - External Sender] Re: [PATCH] riscv: Improve exception
+ and system call latency
+To: Cyril Bur <cyrilbur@tenstorrent.com>
+Cc: Anton Blanchard <antonb@tenstorrent.com>, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 04, 2024 at 06:20:24PM +0300, Abel Vesa wrote:
-> The actual size of the DBI region is 0xf20 and the start of the
-> ELBI region is 0xf40, according to the documentation. So fix them.
-> While at it, add the MHI region as well.
-> 
-> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+On Tue, Jun 4, 2024 at 4:16=E2=80=AFPM Cyril Bur <cyrilbur@tenstorrent.com>=
+ wrote:
+>
+> On Mon, Jun 3, 2024 at 4:39=E2=80=AFPM Guo Ren <guoren@kernel.org> wrote:
+> >
+> > On Mon, Jun 3, 2024 at 12:38=E2=80=AFPM Cyril Bur <cyrilbur@tenstorrent=
+.com> wrote:
+> > >
+> > > [ apologies, I think my mailer is going to mess up the formatting ]
+> > >
+> > > On 26 Dec 2023, at 2:56=E2=80=AFPM, Guo Ren <guoren@kernel.org> wrote=
+:
+> > >
+> > > On Sun, Dec 24, 2023 at 08:00:18PM -0800, Anton Blanchard wrote:
+> > >
+> > > Many CPUs implement return address branch prediction as a stack. The
+> > > RISCV architecture refers to this as a return address stack (RAS). If
+> > > this gets corrupted then the CPU will mispredict at least one but
+> > > potentally many function returns.
+> > >
+> > > There are two issues with the current RISCV exception code:
+> > >
+> > > - We are using the alternate link stack (x5/t0) for the indirect bran=
+ch
+> > >  which makes the hardware think this is a function return. This will
+> > >  corrupt the RAS.
+> > >
+> > > - We modify the return address of handle_exception to point to
+> > >  ret_from_exception. This will also corrupt the RAS.
+> > >
+> > > Testing the null system call latency before and after the patch:
+> > >
+> > > Visionfive2 (StarFive JH7110 / U74)
+> > > baseline: 189.87 ns
+> > > patched:  176.76 ns
+> > >
+> > > Lichee pi 4a (T-Head TH1520 / C910)
+> > > baseline: 666.58 ns
+> > > patched:  636.90 ns
+> > >
+> > > Just over 7% on the U74 and just over 4% on the C910.
+> > >
+> > >
+> > > Yes, the wrong "jalr zero, t0/ra" would pop RAS and destroy the RAS
+> > > layout of the hardware for the userspace. How about giving a fake pus=
+h
+> > > for the RAS to connect "jalr zero, ra" of sub-function call return? I=
+'m
+> > > curious if you could measure the difference with only one RAS
+> > > misprediction.
+> > >
+> > > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> > > index 54ca4564a926..94c7d2be35d0 100644
+> > > --- a/arch/riscv/kernel/entry.S
+> > > +++ b/arch/riscv/kernel/entry.S
+> > > @@ -93,7 +93,8 @@ SYM_CODE_START(handle_exception)
+> > >        bge s4, zero, 1f
+> > >
+> > >        /* Handle interrupts */
+> > > -       tail do_irq
+> > > +       auipc t0, do_irq
+> > > +       jalr  t0, t0
+> > > 1:
+> > >        /* Handle other exceptions */
+> > >        slli t0, s4, RISCV_LGPTR
+> > > @@ -103,9 +104,10 @@ SYM_CODE_START(handle_exception)
+> > >        /* Check if exception code lies within bounds */
+> > >        bgeu t0, t2, 1f
+> > >        REG_L t0, 0(t0)
+> > > -       jr t0
+> > > +       jalr t0, t0
+> > > 1:
+> > > -       tail do_trap_unknown
+> > > +       auipc t0, do_trap_unknown
+> > > +       jalr  t0, t0
+> > > SYM_CODE_END(handle_exception)
+> > >
+> > > You could prepare a deeper userspace stack calling if you want better
+> > > measurement results.
+> > >
+> > >
+> > > Signed-off-by: Anton Blanchard <antonb@tenstorrent.com>
+> > > Reviewed-by: Jisheng Zhang <jszhang@kernel.org>
+> > > ---
+> > >
+> > > This introduces some complexity in the stackframe walk code. PowerPC
+> > > resolves the multiple exception exit paths issue by placing a value i=
+nto
+> > > the exception stack frame (basically the word "REGS") that the stack =
+frame
+> > > code can look for. Perhaps something to look at.
+> > >
+> > > arch/riscv/kernel/entry.S      | 21 ++++++++++++++-------
+> > > arch/riscv/kernel/stacktrace.c | 14 +++++++++++++-
+> > > 2 files changed, 27 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> > > index 54ca4564a926..89af35edbf6c 100644
+> > > --- a/arch/riscv/kernel/entry.S
+> > > +++ b/arch/riscv/kernel/entry.S
+> > > @@ -84,7 +84,6 @@ SYM_CODE_START(handle_exception)
+> > > scs_load_current_if_task_changed s5
+> > >
+> > > move a0, sp /* pt_regs */
+> > > - la ra, ret_from_exception
+> > >
+> > > /*
+> > > * MSB of cause differentiates between
+> > > @@ -93,7 +92,10 @@ SYM_CODE_START(handle_exception)
+> > > bge s4, zero, 1f
+> > >
+> > > /* Handle interrupts */
+> > > - tail do_irq
+> > > + call do_irq
+> > > +.globl ret_from_irq_exception
+> > > +ret_from_irq_exception:
+> > > + j ret_from_exception
+> > > 1:
+> > > /* Handle other exceptions */
+> > > slli t0, s4, RISCV_LGPTR
+> > > @@ -101,11 +103,16 @@ SYM_CODE_START(handle_exception)
+> > > la t2, excp_vect_table_end
+> > > add t0, t1, t0
+> > > /* Check if exception code lies within bounds */
+> > > - bgeu t0, t2, 1f
+> > > - REG_L t0, 0(t0)
+> > > - jr t0
+> > > -1:
+> > > - tail do_trap_unknown
+> > > + bgeu t0, t2, 3f
+> > > + REG_L t1, 0(t0)
+> > > +2: jalr ra,t1
+> > > +.globl ret_from_other_exception
+> > > +ret_from_other_exception:
+> > > + j ret_from_exception
+> > > +3:
+> > > +
+> > > + la t1, do_trap_unknown
+> > > + j 2b
+> > > SYM_CODE_END(handle_exception)
+> > >
+> > > /*
+> > > diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stack=
+trace.c
+> > > index 64a9c093aef9..b9cd131bbc4c 100644
+> > > --- a/arch/riscv/kernel/stacktrace.c
+> > > +++ b/arch/riscv/kernel/stacktrace.c
+> > > @@ -17,6 +17,18 @@
+> > > #ifdef CONFIG_FRAME_POINTER
+> > >
+> > > extern asmlinkage void ret_from_exception(void);
+> > > +extern asmlinkage void ret_from_irq_exception(void);
+> > > +extern asmlinkage void ret_from_other_exception(void);
+> > > +
+> > > +static inline bool is_exception_frame(unsigned long pc)
+> > > +{
+> > > + if ((pc =3D=3D (unsigned long)ret_from_exception) ||
+> > > +    (pc =3D=3D (unsigned long)ret_from_irq_exception) ||
+> > > +    (pc =3D=3D (unsigned long)ret_from_other_exception))
+> > > + return true;
+> > > +
+> > > + return false;
+> > > +}
+> > >
+> > > We needn't put too many .globl in the entry.S, and just check that pc=
+ is
+> > > in SYM_CODE_START/END(handle_exception), then entry.S would be cleane=
+r:
+> > >
+> > > Hi Guo,
+> > >
+> > > I've taken this patch over from Anton, mostly just to tidy it up. I'd
+> > > like to incorporate
+> > > what you mention here but I'm not sure how to achieve it. Have I
+> > > missed something
+> > > obvious? As things currently stand there doesn't seem to be a way to =
+get the end
+> > > (or size) of handle_exception in C code.
+> > "just check that pc is in SYM_CODE_START/END(handle_exception)."
+> > Sorry, I think my previous description is wrong.
+> >
+> > Instead, "We needn't modify anything in stacktrace.c because we keep
+> > ra =3D ret_from_exception."
+> >
+> > I want only cleaner and smaller modifications to the entry.S to
+> > satisfy RAS prediction performance requirements.
+> >
+>
+> I completely agree with keeping entry.S as clean as possible.
+>
+> I'm trying to understand what you mean.
+> Isn't the point of the patch to remove ra =3D ret_from_exception?
+>
+> I'm not sure but maybe we can leave entry.S as it is and the check in
+> stacktrace.c can become a check for pc =3D=3D handle_exception?
+Yes, we needn't modify stacktrace.c anymore. Because we still keep "ra
+=3D handle_exception".
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>
+> >
+> > >
+> > > Your advice is greatly appreciated,
+> > >
+> > > Thanks,
+> > >
+> > > Cyril
+> > >
+> > > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> > > index 54ca4564a926..d452d5f12b1b 100644
+> > > --- a/arch/riscv/kernel/entry.S
+> > > +++ b/arch/riscv/kernel/entry.S
+> > > @@ -84,7 +84,6 @@ SYM_CODE_START(handle_exception)
+> > >        scs_load_current_if_task_changed s5
+> > >
+> > >        move a0, sp /* pt_regs */
+> > >
+> > >        /*
+> > >         * MSB of cause differentiates between
+> > > @@ -93,7 +92,8 @@ SYM_CODE_START(handle_exception)
+> > >        bge s4, zero, 1f
+> > >
+> > >        /* Handle interrupts */
+> > >        call do_irq
+> > >        j ret_from_exception
+> > > 1:
+> > >        /* Handle other exceptions */
+> > >        slli t0, s4, RISCV_LGPTR
+> > > @@ -102,10 +102,12 @@ SYM_CODE_START(handle_exception)
+> > >        add t0, t1, t0
+> > >        /* Check if exception code lies within bounds */
+> > >        bgeu t0, t2, 1f
+> > >        REG_L ra, 0(t0)
+> > >        jalr ra, ra
+> > >        j ret_from_exception
+> > > 1:
+> > >        call do_trap_unknown
+> > >        j ret_from_exception
+> > > SYM_CODE_END(handle_exception)
+> > >
+> > >
+> > >
+> > > void notrace walk_stackframe(struct task_struct *task, struct pt_regs=
+ *regs,
+> > >     bool (*fn)(void *, unsigned long), void *arg)
+> > > @@ -62,7 +74,7 @@ void notrace walk_stackframe(struct task_struct
+> > > *task, struct pt_regs *regs,
+> > > fp =3D frame->fp;
+> > > pc =3D ftrace_graph_ret_addr(current, NULL, frame->ra,
+> > >   &frame->ra);
+> > > - if (pc =3D=3D (unsigned long)ret_from_exception) {
+> > > + if (is_exception_frame(pc)) {
+> > > if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+> > > break;
+> > >
+> > > --
+> > > 2.25.1
+> > >
+> > >
+> > > _______________________________________________
+> > > linux-riscv mailing list
+> > > linux-riscv@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> >
+> >
+> >
+> > --
+> > Best Regards
+> >  Guo Ren
 
-- Mani
 
-> ---
-> Changes in v2:
-> - Dropped the 4-lane mode switch patch entire.
-> - Fetched Konrad's R-b tag
-> - Link to v1: https://lore.kernel.org/r/20240531-x1e80100-dts-fixes-pcie6a-v1-0-1573ebcae1e8@linaro.org
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index cf8d8d5b1870..fe7ca2a73f9d 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -2818,15 +2818,17 @@ pcie6a: pci@1bf8000 {
->  			device_type = "pci";
->  			compatible = "qcom,pcie-x1e80100";
->  			reg = <0 0x01bf8000 0 0x3000>,
-> -			      <0 0x70000000 0 0xf1d>,
-> -			      <0 0x70000f20 0 0xa8>,
-> +			      <0 0x70000000 0 0xf20>,
-> +			      <0 0x70000f40 0 0xa8>,
->  			      <0 0x70001000 0 0x1000>,
-> -			      <0 0x70100000 0 0x100000>;
-> +			      <0 0x70100000 0 0x100000>,
-> +			      <0 0x01bfb000 0 0x1000>;
->  			reg-names = "parf",
->  				    "dbi",
->  				    "elbi",
->  				    "atu",
-> -				    "config";
-> +				    "config",
-> +				    "mhi";
->  			#address-cells = <3>;
->  			#size-cells = <2>;
->  			ranges = <0x01000000 0 0x00000000 0 0x70200000 0 0x100000>,
-> 
-> ---
-> base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
-> change-id: 20240531-x1e80100-dts-fixes-pcie6a-0cf5b75a818e
-> 
-> Best regards,
-> -- 
-> Abel Vesa <abel.vesa@linaro.org>
-> 
-> 
 
--- 
-மணிவண்ணன் சதாசிவம்
+--=20
+Best Regards
+ Guo Ren
 
