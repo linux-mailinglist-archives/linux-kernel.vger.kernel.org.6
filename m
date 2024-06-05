@@ -1,182 +1,188 @@
-Return-Path: <linux-kernel+bounces-203373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB0B8FDA0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:47:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 811BA8FDA0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 638E41F2406F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3512B1F24519
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C53161B6B;
-	Wed,  5 Jun 2024 22:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02BE16079D;
+	Wed,  5 Jun 2024 22:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JLRiyFDL"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2078.outbound.protection.outlook.com [40.107.243.78])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ow8m+FnD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6147E15FA76;
-	Wed,  5 Jun 2024 22:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717627577; cv=fail; b=S9K/LJU3VRBlJXlBEkga2cCQtlKZ2/zhb6fx2MkmoWNrNjg7UmbG49cOqS5XcDSyuNnrgM3P2rftBAdhDUfriRJN43f+tEUBU6HjWqYuNNkcbpRtohrmgyjr5mMtwDepwm6seoGpdKncbbw7nYliP14f6pi41V3bX3CayucTVf0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717627577; c=relaxed/simple;
-	bh=tOKNDuf+n2P8XvLQ+Vohkrl3qY/OtOIaZrox2fiLgjk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R+oaUttdfmdEkRyuXtqIHcH+x+g/7X4kvKbHGg3rtmAi8l29JejApL0oFv3NWf/eexiVjGL1JqtYgpxdCuqoK0iOxwccYtfLWXhXtk6JScoQ4QI7g4R4ar1bVhBF4nOv4bopnwbGlDkjREeRj92P6EiwBu1BM/lb9NRkh6VKWlY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JLRiyFDL; arc=fail smtp.client-ip=40.107.243.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PeFV+E8Nq3c3uQhskTv4RmIDJ/Lx9wRrKakNy4chEN0/044NuwrlozewzfzjIFPe9x6HtNa4E2UBMRzSm53qmLiridS7GaqpoqGPLiq5OYjcomrhrO7n49f0JPv2Dz70PQnDosGCbxrQ+pDEoLVCCnzSwNo9PVxDKo3SF48Bq0iD7a4Qlh5E68NaOQhiY3O0wcAICem4rw1PFhsr8CUzZUnGb5YVL2gXfVntdNwo5UR+Cw8Bq+/X+rw68xLQm9cApcGWJF/Szh6KqNkmyUe5YEko/ZowZsscpmEo4IgRwQXaON/FcTWRYDr0zgEuoWBh8rhFWz+8421GHIhUbC9Mcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=isEMcKyCzuZaivTl3Guoszin1uQ4GyzYUQM2cCX1b2E=;
- b=Svba4eh/jOc2EtyONUGvzDXtozbTjdxGNQQTqJkpQyL8MuprQDvhryi40I5Mkinbp3JUUCUqX6aP7WcljmGUQqkKU5paA1E8yv77LZWokgSwWkkNtaQCRU3ItEmKfsla1TBetrXXFWAUtMx1L88atuhHXTBItMe6/1GghAK+PcCoVnLQcpGmWz6aTbZlikuiOgjv1Rsen79S9JhG86dLxEK7XE0pc1eyVW4HdT2jNlsgJyYFwFaNtkOksXwjjS6pbYhfgEFzG/E9EnPsBmFnxJSXx4hJ2ycFqVnGYOgfuKIZcmFtm2wATu3TXD4ENOAjzc9hcUkg6Zh8vJjMMmILUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=isEMcKyCzuZaivTl3Guoszin1uQ4GyzYUQM2cCX1b2E=;
- b=JLRiyFDLzKKObY26E1BGKV54fVUszPMHg0+ace5vGBZcArg+8qI6v7CZ7t9GuPDU5mQmpvz6nMknvLm8b/LsNBX42I1VbvsvhntOfyUz8TbBXIWx5ku0hrbC/gkfABjpHWXaHNoaMsKDA8dDkGYxYIQXBiYgpiVbu7Abc1EFwhg=
-Received: from BL0PR02CA0026.namprd02.prod.outlook.com (2603:10b6:207:3c::39)
- by CH3PR12MB9453.namprd12.prod.outlook.com (2603:10b6:610:1c9::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Wed, 5 Jun
- 2024 22:46:14 +0000
-Received: from BL02EPF0001A100.namprd03.prod.outlook.com
- (2603:10b6:207:3c:cafe::dc) by BL0PR02CA0026.outlook.office365.com
- (2603:10b6:207:3c::39) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31 via Frontend
- Transport; Wed, 5 Jun 2024 22:46:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF0001A100.mail.protection.outlook.com (10.167.242.107) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7633.15 via Frontend Transport; Wed, 5 Jun 2024 22:46:14 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 5 Jun
- 2024 17:46:13 -0500
-From: Babu Moger <babu.moger@amd.com>
-To: <fenghua.yu@intel.com>, <reinette.chatre@intel.com>, <shuah@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<ilpo.jarvinen@linux.intel.com>, <babu.moger@amd.com>,
-	<maciej.wieczor-retman@intel.com>, <peternewman@google.com>,
-	<eranian@google.com>
-Subject: [PATCH v3 4/4] selftests/resctrl: Enable MBA/MBA tests on AMD
-Date: Wed, 5 Jun 2024 17:45:34 -0500
-Message-ID: <24ac6e8dba1b42aec8c33bd3c26f58344dad34f1.1717626661.git.babu.moger@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1717626661.git.babu.moger@amd.com>
-References: <cover.1717626661.git.babu.moger@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F9213BC3E;
+	Wed,  5 Jun 2024 22:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717627708; cv=none; b=hmufJCBcL0OTPcRui0xk20LW8SDC1L1py/uHDq940a4fzVCDtD8VlMsiKLZPBgnHqC+onhEbG79Wlq0z9JlokA07FiEfL5c3uqCkqCLf8CRwIOSaq4xEELSyTbThCAICzqPTiLb6XIh8egm/BH2Wl2hVTr7yH5x/n8s0BkOsIWw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717627708; c=relaxed/simple;
+	bh=SaKkEONMcXz5VuiwJ8gPQQzVNVB04hLirJVwtDBEQQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bV/SmgECsGz1IUo0Jd0oZSTKJhGbSuHPzK4tDPBPw2wyZkJbeE2odRwl8mgmT17hjL2vFY6J8Kfqx1ZYb1Q+k4VfaNOuhUj6KPwy4I4rToMd14NQ2q28Ss3lbp2iCE5bUKf8jiMDSAWzQ6P2dRV0aaMja35ICkgtJ0R7rQawFZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ow8m+FnD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1UFW031684;
+	Wed, 5 Jun 2024 22:48:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	B5SNWx6UZouir9JNN7giO4PUeXl6JfqRb+48Qd1gCn4=; b=ow8m+FnDxYRPGzHp
+	tRvFBGZ8B1i6M+7zVay1pEmG+z9zuFGt8BkYbFPI5QLEwvOixTvskS7fNrTzlXjw
+	9Wj2G3Ne0CIYQftdsEmumugjPKVUNkk0VSjHzEvZaiePlqMif4sRVYEVTWwhTWQx
+	2WUSPhl8uarn4obQXkUEAKMge018ZaC4OSrNxcNtC6VPzHVcifLmroNPcuYFrujX
+	46iaAwNFGvSAe6TBjV0W8AXxMKmqwjESqPlqvfXhYL1LySdHaUETm+pW8vN3uEPW
+	mPHQ+4lUUsAnNZOPcopzNKAQ1SHiUShhRBmFHQBpzk9RsaGqVZUX4P7sV3DbDiT6
+	kSbhLw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjh3tt8rc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Jun 2024 22:48:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455Mm9DB009493
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Jun 2024 22:48:09 GMT
+Received: from [10.110.119.103] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
+ 15:48:08 -0700
+Message-ID: <d9a2004a-0a3b-41a6-92a4-eea7b1b3f804@quicinc.com>
+Date: Wed, 5 Jun 2024 15:48:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A100:EE_|CH3PR12MB9453:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58d0ba00-acb3-4bcc-40e2-08dc85b14def
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|1800799015|36860700004|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qzJ4IJkJ10J1Y7FtDfa9uzvHDGPzBIzIGR7Sec/WfYjkZ092ZEpsidSQfkbZ?=
- =?us-ascii?Q?U2eGPxAUfr1xQ7wVBU2QKMHu66cg8+8SY4N5gqVrLGXn3mcuMWQ5UxuUJzqE?=
- =?us-ascii?Q?et5p0LycHi8jn0tbCkYkaN2NOyA1X8xW0n05V3J/G1lFGNIHJl3Z9mZ6b5Wb?=
- =?us-ascii?Q?+lyra/Gohur89Drh9Sx2LotCq2Zmq6CNmuymfit5EAbrmL2QnD0XC5TcJQU5?=
- =?us-ascii?Q?wvNrTjpQHzWD2zFca+6QOXCX+pi50txO0mXxUr0lU0ie+TB4bs0GezdS9VSe?=
- =?us-ascii?Q?B/7IgChwouy3X0JOmzaWvEp/n4TuYjrlSctAj86a/dV6AjjqP9gCBHgxFfKQ?=
- =?us-ascii?Q?ECCd42XBAQmrrHhKgw0/9Ziv97zJxP5XkXxu3SydxRPhu3vQ+ddjSF3KSfbG?=
- =?us-ascii?Q?ilZsjkg+8EDurVRR2eLMXrSRKvkHhiyjCNUqjoZNAQkklJoeDiJrBizuQUbl?=
- =?us-ascii?Q?GKWtUu2ctGkeZsPxmCy13gpfoKBInZph6pcan2Fs1ttWABYBeqKBmjzz8AMx?=
- =?us-ascii?Q?Qh1sMWI5p1FE6uUOUPEbErVcyLMXyix4UPlT6vF62Qv5lNNNRqzn2zLV446w?=
- =?us-ascii?Q?0rWD0YujRn8kbUm/u4Mm4cTE8d0VpcQ7t946xrR8BBdhFoYIaEcGVi6AyzPz?=
- =?us-ascii?Q?M0Yk2FBERFFxhe9MUZWi6nPvstJl5temXiWkSUdKkvRBa606+ov7ViVY93CS?=
- =?us-ascii?Q?LZF/Qu0jfrpOdMQP5SX2ksp0rb26ytM0KXs+ZljIACDhBEXnHJoI8wZgCGBF?=
- =?us-ascii?Q?AfRW6/YzoH9CQc0Zx9I6fGB/PrOV9Y0Cq6odmMX4fH/sf98ZxPxUJBargP4Y?=
- =?us-ascii?Q?ArbYfZs6FipvTuVRSnO/N+APtJ4yvIW3QQMiWg/mR1dlcsQFeOYA7qVaxgX3?=
- =?us-ascii?Q?hQBX8DkazxUa0YIPSm5UFFc7pnJ2DUVt+Wsur8r+hXyWR6QXBHC7o8Dd1qBT?=
- =?us-ascii?Q?7VK4U3Zeg/YAqaaUSwnAG4HGUFFhy6tg9llTsS6zQC8EvKkrtd+EFKZNLL6z?=
- =?us-ascii?Q?ooa6Y3qJylzqJoZwlOTYVjNhO8NyAHPAP2ZGYFMqKdALT/aWY+C/g4BSormH?=
- =?us-ascii?Q?k4s4g+L2vX9AIqUu3zxtcbtkNIiicbxwNt0bqgW8TXUt3n6S61oSU0XuP3lO?=
- =?us-ascii?Q?DB6jDpnYl3Ee3drULzPKwAyCFZRzstGw94FVItGsLs8oD69xf4epYS1W5HLQ?=
- =?us-ascii?Q?v3w9rDL3FC+/b6h5YoPKKvaBwnXeeMqG9Ep+YxC3nL9cDJ7KnNhxK9toc0Rw?=
- =?us-ascii?Q?vLUAnO8PYHjr/A0Y2Nn7SY9a0H4kL0WWm1++ck0VVG4behU2zWajzPDLvJ6W?=
- =?us-ascii?Q?28sj+lO09BdYxWvxuL9CUkyZk0LrhW36UtjcHhuz53aaPLQx6pUxltFhww+t?=
- =?us-ascii?Q?2niLdbuIUe2gOAN49tSGbb9XePcDiTvdckBhMzm9MvlfIJ+v+A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(1800799015)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 22:46:14.2217
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58d0ba00-acb3-4bcc-40e2-08dc85b14def
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A100.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9453
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/5] soc: qcom: pdr: protect locator_addr with the main
+ mutex
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sibi Sankar
+	<quic_sibis@quicinc.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Xilin Wu <wuxilin123@gmail.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Steev Klimaszewski <steev@kali.org>,
+        "Alexey
+ Minnekhanov" <alexeymin@postmarketos.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+References: <20240512-qcom-pd-mapper-v8-0-5ecbb276fcc0@linaro.org>
+ <20240512-qcom-pd-mapper-v8-1-5ecbb276fcc0@linaro.org>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20240512-qcom-pd-mapper-v8-1-5ecbb276fcc0@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Wqs08OC1n35NM-bPWOi_M7MKTo19eJng
+X-Proofpoint-ORIG-GUID: Wqs08OC1n35NM-bPWOi_M7MKTo19eJng
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 clxscore=1011 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406050171
 
-Enable MBA/MBM tests if UMC (Unified Memory Controller) support is
-available on the system. Tests will be skipped otherwise.
+Hi Dmitry,
 
-Signed-off-by: Babu Moger <babu.moger@amd.com>
----
-v3: Separated fix as another patch.
-    https://lore.kernel.org/lkml/3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com/
+On 5/11/2024 2:56 PM, Dmitry Baryshkov wrote:
+...
+> @@ -76,12 +76,12 @@ static int pdr_locator_new_server(struct qmi_handle *qmi,
+>   					      locator_hdl);
+>   	struct pdr_service *pds;
+>   
+> +	mutex_lock(&pdr->lock);
+>   	/* Create a local client port for QMI communication */
+>   	pdr->locator_addr.sq_family = AF_QIPCRTR;
+>   	pdr->locator_addr.sq_node = svc->node;
+>   	pdr->locator_addr.sq_port = svc->port;
+>   
+> -	mutex_lock(&pdr->lock);
+>   	pdr->locator_init_complete = true;
+>   	mutex_unlock(&pdr->lock);
+>   
+> @@ -104,10 +104,10 @@ static void pdr_locator_del_server(struct qmi_handle *qmi,
+>   
+>   	mutex_lock(&pdr->lock);
+>   	pdr->locator_init_complete = false;
+> -	mutex_unlock(&pdr->lock);
+>   
+>   	pdr->locator_addr.sq_node = 0;
+>   	pdr->locator_addr.sq_port = 0;
+> +	mutex_unlock(&pdr->lock);
+>   }
+>   
+>   static const struct qmi_ops pdr_locator_ops = {
+> @@ -365,6 +365,7 @@ static int pdr_get_domain_list(struct servreg_get_domain_list_req *req,
+>   	if (ret < 0)
+>   		return ret;
+>   
+> +	mutex_lock(&pdr->lock);
+>   	ret = qmi_send_request(&pdr->locator_hdl,
+>   			       &pdr->locator_addr,
+>   			       &txn, SERVREG_GET_DOMAIN_LIST_REQ,
+> @@ -373,15 +374,16 @@ static int pdr_get_domain_list(struct servreg_get_domain_list_req *req,
+>   			       req);
+>   	if (ret < 0) {
+>   		qmi_txn_cancel(&txn);
+> -		return ret;
+> +		goto err_unlock;
+>   	}
+>   
+>   	ret = qmi_txn_wait(&txn, 5 * HZ);
+>   	if (ret < 0) {
+>   		pr_err("PDR: %s get domain list txn wait failed: %d\n",
+>   		       req->service_name, ret);
+> -		return ret;
+> +		goto err_unlock;
+>   	}
+> +	mutex_unlock(&pdr->lock);
 
-v2: No changes.
----
- tools/testing/selftests/resctrl/mba_test.c | 1 -
- tools/testing/selftests/resctrl/mbm_test.c | 1 -
- 2 files changed, 2 deletions(-)
+I'm not sure it is necessary to hold the the mutex during the 
+qmi_txn_wait() since the only variable we are trying to protect is 
+locator_addr.
 
-diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
-index 394bbfd8a93e..5702bb1d6a98 100644
---- a/tools/testing/selftests/resctrl/mba_test.c
-+++ b/tools/testing/selftests/resctrl/mba_test.c
-@@ -192,7 +192,6 @@ static bool mba_feature_check(const struct resctrl_test *test)
- struct resctrl_test mba_test = {
- 	.name = "MBA",
- 	.resource = "MB",
--	.vendor_specific = ARCH_INTEL,
- 	.feature_check = mba_feature_check,
- 	.run_test = mba_run_test,
- 	.cleanup = mba_test_cleanup,
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-index 9b6f7f162282..dbdb1b490df8 100644
---- a/tools/testing/selftests/resctrl/mbm_test.c
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -162,7 +162,6 @@ static bool mbm_feature_check(const struct resctrl_test *test)
- struct resctrl_test mbm_test = {
- 	.name = "MBM",
- 	.resource = "MB",
--	.vendor_specific = ARCH_INTEL,
- 	.feature_check = mbm_feature_check,
- 	.run_test = mbm_run_test,
- 	.cleanup = mbm_test_cleanup,
--- 
-2.34.1
+Wouldn't this delay other work like new/del server notifications if this 
+qmi service is delayed or non-responsive?
 
+Thanks,
+Chris
+
+>   
+>   	if (resp->resp.result != QMI_RESULT_SUCCESS_V01) {
+>   		pr_err("PDR: %s get domain list failed: 0x%x\n",
+> @@ -390,6 +392,11 @@ static int pdr_get_domain_list(struct servreg_get_domain_list_req *req,
+>   	}
+>   
+>   	return 0;
+> +
+> +err_unlock:
+> +	mutex_unlock(&pdr->lock);
+> +
+> +	return ret;
+>   }
+>   
 
