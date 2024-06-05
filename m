@@ -1,173 +1,151 @@
-Return-Path: <linux-kernel+bounces-202239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0895D8FC9E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:11:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C844B8FC9DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E617282EE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:11:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD561F25704
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2146194A4D;
-	Wed,  5 Jun 2024 11:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27680192B94;
+	Wed,  5 Jun 2024 11:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="XzmtI09r"
-Received: from aposti.net (aposti.net [89.234.176.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aWYDBVHB"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990BC190490;
-	Wed,  5 Jun 2024 11:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF2219412A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717585799; cv=none; b=kYRzDQEy+7Pch36wHbpGK/BIFS/ein9n52QkmKK7ZY9tlioT8Kh0eFFoGExrINALjgmWLmHJQZTLDiwYrV7ZnxBP95pXnmXldddXfyWx6mtROWD0nDBYSlF4fljvrEaoVKcCCvHKn60m6Gaq3+SIlSTUC+nN4DvkUs1Gzdd6nK4=
+	t=1717585790; cv=none; b=sPMEhFVHxZk3NGfF3hpGhQfxwCQyRwH0NM/QeciyCHohgVNRAcYlMtA1iyqKsiD8h6Y67jK5L+KbiwIJhgNZhYnF7cCG6+IFf5k8Zew5hGuJI4LD1HqKDI8Pav3+G7dXO2jIWb84fUHxvrs395Gj1adTM5qMmT5v0iPjY49jP3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717585799; c=relaxed/simple;
-	bh=HzcPhbufi5cXlv2G7/7Dg+cEaQz53uXcRQczeDy0Lfs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V2vLPM1TAoDjBRts65zdi47U5vdEHkDq0192jk8mRR7OcAm6HvqOCYc4vntgM1SASXbzmP5kxSkupdoK2DIzI2oHY5868Md2YRQj0yyL1sUiXB1phorH/TMWKFEsGjDqYXDSVY8OMueDJYBuaVo/wuZ+tNaiYYzJSoU3Q7KhjFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=XzmtI09r; arc=none smtp.client-ip=89.234.176.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1717585744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zZ1Ob78ZjWlZgX+z9DrKajLPpBuBZCqRum8/eJrHWnI=;
-	b=XzmtI09rBY87MWojYhpPffNwV+tIMJP6oV+FTMNTTJFdgqd6aGorPN8QY9MEhjGs0p30GT
-	UDdqbOzhHbVGVhxE6bULS4PlV2hNYB8TNXt+MPSR3S/QMXX9ISC/bgsOfQE1l+Dn8t2dnY
-	BAIpk7/OcL7arzBDOyPGSrn5rpSGGuY=
-From: Paul Cercueil <paul@crapouillou.net>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Nuno Sa <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v10 6/6] Documentation: iio: Document high-speed DMABUF based API
-Date: Wed,  5 Jun 2024 13:08:45 +0200
-Message-ID: <20240605110845.86740-7-paul@crapouillou.net>
-In-Reply-To: <20240605110845.86740-1-paul@crapouillou.net>
-References: <20240605110845.86740-1-paul@crapouillou.net>
+	s=arc-20240116; t=1717585790; c=relaxed/simple;
+	bh=gHYwV3ZcigYKcTefauABwPWAEb9vyy0l/uk5Qsnin7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8Pzg1HaLYUa/7G80AuK6ri3TFjww5lyPLOMIIcYMawW2wXync9z6GuTDkHL2hhOZsYq/luvjcPAab0HIbGXVikX9EKUYr7Mbltikqib9PyBsTGysLx0RyGguAMEm1tvhtOuo0CMOTMvjKc1xFhxJwmnhM+MeZCXPAumgjEISqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aWYDBVHB; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E13B640E0176;
+	Wed,  5 Jun 2024 11:09:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id iJf5bq__s4gN; Wed,  5 Jun 2024 11:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717585781; bh=u8G7LlOZuSGdMErqsnXyAGVosfE3DwlKRA2nP23l5K8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aWYDBVHBUclEEG1gDdbe+IdXFSR610ZcoZ15fdD8wx7IG52P3H1YvEhtTtsD9nONn
+	 EgachKPplm43FJBaLMC5cc6CvfKV8MA6SbwzeUu688pecrXXCwz7NgHD2A/vpnmyDI
+	 RyJkAcnNA1Bcw8f8SHu++1GS8A9sSmpx7KeGtYLbr9WzqlMvWymSdqGrctv/FnXRUI
+	 /v4rEcLYOYGvvAJI8FsNk9w9gkIU13OJMJIrqITMCtL4fQMOJdLywG351jw+GburS3
+	 bBcRign7gnvOvXogKGlvpwebk/wxjW+WltpUQFOHnmWjW7jokjkP0FCJ6m/EvuLDTe
+	 BbqVHmANcg2kg0cCHJdFwMhlxCE6azl8xwW2RkRPsTxwRItOuqsMhQDYruReg6HJyR
+	 6sUhmNdlZGoCqckVBNJY7ipHisko8EqoNU/rhHcBqsr6g313/KLk9HxSbdYRTdPm8l
+	 QEZSleJvDkkR2JwNGSKsLLkuvNMWSJaGpvKCmbqrVHmzI08iJxzauhUwV4ccvI/Zqr
+	 hfGKSO2De6TDGnPBS6+11FvEK0QNVZDFIWT6waY8YUuOVx+tr/qnezVh6BEbypjMNU
+	 E1DdG2C1jyw2gnmyh3zRSpfjkQ0ZIaHNe1mOzFZIIGKdj2pZQ1JRAAcBC7k+puZ9nn
+	 A1smz3yi1mW/YVlSH/e7KPoI=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5225D40E016A;
+	Wed,  5 Jun 2024 11:09:11 +0000 (UTC)
+Date: Wed, 5 Jun 2024 13:09:04 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Young <dyoung@redhat.com>, ardb@kernel.org,
+	dan.j.williams@intel.com
+Cc: "Kalra, Ashish" <ashish.kalra@amd.com>, Mike Rapoport <rppt@kernel.org>,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, rafael@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, adrian.hunter@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com,
+	rick.p.edgecombe@intel.com, thomas.lendacky@amd.com,
+	michael.roth@amd.com, seanjc@google.com, kai.huang@intel.com,
+	bhe@redhat.com, kirill.shutemov@linux.intel.com, bdas@redhat.com,
+	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
+	jroedel@suse.de, kexec@lists.infradead.org,
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
+Message-ID: <20240605110904.GWZmBHUHSqCJVQYajF@fat_crate.local>
+References: <7eb4ca99-679c-4f23-9562-a39b966c28a0@amd.com>
+ <20240603165747.GGZl32C9yrmXJ4nhPT@fat_crate.local>
+ <2343889c-887a-49ce-86df-343737d70d37@amd.com>
+ <20240603171231.GJZl35f-BHvU2Pk3lb@fat_crate.local>
+ <ff28e3ea-c492-4db6-8781-abaec6320756@amd.com>
+ <CALu+AoQBXv-y43sx6E28UBVeVHUzRkWEzFxK6jsS5NpN2ho3YQ@mail.gmail.com>
+ <CALu+AoTY2Xxs_vUzCyfsxtk-ov2mzJhzyTbbA9MYeeVkmKTMsw@mail.gmail.com>
+ <CALu+AoSESmasAHqWdCGgQNbsTXfwbfhERBkaqSeaX881zqKtFg@mail.gmail.com>
+ <41e085b8-2b45-40ab-9a6f-f4ad975a0b06@amd.com>
+ <CALu+AoQ2jNjb+5MZfFtpT_Y=2gJRWwqEeWTpQkwNt0-U5fpO_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALu+AoQ2jNjb+5MZfFtpT_Y=2gJRWwqEeWTpQkwNt0-U5fpO_w@mail.gmail.com>
 
-Document the new DMABUF based API.
+Moving Ard and Dan to To:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Nuno Sa <nuno.sa@analog.com>
+On Wed, Jun 05, 2024 at 10:28:18AM +0800, Dave Young wrote:
+> Ok, thanks!  I think the right way is creating two patches,  one to
+> remove the __efi_memmap_free,
 
----
-v2: - Explicitly state that the new interface is optional and is
-      not implemented by all drivers.
-    - The IOCTLs can now only be called on the buffer FD returned by
-      IIO_BUFFER_GET_FD_IOCTL.
-    - Move the page up a bit in the index since it is core stuff and not
-      driver-specific.
+Yap, that 
 
-v3: Update the documentation to reflect the new API.
+  f0ef6523475f ("efi: Fix efi_memmap_alloc() leaks")
 
-v5: Use description lists for the documentation of the three new IOCTLs
-    instead of abusing subsections.
+needs revisiting.
 
-v8: Renamed dmabuf_api.rst -> iio_dmabuf_api.rst, and updated index.rst
-    whose format changed in iio/togreg.
----
- Documentation/iio/iio_dmabuf_api.rst | 54 ++++++++++++++++++++++++++++
- Documentation/iio/index.rst          |  1 +
- 2 files changed, 55 insertions(+)
- create mode 100644 Documentation/iio/iio_dmabuf_api.rst
+So AFAIU, the flow is this:
 
-diff --git a/Documentation/iio/iio_dmabuf_api.rst b/Documentation/iio/iio_dmabuf_api.rst
-new file mode 100644
-index 000000000000..1cd6cd51a582
---- /dev/null
-+++ b/Documentation/iio/iio_dmabuf_api.rst
-@@ -0,0 +1,54 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===================================
-+High-speed DMABUF interface for IIO
-+===================================
-+
-+1. Overview
-+===========
-+
-+The Industrial I/O subsystem supports access to buffers through a
-+file-based interface, with read() and write() access calls through the
-+IIO device's dev node.
-+
-+It additionally supports a DMABUF based interface, where the userspace
-+can attach DMABUF objects (externally created) to a IIO buffer, and
-+subsequently use them for data transfers.
-+
-+A userspace application can then use this interface to share DMABUF
-+objects between several interfaces, allowing it to transfer data in a
-+zero-copy fashion, for instance between IIO and the USB stack.
-+
-+The userspace application can also memory-map the DMABUF objects, and
-+access the sample data directly. The advantage of doing this vs. the
-+read() interface is that it avoids an extra copy of the data between the
-+kernel and userspace. This is particularly useful for high-speed devices
-+which produce several megabytes or even gigabytes of data per second.
-+It does however increase the userspace-kernelspace synchronization
-+overhead, as the DMA_BUF_SYNC_START and DMA_BUF_SYNC_END IOCTLs have to
-+be used for data integrity.
-+
-+2. User API
-+===========
-+
-+As part of this interface, three new IOCTLs have been added. These three
-+IOCTLs have to be performed on the IIO buffer's file descriptor,
-+obtained using the IIO_BUFFER_GET_FD_IOCTL() ioctl.
-+
-+  ``IIO_BUFFER_DMABUF_ATTACH_IOCTL(int)``
-+    Attach the DMABUF object, identified by its file descriptor, to the
-+    IIO buffer. Returns zero on success, and a negative errno value on
-+    error.
-+
-+  ``IIO_BUFFER_DMABUF_DETACH_IOCTL(int)``
-+    Detach the given DMABUF object, identified by its file descriptor,
-+    from the IIO buffer. Returns zero on success, and a negative errno
-+    value on error.
-+
-+    Note that closing the IIO buffer's file descriptor will
-+    automatically detach all previously attached DMABUF objects.
-+
-+  ``IIO_BUFFER_DMABUF_ENQUEUE_IOCTL(struct iio_dmabuf *iio_dmabuf)``
-+    Enqueue a previously attached DMABUF object to the buffer queue.
-+    Enqueued DMABUFs will be read from (if output buffer) or written to
-+    (if input buffer) as long as the buffer is enabled.
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 4c13bfa2865c..9cb4c50cb20d 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -9,6 +9,7 @@ Industrial I/O
- 
-    iio_configfs
-    iio_devbuf
-+   iio_dmabuf_api
-    iio_tools
- 
- Industrial I/O Kernel Drivers
+In a kexec-ed kernel:
+
+1. efi_arch_mem_reserve() gets called by bgrt, erst, mokvar... whatever
+   to hold on to boot services regions for longer otherwise EFI
+   "implementations" explode.
+
+2. On same kexec-ed kernel, we call into kexec_enter_virtual_mode()
+   because it needs to get the runtime services regions from the first
+   kernel
+
+3. As part of that call, it'll do
+   efi_memmap_init_late->__efi_memmap_init():
+
+        if (efi.memmap.flags & (EFI_MEMMAP_MEMBLOCK | EFI_MEMMAP_SLAB))
+                __efi_memmap_free(efi.memmap.phys_map,
+
+and the memory which got allocated in step 1 is gone, thus reverting
+what efi_arch_mem_reserve() is trying to fix.
+
+IOW, we need a
+
+	EFI_MEMMAP_DO_NOT_TOUCH_MY_MEMORY
+
+flag which'll stop this from happening. But I'd prefer it if Ard decides
+what the right thing to do here is.
+
+> another is  skip efi_arch_mem_reserve when the EFI_MEMORY_RUNTIME bit
+> was set already.
+
+Can that even happen?
+
+Thx.
+
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
