@@ -1,460 +1,283 @@
-Return-Path: <linux-kernel+bounces-202198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C388FC919
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3EE8FC91C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE3F283B8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:29:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93471F24170
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE95191469;
-	Wed,  5 Jun 2024 10:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE06149C77;
+	Wed,  5 Jun 2024 10:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u4G5NntM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KfEJzX+T"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46ECE1946D2;
-	Wed,  5 Jun 2024 10:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF9C17C96
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717583351; cv=none; b=cGWquWMVO9o7kWxKw1uclYVLTMM1tBdVelqjj6nbwwZhj9waj0xExio6OmZrK9GLWvtfi5MZA1K8Zu301n5t4YPDpmbnIOr1Uvp89kim/MGFuOM6l81SYxGRmAXzjCckepL4qN4Y4U57DNAuhDE/muOvWACy+zVXFYTRhaRKYqI=
+	t=1717583417; cv=none; b=SnNEB9frs8mrBxadYzBDuaKMM8oyTfd+qwZZNd23Wx06WnEeTpkPim0Ycs4tMT5KOdi7MRRNdhUdNjo6DqSTdfDy0ncDTWg8EdBFTrU3p9dpTtw0+MK7D42Tz0EWrBLvTQaPkqkXgiS9wYnIMcdvsX+x1oTuozXsovdwlASKrgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717583351; c=relaxed/simple;
-	bh=KJFx8mLLSIvcgUcKxYg+ceOAwzffFdULwa5Tt+9dI5M=;
+	s=arc-20240116; t=1717583417; c=relaxed/simple;
+	bh=MwrW1+hyiMoPJqWPiECffZxiUSzN/RDxDyzYM5DP1Vw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YsprxCRsrILFR79P9FuPh44G/cy4DuzYIXvRKnObilDUEilsha7nma6Vtkq6uu6bfE+tmf1MdEzgmoXPOx0npkPDoE+JN3jo18etvd1X/f3ZpdXh3drcfl0yNfz1SHiemM2GdIzJTSP7M4GH5Gy+pu72WmGLCn9tXXNL8KkdB54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u4G5NntM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF68C3277B;
-	Wed,  5 Jun 2024 10:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717583350;
-	bh=KJFx8mLLSIvcgUcKxYg+ceOAwzffFdULwa5Tt+9dI5M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u4G5NntMM2wDB31s4HGsO6c4LRBVahT/UZcCeSvfkSI3qnIVBk/TuPR/VAXBKqCrX
-	 htmjEhYk2809GORu/1+2DNLEC+Ycf84OAsS4YBvEgXCvVdVbQU6RwzRrO8SsusqAyk
-	 dXXUntteXLNzhz5rCGIFxi3leWQi6idIF4Ipn6szdaSgPTOuL/x7fD9V+cl3u0bD0Q
-	 uogm4jFNQUwMf4s++43uh8IBeaXieCBzpIvZzqGLRH6K+JEPrTX6EWuNyAFaizG836
-	 +iu6huLB4GWUWXvqZjwU97m7dwC2NWmo62fsKf1TTDhjwzOKUD4RbCmssPkNkUR6kv
-	 1H+tWpapWYkdA==
-Message-ID: <869a876f-6ad8-40ff-85f2-268fb49fd475@kernel.org>
-Date: Wed, 5 Jun 2024 12:29:06 +0200
+	 In-Reply-To:Content-Type; b=bq+kxYLaefSrBrAzWBWGxBuk/ahGdOCTZr+CN7JQStwbSwChvWb8fxJTPxyIqflTf3uY7JH2DrlrOls1+MjSq3oHsEfriUvR6RhOHgY+270LW/KnHqXMKJXE0YsfJYW7mESUMUXZ+FWgyz/TgUA6HRLYF3nxx+t+EtZz+6AzccI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KfEJzX+T; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: f.weber@proxmox.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717583413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FCTAweSZe+lBgkMRX+yfCoM13VJZvH5Yn8SU9Jfa+Bk=;
+	b=KfEJzX+TH8aQMx+fUatnyKE8sjRumfBMg5IhmkBEzqgZWIQGpFIb1kI6f/zgu2OM+kJcXD
+	vpj607bi9vbkG8qK7G9JpXVLXz+7G5E6B34LNbm4WTIGT7YgZgyBqBn2E2MCK84e81BZKL
+	GLkfBIlaLGG1v8rSwFitGu8fUNWrBNg=
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: ming.lei@redhat.com
+X-Envelope-To: hch@lst.de
+X-Envelope-To: bvanassche@acm.org
+X-Envelope-To: linux-block@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: zhouchengming@bytedance.com
+Message-ID: <1344640f-b22d-4791-aed4-68fc62fb6e36@linux.dev>
+Date: Wed, 5 Jun 2024 18:30:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 4/5] Add aw963xx series related interfaces to the
- aw_sar driver.
-To: wangshuaijie@awinic.com, dmitry.torokhov@gmail.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, jeff@labundy.com,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: liweilei@awinic.com, kangjiajun@awinic.com
-References: <20240605091143.163789-1-wangshuaijie@awinic.com>
- <20240605091143.163789-5-wangshuaijie@awinic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] block: fix request.queuelist usage in flush
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240605091143.163789-5-wangshuaijie@awinic.com>
+To: Friedrich Weber <f.weber@proxmox.com>, axboe@kernel.dk,
+ ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20240604064745.808610-1-chengming.zhou@linux.dev>
+ <c9d03ff7-27c5-4ebd-b3f6-5a90d96f35ba@proxmox.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <c9d03ff7-27c5-4ebd-b3f6-5a90d96f35ba@proxmox.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 05/06/2024 11:11, wangshuaijie@awinic.com wrote:
-> From: shuaijie wang <wangshuaijie@awinic.com>
+On 2024/6/5 16:45, Friedrich Weber wrote:
+> Hi,
 > 
-> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Reported-by: Dan Carpenter <error27@gmail.com>
-> ---
->  drivers/input/misc/aw_sar/aw963xx/aw963xx.c | 974 ++++++++++++++++++++
->  drivers/input/misc/aw_sar/aw963xx/aw963xx.h | 753 +++++++++++++++
->  2 files changed, 1727 insertions(+)
->  create mode 100644 drivers/input/misc/aw_sar/aw963xx/aw963xx.c
->  create mode 100644 drivers/input/misc/aw_sar/aw963xx/aw963xx.h
+> On 04/06/2024 08:47, Chengming Zhou wrote:
+>> Friedrich Weber reported a kernel crash problem and bisected to commit
+>> 81ada09cc25e ("blk-flush: reuse rq queuelist in flush state machine").
+>>
+>> The root cause is that we use "list_move_tail(&rq->queuelist, pending)"
+>> in the PREFLUSH/POSTFLUSH sequences. But rq->queuelist.next == xxx since
+>> it's popped out from plug->cached_rq in __blk_mq_alloc_requests_batch().
+>> We don't initialize its queuelist just for this first request, although
+>> the queuelist of all later popped requests will be initialized.
+>>
+>> Fix it by changing to use "list_add_tail(&rq->queuelist, pending)" so
+>> rq->queuelist doesn't need to be initialized. It should be ok since rq
+>> can't be on any list when PREFLUSH or POSTFLUSH, has no move actually.
+>>
+>> Please note the commit 81ada09cc25e ("blk-flush: reuse rq queuelist in
+>> flush state machine") also has another requirement that no drivers would
+>> touch rq->queuelist after blk_mq_end_request() since we will reuse it to
+>> add rq to the post-flush pending list in POSTFLUSH. If this is not true,
+>> we will have to revert that commit IMHO.
 > 
-> diff --git a/drivers/input/misc/aw_sar/aw963xx/aw963xx.c b/drivers/input/misc/aw_sar/aw963xx/aw963xx.c
-> new file mode 100644
-> index 000000000000..7ce40174a089
-> --- /dev/null
-> +++ b/drivers/input/misc/aw_sar/aw963xx/aw963xx.c
-> @@ -0,0 +1,974 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * AWINIC sar sensor driver (aw963xx)
-> + *
-> + * Author: Shuaijie Wang<wangshuaijie@awinic.com>
-> + *
-> + * Copyright (c) 2024 awinic Technology CO., LTD
-> + */
-> +#include "aw963xx.h"
-> +#include "../aw_sar.h"
-> +
-> +#define AW963XX_I2C_NAME "aw963xx_sar"
-> +
-> +static void aw963xx_set_cs_as_irq(struct aw_sar *p_sar, int flag);
-> +static void aw963xx_get_ref_ch_enable(struct aw_sar *p_sar);
-> +
-> +static int32_t aw963xx_read_init_over_irq(void *load_bin_para)
-> +{
-> +	struct aw_sar *p_sar = (struct aw_sar *)load_bin_para;
-> +	uint32_t cnt = 1000;
-> +	uint32_t reg;
-> +	int32_t ret;
-> +
-> +	while (cnt--) {
-> +		ret = aw_sar_i2c_read(p_sar->i2c, REG_IRQSRC, &reg);
-> +		if (ret != 0) {
-> +			dev_err(p_sar->dev, "i2c error %d", ret);
-> +			return ret;
-> +		}
-> +		if ((reg & 0x01) == 0x01) {
-> +			aw_sar_i2c_read(p_sar->i2c, REG_FWVER, &reg);
-> +			return 0;
-> +		}
-> +		mdelay(1);
-> +	}
-> +
-> +	aw_sar_i2c_read(p_sar->i2c, REG_FWVER, &reg);
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static void aw963xx_convert_little_endian_2_big_endian(struct aw_bin *aw_bin)
-> +{
-> +	uint32_t start_index = aw_bin->header_info[0].valid_data_addr;
-> +	uint32_t fw_len = aw_bin->header_info[0].reg_num;
-> +	uint32_t uints = fw_len / AW963XX_SRAM_UPDATE_ONE_UINT_SIZE;
-> +	uint8_t tmp1;
-> +	uint8_t tmp2;
-> +	uint8_t tmp3;
-> +	uint8_t tmp4;
-> +	int i;
-> +
-> +	for (i = 0; i < uints; i++) {
-> +		tmp1 = aw_bin->info.data[start_index + i * AW963XX_SRAM_UPDATE_ONE_UINT_SIZE + 3];
-> +		tmp2 = aw_bin->info.data[start_index + i * AW963XX_SRAM_UPDATE_ONE_UINT_SIZE + 2];
-> +		tmp3 = aw_bin->info.data[start_index + i * AW963XX_SRAM_UPDATE_ONE_UINT_SIZE + 1];
-> +		tmp4 = aw_bin->info.data[start_index + i * AW963XX_SRAM_UPDATE_ONE_UINT_SIZE];
-> +		aw_bin->info.data[start_index + i * AW963XX_SRAM_UPDATE_ONE_UINT_SIZE]     = tmp1;
-> +		aw_bin->info.data[start_index + i * AW963XX_SRAM_UPDATE_ONE_UINT_SIZE + 1] = tmp2;
-> +		aw_bin->info.data[start_index + i * AW963XX_SRAM_UPDATE_ONE_UINT_SIZE + 2] = tmp3;
-> +		aw_bin->info.data[start_index + i * AW963XX_SRAM_UPDATE_ONE_UINT_SIZE + 3] = tmp4;
-> +	}
-> +}
-> +
-> +/**
-> + * @aw963xx_sram_fill_not_wrote_area()
-> + *         |----------------code ram-----------------|
-> + *       0x2000                                    0x4fff
-> + *         |--- app wrote here ---|--fill with 0xff--|
-> + *
-> + *         if the size of app is less than the size of code ram, the rest of the
-> + *         ram is filled with 0xff.
-> + * @load_bin_para
-> + * @offset the rear addr of app
-> + * @return int32_t
-> + */
-> +static int32_t aw963xx_sram_fill_not_wrote_area(void *load_bin_para, uint32_t offset)
-> +{
-> +	uint32_t last_pack_len = (AW963XX_SRAM_END_ADDR - offset) %
-> +						AW963XX_SRAM_UPDATE_ONE_PACK_SIZE;
-> +	uint32_t pack_cnt = last_pack_len == 0 ?
-> +			((AW963XX_SRAM_END_ADDR - offset) / AW963XX_SRAM_UPDATE_ONE_PACK_SIZE) :
-> +			((AW963XX_SRAM_END_ADDR - offset) / AW963XX_SRAM_UPDATE_ONE_PACK_SIZE) + 1;
-> +	uint8_t buf[AW963XX_SRAM_UPDATE_ONE_PACK_SIZE + 2] = { 0 };
-> +	struct aw_sar *p_sar = (struct aw_sar *)load_bin_para;
-> +	uint32_t download_addr_with_ofst;
-> +	uint8_t *r_buf;
-> +	int32_t ret;
-> +	uint32_t i;
-> +
-> +	r_buf = devm_kzalloc(p_sar->dev, AW963XX_SRAM_UPDATE_ONE_PACK_SIZE, GFP_KERNEL);
-> +	if (!r_buf)
-> +		return -ENOMEM;
-> +
-> +	memset(buf, 0xff, sizeof(buf));
-> +	for (i = 0; i < pack_cnt; i++) {
-> +		memset(r_buf, 0, AW963XX_SRAM_UPDATE_ONE_PACK_SIZE);
-> +		download_addr_with_ofst = offset + i * AW963XX_SRAM_UPDATE_ONE_PACK_SIZE;
-> +		buf[0] = (uint8_t)(download_addr_with_ofst >> OFFSET_BIT_8);
-> +		buf[1] = (uint8_t)(download_addr_with_ofst);
-> +		if (i != (pack_cnt - 1)) {
-> +			ret = aw_sar_i2c_write_seq(p_sar->i2c, buf,
-> +					AW963XX_SRAM_UPDATE_ONE_PACK_SIZE + 2);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, write_seq error!", i);
-> +				devm_kfree(p_sar->dev, r_buf);
-> +				return ret;
-> +			}
-> +			ret = aw_sar_i2c_read_seq(p_sar->i2c, buf, 2, r_buf,
-> +					AW963XX_SRAM_UPDATE_ONE_PACK_SIZE);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, read_seq error!", i);
-> +				devm_kfree(p_sar->dev, r_buf);
-> +				return ret;
-> +			}
-> +			if (memcmp(&buf[2], r_buf, AW963XX_SRAM_UPDATE_ONE_PACK_SIZE) != 0) {
-> +				dev_err(p_sar->dev, "read is not equal to write ");
-> +				devm_kfree(p_sar->dev, r_buf);
-> +				return -EINVAL;
-> +			}
-> +		} else {
-> +			ret = aw_sar_i2c_write_seq(p_sar->i2c, buf, last_pack_len + 2);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, write_seq error!", i);
-> +				devm_kfree(p_sar->dev, r_buf);
-> +				return ret;
-> +			}
-> +			ret = aw_sar_i2c_read_seq(p_sar->i2c, buf, 2, r_buf, last_pack_len);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, read_seq error!", i);
-> +				devm_kfree(p_sar->dev, r_buf);
-> +				return ret;
-> +			}
-> +			if (memcmp(&buf[2], r_buf, last_pack_len) != 0) {
-> +				dev_err(p_sar->dev, "read is not equal to write ");
-> +				devm_kfree(p_sar->dev, r_buf);
-> +				return -EINVAL;
-> +			}
-> +		}
-> +	}
-> +
-> +	devm_kfree(p_sar->dev, r_buf);
-> +
-> +	return 0;
-> +}
-> +
-> +static int32_t aw963xx_sram_data_write(struct aw_bin *aw_bin, void *load_bin_para)
-> +{
-> +	uint8_t buf[AW963XX_SRAM_UPDATE_ONE_PACK_SIZE + 2] = { 0 };
-> +	uint32_t start_index = aw_bin->header_info[0].valid_data_addr;
-> +	uint32_t fw_bin_version = aw_bin->header_info[0].app_version;
-> +	uint32_t download_addr = AW963XX_RAM_START_ADDR;
-> +	uint32_t fw_len = aw_bin->header_info[0].reg_num;
-> +	uint32_t last_pack_len = fw_len % AW963XX_SRAM_UPDATE_ONE_PACK_SIZE;
-> +	struct aw_sar *p_sar = (struct aw_sar *)load_bin_para;
-> +	uint32_t download_addr_with_ofst = 0;
-> +	uint32_t pack_cnt;
-> +	uint8_t *r_buf;
-> +	int32_t ret = -EINVAL;
-> +	uint32_t i;
-> +
-> +	r_buf = devm_kzalloc(p_sar->dev, AW963XX_SRAM_UPDATE_ONE_PACK_SIZE, GFP_KERNEL);
-> +	if (!r_buf)
-> +		return -ENOMEM;
-> +
-> +	pack_cnt = ((fw_len % AW963XX_SRAM_UPDATE_ONE_PACK_SIZE) == 0) ?
-> +			(fw_len / AW963XX_SRAM_UPDATE_ONE_PACK_SIZE) :
-> +			(fw_len / AW963XX_SRAM_UPDATE_ONE_PACK_SIZE) + 1;
-> +
-> +	dev_info(p_sar->dev, "fw_bin_version = 0x%x", fw_bin_version);
-> +	for (i = 0; i < pack_cnt; i++) {
-> +		memset(r_buf, 0, AW963XX_SRAM_UPDATE_ONE_PACK_SIZE);
-> +		download_addr_with_ofst = download_addr + i * AW963XX_SRAM_UPDATE_ONE_PACK_SIZE;
-> +		buf[0] = (uint8_t)(download_addr_with_ofst >> OFFSET_BIT_8);
-> +		buf[1] = (uint8_t)(download_addr_with_ofst);
-> +		if (i != (pack_cnt - 1)) {
-> +			memcpy(&buf[2], &aw_bin->info.data[start_index +
-> +					i * AW963XX_SRAM_UPDATE_ONE_PACK_SIZE],
-> +					AW963XX_SRAM_UPDATE_ONE_PACK_SIZE);
-> +			ret = aw_sar_i2c_write_seq(p_sar->i2c, buf,
-> +					AW963XX_SRAM_UPDATE_ONE_PACK_SIZE + 2);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, write_seq error!", i);
-> +				goto err_out;
-> +			}
-> +			ret = aw_sar_i2c_read_seq(p_sar->i2c, buf, 2, r_buf,
-> +					AW963XX_SRAM_UPDATE_ONE_PACK_SIZE);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, read_seq error!", i);
-> +				goto err_out;
-> +			}
-> +			if (memcmp(&buf[2], r_buf, AW963XX_SRAM_UPDATE_ONE_PACK_SIZE) != 0) {
-> +				dev_err(p_sar->dev, "read is not equal to write ");
-> +				ret = -EIO;
-> +				goto err_out;
-> +			}
-> +		} else { // last pack process
-> +			memcpy(&buf[2], &aw_bin->info.data[start_index +
-> +					i * AW963XX_SRAM_UPDATE_ONE_PACK_SIZE], last_pack_len);
-> +			ret = aw_sar_i2c_write_seq(p_sar->i2c, buf, last_pack_len + 2);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, write_seq error!", i);
-> +				goto err_out;
-> +			}
-> +			ret = aw_sar_i2c_read_seq(p_sar->i2c, buf, 2, r_buf, last_pack_len);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, read_seq error!", i);
-> +				goto err_out;
-> +			}
-> +			if (memcmp(&buf[2], r_buf, last_pack_len) != 0) {
-> +				dev_err(p_sar->dev, "read is not equal to write ");
-> +				ret = -EIO;
-> +				goto err_out;
-> +			}
-> +			/* fill 0xff in the area that not worte. */
-> +			ret = aw963xx_sram_fill_not_wrote_area(load_bin_para,
-> +					download_addr_with_ofst + last_pack_len);
-> +			if (ret != 0) {
-> +				dev_err(p_sar->dev, "cnt%d, sram_fill_not_wrote_area error!", i);
-> +				goto err_out;
-> +			}
-> +		}
-> +	}
-> +
-> +err_out:
-> +	devm_kfree(p_sar->dev, r_buf);
+> Unfortunately, with this patch applied to kernel 6.9 I get a different
+> crash [2] on a Debian 12 (virtual) machine with root on LVM on boot (no
+> software RAID involved). See [1] for lsblk and findmnt output. addr2line
+> says:
 
-Why do you use managed interface?
+Sorry, which commit is your kernel? Is mainline tag v6.9 or at some commit?
+And is it reproducible using the mainline kernel v6.10-rc2?
 
-> +
-> +	return ret;
-> +}
-> +
-> +static int32_t aw963xx_update_firmware(struct aw_bin *aw_bin, void *load_bin_para)
-> +{
-> +	struct aw_sar *p_sar = (struct aw_sar *)load_bin_para;
-> +	struct aw963xx *aw963xx = (struct aw963xx *)p_sar->priv_data;
-> +	struct i2c_client *i2c = p_sar->i2c;
-> +	int32_t ret;
-> +
-> +	if (aw963xx->start_mode == AW963XX_ROM_MODE) {
-> +		dev_info(p_sar->dev, "no need to update fw.");
-> +		return 0;
-> +	}
-> +
-> +	//step1: close coderam shutdown mode
+> 
+> # addr2line -f -e /usr/lib/debug/vmlinux-6.9.0-patch0604-nodebuglist+
+> blk_mq_request_bypass_insert+0x20
 
-Plaese fix your style to be consistent. There is a space after //.
-Always, so fix all your patches.
+I think here should use blk_mq_insert_request+0x120, instead of the
+blk_mq_request_bypass_insert+0x20, which has "?" at the beginning.
 
+> blk_mq_request_bypass_insert
+> [...]/linux/block/blk-mq.c:2456
+> 
+> No crashes seen so far if the root is on LVM on top of software RAID, or
+> if the root partition is directly on disk.
 
+Ok, I will look into this ASAP, thank you for the information!
 
-...
-
-> +
-> +int32_t aw963xx_check_chipid(void *data)
-> +{
-> +	struct aw_sar *p_sar = (struct aw_sar *)data;
-> +	uint32_t reg_val;
-> +	int32_t ret;
-> +
-> +	if (!p_sar)
-> +		return -EINVAL;
-> +
-> +	ret = aw_sar_i2c_read(p_sar->i2c, REG_CHIP_ID0, &reg_val);
-> +	if (ret < 0) {
-> +		dev_err(p_sar->dev, "read CHIP ID failed: %d", ret);
-> +		return ret;
-> +	}
-> +
-> +	switch (reg_val) {
-> +	case AW96303_CHIP_ID:
-> +		dev_info(p_sar->dev, "aw96303 detected, 0x%04x", reg_val);
-
-Your driver is quite noisy. Reduce the severity of informational
-messages, because driver should be quiet on success.
-
-I don't understand why even having dev_info in 5 places instead of one
-place.
-
-> +		memcpy(p_sar->chip_name, AW96303, 8);
-> +		ret = 0;
-> +		break;
-> +	case AW96305_CHIP_ID:
-> +		dev_info(p_sar->dev, "aw96305 detected, 0x%04x", reg_val);
-> +		memcpy(p_sar->chip_name, AW96305, 8);
-> +		ret = 0;
-> +		break;
-> +	case AW96305BFOR_CHIP_ID:
-> +		dev_info(p_sar->dev, "aw96305bfor detected, 0x%04x", reg_val);
-> +		memcpy(p_sar->chip_name, AW96305BFOR, 8);
-> +		ret = 0;
-> +		break;
-> +	case AW96308_CHIP_ID:
-> +		dev_info(p_sar->dev, "aw96308 detected, 0x%04x", reg_val);
-> +		memcpy(p_sar->chip_name, AW96308, 8);
-> +		ret = 0;
-> +		break;
-> +	case AW96310_CHIP_ID:
-> +		dev_info(p_sar->dev, "aw96310 detected, 0x%04x", reg_val);
-> +		memcpy(p_sar->chip_name, AW96310, 8);
-
-No, all these memcpy are just silly. You later compare strings instead
-of comparing the detected chip id (integer).
-
-> +		ret = 0;
-> +		break;
-> +	default:
-> +		dev_info(p_sar->dev, "chip id error, 0x%04x", reg_val);
-> +		ret =  -EIO;
-
-Fix your style, just one space after =. This applies in multiple places.
-
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-
-There are so many trivial issues in this driver that I think you should
-start from huge cleanup from all these trivialities before sending to
-review. You try to upstream a downstream, poor quality code. This is
-always a pain. Instead you should take moderately recent driver, which
-passed review, as a template and work on top of it with Linux coding
-uniformed style.
-
-Best regards,
-Krzysztof
-
+> 
+> If I can provide any more information, just let me know.
+> 
+> Thanks!
+> 
+> Best,
+> 
+> Friedrich
+> 
+> [1]
+> 
+> # lsblk -o name,fstype,label --ascii
+> NAME                          FSTYPE      LABEL
+> sda
+> |-sda1                        ext2
+> |-sda2
+> `-sda5                        LVM2_member
+>   |-kernel684--deb--vg-root   ext4
+>   `-kernel684--deb--vg-swap_1 swap
+> sr0                           iso9660     Debian 12.5.0 amd64 n
+> # findmnt --ascii
+> TARGET                       SOURCE     FSTYPE    OPTIONS
+> /                            /dev/mapper/kernel684--deb--vg-root
+>                                         ext4
+> rw,relatime,errors=remount-ro
+> |-/sys                       sysfs      sysfs
+> rw,nosuid,nodev,noexec,relatime
+> | |-/sys/kernel/security     securityfs securityf
+> rw,nosuid,nodev,noexec,relatime
+> | |-/sys/fs/cgroup           cgroup2    cgroup2
+> rw,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursive
+> | |-/sys/fs/pstore           pstore     pstore
+> rw,nosuid,nodev,noexec,relatime
+> | |-/sys/fs/bpf              bpf        bpf
+> rw,nosuid,nodev,noexec,relatime,mode=700
+> | |-/sys/kernel/debug        debugfs    debugfs
+> rw,nosuid,nodev,noexec,relatime
+> | |-/sys/kernel/tracing      tracefs    tracefs
+> rw,nosuid,nodev,noexec,relatime
+> | |-/sys/fs/fuse/connections fusectl    fusectl
+> rw,nosuid,nodev,noexec,relatime
+> | `-/sys/kernel/config       configfs   configfs
+> rw,nosuid,nodev,noexec,relatime
+> |-/proc                      proc       proc
+> rw,nosuid,nodev,noexec,relatime
+> | `-/proc/sys/fs/binfmt_misc systemd-1  autofs
+> rw,relatime,fd=30,pgrp=1,timeout=0,minproto=5,maxproto=5,di
+> |-/dev                       udev       devtmpfs
+> rw,nosuid,relatime,size=4040780k,nr_inodes=1010195,mode=755
+> | |-/dev/pts                 devpts     devpts
+> rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
+> | |-/dev/shm                 tmpfs      tmpfs     rw,nosuid,nodev,inode64
+> | |-/dev/hugepages           hugetlbfs  hugetlbfs rw,relatime,pagesize=2M
+> | `-/dev/mqueue              mqueue     mqueue
+> rw,nosuid,nodev,noexec,relatime
+> |-/run                       tmpfs      tmpfs
+> rw,nosuid,nodev,noexec,relatime,size=813456k,mode=755,inode
+> | |-/run/lock                tmpfs      tmpfs
+> rw,nosuid,nodev,noexec,relatime,size=5120k,inode64
+> | |-/run/credentials/systemd-sysctl.service
+> | |                          ramfs      ramfs
+> ro,nosuid,nodev,noexec,relatime,mode=700
+> | |-/run/credentials/systemd-sysusers.service
+> | |                          ramfs      ramfs
+> ro,nosuid,nodev,noexec,relatime,mode=700
+> | |-/run/credentials/systemd-tmpfiles-setup-dev.service
+> | |                          ramfs      ramfs
+> ro,nosuid,nodev,noexec,relatime,mode=700
+> | |-/run/user/0              tmpfs      tmpfs
+> rw,nosuid,nodev,relatime,size=813452k,nr_inodes=203363,mode
+> | `-/run/credentials/systemd-tmpfiles-setup.service
+> |                            ramfs      ramfs
+> ro,nosuid,nodev,noexec,relatime,mode=700
+> `-/boot                      /dev/sda1  ext2      rw,relatime
+> 
+> [2]
+> [    1.137443] BUG: kernel NULL pointer dereference, address:
+> 0000000000000000
+> [    1.137951] #PF: supervisor write access in kernel mode
+> [    1.138332] #PF: error_code(0x0002) - not-present page
+> [    1.138695] PGD 0 P4D 0
+> [    1.138697] Oops: 0002 [#1] PREEMPT SMP NOPTI
+> [    1.138702] CPU: 1 PID: 27 Comm: kworker/1:0H Tainted: G            E
+>      6.9.0-patch0604-nodebuglist+ #35
+> [    1.138703] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [    1.138705] Workqueue: kblockd blk_mq_requeue_work
+> [    1.141021] RIP: 0010:_raw_spin_lock+0x13/0x60
+> [    1.141336] Code: 31 db c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90
+> 90 90 90 90 90 90 0f 1f 44 00 00 65 ff 05 bc 94 cb 69 31 c0 ba 01 00 00
+> 00 <f0> 0f b1 17 75 1b 31 c0 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9
+> [    1.142670] RSP: 0018:ffffa42a40103d78 EFLAGS: 00010246
+> [    1.143032] RAX: 0000000000000000 RBX: ffff91c4c0357c00 RCX:
+> 00000000ffffffe0
+> [    1.143545] RDX: 0000000000000001 RSI: 0000000000000001 RDI:
+> 0000000000000000
+> [    1.144037] RBP: ffffa42a40103d98 R08: 0000000000000000 R09:
+> 0000000000000000
+> [    1.144548] R10: 0000000000000000 R11: 0000000000000000 R12:
+> 0000000000000000
+> [    1.145036] R13: 0000000000000001 R14: ffff91c5f7cc1d80 R15:
+> ffff91c4c153eb54
+> [    1.145542] FS:  0000000000000000(0000) GS:ffff91c5f7c80000(0000)
+> knlGS:0000000000000000
+> [    1.146092] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    1.146511] CR2: 0000000000000000 CR3: 000000010e514001 CR4:
+> 0000000000370ef0
+> [    1.147003] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> 0000000000000000
+> [    1.147507] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> 0000000000000400
+> [    1.147997] Call Trace:
+> [    1.148177]  <TASK>
+> [    1.148332]  ? show_regs+0x6c/0x80
+> [    1.148603]  ? __die+0x24/0x80
+> [    1.148824]  ? page_fault_oops+0x175/0x5b0
+> [    1.149111]  ? do_user_addr_fault+0x311/0x680
+> [    1.149420]  ? exc_page_fault+0x82/0x1b0
+> [    1.149718]  ? asm_exc_page_fault+0x27/0x30
+> [    1.150013]  ? _raw_spin_lock+0x13/0x60
+> [    1.150282]  ? blk_mq_request_bypass_insert+0x20/0xe0
+> [    1.150663]  blk_mq_insert_request+0x120/0x1e0
+> [    1.150975]  blk_mq_requeue_work+0x18f/0x230
+> [    1.151277]  process_one_work+0x19b/0x3f0
+> [    1.151562]  worker_thread+0x32a/0x500
+> [    1.151847]  ? __pfx_worker_thread+0x10/0x10
+> [    1.152148]  kthread+0xe1/0x110
+> [    1.152373]  ? __pfx_kthread+0x10/0x10
+> [    1.152640]  ret_from_fork+0x44/0x70
+> [    1.152906]  ? __pfx_kthread+0x10/0x10
+> [    1.153169]  ret_from_fork_asm+0x1a/0x30
+> [    1.153449]  </TASK>
+> [    1.153608] Modules linked in: efi_pstore(E) dmi_sysfs(E)
+> qemu_fw_cfg(E) ip_tables(E) x_tables(E) autofs4(E) psmouse(E) bochs(E)
+> uhci_hcd(E) crc32_pclmul(E) drm_vram_helper(E) drm_ttm_helper(E)
+> i2c_piix4(E) ttm(E) ehci_hcd(E) pata_acpi(E) floppy(E)
+> [    1.155135] CR2: 0000000000000000
+> [    1.155370] ---[ end trace 0000000000000000 ]---
+> [    1.155694] RIP: 0010:_raw_spin_lock+0x13/0x60
+> [    1.156024] Code: 31 db c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90
+> 90 90 90 90 90 90 0f 1f 44 00 00 65 ff 05 bc 94 cb 69 31 c0 ba 01 00 00
+> 00 <f0> 0f b1 17 75 1b 31 c0 31 d2 31 c9 31 f6 31 ff 45 31 c0 45 31 c9
+> [    1.157306] RSP: 0018:ffffa42a40103d78 EFLAGS: 00010246
+> [    1.157669] RAX: 0000000000000000 RBX: ffff91c4c0357c00 RCX:
+> 00000000ffffffe0
+> [    1.158172] RDX: 0000000000000001 RSI: 0000000000000001 RDI:
+> 0000000000000000
+> [    1.158682] RBP: ffffa42a40103d98 R08: 0000000000000000 R09:
+> 0000000000000000
+> [    1.159311] R10: 0000000000000000 R11: 0000000000000000 R12:
+> 0000000000000000
+> [    1.159992] R13: 0000000000000001 R14: ffff91c5f7cc1d80 R15:
+> ffff91c4c153eb54
+> [    1.160575] FS:  0000000000000000(0000) GS:ffff91c5f7c80000(0000)
+> knlGS:0000000000000000
+> [    1.161186] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    1.161618] CR2: 0000000000000000 CR3: 000000010e514001 CR4:
+> 0000000000370ef0
+> [    1.162158] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> 0000000000000000
+> [    1.162691] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> 0000000000000400
+> 
 
