@@ -1,136 +1,102 @@
-Return-Path: <linux-kernel+bounces-202804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2EA8FD164
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:09:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EA28FD194
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38CBD1F23B26
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDA5283775
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F3E146D5E;
-	Wed,  5 Jun 2024 15:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5DA482C3;
+	Wed,  5 Jun 2024 15:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LOWxch2K"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxSIBGH6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375A947F69
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FE619D8A2;
+	Wed,  5 Jun 2024 15:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717600138; cv=none; b=SJnfJ7y++UXfvPjQyK6JKFbYW374+JqQqLR9d+uiIPa4i9hWUUnYNKDQAYUMuuLTlwtt/2fK51XmobNfkypq2+TU6SzpjWqFpyMYSHfDMDyVen4lKbl1XA6qpa3rs5GrwA3ekC/Igi2+feRtzI+yMZ6Cei9GP9Q9AQ6ZHLC4NRI=
+	t=1717601169; cv=none; b=jIbL/8eEphguyO0orUznfK/1fk+1/0PRDFfKsnx9CV1pk1Mc/QR8zaQ1nF21eAOKi7FHyDZvh6FhAw8DhqrUBtHiRLUedUzgc2aVweJvaAW4EfVpILcFfkDdjDPgl9sRGr2l7SIWPq8g39RP3ZP6IjJr2Q0EnGrPNwpobfuL/B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717600138; c=relaxed/simple;
-	bh=4JyuwwyC3HBCATZsuMSNx2NdgBe2Rb9+OjQPFT0wds8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LVRjEREJ2WMuvq+PMwJha8MoBKY6UBZ3uUPzlumGuxPMlQxrmZSG+FElou4KXqhT8s8p9tQWP+jg+OoyEsOBQSWTkCEIcd+CkPPtBaIjHSijI5Kth+a8s3MN2U4+thPtY3/8QkD74gClsnPvjGomrnSSZHwajbC7F366FaIUJ3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LOWxch2K; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1f68862ab69so30998595ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 08:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717600136; x=1718204936; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9QZ+vKQP5mDiEMq7aC/1ssTDMAZfDe/7jI56fqmifes=;
-        b=LOWxch2KH2LSl24kClKFEev2bvld6zvWHKktwiAXfuFZHiEm9p6R3z+1tqHE/79YAY
-         0O39tlclUMgkUIpRZeNZ1RazIG3qh6fwl7feJWpFiHHTRAOv3sV1r684cdT1DqyoGOxO
-         hxdPpWO3F7AVETIK+YnxmbN8ATDsSt8b6bN/aBGzPKVBHu1NKjDe1b9JZv/QtSaZL8CS
-         l5+lLXJu7dZMRvoHN8v2o7KdaNJD45vbBcn99Wa8WkqMdxJaXKS2yWTx6G+a1TvqQN4f
-         EM2YiWx5WJwci9clhu9NjTnJXrNg1AoNklD4ybr1rKTfvA2FVk99IObdOco76mG3GKD1
-         BPuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717600136; x=1718204936;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9QZ+vKQP5mDiEMq7aC/1ssTDMAZfDe/7jI56fqmifes=;
-        b=pDnnqWheqzapNcEIcYhdct51LnrrP/st4/8QLyzdRGCm2TSKDTHH9OHmWYWw9jnLQ8
-         UHE2L73qCIZ4YC9jjtnXEtrnpvCdk73Y0lAC8hArq5zgIChWTSWp2r1ga1RlS5A0Z5/o
-         w74LE0qvM/bqIHXvW6M80DWwNIWRzM9PsfXWmdmoPIeMI8FXgXb1qyRyPVPWVOzUBCMr
-         7Nhityzo5HIdPY/m8i4FMV5bPXwbSAV8gc5C99AYjTwzmCwmq0qTfhx+EVtfKcdKENkW
-         g1+grL8G/oppEneFF13mOjYZToyUYKFG2ayBECFxvzJyM1DpvQ8WakE3zFx5HLBKkWNL
-         NEsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvfFqPrW50Lv4BOEWPFX7sKENwv7z/nYP7cNLJbaIXbkLq/smIYD244B7vbJeRv5WcJnyzLcdq7OA7XT8ud4B6cFp1d3icCOYTPUNX
-X-Gm-Message-State: AOJu0Yzw0A0/OsvdAaJ5o4wWj+4vAb4eHUx7CHMivB9DTzjU2bG1hmk7
-	W2q51rN9x2N7eyvYx2f/XvZRpRBOeWMrOQMYF2hKlaAFP0SyItYjjOGIcTsXKpKRnbN7iTmdxjp
-	XGw==
-X-Google-Smtp-Source: AGHT+IFOWIAW8rQZeqIoAhkK9HfGTM8iAboRiyRWXoj3LvZaRP7jP/VaJALlP/KwviDZ8VgTtBwOJCi8oYs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:1cc:b0:1f3:e88:a6a0 with SMTP id
- d9443c01a7336-1f6a5a1b926mr1528685ad.7.1717600136208; Wed, 05 Jun 2024
- 08:08:56 -0700 (PDT)
-Date: Wed, 5 Jun 2024 08:08:54 -0700
-In-Reply-To: <e1c29dd4-2eb9-44fe-abf2-f5ca0e84e2a6@amd.com>
+	s=arc-20240116; t=1717601169; c=relaxed/simple;
+	bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=envxarqUcZfqVGrB9+dGgaMABhWCNCwDfbv+5D0T3vCYTnIBjTUtBLLtgK1uMTWvEZioRgbW3Uc9jqY/YFYzcx6oeRn99TdvhYLTdVc1jO8p5tqGD9s3I4t/zX9529UZjgJmQZ7pwBQ0IdeQvuQ+ZXzyaG/4vgzsQQ1zhEa0XcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxSIBGH6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ADEEC2BD11;
+	Wed,  5 Jun 2024 15:26:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717601169;
+	bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XxSIBGH6rRgGrOvWHVda0jAQp3yhRM782xGt9XMZcSl7d0ZA1lIizB1m02OTh41lU
+	 OrgAkmc26Q+hlkecOcTIdgf4h0DD7g3Qf8a9CiHFwye67f6dMi24jzxoSljrTYTDqg
+	 FF3vy/uyk7Hbv2d1UWIxVQyN/cSjKma5vY9TasiN9eLBbGHOdp3g0+C17YonBncNeQ
+	 4z5CdS2uEe3o+SrmoXZ1adaCx8EVoK7FzIYJiEcRFdT6IupN2Lyutk+jkCaTew7aMI
+	 6G0NQWBVJzAuF/rcttJUUz1NJttM7PHuB332ybK/OXHgqyc27x208p9iQL2n8igUVL
+	 rGoril+oaHeIA==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/3] whack user_path_at_empty, cleanup getname_flags
+Date: Wed,  5 Jun 2024 17:10:03 +0200
+Message-ID: <20240605-notation-rausnehmen-c4bd0c38f994@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240604155257.109500-1-mjguzik@gmail.com>
+References: <20240604155257.109500-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240429060643.211-1-ravi.bangoria@amd.com> <20240429060643.211-4-ravi.bangoria@amd.com>
- <Zl5jqwWO4FyawPHG@google.com> <e1c29dd4-2eb9-44fe-abf2-f5ca0e84e2a6@amd.com>
-Message-ID: <ZmB_hl7coZ_8KA8Q@google.com>
-Subject: Re: [PATCH 3/3] KVM SVM: Add Bus Lock Detect support
-From: Sean Christopherson <seanjc@google.com>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, pbonzini@redhat.com, thomas.lendacky@amd.com, 
-	hpa@zytor.com, rmk+kernel@armlinux.org.uk, peterz@infradead.org, 
-	james.morse@arm.com, lukas.bulwahn@gmail.com, arjan@linux.intel.com, 
-	j.granados@samsung.com, sibs@chinatelecom.cn, nik.borisov@suse.com, 
-	michael.roth@amd.com, nikunj.dadhania@amd.com, babu.moger@amd.com, 
-	x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1442; i=brauner@kernel.org; h=from:subject:message-id; bh=jZnPdnaeLmJO5kHuCGrxoXWrDPQ+XKI6fsrjEvqiiVA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQlNLf5fI6WunTQXPrVzJ7D7z+qPG30nKiW3nC/y2zSA qMP50JedJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkfiEjw0OHuokvp7l8dRCw /t3r4uaVlpa6+IR8EpdDzkcBoZIlqxgZru84+TJkoc6z+dZ1jSvlHk1ew6h89t321bVpQuqptql bGQE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024, Ravi Bangoria wrote:
-> Hi Sean,
+On Tue, 04 Jun 2024 17:52:54 +0200, Mateusz Guzik wrote:
+> I tried to take a stab at the atomic filename refcount thing [1], found
+> some easy cleanup to do as a soft prerequisite.
 > 
-> On 6/4/2024 6:15 AM, Sean Christopherson wrote:
-> > On Mon, Apr 29, 2024, Ravi Bangoria wrote:
-> >> Upcoming AMD uarch will support Bus Lock Detect. Add support for it
-> >> in KVM. Bus Lock Detect is enabled through MSR_IA32_DEBUGCTLMSR and
-> >> MSR_IA32_DEBUGCTLMSR is virtualized only if LBR Virtualization is
-> >> enabled. Add this dependency in the KVM.
-> > 
-> > This is woefully incomplete, e.g. db_interception() needs to be updated to decipher
-> > whether the #DB is the responsbility of the host or of the guest.
+> user_path_at_empty saddles getname_flags with an int * argument nobody
+> else uses, so it only results in everyone else having to pass NULL
+> there. This is trivially avoidable.
 > 
-> Can you please elaborate. Are you referring to vcpu->guest_debug thingy?
+> [...]
 
-Yes.  More broadly, all of db_interception().
+Snatched with some minor changes unless I hear complaints.
 
-> > Honestly, I don't see any point in virtualizing this in KVM.  As Jim alluded to,
-> > what's far, far more interesting for KVM is "Bus Lock Threshold".  Virtualizing
-> > this for the guest would have been nice to have during the initial split-lock #AC
-> > support, but now I'm skeptical the complexity is worth the payoff.
-> 
-> This has a valid usecase of penalizing offending processes. I'm not sure
-> how much it's really used in the production though.
+---
 
-Yeah, but split-lock #AC and #DB have existed on Intel for years, and no one has
-put in the effort to land KVM support, despite the series getting as far as v9[*].
-Some of the problems on Intel were due to the awful FMS-based feature detection,
-but those weren't the only hiccups.  E.g. IIRC, we never sorted out what should
-happen if both the host and guest want bus-lock #DBs.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Anyways, my point is that, except for SEV-ES+ where there's no good reason NOT to
-virtualize Bus Lock Detect, I'm not convinced that it's worth virtualizing bus-lock
-#DBs.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-[*] https://lore.kernel.org/all/20200509110542.8159-1-xiaoyao.li@intel.com
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> > I suppose we could allow it if #DB isn't interecepted, at which point the enabling
-> > required is minimal?
-> 
-> The feature uses DEBUG_CTL MSR, #DB and DR6 register. Do you mean expose
-> it when all three are accelerated or just #DB?
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-I mean that if KVM isn't intercepting #DB, then there's no extra complexity needed
-to sort out whether the #DB "belongs" to the host or the guest.  See commit
-90cbf6d914ad ("KVM: SEV-ES: Eliminate #DB intercept when DebugSwap enabled").
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/3] vfs: stop using user_path_at_empty in do_readlinkat
+      https://git.kernel.org/vfs/vfs/c/d63b3a67520b
+[2/3] vfs: retire user_path_at_empty and drop empty arg from getname_flags
+      https://git.kernel.org/vfs/vfs/c/a01c264715dc
+[3/3] vfs: shave a branch in getname_flags
+      https://git.kernel.org/vfs/vfs/c/12a8c8f491b4
 
