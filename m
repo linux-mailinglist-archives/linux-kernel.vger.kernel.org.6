@@ -1,156 +1,268 @@
-Return-Path: <linux-kernel+bounces-203406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905E88FDA71
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:27:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288C78FDA82
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FEE61F25D00
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A19A286177
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDBA1667F6;
-	Wed,  5 Jun 2024 23:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CDC167DA2;
+	Wed,  5 Jun 2024 23:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iElbNTyu"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiC7jkMY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0301415FA8D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2CE2AE7F;
+	Wed,  5 Jun 2024 23:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717630022; cv=none; b=nZe+GENyaLirxeeVvTkK/rvVcWQg7e0pwq/qNAktnlnQoMn4I0Flh1zIU8NOmDzDdDayox7+ihsippGJTsc4LNBtKH/k15wj5HkSNlxo/Pc9A4dY8UNW9OdVkxbHgzzKCUkuCQRHbDBUyGJYJ+H6izSvQQrkNh6l4IAOOdf4tLo=
+	t=1717630160; cv=none; b=h/iW7f/ui2VP2vA6EBCaj7hwITW8EMNtEjuyOcNwhwWHomlU0Khat/ldD90eZmTllodxVqKz6hugGlvKkniFSG4PKjA/7e8+ipQ1CT1SGNlU4d08vGAxjdhrNsBzw5VArSqKyvwiZzXwp1L17gNpmkqMbEj8Xh1k2os239CwMf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717630022; c=relaxed/simple;
-	bh=Uvh7c5HPcPZsUBUF5x6xG49unjoIWNwnWZBN+MKrLUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VgaSoypnIOcSDGn6zCFUTvIoF7mpB5zh54XcwBY4AE8i3ddxilc18Z4i7nxykpvYqEFIYoBhcf3qarQrdlDj7zQ1vItUTlZ6BtBBvaa7N5Mi5rB1X5tJMCDogrUPnuIiX4PyH2ne388mzQ+MUyYKlTLiaUlEf1Psr/KJBonK6G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iElbNTyu; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa71ded97bso285570276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 16:27:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717630020; x=1718234820; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QIAF8QbRwm7UUfXsDXX+XUkKot8/Im3q+obHDhaEPyU=;
-        b=iElbNTyuJl/fqEYibZ3VA2RQmTCx2dGHqviU5RG/TU7LfcW6r/kj6IDQNux6qSrxEh
-         d5TP5+ZwBOBxlYYaVZgL7yW7p8oJ6fr+J+frp5u7DjHdyqIaBsocMU7FYe2ismAy0+0h
-         a+eJI0F7KhN6Qv2+E5VPVU0XvBI+fW2mLzdc9H42k2RyRFQhf38wiXUqzvbwA9qLViYz
-         lvcnFYsvQfpmUcD64Y9UndMsjLqv4wP8ckou1K57uMhK5zV7OLR9DzRNrGOkC2d7rLIa
-         dSbY8+OblEVpRo26KS2VjnQA0z6EfB2NYAqPmSWTWarH4jbJ2P72dXmJAiqSj4h4q6LP
-         38fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717630020; x=1718234820;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QIAF8QbRwm7UUfXsDXX+XUkKot8/Im3q+obHDhaEPyU=;
-        b=jKkBLM44a31Y6JatlDapa/L/PEF+Jx3QrsZpZjzbhQrY+WFB9VON9cg3lru08H20vG
-         kkxA/+PZBPLcKfzY0/5wi8FgEyV9CfEGgESz4BMVFQExU1Y9092QgsEWzgJnZHzml671
-         XcZLHz0h6NB7Otir24dJIEhLrj4BFs7wNHQJKfjQCuYAfSXj61oREtzIorQViR1uhjGV
-         Zupo5coeg/+2hfoKHE0AX/B+2RehFqBN+tGdy1DiLG3pgGzLQMMaUYPn9v49WLx2Mbaq
-         DuO7A6X8PRXqSEcToM+cywxxQZdG7pCZ+O11NNbDQa8OGbSymPD1MPV4mklDcX7pW+Pj
-         0alQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlq2rxP3Ww5NVtMVTK6ZDe8yh6nAZ2BMmPPeuiEo3DXXYHFRs46vtHpgvTEv5eMUfHN2ZK8UarJRw4P6DJMuSkbyb03scydoOptbNM
-X-Gm-Message-State: AOJu0YwqiH9KXrU657kJSHcrMHVyvdPnkYFq9bgy69aDZg45gxoJT21V
-	Jv4Txjv2OJxJPwWkP/kMog+XeGJe1GtYXAnBUC3YYbJ71XmSApZGkQhRXBlsm559i2GEbCVgHvm
-	qWusUSChSB05TDB/D9KAQ09xbxdftgad9bXkmLgmARYXsyGJW
-X-Google-Smtp-Source: AGHT+IFfQiXdaxWwXiph80q/21i5cUmAcf5zvU2JUP9S2fWWkpl/D3qIPiQt8Ovp+Liq/Ff2Le+9lzJrniwVaZMFMjI=
-X-Received: by 2002:a25:906:0:b0:dfa:5ab5:d2d with SMTP id 3f1490d57ef6-dfadeb86662mr1026190276.13.1717630019511;
- Wed, 05 Jun 2024 16:26:59 -0700 (PDT)
+	s=arc-20240116; t=1717630160; c=relaxed/simple;
+	bh=XJoNnLa6bSjUpsAGuvnYZUrq8gMdzN/n/FdfKk2N5n0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKvV0+48dCW4d3iRWGYWZHvaghFnNnnMGeZ/cczD2yzKSEy4jd0Mxs1B8gIKCNipEQGh8QiyQA8gVTpBAK/yp7gCogk4mpnucpABRHxLHebi8o23BaF/TBH9N6RSlI9JGsF/kmU2J+WG5pnjuozorl3u0VcKCOjF1smrOC3QNC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiC7jkMY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F23FC2BD11;
+	Wed,  5 Jun 2024 23:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717630159;
+	bh=XJoNnLa6bSjUpsAGuvnYZUrq8gMdzN/n/FdfKk2N5n0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QiC7jkMYzVmu4VMMt3O1dP83DWyLAQ33RZbx5KsVs7YE7Wdp0SumwfzRYsmKdD5R1
+	 Zhki8J8/jp6F6SpSxSKohmE0JEEVOAKdNtNp4zxXMHPAUDmTrqHQ+d4ZtzdkSHRcx5
+	 vg7bJdzoz4xt/AP0tDYa0TXvyoY0vazD7FTMdWv4+27W1udL5JZvthrgakw/PhYcKX
+	 GIfZRVKMuqYXTuxSshw2Owl7J6MHHMTNmK/2AFtyloBMcseHJBtY2rafbCl0EnPKOJ
+	 Fg6Xo5uXh/qxESg+lxH3JZfmw0wjgRndwOWXpV1d4wL+qqnbvRa+ieYusVa9rUn/2F
+	 NCjzAKOAkOVZg==
+Date: Wed, 5 Jun 2024 17:29:16 -0600
+From: Rob Herring <robh@kernel.org>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 06/10] dt-bindings: net: Add Synopsys DW xPCS
+ bindings
+Message-ID: <20240605232916.GA3400992-robh@kernel.org>
+References: <20240602143636.5839-1-fancer.lancer@gmail.com>
+ <20240602143636.5839-7-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <mpearson-lenovo@squebb.ca> <20240604194056.16625-1-mpearson-lenovo@squebb.ca>
- <2midmmssv2i3plvtc2hajar6alfvggpnbvgpmldspelxsnjvcl@qiblhwat6n3p> <a517bb13-9772-49f9-b75c-8fa4d98b2ae9@app.fastmail.com>
-In-Reply-To: <a517bb13-9772-49f9-b75c-8fa4d98b2ae9@app.fastmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 6 Jun 2024 02:26:46 +0300
-Message-ID: <CAA8EJppzeBPHW1GPGvVzT-YSGm4PZUQ4qgq0FCgqn1e9Vt-MXg@mail.gmail.com>
-Subject: Re: [PATCH] usb: typec: ucsi: treat get_pdos not supported condition
- as info instead of error
-To: Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg KH <gregkh@linuxfoundation.org>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Diogo Ivo <diogo.ivo@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240602143636.5839-7-fancer.lancer@gmail.com>
 
-On Wed, 5 Jun 2024 at 20:09, Mark Pearson <mpearson-lenovo@squebb.ca> wrote:
->
-> Thanks Dmitry (& Diogo from the other thread)
->
-> On Tue, Jun 4, 2024, at 7:45 PM, Dmitry Baryshkov wrote:
-> > On Tue, Jun 04, 2024 at 03:40:44PM -0400, Mark Pearson wrote:
-> >> On systems where the UCSI PDOs are not supported, the UCSI driver is
-> >> giving an error message. This can cause users to believe there is a HW
-> >> issue with their system when in fact it is working as designed.
-> >>
-> >> Downgrade message to dev_info for EOPNOTSUPP condition.
-> >>
-> >> Tested on Lenovo L14 G5 AMD and confirmed with Lenovo FW team that PDOs
-> >> are not supported on this platform.
-> >>
-> >> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> >> ---
-> >>  drivers/usb/typec/ucsi/ucsi.c | 8 ++++++--
-> >>  1 file changed, 6 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> >> index cb52e7b0a2c5..090be87d5485 100644
-> >> --- a/drivers/usb/typec/ucsi/ucsi.c
-> >> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> >> @@ -632,8 +632,12 @@ static int ucsi_read_pdos(struct ucsi_connector *con,
-> >>      command |= is_source(role) ? UCSI_GET_PDOS_SRC_PDOS : 0;
-> >>      ret = ucsi_send_command(ucsi, command, pdos + offset,
-> >>                              num_pdos * sizeof(u32));
-> >> -    if (ret < 0 && ret != -ETIMEDOUT)
-> >> -            dev_err(ucsi->dev, "UCSI_GET_PDOS failed (%d)\n", ret);
-> >> +    if (ret < 0 && ret != -ETIMEDOUT) {
-> >> +            if (ret == -EOPNOTSUPP)
-> >> +                    dev_info(ucsi->dev, "UCSI_GET_PDOS not supported on this hardware\n");
-> >
-> > Maybe it would be enough to guard GET_PDOS commands with the
-> > UCSI_CAP_PDO_DETAILS check? Is it cleared on affected platforms?
-> >
->
-> I checked on the system I have and the features are 0x84, so the CAP_PDO_DETAILS aren't set.
-> I can do a formal patch if the approach is better, I ended up doing:
->
-> @@ -645,9 +645,13 @@ static int ucsi_read_pdos(struct ucsi_connector *con,
->  static int ucsi_get_pdos(struct ucsi_connector *con, enum typec_role role,
->                          int is_partner, u32 *pdos)
->  {
-> +       struct ucsi *ucsi = con->ucsi;
->         u8 num_pdos;
->         int ret;
->
-> +       if (!(ucsi->cap.features & UCSI_CAP_PDO_DETAILS))
-> +               return 0;
+On Sun, Jun 02, 2024 at 05:36:20PM +0300, Serge Semin wrote:
+> Synopsys DesignWare XPCS IP-core is a Physical Coding Sublayer (PCS) layer
+> providing an interface between the Media Access Control (MAC) and Physical
+> Medium Attachment Sublayer (PMA) through a Media independent interface.
+> >From software point of view it exposes IEEE std. Clause 45 CSR space and
+> can be accessible either by MDIO or MCI/APB3 bus interfaces. In the former
+> case the PCS device is supposed to be defined under the respective MDIO
+> bus DT-node. In the later case the DW xPCS will be just a normal IO
+> memory-mapped device.
+> 
+> Besides of that DW XPCS DT-nodes can have an interrupt signal and clock
+> source properties specified. The former one indicates the Clause 73/37
+> auto-negotiation events like: negotiation page received, AN is completed
+> or incompatible link partner. The clock DT-properties can describe up to
+> three clock sources: peripheral bus clock source, internal reference clock
+> and the externally connected reference clock.
+> 
+> Finally the DW XPCS IP-core can be optionally synthesized with a
+> vendor-specific interface connected to the Synopsys PMA (also called
+> DesignWare Consumer/Enterprise PHY). Alas that isn't auto-detectable in a
+> portable way. So if the DW XPCS device has the respective PMA attached
+> then it should be reflected in the DT-node compatible string so the driver
+> would be aware of the PMA-specific device capabilities (mainly connected
+> with CSRs available for the fine-tunings).
+> 
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> 
+> ---
+> 
+> Changelog v2:
+> - Drop the Management Interface DT-node bindings. DW xPCS with MCI/APB3
+>   interface is just a normal memory-mapped device.
+> ---
+>  .../bindings/net/pcs/snps,dw-xpcs.yaml        | 133 ++++++++++++++++++
+>  1 file changed, 133 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml b/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
+> new file mode 100644
+> index 000000000000..7927bceefbf3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
+> @@ -0,0 +1,133 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/pcs/snps,dw-xpcs.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->         /* UCSI max payload means only getting at most 4 PDOs at a time */
->         ret = ucsi_read_pdos(con, role, is_partner, pdos, 0, UCSI_MAX_PDOS);
->
-> And this did indeed squelch the 'error' message.
->
-> Couple of notes:
->  - I don't know this area very well, so don't know if there are risks of any regressions in other circumstances. I think it's pretty safe, but if any experts have an opinion that would be appreciated.
->  - It means that there isn't a log message saying that PDO capabilities are not available. Are there going to be power related tooling that won't work and it would be useful to have that message available?
+> +title: Synopsys DesignWare Ethernet PCS
+> +
+> +maintainers:
+> +  - Serge Semin <fancer.lancer@gmail.com>
+> +
+> +description:
+> +  Synopsys DesignWare Ethernet Physical Coding Sublayer provides an interface
+> +  between Media Access Control and Physical Medium Attachment Sublayer through
+> +  the Media Independent Interface (XGMII, USXGMII, XLGMII, GMII, etc)
+> +  controlled by means of the IEEE std. Clause 45 registers set. The PCS can be
+> +  optionally synthesized with a vendor-specific interface connected to
+> +  Synopsys PMA (also called DesignWare Consumer/Enterprise PHY) although in
+> +  general it can be used to communicate with any compatible PHY.
+> +
+> +  The PCS CSRs can be accessible either over the Ethernet MDIO bus or directly
+> +  by means of the APB3/MCI interfaces. In the later case the XPCS can be mapped
+> +  right to the system IO memory space.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - description: Synopsys DesignWare XPCS with none or unknown PMA
+> +        const: snps,dw-xpcs
+> +      - description: Synopsys DesignWare XPCS with Consumer Gen1 3G PMA
+> +        const: snps,dw-xpcs-gen1-3g
+> +      - description: Synopsys DesignWare XPCS with Consumer Gen2 3G PMA
+> +        const: snps,dw-xpcs-gen2-3g
+> +      - description: Synopsys DesignWare XPCS with Consumer Gen2 6G PMA
+> +        const: snps,dw-xpcs-gen2-6g
+> +      - description: Synopsys DesignWare XPCS with Consumer Gen4 3G PMA
+> +        const: snps,dw-xpcs-gen4-3g
+> +      - description: Synopsys DesignWare XPCS with Consumer Gen4 6G PMA
+> +        const: snps,dw-xpcs-gen4-6g
+> +      - description: Synopsys DesignWare XPCS with Consumer Gen5 10G PMA
+> +        const: snps,dw-xpcs-gen5-10g
+> +      - description: Synopsys DesignWare XPCS with Consumer Gen5 12G PMA
+> +        const: snps,dw-xpcs-gen5-12g
+> +
+> +  reg:
+> +    items:
+> +      - description:
+> +          In case of the MDIO management interface this just a 5-bits ID
+> +          of the MDIO bus device. If DW XPCS CSRs space is accessed over the
+> +          MCI or APB3 management interfaces, then the space mapping can be
+> +          either 'direct' or 'indirect'. In the former case all Clause 45
+> +          registers are contiguously mapped within the address space
+> +          MMD '[20:16]', Reg '[15:0]'. In the later case the space is divided
+> +          to the multiple 256 register sets. There is a special viewport CSR
+> +          which is responsible for the set selection. The upper part of
+> +          the CSR address MMD+REG[20:8] is supposed to be written in there
+> +          so the corresponding subset would be mapped to the lowest 255 CSRs.
+> +
+> +  reg-names:
+> +    items:
+> +      - enum: [ direct, indirect ]
+> +
+> +  reg-io-width:
+> +    description:
+> +      The way the CSRs are mapped to the memory is platform depended. Since
+> +      each Clause 45 CSR is of 16-bits wide the access instructions must be
+> +      two bytes aligned at least.
+> +    default: 2
+> +    enum: [ 2, 4 ]
+> +
+> +  interrupts:
+> +    description:
+> +      System interface interrupt output (sbd_intr_o) indicating Clause 73/37
+> +      auto-negotiation events':' Page received, AN is completed or incompatible
+> +      link partner.
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description:
+> +      Both MCI and APB3 interfaces are supposed to be equipped with a clock
+> +      source connected via the clk_csr_i line.
+> +
+> +      PCS/PMA layer can be clocked by an internal reference clock source
+> +      (phyN_core_refclk) or by an externally connected (phyN_pad_refclk) clock
+> +      generator. Both clocks can be supplied at a time.
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +    anyOf:
+> +      - items:
+> +          enum: [ core, pad ]
 
-From my POV this patch looks good. Also if there are no PDOs, then the
-UCSI driver will register an empty usb_power_delivery object with
-neither source nor sink capabilities being present. So userspace can
-identify the case of PDOs retrieval being unsupported. If you really
-want to have a possible trace in the logs, it might be a good idea to
-add dev_dbg under this if statement.
+This has no effect. If it is true, then the 2nd entry is too.
 
--- 
-With best wishes
-Dmitry
+You are saying all the clocks are optional and any combination/order is 
+valid. Do we really need it so flexible? Doubtful the h/w is that 
+flexible.
+
+> +      - items:
+> +          enum: [ pclk, core, pad ]
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    ethernet-pcs@1f05d000 {
+> +      compatible = "snps,dw-xpcs";
+> +      reg = <0x1f05d000 0x1000>;
+> +      reg-names = "indirect";
+> +
+> +      reg-io-width = <4>;
+> +
+> +      interrupts = <79 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +      clocks = <&ccu_pclk>, <&ccu_core>, <&ccu_pad>;
+> +      clock-names = "pclk", "core", "pad";
+> +    };
+> +  - |
+> +    mdio-bus {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      ethernet-pcs@0 {
+> +        compatible = "snps,dw-xpcs";
+> +        reg = <0>;
+> +
+> +        clocks = <&ccu_core>, <&ccu_pad>;
+> +        clock-names = "core", "pad";
+> +      };
+> +    };
+> +...
+> -- 
+> 2.43.0
+> 
 
