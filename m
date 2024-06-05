@@ -1,174 +1,106 @@
-Return-Path: <linux-kernel+bounces-202652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90AA28FCF2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:27:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B228FCF04
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4443D1F2357E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C077C283E32
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F73A1C3716;
-	Wed,  5 Jun 2024 12:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24393195983;
+	Wed,  5 Jun 2024 12:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EzLCkWz1"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517451BF91D;
-	Wed,  5 Jun 2024 12:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4STCr0b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6367F188CA4;
+	Wed,  5 Jun 2024 12:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717591783; cv=none; b=jzHztFQIGjnfCsoJNyl0JdtdAWB3zsRWNwZdshi11LcMwX21qffFp/2U63vXtOXZG/rhLy89u+RCHS+6qOO9QsLthubJ31Zs8lp51a7IxCheloAbqFnaG90wauKc7x2GP6VIIw3outX1YXnG0RiGRBdoiBY7jMvTkhYtBwx2OFo=
+	t=1717591734; cv=none; b=gxnLu33zMTsrHUke9FKgkio9xSdIIKpR2Pe1ofhOsdvGrGVP6gVc4c75Jhtp8F2PYowG6D7vOYuXF1cT127ZuUY98xHwW8/JRoeO4mVLQwYQzjTYoT7zy/2I4gWl9xnM6+yEYBgw8hIP61g/C1gdP03yaeUCrONVc541w34ql9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717591783; c=relaxed/simple;
-	bh=lnC6lhwfhZqonMLmQYocGI5DzJnUgP8OC7a1XdWj1YU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Llt0qdX/EOSQ+A/oAAYnS5vC+Fl7+aU4EINHnTxuhKmUt/L10vQb0xIPX/LfDrhmfWUswSyeYfFvantRVgjJiW6YplFrkD/QhyI4toP/SuIhSSgI1UQ2KZAuh+dZ0XxxdDmAh5cbqm+O28oV3AKCc2K0d9n51pyuVnc83QDk5D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EzLCkWz1; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vNEtL
-	v/3kBJEzVxwQt25NOC9mRnmCXCCBtOoDIT636c=; b=EzLCkWz1UrGl4l89eNfgZ
-	WsyJuWB8TD+Rc5kDSdVvc94C1PX7Hty+7StfQtbqVOcRPwjizBqTZRoBpQ5yalYD
-	HiQPfDMP+xxCPtHWAQk+xGBfh3bjkD7Hh8yuGmcn9cRH55895gYLD4Fn1EXJ6rRL
-	tb6ESq+wvahEABwR0TU5f0=
-Received: from localhost.localdomain (unknown [120.244.62.148])
-	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDnb4utXmBmCRXTCg--.38636S2;
-	Wed, 05 Jun 2024 20:48:46 +0800 (CST)
-From: Jiwei Sun <sjiwei@163.com>
-To: nirmal.patel@linux.intel.com,
-	jonathan.derrick@linux.dev,
-	paul.m.stillwell.jr@intel.com
-Cc: lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sunjw10@lenovo.com,
-	sjiwei@163.com,
-	ahuang12@lenovo.com
-Subject: [PATCH v3] PCI: vmd: Create domain symlink before pci_bus_add_devices()
-Date: Wed,  5 Jun 2024 20:48:44 +0800
-Message-Id: <20240605124844.24293-1-sjiwei@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717591734; c=relaxed/simple;
+	bh=yy+Rt83glVimHAJ9L79Wxbxkzr75tLAHJvJiamRNvls=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/OwjiukjqFK5r+lYhQzQQl3SJAkuQjxrlWBasRvXHo31iVsqq1R0olopRB0C49BY5Pg/8ftJfNkxcrSKOo1H9zbVXTrhSrHGDw7QiefdfDD6uMlJ0s8Gh9SXZVc5t48CN6ens6n9c1XrmBuLoMMEO80485KbZYrnhvmL6EmGtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4STCr0b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F295EC3277B;
+	Wed,  5 Jun 2024 12:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717591734;
+	bh=yy+Rt83glVimHAJ9L79Wxbxkzr75tLAHJvJiamRNvls=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=c4STCr0blobrUxuNk+Q7iNAqoZY8xgN7Xcpy2KGXBbyn2o/WsmrJceLBYewsz/s5u
+	 4gi3frDMYzWEjcApYPsPv6C1Q9FJoxkbFJrhq9+wqk8oD392l/Qy1cQVu1MDHzo9nS
+	 Hhw39R+9CwSeuKhVorgCX+QT/kYPsyqCuYHizfCGCQsVTkJkQdO1FkJZRcmkU+d8uK
+	 ZhaHdX/KoCHg7C7pl3rycQcXHKjJd6P8BSguqSNdptsGzqlyqSRAvpevort9ZF2yvY
+	 P/G8J/z/flf2eaDEriFBfO1B7fYytpYViob5JIAtKyKJF6rsKmhIXJul3WmpcSdyRm
+	 Otg/3NxNBTUUw==
+Date: Wed, 5 Jun 2024 13:48:49 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PULL REQUEST] i2c-for-6.10-rc3
+Message-ID: <xa6xj6rpt5uuyxq4psm26qs5ptjn3n2krpdhcevh2kv2tz6eft@4t2undxir6un>
+References: <ZmARnWliAuHLbwOy@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnb4utXmBmCRXTCg--.38636S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGr13Kr45urW3GF4ruF1DAwb_yoWrJFyxpF
-	4rW3WjvrsrGw4fXayDA3y8Wry5Aa1vv34UJ3sxK34a939xAFy09rW0gFZ8Ar4jyFyqv3W2
-	vwsrXF1a9wn8KaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piX_-PUUUUU=
-X-CM-SenderInfo: 5vml4vrl6rljoofrz/1tbiDx30mWVOEWsSDQABsw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmARnWliAuHLbwOy@shikoro>
 
-From: Jiwei Sun <sunjw10@lenovo.com>
+Hi Wolfram,
 
-During booting into the kernel, the following error message appears:
+On Wed, Jun 05, 2024 at 09:19:57AM +0200, Wolfram Sang wrote:
+> The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
+> 
+>   Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc3
+> 
+> for you to fetch changes up to c4aff1d1ec90d9596c71b6f06b0bfab40a36a34a:
+> 
+>   Merge tag 'i2c-host-6.10-pt2' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-06-03 08:51:53 +0200)
+> 
+> ----------------------------------------------------------------
+> This should have been my second pull request during the merge window but
+> one dependency in the drm subsystem fell through the cracks and was only
+> applied for rc2. Now, we can finally remove I2C_CLASS_SPD.
+> 
+> ----------------------------------------------------------------
+> Christophe JAILLET (1):
+>       i2c: synquacer: Remove a clk reference from struct synquacer_i2c
+> 
+> Heiner Kallweit (1):
+>       i2c: Remove I2C_CLASS_SPD
 
-  (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device''
-  (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: /dev/nvme1n1 is not attached to Intel(R) RAID controller.'
-  (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: No OROM/EFI properties for /dev/nvme1n1'
-  (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: no RAID superblock on /dev/nvme1n1.'
-  (udev-worker)[2149]: nvme1n1: Process '/sbin/mdadm -I /dev/nvme1n1' failed with exit code 1.
+I had these in my branches queued up for 6.11. As you are taking
+care of them, I will then remove them from my branch.
 
-This symptom prevents the OS from booting successfully.
+I have a few fixes more for rc3, though that I'm planning to send
+you tomorrow.
 
-After a NVMe disk is probed/added by the nvme driver, the udevd executes
-some rule scripts by invoking mdadm command to detect if there is a
-mdraid associated with this NVMe disk. The mdadm determines if one
-NVMe devce is connected to a particular VMD domain by checking the
-domain symlink. Here is the root cause:
+Thanks,
+Andi
 
-Thread A                   Thread B             Thread mdadm
-vmd_enable_domain
-  pci_bus_add_devices
-    __driver_probe_device
-     ...
-     work_on_cpu
-       schedule_work_on
-       : wakeup Thread B
-                           nvme_probe
-                           : wakeup scan_work
-                             to scan nvme disk
-                             and add nvme disk
-                             then wakeup udevd
-                                                : udevd executes
-                                                  mdadm command
-       flush_work                               main
-       : wait for nvme_probe done                ...
-    __driver_probe_device                        find_driver_devices
-    : probe next nvme device                     : 1) Detect the domain
-    ...                                            symlink; 2) Find the
-    ...                                            domain symlink from
-    ...                                            vmd sysfs; 3) The
-    ...                                            domain symlink is not
-    ...                                            created yet, failed
-  sysfs_create_link
-  : create domain symlink
+> Wolfram Sang (1):
+>       Merge tag 'i2c-host-6.10-pt2' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+> 
+>  drivers/i2c/busses/i2c-synquacer.c | 11 +++++------
+>  include/linux/i2c.h                |  1 -
+>  2 files changed, 5 insertions(+), 7 deletions(-)
 
-sysfs_create_link() is invoked at the end of vmd_enable_domain().
-However, this implementation introduces a timing issue, where mdadm
-might fail to retrieve the vmd symlink path because the symlink has not
-been created yet.
-
-Fix the issue by creating VMD domain symlinks before invoking
-pci_bus_add_devices().
-
-Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
-Suggested-by: Adrian Huang <ahuang12@lenovo.com>
----
-v3 changes:
- - Per Paul's comment, move sysfs_remove_link() after
-   pci_stop_root_bus()
-
-v2 changes:
- - Add "()" after function names in subject and commit log
- - Move sysfs_create_link() after vmd_attach_resources()
-
- drivers/pci/controller/vmd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index 87b7856f375a..4e7fe2e13cac 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -925,6 +925,9 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
- 		dev_set_msi_domain(&vmd->bus->dev,
- 				   dev_get_msi_domain(&vmd->dev->dev));
- 
-+	WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
-+			       "domain"), "Can't create symlink to domain\n");
-+
- 	vmd_acpi_begin();
- 
- 	pci_scan_child_bus(vmd->bus);
-@@ -964,9 +967,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
- 	pci_bus_add_devices(vmd->bus);
- 
- 	vmd_acpi_end();
--
--	WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
--			       "domain"), "Can't create symlink to domain\n");
- 	return 0;
- }
- 
-@@ -1042,8 +1042,8 @@ static void vmd_remove(struct pci_dev *dev)
- {
- 	struct vmd_dev *vmd = pci_get_drvdata(dev);
- 
--	sysfs_remove_link(&vmd->dev->dev.kobj, "domain");
- 	pci_stop_root_bus(vmd->bus);
-+	sysfs_remove_link(&vmd->dev->dev.kobj, "domain");
- 	pci_remove_root_bus(vmd->bus);
- 	vmd_cleanup_srcu(vmd);
- 	vmd_detach_resources(vmd);
--- 
-2.27.0
 
 
