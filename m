@@ -1,131 +1,112 @@
-Return-Path: <linux-kernel+bounces-201846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AF68FC431
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:11:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F8A8FC435
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC244B29EF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:10:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D562850C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EABF18C337;
-	Wed,  5 Jun 2024 07:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4F818C335;
+	Wed,  5 Jun 2024 07:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKdxgNQi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmxKmoEs"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF9660263;
-	Wed,  5 Jun 2024 07:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A406D169381;
+	Wed,  5 Jun 2024 07:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571450; cv=none; b=ESJbKs5wTiDS0R7CNCy8U2fwzvbuOq73V+kiBIfRoJMabt58QGuhQYs/YFjNf1wrVQ3ui+r/HBnCSTEIDxCGqyeqatHde4JsUg0ylDvq3lyllQ8E1f0Ozp7OL63RKABWy5nfEN22ZLrkBCtgARji6QSiQaZrrs4gcCaH54mvAbY=
+	t=1717571569; cv=none; b=htBTAQLs8ms1maXPuD77pA4NIoAVp8RFXYrgWUVMTJ8ubAFiNWU4KXN2sY0Zlu2UWXSbSH+ywVdcXCGIS1NU/77i7xhZDih5dgbyhHqguq+b5y/Mn2BnZBCB7YJyl4ZE4g8INp+e0hX3gEnvl3S0vXmiUANFwDqUEQXh7M2Db8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571450; c=relaxed/simple;
-	bh=Cys+VR21HFwMU+hFWbogOsAR/iljYS/prKcGZpy+JHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dpXnErg3I3wyRlPYuk3SxixJrfkt+VurrMfTiHBEWcLVATGHLKV3GLKWprcGiJ60JyPNTsQOsyanFUW6v9wWCJYgqMDFu1FERnEYzMy1TXwQ8TEEckp7t/Q4m4IKZWP0lBA+zKxp0dGZeUS41uUheiF6DdRrVdyWBZB0zrO5Xg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKdxgNQi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC15FC32781;
-	Wed,  5 Jun 2024 07:10:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717571449;
-	bh=Cys+VR21HFwMU+hFWbogOsAR/iljYS/prKcGZpy+JHk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=MKdxgNQi/AkanOQYSm+0WQCqoHfI24zU8v6BLU4aIgAmnypM94US9zKmVis1UfVUt
-	 4vaGlvWkAZEb31eUS/6jvV1/AuST23Mbf8kvzke+MexWS7KvQrk0gPpT5tbbUBaB58
-	 vE1mcQrsg2OsKVL5j75K/+ZRNWR11pBvZknluYznreCiP27yxUFrwGvhYn2+wedww5
-	 LhXFng8laDgbneEL3vKLn4P6iZvPUf/ewfWGqfuJMsPPpyaDch7f5WWcAcyX+IQvlo
-	 JFit2pFHoK3sj3NLUlU9aVvaCl7RfhBSLWih0i8gtv3+W+rO2+oJE6fRnvLdXMo4SD
-	 PB8FR9sJHqYJA==
-Message-ID: <63ef25dd-3cbd-4de7-bde4-87456ef2e9c5@kernel.org>
-Date: Wed, 5 Jun 2024 09:10:44 +0200
+	s=arc-20240116; t=1717571569; c=relaxed/simple;
+	bh=z4AquIlgWDEkWPBadYynuGitiEkZf7rVRIOm76Qo36s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hkR/JWOzrSh36+XBkHCyW86AnQ0Pxeen27iyc1QEakRop3G5N6dGmnu8Pv+we0q0YOdQ9DpX6QwDmB54A/SWcq5hX4IZPFOcNMXP3C+KAqJzF0FBBAhjrXjXneDsopIpV6ORYoU004VYm+ssB8txVXFMCeGz0QsTWkvg6RAK9wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmxKmoEs; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a68b5f18fc5so442519566b.1;
+        Wed, 05 Jun 2024 00:12:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717571566; x=1718176366; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2DWcMOXoonO165FoCGi6lVgjsd12bqTBfFwJcQ9yZaE=;
+        b=GmxKmoEs5bhHOU49+JbJu7AggNXHJ7f7XXIq/AielS+NTXunu9jpaF3seqtuvqszgi
+         ee3qSDi84jIZpZY6QB3axcgYU82yynJjAiEZc6Q4CUYCgrut/Ll607nCZZwtlxAwzpa2
+         Ear6MtHm8Y/aAPoItbE77rZi42xI7i/0gnls4ibvBsb3v4k3D+wF5ICHQlSnlboDQMKR
+         eexI8MG3LOzwVUi2Uvopi6yyH9sMYTMC16nwBLqGhG7lwQbHRF9SnfG5aJ3DSxjlkAML
+         8bwjD0t1E5WS1s8ZezMB9iKgDNcLD2Cl+pDYAo1P32AEu5ueeRZqRPUTeQGFXatTJdxv
+         GWrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717571566; x=1718176366;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2DWcMOXoonO165FoCGi6lVgjsd12bqTBfFwJcQ9yZaE=;
+        b=rkybld/cEO0TXg/Gg1+x9llsFK7SyZfOV+gWRhZoS3i4/KJM5RE39jttQb0lLI0sK8
+         /v7AqBMd887hMAWm/rm41BQFMGlkaNGDU3Q+4O2O2SV9mnP5w9UFPG0u/d/GSYtB9TSb
+         PhvrrTtrmuuV3HKRGU1fJlGYKTrHsrrx/Vna9PjjQESG1T1DB8NA7OUeqeDr1AQ3hwdt
+         SelOj+O0W32zMejsiWx2f/03w5phMGcPiE2SwuS0DrpOSGgkBA7pDTe30H5ybKsGobMs
+         bbpziQIGT8/Ga+VDRs9YDd89IN7edgEtCCeAbSN50U2yaqml3L+OH5uMdO2ZEgsgsKSn
+         aXvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWn1YohZ2WwbqVdqjQJJICEvTlq66XrxNITsY7X8bOVmejL+CBLU3SoxruQiVr6+hhbeLRRdByVYDlByWMuNSJVJZi11GD9bUDeZiDrsYv2lUJeE1cw4KQ8Hgjdf0yBUsG+dYMExiOhXDGuugAovg==
+X-Gm-Message-State: AOJu0Yyl5uoDAjwTYeTa91N/mMGkD2d2QeQqPq5DJjmNGsHACgQD8bps
+	R+9Dh9Xv6ZubOc1P5If8W8eOxL++ZSX3bDn1D4zix1uLNNH/kuA0
+X-Google-Smtp-Source: AGHT+IFYKnveG9DBX//L1ic3dpu56BfTWuatZPfhxkZzxumDTDnf9nb9iOU5LO8GzJQXuL8FaS3bqA==
+X-Received: by 2002:a17:906:a184:b0:a5a:15b6:25ab with SMTP id a640c23a62f3a-a69a0022d7dmr103627066b.61.1717571565637;
+        Wed, 05 Jun 2024 00:12:45 -0700 (PDT)
+Received: from gmail.com (1F2EF2F4.nat.pool.telekom.hu. [31.46.242.244])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a690605d07asm418212766b.130.2024.06.05.00.12.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 00:12:45 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Wed, 5 Jun 2024 09:12:43 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
+ vmlinux.h. Stop.
+Message-ID: <ZmAP6-bCX8TN0oSB@gmail.com>
+References: <ZjssGrj+abyC6mYP@gmail.com>
+ <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
+ <ZkG4LWr7w11wQ/PR@gmail.com>
+ <CAP-5=fVHrKcqwczoU1uMD4tP5DTVhfQ1T_hXnm_y5Ji3M6K_ag@mail.gmail.com>
+ <ZkJK3x3zQ9a4wp8E@gmail.com>
+ <CAP-5=fUh+GoqERAF-qf8zx4kwq2uzwR2Ugop5XOkPexYGAqF3A@mail.gmail.com>
+ <CAP-5=fWXDPfNqLz6DHYe9+dev_e6X5TcTe_xzOOz27yDkT7o7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drivers: iio: frequency: adf4350: add clk provider
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240603112447.23308-1-antoniu.miclaus@analog.com>
- <20240603112447.23308-2-antoniu.miclaus@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240603112447.23308-2-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP-5=fWXDPfNqLz6DHYe9+dev_e6X5TcTe_xzOOz27yDkT7o7A@mail.gmail.com>
 
-On 03/06/2024 13:24, Antoniu Miclaus wrote:
-> Add clk provider feature for the adf4350.
-> 
-> Even though the driver was sent as an IIO driver in most cases the
-> device is actually seen as a clock provider.
-> 
-> This patch aims to cover actual usecases requested by users in order to
-> completely control the output frequencies from userspace.
-> 
 
-Please do not use subject prefixes from your downstream tree, but use
-upstream convention. This applies to multiple of Analog submissions, so
-I would prefer if you create internal guideline and check it internally
-before posting.
+* Ian Rogers <irogers@google.com> wrote:
 
-There is basically never a "drivers" prefix.
+> It is working at v6.9 for me
 
-Best regards,
-Krzysztof
+Did you try to interrupt the build with Ctrl-C, to trigger the failure as I 
+suggested?
 
+Your logs are showing full builds AFAICS.
+
+Thanks,
+
+	Ingo
 
