@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-203173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211CB8FD77B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:27:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9A78FD77E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9645B2868C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:27:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3741C287DBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6517715ECF8;
-	Wed,  5 Jun 2024 20:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2122615F41F;
+	Wed,  5 Jun 2024 20:27:08 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1EF15ECCD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580F815ECF4;
 	Wed,  5 Jun 2024 20:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717619226; cv=none; b=AhOpfdDWj8nEPMwwQDB52UiWrU4RBvV477b6MNorzBMmv8q8/iZ/7UmKIzGm3WL+tYONXp1UhGXS8GSdYb+D8OY+T/LgsDRropWPMSGTnhuUZlRMv3kHY+yuzciSYjSK3H2mEWWTkQ9vf9j903dFPII/90Kaa/s/ZTupYZW6hcY=
+	t=1717619226; cv=none; b=GmCMhRBkZevzJzEftse6jeS560yxg+YR4T7JbNVhROjHWR1HfmfR/s3ap4NQ9a+1EKy8OGsGzd8O6LzAw6RmtOwqsKuZ6SK4kMmWgyIj/2O2gmyzds5YP3RlQ2JnJbrLsoGh43TUfV+QgW+rQrOk0L2CLeOEAtxADJxbgq7TS24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717619226; c=relaxed/simple;
-	bh=jnHREzsc8tpTaQNkMJMt6pd9c2rlI6DKzyKGBlZBgRM=;
+	bh=Lo+KTDar5Td+LgUarTq7UKV7H+gNQWMb5yhOymYhrw4=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=rUAJA+XzHHNLkPvVSTtT4FX7MFnNZQ7n4I8WS1Xnd8jaNpLQYpMG6t+pxGb4NBZUeb9DXbUkXeywfIxDQHwBcukkmKrki1Oy7kw3Hj82GBAuvqzCoYHonFiEU6EjZx1dDCp8uYUumu2YL03AeYZ8xjRdNSEd+f9q7Ww3tJHv3Z8=
+	 Content-Type; b=jfoc2BZyM/ZbGNu19JDqZQzduHT7gunnpaougO6sEfHbC0cuqHJ5amQw5+WSSwL4bDntZqvom7lSc8CQMy4a2IkucGREYSM+8BDGdtUJo5pQAZwfFKsa2mkUaFU5SBP29TfaS/Xozz7roC4ExyK1YJfIbgdN+qJvL72jNbIXgmc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B290AC4AF0A;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D70C5C32781;
 	Wed,  5 Jun 2024 20:27:05 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sExDw-00000000i7u-39u8;
+	id 1sExDw-00000000i8O-3qFn;
 	Wed, 05 Jun 2024 16:27:08 -0400
-Message-ID: <20240605202708.613471310@goodmis.org>
+Message-ID: <20240605202708.773583114@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 05 Jun 2024 16:26:47 -0400
+Date: Wed, 05 Jun 2024 16:26:48 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 3/6] ftrace: Assign RCU list variable with rcu_assign_ptr()
+ Andrew Morton <akpm@linux-foundation.org>,
+ kernel test robot <lkp@intel.com>
+Subject: [PATCH 4/6] ftrace: Fix prototypes for ftrace_startup/shutdown_subops()
 References: <20240605202644.293295925@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,30 +55,56 @@ Content-Type: text/plain; charset=UTF-8
 
 From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-Use rcu_assign_ptr() to assign the list pointer as it is marked as RCU,
-and this quiets the sparse warning:
+The ftrace_startup_subops() was in the wrong header, and both functions
+were not defined on !CONFIG_DYNAMIC_FTRACE.
 
-   kernel/trace/ftrace.c:313:23: warning: incorrect type in assignment (different address spaces)
-   kernel/trace/ftrace.c:313:23:    expected struct ftrace_ops [noderef] __rcu *
-   kernel/trace/ftrace.c:313:23:    got struct ftrace_ops *
-
+Fixes: 5fccc7552ccbc ("ftrace: Add subops logic to allow one ops to manage many")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406051524.a12JqLqx-lkp@intel.com/
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/ftrace_internal.h | 9 +++++++++
+ kernel/trace/trace.h           | 1 -
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 3af0b1feb873..a39842a53444 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -310,7 +310,7 @@ static int remove_ftrace_ops(struct ftrace_ops __rcu **list,
- 			lockdep_is_held(&ftrace_lock)) == ops &&
- 	    rcu_dereference_protected(ops->next,
- 			lockdep_is_held(&ftrace_lock)) == &ftrace_list_end) {
--		*list = &ftrace_list_end;
-+		rcu_assign_pointer(*list, &ftrace_list_end);
- 		return 0;
- 	}
+diff --git a/kernel/trace/ftrace_internal.h b/kernel/trace/ftrace_internal.h
+index bfba10c2fcf1..4bb1e881154a 100644
+--- a/kernel/trace/ftrace_internal.h
++++ b/kernel/trace/ftrace_internal.h
+@@ -15,6 +15,7 @@ extern struct ftrace_ops global_ops;
+ int ftrace_startup(struct ftrace_ops *ops, int command);
+ int ftrace_shutdown(struct ftrace_ops *ops, int command);
+ int ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs);
++int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command);
+ int ftrace_shutdown_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command);
+ 
+ #else /* !CONFIG_DYNAMIC_FTRACE */
+@@ -39,6 +40,14 @@ ftrace_ops_test(struct ftrace_ops *ops, unsigned long ip, void *regs)
+ {
+ 	return 1;
+ }
++static inline int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
++{
++	return -EINVAL;
++}
++static inline int ftrace_shutdown_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command)
++{
++	return -EINVAL;
++}
+ #endif /* CONFIG_DYNAMIC_FTRACE */
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index b37402e3f0c9..8783bebd0562 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1186,7 +1186,6 @@ extern int ftrace_set_filter(struct ftrace_ops *ops, unsigned char *buf,
+ 			     int len, int reset);
+ extern int ftrace_set_notrace(struct ftrace_ops *ops, unsigned char *buf,
+ 			      int len, int reset);
+-extern int ftrace_startup_subops(struct ftrace_ops *ops, struct ftrace_ops *subops, int command);
+ #else
+ struct ftrace_func_command;
  
 -- 
 2.43.0
