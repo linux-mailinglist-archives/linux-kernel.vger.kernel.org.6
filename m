@@ -1,95 +1,103 @@
-Return-Path: <linux-kernel+bounces-202036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C828FC6F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:50:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DADD18FC6F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A24BFB21E6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:50:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2F9C1C233DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA03E14B969;
-	Wed,  5 Jun 2024 08:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAA914B969;
+	Wed,  5 Jun 2024 08:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6xtsRDk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PyIjdpIi"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2002A1946AA;
-	Wed,  5 Jun 2024 08:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6DB1946A9;
+	Wed,  5 Jun 2024 08:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717577431; cv=none; b=MAR9CKn+buGPDZ/798OI6vszYt6xijbm7MdGHTuyUDE7YJUfQWXIaEcK0hZkKTzj4xhnOTyJ/pVgKNo5rTbhCHFXf+oXCS1xQB0toH5QrviK851wOKn4i/5IfRYju8GSB8Dbd3P4hokSW9PRnercvYP9EqfBgke5DQ/Cwhdy7QQ=
+	t=1717577524; cv=none; b=gj1oSoqtk7DlzUx+oDiE1BVWPXq579+xzm1qp0EdDMoVKQIPNaYaZ/rwx+vADW//ycP2pvMYLh40sbShUc6jZcqABQh1p5npb1FtolHvKnfdGFak5xPdQ97JkwYQXdhc1V1bUwx+C5K/v00aK+0nN6cbiX8f2BlNzm+2GMWR46g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717577431; c=relaxed/simple;
-	bh=cmMrnBLmILI34bSTEqGAFTuSRh1IzjExT7ZUARg/WJY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sj6H6zeq1AFWttKa080Y5HZ+PW3cPGzFjkN/2KhXgNN/ach2CNJYTRhTbXAf0afKVneo12ZdlrUNbxCmMmeUfDX8dBStNZmTMcsf81bCkwEuV0BQzjsslBh2Yin3cKvdik5VWg4eRi75Kq33BXx2LyE9qEeNUQUwXOC+2+mUDJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6xtsRDk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A4210C32781;
-	Wed,  5 Jun 2024 08:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717577430;
-	bh=cmMrnBLmILI34bSTEqGAFTuSRh1IzjExT7ZUARg/WJY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=N6xtsRDkaq49UIDroEsNvxouCqW8q7CcDA3lpeYf6sY4DDrKSmIwwB8gZOtLJ8Rf7
-	 krBx8JxYUCWaDy2ekP3RhVd3dnmxxshy5iyj+9bWmqPgE2sO9PAfXWyiYNh8D5oXFs
-	 BQUy9B8C2lcrEOtRTR51BLfqClYlG8puJUyJDLpmNh3iCnH6XgfdhGUDWM+IG+XS7o
-	 23E66TDeg3Yh4Iu1beS1z/mNxel7paKJmXjC6Vqxeo0H+mveYzkNztNU2w0Vrlcvy3
-	 YOazODgZxAeRBsnaugeYXZbLfLuohruaKakbINlF2aXdKdn/Y//ZMvSSIt9OWF+AsH
-	 CwqyHcKug8BEg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 92768D3E997;
-	Wed,  5 Jun 2024 08:50:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1717577524; c=relaxed/simple;
+	bh=KVo0CDA7CinqPGCJH+/lMOn6Db3ejCQh3A/WJGsD9hU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VxiWfH7dsX9fSxfJsuIM9wdluAslQi1AW7r318377TYoBna/Lh1k/7LW8N5DuuX69z9WAPOkOjJtQ206LWEIUSN33s5bBQ6LU3hfE6o/Fuvy1Yey2dydtMysOGJB25kdTCpRtNNP0XWYDwYjZQDTzMFUYP8zphkleO6DRkO5bSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PyIjdpIi; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 442BB40E016E;
+	Wed,  5 Jun 2024 08:52:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mQSl4PYr5Z_z; Wed,  5 Jun 2024 08:51:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717577515; bh=pc9sf9qZhy+fcRBG5stiu+nUi7lrBalV1BjEV7RY3dA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PyIjdpIiz6n5xuGF6CqjtbullZqVyf1/akA89RidHLs/mr9cKNVEeqklBDxhQaOxk
+	 f9a7n8EHGPrONbY8EosT3V2iM4TVPm9GFwr3lngPfvtTzbt6udbKgqtSdZv4e46d/M
+	 K6yi+q3RYhy6D1FQLXZCJK88ln6zTFSJqukyu7EyBGR4K8mAwKCoJWNL0O/8nbEu0n
+	 LQMTHtBtxiPlbi/4iBI5RbGW6QEuvRxGFfOrwvdbY8Ekunh/BkLbmJK+DzL4lp3sYw
+	 dT/c51m6ZnFMtkqdtenkdJwAmIXG4Gb2+Q11xn1sTmS1NFKnDjyDKoLvVxM31FYdMW
+	 5dB2muZys7d8QS4Yn3eb3MwXYnwrdZ0bFEPd2ENYt0s50SR5VTK54xViVti5wpKNu7
+	 yYbgD6ZYkfZJOlnB35cOTCSkKv4Q22hg2kpe6US0bWfvpUlntIijfVI8E4WZBD8P09
+	 KlFA4JuxreDI3nqwBmFzBTjpLdh0O5CK0tdXblFe7E2o5HGPAs1+tzQIh8GATZHayA
+	 3S1NHn3bi3ZBrrfVxfLZzKVA5+FkVb9XHfg+uRWNZXUymGRYRK9+Z5NUHmlYuDR5ga
+	 WIxjx7vQNRUqm0niRE3j/oubo/vIeR3fdcnbEbAI4Dj+HOMiMXjWGBIPbv2L+4w8Pn
+	 PAJotargnDxkHQtfwDgApDoY=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7566640E016C;
+	Wed,  5 Jun 2024 08:51:48 +0000 (UTC)
+Date: Wed, 5 Jun 2024 10:51:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, x86@kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] EDAC/amd64: Remove unused register accesses
+Message-ID: <20240605085142.GUZmAnHiPyhceOBvWc@fat_crate.local>
+References: <20240523-fix-smn-bad-read-v3-0-aa44c622de39@amd.com>
+ <20240523-fix-smn-bad-read-v3-1-aa44c622de39@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net/smc: avoid overwriting when adjusting sock bufsizes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171757743059.31154.18322845885224431622.git-patchwork-notify@kernel.org>
-Date: Wed, 05 Jun 2024 08:50:30 +0000
-References: <20240531085417.43104-1-guwen@linux.alibaba.com>
-In-Reply-To: <20240531085417.43104-1-guwen@linux.alibaba.com>
-To: Wen Gu <guwen@linux.alibaba.com>
-Cc: gbayer@linux.ibm.com, wenjia@linux.ibm.com, jaka@linux.ibm.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240523-fix-smn-bad-read-v3-1-aa44c622de39@amd.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri, 31 May 2024 16:54:17 +0800 you wrote:
-> When copying smc settings to clcsock, avoid setting clcsock's sk_sndbuf
-> to sysctl_tcp_wmem[1], since this may overwrite the value set by
-> tcp_sndbuf_expand() in TCP connection establishment.
+On Thu, May 23, 2024 at 01:26:52PM -0500, Yazen Ghannam wrote:
+> A number of UMC registers are read only for the purpose of debug
+> printing. They are not used in any calculations. Nor do they have any
+> specific debug value.
 > 
-> And the other setting sk_{snd|rcv}buf to sysctl value in
-> smc_adjust_sock_bufsizes() can also be omitted since the initialization
-> of smc sock and clcsock has set sk_{snd|rcv}buf to smc.sysctl_{w|r}mem
-> or ipv4_sysctl_tcp_{w|r}mem[1].
+> Remove these register accesses.
 > 
-> [...]
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Cc: stable@vger.kernel.org
 
-Here is the summary with links:
-  - [net] net/smc: avoid overwriting when adjusting sock bufsizes
-    https://git.kernel.org/netdev/net/c/fb0aa0781a5f
+Definitely not stable material.
 
-You are awesome, thank you!
+With that tag dropped, applied, thx.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
