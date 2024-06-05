@@ -1,123 +1,123 @@
-Return-Path: <linux-kernel+bounces-202240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713D98FC9E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:11:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928368FC9E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD751F26414
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B431628645D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5378192B6C;
-	Wed,  5 Jun 2024 11:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MI84b9tH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D28192B75;
+	Wed,  5 Jun 2024 11:11:26 +0000 (UTC)
+Received: from mail78-58.sinamail.sina.com.cn (mail78-58.sinamail.sina.com.cn [219.142.78.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0964E192B60;
-	Wed,  5 Jun 2024 11:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7761922F5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717585815; cv=none; b=XF42IJtIRGkI4bvr2vlYllKSy3BPsCRsNCo/S1KXdMp056DoKGDERwUrA0LqVjN/mMUBTUw5/thDSWg2BQuUonSIxhNHGPWbB3/V+0naoJ6vH6F7ISXHPPs8O+TWBIIgp3kKgtX2iEmuDnMCyk70phbsJ2/SMrjgqxTPSDlkVPQ=
+	t=1717585885; cv=none; b=CWYksWT9C6pz0J78p4Qc3d8ZvOC4FwC0OmArDQBrqswetsSso/P4sRB1Hst55R7xJkcB19mXqExXECABdGjntEXtxYXWyqaHyximeDMEylrzgyA1jqjmeNhUWws50j/PGrKAduuMfkT01WhfP9/hv94fNYxDTCp+MYKEH9CEWMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717585815; c=relaxed/simple;
-	bh=WAf92JcWL9zU29AnQHI1Uxy5BLjHqcBVKQhaoL07mZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHMSlyOix1x89IkP/Uq+LdJq7GM0/f/DsEjSD86E5oZTQ8Z7zszg/Tz7iqL0nG7wMJBFCUTGFrgQ+VaoIvcUsbmv5ovkt/wTiZ/3pxRh0qgiRpjiFf+9l1ZFgYOB+OvNSVQg5Prd8n/YpJgykiFtDvsQ02m+GScllIrZK1OKilQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MI84b9tH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4080C3277B;
-	Wed,  5 Jun 2024 11:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717585814;
-	bh=WAf92JcWL9zU29AnQHI1Uxy5BLjHqcBVKQhaoL07mZg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MI84b9tHI/I/sI/UDJ9M4y7Lj6bLx5Ikk7ZrtqjcSUBrsuNUMcJzK/4edVNt4XHDS
-	 7cQdHEakeG7uzAFKUq8Zn6s+1Lp2GVE8Ntt9w1dhMal1gC8umbQrXuPy3A+KRFEINS
-	 mQdY8WJ9UcH8IDHu08sl15ouTSGl1P5n/hv9FN1vma8nbbeGPB1SOKS9nRQEaPjABm
-	 1MQK44Km9MYB21F3Y/O//jHmrXsuWegqeS9IGRtt5cSZcsUnu4AezVpiwFr27fgAeM
-	 IuzIIU3yodrb+wxiXGBU2AC2wGvnantTYkSqVh2UW9UCmediLMY0uIUIDYKM5bdwIB
-	 6G30OlwlVSjWw==
-Date: Wed, 5 Jun 2024 12:10:08 +0100
-From: Will Deacon <will@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Baoquan He <bhe@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] [v3] arm64/io: add constant-argument check
-Message-ID: <20240605111008.GA21651@willie-the-truck>
-References: <20240604210006.668912-1-arnd@kernel.org>
- <ZmAsutGzL5_Kx8Pn@J2N7QTR9R3>
+	s=arc-20240116; t=1717585885; c=relaxed/simple;
+	bh=LSDCL93k5vWQ4ROYGbGIImcnUT3CyHzsNKfiQrNTl9E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=oc44S0vPdkJn2nP3uzm1cOW/fUuNxgY3xElgpB03xVXNwpn9WGW4h8UAmHAwxZPPdAjnYIkspulmygdB2WzE6s02IUGMWPoaQWQz55g6Pc3KLMOebVcNxV4JmWqlF7EE1OqkQk7vfTVVHoUgB5SCw3BZDrFkNAofqkzF85jeIr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.70.2])
+	by sina.com (172.16.235.25) with ESMTP
+	id 666047C800003AB0; Wed, 5 Jun 2024 19:11:09 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 29600134210358
+X-SMAIL-UIID: F6B7F59F33754DBFA004D0AA4633AF65-20240605-191109-1
+From: Hillf Danton <hdanton@sina.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH -rc] workqueue: Reimplement UAF fix to avoid lockdep worning
+Date: Wed,  5 Jun 2024 19:10:55 +0800
+Message-Id: <20240605111055.1843-1-hdanton@sina.com>
+In-Reply-To: <20240604185804.GT3884@unreal>
+References: <4c4f1fb769a609a61010cb6d884ab2841ef716d3.1716885172.git.leon@kernel.org> <ZljyqODpCD0_5-YD@slm.duckdns.org> <20240531034851.GF3884@unreal> <Zl4jPImmEeRuYQjz@slm.duckdns.org> <20240604105456.1668-1-hdanton@sina.com> <20240604113834.GO3884@unreal> <Zl9BOaPDsQBc8hSL@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmAsutGzL5_Kx8Pn@J2N7QTR9R3>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 05, 2024 at 10:15:38AM +0100, Mark Rutland wrote:
-> On Tue, Jun 04, 2024 at 10:59:57PM +0200, Arnd Bergmann wrote:
-> > Move the check for constant arguments into the inline function to ensure
-> > it is still constant if the compiler decides against inlining it, and
-> > mark them as __always_inline to override the logic that sometimes leads
-> > to the compiler not producing the simplified output.
+On Tue, 4 Jun 2024 21:58:04 +0300 Leon Romanovsky <leon@kernel.org>
+> On Tue, Jun 04, 2024 at 06:30:49AM -1000, Tejun Heo wrote:
+> > On Tue, Jun 04, 2024 at 02:38:34PM +0300, Leon Romanovsky wrote:
+> > > Thanks, it is very rare situation where call to flush/drain queue
+> > > (in our case kthread_flush_worker) in the middle of the allocation
+> > > flow can be correct. I can't remember any such case.
+> > >
+> > > So even we don't fully understand the root cause, the reimplementation
+> > > is still valid and improves existing code.
 > > 
-> > Note that either the __always_inline annotation or the check for a
-> > constant value are sufficient here, but combining the two looks cleaner
-> > as it also avoids the macro. With clang-8 and older, the macro was still
-> > needed, but all versions of gcc and clang can reliably perform constant
-> > folding here.
-> > 
-> > Fixes: ead79118dae6 ("arm64/io: Provide a WC friendly __iowriteXX_copy()")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > It's not valid. pwq release is async and while wq free in the error path
+> > isn't. The flush is there so that we finish the async part before
+> > synchronize error handling. The patch you posted will can lead to double
+> > free after a pwq allocation failure. We can make the error path synchronous
+> > but the pwq free path should be updated first so that it stays synchronous
+> > in the error path. Note that it *needs* to be asynchronous in non-error
+> > paths, so it's going to be a bit subtle one way or the other.
 > 
-> I have a trivial nit below, but either way this looks good to me, so
-> regardless of that:
+> But at that point, we didn't add newly created WQ to any list which will execute
+> that asynchronous release. Did I miss something?
 > 
-> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> > +static __always_inline void
-> > +__iowrite32_copy(void __iomem *to, const void *from, size_t count)
-> >  {
-> > -	if (count == 8 || count == 4 || count == 2 || count == 1) {
-> > +	if (__builtin_constant_p(count) &&
-> > +	    (count == 8 || count == 4 || count == 2 || count == 1)) {
-> >  		__const_memcpy_toio_aligned32(to, from, count);
-> >  		dgh();
-> >  	} else {
-> >  		__iowrite32_copy_full(to, from, count);
-> >  	}
-> >  }
-> > +#define __iowrite32_copy(to, from, count) __iowrite32_copy(to, from, count)
-> 
-> Normally we'd make this:
-> 
-> #define __iowrite32_copy __iowrite32_copy
-> 
-> ... so that it's clear it's just providing the preprocessor symbol, and
-> doesn't have to be updated if the prototype changes.
-> 
-> [...]
-> 
-> > +#define __iowrite64_copy(to, from, count) __iowrite64_copy(to, from, count)
-> 
-> Likewise here.
+Maybe it is more subtle than thought, but not difficult to make the wq
+allocation path sync. See if the patch could survive your test.
 
-I can fold these two changes in.
-
-Will
+--- x/include/linux/workqueue.h
++++ y/include/linux/workqueue.h
+@@ -402,6 +402,7 @@ enum wq_flags {
+ 	 */
+ 	WQ_POWER_EFFICIENT	= 1 << 7,
+ 
++	__WQ_INITIALIZING 	= 1 << 14, /* internal: workqueue is initializing */
+ 	__WQ_DESTROYING		= 1 << 15, /* internal: workqueue is destroying */
+ 	__WQ_DRAINING		= 1 << 16, /* internal: workqueue is draining */
+ 	__WQ_ORDERED		= 1 << 17, /* internal: workqueue is ordered */
+--- x/kernel/workqueue.c
++++ y/kernel/workqueue.c
+@@ -5080,6 +5080,8 @@ static void pwq_release_workfn(struct kt
+ 	 * is gonna access it anymore.  Schedule RCU free.
+ 	 */
+ 	if (is_last) {
++		if (wq->flags & __WQ_INITIALIZING)
++			return;
+ 		wq_unregister_lockdep(wq);
+ 		call_rcu(&wq->rcu, rcu_free_wq);
+ 	}
+@@ -5714,8 +5716,10 @@ struct workqueue_struct *alloc_workqueue
+ 			goto err_unreg_lockdep;
+ 	}
+ 
++	wq->flags |= __WQ_INITIALIZING;
+ 	if (alloc_and_link_pwqs(wq) < 0)
+ 		goto err_free_node_nr_active;
++	wq->flags &= ~__WQ_INITIALIZING;
+ 
+ 	if (wq_online && init_rescuer(wq) < 0)
+ 		goto err_destroy;
+--
 
