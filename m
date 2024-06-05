@@ -1,314 +1,154 @@
-Return-Path: <linux-kernel+bounces-201910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195AA8FC522
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF198FC52A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856FC1F25996
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8321F266AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6856318C33F;
-	Wed,  5 Jun 2024 07:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEA918F2ED;
+	Wed,  5 Jun 2024 07:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fArANUOv"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3GSuJjCW"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E0318F2FB;
-	Wed,  5 Jun 2024 07:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7716118F2C1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717573968; cv=none; b=lSfLMHHborcaeKH7u7jBBAFKLSnh8lnqnvdNV6XQJttj0TTOtEsYJEu5RhC8fi3NuIvXjvHCbavTM0O+M/YOel3AElBZopQsrCECjgR4QNrAKxdgeLyI050HCMRugoPr8czHI1aDN2PcbV+KZj1HbOrFzcd4L85OMty+il/s/JA=
+	t=1717574000; cv=none; b=V2Jkiu/KtPpIO4VrP8xLXB6QYMGzRhrYjqju3Y8TO/nCjFiWR8jImQNBmDUy/QTAf1PmXa8Cdqbw6b7FptVGOiP/ip2uhaWhxR16selgYk0Up5dj0RmCz2f366FKb9E0Yn0hRNNDQmCK1iCycBfd0H1xIuj//oBzv7wVO/y4hBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717573968; c=relaxed/simple;
-	bh=XrfSRrJ7EF0t1bW4E2n/AMkEy5nbGXCiOMHr7XSDs5w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IWs/wZh8l/AGNvISKN516pJCnUZtEUoy08rkE0W9oZQ2EKVyzVHLD1OlWg+gy8Md7EfM4fLBrHuCBTb3ucNIjHDXG2qM40kKn3f3GRaLdiFJdz0acc7jiIMZ8X5VugO102rv5olUWKfizyKs4Uu1dOD4YlhxqFxeXOcGdUeOdbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fArANUOv; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42159283989so1965685e9.3;
-        Wed, 05 Jun 2024 00:52:46 -0700 (PDT)
+	s=arc-20240116; t=1717574000; c=relaxed/simple;
+	bh=rc0+EnOjjlcqrlZBSxhgDHouHLknnPbYCYKcXR2MDhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OyK9wwc+RZsbFgZICO9ez2BqV2JOOarPGRAd3bm2dPeF3SDMQ6ej5a/JXc/q27iBn5YeKfBR5pp4cCiSTO67TGhc+kEv9w4yGKoy25qgBmWk5gczRF1cVI6xv02+eUdEhVABMJiSSIwA+brEKwoTQVyiViohlNkYldmoMph8vAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3GSuJjCW; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4eaf67ad82dso1974647e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717573965; x=1718178765; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d938GCY+0VmkKPW+ZUE+VmgbyLC1bhkjlDIYYNMduOE=;
-        b=fArANUOv3sZlxcQLsxmsYDE/3vgQIcUp4k5X6wN/nex6zPxCV9H4AOGzegoKQDbjcq
-         O5sx6j9MJK4HMcfnR/WbQJwjMTfeqRSHLXwjRJRmbWyV0EcZNMLaAZrQ4XR1UFNNm7CF
-         46o6FeWX3FPMdbrz3jLJcvNB+I7JvPQkArk/vmnkOiEvaa0s4Cr7ND/LatSKd7jqWJLL
-         LNosjZTgrt2ExWcmbvxAglccwLXWM9cYviditUH6GqNueRwJjrulMV3RxkXDfafNdfat
-         g4kuS/xjTUbAWj2RVufpSWyaRwxlotVzWPH7dB7OCXtRKHsDudqeQI4zUmQ9P72mkf96
-         PqSw==
+        d=google.com; s=20230601; t=1717573997; x=1718178797; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dH9aFv02Wu6clD2z8MVw+PuL/jNAUoVwhNcfaDFd6Rg=;
+        b=3GSuJjCWZAdDUAsWB3hZtLo9nCNjkW6uFnNSOnyPUik3YrmS14a19V7FO2VNL7yqap
+         l54Q1NvpVLy7q/O8+7wcAPJf+vbq+PD5PxXgthWi/LJkMGcWQEhBvFmLeQeVWJjNRzZC
+         d1EaHRFYlcRHpExtwIraEm+73jl5V46QAvZ5fPmKdZQqaGRJKlA/qJUArUuH4CmWhEDZ
+         lf6cfjiN9/kKPzllFeWjWedRaFxGj2ZfkkYpyPkdiZ5XmBcYS8qB+/nILH8yqZOFA8Ho
+         tnIooks/9yujF0UzULihCnEanle8HowmkD/zcKS5CMZPenkcYDy0z7ZyfFWgNRruMdAl
+         x+Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717573965; x=1718178765;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d938GCY+0VmkKPW+ZUE+VmgbyLC1bhkjlDIYYNMduOE=;
-        b=iZ2mMhGzdVlfkY77st2IWLefgjXYz7hKw37850dy91R8b/PZnDp0Iy+VrsQtPBlY26
-         H6uBTMRAGKIv7LYtqZFD7EZCuZ1gNrLdnCss0HT6g67ho+taKIHM+Ak58uJLHc9UTMAF
-         f+dBGLiR4xzRNV3kM79PPcJFOsq2Xj/fkuA1vyW9n03DpdYngOewdnRpXHHyfZEOTHJV
-         6bBM9CiqsSRcHIiovC7hApqQmliX28X3086FA2HSdsQnKJTtzncvRGQTLcd7GCBgA38D
-         sIyDBbY7KzhVTk5+G9e7ssBDZkrQLcVR+4XAOTxPDwYBdHkC9KruxRf7o++5CGliWhOv
-         DUxA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9cYKedMqpgOnypiAxRDR1EDyHQnocnGWMt4IVkuEYBaU6+w3uQKzwUuurX7lt3NQjYoVL/kcuf1q6ozUQ6nileadAkXXOnn6vTmhlurz4jN9rV3gCblvIdEWEhlxCbi4qqf9hvZaut1EiGzduclm/WzdyiAfs1BQ/v53e9ohYgFN7uA==
-X-Gm-Message-State: AOJu0YwnlIG7bzgOo4UntEwda2CXXANHgDsZ4xQOZcVnkOjHyx133FiA
-	AksqdoSj/1btgAAIOlAcuqpnVwDQPStj5BJt4jFblWf4hyZewtsc
-X-Google-Smtp-Source: AGHT+IEqdkRRQZGOY6z7/+oi4ovCv5lUjMlYEwAq6t0eHQWU5Ya7uHIO8FFMtBMpIgOR2qabABNsEA==
-X-Received: by 2002:a5d:5f91:0:b0:354:f612:5f7e with SMTP id ffacd0b85a97d-35e8ef94989mr1966577f8f.56.1717573964904;
-        Wed, 05 Jun 2024 00:52:44 -0700 (PDT)
-Received: from spiri.. ([2a02:2f08:a10a:2300:8e59:f160:bdc8:6311])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0839sm13760638f8f.23.2024.06.05.00.52.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 00:52:44 -0700 (PDT)
-From: Alisa-Dariana Roman <alisadariana@gmail.com>
-X-Google-Original-From: Alisa-Dariana Roman <alisa.roman@analog.com>
-To: Alisa-Dariana Roman <alisa.roman@analog.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Alexandru Tachici <alexandru.tachici@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH v2 3/3] iio: adc: ad7192: Fix clock config
-Date: Wed,  5 Jun 2024 10:51:54 +0300
-Message-Id: <20240605075154.625123-3-alisa.roman@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240605075154.625123-1-alisa.roman@analog.com>
-References: <20240605075154.625123-1-alisa.roman@analog.com>
+        d=1e100.net; s=20230601; t=1717573997; x=1718178797;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dH9aFv02Wu6clD2z8MVw+PuL/jNAUoVwhNcfaDFd6Rg=;
+        b=aLFS3bj3pZTXV++MK0I3UFhrE4vMO9OPmzJXm476vTebNR+9kBb89QbvFg2yuKqJ9w
+         9tF9zBGAOOenh5K8y5A4bdWNOHNk0/OFkHSekl9oaFv/Osa1KY5QCDUmo0Yt3OZbznxa
+         cL52k4lnN+256R6A8L0vD5FtWDIc/H4/piWxOVWXPE9lZngAwgiInk6KEpYUFo+FWWxg
+         5tgTNI2TciWr3H5gF+3nyVimIU0Why6Y3wHR8FILUe3xrrq2MMl/mwilCjacMqzTxyU7
+         2rfeNh7PhnEBN9tL/ziAJTMYJ2b64C1Rvshf7vkSZhG9icRzfj/9r0rGP+F0cKlve8kU
+         8qpA==
+X-Gm-Message-State: AOJu0Yzrt/GR1jgAr+q5/QRqtV5IOJq/pn5ttTxtZiSSvsCrreAkOOBN
+	e4mSvkHqTTUqmniXwo0CrBYc2KYOtoeHOd/SjbmDcOeGGxxg8KRkAmXpybwkx4C0ux6QwEIGBph
+	As9XAqa0YKGxw9CoVeWyDpvvupNmWtV4oVDQ8
+X-Google-Smtp-Source: AGHT+IHw4sctzHvhh3i0frOqnT98DxfC219+bnTQ3By91zpdxKyoqnBwKXVmxQ5sf0WjrwPk3YhmlepYfomplHKzrIY=
+X-Received: by 2002:a05:6122:31a4:b0:4dc:b486:e4a5 with SMTP id
+ 71dfb90a1353d-4eb3a27fe04mr2565829e0c.0.1717573997139; Wed, 05 Jun 2024
+ 00:53:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <b290acd5-074f-4e17-a8bf-b444e553d986@paulmck-laptop> <20240604221419.2370127-3-paulmck@kernel.org>
+In-Reply-To: <20240604221419.2370127-3-paulmck@kernel.org>
+From: Marco Elver <elver@google.com>
+Date: Wed, 5 Jun 2024 09:52:38 +0200
+Message-ID: <CANpmjNPPaqcHPowRSb=8u+rqykctRW_Mod5nO_0KTc68WdRLWw@mail.gmail.com>
+Subject: Re: [PATCH memory-model 3/3] tools/memory-model: Add KCSAN LF
+ mentorship session citation
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	kernel-team@meta.com, mingo@kernel.org, stern@rowland.harvard.edu, 
+	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org, 
+	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com, 
+	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com, 
+	Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>
+Content-Type: text/plain; charset="UTF-8"
 
-There are actually 4 configuration modes of clock source for AD719X
-devices. Either a crystal can be attached externally between MCLK1 and
-MCLK2 pins, or an external CMOS-compatible clock can drive the MCLK2
-pin. The other 2 modes make use of the 4.92MHz internal clock, which can
-be made available on the MCLK2 pin.
+On Wed, 5 Jun 2024 at 00:14, Paul E. McKenney <paulmck@kernel.org> wrote:
+>
+> Add a citation to Marco's LF mentorship session presentation entitled
+> "The Kernel Concurrency Sanitizer"
+>
+> [ paulmck: Apply Marco Elver feedback. ]
+>
+> Reported-by: Marco Elver <elver@google.com>
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 
-Rename mclk to ext_clk for clarity.
+Acked-by: Marco Elver <elver@google.com>
 
-Note that the fix tag is for the commit that moved the driver out of
-staging.
+Thanks for adding.
 
-Fixes: b581f748cce0 ("staging: iio: adc: ad7192: move out of staging")
-Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
----
- drivers/iio/adc/ad7192.c | 153 ++++++++++++++++++++++++++++++---------
- 1 file changed, 119 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
-index f06cb7ac4b42..75b0724142b1 100644
---- a/drivers/iio/adc/ad7192.c
-+++ b/drivers/iio/adc/ad7192.c
-@@ -8,6 +8,7 @@
- #include <linux/interrupt.h>
- #include <linux/bitfield.h>
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/kernel.h>
- #include <linux/slab.h>
-@@ -202,7 +203,8 @@ struct ad7192_state {
- 	const struct ad7192_chip_info	*chip_info;
- 	struct regulator		*avdd;
- 	struct regulator		*vref;
--	struct clk			*mclk;
-+	struct clk			*ext_clk;
-+	struct clk_hw			int_clk_hw;
- 	u16				int_vref_mv;
- 	u32				aincom_mv;
- 	u32				fclk;
-@@ -398,27 +400,6 @@ static inline bool ad7192_valid_external_frequency(u32 freq)
- 		freq <= AD7192_EXT_FREQ_MHZ_MAX);
- }
- 
--static int ad7192_clock_select(struct ad7192_state *st)
--{
--	struct device *dev = &st->sd.spi->dev;
--	unsigned int clock_sel;
--
--	clock_sel = AD7192_CLK_INT;
--
--	/* use internal clock */
--	if (!st->mclk) {
--		if (device_property_read_bool(dev, "adi,int-clock-output-enable"))
--			clock_sel = AD7192_CLK_INT_CO;
--	} else {
--		if (device_property_read_bool(dev, "adi,clock-xtal"))
--			clock_sel = AD7192_CLK_EXT_MCLK1_2;
--		else
--			clock_sel = AD7192_CLK_EXT_MCLK2;
--	}
--
--	return clock_sel;
--}
--
- static int ad7192_setup(struct iio_dev *indio_dev, struct device *dev)
- {
- 	struct ad7192_state *st = iio_priv(indio_dev);
-@@ -1194,6 +1175,96 @@ static void ad7192_reg_disable(void *reg)
- 	regulator_disable(reg);
- }
- 
-+static const char *const ad7192_clock_names[] = {
-+	"xtal",
-+	"clk"
-+};
-+
-+static struct ad7192_state *clk_hw_to_ad7192(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct ad7192_state, int_clk_hw);
-+}
-+
-+static void ad7192_clk_disable_unprepare(void *clk)
-+{
-+	clk_disable_unprepare(clk);
-+}
-+
-+static unsigned long ad7192_clk_recalc_rate(struct clk_hw *hw,
-+					    unsigned long parent_rate)
-+{
-+	return AD7192_INT_FREQ_MHZ;
-+}
-+
-+static int ad7192_clk_output_is_enabled(struct clk_hw *hw)
-+{
-+	struct ad7192_state *st = clk_hw_to_ad7192(hw);
-+
-+	return st->clock_sel == AD7192_CLK_INT_CO;
-+}
-+
-+static int ad7192_clk_prepare(struct clk_hw *hw)
-+{
-+	struct ad7192_state *st = clk_hw_to_ad7192(hw);
-+	int ret;
-+
-+	st->mode &= ~AD7192_MODE_CLKSRC_MASK;
-+	st->mode |= AD7192_CLK_INT_CO;
-+
-+	ret = ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-+	if (ret)
-+		return ret;
-+
-+	st->clock_sel = AD7192_CLK_INT_CO;
-+
-+	return 0;
-+}
-+
-+static void ad7192_clk_unprepare(struct clk_hw *hw)
-+{
-+	struct ad7192_state *st = clk_hw_to_ad7192(hw);
-+	int ret;
-+
-+	st->mode &= ~AD7192_MODE_CLKSRC_MASK;
-+	st->mode |= AD7192_CLK_INT;
-+
-+	ret = ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-+	if (ret)
-+		return;
-+
-+	st->clock_sel = AD7192_CLK_INT;
-+}
-+
-+static const struct clk_ops ad7192_int_clk_ops = {
-+	.recalc_rate = ad7192_clk_recalc_rate,
-+	.is_enabled = ad7192_clk_output_is_enabled,
-+	.prepare = ad7192_clk_prepare,
-+	.unprepare = ad7192_clk_unprepare,
-+};
-+
-+static int ad7192_register_clk_provider(struct iio_dev *indio_dev)
-+{
-+	struct ad7192_state *st = iio_priv(indio_dev);
-+	struct device *dev = indio_dev->dev.parent;
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	if (!IS_ENABLED(CONFIG_COMMON_CLK))
-+		return 0;
-+
-+	init.name = fwnode_get_name(fwnode);
-+	init.ops = &ad7192_int_clk_ops;
-+
-+	st->int_clk_hw.init = &init;
-+	ret = devm_clk_hw_register(dev, &st->int_clk_hw);
-+	if (ret)
-+		return ret;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					   &st->int_clk_hw);
-+}
-+
- static int ad7192_probe(struct spi_device *spi)
- {
- 	struct device *dev = &spi->dev;
-@@ -1312,20 +1383,34 @@ static int ad7192_probe(struct spi_device *spi)
- 
- 	st->fclk = AD7192_INT_FREQ_MHZ;
- 
--	st->mclk = devm_clk_get_optional_enabled(dev, "mclk");
--	if (IS_ERR(st->mclk))
--		return PTR_ERR(st->mclk);
-+	ret = device_property_match_property_string(dev, "clock-names",
-+						    ad7192_clock_names,
-+						    ARRAY_SIZE(ad7192_clock_names));
-+	if (ret < 0) {
-+		st->clock_sel = AD7192_CLK_INT;
-+		st->fclk = AD7192_INT_FREQ_MHZ;
- 
--	st->clock_sel = ad7192_clock_select(st);
-+		ret = ad7192_register_clk_provider(indio_dev);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Registration of clock provider failed\n");
-+	} else {
-+		st->clock_sel = AD7192_CLK_EXT_MCLK1_2 + ret;
- 
--	if (st->clock_sel == AD7192_CLK_EXT_MCLK1_2 ||
--	    st->clock_sel == AD7192_CLK_EXT_MCLK2) {
--		st->fclk = clk_get_rate(st->mclk);
--		if (!ad7192_valid_external_frequency(st->fclk)) {
--			dev_err(dev,
--				"External clock frequency out of bounds\n");
--			return -EINVAL;
--		}
-+		st->ext_clk = devm_clk_get_enabled(dev, ad7192_clock_names[ret]);
-+		if (IS_ERR(st->ext_clk))
-+			return PTR_ERR(st->ext_clk);
-+
-+		ret = devm_add_action_or_reset(dev,
-+					       ad7192_clk_disable_unprepare,
-+					       st->ext_clk);
-+		if (ret)
-+			return ret;
-+
-+		st->fclk = clk_get_rate(st->ext_clk);
-+		if (!ad7192_valid_external_frequency(st->fclk))
-+			return dev_err_probe(dev, -EINVAL,
-+					     "External clock frequency out of bounds\n");
- 	}
- 
- 	ret = ad7192_setup(indio_dev, dev);
--- 
-2.34.1
-
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Andrea Parri <parri.andrea@gmail.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
+> Cc: Daniel Lustig <dlustig@nvidia.com>
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: <linux-arch@vger.kernel.org>
+> ---
+>  tools/memory-model/Documentation/access-marking.txt | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/memory-model/Documentation/access-marking.txt b/tools/memory-model/Documentation/access-marking.txt
+> index 65778222183e3..f531b0837356b 100644
+> --- a/tools/memory-model/Documentation/access-marking.txt
+> +++ b/tools/memory-model/Documentation/access-marking.txt
+> @@ -6,7 +6,8 @@ normal accesses to shared memory, that is "normal" as in accesses that do
+>  not use read-modify-write atomic operations.  It also describes how to
+>  document these accesses, both with comments and with special assertions
+>  processed by the Kernel Concurrency Sanitizer (KCSAN).  This discussion
+> -builds on an earlier LWN article [1].
+> +builds on an earlier LWN article [1] and Linux Foundation mentorship
+> +session [2].
+>
+>
+>  ACCESS-MARKING OPTIONS
+> @@ -31,7 +32,7 @@ example:
+>         WRITE_ONCE(a, b + data_race(c + d) + READ_ONCE(e));
+>
+>  Neither plain C-language accesses nor data_race() (#1 and #2 above) place
+> -any sort of constraint on the compiler's choice of optimizations [2].
+> +any sort of constraint on the compiler's choice of optimizations [3].
+>  In contrast, READ_ONCE() and WRITE_ONCE() (#3 and #4 above) restrict the
+>  compiler's use of code-motion and common-subexpression optimizations.
+>  Therefore, if a given access is involved in an intentional data race,
+> @@ -594,5 +595,8 @@ REFERENCES
+>  [1] "Concurrency bugs should fear the big bad data-race detector (part 2)"
+>      https://lwn.net/Articles/816854/
+>
+> -[2] "Who's afraid of a big bad optimizing compiler?"
+> +[2] "The Kernel Concurrency Sanitizer"
+> +    https://www.linuxfoundation.org/webinars/the-kernel-concurrency-sanitizer
+> +
+> +[3] "Who's afraid of a big bad optimizing compiler?"
+>      https://lwn.net/Articles/793253/
+> --
+> 2.40.1
+>
 
