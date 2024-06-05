@@ -1,172 +1,248 @@
-Return-Path: <linux-kernel+bounces-201625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 180888FC0E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:39:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4BD18FC0E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E491F231FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA49F1F231BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E2F2CA9;
-	Wed,  5 Jun 2024 00:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573922F44;
+	Wed,  5 Jun 2024 00:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XpGACfJL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4FKaKEA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1DE323D;
-	Wed,  5 Jun 2024 00:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7815F184E;
+	Wed,  5 Jun 2024 00:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717547941; cv=none; b=S+sKhXQpOksxbQXB1Fe3Xhc7IN4Ua0WAkyinQ5Zvecp/FeEAA4nu6+dV+pswCWdiufXKA9+k5s/LvRg50X1xpxraGdTjWvQ9uBlS35bJPTeZSgZHtG8q6Kj3m3ijJh/8H7BgTQ/9/52W37Ns7sw142BqVC3I3Mmvna9X56i0NV4=
+	t=1717548172; cv=none; b=eMe61sfmp7LPj/qmjCF4ckv/P78CLfHFRUKEwz4NDc0mpkHdDzrq8E3knw3XHMXe73WTTgixmjnWMQq4Ysr4Xvopsfwak3Rnm/mAM2uPtQOTE7/iwgVmGbPO/76e0RKdaX0jX8A8jH3HAprpUnAzh6DjN2HqGg6eUds3mINa4uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717547941; c=relaxed/simple;
-	bh=EXUEIRS9624hyKCJA7psottKLEzIfA5p+GtERCtockY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JdnAwTl0/lcL6ENQCIHH3AbFFC/+h4qohzYK5inOU99G3dl2LCrJqGLzONC15sVuGk5TwO72LsE2hwEK6dMYZiKev9XAv75h0jCfnwfI0AmS9tPxqS2ye8AdS4xGvvW10AZ3q3iLmQAzjcnMTonEHa8/q+1+whkYGQ0zoDYLg5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XpGACfJL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454Gr94l009519;
-	Wed, 5 Jun 2024 00:38:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=7J5zgdpsPhcHsRBPwiKeIr
-	Iwy90pClK1sMRAZtF5i8c=; b=XpGACfJL8dw1gfqpUc15HcKPRlQc82mJMafLuG
-	N7lZimNGV9hy62cVcem4Y9i8+yYr5ATPMCBRBm7IQT57AGRLYwtqzrDkvh+C8TR5
-	lguyMCnCyhgTO5OgH7Nxj6o4qHZkghdZWv+uBWrpHSEQ4rR9cFpToR7PXwkeyHdE
-	AoPIlaj5i9eE+DOdZnojVPV6PqUx6FtzXUu+UqVdGimKKXlGdCy43+z6F8PIrl13
-	dmLCiWOEDAT5TuSSPdZgKC5lMEVLSkHa2xseX81vOhFNVUOt8xE3+H17gkDK37Z9
-	dtgFIHlK80em3NQ02nfyLao5rs2yN8VIDm7JoUe6A3cgjO+g==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj6u78vk2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 00:38:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4550cd5v029253
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Jun 2024 00:38:39 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 4 Jun 2024 17:38:39 -0700
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Connor Abbott <cwabbott0@gmail.com>
-CC: <dri-devel@lists.freedesktop.org>, <seanpaul@chromium.org>,
-        <quic_jesszhan@quicinc.com>, Rob Clark <robdclark@chromium.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] drm/msm/a6xx: use __unused__ to fix compiler warnings for gen7_* includes
-Date: Tue, 4 Jun 2024 17:38:28 -0700
-Message-ID: <20240605003829.4120343-1-quic_abhinavk@quicinc.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1717548172; c=relaxed/simple;
+	bh=o/9XA293ztzQotVbWDuq6SEmoKfFMzc7jf77BFoaTdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aluhuzm+gfTAfMwWvrp6LobbTzPzzRfasY09/r0ajP48IAeYbi/63sJBJok4eqOHx05210WQsv9J6701C1tJIzhSD7BBNbKd8sI2Cb2G1e3TklDTd4jug9Z4w+jzWLhr1AEWyN65zcfgQFGkjFmb7Fgme9ksQtQKpLx9+FtHRw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4FKaKEA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984A1C2BBFC;
+	Wed,  5 Jun 2024 00:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717548171;
+	bh=o/9XA293ztzQotVbWDuq6SEmoKfFMzc7jf77BFoaTdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C4FKaKEAK9jHS1pp+wRVnlGZ9SuZA24j/+tIvrhulO+YhDlHuceOhw+4wPiSenAJS
+	 x6L4TCuXFHeA33qBGMmuiIC6ULqQp3Kj7wTyyxNHQw/CWWtAh6NmtI1NGK9uNND1M4
+	 aFzTizTCvaAzelYADYQJ+NBDYPl6jkFVQvF0xZCBJj/J452dmYkmxcd/ykrNNSBBDv
+	 2qRRjKlZ1M9kZIAAC7zm0ycFg0E7XgS9WXySvJd+z1D2bYhx1yhRm80AGa7RgMaZ32
+	 CjzdQJjlGsY0UUHAaWh9JgkxiRi59Uj3qEsoYSppmNqiATJp2xu74ml05QnCIK24GO
+	 w2jY8CIgfgm9w==
+Date: Tue, 4 Jun 2024 17:42:50 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/4] perf hist: Factor out __hpp__fmt_print()
+Message-ID: <Zl-0igwvs8EuzOMs@google.com>
+References: <20240603224412.1910049-1-namhyung@kernel.org>
+ <20240603224412.1910049-2-namhyung@kernel.org>
+ <Zl8tvVPEfLM8_T_z@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: P4jDMhdz7djqjMN0AG4NOkxt5dpiqjL2
-X-Proofpoint-GUID: P4jDMhdz7djqjMN0AG4NOkxt5dpiqjL2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- clxscore=1015 malwarescore=0 adultscore=0 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406050002
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zl8tvVPEfLM8_T_z@x1>
 
-GCC diagnostic pragma method throws below warnings in some of the versions
+On Tue, Jun 04, 2024 at 12:07:41PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Mon, Jun 03, 2024 at 03:44:09PM -0700, Namhyung Kim wrote:
+> > Split the logic to print the histogram values according to the format
+> > string.  This was used in 3 different places so it's better to move out
+> > the logic into a function.
+> 
+> But are all really equivalent? I had difficulty following it, perhaps it
+> would be better to introduce the function and then go on making one by
+> one use it instead of doing it all at once?
 
-drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:16:9: warning: unknown
-option after '#pragma GCC diagnostic' kind [-Wpragmas]
-  #pragma GCC diagnostic ignored "-Wunused-const-variable"
-          ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:18:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h:924:19: warning:
-'gen7_0_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_0_0_external_core_regs[] = {
-                    ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:19:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h:748:19: warning:
-'gen7_2_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_2_0_external_core_regs[] = {
-                    ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:20:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:1188:43: warning:
-'gen7_9_0_sptp_clusters' defined but not used [-Wunused-variable]
-  static struct gen7_sptp_cluster_registers gen7_9_0_sptp_clusters[] = {
-                                            ^
-drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:1438:19: warning:
-'gen7_9_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_9_0_external_core_regs[] = {
+Sorry, I agree the code looks confusing.  But they are equivalent and
+just to print the value in a different way.
 
-Remove GCC version dependency by using __unused__ for the unused gen7_* includes.
+> 
+> So in the end we have:
+> 
+> static int __hpp__fmt_print(struct perf_hpp *hpp, struct hists *hists, u64 val,
+> 			    int nr_samples, const char *fmt, int len,
+> 			    hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
+> {
+> 	if (fmtype == PERF_HPP_FMT_TYPE__PERCENT) {
+> 		double percent = 0.0;
+> 		u64 total = hists__total_period(hists);
+> 
+> 		if (total)
+> 			percent = 100.0 * val / total;
+> 
+> 		return hpp__call_print_fn(hpp, print_fn, fmt, len, percent);
+> 	}
+> 	if (fmtype == PERF_HPP_FMT_TYPE__AVERAGE) {
+> 		double avg = nr_samples ? (1.0 * val / nr_samples) : 0;
+> 
+> 		return hpp__call_print_fn(hpp, print_fn, fmt, len, avg);
+> 	}
+> 
+> 	return hpp__call_print_fn(hpp, print_fn, fmt, len, val);
+> }
+> 
+> I.e. we do something with the last arg for hpp__call_print_fn() for the
+> PERF_HPP_FMT_TYPE__PERCENT and PERF_HPP_FMT_TYPE__AVERAGE fmtype's, but
+> we don't check for those fmtypes on each of the places that we now call
+> __hpp__fmt_print(), right?
+> 
+> That while (idx_delta--) cases is only interested in !=PERF_HPP_FMT_TYPE__RAW...
+> 
+> Nah, after trying to describe the confusion I think I clarified it,
+> probably leave it as you did :-\
 
-Changes in v2:
-	- Fix the warnings in the commit text
-	- Use __attribute((__unused__)) instead of local assignment
+:)
 
-changes in v3:
-	- drop the Link from the auto add
+The 'while (idx_delta--)' part is just to fill the gap for entries
+without samples.  The value is always 0, so it only cares the data type
+(double or u64) in the format string.  RAW needs u64 while PERCENT and
+AVERAGE need double.
 
-Fixes: 64d6255650d4 ("drm/msm: More fully implement devcoredump for a7xx")
-Suggested-by: Rob Clark <robdclark@chromium.org>
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
----
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Thanks,
+Namhyung
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-index 0a7717a4fc2f..a958e2b3c025 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-@@ -8,19 +8,15 @@
- #include "a6xx_gpu_state.h"
- #include "a6xx_gmu.xml.h"
- 
--/* Ignore diagnostics about register tables that we aren't using yet. We don't
-- * want to modify these headers too much from their original source.
-- */
--#pragma GCC diagnostic push
--#pragma GCC diagnostic ignored "-Wunused-variable"
--#pragma GCC diagnostic ignored "-Wunused-const-variable"
-+static const unsigned int *gen7_0_0_external_core_regs[] __attribute((__unused__));
-+static const unsigned int *gen7_2_0_external_core_regs[] __attribute((__unused__));
-+static const unsigned int *gen7_9_0_external_core_regs[] __attribute((__unused__));
-+static struct gen7_sptp_cluster_registers gen7_9_0_sptp_clusters[] __attribute((__unused__));
- 
- #include "adreno_gen7_0_0_snapshot.h"
- #include "adreno_gen7_2_0_snapshot.h"
- #include "adreno_gen7_9_0_snapshot.h"
- 
--#pragma GCC diagnostic pop
--
- struct a6xx_gpu_state_obj {
- 	const void *handle;
- 	u32 *data;
--- 
-2.44.0
-
+  
+> > +++ b/tools/perf/ui/hist.c
+> > @@ -23,35 +23,42 @@
+> >  	__ret;							\
+> >  })
+> >  
+> > -static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
+> > -		      hpp_field_fn get_field, const char *fmt, int len,
+> > -		      hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
+> > +static int __hpp__fmt_print(struct perf_hpp *hpp, struct hists *hists, u64 val,
+> > +			    int nr_samples, const char *fmt, int len,
+> > +			    hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
+> >  {
+> > -	int ret;
+> > -	struct hists *hists = he->hists;
+> > -	struct evsel *evsel = hists_to_evsel(hists);
+> > -	char *buf = hpp->buf;
+> > -	size_t size = hpp->size;
+> > -
+> >  	if (fmtype == PERF_HPP_FMT_TYPE__PERCENT) {
+> >  		double percent = 0.0;
+> >  		u64 total = hists__total_period(hists);
+> >  
+> >  		if (total)
+> > -			percent = 100.0 * get_field(he) / total;
+> > +			percent = 100.0 * val / total;
+> >  
+> > -		ret = hpp__call_print_fn(hpp, print_fn, fmt, len, percent);
+> > -	} else if (fmtype == PERF_HPP_FMT_TYPE__AVERAGE) {
+> > -		double average = 0;
+> > +		return hpp__call_print_fn(hpp, print_fn, fmt, len, percent);
+> > +	}
+> >  
+> > -		if (he->stat.nr_events)
+> > -			average = 1.0 * get_field(he) / he->stat.nr_events;
+> > +	if (fmtype == PERF_HPP_FMT_TYPE__AVERAGE) {
+> > +		double avg = nr_samples ? (1.0 * val / nr_samples) : 0;
+> >  
+> > -		ret = hpp__call_print_fn(hpp, print_fn, fmt, len, average);
+> > -	} else {
+> > -		ret = hpp__call_print_fn(hpp, print_fn, fmt, len, get_field(he));
+> > +		return hpp__call_print_fn(hpp, print_fn, fmt, len, avg);
+> >  	}
+> >  
+> > +	return hpp__call_print_fn(hpp, print_fn, fmt, len, val);
+> > +}
+> > +
+> > +static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
+> > +		      hpp_field_fn get_field, const char *fmt, int len,
+> > +		      hpp_snprint_fn print_fn, enum perf_hpp_fmt_type fmtype)
+> > +{
+> > +	int ret;
+> > +	struct hists *hists = he->hists;
+> > +	struct evsel *evsel = hists_to_evsel(hists);
+> > +	char *buf = hpp->buf;
+> > +	size_t size = hpp->size;
+> > +
+> > +	ret = __hpp__fmt_print(hpp, hists, get_field(he), he->stat.nr_events,
+> > +			       fmt, len, print_fn, fmtype);
+> > +
+> >  	if (evsel__is_group_event(evsel)) {
+> >  		int prev_idx, idx_delta;
+> >  		struct hist_entry *pair;
+> > @@ -72,30 +79,16 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
+> >  
+> >  			while (idx_delta--) {
+> >  				/*
+> > -				 * zero-fill group members in the middle which
+> > -				 * have no sample
+> > +				 * zero-fill group members in the middle which have
+> > +				 * no samples, pair->hists is not correct but it's
+> > +				 * fine since the value is 0.
+> >  				 */
+> > -				if (fmtype != PERF_HPP_FMT_TYPE__RAW) {
+> > -					ret += hpp__call_print_fn(hpp, print_fn,
+> > -								  fmt, len, 0.0);
+> > -				} else {
+> > -					ret += hpp__call_print_fn(hpp, print_fn,
+> > -								  fmt, len, 0ULL);
+> > -				}
+> > +				ret += __hpp__fmt_print(hpp, pair->hists, 0, 0,
+> > +							fmt, len, print_fn, fmtype);
+> >  			}
+> >  
+> > -			if (fmtype == PERF_HPP_FMT_TYPE__PERCENT) {
+> > -				ret += hpp__call_print_fn(hpp, print_fn, fmt, len,
+> > -							  100.0 * period / total);
+> > -			} else if (fmtype == PERF_HPP_FMT_TYPE__AVERAGE) {
+> > -				double avg = nr_samples ? (period / nr_samples) : 0;
+> > -
+> > -				ret += hpp__call_print_fn(hpp, print_fn, fmt,
+> > -							  len, avg);
+> > -			} else {
+> > -				ret += hpp__call_print_fn(hpp, print_fn, fmt,
+> > -							  len, period);
+> > -			}
+> > +			ret += __hpp__fmt_print(hpp, pair->hists, period, nr_samples,
+> > +						fmt, len, print_fn, fmtype);
+> >  
+> >  			prev_idx = evsel__group_idx(evsel);
+> >  		}
+> > @@ -104,15 +97,11 @@ static int __hpp__fmt(struct perf_hpp *hpp, struct hist_entry *he,
+> >  
+> >  		while (idx_delta--) {
+> >  			/*
+> > -			 * zero-fill group members at last which have no sample
+> > +			 * zero-fill group members at last which have no sample.
+> > +			 * the hists is not correct but it's fine like above.
+> >  			 */
+> > -			if (fmtype != PERF_HPP_FMT_TYPE__RAW) {
+> > -				ret += hpp__call_print_fn(hpp, print_fn,
+> > -							  fmt, len, 0.0);
+> > -			} else {
+> > -				ret += hpp__call_print_fn(hpp, print_fn,
+> > -							  fmt, len, 0ULL);
+> > -			}
+> > +			ret += __hpp__fmt_print(hpp, evsel__hists(evsel), 0, 0,
+> > +						fmt, len, print_fn, fmtype);
+> >  		}
+> >  	}
+> >  
+> > -- 
+> > 2.45.1.288.g0e0cd299f1-goog
 
