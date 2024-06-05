@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-202901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322C38FD2A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:17:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E11B8FD2AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93EC0B21A51
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:17:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2B4285C9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B10D52F6D;
-	Wed,  5 Jun 2024 16:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49BF14E2FD;
+	Wed,  5 Jun 2024 16:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YgEAwCZJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UVdcynoV"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802FD801
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FB819D899
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 16:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717604211; cv=none; b=Nk9l6Xbxti5dqTgZT6s/yPV7ODb3cHQvDeWtMHVGmeCenkBZqnG6y1nuU+zN+x//Pz0A6H0XidkiZBuOOqJOlXlcHygzAj8T6P7QCjh/jdCasIyb8CeELfaoYO/hpBkc+Fz9iX1ecrQAf6XpUj8Mw3eItwMdzegeR70Aj4xDabc=
+	t=1717604248; cv=none; b=fi/5Zf28LVPyhIlVsFIP7Djmq4Jkz/UBhF2/8WQn1zcEmApA2UzGtvatKAqdsfbQC4ymwQFij8SiMjHh7q8rdgLVMNt17nKF51WBlX/OU5s/EgIjm1GbyFRzT2X5e4VfOa0C9hpNA5MSFGz0Ooihf8Pgm0eDTJsNkfZM1i/TW90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717604211; c=relaxed/simple;
-	bh=lltmyBfHopMgpKG6NjiGpjCHApC6tme0TERxxWS2ioA=;
+	s=arc-20240116; t=1717604248; c=relaxed/simple;
+	bh=XCKqjztYR9+IKBnfTAp3qkdWxzvX3tjFJRwRcXyy0wU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=egjz9QSBH34n7XA5cD0Vu58H+HxmRkenBA/pbSQv0OnnxtU+p4ebSlrgVYOpsKVpt/TIfEBz1dXFnaKmVaCsgbeESeSjDR87rTrkbQfaTke+yW2B8oPzSCxzLn/v6oOdeFH7lmxiKmF0ERH2QAWYEwREUeByUiVboaOElforhFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YgEAwCZJ; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=bAtm5CRnlFbylHtzVSaS3NqWdz6UeWrZMYu5awhTSrRmK6we2yc+7mqlsUvqHtr/fRGMbvjjOgXZnXdDKE1hYaFKIGtlhM3xg03p1qfhCKAdz1PSH7HcvCT2z6GvgyMzqHncR34588buNsTFEK3L0Fqw/m1OJqwFnGVZvr6RhYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UVdcynoV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717604208;
+	s=mimecast20190719; t=1717604245;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Cc7XhOYX2iNG4U9fFF6aeirQhLY4JHilwmQx2DKtSVs=;
-	b=YgEAwCZJd2kQtdO1+IlLhaJq/I7WIBAvFegAkAaG1x8BwAThaDViRrR2P7tF55rPJ08V9x
-	1CfnZVJwFbvsQDHMmO56/Cf406SkyqwhQWWHBMAGl7PAtlBGTW/MuZbhuBe9j+KrZz8sFc
-	SOGmZGE1z/TDUPnPyuVUBPDtFs17SXc=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=cWV8Lo8WLzhgwKW8jLwqp32oyRHSZADB4Op3hCnu5O4=;
+	b=UVdcynoVSUeS5TQd1QHm1TQVEARh3bDuNHf7zMphRJREYRMlItRHl17mR84scWRsem5zXs
+	lLYiz99oXCcEvKYy1+oPMvACgNC9woUqrP+YK4B3/zCss6OtL4xu1Xz0t/U0rpQRb9aBZA
+	Wvv2/INyv0940L7Nh+0+ZJaBztPdJyE=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-18-hSi9rVbANPOyDuS6nrcfkw-1; Wed, 05 Jun 2024 12:16:47 -0400
-X-MC-Unique: hSi9rVbANPOyDuS6nrcfkw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4212e2a3a1bso82845e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 09:16:46 -0700 (PDT)
+ us-mta-516-PkGIgM6YMnitWy1f_yomnQ-1; Wed, 05 Jun 2024 12:17:15 -0400
+X-MC-Unique: PkGIgM6YMnitWy1f_yomnQ-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2eaaae3e600so59971fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 09:17:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717604206; x=1718209006;
+        d=1e100.net; s=20230601; t=1717604231; x=1718209031;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Cc7XhOYX2iNG4U9fFF6aeirQhLY4JHilwmQx2DKtSVs=;
-        b=vapkyDE/yIDBRoXqS4KwPET0xeC1daRotoovv0OsQfVT0Ug2IjMCXuOJ3IJIZF8hZw
-         7GcYhbeKYEkOC09EjZcubnkGoV2RoFvK2XBkKw4fIQC/EVmBeTRdi3RoEpm8CmJKEXq3
-         oNr6Xb1Es5tND/w510UbAkrZu3e9Bm6pVJdgtSPeNN23Msm6yNI1MYwSPM5JfL6zgxZx
-         Q9nOw0ipecjqq6eQzIr0ezxXpzWKYwGyWJAcmaUOLaaOCPIat2kaeHFBPjtHkgqqztyN
-         0hH6dIW1hn2wYgfqRXC9EO9nmPNvyQwhRqjHNjzcQntCmmPW18kCrHmnDRAzj5+xNyAJ
-         0NYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDvSG85dpXri0Xa13gJzxTx4JTQsvl9Ig2u19cyDdQ27NHNKsJB01w6lRLg2RyU22jSNpkrDMvW6Iqe41KE7FtCGFTphAPeHnwM1P8
-X-Gm-Message-State: AOJu0YzWxoRJlYzvPh9dLaVKhHvCMo+7bGiFtJ+LyyHQtwHhV51Pinjl
-	vt6rnCP6E5ttudc6+UBdFMnEn8X0/pbBKuKqK/80EafzTFTNeqRGLIetsyGJNVDizsfdoM08nSX
-	VNB6YQ4vj2/mxI3JkCKuDuGETFR9vBwhSTHjFKL7r7M7jwUMXh00uKCSxpTfPwQ==
-X-Received: by 2002:a05:600c:45c8:b0:41c:2931:e670 with SMTP id 5b1f17b1804b1-421562d4717mr24371785e9.2.1717604205803;
-        Wed, 05 Jun 2024 09:16:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhoZSDpF+Zb8hBwwxosUfIzl3S/3jssa5ktv18HnkzDinSc6kPVZ1srS/Rs1mDZwKLK/aREw==
-X-Received: by 2002:a05:600c:45c8:b0:41c:2931:e670 with SMTP id 5b1f17b1804b1-421562d4717mr24371445e9.2.1717604205320;
-        Wed, 05 Jun 2024 09:16:45 -0700 (PDT)
+        bh=cWV8Lo8WLzhgwKW8jLwqp32oyRHSZADB4Op3hCnu5O4=;
+        b=oB/pIdxVJNd+jR0roVYYGcrVRGOnyp/oQx9HnKYkuWzE9xGk+1CF94qM73h9KMPCB+
+         wpikevVfRb/vw+w2PidvKUmueS/dhlyTppwPqnIP1o1C2P/4NKinPnkH3EI216OmWmHY
+         psUOaxspFpQNmbNA26wAL3BPdlhROqC1txv6sUrNcmujWD+emJVs+un0NZXkrZ8F8VZY
+         u4L+XR8Jwzu2h/iyt5TLPgsvjTBo+fNt49cMiGipMF687NViSNDsMKQ6NCT3reG8bwYU
+         fBr47ULmhYM8A2au786XUcBNfEx9Jdi41j9/veBREuYa601Eo5yV44g2fj1NDLMPx+/g
+         O7Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUO8JOcacBztsYI5X9o2CJi7NKuegRdtW7rvVGPyxtR/7sUSQhIatOkb/P4azzNiH6dgLIM8VzVPkcXDgV5awJugNXGmT+AqLUuVj/t
+X-Gm-Message-State: AOJu0YzXKZlAaU/GjbX0VyuQE7AQyIqm908o8ROXKQPDW4jomNxabqOK
+	iqWX2u49xxHMpTb1uG7yLgejs9xsSKI4f99N6kYcY65dzgLPmyU5GLBPAjbfIDfrLBaB5u6w7rO
+	IvdGpZOAn+N2sSfr2qFWqUqSY9yYdlIoMiyecnR4q5QGqjvsjpCOzI4zcKt0ddg==
+X-Received: by 2002:a2e:9015:0:b0:2e2:a85f:f222 with SMTP id 38308e7fff4ca-2eac79bffd6mr21905211fa.10.1717604231459;
+        Wed, 05 Jun 2024 09:17:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1/ptFn9F2AicH1L8mC8tPW6vXI9kcDGJgMU0weURGF8brg/KfPg9v0PpQcR+jiOzihyazkg==
+X-Received: by 2002:a2e:9015:0:b0:2e2:a85f:f222 with SMTP id 38308e7fff4ca-2eac79bffd6mr21904871fa.10.1717604230954;
+        Wed, 05 Jun 2024 09:17:10 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c706:3100:19a8:d898:8e69:6aff? (p200300cbc706310019a8d8988e696aff.dip0.t-ipconnect.de. [2003:cb:c706:3100:19a8:d898:8e69:6aff])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215814f141sm27515365e9.42.2024.06.05.09.16.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148f91sm28767755e9.30.2024.06.05.09.17.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 09:16:44 -0700 (PDT)
-Message-ID: <c1975e82-3442-441a-a9ce-c612c2d3f70f@redhat.com>
-Date: Wed, 5 Jun 2024 18:16:43 +0200
+        Wed, 05 Jun 2024 09:17:10 -0700 (PDT)
+Message-ID: <6089ccc4-1fb7-4934-b119-253aa246a2dd@redhat.com>
+Date: Wed, 5 Jun 2024 18:17:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,25 +82,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] mm/rmap: integrate PMD-mapped folio splitting into
- pagewalk loop
-To: Lance Yang <ioworker0@gmail.com>
-Cc: Yin Fengwei <fengwei.yin@intel.com>, akpm@linux-foundation.org,
- willy@infradead.org, sj@kernel.org, baolin.wang@linux.alibaba.com,
- maskray@google.com, ziy@nvidia.com, ryan.roberts@arm.com, 21cnbao@gmail.com,
- mhocko@suse.com, zokeefe@google.com, shy828301@gmail.com,
- xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com,
- songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240521040244.48760-1-ioworker0@gmail.com>
- <20240521040244.48760-3-ioworker0@gmail.com>
- <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com>
- <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
- <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com>
- <8580a462-eadc-4fa5-b01a-c0b8c3ae644d@redhat.com>
- <CAK1f24=7=QqDFoh=joC+o1eZfyJ8onyc9ELBZBzn1CFr4uPSwQ@mail.gmail.com>
- <7f2ab112-5916-422c-b29f-343cc0d6d754@redhat.com>
- <CAK1f24nDH2UxCskNsFM84=5uGTUb_bAUivgmQJCcE+H1dJHDxw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: page_ref: remove folio_try_get_rcu()
+To: Yang Shi <yang@os.amperecomputing.com>, Peter Xu <peterx@redhat.com>
+Cc: oliver.sang@intel.com, paulmck@kernel.org, willy@infradead.org,
+ riel@surriel.com, vivek.kasireddy@intel.com, cl@linux.com,
+ akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240604234858.948986-1-yang@os.amperecomputing.com>
+ <ZmCDU5PMBqE-H-om@x1n>
+ <58f249cf-c2a9-429b-871d-15584ed37956@os.amperecomputing.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -148,154 +138,127 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <CAK1f24nDH2UxCskNsFM84=5uGTUb_bAUivgmQJCcE+H1dJHDxw@mail.gmail.com>
+In-Reply-To: <58f249cf-c2a9-429b-871d-15584ed37956@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 05.06.24 17:43, Lance Yang wrote:
-> On Wed, Jun 5, 2024 at 11:03 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 05.06.24 16:57, Lance Yang wrote:
->>> On Wed, Jun 5, 2024 at 10:39 PM David Hildenbrand <david@redhat.com> wrote:
->>>>
->>>> On 05.06.24 16:28, David Hildenbrand wrote:
->>>>> On 05.06.24 16:20, Lance Yang wrote:
->>>>>> Hi David,
->>>>>>
->>>>>> On Wed, Jun 5, 2024 at 8:46 PM David Hildenbrand <david@redhat.com> wrote:
->>>>>>>
->>>>>>> On 21.05.24 06:02, Lance Yang wrote:
->>>>>>>> In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
->>>>>>>> folios, start the pagewalk first, then call split_huge_pmd_address() to
->>>>>>>> split the folio.
->>>>>>>>
->>>>>>>> Since TTU_SPLIT_HUGE_PMD will no longer perform immediately, we might
->>>>>>>> encounter a PMD-mapped THP missing the mlock in the VM_LOCKED range during
->>>>>>>> the page walk. It’s probably necessary to mlock this THP to prevent it from
->>>>>>>> being picked up during page reclaim.
->>>>>>>>
->>>>>>>> Suggested-by: David Hildenbrand <david@redhat.com>
->>>>>>>> Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>>>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
->>>>>>>> ---
->>>>>>>
->>>>>>> [...] again, sorry for the late review.
->>>>>>
->>>>>> No worries at all, thanks for taking time to review!
->>>>>>
->>>>>>>
->>>>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>>>>>> index ddffa30c79fb..08a93347f283 100644
->>>>>>>> --- a/mm/rmap.c
->>>>>>>> +++ b/mm/rmap.c
->>>>>>>> @@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->>>>>>>>           if (flags & TTU_SYNC)
->>>>>>>>                   pvmw.flags = PVMW_SYNC;
->>>>>>>>
->>>>>>>> -     if (flags & TTU_SPLIT_HUGE_PMD)
->>>>>>>> -             split_huge_pmd_address(vma, address, false, folio);
->>>>>>>> -
->>>>>>>>           /*
->>>>>>>>            * For THP, we have to assume the worse case ie pmd for invalidation.
->>>>>>>>            * For hugetlb, it could be much worse if we need to do pud
->>>>>>>> @@ -1668,20 +1665,35 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->>>>>>>>           mmu_notifier_invalidate_range_start(&range);
->>>>>>>>
->>>>>>>>           while (page_vma_mapped_walk(&pvmw)) {
->>>>>>>> -             /* Unexpected PMD-mapped THP? */
->>>>>>>> -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
->>>>>>>> -
->>>>>>>>                   /*
->>>>>>>>                    * If the folio is in an mlock()d vma, we must not swap it out.
->>>>>>>>                    */
->>>>>>>>                   if (!(flags & TTU_IGNORE_MLOCK) &&
->>>>>>>>                       (vma->vm_flags & VM_LOCKED)) {
->>>>>>>>                           /* Restore the mlock which got missed */
->>>>>>>> -                     if (!folio_test_large(folio))
->>>>>>>> +                     if (!folio_test_large(folio) ||
->>>>>>>> +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
->>>>>>>>                                   mlock_vma_folio(folio, vma);
->>>>>>>
->>>>>>> Can you elaborate why you think this would be required? If we would have
->>>>>>> performed the  split_huge_pmd_address() beforehand, we would still be
->>>>>>> left with a large folio, no?
->>>>>>
->>>>>> Yep, there would still be a large folio, but it wouldn't be PMD-mapped.
->>>>>>
->>>>>> After Weifeng's series[1], the kernel supports mlock for PTE-mapped large
->>>>>> folio, but there are a few scenarios where we don't mlock a large folio, such
->>>>>> as when it crosses a VM_LOCKed VMA boundary.
->>>>>>
->>>>>>      -                     if (!folio_test_large(folio))
->>>>>>      +                     if (!folio_test_large(folio) ||
->>>>>>      +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
->>>>>>
->>>>>> And this check is just future-proofing and likely unnecessary. If encountering a
->>>>>> PMD-mapped THP missing the mlock for some reason, we can mlock this
->>>>>> THP to prevent it from being picked up during page reclaim, since it is fully
->>>>>> mapped and doesn't cross the VMA boundary, IIUC.
->>>>>>
->>>>>> What do you think?
->>>>>> I would appreciate any suggestions regarding this check ;)
->>>>>
->>>>> Reading this patch only, I wonder if this change makes sense in the
->>>>> context here.
->>>>>
->>>>> Before this patch, we would have PTE-mapped the PMD-mapped THP before
->>>>> reaching this call and skipped it due to "!folio_test_large(folio)".
->>>>>
->>>>> After this patch, we either
->>>>>
->>>>> a) PTE-remap the THP after this check, but retry and end-up here again,
->>>>> whereby we would skip it due to "!folio_test_large(folio)".
->>>>>
->>>>> b) Discard the PMD-mapped THP due to lazyfree directly. Can that
->>>>> co-exist with mlock and what would be the problem here with mlock?
->>>>>
->>>>>
->>>
->>> Thanks a lot for clarifying!
->>>
->>>>> So if the check is required in this patch, we really have to understand
->>>>> why. If not, we should better drop it from this patch.
->>>>>
->>>>> At least my opinion, still struggling to understand why it would be
->>>>> required (I have 0 knowledge about mlock interaction with large folios :) ).
->>>>>
->>>>
->>>> Looking at that series, in folio_references_one(), we do
->>>>
->>>>                           if (!folio_test_large(folio) || !pvmw.pte) {
->>>>                                   /* Restore the mlock which got missed */
->>>>                                   mlock_vma_folio(folio, vma);
->>>>                                   page_vma_mapped_walk_done(&pvmw);
->>>>                                   pra->vm_flags |= VM_LOCKED;
->>>>                                   return false; /* To break the loop */
->>>>                           }
->>>>
->>>> I wonder if we want that here as well now: in case of lazyfree we
->>>> would not back off, right?
->>>>
->>>> But I'm not sure if lazyfree in mlocked areas are even possible.
->>>>
->>>> Adding the "!pvmw.pte" would be much clearer to me than the flag check.
->>>
->>> Hmm... How about we drop it from this patch for now, and add it back if needed
->>> in the future?
->>
->> If we can rule out that MADV_FREE + mlock() keeps working as expected in
->> the PMD-mapped case, we're good.
->>
->> Can we rule that out? (especially for MADV_FREE followed by mlock())
+On 05.06.24 18:16, Yang Shi wrote:
 > 
-> Perhaps we don't worry about that.
 > 
-> IIUC, without that check, MADV_FREE + mlock() still works as expected in
-> the PMD-mapped case, since if encountering a large folio in a VM_LOCKED
-> VMA range, we will stop the page walk immediately.
+> On 6/5/24 8:25 AM, Peter Xu wrote:
+>> On Tue, Jun 04, 2024 at 04:48:57PM -0700, Yang Shi wrote:
+>>> The below bug was reported on a non-SMP kernel:
+>>>
+>>> [  275.267158][ T4335] ------------[ cut here ]------------
+>>> [  275.267949][ T4335] kernel BUG at include/linux/page_ref.h:275!
+>>> [  275.268526][ T4335] invalid opcode: 0000 [#1] KASAN PTI
+>>> [  275.269001][ T4335] CPU: 0 PID: 4335 Comm: trinity-c3 Not tainted 6.7.0-rc4-00061-gefa7df3e3bb5 #1
+>>> [  275.269787][ T4335] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+>>> [  275.270679][ T4335] RIP: 0010:try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
+>>> [  275.272813][ T4335] RSP: 0018:ffffc90005dcf650 EFLAGS: 00010202
+>>> [  275.273346][ T4335] RAX: 0000000000000246 RBX: ffffea00066e0000 RCX: 0000000000000000
+>>> [  275.274032][ T4335] RDX: fffff94000cdc007 RSI: 0000000000000004 RDI: ffffea00066e0034
+>>> [  275.274719][ T4335] RBP: ffffea00066e0000 R08: 0000000000000000 R09: fffff94000cdc006
+>>> [  275.275404][ T4335] R10: ffffea00066e0037 R11: 0000000000000000 R12: 0000000000000136
+>>> [  275.276106][ T4335] R13: ffffea00066e0034 R14: dffffc0000000000 R15: ffffea00066e0008
+>>> [  275.276790][ T4335] FS:  00007fa2f9b61740(0000) GS:ffffffff89d0d000(0000) knlGS:0000000000000000
+>>> [  275.277570][ T4335] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [  275.278143][ T4335] CR2: 00007fa2f6c00000 CR3: 0000000134b04000 CR4: 00000000000406f0
+>>> [  275.278833][ T4335] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>> [  275.279521][ T4335] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>> [  275.280201][ T4335] Call Trace:
+>>> [  275.280499][ T4335]  <TASK>
+>>> [ 275.280751][ T4335] ? die (arch/x86/kernel/dumpstack.c:421 arch/x86/kernel/dumpstack.c:434 arch/x86/kernel/dumpstack.c:447)
+>>> [ 275.281087][ T4335] ? do_trap (arch/x86/kernel/traps.c:112 arch/x86/kernel/traps.c:153)
+>>> [ 275.281463][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
+>>> [ 275.281884][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
+>>> [ 275.282300][ T4335] ? do_error_trap (arch/x86/kernel/traps.c:174)
+>>> [ 275.282711][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
+>>> [ 275.283129][ T4335] ? handle_invalid_op (arch/x86/kernel/traps.c:212)
+>>> [ 275.283561][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
+>>> [ 275.283990][ T4335] ? exc_invalid_op (arch/x86/kernel/traps.c:264)
+>>> [ 275.284415][ T4335] ? asm_exc_invalid_op (arch/x86/include/asm/idtentry.h:568)
+>>> [ 275.284859][ T4335] ? try_get_folio (include/linux/page_ref.h:275 (discriminator 3) mm/gup.c:79 (discriminator 3))
+>>> [ 275.285278][ T4335] try_grab_folio (mm/gup.c:148)
+>>> [ 275.285684][ T4335] __get_user_pages (mm/gup.c:1297 (discriminator 1))
+>>> [ 275.286111][ T4335] ? __pfx___get_user_pages (mm/gup.c:1188)
+>>> [ 275.286579][ T4335] ? __pfx_validate_chain (kernel/locking/lockdep.c:3825)
+>>> [ 275.287034][ T4335] ? mark_lock (kernel/locking/lockdep.c:4656 (discriminator 1))
+>>> [ 275.287416][ T4335] __gup_longterm_locked (mm/gup.c:1509 mm/gup.c:2209)
+>>> [ 275.288192][ T4335] ? __pfx___gup_longterm_locked (mm/gup.c:2204)
+>>> [ 275.288697][ T4335] ? __pfx_lock_acquire (kernel/locking/lockdep.c:5722)
+>>> [ 275.289135][ T4335] ? __pfx___might_resched (kernel/sched/core.c:10106)
+>>> [ 275.289595][ T4335] pin_user_pages_remote (mm/gup.c:3350)
+>>> [ 275.290041][ T4335] ? __pfx_pin_user_pages_remote (mm/gup.c:3350)
+>>> [ 275.290545][ T4335] ? find_held_lock (kernel/locking/lockdep.c:5244 (discriminator 1))
+>>> [ 275.290961][ T4335] ? mm_access (kernel/fork.c:1573)
+>>> [ 275.291353][ T4335] process_vm_rw_single_vec+0x142/0x360
+>>> [ 275.291900][ T4335] ? __pfx_process_vm_rw_single_vec+0x10/0x10
+>>> [ 275.292471][ T4335] ? mm_access (kernel/fork.c:1573)
+>>> [ 275.292859][ T4335] process_vm_rw_core+0x272/0x4e0
+>>> [ 275.293384][ T4335] ? hlock_class (arch/x86/include/asm/bitops.h:227 arch/x86/include/asm/bitops.h:239 include/asm-generic/bitops/instrumented-non-atomic.h:142 kernel/locking/lockdep.c:228)
+>>> [ 275.293780][ T4335] ? __pfx_process_vm_rw_core+0x10/0x10
+>>> [ 275.294350][ T4335] process_vm_rw (mm/process_vm_access.c:284)
+>>> [ 275.294748][ T4335] ? __pfx_process_vm_rw (mm/process_vm_access.c:259)
+>>> [ 275.295197][ T4335] ? __task_pid_nr_ns (include/linux/rcupdate.h:306 (discriminator 1) include/linux/rcupdate.h:780 (discriminator 1) kernel/pid.c:504 (discriminator 1))
+>>> [ 275.295634][ T4335] __x64_sys_process_vm_readv (mm/process_vm_access.c:291)
+>>> [ 275.296139][ T4335] ? syscall_enter_from_user_mode (kernel/entry/common.c:94 kernel/entry/common.c:112)
+>>> [ 275.296642][ T4335] do_syscall_64 (arch/x86/entry/common.c:51 (discriminator 1) arch/x86/entry/common.c:82 (discriminator 1))
+>>> [ 275.297032][ T4335] ? __task_pid_nr_ns (include/linux/rcupdate.h:306 (discriminator 1) include/linux/rcupdate.h:780 (discriminator 1) kernel/pid.c:504 (discriminator 1))
+>>> [ 275.297470][ T4335] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.c:4300 kernel/locking/lockdep.c:4359)
+>>> [ 275.297988][ T4335] ? do_syscall_64 (arch/x86/include/asm/cpufeature.h:171 arch/x86/entry/common.c:97)
+>>> [ 275.298389][ T4335] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.c:4300 kernel/locking/lockdep.c:4359)
+>>> [ 275.298906][ T4335] ? do_syscall_64 (arch/x86/include/asm/cpufeature.h:171 arch/x86/entry/common.c:97)
+>>> [ 275.299304][ T4335] ? do_syscall_64 (arch/x86/include/asm/cpufeature.h:171 arch/x86/entry/common.c:97)
+>>> [ 275.299703][ T4335] ? do_syscall_64 (arch/x86/include/asm/cpufeature.h:171 arch/x86/entry/common.c:97)
+>>> [ 275.300115][ T4335] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:129)
+>>>
+>>> This BUG is the VM_BUG_ON(!in_atomic() && !irqs_disabled()) assertion in
+>>> folio_ref_try_add_rcu() for non-SMP kernel.
+>>>
+>>> The process_vm_readv() calls GUP to pin the THP. An optimization for
+>>> pinning THP instroduced by commit 57edfcfd3419 ("mm/gup: accelerate thp
+>>> gup even for "pages != NULL"") calls try_grab_folio() to pin the THP,
+>>> but try_grab_folio() is supposed to be called in atomic context for
+>>> non-SMP kernel, for example, irq disabled or preemption disabled, due to
+>>> the optimization introduced by commit e286781d5f2e ("mm: speculative
+>>> page references").
+>>>
+>>> The commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
+>>> boundaries") is not actually the root cause although it was bisected to.
+>>> It just makes the problem exposed more likely.
+>>>
+>>> The follow up discussion suggested the optimization for non-SMP kernel
+>>> may be out-dated and not worth it anymore [1].  So removing the
+>>> optimization to silence the BUG.
+>>>
+>>> However calling try_grab_folio() in GUP slow path actually is
+>>> unnecessary, so the following patch will clean this up.
+>>>
+>>> [1] https://lore.kernel.org/linux-mm/821cf1d6-92b9-4ac4-bacc-d8f2364ac14f@paulmck-laptop/
+>>> Fixes: 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages != NULL"")
+>>> Reported-by: kernel test robot <oliver.sang@intel.com>
+>>> Cc: linux-stable <stable@vger.kernel.org> v6.6+
+>>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+>> Just to mention, IMHO it'll still be nicer if we keep the 1st fix patch
+>> only have the folio_ref_try_add_rcu() changes, it'll be easier for
+>> backport.
+>>
+>> Now this patch contains not only that but also logically a cleanup patch
+>> that replaces old rcu calls to folio_try_get().  But squashing these may
+>> mean we need explicit backport to 6.6 depending on whether those lines
+>> changed, meanwhile the cleanup part may not be justfied to be backported in
+>> the first place.  I'll leave that to you to decide, no strong feelings here.
+> 
+> Neither do I. But I slightly prefer have the patch as is for mainline
+> since removing the #ifdef and the clean up lead by it seems
+> self-contained and naturally integral. If it can not be applied to
+> stable tree without conflict, I can generate a separate patch for stable
+> tree with the removing #ifdef part. The effort should be trivial.
 
+Agreed
 
-Can you point me at the code (especially considering patch #3?)
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
