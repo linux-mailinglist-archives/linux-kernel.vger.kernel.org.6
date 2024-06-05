@@ -1,132 +1,123 @@
-Return-Path: <linux-kernel+bounces-203163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680768FD75D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:15:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DAF78FD70C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7903B244A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD331C21EDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC9F15A873;
-	Wed,  5 Jun 2024 20:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C87157A4F;
+	Wed,  5 Jun 2024 20:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="OwFWNGlh"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjlnSwCZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96720158875;
-	Wed,  5 Jun 2024 20:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6A5155356;
+	Wed,  5 Jun 2024 20:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717618536; cv=none; b=Z9dVlmBtMJO9c2N1aQyRN/qGkWVZArTfgeJ2dBsr1/d3k1ExYORnpL8l2qrDqko3qz+5JS4t6lfieitTY78K2m/89ejNwlXtSUHjp2lZnn4oTdw32On32bYqDt6KVNrUuo5sq5nggCMR8HmzmgemA0RYAeiZCpdBJivVF//NC5o=
+	t=1717617968; cv=none; b=VNhZFshvSU1yDi/yrH7Z7tNemStU0LO/Hc1aiPKBJmlLdVvRTGE7suutIFsD3X6+2kX/c8LSYeqSAqaFbi4fPHI98kt6Dq+6C6EygagDtvnqWaggfvaK1TVkay1Ikycm0TaVKKtD4h+adLI6Or8AE2VQ/LWc5RKWGck7JZhSG3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717618536; c=relaxed/simple;
-	bh=zxD1cwFWyYIiwsBdznmwI88r68Qo758+nAqPtOAaj9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EzP6P8vpbOPZlMnJh+bFOByWNeDUChSn8QTYqJugp3IZ1zqwxoXSwDf/lcpI+p2wCba0Y8P7EACNk2D5mIFhP1IN3hZayioMTPFS/vfVAbBaMGB+VigZ4oK/KgNB6WXtStteSHeVareRlh9G8JaXVj3ZbmFGpf7AlmCqOd/X6MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=OwFWNGlh reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.1.0)
- id 54c4fb9e1115c09a; Wed, 5 Jun 2024 21:15:29 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3FD77D503F3;
-	Wed,  5 Jun 2024 21:15:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1717614928;
-	bh=zxD1cwFWyYIiwsBdznmwI88r68Qo758+nAqPtOAaj9s=;
-	h=From:To:Cc:Subject:Date;
-	b=OwFWNGlhDNnwJ8Gkk+PMkrpaaukYQm1FN/qCMHbEyNAMbb92BAQgfi6+JXWHxiMB8
-	 yj0FDzGSfK6zUoLcT9j/GygxUzOpHw6PVDFeufjSoXQKLYd5LtvyozD9ghn2F7e62p
-	 G/H6l5LiIH8CtQ8vk/UY62UyzD7znJTfHeqRnhTAZiGLkMlsXw+/lpnAowymYbv4cu
-	 GKKT4odam/PFALihFWrbUHF9PxNY2Nq5A6YHFNRUkKevQVFKOOmCHylpliUJOXRTGo
-	 ulgj09rwvhGDdrBitVWTgDQK4Z8DNLpcLXUiK9ctkbmdaXEOi8/sEZvAx6yPlY+QOf
-	 OelU0Sasewnug==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Tibor Billes <tbilles@gmx.com>, Doug Smythies <dsmythies@telus.net>,
- Linux ACPI <linux-acpi@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v1] thermal: ACPI: Invalidate trip points with temperature of 0 or
- below
-Date: Wed, 05 Jun 2024 21:15:10 +0200
-Message-ID: <5784853.DvuYhMxLoT@kreacher>
+	s=arc-20240116; t=1717617968; c=relaxed/simple;
+	bh=tcIV154yjEx+jZi6w1gwf86t72QgsTXPe1vDfXnptNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sbhRV1m3+S0srhXvnOei6wjfjWekFNbLlfa0wCUHd3D2yd1oRR2+Oo8thOIikRrYQr24Ag5mNlhKfToUWv6uzitw0TpJqDN7gb+DbuX7avs9gK0Z9gm80H5ZLQC+9BGv13EmoMdGLEZyRP0vO+BwpEJ3mxXm607XYIdWkpDdw4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjlnSwCZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC328C2BD11;
+	Wed,  5 Jun 2024 20:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717617968;
+	bh=tcIV154yjEx+jZi6w1gwf86t72QgsTXPe1vDfXnptNM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LjlnSwCZ3QBn+iv6bMHUH81hwuZF4ddVoebpRp3oNUHaWIyj5D7tXJ5us/UaGcwQu
+	 3dWqyQbno52GB0lf1+Y+PQvumgnJ2zb+Mj0nK3is/r37UiFc6PFD++cG7isW0GdaBM
+	 M1Mo51dyfbb2qxEXDRlCAxvG+EJW9e5L3Dqvl+S/S3tCUdhcy5oM9R0+yq58dOXa8t
+	 SCVWiByboBeyJkjHWQtBMtt/izj/vt+PSgEDX/8rUW+h9v5gxYXdfFIVbcbMdXfnzF
+	 Xl4NuCMELC8BzSMsxsh9gbF7TlZ9JWFbahEVfq9MitPIV78rcDIHurx7ebWSeVKFiD
+	 BzB/piWdTbFlg==
+Date: Wed, 5 Jun 2024 21:06:02 +0100
+From: Simon Horman <horms@kernel.org>
+To: =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
+Cc: kernel test robot <lkp@intel.com>, netdev@vger.kernel.org,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	aconole@redhat.com, echaudro@redhat.com, i.maximets@ovn.org,
+	dev@openvswitch.org, Donald Hunter <donald.hunter@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
+Message-ID: <20240605200602.GB791188@kernel.org>
+References: <20240603185647.2310748-6-amorenoz@redhat.com>
+ <202406050852.hDtfskO0-lkp@intel.com>
+ <CAG=2xmOQBaUki43jpUnP7F-RvkxXroQ46_CuXvbQyps=MvvYAg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdeliedgudefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepledprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtsghilhhlvghssehgmhigrdgtohhmpdhrtghpthhtohepughsmhihthhhihgvshesthgvlhhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
- thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=9 Fuz1=9 Fuz2=9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG=2xmOQBaUki43jpUnP7F-RvkxXroQ46_CuXvbQyps=MvvYAg@mail.gmail.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Jun 05, 2024 at 07:31:55PM +0000, Adrián Moreno wrote:
+> On Wed, Jun 05, 2024 at 08:29:22AM GMT, kernel test robot wrote:
+> > Hi Adrian,
+> >
+> > kernel test robot noticed the following build errors:
+> >
+> > [auto build test ERROR on net-next/main]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Adrian-Moreno/net-psample-add-user-cookie/20240604-030055
+> > base:   net-next/main
+> > patch link:    https://lore.kernel.org/r/20240603185647.2310748-6-amorenoz%40redhat.com
+> > patch subject: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
+> > config: s390-randconfig-002-20240605 (https://download.01.org/0day-ci/archive/20240605/202406050852.hDtfskO0-lkp@intel.com/config)
+> > compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406050852.hDtfskO0-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202406050852.hDtfskO0-lkp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    s390x-linux-ld: net/openvswitch/actions.o: in function `do_execute_actions':
+> > >> actions.c:(.text+0x1d5c): undefined reference to `psample_sample_packet'
+> >
+> 
+> Thanks robot!
+> 
+> OK, I think I know what's wrong. There is an optional dependency with
+> PSAMPLE. Openvswitch module does compile without PSAMPLE but there is a
+> link error if OPENVSWITCH=y and PSAMPLE=m.
+> 
+> Looking into how to express this in the Kconfig, I'm planning to add the
+> following to the next version of the series.
+> 
+> diff --git a/net/openvswitch/Kconfig b/net/openvswitch/Kconfig
+> index 29a7081858cd..2535f3f9f462 100644
+> --- a/net/openvswitch/Kconfig
+> +++ b/net/openvswitch/Kconfig
+> @@ -10,6 +10,7 @@ config OPENVSWITCH
+>  		   (NF_CONNTRACK && ((!NF_DEFRAG_IPV6 || NF_DEFRAG_IPV6) && \
+>  				     (!NF_NAT || NF_NAT) && \
+>  				     (!NETFILTER_CONNCOUNT || NETFILTER_CONNCOUNT)))
+> +	depends on PSAMPLE || !PSAMPLE
+>  	select LIBCRC32C
+>  	select MPLS
+>  	select NET_MPLS_GSO
+> 
 
-It is reported that commit 950210887670 ("thermal: core: Drop
-trips_disabled bitmask") causes the maximum frequency of CPUs to drop
-further down with every system sleep-wake cycle on Intel Core i7-4710HQ.
+Thanks Adrián,
 
-This turns out to be due to a trip point whose temperature is equal to 0
-degrees Celsius which is acted on every time the system wakes from sleep.
-
-Before commit 950210887670 this trip point would be disabled wia the
-trips_disabled bitmask, but now it is treated as a valid one.
-
-Since ACPI thermal control is generally about protection against
-overheating, trip points with temperature of 0 centigrade or below are
-not particularly useful there, so initialize them all as invalid which
-fixes the problem at hand.
-
-Fixes: 950210887670 ("thermal: core: Drop trips_disabled bitmask")
-Closes: https://lore.kernel.org/linux-pm/3f71747b-f852-4ee0-b384-cf46b2aefa3f@gmx.com
-Reported-by: Tibor Billes <tbilles@gmx.com>
-Tested-by: Tibor Billes <tbilles@gmx.com>
-Cc: 6.7+ <stable@vger.kernel.org> # 6.7+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/thermal.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-Index: linux-pm/drivers/acpi/thermal.c
-===================================================================
---- linux-pm.orig/drivers/acpi/thermal.c
-+++ linux-pm/drivers/acpi/thermal.c
-@@ -168,11 +168,17 @@ static int acpi_thermal_get_polling_freq
- 
- static int acpi_thermal_temp(struct acpi_thermal *tz, int temp_deci_k)
- {
-+	int temp;
-+
- 	if (temp_deci_k == THERMAL_TEMP_INVALID)
- 		return THERMAL_TEMP_INVALID;
- 
--	return deci_kelvin_to_millicelsius_with_offset(temp_deci_k,
-+	temp = deci_kelvin_to_millicelsius_with_offset(temp_deci_k,
- 						       tz->kelvin_offset);
-+	if (temp <= 0)
-+		return THERMAL_TEMP_INVALID;
-+
-+	return temp;
- }
- 
- static bool acpi_thermal_trip_valid(struct acpi_thermal_trip *acpi_trip)
-
-
-
+I both agree that should work, and tested with the config at the link above
+and found that it does work.
 
