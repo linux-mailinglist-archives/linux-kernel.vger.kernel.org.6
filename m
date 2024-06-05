@@ -1,119 +1,152 @@
-Return-Path: <linux-kernel+bounces-202159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEF08FC87A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:59:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319D38FC87E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C0A3B226B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE4D283835
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DCA191480;
-	Wed,  5 Jun 2024 09:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE53190045;
+	Wed,  5 Jun 2024 09:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uHEzxeB+"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zk6XJy90"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DE819147E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9804963B;
+	Wed,  5 Jun 2024 09:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717581496; cv=none; b=AMZEB44gBYUHiv3mSkxuYa4fReF/InAlkkWntAQeyK23UKYcMQodyV7cvpFEOJdmwJr4px60Vd1d9LtWhHIA58LqjDOIbihrdi9fjBf5a5HmjpUfejIZHQ4kQGS90sO7kaXV2Ldl3/21tE+iBQeBy2TLIFu+einWqSQYTgQ0I4k=
+	t=1717581527; cv=none; b=GADZMAnk8fPmCQxE7NYlpkqYCtAhop2gKDisfkn3N3WiS6wo0+rFuvn8OfkoiAap8WYAIxXu9ClFynx02lDlv3cPCs2PvOkZoHqNPEYBmggv2UPCNtTpv8uGx+OWA5XMb4HRrWuzI/WBVEPM9eXlXG9Kv9SSl4jFttlOcFoC4q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717581496; c=relaxed/simple;
-	bh=hDA71fRwtUYEBuYxCMd/F/n8HA3nU7ezWt1QeUFZ3Ec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SL+hwST6bTveenO4LGEvCGdQ+i3bxKZmy/B0nuC3fc7ii9gxm+alMynE2qTqNcammVh9ddkdolSVG6K6CK0T6Wftgd7bINQ8qu4LJaAl7AD27h51b77RkZDNHzF7fpNoARu/NrJng+sueRaNuf6Id8jaLNBOXAVDHfL+1apkuGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uHEzxeB+; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfa59c35e44so2126788276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717581493; x=1718186293; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BaOO1MZ5brJXt2IuBE79MJkWfpJ44KhCLFOE62rdqkI=;
-        b=uHEzxeB+YaaHMrf7crpk9SxBfCJ6MsmoFqEY49wnjbe+Tpp2Pv+fzIQt2mlKF5WJWg
-         0SZgm35+vzZmJmRVkfHu1CDUqUzgLnyOtApr6ebAxGwZUEJGBdaVemla3Ew6+hnORTwu
-         waUb80yGK0pSx4ijx2CI6cCmDoZsa2+0HHUHi/QPIrqgG/sLBlbvD76qX3myZagPl5qs
-         Mz/Nii+XmPERh6lsBkjRm/chGpLz887W1XpdTjVdAx05EpE6uvy3oSC9WxAF++kX2LC1
-         PB5WDH27zG+9d+O5u3rIzu/j187yJqtjJpt1AwKpyMf8SfzuLxbzxFojPUp+b/y82FJH
-         Lrdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717581493; x=1718186293;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BaOO1MZ5brJXt2IuBE79MJkWfpJ44KhCLFOE62rdqkI=;
-        b=i98wC9yK3NiO+90DTGWNhbbcxLH4HIFgB3e5lR0vTV66I60hdyMgI6zoxdYP5+LnU0
-         UX05v5i+BlNLgtSFEr5svu4xmm9D8DDGxJUZFhsWIsbZLWRua1fpeKkaiJXKQBzGPsYz
-         LofstnUNQM/m0kUlydUX44vs+7an7AwmS/XWZBjUkZnl4U7FDfuGBjR2pTwsDUbOtm4s
-         GxjxtcoDA5unvcL/llUDVsXvcotxHHPZ9uFadJdd+Z9Swc/6zj1EnppspLwUQSbRxLZd
-         mkkdrIRmVk+kbHyX8/P6dPN8Jj1WHyfT7xTkBw3zqTC9znXWD1QB70hkPTJSSn39ZSe8
-         psWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSGOkcI7gYLfnc4pmX1/mvggycYNug4h0B+YOLkB6Q0E1UnKsqVWcYWCy67v+74FLmJg03Av1xGF+/MzhLu5otrBC1wBIEFL48F06A
-X-Gm-Message-State: AOJu0Yz9FizE1ioWh4TNA9yiS5nSzyXLfJCBGnGj1Q6x4QTuSILay3/1
-	pi0t5Yct7vv7ksUvMLyAluaykrlH9ypI9xrtngElOPvgU5FjUMfdUXR7t8Ycb6X3MrJZaN60edD
-	UyVsllW1EUsti7+cvh6l28i5aHAb9vBDvxEnI4w==
-X-Google-Smtp-Source: AGHT+IEdBB7S8dTAffaTqVKyoAg42mxePBAC5qgCxYIc7hXyLIMAXwcRWrwgP4N3N9dB3leYuKj1mXl+ldO5b05Fl/Q=
-X-Received: by 2002:a25:c544:0:b0:df7:955f:9b99 with SMTP id
- 3f1490d57ef6-dfacaced9aamr1925384276.47.1717581493556; Wed, 05 Jun 2024
- 02:58:13 -0700 (PDT)
+	s=arc-20240116; t=1717581527; c=relaxed/simple;
+	bh=VsCLmW5NRHHHf6eHKMLnWQqhmdGm5TQVaJcQ/lKbH6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VXEVs8spyaK7q/FqCvcOJZ+Y5gL5cXaLometRX0ESeGIvWaRO3mRg5DAhBSwBIpA9/dsoweFPaIqQ0t85was7a5603dnsvhY9Mp/eVJnv0bMRmbjMoo3o4RUL3gSk6nEvuQ59bPiuZhme4rXdeV4suCfYsZklonq/Zj4q5a9Y7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zk6XJy90; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 937C4C3277B;
+	Wed,  5 Jun 2024 09:58:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717581527;
+	bh=VsCLmW5NRHHHf6eHKMLnWQqhmdGm5TQVaJcQ/lKbH6Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zk6XJy90IzWtKMAnZpJSpHRLfwpS8wExCNavaW6/qwV0gsO00A2JkyEscF2LUGRVs
+	 YzhXyf12Ph3umFHHW2ACQ727HzeHOWkFSiU9DnHoA6KQVUewVr4cyqZyYzQ78X9oK4
+	 YECYQ/Q9xsKDoGK7SXd8TEa1nxaa/SoBikPo2MGk4UU0U1XbG94uziszaUX4w+RiDs
+	 XHhRFr/3lrQ7JImMGCnlGOalpGnM0IM+38I7sKK+cXJmTUG1HnGQExlEk8G7j8nZno
+	 75qBl3TxYdI5jugR+CrwxY3JtNEfPkGUpPQOvEPNyj50ZfOrp7K7z6RPAaojn66hUT
+	 XgmIoEpAiRLRQ==
+Message-ID: <9c32a07a-9af0-479d-92d3-1d3076f76e15@kernel.org>
+Date: Wed, 5 Jun 2024 11:58:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514131833.911703-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20240514131833.911703-1-peng.fan@oss.nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 5 Jun 2024 11:57:37 +0200
-Message-ID: <CAPDyKFrs1YjPOEW9eVa4HK+Ct-gnBWB6nRCAvNGvmwBYqnCPZA@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: arm: scmi_pm_domain: set flag GENPD_FLAG_ACTIVE_WAKEUP
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net 1/3] selftests: net: lib: support errexit with
+ busywait
+Content-Language: en-GB
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ Petr Machata <petrm@nvidia.com>, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Geliang Tang <geliang@kernel.org>
+References: <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-0-b3afadd368c9@kernel.org>
+ <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-1-b3afadd368c9@kernel.org>
+ <ZmAzY4eE9eaJ0IpE@Laptop-X1>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <ZmAzY4eE9eaJ0IpE@Laptop-X1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 14 May 2024 at 15:10, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Set flag GENPD_FLAG_ACTIVE_WAKEUP to scmi genpd, then when a device
-> is set as wakeup source using device_set_wakeup_enable, the power
-> domain could be kept on to make sure the device could wakeup the system.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Hi Hangbin,
 
-Applied for next, thanks!
+Thank you for your reply!
 
-Kind regards
-Uffe
+On 05/06/2024 11:44, Hangbin Liu wrote:
+> On Wed, Jun 05, 2024 at 11:21:16AM +0200, Matthieu Baerts (NGI0) wrote:
+>> If errexit is enabled ('set -e'), loopy_wait -- or busywait and others
+>> using it -- will stop after the first failure.
+>>
+>> Note that if the returned status of loopy_wait is checked, and even if
+>> errexit is enabled, Bash will not stop at the first error.
+>>
+>> Fixes: 25ae948b4478 ("selftests/net: add lib.sh")
+> 
+> Not sure if the fixes tag should be c5341bcc337c ("selftests: mlxsw: Add a
+> self-test for port-default priority"), so the fixes could be backported to
+> stable kernel for forwarding/lib.sh.
 
+Good point, I didn't notice it was coming from there.
 
-> ---
->  drivers/pmdomain/arm/scmi_pm_domain.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/pmdomain/arm/scmi_pm_domain.c b/drivers/pmdomain/arm/scmi_pm_domain.c
-> index 0e05a79de82d..a7784a8bb5db 100644
-> --- a/drivers/pmdomain/arm/scmi_pm_domain.c
-> +++ b/drivers/pmdomain/arm/scmi_pm_domain.c
-> @@ -102,6 +102,7 @@ static int scmi_pm_domain_probe(struct scmi_device *sdev)
->                 scmi_pd->genpd.name = scmi_pd->name;
->                 scmi_pd->genpd.power_off = scmi_pd_power_off;
->                 scmi_pd->genpd.power_on = scmi_pd_power_on;
-> +               scmi_pd->genpd.flags = GENPD_FLAG_ACTIVE_WAKEUP;
->
->                 pm_genpd_init(&scmi_pd->genpd, NULL,
->                               state == SCMI_POWER_STATE_GENERIC_OFF);
-> --
-> 2.37.1
->
+I don't think that's needed: 'net/forwarding/lib.sh' is far from being
+compatible with 'errexit', please look at all the utilisations of '$?'.
+
+For 'net/lib.sh', that's different: some functions explicitly check for
+'errexit' support. If I'm not mistaken, I fixed the only place where it
+was not compatible with 'errexit'.
+
+> Others looks good to me.
+> 
+> Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
+
+Thank you for the review!
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
