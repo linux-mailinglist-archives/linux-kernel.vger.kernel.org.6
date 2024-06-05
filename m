@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-203292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3028FD903
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:33:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 174ED8FD905
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5136B2281C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:33:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86B85B2392E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5855215FA8C;
-	Wed,  5 Jun 2024 21:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088BD160791;
+	Wed,  5 Jun 2024 21:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klG6AWkd"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cb+5Zd6o"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D9619642A;
-	Wed,  5 Jun 2024 21:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E119615FD1E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717622643; cv=none; b=jvs/mLrmoWMCA1eM1Jzat/uYPraM/Pdcmi78n7Mv/oKj0LaawsWWjbUpMJvPs/bR3JMMhLj3lBo34TKti8Zg9ynyZ8QuemQJ05Bm68N1pPtW79syOStO4AtCFMRWegN1QG9Sl3KeDY0IfkRI0GQL36GhgNDKD+GgmtfeT9fMmYo=
+	t=1717622738; cv=none; b=iqxojnCZky8r2s+Q2+iRRqY2eaaWqNmsas3u8JGq272xmPJUfjX3rmxTMedGSbV2rj8IzyitIfjnFXm3ROoYghe6VkL2ZnyPLSfIonNLxxsSGbLiY/aAk7nH3q8RGJ74BKCgs7n4dF+Ig3x0+5BqdoDUNLY01izSpRBhXnZtB9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717622643; c=relaxed/simple;
-	bh=k0wEMVV2/kLderbs/W+38MVdsxNr9aKZ33ehYv423y8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tzrB0Rgd+L6WqfKjw9b+YAUnikNnHq30jWrx/7K8lwbRvwADtPs2RXazm3rRkW4jJzjRMcKeIRt8KLA2B1P4TB9MVKh1/9LIQy6c2WPe2ks6VZJ6VcC5wYoHrzfNEunJA76xQo1h0NgRSg0T7q9zYLbi/ZpQRruiSSc/PXOJLmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klG6AWkd; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6c53a315c6eso189599a12.3;
-        Wed, 05 Jun 2024 14:24:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717622641; x=1718227441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TEnxTETK0rFGl7veDAfyPrBbDGYeHk9u0SUVvr1yaQk=;
-        b=klG6AWkdgNg0TZtXd/cVuaKUMaKmOy/qHLs+DF/pEQ1sZ1p73ATbtpLsEvx1mJzx2A
-         ymkHqGXXAz7Yd1Qd3edEm3TMF9cYsbKllYZOyEfVXrx+e3zOf0ZdSiJ5Gw8IHKz7k+gP
-         V/R5CTx1QudVFY+PpqiJZQprytQSVyTsympDSHhlb+w8NFB7Qiyxh6SWiwyxd/Vx2UrW
-         trvcY6UClJrfj7TgUL79X3aq5AS+jgHdy1a4+ph2DeZOUk1ufr68bxMeqMARyf2VqiQH
-         1pE3AN5nKiOE2N2JXv538WXRrH1zLVp4WLsbE9BOxvWnOJaHtK6MNBL1h8R20miANkHz
-         T20w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717622641; x=1718227441;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TEnxTETK0rFGl7veDAfyPrBbDGYeHk9u0SUVvr1yaQk=;
-        b=vV0gyMNMuohioFiUukgX0W/q/q/4zMR27CYRctBTL7sM3u86g9q7VcV1gXYWWG9yaM
-         nt4R6vZpw3pkZalRF/Y0EawAhb3UL9Yy+3x/a4N2rlPAHcdl5xHm3ErR7c3vwZdYaeLX
-         a5dlE3anbGesB8k0VKfcwOP0PzqMVPweO0vzR2eENySINeQkkCeJPg/V7RupPNrsSb52
-         6rUxqeQ89vsgyoXS0D2tgpv2NFMbnwM56yuGcu9w0MVP49D5L73jTUUAsfXwZUYzoJkF
-         JaQDsjZffIQhVRYwgQaGqJtMpj03sxGT0nKkTc/wScH2uj1vhBpjX7CzWgwwmTfsGdo4
-         yLvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeh6x3MnnPAI5H/Ydum76VQIN6wAYHiNAB15heWLemyrDKtXsD9ird6lYo2PFuZmb8SOaD0KCdCPrE6tnYr7MQVu5Z0uu4RepF0n4EHOUKOpM5KX9DLp8PXTAV25skp/faE1fuNs+2
-X-Gm-Message-State: AOJu0YxZYx5jNZFt/LjNqaA0djnBJfztAx5VtHyJNs/H8JN6HyztxElH
-	MfwIu3I0zH+AG8FBEYsgin7C4tj42upaXvs8gSzRk5j9/AoFTr9C
-X-Google-Smtp-Source: AGHT+IGrDuL4Tcy+8N1pC0DV9Wv9hU8i5ICvU98GSp0M8sQB57y48/AYA2i9L35BYMcG2jlrVaDxqQ==
-X-Received: by 2002:a17:90b:391:b0:2c1:9e9d:b9b5 with SMTP id 98e67ed59e1d1-2c27db15708mr3898081a91.15.1717622639960;
-        Wed, 05 Jun 2024 14:23:59 -0700 (PDT)
-Received: from dev0.. ([49.43.162.143])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c29c3884f8sm29370a91.37.2024.06.05.14.23.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 14:23:59 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: jain.abhinav177@gmail.com
-Cc: bhelgaas@google.com,
-	javier.carrasco.cruz@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	mahesh@linux.ibm.com,
-	oohall@gmail.com,
-	skhan@linuxfoundation.org
-Subject: [PATCH v2] PCI/AER: Print error message as per the TODO
-Date: Wed,  5 Jun 2024 21:23:44 +0000
-Message-Id: <20240605212344.21808-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240415161055.8316-1-jain.abhinav177@gmail.com>
-References: <20240415161055.8316-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1717622738; c=relaxed/simple;
+	bh=vPUsNLtvA3c1wzJPrmq0xqsqKfT7lCp9zPJqLgYvZgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfvnVHpcmn0ZIjI9mOwvIwFrWCiyR/VZ5f5ein1msuajUDD8AKRBcXVxrRW4NDLlgmiCYtKAEsQZuBg/KWEdQWRmtLC3ay8yECP9INsYMupwepk+icjwVVfoSZVl+LT7FIFLr1NIV6GC9otQHY8BS1zVZGxH52/K3wgSvryQmus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cb+5Zd6o; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717622735;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vPUsNLtvA3c1wzJPrmq0xqsqKfT7lCp9zPJqLgYvZgg=;
+	b=Cb+5Zd6o1HIngJypT+aa9uIyM+vmkI5gjS/RG3VcCXwZ5FeUYi6TPHOXFBZr0li7pjyzn5
+	u88hMEhnbku4bu8kPSYj7GNLa2wQlUfId4LvX11YkoQe4op+iTaDbd7wOqAc3qMXmESBNN
+	e4nv2RB1/9lBheW/2Y5tgp2s/3tINYA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-249-cJTSEEHmPlaMTdqrJfJyqQ-1; Wed, 05 Jun 2024 17:25:30 -0400
+X-MC-Unique: cJTSEEHmPlaMTdqrJfJyqQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9120A85A588;
+	Wed,  5 Jun 2024 21:25:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.62])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 7534A2166AF9;
+	Wed,  5 Jun 2024 21:25:24 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  5 Jun 2024 23:24:00 +0200 (CEST)
+Date: Wed, 5 Jun 2024 23:23:55 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to
+ uprobe_consumer
+Message-ID: <20240605212354.GC19139@redhat.com>
+References: <20240604200221.377848-1-jolsa@kernel.org>
+ <20240604200221.377848-2-jolsa@kernel.org>
+ <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
+ <20240605175619.GH25006@redhat.com>
+ <CAEf4Bzbz3vi6ahkUu7yABV-QhkzNCF-ROcRjUpGjt0FRjfDuKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4Bzbz3vi6ahkUu7yABV-QhkzNCF-ROcRjUpGjt0FRjfDuKQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-Print the add device error in find_device_iter()
+On 06/05, Andrii Nakryiko wrote:
+>
+> WDYT? It's still fast, and it's simpler than the shadow stack idea, IMO.
 
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+Andrii. I am alredy sleeping, I'll try to read your email tomorrow.
+Right now I can only say that everything is simpler than the shadow stack ;)
 
-PATCH v1 link : https://lore.kernel.org/all/20240415161055.8316-1-jain.abhinav177@gmail.com/
+> P.S. Regardless, maybe we should change the order in which we insert
+> consumers to uprobe? Right now uprobe consumer added later will be
+> executed first, which, while not wrong, is counter-intuitive.
 
-Changes since v1:
- - Replaced pr_err() with pr_notice()
- - Removed unncessary whitespaces
----
- drivers/pci/pcie/aer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Agreed...
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 0e1ad2998116..8b820a74dd6b 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -885,8 +885,8 @@ static int find_device_iter(struct pci_dev *dev, void *data)
- 		/* List this device */
- 		if (add_error_device(e_info, dev)) {
- 			/* We cannot handle more... Stop iteration */
--			pr_err("find_device_iter: Cannot handle more devices.
--					Stopping iteration");
-+			pr_notice("%s: Cannot handle more devices - iteration stopped\n",
-+					__func__);
- 			return 1;
- 		}
- 
--- 
-2.34.1
+Even if currently this doesn't really matter, I guess it is supposed
+that uc->handler() is "non-intrusive".
+
+Oleg.
 
 
