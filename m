@@ -1,91 +1,101 @@
-Return-Path: <linux-kernel+bounces-202553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CEDF8FCDE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:56:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C954A8FCDEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB663293E2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:56:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91301C213B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A764561FF3;
-	Wed,  5 Jun 2024 12:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759F7195B35;
+	Wed,  5 Jun 2024 12:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGQUSfzG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICyBW73T"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7248188CBE;
-	Wed,  5 Jun 2024 12:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8ED188CBE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717589378; cv=none; b=Chno5NUvZe6/53P8ZiOc2o4N5QbE+4+R2E/scWsuQdptwsEhXbxF0tShDOMZiwcQpyCpSIx5/Rv3n8zX8XrrdYVdMwew3XZl8lagGiZhttWutVFiZdQkgsER7Hcpl1lPR6GOXuYxxss4F6DUVQIQmUueiTK2cqSMGhAhY5OhgZQ=
+	t=1717589394; cv=none; b=bsokXwOK1yF9kl2CLzq96VYzVoddjczVuTpXzXbS17P0KUg46pX/V8rs9JnF18vky0Z00aBsXDEqlCW/Ur0eLdkqNxhMA2hPNL37PiImexNyIHok7O3nzQUUT4R/YIHUKa/x+qDFOc3WcFpjRVYsoxr2sCJ7EWTim9JNqij251M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717589378; c=relaxed/simple;
-	bh=wVH3V0ZiYy8bt0BX0U/EChRzQBLdHlpA3Toip9MADsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nwUL59ThRAITPC8QvPN2opIhCA9Lv1dFH95FkpGkOiZG1hoPFw98DVIfrWpJA7jw3DB+bOFH3L/ZgwLeZhxOVCwTh0ZPCtA+/AQ3icNK3NZ9GpqwnRsjAGUNfjBT7fJxZEUEoR2ea7OnMvN64g4AiFPXumrh3+pi5niLsWlPaKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGQUSfzG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0145DC3277B;
-	Wed,  5 Jun 2024 12:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717589377;
-	bh=wVH3V0ZiYy8bt0BX0U/EChRzQBLdHlpA3Toip9MADsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TGQUSfzGSRPFgtqyyTejrHMnwLEc1VvFndNQqSzNSOuYXekLMeXzMm66OlwWhDuov
-	 pBt5MCbUOTrWSXGugJzufLDADDaEOJxy5qIiA4wKRtZIcNBLsjaRRakHSjbLiZ3svs
-	 6Wnz7lx/GrcH5KZ0PIiF6JH6Qu+PpQuw89zNgPULZJAxet+e0HWUFcbRGc2D/fnB2u
-	 h66SmDewopwrQV3byfAqLbObqj1A9kv8jC6iQ9LvJPR3G+bRB6vM0TB2YHU0P+3Gjq
-	 0C7DI8jwqsws1jgB7VsmI3+Bisw7aympJ6IJMn6QIcsfRYoo0Y1WAazUpgGfU7mQgS
-	 wZk/Z+DYM1Phg==
-Date: Wed, 5 Jun 2024 14:09:34 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: Re: [PATCH rcu 2/9] rcu: Reduce synchronize_rcu() delays when all
- wait heads are in use
-Message-ID: <ZmBVfpyEZeTIAHJn@localhost.localdomain>
-References: <657595c8-e86c-4594-a5b1-3c64a8275607@paulmck-laptop>
- <20240604222355.2370768-2-paulmck@kernel.org>
+	s=arc-20240116; t=1717589394; c=relaxed/simple;
+	bh=v6OkUYHTDnK30eTulYuTKHOA0EMuuGUmEQIuIvevXFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e52RluZc73i9TZofM7Lnlj7d5vwgeC7UnO3gNAsaCTxUmqbg+VwWihikuy3vAQ72igOoA+vKHY0+Ulvibk47V+owE+jvBjxqvelqCkAyltnoyAMM57T8NddTIjB599xkwaoYJX2ibl1vDqS0mPJnnhJ2VedDAmS+spcPpuV0nX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICyBW73T; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-df771cae64bso920804276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 05:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717589392; x=1718194192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v6OkUYHTDnK30eTulYuTKHOA0EMuuGUmEQIuIvevXFE=;
+        b=ICyBW73TT4Sq64wrXk+Lt8UP8Akc+p5qY3XbgD82HVn8ggPcKkKnJyhKVHxk27KxAL
+         r3gV13eMOQ0bw9fcdlTIlWUI8ipnbKwFo76nZTJu6FLL8ghnJPCxYSKsSC8pT1zOPKLT
+         o80jmRwGk6FpSsU4J67AdDWx5UB1ew7NfxuFr84bBgKlIZLvlkaoVMFerBozbfY0waF1
+         Rx0NZTCyPCPPXUaFzL+4L7As+I+W6Enamn8HXZcDUelubhgbhVdfHYe+lrykPWqW/75i
+         Gf3Ulq+r/w+zks4jcA5D2nWQpMaDfaO7uGwvhPqWKBz/ZxZBi1LsQTyXfUQqR4QoZdW2
+         JkWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717589392; x=1718194192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v6OkUYHTDnK30eTulYuTKHOA0EMuuGUmEQIuIvevXFE=;
+        b=CvIUWPwqTX/7Va5VgNaJxTUW5dNvOc8Ey2X1c4RmmR2xEwQgoHlMsIq44YbKbV5KMR
+         8biXcpVXaty6mxF9bEixJwsaiK1svh3KcPF/yCHdOv8zB9rCJknFb1A4XHzlwNw9z3f6
+         Ka9bZC2JmNiEo1eQJ3vP5g2yImaG0bOfMjiFgTDeZaHLIH8Ba/5zjxtkG9+2guiake4k
+         XMAKV9KQqtAlCHObSCfDRLZM9hR71CJ3Nxc2ougKPDyYkm80/R1DlTaRFwe/tzpoQ9y2
+         rljHBM8IEK/nTWcR3yAINqPs46p1Tvlv195g6F2ojnocPw6c4o+Q50CYr6pYbWqBwpT+
+         n18A==
+X-Forwarded-Encrypted: i=1; AJvYcCWs4+Jt9IDnTRnzhc2KAVRVUrhbb1bM/Bs8piLB7kufgqFlZsrWJJPX7rxc8YKVbxJfHvBbj8BgYJLJIfAlbpzgZEA4Oc/A2vbPdobn
+X-Gm-Message-State: AOJu0Ywmd7XnGYotixunTmkFSKlMCuGeivUGWQEqSvxqTn+QvwJqmDUB
+	L36VLS92e9BbMb35upRo1oixeRiuDqywe1Bm6nviGdsSvUuCJ0VuOTY1jSYML8FtVmpSJtGqVVD
+	tp6LAgh3fDAVltMPn8n8+afYE3GQ=
+X-Google-Smtp-Source: AGHT+IFutQyTj0+V5BeNMKPgv6bKnZ2VEqST1PWMxEl6FvshfTzXV2urEFBL/wOmjSW7uaTvLYelQHMwWtqnN9amCXg=
+X-Received: by 2002:a05:6902:260c:b0:dee:6ffb:b3ab with SMTP id
+ 3f1490d57ef6-dfacacca5a5mr1897470276.4.1717589392287; Wed, 05 Jun 2024
+ 05:09:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240604222355.2370768-2-paulmck@kernel.org>
+References: <CABXGCsOkiGxAfA9tPKjYX7wqjBZQxqK2PzTcW-RgLfgo8G74EQ@mail.gmail.com>
+ <87zfso6tfk.fsf@intel.com> <8fb634f8-7330-4cf4-a8ce-485af9c0a61a@intel.com>
+In-Reply-To: <8fb634f8-7330-4cf4-a8ce-485af9c0a61a@intel.com>
+From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date: Wed, 5 Jun 2024 17:09:41 +0500
+Message-ID: <CABXGCsPAdzVnSpT65NkMTi=jS1c0-bz=2XjnZWUkOxhrnkpgEQ@mail.gmail.com>
+Subject: Re: [Intel-wired-lan] 6.10; regression; bisected - commit
+ 86167183a17e cause info msg "trying to register non-static key"
+To: Sasha Neftin <sasha.neftin@intel.com>
+Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, vinschen@redhat.com, hkelam@marvell.com, 
+	naamax.meir@linux.intel.com, anthony.l.nguyen@intel.com, 
+	"Ruinskiy, Dima" <dima.ruinskiy@intel.com>, "Lifshits, Vitaly" <vitaly.lifshits@intel.com>, 
+	intel-wired-lan@lists.osuosl.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Tue, Jun 04, 2024 at 03:23:48PM -0700, Paul E. McKenney a écrit :
-> From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> 
-> When all wait heads are in use, which can happen when
-> rcu_sr_normal_gp_cleanup_work()'s callback processing
-> is slow, any new synchronize_rcu() user's rcu_synchronize
-> node's processing is deferred to future GP periods. This
-> can result in long list of synchronize_rcu() invocations
-> waiting for full grace period processing, which can delay
-> freeing of memory. Mitigate this problem by using first
-> node in the list as wait tail when all wait heads are in use.
-> While methods to speed up callback processing would be needed
-> to recover from this situation, allowing new nodes to complete
-> their grace period can help prevent delays due to a fixed
-> number of wait head nodes.
-> 
-> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+On Tue, May 21, 2024 at 10:34=E2=80=AFAM Sasha Neftin <sasha.neftin@intel.c=
+om> wrote:
+>
+> Any thought? Revert?
+>
 
-IIRC we agreed that this patch could be a step too far that
-made an already not so simple state machine even less simple,
-breaking the wait_head based flow.
+Sorry for the noise. Is there any solution?
 
-Should we postpone this change until it is observed that a workqueue
-not being scheduled for 5 grace periods is a real issue?
-
-Thanks.
+--=20
+Best Regards,
+Mike Gavrilov.
 
