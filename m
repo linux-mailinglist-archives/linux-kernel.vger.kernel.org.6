@@ -1,125 +1,92 @@
-Return-Path: <linux-kernel+bounces-203317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8688FD94A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:41:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230298FD94E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04C01C25636
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:40:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5143B21229
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE77516D303;
-	Wed,  5 Jun 2024 21:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D4815F409;
+	Wed,  5 Jun 2024 21:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbRgPVz3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gx1iWzgT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZtHx48XW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0B515FD1D;
-	Wed,  5 Jun 2024 21:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7861213A87A;
+	Wed,  5 Jun 2024 21:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717623528; cv=none; b=VkQG58//fkSH69PBjlBFdC+Qoq8cjVt3J7v/fSRQwaNZpw1LF4i7764fj9yCaAdbzD9lxFFlgd3EbJ4Z69Z8P2KGyTUkr2LavdPDOGjNSN/C8cbVbUaBI4Jk/BCS32jPdCxL9MQT5MNMOwIdBWrDo6x+nSaiiszsCtjL27KvMtU=
+	t=1717623707; cv=none; b=P7qAqAObnu+LXUSrOfMTNXvKIUB9MdoQzbhRKzWzXf4zfE9SxQMK2cPCUiAjRkKzXnt8iJH5QeAqfFhOUyBp+TMX36cxTTPtcVSS5at4MnVrjzYkL0GbsxgvJVRKyhZanEjfiUJRX1pHuW6MtruJbuV567miEa3rl1OI8rVDCOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717623528; c=relaxed/simple;
-	bh=CNxFneNBPrNP1nET8F9qHyjS2o3ddD0DMIOXFNfAuH0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rGQ/uoYIo1kXdHgCAAMauOOLV4Oz0EDuOJz5Bh4IqisrMMdw/q7AX1pZGcV5RJOIVxcmDLQsK+IQu2KNrrSpt76oiPFV3SkUrrqzx5hGv3EgbOFsTPBivVDcobaDSi7PrP/ycYIAUDEvvvk6AwiefW1L19N5KIyU335b1ozIcJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbRgPVz3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB2BC2BD11;
-	Wed,  5 Jun 2024 21:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717623527;
-	bh=CNxFneNBPrNP1nET8F9qHyjS2o3ddD0DMIOXFNfAuH0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gbRgPVz31SEFeEME1bDGWX7frKr1qO7XvXkbR2vJvHLWil/+UZ3EdftrhuTyDKAS2
-	 AT4UDtcVsARkaROa+FdTkRCmGplASgbdInf4Cpyn1k+7tCDd+MZ9BROIo21qUad2xy
-	 tQHUKKGWPQgutKXnUZnUdOJzq+l5i6b3GTiplRJhOBedjtzT3Y05eYnU+x0ZuHtvfZ
-	 99Qq42yhRiOk6eAfXeD2Pa/LV/Nt7NbCjwt3Im9y0RJmxU2OVVMdvVuCIL7zTO9npC
-	 iBuZd0TJht1RWM8kjTqgdNzE3o2YXW+oFa/fM7jTgWuK5Q1qWHvHjfeptkIpurAi+X
-	 yLqntnFFJz/Yg==
-From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Daniel Mack <daniel@zonque.org>, 
- Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Robert Jarzmik <robert.jarzmik@free.fr>
-In-Reply-To: <20240530151117.1130792-1-andriy.shevchenko@linux.intel.com>
-References: <20240530151117.1130792-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 00/11] spi: pxa2xx: Get rid of an additional layer
- in PCI driver
-Message-Id: <171762352584.566005.7179285192492328101.b4-ty@kernel.org>
-Date: Wed, 05 Jun 2024 22:38:45 +0100
+	s=arc-20240116; t=1717623707; c=relaxed/simple;
+	bh=m/okp4LUNPy9iC8VpIelYhrBq5Bzu3Me1uCGiBay1UM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=T8k6Pzv0YhT3Fuhn8lTznIplXfXDaraZ4UnmfuZ9i2PQ/8ZSULW+Q5zk9nVokM8dznvhouiuhdMhfKsN0sNxEjXAxWwkFJnVr3StFPhcJY2yDUoaubMFkQbC9f98AsVwiIdx6AGGFZx7iVsHxPy4mWvctKqq9+4yS6tcWG9I4HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gx1iWzgT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZtHx48XW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717623704;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RMaEgKRTCDlNySpYj41VqXw4r1dDo5g5VEmGt4FNdnE=;
+	b=Gx1iWzgTX0o8ADRd6eAhWRdaw8KXSRR7QkzG/7kanVTpqiDlZTNDYD6c9Pj4vMqiSqVvW6
+	waJ3TIx6C4gRFJ6kLumfJVF+iQIKnjSbSk9MmcxpV/FiEVZl9oG+rLW4PZB5iAm55qpH37
+	VQqPiI+P4dfRQtdfuDbPXgenUewddcsAVN3ijs4UDMd5wihw/YM8ihrRfp+/OSNpVz4KgC
+	vhSKaGL1vv+ThKOW9p0MbLK8irlk8DhzWsqn2aXDrJQbra4cRQ/waEoo8vovW19KGoZCZv
+	Bd4czcoC5I1BjMIy4jLKO1Si6cFOSBneHqSFi5B1P32BZvtH8b71uObeOQEBaQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717623704;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RMaEgKRTCDlNySpYj41VqXw4r1dDo5g5VEmGt4FNdnE=;
+	b=ZtHx48XWJqTKoECYXNN6PcoyyGXqNPkylnSFnwUYTP4Dr/UG3RwteEbcFNRjKTC86kbbo0
+	4hp+lFhJW9V2AdAA==
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-crypto@vger.kernel.org,
+ linux-api@vger.kernel.org, x86@kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Adhemerval Zanella Netto
+ <adhemerval.zanella@linaro.org>, Carlos O'Donell <carlos@redhat.com>,
+ Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann
+ Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, David
+ Hildenbrand <dhildenb@redhat.com>, Samuel Neves <sneves@dei.uc.pt>
+Subject: Re: [PATCH v16 5/5] x86: vdso: Wire up getrandom() vDSO implementation
+In-Reply-To: <20240528122352.2485958-6-Jason@zx2c4.com>
+References: <20240528122352.2485958-1-Jason@zx2c4.com>
+ <20240528122352.2485958-6-Jason@zx2c4.com>
+Date: Wed, 05 Jun 2024 23:41:44 +0200
+Message-ID: <87y17j2hk7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Type: text/plain
 
-On Thu, 30 May 2024 18:09:56 +0300, Andy Shevchenko wrote:
-> SPI PXA2xx main driver is a compound of a core library and
-> a platform driver code. Decoupling that allows to eventually
-> get rid of an additional layer of devices hierarchy in PCI driver.
-> There are also precursor cleanups.
-> 
-> In v2:
-> - made better handling of pxa_ssp_free() calls
-> 
-> [...]
+On Tue, May 28 2024 at 14:19, Jason A. Donenfeld wrote:
+> +
+> +static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
+> +{
+> +	if (__vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
 
-Applied to
+Lacks an IS_ENABLED(CONFIG_TIMENS)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[01/11] spi: pxa2xx: Wrap pxa_ssp_request() to be device managed resource
-        commit: a2fca8f2e242b3cdfed2a15084e733348ef68509
-[02/11] spi: pxa2xx: Reorganize the SSP type retrieval
-        commit: 8aa5062e26054b8c081d5bba930baac4faadd1b0
-[03/11] spi: pxa2xx: Remove no more needed driver data
-        commit: 7b0f2c1050643c4793e6eae0246a8de3b22c950a
-[04/11] spi: pxa2xx: Remove hard coded number of chip select pins
-        commit: c1b93986dfb2a31b0528fe929d574843801089f5
-[05/11] spi: pxa2xx: Utilise temporary variable for struct device
-        commit: c65174fdb2f7fe83ee515966c08de9a990e722f9
-[06/11] spi: pxa2xx: Print DMA burst size only when DMA is enabled
-        commit: 9b328f5f5c921ec83e1765075b82e6cc05e576b9
-[07/11] spi: pxa2xx: Remove duplicate check
-        commit: 560fb06df2fd250004a1cac079717dbe7f863ff2
-[08/11] spi: pxa2xx: Remove superflous check for Intel Atom SoCs
-        commit: 75bfdccaecf96189318b29100b880c416d89ed46
-[09/11] spi: pxa2xx: Extract pxa2xx_spi_platform_*() callbacks
-        commit: 20ade9b9771c80eb58eb42ccd0a48ba24bdc3c4f
-[10/11] spi: pxa2xx: Move platform driver to a separate file
-        commit: 3d8f037fbcab53e03ab2ef18a66f202be3653d50
-[11/11] spi: pxa2xx: Convert PCI driver to use spi-pxa2xx code directly
-        commit: cc160697a576150975280a4b5394fe9c70700503
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> +		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&__vdso_data);
+> +	return &__vdso_rng_data;
+> +}
 
 Thanks,
-Mark
 
+        tglx
 
