@@ -1,188 +1,125 @@
-Return-Path: <linux-kernel+bounces-201877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3F18FC47B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:26:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69918FC478
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D9528B50D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940AB28B5BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA591922DA;
-	Wed,  5 Jun 2024 07:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XBJKKCoN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265911922D6;
+	Wed,  5 Jun 2024 07:25:42 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA10D1922C6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA281922C6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717572359; cv=none; b=GqdyuYoT1YUwfM6f1fJVdH41vmWzh1dEs1FX3yej7VxoFYoyHrVeLi1QKBgV3huQrA1VGOSZsP1Ym8+aPcxPv4ztdTXIdRGQ/NIsAhp0ebkgTiagTm7jGzsPsxb27zXr0tHy4Jouye0x1hO5+ekZepiFDVx3NWIQcB4gkyZpiak=
+	t=1717572341; cv=none; b=qF3sbxFRsBPskAJZfeJFHYS5h0V8bE6TpiYqfcDzLP66uZ+BwACDNnyb8NSiatIEeQiWVtE7dMoFOq4hWdUpZeucd+eHtwz5Ougzt18JXx02koV7cy4Sad81uenFxvY/zL1JS0EU/NuUmeRa57dbJGuFwRQSpcBzh3v+gy2AQqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717572359; c=relaxed/simple;
-	bh=oI+0AhRd6XO2nPWELVQw/ndPkwUnVksD59YmuSTh7cw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uaEROpN3TvFfrfhyctldS/8Fax77zDXQkVsewAxN9g8BxXHYIKd6oguEA15SO5q4lwLbN4USvquFf3mQ2uQbHO+bWcBs4QhMVLN6KWnY6fMX4IEZIz5elrs7RueSClIoP3iOaIF9wmrrEUHeyhWZyPPGTqois5qum3QinMjuOVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XBJKKCoN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717572356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pumE9d1S0tafnHRwklKzgHLHPAypPUPCxefDQLK+idk=;
-	b=XBJKKCoNLZXbDOUbpOspU4xs0FYFGDKI9Ddjkqx+WCLRJBCsySwNVmrZojY/rZ5OV3hamh
-	DfeFdkHitOYXWT68+g/vR/+MAd+EmS/MEmhpc4FDYxMwgjSL8Mi46/nSQxWTTrOvlnZdMV
-	0jXfl7/5kkeN1Wi9mRweY1qek/PPIds=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-374-UHry68yON2yJG6pMS1GxqQ-1; Wed, 05 Jun 2024 03:25:52 -0400
-X-MC-Unique: UHry68yON2yJG6pMS1GxqQ-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2e95a73c99eso54732481fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:25:51 -0700 (PDT)
+	s=arc-20240116; t=1717572341; c=relaxed/simple;
+	bh=5jVZ+F8iul/MXl68OT3lB4bL7dKSLhQPN3ZL10GpPas=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Z2JryncsrBQ2GXUJCM9ZjZJ2zMVgxXkuCWhef2INAT2SA92YfgmPd6sunkXv24eDSmZ+e+vxr60DLDec44NdHSoA+fsG1OTOToSPxAhAhef4cy1IMwWndxHNgNcllvlEiZqPd1ev0+2MiKrncpR//Oth3KDbC7bwtDjmnJHpbzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-374b033db7dso11294235ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:25:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717572350; x=1718177150;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pumE9d1S0tafnHRwklKzgHLHPAypPUPCxefDQLK+idk=;
-        b=c0O0sHdlDIT2PVg1jwVOEOiMBW71oYs+OgC/XqrWFpLXClGTQ9DJLoGbtUatgf9yMe
-         4HGpGjSMxgkwY5dz1MGHcvNlmOinP2zX539h8EIM6xeiuVio17GMiAKSgyneXuJyqHJc
-         9QjXJTqnVL6dXwTf5X+V/Esm0n7mCY7S2jRkMU3pAE7SGb3Wjw4xCsH8GQhB+TaYFQGx
-         T/ZnfoDYV5Dt8Gu4q8tSrIzWIqKAI3jskBklu1cNy76eUIxws3bgmFGm32o1qQ8kIzQP
-         Opo5HSku/msQf1s3C+Iw9pEIYQdTKOnJU1qaDIpIZwI8E0VfKvERF8xT7EJDCUgkMp0v
-         W26Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWW+DUDrpYoEJ1kbCATSsK4p6Rfjhc5bjF/+gyb8xBNGgTb3Mkz/WIWrMLA93Bqx6IQveN01BDk14eHJ53D1CjFE5/Un9lbCv94Dnn5
-X-Gm-Message-State: AOJu0YyHvB6Uk4Ps2BaydDKueipjKD9O74Kl3fgvnrvYjuQjPc0anMeg
-	+NR/XNP8wuqg2x9aQkcGAcKrOXJvq2R0ZxHy7AuMgsklD7s7sdVLWILIff12nTEnUn5F6JP7xui
-	1iiH8FQUlnME0BNsQni50zxZerCtBJucNrnFBM51awiiXe3pJRjBuBVkHm7D46g==
-X-Received: by 2002:a19:e053:0:b0:52b:8411:20e5 with SMTP id 2adb3069b0e04-52bab4dd189mr1099555e87.15.1717572350588;
-        Wed, 05 Jun 2024 00:25:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXFQRCoFPm+E+rXxeiVEMmkFgDtGGBJpjhUht5lt0NsWA6cdX7yGcsJmAMZZpvK6ATjrIniA==
-X-Received: by 2002:a19:e053:0:b0:52b:8411:20e5 with SMTP id 2adb3069b0e04-52bab4dd189mr1099538e87.15.1717572350158;
-        Wed, 05 Jun 2024 00:25:50 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:3100:19a8:d898:8e69:6aff? (p200300cbc706310019a8d8988e696aff.dip0.t-ipconnect.de. [2003:cb:c706:3100:19a8:d898:8e69:6aff])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148f91sm9993585e9.30.2024.06.05.00.25.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 00:25:45 -0700 (PDT)
-Message-ID: <05e50d0c-4222-4c1f-b051-c7249f04c661@redhat.com>
-Date: Wed, 5 Jun 2024 09:25:37 +0200
+        d=1e100.net; s=20230601; t=1717572339; x=1718177139;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5jVZ+F8iul/MXl68OT3lB4bL7dKSLhQPN3ZL10GpPas=;
+        b=afk26ETAcP2J/ysYifmFOuUjdWJNqxo8w4r0jTH9MEm+52wdc+C9s07sbUj7rjITj0
+         T7ykqtOjw4U9TLFHI/vpymQ5RKmZvfdG7lmhqBk8m/Ayb/YBME0+ZQYMU9k0BCd/p5OO
+         mGeQ+YvPBGs2XO1a1oiFFfrfKNoqhQz+HNLXrJmjI0TWMTpwFtxdt6HODjVk8Hd9m3Uc
+         UafiqlKqgQ8HktFA37nqUSDqgIuGanjudH1PBXSXrm+WTDCpE2LDhkl3mABPLyKux+c/
+         a8kMN5vUNAo09AxnlCJlKNrSMb0GQHGhipqgJ+Fl5rNBqFV7OHQqLpHCg4NFR252+ACZ
+         Pr4w==
+X-Gm-Message-State: AOJu0YzVuBjUoNv7Y2ttvWSsxixnkNYPF6a907ZO2oDz7jT5v6bK3nIx
+	5/vwyaJv8HmU0woqTlHwp+fY00drDXJehV2LtmfY9t2le1I8tPBLEO9ae1ORoYCYmGwPAdtt9Qw
+	UM4N1SNS3a8srXrNRdN5GrXHHJBVpPatCSBubS9JOb9Nq8Ti7kWMzUic=
+X-Google-Smtp-Source: AGHT+IEJifPXDqaUYsOLA3EmvPsi16Hd2X+UACfaGI7/1tCY+z16N5rF1Fv0RKPwW9dP/i4IGWNQ+TdHoYBIuoXLBTo5oahenfcd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux-next] mm: huge_memory: fix misused
- mapping_large_folio_support() for anon folios
-To: ran xiaokai <ranxiaokai627@163.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, mhocko@kernel.org, v-songbaohua@oppo.com,
- ran.xiaokai@zte.com.cn, xu.xin16@zte.com.cn, yang.yang29@zte.com.cn,
- ziy@nvidia.com
-References: <fe35d494-b54e-4302-8c75-24abc9094ea1@redhat.com>
- <20240605022051.888955-1-ranxiaokai627@163.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240605022051.888955-1-ranxiaokai627@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a24:b0:374:9af0:5f5a with SMTP id
+ e9e14a558f8ab-374b1f88226mr955115ab.6.1717572339724; Wed, 05 Jun 2024
+ 00:25:39 -0700 (PDT)
+Date: Wed, 05 Jun 2024 00:25:39 -0700
+In-Reply-To: <000000000000adb08b061413919e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002f8558061a1f7902@google.com>
+Subject: Re: [syzbot] Re: 000000000000fcfa6406141cc8ac@google.com
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05.06.24 04:20, ran xiaokai wrote:
->> On 04.06.24 07:47, xu.xin16@zte.com.cn wrote:
->>> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->>>
->>> When I did a large folios split test, a WARNING
->>> "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
->>> was triggered. But my test cases are only for anonmous folios.
->>> while mapping_large_folio_support() is only reasonable for page
->>> cache folios.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: Re: 000000000000fcfa6406141cc8ac@google.com
+Author: wojciech.gladysz@infogain.com
+
+#syz test https://linux.googlesource.com/linux/kernel/git/torvalds/linux e3=
+77d803b65ee4130213b3c041fc25fdfec1bd90
+________________________________
+From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+Sent: Wednesday, June 5, 2024 09:15
+To: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>
+Cc: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>; linux-kernel@vger.ker=
+nel.org <linux-kernel@vger.kernel.org>; syzkaller-bugs@googlegroups.com <sy=
+zkaller-bugs@googlegroups.com>
+Subject: Re: 000000000000fcfa6406141cc8ac@google.com
+
+EXTERNAL: This message was sent from outside of Infogain. Please do not cli=
+ck links or open attachments unless you know the content is safe.
+
+> #syz testhttps://github.com/torvalds/linux.gite377d803b65ee4130213b3c041f=
+c25fdfec1bd90
+
+unknown command "testhttps://github.com/torvalds/linux.gite377d803b65ee4130=
+213b3c041fc25fdfec1bd90"
+
+> ________________________________
+> From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
+> Sent: Wednesday, June 5, 2024 09:06
+> To: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>
+> Cc: Wojciech Gladysz <Wojciech.Gladysz@infogain.com>; linux-kernel@vger.k=
+ernel.org <linux-kernel@vger.kernel.org>; syzkaller-bugs@googlegroups.com <=
+syzkaller-bugs@googlegroups.com>
+> Subject: Re: 000000000000fcfa6406141cc8ac@google.com
+>
+> EXTERNAL: This message was sent from outside of Infogain. Please do not c=
+lick links or open attachments unless you know the content is safe.
+>
+>> #syz test https://linux.googlesource.com/linux/kernel/git/torvalds/linux=
+<https://linux.googlesource.com/linux/kernel/git/torvalds/linux<https://lin=
+ux.googlesource.com/linux/kernel/git/torvalds/linux>> e377d803b65ee4130213b=
+3c041fc25fdfec1bd90
+>
+> "https://linux.googlesource.com/linux/kernel/git/torvalds/linux<https://l=
+inux.googlesource.com/linux/kernel/git/torvalds/linux<https://linux.googles=
+ource.com/linux/kernel/git/torvalds/linux>>" does not look like a valid git=
+ repo address.
+>
 >>
->> Agreed.
->>
->> I wonder if mapping_large_folio_support() should either
->>
->> a) Complain if used for anon folios, so we can detect the wrong use more
->> easily. (VM_WARN_ON_ONCE())
-> 
->> b) Return "true" for anonymous mappings, although that's more debatable.
->>
-> 
-> Hi, David,
-> Thanks for the review.
-> I think a) is better.
-> But we have to add a new parameter "folio" to mapping_large_folio_support(), right ?
-> something like mapping_large_folio_support(struct address_space *mapping, struct folio *folio) ?
-> But in the __filemap_get_folio() path,
-> 
-> __filemap_get_folio()
->    no_page:
->      ....
->      if (!mapping_large_folio_support(mapping))
-> 
-> the folio is not allocated yet, yes ?
-> Or do you mean there is some other way to do this ?
-
-If we really pass unmodified folio->mapping, you can do what 
-folio_test_anon() would and make sure PAGE_MAPPING_ANON is not set.
-
--- 
-Cheers,
-
-David / dhildenb
-
+>> The information in this email is confidential and may be legally privile=
+ged. It is intended solely for the addressee and access to it by anyone els=
+e is unauthorized. If you are not the intended recipient, any disclosure, c=
+opying, distribution or any action taken or omitted to be taken based on it=
+, is strictly prohibited and may be unlawful.
 
