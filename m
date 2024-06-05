@@ -1,81 +1,120 @@
-Return-Path: <linux-kernel+bounces-202232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98E28FC9AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DEDA8FCA02
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09FC91C223B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:05:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5551C2441D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CCB192B7B;
-	Wed,  5 Jun 2024 11:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE023192B81;
+	Wed,  5 Jun 2024 11:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="MChRTUQk"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="fnNXiWCz"
+Received: from aposti.net (aposti.net [89.234.176.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149961922F7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C717514B974;
+	Wed,  5 Jun 2024 11:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717585521; cv=none; b=HRSTf6EzbP22djQsjF1+AaKpJFHeDsMzGNrGlRn25QG5O/8T2kPre5vi0E30CQVqdRRa5ynfeqvIhPru31uo075ntJQ5JWAD7zXv+g2lktZt5OTPSFYXKHTFl/atVfnZMa26bR2pHd7W3hjDVT4T+nWIHF8wlaMNqTIbuKegiK8=
+	t=1717586156; cv=none; b=tI5qNrbKzzEr1IS5CLGnDht1AlolBma0XptRx36nA8HeMw6MjEgaVC/kSH88cMyZlyU0PiMby/t+SvwAryzJBw7G8EDjSk5S3rKCuTPZvr3n17XfKm7djCgOJATPFMKFLrFTjaDDJNHkH+U6PByB6su6En92LTLLWB9wFgG5DDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717585521; c=relaxed/simple;
-	bh=Tj542Ql3NJjfsqzKkHdQSa2YLnrfQwlEirm8q8wFYEE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GWVKNtARaamykNlLMu409pxa6aoPXqWxxrRyH5yMPYjrnoygBBR4L20nJDLJQBbZxpVaBoh+tn2sAJebTFiwyVOf1eKvPkTxK5fRnXHoAeGZCJe3iRsugKwHa7O2hvCHUBIDYgaik3TI9hniEPMKXnmTORVQM9cGXokYPnObS0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=MChRTUQk; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b9af7a01bso4098924e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 04:05:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1717585517; x=1718190317; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kyqsMalQEV+9l0Conlo3kxuFIzX2TPTLRyUlJoVzZhE=;
-        b=MChRTUQka+ScVsKxC4bU3D1yoCTNQfDwawIb6AYBRwQz9iL8WHyPmSGxmJQhsitdvc
-         bkWo+STv54y8dzv4oppwYB2ssbLVP+/JocoEtGz8w0fInsR37s2VAdkkWpbHVLOhGt31
-         uqCWbsDVkydO+so9xPJXeT8RdMrEKY+pGZ/AQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717585517; x=1718190317;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kyqsMalQEV+9l0Conlo3kxuFIzX2TPTLRyUlJoVzZhE=;
-        b=bmTOswkrc4ZTY9DeWoD1/TllWEClem1HdABVCAoA8NLGyYIMY+hLMYS9Pw4zFKI5Mp
-         MOV7/CmltCjTdrbauWJ/JH3W5ZUh5x5/MaGENge3o+x/w8cF3arm/bB3F/LxA+5pAQX8
-         qdsIEL5IXV4ey//5oPoD7HO74sNaWXL0z0OMWuo9Bh+sb/Dl0KVyx+ER4oHQYLsEyFgM
-         ZEibf0+YZSKaPWuTpqjsqevExAoXNhilPaKZuDQJ+1Pbtwu7SjUuYnk85O7Ql+dm2dNt
-         u6Ct5gtNt5u6INfo7ShNXlc+CYWEw9QfM3UGcbiUX0Kze5MNzK353GRhHUJVHYPpzwaR
-         dW7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVuqW6TMPNjrVizt9tvU0/85AgZ1A9lHukKinxGvxnB1RycYDizrRrAXPHV7wz5QKDRC3sBCBk2P7NUlK3K91GpuLbpc2a2B0Ox1B36
-X-Gm-Message-State: AOJu0YxqBjxk2MeNZrlMCHTydkSu87j7pfus+CwSyXjWGg4fsCeNJt7H
-	Ke5eEbzAHoG5ivXMSKF83HxRrHwv9hIDE3LhPF0PzUW6sZ6myzbR4Mhh9e42jGUVxpeIOqUD3qu
-	UpBRcROWoqFRkhARJRj+z0wvqC4htwdar2dJVCw==
-X-Google-Smtp-Source: AGHT+IHF1jsrlJq9KSyXvJxuUgLBjkY9uATcMo/+IhftCPJlKni4Cg/lx7edyCsWko7aivNpEEUAT/3Ib2sKhIAftKg=
-X-Received: by 2002:a05:6512:e99:b0:51d:3f07:c93c with SMTP id
- 2adb3069b0e04-52bab4b80c7mr1806663e87.3.1717585516840; Wed, 05 Jun 2024
- 04:05:16 -0700 (PDT)
+	s=arc-20240116; t=1717586156; c=relaxed/simple;
+	bh=j23cpuGAemJTmamOXD92cbvxQHnwkWvNJTIkvGKjv2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EyyjgJFXVDVkY9ihX+6uxmb4JnUuA1oDV5my9RE1oeJ8x/I8BeszBU4phpwUPSvoNsa2Y9hVBObALJKOt/rnzH53k1XJhxfFkZHFHDUzJvreyt1jXD7fRGLni0YVnbyb2CS5smlFBRuy0A9K9e/Qe/cLUcB2joMR/f8gQU0kCnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=fnNXiWCz; arc=none smtp.client-ip=89.234.176.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+	s=mail; t=1717585738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lbF3Hr41nIth/kjABYAo6ELsT9zfo9W62/2gY+j3W6A=;
+	b=fnNXiWCz+piHjs3cCFKX5GI5TCn9Y2prcen/ET7kh9pye5qm+pIgUBf/O3bV3BnNT1h/2u
+	NyMwYH4qGWbWGr1IYazRbY6rtGSVJoiMLXi/3PHX/GFa4ahJSbYFIZ5go1Y3p1tTrpunF0
+	gFAQsaj5oi/revV7EdeAexrsKXH2qHg=
+From: Paul Cercueil <paul@crapouillou.net>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Nuno Sa <nuno.sa@analog.com>,
+	linux-iio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v10 0/6] iio: new DMABUF based API v10
+Date: Wed,  5 Jun 2024 13:08:39 +0200
+Message-ID: <20240605110845.86740-1-paul@crapouillou.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000065b2f6061a14ecde@google.com>
-In-Reply-To: <00000000000065b2f6061a14ecde@google.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 5 Jun 2024 13:05:05 +0200
-Message-ID: <CAJfpegveMOTa8jV7fTWARuOU-_xXddrY7G1M3DJeoYNZOJ6hMg@mail.gmail.com>
-Subject: Re: [syzbot] [overlayfs?] possible deadlock in iter_file_splice_write (4)
-To: syzbot <syzbot+5ce16f43e888965f009d@syzkaller.appspotmail.com>
-Cc: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-#syz dup  possible deadlock in kernfs_seq_start
+Hi Jonathan,
+
+Here is a revised (and hopefully final?) version of my DMABUF patchset.
+
+This v10 removes the extra "flags" parameter of
+dmaengine_prep_peripheral_dma_vec(), and adds kernel doc to the function
+as Vinod requested.
+
+As Nuno upstreamed support for output buffers, I (slightly) modified
+patch 5/6 and now output buffers are supported with the DMABUF API.
+All I did was remove a "fail if output" check really.
+
+This was based on next-20240605.
+
+Changelog:
+- [1/6]:
+  - Add kernel doc to dmaengine_prep_peripheral_dma_vec()
+  - Remove extra flags parameter
+- [2/6]:
+  - Use the new function prototype (without the extra prep_flags).
+- [5/6]:
+  - Remove extra flags parameter to dmaengine_prep_peripheral_dma_vec()
+  - Add support for TX transfers
+
+Cheers,
+-Paul
+
+Paul Cercueil (6):
+  dmaengine: Add API function dmaengine_prep_peripheral_dma_vec()
+  dmaengine: dma-axi-dmac: Implement device_prep_peripheral_dma_vec
+  iio: core: Add new DMABUF interface infrastructure
+  iio: buffer-dma: Enable support for DMABUFs
+  iio: buffer-dmaengine: Support new DMABUF based userspace API
+  Documentation: iio: Document high-speed DMABUF based API
+
+ Documentation/iio/iio_dmabuf_api.rst          |  54 ++
+ Documentation/iio/index.rst                   |   1 +
+ drivers/dma/dma-axi-dmac.c                    |  40 ++
+ drivers/iio/Kconfig                           |   1 +
+ drivers/iio/buffer/industrialio-buffer-dma.c  | 180 ++++++-
+ .../buffer/industrialio-buffer-dmaengine.c    |  62 ++-
+ drivers/iio/industrialio-buffer.c             | 462 ++++++++++++++++++
+ include/linux/dmaengine.h                     |  33 ++
+ include/linux/iio/buffer-dma.h                |  31 ++
+ include/linux/iio/buffer_impl.h               |  30 ++
+ include/uapi/linux/iio/buffer.h               |  22 +
+ 11 files changed, 896 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/iio/iio_dmabuf_api.rst
+
+-- 
+2.43.0
+
 
