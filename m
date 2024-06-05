@@ -1,141 +1,146 @@
-Return-Path: <linux-kernel+bounces-202614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766418FCEAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:14:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4198FCEAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26A6E1F28E40
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:14:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05A941C24E05
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4C5195FEF;
-	Wed,  5 Jun 2024 12:33:12 +0000 (UTC)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C5B19643D;
+	Wed,  5 Jun 2024 12:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RO67AvLJ"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC6019D88B;
-	Wed,  5 Jun 2024 12:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2EB19642E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590791; cv=none; b=WNLN5BBWh8zyta+IXLiEh1uV1Hohb00Me5X9zfkjgcv74J62ZwzqEgYfcLaWn6pRvvSV/tRo3deoLBJXVbh8hj9PFpWzM4n4W3S0i52jUWZojpVzq2jRyBytLB3eley8IqowgIKGLF18NPw4nw/z+kufF6S4j2pmY6XVT1fY0Sk=
+	t=1717590801; cv=none; b=ctG1OQbjY0qiTWrGQZPerJ522JGqzdHeMP0H7DK+ENIuO7dJFW4X92CPaBrGXlYPDKfX3OfYYgpC8zfcGnEytq1ORHyix6qMxgdtg+APXWnaYipIUKTvnijoZr1ASYUB/VpQAJdnK/oXrlzy9LJbWqgVMhX4skUrnQt/uE98+Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590791; c=relaxed/simple;
-	bh=hqgiPbTxuUPwd6oAxJ/pEfDW5K2k/hwU5oOJo/VQyCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F7qEN0n+sfwgoiQzKOovrjIxFMj977sjyug854JSqO7llTEqKyUTV34AHX2hAOR1jQCNXbSO5WtCSrtWcqENeZ1V8k9XFNwrtUNccuc/sTYZx5FTISF9Hi5VhuNRxFahfhx8Fg50YuqlE/3y+o/8snMibWkzT2VIIoQWWg1ij2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-62a08b250a2so23555977b3.3;
-        Wed, 05 Jun 2024 05:33:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717590788; x=1718195588;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SnslpsTkxq1BUdjKUxyNngzADoWBlrSm/gd/INeh4LA=;
-        b=uCy5J5oJJMq6n7QqdFKFza4QNtvC+skXFrfySuWVkS6aHredJGQY+6CK9lpcW8jelF
-         fXETK/yl2iMgtDYH1tlLrDNa34oUZ7vuFKFB4TOdAXssHpxGqmt9w+l3wFQAQrqJC3vA
-         TA+IZ5fJe7pvqyhNjaK2J+g6e5vtMHAFoRMIUvY18lFLGq50Z18BoJROp77k5HrjYvgz
-         iViaJmXbjDajbbDy9mlFmmgaxvXRwAPucDc+SYsSOl3lkHC35UUf+mhc5DcdtPABjDUK
-         OM0Hea/1MsMLozasYnusofHgKXjGKKsKbZ0V+TrkMTc8XS+lbDZM/Ynb1YcydxmPxGsk
-         xmYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUavLoHyGcCfqbg9zNPIOLw8sslBgBy8iDvpeXIZcNdf5hHpTwjQuxHnkrhqkxu56+Z0w/gVFs74lSNjxVkNZ5Lb0Lp/Vz8s8rvi4E2WPNnt8S0ByKHUE8PKP8sOFFQfd2OMDoTlhazBrNkL7TQaFrwxYd2GbtwFfpSp+Gxfj2e2pd1Rr0wtFmTI2eUlA8S5QPYqrP4LfoSRymzMoUHmm1C0qVMLvp9dw==
-X-Gm-Message-State: AOJu0YwWvJJTOA2AZWxlG2wRL2fmfTj45vs2ONtH+lfGZhXzYOlsVb2L
-	zN3+UO4Ev1ccnxKeDURWtDk7v5WvZkNy04mS+Pkj0xFltEozUv7/ayHKP/KQ
-X-Google-Smtp-Source: AGHT+IFkImrkK7qPRPe6sDGEmdkLVhdG2TDFZ2BctWFrFgh23fK3+mC01TrtKZK66DI710XUBVtGtA==
-X-Received: by 2002:a0d:d8d1:0:b0:61a:ae79:816a with SMTP id 00721157ae682-62cbb515ce7mr22331867b3.31.1717590787656;
-        Wed, 05 Jun 2024 05:33:07 -0700 (PDT)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765b7ec1sm22113827b3.10.2024.06.05.05.33.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 05:33:06 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfa584ea2ffso1811966276.1;
-        Wed, 05 Jun 2024 05:33:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX6Bg31JF+Cpt432tgMSchRWDHwhD6xhCUYFm44MU3+U4wCXPti5SOhfPfbT5Um4wvwLYKSQQARbomyFSmK0WBYxwLrraTRd74cW0juEgt/RX0zIoc4HZM0gow0BtMQFa/FGW6jhCjx3jasIjE2lSWj+X74vEcn4oc5xSvSyd2+5iMs4sbCURaNSkIdXlkbuPAYFxdQK4ql27LDJ75hvcqwp/crGqwF9A==
-X-Received: by 2002:a25:aa72:0:b0:dfa:5748:124c with SMTP id
- 3f1490d57ef6-dfacab1ab0cmr2235065276.10.1717590786252; Wed, 05 Jun 2024
- 05:33:06 -0700 (PDT)
+	s=arc-20240116; t=1717590801; c=relaxed/simple;
+	bh=43JzBq3ntkiARgDqq61v/eTzXhWt2IKimvfmiXq/pWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RY3dg0LngtmMPh9/nUkx1pvw1xUH9zjA++jNmLwnQlpDHirY5HJMZFTCKl4OYEJq3zd+owRNuM4X7ZsMcpsQzbc+TomBTsxUYhULczU+MFywIwUOljRjHwWAG+f67xUhAW0h5WZu3Ltii99x+fsmA/5fzyXryq7H4esvdlqIQWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RO67AvLJ; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717590798;
+	bh=43JzBq3ntkiARgDqq61v/eTzXhWt2IKimvfmiXq/pWI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RO67AvLJAYr/9hxw8E5sXcBQritIrnEVl/iQvjAhAnQIH50bMDpCu3lrbl+NeBTtX
+	 U1S8ZPqTvJzFHzKfHaeAhwOv/oMThjyyrtQGqzipSltDsIfzA2X4kiCDGvzdTioHLF
+	 TYWpDN5Tr8ZMDm2AyCYFreP+xOtBzZ0JQOEg0nFMN9ZGUitEn6s1iZ2X0IxUmcQWKl
+	 pM1CdV8+nLW7+tYqUsrYzpx/hKqMF4rv4Z2Ep/u+KNy7nh+tpZZn35THRJuJ6baqIY
+	 DN+ZSjvrgszTNK5WRraqWdq/OZw1jSBbSEA4XKfhb2YdBW7Rl6IWIeb4R0eEjS1Kj4
+	 zYStJebSWO6SA==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 321BB37804C8;
+	Wed,  5 Jun 2024 12:33:15 +0000 (UTC)
+Date: Wed, 5 Jun 2024 08:33:14 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: linux-mediatek@lists.infradead.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Subject: Re: Probe failures on mt8183-kukui-jacuzzi-juniper-sku16
+Message-ID: <2491f962-a8e1-44c4-8ff9-f8c3e58a2a39@notapiano>
+References: <e5912054-0fc9-47ff-8f38-9b9a3e9d2156@notapiano>
+ <CAGXv+5HJKur9vWq4j_x7-fuL5H0SY_oQNYFWTxFCC1EBxF9yQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530173857.164073-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240530173857.164073-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240530173857.164073-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jun 2024 14:32:53 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU5tYSF7m435F=sBS0FjoZ=q7D4RsufRYLbNVzKArUYPQ@mail.gmail.com>
-Message-ID: <CAMuHMdU5tYSF7m435F=sBS0FjoZ=q7D4RsufRYLbNVzKArUYPQ@mail.gmail.com>
-Subject: Re: [PATCH v3 14/15] pinctrl: renesas: pinctrl-rzg2l: Acquire lock in rzg2l_pinctrl_pm_setup_pfc()
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5HJKur9vWq4j_x7-fuL5H0SY_oQNYFWTxFCC1EBxF9yQw@mail.gmail.com>
 
-On Thu, May 30, 2024 at 7:42=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> To keep consistency with rzg2l_pinctrl_set_pfc_mode(), acquire the lock
-> in rzg2l_pinctrl_pm_setup_pfc() during PFC setup.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3
-> - New patch
+On Wed, Jun 05, 2024 at 04:01:06PM +0800, Chen-Yu Tsai wrote:
+> Hi,
+> 
+> On Tue, Jun 4, 2024 at 11:52 PM Nícolas F. R. A. Prado
+> <nfraprado@collabora.com> wrote:
+> >
+> > Hi,
+> >
+> > We're monitoring the status of device probe on the
+> > mt8183-kukui-jacuzzi-juniper-sku16 platform in KernelCI, and I thought it'd be
+> > helpful to share the results.
+> >
+> > These are the current failures:
+> >
+> > * /soc/i2c@11009000/trackpad@15
+> > * /soc/svs@1100bc00
+> > * /thermal-sensor1
+> > * /thermal-sensor2
+> >
+> > In more details:
+> >
+> > * /soc/i2c@11009000/trackpad@15: I believe this is a second source trackpad and
+> >   is thus waiting for the "platform/chrome: Introduce DT hardware prober" series
+> >   [1] to be merged before it can be handled. Although looks like there haven't
+> >   been updates to the series in a while.
+> 
+> I've been working on other stuff and haven't had time to respin this series.
 
-Thanks for your patch!
+No worries, but it's good to know that that's the latest status and I didn't
+miss something.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -2541,7 +2541,9 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(s=
-truct rzg2l_pinctrl *pctrl, b
->  static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l_pinctrl *pctrl)
->  {
->         u32 nports =3D pctrl->data->n_port_pins / RZG2L_PINS_PER_PORT;
-> +       unsigned long flags;
->
-> +       spin_lock_irqsave(&pctrl->lock, flags);
->         pctrl->data->pwpr_pfc_lock_unlock(pctrl, false);
->
->         /* Restore port registers. */
-> @@ -2586,6 +2588,7 @@ static void rzg2l_pinctrl_pm_setup_pfc(struct rzg2l=
-_pinctrl *pctrl)
->         }
->
->         pctrl->data->pwpr_pfc_lock_unlock(pctrl, true);
-> +       spin_unlock_irqrestore(&pctrl->lock, flags);
->  }
->
->  static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
+> 
+> Just to confirm, is the failure due to pinctrl conflicts when the trackpad
+> variants probe asynchronously?
 
-It's definitely safer to unlock only while holding the lock.
+Yes:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[    2.185408] input: hid-over-i2c 06CB:CDB5 Mouse as /devices/platform/soc/11009000.i2c/i2c-2/2-002c/0018:06CB:CDB5.0001/input/input2
+[    2.845044] mt8183-pinctrl 10005000.pinctrl: pin GPIO7 already requested by 2-002c; cannot claim for 2-0015
+[    2.854700] mt8183-pinctrl 10005000.pinctrl: error -EINVAL: pin-7 (2-0015)
+[    2.869503] mt8183-pinctrl 10005000.pinctrl: error -EINVAL: could not request pin 7 (GPIO7) from group GPIO7  on device pinctrl_paris
+[    2.894885] elan_i2c 2-0015: Error applying setting, reverse things back
 
-Gr{oetje,eeting}s,
+> 
+[..]
+> > * /thermal-sensor1, /thermal-sensor2: The following is reported:
+> >
+> >     [    2.813605] thermal_sys: Failed to find 'trips' node
+> >     [    2.813611] thermal_sys: Failed to find trip points for thermal-sensor1 id=0
+> >     [    2.813619] generic-adc-thermal thermal-sensor1: Thermal zone sensor register failed: -22
+> >     [    2.813624] generic-adc-thermal thermal-sensor1: probe with driver generic-adc-thermal failed with error -22
+> >
+> >   And the same for thermal-sensor2. So both are missing the required 'trips'
+> >   subnode.
+> 
+> IIRC either the driver or the DT had comments saying "these zones don't
+> need trip points". In that case maybe the driver should use
+> thermal_tripless_zone_device_register() for them?
 
-                        Geert
+I believe you're thinking of the SoC thermal zones, which had trips added (and
+the comment removed) in commit 978979409209 ("arm64: dts: mediatek: mt8183:
+Refactor thermal zones"). But these are the kukui board thermal zones.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+The thermal-zones dt-binding does describe the 'trips' node as required, so I
+think the only option in this case is to add trips to them, or remove the
+thermal zones altogether. I'm guessing the
+thermal_tripless_zone_device_register() helper is meant for other thermal zones
+that aren't described in the DT.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Nícolas
 
