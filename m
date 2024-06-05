@@ -1,144 +1,88 @@
-Return-Path: <linux-kernel+bounces-202660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3668FCF40
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:30:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95158FCF44
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EDE5298449
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C629F1C23A3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26551ABCCC;
-	Wed,  5 Jun 2024 12:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6BE1AC421;
+	Wed,  5 Jun 2024 12:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WnB4isZm"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7y54Cxx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD29188CB1;
-	Wed,  5 Jun 2024 12:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4E01E89C;
+	Wed,  5 Jun 2024 12:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717591968; cv=none; b=FDWdCmm/EpM/ek/Pu6/Ql7+BMCBhJE53fojx3m2M4BGzGDBG0H2tYjuPUY0IaUwN/AQ1T2MXVXiKh6D+9KGwZBIQfc72ICs+MGLX3fsnTOO4lUKHWZtLuaCS0af68D9XqlLZ9JS2wfcrMYlrhgexnTXnhJz6O5X8pwVgbJSnIEg=
+	t=1717592072; cv=none; b=E2TeyxG2rDeMjf3w8lFXElkXbemlz8vZngIw8aII1Y2yewUp/VVurte6zzv9i6kD7szrMk3SONKHFJi/DA/GBnpk5Gi38qM8CHbYmDHxlPe6O7uMygFyMW1O7wpYZ19MhssU2lFjZlbMl1kejl9Esc31Cmk89tuT42D8JuGdnJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717591968; c=relaxed/simple;
-	bh=Sy7T7GzC2ZOWsY/UPrXngYcioAZUouVavGghEB3t+y8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PWF7Rq3WybVy3zG2NngPv1WyXDK9d5iJxoeTyowZYFatDPW3OkRAVyLDPlsSj7/1KZuAxnYXNkaX7sD9an8xLSihJAOnvQrlW+7HCIrCRjEe66A23Kum3U6PkzhqHQ7lpHwUdSzEj1lylXZYB3IFkfFm8k81cQlkKhz/gjFKuTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WnB4isZm; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 455CqXsp119194;
-	Wed, 5 Jun 2024 07:52:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1717591953;
-	bh=PZVe92Rj78eN1DbQzLm0zMnQYFdOj9DVODRU7I5SMuI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=WnB4isZmCxppFWtKWywfN/vCtH+mz0z5CKJINTCZX98cDRGKHU02w0GCW3z28rBxL
-	 FBXA6rREkk1Gv5vLQJ/ymxZ0RXrD3/6KkbgUOv3y8KMud+gfBHTmIXDKKMYuejAhVX
-	 2v4mDVxw8GXNNJrIg+bRz+MLxrbhqCX62U5IhOa4=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 455CqXlP113459
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 5 Jun 2024 07:52:33 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
- Jun 2024 07:52:32 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 5 Jun 2024 07:52:32 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 455CqWSL115373;
-	Wed, 5 Jun 2024 07:52:32 -0500
-Date: Wed, 5 Jun 2024 07:52:32 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Jai Luthra <j-luthra@ti.com>
-CC: Francesco Dolcini <francesco@dolcini.it>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Jayesh Choudhary <j-choudhary@ti.com>,
-        Devarsh Thakkar
-	<devarsht@ti.com>, Bryan Brattlof <bb@ti.com>,
-        Aradhya Bhatia
-	<a-bhatia1@ti.com>,
-        Francesco Dolcini <francesco.dolcini@toradex.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/7] arm64: dts: ti: k3-am62-verdin: Drop McASP AFIFOs
-Message-ID: <20240605125232.5xql5nonllyslchc@saucy>
-References: <20240604-mcasp_fifo_drop-v1-0-03ebe25f47db@ti.com>
- <20240604-mcasp_fifo_drop-v1-5-03ebe25f47db@ti.com>
- <20240605084713.GA10711@francesco-nb>
- <yd4doskkq443xkvc4ahnxexyi7f5oteoh5egiv3plcduyl7dfr@dgtdwd3dbdkg>
+	s=arc-20240116; t=1717592072; c=relaxed/simple;
+	bh=XB07QR+XSkJHYCaW2hwUoy4YszkpOcRuq7NZF7LreUM=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=kXBoowUXCBnLCmhgO6IRrgrvQ6U9wWTdmw1k5KfOFa4G2J43te9ZTOtCQPxG8bNezwac5aUugtIB0nbpFv1jEcWz+f3MZ5GeRsZM7s41bWcioRVmN4Z3OjU9PXNQVGqTSa/mo235sbG5eP87h7I7+m8GoiXTD9DlBPkHmztIdnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7y54Cxx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E107CC32782;
+	Wed,  5 Jun 2024 12:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717592071;
+	bh=XB07QR+XSkJHYCaW2hwUoy4YszkpOcRuq7NZF7LreUM=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=c7y54Cxx1Xv0TlGIq5HUgQ2nYtyeWNVe/PtsNtglsSeAXuaKc3I3Nbo/BsduhjI/1
+	 H0zvh1L+J2ykqqKN3pGGvIUYuAoBav2L6iNFrrLojJinF6swHPqHTCHL0yoCklSxwz
+	 VzwcKpya5PyhI3omNOazYBtnTxEqRw5F1CzzqAYALkLyvxU8InjCz9YgV3dhcYK8dN
+	 lu5Ce9UyH35QkftqwPw8wbOBtYkartYTtvb5/uOufL6m1IZM7lC8fZ+2b7TTL5nGOZ
+	 ycsmJdpoyx+8t64yngGCt5hQ9mo+OGDvKTTDaCIoXFyY/IwMnVnlnJTacMOIr6R7pe
+	 cK8sUSngASrgQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <yd4doskkq443xkvc4ahnxexyi7f5oteoh5egiv3plcduyl7dfr@dgtdwd3dbdkg>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 3/6] wifi: mac80211: use 'time_left' variable with
+ wait_for_completion_timeout()
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240603091541.8367-4-wsa+renesas@sang-engineering.com>
+References: <20240603091541.8367-4-wsa+renesas@sang-engineering.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-wireless@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171759206880.1969597.15358870283165767535.kvalo@kernel.org>
+Date: Wed,  5 Jun 2024 12:54:30 +0000 (UTC)
 
-On 14:28-20240605, Jai Luthra wrote:
-> Hi Francesco,
-> 
-> Thanks for the review.
-> 
-> On Jun 05, 2024 at 10:47:13 +0200, Francesco Dolcini wrote:
-> > Hello Jai, thanks for the patch.
-> > 
-> > On Tue, Jun 04, 2024 at 03:11:06PM +0530, Jai Luthra wrote:
-> > > McASP AFIFOs are not necessary with UDMA-P/BCDMA as there is buffering
-> > > on the DMA IP. Drop these for better audio latency.
-> > > 
-> > > Fixes: 316b80246b16 ("arm64: dts: ti: add verdin am62")
-> > > Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> > > ---
-> > >  arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi | 8 ++++----
-> > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-> > > index 2038c5e04639..27e5220e1dc7 100644
-> > > --- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-> > > +++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-> > > @@ -1364,8 +1364,8 @@ &mcasp0 {
-> > >  	       0 0 0 0
-> > >  	>;
-> > >  	tdm-slots = <2>;
-> > > -	rx-num-evt = <32>;
-> > > -	tx-num-evt = <32>;
-> > > +	rx-num-evt = <0>;
-> > > +	tx-num-evt = <0>;
-> > 
-> > From my understanding of the dt-binding having these properties set to
-> > <0> is equivalent to not having those properties at all.
-> > My suggestion would be to just remove those, therefore.
-> > 
-> 
-> I was following the existing convention of setting it to 0 for 
-> disabling, as done in k3-j721e-common-proc-board.dts
-> 
-> IMO it is better to keep it explicit, but I don't feel strongly against 
-> dropping it either (as long as we do the same for j721e). Will defer the 
-> decision to the tree maintainers.
-> 
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-If they are equivalent, then just drop them.
+> There is a confusing pattern in the kernel to use a variable named 'timeout' to
+> store the result of wait_for_completion_timeout() causing patterns like:
+> 
+> 	timeout = wait_for_completion_timeout(...)
+> 	if (!timeout) return -ETIMEDOUT;
+> 
+> with all kinds of permutations. Use 'time_left' as a variable to make the code
+> self explaining.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+The title should be:
+
+wifi: mwl8k: use 'time_left' variable with wait_for_completion_timeout()
+
+I can fix that, no need to resend because of this.
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://patchwork.kernel.org/project/linux-wireless/patch/20240603091541.8367-4-wsa+renesas@sang-engineering.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
