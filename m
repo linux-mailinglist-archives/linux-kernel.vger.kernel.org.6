@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-203395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959F38FDA47
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4108FDA49
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469081F25256
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 658611C22F8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D827E16C850;
-	Wed,  5 Jun 2024 23:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FAA16DED7;
+	Wed,  5 Jun 2024 23:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="phFCmQi0"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EGlIrM7a"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71A916A383
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0BD16D4C6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717629570; cv=none; b=QgGWLFNxhhKxZchqWZZtgOD/vc+jFNXlFY2wmvlQtlDEBpDPgqj45QsM4M3L3lODHqLuQ/PLCsssgSpOtvvMbwtt37g/lsfDfFIQF77Xk91nWHcJItTES8SYM2X5GBT7ZqddNaSyJo8POu91g9R7XrSs+5pdl2TIaNMgb+H5eoo=
+	t=1717629573; cv=none; b=HiQB1qZFYaRcJL2EbbWmqmBj5dSSaGP6eYc6J5ZvGP3vqEwM1ndpGVkWnLadNzU4mT3v6mlfNOLde4MDuQydPf1wzajzPWqLNGlCi4C2mOVMeEsD4FTYZUS2Z1AkuXesywxKtHsnRCPiWYv+P3YHkXzR5WzBt8q09G4f0viyocg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717629570; c=relaxed/simple;
-	bh=vtWhHR8rCipCyVzNAFOmF7RFYT1AytVFYLp9pofdaVo=;
+	s=arc-20240116; t=1717629573; c=relaxed/simple;
+	bh=dO25VgHPABsHY2fEB1vc850vQbsSZc7TVlAn3AUTs0s=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Xx3PKUliKCFB4ZQh1f+5GrKL1je+YAZm+/dIECCrgPi9AncbdPLtEEJSLDl54BvHTKpZole9yu7N4iu+OuAQtDptKkIhbjeKH72MUQ9ANo32cL4fKIJHiQgxR7hk+0yFnYXi3NsrMVEefXqgSSyQyW89TJ48k80wD9NYrT3cP5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=phFCmQi0; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=QZO10ThlyBR1U9QiKYfnRWS+VJuUpK1EDlf/Uvgpdj/iGQQJ5v523cZEWtae8Wntsjg9OmwQM0i+9L0SzQi5fF1j/kWAcNOiU3IvuIaCLIAfukUpqN+dAfrNyMtDfUPqVZlvo49zBOrxZuFOFt+5XP3HOBHDCY83N3pJJ8QHJTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EGlIrM7a; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-629fe12b380so4991737b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 16:19:28 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-627eb3fb46cso4805297b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 16:19:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717629568; x=1718234368; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717629570; x=1718234370; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=JbnJv6vDpUrRyVZhMkImU0pEXY4NZDKxZhfl/r6eM3A=;
-        b=phFCmQi0I2fG8dYIxhSk0AHuYzfInmJ7fL0WE6PpVzInR8vPnRggesC1fbk2YnOEKx
-         yGDorjR4+5LZn54eeXMqwTTzazXMCj55T1RScmcGSG+cJVFPHL+5eLMoOJMs7WgoLAV6
-         P+Uqp2ejQpu6yIzuQJcOgQH0ilj61FiNBSIkyw3zBJ1HSfVF9HU7fFesVjFjSwOOFOzV
-         EbXv3okpj3yuct4C+fiQRIkDfYkwiuDi8NFl6y6dWghVnHK5d2aRSoUiX8fBaNICp2IN
-         JnQq3fABiLI882wlWACKY3tOvC6GIQ7h+aI344P5a02nTLY7jzGAvAHkch6HuYgrX4kW
-         5GZQ==
+        bh=EXdA077yWpI6eczOdgTucO+pfSrwF4gU1Jrgqc+2K/k=;
+        b=EGlIrM7apFsKkOtraFd9l3xurhcgrWIqRYqyAJNVqDJBLSNJXuz0R4lDJNUMBKHLLj
+         POG2mxNeFowfCw4sGG1wU/RrutdtmU+Vsc2JLCbad5kT84ZJG1vZVTRcCirKnvQVXXBm
+         L04XY8F2Zdt3pIxlBHCfyjKk4C5zjdC1euKqkIF+j588O7uZ0KGQbYVMRc8dc6pCDu1M
+         cPW56OrUE7NaECbRMohaN3T+nfjP4mLZViak1A3FJdNpX7lEeAmyitkfjrax1uT7lzVP
+         5iX1xU5K11vbWI/h9LMO+7lBlMI4rFqESVHu/oxSzFQ+nFC2MzKTO+ZNnBU0zEHjjwAM
+         fZFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717629568; x=1718234368;
+        d=1e100.net; s=20230601; t=1717629570; x=1718234370;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JbnJv6vDpUrRyVZhMkImU0pEXY4NZDKxZhfl/r6eM3A=;
-        b=RhGwMphKPPwkt9xE3ActP/Ui/t0YlOfL7C3pkPV1e1+1ScQe2oAnCBfcMh80N34j0S
-         tJS3RmTg6KZGtQzc7FpnvZMcxD+kOPCEhCJTIx5qKO9DczPZp7/yQZkZMY0xpSiOz2/K
-         RfkJh2qSbg7Zt+Ny+FTyNNDZUhWqdFJf1w0L8rMloslBz7WIqEHnLm4zBGM+iZsqhqFZ
-         LhsMc5QYlEBou/1nMgWJGfraxomHll2TtgkERBx2pflBrojAuQy27v1YN+SFFTJqHinD
-         zQoRI3tU98ATApf++0XMaEQc2lyjP9UE4CPnKvN85bB8b2me2/nZ6u/30pVdK1OonwuZ
-         zd3w==
-X-Gm-Message-State: AOJu0YzfTjzAJZvwtncFQyBXJidiqRmvz2VywdLnnYy+rr0aUV1dSxl4
-	37JZRSFX0hvX2/SaMvk/LlIyQ8HWqrIJSOOukzh9n2l17FjxPQuNhtihV2bw6o/GA9YHpktgXYg
-	tMA==
-X-Google-Smtp-Source: AGHT+IGT3X5M7VkVP46RRq6pl4m8P42cLEg9GfqDkINN+MTO1zovJ38lv62i90wYIsCXK1EryfZOAVoe7p4=
+        bh=EXdA077yWpI6eczOdgTucO+pfSrwF4gU1Jrgqc+2K/k=;
+        b=n3IfYFBCNVA7p0AoT+LcWl759Ym3im/9P5MFxfkTX3aLneF3P7uBfOh9K5CZkugmnq
+         PTyeXf/DXY7aW7AYLBZ4AjHP9beovmNCtvOBHE5sVxMeMolPuZgmkmX6RkU5jXk9UDFh
+         PmhEy3F+P30lYMfEqHowYDsKV1BBh2iGjwfkOFe5f4UdwQdqQNMPlJcPH9pUKPb8oXK0
+         txAaB4/yts463GEAfM6NqNtZGPv2pV6L4t47deo5hHhOG2RZu/OcMng4XvBzqoDdstFq
+         lQ9vmP/f1axV4FiCRWHtwNwfJfAKkZ5z+ZhksMQL7/kUH/XSpZb46X+5/u+S3BTLqlO1
+         NEKA==
+X-Gm-Message-State: AOJu0YwIB+9UBjpB33D+TVZhdU7UYnPJ/C+dljLW4jvug4Y7gkayCMwl
+	NONxYpZUMeTw1UHn1HT4FdOLnmsHEZrVkvR44KdeEs4zZ6OYxiUpXcHZR7wykEfO8dwJSPyIkY3
+	U8w==
+X-Google-Smtp-Source: AGHT+IGwHwc7adeQ7Fa0nF/PuQjXMtSIZpJWHdiU+6eoX6gflpLW5j8n1F+4W20UZwZOpHoho/kpjm6DKT8=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:10:b0:627:a671:8805 with SMTP id
- 00721157ae682-62cbb4d8986mr12338967b3.3.1717629567792; Wed, 05 Jun 2024
- 16:19:27 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6902:c09:b0:dfa:59a1:e8f4 with SMTP id
+ 3f1490d57ef6-dfacace3345mr463340276.10.1717629569624; Wed, 05 Jun 2024
+ 16:19:29 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed,  5 Jun 2024 16:19:11 -0700
+Date: Wed,  5 Jun 2024 16:19:12 -0700
 In-Reply-To: <20240605231918.2915961-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,9 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240605231918.2915961-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
-Message-ID: <20240605231918.2915961-4-seanjc@google.com>
-Subject: [PATCH v8 03/10] KVM: x86: Stuff vCPU's PAT with default value at
- RESET, not creation
+Message-ID: <20240605231918.2915961-5-seanjc@google.com>
+Subject: [PATCH v8 04/10] KVM: VMX: Move MSR_IA32_VMX_BASIC bit defines to asm/vmx.h
 From: Sean Christopherson <seanjc@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -88,45 +87,71 @@ Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
 	Zhao Liu <zhao1.liu@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Move the stuffing of the vCPU's PAT to the architectural "default" value
-from kvm_arch_vcpu_create() to kvm_vcpu_reset(), guarded by !init_event,
-to better capture that the default value is the value "Following Power-up
-or Reset".  E.g. setting PAT only during creation would break if KVM were
-to expose a RESET ioctl() to userspace (which is unlikely, but that's not
-a good reason to have unintuitive code).
+From: Xin Li <xin3.li@intel.com>
 
-No functional change.
+Move the bit defines for MSR_IA32_VMX_BASIC from msr-index.h to vmx.h so
+that they are colocated with other VMX MSR bit defines, and with the
+helpers that extract specific information from an MSR_IA32_VMX_BASIC value.
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Opportunistically use BIT_ULL() instead of open coding hex values.
+
+Opportunistically rename VMX_BASIC_64 to VMX_BASIC_32BIT_PHYS_ADDR_ONLY,
+as "VMX_BASIC_64" is widly misleading.  The flag enumerates that addresses
+are limited to 32 bits, not that 64-bit addresses are allowed.
+
+Last but not least, opportunistically #define DUAL_MONITOR_TREATMENT so
+that all known single-bit feature flags are defined (this will allow
+replacing open-coded literals in the future).
+
+Cc: Shan Kang <shan.kang@intel.com>
+Cc: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Xin Li <xin3.li@intel.com>
+[sean: split to separate patch, write changelog]
+Reviewed-by: Zhao Liu <zhao1.liu@intel.com>
 Reviewed-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/msr-index.h | 8 --------
+ arch/x86/include/asm/vmx.h       | 7 +++++++
+ 2 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 4157602c964e..887d29db0e05 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -12226,8 +12226,6 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- 	vcpu->arch.maxphyaddr = cpuid_query_maxphyaddr(vcpu);
- 	vcpu->arch.reserved_gpa_bits = kvm_vcpu_reserved_gpa_bits_raw(vcpu);
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index d93b73476583..b25c1c62b77c 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -1167,14 +1167,6 @@
+ #define MSR_IA32_VMX_VMFUNC             0x00000491
+ #define MSR_IA32_VMX_PROCBASED_CTLS3	0x00000492
  
--	vcpu->arch.pat = MSR_IA32_CR_PAT_DEFAULT;
+-/* VMX_BASIC bits and bitmasks */
+-#define VMX_BASIC_VMCS_SIZE_SHIFT	32
+-#define VMX_BASIC_TRUE_CTLS		(1ULL << 55)
+-#define VMX_BASIC_64		0x0001000000000000LLU
+-#define VMX_BASIC_MEM_TYPE_SHIFT	50
+-#define VMX_BASIC_MEM_TYPE_MASK	0x003c000000000000LLU
+-#define VMX_BASIC_INOUT		0x0040000000000000LLU
 -
- 	kvm_async_pf_hash_reset(vcpu);
+ /* Resctrl MSRs: */
+ /* - Intel: */
+ #define MSR_IA32_L3_QOS_CFG		0xc81
+diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+index e531d8d80a11..81b986e501a9 100644
+--- a/arch/x86/include/asm/vmx.h
++++ b/arch/x86/include/asm/vmx.h
+@@ -135,6 +135,13 @@
+ #define VMX_VMFUNC_EPTP_SWITCHING               VMFUNC_CONTROL_BIT(EPTP_SWITCHING)
+ #define VMFUNC_EPTP_ENTRIES  512
  
- 	vcpu->arch.perf_capabilities = kvm_caps.supported_perf_cap;
-@@ -12393,6 +12391,8 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	if (!init_event) {
- 		vcpu->arch.smbase = 0x30000;
- 
-+		vcpu->arch.pat = MSR_IA32_CR_PAT_DEFAULT;
++#define VMX_BASIC_VMCS_SIZE_SHIFT		32
++#define VMX_BASIC_32BIT_PHYS_ADDR_ONLY		BIT_ULL(48)
++#define VMX_BASIC_DUAL_MONITOR_TREATMENT	BIT_ULL(49)
++#define VMX_BASIC_MEM_TYPE_SHIFT		50
++#define VMX_BASIC_INOUT				BIT_ULL(54)
++#define VMX_BASIC_TRUE_CTLS			BIT_ULL(55)
 +
- 		vcpu->arch.msr_misc_features_enables = 0;
- 		vcpu->arch.ia32_misc_enable_msr = MSR_IA32_MISC_ENABLE_PEBS_UNAVAIL |
- 						  MSR_IA32_MISC_ENABLE_BTS_UNAVAIL;
+ static inline u32 vmx_basic_vmcs_revision_id(u64 vmx_basic)
+ {
+ 	return vmx_basic & GENMASK_ULL(30, 0);
 -- 
 2.45.1.467.gbab1589fc0-goog
 
