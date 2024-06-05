@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-203230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B668FD818
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:05:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0B08FD819
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD8DC1C23828
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61CD32820D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F58615F3ED;
-	Wed,  5 Jun 2024 21:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEDA4965B;
+	Wed,  5 Jun 2024 21:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5bLm2Y1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IotqZlJh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD374965B;
-	Wed,  5 Jun 2024 21:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4CF15F418;
+	Wed,  5 Jun 2024 21:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621533; cv=none; b=FDAFHipy2G84MfanpzdVjOmOShpwjE6IhI3kmIFuyH2wlerloVzTh0CdLTi9fAE+wa1TE1Gx2RWYL4/mCUr/ec58wMLwbynFz1hUYi8QFAcaAxNDmoLyY0p7OYM3XUj33opHOAHOi054QcLXWhcgEjJkbwRjfWtrxcaQ4kbpMLE=
+	t=1717621535; cv=none; b=Zlzmb4WrUlSR0W+9mcqAG9CnlDOGypVR+oGzsvIAyyYgiHvNqwBgny0qgknFCRSisx6bdluswsXmZauxOLGlkiqUCHDCuIYmwJ67Y82pU8dw3JYKriDGx7lYrRVZ6n9X+knndy8HIZF1LvtGaJ2yRbqxrdC/2nszqBi8KsI4hrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621533; c=relaxed/simple;
-	bh=vyVyWpamBkhCibWqrfOK0k2btOHC5xE3kXgbNGIntKs=;
+	s=arc-20240116; t=1717621535; c=relaxed/simple;
+	bh=HX2FOEXY8UflXmGqEAtTtfooLXB6TYloRO4ddELc9EI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fMYHItDsau6Jkjm/mPvHRML3wtDCMGWruelZ44EHKBfDBzf5iONclypL8BGeV1BcgkY5gfWz/pvVW0snmHuhgfKqH7qBqzZP/dXRGGRtEdnpLLrv5J7NFdi7yUoMXIApYDRHWJZ70d/u4c0LGoKCdsmIL10bSfDGGaK2C2t3SXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5bLm2Y1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B75C2BD11;
-	Wed,  5 Jun 2024 21:05:30 +0000 (UTC)
+	 MIME-Version:Content-Type; b=WEZ8+6ELgb5PPlCu2kZ5iEXT45MVcrTgM3lns4Xv71XMtKi7rQ7jIgCWG4znBHs837rs3UKHqYxJlueMEY4xzO7bOevY9KCrFLLhdrGCWPYM/PtVz6WsnRVhyXsBG4zltXdqFsMFCPJtAX61O9VK7DKC1jGaYAM9r6Pl9hg6Bt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IotqZlJh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBFFC32782;
+	Wed,  5 Jun 2024 21:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717621532;
-	bh=vyVyWpamBkhCibWqrfOK0k2btOHC5xE3kXgbNGIntKs=;
+	s=k20201202; t=1717621535;
+	bh=HX2FOEXY8UflXmGqEAtTtfooLXB6TYloRO4ddELc9EI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=P5bLm2Y1KeGSag+rNs+2DpD5bY/QXV89c223ilnqh9HJ6pHE8cViiSt0TNL2s7h8w
-	 AwRGkgPlZVjdVx9XmmEjtFBkluoSfbeGJyXzcKiO3lqQjlLNbrtspmcmcMiBL+GbVM
-	 aUXB8xi1S+d4MhpV6CsMA0fdR1ZIxCSVp8YUdYwyVsaaDxayadxE+1mfisHfizGitN
-	 OUrUm6oilb76eEZBH4CGhtV95roADGOpMlkJElwwjCFVCeRUEE1YD+whkoZywyJsSv
-	 CmMSM72YP2Eft8rh+hRYPp7loZaPIBVzOmaercAiUL6vmtzWjU1mfNf+Sad716mHzz
-	 cTKsR3xQiIqjw==
+	b=IotqZlJhbhOy1/VcjrFfU9iEv72PAg2bPladFlnP4BoBgvaeqES5SgqaWt9HzHWOt
+	 YUhdH8CWnoLBKRmYu3e7DuPDqeV2dDE90kKVFFx1mOr+170mvT9FqXR8xEVCApXYZD
+	 ZEalX9aDgV+/oqNlQbCO0YxeLbDF/hTQp/elWc5Wiyx35JgTuVjedn6Z2pq+V7h2oq
+	 KqiKecpswSFCXCeJ5Kc6Mmrp6vNoBzlR2IE3VPQGAM8EQjML3Fe4OffEaRzemgqD+L
+	 ttguZbJ0oGhJWZuwiGEDCdbWjzfMQwVM8FPoEFIYddoMH1WQK6YVyNVuwGJqKyknw7
+	 5NMtjUWVCWxrQ==
 From: Mark Brown <broonie@kernel.org>
-To: luca.ceresoli@bootlin.com, 
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Heiko Stuebner <heiko@sntech.de>, 
- Alibek Omarov <a1ba.omarov@gmail.com>
-Cc: linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240604184752.697313-1-a1ba.omarov@gmail.com>
-References: <20240604184752.697313-1-a1ba.omarov@gmail.com>
-Subject: Re: [PATCH] ASoC: rockchip: i2s-tdm: Fix trcm mode by setting
- clock on right mclk
-Message-Id: <171762152990.557520.1569792742795917762.b4-ty@kernel.org>
-Date: Wed, 05 Jun 2024 22:05:29 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Alper Nebi Yasak <alpernebiyasak@gmail.com>, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+In-Reply-To: <20240531-da7219-v1-1-ac3343f3ae6a@chromium.org>
+References: <20240531-da7219-v1-1-ac3343f3ae6a@chromium.org>
+Subject: Re: [PATCH RFT] ASoC: mediatek: mt8183-da7219-max98357: Fix
+ kcontrol name collision
+Message-Id: <171762153256.557520.12011428649748199502.b4-ty@kernel.org>
+Date: Wed, 05 Jun 2024 22:05:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,15 +64,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Tue, 04 Jun 2024 21:47:52 +0300, Alibek Omarov wrote:
-> When TRCM mode is enabled, I2S RX and TX clocks are synchronized through
-> selected clock source. Without this fix BCLK and LRCK might get parented
-> to an uninitialized MCLK and the DAI will receive data at wrong pace.
+On Fri, 31 May 2024 08:37:54 +0000, Hsin-Te Yuan wrote:
+> Since "Headphone Switch" kcontrol name has already been used by da7219,
+> rename the control name from "Headphone" to "Headphones" to prevent the
+> colision. Also, this change makes kcontrol name align with the one in
+> mt8186-mt6366-da7219-max98357.c.
 > 
-> However, unlike in original i2s-tdm driver, there is no need to manually
-> synchronize mclk_rx and mclk_tx, as only one gets used anyway.
 > 
-> [...]
 
 Applied to
 
@@ -80,8 +78,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: rockchip: i2s-tdm: Fix trcm mode by setting clock on right mclk
-      commit: ccd8d753f0fe8f16745fa2b6be5946349731d901
+[1/1] ASoC: mediatek: mt8183-da7219-max98357: Fix kcontrol name collision
+      commit: 97d8613679eb53bd0c07d0fbd3d8471e46ba46c1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
