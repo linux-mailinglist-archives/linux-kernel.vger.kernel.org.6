@@ -1,264 +1,186 @@
-Return-Path: <linux-kernel+bounces-202141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97FF48FC848
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:48:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CF58FC81D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8201C22D9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:48:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B1EFB261AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D548818FDB0;
-	Wed,  5 Jun 2024 09:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB7018FDC3;
+	Wed,  5 Jun 2024 09:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aQCoWDdN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Vm7/XYDB"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2088.outbound.protection.outlook.com [40.107.6.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526DF18FC90
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580892; cv=none; b=saGaKEfgxQOTiQcz7XXNZBmWTIiDLPilWN4SRX4T9sOlPpjQU5Z5NKEzFEa6dgzlGU/TmyrEaK0mlRB8xm+KVI+qp7pqU9lT20bboSb+uDJ9O+1HdJW6MXpHF9Y2T9Oa64TP59qu8o2q3Bl0U1sXUF1hx+yu2nYvNBR5ur7qWqM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580892; c=relaxed/simple;
-	bh=C4iwgHy0Vtpi0Ntz+kAPqXOSt3BXAywIVancJW3S7TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h33oItTvtHbqXZjRw42FGJAzebu48EoGV4BAXNP9aBPiBjWtO59YSKWomG4S+AE/0Ury+44ZZsev14n4ZP2zKoczRP4ob1uqmMlWb+1b9fUlxcTn4TBb8MgLVBlvYX9CSdm9npiglmNEP3xGALu7g1VTenOPug5uaX2GjJGX4B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aQCoWDdN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717580889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=opY4p+BpYUBWLdwIooIw98BXTUX1WcY1hsxBx/R5iBM=;
-	b=aQCoWDdNl1VR8+RkaBf1SDI8KesjZyjMRydry/QoMsBiXBCTp1aB9/qZeA9HIrUj6uvpAa
-	cbSRUQ8nhI4ZaQp8zj1HCJ4OZkaRSxcCW58V1haq9PVFqkPdJwCODIdCdhUgLanFE6elj3
-	a4YhLQtlBisfuKOh/hSGauK515AbBKQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-333-4X7cLI-bOh-8HDmhpp1D3Q-1; Wed, 05 Jun 2024 05:48:03 -0400
-X-MC-Unique: 4X7cLI-bOh-8HDmhpp1D3Q-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1F6BF101A520;
-	Wed,  5 Jun 2024 09:48:03 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.43])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id DFE9E492BF6;
-	Wed,  5 Jun 2024 09:47:57 +0000 (UTC)
-Date: Wed, 5 Jun 2024 17:47:53 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Changhui Zhong <czhong@redhat.com>
-Cc: Li Nan <linan666@huaweicloud.com>, axboe@kernel.dk,
-	ZiyangZhang@linux.alibaba.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
-	yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH] ublk_drv: fix NULL pointer dereference in
- ublk_ctrl_start_recovery()
-Message-ID: <ZmA0Se+t/LZihBKp@fedora>
-References: <20240529095313.2568595-1-linan666@huaweicloud.com>
- <Zl0QpCbYVHIkKa/H@fedora>
- <225f4c8e-0e2c-8f4b-f87d-69f4677af572@huaweicloud.com>
- <CAGVVp+XD5MbYOWL4pbLMxXL0yNKO5NJ84--=KVnW6w5-GF7Drw@mail.gmail.com>
- <918f128b-f752-2d66-ca60-7d9c711ed928@huaweicloud.com>
- <CAGVVp+V6XGmE_LyOYM3z8cEOzkvQZy=2Fnr5V3G4+DchxAz3Qw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745F218C34B;
+	Wed,  5 Jun 2024 09:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717580359; cv=fail; b=DEWw/5DsXs4B58OFCtHLgZgw7uaP3ecqdWpBbISnGt+veg3BiafDUZcFm+LuePQdAsp+FX+yW75v/HRffEd79wWkQKwZXpU418N+sJWaHKRPtt78fuY4HOYoCibRNwpC4/HeTwNQgJ7kyIC9bAb83eCgJyv5wzqdvwzd/Ghsz0E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717580359; c=relaxed/simple;
+	bh=DLwxT2pRUSsZEQbM/T7TvxHZuDNf89dgCEyrvuuXLEA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=D2B9Pb/DFzTRemZTrHKsA5dJQsTDYOoCaQVsoEsJnLyE5gApt3ajh4hIOT2Y1bxTrHWfVy7zx61wmkDOvKDFU37yux4BBGGi46g4ccINUTqRoTmMC3P12DUZOSof3LB2EKePsqoVOnAdfHzj3SF4yuPMebvN32SrKvdG+iE08VQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Vm7/XYDB; arc=fail smtp.client-ip=40.107.6.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EWFQNOnGpSGAVbJnqn8V4DR0q65DqxZlXUA8izh+aejf6ubeelWwUblR+R4332NnxbINZ+VPpbojx7pePb/l+5WfF0hbImldu5y2xu7oAU/wR4dtRqtTltfDfnGtwnvgNi8vpKYUehqW919nslrtR/n/qmAWD4ooePiNFTxaC9dVQQYJXoXqVqQyPPMO6cHIZ5Qr3ygPIZX+kUID3q3/TZij5HfiqX27i/qOD/+bVHA36C5tmUiK11p37yaMsGsV+OJItKNsfKdotIJefYtREMtBlNCyG8Ed8v0M/uLiV5meY2AkTUhUtEYfU25yLVI87BiqQ1jdMMPmbuiujnx++Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=emrWWXRdrMwTagjAgdl0gdJwScmGG4NPaFtdOuh6l/A=;
+ b=OTOl8bJ88IZWgvZoob9DG5Gxd46zFCliOyFCKgM1SaiqD4FRtATRlZmLONHUceJc1iKUCQ62DP4N5VwESo5CI/ESZEnOK0ZNlHy+70qv2wD2xyjSrIcYdC4HSna56QFKS9qxmKnanGSMF9tgv77tUQCsQPyYfDpPmDScTlnQPxblmB6qIwPCuBWlr9y9AtxXhPqTOaM3f9JQ2t34JvRRN4+QQ++GCSL/m0H6n4y3+coB1mPX3kmQKGjObX9KSrwxAEyk1kpVAYP0qXQKbuYR27hY7r3myiOMg37SKpZCTOwWLcQnKBeqf2B9xE62P6h5V5htSLEGMmyAbJPZEqzRbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=emrWWXRdrMwTagjAgdl0gdJwScmGG4NPaFtdOuh6l/A=;
+ b=Vm7/XYDBgzSP9P4KRC+lOaNORaZCQ/cgCv8ntY5pWFED7sG6odoy7oU6iyYtCY/IBgacQUuu1NXfS3fv23vCn3UlEMRMH7gunQHiAOGGHCGS7wdJUUsASLd4tXEJEk/fjyjZlFHA6j50o9u31ms72qcGzvqwk7Wkwxw7lQAP3y0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by GVXPR04MB10519.eurprd04.prod.outlook.com (2603:10a6:150:1dc::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.26; Wed, 5 Jun
+ 2024 09:39:12 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%5]) with mapi id 15.20.7611.030; Wed, 5 Jun 2024
+ 09:39:11 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de
+Cc: kernel@pengutronix.de,
+	festevam@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 1/2] dt-bindings: arm: fsl: add i.MX93 9x9 QSB board
+Date: Wed,  5 Jun 2024 17:48:11 +0800
+Message-Id: <20240605094812.1074027-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0012.apcprd02.prod.outlook.com
+ (2603:1096:3:17::24) To AM6PR04MB5941.eurprd04.prod.outlook.com
+ (2603:10a6:20b:9e::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGVVp+V6XGmE_LyOYM3z8cEOzkvQZy=2Fnr5V3G4+DchxAz3Qw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR04MB5941:EE_|GVXPR04MB10519:EE_
+X-MS-Office365-Filtering-Correlation-Id: d78476fb-867f-4c60-91f4-08dc85435ac1
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|52116005|366007|376005|1800799015|7416005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vQYU8ueaFdEaHNEFe7GXhITN5BEBzTKdVsCdBi9legcz5ZT0pAmKKZQ4rXY4?=
+ =?us-ascii?Q?X6OsT+Ri44aFIgkzis/8xdrzKUvGAAZv/XOfWXmXUl2OMr8JuPSehBCTECRN?=
+ =?us-ascii?Q?wXRqdTRcsk/41XphkTBLsB6IyEz8L7ajrJJzVu3EYs7XVNKbH77FdeD7Y90/?=
+ =?us-ascii?Q?JWx7oa6lvKUCA3Mh+tBetuv9SxT+1xia4W2KTV9yF1xR9Fs6pNaY9km7qL0i?=
+ =?us-ascii?Q?Bwfm0HstMBUuvnNbSn462grDyNOOZXhFvV2DLR/B6mZ5i63ujeEZqHOzdptQ?=
+ =?us-ascii?Q?8o3kOI8M9ugT53/WnVGs9TTOBnHuet+/EeZnt0RKzFi3RFYcqqwtCQPMFfNJ?=
+ =?us-ascii?Q?go/q5QbcOLrfRISMX27CzLY3J29vsKnXnk78r0l8gghE+llXCFr+gQnqCNKP?=
+ =?us-ascii?Q?hr40/VLRIjnwOABiekm72Uf7eKkyq5mNISav5xNb2LC1PldbStxaGSKGPrim?=
+ =?us-ascii?Q?Vc2AJCaAaJ1oOBwxZA4uPIXvJbfVc3hEncq2Iq7M3+uU3ZULSxPVBs0ZLu2t?=
+ =?us-ascii?Q?varJUT+iBu2rJxgSiCK9hG64bmBlqeQPvrBusLOCOZlPH/64sS0GE/IqdAju?=
+ =?us-ascii?Q?rtdRD+RHchSWcquj+1bjBOEKttp5keWDeQhv8Z3eBplMg9Y3r+RGUyeSdnC2?=
+ =?us-ascii?Q?KmVbAojpimCaE/KO10fsd/JwvX14oUmh6SMIPytwTJxZyTtpGcZycbrpqXGP?=
+ =?us-ascii?Q?odClPjglDhB2d5ME084KSSlLuTO9Ir3OckJihvAfQvukI32Oh3LA1doW3v1a?=
+ =?us-ascii?Q?vdTGtqyU5qPXRWbypwuRunw9aoeP5dHlfH24yV6DXW++l20wzgCJW4ZJzEqL?=
+ =?us-ascii?Q?pGd88mZymkeo4TAXE0jmbG7NHqRLa5859BVPbC4sB37Cw4hN0VKy15fWdcCo?=
+ =?us-ascii?Q?qLthP2lUvfzKqxj2Stt+NTSWjOW4LQIREjTgySyASe4mxHjVmk9OuTOno5NC?=
+ =?us-ascii?Q?kCzrjEKJkGHBSZnH3ZsNDZmMpD0w2zEh/9BlpKZa4fkmtUXoLYsDHVOzkSO1?=
+ =?us-ascii?Q?fqk766XN17Qb29Z+heSB4/FhzGS4UzaTfif/dRksv1WAlNknCNkGJk0BeI7m?=
+ =?us-ascii?Q?GnW2Ed3iywbPiPFaXQftPYt0Lv9qdwAXJQqKBcI7eiR3FDjU6Gt90okpoEt/?=
+ =?us-ascii?Q?f/2C4uyHtUzxuu8/UlYUPXKokHEMD0VktGr/Qvi+qYS9GYXGJ7wZtGvZqwK8?=
+ =?us-ascii?Q?jXAuv716N9dLKCgCeJ12BtRoNxDVf/7pwQjKHnRDaXnne7wVvkMzUuSGppXh?=
+ =?us-ascii?Q?tpiqvNYHcnoSFYelFDmwd5WPinkcZut1vADxZeuGYocfGhm3gVGBF54Se/a3?=
+ =?us-ascii?Q?4xyCktCAnQfqtXCc3rlgUFHi1kC7oO/gQf3SAUcJghJMsQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(366007)(376005)(1800799015)(7416005)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eknvF0EqGGETkl5t9UBCFJ2CirV5UbQEJvrLd9wMgXHVkU041cWfHttB6j9S?=
+ =?us-ascii?Q?4BXgp8HnuuKlpUQi9yFMvBEyFV98HSXFZWz8C8jyfnMmv+Db8he5cEPSigix?=
+ =?us-ascii?Q?DjdzbaawjYUoPw/VuS5JqB1SWm4Z6eqd6LLr3w6rMua/7z0DrWjZVH5/2Ln9?=
+ =?us-ascii?Q?SvPo+1Pg8ohApBsYisHA5FkjOltWiepCQXP/SVfYw5lkfHlqyfBndaPodEZP?=
+ =?us-ascii?Q?ierPq2nMSAL7+qNvbQEiESbTuZd17vzCWeaNDRv1dgTv1RWIyLyzWmkAa4yC?=
+ =?us-ascii?Q?Fb++6Uh/hYdnoAVVS+TOez3XXDZS/Uzlazu5XJFRJAijF02NG1dIVXyLG+XV?=
+ =?us-ascii?Q?PazWYfLHRjydSM635Fsj6xC+WZ/NIobicOskUXF7JL2Kt0FVbQ2oN40bGv7h?=
+ =?us-ascii?Q?2mzXiq6LEIBmmzOKiFOaBJbJSmlE+xDSZf+GA74Dt6rqAd7F1YRYhEQgarfq?=
+ =?us-ascii?Q?5v/MII5tqt9JGEAHSW2XYIQrisjXWtrnWp0EA/6fHLaFMezxZH57k+w92o76?=
+ =?us-ascii?Q?dE/GKUV1PEwLaLVIDOJSTuOdMUycCakGNV4655RC4P5S97FN3KMEbOqxhJBk?=
+ =?us-ascii?Q?oCFUQhzjClInxu79CQeDbP4WvEs+rq8MC+A1ECkAirA5yVjYqurd9OyPZxEe?=
+ =?us-ascii?Q?pIIZa6uO73NmfGAZfWosHgvoCPCXmoQzym9TxhVoocmTebP+CigyrEMMJuEU?=
+ =?us-ascii?Q?iSfJQ8E7LYUfCeXad6ihBstQ+CH9BsPF7kt3JTK5QuIXGf/5aAx/rJmRxjz/?=
+ =?us-ascii?Q?QddyE3zkC3sSf/cBBOez77Q7AUHCN6RpximDtoW5Oymx6QToouktvLUswmS4?=
+ =?us-ascii?Q?xgUAQD+KUhQNg6t9nPbCCOCTf2QdHsyD7S4IsTh0VjkHtkhsDlAYJBeuHky8?=
+ =?us-ascii?Q?62DikpUIlQgoPPXjh/7ypZnnyVobXPilOwTTFMR+wJFDVTyhJSGVCrDqCnCr?=
+ =?us-ascii?Q?jOAmrZgo4gd/mGu+QE3wrdu3+HFbOEbE+bHu6Esu7OaLESHGRNqQz2D81EjJ?=
+ =?us-ascii?Q?yaJ/l1kw6MpzE07pgKbVaPGqW/l/Q+18Sr96RrtNzDkfBicID1Oj6et/4dAh?=
+ =?us-ascii?Q?XE9E+iAswh+JM6Liv4DumYeY1I55MPGeUSpi4nB3nv/kcgwW+v2z7k/wJiaq?=
+ =?us-ascii?Q?HzPoTKdZTa5cOg9uXDh8+RWPP7w6Ekq0G7DFY/mX6eywjoYbjCYPeaC9L5L9?=
+ =?us-ascii?Q?05xeN9t1uetCcSIfjeyxgMKcp6oIsaJGa6au24VKatl/aRKmSnn2xe2HdCTq?=
+ =?us-ascii?Q?nyNZdfCNa1oi3DP1vfRhEm35b78pUE7Er3lnfdlWP5qX5UWXMslAlWVmOcSv?=
+ =?us-ascii?Q?f9J2JBPK8x85z3FfB8QbQu2LlQHD/ZyN+TxqIEydfzAHwGSdjxrv/Ysxr16f?=
+ =?us-ascii?Q?14Ghw+GK8DlRF6Dey4dqTHV0W1/9o6YMBOPb1oTH2Zxx88Ngyzw+JT7n9ZbK?=
+ =?us-ascii?Q?gDKSMcORwVtPOUA4uxLlgtW1dQKxTNxPgLevpu5kbZ0+naTXFdzOKyUewfcW?=
+ =?us-ascii?Q?XL/VyWOioZIETp10lxntCUktDFPkLIhuiTy3J80gPSbq10seRYm0Z7koBG4Q?=
+ =?us-ascii?Q?qnfRg1GgbsBvbHrxxGJAtK4qzoLXX/zlGCZeXqsT?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d78476fb-867f-4c60-91f4-08dc85435ac1
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 09:39:11.7674
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SUq7fCpYc8kMzLnN8ZG9H9hXPmRz3aD+fsBY5b2vcJ8qdSkdAOhBYcJq8wBw471Qymf7murHjXWAsNIQ42MykA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10519
 
-On Wed, Jun 05, 2024 at 03:20:34PM +0800, Changhui Zhong wrote:
-> On Wed, Jun 5, 2024 at 9:41 AM Li Nan <linan666@huaweicloud.com> wrote:
-> >
-> >
-> >
-> > 在 2024/6/4 9:32, Changhui Zhong 写道:
-> > > On Mon, Jun 3, 2024 at 10:20 AM Li Nan <linan666@huaweicloud.com> wrote:
-> > >>
-> > >>
-> > >>
-> > >> 在 2024/6/3 8:39, Ming Lei 写道:
-> > >>
-> > >> [...]
-> > >>
-> > >>>> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> > >>>> index 4e159948c912..99b621b2d40f 100644
-> > >>>> --- a/drivers/block/ublk_drv.c
-> > >>>> +++ b/drivers/block/ublk_drv.c
-> > >>>> @@ -2630,7 +2630,8 @@ static void ublk_queue_reinit(struct ublk_device *ub, struct ublk_queue *ubq)
-> > >>>>    {
-> > >>>>       int i;
-> > >>>>
-> > >>>> -    WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq)));
-> > >>>> +    if (WARN_ON_ONCE(!(ubq->ubq_daemon && ubq_daemon_is_dying(ubq))))
-> > >>>> +            return;
-> > >>>
-> > >>> Yeah, it is one bug. However, it could be addressed by adding the check in
-> > >>> ublk_ctrl_start_recovery() and return immediately in case of NULL ubq->ubq_daemon,
-> > >>> what do you think about this way?
-> > >>>
-> > >>
-> > >> Check ub->nr_queues_ready seems better. How about:
-> > >>
-> > >> @@ -2662,6 +2662,8 @@ static int ublk_ctrl_start_recovery(struct
-> > >> ublk_device *ub,
-> > >>           mutex_lock(&ub->mutex);
-> > >>           if (!ublk_can_use_recovery(ub))
-> > >>                   goto out_unlock;
-> > >> +       if (!ub->nr_queues_ready)
-> > >> +               goto out_unlock;
-> > >>           /*
-> > >>            * START_RECOVERY is only allowd after:
-> > >>            *
-> > >>
-> > >>>
-> > >>> Thanks,
-> > >>> Ming
-> > >>
-> > >> --
-> > >> Thanks,
-> > >> Nan
-> > >>
-> > >
-> > >
-> > > Hi,Nan
-> > >
-> > > After applying your new patch, I did not trigger "NULL pointer
-> > > dereference" and "Warning",
-> > > but hit task hung "Call Trace" info, please check
-> > >
-> > > [13617.812306] running generic/004
-> > > [13622.293674] blk_print_req_error: 91 callbacks suppressed
-> > > [13622.293681] I/O error, dev ublkb4, sector 233256 op 0x1:(WRITE)
-> > > flags 0x8800 phys_seg 1 prio class 0
-> > > [13622.308145] I/O error, dev ublkb4, sector 233256 op 0x0:(READ)
-> > > flags 0x0 phys_seg 2 prio class 0
-> > > [13622.316923] I/O error, dev ublkb4, sector 233264 op 0x1:(WRITE)
-> > > flags 0x8800 phys_seg 1 prio class 0
-> > > [13622.326048] I/O error, dev ublkb4, sector 233272 op 0x0:(READ)
-> > > flags 0x0 phys_seg 1 prio class 0
-> > > [13622.334828] I/O error, dev ublkb4, sector 233272 op 0x1:(WRITE)
-> > > flags 0x8800 phys_seg 1 prio class 0
-> > > [13622.343954] I/O error, dev ublkb4, sector 233312 op 0x0:(READ)
-> > > flags 0x0 phys_seg 1 prio class 0
-> > > [13622.352733] I/O error, dev ublkb4, sector 233008 op 0x0:(READ)
-> > > flags 0x0 phys_seg 1 prio class 0
-> > > [13622.361514] I/O error, dev ublkb4, sector 233112 op 0x0:(READ)
-> > > flags 0x0 phys_seg 1 prio class 0
-> > > [13622.370292] I/O error, dev ublkb4, sector 233192 op 0x1:(WRITE)
-> > > flags 0x8800 phys_seg 1 prio class 0
-> > > [13622.379419] I/O error, dev ublkb4, sector 233120 op 0x0:(READ)
-> > > flags 0x0 phys_seg 1 prio class 0
-> > > [13641.069695] INFO: task fio:174413 blocked for more than 122 seconds.
-> > > [13641.076061]       Not tainted 6.10.0-rc1+ #1
-> > > [13641.080338] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> > > disables this message.
-> > > [13641.088164] task:fio             state:D stack:0     pid:174413
-> > > tgid:174413 ppid:174386 flags:0x00004002
-> > > [13641.088168] Call Trace:
-> > > [13641.088170]  <TASK>
-> > > [13641.088171]  __schedule+0x221/0x670
-> > > [13641.088177]  schedule+0x23/0xa0
-> > > [13641.088179]  io_schedule+0x42/0x70
-> > > [13641.088181]  blk_mq_get_tag+0x118/0x2b0
-> > > [13641.088185]  ? gup_fast_pgd_range+0x280/0x370
-> > > [13641.088188]  ? __pfx_autoremove_wake_function+0x10/0x10
-> > > [13641.088192]  __blk_mq_alloc_requests+0x194/0x3a0
-> > > [13641.088194]  blk_mq_submit_bio+0x241/0x6c0
-> > > [13641.088196]  __submit_bio+0x8a/0x1f0
-> > > [13641.088199]  submit_bio_noacct_nocheck+0x168/0x250
-> > > [13641.088201]  ? submit_bio_noacct+0x45/0x560
-> > > [13641.088203]  __blkdev_direct_IO_async+0x167/0x1a0
-> > > [13641.088206]  blkdev_write_iter+0x1c8/0x270
-> > > [13641.088208]  aio_write+0x11c/0x240
-> > > [13641.088212]  ? __rq_qos_issue+0x21/0x40
-> > > [13641.088214]  ? blk_mq_start_request+0x34/0x1a0
-> > > [13641.088216]  ? io_submit_one+0x68/0x380
-> > > [13641.088218]  ? kmem_cache_alloc_noprof+0x4e/0x320
-> > > [13641.088221]  ? fget+0x7c/0xc0
-> > > [13641.088224]  ? io_submit_one+0xde/0x380
-> > > [13641.088226]  io_submit_one+0xde/0x380
-> > > [13641.088228]  __x64_sys_io_submit+0x80/0x160
-> > > [13641.088229]  do_syscall_64+0x79/0x150
-> > > [13641.088233]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-> > > [13641.088237]  ? do_io_getevents+0x8b/0xe0
-> > > [13641.088238]  ? syscall_exit_work+0xf3/0x120
-> > > [13641.088241]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-> > > [13641.088243]  ? do_syscall_64+0x85/0x150
-> > > [13641.088245]  ? do_syscall_64+0x85/0x150
-> > > [13641.088247]  ? blk_mq_flush_plug_list.part.0+0x108/0x160
-> > > [13641.088249]  ? rseq_get_rseq_cs+0x1d/0x220
-> > > [13641.088252]  ? rseq_ip_fixup+0x6d/0x1d0
-> > > [13641.088254]  ? blk_finish_plug+0x24/0x40
-> > > [13641.088256]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-> > > [13641.088258]  ? do_syscall_64+0x85/0x150
-> > > [13641.088260]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-> > > [13641.088262]  ? do_syscall_64+0x85/0x150
-> > > [13641.088264]  ? syscall_exit_to_user_mode+0x6c/0x1f0
-> > > [13641.088266]  ? do_syscall_64+0x85/0x150
-> > > [13641.088268]  ? do_syscall_64+0x85/0x150
-> > > [13641.088270]  ? do_syscall_64+0x85/0x150
-> > > [13641.088272]  ? clear_bhb_loop+0x45/0xa0
-> > > [13641.088275]  ? clear_bhb_loop+0x45/0xa0
-> > > [13641.088277]  ? clear_bhb_loop+0x45/0xa0
-> > > [13641.088279]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > > [13641.088281] RIP: 0033:0x7ff92150713d
-> > > [13641.088283] RSP: 002b:00007ffca1ef81f8 EFLAGS: 00000246 ORIG_RAX:
-> > > 00000000000000d1
-> > > [13641.088285] RAX: ffffffffffffffda RBX: 00007ff9217e2f70 RCX: 00007ff92150713d
-> > > [13641.088286] RDX: 000055863b694fe0 RSI: 0000000000000010 RDI: 00007ff92164d000
-> > > [13641.088287] RBP: 00007ff92164d000 R08: 00007ff91936d000 R09: 0000000000000180
-> > > [13641.088288] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000010
-> > > [13641.088289] R13: 0000000000000000 R14: 000055863b694fe0 R15: 000055863b6970c0
-> > > [13641.088291]  </TASK>
-> > >
-> > > Thanks，
-> > > Changhui
-> > >
-> >
-> > After applying the previous patch, will the test environment continue to
-> > execute test cases after WARN?
-> 
-> a few days ago，test with the previous patch, the test environment
-> continued to execute test cases after WARN,
-> and I terminated the test when I observed a WARN，so I did not observe
-> the subsequent situation.
-> 
-> > I am not sure whether this issue has always
-> > existed but was not tested becasue of WARN, or whether the new patch
-> > introduced it.
-> 
-> today， I re-test previous patch， and let it run for a long time，I
-> observed WARN and task hung，
-> looks this issue already existed and not introduced by new patch.
+From: Peng Fan <peng.fan@nxp.com>
 
-Hi Changhui,
+Add compatible string for i.MX93 9x9 Quick Start Board.
 
-The hang is actually expected because recovery fails.
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please pull the latest ublksrv and check if the issue can still be
-reproduced:
-
-https://github.com/ublk-org/ublksrv
-
-BTW, one ublksrv segfault and two test cleanup issues are fixed.
-
-Thanks,
-Ming
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 6d185d09cb6a..aeecf4e70dcf 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -1272,6 +1272,7 @@ properties:
+       - description: i.MX93 based Boards
+         items:
+           - enum:
++              - fsl,imx93-9x9-qsb         # i.MX93 9x9 QSB Board
+               - fsl,imx93-11x11-evk       # i.MX93 11x11 EVK Board
+           - const: fsl,imx93
+ 
+-- 
+2.37.1
 
 
