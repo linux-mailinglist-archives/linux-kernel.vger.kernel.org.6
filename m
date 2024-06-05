@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-201873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985B98FC46F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:22:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A598FC473
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5428C28A9E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:22:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B0B1F21650
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F374E1922F8;
-	Wed,  5 Jun 2024 07:22:34 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3201922EA;
+	Wed,  5 Jun 2024 07:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YD55qfcj"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D0B1922CA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84351922DD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717572154; cv=none; b=PI+h7LpWZEIBx65UA1ywkPPeENkVuCV/1fDKg2dwPm2C87vviLETd1t4RhrA8WK+9ckEIYCpWAaEuHv0ioebNPUic8wu9MoVHqXqiPIBmolKlzRWhd2QFxlQCSTwmjdkhMTKz4bMw5TPQVcfK/k7nSZvLgm63cF5sN62y+JJHMM=
+	t=1717572177; cv=none; b=e7T6GC8xJslOvaPP8rXQ+YBh+3oBb97UwrIZmZ5hIwSqD+RMyuPTrVR5u538hKdKQBL9H/xwniWZQ3ezBdF2bDkB6nGV6h+3eHefK3Cefa87p5gaOa1Qn4yv9vaPrDnL9+1lmeyXXbS+wPcjbdMqABp/rEwebZgiSO+TJNU6fHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717572154; c=relaxed/simple;
-	bh=lro3mCFjtFUdno1sdsyDe4qop6S9j//a9rrNG06fmXc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sWZvdg4pLzPT8cYi2hSi6b0XlIItwfBwDF0QWDPhDo2kde5VwKsWsqwmCE8Yg+871Aa8cQGjvrDW6OaasRyB6p/NRvRSvtsDU9rJmv4O7ch9PEkzcBqlguHdWsX9OiIFGw9DrxnlpitYS6mGMw7psJUSOuJ1jVzGjiVZiLfxjiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb01189491so230464039f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:22:32 -0700 (PDT)
+	s=arc-20240116; t=1717572177; c=relaxed/simple;
+	bh=R4YKIM6OKd1WIlOGsM6YjhBav9nZ9U9MhpDx2XiXALo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9ZZfYUAnfQs6jG8+PYNBd6aAUnYUhTziM19nbO9pbJYH2GCU+setlm37YezLG/GviHKc1e27JQUyP/phzRuG6UocHjg6Yz1QINK4uxfly2SqW0RkQs1s1YhFBInqDeGNfDMvxX6nCE71wZdqMqiJcz47IBctkmM+PSnHTbILDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YD55qfcj; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52b950aa47bso2644220e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 00:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717572174; x=1718176974; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RqnZdFgvboe7tX2UKgOGW0Pa1N7zuJuJPg9c9wyxQMg=;
+        b=YD55qfcjDfOPWxSNsWWoCc7hMBzAWe+akRiI8lzSH8z/iGpBGcYp0JFqNsj3je+ItV
+         P1V6WizYoA/H0X5EsVo03D2uWwuj3nt648KNBkko/8+xZIHTi8NF35GhdFEJgMBHAfwA
+         0CrWixDkKgPJjXRXdHIMPsc90/VuMNk7X8HX+5nSzmTUidkjHs91TPIXzvSIjxkU+w31
+         EqRBBlF6p50NGZAYwFW9USrK5daTHT+T9/NihUkPrJ0F03W5KiGZMVQJXz9beozjj7Bz
+         V5QfTpO/kxaiEqr04mcE7etRSEon+zfE4F+aVLK6p70w5phZf57JmDX41BEjFlSOLlqh
+         pDJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717572152; x=1718176952;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1717572174; x=1718176974;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IVbfPAz7yPBJaOxjtXsyWiEgQ8NG3RgtPQ8WAIdk9AY=;
-        b=iANMZNUp4Bh8dqD4IOomt42e9hUqmApdRiQ6AJnPQGV+sIAZWCqfETa++bsEXFdTDQ
-         tYUqfWFIcik9Kqz5Dn3SQQO5TaIwJYiSpa9CxUpw92/4rhJ3JC3ncRSRsDfDJ94jD0oh
-         wSjw9mmiaDI6vJ0xUah7oM4o7gpWS5B3gOgeBlvY5pnDBBgM+j0QF/nv+kKGRVj6egti
-         bGBPWKfqlQmpkaIepQx+k6TlSq8+s+sMgNQhjA9Us5igMCoKltsE1ZC6qN2xybb5LxCQ
-         A7sjDNfmB6d1Odx1Dc0XZ+FYaEDf+POiMJN+Y8ijgUmkJfVeCpnkgpiSJLWoqJQozXdK
-         2guw==
-X-Gm-Message-State: AOJu0YyotORKv4Wn/s05zK3E4mZbeW3eF/qR1fxnE2jloMm4j32N771d
-	UhroXcb20Bc4/+BTaWvjQ5nsrXgbWo9ohyg1Nju/22d3obTt7OjlO71/yLY2mOJMaVRVHCZ5mdC
-	IAkbY8TYLxz4vtzH6HLf0onV/PgSOvN7wNXdFGP25ZFW/gI062jngwdY=
-X-Google-Smtp-Source: AGHT+IE7lS+jL41DSOqGVho1cMvKk4hRl6V6URlMm/jBPHHBxTpswBEkvsBWI2413BqHa9K9qeYVx2slRt4LQNLL7fhHPJ51oRKt
+        bh=RqnZdFgvboe7tX2UKgOGW0Pa1N7zuJuJPg9c9wyxQMg=;
+        b=sls2MaRPkIK+KHxELOgsmC+aVdFKHJBjdTVSJoiwE1k42rI9PZoiRZnRPLDiymdhyB
+         3J9r1oelklftObCQbFWzZoxzxPfdoM/fHv3kfJs/QriJoBAnLbRtAvOo/APQ84nU7Zzg
+         HGwcJIsLEidCvsMSCpWe6NwIongVuypHPOxjDFxGMl22jxlLlAdZnecjj7pn9km+kniw
+         7JtUcX0QT8YjW0ahHUG84T4zD5wyDjQhRTzWOr8S7oXQyif9WREy1B8ZnaZ669VZRCPi
+         HHgVxlIb01zEftrRYWyL2WShdFl/NVX7/7Q5kFD/aDOLkzFWdSJfdUK8eNSQIWsS+5tl
+         67pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNzNTnb7zFFox6VS6anZn3obgRVwYtGd3Tk0/YrnLJ1KqvU0IiQcVjIFks0TchDr/6sGKLE4hCfRVDZudftr7jpB/0ZodfrnLIb44k
+X-Gm-Message-State: AOJu0Yz503iOGpMvesCBBVYQz+6fUP7ztW90THxr9RT6Lzduglqawo6a
+	93FY+AbjiVgNB0L0oxhkf9FULEhEHFiAGsKy0bi6F7d1VOm5Ib1D3qRrYxeKP6g=
+X-Google-Smtp-Source: AGHT+IGrEUTIRlHebCjYcSxaWnRyULJcyEIEq/vcwbc8wOASvTCW7s5vwhOA3Z/T5Q0VVe7HxptVtw==
+X-Received: by 2002:a05:6512:2308:b0:52b:83d5:34 with SMTP id 2adb3069b0e04-52bab2843eemr1239519e87.0.1717572173579;
+        Wed, 05 Jun 2024 00:22:53 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68519892c8sm695071366b.65.2024.06.05.00.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 00:22:53 -0700 (PDT)
+Date: Wed, 5 Jun 2024 10:22:49 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dmitry Yashin <dmt.yashin@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Jianqun Xu <jay.xu@rock-chips.com>, Jonas Karlman <jonas@kwiboo.se>,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] pinctrl: rockchip: add rk3308b SoC support
+Message-ID: <b5d2d914-0c2b-4cd1-b894-f894a93a54f9@moroto.mountain>
+References: <20240604141020.21725-1-dmt.yashin@gmail.com>
+ <20240604141020.21725-3-dmt.yashin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a24:b0:374:9af0:5f5a with SMTP id
- e9e14a558f8ab-374b1f88226mr951415ab.6.1717572152375; Wed, 05 Jun 2024
- 00:22:32 -0700 (PDT)
-Date: Wed, 05 Jun 2024 00:22:32 -0700
-In-Reply-To: <000000000000adb08b061413919e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000004c91f061a1f6ec9@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604141020.21725-3-dmt.yashin@gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Jun 04, 2024 at 07:10:20PM +0500, Dmitry Yashin wrote:
+> Add pinctrl support for rk3308b. This pin controller much the same as
+> rk3308's, but with additional iomux routes and 3bit iomuxes selected
+> via gpio##_sel_src_ctrl registers. Set them up in the function
+> rk3308b_soc_sel_src_init to use new 3bit iomuxes over some 2bit old
+> ones and update iomux_recalced and iomux_routes for the new SoC's.
+> 
+> Fixes: 1f3e25a06883 ("pinctrl: rockchip: fix RK3308 pinmux bits")
 
-***
+Why does this one have a Fixes tag?  Isn't this new hardware support?
+Possibly patch 1/2 was not actually a fix but just preparation for this
+patch?
 
-Subject: Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
-Author: wojciech.gladysz@infogain.com
+regards,
+dan carpenter
 
-#syz test https://linux.googlesource.com/linux/kernel/git/torvalds/linux e3=
-77d803b65ee4130213b3c041fc25fdfec1bd90
-________________________________
-From: syzbot <syzbot+9d95beb2a3c260622518@syzkaller.appspotmail.com>
-Sent: Wednesday, June 5, 2024 09:17
-To: linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; syzkaller-=
-bugs@googlegroups.com <syzkaller-bugs@googlegroups.com>; Wojciech Gladysz <=
-Wojciech.Gladysz@infogain.com>
-Subject: Re: [syzbot] [bpf?] possible deadlock in trie_delete_elem
+> Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-EXTERNAL: This message was sent from outside of Infogain. Please do not cli=
-ck links or open attachments unless you know the content is safe.
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-failed to checkout kernel repo https://github.com/torvalds/linux.git on com=
-mit e377d803b65ee4130213b3c041fc25fdfec1bd90: failed to run ["git" "fetch" =
-"--force" "--tags" "aa24f7914cebcc04de6104c814c089815e172c16" "e377d803b65e=
-e4130213b3c041fc25fdfec1bd90"]: exit status 128
-fatal: remote error: upload-pack: not our ref e377d803b65ee4130213b3c041fc2=
-5fdfec1bd90
-
-
-
-Tested on:
-
-commit:         [unknown
-git tree:       https://github.com/torvalds/linux.git e377d803b65ee4130213b=
-3c041fc25fdfec1bd90
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9d7ea7de0cb3258=
-7
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D9d95beb2a3c260622=
-518
-compiler:
-
-Note: no patches were applied.
-
-The information in this email is confidential and may be legally privileged=
-. It is intended solely for the addressee and access to it by anyone else i=
-s unauthorized. If you are not the intended recipient, any disclosure, copy=
-ing, distribution or any action taken or omitted to be taken based on it, i=
-s strictly prohibited and may be unlawful.
 
