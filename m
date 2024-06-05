@@ -1,136 +1,108 @@
-Return-Path: <linux-kernel+bounces-201758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D888FC2E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:04:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8D08FC2E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AC051C22489
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:04:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BF961F232ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA7B13AA5C;
-	Wed,  5 Jun 2024 05:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6139513AA5C;
+	Wed,  5 Jun 2024 05:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eUidmhsw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BO4uEPH9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A7861FCC;
-	Wed,  5 Jun 2024 05:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9872D139D1A;
+	Wed,  5 Jun 2024 05:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717563879; cv=none; b=UPbYmhaff1PUUS+35bPbRIF86fwGx+/ugsT/H+JOutcu970dx7iJorggJv5bLdAdD/9ut9fwE/plH79sKSasJ9Pk0pGenCvwcuxXfzWpL5WFAlKjbwaYRCIh7oqV7PgDBI1NqP+Kjl1R6dz69IvBGYA6FHG/LSNLP9sBnQQP7+s=
+	t=1717563896; cv=none; b=H5zlKuN5bsm8GzztBeufreGfod2POOuE0lNNoT4k5ve2Pi2eG4aZCvnkov3j8YSrQuPhbjtha0/wUiYh2+7HAuSgW1t44d9RYzJaP9Nk1QRaLhe4x6qXB3bJ4/1Ph4Lx5YZ0zaJI3ACA+/50DS4WbhHhHGMNJQvYGnkCNSnm71A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717563879; c=relaxed/simple;
-	bh=x2ZW8cijAAACiOfJr+MbErW0fJMSAWOe6vL0+p9HPsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hNSIa0suwSMwzV6sSAkiQOLTRkuLqyzGvGpqpwHKu/qBIf5kzaqbe8tJXOF1Gcp6VULIb3r/u6TcmebdUVThOPcqzRX/bcFDFFqVsLgnLNvItKgMdZb28z1HpKLvAWk+ij8BOoHv4wtjMlO+GXJZBeRCEEUIf0fmVM1uCb/TFj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eUidmhsw; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717563877; x=1749099877;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=x2ZW8cijAAACiOfJr+MbErW0fJMSAWOe6vL0+p9HPsc=;
-  b=eUidmhswdYaldfYrY4XLZCycCpFB2qQcb9lGOyEryDiCp0EZidmGvElv
-   iDIbmmVzIkK22lKXCPZVMNvPehvzRQ8n+hFCddX12XjrNd0ffAUmmn0eu
-   wzSU5iKXa4httFgEvV2QrjUA58euoQQivHd6TjaLQ9cHBgYK7Aq/7s4tS
-   f4theceAcPG8qjW6Jr0tHsHpEEcnOFScjaVRaSrpi0POiDotfK3l9CZyw
-   ibreHOtZIjo0Gz+dZyLRQcdkoyd6aSv/KNQi/1NdYWy9aRqqNC1efEHHB
-   EmucQaTYhpQjuHmNijmpgVk6FBi2v9eoYZ9DpGYM4g1nck329DzJwZTdY
-   g==;
-X-CSE-ConnectionGUID: ym3eVshlSMStnm+hZPKbbg==
-X-CSE-MsgGUID: a/sPvPTSRlOphEWSdxDfdg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="25257246"
-X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
-   d="scan'208";a="25257246"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 22:04:36 -0700
-X-CSE-ConnectionGUID: GJ7hVspwS1eWwapyAKcxKQ==
-X-CSE-MsgGUID: 1Q08XN4PTlG6z6cEZDUvkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
-   d="scan'208";a="68598678"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 04 Jun 2024 22:04:32 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sEip4-0000vn-0q;
-	Wed, 05 Jun 2024 05:04:30 +0000
-Date: Wed, 5 Jun 2024 13:03:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Connor Abbott <cwabbott0@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	seanpaul@chromium.org, quic_jesszhan@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/a6xx: use __always_unused to fix compiler
- warnings for gen7_* includes
-Message-ID: <202406051244.xdNC6LyO-lkp@intel.com>
-References: <20240604215105.4057278-1-quic_abhinavk@quicinc.com>
+	s=arc-20240116; t=1717563896; c=relaxed/simple;
+	bh=ugc2bykqt55t/VwJ9UCKNtxoLh62vpOWsbk3df+1xH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M1nUqoiTcXfHO1bPLEkHugfxmp2pnTjb+L51mWXfNNRafGFGgB80seCTdGm56jYmojVkqAZkFvl6pFeOKwe0GVh04+4ZPkjlrmZsQlTRTmotzfvnaiqJy+ctssIWAAmSaIwzatfhkE912rsgOG8Z0AbFmNxiOnHPqSIS3j24bWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BO4uEPH9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6FCEC4AF09;
+	Wed,  5 Jun 2024 05:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717563895;
+	bh=ugc2bykqt55t/VwJ9UCKNtxoLh62vpOWsbk3df+1xH8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BO4uEPH9S30Q36KtXilbFbS7FpqzfCeJ79caSMleuh8nfMIv6JUxQJd+gZ7VJYdIY
+	 laBjeK9YxSe7E15T7h8ECyGaurxGgpSmjlYjPX61L7kDrmikTK21GfsH/P/HqFSYXU
+	 2Jl0MsENBgcqJa5f0QsFh6f7JzwF5V405WtixWokfk7HEgPzNmb264JZo7+nT9hDnl
+	 qZakvgykeL/Kx9nIoiH+BiwG9dWQdAy2M8ZgD4BF2N5l6qpWtUdA6kqX9pEe83JtNP
+	 oqt//3qVw5RB7jxiBr328wbHCGJ5NxD9ni5DzihtKGhqDqf4ll3+1MP7YRKVgeLWby
+	 f+7MCmZygiBJQ==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52b840cfecdso2203703e87.3;
+        Tue, 04 Jun 2024 22:04:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUwpxo/1BD+5ej7Cb52Vio/btF9aY5fS+ovpu/fChhh95gdRwoQNQXdrRfPToWup9OPsLo0Aya3lgTItLyPvLvGVWd59RdUmUtCRMbljh3cxuzPKuDLxbwO6J4baaS8ftiU7JrBvv1gYSvSRQ==
+X-Gm-Message-State: AOJu0YwtSbsjsqHLxfoX4nRNIpj0JMnqG23R6UN5brD+X8hdqzKuctmS
+	XpgXueqOFn6ppoVs/N3A8B3PRyqFC5jtiCAX81IXZg33Oaf+vfipD7RiGX/Fvz+udBvlwgQ8cfV
+	bGd8QtK4NkyVEZfBpL2bAuPVyHWY=
+X-Google-Smtp-Source: AGHT+IHY11EiYpkwOu8YDTv9BnZRnCOn2vR5KiKFthP+mnlG0hUwouE7lByd4T93E6RTObvl31cEChVwMWi2dwtHmwE=
+X-Received: by 2002:a05:6512:402a:b0:520:9df8:f245 with SMTP id
+ 2adb3069b0e04-52bab4c8f5emr1090876e87.1.1717563894277; Tue, 04 Jun 2024
+ 22:04:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604215105.4057278-1-quic_abhinavk@quicinc.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com> <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+ <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com> <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
+ <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
+In-Reply-To: <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
+From: Song Liu <song@kernel.org>
+Date: Tue, 4 Jun 2024 22:04:42 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7bjyLvfQ-ysKE+S8x26Zv5b7jbJoyW8UiBaUfaRncKfg@mail.gmail.com>
+Message-ID: <CAPhsuW7bjyLvfQ-ysKE+S8x26Zv5b7jbJoyW8UiBaUfaRncKfg@mail.gmail.com>
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+To: Petr Mladek <pmladek@suse.com>
+Cc: Miroslav Benes <mbenes@suse.cz>, zhang warden <zhangwarden@gmail.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Abhinav,
+On Tue, May 21, 2024 at 1:04=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
+e:
+[...]
+> >
+> > Yes, but the information you get is limited compared to what is availab=
+le
+> > now. You would obtain the information that a patched function was calle=
+d
+> > but ftrace could also give you the context and more.
+>
+> Another motivation to use ftrace for testing is that it does not
+> affect the performance in production.
+>
+> We should keep klp_ftrace_handler() as fast as possible so that we
+> could livepatch also performance sensitive functions.
 
-kernel test robot noticed the following build warnings:
+At LPC last year, we discussed about adding a counter to each
+klp_func, like:
 
-[auto build test WARNING on drm-intel/for-linux-next-fixes]
-[also build test WARNING on drm-tip/drm-tip linus/master v6.10-rc2 next-20240604]
-[cannot apply to drm-intel/for-linux-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+struct klp_func {
+    ...
+    u64 __percpu counter;
+    ...
+};
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Abhinav-Kumar/drm-msm-a6xx-use-__always_unused-to-fix-compiler-warnings-for-gen7_-includes/20240605-055341
-base:   git://anongit.freedesktop.org/drm-intel for-linux-next-fixes
-patch link:    https://lore.kernel.org/r/20240604215105.4057278-1-quic_abhinavk%40quicinc.com
-patch subject: [PATCH] drm/msm/a6xx: use __always_unused to fix compiler warnings for gen7_* includes
-config: i386-buildonly-randconfig-001-20240605 (https://download.01.org/0day-ci/archive/20240605/202406051244.xdNC6LyO-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406051244.xdNC6LyO-lkp@intel.com/reproduce)
+With some static_key (+ sysctl), this should give us a way to estimate
+the overhead of livepatch. If we have the counter, this patch is not
+needed any more. Does this (adding the counter) sound like
+something we still want to pursue?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406051244.xdNC6LyO-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:13:
->> drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:114:18: warning: 'gen7_9_0_cx_debugbus_blocks' defined but not used [-Wunused-const-variable=]
-     114 | static const u32 gen7_9_0_cx_debugbus_blocks[] = {
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/gen7_9_0_cx_debugbus_blocks +114 drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h
-
-6408a1b5a7d7a9 Connor Abbott 2024-05-03  113  
-6408a1b5a7d7a9 Connor Abbott 2024-05-03 @114  static const u32 gen7_9_0_cx_debugbus_blocks[] = {
-106414f8b60346 Connor Abbott 2024-05-03  115  	A7XX_DBGBUS_CX,
-106414f8b60346 Connor Abbott 2024-05-03  116  	A7XX_DBGBUS_GMU_CX,
-106414f8b60346 Connor Abbott 2024-05-03  117  	A7XX_DBGBUS_GBIF_CX,
-6408a1b5a7d7a9 Connor Abbott 2024-05-03  118  };
-6408a1b5a7d7a9 Connor Abbott 2024-05-03  119  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Song
 
