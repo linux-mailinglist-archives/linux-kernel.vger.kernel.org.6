@@ -1,221 +1,147 @@
-Return-Path: <linux-kernel+bounces-202589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699648FCE5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:07:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263B98FCE47
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E4F4B21741
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:06:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367431C2453C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4878F1BB6BF;
-	Wed,  5 Jun 2024 12:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB831BA86F;
+	Wed,  5 Jun 2024 12:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pJunJXQP"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmenRmc5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DBF1BB680
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB0C1B5831;
+	Wed,  5 Jun 2024 12:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590084; cv=none; b=KcI5F+SvZZFdARvM4P0VcDTtSCa8qO31LLPdvWXIVgjkAuUdw+zYFOjBLJMBu1RfEqxREPmG7nRJAVVSX9eBD2m3D0tSQjZQkFPzbIu3ziEV9klWgt9fICC+RCmgSx+nhT4/r8DFYAg3LZfKKt10lu9H2o646wdokCBEQIMlfwY=
+	t=1717590076; cv=none; b=ek2RVcZT3/B26mcIkPqYRrnFDjs9XTk7Om+zMjcsfmmF1o+c7931w6PXFoYLFIJ2f7fh5iUnxQROHSD6fWlvBYZlwb/C8RLq7R21eP9MBF0vTNdEdUajl3sBByDzdosXRp0NF30HQNEFL/Ea0idCnXnFMsxyQBswqQVdnAPUl1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590084; c=relaxed/simple;
-	bh=iSIJRYQoDeifOwpk0peo5NpP3jgdrZqBKDhv4/ZqD2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=btqxsNO5qBJZRd8VfvsVcx7Nlz5Nu6TPIGS2zGlwukiAhNV7PNb0Cp2YgckqwANPoTmg1nHDTPCGthcTt11iVXC7BR9RhMzUz9rfSdXJ+pFOvw1LQ9zuFzbEY09g/BWFPDkA61R1bZ0MLa0rsvK2Dl7gB+9j5ltXzIAnSRlSf8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pJunJXQP; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42158db02c3so4106675e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 05:21:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717590081; x=1718194881; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ucQO5tSR+UUnqX3BARACo1yN9MzAT61u2WtozQUoIJg=;
-        b=pJunJXQP4hVXQEKfh779jvRcQGK9mw8RgdSfKpcU+3st17ilRZfgAahYsUl1oEwHJV
-         kM17NTI244Di86qs65Ti/KY6dCesbpxpo1KTA5uVo+xFAsvvjYLG6+e05BQNusR1vGog
-         SbVXaL84A/iLRi/aJubPamRiXgYpjYcR13QG2K510/1y3m+yHfwXLUJRGkXtR2SXCcoV
-         Vhbfd1+Du18hO6GMYvSO0GyU6RtGlAYKDQEBO8THWhoE2t3IvfTzeATT+3Ql+nBj8G+q
-         CC7kU/tFHL/V/XQn895/iOy7zY72CF0bnh43gFKcu52kZQx/+A+xy2Q8nxp2p5LMAqzE
-         96Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717590081; x=1718194881;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ucQO5tSR+UUnqX3BARACo1yN9MzAT61u2WtozQUoIJg=;
-        b=AqYgMGaz4o362nAhEI6uch0v2a0XLfBI1Q79H6dtorbMzocLHhzSLtM0LZDhNJrTEJ
-         uP4EU0tleY4du8+lvlncBWDU/SyvYLPMI55NYL9efCgG24RaCEZhfSBQFJRgtfv3/Fge
-         BhseoRC9vnHP4S1HGGzPdFH36g7LWG2e0mr5yS11vGVK+G20Zz/xeRYZLRzDVmFaVuqI
-         HJUN2xYBZ3rmzzQOxSWXU5O7wcOmHsLjvQvNYn7z+h5zfYpn6iL95XfY+g6h7YICkKs6
-         ax7Oj2ekpUiOfmN6NFkNgsgGYsxnxkcBEz3DaITp6XZXwippKBpQZXZTWe8gIE8KS3yd
-         FMWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmVVyJFMHpalViv3vF1anTolUsPhLdXE/WlWevgp/kB+cb8A0NTSVVYHlEGN4ryCpmF0zSlldF2KvGpTxVTXqjxUgGt1aGhMz3eFa3
-X-Gm-Message-State: AOJu0Yy7SK121dNXL5VgT+Ee+cCtsr8rSfa+NDH95//ir27VrTCu2vwG
-	ZB9dKxIkwL2aBoiUImCDZSM+AB2DBjOib83wFnGcdxpQohKIPuf/OXwfYq5NroM=
-X-Google-Smtp-Source: AGHT+IEzV4+qPAdbvBIVSDh25Kg43lXFdrbrVxygpt/spQBQn6auoyHk/Hs/OfBTW0kfE6X67LA+9A==
-X-Received: by 2002:a05:600c:46c4:b0:41f:b0e7:f299 with SMTP id 5b1f17b1804b1-421562cc205mr18573495e9.9.1717590081264;
-        Wed, 05 Jun 2024 05:21:21 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:d3dd:423:e1eb:d88b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215813ce64sm19634485e9.44.2024.06.05.05.21.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 05:21:19 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Kalle Valo <kvalo@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	ath12k@lists.infradead.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v9 2/2] dt-bindings: net: wireless: describe the ath12k PCI module
-Date: Wed,  5 Jun 2024 14:21:05 +0200
-Message-ID: <20240605122106.23818-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605122106.23818-1-brgl@bgdev.pl>
-References: <20240605122106.23818-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1717590076; c=relaxed/simple;
+	bh=KutjEnSy3mJvJZ4Xuim93whBGTiCDrdHPF7VN2LoQg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLfdo23LUzmN2ReUBdCiSbcWytvU+AMuB0/r1KPk4Ov6/4ReH8hRIj121JkxqYziBumc4328/daq99YuzfP8/LJZPEQ6c91cIs23Qzfgkq4nGqkGVQwr1mCWd4RbzxmakbuSj8nqd4krhzHYgZuOpreA3oNtldSoAJGRAtRKnh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmenRmc5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C88C32782;
+	Wed,  5 Jun 2024 12:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717590075;
+	bh=KutjEnSy3mJvJZ4Xuim93whBGTiCDrdHPF7VN2LoQg0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lmenRmc5Rf+Ivrn+8A3bJtENcGWcXPebIHvl+BrdcS+css08Cbwo37W7h+BsdMcdk
+	 fDT+t8Jhw+JY17mfZG4APC1a8XFNGfs2aJD8wq2iRKpC8yYGU6lcjDAMMRo9WmE4fk
+	 RoGdzFV7qKWuOzziU1P/SZOFdZicXN0ijlZse02R56abwJ1eyJe487/BoI8qUd6fOA
+	 o4btbQo3uw9DonLVhXYFcv7ka2nonOFKEUPvaAhFMoIEcPOYKCJMpS4CvatGK97rrM
+	 2xdcxd2akGsGSUcV4fa2epHHGiXqy+mQQ3UunVmBa9kMdQLJDIp6G51RfLskHHDlPw
+	 eZUky3BDSUF2Q==
+Date: Wed, 5 Jun 2024 14:21:13 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH rcu 1/6] rcu: Remove full ordering on second EQS snapshot
+Message-ID: <ZmBYOaQQQKapFGZo@localhost.localdomain>
+References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
+ <20240604222652.2370998-1-paulmck@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240604222652.2370998-1-paulmck@kernel.org>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Le Tue, Jun 04, 2024 at 03:26:47PM -0700, Paul E. McKenney a écrit :
+> From: Frederic Weisbecker <frederic@kernel.org>
+> 
+> When the grace period kthread checks the extended quiescent state
+> counter of a CPU, full ordering is necessary to ensure that either:
+> 
+> * If the GP kthread observes the remote target in an extended quiescent
+>   state, then that target must observe all accesses prior to the current
+>   grace period, including the current grace period sequence number, once
+>   it exits that extended quiescent state. Also the GP kthread must
+>   observe all accesses performed by the target prior it entering in
+>   EQS.
+> 
+> or:
+> 
+> * If the GP kthread observes the remote target NOT in an extended
+>   quiescent state, then the target further entering in an extended
+>   quiescent state must observe all accesses prior to the current
+>   grace period, including the current grace period sequence number, once
+>   it enters that extended quiescent state. Also the GP kthread later
+>   observing that EQS must also observe all accesses performed by the
+>   target prior it entering in EQS.
+> 
+> This ordering is explicitly performed both on the first EQS snapshot
+> and on the second one as well through the combination of a preceding
+> full barrier followed by an acquire read. However the second snapshot's
+> full memory barrier is redundant and not needed to enforce the above
+> guarantees:
+> 
+>     GP kthread                  Remote target
+>     ----                        -----
+>     // Access prior GP
+>     WRITE_ONCE(A, 1)
+>     // first snapshot
+>     smp_mb()
+>     x = smp_load_acquire(EQS)
+>                                // Access prior GP
+>                                WRITE_ONCE(B, 1)
+>                                // EQS enter
+>                                // implied full barrier by atomic_add_return()
+>                                atomic_add_return(RCU_DYNTICKS_IDX, EQS)
+>                                // implied full barrier by atomic_add_return()
+>                                READ_ONCE(A)
+>     // second snapshot
+>     y = smp_load_acquire(EQS)
+>     z = READ_ONCE(B)
+> 
+> If the GP kthread above fails to observe the remote target in EQS
+> (x not in EQS), the remote target will observe A == 1 after further
+> entering in EQS. Then the second snapshot taken by the GP kthread only
+> need to be an acquire read in order to observe z == 1.
+> 
+> Therefore remove the needless full memory barrier on second snapshot.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> ---
+>  kernel/rcu/tree.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 28c7031711a3f..f07b8bff4621b 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -321,7 +321,7 @@ static bool rcu_dynticks_in_eqs(int snap)
+>   */
+>  static bool rcu_dynticks_in_eqs_since(struct rcu_data *rdp, int snap)
+>  {
+> -	return snap != rcu_dynticks_snap(rdp->cpu);
+> +	return snap != ct_dynticks_cpu_acquire(rdp->cpu);
 
-Add device-tree bindings for the ATH12K module found in the WCN7850
-package.
+I guess I'm going to add a comment here to elaborate on the fact
+it relies on the ordering enforced before the first snapshot. Would
+you prefer a delta patch or an updated patch?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- .../bindings/net/wireless/qcom,ath12k.yaml    | 99 +++++++++++++++++++
- 1 file changed, 99 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+Thanks.
 
-diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-new file mode 100644
-index 000000000000..1b5884015b15
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-@@ -0,0 +1,99 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (c) 2024 Linaro Limited
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/wireless/qcom,ath12k.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Technologies ath12k wireless devices (PCIe)
-+
-+maintainers:
-+  - Jeff Johnson <quic_jjohnson@quicinc.com>
-+  - Kalle Valo <kvalo@kernel.org>
-+
-+description:
-+  Qualcomm Technologies IEEE 802.11be PCIe devices.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - pci17cb,1107  # WCN7850
-+
-+  reg:
-+    maxItems: 1
-+
-+  vddaon-supply:
-+    description: VDD_AON supply regulator handle
-+
-+  vddwlcx-supply:
-+    description: VDD_WLCX supply regulator handle
-+
-+  vddwlmx-supply:
-+    description: VDD_WLMX supply regulator handle
-+
-+  vddrfacmn-supply:
-+    description: VDD_RFA_CMN supply regulator handle
-+
-+  vddrfa0p8-supply:
-+    description: VDD_RFA_0P8 supply regulator handle
-+
-+  vddrfa1p2-supply:
-+    description: VDD_RFA_1P2 supply regulator handle
-+
-+  vddrfa1p8-supply:
-+    description: VDD_RFA_1P8 supply regulator handle
-+
-+  vddpcie0p9-supply:
-+    description: VDD_PCIE_0P9 supply regulator handle
-+
-+  vddpcie1p8-supply:
-+    description: VDD_PCIE_1P8 supply regulator handle
-+
-+required:
-+  - compatible
-+  - reg
-+  - vddaon-supply
-+  - vddwlcx-supply
-+  - vddwlmx-supply
-+  - vddrfacmn-supply
-+  - vddrfa0p8-supply
-+  - vddrfa1p2-supply
-+  - vddrfa1p8-supply
-+  - vddpcie0p9-supply
-+  - vddpcie1p8-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    pcie {
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+
-+        pcie@0 {
-+            device_type = "pci";
-+            reg = <0x0 0x0 0x0 0x0 0x0>;
-+            #address-cells = <3>;
-+            #size-cells = <2>;
-+            ranges;
-+
-+            bus-range = <0x01 0xff>;
-+
-+            wifi@0 {
-+                compatible = "pci17cb,1107";
-+                reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+                vddaon-supply = <&vreg_pmu_aon_0p59>;
-+                vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+                vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+                vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+                vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+                vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+                vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+                vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+                vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+            };
-+        };
-+    };
--- 
-2.40.1
-
+>  }
+>  
+>  /*
+> -- 
+> 2.40.1
+> 
+> 
 
