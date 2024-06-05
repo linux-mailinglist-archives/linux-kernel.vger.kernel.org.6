@@ -1,157 +1,198 @@
-Return-Path: <linux-kernel+bounces-201782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B678FC31B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:49:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6768FC321
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE8C1F24267
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DA2286055
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCEA21C183;
-	Wed,  5 Jun 2024 05:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445233DABFD;
+	Wed,  5 Jun 2024 05:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F7BXUwSV"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="EwG+dJZe"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974A621C164
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6074B3DABEC;
+	Wed,  5 Jun 2024 05:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717566584; cv=none; b=K+//QhnZNr7bBMbbuhVNnBVJsPExKp10AIStyF0NreteQA0wJk8FL4KyoeZ6yMDVAZq6U8Jwo8ye5qYeVYRlwn65YAEcrvwt8ruYjzprFLSflxDTDMm6tE6TLYIA9zGzgcCMo8ON5WFG8x+yApdOY7FszfJwB6tqgDfHgXnCBeY=
+	t=1717566613; cv=none; b=jn5bTVUkCkaPdZ9gsBQWiW2Qmr1OD17PbFcryVkO6WV2xYNodZTiwGHzaqm7cxzjl11mEYVP3QGNse8Q7I61TPugA8ObKwb5CRbhqL7uf0LOfgr88emrxLBy6sS268hIvZwlstIfrV5a7lvY0H3yxoo9dMlEOK127ssypipOoMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717566584; c=relaxed/simple;
-	bh=Beh2wlkRe7Eug/7DYljw55OLT0VJDjN+N9ltnUnhZMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TwvJGFZ5mqaMevfCHdaUPGQ9SIDHvarM+Toy2PKJcQQPXV2Ro5ZaJBM3HtiL1qBjV/D2Yi+qI6IhN3CUYKyB8cEh4wmL0HPsoHeR+npOJesyDWljPwQrMUW6DxU16REMWkyqL9EPs3542jUuNQpFPz6Uuw63lp7zygnP+ne1bTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F7BXUwSV; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f47f07acd3so16264525ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 22:49:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717566581; x=1718171381; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+dM5+k2xQ90bwK2u/6F8dSzOK+d/yGXOElnGPg/eOmg=;
-        b=F7BXUwSVaWxsDPfg/N4kEFbQep/g/8n3NSjTTNKnhqQDepcUgdFONF7bAA98X465ve
-         DuIwZsmpm9/aneSxDATZxIy3dlkZ0lS6xJQtWVCcADBEHfg4JfCusyYq1Yx6aYaHSb/J
-         g1EohOWBBGqlRJgmqUpn2yfqaQtllX49SO2yMzN1sofMHpcvDOw/+0E+ZAA18zIpSy2x
-         BZZj0dDqNs+efBeBbOno+6yMJxKYc1seXwqZLMSMhFb7mm/Sg8C7JPiam/q5mfrO8rqC
-         QLZt0oAh8DpUmnxUuiLJN7sD6WKZIplTIqklnOlo94Rt2RBEHVuM/5ruogYdo3uqLLMz
-         GOCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717566581; x=1718171381;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+dM5+k2xQ90bwK2u/6F8dSzOK+d/yGXOElnGPg/eOmg=;
-        b=m9ehsKkBB2xJrMtgcvsMrmJ/oRe3fWYETKpKu4Y2qObqESdyian7FNSMRUa5fjALAW
-         r75lckfN9Drq18JArDeaZe8clyWRaRUo+qA667PeHEo6r92VMBAZvK8WyLVn2+NBDgor
-         KZX6SfPjJFN1eR0fjWyQvQzawJsQi8lA/EJk3qrpos6bxi5EEfOhusQrGFYR/LsJWWeZ
-         oNuxnXvs9r1miMRU5ovOb4NUdxLmhCkKAP6qRaKfhSRrv1TkS30YaoOGznPKAIjQqBxP
-         auG7T11KbF9TJsgeJWT6bAqThIUSN4S2E3oA7OyPSWst9/9pbA/4buO7g5TtlpQtj3/L
-         21qA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ1YF7Q44bsFuqvLeuzc0KlP3l12YIrwKuFZEbtsFBlUn/eV19F5O1FFHbuitdDZdEvZ0a5n6bTaBFxtMFojU7CXDSO+bc1BGHHeC9
-X-Gm-Message-State: AOJu0YwFhQ9S4zl+9Jz4bqgiAZCDIm9ocrTidFW269u+qizzQwHaQY+0
-	MZPmBvP8+WkHDgLYQiR4EE3hK2jTC5aVcTdoS2hc2aYy+hOSA62JksX/Nc5rFQ==
-X-Google-Smtp-Source: AGHT+IEZszKMxzYyviv9Fxic6NPR/A6OoNXaAaG1oAK0KQm8hWctUvTFoKzkoioIm4/mshFm531FvQ==
-X-Received: by 2002:a17:902:db0a:b0:1f6:7ee8:8942 with SMTP id d9443c01a7336-1f6a5a290ffmr21801795ad.40.1717566580772;
-        Tue, 04 Jun 2024 22:49:40 -0700 (PDT)
-Received: from thinkpad ([120.60.137.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323ddac9sm95544525ad.173.2024.06.04.22.49.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 22:49:40 -0700 (PDT)
-Date: Wed, 5 Jun 2024 11:19:28 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: qcom: Fix register maps items and add
- 3.3V supply
-Message-ID: <20240605054928.GB2417@thinkpad>
-References: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
- <20240604235806.GA1903493-robh@kernel.org>
+	s=arc-20240116; t=1717566613; c=relaxed/simple;
+	bh=C6DHcioBtZO8Ft6NCOTxg1IFxOjJNDjKMUw66WUpIkE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YQb3tJXwvcZofoQDzDx71ZmoG2rdEKqO12W2xOOuQAy+gxGjMSepyzqQJLUAvwTH+c9CY2rapqgjIhf6i82bnYJGpstluD9nTS1ytyfk5FzkZ9O5LsIItGQkDGA8kByrVjt35ZnsA+jVr3dRS/to+eRo7qy520+JEVdS6kLCtfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=EwG+dJZe; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1717566595; x=1718171395; i=wahrenst@gmx.net;
+	bh=LhDKqxW6L1Ssz9fZh25QjqFX4bDiK3gZ9H644lacdlk=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EwG+dJZe9AZ8h4sOdTiiUqUb55MqpyVLJfoA0J3dr9CUdsHX3lK6crSLJ0PpA4lW
+	 a4+z+XAvfGdI+FG2jiPR4gNNNf397tPCfNT9Q7yD/5JzKXo42+av1YZvFPMgzyFkv
+	 4OODgLQvOmav+jl7vvWhtcoQk16XOzqqFz2/Wc4fevAxMb1w6hvkpE9/5t2U66e0c
+	 8DPkUlyM0Ft7ycaK99psgv6mYE7+lClCrbWGTK89XPAmvJWO/fiWc4g7a9QxA5kpw
+	 Jq7KXsOEPNSzlNbsejneRH71v+1P9z45K518cvNSmqjUpKIUl2OtvezaxADssFhus
+	 HSXz+fOyGmeiBisAcA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mnps0-1spNwf1BN4-00pKfz; Wed, 05
+ Jun 2024 07:49:55 +0200
+From: Stefan Wahren <wahrenst@gmx.net>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Christoph Fritz <chf.fritz@googlemail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH RFC] qca_spi: Make interrupt remembering atomic
+Date: Wed,  5 Jun 2024 07:49:39 +0200
+Message-Id: <20240605054939.34870-1-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240604235806.GA1903493-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TuT0o4Osg9B9GIit4JJq9P9z292nEkgMNJiZFqaUKEvnfZERxhP
+ HAHXOkS05v0XhlJYA6wim8PmXErup3tIbb1RApsMpkPAuxpexH9DtB872zV1XtRk6qOBL0G
+ /Tj7+zesEquAkos5OYHqqjkU7qif8YgLA+AUjLORAQ9QOboLZaHqw+Ft3HBzTqC+2voC6uA
+ VoBvQl21p8jVDefFHVg9g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3jhrT1xqADA=;mMaBq+QuCjkH2Ph8NfOyx7ednTR
+ 56IF8YgBZxwgTRnyCDIJLjn/YmsyoeMatMlafB71XASkaoPDgqhXKk9pqMqEtvXBVAQH9My3o
+ 70wqfDMoeTom6xgy5Fe30d5KWLhRVZk5cZg7TOv93Gf2mX6aVJJ8tAaqCUGbYOcooJIF3gFBW
+ 0kAspYCU5MAMC50jUF/xVoWxbz/yuEq7kWb6j2QT4bRUr/5UW6KNkUyo/e9qYKzZpU2LSjPx3
+ 2huG8Ur96AmsRA9Hf8rbKaxqeEHznA6NzSO5Fygx5UDC3xZzRJOn8bT2THwafvIMblIPcKdQL
+ k7kAF2wPUDQyFJ0wyyBKn79GxQ3UFFIXWRGdqPqFgA9nsXdvPLAR6/tKasA/yJi3hjyCoxE8Q
+ thxXc6qWcxzMOaBhfo9OnI36o+jSN1vzef06uhJvgUqmPc0ZYixir2vtpKef71HPnqRp4L70T
+ D2fcHHuOTD+U8IvoV9liwXjYYYfOYzHW37jQo6g0Tsm4o0ZQjmhht5he90L8l2lOSx87MEdiu
+ t9tYjc813plOy2DMrp+cr92gVvGhiG4R7DMHdFmejPYnlcRDSG3XBq5OSv1GOLYxfqtdqHqHm
+ /ZP3ZQ0csrOM3cdhsBJ7cvbxjM8QYsuNT1no2nFyjKdYRGsRz82jOAZ+dCGOMDf9ZRD1IPXPz
+ 4OzrkVGS0KXpDVd4UFvkxVo7b9Vb1j0balFTUJAvvoXnoCSkXTmjQcsKk7F0lFFw6hja3mcjC
+ 5MrxIKPHZc1Hhwd7/ANQq5i2Fu0RlEYief0/tPVlcUw1n+bJpRuSk/kd+UPQinBT7Svr0Satb
+ JJhx45mpFb0rSo7a3w2P5+z3QA305CiwOgGhfh+F6osto=
 
-On Tue, Jun 04, 2024 at 05:58:06PM -0600, Rob Herring wrote:
-> On Tue, Jun 04, 2024 at 07:05:12PM +0300, Abel Vesa wrote:
-> > All PCIe controllers found on X1E80100 have MHI register region and
-> > VDDPE supplies. Add them to the schema as well.
-> > 
-> > Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> > This patchset fixes the following warning:
-> > https://lore.kernel.org/all/171751454535.785265.18156799252281879515.robh@kernel.org/
-> > 
-> > Also fixes a MHI reg region warning that will be triggered by the following patch:
-> > https://lore.kernel.org/all/20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org/
-> > ---
-> >  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > index 1074310a8e7a..7ceba32c4cf9 100644
-> > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > @@ -19,11 +19,10 @@ properties:
-> >      const: qcom,pcie-x1e80100
-> >  
-> >    reg:
-> > -    minItems: 5
-> > +    minItems: 6
-> >      maxItems: 6
-> >  
-> >    reg-names:
-> > -    minItems: 5
-> >      items:
-> >        - const: parf # Qualcomm specific registers
-> >        - const: dbi # DesignWare PCIe registers
-> > @@ -71,6 +70,9 @@ properties:
-> >        - const: pci # PCIe core reset
-> >        - const: link_down # PCIe link down reset
-> >  
-> > +  vddpe-3v3-supply:
-> > +    description: A phandle to the PCIe endpoint power supply
-> 
-> TBC, this is a rail on the host side provided to a card? If so, we have 
-> standard properties for standard PCI voltage rails.
+The whole mechanism to remember occurred SPI interrupts is not atomic,
+which could lead to unexpected behavior. So fix this by using atomic bit
+operations instead.
 
-There is a 'vpcie3v3-supply' property and it should satisfy the requirement. But
-'vddpe-3v3-supply' is already used on multiple Qcom SoCs. So changing the name
-in dts warrants the driver to support both supplies for backwards compatibility,
-but that should be fine.
+Fixes: 291ab06ecf67 ("net: qualcomm: new Ethernet over SPI driver for QCA7=
+000")
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+=2D--
+ drivers/net/ethernet/qualcomm/qca_debug.c |  6 ++----
+ drivers/net/ethernet/qualcomm/qca_spi.c   | 16 ++++++++--------
+ drivers/net/ethernet/qualcomm/qca_spi.h   |  3 +--
+ 3 files changed, 11 insertions(+), 14 deletions(-)
 
-> It is also preferred that you put them in a root port node rather than the
-> host bridge.
+diff --git a/drivers/net/ethernet/qualcomm/qca_debug.c b/drivers/net/ether=
+net/qualcomm/qca_debug.c
+index ff3b89e9028e..ad06da0fdaa0 100644
+=2D-- a/drivers/net/ethernet/qualcomm/qca_debug.c
++++ b/drivers/net/ethernet/qualcomm/qca_debug.c
+@@ -98,10 +98,8 @@ qcaspi_info_show(struct seq_file *s, void *what)
 
-Even though the resource split between root port and host bridge is not clear in
-Qcom SoCs, I think from logical stand point it makes sense.
+ 	seq_printf(s, "IRQ              : %d\n",
+ 		   qca->spi_dev->irq);
+-	seq_printf(s, "INTR REQ         : %u\n",
+-		   qca->intr_req);
+-	seq_printf(s, "INTR SVC         : %u\n",
+-		   qca->intr_svc);
++	seq_printf(s, "INTR             : %lx\n",
++		   qca->intr);
 
-- Mani
+ 	seq_printf(s, "SPI max speed    : %lu\n",
+ 		   (unsigned long)qca->spi_dev->max_speed_hz);
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/etherne=
+t/qualcomm/qca_spi.c
+index 5799ecc88a87..8f7ce6b51a1c 100644
+=2D-- a/drivers/net/ethernet/qualcomm/qca_spi.c
++++ b/drivers/net/ethernet/qualcomm/qca_spi.c
+@@ -35,6 +35,8 @@
 
--- 
-மணிவண்ணன் சதாசிவம்
+ #define MAX_DMA_BURST_LEN 5000
+
++#define SPI_INTR 0
++
+ /*   Modules parameters     */
+ #define QCASPI_CLK_SPEED_MIN 1000000
+ #define QCASPI_CLK_SPEED_MAX 16000000
+@@ -579,14 +581,14 @@ qcaspi_spi_thread(void *data)
+ 			continue;
+ 		}
+
+-		if ((qca->intr_req =3D=3D qca->intr_svc) &&
++		if (!test_bit(SPI_INTR, &qca->intr) &&
+ 		    !qca->txr.skb[qca->txr.head])
+ 			schedule();
+
+ 		set_current_state(TASK_RUNNING);
+
+-		netdev_dbg(qca->net_dev, "have work to do. int: %d, tx_skb: %p\n",
+-			   qca->intr_req - qca->intr_svc,
++		netdev_dbg(qca->net_dev, "have work to do. int: %lu, tx_skb: %p\n",
++			   qca->intr,
+ 			   qca->txr.skb[qca->txr.head]);
+
+ 		qcaspi_qca7k_sync(qca, QCASPI_EVENT_UPDATE);
+@@ -600,8 +602,7 @@ qcaspi_spi_thread(void *data)
+ 			msleep(QCASPI_QCA7K_REBOOT_TIME_MS);
+ 		}
+
+-		if (qca->intr_svc !=3D qca->intr_req) {
+-			qca->intr_svc =3D qca->intr_req;
++		if (test_and_clear_bit(SPI_INTR, &qca->intr)) {
+ 			start_spi_intr_handling(qca, &intr_cause);
+
+ 			if (intr_cause & SPI_INT_CPU_ON) {
+@@ -663,7 +664,7 @@ qcaspi_intr_handler(int irq, void *data)
+ {
+ 	struct qcaspi *qca =3D data;
+
+-	qca->intr_req++;
++	set_bit(SPI_INTR, &qca->intr);
+ 	if (qca->spi_thread)
+ 		wake_up_process(qca->spi_thread);
+
+@@ -679,8 +680,7 @@ qcaspi_netdev_open(struct net_device *dev)
+ 	if (!qca)
+ 		return -EINVAL;
+
+-	qca->intr_req =3D 1;
+-	qca->intr_svc =3D 0;
++	set_bit(SPI_INTR, &qca->intr);
+ 	qca->sync =3D QCASPI_SYNC_UNKNOWN;
+ 	qcafrm_fsm_init_spi(&qca->frm_handle);
+
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.h b/drivers/net/etherne=
+t/qualcomm/qca_spi.h
+index d59cb2352cee..8f4808695e82 100644
+=2D-- a/drivers/net/ethernet/qualcomm/qca_spi.h
++++ b/drivers/net/ethernet/qualcomm/qca_spi.h
+@@ -81,8 +81,7 @@ struct qcaspi {
+ 	struct qcafrm_handle frm_handle;
+ 	struct sk_buff *rx_skb;
+
+-	unsigned int intr_req;
+-	unsigned int intr_svc;
++	unsigned long intr;
+ 	u16 reset_count;
+
+ #ifdef CONFIG_DEBUG_FS
+=2D-
+2.34.1
+
 
