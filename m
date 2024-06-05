@@ -1,223 +1,96 @@
-Return-Path: <linux-kernel+bounces-202263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3978FCA77
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:30:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8DB8FCA7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 773E6282B11
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:30:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9CE31F2385C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A974D140380;
-	Wed,  5 Jun 2024 11:30:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8491918C34D;
+	Wed,  5 Jun 2024 11:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3tjA3Hn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDDD1946D8;
-	Wed,  5 Jun 2024 11:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C388A49622;
+	Wed,  5 Jun 2024 11:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717587009; cv=none; b=E/qcsCmocKvMazeDcNnKirA7sUL5R8/dXcfpPJwiEaNzNN9r1Hmn5fii/6EIw28FoXJIYbYGV/a9oqHarccsDq8OXsyQFeeQ+w6VcOV9v3H63Z3Ym00H9xDdaHAxOk64WxLKEUfsPX5Ly5Vr9mLrJRX80Pz3SHN369mlgr2nt00=
+	t=1717587028; cv=none; b=CKL0EhUjhhmcD5vkujXMB7dH4OvOyy0s/oRJoGewX8LHLS0h7HqPnJHdLrHC+iUGL4RIDQSzPDlEQYCt8jU1R3LmWWmMufhMHFlPh0q7L3BUyuLWMDVyXcb4QhABEdUNAv8iIpzt9iVUkKDkbrHHOmJPv/+lvrUVYuG84zc+7Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717587009; c=relaxed/simple;
-	bh=zwnHaQ1ZmkNlUtS7++VTNPOg3xHBKHbpyAnauLX24ug=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ddk7T8q1nWX+wNChhKXpxI7IMygnO4pC/WNdnxNpmR7sg7GhQq7KNgAnVxZae5lvJ43Tp32LNLkjfroXaZe3+v1wZkUGktFy6CyfaMv8fVHFvR2obPa9XiQCuy/cxld6/EBzz9BnLt0JraCrLaugj2ZpuyUw9pRPcNGdnRSnxZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VvQ9y0Rkzz6K6SB;
-	Wed,  5 Jun 2024 19:25:26 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id E68C71400C9;
-	Wed,  5 Jun 2024 19:30:01 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 5 Jun
- 2024 12:30:01 +0100
-Date: Wed, 5 Jun 2024 12:30:00 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6] cxl/events: Use a common struct for DRAM and General
- Media events
-Message-ID: <20240605123000.00001e8f@Huawei.com>
-In-Reply-To: <20240602191238.27712-1-fabio.m.de.francesco@linux.intel.com>
-References: <20240602191238.27712-1-fabio.m.de.francesco@linux.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1717587028; c=relaxed/simple;
+	bh=ohU8eFMsKrVEuiqcNPZaUDhVqxquhRY+n4mV8mf7Tn8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YABuXps5XOK6rk9bidsYlMGSmGctAVd/dWIXQhw93g4k3YX+A9hTPz7hxs0NNrDmt6F4JYr/I0BVhQGhRVw0bYkuJCuCAbg6g2xAOq8g2mK9Rjd5CjkwHiiuC8HQ2gmMc1cGMwxmkEEtT7MX+p4NvtcEwzsSF9Rkx6xoUcwEukM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3tjA3Hn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6137CC32781;
+	Wed,  5 Jun 2024 11:30:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717587028;
+	bh=ohU8eFMsKrVEuiqcNPZaUDhVqxquhRY+n4mV8mf7Tn8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=p3tjA3HnNR3e4CoON75PPSDNbs8Xb36O5ba3BkodERo8dj5+iMAaxGd2wfE1cGX5H
+	 w8xysI43tMn0A7Vkf0IA7CleygNo98eyoooBUqzPg2Q9LdDkUjz7mJcMTtpIJ3YZDw
+	 2ha+jN4S2yOY1PfXjvKgNlu94nXX5eLPkZJB+sLGmfrVNqr5xnnAj55qk8AXSf7sUV
+	 RH+MHhHX8+346Dv23FzbDF0vEETBbf58XpeWUhl+3OEK+bf+K7xPHHY3LpuIDS0tdp
+	 PdwNfOl6h09lpLAWhmW0IW+hbOIPTUW7uzhIfdrIRpX/HhuQfkiq3LtKF/jTL1i7tp
+	 Ld6hgX1fmaxrA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4FABAD3E996;
+	Wed,  5 Jun 2024 11:30:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [net-next PATCH v3] octeontx2-af: Add debugfs support to dump NIX TM
+ topology
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171758702832.15938.14799291870880574957.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Jun 2024 11:30:28 +0000
+References: <20240603112249.6403-1-agaur@marvell.com>
+In-Reply-To: <20240603112249.6403-1-agaur@marvell.com>
+To: Anshumali Gaur <agaur@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+ jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
 
-On Sun,  2 Jun 2024 21:12:25 +0200
-"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
+Hello:
 
-> cxl_event_common was an unfortunate naming choice and caused confusion with
-> the existing Common Event Record. Furthermore, its fields didn't map all
-> the common information between DRAM and General Media Events.
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Mon, 3 Jun 2024 16:52:48 +0530 you wrote:
+> This patch adds support to dump NIX transmit queue topology.
+> There are multiple levels of scheduling/shaping supported by
+> NIX and a packet traverses through multiple levels before sending
+> the packet out. At each level, there are set of scheduling/shaping
+> rules applied to a packet flow.
 > 
-> Remove cxl_event_common and introduce cxl_event_media_hdr to record common
-> information between DRAM and General Media events.
+> Each packet traverses through multiple levels
+> SQ->SMQ->TL4->TL3->TL2->TL1 and these levels are mapped in a parent-child
+> relationship.
 > 
-> cxl_event_media_hdr, which is embedded in both cxl_event_gen_media and
-> cxl_event_dram, leverages the commonalities between the two events to
-> simplify their respective handling.
-> 
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-> ---
-> 
-> - Changes for v6 -
-> 
-> 	- Add "Reviewed-by" tags
-Hi Fabio,
+> [...]
 
-Adding tags doesn't need a new version. b4 or however Dave is picking these
-up will gather them up from the v5 posting.
+Here is the summary with links:
+  - [net-next,v3] octeontx2-af: Add debugfs support to dump NIX TM topology
+    https://git.kernel.org/netdev/net-next/c/b907194a5d5b
 
-My one nervousness about this is the impression it perhaps gives that the contents
-of validity flags has the same meaning in both records.
-
-Maybe a comment to that effect next to it's definition makes sense?
-
-I think the alternative of not including that or the remaining elements in
-your common structure would be worse.
-
-Jonathan
-
-
-
-
-> 
-> - Changes for v5 -
-> 
-> 	- Rebase on v6.10-rc1
-> 
-> - Changes for v4 -
-> 
->         - Initialise cxl_test_dram and cxl_test_gen_media without 
->           unnecessary extra de-references (Dan)
->         - Add a comment for media_hdr in union cxl_event (Alison)
-> 
-> - Changes for v3 -
-> 
->         - Rework the layout of cxl_event_dram and cxl_event_gen_media to
->           make a simpler change (Dan)
->         - Remove a "Fixes" tag (Dan)
->         - Don't use unnecessary struct_group[_tagged] (Jonathan, Ira)
->         - Rewrite end extend the commit message
-> 
-> - Link to v4 -
-> 
-> https://lore.kernel.org/linux-cxl/20240521140750.26035-1-fabio.m.de.francesco@linux.intel.com/
-> 
->  drivers/cxl/core/mbox.c      |  2 +-
->  drivers/cxl/core/trace.h     | 32 ++++++++++-----------
->  include/linux/cxl-event.h    | 41 ++++++++++-----------------
->  tools/testing/cxl/test/mem.c | 54 +++++++++++++++++++-----------------
->  4 files changed, 61 insertions(+), 68 deletions(-)
-
-
-
-> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> index 60b25020281f..1119d0bbb091 100644
-> --- a/include/linux/cxl-event.h
-> +++ b/include/linux/cxl-event.h
-> @@ -21,6 +21,17 @@ struct cxl_event_record_hdr {
->  	u8 reserved[15];
->  } __packed;
->  
-> +struct cxl_event_media_hdr {
-> +	struct cxl_event_record_hdr hdr;
-> +	__le64 phys_addr;
-> +	u8 descriptor;
-> +	u8 type;
-> +	u8 transaction_type;
-> +	u8 validity_flags[2];
-
-Perhaps a comment to say that validity_flags meaning after bit 2
-varies across the different records?
-
-> +	u8 channel;
-> +	u8 rank;
-> +} __packed;
-> +
->  #define CXL_EVENT_RECORD_DATA_LENGTH 0x50
->  struct cxl_event_generic {
->  	struct cxl_event_record_hdr hdr;
-> @@ -33,14 +44,7 @@ struct cxl_event_generic {
->   */
->  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
->  struct cxl_event_gen_media {
-> -	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -	u8 descriptor;
-> -	u8 type;
-> -	u8 transaction_type;
-> -	u8 validity_flags[2];
-> -	u8 channel;
-> -	u8 rank;
-> +	struct cxl_event_media_hdr media_hdr;
->  	u8 device[3];
->  	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
->  	u8 reserved[46];
-> @@ -52,14 +56,7 @@ struct cxl_event_gen_media {
->   */
->  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
->  struct cxl_event_dram {
-> -	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -	u8 descriptor;
-> -	u8 type;
-> -	u8 transaction_type;
-> -	u8 validity_flags[2];
-> -	u8 channel;
-> -	u8 rank;
-> +	struct cxl_event_media_hdr media_hdr;
->  	u8 nibble_mask[3];
->  	u8 bank_group;
->  	u8 bank;
-> @@ -95,21 +92,13 @@ struct cxl_event_mem_module {
->  	u8 reserved[0x3d];
->  } __packed;
->  
-> -/*
-> - * General Media or DRAM Event Common Fields
-> - * - provides common access to phys_addr
-> - */
-> -struct cxl_event_common {
-> -	struct cxl_event_record_hdr hdr;
-> -	__le64 phys_addr;
-> -} __packed;
-> -
->  union cxl_event {
->  	struct cxl_event_generic generic;
->  	struct cxl_event_gen_media gen_media;
->  	struct cxl_event_dram dram;
->  	struct cxl_event_mem_module mem_module;
-> -	struct cxl_event_common common;
-> +	/* dram & gen_media event header */
-> +	struct cxl_event_media_hdr media_hdr;
->  } __packed;
-
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
