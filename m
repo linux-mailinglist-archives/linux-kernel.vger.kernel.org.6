@@ -1,98 +1,102 @@
-Return-Path: <linux-kernel+bounces-202676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447438FCF77
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:36:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5C78FCF7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6657F1C23D93
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:36:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE29D1F22086
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACEF1990C8;
-	Wed,  5 Jun 2024 13:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334CA193085;
+	Wed,  5 Jun 2024 13:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/OmKoe0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxCXSDuI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44C9194A43;
-	Wed,  5 Jun 2024 13:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695F9143722;
+	Wed,  5 Jun 2024 13:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717593032; cv=none; b=lnukRqO9bn+AVW9SgL+Gd+asrRuqAsfj6k/GBGUISi3d2btgXLba91BXXTnsu3Ih9LWk3UWtGWEOcJPgoEQlaJwEs9/WOoeywFxMBgQFo7LpZkDso0lHOQjM/CG0LICaFFNVYnewDCsUwEq20zO9WF6zLbzPY8imm46E0JJGJls=
+	t=1717593095; cv=none; b=bIGEx5xOvAilmazl3gZZL3QcC3DWgwWsJtaF+nS2nf+hft1kA9BRgcTIFB2Eb+OKVstZRbJmFTqaiWX7/yPheCMTYn3mM8DTRe2Q9O7BgUfObuvvE58ji/4qKrl+K5bNMhf2VggS1CGMrUjiqVykbMY2G4yc4VPijt4bs4zf85o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717593032; c=relaxed/simple;
-	bh=u3bAQnWwZ28p/kNsVqk2e4u6Iq8eIG5zznvzDkYoUog=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RYgaCMoEhKQZ6oMw8qX4Y8xj4d8kdgBLrcBZhy1b1LvYbOrmAOdDB7LF1mvLci12mvzRK9qdEUushXEiXj6gbDlQ15x25wMJqlIwpbiBBTNu+7R7rSbXwGZ9x9YfmhnQRs5Nuyyw5hrmA7+CaJCjul9nZpRway7Z8Qs8sZNhIuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/OmKoe0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 844D4C32782;
-	Wed,  5 Jun 2024 13:10:31 +0000 (UTC)
+	s=arc-20240116; t=1717593095; c=relaxed/simple;
+	bh=p1Mf5DG1LhyqB8wXqkjnzUXqy6sag24Z+F1LZfH0pEQ=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=cLWofx8xOal5iu1EA4TVm1VhP++P5t3xxFX4qdETPA08VTGn3StZvBs1jeusYAl/UDBzyg1L1s8TD4bs6WJnWejpug5tQwOH3rQiGJZ0o1p1nUtFXDGd+9Quoolo9BUfFzpZm4HnjWUkdPLbvAqN5AkySEVIWxGp9wU1q6ZEzjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxCXSDuI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E70C3277B;
+	Wed,  5 Jun 2024 13:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717593031;
-	bh=u3bAQnWwZ28p/kNsVqk2e4u6Iq8eIG5zznvzDkYoUog=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=k/OmKoe09Hnm9ndfZnuOCZUr5Of+DpVHDTCZ2aB1AuRqQycgkANEzX5Mhejcjt6or
-	 eF/GEgPsSTorLYM5jtvxNLaNoSgld5P0WGOgqBNOAjhFWjVgK9xP6BSckBSBTOY2Ny
-	 v7y3yyhCyfuDxo6tvjYtyjCpXSOmiclyiivveMrkLJJ0lvXq2A58doanTU1ntfaSpR
-	 qsNk6Q2BIm6uP88sHhJJvXuzkgm4yY/WI+ysX0VdgB/UI6wV1LDWGP9GkznMdaxZXF
-	 v/FevXfVS3lkD4MAX3jLb28EhlZXt4vy4DcK6fITG2ozKSIgL9rCglsxaEfCJJKGUa
-	 oMBv3cVpEaW7A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6D3E0D3E99A;
-	Wed,  5 Jun 2024 13:10:31 +0000 (UTC)
+	s=k20201202; t=1717593094;
+	bh=p1Mf5DG1LhyqB8wXqkjnzUXqy6sag24Z+F1LZfH0pEQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=AxCXSDuIbI9ABphc+MtPB9Swb+NEhUSK4Setoo6PWjDy2kz9THhj9T83HAtduj5zD
+	 zCb7UnP/FU46eA80JDJX5jkXO+nn4E+Bx5gFgXIi773vzBj0Q4uwRDSa39NAcb4zcA
+	 WuItGcB2a/CHQtIBreJsKho8GZV4Yu04JhhDzudISPRA2Z8BU2Kj0nAJ3X5GuWQhRa
+	 RzeMIxE5DmeFsvAh8g8wMpuQ9WbXCdJQDiv7ooeaQcSt91KfgSNxHbo4RNgi3Y+ArJ
+	 s+KEhHh4FIk/bEH++xMbh04Xy9iR/Ex2/0jNnHfbjehFDxgsAtwNOrmYN0WAVf8gHv
+	 qJ3E5DTkPFSUw==
+Date: Wed, 05 Jun 2024 07:11:32 -0600
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net v3] net: ethernet: mtk_eth_soc: handle dma buffer size soc
- specific
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171759303143.15829.1231118828058253183.git-patchwork-notify@kernel.org>
-Date: Wed, 05 Jun 2024 13:10:31 +0000
-References: <20240603192505.217881-1-linux@fw-web.de>
-In-Reply-To: <20240603192505.217881-1-linux@fw-web.de>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: nbd@nbd.name, sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com,
- lorenzo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, frank-w@public-files.de,
- john@phrozen.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- bc-bocun.chen@mediatek.com, daniel@makrotopia.org
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ninad Palsule <ninad@linux.ibm.com>
+Cc: andrew@codeconstruct.com.au, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-aspeed@lists.ozlabs.org, joel@jms.id.au, eajames@linux.ibm.com, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240604215939.1967329-1-ninad@linux.ibm.com>
+References: <20240604215939.1967329-1-ninad@linux.ibm.com>
+Message-Id: <171759284804.2200781.9915039390039475490.robh@kernel.org>
+Subject: Re: [PATCH v1] ARM: dts: aspeed: System1: Updates to BMC board
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Mon,  3 Jun 2024 21:25:05 +0200 you wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
+On Tue, 04 Jun 2024 16:59:39 -0500, Ninad Palsule wrote:
+> - Added new power monitor device max5970
+> - Changed temperature sensor monitor chip from tmp423 to tmp432
 > 
-> The mainline MTK ethernet driver suffers long time from rarly but
-> annoying tx queue timeouts. We think that this is caused by fixed
-> dma sizes hardcoded for all SoCs.
+> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
+> ---
+>  arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 > 
-> We suspect this problem arises from a low level of free TX DMADs,
-> the TX Ring alomost full.
-> 
-> [...]
 
-Here is the summary with links:
-  - [net,v3] net: ethernet: mtk_eth_soc: handle dma buffer size soc specific
-    https://git.kernel.org/netdev/net/c/c57e55819443
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-ibm-system1.dtb' for 20240604215939.1967329-1-ninad@linux.ibm.com:
+
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: power-monitor@3a: 'regulators' is a required property
+	from schema $id: http://devicetree.org/schemas/mfd/maxim,max5970.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: power-monitor@3a: 'vss1-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/mfd/maxim,max5970.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: power-monitor@3a: 'vss2-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/mfd/maxim,max5970.yaml#
+
+
+
 
 
 
