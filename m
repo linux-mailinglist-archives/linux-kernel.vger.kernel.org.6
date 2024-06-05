@@ -1,121 +1,193 @@
-Return-Path: <linux-kernel+bounces-202838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B028FD1B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:33:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7933C8FD1C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C451F1F245C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:33:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BEE3B29D6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4038A7CF33;
-	Wed,  5 Jun 2024 15:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9245114AD2D;
+	Wed,  5 Jun 2024 15:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZY76XVen"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ObjBWPAK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A6F27450;
-	Wed,  5 Jun 2024 15:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40EC17BCD;
+	Wed,  5 Jun 2024 15:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717601611; cv=none; b=n5cZ8uAXV6MJlP+leHsBqYtfNi575e8cWP8n3VrWlGikRHd00r49dbdaq1ORnc4hy86XG9BC7MBtrW9r4mtVSibwnIoJS6utfaBB7Ykpl72Q4CfdWLq58F9GIwon9ivByNbbcCTs7jSPyZc+5fSA3SCold3y8PHUmLy9jCO/U98=
+	t=1717601763; cv=none; b=VejsY1o5zujx6xj34rmsx27dJkhMTg4zT4spZ0En73wyDT2nbseASOARFNY+eS6QcoEuI/3ZaoICuLb8rLJp1/yjvp4sPquUAQj1ACLttT+VFf2iRId69Qs2F1BkXj7/fCfIke3d7hPRjFEQmrBXoW2JHYB12Yshpsj1TbBKoW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717601611; c=relaxed/simple;
-	bh=4lLUXsn97faWP7+i+36tE5boR7rNlTYyLIxuiFPVPbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQlPaxoJsyZqNweiDnRr9Z8NgHnszewDLep8moc4G81b7VvGlD8xCTuIcX2/MJDsLKC28vYRkAR6mtgiyK3eUT7gS0FPvoqKv9bGi0+11dPRLiqtgrnpf7vVYS0X4eyr/lTQ4E/X4ir2LzIRvLnnbFYsjdUGq1iJQgEM1vAtW3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZY76XVen; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F03B7C2BD11;
-	Wed,  5 Jun 2024 15:33:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717601611;
-	bh=4lLUXsn97faWP7+i+36tE5boR7rNlTYyLIxuiFPVPbU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZY76XVeneC2Z77c/01GHO8HLsz0kEw385P1BgievhO6xmP/qtnxze1wkQlv8UDCIY
-	 ShcZuqBij1k3Qox7WU9j5MA4mO+Myx9uXO3vZedaPWUlNLpRyHgurTXiB73OLFcjtA
-	 Aq3uVgnoayqmN/9Wr7Dw5bu+w9mOb3FLRLWPk/19aV0xVjnz5AV+iv7tK2iLn/7tLT
-	 AmnHJ05T4whYMhyuECaKBr52Ex7KLr03RHJdftlGfpryqkNGV8bd0hL7hvZ/l3gII5
-	 PHDN1iV1fQcNXGWDKDhRecNGcw5w85woaE/nP1q/TYZ+Jo2R2go2uj6MQ5zw9FGQ5k
-	 tX+0J21Ezk/GA==
-Date: Wed, 5 Jun 2024 17:33:26 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs: ignore auto and noauto options if given
-Message-ID: <20240605-miterleben-empfunden-ee9efeded6d3@brauner>
-References: <20240522083851.37668-1-wsa+renesas@sang-engineering.com>
- <20240524-glasfaser-gerede-fdff887f8ae2@brauner>
- <20240527100618.np2wqiw5mz7as3vk@ninjato>
- <20240527-pittoresk-kneipen-652000baed56@brauner>
- <nr46caxz7tgxo6q6t2puoj36onat65pt7fcgsvjikyaid5x2lt@gnw5rkhq2p5r>
- <20240603-holzschnitt-abwaschen-2f5261637ca8@brauner>
- <7e8f8a6c-0f8e-4237-9048-a504c8174363@redhat.com>
- <20240603-turnen-wagen-685f86730633@brauner>
- <934aaad0-4c41-43d4-9ba2-bd15513b9527@redhat.com>
+	s=arc-20240116; t=1717601763; c=relaxed/simple;
+	bh=GOYpM4/dfC29NdGSB+aunhpkeRtHnHQ0+apnw8FNPqM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OzpiiR/sP/i5VNcIBu0XTRPvfHlo4nKvFToGwBZhZ1uG7aUkHV4yilfay9Xhw98bHM6XZ0fA2geoEPmoqePbgQtcG88uVBbD3CITHSajRHuSDX57GpsHgZcxZv7bjJPECvcwu52dF7qbMX23bYp/fbvEsioIWl2tOv25Mf/ziZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ObjBWPAK; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717601762; x=1749137762;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GOYpM4/dfC29NdGSB+aunhpkeRtHnHQ0+apnw8FNPqM=;
+  b=ObjBWPAKG9H7CSFZh3Dj9kpDIEAjp00Jn8hKNiSjDKLfZ7DvPd6ziVch
+   MgFVwclAESbdgCz3kf6CRgZu03UFN6dhjUu5+EktTH3Mh+ezm6TfstD/s
+   c8zS5rLtErMLBhWmNRn3R/NK6MRwiuYvF2EU764598tgTA3uZ3ZtpKNkS
+   vFEjDdNndkPq5eZWe7FHLoDFC0TCInje9S93YV4T94TWB4fsqGi89Wiua
+   s/yoOxttkdKE56CS1jxyTw9T1A/ueA6dvduOzhGblMZ8J7kNg0tV0lG5f
+   YQlNXvWl32F7jqcYS/ntYLuewBDmmp2Gos6J5tuean0aNSfaLYJpUkrKN
+   Q==;
+X-CSE-ConnectionGUID: TANsHIgDTxy/nhuLFf84Fw==
+X-CSE-MsgGUID: jWUmypBnSDS0XWaGgAevaw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14105997"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="14105997"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 08:35:59 -0700
+X-CSE-ConnectionGUID: nOM8ICnRQnyGyDu/7ttjHw==
+X-CSE-MsgGUID: fNFn4dViR/OmWm9ehxFgJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="37765242"
+Received: from inlubt0316.iind.intel.com ([10.191.20.213])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Jun 2024 08:35:56 -0700
+From: lakshmi.sowjanya.d@intel.com
+To: tglx@linutronix.de,
+	giometti@enneenne.com,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	andriy.shevchenko@linux.intel.com,
+	eddie.dong@intel.com,
+	christopher.s.hall@intel.com,
+	pandith.n@intel.com,
+	subramanian.mohan@intel.com,
+	thejesh.reddy.t.r@intel.com,
+	lakshmi.sowjanya.d@intel.com
+Subject: [PATCH v9 0/3] Add support for Intel PPS Generator
+Date: Wed,  5 Jun 2024 21:05:51 +0530
+Message-Id: <20240605153554.11584-1-lakshmi.sowjanya.d@intel.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <934aaad0-4c41-43d4-9ba2-bd15513b9527@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 03, 2024 at 10:13:43AM -0500, Eric Sandeen wrote:
-> On 6/3/24 9:33 AM, Christian Brauner wrote:
-> > On Mon, Jun 03, 2024 at 09:17:10AM -0500, Eric Sandeen wrote:
-> >> On 6/3/24 8:31 AM, Christian Brauner wrote:
-> >>> On Mon, Jun 03, 2024 at 09:24:50AM +0200, Wolfram Sang wrote:
-> >>>>
-> >>>>>>> Does that fix it for you?
-> >>>>>>
-> >>>>>> Yes, it does, thank you.
-> >>>>>>
-> >>>>>> Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >>>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >>>>>
-> >>>>> Thanks, applied. Should be fixed by end of the week.
-> >>>>
-> >>>> It is in -next but not in rc2. rc3 then?
-> >>>
-> >>> Yes, it wasn't ready when I sent the fixes for -rc2 as I just put it in
-> >>> that day.
-> >>>
-> >>
-> >> See my other reply, are you sure we should make this change? From a
-> >> "keep the old behavior" POV maybe so, but this looks to me like a
-> >> bug in busybox, passing fstab hint "options" like "auto" as actual mount
-> >> options being the root cause of the problem. debugfs isn't uniquely
-> >> affected by this behavior.
-> >>
-> >> I'm not dead set against the change, just wanted to point this out.
-> > 
-> > Hm, it seems I forgot your other mail, sorry.
-> 
-> No worries!
-> 
-> > So the issue is that we're breaking existing userspace and it doesn't
-> > seem like a situation where we can just ignore broken userspace. If
-> > busybox has been doing that for a long time we might just have to
-> > accommodate their brokenness. Thoughts?
-> 
-> Yep, I can totally see that POV.
-> 
-> It's just that surely every other strict-parsing filesystem is also
-> broken in this same way, so coding around the busybox bug only in debugfs
-> seems a little strange. (Surely we won't change every filesystem to accept
-> unknown options just for busybox's benefit.)
-> 
-> IOWS: why do we accomodate busybox brokenness only for debugfs, given that
-> "auto" can be used in fstab for any filesystem?
+From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 
-I suspect that not that most filesystems aren't mounted from fstab which
-is why we've never saw reports.
+The goal of the PPS (Pulse Per Second) hardware/software is to generate a
+signal from the system on a wire so that some third-party hardware can
+observe that signal and judge how close the system's time is to another
+system or piece of hardware.
+
+Existing methods (like parallel ports) require software to flip a bit at
+just the right time to create a PPS signal. Many things can prevent
+software from doing this precisely. This (Timed I/O) method is better
+because software only "arms" the hardware in advance and then depends on
+the hardware to "fire" and flip the signal at just the right time.
+
+To generate a PPS signal with this new hardware, the kernel wakes up
+twice a second, once for 1->0 edge and other for the 0->1 edge. It does
+this shortly (~10ms) before the actual change in the signal needs to be
+made. It computes the TSC value at which edge will happen, convert to a
+value hardware understands and program this value to Timed I/O hardware.
+The actual edge transition happens without any further action from the
+kernel.
+
+The result here is a signal coming out of the system that is roughly
+1,000 times more accurate than the old methods. If the system is heavily
+loaded, the difference in accuracy is larger in old methods.
+
+Application Interface:
+The API to use Timed I/O is very simple. It is enabled and disabled by
+writing a '1' or '0' value to the sysfs enable attribute associated with
+the Timed I/O PPS device. Each Timed I/O pin is represented by a PPS
+device. When enabled, a pulse-per-second (PPS) synchronized with the
+system clock is continuously produced on the Timed I/O pin, otherwise it
+is pulled low.
+
+The Timed I/O signal on the motherboard is enabled in the BIOS setup.
+Intel Advanced Menu -> PCH IO Configuration -> Timed I/O <Enable>
+
+References:
+https://en.wikipedia.org/wiki/Pulse-per-second_signal
+https://drive.google.com/file/d/1vkBRRDuELmY8I3FlfOZaEBp-DxLW6t_V/view
+https://youtu.be/JLUTT-lrDqw
+ 
+Patch 1 adds the pps(pulse per second) generator tio driver to the pps
+subsystem.
+Patch 2 documentation and usage of the pps tio generator module.
+Patch 3 includes documentation for sysfs interface.
+
+These patches are based on the timers/core branch:
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/?h=timers/core
+These changes are dependent on patches that are merged in [1].
+
+Please help to review the changes.
+
+Thanks in advance,
+Sowjanya
+
+Changes from v2:
+ - Split patch 1 to remove the functions in later stages.
+ - Include required headers in pps_gen_tio.
+
+Changes from v3:
+ - Corrections in Documentation.
+ - Introducing non-RFC version of the patch series.
+
+Changes from v4:
+ - Setting id in ice_ptp
+ - Modified conversion logic in convert_base_to_cs.
+ - Included the usage of the APIs in the commit message of 2nd patch.
+
+Changes from v5:
+ - Change nsecs variable to use_nsecs.
+ - Change order of 1&2 patches and modify the commit message.
+ - Add sysfs abi file entry in MAINTAINERS file.
+ - Add check to find if any event is missed and disable hardware
+   accordingly.
+
+Changes from v6:
+ - Split patch 1 into 1&2 patches.
+ - Add check for overflow in convert_ns_to_cs().
+ - Refine commit messages.
+
+Changes from v7:
+ - Split the if condition and return error if current time exceeds
+   expire time.
+ - Update kernel version and month in ABI file.
+
+Changes from v8:
+ - Add function to enable Timed I/O.
+ - Changed the updating of tio->enabled to a centralized place in
+   disable and enable functions.
+
+Lakshmi Sowjanya D (3):
+  pps: generators: Add PPS Generator TIO Driver
+  Documentation: driver-api: pps: Add Intel Timed I/O PPS generator
+  ABI: pps: Add ABI documentation for Intel TIO
+
+ .../ABI/testing/sysfs-platform-pps-tio        |   7 +
+ Documentation/driver-api/pps.rst              |  22 ++
+ MAINTAINERS                                   |   1 +
+ drivers/pps/generators/Kconfig                |  16 ++
+ drivers/pps/generators/Makefile               |   1 +
+ drivers/pps/generators/pps_gen_tio.c          | 268 ++++++++++++++++++
+ 6 files changed, 315 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-pps-tio
+ create mode 100644 drivers/pps/generators/pps_gen_tio.c
+
+-- 
+2.35.3
+
 
