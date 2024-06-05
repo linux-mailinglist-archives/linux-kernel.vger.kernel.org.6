@@ -1,121 +1,198 @@
-Return-Path: <linux-kernel+bounces-202794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF3C8FD139
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BA98FD144
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399191C21D86
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAFAA1F25DA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D132E403;
-	Wed,  5 Jun 2024 14:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8204A3A8D2;
+	Wed,  5 Jun 2024 14:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nM/ELYqC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9JF+QV1y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGUIrNqC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33FA262BE;
-	Wed,  5 Jun 2024 14:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E2519D88D;
+	Wed,  5 Jun 2024 14:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717599277; cv=none; b=tP5MwQh/kk+DNGS8I4U6QkiIfUnZqu6sqB5lC3OkvCy8Bei4wmI3WS5KyeEsCm7YvJSH2Tec2P/bFul393kjozpHOD6LxkyK/FebB5iJ+rjgqCzDhe3t8Tca06pPPMm+isSGCE7HXa6thUOtaaFsr+PGHvf5W2/bJpPYFrQqEMk=
+	t=1717599416; cv=none; b=qNoOtTwH+Dsm5lUTeki9CKxYsxu41PIWg33JWjN/pfXlJxkwzZCUqEOZbLyxiYf6xSzAuv7tD/SCpmty9hO+4EHrG5ndPeq0VbV6PHFGPHgiz3zHLj7kyP9GDWSmQdGgoxrrGhuuvx4q+IUHYAr0QENzMwcOZ92+qnyZbWzmWpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717599277; c=relaxed/simple;
-	bh=vEAm8XW4A4JCAVr1Njf+fvAe/H3oq73qrPOokg531pE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FPcm2pGO98UX4WhJTWgB4fWYd9eqRZ2TNi0zTh+s/7sN/6YSqhLb/OEj7gxGjlCR5PFTups08v8Fs0nP0UbgdhsS/MtpVGSsMS46Q+sJgx/qeDpoqB77ycitB21OIDm2NHZf78FGvGIp6m2PWAEzx06EYguv0/SeRSx0W6EVOOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nM/ELYqC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9JF+QV1y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 05 Jun 2024 14:54:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717599273;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nabDAdkeXLpiGcP4YJdk7saSMZT0JJB2s6uiC+hHzDE=;
-	b=nM/ELYqCgJQRkG5V+oEE4toaC0xcVofpE8NwzW+fKhx/XT9w5+ZPQNKgUulLKzjbj23++2
-	pNhh91OpmY0ktFQJWK8syhQVQemLec1IEAIOfwFLAwepjtuWjGi8+Q0cmrAyNNEh2c+vqq
-	MHYkS2iSc2/SMJjY9rF1ests9jvrmTsqF2Br/bLUhORrrKG3PnYyd0ExDiF8dsxWxA9tGk
-	imHjkkzM+oZgm5esoO3JWlQD3/JQnXxuOFV7Ok3OzsQ+rXYsjviJrYC/alGElLClY29ihu
-	U3mR+5Aoaqc/Pr7J2TXas0bq2Jqz/skZ0isVtSVXnXt7BfvHZrH7ybnmO6ZDtA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717599273;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nabDAdkeXLpiGcP4YJdk7saSMZT0JJB2s6uiC+hHzDE=;
-	b=9JF+QV1y/hu+ezbU7P5YrNthKDO8LeiRPnDZXIQxKlJhKMYGXgza3Gj0OWq0tpYJLboQZK
-	u7jAW75bs0bqPcAQ==
-From: "tip-bot2 for Christian Loehle" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] idle: Remove stale RCU comment
-Cc: Christian Loehle <christian.loehle@arm.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <5b936388-47df-4050-9229-6617a6c2bba5@arm.com>
-References: <5b936388-47df-4050-9229-6617a6c2bba5@arm.com>
+	s=arc-20240116; t=1717599416; c=relaxed/simple;
+	bh=srqdIbCzJiCSKItXzlP9aa0Xayzluhdpf+SVbqnv6jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t3A+lmTSkNjfK6mEb+XOGihZ3re9ZpUf1oDldaPgmgaDuUCC+H1MvqN7x+OHFMZvag+GikJNVoad1ivxl8DKFFOTEy2XeLbwHelMMMswIx/MY+OjKucf4ItslaAiMIT6zOOdj06VjuqxBugGeBSMqCULT4ddJnky1J0kKmRvutY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGUIrNqC; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717599415; x=1749135415;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=srqdIbCzJiCSKItXzlP9aa0Xayzluhdpf+SVbqnv6jc=;
+  b=iGUIrNqCi/s1i7mOH6Y0olgFdlEXaWlD1jFA4ZeIWEOig6QehBJnYJoS
+   ygzpwhBVVPqw+2IpuRYdk+I+KXiVCIyX/PX0NrZF4PCVE3RwPH0uSpiCI
+   d9w70IInuNc9VbmlRUjEaCGIe/W6fA7INbEn1A9h5IC5BPiQLPVsonnH2
+   MHLx55dw0dufz2xvEuUbdOBKV0YBvKtnmWdFMUpLxn8ZbgJbsvPd3K2tj
+   3QahjyvhuD5bjQB5hD01ZcSlJ+mRklHSyctXlBPeXpJ48+97NUEPTpx1v
+   g6UWK1pCqh+Oq4W3mm4jnL0V36pIr+Ep/bovNPdmVRBNyADZYAmCj0f7d
+   w==;
+X-CSE-ConnectionGUID: Z8LJnP5jR6GOAmy8t/zMiw==
+X-CSE-MsgGUID: /iNMLs37QqGJgqAixT0RmA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="18062856"
+X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
+   d="scan'208";a="18062856"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 07:56:54 -0700
+X-CSE-ConnectionGUID: 3CDgrgshSYSlKcPgU8/ExQ==
+X-CSE-MsgGUID: ZZjCYR3XR7mEuxF96N/4iQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
+   d="scan'208";a="37551759"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 05 Jun 2024 07:56:51 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sEs4F-0001lq-2D;
+	Wed, 05 Jun 2024 14:56:47 +0000
+Date: Wed, 5 Jun 2024 22:56:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, davem@davemloft.net, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, bryan.whitehead@microchip.com,
+	andrew@lunn.ch, linux@armlinux.org.uk, sbauer@blackbox.su,
+	hmehrtens@maxlinear.com, lxu@maxlinear.com, hkallweit1@gmail.com,
+	edumazet@google.com, pabeni@redhat.com,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net V3 2/3] net: lan743x: Support WOL at both the PHY and
+ MAC appropriately
+Message-ID: <202406052200.w3zuc32H-lkp@intel.com>
+References: <20240605101611.18791-3-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171759927337.10875.6268868204666848368.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605101611.18791-3-Raju.Lakkaraju@microchip.com>
 
-The following commit has been merged into the sched/core branch of tip:
+Hi Raju,
 
-Commit-ID:     764d5fcc2a58d789629f6800451975fc93f25822
-Gitweb:        https://git.kernel.org/tip/764d5fcc2a58d789629f6800451975fc93f25822
-Author:        Christian Loehle <christian.loehle@arm.com>
-AuthorDate:    Mon, 03 Jun 2024 16:30:39 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 05 Jun 2024 15:52:35 +02:00
+kernel test robot noticed the following build errors:
 
-idle: Remove stale RCU comment
+[auto build test ERROR on net/main]
 
-The call of rcu_idle_enter() from within cpuidle_idle_call() was
-removed in commit 1098582a0f6c ("sched,idle,rcu: Push rcu_idle deeper
-into the idle path") which makes the comment out of place.
+url:    https://github.com/intel-lab-lkp/linux/commits/Raju-Lakkaraju/net-lan743x-disable-WOL-upon-resume-to-restore-full-data-path-operation/20240605-182110
+base:   net/main
+patch link:    https://lore.kernel.org/r/20240605101611.18791-3-Raju.Lakkaraju%40microchip.com
+patch subject: [PATCH net V3 2/3] net: lan743x: Support WOL at both the PHY and MAC appropriately
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240605/202406052200.w3zuc32H-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406052200.w3zuc32H-lkp@intel.com/reproduce)
 
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/5b936388-47df-4050-9229-6617a6c2bba5@arm.com
----
- kernel/sched/idle.c | 6 ------
- 1 file changed, 6 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406052200.w3zuc32H-lkp@intel.com/
 
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 770e698..6e78d07 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -179,12 +179,6 @@ static void cpuidle_idle_call(void)
- 		return;
- 	}
- 
--	/*
--	 * The RCU framework needs to be told that we are entering an idle
--	 * section, so no more RCU read side critical sections and one more
--	 * step to the grace period
--	 */
--
- 	if (cpuidle_not_available(drv, dev)) {
- 		tick_nohz_idle_stop_tick();
- 
+All errors (new ones prefixed by >>):
+
+   drivers/net/ethernet/microchip/lan743x_main.c: In function 'lan743x_netdev_open':
+>> drivers/net/ethernet/microchip/lan743x_main.c:3126:24: error: 'struct lan743x_adapter' has no member named 'phy_wol_supported'
+    3126 |                 adapter->phy_wol_supported = wol.supported;
+         |                        ^~
+>> drivers/net/ethernet/microchip/lan743x_main.c:3127:24: error: 'struct lan743x_adapter' has no member named 'phy_wolopts'
+    3127 |                 adapter->phy_wolopts = wol.wolopts;
+         |                        ^~
+
+
+vim +3126 drivers/net/ethernet/microchip/lan743x_main.c
+
+  3085	
+  3086	static int lan743x_netdev_open(struct net_device *netdev)
+  3087	{
+  3088		struct lan743x_adapter *adapter = netdev_priv(netdev);
+  3089		int index;
+  3090		int ret;
+  3091	
+  3092		ret = lan743x_intr_open(adapter);
+  3093		if (ret)
+  3094			goto return_error;
+  3095	
+  3096		ret = lan743x_mac_open(adapter);
+  3097		if (ret)
+  3098			goto close_intr;
+  3099	
+  3100		ret = lan743x_phy_open(adapter);
+  3101		if (ret)
+  3102			goto close_mac;
+  3103	
+  3104		ret = lan743x_ptp_open(adapter);
+  3105		if (ret)
+  3106			goto close_phy;
+  3107	
+  3108		lan743x_rfe_open(adapter);
+  3109	
+  3110		for (index = 0; index < LAN743X_USED_RX_CHANNELS; index++) {
+  3111			ret = lan743x_rx_open(&adapter->rx[index]);
+  3112			if (ret)
+  3113				goto close_rx;
+  3114		}
+  3115	
+  3116		for (index = 0; index < adapter->used_tx_channels; index++) {
+  3117			ret = lan743x_tx_open(&adapter->tx[index]);
+  3118			if (ret)
+  3119				goto close_tx;
+  3120		}
+  3121	
+  3122		if (adapter->netdev->phydev) {
+  3123			struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
+  3124	
+  3125			phy_ethtool_get_wol(netdev->phydev, &wol);
+> 3126			adapter->phy_wol_supported = wol.supported;
+> 3127			adapter->phy_wolopts = wol.wolopts;
+  3128		}
+  3129	
+  3130		return 0;
+  3131	
+  3132	close_tx:
+  3133		for (index = 0; index < adapter->used_tx_channels; index++) {
+  3134			if (adapter->tx[index].ring_cpu_ptr)
+  3135				lan743x_tx_close(&adapter->tx[index]);
+  3136		}
+  3137	
+  3138	close_rx:
+  3139		for (index = 0; index < LAN743X_USED_RX_CHANNELS; index++) {
+  3140			if (adapter->rx[index].ring_cpu_ptr)
+  3141				lan743x_rx_close(&adapter->rx[index]);
+  3142		}
+  3143		lan743x_ptp_close(adapter);
+  3144	
+  3145	close_phy:
+  3146		lan743x_phy_close(adapter);
+  3147	
+  3148	close_mac:
+  3149		lan743x_mac_close(adapter);
+  3150	
+  3151	close_intr:
+  3152		lan743x_intr_close(adapter);
+  3153	
+  3154	return_error:
+  3155		netif_warn(adapter, ifup, adapter->netdev,
+  3156			   "Error opening LAN743x\n");
+  3157		return ret;
+  3158	}
+  3159	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
