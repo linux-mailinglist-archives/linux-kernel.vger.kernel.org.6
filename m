@@ -1,133 +1,118 @@
-Return-Path: <linux-kernel+bounces-202752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEBD8FD065
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:05:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87CB8FD06B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D3A1C22728
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:05:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F03428C4FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A1010A12;
-	Wed,  5 Jun 2024 14:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBDE1D6A5;
+	Wed,  5 Jun 2024 14:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GYgF/4W3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jR5JlSHx"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1F710A1E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B7417BBF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717596331; cv=none; b=Op1bQMTvcCX14T7WRuFe9l78JrV5PBQ1S4oTjuWjZl5BLtFAauakyncBxLehJKJaTAK+THD3mPZXydGcScE/PjZhwO306Nd2H+OFXwnfEqYwDD3clyAASxGT0IOCTEYA1d+xSOBDkm0NQ78RRYYmLryZRBwedklHY0O/3NaGc8Y=
+	t=1717596410; cv=none; b=AcSWyeZFWYqOwINTki33NTTfrU2lL/ghRO20hXbo1YdU0NrSVAXZaZcESMcDja3hH5rYP+TfDBRn8EnUA+V7aqjx+TceDUFgCMGhRlfjTjfiIcy/og3GiBPBDOqtYNbdOba3cRZNWuanxaQpaxD0h3cKfbrCD8dhDIvuWXCMdSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717596331; c=relaxed/simple;
-	bh=J2kQ4wQoNvDj4NE3mHtx5/BMuZd20qs1tyhxegM305Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E4fVrfG3hWtcazvyem/Sc0ZxBJYZ0FR5yGh8K59KKgZlPS6rOBaLKdn2qyonxRXO3tzrOLmaMwtC2RsHuzwXrVOtQUYiBwbu4e26WzvODYdjzuv6eYq0h6c/3GJ6tHZJ7knr6ISWyV/DRujkHx7SqRDKBoJBLPTSGRxnk7RIyn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GYgF/4W3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717596328;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnAjRPdPslLKR6RQzu2pBmXnTD4p4gc93G0q5GXgtK8=;
-	b=GYgF/4W3t6HhZMA7j0hbcgv6t0Q23+3SlQu9Z4TPWVl1WblnU1GdcuW7OuHPz2EzdlfbV5
-	gqna9P55slFr3XvJwIxdu0qr/revjtmRuTH1eqyKSvsH3WTbUDbrKTVV5hBW7a2WFed0u0
-	OwmIkggVpSbIsZiZrz95k7t9Ni1VJPw=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-74-hRzSkVHZN-apQgT_v0R6AQ-1; Wed, 05 Jun 2024 10:05:27 -0400
-X-MC-Unique: hRzSkVHZN-apQgT_v0R6AQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52baa2e4ab1so1376961e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:05:26 -0700 (PDT)
+	s=arc-20240116; t=1717596410; c=relaxed/simple;
+	bh=RLigTN6QlgfnN8MmaEOoLfcZ90fDVBpjgvMkiBaFCMo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ev/0BDtBKjYDtbPKlaTDww53TBuZwJiZXH57blAUGScsOpBqFQImfXA162vPRvizEysNR/HU1w006BzJth6KtcApAhzCjliPy9ULEwNFYG9oeDxp7TAsWCf9Nb/Lps5EgfcSFGIL9Xa45fv77bcdhh/2kwEQlD4okBxzzXeotu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jR5JlSHx; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627f20cff42so114353587b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:06:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717596407; x=1718201207; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BL138jN66e7d4oRS9LVO/0u1phYBQ+x8xQzsbL5QTlo=;
+        b=jR5JlSHxwJBVnwKlYd2q3dAIa5VvoPsvGkmI7dq5336WqvGRPa64jtwoiKusLudxNJ
+         wRo6BlVYYk/5rzubjsIrmZXk9ewEG5JJ8BCTLVgJyzNQVlxLFVx/Akc4vA8p8Scjkqje
+         puvdvN1viiVX/5foJxJ/sxvUZJJBJfd0JjxM0U77CePNn9PXsNeYLXejZdc6FQWJXThA
+         84V7lPg0nLvtcwdAv7S1eSLnmZgdT+BP/cKPuKUfXA4IbPibkh+ajfitxR1t0Mk9KKBb
+         Oty/o87QsZbZiWrjRlx/5FMzvMkOP3s1ZAOVenNUNnCYIK+pDB1DRFHCMXxiIyTPrsca
+         Nj5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717596325; x=1718201125;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SnAjRPdPslLKR6RQzu2pBmXnTD4p4gc93G0q5GXgtK8=;
-        b=ZgJt86LVOt0UPF9IKZhs9Lk9CsBo3/DC4pqJIcMnTdc+26EwnSgEA75tDATuHHHTbu
-         VH23zwdvhvuSSTnua52OYhQedGPkyee3uKUpdiZ5ny5C7dfCSFBnulJmJhaqBDvoWFv6
-         NG9Qw5yLLgnYH3Ue1I5vHLfP/YPsGNgq9K7ZUbb7GR2Kbnh04mF5FUdhMcfxDp6ONniv
-         xB73pmlRVvGCr0Z7Ilg+i9OrbGUmBdJ2k5zEj6pxzAS1KBfOxKlHFjBQJ7+ExIAe8l+e
-         +N5cExM+cfWrWiF2xzF4KCs7ZKb+9Psa2t0+Pyv5d6UU0DPjSyQ5IgO98kPJ2qmu3Lpr
-         gXRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6kz5NQaXhW5cVVRCioXLACnBiOR/2Na4kRr6CY6FPeuRZvzg4mc01G6yuDv498wrgdKbvpSejKnYylvYL+2Qk6n6bRxBW98GUihOd
-X-Gm-Message-State: AOJu0Yys9UHxvBt1JBe6izv0ZOiD4xcynkGaskeeQqo8uYGiuPfq5535
-	NbwPKVc3HDsuiqv4dGd6WatzUouF0XSXpKJyKLUEC+0RfgKdTE/xad3k6YMdSD9CgnJ4Lv3XZca
-	qazrKJkzSfjcUaOo0IC1l5UpsY3lbu/0GvGRUBQf6kgSPRqWxPYHE4q7Rqr4hqQ==
-X-Received: by 2002:a05:6512:3e5:b0:52b:4ae8:46d9 with SMTP id 2adb3069b0e04-52bab4ca6d4mr1891860e87.5.1717596325743;
-        Wed, 05 Jun 2024 07:05:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGC7EdqZjYrmyMx/USwVrnIBDKTdRMVW5oYpkXPFLx7eROHA0u1LtZeLxEwCYBnW4Z+lNhiRA==
-X-Received: by 2002:a05:6512:3e5:b0:52b:4ae8:46d9 with SMTP id 2adb3069b0e04-52bab4ca6d4mr1891750e87.5.1717596321944;
-        Wed, 05 Jun 2024 07:05:21 -0700 (PDT)
-Received: from [192.168.0.161] (host-79-23-6-148.retail.telecomitalia.it. [79.23.6.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a681c4f2b6fsm777163266b.144.2024.06.05.07.05.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 07:05:21 -0700 (PDT)
-Message-ID: <9f21c8e5-1103-44fa-82bd-cf608f8a96f6@redhat.com>
-Date: Wed, 5 Jun 2024 16:05:19 +0200
+        d=1e100.net; s=20230601; t=1717596407; x=1718201207;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BL138jN66e7d4oRS9LVO/0u1phYBQ+x8xQzsbL5QTlo=;
+        b=G6hzd1bzazVnXDJsStv59DyeVw9EEOy3xkkAy+Tvs1ZOhcW2HtBnc4r2vXWyfOEJoy
+         7j/+CYvJhrxgCTs4IaOVVj6DdByEAH29FU2GoFS9NuAIXpYg5B9OVB+LLVf/ZGiKXgam
+         xUMUkyAeZbswlgupdUHeSm+yY+9yYGjZX8vX/T5/roS1omkkSHVNXuRegBhEHyPOwFCW
+         wl1mpP0cS9rYB5viHicZI6wKZL0bBY0lLHN3nUVeW/vBqQwwitx+chkVQWsjIxqLMda7
+         cg5SgzIe/cjKzyd8Nxc7/I6QXhqoueI6fBCLwDztie16weeIIRpe7Y964ny1AdvXSfI9
+         bWXA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+/dXhbsWu+XBBh7ylb6amTSqDoXvR3IF2H+teF391BNcQyTGWFgIJxGMMDxH0lMJAzTihWmR/4j1vpTb56LQ24Fuo6Tw7w/6OhzbL
+X-Gm-Message-State: AOJu0YwOt2Uwroy4ZhHdL27QwyzCJb+Y/rN7cZm3ytkGJQSw3By0IbpX
+	+x4fHSLXV0fFIbt/a8l15LPGi4c7c5qmt9iFayD0twd5WCMsCX4COg+f3kw487hc3B11Vj3/gpu
+	ROw==
+X-Google-Smtp-Source: AGHT+IG1hc4iMUkWuc2pTjAvNhhnxyv7afMIRBSIBUolkARKLQQrvnWjgIFzBdhrmfAcjl+qpvy1b4ZNUi0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2991:b0:dfa:4b20:bdaf with SMTP id
+ 3f1490d57ef6-dfacad0f465mr254997276.13.1717596407332; Wed, 05 Jun 2024
+ 07:06:47 -0700 (PDT)
+Date: Wed, 5 Jun 2024 07:06:45 -0700
+In-Reply-To: <171754361450.2780320.9936421038178572773.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] sched/rt: Clean up usage of rt_task()
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- Metin Kaya <metin.kaya@arm.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-mm@kvack.org, Phil Auld <pauld@redhat.com>
-References: <20240604144228.1356121-1-qyousef@layalina.io>
- <20240604144228.1356121-2-qyousef@layalina.io>
- <b298bca1-190f-48a2-8d2c-58d54b879c72@redhat.com>
- <20240605093246.4h0kCR67@linutronix.de>
-Content-Language: en-US, pt-BR, it-IT
-From: Daniel Bristot de Oliveira <bristot@redhat.com>
-In-Reply-To: <20240605093246.4h0kCR67@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <cover.1714081725.git.reinette.chatre@intel.com> <171754361450.2780320.9936421038178572773.b4-ty@google.com>
+Message-ID: <ZmBw9R_jkNLYXkJh@google.com>
+Subject: Re: [PATCH V5 0/4] KVM: x86: Make bus clock frequency for vAPIC timer configurable
+From: Sean Christopherson <seanjc@google.com>
+To: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
+	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
+	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
+	rick.p.edgecombe@intel.com, Reinette Chatre <reinette.chatre@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 6/5/24 11:32, Sebastian Andrzej Siewior wrote:
-> On 2024-06-04 17:57:46 [+0200], Daniel Bristot de Oliveira wrote:
->> On 6/4/24 16:42, Qais Yousef wrote:
->>> -	    (wakeup_rt && !dl_task(p) && !rt_task(p)) ||
->>> +	    (wakeup_rt && !realtime_task(p)) ||
->>
->> I do not like bikeshedding, and no hard feelings...
->>
->> But rt is a shortened version of realtime, and so it is making *it less*
->> clear that we also have DL here.
+On Tue, Jun 04, 2024, Sean Christopherson wrote:
+> On Thu, 25 Apr 2024 15:06:58 -0700, Reinette Chatre wrote:
+> > Changes from v4:
+> > - v4: https://lore.kernel.org/lkml/cover.1711035400.git.reinette.chatre@intel.com/
+> > - Rename capability from KVM_CAP_X86_APIC_BUS_FREQUENCY to
+> >   KVM_CAP_X86_APIC_BUS_CYCLES_NS. (Xiaoyao Li).
+> > - Include "Testing" section in cover letter.
+> > - Add Rick's Reviewed-by tags.
+> > - Rebased on latest of "next" branch of https://github.com/kvm-x86/linux.git
+> > 
+> > [...]
 > 
-> Can SCHED_DL be considered a real-time scheduling class as in opposite
-> to SCHED_BATCH for instance? Due to its requirements it fits for a real
-> time scheduling class, right?
-> And RT (as in real time) already includes SCHED_RR and SCHED_FIFO.
-
-It is a real-time scheduler, but the problem is that FIFO and RR are in rt.c and
-they are called the "realtime" ones, so they are the first to come in mind.
-
--- Daniel
-
->> -- Daniel
+> Applied the KVM changes to kvm-x86 misc (I'm feeling lucky).  Please prioritize
+> refreshing the selftests patch, I'd like to get it applied sooner than later
+> for obvious reasons (I'm not feeling _that_ lucky).
 > 
-> Sebastian
-> 
+> [1/4] KVM: x86: hyper-v: Calculate APIC bus frequency for Hyper-V
+>       https://github.com/kvm-x86/linux/commit/41c7b1bb656c
+> [2/4] KVM: x86: Make nsec per APIC bus cycle a VM variable
+>       https://github.com/kvm-x86/linux/commit/01de6ce03b1e
+> [3/4] KVM: x86: Add a capability to configure bus frequency for APIC timer
+>       https://github.com/kvm-x86/linux/commit/937296fd3deb
+> [4/4] KVM: selftests: Add test for configure of x86 APIC bus frequency
+>       (not applied)
 
+FYI, the hashes changed as I had to drop an unrelated commit.
+
+[1/3] KVM: x86: hyper-v: Calculate APIC bus frequency for Hyper-V
+      https://github.com/kvm-x86/linux/commit/f9e1cbf1805e
+[2/3] KVM: x86: Make nanoseconds per APIC bus cycle a VM variable
+      https://github.com/kvm-x86/linux/commit/b460256b162d
+[3/3] KVM: x86: Add a capability to configure bus frequency for APIC timer
+      https://github.com/kvm-x86/linux/commit/6fef518594bc
 
