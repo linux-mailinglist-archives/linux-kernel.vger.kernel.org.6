@@ -1,189 +1,175 @@
-Return-Path: <linux-kernel+bounces-202778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8002B8FD0E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:34:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F081E8FD0F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06EE728508B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:34:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768131F26538
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB65B2629F;
-	Wed,  5 Jun 2024 14:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C908E2032A;
+	Wed,  5 Jun 2024 14:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sO3wRMLQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cf88l8XI"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1073319D8B1;
-	Wed,  5 Jun 2024 14:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF54810979
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717598033; cv=none; b=UcYV+vqYDKOoHDX1uprh7VL4WWO6/x27110+F5mMLYMnihH/UJ24merPlBIueHasDxLwVjDzPcSydDa8NAbXBJvYQLdntSuRve+DSoMzIkjuLT61jH8YEbbvOxTIrOWtpjtvhB041fAPxB304Y2SN3MwuuW9DGAhyMKNuYGNDx0=
+	t=1717598168; cv=none; b=M8IjPecL3fRJyP16MIAG7ofXwxBZBqIj1omMFMVh3UxQUtDxdVP4uaKDYsI5gZiCQgFv0c9hYUK2mOvJJFCZf0/F+o8thOXaIrzYAHfMfBk+BhqyvAN0AROb3nEHOxhqx3fBoq5gmbPLr2FkcAs1YUFfISoScCS5hGE6oHkwaIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717598033; c=relaxed/simple;
-	bh=YlKMrykXOHD/CY+5hLXKnWTfq+ZFZ4U0U4Ww7WX5qQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L/BklMPaZ0d5Q+5JqHkYduPGT/bp+PSgqAxPSNMBo5F1EUcEhH5OXMPmP+obUK0w0We9tsABfs0ACRadhUxPEfSajTD1F2ETCTOymStRfWnS3A60igGE1aSSMPMTy7OnCF7waipw5bItKLBNAayaq1eFc6hhfIYyy8prTMqThOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sO3wRMLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F08DCC2BD11;
-	Wed,  5 Jun 2024 14:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717598032;
-	bh=YlKMrykXOHD/CY+5hLXKnWTfq+ZFZ4U0U4Ww7WX5qQk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sO3wRMLQ4FK4MkJrYo8Xcbsd5hi7Vwt2/zajyGrhSJSJ539UTmptqTtIpiQPUiSgO
-	 JIZoQliyswdaI377pz16wFEw69uc5KJrkTTQ9iLEttR/PMsCAOqeTtDbTCxxlrSXzH
-	 lkH0Nok9zjvc33o9ewEajiC6ln5XXvPVAhPATJtcqMZIk/NXr/tlb9X8//U6ZALdrk
-	 +GuqTgzA38WDy1GiTqRhbbo0HBDsb9zo/GNSDkMR/3RAzvCpmaGFVz4/pwrLUfn+hT
-	 BXUzbgEKV6vKgm4rccEllAsGAEVe//hRsTNpnZ+gMyq7dmW6jwEyQaYHxQDHEtmaa/
-	 viu4wyUQnOFcw==
-Message-ID: <5e2faef6-c80d-4fde-8b15-029b687cdf4a@kernel.org>
-Date: Wed, 5 Jun 2024 16:33:48 +0200
+	s=arc-20240116; t=1717598168; c=relaxed/simple;
+	bh=90sQLbIUZo5FsAYSdsfJFZRSqmqR/Gsc7mPGaTjeK74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GGi76gp8PQVUdPtWYC+MOSCrCaMNqSLm1ebIMhKz97jz1ebPJzJyLFeW5THiz17iTAKYhEDaJnXAj9rDUx0sJN6q8xMv9LU/eXWTx7YLhkQUTl+nR/AzzTBWc/hXc1I775pKc+St11MmN29AR+JgzhoLlidme6UamEOtYPy30ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cf88l8XI; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-701b0b0be38so51671b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717598166; x=1718202966; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yq1yy0Su5P7QN87mXYg9WXuNVfybQpz6GBQGEruYcrI=;
+        b=Cf88l8XIDJpqHxCNYby7xa1J3jQdgtF1hKzBIqKF9S7kNPlwtjn/foI133ztGIAjlu
+         /uHCsblOfJYZrB9mqCbYCHKfwOvWlB74r7wUeitL0UFsA7o8bpsW27pkYHPauQQ/w62V
+         4S3GAPyOEU2cmSNxZdWmyARnJ1+Vp/MUd1hDNIR2oapr+QG/ADR5tVQQMEyLQ08wwHJi
+         Mm1T+NYwK8/Uk1k24i00TZrnqb6nb6Boyw5d6xKNgPKDnpN7byfnx/M7dKapZfKOtScF
+         rLnKf9C+JjOJ/blzZBgIVQ+M9d+Xx6FwXrAlhkJ/5O65PyYmoA2sQ6MzIK5zUShIUHvO
+         at9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717598166; x=1718202966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yq1yy0Su5P7QN87mXYg9WXuNVfybQpz6GBQGEruYcrI=;
+        b=T3dAExonkseqpTMDctZVkrB14WV25fnv97QLY7iEnBYqgYHBgZjHISZIh5gvULVbco
+         cIKDTSh2INNlMbN3+NYfUkInwNLcwEujj6PJUiswmlghf0KNP/7WWHYO4KxtIT2qBUGP
+         h5PUFTPjIGK/WpX8NT3nIPEkqdcji4TRdYMKH9/6bXGT92moEMsQytFziIKR9BilEW46
+         bQc+CenBDy4HWB7NLXjVKt11gJw6d3pE4F/YBz9LjWxEaEn+qmC1EkzbJbUq/Odempz1
+         oR9pVHhHJY+2fDZ+v3ke3YNEH8obp/zvB0TFX4FppJoc93dpG9ETw0shwjpmm5H10cLh
+         OtqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Jijl+iVq5t0bCAbnHefB0PbM9ooVS+Wxt1KA2i3RqFM+dRe/+LLs4QjOtS5GHN+eACOV/q9XqYqnWFXavN6d1gdusXlgrvdGx6AH
+X-Gm-Message-State: AOJu0YwZrgiFIwks7E+rUq1mPAhCZGCL2xQSP6RloHhgFi7sYwDreYAC
+	DgHq2mzBl2xFr/j5ZGKX4ymdOmuqjWJLZ/H3PxllFX4zEh3JH8O4uYgddTpEN4ajVg0n1iFdRKb
+	48iDgai8VneZeUc1UqP4xH2LGy6o=
+X-Google-Smtp-Source: AGHT+IHzMIhmIExlPP2dOJMwUeHRzAG3Zqtu8CJwxbDQujyXLFtz5Pdob5xgc4REV0gHk7os55wc3YNBoweEki0mI8g=
+X-Received: by 2002:a05:6a20:918d:b0:1b0:111f:2b7f with SMTP id
+ adf61e73a8af0-1b2b75a2cc8mr3145079637.39.1717598165835; Wed, 05 Jun 2024
+ 07:36:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net 2/3] selftests: net: lib: avoid error removing empty
- netns name
-Content-Language: en-GB
-To: Petr Machata <petrm@nvidia.com>
-Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>,
- Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Geliang Tang <geliang@kernel.org>
-References: <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-0-b3afadd368c9@kernel.org>
- <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-2-b3afadd368c9@kernel.org>
- <877cf38yg5.fsf@nvidia.com> <0f85551f-dd67-4d88-abc2-cdf80293a604@kernel.org>
- <87h6e7796c.fsf@nvidia.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <87h6e7796c.fsf@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240604103736.3068-1-thorsten.blum@toblux.com>
+In-Reply-To: <20240604103736.3068-1-thorsten.blum@toblux.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 5 Jun 2024 10:35:51 -0400
+Message-ID: <CADnq5_OtyaYJAcMpd6hmo4jShFq+1NjDHW5_TEcQB+Hf3yxaqQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Simplify if conditions
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	daniel@ffwll.ch, Qingqing.Zhuo@amd.com, roman.li@amd.com, hersenxs.wu@amd.com, 
+	chaitanya.dhere@amd.com, wenjing.liu@amd.com, alex.hung@amd.com, 
+	sungkim@amd.com, syed.hassan@amd.com, syedsaaem.rizvi@amd.com, 
+	dillon.varone@amd.com, charlene.liu@amd.com, hamza.mahfooz@amd.com, 
+	nicholas.kazlauskas@amd.com, jerry.zuo@amd.com, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/06/2024 16:30, Petr Machata wrote:
-> 
-> Matthieu Baerts <matttbe@kernel.org> writes:
-> 
->> Hi Petr,
->>
->> Thank you for the review!
->>
->> On 05/06/2024 12:38, Petr Machata wrote:
->>>
->>> "Matthieu Baerts (NGI0)" <matttbe@kernel.org> writes:
->>>
->>>> If there is an error to create the first netns with 'setup_ns()',
->>>> 'cleanup_ns()' will be called with an empty string as first parameter.
->>>>
->>>> The consequences is that 'cleanup_ns()' will try to delete an invalid
->>>> netns, and wait 20 seconds if the netns list is empty.
->>>>
->>>> Instead of just checking if the name is not empty, convert the string
->>>> separated by spaces to an array. Manipulating the array is cleaner, and
->>>> calling 'cleanup_ns()' with an empty array will be a no-op.
->>>>
->>>> Fixes: 25ae948b4478 ("selftests/net: add lib.sh")
->>>> Cc: stable@vger.kernel.org
->>>> Acked-by: Geliang Tang <geliang@kernel.org>
->>>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
->>>> ---
->>>>  tools/testing/selftests/net/lib.sh | 13 +++++++------
->>>>  1 file changed, 7 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/tools/testing/selftests/net/lib.sh b/tools/testing/selftests/net/lib.sh
->>>> index a422e10d3d3a..e2f51102d7e1 100644
->>>> --- a/tools/testing/selftests/net/lib.sh
->>>> +++ b/tools/testing/selftests/net/lib.sh
->>>> @@ -15,7 +15,7 @@ ksft_xfail=2
->>>>  ksft_skip=4
->>>>  
->>>>  # namespace list created by setup_ns
->>>> -NS_LIST=""
->>>> +NS_LIST=()
->>>>  
->>>>  ##############################################################################
->>>>  # Helpers
->>>> @@ -137,6 +137,7 @@ cleanup_ns()
->>>>  	fi
->>>>  
->>>>  	for ns in "$@"; do
->>>> +		[ -z "${ns}" ] && continue
->>>
->>> I think this is now irrelevant though? Now cleanup_ns() will be called
->>> with no arguments for an empty NS list, so the loop does not even kick in.
->>
->> If you don't mind, I think it is "safer" to keep it: some selftests are
->> using 'cleanup_ns()' directly, not via 'cleanup_all_ns()', e.g.
->> netns-name.sh, cmsg-*.sh, fib-*.sh, etc. which can call it with the
->> variables not set if 'setup_ns' failed during the init phase.
->>
->> For the moment, all these selftests are calling 'cleanup_ns()' with
->> parameters added without double quotes: so it is fine. Until someone
->> changes that to please shellcheck, like we did on our side with MPTCP
->> selftests. So this line will be useful soon when we will publish the
->> rest of our patches to use 'lib.sh' [1] :)
-> 
-> All right.
-> 
-> Reviewed-by: Petr Machata <petrm@nvidia.com>
+Applied.  Thanks!
 
-Thank you!
+Alex
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+On Tue, Jun 4, 2024 at 9:07=E2=80=AFAM Thorsten Blum <thorsten.blum@toblux.=
+com> wrote:
+>
+> The if conditions !A || A && B can be simplified to !A || B.
+>
+> Fixes the following Coccinelle/coccicheck warnings reported by
+> excluded_middle.cocci:
+>
+>         WARNING !A || A && B is equivalent to !A || B
+>         WARNING !A || A && B is equivalent to !A || B
+>         WARNING !A || A && B is equivalent to !A || B
+>
+> Compile-tested only.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c | 6 +++---
+>  .../gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c   | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c =
+b/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
+> index ad2a6b4769fe..940081df6dc0 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
+> @@ -68,7 +68,7 @@ static bool get_plane_id(struct dml2_context *dml2, con=
+st struct dc_state *state
+>                 if (state->streams[i]->stream_id =3D=3D stream_id) {
+>                         for (j =3D 0; j < state->stream_status[i].plane_c=
+ount; j++) {
+>                                 if (state->stream_status[i].plane_states[=
+j] =3D=3D plane &&
+> -                                       (!is_plane_duplicate || (is_plane=
+_duplicate && (j =3D=3D plane_index)))) {
+> +                                       (!is_plane_duplicate || (j =3D=3D=
+ plane_index))) {
+>                                         *plane_id =3D (i << 16) | j;
+>                                         return true;
+>                                 }
+> @@ -707,8 +707,8 @@ static void free_unused_pipes_for_plane(struct dml2_c=
+ontext *ctx, struct dc_stat
+>         for (i =3D 0; i < ctx->config.dcn_pipe_count; i++) {
+>                 if (state->res_ctx.pipe_ctx[i].plane_state =3D=3D plane &=
+&
+>                         state->res_ctx.pipe_ctx[i].stream->stream_id =3D=
+=3D stream_id &&
+> -                       (!is_plane_duplicate || (is_plane_duplicate &&
+> -                       ctx->v20.scratch.dml_to_dc_pipe_mapping.dml_pipe_=
+idx_to_plane_index[state->res_ctx.pipe_ctx[i].pipe_idx] =3D=3D plane_index)=
+) &&
+> +                       (!is_plane_duplicate ||
+> +                       ctx->v20.scratch.dml_to_dc_pipe_mapping.dml_pipe_=
+idx_to_plane_index[state->res_ctx.pipe_ctx[i].pipe_idx] =3D=3D plane_index)=
+ &&
+>                         !is_pipe_used(pool, state->res_ctx.pipe_ctx[i].pi=
+pe_idx)) {
+>                         free_pipe(&state->res_ctx.pipe_ctx[i]);
+>                 }
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.=
+c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
+> index a41812598ce8..b2bbf7988f92 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
+> @@ -979,7 +979,7 @@ static bool get_plane_id(struct dml2_context *dml2, c=
+onst struct dc_state *conte
+>                 if (context->streams[i]->stream_id =3D=3D stream_id) {
+>                         for (j =3D 0; j < context->stream_status[i].plane=
+_count; j++) {
+>                                 if (context->stream_status[i].plane_state=
+s[j] =3D=3D plane &&
+> -                                       (!is_plane_duplicate || (is_plane=
+_duplicate && (j =3D=3D plane_index)))) {
+> +                                       (!is_plane_duplicate || (j =3D=3D=
+ plane_index))) {
+>                                         *plane_id =3D (i << 16) | j;
+>                                         return true;
+>                                 }
+> --
+> 2.39.2
+>
 
