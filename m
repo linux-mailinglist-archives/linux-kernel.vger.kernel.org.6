@@ -1,143 +1,122 @@
-Return-Path: <linux-kernel+bounces-202177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5A88FC8BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:15:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C598FC8C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC6EBB22AB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7FC28256A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34451419B3;
-	Wed,  5 Jun 2024 10:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pxVqLWi/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RWOe6OyL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8944719006E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58A0190048;
+	Wed,  5 Jun 2024 10:15:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E2113FD92;
+	Wed,  5 Jun 2024 10:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717582510; cv=none; b=EIxDVbTjPcVdnLT1kVdTEEGPeW/cZJdBH5CB/+5RvLuz21YPIfbFjqKeCabtpeAiSaFsQV9vHr2DeFJeS6QOPaGpQmBe+olOXOkCITsmy93HeL0YRyLqVINeywAmTGO/wJeFGtKijLz4PDywzdvLgSrN+9619KOdBAwq+cOfVvQ=
+	t=1717582545; cv=none; b=b5G0ijEHSsP16WXHwyQVmbjLRJlx7T+Vox5UEYBflm7ikr2KP3Oldqf4xmTaI85Q4FFOfZf45rzJ4KkeWVfgHQY0CzizhX8cpRNQbT+SHlHnQ+FNYIF/FTaT3L5Xdg9/s1qqv7Gz2JOSrhB93lT+0ceo6Bb8LE+9kw3JlRM3fNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717582510; c=relaxed/simple;
-	bh=5FYlycc80OiaHBAK250WvdCEOOgG9oY85Bi0+i+GUhU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SxlzqzFNaSy0LkVfkZwUzpIftxZfcgn/Bm6ZRvjLX2C0EGWOqBllVH9IQ/U9noobwh8Bx0qOjCNSlpPmWVIAKwVL9lKnfvsTHOmrkzHrVwzjcLyhhFMOrZyHW5uSc0iO3V4lpCDyFlFfa0Y6z6RgPUJfq4HDf6dIihjTKoDHRwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pxVqLWi/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RWOe6OyL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717582500;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0AGW4NPcPgZ+kllaz1iPcGGi2RTc/mz6X+/BfY/cPz0=;
-	b=pxVqLWi/Yb7a/LrLOJggqlpcYlf6UrMtTLNLpDVqZg0QlLi+CTc0XfTb+/poAi/GcXDmkX
-	qvlJ3Yl5BQKDGI32Nd8o+YhOMGQ/XndHUKh+d2DYC5Pu2GwfbzVmYGTZ1WH3hyB7QB0iAY
-	S8nsQLC/dLKtYjn8fM5RsbSdkNV+bi+j53TIy4pom4FcmR5s+KU8rTKPzZRMijtjWMDru1
-	NmrFibIHB/mHOx/FWvEn/5kt43i0ysP+D3XfrkHsOfVA1thz/y5Ev/ksq+FgO+SeFb3gXa
-	cSSbbAxDmekJ2wvP/X8M96gzV828929XUtrHOrSKMh+1krLdObJGggLC+m5Vog==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717582500;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0AGW4NPcPgZ+kllaz1iPcGGi2RTc/mz6X+/BfY/cPz0=;
-	b=RWOe6OyLnPQkqmEDbUsgM6r2SGakTwisP2BQzYobq5K7UJMFKqbw24F9h3+s5zRwnAWpvp
-	b/FKYIujy4Of3oAA==
-To: Phil Chang <phil.chang@mediatek.com>, phil.chang@mediatek.com
-Cc: frederic@kernel.org, tglx@linutronix.de, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, jy.ho@mediatek.com,
- alix.wu@mediatk.com
-Subject: Re: [PATCH] hrtimer: check hrtimer with a NULL function
-In-Reply-To: <20240605084149.6420-1-phil.chang@mediatek.com>
-References: <20240605084149.6420-1-phil.chang@mediatek.com>
-Date: Wed, 05 Jun 2024 12:15:00 +0200
-Message-ID: <87plsvvgpn.fsf@somnus>
+	s=arc-20240116; t=1717582545; c=relaxed/simple;
+	bh=IUX6zIPyypIRUN0tk9hXbZutMUX1lSDUS76QuLJCPBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eOcJtXYbYKBNCni1dMei+umEUK6rkMrCCyeDqR3TUExNxV0eZbyLT7REv+cfhEqwm7sg0QU+21mZaA6/0B3oP36SPgTtJ9seb1+sTV1NliAj1Dr/PwgWUY97XF5+jQaMcb/LeFt0k12yrKGAVIz3xUoBP++2YRa3JEaDR2GhTI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E813339;
+	Wed,  5 Jun 2024 03:16:07 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B14A23F792;
+	Wed,  5 Jun 2024 03:15:41 -0700 (PDT)
+Date: Wed, 5 Jun 2024 11:15:38 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 2/5] ftrace: Comment __ftrace_hash_rec_update() and make
+ filter_hash bool
+Message-ID: <ZmA6ygUWNPkq0PKV@J2N7QTR9R3>
+References: <20240604212817.384103202@goodmis.org>
+ <20240604212854.725383717@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604212854.725383717@goodmis.org>
 
-Hi,
-
-Phil Chang <phil.chang@mediatek.com> writes:
-
-> simillar with timers, check for timer->function == NULL.
-> If the pointer is NULL, discard the request silently.
-
-Can you please explain, why this change is required?
-
-The statement "similar to timers" is not a valid explaination as timer
-list timers and hrtimers are two different things. The function pointer
-for timer list timers is explicitly set to NULL in shutdown path to
-prevent unwanted rearming of the timer. For hrtimers there is no
-shutdown function implemented and function is never set to NULL by
-hrtimer code.
-
-> Signed-off-by: Phil Chang <phil.chang@mediatek.com>
+On Tue, Jun 04, 2024 at 05:28:19PM -0400, Steven Rostedt wrote:
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> 
+> The function __ftrace_hash_rec_update() parameter "filter_hash" is only
+> used for true or false (boolean), but is of type int. It already has an
+> "inc" parameter that is boolean. This is confusing, make "filter_hash"
+> boolean as well.
+> 
+> While at it, add some documentation to that function especially since it
+> holds the guts of the filtering logic of ftrace.
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  kernel/time/hrtimer.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> index 492c14aac642..72d6e7bc9cd9 100644
-> --- a/kernel/time/hrtimer.c
-> +++ b/kernel/time/hrtimer.c
-> @@ -1297,9 +1297,13 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
->  
->  	base = lock_hrtimer_base(timer, &flags);
->  
-> +	if (!timer->function)
-> +		goto out;
-
-When this happens, user of hrtimers do not follow the semantics of
-hrtimers which means this is a bug.
-
-> +
->  	if (__hrtimer_start_range_ns(timer, tim, delta_ns, mode, base))
->  		hrtimer_reprogram(timer, true);
->  
-> +out:
->  	unlock_hrtimer_base(timer, &flags);
+>  kernel/trace/ftrace.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 9dcdefe9d1aa..93c7c5fd4249 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -1701,8 +1701,20 @@ static bool skip_record(struct dyn_ftrace *rec)
+>  		!(rec->flags & FTRACE_FL_ENABLED);
 >  }
->  EXPORT_SYMBOL_GPL(hrtimer_start_range_ns);
-> @@ -1667,6 +1671,11 @@ static void __run_hrtimer(struct hrtimer_cpu_base *cpu_base,
->  	__remove_hrtimer(timer, base, HRTIMER_STATE_INACTIVE, 0);
->  	fn = timer->function;
 >  
-> +	if (WARN_ON_ONCE(!fn)) {
-> +		/* Should never happen. */
+> +/*
+> + * This is the main engine to the ftrace updates.
+> + *
+> + * It will iterate through all the available ftrace functions
+> + * (the ones that ftrace can have callbacks to) and set the flags
+> + * to the associated dyn_ftrace records.
 
-...same as above...
+I beleive s/to/in/ here, to make this one of:
 
-> +		goto out;
-> +	}
-> +
->  	/*
->  	 * Clear the 'is relative' flag for the TIME_LOW_RES case. If the
->  	 * timer is restarted with a period then it becomes an absolute
-> @@ -1710,6 +1719,7 @@ static void __run_hrtimer(struct hrtimer_cpu_base *cpu_base,
->  	 * hrtimer_active() cannot observe base->running.timer == NULL &&
->  	 * timer->state == INACTIVE.
->  	 */
-> +out:
->  	raw_write_seqcount_barrier(&base->seq);
->  
->  	WARN_ON_ONCE(base->running != timer);
+	set the flags in the associated dyn_ftrace records.
 
+... rather than:
 
-Thanks,
+	set the flags to the associated dyn_ftrace records.
 
-	Anna-Maria
+> + *
+> + * @filter_hash: True if for the filter hash is udpated, false for the
+> + *               notrace hash
+
+Typo: s/udpated/updated/
+
+... though I couldn't parse this regardless; maybe:
+
+	@filter_hash: true to update the filter hash, false to update
+		      the notrace hash
+
+Mark.
+
+> + * @inc: True to add this hash, false to remove it (increment the
+> + *       recorder counters or decrement them).
+> + */
+>  static bool __ftrace_hash_rec_update(struct ftrace_ops *ops,
+> -				     int filter_hash,
+> +				     bool filter_hash,
+>  				     bool inc)
+>  {
+>  	struct ftrace_hash *hash;
+> -- 
+> 2.43.0
+> 
+> 
 
