@@ -1,176 +1,118 @@
-Return-Path: <linux-kernel+bounces-202626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785C18FCEE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:18:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014318FCEE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D63B81F21C52
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:18:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5EB61F276BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2352195817;
-	Wed,  5 Jun 2024 12:40:47 +0000 (UTC)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B9F1957F0;
+	Wed,  5 Jun 2024 12:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHUw4hyj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7A01957FC;
-	Wed,  5 Jun 2024 12:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCC71957E3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717591247; cv=none; b=mkv/oPb9D6DngXhTCDxISGZ10kywUiBeaVjgmHzU5OC6knmK1C7qPohPVkKddLWXGF44kObADX3zQJEecYNEDoE9k4yr9oFDdQoS1j3RhjhYyyTsBuVXg27+fosbUZ8QnPXRlLjNRBxZ1jb/lgWkmFTPPeU1HUcxO1Gt/TAhQSo=
+	t=1717591229; cv=none; b=TCjPDdta17beJLTO03Qv2Z8VU6fOhPS2gR38wT1o7ifT/Q4NOcN72BN1FSClEo1ObxUuItdXlu1mgX/hWi2601JhjjYYE34/3wud00pdVSEn5SS+SS6o5+As0oMSti4o7CVffLItOec5mqD+Ar6B9nHPssZI9FN/EH2MM3DqmEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717591247; c=relaxed/simple;
-	bh=L9f0nPu86ClISH3h8JDLKArTlRwI6HQQN1TeZVB8Ql4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aX2t168ba5rLNjPAVGq+05yudDUYD/ESVDHc/A21ivmNlw4Qbr+ko58rOtY9tjuptHC355dozt6YUd6z3ejT36MLuepM6/K1xJAYTJ4EySpkvE6ja9NcRngTYLTbBazLySrGpU3kRkOHsFGXs5JAlR7/jOUB8GYWk8y+IhzZDIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-62a2424ec50so71433237b3.3;
-        Wed, 05 Jun 2024 05:40:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717591243; x=1718196043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QA2P5Xr8Q0KSzKZJIkj8jUkBjIWrqYG6SJ0zJfpivIQ=;
-        b=M8+ci1mQX+JyvI7/9DGyS2SKkRGVNO8n6MnqDCetO94TRsX6hiPd+os6PnG+MLssoG
-         NhHozFQ7XbOjO0X/zvOTpOmmAYMm7DlZOrj9AOWTzDyrgqb+dTZEwickWFC+5eZscFFD
-         lbkO5kRWJtcZQF0zw+BQI1ZC6xH583ygRlnZoV0eBLqSy5+5t8pgpWg+yEEpHR9U2cZy
-         Nq3zVfVePhvC9EM2t8lKTCpESffBJgGkBYQWFQK4o7nafd7zPsAHjuBIyOUB3n1s7P/0
-         gm6FQrGbMq+sYIcJ6mk71B0v5h/oDg89ls8Kvb6Osk1o6iSccF92feYfVpunN+wKw4UE
-         mq0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUAb7a+UAYeR8JxK5Q8b6p5bgpvitOlySJ9+uFyyWr+6PsowZabRzHlzAQtlLTULnHiHjqBEPVwjrjXvCvVKwnpG13PeNP7XUX9R24IqGXQPN7/ZnYt1WpD8Hc7yHxm2u2knyMa1BZBiO4rLYX/C0bLCHMUys5LRNjetHpEJeTPjb+VlBKKycoZHBVIDzH3aLGHHimRUpN5h3fiUyyJfU8AHHEE+TNC
-X-Gm-Message-State: AOJu0YyWoW6448jYaLzHmMABcbLkkzjeIHLk3VIaEkGSLFTnIjo2jobu
-	/N/5YqBYLtY9j7/z12JsqIH3sFewwCJB7k/iNIwbX4Zff9FjFFE1rwfx3pJ6
-X-Google-Smtp-Source: AGHT+IEeyo/5wHU6sVa9oOhmt9I8O5qBu+xsNVmh3RLnsPOaTESN6RyU2uwVNomGzFmS4jhrfirk0g==
-X-Received: by 2002:a81:b717:0:b0:62a:530:1e53 with SMTP id 00721157ae682-62cbb504e14mr21958887b3.30.1717591241387;
-        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766850aesm21918417b3.102.2024.06.05.05.40.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa727d47c1so5171939276.0;
-        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9LbJI1sms3UgoOn0dxdCnEpuOw/+h3VmdjpLIgd4hm8a3C4mo6uUsinzrigqiJdscFjMht8KrvSfrjBVjmYAc4DElNfWHCow/GajuMjm52N6o6x87LFfQ4Dk294NDbPw5MwC7ZCEroGjJ1L2SecxPAZxn30fqwNP+VTRlonHP0K2RsrJ2932b1nTxqs2Bz+0h66cPfJCzal8U6Wv/IDwjOsOzj7zm
-X-Received: by 2002:a25:b20f:0:b0:dfa:b28b:a0c with SMTP id
- 3f1490d57ef6-dfacac53bf8mr2604814276.26.1717591239815; Wed, 05 Jun 2024
- 05:40:39 -0700 (PDT)
+	s=arc-20240116; t=1717591229; c=relaxed/simple;
+	bh=fTj8oqzixDOnw98MMc7gAnO1TsJrNYBGRMd8QpqOvpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HX62Z6JeLyajNePD8Fc4XAQn1y42n6jcIKbSKXq/hOjzscNXtfk5DxkHzc9bLmw+8Ty6wiETNtAS34IF6nJl0kORJXAggR8fX/6SBduk1DZ3Z0rcDpKu7XNvJwy1OCPYfMdATSFF27I+bBmX5O0mySr2LgSLys1kV/MTXfXslf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHUw4hyj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBD9C4AF0C;
+	Wed,  5 Jun 2024 12:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717591228;
+	bh=fTj8oqzixDOnw98MMc7gAnO1TsJrNYBGRMd8QpqOvpU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FHUw4hyjTzdGTrr31aRBhvPcUxxIQB+CF4oSvRyygdllkwSV0/Lqc5Qz/NZ/DOytM
+	 TItnS8yTMEZ/RbnOqau8lVCSPY22r0zPT5TnvZ7suoL43ZhVW/XvDqSxkglbvosDHw
+	 rHaJqwxNK4crqamkt4ZYgV5G1k3UDkpdjj5W/D5pE/vPE2xXdEGJr753HhUBeT0HXg
+	 51jCig/hOWr58WCHUhC1zNP54LLMjCI+OVk/r4rUQvITFt/K0xPRcFFDwPkc+xMlO4
+	 62RT7HMopxKSL8uEWZWpI3Hr32UOOx/495D/5MYudyl434/48i1Ahc3DOTO8szJYiw
+	 NCjPblmn5rcPw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sEpwM-000000007gp-0z0r;
+	Wed, 05 Jun 2024 14:40:30 +0200
+Date: Wed, 5 Jun 2024 14:40:30 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/2] mfd: lm3533: Hide legacy platform data in the
+ driver
+Message-ID: <ZmBcvtLCzllQDWVX@hovoldconsulting.com>
+References: <20240508104848.846580-1-andriy.shevchenko@linux.intel.com>
+ <20240508104848.846580-2-andriy.shevchenko@linux.intel.com>
+ <20240531150048.GO1005600@google.com>
+ <Zlnn89KPSHSCp3Bh@smile.fi.intel.com>
+ <20240531155445.GS1005600@google.com>
+ <Zln9lRvKJYwlSM3l@smile.fi.intel.com>
+ <20240531165834.GA1204315@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
- <CA+V-a8uxwiof-hLPRpYCnDkVs8tj+-+v8GQLSSkMFUP13cuoXQ@mail.gmail.com>
- <CAMuHMdWEKCB3XdwQeK_MOUm3wyrhLtVXE+96vAVLv2iurmGbJQ@mail.gmail.com> <CA+V-a8s3J8PzmA9DqoazdAoC2WRdBASvWTr35FFzfKnJ7yWayA@mail.gmail.com>
-In-Reply-To: <CA+V-a8s3J8PzmA9DqoazdAoC2WRdBASvWTr35FFzfKnJ7yWayA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Jun 2024 14:40:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVNHSf6fN756GgNqNsYDDm2v6p+KCTZYDBx08M3213kkg@mail.gmail.com>
-Message-ID: <CAMuHMdVNHSf6fN756GgNqNsYDDm2v6p+KCTZYDBx08M3213kkg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531165834.GA1204315@google.com>
 
-Hi Prabhakar,
+On Fri, May 31, 2024 at 05:58:34PM +0100, Lee Jones wrote:
+> On Fri, 31 May 2024, Andy Shevchenko wrote:
+> 
+> > On Fri, May 31, 2024 at 04:54:45PM +0100, Lee Jones wrote:
+> > > On Fri, 31 May 2024, Andy Shevchenko wrote:
+> > > > On Fri, May 31, 2024 at 04:00:48PM +0100, Lee Jones wrote:
+> > > > > On Wed, 08 May 2024, Andy Shevchenko wrote:
+> > > > > 
+> > > > > > First of all, there is no user for the platform data in the kernel.
+> > > > > > Second, it needs a lot of updates to follow the modern standards
+> > > > > > of the kernel, including proper Device Tree bindings and device
+> > > > > > property handling.
+> > > > > > 
+> > > > > > For now, just hide the legacy platform data in the driver's code.
+> > > > > 
+> > > > > Why not just rip it out entirely?
+> > > > 
+> > > > You mean the driver?
+> > > 
+> > > The unused platform data.
+> > 
+> > Good question. In any case these drivers are non-functional anyway without OOT
+> > board code. If we rip out the main platform data completely, the logical following
+> > question arises: why do we need the per-device platform data? If we rip that out,
+> > we basically make non-functional driver a 100% dead code. Hence what you propose
+> > mostly equals to ripping out the drivers completely.
+> > 
+> > TL;DR: with the main platform data being ripped out the driver code will be in
+> > inconsistent state.
+> 
+> What do you think Johan?  Do you see any reason to keep it around?
 
-On Thu, May 30, 2024 at 12:00=E2=80=AFPM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Thu, May 30, 2024 at 8:12=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Wed, May 29, 2024 at 11:10=E2=80=AFPM Lad, Prabhakar
-> > <prabhakar.csengg@gmail.com> wrote:
-> > > On Mon, May 27, 2024 at 10:18=E2=80=AFAM Geert Uytterhoeven
-> > > <geert@linux-m68k.org> wrote:
-> > > > On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.cseng=
-g@gmail.com> wrote:
-> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > >
-> > > > > Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock o=
-utputs
-> > > > > (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registe=
-rs)
-> > > > > in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the=
- RZ/V2H(P)
-> > > > > Hardware User's Manual (Rev.1.01, Feb. 2024).
-> > > > >
-> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas=
-.com>
-> > > >
-> > > > > --- /dev/null
-> > > > > +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
-> > > > > @@ -0,0 +1,644 @@
-> > > > > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > + *
-> > > > > + * Copyright (C) 2024 Renesas Electronics Corp.
-> > > > > + */
-> > > > > +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
-> > > > > +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
-> > > > > +
-> > > > > +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> > > > > +
-> > > > > +/* Clock list */
-> > > >
-> > > > No distinction between Core and Module clocks?
-> > > >
-> > > I was in two minds here. Would you prefer clocks with no CGC support
-> > > to be listed as core clocks?
-> >
-> > What's CGC support? (Obviously I need some more reading before
-> > I can tackle the rest of this series :-)
-> >
-> I meant the clocks which cannot be controlled by the CPG_CLKON_m
-> register. Shall I add them as CORE clocks?
+Yeah, I'd prefer to keep it around. This device is used in a bunch of
+Sony phones and Bjorn A posted a series adding devicetree bindings a few
+years ago which I believe was more or less acked and ready go.
 
-If you don't need to refer to these clocks from DT, there is no need to add
-them to the bindings header file.
+I'll try to find some time to look at that myself as I think I may
+favour a less verbose binding (e.g. similar to pm8008 that I'm working
+on).
 
-> > My comments are due to the bindings saying:
-> >
-> >   '#clock-cells':
-> >     description: |
-> >       - For CPG core clocks, the two clock specifier cells must be "CPG=
-_CORE"
-> >         and a core clock reference, as defined in
-> >         <dt-bindings/clock/r9a09g057-cpg.h>,
-> >       - For module clocks, the two clock specifier cells must be "CPG_M=
-OD" and
-> >         a module number, as defined in <dt-bindings/clock/r9a09g057-cpg=
-.h>.
-> >     const: 2
-> >
-> > while the header file does not make it obvious whether a clock needs
-> > CPG_CORE or CPG_MOD.
-> >
-> I was intending to drop the CPG_CORE description in the next version.
+For now I suggest keeping the platform data where it is and just convert
+the single gpio lookup to look for a "hwen" gpio that can be provided by
+lookup tables and soon devicetree.
 
-OK.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Johan
 
