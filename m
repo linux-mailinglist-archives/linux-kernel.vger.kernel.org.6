@@ -1,193 +1,125 @@
-Return-Path: <linux-kernel+bounces-202220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8211A8FC972
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:54:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22E68FC974
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A50C1C2390F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:54:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5CC1F226A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDC91922C8;
-	Wed,  5 Jun 2024 10:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qOy05tkp"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA67619149D;
+	Wed,  5 Jun 2024 10:54:44 +0000 (UTC)
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5BE4965F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098384965F;
+	Wed,  5 Jun 2024 10:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717584874; cv=none; b=lI8zsL9nBYS4l1EMB1rtgWi7XyrXw1SiEDWraZ+o/O9oesWp/bQIMEJBOahN0Ye48uhNngzb7xcdhN70dyXccjG+WdGE6YIIWYgy14HrlvJ8d24JFS1atP4HrFznNBK9G9Wu+ptUbLFym59ew3J0AubFIDJYaefCgWPpEp3cGXU=
+	t=1717584884; cv=none; b=WK2WHdZfEH71tJQg4ClZnz1MpQqOte6V6Xbv5YEa013n1sNNQ3+hzTk9Tna8HGMpKOOPRHbySfHakVcTe49bdeYqFF+hTQpd5nJnDumhe5lKRKk02Qz98+LW7iyV8QiKuLL2Jh8dqploEp4a7uXydZtekO3Cuu3thkhWY02M/Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717584874; c=relaxed/simple;
-	bh=FTgBRYYy6JQRexZRZJFjuNAFj4Osr8S9dZDMnD+Hpkg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aXX8k2HfDSrFrrkQAno93Sb4R3hwyILoAbWEXhgJk+mvkHbAgyqJfDewnAh/ATDsN03TXRx4OwzCPOOOfb5z/HDE0p2RceYTJNOYiGeX7E7Hr+Ep7qF2EA/97zk9DrvNQTcAKxBRCWigDW+vEaHt0Csf4wFrRncMjTWMYu5sLnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qOy05tkp; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa71ded97bso659136276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 03:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717584871; x=1718189671; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwOYdBEP20eHqXfiLB/uZRRK7vGmn2sMRMDnSyVKlSw=;
-        b=qOy05tkp1Jh9xyTIiDfcWBORdVYV9xOpdRiBq5wfsDPG3C03dKc5lIEI9cgtiUDw97
-         79BOWCujxAwC42Ia9HJuq2CvetruFN1Qq3klniYjWPtZziiBVZwXkDiyu1bZ9NBpaLcv
-         6JR90CNU4nd3KyrUKWJRQJ9XnGk4xbt0KjoltJUCC+NpAqnfeFjBeB7g711/V8MVfRqy
-         l6pTVZ5fII/62FaGvHXWr87DRgtumoiP1M/gyccN6P6yV1e1U5OfFv1OGwJLpV6iFYNa
-         X5XIfjQBNF6tKb9wJDbvjfxyxgi52+59XVhrRIZYvKGru9tjjlS886D+XZHB8rOU9jIW
-         fFug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717584871; x=1718189671;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jwOYdBEP20eHqXfiLB/uZRRK7vGmn2sMRMDnSyVKlSw=;
-        b=qwq3uYl0L9mwvLCCVg46OLE1WVrDZKB9JjzLnXLxEqvN5DMWRdAh1JuT4Y69VZQXsW
-         w4OkFrA+JJ9murwJz4VH7cLJiYwXZtuOqJqwmUqVwshYPlOrKzxOr6ra8gw3J/aFUW8F
-         f0RQ1QU9R8/Bh9N3X/lJWjywSgevQfW7apcFWk0lusmuBE6YSdYGt96Vvwaac36SQIGh
-         /BfIyfN+7cLiaDcVFSkXJ3h//KTQkEysYwLjRYhzdMq0bGRtaBFzE7LdipQXip+ndzSe
-         kIkPcD+wm5E+pZN4s/UA6I2+GzTGxDWXWMlsiiY9NULFCLd8+a7SargCsuyizu0hmreL
-         cmRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkUMfu9c1cXN/QWuONdfghlszIgQIB2oQn8b8zEIckK0Xk60C5TV/pp6gFPL4lje2DZyBJ6x4c3PGg2orTw5WbJtUHzT6RUkoHOrDp
-X-Gm-Message-State: AOJu0Yyd2tP8K9VmCUkRcLDM2yATCmqFUWZZLy3sxHku2QLsFO+BVQjN
-	sE2rxcb4LJdxqlxT8v7RUeTtZg1JXUt/7jI5T080NkLxT7zsUp/H0PBie/RRHhjrV2gZUUarlwZ
-	wP894ATmjU2IpbX3TCjMOWE0dRLpMB18SOyw7vA==
-X-Google-Smtp-Source: AGHT+IFCIpk76VQM4IGtOzYy0kvzCqfdvB04uHsR5vs8p9fLuPGESGvnInQIi3EisoXfHVIM/A1cG1VKEJLdP84nFxo=
-X-Received: by 2002:a25:c102:0:b0:df4:d98d:3e4f with SMTP id
- 3f1490d57ef6-dfab854c9c8mr4052568276.12.1717584871226; Wed, 05 Jun 2024
- 03:54:31 -0700 (PDT)
+	s=arc-20240116; t=1717584884; c=relaxed/simple;
+	bh=bau7Nw4lZjOvZ5Zq7H83So2KGZJ6w7rIU5ZNiMh/AX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dvAiqV1YgMY1JPODmFoakue0jdU/j6U37XSHW8dnUkrksNxQV6OSQz3pe6xXXoyhffPPd6xMpF0AT4VIbvBwHAqjv+OliNUZHay7OgyPmrjv1P/iWzfAjrXLiV6IaFnAHG3FVpKBP3opnZi/p8SSuo6rDzf9thfYU+/IGyoszso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 624F544E91;
+	Wed,  5 Jun 2024 12:54:38 +0200 (CEST)
+Message-ID: <ec27da86-b84a-430b-98aa-9971f90c8c87@proxmox.com>
+Date: Wed, 5 Jun 2024 12:54:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1716811405.git.geert+renesas@glider.be> <CAPDyKFpa4LZF3eN7x-NT+b9=dKB3Oe6RY8RAyetdRBSR1-LQoQ@mail.gmail.com>
- <0a025885-ed95-45d3-bf76-d2a043baaed7@ideasonboard.com>
-In-Reply-To: <0a025885-ed95-45d3-bf76-d2a043baaed7@ideasonboard.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 5 Jun 2024 12:53:55 +0200
-Message-ID: <CAPDyKFrxUDhnUUfz5wHpGVQfNYssxoWO5Eb2wtmZMTcMYhEjxQ@mail.gmail.com>
-Subject: Re: [PATCH/RFC 0/3] pmdomain: renesas: rmobile-sysc: Remove serial
- console handling
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Peng Fan <peng.fan@nxp.com>, linux-pm@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: fix request.queuelist usage in flush
+To: Chengming Zhou <chengming.zhou@linux.dev>, axboe@kernel.dk,
+ ming.lei@redhat.com, hch@lst.de, bvanassche@acm.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20240604064745.808610-1-chengming.zhou@linux.dev>
+ <c9d03ff7-27c5-4ebd-b3f6-5a90d96f35ba@proxmox.com>
+ <1344640f-b22d-4791-aed4-68fc62fb6e36@linux.dev>
+Content-Language: en-US
+From: Friedrich Weber <f.weber@proxmox.com>
+In-Reply-To: <1344640f-b22d-4791-aed4-68fc62fb6e36@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 5 Jun 2024 at 12:41, Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
->
-> Hi Ulf,
->
-> On 05/06/2024 12:34, Ulf Hansson wrote:
-> > + Tomi
-> >
-> > On Mon, 27 May 2024 at 14:41, Geert Uytterhoeven
-> > <geert+renesas@glider.be> wrote:
-> >>
-> >>          Hi all,
-> >>
-> >> Since commit a47cf07f60dcb02d ("serial: core: Call
-> >> device_set_awake_path() for console port"), the serial driver properly
-> >> handles the case where the serial console is part of the awake path, and
-> >> it looked like we could start removing special serial console handling
-> >> from PM Domain drivers like the R-Mobile SYSC PM Domain driver.
-> >> Unfortunately the devil is in the details, as usual...
-> >>
-> >> Earlycon relies on the serial port to be initialized by the firmware
-> >> and/or bootloader.  Linux is not aware of any hardware dependencies that
-> >> must be met to keep the port working, and thus cannot guarantee they
-> >> stay met, until the full serial driver takes over.
-> >>
-> >> E.g. all unused clocks and unused PM Domains are disabled in a late
-> >> initcall.  As this happens after the full serial driver has taken over,
-> >> the serial port's clock and/or PM Domain are no longer deemed unused,
-> >> and this is typically not a problem.
-> >>
-> >> However, if the serial port's clock or PM Domain is shared with another
-> >> device, and that other device is runtime-suspended before the full
-> >> serial driver has probed, the serial port's clock and/or PM Domain will
-> >> be disabled inadvertently.  Any subsequent serial console output will
-> >> cause a crash or system lock-up.  E.g. on R/SH-Mobile SoCs, the serial
-> >> ports share their PM Domain with several other I/O devices.  After the
-> >> use of pwm (Armadillo-800-EVA) or i2c (KZM-A9-GT) during early boot,
-> >> before the full serial driver takes over, the PM Domain containing the
-> >> early serial port is powered down, causing a lock-up when booted with
-> >> "earlycon".
-> >
-> > Hi Geert,
-> >
-> > Thanks for the detailed description of the problem! As pointed out in
-> > regards to another similar recent patch [1], this is indeed a generic
-> > problem, not limited to the serial console handling.
-> >
-> > At Linaro Connect a few weeks ago I followed up with Saravana from the
-> > earlier discussions at LPC last fall. We now have a generic solution
-> > for genpd drafted on plain paper, based on fw_devlink and the
-> > ->sync_state() callback. I am currently working on the genpd series,
-> > while Saravana will re-spin the series (can't find the link to the
-> > last version) for the clock framework. Ideally, we want these things
-> > to work in a very similar way.
-> >
-> > That said, allow me to post the series for genpd in a week or two to
-> > see if it can solve your problem too, for the serial console.
->
-> Both the genpd and the clock solutions will make suppliers depend on all
-> their consumers to be probed, right?
->
-> I think it is a solution, and should be worked on, but it has the
-> drawback that suppliers that have consumers that will possibly never be
-> probed, will also never be able to turn off unused resources.
->
-> This was specifically the case with the TI ti-sci pmdomain case I was
-> looking at: the genpd driver (ti_sci_pm_domains.c) provides a lot of
-> genpds for totally unrelated devices, and so if, e.g., you don't have or
-> don't want to load a driver for the GPU, all PDs are affected.
->
-> Even here the solutions you mention will help: instead of things getting
-> broken because genpds get turned off while they are actually in use, the
-> genpds will be kept enabled, thus fixing the breakage. Unfortunately,
-> they'll be kept enabled forever.
->
-> I've been ill for quite a while so I haven't had the chance to look at
-> this more, but before that I was hacking around a bit with something I
-> named .partial_sync_state(). .sync_state() gets called when all the
-> consumers have probed, but .partial_sync_state() gets called when _a_
-> consumer has been probed.
->
-> For the .sync_state() things are easy for the driver, as it knows
-> everything related has been probed, but for .partial_sync_state() the
-> driver needs to track resources internally. .partial_sync_state() will
-> tell the driver that a consumer device has probed, the driver can then
-> find out which specific resources (genpds in my case) that consumer
-> refers to, and then... Well, that's how far I got with my hacks =).
->
-> So, I don't know if this .partial_sync_state() can even work, but I
-> think we do need something more on top of the .sync_state().
+On 05/06/2024 12:30, Chengming Zhou wrote:
+> On 2024/6/5 16:45, Friedrich Weber wrote:
+>> Hi,
+>>
+>> On 04/06/2024 08:47, Chengming Zhou wrote:
+>>> Friedrich Weber reported a kernel crash problem and bisected to commit
+>>> 81ada09cc25e ("blk-flush: reuse rq queuelist in flush state machine").
+>>>
+>>> The root cause is that we use "list_move_tail(&rq->queuelist, pending)"
+>>> in the PREFLUSH/POSTFLUSH sequences. But rq->queuelist.next == xxx since
+>>> it's popped out from plug->cached_rq in __blk_mq_alloc_requests_batch().
+>>> We don't initialize its queuelist just for this first request, although
+>>> the queuelist of all later popped requests will be initialized.
+>>>
+>>> Fix it by changing to use "list_add_tail(&rq->queuelist, pending)" so
+>>> rq->queuelist doesn't need to be initialized. It should be ok since rq
+>>> can't be on any list when PREFLUSH or POSTFLUSH, has no move actually.
+>>>
+>>> Please note the commit 81ada09cc25e ("blk-flush: reuse rq queuelist in
+>>> flush state machine") also has another requirement that no drivers would
+>>> touch rq->queuelist after blk_mq_end_request() since we will reuse it to
+>>> add rq to the post-flush pending list in POSTFLUSH. If this is not true,
+>>> we will have to revert that commit IMHO.
+>>
+>> Unfortunately, with this patch applied to kernel 6.9 I get a different
+>> crash [2] on a Debian 12 (virtual) machine with root on LVM on boot (no
+>> software RAID involved). See [1] for lsblk and findmnt output. addr2line
+>> says:
+> 
+> Sorry, which commit is your kernel? Is mainline tag v6.9 or at some commit?
 
-Thanks for the update!
+Yes, by "kernel 6.9" I meant mainline tag v6.9, so commit a38297e3fb01.
 
-You certainly have a point, but rather than implementing some platform
-specific method, I think we should be able enforce the call to
-->sync_state(), based upon some condition/timeout - and even if all
-consumers haven't been probed.
+If I boot this mainline kernel v6.9 in a Debian (virtual) machine with
+root on LVM, I do not get a crash. If I apply the patch "block: fix
+request.queuelist usage in flush" on top of this mainline kernel v6.9,
+and boot the Debian machine into that patched kernel, I get a crash on boot.
 
-[...]
+> And is it reproducible using the mainline kernel v6.10-rc2?
 
-Kind regards
-Uffe
+I'll test mainline kernel v6.10-rc2, and "block: fix request.queuelist
+usage in flush" applied on top of v6.10-rc2, and get back to you.
+
+>> # addr2line -f -e /usr/lib/debug/vmlinux-6.9.0-patch0604-nodebuglist+
+>> blk_mq_request_bypass_insert+0x20
+> 
+> I think here should use blk_mq_insert_request+0x120, instead of the
+> blk_mq_request_bypass_insert+0x20, which has "?" at the beginning.
+> 
+
+Right, sorry:
+
+# addr2line -f -e /usr/lib/debug/vmlinux-6.9.0-patch0604-nodebuglist+
+blk_mq_insert_request+0x120
+blk_mq_insert_request
+[...]/linux/block/blk-mq.c:2539
+
+which refers to this line [1]:
+
+		blk_mq_request_bypass_insert(rq, BLK_MQ_INSERT_AT_HEAD);
+
+Thanks!
+
+Friedrich
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/block/blk-mq.c?h=v6.9#n2539
+
 
