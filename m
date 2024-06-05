@@ -1,340 +1,218 @@
-Return-Path: <linux-kernel+bounces-202011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187AB8FC692
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:34:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEAA18FC6B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30A531C22EBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:34:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12A781C22A54
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DBD1946BF;
-	Wed,  5 Jun 2024 08:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C83249644;
+	Wed,  5 Jun 2024 08:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtZzXHXj"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079841946A1;
-	Wed,  5 Jun 2024 08:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HanVOSjg"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C324963E;
+	Wed,  5 Jun 2024 08:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717576487; cv=none; b=unkAc4iN0/3/BovnmR2D95O4xb2aryRd6yLvWxdZGzxYDRtZTuwoyjIJJTDRkZAE/eA3CGqV6HgdZjk5CvnLlQHfbJ9w8kdXfR08dtUR9FqEiQ7tePAUYBzNWqDX3yaGMK4dmDAiDXsglCFmqALkG4bl1uZAiqi56VtOr0+Jal4=
+	t=1717576748; cv=none; b=bBqgBXiHTKtnlmPGPGLsThf5q+nlPblj+RoNSQnDcxFvGogo1gSSdTBVAyfURlt9SXu5Juq+wODpwbT3vDhJfnXg7Ef6x3wpAdSbNXIwSSDO/+z/QuHIBnG7We/UhcbUka0TqXDNitp3+Tv0CCvLUVSbOrNH2sDNZdOGRuBnSIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717576487; c=relaxed/simple;
-	bh=8tub/dq8Y5Q6ruH9V24XLrhs/lz6AhQ7gjdxdBmwEs0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SoNgruTsupMkI8eaU0aYyhicThlmqeVToZVEV8PBytQ8RkPACTfClaQireFxp8hN//jKLY1zkfRsAFVObdRQYpLu5uTw18vcNjTfJsOATxa3fODK7ECNDv3b7Hm8apGeyTU76U8/9KtjNqQ9b0xj1xGZgFF6vLkTJ1hwWnCSRkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PtZzXHXj; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a68fc86acfaso105747066b.1;
-        Wed, 05 Jun 2024 01:34:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717576484; x=1718181284; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QXTVAvomi+GcMNTA33Njw+J/KuHjIHiARYW73adHZhA=;
-        b=PtZzXHXjKZzb3OLnSK82ZXf+4vSA+KierM//Ao9mSAgDm+TVNztTKomF5MHSjnmUcQ
-         GTUT/a9C70R15wJOoy0qX/G4sB3LirrnZAjBzC0dXzPTEw1ZsJoPeysG+dkCgo6no4lN
-         moehbpxQvaNhQgEcmGWBw/R8CSrXbKf2gl4s5YdC/KNlsqKOaOPxQKmfO8aCUma+JXMJ
-         yZUawM4ePpSvJR4UFuPwG3aYEQokWTqUQH8Oa5YQCrblRquTk3oTB6BFfZgQfdQgNVd6
-         5+pSWUJ1A3FMQhxR8ajWeVbji7HrcxgacHjOZ/PlXkw2QznH/6OAP3PJMKh9OO264RSq
-         acPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717576484; x=1718181284;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QXTVAvomi+GcMNTA33Njw+J/KuHjIHiARYW73adHZhA=;
-        b=cHk3bxdiG0LZwmEYyk6NI/D8rbAvnGxoXTWWWuGNf0ZjOyyrBiEacX+xYa75Vz+//i
-         uRXN6m/fSh8qFJyqOztekObVhQDub6vNGq3FdbCFHioAfy94shC8MrE+Y3rLCFcdUk3o
-         Nu53sI7NvJeQgZXiDZuWJS3LTAYC8catyS5Y3DhCDunuD6ti/slhVNE5wBIF0GdbT2XL
-         pHEYpCCiCO5Knttpl1NcQyz8ZDo93W6Rz3BpQRmQc8WlANgTJEePCosewETXzaJxha7f
-         DzVNyBb/dKJpDKyzFeugPptUssJy7POBvUQE8VdT5Tav19sD0yscMFQduecn6vQI39WZ
-         kL9A==
-X-Forwarded-Encrypted: i=1; AJvYcCX0YhJehfvYaw7WKCH8KZdsHB6VJEDuBhlujP2Re05SPVgDz5rCQIaDovGYvKkKKgn/nsm9vcXglVdPeVyftBKuZWAyV7Jw549CVDezazqMHSEOdn1Ps4+fFvaxbn4yONODj1NjSCHKEYQPnYshkeD8zZH0Wz6qYxPfsWwKaSE7TPoqxw==
-X-Gm-Message-State: AOJu0YxLe1dYnvWlw1pK6bga86MNRvfY9tE3OlwFVUhcZbdcmSBUtWu1
-	1xMbHc8WFzcfvcAfs1oEqFdry29ZEagKXJhSeZw5dD4a3pEkgvdl
-X-Google-Smtp-Source: AGHT+IHgtYNraahDjvpDbChpLJT7frY7o8BT6Cu/M37rZy3FCtqIpojRwaHZxveOXVDIB2EiyWYrpQ==
-X-Received: by 2002:a17:907:77c5:b0:a69:e07:c81 with SMTP id a640c23a62f3a-a69543cea4cmr398095966b.19.1717576484227;
-        Wed, 05 Jun 2024 01:34:44 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a69097bf6bbsm412239666b.110.2024.06.05.01.34.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 01:34:43 -0700 (PDT)
-Message-ID: <f4adedf90d8d14671335071a305335ed7ffcde8b.camel@gmail.com>
-Subject: Re: [PATCH v2 3/3] iio: adc: ad7192: Fix clock config
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Alisa-Dariana Roman <alisadariana@gmail.com>, Alisa-Dariana Roman
- <alisa.roman@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Michael Hennerich <michael.hennerich@analog.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Alexandru Tachici
- <alexandru.tachici@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>
-Date: Wed, 05 Jun 2024 10:38:30 +0200
-In-Reply-To: <20240605075154.625123-3-alisa.roman@analog.com>
-References: <20240605075154.625123-1-alisa.roman@analog.com>
-	 <20240605075154.625123-3-alisa.roman@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1717576748; c=relaxed/simple;
+	bh=CNAuilfiRwwKm0fGNUOB0FH43WBrxg4Srl1Cepe++Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ashag912Xmsgkj1v3d1VQakwdi438KNAGYLQtacsom2XSKIaWvXcsJ9j5jxCUbKxTUb6pLBomch2ei33E8hN+qtkz8xV+BybGqx78jagWqsUUBGNzw0LJqI9AVFj8QJl1uTLv4LW7Q3LCrm0+upQLMWVY8Lbcfagm7tTCYhfyiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HanVOSjg; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 678D120B9260; Wed,  5 Jun 2024 01:39:06 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 678D120B9260
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1717576746;
+	bh=TrGB2Ttu+2GQP4P667beS3OkIPRmk8NFPGqeTHHLFWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HanVOSjgakHW3wIPeXeqrGKQ1S3YE4V/rsqZcbU8ENuI6HzP2JbQ/gZM2NzgEAvV9
+	 yutTk2fmzDfEd/kXALFdNom5jAXN17IeP5kKUuv8Xwe4sB7CPBfj4TsdS90ZzkH58c
+	 fDqpCeXRUSUtle0vYZxpyFrajGZLw4X+sjyHRrpQ=
+Date: Wed, 5 Jun 2024 01:39:06 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Simon Horman <horms@kernel.org>
+Cc: linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Kees Cook <keescook@chromium.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Long Li <longli@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH net-next v3] net: mana: Allow variable size indirection
+ table
+Message-ID: <20240605083906.GA15889@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1717169861-15825-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <20240604093349.GP491852@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604093349.GP491852@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Wed, 2024-06-05 at 10:51 +0300, Alisa-Dariana Roman wrote:
-> There are actually 4 configuration modes of clock source for AD719X
-> devices. Either a crystal can be attached externally between MCLK1 and
-> MCLK2 pins, or an external CMOS-compatible clock can drive the MCLK2
-> pin. The other 2 modes make use of the 4.92MHz internal clock, which can
-> be made available on the MCLK2 pin.
->=20
-> Rename mclk to ext_clk for clarity.
->=20
-> Note that the fix tag is for the commit that moved the driver out of
-> staging.
->=20
-> Fixes: b581f748cce0 ("staging: iio: adc: ad7192: move out of staging")
-> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
-> ---
-> =C2=A0drivers/iio/adc/ad7192.c | 153 ++++++++++++++++++++++++++++++------=
----
-> =C2=A01 file changed, 119 insertions(+), 34 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
-> index f06cb7ac4b42..75b0724142b1 100644
-> --- a/drivers/iio/adc/ad7192.c
-> +++ b/drivers/iio/adc/ad7192.c
-> @@ -8,6 +8,7 @@
-> =C2=A0#include <linux/interrupt.h>
-> =C2=A0#include <linux/bitfield.h>
-> =C2=A0#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> =C2=A0#include <linux/device.h>
-> =C2=A0#include <linux/kernel.h>
-> =C2=A0#include <linux/slab.h>
-> @@ -202,7 +203,8 @@ struct ad7192_state {
-> =C2=A0	const struct ad7192_chip_info	*chip_info;
-> =C2=A0	struct regulator		*avdd;
-> =C2=A0	struct regulator		*vref;
-> -	struct clk			*mclk;
-> +	struct clk			*ext_clk;
-> +	struct clk_hw			int_clk_hw;
-> =C2=A0	u16				int_vref_mv;
-> =C2=A0	u32				aincom_mv;
-> =C2=A0	u32				fclk;
-> @@ -398,27 +400,6 @@ static inline bool ad7192_valid_external_frequency(u=
-32
-> freq)
-> =C2=A0		freq <=3D AD7192_EXT_FREQ_MHZ_MAX);
-> =C2=A0}
-> =C2=A0
-> -static int ad7192_clock_select(struct ad7192_state *st)
-> -{
-> -	struct device *dev =3D &st->sd.spi->dev;
-> -	unsigned int clock_sel;
-> -
-> -	clock_sel =3D AD7192_CLK_INT;
-> -
-> -	/* use internal clock */
-> -	if (!st->mclk) {
-> -		if (device_property_read_bool(dev, "adi,int-clock-output-
-> enable"))
-> -			clock_sel =3D AD7192_CLK_INT_CO;
-> -	} else {
-> -		if (device_property_read_bool(dev, "adi,clock-xtal"))
-> -			clock_sel =3D AD7192_CLK_EXT_MCLK1_2;
-> -		else
-> -			clock_sel =3D AD7192_CLK_EXT_MCLK2;
-> -	}
-> -
-> -	return clock_sel;
-> -}
-> -
-> =C2=A0static int ad7192_setup(struct iio_dev *indio_dev, struct device *d=
-ev)
-> =C2=A0{
-> =C2=A0	struct ad7192_state *st =3D iio_priv(indio_dev);
-> @@ -1194,6 +1175,96 @@ static void ad7192_reg_disable(void *reg)
-> =C2=A0	regulator_disable(reg);
-> =C2=A0}
-> =C2=A0
-> +static const char *const ad7192_clock_names[] =3D {
-> +	"xtal",
-> +	"clk"
-> +};
+On Tue, Jun 04, 2024 at 10:33:49AM +0100, Simon Horman wrote:
+> On Fri, May 31, 2024 at 08:37:41AM -0700, Shradha Gupta wrote:
+> > Allow variable size indirection table allocation in MANA instead
+> > of using a constant value MANA_INDIRECT_TABLE_SIZE.
+> > The size is now derived from the MANA_QUERY_VPORT_CONFIG and the
+> > indirection table is allocated dynamically.
+> > 
+> > Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> > Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> 
+> ...
+> 
+> > diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> 
+> ...
+> 
+> > @@ -2344,11 +2352,33 @@ static int mana_create_vport(struct mana_port_context *apc,
+> >  	return mana_create_txq(apc, net);
+> >  }
+> >  
+> > +static int mana_rss_table_alloc(struct mana_port_context *apc)
+> > +{
+> > +	if (!apc->indir_table_sz) {
+> > +		netdev_err(apc->ndev,
+> > +			   "Indirection table size not set for vPort %d\n",
+> > +			   apc->port_idx);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	apc->indir_table = kcalloc(apc->indir_table_sz, sizeof(u32), GFP_KERNEL);
+> > +	if (!apc->indir_table)
+> > +		return -ENOMEM;
+> > +
+> > +	apc->rxobj_table = kcalloc(apc->indir_table_sz, sizeof(mana_handle_t), GFP_KERNEL);
+> > +	if (!apc->rxobj_table) {
+> > +		kfree(apc->indir_table);
+> 
+> Hi, Shradha
+> 
+> Perhaps I am on the wrong track here, but I have some concerns
+> about clean-up paths.
+> 
+> Firstly.  I think that apc->indir_table should be to NULL here for
+> consistency with other clean-up paths. Or alternatively, fields of apc
+> should not set to NULL elsewhere after being freed.
 
-This could be moved closer where it will be used...
+Hi Simon,
 
-> +
-> +static struct ad7192_state *clk_hw_to_ad7192(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct ad7192_state, int_clk_hw);
-> +}
-> +
-> +static void ad7192_clk_disable_unprepare(void *clk)
-> +{
-> +	clk_disable_unprepare(clk);
-> +}
-> +
-> +static unsigned long ad7192_clk_recalc_rate(struct clk_hw *hw,
-> +					=C2=A0=C2=A0=C2=A0 unsigned long parent_rate)
-> +{
-> +	return AD7192_INT_FREQ_MHZ;
-> +}
-> +
-> +static int ad7192_clk_output_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct ad7192_state *st =3D clk_hw_to_ad7192(hw);
-> +
-> +	return st->clock_sel =3D=3D AD7192_CLK_INT_CO;
-> +}
-> +
-> +static int ad7192_clk_prepare(struct clk_hw *hw)
-> +{
-> +	struct ad7192_state *st =3D clk_hw_to_ad7192(hw);
-> +	int ret;
-> +
-> +	st->mode &=3D ~AD7192_MODE_CLKSRC_MASK;
-> +	st->mode |=3D AD7192_CLK_INT_CO;
-> +
-> +	ret =3D ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->clock_sel =3D AD7192_CLK_INT_CO;
-> +
-> +	return 0;
-> +}
-> +
-> +static void ad7192_clk_unprepare(struct clk_hw *hw)
-> +{
-> +	struct ad7192_state *st =3D clk_hw_to_ad7192(hw);
-> +	int ret;
-> +
-> +	st->mode &=3D ~AD7192_MODE_CLKSRC_MASK;
-> +	st->mode |=3D AD7192_CLK_INT;
-> +
-> +	ret =3D ad_sd_write_reg(&st->sd, AD7192_REG_MODE, 3, st->mode);
-> +	if (ret)
-> +		return;
-> +
-> +	st->clock_sel =3D AD7192_CLK_INT;
-> +}
-> +
-> +static const struct clk_ops ad7192_int_clk_ops =3D {
-> +	.recalc_rate =3D ad7192_clk_recalc_rate,
-> +	.is_enabled =3D ad7192_clk_output_is_enabled,
-> +	.prepare =3D ad7192_clk_prepare,
-> +	.unprepare =3D ad7192_clk_unprepare,
-> +};
-> +
-> +static int ad7192_register_clk_provider(struct iio_dev *indio_dev)
-> +{
-> +	struct ad7192_state *st =3D iio_priv(indio_dev);
-> +	struct device *dev =3D indio_dev->dev.parent;
-> +	struct fwnode_handle *fwnode =3D dev_fwnode(dev);
-> +	struct clk_init_data init =3D {};
-> +	int ret;
-> +
-> +	if (!IS_ENABLED(CONFIG_COMMON_CLK))
-> +		return 0;
-> +
-> +	init.name =3D fwnode_get_name(fwnode);
-> +	init.ops =3D &ad7192_int_clk_ops;
-> +
-> +	st->int_clk_hw.init =3D &init;
-> +	ret =3D devm_clk_hw_register(dev, &st->int_clk_hw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-> +					=C2=A0=C2=A0 &st->int_clk_hw);
-> +}
+Thanks for the comments. This makes sense, I am planning of consistently removing
+the NULLify from other places too as per Leon's comments.
+> 
+> In looking into this I noticed that mana_probe() does not call
+> mana_remove() or return an error in the cases where mana_probe_port() or
+> mana_attach() fail unless add_adev also fails. If so, is that intentional?
 
-The above code is unrelated... Should be in another patch (also needs chang=
-es in
-the bindings). It's also a new feature which does not match much with the s=
-eries
-subject :)
+Right, so most calls like mana_probe_port(), mana_attach() cleanup after themselves
+in the code if there is any error. So, not having to call mana_remove() in these
+cases in mana_probe() is intentional. But I do agree that an error is returned in
+mana_probe() only if add_adev also fails. I'll fix that too in the next version
+> 
+> In any case, I would suggest as a follow-up, arranging things so that when
+> an error occurs in a function, anything that was allocated is unwound
+> before returning an error.
+> 
+> I think this would make allocation/deallocation easier to reason with.
+> And I suspect it would avoid both the need for fields of structures to be
+> zeroed after being freed, and the need to call mana_remove() from
+> mana_probe().
 
-> +
-> =C2=A0static int ad7192_probe(struct spi_device *spi)
-> =C2=A0{
-> =C2=A0	struct device *dev =3D &spi->dev;
-> @@ -1312,20 +1383,34 @@ static int ad7192_probe(struct spi_device *spi)
-> =C2=A0
-> =C2=A0	st->fclk =3D AD7192_INT_FREQ_MHZ;
-> =C2=A0
-> -	st->mclk =3D devm_clk_get_optional_enabled(dev, "mclk");
-> -	if (IS_ERR(st->mclk))
-> -		return PTR_ERR(st->mclk);
-> +	ret =3D device_property_match_property_string(dev, "clock-names",
-> +						=C2=A0=C2=A0=C2=A0 ad7192_clock_names,
-> +						=C2=A0=C2=A0=C2=A0
-> ARRAY_SIZE(ad7192_clock_names));
-> +	if (ret < 0) {
-> +		st->clock_sel =3D AD7192_CLK_INT;
-> +		st->fclk =3D AD7192_INT_FREQ_MHZ;
-> =C2=A0
-> -	st->clock_sel =3D ad7192_clock_select(st);
-> +		ret =3D ad7192_register_clk_provider(indio_dev);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0 "Registration of clock provider
-> failed\n");
-> +	} else {
-> +		st->clock_sel =3D AD7192_CLK_EXT_MCLK1_2 + ret;
-> =C2=A0
-> -	if (st->clock_sel =3D=3D AD7192_CLK_EXT_MCLK1_2 ||
-> -	=C2=A0=C2=A0=C2=A0 st->clock_sel =3D=3D AD7192_CLK_EXT_MCLK2) {
-> -		st->fclk =3D clk_get_rate(st->mclk);
-> -		if (!ad7192_valid_external_frequency(st->fclk)) {
-> -			dev_err(dev,
-> -				"External clock frequency out of bounds\n");
-> -			return -EINVAL;
-> -		}
-> +		st->ext_clk =3D devm_clk_get_enabled(dev,
-> ad7192_clock_names[ret]);
-> +		if (IS_ERR(st->ext_clk))
-> +			return PTR_ERR(st->ext_clk);
-> +
-> +		ret =3D devm_add_action_or_reset(dev,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ad7192_clk_disable_unprepare,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->ext_clk);
+Agreed
+> 
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static void mana_rss_table_init(struct mana_port_context *apc)
+> >  {
+> >  	int i;
+> >  
+> > -	for (i = 0; i < MANA_INDIRECT_TABLE_SIZE; i++)
+> > +	for (i = 0; i < apc->indir_table_sz; i++)
+> >  		apc->indir_table[i] =
+> >  			ethtool_rxfh_indir_default(i, apc->num_queues);
+> >  }
+> 
+> ...
+> 
+> > @@ -2739,11 +2772,17 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
+> >  	err = register_netdev(ndev);
+> >  	if (err) {
+> >  		netdev_err(ndev, "Unable to register netdev.\n");
+> > -		goto reset_apc;
+> > +		goto free_indir;
+> >  	}
+> >  
+> >  	return 0;
+> >  
+> > +free_indir:
+> > +	apc->indir_table_sz = 0;
+> > +	kfree(apc->indir_table);
+> > +	apc->indir_table = NULL;
+> > +	kfree(apc->rxobj_table);
+> > +	apc->rxobj_table = NULL;
+> >  reset_apc:
+> >  	kfree(apc->rxqs);
+> >  	apc->rxqs = NULL;
+> 
+> nit: Not strictly related to this patch, but the reset_apc code should
+>      probably be a call to mana_cleanup_port_context() as it is the dual of
+>      mana_init_port_context() which is called earlier in mana_probe_port()
 
-No need for this... Check what devm_clk_get_enabled() is doing :)
+Sure, let me do that too.
+> 
+> ...
+> 
+> > @@ -2931,6 +2972,11 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+> >  		}
+> >  
+> >  		unregister_netdevice(ndev);
+> > +		apc->indir_table_sz = 0;
+> > +		kfree(apc->indir_table);
+> > +		apc->indir_table = NULL;
+> > +		kfree(apc->rxobj_table);
+> > +		apc->rxobj_table = NULL;
+> 
+> The code to free and zero indir_table_sz and indir_table appears twice
+> in this patch. Perhaps a helper to do this, which would be the dual
+> of mana_rss_table_alloc is in order.
+Makes sense, will change this too.
 
-> +		if (ret)
-> +			return ret;
-> +
-> +		st->fclk =3D clk_get_rate(st->ext_clk);
-> +		if (!ad7192_valid_external_frequency(st->fclk))
-> +			return dev_err_probe(dev, -EINVAL,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0 "External clock frequency out of
-> bounds\n");
-
-Maybe the above could be placed in a proper setup function... Like renaming
-ad7192_clock_select() -> ad7192_clock_setup()?
-
-
-One other thing is, if this is a fix, then it should come first in the seri=
-es.
-The reasoning is that we may want to backport the fix but there's no reason=
- to
-backport unneeded patches like your first patch that's only about cosmetics=
-.
-
-- Nuno S=C3=A1
+Thanks,
+Shradha.
+> 
+> >  
+> >  		rtnl_unlock();
+> >  
+> 
+> ...
 
