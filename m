@@ -1,80 +1,159 @@
-Return-Path: <linux-kernel+bounces-203331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FA68FD996
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:05:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93088FD9A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C84C2B2468B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C95D286A15
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B0E15F3FB;
-	Wed,  5 Jun 2024 22:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B5315FCF0;
+	Wed,  5 Jun 2024 22:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HUvp73ij"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XEELFtPb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B730C15539D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 22:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198CF15F400;
+	Wed,  5 Jun 2024 22:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717625145; cv=none; b=B8EB+sR9pOY53d0Sh2Ei4WKXjjZap5ZyNmQrB7MgcBjFLODlvfOL6Iyxmzfti2TMcs7xLHgZM4FeN9bFR+K0i6+Sv2L42lYNLmgG3V8l7AJDQF948U+U65AuPjJ/9TLskpejYBdx7FTNQpJSV0npizwp1OYmug67N3TqdUNYhi8=
+	t=1717625698; cv=none; b=jl/BoEaJrPLrKHNutkBj0mTFBpCKsrggj7fivi7/6yfHLUZn0MmhKlR9xZZv52GYqxHSZnIg0Xo6D9H+wVg7y664p01yvcvxlJtGZQcMB/p0rcQc/BxRgn4F1AWHRU8WrPPp9aGwy1HVOXIaOmrbukcEnzfSLzPFLMq9yrWI8jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717625145; c=relaxed/simple;
-	bh=R3+HS5IAcTR42fptTxGAE8k7b69s+G5kxAPPVyzJJfg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=PDg/XmC7MLDxP2Uu3khnABMu5RJ/xZb5ysdkgt41ySrYvoh+wH0R8boggEKiLU+eKVGUu9nhZaZ/iRp+N0cidQegweN5u8OgeECcIQee+ocQQCmBVbmu0BcHrfloYJp39o0yZCSp5KalskkwOYemaV3p9NSpGEB29/jpBz/SdCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HUvp73ij; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF83C2BD11;
-	Wed,  5 Jun 2024 22:05:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1717625145;
-	bh=R3+HS5IAcTR42fptTxGAE8k7b69s+G5kxAPPVyzJJfg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HUvp73ijpQYic3gRaURF4D3OSbULFRnhHTQh5Kic03/1ZO+YRcy/dsR5zGvdl0hPH
-	 znrLxImKjFswYuAqJUYOCBDVBWcDUna+fcIbdRRe3TQSt469Z2xLrtt65RTvOVrth0
-	 Gd+MaGyE61KwnWtvs7ClEhgwGfH73C8fUoBBK1k8=
-Date: Wed, 5 Jun 2024 15:05:43 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, Dan Williams
- <dan.j.williams@intel.com>, Pasha Tatashin <pasha.tatashin@soleen.com>
-Subject: Re: [PATCH] mm/page_table_check: Fix crash on ZONE_DEVICE
-Message-Id: <20240605150543.87c81189fa7cb562e73fa0b8@linux-foundation.org>
-In-Reply-To: <20240605212146.994486-1-peterx@redhat.com>
-References: <20240605212146.994486-1-peterx@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1717625698; c=relaxed/simple;
+	bh=dwECkwwPLF86p2uDLyCcd8vztQ4JautCXDJYA3o9rvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NmA5LkwOd4sntlZIOcS3J47vRi2JIyjMVNUU+ZPEdQLRfFOLmSexdUlNb3qWRS9CvvPw/a6r36xKewp8LMB5SXO9P3EEtg26R5ST6hIsHL8/2kEgjaVxRo/BvhpFsyJGNUQ8sMsewsYKwz99QqdN/KIbugr52x8VhF0X8FQBYhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XEELFtPb; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717625698; x=1749161698;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dwECkwwPLF86p2uDLyCcd8vztQ4JautCXDJYA3o9rvk=;
+  b=XEELFtPbJcQXd74evofcRzWf3FNhce+Ci7Hq92WYUX5Z3AYwiRCBlZ7h
+   HH560zxgz76oCp208kUjy50xuPuiyGp4z+OCq6LzKmoqa5hOoTRLzomeN
+   Pf2NU2TXLo4iaI49au+k2gWR867L6M3dUh1s1ELVKvYyVJLSRGzIEGMOb
+   0Sl3aJtSOPoS2KXf2oN9m04zkKoolix4l435MZiqKXDAUDq5/lnwvDz+R
+   fX/UG4QcdFEfJfOWb0S7WBUt2GsfiMwDs9bcz0uf/Ky21Obp37QjcwGPH
+   1ebTdeef0RUhMrU4YMt0XcftJp7QHsBAQRqeemUDEkpfur1hlYTox4R/3
+   g==;
+X-CSE-ConnectionGUID: Ax0eu9FASoyWHAt2EjWYnQ==
+X-CSE-MsgGUID: NJ3Dx/GHQpmonTPoPbyD/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14218693"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="14218693"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 15:14:57 -0700
+X-CSE-ConnectionGUID: JP45dUK1TdW/fW9g0ksUVQ==
+X-CSE-MsgGUID: zMDwYyHVQI2ocTPWwtYvvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="37621427"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 05 Jun 2024 15:14:49 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 975E024D; Thu, 06 Jun 2024 01:14:47 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Rob Herring <robh@kernel.org>,
+	Weidong Wang <wangweidong.a@awinic.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Shenghao Ding <shenghao-ding@ti.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+	Chancel Liu <chancel.liu@nxp.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	patches@opensource.cirrus.com,
+	linux-arm-msm@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2 0/6] ASoC: Drop or replace of_gpio.h
+Date: Thu,  6 Jun 2024 00:27:23 +0300
+Message-ID: <20240605221446.2624964-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed,  5 Jun 2024 17:21:46 -0400 Peter Xu <peterx@redhat.com> wrote:
+Replace or drop the legacy header that is subject to remove.
+Not all of them were compile-tested, the series might have
+hidden compilation errors.
 
-> Not all pages may apply to pgtable check.  One example is ZONE_DEVICE
-> pages: they map PFNs directly, and they don't allocate page_ext at all even
-> if there's struct page around.  One may reference devm_memremap_pages().
-> 
-> When both ZONE_DEVICE and page-table-check enabled, then try to map some
-> dax memories, one can trigger kernel bug constantly now when the kernel was
-> trying to inject some pfn maps on the dax device:
-> 
->  kernel BUG at mm/page_table_check.c:55!
-> 
-> While it's pretty legal to use set_pxx_at() for ZONE_DEVICE pages for page
-> fault resolutions, skip all the checks if page_ext doesn't even exist in
-> pgtable checker, which applies to ZONE_DEVICE but maybe more.
+In v3:
+- moved aw88399 from the "Remove ..." patch to the "Replace ..." (LKP)
 
-Do we have a Reported-by: for this one?
+In v2:
+- added tags (Kuninori, Charles)
+- ripped out TAS2781 (it's a mess from GPIO handling perspective)
 
-And a Fixes?  It looks like df4e817b7108?
+Andy Shevchenko (6):
+  ASoC: codecs: Remove unused of_gpio.h
+  ASoC: fsl: Remove unused of_gpio.h
+  ASoC: rockchip: Remove unused of_gpio.h
+  ASoC: codecs: Replace of_gpio.h by proper one
+  ASoC: generic: Replace of_gpio.h by proper one
+  ASoC: samsung: Replace of_gpio.h by proper one
 
+ sound/soc/codecs/ak4118.c                           | 1 -
+ sound/soc/codecs/ak4458.c                           | 1 -
+ sound/soc/codecs/aw88395/aw88395.c                  | 2 +-
+ sound/soc/codecs/aw88399.c                          | 2 +-
+ sound/soc/codecs/cs53l30.c                          | 1 -
+ sound/soc/codecs/max98390.c                         | 1 -
+ sound/soc/codecs/pcm3168a.c                         | 1 -
+ sound/soc/codecs/rk817_codec.c                      | 1 -
+ sound/soc/codecs/tas2552.c                          | 1 -
+ sound/soc/codecs/tas2764.c                          | 1 -
+ sound/soc/codecs/tas2770.c                          | 1 -
+ sound/soc/codecs/tas2780.c                          | 1 -
+ sound/soc/codecs/tlv320adc3xxx.c                    | 1 -
+ sound/soc/codecs/tlv320adcx140.c                    | 1 -
+ sound/soc/codecs/tlv320aic31xx.c                    | 1 -
+ sound/soc/codecs/ts3a227e.c                         | 1 -
+ sound/soc/codecs/wsa883x.c                          | 1 -
+ sound/soc/fsl/imx-es8328.c                          | 1 -
+ sound/soc/fsl/imx-rpmsg.c                           | 2 --
+ sound/soc/generic/audio-graph-card2-custom-sample.c | 3 ++-
+ sound/soc/rockchip/rockchip_i2s.c                   | 1 -
+ sound/soc/rockchip/rockchip_spdif.c                 | 1 -
+ sound/soc/samsung/aries_wm8994.c                    | 2 +-
+ 23 files changed, 5 insertions(+), 24 deletions(-)
+
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
 
