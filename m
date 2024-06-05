@@ -1,62 +1,78 @@
-Return-Path: <linux-kernel+bounces-203239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C318FD82A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDFD8FD82C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6CE1F24BEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:13:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACB8288B05
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D71015F3E9;
-	Wed,  5 Jun 2024 21:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C035215FA75;
+	Wed,  5 Jun 2024 21:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h4WxDr/K"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nTa33+q1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3383A4965B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB0315F40C;
+	Wed,  5 Jun 2024 21:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621985; cv=none; b=gQmXOlYT9TxklUCcEfmxgaCWCm4SiUKJ12/vifuhaAVHLhMFrS5AWnepnhFdZE3kOCh229Fw0tBI5ef+OMWoEsPjs8ckU6JiQn2StpVDPPhxK6cGlSJmA5uhbtxb8EaWSTnWMUE0I0T7zDkT6fnQiCakrlS3DNbmvpgTha3xepo=
+	t=1717621989; cv=none; b=DkcDlSqxAl+lZiFGaW8GQZ4SPsiIWKm4vrL/udKrHrmdY/JRZfTU7duvQgDhN98QdBwxrQwMgBzdtvlicn+2SSWXnGPAKWtWGHqN3eA4By0pN+jF5BmnafpkhoEd5sXcFsEo6ea1PmrvspEuT2UBdc8Fn/WHEHv9AravqOuG+mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621985; c=relaxed/simple;
-	bh=kVVBwhOi4Etc3xbQeGCLfgKd0zzpIISgNf/sZzDmckA=;
+	s=arc-20240116; t=1717621989; c=relaxed/simple;
+	bh=hWLUBTXsqjYpf/Y+7jj6qTjc3Zt+ncVlnVqufpZ0mHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZG0bsJYabU9df2dZd8GsWmSOoiNslbnAXcNLNe1Xw32l+e9JNKJSNvvAIE8aj5YMBvYnOQhvrhBJsC6f1WXOOvMIEP80h/ywpOg2pTsi9VrqUlwwXs2U9Ixwz5YV0N9SeOCEvZt1ksN+bOhj6qHj+ZirwZTpplX+0G/dv0ulO9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h4WxDr/K; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tyPAwm3M+1wVMHk+k1F92p+/vIG4V+hj4p+c1Kn8nfU=; b=h4WxDr/KHzPoTSlsJJsCtT+cv+
-	h79QXhcGqTuYAp01kJh9fTZKQIYEFL+I5cNQ9bRz1b3jtHibJw4SfnKXczxJ5ThUoyOesgKKiueA5
-	dgIwr/11mhmHDR0Ni44oELi+1c+IJPR176OT55zYhqKzyJa0+8ZQPdjcAB9RVV2pgYkcHSTb8TAen
-	jjktNWOFeAELuaWLQZyZcdW/e1LAw7loshY2I+oxjdyuzm78flwaaTHZ0ah4OfJdPOqrmxvJuDiiu
-	SZdFc8y4eAyIy21DtfM7uzbSMprsWC05e//u737zLhd9U/2g7Hp0XDGz3P76a7PhGPNKfO59N5ptd
-	dHUWN33Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sExvS-00000004CDq-38ak;
-	Wed, 05 Jun 2024 21:12:11 +0000
-Date: Wed, 5 Jun 2024 22:12:06 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Alex Shi <seakeel@gmail.com>, alexs@kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
-	aarcange@redhat.com, chrisw@sous-sol.org, hughd@google.com
-Subject: Re: [PATCH 02/10] mm/ksm: skip subpages of compound pages
-Message-ID: <ZmDUpryUaVraNF6m@casper.infradead.org>
-References: <20240604042454.2012091-1-alexs@kernel.org>
- <20240604042454.2012091-3-alexs@kernel.org>
- <Zl_g7qmXAJDy4vKu@casper.infradead.org>
- <5bb3bbf6-6a22-449f-96f1-b9476357f284@gmail.com>
- <8a614d01-191e-45d1-b6b6-c36ec0bd9e5a@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ed0V9RYFOfS7eam38R9Kvg9gxhVTN97K/D4a4Bh9Sws8S47RLNcZWnHj6WLIBwHwO8ykfq+ORh3QH6IBUQm1/HiLPPcMLXPr6QxonBY/jAHNT+tyf+kXjAtHsOiCqd60xGluAKnJqJVdsCppB2bDRnSn2bfeAq1uVFZHYqyFpt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nTa33+q1; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717621988; x=1749157988;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hWLUBTXsqjYpf/Y+7jj6qTjc3Zt+ncVlnVqufpZ0mHI=;
+  b=nTa33+q1LtJW67JszZ2QNPBmw3yk37BeSyBgNvigwllHLqYv9JF29Plm
+   0N3vpyT1WZGd1/+DMnn5feJZj9pAy4ZD1tlJ0dYZncMton+rTBzDv4DPV
+   1+qHjjRs0sqkeZ/boVJIoFKCliM58HaLIcm/lDw2sudWCa4lGb6PIrW+x
+   GWCzthTq4+dp1+6psv5weu8GuOnI+ojIfgGoVVWhzJG/fvFhyBIkbDDTt
+   vep0JNv1IDTnhfiUwysx7EwAE3chgIXJ/J7+LKIvVTZkB7vHvmoGQK7u1
+   hvau1VzrzUv0rFGyyJpCGhP/qxMyTxw8Y0E3RWH2ctwRUb06voKZlgZBV
+   w==;
+X-CSE-ConnectionGUID: 5rNvcfxgQoyolI61zZq4zQ==
+X-CSE-MsgGUID: oeceHNYJTv2VwltZpBOXig==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="36789651"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="36789651"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:13:07 -0700
+X-CSE-ConnectionGUID: Y0QGY5eiSruNNRnmXE6QJQ==
+X-CSE-MsgGUID: 4jUMf+QVTGSKoNFkVQCA4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="42295277"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:13:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sExwM-0000000Dy9L-1NDe;
+	Thu, 06 Jun 2024 00:13:02 +0300
+Date: Thu, 6 Jun 2024 00:13:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
+Subject: Re: [PATCH v1 1/1] lockd: Use *-y instead of *-objs in Makefile
+Message-ID: <ZmDU3q1Vfv9xkipa@smile.fi.intel.com>
+References: <20240508151951.1445074-1-andriy.shevchenko@linux.intel.com>
+ <ZjuijMla78l+sl5S@tissot.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,50 +81,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8a614d01-191e-45d1-b6b6-c36ec0bd9e5a@redhat.com>
+In-Reply-To: <ZjuijMla78l+sl5S@tissot.1015granger.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Jun 05, 2024 at 09:47:10AM +0200, David Hildenbrand wrote:
-> On 05.06.24 08:14, Alex Shi wrote:
+On Wed, May 08, 2024 at 12:04:28PM -0400, Chuck Lever wrote:
+> On Wed, May 08, 2024 at 06:19:38PM +0300, Andy Shevchenko wrote:
+> > *-objs suffix is reserved rather for (user-space) host programs while
+> > usually *-y suffix is used for kernel drivers (although *-objs works
+> > for that purpose for now).
 > > 
-> > 
-> > On 6/5/24 11:52 AM, Matthew Wilcox wrote:
-> > > On Tue, Jun 04, 2024 at 12:24:44PM +0800, alexs@kernel.org wrote:
-> > > > From: "Alex Shi (tencent)" <alexs@kernel.org>
-> > > > 
-> > > > When a folio isn't fit for KSM, the subpages are unlikely to be good,
-> > > > So let's skip the rest page checking to save some actions.
-> > > 
-> > > Why would you say that is true?  We have plenty of evidence that
-> > > userspace allocators can allocate large folios, then use only the first
-> > > few bytes, leaving many tail pages full of zeroes.
-> > 
-> > Um, that do need tail pages...
-> > Is there some way to use more folio in ksm?
+> > Let's correct the old usages of *-objs in Makefiles.
+
+...
+
+> Acked-by: Chuck Lever <chuck.lever@oracle.com>
 > 
-> My take, and Willy can correct me if I am wrong:
-> 
-> "struct page" is not going to away any time soon, but it might shrink at
-> some point.
-> 
-> That is, we can use the "struct page" pointer to point at a page frame, and
-> use "struct folio" to lookup/manage the metadata.
+> Unless, of course, you'd like me to take this through the nfsd tree.
 
-Right.
+Why not? Otherwise it seems nobody have taken it so far.
 
-> That is, use "struct page" when accessing the actual memory content
-> (checksum, testing for identical content), but use the folio part when
-> looking up metadata (folio_test_anon() etc). In the future we might want to
-> replace the "struct page" pointer by an index into the folio, but that
-> doesn't have to happen right now.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-My current thinking is that folio->pfn is how we know where the memory
-described by the folio is.  Using an index would be memmap[folio->pfn +
-index] which isn't terribly expensive, but we may as well pass around the
-(folio, page) pair and save the reference to memmap.
 
-> For KSM, that would mean that you have a folio+page (late folio+index) pair
-> when possibly dealing with large folios, but you can use a folio without a
-> page when dealing with KSM folios, that are always small.
-
-Yes, agreed.
 
