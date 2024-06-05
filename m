@@ -1,101 +1,139 @@
-Return-Path: <linux-kernel+bounces-203335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419638FD9A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:10:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270AB8FD9A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 00:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F831C23FF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:10:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAAE1C22610
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 22:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC3915FA78;
-	Wed,  5 Jun 2024 22:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F91C15FA67;
+	Wed,  5 Jun 2024 22:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxDr7PEj"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PheCa5Cg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63623C28;
-	Wed,  5 Jun 2024 22:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F60A3C28
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 22:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717625419; cv=none; b=gnC+zZzoQegk6M3EIbGKY3BlI9scW+W2HC94OToZ4go+YSf0gSbI+3m+UKPvuFlfzPbSokUyZXx6Vo8yYaa/lqltcDYdu+71Jwp9+0+F1WXStxYRYJvqlHrJnidoYTujx0GXYo6GPG0JoCPaMlanuA9F5jGJhNPhiMwtkIWHXD8=
+	t=1717625450; cv=none; b=QboURizBue4lTAzCdjd9UR/Vca0/5RQ+iqhFYBqwAGXbkNBj376m8MwaFXlqdKZ9tUsYFnjlhzrMNhrCb4eFGBmR9EWVA6qSLTOXzDeveOSj+hr7JoN4+Z3XSUCPa+odIlxGjvB2Smajs/BjZecuHW3CxuKWpLLYLvz+UrxhOOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717625419; c=relaxed/simple;
-	bh=4MtmmxRMBlxfNJ305JevlhUwnKyFWYAIWelpGhZ8Xhw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IcHGz327ehQumCPhd7weSvwd2u7YENYTbEZlVsTpUK21/usbq4qpYHJfER2KC/kyfzz5bhcpTdHkuHfAos3zXF9XYmiU6eZYWZDiZHk8g3Udt4MXrbbGJI410tBD2YRRm1RSL/VC3ZI3BadmpqfUsgFyXVzAfu+C8aDClNtL5rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxDr7PEj; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f44b594deeso2426525ad.2;
-        Wed, 05 Jun 2024 15:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717625417; x=1718230217; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iJJ1Il1hEBNHAhh0aQyG/BXiplrVKkTrWLDaHYRJumM=;
-        b=cxDr7PEj3OWN/Zdcry00kzuKWJ8wXEqwlZx0xDhGVCbVmI8PqGDiHEE/cu3208E2gW
-         d+7ZplvkEfeb/sDHGwWhGyh4IGul7B/T73qDUIhragF5drDEYz9BegZWUMgp4doB8cxf
-         3csIvs7OzMvUH2Wsyyy0Wx2qKDpnpuAsj3VZ+zXwuWIGNCxESqZLox859DmvczP1ELLU
-         dYXInkPVZTw02h3e9sfq6D/rFWYjosvSxX8ee5yrsqvi3+HO86y8cBFYTXHiNXQl+Ho/
-         XZWvlyR5vQBYkw1JLBxij38XbD7YCSFMVHCVJorCOSrCdpqbgjF2/ehhcm8WGY7bOTls
-         Qpxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717625417; x=1718230217;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iJJ1Il1hEBNHAhh0aQyG/BXiplrVKkTrWLDaHYRJumM=;
-        b=FNIwT5KhQI9RdLFwYyvMmjjIRWJNJGc8DKbImdeZ3BJpghR14mEFqECat0p4OMuVR/
-         GiQJSj4jEuM01GLuNRRXzIhuWYwZTIzOHEug4vJb0CE+JX/LJEkXmE3XxWJ+vXGLz3qr
-         ajzug1Ph0NIr2RozLDh8iwUUcKpncT9v8dmMXfW6adx/9YiVmpoE4QeWkgaZeswmbMBy
-         yrKQYfBHEBSmcBblKZ/hchLM9I16DltyJ2zyupmFbATjC/b4hU9GTRnFrXV/pP7fAJjh
-         czlk6vaBzoy6PnbnAG0tac7NSIlFiNpIiMrWLUJ1MZBfcBf37eLmuJF/sW2Y8tnrRHXt
-         DuCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQh4Sqd455GE5wq7U5GnuRyBqtSKJDToizBkDlZJXS2Lxznk99VPcecbxa4R0lj0tE1PAWIU6b3Cl/ZQn8Ghi9BDYRSQYIT6NclVt83pJR2sUwM5xhhaLk7ptMCzpMXmDrvjR4ljODFPdK8GOq
-X-Gm-Message-State: AOJu0YwFLVV6c3Vydw8rTHQBEs83enrICxG7bjfDwNNLmk1kURgeeGJP
-	FourESZrwpj1qUQ4b/VSR/OBtbxuaDpj0Yp4p0nOiYgtsYYTkReD
-X-Google-Smtp-Source: AGHT+IHRXnPN0u7Ps/6G42PH3KCbpcG6/xDZesLl4G01pVNLBwdTragYtQjUCPK7uxG6hIgrhxC+Qw==
-X-Received: by 2002:a17:902:fa4c:b0:1e0:bae4:48f9 with SMTP id d9443c01a7336-1f6a5a13943mr35800775ad.32.1717625417010;
-        Wed, 05 Jun 2024 15:10:17 -0700 (PDT)
-Received: from dev0.. ([49.43.162.143])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd75f14csm374425ad.21.2024.06.05.15.10.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 15:10:16 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: keescook@chromium.org
-Cc: gpiccoli@igalia.com,
-	jain.abhinav177@gmail.com,
-	javier.carrasco.cruz@gmail.com,
-	julia.lawall@inria.fr,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	tony.luck@intel.com
-Subject: Re: [PATCH] pstore/ram: Replace of_node_put with __free() for automatic cleanup
-Date: Wed,  5 Jun 2024 22:10:10 +0000
-Message-Id: <20240605221010.22262-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <202404241639.3F455ECCD@keescook>
-References: <202404241639.3F455ECCD@keescook>
+	s=arc-20240116; t=1717625450; c=relaxed/simple;
+	bh=tCyXM0NybvB2VFYCWYFtH2Ul4E7dIl0waEGFFsUqOok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Biu6/JfhZ/2zjd/J5FPz4huHux4+ln+AXpCqC6WDiNCnWToia7OVMuOWnB3ywE+T8kT0iSCvJlPTsQ9BU+HYJc0EZTQwqbuJ+19D3Jpms49ZLzkASIkSEW7GXqkpA1yfbA71vGQCG4yKw7cWID6DLtjf478LDP2ZsDn5wn01Kdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PheCa5Cg; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717625450; x=1749161450;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tCyXM0NybvB2VFYCWYFtH2Ul4E7dIl0waEGFFsUqOok=;
+  b=PheCa5CgohGtnm7j1trpP7//j53h2tOz715CTtYkiiIbym18Ygl3/fOq
+   Zn10/I/TkUPwPxTT0kgQc+pLBxRzSJhS3vPqTVKGB+kpTmbldNEgz0AfK
+   X52JnjkiNZnQjaFBaWjxtWa3Bo4G7lAQYZWOXdz9hrH/+1PQvIpETZhtX
+   jhJRvG4QWAC4vjg4RxckugOnfusZq7BFr/iLRDTAJ+9oV4JrATPmfMNYy
+   +FlWebDTmcBTAVWBxv1eg2Hy7QErCCI4R9UCK2rxqNIEpLLfb+yx+DcJ7
+   8Iw1MZ003Q6T+7ch+DTUDN/Wk7u3LUErFP67hvfPoL64JWzVSu1vLL6DG
+   Q==;
+X-CSE-ConnectionGUID: AUCzep+CQAqIRIdon6cdQw==
+X-CSE-MsgGUID: /RKRJpd3SWqvxI4HBq63QA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="14103428"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="14103428"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 15:10:49 -0700
+X-CSE-ConnectionGUID: bW6GitTgQZqpARu09CsCkA==
+X-CSE-MsgGUID: J9Ky4YJvT4WlTyYNBahZhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="37813273"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 15:10:47 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sEyqB-0000000DyuJ-3TNX;
+	Thu, 06 Jun 2024 01:10:43 +0300
+Date: Thu, 6 Jun 2024 01:10:43 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] resource: add a simple test for walk_iomem_res_desc()
+Message-ID: <ZmDiYze9MEFxn50C@smile.fi.intel.com>
+References: <20240605212840.3227774-1-olvaffe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605212840.3227774-1-olvaffe@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 24 Apr 2024, Kees Cook wrote:
-> Please don't move variable definitions into the middle of the function
-> body. :)
+On Wed, Jun 05, 2024 at 02:28:26PM -0700, Chia-I Wu wrote:
+> This mainly tests that find_next_iomem_res() does not miss resources.
 
-I have moved the parent_node declaration back to the top of the function body.
+...
 
-Patch v2: 
-https://lore.kernel.org/all/20240605214944.22113-1-jain.abhinav177@gmail.com/
+> v2: update subject, use DEFINE_RES_NAMED and hardcoded offsets
+> v3: really hardcode offsets, with 4KB intervals since 0x1000 is easier
+>     to read than 0x400
+
+Right, but...
+
+> v4: use RESOURCE_SIZE_MAX, split allocate_resource and KUNIT_ASSERT_EQ,
+>     and other cosmetic changes
+
+...
+
+> +	ret = allocate_resource(&iomem_resource, &root, 0x100000,
+> +			0, RESOURCE_SIZE_MAX, 0x100000, NULL, NULL);
+
+Just double check that limits.h is included.
+
+...
+
+> +	/* build the resource tree */
+> +	res[0] = DEFINE_RES_NAMED(root.start + 0x0000, 0x1000, "SYSRAM 1",
+> +			IORESOURCE_SYSTEM_RAM);
+> +	res[1] = DEFINE_RES_NAMED(root.start + 0x1000, 0x1000, "OTHER", 0);
+> +
+> +	res[2] = DEFINE_RES_NAMED(root.start + 0x3000, 0x1000, "NESTED", 0);
+> +	res[3] = DEFINE_RES_NAMED(root.start + 0x3800, 0x0400, "SYSRAM 2",
+> +			IORESOURCE_SYSTEM_RAM);
+
+...here is overlap with the previous resource.
+
+And here is the gap to the next one, in case we make that overlapping gone.
+
+> +	res[4] = DEFINE_RES_NAMED(root.start + 0x4000, 0x1000, "SYSRAM 3",
+> +			IORESOURCE_SYSTEM_RAM);
+
+It wasn't the case in previous data. Please, elaborate what's going on here?
+
+...
+
+And rather sending one version per 12h, take your time and think more about
+test data. What are we testing? Are the testing data correct? Shouldn't we also
+have negative test cases?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
