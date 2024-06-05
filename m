@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-203063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159CE8FD5D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B99C08FD5DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992661F24C79
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680A41F24D44
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5849E13A3E8;
-	Wed,  5 Jun 2024 18:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9305413AA2F;
+	Wed,  5 Jun 2024 18:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQqaYyME"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NNvvnIzx"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6705228;
-	Wed,  5 Jun 2024 18:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD58DF78;
+	Wed,  5 Jun 2024 18:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717612581; cv=none; b=Hi6FHmtkhQ+s+TdVmhR2IetEGNb1kwcuDnAgfxbbv69sBFlh1O/4T+kTj8yVb14yU+TkF/AdIeEbR3NHtw0cpy+EHwavk75PxkRImmob2hy9m97YKuXsqdlDvHHmhklCotp9UNwNJgW2vysz0Nnf/CVKDOIzLNG1S+feOL4h144=
+	t=1717612659; cv=none; b=hfE9QQ9yn2+WuOUynP1W+4IlhK/dM2jKMALlmEla0JyN7/EVCnKq7OTzHPvAPA6+cwXjgSwIj++zDqUEBBO63G+4N9Z84gm/mb0l8+BDitZQOIx3tX8ZoPy1tbnJsnMm8PJGkIMJOqXQX25b5zIvrii7UPuIy6La7OadcQswu+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717612581; c=relaxed/simple;
-	bh=U8Pum04kWJiOrMbd7F2SoV1BMtOhRMWdgkflF0DyIpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+XPSbf7+1KWGfV6MrctLW8WvpM7LAfrRot4syXXOrx0sbmMaawN0zFEpn9yFR2knNdO1NTviz69gxp9MQWJVBUEt185oTRu3LjElSAT9e5Fu0UbihOmA/Lp6yiCBNY8jIs/JQgeOhnEtZudeLoHaUhubrCLcVgniqKMX+CrzbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQqaYyME; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F80EC2BD11;
-	Wed,  5 Jun 2024 18:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717612581;
-	bh=U8Pum04kWJiOrMbd7F2SoV1BMtOhRMWdgkflF0DyIpQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=JQqaYyMEqg9hpPKg5pYntV5U+OuriptEh6SxpJLi6zXZr+R5/OzZML1IjXO5hbz71
-	 JbkbxnyBmikiw750xEPHjoUdtVaf2oWES2k4w6USStNe/2g56Qo+fLWZvr1yNAf3+U
-	 uIPHjKuOaS2Zs6QMqLddi/bhjXxml1qU9W8ejvITtXA8OnzFUnTOEPhpxlFCjvJqBo
-	 J3kmURpLuTHqn5atmRaV0w8EIOMN8UalfguhHrlUrwZcyTDOuYQeTm373Jvamqdxzp
-	 0hWQg7HOyy/NjPXMcMbMTqk0VJtiRYH+niIbSZm2c0sLkhuzkg79PWYhr5SuhADCuo
-	 hjlOLBjMY07mg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id ABAC3CE0A73; Wed,  5 Jun 2024 11:36:15 -0700 (PDT)
-Date: Wed, 5 Jun 2024 11:36:15 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Rao Shoaib <rao.shoaib@oracle.com>
-Subject: Re: [PATCH rcu 2/2] doc: Clarify rcu_assign_pointer() and
- rcu_dereference() ordering
-Message-ID: <4035a57f-9873-4178-8d60-3ab07f709e2e@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <e5dc5f14-04c1-494b-9044-e837279a7bcd@paulmck-laptop>
- <20240604222155.2370541-2-paulmck@kernel.org>
- <ZmBSZ3AAp9TN5YaP@localhost.localdomain>
+	s=arc-20240116; t=1717612659; c=relaxed/simple;
+	bh=IWRxEymlXyeOoO9yBjR2hKECkwKKp+8egwI0jWkj/dY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jMmKJo0A3POypQG8FlGlkApbLjZRgx9oTIyM2GYlN+o5KHtCfr8kwsPZDnn3uk0/oX7ObzjLVfCWvL5RDpB6R8ZnFQYXPfNXDnArsc2m7hDwQKKmj1QnWELYApvfJZCBtFyzaTXeUnBBVL6lWn+Kwg+QJTBB86oZPFeMP//1YLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NNvvnIzx; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f4a0050b9aso1481085ad.2;
+        Wed, 05 Jun 2024 11:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717612658; x=1718217458; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rBsylD2EcrDb2y9t7J9rNMpo+HTh9H61rht72+hy9NA=;
+        b=NNvvnIzxgRubRHoUh4aJV1/nwSjV4Cyz1VQK1e7WpLUZnf6Jw5Nm/z1F1rIbbSka8q
+         IvoU2yh+W7aNtC30ArmOtaDPgOdBVOchpsCeCA7QHdmTvdRxWfvsuiHLOCPYX2/FyAYf
+         rSw4STKnXIkAoru8JbMdC2jIJgOJT+hQ63p7i0AxPEwK1fBRc1PYHq7C0IvSBhbFub1C
+         8X9cezE4ljI/sM0iCdWgEO/gf0H3QrK1kgYQGpa+tRQG1dhAlBEcD9KUpm/vMnGozFvo
+         yKOhLyd07sk/jCEwGZR/v8al9DHI8DE7mnVD0WhFzjlofmEpmDoG9oGONvLC4F//1lNF
+         0WOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717612658; x=1718217458;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rBsylD2EcrDb2y9t7J9rNMpo+HTh9H61rht72+hy9NA=;
+        b=w2HWbh8+RueXn964RDIRivouU6+LBxiSih6pTKv9Gr7IA+17XJdSGMyNotuht5+Sgt
+         ubM+0GQBv2HVPCqQo5mTTK0MpEXLqlVURfFIshNLrS5PlCdD0Dh7jHvI4IzA3RgKe9Lm
+         1UeoTdxM3uFeyy7OQ+adryRSvFaoIyuKxBEj40e82mhoJC0E4uBV7BTKXA0XNSQ2jLiu
+         goEVAqbYy71RrXixKggBB4UFSigPu5GNS7Uk4gpok/z4O7tJklZ30iV08x8oKN0gLcIu
+         DPmsGDAPMBED6++zolr6VXrapdmgsoUgWZCi2Tp39lSnVyYiMU4lvuNjvZxtITF8jY7e
+         MmiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmIqSdEpJgdYxBKH+DinlYZ5SvSJDgU6Vg9kCZccFMABpHHpmoXXuTx5YXQvXCeF02muirOdKFXa4kmwvk9pJ8Xq9CVn3ze/IHviFM1qb7N+UXTi8Jm5vsBKoQKfn9j3wWJbFKD0xE41jrQY4=
+X-Gm-Message-State: AOJu0YwqC16DyH64vjTg316szoyduqDwZpYob7rKyoURh68HhO8aAtbZ
+	MGIMbY2hkIG59675zYGkEIDZAIPWPG5ygJm0AxnbIPddYTUXX0eT
+X-Google-Smtp-Source: AGHT+IFtOR5FT59qeaQIBc7JDpQX/YF3b15w1TIgp7tAoCBQxFPZKwSXEvQh3HKRFK5LARVdv7tUvg==
+X-Received: by 2002:a17:902:e809:b0:1f6:74bb:4921 with SMTP id d9443c01a7336-1f6a5a69a0emr40966495ad.44.1717612657692;
+        Wed, 05 Jun 2024 11:37:37 -0700 (PDT)
+Received: from localhost.localdomain ([177.21.143.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f632338ae5sm105486695ad.37.2024.06.05.11.37.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 11:37:37 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: miriam.rachel.korenblit@intel.com,
+	kvalo@kernel.org,
+	rafael.j.wysocki@intel.com,
+	daniel.lezcano@linaro.org,
+	johannes.berg@intel.com,
+	dmantipov@yandex.ru
+Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2] iwlwifi: mvm: adding check if the thermal firmware is running
+Date: Wed,  5 Jun 2024 15:37:08 -0300
+Message-ID: <20240605183710.66016-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZmBSZ3AAp9TN5YaP@localhost.localdomain>
 
-On Wed, Jun 05, 2024 at 01:56:23PM +0200, Frederic Weisbecker wrote:
-> Le Tue, Jun 04, 2024 at 03:21:55PM -0700, Paul E. McKenney a écrit :
-> > This commit expands on the ordering properties of rcu_assign_pointer()
-> > and rcu_dereference(), outlining their constraints on CPUs and compilers.
-> > 
-> > Reported-by: Rao Shoaib <rao.shoaib@oracle.com>
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > ---
-> >  Documentation/RCU/whatisRCU.rst | 30 +++++++++++++++++++-----------
-> >  1 file changed, 19 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/Documentation/RCU/whatisRCU.rst b/Documentation/RCU/whatisRCU.rst
-> > index 94838c65c7d97..d585a5490aeec 100644
-> > --- a/Documentation/RCU/whatisRCU.rst
-> > +++ b/Documentation/RCU/whatisRCU.rst
-> > @@ -250,21 +250,25 @@ rcu_assign_pointer()
-> >  ^^^^^^^^^^^^^^^^^^^^
-> >  	void rcu_assign_pointer(p, typeof(p) v);
-> >  
-> > -	Yes, rcu_assign_pointer() **is** implemented as a macro, though it
-> > -	would be cool to be able to declare a function in this manner.
-> > -	(Compiler experts will no doubt disagree.)
-> > +	Yes, rcu_assign_pointer() **is** implemented as a macro, though
-> > +	it would be cool to be able to declare a function in this manner.
-> > +	(And there has been some discussion of adding overloaded functions
-> > +	to the C language, so who knows?)
-> >  
-> >  	The updater uses this spatial macro to assign a new value to an
-> >  	RCU-protected pointer, in order to safely communicate the change
-> >  	in value from the updater to the reader.  This is a spatial (as
-> >  	opposed to temporal) macro.  It does not evaluate to an rvalue,
-> > -	but it does execute any memory-barrier instructions required
-> > -	for a given CPU architecture.  Its ordering properties are that
-> > -	of a store-release operation.
-> > -
-> > -	Perhaps just as important, it serves to document (1) which
-> > -	pointers are protected by RCU and (2) the point at which a
-> > -	given structure becomes accessible to other CPUs.  That said,
-> > +	but it does provide any compiler directives and memory-barrier
-> > +	instructions required for a given compile or CPU architecture.
-> > +	Its ordering properties are that of a store-release operation,
-> > +	that is, any prior loads and stores required to initialize the
-> > +	structure are ordered before the store that publishes the pointer
-> > +	to that structure.
-> 
-> About that, why rcu_dereference() isn't a matching load-acquire?
+In the dmesg is showing the message "failed to read out thermal zone"
+as if the temperature read is failed by don't find the thermal zone.
 
-Here is an example showing the difference:
+After researching and debugging, I see that this specific error is
+occurrenced because the thermal try read the temperature when is started,
+but the firmware is not running yet.
 
-	p = rcu_dereference(gp);
-	r1 = READ_ONCE(x);
-	r2 = p->a;
+For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
+After this change, in my computer I compile and install kernel in /boot
+and in my dmesg the message "failed to read out thermal zone" is not show
+any more.
 
-The READ_ONCE() is not ordered against the rcu_dereference(), only the
-read from p->a.  In contrast, if that rcu_dereference() was instead an
-smp_load_acquire(), both of the two later statements would be ordered.
+I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> and
+Kalle Valo <kvalo@kernel.org> for your suggestions in my first patch.
 
-Ah.  You are suggesting that this be added to the description of
-rcu_dereference()?
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Or are you asking that this documentation state that an rcu_dereference()
-memory-barrier-pairs with an rcu_assign_pointer()?
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+index 8083c4b2ab6b..68ab9966330c 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+@@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
+ 
+ 	mutex_lock(&mvm->mutex);
+ 
+-	if (!iwl_mvm_firmware_running(mvm) ||
+-	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
++	const int res = iwl_mvm_firmware_running(mvm);
++
++	if (!res) {
++		ret = -EAGAIN;
++		goto out;
++	}
++
++	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+ 		ret = -ENODATA;
+ 		goto out;
+ 	}
+-- 
+2.45.2
 
-Or something else completely?
-
-							Thanx, Paul
 
