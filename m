@@ -1,108 +1,118 @@
-Return-Path: <linux-kernel+bounces-202741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15578FD03C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:56:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355A38FD057
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1CD1F22CD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:56:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BB09286137
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1091E89C;
-	Wed,  5 Jun 2024 13:54:15 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C001125BA;
+	Wed,  5 Jun 2024 14:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="cXg/Qwk3"
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D3017BCD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 13:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D8F53BE;
+	Wed,  5 Jun 2024 14:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717595655; cv=none; b=ZxDMLD5JbyiM8wnYKAoKvvj/Ojhzu33DwxHTLxt/skIVvwYOvGCdK5j9MOGd5E+pm97NGAoCgwucqWb74eFDUZpRtX8GOtgxQaI9faLgj8STEI1EnCPHrlpzjkSAkGySMge58CH4UzTxRVfOh0EfRyKvFopNx5YI1mdKvDNdyR4=
+	t=1717596162; cv=none; b=bNKNikUKwUG9R4UYT8wC7iABafZciS1fOD6RW6EWIYG90JPwbhmJh54yuqpppxLJrC1pScR8I4DSVePWgLTek8bnWcrMh/LeclzwVHrPffUNNzMaNHewlmUzD1sma5a3FJoCJnloRA/iE/F+D6NZhegRHSv0i2YPrTMbMrWz0AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717595655; c=relaxed/simple;
-	bh=TXGHJ2+hUM24/BjFwCP02SOE7NoVVnR3kdLEdqV7maw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JTMfxhxz5NAwwMUFrKmNA1MKrBV5OWT7dTNAzzh4eSF3i3uxM6lL5ypLZSWGnorIOAA4skw51N4S5R+TnIeBv9S6u/dn944P9a0U4qRb5nlGBXGJEZhr6wMLeohKOucuQAH/0pwbxzV8mAJFX8AUBR/x2xQ4WkN8pd/SoKGyu7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 10030d24234311ef9305a59a3cc225df-20240605
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:ce8cb58e-4250-420b-b5d4-48e8eb6962e6,IP:25,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-INFO: VERSION:1.1.38,REQID:ce8cb58e-4250-420b-b5d4-48e8eb6962e6,IP:25,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:20
-X-CID-META: VersionHash:82c5f88,CLOUDID:c97b73ac3a0f892bfe4b6f8a75eb25d4,BulkI
-	D:240605215401EJAVI5UO,BulkQuantity:0,Recheck:0,SF:38|24|72|19|44|66|102,T
-	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
-	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_LOWREP
-	SA_EXISTED, SN_UNTRUSTED, SN_LOWREP, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-UUID: 10030d24234311ef9305a59a3cc225df-20240605
-X-User: cuitao@kylinos.cn
-Received: from localhost.localdomain [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <cuitao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 151872135; Wed, 05 Jun 2024 21:54:01 +0800
-From: cuitao <cuitao@kylinos.cn>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	virtualization@lists.linux.dev
-Cc: xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	linux-kernel@vger.kernel.org,
-	cuitao <cuitao@kylinos.cn>
-Subject: [PATCH] tools/virtio: Use the __GFP_ZERO flag of kmalloc to complete the memory initialization.
-Date: Wed,  5 Jun 2024 21:52:45 +0800
-Message-Id: <20240605135245.14921-1-cuitao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717596162; c=relaxed/simple;
+	bh=4tC7k/l/xaI7nEusPHODhnaab9GGYBzhfIcMqHGnSBw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rHNVbpyAjtZx79G3YWoLiK46xE9+kE63H57kYoltZLG0s/Vq7ny5CFoYvOcL9pP6uuBUdftM5eZLpe8Pvu0zg6c8MJF+GF7pW2ReWUyd+Kc3ZxlGpMLpZ7D7JyfnS4aFcBaVTtIKtcSKKV9FTTuKk2kXiFODVzhFAXesPXngsi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=cXg/Qwk3; arc=none smtp.client-ip=194.87.146.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id 9DD8A403AB;
+	Wed,  5 Jun 2024 18:54:08 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1717595649; bh=4tC7k/l/xaI7nEusPHODhnaab9GGYBzhfIcMqHGnSBw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=cXg/Qwk3EzhoriIdpzqlP9fr/j5w5TSKi2y+BLTN05Yb1R66oancKd2aVtZfLAPNE
+	 RIh+pmYIZzlpds+8Y4nnlJbGEJ9kKmIk9/5YeCznbE3CMbJTFe/Q4dtikUaeBfFo2A
+	 2A/DB/m91qECmc99dZRBM2P0H5+wTgLnLBSwuQ7D/mtixWENP1lADWn1r53wK21Zda
+	 LlNOY/nP9e0CoC/tHxQmOGNf4BDsDtsOg7SYMhvZXEcIn3A56URDThQw3FPQEg8TRY
+	 eW8EGidml8b/3lsFFsNblFnR9UoYfJiHi+jGFwxVHpJ4BmmZyBg/1Sjy839Snm+0GA
+	 /4x29iZnZG4rg==
+From: Nikita Travkin <nikita@trvn.ru>
+Date: Wed, 05 Jun 2024 18:53:27 +0500
+Subject: [PATCH] power: supply: rt5033: Bring back i2c_set_clientdata
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240605-rt5033-null-clientdata-v1-1-558d710eeb4d@trvn.ru>
+X-B4-Tracking: v=1; b=H4sIANZtYGYC/x3MwQqFIBBA0V+JWb+BKbWiX3m0kJxqQCzUIoj+P
+ Wl5FvfekDgKJxiqGyKfkmQLBfWvgmm1YWEUVwwNNZpaMhizIaUwHN7j5IVDdjZbVJ1Wru2dIW2
+ hxHvkWa5v/B+f5wXkdU1kaAAAAA==
+To: Sebastian Reichel <sre@kernel.org>, Andrew Davis <afd@ti.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Raymond Hackley <raymondhackley@protonmail.com>, 
+ Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1247; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=4tC7k/l/xaI7nEusPHODhnaab9GGYBzhfIcMqHGnSBw=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBmYG39B7ZCwIhVYTdCPuf4mGkF+mxAOWBxH+Xz5
+ zozxiJIb0SJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZmBt/QAKCRBDHOzuKBm/
+ dY2VD/41zDgPzecjjbDCgZ5DKznW8U4I9X1N6D5K3rzsr+HvrUS5xcLURkwj57tgGHSrN0u6mLa
+ GXMzKqPPrOukvnPoflzrDgEUy18eSOYJBELjQeRL+MEJkZRfnKRr7F4E9JaL5bgrCEwpJLFNIaS
+ GDa7iS1QT7klCd9kmh0unlIsvgDMlL5q3us/VwciXD6DaqJFirU/psUcU+LN3tDtMu/W+niGwWz
+ htRoNwP4oS7Gs5g8NFc/CMxGHmYglsDFIwwBo7Ksl31njzyC7UWVxKDvKo1k6NU+diuF4hysVI2
+ rZhXk2y4/0EfIMrAdN0YEpq0JoJzqotCXhDheeDhnOAsmWoWDhepGJYP3wxEKGwxM06O1IrTipf
+ LW+/ZpS+bLlId89jNrNeC0DbiWF0LyIgMfXCZxilEIiZHYpjhTJFDPqpAFWRaRoCWT9oLquwxi3
+ SD2ir2YTniNnQAPLAf6ynZiWu6dDzylzOAor4EoXdq0mWUd6Atv1bshu6Cx6iBiKWZMMp97oVau
+ xYyTflXOd32lzHyadKJLspIlPwJXDiRf0alXW3lJ4scgtDx1TYCtSUOAvZjqy1tLX9a2CiCGF/n
+ hXUBokUhtb6h33M+jG7hWjaFfh2OHF4lHez8r2jPkMLQRv9IjnjaHHmfHR17SXMzO17WW44NJQh
+ EUm5pB2cbPckL7g==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 
-Use the __GFP_ZERO flag of kmalloc to initialize memory while allocating it,
-without the need for an additional memset call.
+Commit 3a93da231c12 ("power: supply: rt5033: Use devm_power_supply_register() helper")
+reworked the driver to use devm. While at it, the i2c_set_clientdata
+was dropped along with the remove callback. Unfortunately other parts
+of the driver also rely on i2c clientdata so this causes kernel oops.
 
-Signed-off-by: cuitao <cuitao@kylinos.cn>
+Bring the call back to fix the driver.
+
+Fixes: 3a93da231c12 ("power: supply: rt5033: Use devm_power_supply_register() helper")
+Tested-by: Raymond Hackley <raymondhackley@protonmail.com>
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 ---
- tools/virtio/linux/kernel.h | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/power/supply/rt5033_battery.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/virtio/linux/kernel.h b/tools/virtio/linux/kernel.h
-index 6702008f7f5c..9e401fb7c215 100644
---- a/tools/virtio/linux/kernel.h
-+++ b/tools/virtio/linux/kernel.h
-@@ -66,10 +66,7 @@ static inline void *kmalloc_array(unsigned n, size_t s, gfp_t gfp)
+diff --git a/drivers/power/supply/rt5033_battery.c b/drivers/power/supply/rt5033_battery.c
+index 32eafe2c00af..7a27b262fb84 100644
+--- a/drivers/power/supply/rt5033_battery.c
++++ b/drivers/power/supply/rt5033_battery.c
+@@ -159,6 +159,7 @@ static int rt5033_battery_probe(struct i2c_client *client)
+ 		return -EINVAL;
+ 	}
  
- static inline void *kzalloc(size_t s, gfp_t gfp)
- {
--	void *p = kmalloc(s, gfp);
--
--	memset(p, 0, s);
--	return p;
-+	return kmalloc(s, gfp | __GFP_ZERO);
- }
++	i2c_set_clientdata(client, battery);
+ 	psy_cfg.of_node = client->dev.of_node;
+ 	psy_cfg.drv_data = battery;
  
- static inline void *alloc_pages_exact(size_t s, gfp_t gfp)
+
+---
+base-commit: 234cb065ad82915ff8d06ce01e01c3e640b674d2
+change-id: 20240605-rt5033-null-clientdata-3743d68d504a
+
+Best regards,
 -- 
-2.25.1
+Nikita Travkin <nikita@trvn.ru>
 
 
