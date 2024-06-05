@@ -1,195 +1,196 @@
-Return-Path: <linux-kernel+bounces-203243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA388FD83D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:17:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B598FD848
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B40289813
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:17:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5973D1C256E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2715F15FA73;
-	Wed,  5 Jun 2024 21:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BF115FA7D;
+	Wed,  5 Jun 2024 21:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UUlEZslh"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLgiqi07"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26C15F416;
-	Wed,  5 Jun 2024 21:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A267139D00;
+	Wed,  5 Jun 2024 21:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717622253; cv=none; b=fKswC/dOVcugGAhV96trFYLWqhYG1fmm2fmi3g5BLOd3kE+FY7AgoibzG07o8kCy7wfADlPhh5Gx2OIQakaembNM5Mg9PNBZUKjM/mE2JqSZv/s4/U6oOvatyY4KSaMeCxP2LmPrW/VDn+vzwTphufTUOqvU4RUkWH+i/XtOndg=
+	t=1717622299; cv=none; b=W4UvSV5m27FoYrKIOiQREGRD+6K84SYjXQdecd04lSddfIBpcdQ7uSXsII5sQAg12DFBv7lzag8/VXdtK+NI0LqVDNgMRlPxEvNKxRaZ1z69hyjZ5Dxdpq5LLVHXSCileU0F/U5TnigH5+qfcpz71iqXceJlzeTpuPdAkMcyYHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717622253; c=relaxed/simple;
-	bh=rcNT+VkwiI4GjlerZjKyIVuJ8X+qsikybUwdV8yPp6U=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=opczzx3slC0i20AdONdZ5BCArxDSkzC61J4uYMWufGjbFiyBYjSyUwVqf8c0f2SwPwhaPfiwr6aMNhg+TQPJSs9evnUub2g/KS1HzwoE+VE1ZkYrEKc4mpE7UlalR5jhb0ryuhFIL+fl646gKLjuO2XXdXj1L+zK84M0Gj6owoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UUlEZslh; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1717622299; c=relaxed/simple;
+	bh=PohwR8Nc3tGOVCXQrntYVzc2LTggmjtaIiB8D9Q5S7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TQ7VQMakft3o3AbqD86dxq0A4qnhci5vSTVCQnjJeeKUJSL7mxq1Qi8KVt/NiGvNXpy/odkKmAvQWKTQBg/GK+Oqhziz6aqn1Dy3mqCE/BldorLJUk+IRXz40aOPYlxXfatPDj086lkMPx9/1t075zPrmMgZjpcV6c/WYlv27+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLgiqi07; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a68a9a4e9a6so29860766b.3;
-        Wed, 05 Jun 2024 14:17:30 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c2999f969aso266485a91.0;
+        Wed, 05 Jun 2024 14:18:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717622249; x=1718227049; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=COrz65pOh/yQ2I4pAQH6V+4/UFcJFquCRwFewpYu7HI=;
-        b=UUlEZslhekOFnZFyuoIZFoMaTBxUz70B1X312OEfXd+yQWNVuTXIR72EJeeMOoL7ZQ
-         +mLWKgFWolPCUludk+6a09Rta0/0Ae3yrcP6R30JJ7OGdo/rU5HPviearNkCsrmkylFb
-         2UoDH9IjqebvhsPb5gLYCNj+8A2eb7vbGSpM7OYUD7kEYa8sWFLBrnNZN8ehxAhbhX/X
-         cqpvUCUY17j7qJuSEBlkQIyrfs/gz9VtNLIGXf4taVh6g0hPO/2kpvaH5tH1yrtL1V8H
-         Kv7kIkCgNR7NZXKskquCnBIRXs/O9f/Zj04oAMbBl0BtZPRARiClDU9Cv5TLmmpLlU7m
-         X7qQ==
+        d=gmail.com; s=20230601; t=1717622297; x=1718227097; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=0TC939jtnzolf29JXwiWps/F6ODviUjUE8F+jRVq7Bg=;
+        b=GLgiqi07/MSvYFoKe5KyxJxMatiS1/XeL76Z7KKKezOVeDU/i2VvuSrv7mzgPl1IO5
+         deG6KP5QB98PuJT1BAkTafqfCaBXt3am507pLu94RKnI2hHNeroLDgKLEhoC9BX+YJcd
+         AlRpacHW5ypLuEqCEYgOYclRprrWXvyok15E925V0dIeKfIACny9WD9eo5qYzioQsHOL
+         GzYDG72r7Jc7wQYXUeOv6tNOhZtbiiRjrMRyAo6Oi9Zrfj8Lhu5jMFTREbQa/P+xQp5m
+         6uJSph+i5hJtC6Mqz9IElUhFF8Tet7PQAq99mz/qP8aVe3dIxVqmXvTHQhHqHFL82A55
+         4lyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717622249; x=1718227049;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=COrz65pOh/yQ2I4pAQH6V+4/UFcJFquCRwFewpYu7HI=;
-        b=JmvS4IezryROLIsUZrE3xJyJyCde/xcWd3FK79sQM1GAhozRTlOIyFTifbTmfdj4ck
-         E7xDWM1FimP/9zKpCmZfLLdVg6V8EOrkvXfqvwgGbgf5GVdLjfbausQVtuFet6HTbnSR
-         Rfrga21Y/nwBY2Iv1n2YOkqD0IpSliWZKIAx/Uz+JZMFR8nF6VR2BufDGooPwS3dsjPb
-         SD8H+7iVRkmEwcWXClc0TTxEVz9JCCcArYW4kirOGMLs+zdXoJ7k1gPFru3s+c5ds8cm
-         5CFyRC3VcUf06svWZAkljeDzqM3fzKrX6yvgSkG/raJXT70U0Bn/xLvWcvhiHDf49Ibp
-         KJEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8Vp6SgsX4Y2jksXFTlYlVJYMdP2OW8Tyx2XhnB+uVx+QR4TTktpJRVUf0kW84U2EiBlHNYZ5BLiBCD+rXeXs6YsTAFTztdjmTYt9/SKhU9dDX79xM6ca0KsajBdnXubTpGuH9K3JDWjs4n4aj/rQFgoPS120kkMHZ1WrmUE5+fJvpgftl
-X-Gm-Message-State: AOJu0YzweswMsLebvc3Kr24wMKFkr91NOq+sd5JM76/Iv/bxfItyyxws
-	4Va4//aRdNLs6AJ2itFZP9gtCh8qUqgc+WPbznJiXUKYGIr5tngs
-X-Google-Smtp-Source: AGHT+IF0ZMCknLrmT7qh1gyO8kpo7oCxWKy5Dp7jYz7jRf/ZV+TWhUe6iYr01ytCngHImp9Vd6EgBg==
-X-Received: by 2002:a17:907:609:b0:a68:b5f0:3b4a with SMTP id a640c23a62f3a-a699f88b0a9mr293725066b.39.1717622249280;
-        Wed, 05 Jun 2024 14:17:29 -0700 (PDT)
-Received: from krava ([83.240.63.158])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68fe33c561sm542617866b.70.2024.06.05.14.17.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 14:17:29 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 5 Jun 2024 23:17:27 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to
- uprobe_consumer
-Message-ID: <ZmDV52JUrASljxTh@krava>
-References: <20240604200221.377848-1-jolsa@kernel.org>
- <20240604200221.377848-2-jolsa@kernel.org>
- <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
- <20240605175619.GH25006@redhat.com>
- <CAEf4Bzbz3vi6ahkUu7yABV-QhkzNCF-ROcRjUpGjt0FRjfDuKQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1717622297; x=1718227097;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0TC939jtnzolf29JXwiWps/F6ODviUjUE8F+jRVq7Bg=;
+        b=qZjWlTohkHpmrBF0IZ+X/1fVS22ndZMYxArbgmk2UqsOStJpaopZtXBTv3YmB1l/32
+         0Fldm+JqDBpGUQc1xt9WVIA4DfZzdB0V9gTgLlbiWvvLDCivxmxds4TLNzvNIKRCMC+n
+         o9yCiOPlTQdmThUgsNID/R5ENq/8VWbNKUNaTAoTnLaP2NHnelpolYyErVf5YrtdZ2Hy
+         02ORb1Of/ZT5+2lrBkcz20ArHvk8djQZ6atud9LmXm5XO6N2tu9W+xjhqH+9G1ZU9BIh
+         dEaLN2AobV5xI+m+/uLsNEx4uiDKE+96P2Xea2Aehi2jEltHFtrr110VSL3HZIGHy9O5
+         8lIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRkSyAKPE04VLOJhBa+6LzeY3GciE7YlBVAVhKbRsV0Fi05nzjAEVzLcMkOxoi92mFdMqVWlq/iVcP7337RmbFp0+HELZUkiL+k4ZwNzlKKPexWnoGHD4CcOunyN7/ZPpcANjW93JUddPKmCxq1AedamZuNnkj0wiPR0yQuWxEjryjEJlexlXdpkJJYCcCaWEZmL1OAKC8Zpbn+YdJQ7hwl+SGY3k+XbgmgWtgNp13/dky8uXEG87KHBBZRrrqCWrzXBwFKdKdwpKsHm+9z188R8s4eFmvZyqwfn9H/7y3oPpv1UauCdfKon4Y2R5WiXa9Bm3zejRnT/AkzS7zD4rYQ/hzH5niD6OXGX9DYVM=
+X-Gm-Message-State: AOJu0Yxirisr15ZoGrB2T5y4nuVkxatPNwNa67ptWz2rfpUGyThCC70K
+	5hovAv51BZSKoNYGnixOFPo6WsddGoJO1WB/kU+0m0HSGN0gk17K
+X-Google-Smtp-Source: AGHT+IH6mpaSlgZbj9wjlN2+g8jBX7TUrx4Tkes9rmgCSfmSHpu1TLrHJW7JJ/KoS4CQMuRhy5Masw==
+X-Received: by 2002:a17:90b:128e:b0:2c2:8d2c:8292 with SMTP id 98e67ed59e1d1-2c28d2c8317mr2042051a91.48.1717622296577;
+        Wed, 05 Jun 2024 14:18:16 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c28066d59fsm1922215a91.24.2024.06.05.14.18.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 14:18:15 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <20a9ea0b-74d0-47b2-8dc0-2b5e7d070d38@roeck-us.net>
+Date: Wed, 5 Jun 2024 14:18:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzbz3vi6ahkUu7yABV-QhkzNCF-ROcRjUpGjt0FRjfDuKQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 05/17] misc: ds1682: Change nvmem reg_read/write return
+ type
+To: Joy Chakraborty <joychakr@google.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-usb@vger.kernel.org, manugautam@google.com
+References: <20240605175953.2613260-1-joychakr@google.com>
+ <20240605175953.2613260-6-joychakr@google.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240605175953.2613260-6-joychakr@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 01:47:00PM -0700, Andrii Nakryiko wrote:
-> On Wed, Jun 5, 2024 at 10:57 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > On 06/05, Andrii Nakryiko wrote:
-> > >
-> > > so any such
-> > > limitations will cause problems, issue reports, investigation, etc.
-> >
-> > Agreed...
-> >
-> > > As one possible solution, what if we do
-> > >
-> > > struct return_instance {
-> > >     ...
-> > >     u64 session_cookies[];
-> > > };
-> > >
-> > > and allocate sizeof(struct return_instance) + 8 *
-> > > <num-of-session-consumers> and then at runtime pass
-> > > &session_cookies[i] as data pointer to session-aware callbacks?
-> >
-> > I too thought about this, but I guess it is not that simple.
-> >
-> > Just for example. Suppose we have 2 session-consumers C1 and C2.
-> > What if uprobe_unregister(C1) comes before the probed function
-> > returns?
-> >
-> > We need something like map_cookie_to_consumer().
+On 6/5/24 10:59, Joy Chakraborty wrote:
+> Change nvmem read/write function definition return type to ssize_t.
 > 
-> Fair enough. The easy way to solve this is to have
+> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> ---
+>   drivers/misc/ds1682.c | 16 ++++++----------
+>   1 file changed, 6 insertions(+), 10 deletions(-)
 > 
-> 
-> struct uprobe_session_cookie {
->     int consumer_id;
->     u64 cookie;
-> };
-> 
-> And add id to each new consumer when it is added to struct uprobe.
-> Unfortunately, it's impossible to tell when a new consumer was added
-> to the list (as a front item, but maybe we just change it to be
-> appended instead of prepending) vs when the old consumer was removed,
-> so in some cases we'd need to do a linear search.
+> diff --git a/drivers/misc/ds1682.c b/drivers/misc/ds1682.c
+> index 5f8dcd0e3848..953341666ddb 100644
+> --- a/drivers/misc/ds1682.c
+> +++ b/drivers/misc/ds1682.c
+> @@ -198,26 +198,22 @@ static const struct bin_attribute ds1682_eeprom_attr = {
+>   	.write = ds1682_eeprom_write,
+>   };
+>   
+> -static int ds1682_nvmem_read(void *priv, unsigned int offset, void *val,
+> -			     size_t bytes)
+> +static ssize_t ds1682_nvmem_read(void *priv, unsigned int offset, void *val,
+> +				 size_t bytes)
+>   {
+>   	struct i2c_client *client = priv;
+> -	int ret;
+>   
+> -	ret = i2c_smbus_read_i2c_block_data(client, DS1682_REG_EEPROM + offset,
+> +	return i2c_smbus_read_i2c_block_data(client, DS1682_REG_EEPROM + offset,
+>   					    bytes, val);
+> -	return ret < 0 ? ret : 0;
+>   }
+>   
+> -static int ds1682_nvmem_write(void *priv, unsigned int offset, void *val,
+> -			      size_t bytes)
+> +static ssize_t ds1682_nvmem_write(void *priv, unsigned int offset, void *val,
+> +				  size_t bytes)
+>   {
+>   	struct i2c_client *client = priv;
+> -	int ret;
+>   
+> -	ret = i2c_smbus_write_i2c_block_data(client, DS1682_REG_EEPROM + offset,
+> +	return i2c_smbus_write_i2c_block_data(client, DS1682_REG_EEPROM + offset,
+>   					     bytes, val);
 
-also we probably need to add the flag if we want to execute the return
-handler..  we can have multiple session handlers and if just one of them
-returns 0 we need to install the return probe
+i2c_smbus_write_i2c_block_data() does not return the number of bytes written.
+It returns either 0 or an error code.
 
-and then when return probe hits, we need to execute only that consumer's
-return handler
+Guenter
 
-jirka
-
-> 
-> But the good news is that in the common case we wouldn't need to
-> search and the next item in session_cookies[] array would be the one
-> we need.
-> 
-> WDYT? It's still fast, and it's simpler than the shadow stack idea, IMO.
-> 
-> P.S. Regardless, maybe we should change the order in which we insert
-> consumers to uprobe? Right now uprobe consumer added later will be
-> executed first, which, while not wrong, is counter-intuitive. And also
-> it breaks a nice natural order when we need to match it up with stuff
-> like session_cookies[] as described above.
-> 
-> >
-> > > > +       /* The handler_session callback return value controls execution of
-> > > > +        * the return uprobe and ret_handler_session callback.
-> > > > +        *  0 on success
-> > > > +        *  1 on failure, DO NOT install/execute the return uprobe
-> > > > +        *    console warning for anything else
-> > > > +        */
-> > > > +       int (*handler_session)(struct uprobe_consumer *self, struct pt_regs *regs,
-> > > > +                              unsigned long *data);
-> > > > +       int (*ret_handler_session)(struct uprobe_consumer *self, unsigned long func,
-> > > > +                                  struct pt_regs *regs, unsigned long *data);
-> > > > +
-> > >
-> > > We should try to avoid an alternative set of callbacks, IMO. Let's
-> > > extend existing ones with `unsigned long *data`,
-> >
-> > Oh yes, agreed.
-> >
-> > And the comment about the return value looks confusing too. I mean, the
-> > logic doesn't differ from the ret-code from ->handler().
-> >
-> > "DO NOT install/execute the return uprobe" is not true if another
-> > non-session-consumer returns 0.
-> >
-> > Oleg.
-> >
 
