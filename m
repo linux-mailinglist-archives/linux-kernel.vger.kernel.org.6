@@ -1,175 +1,275 @@
-Return-Path: <linux-kernel+bounces-202779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F081E8FD0F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:36:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7696B8FD0F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768131F26538
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:36:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F451F265B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C908E2032A;
-	Wed,  5 Jun 2024 14:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC14D25601;
+	Wed,  5 Jun 2024 14:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cf88l8XI"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WaqA7Eq+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF54810979
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDB11B5AA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 14:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717598168; cv=none; b=M8IjPecL3fRJyP16MIAG7ofXwxBZBqIj1omMFMVh3UxQUtDxdVP4uaKDYsI5gZiCQgFv0c9hYUK2mOvJJFCZf0/F+o8thOXaIrzYAHfMfBk+BhqyvAN0AROb3nEHOxhqx3fBoq5gmbPLr2FkcAs1YUFfISoScCS5hGE6oHkwaIQ=
+	t=1717598367; cv=none; b=C8OTcvsXR8RxNxACq582cqBcLUSY47qkDvVsrg9WpWKCbS45xtb2kb8yTiLvAAnWxZCktyTYOr2xbZ00wdwLTuVwaai2+YoB4W4X4OnqvuDssANgMCOxhtNvUqvsWh0HACgkdxavsICp4zmwMle6iftUgQ4bhGMi1BYvYYsvXUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717598168; c=relaxed/simple;
-	bh=90sQLbIUZo5FsAYSdsfJFZRSqmqR/Gsc7mPGaTjeK74=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GGi76gp8PQVUdPtWYC+MOSCrCaMNqSLm1ebIMhKz97jz1ebPJzJyLFeW5THiz17iTAKYhEDaJnXAj9rDUx0sJN6q8xMv9LU/eXWTx7YLhkQUTl+nR/AzzTBWc/hXc1I775pKc+St11MmN29AR+JgzhoLlidme6UamEOtYPy30ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cf88l8XI; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-701b0b0be38so51671b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:36:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717598166; x=1718202966; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yq1yy0Su5P7QN87mXYg9WXuNVfybQpz6GBQGEruYcrI=;
-        b=Cf88l8XIDJpqHxCNYby7xa1J3jQdgtF1hKzBIqKF9S7kNPlwtjn/foI133ztGIAjlu
-         /uHCsblOfJYZrB9mqCbYCHKfwOvWlB74r7wUeitL0UFsA7o8bpsW27pkYHPauQQ/w62V
-         4S3GAPyOEU2cmSNxZdWmyARnJ1+Vp/MUd1hDNIR2oapr+QG/ADR5tVQQMEyLQ08wwHJi
-         Mm1T+NYwK8/Uk1k24i00TZrnqb6nb6Boyw5d6xKNgPKDnpN7byfnx/M7dKapZfKOtScF
-         rLnKf9C+JjOJ/blzZBgIVQ+M9d+Xx6FwXrAlhkJ/5O65PyYmoA2sQ6MzIK5zUShIUHvO
-         at9Q==
+	s=arc-20240116; t=1717598367; c=relaxed/simple;
+	bh=Wlqt5CGsPx2/fPJl3GbzpCwx7K0CV0Ro7rqrsWeiSWA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PX4x11XKYpB1qVvXOooam7CYPSmmwW5K4WDgdjCzflKurMYEp6c/QOvU+eVH9zkftNGtguBPYBFtU43rTR5jHAACvnkpf9z/tuHxJVrBRtmLEVmbyBbmvo6YUUQKh8FJ08cziNcyvz5/dTv0AoeCTG5JwTXlOfBI6Vek3xbVt9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WaqA7Eq+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717598365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CA/B9zN9yBH+VZdI5j5Tw4Q/m+51LN5pfqTQLeU79bU=;
+	b=WaqA7Eq+DFDGj5J5lALk8QAqiVxiJYpRGoaHOKCxDLXyUWdGXf7rIfXa/PsMuSbgLgwx1K
+	GlRdBSDSpiijN7G7nrAsj8wO1r2LpQeDiQAW1uS6eBgs8uyIEApuoMO4YKkDF5NfMj5dP2
+	IKm04i7L91xWBUG4RVuaubKCn60DRpg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-461-mbO81JCPM26bLTtmc9e4yw-1; Wed, 05 Jun 2024 10:39:23 -0400
+X-MC-Unique: mbO81JCPM26bLTtmc9e4yw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42158087ac3so4073395e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 07:39:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717598166; x=1718202966;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yq1yy0Su5P7QN87mXYg9WXuNVfybQpz6GBQGEruYcrI=;
-        b=T3dAExonkseqpTMDctZVkrB14WV25fnv97QLY7iEnBYqgYHBgZjHISZIh5gvULVbco
-         cIKDTSh2INNlMbN3+NYfUkInwNLcwEujj6PJUiswmlghf0KNP/7WWHYO4KxtIT2qBUGP
-         h5PUFTPjIGK/WpX8NT3nIPEkqdcji4TRdYMKH9/6bXGT92moEMsQytFziIKR9BilEW46
-         bQc+CenBDy4HWB7NLXjVKt11gJw6d3pE4F/YBz9LjWxEaEn+qmC1EkzbJbUq/Odempz1
-         oR9pVHhHJY+2fDZ+v3ke3YNEH8obp/zvB0TFX4FppJoc93dpG9ETw0shwjpmm5H10cLh
-         OtqA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Jijl+iVq5t0bCAbnHefB0PbM9ooVS+Wxt1KA2i3RqFM+dRe/+LLs4QjOtS5GHN+eACOV/q9XqYqnWFXavN6d1gdusXlgrvdGx6AH
-X-Gm-Message-State: AOJu0YwZrgiFIwks7E+rUq1mPAhCZGCL2xQSP6RloHhgFi7sYwDreYAC
-	DgHq2mzBl2xFr/j5ZGKX4ymdOmuqjWJLZ/H3PxllFX4zEh3JH8O4uYgddTpEN4ajVg0n1iFdRKb
-	48iDgai8VneZeUc1UqP4xH2LGy6o=
-X-Google-Smtp-Source: AGHT+IHzMIhmIExlPP2dOJMwUeHRzAG3Zqtu8CJwxbDQujyXLFtz5Pdob5xgc4REV0gHk7os55wc3YNBoweEki0mI8g=
-X-Received: by 2002:a05:6a20:918d:b0:1b0:111f:2b7f with SMTP id
- adf61e73a8af0-1b2b75a2cc8mr3145079637.39.1717598165835; Wed, 05 Jun 2024
- 07:36:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717598360; x=1718203160;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CA/B9zN9yBH+VZdI5j5Tw4Q/m+51LN5pfqTQLeU79bU=;
+        b=vyILYqKVx0pf6MYve3VAPcEDL+V9CR8uBT4ecRlzT3z8f9T321A1Ko9ifXBuMF6fvF
+         VMQjfdKEEkp0YXWcwlWKo67ZLyOF8k7tlfEb+w0bUffhoFjsTKdVN9vmp9uiUiUCH4Cr
+         oYB6a5iquE7Qg9IdAf/KJxPoAuf4ptckv4nQBTjcnb4GZXe6ViYQAMbFH6wHpJ7ZXZFV
+         P6I6Ai+BPclsdBE9MikNifJj3aL/kzE7r2fAD3ANvyvwOkHQw92h/V4QJeq1KrR3ipBu
+         Nft2nyTk+YKCBXL60TrlQVGacMITZXCcfOFD30zETsK+32Jda6NrReuby66QlV2/x8Xu
+         Guzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSf3Iw+GlhKvrnz6SG/xmwOApJ5E4xoPisjVFJtLo7/OQY9+U52N0Z9u0nJWr9uYbA6WuCqWXCfYUPgmnMxdJDkSWFyagNQRzKKJwH
+X-Gm-Message-State: AOJu0YwoNkmu96cNDAkKi8NzFWRO/Y65o6ZQI064E1KB0wgz1+Xn/jDJ
+	Yq+Oz9PPYOk+LKx+Upe066LSL1cMrC3Jbqy9BVly1buP6bUadrm3HKYjZIjbUDYBkRSIpC4ehW2
+	A9jjupEkrY5E3v9CcjoR2PFPg08o3A6N49QDsuHDpu+EXHMFMYkn5x3QgUw1CYg==
+X-Received: by 2002:a05:6000:d86:b0:355:1759:db18 with SMTP id ffacd0b85a97d-35e8ef17b36mr1764709f8f.29.1717598359775;
+        Wed, 05 Jun 2024 07:39:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnhh+zq8OOs0lO4LDZRr22xIUOu01qZq4BIHyJxbsxHpehZK37CZodePmt4TszO7CV1DsRiA==
+X-Received: by 2002:a05:6000:d86:b0:355:1759:db18 with SMTP id ffacd0b85a97d-35e8ef17b36mr1764677f8f.29.1717598359317;
+        Wed, 05 Jun 2024 07:39:19 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:3100:19a8:d898:8e69:6aff? (p200300cbc706310019a8d8988e696aff.dip0.t-ipconnect.de. [2003:cb:c706:3100:19a8:d898:8e69:6aff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd064b030sm14781164f8f.105.2024.06.05.07.39.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 07:39:18 -0700 (PDT)
+Message-ID: <8580a462-eadc-4fa5-b01a-c0b8c3ae644d@redhat.com>
+Date: Wed, 5 Jun 2024 16:39:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604103736.3068-1-thorsten.blum@toblux.com>
-In-Reply-To: <20240604103736.3068-1-thorsten.blum@toblux.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 5 Jun 2024 10:35:51 -0400
-Message-ID: <CADnq5_OtyaYJAcMpd6hmo4jShFq+1NjDHW5_TEcQB+Hf3yxaqQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Simplify if conditions
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
-	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	daniel@ffwll.ch, Qingqing.Zhuo@amd.com, roman.li@amd.com, hersenxs.wu@amd.com, 
-	chaitanya.dhere@amd.com, wenjing.liu@amd.com, alex.hung@amd.com, 
-	sungkim@amd.com, syed.hassan@amd.com, syedsaaem.rizvi@amd.com, 
-	dillon.varone@amd.com, charlene.liu@amd.com, hamza.mahfooz@amd.com, 
-	nicholas.kazlauskas@amd.com, jerry.zuo@amd.com, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] mm/rmap: integrate PMD-mapped folio splitting into
+ pagewalk loop
+From: David Hildenbrand <david@redhat.com>
+To: Lance Yang <ioworker0@gmail.com>, Yin Fengwei <fengwei.yin@intel.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org,
+ baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com,
+ ryan.roberts@arm.com, 21cnbao@gmail.com, mhocko@suse.com,
+ fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com,
+ xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com,
+ songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240521040244.48760-1-ioworker0@gmail.com>
+ <20240521040244.48760-3-ioworker0@gmail.com>
+ <fd16b219-bc46-484a-8581-a21240440fa6@redhat.com>
+ <CAK1f24kwf4gDwK=8X4z1bM9-H6_M9QKy6-ko9pTUZij-W=40wg@mail.gmail.com>
+ <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <d319f00e-9dfb-43b1-ae81-a2e2afdf36c4@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Applied.  Thanks!
+On 05.06.24 16:28, David Hildenbrand wrote:
+> On 05.06.24 16:20, Lance Yang wrote:
+>> Hi David,
+>>
+>> On Wed, Jun 5, 2024 at 8:46 PM David Hildenbrand <david@redhat.com> wrote:
+>>>
+>>> On 21.05.24 06:02, Lance Yang wrote:
+>>>> In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
+>>>> folios, start the pagewalk first, then call split_huge_pmd_address() to
+>>>> split the folio.
+>>>>
+>>>> Since TTU_SPLIT_HUGE_PMD will no longer perform immediately, we might
+>>>> encounter a PMD-mapped THP missing the mlock in the VM_LOCKED range during
+>>>> the page walk. It’s probably necessary to mlock this THP to prevent it from
+>>>> being picked up during page reclaim.
+>>>>
+>>>> Suggested-by: David Hildenbrand <david@redhat.com>
+>>>> Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+>>>> ---
+>>>
+>>> [...] again, sorry for the late review.
+>>
+>> No worries at all, thanks for taking time to review!
+>>
+>>>
+>>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>>> index ddffa30c79fb..08a93347f283 100644
+>>>> --- a/mm/rmap.c
+>>>> +++ b/mm/rmap.c
+>>>> @@ -1640,9 +1640,6 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+>>>>         if (flags & TTU_SYNC)
+>>>>                 pvmw.flags = PVMW_SYNC;
+>>>>
+>>>> -     if (flags & TTU_SPLIT_HUGE_PMD)
+>>>> -             split_huge_pmd_address(vma, address, false, folio);
+>>>> -
+>>>>         /*
+>>>>          * For THP, we have to assume the worse case ie pmd for invalidation.
+>>>>          * For hugetlb, it could be much worse if we need to do pud
+>>>> @@ -1668,20 +1665,35 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+>>>>         mmu_notifier_invalidate_range_start(&range);
+>>>>
+>>>>         while (page_vma_mapped_walk(&pvmw)) {
+>>>> -             /* Unexpected PMD-mapped THP? */
+>>>> -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+>>>> -
+>>>>                 /*
+>>>>                  * If the folio is in an mlock()d vma, we must not swap it out.
+>>>>                  */
+>>>>                 if (!(flags & TTU_IGNORE_MLOCK) &&
+>>>>                     (vma->vm_flags & VM_LOCKED)) {
+>>>>                         /* Restore the mlock which got missed */
+>>>> -                     if (!folio_test_large(folio))
+>>>> +                     if (!folio_test_large(folio) ||
+>>>> +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
+>>>>                                 mlock_vma_folio(folio, vma);
+>>>
+>>> Can you elaborate why you think this would be required? If we would have
+>>> performed the  split_huge_pmd_address() beforehand, we would still be
+>>> left with a large folio, no?
+>>
+>> Yep, there would still be a large folio, but it wouldn't be PMD-mapped.
+>>
+>> After Weifeng's series[1], the kernel supports mlock for PTE-mapped large
+>> folio, but there are a few scenarios where we don't mlock a large folio, such
+>> as when it crosses a VM_LOCKed VMA boundary.
+>>
+>>    -                     if (!folio_test_large(folio))
+>>    +                     if (!folio_test_large(folio) ||
+>>    +                         (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
+>>
+>> And this check is just future-proofing and likely unnecessary. If encountering a
+>> PMD-mapped THP missing the mlock for some reason, we can mlock this
+>> THP to prevent it from being picked up during page reclaim, since it is fully
+>> mapped and doesn't cross the VMA boundary, IIUC.
+>>
+>> What do you think?
+>> I would appreciate any suggestions regarding this check ;)
+> 
+> Reading this patch only, I wonder if this change makes sense in the
+> context here.
+> 
+> Before this patch, we would have PTE-mapped the PMD-mapped THP before
+> reaching this call and skipped it due to "!folio_test_large(folio)".
+> 
+> After this patch, we either
+> 
+> a) PTE-remap the THP after this check, but retry and end-up here again,
+> whereby we would skip it due to "!folio_test_large(folio)".
+> 
+> b) Discard the PMD-mapped THP due to lazyfree directly. Can that
+> co-exist with mlock and what would be the problem here with mlock?
+> 
+> 
+> So if the check is required in this patch, we really have to understand
+> why. If not, we should better drop it from this patch.
+> 
+> At least my opinion, still struggling to understand why it would be
+> required (I have 0 knowledge about mlock interaction with large folios :) ).
+> 
 
-Alex
+Looking at that series, in folio_references_one(), we do
 
-On Tue, Jun 4, 2024 at 9:07=E2=80=AFAM Thorsten Blum <thorsten.blum@toblux.=
-com> wrote:
->
-> The if conditions !A || A && B can be simplified to !A || B.
->
-> Fixes the following Coccinelle/coccicheck warnings reported by
-> excluded_middle.cocci:
->
->         WARNING !A || A && B is equivalent to !A || B
->         WARNING !A || A && B is equivalent to !A || B
->         WARNING !A || A && B is equivalent to !A || B
->
-> Compile-tested only.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c | 6 +++---
->  .../gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c   | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c =
-b/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
-> index ad2a6b4769fe..940081df6dc0 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_dc_resource_mgmt.c
-> @@ -68,7 +68,7 @@ static bool get_plane_id(struct dml2_context *dml2, con=
-st struct dc_state *state
->                 if (state->streams[i]->stream_id =3D=3D stream_id) {
->                         for (j =3D 0; j < state->stream_status[i].plane_c=
-ount; j++) {
->                                 if (state->stream_status[i].plane_states[=
-j] =3D=3D plane &&
-> -                                       (!is_plane_duplicate || (is_plane=
-_duplicate && (j =3D=3D plane_index)))) {
-> +                                       (!is_plane_duplicate || (j =3D=3D=
- plane_index))) {
->                                         *plane_id =3D (i << 16) | j;
->                                         return true;
->                                 }
-> @@ -707,8 +707,8 @@ static void free_unused_pipes_for_plane(struct dml2_c=
-ontext *ctx, struct dc_stat
->         for (i =3D 0; i < ctx->config.dcn_pipe_count; i++) {
->                 if (state->res_ctx.pipe_ctx[i].plane_state =3D=3D plane &=
-&
->                         state->res_ctx.pipe_ctx[i].stream->stream_id =3D=
-=3D stream_id &&
-> -                       (!is_plane_duplicate || (is_plane_duplicate &&
-> -                       ctx->v20.scratch.dml_to_dc_pipe_mapping.dml_pipe_=
-idx_to_plane_index[state->res_ctx.pipe_ctx[i].pipe_idx] =3D=3D plane_index)=
-) &&
-> +                       (!is_plane_duplicate ||
-> +                       ctx->v20.scratch.dml_to_dc_pipe_mapping.dml_pipe_=
-idx_to_plane_index[state->res_ctx.pipe_ctx[i].pipe_idx] =3D=3D plane_index)=
- &&
->                         !is_pipe_used(pool, state->res_ctx.pipe_ctx[i].pi=
-pe_idx)) {
->                         free_pipe(&state->res_ctx.pipe_ctx[i]);
->                 }
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.=
-c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
-> index a41812598ce8..b2bbf7988f92 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_translation_helper.c
-> @@ -979,7 +979,7 @@ static bool get_plane_id(struct dml2_context *dml2, c=
-onst struct dc_state *conte
->                 if (context->streams[i]->stream_id =3D=3D stream_id) {
->                         for (j =3D 0; j < context->stream_status[i].plane=
-_count; j++) {
->                                 if (context->stream_status[i].plane_state=
-s[j] =3D=3D plane &&
-> -                                       (!is_plane_duplicate || (is_plane=
-_duplicate && (j =3D=3D plane_index)))) {
-> +                                       (!is_plane_duplicate || (j =3D=3D=
- plane_index))) {
->                                         *plane_id =3D (i << 16) | j;
->                                         return true;
->                                 }
-> --
-> 2.39.2
->
+			if (!folio_test_large(folio) || !pvmw.pte) {
+				/* Restore the mlock which got missed */
+				mlock_vma_folio(folio, vma);
+				page_vma_mapped_walk_done(&pvmw);
+				pra->vm_flags |= VM_LOCKED;
+				return false; /* To break the loop */
+			}
+
+I wonder if we want that here as well now: in case of lazyfree we
+would not back off, right?
+
+But I'm not sure if lazyfree in mlocked areas are even possible.
+
+Adding the "!pvmw.pte" would be much clearer to me than the flag check.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
