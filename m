@@ -1,179 +1,100 @@
-Return-Path: <linux-kernel+bounces-202854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1AED8FD1F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E758FD1F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F32211C22E5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C40A61F24108
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A9B13B7A7;
-	Wed,  5 Jun 2024 15:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1585061FE7;
+	Wed,  5 Jun 2024 15:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C+L/a80y";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qPw1NWO0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CPWEHlhR"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E921E89C;
-	Wed,  5 Jun 2024 15:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192FF19D88E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717602245; cv=none; b=OABex+EIOw5OYGKPvzTL8oEwySDofhEp9AYqSR28JtFR8+QMqMLaE6YtDw0Zeiq7NM2bdnVQD8xe+0goFyRx4BZ5LQg/h4VovoEZC+ezGBCRJo0XBybM/hnxNFkTKEpMM4fSltOLy+mt1pgwplRFuw5molNPT23vQNz+QLjquXg=
+	t=1717602294; cv=none; b=pKzLGQHFFb86g4jbxfgFs1et5gvB0l5bLVpxL6O3zlXzbyRGbe9zO8NSblHLQndcIPxlxyYp105ufdCIDCC0+QsrEbXbVCs1Pk2KVZE5QMuIzl5jnOzLU/+Hh2oJRq6Tgj7l007TjxQdQ2eOZwTTU4yDRf4kbZ79KaClBddV6oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717602245; c=relaxed/simple;
-	bh=KT6Ja21CeBwDwnbTMjxwB5jW7NaOaDFBEqS3Jil1IB0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=qkD31hZtWtucuor22NyMVI2TTJwykwCBH8bMKWumEtByc+axEB9t++zFqDw3iLxUbgugVdf4YmhAgsL63aBHJJxPpIwT9VC8TjPNNI427R3NH7UqMRBFUhNxDyDYrh4GhPZ0tSQ9eHpUf8Wu03SAhrQBNlgIKyFufcjSpDHYCpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C+L/a80y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qPw1NWO0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 05 Jun 2024 15:44:01 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717602242;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yvg4wm+N6AqA16g0BLTOAUIQFZA6StgSmQvAxJCYYhc=;
-	b=C+L/a80yiUTx/cR1sYxPOwlaZkb3//acDXR2L8VOji0MzhIZuU2iA+F//ATG4iiT4rBXFj
-	ruSKi58IBCwwygxocVpsYjNFxLV3eTYRgd2OhEnRMbJNqkCc3IdkzRxwJT+EdkJdss/mtu
-	xzWbYRBHUsCMPoknWOHtYzRRABusqCvDQ2tDr0j79E5Su3uf7yfGZxiaaZ3n0bdebe003t
-	QZSsFsGr1iXbS6iNLvejD0+iIyDLFM5jTGQhKDt88eVViNxIddpjsqFA4UwN6hWmBbE+N5
-	pmKBWkLQIvX01dhJvYVS/igMpDsXlyGERo/xGJz/RgpA+Mdffzxp9Xo9BDCsGA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717602242;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yvg4wm+N6AqA16g0BLTOAUIQFZA6StgSmQvAxJCYYhc=;
-	b=qPw1NWO0fw7aOwNayDhnmtiDrWyieKBRVbJ4ZJEHT0mXatsKOz6j68fuAZLQm5XFSQDpcT
-	q7JxYm/LgKIUy5CA==
-From: "tip-bot2 for Herve Codina" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqdomain: Add missing parameter descriptions in
- kernel-doc comments
-Cc: Herve Codina <herve.codina@bootlin.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240527161450.326615-10-herve.codina@bootlin.com>
-References: <20240527161450.326615-10-herve.codina@bootlin.com>
+	s=arc-20240116; t=1717602294; c=relaxed/simple;
+	bh=BVhfDmp7EMCJeUlCwY6gVCLaaetzqiVbZV7+bFTYkZA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=B3Y1LJWWhIbpR2CNiqmufSCWCB5EPQ5CstwN/JRGVnnMA2nCJ3b49R3OYncYV2erbdrOpwvzmyTjrMhQbhlFjVqIsrTCU/NVlbwLJImE91wvraQ8qg+nMuj2KmEKdIoZfdZlqH7bN5V1FaMf52raiNkOeJ6hJ9ic10zPIJF8omQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CPWEHlhR; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627f43bec13so117413147b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 08:44:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717602292; x=1718207092; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BC+wHIAAkSMG5ikZu33sScLTYzucBodRNg3gYHDfmYw=;
+        b=CPWEHlhRI8V/sxjjwPIaEkOQE27LvBwn9waUbtgR7pzLSmLg5cDRVsf/jZx0E62zRC
+         tRJWHKPT7UNo7Et5BXj95Q0UMCbutQDWfzVsHft2bw8JnO6rXQADKFXjW1pGZPMpNelA
+         440ULFGF9gjJsGpkIg5kP6QG3CH2p4wEzHgchU9t75Yy3xsyNKL6KGhtPDH2pmWutBCw
+         wgLhOIACZEO7EqrqMMshnDUVxBnO1ESotLUt6PgsPJ1j7icWDDaxOtdwPzoux8X/vJYG
+         Y0x/biAg/rM5B8JUjjpvB908L3MlqE6C2JU832zzGfq+wCiVMudk4kl081WlozbPK6Bv
+         V9Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717602292; x=1718207092;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BC+wHIAAkSMG5ikZu33sScLTYzucBodRNg3gYHDfmYw=;
+        b=njF3IaZ1/cdGDAm3VHV9M3xt0EcLSgOoIOBzMfR/Ax0LsqevzCyIm4yt479Zs8C2I8
+         LVuFv85oZq92qCURuIs8zIaWJZHh8Mumwr41+4wPyzLpleBpav2N0yV7PiMzTXEPubkU
+         8EcYvnkspQ1tusBNinsBzZlLSCFDMzbncMDQeS0Py2L9zcPCjiVxSC95zxmgivYrg/7d
+         Q3bhGy7YA1SP5eu+gOpXxsd4MWIrYQqkDj+AHuMdt6VRir6U79pf1NhoNVPGQLPO/UD8
+         oxaMvp5jfZEYsktltSjCM8+hDW7e5u5Y63vu7rLoTdRe221+n0KNvSOhwbw1E6pWyOy/
+         QmzQ==
+X-Gm-Message-State: AOJu0YwtXmc0tQMiprx56SCKbRE4TPqrHqDCNY2WU1w/fivDeUg/A1zH
+	WidCo+RIIaw7kH7aoaGLZXipy5hYSD35HsLEP0eD4pxX/+yGGVsxKo0JGgo7MX0MmK2g5jMbosJ
+	K/w==
+X-Google-Smtp-Source: AGHT+IE2iOIzHVLwm+SJXUsDFZt6fF5GM2SMfLp5CkJVhKWqscYywtwdaJbJfiTEdC8yAdRWJJoeax6Ugeo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:85:b0:627:925c:cf31 with SMTP id
+ 00721157ae682-62cbb58de20mr7360197b3.5.1717602292014; Wed, 05 Jun 2024
+ 08:44:52 -0700 (PDT)
+Date: Wed, 5 Jun 2024 08:44:50 -0700
+In-Reply-To: <20240528003521.979836-1-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <171760224154.10875.18416115234457548979.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
+Message-ID: <ZmCH8vH6VRdYHZWs@google.com>
+Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
+From: Sean Christopherson <seanjc@google.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, peterz@infradead.org, 
+	torvalds@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org, 
+	mark.rutland@arm.com, juri.lelli@redhat.com, joel@joelfernandes.org, 
+	raghavendra.kt@amd.com, sshegde@linux.ibm.com, boris.ostrovsky@oracle.com, 
+	konrad.wilk@oracle.com
+Content-Type: text/plain; charset="us-ascii"
 
-The following commit has been merged into the irq/core branch of tip:
+On Mon, May 27, 2024, Ankur Arora wrote:
+> Patches 1,2 
+>  "sched/core: Move preempt_model_*() helpers from sched.h to preempt.h"
+>  "sched/core: Drop spinlocks on contention iff kernel is preemptible"
+> condition spin_needbreak() on the dynamic preempt_model_*().
 
-Commit-ID:     b4dc049ea3ea98df58820f988c7c9578aa076f72
-Gitweb:        https://git.kernel.org/tip/b4dc049ea3ea98df58820f988c7c9578aa076f72
-Author:        Herve Codina <herve.codina@bootlin.com>
-AuthorDate:    Mon, 27 May 2024 18:14:36 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 05 Jun 2024 17:41:42 +02:00
+...
 
-irqdomain: Add missing parameter descriptions in kernel-doc comments
+> Not really required but a useful bugfix for PREEMPT_DYNAMIC and PREEMPT_AUTO.
+> Sean Christopherson (2):
+>   sched/core: Move preempt_model_*() helpers from sched.h to preempt.h
+>   sched/core: Drop spinlocks on contention iff kernel is preemptible
 
-During compilation, several warning of the following form were raised:
-  Function parameter or struct member 'x' not described in 'yyy'
-
-Add the missing function parameter descriptions.
-
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20240527161450.326615-10-herve.codina@bootlin.com
----
- kernel/irq/irqdomain.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index d937231..28709c1 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -111,6 +111,7 @@ EXPORT_SYMBOL_GPL(__irq_domain_alloc_fwnode);
- 
- /**
-  * irq_domain_free_fwnode - Free a non-OF-backed fwnode_handle
-+ * @fwnode: fwnode_handle to free
-  *
-  * Free a fwnode_handle allocated with irq_domain_alloc_fwnode.
-  */
-@@ -982,6 +983,12 @@ EXPORT_SYMBOL_GPL(__irq_resolve_mapping);
- 
- /**
-  * irq_domain_xlate_onecell() - Generic xlate for direct one cell bindings
-+ * @d:		Interrupt domain involved in the translation
-+ * @ctrlr:	The device tree node for the device whose interrupt is translated
-+ * @intspec:	The interrupt specifier data from the device tree
-+ * @intsize:	The number of entries in @intspec
-+ * @out_hwirq:	Pointer to storage for the hardware interrupt number
-+ * @out_type:	Pointer to storage for the interrupt type
-  *
-  * Device Tree IRQ specifier translation function which works with one cell
-  * bindings where the cell value maps directly to the hwirq number.
-@@ -1000,6 +1007,12 @@ EXPORT_SYMBOL_GPL(irq_domain_xlate_onecell);
- 
- /**
-  * irq_domain_xlate_twocell() - Generic xlate for direct two cell bindings
-+ * @d:		Interrupt domain involved in the translation
-+ * @ctrlr:	The device tree node for the device whose interrupt is translated
-+ * @intspec:	The interrupt specifier data from the device tree
-+ * @intsize:	The number of entries in @intspec
-+ * @out_hwirq:	Pointer to storage for the hardware interrupt number
-+ * @out_type:	Pointer to storage for the interrupt type
-  *
-  * Device Tree IRQ specifier translation function which works with two cell
-  * bindings where the cell values map directly to the hwirq number
-@@ -1018,6 +1031,12 @@ EXPORT_SYMBOL_GPL(irq_domain_xlate_twocell);
- 
- /**
-  * irq_domain_xlate_onetwocell() - Generic xlate for one or two cell bindings
-+ * @d:		Interrupt domain involved in the translation
-+ * @ctrlr:	The device tree node for the device whose interrupt is translated
-+ * @intspec:	The interrupt specifier data from the device tree
-+ * @intsize:	The number of entries in @intspec
-+ * @out_hwirq:	Pointer to storage for the hardware interrupt number
-+ * @out_type:	Pointer to storage for the interrupt type
-  *
-  * Device Tree IRQ specifier translation function which works with either one
-  * or two cell bindings where the cell values map directly to the hwirq number
-@@ -1051,6 +1070,10 @@ EXPORT_SYMBOL_GPL(irq_domain_simple_ops);
- /**
-  * irq_domain_translate_onecell() - Generic translate for direct one cell
-  * bindings
-+ * @d:		Interrupt domain involved in the translation
-+ * @fwspec:	The firmware interrupt specifier to translate
-+ * @out_hwirq:	Pointer to storage for the hardware interrupt number
-+ * @out_type:	Pointer to storage for the interrupt type
-  */
- int irq_domain_translate_onecell(struct irq_domain *d,
- 				 struct irq_fwspec *fwspec,
-@@ -1068,6 +1091,10 @@ EXPORT_SYMBOL_GPL(irq_domain_translate_onecell);
- /**
-  * irq_domain_translate_twocell() - Generic translate for direct two cell
-  * bindings
-+ * @d:		Interrupt domain involved in the translation
-+ * @fwspec:	The firmware interrupt specifier to translate
-+ * @out_hwirq:	Pointer to storage for the hardware interrupt number
-+ * @out_type:	Pointer to storage for the interrupt type
-  *
-  * Device Tree IRQ specifier translation function which works with two cell
-  * bindings where the cell values map directly to the hwirq number
+Peter and/or Thomas, would it be possible to get these applied to tip-tree sooner
+than later?  They fix a real bug that affects KVM to varying degrees.
 
