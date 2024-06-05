@@ -1,410 +1,142 @@
-Return-Path: <linux-kernel+bounces-201986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B33D8FC628
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:26:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA858FC625
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB3A82830D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:26:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E99A1C2124E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B431922E3;
-	Wed,  5 Jun 2024 08:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="w2Ixvx7h"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B206C1946BA;
-	Wed,  5 Jun 2024 08:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CD01946C3;
+	Wed,  5 Jun 2024 08:19:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B0F1946BA;
+	Wed,  5 Jun 2024 08:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717575579; cv=none; b=tbogx/FJK4YevF5OJBYuNvIcVNb8U3gNVn4MsXH0Y9fnHEdevJxXQ8yAqGXZJMCLGYnm3Ljna8XZ49pWGyW33JWhliZ0BDTjwdn7UDnsxYmBrpu4qaoz4UpFNyynmVin4QSJ4ECQVhR0nBpaIyKqyx8yZSihzn7C7wC724z7VTo=
+	t=1717575574; cv=none; b=gnw7OV0IXW7z/TmV3uO7iXe2ALoZBZZwgWdvhhQPSnDyrra06JA60QQu3zhtqEVTMOC6Z3BIg0ZiPn6xGvPHWorjLQSpAYIoVuTKLN64abXdSTuoMUaXcW5IK5LgifAvvoLqk2OigltbInOLnBpeod3wlnYtu/vX7wk6hpLp9VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717575579; c=relaxed/simple;
-	bh=awnecWctzKrmH2Q9F9eUI1sO1/cE+Y+MWy1YkQh6Tsk=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=PtkVCKDSwCApTcYv83qaBO2Kxq8SnTs9Y7jPJozMlFIWh1up39z1kAV2Mz8wbHQ0/jZHbgHqkvcP0Crrc3+rH7OT4bWO3PN6Z56beZs8JWjxzi972Fd2RRimQHQhwMNY+mVDAvRyHPAeQpy8J6vZIukMq2ze1ncrSJD5922aqfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=w2Ixvx7h; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sElrk-008sMe-13;
-	Wed, 05 Jun 2024 10:19:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
-	Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RJv1sYTRVMr7FTjeuQa/7/Qu+8HkgnWrXnXH071JoWo=; b=w2Ixvx7hYXXkVD6thSD6tSLEs1
-	rJdMaawDNbgs3OH72we4bzwon+ObclyH4Ay+4yjIuBxtSDjEFymuCZ2KXqbAG6M7MYtZDO6Yf9tC0
-	ncAwIjDbEsv5ZQRby+GLgjsvPNUjxfTMQVrOuJaqDzlIAo6JfV2+WFAotorvwgxjqHb45I2Q4HPu6
-	RCg5/x8fW6611ncgQL9Xa8zoVHBgCQ5NeRZaW1f4ysj/kIMfIoA1RlonD1lnwys2BJpygkbjhn1y6
-	ZFaYUaxv1C2fWtFwHO58mQaXjrtwGLwpfLLGwA4OHcr4mGSmzSlwuCVyL8OINyTr8SAHmur22kyfv
-	uD6YV8nA==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sElri-002fQU-2Q;
-	Wed, 05 Jun 2024 10:19:28 +0200
-Received: from andi by aktux with local (Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sElrj-000Ytt-20;
-	Wed, 05 Jun 2024 10:19:27 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andreas@kemnade.info,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: regulator: twl-regulator: convert to yaml
-Date: Wed,  5 Jun 2024 10:19:06 +0200
-Message-Id: <20240605081906.134141-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1717575574; c=relaxed/simple;
+	bh=J11oghjLd2OL4EAzmLeais99j3IPznPLv+/4AFGSym4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f6+jb6bnzmr8amvd1eN8QuLxyg+Xdle7xbkVqQelMwORLL5d3GHKGzLgfPRg9sILEX+YhLToRHPMyfQ4spl5SsSNwi2pgOUQkitOWk3inpRBjg9uLwWlpq0yllR7nrBTnx2FDS8+krd/SLVec5l3pjhKSGHblASkdSFnu2IAQH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81375DA7;
+	Wed,  5 Jun 2024 01:19:55 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF1BF3F762;
+	Wed,  5 Jun 2024 01:19:26 -0700 (PDT)
+Message-ID: <e0434947-4fe9-43f8-87dd-91e6eb491341@arm.com>
+Date: Wed, 5 Jun 2024 09:19:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/16] perf auxtrace: Allow number of queues to be
+ specified
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org,
+ coresight@lists.linaro.org, suzuki.poulose@arm.com,
+ gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
+ leo.yan@linux.dev, anshuman.khandual@arm.com
+References: <20240604143030.519906-1-james.clark@arm.com>
+ <20240604143030.519906-3-james.clark@arm.com>
+ <12c09d40-788d-4af1-9eb6-0f5699875d70@intel.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <12c09d40-788d-4af1-9eb6-0f5699875d70@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Convert the regulator bindings to yaml files. To allow only the regulator
-compatible corresponding to the toplevel mfd compatible, split the file
-into one per device.
 
-Drop one twl5030 compatible due to no documentation on mfd side and no
-users of the twl5030.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-Changes in v3:
-- define regulator stuff in toplevel
-- simplified regulator-inital-mode
-- extended example to contain both regulator-initial-mode and
-  retain-on-reset
+On 05/06/2024 06:26, Adrian Hunter wrote:
+> On 4/06/24 17:30, James Clark wrote:
+>> Currently it's only possible to initialize with the default number of
+>> queues and then use auxtrace_queues__add_event() to grow the array. But
+>> that's problematic if you don't have a real event to pass into that
+>> function yet.
+>>
+>> The queues hold a void *priv member to store custom state, and for
+>> Coresight we want to create decoders upfront before receiving data, so
+>> add a new function that allows pre-allocating queues. One reason to do
+>> this is because we might need to store metadata (HW_ID events) that
+>> effects other queues, but never actually receive auxtrace data on that
+>> queue.
+>>
+>> Signed-off-by: James Clark <james.clark@arm.com>
+> 
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> 
+> Again ;-)
+> 
 
-Changes in v2:
-- add regulators directly to ti,twl.yaml
-- less restrictions on regulator node name
+Oops yeah I should have picked that up. This one was already applied to
+perf-tools-next as well.
 
- .../devicetree/bindings/mfd/ti,twl.yaml       | 167 +++++++++++++++++-
- .../bindings/regulator/twl-regulator.txt      |  80 ---------
- 2 files changed, 165 insertions(+), 82 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/regulator/twl-regulator.txt
+Thanks
 
-diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-index c2357fecb56c..e4a9bc97e597 100644
---- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-+++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-@@ -22,6 +22,32 @@ allOf:
-           contains:
-             const: ti,twl4030
-     then:
-+      patternProperties:
-+        "^regulator-":
-+          properties:
-+            compatible:
-+              enum:
-+                - ti,twl4030-vaux1
-+                - ti,twl4030-vaux2
-+                - ti,twl4030-vaux3
-+                - ti,twl4030-vaux4
-+                - ti,twl4030-vmmc1
-+                - ti,twl4030-vmmc2
-+                - ti,twl4030-vpll1
-+                - ti,twl4030-vpll2
-+                - ti,twl4030-vsim
-+                - ti,twl4030-vdac
-+                - ti,twl4030-vintana2
-+                - ti,twl4030-vio
-+                - ti,twl4030-vdd1
-+                - ti,twl4030-vdd2
-+                - ti,twl4030-vintana1
-+                - ti,twl4030-vintdig
-+                - ti,twl4030-vusb1v5
-+                - ti,twl4030-vusb1v8
-+                - ti,twl4030-vusb3v1
-+            ti,retain-on-reset: false
-+
-       properties:
-         madc:
-           type: object
-@@ -50,13 +76,34 @@ allOf:
-           properties:
-             compatible:
-               const: ti,twl4030-wdt
--
-   - if:
-       properties:
-         compatible:
-           contains:
-             const: ti,twl6030
-     then:
-+      patternProperties:
-+        "^regulator-":
-+          properties:
-+            compatible:
-+              enum:
-+                - ti,twl6030-vaux1
-+                - ti,twl6030-vaux2
-+                - ti,twl6030-vaux3
-+                - ti,twl6030-vmmc
-+                - ti,twl6030-vpp
-+                - ti,twl6030-vusim
-+                - ti,twl6030-vana
-+                - ti,twl6030-vcxio
-+                - ti,twl6030-vdac
-+                - ti,twl6030-vusb
-+                - ti,twl6030-v1v8
-+                - ti,twl6030-v2v1
-+                - ti,twl6030-vdd1
-+                - ti,twl6030-vdd2
-+                - ti,twl6030-vdd3
-+            regulator-initial-mode: false
-+
-       properties:
-         gpadc:
-           type: object
-@@ -69,6 +116,26 @@ allOf:
-           contains:
-             const: ti,twl6032
-     then:
-+      patternProperties:
-+        "^regulator-":
-+          unevaluatedProperties: false
-+          properties:
-+            compatible:
-+              enum:
-+                - ti,twl6032-ldo1
-+                - ti,twl6032-ldo2
-+                - ti,twl6032-ldo3
-+                - ti,twl6032-ldo4
-+                - ti,twl6032-ldo5
-+                - ti,twl6032-ldo6
-+                - ti,twl6032-ldo7
-+                - ti,twl6032-ldoln
-+                - ti,twl6032-ldousb
-+                - ti,twl6032-smps3
-+                - ti,twl6032-smps4
-+                - ti,twl6032-vio
-+            regulator-initial-mode: false
-+
-       properties:
-         gpadc:
-           type: object
-@@ -112,6 +179,27 @@ properties:
-       interrupts:
-         maxItems: 1
- 
-+patternProperties:
-+  "^regulator-":
-+    type: object
-+    unevaluatedProperties: false
-+    $ref: /schemas/regulator/regulator.yaml
-+    properties:
-+      compatible: true
-+      regulator-initial-mode:
-+        enum:
-+          - 0x08 # Sleep mode, the nominal output voltage is maintained
-+                 # with low power consumption with low load current capability
-+          - 0x0e # Active mode, the regulator can deliver its nominal output
-+                 # voltage with full-load current capability
-+      ti,retain-on-reset:
-+        description:
-+          Does not turn off the supplies during warm
-+          reset. Could be needed for VMMC, as TWL6030
-+          reset sequence for this signal does not comply
-+          with the SD specification.
-+        type: boolean
-+
- unevaluatedProperties: false
- 
- required:
-@@ -131,9 +219,84 @@ examples:
-         compatible = "ti,twl6030";
-         reg = <0x48>;
-         interrupts = <39>; /* IRQ_SYS_1N cascaded to gic */
-+        interrupt-parent = <&gic>;
-         interrupt-controller;
-         #interrupt-cells = <1>;
--        interrupt-parent = <&gic>;
-+
-+        gpadc {
-+          compatible = "ti,twl6030-gpadc";
-+          interrupts = <6>;
-+        };
-+
-+        rtc {
-+          compatible = "ti,twl4030-rtc";
-+          interrupts = <8>;
-+        };
-+
-+        regulator-vaux1 {
-+          compatible = "ti,twl6030-vaux1";
-+          regulator-min-microvolt = <1000000>;
-+          regulator-max-microvolt = <3000000>;
-+        };
-+
-+        regulator-vmmc1 {
-+          compatible = "ti,twl6030-vmmc";
-+          ti,retain-on-reset;
-+        };
-       };
-     };
- 
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      pmic@48 {
-+        compatible = "ti,twl4030";
-+        reg = <0x48>;
-+        interrupts = <7>; /* SYS_NIRQ cascaded to intc */
-+        interrupt-parent = <&intc>;
-+        interrupt-controller;
-+        #interrupt-cells = <1>;
-+
-+        bci {
-+          compatible = "ti,twl4030-bci";
-+          interrupts = <9>, <2>;
-+          bci3v1-supply = <&vusb3v1>;
-+          io-channels = <&twl_madc 11>;
-+          io-channel-names = "vac";
-+        };
-+
-+        twl_madc: madc {
-+          compatible = "ti,twl4030-madc";
-+          interrupts = <3>;
-+          #io-channel-cells = <1>;
-+        };
-+
-+        pwrbutton {
-+          compatible = "ti,twl4030-pwrbutton";
-+          interrupts = <8>;
-+        };
-+
-+        rtc {
-+          compatible = "ti,twl4030-rtc";
-+          interrupts = <11>;
-+        };
-+
-+        regulator-vaux1 {
-+          compatible = "ti,twl4030-vaux1";
-+          regulator-min-microvolt = <1000000>;
-+          regulator-max-microvolt = <3000000>;
-+          regulator-initial-mode = <0xe>;
-+        };
-+
-+        vusb3v1: regulator-vusb3v1 {
-+          compatible = "ti,twl4030-vusb3v1";
-+        };
-+
-+        watchdog {
-+          compatible = "ti,twl4030-wdt";
-+        };
-+      };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/regulator/twl-regulator.txt b/Documentation/devicetree/bindings/regulator/twl-regulator.txt
-deleted file mode 100644
-index 549f80436deb..000000000000
---- a/Documentation/devicetree/bindings/regulator/twl-regulator.txt
-+++ /dev/null
-@@ -1,80 +0,0 @@
--TWL family of regulators
--
--Required properties:
--For twl6030 regulators/LDOs
--- compatible:
--  - "ti,twl6030-vaux1" for VAUX1 LDO
--  - "ti,twl6030-vaux2" for VAUX2 LDO
--  - "ti,twl6030-vaux3" for VAUX3 LDO
--  - "ti,twl6030-vmmc" for VMMC LDO
--  - "ti,twl6030-vpp" for VPP LDO
--  - "ti,twl6030-vusim" for VUSIM LDO
--  - "ti,twl6030-vana" for VANA LDO
--  - "ti,twl6030-vcxio" for VCXIO LDO
--  - "ti,twl6030-vdac" for VDAC LDO
--  - "ti,twl6030-vusb" for VUSB LDO
--  - "ti,twl6030-v1v8" for V1V8 LDO
--  - "ti,twl6030-v2v1" for V2V1 LDO
--  - "ti,twl6030-vdd1" for VDD1 SMPS
--  - "ti,twl6030-vdd2" for VDD2 SMPS
--  - "ti,twl6030-vdd3" for VDD3 SMPS
--For twl6032 regulators/LDOs
--- compatible:
--  - "ti,twl6032-ldo1" for LDO1 LDO
--  - "ti,twl6032-ldo2" for LDO2 LDO
--  - "ti,twl6032-ldo3" for LDO3 LDO
--  - "ti,twl6032-ldo4" for LDO4 LDO
--  - "ti,twl6032-ldo5" for LDO5 LDO
--  - "ti,twl6032-ldo6" for LDO6 LDO
--  - "ti,twl6032-ldo7" for LDO7 LDO
--  - "ti,twl6032-ldoln" for LDOLN LDO
--  - "ti,twl6032-ldousb" for LDOUSB LDO
--  - "ti,twl6032-smps3" for SMPS3 SMPS
--  - "ti,twl6032-smps4" for SMPS4 SMPS
--  - "ti,twl6032-vio" for VIO SMPS
--For twl4030 regulators/LDOs
--- compatible:
--  - "ti,twl4030-vaux1" for VAUX1 LDO
--  - "ti,twl4030-vaux2" for VAUX2 LDO
--  - "ti,twl5030-vaux2" for VAUX2 LDO
--  - "ti,twl4030-vaux3" for VAUX3 LDO
--  - "ti,twl4030-vaux4" for VAUX4 LDO
--  - "ti,twl4030-vmmc1" for VMMC1 LDO
--  - "ti,twl4030-vmmc2" for VMMC2 LDO
--  - "ti,twl4030-vpll1" for VPLL1 LDO
--  - "ti,twl4030-vpll2" for VPLL2 LDO
--  - "ti,twl4030-vsim" for VSIM LDO
--  - "ti,twl4030-vdac" for VDAC LDO
--  - "ti,twl4030-vintana2" for VINTANA2 LDO
--  - "ti,twl4030-vio" for VIO LDO
--  - "ti,twl4030-vdd1" for VDD1 SMPS
--  - "ti,twl4030-vdd2" for VDD2 SMPS
--  - "ti,twl4030-vintana1" for VINTANA1 LDO
--  - "ti,twl4030-vintdig" for VINTDIG LDO
--  - "ti,twl4030-vusb1v5" for VUSB1V5 LDO
--  - "ti,twl4030-vusb1v8" for VUSB1V8 LDO
--  - "ti,twl4030-vusb3v1" for VUSB3V1 LDO
--
--Optional properties:
--- Any optional property defined in bindings/regulator/regulator.txt
--For twl4030 regulators/LDOs:
-- - regulator-initial-mode:
--  - 0x08 - Sleep mode, the nominal output voltage is maintained with low power
--           consumption with low load current capability.
--  - 0x0e - Active mode, the regulator can deliver its nominal output voltage
--           with full-load current capability.
--
--Example:
--
--	xyz: regulator@0 {
--		compatible = "ti,twl6030-vaux1";
--		regulator-min-microvolt  = <1000000>;
--		regulator-max-microvolt  = <3000000>;
--	};
--
--For twl6030 regulators/LDOs:
--
-- - ti,retain-on-reset: Does not turn off the supplies during warm
--                       reset. Could be needed for VMMC, as TWL6030
--                       reset sequence for this signal does not comply
--                       with the SD specification.
--- 
-2.39.2
-
+>> ---
+>>  tools/perf/util/auxtrace.c | 9 +++++++--
+>>  tools/perf/util/auxtrace.h | 1 +
+>>  2 files changed, 8 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+>> index 3684e6009b63..563b6c4fca31 100644
+>> --- a/tools/perf/util/auxtrace.c
+>> +++ b/tools/perf/util/auxtrace.c
+>> @@ -218,15 +218,20 @@ static struct auxtrace_queue *auxtrace_alloc_queue_array(unsigned int nr_queues)
+>>  	return queue_array;
+>>  }
+>>  
+>> -int auxtrace_queues__init(struct auxtrace_queues *queues)
+>> +int auxtrace_queues__init_nr(struct auxtrace_queues *queues, int nr_queues)
+>>  {
+>> -	queues->nr_queues = AUXTRACE_INIT_NR_QUEUES;
+>> +	queues->nr_queues = nr_queues;
+>>  	queues->queue_array = auxtrace_alloc_queue_array(queues->nr_queues);
+>>  	if (!queues->queue_array)
+>>  		return -ENOMEM;
+>>  	return 0;
+>>  }
+>>  
+>> +int auxtrace_queues__init(struct auxtrace_queues *queues)
+>> +{
+>> +	return auxtrace_queues__init_nr(queues, AUXTRACE_INIT_NR_QUEUES);
+>> +}
+>> +
+>>  static int auxtrace_queues__grow(struct auxtrace_queues *queues,
+>>  				 unsigned int new_nr_queues)
+>>  {
+>> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+>> index 55702215a82d..8a6ec9565835 100644
+>> --- a/tools/perf/util/auxtrace.h
+>> +++ b/tools/perf/util/auxtrace.h
+>> @@ -521,6 +521,7 @@ int auxtrace_mmap__read_snapshot(struct mmap *map,
+>>  				 struct perf_tool *tool, process_auxtrace_t fn,
+>>  				 size_t snapshot_size);
+>>  
+>> +int auxtrace_queues__init_nr(struct auxtrace_queues *queues, int nr_queues);
+>>  int auxtrace_queues__init(struct auxtrace_queues *queues);
+>>  int auxtrace_queues__add_event(struct auxtrace_queues *queues,
+>>  			       struct perf_session *session,
+> 
 
