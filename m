@@ -1,104 +1,164 @@
-Return-Path: <linux-kernel+bounces-202686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9E38FCF94
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE1A8FCFA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1235C28EF9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:39:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85DE328F6E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D182B196432;
-	Wed,  5 Jun 2024 13:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FAD1993B6;
+	Wed,  5 Jun 2024 13:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9MWZXpg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="b+tDXKHS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XhxRBfMk"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE17195FFE;
-	Wed,  5 Jun 2024 13:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9101E19924D;
+	Wed,  5 Jun 2024 13:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717593462; cv=none; b=qW6NIV0H1sH/ascH3yxVBYKQKWYy9esM0wgdTKUn6sSjd6C5hEN0RsQwL3L02L01SuaW7wvJyAj0seB4BJUldAz3s1+wJuinwf5B3eEgNRXOizeM1tTFAcuFVaGKmysYVaV0fZFBzN51wqb7dce2y3O9cbF4r8OnsJsMb0FswFk=
+	t=1717593480; cv=none; b=iQuaTiuivbi2pvte2LeKGB+Bcl/LpMK9CwwlRoO2PMME2eOBGtJ1nCjby2MfGU/X2KpZogK0gRMa4i9PdlsIoP2HAYEW2Kzzy+FwSFPeQxIq7P5+3NJrBKAnoIPuajXKcUBBcUSrlmw7FVxRWoqzLWgMcLnlIrF6yK1cQ9Isf3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717593462; c=relaxed/simple;
-	bh=vtQ2ztx8bpH23oukRF3ssYiPY1N+3RM1KbSa8Y3gtMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CimEi61m5mb4URUgIk2nOw3kZpj1MyJECjrtOWi0daKgyPCHM7EVMw+QPA7FIEULfv+znXLf/HxJAkEMT7EVMPCThu5CGUU0SuU9ai3346YyP0NV+8lMroZXrX1NICOsDS3kxRUog6dCyfJ1k68waDkfWhVJp55fJ39nXYBaOSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9MWZXpg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A32C3277B;
-	Wed,  5 Jun 2024 13:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717593461;
-	bh=vtQ2ztx8bpH23oukRF3ssYiPY1N+3RM1KbSa8Y3gtMI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D9MWZXpggxNZc7BjJRmi1eMi1B+ACAxvQmCHEHCVtJBIcpFyC9YhRc0H/UXzuPmlG
-	 YnJ7hRsNCSM6NsvJilBJW6DkTi1nZE+DoGZhHeDMyzXSY3mdbFGY+h+mWaJ0z7pwdK
-	 5ldaXygtkZ51rGVANBCLhaX7U0zSuKof2fdppKUMSO9FcdGDRRNm2byOb/xd+w0OhK
-	 hIIDD1muQfkKS3nV+n25SppPZso/pHV32VCTNUAI1svtJBQyYGRcSKNlcU1btm4x1v
-	 AvAtWv9/mJXAyjtrWPRA9sNBNbzZ5WDWuLnlSi+UfjBPqXDUp3djTJHAVL5q+so+MJ
-	 dj53S1SCdEY5Q==
-Date: Wed, 5 Jun 2024 14:17:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Fuad Tabba <tabba@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH 3/4] KVM: arm64: Fix FFR offset calculation for pKVM host
- state save and restore
-Message-ID: <af6fd3c0-f411-4f33-aa8a-885873a74c73@sirena.org.uk>
-References: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org>
- <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-3-680d6b43b4c1@kernel.org>
- <CA+EHjTxrCOv44T8uq1e2Vvm0SooRKix1zwhFqQF6=GN2H1iB2g@mail.gmail.com>
+	s=arc-20240116; t=1717593480; c=relaxed/simple;
+	bh=78/x5XUPo5xusPgNw/FNUoT8dnpyBDLoUYTIoTMbIkI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=r3VwWDCF5y/GJmcclUZclWQRIn9R/KZq63CKxPBSGP887luioE2SRdEHI8Ej/N8ABigeNyOVh7kSDDHlrfK/tQ05F7xXVCgBpM2PpNp6Lf/jF4Wbfd7ddegs+CvpWFDl8c7eVTa/VjohKSjQ/YChXHF0Nbt8ivu520TGDwu9OjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=b+tDXKHS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XhxRBfMk; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 9AB20138008D;
+	Wed,  5 Jun 2024 09:17:57 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Wed, 05 Jun 2024 09:17:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1717593477;
+	 x=1717679877; bh=N2eL8RwybwiJUKVprjaoTWy+fNNjx5dXfQ7CD829ifE=; b=
+	b+tDXKHSZUiRtQKPGC5EZY89buxGvF7wJQIfNACRZgkiqnL5kS/TiYkw9na32eWc
+	UnMp7+r6j7nyE773712+a570z3NAUG0ygd38JI1fydRKHn2EWA4ds1aWQ+KzyT5A
+	xsIdYrOvoyjjTYvMWQq/oztPCun0CZV0YpfeIU+rN4xiMlSfRk4EjyNygK9oRm4i
+	HZkQG0TNeXHI/Gu0hG1IZRe9irjAIzZ4BcQwXvR7SU9FxfkqCTDvN1GoH3bqxOD8
+	KirLCtXgZb6vORHR7qZbTJm5wtkJklT2b6StSPo4iapD7RLjN8u9ADnFJNA0Smk3
+	GGnRq2eymrEFophjm84dTA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717593477; x=
+	1717679877; bh=N2eL8RwybwiJUKVprjaoTWy+fNNjx5dXfQ7CD829ifE=; b=X
+	hxRBfMkDblW4U9mMyDka2s4QLmNQMLA+rGZP97Q5uoEF6vuShzzIxHGyosgvmca8
+	WCuc+6+zj0vQIgoxCq6bgZy3pZkemtvzfSpo/zxoZlQtIoZuEezgSTLyRhe6siE4
+	SQOxlMpMUHBFTNSU07WwRQvJn9rkyAh106QS+gSfqLRb/DpVmGh/tYpu0uk8x3/Z
+	6GtekL9c+iy4293mzELBWmnt7W8CnTi0q+x+eZkdZWqai3LyZyQbpYO08B/cPGRO
+	G9fdoL9Z/FMB39uM7Cy71wZHookk8rQdpeOi4PqlfQIGn/qnL57dI+BYcqFBqy4h
+	JkJmg+2gQ3sFTgmdgrQdw==
+X-ME-Sender: <xms:hWVgZmEypVF6k5cR8kWOtCsFwHhwP6RO7gpEZGcYOeusDnxwCH6KlA>
+    <xme:hWVgZnW1-wUrGbleNw1caKLCqkRvLSF_h0djxwCL6GRGldZFfitLVNRBLoAQjn1mD
+    qQbZk5qNLKXV_XCtDI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeliedgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:hWVgZgK5b2ZajJ0AU_NIHnmXE5-iHYiKbihSIHArIRcCR4vPjaZ_oQ>
+    <xmx:hWVgZgH-hIy5j8d0ADNgQ1Iov5Vc7Y4tcaE4o2qrfO8JmsegiNYytA>
+    <xmx:hWVgZsXQBJTwjVJKMwXGEfdGmF5ofNYtseWUtW9NtZqAaXbAFGE_Qg>
+    <xmx:hWVgZjN-ICa2Z_GMP_ffklLYyz6SPb0iEm-6dQPh1IdmBaaDUFNRHA>
+    <xmx:hWVgZmffpLUpXM1Q80stXS9u3zFhQR1pTkwhiAWWUfVioDvqpAhrHOFG>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E7DE336A0074; Wed,  5 Jun 2024 09:17:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZWJVHrSAVB/AiNlk"
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTxrCOv44T8uq1e2Vvm0SooRKix1zwhFqQF6=GN2H1iB2g@mail.gmail.com>
-X-Cookie: Simulated picture.
+Message-Id: <310c2bce-e6cb-4268-858b-8466c92266dd@app.fastmail.com>
+In-Reply-To: <878qztbvb4.ffs@tglx>
+References: <20240517-loongson_nodecnt-v2-1-5bd0bb20ff5f@flygoat.com>
+ <87sey3b6de.ffs@tglx> <9947f7a5-1a95-48f2-b0eb-0385eb2b3d55@app.fastmail.com>
+ <558b1d58-08a5-410d-97b8-e77def7c1cf8@app.fastmail.com> <878qztbvb4.ffs@tglx>
+Date: Wed, 05 Jun 2024 14:17:38 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Gleixner" <tglx@linutronix.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v2] clocksource: Add node counter timer driver for MIPS/Loongson64
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
---ZWJVHrSAVB/AiNlk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Jun 05, 2024 at 01:12:34PM +0100, Fuad Tabba wrote:
+=E5=9C=A82024=E5=B9=B45=E6=9C=8828=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
+=8D=888:17=EF=BC=8CThomas Gleixner=E5=86=99=E9=81=93=EF=BC=9A
+> On Tue, May 28 2024 at 15:31, Jiaxun Yang wrote:
+>> =E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=
+=E5=8D=885:32=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+>>> =E5=9C=A82024=E5=B9=B45=E6=9C=8827=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=
+=8B=E5=8D=884:51=EF=BC=8CThomas Gleixner=E5=86=99=E9=81=93=EF=BC=9A
+>>>> Jiaxun!
+>>>>
+>>> Hi Thomas,
+>>> [...]
+>>>>
+>>>> What's this indirection for? Why dont you update=20
+>>> [...]
+>>>>
+>>>>> +static struct clocksource nodecnt_clocksource =3D {
+>>>>> +	.name	=3D "nodecnt",
+>>>>> +	.read	=3D nodecnt_clocksource_read,
+>>>>
+>>>> the read function pointer here and spare the indirection?
+>>> Smart! sched_clock takes slightly different function pointer argumen=
+t type
+>>> but as we don't use the argument anyway, it should be safe to relax =
+this
+>>> indirection.
+>>
+>> Sadly, I'm unable to remove it with force type catsing :-/
+>>
+>> drivers/clocksource/loongson-nodecnt.c: In function =E2=80=98nodecnt_=
+clocksource_init=E2=80=99:
+>> drivers/clocksource/loongson-nodecnt.c:89:36: warning: cast between i=
+ncompatible function types from =E2=80=98u64 (*)(void)=E2=80=99 {aka =E2=
+=80=98long long unsigned int (*)(void)=E2=80=99} to =E2=80=98u64 (*)(str=
+uct clocksource *)=E2=80=99 {aka =E2=80=98long long unsigned int (*)(str=
+uct clocksource *)=E2=80=99} [-Wcast-function-type]
+>>    89 |         nodecnt_clocksource.read =3D (u64 (*)(struct clocksou=
+rce *))nodecnt_read_fn;
+>>
+>
+> What about making the actual read functions have the required function
+> signature? The clocksource argument is not used in those real function=
+s.
 
-> If my understanding of the spec is correct (which more often than not
-> it isn't), I don't think we have an issue as long as we use the same
-> value in the offset on saving/restoring, and that that value
-> represents the maximum possible value.
+Sadly sched_clock requires another signature :-/
 
-Yes, we could also correct the issue by switching to use the system
-enumerated maximum but that still leaves us setting one value and then
-immediately assuming a different value.  Reading the actual VL from the
-hardware makes the code more obviously self consistent.
+I can see timer-clint hit into the same pitfall.
 
---ZWJVHrSAVB/AiNlk
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks
+>
+> Thanks,
+>
+>         tglx
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZgZW8ACgkQJNaLcl1U
-h9DYowf7B0Gh80pKdwlt71H4rUSGM0FVdVPx5yOdZVq/tPzh3QMHcGxzpzZJIDF+
-Hcf2sOiu4qRXzj4836C0XN+V7FbmcOBmtfFqxD8jDrqUr6QJh9yaDL2VWWY3iasq
-lG/KeDXr732vAO/70R0iWfrZWY7zAyJz4IsM8ts+tQ6yNrqy1vcOzTLDL45ubqNI
-uo18MPYYttI8WRZE7Vsl8PVj/HPpvtIXH4H1D/xmkRHza4hAXoAChkgcu5o8K7uQ
-HlxcaRF843E8XdbLY/cau42pcM6s1/cbQZj9NhrKLOIIjlaaKeqmgOJCoLGu0wWs
-OohMPKqkLvMaucrnrq5nkJQ0DkzHDw==
-=1EVk
------END PGP SIGNATURE-----
-
---ZWJVHrSAVB/AiNlk--
+--=20
+- Jiaxun
 
