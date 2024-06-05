@@ -1,226 +1,197 @@
-Return-Path: <linux-kernel+bounces-203391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA818FDA37
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:16:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7DA8FDA3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47E791C234B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:16:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B022A1F2514A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF6615FA6E;
-	Wed,  5 Jun 2024 23:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0B51667F6;
+	Wed,  5 Jun 2024 23:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0axwYly0"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c9RrZyN1"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2AB15FA73
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1490315FA6E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717629375; cv=none; b=rb1x7+qYidoe0zw8v59onJBVa4JSauolpmSfkCsgkh/Bl+F+gnye148Im5l1qUtay+DI/ThRtx/Hu1EZ/p4OCbCPvu9C87l5cwJsWP653CINBmheitoMyMa6BWmCnCYhBm06VhkU1ouK99KRopi3cga1d0Mw+RCjeHcCjYHlTuA=
+	t=1717629564; cv=none; b=Iitnfj+HUtzI1J1U6Vg5WMSYBUvVPSNQf1KJR2FyFPpQLEAeB67bn1hmk0o4rqAvJNFKWhq7azM0j5matrm2HuRSLBHl2KOSqwg4d5+YB0A3Ghpddh99TMZ24hs/Uy92FlRHNqnyRaALI0AmyIyybA4eQuEdGepZPdcLTgENme0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717629375; c=relaxed/simple;
-	bh=sCnF1WWhVGW8xVYwTfmbAr1BNfwqxr2DfWhEZMEn4bY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M4niHyDtfX/Gonlml0d8Mqudp7FRWaebu6Exl0VdP2zLi/oF7k8l0AofmNJuFoHSTMYh+yq20x0aZFELpcqTB2BDy2155HvBOkZYnprhaRPNQD2dfFdMp+8VmWfStDOM0vDNddrbikAh/mVxv4kB7Ipp12RVDqG0RaeZJiczKmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0axwYly0; arc=none smtp.client-ip=209.85.219.170
+	s=arc-20240116; t=1717629564; c=relaxed/simple;
+	bh=bPYpKaFffVT7czraRt/cDjH6Nr8d+yMIXoAp76YawnI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sHXddQGn9m46EHTNu8JzD/S/uY2tojhJC19U6CU/b3EllgYYFDU7XymMOqzD6gwLodu+mEGuWSzXLSXrETqoRCwHKWN8jZooED0AEfXxvljdMkT0LtE3XDEh5S3jibwyvJQgVgHDBtu0XpMmRy1TN3t+W4TT0qMgPck82TpAMUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c9RrZyN1; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfa6e0add60so419507276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 16:16:13 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a1e9807c0so3939677b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 16:19:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717629372; x=1718234172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=It1jGSpY/d5JoW3BH0YDpFaZbUvrsvHdjibkMTnj6oI=;
-        b=0axwYly08R1IzMpbeUenVfvBdvSeJTVQkAqE3dBLDuiuXw2fhLdGKRnP2nmVosxg0H
-         32W3X+n2fWL2hfXb7JH0T4L03t6OMJsk/Rl7dOqCaPwef+STobuFDkhNFrcj3BjL1JVX
-         9SIwpnDv1VgBV2EHFImMur9dBwfNZpQQD0ZWs+73im87Uk0uij2ss+w1ZBYLy/UaXttf
-         JAb/h25UE20Lc+mSoiGPBYPEvnspIV9fyPKZkNOlh1p+saWy+T2Z9Mw5KV/2xfYBrsJG
-         CeImEszUUD9lEUkJG5zZOv6VLSLaaXeLW1uXyO+MzSUDQLihn0Bmc1DgwtTygKubYH39
-         s0qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717629372; x=1718234172;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1717629562; x=1718234362; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=It1jGSpY/d5JoW3BH0YDpFaZbUvrsvHdjibkMTnj6oI=;
-        b=JZuRc4UMkvy/UB1ssdUJESYlpGmLdFLfLdcRsPJSBBlLNUevB/FJ+vv4xc6s2seGcr
-         ZqMQoyEbLVt28cPx5YojqvtKAPEiTXfxp24870OjaNECBWhG194o+c4URxjMUZAJAXee
-         H4N4sb2ZAdK6tfdkgsqRupC7DoQKnm96OqPq3tVN4zc+ZI0XA6Jb7OQSCkTaQJfYAeCZ
-         XLaIQkba9V1Uj0IKONgZzJm2ADtOZVpwePCumFORAdOAh2DWl6Lj1eQQg7Z/g4OrtEV6
-         EBX4sODJC+Nexg/SRZpeJjnykwDNRyXei/1gxKPWTZAcvUnHd7+1k7ujV+4X8I49XEXF
-         3otw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv2MGDRRVyRh7uphX0VZn8mi2bkVoQPoYE/hkRhI6jq7pUsPx+zEMg3gqz9DHJW/Kbc/4VyeJ64ZwAOGsnO/588oJFaJlfHnU7vSsT
-X-Gm-Message-State: AOJu0YzUrkZswO8jGOw4U+PiOy8jNvEeB4F8zupw1B6/vkK6S063P6Ao
-	cK60weVOxWHQcxP4DaZoLHSLntWkXNII4QlR/zjePd+OKWN+gOwSqe04DyINgzf4+Ji+D/lBNXv
-	L/MfKsDuJ+5qixnsUQA0u+WqOBjKEirI6+vUE
-X-Google-Smtp-Source: AGHT+IG//Bbpm13yX5er5mRkf9mAC+1ekahyf3BmUiMZJv5AfaAy7zvY2vctDaLWIjOaU+8qTcrwQqETtL7ybQfO+V0=
-X-Received: by 2002:a25:b299:0:b0:dfa:5d84:716b with SMTP id
- 3f1490d57ef6-dfacac6b7f4mr3630672276.57.1717629371946; Wed, 05 Jun 2024
- 16:16:11 -0700 (PDT)
+        bh=hI7a+TyPUatLlBqya9hLDCAQBrkIObBfpV8d3FDL4ek=;
+        b=c9RrZyN1hItO/rOqh/IOH/V25NUi3P3XLrsPIupk5t009sr0UJB88ekNYW2YQT+1GR
+         K+fOe2wb7exwgSk07n93VzqZHCinfcP8L9n7/o1JNx1ukptqwaes5FhDNe9GTK/Wa+Zq
+         zDsIoUvXyOFHlDDYcFNZyBAeg5HSOYEZRU1Z2FGTnR0EqPv6+uAwEt/y+Bx6N4UhecCo
+         EtbXooikuns1R8sBz3EMNLss3uA5ZmYhhzxaJOIfRDVYkzTA5e5JuU6R0jqvuoyxmAB6
+         N+LOaWBXkGLtriUDghrXv4c09Dc6kPQOFAmT2lEFlWhGHx1Uk1fpa/zR43V/8nd6uMMR
+         4zMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717629562; x=1718234362;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hI7a+TyPUatLlBqya9hLDCAQBrkIObBfpV8d3FDL4ek=;
+        b=iob0bVmrrkLNLkx+Xk2lwaajgmewwaAGSHjUR8QTM9Nq6DBm8/Ut92+K5osRlTtWxV
+         fdd3UIHqlczPoCBTVv76rraenNil/aPbLVX8uSFCW85GTicqxW9xe8cpWPUP76qgy3Po
+         9GFkGQudI7x93pF/UAZzF/QOiInXfaMPor4/Iy7AcdmhExI028aPI9tvpRJvZA+PxG2n
+         tEVMBMP8DMiQmPM9k9cMfom/el7fj2n4tfe3+Z8DMxeLgaf2VbMvQQ0OJikg6JSQfV2n
+         Tzz0SSmqEqpr4pp9XfSxRHPywpnOuQ5fx7k7BFC9DLR0XNN+7dyqdWXSQDmuu6mLsyPG
+         5hWA==
+X-Gm-Message-State: AOJu0Yw7KAvOGO4jk+wLhJQkSoXXjJwNUqpPp7rFEX8F4nqquyxO0uzp
+	YGZPT9/SCyMXL1b/lPzIaod8yjfaNK48/+n0CpQMDM8f56FhF4Bo1zQzAJ1RxK3qx2U6WfuhWsm
+	x8A==
+X-Google-Smtp-Source: AGHT+IFo05Hsu0bhH6GHB6K49InVKQvcRCX8vVk+2uKwLe/Cco1GZvM1/9WzUfOV4FHMu2bPNVtzCr8y6Fo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:dcf:b0:61b:e53e:c7ae with SMTP id
+ 00721157ae682-62cc709c399mr2965957b3.2.1717629562002; Wed, 05 Jun 2024
+ 16:19:22 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed,  5 Jun 2024 16:19:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240605002459.4091285-1-andrii@kernel.org> <20240605002459.4091285-5-andrii@kernel.org>
-In-Reply-To: <20240605002459.4091285-5-andrii@kernel.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 5 Jun 2024 16:15:58 -0700
-Message-ID: <CAJuCfpFp38X-tbiRAqS36zXG_ho2wyoRas0hCFLo07pN1noSmg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/9] fs/procfs: use per-VMA RCU-protected locking in
- PROCMAP_QUERY API
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	gregkh@linuxfoundation.org, linux-mm@kvack.org, liam.howlett@oracle.com, 
-	rppt@kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
+Message-ID: <20240605231918.2915961-1-seanjc@google.com>
+Subject: [PATCH v8 00/10] x86/cpu: KVM: Clean up PAT and VMX macros
+From: Sean Christopherson <seanjc@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Jim Mattson <jmattson@google.com>, Shan Kang <shan.kang@intel.com>, Xin Li <xin3.li@intel.com>, 
+	Zhao Liu <zhao1.liu@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 5:25=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org> =
-wrote:
->
-> Attempt to use RCU-protected per-VMA lock when looking up requested VMA
-> as much as possible, only falling back to mmap_lock if per-VMA lock
-> failed. This is done so that querying of VMAs doesn't interfere with
-> other critical tasks, like page fault handling.
->
-> This has been suggested by mm folks, and we make use of a newly added
-> internal API that works like find_vma(), but tries to use per-VMA lock.
->
-> We have two sets of setup/query/teardown helper functions with different
-> implementations depending on availability of per-VMA lock (conditioned
-> on CONFIG_PER_VMA_LOCK) to abstract per-VMA lock subtleties.
->
-> When per-VMA lock is available, lookup is done under RCU, attempting to
-> take a per-VMA lock. If that fails, we fallback to mmap_lock, but then
-> proceed to unconditionally grab per-VMA lock again, dropping mmap_lock
-> immediately. In this configuration mmap_lock is never helf for long,
-> minimizing disruptions while querying.
->
-> When per-VMA lock is compiled out, we take mmap_lock once, query VMAs
-> using find_vma() API, and then unlock mmap_lock at the very end once as
-> well. In this setup we avoid locking/unlocking mmap_lock on every looked
-> up VMA (depending on query parameters we might need to iterate a few of
-> them).
->
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
->  fs/proc/task_mmu.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
->
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 614fbe5d0667..140032ffc551 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -388,6 +388,49 @@ static int pid_maps_open(struct inode *inode, struct=
- file *file)
->                 PROCMAP_QUERY_VMA_FLAGS                         \
->  )
->
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +static int query_vma_setup(struct mm_struct *mm)
-> +{
-> +       /* in the presence of per-VMA lock we don't need any setup/teardo=
-wn */
-> +       return 0;
-> +}
-> +
-> +static void query_vma_teardown(struct mm_struct *mm, struct vm_area_stru=
-ct *vma)
-> +{
-> +       /* in the presence of per-VMA lock we need to unlock vma, if pres=
-ent */
-> +       if (vma)
-> +               vma_end_read(vma);
-> +}
-> +
-> +static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *m=
-m, unsigned long addr)
-> +{
-> +       struct vm_area_struct *vma;
-> +
-> +       /* try to use less disruptive per-VMA lock */
-> +       vma =3D find_and_lock_vma_rcu(mm, addr);
-> +       if (IS_ERR(vma)) {
-> +               /* failed to take per-VMA lock, fallback to mmap_lock */
-> +               if (mmap_read_lock_killable(mm))
-> +                       return ERR_PTR(-EINTR);
-> +
-> +               vma =3D find_vma(mm, addr);
-> +               if (vma) {
-> +                       /*
-> +                        * We cannot use vma_start_read() as it may fail =
-due to
-> +                        * false locked (see comment in vma_start_read())=
-. We
-> +                        * can avoid that by directly locking vm_lock und=
-er
-> +                        * mmap_lock, which guarantees that nobody can lo=
-ck the
-> +                        * vma for write (vma_start_write()) under us.
-> +                        */
-> +                       down_read(&vma->vm_lock->lock);
+The primary goal of this series is to clean up the VMX MSR macros and their
+usage in KVM.
 
-Hi Andrii,
-The above pattern of locking VMA under mmap_lock and then dropping
-mmap_lock is becoming more common. Matthew had an RFC proposal for an
-API to do this here:
-https://lore.kernel.org/all/ZivhG0yrbpFqORDw@casper.infradead.org/. It
-might be worth reviving that discussion.
+The first half of the series touches memtype code that (obviously) impacts
+areas well outside of KVM, in order to address several warts:
 
-> +               }
-> +
-> +               mmap_read_unlock(mm);
+  (a) KVM is defining VMX specific macros for the architectural memtypes
+  (b) the PAT and MTRR code define similar, yet different macros
+  (c) that the PAT code not only has macros for the types (well, enums),
+      it also has macros for encoding the entire PAT MSR that can be used
+      by KVM.
 
-Later on in your code you are calling get_vma_name() which might call
-anon_vma_name() to retrieve user-defined VMA name. After this patch
-this operation will be done without holding mmap_lock, however per
-https://elixir.bootlin.com/linux/latest/source/include/linux/mm_types.h#L58=
-2
-this function has to be called with mmap_lock held for read. Indeed
-with debug flags enabled you should hit this assertion:
-https://elixir.bootlin.com/linux/latest/source/mm/madvise.c#L96.
+The memtype changes aren't strictly required for the KVM-focused changes in
+the second half of the series, but splitting this into two series would
+generating a number of conflicts that would be cumbersome to resolve after
+the fact.
 
-> +       }
-> +
-> +       return vma;
-> +}
-> +#else
->  static int query_vma_setup(struct mm_struct *mm)
->  {
->         return mmap_read_lock_killable(mm);
-> @@ -402,6 +445,7 @@ static struct vm_area_struct *query_vma_find_by_addr(=
-struct mm_struct *mm, unsig
->  {
->         return find_vma(mm, addr);
->  }
-> +#endif
->
->  static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
->                                                  unsigned long addr, u32 =
-flags)
-> @@ -441,8 +485,10 @@ static struct vm_area_struct *query_matching_vma(str=
-uct mm_struct *mm,
->  skip_vma:
->         /*
->          * If the user needs closest matching VMA, keep iterating.
-> +        * But before we proceed we might need to unlock current VMA.
->          */
->         addr =3D vma->vm_end;
-> +       vma_end_read(vma); /* no-op under !CONFIG_PER_VMA_LOCK */
->         if (flags & PROCMAP_QUERY_COVERING_OR_NEXT_VMA)
->                 goto next_vma;
->  no_vma:
-> --
-> 2.43.0
->
+I would like to take this through the KVM tree, as I don't expect the PAT/MTRR
+code to see much change in the near future, and IIRC the original motiviation
+of the VMX MSR cleanups was to prepare for KVM feature enabling (FRED maybe?).
+
+Based on:
+
+  https://github.com/kvm-x86/linux next
+
+v8:
+ - Collect more reviews.
+ - Call out opportunistic change in patch 4. [Xiaoyao]
+ - Hopefully actually Cc the x86 maintainers to get Acks on the PAT changes.
+
+v7:
+ - https://lore.kernel.org/all/20240520175925.1217334-1-seanjc@google.com
+ - Collect reviews.
+ - Fix an Author misattribution issue. [Xiaoyao]
+ - Add vmx_basic_encode_vmcs_info() to avoid ending up with a mix of open-coded
+   shift/masks and #defined shift/masks. [Xiaoyao]
+ - Remove an "#undef PAT" that got left behind. [Kai]
+
+v6:
+ - https://lore.kernel.org/all/20240309012725.1409949-1-seanjc@google.com
+ - Add all the PAT/memtype patches.
+ - Split the VMX changes into more appropriately sized chunks.
+ - Multiple minor modifications to make the macro mess more maintainable
+   (and yes, I edited that sentence to use "modifications" specifically
+   for alliteration purposes).
+
+v5:
+* https://lore.kernel.org/all/20240206182032.1596-1-xin3.li@intel.com
+* Do not split VMX_BASIC bit definitions across multiple files (Kai
+  Huang).
+* Put some words to the changelog to justify changes around memory
+  type macros (Kai Huang).
+* Remove a leftover ';' (Kai Huang).
+
+v4:
+* Remove vmx_basic_vmcs_basic_cap() (Kai Huang).
+* Add 2 macros VMX_BASIC_VMCS12_SIZE and VMX_BASIC_MEM_TYPE_WB to
+  avoid keeping 2 their bit shift macros (Kai Huang).
+
+v3:
+* Simply save the full/raw value of MSR_IA32_VMX_BASIC in the global
+  vmcs_config, and then use the helpers to extract info from it as
+  needed (Sean Christopherson).
+* Move all VMX_MISC related changes to the second patch (Kai Huang).
+* Commonize memory type definitions used in the VMX files, as memory
+  types are architectural.
+
+v2:
+* Don't add field shift macros unless it's really needed, extra layer
+  of indirect makes it harder to read (Sean Christopherson).
+* Add a static_assert() to ensure that VMX_BASIC_FEATURES_MASK doesn't
+  overlap with VMX_BASIC_RESERVED_BITS (Sean Christopherson).
+* read MSR_IA32_VMX_BASIC into an u64 rather than 2 u32 (Sean
+  Christopherson).
+* Add 2 new functions for extracting fields from VMX basic (Sean
+  Christopherson).
+* Drop the tools header update (Sean Christopherson).
+* Move VMX basic field macros to arch/x86/include/asm/vmx.h.
+
+Sean Christopherson (5):
+  x86/cpu: KVM: Add common defines for architectural memory types (PAT,
+    MTRRs, etc.)
+  x86/cpu: KVM: Move macro to encode PAT value to common header
+  KVM: x86: Stuff vCPU's PAT with default value at RESET, not creation
+  KVM: nVMX: Add a helper to encode VMCS info in MSR_IA32_VMX_BASIC
+  KVM VMX: Move MSR_IA32_VMX_MISC bit defines to asm/vmx.h
+
+Xin Li (5):
+  KVM: VMX: Move MSR_IA32_VMX_BASIC bit defines to asm/vmx.h
+  KVM: VMX: Track CPU's MSR_IA32_VMX_BASIC as a single 64-bit value
+  KVM: nVMX: Use macros and #defines in vmx_restore_vmx_basic()
+  KVM: VMX: Open code VMX preemption timer rate mask in its accessor
+  KVM: nVMX: Use macros and #defines in vmx_restore_vmx_misc()
+
+ arch/x86/include/asm/msr-index.h | 34 ++++++++++--------
+ arch/x86/include/asm/vmx.h       | 40 +++++++++++++++------
+ arch/x86/kernel/cpu/mtrr/mtrr.c  |  6 ++++
+ arch/x86/kvm/vmx/capabilities.h  | 10 +++---
+ arch/x86/kvm/vmx/nested.c        | 62 +++++++++++++++++++++-----------
+ arch/x86/kvm/vmx/nested.h        |  2 +-
+ arch/x86/kvm/vmx/vmx.c           | 30 ++++++++--------
+ arch/x86/kvm/x86.c               |  4 +--
+ arch/x86/kvm/x86.h               |  3 +-
+ arch/x86/mm/pat/memtype.c        | 36 ++++++-------------
+ 10 files changed, 132 insertions(+), 95 deletions(-)
+
+
+base-commit: af0903ab52ee6d6f0f63af67fa73d5eb00f79b9a
+-- 
+2.45.1.467.gbab1589fc0-goog
+
 
