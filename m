@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-203127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D138FD6D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:54:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38ECD8FD6D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5F13281DA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:54:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DED7F1F244B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C931552EE;
-	Wed,  5 Jun 2024 19:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0B315531C;
+	Wed,  5 Jun 2024 19:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtZ2mA7N"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bo+Tymvp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D21F154BF9;
-	Wed,  5 Jun 2024 19:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6878C154BF9;
+	Wed,  5 Jun 2024 19:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717617268; cv=none; b=Goorn1uogyzibXYRNNH2l63AvyxPYqAcrFCUP9P68neJAa1F8UCywTUMiBVUVMo6IHBtkp9pRQAT6fN2vNNg6Qb3gAebnJ1RzxV8joi7Ku+Bl97GpYNiAoG3tK17M59pNchJ/5ckylswBrZYSp7NXcVL2xmhGw7FyOHNFSxwU8I=
+	t=1717617281; cv=none; b=Kfl1syNWNudVCil5nKZiG8t6HS5+9fKCuPoZIgVXmFLb1nEz72rjzWp7JoaueDn3lv6Sf7aNWRpqOCcuRaPpAiw19S9V/59awVIDBAbEI5XwQyy3fwec5lLXjp96PAbSuk5yfe7ZNbqF4FGitk4OKeeaLcvRRMbglpdDKcBmkE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717617268; c=relaxed/simple;
-	bh=+MY40fely0yAhyFPkPlHk3xRM27wG8udewadRMc4KeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TIFFmc2ZtzNkx/IxHwGt+ay1x5pIjDJ2ywS3kli2hwjBS1KBEJ6AuSnDciMsnuaa+7sg9kwpRlhQ3Cz7tVdQx/oj7E0GLiElIwWJzFHRqto6442t3sDIiYaHZ8jJLKyHV+nOSZEmFFGp6oEsL98++wymY+NlJ2g7D8JDzg5Ga4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtZ2mA7N; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f945b242easo142370a34.1;
-        Wed, 05 Jun 2024 12:54:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717617266; x=1718222066; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MYWFYC0miA5hqdy7YN8GRMQMxM9HNoPBybSxK4N6ayM=;
-        b=MtZ2mA7NrOY1G14DYn2uLH0FUNINE1EAukuVEJ0Mi6T24TyRoDK6RlFl99S8ox+iO5
-         C3PWsr/6OAdTNcNf8obCcIvycTPddzGW9VNOoyDf0f9rgjaaH8sUeCs785brY0MMN0fl
-         wyf4NJh6UsyNoAwnmbjXdqXwotdwPFueYzl73pqlBJSUT6bguX4xE+u07SEVM4pA4SxJ
-         sj5pu5wZTVoihenP+1+hH0sbxHCuHDsrgcNKRTZezgNIWYkoO9UcBXUSHO0UZp1h2HlT
-         bZ8YvT62ytClbUE7TQOQxMUopN4ORg9D8ngpq3JGDNTRmzkSHNpnco6cZACn3EzlWASj
-         VKgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717617266; x=1718222066;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MYWFYC0miA5hqdy7YN8GRMQMxM9HNoPBybSxK4N6ayM=;
-        b=c7/rDbIao01Z+6w3l6jW2QR1yDYGDY6dqhXkxYhn8FGxQ9ShsQ1zZFXdbJ40k7VBC4
-         u8G7djzjxJ6kDxF8J5Smzv+O5+dvWfIiUpZlJfrTAGP6L6vbg39fZHvt8HF0D+hjfbz9
-         5VvMwIbPKigUy0GvtIeNSYxP0j8RQ9HTHWZOHlLAlrNC3zKi/zFIom/v03/v9tUrjbh3
-         jKIUdahJ+7+VCsrq8nf5lJA/7ufQH3VM2ykhC1VjCZBw2+xZZwunXanaoZs7XJlfxgWo
-         8EAk5rkspz9QJITFRvybQE5EF4/pC9pJQBkgEV4Gmy0wtGj6m1wPWm67UNrw8lHx2Uay
-         7ULw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJsd8cbARMePo8MOw1fNAMUS3DQCuobil7e9YX8kiWSqcPoJH47Fs98Wm2a0Inc1t0TWgo2cfJXEo9sgnn3A3DyC7YN0kYzGD3talY3zcAE+RWjE/TIVju0VGTGhT6jZ9MvTM+HyZ3MG5cqno=
-X-Gm-Message-State: AOJu0YxPXyE4172z6yhfAoLkzm9UNcPrboCbCkLhu8gGjdUD4kEUrCgA
-	LNctuSee8VOI3cWh8AROyheDx8GA8P/U6ZtQhQ7PcyQiCCuEjtoxcYkVoAJSxSCsSsVykngEOVt
-	0QrWzS+iiJ4xc4+GAhoMxcAVYk5M=
-X-Google-Smtp-Source: AGHT+IG8KVqezO2d9AlJKJ9+MvNqiT51WUXLrY2RAu5hGE9PLzTD/XaDxitQJBjkpgONT1t3LSYRsE6W/sMcn2a5taY=
-X-Received: by 2002:a05:6830:1542:b0:6f9:3775:73ba with SMTP id
- 46e09a7af769-6f9436b5d3fmr3661648a34.28.1717617265908; Wed, 05 Jun 2024
- 12:54:25 -0700 (PDT)
+	s=arc-20240116; t=1717617281; c=relaxed/simple;
+	bh=C/d+QzzEEXD3nP3fLH1CEjnoNOPR1mWYBBp0rsQc8ZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QdVqB52L53dKHW8jBUVx8VCkkNXo2uDoG/VKW/Rb7Z/W4IY8Oi9oVm5kqNxdfwBbjXqAnPcQ0VOUjgRI5qm5kylNcKN/zCzwazS8Ua8mNkV7LA3q271T7VNqWqSgK8wB/vrUOSQEEiCkxv6ytsLl62QIxFaKfMBaINDtuFTRy9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bo+Tymvp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46803C2BD11;
+	Wed,  5 Jun 2024 19:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717617281;
+	bh=C/d+QzzEEXD3nP3fLH1CEjnoNOPR1mWYBBp0rsQc8ZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bo+TymvpxxRc2c3hAxES9XbNbQqulQYx1SsCVi28ZwWJLt7AFPjcGIX9mbNoBkJ65
+	 jDahOBbTgwf17xQ4MB/Paf0qi84pSEdTOsZU03OVY+Mo76vLIlYJzMofh0I4bQF2h3
+	 LTFJ6sQzuBR5IuaobyoHBIQLudhDWvyRUaxN783YjdX7bWIUmjqAcw+UloBJNWpprc
+	 t/6aZNUqUZTX7TsETyB5gt4XVB3sUmwOsaaNu/kOtJ8waFsyKw0wgl2Hm0ER40ncaG
+	 GGVUd//wgrYXjnuHbZx1++O21swJtbbqoEcau3lj8WW9wCEFFQ2EZUSKuNbTLgofRW
+	 O7u+xQN4j/MLg==
+Date: Wed, 5 Jun 2024 20:54:33 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Tycho Andersen <tycho@tycho.pizza>, Vlastimil Babka <vbabka@suse.cz>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	jvoisin <julien.voisin@dustri.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
+	Thomas Graf <tgraf@suug.ch>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] mm/slab: Introduce kmem_buckets_create() and
+ family
+Message-ID: <20240605195433.GA791188@kernel.org>
+References: <20240531191304.it.853-kees@kernel.org>
+ <20240531191458.987345-4-kees@kernel.org>
+ <20240604150228.GS491852@kernel.org>
+ <Zl+RjJDOX45DH6gR@tycho.pizza>
+ <202406041749.27CAE270@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605183710.66016-1-trintaeoitogc@gmail.com> <00555ae56b4193f47d32550440829d1c542534f6.camel@sipsolutions.net>
-In-Reply-To: <00555ae56b4193f47d32550440829d1c542534f6.camel@sipsolutions.net>
-From: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
-Date: Wed, 5 Jun 2024 16:53:49 -0300
-Message-ID: <CAM_RzfYMzHpL7Z+3mRN8P0shJX6mQ+hecHXdydszZnO6eAFAbQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2] iwlwifi: mvm: adding check if the thermal
- firmware is running
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: miriam.rachel.korenblit@intel.com, kvalo@kernel.org, 
-	rafael.j.wysocki@intel.com, daniel.lezcano@linaro.org, dmantipov@yandex.ru, 
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202406041749.27CAE270@keescook>
 
- Johannes Berg <johannes@sipsolutions.net> write:
->
-> On Wed, 2024-06-05 at 15:37 -0300, Guilherme Giacomo Simoes wrote:
-> > In the dmesg is showing the message "failed to read out thermal zone"
-> > as if the temperature read is failed by don't find the thermal zone.
-> >
-> > After researching and debugging, I see that this specific error is
-> > occurrenced because the thermal try read the temperature when is started,
-> > but the firmware is not running yet.
-> >
-> > For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
-> > After this change, in my computer I compile and install kernel in /boot
-> > and in my dmesg the message "failed to read out thermal zone" is not show
-> > any more.
-> >
-> > I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> and
-> > Kalle Valo <kvalo@kernel.org> for your suggestions in my first patch.
-> >
-> > Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-> > ---
-> >  drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > index 8083c4b2ab6b..68ab9966330c 100644
-> > --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> > @@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
-> >
-> >       mutex_lock(&mvm->mutex);
-> >
-> > -     if (!iwl_mvm_firmware_running(mvm) ||
-> > -         mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
-> > +     const int res = iwl_mvm_firmware_running(mvm);
->
-> const is useless, but you should not have variable declarations in the
-> middle of the function (per kernel convention)
->
-> johannes
->
+On Tue, Jun 04, 2024 at 05:49:20PM -0700, Kees Cook wrote:
+> On Tue, Jun 04, 2024 at 04:13:32PM -0600, Tycho Andersen wrote:
+> > On Tue, Jun 04, 2024 at 04:02:28PM +0100, Simon Horman wrote:
+> > > On Fri, May 31, 2024 at 12:14:56PM -0700, Kees Cook wrote:
+> > > > +	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
+> > > > +		char *short_size, *cache_name;
+> > > > +		unsigned int cache_useroffset, cache_usersize;
+> > > > +		unsigned int size;
+> > > > +
+> > > > +		if (!kmalloc_caches[KMALLOC_NORMAL][idx])
+> > > > +			continue;
+> > > > +
+> > > > +		size = kmalloc_caches[KMALLOC_NORMAL][idx]->object_size;
+> > > > +		if (!size)
+> > > > +			continue;
+> > > > +
+> > > > +		short_size = strchr(kmalloc_caches[KMALLOC_NORMAL][idx]->name, '-');
+> > > > +		if (WARN_ON(!short_size))
+> > > > +			goto fail;
+> > > > +
+> > > > +		cache_name = kasprintf(GFP_KERNEL, "%s-%s", name, short_size + 1);
+> > > > +		if (WARN_ON(!cache_name))
+> > > > +			goto fail;
+> > > > +
+> > > > +		if (useroffset >= size) {
+> > > > +			cache_useroffset = 0;
+> > > > +			cache_usersize = 0;
+> > > > +		} else {
+> > > > +			cache_useroffset = useroffset;
+> > > > +			cache_usersize = min(size - cache_useroffset, usersize);
+> > > > +		}
+> > > > +		(*b)[idx] = kmem_cache_create_usercopy(cache_name, size,
+> > > > +					align, flags, cache_useroffset,
+> > > > +					cache_usersize, ctor);
+> > > > +		kfree(cache_name);
+> > > > +		if (WARN_ON(!(*b)[idx]))
+> > > > +			goto fail;
+> > > > +	}
+> > > > +
+> > > > +	return b;
+> > > > +
+> > > > +fail:
+> > > > +	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++) {
+> > > > +		if ((*b)[idx])
+> > > > +			kmem_cache_destroy((*b)[idx]);
+> > > 
+> > > nit: I don't think it is necessary to guard this with a check for NULL.
+> > 
+> > Isn't it? What if a kasprintf() fails halfway through the loop?
+> 
+> He means that kmem_cache_destroy() already checks for NULL. Quite right!
+> 
+> void kmem_cache_destroy(struct kmem_cache *s)
+> {
+>         int err = -EBUSY;
+>         bool rcu_set;
+> 
+>         if (unlikely(!s) || !kasan_check_byte(s))
+>                 return;
 
-I really appreciate your suggestions. I sended a new v3 patch without
-the "const" keyword.
+Yes, thanks. That is what I was referring to.
 
