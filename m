@@ -1,92 +1,119 @@
-Return-Path: <linux-kernel+bounces-203380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123E48FDA20
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:00:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D51E8FDA22
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4291F1C226C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:00:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE431F24EF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3C116131A;
-	Wed,  5 Jun 2024 23:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4642316079D;
+	Wed,  5 Jun 2024 23:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTWH6rwd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4RsB/q3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8998DC15D;
-	Wed,  5 Jun 2024 23:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986ABA38;
+	Wed,  5 Jun 2024 23:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717628434; cv=none; b=rYTyt/wrfrsRPTw69k2iKQxz9LbZwd1W2qslV8dfhXIjyQE4LSnrtLXdc+sC1SveCuIAdSNyvWCINN7/i3fEs4ufTrSaF//xGEkh/E7m1+Sk+Zv8t+Lg70jnKSkZ4RVWlyawwrVaSN6Zkk9mFv8NWP6ROZn508MuOpd9vbKjwXs=
+	t=1717628511; cv=none; b=GIMd7IwcUqY89iTJQVYwue+AGnFZleZCkPcjKS+WS3XSco5LTV8KEEE+RVNA41V991Oc5ZzT1QRr5WwL7+vFY3LlGUrBFOMxPT7ExVJnIcoWtOMqYo6XJIaLHII+83IWzIgfwNLxe4BcvkLcvPkaUIJxBtb32cCnRhtQZRHzfDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717628434; c=relaxed/simple;
-	bh=874CuEqBDhO5LkPFXKPIAmkGHDYIphCHms3xFeGLJYY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=iYShBSAoR28HtRBMl3LE5ccxW/o+eteSOUflDjA/8pC/xfDoIyQf+wOxvelXCs09l8YtBXRF+qBW8vf0UKQQydwIrwUwuKzMIW51jTGbwPo6WAo+DoxSdbiOBbUWbhHCWhT4JU0aMZnYwx5r6eFuM4mhsmt62MyQkR95LSVMrr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTWH6rwd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1C59AC32782;
-	Wed,  5 Jun 2024 23:00:34 +0000 (UTC)
+	s=arc-20240116; t=1717628511; c=relaxed/simple;
+	bh=Z3h4+PdKb5fP3a2f7pP8Dpq2lfsZWnsIkrMrgnK1Kh0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=YEV+3yXUoH0UItul4GOhenc/21PtVhOjpInFUiUCrLwhhPx7ggL9Dnk9m+q0ty3GKBsKy1+BP3vmWKyx5kXy2dZovYOLTsCrpktLs5MfOMeBm7h6vrGaThDkFXK5Ew3f5iKhGdH1IwjvtZsR9fbec9sg/t1RZ0RohAPm2jrhAMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4RsB/q3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B99C2BD11;
+	Wed,  5 Jun 2024 23:01:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717628434;
-	bh=874CuEqBDhO5LkPFXKPIAmkGHDYIphCHms3xFeGLJYY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DTWH6rwdXkRAXB9JC988OG4WrMd3goFGOn5FBHYM1f+1nxk3fc63qovWOnYHqwaPn
-	 1g/YRt9OTnwg7YPrmISqNgXMVfMp39Fbu9uNOq3lzleFogG5OoJFKRiiS1Y6pQbonV
-	 J2qqTutrkTwpReqRMh53eFDkoBgMQiXNfc29gZQd6f/lzrvLgjPKWy4Y/b1rPJO9ns
-	 HRofJkwfG7C62obeZnrCG7r607Je1RXgp/nYHVsPTm/eLryeF0Vm1N6f6gmElHRBHr
-	 q3bPI0wlwL4jRyJftEVKag3qpdH9KzFP81x0BkZedYNWATbPk/S/2vI9+zqxQx2zJj
-	 5ZipREDw7g57Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0BC6AC4332C;
-	Wed,  5 Jun 2024 23:00:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1717628511;
+	bh=Z3h4+PdKb5fP3a2f7pP8Dpq2lfsZWnsIkrMrgnK1Kh0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=W4RsB/q3OYPNHyBjNwIrXJ5dhDMNo6c02n9hk6NVTKxJ0bSLyqmcUwHReqNUoRGfg
+	 2nci0Plb0Fgme8sZon/sMkLNdX4EFxEcR+D7LaINo6uZlVg1J42M2X8N1tBN/pmsRw
+	 roBMeBSGyPXybUABfd4eqGbl7u17n09UeMt46qvuM+4LV7BX/4jazpell3cSb2isPZ
+	 A2poSOkc7g2OFiN28VbXSuG5DIg2W7D8vThNv2fWI8ED6FXhyt9AGYZyo/F0ZWf7xo
+	 pIh6bCqiujZu0u5fgzW8uYJeBD6+HTjc93u6xM1MvZYD7UPvYQx9sn8WSIWcfuK6Ji
+	 bycyargZHq88A==
+Date: Thu, 6 Jun 2024 08:01:47 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 1/5] ftrace: Rename dup_hash() and comment it
+Message-Id: <20240606080147.99c20cd5a638eda8307dc7a7@kernel.org>
+In-Reply-To: <20240605180408.537723591@goodmis.org>
+References: <20240605180334.090848865@goodmis.org>
+	<20240605180408.537723591@goodmis.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] ionic: advertise 52-bit addressing limitation for
- MSI-X
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171762843403.9199.12097128294110866724.git-patchwork-notify@kernel.org>
-Date: Wed, 05 Jun 2024 23:00:34 +0000
-References: <20240603212747.1079134-1-drc@linux.ibm.com>
-In-Reply-To: <20240603212747.1079134-1-drc@linux.ibm.com>
-To: David Christensen <drc@linux.ibm.com>
-Cc: shannon.nelson@amd.com, brett.creeley@amd.com, drivers@pensando.io,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Wed, 05 Jun 2024 14:03:35 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon,  3 Jun 2024 17:27:41 -0400 you wrote:
-> Current ionic devices only support 52 internal physical address
-> lines. This is sufficient for x86_64 systems which have similar
-> limitations but does not apply to all other architectures,
-> notably IBM POWER (ppc64). To ensure that MSI/MSI-X vectors are
-> not set outside the physical address limits of the NIC, set the
-> no_64bit_msi value of the pci_dev structure during device probe.
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 > 
-> [...]
+> The name "dup_hash()" is a misnomer as it does not duplicate the hash that
+> is passed in, but instead moves its entities from that hash to a newly
+> allocated one. Rename it to "__move_hash()" (using starting underscores as
+> it is an internal function), and add some comments about what it does.
+> 
 
-Here is the summary with links:
-  - [net-next,v2] ionic: advertise 52-bit addressing limitation for MSI-X
-    https://git.kernel.org/netdev/net-next/c/1467713eb224
+Looks good to me.
 
-You are awesome, thank you!
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/ftrace.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index da7e6abf48b4..9dcdefe9d1aa 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -1391,7 +1391,11 @@ ftrace_hash_rec_enable_modify(struct ftrace_ops *ops, int filter_hash);
+>  static int ftrace_hash_ipmodify_update(struct ftrace_ops *ops,
+>  				       struct ftrace_hash *new_hash);
+>  
+> -static struct ftrace_hash *dup_hash(struct ftrace_hash *src, int size)
+> +/*
+> + * Allocate a new hash and remove entries from @src and move them to the new hash.
+> + * On success, the @src hash will be empty and should be freed.
+> + */
+> +static struct ftrace_hash *__move_hash(struct ftrace_hash *src, int size)
+>  {
+>  	struct ftrace_func_entry *entry;
+>  	struct ftrace_hash *new_hash;
+> @@ -1438,7 +1442,7 @@ __ftrace_hash_move(struct ftrace_hash *src)
+>  	if (ftrace_hash_empty(src))
+>  		return EMPTY_HASH;
+>  
+> -	return dup_hash(src, size);
+> +	return __move_hash(src, size);
+>  }
+>  
+>  static int
+> -- 
+> 2.43.0
+> 
+> 
+
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
