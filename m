@@ -1,147 +1,140 @@
-Return-Path: <linux-kernel+bounces-202586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263B98FCE47
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:05:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E148FCE57
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367431C2453C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:05:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A351F2C49C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB831BA86F;
-	Wed,  5 Jun 2024 12:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6841D3656;
+	Wed,  5 Jun 2024 12:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmenRmc5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iG0rIBEp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB0C1B5831;
-	Wed,  5 Jun 2024 12:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFDD1D3651;
+	Wed,  5 Jun 2024 12:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717590076; cv=none; b=ek2RVcZT3/B26mcIkPqYRrnFDjs9XTk7Om+zMjcsfmmF1o+c7931w6PXFoYLFIJ2f7fh5iUnxQROHSD6fWlvBYZlwb/C8RLq7R21eP9MBF0vTNdEdUajl3sBByDzdosXRp0NF30HQNEFL/Ea0idCnXnFMsxyQBswqQVdnAPUl1Q=
+	t=1717590111; cv=none; b=W0wP7zMQTjqdhUaOWy4b6OiJiAKqhwgVR5+mN+Y1ODkuDyEJFGES3fEJeY9uiA7Yv2rYIopZITR8ECyNvghazXmGZKZPtqCWNLMSbhE2vHdghPmL0m66FU+htjI+cc/oSIMDrmYyMduPCkrYQhNmk6eWU7e56O4VfOIbZt2vJD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717590076; c=relaxed/simple;
-	bh=KutjEnSy3mJvJZ4Xuim93whBGTiCDrdHPF7VN2LoQg0=;
+	s=arc-20240116; t=1717590111; c=relaxed/simple;
+	bh=UHHCuXxgr4YI01SKxX+c/bFPiTRBKJKPTARrf8CN9LM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FLfdo23LUzmN2ReUBdCiSbcWytvU+AMuB0/r1KPk4Ov6/4ReH8hRIj121JkxqYziBumc4328/daq99YuzfP8/LJZPEQ6c91cIs23Qzfgkq4nGqkGVQwr1mCWd4RbzxmakbuSj8nqd4krhzHYgZuOpreA3oNtldSoAJGRAtRKnh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmenRmc5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C88C32782;
-	Wed,  5 Jun 2024 12:21:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717590075;
-	bh=KutjEnSy3mJvJZ4Xuim93whBGTiCDrdHPF7VN2LoQg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lmenRmc5Rf+Ivrn+8A3bJtENcGWcXPebIHvl+BrdcS+css08Cbwo37W7h+BsdMcdk
-	 fDT+t8Jhw+JY17mfZG4APC1a8XFNGfs2aJD8wq2iRKpC8yYGU6lcjDAMMRo9WmE4fk
-	 RoGdzFV7qKWuOzziU1P/SZOFdZicXN0ijlZse02R56abwJ1eyJe487/BoI8qUd6fOA
-	 o4btbQo3uw9DonLVhXYFcv7ka2nonOFKEUPvaAhFMoIEcPOYKCJMpS4CvatGK97rrM
-	 2xdcxd2akGsGSUcV4fa2epHHGiXqy+mQQ3UunVmBa9kMdQLJDIp6G51RfLskHHDlPw
-	 eZUky3BDSUF2Q==
-Date: Wed, 5 Jun 2024 14:21:13 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH rcu 1/6] rcu: Remove full ordering on second EQS snapshot
-Message-ID: <ZmBYOaQQQKapFGZo@localhost.localdomain>
-References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
- <20240604222652.2370998-1-paulmck@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JdsIykdupdVCNw6FTES+pylz9Nf0ZH9DzubP46R3AWUjGvKEZUeYE3TwV+BJ2/6V/T7h/BVyGcZqKjks3C32K2EvPW/tYPH+08Yng6CEEZ6kJFEviEdxHKS3OdvVpmSZxnN0Xn+RGKxoOtBvVje7i8z8MxtrHVS9yhsw/zEVq1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iG0rIBEp; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717590110; x=1749126110;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UHHCuXxgr4YI01SKxX+c/bFPiTRBKJKPTARrf8CN9LM=;
+  b=iG0rIBEpIqDlSNQ9xy3z1IUpZZhOjEOJQCLm3JOytg0QVLRLQTKMzy2t
+   t08zE4bJupjrd4JEbQaDqlHiH4FIqfOp202xa1S4tadLX0Gwn7geVSIao
+   M5OWxzym+YJjExTula0L2GSIAjTYMBqUJvYE5MSRrVfrtF3sADX6uomuS
+   KTuUUKRSCZqwH9yJxgYnhGNk053Vog63ruOcPFRtkoOmObZzsotwTNUye
+   smGS8SWdc06j9HrXqTAo6+TOdRCu8Q0JzBPsx1YWuyNr9PVnWvb4SSDXg
+   rgXikCBVulhxt+d1mgODtQA+dWSumAv1TyfrVg4g/nmZs+Tn0C4cQgj/f
+   w==;
+X-CSE-ConnectionGUID: JP5Hg7PqSwC7Qq2DAG/WFA==
+X-CSE-MsgGUID: BiSN2J+PSLq+MZpHu1INXA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13998764"
+X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
+   d="scan'208";a="13998764"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 05:21:49 -0700
+X-CSE-ConnectionGUID: CApkPYYZQBC0yiDEy7bMSw==
+X-CSE-MsgGUID: 1fIP69SpRjaarDLU3PYGpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
+   d="scan'208";a="68714614"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 05 Jun 2024 05:21:43 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 5E1A81B6; Wed, 05 Jun 2024 15:21:42 +0300 (EEST)
+Date: Wed, 5 Jun 2024 15:21:42 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>, adrian.hunter@intel.com, 
+	ardb@kernel.org, ashish.kalra@amd.com, bhe@redhat.com, 
+	dave.hansen@linux.intel.com, elena.reshetova@intel.com, haiyangz@microsoft.com, hpa@zytor.com, 
+	jun.nakajima@intel.com, kai.huang@intel.com, kexec@lists.infradead.org, 
+	kys@microsoft.com, linux-acpi@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, ltao@redhat.com, mingo@redhat.com, 
+	peterz@infradead.org, rafael@kernel.org, rick.p.edgecombe@intel.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, seanjc@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	x86@kernel.org
+Subject: Re: [PATCHv11.1 11/19] x86/tdx: Convert shared memory back to
+ private on kexec
+Message-ID: <alkew673cceojzmhsp3wj43yv76cek5ydh2iosfcphuv6ro26q@pj6whxcoetht>
+References: <20240531151442.GMZlnpYkDCRlg1_YS0@fat_crate.local>
+ <20240602142303.3263551-1-kirill.shutemov@linux.intel.com>
+ <20240603083754.GAZl2A4uXvVB5w4l9u@fat_crate.local>
+ <noym2bqgxqcyhhdzoax7gvdfzhh7rtw7cv236fhzpqh3wqf76e@2jj733skv7y4>
+ <78d33a31-0ef2-417b-a240-b2880b64518e@intel.com>
+ <u3hg3fqc2nxsjtfugjmmzlahwriyqlebnkxrbzgrxlkj6l3k36@yd3yudglgevi>
+ <20240604180554.GIZl9XgscEI3PUvR-W@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240604222652.2370998-1-paulmck@kernel.org>
+In-Reply-To: <20240604180554.GIZl9XgscEI3PUvR-W@fat_crate.local>
 
-Le Tue, Jun 04, 2024 at 03:26:47PM -0700, Paul E. McKenney a écrit :
-> From: Frederic Weisbecker <frederic@kernel.org>
+On Tue, Jun 04, 2024 at 08:05:54PM +0200, Borislav Petkov wrote:
+> On Tue, Jun 04, 2024 at 07:14:00PM +0300, Kirill A. Shutemov wrote:
+> > 			/*
+> > 			 * If tdx_enc_status_changed() fails, it leaves memory
+> > 			 * in an unknown state. If the memory remains shared,
+> > 			 * it can result in an unrecoverable guest shutdown on
+> > 			 * the first accessed through a private mapping.
 > 
-> When the grace period kthread checks the extended quiescent state
-> counter of a CPU, full ordering is necessary to ensure that either:
-> 
-> * If the GP kthread observes the remote target in an extended quiescent
->   state, then that target must observe all accesses prior to the current
->   grace period, including the current grace period sequence number, once
->   it exits that extended quiescent state. Also the GP kthread must
->   observe all accesses performed by the target prior it entering in
->   EQS.
-> 
-> or:
-> 
-> * If the GP kthread observes the remote target NOT in an extended
->   quiescent state, then the target further entering in an extended
->   quiescent state must observe all accesses prior to the current
->   grace period, including the current grace period sequence number, once
->   it enters that extended quiescent state. Also the GP kthread later
->   observing that EQS must also observe all accesses performed by the
->   target prior it entering in EQS.
-> 
-> This ordering is explicitly performed both on the first EQS snapshot
-> and on the second one as well through the combination of a preceding
-> full barrier followed by an acquire read. However the second snapshot's
-> full memory barrier is redundant and not needed to enforce the above
-> guarantees:
-> 
->     GP kthread                  Remote target
->     ----                        -----
->     // Access prior GP
->     WRITE_ONCE(A, 1)
->     // first snapshot
->     smp_mb()
->     x = smp_load_acquire(EQS)
->                                // Access prior GP
->                                WRITE_ONCE(B, 1)
->                                // EQS enter
->                                // implied full barrier by atomic_add_return()
->                                atomic_add_return(RCU_DYNTICKS_IDX, EQS)
->                                // implied full barrier by atomic_add_return()
->                                READ_ONCE(A)
->     // second snapshot
->     y = smp_load_acquire(EQS)
->     z = READ_ONCE(B)
-> 
-> If the GP kthread above fails to observe the remote target in EQS
-> (x not in EQS), the remote target will observe A == 1 after further
-> entering in EQS. Then the second snapshot taken by the GP kthread only
-> need to be an acquire read in order to observe z == 1.
-> 
-> Therefore remove the needless full memory barrier on second snapshot.
-> 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> ---
->  kernel/rcu/tree.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 28c7031711a3f..f07b8bff4621b 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -321,7 +321,7 @@ static bool rcu_dynticks_in_eqs(int snap)
->   */
->  static bool rcu_dynticks_in_eqs_since(struct rcu_data *rdp, int snap)
->  {
-> -	return snap != rcu_dynticks_snap(rdp->cpu);
-> +	return snap != ct_dynticks_cpu_acquire(rdp->cpu);
+> "access"
 
-I guess I'm going to add a comment here to elaborate on the fact
-it relies on the ordering enforced before the first snapshot. Would
-you prefer a delta patch or an updated patch?
+Okay.
 
-Thanks.
+> So this sentence above can go too, right?
 
->  }
->  
->  /*
-> -- 
-> 2.40.1
+I don't think so.
+
+> Because that comment is in tdx_kexec_finish() and we're basically going
+> off to kexec. So can a guest even access it through a private mapping?
+> We're shutting down so nothing is running anymore...
+
+This kernel can't. But the next kernel can.
+
+If a page can be accessed via private mapping is determined by the
+presence in Secure EPT. This state persist across kexec.
+
+> > 			 * The kdump kernel boot is not impacted as it uses
+> > 			 * a pre-reserved memory range that is always private.
+> > 			 * However, gathering crash information could lead to
+> > 			 * a crash if it accesses unconverted memory through
+> > 			 * a private mapping.
 > 
+> When does the kexec kernel even get such a private mapping? It is not
+> even up yet...
+
+Crash kernel provides access to this memory via /proc/vmcore. Crash kernel
+will assume all memory there is private.
+
+> > 			 * pr_err() may assist in understanding such crashes.
 > 
+> "Print error info in order to leave bread crumbs for debugging." is what
+> I'd say.
+
+Okay.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
