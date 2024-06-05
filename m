@@ -1,166 +1,100 @@
-Return-Path: <linux-kernel+bounces-202846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8558FD1CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:37:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4368FD1D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FB11F273B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:37:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EACB28BB1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED8D14E2CA;
-	Wed,  5 Jun 2024 15:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B267CF33;
+	Wed,  5 Jun 2024 15:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iINa8Zxs"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i7mV3pBM"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5830F14B968;
-	Wed,  5 Jun 2024 15:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9021773D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717601837; cv=none; b=ffElDPG+bl3rvPrP5DulIAWQNaDrsh2ubuKq9e7kgPM+TtkbRFlaolCyX1/xf/pC6Tyk8VDQtUJD9x1Ss6Rty8KzgA6pz47/lWPu6ktXYISdtmBEI9kTXOsP7tSSfxTGSWLnsSnv2BWGbUwcCbm0ZhnLqkV9f3bYE4ODyphTric=
+	t=1717601890; cv=none; b=ZMAQr8pGGI9iULEjps+LnJrRK4R3l/8Q1zqgavzH1jLknlOaO49Tg1/b1seMPhy7b37/6ROiUUR2ZdJIoLQ4DusV8jXous92Kxnb8GuMrE/R+tQ80/Sa8YPi6pzc8DAGrgWlA68GGKokjZwX/ZLW7+KMYq43sgLggWMcHRDdHRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717601837; c=relaxed/simple;
-	bh=W8loeJgPBjnjnkzn24m+LbcwcKGo+/TYQDyUzZ/j8q0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g+6FZnTM28/CI5pPK2d3Mntdt8dtxBQFDznSbiXoe5G5czrqBbdR9AL+++OAk5ALxrmVxBW59sZw2zL1GmnU7CC/0k2TYcjpMlP4v8actFhLipkMgKnGIr2XB0cfYOuIkV3HzzspyCQn1+YhZ3jBmgwZZfp99tsKuvkdv/ul8J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iINa8Zxs; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-421392b8156so23281135e9.3;
-        Wed, 05 Jun 2024 08:37:15 -0700 (PDT)
+	s=arc-20240116; t=1717601890; c=relaxed/simple;
+	bh=bpFNmEe++Fm6Jhn5LqQS44pORnnsMVjcXJi0YMeG9xI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eU2Mkyj/5t8EEZ1mxIxK5ilkomLib0ZM+XWZzdzedRjXoaVYw8z8pn6jvBwkVNDj/cD9RG6Q9wipIgdL99zUR/X1xpx6hZTb9s5lIWXj+TUyi+rY0MZ0TjJ3UIC3CuGQQR5G2up7tRkzwV4OW/kVFz4lhvGT+k+j1wxr/haCSkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i7mV3pBM; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62a088faef7so13700397b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 08:38:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717601834; x=1718206634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAjezbYFk4kRuwBAyZVCH+a9cPM1rylHv2qjz+E2Bv8=;
-        b=iINa8Zxsrck0MG2QiqgCWmkTiZz1BGJLNqCdwa6d6AsmOqiA/+mmAfMtnqpTylpQLz
-         VLjK2+reVklx27nCT4873chZZXsWy3dsy3gi1UZa9owJuNFLy/76DUnuTsSCT0BCeGy0
-         slQGeFnxnLr7neYB2h1LsfPEhMw0Cd2El9toEDk15wpPpZ0tiyRvSq+lBBHUgcxlT84g
-         i5zbOD7UbgZTlCfiqzw9K5A0NDj3gAzYn1BObqLzWIrp/TC3WJT5cOZpEx8IM41BDbZ9
-         0O2yEbTi5cVVKjNZkVpDXv6M/eWSlmsqZCeMst2fzKe+nSIgiQnmCmKoP5Di69bGIrw+
-         5dDA==
+        d=google.com; s=20230601; t=1717601888; x=1718206688; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4kIwFDSYK6IZoKm19H7uH4SBYfg7R2PGBVGLBIDSlog=;
+        b=i7mV3pBMEar5mH8xrDKUgrXbxQvALUJkZUo79eSMLMqN79Y4rVJwAbrYAuKHYa//T/
+         Cv61I2YB7ou0dAgzKWVBsxaYX6qe84R9X4dNk6bwo8C8vdMO3FQy28JhaKQivJtweIsR
+         6Af1FRZql7xQ+YOCTQ+NZk3sS9fvQzhEvUgtN9g2qyccE7tiKF7pCGkGEQBGHNqS41x5
+         AZ1hl4Ric+S8oEk0DbLkpwYVGMmfX/atirjqU9cdNIF4ihqW6klDCyvVFfc+etFL8Pur
+         HHL0oVa7e6HSZKcyv45X//ZqcFKaNIby4ku8mN7SNZSe/FgosbQsCRQURDKGMbufMkAx
+         FCXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717601834; x=1718206634;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lAjezbYFk4kRuwBAyZVCH+a9cPM1rylHv2qjz+E2Bv8=;
-        b=FKziftfzZ9HGmmnfQOq7WyCMseMxV9NEGK5jBlVVUKDwjByYJzN7mKqoMH1VHy2JIT
-         LGAv4YenwqwJsolOPmcVzWwGtw0nexqJUKh+bj4STTv7bFj1hlxuro5NGSTHaPck8xot
-         l4DPw0nYrs1TIB2/PzfAtOZ5uQh++1F9YYHf6uQtxmcAvMztwEw6mFTWYZyq/ujmYQmQ
-         InV7xrOcrVwAhDWYhijdvn4X4CXXxD8cpk1umQufpdTHsAmRGsPEA5ltMY4K3Tj6/88v
-         GrH+zG94xkkuvxcgW7V/pSMqPiqj4lZQBzcuI797e7x7GnkzOkSXIJDjRhARWRLaf9wD
-         Uwag==
-X-Forwarded-Encrypted: i=1; AJvYcCWVG2YDPxjhj3k/sLEMOkR10xn95o4pB75PivUip/fOlEpq+Os9CCu5zTHt8ABf+bkOOpyPBu2LcnaqaeXnbVeTUwg2YHN1yFYWoDvEYGsDS5s=
-X-Gm-Message-State: AOJu0YwGZKIP9Lus8OxspPNSGW/5u7SNQi31MIFBALjVkJs9wvY9Y7ay
-	ajBpi/BWP+H+322AIqcO1Iln87ovzjWAGJCjXLjkmLlK1xGEZr2n
-X-Google-Smtp-Source: AGHT+IGB+Rwwao76RXcektdyMHLa2vpeLrOu5clOBZtUdExzKvl3zDenxBafFf61pEtfzUiDObaYxg==
-X-Received: by 2002:a05:600c:3589:b0:418:3eb7:e8c6 with SMTP id 5b1f17b1804b1-421562c24f0mr23479115e9.5.1717601833369;
-        Wed, 05 Jun 2024 08:37:13 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421580a94edsm26433685e9.0.2024.06.05.08.37.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 08:37:12 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RESEND RFC PATCH] reset: Add devm_reset_control_deassert helper
-Date: Wed,  5 Jun 2024 16:37:08 +0100
-Message-Id: <20240605153708.613610-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1717601888; x=1718206688;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4kIwFDSYK6IZoKm19H7uH4SBYfg7R2PGBVGLBIDSlog=;
+        b=u9W402S+cU3Mk7wNqM3pkI1yML04f1gdNMe1DOlZLXBjFt/SAqNmC7s+wSwQ2WXE1v
+         ZJuVB5N+SvfFlZx2otYqHIsxxtQt5gWUtZTF9T2F6sKeHNw9DY+VgGERdzx6FVZQF06j
+         gsfqZe3+UeII6n0imHlK++6zY0cRLor02dBjLaN3/ctwIcOHgEIuRzjLbObEHgb4HBei
+         QlOLxuie9tMjykUgl6vvPKrL+bRYEXALCso1mxYDCraWcMwOdlpZk9l4o9CWs3rQGB1G
+         4+AZFwXpXuROJUrgHNc2xukXmaPUffjqMp8TjmZO+XyrIzk4DS/pWJpEaSAM6a34ZgMc
+         oqIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfXgGazZk1ROfFHXmPzb6KJRor2NSzEx7whkU6M+z05+EvRCzPQNU7VM9FCDYpayLOM7anqaSksNillbSTUOfizNdHn8CwgpuI7kC6
+X-Gm-Message-State: AOJu0YwexUDewysgv2/iVe5onzVbbimexuM3t+aItNFNPQp7DNaQoFjo
+	dRr5qbA1QltAWXgaIXJFM1NYSmKIRWJ+WvjO7eKbDFti+fZyB+6Rhpsb1mo4QCuPnNSJcTX0txw
+	uAA==
+X-Google-Smtp-Source: AGHT+IFVGwW9/cpLUjRGOTBt7abgUxXeVyV3Hw/4O0+DzAsmAXs3qbFgTiclGA8Y/LqWnzwtdCDqyCrlowg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2b02:b0:de5:9ecc:46b6 with SMTP id
+ 3f1490d57ef6-dfadeba2a13mr1790276.6.1717601888104; Wed, 05 Jun 2024 08:38:08
+ -0700 (PDT)
+Date: Wed, 5 Jun 2024 08:38:06 -0700
+In-Reply-To: <81d9b683-450a-4fb6-9d95-108c77d9b3cb@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240520175925.1217334-1-seanjc@google.com> <20240520175925.1217334-9-seanjc@google.com>
+ <81d9b683-450a-4fb6-9d95-108c77d9b3cb@intel.com>
+Message-ID: <ZmCGXhnlwQjqbfab@google.com>
+Subject: Re: [PATCH v7 08/10] KVM VMX: Move MSR_IA32_VMX_MISC bit defines to asm/vmx.h
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kai Huang <kai.huang@intel.com>, Shan Kang <shan.kang@intel.com>, Xin Li <xin3.li@intel.com>, 
+	Zhao Liu <zhao1.liu@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, May 22, 2024, Xiaoyao Li wrote:
+> On 5/21/2024 1:59 AM, Sean Christopherson wrote:
+> > +#define VMX_MISC_ACTIVITY_SHUTDOWN		BIT_ULL(7)
+> 
+> Same as Patch 4. It is newly added but will be used by following patch 10.
+> 
+> Call out it in change log or move it to patch 10.
 
-A typical code pattern for reset_control_deassert() call is to call it in
-the _probe function and to call reset_control_assert() both from _probe
-error path and from _remove function.
+This one actually is mentioned, though it's not super obvious.
 
-Add helper function to replace this bolierplate piece of code. Calling
-devm_reset_control_deassert() removes the need for calling
-reset_control_assert() both in the probe()'s error path and in the
-remove() function.
-
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/reset/core.c  | 22 ++++++++++++++++++++++
- include/linux/reset.h |  6 ++++++
- 2 files changed, 28 insertions(+)
-
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index dba74e857be6..a2a6eff8e599 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -592,6 +592,28 @@ int reset_control_deassert(struct reset_control *rstc)
- }
- EXPORT_SYMBOL_GPL(reset_control_deassert);
- 
-+static void reset_control_assert_action(void *rstc)
-+{
-+	reset_control_assert(rstc);
-+}
-+
-+/**
-+ * devm_reset_control_deassert - devres-enabled version of reset_control_deassert()
-+ * @dev: device that requests the reset control
-+ * @rstc: reset controller
-+ */
-+int devm_reset_control_deassert(struct device *dev, struct reset_control *rstc)
-+{
-+	int ret;
-+
-+	ret = reset_control_deassert(rstc);
-+	if (ret)
-+		return ret;
-+
-+	return devm_add_action_or_reset(dev, reset_control_assert_action, rstc);
-+}
-+EXPORT_SYMBOL_GPL(devm_reset_control_deassert);
-+
- /**
-  * reset_control_bulk_deassert - deasserts the reset lines in reverse order
-  * @num_rstcs: number of entries in rstcs array
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 514ddf003efc..e41e752ba098 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -31,6 +31,7 @@ int reset_control_reset(struct reset_control *rstc);
- int reset_control_rearm(struct reset_control *rstc);
- int reset_control_assert(struct reset_control *rstc);
- int reset_control_deassert(struct reset_control *rstc);
-+int devm_reset_control_deassert(struct device *dev, struct reset_control *rstc);
- int reset_control_status(struct reset_control *rstc);
- int reset_control_acquire(struct reset_control *rstc);
- void reset_control_release(struct reset_control *rstc);
-@@ -91,6 +92,11 @@ static inline int reset_control_deassert(struct reset_control *rstc)
- 	return 0;
- }
- 
-+static inline int devm_reset_control_deassert(struct device *dev, struct reset_control *rstc)
-+{
-+	return 0;
-+}
-+
- static inline int reset_control_status(struct reset_control *rstc)
- {
- 	return 0;
--- 
-2.34.1
-
+    Opportunistically use BIT_ULL() instead of open coding hex values, add
+    defines for feature bits that are architecturally defined, and move the
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    defines down in the file so that they are colocated with the helpers for
+    getting fields from VMX_MISC.
 
