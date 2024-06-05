@@ -1,156 +1,151 @@
-Return-Path: <linux-kernel+bounces-202150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C658FC861
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:55:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC038FC863
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73B671C2131C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C411F21416
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EA918FDB0;
-	Wed,  5 Jun 2024 09:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E8D18FDCB;
+	Wed,  5 Jun 2024 09:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DxZzDfW3"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E80E163
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jgs9t38X"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E2918F2DD;
+	Wed,  5 Jun 2024 09:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717581309; cv=none; b=Y2843zFEco8HU6PZKiR50oMj4ii8Bbm3pavTwaw1J5yu+EnLk/2kiIL4z2qeBHovrJ6py/NxwdM+Z4qpaFGFH2WOgjZ1I9ymUkbmtdTRnvlsxAiHLHA/ZOCG+4ddi0O+r39ohH9TTWtIscRNs7DKrbcl7eXWw4g1dzvqDPVeb2I=
+	t=1717581378; cv=none; b=Dr0/3fewJohBneTexaYvORLWFQmcB2miepdH497peRTNmdq1iAb9MM59zBctNKKph5/FtKuAXgsyjY52t1HRKBX4g4Qd4S8eWhXksL3x2UQw1VWXMS90EpWGBUtHhLEQABO1oWnc9ksFB+NSZcxnZZlYSG5m4Y2lcnrTc3Se2QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717581309; c=relaxed/simple;
-	bh=QXeiEtnyemZNpJWeY5akh3tqj/FK6IvnOXT8E5iE5ZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Uct7Z41NVE1h/ibUQw6qSUmpjPqXfkDa4ITsOoeZjM9AAlAIz25RhQk3oWpIJVeboQPCOLnG4b2X9GLJTSBq4WEVfPIyo32NuDg5d2KjUiT5c+XMH/CbrUMndGCpBMMtblLloGy83DAXXkAFARg3DyqkW2FJ0a1vbp8R5wvOkQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DxZzDfW3; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=/oakU
-	ifhniV84QMFd9hK/xRSzvvRjN1nHsDWsGL/yU8=; b=DxZzDfW3K5loicecZdNMP
-	pS8zyO7P3zNo7c1R02FRNTabdIi82Cqt9N62M3VdzY8fAhT/5SX2iBZ5XFmXIOn5
-	qyTbKLwb5OJRKIzr9Zo5loSd9NdKKHrv4Rt68j4YUlG2vPUFZ+2uX97wyDpOPuuv
-	3ncJQNb5WXq0U8JLDu11fs=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g1-3 (Coremail) with SMTP id _____wDn932+NWBmjnx1HA--.48089S4;
-	Wed, 05 Jun 2024 17:54:08 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: 21cnbao@gmail.com
-Cc: akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mhocko@kernel.org,
-	v-songbaohua@oppo.com,
-	xu.xin16@zte.com.cn,
-	yang.yang29@zte.com.cn,
-	ziy@nvidia.com
-Subject: Re: [PATCH linux-next] mm: huge_memory: fix misused mapping_large_folio_support() for anon folios
-Date: Wed,  5 Jun 2024 09:54:06 +0000
-Message-Id: <20240605095406.891512-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CAGsJ_4wFyFBTDDfsBpi0sKs1WOH2jaKKoYWWj9Ln_PsNjP2uuA@mail.gmail.com>
-References: <CAGsJ_4wFyFBTDDfsBpi0sKs1WOH2jaKKoYWWj9Ln_PsNjP2uuA@mail.gmail.com>
+	s=arc-20240116; t=1717581378; c=relaxed/simple;
+	bh=sZH130KhV6Sxe/srQIfQ6fLBm2tVfgmWGkFbCM8jzMo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=DfjlKWPTfXDAF9a0y1TeKOScZt+yTKymoA0EHU4CmIALhXoUTiaNfN3KF1aoU6yGWrSxdka8JD3ArWhjxlNSVYUzR7vPwnLoAfkhYwFl6NRjfNHl9Gm3hzolXkYlc5OIAzhw9bTAvcg2begT9vbrIAszz6F0SeuRD4lakQJdeuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jgs9t38X; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4559tBBN083735;
+	Wed, 5 Jun 2024 04:55:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717581311;
+	bh=m4dawFd7mVRkD8sUTHOUCTtxKHfu5Cbecp6wmmcEiss=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=jgs9t38XWrp8HD7lHcoWWvKBojDhhpkt6WR8pmNZEIphvCx9iq1EwtpMQaKs23XjK
+	 NHUPYPDGAEc8w/p8uQPX1ECPCQRcI+sTvaHMgQRxzcMIScSBD1H4tVpg+fVi1lR8Qk
+	 k/0YiJraRNTHvYszMHWtSFTk0PysGFiVpheu00l8=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4559tBCB091164
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 5 Jun 2024 04:55:11 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
+ Jun 2024 04:55:11 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 5 Jun 2024 04:55:11 -0500
+Received: from [137.167.6.231] (lt5cg1094w5k.dhcp.ti.com [137.167.6.231])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4559t9C7098183;
+	Wed, 5 Jun 2024 04:55:09 -0500
+Message-ID: <eea16e12-6e9d-4630-87e6-f44071ab1c4e@ti.com>
+Date: Wed, 5 Jun 2024 12:55:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn932+NWBmjnx1HA--.48089S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXr43KFy3XF15Jr15Cr4kJFb_yoW5uFWrpF
-	W2grn3ta95XFZIkr12qr40kr15XrWkXa4kAay3ZwnxA3ZxJrnF9Fy7J3W8uay7uryfJrWI
-	qa1UXFy3W3WDtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRoKZZUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMwT0TGXAlpWHBAAAsq
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/17] Add main.c
+From: "Nemanov, Michael" <michael.nemanov@ti.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Breno Leitao <leitao@debian.org>,
+        Justin Stitt <justinstitt@google.com>,
+        Kees Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20240521171841.884576-1-michael.nemanov@ti.com>
+ <20240521171841.884576-9-michael.nemanov@ti.com>
+ <cfe33bf1-9df3-4d02-b4ed-e29a430b106d@kernel.org>
+ <456c8076-1e3a-4cc9-895c-e707e68fe610@ti.com>
+ <97d8acf9-6cb3-4da7-ad4e-0f2d0a63c172@kernel.org>
+ <2e2ec1ba-0c24-4173-af60-ea51004f2e10@ti.com>
+Content-Language: en-US
+In-Reply-To: <2e2ec1ba-0c24-4173-af60-ea51004f2e10@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-> On Tue, Jun 4, 2024 at 5:47?PM <xu.xin16@zte.com.cn> wrote:
-> >
-> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> >
-> > When I did a large folios split test, a WARNING
-> > "[ 5059.122759][  T166] Cannot split file folio to non-0 order"
-> > was triggered. But my test cases are only for anonmous folios.
-> > while mapping_large_folio_support() is only reasonable for page
-> > cache folios.
-> >
-> > In split_huge_page_to_list_to_order(), the folio passed to
-> > mapping_large_folio_support() maybe anonmous folio. The
-> > folio_test_anon() check is missing. So the split of the anonmous THP
-> > is failed. This is also the same for shmem_mapping(). We'd better add
-> > a check for both. But the shmem_mapping() in __split_huge_page() is
-> > not involved, as for anonmous folios, the end parameter is set to -1, so
-> > (head[i].index >= end) is always false. shmem_mapping() is not called.
-> >
-> > Using /sys/kernel/debug/split_huge_pages to verify this, with this
-> > patch, large anon THP is successfully split and the warning is ceased.
-> >
-> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > Cc: xu xin <xu.xin16@zte.com.cn>
-> > Cc: Yang Yang <yang.yang29@zte.com.cn>
-> > ---
-> >  mm/huge_memory.c | 38 ++++++++++++++++++++------------------
-> >  1 file changed, 20 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 317de2afd371..4c9c7e5ea20c 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -3009,31 +3009,33 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-> >         if (new_order >= folio_order(folio))
-> >                 return -EINVAL;
-> >
-> > -       /* Cannot split anonymous THP to order-1 */
-> > -       if (new_order == 1 && folio_test_anon(folio)) {
-> > -               VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-> > -               return -EINVAL;
-> > -       }
-> > -
-> >         if (new_order) {
-> >                 /* Only swapping a whole PMD-mapped folio is supported */
-> >                 if (folio_test_swapcache(folio))
-> >                         return -EINVAL;
-> > -               /* Split shmem folio to non-zero order not supported */
-> > -               if (shmem_mapping(folio->mapping)) {
-> > -                       VM_WARN_ONCE(1,
-> > -                               "Cannot split shmem folio to non-0 order");
-> > -                       return -EINVAL;
-> > -               }
-> > -               /* No split if the file system does not support large folio */
-> > -               if (!mapping_large_folio_support(folio->mapping)) {
-> > -                       VM_WARN_ONCE(1,
-> > -                               "Cannot split file folio to non-0 order");
-> > -                       return -EINVAL;
-> > +
-> > +               if (folio_test_anon(folio)) {
-> > +                       /* Cannot split anonymous THP to order-1 */
-> > +                       if (new_order == 1) {
-> > +                               VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-> > +                               return -EINVAL;
-> > +                       }
-> > +               } else {
-> > +                       /* Split shmem folio to non-zero order not supported */
-> > +                       if (shmem_mapping(folio->mapping)) {
-> > +                               VM_WARN_ONCE(1,
-> > +                                       "Cannot split shmem folio to non-0 order");
-> > +                               return -EINVAL;
-> > +                       }
-> > +                       /* No split if the file system does not support large folio */
-> > +                       if (!mapping_large_folio_support(folio->mapping)) {
-> > +                               VM_WARN_ONCE(1,
-> > +                                       "Cannot split file folio to non-0 order");
-> > +                               return -EINVAL;
-> > +                       }
-> 
-> Am I missing something? if file system doesn't support large folio,
-> how could the large folio start to exist from the first place while its
-> mapping points to a file which doesn't support large folio?
+On 5/31/2024 4:50 PM, Nemanov, Michael wrote:
+> On 5/22/2024 12:46 PM, Krzysztof Kozlowski wrote:>
+>>> +
+>>> +static int cc33xx_probe(struct platform_device *pdev)
+>>> +{
+>>> +	struct cc33xx *cc;
+>>> +	struct ieee80211_hw *hw;
+>>> +	struct cc33xx_platdev_data *pdev_data = dev_get_platdata(&pdev->dev);
+>>> +	const char *nvs_name;
+>>> +	int ret;
+>>> +
+>>> +	cc33xx_debug(DEBUG_CC33xx, "Wireless Driver Version %s", DRV_VERSION);
+>>
+>> Drop
+>>
+>>> +
+>>> +	if (!pdev_data) {
+>>> +		cc33xx_error("can't access platform data");
+>>
+>> Do not use your own print code. Use standard dev_() calls. This applies
+>> *everywhere*.
+>>
+>> [...]
+>>
+>>> +	cc33xx_debug(DEBUG_CC33xx, "WLAN CC33xx platform device probe done");
+>>
+>> Drop, tracing/sysfs gices you this. Do not print simple
+>> success/entry/exit messages.
+>>
+>> [...]
+>>
+>>> +};
+>>> +MODULE_DEVICE_TABLE(platform, cc33xx_id_table);
+>>> +
+>>> +static struct platform_driver cc33xx_driver = {
+>>> +	.probe		= cc33xx_probe,
+>>> +	.remove		= cc33xx_remove,
+>>> +	.id_table	= cc33xx_id_table,
+>>> +	.driver = {
+>>> +		.name	= "cc33xx_driver",
+>>> +	}
+>>> +};
+>>> +
+>>> +u32 cc33xx_debug_level = DEBUG_NO_DATAPATH;
+>>> 
+>> Why this is global? Why u32? Why global variable is defined at the end
+>> of the file?!?!
+>  
+> cc33xx_debug_level together with cc33xx_debug/info/error() macros is how
+> all traces were done in drivers/net/wireless/ti/wlcore/ (originally was
+> wl1271_debug/info etc.)
+> It enables / disables traces without rebuilding or even reloading which
+> is very helpful for remote support. These macros map to dynamic_pr_debug
+> / pr_debug. I saw similar wrappers in other wireless drivers (ath12k).
+> This is also why there are plenty of cc33xx_debug() all over the code,
+> most are silent by default.
 
-I think it is the CONFIG_READ_ONLY_THP_FOR_FS case.
-khugepaged will try to collapse read-only file-backed pages to 2M THP.
+Any more thoughts on debug traces? I'll remove all trivial function 
+entry / exit traces as Krzysztof requested. Is it OK to keep other 
+cc33xx_debug() calls which will be off by default?
+
+Michael.
 
 
