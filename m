@@ -1,196 +1,102 @@
-Return-Path: <linux-kernel+bounces-202582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1BC8FCE3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACBAA8FCE40
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94746288CCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3862C2895A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F277A194080;
-	Wed,  5 Jun 2024 12:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31ED1940B2;
+	Wed,  5 Jun 2024 12:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RY6y9bnU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jJ/YStJc"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF507195B1B;
-	Wed,  5 Jun 2024 12:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34E91990B3;
+	Wed,  5 Jun 2024 12:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717589945; cv=none; b=LTKQrIOIafJeNkjTUoxv2iWvp3wYJq3rQQnNXEkqPc6vdPODm+pkqpPZPkUxXeGuREcZkTZpHuE7jfnysdAs3kDhRo2rUHCMd8PGL0Ozz6SnbTzlkFR1htfNwLUgZaQg7y7IRArdQ5XbZO7+C/tzg2j9IbNlYrPPmOwG7tC2ua4=
+	t=1717590032; cv=none; b=urG2Y2ckdHw6ZwDkZmHyAqpSTPIKzEyX8OksoU7iZIkni2JWSe52R7A7lS7yRCEPavmRKpalmjlDwZ7zlaKFCkai2twXpNwEsV8Q8A7awadnwoEdqa9KB0vDESNsL2yeLU+rp6WwXZwEBh7zJSKW+fQIYj6srLugrfwgrlqBkZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717589945; c=relaxed/simple;
-	bh=I2GxTOGGDNAddHTDnWsVMvrYiRkDJ16/3v8Ih7ZBOGY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KGs+3Xp1IimcwQ8W1HN52i2LAuvyZde9rj42efjWauE6VZiopdwThcNa4xZD8xarSg+jN2ipIbvX0wr/OwiipC5FbVJgDGq2wq7VgJ0yRKHa2PnWx3xOZS/afNLkrnpJn22kQ8RgE3Dw855CQHvIyozEaisbM+VlXStUDK28aSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RY6y9bnU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455B1YwE031013;
-	Wed, 5 Jun 2024 12:18:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HMfQOpxpc0PHRoP5T27R8PUZjKJPEZqpNjUcrimz/Gs=; b=RY6y9bnUL0u5GvJp
-	4ZynOO7HvSYGEelk8Qc+LZnGwvouWs6Rs8+dnnLxz+Xv/N5nPeKdSn3MXfzuSV0+
-	55QpR0X3x2SagaeATY0eM3dTuK0pD855EzZ/DYscksuWT0HCU4GNk7wrNgAP6eUX
-	S0eyPNHLVn7C1x7q7BU3FsJZLzVxxlmFc1YRr+9y/B0RNSa60EkThRoaEMkS67Lr
-	ZmS2em9mMBflFFM20V3o7jVjXGEn+2Z3n0knqT+N0Mv8XQDd73ylySDNbTDtqqc3
-	7zKzLXrTra0N8QNEyMdB02h4+Nn1dY1KoRx6RTy7sZKP41+nAzFBx9gMEphhJyE5
-	gy34gA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yj87rhxuv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 12:18:46 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 455CIj0C023354
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Jun 2024 12:18:45 GMT
-Received: from hu-bibekkum-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 5 Jun 2024 05:18:40 -0700
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
-        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <konrad.dybcio@linaro.org>
-CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Bibek Kumar Patro" <quic_bibekkum@quicinc.com>
-Subject: [PATCH v11 6/6] iommu/arm-smmu: add support for PRR bit setup
-Date: Wed, 5 Jun 2024 17:47:13 +0530
-Message-ID: <20240605121713.3596499-7-quic_bibekkum@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240605121713.3596499-1-quic_bibekkum@quicinc.com>
-References: <20240605121713.3596499-1-quic_bibekkum@quicinc.com>
+	s=arc-20240116; t=1717590032; c=relaxed/simple;
+	bh=Isw1Rb90CkvWGeaWm1rp6CVK1Bn0jG3mFLlhRT69y30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iq4xlZqHaZKqyPf4nU5wozW6pdUgoqCfwoUNlDhIuoMVqbme13TrdT1cRojFogNkxQRsz4FJOyI3TaGgXtAs/76b6+jP4vd6jlQezRt2nxN2cGszs+8Re2KvJ4n6v+88KiwLYHepOcBJ5qWM54JxCTyy/vWNL9S++XpAJ5PSHb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jJ/YStJc; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B9EC840E0177;
+	Wed,  5 Jun 2024 12:20:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id LbdEF1MBrpRI; Wed,  5 Jun 2024 12:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717590024; bh=yyocJ68fnCk370YMJK18X98QhZWFXJTCPUx5kM8HklQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jJ/YStJc76C6zFmTFMLA7NntveyEybvDIt3XGcm7bqvijz+ErywHVoUsvCgBDkjul
+	 rzgTSmcsFGgw13rTe8gSMW1pvz+vbB5uBE/9ytg4LUpETiwak8ngocQMr0pI0VoNhJ
+	 DvIf5iuTv4Q28H8B9jqUhcxH0UerbdzHpu7aVfIql4PMaxAHC8caT8hqeTgblT4HRt
+	 XMxbF56/YB6xk9JFGbJ075b8eevc+Jh5TTjLYOrOi/l8oFnhqgNVi2c/Sytm9NQeQk
+	 YaeTiV7vGzbH/Hba9mwKTykLcoJ7DbW172DTQW9sGynijQcjXjwSNLNy8Xzi7eO3Hs
+	 Y9jDeD99FxV8KoPygWXVL2j7TohNO2VihC1o8PQ3UacLARwQITcF5lDafHGLA7oruG
+	 sWtyUXs6rZ3y03mtqvVhIb2ja+oEp4K0+gumxHITFyXckTWGH+yBRqOjhBzjN4pD3O
+	 QIZmUolHQyE/Mdjs1afgslQb3qavhaygfBPPs+nEPY0+ZB/RuTdklOKwW4USjE68pJ
+	 LU6tyLZIpZGGW30dpFid2IkSRvhnkvaln4Op8YK3lPJm+5qc5I4/WAiSIH28yJ4rqw
+	 8M/0zL2X2ED9132mFgVpSGRxrm00wUNlrQgygnl3dc6qpl2adK972lYdtO4zMvGHo9
+	 NpEW51iIvgai+J55TLPXz/BI=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AD2DB40E016A;
+	Wed,  5 Jun 2024 12:20:17 +0000 (UTC)
+Date: Wed, 5 Jun 2024 14:20:12 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, x86@kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v3 3/8] hwmon: (k10temp) Check return value of
+ amd_smn_read()
+Message-ID: <20240605122012.GXZmBX_KFQArXB9Lar@fat_crate.local>
+References: <20240523-fix-smn-bad-read-v3-0-aa44c622de39@amd.com>
+ <20240523-fix-smn-bad-read-v3-3-aa44c622de39@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: H9kiI3ojLHVoDumKSBegJeNiijsiCnmE
-X-Proofpoint-ORIG-GUID: H9kiI3ojLHVoDumKSBegJeNiijsiCnmE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-05_02,2024-06-05_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 spamscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406050093
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240523-fix-smn-bad-read-v3-3-aa44c622de39@amd.com>
 
-Add an adreno-smmu-priv interface for drm/msm to call
-into arm-smmu-qcom and initiate the PRR bit setup or reset
-sequence as per request.
+On Thu, May 23, 2024 at 01:26:54PM -0500, Yazen Ghannam wrote:
+> Cc: stable@vger.kernel.org
 
-This will be used by GPU side to setup the PRR bit and
-related configuration registers through adreno-smmu private
-interface instead of directly poking the smmu hardware.
+So yeah, I'll drop the CC:stable tagging in all patches unless we're
+talking about a concrete issue. You need to think about the downstream,
+distro folks who need to go through gazillion of patches and wonder
+whether they really need to backport them.
 
-Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 21 +++++++++++++++++++++
- drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
- include/linux/adreno-smmu-priv.h           |  5 ++++-
- 3 files changed, 27 insertions(+), 1 deletion(-)
+And I don't think misusing the stable process like that is the right
+way.
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index 8dabc26fa10e..2f4ee22f740a 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -28,6 +28,7 @@
- #define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
- #define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
- #define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
-+#define GFX_ACTLR_PRR		(1 << 5)
+Thx.
 
- static const struct actlr_config sc7280_apps_actlr_cfg[] = {
- 	{ 0x0800, 0x24e1, PREFETCH_DEFAULT | CMTLB },
-@@ -212,6 +213,25 @@ static void qcom_adreno_smmu_resume_translation(const void *cookie, bool termina
- 	arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, reg);
- }
+-- 
+Regards/Gruss,
+    Boris.
 
-+static void qcom_adreno_smmu_set_actlr_bit(const void *cookie, phys_addr_t page_addr, bool set)
-+{
-+	struct arm_smmu_domain *smmu_domain = (void *)cookie;
-+	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
-+	struct arm_smmu_device *smmu = smmu_domain->smmu;
-+	u32 reg = 0;
-+
-+	writel_relaxed(lower_32_bits(page_addr),
-+				(void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_LADDR);
-+
-+	writel_relaxed(upper_32_bits(page_addr),
-+				(void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_UADDR);
-+
-+	reg =  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR);
-+	reg |= FIELD_PREP(GFX_ACTLR_PRR, set ? 1 : 0);
-+	arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
-+
-+}
-+
- #define QCOM_ADRENO_SMMU_GPU_SID 0
-
- static bool qcom_adreno_smmu_is_gpu_device(struct device *dev)
-@@ -384,6 +404,7 @@ static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *smmu_domain,
- 	priv->get_fault_info = qcom_adreno_smmu_get_fault_info;
- 	priv->set_stall = qcom_adreno_smmu_set_stall;
- 	priv->resume_translation = qcom_adreno_smmu_resume_translation;
-+	priv->set_actlr_bit = qcom_adreno_smmu_set_actlr_bit;
-
- 	actlrvar = qsmmu->data->actlrvar;
- 	if (!actlrvar)
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-index d9c2ef8c1653..3076bef49e20 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-@@ -154,6 +154,8 @@ enum arm_smmu_cbar_type {
- #define ARM_SMMU_SCTLR_M		BIT(0)
-
- #define ARM_SMMU_CB_ACTLR		0x4
-+#define ARM_SMMU_GFX_PRR_CFG_LADDR	0x6008
-+#define ARM_SMMU_GFX_PRR_CFG_UADDR	0x600C
-
- #define ARM_SMMU_CB_RESUME		0x8
- #define ARM_SMMU_RESUME_TERMINATE	BIT(0)
-diff --git a/include/linux/adreno-smmu-priv.h b/include/linux/adreno-smmu-priv.h
-index c637e0997f6d..448e191eeb52 100644
---- a/include/linux/adreno-smmu-priv.h
-+++ b/include/linux/adreno-smmu-priv.h
-@@ -49,7 +49,9 @@ struct adreno_smmu_fault_info {
-  *                 before set_ttbr0_cfg().  If stalling on fault is enabled,
-  *                 the GPU driver must call resume_translation()
-  * @resume_translation: Resume translation after a fault
-- *
-+ * @set_actlr_bits: Extendible interface to be used  by GPU to modify the
-+ *		    ACTLR bits, currently used to intitate PRR bit setup or
-+ *		    reset sequence for ACTLR registers as requested.
-  *
-  * The GPU driver (drm/msm) and adreno-smmu work together for controlling
-  * the GPU's SMMU instance.  This is by necessity, as the GPU is directly
-@@ -67,6 +69,7 @@ struct adreno_smmu_priv {
-     void (*get_fault_info)(const void *cookie, struct adreno_smmu_fault_info *info);
-     void (*set_stall)(const void *cookie, bool enabled);
-     void (*resume_translation)(const void *cookie, bool terminate);
-+    void (*set_actlr_bit)(const void *cookie, phys_addr_t page_addr, bool set);
- };
-
- #endif /* __ADRENO_SMMU_PRIV_H */
---
-2.34.1
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
