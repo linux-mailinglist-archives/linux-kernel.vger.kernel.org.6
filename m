@@ -1,140 +1,121 @@
-Return-Path: <linux-kernel+bounces-201848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32AB8FC438
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:14:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB4E8FC443
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC5A2865EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:14:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07C1CB28908
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06C918C336;
-	Wed,  5 Jun 2024 07:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A156418F2FC;
+	Wed,  5 Jun 2024 07:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DnjKjRhK"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NKUe4OPq"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F82190473;
-	Wed,  5 Jun 2024 07:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988C118C343
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 07:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717571638; cv=none; b=GYSqeur23ZDdwGUgcsTl4rD4qgn+0DZQKvWlm6Vk6CUCHPrYeUQUPO7inVBdPuV3dLUmAWkaBPInZZg12VRT1e45bvB0p93NrED5izkItpkpKaibVryfsG3TIJnRU04yRks7s2F0+0rr8WJBQVMvmRIekkqaGZG/65eds72iqZk=
+	t=1717571718; cv=none; b=QeOJEoiEbDK7lMZW2yweJdlOkgrv9/b8jInf9Iccs76TWV36nifNhboRGKfVfoUbyMei5aQOjjiUeVXw/xXO+JNjCgAq6fLaTt5xad2CTEPuvTuN3NaL+TpAXLlqHccJ9mhRFb0j/wo9ay8kL5AW5hu466MzQXVHwxdH0hN+etI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717571638; c=relaxed/simple;
-	bh=xv2yHse5wYiCIpS1QkXIwSPeek7ooAsMqrgbwuNRmZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Fds2i+IpkGoWsVLnmtIQVBngRc2AejHsAcMTXJ4EWLO6j1zK896/N/0K7nTKDUtf3rfOxNe8jNQ+wVhPOhKj/dCoMOwaAywoiAX0/Gg83o3S8u+yJsFLh55NSWPraj0IXQVtuqoelqyTIoSYCFCx9/x1lvqgZYJpScKd49LIfWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DnjKjRhK; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 455035hg017301;
-	Wed, 5 Jun 2024 09:13:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	8a+3EKBu55kmccJ+MjWqICbYzukEqrQwk1Qsid7INes=; b=DnjKjRhK4XY5Jp7Q
-	LjfH77IPpO2PyLRg9BzacSrSlmaaQo+Hwr616ztduTZRZ3qVZcKPDzmDI0yP/6ue
-	qcJ2HEbM4K0wNTPV1voTbgfWMObhqSXi73TLM0wYT8sSXeUqpm6u0gT9IvfI8Tia
-	6XMXBZQ1E3SZWncK67i64R+K3IJKc2HNhlhLwWAwyBX0E9g3jaeOid2tZPKR+Pin
-	Mv5pPBGoE6km0XtGBoj245PGppwyr08kiPG72ameGXCENlkmJJUaSHWiUgvEYIl5
-	ssxs8QUBCY1XTU5y6hM8Lo9dEzanVSmU5eNJqGEbCsA0Oa16VnlrYE0n+MG/gh7s
-	9XBitg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yfw91fddt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 09:13:33 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A1F0740045;
-	Wed,  5 Jun 2024 09:13:28 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D2B9A210F86;
-	Wed,  5 Jun 2024 09:12:49 +0200 (CEST)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 5 Jun
- 2024 09:12:49 +0200
-Message-ID: <a4b8947a-f17a-4f78-bb94-a5c7b2514b24@foss.st.com>
-Date: Wed, 5 Jun 2024 09:12:48 +0200
+	s=arc-20240116; t=1717571718; c=relaxed/simple;
+	bh=NUq4hUMFyN/6UPuWAGO3h695blPsgWsaqsOr34MSY/E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l9gt7J5FRFTlM75r6qZazZNxTPz0ensdRrZ69JTGZ/cgff3yvOw9JqfkXOEzQ5dE1ChAKY3YqIPmBiSDHBmtw3n4UNatM5kR5B/BjFC5nILfp6Yahg6eV4oWcaUFtmYA1tuEhH+1jfUT/O4dX0D23dRBWLZHjpc8vxOZRBrfR3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NKUe4OPq; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: linux-mm@kvack.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717571710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MgQ54wqpPyu/de/IC92RsymjWefuXxvvmWin5jNjSXQ=;
+	b=NKUe4OPqpSUR+OR0Mazu4CTFXw74QR/uNWe4nUmch5P9NkbUpRewOT9h9o33Kzh/vMMUcy
+	grwy/JjedJmanJJ0m11fEWNiw1JJjOlIyRuA2rqQQ1wI3ojtkWashhBWUdjVg2FG2YRAVt
+	kH7g5Bkga45BiE7fUFm/+FSm6ubcSpM=
+X-Envelope-To: penberg@kernel.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: feng.tang@intel.com
+X-Envelope-To: zhouchengming@bytedance.com
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: iamjoonsoo.kim@lge.com
+X-Envelope-To: vbabka@suse.cz
+X-Envelope-To: chengming.zhou@linux.dev
+X-Envelope-To: cl@linux.com
+X-Envelope-To: 42.hyeyoo@gmail.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+Subject: [PATCH v2 0/3] slab: fix and cleanup of slub_debug
+Date: Wed, 05 Jun 2024 15:13:53 +0800
+Message-Id: <20240605-b4-slab-debug-v2-0-c535b9cd361c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: st: OP-TEE async notif on PPI 15 for
- stm32mp25
-To: Pascal Paillet <p.paillet@foss.st.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240521080131.473447-1-p.paillet@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240521080131.473447-1-p.paillet@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-05_01,2024-05-17_01
+X-B4-Tracking: v=1; b=H4sIADEQYGYC/3XMQQ6DIBCF4auYWXcaINRCV96jcSEy6CRGG6jEx
+ nj3Uvdd/i953w6JIlOCR7VDpMyJl7mEulTQj908ELIvDUooLW7KoNOYps6hJ7cOKL2Rdxt6a+s
+ OyucVKfB2es+29MjpvcTPyWf5W/9JWaJAU1tNQRuhfGgmntft6ilDexzHF2LHNJSqAAAA
+To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, 
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Feng Tang <feng.tang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ zhouchengming@bytedance.com, Chengming Zhou <chengming.zhou@linux.dev>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717571705; l=1377;
+ i=chengming.zhou@linux.dev; s=20240508; h=from:subject:message-id;
+ bh=NUq4hUMFyN/6UPuWAGO3h695blPsgWsaqsOr34MSY/E=;
+ b=+ms+kPaOg2SJvqKFwZFq2Vqt+ZOIoeYlDeMC/ug+gvORklv4nOem+bSIiRiBIk3E8HfRT1/WW
+ RHu6lPGP1vxBwtz3hvdDs+7HMG9DQAe/q1avhaeuD7WC4Hx7rDdnC1I
+X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
+ pk=kx40VUetZeR6MuiqrM7kPCcGakk1md0Az5qHwb6gBdU=
+X-Migadu-Flow: FLOW_OUT
 
-Hi
+Changes in v2:
+- Change check_object() to do all the checks without skipping, report
+  their specific error findings in check_bytes_and_report() but not
+  print_trailer(). Once all checks were done, if any found an error,
+  print the trailer once from check_object(), suggested by Vlastimil.
+- Consolidate the two cases with flags & SLAB_RED_ZONE and make the
+  complex conditional expressions a little prettier and add comments
+  about extending right redzone, per Vlastimil.
+- Add Reviewed-by from Feng Tang.
+- Link to v1: https://lore.kernel.org/r/20240528-b4-slab-debug-v1-0-8694ef4802df@linux.dev
 
-On 5/21/24 10:01, Pascal Paillet wrote:
-> From: Etienne Carriere <etienne.carriere@foss.st.com>
-> 
-> Define GIC PPI 15 (aka GIC interrupt line 31) for OP-TEE asynchronous
-> notification.
-> 
-> Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
-> Signed-off-by: Pascal Paillet <p.paillet@foss.st.com>
-> ---
->   arch/arm64/boot/dts/st/stm32mp251.dtsi | 4 +++-
->   arch/arm64/boot/dts/st/stm32mp253.dtsi | 4 ++++
->   2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> index 4b48e4ed2d28..d0e10dda96b6 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> @@ -51,9 +51,11 @@ clk_rcbsec: clk-rcbsec {
->   	};
->   
->   	firmware {
-> -		optee {
-> +		optee: optee {
->   			compatible = "linaro,optee-tz";
->   			method = "smc";
-> +			interrupt-parent = <&intc>;
-> +			interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
->   		};
->   
->   		scmi {
-> diff --git a/arch/arm64/boot/dts/st/stm32mp253.dtsi b/arch/arm64/boot/dts/st/stm32mp253.dtsi
-> index 029f88981961..69001f924d17 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp253.dtsi
-> +++ b/arch/arm64/boot/dts/st/stm32mp253.dtsi
-> @@ -28,3 +28,7 @@ timer {
->   			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
->   	};
->   };
-> +
-> +&optee {
-> +	interrupts = <GIC_PPI 15 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-> +};
+Hello,
 
-Applied on stm32-next.
+This series includes minor fix and cleanup of slub_debug, please see
+the commits for details.
 
-Thanks
-Alex
+Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+---
+Chengming Zhou (3):
+      slab: make check_object() more consistent
+      slab: don't put freepointer outside of object if only orig_size
+      slab: delete useless RED_INACTIVE and RED_ACTIVE
+
+ include/linux/poison.h       |  7 ++----
+ mm/slub.c                    | 60 +++++++++++++++++++++++---------------------
+ tools/include/linux/poison.h |  7 ++----
+ 3 files changed, 36 insertions(+), 38 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240528-b4-slab-debug-1d8179fc996a
+
+Best regards,
+-- 
+Chengming Zhou <chengming.zhou@linux.dev>
+
 
