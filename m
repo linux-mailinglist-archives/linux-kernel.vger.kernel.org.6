@@ -1,114 +1,105 @@
-Return-Path: <linux-kernel+bounces-202020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66BD8FC6B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:39:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FD08FC6AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF081B2AFB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DB861F24999
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16941946C2;
-	Wed,  5 Jun 2024 08:38:19 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004F84962C;
+	Wed,  5 Jun 2024 08:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oBn6eZg8"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0741946A7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 08:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153B21946DC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 08:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717576699; cv=none; b=nsmY2UYBJ/OmmQyiW1uUCt+p9vHztlFEeww0NU5cryVl+rGrW9TIQmUFuU2f5Y5M0gljdY9Coo9eTeNvotEzRj9pdro3LqmUBbT1ivh52Jj6jg7ssYTV8OyGbRfni8L6gMWXH9G4lsF7gFzGKqv/4Zwwn3sTp2C1msf+T90XDgM=
+	t=1717576703; cv=none; b=kSJu54uNSSVvXzhyCWYBUfv1OMsKqVwYXEJZzXG5MGls09aLBaHxONWnC+WUjS9ekbvLz4UjcpA+NVhGkga9nH7KIIq9ZXQa5chfEZ1nwsrtg0oPyAYTV5gp1zqRSgFPY+uxQQEPCScQCEiyT524Ud/JINV9kZ64wnvMUiSJ4dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717576699; c=relaxed/simple;
-	bh=bGC3C+2xwWd6OYkZRJW0Xp+S0CBDQum5pqSO3u6vVCw=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=MlDHBJ85A4aI7YXh6Rc9aad7ZjigDZzN/6JeSj0IKdNK86vOHa917CCmZB2IcrbkmxarLTCtneHrXH0FZOWbs6dW1ZnTA/M8iFYasHmWI5eiSQJMs5jT+Cl6QqyTyXuAfoqhbAGqr6+HUe6W48vl2nviOI/fphfHcmP8OGrIJAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VvLSx4NJFz6G3wn;
-	Wed,  5 Jun 2024 16:38:09 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 4558bS2q014156;
-	Wed, 5 Jun 2024 16:37:28 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 5 Jun 2024 16:37:31 +0800 (CST)
-Date: Wed, 5 Jun 2024 16:37:31 +0800 (CST)
-X-Zmail-TransId: 2af9666023cb0a5-00b6d
-X-Mailer: Zmail v1.0
-Message-ID: <20240605163731027tu4GJzm7fzc00snHCyF_3@zte.com.cn>
+	s=arc-20240116; t=1717576703; c=relaxed/simple;
+	bh=uB6WNlNFMa25Q/piLdGW+h2FWN9ed9vG8wJIaY0J6ME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hvVoDHURMLyOIaWMZpeCEqsRRagHUJT+Mgz6RVxPPCcYDTN8rqdPaWaQ43oC0MqqVtwXlTzXRDVkOO+xW2LKTs1WmbTUFIZGZ2qj09O176mbp9haHMVMzWpW6d2mWxjvARH3sXADQHJB2eYQ+2Lr4v6Dr5Zj09BqFxPxjV6k+Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oBn6eZg8; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ea8fff1486so6331531fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 01:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717576699; x=1718181499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BUWSW08nntJrf8CGVr9DXOkBBBauaj8YBTu+CpBRFmI=;
+        b=oBn6eZg8h+bXTZ9U5iVDK1CssKZMfHRQI9hvl6uI7NPD1eG2WiwVZG2P/kWweG0KL6
+         C8tjzdDO+9e14naPs7LAUqRgzk4MaijtHqNd7QaTfnqC/DJCfbZGBpeZ+U7FgIQybLIx
+         VztlpS+XQnQtMX9FYn61CXh8UiWEHUXEyHU4GucVrguBvhHvoRGIwWWT0zbKlDrHaOz1
+         B+6bOYHsAPegSnexiZ4qfuj9A3PVUZsWfMcxY5NG7Pv6pRM2k9Hu90evL4dXSMKxSWaD
+         vsgtgQwGQWQytX86D9IETdw4tVduFGLsVmPp7pguXbMy//R0UcMspDCzkEUowqESPUY2
+         iU5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717576699; x=1718181499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BUWSW08nntJrf8CGVr9DXOkBBBauaj8YBTu+CpBRFmI=;
+        b=nA78CR08P4LEijCjwKjmu3lswtuA4hDTCVZy2OYBJj8MPX3PO3GDAGVe4775YKiURK
+         WM/GnHKBtte9/URHMblSDB0TKFQFVYm4Y4mWqOwrRh5eV/kYmy9F6Vzj2f4WDjZ9IzIe
+         5V/5Fcm1ydj6LOCjYr0NIwFrQemyEG37JQGosjtLRaudB42oZDal2rfF2qHOCM1g9qtg
+         hAOl1cVdSwpWX/+a1my/wTQJaDkkWSy9nyrGrFgDBIDOaducJhQC2K0XkI1HMGmStvpl
+         /dJTOFlO39yiO1JfBRUkwDLUrJoYV8GgzIWPPKjCzNNh8NUlHGp+KeeV/DDladcefcrS
+         xung==
+X-Forwarded-Encrypted: i=1; AJvYcCXk4yKYlnhjU6B0sJYYnfK2qPIrcPKHAwoGCipzSddDemgS1wQQaShcivUnptckv9qZM40mFgpiex5y6MXUJBcdC5aIYLhnEvdizFxI
+X-Gm-Message-State: AOJu0YwwfmhT38V0CzfypxyTnu+BBhe2QtAEe+QWYmb8NDyNx+CkAw3s
+	9Pt6Pd5OHWpRRFKyljDYQ8pwhgloyisZ+VlCClXCkr/HuA00/h1lpRBCqHu8PjL/723nLUklo4Y
+	takUrmZCMxQQCAsGgDr4vaXf4pEmcl/PzUAyknw==
+X-Google-Smtp-Source: AGHT+IGa47xxFBOoSvrEt/XV5uGA0JUIqf0664xs+6A6Aka2gt3WvS4ie0V9Y07HNcqrVkyEu+v0Wuo/YC7l78WaDXA=
+X-Received: by 2002:a05:651c:546:b0:2ea:7f46:174f with SMTP id
+ 38308e7fff4ca-2eac6470b9dmr7173571fa.20.1717576699220; Wed, 05 Jun 2024
+ 01:38:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <willy@infradead.org>, <ziy@nvidia.com>, <akpm@linux-foundation.org>
-Cc: <ran.xiaokai@zte.com.cn>, <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>,
-        <mhocko@kernel.org>, <david@redhat.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?4oCLIFtQQVRDSCBsaW51eC1uZXh0XSBtbTogaHVnZV9tZW1vcnk6IHJlbW92ZSBpc190cmFuc3BhcmVudF9odWdlcGFnZSgp?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 4558bS2q014156
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 666023F1.000/4VvLSx4NJFz6G3wn
+MIME-Version: 1.0
+References: <1dee481f-d584-41d6-a5f1-d84375be5fe8@paulmck-laptop>
+ <20240604170437.2362545-4-paulmck@kernel.org> <CACRpkdaYQWGsjtDPzbJS4C9Y9z8JGv=3ihQrVKvegJf8ujqSmA@mail.gmail.com>
+ <2fbe86b7-70f0-46cd-b7b7-9d67e78d72f3@paulmck-laptop>
+In-Reply-To: <2fbe86b7-70f0-46cd-b7b7-9d67e78d72f3@paulmck-laptop>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 5 Jun 2024 10:38:07 +0200
+Message-ID: <CACRpkdYMiaMFmUoXyHdR9kLyAZma-24-m7cofztxd=n_Fr+GYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 cmpxchg 4/4] ARM: Emulate one-byte cmpxchg
+To: paulmck@kernel.org
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, elver@google.com, akpm@linux-foundation.org, 
+	tglx@linutronix.de, peterz@infradead.org, dianders@chromium.org, 
+	pmladek@suse.com, torvalds@linux-foundation.org, arnd@arndb.de, 
+	Mark Brown <broonie@kernel.org>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
+	Nathan Chancellor <nathan@kernel.org>, "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
+	Andrew Davis <afd@ti.com>, Eric DeVolder <eric.devolder@oracle.com>, Rob Herring <robh@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On Tue, Jun 4, 2024 at 11:14=E2=80=AFPM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
 
-is_transparent_hugepage() was first introduced to ensure the page is
-2M THP page. After commit de53c05f2ae3 ("mm: add large_rmappable
-page flag") and commit fc4d182316bd ("mm: huge_memory: enable debugfs
-to split huge pages to any order"), any large folio of mTHP suitable order
-can be split, not only 2M THP page.
-so the check in split_huge_pages_pid() is not needed here, instead
-a folio_test_large() check is sufficient. To ensure a 2M THP folio,
-we should use "folio_order(folio) == HPAGE_PMD_ORDER" for now.
+> Thank you for looking this over!  Does the following patch (to be merged
+> into the original) capture it properly?
 
-As split_huge_pages_pid() is the only user of is_transparent_hugepage(),
-we can remove this helper.
+Yup, also fix the commit message to be =3D=3D CPU_V6,
+with that:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
----
- mm/huge_memory.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 317de2afd371..f1a992945007 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -839,15 +839,6 @@ struct deferred_split *get_deferred_split_queue(struct folio *folio)
- }
- #endif
-
--static inline bool is_transparent_hugepage(const struct folio *folio)
--{
--	if (!folio_test_large(folio))
--		return false;
--
--	return is_huge_zero_folio(folio) ||
--		folio_test_large_rmappable(folio);
--}
--
- static unsigned long __thp_get_unmapped_area(struct file *filp,
- 		unsigned long addr, unsigned long len,
- 		loff_t off, unsigned long flags, unsigned long size,
-@@ -3439,7 +3430,7 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
- 			continue;
-
- 		folio = page_folio(page);
--		if (!is_transparent_hugepage(folio))
-+		if (!folio_test_large(folio))
- 			goto next;
-
- 		if (new_order >= folio_order(folio))
--- 
-2.15.2
+Yours,
+Linus Walleij
 
