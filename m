@@ -1,123 +1,96 @@
-Return-Path: <linux-kernel+bounces-202663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32DB48FCF46
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:30:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23788FCF52
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D764C1F2993E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9044A1F23267
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48CC188CD8;
-	Wed,  5 Jun 2024 12:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DFE195F04;
+	Wed,  5 Jun 2024 12:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1It8SbA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lyw116i/"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD6B61FF3;
-	Wed,  5 Jun 2024 12:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5526D195F12
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 12:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717592185; cv=none; b=rHuwZBvBPZ4edAmQYfnF1qjskHCM+GlyZQrf27lW4Lg/PyDTEvN4CHDysW0REirbvmQO++0E3ZVLcYzQvWP8TSmva2yxHEsBTDlc/JDoWqL/TIlCu2wTiAhuWlSRlddxpSu3I2Xb93iz65W2x1+vwnwR1D5LAeoCUzT6iSZpxng=
+	t=1717592205; cv=none; b=e5dMeVdKLIY0z022Eu4J7/VxDNMKzn8b6H5DZMhBoO83oXMAPCzGSzHabt0XQDXTHuFkUgEGl4kTVBWp0llt6yCJJQF9paNREM79GRN4mblZ2+6mvLr67Vz956MMbe6RdXrAMPQGg2oH9pEoad5yp+UEXi29Vi8ZiN3eg6QIVds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717592185; c=relaxed/simple;
-	bh=H+8uVs/sBG+UVmSbTeEnbYMN4hk29tYYk86tahZARVs=;
+	s=arc-20240116; t=1717592205; c=relaxed/simple;
+	bh=jGzEddtQk5hB0DbppLPpb3NGlYBWqBx+t3ye8Q3Fj3g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDwzdvOjiL/MnL3QP//IDNx370LyN1XcayJWSAShnOH3DOIq5ZASA0JPNpmuoFhs2lxmsO9C2juvFF+Rsoy8Lg2SFbyvmoGb1/wIAuZ0/uddU3Gc9lA4lDt4ufOX4+U2gA2CU4vJ3hJUm/SIIxKbxBcL1ekr3prj8oRob96A2+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1It8SbA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C92CCC32781;
-	Wed,  5 Jun 2024 12:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717592185;
-	bh=H+8uVs/sBG+UVmSbTeEnbYMN4hk29tYYk86tahZARVs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F1It8SbAYOnsn0akrvLt4mzzum/kCqexR9/RQex523qWDKJEdRV/508vt+8bUWgzE
-	 4CdTC5M8018GEddmTMv4mCpWNGcmrYOL3fPgnhR9gNTHIVgQ9lbkuJdjDzBpUB/POj
-	 oyIreHIssJTz+H1QXKPFyIvW8MLhcXVF0LsfEDujvODza+xPldL2pJL3UtShEHEK9S
-	 565ezLs3EMlvAKMfsZezmUS4ZbKEL0qE3M82De5nkWd3u9mLj0YkoQD8LqyEYkSK3g
-	 zvYD0irgrUzZc9A/bzHUdhAO/ydlqu5sucMSiIWnnJlyJxHqcA83S5cgiie1cErfLr
-	 sVC0nCAIzQzmA==
-Date: Wed, 5 Jun 2024 13:56:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Fuad Tabba <tabba@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH 2/4] arm64/fpsimd: Discover maximum vector length
- implemented by any CPU
-Message-ID: <50d3d9d3-50f2-4c95-a481-6e744ae17099@sirena.org.uk>
-References: <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-0-680d6b43b4c1@kernel.org>
- <20240605-kvm-arm64-fix-pkvm-sve-vl-v1-2-680d6b43b4c1@kernel.org>
- <CA+EHjTyGWu-5JQjhit310VY8fOeVZ1Ht7cbfYoF-AUi0yEDJYA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oaRI4t1qFPHUVHGld3mw2NTw3vumHQV1nJJVstONfn0z2FlJ6/NqPr9iJ8aKvsiDr4Yn/c9v1mkocKrE3j1hE3C985yvFcQvNSDE1v5SQQmvHzAVCbj6LiQMjN2kR6TPdHxFCAxPkVkj3Pv8V0eoEkR4zw7q9faG34jlUkL5UnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lyw116i/; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: jonathanh@nvidia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1717592199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HDvR2BJJ4XVS24JY6c7eVBrquWeT9EpRCNZeH+8pBFY=;
+	b=Lyw116i/jSj1dQYfZGwRKdX7TRhpqZFdLtcdGrb5fEoG366WFjXUZGcam6QvkxL91MvPpS
+	8FjIshTQsh35g8OkPXwS8hGuPE/ilhWhgbJMx7n9z/Mjwn4V5Q3OeA6ecKDspcghJHSoPF
+	AJwa/UDrZDrLFujNdy7Zvh62+Wotqlk=
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-tegra@vger.kernel.org
+X-Envelope-To: linux-kbuild@vger.kernel.org
+X-Envelope-To: masahiroy@kernel.org
+Date: Wed, 5 Jun 2024 08:56:36 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-kbuild@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: kbuild: mksysmap: Build regression for next-20240604
+Message-ID: <2b6llsqhqvsc3qrtsqlv2b6353kvuldwrp3xs5v6jistuskzeh@hnlhxbzpvwzh>
+References: <21cdf8ef-e2fe-4247-9390-4b3d975f80a3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dPsNrGbRL7TTHtEY"
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTyGWu-5JQjhit310VY8fOeVZ1Ht7cbfYoF-AUi0yEDJYA@mail.gmail.com>
-X-Cookie: Simulated picture.
-
-
---dPsNrGbRL7TTHtEY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <21cdf8ef-e2fe-4247-9390-4b3d975f80a3@nvidia.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 05, 2024 at 01:03:16PM +0100, Fuad Tabba wrote:
+On Wed, Jun 05, 2024 at 09:14:23AM +0100, Jon Hunter wrote:
+> Hi Kent,
+> 
+> Since next-20240604 I noticed a build regression in our farm builders
+> and I am seeing the following error ...
+> 
+> /usr/bin/env: invalid option -- 'S'
+> Try '/usr/bin/env --help' for more information.
+> 
+> These builders have an older version of 'env' that do not support the
+> '-S' argument and so your change [0] is breaking the for these
+> machines. I did not see your patch on any list and found it on your
+> bcachefs tree [1]. So not clear if this has been reviewed and if this
+> is trying to fix some related to Masahiro change [2]?
+> 
+> It is also not clear what the minimum version of 'env' is supported
+> for building the linux kernel, but these builders have been building
+> the kernel fine for years.
+> 
+> Thanks
+> Jon
+> 
+> [0] https://evilpiepirate.org/git/bcachefs.git/commit/?h=for-next&id=973eca8db5570dd0c3f2b3190867138cc446eb3b
+> [1] https://evilpiepirate.org/git/bcachefs.git/log/?h=for-next
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git/commit/?h=kbuild&id=b18b047002b7d3b19d9fb905c1bd2a214016c153
 
-> Actually, I was working on fixing it and was about to send this, which
-> I think might be a bit simpler than what you have. Let me know what
-> you think and I'll send it as a proper patch if you agree:
-
-> +
-> +               if (!max_vl)
-> +                       max_vl = vl;
->         }
-> +
-> +       info->max_system_vl = max((int) max_vl, info->max_system_vl);
-
-Yeah, I originally had written something like this (just doing the max
-in the original assignment rather than staging in a local variable) but
-it didn't feel great and like it was more vulnerable to getting missed
-if we do more parallel bringup so I switched to keeping the split
-between enumeration and integration.
-
-I do also prefer the _cpu_ naming since _system_ could be read as the
-maximum that we're actually using in the system, as with any naming
-thing it's all a bit bikesheddy.
-
->         if (system_supports_sve()) {
->                 kvm_sve_max_vl = sve_max_virtualisable_vl();
-> -               kvm_host_sve_max_vl = sve_max_vl();
-> +               kvm_host_sve_max_vl = vl_info[ARM64_VEC_SVE].max_system_vl;
-
-We should keep the accessor functions, it's more consistent and supports
-refactoring.
-
---dPsNrGbRL7TTHtEY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZgYHIACgkQJNaLcl1U
-h9DZ/wf/ZIogM3NDLMaCTxNsRikMzWiooLVUWAOHEoDUbhu91kG6fWBYVHUwDuHX
-v2ZWGDKptRlwPrxx7ixSn4UgZlqHOcnqbTuVi/JzX+VtB1aYX/KWKKlkVfptZ6yl
-mohaQOBVS5VoXAUVEexOgIJ5lNCPgRMFNvXfzbBQTaAfeHGp+sPgzUzivAaFuvSy
-oVG/CI8bptsyhD7/0ZgEhizhOe329ITuVZ4i9/JD+d346w9IisFSzyMa+f5qPYYg
-2WcwhRNIB1OaaMcIgXekGPiJzi5SCL6TRwWpGhVOwKFJ5e3cR7jgvzuwR2kEQyx6
-1w5ao6U4U7topnm7IzHzvpp/AagL9Q==
-=LbHy
------END PGP SIGNATURE-----
-
---dPsNrGbRL7TTHtEY--
+I'll drop it, but we need a real fix then, my CI builders are broken
+without it...
 
