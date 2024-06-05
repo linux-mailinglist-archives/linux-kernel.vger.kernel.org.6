@@ -1,122 +1,128 @@
-Return-Path: <linux-kernel+bounces-202242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB228FC9EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC748FC9F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59251C24142
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE83B1F21A5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CF11922FA;
-	Wed,  5 Jun 2024 11:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787C4193062;
+	Wed,  5 Jun 2024 11:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z/dW1V/n";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HKZb8F41"
-Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXvanTAi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0336190490
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FEA49645;
+	Wed,  5 Jun 2024 11:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717585960; cv=none; b=mrNoAEjlDtvV7ox2VyC2w9/gQJw9MJwLurNaRffODeHizLDnF1+x/Aw2ub7DWJTx+7aksXfGpvWspKeh7qBCLGFFl8VBpiNU9KPMkxuOXeFPcjhV1eLs0J3mMpl4c+KqEIYJWTHXgb9nqCjtKgZ8qTK/gHvbxWwwQ6/Jl9mo7tg=
+	t=1717585969; cv=none; b=IguG7bvOn1mvxk2FUp8si5mTrOl7IqibKr5xldbr5qOCWt2/A8UavpnFvMJTW4HfSgFj139WIznbCmei8I0IfPJh32LUTF2fHCiy4f8BXXU1ymYdfWGvMbFqeUdsImDQSnm+6PmAWCzqPtIfuWjA5leV91hhE3w+SouPF5JjUM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717585960; c=relaxed/simple;
-	bh=H4OeqS4v9XYBERN4WeYcxJy12iXmfI3Lsg5bERbc2ZE=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=mNUpaUQN9KJ35pyqI8acKV4Zprvr2TwzmAsbfybzwMoj0Rhn2pRfzV7BGzJJ5b9PuzFRouvWNgAJrXIk5V5yv0ohnFuzednNnrgRzIdxGHWZmxqWArBOCxUXr4BCDViDPRDg16DTuTj8821S6/sZijcEoI8ji+CsR+MybGqvLjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z/dW1V/n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HKZb8F41; arc=none smtp.client-ip=64.147.123.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id EE04B18000F4;
-	Wed,  5 Jun 2024 07:12:36 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 05 Jun 2024 07:12:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1717585956; x=1717672356; bh=CP7e2tWVOJ
-	LS21Dk/fSKZ9nuJKGzlXo1Ih4NyojX3uo=; b=Z/dW1V/n+WUV3r2WWfRVFQA2sb
-	ufSrMZqxPlv7r6p0mAooOi7Hsx7OTVvwjy40SRxTZxhY7wkN1HIx4Kz2joo+1NPn
-	N18ADVM1OY+SS5LvRvxL2s1AK+4yqP4LiTsBqQZyVDAbcIyrDipYFDdid4rY5lcO
-	k8B5W3r6vRcN07qMorNHbYGYWSLgKJI2XM4f3nxXokcvgY2MLAypGfKSZQgFnPbU
-	DDfV2ocaSsiH/wDlv6XoImzk1RAfhnCrC8SV2UWZ6B9bap495nDi/EsXmyXJc5LV
-	h6C60IOyu5sWgWzk3L6eHlvU4EyXlVnDDa0RPBPMjBJSlehIA8sVg1X2lFwA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1717585956; x=1717672356; bh=CP7e2tWVOJLS21Dk/fSKZ9nuJKGz
-	lXo1Ih4NyojX3uo=; b=HKZb8F41Jnm/5dF6omNRUZPh+pd8A19LNEV7ZXDwTyU+
-	z4LkoqzJNVG4dCT4AKdKuiYsmCSdvYb65Zou/2zLvsyowGpkJ/+KGhEsZSnOd82c
-	jzwCm0UPL1B1QbelXfgQ0vtYn93UYuqwETMB6g1RVL6gILww6al2oCJIUIHEIWey
-	IFgTNIYIFdG9hdqQg0WB1KFbRq501o3ZO8eDqehp2dEkQBBzNti0tm6eXVWYNNrG
-	5I4VVYoDsQLdIcKt+3FXG5j8P3AhKr2FHOamkA8LPtKZngIxlNL+xMaNRMnAVssM
-	HVU/N0/oCus4g94JE14JXjzRiuAvosd/8jncA8VFFA==
-X-ME-Sender: <xms:JEhgZjK5vk-6POQhs7O4cjRRyuni_i-tlo0FKvKIuCl-9Ka6zqTeaQ>
-    <xme:JEhgZnLipayPRV8umdBh-WRq72PjzDP40NZmAfBwBt_qnK64ExxO-0ZfFGIASBHPa
-    CueX7ZZ7H2hX_oD0C4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeliedgfeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:JEhgZrsujCBcsJa2t2APDSyrYnbakOeT7blFAHNQARQUpCF05UJneQ>
-    <xmx:JEhgZsZT81DgbfcohrWcioie6BPkQw0jUs9U7QSBofBxnSfNWh8enw>
-    <xmx:JEhgZqZTqj8zAxmUwHQxdkYSpEprSJIa3uNVDbwE0UnUM3tzNiBveA>
-    <xmx:JEhgZgBem7ROT7J0wPWaI8z3fqkUPIG_HoJ-00BwyewMPDk2pqco1w>
-    <xmx:JEhgZgyCKYJ4tIG1EOZP4tq-emKtdJ_oLT3tyGqrH0MWeLRgZ76Qaiu9>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1D5B2B6008D; Wed,  5 Jun 2024 07:12:36 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
+	s=arc-20240116; t=1717585969; c=relaxed/simple;
+	bh=yYAj163noFkob5L7lXkiWLT1nMsl/P7iRUgZ6mMxCvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/r3kWxi2xCG8MAIY1VVw2Z9EgybVDDoP767z1HRJCDACWEWpVeeyLbateOhqauwcazigChQd4g5b985hp3PWyrIpkQuZeLgtqn5C8nMJQwBr69O5dKDVO+czkTc9n/e+gag9odWfLz6SqoBsSiNlQ92stc2HDI1yN6+SfprJFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXvanTAi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 314C4C32786;
+	Wed,  5 Jun 2024 11:12:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717585969;
+	bh=yYAj163noFkob5L7lXkiWLT1nMsl/P7iRUgZ6mMxCvg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aXvanTAihYAPX/RJQpmYDHZb43VOd2kMMK/Hi3Ffzhpmrs+iX8mOmJ93cqF6ZQO+9
+	 N2AH7FCTKu9GBr/SW4Bq0kfYXgJFDRpUPxsEdC1GLTxmBbsus3CmJKx4XXuBlBoOF4
+	 y/daZufRlf0Q2x2hYGl5PgYltv3WUuuWQqCOl31qsY826eQOplQep9OWxxhrHkoIYT
+	 NIApGI8rmQzjAtznelf2nu7sLBeNs31TUjBI1tef6CBmq2dqgRNDBH6NgyCPiT+eeF
+	 SrvdpFtgm3dYC0phg7owIH7IrrmbD6dIvyh5itRgsCZ14/J3QgOUUan3e+WDH2HL5R
+	 w+KruQVRvX7/Q==
+Date: Wed, 5 Jun 2024 12:12:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+	Rocky Liao <quic_rjliao@quicinc.com>, Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Alex Elder <elder@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	ath12k@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	kernel@quicinc.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v8 01/17] regulator: dt-bindings: describe the PMU module
+ of the QCA6390 package
+Message-ID: <21a00ea1-1749-4fcc-87cd-1af8876a7efd@sirena.org.uk>
+References: <20240528-pwrseq-v8-1-d354d52b763c@linaro.org>
+ <20240604173021.GA732838@bhelgaas>
+ <CAMRc=MeNPvZUyu6rtsWtdvXFmOOpmjKCEpkoc5zBfJy6qBpxrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <73051ed4-248e-4a33-828b-c34093d5ce4b@app.fastmail.com>
-In-Reply-To: <20240605111008.GA21651@willie-the-truck>
-References: <20240604210006.668912-1-arnd@kernel.org>
- <ZmAsutGzL5_Kx8Pn@J2N7QTR9R3> <20240605111008.GA21651@willie-the-truck>
-Date: Wed, 05 Jun 2024 13:12:15 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Will Deacon" <will@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Nathan Chancellor" <nathan@kernel.org>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- "Nick Desaulniers" <ndesaulniers@google.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- "Mike Rapoport" <rppt@kernel.org>, "Baoquan He" <bhe@redhat.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-Subject: Re: [PATCH] [v3] arm64/io: add constant-argument check
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ja+GgII04rJlrfXo"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeNPvZUyu6rtsWtdvXFmOOpmjKCEpkoc5zBfJy6qBpxrg@mail.gmail.com>
+X-Cookie: Simulated picture.
 
-On Wed, Jun 5, 2024, at 13:10, Will Deacon wrote:
-> On Wed, Jun 05, 2024 at 10:15:38AM +0100, Mark Rutland wrote:
 
->> > +#define __iowrite32_copy(to, from, count) __iowrite32_copy(to, from, count)
->> 
->> Normally we'd make this:
->> 
->> #define __iowrite32_copy __iowrite32_copy
->> 
->
-> I can fold these two changes in.
+--Ja+GgII04rJlrfXo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sounds good, thanks!
+On Wed, Jun 05, 2024 at 11:13:04AM +0200, Bartosz Golaszewski wrote:
+> On Tue, Jun 4, 2024 at 7:30=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
+ wrote:
 
-    Arnd
+> > LDO?  Again below, but maybe this is obvious to everybody.
+
+> Yes, this is an acceptable abbreviation to use, it's all over the
+> bindings and regulator drivers.
+
+Vastly more people are going to understand LDO than would be able to
+expand the acronym.
+
+--Ja+GgII04rJlrfXo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZgSCUACgkQJNaLcl1U
+h9ByZgf/TG0Lj2GpWhjqjqffaI1t0B0aafiDHRBlSOkaq9el1b4FEPEjjrECf1Qh
+ne5c8PYSt81tN22LJRsh4gK53Ff9ziSn2l0KjKes7LCUwu58zAXDKgrsji++9+Vw
+vqxnhPdP5to25T28H3ds9QoF2jluYqiT/aQXtpRxZWWkO2xHYZ7eAwJe0vOn4rx8
+cqMEBHu9a57G8kN5BIs6cwaNmwlorGxdPKyLdXx3F6+3NvqtbvHGT9XDAkIU+GtC
+2QjuqiW8jM+xvSVYi+ALcYY0djf8Q7J8gmhyQaZa6UNFwO1H8AibziDOF9X7v7nB
+oouRPtsj7Oma2IMcaDj8MW3Ry5Jhsw==
+=tpqW
+-----END PGP SIGNATURE-----
+
+--Ja+GgII04rJlrfXo--
 
