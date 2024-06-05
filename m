@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-201647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A3F8FC145
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:26:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83FEB8FC147
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0EEE1C224F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:26:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37CFD2841DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7855B14A90;
-	Wed,  5 Jun 2024 01:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151631642B;
+	Wed,  5 Jun 2024 01:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCRJDpBM"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b="tt+FT3lL"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6382F44;
-	Wed,  5 Jun 2024 01:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1964FDDDF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 01:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717550790; cv=none; b=fmmzh7lBnb45w98I99nMrax/BSSKMY+Deqyl4090p1G9dsLmJqDB0JDOn0naTBmhZdka8aM3qi+IHsQ4LrY8exzJKz0tCbms29iO2PHUWM/SHf0Je2UH0uabA5QZ343nYT2qgfG/XS4qftcYulBhl2cY5CrhfC27F7QC2fO91+g=
+	t=1717550891; cv=none; b=rYCd2jLmVei2HXS3wmhlRk2yqAawXLLpEtGOe1NwEP885irBjPt3VslqRdbHZi4m6G+TvWLJW0jHaEimyY68nJsN9stgsbx52lazNACA8zM7QXONsQoCeQbTk4s00CMOxC2B7jfXoAyUn/LBtuRIN9zXh0T1LAbO7fYf8MJY264=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717550790; c=relaxed/simple;
-	bh=pfnjwzyV08UL5l8zXUi9O3kqZDZoSJafjB4pwAi3Ir0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EzF3GshklAoQmX9o7jFjJ9bEv2e0WnhLmYrhO5wPrr3045Yf5HR1XADc3CeXnE47U2DF0OoY5HaeKJ+eKyD9C9gQN/kWxlLrJpX5EwBEQwUCb4S5UNvDEwmVTS8/RcEaLw5vimeB6HagCCXgeTm4vKg5dxbuRzV1mwATR960FzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCRJDpBM; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-6ce533b643dso2024060a12.3;
-        Tue, 04 Jun 2024 18:26:29 -0700 (PDT)
+	s=arc-20240116; t=1717550891; c=relaxed/simple;
+	bh=1aAtN/3z/CC+KoX4/Uc468gsc1Odb+4pk0TbWNTH5rk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mLvtDaZCabK4LK7sFYXejZghHTWuSKCHTh/rBA/ez7K//Zn+G2rGAdsgUyv3ITiIi92JY15JaHksBwzMZ2qyiUCdom3W8JAErDy9V9otLnV67lSS3pB270tKnUQSBx+9E2ElFsqVdPDoujNh/mYikuKTln8z9Bl4lq5oH+dxAMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett-net.20230601.gappssmtp.com header.i=@howett-net.20230601.gappssmtp.com header.b=tt+FT3lL; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfa71ded97bso362349276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 18:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717550789; x=1718155589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RUIjL2bB2TqpHtA3OGdQJrt/bxd1bdS7vuCMFqU7/Ts=;
-        b=WCRJDpBMi9XiFIFW8SKYhFEa5/SqIMYQZXyPWMgQNM3kAT9BHKrUHC+Are7/2iakFj
-         +DlG/sDys/23RyEv8cKuxCK7RmSJMLIUzpGzv/4an/Ou1KxMJSj0GFWOyjBHu85pCE7+
-         LbTgSZmp3kZyLyujCFdKwSlUR29XknFBYfGYYas2JgKnzHbHbxVCdk22VuOLldnkBKnI
-         Ea3RWQ0WFxHzoIILg4cmQRys+BwwUF0ubby9sYOTmmMoas8EjrWGb/cxiTiu3hRe2JAS
-         /15TeBMScg7vg3ZnkOYzpdO7Qk3tYAsg09ZGZyLZmnW7iI+pLD4lN+LkZUCl5s67iCe+
-         P4Bg==
+        d=howett-net.20230601.gappssmtp.com; s=20230601; t=1717550889; x=1718155689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1aAtN/3z/CC+KoX4/Uc468gsc1Odb+4pk0TbWNTH5rk=;
+        b=tt+FT3lLTJnj8aN+o0+xOkQN/JTcTWZWIjXbRRUlHf8Kr8jVb8sdC5FgSH2wPr9qU6
+         381P/7uuhx3VU8IpbzRyy+x+sC7vIGyaq4YI89Oo+XqNuY1b1QbjlkvqcLtlO52+KjTu
+         X8zeWgbUqqy1fg3h41yXtLHC/AH1E71YWG3FbgRTltc7wZtE0atG3CeDFruc1tJTQTfG
+         PZSGhc51KhJgF1VGI17A/3IBhilLEjbnXg1QYmEPnJFM35BuK0sQ+N5n1sOfw+CxINZo
+         MjGNYklVk5Ega603pbts7+IF1WQxVkdsdp/9uEsXZnIDgjaKSfFZspGy8EVe3UeysmLS
+         NIDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717550789; x=1718155589;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RUIjL2bB2TqpHtA3OGdQJrt/bxd1bdS7vuCMFqU7/Ts=;
-        b=q2cSnLtateZ4sYK8N+v+75kO0UfBy1jcergwhZ/2uOo4OrMHplYfo8jldJ9TeWIvZB
-         VXxmA055idF20nVhYr4JY6GCDZzQnWsh3syvXM/zdyGkKrYq7jMwFh+NtP01bMwZCXB4
-         9IwQWQr2+DyxC6l4YqL6BBzVjtUHR/inFrhXP7SghGPWxVa4sJEdkmK/4NQEnZr60SCL
-         z90oq+8/KgCQdtTEbii9OJbnbe1sDTn0aJSGLzHZICg8GZ+BVS2zxkCJ5Or1P3TVA25X
-         HtoVerfsalVrVgwTocJBzbkd66IzsJxrmFFhW1fHhUQPfwHndaoSuW/2FOwGUnM3Utt3
-         1cLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwiuk+rU+nqTyXmo+EIO6Y7VRa57UWMTs174WyOtJT96zr6rxT7Kkr3hvZO8fY6ErmwmXWNzXDmQgcha0/WIgXAgbEFEKSHpWIvu8ySJXyrxZMVB3pBwSs+WI5TR/GN2qpTC/t2OHZeSw=
-X-Gm-Message-State: AOJu0YwCGsw4IcEJDQf7j8Fz3hwGRJpVHgy8KiA2aedhJkwWAvt3VgSB
-	3eE6FKiAsGJnhsttdrYAwqGu+eCiS3Mia4fOXYZlCair5VIKbwmR
-X-Google-Smtp-Source: AGHT+IGuTZCyKrper2d0FzGSQcG256xnePEMwZfbyz58T1ZcrICBdGuafuNDPsQyZ8zq1/vaVlDFFA==
-X-Received: by 2002:a17:90a:ac0d:b0:2c1:c648:1c50 with SMTP id 98e67ed59e1d1-2c27db16442mr1073954a91.17.1717550788575;
-        Tue, 04 Jun 2024 18:26:28 -0700 (PDT)
-Received: from barry-desktop.hub ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c2806bd8adsm174203a91.39.2024.06.04.18.26.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 18:26:28 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: linaro-mm-sig@lists.linaro.org,
-	linux-media@vger.kernel.org,
-	sumit.semwal@linaro.org
-Cc: Brian.Starkey@arm.com,
-	benjamin.gaignard@collabora.com,
-	christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org,
-	jstultz@google.com,
-	linux-kernel@vger.kernel.org,
-	tjmercier@google.com,
-	v-songbaohua@oppo.com,
-	hailong.liu@oppo.com
-Subject: [PATCH v2] dma-buf: align fd_flags and heap_flags with dma_heap_allocation_data
-Date: Wed,  5 Jun 2024 13:26:05 +1200
-Message-Id: <20240605012605.5341-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1717550889; x=1718155689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1aAtN/3z/CC+KoX4/Uc468gsc1Odb+4pk0TbWNTH5rk=;
+        b=LQR+VSN8Yw/Z7BS4dBwITkT47fHYH1IL6tUEkTXBlZ36Wz9VZokhg/I8XGdqkCPicr
+         JntLS7Bm4Ei5MVWi+PEtpsMcU5dua4x2ggefia7WRgG71Yt6iwROTtJMixXJr6epOPeh
+         w4j95SSZ2AI3nOODSvZn/IXwlA2U5prRUDqTvXYNc16QJI1uihMrFJGCVwvJElyE70q8
+         Rv/09L/GldnPGic6pWy3m/XEpaasLIMN1NhPVJl4MWKf+DpFX84M3gI6y3CSZMR7zDtx
+         BrlZyP/koHg5k7U1vslgrKLy8UolCwMC7czV1iuQNJAL1/LC5B2hFu7lBtFtziIbT58S
+         wMuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXE0FF6Mw+k48ZASC5nwnf4XBCCt600732YMPh843Aai62CM51Xx9ecmWBOqvbGnIGb9h0SA+sXbE8XrhbcLQEiLyWEpgtQSIcyy8s6
+X-Gm-Message-State: AOJu0YzGZnsJ3CuT38PFkXpIf8H3TBog2msGaGXHonL8eWCCnljbxbbk
+	WNo34qSW52geQjJyq27XCtxB6Ij2TNG7V/SU0Yt3FQpPny9lLyFdlLoVwnMRyzbjyuEVGsOR349
+	p6gNvyLDPnRRIt4PRZf4J6dVclRRbPsChQ1aj
+X-Google-Smtp-Source: AGHT+IH5b1wkP6S8DAEsGopYfUuPnn0CZWaw+8yynTwvbj2MBk6B92RfrPC2tnzyTU88t/RNBKA5stTuHDy5P/ggUWk=
+X-Received: by 2002:a25:bcc6:0:b0:df7:92ed:365e with SMTP id
+ 3f1490d57ef6-dfac97ce463mr1085810276.26.1717550888977; Tue, 04 Jun 2024
+ 18:28:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
+ <CA+BfgNJByawxkZukaCXYcmOo_K9aQ0W1x8B6Y+Hyg_fZaJ4axw@mail.gmail.com> <5baf3caf-dc09-4829-96db-2666fc902710@t-8ch.de>
+In-Reply-To: <5baf3caf-dc09-4829-96db-2666fc902710@t-8ch.de>
+From: Dustin Howett <dustin@howett.net>
+Date: Tue, 4 Jun 2024 20:27:57 -0500
+Message-ID: <CA+BfgN+LE3YyF3te4m8sWbtH85tU+ERUDW7YR_BFecusVTAWWw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] ChromeOS Embedded Controller charge control driver
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, chrome-platform@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Mario Limonciello <mario.limonciello@amd.com>, Stephen Horvath <s.horvath@outlook.com.au>, 
+	Rajas Paranjpe <paranjperajas@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Barry Song <v-songbaohua@oppo.com>
+On Mon, Jun 3, 2024 at 3:59=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
+huh.net> wrote:
+>
+> Can you try disabling all of the Framework-specific charge control
+> settings and test again?
+> Probably the different, disparate logics in the Framework ECs are
+> conflicting with each other.
 
-dma_heap_allocation_data defines the UAPI as follows:
+Fascinating! This board does indeed support charge limiting through
+both interfaces. It looks like the most recently set one wins for a
+time.
 
- struct dma_heap_allocation_data {
- 	__u64 len;
- 	__u32 fd;
- 	__u32 fd_flags;
- 	__u64 heap_flags;
- };
+The UEFI setup utility only sets the framework-specific charge limit value.
 
-However, dma_heap_buffer_alloc() casts both fd_flags and heap_flags
-into unsigned int. We're inconsistent with types in the non UAPI
-arguments. This patch fixes it.
+We should probably find some way to converge them, for all of the
+supported Framework Laptop programs.
 
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-Acked-by: John Stultz <jstultz@google.com>
----
- -v2:
- collect ack of John, thanks!
- refine commit message;
-
- drivers/dma-buf/dma-heap.c    | 4 ++--
- include/uapi/linux/dma-heap.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-index 84ae708fafe7..2298ca5e112e 100644
---- a/drivers/dma-buf/dma-heap.c
-+++ b/drivers/dma-buf/dma-heap.c
-@@ -50,8 +50,8 @@ static struct class *dma_heap_class;
- static DEFINE_XARRAY_ALLOC(dma_heap_minors);
- 
- static int dma_heap_buffer_alloc(struct dma_heap *heap, size_t len,
--				 unsigned int fd_flags,
--				 unsigned int heap_flags)
-+				 u32 fd_flags,
-+				 u64 heap_flags)
- {
- 	struct dma_buf *dmabuf;
- 	int fd;
-diff --git a/include/uapi/linux/dma-heap.h b/include/uapi/linux/dma-heap.h
-index 6f84fa08e074..a4cf716a49fa 100644
---- a/include/uapi/linux/dma-heap.h
-+++ b/include/uapi/linux/dma-heap.h
-@@ -19,7 +19,7 @@
- #define DMA_HEAP_VALID_FD_FLAGS (O_CLOEXEC | O_ACCMODE)
- 
- /* Currently no heap flags */
--#define DMA_HEAP_VALID_HEAP_FLAGS (0)
-+#define DMA_HEAP_VALID_HEAP_FLAGS (0ULL)
- 
- /**
-  * struct dma_heap_allocation_data - metadata passed from userspace for
--- 
-2.34.1
-
+> Thomas
 
