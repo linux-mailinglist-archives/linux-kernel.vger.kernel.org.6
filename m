@@ -1,142 +1,94 @@
-Return-Path: <linux-kernel+bounces-202999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBF38FD48B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:58:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5198FD475
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 102731C22728
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:58:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4D3C1C21F76
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF616195808;
-	Wed,  5 Jun 2024 17:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DB6194AFD;
+	Wed,  5 Jun 2024 17:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RYlsfO2G"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEz/nDoH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66004195388
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 17:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0296E13A26E;
+	Wed,  5 Jun 2024 17:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610282; cv=none; b=CI9Po4PB/mAXyCQ8HzdmmxWpd02HYQiXv8WK4A9Cc6BJ69LzND58l65SqkhQ3/eibvEXol3X78Qr0j53XpxyaJY1ahNjZCwct7VHsKjnM/WKYQSHRqZKoh8bHexwPk1I/50JnpGlnsAHnX33t7x/uTd8HmNK6qxbmB8pNMBXV+g=
+	t=1717610190; cv=none; b=FL8PNYCogHbKUIJhggqo9H4V7c+FAqONCU4NeXu8oWjczNwQTX05XCQcB8mStFis8QV4SDmaEP2e6VZQF4qP2bnygPj3BQrxuLIlk9wAldImCcqejxSUbV9gaQpVsF277DPNLkMQXhhyC+kJtfdE0UVAEQGNlnZig0nVuVnhZjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610282; c=relaxed/simple;
-	bh=M+kTfQgopDw6pRHN5KgPqRjscFYLhvqP2Cm8FVR4IoY=;
+	s=arc-20240116; t=1717610190; c=relaxed/simple;
+	bh=SNzE0F9enywAXpbx37sfhGTyuSO2Iy8uiW1YPcMF1Dc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hrDVeV7ilmcrXGzMhkCL74xUZwNYS9dO3fpClHgmRMVR9v3jt8JzVpLzyBOYEadSf/Z5QNn3H+9WcV+lEXM3iQwCktVEAaACi4q9+7dXWaqPcLm/lBfGapwoDoxozhGwZftv6BG+L5fGV993dRELWL3YPewrA3QOZlWrcVuq7Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RYlsfO2G; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717610279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VuJ4fNB8fhXRvR11VmS6YjcKZS/vPkYMz+xJwYDKrdE=;
-	b=RYlsfO2GT6LRTWqUUuQwxv4q1l6JjL+xRmZm+h1OqXAWaKf/a2V2ErZeaPqZTy34NDyilY
-	n7wTiMdOeSdtbaOk+autc7apRjsG+mM1pABFgZlTNwf2ug4uz6+Z5Z3vKFhSEYBX5/uYQo
-	Gr+punaRYWklhYI7Qx9hBmwRK4rbwOw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-IkNazG97MHS7anzZWG_1Mw-1; Wed, 05 Jun 2024 13:57:53 -0400
-X-MC-Unique: IkNazG97MHS7anzZWG_1Mw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E2D0B85A588;
-	Wed,  5 Jun 2024 17:57:52 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.62])
-	by smtp.corp.redhat.com (Postfix) with SMTP id DE3E5408A433;
-	Wed,  5 Jun 2024 17:57:48 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  5 Jun 2024 19:56:24 +0200 (CEST)
-Date: Wed, 5 Jun 2024 19:56:19 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to
- uprobe_consumer
-Message-ID: <20240605175619.GH25006@redhat.com>
-References: <20240604200221.377848-1-jolsa@kernel.org>
- <20240604200221.377848-2-jolsa@kernel.org>
- <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIFiQf19y4dKCxv7LV+PYdJUn1F4BAuDkGRUzJ/2I2eGjuBJBp47LttuzeByPSjDT3jMtRs/6RQY6oi5GoYMVawDN3OY3FFP7DplO/gxrNjV7dcZOYLiSNKFhgTqFO5hnoC6VSWJQhvI6GuXUVHbhRN0Ns86dwHrkIiqESNehms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEz/nDoH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1473BC2BD11;
+	Wed,  5 Jun 2024 17:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717610189;
+	bh=SNzE0F9enywAXpbx37sfhGTyuSO2Iy8uiW1YPcMF1Dc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UEz/nDoH7s82EQnTwVzzeG15BOpK5GJlr9WAW3VNhJXcoL19pKBtCAea+URGa6Avw
+	 F/MDrcZe8922kwzTJ2yUQhCSZv2DoyQgJn/PdA/wWzSAjivbG164pcspqFPMpkmB8/
+	 8pLXCvAOt5cHKS/LnU/L4vmTx9ut0i6FuyGJP8HHZ7/nhlKAn4088tYwvgIPFUKfqq
+	 dIJTtteJKT/kX8//XAqJ4VxSvxeTk44TyhUWIHPGE6ldpCawXhzhKc6W5KIyw5OwMa
+	 3H7qUe9GdOrMaD9svpkhwlH+lBksHM+tnS3ISRftFKgF2YZDV8or0PPgkRMD4UeDlG
+	 MlzQbiAEuHl7w==
+Date: Wed, 5 Jun 2024 18:56:24 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alex Bee <knaerzche@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: rk3128: Add HCLK_SFC
+Message-ID: <20240605-proponent-ion-d78e863ca7b5@spud>
+References: <20240605172154.193047-1-knaerzche@gmail.com>
+ <20240605172154.193047-2-knaerzche@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IkMWFnV2LSveQRFT"
+Content-Disposition: inline
+In-Reply-To: <20240605172154.193047-2-knaerzche@gmail.com>
+
+
+--IkMWFnV2LSveQRFT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On 06/05, Andrii Nakryiko wrote:
->
-> so any such
-> limitations will cause problems, issue reports, investigation, etc.
+On Wed, Jun 05, 2024 at 07:21:52PM +0200, Alex Bee wrote:
+> Add a clock id for SFC's AHB clock.
 
-Agreed...
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> As one possible solution, what if we do
->
-> struct return_instance {
->     ...
->     u64 session_cookies[];
-> };
->
-> and allocate sizeof(struct return_instance) + 8 *
-> <num-of-session-consumers> and then at runtime pass
-> &session_cookies[i] as data pointer to session-aware callbacks?
+Thanks,
+Conor.
 
-I too thought about this, but I guess it is not that simple.
+--IkMWFnV2LSveQRFT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Just for example. Suppose we have 2 session-consumers C1 and C2.
-What if uprobe_unregister(C1) comes before the probed function
-returns?
+-----BEGIN PGP SIGNATURE-----
 
-We need something like map_cookie_to_consumer().
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmCmyAAKCRB4tDGHoIJi
+0kr2AP9CcJSE0xRZszok5aIlAw4wAVI+sOpC9KTCCLbELcfxoAEAjH2YTfqU+eA7
+7Cbv3vSQO00bE61flXDiiId5PhMPBgs=
+=3UhK
+-----END PGP SIGNATURE-----
 
-> > +       /* The handler_session callback return value controls execution of
-> > +        * the return uprobe and ret_handler_session callback.
-> > +        *  0 on success
-> > +        *  1 on failure, DO NOT install/execute the return uprobe
-> > +        *    console warning for anything else
-> > +        */
-> > +       int (*handler_session)(struct uprobe_consumer *self, struct pt_regs *regs,
-> > +                              unsigned long *data);
-> > +       int (*ret_handler_session)(struct uprobe_consumer *self, unsigned long func,
-> > +                                  struct pt_regs *regs, unsigned long *data);
-> > +
->
-> We should try to avoid an alternative set of callbacks, IMO. Let's
-> extend existing ones with `unsigned long *data`,
-
-Oh yes, agreed.
-
-And the comment about the return value looks confusing too. I mean, the
-logic doesn't differ from the ret-code from ->handler().
-
-"DO NOT install/execute the return uprobe" is not true if another
-non-session-consumer returns 0.
-
-Oleg.
-
+--IkMWFnV2LSveQRFT--
 
