@@ -1,89 +1,117 @@
-Return-Path: <linux-kernel+bounces-202955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3E98FD389
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2441D8FD390
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 033901F24D56
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B573E1F266E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F6518FC87;
-	Wed,  5 Jun 2024 17:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D92D191471;
+	Wed,  5 Jun 2024 17:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fa1YcfXG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kgEXsunN"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5260D17559;
-	Wed,  5 Jun 2024 17:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0122837A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 17:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717607072; cv=none; b=qUoOH0UwABSd6IHHaBQnpP0tICMbqODiDy4jNH0nAwGgRqGxH8ixK9Rzh9N2fRYCsHoKtajWy6QusG8D4h6pCnVr0dATZODq8XlxV1Ew67qUney3EeQf2C1e/G7rWxLCdMuxWoAqmUpsHt2yLt/qRWtenNzagfszhBIvYLHIuaQ=
+	t=1717607159; cv=none; b=QR7RjloJ+KEGsg07xB8T2/6x7gjqUtD7PUnwb6B1SOI66OXgFVFm1ocf3YMgGhtHOQHRcBW1MNiOqPGs9LbvCPDhbGZZdNUWljgzW99SlOaQGSFO8TrA8WHIQOAsaeNtr8JbNU3fgs+rsGJctr7ya7uYd/bhAy4hjVJ5BNWnks8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717607072; c=relaxed/simple;
-	bh=nhFWFsp+9ExjOIXbu0vBmHM9s9CAsaCAVQQ7E358h9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2E5snRV8u7tRQ3KcR7YjCNoZVPB2C2FhMzIn8p324IQhJRNpv3UMrf7Fe8AbyZ63QQyz8mo+CRcG/0AHOWj3eASp2yMHZgvDXu2okkFZG4g2k9nKOYRnZ9GSg/b4UaQ82SjrAILDqYOgC3qBpoVjE5mvGsEshcYf7AmelzbJIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fa1YcfXG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B7AC2BD11;
-	Wed,  5 Jun 2024 17:04:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717607072;
-	bh=nhFWFsp+9ExjOIXbu0vBmHM9s9CAsaCAVQQ7E358h9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fa1YcfXGmjcOXmffGBJge6qX26nr1zo/kXEqmVo1su2WdAIlSKFcpEiDDS2DDH2Fx
-	 HpaQiGe7X51iLeB+wcUeUGyRuenIfOBL59LWtA6H+MaVPZyNyYdcIV3LphhusJWYzz
-	 l1VnWcAL95uFrkuPXeK3r4PhzYPOERC8x2bcAoo1m5LLKKRqDpP2fHvHaldLPsrwtq
-	 rgFQE7CGpMotRiVYDgSEGAgmhai9hhAUNSsg+WUE+1P/WYNaOpU4RmLWSX61ew/mJm
-	 558DLmWiXztnaPcho+7DEHIHLR6trO3Yw80kOi8ZLgda3ENjPjgPdjyxxuCT6RMmQy
-	 d+YcPETCnTAdg==
-Date: Wed, 5 Jun 2024 11:04:28 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Chaitra P B <chaitra.basappa@broadcom.com>, leit@meta.com,
-	stable@vger.kernel.org,
-	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <MPT-FusionLinux.pdl@broadcom.com>,
-	"open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)" <linux-scsi@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mpt3sas: Avoid test/set_bit() operating in
- non-allocated memory
-Message-ID: <ZmCanHvLTo_RjZsA@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240605085530.499432-1-leitao@debian.org>
+	s=arc-20240116; t=1717607159; c=relaxed/simple;
+	bh=Zuf8btuKWalmhChHnYF6Zs4RJxXpua8dNN2r4Rf6cWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OcrAKDJScIfrCd9i+ysIkGTbMUzToIWOx3CQAntchxmPuUY+vus2l8bRpQUSipb2oLJ12PScZXQq+441Q5+fQfpAYunHpC9iKdHBU2NAlD8wikVl7uepNsXgLJtECdiLj5KGj/DisLCQTkzsa3yrkSMjTj0RTF+JS7jQYdZNdqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kgEXsunN; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2512a0b6916so9085fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 10:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717607157; x=1718211957; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=H3zTo46io+/7RGOWkcXF2UOVMch9m0QPNz90dItucSw=;
+        b=kgEXsunN1vUocqgan4PIZpUqm6JirA3S1FuarNwlYkvVH+PfuCMR1UroU06mJkvA4V
+         kiq4Le8x9vxYBYm3MPm5md9Lpe+tOZQn0Q3djQQ5wYyjQ+rzWT50f65Is7Tyh5DNkgZy
+         FZUj0e9vy9PamFPnozeFkMeTx36BXt0dAPKEBmLQBulgRLGtmplaY0PHO2gcQfyQTU34
+         NgQvcGx91RThT/s0PkrZjVn2iDJ0V1MAdwnBQCafU8uUyCIJ1j3PqWEN9NqBt2V+rLUe
+         BvXhxVnqZTAckjbuDXow8BTc3bh085zfipLi/1vRhk5RJqiGWs4rNgZsUB60Kzk04kGF
+         uxRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717607157; x=1718211957;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H3zTo46io+/7RGOWkcXF2UOVMch9m0QPNz90dItucSw=;
+        b=aVza+L7StZHg2kLFZI3tl5TJUT3esp/Ce4kEz1AfecJktGC1UlrLymzduCdzZ3/9X/
+         VcD3qt664HxOLOIj+W0MPTY0HiI1wGdXzwxEBfZPo5mZxRIinYEt/kRfIwYkyM2euQsf
+         /GzSEEH8uCJcuRswcdTeibmoYwdiJQBISgh3qOfiwmhcZFjoaikUwTTXZiwgzhDLDYbs
+         XQCXhdzu29woAR8mt74ZGGyoXF+DPV2XHqKmGClxkSzdyV2dkLqcGKPz6nViemG07thS
+         6wDLSol9Vyr6I+e6sjhnKAttfHahwf1B1N/Fz/LGzoufxJRDLtmSrfltvdJAAGGI3wUd
+         E4eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnOZQfOPcUom1UBhXFmhL8PZsOiIWe5SVBw6AD3huUEFeRPDDQWvfsDeM967ELQ2ibiYkdERUXfVjkKCrCVIkmN5Ad+e+2t3hxPN+/
+X-Gm-Message-State: AOJu0Yx1JHOsZs/iwVLQYJau1Ns1gfV9jVhVZZ2gWmXZt8xjVw1i2dBw
+	ZfLakgDZKaud/RUxIKO/fZS480LiFMLwmgEqWrTzkKStWuH3A86caaR/OPm+Kccf29Sbblwwjcj
+	W5LJpnf+nbSCLIIAv19Q1bcuFGbc=
+X-Google-Smtp-Source: AGHT+IHQEBrPAkxWoHscGpgooWUNneyz6aeprNkAeu/ei7oNi2n2hk4dWtQTqRF3n/MXaPWjI95ER+FlvBrfo8rWSw8=
+X-Received: by 2002:a05:6870:9a23:b0:250:6aa0:7c8e with SMTP id
+ 586e51a60fabf-25122b08365mr2624950fac.53.1717607157045; Wed, 05 Jun 2024
+ 10:05:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605085530.499432-1-leitao@debian.org>
+References: <20240516174357.26755-1-jim.cromie@gmail.com> <CALwA+NZ7Cdd9M2Cus+Lv3yoc+eWNdUjCmECGJbfoin3ikHLbxQ@mail.gmail.com>
+ <CAJfuBxxus5_0=ydNWwQhDNhe1++oh8nBe-+3Egt6mKk_W=0w3w@mail.gmail.com> <CALwA+NbtX4pkFm35L7bjL0D-c=RMOu7vVC0=cUg4Q6n7uD=u-A@mail.gmail.com>
+In-Reply-To: <CALwA+NbtX4pkFm35L7bjL0D-c=RMOu7vVC0=cUg4Q6n7uD=u-A@mail.gmail.com>
+From: jim.cromie@gmail.com
+Date: Wed, 5 Jun 2024 11:05:30 -0600
+Message-ID: <CAJfuBxwSXVLnis6T=ybbyxQRdSV6mHMBbDJ_CwUr93f=adSHDQ@mail.gmail.com>
+Subject: Re: [PATCH v8-RESEND 00/33] Fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y regression
+To: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
+	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
+	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 05, 2024 at 01:55:29AM -0700, Breno Leitao wrote:
-> There is a potential out-of-bounds access when using test_bit() on a
-> single word. The test_bit() and set_bit() functions operate on long
-> values, and when testing or setting a single word, they can exceed the
-> word boundary. KASAN detects this issue and produces a dump:
-> 
-> 	 BUG: KASAN: slab-out-of-bounds in _scsih_add_device.constprop.0 (./arch/x86/include/asm/bitops.h:60 ./include/asm-generic/bitops/instrumented-atomic.h:29 drivers/scsi/mpt3sas/mpt3sas_scsih.c:7331) mpt3sas
-> 
-> 	 Write of size 8 at addr ffff8881d26e3c60 by task kworker/u1536:2/2965
-> 
-> For full log, please look at [1].
-> 
-> Make the allocation at least the size of sizeof(unsigned long) so that
-> set_bit() and test_bit() have sufficient room for read/write operations
-> without overwriting unallocated memory.
+>
+>
+> > Im thinking that a combo of 1, 2 would suffice.
+> > And we could probably drop the config constraints,
+> > especially if the test avoids failing on configs where a failure is expected.
+> > IOW - if no test-modules/builtins, run only 1st 3 tests, ending with PERCENT
+> >
+> > That said, I wonder if the exit 127 should be success instead ?
+> >
+>
+> I don't follow you here. Could you please elaborate why exit 127
+> should be a success ?
+>
 
-Looks good.
+well, exit 127 is sort-of a monkey-patch.
+(this) monkey, sees it used by git-bisect to not be a normal fail,
+but a special signal that bisection itself failed. (maybe..)
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+I have no good reason to think its useful for selftests.  RFC.
+
+WRT success,  if /proc/dynamic_debug/control doesnt exist,
+thats probably intended, and we shouldnt complain.
+
+>
+> > thanks Lukas,
+> > ~jimc
+> >
+> > > Thanks,
+> > > Lukasz
 
