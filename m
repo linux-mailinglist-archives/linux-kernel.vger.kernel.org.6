@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-202551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251B88FCDE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:55:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC178FCE04
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88B31F2622D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEE6B2953C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16121D24F4;
-	Wed,  5 Jun 2024 12:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894CE197539;
+	Wed,  5 Jun 2024 12:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFHc9p+g"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="H27FA7rG"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA961D24E1;
-	Wed,  5 Jun 2024 12:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECC0197527;
+	Wed,  5 Jun 2024 12:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717589191; cv=none; b=p062Qigy6SGETiPU21H/PrQ7Silni1ERNAnwCx65+ziMSyu5Au/VRTc3xH2bDrV3ZGztMGWcrOSrSOcEuuULvRidJJq87R9sAzPhnagx20cVTy2Y8LxX6MK6cMsmvNF6jj8sqDGKGDBoDU4diSuowfj9Z392Oz0b1Q8TGOw3i9c=
+	t=1717589594; cv=none; b=dQiLlvtKGhfLvyZb5eoLsSGae/VV+X68fzTRLMoPmEkNYW/PNnr8+TXq1FoXbj/iiiqK8WSO7a8Av9cThqY1nulfPx84SW9yh1hwUTMh69uE3so51cw5JowjCRTIQtq0D9biCuIL1C5f3mJw9Jn94wZyvGa+owE1Sf8i+8r+E9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717589191; c=relaxed/simple;
-	bh=lortl1z76Nmv2QOyONeN62az8pvnboP+S0JeNy16iZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WP7lpGr9FvbmkFwyLNSbPbrSfyASfTnnieAkdB1+BZZfrZM0NbimdLO2w0TJoajjR3Aws/9jmcEdpeN2A6aX6d0yOkrGr7JIenrRoTMxe1U0jkIMSixZFn46I1bOSFD5juX+Gv8RUzty8AWdLqtytT4l3ya2KXoxCBCbKTma3PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFHc9p+g; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e73441edf7so71742421fa.1;
-        Wed, 05 Jun 2024 05:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717589188; x=1718193988; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=du0NeTxqutcJ2uTplQDMRL2aMycCdl9mM4JMoH82dDg=;
-        b=fFHc9p+gAfEADWS38dy1J2/5VARvtOSwq+ryaafZecz8M2zRt+KCpE/9WFt70OJ+Wr
-         MBsztd5HqHPU78CDEm7ncoyIujMbqI828z3RQLRXOB3DWqZLbSmQkw8k9lvfdWgsuwKq
-         aAOkY2YWwvnvUTm+4rmWfZ4oLjrgmbmFfhmtNGpGOHZUac+qxl1Z5WV/obV1m/iCI8k3
-         wF+OcdFdt/gClNe6TKga0bdC847djohKdw1Hj++VXLOYGeIuIRvs5xLciHLETVcdSWo2
-         yiZbJUdF463DL8JEkdYF51GdYF/oyn+Nh06dpj7U4tm41NeDW9MlZ36fgaQT5SMAZUPY
-         Ditg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717589188; x=1718193988;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=du0NeTxqutcJ2uTplQDMRL2aMycCdl9mM4JMoH82dDg=;
-        b=HO5KJ/pLoQgtT+b54qyxLIe3g8EZFI74Z1WAXPcv9LNp13HL3M38IbU34UlIXJ+SoR
-         Hoe13n/eBGQ06vGZ7FfxsA7Lj+Am1qHEUqznJbaDQ7lWSzwbarTPIrKvQAFZapzV9lmv
-         uzMufofpmrnYKTOwOSRGbBLJTWkW3cG30cBujiX3L1fRCaQGy5xnWZl3e1+fGc3wnBLn
-         An1c3dn0KNrwjQgBuKXMdyaNBmF1PU0s4SSfhPKGf/HX8N9yjGWVNf1lONlzeVwKAnIr
-         Ad5vbvDx4kigq8WgR9cwHJ0Dpfa9BqZQFihUlpMOdStRKkaH9gfAzRm27eTxE2byxfLw
-         3b0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbnGiM8ml2g6/vQyAsYJQ36CfM8tyOJZOcZp10Cys3jy4vVYiEED/qXap0q3LfJJpJiOOBy/aHU46WiSylpVFOLwvHqn5Hlzifu+Kcl0BLZa+K9zaOuOt5Acnq2/+QS0N4HXmhnd8Q5MHUoEZ++M7hQkKcuBfIokdVd4pXf4cr7Rt4+Qo=
-X-Gm-Message-State: AOJu0Yxt1sCHY4F9m2/hgNN4JwssB5ZwKIQYSgjcCkb8Gb7fgcAkt0PM
-	C+PyZeaPGR0q7Fpstbku6RLBNNVzbdh+0wnTtV4hHRlt52gBznU6
-X-Google-Smtp-Source: AGHT+IHV4exuth1+KkRgJIPAqJ821frbB5sqYY2gJmqLgu1Rrc9bE5yF9v+X4EEGzDscj3iPlac9tg==
-X-Received: by 2002:a2e:990f:0:b0:2ea:7dbd:adbb with SMTP id 38308e7fff4ca-2eac7a92a37mr12145191fa.50.1717589187277;
-        Wed, 05 Jun 2024 05:06:27 -0700 (PDT)
-Received: from [10.20.30.169] ([178.218.200.115])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eac2373686sm3559381fa.43.2024.06.05.05.06.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 05:06:26 -0700 (PDT)
-Message-ID: <d61bdc61-3375-4981-ac55-4004776aabe3@gmail.com>
-Date: Wed, 5 Jun 2024 17:06:23 +0500
+	s=arc-20240116; t=1717589594; c=relaxed/simple;
+	bh=KquR/qVX3Bfj67P/WWEDL2CtUe6KxjKA4k3e1DojbFU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XlxWDxyluOB5Lz58BtXzhq/plOdLTbu7pU2f/TBdf44MblE3zfAuTO66bT5SdF5Mm6Lw/Z/qbi2wMpI4sQ0bB6rtRf3dEWIXxwDYowN2oOXJNU8z4wIzu6gD/V33XcJsIz4Xhseth/wRftcSeACzJsr/ufvYVnFuu6m9B9dDJ7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=H27FA7rG; arc=none smtp.client-ip=192.19.144.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id A9D8FC0000F5;
+	Wed,  5 Jun 2024 05:07:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com A9D8FC0000F5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1717589233;
+	bh=KquR/qVX3Bfj67P/WWEDL2CtUe6KxjKA4k3e1DojbFU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=H27FA7rG4T0cLUUFumTG7nIsUW2aH5Gz0fqTkaW5+lWjherjlJc+2tSsCvN169o80
+	 r8N8hDvh3KkEMs/N5XkSNeRwHlq5B3rxwO9IEGAuMSDa7OMhSdS96X27QWKAvZYfIM
+	 5R3ln8YOavuc6GHch3wybngblyEQgzUaJmWcHadA=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 796E718041CAC4;
+	Wed,  5 Jun 2024 05:07:11 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v5 4/4] arm64: dts: broadcom: Add minimal support for Raspberry Pi 5
+Date: Wed,  5 Jun 2024 05:07:12 -0700
+Message-Id: <20240605120712.3523290-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <874589f6c621036620cca944986e5be7238b4784.1717061147.git.andrea.porta@suse.com>
+References: <cover.1717061147.git.andrea.porta@suse.com> <874589f6c621036620cca944986e5be7238b4784.1717061147.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] pinctrl: rockchip: add rk3308b SoC support
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Jianqun Xu <jay.xu@rock-chips.com>, Jonas Karlman <jonas@kwiboo.se>,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240604141020.21725-1-dmt.yashin@gmail.com>
- <20240604141020.21725-3-dmt.yashin@gmail.com>
- <b5d2d914-0c2b-4cd1-b894-f894a93a54f9@moroto.mountain>
-Content-Language: en-US
-From: Dmitry Yashin <dmt.yashin@gmail.com>
-In-Reply-To: <b5d2d914-0c2b-4cd1-b894-f894a93a54f9@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Dan,
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-On 6/5/24 12:22 PM, Dan Carpenter wrote:
+On Thu, 30 May 2024 12:12:01 +0200, Andrea della Porta <andrea.porta@suse.com> wrote:
+> The BCM2712 SoC family can be found on Raspberry Pi 5.
+> Add minimal SoC and board (Rpi5 specific) dts file to be able to
+> boot from SD card and use console on debug UART.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
 
-> On Tue, Jun 04, 2024 at 07:10:20PM +0500, Dmitry Yashin wrote:
-> Why does this one have a Fixes tag?  Isn't this new hardware support?
-> Possibly patch 1/2 was not actually a fix but just preparation for this
-> patch?
->
-> regards,
-> dan carpenter
-
-Initial pinctrl support for rk3308 included registers for rk3308b variant, which didn't work well with some pins of the first SoC and these reg's were fixed in the patch mentioned in this tag. So I added Fixes tag as this patch brings back proper setup for rk3308b and 1/2 indeed is the preparation. Thank you for taking your time on it. Perhaps I should describe such moments better next time.
-
--- 
-Thanks,
-Dmitry
-
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree-arm64/next, thanks!
+--
+Florian
 
