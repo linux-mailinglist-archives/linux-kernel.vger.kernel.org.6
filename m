@@ -1,75 +1,45 @@
-Return-Path: <linux-kernel+bounces-202032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B4F8FC6DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:46:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AA38FC6E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F141C21C94
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:46:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B11FB2206B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3065812F;
-	Wed,  5 Jun 2024 08:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ecdvmj4x"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64367344C;
+	Wed,  5 Jun 2024 08:46:48 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5459D49637
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 08:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0446A1946BE;
+	Wed,  5 Jun 2024 08:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717577178; cv=none; b=Q5nqrVI1hXwKP8ey+1jJdemvFdMqve0rBAY4o7RVjzUQFBx6hWba4IruCI3GVrEHOA68zaTs801oynV4bpcTYLj11fAjeTWSxFjHOjRliDq/Z9c/sz2V8G9p+h7eBO3VqnoKMGoNfBwyeMSSz/biMHSo1lP5l+n9DuVSM7QsDTY=
+	t=1717577208; cv=none; b=JTt9yaFgXpuo6PSquh+vgCnKzGsUzY0eWwEHmzsxj6myGnrDSbAgTsO6udW4nK0WIUniKo+8A3AnJ7mF9KzeM7bLTBe8rqLTTsLKBmXsTg/PM92sObWHieCeB5lNfhxBfRz1kYpEBLXW7ATUHTVzyOUY90K+O0oprOUoAGYqR8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717577178; c=relaxed/simple;
-	bh=k5hPE9u97z5wZR33by4343ri6f791GQUzIj+JvXc7iM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=MmYExc3WcnK6/1e6C8XZHixxlpKGb94R3FdYAOCg+uUwPnMc22TD0/kM9VJoRiuHRKlcqfYd9x0wMbg+hWz/jrYA1L1y87eKx663XQ4uJh+aFRD6xsztDkmKVuGKpV3sM5RTQYvP/Wz0gqhlcPK7W7d7D5dLp7b50xmidkEDakE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ecdvmj4x; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35dcd34a69bso5043982f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 01:46:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717577175; x=1718181975; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cghILI8ZJPm9SL1zceBvs6FK9GtRFOI4Hps8zLPbyaI=;
-        b=Ecdvmj4xxxx9KQ2Wf8FfYIHIiC/Ak7wmvzdh7XzPlBqHXyYcsodx5KABOKTzkqYo8G
-         uu1VWVpKL02RiGSN5OICVQpvW5bCSOhSegm9xFiUdxRxwva1houeuSqtdVzMfFARxTP3
-         UMKD5M/fbYLaMUL4zIIl7vVZx3zJYki83zdNlgZPo84/J/Wwg+90rFnUj06jrCj+qeJt
-         kA5lEGdAKZx1GQuPuSoQ9A/nXWWg6lIF8Bh7+RbvceJg+7fTirk5yr0lDsuJoHjfO8CH
-         94hV4GHd/dDuq4C4n28KfiRNM3lFVL3JgyIDqaFYrvcgEybmZ+TwbogfmOWHEL3KVv+n
-         1gRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717577175; x=1718181975;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cghILI8ZJPm9SL1zceBvs6FK9GtRFOI4Hps8zLPbyaI=;
-        b=vWfXXsjAdq/acHnibSgl4fKajRxviIF3X82quAK3BJ0rT64dLRGBWs7zl8IWb9IiJE
-         9Lx80fk+4WbqF/4eahdihcxOhOky0gzDbqblJPfEBoQzjjGI2YrxX4ZGSouFXJe8hj32
-         Tlub99/q5Hqu5g6c9WBS3e5JkRRYWRGrj6BCGfeqNcqH8RFETLWslOp2W1XXR4xJGBd8
-         6Wf52IMLHyW2PhYdwSHm/aDpUdNQOF8Ggnc29za7L/RupGVgfi+Rw3V7RuX6B+fYMxHm
-         Tsdylv14YhWM6OrbQYtgmY8UKnLOsUD/z/UYliFUCg9CSffqy/wMCEABp81FvhdThsA/
-         sKzA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5HrI92AgC7NGji5JoBbkNxCg4Jd7zNKiIoyxHIvAt9mIy+uxYkR+auB0Ujp8E0t6uSI5y4KbriiwZd2ett5vD32FSr1LkWbOyEDeM
-X-Gm-Message-State: AOJu0YwDa5yNxWJZHIgXPd3FLw+MszhPBYD6KPCwpHAB6XGkPT1vWcbB
-	ls39i3woeJ/duaUBJbOLAKDRNM/680GcqcIyApesPXaoxwVGUeAF6A3EPtFvvjk=
-X-Google-Smtp-Source: AGHT+IFY5ACIs0f3ebBqrJnsM1HHTH2Jm8Tl0u6MGK+JdFZj5Lc+Q99ZElmnnfOqiOiP8idM0ErvwQ==
-X-Received: by 2002:adf:e7c1:0:b0:354:f815:8b85 with SMTP id ffacd0b85a97d-35e8ef94374mr1276637f8f.67.1717577174518;
-        Wed, 05 Jun 2024 01:46:14 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:c7ce:7756:462d:a8bd? ([2a01:e0a:982:cbb0:c7ce:7756:462d:a8bd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd062edbcsm13787599f8f.84.2024.06.05.01.46.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 01:46:14 -0700 (PDT)
-Message-ID: <c66846c6-d5d6-4d4d-98d4-ffb907521c09@linaro.org>
-Date: Wed, 5 Jun 2024 10:46:13 +0200
+	s=arc-20240116; t=1717577208; c=relaxed/simple;
+	bh=j1eVpJRBA9lmFHiWEcZhRmdO05Q6wWL54KVNcMBLTKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=M5TNrk4Mjpj3cbdWRZOZMPWf+ffmDTs9OPDUTsP9ToQrbtPzb3N7F2wRYgCSuhtB557CdUZzucwWO6NXBlpplv42LuA++L3loZFeXpkqUrDtyIwRjqMbENmauPyvKw8YnviCB8Kqg33GpB5YjthtFB9th+XA5eGHrwK1xzxRukw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VvLdB18fbzclgV;
+	Wed,  5 Jun 2024 16:45:18 +0800 (CST)
+Received: from canpemm500010.china.huawei.com (unknown [7.192.105.118])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3F05C180085;
+	Wed,  5 Jun 2024 16:46:42 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ canpemm500010.china.huawei.com (7.192.105.118) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 5 Jun 2024 16:46:25 +0800
+Message-ID: <73320749-1a9c-40a1-a7d5-c386f1453664@huawei.com>
+Date: Wed, 5 Jun 2024 16:46:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,142 +47,244 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/2] arm64: dts: meson: add GXLX/S905L/p271 support
-To: Christian Hewitt <christianshewitt@gmail.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240604084134.3315841-1-christianshewitt@gmail.com>
- <20240604084134.3315841-2-christianshewitt@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240604084134.3315841-2-christianshewitt@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] xfs: Fix file creation failure
+To: Dave Chinner <david@fromorbit.com>
+CC: <chandan.babu@oracle.com>, <djwong@kernel.org>, <dchinner@redhat.com>,
+	<linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yangerkun@huawei.com>
+References: <20240604071121.3981686-1-wozizhi@huawei.com>
+ <Zl+cjKxrncOKbas7@dread.disaster.area>
+ <ba3cb00b-1d05-4ac9-b14e-e73e65cc4017@huawei.com>
+ <ZmAIWOZmUKBNI8ZZ@dread.disaster.area>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <ZmAIWOZmUKBNI8ZZ@dread.disaster.area>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ canpemm500010.china.huawei.com (7.192.105.118)
 
-On 04/06/2024 10:41, Christian Hewitt wrote:
-> Add a device-tree for the GXLX Amlogic P271 (S905L) reference design
-> board. This is a low-cost design similar to P281 (S905W) but with
-> silicon differences to omit VP9 and use Mali 450-MP2 (not MP3). The
-> SoC is marked with S905L and "2" (believed to denote MP2) resulting
-> in chip distributor stock lists and Android STB marketing sometimes
-> describing it as an S905L2 chip.
-> 
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
-> NOTE: This patch depends upon the following submitted patches for
-> VDEC [0] and SARADC [1] support:
-> 
-> [0] https://patchwork.kernel.org/project/linux-amlogic/list/?series=858514
-> [1] https://patchwork.kernel.org/project/linux-amlogic/list/?series=858525
-> 
-> CHECK_DTBS generates some warnings for pre-existing issues inherited
-> from common dtsi files. The patch does not add any new issues.
-> 
->   arch/arm64/boot/dts/amlogic/Makefile          |  1 +
->   .../dts/amlogic/meson-gxlx-s905l-p271.dts     | 51 +++++++++++++++++++
->   2 files changed, 52 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-> index 0f29517da5ec..0746e01b5853 100644
-> --- a/arch/arm64/boot/dts/amlogic/Makefile
-> +++ b/arch/arm64/boot/dts/amlogic/Makefile
-> @@ -62,6 +62,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-libretech-cc-v2.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-libretech-cc.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-p212.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxlx-s905l-p271.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxm-gt1-ultimate.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxm-khadas-vim2.dtb
->   dtb-$(CONFIG_ARCH_MESON) += meson-gxm-mecool-kiii-pro.dtb
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts b/arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts
-> new file mode 100644
-> index 000000000000..1221f4545130
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxlx-s905l-p271.dts
-> @@ -0,0 +1,51 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2024 Christian Hewitt <christianshewitt@gmail.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "meson-gxl-s905x.dtsi"
-> +#include "meson-gx-p23x-q20x.dtsi"
-> +
-> +/ {
-> +	compatible = "amlogic,p271", "amlogic,s905l", "amlogic,meson-gxlx";
-> +	model = "Amlogic Meson GXLX (S905L) P271 Development Board";
-> +
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x0 0x0 0x40000000>;
-> +	};
-> +
-> +	sound {
-> +		model = "P271";
-> +	};
-> +};
-> +
-> +&apb {
-> +	mali: gpu@c0000 {
-> +		/* Mali 450-MP2 */
-> +		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "gp", "gpmmu", "pp", "pmu",
-> +			"pp0", "ppmmu0", "pp1", "ppmmu1";
-> +	};
-> +};
-> +
-> +&saradc {
-> +	compatible = "amlogic,meson-gxlx-saradc", "amlogic,meson-saradc";
-> +};
-> +
-> +&usb {
-> +	dr_mode = "host";
-> +};
-> +
-> +&vdec {
-> +	compatible = "amlogic,gxlx-vdec", "amlogic,gx-vdec";
-> +};
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+在 2024/6/5 14:40, Dave Chinner 写道:
+> On Wed, Jun 05, 2024 at 10:51:31AM +0800, Zizhi Wo wrote:
+>> 在 2024/6/5 7:00, Dave Chinner 写道:
+>>> On Tue, Jun 04, 2024 at 03:11:21PM +0800, Zizhi Wo wrote:
+>>>> We have an xfs image that contains only 2 AGs, the first AG is full and
+>>>> the second AG is empty, then a concurrent file creation and little writing
+>>>> could unexpectedly return -ENOSPC error since there is a race window that
+>>>> the allocator could get the wrong agf->agf_longest.
+> .....
+
+Yeah...I know it is amazing...
+
+>>>> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+>>>> index 6c55a6e88eba..86ba873d57a8 100644
+>>>> --- a/fs/xfs/libxfs/xfs_alloc.c
+>>>> +++ b/fs/xfs/libxfs/xfs_alloc.c
+>>>> @@ -577,6 +577,13 @@ xfs_alloc_fixup_trees(
+>>>>    		nfbno2 = rbno + rlen;
+>>>>    		nflen2 = (fbno + flen) - nfbno2;
+>>>>    	}
+>>>> +
+>>>> +	/*
+>>>> +	 * Record the potential maximum free length in advance.
+>>>> +	 */
+>>>> +	if (nfbno1 != NULLAGBLOCK || nfbno2 != NULLAGBLOCK)
+>>>> +		cnt_cur->bc_ag.bc_free_longest = XFS_EXTLEN_MAX(nflen1, nflen2);
+>>>> +
+>>>
+>>> Why do we store the length of a random extent being freed here?
+>>> nflen1/2 almost always have nothing to do with the longest free
+>>> space extent in the tree, they are just the new free space extents
+>>> we are insering into a random location in the free space tree.
+>>>
+>>
+>> First of all, there may be ambiguity in the name of the bc_free_longest
+>> field. I'm sorry for that. Its only role is to give the longest non-0 in
+>> a particular scenario.
+>>
+>> Yes, nflen1/2 can't determine the subsequent operation, but they are
+>> used to update the longest record only if the numrec in cntbt is zero,
+>> the last has been deleted and a new record will be added soon (that is,
+>> there is still space left on the file system), and that is their only
+>> function. So at this time nflen1/2 are not random extent, they indicate
+>> the maximum value to be inserted later. If cntbt does not need to be
+>> updated longest or the numrec is not zero, then bc_free_longest will not
+>> be used to update the longest.
+> 
+> That's the comment you should have put in the code.
+> 
+> Comments need to explain -why- the code exists, not tell us -what-
+> the code does. We know the latter from reading the code, we cannot
+> know the former from reading the code...
+> 
+
+I am sorry for the trouble caused by my comments. I have indeed left out
+a lot of details, and I will correct it next time. /(ㄒoㄒ)/~~
+
+>>>>    	/*
+>>>>    	 * Delete the entry from the by-size btree.
+>>>>    	 */
+>>>> @@ -2044,6 +2051,13 @@ xfs_free_ag_extent(
+>>>>    	 * Now allocate and initialize a cursor for the by-size tree.
+>>>>    	 */
+>>>>    	cnt_cur = xfs_cntbt_init_cursor(mp, tp, agbp, pag);
+>>>> +	/*
+>>>> +	 * Record the potential maximum free length in advance.
+>>>> +	 */
+>>>> +	if (haveleft)
+>>>> +		cnt_cur->bc_ag.bc_free_longest = ltlen;
+>>>> +	if (haveright)
+>>>> +		cnt_cur->bc_ag.bc_free_longest = gtlen;
+>>>
+>>> That doesn't look correct. At this point in the code, ltlen/gtlen
+>>> are the sizes of the physically adjacent freespace extents that we
+>>> are going to merge the newly freed extent with. i.e. the new
+>>> freespace extent is going to have one of 4 possible values:
+>>>
+>>> 	no merge: len
+>>> 	left merge: ltlen + len
+>>> 	right merge: gtlen + len
+>>> 	both merge: ltlen + gtlen + len
+>>>
+>>> So regardless of anything else, this code isn't setting the longest
+>>> freespace extent in teh AGF to the lenght of the longest freespace
+>>> extent in the filesystem.
+>>
+>>> Which leads me to ask: how did you test this code? This bug should
+>>> have been triggering verifier, repair and scrub failures quite
+>>> quickly with fstests....
+>>>
+>>
+>> The logic I'm considering here is that the record is less than or equal
+>> to the maximum value that will be updated soon, as I wrote "potentially"
+>> in the comment. And consider the following two scenarios:
+>> 1) If it is no merge, then haveleft == 0 && haveright == 0, and
+>> bc_free_longest will not be assigned, and is no need to worry about the
+>> longest update at this time.
+>> 2) If it is in merge scenario, only updating the original values here,
+>> and the actual updates are put into the subsequent xfs_btree_insert().
+>> There is no need to worry about atomicity, both are carried out in the
+>> same transaction. All we have to do is the longest non-0. As long as the
+>> fast path judgment without locking passes, the longest must be updated
+>> to the correct value during the second lock judgment.
+> 
+> And therein lies the problem. We've learnt the had way not to do
+> partial state updates that might end up on disk even within
+> transactions. At some point in the future, we'll change the way the
+> code works, not realising that there's an inconsistent transient
+> state being logged, and some time after that we'll have occasional
+> reports of weird failures with values on disk or in the journal we
+> cannot explain.
+> 
+>> I tested this part of the code, passed xfstests, and local validation
+>> found no problems.
+> 
+> yeah, fstests won't expose the inconsistent state *right now*; the
+> problem is that we've just left a landmine for future developers to
+> step on.
+> 
+> It's also really difficult to follow - you've added non-obvious
+> coupling between the free space btree updates and the AGF updates
+> via a field held in a btree cursor. This essentially means that all
+> this stuff has to occur within the context of a single btree cursor,
+> and that btree cursor cannot be re-used for further operations
+> because this field is not reset by things like new lookups.
+> 
+> Then there is the question of what happens if we have duplicated the
+> cursor for a specific btree record operation, and the field is set
+> in the duplicated cursor. The core btree operations do this in
+> several places because they want to retain a cursor to the original
+> poistion, but the specific operation that needs to be performed will
+> change the cursor position (e.g. shifts, splits, merges, etc). Hence
+> there's no guarantee that a single cursor is used for all the
+> operations in a single btree modification, and hence storing
+> information in cursors that is supposed to persist until some other
+> btree modification method is run is asking for trouble.
+> 
+> Hence, IMO, coupling allocation btree coherency operations via the
+> btree cursor is something we should avoid at all costs. That's why I
+> keep saying the last record update for the by-count/AGF longest
+> needs to be moved outside the generic btree code itself. The
+> coherency and coupling needs to be directly controlled by the high
+> level alloc code, not by trying to punch special data holes through
+> the generic btree abstractions.
+> 
+
+Oh, I did not consider the problems you pointed out above, and the
+previous revision should be avoided. I fully agree with your opinion.
+
+>>>>    	/*
+>>>>    	 * Have both left and right contiguous neighbors.
+>>>>    	 * Merge all three into a single free block.
+>>>> diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
+>>>> index 6ef5ddd89600..8e7d1e0f1a63 100644
+>>>> --- a/fs/xfs/libxfs/xfs_alloc_btree.c
+>>>> +++ b/fs/xfs/libxfs/xfs_alloc_btree.c
+>>>> @@ -161,7 +161,14 @@ xfs_allocbt_update_lastrec(
+>>>>    			rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
+>>>>    			len = rrp->ar_blockcount;
+>>>>    		} else {
+>>>> -			len = 0;
+>>>> +			/*
+>>>> +			 * Update in advance to prevent file creation failure
+>>>> +			 * for concurrent processes even though there is no
+>>>> +			 * numrec currently.
+>>>> +			 * And there's no need to worry as the value that no
+>>>> +			 * less than bc_free_longest will be inserted later.
+>>>> +			 */
+>>>> +			len = cpu_to_be32(cur->bc_ag.bc_free_longest);
+>>>>    		}
+>>>
+>>> So this is in the LASTREC_DELREC case when the last record is
+>>> removed from the btree. This is what causes the transient state
+>>> as we do this when deleting a record to trim it and then re-insert
+>>> the remainder back into the by-count btree.
+>>>
+>>> Writing some random transient value into the AGF *and journalling
+>>> it* means we creating a transient on-disk format structure
+>>> corruption and potentially writing it to persistent storage (i.e.
+>>> the journal). The structure is, at least, not consistent in memory
+>>> because the free space tree is empty at this point in time, whilst
+>>> the agf->longest field says it has a free space available. This
+>>> could trip verifiers, be flagged as corruption by xfs_scrub/repair,
+>>> etc.
+>>>
+>>
+>> I'm sorry, but I didn't find the problem during my own screening. In my
+>> opinion, because the trigger scenario for the current problem is only to
+>> delete the last node and be updated shortly, and bc_free_longest is used
+>> only in the following two scenarios:
+>> 1) cntbt has only one extent and remains after being used, so nflen 1/2
+>> will be inserted later.
+>> 2) cntbt has only one extent and the released extent is adjacent to this
+>> record. This unique record will be deleted firstly, and then the two
+>> extents are merged and inserted.
+> 
+> Yes, I understand what you've done.
+> 
+> But I don't think it is the right way to fix the issue for the
+> reasons I've given.
+> 
+> I've attached a quick hack (not even compile tested!) to
+> demonstrate the way I've been suggesting this issue should be fixed
+> by the removal of the lastrec update code from the generic
+> btree implementation. It updates pag->pagf_longest and
+> agf->longest directly from the high level allocation code once the
+> free space btree manipulations have been completed. We do this in a
+> context where we control AGF, the perag and the btree cursors
+> directly, and there is no need to temporarily store anything in the
+> btree cursors at all.
+> 
+> Feel free to use this code as the basis of future patches to address
+> this issue.
+> 
+> -Dave.
+
+That's amazing! Thanks!! I will read the code carefully and submit the
+correct fix for this issue again soon.
+
+Thanks,
+Zizhi Wo
+
 
