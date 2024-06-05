@@ -1,141 +1,106 @@
-Return-Path: <linux-kernel+bounces-202123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60648FC809
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:39:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195EE8FC835
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F4CC1C21B7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:39:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A7CB298B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6B719412F;
-	Wed,  5 Jun 2024 09:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FCD18FC6B;
+	Wed,  5 Jun 2024 09:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PmHN4Geu"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ewFF97Ps"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14A9190053
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C9C19006D;
+	Wed,  5 Jun 2024 09:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580164; cv=none; b=cgRX7ssMkjG2TAtWh6aUOj2iYEq2bPiSQhXE5/Rw3ZP4iSIZrn6qXAQ7DTCJg1wDg0l1Q1jn+ItQnMLCDJyLxYy67cyVmXoG6tCay3pgmFFeQYYQhcyAdNSKarWyq62riKQ0XRaoUKB0UHcymuBiOIDFHwb/JLEn3GOlnPqbVSM=
+	t=1717580212; cv=none; b=s0NCjbaLvYEFvipxrBbccxTGBFpI7Dp30wCNDtqllns8M8sTeAfz8YMja8POw6dxFBGQ9s3M/X/vQQfdDNsdUJr56nYtMzco1OXdahqo4Mx1tUZiAo4KtjNfu8GEJvQXqr4vp+LV3mymU61OgOvlq0gpGhfHMe2SSLUE98Pb/Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580164; c=relaxed/simple;
-	bh=2AiPNgYn5aJ9kmyFeJAW+F3M18dv8Gy8FjbR8CZ+MhQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PqNI2VyuarqzK/bbCG1yPZITVpvqwK6W4YzZK4g/LUoMC5VMvC+rf/PIx5h/WZtRcpnvJRWxqHx67oCMHEpiQBNuhKdoz8DTrlhkqX2zvBnvJr67OLZ33JSAPh7HCviWfdCAWzMWDgxVk0W/4aWljANIFQIpNrx2Flt2uhwnyM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PmHN4Geu; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-35dc7d0387cso6866918f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717580161; x=1718184961; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RvLzM9PWDuCZzQefB2Y3g2EHSJvTBdod+ADOPN2y/68=;
-        b=PmHN4GeusMKKD1k+4NCjWc4+cq5s3SiH0PE0ll9Su+K63w6rXGMQAwpu2exPehtBGG
-         +pN7ygNJCPv8zNXZiAqApytW1o6qnCNV2Gv3FzS7jhA5qmI3gFXZxKDeKoL8CrUyQwxq
-         dkb+38IBjyJph5i6x3KhDhzAnmrSluZmFT2tQN4ZwjX6POl0hKBCyteTyC1qSkielJXc
-         KDvKTna7wIoOgBqVBiuOxuPVE424UysaUDOmXAGpKChM8D5yqtzDYKk25M9Qsm1koSST
-         rXwjgD1umFsvm/nt0JyRbtcQ0AoJiMEezFvMRXkR0UJFmaFY3bJgRAQDKiGxdc1Irfjv
-         lTJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717580161; x=1718184961;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RvLzM9PWDuCZzQefB2Y3g2EHSJvTBdod+ADOPN2y/68=;
-        b=R+dM7oy7OjZpNqOqu5QYW8KTXdmssD0ldoiYiSaR4jvKdtkDuvCFSxoUuTK7eMdn59
-         K83c0EhoN3n4k2WUzEl8RLuoA0AJZGKSIGbxk2/AScS9xnbFaFiG+U1jEpWu9F6hX1zk
-         MtwEPgfM1Ecdj6vy3+UfKQ75wnz9KRgC1L5WEXtZ1pg3WMCIhqypCHPfLSgU4PChtRBP
-         2vTXcG6QwbEHUW8Ly0/jy99hON88wIj6tV4GbIF4/aDGVC4HgcDk4cTMhrPn49PhUDWS
-         /fYrUkts9L9EDIHzRgjwFbKasJ8RmsZD5VbZ4plGeqVHY2ZsYmJVjNd3eCf+ohvXJmzY
-         4oVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyGCxixRjVpCBQMYqKLxNpEPMysLoO9Bol8Ms4IrdqJArM63jJrdlgre+vc2aBWn14T5Fo+5RT3cFdG/bEgK6b5xcSEVYHO5EvnY1p
-X-Gm-Message-State: AOJu0Yw+KajAkzb/owbHcju5a1GJy30CBlqCGBKVFquObxRHbuFyvcmq
-	YydmMJP3lR+L9Aj2owFPDdTps0+nWYa+/I3OZ1/nG3t9U3H4jbAIgEQUdCO507M=
-X-Google-Smtp-Source: AGHT+IHtrU1+uKM8tZ8aHtiLuZxzOra0uUBCT7mFMeP5oUJarPdWQFzzhLROAKv0kBYHXRcX992Icw==
-X-Received: by 2002:a5d:5747:0:b0:35d:bfe2:baaa with SMTP id ffacd0b85a97d-35e8406defdmr1840962f8f.13.1717580161377;
-        Wed, 05 Jun 2024 02:36:01 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35e7e07d7besm4303860f8f.18.2024.06.05.02.36.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 02:36:01 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Wed, 05 Jun 2024 11:36:00 +0200
-Subject: [PATCH] dt-bindings: phy: g12a-usb2-phy: add optional
- power-domains
+	s=arc-20240116; t=1717580212; c=relaxed/simple;
+	bh=M77RrYoGQJJU2kRPKFShDM2HV1XAifjZT53RIOfzF74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FaOKHFSKOWlbv0LyrSSRUd3ge5crTY5Ndmzp2tiaBwvxU2g+OKucbUA4rP99TaQF9Ywy17KEKkmCy7/KHBjsnWYqve0XYkBAAWC7oYUbAV4utj92fQH8OCEwda6ZEV3J5tLiITAxleO0ycI5tRjfMNoD1BYIdDhXLKgqcYHlBKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ewFF97Ps; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9889E40E016C;
+	Wed,  5 Jun 2024 09:36:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TrvBtMIroWna; Wed,  5 Jun 2024 09:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1717580198; bh=sVAlGknADMTqq51pEmOH4pigiZZfPcaq6bynh+gDEbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ewFF97Ps2admHqn0lwLWa440X4PnYGLeGoYNYX4dcK9Ffj0KHRdbkYsE/JaDALfLD
+	 CefvwQjM3WilXIaxwbfCdVG8ggK1za/38BRiA1TSgoBVcly0o03sN86gAolqs0ks5I
+	 mK4+MzugY7Mn153ID+uwVxKwNuO7ykSNoaBNxd2qKQseNE0oipQ9IYrPs4sbKr+sVj
+	 pZfGUppgHKl96FoMYPv+TgdJKn5tBTKh/9hIUWXpQU5rBcNALVg+sijB0EHqQepK6n
+	 9R8QkNU4qWht3/JgSil5iNxwHqP9wL2PtH0ZHGBhzScpoC5Lv1TxhFv66eGZ9Qb2o2
+	 PsZi276qQDkPlv5FYKVwNj4cBo+iABFcSh05SNsIp6YRDHd3Lz5fi7XiPzs5pP9rpc
+	 nMD6G006T+1vANZ9tEzttPUiFXlrXFhBrnABKBEtc8oT6kjvXZPJm8SNrjvE0XbwDP
+	 a4eYsTCmwx6TX4Kwa1u8FhBg0Nb12ARLZNuwxigMCCmZBzFe9SA92Vk8v7qExtpqcG
+	 7kl9SMDpg5FqpA9jl9iCWlqd1DRDsbhVOu+YthBIuZjUUsIt4ui7zS/MTpVaO1RFmp
+	 AranekvnxE5O06adlOeQ6k9SruS9M4coSTXwhIlewMZe47lI7Pf3wHceDoOwUeHKQ/
+	 eSmujPG6Fr2RL8s6c1iWpPSk=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 21B8C40E016A;
+	Wed,  5 Jun 2024 09:36:15 +0000 (UTC)
+Date: Wed, 5 Jun 2024 11:36:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Dave Hansen <dave.hansen@intel.com>, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+	mat.jonczyk@o2.pl, rdunlap@infradead.org,
+	alexandre.belloni@bootlin.com, mario.limonciello@amd.com,
+	yaolu@kylinos.cn, bhelgaas@google.com, justinstitt@google.com,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	CobeChen@zhaoxin.com, TimGuo@zhaoxin.com, LeoLiu-oc@zhaoxin.com
+Subject: Re: [PATCH] x86/hpet: Read HPET directly if panic in progress
+Message-ID: <20240605093609.GCZmAxidNIBP5bkDcX@fat_crate.local>
+References: <20240528063836.5248-1-TonyWWang-oc@zhaoxin.com>
+ <50fc1bd3-909e-41c4-a991-9d81e32ef92c@intel.com>
+ <87wmnda8mc.ffs@tglx>
+ <CAHk-=wgMoeOTL1V3wTO=o=U1OXn7xF8OWv2hB9NF9Z=G4KotfQ@mail.gmail.com>
+ <87le3t9i8c.ffs@tglx>
+ <0aff3f62-a8a5-4358-ae3f-2ded339aface@zhaoxin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240605-topic-amlogic-upstream-bindings-fixes-power-domains-phy-v1-1-c819b0ecd8c8@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAH8xYGYC/x3MywrCQAyF4VcpWRsY2yriq4iL2MlMA86FSeuF0
- nc3uDp8cPg3UG7CCtdug8YvUSnZcDx0MM2UI6N4M/SuH93ZnXApVSak9CzRdq26NKaED8leclQ
- M8mHFWt7c0JdEkk3zFwNd/DAyDRwIrF4b/68Wv933/QeVz+oeiQAAAA==
-To: Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1068;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=2AiPNgYn5aJ9kmyFeJAW+F3M18dv8Gy8FjbR8CZ+MhQ=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmYDGAU1XqPzj0KlIZpjxSHWVqHuAwLj3MQo+kTCmC
- fA4KajqJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZmAxgAAKCRB33NvayMhJ0TEGEA
- CjSucUUcLIoEmjR2q1hRGOWbefCwLDmdWvKRIPAt4kaVSs9mp1i61naayqw0ICNlct6wrWsH6ZpiqE
- 9AdBsWN17df0MP+53I0k6On5hDJgAQryTZ73iXW48oT6HTJFrhY41AYguHchUmhM9fpY7UggYrtGqw
- nerealIaTlYLWj+zQl4iFPhKBI8mWp5Al/tjrzK8OXVQcOjja/6XOhGkyC/KDejjKpSCSzwoN6zO0E
- JFUU2HEz3jiSzjYGE4ehI0gc3n9O8uVN8p32KA0G71eLpBLA1QMoqi8xRqquZV11yrL7CgZFIuusaO
- pL2O+hspt/LpHYBQKnKirP4wJ60QHupYoK44J5vqWLN6iDWa8NU5Ryb1gastIy6g1y/FSmSEOh6b7e
- DBuVG6tBWGzmZygywv92vfxq56u4Xe3nrzhEOM77ODhcrw7CmYKXxOryodjgP0dOAy2LZxNI+fXq88
- o4dgJuPV6hZZv6wui8kEh28f+IJK76l1K+YdA1I2fox56IzjnDdZ7JiV+kOn+jsmaOwJdRZJjP54/+
- D1TeadM2vuJks/ZHLTJ3iLVydnLQJo2A6uWEDTWKzCv5nFANE0pve09r+xLvcsIdWBTHnvsdnGn6Yx
- AqVnEUrrgeUnOmVYrVCAmmuDd+oT/gnaVLX77Ch+gMZP9EFDWKmVCscsny+w==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0aff3f62-a8a5-4358-ae3f-2ded339aface@zhaoxin.com>
 
-On newer SoCs, the USB2 PHY can require a power-domain to operate,
-add it as optional.
+On Wed, Jun 05, 2024 at 02:23:32PM +0800, Tony W Wang-oc wrote:
+> After MCE has occurred, it is possible for the MCE handler to execute the
+> add_taint() function without panic. For example, the fake_panic is
+> configured.
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+fake_panic is an ancient debugging leftover. If you set it, you get what
+you deserve.
 
-diff --git a/Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml
-index 0031fb6a4e76..1a0c436b87a0 100644
---- a/Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/amlogic,g12a-usb2-phy.yaml
-@@ -41,6 +41,9 @@ properties:
-       Phandle to a regulator that provides power to the PHY. This
-       regulator will be managed during the PHY power on/off sequence.
- 
-+  power-domains:
-+    maxItems: 1
-+
- required:
-   - compatible
-   - reg
-
----
-base-commit: c3f38fa61af77b49866b006939479069cd451173
-change-id: 20240605-topic-amlogic-upstream-bindings-fixes-power-domains-phy-fa8d34ea3efa
-
-Best regards,
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
