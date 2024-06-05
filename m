@@ -1,248 +1,182 @@
-Return-Path: <linux-kernel+bounces-203432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DD68FDAFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:54:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0C58FDB02
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C495284AC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 995CE1F28D18
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A38517D88B;
-	Wed,  5 Jun 2024 23:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A8E17E904;
+	Wed,  5 Jun 2024 23:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="FCOyQRTQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DJ4yzf2m"
-Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KNBfEpor"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEC417A906
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497DB1AAA5;
+	Wed,  5 Jun 2024 23:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717631545; cv=none; b=KjQAGbFaQAXgs2ujBCjvFVz1uuruDbWGTX9T3PtQbp9Bj+CxrjUnzuJNHKPgTswB5ujb7YhWwkKzogcK4Au8MOyIBdBFIozI8E47qXnJn3ss4KZrkHjnv8ceb7ck1I3y9tRZpFXZaLEtSEhfkTOZG4LbIKqjhOO3T0yFbML7GCc=
+	t=1717631555; cv=none; b=o1W1JZxblfH0QcQVuq5bs8r7L32FbWjFADJgNiH1/OLQEpe7rVIK1VsUmLwENv+6ZsLzsHbIq7r1gRxyxAtO+NSa+PF4IKHnG/uxtDa09f0tanTF1klONeHiJEK/erWLHU6t5i88iSYOLJQ7ogMurv22J+WbtP/NfY2CdDhOIfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717631545; c=relaxed/simple;
-	bh=puOjsXCpTLLDHFN23XdWATe1c+0fFNhQUGaNsCJYEfw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sKMp4+Pp0JkwakPixhT2wvBDxClVfvG5utVgHPVarpD3ygGwEYbsPAWktAg7EEl+skUvPl4V4iCwYchSFVQP8k7XA16vNSKj5ETC9tKajXTVg2tZK7SL6hPKmpA0wSr0hHAC/WVWM3Aq2E7pm2SxRKTQHB2WfZxuYh7FsLklOgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=FCOyQRTQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DJ4yzf2m; arc=none smtp.client-ip=64.147.123.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.west.internal (Postfix) with ESMTP id A96771800124;
-	Wed,  5 Jun 2024 19:52:23 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Wed, 05 Jun 2024 19:52:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1717631543; x=
-	1717717943; bh=mFLRPY8Emv7QgVYkbWBjf7n/0RQSBEsg8Su4xKUqlzM=; b=F
-	COyQRTQp65TYKhNrarr04rO868DSMZRojvdmk8bPb6Yc7YlxjXWax4ndmBay0bKE
-	gnoVq8qc3kdICfT1cwpFnMQ7JZF3eIySf2Qyd1OL99/73dFBGDLYxWbddsfHCnJn
-	Tj5ukmzEpWg0vSl3qAW3XyN2hyWPJD8KZUhXb7hEvs+wFaOkh4RbRt+gIgm6YY0I
-	zMyYVXMzKeP8dZxifVrCpn3q5oDfcHT97jnXAjA/M2EDnjwcR0DOy+McvPmEFWYN
-	J5jqqSsav9z+jvcM+AlPb9+6ldjvq9r+Qu4JQ3PGzYzoagBO1nm5gyQ4a3JMFdr6
-	G8cuBOq1B1vaVox1E3H7Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1717631543; x=
-	1717717943; bh=mFLRPY8Emv7QgVYkbWBjf7n/0RQSBEsg8Su4xKUqlzM=; b=D
-	J4yzf2mCGdKbb46ZDM3jvxOZ63Fhljlm5j75BWzgmy92ALE+dy90hhvXt5HzdNTF
-	Dg/OPYwsH7F7akZofd6YTLOuHAnGHCWQ9UAtPTsAYlU3+dXwO2lmOOKfQQ9MNmsQ
-	Tm3VMu+/F5em76wgXyJQI8pmnlvOGUb+Wn9dJaeTWUQ0WnxVXljdwe+XRAH3v3Qs
-	AkoVi4Idw77wIiDMSE4Oq1O/v96ZFa6zYAbj9QjTc88JmUmV4gWUjwg8WIK4rn2z
-	7TaYZOhcShX1JHmQKuZ52upXJLrJLAZ/1UyhHTqXLut7v5UXqbf4k2VmYuDmYeH+
-	NyvoJIpgqPhJ4Y7lhe9EQ==
-X-ME-Sender: <xms:N_pgZpFCdhIAvjkEidkOlGslsNZ9K4PDYvcuaNuFlVHSWT0FiXpvrQ>
-    <xme:N_pgZuW5yn-o3NpY6FbZbdv75YsNDdnKLmDBJTgnTHCpadDzwfh9lI2_TzIJpvZt6
-    BB22yvZsaaZG4lIriw>
-X-ME-Received: <xmr:N_pgZrI80Xikrixo0MtUfND6ftL3q3PqSAiFCGGoMyNSXAyP7i9a50KUcWsoXvHtHrlq3uDlNwFB-NgKjd08X4TKFOyk0XjyAlh2aAduxwFIwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeljedgvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
-    ertdertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghk
-    rghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpedvjefgje
-    euvdfguddukeelveetgfdtvefhtdfffeeigfevueetffeivdffkedvtdenucevlhhushht
-    vghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhise
-    hsrghkrghmohgttghhihdrjhhp
-X-ME-Proxy: <xmx:N_pgZvEvmgJFGvuBpx9z-Duxl5XUxWilyC4MtMFWdQHK8GsjkDvGHQ>
-    <xmx:N_pgZvWzKA_grUhUj7eSlo7-IwMlr4EACANSYUSSyyWMFqUPQCkPnw>
-    <xmx:N_pgZqNZxeKUC56pC31wez4XnfKKrYrg5Rt_KfIivN361UEIo7xKRQ>
-    <xmx:N_pgZu0tcUv3hBZU0JdjAnkdMmV7ARkHkqQ7iZLA9KfHmv6__86OeA>
-    <xmx:N_pgZshqOCYj-lewRkxhiKmogX9UF2oniuBFk_T80tEbcKeI3goHnzHo>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Jun 2024 19:52:22 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] firewire: core: add tracepoints event for self_id_sequence
-Date: Thu,  6 Jun 2024 08:51:55 +0900
-Message-ID: <20240605235155.116468-12-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605235155.116468-1-o-takashi@sakamocchi.jp>
-References: <20240605235155.116468-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1717631555; c=relaxed/simple;
+	bh=S5f1uzmtb8uc01jTh5ar2w9G5sPTtr6TfMY0Y57y51I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=exwogDsvrL/SjVBeonkMvJOIAhXt+5/ce3ZCODcd42EmUAkFYXmQu7/MNW6GqVij8qS/KMM9ZB2uSP5mF42RSxQLVrRg7Zd3lED+IBn279rTvu5ygGatzeMbfuHAXJBOqgeB+EJQil8i2r1uHdGwf2/Lx1CIzt2dPsZ2fSyXPUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KNBfEpor; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717631552;
+	bh=S5f1uzmtb8uc01jTh5ar2w9G5sPTtr6TfMY0Y57y51I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KNBfEporJmpNknMJZiS7jXmOSq3w0jhWnijSn4zrZwzqTv3/Kj5GVr6rc6RPSfiiT
+	 xT9DFOCYJQsU6Tr/r+mnHtF2sGq9z3d46OV6sWbul/Nk450x6Nk91ddyF1hbDkLe5c
+	 h8ukxce5hZ0e1geY0NehPHakiJdHx9l8TbIuO3FZGdq/57JX8HhLSmx4Ms8dodvsL7
+	 dvDMEhasmnTC+AwDr0wdJaRTpaSJrmOl2InBZelFa2Ofy7K5QOUwrHYHtRkyU0gTkP
+	 3eC9k0VkNpiAUIOQm9hnA3MWtJu3DaWtXfGajefxKRz3zfwHhjWXnzCBzOp7xh1MMx
+	 AC523n1BdeTlA==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3346937820CD;
+	Wed,  5 Jun 2024 23:52:32 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id ACD2B1060501; Thu, 06 Jun 2024 01:52:31 +0200 (CEST)
+Date: Thu, 6 Jun 2024 01:52:31 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>
+Subject: Re: [PATCH v4 4/6] power: supply: lenovo_yoga_c630_battery: add
+ Lenovo C630 driver
+Message-ID: <iefpe3vjf6u43yph2jqhd2pp6dhzk5kzseo2cffv5ksoyqk22c@2plv7xxped67>
+References: <20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org>
+ <20240528-yoga-ec-driver-v4-4-4fa8dfaae7b6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ebyt27yflv6nt4ze"
+Content-Disposition: inline
+In-Reply-To: <20240528-yoga-ec-driver-v4-4-4fa8dfaae7b6@linaro.org>
 
-It is helpful to trace the content of self ID sequence when the core
-function building bus topology.
 
-This commit adds a tracepoints event fot the purpose. It seems not to
-achieve printing variable length of array in print time without any
-storage, thus the structure of event includes a superfluous array to store
-the state of port. Additionally, there is no helper function to print
-symbol array, thus the state of port is printed as raw value.
+--ebyt27yflv6nt4ze
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/core-topology.c |  7 ++--
- drivers/firewire/core-trace.c    | 15 ++++++++
- include/trace/events/firewire.h  | 59 ++++++++++++++++++++++++++++++++
- 3 files changed, 79 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
-index 6ec100e17500..4a0b273392ab 100644
---- a/drivers/firewire/core-topology.c
-+++ b/drivers/firewire/core-topology.c
-@@ -95,7 +95,8 @@ static inline struct fw_node *fw_node(struct list_head *l)
-  * internally consistent.  On success this function returns the
-  * fw_node corresponding to the local card otherwise NULL.
-  */
--static struct fw_node *build_tree(struct fw_card *card, const u32 *sid, int self_id_count)
-+static struct fw_node *build_tree(struct fw_card *card, const u32 *sid, int self_id_count,
-+				  unsigned int generation)
- {
- 	struct self_id_sequence_enumerator enumerator = {
- 		.cursor = sid,
-@@ -139,6 +140,8 @@ static struct fw_node *build_tree(struct fw_card *card, const u32 *sid, int self
- 		}
- 
- 		port_capacity = self_id_sequence_get_port_capacity(quadlet_count);
-+		trace_self_id_sequence(self_id_sequence, quadlet_count, generation);
-+
- 		for (port_index = 0; port_index < port_capacity; ++port_index) {
- 			port_status = self_id_sequence_get_port_status(self_id_sequence, quadlet_count,
- 								       port_index);
-@@ -482,7 +485,7 @@ void fw_core_handle_bus_reset(struct fw_card *card, int node_id, int generation,
- 	card->bm_abdicate = bm_abdicate;
- 	fw_schedule_bm_work(card, 0);
- 
--	local_node = build_tree(card, self_ids, self_id_count);
-+	local_node = build_tree(card, self_ids, self_id_count, generation);
- 
- 	update_topology_map(card, self_ids, self_id_count);
- 
-diff --git a/drivers/firewire/core-trace.c b/drivers/firewire/core-trace.c
-index 7cbf850f3719..c9bc4990d66e 100644
---- a/drivers/firewire/core-trace.c
-+++ b/drivers/firewire/core-trace.c
-@@ -2,7 +2,22 @@
- // Copyright (c) 2024 Takashi Sakamoto
- 
- #include <linux/types.h>
-+#include <linux/err.h>
- #include "packet-header-definitions.h"
-+#include "phy-packet-definitions.h"
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/firewire.h>
-+
-+#ifdef TRACEPOINTS_ENABLED
-+void copy_port_status(u8 *port_status, unsigned int port_capacity,
-+		      const u32 *self_id_sequence, unsigned int quadlet_count)
-+{
-+	unsigned int port_index;
-+
-+	for (port_index = 0; port_index < port_capacity; ++port_index) {
-+		port_status[port_index] =
-+			self_id_sequence_get_port_status(self_id_sequence, quadlet_count, port_index);
-+	}
-+}
-+#endif
-diff --git a/include/trace/events/firewire.h b/include/trace/events/firewire.h
-index 1f4ef0ed65bc..4761b700ff84 100644
---- a/include/trace/events/firewire.h
-+++ b/include/trace/events/firewire.h
-@@ -341,6 +341,65 @@ TRACE_EVENT(bus_reset_handle,
- 	)
- );
- 
-+// Some macros are defined in 'drivers/firewire/phy-packet-definitions.h'.
-+
-+// The content of TP_printk field is preprocessed, then put to the module binary.
-+
-+#define PHY_PACKET_SELF_ID_GET_PHY_ID(quads)		\
-+	((((const u32 *)quads)[0] & SELF_ID_PHY_ID_MASK) >> SELF_ID_PHY_ID_SHIFT)
-+
-+#define PHY_PACKET_SELF_ID_GET_LINK_ACTIVE(quads)	\
-+	((((const u32 *)quads)[0] & SELF_ID_ZERO_LINK_ACTIVE_MASK) >> SELF_ID_ZERO_LINK_ACTIVE_SHIFT)
-+
-+#define PHY_PACKET_SELF_ID_GET_GAP_COUNT(quads)		\
-+	((((const u32 *)quads)[0] & SELF_ID_ZERO_GAP_COUNT_MASK) >> SELF_ID_ZERO_GAP_COUNT_SHIFT)
-+
-+#define PHY_PACKET_SELF_ID_GET_SCODE(quads)		\
-+	((((const u32 *)quads)[0] & SELF_ID_ZERO_SCODE_MASK) >> SELF_ID_ZERO_SCODE_SHIFT)
-+
-+#define PHY_PACKET_SELF_ID_GET_CONTENDER(quads)		\
-+	((((const u32 *)quads)[0] & SELF_ID_ZERO_CONTENDER_MASK) >> SELF_ID_ZERO_CONTENDER_SHIFT)
-+
-+#define PHY_PACKET_SELF_ID_GET_POWER_CLASS(quads)	\
-+	((((const u32 *)quads)[0] & SELF_ID_ZERO_POWER_CLASS_MASK) >> SELF_ID_ZERO_POWER_CLASS_SHIFT)
-+
-+#define PHY_PACKET_SELF_ID_GET_INITIATED_RESET(quads)	\
-+	((((const u32 *)quads)[0] & SELF_ID_ZERO_INITIATED_RESET_MASK) >> SELF_ID_ZERO_INITIATED_RESET_SHIFT)
-+
-+void copy_port_status(u8 *port_status, unsigned int port_capacity, const u32 *self_id_sequence,
-+		      unsigned int quadlet_count);
-+
-+TRACE_EVENT(self_id_sequence,
-+	TP_PROTO(const u32 *self_id_sequence, unsigned int quadlet_count, unsigned int generation),
-+	TP_ARGS(self_id_sequence, quadlet_count, generation),
-+	TP_STRUCT__entry(
-+		__field(u8, generation)
-+		__dynamic_array(u8, port_status, self_id_sequence_get_port_capacity(quadlet_count))
-+		__dynamic_array(u32, self_id_sequence, quadlet_count)
-+	),
-+	TP_fast_assign(
-+		__entry->generation = generation;
-+		copy_port_status(__get_dynamic_array(port_status), __get_dynamic_array_len(port_status),
-+				 self_id_sequence, quadlet_count);
-+		memcpy(__get_dynamic_array(self_id_sequence), self_id_sequence,
-+					   __get_dynamic_array_len(self_id_sequence));
-+	),
-+	TP_printk(
-+		"generation=%u phy_id=0x%02x link_active=%s gap_count=%u scode=%u contender=%s power_class=%u initiated_reset=%s port_status=%s self_id_sequence=%s",
-+		__entry->generation,
-+		PHY_PACKET_SELF_ID_GET_PHY_ID(__get_dynamic_array(self_id_sequence)),
-+		PHY_PACKET_SELF_ID_GET_LINK_ACTIVE(__get_dynamic_array(self_id_sequence)) ? "true" : "false",
-+		PHY_PACKET_SELF_ID_GET_GAP_COUNT(__get_dynamic_array(self_id_sequence)),
-+		PHY_PACKET_SELF_ID_GET_SCODE(__get_dynamic_array(self_id_sequence)),
-+		PHY_PACKET_SELF_ID_GET_CONTENDER(__get_dynamic_array(self_id_sequence)) ? "true" : "false",
-+		PHY_PACKET_SELF_ID_GET_POWER_CLASS(__get_dynamic_array(self_id_sequence)),
-+		PHY_PACKET_SELF_ID_GET_INITIATED_RESET(__get_dynamic_array(self_id_sequence)) ? "true" : "false",
-+		__print_array(__get_dynamic_array(port_status), __get_dynamic_array_len(port_status), 1),
-+		__print_array(__get_dynamic_array(self_id_sequence),
-+			      __get_dynamic_array_len(self_id_sequence) / QUADLET_SIZE, QUADLET_SIZE)
-+	)
-+);
-+
- #undef QUADLET_SIZE
- 
- #endif // _FIREWIRE_TRACE_EVENT_H
--- 
-2.43.0
+Thanks for your patch. I have a few more comments.
 
+On Tue, May 28, 2024 at 11:44:49PM +0300, Dmitry Baryshkov wrote:
+...
+> +struct yoga_c630_psy {
+> +       struct yoga_c630_ec *ec;
+> +       struct device *dev;
+> +       struct device_node *of_node;
+
+Please use fwnode
+
+> +static enum power_supply_property yoga_c630_psy_bat_mA_properties[] = {
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_PRESENT,
+> +	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_CHARGE_FULL,
+> +	POWER_SUPPLY_PROP_CHARGE_NOW,
+> +	POWER_SUPPLY_PROP_CURRENT_NOW,
+> +	POWER_SUPPLY_PROP_POWER_NOW,
+> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+> +	POWER_SUPPLY_PROP_TECHNOLOGY,
+> +	POWER_SUPPLY_PROP_MODEL_NAME,
+> +	POWER_SUPPLY_PROP_MANUFACTURER,
+> +};
+> +
+> +static enum power_supply_property yoga_c630_psy_bat_mWh_properties[] = {
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_PRESENT,
+> +	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
+> +	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
+> +	POWER_SUPPLY_PROP_ENERGY_FULL,
+> +	POWER_SUPPLY_PROP_ENERGY_NOW,
+> +	POWER_SUPPLY_PROP_CURRENT_NOW,
+> +	POWER_SUPPLY_PROP_POWER_NOW,
+> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+> +	POWER_SUPPLY_PROP_TECHNOLOGY,
+> +	POWER_SUPPLY_PROP_MODEL_NAME,
+> +	POWER_SUPPLY_PROP_MANUFACTURER,
+> +};
+
+Please also add
+
+POWER_SUPPLY_PROP_SCOPE = POWER_SUPPLY_SCOPE_SYSTEM
+
+> +static enum power_supply_property yoga_c630_psy_adpt_properties[] = {
+> +       POWER_SUPPLY_PROP_ONLINE,
+> +};
+
+Please also add
+
+POWER_SUPPLY_PROP_USB_TYPE = POWER_SUPPLY_USB_TYPE_C
+
+> +static const struct power_supply_desc yoga_c630_psy_adpt_psy_desc = {
+> +	.name = "yoga-c630-adapter",
+> +	.type = POWER_SUPPLY_TYPE_USB_TYPE_C,
+
+static const enum power_supply_usb_type yoga_c630_psy_adpt_usb_type[] = {
+	POWER_SUPPLY_USB_TYPE_C,
+};
+
+.type = POWER_SUPPLY_TYPE_USB
+.usb_types = yoga_c630_psy_adpt_usb_type
+.num_usb_types = ARRAY_SIZE(yoga_c630_psy_adpt_usb_type),
+
+> +	.properties = yoga_c630_psy_adpt_properties,
+> +	.num_properties = ARRAY_SIZE(yoga_c630_psy_adpt_properties),
+> +	.get_property = yoga_c630_psy_adpt_get_property,
+> +};
+> +
+
+Greetings,
+
+-- Sebastian
+
+--ebyt27yflv6nt4ze
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZg+jwACgkQ2O7X88g7
++prgcg/+Oj9Lis1zOv00R9LtK2n3mOqqE4WLDAnm9j8cxMhyQyNlAOY/71t6VkCU
+bXeDpkoBVYVLRTHu++yw7yuBXckKJ8ZGxfzGtuHPiUzl2FjXBOjZEHCc7RlAfiHy
+wLpqos2ZHrDu/IkSr1wgLmPe1nqOGbuBWJLcUgmi0pk9iKt5+tB1w2UqP7CsqDRH
+ncOE7YydWI71ueD4DmBceAa4p11mUnX+dBrx2vuTWUPaAJecpP6vcIkqWiKdf5LF
+USw8GvSMfEgBus/KMgohMI9YJvNeNM/iC8wjxjOFHN6Csvt5VmRE7L7rk/EsG1QX
+g+zXiHh8FxasapjsiM5ZHwYbT5zZBLSl6DLS16gcouZu7a8spmPXDi4PafaHi46A
+YGNjb1It/aUdJdA2GLjiHXZKCtmTNKTngm40UbP0BsfSJgG7tGTfQb7HNCShBOlL
+V1KmhEeIuFgs0PbkAH5bu993Vu2qn19ohYwd64KWTJqXtsMlfDWxcOPw8aNBxDc1
+i8kv1Tytya3a0XK3oCHUZ4AUVO2BfwbA0uLc2JVZ0LV2nJiCeFVzyW76YA4FhAPl
+PeIvwvoOYAD4GtX6Ovf4npq5QMhMjG1f5QBVW1CkjXPtYeZNqAIft8AlnL0MzazY
+4rKlgjL6XywuGsqmhSEO43GoBleMTQNDwi3J+LOM/u4Fmi3f1zE=
+=PNUy
+-----END PGP SIGNATURE-----
+
+--ebyt27yflv6nt4ze--
 
