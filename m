@@ -1,103 +1,338 @@
-Return-Path: <linux-kernel+bounces-202726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E51F8FD00F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:51:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC1A8FD050
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0029C1F2139A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:51:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C98EB2A552
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33212192B6D;
-	Wed,  5 Jun 2024 13:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60668194AEB;
+	Wed,  5 Jun 2024 13:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AUH34lJS"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfAtTCtx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7718018FDBF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 13:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5125718F2CD;
+	Wed,  5 Jun 2024 13:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717594717; cv=none; b=cEkwJoxuINdsePk0r4L7Q/iRI7qSYmzpXgOsZkDXg+ya+qJIgSLsSZZ9EK03COuh6CztY7BXXzaRwePz5qROry2tqugLcxbdFZDCuxp+wi0epaXvODTUkM52NlgR6deLQ6k3B4rkw9brsZVQbc5FKO0QeNlet9fu2tZfQbYWYBc=
+	t=1717594782; cv=none; b=aaiC8A3SUTvG7p8xzscRwLeIOAJbAV8Ycq/p981P1mJ0rzRiRtTcOW7IUq1xcLJV5+aIyytZLsRdiiI7KJzF4cbXNdBsrGyoc4G7njAINYYSMpmVVbex7At71+yj8u3xkE2WVvvs0chLQf/ZXbSotrq1vKaRMh339/vrUFRV9GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717594717; c=relaxed/simple;
-	bh=mlhApMpG5WU395YtWwS9QPBflIL0rJC4v8OyN6FnRbc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJsm/qWECToxuJYZo5zxFoCiLjzuPShIkZcCJxsSNikLFhK7143qvuGvg9SAk/mz5b2HErVTU/5fgwYpLhqrDlHnwqfR3B3XKEPtuUfTbKs/VSTuubNy4Jj1HHx5Fmyya/fVywIspkemGwgI5M3Oy7gpg1ESiGeDb6Jgs6NS6Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AUH34lJS; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-421396e3918so48144455e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 06:38:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717594714; x=1718199514; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mlhApMpG5WU395YtWwS9QPBflIL0rJC4v8OyN6FnRbc=;
-        b=AUH34lJSHF1jmKLrzgVUddSsKCND91OwylcvYopEsudkJI9VrjsLp7Mket5FQ6NCAK
-         +bhBPjP5gj+u9a3pX2pHCpy/xTsyECtunF/ogJEwWnfF1XFIhIkvF7kK/m3GJsztd1CG
-         tm+Qixqbjhif2OlUGdQCNJAinA6QtoXclkKE9POoJD+yP8bQ0WC2mbAlZRX64QHoaFiU
-         MMHJyuAc5FQpS4ucRbhd/qz880dAmHVx68nWaekLhs6YibBZnbjGEF/un28MehTJFwkY
-         /6kjzZtrS1Kri/wdZfcFzOM7LIJnQ++bH87xmBa9XQTSG2kWdtS84CNsHgg8gWdocUUG
-         E62g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717594714; x=1718199514;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mlhApMpG5WU395YtWwS9QPBflIL0rJC4v8OyN6FnRbc=;
-        b=YqNyIzZmx6qSdbP75at3q0K92IaEYf4EtaHJ3bLV8msNlDXsWWKrE23AhPmcFlj7oT
-         LAT31GDmyMmnCCD3yN0eotgy4wsL2E/7945HexAt0be5HZsoGsdqD8AH3TuFNPb03Nww
-         98JtUd8cOIhbrF19G/RPIbXWq4ZMPUsQJ1BD8a7K7fka5VgbAjbhtVmqnwcQsA5lOmGa
-         alSNm77NX6lrKrVw9DKb9c0w5PQmzTPyRDU6fIyNll1YkaLHpfw+VI55YfE2uIDVB/LB
-         Su0SHHckwM26DdgS0jQQdc13wMRUEeQkAPT0MhUqgSNsCS8RIciPk/e/tm101UwWb67A
-         569Q==
-X-Gm-Message-State: AOJu0Yy9IuCtE5JBxeQ4lG4zE4InDGUzdbPWn9P3oxASn9WseDeJAjOZ
-	C+WWatbYETg7wHwdNTEx4p15gZmiv5pwc7Sy0cS0zrKRLz6eDqzk77ZXnLPL1dg=
-X-Google-Smtp-Source: AGHT+IHjkretuS1fTFtZei6hChIG2kgCEQtxhJThqCOKkNHqb6TBqHMder8dhApLzt0DEjaMW0SbBQ==
-X-Received: by 2002:a05:600c:46cd:b0:421:1fb1:fe00 with SMTP id 5b1f17b1804b1-421562d4a37mr26359565e9.17.1717594713675;
-        Wed, 05 Jun 2024 06:38:33 -0700 (PDT)
-Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215814fc11sm22296825e9.48.2024.06.05.06.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 06:38:33 -0700 (PDT)
-From: "Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@baylibre.com>
-X-Google-Original-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Date: Wed, 5 Jun 2024 15:38:31 +0200
-To: Hironori KIKUCHI <kikuchan98@gmail.com>
-Cc: linux-kernel@vger.kernel.org, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Aleksandr Shubin <privatesub2@gmail.com>, Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 0/5] Add support for Allwinner H616 PWM
-Message-ID: <d5mr73yc7l6w6uvgqb4ymyc5267do4zirnnorkpi5s6qa5vckk@owayit4mexk2>
-References: <20240531141152.327592-1-kikuchan98@gmail.com>
+	s=arc-20240116; t=1717594782; c=relaxed/simple;
+	bh=RhsbuZVJInfZKJ146CqaCAq41JrtoARkqm29fDz9dZ4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LZF3lLhedd9m7a/rxhqarL82CDnyee/NVsgvwQ9WmPbQEkd+9PMJ1veDDWAz5JG7zs10WJWSZxVMY0mNFNLSFOdEn7EW6n+pRefYOEE9GqNRwoBCikjnl0OW5O7skGJqVvEP/Pgy2mWHaDagJqL/XLbUoLtTXsxP4PDXr8StrtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfAtTCtx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B14AFC3277B;
+	Wed,  5 Jun 2024 13:39:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717594781;
+	bh=RhsbuZVJInfZKJ146CqaCAq41JrtoARkqm29fDz9dZ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nfAtTCtxIlc4xYcYU7jXbW1LvVi11nQrvwLpigNxFCsr9dh6bVkHYar02+guVHCPr
+	 xTaMYwGcMAWji01bc3DUCqjpZCm4YMn6pTNAZd39HXAGP1igw/uJT3wsydZtI7d22e
+	 BhneFmyvWTLuwUvbVCxhGuGsNwOXpwWGQRnFw2Gxlqxz1wRFfsH2kX0lTHZaSEujDV
+	 ugtg1itATs/7CSwh01muDgT6y/zssKQl+9It+QFeNJefuV9AF5C+QMyX9cBYqaagqo
+	 dWEBqkI//IdijEuk/AKcFhqILiAYt5zp9oyd9/nOQjnJIGNUfh3EHDY1lgvZ09KjTc
+	 oVdXkf1xau+1Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sEqrb-000xii-HA;
+	Wed, 05 Jun 2024 14:39:39 +0100
+Date: Wed, 05 Jun 2024 14:39:39 +0100
+Message-ID: <86a5jzld9g.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v3 12/14] arm64: realm: Support nonsecure ITS emulation shared
+In-Reply-To: <20240605093006.145492-13-steven.price@arm.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+	<20240605093006.145492-13-steven.price@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531141152.327592-1-kikuchan98@gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, May 31, 2024 at 11:11:32PM +0900, Hironori KIKUCHI wrote:
-> Add support for the Allwinner H616 PWM, building on top of Aleksandr's
-> Allwinner D1 PWM driver v9.
+The subject line is... odd. I'd expect something like:
 
-It would be great if you could arrange with Aleksandr to maybe put your
-efforts into a single series. I think this would simplify reviewing and
-overall handling of your series to me.
+"irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor"
 
-Your first patch should for sure be squashed into Aleksandr's patch #2.
+because nothing here should be CCA specific.
 
-Best regards
-Uwe
+On Wed, 05 Jun 2024 10:30:04 +0100,
+Steven Price <steven.price@arm.com> wrote:
+> 
+> Within a realm guest the ITS is emulated by the host. This means the
+> allocations must have been made available to the host by a call to
+> set_memory_decrypted(). Introduce an allocation function which performs
+> this extra call.
+
+This doesn't mention that this patch radically changes the allocation
+of some tables.
+
+> 
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v2:
+>  * Drop 'shared' from the new its_xxx function names as they are used
+>    for non-realm guests too.
+>  * Don't handle the NUMA_NO_NODE case specially - alloc_pages_node()
+>    should do the right thing.
+>  * Drop a pointless (void *) cast.
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c | 90 ++++++++++++++++++++++++--------
+>  1 file changed, 67 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 40ebf1726393..ca72f830f4cc 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/irqdomain.h>
+>  #include <linux/list.h>
+>  #include <linux/log2.h>
+> +#include <linux/mem_encrypt.h>
+>  #include <linux/memblock.h>
+>  #include <linux/mm.h>
+>  #include <linux/msi.h>
+> @@ -27,6 +28,7 @@
+>  #include <linux/of_pci.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/percpu.h>
+> +#include <linux/set_memory.h>
+>  #include <linux/slab.h>
+>  #include <linux/syscore_ops.h>
+>  
+> @@ -163,6 +165,7 @@ struct its_device {
+>  	struct its_node		*its;
+>  	struct event_lpi_map	event_map;
+>  	void			*itt;
+> +	u32			itt_order;
+>  	u32			nr_ites;
+>  	u32			device_id;
+>  	bool			shared;
+> @@ -198,6 +201,30 @@ static DEFINE_IDA(its_vpeid_ida);
+>  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+>  #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
+>  
+> +static struct page *its_alloc_pages_node(int node, gfp_t gfp,
+> +					 unsigned int order)
+> +{
+> +	struct page *page;
+> +
+> +	page = alloc_pages_node(node, gfp, order);
+> +
+> +	if (page)
+> +		set_memory_decrypted((unsigned long)page_address(page),
+> +				     1 << order);
+
+Please use BIT(order).
+
+> +	return page;
+> +}
+> +
+> +static struct page *its_alloc_pages(gfp_t gfp, unsigned int order)
+> +{
+> +	return its_alloc_pages_node(NUMA_NO_NODE, gfp, order);
+> +}
+> +
+> +static void its_free_pages(void *addr, unsigned int order)
+> +{
+> +	set_memory_encrypted((unsigned long)addr, 1 << order);
+> +	free_pages((unsigned long)addr, order);
+> +}
+> +
+>  /*
+>   * Skip ITSs that have no vLPIs mapped, unless we're on GICv4.1, as we
+>   * always have vSGIs mapped.
+> @@ -2212,7 +2239,8 @@ static struct page *its_allocate_prop_table(gfp_t gfp_flags)
+>  {
+>  	struct page *prop_page;
+>  
+> -	prop_page = alloc_pages(gfp_flags, get_order(LPI_PROPBASE_SZ));
+> +	prop_page = its_alloc_pages(gfp_flags,
+> +				    get_order(LPI_PROPBASE_SZ));
+>  	if (!prop_page)
+>  		return NULL;
+>  
+> @@ -2223,8 +2251,8 @@ static struct page *its_allocate_prop_table(gfp_t gfp_flags)
+>  
+>  static void its_free_prop_table(struct page *prop_page)
+>  {
+> -	free_pages((unsigned long)page_address(prop_page),
+> -		   get_order(LPI_PROPBASE_SZ));
+> +	its_free_pages(page_address(prop_page),
+> +		       get_order(LPI_PROPBASE_SZ));
+>  }
+>  
+>  static bool gic_check_reserved_range(phys_addr_t addr, unsigned long size)
+> @@ -2346,7 +2374,8 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
+>  		order = get_order(GITS_BASER_PAGES_MAX * psz);
+>  	}
+>  
+> -	page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO, order);
+> +	page = its_alloc_pages_node(its->numa_node,
+> +				    GFP_KERNEL | __GFP_ZERO, order);
+>  	if (!page)
+>  		return -ENOMEM;
+>  
+> @@ -2359,7 +2388,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
+>  		/* 52bit PA is supported only when PageSize=64K */
+>  		if (psz != SZ_64K) {
+>  			pr_err("ITS: no 52bit PA support when psz=%d\n", psz);
+> -			free_pages((unsigned long)base, order);
+> +			its_free_pages(base, order);
+>  			return -ENXIO;
+>  		}
+>  
+> @@ -2415,7 +2444,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
+>  		pr_err("ITS@%pa: %s doesn't stick: %llx %llx\n",
+>  		       &its->phys_base, its_base_type_string[type],
+>  		       val, tmp);
+> -		free_pages((unsigned long)base, order);
+> +		its_free_pages(base, order);
+>  		return -ENXIO;
+>  	}
+>  
+> @@ -2554,8 +2583,8 @@ static void its_free_tables(struct its_node *its)
+>  
+>  	for (i = 0; i < GITS_BASER_NR_REGS; i++) {
+>  		if (its->tables[i].base) {
+> -			free_pages((unsigned long)its->tables[i].base,
+> -				   its->tables[i].order);
+> +			its_free_pages(its->tables[i].base,
+> +				       its->tables[i].order);
+>  			its->tables[i].base = NULL;
+>  		}
+>  	}
+> @@ -2821,7 +2850,8 @@ static bool allocate_vpe_l2_table(int cpu, u32 id)
+>  
+>  	/* Allocate memory for 2nd level table */
+>  	if (!table[idx]) {
+> -		page = alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(psz));
+> +		page = its_alloc_pages(GFP_KERNEL | __GFP_ZERO,
+> +				       get_order(psz));
+>  		if (!page)
+>  			return false;
+>  
+> @@ -2940,7 +2970,8 @@ static int allocate_vpe_l1_table(void)
+>  
+>  	pr_debug("np = %d, npg = %lld, psz = %d, epp = %d, esz = %d\n",
+>  		 np, npg, psz, epp, esz);
+> -	page = alloc_pages(GFP_ATOMIC | __GFP_ZERO, get_order(np * PAGE_SIZE));
+> +	page = its_alloc_pages(GFP_ATOMIC | __GFP_ZERO,
+> +			       get_order(np * PAGE_SIZE));
+>  	if (!page)
+>  		return -ENOMEM;
+>  
+> @@ -2986,8 +3017,8 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
+>  {
+>  	struct page *pend_page;
+>  
+> -	pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
+> -				get_order(LPI_PENDBASE_SZ));
+> +	pend_page = its_alloc_pages(gfp_flags | __GFP_ZERO,
+> +				    get_order(LPI_PENDBASE_SZ));
+>  	if (!pend_page)
+>  		return NULL;
+>  
+> @@ -2999,7 +3030,7 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
+>  
+>  static void its_free_pending_table(struct page *pt)
+>  {
+> -	free_pages((unsigned long)page_address(pt), get_order(LPI_PENDBASE_SZ));
+> +	its_free_pages(page_address(pt), get_order(LPI_PENDBASE_SZ));
+>  }
+>  
+>  /*
+> @@ -3334,8 +3365,9 @@ static bool its_alloc_table_entry(struct its_node *its,
+>  
+>  	/* Allocate memory for 2nd level table */
+>  	if (!table[idx]) {
+> -		page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
+> -					get_order(baser->psz));
+> +		page = its_alloc_pages_node(its->numa_node,
+> +					    GFP_KERNEL | __GFP_ZERO,
+> +					    get_order(baser->psz));
+>  		if (!page)
+>  			return false;
+>  
+> @@ -3418,7 +3450,9 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>  	unsigned long *lpi_map = NULL;
+>  	unsigned long flags;
+>  	u16 *col_map = NULL;
+> +	struct page *page;
+>  	void *itt;
+> +	int itt_order;
+>  	int lpi_base;
+>  	int nr_lpis;
+>  	int nr_ites;
+> @@ -3430,7 +3464,6 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>  	if (WARN_ON(!is_power_of_2(nvecs)))
+>  		nvecs = roundup_pow_of_two(nvecs);
+>  
+> -	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+>  	/*
+>  	 * Even if the device wants a single LPI, the ITT must be
+>  	 * sized as a power of two (and you need at least one bit...).
+> @@ -3438,7 +3471,16 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>  	nr_ites = max(2, nvecs);
+>  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
+>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
+> +	itt_order = get_order(sz);
+> +	page = its_alloc_pages_node(its->numa_node,
+> +				    GFP_KERNEL | __GFP_ZERO,
+> +				    itt_order);
+
+So we go from an allocation that was so far measured in *bytes* to
+something that is now at least a page. Per device. This seems a bit
+excessive to me, specially when it isn't conditioned on anything and
+is now imposed on all platforms, including the non-CCA systems (which
+are exactly 100% of the machines).
+
+Another thing is that if we go with page alignment, then the 256 byte
+alignment can obviously be removed everywhere (hint: MAPD needs to
+change).
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
