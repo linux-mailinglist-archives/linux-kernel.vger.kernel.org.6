@@ -1,170 +1,114 @@
-Return-Path: <linux-kernel+bounces-201622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39068FC0D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:34:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8DC8FC0D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 02:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02DC61C21EC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:34:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECC4EB26BD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 00:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2853B8F59;
-	Wed,  5 Jun 2024 00:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F730BA50;
+	Wed,  5 Jun 2024 00:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fJdOoOd6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgXHt5SF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14819463;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349D3944D;
 	Wed,  5 Jun 2024 00:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717547374; cv=none; b=lxE8C/fvhI8sz6hXuScP0cFekkvt49qYfSv8pzOBucOZ2p6iOH/AXCdaFN0FgNYjwVGrjQ1Avh7qJjxm61EhFEy57GyxSGeUec2Cv2ARlpLmAZ200QLaQ7Fh+VgDu0salOJJQ0Q4/slP11YTmuYVTIFLQBbWDRYRtgRF53+/kCI=
+	t=1717547375; cv=none; b=O/E7Sf66mT1kzTF8Sx4rWpbGZVzos2wazU+gzNw7HJWS0tlX4BAFklFhoCC/VN0p4FhY5SLq4xnTl9nKIRcN5RKKAccE8seGOMrGyEloKEzX4L6HIVjU8j9wFhvpKhfXk54i1Tq9dIYO0W+dhfwrazxVZrv+pYTUC5KVw67+2VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717547374; c=relaxed/simple;
-	bh=u/knzlM7OjEmdCAJzyoWeHguJVEbDjQoLTrldoBR9Ck=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RVfHAQn6eoMJnG7AeZltLTxokBM5cDd5xK18zw5YmbL1fX+8jkPD2Drp15LqF1wobSGkTXXO1tlM7mB46Publ0ip1y7jUNuauJmQDchC8uasZ0+RsVl2BrgWyNnx0RSluAVazrYlWBNui81TpOya5iJMROW25jqnzTk3hVSUh7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fJdOoOd6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 454LDBC8000992;
-	Wed, 5 Jun 2024 00:29:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=gs77EA47eNwbjJSZUfLLf7
-	l+3bRFgEdBE7WweJq2b/k=; b=fJdOoOd6LYb4tGX2KYEUTr5GmPu8uIMENb3U1v
-	JlW0jm0BCojNhUM8Yc+kVrYLtWP6slgwsmAeph3VItdls02K/OHW/2HspnB+4EbR
-	2iOWiUyCXZkIdxlddBh28poJSD4NnP2VA5nfHR8+TtdA152eQEQxUXPddyzkmi10
-	i+/tPHYFSoaPq0opeSpxV4ihqHuz6gnrulbr0iKZi6ajJSsdjBlkkcOtoal4VJSH
-	MqTNuCwERfDCmaKLnKWrhhn59p5jLPnlDnjEWuwjLjg0qmnvC59SeicujPBdTrZa
-	MR4yzp5MJyrBcmCGaitsLJ6gpKwUrtJ2Miwh56N75i41lGSg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yjan2g9up-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Jun 2024 00:29:22 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4550TLaq017056
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Jun 2024 00:29:21 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 4 Jun 2024 17:29:10 -0700
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Connor Abbott <cwabbott0@gmail.com>
-CC: <dri-devel@lists.freedesktop.org>, <seanpaul@chromium.org>,
-        <quic_jesszhan@quicinc.com>, Rob Clark <robdclark@chromium.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] drm/msm/a6xx: use __unused__ to fix compiler warnings for gen7_* includes
-Date: Tue, 4 Jun 2024 17:28:58 -0700
-Message-ID: <20240605002859.4111643-1-quic_abhinavk@quicinc.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1717547375; c=relaxed/simple;
+	bh=TY+ZzDSLxMX2DBv+6OsKEQ4VA6EI1NW1sVZ8duIxLtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pR0953QmxXQ1qqGImHVAigNm8TQq3LCPWebIzo6MJoy/YBQGYIriu2jSrenPkgZgBzBS9xbRc6EBTI7stIDRBdwdr3Vwi7djBBrMLVz0XtdGXq4MkUgJK4OWxzzdas5cgXj7AMholSeqYCc+N1NMKkyKDckDmmKH16lJ1C57nAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgXHt5SF; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717547373; x=1749083373;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TY+ZzDSLxMX2DBv+6OsKEQ4VA6EI1NW1sVZ8duIxLtU=;
+  b=QgXHt5SFu8NgDx9ro6RVl627Lx0E+UoWQv2LXZmoDgM0zeaxS3LiWLye
+   2rC+wagk/psUFDg0JFYZtRg7lLGBlvt/coCTZBNtQLtlIBD3v+odTMINk
+   cCjAfkuWqeIc5vUTj1AQX0YL/ZZEhOmXAKgfbXr2Tfs4LqxRS0abRDNb6
+   upfgVb0pSRzCrF5n/BJmHlGDiFV1PlSUmSQ3afhaTEg3Dom+Gf8AeSu6g
+   WcL3ODFPbnw+kBtdZWjreiGi6ROZI0SD11hgLs/csPgmg1jnppTmjwDwP
+   LGyU9PN83KUTkBxdcSS7uG+UqxgeEeTSCxAiu/nuUVzb7yIY48lYnXGfy
+   g==;
+X-CSE-ConnectionGUID: XnFhLHNrRtG+crDYZMaI3g==
+X-CSE-MsgGUID: J/HZ2jAzSmijeQ4bHcJhgw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="25534139"
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="25534139"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 17:29:32 -0700
+X-CSE-ConnectionGUID: K5YfX7b3Qc+yFqaiCZCwPQ==
+X-CSE-MsgGUID: 9rNNaSDJSJ+98vPxqvq9lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
+   d="scan'208";a="60598970"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 04 Jun 2024 17:29:28 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sEeWs-0000iL-05;
+	Wed, 05 Jun 2024 00:29:26 +0000
+Date: Wed, 5 Jun 2024 08:29:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, aconole@redhat.com,
+	echaudro@redhat.com, horms@kernel.org, i.maximets@ovn.org,
+	dev@openvswitch.org, Adrian Moreno <amorenoz@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
+Message-ID: <202406050852.hDtfskO0-lkp@intel.com>
+References: <20240603185647.2310748-6-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qQLHf32RZceFfHAguF2nkrk5o70kSj-p
-X-Proofpoint-ORIG-GUID: qQLHf32RZceFfHAguF2nkrk5o70kSj-p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-04_11,2024-06-04_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 spamscore=0 clxscore=1015 mlxscore=0
- malwarescore=0 impostorscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406050001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603185647.2310748-6-amorenoz@redhat.com>
 
-GCC diagnostic pragma method throws below warnings in some of the versions
+Hi Adrian,
 
-drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:16:9: warning: unknown
-option after '#pragma GCC diagnostic' kind [-Wpragmas]
-  #pragma GCC diagnostic ignored "-Wunused-const-variable"
-          ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:18:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h:924:19: warning:
-'gen7_0_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_0_0_external_core_regs[] = {
-                    ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:19:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h:748:19: warning:
-'gen7_2_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_2_0_external_core_regs[] = {
-                    ^
-In file included from drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:20:0:
-drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:1188:43: warning:
-'gen7_9_0_sptp_clusters' defined but not used [-Wunused-variable]
-  static struct gen7_sptp_cluster_registers gen7_9_0_sptp_clusters[] = {
-                                            ^
-drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h:1438:19: warning:
-'gen7_9_0_external_core_regs' defined but not used [-Wunused-variable]
-  static const u32 *gen7_9_0_external_core_regs[] = {
+kernel test robot noticed the following build errors:
 
-Remove GCC version dependency by using __unused__ for the unused gen7_* includes.
+[auto build test ERROR on net-next/main]
 
-Changes in v2:
-	- Fix the warnings in the commit text
-	- Use __attribute((__unused__)) instead of local assignment
+url:    https://github.com/intel-lab-lkp/linux/commits/Adrian-Moreno/net-psample-add-user-cookie/20240604-030055
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240603185647.2310748-6-amorenoz%40redhat.com
+patch subject: [PATCH net-next v2 5/9] net: openvswitch: add emit_sample action
+config: s390-randconfig-002-20240605 (https://download.01.org/0day-ci/archive/20240605/202406050852.hDtfskO0-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406050852.hDtfskO0-lkp@intel.com/reproduce)
 
-Fixes: 64d6255650d4 ("drm/msm: More fully implement devcoredump for a7xx")
-Suggested-by: Rob Clark <robdclark@chromium.org>
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Link: https://lore.kernel.org/r/20240604215105.4057278-1-quic_abhinavk@quicinc.com
----
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406050852.hDtfskO0-lkp@intel.com/
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-index 0a7717a4fc2f..a958e2b3c025 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
-@@ -8,19 +8,15 @@
- #include "a6xx_gpu_state.h"
- #include "a6xx_gmu.xml.h"
- 
--/* Ignore diagnostics about register tables that we aren't using yet. We don't
-- * want to modify these headers too much from their original source.
-- */
--#pragma GCC diagnostic push
--#pragma GCC diagnostic ignored "-Wunused-variable"
--#pragma GCC diagnostic ignored "-Wunused-const-variable"
-+static const unsigned int *gen7_0_0_external_core_regs[] __attribute((__unused__));
-+static const unsigned int *gen7_2_0_external_core_regs[] __attribute((__unused__));
-+static const unsigned int *gen7_9_0_external_core_regs[] __attribute((__unused__));
-+static struct gen7_sptp_cluster_registers gen7_9_0_sptp_clusters[] __attribute((__unused__));
- 
- #include "adreno_gen7_0_0_snapshot.h"
- #include "adreno_gen7_2_0_snapshot.h"
- #include "adreno_gen7_9_0_snapshot.h"
- 
--#pragma GCC diagnostic pop
--
- struct a6xx_gpu_state_obj {
- 	const void *handle;
- 	u32 *data;
+All errors (new ones prefixed by >>):
+
+   s390x-linux-ld: net/openvswitch/actions.o: in function `do_execute_actions':
+>> actions.c:(.text+0x1d5c): undefined reference to `psample_sample_packet'
+
 -- 
-2.44.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
