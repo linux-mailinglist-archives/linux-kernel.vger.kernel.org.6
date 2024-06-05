@@ -1,51 +1,64 @@
-Return-Path: <linux-kernel+bounces-201720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7B88FC22C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:26:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61C58FC225
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E419BB22DDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767B8285086
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6EC12DDA2;
-	Wed,  5 Jun 2024 03:25:37 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCBB7344F;
+	Wed,  5 Jun 2024 03:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTH+VKDo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A8F79DE;
-	Wed,  5 Jun 2024 03:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C2F79DE;
+	Wed,  5 Jun 2024 03:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717557937; cv=none; b=jERCPHxKChtxbjd6Ydfm/NF5z8mNcwTvGp7RL53VKtSxnjUKO/0EA2Vw3CPPMIEpG2YA97eamWhO84U8Zi8lgK4lZ7KXYulHYcutjyBAe5hmTb3ajk7KYZg7AV9BAIuDUHrOPWtRFB8fsFQzU/ytS2EBTeBNRif4rsGh1LAlKUw=
+	t=1717557714; cv=none; b=bMket+WSnFYquo1L2uVS1VJXdvD5kkvrRHRXxQkQ6MjlssPOYhpc5KXD5bsx7LGGeTDNdiA0Yx/U6y9Wca7Vw0wORxnKfYwj6co1bApy8sJdOrJ9BdzvRvDPV5fADLdhokKEdDhO1QBnPRhzlNKlV0wGkkIs8QUOWVBEtq7LW98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717557937; c=relaxed/simple;
-	bh=iar+ScYHyGbSpwqZk7GsbhYJzP4tfyU039xANgAKi8E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NMOJ9LsrOQDMrN/BZVdd4ui+d8ssYXgzeQhFeSqso1kjHZCts38lzJPbWI8ZC9RuT7qF3tfhrtOqPi978YYW1I2Aem3LrIWbTU44f3o/aQoH36/+Lm23QtRt8fo484EhPjN0s3dyOTv+xhBD6AErctwrq/nvZXM6T991l+uQ9yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowADHzJA52V9mURJCDw--.61166S2;
-	Wed, 05 Jun 2024 11:19:21 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: giovanni.cabiddu@intel.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	markas.rapoportas@intel.com,
-	ahsan.atta@intel.com,
-	mun.chun.yep@intel.com,
-	xin.zeng@intel.com
-Cc: qat-linux@intel.com,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] crypto: qat - add check for adf_cfg_add_key_value_param
-Date: Wed,  5 Jun 2024 11:18:35 +0800
-Message-Id: <20240605031835.2916052-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1717557714; c=relaxed/simple;
+	bh=XXmGYhr/asAtu28FiZdJhn7l0dn1aN/YIqMkca+f7JE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYb1KLB+4vOUJw4bZyrgCev+Yb2b2uXTZiZzYcI9RbHybrsKAkIVAm3rQlZOyLkRt8EhElZG6e2b7gAqFkBMQ9xQHcxzMXwvqlN8xvjlQIa1Dxboxfy5mi5qlTQrj81eGOrjHRXvul9I6IWV0eUvBqOGS5TPYx8b32hMlj2JBvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTH+VKDo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5ECBC32781;
+	Wed,  5 Jun 2024 03:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717557714;
+	bh=XXmGYhr/asAtu28FiZdJhn7l0dn1aN/YIqMkca+f7JE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uTH+VKDo86rqriq+2tGeiI7GDLHqZyU6gpJv5Gb4oh4x147MTH9CRncEJcUS16Im1
+	 zwY3xS9Se9/6NRsglKZufswbeuKwXEDxXgDxkGNGfYDwaBV6wPEe4QgyL48vfpkOzX
+	 BxUyxVysug7fAW36wbeAYeEO9eGuybI3K+lQiuuB86UeupXkzYcUr3TfXcjasB1tvu
+	 pWWTZFxpKomQcMqR+4tj4Xe2fpD9lmNOYH3TaH5G3caDqm7WYMVdYJyifthaainz87
+	 0+acwJhNxXYQq19ZQXGnggDddTePod1+kZv7Qd37SGugKvHkrFxBr3RrSN8tvnQcoy
+	 hBTZKDds+cyew==
+From: Song Liu <song@kernel.org>
+To: live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: jpoimboe@kernel.org,
+	jikos@kernel.org,
+	mbenes@suse.cz,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com,
+	nathan@kernel.org,
+	morbo@google.com,
+	justinstitt@google.com,
+	mcgrof@kernel.org,
+	thunder.leizhen@huawei.com,
+	kees@kernel.org,
+	kernel-team@meta.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH] kallsyms, livepatch: Fix livepatch with CONFIG_LTO_CLANG
+Date: Tue,  4 Jun 2024 20:21:20 -0700
+Message-ID: <20240605032120.3179157-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,51 +66,188 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADHzJA52V9mURJCDw--.61166S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrW3Jr15CFy7WrW5tw17Awb_yoWDWwb_Cr
-	Z09ayaqryDCFn5Wrn8trWavrWj93s09ryruF1vvF4akasrGrsrKFykZr1DZF1Sqr1kWrn8
-	u3Zayr1kAw47XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkIecxEwVAFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUk3ktUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Add check for the return value of adf_cfg_add_key_value_param() and
-return the error if it fails in order to catch the error.
+With CONFIG_LTO_CLANG, the compiler may postfix symbols with .llvm.<hash>
+to avoid symbol duplication. scripts/kallsyms.c sorted the symbols
+without these postfixes. The default symbol lookup also removes these
+postfixes before comparing symbols.
 
-Fixes: 4469f9b23468 ("crypto: qat - re-enable sriov after pf reset")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+On the other hand, livepatch need to look up symbols with the full names.
+However, calling kallsyms_on_each_match_symbol with full name (with the
+postfix) cannot find the symbol(s). As a result, we cannot livepatch
+kernel functions with .llvm.<hash> postfix or kernel functions that use
+relocation information to symbols with .llvm.<hash> postfixes.
+
+Fix this by calling kallsyms_on_each_match_symbol without the postfix;
+and then match the full name (with postfix) in klp_match_callback.
+
+Signed-off-by: Song Liu <song@kernel.org>
 ---
- drivers/crypto/intel/qat/qat_common/adf_sriov.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/kallsyms.h | 13 +++++++++++++
+ kernel/kallsyms.c        | 21 ++++++++++++++++-----
+ kernel/livepatch/core.c  | 32 +++++++++++++++++++++++++++++++-
+ 3 files changed, 60 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/crypto/intel/qat/qat_common/adf_sriov.c b/drivers/crypto/intel/qat/qat_common/adf_sriov.c
-index 8d645e7e04aa..30ff9097f527 100644
---- a/drivers/crypto/intel/qat/qat_common/adf_sriov.c
-+++ b/drivers/crypto/intel/qat/qat_common/adf_sriov.c
-@@ -228,8 +228,10 @@ int adf_sriov_configure(struct pci_dev *pdev, int numvfs)
- 		return ret;
+diff --git a/include/linux/kallsyms.h b/include/linux/kallsyms.h
+index c3f075e8f60c..d7d07a134ae4 100644
+--- a/include/linux/kallsyms.h
++++ b/include/linux/kallsyms.h
+@@ -97,6 +97,10 @@ extern int sprint_backtrace_build_id(char *buffer, unsigned long address);
  
- 	val = 1;
--	adf_cfg_add_key_value_param(accel_dev, ADF_GENERAL_SEC, ADF_SRIOV_ENABLED,
-+	ret = adf_cfg_add_key_value_param(accel_dev, ADF_GENERAL_SEC, ADF_SRIOV_ENABLED,
- 				    &val, ADF_DEC);
-+	if (ret)
-+		return ret;
+ int lookup_symbol_name(unsigned long addr, char *symname);
  
- 	return numvfs;
++int kallsyms_lookup_symbol_full_name(unsigned long addr, char *symname);
++
++void kallsyms_cleanup_symbol_name(char *s);
++
+ #else /* !CONFIG_KALLSYMS */
+ 
+ static inline unsigned long kallsyms_lookup_name(const char *name)
+@@ -165,6 +169,15 @@ static inline int kallsyms_on_each_match_symbol(int (*fn)(void *, unsigned long)
+ {
+ 	return -EOPNOTSUPP;
  }
++
++static inline int kallsyms_lookup_symbol_full_name(unsigned long addr, char *symname)
++{
++	return -ERANGE;
++}
++
++static inline void kallsyms_cleanup_symbol_name(char *s)
++{
++}
+ #endif /*CONFIG_KALLSYMS*/
+ 
+ static inline void print_ip_sym(const char *loglvl, unsigned long ip)
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index 22ea19a36e6e..f0d04fa1bbb4 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -163,7 +163,7 @@ unsigned long kallsyms_sym_address(int idx)
+ 	return kallsyms_relative_base - 1 - kallsyms_offsets[idx];
+ }
+ 
+-static void cleanup_symbol_name(char *s)
++void kallsyms_cleanup_symbol_name(char *s)
+ {
+ 	char *res;
+ 
+@@ -191,7 +191,7 @@ static int compare_symbol_name(const char *name, char *namebuf)
+ 	 * To ensure correct bisection in kallsyms_lookup_names(), do
+ 	 * cleanup_symbol_name(namebuf) before comparing name and namebuf.
+ 	 */
+-	cleanup_symbol_name(namebuf);
++	kallsyms_cleanup_symbol_name(namebuf);
+ 	return strcmp(name, namebuf);
+ }
+ 
+@@ -426,7 +426,7 @@ static const char *kallsyms_lookup_buildid(unsigned long addr,
+ 						offset, modname, namebuf);
+ 
+ found:
+-	cleanup_symbol_name(namebuf);
++	kallsyms_cleanup_symbol_name(namebuf);
+ 	return ret;
+ }
+ 
+@@ -446,7 +446,7 @@ const char *kallsyms_lookup(unsigned long addr,
+ 				       NULL, namebuf);
+ }
+ 
+-int lookup_symbol_name(unsigned long addr, char *symname)
++static int __lookup_symbol_name(unsigned long addr, char *symname, bool cleanup)
+ {
+ 	int res;
+ 
+@@ -468,10 +468,21 @@ int lookup_symbol_name(unsigned long addr, char *symname)
+ 		return res;
+ 
+ found:
+-	cleanup_symbol_name(symname);
++	if (cleanup)
++		kallsyms_cleanup_symbol_name(symname);
+ 	return 0;
+ }
+ 
++int lookup_symbol_name(unsigned long addr, char *symname)
++{
++	return __lookup_symbol_name(addr, symname, true);
++}
++
++int kallsyms_lookup_symbol_full_name(unsigned long addr, char *symname)
++{
++	return __lookup_symbol_name(addr, symname, false);
++}
++
+ /* Look up a kernel symbol and return it in a text buffer. */
+ static int __sprint_symbol(char *buffer, unsigned long address,
+ 			   int symbol_offset, int add_offset, int add_buildid)
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index 52426665eecc..284220e04801 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -128,6 +128,19 @@ struct klp_find_arg {
+ static int klp_match_callback(void *data, unsigned long addr)
+ {
+ 	struct klp_find_arg *args = data;
++#ifdef CONFIG_LTO_CLANG
++	char full_name[KSYM_NAME_LEN];
++
++	/*
++	 * With CONFIG_LTO_CLANG, we need to compare the full name of the
++	 * symbol (with .llvm.<hash> postfix).
++	 */
++	if (kallsyms_lookup_symbol_full_name(addr, full_name))
++		return 0;
++
++	if (strcmp(args->name, full_name))
++		return 0;
++#endif
+ 
+ 	args->addr = addr;
+ 	args->count++;
+@@ -145,10 +158,12 @@ static int klp_match_callback(void *data, unsigned long addr)
+ 
+ static int klp_find_callback(void *data, const char *name, unsigned long addr)
+ {
++#ifndef CONFIG_LTO_CLANG
+ 	struct klp_find_arg *args = data;
+ 
+ 	if (strcmp(args->name, name))
+ 		return 0;
++#endif
+ 
+ 	return klp_match_callback(data, addr);
+ }
+@@ -162,11 +177,26 @@ static int klp_find_object_symbol(const char *objname, const char *name,
+ 		.count = 0,
+ 		.pos = sympos,
+ 	};
++	const char *lookup_name = name;
++#ifdef CONFIG_LTO_CLANG
++	char short_name[KSYM_NAME_LEN];
++
++	/*
++	 * With CONFIG_LTO_CLANG, the symbol name make have .llvm.<hash>
++	 * postfix, e.g. show_cpuinfo.llvm.12345.
++	 * Call kallsyms_on_each_match_symbol with short_name, e.g.
++	 * show_cpuinfo, args->name is still the full name, which is used
++	 * checked in klp_match_callback.
++	 */
++	strscpy(short_name, name, sizeof(short_name));
++	kallsyms_cleanup_symbol_name(short_name);
++	lookup_name = short_name;
++#endif
+ 
+ 	if (objname)
+ 		module_kallsyms_on_each_symbol(objname, klp_find_callback, &args);
+ 	else
+-		kallsyms_on_each_match_symbol(klp_match_callback, name, &args);
++		kallsyms_on_each_match_symbol(klp_match_callback, lookup_name, &args);
+ 
+ 	/*
+ 	 * Ensure an address was found. If sympos is 0, ensure symbol is unique;
 -- 
-2.25.1
+2.43.0
 
 
