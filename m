@@ -1,136 +1,147 @@
-Return-Path: <linux-kernel+bounces-202074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC83B8FC782
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:19:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AC08FC784
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B178286308
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:19:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31B63B23466
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9323190076;
-	Wed,  5 Jun 2024 09:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxFlksZA"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A01190051;
-	Wed,  5 Jun 2024 09:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08F418FC7E;
+	Wed,  5 Jun 2024 09:18:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FFB49657;
+	Wed,  5 Jun 2024 09:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717579075; cv=none; b=YfdOqzD594/nVRFkHC123QvNRIH1lqTAt37z8bhkfGVgWes+gism5ZGK1kEVe1l46mvUxd7xGazo3eNhdJmBqyUKDBwSNmGLv8iYVnJYo8W+2YpdhrDXMZCudlvLIYehjhUHVGGRT2p42LjmWzrA9b1V2b6A+HTfwf5H3tu4SsI=
+	t=1717579102; cv=none; b=BekFCuSqpN0jjyOR9qINaIzaASaDvNQnzlfKh7TPltPr6o44kPuYM1Znt6rMTMsvK0b8mXzQxLnTxu7YWismr3vpIqOKmmLZVzqJiJhkOZccfdOI/c12+ufLlY2Dy628iTEI8V392akToR7cFOPChBxx0exakRKK8te5Y4xFpUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717579075; c=relaxed/simple;
-	bh=QU/idcVM4otdxk+iVm4L+rSCGwk9/9AmyQ9pVxLqVA0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UANh9IfGa6KYUHQGToucSY+5bjbYVxD4uvD2nHwXYeNPw3iIt9QuU+/oK8nP/mSZ+iQTJokWLxxMGgTTeP4IFc0m/2vhi74F2h9LMa6JopRiOVwevQCfvVfe0XAoGNabVm3to4c7yTZ4MD0Czwiq66hMVU5wrllPnkshvJ+yPQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxFlksZA; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70260814b2dso617886b3a.1;
-        Wed, 05 Jun 2024 02:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717579073; x=1718183873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rb8TvlwBPqPDumdC3j6Umh6H2xQnXI3Qx2U5XQXVFps=;
-        b=PxFlksZAOAHwhmd/a9xBq/n1VJ8pJErcMpBABopOKk/iXCmPCgUYjOAjV1lFNGHRlL
-         KUe9PoCi9WNTAhf7Gn0uhnuId3HAKSbZ4P3O4L6Jt4u2PjDr0sPvugzFgpo/Ch/dXzLg
-         B+sx5rgebWR/djdfs3lDTswUmQqMVdtM6JUxMmba9UnFckhY7WhGTEt/IIyRh4Ku+uQn
-         8curO5h3gXTWq1B1y0Abz1HdMQa4OXRBkvRKEdq9pnB1AMuCKZIrOqdK2XcCvgj31Qog
-         6r3Q2KXKF0YBbYUsbJeaGhHwHNiiuBH+tPeiOACRWL/C4uw/IbaX7axMoNX/tNB2K3mT
-         Teug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717579073; x=1718183873;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rb8TvlwBPqPDumdC3j6Umh6H2xQnXI3Qx2U5XQXVFps=;
-        b=vDBgFt6e1bzv27lILafHibE5UV7jtKJDb+tqX6OVBAMfpWG6SJRMYfkQUh/3GkFVbo
-         92nCmUgqWYk6ocK3TprEIIAhTYk2a+ImpIcCLdzLpAJdkD1Ij9EcaGY3oN6P/3hya6Dj
-         y+VQOQZme5IpPlwURrM/EUOnqsNLTCQrqmv2l+M0XPchYP7tUj6MAoGg2ahpu0hLfFLC
-         B2zYVPJkhvgR/e8Sk6IbzKVaOUDTuSvycZZoxKQjkm2m0b6oi8aCg/+4/hwKByK3N/ro
-         o6cdi5Oj0xg6jzQN22QcDW6qJIJ3rF7dk1/dK7JSeX9yF5pPlfdjTV8GauSjqplIyeMl
-         jzaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOpHR+V7s36I+Pk1PRbRm2dFbb88xpQlvBWjYt0CwzmbMRStEnwj8JMVDW30BAph2exwHvaz/DrClTAAjY0rBuPAU7XTuyqbSXC6lcKr58QCXecMNZoCq9/jc4KokgtxLPKOVIhNaomw==
-X-Gm-Message-State: AOJu0Yxu0+4BIzDo5LNwSKK942EAI7VNGIpLBTNne+smRmX0FQ0cBl6J
-	jbju3jNfiq7P2qNdIwlNekTtaG5Dl8bHfGeV2XSzdG6iBe0PImcM
-X-Google-Smtp-Source: AGHT+IEKs17Yc7zGzcdRhEdzekurmlGaDm9rgSC3O14gNe1ncYRplcpMtwzg/MR2bP+6nRJ8W1Hqpw==
-X-Received: by 2002:a05:6a21:18e:b0:1b2:b183:69f6 with SMTP id adf61e73a8af0-1b2b6fd4d89mr3503703637.16.1717579073106;
-        Wed, 05 Jun 2024 02:17:53 -0700 (PDT)
-Received: from localhost (97.64.23.41.16clouds.com. [97.64.23.41])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-702423da888sm8265740b3a.60.2024.06.05.02.17.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 02:17:52 -0700 (PDT)
-From: Wenchao Hao <haowenchao22@gmail.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Wenchao Hao <haowenchao22@gmail.com>
-Subject: [PATCH v5 3/3] scsi: scsi_error: Fix device reset is not triggered
-Date: Wed,  5 Jun 2024 17:17:31 +0800
-Message-Id: <20240605091731.3111195-4-haowenchao22@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20240605091731.3111195-1-haowenchao22@gmail.com>
-References: <20240605091731.3111195-1-haowenchao22@gmail.com>
+	s=arc-20240116; t=1717579102; c=relaxed/simple;
+	bh=6S3YpsbbS53ZfCt49YVCxFQF4BBA0IGGQrjEj4VK/zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hcz11qbQDcQvuzpfaULPNs7VwTI+rZoDGVFyMVIO5In7pix8njnwjC2Dr05losK8syUwrmjou+5a0mhssiNWBgmQwRbqGZngq7ww//N8QmcLJVGlgwSkkqnQzoCYm7St+bQEkkwwFdjPpxLYkXM2JfxydF2Zh4WHOocMFIOlEnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF2FDDA7;
+	Wed,  5 Jun 2024 02:18:44 -0700 (PDT)
+Received: from [10.57.39.129] (unknown [10.57.39.129])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 147E13F792;
+	Wed,  5 Jun 2024 02:18:16 -0700 (PDT)
+Message-ID: <f44611fd-523a-4b4d-accd-20fdfbac178a@arm.com>
+Date: Wed, 5 Jun 2024 10:18:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] drm/panfrost: Add support for Mali on the MT8188
+ SoC
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ boris.brezillon@collabora.com
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240604123922.331469-1-angelogioacchino.delregno@collabora.com>
+ <20240604123922.331469-3-angelogioacchino.delregno@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240604123922.331469-3-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-shost_for_each_device() would skip devices which is in progress of
-removing, so scsi_try_bus_device_reset() for these devices would be
-skipped in scsi_eh_bus_device_reset() with following order:
+On 04/06/2024 13:39, AngeloGioacchino Del Regno wrote:
+> MediaTek MT8188 has a Mali-G57 MC3 (Valhall-JM): add a new
+> compatible and platform data using the same supplies and the
+> same power domain lists as MT8183 (one regulator, three power
+> domains).
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_drv.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index ef9f6c0716d5..4e2d9f671a0d 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -777,6 +777,14 @@ static const struct panfrost_compatible mediatek_mt8186_data = {
+>  	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+>  };
+>  
+> +static const struct panfrost_compatible mediatek_mt8188_data = {
+> +	.num_supplies = ARRAY_SIZE(mediatek_mt8183_b_supplies) - 1,
+> +	.supply_names = mediatek_mt8183_b_supplies,
 
-T1:					T2:scsi_error_handle
-__scsi_remove_device
-  scsi_device_set_state(sdev, SDEV_DEL)
-					// would skip device with SDEV_DEL state
-  					shost_for_each_device()
-					  scsi_try_bus_device_reset
-					flush all commands
- ...
- releasing and free scsi_device
+I think this is a little confusing. Ideally we'd drop the existing
+mediatek_xxx_supplies which are the same as default_supplies and just
+use that instead.
 
-Some drivers like smartpqi only implement eh_device_reset_handler,
-if device reset is skipped, the commands which had been sent to
-firmware or devices hardware are not cleared. The error handle
-would flush all these commands in scsi_unjam_host().
+> +	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
+> +	.pm_domain_names = mediatek_mt8183_pm_domains,
 
-When the commands are finished by hardware, use after free issue is
-triggered.
+We'd want at least a comment explaining that this isn't a typo (i.e. /*
+mt8188 uses the same pm domains as mt8183 */). But I'm also wondering if
+it would be sensible to simply have one domain list, something like:
 
-Fix this issue by using shost_for_each_device_include_deleted()
-to iterate devices in scsi_eh_bus_device_reset().
+--->8---
+static const char * const mediatek_pm_domains[] = { "core0", "core1",
+						    "core2", "core3",
+						    "core4" };
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
----
- drivers/scsi/scsi_error.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+static const struct panfrost_compatible mediatek_mt8183_data = {
+	...
+	.num_pm_domains = 3,
+	.pm_domain_names = mediatek_pm_domains,
+};
+...
+static const struct panfrost_compatible mediatek_mt8186_data = {
+	...
+	.num_pm_domains = 2,
+	.pm_domain_names = mediatek_pm_domains,
+};
+...
+static const struct panfrost_compatible mediatek_mt8188_data = {
+	...
+	.num_pm_domains = 3,
+	.pm_domain_names = mediatek_pm_domains,
+};
+...
+static const struct panfrost_compatible mediatek_mt8192_data = {
+	...
+	.num_pm_domains = 5,
+	.pm_domain_names = mediatek_pm_domains,
+};
+--->8---
 
-diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
-index a61fd8af3b1f..ab4a58f92838 100644
---- a/drivers/scsi/scsi_error.c
-+++ b/drivers/scsi/scsi_error.c
-@@ -1571,7 +1571,7 @@ static int scsi_eh_bus_device_reset(struct Scsi_Host *shost,
- 	struct scsi_device *sdev;
- 	enum scsi_disposition rtn;
- 
--	shost_for_each_device(sdev, shost) {
-+	shost_for_each_device_include_deleted(sdev, shost) {
- 		if (scsi_host_eh_past_deadline(shost)) {
- 			SCSI_LOG_ERROR_RECOVERY(3,
- 				sdev_printk(KERN_INFO, sdev,
--- 
-2.38.1
+OTOH what you've got it no worse than what we already had, so it's up to
+you whether you want to tidy this up or just add a comment so it doesn't
+look like there's a typo.
+
+Steve
+
+> +	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
+> +};
+> +
+>  static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
+>  static const char * const mediatek_mt8192_pm_domains[] = { "core0", "core1", "core2",
+>  							   "core3", "core4" };
+> @@ -808,6 +816,7 @@ static const struct of_device_id dt_match[] = {
+>  	{ .compatible = "mediatek,mt8183-mali", .data = &mediatek_mt8183_data },
+>  	{ .compatible = "mediatek,mt8183b-mali", .data = &mediatek_mt8183_b_data },
+>  	{ .compatible = "mediatek,mt8186-mali", .data = &mediatek_mt8186_data },
+> +	{ .compatible = "mediatek,mt8188-mali", .data = &mediatek_mt8188_data },
+>  	{ .compatible = "mediatek,mt8192-mali", .data = &mediatek_mt8192_data },
+>  	{}
+>  };
 
 
