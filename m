@@ -1,85 +1,48 @@
-Return-Path: <linux-kernel+bounces-202138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616998FC84A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A038FC83F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1421B27E99
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A23391F26A00
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA19B18FDC3;
-	Wed,  5 Jun 2024 09:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VA6gr2ph"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FF1372;
-	Wed,  5 Jun 2024 09:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38EB18FC7A;
+	Wed,  5 Jun 2024 09:46:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D150E1946CA;
+	Wed,  5 Jun 2024 09:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580652; cv=none; b=iwgtKGXf2+hZW3V/y0PsZdQrLbSmwLDwmtNKQNlMbFhGo2jcQYMO7fjRtc2uEXClkvaxxoDnajAd777xId7PVIo/SojBP+y6o4qji7uhxfdjU1ckq74w3KSR7TTYJan6AvaV5f0OvkG7Hg+JBwnbzuN2B+Z/dIrBFX8mRPPKeiA=
+	t=1717580760; cv=none; b=nQ9AJ5UDbo8uuPdi/AUZlAsdnckCKv3PrBvQCi5arwBgYOtVr+D1vjYsIukeqvr4UdZus8cVJO0iqAyV3WLaSIkg9GzGwPJJEY4q6YRMQeqrSC/tooXnh+P4HTGi5ScTKv6nx/fawyuLLxQ0jK6HtJsXvN14MFvh3giYzjtDmM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580652; c=relaxed/simple;
-	bh=7Bgdx7IqaGbveO1omriWFiC4m25biWloVy12Zy4BeMk=;
+	s=arc-20240116; t=1717580760; c=relaxed/simple;
+	bh=HRhwsCwZJMDT/pJ0buxmvyRoZ6tgXbl42wDlzIPXQGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JLKFKvtvmGrcZb8iXSDgacZLfl6bmba2JgMVzlwWpwzuSng6yHjmClkZ8N09ul+GEkjR3Dqm39UIdbdGJ+t52H3+TNv4COq83qTdNFsfNkDUnJiNF7OAyGdR62AuHIuUJlnMSUJodBrmRQPUZHL/wrFLMee/R8ottOKGxTheGfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VA6gr2ph; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d1fd55081fso1022033b6e.2;
-        Wed, 05 Jun 2024 02:44:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717580650; x=1718185450; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gK79F04gd642egsqzJF+CSBzAbwsHZYo+7RIWwdUwAQ=;
-        b=VA6gr2phDmbvpK1IXArZf4NbVn5TVc55GMSQvUyBcInQIolkpPUKREGENVXEZHeD2/
-         n+hDLZOiX3n3c6cijofdTBGTvn2B7r7NfJIk/KMqiXATIwTsnwxVjyuvobHoblP9Z4+T
-         Hx/fhrkT74msDLO0tcU9LTHxT3FguylOhjR3JcysXxC4eVx0pWIhTE6k2tsDzmo0k5X0
-         Oc9501RhkA3zSdOLStVQztoiraNyPPdooXAoRF8c7rjU/9wQZMRX3erMHHexVokPkk7S
-         T7u4xFuOiC/Vnyr+lwjtZ/B/FcX5ARMTCEUYh9EvQuWFMlkrbtwrmaFmstyaRhC9gYoi
-         hktA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717580650; x=1718185450;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gK79F04gd642egsqzJF+CSBzAbwsHZYo+7RIWwdUwAQ=;
-        b=cSOm9iuP/tZseJtUXnIbAE+kT9OOgwUya/EpdzIwP/V04YO28mLQf10YPunayG3o8a
-         m5VsRYsx2Bpkhl/gVtDBj796XEgq2i+fRkm4Sj4OUW4tuToz1TZiYlC2KGWZb7xJsZKa
-         w0GpIlr/GUYA5XyNrOeJUn+4nWz1ZRX4jRROP5r72x2t7n6LS/TMr9Rox8//UP5VEjrr
-         DPHFiDa08UgTh9slvdvPflePucWzJ6AutSEfV7std8Ffafdwx3+/A9XpLZ0nK/RhbH5A
-         Bb1btZEh/DDkOSiwQRovENGabwzuKLpSrr4FlV3WxzzAQcHMTXYVhH6zkA0hlGXLWkXF
-         drOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnKdjMYzpIuvOi04TJFUIOK4sikse/+yPp1APTjXUvcR05zkl/wlY5OUoKJ+NEhQ2K+Xt30WYUqsUsZPjpXBnqJo3P6P1xwjvucXwED9/vVt7nos325Nw+0yVvnJIjwH0w7QsHrdqO3Imkt+HccYvx1zoCNDHaWPZnDshtGbrlmT3jPMzSTN35judSMkI/gDW66xtzyLHSIkysGmNx
-X-Gm-Message-State: AOJu0YxIKQHBpJtC0j+ANq9+kd5Vn6jeBeeItY0C+VUAAK8NKohhLgRW
-	qQohuQ6QXNOeiuoDrXYwW0KOtko+50bDrca9iOQ9xLOSnctIOf+i2oearhX2qeU=
-X-Google-Smtp-Source: AGHT+IFaaRDnVhyOvSL7Tug0T39Td77AqPRbZu5+wRY+YQIvmBZMA+HYEQdgMdCZkXmHoAHJ9hatiQ==
-X-Received: by 2002:a05:6870:5e14:b0:24c:b878:b515 with SMTP id 586e51a60fabf-2512208d4edmr2327156fac.49.1717580649622;
-        Wed, 05 Jun 2024 02:44:09 -0700 (PDT)
-Received: from Laptop-X1 ([2409:8a02:782b:80e0:aaca:87fa:f402:cc0f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242aea177sm8288566b3a.110.2024.06.05.02.44.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 02:44:09 -0700 (PDT)
-Date: Wed, 5 Jun 2024 17:44:03 +0800
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Petr Machata <petrm@nvidia.com>,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Geliang Tang <geliang@kernel.org>
-Subject: Re: [PATCH net 1/3] selftests: net: lib: support errexit with
- busywait
-Message-ID: <ZmAzY4eE9eaJ0IpE@Laptop-X1>
-References: <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-0-b3afadd368c9@kernel.org>
- <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-1-b3afadd368c9@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yosi5M8EFnHx+xZt+ATusVR8bEVeKjwxI9p5mcDPtwne9d58o9mAV5RSpbPebXDBZLGVWHnLwhQWX9vsMmRNIPhWXTHRvusmh4rlHTfmY/C6yTTimy6BWj/uyk1I6olnZ/Z7cRnLIbOFRt9v7P+SABZ5/qALwnSIkLStNVMGaS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F951DA7;
+	Wed,  5 Jun 2024 02:46:22 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 426913F792;
+	Wed,  5 Jun 2024 02:45:57 -0700 (PDT)
+Date: Wed, 5 Jun 2024 10:45:54 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] ftrace/selftests: Fix pid test with function graph not
+ showing pids
+Message-ID: <ZmAz0uEKV_9ijfSF@J2N7QTR9R3>
+References: <20240604152550.0c01d7cd@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,46 +51,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240605-upstream-net-20240605-selftests-net-lib-fixes-v1-1-b3afadd368c9@kernel.org>
+In-Reply-To: <20240604152550.0c01d7cd@gandalf.local.home>
 
-On Wed, Jun 05, 2024 at 11:21:16AM +0200, Matthieu Baerts (NGI0) wrote:
-> If errexit is enabled ('set -e'), loopy_wait -- or busywait and others
-> using it -- will stop after the first failure.
+On Tue, Jun 04, 2024 at 03:25:50PM -0400, Steven Rostedt wrote:
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 > 
-> Note that if the returned status of loopy_wait is checked, and even if
-> errexit is enabled, Bash will not stop at the first error.
+> The pid filtering test will set the pid filters and make sure that both
+> function and function_graph tracing honors the filters. But the
+> function_graph tracer test was failing because the PID was not being
+> filtered properly. That's because the funcgraph-proc option wasn't getting
+> set. Without that option the PID is not shown.
 > 
-> Fixes: 25ae948b4478 ("selftests/net: add lib.sh")
+> Instead we get:
+> 
+> 	+ cat trace
+> 	# tracer: function_graph
+> 	#
+> 	# CPU  DURATION                  FUNCTION CALLS
+> 	# |     |   |                     |   |   |   |
+> 	 3) ! 143.685 us  |  kernel_clone();
+> 	 3) ! 127.055 us  |  kernel_clone();
+> 	 1) ! 127.170 us  |  kernel_clone();
+> 	 3) ! 126.840 us  |  kernel_clone();
+> 
+> When we should be getting:
+> 
+> 	+ cat trace
+> 	# tracer: function_graph
+> 	#
+> 	# CPU  TASK/PID         DURATION                  FUNCTION CALLS
+> 	# |     |    |           |   |                     |   |   |   |
+> 	 4)    bash-939    | # 1070.009 us |  kernel_clone();
+> 	 4)    bash-939    | # 1116.903 us |  kernel_clone();
+> 	 5)    bash-939    | ! 976.133 us  |  kernel_clone();
+> 	 5)    bash-939    | ! 954.012 us  |  kernel_clone();
+> 
+> The test looks for the pids it is filtering and will fail if it can not
+> find them. Without fungraph-proc option set, it will not be displayed and
+> the test will fail.
+> 
+> Link: https://lore.kernel.org/all/Zl9JFnzKGuUM10X2@J2N7QTR9R3/
+> 
+> Fixes: 35b944a997e2 ("selftests/ftrace: Add function_graph tracer to func-filter-pid test")
+> Reported-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Not sure if the fixes tag should be c5341bcc337c ("selftests: mlxsw: Add a
-self-test for port-default priority"), so the fixes could be backported to
-stable kernel for forwarding/lib.sh. Others looks good to me.
+Applying this makes the pid filter tests go from FAIL to PASS, so FWIW:
 
-Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
 
-> Cc: stable@vger.kernel.org
-> Acked-by: Geliang Tang <geliang@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Mark.
+
 > ---
->  tools/testing/selftests/net/lib.sh | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/tools/testing/selftests/net/lib.sh b/tools/testing/selftests/net/lib.sh
-> index edc030e81a46..a422e10d3d3a 100644
-> --- a/tools/testing/selftests/net/lib.sh
-> +++ b/tools/testing/selftests/net/lib.sh
-> @@ -67,9 +67,7 @@ loopy_wait()
->  	while true
->  	do
->  		local out
-> -		out=$("$@")
-> -		local ret=$?
-> -		if ((!ret)); then
-> +		if out=$("$@"); then
->  			echo -n "$out"
->  			return 0
->  		fi
-> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
+> index c6fc9d31a496..8dcce001881d 100644
+> --- a/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func-filter-pid.tc
+> @@ -8,6 +8,7 @@
+>  # Also test it on an instance directory
+>  
+>  do_function_fork=1
+> +do_funcgraph_proc=1
+>  
+>  if [ ! -f options/function-fork ]; then
+>      do_function_fork=0
+> @@ -28,6 +29,7 @@ fi
+>  
+>  if [ $do_funcgraph_proc -eq 1 ]; then
+>      orig_value2=`cat options/funcgraph-proc`
+> +    echo 1 > options/funcgraph-proc
+>  fi
+>  
+>  do_reset() {
 > -- 
 > 2.43.0
 > 
