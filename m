@@ -1,236 +1,180 @@
-Return-Path: <linux-kernel+bounces-202295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADD38FCADB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:48:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B648FCADD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC9F1B22D06
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3926828AB3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A2D190050;
-	Wed,  5 Jun 2024 11:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F68191462;
+	Wed,  5 Jun 2024 11:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FmSZspYq"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NyztrFS4"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2073.outbound.protection.outlook.com [40.107.92.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2973014D447
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717588095; cv=none; b=DfNYOJuOpczcnKIMSBzyNWhDyUchIHjum94ToI3vciz5tN7N5MunuL7V/jHakOQ19Es8ji4MmveJ6wOwEZ8EM0tCsmt9XE3SRQTQ4zEFe4rThdh+njEXJNS0PRrQwGp2Ru7U9yNxochk3MbGjphbBgjwAYtYXh1sDv50npOUB2s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717588095; c=relaxed/simple;
-	bh=DwmE/HJViHW0vSvn1az5xz1JgTTxQ9iyyQrMHPsDVOs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=c9llATwMMUg4nZ30PKDS80DU5NpVGniRfWYEpIdqAPxQJiO6DXLu7UX9am+kyp1ZqsE7Z2xOMzIkl+7zb25qNBdPPDjQ1fUdgzcVMZa7sT1Es4IefgvhidmTkVe8sSYblSG2QdzBMx6PPIVqT/52P7VESnre4PBlJWYu7hyBGsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FmSZspYq; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-35dc04717a1so4988050f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 04:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717588092; x=1718192892; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sq/Mg5xdkn7VG051aeSlr0cnodPM8eEq6trD79vAGKI=;
-        b=FmSZspYq6Q2dPVgdsPVC4IYUnRE6lpfP/TdYe3E4nupADPDVaBIZJr6NEoXoi5ObTS
-         DZqeb+45JeGzYgyEwq6iZYe69nV0/aIZsx3MvCc/Wvq/QRmQ4uhnBg+eAyj5t3OUC16o
-         cPtJNqwm6iQ6soyQndu0GJ+OLmw+Q3Ux4RlZ4HH0BVDwGgi4Sxp7Vjveu+N7H68uAKZu
-         OXpsyk6jEIfRCdcScb95PMTs1RUzSQACSdzOc7GGlnvtHmmHGM5+01K//JXKXXUfNhVN
-         aDLi0nFFU/vLg0QuwM2lWPO7ZFHuHHmKQVzID4PV4GQRJhs5K06HyzFsw82dmqJHxp7P
-         3NGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717588092; x=1718192892;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Sq/Mg5xdkn7VG051aeSlr0cnodPM8eEq6trD79vAGKI=;
-        b=WEuau3ybkepaDl+usqivRtTDZ3QcVBgaiLGsNvXmJjpwDdblZV63z49zxWulSMulBF
-         LxlIJzFackvllaiGiKi31BNxs2iI0atWKdoMBzGKlFMVddBOIvkZ/s1Yj0mEqA6QR0K3
-         0vdUqub3HF7Mi51rHFQldiHxm5WS/99LBeB7ETNiPKZyAQYcq86k+m88JE7j6u3cTNN9
-         2kyzEJCEptO4RW5xurqQKWYKEPktIeIURIImeD77UY4S6NqROl/h3+rlJjGEpBEtiQRE
-         tqggmZlw4AYZrWx8eQhbQpjcL0phqyb5KPDnqXx37DdKis1ANkGuXcKWzXHtUD2yCE4r
-         VzLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfif1AlM7MzY8J6s4CiwA0YT1DjEPs8fsGEyZtwnWa8+JkJVTxPGCOnrqrhs/pa04HPeAr4cTuxHrmo1bvL8+BKvINo1eG6gbcM977
-X-Gm-Message-State: AOJu0YzvNRvf+YHhxFmegZk6c8LnvK8Lya8vNiI7FjDh7oJsN3xZ+fj4
-	YeJYCpCi3W0u6mLuM1z2jY61WitdNhLLBWAmyAg1JtEwVG9aGcA6dZFqKU4DJhg=
-X-Google-Smtp-Source: AGHT+IHlR2SK96JLCdyyN00srFLb5WsC8iq/TUAeaI5Vi/UOfNYzNfpAYVSwhJmvRN6a17FGY+m4Ng==
-X-Received: by 2002:a05:6000:b84:b0:35a:dff9:73bd with SMTP id ffacd0b85a97d-35e8ef8fc97mr1926848f8f.56.1717588092369;
-        Wed, 05 Jun 2024 04:48:12 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:c7ce:7756:462d:a8bd? ([2a01:e0a:982:cbb0:c7ce:7756:462d:a8bd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04cac9asm14374570f8f.34.2024.06.05.04.48.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 04:48:11 -0700 (PDT)
-Message-ID: <5dc16b34-d638-4fab-84e1-cb7db08ad80e@linaro.org>
-Date: Wed, 5 Jun 2024 13:48:09 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C2C27459;
+	Wed,  5 Jun 2024 11:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717588153; cv=fail; b=NLDbaxvSe9IBdcFut9W0pi0IRhOMf7h5ujtTDUG29veHKOgM+FVuVdpMmbm5wv2f6W58ZdIAFS5ipv9MtT+vTT/Sc4NIs58EBTu09C2r/cuEsIwPPhwSHE6OSAvYef4O8aYwR41bHmOvbEPzg/2aRm9QkHUdk/cMXxPfe3MDQ5Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717588153; c=relaxed/simple;
+	bh=Pl7VrNg6r8jRG6Euk3BO2Gu1aJujI21dQ3wxD2mES9s=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DVVxbdx3S8xuEtpffZp+xbAvYE0tYAhBWTr4lF/23L/lACk7WM+U/pld7kc2shZ1Zms76cjKb8tIHbdqak638Yw++/9Fa6mKSptr5EIB4d1y8BL/H4c1ZRVkoq7ur/ttPyiAlcwxk22KKJk8kSlFz+a5WPllKdwvjpibZLnH+tc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NyztrFS4; arc=fail smtp.client-ip=40.107.92.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DP+K8rCun5C1/BClJCcwE5M98iQ8j2aEP16M216RCycYBVPtF1zob7jdN1NX0YJxp2oDwyl1AjbkC9xOq/xapZX0xSFDf3xGVYSmLsDwj8mqwy6XmlyZFDVJRmVAdSa/PHrwn1BQlJU1XE8BhSs+OTxwhlz82at0ElPirZm4ewnnxBfclfumphjBQpPAGKorjpG12HRUfCXlYbXwz8Vbvn2OAXcPGt1FdZp7fnr2leqT0yju9A3JGA0vUWl8Az1Q3liEIzJAdS/rN3+i/oIXtn5V20yaL0X0t8eJlRnDt9fSD/7kk59OBIvQCtjp8Z608KI2zIQRPFkaDfa3PHpAXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c/6aNdu5QBu/Ycn53szS9/KFT6NBIsdQArj1nrSV/Yg=;
+ b=jXYqhe6a+cs+89/r63rfCxk4LlmDcFF2FPQC2aDjlCEDfswDB8Zm9bVfdVoiv/4i5zhSoU0MWDz6PyRsjd7GHydVkdLLMqGCR3RzsemkSoz0Yp1fRpGUo+/pGUhw+w+z9X3JVpAuO5l9nYukyhB04DxihJbuWl4jBWhm4s4dPQPsl394CqEYFe+BeL8ajFlFI/iXXR7JoSF3WegyhALO5ylyYtXbfuL9DxG5rPtCb2L/n8cv2pynfiiNP4a4B2RX1YmxGKI7q8bva4+Iy8TVcWDb4wIbm+DVQ/Ugdf5hTRrlIiIfT3Z2ZYPM7fGvSTA5V3o4wRC1gNl+lOc8gXLugA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c/6aNdu5QBu/Ycn53szS9/KFT6NBIsdQArj1nrSV/Yg=;
+ b=NyztrFS4t86xSX7J8w+dwB2qaaoUFEA3CjVpbcjZlLu3RMLzOipoyg2mvolot0qJPvqtbsQSb7wJH5n3gYkFNts++ejVka6u7eEwArTQQktutFIKJFwwv1FPP5h9GXuqukoqceBzAK/BtUqO9pnVj1Gf/ZOBcNBbYuBrP3vh6bg=
+Received: from BLAPR03CA0082.namprd03.prod.outlook.com (2603:10b6:208:329::27)
+ by SA3PR12MB8048.namprd12.prod.outlook.com (2603:10b6:806:31e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.32; Wed, 5 Jun
+ 2024 11:49:08 +0000
+Received: from BN3PEPF0000B06B.namprd21.prod.outlook.com
+ (2603:10b6:208:329:cafe::28) by BLAPR03CA0082.outlook.office365.com
+ (2603:10b6:208:329::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31 via Frontend
+ Transport; Wed, 5 Jun 2024 11:49:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B06B.mail.protection.outlook.com (10.167.243.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.0 via Frontend Transport; Wed, 5 Jun 2024 11:49:07 +0000
+Received: from BLR-L-RBANGORI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 5 Jun
+ 2024 06:48:58 -0500
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+To: <seanjc@google.com>, <pbonzini@redhat.com>, <nikunj.dadhania@amd.com>,
+	<sraithal@amd.com>
+CC: <ravi.bangoria@amd.com>, <thomas.lendacky@amd.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <michael.roth@amd.com>,
+	<pankaj.gupta@amd.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <santosh.shukla@amd.com>
+Subject: [PATCH] KVM: SNP: Fix LBR Virtualization for SNP guest
+Date: Wed, 5 Jun 2024 11:48:10 +0000
+Message-ID: <20240605114810.1304-1-ravi.bangoria@amd.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240531044644.768-4-ravi.bangoria@amd.com>
+References: <20240531044644.768-4-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller
- driver
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Sam Ravnborg <sam@ravnborg.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
- <20240601143226.GA2003970@ravnborg.org>
- <59519381-2729-4839-9882-65a981a0c551@collabora.com>
- <20240604204110.GA84949@ravnborg.org>
- <f656c72e-fac8-4345-9b65-1031ebe81c25@collabora.com>
- <304b4602-8722-4ed0-a555-8dada573ee79@collabora.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <304b4602-8722-4ed0-a555-8dada573ee79@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06B:EE_|SA3PR12MB8048:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4138d9ad-737c-424e-c688-08dc855581b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|36860700004|1800799015|7416005|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IKsR7EzsyxHMqOrHWiCNMqqvA6DoUKj7dcJ2H/v6WkUDZsIJBtoBQ/P0qdw1?=
+ =?us-ascii?Q?ATMKCiQo05qlHiBO1pAr5yZTDcOp7f0jfReJSuqqY4nVKFzREicqPA3M6pbZ?=
+ =?us-ascii?Q?BcNaNA8jjIyLOXVEhznCINtQfzD7ywGM11yrD6oUoDYMU+KoLdkC2YVVEcND?=
+ =?us-ascii?Q?pj0o/MgGTQNxlZ2od7RQTPeA4Tq1lc18RKeplYibz5INNloDs28ObdVT6Gkh?=
+ =?us-ascii?Q?SbizDUP49ifYuScGSe1z7wN8MFqVnc3imlIYKqdXgrhcHW5O8WmkKc87Lsmo?=
+ =?us-ascii?Q?UJPrOGADGL1qsx3pOsBXYSmjkCTaK91gV9NZi3OGc9oLciwsKyus7tlQ+PVJ?=
+ =?us-ascii?Q?5J7We+z2hXIEoxlg/orZ4r4T43ihPr3CGHXTD6pbMn4MIri0GzdeSFQPgdn5?=
+ =?us-ascii?Q?FDuKZOiNzQPbgIPgSLFpidZUmhfSoR5hQwwCcjej9jw80M2Cn4LijYAQBPL4?=
+ =?us-ascii?Q?RMPXUsyT+dHBb5bjwynU/AjJTcLmr6jCh3xdbuYA5CsJKxgHQFnBWI94HgTd?=
+ =?us-ascii?Q?1GgIYPTIiiaf9yTqz8epJmQjDsGb/5lp38CHyejbMpm/Mrr3D+4X4EGscfjO?=
+ =?us-ascii?Q?Zk8qzTgIjlEW7tTdmNITRTyXo6cZ2GNlBjl2lZwo8Ddl0puLKAOI6BXiiaqC?=
+ =?us-ascii?Q?nXDxsR43bX7TmcDeI/YdW7uBL86yl1+LPjIAUVa6XCg+MowdT1Hda/3F9edb?=
+ =?us-ascii?Q?C/OgDpJ+bobxuhRRiP7JMfn1PeLtF97R72t9U31pJU+g7BnVPkigNUnVDhpg?=
+ =?us-ascii?Q?Sm6zJJWTJWtm0B1xF7V1cOnBs7PIDT8c4MO+kBh1pLcj/Y9cdrsW5goJzJl9?=
+ =?us-ascii?Q?2xtBOXo6iAWTtroOeKNpYSa7JtVlvH+6+32XCzDGbeKLJcvCNYo8FpkCxhV0?=
+ =?us-ascii?Q?oKh73SJZ6A/SdpmSEcmF4qzCEO882Gw32zXLUlDam2rx/6d/NUPIe57EjWB+?=
+ =?us-ascii?Q?ZtyGQ7xDaPnYXtmZtOMtAvXpSX8C7t2wjxPCkFMfqvN9TmMhmtcz4aZDgl1j?=
+ =?us-ascii?Q?Q43tt2JJmU3/ibZhnGnUVdTabrOT0pWKhS3ygSZHtxfLNGe/Ag7FjNEUBbDH?=
+ =?us-ascii?Q?iB3ZnR94s/4XKD4CdkNjDHIPBtkaxX8BasI6WewxAJRMLG4CHOjdjWpbcf+i?=
+ =?us-ascii?Q?HmDvR4hByFm8gpOYTmcc0SA03TCxhfy284AKHIBk4GBr+vIpExXMZYdMD5Ws?=
+ =?us-ascii?Q?UaPD8pZM7QGzGfJSyR+/kW4gVgIyXIDF7IRIxlMiUuUX+T5nxJuhHV8fX9I7?=
+ =?us-ascii?Q?eyvlV0Y2CgQufZl3Ng3Xu6W6/HOR0DEOvcZPsIa09JR/dCWYUCnNrL7uFblS?=
+ =?us-ascii?Q?tV8el5/LPD8FOyE42XvoXaBPh5QZP1jmRsT9rL+NDuP6tYvF6PRLovnXl4s+?=
+ =?us-ascii?Q?cZwlE8bKAE17wd3Cg6sYYflx8JC42sL5fQ6VaGv8fZYrqplM8w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(36860700004)(1800799015)(7416005)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 11:49:07.4161
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4138d9ad-737c-424e-c688-08dc855581b7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B06B.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8048
 
-On 05/06/2024 12:11, Cristian Ciocaltea wrote:
-> On 6/5/24 12:34 AM, Cristian Ciocaltea wrote:
->> On 6/4/24 11:41 PM, Sam Ravnborg wrote:
->>> Hi Cristian.
->>>
->>> On Tue, Jun 04, 2024 at 10:32:04PM +0300, Cristian Ciocaltea wrote:
->>>> Hi Sam,
->>>>
->>>> On 6/1/24 5:32 PM, Sam Ravnborg wrote:
->>>>> Hi Cristian,
->>>>>
->>>>> a few drive-by comments below.
->>>>>
->>>>> 	Sam
->>>>>
->>>>>
->>>>>> +
->>>>>> +static const struct drm_connector_funcs dw_hdmi_qp_connector_funcs = {
->>>>>> +	.fill_modes = drm_helper_probe_single_connector_modes,
->>>>>> +	.detect = dw_hdmi_connector_detect,
->>>>>> +	.destroy = drm_connector_cleanup,
->>>>>> +	.force = dw_hdmi_qp_connector_force,
->>>>>> +	.reset = drm_atomic_helper_connector_reset,
->>>>>> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->>>>>> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->>>>>> +};
->>>>>> +
->>>>>> +static int dw_hdmi_qp_bridge_attach(struct drm_bridge *bridge,
->>>>>> +				    enum drm_bridge_attach_flags flags)
->>>>>> +{
->>>>>> +	struct dw_hdmi *hdmi = bridge->driver_private;
->>>>>> +
->>>>>> +	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
->>>>>> +		return drm_bridge_attach(bridge->encoder, hdmi->next_bridge,
->>>>>> +					 bridge, flags);
->>>>>> +
->>>>>> +	return dw_hdmi_connector_create(hdmi, &dw_hdmi_qp_connector_funcs);
->>>>>> +}
->>>>>
->>>>> Are there any users left that requires the display driver to create the
->>>>> connector?
->>>>> In other words - could this driver fail if DRM_BRIDGE_ATTACH_NO_CONNECTOR
->>>>> is not passed and drop dw_hdmi_connector_create()?
->>>>>
->>>>> I did not try to verify this - just a naive question.
->>>>
->>>> I've just tested this and it doesn't work - dw_hdmi_connector_create()
->>>> is still needed.
->>>
->>> Hmm, seems the display driver or some other bridge driver fails to
->>> support "DRM_BRIDGE_ATTACH_NO_CONNECTOR".
->>> what other drivers are involved?
->>
->> Could it be related to the glue driver (updated in the next patch) which
->> is also responsible for setting up the encoder?
->>
->>> Note that my comments here should be seen as potential future
->>> improvements, and do not block the patch from being used.
->>
->> Thanks for the heads up! Will try to get back to this soon and investigate.
->   
-> IIUC, modern bridges should not create the connector but rely on display
-> drivers to take care of, which in this case is the VOP2 driver. However,
-> it also handles some of the older SoCs relying on the non-QP variant of
-> DW HDMI IP. Hence the existing dw-hdmi driver would be also impacted in
-> order to come up with a proper solution.
-> 
-> A quick check shows there are several users of this IP:
-> 
-> $ git grep -E '= dw_hdmi_(bind|probe)\('
-> drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c:    hdmi->dw_hdmi = dw_hdmi_probe(pdev, plat_data);
-> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:      hdmi = dw_hdmi_probe(pdev, plat_data);
-> drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c:        hdmi->hdmi = dw_hdmi_probe(pdev, match->data);
-> drivers/gpu/drm/ingenic/ingenic-dw-hdmi.c:      hdmi = dw_hdmi_probe(pdev, &ingenic_dw_hdmi_plat_data);
-> drivers/gpu/drm/meson/meson_dw_hdmi.c:  meson_dw_hdmi->hdmi = dw_hdmi_probe(pdev, &meson_dw_hdmi->dw_plat_data);
-> drivers/gpu/drm/renesas/rcar-du/rcar_dw_hdmi.c: hdmi = dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
-> drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:            hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
-> drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c:  hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
-> 
-> I didn't check which display drivers would be involved, I'd guess there
-> are quite a few of them as well. So it seems this ends up being a pretty
-> complex task.
+SEV-ES and thus SNP guest mandates LBR Virtualization to be _always_ ON.
+Although commit b7e4be0a224f ("KVM: SEV-ES: Delegate LBR virtualization
+to the processor") did the correct change for SEV-ES guests, it missed
+the SNP. Fix it.
 
-If this would be a brand new driver, then it should only support DRM_BRIDGE_ATTACH_NO_CONNECTOR,
-so you should not create a connector from the driver.
+Reported-by: Srikanth Aithal <sraithal@amd.com>
+Fixes: b7e4be0a224f ("KVM: SEV-ES: Delegate LBR virtualization to the processor")
+Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+---
+- SNP support was not present while I prepared the original patches and
+  that lead to this confusion. Sorry about that.
 
-The fact dw-hdmi accepts an attach without the flag is for legacy purpose
-since some DRM drivers haven't switched to DRM_BRIDGE_ATTACH_NO_CONNECTOR yes,
-but it's a requirement for new bridges so at some point you'll need to make
-sure the rockchip glue and drm driver supports DRM_BRIDGE_ATTACH_NO_CONNECTOR.
+ arch/x86/kvm/svm/sev.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-This will greatly simplify the driver!
-
-Neil
-
-> 
-> Cristian
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 7d401f8a3001..57291525e084 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -2395,6 +2395,14 @@ static int snp_launch_update_vmsa(struct kvm *kvm, struct kvm_sev_cmd *argp)
+ 		}
+ 
+ 		svm->vcpu.arch.guest_state_protected = true;
++		/*
++		 * SEV-ES (and thus SNP) guest mandates LBR Virtualization to
++		 * be _always_ ON. Enable it only after setting
++		 * guest_state_protected because KVM_SET_MSRS allows dynamic
++		 * toggling of LBRV (for performance reason) on write access to
++		 * MSR_IA32_DEBUGCTLMSR when guest_state_protected is not set.
++		 */
++		svm_enable_lbrv(vcpu);
+ 	}
+ 
+ 	return 0;
+-- 
+2.45.1
 
 
