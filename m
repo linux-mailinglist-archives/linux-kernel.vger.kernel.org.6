@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-203067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8B08FD5E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:39:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84ADB8FD5E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58BF328339F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:39:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6916D1C23D7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F513A898;
-	Wed,  5 Jun 2024 18:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="siRgdmpA"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F7B19D8B8;
-	Wed,  5 Jun 2024 18:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01EA13A87E;
+	Wed,  5 Jun 2024 18:40:08 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 543B95C96
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 18:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717612786; cv=none; b=RkYf7+AGS5FwpUrlQhjC2Kp3X7L8JYHfyxLYKsSlWIY7kAVRM6PXNoEFFQPdQQ9bC46d03XNpJgQgOgJz52CwB12V5eOtvG6LvVInX3sZIXGp8d3vc0ZgBwC0+ck5IkByB6ALbXgxMBGnwC1C28i7PxvRMsGkXn4C43FV9XCgSI=
+	t=1717612808; cv=none; b=lcWVfQj8vBcAY6pTR8+jfciT1H6NsU4BSz+jX58r5khMTTRQ8ArHAXSkt6q7D3/mgJk+d7CqGpkh+u542Vv/4rX3ooI2NsOTpD31aty/wjyVQNISc0HvvbymveslG8NOdQFVj5brMx9YJaSGJCXOKa7qmpk/b74OD0Ia5ZtotT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717612786; c=relaxed/simple;
-	bh=ll7BJXBgyzFfVEbUvstry2CP0ImNl+s6mup20BRuXyU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=so8WHsAskyIQziTeYYdXhcClgF948fnbsSZgig9DfPyMbanRC7WybBrNnv7vg2DgXBQvBrpR/4RzWKjyzXN8hKqILbV//JZ+MIhUfZ05h5bNlKOGdSAP2qHqq3BqI36B4U5hvh5hvn3vDc5ivDIdT5gmnLVeJT3rwiPTqcDEM/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=siRgdmpA; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=y/VdjsL4ukypdzxZWoyFIbTeiY0cZ0qqJTSU7aQD81I=;
-	t=1717612784; x=1718822384; b=siRgdmpAjcjnZydxxmYuvGqTuioP5MknYzvFcCYy2cFcRfK
-	V7nTjzHkyrP+DUF70Tt1dGAnNwh11KdrYsL6GFkBTxvljTjmfD64g5R27IAsR3nLPyNa4gFY48vxb
-	gXGpEYUQTxVv6HVgMGLHO8bNWaM8wTa2SQ5iVhvp8CEIZtulTb7aVhGTqQLhjTqBQ8i8OkJnI+poR
-	60jWi2/hsrSx9XLLVE17Gwj5PVnOHY9g6Ka65+jPKXnhsOPclEJunwVkxHCnGXZaiYQBAfflfx4MY
-	hpsUCLjyDmwRGHTiHZSYaWw63CyMUyiUnmeO9QQh2K0gkLXoKV54rpiR4g/1Af6w==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sEvXw-0000000EuRA-3zzb;
-	Wed, 05 Jun 2024 20:39:41 +0200
-Message-ID: <00555ae56b4193f47d32550440829d1c542534f6.camel@sipsolutions.net>
-Subject: Re: [RESEND PATCH v2] iwlwifi: mvm: adding check if the thermal
- firmware is running
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>, 
- miriam.rachel.korenblit@intel.com, kvalo@kernel.org,
- rafael.j.wysocki@intel.com,  daniel.lezcano@linaro.org, dmantipov@yandex.ru
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 05 Jun 2024 20:39:39 +0200
-In-Reply-To: <20240605183710.66016-1-trintaeoitogc@gmail.com>
-References: <20240605183710.66016-1-trintaeoitogc@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1717612808; c=relaxed/simple;
+	bh=0jI3CUuP5puOjAYBI9zzxgoVgLBurSEEXQshgD7sXEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UBZpb+VrXzlOlRliQ2uVZ96H6gMjp11lb0qSXgrbjWKcCuA0dNSPWb9pugg/ZlYXDORa4BmjLpLl/SNT+UsuVFkjjbISZiSsw+4cRH+m47zdV4B+uAnCPhIT1kb8QZFb+9DVFc3Awx2rmHY4kqr2h8efdeDWeLykcb5MYorxu5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 205382 invoked by uid 1000); 5 Jun 2024 14:40:05 -0400
+Date: Wed, 5 Jun 2024 14:40:05 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Andrea Parri <parri.andrea@gmail.com>, will@kernel.org,
+  peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+  dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+  akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+  linux-kernel@vger.kernel.org, hernan.poncedeleon@huaweicloud.com,
+  jonas.oberhauser@huaweicloud.com
+Subject: Re: New locking test for the paulmckrcu/litmus github archive
+Message-ID: <1d175b42-84b4-4a48-b1fb-ab6fd3566f75@rowland.harvard.edu>
+References: <a8c06694-098d-4b95-845c-96b40cd3ff2d@rowland.harvard.edu>
+ <df851df5-0e3a-45b1-ae85-9625309766b0@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df851df5-0e3a-45b1-ae85-9625309766b0@paulmck-laptop>
 
-On Wed, 2024-06-05 at 15:37 -0300, Guilherme Giacomo Simoes wrote:
-> In the dmesg is showing the message "failed to read out thermal zone"
-> as if the temperature read is failed by don't find the thermal zone.
->=20
-> After researching and debugging, I see that this specific error is
-> occurrenced because the thermal try read the temperature when is started,
-> but the firmware is not running yet.
->=20
-> For more legibiliti i change the tt.c for return EAGAIN when this was occ=
-urrence.
-> After this change, in my computer I compile and install kernel in /boot
-> and in my dmesg the message "failed to read out thermal zone" is not show
-> any more.
->=20
-> I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> an=
-d
-> Kalle Valo <kvalo@kernel.org> for your suggestions in my first patch.
->=20
-> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-> ---
->  drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wi=
-reless/intel/iwlwifi/mvm/tt.c
-> index 8083c4b2ab6b..68ab9966330c 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> @@ -620,8 +620,14 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zon=
-e_device *device,
-> =20
->  	mutex_lock(&mvm->mutex);
-> =20
-> -	if (!iwl_mvm_firmware_running(mvm) ||
-> -	    mvm->fwrt.cur_fw_img !=3D IWL_UCODE_REGULAR) {
-> +	const int res =3D iwl_mvm_firmware_running(mvm);
+On Wed, Jun 05, 2024 at 11:25:11AM -0700, Paul E. McKenney wrote:
+> Thank you both!
+> 
+> I queued and pushed the following commit, please let me know if it
+> needs adjustment.
+> 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit fb65813a7a181cd86c50bb03f9df1f6a398fa22b
+> Author: Alan Stern <stern@rowland.harvard.edu>
+> Date:   Wed Jun 5 11:20:47 2024 -0700
+> 
+>     manual/locked: Add single-threaded spin_is_locked() test
+>     
+>     This new litmus test demonstrates a bug in the current LKMM lock.cat file.
+>     This bug results in the following output:
+>     
+>             Test CoWWW+sil-lock-sil-unlock-sil Allowed
+>             States 0
+>             No
+>             Witnesses
+>             Positive: 0 Negative: 0
+>             Condition exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
+>             Observation CoWWW+sil-lock-sil-unlock-sil Never 0 0
+>             Time CoWWW+sil-lock-sil-unlock-sil 0.01
+>             Hash=cf12d53b4d1afec2e46bf9886af219c8
+>     
+>     This is consistent with a deadlock.  After the fix, there should be one
+>     execution that matches the "exists" clause, hence an "Always" result.
 
-const is useless, but you should not have variable declarations in the
-middle of the function (per kernel convention)
+The part about being consistent with a deadlock is not very important; 
+I'd omit it.  Also, the second sentence is ambiguous; change it to:
 
-johannes
+	After the fix, there should be one execution that matches the 
+	"exists" clause and no executions that don't match, hence an 
+	"Always" result.
 
+> diff --git a/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus b/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus
+> new file mode 100644
+> index 00000000..cee5abf4
+> --- /dev/null
+> +++ b/manual/locked/CoWWW+sil-lock-sil-unlock-sil.litmus
+> @@ -0,0 +1,24 @@
+> +C CoWWW+sil-lock-sil-unlock-sil.litmus
+
+Where does the "CoWWW" part of the name come from?  If it refers to 
+coherence order and three writes, I'll point out that the litmus test 
+contains only two writes -- which would better be described as a lock 
+and an unlock.  (Or are you counting the "write" that sets the lock's 
+initial value?)
+
+> +
+> +(*
+> + * Result: Always
+> + *
+> + * This tests the memory model's implementation of spin_is_locked().
+> + *)
+> +
+> +{}
+> +
+> +P0(spinlock_t *x)
+> +{
+> +        int r0;
+
+Oops!  Apparently I managed not to convert the spaces on that line to a 
+tab.  Can you take care of that?
+
+Alan
+
+> +	int r1;
+> +	int r2;
+> +
+> +	r0 = spin_is_locked(x);
+> +	spin_lock(x);
+> +	r1 = spin_is_locked(x);
+> +	spin_unlock(x);
+> +	r2 = spin_is_locked(x);
+> +}
+> +
+> +exists (0:r0=0 /\ 0:r1=1 /\ 0:r2=0)
 
