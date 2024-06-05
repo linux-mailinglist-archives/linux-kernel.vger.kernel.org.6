@@ -1,190 +1,182 @@
-Return-Path: <linux-kernel+bounces-201655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9208FC169
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:49:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974EC8FC16D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 03:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39695B26026
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1031F22BD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 01:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850CA56470;
-	Wed,  5 Jun 2024 01:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TPEuragX"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8127F1EA90
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 01:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5CE5380F;
+	Wed,  5 Jun 2024 01:50:34 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2786963D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 01:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717552181; cv=none; b=Nmq7Tl3dwoiVm4KaJXlnFVr0TjY/nDXnwkMbMd+ZZCJ+vOPOWZHGH469bh5XQzQZUKReZHR69Rlb67o2rHLVk91jtJvxUXgQDmuBdBM08iGf8bkj8W0hyBEMGMwQdCt765ZSdF8fsIcbenxpT7VOdKNRlo5HoWAhu3IZdtbc91c=
+	t=1717552234; cv=none; b=hm6Ii4Sro8XYwYNMEkenDksPu6/7xDK3hgxGHJQRWwhGnd+XyY1m1Jb/pnbW0kQ8xlf/NjzfUJIjxmW6MriNazKi8mZY/jHG5o9Mhj8Nwdbl9GF3X/Ncmy+UmLoaL8OXW8nVa+0y2fY5blBCRGtIetcm1r6WNUbgqPe/x83vaSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717552181; c=relaxed/simple;
-	bh=54xGD9mwhdTUfJvhlirOvqh8dGVz6PFWwFl4GPdlsSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=IoiPj9pzKr5xPkzS53kOAiQZn/gA4t0qU7bX60VTcQj/Hi8E72dlYhx8ypDPudF+glLurVyV4z4dNDIdN3/I7xwpXfBfmXmgwGqoHrn3UtzeihYrr4K3Xj4anJMaedzPTQN9bvt4nhUihCMzFm1aK4J04wk8bW1VyVhI4pGGjbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TPEuragX; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240605014937epoutp0320363452d45d69f81af161dc42de154a~V_JsFgVdB0587905879epoutp03j
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 01:49:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240605014937epoutp0320363452d45d69f81af161dc42de154a~V_JsFgVdB0587905879epoutp03j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717552177;
-	bh=F5s/37u811Q469zE6i98obPqxxD2mwwdYws0s56w6D4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TPEuragX9kWStU3D4c85z2qDNv2rdnUStKqfRm6gt9qUd77R1DzgcIwx33dVbdCzS
-	 o8M/JVlthRBz6k8ntdS5sKGQbA6rynFzz85wgzYzxFx3MnwVtPecDJIXjC7vp+js3G
-	 ZDbbrWCulbAqr390omyEM1zZ868NzITsMflFGsTE=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240605014937epcas2p220b03702a6f5c1b65e5c3bb229553cb1~V_Jrh4nE12571225712epcas2p21;
-	Wed,  5 Jun 2024 01:49:37 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.98]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Vv9PX4QjZz4x9Pp; Wed,  5 Jun
-	2024 01:49:36 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FD.45.09479.034CF566; Wed,  5 Jun 2024 10:49:36 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240605014936epcas2p2aef39bb60589271af07737a1059d3d4c~V_JqwN-wm0462504625epcas2p2N;
-	Wed,  5 Jun 2024 01:49:36 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240605014936epsmtrp157818f9a5c878445047e778261e221a3~V_JqvgBl42315723157epsmtrp1Y;
-	Wed,  5 Jun 2024 01:49:36 +0000 (GMT)
-X-AuditID: b6c32a48-105fa70000002507-32-665fc4309100
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	79.1B.08336.F24CF566; Wed,  5 Jun 2024 10:49:36 +0900 (KST)
-Received: from ubuntu (unknown [10.229.95.128]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240605014935epsmtip10c11447db649ccb708543d313fa09d5c~V_JqgYdri2617126171epsmtip1d;
-	Wed,  5 Jun 2024 01:49:35 +0000 (GMT)
-Date: Wed, 5 Jun 2024 10:50:10 +0900
-From: Jung Daehwan <dh10.jung@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Mathias
-	Nyman <mathias.nyman@intel.com>, Felipe Balbi <balbi@kernel.org>, "open
- list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>, "open list:OPEN FIRMWARE
- AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 5/5] usb: host: xhci-plat: Add support for
- XHCI_WRITE_64_HI_LO_QUIRK
-Message-ID: <20240605015010.GA57120@ubuntu>
+	s=arc-20240116; t=1717552234; c=relaxed/simple;
+	bh=+/WW9mo1VUWRrsh667APns4YfcJSzJ17CdWhqAAm26w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=he1Hro2CbAit5HiPnio5rcl0SV83dFFR3rsI8JV0ccVaiyuamSsyMevfa49eyUxV+2ltLZFxupBK6Odeh1jkmNtDLu7g5r4XbMIVjj0SXrMaE7laJ/0MxozQ16lNFhsTlNIWXSmX7CFfkqJXj0Z3PxTbCdPTKhd42al5qBYEP88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d85ff70000001748-33-665fc46277e5
+Date: Wed, 5 Jun 2024 10:50:21 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com, hannes@cmpxchg.org,
+	iamjoonsoo.kim@lge.com, rientjes@google.com
+Subject: Re: [PATCH v2] mm: let kswapd work again for node that used to be
+ hopeless but may not now
+Message-ID: <20240605015021.GB75311@system.software.com>
+References: <20240604072323.10886-1-byungchul@sk.com>
+ <87bk4hcf7h.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <20240604084533.GA68919@system.software.com>
+ <8734ptccgi.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1935a30f-b4fd-4240-93f0-e2baf218223d@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmua7Bkfg0g46TShbH2p6wW6zZe47J
-	Yv6Rc6wWzYvXs1m8nHWPzeL8+Q3sFpd3zWGzWLSsldmiedMUVov/e3awW6xacIDdgdtj8Z6X
-	TB6bVnWyeeyfu4bdY8v+z4wenzfJBbBGZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoa
-	WlqYKynkJeam2iq5+AToumXmAJ2mpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkw
-	L9ArTswtLs1L18tLLbEyNDAwMgUqTMjOONY3lb2gnadiy7QmlgbGV5xdjBwcEgImEn9+Sncx
-	cnEICexglJjxcj47hPOJUeJ68zc2COcbo8Tqj1fYYTpuTdOBiO9llNg1+T4rhPOEUWLzj3OM
-	XYycHCwCKhIfj4E0cHKwCWhJ3PtxghnEFhHQlLj+9ztYA7PAHWaJSetOsIEkhAViJT7emQlW
-	xCugLfF0w0tWCFtQ4uTMJywgNqeAncTUht1sIFeIAi14dbAeJCwhMJNDYv0SSQjbReL5mY9M
-	ELawxKvjW9ghbCmJl/1tUHaxxK3nz5hBbpAQaGGUWPGqhRkiYSwx61k72APMAhkST+7NZ4L4
-	WFniyC0WiDCfRMfhv9CA4JXoaBOC6FSWmH55AiuELSlx8PU5qIkeEpeuz4YG4nZmiVsnl7BP
-	YJSfheSzWUi2Qdg6Egt2f2KbBbSCWUBaYvk/DghTU2L9Lv0FjKyrGMVSC4pz01OLjQpM4HGd
-	nJ+7iRGcaLU8djDOfvtB7xAjEwfjIUYJDmYlEV6/4vg0Id6UxMqq1KL8+KLSnNTiQ4ymwHia
-	yCwlmpwPTPV5JfGGJpYGJmZmhuZGpgbmSuK891rnpggJpCeWpGanphakFsH0MXFwSjUwubma
-	SFktXeuw69zUJ/M2zf5+Z+/Vm0vEZ8U6zZBgTW6cbB33tc5LYPHBR0JvZrpkG7Dobpv9c8nH
-	SQp3lTX1n51Zzh/YuFLjA+/evK/cu9j1NSy/zK0w9l2gYPV8+XWZo5NftG9Pvrh+0wbTVacU
-	jqbL+uRs6z71w0j4jPd9lVcXbslwRp+Kvz9v2cIal3/TzF382p5NOT8nR/W2seyhl2eXN6j8
-	m/IyoznX/Ll65G/OtJspx9W92o3YmH0S816752hNuXxrDofM6Ydnz779zKV+wG7RmhUvwy71
-	3KqYLTzPQGXGs5utkhfPW15bx/b5k2e9Nt8vOftU6+cW5s/VEh3OTbvOb83rWvc0iY/X/4gS
-	S3FGoqEWc1FxIgCYDzEjPQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSnK7Bkfg0g//rGC2OtT1ht1iz9xyT
-	xfwj51gtmhevZ7N4Oesem8X58xvYLS7vmsNmsWhZK7NF86YprBb/9+xgt1i14AC7A7fH4j0v
-	mTw2repk89g/dw27x5b9nxk9Pm+SC2CN4rJJSc3JLEst0rdL4MrY+2Myc8FxzoqL93eyNDAe
-	Zu9i5OCQEDCRuDVNp4uRi0NIYDejxKnDC1i7GDmB4pISS+feYIewhSXutxxhhSh6xChx9NhP
-	NpAEi4CKxMdjV8CK2AS0JO79OMEMYosIaEpc//sdrIFZ4BGzxPQXT8AahAViJT7emQlWxCug
-	LfF0w0uoqduZJWbvWsUCkRCUODnzCZjNDDT1xr+XTCCnMgtISyz/xwES5hSwk5jasJsNJCwK
-	dMSrg/UTGAVnIWmehaR5FkLzAkbmVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwbGi
-	pbmDcfuqD3qHGJk4GA8xSnAwK4nw+hXHpwnxpiRWVqUW5ccXleakFh9ilOZgURLnFX/RmyIk
-	kJ5YkpqdmlqQWgSTZeLglGpgqnl/w7fGNSk4WfCna3niGxbHcyq+71/onzdvn74ofMPKW6ty
-	+S26WeJrvrywyudY+UNa8s8Jm1mxdqLXOsS3WdrqSWUWOQZJLvz8SEQ4Jdl/8fY5v+9XfzMS
-	WPXsfnWLjVByOsuignmBsf+CHb98ecr1xnrei7N9eat1Aqbll567qX43gz1r0Zc31e3bV8+/
-	dMH0nNFq79NyrMufnfe/X7Ao9Ge028KWM1XPYpKMr6bPzrrT4PPuNfNjX04bx/r0xwVa80T5
-	b8qt+KF7X9df8bi9YGb9nsVX51n89jli8mif3tt/b3ukVsQcrNdR6LqrHZ93SU9r5cT1muFP
-	z+oXrg1X8HFd+N/8mNaDVYJXlViKMxINtZiLihMBf3VjTQQDAAA=
-X-CMS-MailID: 20240605014936epcas2p2aef39bb60589271af07737a1059d3d4c
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----40rWTt6DAFmUrjtMexcyNm5gpMTj9FMdHa8zGfbdWx6mQz74=_4fd93_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240531060731epcas2p4f14afae9f00a7e71e6bd3863f0a51441
-References: <1717135657-120818-1-git-send-email-dh10.jung@samsung.com>
-	<CGME20240531060731epcas2p4f14afae9f00a7e71e6bd3863f0a51441@epcas2p4.samsung.com>
-	<1717135657-120818-6-git-send-email-dh10.jung@samsung.com>
-	<9c9d74c0-72a2-418a-b3c6-a0f9716c943d@kernel.org>
-	<20240603034435.GC23593@ubuntu>
-	<eb1d9734-fa19-4051-9e78-a6e72ac12662@kernel.org>
-	<20240603085111.GF23593@ubuntu>
-	<1935a30f-b4fd-4240-93f0-e2baf218223d@kernel.org>
-
-------40rWTt6DAFmUrjtMexcyNm5gpMTj9FMdHa8zGfbdWx6mQz74=_4fd93_
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <8734ptccgi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsXC9ZZnoW7Skfg0g0Wr5SzmrF/DZrF6k6/F
+	yu5mNovLu+awWdxb85/Vom3JRiaLk7Mmsziwexx+857ZY8GmUo/Fe14yeWz6NIndo+vtFSaP
+	EzN+s3h83iQXwB7FZZOSmpNZllqkb5fAlfHpZjdzQa9KRfuKC8wNjEtkuhg5OSQETCQunX7F
+	2sXIAWZ/nOgEEmYRUJG4+GMRE4jNJqAucePGT2YQW0RAQ+LTwuXsXYxcHMwCaxkljlxtAesV
+	FkiVOL49AKSGV8BC4u6fy6wgNUICZxglehvWM0EkBCVOznzCAmIzC2hJ3Pj3kgmkl1lAWmL5
+	Pw6QMKeAnUTvovuMILaogLLEgW3HmUDmSAgcYJP42fmSBeJmSYmDK26wTGAUmIVk7CwkY2ch
+	jF3AyLyKUSgzryw3MTPHRC+jMi+zQi85P3cTIzDUl9X+id7B+OlC8CFGAQ5GJR7eHb/i0oRY
+	E8uKK3MPMUpwMCuJ8PoVx6cJ8aYkVlalFuXHF5XmpBYfYpTmYFES5zX6Vp4iJJCeWJKanZpa
+	kFoEk2Xi4JRqYLSf+HVKXWucWu72S4axYu/eROhN/jqJ+Xrm0UMGE41Ts7TPRL9SXcKtccRf
+	bQ+rObP19n8bZkre0/Zeve9OddmNu+5X+jTe9RoGcnKffFG7Tm2ZZtCxNWWvHL/5KRes87m0
+	auuU/dGF31mlXnHlbm5Zq6t0aK5CyvXHtVuPWF00OXn00esrzVlKLMUZiYZazEXFiQBD4Uny
+	cQIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsXC5WfdrJt0JD7N4EiHsMWc9WvYLFZv8rVY
+	2d3MZnF47klWi8u75rBZ3Fvzn9WibclGJouTsyazOHB4HH7zntljwaZSj8V7XjJ5bPo0id2j
+	6+0VJo8TM36zeCx+8YHJ4/MmuQCOKC6blNSczLLUIn27BK6MTze7mQt6VSraV1xgbmBcItPF
+	yMEhIWAi8XGiUxcjJweLgIrExR+LmEBsNgF1iRs3fjKD2CICGhKfFi5n72Lk4mAWWMsoceRq
+	CytIr7BAqsTx7QEgNbwCFhJ3/1xmBakREjjDKNHbsJ4JIiEocXLmExYQm1lAS+LGv5dMIL3M
+	AtISy/9xgIQ5BewkehfdZwSxRQWUJQ5sO840gZF3FpLuWUi6ZyF0L2BkXsUokplXlpuYmWOq
+	V5ydUZmXWaGXnJ+7iREYuMtq/0zcwfjlsvshRgEORiUe3h2/4tKEWBPLiitzDzFKcDArifD6
+	FcenCfGmJFZWpRblxxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgskycXBKNTDe8QvY
+	4TPl75OMkwuPCDYU2P2eLCR0eDKv6ssjn+Or3cOitbWWBP0pn/zp/o5H7G5TbcIPn7YvcSv1
+	TGxbvbhS7MIDkR/Kn7emaUxbaCvnU1s6/XjZF+PLB1R4HHQfzzvWvEOVX3h+5VuZPP/VqxJu
+	sSnqOmkYsot3bjsWE9Vi91n58BO2fgUlluKMREMt5qLiRABdMdU8WAIAAA==
+X-CFilter-Loop: Reflected
 
-On Tue, Jun 04, 2024 at 08:20:44AM +0200, Krzysztof Kozlowski wrote:
-> On 03/06/2024 10:51, Jung Daehwan wrote:
-> >>>>>  
-> >>>>> +		if (device_property_read_bool(tmpdev, "write-64-hi-lo-quirk"))
-> >>>>> +			xhci->quirks |= XHCI_WRITE_64_HI_LO;
-> >>>>
-> >>>> Where is any user of this property (DTS)? Just to clarify: your
-> >>>> downstream does not matter really.
-> >>>>
-> >>>
-> >>> This is set by dwc3 parent node by software node.
-> >>>
-> >>> [PATCH v2 1/5] dt-bindings: usb: snps,dwc3: Add 'snps,xhci-write-64-hi-lo-quirk' quirk
-> >>> https://lore.kernel.org/r/1717135657-120818-2-git-send-email-dh10.jung@samsung.com/
-> >>
-> >> This is not a patch to DTS.
-> >>
-> >>
-> > 
-> > This is set by software node from dwc3. That's why I think this patch doesn't
-> > need DTS patch. I would add DTS patch in dwc3 not xhci if it's needed.
-> > 
+On Tue, Jun 04, 2024 at 04:57:17PM +0800, Huang, Ying wrote:
+> Byungchul Park <byungchul@sk.com> writes:
 > 
-> What?
+> > On Tue, Jun 04, 2024 at 03:57:54PM +0800, Huang, Ying wrote:
+> >> Byungchul Park <byungchul@sk.com> writes:
+> >> 
+> >> > Changes from v1:
+> >> > 	1. Don't allow to resume kswapd if the system is under memory
+> >> > 	   pressure that might affect direct reclaim by any chance, like
+> >> > 	   if NR_FREE_PAGES is less than (low wmark + min wmark)/2.
+> >> >
+> >> > --->8---
+> >> > From 6c73fc16b75907f5da9e6b33aff86bf7d7c9dd64 Mon Sep 17 00:00:00 2001
+> >> > From: Byungchul Park <byungchul@sk.com>
+> >> > Date: Tue, 4 Jun 2024 15:27:56 +0900
+> >> > Subject: [PATCH v2] mm: let kswapd work again for node that used to be hopeless but may not now
+> >> >
+> >> > A system should run with kswapd running in background when under memory
+> >> > pressure, such as when the available memory level is below the low water
+> >> > mark and there are reclaimable folios.
+> >> >
+> >> > However, the current code let the system run with kswapd stopped if
+> >> > kswapd has been stopped due to more than MAX_RECLAIM_RETRIES failures
+> >> > until direct reclaim will do for that, even if there are reclaimable
+> >> > folios that can be reclaimed by kswapd.  This case was observed in the
+> >> > following scenario:
+> >> >
+> >> >    CONFIG_NUMA_BALANCING enabled
+> >> >    sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
+> >> >    numa node0 (500GB local DRAM, 128 CPUs)
+> >> >    numa node1 (100GB CXL memory, no CPUs)
+> >> >    swap off
+> >> >
+> >> >    1) Run a workload with big anon pages e.g. mmap(200GB).
+> >> >    2) Continue adding the same workload to the system.
+> >> >    3) The anon pages are placed in node0 by promotion/demotion.
+> >> >    4) kswapd0 stops because of the unreclaimable anon pages in node0.
+> >> >    5) Kill the memory hoggers to restore the system.
+> >> >
+> >> > After restoring the system at 5), the system starts to run without
+> >> > kswapd.  Even worse, tiering mechanism is no longer able to work since
+> >> > the mechanism relies on kswapd for demotion.
+> >> 
+> >> We have run into the situation that kswapd is kept in failure state for
+> >> long in a multiple tiers system.  I think that your solution is too
+> >
+> > My solution just gives a chance for kswapd to work again even if
+> > kswapd_failures >= MAX_RECLAIM_RETRIES, if there are potential
+> > reclaimable folios.  That's it.
+> >
+> >> limited, because OOM killing may not happen, while the access pattern of
+> >
+> > I don't get this.  OOM will happen as is, through direct reclaim.
 > 
-> I asked you question which upstream SoC (link to DTS) uses it, and you
-> say that "no need for DTS patch"? That's not an answer.
+> A system that fails to reclaim via kswapd may succeed to reclaim via
+> direct reclaim, because more CPUs are used to scanning the page tables.
+
+Honestly, I don't think so with this description.
+
+The fact that the system hit MAX_RECLAIM_RETRIES means the system is
+currently hopeless unless reclaiming folios in a stronger way by *direct
+reclaim*.  The solution for this situation should not be about letting
+more CPUs particiated in reclaiming, again, *at least in this situation*.
+
+What you described here is true only in a normal state where the more
+CPUs work on reclaiming, the more reclaimable folios can be reclaimed.
+kswapd can be a helper *only* when there are kswapd-reclaimable folios.
+
+	Byungchul
+
+> In a system with NUMA balancing based page promotion and page demotion
+> enabled, page promotion will wake up kswapd, but kswapd may fail in some
+> situations.  But page promotion will no trigger direct reclaim or OOM.
 > 
-> Best regards,
-> Krzysztof
+> >> the workloads may change.  We have a preliminary and simple solution for
+> >> this as follows,
+> >> 
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=17a24a354e12d4d4675d78481b358f668d5a6866
+> >
+> > Whether tiering is involved or not, the same problem can arise if
+> > kswapd gets stopped due to kswapd_failures >= MAX_RECLAIM_RETRIES.
 > 
+> Your description is about tiering too.  Can you describe a situation
+> without tiering?
 > 
-
-I'm sorry I didn't get your point. I've been working on Exynos SoC.
-But there's no upstream user of this property yet in this patchset.
-
-Best Regards,
-Jung Daehwan
-
-------40rWTt6DAFmUrjtMexcyNm5gpMTj9FMdHa8zGfbdWx6mQz74=_4fd93_
-Content-Type: text/plain; charset="utf-8"
-
-
-------40rWTt6DAFmUrjtMexcyNm5gpMTj9FMdHa8zGfbdWx6mQz74=_4fd93_--
+> --
+> Best Regards,
+> Huang, Ying
+> 
+> > 	Byungchul
+> >
+> >> where we will try to wake up kswapd to check every 10 seconds if kswapd
+> >> is in failure state.  This is another possible solution.
+> >> 
+> >> > However, the node0 has pages newly allocated after 5), that might or
+> >> > might not be reclaimable.  Since those are potentially reclaimable, it's
+> >> > worth hopefully trying reclaim by allowing kswapd to work again.
+> >> >
+> >> 
+> >> [snip]
+> >> 
+> >> --
+> >> Best Regards,
+> >> Huang, Ying
 
