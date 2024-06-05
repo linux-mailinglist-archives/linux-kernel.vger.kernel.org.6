@@ -1,149 +1,108 @@
-Return-Path: <linux-kernel+bounces-202789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6880E8FD117
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:48:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17168FD11A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D5D7B25CBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:47:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 011F8B25D76
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1992D4594D;
-	Wed,  5 Jun 2024 14:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15361381D5;
+	Wed,  5 Jun 2024 14:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecknh+zL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="tcfuyKhV"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4173D548;
-	Wed,  5 Jun 2024 14:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4296A125BA;
+	Wed,  5 Jun 2024 14:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717598841; cv=none; b=SpoaQrH/MK6Qb4sZ1xDeaX70nwWTkFv4tTa3vvxao+jkteR23cIgSbve3aUtgR/6b4A+VITSLGpvnexTWpWlUcuAVxIZvP0ufxxRZpQsA/8j1T3Rc4/SJr9g2mu2VQ/sIkHpt10QgZ9N+zaSNdx0KzKbD6XZGAb5tDS1bJD3yEE=
+	t=1717598855; cv=none; b=fK2KJS/zGrEqHmY1xh2zP94EnBa5b5cjmdHYb2XBcSbgmFAVlFcca9/C1Y4eXw5fNoWOlt3LzgF3jL0VW1sX3s5QzbB0PW0aj0fmyXaHiAAeQBriX94o6J/fgN/dRB7yrgcH4vL8IBAvLHor5t72PKl2YU3KCs0uW8kWeTZA0Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717598841; c=relaxed/simple;
-	bh=x3iiJL5LZiRgm4rUM3UVhOCzxFTRXajLnBCXgJZ+0nQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nr3vnnBgxxLs2+pv+gGJW/IK17f+YR73wBHdpN5bRMMWvqy8/r/s4xSpw58+Rzue4r+uplrXJNxBMduXJoq7e2XC1LzNX5W7LF30eVEQAgdNIcSOYbyKwptQfa/s1bgLZ+KrRnClPXV+Ea85j/vfffikYaNj/gCTWZKsIIoGDcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecknh+zL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DA1C32781;
-	Wed,  5 Jun 2024 14:47:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717598839;
-	bh=x3iiJL5LZiRgm4rUM3UVhOCzxFTRXajLnBCXgJZ+0nQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ecknh+zLlyLrTr/OqfXddwMQFkPWOMb8At0msdLtOGHDsRGXW3Fu+wy/hCKCdm68d
-	 Md/ulMyYUlGRmBe9Ti9XbvhAvf3MMasX/npbYGOY2uQ49qPim0USXJlMLprGSSuP1m
-	 5C323yCBFmd9bBWgfZa6eqcEccBrgKM1gNByZvSFpJ0kLjuZxnnzDOqU3puSFNOThg
-	 t8jlqJmrJG6yGUox6+kQPiBbM+uQh31VFeMFv5YWKKrkhI+NcAFODGNIUkNggEF8rk
-	 jA0PusXYXBTlmIUj59xH7XHYm12VTCYyRITmPY1Xrg0kEv/gfHb0Z+iDu93q3QXx/Q
-	 6sxRMA3XKR09Q==
-Date: Wed, 5 Jun 2024 11:47:17 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
- vmlinux.h. Stop.
-Message-ID: <ZmB6dUas3ctzzDfL@x1>
-References: <ZjssGrj+abyC6mYP@gmail.com>
- <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
- <ZkG4LWr7w11wQ/PR@gmail.com>
- <CAP-5=fVHrKcqwczoU1uMD4tP5DTVhfQ1T_hXnm_y5Ji3M6K_ag@mail.gmail.com>
- <ZkJK3x3zQ9a4wp8E@gmail.com>
- <CAP-5=fUh+GoqERAF-qf8zx4kwq2uzwR2Ugop5XOkPexYGAqF3A@mail.gmail.com>
- <CAP-5=fWXDPfNqLz6DHYe9+dev_e6X5TcTe_xzOOz27yDkT7o7A@mail.gmail.com>
- <CAM9d7ch5HTr+k+_GpbMrX0HUo5BZ11byh1xq0Two7B7RQACuNw@mail.gmail.com>
- <ZmAQfJ9C5fFQdjQM@gmail.com>
- <ZmARSXB0Wqp6wMpr@gmail.com>
+	s=arc-20240116; t=1717598855; c=relaxed/simple;
+	bh=PXB2GCAHy4AXeES+/s42eyr/C+ckbgTV2vZzTuEb1/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sQOQQ99byzt1HFGOgp/u4EFkX0RhheQQz8GxDgL6c007X8ABYAHIyQpC3cMeExK7k3/ay0C4N3e1q7l9XIUTblrL0177AfdRvancAXOZPwc36gfjVnrn86zwMqBYeJhcFKkJiQOyDnkBrHVUwkIjR8abzQNGkSFrHchxp0Rk9Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=tcfuyKhV; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E87A5A0790;
+	Wed,  5 Jun 2024 16:47:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=yHugVKhDEFMDE/eZEfLI
+	Bc5qQ57hrk9iNIoSwhUNJLk=; b=tcfuyKhVcRguuQNo46SAlaD0FlIQvRDrF7ZK
+	vIFiROmjYHioynBcUn9Cfy07HvZf/457e1G/sky+RcyneEqP76d0oGDE9qjmC47/
+	Rokdx6uAahKDAjhnFPbxXyJO11FGRElI+p7UFaw1GX4rsvqTkzIVlJmGynOTn/kp
+	q6Mn4e5puJtbfcgH+N3NC1apXtbrU94OQhlGxOw4aKUf035bgdO0bYR60VwjqJuC
+	kBh9VdVCVt+RF6FJO8ObX6pwDWJqnmHcvrqmBdnE7ETp2zbD+TXXJFECrCqt4g0Q
+	BddyZyfT0Xs5JgIsGSOzKIxKmjPl3nXWv30fM4SbVgLpj29AKnGx+Gz7bRIlzEl+
+	yG7UDiyHzjD6rhOMXcOeZp6aMkCjM2hNhkBpySLcbSrqLo59oHh27C3K3O7dV4S+
+	ew/YM5ZpzyE/ad6tlY+og8qBLZlVDleSjeBA25vZrWkw1IQFTNQYicmsHxum4I3w
+	eT4fEE/zfIGZZ6VIVc+rwhJGHtGe93ujoWvBsT0Jvra/QlvJd81YQaqadcX0X3BA
+	gsaLJV3tdfiereYCQG/acn5NvfvZEj1MDnofbamKcHcqCheAAK4nV3O4kurBB8d4
+	FhTKt8Iy/BtkU9eeZFMFjHre41XVicR7anoPEn584rGcX97v+XPLldA1FcU5Lczo
+	yDzFzxk=
+Message-ID: <52b9e3f4-8dd4-4696-9a47-0dc4eb59c013@prolan.hu>
+Date: Wed, 5 Jun 2024 16:47:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmARSXB0Wqp6wMpr@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] net: include: mii: Refactor: Use BIT() for
+ ADVERTISE_* bits
+To: Vladimir Oltean <olteanv@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<trivial@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>
+References: <20240605121648.69779-1-csokas.bence@prolan.hu>
+ <20240605121648.69779-1-csokas.bence@prolan.hu>
+ <20240605121648.69779-2-csokas.bence@prolan.hu>
+ <20240605121648.69779-2-csokas.bence@prolan.hu>
+ <20240605141342.262wgddrf4xjbbeu@skbuf>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20240605141342.262wgddrf4xjbbeu@skbuf>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2945A12957627661
 
-On Wed, Jun 05, 2024 at 09:18:33AM +0200, Ingo Molnar wrote:
-> > Yeah, this appears to be doing the trick here - judging by a couple of 
-> > tries of interrupted builds:
-> > 
-> >    Tested-by: Ingo Molnar <mingo@kernel.org>
+Hi!
+
+On 6/5/24 16:13, Vladimir Oltean wrote:
+> On Wed, Jun 05, 2024 at 02:16:49PM +0200, Csókás, Bence wrote:
+>> Replace hex values with BIT() and GENMASK() for readability
+>>
+>> Cc: trivial@kernel.org
+>>
+>> Signed-off-by: "Csókás, Bence" <csokas.bence@prolan.hu>
+>> ---
 > 
-> Specifically I also tested it on a failed tree, by merging in your fix the 
-> build now progresses as expected. So this is fixed for good.
+> You can't use BIT() and GENMASK() in headers exported to user space.
+> 
+> I mean you can, but the BIT() and GENMASK() macros themselves aren't
+> exported to user space, and you would break any application which used
+> values dependent on them.
+> 
 
-Hi,
+I thought the vDSO headers (which currently hold the definition for 
+`BIT()`) *are* exported. Though `GENMASK()`, and the headers which would 
+normally include vdso/bits.h, might not be... But then again, is 
+uapi/linux/mii.h itself even exported? And if so, why aren't these 
+macros? Is there any reason _not_ to export the entire linux/bits.h?
 
-	I put this together, can I keep it so that I have it in my next
-perf-tools pull req for Linus for v6.10?
-
-Cheers,
-
-- Arnaldo
-
-From ca9680821dfec73c9100860bda4fab1f1309722e Mon Sep 17 00:00:00 2001
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 21 May 2024 10:07:40 -0700
-Subject: [PATCH 1/1] perf bpf: Fix handling of minimal vmlinux.h file when
- interrupting the build
-
-Ingo reported that he was seeing these when hitting Control+C during a
-perf tools build:
-
-  Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h. Stop.
-
-The failure happens when you don't have vmlinux.h or vmlinux with BTF.
-
-ifeq ($(VMLINUX_H),)
-  ifeq ($(VMLINUX_BTF),)
-    $(error Missing bpftool input for generating vmlinux.h)
-  endif
-endif
-
-VMLINUX_BTF can be empty if you didn't build a kernel or it doesn't have
-a BTF section and the current kernel also has no BTF.  This is totally
-ok.
-
-But VMLINUX_H should be set to the minimal version in the source tree
-(unless you overwrite it manually) when you don't pass GEN_VMLINUX_H=1
-(which requires VMLINUX_BTF should not be empty).  The problem is that
-it's defined in Makefile.config which is not included for `make clean`.
-
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Tested-by: Ingo Molnar <mingo@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Link: http://lore.kernel.org/lkml/CAM9d7ch5HTr+k+_GpbMrX0HUo5BZ11byh1xq0Two7B7RQACuNw@mail.gmail.com
-Link: http://lore.kernel.org/lkml/ZjssGrj+abyC6mYP@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Makefile.perf | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 5c35c0d89306964f..e6d56b555369581d 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -214,6 +214,7 @@ NON_CONFIG_TARGETS := clean python-clean TAGS tags cscope help
- 
- ifdef MAKECMDGOALS
- ifeq ($(filter-out $(NON_CONFIG_TARGETS),$(MAKECMDGOALS)),)
-+  VMLINUX_H=$(src-perf)/util/bpf_skel/vmlinux/vmlinux.h
-   config := 0
- endif
- endif
--- 
-2.45.1
+Bence
 
 
