@@ -1,158 +1,162 @@
-Return-Path: <linux-kernel+bounces-201776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B47A8FC306
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:27:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C758FC30B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 07:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B0D1F2176C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:27:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDEA3B2656E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 05:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A601013AD1D;
-	Wed,  5 Jun 2024 05:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F371B13AD33;
+	Wed,  5 Jun 2024 05:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bv3rD2GV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zcST5AmE"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8081A8C07;
-	Wed,  5 Jun 2024 05:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F9D135417
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 05:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717565222; cv=none; b=YgSt1LM1x+ySju6lifA9VuBWOEcoQqyQ1q4y0epFWuaE4LXeyIiCFJT5Q0qHuQmDhAIxXWQ5dIa5tJGFa2xdvWCi/r9U7Gy8lc4gG+ri71Eo3Uxg8OkI2h6hTWJ5tWwOT9W1McRz+gQc0gJcPiuk7mJ71IfT3nSBj6EH/h+Cs5k=
+	t=1717565348; cv=none; b=JPULhz0q2yPQYiV6g7EzW8A+e+vqJ50KJGG8ISdWrcNBzlsqwUIlqPBIGzPXIGwCOeM7NiAe6+7zIOWKXUkWwlA8zOwBXQNd6zWUcqzkv9A0YTV96wNguZeAbWFnwe51xWxtQA8Vg+PhKut+1dE2CRvFV69b097+wxXLcZjZwis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717565222; c=relaxed/simple;
-	bh=3RRuyKGLNOBy7i2i4R4B/Xpa4YznPKGDdEc8i6l7yhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PO6YeBG2OsSA6r8daTIuVagSGeU5CBy31wmFO5uA87qorQn9z40uaozJeaLAYHNQhevWFGkbHF8KBaEpX3H33fT20clq7s3w/B+5q34l6CHZ9Rz7UrzP6SSxB0Qu1A9fXZcoqorcrBYXv4J+Tk3C6B1qRf10RbTFmAtkRZh+KD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bv3rD2GV; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717565220; x=1749101220;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3RRuyKGLNOBy7i2i4R4B/Xpa4YznPKGDdEc8i6l7yhA=;
-  b=bv3rD2GVn8QZA/VCpAZPNkStDZ16BzajEmcMcZmJLMnuP5ZfCjEoYrSq
-   /Hw9x4wt8IZRHCeKDSXoa+QZrCD8QS0v2/tOEJ9VCYVXEc+pXSJo0e4M8
-   lclQzohWCpsrf4GKrnd5d2KJk1KX6Ah3fxDbzm9cpYuNyDTfwdyAN5Hnc
-   OK5GSrnQntNtbBH7OG/W/59mI4pr3kbh2Zut1/2dXL/OVeWAXe3r7Kw25
-   2qxRfvijKc4WjTYadYLRHVfV1anSWjqFfIwnY2UCv7aLXIImXvW3vZxmP
-   ADm3irTLNnBn9PX8POQie0iY/jm1GtvCVnH93/7vVMv8zx++vNsU0gubV
-   g==;
-X-CSE-ConnectionGUID: zCSRlhB4RQinqYLloDjw8A==
-X-CSE-MsgGUID: wKxVP2Z5TeiOF9QJdoOa8g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="13956046"
-X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
-   d="scan'208";a="13956046"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 22:26:59 -0700
-X-CSE-ConnectionGUID: sk5OLcxuTBWzciShxNLuCw==
-X-CSE-MsgGUID: JsmSPp6SSL6tLYR07zqctQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,215,1712646000"; 
-   d="scan'208";a="38038066"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.95])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2024 22:26:53 -0700
-Message-ID: <12c09d40-788d-4af1-9eb6-0f5699875d70@intel.com>
-Date: Wed, 5 Jun 2024 08:26:50 +0300
+	s=arc-20240116; t=1717565348; c=relaxed/simple;
+	bh=bo3YB9Y6PGsittK9YRMU0QTYRExtaWEzIpjtb9I71L4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+HCfGr32YNAty8b4hXHNYbUgOw5blcEDOB5uG9NSlD8tdIXtxS1i7lDunE5V779v8Ha2Gdc4BkSKfuDT5PamqODEVadT7UsGsDxyKzRJbmI+EgmXK88THIZ3FUiFpcF+ua90R8R4F73yt0zvBQNUGe9TqiYQ+nVVkyaD5BOHek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zcST5AmE; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f4a0050b9aso43435515ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 22:29:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717565345; x=1718170145; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=S4zI4U11BDZNfkZZzEZj6d9Y1BsbhzfMmQs4Vod2x5k=;
+        b=zcST5AmEC/IXWl196MaIwcTfOwbGIkY8Bvi4jAOt1C5h+zdjAN3HYubqUwFHJa1Vdo
+         HOaUXfBUAdpaz0bdWG/xyQ9ArLMalVPZ4vyCljZn1KP5yrEExzQM/9thm8QFyAuvQu8d
+         FWTo/HcBTBkxUA8gTrUE5l1TsBrWBWyUMZheQ1ghzrFUv6J3vOL8gm85qOdv9zfHQnEu
+         hCR1ew9xcLa7lWaxV8BtLymdQoXMVVO+mryAPLTCboyZi2c54tqmnf/+0FlUk0hHrVwx
+         Bj/Tn6i7CpDr7kwfpxD6XHKewO1sacK/k3U7znruFX1LHib0sWRhtEholQgKP3HOAAq6
+         EdCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717565345; x=1718170145;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S4zI4U11BDZNfkZZzEZj6d9Y1BsbhzfMmQs4Vod2x5k=;
+        b=B1DCFgSO1xfq1PDVizMpcvF1ylO8rFSw9QcnFUCzyalxuAAHXM9BhAJiZSnxuxGjn4
+         rpSEMUUBVCQFfMbvE0SuaslhsIDbBD4308Ng9NBAM6Vb8vymfGq6W6qGUuRvwSHBmu7P
+         M9GyKA8jvCdCTsPTDUtX8x3q3qsU2LlBIp3j0SvZ+jIF86iAvgrJDTr66QC8oyz4fHGn
+         kWK9XeX6yfbIuz1F3M9UjHg5MGb5QCe9uyOgDpWDelryHP3JdPdrb0j4QQpkw0i/bFIG
+         ELpogNdCKAHDbmb5QOGIt/5ggvIown+zkbovNHO9PaofMBenYwl9wkb3LJur4Ik3byTm
+         KU8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPeP3k25/YIocDdZyqb2apR++rZvTDSdyIqGVs19k0v+SzN4NtxiNaF5HrviRRSngg00JTgNaEil+P9JAIvQRy58NrD68F1R6HMj3z
+X-Gm-Message-State: AOJu0Yz+iZWj8pJ7CmKmpSerUdxHeOn+P3ixLSRY2xri9uUGy3SHdNbf
+	AB56f/BLCFjN+dKlAITlxTgddnVoz3uCelxhk6DqdwVbDCpondjhvVYf5Ef3FQ==
+X-Google-Smtp-Source: AGHT+IEzdNCJCRH7yJ0ei0sniJdJNz8MHeUqYp2pu53sf+8Bmyz5pIMjJwrHoIHAL/e8IimnYzpWvA==
+X-Received: by 2002:a17:903:182:b0:1f6:6c52:7231 with SMTP id d9443c01a7336-1f6a5a0de72mr20221205ad.20.1717565345495;
+        Tue, 04 Jun 2024 22:29:05 -0700 (PDT)
+Received: from thinkpad ([120.60.137.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6323dd9dcsm92616585ad.126.2024.06.04.22.29.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 22:29:05 -0700 (PDT)
+Date: Wed, 5 Jun 2024 10:58:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: PCI: qcom: Fix register maps items and add
+ 3.3V supply
+Message-ID: <20240605052848.GA2417@thinkpad>
+References: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/16] perf auxtrace: Allow number of queues to be
- specified
-To: James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
- suzuki.poulose@arm.com, gankulkarni@os.amperecomputing.com,
- mike.leach@linaro.org, leo.yan@linux.dev, anshuman.khandual@arm.com
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240604143030.519906-1-james.clark@arm.com>
- <20240604143030.519906-3-james.clark@arm.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240604143030.519906-3-james.clark@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240604-x1e80100-pci-bindings-fix-v1-1-f4e20251b3d0@linaro.org>
 
-On 4/06/24 17:30, James Clark wrote:
-> Currently it's only possible to initialize with the default number of
-> queues and then use auxtrace_queues__add_event() to grow the array. But
-> that's problematic if you don't have a real event to pass into that
-> function yet.
+On Tue, Jun 04, 2024 at 07:05:12PM +0300, Abel Vesa wrote:
+
+Nit: Subject should mention the SoC name
+
+> All PCIe controllers found on X1E80100 have MHI register region and
+> VDDPE supplies. Add them to the schema as well.
 > 
-> The queues hold a void *priv member to store custom state, and for
-> Coresight we want to create decoders upfront before receiving data, so
-> add a new function that allows pre-allocating queues. One reason to do
-> this is because we might need to store metadata (HW_ID events) that
-> effects other queues, but never actually receive auxtrace data on that
-> queue.
-> 
-> Signed-off-by: James Clark <james.clark@arm.com>
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+This is actually 2 patches. One adding the MHI register region for X1E80100 and
+another adding the missing 'vddpe-3v3-supply' common to other SoCs as well.
 
-Again ;-)
+- Mani
 
+> Fixes: 692eadd51698 ("dt-bindings: PCI: qcom: Document the X1E80100 PCIe Controller")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  tools/perf/util/auxtrace.c | 9 +++++++--
->  tools/perf/util/auxtrace.h | 1 +
->  2 files changed, 8 insertions(+), 2 deletions(-)
+> This patchset fixes the following warning:
+> https://lore.kernel.org/all/171751454535.785265.18156799252281879515.robh@kernel.org/
 > 
-> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-> index 3684e6009b63..563b6c4fca31 100644
-> --- a/tools/perf/util/auxtrace.c
-> +++ b/tools/perf/util/auxtrace.c
-> @@ -218,15 +218,20 @@ static struct auxtrace_queue *auxtrace_alloc_queue_array(unsigned int nr_queues)
->  	return queue_array;
->  }
+> Also fixes a MHI reg region warning that will be triggered by the following patch:
+> https://lore.kernel.org/all/20240604-x1e80100-dts-fixes-pcie6a-v2-1-0b4d8c6256e5@linaro.org/
+> ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> index 1074310a8e7a..7ceba32c4cf9 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
+> @@ -19,11 +19,10 @@ properties:
+>      const: qcom,pcie-x1e80100
 >  
-> -int auxtrace_queues__init(struct auxtrace_queues *queues)
-> +int auxtrace_queues__init_nr(struct auxtrace_queues *queues, int nr_queues)
->  {
-> -	queues->nr_queues = AUXTRACE_INIT_NR_QUEUES;
-> +	queues->nr_queues = nr_queues;
->  	queues->queue_array = auxtrace_alloc_queue_array(queues->nr_queues);
->  	if (!queues->queue_array)
->  		return -ENOMEM;
->  	return 0;
->  }
+>    reg:
+> -    minItems: 5
+> +    minItems: 6
+>      maxItems: 6
 >  
-> +int auxtrace_queues__init(struct auxtrace_queues *queues)
-> +{
-> +	return auxtrace_queues__init_nr(queues, AUXTRACE_INIT_NR_QUEUES);
-> +}
+>    reg-names:
+> -    minItems: 5
+>      items:
+>        - const: parf # Qualcomm specific registers
+>        - const: dbi # DesignWare PCIe registers
+> @@ -71,6 +70,9 @@ properties:
+>        - const: pci # PCIe core reset
+>        - const: link_down # PCIe link down reset
+>  
+> +  vddpe-3v3-supply:
+> +    description: A phandle to the PCIe endpoint power supply
 > +
->  static int auxtrace_queues__grow(struct auxtrace_queues *queues,
->  				 unsigned int new_nr_queues)
->  {
-> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-> index 55702215a82d..8a6ec9565835 100644
-> --- a/tools/perf/util/auxtrace.h
-> +++ b/tools/perf/util/auxtrace.h
-> @@ -521,6 +521,7 @@ int auxtrace_mmap__read_snapshot(struct mmap *map,
->  				 struct perf_tool *tool, process_auxtrace_t fn,
->  				 size_t snapshot_size);
+>  allOf:
+>    - $ref: qcom,pcie-common.yaml#
 >  
-> +int auxtrace_queues__init_nr(struct auxtrace_queues *queues, int nr_queues);
->  int auxtrace_queues__init(struct auxtrace_queues *queues);
->  int auxtrace_queues__add_event(struct auxtrace_queues *queues,
->  			       struct perf_session *session,
+> 
+> ---
+> base-commit: d97496ca23a2d4ee80b7302849404859d9058bcd
+> change-id: 20240604-x1e80100-pci-bindings-fix-196925d15260
+> 
+> Best regards,
+> -- 
+> Abel Vesa <abel.vesa@linaro.org>
+> 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
