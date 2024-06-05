@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-203238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD4A8FD829
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:12:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C318FD82A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4EA1C2536F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:12:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6CE1F24BEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B784D15F3FB;
-	Wed,  5 Jun 2024 21:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D71015F3E9;
+	Wed,  5 Jun 2024 21:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NKWTMt4v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h4WxDr/K"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7DA4965B;
-	Wed,  5 Jun 2024 21:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3383A4965B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 21:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621934; cv=none; b=s6xcuVDrhTnG6c+dSrGY6ree8k9HWXiNqqzqCGQC2eeoDkcptThqiEe2EWkfkkVutp2GzFDmJe0wMJucNoPdhM8El2CpLeMecirPPLoTXppdkmhbyyRyEX6kFjpOSCMHi7lH1k6vts9Uu3E+H8k+Y8SivrFb0cSY37LTAon935E=
+	t=1717621985; cv=none; b=gQmXOlYT9TxklUCcEfmxgaCWCm4SiUKJ12/vifuhaAVHLhMFrS5AWnepnhFdZE3kOCh229Fw0tBI5ef+OMWoEsPjs8ckU6JiQn2StpVDPPhxK6cGlSJmA5uhbtxb8EaWSTnWMUE0I0T7zDkT6fnQiCakrlS3DNbmvpgTha3xepo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621934; c=relaxed/simple;
-	bh=LyHLgJkRrurdDRgnBOzirT7zP/ucxLdsMEoWbv6XOwA=;
+	s=arc-20240116; t=1717621985; c=relaxed/simple;
+	bh=kVVBwhOi4Etc3xbQeGCLfgKd0zzpIISgNf/sZzDmckA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NFkREGy8WLgG6GfqJLj/sHmBm4WddFQK327KJUUryvbpjPWp09IwsvkH/+EJNlhB8F4vpZvkXSCbl9FL2FKa1Ar7e02nygdqh1vyVzd4WzJWO/oEZcXa9oty5N+Rzen1nin+DTWV4tLwC+8pcd2ILX5ZVoS1WeYPWiD9JszDeXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NKWTMt4v; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717621933; x=1749157933;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LyHLgJkRrurdDRgnBOzirT7zP/ucxLdsMEoWbv6XOwA=;
-  b=NKWTMt4vj3JNdzmZPi0A6TPh8sxLZHVDlStMxuWoDFp63nwqHcV4Dg1r
-   3xAD+eH1xfAoZWe/AJPBts5O+/kRAUeHirv6+V0Um/JyRW7BghvjPClmg
-   M6Rky2+uzv2XkOmhQqik3W1oumIoK6wgxPpGHXpQ7ccHBsKBKZWSNSOlr
-   ZgEtkGuhzQecm/LMA0sWQbFpEcuAk6ZAv1d0piVa5oCWDvZff3b6J0m72
-   Wnug9ZDVY84mElRtLjVK7Nna6dj8a16GJ73zoTGG32hs3bNY5+xB6s2xn
-   hLOp6AhT44RFM4Vo2SBYJ2JBDa/lQC6dBb7+SRdmjOA10dHqPxqGbiH/B
-   A==;
-X-CSE-ConnectionGUID: TKMCTLWqQhSG1eVwVIMXvQ==
-X-CSE-MsgGUID: w+sE6wrARZefbPxDhBEL/w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="25662944"
-X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
-   d="scan'208";a="25662944"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:12:12 -0700
-X-CSE-ConnectionGUID: M+t6oNJWSXC5g247pdi2mg==
-X-CSE-MsgGUID: TcMyoLmrRROziMe/wvpPGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
-   d="scan'208";a="37735874"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 14:12:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sExvR-0000000Dy86-3xjO;
-	Thu, 06 Jun 2024 00:12:05 +0300
-Date: Thu, 6 Jun 2024 00:12:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Thangaraj Samynathan <thangaraj.s@microchip.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Cc: Serge Semin <fancer.lancer@gmail.com>, Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	=?iso-8859-1?Q?N=EDcolas_F_=2E_R_=2E_A_=2E?= Prado <nfraprado@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1 5/8] spi: pxa2xx: Use new spi_xfer_is_dma_mapped()
- helper
-Message-ID: <ZmDUpfCfcFUWz9py@smile.fi.intel.com>
-References: <20240531194723.1761567-1-andriy.shevchenko@linux.intel.com>
- <20240531194723.1761567-6-andriy.shevchenko@linux.intel.com>
- <Zl4XphMgxEwzPCKA@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZG0bsJYabU9df2dZd8GsWmSOoiNslbnAXcNLNe1Xw32l+e9JNKJSNvvAIE8aj5YMBvYnOQhvrhBJsC6f1WXOOvMIEP80h/ywpOg2pTsi9VrqUlwwXs2U9Ixwz5YV0N9SeOCEvZt1ksN+bOhj6qHj+ZirwZTpplX+0G/dv0ulO9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h4WxDr/K; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tyPAwm3M+1wVMHk+k1F92p+/vIG4V+hj4p+c1Kn8nfU=; b=h4WxDr/KHzPoTSlsJJsCtT+cv+
+	h79QXhcGqTuYAp01kJh9fTZKQIYEFL+I5cNQ9bRz1b3jtHibJw4SfnKXczxJ5ThUoyOesgKKiueA5
+	dgIwr/11mhmHDR0Ni44oELi+1c+IJPR176OT55zYhqKzyJa0+8ZQPdjcAB9RVV2pgYkcHSTb8TAen
+	jjktNWOFeAELuaWLQZyZcdW/e1LAw7loshY2I+oxjdyuzm78flwaaTHZ0ah4OfJdPOqrmxvJuDiiu
+	SZdFc8y4eAyIy21DtfM7uzbSMprsWC05e//u737zLhd9U/2g7Hp0XDGz3P76a7PhGPNKfO59N5ptd
+	dHUWN33Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sExvS-00000004CDq-38ak;
+	Wed, 05 Jun 2024 21:12:11 +0000
+Date: Wed, 5 Jun 2024 22:12:06 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Alex Shi <seakeel@gmail.com>, alexs@kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, izik.eidus@ravellosystems.com,
+	aarcange@redhat.com, chrisw@sous-sol.org, hughd@google.com
+Subject: Re: [PATCH 02/10] mm/ksm: skip subpages of compound pages
+Message-ID: <ZmDUpryUaVraNF6m@casper.infradead.org>
+References: <20240604042454.2012091-1-alexs@kernel.org>
+ <20240604042454.2012091-3-alexs@kernel.org>
+ <Zl_g7qmXAJDy4vKu@casper.infradead.org>
+ <5bb3bbf6-6a22-449f-96f1-b9476357f284@gmail.com>
+ <8a614d01-191e-45d1-b6b6-c36ec0bd9e5a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,27 +65,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zl4XphMgxEwzPCKA@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <8a614d01-191e-45d1-b6b6-c36ec0bd9e5a@redhat.com>
 
-On Mon, Jun 03, 2024 at 10:21:11PM +0300, Andy Shevchenko wrote:
-> On Fri, May 31, 2024 at 10:42:37PM +0300, Andy Shevchenko wrote:
-> > Replace a few lines of code by calling a spi_xfer_is_dma_mapped() helper.
+On Wed, Jun 05, 2024 at 09:47:10AM +0200, David Hildenbrand wrote:
+> On 05.06.24 08:14, Alex Shi wrote:
+> > 
+> > 
+> > On 6/5/24 11:52 AM, Matthew Wilcox wrote:
+> > > On Tue, Jun 04, 2024 at 12:24:44PM +0800, alexs@kernel.org wrote:
+> > > > From: "Alex Shi (tencent)" <alexs@kernel.org>
+> > > > 
+> > > > When a folio isn't fit for KSM, the subpages are unlikely to be good,
+> > > > So let's skip the rest page checking to save some actions.
+> > > 
+> > > Why would you say that is true?  We have plenty of evidence that
+> > > userspace allocators can allocate large folios, then use only the first
+> > > few bytes, leaving many tail pages full of zeroes.
+> > 
+> > Um, that do need tail pages...
+> > Is there some way to use more folio in ksm?
 > 
-> It appears that this patch is based on the cleanup series against the driver
-> that had been sent earlier. Namely this:
-> [v2] spi: pxa2xx: Get rid of an additional layer in PCI driver
+> My take, and Willy can correct me if I am wrong:
 > 
-> https://lore.kernel.org/linux-spi/20240530151117.1130792-1-andriy.shevchenko@linux.intel.com/T/#t
+> "struct page" is not going to away any time soon, but it might shrink at
+> some point.
+> 
+> That is, we can use the "struct page" pointer to point at a page frame, and
+> use "struct folio" to lookup/manage the metadata.
 
-Okay, now it should cleanly apply to spi/for-next (and indeed, it does, I just
-checked locally).
+Right.
 
-> And as others already said, this series is pure cleanup, no need to be backported.
+> That is, use "struct page" when accessing the actual memory content
+> (checksum, testing for identical content), but use the folio part when
+> looking up metadata (folio_test_anon() etc). In the future we might want to
+> replace the "struct page" pointer by an index into the folio, but that
+> doesn't have to happen right now.
 
--- 
-With Best Regards,
-Andy Shevchenko
+My current thinking is that folio->pfn is how we know where the memory
+described by the folio is.  Using an index would be memmap[folio->pfn +
+index] which isn't terribly expensive, but we may as well pass around the
+(folio, page) pair and save the reference to memmap.
 
+> For KSM, that would mean that you have a folio+page (late folio+index) pair
+> when possibly dealing with large folios, but you can use a folio without a
+> page when dealing with KSM folios, that are always small.
 
+Yes, agreed.
 
