@@ -1,161 +1,315 @@
-Return-Path: <linux-kernel+bounces-202880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751A68FD25D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:02:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E85F8FD272
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BAD428188A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:02:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8107AB26D81
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 16:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0FA14E2FD;
-	Wed,  5 Jun 2024 16:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E49B188CA3;
+	Wed,  5 Jun 2024 16:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ovx20g2s"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YkjBcw+H"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2050.outbound.protection.outlook.com [40.107.247.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC7C39FC5;
-	Wed,  5 Jun 2024 16:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717603333; cv=none; b=N2ibU+46EZXxS1U36Aqnj8YuD8Md1ACmjZGpGcveqJxu+t2RsdOMmNrOmcVvirpm3YOqQCSPeDipY3NC9vTQU7uCIwN/8rOCujGecwzMe5Mv3loumuFd1ePQb/eGiJFF7H6Gh23fFEvzaFSHPmDDgYJN5/MXHl0gKhoteNqlcDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717603333; c=relaxed/simple;
-	bh=XsCDIQqWFIAtkoUuO/wschw4i+ZQG0aINPMpmAnYKaE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MME/iF6qg3arE7102TPcxPeJBgSEVkZfYBBM4QcF1SYjzjypvcFz/h5cglc3LDleU62ZuG/kHup0/75At5LMPRO3iq0uNl89LnV3ZahfWvUBLM3A3Fa/YAyCzVFR70K1oT9gGsWZaJYfROEFqnRbsz9BGdbJOWUWgNzRlA1sN7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ovx20g2s; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1717603327; x=1718208127; i=markus.elfring@web.de;
-	bh=vwdXzxZFphgllAmGQX7gyl/IZ9Ketxl+VMFIZDnDGDc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ovx20g2s/J9C5oKkYJvjucrfVQDP/rxhCRXM5ltGrMGV4qnSaAiBpaqFgGUtG0Th
-	 y+S5Fm8K4FYXzmfwKBbWOt6agZw4pi8QJDKaf3IyNID4ezzO1li+BGYhKIXle5wAp
-	 mhowIdiZnOaDDLpLlNfNw/T7i7YFEda+YwAyR1LpohAZdHLVGsarMvJx6ckw3TSb6
-	 nZR6hcQLFqE5e2TxboIDAORTtlMznOWc8GBcLWUi13wEDLKj2dt6BoByBQtwjtANn
-	 RKbm/lpXax3xZ/dA+8qhn7WeUBK76R2FfTQSEMzZj6zmFbnMAk5BiPKXWG2h939X+
-	 tl8pQ+IPkUhXyx9WMA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M7Nmq-1sMbFT2FrQ-00FC4x; Wed, 05
- Jun 2024 18:02:07 +0200
-Message-ID: <3f6fc17e-2ab4-43f2-b166-2393a369a263@web.de>
-Date: Wed, 5 Jun 2024 18:02:01 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAE8155331;
+	Wed,  5 Jun 2024 16:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717603520; cv=fail; b=lrMm1KEYz5BmlQquHit2l9P6tFBUDc9A34e5vDuMkco6tRAPkAXLI7PuOp/7j7bq1JZ60WpfXKvOeBNMZjAnRubE3ESHEwq25oHFCdMIYnZfF7jamqQtIoyIk5Uf2Dt+zceqzWVB+brcIDVTgUgn8iI9DwPzHmLv1zcu4TFjSvs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717603520; c=relaxed/simple;
+	bh=xHvS5/8fLaHTdiv0E12x55zxJoO/xCLgAWPD7a3lgTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=T50daro+HRjj5yX3HZIbFUGE4PO0kYWTcXZKaE/gafoxGxzNXhCw4HB8ZvZDgejBdKExv3cCK1dziiUC/HLapZfk6/WSZVTG7N+Yyt61kz/isbZ1aZnvvXMbEWjQ8+d29RoBB0JmTq47i6+dZ2vw5q34J9BzYIfzoXXwJ0HUAVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=YkjBcw+H; arc=fail smtp.client-ip=40.107.247.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aV6SwaROweAyIp6n3b0ZrFV5wd74xvLRtDoCGL9co7XMMNN2rmGMR7zi0F8EuewZx3q7sEqfkKDyrF8zETCRloleiqal7sCxI99xFueahhVsz8jW6nJ+QTtAaE1vfh0VkRjL0K/TQ+wTI59iNSnxs9sgxFCUS+hjb7mW9/UjwcG5Q0+4yrb330aMREa8+lL87+LIBBHUuJCDNMN4dNftmaaj1Vt/j1CWOt8Uco60OlUXvpubFdVcXTqPUb5FFGbkMOISXtskxOAPyWmxAs8mx1GKI66120Vw4dkfE0dXP38mpxRahxds40xgbEl7kJrGuQQcEagX3mO3ucxzkvEvzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LcxOW4jR7COabzntVH9G0Yxw8fVkTniSRe6QsVUkz1A=;
+ b=ieT1gk5+dsNCtg3yOKp5jHBrK23ul2njJPwFIcv4nWMUwFqP64NX9Nf50zG/9gRXCL80Kfw7e3kgYtbL4rAtlz/AkQ7PggsLg0US1/xlF1NCQ4gsOtnGBWGhuEnr/XT/7vrSqA1PeWVIoiVOOj1iIgV8ciXtP94ijbCLQZBTTsb6OjEFzb5c2aGUh3xYWDT2AOGqK/ifg6xPJXbhoFp8oKJuX2apF3djCzMAsK3/1v5bLWCUEiXaOtva2/JCWUruPs3n79wx1LHckG193OdjXps7JjIHKsrT2YrzPhS+Qyuh/sYC5bCP4Wvv5seXachMYVOARXvBYSN1TlKu9VjotQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LcxOW4jR7COabzntVH9G0Yxw8fVkTniSRe6QsVUkz1A=;
+ b=YkjBcw+H10RkG4OqxWEXKAG4KIkdKjxOiL+ipzB3nYBVLFaNIsskAZ0zAcLNKoLQsVGBm8IktYnB3yAEx8PZ3gC4qFFPiSVUFjM8HKqc/4kqJ7FT0GTHkjVHGrkljj9uYOS/hdHYOo5FKgRucnkwrWvUpNMW2Yn68MSpRJ8+ilY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB9510.eurprd04.prod.outlook.com (2603:10a6:20b:44a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Wed, 5 Jun
+ 2024 16:05:13 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
+ 16:05:13 +0000
+Date: Wed, 5 Jun 2024 12:05:01 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Vinod Koul <vkoul@kernel.org>, Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Mark Brown <broonie@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Vladimir Murzin <vladimir.murzin@arm.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org,
+	iommu@lists.linux.dev, linux-sound@vger.kernel.org,
+	Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH 04/18] dmaengine: bcm2835: move CB info generation into
+ separate function
+Message-ID: <ZmCMrfX449qUudSo@lizhi-Precision-Tower-5810>
+References: <20240524182702.1317935-1-dave.stevenson@raspberrypi.com>
+ <20240524182702.1317935-5-dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524182702.1317935-5-dave.stevenson@raspberrypi.com>
+X-ClientProxiedBy: SJ0PR03CA0252.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a0::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] pinctrl: pistachio: Use scope-based resource management in
- pistachio_gpio_register()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9RDbEdHu7QE+PQrS0bke8C0f3VIemBmJCM40WoU9RNTOSkdcDoX
- Q/RV8FNC3fG8N+/9BB6imsFsz+tM3fI8AaoK6YUk0bKTIJdAsLQJWY9LzaGhE1/BzLutQ1n
- pA8g/nLVkcihD8yJZ8szRjWPYwVz5Czo6vZIJfjpgTFhY3gghAlgXK1cRWKeUu/Dw3bPrsf
- Wl6uc3i9VT26XBCAhQuQA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:V197F1Xci9c=;Qc4P3jy9vLPsU3CtCsJeEmLb9Jh
- Xq3lNwgUCV4/WLg42MAeuVn+YLFHCh38ZhSfn3nthnTb0Ukmsq+vucObPL12J1FVirKfkvPXX
- DDl0MSYIIDDS2a5ZzOCGG7+KEPqq6HrhWwmWA9uCi3KBzYVuf89JI4cNuYaz7q5MUPxYYiR6m
- Ep3k39wuzjzx/TNsaVjOCjaptbwm1bQoovvUe02yFHrVyAnepzBMtkMbUKiwKMwh/+qtmH7cW
- WjbSjQzn7ZH5gbqDyKHG6NoP3QWtuFODPthRi1zsDbZaDn2IJak8npf/9J+ZhPORdCwlp0VDQ
- FdrlmKWqAgZvPLkk60Wtkza83O15twEQdKZwTkDeKz0u0VNFllKzJxhCy6IoYEE3Qmc1veZMy
- ZmfPgNxNcV6YBdPUUbZw3rsz3EOUdoijwEFkJHY0kbsqlwMbymKnOvzCf6YwQpaPh+SFpQZra
- Yc5TA/pE0t7umnGPn5E0Y0sosy3o1tgRtH6KGh7qdWeIgVAlKR7paMXW785fB3vA3FOBVkD67
- Y5kC7WTJ58M1VpcvSWOvXiPAgA/01CgXALorUf3Lkst3AVKq9Bw9eg5GO42AHFz2i4/xFgESp
- 47bd6obChhWTfGVMcZoe5dUsga8aNAC8jqWrNKTLT6sB8dxjhgTUebhsfJBLj0ckF3IXqN6N0
- MpvTIh7fboKokH0z/2t3OH0vfvqZFuaCXyi1G4P0v7IFuShKuPgZjBNRL9R+8m+4kCAwJWZpG
- k6lBvHyCriDY5L8QK36GAUr/HvFd5tR4PnSOyvrWrJ9uw/OG7kXMdIzgWgeYjLiV1X8AzUiQ4
- lS9gg8hHxOrNQgWJf/sae+gNgYg/kLE5F9NjErM7JVG/8=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB9510:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7a4a227f-be8e-4907-450a-08dc85794888
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|376005|52116005|1800799015|7416005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bXMow/8g5HA7xs41Mddm7AqEgqlkGJKYc0Oex4Pb/sihGa9vw3R4TpeyG60v?=
+ =?us-ascii?Q?scJLRBiubli49HWLdo7Q410N76vO8753qnWfpT5pjkvz+LHP5zIZ5tVnPWig?=
+ =?us-ascii?Q?8vlEhq/3VbGxR9ZuF9VCIFXmzwynbynjDoD7Rm/UsQ3NefNA2R9y7KDUxVBM?=
+ =?us-ascii?Q?ECFeEPRRloS/uJPklY/mBLCeRm02O7nWbQ9LvYRAtgYpVQq9dlopMG4c+gjX?=
+ =?us-ascii?Q?Ay1qND+e+o4rosxSErJLNNLrGtbAW81dqqzjEmMfITKUb25h8exEa8BT+9RM?=
+ =?us-ascii?Q?5C4PZFcQ4mQ/mCiq67sLK1UW7ANVi5bexQpEei6nVd4p18a6aGgzX9vp4to+?=
+ =?us-ascii?Q?hBE695CPLWVHq671OQGFy3IQ6gT+6+aiLclFXIaubWLtn24Zb9Um7CNDPaZZ?=
+ =?us-ascii?Q?XKkWZ4xTaJ6H2T9tPjE69V+ZzjFxPyY/3J2ePmCS55TtFRaY/4FEDOKgKOCT?=
+ =?us-ascii?Q?UvK7p/W/btfSRHPSoueCf8Gtx7vUtP5tSuiVZQdToga3enKv2U89fYsrES3p?=
+ =?us-ascii?Q?DxMG1dk4sZ6gIB7ELJh1CN7zI8RuzUKBhtDM7ZiIuYkatqL1IqCgW1S5e6iu?=
+ =?us-ascii?Q?2xh+eJ6SM8bx3688PQBbnHooMqpqUI6FrUSUMUHX0XMfhpVY0sYUlEtNGW7z?=
+ =?us-ascii?Q?KTCZTi/qKvVbuteDgMrjEpV1W4IDkyYKzhNiyafQX3lIa9igflfySoyGsPkS?=
+ =?us-ascii?Q?xWCsxyQtQwc1L+N0s5J/dOhpHQETwttdpruVDfFKcJ+eIYAD0tKRwNDBt/88?=
+ =?us-ascii?Q?J+MLw5ezEa62E+i3TONZ4tV6BvEybq2LiurLyFvOCB9D1k4mXA8B2D/7t6sa?=
+ =?us-ascii?Q?9ZNAAAF49MNZuRrM6c2BJYPCsjn3as0rSF5ArOiqNF1Cun8ByjcMVdy1AWj4?=
+ =?us-ascii?Q?kRWU+B3dkX7UsMxgnRG8d/E/R71XYHR4KU98lG/G3rG/9WdvOjIPQtlEkDnw?=
+ =?us-ascii?Q?NUNWHSAokVp+1Xinm18zgEXUnBLiWKL8BdhzOLo5ZAAz+4TEV+usTChIALQg?=
+ =?us-ascii?Q?dR6wq8BBjck0ifJvGWw6/08Y8b8jj14IXXftYAUkc0nqX9KuUn/CJxPHhyGH?=
+ =?us-ascii?Q?dhSdauuhNadUbQc/GrDI+v12tqKfaPU6mI0Iw2KzB5un3fMAn6Yhhzy4vC3g?=
+ =?us-ascii?Q?QBUOL9uXreSU/GaNEvLgdl0t+RzxYSP8cjAhZ9ke4rDJpIhZ208+ShUpy4JM?=
+ =?us-ascii?Q?phU9CvSZDT6UtlkAWgDff227EHFONLKcxU9NySPjH35rom6Y8HwjutszBogk?=
+ =?us-ascii?Q?U5NwMHOyzrYlKPmDS8Og7eB6fAx2lKTxti7GlAN629wGovvABryZ9yEpU18Q?=
+ =?us-ascii?Q?y2BCXNniYNyjPv8dSFHAYAf6dFXpe7Sotfp5XxZb1pLy5zXxubJpqi1QB96+?=
+ =?us-ascii?Q?HLqnYwU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(52116005)(1800799015)(7416005)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7Sxs/4vXFH857CcZSKN32Z8VsGtuEp5w7F9eaCcDgVE2x8P8Oiy/lOLbCvxc?=
+ =?us-ascii?Q?pk3jO9fHoA0Kvs6iqGut4X8a4hJS+R0P8Tx0fwBR8b1SmpPX+MXSdfGqjgQn?=
+ =?us-ascii?Q?AeuQOcy0GrxmHdWErJbeuYObbi3a8QucPHzmHFhGBsAc7BAeMNQZ23j5uEdu?=
+ =?us-ascii?Q?fe4EgFF0TLK88G2uMt2nxG1ynU/b0u/QNfjojkqBFTBwo1hUryX/Kb0mUtb4?=
+ =?us-ascii?Q?0Dfrh1l+I0BIshW1IyFfqEqa4AayGvuptS47cgLf7hVDobfLn8aEjkRsuNYv?=
+ =?us-ascii?Q?Mn/Gmvs4bKtPHcZWYxQIZaTxl+qE/MhNXyRKRjdMjlynKD7XeuWcUCn0EO9M?=
+ =?us-ascii?Q?uidlK90/boYnSRoog3Y/vw/FFW0D8lBXumO/pcuw6Cy4U2Y6A0Gi+6jHrLtm?=
+ =?us-ascii?Q?ny8uGkG7z2Hvt+NjRBsPhuZve6pNUry951U4AEdlFCr4OVMg3ifRmWaRV7qV?=
+ =?us-ascii?Q?KCCGVwub7AMOufc8gongkbYg8awepeTNa6YncFZqGdA9ecdnPNwWcBjijTyr?=
+ =?us-ascii?Q?Qb2XJjwOl3BbIfvN9O5IhBer5rKZ30f32srVDIwPyWZq6vjdg6hUGFgfmPMi?=
+ =?us-ascii?Q?Y9GLH8Ll372tDpZmTlh5CrPQpBZXd7Y/+FJQLybiKjyPHVJPI9dN5XS+KWJn?=
+ =?us-ascii?Q?Arzu/XP0Y0sHWae47RvlNHB0fx+oxQz4XyMaDJw92jFWB3AJTuXjOQqVWovG?=
+ =?us-ascii?Q?kwXJAMmG0IOALZ8dZ7g8+hegIUuc+3/+vN51Vj06VS1bZzEL/b4BToiutGoO?=
+ =?us-ascii?Q?RiU+C902SfXN7ym7bQcSlraSezo9ln3CbB/ZWNU9+PQrF3e17mps73LqWexu?=
+ =?us-ascii?Q?GZ6MIJT6vXh0ioBmTHSltVHQGDFQWrKtsecxTDrBJRK6eHZ0HgiSQLwe2Xk8?=
+ =?us-ascii?Q?7ZoXgVpV/cJEmC/ozNgzAWkq2OB5Bz8Oj5tXS0Auq9UqsMl6gJaFbm9c7U05?=
+ =?us-ascii?Q?wRbp4JhqEAJiIGdeM9AAyfYyeWDj4W4h0h/HGASMXTeHZMa91BShRjEZNB+l?=
+ =?us-ascii?Q?XHyVTDyLbl1H1sfnkMFP+zV4nsZQAd3Mm8AWUXGeMrP+YCnCfRYWok77VuOu?=
+ =?us-ascii?Q?YlYMRfu+JAscWtl+bquxQuozTAZ74mHk70spJUZUesH+fs+BreIx9zWz03RN?=
+ =?us-ascii?Q?1RS1b3fE6nBFuf1pFgwF8s5nTXcOUvuD9+stYncJx8EFh1zLOoSdklHgG9Kr?=
+ =?us-ascii?Q?3a/N6rGwUIgq0jhN7AWdW4gEqM4uE4WOUAr5MKzZZG9szVJFWlL+KzEDmhDb?=
+ =?us-ascii?Q?N94O2yWCy07I0NVwY3tEiGsj3UMesFO4vMAFZ0JbbIIPWBTCuYOaa0TuwPhB?=
+ =?us-ascii?Q?VuHFhMKctshl9H4QXfFf4kbNKIEaAELvRcKOYSRmE4dJ/7u8esWGp71Sv0MD?=
+ =?us-ascii?Q?SCg2Jc8nwt0H8J7nRlecUDRdrWQCE0IJNVwvTamhuMwtT1BHBKKrg1cnWg8u?=
+ =?us-ascii?Q?xhMosceTnB7L4Kn3OKypSK6ypw4USB8h3mS9KL3HRdkBw/3UdJZ+QYP4Vx5G?=
+ =?us-ascii?Q?9jGqUmhSA8lAj27nZV+4Y0kj6+4+y1ecDc39Tq5UFR7SYI3agR7l+e8+rd6B?=
+ =?us-ascii?Q?SNj1HMIAnRnHqlnrg1hKOh/MuJY1jpwba3EeTAE0?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a4a227f-be8e-4907-450a-08dc85794888
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 16:05:13.5950
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 40Z+XO/brjhUCHFgPNRcjASPlLnSI40brvLO4h2XnBxHnhNrZn8Ut3QaNK+6Ngw5bKS1MAfCzUa1Oak4+j9VVQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9510
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Jun 2024 17:46:52 +0200
+On Fri, May 24, 2024 at 07:26:48PM +0100, Dave Stevenson wrote:
+> From: Stefan Wahren <stefan.wahren@i2se.com>
+> 
+> Actually the generation of the Control Block info follows some simple
+> rules. So handle this with a separate function to avoid open coding
+> for every DMA operation. Another advantage is that we can easier
+> introduce other platforms with different info bits.
 
-Scope-based resource management became supported also for another
-programming interface by contributions of Jonathan Cameron on 2024-02-17.
-See also the commit 59ed5e2d505bf5f9b4af64d0021cd0c96aec1f7c ("device
-property: Add cleanup.h based fwnode_handle_put() scope based cleanup.").
+May simple said as:
 
-* Thus use the attribute =E2=80=9C__free(fwnode_handle)=E2=80=9D.
-
-* Reduce the scope for the local variable =E2=80=9Cchild=E2=80=9D.
-
-* Omit explicit fwnode_handle_put() calls accordingly.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/pinctrl/pinctrl-pistachio.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl=
--pistachio.c
-index 53408344927a..d0a18296fb27 100644
-=2D-- a/drivers/pinctrl/pinctrl-pistachio.c
-+++ b/drivers/pinctrl/pinctrl-pistachio.c
-@@ -1368,11 +1368,12 @@ static int pistachio_gpio_register(struct pistachi=
-o_pinctrl *pctl)
-
- 	for (i =3D 0; i < pctl->nbanks; i++) {
- 		char child_name[sizeof("gpioXX")];
--		struct fwnode_handle *child;
- 		struct gpio_irq_chip *girq;
-
- 		snprintf(child_name, sizeof(child_name), "gpio%d", i);
--		child =3D device_get_named_child_node(pctl->dev, child_name);
-+
-+		struct fwnode_handle *child __free(fwnode_handle)
-+					    =3D device_get_named_child_node(pctl->dev, child_name);
- 		if (!child) {
- 			dev_err(pctl->dev, "No node for bank %u\n", i);
- 			ret =3D -ENODEV;
-@@ -1380,7 +1381,6 @@ static int pistachio_gpio_register(struct pistachio_=
-pinctrl *pctl)
- 		}
-
- 		if (!fwnode_property_present(child, "gpio-controller")) {
--			fwnode_handle_put(child);
- 			dev_err(pctl->dev,
- 				"No gpio-controller property for bank %u\n", i);
- 			ret =3D -ENODEV;
-@@ -1389,12 +1389,10 @@ static int pistachio_gpio_register(struct pistachi=
-o_pinctrl *pctl)
-
- 		ret =3D fwnode_irq_get(child, 0);
- 		if (ret < 0) {
--			fwnode_handle_put(child);
- 			dev_err(pctl->dev, "Failed to retrieve IRQ for bank %u\n", i);
- 			goto err;
- 		}
- 		if (!ret) {
--			fwnode_handle_put(child);
- 			dev_err(pctl->dev, "No IRQ for bank %u\n", i);
- 			ret =3D -EINVAL;
- 			goto err;
-@@ -1406,7 +1404,7 @@ static int pistachio_gpio_register(struct pistachio_=
-pinctrl *pctl)
- 		bank->base =3D pctl->base + GPIO_BANK_BASE(i);
-
- 		bank->gpio_chip.parent =3D pctl->dev;
--		bank->gpio_chip.fwnode =3D child;
-+		bank->gpio_chip.fwnode =3D no_free_ptr(child);
-
- 		girq =3D &bank->gpio_chip.irq;
- 		gpio_irq_chip_set_chip(girq, &pistachio_gpio_irq_chip);
-=2D-
-2.45.1
-
+Introduce common help funtion to prepare Control Block Info to avoid
+dupicate code in every DMA operation.
+ 
+> 
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+>  drivers/dma/bcm2835-dma.c | 50 +++++++++++++++++++++++++--------------
+>  1 file changed, 32 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
+> index 528c4593b45a..7cef7ff89575 100644
+> --- a/drivers/dma/bcm2835-dma.c
+> +++ b/drivers/dma/bcm2835-dma.c
+> @@ -201,6 +201,34 @@ static inline struct bcm2835_desc *to_bcm2835_dma_desc(
+>  	return container_of(t, struct bcm2835_desc, vd.tx);
+>  }
+>  
+> +static u32 bcm2835_dma_prepare_cb_info(struct bcm2835_chan *c,
+> +				       enum dma_transfer_direction direction,
+> +				       bool zero_page)
+> +{
+> +	u32 result;
+> +
+> +	if (direction == DMA_MEM_TO_MEM)
+> +		return BCM2835_DMA_D_INC | BCM2835_DMA_S_INC;
+> +
+> +	result = BCM2835_DMA_WAIT_RESP;
+> +
+> +	/* Setup DREQ channel */
+> +	if (c->dreq != 0)
+> +		result |= BCM2835_DMA_PER_MAP(c->dreq);
+> +
+> +	if (direction == DMA_DEV_TO_MEM) {
+> +		result |= BCM2835_DMA_S_DREQ | BCM2835_DMA_D_INC;
+> +	} else {
+> +		result |= BCM2835_DMA_D_DREQ | BCM2835_DMA_S_INC;
+> +
+> +		/* non-lite channels can write zeroes w/o accessing memory */
+> +		if (zero_page && !c->is_lite_channel)
+> +			result |= BCM2835_DMA_S_IGNORE;
+> +	}
+> +
+> +	return result;
+> +}
+> +
+>  static void bcm2835_dma_free_cb_chain(struct bcm2835_desc *desc)
+>  {
+>  	size_t i;
+> @@ -615,7 +643,7 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_memcpy(
+>  {
+>  	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
+>  	struct bcm2835_desc *d;
+> -	u32 info = BCM2835_DMA_D_INC | BCM2835_DMA_S_INC;
+> +	u32 info = bcm2835_dma_prepare_cb_info(c, DMA_MEM_TO_MEM, false);
+>  	u32 extra = BCM2835_DMA_INT_EN | BCM2835_DMA_WAIT_RESP;
+>  	size_t max_len = bcm2835_dma_max_frame_length(c);
+>  	size_t frames;
+> @@ -646,7 +674,7 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_slave_sg(
+>  	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
+>  	struct bcm2835_desc *d;
+>  	dma_addr_t src = 0, dst = 0;
+> -	u32 info = BCM2835_DMA_WAIT_RESP;
+> +	u32 info = bcm2835_dma_prepare_cb_info(c, direction, false);
+>  	u32 extra = BCM2835_DMA_INT_EN;
+>  	size_t frames;
+>  
+> @@ -656,19 +684,14 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_slave_sg(
+>  		return NULL;
+>  	}
+>  
+> -	if (c->dreq != 0)
+> -		info |= BCM2835_DMA_PER_MAP(c->dreq);
+> -
+>  	if (direction == DMA_DEV_TO_MEM) {
+>  		if (c->cfg.src_addr_width != DMA_SLAVE_BUSWIDTH_4_BYTES)
+>  			return NULL;
+>  		src = c->cfg.src_addr;
+> -		info |= BCM2835_DMA_S_DREQ | BCM2835_DMA_D_INC;
+>  	} else {
+>  		if (c->cfg.dst_addr_width != DMA_SLAVE_BUSWIDTH_4_BYTES)
+>  			return NULL;
+>  		dst = c->cfg.dst_addr;
+> -		info |= BCM2835_DMA_D_DREQ | BCM2835_DMA_S_INC;
+>  	}
+>  
+>  	/* count frames in sg list */
+> @@ -698,7 +721,8 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_cyclic(
+>  	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
+>  	struct bcm2835_desc *d;
+>  	dma_addr_t src, dst;
+> -	u32 info = BCM2835_DMA_WAIT_RESP;
+> +	u32 info = bcm2835_dma_prepare_cb_info(c, direction,
+> +					       buf_addr == od->zero_page);
+>  	u32 extra = 0;
+>  	size_t max_len = bcm2835_dma_max_frame_length(c);
+>  	size_t frames;
+> @@ -729,26 +753,16 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_cyclic(
+>  			      "%s: buffer_length (%zd) is not a multiple of period_len (%zd)\n",
+>  			      __func__, buf_len, period_len);
+>  
+> -	/* Setup DREQ channel */
+> -	if (c->dreq != 0)
+> -		info |= BCM2835_DMA_PER_MAP(c->dreq);
+> -
+>  	if (direction == DMA_DEV_TO_MEM) {
+>  		if (c->cfg.src_addr_width != DMA_SLAVE_BUSWIDTH_4_BYTES)
+>  			return NULL;
+>  		src = c->cfg.src_addr;
+>  		dst = buf_addr;
+> -		info |= BCM2835_DMA_S_DREQ | BCM2835_DMA_D_INC;
+>  	} else {
+>  		if (c->cfg.dst_addr_width != DMA_SLAVE_BUSWIDTH_4_BYTES)
+>  			return NULL;
+>  		dst = c->cfg.dst_addr;
+>  		src = buf_addr;
+> -		info |= BCM2835_DMA_D_DREQ | BCM2835_DMA_S_INC;
+> -
+> -		/* non-lite channels can write zeroes w/o accessing memory */
+> -		if (buf_addr == od->zero_page && !c->is_lite_channel)
+> -			info |= BCM2835_DMA_S_IGNORE;
+>  	}
+>  
+>  	/* calculate number of frames */
+> -- 
+> 2.34.1
+> 
 
