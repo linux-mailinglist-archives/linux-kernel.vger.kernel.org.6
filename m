@@ -1,130 +1,156 @@
-Return-Path: <linux-kernel+bounces-203436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65408FDB08
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:55:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C088FDB0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2024 01:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6400D287750
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26A7D1F297F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8925E169375;
-	Wed,  5 Jun 2024 23:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EP8zK+Dr"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2FE169367;
+	Wed,  5 Jun 2024 23:57:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9D5168C2E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 23:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A0C1AAA5;
+	Wed,  5 Jun 2024 23:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717631694; cv=none; b=DZ/sXu6YX1MyYdzF7BlU63XEGPcXgA4Ouj649fK8RZKAwV5a6n/2CWvLODHlIC2NEonvresse9XYLChmovvun+d+NFtHbbJI9Nh0PKaO1FBZJ+zGfMERvsO3h+dDtXkTg/GmeLeURbkm1AKwIBTFTeeJDBlfG3tscTayCouI1C8=
+	t=1717631871; cv=none; b=Wub+LatOf0YHSujXa/N/tJLFpDdqVMYhpfTeHhHCCgkzeR8sctu9hS80aTnlT4G2fkphiYidR7g/CLt5uRFtHJnhpM4dC0vOzOYiUSomWREt4TBTaieXUm8LPIVVI01Y/f3ho1V98dRp+ajVxd0ig0GiZw6PiVgDSUlR5m0oofI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717631694; c=relaxed/simple;
-	bh=Tk/gg4Z7m8cPwkqUMSj9bxnEXvLbAVNGUl3GAZ8QhMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=FWyS/2riWUh9eSOv+SGKCI3OCghNPFQpaVCIZ+7So6gZy8fEUUwxl3aNHP01IjsO7QpfvyK67LDDv8siMJw3j3QG1X6fvY9V6u2HkFEVR3nrv/m+TJMxOuIsBAHpNN0lkJxTedzmWAHO0uahbszEClSNxXaE7fl7mI0R7f9ztKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EP8zK+Dr; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ee5f3123d8so37085ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 16:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717631693; x=1718236493; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SOoM7UFhwQ7QR/s5c6/iMqUtz+xzNojBCRoqDAeYHPk=;
-        b=EP8zK+DriFdNMatQenNp34Ulk+MxOi01IKpL95Jqh9c2Q63NBrPkFcwR4D5oy0MDIZ
-         AjWCSLzzMxUYB/qSRIJ6Yl07cogcN140pppAtq65uReCuEDsqr9rcAJmt822MI4eKI2F
-         lNtwwbRXMQ2Dap3MVwuRuYwsUmIP6WwbYyW47p4Nghfkcp5l9jPwcYW5hwyBBDxgohXn
-         TeMLvRR46CnMk7/WzjS/Qbm6+tUsJ4N005SUFnBE6WP8lF7JM0xYEt18I20eix/18CPm
-         LBr7HStQFRI4L+ONGYP0XCKbwv7p7mzDweQItz/y1A6LzqPldN4pJi7ALFFR9WxnBKKb
-         zj/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717631693; x=1718236493;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SOoM7UFhwQ7QR/s5c6/iMqUtz+xzNojBCRoqDAeYHPk=;
-        b=Op0dLZIJN7Ayaj5DYVFYJMhEal1nIrthLuJLhnzknLq7HYzJecxltfoLrJ2U5e9PC3
-         EBuD+CxdWd74b/YCJ2h+5T+UJ9ZZE4IVgJC5A32C2o/IjqngYb/ElYvKKMtG86LxlO87
-         fJT+fv/4WDI2urOMj1at5Z0x0Y0Fe64rgDXVkedqVWQ6YmFYnuGgFGzQFTwtMzuvydm4
-         CJVNzT7qXBN4IIa4Ln/6CbwHYopXMyQYi2ECteBCoNlsT4T5qrxZKk55hpUaXUmHNYlR
-         uObS0ao64tjU6g6mKuUblcjY7L5lj4CVNIsM9EqlRIk8fgyg9oDavXbvhTrQxzK472P+
-         xM4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVVo1KhZoxVHIrDyFb6DYtpRyJvV8NYA2DWqWvcqgG/1kmvAmB1JrkHcAt9/WwSAksehYEeluPty/BMJJUppCWrWLVjSgbmiKx880ND
-X-Gm-Message-State: AOJu0Yw1qtadLgYbDmYkMzCet/xAjfQXz2VPsLtia8k+BrGuIt+KBpNY
-	MyJtVhL6lP29RyE6mV+GRyxWA5oLE4DdQT8Zp0blEewTkuTeg8Iv6pV3/n0bFxuVymyNeNiE2wU
-	He3cX41RdK/3kB5pDAkzAnqBOaBpVVmRYzj9W
-X-Google-Smtp-Source: AGHT+IFKAkvdqg8Y4XtZJrq2ocqJwSXi5rXoy4qvsNne+rSk5pV5EMUpWTijA52FMFgSlCuU6iCOUgRoIxtqZfaFju0=
-X-Received: by 2002:a17:902:8b87:b0:1f3:2b46:47ce with SMTP id
- d9443c01a7336-1f6bd3a4268mr711265ad.15.1717631692204; Wed, 05 Jun 2024
- 16:54:52 -0700 (PDT)
+	s=arc-20240116; t=1717631871; c=relaxed/simple;
+	bh=5ApjUtK872vDWT9BiZ/Y5CWSDUL4VWEAnM4+OUhd+Zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=swM4D0LYZknRjEJeaV/zhOTNcKjNNN6DEXrd++mTLxliK8nBJLyyOWrCWf1iASivwiEjuytJWJx57GSKU5zmJEEwYHaTYEanYY7JYWZzC2mJBTYLddzldrsTcpvKU2PcM8Se7AAEIVIdXxsJ4bnlYV93iQlLtrJy4K5SUmv5JmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 445C9C2BD11;
+	Wed,  5 Jun 2024 23:57:48 +0000 (UTC)
+Date: Wed, 5 Jun 2024 19:57:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yan Zhai <yan@cloudflare.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, David Ahern
+ <dsahern@kernel.org>, Abhishek Chauhan <quic_abchauha@quicinc.com>, Mina
+ Almasry <almasrymina@google.com>, Florian Westphal <fw@strlen.de>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, David Howells
+ <dhowells@redhat.com>, Jiri Pirko <jiri@resnulli.us>, Daniel Borkmann
+ <daniel@iogearbox.net>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Pavel Begunkov
+ <asml.silence@gmail.com>, linux-kernel@vger.kernel.org,
+ kernel-team@cloudflare.com, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Neil Horman <nhorman@tuxdriver.com>,
+ linux-trace-kernel@vger.kernel.org, Dan Carpenter
+ <dan.carpenter@linaro.org>
+Subject: Re: [RFC v3 net-next 1/7] net: add rx_sk to trace_kfree_skb
+Message-ID: <20240605195750.1a225963@gandalf.local.home>
+In-Reply-To: <983c54f98746bd42d778b99840435d0a93963cb3.1717529533.git.yan@cloudflare.com>
+References: <cover.1717529533.git.yan@cloudflare.com>
+	<983c54f98746bd42d778b99840435d0a93963cb3.1717529533.git.yan@cloudflare.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521165109.708593-1-irogers@google.com>
-In-Reply-To: <20240521165109.708593-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 5 Jun 2024 16:54:40 -0700
-Message-ID: <CAP-5=fXJrGWpOo9B9V-T9K2fkQBhgL6edo-c039nCn=Y7FxSEg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] Fix and improve __maps__fixup_overlap_and_insert
-To: "Steinar H . Gunderson" <sesse@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 9:51=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> Fix latent unlikely bugs in __maps__fixup_overlap_and_insert.
->
-> Improve __maps__fixup_overlap_and_insert's performance 21x in the case
-> of overlapping mmaps. sesse@google.com reported slowness opening
-> perf.data files from chromium where the files contained a large number
-> of overlapping mappings. Improve this case primarily by avoiding
-> unnecessary sorting.
->
-> Unscientific timing data processing a perf.data file with overlapping
-> mmap events from chromium:
->
-> Before:
-> real    0m9.856s
-> user    0m9.637s
-> sys     0m0.204s
->
-> After:
-> real    0m0.675s
-> user    0m0.454s
-> sys     0m0.196s
->
-> Tested with address/leak sanitizer, invariant checks and validating
-> the before and after output are identical.
->
-> Ian Rogers (3):
->   perf maps: Fix use after free in __maps__fixup_overlap_and_insert
->   perf maps: Reduce sorting for overlapping mappings
->   perf maps: Add/use a sorted insert for fixup overlap and insert
+On Tue, 4 Jun 2024 14:47:38 -0700
+Yan Zhai <yan@cloudflare.com> wrote:
 
-Ping. Thanks,
-Ian
+> skb does not include enough information to find out receiving
+> sockets/services and netns/containers on packet drops. In theory
+> skb->dev tells about netns, but it can get cleared/reused, e.g. by TCP
+> stack for OOO packet lookup. Similarly, skb->sk often identifies a local
+> sender, and tells nothing about a receiver.
+> 
+> Allow passing an extra receiving socket to the tracepoint to improve
+> the visibility on receiving drops.
+> 
+> Signed-off-by: Yan Zhai <yan@cloudflare.com>
+> ---
+> v2->v3: fixed drop_monitor function prototype
+> ---
+>  include/trace/events/skb.h | 11 +++++++----
+>  net/core/dev.c             |  2 +-
+>  net/core/drop_monitor.c    |  9 ++++++---
+>  net/core/skbuff.c          |  2 +-
+>  4 files changed, 15 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/trace/events/skb.h b/include/trace/events/skb.h
+> index 07e0715628ec..aa6b46b6172c 100644
+> --- a/include/trace/events/skb.h
+> +++ b/include/trace/events/skb.h
+> @@ -24,15 +24,16 @@ DEFINE_DROP_REASON(FN, FN)
+>  TRACE_EVENT(kfree_skb,
+>  
+>  	TP_PROTO(struct sk_buff *skb, void *location,
+> -		 enum skb_drop_reason reason),
+> +		 enum skb_drop_reason reason, struct sock *rx_sk),
+>  
+> -	TP_ARGS(skb, location, reason),
+> +	TP_ARGS(skb, location, reason, rx_sk),
+>  
+>  	TP_STRUCT__entry(
+>  		__field(void *,		skbaddr)
+>  		__field(void *,		location)
+>  		__field(unsigned short,	protocol)
+>  		__field(enum skb_drop_reason,	reason)
+> +		__field(void *,		rx_skaddr)
 
->  tools/perf/util/maps.c | 113 +++++++++++++++++++++++++++++++++--------
->  1 file changed, 92 insertions(+), 21 deletions(-)
->
-> --
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
->
+Please add the pointer after the other pointers:
+
+ 		__field(void *,		skbaddr)
+ 		__field(void *,		location)
++		__field(void *,		rx_skaddr)
+ 		__field(unsigned short,	protocol)
+ 		__field(enum skb_drop_reason,	reason)
+
+otherwise you are adding holes in the ring buffer event.
+
+The TP_STRUCT__entry() is a structure that is saved in the ring buffer. We
+want to avoid alignment holes. I also question having a short before the
+enum, if the emum is 4 bytes. The short should be at the end.
+
+In fact, looking at the format file, there is a 2 byte hole:
+
+ # cat /sys/kernel/tracing/events/skb/kfree_skb/format
+
+name: kfree_skb
+ID: 1799
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:void * skbaddr;	offset:8;	size:8;	signed:0;
+	field:void * location;	offset:16;	size:8;	signed:0;
+	field:unsigned short protocol;	offset:24;	size:2;	signed:0;
+	field:enum skb_drop_reason reason;	offset:28;	size:4;	signed:0;
+
+Notice that "protocol" is 2 bytes in size at offset 24, but "reason" starts
+at offset 28. This means at offset 26, there's a 2 byte hole.
+
+-- Steve
+
+
+
+>  	),
+>  
+>  	TP_fast_assign(
+> @@ -40,12 +41,14 @@ TRACE_EVENT(kfree_skb,
+>  		__entry->location = location;
+>  		__entry->protocol = ntohs(skb->protocol);
+>  		__entry->reason = reason;
+> +		__entry->rx_skaddr = rx_sk;
+>  	),
+>  
+
 
