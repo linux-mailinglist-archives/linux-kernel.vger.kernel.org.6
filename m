@@ -1,172 +1,142 @@
-Return-Path: <linux-kernel+bounces-201923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331788FC558
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:06:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E488FC556
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56AF1F21163
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:06:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE221C2088C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ED618F2D5;
-	Wed,  5 Jun 2024 08:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7574C18C356;
+	Wed,  5 Jun 2024 08:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EsVF6wF+"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367D21922FC;
-	Wed,  5 Jun 2024 08:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I1qpK8XM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+p4el+xK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141BE1922FC;
+	Wed,  5 Jun 2024 08:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717574764; cv=none; b=hDFc8RRYiYCYpgDKoLPllbbZtuz7tqto0DWaa2fAwdv7rPgwgtm/g9ZFh1Ap17wUGklYQLPJPYOik0qqzyw5DA5IgvmRvM8iHW+2ZxDmC7fnlX+9fgD1rwewsGZ4EIid8EVgbkkBmiawOKUBz9RRvUus8GnpkxmopMV2Suae4+0=
+	t=1717574710; cv=none; b=nTqNVm58oppNPvMy/M/OT2Yrs9q2zU5I2AeB4tbRWczqUmwQujZ3XXiSJNNs+jpnQdy7mOZ112LkuSraAwwJkrAw/nDT6Ua0crEjiRo4uBTo1vtyE50OKds5Q48RjnkOExfNIFzVo0MbjyZqmjqatb/uEddaPngQnZYFSmQPxrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717574764; c=relaxed/simple;
-	bh=MEkf72hbkHlFJhXcMR6uH2GgppBTzzZuYu9Bj9tZ+aw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SNzUIPk/ZfACMY9o5V75530YjATtiiOBvSSmKvqiSIOq7Prh8xJP62fTBxppiY7RrVXtfRKA4EBk7wbOcqqQfGFVDljAzDwDdRKOCsuqdxVL0aljjCdyxwTpVTJeGPygiFsF4yJtx39cn52uaQqEMA5zYr0omXKSZUwQq8od6Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EsVF6wF+; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=PVpxHacadX3v1Jpi8ge1wxLL0LsNrEZCAoTEQu6/AwY=;
-	b=EsVF6wF+sJPffZeWM1rhAChqEu4bITXYoFmrAnqS0mK4VKkvs9LSkCLg8f5DEH
-	8eNfxwJKTS/K/4ilGTCFTHukBib8y1BS23Pqlv1f77nLI0IeWH7X9261vp3HbVPZ
-	uwK43GaO4pVRvrK/XVhrjIhFKzEPMkILQvX/jZ3pT/85Q=
-Received: from [10.0.2.15] (unknown [111.205.43.230])
-	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wD3f6gCHGBmGz6GBw--.28481S2;
-	Wed, 05 Jun 2024 16:04:19 +0800 (CST)
-Message-ID: <ddfb1619-22bc-40f7-a595-f7600608da8a@163.com>
-Date: Wed, 5 Jun 2024 16:04:18 +0800
+	s=arc-20240116; t=1717574710; c=relaxed/simple;
+	bh=b4p8eEI2U4qC9glBv0EWb7H1HwkXR8cF4asHbORoZWg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=AmiCAq+ZrKs9zG5duXYYBM2kbLGmP2BynTSEof++ISCvFB4oBgquosk5SAqijadB8qJsDN4ypkzFbdVb/3Jqp3srP+KyarHoOpGr06L4c2t1Ia6SZZj0lU/Ploz6lvG1yYa2YB0PBDlqz9TRAQM9rjyArt9akQ42aCcYzOsdNWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I1qpK8XM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+p4el+xK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Jun 2024 08:05:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717574705;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xenF9RbgPjHNqBJqKTeAURBpnhxtLmauk1Wzc33aoNI=;
+	b=I1qpK8XMub2F6RUD+ZtVnz1XK/wz3OvJs602kTze9K36L72Ql9Jd8jWVI9eppedHmWHW/C
+	5c4So/pSSe1sEENdZwTS9v8+j/s7gY3QylWBKPDAqclAv8y4H6V6u33aPnw88s4Msy4mHN
+	HruAgXBisUku/wW/D+RgMGYEgrG02gyQuWIDneXdw+3+tkXDbZERmFdanM+MCtxcY4n0Wz
+	yAR77JsLsZnkNKMyZiA7QH1GRVcFt2T4OtuQop7lY5xgPEvxysDKtZXbEvUh3b1f7iAUyh
+	ycCbaQiRtEki9RPL0Bi/V2gOfpSvDM4pX/zl/3i4nK/b7fQ6l7yiaFymj/YzEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717574705;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xenF9RbgPjHNqBJqKTeAURBpnhxtLmauk1Wzc33aoNI=;
+	b=+p4el+xKZ141z3jzZ+pJRqrfpouIIstLi/l0KnjPsoeMNgiiT7g9uhcUlhl1dlVn0ENvC1
+	XdQ9DqANUhZMa2BQ==
+From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/kexec: Fix bug with call depth tracking
+Cc: David Kaplan <david.kaplan@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Tom Lendacky <thomas.lendacky@amd.com>,  <stable@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240603083036.637-1-bp@kernel.org>
+References: <20240603083036.637-1-bp@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PCI: vmd: Create domain symlink before
- pci_bus_add_devices()
-Content-Language: en-US
-To: Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>,
- nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
- bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, sunjw10@lenovo.com, ahuang12@lenovo.com
-References: <20240604135153.9182-1-sjiwei@163.com>
- <c1885394-9edf-47a7-a4f8-1e456ba52316@intel.com>
-From: Jiwei Sun <sjiwei@163.com>
-In-Reply-To: <c1885394-9edf-47a7-a4f8-1e456ba52316@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3f6gCHGBmGz6GBw--.28481S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWftr1DKF17Gw47Wr47XFb_yoWrJFWrpF
-	WrWa1jvFW7Gr47XayDZ3W8WryYvw4vv34UJ3sxK347Z34DAFy09FW0gFs8ArWqvF1q93W2
-	vwsrXF1S9wn5KaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UYD7-UUUUU=
-X-CM-SenderInfo: 5vml4vrl6rljoofrz/1tbiWwb0mWV4JSWaTQAAs6
+Message-ID: <171757470541.10875.11693142669094911973.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/urgent branch of tip:
 
+Commit-ID:     93c1800b3799f17375989b0daf76497dd3e80922
+Gitweb:        https://git.kernel.org/tip/93c1800b3799f17375989b0daf76497dd3e80922
+Author:        David Kaplan <david.kaplan@amd.com>
+AuthorDate:    Sun, 02 Jun 2024 13:19:09 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 03 Jun 2024 17:19:03 +02:00
 
-On 6/5/24 02:00, Paul M Stillwell Jr wrote:
-> On 6/4/2024 6:51 AM, Jiwei Sun wrote:
->> From: Jiwei Sun <sunjw10@lenovo.com>
->>
->> During booting into the kernel, the following error message appears:
->>
->>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device''
->>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: /dev/nvme1n1 is not attached to Intel(R) RAID controller.'
->>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: No OROM/EFI properties for /dev/nvme1n1'
->>    (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: no RAID superblock on /dev/nvme1n1.'
->>    (udev-worker)[2149]: nvme1n1: Process '/sbin/mdadm -I /dev/nvme1n1' failed with exit code 1.
->>
->> This symptom prevents the OS from booting successfully.
->>
->> After a NVMe disk is probed/added by the nvme driver, the udevd executes
->> some rule scripts by invoking mdadm command to detect if there is a
->> mdraid associated with this NVMe disk. The mdadm determines if one
->> NVMe devce is connected to a particular VMD domain by checking the
->> domain symlink. Here is the root cause:
->>
->> Thread A                   Thread B             Thread mdadm
->> vmd_enable_domain
->>    pci_bus_add_devices
->>      __driver_probe_device
->>       ...
->>       work_on_cpu
->>         schedule_work_on
->>         : wakeup Thread B
->>                             nvme_probe
->>                             : wakeup scan_work
->>                               to scan nvme disk
->>                               and add nvme disk
->>                               then wakeup udevd
->>                                                  : udevd executes
->>                                                    mdadm command
->>         flush_work                               main
->>         : wait for nvme_probe done                ...
->>      __driver_probe_device                        find_driver_devices
->>      : probe next nvme device                     : 1) Detect the domain
->>      ...                                            symlink; 2) Find the
->>      ...                                            domain symlink from
->>      ...                                            vmd sysfs; 3) The
->>      ...                                            domain symlink is not
->>      ...                                            created yet, failed
->>    sysfs_create_link
->>    : create domain symlink
->>
->> sysfs_create_link() is invoked at the end of vmd_enable_domain().
->> However, this implementation introduces a timing issue, where mdadm
->> might fail to retrieve the vmd symlink path because the symlink has not
->> been created yet.
->>
->> Fix the issue by creating VMD domain symlinks before invoking
->> pci_bus_add_devices().
->>
->> Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
->> Suggested-by: Adrian Huang <ahuang12@lenovo.com>
->> ---
->> v2 changes:
->>   - Add "()" after function names in subject and commit log
->>   - Move sysfs_create_link() after vmd_attach_resources()
->>
->> ---
->>   drivers/pci/controller/vmd.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
->> index 87b7856f375a..d0e33e798bb9 100644
->> --- a/drivers/pci/controller/vmd.c
->> +++ b/drivers/pci/controller/vmd.c
->> @@ -925,6 +925,9 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
->>           dev_set_msi_domain(&vmd->bus->dev,
->>                      dev_get_msi_domain(&vmd->dev->dev));
->>   +    WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
->> +                   "domain"), "Can't create symlink to domain\n");
->> +
-> 
-> I think you should move the sysfs_remove_link() line in vmd_remove() down as well.
+x86/kexec: Fix bug with call depth tracking
 
-Indeed, thanks for your suggestion. I will modify it in v3 patch.
+The call to cc_platform_has() triggers a fault and system crash if call depth
+tracking is active because the GS segment has been reset by load_segments() and
+GS_BASE is now 0 but call depth tracking uses per-CPU variables to operate.
 
-Thanks,
-Regards,
-Jiwei
+Call cc_platform_has() earlier in the function when GS is still valid.
 
-> 
-> Paul
-> 
->>       vmd_acpi_begin();
->>         pci_scan_child_bus(vmd->bus);
->> @@ -964,9 +967,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
->>       pci_bus_add_devices(vmd->bus);
->>         vmd_acpi_end();
->> -
->> -    WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
->> -                   "domain"), "Can't create symlink to domain\n");
->>       return 0;
->>   }
->>   
+  [ bp: Massage. ]
 
+Fixes: 5d8213864ade ("x86/retbleed: Add SKL return thunk")
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: <stable@kernel.org>
+Link: https://lore.kernel.org/r/20240603083036.637-1-bp@kernel.org
+---
+ arch/x86/kernel/machine_kexec_64.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index b180d8e..cc0f7f7 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -295,8 +295,15 @@ void machine_kexec_cleanup(struct kimage *image)
+ void machine_kexec(struct kimage *image)
+ {
+ 	unsigned long page_list[PAGES_NR];
+-	void *control_page;
++	unsigned int host_mem_enc_active;
+ 	int save_ftrace_enabled;
++	void *control_page;
++
++	/*
++	 * This must be done before load_segments() since if call depth tracking
++	 * is used then GS must be valid to make any function calls.
++	 */
++	host_mem_enc_active = cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT);
+ 
+ #ifdef CONFIG_KEXEC_JUMP
+ 	if (image->preserve_context)
+@@ -358,7 +365,7 @@ void machine_kexec(struct kimage *image)
+ 				       (unsigned long)page_list,
+ 				       image->start,
+ 				       image->preserve_context,
+-				       cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT));
++				       host_mem_enc_active);
+ 
+ #ifdef CONFIG_KEXEC_JUMP
+ 	if (image->preserve_context)
 
