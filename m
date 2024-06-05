@@ -1,111 +1,153 @@
-Return-Path: <linux-kernel+bounces-202173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE8B8FC8B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754278FC8BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30966B25789
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EB01F239CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8715190060;
-	Wed,  5 Jun 2024 10:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E8C19006D;
+	Wed,  5 Jun 2024 10:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="f22VGsT6"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="S7eWnebj"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB40C18F2DD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCA714A4F4;
+	Wed,  5 Jun 2024 10:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717582254; cv=none; b=sGnotdtLlhTZnsbdLXc42Od4HjdqLYTRv3B/188b4rbAdoHNanhqcpGATmg6pCWLV6uD1sRaQtmBRbFJLAEKXcaF7NFujYmYS95Tcjm+lnO8mabJkcOGv7+jx9TG7RsXa8cKurTo6SfQ5i581bSxtsMGyRxgewZxlBK6Hw/lLeY=
+	t=1717582435; cv=none; b=pPfSoLw2PtFkamRxTdfC829Wi4d5aSJMXD0l++IcJdXM1KOULIYN92mg6D3rrGmTyDWZxleiyLSFS66vAYpbumPiBepz5t86kbcFTx6KhdpZ1cdFVmyIQTFt7bEQlUUs58Q9VDeA4irO4lYGR2wGdY8YFuBq17+ao49DKQPFVQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717582254; c=relaxed/simple;
-	bh=qglBQ7rwNv7Li7vvSQYY+g6s2ZyFxgycV1UGyNThHl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlZOZNDv2t4fTucT8y1RqpnApoSMmwGlpu7xJwlT94KZ9QyfCgRryESV7p+pViaQrulxjleTWVwAUJaKvn6KluhqVJFqHxKGfvHk97v9wCSDCu7G1bjWK9tSqfDnXZ3l5IBdlGHyyMOv5DQMJjSzpGyhcsU5ljdLLG+6xFOOsj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=f22VGsT6; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eacd7e7ad7so2436431fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 03:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1717582250; x=1718187050; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mku7GzZWs5xanYMf7QuG6n9lfp8wLHBzVIbTOzZoCDQ=;
-        b=f22VGsT6xc2gIcck1vuV8t01SREp6SboC3PJbt2QaYbpzjFSRzosvjnDDRFaE9r55L
-         K7Ja9kQzxKCCY8fhx/brZ7ZasqPRpfj+G3Lkk30BHoVPVv3MthPzEC7aoUG0SRPKwP6/
-         SXbozYbKlU8kgVY/m6wVxfHiCYwJoINBWPZpKkD9cYW6PAkZP7HwfbZfjOD5alpVJfvI
-         r+k5l0mU99HPlCtfOqxDj9uo55jmV1lzb9Q1qmzlcRBTQGHNDZOfOD1kqJuhd+ZGEKW8
-         i+DLvv7Eo8LhXJ+/+DiSJqg10PZxFPndKM5ILXJ3BFljomd/vVM8k7aeyTp7DgJNIjwE
-         qIKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717582250; x=1718187050;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mku7GzZWs5xanYMf7QuG6n9lfp8wLHBzVIbTOzZoCDQ=;
-        b=WskVNvGA7t88JeGXJoiuQGoC7Mbn5H5A1DMekat1/W620DIWy50cz7B9y1oe6NuajS
-         JPrXfJ3l7CO9CCU+SH3+wXUH1NLf/ht/cXscrQTjnkdQR+rfL5mkR1tOdJ+6Fk7tzrrj
-         EIMJYFfqdRYtoYpHxm97KYH2QKZOfOhofPkH8UFO4qSO4fp8Ld5cjXB0WojCeYJsrdX1
-         F6OWMtFcVVfMPqBrgEXVyaxBVKlNO6/qNQEKFxg0SZWp4Rm7TnwkvpSDwuZbrwfS22H0
-         TjtkGUHcCOKtJ+t57aB5exK1J3sFXnUNmPI5dkUDDd9bahLbJg/FBv7hejS1NtranhYo
-         AnXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYJHm/5uJOCY7wddgjNMhx+duam8oJ9T05aGpd39uhVa4p835YE3Y9AH7b7fiMoAT9h/LyFrKy3D8pfhEDbSZj6FKSA+gAAiZGKdaR
-X-Gm-Message-State: AOJu0Yx+MwtwzgU7FMSEK12Hhb0+5Poi0XstlpsjNvDx13PjnU+LUe/c
-	2mujESbOVArBfLPmswjCp2lRSkGog/1ifVsuVqQL8JxOMrbxnAnhf3Tx4GUelM84Np+QPu30HIG
-	I
-X-Google-Smtp-Source: AGHT+IE8WDyz86+CBmU5Yun7o6qjUBmFSvF0F+vN+plt7b7qCALDSxPKHPC3yJtEQ38n8UzyTWpUTQ==
-X-Received: by 2002:a2e:8604:0:b0:2ea:c7f7:ea20 with SMTP id 38308e7fff4ca-2eac7f7f536mr10871971fa.7.1717582249973;
-        Wed, 05 Jun 2024 03:10:49 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c28067b192sm1103246a91.30.2024.06.05.03.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 03:10:49 -0700 (PDT)
-Date: Wed, 5 Jun 2024 12:10:40 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH linux-next] printk: nbcon: Fix
- nbcon_cpu_emergency_flush() when preemptible
-Message-ID: <ZmA5oIkImclKM0vx@pathway.suse.cz>
-References: <87zfrzvhsp.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1717582435; c=relaxed/simple;
+	bh=ik7O5D1/zfrU5PaNGdXm7WqPHSu6IAEY0lgHj8rkt14=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M9uOVym77G5N4FX5s7BtMRjF4/cQQOy2KPlSmuAzeNXylBgv3LWNV/kgBIts6DMJf/f4ZkmrlV67LE0xGUWBLNlIGSTQssiSvMzEr41s4o5roRygUiASoLL9TJJbYHNZwHqAVDwEwhaPk1xiaGmHor3iFOjKyeRq+1QmureoHRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=S7eWnebj; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 97472100003;
+	Wed,  5 Jun 2024 13:13:24 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1717582404; bh=0/SSnP2FmJDTn4D/XDM1bjJhKm4OlkcBcXnMVeCu4GU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=S7eWnebj243qAdwLvX/2889sWAI05xibP/b6g+UGGNXeb1Vhia9+L058lm2o5z9qJ
+	 2WwDEj5su5BMfpHf1/jnm3NYEoNNC/4E50DYgGgBfgFfSuZiD36jCvpumIhUOlBSml
+	 PRmufnT2JVUr/yjU7OPibisWWPl047oAhYakJEYhOCrAS71uFYA35o6v4ISb4kq6Lc
+	 Uf7IT7y4kZJyF6Tc7MFxkVT+mJzWyTkb0WOUOd3Z8HgM6sSS8j79HF/CoQRVAV6B5A
+	 ebPMHHEYnIh+5ro8qF+lfEAF0doNqiTu5u7s73K2HSIbVXbF/ivJUGandRh7f7/acD
+	 MMP++fzDP/vJw==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Wed,  5 Jun 2024 13:12:03 +0300 (MSK)
+Received: from localhost.localdomain (172.17.215.6) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Jun 2024
+ 13:11:42 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: "David S. Miller" <davem@davemloft.net>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Simon Horman <horms@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Kees Cook <keescook@chromium.org>, Justin Stitt
+	<justinstitt@google.com>, Felix Manlunas <felix.manlunas@cavium.com>,
+	Satanand Burla <satananda.burla@cavium.com>, Raghu Vatsavayi
+	<raghu.vatsavayi@cavium.com>, Vijaya Mohan Guvva <vijaya.guvva@cavium.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net v3] liquidio: Adjust a NULL pointer handling path in lio_vf_rep_copy_packet
+Date: Wed, 5 Jun 2024 13:11:35 +0300
+Message-ID: <20240605101135.11199-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zfrzvhsp.fsf@jogness.linutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185735 [Jun 05 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;mx1.t-argos.ru.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/06/05 09:22:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/05 07:06:00 #25449783
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Wed 2024-06-05 11:57:34, John Ogness wrote:
-> nbcon_cpu_emergency_flush() can be called in a preemptible
-> context. In that case the CPU is not in an emergency state.
-> However, in order to see that the CPU is not in an emergency
-> state (accessing the per-cpu variable), preemption must be
-> disabled.
-> 
-> Disable preemption when checking the CPU state.
-> 
-> Reported-by: Juri Lelli <juri.lelli@redhat.com>
-> Closes: https://lore.kernel.org/aqkcpca4vgadxc3yzcu74xwq3grslj5m43f3eb5fcs23yo2gy4@gcsnqcts5tos
-> Fixes: 46a1379208b7 ("printk: nbcon: Implement emergency sections")
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+In lio_vf_rep_copy_packet() pg_info->page is compared to a NULL value,
+but then it is unconditionally passed to skb_add_rx_frag() which looks
+strange and could lead to null pointer dereference.
 
-Great catch!
+lio_vf_rep_copy_packet() call trace looks like:
+	octeon_droq_process_packets
+	 octeon_droq_fast_process_packets
+	  octeon_droq_dispatch_pkt
+	   octeon_create_recv_info
+	    ...search in the dispatch_list...
+	     ->disp_fn(rdisp->rinfo, ...)
+	      lio_vf_rep_pkt_recv(struct octeon_recv_info *recv_info, ...)
+In this path there is no code which sets pg_info->page to NULL.
+So this check looks unneeded and doesn't solve potential problem.
+But I guess the author had reason to add a check and I have no such card
+and can't do real test.
+In addition, the code in the function liquidio_push_packet() in
+liquidio/lio_core.c does exactly the same.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Based on this, I consider the most acceptable compromise solution to
+adjust this issue by moving skb_add_rx_frag() into conditional scope.
 
-I am going to push it...
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Best Regards,
-Petr
+Fixes: 1f233f327913 ("liquidio: switchdev support for LiquidIO NIC")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+Reviewed-by: Simon Horman <horms@kernel.org>
+---
+v1->v2: Fix incorrect 'Fixes' tag format
+v2->v3: Add explanation why this should be fixed,
+ add Reviewed-by: Simon Horman <horms@kernel.org>
+ (https://lore.kernel.org/all/20240308201911.GB603911@kernel.org/)
+
+ drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
+index aa6c0dfb6f1c..e26b4ed33dc8 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
+@@ -272,13 +272,12 @@ lio_vf_rep_copy_packet(struct octeon_device *oct,
+ 				pg_info->page_offset;
+ 			memcpy(skb->data, va, MIN_SKB_SIZE);
+ 			skb_put(skb, MIN_SKB_SIZE);
++			skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
++					pg_info->page,
++					pg_info->page_offset + MIN_SKB_SIZE,
++					len - MIN_SKB_SIZE,
++					LIO_RXBUFFER_SZ);
+ 		}
+-
+-		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
+-				pg_info->page,
+-				pg_info->page_offset + MIN_SKB_SIZE,
+-				len - MIN_SKB_SIZE,
+-				LIO_RXBUFFER_SZ);
+ 	} else {
+ 		struct octeon_skb_page_info *pg_info =
+ 			((struct octeon_skb_page_info *)(skb->cb));
+-- 
+2.30.2
+
 
