@@ -1,110 +1,121 @@
-Return-Path: <linux-kernel+bounces-203321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664528FD95E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:45:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2E38FD962
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05222283B6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7862D1C225F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F17160780;
-	Wed,  5 Jun 2024 21:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4608515ECE5;
+	Wed,  5 Jun 2024 21:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FT8g+35C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3VcNcRA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0FF15FA6B;
-	Wed,  5 Jun 2024 21:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89584125D6;
+	Wed,  5 Jun 2024 21:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717623902; cv=none; b=UXhw/42YTobchWnxjJYycDbXz+E/bDhRTV6SVGBybnqWjT8nLHpIcG5lka9GX+2btT4sSts1b2GUIqyF8czTNAQ7Oot3HMA9MStOp378FXrqDIsgZ4k7+twz0Nze3KqDoYt50bd+63zf8O+S/Pb08+Iagusrg/qGKC2TWn509Kk=
+	t=1717624015; cv=none; b=oLlwCevkwCoEH7JuGrcFl/d2Qnu+w7rgqbpWWmxkvQ86y70V3L5RWdcZffUlV0G6zBv895aLY1nhzcAa4AZpHmoi9ts/tpLhOye7IjSE1V99dnRge1Mf8hY9CJM/+L+xX6w1KQBKkNvmUlkz5DPHfgaXKLEetFvHGZPqVC11NmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717623902; c=relaxed/simple;
-	bh=CVFMj08n3jx14fA4p4rVO8oNP2YJkFvLHwp+4lE/nJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=pfxxyhCIkrw+8BMIKo6M7h30BwHMZKABbaqg4UddbxSWxoKoPvLqdKup1kfo5n73u0I5Q9ARndY39Hu29fsZkUzgZRzNGkjmpmjAMYP3KenIVMGVdBPB24CP+eBuLKW6CFiTeWHrYDf6MbzIxU6/hNw8bvv9qYZ/26V+XbofXM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FT8g+35C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD9E4C2BD11;
-	Wed,  5 Jun 2024 21:45:01 +0000 (UTC)
+	s=arc-20240116; t=1717624015; c=relaxed/simple;
+	bh=8IwSqABN3QUMo7Xt3msOWudlsQ/lqx8RLiIFZ+0j31g=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=M9oUwMZAIl0wBKVD7uX5bdo8u8zMYiFO4GALTbQ7GbcYrON5LjfX+0L1uWXel/0Znp0QM0ifqghQNG8cXQWo54teLXS6pxw45OzUjVeg1VC4VSgBH6qaF3Lp4RFcuKUv9FERxYkkL7CW4t9LqZQSdPT84AWFQkOhfpdIZ/EF+6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3VcNcRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EB7C2BD11;
+	Wed,  5 Jun 2024 21:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717623902;
-	bh=CVFMj08n3jx14fA4p4rVO8oNP2YJkFvLHwp+4lE/nJk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=FT8g+35CiFMlqdW45S1xvzcyh6rKx+CgS1WwjYzIADHjLKkvfngN74AXw7nrcOHNp
-	 W/jTuM7rBD2tO/ss+up8NPfPp1AZQpaG6whs2KMNyRsFLFZoMjqPTlGQ8t4hrwJeZS
-	 E3EtLD1WTLPWUouYrWzY9FwX38uX5LzwsPYcp/IX8m8T3Iq98c2VnukCiS/L/hYZu0
-	 v2nuSygn69PZ4lUFigqffS3vhHrMngjxVJ2n5iSti6Z547E4IC7e5FBpyPYiW6XEFn
-	 7jEBrGrhmjFYUkOwaoHkYJ1FLJD67eL3hatO1/UBa1dmULLixBRhE9em/5wFOtPZ4f
-	 ocIB2a3M5WPmw==
-Date: Wed, 5 Jun 2024 16:45:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Martin Oliveira <martin.oliveira@eideticom.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-mm@kvack.org,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tejun Heo <tj@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Valentine Sinitsyn <valesini@yandex-team.ru>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH 3/6] PCI/P2PDMA: create VMA without page_mkwrite()
- operator
-Message-ID: <20240605214500.GA781636@bhelgaas>
+	s=k20201202; t=1717624015;
+	bh=8IwSqABN3QUMo7Xt3msOWudlsQ/lqx8RLiIFZ+0j31g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J3VcNcRAd5sterQjy8ufiNGoR9ycCDnEBBSeNq95rhHVOO7SA60FXX3/Xbt0wpwr/
+	 XHHkBYpP5rz9l/1dW1/MlhXgYs05Y+bXJ6zfYbbMocPlRBnAz5Mk/BIu2Uiir4IPHt
+	 p1iuAuTjCfY9JSGqU8Iqmt7whs5+POsThIg9U8AGeugdLeRBe0I/4U2/9lTLvWiFDH
+	 Jsq/koTF2KtPSdKGW7vwiBdSNhu6nP/EOVvmFyPAnBNsVbSKa11WYYKbVFISiskX6L
+	 N0sYIz3olSB0GQmZGpbf8U/Q6gFbvxlMXUw+eArKnUlKZhgUb8x6UlsCg3nUdRZVhN
+	 g83pGVEYMqOoA==
+Date: Thu, 6 Jun 2024 06:46:51 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH 1/5] ftrace: Rename dup_hash() and comment it
+Message-Id: <20240606064651.2de33dadaf241dda11fb70bc@kernel.org>
+In-Reply-To: <20240604212854.564747474@goodmis.org>
+References: <20240604212817.384103202@goodmis.org>
+	<20240604212854.564747474@goodmis.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605192934.742369-4-martin.oliveira@eideticom.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 01:29:31PM -0600, Martin Oliveira wrote:
-> The P2PDMA code does not need (or want) a page_mkwrite() operator on its
-> VMA.
+On Tue, 04 Jun 2024 17:28:18 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 > 
-> Furthermore, having the page_mkwrite() operator causes
-> writable_file_mapping_allowed() to fail due to
-> vma_needs_dirty_tracking() on the gup flow, which is a pre-requisite for
-> enabling P2PDMA with FOLL_LONGTERM use cases.
+> The name "dup_hash()" is a misnomer as it does not duplicate the hash that
+> is passed in, but instead moves its entities from that hash to a newly
+> allocated one. Rename it to "__move_hash()" (using starting underscores as
+> it is an internal function), and add some comments about what it does.
+
+Good change.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you,
+
 > 
-> Co-developed-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Martin Oliveira <martin.oliveira@eideticom.com>
-
-Fine with me, but please s/create/Create/ in the subject to match
-history of the file.
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  drivers/pci/p2pdma.c | 1 +
->  1 file changed, 1 insertion(+)
+>  kernel/trace/ftrace.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index 4f47a13cb500..ac07053abfea 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -171,6 +171,7 @@ static struct bin_attribute p2pmem_alloc_attr = {
->  	 * to be very large.
->  	 */
->  	.size = SZ_1T,
-> +	.mmap_allocates = true,
->  };
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index da7e6abf48b4..9dcdefe9d1aa 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -1391,7 +1391,11 @@ ftrace_hash_rec_enable_modify(struct ftrace_ops *ops, int filter_hash);
+>  static int ftrace_hash_ipmodify_update(struct ftrace_ops *ops,
+>  				       struct ftrace_hash *new_hash);
 >  
->  static struct attribute *p2pmem_attrs[] = {
+> -static struct ftrace_hash *dup_hash(struct ftrace_hash *src, int size)
+> +/*
+> + * Allocate a new hash and remove entries from @src and move them to the new hash.
+> + * On success, the @src hash will be empty and should be freed.
+> + */
+> +static struct ftrace_hash *__move_hash(struct ftrace_hash *src, int size)
+>  {
+>  	struct ftrace_func_entry *entry;
+>  	struct ftrace_hash *new_hash;
+> @@ -1438,7 +1442,7 @@ __ftrace_hash_move(struct ftrace_hash *src)
+>  	if (ftrace_hash_empty(src))
+>  		return EMPTY_HASH;
+>  
+> -	return dup_hash(src, size);
+> +	return __move_hash(src, size);
+>  }
+>  
+>  static int
 > -- 
-> 2.34.1
+> 2.43.0
 > 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
