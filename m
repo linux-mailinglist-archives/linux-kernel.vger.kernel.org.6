@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-202166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A088FC898
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:04:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294F58FC89A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 266B81C21308
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:04:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78C4CB2425B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7997918FDCB;
-	Wed,  5 Jun 2024 10:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07D6190078;
+	Wed,  5 Jun 2024 10:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWQoFThp"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIEPWhPz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3FC18FC6B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 10:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CBB18FC94;
+	Wed,  5 Jun 2024 10:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717581865; cv=none; b=g8X7tcp5JOUsVrUqMzPTupoQWQPAXRfgRiJdwEn/RNkOKWqSvRCAGneUXRr7jy3Plna2R7nP74DBkhKCziQ1NYchhuo405z5u/TV/A6tsdDLXH8bz4KOKhbvtSZUcFLa3VGmGFkumGJTiHhBsKOerH4DchJaPoJ7z/lY0V0HcLA=
+	t=1717581874; cv=none; b=MuSQNVpALNW990IbrMCIXU3kB55rwOjXs0GeT0U+asDpJ2DESZh8DS/WgNx1CyqPWTQmceR6Vo0aKokrfJhq+yunBDE7AR0a5t9+SWkLq3x74qMManYRj2tI0qUZN9edKIduBRPjjl5rXnbSmkEbcRxL2Sh8jMuU4EyLaJQJuTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717581865; c=relaxed/simple;
-	bh=V9afjXCLv74rpExL0uuplo9YHWRRfoe+FmZhXnu1o6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=l+pVf2zoda3O6gofi5WOtjRZlmMVAVUDNN9Hsgkv+AhmPGeuFrWb2dSUhA9iPCQw/tjq/4gfHxJikdFyw8e231L0anHgKPNY4geUu/3B7o5HG2gRfmatPIVhG/FOITBffyChKgAQrdYzmexj07uZT0YehC++i5ycP2AfZ5R/CCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWQoFThp; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7025b253f64so3012528b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 03:04:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717581864; x=1718186664; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=A7d1eUTZNGszW0x+tHAtEsjGhoVVhsH2xVEU1kXMK+U=;
-        b=IWQoFThp8bqTClX1WVd034013a1L1N8GAwj9ekjkcimEJ5Bw54fu5xOoohZxXrsxwO
-         aj31O/0b/QelBt41NY5GD6a7SlK08qsJFks345V5a294A2E1NAmYmEnwZOwMC2R+Fim+
-         HqImK/yfSBp+dYpjt48hrwxxJUxeT7GeqPu1qhDMjszdf6aTviHfYRuiZxC8LzhOFhtW
-         bQYkc+egb23XlfchoTIPilQLQ/D8jbUndjdoz5LXpPoOO0H+hnwaOacIs1xf9MrD6NuU
-         14YIKiWnZBT+A9KGZbB+3CoihEvmr34tFs/sJb9f8FZvTAJTqD2OTB5owv/zkGDUAb0w
-         VT7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717581864; x=1718186664;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7d1eUTZNGszW0x+tHAtEsjGhoVVhsH2xVEU1kXMK+U=;
-        b=vo1awRV9sc8d2wYPCSymFmH11aSQ/k69pJ82Tx3LFgAvDOkTQwv30rKwswAqb+rKNF
-         F6gtxyQLvukB6hyLN5i5iUx6qrGo91txssSiZK7KAs0u1AyOXNgE9F2iLb0aTPcFMM+H
-         /i1k23gMJW0pLXIfzfhYvVt4nXe9c+tKgYVNGYPfcE/QjOuaaAJIePYFPjQoFnOl3qw2
-         oZ4SsGsukierMb6eaKrfRJa12K2rnhLRUG+cpOE6hgxjD/G/iHyCsK8JMYfdcYKOIQ7w
-         xyJrsck+LgOPXaCvrvDOTEwF7fkAHiMvMVU23zLW7JL9GW5axn2X+nRnC1/lUMMdfkeK
-         fdZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLM4b9ArRmKNVLoqlNlcQ5bgiyLTe5hQEd5VQtEx7IFCI6FWbO3KvdhTwCaDcH2Cayp8z4YEymUEfSvcaUz/Sfgmwm4pSw/sA6Tx+M
-X-Gm-Message-State: AOJu0Yw6BYFR9OxDQrxH1C+AvvNW3TkKTg/jg5Jpb4iIHwayLLTC+8bc
-	bA8VWx5H/iSlhvZmQIVgy9DjMVw+6Pgf4QFCBb4pP/eNpX7c+Nqb
-X-Google-Smtp-Source: AGHT+IGp7FyIzGZzB11PGFyatr+hn2MrYKFTbfkP7NCUaxvU4h42qPcX6DbM3UWRssnBa1+faOY7MA==
-X-Received: by 2002:a05:6a00:1146:b0:6f3:ea67:48c3 with SMTP id d2e1a72fcca58-703e56d308amr2242920b3a.0.1717581863510;
-        Wed, 05 Jun 2024 03:04:23 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70242ae6b7esm8296082b3a.113.2024.06.05.03.04.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 03:04:23 -0700 (PDT)
-Message-ID: <a1ba41f1-ecff-4790-b85a-ce5dc8077b91@gmail.com>
-Date: Wed, 5 Jun 2024 18:04:19 +0800
+	s=arc-20240116; t=1717581874; c=relaxed/simple;
+	bh=Cn73GF3ysEs/8M4g6qhMBufC206zVPlSS64vbWQZY0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M+QEMIcIX9e/PvdOZeLZaYMFep3NsRKbrI6fcysKArPhZMsD+2iLa5VFPESwyL7W3ETcmZFhi6f9RPQFMI/6Kvrc+N9vBdCseCAab126fLb8ZkREj+wBDO8imB26STObwSRWNg2UKQXReoSqFDeskWfTZdpQzGqfXf7/mK8CbcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIEPWhPz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B6C5C3277B;
+	Wed,  5 Jun 2024 10:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717581874;
+	bh=Cn73GF3ysEs/8M4g6qhMBufC206zVPlSS64vbWQZY0E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qIEPWhPzEggn60Ixv7bxJ8ZVsgHPKWYmTGt6EfxJLjk2Sv+39F8Bh3zcBeJ2qqJU4
+	 4/KFWYNo6wCSXC1M6juhK2POrxJsudVNepz1obkVG1AkxyHCXVHIEqW8OdUmNxuffF
+	 R6aDNOXAFV0NN8fCDuKGWsxOpv7Ydwk/pwgCnsT66mZ6Pva1yFrSmuH3hJ3ROVYOyh
+	 SBwn5BTWrOhh/txn6M4JRwe+zzkF5px+Cb4X4COwqHrkmrgmBtpKBiGfw7AGeltUXg
+	 n0Kc+bGDceRVpn1fFK9I/V78YJT8E2zMBevCPPnOAljUFseJ1xcvTQB0enTEi96Q9w
+	 /2YFTCTChbC8Q==
+Message-ID: <2c4283be-0369-4be3-ba07-987b9fb41476@kernel.org>
+Date: Wed, 5 Jun 2024 12:04:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,81 +49,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 3/3] mm/ksm: move flush_anon_page before checksum
- calculation
-To: alexs@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- izik.eidus@ravellosystems.com, willy@infradead.org, aarcange@redhat.com,
- chrisw@sous-sol.org, hughd@google.com, david@redhat.com
-References: <20240605095304.66389-1-alexs@kernel.org>
- <20240605095304.66389-3-alexs@kernel.org>
+Subject: Re: [PATCH 08/17] Add main.c
+To: "Nemanov, Michael" <michael.nemanov@ti.com>, Kalle Valo
+ <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
+ Breno Leitao <leitao@debian.org>, Justin Stitt <justinstitt@google.com>,
+ Kees Cook <keescook@chromium.org>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20240521171841.884576-1-michael.nemanov@ti.com>
+ <20240521171841.884576-9-michael.nemanov@ti.com>
+ <cfe33bf1-9df3-4d02-b4ed-e29a430b106d@kernel.org>
+ <456c8076-1e3a-4cc9-895c-e707e68fe610@ti.com>
+ <97d8acf9-6cb3-4da7-ad4e-0f2d0a63c172@kernel.org>
+ <2e2ec1ba-0c24-4173-af60-ea51004f2e10@ti.com>
+ <eea16e12-6e9d-4630-87e6-f44071ab1c4e@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240605095304.66389-3-alexs@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <eea16e12-6e9d-4630-87e6-f44071ab1c4e@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Let me withdraw this patch, the flush_anon_page come with the first patchset of ksm, and no explanation for them.
-Though, no any guarantee for concurrent page write for the flush, but anyway I give up on the flush optimize.
+On 05/06/2024 11:55, Nemanov, Michael wrote:
+> On 5/31/2024 4:50 PM, Nemanov, Michael wrote:
+>> On 5/22/2024 12:46 PM, Krzysztof Kozlowski wrote:>
+>>>> +
+>>>> +static int cc33xx_probe(struct platform_device *pdev)
+>>>> +{
+>>>> +	struct cc33xx *cc;
+>>>> +	struct ieee80211_hw *hw;
+>>>> +	struct cc33xx_platdev_data *pdev_data = dev_get_platdata(&pdev->dev);
+>>>> +	const char *nvs_name;
+>>>> +	int ret;
+>>>> +
+>>>> +	cc33xx_debug(DEBUG_CC33xx, "Wireless Driver Version %s", DRV_VERSION);
+>>>
+>>> Drop
+>>>
+>>>> +
+>>>> +	if (!pdev_data) {
+>>>> +		cc33xx_error("can't access platform data");
+>>>
+>>> Do not use your own print code. Use standard dev_() calls. This applies
+>>> *everywhere*.
+>>>
+>>> [...]
+>>>
+>>>> +	cc33xx_debug(DEBUG_CC33xx, "WLAN CC33xx platform device probe done");
+>>>
+>>> Drop, tracing/sysfs gices you this. Do not print simple
+>>> success/entry/exit messages.
+>>>
+>>> [...]
+>>>
+>>>> +};
+>>>> +MODULE_DEVICE_TABLE(platform, cc33xx_id_table);
+>>>> +
+>>>> +static struct platform_driver cc33xx_driver = {
+>>>> +	.probe		= cc33xx_probe,
+>>>> +	.remove		= cc33xx_remove,
+>>>> +	.id_table	= cc33xx_id_table,
+>>>> +	.driver = {
+>>>> +		.name	= "cc33xx_driver",
+>>>> +	}
+>>>> +};
+>>>> +
+>>>> +u32 cc33xx_debug_level = DEBUG_NO_DATAPATH;
+>>>>
+>>> Why this is global? Why u32? Why global variable is defined at the end
+>>> of the file?!?!
+>>  
+>> cc33xx_debug_level together with cc33xx_debug/info/error() macros is how
+>> all traces were done in drivers/net/wireless/ti/wlcore/ (originally was
+>> wl1271_debug/info etc.)
+>> It enables / disables traces without rebuilding or even reloading which
+>> is very helpful for remote support. These macros map to dynamic_pr_debug
+>> / pr_debug. I saw similar wrappers in other wireless drivers (ath12k).
+>> This is also why there are plenty of cc33xx_debug() all over the code,
+>> most are silent by default.
+> 
+> Any more thoughts on debug traces? I'll remove all trivial function 
+> entry / exit traces as Krzysztof requested. Is it OK to keep other 
+> cc33xx_debug() calls which will be off by default?
 
-Sorry for disturber.
+Sorry, I don't see the point. Dynamic debug gives you debug control. You
+just added orthogonal code to existing debug infrastructure, so as far
+as I am concerned, this should be dropped in favor of standard debugging
+calls.
 
-Alex
+Best regards,
+Krzysztof
 
-On 6/5/24 5:53 PM, alexs@kernel.org wrote:
-> From: "Alex Shi (tencent)" <alexs@kernel.org>
-> 
-> commit 6020dff09252 ("[ARM] Resolve fuse and direct-IO failures due to missing cache flushes")
-> explain that the aim of flush_anon_page() is to keep the cache and memory
-> content synced. Also as David Hildenbrand pointed, flush page without
-> the page contents reading here is meaningless, so let's move the flush action
-> just before page contents reading, like calc_checksum(), not
-> just find a page, flush it, w/o clear purpose. This should save some flush
-> actions why keep page content safely synced.
-> 
-> BTW, write_protect_page() do another type flush actions before pages_identical().
-> 
-> Signed-off-by: Alex Shi (tencent) <alexs@kernel.org>
-> ---
->  mm/ksm.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index ef335ee508d3..77e8c1ded9bb 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -784,10 +784,7 @@ static struct page *get_mergeable_page(struct ksm_rmap_item *rmap_item)
->  		goto out;
->  	if (is_zone_device_page(page))
->  		goto out_putpage;
-> -	if (PageAnon(page)) {
-> -		flush_anon_page(vma, page, addr);
-> -		flush_dcache_page(page);
-> -	} else {
-> +	if (!PageAnon(page)) {
->  out_putpage:
->  		put_page(page);
->  out:
-> @@ -2378,7 +2375,12 @@ static void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_ite
->  		mmap_read_unlock(mm);
->  		return;
->  	}
-> +
-> +	/* flush page contents before calculate checksum */
-> +	flush_anon_page(vma, page, rmap_item->address);
-> +	flush_dcache_page(page);
->  	checksum = calc_checksum(page);
-> +
->  	if (rmap_item->oldchecksum != checksum) {
->  		rmap_item->oldchecksum = checksum;
->  		mmap_read_unlock(mm);
-> @@ -2662,8 +2664,6 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
->  			if (is_zone_device_page(*page))
->  				goto next_page;
->  			if (PageAnon(*page)) {
-> -				flush_anon_page(vma, *page, ksm_scan.address);
-> -				flush_dcache_page(*page);
->  				rmap_item = get_next_rmap_item(mm_slot,
->  					ksm_scan.rmap_list, ksm_scan.address);
->  				if (rmap_item) {
 
