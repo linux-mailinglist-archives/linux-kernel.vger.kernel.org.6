@@ -1,131 +1,155 @@
-Return-Path: <linux-kernel+bounces-202693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F3C8FCFA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:41:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F153D8FCFA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA0028F8DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887071F26AD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB3519A2B1;
-	Wed,  5 Jun 2024 13:18:02 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80F31957E4;
+	Wed,  5 Jun 2024 13:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="K/QYeyeS"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738381993AE;
-	Wed,  5 Jun 2024 13:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5B719924D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 13:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717593482; cv=none; b=D1Eynh5e8BazLnsqcO1E1mNFnIrmauN24k7hLiTaaUH6Cx1vEAmLhKu2oL1sZ1HRt/CPLBJzfEmqKNjgXRrT5VD08CilkCtK2BZnxaXb8rPlxpDgiARa1WXiYooXEVdTvOsaphZpMFDSQVxShnQTYawrusHglzx42pqQ1AOJwgM=
+	t=1717593500; cv=none; b=mqvaroFVInEoNinLmr3/3TRes5KcocWS/uGNk0LC9fMkJm59aXbjucOEYAaFyV0tqg/LaHdpyM6+Tq3R7Lxf+f4HJaJqzX7jYlnG5HPnRUgP4V/QtCikaoXulnUaxgRpJrGt7OfbHvxvLNnTQjK+cqSXhk6FJNPya3LoDaeXd78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717593482; c=relaxed/simple;
-	bh=zKvIhxSqqT9FqJeBjcPR8uWxWYQnQKPGnUrKxRgCKQE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l7TzNSH37vEXUo4CDsMnFKKQrW+LI6WurxEdjkGh223jUqkhqr1bm3Q9pLl/TUZEalhT2yRRxuc41/4pdmxpwjpRRundNZm5ZV7bDDzce4vEOgvyeztKuJUsPe0lzu0YWjpxdVrc7UzGn06W61t4aosJIA/R0HpaR8WjaDaNk2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a31d63b6bso3086204a12.0;
-        Wed, 05 Jun 2024 06:18:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717593479; x=1718198279;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z0UO6kXD+1YYvRaIqQUVf1oJgFoVApkH9Bfb2EMD7Mg=;
-        b=AoGy4C3U8T1aheX6q7BW0ypDRHcM/crKpyr2k70c4H4ECodhBqAzeNw16dFJs5XgWw
-         zzwE+cLHqxQKlALtM6RmBe33avL76dI3Qfaf7NNx5+MaxdqsT4BnqoqfZ8uV2tDdJMau
-         DK8AG/tgMUvuCH3eteXZoZ/D/a1BZx8AbtEfILjaj6VwTUZxTgVrBbGek+OAqKEqLAXy
-         x3SjGIc2OTDV7F3otV2syW89wmju7e7BlnzE9kinS9d+AwZBbs/xPWZppXKv1PPTPx2X
-         11yNONKevExXsDx27vT/FV8qjM35n4PLOGnGKiVFQFoCDzXlbFSEYgTbX5uDxB862yEw
-         H08Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXqwmR8MHf2vvEjycyRFbDyFSuuxaUp2CIzMYv6HD/ZL05BBdeuyPs3t0UzjLyEc94Daf9B1M71ZTpSlVK3BUDozm/U/WR2JbiuuZe
-X-Gm-Message-State: AOJu0Yx0zapQYX436hc2ClQpRrLSbRxd8K/CdUhvTp2zWlfZtVuMMDNV
-	ogm1GEZ11ttWH6tFbdy1EAMBwRpAOKto0FuWVfHPeVrt5bkmaNsL
-X-Google-Smtp-Source: AGHT+IHg3k02UXOhdyZHB6aIK2ubKiZI0k4sBYhtcpPHPogQwpj9d5yc9KJK7KzgGw+S0sIJfca1bA==
-X-Received: by 2002:a50:875c:0:b0:57a:4af6:319e with SMTP id 4fb4d7f45d1cf-57a8b69d02amr1739160a12.1.1717593478760;
-        Wed, 05 Jun 2024 06:17:58 -0700 (PDT)
-Received: from [127.0.0.1] (p200300f6f7253800fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f725:3800:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31b99a3fsm9266913a12.9.2024.06.05.06.17.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 06:17:58 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-Date: Wed, 05 Jun 2024 15:17:52 +0200
-Subject: [PATCH 4/4] btrfs: don't pass fs_info to describe_relocation
+	s=arc-20240116; t=1717593500; c=relaxed/simple;
+	bh=aSGeY//DKOc9pUfHYgBFU7c6uqdrSP0BOyUSG+ubbnc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eItNdB7BXDgUCq4kU9fi2ESslBlHzKd6GgPdnpBr8JUHLJaBk03bgW+ywjN9nBvzOo8ps79oFIZrruB/pP44g+lKK4KxxL8icW7cuCrRwaJ6khFSeBbhHtEYprG5f9ILuFOM3k+fNTkuxNwLw8TOpRHvibYMnaxBCNmaHT0lbZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=K/QYeyeS; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1717593493;
+	bh=aSGeY//DKOc9pUfHYgBFU7c6uqdrSP0BOyUSG+ubbnc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=K/QYeyeSpUarJlYgGgAyIAl4Fd+JhbABsGC8TCH2Hn4w42JBjAcm37/+UPyjiPAiS
+	 FXqo2AgIrAo3JpeegFXyKyanW+LLvUOsnxx66xVFVXJVJCEME/Rclz++AQPGIMeI5U
+	 CkSNEPqyletl8w4nPPNuC6JwFEfS5d5LgrHDLEpE=
+Received: from [192.168.124.13] (unknown [113.140.11.124])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id E912F6760C;
+	Wed,  5 Jun 2024 09:18:08 -0400 (EDT)
+Message-ID: <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
+Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
+ unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
+From: Xi Ruoyao <xry111@xry111.site>
+To: Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Tiezhu Yang <yangtiezhu@loongson.cn>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, Youling Tang <tangyouling@kylinos.cn>, Jinyang He
+ <hejinyang@loongson.cn>,  loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ mengqinggang@loongson.cn, cailulu@loongson.cn, wanglei@loongson.cn, 
+ luweining@loongson.cn, Yujie Liu <yujie.liu@intel.com>, Heng Qi
+ <hengqi@linux.alibaba.com>, Tejun Heo <tj@kernel.org>
+Date: Wed, 05 Jun 2024 21:18:06 +0800
+In-Reply-To: <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
+References: <20240604150741.30252-1-xry111@xry111.site>
+	 <20240605054328.GA279426@thelio-3990X>
+	 <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
+	 <20240605062548.GF279426@thelio-3990X>
+	 <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240605-reloc-cleanups-v1-4-9e4a4c47e067@kernel.org>
-References: <20240605-reloc-cleanups-v1-0-9e4a4c47e067@kernel.org>
-In-Reply-To: <20240605-reloc-cleanups-v1-0-9e4a4c47e067@kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Johannes Thumshirn <johannes.thumshirn@wdc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1487; i=jth@kernel.org;
- h=from:subject:message-id; bh=2s+AQcPtYn/L37Kl21F6nhewozdhJbQniXadYahR2ws=;
- b=owGbwMvMwCV2ad4npfVdsu8YT6slMaQlpDbM97wqVr6wgoft2a4XLjvMxJWMt4bJ8D69dFCN8
- eYkn9XpHaUsDGJcDLJiiizHQ233S5geYZ9y6LUZzBxWJpAhDFycAjCRWUqMDFP6l8iZfGZqnmV4
- 7VCFhkiwmTvHoiA+j8fWe+Ye5Gtdmszw35F5VhMfQ0NycRBvi1bmm3nW13bvaGWNVY5dsojncNt
- tVgA=
-X-Developer-Key: i=jth@kernel.org; a=openpgp;
- fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On Wed, 2024-06-05 at 18:57 +0800, Xi Ruoyao wrote:
+> On Tue, 2024-06-04 at 23:25 -0700, Nathan Chancellor wrote:
+> > On Wed, Jun 05, 2024 at 01:54:24PM +0800, Xi Ruoyao wrote:
+> > > On Tue, 2024-06-04 at 22:43 -0700, Nathan Chancellor wrote:
+> > > > For what it's worth, I have noticed some warnings with clang that I
+> > > > don't see with GCC but I only filed an issue on our GitHub and neve=
+r
+> > > > followed up on the mailing list, so sorry about that.
+> > > >=20
+> > > > https://github.com/ClangBuiltLinux/linux/issues/2024
+> > > >=20
+> > > > Might be tangential to this patch though but I felt it was worth
+> > > > mentioning.
+> > >=20
+> > > The warnings in GCC build is definitely the issue handled by this pat=
+ch.
+> > > But the warnings in Clang build should be a different issue.=C2=A0 Ca=
+n you
+> > > attach the kernel/events/core.o file from the Clang build for analysi=
+s?
+> > > I guess we need to disable more optimization...
+> >=20
+> > Sure thing. Let me know if there are any issues with the attachment.
+>=20
+> Thanks!=C2=A0 I've simplified it and now even...
+>=20
+> .global test
+> .type test,@function
+> test:
+>=20
+> addi.d	$sp,$sp,-448
+> st.d	$ra,$sp,440
+> st.d	$fp,$sp,432
+> addi.d	$fp,$sp,448
+>=20
+> # do something
+>=20
+> addi.d	$sp,$fp,-448
+> ld.d	$fp,$sp,432
+> ld.d	$ra,$sp,440
+> addi.d	$sp,$sp,448
+> ret
+>=20
+> .size test,.-test
+>=20
+> is enough to trigger a objtool warning:
+>=20
+> /home/xry111/t1.o: warning: objtool: test+0x20: return with modified stac=
+k frame
+>=20
+> And to me this warning is bogus?
 
-In describe_relocation() the fs_info is only needed for printing
-information via btrfs_info() and can easily be accessed via the passed
-in 'struct btrfs_block_group'.
+Minimal C reproducer:
 
-So we can savely remove the fs_info parameter.
+struct x { _Alignas(64) char buf[128]; };
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/btrfs/relocation.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+void f(struct x *p);
+void g()
+{
+	struct x x =3D { .buf =3D "1145141919810" };
+	f(&x);
+}
 
-diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-index a43118a70916..df3f7c11cfce 100644
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -4005,15 +4005,13 @@ static void free_reloc_control(struct reloc_control *rc)
- /*
-  * Print the block group being relocated
-  */
--static void describe_relocation(struct btrfs_fs_info *fs_info,
--				struct btrfs_block_group *block_group)
-+static void describe_relocation(struct btrfs_block_group *block_group)
- {
- 	char buf[128] = {'\0'};
- 
- 	btrfs_describe_block_groups(block_group->flags, buf, sizeof(buf));
- 
--	btrfs_info(fs_info,
--		   "relocating block group %llu flags %s",
-+	btrfs_info(block_group->fs_info, "relocating block group %llu flags %s",
- 		   block_group->start, buf);
- }
- 
-@@ -4121,7 +4119,7 @@ int btrfs_relocate_block_group(struct btrfs_fs_info *fs_info, u64 group_start)
- 		goto out;
- 	}
- 
--	describe_relocation(fs_info, rc->block_group);
-+	describe_relocation(rc->block_group);
- 
- 	btrfs_wait_block_group_reservations(rc->block_group);
- 	btrfs_wait_nocow_writers(rc->block_group);
+Then objtool is unhappy to the object file produced with "clang -c -O2"
+from this translation unit:
 
--- 
-2.43.0
+/home/xry111/t2.o: warning: objtool: g+0x50: return with modified stack fra=
+me
 
+It seems CFI_BP has a very specific semantic in objtool and Clang does
+not operates $fp in the expected way.  I'm not sure about my conclusion
+though.  Maybe Peter can explain it better.
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
