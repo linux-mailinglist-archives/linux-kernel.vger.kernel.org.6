@@ -1,180 +1,350 @@
-Return-Path: <linux-kernel+bounces-202802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536F08FD161
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1637F8FD163
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0EB828B6B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:08:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB98328B67A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C443C463;
-	Wed,  5 Jun 2024 15:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cV5Ulta7"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABE93C488
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C8A61FD3;
+	Wed,  5 Jun 2024 15:08:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B4647F69;
+	Wed,  5 Jun 2024 15:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717600122; cv=none; b=gCPZIrsBvTgVqjUOB7Y+0aerYML249xNh2rz/LFSh5q0XRKYx/SQFy1bi28B4Bcp2Ji/sgc2KRS0WyH4QFZouPkppzWrgIuMTByoEdPWo4rYxoX3ZRiWxF5SUW7cuH6b4C9VcjQkcRcn+tdyOxWO1MovPTAdDRSaP8Owg/M1aGU=
+	t=1717600133; cv=none; b=A8eanyPTLvw+C64jU0SoLrRNpC822fIF4MZo8WPbbWCH03WQyJkiPISsT9vBPCtFsSKFTap0rfjg8L0PIzbpu8E2dYkKiWhvwQAbows/gJGyhQ3Ldx4pdUC+Bbnw06P2ltWyCVbqa29RFdoX3TptmybiD/SqhPB//0t1SuZCLSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717600122; c=relaxed/simple;
-	bh=R/9wivTDs3u96sEWdTwIGHy+6uzaOMjnC/KBbTF0rdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dgLqSWbGA3zS1RqgY96gm11YsgQbFN8nQZeVHT3g3mfa2+rGlip47qQwg9vDt2vOBhna84kuEdnQxoCPf98NM0/hN102x6SCTPqgdNDMeZR4Q6/PMSHGzr6kApH26zKafh/TAB/c2h7UMLflRNriZRmln3ZNTECHaAnpG40EKCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cV5Ulta7; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4214f803606so17436845e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 08:08:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717600118; x=1718204918; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6erns6P7m66pg24yXk3vygFkTJngHmTZFzrZV+/TSUs=;
-        b=cV5Ulta7XxLDd7789aAwg5MJF3D8WKs/h3xnOPu0czoeykX6zCgdnn/00BvDEUfNhZ
-         FnAGvAK1FOy+DVC7MfUI9lOv4VI6WKjq/wWELkHYKhKGx/0UXpS5gF99N/BpXReeuzAh
-         Hq2IPZcCm6qH3vXrMZF+Q+4zzGclNEovPtHKCYWO4Ua1DGgEsjB8MQVnYUYqBq3AIYbz
-         tMjFycyH10C2MX/qrhd4UWcjteF+2n6rnP++Gmz9xMl4bwkn3TACfZZn6PkEMsemm39W
-         SoE3bwpsISbhFZvSe2xMwi0Sur4xCYbSHRQfkg1yOGooJcLERt3+kqBVIVbF4+dzVXgp
-         cucA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717600118; x=1718204918;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6erns6P7m66pg24yXk3vygFkTJngHmTZFzrZV+/TSUs=;
-        b=oQ91x/1Y/na7ZyNPa3E3dSyKXdDTOWGfwKQe5+nsaFK1WK2ArKLjbzMyEUbqBbqez2
-         QGITljLBfeiDDrOg74i4PTkwghtkmsdjg69oewaiPbxXeN9yNmlebnW/cXApOaGfHyk+
-         KQuXBc1j4INVi8HXixhN9MGtfFFYNLGoqa9AX0Trci+PhLJ6yjn/jaxudCBVbH9i+9Zj
-         qVeb0QnVplZBTU00px31F7UV9gW/JTojLfJ79oMB51ZSrSY5pSgy1a49yHDVfvzNJ3Dm
-         77ETnnqCb2/hbh99jV2ZmjHDe1rypBd0IvWTZPLY4XAeL1pT2yqzsyowVOq4Arqf9v/Q
-         hYyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXChmdB4p4THOqYpzSuDEtYCrTtSD5KerzLO4kbBWNXzlnjBb9OMoKibCMxDTuROMjmFz4ATGgCvwaRWvlBvJq/CQCOGIEgGLZTU+ZF
-X-Gm-Message-State: AOJu0YzCUUdac85Bgu9XnYx31oDIehhOglygF/KruKmem/wWRV91q7u6
-	qnAgmf683/MZlIwernDiiCrAyuT+du6QThO3rmtAsFjYUnDOpfew
-X-Google-Smtp-Source: AGHT+IEFu8ys0OL+E2LRlq1NQiHBA4qS5m34VFEk2S56/hrWXMWplj2HkecNf8oldUnJapE8tT/jLg==
-X-Received: by 2002:a05:600c:1554:b0:41a:2044:1b3e with SMTP id 5b1f17b1804b1-4215633812fmr22794165e9.32.1717600118154;
-        Wed, 05 Jun 2024 08:08:38 -0700 (PDT)
-Received: from debian.local (host-92-13-19-4.as13285.net. [92.13.19.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42158148f91sm26280455e9.30.2024.06.05.08.08.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 08:08:37 -0700 (PDT)
-Date: Wed, 5 Jun 2024 16:08:34 +0100
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	hughsient@gmail.com
-Subject: Re: [PATCH v2] drm/client: Detect when ACPI lid is closed during
- initialization
-Message-ID: <ZmB_cs-7GU-m3GXX@debian.local>
-References: <20240528210319.1242-1-mario.limonciello@amd.com>
- <202406040928.Eu1gRIWv-lkp@intel.com>
+	s=arc-20240116; t=1717600133; c=relaxed/simple;
+	bh=4aEIt++Ih7LHuORmU/+95bpdtFQCe8Oh7tumk4SKzZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oPE40hhcXCP5PC1w5Ve3S/LDW0dyG8BX4c1FYV2/bumbd4e8rDWKt74jyo2J2YiUAvBDWmyoIjqfQOu1N7WRqK9CpSU7FcZy+ifyuOpGydFQkxOXnT9jMOiTcD9bUPXJKUea0EamMDt5pMF0EZ4qIiyFFo8Mis7cRJ0B0cjMXqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2192B339;
+	Wed,  5 Jun 2024 08:09:14 -0700 (PDT)
+Received: from [10.57.39.129] (unknown [10.57.39.129])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB6EE3F64C;
+	Wed,  5 Jun 2024 08:08:46 -0700 (PDT)
+Message-ID: <4c363476-e5b5-42ff-9f30-a02a92b6751b@arm.com>
+Date: Wed, 5 Jun 2024 16:08:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202406040928.Eu1gRIWv-lkp@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/14] arm64: realm: Support nonsecure ITS emulation
+ shared
+To: Marc Zyngier <maz@kernel.org>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <20240605093006.145492-13-steven.price@arm.com>
+ <86a5jzld9g.wl-maz@kernel.org>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <86a5jzld9g.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 04, 2024 at 10:02:29AM +0800, kernel test robot wrote:
-> Hi Mario,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on drm-misc/drm-misc-next]
-> [also build test ERROR on drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-tip/drm-tip linus/master v6.10-rc2 next-20240603]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/drm-client-Detect-when-ACPI-lid-is-closed-during-initialization/20240529-050440
-> base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-> patch link:    https://lore.kernel.org/r/20240528210319.1242-1-mario.limonciello%40amd.com
-> patch subject: [PATCH v2] drm/client: Detect when ACPI lid is closed during initialization
-> config: i386-randconfig-053-20240604 (https://download.01.org/0day-ci/archive/20240604/202406040928.Eu1gRIWv-lkp@intel.com/config)
-> compiler: gcc-9 (Ubuntu 9.5.0-4ubuntu2) 9.5.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240604/202406040928.Eu1gRIWv-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406040928.Eu1gRIWv-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    ld: drivers/gpu/drm/drm_client_modeset.o: in function `drm_client_match_edp_lid':
-> >> drivers/gpu/drm/drm_client_modeset.c:281:(.text+0x221b): undefined reference to `acpi_lid_open'
-> 
-> 
-> vim +281 drivers/gpu/drm/drm_client_modeset.c
-> 
->    260	
->    261	static void drm_client_match_edp_lid(struct drm_device *dev,
->    262					     struct drm_connector **connectors,
->    263					     unsigned int connector_count,
->    264					     bool *enabled)
->    265	{
->    266		int i;
->    267	
->    268		for (i = 0; i < connector_count; i++) {
->    269			struct drm_connector *connector = connectors[i];
->    270	
->    271			switch (connector->connector_type) {
->    272			case DRM_MODE_CONNECTOR_LVDS:
->    273			case DRM_MODE_CONNECTOR_eDP:
->    274				if (!enabled[i])
->    275					continue;
->    276				break;
->    277			default:
->    278				continue;
->    279			}
->    280	
->  > 281			if (!acpi_lid_open()) {
->    282				drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
->    283					    connector->base.id, connector->name);
->    284				enabled[i] = false;
->    285			}
->    286		}
->    287	}
->    288	
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Hi Marc,
 
-The failed config has CONFIG_ACPI_BUTTON=m. The build failure can be
-fixed with:
+On 05/06/2024 14:39, Marc Zyngier wrote:
+> The subject line is... odd. I'd expect something like:
+> 
+> "irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor"
+> 
+> because nothing here should be CCA specific.
 
-diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
-index b76438c31761..0271e66f44f8 100644
---- a/drivers/gpu/drm/drm_client_modeset.c
-+++ b/drivers/gpu/drm/drm_client_modeset.c
-@@ -271,11 +271,13 @@ static void drm_client_match_edp_lid(struct drm_device *dev,
-                if (connector->connector_type != DRM_MODE_CONNECTOR_eDP || !enabled[i])
-                        continue;
+Good point - that's a much better subject.
 
-+#if defined(CONFIG_ACPI_BUTTON)
-                if (!acpi_lid_open()) {
-                        drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
-                                    connector->base.id, connector->name);
-                        enabled[i] = false;
-                }
-+#endif
-        }
- }
+> On Wed, 05 Jun 2024 10:30:04 +0100,
+> Steven Price <steven.price@arm.com> wrote:
+>>
+>> Within a realm guest the ITS is emulated by the host. This means the
+>> allocations must have been made available to the host by a call to
+>> set_memory_decrypted(). Introduce an allocation function which performs
+>> this extra call.
+> 
+> This doesn't mention that this patch radically changes the allocation
+> of some tables.
+
+I guess that depends on your definition of radical, see below.
+
+>>
+>> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v2:
+>>  * Drop 'shared' from the new its_xxx function names as they are used
+>>    for non-realm guests too.
+>>  * Don't handle the NUMA_NO_NODE case specially - alloc_pages_node()
+>>    should do the right thing.
+>>  * Drop a pointless (void *) cast.
+>> ---
+>>  drivers/irqchip/irq-gic-v3-its.c | 90 ++++++++++++++++++++++++--------
+>>  1 file changed, 67 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>> index 40ebf1726393..ca72f830f4cc 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/irqdomain.h>
+>>  #include <linux/list.h>
+>>  #include <linux/log2.h>
+>> +#include <linux/mem_encrypt.h>
+>>  #include <linux/memblock.h>
+>>  #include <linux/mm.h>
+>>  #include <linux/msi.h>
+>> @@ -27,6 +28,7 @@
+>>  #include <linux/of_pci.h>
+>>  #include <linux/of_platform.h>
+>>  #include <linux/percpu.h>
+>> +#include <linux/set_memory.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/syscore_ops.h>
+>>  
+>> @@ -163,6 +165,7 @@ struct its_device {
+>>  	struct its_node		*its;
+>>  	struct event_lpi_map	event_map;
+>>  	void			*itt;
+>> +	u32			itt_order;
+>>  	u32			nr_ites;
+>>  	u32			device_id;
+>>  	bool			shared;
+>> @@ -198,6 +201,30 @@ static DEFINE_IDA(its_vpeid_ida);
+>>  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+>>  #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
+>>  
+>> +static struct page *its_alloc_pages_node(int node, gfp_t gfp,
+>> +					 unsigned int order)
+>> +{
+>> +	struct page *page;
+>> +
+>> +	page = alloc_pages_node(node, gfp, order);
+>> +
+>> +	if (page)
+>> +		set_memory_decrypted((unsigned long)page_address(page),
+>> +				     1 << order);
+> 
+> Please use BIT(order).
+
+Sure.
+
+>> +	return page;
+>> +}
+>> +
+>> +static struct page *its_alloc_pages(gfp_t gfp, unsigned int order)
+>> +{
+>> +	return its_alloc_pages_node(NUMA_NO_NODE, gfp, order);
+>> +}
+>> +
+>> +static void its_free_pages(void *addr, unsigned int order)
+>> +{
+>> +	set_memory_encrypted((unsigned long)addr, 1 << order);
+>> +	free_pages((unsigned long)addr, order);
+>> +}
+>> +
+>>  /*
+>>   * Skip ITSs that have no vLPIs mapped, unless we're on GICv4.1, as we
+>>   * always have vSGIs mapped.
+>> @@ -2212,7 +2239,8 @@ static struct page *its_allocate_prop_table(gfp_t gfp_flags)
+>>  {
+>>  	struct page *prop_page;
+>>  
+>> -	prop_page = alloc_pages(gfp_flags, get_order(LPI_PROPBASE_SZ));
+>> +	prop_page = its_alloc_pages(gfp_flags,
+>> +				    get_order(LPI_PROPBASE_SZ));
+>>  	if (!prop_page)
+>>  		return NULL;
+>>  
+>> @@ -2223,8 +2251,8 @@ static struct page *its_allocate_prop_table(gfp_t gfp_flags)
+>>  
+>>  static void its_free_prop_table(struct page *prop_page)
+>>  {
+>> -	free_pages((unsigned long)page_address(prop_page),
+>> -		   get_order(LPI_PROPBASE_SZ));
+>> +	its_free_pages(page_address(prop_page),
+>> +		       get_order(LPI_PROPBASE_SZ));
+>>  }
+>>  
+>>  static bool gic_check_reserved_range(phys_addr_t addr, unsigned long size)
+>> @@ -2346,7 +2374,8 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
+>>  		order = get_order(GITS_BASER_PAGES_MAX * psz);
+>>  	}
+>>  
+>> -	page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO, order);
+>> +	page = its_alloc_pages_node(its->numa_node,
+>> +				    GFP_KERNEL | __GFP_ZERO, order);
+>>  	if (!page)
+>>  		return -ENOMEM;
+>>  
+>> @@ -2359,7 +2388,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
+>>  		/* 52bit PA is supported only when PageSize=64K */
+>>  		if (psz != SZ_64K) {
+>>  			pr_err("ITS: no 52bit PA support when psz=%d\n", psz);
+>> -			free_pages((unsigned long)base, order);
+>> +			its_free_pages(base, order);
+>>  			return -ENXIO;
+>>  		}
+>>  
+>> @@ -2415,7 +2444,7 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
+>>  		pr_err("ITS@%pa: %s doesn't stick: %llx %llx\n",
+>>  		       &its->phys_base, its_base_type_string[type],
+>>  		       val, tmp);
+>> -		free_pages((unsigned long)base, order);
+>> +		its_free_pages(base, order);
+>>  		return -ENXIO;
+>>  	}
+>>  
+>> @@ -2554,8 +2583,8 @@ static void its_free_tables(struct its_node *its)
+>>  
+>>  	for (i = 0; i < GITS_BASER_NR_REGS; i++) {
+>>  		if (its->tables[i].base) {
+>> -			free_pages((unsigned long)its->tables[i].base,
+>> -				   its->tables[i].order);
+>> +			its_free_pages(its->tables[i].base,
+>> +				       its->tables[i].order);
+>>  			its->tables[i].base = NULL;
+>>  		}
+>>  	}
+>> @@ -2821,7 +2850,8 @@ static bool allocate_vpe_l2_table(int cpu, u32 id)
+>>  
+>>  	/* Allocate memory for 2nd level table */
+>>  	if (!table[idx]) {
+>> -		page = alloc_pages(GFP_KERNEL | __GFP_ZERO, get_order(psz));
+>> +		page = its_alloc_pages(GFP_KERNEL | __GFP_ZERO,
+>> +				       get_order(psz));
+>>  		if (!page)
+>>  			return false;
+>>  
+>> @@ -2940,7 +2970,8 @@ static int allocate_vpe_l1_table(void)
+>>  
+>>  	pr_debug("np = %d, npg = %lld, psz = %d, epp = %d, esz = %d\n",
+>>  		 np, npg, psz, epp, esz);
+>> -	page = alloc_pages(GFP_ATOMIC | __GFP_ZERO, get_order(np * PAGE_SIZE));
+>> +	page = its_alloc_pages(GFP_ATOMIC | __GFP_ZERO,
+>> +			       get_order(np * PAGE_SIZE));
+>>  	if (!page)
+>>  		return -ENOMEM;
+>>  
+>> @@ -2986,8 +3017,8 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
+>>  {
+>>  	struct page *pend_page;
+>>  
+>> -	pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
+>> -				get_order(LPI_PENDBASE_SZ));
+>> +	pend_page = its_alloc_pages(gfp_flags | __GFP_ZERO,
+>> +				    get_order(LPI_PENDBASE_SZ));
+>>  	if (!pend_page)
+>>  		return NULL;
+>>  
+>> @@ -2999,7 +3030,7 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
+>>  
+>>  static void its_free_pending_table(struct page *pt)
+>>  {
+>> -	free_pages((unsigned long)page_address(pt), get_order(LPI_PENDBASE_SZ));
+>> +	its_free_pages(page_address(pt), get_order(LPI_PENDBASE_SZ));
+>>  }
+>>  
+>>  /*
+>> @@ -3334,8 +3365,9 @@ static bool its_alloc_table_entry(struct its_node *its,
+>>  
+>>  	/* Allocate memory for 2nd level table */
+>>  	if (!table[idx]) {
+>> -		page = alloc_pages_node(its->numa_node, GFP_KERNEL | __GFP_ZERO,
+>> -					get_order(baser->psz));
+>> +		page = its_alloc_pages_node(its->numa_node,
+>> +					    GFP_KERNEL | __GFP_ZERO,
+>> +					    get_order(baser->psz));
+>>  		if (!page)
+>>  			return false;
+>>  
+>> @@ -3418,7 +3450,9 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>>  	unsigned long *lpi_map = NULL;
+>>  	unsigned long flags;
+>>  	u16 *col_map = NULL;
+>> +	struct page *page;
+>>  	void *itt;
+>> +	int itt_order;
+>>  	int lpi_base;
+>>  	int nr_lpis;
+>>  	int nr_ites;
+>> @@ -3430,7 +3464,6 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>>  	if (WARN_ON(!is_power_of_2(nvecs)))
+>>  		nvecs = roundup_pow_of_two(nvecs);
+>>  
+>> -	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+>>  	/*
+>>  	 * Even if the device wants a single LPI, the ITT must be
+>>  	 * sized as a power of two (and you need at least one bit...).
+>> @@ -3438,7 +3471,16 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>>  	nr_ites = max(2, nvecs);
+>>  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
+>>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+>> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
+>> +	itt_order = get_order(sz);
+>> +	page = its_alloc_pages_node(its->numa_node,
+>> +				    GFP_KERNEL | __GFP_ZERO,
+>> +				    itt_order);
+> 
+> So we go from an allocation that was so far measured in *bytes* to
+> something that is now at least a page. Per device. This seems a bit
+> excessive to me, specially when it isn't conditioned on anything and
+> is now imposed on all platforms, including the non-CCA systems (which
+> are exactly 100% of the machines).
+
+Catalin asked about this in v2:
+https://lore.kernel.org/lkml/c329ae18-2b61-4851-8d6a-9e691a2007c8@arm.com/
+
+To be honest, I don't have a great handle on how much memory is being
+wasted here. Within the realm guest I was testing this is rounding up an
+otherwise 511 byte allocation to a 4k page, and there are 3 of them.
+Which seems reasonable from a realm guest perspective.
+
+I can see two options to improve here:
+
+1. Add a !is_realm_world() check and return to the previous behaviour
+when not running in a realm. It's ugly, and doesn't deal with any other
+potential future memory encryption. cc_platform_has(CC_ATTR_MEM_ENCRYPT)
+might be preferable? But this means no impact to non-realm guests.
+
+2. Use a special (global) memory allocator that does the
+set_memory_decrypted() dance on the pages that it allocates but allows
+packing the allocations. I'm not aware of an existing kernel API for
+this, so it's potentially quite a bit of code. The benefit is that it
+reduces memory consumption in a realm guest, although fragmentation
+still means we're likely to see a (small) growth.
+
+Any thoughts on what you think would be best?
+
+> Another thing is that if we go with page alignment, then the 256 byte
+> alignment can obviously be removed everywhere (hint: MAPD needs to
+> change).
+
+Ah, good point - I'll need to look into that, my GIC-foo isn't quite up
+to speed on that.
+
+Thanks,
+
+Steve
+
 
