@@ -1,232 +1,140 @@
-Return-Path: <linux-kernel+bounces-202131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8038FC81C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:42:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268DF8FC81F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791DC1F22C4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC038281F57
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480C61922FD;
-	Wed,  5 Jun 2024 09:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73B41946C6;
+	Wed,  5 Jun 2024 09:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TlcUulu7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jbu9YUaR"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6821B18FC92;
-	Wed,  5 Jun 2024 09:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6FC18F2F5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580391; cv=none; b=PA/Fpfmkk6jGsXpI3Q0snul+Aq5ERcqIcgyAroG2Wt38QyDGNdXycUWsPlO2VnpwJx93PsAi1bSohZT3KDky97CN+E7PiAXyad/JlcJ5eq+M+1nN5hNGMqQWazYs3P9TwjZKCFY4CaHH/MCdRMuRC/3RECuxmicqnYi+tFB29og=
+	t=1717580457; cv=none; b=CPI5Z3qtYXORtB1qoO9QC0WDLkiziwtV4+sCo5irBxu/xB/vcLTDsNza4aCBXUkQm10Hw/01aXKXUp6AGuFKU1c6cURHve5zTnDVXUSVWegdlGBK4MpJETy1HcmcF+Y+PbqMN+rtwyo1sv0sF0ZE2bGR434nddqMXeI6Ew0EZ2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580391; c=relaxed/simple;
-	bh=J7yRwF0afgwLgQZjPbXaZOXLYV2ukwM/posUTXQ8C5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h7QQ9Wwr8EUWiLiEILZ29SxnyoCD4qNk1ZK9kUdttb+v8HlBqHwyPexNMY5Bi7Gis1ob0Y1gcPkGO5VxUBOmb6tD2/4f5BRWF6tZYchUDBtHLuiDSW5v8Be5ls1uLHaHkLb9odDh+P5a9320K7HAyNRh7R3TKQGHuQABJs/WxxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TlcUulu7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76EC7C3277B;
-	Wed,  5 Jun 2024 09:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717580391;
-	bh=J7yRwF0afgwLgQZjPbXaZOXLYV2ukwM/posUTXQ8C5Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TlcUulu7IAzlmvbgh4sCqt7VcDrZrIkd7siZ3UYGrUQ2f9g+CNuiuVsCX7CDMG81C
-	 6h2AWNO0uyGG+gq6YxEJd3yLCiPiSXamxkvWu8ZBZaSGUAQu0uOEIEUFodLJ5P0UFx
-	 y8nD6ZpSdYt3t/RnSvbdhoFkBboFv83FR+XyyIwOS7QRacG3XNg9pUzAh0UdOdFb7l
-	 tpQhuvO4VWVJ6nzSqybpve6CuXCq74yAjlDV5ME+T7PAfSHF5TO63NuNKaxzhjFM5I
-	 HCukHj9uzXsUa2t94UMNuWGO5kRct2bQHn16RS/GeSjg+3f12/j/5LstjqJuzLthZy
-	 JWaa4TnqcLi6w==
-Date: Wed, 5 Jun 2024 11:39:48 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: neil.armstrong@linaro.org
-Cc: Andy Yan <andyshrk@163.com>, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mark Yao <markyao0591@gmail.com>, Andy Yan <andy.yan@rock-chips.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>, 
-	Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH 00/14] Add initial support for the Rockchip RK3588 HDMI
- TX Controller
-Message-ID: <20240605-logical-piculet-of-democracy-6bc732@houat>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <a4b22708-e85d-448a-8145-244b49bca053@linaro.org>
- <ab0a6372-091b-4293-8907-a4b3ff4845c0@rock-chips.com>
- <11359776.NyiUUSuA9g@phil>
- <ef60403f-078f-411a-867b-9b551e863f56@linaro.org>
- <b8066150-c147-4eb6-9f7a-2bd0268c274e@collabora.com>
- <4456bc5a.9b2d.18fe7b76790.Coremail.andyshrk@163.com>
- <01bde68a-88a7-46eb-860c-1375aa730bec@linaro.org>
+	s=arc-20240116; t=1717580457; c=relaxed/simple;
+	bh=Hcboqt/mCTVI1F3jHOS4TQJM3QuLm78ZsIrceEwB3No=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t/QCFKeC4fs3+vGbbf8A1M1n8YShnYqOAGNdzKW3+w0xQLk68K6lNhVoT62jcBK/ocCVc7S5Ozet6X8IpP7/kzJIArAHNy5QW23zP54uoPzsKjq0TbSY+JFt8Zj6Yvs/SyhJNoDyS2f1mpr2k/ZUFhnaVohrqi/Ye5o8yEPpqMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jbu9YUaR; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e72224c395so58586221fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717580453; x=1718185253; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2ukym6a7idvbhiMPUeFxPFQ9JMmthq9JaArWccCKyo=;
+        b=Jbu9YUaR4QPToEztJ9P+fXEv2G184YAflRHyH+D8sWxAd+Z0UOXbX/4UNmZJCAnwGK
+         IB8wf5PYPFtR+3zet1M8NVpjbvNH0QfxJ/fNcbGibAc87903X9fCar6LxXyI+IAtCze/
+         ye23SG4GSrCExe+7jwO6RI7I6IXZyaP1N8SdcGKYGzAcw6Dwr3OzreqDI3M1/pg68b8F
+         EoJpORdag7w9yHdrthJv6bIYWiv/a6ucF2OZzQ+XJ/e4eikrua/amYfYJdeKCwhZDInB
+         a3f1+X9nAVaBouvD+prvnfH9Q6DEJTXS1CXttztLnDb8WruaBbHHBZwWY85SlqnskMwO
+         q9oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717580453; x=1718185253;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N2ukym6a7idvbhiMPUeFxPFQ9JMmthq9JaArWccCKyo=;
+        b=FxFDRZDJdsL/JCAiSBQV4YUbWpdaiWKOn1BokH96FmFQf3qkc1EkLHDW0aSsGuUc44
+         BZUOC1yqXob8e6RjlrYocChsFRJ0uKKGvSb7XLyghe2fjIxd2OSncfMpCQoJ1TZGUPpR
+         plcT5LLku8eLPSnRu1l2j7BwLQ8lohbHKlVViszvu4tKucfDJd5qdBXGlpavQ1SyK4ZM
+         CsqfLjZcq0fYRamxZ5ZoFaCkbeuoMb+VDkvj0exp8rPTon06bl9NlLcCJYetVwEI04AF
+         T3Y0Fezro+vNiXPPlXVIlW2nfg5Fl7pkz9Gc7BMAkl5ZvGYjcCI64dUBDqtTMJu7HBNa
+         iVdA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8sOiBTYVAA1HhO2xdJSJnJ31wmTqs9Pua6KuJJhgpYWvtypIimfydOqd0NRNB+COMVImoxhK9SoGagHvxZHbEqlK1yIEEvYsZtqpK
+X-Gm-Message-State: AOJu0YyAmveZo9x8vfcZgVggcTh2iNCUaMHF0aMth9WOKaEqsOBeDcO8
+	3r5mmVEa3cMj25ECDj8qHRmwEMNMIyH5sULgPk8R6+/CScATWkdIl9C/pjBUqaw=
+X-Google-Smtp-Source: AGHT+IFMcjnS3DnsYbqQlASFRzhCm5EUynN8y8SEbAtGYnAGKbONFNfagI8RnrgkTFcQSK2RQsYS/g==
+X-Received: by 2002:a2e:3c0f:0:b0:2ea:7a2a:c044 with SMTP id 38308e7fff4ca-2eac7a54157mr10681711fa.37.1717580453531;
+        Wed, 05 Jun 2024 02:40:53 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215814f0besm14561375e9.43.2024.06.05.02.40.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 02:40:53 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Wed, 05 Jun 2024 11:40:51 +0200
+Subject: [PATCH] ASoC: dt-bindings: amlogic,gx-sound-card: drop minItems
+ for audio-widgets
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="4lab3i7lwv5psiqg"
-Content-Disposition: inline
-In-Reply-To: <01bde68a-88a7-46eb-860c-1375aa730bec@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240605-topic-amlogic-upstream-bindings-fixes-audio-widgets-v1-1-65bd7cc2e09b@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKIyYGYC/x2MQQrCMBAAv1L27MKmqAe/Ih62yTYu2CRkUxVK/
+ 97Q0zAwzAYmVcXgMWxQ5aumOXVxlwH8m1MU1NAdRhqvdKcbtlzUIy+fHDvXYq0KLzhpCpqi4ax
+ /MeQ1aMafhijNkEgczz6wown6uVQ5sz5+vvb9AKX1oeaFAAAA
+To: Jerome Brunet <jbrunet@baylibre.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1312;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=Hcboqt/mCTVI1F3jHOS4TQJM3QuLm78ZsIrceEwB3No=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmYDKkt2DGUfinkqCMwZEThmnPMR3bgoN1YFiAvLEI
+ czAZEUeJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZmAypAAKCRB33NvayMhJ0aPrEA
+ CuKabcMnfZApG9Ja4UOCYeP0CSfWmNy2Y7L2lZfzWotJsMv4VpYAuKJ8itU2PgMfzoR1CX+UL7zPFU
+ Mg+vioYU2EJ6P4CGDlYfl/35ZWobModRrHWugri3CgoecgPWqDPm0o6pwyKTy8SibKvVtS+Y+eJgI3
+ FznWEHipHGIqi54kjex98EPJyPogfKS7z1YI+7pjKb8p33uvgKEbqDx9lRv21vAXwCHyQBvY4iSDc7
+ ohq/FhOlDt84sRC3aR9sse+qMK9/Ca1OsEVVpLeODncPM7QHwkQA8851CGFbTkCS/C0cvpGew1UjGJ
+ QdC+kPB4L4iTjmK+ptzbL2DJM6eYbY1yI9lSbJ+jPcJeGZph/D0KMp2Vap2KfFlG+ie9f1IN43xOQm
+ fgofKD9pML5aAutw+451YZQbo6Tc2QoQpRZBjto+IpTFt6FuBaC2uahR0yBE+I5Il0IvqUIooxihOl
+ M3y0tv5+fNmeEbnLAOlD9+7TWyd3h8nfo0LBVx4kSz/FnmQo0rsR7oL2SrXEcHhr5T8uXoxiKAUYHC
+ vqwQaOBBSwMNeyW2jvJee0ARwJVm3HhTk3GtFS/fPh2VZvdJrA0b6scDmsVcmOsIHELP0bPY2OK0sN
+ 9WVwvlKF42oOaTuBA5r6HLDwXWr37rfKyKnJLuX5LQK73vw5f2VbS/y/SmJA==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
+Like "audio-routing" drop the minItems: 2 from the "audio-widgets", because
+any limit here - lower or upper- is rather meaningless.
 
---4lab3i7lwv5psiqg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This will also fix `dtbs_check` warnings like:
+sound: audio-widgets: ['Speaker', '7J4-14 LEFT', 'Speaker', '7J4-11 RIGHT'] is too long
 
-On Wed, Jun 05, 2024 at 11:28:41AM GMT, neil.armstrong@linaro.org wrote:
-> Hi,
->=20
-> On 05/06/2024 11:25, Andy Yan wrote:
-> >=20
-> > Hi,
-> >=20
-> > At 2024-06-05 04:33:57, "Cristian Ciocaltea" <cristian.ciocaltea@collab=
-ora.com> wrote:
-> > > On 6/3/24 4:08 PM, neil.armstrong@linaro.org wrote:
-> > > > Hi,
-> > > >=20
-> > > > On 03/06/2024 15:03, Heiko Stuebner wrote:
-> > > > > Am Montag, 3. Juni 2024, 14:14:17 CEST schrieb Andy Yan:
-> > > > > > Hi Neil:
-> > > > > >=20
-> > > > > > On 6/3/24 16:55, Neil Armstrong wrote:
-> > > > > > > Hi Christian,
-> > > > > > >=20
-> > > > > > > On 01/06/2024 15:12, Cristian Ciocaltea wrote:
-> > > > > > > > The RK3588 SoC family integrates a Quad-Pixel (QP) variant =
-of the
-> > > > > > > > Synopsys DesignWare HDMI TX controller used in the previous=
- SoCs.
-> > > > > > > >=20
-> > > > > > > > It is HDMI 2.1 compliant and supports the following feature=
-s, among
-> > > > > > > > others:
-> > > > > > > >=20
-> > > > > > > .
-> > > > > > >=20
-> > > > > > > ..
-> > > > > > >=20
-> > > > > > > > * SCDC I2C DDC access
-> > > > > > > > * TMDS Scrambler enabling 2160p@60Hz with RGB/YCbCr4:4:4
-> > > > > > > > * YCbCr4:2:0 enabling 2160p@60Hz at lower HDMI link speeds
-> > > > > > > > * Multi-stream audio
-> > > > > > > > * Enhanced Audio Return Channel (EARC)
-> > > > > > > -> Those features were already supported by the HDMI 2.0a com=
-pliant
-> > > > > > > HW, just
-> > > > > > > list the _new_ features for HDMI 2.1
-> > > > > > >=20
-> > > > > > > I did a quick review of your patchset and I don't understand =
-why you
-> > > > > > > need
-> > > > > > > to add a separate dw-hdmi-qp.c since you only need simple var=
-iants
-> > > > > > > of the I2C
-> > > > > > > bus, infoframe and bridge setup.
-> > > > > > >=20
-> > > > > > > Can you elaborate further ? isn't this Quad-Pixel (QP) TX con=
-troller
-> > > > > > > version
-> > > > > > > detectable at runtime ?
-> > > > > > >=20
-> > > > > > > I would prefer to keep a single dw-hdmi driver if possible.
-> > > > > >=20
-> > > > > >=20
-> > > > > >=20
-> > > > > > The QP HDMI controller is a completely different variant with t=
-otally
-> > > > > > different
-> > > > > > registers layout, see PATCH 13/14.
-> > > > > > I think make it a separate driver will be easier for developmen=
-t and
-> > > > > > maintenance.
-> > > > >=20
-> > > > > I'm with Andy here. Trying to navigate a driver for two IP blocks=
- really
-> > > > > sounds taxing especially when both are so different.
-> > >=20
-> > > Thank you all for the valuable feedback!
-> > >=20
-> > > > I agree, I just wanted more details than "variant of the
-> > > > Synopsys DesignWare HDMI TX controller", if the register mapping is=
- 100%
-> > > > different, and does not match at all with the old IP, then it's ind=
-eed time
-> > > > to make a brand new driver, but instead of doing a mix up, it's tim=
-e to
-> > > > extract
-> > > > the dw-hdmi code that could be common helpers into a dw-hdmi-common=
- module
-> > > > and use them.
-> > >=20
-> > > Sounds good, will handle this in v2.
-> > >=20
-> > > > As I see, no "driver" code can be shared, only DRM plumbings, so pe=
-rhaps
-> > > > those
-> > > > plumbing code should go into the DRM core ?
-> > > >=20
-> > > > In any case, please add more details on the cover letter, including=
- the
-> > > > detailed
-> > > > HW differrence and the design you chose so support this new IP.
-> > >=20
-> > > Andy, could you please help with a summary of the HW changes?
-> > > The information I could provide is rather limited, since I don't have
-> > > access to any DW IP datasheets and I'm also not familiar enough with =
-the
-> > > old variant.
-> > >=20
-> >   Accurately, we should refer to it as an entirely new IP=EF=BC=8Cit ha=
-s nothing in common with
-> > the current mainline dw-hdmi=E3=80=82 The only  commonality is that the=
-y both come from
-> > Synopsys DesignWare=EF=BC=9A
-> > =EF=BC=881=EF=BC=89It has a 100% different register mapping
-> > =EF=BC=882=EF=BC=89It supports FRL and DSC
-> > =EF=BC=883=EF=BC=89different configuration flow in many places=E3=80=82
-> >=20
-> > So I have the same feeling with Heiko and Maxime=EF=BC=9A
-> > The DW_HDMI_QP should have a  separate driver and with it's  own CONFIG=
-  such as DRM_DW_HDMI_QP  in Kconfig.
-> > and the rockchip part should also be split from dw_hdmi-rockchip.c.
-> > I am sorry we mixed them in dw_hdmi-rockchip.c when we develop the bsp =
-driver=EF=BC=8Cbut we really regretted this decision
-> > when  we repeatedly broke compatibility with dw-hdmi on other socs=E3=
-=80=82
->=20
-> Yes please, and as I say, if there's code common with the old dw-hdmi, pl=
-ease add a common
-> module if this code can't be moved in core bridge helpers.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
-And chances are that the common code is actually there to deal with HDMI
-spec itself and not really the hardware, which is solved by moving both
-drivers to the HDMI helpers that just got merged.
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml b/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
+index d4277d342e69..0ecdaf7190e9 100644
+--- a/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
++++ b/Documentation/devicetree/bindings/sound/amlogic,gx-sound-card.yaml
+@@ -23,7 +23,6 @@ properties:
+ 
+   audio-widgets:
+     $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+-    minItems: 2
+     description: |-
+       A list off component DAPM widget. Each entry is a pair of strings,
+       the first being the widget type, the second being the widget name
 
-Maxime
+---
+base-commit: c3f38fa61af77b49866b006939479069cd451173
+change-id: 20240605-topic-amlogic-upstream-bindings-fixes-audio-widgets-00e1afcda10b
 
---4lab3i7lwv5psiqg
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZmAyYAAKCRAnX84Zoj2+
-dvaqAX4y01HbYFGYRCxGaafC276+nuXwpR95Ld6A8is239CcMgThYuCv5bGLZuLM
-Y5UKnKkBf3NBz6lmlnwNKqUuPwmYn9qW/A7HeWtMIN7NIryQcd925sIKivtFZ0PF
-L1JgyrfHwA==
-=KSkS
------END PGP SIGNATURE-----
-
---4lab3i7lwv5psiqg--
 
