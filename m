@@ -1,105 +1,161 @@
-Return-Path: <linux-kernel+bounces-201935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4843A8FC5E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:19:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F3D8FC5BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA01F1F239CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098B82823E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D650C21C183;
-	Wed,  5 Jun 2024 08:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A0A49630;
+	Wed,  5 Jun 2024 08:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W9S9macV"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBSAVBjB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4050E190498
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 08:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA8549621;
+	Wed,  5 Jun 2024 08:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717575011; cv=none; b=oM0K7tM3uT4tj/ssLiPnV5blLl7s60h62AYVS12fALNPGGQrAUFGK9VXKZF5dylPQiIJoOV9FcmjeppM3bjPGgru9AhUpkFhLX9r5+X+RcNnJaFnP25FIGcWAOCI85XlNPTt/hYpYJUStBFa5zi61pdg0isoSii0st7hLd3H7V0=
+	t=1717575131; cv=none; b=NBghpLYUP4v614mUMU/grpoOo7TMcrWYFvMcJqlef+/VNwZnClBy50zE419H+Bok5xhTaOLom4/5Roi2RMtwppFqnmd2UtCy310045ec5ceLahr2O4IUhguaPFcHY6UJ+3cZl338xO807kLbaqjyrcVWQs0o9spZ606aZFc2X0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717575011; c=relaxed/simple;
-	bh=3T174Dceoicm7kUCD/y7XPY3dib15KsmGy0OqrQEOVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lMNOiSnItWe7Bc2dgiyCA9eHWFUOtBQHWZrpJ1gWC7vg6Wj1DfNSw1g4aaA66HJs9jt7HKV0YkPEVK8ZhPIEK5Nl1QvTWe9KdYF+erQEEps+ENzFVJ8CMAGDZWtrV3LXexNFJaFA9Ohez2sKHP2qa8abt5bD+yivDEvZJC0IcfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W9S9macV; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a22af919cso5852a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 01:10:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717575007; x=1718179807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3T174Dceoicm7kUCD/y7XPY3dib15KsmGy0OqrQEOVQ=;
-        b=W9S9macVhIq3FZ5k7yka9nNM8QU5bW6GhWY47E1tPYGVMf2Ar6V6kxPlV6pIypg1jr
-         MrAUhTsFVXy9hzd4aeuhhkch3EojkOPz3eq2UoIZfJF641sXNXGpOnfChmLnjGBiZe2g
-         2nv/P47yCuk24TrMCIA84Boo0DuNAJ3ovqtj1E7JlsDOp9+QFxTazGYPokkyqXDMDwk1
-         Ly5wcgu7kDOrItm1I9rxG+4cWkU/yQUANT7NdeXCdvpQWfnyfo/+Rrhly4vGkHEwrCvr
-         26Y8Sy28WEH82eg3Cmzsaa9DpQdF/zz64Cyv0SgeoLtb93Ds8S1ir6XhonSi/Ex43mZO
-         n3sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717575007; x=1718179807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3T174Dceoicm7kUCD/y7XPY3dib15KsmGy0OqrQEOVQ=;
-        b=B3Hm/XQn8PPTgKDEVPvIX4N+aT/A8c1y+RX8/5nlBnr05gU1WSpLRrDYEZMUWpQvo+
-         A8R3m75Ib8nSlL1TZnh3g6tnPfM/kjHiEIGMQFHJi2KdqdinT2EsRCDVEgRqsHPz8FOc
-         S4bmk26BymviipFkOjUlkOJWpvuvMrM2hlN08Ig/1RdBGIpUkmu/T+6tnGUeMixGNDus
-         ENK4QNKJy0iRod0XIE4KVBFfEE+8F2X41B5ETrOOM+bypsRqUwG1Kl6LMTgQGsa3YOTD
-         0XrcBREwGyYMj3CDNa4nb+Wca0vsJYZ5HcGW1afvU9sVNP85qorseOeUKXrgBsiMeErG
-         sYjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGCwUPPHVF2X45vXS4itsppnhoR2gPq3OWVgvdeJeJ0X4Dnc8YwEO3Z5CT5xHB96WeL8mt97DJglF6/4+8CED4jYi+fFxuWf/txYQE
-X-Gm-Message-State: AOJu0YxAo6GooP3BeDeECo5zXJW0FCoGdQ6q8RpZFdGFdxIcyKRXp3Fw
-	KGODDY8Gwh8aiG32cqMC2bmiC+q3W+jdTuySXLD6txcQqngWdfZwdUQhJgY4UfGTASD56T2NczA
-	oblm6vt0fCsdMfPEkICy1ItOEAiYE8mD0ePM0
-X-Google-Smtp-Source: AGHT+IFHJQQ7/NDVyqJbqUGkdoduFW8ZFDMW1u4Nz+gk70EjEJGUIexCHfm07OGdLX5eLDSaEBU5m9EO+DfzPVRzJpg=
-X-Received: by 2002:a05:6402:31a3:b0:57a:1937:e28b with SMTP id
- 4fb4d7f45d1cf-57a94fb3c0dmr89289a12.1.1717575006236; Wed, 05 Jun 2024
- 01:10:06 -0700 (PDT)
+	s=arc-20240116; t=1717575131; c=relaxed/simple;
+	bh=3Cu0rGtiUDZ4fe7lgTvZx3NuR8q2z0tMfYhv6hfQR1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJyUT4VN9jrtuTwXr0nZfrwfg9Q9Tu7w4vkFCCPxJ6KfDmCWhf0UWA4G2+oVlb+tGbK58bM7TE728inze2iRrQezZDMrw2N2wJFhtS49/RRe/Bycv7UlguEmb/lNouVRviQwdIptSNUKy01/3b5vKGUYXstdPDLrqYe+H4XWQKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBSAVBjB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB93BC3277B;
+	Wed,  5 Jun 2024 08:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717575130;
+	bh=3Cu0rGtiUDZ4fe7lgTvZx3NuR8q2z0tMfYhv6hfQR1A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aBSAVBjBUYdLHnP+vCQwiEZhgY4g/CEfaZniAi4hhhR4+NFSoB02G4s4iKtajQ60E
+	 RFNe2gvjezxf1c9KzEzBS9EI0arIbJezZBqDwXDZcI1ntAFcm1Zybc48OGOS4IJpje
+	 SfpSa0kUUIpSL2Vi3bxvcEvp4NtcEPJfOr6ID0EXADsj5jNnXBIvhxYEAcF//BkTHG
+	 /5yZaQqtO+lWh5XxZk5nH3B9jRtIX90c8834SuL3VtboV0djtrJefvXURKAmWdY7UG
+	 xnrUMTAzLsYqEnbaGEI00FtXIG4mfxiHmKiZpwdviKYmm0kryUzYYrRlpnowiAE3xp
+	 xlCBaTQlVRZuQ==
+Message-ID: <75c27bf0-4cc1-41ec-86ed-5c7f3d38f5d8@kernel.org>
+Date: Wed, 5 Jun 2024 10:12:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605-tcp_ao-tracepoints-v2-0-e91e161282ef@gmail.com> <20240605-tcp_ao-tracepoints-v2-5-e91e161282ef@gmail.com>
-In-Reply-To: <20240605-tcp_ao-tracepoints-v2-5-e91e161282ef@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 5 Jun 2024 10:09:52 +0200
-Message-ID: <CANn89iJtAPYb_N8J_uvKDV_C=rJ8MzzEuhaiRvFs32giW-30EQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 5/6] net/tcp: Remove tcp_hash_fail()
-To: 0x7f454c46@gmail.com
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Mohammad Nassiri <mnassiri@ciena.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: Add i.MX91 clock support
+To: Pengfei Li <pengfei.li_1@nxp.com>, Rob Herring <robh@kernel.org>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, abelvesa@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ ping.bai@nxp.com, ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
+ frank.li@nxp.com, tharvey@gateworks.com, alexander.stein@ew.tq-group.com,
+ gregor.herburger@ew.tq-group.com, hiago.franco@toradex.com,
+ joao.goncalves@toradex.com, hvilleneuve@dimonoff.com,
+ Markus.Niebel@ew.tq-group.com, m.felsch@pengutronix.de,
+ m.othacehe@gmail.com, bhelgaas@google.com, leoyang.li@nxp.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20240530022634.2062084-1-pengfei.li_1@nxp.com>
+ <20240530022634.2062084-2-pengfei.li_1@nxp.com>
+ <20240604150306.GA596314-robh@kernel.org>
+ <ZmD76mp2dPVv6HeA@pengfei-OptiPlex-Tower-Plus-7010>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <ZmD76mp2dPVv6HeA@pengfei-OptiPlex-Tower-Plus-7010>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 5, 2024 at 4:20=E2=80=AFAM Dmitry Safonov via B4 Relay
-<devnull+0x7f454c46.gmail.com@kernel.org> wrote:
->
-> From: Dmitry Safonov <0x7f454c46@gmail.com>
->
-> Now there are tracepoints, that cover all functionality of
-> tcp_hash_fail(), but also wire up missing places
-> They are also faster, can be disabled and provide filtering.
->
-> This potentially may create a regression if a userspace depends on dmesg
-> logs. Fingers crossed, let's see if anyone complains in reality.
->
-> Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+On 06/06/2024 01:59, Pengfei Li wrote:
+> On Tue, Jun 04, 2024 at 10:03:06AM -0500, Rob Herring wrote:
+>> On Wed, May 29, 2024 at 07:26:30PM -0700, Pengfei Li wrote:
+>>> i.MX91 has similar Clock Control Module(CCM) design as i.MX93.
+>>> Add a new compatible string for i.MX91.
+>>>
+>>> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+>>> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/clock/imx93-clock.yaml | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/imx93-clock.yaml b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
+>>> index ccb53c6b96c1..98c0800732ef 100644
+>>> --- a/Documentation/devicetree/bindings/clock/imx93-clock.yaml
+>>> +++ b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
+>>> @@ -16,6 +16,7 @@ description: |
+>>>  properties:
+>>>    compatible:
+>>>      enum:
+>>> +      - fsl,imx91-ccm
+>>>        - fsl,imx93-ccm
+>>
+>> Should fallback to fsl,imx93-ccm? Being a superset should be ok because 
+>> your DT should never use the non-existent clocks. If not, where is the 
+>> driver change?
+>>
+>> Rob
+>>
+> 
+> Hi Rob Herring,
+> ﻿
+> Due to the different maintainers of the CCM framework and DTS, I have separated 
+> the CCM driver patch and plan to send the DTS patch first before sending the 
+> CCM driver patch. If that's possible, could you help merge this patch first? If 
+> this is not allowed, I can also send out the CCM driver patch at the same time.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Binding goes with the driver, not DTS.
+
+Best regards,
+Krzysztof
+
 
