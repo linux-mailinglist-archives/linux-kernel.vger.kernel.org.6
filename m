@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-203118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA9A8FD6AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:43:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED5C8FD6B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CFD3289C4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:43:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 452A5B2583B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 19:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615E6152E00;
-	Wed,  5 Jun 2024 19:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73325152DE3;
+	Wed,  5 Jun 2024 19:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKaN2IFJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q99Quntj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F99314EC56;
-	Wed,  5 Jun 2024 19:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BB414D449
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 19:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717616600; cv=none; b=cUWfsP0Ij+nD/CQ4akf1cGsQcNAusInooZ7geKp0cueu1APzxT2r72yaA5OXVq6vhXIawiv4LZVajRS8pPjLJlV3nI7czodvRGgyOLG1vCsGUlaeANiPPL/VZg2iVmGB1pPWf1no0PGQa8nbpSSRQTKBBkKOcQhObU98hX15Pvs=
+	t=1717616666; cv=none; b=OVLdckULq35pHbX5dOzrSjHX86mmti4T9uhFIlHKL2LXiKJcGoddMKjuOCFs+3nbKzZkCRdbscwld0qduu4JDiu64tjxUHwBDU2uvLXfyweLQDnBJgd9RXftcHaJLQp0gflTet4DfUnU7IkfsWE3kSxIPq5+oCF21mzF55DvTBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717616600; c=relaxed/simple;
-	bh=KIGvffMFmtiF6JY2kPrxSLeoIMqNOQ0IhOPnWoh89qY=;
+	s=arc-20240116; t=1717616666; c=relaxed/simple;
+	bh=KCeniOHRFpzzTdyjs5MfcwvZY4RL5vqjprwOVtavYh0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bmQADH7JhkeLHgrSVCmfhl21f1n2MheQ2A5uSsSIcRRZYUU2kIbWPaiqzFWdHAUilx/YfZYBsmldwxvC5P5ihB5ssFbQWasMvhkN5LDiIM8xl6AORqvD+1st1wYk+Rnmw1eeqfLwHi2aUtO5whGZhJfcQnfL8Ev9bpeR4n7NKr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKaN2IFJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A240C2BD11;
-	Wed,  5 Jun 2024 19:43:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/uXkeFKWadInAFcfttcXswDXh00jgj+fMVjzrpZkqgSLaUH/thZCbSSyZMPBOIA+ocjBROw7gya5FYufZK15lg9ryss2kByDxy/xwxWDr9qJ6Mp4eV708Ja+ttiHzuEjP+nu4BnAbR+2HTAl5ktUypGk64ZqAJaw6Ha2iT5AxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q99Quntj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16F8AC2BD11;
+	Wed,  5 Jun 2024 19:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717616600;
-	bh=KIGvffMFmtiF6JY2kPrxSLeoIMqNOQ0IhOPnWoh89qY=;
+	s=k20201202; t=1717616666;
+	bh=KCeniOHRFpzzTdyjs5MfcwvZY4RL5vqjprwOVtavYh0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kKaN2IFJMH56DTxD6b+6O+4kWa3g6aTqMvBPs6i1mT30xPAXQPUWafP+1Jx1JdDsC
-	 62zCdOLvk+B+4F47V9wIoc4DqvdEWSHFK+QqmcbTq0LZ0D5jYCqLP8ob+kf6OYoYoR
-	 SYmUAgt2Tw+bgeAonl4E6Pf3lnr23fao+Y7cuT/IYfMYYQsuw4WLnkmJ5fTGuHESzo
-	 9v/9c4r9cjc1eD+pKoGANyTxd6Te+w5st6/Od/mlfu1aWfdjQZraJX/bo0Sgu7BAlz
-	 ScrGVKjA/5dCdATM/KN94ntYghEYAx5Wi7+NwWJFDzrmyX6yh6T/S40w6t4URGkR94
-	 nbYzdHe8ST2dw==
-Date: Wed, 5 Jun 2024 20:43:14 +0100
-From: Simon Horman <horms@kernel.org>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com,
-	i.maximets@ovn.org, dev@openvswitch.org,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 9/9] selftests: openvswitch: add emit_sample
- test
-Message-ID: <20240605194314.GX791188@kernel.org>
-References: <20240603185647.2310748-1-amorenoz@redhat.com>
- <20240603185647.2310748-10-amorenoz@redhat.com>
+	b=Q99QuntjdVygG3DhQZamPejzmR6f+mOuMZNvYp8uFdB6vyiHK3Uzycwz/kai+au5G
+	 FneKlFLCF/YFhm48Vktvcyfb1LmkZj0Ik5BEA751K28ticZOMufwLBMnCl7m/+Yx5I
+	 qehPbHDDiY84ljRwFMzplxPBFU96E0Vhm5V+WbbR8XZYf9Bl1Y7jA1j/HI7v/2zHgz
+	 +/CFWreAfygAHhYyES+ZmLd32fGevD7QEv5bRrQvqSTiQdm6z7ENGSXKJtV78AjoHH
+	 o3CdYIpBtWI8s8p9KBWz2zPDpSRl+A0HokZGeAWQ1ehLdM73hIG7dUDMD/rZvaMNgq
+	 alXGzaJqC6awQ==
+Received: by pali.im (Postfix)
+	id D0085A2F; Wed,  5 Jun 2024 21:44:22 +0200 (CEST)
+Date: Wed, 5 Jun 2024 21:44:22 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Benjamin Schneider <bschnei@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Benjamin Schneider <ben@bens.haus>
+Subject: Re: [PATCH] cpufreq: enable 1200Mhz clock speed for armada-37xx
+Message-ID: <20240605194422.klxtxgyljrrllkzy@pali>
+References: <20240603012804.122215-1-ben@bens.haus>
+ <20240603012804.122215-2-ben@bens.haus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240603185647.2310748-10-amorenoz@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240603012804.122215-2-ben@bens.haus>
+User-Agent: NeoMutt/20180716
 
-On Mon, Jun 03, 2024 at 08:56:43PM +0200, Adrian Moreno wrote:
-> Add a test to verify sampling packets via psample works.
+On Sunday 02 June 2024 18:26:38 Benjamin Schneider wrote:
+> This frequency was disabled because of unresolved stability problems.
+> However, based on several months of testing, the source of the
+> stability problems seems to be the bootloader, not the kernel.
+> Marvell has recently merged changes to their bootloader source that
+> addresses the stability issues when frequency scaling is enabled at
+> all frequencies including 1.2Ghz.
 > 
-> In order to do that, create a subcommand in ovs-dpctl.py to listen to
-> on the psample multicast group and print samples.
+> Signed-off-by: Benjamin Schneider <ben@bens.haus>
+> ---
+>  drivers/cpufreq/armada-37xx-cpufreq.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 > 
-> In order to also test simultaneous sFlow and psample actions and
-> packet truncation, add missing parsing support for "userspace" and
-> "trunc" actions.
-> 
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-
-...
-
-> @@ -803,6 +819,25 @@ class ovsactions(nla):
->                  self["attrs"].append(["OVS_ACTION_ATTR_EMIT_SAMPLE", emitact])
->                  parsed = True
+> diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
+> index bea41ccab..f28a4435f 100644
+> --- a/drivers/cpufreq/armada-37xx-cpufreq.c
+> +++ b/drivers/cpufreq/armada-37xx-cpufreq.c
+> @@ -102,11 +102,7 @@ struct armada_37xx_dvfs {
+>  };
 >  
-> +            elif parse_starts_block(actstr, "userspace(", False):
-> +                uact = self.userspace()
-> +                actstr = uact.parse(actstr[len("userpsace(") : ])
+>  static struct armada_37xx_dvfs armada_37xx_dvfs[] = {
+> -	/*
+> -	 * The cpufreq scaling for 1.2 GHz variant of the SOC is currently
+> -	 * unstable because we do not know how to configure it properly.
+> -	 */
+> -	/* {.cpu_freq_max = 1200*1000*1000, .divider = {1, 2, 4, 6} }, */
+> +	{.cpu_freq_max = 1200*1000*1000, .divider = {1, 2, 4, 6} },
+>  	{.cpu_freq_max = 1000*1000*1000, .divider = {1, 2, 4, 5} },
+>  	{.cpu_freq_max = 800*1000*1000,  .divider = {1, 2, 3, 4} },
+>  	{.cpu_freq_max = 600*1000*1000,  .divider = {2, 4, 5, 6} },
+> -- 
+> 2.45.1
 
-nit: userspace
+As without the updated firmware on 1.2 GHz variant of the SoC is kernel
+already crashing, even with commented line for .cpu_freq_max = 1200,
+this change makes sense.
 
-     Flagged by checkpatch.pl --codespell
+There is no reason to have 1.2 GHz line disabled as it does not solve
+any issue (as was originally thought) and just prevent people with
+updated firmware to use non-performance governor on that SoC.
+(When cpufreq driver is not loaded then CPU frequency of the SoC is
+locked at the max speed, which has observed behavior same as performance
+cpufreq governor).
 
-> +                self["attrs"].append(["OVS_ACTION_ATTR_USERSPACE", uact])
-> +                parsed = True
-> +
-> +            elif parse_starts_block(actstr, "trunc", False):
-> +                parencount += 1
-> +                actstr, val = parse_extract_field(
-> +                    actstr,
-> +                    "trunc(",
-> +                    r"([0-9]+)",
-> +                    int,
-> +                    False,
-> +                    None,
-> +                )
-> +                self["attrs"].append(["OVS_ACTION_ATTR_TRUNC", val])
-> +                parsed = True
-> +
->              actstr = actstr[strspn(actstr, ", ") :]
->              while parencount > 0:
->                  parencount -= 1
+So, go ahead with this change with my
+
+Reviewed-by: Pali Rohár <pali@kernel.org>
 
