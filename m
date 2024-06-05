@@ -1,92 +1,99 @@
-Return-Path: <linux-kernel+bounces-203318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230298FD94E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730AE8FD956
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5143B21229
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29222828B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D4815F409;
-	Wed,  5 Jun 2024 21:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E2115FA76;
+	Wed,  5 Jun 2024 21:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gx1iWzgT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZtHx48XW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBmwCejs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7861213A87A;
-	Wed,  5 Jun 2024 21:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078081373;
+	Wed,  5 Jun 2024 21:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717623707; cv=none; b=P7qAqAObnu+LXUSrOfMTNXvKIUB9MdoQzbhRKzWzXf4zfE9SxQMK2cPCUiAjRkKzXnt8iJH5QeAqfFhOUyBp+TMX36cxTTPtcVSS5at4MnVrjzYkL0GbsxgvJVRKyhZanEjfiUJRX1pHuW6MtruJbuV567miEa3rl1OI8rVDCOM=
+	t=1717623825; cv=none; b=q3+He4rPj7lXgWvC/fnGmCvgigqeRMgI7qExCRQ7iiEs0Ak/BRJbSBE9Kwyd5WP7xPtggBrCCCneRVVvaRxyvaOy1eUOvy1t/IgSjfwLl2Av0S3qmhlCF8k9Wcjwss8FbVC1IKb9aZUP04xCIUQbTNafIJ4JY2wqnxfZr1kNzlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717623707; c=relaxed/simple;
-	bh=m/okp4LUNPy9iC8VpIelYhrBq5Bzu3Me1uCGiBay1UM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=T8k6Pzv0YhT3Fuhn8lTznIplXfXDaraZ4UnmfuZ9i2PQ/8ZSULW+Q5zk9nVokM8dznvhouiuhdMhfKsN0sNxEjXAxWwkFJnVr3StFPhcJY2yDUoaubMFkQbC9f98AsVwiIdx6AGGFZx7iVsHxPy4mWvctKqq9+4yS6tcWG9I4HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gx1iWzgT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZtHx48XW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1717623704;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RMaEgKRTCDlNySpYj41VqXw4r1dDo5g5VEmGt4FNdnE=;
-	b=Gx1iWzgTX0o8ADRd6eAhWRdaw8KXSRR7QkzG/7kanVTpqiDlZTNDYD6c9Pj4vMqiSqVvW6
-	waJ3TIx6C4gRFJ6kLumfJVF+iQIKnjSbSk9MmcxpV/FiEVZl9oG+rLW4PZB5iAm55qpH37
-	VQqPiI+P4dfRQtdfuDbPXgenUewddcsAVN3ijs4UDMd5wihw/YM8ihrRfp+/OSNpVz4KgC
-	vhSKaGL1vv+ThKOW9p0MbLK8irlk8DhzWsqn2aXDrJQbra4cRQ/waEoo8vovW19KGoZCZv
-	Bd4czcoC5I1BjMIy4jLKO1Si6cFOSBneHqSFi5B1P32BZvtH8b71uObeOQEBaQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1717623704;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RMaEgKRTCDlNySpYj41VqXw4r1dDo5g5VEmGt4FNdnE=;
-	b=ZtHx48XWJqTKoECYXNN6PcoyyGXqNPkylnSFnwUYTP4Dr/UG3RwteEbcFNRjKTC86kbbo0
-	4hp+lFhJW9V2AdAA==
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-crypto@vger.kernel.org,
- linux-api@vger.kernel.org, x86@kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Adhemerval Zanella Netto
- <adhemerval.zanella@linaro.org>, Carlos O'Donell <carlos@redhat.com>,
- Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann
- Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, David
- Hildenbrand <dhildenb@redhat.com>, Samuel Neves <sneves@dei.uc.pt>
-Subject: Re: [PATCH v16 5/5] x86: vdso: Wire up getrandom() vDSO implementation
-In-Reply-To: <20240528122352.2485958-6-Jason@zx2c4.com>
-References: <20240528122352.2485958-1-Jason@zx2c4.com>
- <20240528122352.2485958-6-Jason@zx2c4.com>
-Date: Wed, 05 Jun 2024 23:41:44 +0200
-Message-ID: <87y17j2hk7.ffs@tglx>
+	s=arc-20240116; t=1717623825; c=relaxed/simple;
+	bh=aFVcd3geGR9oREiYgD4RepVhm5hzoZ0e1xsgwtZ3xEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=mrysDJB+hB8sEpCfru+SNVr2HzAVbP6Y9ypiv2lNpQAAvmy9/ZNROVCMQcLuMzqm5YDs7bRCQUtUIy8in7ONLagJZO9HTmuRKEIn1OpH5w4MjCm1SyUvrSGEiYFibD5Yg1bQz7ue2uzx5drePm4QRKYQpL3aZ2wnM6ty6pQGh6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tBmwCejs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 904ABC2BD11;
+	Wed,  5 Jun 2024 21:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717623824;
+	bh=aFVcd3geGR9oREiYgD4RepVhm5hzoZ0e1xsgwtZ3xEw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=tBmwCejsGiyfz8GhEMM/IndBJanR8YLNfWrKeFEHMrJUPX9uFGMbTXvKhSM2N9bEj
+	 T3RDKX8Z9a4+iQh1pnrALyE/u4xHgywxRjeRSD7kDqcCVl1bvgaT6KxyCQVr2oy0YQ
+	 siRX7jpVZ89wLhWSg/dpeEGOlpFtOz708FZuatdJgKnfxiGN6CmsXv6aDHYPVAssV/
+	 CE7CJBlnK7kSQzg9ZZgPAkcxbfI6mwlocsnZttS3wQJxY+vkW2eL7E5YTivdvdLS+r
+	 +9nDx0YJ75qtco7aoWAi1VO0EmvPlwZy4wYivMmln5BBfsKs+7BOTO2WaD4goThKqw
+	 /Rcp3PwNdWIyQ==
+Date: Wed, 5 Jun 2024 16:43:42 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Martin Oliveira <martin.oliveira@eideticom.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-mm@kvack.org,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tejun Heo <tj@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Valentine Sinitsyn <valesini@yandex-team.ru>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH 1/6] kernfs: create vm_operations_struct without
+ page_mkwrite()
+Message-ID: <20240605214342.GA781723@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605192934.742369-2-martin.oliveira@eideticom.com>
 
-On Tue, May 28 2024 at 14:19, Jason A. Donenfeld wrote:
-> +
-> +static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-> +{
-> +	if (__vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
+On Wed, Jun 05, 2024 at 01:29:29PM -0600, Martin Oliveira wrote:
+> The standard kernfs vm_ops installs a page_mkwrite() operator which
+> modifies the file update time on write.
+> 
+> This not always required (or makes sense), such as in the P2PDMA, which
 
-Lacks an IS_ENABLED(CONFIG_TIMENS)
+s/This/This is/ ?
 
-> +		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&__vdso_data);
-> +	return &__vdso_rng_data;
-> +}
+> uses the sysfs file as an allocator from userspace.
+> 
+> Furthermore, having the page_mkwrite() operator causes
+> writable_file_mapping_allowed() to fail due to
+> vma_needs_dirty_tracking() on the gup flow, which is a pre-requisite for
+> enabling P2PDMA over RDMA.
+> 
+> Fix this by adding a new boolean on kernfs_ops to differentiate between
+> the different behaviours.
 
-Thanks,
+> +	 * Use the file as an allocator from userspace. This disables
+> +	 * page_mkwrite() to prevent the file time from being updated on write
+> +	 * which enables using GUP with FOLL_LONGTERM with memory that's been
+> +	 * mmaped.
 
-        tglx
+"mmaped" does seem more commonly used in Linux than "mmapped", but the
+base word "mapped" definitely requires "pp", so "mmaped" looks funny
+to me.
 
