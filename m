@@ -1,172 +1,153 @@
-Return-Path: <linux-kernel+bounces-202013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F289E8FC6C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:41:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29848FC6A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFD9AB2A667
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404491F2495D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4423C846D;
-	Wed,  5 Jun 2024 08:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EDB1946BA;
+	Wed,  5 Jun 2024 08:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="078Tre/s";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qyr1ndeB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="078Tre/s";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qyr1ndeB"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTutUWFX"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0204A11;
-	Wed,  5 Jun 2024 08:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839704962C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 08:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717576558; cv=none; b=eqLsFOKtQaSdG9hezwISmhdb1JlRBZNfHQPxPFdHDp/Gs/cwcMg6v3liVilDRCTA4wm0nwl9uaLpuH8FfpCeUdAKeIduhIA1LdBl57kegGNIpov0q7qroJHAD6grHhmexo3AyztIIopA79+DtdWWLHzTH6W1HLnFIbG7M3Dv5Mo=
+	t=1717576579; cv=none; b=VzbjaQ9i+474uYNFJe2K6PfFCvAtOwHJEnp0rk3dnS19WbIce9zkluVXA3DzkhBq3RyQ/BDzUzUpKhS1u6gpUEZA2vQK/eOeoBT3kFB1jbkSIg3Wy84rHWc4IywugDM8gg3gawskEKS0ozWK70y7c+w3yIV3S22xZ0acUDxuw7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717576558; c=relaxed/simple;
-	bh=0pQwQGLnrRqi4ZpBNPD2igxT3WIUyBTq3rTM8UuY7RY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5ZOpKdTsbRi6z79p4BV5XH6EV9MdExbTkoJJGPoMNoD9nY8NBo22YEQ8pguKtgqgpSyGgkx264RbbRsWe5IG9Y/Ko05oyM5reF2jzAe6QDvmHT5YLnc37I7XQ9Nwmk918azg7PLG6sODlIr4+APmX2mi7M8V17gsZDfAdplUBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=078Tre/s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qyr1ndeB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=078Tre/s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qyr1ndeB; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C66BD216E7;
-	Wed,  5 Jun 2024 08:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717576554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7TvQX13j+85jesRrC3K1xLONdQ11oVJErvF9uxA3O1Y=;
-	b=078Tre/sA2OhOBOLlEMXVPuYaENCubf1dCLtUCbjBN4ywIwTwHZW8F1VVNqQsJc0Hug+fy
-	PCmNyBQBeVSNJTZum0Wbw45/lr+lMbgTlb91aq+MP8/ZbvEGUssVvz2bnHPpbFtjR22Nke
-	D8Q/Tr15zQoh0iLZAh9E555bX/0GJOE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717576554;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7TvQX13j+85jesRrC3K1xLONdQ11oVJErvF9uxA3O1Y=;
-	b=Qyr1ndeBV9QyZPAEvBUZMsd7aIkIqU+bdUrz/EkLswNEsg7VDvGXlxRERtWKiC1lIPEwXl
-	S3sNGPamVEJO+OAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="078Tre/s";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Qyr1ndeB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1717576554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7TvQX13j+85jesRrC3K1xLONdQ11oVJErvF9uxA3O1Y=;
-	b=078Tre/sA2OhOBOLlEMXVPuYaENCubf1dCLtUCbjBN4ywIwTwHZW8F1VVNqQsJc0Hug+fy
-	PCmNyBQBeVSNJTZum0Wbw45/lr+lMbgTlb91aq+MP8/ZbvEGUssVvz2bnHPpbFtjR22Nke
-	D8Q/Tr15zQoh0iLZAh9E555bX/0GJOE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1717576554;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7TvQX13j+85jesRrC3K1xLONdQ11oVJErvF9uxA3O1Y=;
-	b=Qyr1ndeBV9QyZPAEvBUZMsd7aIkIqU+bdUrz/EkLswNEsg7VDvGXlxRERtWKiC1lIPEwXl
-	S3sNGPamVEJO+OAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC14213AA1;
-	Wed,  5 Jun 2024 08:35:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BbfqLWojYGZmOQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 05 Jun 2024 08:35:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5BB97A088A; Wed,  5 Jun 2024 10:35:50 +0200 (CEST)
-Date: Wed, 5 Jun 2024 10:35:50 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] isofs: add missing MODULE_DESCRIPTION()
-Message-ID: <20240605083550.th47cyxnrp3vawja@quack3>
-References: <20240526-md-fs-isofs-v1-1-60e2e36a3d46@quicinc.com>
+	s=arc-20240116; t=1717576579; c=relaxed/simple;
+	bh=muohkQHM4xGVqaMFOC4b3LZBXk6gCJb0TTTyktpFYFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SvMMfgBmEN3brRx5Fth8HavIN0vyANQ4t45ANjKpJ+bALuXjGszFjGuFMU+6HC6gIePHhjG0mR04oXqNEyk1IO+2rq/RjKu6YuK48kxxHkCV/XchOOCWDePjKAAcQTmA1iL0CwKYMTsKyN0jEjM+xWnr5bsCljOxT9nWWZbhDDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTutUWFX; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52b8e0e98adso2917015e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 01:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717576576; x=1718181376; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=74218/qTlQX5R13IzjLgr2DOxfv8K30mXmcKDFS7i+o=;
+        b=cTutUWFXBOoXO08SV3iZI6rcqzY5hG0zYNzq4ARdxqo6suLp16S0QYp7D5kwIjU2Wz
+         Sma/GmH/aP49AOR+m9LR0Vi/jOko5AUTRNxLIke+XN14O48PT86Egwf6DvSnsh1QeS7v
+         WIYXVw6D7APO0hex7qr+jCwf/OJGG3jZlSqdmJq39q/qjCUK6MmMfb/Dp3J0HOk+zecD
+         STqGTYLb6WjC6jCT9i7fl+74flEqaaDGr7DhMs7B2MrvIsAjGw/xzSCG+ajSPmHY9/Ov
+         5jJfSpI2ogGzkIKBT/mLyQs3ZMsuq4R6MJJQEXybTnrO73Yn6mdt4lEbGCZfJPCmm+9I
+         IJTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717576576; x=1718181376;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=74218/qTlQX5R13IzjLgr2DOxfv8K30mXmcKDFS7i+o=;
+        b=LtIu3GT530vZTOKgnV+uwBXzd8CkIzxzfSPwu/Span2qUKVnJO+1ZW4W2PKlHS6ZKP
+         6mZDZNBcJv0km0OgPz26L/YhaK8wjIPGOyY3bAFDfikIO8EvXuxG7I6rsZa7ur6DHELv
+         UgtPYpVBRLfGVfo9xxw2lqQCD7iTj1/QEhNZ1oFpkd9D3G7soJ9PHM3Fn8/Qy0XzScYZ
+         M9gwQg8lYEDqwf4YTAk75HypVdYe8eiGSrg8np1ehgLaxyXY6ZuA3ywS+8N2g1xwBabK
+         /k9AUmiu3xk3AKpvwT8tq0TucNXMsLTPw+jqIbIUb7CItYz8Px+qCwOmBVuVjsK7o5Lo
+         lHPg==
+X-Gm-Message-State: AOJu0YyJokVJNuaeoaXFqedz0sTs4/aP76tNQbdkZIVJGTOPrULMbFbS
+	IS4K3WxHOq1jAcSuMqWj+IJlPneBcc6g4uo/7BzkXkklr5I1Zmx2QvClQLlX
+X-Google-Smtp-Source: AGHT+IG07th/gojxw6KZAyaItF2AJx1hysTGqzHVTJ/6Q9zucdsggjvd3hTpqHOKYVgTdchNzOKlQA==
+X-Received: by 2002:a05:6512:6c7:b0:52b:7c3a:423e with SMTP id 2adb3069b0e04-52bab4d470dmr1325612e87.20.1717576575327;
+        Wed, 05 Jun 2024 01:36:15 -0700 (PDT)
+Received: from kepler.. (1F2EF2F4.nat.pool.telekom.hu. [31.46.242.244])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68b3eaeb69sm611933766b.92.2024.06.05.01.36.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jun 2024 01:36:14 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+From: Ingo Molnar <mingo@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Hansen <dave@sr71.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uros Bizjak <ubizjak@gmail.com>
+Subject: [PATCH 0/3, v3] x86/fpu: Remove the thread::fpu pointer
+Date: Wed,  5 Jun 2024 10:35:54 +0200
+Message-ID: <20240605083557.2051480-1-mingo@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240526-md-fs-isofs-v1-1-60e2e36a3d46@quicinc.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.99
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: C66BD216E7
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.99 / 50.00];
-	BAYES_HAM(-2.98)[99.91%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,quicinc.com:email,suse.com:email,suse.cz:dkim]
+Content-Transfer-Encoding: 8bit
 
-On Sun 26-05-24 12:05:23, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/isofs/isofs.o
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+This series is one of the dependencies of the fast-headers work,
+which aims to reduce header complexity by removing <asm/processor.h>
+from the <linux/sched.h> dependency chain, which headers are headers
+are fat enough already even if we do not combine them.
 
-Thanks. Added to my tree.
+To achieve that decoupling, one of the key steps is to not embedd any
+C types from <asm/processor.h> into task_struct.
 
-								Honza
+The only architecture that relies on that in a serious fashion is x86,
+via 'struct thread::fpu', and the series below attempts to resolve it
+by using a calculated &task->thread.fpu value via the x86_task_fpu()
+helper.
 
-> ---
->  fs/isofs/inode.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-> index 93b1077a380a..2bb8b422f434 100644
-> --- a/fs/isofs/inode.c
-> +++ b/fs/isofs/inode.c
-> @@ -1625,4 +1625,5 @@ static void __exit exit_iso9660_fs(void)
->  
->  module_init(init_iso9660_fs)
->  module_exit(exit_iso9660_fs)
-> +MODULE_DESCRIPTION("ISO 9660 CDROM file system support");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 416ff45264d50a983c3c0b99f0da6ee59f9acd68
-> change-id: 20240526-md-fs-isofs-4f66f48f9448
-> 
+Code generation: without CONFIG_X86_DEBUG_FPU=y we get a small reduction:
+
+   text        data        bss        dec         hex        filename
+   26475783    10439082    1740804    38655669    24dd6b5    vmlinux.before
+   26475601    10435146    1740804    38651551    24dc69f    vmlinux.after
+
+With the new debug code - which I think we'll remove soon-ish, there's an
+expected increase:
+
+   text        data        bss        dec         hex        filename
+   26476198    10439286    1740804    38656288    24dd920    vmlinux.CONFIG_X86_DEBUG_FPU.before
+   26477000    10435458    1740804    38653262    24dcd4e    vmlinux.CONFIG_X86_DEBUG_FPU.after
+
+The Git tree can be found at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/fpu
+
+Thanks,
+
+    Ingo
+
+===============>
+Ingo Molnar (3):
+  x86/fpu: Make task_struct::thread constant size
+  x86/fpu: Remove the thread::fpu pointer
+  x86/fpu: Remove init_task FPU state dependencies, add debugging warning
+
+ arch/x86/include/asm/fpu/sched.h |  2 +-
+ arch/x86/include/asm/processor.h | 19 ++++++++++---------
+ arch/x86/kernel/fpu/context.h    |  4 ++--
+ arch/x86/kernel/fpu/core.c       | 57 +++++++++++++++++++++++++++++++--------------------------
+ arch/x86/kernel/fpu/init.c       | 23 +++++++++++++----------
+ arch/x86/kernel/fpu/regset.c     | 22 +++++++++++-----------
+ arch/x86/kernel/fpu/signal.c     | 18 +++++++++---------
+ arch/x86/kernel/fpu/xstate.c     | 23 ++++++++++-------------
+ arch/x86/kernel/fpu/xstate.h     |  6 +++---
+ arch/x86/kernel/process.c        |  6 ++----
+ arch/x86/kernel/signal.c         |  6 +++---
+ arch/x86/kernel/traps.c          |  2 +-
+ arch/x86/math-emu/fpu_aux.c      |  2 +-
+ arch/x86/math-emu/fpu_entry.c    |  4 ++--
+ arch/x86/math-emu/fpu_system.h   |  2 +-
+ arch/x86/mm/extable.c            |  2 +-
+ include/linux/sched.h            | 13 +++----------
+ 17 files changed, 104 insertions(+), 107 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
