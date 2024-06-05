@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-203076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07EB68FD60C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:51:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33ED28FD612
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 20:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83BBD1F235B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:51:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A602FB23D8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 18:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E9513BAD4;
-	Wed,  5 Jun 2024 18:51:15 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E09C13B5A4;
+	Wed,  5 Jun 2024 18:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHMJzN6x"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5985C22615;
-	Wed,  5 Jun 2024 18:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E08139D10;
+	Wed,  5 Jun 2024 18:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717613475; cv=none; b=amd9CbUCSFqIb72Mp4ztgpZkcvQ0uC5KonPSPAI6QkflyESCeSj1f485t4v9a9hW4/VoHqQYswhjVDp3uO8XNr0wgfiCMGXsbcFN1fFCKBPkpr7IV1hDBJ4OEf2gSWdSthcQVeSh+3k2tCBAiXRyo3DdX9xSyCH9QaInYw8eq8E=
+	t=1717613501; cv=none; b=eYuJqXp4APuie0zOB3qNyrF+1vulUyjT6ElUmzcYo76wCHF+r8cXG3o3uRjnfTl/GlPkNpA2saZylJpio1YdJPvJ04Ly9hur8330c/p3gnW7azCd67J6TpSda7MSgZDD6SUhwESPoCpkJT8ESsHCy01PWw39AZBSJRWQpl3Behw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717613475; c=relaxed/simple;
-	bh=zx9Pn72XW+0OyeDmaj8nqxeP/1TM/BNsr82eIksOpv8=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FGAzRPu3eHxSG0S/BTpwBdBNxr33EE18VTMti11s6J/aHwlu/pe4mBg2bhj9MXN6WIwf/n+nSM3k2bIZSWlcJlU6NzCU4Pw/F+P9YOYViG0SoGpScGA7WILiiC4an7JgtthUpZSPVo3S5qc5LZjLbxbHEKrPml3vLKDHtxUJP38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (31.173.84.195) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 5 Jun
- 2024 21:51:02 +0300
-Subject: Re: [net-next PATCH v5 4/7] net: ravb: Refactor GbEth RX code path
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Simon Horman <horms@kernel.org>
-CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240604072825.7490-1-paul.barker.ct@bp.renesas.com>
- <20240604072825.7490-5-paul.barker.ct@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <9fc54591-532e-2dc0-6f83-52a5d4a6312e@omp.ru>
-Date: Wed, 5 Jun 2024 21:51:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1717613501; c=relaxed/simple;
+	bh=6QVa32CvRhezMvRl7Gvfl2NwvxXkN30JpnVwBKt0WRU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qa1yPaAQH1cNk7gWf9b61Owdmv7+m/wGzwgp13eMH4acms9JxklWLXGeePqJS4Fu+UapgP4BKgEWNDDAay1ZoI7uXitpZnwAt4UjW0CMRWHZq3U+4bBFos4vIE4OnzTPXjGy6u5ni1aicA2IGZQqoAkbOo+o3IO+aAlSx1vOHlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FHMJzN6x; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717613500; x=1749149500;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6QVa32CvRhezMvRl7Gvfl2NwvxXkN30JpnVwBKt0WRU=;
+  b=FHMJzN6xvhZPjzPNdjoQD8Db74XUTJZeRWfSRmJdhCWMfbMVNKOzpEFV
+   3UFbXuCE0Arc+j5cmWkSUXSpjwDF9mh/nA6NFf1Af0xG+aBJoSAiefT5B
+   glwkLGQ+QJORtV1mM7Ryj25F1Rv9BQKBLoNuSx5FVtU7EldNejz8o9XBi
+   BMHTws3akBvGcc7Tf/rbi0G97rp0zYWzGue1VhxoRjJ9mLEorPhaLsqdN
+   zEb5MYxPQDKmv5CkvFIv3gZRtvoyEd8iA6TCba0+bDd8HJZ4KCSaTpdOY
+   DzPvqdOA3IR/LMgrzWTOtjbDj0ipoFtUWbWKAC2KJghtgaKAGC3HjWZ8E
+   Q==;
+X-CSE-ConnectionGUID: R5AYrdKnTbW64XT92xKRnA==
+X-CSE-MsgGUID: WxaFy9rjQPS5bevlu1QEDg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11094"; a="18093844"
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="18093844"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 11:51:39 -0700
+X-CSE-ConnectionGUID: f+M3l6eUS5ef81bZmi8u4g==
+X-CSE-MsgGUID: CJ3QLZUxTpy0CFBWvYZ9GA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,217,1712646000"; 
+   d="scan'208";a="37574813"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 05 Jun 2024 11:51:38 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id D0AE01B6; Wed, 05 Jun 2024 21:51:36 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH v1 1/1] hw_random: Remove list.h from the hw_random.h
+Date: Wed,  5 Jun 2024 21:51:33 +0300
+Message-ID: <20240605185133.2535780-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240604072825.7490-5-paul.barker.ct@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/05/2024 18:28:34
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185750 [Jun 05 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.84.195 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.84.195 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;31.173.84.195:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.84.195
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/05/2024 18:33:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/5/2024 4:42:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
 
-On 6/4/24 10:28 AM, Paul Barker wrote:
+The 'struct list' type is defined in types.h, no need to include list.h
+for that.
 
-> We can reduce code duplication in ravb_rx_gbeth().
-> 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/hw_random.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/include/linux/hw_random.h b/include/linux/hw_random.h
+index 136e9842120e..b424555753b1 100644
+--- a/include/linux/hw_random.h
++++ b/include/linux/hw_random.h
+@@ -13,9 +13,8 @@
+ #define LINUX_HWRANDOM_H_
+ 
+ #include <linux/completion.h>
+-#include <linux/types.h>
+-#include <linux/list.h>
+ #include <linux/kref.h>
++#include <linux/types.h>
+ 
+ /**
+  * struct hwrng - Hardware Random Number Generator driver
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-
-[...]
-
-MBR, Sergey
 
