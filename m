@@ -1,118 +1,134 @@
-Return-Path: <linux-kernel+bounces-202413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B308FCC5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 793578FCC62
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 14:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF88295E9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DD011F21C64
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 12:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0905F1991D7;
-	Wed,  5 Jun 2024 11:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E8D1BA87B;
+	Wed,  5 Jun 2024 11:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihLNEHWW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmxHA5v4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4828E1991BF;
-	Wed,  5 Jun 2024 11:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991321BA867;
+	Wed,  5 Jun 2024 11:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717588514; cv=none; b=U1Oz7Ycq87rLASIujOi+OcpAPjyrEsGZYx5bjJj1dSMkCsSoV60t3YSGY+RCg6RyBumWBa3UHEqziK4DfEjsITYyzhtBBZfd61aFX66grOrJMHXskDlrA1PNCpzIyLmSzCofK3CcqJq3y8G+CWAPxJORn4KLNnP/iwh4jJ7YQjw=
+	t=1717588520; cv=none; b=L/27zTUwIRRoA8Nr8usac2J+6RMaf9vZd4+J0Cg+vNU6/8FkQaW0SbETqrz5qmxIt7bta6UWcJb/xuoLsQ6M2Cd5agAZBsQN6xir3qMJhoNNsKsMdeufP8UxpXpwY74WHPICE/e2A1Yc/opiI0tt//BHnG2K3wklxLnEAc5SP1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717588514; c=relaxed/simple;
-	bh=vxNta2dXvygcPDnAOyNlvvdZasfoIV/rkHu+VVyVUxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FDM9VM8WUjB+KnCF+j5zdAmMyeRL7m6uzg2PaAvDuDWyKoGYNxE8TV3XIMODk0p+hdl6+rVcc9DSYD2c2xtY6fdapDSc+sxHs6c1SAobB8cxjJSSbqIzsp3m7jVCBWqQ38Z7FycNX+00JOu1xmITwoqCiBl2a16/sve+K+NgR2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihLNEHWW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04B2C32781;
-	Wed,  5 Jun 2024 11:55:08 +0000 (UTC)
+	s=arc-20240116; t=1717588520; c=relaxed/simple;
+	bh=keKYWfzN1djD6KLmxuPPa4XdGqVyHQTp9UFTeJAwljs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oRJPIlEFjm7zqqgnsdlT9XjkxoAIMHsYIl4GLXtToa5BnqPeEbVLFxoYl6HI/N/Qa2WiTo9s3LYibhBYaRjgZbpepIImEeRlLkFdB8CViR2Lboe2Xd6cT422YvnKjITS6il8GXnZwBN/42jfLg2Z8cQQV+uHT/UNuoI87WPBnMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmxHA5v4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8BC1C3277B;
+	Wed,  5 Jun 2024 11:55:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717588513;
-	bh=vxNta2dXvygcPDnAOyNlvvdZasfoIV/rkHu+VVyVUxQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ihLNEHWWeyMq3gPlOBgaF5Yr8+BSQTQupEqqMvROYRzEKQYZrf7equbZ5cgHjtHf3
-	 /bH29+vNWl3dLW4GrR3Au3z/zqxMQ1A/tjbEhu//vqflP3X+z7tpadFTQ8mQiIte3S
-	 wwmXgTo/zGr2YixlSlgp7uQxTi6Z6DcKm9ywvQg6PUlUCob/YGOaJhyABcE5kEqR51
-	 +jkebJYJU436NDgXyM+8dwJrHtOQ4fsHq3IVo3kwIl7NR/nign0GHFU4XjiLAXHgWk
-	 ogIs6rqg2A9MMkMglaRI/1A3vub6C53MZJ+1T7CrrKNoFTWB25/9z/nYLakhK4ZYQ0
-	 bpDJ9iE7wqFfw==
-Message-ID: <c71e0891-a187-4ad9-b554-8f28c15984fd@kernel.org>
-Date: Wed, 5 Jun 2024 13:55:07 +0200
+	s=k20201202; t=1717588520;
+	bh=keKYWfzN1djD6KLmxuPPa4XdGqVyHQTp9UFTeJAwljs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mmxHA5v4VSrbjUI6RLb4wp/u334tvAzC5AKi5cx/4dJvbRRK+WTtS0F7WghboiSgT
+	 XGNLsPGs4mN/L1rj0MbWIiF9FenBe6NXj/NSCijJEwl2tvWCOYTBNJytDRbadG3iEF
+	 HuPtsQow7CkShCvKlBF7BCyny2EP5VeQ4Rbop3sRSgOlT+qGfFIlGVHYHJ48WlvVh0
+	 21SXfoZ133mJYH1fh3AlypZtZZ7a69lGUsYMAMfegHqio2bBYOH9YXI21ykSK72iKO
+	 wKqCyFGYYT4Dp+0BoycfVWvtjA5MckquV7Gj7UinvQyfwbDo9Rbq3KViIsVXu+xXXS
+	 /Xks8iEArxtqg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Alex Henrie <alexhenrie24@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	sudipm.mukherjee@gmail.com,
+	linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 1/4] usb: misc: uss720: check for incompatible versions of the Belkin F5U002
+Date: Wed,  5 Jun 2024 07:55:09 -0400
+Message-ID: <20240605115518.2964670-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 net-next 14/15] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Boqun Feng <boqun.feng@gmail.com>,
- Daniel Borkmann <daniel@iogearbox.net>, Eric Dumazet <edumazet@google.com>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
-References: <20240529162927.403425-1-bigeasy@linutronix.de>
- <20240529162927.403425-15-bigeasy@linutronix.de> <87y17sfey6.fsf@toke.dk>
- <20240531103807.QjzIOAOh@linutronix.de>
- <9afab1bb-43d6-4f17-b45d-7f4569d9db70@kernel.org>
- <20240605104128.Nn9Cp0CB@linutronix.de>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20240605104128.Nn9Cp0CB@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 4.19.315
 Content-Transfer-Encoding: 8bit
 
+From: Alex Henrie <alexhenrie24@gmail.com>
 
+[ Upstream commit 3295f1b866bfbcabd625511968e8a5c541f9ab32 ]
 
-On 05/06/2024 12.41, Sebastian Andrzej Siewior wrote:
-> On 2024-06-05 12:28:08 [+0200], Jesper Dangaard Brouer wrote:
->>
->> Hmm, but how will this affect performance?
-> 
-> As I wrote in the changelog for v4, I haven't notice a difference. I
-> tried to move bpf_net_ctx_set() from cpu_map_bpf_prog_run() to
-> cpu_map_kthread_run() to have this assignment only once and I didn't see
-> a difference/ I couldn't tell the two kernels apart.
-> 
+The incompatible device in my possession has a sticker that says
+"F5U002 Rev 2" and "P80453-B", and lsusb identifies it as
+"050d:0002 Belkin Components IEEE-1284 Controller". There is a bug
+report from 2007 from Michael Trausch who was seeing the exact same
+errors that I saw in 2024 trying to use this cable.
 
-This would be my preferred solution.
-See below, your benchmark wasn't testing/measuring this changed code on
-remote CPU running kthread.
+Link: https://lore.kernel.org/all/46DE5830.9060401@trausch.us/
+Signed-off-by: Alex Henrie <alexhenrie24@gmail.com>
+Link: https://lore.kernel.org/r/20240326150723.99939-5-alexhenrie24@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/usb/misc/uss720.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-> This is what I have been using for testing
-> 
-> | xdp-bench redirect-cpu --cpu 3 --remote-action drop eth1 -e
-> 
-> in case I was changing the wrong part…
-
-As we saw earlier (with your hardware setup) this test is benchmarking
-the RX-NAPI XDP-redirect code.  As the cpumap "remote" CPUs kthread had
-idle cycles.
-
-The extra clearing bpf_net_ctx_set() for each packet in the kthread on
-the remote CPU will not change the benchmark numbers (as it have idle
-cycles).
-
-Looking closer at kernel code + your patch, I see that this clearing
-isn't done for each packet, but per bulk (up-to CPUMAP_BATCH 8).  Given
-that, I'm more okay with this change.
-
---Jesper
-
+diff --git a/drivers/usb/misc/uss720.c b/drivers/usb/misc/uss720.c
+index 0be8efcda15d5..d972c09629397 100644
+--- a/drivers/usb/misc/uss720.c
++++ b/drivers/usb/misc/uss720.c
+@@ -677,7 +677,7 @@ static int uss720_probe(struct usb_interface *intf,
+ 	struct parport_uss720_private *priv;
+ 	struct parport *pp;
+ 	unsigned char reg;
+-	int i;
++	int ret;
+ 
+ 	dev_dbg(&intf->dev, "probe: vendor id 0x%x, device id 0x%x\n",
+ 		le16_to_cpu(usbdev->descriptor.idVendor),
+@@ -688,8 +688,8 @@ static int uss720_probe(struct usb_interface *intf,
+ 		usb_put_dev(usbdev);
+ 		return -ENODEV;
+ 	}
+-	i = usb_set_interface(usbdev, intf->altsetting->desc.bInterfaceNumber, 2);
+-	dev_dbg(&intf->dev, "set interface result %d\n", i);
++	ret = usb_set_interface(usbdev, intf->altsetting->desc.bInterfaceNumber, 2);
++	dev_dbg(&intf->dev, "set interface result %d\n", ret);
+ 
+ 	interface = intf->cur_altsetting;
+ 
+@@ -725,12 +725,18 @@ static int uss720_probe(struct usb_interface *intf,
+ 	set_1284_register(pp, 7, 0x00, GFP_KERNEL);
+ 	set_1284_register(pp, 6, 0x30, GFP_KERNEL);  /* PS/2 mode */
+ 	set_1284_register(pp, 2, 0x0c, GFP_KERNEL);
+-	/* debugging */
+-	get_1284_register(pp, 0, &reg, GFP_KERNEL);
++
++	/* The Belkin F5U002 Rev 2 P80453-B USB parallel port adapter shares the
++	 * device ID 050d:0002 with some other device that works with this
++	 * driver, but it itself does not. Detect and handle the bad cable
++	 * here. */
++	ret = get_1284_register(pp, 0, &reg, GFP_KERNEL);
+ 	dev_dbg(&intf->dev, "reg: %7ph\n", priv->reg);
++	if (ret < 0)
++		return ret;
+ 
+-	i = usb_find_last_int_in_endpoint(interface, &epd);
+-	if (!i) {
++	ret = usb_find_last_int_in_endpoint(interface, &epd);
++	if (!ret) {
+ 		dev_dbg(&intf->dev, "epaddr %d interval %d\n",
+ 				epd->bEndpointAddress, epd->bInterval);
+ 	}
+-- 
+2.43.0
 
 
