@@ -1,76 +1,56 @@
-Return-Path: <linux-kernel+bounces-202830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902058FD195
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:26:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3E98FD1A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 17:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B568F1C22530
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:26:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8297D1F23783
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 15:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6EC4963F;
-	Wed,  5 Jun 2024 15:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14990481D3;
+	Wed,  5 Jun 2024 15:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="BJJAfbu2";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="BJJAfbu2"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="c7/xBj9Q"
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520F119D8A2;
-	Wed,  5 Jun 2024 15:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1D0482C3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 15:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717601185; cv=none; b=eEAYKC79ONWyz6M5jIHl4jEBBiuxHhrgyOy903Th6+gdT2acEHYQhBOAGGAFhCxZXUxzR07qzYBCv4F0O8R/caPwApAmj5jjZLux1HsuFytIVT8S3bF8qwmdlndGrx13E74ffeRounMKBfmvNOsav7HPNwWWjXy6Ps5VODeRl3k=
+	t=1717601368; cv=none; b=dGqoGb1MYxUagEA6RDaiuRAq8J2L54U46u8zGfK0Z9O8wj81G/umMwAUc2HI8fDzUHM0rv2+n1BN1haPGfoYgk1EanAw+Bm/herEqGy+wJXB8C1Ed/coIvbQpuo/ep/c0iYQtNSXGcCTP7gwlLUxQJqdtJ+UNk8dT9DoAjm24f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717601185; c=relaxed/simple;
-	bh=8XpyhZKSrc4bE8+XvtvAfYDllM78fVvoQxc/aBYNcsk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fAiLCuSvhhIc1n2qVRr/kCJDRcEZe0R/+NkjHaVFHhQKxmuusoufRcws7KmESbNi0nmwLIu+E36z2TKvxdkBfNlcUuLhvQXCybxgOa4yhkNjNdugJbNK5RZEVweVkbyV+wKxc9QU4PVk4ov8sfsio8Qvwxd5ORFrpJYJ0Q9rkTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=BJJAfbu2; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=BJJAfbu2; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7787B1F821;
-	Wed,  5 Jun 2024 15:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717601180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=d8GuYH83WUVlQTRs9HSo1c88X0WQdTG14bgqNF4Wo5Q=;
-	b=BJJAfbu2JD5bXRvgUHmTEDwD1sK2qedlKOYewz0oDcZ8oEffNBEE5IjLWSd5S+Ljh6Ds3B
-	0UkWXCJdkW61og0hBjR6bJeS3bMhITc/SOdM82o5oTTI9g5AwBzvdygCaUvRN5Xhe+UKG4
-	4aZlr/8+hUZoKG/93qn5PUu40yUUZv8=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1717601180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=d8GuYH83WUVlQTRs9HSo1c88X0WQdTG14bgqNF4Wo5Q=;
-	b=BJJAfbu2JD5bXRvgUHmTEDwD1sK2qedlKOYewz0oDcZ8oEffNBEE5IjLWSd5S+Ljh6Ds3B
-	0UkWXCJdkW61og0hBjR6bJeS3bMhITc/SOdM82o5oTTI9g5AwBzvdygCaUvRN5Xhe+UKG4
-	4aZlr/8+hUZoKG/93qn5PUu40yUUZv8=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7048E13A42;
-	Wed,  5 Jun 2024 15:26:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8+5iG5yDYGaiRgAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Wed, 05 Jun 2024 15:26:20 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fix for 6.10-rc3
-Date: Wed,  5 Jun 2024 17:26:14 +0200
-Message-ID: <cover.1717600881.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1717601368; c=relaxed/simple;
+	bh=lYE4mLW4/3gTTTeblhA4fcedkm6JVBcKv/nqj5RQWbM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tB44SQ3S6whyB583pBQZ2HBkrFjZc4sDLmlyprWus3vuFOBghNU1uayXDArE7b4i3nCdtnUxwN5OiyyYFDrvYrU1SGLHQEp5YrX94Bx0f7lAm4RYWYmg7ojrZpRo+mt+uoZZssBKLtnHMGbMa4yI01H7qWW21PXaR/rK3aXUHVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=c7/xBj9Q; arc=none smtp.client-ip=185.136.65.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202406051529129795a9720fa52be546
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 05 Jun 2024 17:29:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=lYE4mLW4/3gTTTeblhA4fcedkm6JVBcKv/nqj5RQWbM=;
+ b=c7/xBj9Q3Nu7BlSuOm5AYocnULLKZkmuIpnYSMKe5F5wn173MbfZ++XL1/Jo1Cex6Qw9gZ
+ Us1Ti3LM6Md+P2m3NvOFWLtN0Vbibkek3Cp+XwcW/rbtNX2gv02Gq5uOsuLPfdPdQ3sR5GXf
+ BhEO/fzyNUeaE2arihgxYyQ1+/K/8=;
+From: Diogo Ivo <diogo.ivo@siemens.com>
+To: mpearson-lenovo@squebb.ca
+Cc: gregkh@linuxfoundation.org,
+	heikki.krogerus@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: treat get_pdos not supported condition as info instead of error
+Date: Wed,  5 Jun 2024 16:29:11 +0100
+Message-ID: <20240605152911.167179-1-diogo.ivo@siemens.com>
+In-Reply-To: <20240604194056.16625-1-mpearson-lenovo@squebb.ca>
+References: <20240604194056.16625-1-mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,55 +58,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1320519:519-21489:flowmailer
 
-Hi,
+Just realized Dmitry said literally the same thing as me. Sorry for the
+extra noise, please ignore my comment.
 
-please pull the following fix for fast fsync that needs to handle errors
-during writes after some COW failure so it does not lead to an
-inconsistent state. Thanks.
-
-----------------------------------------------------------------
-The following changes since commit 440861b1a03c72cc7be4a307e178dcaa6894479b:
-
-  btrfs: re-introduce 'norecovery' mount option (2024-05-21 15:27:17 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-rc2-tag
-
-for you to fetch changes up to f13e01b89daf42330a4a722f451e48c3e2edfc8d:
-
-  btrfs: ensure fast fsync waits for ordered extents after a write failure (2024-05-28 16:35:12 +0200)
-
-----------------------------------------------------------------
-Filipe Manana (1):
-      btrfs: ensure fast fsync waits for ordered extents after a write failure
-
- fs/btrfs/btrfs_inode.h  | 10 ++++++++++
- fs/btrfs/file.c         | 16 ++++++++++++++++
- fs/btrfs/ordered-data.c | 31 +++++++++++++++++++++++++++++++
- 3 files changed, 57 insertions(+)
+Best regards,
+Diogo
 
