@@ -1,173 +1,120 @@
-Return-Path: <linux-kernel+bounces-201824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0D38FC400
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:56:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330DA8FC402
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F14DFB22131
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:56:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B00ADB265E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F69918C321;
-	Wed,  5 Jun 2024 06:56:31 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4A218C327;
+	Wed,  5 Jun 2024 06:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hdvcUrh+"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FBF19046E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 06:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61735190466;
+	Wed,  5 Jun 2024 06:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717570590; cv=none; b=Wyi2h4W3Klouf2w3TfnhNOItpkERm9NK/S3Pk0X4flmKxgkcXrKtURuyTCBbXJ9p4adId/2A6ZjJtHgluMgDARQx7MKNfb8PddBIc0KoKMeyjQMiWM1GjB4vUu3mifif8J2iRF4eYFHM9DADlLWytki/BiHkNYgUKQ4Fylxg+X4=
+	t=1717570648; cv=none; b=IZIuoMSYyn+OrIaKt8vFZL7xweNGmE8wy4NjLydqYs5Mu9CvxiW9iuVxROVspRpszonsNFc8DT8pnqzHS3rp9BR/vMWXlU0ThFpQOyufj0LIa+1z8/MMoWkweJ+gMt9ql5cKf4Vsw8hBCSE/Vj6n0BciuoHmSANXOTamIWkJr0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717570590; c=relaxed/simple;
-	bh=NHKmsHbmxaxmq/t5qOItAZcOd3PP1sLgh1/YDzV6OtM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m4dlcj26n6l13DxPqlUGAsnl2I9RgDzGPmirl7+4YVdYBLBBw4QvoObi9cHNndjFGLM3fGwRwO3y4WZLMCZxdzfJD0sHD4H0k4tlErOFElef4HXdY/0nhO8Pne+D7d3Msws+E8MwDahJYFZFnSd4vWkDlvbBXd2H9/CMQpR4Ai4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-374a831d289so19714045ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 23:56:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717570588; x=1718175388;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a+22Nog8kQyyMDWaryrCDehipgD3m/ylHny5P6cbcV8=;
-        b=lbZ0qj9MD6dyGEMvWxqg6I4MtzVjL1GOJgYNI01A801iEwXlsRyFfkqvnY6wp5Yqv2
-         +sS7F39OIyLDnl9e+StnC95vzo0Vw2Uprn1wwcwBcyhVV7jsvUMh0tKSGLe0EA/9Was2
-         vhQIyR5qmt2zDWkc/87prKTFsDiiFpX/IZk9DPfA0i7XorVhx9LYN7w/G9NLRZDa0Lvo
-         OB3BSoCb17Tt1P5YSdr5sNZr2fn2jb4AnYKpLgUAVqzbdix6jIphWf4UEapk3F+p8JwT
-         7ztp0JeZemJMWVBu1kmksGEXHD/hk8kuCHWkDPymS9azJpI1vgfodZAZpDnmmBiviU+H
-         S18w==
-X-Forwarded-Encrypted: i=1; AJvYcCV49pblipAD+SBVDRUrWjlMzFZbUwnsaCiheDjEp3Z+D2CmD7EB60hhKwO+f8HYWj0wChfSAG3NG9M++Pp/bFNOhui5O42wyvo2X9i2
-X-Gm-Message-State: AOJu0YxNNF38HuJp06TdwuRappNhCcRDFSm0S0uJkojK0HGef6zAuFBu
-	ex7emZFzfL+4TyaortU8/VS2zoGDkphrsnBsPJdn7Lfgz4Z60CQQsFsco4W8czTSvZAe1z0kzeq
-	YR7ZUXBiBT/B6lAOQ7vyEjmiCWH9bOcnOfxdJDKE1nvZE7XCAdjd/90w=
-X-Google-Smtp-Source: AGHT+IGF2NKMT0QCZAIh9zTQsnF7dh0kIhq6LR3RmJvCsubfL1ZWBaKM2qpvu3yqM4GH/qMBdlNUzMZjMs5ziuUsox6DsTq4H4Om
+	s=arc-20240116; t=1717570648; c=relaxed/simple;
+	bh=/r0WB4OrnY3DzA0bEd+9+BuQn8hzAqdTPZfJEJmqX7Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pTug/i5l70gnOXjW2k2qpQrOgSQlXMqU6BFIs0YM1W9sRcW4VdFEZSz/N/ibQjjaTeiRViSTvfwgu42nhEmDCJomsgmzYV+CpojASMwJGHZL66VuMtNWTy59Y6mFpGXC3P5upyqj4Uth5R+4UKYI8XSPiBCv2516clr9Nl5DX/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hdvcUrh+; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4556v8XN021975;
+	Wed, 5 Jun 2024 01:57:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717570628;
+	bh=F8z9CDLYSSGbbwVtiDL55bOqeVlpcFRKEzsGFT6c6Bs=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=hdvcUrh+eTTYHK2/mLZTOoBbaQSQGy/m4eIJeGMXsy5ZnySaBZC+6Hqh2GGI9Pjz2
+	 T7PwB3qnAswZyRy1h/89C6KVcON4b6PWSoq4IKKanlhhEOv0vKZg4vyPlS+hO0g6lQ
+	 XcvwcNhncaJiB+6GDAFvRnmknbjFZ0st1eMWqTgk=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4556v8Tf016972
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 5 Jun 2024 01:57:08 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
+ Jun 2024 01:57:08 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 5 Jun 2024 01:57:08 -0500
+Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4556v7vu014913;
+	Wed, 5 Jun 2024 01:57:08 -0500
+Date: Wed, 5 Jun 2024 12:27:07 +0530
+From: Jai Luthra <j-luthra@ti.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jayesh
+ Choudhary <j-choudhary@ti.com>,
+        Devarsh Thakkar <devarsht@ti.com>, Bryan
+ Brattlof <bb@ti.com>,
+        Aradhya Bhatia <a-bhatia1@ti.com>,
+        Francesco Dolcini
+	<francesco.dolcini@toradex.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH 0/7] arm64: dts: ti: McASP fixes
+Message-ID: <jzg6fhzcia2vfcayrz6xuts4wj5jmspytpibyqzyiajkc4hkrg@zq53frsxda2g>
+References: <20240604-mcasp_fifo_drop-v1-0-03ebe25f47db@ti.com>
+ <20240604133352.GA10282@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0d:b0:36c:4cc9:5923 with SMTP id
- e9e14a558f8ab-374b1ef2622mr919355ab.2.1717570588431; Tue, 04 Jun 2024
- 23:56:28 -0700 (PDT)
-Date: Tue, 04 Jun 2024 23:56:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cce9c0061a1f1071@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_dirent_rename
-From: syzbot <syzbot+ee45465624ceb2e49b50@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240604133352.GA10282@francesco-nb>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello,
+Hi Francesco,
 
-syzbot found the following issue on:
+On Jun 04, 2024 at 15:33:52 +0200, Francesco Dolcini wrote:
+> Hello Jai,
+> 
+> On Tue, Jun 04, 2024 at 03:11:01PM +0530, Jai Luthra wrote:
+> > Drop McASP AFIFOs for all AM62 based platforms, as the extra buffering
+> > is not needed with BCDMA already having internal buffering.
+> 
+> Is this related with the issue in which after play/record or use the
+> McASP interface the system crashes or behaves in unexpected ways or this
+> is something else?
+> 
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14bb8fd2980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=ee45465624ceb2e49b50
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+This series does not address that issue. This is for general latency 
+improvements.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The fix for that is in the DMA driver. We have something working and 
+well tested now in the evil vendor tree, will be posting that to 
+dmaengine@ in a few days.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+> Francesco
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ee45465624ceb2e49b50@syzkaller.appspotmail.com
+-- 
+Thanks,
+Jai
 
-bcachefs (loop2): snapshots_read... done
-bcachefs (loop2): journal_replay... done
-bcachefs (loop2): resume_logged_ops... done
-bcachefs (loop2): going read-write
-bcachefs (loop2): done starting filesystem
-=====================================================
-BUG: KMSAN: uninit-value in dirent_is_visible fs/bcachefs/dirent.c:85 [inline]
-BUG: KMSAN: uninit-value in is_visible_key fs/bcachefs/str_hash.h:159 [inline]
-BUG: KMSAN: uninit-value in bch2_hash_lookup_in_snapshot fs/bcachefs/str_hash.h:177 [inline]
-BUG: KMSAN: uninit-value in bch2_hash_lookup fs/bcachefs/str_hash.h:202 [inline]
-BUG: KMSAN: uninit-value in bch2_dirent_rename+0x2227/0x54d0 fs/bcachefs/dirent.c:332
- dirent_is_visible fs/bcachefs/dirent.c:85 [inline]
- is_visible_key fs/bcachefs/str_hash.h:159 [inline]
- bch2_hash_lookup_in_snapshot fs/bcachefs/str_hash.h:177 [inline]
- bch2_hash_lookup fs/bcachefs/str_hash.h:202 [inline]
- bch2_dirent_rename+0x2227/0x54d0 fs/bcachefs/dirent.c:332
- bch2_rename_trans+0xb24/0x2680 fs/bcachefs/fs-common.c:416
- bch2_rename2+0x265c/0x2e40 fs/bcachefs/fs.c:669
- vfs_rename+0x1d9a/0x2280 fs/namei.c:4887
- do_renameat2+0x18cc/0x1d50 fs/namei.c:5044
- __do_sys_renameat2 fs/namei.c:5078 [inline]
- __se_sys_renameat2 fs/namei.c:5075 [inline]
- __x64_sys_renameat2+0x153/0x200 fs/namei.c:5075
- x64_sys_call+0x2993/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:317
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __kmalloc_large_node+0x231/0x370 mm/slub.c:3994
- __do_kmalloc_node mm/slub.c:4027 [inline]
- __kmalloc_node+0xb10/0x10c0 mm/slub.c:4046
- kmalloc_node include/linux/slab.h:648 [inline]
- kvmalloc_node+0xc0/0x2d0 mm/util.c:634
- kvmalloc include/linux/slab.h:766 [inline]
- btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
- bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
- btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
- bch2_btree_node_read+0x3d42/0x4b50
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
- bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
- read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
- bch2_fs_recovery+0x7b6a/0x93e0 fs/bcachefs/recovery.c:785
- bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
- bch2_fs_open+0x152a/0x15f0 fs/bcachefs/super.c:2105
- bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1906
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa7/0x570 fs/super.c:1779
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
- path_mount+0x742/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3875
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
- x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 PID: 8627 Comm: syz-executor.2 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+GPG Fingerprint: 4DE0 D818 E5D5 75E8 D45A AFC5 43DE 91F9 249A 7145
 
