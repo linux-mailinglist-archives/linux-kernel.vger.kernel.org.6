@@ -1,122 +1,213 @@
-Return-Path: <linux-kernel+bounces-202133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89038FC84B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:48:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05EA8FC823
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10654B2155B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9204281596
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 09:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449A619048F;
-	Wed,  5 Jun 2024 09:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9875118FDBF;
+	Wed,  5 Jun 2024 09:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Q0X4M8qE"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jRTLz0NY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2FA1946A2;
-	Wed,  5 Jun 2024 09:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4837418FC8F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 09:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717580470; cv=none; b=NMGjPYH5sVFkpFEDjKOKTOkksszS+RigmeJxfK5tPM3SkwkRaPnk7WIjp6kHr/JD80oPuSju6km4EDMmKpvUP+1Dti7ypbQcGHbERASfLJ9enfPu0/VIog4H6tMoLmUOnBIv99z39THuVPuLIGpsdM+seP3he4L4UXIRQB7dN0Q=
+	t=1717580491; cv=none; b=GwbS5ZDmFq/b5uhag/7iXa/3m88Jp+ijATYCQNXEBJj5T6no3cwvLhA3iLXAvt7MCF9sW2S1MxZ1chDwU8aXR5poFVnqaIrhj0hsv5KEcFXJtLxGkoYRj0fLei4TQYeKO4LIhpVo/p7c6rpe6Nyhpsg/bZ+dVW0IkqGdKUBdWwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717580470; c=relaxed/simple;
-	bh=3pFN4DdyhUddI2WsBSs6ZHdT32cRg56t+mxrmyj9eMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYONezAPMoStjjRlaDFqHt8J6apYkUNsaHQzSv/NoawETktEAZR7Xf+4W41bhJ2g9zKO6786ps5ko9P3egXZMvKA2kWuoUPYS4vVosHor6BYlgxFJyiV9JphnAs2uO3ScspnxdShpsARiI9revNpvEFmVwJ9L6xhQu3fHI1FoGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Q0X4M8qE; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A714D40E0176;
-	Wed,  5 Jun 2024 09:41:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id foKaUzSCcBWp; Wed,  5 Jun 2024 09:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717580458; bh=cM/V5hgwuNE0tUg8bDOJAW/Hl7YJwCejQy9zIz/wTmo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q0X4M8qEQHd7QpxGSWH8nb/7KxuA7OusxSHmVkXe6Bge3+qNXTM5bBpdAnnpPWG/1
-	 BXmiFJPvSPJ5E93OyyLPiY1O3UlMEcvPhYdQgTHIZ2RIVIssbiJXP/sosXDxSVCfgm
-	 6cqI+n1Xcx6AasNpBXgqirg+vFm/HazTlG3sD+wNCeWEhra5nP73/F4IXKTEqgPbgD
-	 qKmTg3zWWXYwr4/lPaMqySyhIznxUDXiSaTbsYs5aZdbq6hYwIrUokZJFz9Jyxqc8i
-	 pIDiA8/1UGCy8cYwLHaCwrqmNHOHjLImdo2sKOxzGvGq1j/KkKeOwMP02uewx5scsU
-	 Bmr0asMWXtXIi37EX0NdCczxqkINR5UYrOUiwqoCFuLRSHORKielzFj9UNIeSkKVZi
-	 KM5p0uu4WW7NTnsOewG0p8lyJ1zbm71auQOynTMeEWbbMHlbjIOa5FeDNCduu1dIwd
-	 HSKcKjgGB5tSsiRJDzgYTu5h7Dso1kYba5Xor+zowZpRcgPbjZ5lDTj0nUXzbSml7z
-	 EYcxQxo1xNvvT0CnA8MP5s35Pt/qx02Sic7DXnqDd9jQQ4B0YKCkg4U7htOTj2ruJO
-	 Kq1f+teJ0O/3xX9JUrm2dJS3BnIlRDXlWZRLH+lFJV7zykf1gyFZZL4I4dmtSNWzYv
-	 vp6rTFhBWIHa+whkNMjETiWE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C6C8540E0184;
-	Wed,  5 Jun 2024 09:40:52 +0000 (UTC)
-Date: Wed, 5 Jun 2024 11:40:51 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, Tony Luck <tony.luck@intel.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RAS/AMD/ATL: add missing MODULE_DESCRIPTION() macro
-Message-ID: <20240605094051.GDZmAyo1-j_uBri_YO@fat_crate.local>
-References: <20240604-md-ras-amd-atl-v1-1-d4eb3cf3abe4@quicinc.com>
+	s=arc-20240116; t=1717580491; c=relaxed/simple;
+	bh=AFeWsCJtMHss+1KtfaYYBFNgDFMAHYSr1yCRVgt/ZXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OEcKdwgAsXtT+pJkyalW4rYzmvkdNJ9FCuJp5i4SyRbWio8OqfI0f776JuVQUnvaLfv+DuifBFsjLw5iqRZz2P/rqHTFQYxC7yaacrstAnFxrrGX7FbrdN83rK7haczMDWxp5vDXhs5ptQmhh+V5MwTO1YDQPIxM3FUWRTEjWlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jRTLz0NY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717580489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XbFqK7vjRGofhrpgcMu7GJ/j/YD1i36bU+hW03yovCg=;
+	b=jRTLz0NYj+xCeUf6YlAIL3v+uvxdlSj0eaQ85A6yNSJq2+S5tb9Xvc1D60RRbR9UaEAXJk
+	wRxiS3cS08NPMfFfEMfoFobu5wb2IB5RBT0RTEjLkHobnCVwWwtsAChZyAMFjP93KrcgyS
+	jErLtx+AGK8AqXOy/fhgf4J22RAq6EE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-106-7FonminMNk2w_b0XK1r5KA-1; Wed, 05 Jun 2024 05:41:27 -0400
+X-MC-Unique: 7FonminMNk2w_b0XK1r5KA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42153125d3eso11694855e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 02:41:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717580486; x=1718185286;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XbFqK7vjRGofhrpgcMu7GJ/j/YD1i36bU+hW03yovCg=;
+        b=XBgsp+AUQmUJpLbBsNOJJePUENnkMTbRNXUbo4N9m4EGY9JogW2fM2GYSf0lVRWCb4
+         /ggljnNLv1fJltu9wmFqJO2YLvmwPmjBVfddq3OKSjgriic0+jNquDmY75PLb+vYLbOt
+         uCjUNozGHb2KrwMqWtTFirwt/173TOFEUz9intYE936pdyYDTor8lV4xAZ6HzJH2BdBn
+         UiFq9AVxj8D8uXHcJ2eD4btWHANuzQVhS4hCsStokIBxaj/4Kjkmvj36EbRUe3z0YiuH
+         sCFQ+9TJM25GFy3V8eczP+482yb2JQMxFD5XFqhj5PYWkT1TXf6hBCPRUKSwv+C1ODsN
+         jnrA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1AEfAykHdYOAhB0L2nURmXuR7QHrZ+kSWRw9JU9+PcsaRa3DOdRdHwrdtDvoMkaGfGoeWFGiOACZ6y18tlQhJ50ZesYVKop4gG2Tw
+X-Gm-Message-State: AOJu0YzHYegHpDPcZMPBj0/b2i+niPMjL/SxNF7+HuL/9GD8DqQf/joW
+	Co9I2Ew/16yQtPu70k2ApdTRnXYqbDxPcY1HlsomlMtk8/+Fz4AMq3xf/RisBYUwRE8J7aGdl5S
+	7vlBhH6zu5vlAdrZqf99BSVVyDlRKINjCjnKfDbPT8hzRk0Pfo3syNQzT16ZXrg==
+X-Received: by 2002:a05:600c:468a:b0:420:309a:fe63 with SMTP id 5b1f17b1804b1-421562d9dc9mr17551225e9.22.1717580486172;
+        Wed, 05 Jun 2024 02:41:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZ4DsrGvgn0UBtPYVDouVo7ht+wTScpP4QfB3xxibX+Z/xIdtfHCxsKpK67VkdAhG6RpxZQw==
+X-Received: by 2002:a05:600c:468a:b0:420:309a:fe63 with SMTP id 5b1f17b1804b1-421562d9dc9mr17550995e9.22.1717580485682;
+        Wed, 05 Jun 2024 02:41:25 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:3100:19a8:d898:8e69:6aff? (p200300cbc706310019a8d8988e696aff.dip0.t-ipconnect.de. [2003:cb:c706:3100:19a8:d898:8e69:6aff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421581016e0sm14760855e9.9.2024.06.05.02.41.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 02:41:25 -0700 (PDT)
+Message-ID: <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
+Date: Wed, 5 Jun 2024 11:41:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240604-md-ras-amd-atl-v1-1-d4eb3cf3abe4@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
+To: yangge1116 <yangge1116@126.com>, akpm@linux-foundation.org,
+ Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
+References: <1717498121-20926-1-git-send-email-yangge1116@126.com>
+ <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
+ <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 04, 2024 at 07:21:59PM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/ras/amd/atl/amd_atl.o
+On 05.06.24 03:18, yangge1116 wrote:
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/ras/amd/atl/core.c | 1 +
->  1 file changed, 1 insertion(+)
+> 在 2024/6/4 下午9:47, David Hildenbrand 写道:
+>> On 04.06.24 12:48, yangge1116@126.com wrote:
+>>> From: yangge <yangge1116@126.com>
+>>>
+>>> If a page is added in pagevec, its ref count increases one, remove
+>>> the page from pagevec decreases one. Page migration requires the
+>>> page is not referenced by others except page mapping. Before
+>>> migrating a page, we should try to drain the page from pagevec in
+>>> case the page is in it, however, folio_test_lru() is not sufficient
+>>> to tell whether the page is in pagevec or not, if the page is in
+>>> pagevec, the migration will fail.
+>>>
+>>> Remove the condition and drain lru once to ensure the page is not
+>>> referenced by pagevec.
+>>
+>> What you are saying is that we might have a page on which
+>> folio_test_lru() succeeds, that was added to one of the cpu_fbatches,
+>> correct?
 > 
-> diff --git a/drivers/ras/amd/atl/core.c b/drivers/ras/amd/atl/core.c
-> index 6dc4e06305f7..7be4982fdf19 100644
-> --- a/drivers/ras/amd/atl/core.c
-> +++ b/drivers/ras/amd/atl/core.c
-> @@ -222,4 +222,5 @@ static void __exit amd_atl_exit(void)
->  module_init(amd_atl_init);
->  module_exit(amd_atl_exit);
->  
-> +MODULE_DESCRIPTION("AMD Address Translation Library");
->  MODULE_LICENSE("GPL");
+> Yes
 > 
-> ---
+>>
+>> Can you describe under which circumstances that happens?
+>>
+> 
+> If we call folio_activate() to move a page from inactive LRU list to
+> active LRU list, the page is not only in LRU list, but also in one of
+> the cpu_fbatches.
+> 
+> void folio_activate(struct folio *folio)
+> {
+>       if (folio_test_lru(folio) && !folio_test_active(folio) &&
+>           !folio_test_unevictable(folio)) {
+>           struct folio_batch *fbatch;
+> 
+>           folio_get(folio);
+>           //After this, folio is in LRU list, and its ref count have
+> increased one.
+> 
+>           local_lock(&cpu_fbatches.lock);
+>           fbatch = this_cpu_ptr(&cpu_fbatches.activate);
+>           folio_batch_add_and_move(fbatch, folio, folio_activate_fn);
+>           local_unlock(&cpu_fbatches.lock);
+>       }
+> }
 
-Applied, thanks.
+Interesting, the !SMP variant does the folio_test_clear_lru().
 
-Btw, I'd suggest instead of sending those piecemeal-wise, one per
-driver, just group them all by subsystem and whatnot so that each
-maintainer can pick it up and this new thing modpost decided to complain
-about, can be taken care of without noodling through each driver
-one-by-one.
+It would be really helpful if we could reliably identify whether LRU 
+batching code has a raised reference on a folio.
 
-Better yet: do a coccinelle patch and convert the whole tree.
+We have the same scenario in
+* folio_deactivate()
+* folio_mark_lazyfree()
 
-Thx.
+In folio_batch_move_lru() we do the folio_test_clear_lru(folio).
+
+No expert on that code, I'm wondering if we could move the 
+folio_test_clear_lru() out, such that we can more reliably identify 
+whether a folio is on the LRU batch or not.
 
 -- 
-Regards/Gruss,
-    Boris.
+Cheers,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+David / dhildenb
+
 
