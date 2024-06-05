@@ -1,183 +1,223 @@
-Return-Path: <linux-kernel+bounces-202262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96858FCA74
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3978FCA77
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC971F22E61
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 773E6282B11
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1883193062;
-	Wed,  5 Jun 2024 11:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kZqqxsZ+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A974D140380;
+	Wed,  5 Jun 2024 11:30:09 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130F38F6A;
-	Wed,  5 Jun 2024 11:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDDD1946D8;
+	Wed,  5 Jun 2024 11:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717586918; cv=none; b=nJyUkfMMh7Pf1Yez71aZ2770+o28eApbssSJprmOTqjgKd2kYLaKZH+/STU2lpiYm8cLBUVyEmTSMm84/pdl0S01obKgJn2f72/n/pVnCkTon7Ffyq0kdpqtykTQxuj59UguBVt2Q9lKyQBo/NEwCfyhWLeMootZGPmfe0K4EfY=
+	t=1717587009; cv=none; b=E/qcsCmocKvMazeDcNnKirA7sUL5R8/dXcfpPJwiEaNzNN9r1Hmn5fii/6EIw28FoXJIYbYGV/a9oqHarccsDq8OXsyQFeeQ+w6VcOV9v3H63Z3Ym00H9xDdaHAxOk64WxLKEUfsPX5Ly5Vr9mLrJRX80Pz3SHN369mlgr2nt00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717586918; c=relaxed/simple;
-	bh=LZF9UrI54WCbcmYJmTKIePobwE96awTpAKL5pDTIjVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qp7ReEE9MrFAtg5OfsWYq4q+uwEiJ3do+5SPnM1bcLMmi7kxouibMTQmxc26EV9M25Ep3AzXS0caPpNLZdfW1ErVZVlguM5b9gYaBwsW7Niq3an7Kkbo5p0tsE5jIIkJtpSV1BGMIt2YkfNblUOFNOQ0b0d5++5mYQ0/k0loJOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kZqqxsZ+; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717586916; x=1749122916;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LZF9UrI54WCbcmYJmTKIePobwE96awTpAKL5pDTIjVU=;
-  b=kZqqxsZ+A2Qh9fEGVKwsfwZ0i7NWx2ggTa5TK4h7xJ8Vreok9BszaTDd
-   S0NSxE6X1unQ8gX1W2FrF+mOTGLjeSTYuwegGbpeaIvzu2JtNIMZAgxlK
-   PfYYUabU1yRTYAiMTQLFpEQy0D5ClGQ6VAVnewyMr/O/9CE9v57LVocFq
-   NhCDSt8f1ROkc6i7uSH99tjQ15p5XGntzqamuviV4WRVCWC/MhJ83WMEz
-   hbyxig/BoJtQkkc4Rzj/CJ11dm42oGCt+Xna09poD1+ivhk5rRozvpli+
-   5poZcsFT1yTC9fgt7owaXlHw4SgQwswD2L/UauRTxxs9Ba2Lb1Z8rAKDY
-   A==;
-X-CSE-ConnectionGUID: SGXppLIURMSxLCa8Um8MKQ==
-X-CSE-MsgGUID: a5yEQk7UQXyX+PA98Yraiw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11093"; a="14304991"
-X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
-   d="scan'208";a="14304991"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2024 04:28:35 -0700
-X-CSE-ConnectionGUID: wisKOJgcSDShxkJdQHiBSw==
-X-CSE-MsgGUID: iujfoEyuT0+YDLdY0lhqmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,216,1712646000"; 
-   d="scan'208";a="42001639"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 05 Jun 2024 04:28:33 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sEooh-0001S2-1i;
-	Wed, 05 Jun 2024 11:28:31 +0000
-Date: Wed, 5 Jun 2024 19:28:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: bo liu <bo.liu@senarytech.com>, perex@perex.cz, tiwai@suse.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bo liu <bo.liu@senarytech.com>
-Subject: Re: [PATCH] ALSA: hda/senarytech: add senarytech codec support
-Message-ID: <202406051902.R67SGht9-lkp@intel.com>
-References: <20240603093429.25511-1-bo.liu@senarytech.com>
+	s=arc-20240116; t=1717587009; c=relaxed/simple;
+	bh=zwnHaQ1ZmkNlUtS7++VTNPOg3xHBKHbpyAnauLX24ug=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ddk7T8q1nWX+wNChhKXpxI7IMygnO4pC/WNdnxNpmR7sg7GhQq7KNgAnVxZae5lvJ43Tp32LNLkjfroXaZe3+v1wZkUGktFy6CyfaMv8fVHFvR2obPa9XiQCuy/cxld6/EBzz9BnLt0JraCrLaugj2ZpuyUw9pRPcNGdnRSnxZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VvQ9y0Rkzz6K6SB;
+	Wed,  5 Jun 2024 19:25:26 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id E68C71400C9;
+	Wed,  5 Jun 2024 19:30:01 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 5 Jun
+ 2024 12:30:01 +0100
+Date: Wed, 5 Jun 2024 12:30:00 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6] cxl/events: Use a common struct for DRAM and General
+ Media events
+Message-ID: <20240605123000.00001e8f@Huawei.com>
+In-Reply-To: <20240602191238.27712-1-fabio.m.de.francesco@linux.intel.com>
+References: <20240602191238.27712-1-fabio.m.de.francesco@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603093429.25511-1-bo.liu@senarytech.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi bo,
+On Sun,  2 Jun 2024 21:12:25 +0200
+"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
 
-kernel test robot noticed the following build errors:
+> cxl_event_common was an unfortunate naming choice and caused confusion with
+> the existing Common Event Record. Furthermore, its fields didn't map all
+> the common information between DRAM and General Media Events.
+> 
+> Remove cxl_event_common and introduce cxl_event_media_hdr to record common
+> information between DRAM and General Media events.
+> 
+> cxl_event_media_hdr, which is embedded in both cxl_event_gen_media and
+> cxl_event_dram, leverages the commonalities between the two events to
+> simplify their respective handling.
+> 
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+> ---
+> 
+> - Changes for v6 -
+> 
+> 	- Add "Reviewed-by" tags
+Hi Fabio,
 
-[auto build test ERROR on tiwai-sound/for-next]
-[also build test ERROR on tiwai-sound/for-linus linus/master v6.10-rc2 next-20240605]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Adding tags doesn't need a new version. b4 or however Dave is picking these
+up will gather them up from the v5 posting.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/bo-liu/ALSA-hda-senarytech-add-senarytech-codec-support/20240603-181658
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-patch link:    https://lore.kernel.org/r/20240603093429.25511-1-bo.liu%40senarytech.com
-patch subject: [PATCH] ALSA: hda/senarytech: add senarytech codec support
-config: sparc64-randconfig-r081-20240605 (https://download.01.org/0day-ci/archive/20240605/202406051902.R67SGht9-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240605/202406051902.R67SGht9-lkp@intel.com/reproduce)
+My one nervousness about this is the impression it perhaps gives that the contents
+of validity flags has the same meaning in both records.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406051902.R67SGht9-lkp@intel.com/
+Maybe a comment to that effect next to it's definition makes sense?
 
-All errors (new ones prefixed by >>):
+I think the alternative of not including that or the remaining elements in
+your common structure would be worse.
 
-   sound/pci/hda/patch_senarytech.c: In function 'patch_senary_auto':
->> sound/pci/hda/patch_senarytech.c:219:43: error: macro "senary_auto_parse_beep" passed 1 arguments, but takes just 0
-     219 |         err = senary_auto_parse_beep(codec);
-         |                                           ^
-   sound/pci/hda/patch_senarytech.c:76: note: macro "senary_auto_parse_beep" defined here
-      76 | #define senary_auto_parse_beep()        0
-         | 
->> sound/pci/hda/patch_senarytech.c:219:15: error: 'senary_auto_parse_beep' undeclared (first use in this function); did you mean 'senary_auto_parse_eapd'?
-     219 |         err = senary_auto_parse_beep(codec);
-         |               ^~~~~~~~~~~~~~~~~~~~~~
-         |               senary_auto_parse_eapd
-   sound/pci/hda/patch_senarytech.c:219:15: note: each undeclared identifier is reported only once for each function it appears in
+Jonathan
 
 
-vim +/senary_auto_parse_beep +219 sound/pci/hda/patch_senarytech.c
 
-   191	
-   192	static int patch_senary_auto(struct hda_codec *codec)
-   193	{
-   194		struct senary_spec *spec;
-   195		int err;
-   196	
-   197		codec_info(codec, "%s: BIOS auto-probing.\n", codec->core.chip_name);
-   198	
-   199		spec = kzalloc(sizeof(*spec), GFP_KERNEL);
-   200		if (!spec)
-   201			return -ENOMEM;
-   202		snd_hda_gen_spec_init(&spec->gen);
-   203		codec->spec = spec;
-   204		codec->patch_ops = senary_auto_patch_ops;
-   205	
-   206		senary_auto_parse_eapd(codec);
-   207		spec->gen.own_eapd_ctl = 1;
-   208	
-   209		if (!spec->gen.vmaster_mute.hook && spec->dynamic_eapd)
-   210			spec->gen.vmaster_mute.hook = senary_auto_vmaster_hook;
-   211	
-   212		snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_PRE_PROBE);
-   213	
-   214		err = snd_hda_parse_pin_defcfg(codec, &spec->gen.autocfg, NULL,
-   215					       spec->parse_flags);
-   216		if (err < 0)
-   217			goto error;
-   218	
- > 219		err = senary_auto_parse_beep(codec);
-   220		if (err < 0)
-   221			goto error;
-   222	
-   223		err = snd_hda_gen_parse_auto_config(codec, &spec->gen.autocfg);
-   224		if (err < 0)
-   225			goto error;
-   226	
-   227		/* Some laptops with Senary chips show stalls in S3 resume,
-   228		 * which falls into the single-cmd mode.
-   229		 * Better to make reset, then.
-   230		 */
-   231		if (!codec->bus->core.sync_write) {
-   232			codec_info(codec,
-   233				   "Enable sync_write for stable communication\n");
-   234			codec->bus->core.sync_write = 1;
-   235			codec->bus->allow_bus_reset = 1;
-   236		}
-   237	
-   238		snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_PROBE);
-   239	
-   240		return 0;
-   241	
-   242	 error:
-   243		senary_auto_free(codec);
-   244		return err;
-   245	}
-   246	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> - Changes for v5 -
+> 
+> 	- Rebase on v6.10-rc1
+> 
+> - Changes for v4 -
+> 
+>         - Initialise cxl_test_dram and cxl_test_gen_media without 
+>           unnecessary extra de-references (Dan)
+>         - Add a comment for media_hdr in union cxl_event (Alison)
+> 
+> - Changes for v3 -
+> 
+>         - Rework the layout of cxl_event_dram and cxl_event_gen_media to
+>           make a simpler change (Dan)
+>         - Remove a "Fixes" tag (Dan)
+>         - Don't use unnecessary struct_group[_tagged] (Jonathan, Ira)
+>         - Rewrite end extend the commit message
+> 
+> - Link to v4 -
+> 
+> https://lore.kernel.org/linux-cxl/20240521140750.26035-1-fabio.m.de.francesco@linux.intel.com/
+> 
+>  drivers/cxl/core/mbox.c      |  2 +-
+>  drivers/cxl/core/trace.h     | 32 ++++++++++-----------
+>  include/linux/cxl-event.h    | 41 ++++++++++-----------------
+>  tools/testing/cxl/test/mem.c | 54 +++++++++++++++++++-----------------
+>  4 files changed, 61 insertions(+), 68 deletions(-)
+
+
+
+> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+> index 60b25020281f..1119d0bbb091 100644
+> --- a/include/linux/cxl-event.h
+> +++ b/include/linux/cxl-event.h
+> @@ -21,6 +21,17 @@ struct cxl_event_record_hdr {
+>  	u8 reserved[15];
+>  } __packed;
+>  
+> +struct cxl_event_media_hdr {
+> +	struct cxl_event_record_hdr hdr;
+> +	__le64 phys_addr;
+> +	u8 descriptor;
+> +	u8 type;
+> +	u8 transaction_type;
+> +	u8 validity_flags[2];
+
+Perhaps a comment to say that validity_flags meaning after bit 2
+varies across the different records?
+
+> +	u8 channel;
+> +	u8 rank;
+> +} __packed;
+> +
+>  #define CXL_EVENT_RECORD_DATA_LENGTH 0x50
+>  struct cxl_event_generic {
+>  	struct cxl_event_record_hdr hdr;
+> @@ -33,14 +44,7 @@ struct cxl_event_generic {
+>   */
+>  #define CXL_EVENT_GEN_MED_COMP_ID_SIZE	0x10
+>  struct cxl_event_gen_media {
+> -	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -	u8 descriptor;
+> -	u8 type;
+> -	u8 transaction_type;
+> -	u8 validity_flags[2];
+> -	u8 channel;
+> -	u8 rank;
+> +	struct cxl_event_media_hdr media_hdr;
+>  	u8 device[3];
+>  	u8 component_id[CXL_EVENT_GEN_MED_COMP_ID_SIZE];
+>  	u8 reserved[46];
+> @@ -52,14 +56,7 @@ struct cxl_event_gen_media {
+>   */
+>  #define CXL_EVENT_DER_CORRECTION_MASK_SIZE	0x20
+>  struct cxl_event_dram {
+> -	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -	u8 descriptor;
+> -	u8 type;
+> -	u8 transaction_type;
+> -	u8 validity_flags[2];
+> -	u8 channel;
+> -	u8 rank;
+> +	struct cxl_event_media_hdr media_hdr;
+>  	u8 nibble_mask[3];
+>  	u8 bank_group;
+>  	u8 bank;
+> @@ -95,21 +92,13 @@ struct cxl_event_mem_module {
+>  	u8 reserved[0x3d];
+>  } __packed;
+>  
+> -/*
+> - * General Media or DRAM Event Common Fields
+> - * - provides common access to phys_addr
+> - */
+> -struct cxl_event_common {
+> -	struct cxl_event_record_hdr hdr;
+> -	__le64 phys_addr;
+> -} __packed;
+> -
+>  union cxl_event {
+>  	struct cxl_event_generic generic;
+>  	struct cxl_event_gen_media gen_media;
+>  	struct cxl_event_dram dram;
+>  	struct cxl_event_mem_module mem_module;
+> -	struct cxl_event_common common;
+> +	/* dram & gen_media event header */
+> +	struct cxl_event_media_hdr media_hdr;
+>  } __packed;
+
+
+
 
