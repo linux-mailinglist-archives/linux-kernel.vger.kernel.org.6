@@ -1,211 +1,141 @@
-Return-Path: <linux-kernel+bounces-202035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C0548FC6E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:48:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237DD8FC702
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 10:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E5E1C230A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:48:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00FE0B224B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477EB18F2E9;
-	Wed,  5 Jun 2024 08:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA2518F2C9;
+	Wed,  5 Jun 2024 08:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yzvJC92G"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="vKFf8t/q"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9254965D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 08:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90308F9D9;
+	Wed,  5 Jun 2024 08:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717577267; cv=none; b=tZemiTjuDqbUxdta8YZtuTaOKZfwM3HZyTfNvjLSzcL2rzbgfjF2WuL/ZC1Iq2ox1rbsm4nS7qsReibng+NjzF+BeqjZ4Nj5HqrENMdJyzM2tOw0LcCztEIjPrn0Dkix50HzleDVyUH+lseZXHVSgQ0xGSHk92gBwVaeUUcpZaM=
+	t=1717577643; cv=none; b=olP5W7Kx8OvUPi7K0uV0+VIoWrKncxy6m8SsmrmKT88Y9h6M6X30GhEYMk0zb5am4aez3fU9YOh/bOZGFacgAybpLl6Iy0iSVO9wZDJ7P3NLFu4+L3zlh4vacdxKGrUKmvEcizeWXMuM3/PyKIAdeXvnUZWYTr6q8lUWaDOTh5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717577267; c=relaxed/simple;
-	bh=uSKkoIGoa2SrkckhNzNgT8KTYQPaLTtB710iSC/tAE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ReZVw4uiKPJ5gqQbQR44VwZ6IC0pKb/NwC1eEoOF5d6PDnTre1taCL4usD4GeAODwnFwgGMr4btxrD6ZoJYRqD5jXwDn1XMM7DUV9QRSY0PVXh5O8iHNvRFiJgVnBwAJy6kSxF5P5qDCgmHH8WdfNx/Wxly7DhDopAM+pTN48sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yzvJC92G; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e73359b900so21289021fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2024 01:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1717577264; x=1718182064; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nPra9VnPeBiNtl2fHAj/AHY/htZJd5zpefm5z/7mvlE=;
-        b=yzvJC92GX+CnQx7m4LPXyXYsNpBvK/idur5bYDpywh8Go7jQHrXy2gFaqm1K9hDcp+
-         RxJgnqtVk1pwaF88JnMjI68vVZuPrK3wPVivjqPPQrjHbPT8EqHKLt+7THl2eNqqUtku
-         A3Xz6vhJGFl1D+NVsA+4ugRneDGyK/wDAjILU/Trg1wqc9c4y+tcvmoD0PJuKKNqmoWY
-         NHoh1GL1anfB2oaJlnMuNZsi1syUrrgOdDe3NRxMe08Q+pd1IsXVryykPVrFCVT0avuf
-         W3WSu/oCgsVzfqKlx+V4PK4jmd6hAlfYSzFa5murwfQd4FvoqTlDsVOdCC6wTyvn3YGq
-         qpsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717577264; x=1718182064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nPra9VnPeBiNtl2fHAj/AHY/htZJd5zpefm5z/7mvlE=;
-        b=D6VIDO0Df74hjrTDOxVBjm7+X9HNfYAe9dJDCUgZXKAhhkMJ8NBl19jLvPBuYRu/WZ
-         ha3VGhCY8fVhx7G1MXqUukXbEdmiCvHGw0PfdoXTScw/5eWGj3O5GZQiPyiFpAeOIzw5
-         WlfiJ2vadRyNZpWHpL3F3onh5M1Ai3T6/dqjAQHkB3C9Dm5UmdmLpI6PhYn69drhk4yV
-         4CEUzXZ/kfkyzR1e0cltzdg+nj4oPq5JLEn8VnLz+sC0663q0T3SgnMDu0C+RERkunmz
-         vQcspO/lIYpxHrW4aC0gt6jkVEi63efZMKD4NnhYA/8crCznjUD4ZiCrnn6aJGS3mPe8
-         e6mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnhJwVwksz97mEqOasUr5CcK6s5fSDrpRFCZHDPmOg/HZS3USJTWsZ0/VGS6XjQqv4QRngmrbhASkOu6FZU3cQ7pNvZE+ww+iXapnq
-X-Gm-Message-State: AOJu0YylBX/J1e6qE3HB+b9wCwkIWDTrgVuc0VvKZ9pX40CstsF77Hrv
-	Wgyh0dGjJyVAj2CA7p8my4EtnMECqq8VTAAlw3ZPHuWNwBXRyvKdogpOhnOcRFumIZ2h8YwmydU
-	lpPYWDShvDl2AgxYzVW/BW6einiVrTCLigYfUMw==
-X-Google-Smtp-Source: AGHT+IFvAhNmZjR8e0W7tisE1L2rItCbACVQEOeSPIHCQ/2JT5Lzac0kUX9ZWXyqBUxDLGDW1jONb8JYHYsrWH/7fyo=
-X-Received: by 2002:a2e:7a0a:0:b0:2da:b59c:a94b with SMTP id
- 38308e7fff4ca-2eac7a2299fmr11245531fa.25.1717577263571; Wed, 05 Jun 2024
- 01:47:43 -0700 (PDT)
+	s=arc-20240116; t=1717577643; c=relaxed/simple;
+	bh=j+WVWuginHWn+1ASt34SLPVNFE3ZE6mu+8v1fyYbjVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WHhFxM4/lqDh0PfagrWBak4n2jck7roInehI3Sh7bJ/gaJ24Z4/QaADbiO9nbdxEmNX5RyTG2GUitpIYoy3cqhTztfcG5QaInaHmHiCec1SUTGtzYz5i9zw/nXDWA5DzFm2aKY1wULQDbLNo5oS//7vKuhaTL3XtHP0oUZ8P3J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=vKFf8t/q; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 90E1C12000E;
+	Wed,  5 Jun 2024 11:48:03 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 90E1C12000E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1717577283;
+	bh=qhnCf7tWXo/37Lgb8g/EWxYO4igTg0awCL+nXcJWkbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=vKFf8t/qhkeNbGpgQme6pfmQPHTH5qqHhpQYKCtVaiNJuHq+OYvTGS6unXaPEK2PJ
+	 fy7oC7iqQn4uRHeRyWktMrso80diQ0OGkOb9UKDkhGblyk1forBlgzwS2uGvPXWB0r
+	 VQ0kNrpc0nr6Vzhtouf3G6+WpHOohVM7czHiGi7Z+s9dBYudL0kfYZ4Rg/3qs0aMcy
+	 PF5zMhjMX+sCkdmruG+54y3kXKZRlKKrgqsM4FPEO59OOcdvYGt8kU8foyu4gimKDI
+	 xqdZnP7COn9Cw0vVEBt0m1Yh5W+/J4hklU0FEAL+oMbHftEtM2uktGxqz0wt2hJJDi
+	 4Akr0fs3zlwVg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed,  5 Jun 2024 11:48:03 +0300 (MSK)
+Received: from [172.28.225.88] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 5 Jun 2024 11:48:02 +0300
+Message-ID: <faebf74c-cfeb-48c5-8db3-0f51ed6bd9eb@salutedevices.com>
+Date: Wed, 5 Jun 2024 11:48:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAA8EJpomPLQmQbW8w3_ms_NMKHoSPcqBa7f2OhNTTOUSdB+9Eg@mail.gmail.com>
- <20240605021346.GA746121@bhelgaas>
-In-Reply-To: <20240605021346.GA746121@bhelgaas>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 5 Jun 2024 10:47:32 +0200
-Message-ID: <CAMRc=Mckab1QYoBuE3iSv0x+GEjFNBQS5Hw_Mry=r7h5XGHZEQ@mail.gmail.com>
-Subject: Re: [PATCH v8 16/17] PCI/pwrctl: add a PCI power control driver for
- power sequenced devices
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Srini Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Elliot Berman <quic_eberman@quicinc.com>, Caleb Connolly <caleb.connolly@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Alex Elder <elder@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	ath11k@lists.infradead.org, Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	ath12k@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel@quicinc.com, 
-	Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [DMARC error][DKIM error] [PATCH v7 2/2] arm64: dts: amlogic: Add
+ Amlogic S4 PWM
+To: <kelvin.zhang@amlogic.com>
+CC: Jerome Brunet <jbrunet@baylibre.com>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Kevin Hilman
+	<khilman@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Conor
+ Dooley <conor+dt@kernel.org>, <linux-pwm@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Junyi Zhao
+	<junyi.zhao@amlogic.com>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>
+References: <20240605-s4-pwm-v7-0-e822b271d7b0@amlogic.com>
+ <20240605-s4-pwm-v7-2-e822b271d7b0@amlogic.com>
+Content-Language: en-US
+From: George Stark <gnstark@salutedevices.com>
+In-Reply-To: <20240605-s4-pwm-v7-2-e822b271d7b0@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185732 [Jun 05 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/05 04:05:00 #25448641
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Wed, Jun 5, 2024 at 4:13=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org> w=
-rote:
->
-> On Wed, Jun 05, 2024 at 02:34:52AM +0300, Dmitry Baryshkov wrote:
-> > On Wed, 5 Jun 2024 at 02:23, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > >
-> > > On Tue, May 28, 2024 at 09:03:24PM +0200, Bartosz Golaszewski wrote:
-> > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > >
-> > > > Add a PCI power control driver that's capable of correctly powering=
- up
-> > > > devices using the power sequencing subsystem. The first users of th=
-is
-> > > > driver are the ath11k module on QCA6390 and ath12k on WCN7850.
->
-> > > > +static const struct of_device_id pci_pwrctl_pwrseq_of_match[] =3D =
-{
-> > > > +     {
-> > > > +             /* ATH11K in QCA6390 package. */
-> > > > +             .compatible =3D "pci17cb,1101",
-> > > > +             .data =3D "wlan",
-> > > > +     },
-> > > > +     {
-> > > > +             /* ATH12K in WCN7850 package. */
-> > > > +             .compatible =3D "pci17cb,1107",
-> > > > +             .data =3D "wlan",
-> > > > +     },
-> > >
-> > > IIUC, "pci17cb,1101" and "pci17cb,1107" exist partly so we can check
-> > > that a DTS conforms to the schema, e.g., a "pci17cb,1101" node
-> > > contains all the required regulators.  For that use, we obviously nee=
-d
-> > > a very specific "compatible" string.
-> > >
-> > > Is there any opportunity to add a more generic "compatible" string in
-> > > addition to those so this list doesn't have to be updated for every
-> > > PMU?  The .data here is "wlan" in both cases, and for this purpose, w=
-e
-> > > don't care whether it's "pci17cb,1101" or "pci17cb,1107".
-> >
-> > These two devices have different set of regulators and different
-> > requirements to power them on.
->
-> Right, but I don't think pci_pwrctl_pwrseq_probe() knows about those
-> different sets.  It basically looks like:
->
->   pci_pwrctl_pwrseq_probe(struct platform_device *pdev)
->   {
->     struct pci_pwrctl_pwrseq_data *data;
->     struct device *dev =3D &pdev->dev;
->
->     data->pwrseq =3D devm_pwrseq_get(dev, of_device_get_match_data(dev));
->     pwrseq_power_on(data->pwrseq);
->     data->ctx.dev =3D dev;
->     devm_pci_pwrctl_device_set_ready(dev, &data->ctx);
->   }
->
-> I think of_device_get_match_data(dev) will return "wlan" for both
-> "pci17cb,1101" and "pci17cb,1107", so devm_pwrseq_get(),
-> pwrseq_power_on(), and devm_pci_pwrctl_device_set_ready() don't see
-> the distinction between them.
->
+Hello Kelvin, Junyi
 
-These are only the first two users of this generic driver. We may end
-up adding more that will use different targets or even extend the
-match data with additional fields.
+Reviewed-by: George Stark <gnstark@salutedevices.com>
 
-> Of course, they also get "dev", so they can find the device-specifc
-> stuff that way, but I think that's on the drivers/power/sequencing/
-> side, not in this pci-pwrctl-pwrseq driver itself.
->
-> So what if there were a more generic "compatible" string, e.g., if the
-> DT contained something like this:
->
->   wifi@0 {
->     compatible =3D "pci17cb,1101", "wlan-pwrseq";
+On 6/5/24 05:44, Kelvin Zhang via B4 Relay wrote:
+> From: Junyi Zhao <junyi.zhao@amlogic.com>
+> 
+> Add device nodes for PWM_AB, PWM_CD, PWM_EF, PWM_GH and PWM_IJ
+> along with GPIO PIN configs of each channel.
+> 
+> Signed-off-by: Junyi Zhao <junyi.zhao@amlogic.com>
+> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+> ---
+>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 199 ++++++++++++++++++++++++++++++
+>   1 file changed, 199 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> index 10896f9df682..b686eacb9662 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> @@ -312,6 +312,160 @@ mux {
+>   					};
+>   				};
+>   
+> +				pwm_a_pins1: pwm-a-pins1 {
+> +					mux {
+> +						groups = "pwm_a_d";
+> +						function = "pwm_a";
+> +					};
+> +				};
+> +
+> +				pwm_a_pins2: pwm-a-pins2 {
+...
 
-What even is "pwrseq" in the context of the hardware description? DT
-maintainers would like to have a word with you. :)
 
->     ...
->   }
->
-> and pci_pwrctl_pwrseq_of_match[] had this:
->
->   { .compatible =3D "wlan-pwrseq", .data =3D "wlan", }
->
-> Wouldn't this pci-pwrctl-pwrseq driver work the same?  I'm not a DT
-> whiz, so likely I'm missing something, but it would be nice if we
-> didn't have to update this very generic-looking driver to add every
-> device that needs it.
->
-
-Device-tree describes hardware, not the implementation. You can see
-elsewhere in this series that we have the PMU described as a PMIC on
-the device tree but we never register with the regulator subsystem nor
-do we create actual regulators in C. The HW description does not have
-to match the C implementation 1:1 but has to be accurate. There's not
-such HW component as "wlan-pwrseq". If you want a good example of such
-generic fallback - it'll be the C45 ethernet PHYs as they actually
-exist: there's a HW definition of what a broader C45 PHY is, even
-though it can be extended in concrete HW designs.
-
-I'd leave this as is.
-
-Bart
+-- 
+Best regards
+George
 
