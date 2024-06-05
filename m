@@ -1,142 +1,110 @@
-Return-Path: <linux-kernel+bounces-202248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-202249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3BC8FCA05
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF0C8FCA0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 13:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB21281E25
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DB891C24647
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 11:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3431192B61;
-	Wed,  5 Jun 2024 11:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F47C19148B;
+	Wed,  5 Jun 2024 11:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="asNtDGm0"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KNZFXUKg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rz3cGb4Z"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A050319148B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 11:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2336A149C77;
+	Wed,  5 Jun 2024 11:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717586166; cv=none; b=lcAo+HXzLYorUIZOW5RyZvDfdjpck4gjNVDIGxQzwPnwYF1EGv0+2LrQCaXP+0x550AlszC7ZGR+qEcqEvvJLTQy2WGWAHJCtI5KB33XEXEqySltq7QG8eZSs08hEhJ3We2gO4S2/MixesxXi+kXjSQVQA17GW6uXQjgQELRDgc=
+	t=1717586196; cv=none; b=SDFUMgOE5ItkFNaa87Tj8NlsEyzIWP1cY59eKsWPmTNSYWmHjYVRjwn2Hy0OlHM+UksdRySkQY+jgzaEQ8Hp9IT+ksCteAHYtD2qkLtZwwiixebclVDWxMsZbMP8+rNyrKu0rmsNMHskZHhGrA8ZbIcZo4RIxqtpAlfGsilWJjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717586166; c=relaxed/simple;
-	bh=OB4bbDHOpovQgbK+NjxUZFEWt16fgvGMy+LZiN5kFCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxkLYdNolBfNivhXELwm4fM7w65NAS5Y9UcOhfMZVc6xEfcbrcw1SzmuA2/xEtedxDSC612vtyqV6m07aWivQpIlToPEyQ//M2W2pIGcSLM0LiOR9RYAp2qPl5bksH951mgnDCWyQy/s1PzfNzcd6xLN1Xxpuxp6H4N3YEPbvLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=asNtDGm0; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5CC1E40E0191;
-	Wed,  5 Jun 2024 11:16:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2MM_uH0b_vZ5; Wed,  5 Jun 2024 11:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1717586158; bh=MyNP/8A3mneC0TU0vkHmFz9QbD6ZPJz2lnq7g0nJwME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=asNtDGm0aWrqbbyqfz8gB/pIkAwBrS0jW1fszHDBAAE73YTZ1RXmITordyLpNuAhX
-	 tUz7P7b7vWLs+JLMUA35+eo4pHvEJXdcODIEuYvYcNEAP7586+vjckHFwuDboH1ljM
-	 OE5XYQzs1qvsg5G4qWvi5TqHshLp5wFVV/fBxmdsChG0uOrJSWAxt17BAD+0TRbTWy
-	 ye+MDYoA+c3o8gUTX9RQqa19pNy62l6UKhx+TT1AWuKyorUWYwmnhHQ5sCDFTyxMpV
-	 UQwfYaQTey+ui3KYvP+gHOXsKX/n2Nc62GvrjxlA2Y+DEqRE9zk+iPtEZTBnI6SSIt
-	 ZGQFLFMOp6qDBWAadS70VF9O8UUJIlmRQ1lFlZybAyEYnhkd5CBWvrtSI3nAHZ/gzm
-	 4Sr/r0cb7UGb/VMo/3bBRtYjavnG1zO6gfSR02K9obmsBgFXoUSziNzeTJJNRER5aX
-	 Py1DQa6A1lYwmXiw6mFSSky198TDK0p7NWndsTKW9JDo9+RkmCerytU3W94k7rDZQg
-	 IxoiUgrhUHgJDTBSiMzkXxnNyGUSU0v723hRw990dEOJUGPu4JYGi8mta1rgJ6FzXn
-	 4FkfWdMKfAdj5xWNC3fq9Nyno77B4x1ZMMiPutVhTMC5YVy+u5Pk78y9vfPKQ+jSUK
-	 xiThwe6cbzf+amDt7WH8S3Ys=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2559440E016E;
-	Wed,  5 Jun 2024 11:15:29 +0000 (UTC)
-Date: Wed, 5 Jun 2024 13:15:27 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Dave Young <dyoung@redhat.com>, Mike Rapoport <rppt@kernel.org>,
-	"Kalra, Ashish" <ashish.kalra@amd.com>, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	rafael@kernel.org, hpa@zytor.com, peterz@infradead.org,
-	adrian.hunter@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
-	jun.nakajima@intel.com, rick.p.edgecombe@intel.com,
-	thomas.lendacky@amd.com, michael.roth@amd.com, seanjc@google.com,
-	kai.huang@intel.com, bhe@redhat.com,
-	kirill.shutemov@linux.intel.com, bdas@redhat.com,
-	vkuznets@redhat.com, dionnaglaze@google.com, anisinha@redhat.com,
-	jroedel@suse.de, kexec@lists.infradead.org,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] efi/x86: Fix EFI memory map corruption with kexec
-Message-ID: <20240605111527.GEZmBIzwpsrai31qWT@fat_crate.local>
-References: <1ef36309-8d7f-447b-a54a-3cdafeccca64@amd.com>
- <20240603144639.GCZl3XTwmFHwi-KUZW@fat_crate.local>
- <Zl3hwYL2GDiyUfGo@kernel.org>
- <CALu+AoSnA4323QbQG7wrNptosz7tfEfztsE1=o6G=FaLbQ_tKQ@mail.gmail.com>
- <20240604094358.GBZl7h3otTCYJ5rkkt@fat_crate.local>
- <CALu+AoS=-=PbMRxC-1rpfSTPpMOmM5BGRBjLhDwgOC3=4C71ng@mail.gmail.com>
- <20240604180212.GHZl9WpAfNVERTjMqw@fat_crate.local>
- <CALu+AoRqNmsWXi+HXYNYTY=pXJ3sLTLKyXNeJz9EoxEsHzFdQA@mail.gmail.com>
- <20240605074257.GAZmAXAbkc5TGVds5u@fat_crate.local>
- <CAMj1kXFweoskB_qnUFA1b+QXWhjovwMfpM00cGb9KMcm4Zr7EA@mail.gmail.com>
+	s=arc-20240116; t=1717586196; c=relaxed/simple;
+	bh=i5qDHUlWKpQ7V2KQc/nRIfd7ci0vEVnDOh7Bt8/XeBo=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Gbb9FA/+/E4x4oFLJZSCLvoECcjrrYYooUNw4/x52IJMdVSUESmOSbeWak81fwia6DjZKzavK4YeR/AcBrx2txgoA9wCUJzycNlWQuGhTazQHgAzhZa+Ehe2grWxo9y+P+flw0qSJL/wusG3JIYti3S0u0Sg9duMzqTqrpmbJQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KNZFXUKg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rz3cGb4Z; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Jun 2024 11:16:32 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1717586193;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=XWQTvEYhGK0QV04a9jOnt8+f38VQ0r81EfON1LHHCPo=;
+	b=KNZFXUKgAfLC6go0IbsRUUFSaKCpRcTShPH59LI/sncWD3SPjfWIj7jd8La01dOB2UdQ18
+	TxJcMlI73g4lXdJbVXpLtO2DQ1+Kvv05Aq7TjsV5DP1Bnof5VIDCW3PWJTK/klrr9CtX9+
+	QqVu/C6BNy80BZfrjKp3DXpKcWyQzGo1dNlGHSs7pnZsnhdtfHeo6ks7a6GMxEBLGw5QM7
+	otPhWnl6m/STkh+SstrsI6GUSY9dpb/fyj822TzGOdQGaar/ZqFpVDmuGWjFRFjt45+L29
+	An6+AZi/+B7IcYRZMvzFTh8wIAVsGr/RxGmkCURKLoW5QE9G97T+MQfMfwgZnw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1717586193;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=XWQTvEYhGK0QV04a9jOnt8+f38VQ0r81EfON1LHHCPo=;
+	b=rz3cGb4ZE4tuXJS+sXWCzrfEZpmHE86mr0G/92SWIyw+oRmQsFb3bHN2cDjpivwOs446cy
+	DrZ93h2RhTwCEBDQ==
+From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/core: Simplify prefetch_curr_exec_start()
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, x86@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXFweoskB_qnUFA1b+QXWhjovwMfpM00cGb9KMcm4Zr7EA@mail.gmail.com>
+Message-ID: <171758619265.10875.8871135454479339495.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 10:17:22AM +0200, Ard Biesheuvel wrote:
-> I'd argue for the opposite: ideally, the difference between the first
-> boot and not-the-first-boot should be abstracted away by the
-> 'bootloader' side of kexec as much as possible, so that the tricky
-> early startup code doesn't have to be riddled with different code
-> paths depending on !kexec vs kexec.
+The following commit has been merged into the sched/core branch of tip:
 
-Well, off and on we end up needing to be able to ask whether the current
-kernel is kexec-ed. So you need to be able to access that aspect in
-kernel code - not in the bootloader. Perhaps read it from the
-bootloader, sure.
+Commit-ID:     85c9a8f4531c6c0862ecda50cac662b0b78d1974
+Gitweb:        https://git.kernel.org/tip/85c9a8f4531c6c0862ecda50cac662b0b78d1974
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Wed, 05 Jun 2024 13:01:44 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 05 Jun 2024 13:03:20 +02:00
 
-But see my other mail from just now - it might end up not needing it
-after all and I'd prefer if we never ever have to ask that question but
-just from staring at EFI code it reminded me that we do need to ask that
-question already:
+sched/core: Simplify prefetch_curr_exec_start()
 
-        if (efi_setup)
-                kexec_enter_virtual_mode();
-        else
-                __efi_enter_virtual_mode();
+Remove unnecessary use of the address operator.
 
-*exactly* because of EFI and that virtual_map call nonsense of allowing
-it only once.
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org
+---
+ kernel/sched/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-And we check efi_setup here because that works. But you can't use that
-globally. And so on...
-
-> TDX is a good case in point here: rather than add more conditionals,
-> I'd urge to remove them so the TDX startup code doesn't have to care
-> about the difference at all. If there is anything special that needs
-> to be done, it belongs in the kexec implementation of the previous
-> kernel.
-
-Sure, but reality is not as easy sometimes.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 5d861b5..0935f9d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5340,9 +5340,9 @@ EXPORT_PER_CPU_SYMBOL(kernel_cpustat);
+ static inline void prefetch_curr_exec_start(struct task_struct *p)
+ {
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+-	struct sched_entity *curr = (&p->se)->cfs_rq->curr;
++	struct sched_entity *curr = p->se.cfs_rq->curr;
+ #else
+-	struct sched_entity *curr = (&task_rq(p)->cfs)->curr;
++	struct sched_entity *curr = task_rq(p)->cfs.curr;
+ #endif
+ 	prefetch(curr);
+ 	prefetch(&curr->exec_start);
 
