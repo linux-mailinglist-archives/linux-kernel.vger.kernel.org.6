@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-203219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-203220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539DB8FD7FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:01:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4982F8FD7FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 23:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69C561C23266
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:01:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3AC1F22627
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 21:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1977315F3F0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F5C15F409;
 	Wed,  5 Jun 2024 21:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKFwiyE6"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SACEtrH4"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE6D3F8E2;
-	Wed,  5 Jun 2024 21:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456254965B;
+	Wed,  5 Jun 2024 21:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621254; cv=none; b=mcIgl8V/QNisZi8dxkVC5WXLSaQbt2W2fPohrVqxv1u6+hBuZ24GdD+WnTHFyZr9q7BwEILzgwqVChMD8QE2gZLoIJMNsgNqEaYwyMF3kz+LyFmcrwFAEwHGSHX2/VBgGBPyUwQq1cB3mEWCrm2pxqoG+M4JI4W9fIlnVZHvprQ=
+	t=1717621254; cv=none; b=b8lKPCjB+O5SvwNRexWRoSMRvnS+dy+LfimGlP1Vt0auqH+EcgxykYGG9GITbFvdltS1QfBr9ttfbyWIdR9dZXPP2i59O6UZmSYU921n9ox3o2aQz2z1CvjeKZacfy3pKr6ONbkxBgunoOxUXQRmfGdYVPbOPSOXMBa8x95ur7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717621254; c=relaxed/simple;
-	bh=SLWqVrVFKIkmiTUZHJG8FYp74OJNI53OWPPhHkDFqyQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u+uS6MnCAAYE8VvwdjNX8yn0sUlZ9mYuiTNWmXhimIY6DxpSvn9w7EI5LFi+UvWxQVAAchP9ivuZKkeaGYQ+2MbADwLvAoQ8a4M51q73nCK1I+NxgOLOtjoDoCog8WM2cmgibp8+Iwch+eVdgf6WCoyS+XBGfMUIXdwHNFDTahE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKFwiyE6; arc=none smtp.client-ip=209.85.221.43
+	bh=V9iuBXE3RCPxqipBIYq+2imZhquQ1wdIjv+HQgtM/dk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CJLwvKgnnHDpbFhki3tYzo+8MXLbMIVwYyJM5MfwXzuazAF5uhTJbjUtiMEGfy8YOuAD3urE2JYB+5X3nPTdxCnQHUJ7vB/P6PgJCRPj8rSlMB99h7auKDXxZIAATc42XA06yLjtkFcheKOw2V66quc6sDgQov6KPmHXho67YCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SACEtrH4; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35a264cb831so252372f8f.2;
-        Wed, 05 Jun 2024 14:00:52 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4215afa33b7so3026085e9.2;
+        Wed, 05 Jun 2024 14:00:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1717621251; x=1718226051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GEz1de1uXTIeqqebkZztUoW9m4tZyjUe1SpkIZLWTwI=;
-        b=gKFwiyE6gYjRwpTMGwuIwSzgPw1fgTLntJXMqFL8fKYILt0WkmRvWIREV/tKnStitO
-         EfCwp0b17OlvSK8i2h9kjE2JykVzsI0Ks1AsRZbnFVokCivclb6gf1hRS1UxBi+w1Kz0
-         m4C64ZVoV0vRkKGHb4w6VAAtyJUgsMCGyujpRy1JqBkCyZat9GmY1fwU6CiAs8Utb2dE
-         9RrZhNLxAmlIe+JbKQPamoUsIMY2KL1jnUHkorL8eMTycPg3rG7dCUfs4u8jNdavafcC
-         sHm6g1FA74NWFrlLbWxq7R4Sys5CU5WfO5Rlf4+jywrCyJzCxGWWdENj0Kw3yRL3jAI0
-         Z7bw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SwbtZSg+KieEl718DTPhm+GILj3m52AXbprU8PF/yug=;
+        b=SACEtrH41nZpDxN7QON61tORyWFn5dHuwygegc7csrK+1U9eNU3y+pjx1s2AtQhEDn
+         zTV0LTOkl74Qo6MKH1QTZFANECsLKdLNaCxXfxDTcuW3gPpdT+Z7pt04xGDjBSpJT8qE
+         WHwNmE3mlg1AovAm0IfQqSyUfm49EXsMN4YMFIfeOai+H5xZyCkIw0POWY4qSN2FNkDO
+         2+MViKo8uBB6Zkg2KEvQ0+JKk0G+sQ2y/aWxrilYLRwXqzl7joHwcuOEQSpz35SuGxQS
+         RSLKi+BjK4BBRgXIYfnfeREqbN8bCjNGBH5GceK5ZXMoEPA0dplqlrnRXOhf6TOD+8rI
+         /gWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1717621251; x=1718226051;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GEz1de1uXTIeqqebkZztUoW9m4tZyjUe1SpkIZLWTwI=;
-        b=h/7u5yWE7I2+8iNLquOGsHO2c9oIJNv/lAZEcWy6UuIo32wn9TpJoI5dKh0AlGtPho
-         CY0R4g+8Cb/YxtnswwPZqhuKzOvsYnEhsG5iuj+t1RzgxVWdOAlzMkEIP1Cnf1NT9Ve3
-         s6Ox/5RCTtHqtZBTRymCDqlK4vMAa325uXcFYJCXwxCZfAPYWGMw77x7U9FFPuqrAJnw
-         26Ghng7wFkoKbar20L3CGMgZtKaONBA58lFPsC4Ox6fDMSvkTnhDMnmJX8aLWyYdjlXu
-         NUsXbNt6l2wInIr1l9aicK7CbNwB9oIgChGZPeUoG5OPNwK0nkgoOVAshUXAP8JaeSUV
-         LF7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW2bJmthbAyM8efx562G2tgrnwQTaHo7sTT3sbX5XfpCi6lYoW9AZ6bgHwcEldICt8lkk+/gpGk0yhRnIUOmXpPGO4hAIETXl/zPZ1n7Zz7BEVeu7OiLKXBpBQasBzFDO+C9/GKBipJya754F21n0riHILRz59HIRC2aI3eqCJ8dGTDOg==
-X-Gm-Message-State: AOJu0Yx6WU+WAwde8gmPcFP/3K59aTJhXqEuHeM7HUMbW/URd/kPeA4d
-	tC+pH/69eCr+Q0uz4k3MfaKPkTN5QOqpFaIVXvIaFKVt8e8AU2LaMWvr
-X-Google-Smtp-Source: AGHT+IH9LL99z0MTv1+jQF9F2sePDzl73lNh17BbV9ZjLHWp7Mick2PRDD0mTpfpJyEfuh1jNHOhNg==
-X-Received: by 2002:a5d:5547:0:b0:351:c2c1:3682 with SMTP id ffacd0b85a97d-35e8ef88819mr2810501f8f.62.1717621250945;
-        Wed, 05 Jun 2024 14:00:50 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SwbtZSg+KieEl718DTPhm+GILj3m52AXbprU8PF/yug=;
+        b=VHntkoHXZbi6DDGDQbXe/g5JY5FU8BFxFqKfQSmuN0R7rALZ1eolXL82JnrvChjNKP
+         1NjMw9cU6m5NJXbMlU6XquF4ahKNIsvYlCV/WBAexftOYgRSw2SbnBCdrwViDSYje4nX
+         aCIMdt70wkLfWDjmCBeuabDCsdZJSRfjgbTMSDxBRKeq4fBnR9LQdsSsyrMhHCzBKyic
+         bK4055u3cdjbxWqd/pGG+WB+G//PjSth+7gQleuC6p4ysHTgVYa+Dpnq320CbG9Kf73w
+         /HOwYCAPmNeQVCPBR8OgTgf4Qx8JIK51REBeN0QR8PyLtgyk+FyrCoffY9J6YOG+fOHL
+         ++VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeFHSAEc5r90Pdnl9W2Vl26U0lMeexHZU2t5fq58I05Dv7ITph4A/hVolhGRbKg2wiYdEtUQ9sv3xkASd4eXVYeyEoglPaUzN6d47X5R3eXVm9Q0gf3KFnha/Rvs5nMoTBQ/Jf2x05x7kI77xOdC1bCOs+rq4/9NyltOGk1iABKcWa3w==
+X-Gm-Message-State: AOJu0YxRERS+q6U7cC8kZr1gwttieoTtOKQgZEnZAZglCJplyJhDOcYC
+	mqpXUdteSZDgzQvF8E3T7APEXKeyVroK2vBNrf7rjHa6u+LbcDg=
+X-Google-Smtp-Source: AGHT+IE/9gjfgWZnYQXOAj5tp9SUA5Lk6QARVK16iFxrgqIbxjEEWBQNATeesl0pbTjRSU1L32AXIA==
+X-Received: by 2002:adf:fe0d:0:b0:35e:60e6:c8a8 with SMTP id ffacd0b85a97d-35e8405dd0emr2592276f8f.10.1717621251632;
+        Wed, 05 Jun 2024 14:00:51 -0700 (PDT)
 Received: from U4.lan ([2a02:810b:f40:4600:5211:58fe:dfef:c48c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0d77sm15955721f8f.5.2024.06.05.14.00.50
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0d77sm15955721f8f.5.2024.06.05.14.00.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jun 2024 14:00:50 -0700 (PDT)
+        Wed, 05 Jun 2024 14:00:51 -0700 (PDT)
 From: Alex Bee <knaerzche@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -77,10 +79,12 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH v2 0/5 RESEND] Add SFC support for RK3128
-Date: Wed,  5 Jun 2024 23:00:44 +0200
-Message-ID: <20240605210049.232284-1-knaerzche@gmail.com>
+Subject: [PATCH v2 1/5 RESEND] clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
+Date: Wed,  5 Jun 2024 23:00:45 +0200
+Message-ID: <20240605210049.232284-2-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240605210049.232284-1-knaerzche@gmail.com>
+References: <20240605210049.232284-1-knaerzche@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,34 +93,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds support for the Serial Flash Controller (SFC) found in
-RK3128 SoCs.
+In order to get rid of CLK_NR_CLKS and be able to drop it from the
+bindings, use rockchip_clk_find_max_clk_id helper to find the highest
+clock id.
 
-As without using some "id holes" we would run out clock ids in the binding
-and would have to touch the ABI, I added patches which removes the
-CLK_NR_CLKS macro and uses the recently introduced
-rockchip_clk_find_max_clk_id helper instead to find the highest clock id.
-
+Signed-off-by: Alex Bee <knaerzche@gmail.com>
+---
 changes since v1:
- - added patches to remove CLK_NR_CLKS (Connor)
+ - new patch
 
-Link to v1:
-https://lore.kernel.org/all/20240605172154.193047-1-knaerzche@gmail.com/
+ drivers/clk/rockchip/clk-rk3128.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-Alex Bee (5):
-  clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
-  dt-bindings: clock: rk3128: Drop CLK_NR_CLKS
-  dt-bindings: clock: rk3128: Add HCLK_SFC
-  clk: rockchip: Add HCLK_SFC for RK3128
-  ARM: dts: rockchip: Add SFC for RK3128
-
- arch/arm/boot/dts/rockchip/rk3128.dtsi | 35 ++++++++++++++++++++++++++
- drivers/clk/rockchip/clk-rk3128.c      | 21 +++++++++++++---
- include/dt-bindings/clock/rk3128-cru.h |  2 +-
- 3 files changed, 53 insertions(+), 5 deletions(-)
-
-
-base-commit: 234cb065ad82915ff8d06ce01e01c3e640b674d2
+diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
+index d076b7971f33..40e0e4556d59 100644
+--- a/drivers/clk/rockchip/clk-rk3128.c
++++ b/drivers/clk/rockchip/clk-rk3128.c
+@@ -569,18 +569,22 @@ static const char *const rk3128_critical_clocks[] __initconst = {
+ 	"sclk_timer5",
+ };
+ 
+-static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
++static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np,
++								   unsigned long soc_nr_clks)
+ {
+ 	struct rockchip_clk_provider *ctx;
++	unsigned long common_nr_clks;
+ 	void __iomem *reg_base;
+ 
++	common_nr_clks = rockchip_clk_find_max_clk_id(common_clk_branches,
++						      ARRAY_SIZE(common_clk_branches)) + 1;
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+ 		pr_err("%s: could not map cru region\n", __func__);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	ctx = rockchip_clk_init(np, reg_base, max(common_nr_clks, soc_nr_clks));
+ 	if (IS_ERR(ctx)) {
+ 		pr_err("%s: rockchip clk init failed\n", __func__);
+ 		iounmap(reg_base);
+@@ -609,8 +613,12 @@ static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device
+ static void __init rk3126_clk_init(struct device_node *np)
+ {
+ 	struct rockchip_clk_provider *ctx;
++	unsigned long soc_nr_clks;
+ 
+-	ctx = rk3128_common_clk_init(np);
++	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3126_clk_branches,
++						   ARRAY_SIZE(rk3126_clk_branches)) + 1;
++
++	ctx = rk3128_common_clk_init(np, soc_nr_clks);
+ 	if (IS_ERR(ctx))
+ 		return;
+ 
+@@ -627,8 +635,12 @@ CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
+ static void __init rk3128_clk_init(struct device_node *np)
+ {
+ 	struct rockchip_clk_provider *ctx;
++	unsigned long soc_nr_clks;
++
++	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3128_clk_branches,
++						   ARRAY_SIZE(rk3128_clk_branches)) + 1;
+ 
+-	ctx = rk3128_common_clk_init(np);
++	ctx = rk3128_common_clk_init(np, soc_nr_clks);
+ 	if (IS_ERR(ctx))
+ 		return;
+ 
 -- 
 2.45.2
 
