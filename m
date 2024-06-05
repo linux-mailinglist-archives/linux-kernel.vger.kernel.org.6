@@ -1,112 +1,422 @@
-Return-Path: <linux-kernel+bounces-201812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-201814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04048FC3C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:35:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E558FC3CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 08:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 554241F276E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FDC5B28423
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2024 06:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F4419046D;
-	Wed,  5 Jun 2024 06:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E99190473;
+	Wed,  5 Jun 2024 06:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="OD9Cp+j+"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uBoAWrJu"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE5F18C32B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 06:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFD1190463
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2024 06:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717569259; cv=none; b=d5E/1ll2XjEJMF3nX1tFGPiwZf2a7mQqEYK73O3VtYipnEuGD6Lre1tCMOXskmrrUHNsWqT47xFPCwaOd76vD88AmBjOibEIsEt5xpeKMC+4l5rkrzZuN9oEfAB7soRlnX6pPbgvzvjSuEHkX6N81i2udIooQJtRgke+gbPQ/pM=
+	t=1717569516; cv=none; b=gx3Cv0aAnFpbsvX3ABn/Gur2TgYwgiTxL/Kito4eCwgjrHLgCoYpse7Wo5ze31Y9DhfaZITuuNvRWnURvyWX4olXC06edgWSIYbyNfZ3X6C57W8CsZgRkE5NMDEf950c/06nLu59DHRRaETw9vm1mUK9J7QRbRBmXQ7yAcLlis8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717569259; c=relaxed/simple;
-	bh=ruqDG+QNwILXYDQjZdx8DjPIl7jOpAZrddO/qf+cPow=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mkhyNJz3XwO+skK/XIAD0mP1zgm2L+c+PVAQoEGDb1YFfZPQIT59DTe7rrOVycaxNQDoqyhJDWqi+TSeR847edXHtsOYfDooRqOR8CFDFUkRUYA+YpnDvkQx8UtiurFvq6eYRHdqSUz39q+Q1W05dTD10+Ty77vz+Gp2DZPlmA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=OD9Cp+j+; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4VvHjx1G4bz9snn;
-	Wed,  5 Jun 2024 08:34:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
-	t=1717569253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QVWT4o4RJN6rHBWyrxsihWMYRQAtby4mFTEOZmR9bZ8=;
-	b=OD9Cp+j+oYiI1npLa2sF9fA/R/eLbxx1cOSREITVCBCUUfp+T2KK9Vi8W7JzDNMpqmDF7Z
-	evQ8iQSRvDne9UR39Pqjqnuc4oXX2vDbjqgbHl3Mxv15zNos3oTNouIAvjmhyAIZIcA9JW
-	M/I0cDMFNvpNISrIE3skRPbVthuS8PbzZWykupAmKgj0UxAUpYnmLNoOn0QQ6pCnNR4Y8l
-	1gX0iNm1A/hz/yYWyJHwZotrWYZ0SRycklaGMDZyN9/cUkWSS2Yjh+0hMGC4G1vmFt3w++
-	I0EaQEJhNqyz2Iya8lcArailk830RT9RpPkdPryC9riJgMVWY2OwUhwmADmA2w==
-From: Ben Walsh <ben@jubnut.com>
-To: Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	"Dustin L. Howett" <dustin@howett.net>,
-	Kieran Levin <ktl@frame.work>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Ben Walsh <ben@jubnut.com>
-Subject: [PATCH v3 5/5] platform/chrome: cros_ec_lpc: Add quirks for Framework Laptop
-Date: Wed,  5 Jun 2024 07:33:51 +0100
-Message-ID: <20240605063351.14836-6-ben@jubnut.com>
-In-Reply-To: <20240605063351.14836-1-ben@jubnut.com>
-References: <20240605063351.14836-1-ben@jubnut.com>
+	s=arc-20240116; t=1717569516; c=relaxed/simple;
+	bh=C/gqpNsPW6X9AgnD3SWjLERM0lEWOMKoVOsDhhAN66M=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=s68xwkr9tgAqeR/1yu/hoY8N3g2mLbQSbbd/KmKR6aqub7OKdTC0UyHAHEUwWIUVxQYGTkIvWM6rv98waZe8e1U3odW2uJounkpHtrkDNbtsO8NcHahuTFBCYyX7d+lA6Fy94P855At87DGqwSTF+gDbhk4ef9xQM5QFdKfcNcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uBoAWrJu; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62a083e617aso114358307b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2024 23:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717569514; x=1718174314; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q+PpR1gGIbojHkt37dr2HX8fPNt5afUg8N/f8kUSgZ4=;
+        b=uBoAWrJun4MWHQ+xmWFVacuCOeGsAoop3sd+wArrOyOuJaEOmDv81wp2xYKn9GHekn
+         Rcoc+N1ovAZoBrUCSjqbr5jmcAsabaSvZirw94LTzgC/Ja26mybIE8+eBw8ko9a15uci
+         OBLIlQ80/8/bJIQ4CbLx7ezRNYqndVBdJx17cxEEpQO7gST8e+HxucJAai2mNr7mcYFC
+         NbrHWRLTOUdHPBiRw8EVZFyb5MSlaWX0plQ0GP+6B7vMGiohTN7lJIGQxYBK3qu8Jums
+         igBfOaI9kczlvDM5KvPFybrzzfrymm4vmASWyUku7xKpyPkYzPN8o9nIcABdwUB/keT4
+         r2rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717569514; x=1718174314;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q+PpR1gGIbojHkt37dr2HX8fPNt5afUg8N/f8kUSgZ4=;
+        b=lof/VGFSRfjCj9f3HsFdc467ugl/Rk/WV7wL3iQK9W8vbpJ1D5+c3wG8OmNMm7jWRP
+         QwvyA4C5tQjXc+2VHwTbijaJ3FqkmVWPA8A6kRHdF9+p/jVMHn4x3JKZqJYMxeCx+mz9
+         dT4NjIP4BMgis2h3QDwRMoto88y+LnhyjJmyisLZsHJ3cwSB+xyrGKi0+c0JdkBBHEZD
+         go2A7R/Iw0P8Of8iot3JjdglpFUT+hEJFJoRyUjwtQmfMMUtJP6ZMEywcmYVqj4NkFm9
+         AnYTLCezEsqGPPLWLTwkTNS9QbHplLW3/KTfGV/D5EK9m1FLtu0HlrDs6+0/bsfksXKO
+         9K/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUO+95zOtLsfT7cd4/ht666T2y79qeKaMNR3helON/TVUdL3zGwnmCtLJw7yZaECEvBAHS82D6m08kleZRxy5yMExfyf5W2AQvPQmN8
+X-Gm-Message-State: AOJu0YwIUPu9+9VNZhKUJuXp6/y7+u6HwQVkc5djEx96MGFApD6TBojt
+	Ir0J4ilTBqNJW1mlsieYxiHAePKEETcJR2lMwDyVrqIh+0IBceZTtp9BuBcF2WCWlUfj92SkpkC
+	/78mtUA==
+X-Google-Smtp-Source: AGHT+IET95r1UUZLR/FCgKAwLafvauszpYRfROWKh9xsLEESFUplMNArj2C7155zVTfI8yKt1OfgIRUnDxs/
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:42c2:ffc7:ca9b:501f])
+ (user=irogers job=sendgmr) by 2002:a05:690c:dc1:b0:627:cc70:be02 with SMTP id
+ 00721157ae682-62cbb4c30b8mr4425467b3.4.1717569513812; Tue, 04 Jun 2024
+ 23:38:33 -0700 (PDT)
+Date: Tue,  4 Jun 2024 23:38:27 -0700
+Message-Id: <20240605063828.195700-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Subject: [RFC PATCH v1 1/2] perf stat: Make options local
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-For Framework Laptops with Microchip EC (MEC), use the ACPI id
-"PNP0C09" to find the ACPI device, and AML mutex "ECMT" to protect EC
-memory access.
+Reduce the scope of stat_options to cmd_stat, and pass as an argument
+to __cmd_record. This is done to make more localized changes to the
+options in later patches. A side-effect of the change is to reduce the
+size of a stripped PIE perf binary by 5952 bytes. The savings come
+mainly in the dynamic relocation section.
 
-Signed-off-by: Ben Walsh <ben@jubnut.com>
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- drivers/platform/chrome/cros_ec_lpc.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ tools/perf/builtin-stat.c | 291 +++++++++++++++++++-------------------
+ 1 file changed, 145 insertions(+), 146 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 5d9cc8df208b..ebe9fb143840 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -636,6 +636,12 @@ static const struct lpc_driver_data framework_laptop_amd_lpc_driver_data __initc
- 	.quirk_mmio_memory_base = 0xE00,
- };
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 35f79b48e8dc..6227b25d1446 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -1140,150 +1140,6 @@ static int parse_cache_level(const struct option *opt,
+ 	return 0;
+ }
  
-+static const struct lpc_driver_data framework_laptop_11_lpc_driver_data __initconst = {
-+	.quirks = CROS_EC_LPC_QUIRK_ACPI_ID|CROS_EC_LPC_QUIRK_AML_MUTEX,
-+	.quirk_acpi_id = "PNP0C09",
-+	.quirk_aml_mutex_name = "ECMT",
-+};
-+
- static const struct dmi_system_id cros_ec_lpc_dmi_table[] __initconst = {
- 	{
- 		/*
-@@ -704,6 +710,7 @@ static const struct dmi_system_id cros_ec_lpc_dmi_table[] __initconst = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "Framework"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Laptop"),
- 		},
-+		.driver_data = (void *)&framework_laptop_11_lpc_driver_data,
- 	},
- 	{ /* sentinel */ }
- };
+-static struct option stat_options[] = {
+-	OPT_BOOLEAN('T', "transaction", &transaction_run,
+-		    "hardware transaction statistics"),
+-	OPT_CALLBACK('e', "event", &parse_events_option_args, "event",
+-		     "event selector. use 'perf list' to list available events",
+-		     parse_events_option),
+-	OPT_CALLBACK(0, "filter", &evsel_list, "filter",
+-		     "event filter", parse_filter),
+-	OPT_BOOLEAN('i', "no-inherit", &stat_config.no_inherit,
+-		    "child tasks do not inherit counters"),
+-	OPT_STRING('p', "pid", &target.pid, "pid",
+-		   "stat events on existing process id"),
+-	OPT_STRING('t', "tid", &target.tid, "tid",
+-		   "stat events on existing thread id"),
+-#ifdef HAVE_BPF_SKEL
+-	OPT_STRING('b', "bpf-prog", &target.bpf_str, "bpf-prog-id",
+-		   "stat events on existing bpf program id"),
+-	OPT_BOOLEAN(0, "bpf-counters", &target.use_bpf,
+-		    "use bpf program to count events"),
+-	OPT_STRING(0, "bpf-attr-map", &target.attr_map, "attr-map-path",
+-		   "path to perf_event_attr map"),
+-#endif
+-	OPT_BOOLEAN('a', "all-cpus", &target.system_wide,
+-		    "system-wide collection from all CPUs"),
+-	OPT_BOOLEAN(0, "scale", &stat_config.scale,
+-		    "Use --no-scale to disable counter scaling for multiplexing"),
+-	OPT_INCR('v', "verbose", &verbose,
+-		    "be more verbose (show counter open errors, etc)"),
+-	OPT_INTEGER('r', "repeat", &stat_config.run_count,
+-		    "repeat command and print average + stddev (max: 100, forever: 0)"),
+-	OPT_BOOLEAN(0, "table", &stat_config.walltime_run_table,
+-		    "display details about each run (only with -r option)"),
+-	OPT_BOOLEAN('n', "null", &stat_config.null_run,
+-		    "null run - dont start any counters"),
+-	OPT_INCR('d', "detailed", &detailed_run,
+-		    "detailed run - start a lot of events"),
+-	OPT_BOOLEAN('S', "sync", &sync_run,
+-		    "call sync() before starting a run"),
+-	OPT_CALLBACK_NOOPT('B', "big-num", NULL, NULL,
+-			   "print large numbers with thousands\' separators",
+-			   stat__set_big_num),
+-	OPT_STRING('C', "cpu", &target.cpu_list, "cpu",
+-		    "list of cpus to monitor in system-wide"),
+-	OPT_SET_UINT('A', "no-aggr", &stat_config.aggr_mode,
+-		    "disable aggregation across CPUs or PMUs", AGGR_NONE),
+-	OPT_SET_UINT(0, "no-merge", &stat_config.aggr_mode,
+-		    "disable aggregation the same as -A or -no-aggr", AGGR_NONE),
+-	OPT_BOOLEAN(0, "hybrid-merge", &stat_config.hybrid_merge,
+-		    "Merge identical named hybrid events"),
+-	OPT_STRING('x', "field-separator", &stat_config.csv_sep, "separator",
+-		   "print counts with custom separator"),
+-	OPT_BOOLEAN('j', "json-output", &stat_config.json_output,
+-		   "print counts in JSON format"),
+-	OPT_CALLBACK('G', "cgroup", &evsel_list, "name",
+-		     "monitor event in cgroup name only", parse_stat_cgroups),
+-	OPT_STRING(0, "for-each-cgroup", &stat_config.cgroup_list, "name",
+-		    "expand events for each cgroup"),
+-	OPT_STRING('o', "output", &output_name, "file", "output file name"),
+-	OPT_BOOLEAN(0, "append", &append_file, "append to the output file"),
+-	OPT_INTEGER(0, "log-fd", &output_fd,
+-		    "log output to fd, instead of stderr"),
+-	OPT_STRING(0, "pre", &pre_cmd, "command",
+-			"command to run prior to the measured command"),
+-	OPT_STRING(0, "post", &post_cmd, "command",
+-			"command to run after to the measured command"),
+-	OPT_UINTEGER('I', "interval-print", &stat_config.interval,
+-		    "print counts at regular interval in ms "
+-		    "(overhead is possible for values <= 100ms)"),
+-	OPT_INTEGER(0, "interval-count", &stat_config.times,
+-		    "print counts for fixed number of times"),
+-	OPT_BOOLEAN(0, "interval-clear", &stat_config.interval_clear,
+-		    "clear screen in between new interval"),
+-	OPT_UINTEGER(0, "timeout", &stat_config.timeout,
+-		    "stop workload and print counts after a timeout period in ms (>= 10ms)"),
+-	OPT_SET_UINT(0, "per-socket", &stat_config.aggr_mode,
+-		     "aggregate counts per processor socket", AGGR_SOCKET),
+-	OPT_SET_UINT(0, "per-die", &stat_config.aggr_mode,
+-		     "aggregate counts per processor die", AGGR_DIE),
+-	OPT_SET_UINT(0, "per-cluster", &stat_config.aggr_mode,
+-		     "aggregate counts per processor cluster", AGGR_CLUSTER),
+-	OPT_CALLBACK_OPTARG(0, "per-cache", &stat_config.aggr_mode, &stat_config.aggr_level,
+-			    "cache level", "aggregate count at this cache level (Default: LLC)",
+-			    parse_cache_level),
+-	OPT_SET_UINT(0, "per-core", &stat_config.aggr_mode,
+-		     "aggregate counts per physical processor core", AGGR_CORE),
+-	OPT_SET_UINT(0, "per-thread", &stat_config.aggr_mode,
+-		     "aggregate counts per thread", AGGR_THREAD),
+-	OPT_SET_UINT(0, "per-node", &stat_config.aggr_mode,
+-		     "aggregate counts per numa node", AGGR_NODE),
+-	OPT_INTEGER('D', "delay", &target.initial_delay,
+-		    "ms to wait before starting measurement after program start (-1: start with events disabled)"),
+-	OPT_CALLBACK_NOOPT(0, "metric-only", &stat_config.metric_only, NULL,
+-			"Only print computed metrics. No raw values", enable_metric_only),
+-	OPT_BOOLEAN(0, "metric-no-group", &stat_config.metric_no_group,
+-		       "don't group metric events, impacts multiplexing"),
+-	OPT_BOOLEAN(0, "metric-no-merge", &stat_config.metric_no_merge,
+-		       "don't try to share events between metrics in a group"),
+-	OPT_BOOLEAN(0, "metric-no-threshold", &stat_config.metric_no_threshold,
+-		       "disable adding events for the metric threshold calculation"),
+-	OPT_BOOLEAN(0, "topdown", &topdown_run,
+-			"measure top-down statistics"),
+-	OPT_UINTEGER(0, "td-level", &stat_config.topdown_level,
+-			"Set the metrics level for the top-down statistics (0: max level)"),
+-	OPT_BOOLEAN(0, "smi-cost", &smi_cost,
+-			"measure SMI cost"),
+-	OPT_CALLBACK('M', "metrics", &evsel_list, "metric/metric group list",
+-		     "monitor specified metrics or metric groups (separated by ,)",
+-		     append_metric_groups),
+-	OPT_BOOLEAN_FLAG(0, "all-kernel", &stat_config.all_kernel,
+-			 "Configure all used events to run in kernel space.",
+-			 PARSE_OPT_EXCLUSIVE),
+-	OPT_BOOLEAN_FLAG(0, "all-user", &stat_config.all_user,
+-			 "Configure all used events to run in user space.",
+-			 PARSE_OPT_EXCLUSIVE),
+-	OPT_BOOLEAN(0, "percore-show-thread", &stat_config.percore_show_thread,
+-		    "Use with 'percore' event qualifier to show the event "
+-		    "counts of one hardware thread by sum up total hardware "
+-		    "threads of same physical core"),
+-	OPT_BOOLEAN(0, "summary", &stat_config.summary,
+-		       "print summary for interval mode"),
+-	OPT_BOOLEAN(0, "no-csv-summary", &stat_config.no_csv_summary,
+-		       "don't print 'summary' for CSV summary output"),
+-	OPT_BOOLEAN(0, "quiet", &quiet,
+-			"don't print any output, messages or warnings (useful with record)"),
+-	OPT_CALLBACK(0, "cputype", &evsel_list, "hybrid cpu type",
+-		     "Only enable events on applying cpu with this type "
+-		     "for hybrid platform (e.g. core or atom)",
+-		     parse_cputype),
+-#ifdef HAVE_LIBPFM
+-	OPT_CALLBACK(0, "pfm-events", &evsel_list, "event",
+-		"libpfm4 event selector. use 'perf list' to list available events",
+-		parse_libpfm_events_option),
+-#endif
+-	OPT_CALLBACK(0, "control", &stat_config, "fd:ctl-fd[,ack-fd] or fifo:ctl-fifo[,ack-fifo]",
+-		     "Listen on ctl-fd descriptor for command to control measurement ('enable': enable events, 'disable': disable events).\n"
+-		     "\t\t\t  Optionally send control command completion ('ack\\n') to ack-fd descriptor.\n"
+-		     "\t\t\t  Alternatively, ctl-fifo / ack-fifo will be opened and used as ctl-fd / ack-fd.",
+-		      parse_control_option),
+-	OPT_CALLBACK_OPTARG(0, "iostat", &evsel_list, &stat_config, "default",
+-			    "measure I/O performance metrics provided by arch/platform",
+-			    iostat_parse),
+-	OPT_END()
+-};
+-
+ /**
+  * Calculate the cache instance ID from the map in
+  * /sys/devices/system/cpu/cpuX/cache/indexY/shared_cpu_list
+@@ -2245,7 +2101,7 @@ static void init_features(struct perf_session *session)
+ 	perf_header__clear_feat(&session->header, HEADER_AUXTRACE);
+ }
+ 
+-static int __cmd_record(int argc, const char **argv)
++static int __cmd_record(const struct option stat_options[], int argc, const char **argv)
+ {
+ 	struct perf_session *session;
+ 	struct perf_data *data = &perf_stat.data;
+@@ -2494,6 +2350,149 @@ static void setup_system_wide(int forks)
+ 
+ int cmd_stat(int argc, const char **argv)
+ {
++	struct option stat_options[] = {
++		OPT_BOOLEAN('T', "transaction", &transaction_run,
++			"hardware transaction statistics"),
++		OPT_CALLBACK('e', "event", &parse_events_option_args, "event",
++			"event selector. use 'perf list' to list available events",
++			parse_events_option),
++		OPT_CALLBACK(0, "filter", &evsel_list, "filter",
++			"event filter", parse_filter),
++		OPT_BOOLEAN('i', "no-inherit", &stat_config.no_inherit,
++			"child tasks do not inherit counters"),
++		OPT_STRING('p', "pid", &target.pid, "pid",
++			"stat events on existing process id"),
++		OPT_STRING('t', "tid", &target.tid, "tid",
++			"stat events on existing thread id"),
++#ifdef HAVE_BPF_SKEL
++		OPT_STRING('b', "bpf-prog", &target.bpf_str, "bpf-prog-id",
++			"stat events on existing bpf program id"),
++		OPT_BOOLEAN(0, "bpf-counters", &target.use_bpf,
++			"use bpf program to count events"),
++		OPT_STRING(0, "bpf-attr-map", &target.attr_map, "attr-map-path",
++			"path to perf_event_attr map"),
++#endif
++		OPT_BOOLEAN('a', "all-cpus", &target.system_wide,
++			"system-wide collection from all CPUs"),
++		OPT_BOOLEAN(0, "scale", &stat_config.scale,
++			"Use --no-scale to disable counter scaling for multiplexing"),
++		OPT_INCR('v', "verbose", &verbose,
++			"be more verbose (show counter open errors, etc)"),
++		OPT_INTEGER('r', "repeat", &stat_config.run_count,
++			"repeat command and print average + stddev (max: 100, forever: 0)"),
++		OPT_BOOLEAN(0, "table", &stat_config.walltime_run_table,
++			"display details about each run (only with -r option)"),
++		OPT_BOOLEAN('n', "null", &stat_config.null_run,
++			"null run - dont start any counters"),
++		OPT_INCR('d', "detailed", &detailed_run,
++			"detailed run - start a lot of events"),
++		OPT_BOOLEAN('S', "sync", &sync_run,
++			"call sync() before starting a run"),
++		OPT_CALLBACK_NOOPT('B', "big-num", NULL, NULL,
++				"print large numbers with thousands\' separators",
++				stat__set_big_num),
++		OPT_STRING('C', "cpu", &target.cpu_list, "cpu",
++			"list of cpus to monitor in system-wide"),
++		OPT_SET_UINT('A', "no-aggr", &stat_config.aggr_mode,
++			"disable aggregation across CPUs or PMUs", AGGR_NONE),
++		OPT_SET_UINT(0, "no-merge", &stat_config.aggr_mode,
++			"disable aggregation the same as -A or -no-aggr", AGGR_NONE),
++		OPT_BOOLEAN(0, "hybrid-merge", &stat_config.hybrid_merge,
++			"Merge identical named hybrid events"),
++		OPT_STRING('x', "field-separator", &stat_config.csv_sep, "separator",
++			"print counts with custom separator"),
++		OPT_BOOLEAN('j', "json-output", &stat_config.json_output,
++			"print counts in JSON format"),
++		OPT_CALLBACK('G', "cgroup", &evsel_list, "name",
++			"monitor event in cgroup name only", parse_stat_cgroups),
++		OPT_STRING(0, "for-each-cgroup", &stat_config.cgroup_list, "name",
++			"expand events for each cgroup"),
++		OPT_STRING('o', "output", &output_name, "file", "output file name"),
++		OPT_BOOLEAN(0, "append", &append_file, "append to the output file"),
++		OPT_INTEGER(0, "log-fd", &output_fd,
++			"log output to fd, instead of stderr"),
++		OPT_STRING(0, "pre", &pre_cmd, "command",
++			"command to run prior to the measured command"),
++		OPT_STRING(0, "post", &post_cmd, "command",
++			"command to run after to the measured command"),
++		OPT_UINTEGER('I', "interval-print", &stat_config.interval,
++			"print counts at regular interval in ms "
++			"(overhead is possible for values <= 100ms)"),
++		OPT_INTEGER(0, "interval-count", &stat_config.times,
++			"print counts for fixed number of times"),
++		OPT_BOOLEAN(0, "interval-clear", &stat_config.interval_clear,
++			"clear screen in between new interval"),
++		OPT_UINTEGER(0, "timeout", &stat_config.timeout,
++			"stop workload and print counts after a timeout period in ms (>= 10ms)"),
++		OPT_SET_UINT(0, "per-socket", &stat_config.aggr_mode,
++			"aggregate counts per processor socket", AGGR_SOCKET),
++		OPT_SET_UINT(0, "per-die", &stat_config.aggr_mode,
++			"aggregate counts per processor die", AGGR_DIE),
++		OPT_SET_UINT(0, "per-cluster", &stat_config.aggr_mode,
++			"aggregate counts per processor cluster", AGGR_CLUSTER),
++		OPT_CALLBACK_OPTARG(0, "per-cache", &stat_config.aggr_mode, &stat_config.aggr_level,
++				"cache level", "aggregate count at this cache level (Default: LLC)",
++				parse_cache_level),
++		OPT_SET_UINT(0, "per-core", &stat_config.aggr_mode,
++			"aggregate counts per physical processor core", AGGR_CORE),
++		OPT_SET_UINT(0, "per-thread", &stat_config.aggr_mode,
++			"aggregate counts per thread", AGGR_THREAD),
++		OPT_SET_UINT(0, "per-node", &stat_config.aggr_mode,
++			"aggregate counts per numa node", AGGR_NODE),
++		OPT_INTEGER('D', "delay", &target.initial_delay,
++			"ms to wait before starting measurement after program start (-1: start with events disabled)"),
++		OPT_CALLBACK_NOOPT(0, "metric-only", &stat_config.metric_only, NULL,
++				"Only print computed metrics. No raw values", enable_metric_only),
++		OPT_BOOLEAN(0, "metric-no-group", &stat_config.metric_no_group,
++			"don't group metric events, impacts multiplexing"),
++		OPT_BOOLEAN(0, "metric-no-merge", &stat_config.metric_no_merge,
++			"don't try to share events between metrics in a group"),
++		OPT_BOOLEAN(0, "metric-no-threshold", &stat_config.metric_no_threshold,
++			"disable adding events for the metric threshold calculation"),
++		OPT_BOOLEAN(0, "topdown", &topdown_run,
++			"measure top-down statistics"),
++		OPT_UINTEGER(0, "td-level", &stat_config.topdown_level,
++			"Set the metrics level for the top-down statistics (0: max level)"),
++		OPT_BOOLEAN(0, "smi-cost", &smi_cost,
++			"measure SMI cost"),
++		OPT_CALLBACK('M', "metrics", &evsel_list, "metric/metric group list",
++			"monitor specified metrics or metric groups (separated by ,)",
++			append_metric_groups),
++		OPT_BOOLEAN_FLAG(0, "all-kernel", &stat_config.all_kernel,
++				"Configure all used events to run in kernel space.",
++				PARSE_OPT_EXCLUSIVE),
++		OPT_BOOLEAN_FLAG(0, "all-user", &stat_config.all_user,
++				"Configure all used events to run in user space.",
++				PARSE_OPT_EXCLUSIVE),
++		OPT_BOOLEAN(0, "percore-show-thread", &stat_config.percore_show_thread,
++			"Use with 'percore' event qualifier to show the event "
++			"counts of one hardware thread by sum up total hardware "
++			"threads of same physical core"),
++		OPT_BOOLEAN(0, "summary", &stat_config.summary,
++			"print summary for interval mode"),
++		OPT_BOOLEAN(0, "no-csv-summary", &stat_config.no_csv_summary,
++			"don't print 'summary' for CSV summary output"),
++		OPT_BOOLEAN(0, "quiet", &quiet,
++			"don't print any output, messages or warnings (useful with record)"),
++		OPT_CALLBACK(0, "cputype", &evsel_list, "hybrid cpu type",
++			"Only enable events on applying cpu with this type "
++			"for hybrid platform (e.g. core or atom)",
++			parse_cputype),
++#ifdef HAVE_LIBPFM
++		OPT_CALLBACK(0, "pfm-events", &evsel_list, "event",
++			"libpfm4 event selector. use 'perf list' to list available events",
++			parse_libpfm_events_option),
++#endif
++		OPT_CALLBACK(0, "control", &stat_config, "fd:ctl-fd[,ack-fd] or fifo:ctl-fifo[,ack-fifo]",
++			"Listen on ctl-fd descriptor for command to control measurement ('enable': enable events, 'disable': disable events).\n"
++			"\t\t\t  Optionally send control command completion ('ack\\n') to ack-fd descriptor.\n"
++			"\t\t\t  Alternatively, ctl-fifo / ack-fifo will be opened and used as ctl-fd / ack-fd.",
++			parse_control_option),
++		OPT_CALLBACK_OPTARG(0, "iostat", &evsel_list, &stat_config, "default",
++				"measure I/O performance metrics provided by arch/platform",
++				iostat_parse),
++		OPT_END()
++	};
+ 	const char * const stat_usage[] = {
+ 		"perf stat [<options>] [<command>]",
+ 		NULL
+@@ -2530,7 +2529,7 @@ int cmd_stat(int argc, const char **argv)
+ 		stat_config.csv_sep = DEFAULT_SEPARATOR;
+ 
+ 	if (argc && strlen(argv[0]) > 2 && strstarts("record", argv[0])) {
+-		argc = __cmd_record(argc, argv);
++		argc = __cmd_record(stat_options, argc, argv);
+ 		if (argc < 0)
+ 			return -1;
+ 	} else if (argc && strlen(argv[0]) > 2 && strstarts("report", argv[0]))
 -- 
-2.45.1
+2.45.1.288.g0e0cd299f1-goog
 
 
